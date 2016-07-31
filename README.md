@@ -1,4 +1,4 @@
-# Qt Lighting GUI for RGB LED Routines
+# Corluma
 
 Corluma is a cross-platform GUI designed to control Phillips Hue lights, Corsair RGB Keyboards, and arduino sketches from the [RGB-LED-Routines project](https://github.com/timsee/RGB-LED-Routines). It supports Windows, Linux, Mac OS X, Android, and iOS. It requires on Qt5.2 or later and C++11.
 
