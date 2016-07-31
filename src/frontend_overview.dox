@@ -1,0 +1,91 @@
+/*!
+
+<div class="frontendOverview">
+\page front_overview Frontend Overview
+\brief An overview of the frontend classes of the Lighting GUI.
+
+<div class="overviewSection">
+  <div class="overviewTitle">
+    <h2>Main Window</h2>      
+  </div>
+  <div class="overviewImage">
+    \image html mainWindowPreview.png
+  </div>
+  \copydoc MainWindow
+</div>
+
+\section sec_1_frontend Page Classes
+
+<table class="tableRightHandImage">
+  <tr>
+    <td> 
+        <h2>Single Color Page</h2>
+        \copydoc SingleColorPage 
+    </td>
+    <td>         
+        \image html singleColorPagePreview.png
+    </td>
+  </tr>
+  <tr>
+    <td>
+        <h2>Custom Colors Page</h2>        
+        \copydoc CustomColorsPage  
+    </td>
+    <td> 
+        \image html customColorsPagePreview.png
+    </td>
+  </tr>
+  <tr>
+    <td>  
+       <h2>Preset Colors Page</h2>
+       \copydoc PresetColorsPage
+    </td>
+    <td>     
+       \image html presetColorsPagePreview.png
+    </td>
+  </tr>
+  <tr>
+    <td> 
+       <h2>Settings Page</h2>   
+       \copydoc SettingsPage 
+    </td>
+    <td>         
+        \image html settingsPagePreview.png
+    </td>
+  </tr>
+</table>
+
+\section sec_2_frontend Custom UI Elements
+
+<div class="overviewSection">
+  <div class="overviewTitle">
+    <h2>Lights Button</h2>      
+  </div>
+  <div class="overviewImage">
+    \image html lightsButtonPreview.png 
+  </div>
+  \copydoc LightsButton
+</div>
+
+<div class="overviewSection">
+  <div class="overviewTitle">
+    <h2>Lights Slider</h2>      
+  </div>
+  <div class="overviewImage">
+    \image html lightsSliderPreview.png 
+  </div>
+  \copydoc LightsSlider
+</div>
+
+<div class="overviewSection">
+  <div class="overviewTitle">
+    <h2>Color Picker</h2>      
+  </div>
+  <div class="overviewImage">
+    \image html colorPickerPreview.png 
+  </div>
+  \copydoc ColorPicker
+</div>
+
+</div>
+*/

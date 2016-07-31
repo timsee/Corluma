@@ -1,0 +1,22 @@
+/*!
+<div class="backendOverview">
+
+\page backend_overview Backend Overview
+\brief An overview of the backend classes of the Lighting GUI.
+
+The backend handles communicating with the lights, storing data about the session, and generating the icons for the GUI. 
+
+\section sec_1 CommLayer
+
+\copydoc CommLayer
+
+\section sec_2 DataLayer
+
+\copydoc DataLayer
+
+\section sec_3 IconData
+
+\copydoc IconData
+
+</div>
+*/

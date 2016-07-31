@@ -1,0 +1,43 @@
+
+/* All edits have been tested for Doxygen 1.8.x and may not work on other versions.
+   All are designed for the overview pages so they may not work well in a 
+   standard doxygen usecase */
+
+
+/* global css to overview pages */
+.frontendOverview {
+    max-width: 960px;
+}
+.backendOverview {
+    max-width: 960px;
+}
+
+
+/* element specific css for overview pages. Pretty 
+   much all of these are aimed at making the overviews 
+   put images on the right and text on the left. 
+   */
+.overviewTitle {
+    float:left;   
+}
+.tableRightHandImage td:nth-child(odd) {
+    vertical-align: text-top;
+}
+
+
+/* Override image alignment so all images align to the right */
+.image {
+   text-align: right;
+}
+
+
+/* Hide some of the elements that come up in standard doxygen
+   but aren't needed on the overview pages */
+.copyright {
+    display: none;
+}
+.todo {
+    display:none;
+}
+
+
