@@ -15,14 +15,21 @@ Corluma is a cross-platform GUI designed to control Phillips Hue lights, Corsair
 
 ##<a name="progress"></a>Progress
 
-| Hardware     | Progress        | Notes            |
+|  Light Hardware | Progress        | Notes            |
 | ------------- |  ------------- |  ------------- |
+| Phillips Hue |  Complete |   |
+| Corsair RGB Keyboards |  Not Yet Implemented |  |
 | RGB-LED-Routines (UDP) |  Complete |   |
 | RGB-LED-Routines (HTTP) |  Complete |  |
 | RGB-LED-Routines (Serial) |  Complete |  PC Builds only |
-| Phillips Hue |  Complete |   |
-| Corsair RGB Keyboards |  Not Yet Implemented |  |
 
+|  Application Hardware | Progress        | 
+| ------------- |  ------------- | 
+| Linux (Debian 8.5)|  Stable |
+| Windows 10 |  Stable |  
+| Mac OS X (El Capitan) | Minor Bugs |  
+| Android (6.0 on Galaxy S6) |  Stable |  
+| iOS (iOS8) |  Unstable |
 
 ##<a name="mobile-support"></a>Mobile Builds
 
