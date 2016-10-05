@@ -23,7 +23,6 @@ CommHue::CommHue() {
 
     mStateUpdateTimer = new QTimer;
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(updateLightStates()));
-
 }
 
 CommHue::~CommHue() {
@@ -31,6 +30,12 @@ CommHue::~CommHue() {
 }
 
 void CommHue::changeLight(int lightIndex, int saturation, int brightness, int hue) {
+    // handle multicasting with light index 0
+    if (lightIndex == 0) {
+        for (int i = 0; i <= numberOfConnectedDevices(0); ++i) {
+            changeLight(i, saturation, brightness, hue);
+        }
+    }
     if (discovery()->isConnected()) {
         QString urlString = mUrlStart + "/lights/" + QString::number(lightIndex) + "/state";
         if (saturation > 254) {
@@ -129,11 +134,14 @@ bool CommHue::updateHueLightState(QJsonObject object, int i) {
                                stateObject.value("bri").toDouble());
             light.isReachable = stateObject.value("reachable").toBool();
             light.isOn = stateObject.value("on").toBool();
+            light.isValid = true;
             light.index = i;
+            // TODO: fix in refactor of Hue control;
+            light.colorGroup = EColorGroup::eRGB;
             hue.type = object.value("type").toString();
             hue.uniqueID = object.value("uniqueid").toString();
             light.brightness = stateObject.value("bri").toDouble() / 254.0f * 100;
-            updateDevice(light);
+            updateDevice(0, light);
             // update vector with new values
             if ((size_t)light.index > mConnectedHues.size()) {
                 mConnectedHues.resize(light.index);
@@ -145,7 +153,7 @@ bool CommHue::updateHueLightState(QJsonObject object, int i) {
 
             // if its the selected device, update everything
             if (light.index == selectedDevice()) {
-                updateToDataLayer(light.index, (int)ECommType::eHue);
+                updateToDataLayer(0, light.index, (int)ECommType::eHue);
             }
             emit hueLightStatesUpdated();
             return true;

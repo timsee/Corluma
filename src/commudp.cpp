@@ -34,8 +34,10 @@ CommUDP::CommUDP() {
     if (mSocket->bind(QHostAddress(localIP), PORT)) {
         connect(mSocket, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()));
         mDiscoveryTimer->start(250);
+        mBound = true;
     } else {
         qDebug() << "binding to UDP discovery server failed";
+        mBound = false;
     }
 }
 
@@ -49,16 +51,19 @@ CommUDP::~CommUDP() {
 
 
 void CommUDP::changeConnection(QString connectionName) {
+    Q_UNUSED(connectionName);
     if (!isConnected()) {
         mDiscoveryTimer->start(250);
     }
 }
 
 void CommUDP::sendPacket(QString packet) {
-    //qDebug() << "sending udp packet" << packet << "to" << currentConnection();
-    mSocket->writeDatagram(packet.toUtf8().data(),
-                           QHostAddress(currentConnection()),
-                           PORT);
+    if (mBound) {
+        //qDebug() << "sending udp" << packet << "to " << currentConnection();
+        mSocket->writeDatagram(packet.toUtf8().data(),
+                               QHostAddress(currentConnection()),
+                               PORT);
+    }
 }
 
 void CommUDP::readPendingDatagrams() {
@@ -69,15 +74,15 @@ void CommUDP::readPendingDatagrams() {
         quint16 senderPort;
         mSocket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
         QString payload = QString::fromUtf8(datagram);
-        //qDebug() << "UDP payload" << payload;
+        //qDebug() << "UDP payload" << payload << "from" << sender.toString();
         QString discoveryPacket = "DISCOVERY_PACKET";
         if (payload.contains(discoveryPacket)) {
             QString packet = payload.mid(discoveryPacket.size() + 3);
             connected(true);
-            emit discoveryReceived(packet, (int)ECommType::eUDP);
+            emit discoveryReceived(sender.toString(), packet, (int)ECommType::eUDP);
             mDiscoveryTimer->stop();
         } else {
-            emit packetReceived(payload, (int)ECommType::eUDP);
+            emit packetReceived(sender.toString(), payload, (int)ECommType::eUDP);
         }
     }
 }

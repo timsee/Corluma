@@ -936,7 +936,8 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
 
 QTreeView, QListView
 {
-    border: 1px solid #444;
+    border: 1px;
+    color: rgba(0,0,0,0);
     background-color: #201F1F;
 }
 
@@ -980,17 +981,17 @@ QTreeView::branch:open:has-children:has-siblings:hover  {
 QListView::item:!selected:hover, QListView::item:!selected:hover, QTreeView::item:!selected:hover  {
     background: rgba(0, 0, 0, 0);
     outline: 0;
-    color: #FFFFFF
+    color: rgba(0,0,0,0);
 }
 
 QListView::item:selected:hover, QListView::item:selected:hover, QTreeView::item:selected:hover  {
     background: #3d8ec9;
-    color: #FFFFFF;
+    color: rgba(0,0,0,0);
 }
 
 QListView::item:selected:!hover{
     background: #3d8ec9;
-    color: #FFFFFF;
+    color: rgba(0,0,0,0);
 }
 
 QSlider::groove:horizontal {
@@ -1104,12 +1105,12 @@ QTableView, QHeaderView
 
 QTableView::item:pressed, QListView::item:pressed, QTreeView::item:pressed  {
     background: #78879b;
-    color: #FFFFFF;
+    color: rgba(0,0,0,0);
 }
 
 QTableView::item:selected:active, QTreeView::item:selected:active, QListView::item:selected:active  {
     background: #3d8ec9;
-    color: #FFFFFF;
+    color: rgba(0,0,0,0);
 }
 
 

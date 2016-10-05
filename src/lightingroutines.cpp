@@ -250,9 +250,6 @@ LightingRoutines::preProcess(ELightingRoutine routine, EColorGroup group)
     if (group >= EColorGroup::eColorGroup_MAX) {
         group = (EColorGroup)((uint8_t)EColorGroup::eColorGroup_MAX - 1);
     }
-    if ((uint8_t)group < 0) {
-        group = (EColorGroup)0;
-    }
 
     // detect if its a single color solid routine. This is a special case
     // since it only needs to do its processing if its color is changed.

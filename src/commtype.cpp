@@ -10,22 +10,19 @@
 
 void CommType::setupConnectionList(ECommType type) {
     mType = type;
-    mControllerListMaxSize = 5;
+    mSelectedDevice = 0;
     mControllerIndex = 0;
-    mSelectedDevice = 1;
     mControllerListCurrentSize = mSettings.value(settingsListSizeKey()).toInt();
-    mIsConnected = false;
 
     // handles an edge case thats more likely to come up in debugging than typical use
     // but it would cause a crash either way...
-    if (mControllerListCurrentSize >= mControllerListMaxSize) {
+    if (mControllerListCurrentSize >= 10) {
         qDebug() << "WARNING! You have too many saved settings. Reverting all.";
         mControllerListCurrentSize = 0;
     }
     // create the mList object
-    mControllerList =  std::shared_ptr<std::vector<QString> > (new std::vector<QString>(mControllerListMaxSize, nullptr));
-    mDeviceList =  std::shared_ptr<std::vector<SLightDevice> > (new std::vector<SLightDevice>(1));
-
+    mControllerList = new std::deque<QString>(10, nullptr);
+    mDeviceList = new std::deque<std::vector<SLightDevice> >(10, std::vector<SLightDevice>(10));
     // add in a default for specific cases
     if (mControllerListCurrentSize == 0) {
         if(mType == ECommType::eHTTP
@@ -36,28 +33,37 @@ void CommType::setupConnectionList(ECommType type) {
         // load preexisting settings, if they exist
         for (int i = 0; i < mControllerListCurrentSize; ++i) {
            QString value = mSettings.value(settingsIndexKey(i)).toString();
-           if (value.compare(QString("")) != 0) (*mControllerList.get())[i] = value;
+           if (value.compare(QString("")) != 0) addConnection(value, false);
         }
     }
 }
 
-bool CommType::addConnection(QString connection) {
+bool CommType::addConnection(QString connection, bool shouldIncrement) {
     // check both that the connection is valid and that it doesn't already exist in the list
     if (checkIfConnectionIsValid(connection) && !checkIfConnectionExistsInList(connection)) {
         // when less than the max size of connections have been saved, update these values
-        if (mControllerList->size() <= mControllerListMaxSize) {
-            // copy the current vector
-            std::vector<QString> tempCopy = *mControllerList.get();
-            // add the connection to the front of the list
-            (*mControllerList.get())[0] = connection;
-            // move all values one right and throw out the last value of the list
-            for (int i = 1; i < mControllerList->size(); ++i) {
-               (*mControllerList.get())[i] = tempCopy[i - 1];
-            }
-            mControllerIndex = 0;
+        // add the connection to the front of the list
+        (*mControllerList).push_front(connection);
+
+        // add a default device
+        SLightDevice device;
+        device.index = 1;
+        device.isReachable = false;
+
+        SLightDevice invalidDevice;
+        invalidDevice.isValid = false;
+        invalidDevice.isReachable = false;
+
+
+        std::vector<SLightDevice> tempNewList(10, invalidDevice);
+        tempNewList[0] = device;
+        (*mDeviceList).push_front(tempNewList);
+
+        mControllerIndex = 0;
+        if (shouldIncrement) {
             mControllerListCurrentSize++;
-            return true;
         }
+        return true;
     }
     return false;
 }
@@ -66,8 +72,8 @@ bool CommType::selectConnection(QString connection) {
     // check if connection exists
     if (checkIfConnectionExistsInList(connection)) {
         // find the connection's index and save that as mListIndex
-        for (int i = 0; i < mControllerList->size(); ++i) {
-            if (connection.compare((*mControllerList.get())[i]) == 0) {
+        for (uint32_t i = 0; i < mControllerList->size(); ++i) {
+            if (connection.compare((*mControllerList)[i]) == 0) {
                 mControllerIndex = i;
                 return true;
             }
@@ -77,7 +83,7 @@ bool CommType::selectConnection(QString connection) {
 }
 
 bool CommType::selectConnection(int connectionIndex) {
-    if (connectionIndex < mControllerList->size()) {
+    if ((uint32_t)connectionIndex < mControllerList->size()) {
         mControllerIndex = connectionIndex;
         return true;
     }
@@ -86,53 +92,48 @@ bool CommType::selectConnection(int connectionIndex) {
 
 
 bool CommType::removeConnection(QString connection) {
+    int controllerIndex = controllerIndexByName(connection);
+    //qDebug()  << "contrroller index" << controllerIndex
+    //          << "num of devices" << numberOfConnectedDevices(controllerIndex)
+    //          << "num controllers" <<numberOfControllers()
+    //          << "type" << ECommTypeToString(mType);
     // check if connection exists in list and that its not the only connection
-    if (checkIfConnectionExistsInList(connection) && (mControllerList->size() > 1)) {
+    if (checkIfConnectionExistsInList(connection)
+            && (numberOfControllers() > 1)
+            && (controllerIndex > -1)) {
         // get index of connection we're removing
         int tempIndex;
-        for (int i = 0; i < mControllerList->size(); ++i) {
-            if (connection.compare((*mControllerList.get())[i]) == 0) tempIndex = i;
+        for (int i = 0; i < mControllerListCurrentSize; ++i) {
+            if (connection.compare((*mControllerList)[i]) == 0) tempIndex = i;
         }
         // handle edge case
-        if (tempIndex == (mControllerList->size() - 1)) {
-           (*mControllerList.get())[tempIndex] = QString("");
-        } else {
-            // copy the vector
-            std::vector<QString> tempCopy = *mControllerList.get();
-            // move all values to the right of the index one left
-            for (int i = tempIndex; i < mControllerList->size(); ++i) {
-               (*mControllerList.get())[i] = tempCopy[i + 1];
-            }
+        if (tempIndex == (mControllerListCurrentSize - 1)) {
+           (*mControllerList)[tempIndex] = QString("");
+        } else if (mControllerListCurrentSize > 1) {
+            (*mControllerList).erase((*mControllerList).begin() + tempIndex);
+            (*mDeviceList).erase((*mDeviceList).begin() + tempIndex);
         }
         // reduce the overall size.
-        if ((mControllerList->size() != 0)) mControllerListCurrentSize--;
+        if ((mControllerListCurrentSize != 0)) mControllerListCurrentSize--;
         return true;
     }
     return false;
 }
 
 void CommType::saveConnectionList() {
-     // take currently selected and reorder it to the top of the list
-     if (mControllerIndex != 0) {
-         // copy the vector
-         std::vector<QString> tempCopy = *mControllerList.get();
-         // set the selected index at the front of the vector
-         (*mControllerList.get())[0] = (*mControllerList.get())[mControllerIndex];
-         int j = 0;
-         // move all values less than than mListIndex one index right
-         // then keep all other values in the same place.
-         for (int i = 1; i < mControllerList->size(); ++i) {
-            (*mControllerList.get())[i] = tempCopy[j];
-            j++;
-            if (j == mControllerIndex) j++;
-         }
-     }
-    // save the current size
-    mSettings.setValue(settingsListSizeKey(), mControllerListCurrentSize);
     // save the values in the list
-    for (int i = 0; i < mControllerListCurrentSize; ++i) {
-        mSettings.setValue(settingsIndexKey(i), (*mControllerList.get())[i]);
+    int testCount = mControllerListCurrentSize;
+    int x = 0;
+    for (int i = 0; i < testCount; ++i) {
+        if((*mControllerList)[i].compare(QString("")) == 0) {
+            testCount--;
+        } else {
+            mSettings.setValue(settingsIndexKey(x), (*mControllerList)[x]);
+            x++;
+        }
     }
+    // save the current size
+    mSettings.setValue(settingsListSizeKey(), testCount);
     // write settings to disk
     mSettings.sync();
 }
@@ -175,8 +176,8 @@ QString CommType::settingsListSizeKey() {
 
 
 bool CommType::checkIfConnectionExistsInList(QString connection) {
-    for (int i = 0; i < mControllerList->size(); ++i) {
-        if (connection.compare((*mControllerList.get())[i]) == 0) return true;
+    for (int i = 0; i < mControllerListCurrentSize; ++i) {
+        if (connection.compare((*mControllerList)[i]) == 0) return true;
     }
     return false;
 }
@@ -191,23 +192,72 @@ bool CommType::checkIfConnectionIsValid(QString connection) {
 }
 
 
-void CommType::updateDevice(SLightDevice device) {
-    if ((size_t)(device.index) > mDeviceList->size()) {
-        //TODO: remove this edge case
-        if (device.index > 3) {
-            device.index = 3;
-        }
-        mDeviceList->resize(device.index);
-        //TODO: update individual values
-        (*mDeviceList.get())[device.index - 1] = device;
+void CommType::updateDevice(int controller, SLightDevice device) {
+    //qDebug() << "update device" << controller << "indevx" << device.index << "for type" << ECommTypeToString(mType);
+    if ((size_t)device.index > ((*mDeviceList)[controller]).size()) {
+        (*mDeviceList)[controller].resize(device.index);
+        (*mDeviceList)[controller][device.index - 1] = device;
     } else {
-        (*mDeviceList.get())[device.index - 1] = device;
+        //qDebug() << "adding this" << device.index;
+        ((*mDeviceList)[controller])[device.index - 1] = device;
     }
 }
 
 void CommType::updateDeviceColor(int i, QColor color) {
-    if ((size_t)i < mDeviceList->size()) {
-        (*mDeviceList.get())[i].color = color;
+    if ((size_t)i < mDeviceList[mControllerIndex].size()) {
+        (*mDeviceList)[mControllerIndex][i].color = color;
+    } else {
+
     }
 }
 
+int CommType::controllerIndexByName(QString name) {
+    int returnValue = -1;
+    for (uint32_t i = 0; i < mControllerList->size(); ++i) {
+        if(!QString::compare((*mControllerList)[i], name)
+                && QString::compare(QString(""), name)) {
+            returnValue = i;
+        }
+    }
+    return returnValue;
+}
+
+
+void CommType::selectDevice(int controller, uint32_t i) {
+    if (i - 1 <= mDeviceList[controller].size()) {
+         mSelectedDevice = i - 1;
+    }
+}
+
+int CommType::numberOfConnectedDevices(uint32_t controllerIndex)
+{
+    if (controllerIndex < (*mControllerList).size()) {
+        // return only valid device count
+        int x = 0;
+        for (uint32_t i = 0; i < (*mControllerList).size(); ++i) {
+            if ((*mDeviceList)[controllerIndex][i].isValid) {
+                x++;
+            }
+        }
+        return x;
+    } else {
+        qDebug() << "WARNING: looking for a connected device that doesn't exist!";
+        return -1;
+    }
+}
+
+bool CommType::deviceByControllerAndIndex(SLightDevice& device, int controllerIndex, int deviceIndex)
+{
+    if (controllerIndex < (int)mDeviceList->size()) {
+        if(deviceIndex < (int)((*mDeviceList)[controllerIndex]).size()) {
+            device = ((*mDeviceList)[controllerIndex])[deviceIndex];
+            // check if null
+            return !(device.index == 0);
+        }
+    }
+    return false;
+}
+
+QString CommType::currentConnection() {
+    return (*mControllerList)[mControllerIndex];
+}

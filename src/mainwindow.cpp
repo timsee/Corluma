@@ -174,9 +174,9 @@ void MainWindow::updateMenuBar() {
     }
     ui->onOffButton->setIcon(mIconData.renderAsQPixmap());
     if (mData->brightness() != ui->brightnessSlider->slider->value()) {
-        //ui->brightnessSlider->blockSignals(true);
+        ui->brightnessSlider->blockSignals(true);
         ui->brightnessSlider->slider->setValue(mData->brightness());
-       // ui->brightnessSlider->blockSignals(false);
+        ui->brightnessSlider->blockSignals(false);
     }
 }
 

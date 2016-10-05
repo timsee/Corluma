@@ -7,6 +7,8 @@
 #include <QTimer>
 #include <QWidget>
 #include "lightingprotocols.h"
+#include "commtype.h"
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2016.
@@ -89,6 +91,7 @@ public:
      * \brief value between 0-100 that represents how bright the LEDs shine
      */
     bool brightness(int brightness);
+
     /*!
      * \brief brightness getter for the current brightness.
      * \return a value between 0 and 100 that represents the current brightness.
@@ -147,6 +150,7 @@ public:
      * \brief number of colors in the color array
      */
     bool customColorsUsed(int count);
+
     /*!
      * \brief colorCount getter for the number of colors usd by
      *        the by the custom color routines. Will always be less
@@ -171,19 +175,33 @@ public:
     void resetToDefaults();
 
     /*!
-     * \brief multiLightMode toggles between a GUI set up to do a single light at a time
+     * \brief singleLightMode toggles between a GUI set up to do a single light at a time
      *        to a GUI set up to connect to a single piece of hardware at a time, and a
      *        GUI set up to connect to multiple groups of varying sizes.
-     * \param setToMultiLightMode true sets the GUI to multi light mode, false sets it to
-     *        single light mode.
+     * \param setToSingleLightMode true sets the GUI to single light mode, false sets it to
+     *        multi light mode.
      */
-    void multiLightMode(bool setToMultiLightMode);
+    void singleLightMode(bool setToSingleLightMode);
 
     /*!
-     * \brief multiLightMode returns true if in multi light mode, false othewrise.
+     * \brief singleLightMode returns true if in multi light mode, false othewrise.
      * \return true if in multi light mode, false othewrise.
      */
-    bool multiLightMode();
+    bool singleLightMode();
+
+    /*!
+     * \brief changeCurrentDevice change current device that the datalayer is focused on.
+     * \param newDevice the new device to add to the data layer
+     * \param index index of new device.
+     * \return true if device is successfully added, false othwerise.
+     */
+    bool changeDevice(SLightDevice newDevice, int index = 0);
+
+    /*!
+     * \brief currentDevice getter for current device of the datalayer.
+     * \return the SLightDevice that represents the current device in the datalyer.
+     */
+    SLightDevice currentDevice() { qDebug() << "returning"; return mCurrentDevices[mDeviceIndex]; }
 
 private slots:
     /*!
@@ -205,21 +223,6 @@ private:
     QColor *mColors[(int)EColorGroup::eColorGroup_MAX];
 
     /*!
-     * \brief The color used for single color routines.
-     */
-    QColor mMainColor;
-
-    /*!
-     * \brief mCurrentRoutine the mode of the LEDs
-     */
-    ELightingRoutine mCurrentRoutine;
-
-    /*!
-     * \brief mColorGroup the current preset being used for multi color routines.
-     */
-    EColorGroup mColorGroup;
-
-    /*!
      * \brief mCustomColorsUsed the number of colors used multi color routines using the
      *        custom color group.
      */
@@ -232,19 +235,14 @@ private:
     int mTimeOut;
 
     /*!
-     * \brief brightness 0-100, how bright the LEDs are
-     */
-    int mBrightness;
-
-    /*!
      * \brief mSpeed the current speed value of the arduino.
      */
     int mSpeed;
 
     /*!
-     * \brief mIsMultiLightMode true if in multi light mode, false othewrise.
+     * \brief mIsSingleLightMode true if in multi light mode, false othewrise.
      */
-    bool mIsMultiLightMode;
+    bool mIsSingleLightMode;
 
     /*!
      * \brief mTimeoutTimer system that is used to detect when lights should be
@@ -256,6 +254,15 @@ private:
      * \brief mIsTimedOut true if timed out, false otherwise.
      */
     bool mIsTimedOut;
+
+    /*!
+     * \brief mCurrentDevices list of current devices in data layer
+     * \todo complete support of multiple devices in datalayer. currently this is a vector of
+     *       size 1 in preparation.
+     */
+    std::vector<SLightDevice> mCurrentDevices;
+
+    int mDeviceIndex;
 };
 
 #endif // DATALAYER_H

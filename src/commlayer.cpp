@@ -13,30 +13,26 @@
 
 CommLayer::CommLayer(QWidget *parent) : QWidget(parent) {
     mUDP  = std::shared_ptr<CommUDP>(new CommUDP());
-    connect(mUDP.get(), SIGNAL(packetReceived(QString, int)), this, SLOT(parsePacket(QString, int)));
-    connect(mUDP.get(), SIGNAL(discoveryReceived(QString, int)), this, SLOT(discoveryReceived(QString, int)));
+    connect(mUDP.get(), SIGNAL(packetReceived(QString, QString, int)), this, SLOT(parsePacket(QString, QString, int)));
+    connect(mUDP.get(), SIGNAL(discoveryReceived(QString, QString, int)), this, SLOT(discoveryReceived(QString, QString, int)));
 
     mHTTP = std::shared_ptr<CommHTTP>(new CommHTTP());
-    connect(mHTTP.get(), SIGNAL(packetReceived(QString, int)), this, SLOT(parsePacket(QString, int)));
-    connect(mHTTP.get(), SIGNAL(discoveryReceived(QString, int)), this, SLOT(discoveryReceived(QString, int)));
+    connect(mHTTP.get(), SIGNAL(packetReceived(QString, QString, int)), this, SLOT(parsePacket(QString, QString, int)));
+    connect(mHTTP.get(), SIGNAL(discoveryReceived(QString, QString, int)), this, SLOT(discoveryReceived(QString, QString, int)));
 
 #ifndef MOBILE_BUILD
     mSerial = std::shared_ptr<CommSerial>(new CommSerial());
-    connect(mSerial.get(), SIGNAL(packetReceived(QString, int)), this, SLOT(parsePacket(QString, int)));
-    connect(mSerial.get(), SIGNAL(discoveryReceived(QString, int)), this, SLOT(discoveryReceived(QString, int)));
+    connect(mSerial.get(), SIGNAL(packetReceived(QString, QString, int)), this, SLOT(parsePacket(QString, QString, int)));
+    connect(mSerial.get(), SIGNAL(discoveryReceived(QString, QString, int)), this, SLOT(discoveryReceived(QString, QString, int)));
 #endif //MOBILE_BUILD
     mHue = std::shared_ptr<CommHue>(new CommHue());
-    connect(mHue.get(), SIGNAL(packetReceived(QString, int)), this, SLOT(parsePacket(QString, int)));
-    connect(mHue.get(), SIGNAL(discoveryReceived(QString, int)), this, SLOT(discoveryReceived(QString, int)));
-    connect(mHue.get(), SIGNAL(updateToDataLayer(int, int)), this, SLOT(updateDataLayer(int, int)));
+    connect(mHue.get(), SIGNAL(packetReceived(QString, QString, int)), this, SLOT(parsePacket(QString, QString, int)));
+    connect(mHue.get(), SIGNAL(discoveryReceived(QString, QString, int)), this, SLOT(discoveryReceived(QString, QString, int)));
+    connect(mHue.get(), SIGNAL(updateToDataLayer(int, int, int)), this, SLOT(updateDataLayer(int, int, int)));
 
     mSettings = new QSettings;
     mStateUpdateTimer = new QTimer(this);
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(stateUpdate()));
-
-    //TODO: make a cleaner system for this..
-    mStateUpdateInterval = 2500;
-    mStateUpdateTimer->start(mStateUpdateInterval);
 
     mThrottleTimer = new QTimer(this);
     connect(mThrottleTimer, SIGNAL(timeout()), this, SLOT(resetThrottleFlag()));
@@ -57,7 +53,7 @@ CommLayer::CommLayer(QWidget *parent) : QWidget(parent) {
         QString previousConnection = mSettings->value(kCommDefaultName).toString();
         //set the connection, if needed
         if ((ECommType)previousType == ECommType::eHue) {
-            mHue->selectDevice(previousConnection.toInt());
+            mHue->selectDevice(0, previousConnection.toInt());
         }
     }
 
@@ -69,10 +65,11 @@ CommLayer::CommLayer(QWidget *parent) : QWidget(parent) {
 void CommLayer::changeDeviceController(QString controllerName) {
 #ifndef MOBILE_BUILD
     if (mCommType == ECommType::eSerial) {
-        mSerial->closeConnection();
-        mSerial->connectSerialPort(controllerName);
+        if (controllerName.compare(mSerial->portName())) {
+            mSerial->closeConnection();
+            mSerial->connectSerialPort(controllerName);
+        }
         comm()->selectConnection(controllerName);
-        qDebug() << "check connection" << comm()->currentConnection();
     }
 #endif //MOBILE_BUILD
     if (mCommType == ECommType::eUDP) {
@@ -97,10 +94,12 @@ void CommLayer::sendMainColorChange(int deviceIndex, QColor color) {
         sendRoutineChange(deviceIndex, mData->currentRoutine(), (int)mData->currentColorGroup());
     }
     if (mCommType == ECommType::eHue) {
-        mHue->changeLight(mHue->selectedDevice(),
-                          mData->mainColor().saturation(),
-                          (int)(mData->mainColor().value() * (mData->brightness() / 100.0f)),
-                          mData->mainColor().hue() * 182);
+        if (checkThrottle()) {
+            mHue->changeLight(mHue->selectedDevice(),
+                              mData->mainColor().saturation(),
+                              (int)(mData->mainColor().value() * (mData->brightness() / 100.0f)),
+                              mData->mainColor().hue() * 182);
+        }
     } else {
         QString packet = QString("%1,%2,%3,%4,%5").arg(QString::number((int)EPacketHeader::eMainColorChange),
                                                        QString::number(deviceIndex),
@@ -125,7 +124,9 @@ void CommLayer::sendArrayColorChange(int deviceIndex, int index, QColor color) {
 void CommLayer::sendRoutineChange(int deviceIndex, ELightingRoutine routine, int colorGroup) {
     QString packet;
     if (mCommType == ECommType::eHue) {
-        hueRoutineChange(routine, colorGroup);
+        if (checkThrottle()) {
+            hueRoutineChange(routine, colorGroup);
+        }
     } else if ((int)routine <= (int)ELightingRoutine::eSingleSawtoothFadeOut) {
         packet = QString("%1,%2,%3").arg(QString::number((int)EPacketHeader::eModeChange),
                                          QString::number(deviceIndex),
@@ -150,7 +151,9 @@ void CommLayer::sendRoutineChange(int deviceIndex, ELightingRoutine routine, int
 
 void CommLayer::sendBrightness(int deviceIndex, int brightness) {
     if (mCommType == ECommType::eHue) {
-        hueBrightness(brightness);
+        if (checkThrottle()) {
+            hueBrightness(brightness);
+        }
     } else {
         QString packet = QString("%1,%2,%3").arg(QString::number((int)EPacketHeader::eBrightnessChange),
                                                  QString::number(deviceIndex),
@@ -180,17 +183,13 @@ void CommLayer::sendTimeOut(int deviceIndex, int timeOut) {
     sendPacket(packet);
 }
 
-//TODO: clean this up
-int temp = 0;
-bool flagTemp = false;
+
 void CommLayer::requestStateUpdate() {
     if (mLastUpdate.elapsed() < 15000) {
-        temp++;
-        flagTemp = false;
+        mTempThrottleFlag = false;
         QString packet = QString("%1").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
         sendPacket(packet);
     } else {
-        temp = 0;
         mStateUpdateTimer->stop();
     }
 }
@@ -210,32 +209,30 @@ void CommLayer::currentCommType(ECommType commType) {
 #ifndef MOBILE_BUILD
             case ECommType::eSerial:
                 mSerial->discoverSerialPorts();
-                mComm = (CommType*)mSerial.get();
                 mStateUpdateInterval = 1000;
                 mThrottleInterval = 50;
                 mThrottleTimer->start(mThrottleInterval);
                 break;
 #endif //MOBILE_BUILD
             case ECommType::eHTTP:
-                mComm = (CommType*)mHTTP.get();
                 mThrottleInterval = 500;
                 mStateUpdateInterval = 5000;
                 mThrottleTimer->start(mThrottleInterval);
                 break;
             case ECommType::eHue:
-                mComm = (CommType*)mHue.get();
                 mThrottleInterval = 250;
                 mStateUpdateInterval = 2500;
                 mThrottleTimer->start(mThrottleInterval);
                 mHue->turnOnUpdates();
                 break;
             case ECommType::eUDP:
-                mComm = (CommType*)mUDP.get();
                 mThrottleInterval = 200;
                 mStateUpdateInterval = 1000;
                 mThrottleTimer->start(mThrottleInterval);
                 break;
         }
+
+        mComm = commPtrByType(mCommType);
         // save setting to persistent memory
         mSettings->setValue(kCommDefaultType, QString::number((int)mCommType));
         mSettings->sync();
@@ -244,15 +241,7 @@ void CommLayer::currentCommType(ECommType commType) {
 
 
 void CommLayer::sendPacket(QString packet) {
-    if (!mStateUpdateTimer->isActive()) {
-        mStateUpdateTimer->start(mStateUpdateInterval);
-    } else if (flagTemp) {
-        mLastUpdate.restart();
-    }
-    flagTemp = true;
-    if (!mThrottleFlag) {
-        mData->resetTimeoutCounter();
-        mThrottleFlag = true;
+    if (checkThrottle()) {
         switch (mCommType)
         {
 #ifndef MOBILE_BUILD
@@ -324,7 +313,6 @@ void CommLayer::resetThrottleFlag() {
     // then empty it.
     if (!mThrottleFlag && mShouldSendBuffer){
         mShouldSendBuffer = false;
-        //qDebug() << "Sending buffer!" << mBufferedMessage;
         sendPacket(mBufferedMessage);
         mBufferedMessage = "";
     }
@@ -342,8 +330,8 @@ void CommLayer::resetThrottleFlag() {
 
 }
 
-void CommLayer::parsePacket(QString packet, int type) {
-    //qDebug() << "parse commLayer packet " << packet;
+void CommLayer::parsePacket(QString sender, QString packet, int type) {
+    // turn string into vector of ints
     std::vector<int> intVector;
     std::istringstream input(packet.toStdString());
     std::string number;
@@ -354,6 +342,15 @@ void CommLayer::parsePacket(QString packet, int type) {
         intVector.push_back(i);
     }
 
+    // get a pointer to the correct commtype
+    CommType *commPtr = commPtrByType((ECommType)type);
+    // get the index of the connection of conntroller for the commtype
+    int controllerIndex = commPtr->controllerIndexByName(sender);
+    // if the controller doesn't exist, add it.
+    if (controllerIndex == -1) {
+        commPtr->addConnection(sender);
+        controllerIndex = commPtr->controllerIndexByName(sender);
+    }
     bool shouldUpdateGUI = false;
     // check if its a valid size with the proper header for a state update packet
     if (!((intVector.size() - 1) % 9) && (intVector[0] == 7)) {
@@ -365,7 +362,8 @@ void CommLayer::parsePacket(QString packet, int type) {
             if (verifyStateUpdatePacketValidity(intVector, x)) {
                 // all values are in the right range, set them on SLightDevice.
                 int lightIndex         = intVector[x];
-                SLightDevice device    = mComm->deviceByIndex(lightIndex);
+                SLightDevice device;
+                mComm->deviceByControllerAndIndex(device, controllerIndex, lightIndex);
                 device.index           = lightIndex;
                 device.isOn            = (bool)intVector[x + 1];
                 device.isReachable     = (bool)intVector[x + 2];
@@ -373,24 +371,10 @@ void CommLayer::parsePacket(QString packet, int type) {
                 device.lightingRoutine = (ELightingRoutine)intVector[x + 6];
                 device.colorGroup      = (EColorGroup)intVector[x + 7];
                 device.brightness      = intVector[x + 8];
-                switch((ECommType)type)
-                {
-#ifndef MOBILE_BUILD
-                case ECommType::eSerial:
-                    mSerial->updateDevice(device);
-                    break;
-#endif //MOBILE_BUILD
-                case ECommType::eHTTP:
-                    mHTTP->updateDevice(device);
-                    break;
-                case ECommType::eHue:
-                    mHue->updateDevice(device);
-                    break;
-                case ECommType::eUDP:
-                    mUDP->updateDevice(device);
-                    break;
-                }
-                updateDataLayer(device.index, type);
+                device.isValid         = true;
+
+                commPtr->updateDevice(controllerIndex, device);
+                updateDataLayer(controllerIndex, device.index, type);
                 shouldUpdateGUI = true;
             } else {
                qDebug() << "WARNING: Invalid packet for light index" << intVector[x];
@@ -400,7 +384,7 @@ void CommLayer::parsePacket(QString packet, int type) {
         }
     }
     if (shouldUpdateGUI) {
-        emit lightStateUpdate();
+        emit lightStateUpdate(type, controllerIndex);
     }
 }
 
@@ -418,9 +402,10 @@ bool CommLayer::verifyStateUpdatePacketValidity(std::vector<int> packetIntVector
     return isValid;
 }
 
-void CommLayer::discoveryReceived(QString lightStates, int commType) {
-    parsePacket(lightStates, commType);
+void CommLayer::discoveryReceived(QString controller, QString lightStates, int commType) {
+    parsePacket(controller, lightStates, commType);
     sendRoutineChange(mComm->selectedDevice(),  mData->currentRoutine(), (int)mData->currentColorGroup());
+//    /lightStateUpdate(commType, mComm->controllerIndexByName(controller));
 }
 
 void CommLayer::hueDiscoveryUpdate(int newDiscoveryState) {
@@ -430,20 +415,62 @@ void CommLayer::hueDiscoveryUpdate(int newDiscoveryState) {
     }
 }
 
-void CommLayer::updateDataLayer(int deviceIndex, int type) {
+void CommLayer::updateDataLayer(int controllerIndex, int deviceIndex, int type) {
     if (deviceIndex == mComm->selectedDevice()
          && type == (int)currentCommType()) {
-        SLightDevice device = mComm->deviceByIndex(deviceIndex);
-        if (device.isOn) {
-            mData->mainColor(device.color);
-        } else {
-            mData->mainColor(QColor(0,0,0));
+        SLightDevice device;
+        bool shouldContinue = mComm->deviceByControllerAndIndex(device, controllerIndex, deviceIndex - 1);
+        if (shouldContinue) {
+            if (!device.isOn) {
+                device.color = QColor(0,0,0);
+            }
+            mData->changeDevice(device);
         }
-        mData->currentRoutine(device.lightingRoutine);
-        mData->currentColorGroup(device.colorGroup);
-        mData->brightness(device.brightness);
     }
 }
+
+bool CommLayer::checkThrottle() {
+    if (!mStateUpdateTimer->isActive()) {
+        mStateUpdateTimer->start(mStateUpdateInterval);
+    } else if (mTempThrottleFlag) {
+        mLastUpdate.restart();
+    }
+    mTempThrottleFlag = true;
+    if (!mThrottleFlag) {
+        mData->resetTimeoutCounter();
+        mThrottleFlag = true;
+        return true;
+    } else {
+        return false;
+    }
+}
+
+CommType* CommLayer::commPtrByType(ECommType type)
+{
+    CommType* ptr;
+    switch (type)
+    {
+#ifndef MOBILE_BUILD
+        case ECommType::eSerial:
+            ptr = (CommType*)mSerial.get();
+            break;
+#endif //MOBILE_BUILD
+        case ECommType::eHTTP:
+            ptr = (CommType*)mHTTP.get();
+            break;
+        case ECommType::eHue:
+            ptr = (CommType*)mHue.get();
+            break;
+        case ECommType::eUDP:
+            ptr = (CommType*)mUDP.get();
+            break;
+        default:
+            ptr = (CommType*)mUDP.get();
+            break;
+    }
+    return ptr;
+}
+
 
 
 const QString CommLayer::kCommDefaultType = QString("CommDefaultType");

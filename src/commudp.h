@@ -69,6 +69,11 @@ private:
      * \brief mDiscoveryTimer used during discovery to poll the device every few seconds.
      */
     QTimer *mDiscoveryTimer;
+
+    /*!
+     * \brief mBound true if already bound, false otherwise.
+     */
+    bool mBound;
 };
 
 #endif // COMMUDP_H

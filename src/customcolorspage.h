@@ -22,8 +22,8 @@ class CustomColorsPage;
  * Copyright (C) 2015 - 2016.
  * Released under the GNU General Public License.
  *
- * \brief The CustomColorsPage provides a way to use the Custom Color Array
- *        from the arduino's RoutinesRGB library to do Multi Color Routines.
+ * \brief The CustomColorsPage provides a way to use an array of custom colors
+ *        to do multi color routines.
  *
  * The page contains an interface to change the individual array colors and
  * a series of buttons that change the mode.

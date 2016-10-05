@@ -21,7 +21,7 @@ class PresetColorsPage;
  * Released under the GNU General Public License.
  *
  * \brief The PresetColorsPage provides a way to use the Color Presets
- *        from the arduino's RoutineRGB library to do Multi Color Routines.
+ *        from themed groups of colors to do Multi Color Routines.
  *
  * It contains a grid of buttons that map color presets to lighting
  * modes. The list expands horizontally into a QScrollArea.

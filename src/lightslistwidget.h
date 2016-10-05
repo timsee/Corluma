@@ -55,6 +55,12 @@ public:
      */
     void updateColor(QColor color);
 
+    /*!
+     * \brief itemIndex getter for the index of the lightslistwidget
+     * \return string representation of the index of the lightslistwidget
+     */
+    QString itemIndex() { return mIndex->text(); }
+
 private:
     /*!
      * \brief mStatusIcon uses mIconData to display an icon

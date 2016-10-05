@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QWidget>
 #include <memory>
+#include <deque>
 
 #include "lightingprotocols.h"
 
@@ -45,10 +46,17 @@ struct SLightDevice{
     bool isOn;
 
     /*!
+     * \brief isValid true if the device can be considered a valid packet, false
+     *        otherwise.
+     */
+    bool isValid;
+
+    /*!
      * \brief index the index of the hue, each bridge gives an index for all of the
      *        connected hues.
      */
     int index;
+
     /*!
      * \brief color color of this device.
      */
@@ -94,26 +102,34 @@ public:
      *        connection type
      * \return the name of the connection.
      */
-    QString currentConnection() { return (*mControllerList.get())[mControllerIndex]; }
+    QString currentConnection();
 
     /*!
      * \brief controllerList list of the controllers
      * \return list of the controllers
      */
-    std::shared_ptr<std::vector<QString> > controllerList() { return mControllerList; }
+   std::deque<QString>* controllerList() { return mControllerList; }
 
     /*!
      * \brief deviceList list of the light devices
      * \return list of the light devices
      */
-    std::shared_ptr<std::vector<SLightDevice> > deviceList() { return mDeviceList; }
+    std::deque <std::vector<SLightDevice> >* deviceList() { return mDeviceList; }
+
+    /*!
+     * \brief controllerDeviceList returns the device list of a controller. This is a dynamically sized std::vector
+     *        of SLightDevices.
+     * \param controllerIndex index of controller in controllerList array.
+     * \return the vector of connected devices to the controller requested.
+     */
+    std::vector<SLightDevice> controllerDeviceList(int controllerIndex) { return (*mDeviceList)[controllerIndex]; }
 
     /*!
      * \brief numberOfConnections count of connections stored in the
      *        connections list
      * \return count of connections stored in the connections list
      */
-    int numberOfControllers() { return mControllerList->size(); }
+    int numberOfControllers() { return mControllerListCurrentSize; }
 
     /*!
      * \brief listIndex the currently selected index of the connection list. Will always
@@ -136,30 +152,41 @@ public:
     void connected(bool isConnected) { mIsConnected = isConnected; }
 
     /*!
-     * \brief deviceByIndex getter for the data of the current device based off of the index provided
-     * \param i index of the device.
-     * \return the data of the light device.
-     */
-    SLightDevice deviceByIndex(int i) { return (*mDeviceList.get())[i - 1]; }
-
-    /*!
      * \brief selectDevice setter for the currently selected device. If its greater
      *        than the number of devices, no value is set.
      * \param i the desired selected device.
      */
-    void selectDevice(int i) { if (i <= mDeviceList->size()) mSelectedDevice = i; }
+    void selectDevice(int controller, uint32_t i);
 
     /*!
      * \brief selectedDevice getter for the currently selected device.
      * \return getter for the currently selected device.
      */
-    int selectedDevice() { return mSelectedDevice; }
+    int selectedDevice() { return mSelectedDevice + 1; }
+
+    /*!
+     * \brief controllerIndexByName searches the controller list for the given name, returns -1 if no controller
+     *        by that name is found.
+     * \param name the name of the controller you are requesting an index for
+     * \return the index of a controller, -1 if no index is found.
+     */
+    int controllerIndexByName(QString name);
+
+    /*!
+     * \brief deviceByControllerAndIndex fills the referenced device based on the controller index and device index
+     *        given. Returns whether or not it is successful.
+     * \param device SLightDevice to be filled with data if this function is succesful
+     * \param controllerIndex index of the requested controller
+     * \param deviceIndex index of the requested device
+     * \return true if the controllerIndex and deviceIndex are both valid, false otherwise.
+     */
+    bool deviceByControllerAndIndex(SLightDevice& device, int controllerIndex, int deviceIndex);
 
     /*!
      * \brief updateDevice update all the data on light device at the given index
      * \param device the new data for the light device.
      */
-    void updateDevice(SLightDevice device);
+    void updateDevice(int controller, SLightDevice device);
 
     /*!
      * \brief updateDeviceColor update the color of the device at the given index
@@ -169,10 +196,13 @@ public:
     void updateDeviceColor(int i, QColor color);
 
     /*!
-     * \brief numberOfConnectedDevices number of devices on the connected controller.
-     * \return number of devices on the connected controller.
+     * \brief numberOfConnectedDevices uses the controller index to determine the total
+     *        number of connected devices
+     * \param controllerIndexindex of controller being requested
+     * \return number of devices in controller list if successful, -1 if controllerIndex doesn't exist.
      */
-    int numberOfConnectedDevices() { return mDeviceList->size(); }
+    int numberOfConnectedDevices(uint32_t controllerIndex);
+
 
     // ----------------------------
     // Connection List Management
@@ -193,7 +223,7 @@ public:
      * \param connection the name of the new connection
      * \return true if the conenction is added, false otherwise
      */
-    bool addConnection(QString connection);
+    bool addConnection(QString connection, bool shouldIncrement = true);
 
     /*!
      * \brief selectConnection attempts to set the connction as the current conneciton in use.
@@ -223,18 +253,40 @@ public:
      */
     void saveConnectionList();
 
+    /*!
+     * \brief ECommTypeToString utility function for converting a ECommType to a human readable string
+     * \param type the ECommType to convert
+     * \return a simple english representation of the ECommType.
+     */
+    QString static ECommTypeToString(ECommType type) {
+    #ifndef MOBILE_BUILD
+        if (type == ECommType::eSerial) {
+            return "Serial";
+        }
+    #endif //MOBILE_BUILD
+        if (type ==  ECommType::eHTTP) {
+            return "HTTP";
+        } else if (type ==  ECommType::eUDP) {
+            return "UDP";
+        } else if (type ==  ECommType::eHue) {
+            return "Hue";
+        } else {
+            return "CommType not recognized";
+        }
+    }
+
 signals:
     /*!
      * \brief packetReceived emitted whenever a packet that is not a discovery packet is received. Contains
      *        the full packet's contents as a QString.
      */
-    void packetReceived(QString, int);
+    void packetReceived(QString, QString, int);
 
     /*!
      * \brief discoveryReceived emitted when a discovery packet is received, this contains the state
      *        of all connected devices.
      */
-    void discoveryReceived(QString, int);
+    void discoveryReceived(QString, QString, int);
 
     /*!
      * \brief updateToDataLayer signal that allow commtypes, which ordinarily don't interact
@@ -242,10 +294,11 @@ signals:
      *        the data layer.
      *
      * TODO: make a cleaner system for this:
+     * \param controllerIndex the index of the controller
      * \param deviceIndex the index of the light
      * \param type the int representation of the commtype sending out this signal.
      */
-    void updateToDataLayer(int deviceIndex, int type);
+    void updateToDataLayer(int controllerIndex, int deviceIndex, int type);
 
 private:
     // ----------------------------
@@ -299,24 +352,19 @@ private:
     /*!
      * \brief mControllerList the list of possible controllers. Not all are necessarily connected.
      */
-    std::shared_ptr<std::vector<QString> > mControllerList;
+    std::deque<QString> *mControllerList;
 
     /*!
      * \brief mDeviceList list of all devices on the current controller. If the controller is connected,
      *        all of these are connected. However, in certain cases such as Phillips Hues, they may not be
      *        reachable.
      */
-    std::shared_ptr<std::vector<SLightDevice> > mDeviceList;
+    std::deque<std::vector<SLightDevice> > *mDeviceList;
 
     /*!
      * \brief mListIndex the index of the connection that is currently getting used.
      */
     int mControllerIndex;
-
-    /*!
-     * \brief mControllerListMaxSize the maximum possible size of the list
-     */
-    int mControllerListMaxSize;
 
     /*!
      * \brief mControllerListCurrentSize used only when adding and removing controllers,

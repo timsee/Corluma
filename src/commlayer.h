@@ -170,7 +170,7 @@ public:
      *        controller.
      * \return count of devices connected to the current controller.
      */
-    int numberOfConnectedDevices() { return mComm->numberOfConnectedDevices(); }
+    int numberOfConnectedDevices(int index) { return mComm->numberOfConnectedDevices(index); }
 
     /*!
      * \brief selectedDevice index of the currently selected device.
@@ -188,14 +188,6 @@ public:
      */
     void changeDeviceController(QString controllerName);
 
-    /*!
-     * \brief deviceList list of devices connected to the controller. This is either a list
-     *        of hue light bulbs if the controller is a Hue Bridge, or arduino LED arrays if
-     *        the controller is an arduino.
-     * \return a vector of data about the current state of devices.
-     */
-    std::vector<SLightDevice> deviceList() { return (*mComm->deviceList().get()); }
-
     // --------------------------
     // Hardware specific functions
     // --------------------------
@@ -208,6 +200,13 @@ public:
      */
     std::vector<SHueLight> hueList() { return mHue->connectedHues(); }
 
+    /*!
+     * \brief commPtrByType returns pointer to the commtype object of a specific commtype
+     * \param type the comm type you want a pointer to.
+     * \return  a pointer to a commtype.
+     */
+    CommType* commPtrByType(ECommType type);
+
 signals:
     /*!
     * \brief hueDiscoveryStateChange the state of the Hue discovery methods,
@@ -219,7 +218,7 @@ signals:
     * \brief lightStateUpdate sent any time theres an update to the state of
     *        any of the lights.
     */
-   void lightStateUpdate();
+   void lightStateUpdate(int, int);
 
 public slots:
     /*!
@@ -228,10 +227,11 @@ public slots:
      *        execute if this is the currently selected device, as the data layer
      *        always reflects the currently connected device.
      *
+     * \param controllerIndex. index of the controller for the commtype
      * \param deviceIndex. index of the light on its controller.
      * \param type int representation of the ECommType of the type.
      */
-    void updateDataLayer(int deviceIndex, int type);
+    void updateDataLayer(int controllerIndex, int deviceIndex, int type);
 
 private slots:
    /*!
@@ -244,7 +244,7 @@ private slots:
     * \brief hueLightStateUpdate forwards the hue light state changes
     *        from a prviate HueBridgeDiscovery object.
     */
-   void hueLightStateUpdate() { emit lightStateUpdate(); }
+   void hueLightStateUpdate() { emit lightStateUpdate((int)ECommType::eHue, 0); }
 
    /*!
     * \brief resetThrottleFlag resets the flag being used to throttle
@@ -257,14 +257,14 @@ private slots:
     * \brief parsePacket parses any packets sent from any of the commtypes. The
     *        comm type that received the packet is given as an int
     */
-   void parsePacket(QString, int);
+   void parsePacket(QString, QString, int);
 
    /*!
     * \brief discoveryReceived sent from any of the commtypes, this QString
     *        should contain state update packet if the discovery packet was
     *        successful.
     */
-   void discoveryReceived(QString, int);
+   void discoveryReceived(QString, QString, int);
 
    /*!
     * \brief stateUpdate used by the mStateUpdateTimer to request new
@@ -393,6 +393,17 @@ private:
      * \return true if all values in the vector are in the proper range, false othewrise.
      */
     bool verifyStateUpdatePacketValidity(std::vector<int> packetIntVector, int x = 0);
+
+    /*!
+     * \brief checkThrottle true if the throttle is not set and a packet can be sent, false otherwise.
+     * \return true if the throttle is not set and a packet can be sent, false otherwise.
+     */
+    bool checkThrottle();
+
+    /*!
+     * \brief mTempThrottleFlag flag set when a packet is attempted to be sent during a throttle period.
+     */
+    bool mTempThrottleFlag;
 
     /*!
      * \brief KCommDefaultType Settings key for default type of communication.

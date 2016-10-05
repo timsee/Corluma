@@ -240,17 +240,17 @@ DataLayer::~DataLayer() {
 
 }
 
-void DataLayer::multiLightMode(bool setToMultiLightMode) {
-    mIsMultiLightMode = setToMultiLightMode;
+void DataLayer::singleLightMode(bool setToSingleLightMode) {
+    mIsSingleLightMode = setToSingleLightMode;
 }
 
-bool DataLayer::multiLightMode() {
-   return mIsMultiLightMode;
+bool DataLayer::singleLightMode() {
+   return mIsSingleLightMode;
 }
 
 bool DataLayer::brightness(int brightness) {
     if (brightness >= 0 && brightness <= 100) {
-        mBrightness = brightness;
+        mCurrentDevices[mDeviceIndex].brightness = brightness;
         return true;
     } else {
         return false;
@@ -258,17 +258,17 @@ bool DataLayer::brightness(int brightness) {
 }
 
 int DataLayer::brightness() {
-    return mBrightness;
+    return mCurrentDevices[mDeviceIndex].brightness;
 }
 
 
 bool DataLayer::mainColor(QColor newColor) {
-    mMainColor = newColor;
+    mCurrentDevices[mDeviceIndex].color = newColor;
     return true;
 }
 
 QColor DataLayer::mainColor() {
-    return mMainColor;
+    return  mCurrentDevices[mDeviceIndex].color;
 }
 
 uint8_t DataLayer::maxColorGroupSize() {
@@ -311,7 +311,7 @@ QColor DataLayer::colorsAverage(EColorGroup group) {
 
 bool DataLayer::currentRoutine(ELightingRoutine routine) {
     if ((int)routine >= 0 && (int)routine < (int)ELightingRoutine::eLightingRoutine_MAX) {
-        mCurrentRoutine = routine;
+        mCurrentDevices[mDeviceIndex].lightingRoutine = routine;
         return true;
     } else {
         return false;
@@ -319,7 +319,7 @@ bool DataLayer::currentRoutine(ELightingRoutine routine) {
 }
 
 ELightingRoutine DataLayer::currentRoutine() {
-    return mCurrentRoutine;
+    return mCurrentDevices[mDeviceIndex].lightingRoutine;
 }
 
 bool DataLayer::timeOut(int timeOut) {
@@ -338,7 +338,7 @@ int DataLayer::timeOut() {
 
 bool DataLayer::currentColorGroup(EColorGroup colorGroup) {
     if (colorGroup < EColorGroup::eColorGroup_MAX) {
-        mColorGroup = colorGroup;
+        mCurrentDevices[mDeviceIndex].colorGroup = colorGroup;
         return true;
     } else {
         return false;
@@ -346,7 +346,7 @@ bool DataLayer::currentColorGroup(EColorGroup colorGroup) {
 }
 
 EColorGroup DataLayer::currentColorGroup() {
-    return mColorGroup;
+    return mCurrentDevices[mDeviceIndex].colorGroup;
 }
 
 
@@ -388,27 +388,33 @@ int DataLayer::speed() {
 
 
 void DataLayer::resetToDefaults() {
-    mCurrentRoutine = ELightingRoutine::eSingleGlimmer;
-    mColorGroup  = EColorGroup::eSevenColor;
+    mDeviceIndex = 0;
+    if (mCurrentDevices.size()) {
+        mCurrentDevices.clear();
+    }
+    mCurrentDevices = std::vector<SLightDevice>(1);
+    mCurrentDevices[mDeviceIndex].colorGroup        =  EColorGroup::eSevenColor;
+    mCurrentDevices[mDeviceIndex].lightingRoutine   =  ELightingRoutine::eSingleGlimmer;
+    mCurrentDevices[mDeviceIndex].brightness        = 50;
+    mCurrentDevices[mDeviceIndex].color             = QColor(0,255,0);
+
     mTimeOut = 120;
-    mBrightness = 50;
     mCustomColorsUsed = 2;
     mSpeed = 300;
-    mMainColor = QColor(0,255,0);
     mIsTimedOut = false;
 
     int j = 0;
-    int custom_count = 5;
+    int customCount = 5;
     for (int i = 0; i < mArraySizes[0]; i++) {
-        if ((j % custom_count) == 0) {
+        if ((j % customCount) == 0) {
             mColors[0][i] = QColor(0,    255, 0);
-        } else if ((j % custom_count) == 1) {
+        } else if ((j % customCount) == 1) {
             mColors[0][i] = QColor(125,  0,   255);
-        } else if ((j % custom_count) == 2) {
+        } else if ((j % customCount) == 2) {
             mColors[0][i] = QColor(0,    0,   255);
-        } else if ((j % custom_count) == 3) {
+        } else if ((j % customCount) == 3) {
             mColors[0][i] = QColor(40,   127, 40);
-        } else if ((j % custom_count) == 4) {
+        } else if ((j % customCount) == 4) {
             mColors[0][i] = QColor(60,   0,   160);
         }
         j++;
@@ -426,4 +432,25 @@ void DataLayer::resetTimeoutCounter() {
 
 void DataLayer::timeoutHandler() {
     mIsTimedOut = true;
+}
+
+bool DataLayer::changeDevice(SLightDevice newDevice, int index) {
+    bool packetIsValid = true;
+
+    if (!((int)newDevice.lightingRoutine < 0 || (int)newDevice.lightingRoutine >= (int)ELightingRoutine::eLightingRoutine_MAX)) {
+       packetIsValid = false;
+    }
+    if (newDevice.colorGroup >= EColorGroup::eColorGroup_MAX) {
+        packetIsValid = false;
+    }
+    if (newDevice.brightness < 0 || newDevice.brightness > 100) {
+        packetIsValid = false;
+    }
+
+    if (packetIsValid) {
+        mCurrentDevices[index] = newDevice;
+    } else {
+        qDebug() << "Invalid packet fed to data layer!";
+    }
+    return packetIsValid;
 }

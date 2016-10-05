@@ -4,6 +4,7 @@
 
 #include "lightingpage.h"
 #include "lightsslider.h"
+#include "settingslistkey.h"
 
 #include <QWidget>
 #include <QListWidgetItem>
@@ -23,10 +24,10 @@ class SettingsPage;
  * It provides the ability to change the speed the LEDs update
  * and the amount of minutes it takes for the LEDs to timeout.
  *
- * It also provides a way to switch between different communication types
- * such as Serial and UDP. This interface automatically populates serial
- * connections, but allows users to add and remove connections for UDP
- * and HTTP.
+ * It also provides a way to switch between different communication types.
+ * It currently support Serial, HTTP, UDP, and Hue lights. This interface
+ * automatically populates serial and Hue connections, but allows users to
+ * add and remove connections for UDP and HTTP.
  *
  */
 class SettingsPage : public QWidget, public LightingPage
@@ -52,7 +53,7 @@ public:
     /*!
      * \brief updateUI updates the colors of various settings in the UI.
      */
-    void updateUI();
+    void updateUI(int type);
 
 signals:
     /*!
@@ -78,7 +79,7 @@ public slots:
      * \brief lightStateChanged called whenever theres any change in the state of
      *        any of the lights.
      */
-    void lightStateChanged();
+    void lightStateChanged(int, int);
 
     /*!
      * \brief listClicked signaled whenever the serial list is clicked. It
@@ -115,11 +116,13 @@ public slots:
      */
     void hueDiscoveryUpdate(int);
 
+private slots:
+
     /*!
      * \brief updateConnectionList updates the GUI elements that display the
      *        CommLayer's connection list.
      */
-    void updateConnectionList();
+    void updateConnectionList(int);
 
 protected:
     /*!
@@ -151,6 +154,12 @@ private:
      *        This is udpated internally by the hueDiscoveryUpdate(int) slot.
      */
     EHueDiscoveryState mHueDiscoveryState;
+
+    /*!
+     * \brief mListIndexVector stores the current index of the of the connectionList
+     *        for each of the connection types.
+     */
+    std::vector<int> mListIndexVector;
 };
 
 #endif // SETTINGSPAGE_H

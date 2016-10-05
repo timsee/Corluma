@@ -76,9 +76,18 @@
 #### New Repo Update
 * Created a new repo for this project based on the GUI subproject of [RGB-LED-Routines](https://github.com/timsee/RGB-LED-Routines)
 * Added two way communication between the GUI and all light controllers.
-* Added discovery methods to all data streams.  
+* Added discovery methods to all data streams.
 * Synced the state of the GUI with the updates coming from its lights.
 * Added a GUI implementation of RoutinesRGB.
 * Fixed bugs on the settings page. 
 * Fixed miscellaneous bugs.
+
+### **v0.9.5** 
+#### Obligatory Confusing Backend Update
+* Rewrote system that stores and switches between different connections.
+* Rewrote backend logic for the SettinsgPage's connection list.
+* Started to prep the backend for sending the same packet to multiple devices.
+* Removed a bunch of TODOs in the codebase.
+* Removed a bunch of known bugs and edge cases.
+
 

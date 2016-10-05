@@ -70,6 +70,12 @@ public:
      */
     void closeConnection();
 
+    /*!
+     * \brief portName returns the name of the current connection.
+     * \return name of the port of the current connection.
+     */
+    QString portName() { return mSerial->portName(); }
+
 private slots:
     /*!
      * \brief handleReadyRead parses incoming packets

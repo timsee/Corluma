@@ -76,7 +76,7 @@ void CommSerial::discoverSerialPorts() {
 void CommSerial::sendPacket(QString packet) {
     if (mSerial->isOpen()) {
         QString packetString = packet + ";";
-       // qDebug() << "sending" << packetString << "to" <<  mSerial->portName();
+        //qDebug() << "sending" << packetString << "to" <<  mSerial->portName();
         mSerial->write(packetString.toStdString().c_str());
     } else {
         qDebug() << "Serial Device not open";
@@ -95,7 +95,7 @@ void CommSerial::closeConnection() {
 
 bool CommSerial::connectSerialPort(QString serialPortName) {
     // close a preexisting connection if it exists
-    qDebug() << "serial port name: " << serialPortName;
+    //qDebug() << "serial port name: " << serialPortName;
     closeConnection();
     bool serialPortFound = false;
     QSerialPortInfo connectInfo;
@@ -142,14 +142,14 @@ void CommSerial::handleReadyRead() {
         packet.append(mSerial->readLine());
         QString payload = QString::fromUtf8(packet.trimmed());
         QString discoveryPacket = "DISCOVERY_PACKET";
-       // qDebug() << "serial received payload" << payload << "size" << packet.size();
+        //qDebug() << "serial received payload" << payload << "size" << packet.size();
         if (payload.contains(discoveryPacket)) {
             QString packet = payload.mid(discoveryPacket.size() + 3);
-            emit discoveryReceived(packet, (int)ECommType::eSerial);
+            emit discoveryReceived(currentConnection(), packet, (int)ECommType::eSerial);
             connected(true);
             mDiscoveryTimer->stop();
         } else {
-            emit packetReceived(payload, (int)ECommType::eSerial);
+            emit packetReceived(currentConnection(), payload, (int)ECommType::eSerial);
         }
     }
 }

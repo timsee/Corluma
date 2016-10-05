@@ -16,9 +16,15 @@ TEMPLATE = app
 # Minimum Requirements Check
 #----------
 
-# check for Qt5
-!greaterThan(QT_MAJOR_VERSION, 4){
-#todo handle the case of 5.2 or greater, or 6.0 or greater
+# check for proper version of Qt
+#message("DEBUG: QT_MAJOR_VERSION = $$QT_MAJOR_VERSION")
+#message("DEBUG: QT_MINOR_VERSION = $$QT_MINOR_VERSION")
+equals (QT_MAJOR_VERSION, 5)  {
+  !greaterThan(QT_MINOR_VERSION, 1) {
+    error(ERROR: Qt5 is installed, but it is not a recent enough version. This project uses QT5.2 or later)
+  }
+}
+!greaterThan(QT_MAJOR_VERSION, 4) {
     error(ERROR: Qt5 is not installed. This project uses QT5.2 or later)
 }
 
@@ -110,7 +116,8 @@ SOURCES += main.cpp\
     commhue.cpp \
     huebridgediscovery.cpp \
     lightslistwidget.cpp \
-    lightingroutines.cpp
+    lightingroutines.cpp \
+    settingsliskey.cpp
 
 HEADERS  += mainwindow.h \
     singlecolorpage.h \
@@ -132,7 +139,8 @@ HEADERS  += mainwindow.h \
     commhue.h \
     huebridgediscovery.h \
     lightslistwidget.h \
-    lightingroutines.h
+    lightingroutines.h \
+    settingslistkey.h
 
 FORMS    += mainwindow.ui \
     singlecolorpage.ui \
@@ -149,7 +157,4 @@ RESOURCES     = qdarkstyle/style.qrc \
 
 RC_ICONS = images/icon.ico # Windows icon
 ICON = images/icon.icns    # Mac OS X icon
-
-
-
 

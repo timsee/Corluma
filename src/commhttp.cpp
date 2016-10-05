@@ -7,20 +7,22 @@
 #include "commhttp.h"
 
 CommHTTP::CommHTTP() {
+    mNetworkManager = new QNetworkAccessManager(this);
     setupConnectionList(ECommType::eHTTP);
-    mNetworkManager = new QNetworkAccessManager;
     connect(mNetworkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 }
 
 CommHTTP::~CommHTTP() {
     saveConnectionList();
+    delete mNetworkManager;
 }
 
 void CommHTTP::sendPacket(QString packet) {
     // add the packet to the URL address.
     QString urlString = "http://" + currentConnection() + "/arduino/" + packet;
     //qDebug() << "sending" << urlString;
-    mNetworkManager->get(QNetworkRequest(QUrl(urlString)));
+    QNetworkRequest request = QNetworkRequest(QUrl(urlString));
+    mNetworkManager->get(request);
 }
 
 
@@ -33,13 +35,13 @@ void CommHTTP::replyFinished(QNetworkReply* reply) {
         if (payload.contains(discoveryPacket)) {
             QString packet = payload.mid(discoveryPacket.size() + 3);
             connected(true);
-            emit discoveryReceived(packet, (int)ECommType::eHTTP);
+            emit discoveryReceived(currentConnection(), packet, (int)ECommType::eHTTP);
         } else {
             QString packet = payload.simplified();
             if (packet.at(0) == '7') {
-                emit packetReceived(packet.mid(2), (int)ECommType::eHTTP);
+                emit packetReceived(currentConnection(), packet.mid(2), (int)ECommType::eHTTP);
             } else {
-                emit packetReceived(packet, (int)ECommType::eHTTP);
+                emit packetReceived(currentConnection(), packet, (int)ECommType::eHTTP);
             }
         }
     }
