@@ -73,25 +73,28 @@
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_lights_list_widget.html#a88365fc99a1cd91701f818329030c1f8">updateColor</a>(QColor color);</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    QLabel *mStatusIcon;</div>
+<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="class_lights_list_widget.html#a6cfd7402bff161a6323f10571530bd8e">   62</a></span>&#160;    QString <a class="code" href="class_lights_list_widget.html#a6cfd7402bff161a6323f10571530bd8e">itemIndex</a>() { <span class="keywordflow">return</span> mIndex-&gt;text(); }</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <a class="code" href="class_icon_data.html">IconData</a> *mIconData;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    QLabel *mStatusIcon;</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    QLabel *mController;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    QLabel *mIndex;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    QHBoxLayout *mLayout;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;};</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <a class="code" href="class_icon_data.html">IconData</a> *mIconData;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    QLabel *mController;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    QLabel *mIndex;</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="preprocessor">#endif // LIGHTSLISTWIDGET_H</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    QHBoxLayout *mLayout;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;};</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="preprocessor">#endif // LIGHTSLISTWIDGET_H</span></div>
 <div class="ttc" id="class_lights_list_widget_html_ab7303512e0f38263f68e193b72d27bf4"><div class="ttname"><a href="class_lights_list_widget.html#ab7303512e0f38263f68e193b72d27bf4">LightsListWidget::LightsListWidget</a></div><div class="ttdeci">LightsListWidget(QWidget *parent=0)</div><div class="ttdoc">LightsListWidget constructor. </div><div class="ttdef"><b>Definition:</b> lightslistwidget.cpp:8</div></div>
-<div class="ttc" id="class_lights_list_widget_html_a88365fc99a1cd91701f818329030c1f8"><div class="ttname"><a href="class_lights_list_widget.html#a88365fc99a1cd91701f818329030c1f8">LightsListWidget::updateColor</a></div><div class="ttdeci">void updateColor(QColor color)</div><div class="ttdoc">updateColor update just the color of the icon. </div><div class="ttdef"><b>Definition:</b> lightslistwidget.cpp:63</div></div>
-<div class="ttc" id="class_lights_list_widget_html_acac927f09f5be73dcf2ad850ad1366fd"><div class="ttname"><a href="class_lights_list_widget.html#acac927f09f5be73dcf2ad850ad1366fd">LightsListWidget::updateIcon</a></div><div class="ttdeci">void updateIcon(QColor color, ELightingRoutine routine, EColorGroup group)</div><div class="ttdoc">updateIcon update the icon to display a new lighting routine, color group, and color ...</div><div class="ttdef"><b>Definition:</b> lightslistwidget.cpp:68</div></div>
+<div class="ttc" id="class_lights_list_widget_html_a88365fc99a1cd91701f818329030c1f8"><div class="ttname"><a href="class_lights_list_widget.html#a88365fc99a1cd91701f818329030c1f8">LightsListWidget::updateColor</a></div><div class="ttdeci">void updateColor(QColor color)</div><div class="ttdoc">updateColor update just the color of the icon. </div><div class="ttdef"><b>Definition:</b> lightslistwidget.cpp:64</div></div>
+<div class="ttc" id="class_lights_list_widget_html_acac927f09f5be73dcf2ad850ad1366fd"><div class="ttname"><a href="class_lights_list_widget.html#acac927f09f5be73dcf2ad850ad1366fd">LightsListWidget::updateIcon</a></div><div class="ttdeci">void updateIcon(QColor color, ELightingRoutine routine, EColorGroup group)</div><div class="ttdoc">updateIcon update the icon to display a new lighting routine, color group, and color ...</div><div class="ttdef"><b>Definition:</b> lightslistwidget.cpp:69</div></div>
 <div class="ttc" id="class_lights_list_widget_html"><div class="ttname"><a href="class_lights_list_widget.html">LightsListWidget</a></div><div class="ttdoc">The LightsListWidget class This widget is used on the SettingsPage as a replacement for a QListWidget...</div><div class="ttdef"><b>Definition:</b> lightslistwidget.h:23</div></div>
-<div class="ttc" id="class_data_layer_html"><div class="ttname"><a href="class_data_layer.html">DataLayer</a></div><div class="ttdoc">The DataLayer class stores and maintains the data about the state and settings of the application...</div><div class="ttdef"><b>Definition:</b> datalayer.h:25</div></div>
+<div class="ttc" id="class_data_layer_html"><div class="ttname"><a href="class_data_layer.html">DataLayer</a></div><div class="ttdoc">The DataLayer class stores and maintains the data about the state and settings of the application...</div><div class="ttdef"><b>Definition:</b> datalayer.h:27</div></div>
 <div class="ttc" id="class_lights_list_widget_html_abbc549eeff2abf7c5fc332c24e39cabe"><div class="ttname"><a href="class_lights_list_widget.html#abbc549eeff2abf7c5fc332c24e39cabe">LightsListWidget::setup</a></div><div class="ttdeci">void setup(QString name, bool isOn, bool isReachable, QColor color, int index, DataLayer *data)</div><div class="ttdoc">setup called after the constructor, required to set up the widget with the proper data ...</div><div class="ttdef"><b>Definition:</b> lightslistwidget.cpp:13</div></div>
+<div class="ttc" id="class_lights_list_widget_html_a6cfd7402bff161a6323f10571530bd8e"><div class="ttname"><a href="class_lights_list_widget.html#a6cfd7402bff161a6323f10571530bd8e">LightsListWidget::itemIndex</a></div><div class="ttdeci">QString itemIndex()</div><div class="ttdoc">itemIndex getter for the index of the lightslistwidget </div><div class="ttdef"><b>Definition:</b> lightslistwidget.h:62</div></div>
 <div class="ttc" id="class_icon_data_html"><div class="ttname"><a href="class_icon_data.html">IconData</a></div><div class="ttdoc">The IconData class creates all the pixel-y square icons that are seen throughout the app...</div><div class="ttdef"><b>Definition:</b> icondata.h:24</div></div>
 </div><!-- fragment --></div><!-- contents -->
 

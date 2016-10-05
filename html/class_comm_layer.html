@@ -66,9 +66,9 @@
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-slots"></a>
 Public Slots</h2></td></tr>
-<tr class="memitem:a9816eb9876eadf2485e9eda5b14be78b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a9816eb9876eadf2485e9eda5b14be78b">updateDataLayer</a> (int deviceIndex, int type)</td></tr>
-<tr class="memdesc:a9816eb9876eadf2485e9eda5b14be78b"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDataLayer runs a routine that updates the data layer based on the light at the index of the current comm type. This will only execute if this is the currently selected device, as the data layer always reflects the currently connected device.  <a href="#a9816eb9876eadf2485e9eda5b14be78b">More...</a><br /></td></tr>
-<tr class="separator:a9816eb9876eadf2485e9eda5b14be78b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d44784a3af5552619162b4c183e8c20"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a1d44784a3af5552619162b4c183e8c20">updateDataLayer</a> (int controllerIndex, int deviceIndex, int type)</td></tr>
+<tr class="memdesc:a1d44784a3af5552619162b4c183e8c20"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDataLayer runs a routine that updates the data layer based on the light at the index of the current comm type. This will only execute if this is the currently selected device, as the data layer always reflects the currently connected device.  <a href="#a1d44784a3af5552619162b4c183e8c20">More...</a><br /></td></tr>
+<tr class="separator:a1d44784a3af5552619162b4c183e8c20"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
@@ -76,10 +76,10 @@ Signals</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a0a17dd140c665e5ce02e85d82c0bb813">hueDiscoveryStateChange</a> (int)</td></tr>
 <tr class="memdesc:a0a17dd140c665e5ce02e85d82c0bb813"><td class="mdescLeft">&#160;</td><td class="mdescRight">hueDiscoveryStateChange the state of the Hue discovery methods, forwarded from a private <a class="el" href="class_hue_bridge_discovery.html" title="The HueBridgeDiscovery class is an object that handles the discovery of a hue bridge by using a combi...">HueBridgeDiscovery</a> object. <br /></td></tr>
 <tr class="separator:a0a17dd140c665e5ce02e85d82c0bb813"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9513e6478c4919c5fe0d53bce830465d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9513e6478c4919c5fe0d53bce830465d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a9513e6478c4919c5fe0d53bce830465d">lightStateUpdate</a> ()</td></tr>
-<tr class="memdesc:a9513e6478c4919c5fe0d53bce830465d"><td class="mdescLeft">&#160;</td><td class="mdescRight">lightStateUpdate sent any time theres an update to the state of any of the lights. <br /></td></tr>
-<tr class="separator:a9513e6478c4919c5fe0d53bce830465d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a36aab7eb7c6340a35475d34d56e6005e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a36aab7eb7c6340a35475d34d56e6005e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a36aab7eb7c6340a35475d34d56e6005e">lightStateUpdate</a> (int, int)</td></tr>
+<tr class="memdesc:a36aab7eb7c6340a35475d34d56e6005e"><td class="mdescLeft">&#160;</td><td class="mdescRight">lightStateUpdate sent any time theres an update to the state of any of the lights. <br /></td></tr>
+<tr class="separator:a36aab7eb7c6340a35475d34d56e6005e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -145,21 +145,21 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a9748cc1255c1450b4657ba178ab6a66c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a9748cc1255c1450b4657ba178ab6a66c">isConnected</a> ()</td></tr>
 <tr class="memdesc:a9748cc1255c1450b4657ba178ab6a66c"><td class="mdescLeft">&#160;</td><td class="mdescRight">isConnected returns true if a connection has been estbalished with the given parameters for the current communication type. If the communication type is connectionless, this returns true.  <a href="#a9748cc1255c1450b4657ba178ab6a66c">More...</a><br /></td></tr>
 <tr class="separator:a9748cc1255c1450b4657ba178ab6a66c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a02b889ba45960f82355f5d8122dffa8d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a02b889ba45960f82355f5d8122dffa8d">numberOfConnectedDevices</a> ()</td></tr>
-<tr class="memdesc:a02b889ba45960f82355f5d8122dffa8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">numberOfConnectedDevices Count of devices connected to the current controller.  <a href="#a02b889ba45960f82355f5d8122dffa8d">More...</a><br /></td></tr>
-<tr class="separator:a02b889ba45960f82355f5d8122dffa8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc8c95599d45d85d085061102a03d85d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#abc8c95599d45d85d085061102a03d85d">numberOfConnectedDevices</a> (int index)</td></tr>
+<tr class="memdesc:abc8c95599d45d85d085061102a03d85d"><td class="mdescLeft">&#160;</td><td class="mdescRight">numberOfConnectedDevices Count of devices connected to the current controller.  <a href="#abc8c95599d45d85d085061102a03d85d">More...</a><br /></td></tr>
+<tr class="separator:abc8c95599d45d85d085061102a03d85d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a27d0ac40bd38c75c6a58b721fee8c565"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a27d0ac40bd38c75c6a58b721fee8c565">selectedDevice</a> ()</td></tr>
 <tr class="memdesc:a27d0ac40bd38c75c6a58b721fee8c565"><td class="mdescLeft">&#160;</td><td class="mdescRight">selectedDevice index of the currently selected device.  <a href="#a27d0ac40bd38c75c6a58b721fee8c565">More...</a><br /></td></tr>
 <tr class="separator:a27d0ac40bd38c75c6a58b721fee8c565"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab40d262213f35aec8510da0d685d810d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ab40d262213f35aec8510da0d685d810d">changeDeviceController</a> (QString controllerName)</td></tr>
 <tr class="memdesc:ab40d262213f35aec8510da0d685d810d"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeDeviceController change to a different controller and its associated devices. A "controller" is either a Hue Bridge or an arduino. A "device" is either a hue light bulb or any of the supported arduino light platforms. Currently the codebase only support one hue bridge so this function will not work for hues.  <a href="#ab40d262213f35aec8510da0d685d810d">More...</a><br /></td></tr>
 <tr class="separator:ab40d262213f35aec8510da0d685d810d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab0611980373c2fd7cf5da931403bdcb8"><td class="memItemLeft" align="right" valign="top">std::vector&lt; SLightDevice &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ab0611980373c2fd7cf5da931403bdcb8">deviceList</a> ()</td></tr>
-<tr class="memdesc:ab0611980373c2fd7cf5da931403bdcb8"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceList list of devices connected to the controller. This is either a list of hue light bulbs if the controller is a Hue Bridge, or arduino LED arrays if the controller is an arduino.  <a href="#ab0611980373c2fd7cf5da931403bdcb8">More...</a><br /></td></tr>
-<tr class="separator:ab0611980373c2fd7cf5da931403bdcb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a492d25e627cd0d9d583e721613df94bc"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="struct_s_hue_light.html">SHueLight</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a492d25e627cd0d9d583e721613df94bc">hueList</a> ()</td></tr>
 <tr class="memdesc:a492d25e627cd0d9d583e721613df94bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">connectedHues returns a vector of structs that contain all relevant states of all Hue lights connected to the Bridge. These values are updated every few seconds by a timer.  <a href="#a492d25e627cd0d9d583e721613df94bc">More...</a><br /></td></tr>
 <tr class="separator:a492d25e627cd0d9d583e721613df94bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa1355b877c8ab257cc84ed9b93e128ab"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_comm_type.html">CommType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#aa1355b877c8ab257cc84ed9b93e128ab">commPtrByType</a> (ECommType type)</td></tr>
+<tr class="memdesc:aa1355b877c8ab257cc84ed9b93e128ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">commPtrByType returns pointer to the commtype object of a specific commtype  <a href="#aa1355b877c8ab257cc84ed9b93e128ab">More...</a><br /></td></tr>
+<tr class="separator:aa1355b877c8ab257cc84ed9b93e128ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -235,6 +235,29 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="aa1355b877c8ab257cc84ed9b93e128ab"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_comm_type.html">CommType</a> * CommLayer::commPtrByType </td>
+          <td>(</td>
+          <td class="paramtype">ECommType&#160;</td>
+          <td class="paramname"><em>type</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">type</td><td>the comm type you want a pointer to. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a pointer to a commtype. </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a9b3e663fb72572ca3d1086479984d8df"></a>
 <div class="memitem">
 <div class="memproto">
@@ -270,30 +293,6 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="ab0611980373c2fd7cf5da931403bdcb8"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;SLightDevice&gt; CommLayer::deviceList </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>a vector of data about the current state of devices. </dd></dl>
 
 </div>
 </div>
@@ -369,7 +368,7 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a02b889ba45960f82355f5d8122dffa8d"></a>
+<a class="anchor" id="abc8c95599d45d85d085061102a03d85d"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -379,7 +378,8 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="memname">int CommLayer::numberOfConnectedDevices </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>index</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -677,7 +677,7 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a9816eb9876eadf2485e9eda5b14be78b"></a>
+<a class="anchor" id="a1d44784a3af5552619162b4c183e8c20"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -687,6 +687,12 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="memname">void CommLayer::updateDataLayer </td>
           <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>controllerIndex</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>deviceIndex</em>, </td>
         </tr>
@@ -710,6 +716,7 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">controllerIndex.</td><td>index of the controller for the commtype </td></tr>
     <tr><td class="paramname">deviceIndex.</td><td>index of the light on its controller. </td></tr>
     <tr><td class="paramname">type</td><td>int representation of the ECommType of the type. </td></tr>
   </table>

@@ -145,12 +145,18 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a0716275f4a79ee910f5ae7b20a0deb90">resetToDefaults</a> ()</td></tr>
 <tr class="memdesc:a0716275f4a79ee910f5ae7b20a0deb90"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetToDefaults resets the GUI and the arduino to the default values, as defined at compile time. <br /></td></tr>
 <tr class="separator:a0716275f4a79ee910f5ae7b20a0deb90"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad43268be9eb9117fd8050375e0db1041"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#ad43268be9eb9117fd8050375e0db1041">multiLightMode</a> (bool setToMultiLightMode)</td></tr>
-<tr class="memdesc:ad43268be9eb9117fd8050375e0db1041"><td class="mdescLeft">&#160;</td><td class="mdescRight">multiLightMode toggles between a GUI set up to do a single light at a time to a GUI set up to connect to a single piece of hardware at a time, and a GUI set up to connect to multiple groups of varying sizes.  <a href="#ad43268be9eb9117fd8050375e0db1041">More...</a><br /></td></tr>
-<tr class="separator:ad43268be9eb9117fd8050375e0db1041"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af6522aa3f13ac84217893f1bf84c01e7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#af6522aa3f13ac84217893f1bf84c01e7">multiLightMode</a> ()</td></tr>
-<tr class="memdesc:af6522aa3f13ac84217893f1bf84c01e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">multiLightMode returns true if in multi light mode, false othewrise.  <a href="#af6522aa3f13ac84217893f1bf84c01e7">More...</a><br /></td></tr>
-<tr class="separator:af6522aa3f13ac84217893f1bf84c01e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af55a93f7e81e7d1678fccdf139a3e938"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#af55a93f7e81e7d1678fccdf139a3e938">singleLightMode</a> (bool setToSingleLightMode)</td></tr>
+<tr class="memdesc:af55a93f7e81e7d1678fccdf139a3e938"><td class="mdescLeft">&#160;</td><td class="mdescRight">singleLightMode toggles between a GUI set up to do a single light at a time to a GUI set up to connect to a single piece of hardware at a time, and a GUI set up to connect to multiple groups of varying sizes.  <a href="#af55a93f7e81e7d1678fccdf139a3e938">More...</a><br /></td></tr>
+<tr class="separator:af55a93f7e81e7d1678fccdf139a3e938"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a40645080f9f8d15dec635f18febd0a98"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a40645080f9f8d15dec635f18febd0a98">singleLightMode</a> ()</td></tr>
+<tr class="memdesc:a40645080f9f8d15dec635f18febd0a98"><td class="mdescLeft">&#160;</td><td class="mdescRight">singleLightMode returns true if in multi light mode, false othewrise.  <a href="#a40645080f9f8d15dec635f18febd0a98">More...</a><br /></td></tr>
+<tr class="separator:a40645080f9f8d15dec635f18febd0a98"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab827001662a240be832a03858e219773"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#ab827001662a240be832a03858e219773">changeDevice</a> (SLightDevice newDevice, int index=0)</td></tr>
+<tr class="memdesc:ab827001662a240be832a03858e219773"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeCurrentDevice change current device that the datalayer is focused on.  <a href="#ab827001662a240be832a03858e219773">More...</a><br /></td></tr>
+<tr class="separator:ab827001662a240be832a03858e219773"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad179decbbfce29a16e9ad1a9e992e6a"><td class="memItemLeft" align="right" valign="top">SLightDevice&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#aad179decbbfce29a16e9ad1a9e992e6a">currentDevice</a> ()</td></tr>
+<tr class="memdesc:aad179decbbfce29a16e9ad1a9e992e6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">currentDevice getter for current device of the datalayer.  <a href="#aad179decbbfce29a16e9ad1a9e992e6a">More...</a><br /></td></tr>
+<tr class="separator:aad179decbbfce29a16e9ad1a9e992e6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2016. Released under the GNU General Public License.</dd></dl>
@@ -186,6 +192,40 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
       </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>a value between 0 and 100 that represents the current brightness. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ab827001662a240be832a03858e219773"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool DataLayer::changeDevice </td>
+          <td>(</td>
+          <td class="paramtype">SLightDevice&#160;</td>
+          <td class="paramname"><em>newDevice</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>index</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newDevice</td><td>the new device to add to the data layer </td></tr>
+    <tr><td class="paramname">index</td><td>index of new device. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if device is successfully added, false othwerise. </dd></dl>
 
 </div>
 </div>
@@ -242,6 +282,30 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
       </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>the EColorGroup that represents the colors being displayed on the LED array. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aad179decbbfce29a16e9ad1a9e992e6a"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">SLightDevice DataLayer::currentDevice </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>the SLightDevice that represents the current device in the datalyer. </dd></dl>
 
 </div>
 </div>
@@ -384,34 +448,34 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="ad43268be9eb9117fd8050375e0db1041"></a>
+<a class="anchor" id="af55a93f7e81e7d1678fccdf139a3e938"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void DataLayer::multiLightMode </td>
+          <td class="memname">void DataLayer::singleLightMode </td>
           <td>(</td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>setToMultiLightMode</em></td><td>)</td>
+          <td class="paramname"><em>setToSingleLightMode</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">setToMultiLightMode</td><td>true sets the GUI to multi light mode, false sets it to single light mode. </td></tr>
+    <tr><td class="paramname">setToSingleLightMode</td><td>true sets the GUI to single light mode, false sets it to multi light mode. </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a class="anchor" id="af6522aa3f13ac84217893f1bf84c01e7"></a>
+<a class="anchor" id="a40645080f9f8d15dec635f18febd0a98"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool DataLayer::multiLightMode </td>
+          <td class="memname">bool DataLayer::singleLightMode </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
