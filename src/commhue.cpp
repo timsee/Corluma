@@ -18,6 +18,10 @@ CommHue::CommHue() {
     mDiscovery = new HueBridgeDiscovery;
     connect(mDiscovery, SIGNAL(connectionStatusChanged(bool)), this, SLOT(connectionStatusHasChanged(bool)));
 
+    //TODO: When a better settings system is made, run this only IFF hue is enabled. Currently, we assume that
+    //      all communication streams are potentially used.
+    mDiscovery->startBridgeDiscovery(); // will verify it doesn't already have valid data before running.
+
     mNetworkManager = new QNetworkAccessManager;
     connect(mNetworkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 
