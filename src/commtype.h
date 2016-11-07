@@ -382,6 +382,15 @@ private:
      * \brief mIsConnected true if connected, false otherwise
      */
     bool mIsConnected;
+
+protected:
+
+    /*!
+     * \brief mStateUpdateTimer Polls the controller every few seconds requesting
+     *        updates on all of its devices.
+     */
+    QTimer *mStateUpdateTimer;
+
 };
 
 #endif // COMMTYPE_H

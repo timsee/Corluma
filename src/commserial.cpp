@@ -12,11 +12,23 @@
 
 CommSerial::CommSerial() {
     setupConnectionList(ECommType::eSerial);
+
+    mThrottle = new CommThrottle();
+    connect(mThrottle, SIGNAL(sendThrottleBuffer(QString)), this, SLOT(sendThrottleBuffer(QString)));
+    mThrottle->startThrottle(50);
+
     mSerial = new QSerialPort(this);
+
     mDiscoveryTimer = new QTimer(this);
     connect(mSerial, SIGNAL(readyRead()), this, SLOT(handleReadyRead()));
     connect(mSerial, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(handleError(QSerialPort::SerialPortError)));
     connect(mDiscoveryTimer, SIGNAL(timeout()), this, SLOT(discoveryRoutine()));
+
+    mStateUpdateTimer = new QTimer(this);
+    connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(stateUpdate()));
+    mStateUpdateTimer->start(1000);
+
+    discoverSerialPorts();
 }
 
 CommSerial::~CommSerial() {
@@ -75,14 +87,31 @@ void CommSerial::discoverSerialPorts() {
 
 void CommSerial::sendPacket(QString packet) {
     if (mSerial->isOpen()) {
-        QString packetString = packet + ";";
-        //qDebug() << "sending" << packetString << "to" <<  mSerial->portName();
-        mSerial->write(packetString.toStdString().c_str());
+        if (mThrottle->checkThrottle(packet)) {
+            if (packet.at(0) !=  QChar('7')) {
+                mThrottle->sentPacket();
+            }
+            QString packetString = packet + ";";
+            //qDebug() << "sending" << packetString << "to" <<  mSerial->portName();
+            mSerial->write(packetString.toStdString().c_str());
+        }
     } else {
-        qDebug() << "Serial Device not open";
+        //qDebug() << "Serial Device not open";
     }
 }
 
+void CommSerial::sendThrottleBuffer(QString bufferedMessage) {
+    mSerial->write(bufferedMessage.toStdString().c_str());
+}
+
+
+void CommSerial::stateUpdate() {
+   if (mThrottle->checkLastUpdate() < 15000) {
+       QString packet = QString("%1").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
+       // WARNING: this resets the throttle and gets called automatically!
+       sendPacket(packet);
+    }
+}
 
 void CommSerial::closeConnection() {
     if (mSerial->isOpen()) {
@@ -137,6 +166,7 @@ void CommSerial::discoveryRoutine() {
 }
 
 void CommSerial::handleReadyRead() {
+    mThrottle->receivedUpdate();
     while (mSerial->canReadLine()) {
         QByteArray packet;
         packet.append(mSerial->readLine());

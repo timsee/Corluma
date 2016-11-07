@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" rowstretch="5,5,3,3,3,20,2">
+  <layout class="QGridLayout" name="gridLayout" rowstretch="5,5,3,5,3,20,2">
    <item row="6" column="0" colspan="2">
     <widget class="QPushButton" name="resetButton">
      <property name="sizePolicy">
@@ -69,6 +69,12 @@
      </property>
      <item>
       <widget class="QPushButton" name="serialButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Serial</string>
        </property>
@@ -76,6 +82,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="httpButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>HTTP</string>
        </property>
@@ -83,6 +95,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="udpButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>UDP</string>
        </property>
@@ -90,6 +108,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="hueButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Hue</string>
        </property>
@@ -204,14 +228,14 @@
      <item>
       <widget class="QPushButton" name="singleModeButton">
        <property name="text">
-        <string>Single Light Mode</string>
+        <string>Single</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="multiModeButton">
        <property name="text">
-        <string>Multi Light Mode</string>
+        <string>Groups</string>
        </property>
       </widget>
      </item>

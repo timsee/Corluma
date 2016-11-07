@@ -2,6 +2,8 @@
 #define COMMUDP_H
 
 #include "commtype.h"
+#include "commthrottle.h"
+
 #include <QUdpSocket>
 #include <QTimer>
 
@@ -59,6 +61,17 @@ private slots:
      */
     void discoveryRoutine();
 
+    /*!
+     * \brief sendThrottleBuffer response to the throttle buffer wanting to clear itself.
+     */
+    void sendThrottleBuffer(QString);
+
+    /*!
+     * \brief stateUpdate used by the mStateUpdateTimer to request new
+     *        state updates from the currently connected lights.
+     */
+    void stateUpdate();
+
 private:
     /*!
      * \brief mSocket Qt's UDP object
@@ -74,6 +87,16 @@ private:
      * \brief mBound true if already bound, false otherwise.
      */
     bool mBound;
+
+    /*!
+     * \brief mThrottle used to prevent the communication stream from sending commands too frequently.
+     */
+    CommThrottle *mThrottle;
+
+    /*!
+     * \brief mBufferedConnection buffer of last UDP IP address used.
+     */
+    QString mBufferedConnection;
 };
 
 #endif // COMMUDP_H

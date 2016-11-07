@@ -17,8 +17,7 @@ SettingsPage::SettingsPage(QWidget *parent) :
     ui(new Ui::SettingsPage) {
     ui->setupUi(this);
 
-    ui->singleModeButton->setHidden(true);
-    ui->multiModeButton->setHidden(true);
+    mSettings = new QSettings;
 
     // setup sliders
     mSliderSpeedValue = 425;
@@ -78,18 +77,21 @@ SettingsPage::~SettingsPage() {
 void SettingsPage::setupUI() {
    connect(mComm, SIGNAL(hueDiscoveryStateChange(int)), this, SLOT(hueDiscoveryUpdate(int)));
    connect(mComm, SIGNAL(lightStateUpdate(int, int)), this, SLOT(lightStateChanged(int, int)));
-   commTypeSelected((int)mComm->currentCommType());
+   commTypeSelected((int)mData->currentCommType());
+
 }
 
 void SettingsPage::updateUI(int type) {
-    if (mData->currentRoutine() <= ELightingRoutine::eSingleSawtoothFadeOut) {
-        ui->speedSlider->setSliderColorBackground(mData->mainColor());
-        ui->timeoutSlider->setSliderColorBackground(mData->mainColor());
-    } else {
-        ui->speedSlider->setSliderColorBackground(mData->colorsAverage(mData->currentColorGroup()));
-        ui->timeoutSlider->setSliderColorBackground(mData->colorsAverage(mData->currentColorGroup()));
+    if (type == (int)mData->currentCommType()) {
+        if (mData->currentRoutine() <= ELightingRoutine::eSingleSawtoothFadeOut) {
+            ui->speedSlider->setSliderColorBackground(mData->mainColor());
+            ui->timeoutSlider->setSliderColorBackground(mData->mainColor());
+        } else {
+            ui->speedSlider->setSliderColorBackground(mData->colorsAverage(mData->currentColorGroup()));
+            ui->timeoutSlider->setSliderColorBackground(mData->colorsAverage(mData->currentColorGroup()));
+        }
+        updateConnectionList(type);
     }
-    updateConnectionList(type);
 }
 
 // ----------------------------
@@ -112,26 +114,26 @@ void SettingsPage::speedChanged(int newSpeed) {
         }
     }
     mData->speed((int)finalSpeed);
-    mComm->sendSpeed(mComm->selectedDevice(), mData->speed());
+    mComm->sendSpeed(mData->currentDevicePair(), mData->speed());
 }
 
 void SettingsPage::timeoutChanged(int newTimeout) {
    mData->timeOut(newTimeout);
-   mComm->sendTimeOut(mComm->selectedDevice(), mData->timeOut());
+   mComm->sendTimeOut(mData->currentDevicePair(), mData->timeOut());
 }
 
 void SettingsPage::listClicked(QListWidgetItem* item) {
     if (QString::compare(item->text(), mCurrentListString)) {
         mCurrentListString = item->text();
-        SSettingsListKeyData structOutput = SettingsListKey::stringToStruct(mCurrentListString);
+        SControllerCommData structOutput = ControllerCommData::stringToStruct(mCurrentListString);
+        mData->changeControllerCommData(structOutput);
+
         int controllerIndex;
         if (structOutput.type == ECommType::eHue) {
             controllerIndex = mComm->comm()->controllerIndexByName("Bridge");
         } else {
             controllerIndex = mComm->comm()->controllerIndexByName(structOutput.name);
         }
-
-
         if (structOutput.type == ECommType::eHue) {
     #ifndef MOBILE_BUILD
             // serial connections require a little more effort to properly
@@ -155,16 +157,15 @@ void SettingsPage::listClicked(QListWidgetItem* item) {
     #endif //MOBILE_BUILD
         }
         ui->lineEdit->setText(mComm->comm()->currentConnection());
-        SLightDevice light = (mComm->comm()->controllerDeviceList(controllerIndex))[mComm->selectedDevice() - 1];
-        mComm->updateDataLayer(controllerIndex, light.index, (int)mComm->currentCommType());
 
+        SLightDevice light = (mComm->comm()->controllerDeviceList(controllerIndex))[mComm->selectedDevice() - 1];
+        mComm->updateDataLayer(controllerIndex, light.index, (int)mData->currentCommType());
         // save the current index of this version of the list
         for(int i = 0; i < ui->connectionList->count(); ++i) {
             if (!ui->connectionList->item(i)->text().compare(item->text())) {
-                mListIndexVector[(int)mComm->currentCommType()] = i;
+                mListIndexVector[(int)mData->currentCommType()] = i;
             }
         }
-
         updateUI((int)structOutput.type);
         emit updateMainIcons();
     }
@@ -192,20 +193,15 @@ void SettingsPage::highlightButton(ECommType currentCommType) {
 
 
 void SettingsPage::commTypeSelected(int type) {
-    if ((ECommType)type != mComm->currentCommType()) {
-        mComm->currentCommType((ECommType)type);
+    if ((ECommType)type != mData->currentCommType()) {
+
+        mData->currentCommType((ECommType)type);
+
         highlightButton((ECommType)type);
-        if (mComm->currentCommType() == ECommType::eHue) {
-            if (mComm->isConnected()) {
-               // theres a hue bridge already connected, show bridge MAC and all available lights
-               ui->connectionListLabel->setText(QString("Hue Lights:"));
-               mComm->stopDiscovery();
-            } else if (!mComm->isInDiscoveryMode()){
-                // no hue connected and not in discovery mode, start discovery mode
-                mComm->startDiscovery();
-            }
-        } else {
-            mComm->stopDiscovery();
+        if ((mData->currentCommType() == ECommType::eHue)
+            && mComm->isConnected()) {
+           // theres a hue bridge already connected, show bridge MAC and all available lights
+           ui->connectionListLabel->setText(QString("Hue Lights:"));
         }
 #ifndef MOBILE_BUILD
         if ((ECommType)type == ECommType::eSerial) {
@@ -239,7 +235,12 @@ void SettingsPage::commTypeSelected(int type) {
         if (ui->connectionList->count() > 0) {
             ui->connectionList->item(mListIndexVector[(int)type])->setSelected(true);
         }
+        //mData->changeControllerCommData(ControllerCommData::stringToStruct(mComm->comm()->currentConnection()), 0);
+
         emit updateMainIcons();
+        // save setting to persistent memory
+        mSettings->setValue(DataLayer::kCommDefaultType, QString::number((int)type));
+        mSettings->sync();
     }
 }
 
@@ -251,30 +252,34 @@ void SettingsPage::plusButtonClicked() {
         // adjusts the backend to the connection
         mComm->comm()->selectConnection(ui->lineEdit->text());
         // updates the connection list
-        updateConnectionList((int)mComm->currentCommType());
+        updateConnectionList((int)mData->currentCommType());
         // selects the top connection on the GUI level
         ui->connectionList->item(0)->setSelected(true);
-        mListIndexVector[(int)mComm->currentCommType()] = 0;
+        mListIndexVector[(int)mData->currentCommType()] = 0;
     }
 }
 
 
 void SettingsPage::minusButtonClicked() {
-    SSettingsListKeyData listData = SettingsListKey::stringToStruct(mCurrentListString);
+    SControllerCommData listData = ControllerCommData::stringToStruct(mCurrentListString);
     bool isSuccessful = mComm->comm()->removeConnection(listData.name);
 
     if (isSuccessful) {
-
         mCurrentListString = ui->connectionList->item(0)->text();
+        qDebug() << "successful" << mCurrentListString;
+
+        mData->changeControllerCommData(ControllerCommData::stringToStruct(mCurrentListString));
         // adjusts the backend to the connection
         mComm->comm()->selectConnection(mCurrentListString);
         // update the line edit text
         ui->lineEdit->setText(mComm->comm()->currentConnection());
         // updates the connection list
-        updateConnectionList((int)mComm->currentCommType());
+        updateConnectionList((int)mData->currentCommType());
         // selects the top connection on the GUI level
         ui->connectionList->item(0)->setSelected(true);
-        mListIndexVector[(int)mComm->currentCommType()] = 0;
+        mListIndexVector[(int)mData->currentCommType()] = 0;
+    } else {
+        qDebug() << "not successful";
     }
 }
 
@@ -318,27 +323,27 @@ void SettingsPage::hueDiscoveryUpdate(int newState) {
 
 void SettingsPage::showEvent(QShowEvent *event) {
     Q_UNUSED(event);
-    ui->speedSlider->slider->setValue(mSliderSpeedValue);
-    ui->timeoutSlider->slider->setValue(mData->timeOut());
-    highlightButton(mComm->currentCommType());
-    commTypeSelected((int)mComm->currentCommType());
-    mCurrentListString = mComm->comm()->currentConnection();
 
+    updateUI((int)mData->currentCommType());
+    highlightButton(mData->currentCommType());
     // default the settings bars to the current colors
-    updateUI((int)mComm->currentCommType());
+    commTypeSelected((int)mData->currentCommType());
 
-     if(mComm->currentCommType() == ECommType::eHue) {
+     if(mData->currentCommType() == ECommType::eHue) {
          ui->lineEdit->setHidden(true);
          ui->plusButton->setHidden(true);
          ui->minusButton->setHidden(true);
          ui->connectionListLabel->setHidden(false);
      }
-
+     ui->speedSlider->slider->setValue(mSliderSpeedValue);
+     ui->timeoutSlider->slider->setValue(mData->timeOut());
 }
 
 void SettingsPage::lightStateChanged(int type, int controllerIndex) {
     Q_UNUSED(controllerIndex);
-    updateUI(type);
+    if (type == (int)mData->currentCommType()) {
+        updateUI(type);
+    }
 }
 
 // ----------------------------
@@ -346,7 +351,7 @@ void SettingsPage::lightStateChanged(int type, int controllerIndex) {
 // ----------------------------
 
 void SettingsPage::updateConnectionList(int type) {
-   if (type == (int)mComm->currentCommType()) {
+   if (type == (int)mData->currentCommType()) {
         // store currently selected index
         int tempIndex = 0;
         for (int i = 0; i < ui->connectionList->count(); i++) {
@@ -359,7 +364,7 @@ void SettingsPage::updateConnectionList(int type) {
         ui->connectionList->clear();
         int listIndex = 0; // used for inserting new entries on the list
         // get the pointer to the commtype of the connection list
-        CommType *commPtr = mComm->commPtrByType((ECommType)type);
+        CommType *commPtr = mComm->comm();
         // iterate through all of its controllers
         for (uint32_t i = 0; i < (*commPtr->controllerList()).size(); ++i) {
             // get the controller name and if its not empty, continue
@@ -391,12 +396,14 @@ void SettingsPage::updateConnectionList(int type) {
                    if (!itemFound && shouldAdd && light.isValid) {
                        LightsListWidget *lightsItem = new LightsListWidget;
                        lightsItem->setup(controllerName, light.isOn, light.isReachable, light.color, light.index, mData);
-                       SSettingsListKeyData structData;
+                       SControllerCommData structData;
                        structData.index = light.index;
                        structData.type = (ECommType)type;
                        structData.name = controllerName;
-                       QString structString = SettingsListKey::structToString(structData);
+                       QString structString = ControllerCommData::structToString(structData);
                        ui->connectionList->addItem(structString);
+                       int minimumHeight = ui->connectionList->height() / 5;
+                       ui->connectionList->item(listIndex)->setSizeHint(QSize(ui->connectionList->item(listIndex)->sizeHint().width(), minimumHeight));
                        ui->connectionList->setItemWidget(ui->connectionList->item(listIndex), lightsItem);
                        listIndex++;
                    }

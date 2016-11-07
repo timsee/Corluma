@@ -2,6 +2,7 @@
 #define COMMHTTP_H
 
 #include "commtype.h"
+#include "commthrottle.h"
 
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
@@ -39,6 +40,7 @@ public:
      */
     void sendPacket(QString packet);
 
+
 private slots:
     /*!
      * \brief replyFinished called by the mNetworkManager, receives HTTP replies to packets
@@ -46,11 +48,28 @@ private slots:
      */
     void replyFinished(QNetworkReply*);
 
+    /*!
+     * \brief sendThrottleBuffer response to the throttle buffer wanting to clear itself.
+     */
+    void sendThrottleBuffer(QString);
+
+    /*!
+     * \brief stateUpdate used by the mStateUpdateTimer to request new
+     *        state updates from the currently connected lights.
+     */
+    void stateUpdate();
+
 private:
     /*!
      * \brief mNetworkManager Qt's HTTP connection object
      */
     QNetworkAccessManager *mNetworkManager;
+
+    /*!
+     * \brief mThrottle used to prevent the communication stream from sending commands too frequently.
+     */
+    CommThrottle *mThrottle;
+
 
 };
 

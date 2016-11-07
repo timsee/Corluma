@@ -4,7 +4,7 @@
 
 #include "lightingpage.h"
 #include "lightsslider.h"
-#include "settingslistkey.h"
+#include "controllercommdata.h"
 
 #include <QWidget>
 #include <QListWidgetItem>
@@ -95,11 +95,6 @@ public slots:
     void highlightButton(ECommType currentCommType);
 
     /*!
-     * \brief commTypeSelected called when the comm type updates and changes
-     */
-    void commTypeSelected(int);
-
-    /*!
      * \brief plusButtonClicked called whenever the plus button is clicked
      */
     void plusButtonClicked();
@@ -117,6 +112,12 @@ public slots:
     void hueDiscoveryUpdate(int);
 
 private slots:
+
+    /*!
+     * \brief commTypeSelected called when the comm type updates and changes
+     */
+    void commTypeSelected(int);
+
 
     /*!
      * \brief updateConnectionList updates the GUI elements that display the
@@ -160,6 +161,11 @@ private:
      *        for each of the connection types.
      */
     std::vector<int> mListIndexVector;
+
+    /*!
+     * \brief mSettings object used to access persistent app memory
+     */
+    QSettings *mSettings;
 };
 
 #endif // SETTINGSPAGE_H

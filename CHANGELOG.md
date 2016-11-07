@@ -91,3 +91,19 @@
 * Removed a bunch of known bugs and edge cases.
 
 
+### **v0.9.55** 
+#### CommLayer Update
+* Adjusted from having only one connection (UDP, HTTP, Phillips Hue, etc.) active at a time to having all connections active simultaneously.
+* Added independent heartbeats and maintenance to each connection.
+* Changed CommLayer API.
+* Adjusted UI layout to be more mobile friendly.
+
+
+## Upcoming
+
+### **v0.9.6** 
+#### Group Update
+This update is planned to introduce "groups" which contain one or more lighting devices on the same network. All lights in a groups can be controlled simulataneously, New groups can be made
+from the settings page and can combine any lighting devices. Groups are data stream agnostic, so multiple data streams can be used at a time.  
+
+ 

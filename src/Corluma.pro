@@ -117,7 +117,9 @@ SOURCES += main.cpp\
     huebridgediscovery.cpp \
     lightslistwidget.cpp \
     lightingroutines.cpp \
-    settingsliskey.cpp
+    commthrottle.cpp \
+    commpacketparser.cpp \
+    controllercommdata.cpp
 
 HEADERS  += mainwindow.h \
     singlecolorpage.h \
@@ -140,7 +142,9 @@ HEADERS  += mainwindow.h \
     huebridgediscovery.h \
     lightslistwidget.h \
     lightingroutines.h \
-    settingslistkey.h
+    commthrottle.h \
+    commpacketparser.h \
+    controllercommdata.h
 
 FORMS    += mainwindow.ui \
     singlecolorpage.ui \

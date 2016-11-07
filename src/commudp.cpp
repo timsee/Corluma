@@ -14,8 +14,18 @@
 CommUDP::CommUDP() {
     setupConnectionList(ECommType::eUDP);
     mSocket = new QUdpSocket(this);
+
+    mThrottle = new CommThrottle();
+    connect(mThrottle, SIGNAL(sendThrottleBuffer(QString)), this, SLOT(sendThrottleBuffer(QString)));
+    mThrottle->startThrottle(200);
+
     mDiscoveryTimer = new QTimer;
     connect(mDiscoveryTimer, SIGNAL(timeout()), this, SLOT(discoveryRoutine()));
+
+    mStateUpdateTimer = new QTimer(this);
+    connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(stateUpdate()));
+    mStateUpdateTimer->start(1000);
+
     QString localIP;
     // lists all adresses associated with this device
     QList<QHostAddress> list = QNetworkInterface::allAddresses();
@@ -59,14 +69,38 @@ void CommUDP::changeConnection(QString connectionName) {
 
 void CommUDP::sendPacket(QString packet) {
     if (mBound) {
-        //qDebug() << "sending udp" << packet << "to " << currentConnection();
-        mSocket->writeDatagram(packet.toUtf8().data(),
-                               QHostAddress(currentConnection()),
-                               PORT);
+        if (mThrottle->checkThrottle(packet)) {
+            if (packet.at(0) !=  QChar('7')) {
+                mThrottle->sentPacket();
+            }
+            //qDebug() << "sending udp" << packet << "to " << currentConnection();
+            mSocket->writeDatagram(packet.toUtf8().data(),
+                                   QHostAddress(currentConnection()),
+                                   PORT);
+        } else {
+            mBufferedConnection = currentConnection();
+        }
     }
 }
 
+
+void CommUDP::stateUpdate() {
+   if (mThrottle->checkLastSend() < 15000) {
+       QString packet = QString("%1").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
+       // WARNING: this resets the throttle and gets called automatically!
+       sendPacket(packet);
+    }
+}
+
+void CommUDP::sendThrottleBuffer(QString bufferedMessage) {
+    mSocket->writeDatagram(bufferedMessage.toUtf8().data(),
+                           QHostAddress(mBufferedConnection),
+                           PORT);
+}
+
+
 void CommUDP::readPendingDatagrams() {
+    mThrottle->receivedUpdate();
     while (mSocket->hasPendingDatagrams()) {
         QByteArray datagram;
         datagram.resize(mSocket->pendingDatagramSize());

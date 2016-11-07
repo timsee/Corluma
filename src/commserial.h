@@ -4,6 +4,7 @@
 #ifndef MOBILE_BUILD
 
 #include "commtype.h"
+#include "commthrottle.h"
 
 #include <QSerialPort>
 #include <QSerialPortInfo>
@@ -91,7 +92,23 @@ private slots:
      */
     void discoveryRoutine();
 
+    /*!
+     * \brief sendThrottleBuffer response to the throttle buffer wanting to clear itself.
+     */
+    void sendThrottleBuffer(QString);
+
+    /*!
+     * \brief stateUpdate used by the mStateUpdateTimer to request new
+     *        state updates from the currently connected lights.
+     */
+    void stateUpdate();
+
 private:
+
+    /*!
+     * \brief mThrottle used to prevent the communication stream from sending commands too frequently.
+     */
+    CommThrottle *mThrottle;
 
     /*!
      * \brief mSerial the serial port currently in use

@@ -6,8 +6,11 @@
 #include <QColor>
 #include <QTimer>
 #include <QWidget>
+#include <QSettings>
+
 #include "lightingprotocols.h"
 #include "commtype.h"
+#include "controllercommdata.h"
 
 /*!
  * \copyright
@@ -198,10 +201,50 @@ public:
     bool changeDevice(SLightDevice newDevice, int index = 0);
 
     /*!
+     * \brief changeControllerCommData change the controllerCommData in the data layer.
+     * \param newCommData new information about the controller connection
+     * \param index index of mCurrentDevices array to fill
+     * \return true if added successfully, false otherwise.
+     */
+    bool changeControllerCommData(SControllerCommData newCommData, int index = 0);
+
+    /*!
+     * \brief currentDevicePair returns the current Device pair, which contains both controller
+     *        connection info and device settings
+     * \return the current device pair.
+     */
+    std::pair<SControllerCommData, SLightDevice> currentDevicePair() { return mCurrentDevices[mDeviceIndex]; }
+
+    /*!
      * \brief currentDevice getter for current device of the datalayer.
      * \return the SLightDevice that represents the current device in the datalyer.
      */
-    SLightDevice currentDevice() { qDebug() << "returning"; return mCurrentDevices[mDeviceIndex]; }
+    SLightDevice currentDevice() { return mCurrentDevices[mDeviceIndex].second; }
+
+    /*!
+     * \brief currentCommType sets the current comm type
+     * \param type sets the current commtype in the std::pair
+     * \TODO remove this function and refactor away its need
+     */
+    void currentCommType(ECommType type) { mCurrentDevices[mDeviceIndex].first.type = type; }
+
+    /*!
+     * \brief currentCommType returns the current comm type being used
+     * \return the current comm type being used
+     */
+    ECommType currentCommType() { return mCurrentDevices[mDeviceIndex].first.type; }
+
+
+    // --------------------------
+    // Const static strings
+    // --------------------------
+
+    /*!
+     * \brief KCommDefaultType Settings key for default type of communication.
+     *        This is saved whenever the user changes it and is restored at the
+     *        start of each application session.
+     */
+    const static QString kCommDefaultType;
 
 private slots:
     /*!
@@ -251,6 +294,11 @@ private:
     QTimer *mTimeoutTimer;
 
     /*!
+     * \brief mSettings object used to access persistent app memory
+     */
+    QSettings *mSettings;
+
+    /*!
      * \brief mIsTimedOut true if timed out, false otherwise.
      */
     bool mIsTimedOut;
@@ -260,8 +308,11 @@ private:
      * \todo complete support of multiple devices in datalayer. currently this is a vector of
      *       size 1 in preparation.
      */
-    std::vector<SLightDevice> mCurrentDevices;
+    std::vector<std::pair<SControllerCommData, SLightDevice> > mCurrentDevices;
 
+    /*!
+     * \brief mDeviceIndex index of device in data layer.
+     */
     int mDeviceIndex;
 };
 

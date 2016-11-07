@@ -234,6 +234,21 @@ DataLayer::DataLayer() {
     resetToDefaults();
     mTimeoutTimer = new QTimer(this);
     connect(mTimeoutTimer, SIGNAL(timeout()), this, SLOT(timeoutHandler()));
+
+    mSettings = new QSettings;
+
+    // check for last connection type
+    bool foundPrevious = false;
+    int previousType = -1;
+    if (mSettings->value(kCommDefaultType).toString().compare("") != 0) {
+        previousType = mSettings->value(kCommDefaultType).toInt();
+        foundPrevious = true;
+        mCurrentDevices[mDeviceIndex].first.type = (ECommType)previousType;
+    } else {
+        // no connection found, defaults to hue.
+        mCurrentDevices[mDeviceIndex].first.type = ECommType::eHue;
+    }
+
 }
 
 DataLayer::~DataLayer() {
@@ -250,7 +265,7 @@ bool DataLayer::singleLightMode() {
 
 bool DataLayer::brightness(int brightness) {
     if (brightness >= 0 && brightness <= 100) {
-        mCurrentDevices[mDeviceIndex].brightness = brightness;
+        mCurrentDevices[mDeviceIndex].second.brightness = brightness;
         return true;
     } else {
         return false;
@@ -258,17 +273,17 @@ bool DataLayer::brightness(int brightness) {
 }
 
 int DataLayer::brightness() {
-    return mCurrentDevices[mDeviceIndex].brightness;
+    return mCurrentDevices[mDeviceIndex].second.brightness;
 }
 
 
 bool DataLayer::mainColor(QColor newColor) {
-    mCurrentDevices[mDeviceIndex].color = newColor;
+    mCurrentDevices[mDeviceIndex].second.color = newColor;
     return true;
 }
 
 QColor DataLayer::mainColor() {
-    return  mCurrentDevices[mDeviceIndex].color;
+    return  mCurrentDevices[mDeviceIndex].second.color;
 }
 
 uint8_t DataLayer::maxColorGroupSize() {
@@ -311,7 +326,7 @@ QColor DataLayer::colorsAverage(EColorGroup group) {
 
 bool DataLayer::currentRoutine(ELightingRoutine routine) {
     if ((int)routine >= 0 && (int)routine < (int)ELightingRoutine::eLightingRoutine_MAX) {
-        mCurrentDevices[mDeviceIndex].lightingRoutine = routine;
+        mCurrentDevices[mDeviceIndex].second.lightingRoutine = routine;
         return true;
     } else {
         return false;
@@ -319,7 +334,7 @@ bool DataLayer::currentRoutine(ELightingRoutine routine) {
 }
 
 ELightingRoutine DataLayer::currentRoutine() {
-    return mCurrentDevices[mDeviceIndex].lightingRoutine;
+    return mCurrentDevices[mDeviceIndex].second.lightingRoutine;
 }
 
 bool DataLayer::timeOut(int timeOut) {
@@ -338,7 +353,7 @@ int DataLayer::timeOut() {
 
 bool DataLayer::currentColorGroup(EColorGroup colorGroup) {
     if (colorGroup < EColorGroup::eColorGroup_MAX) {
-        mCurrentDevices[mDeviceIndex].colorGroup = colorGroup;
+        mCurrentDevices[mDeviceIndex].second.colorGroup = colorGroup;
         return true;
     } else {
         return false;
@@ -346,7 +361,7 @@ bool DataLayer::currentColorGroup(EColorGroup colorGroup) {
 }
 
 EColorGroup DataLayer::currentColorGroup() {
-    return mCurrentDevices[mDeviceIndex].colorGroup;
+    return mCurrentDevices[mDeviceIndex].second.colorGroup;
 }
 
 
@@ -392,11 +407,11 @@ void DataLayer::resetToDefaults() {
     if (mCurrentDevices.size()) {
         mCurrentDevices.clear();
     }
-    mCurrentDevices = std::vector<SLightDevice>(1);
-    mCurrentDevices[mDeviceIndex].colorGroup        =  EColorGroup::eSevenColor;
-    mCurrentDevices[mDeviceIndex].lightingRoutine   =  ELightingRoutine::eSingleGlimmer;
-    mCurrentDevices[mDeviceIndex].brightness        = 50;
-    mCurrentDevices[mDeviceIndex].color             = QColor(0,255,0);
+    mCurrentDevices = std::vector<std::pair<SControllerCommData, SLightDevice> >(1, std::pair<SControllerCommData, SLightDevice>());
+    mCurrentDevices[mDeviceIndex].second.colorGroup        =  EColorGroup::eSevenColor;
+    mCurrentDevices[mDeviceIndex].second.lightingRoutine   =  ELightingRoutine::eSingleGlimmer;
+    mCurrentDevices[mDeviceIndex].second.brightness        = 50;
+    mCurrentDevices[mDeviceIndex].second.color             = QColor(0,255,0);
 
     mTimeOut = 120;
     mCustomColorsUsed = 2;
@@ -448,9 +463,19 @@ bool DataLayer::changeDevice(SLightDevice newDevice, int index) {
     }
 
     if (packetIsValid) {
-        mCurrentDevices[index] = newDevice;
+        mCurrentDevices[index].second = newDevice;
     } else {
         qDebug() << "Invalid packet fed to data layer!";
     }
     return packetIsValid;
 }
+
+bool DataLayer::changeControllerCommData(SControllerCommData newCommData, int index) {
+
+    mCurrentDevices[index].first = newCommData;
+
+    return  true;
+}
+
+const QString DataLayer::kCommDefaultType = QString("CommDefaultType");
+

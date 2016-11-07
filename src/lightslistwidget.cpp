@@ -12,7 +12,7 @@ LightsListWidget::LightsListWidget(QWidget *parent) : QWidget(parent)
 
 void LightsListWidget::setup(QString name, bool isOn, bool isReachable, QColor color, int index, DataLayer *data) {
 
-    mIconData = new IconData(32, 32, data);
+    mIconData = new IconData(128, 128, data);
     mStatusIcon = new QLabel(this);
     if (!isReachable) {
         mIconData->setSolidColor(QColor(40, 40, 40));
@@ -24,13 +24,16 @@ void LightsListWidget::setup(QString name, bool isOn, bool isReachable, QColor c
         mIconData->setSolidColor(color);
         mStatusIcon->setPixmap(mIconData->renderAsQPixmap());
     }
-    mStatusIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mStatusIcon->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+#ifndef MOBILE_BUILD
+    mStatusIcon->setMaximumWidth(mStatusIcon->height());
+    mStatusIcon->setMinimumWidth(mStatusIcon->height());
+#endif
     mStatusIcon->setStyleSheet("background:rgba(0, 0, 0, 0%);");
 
     mController = new QLabel(this);
     mController->setText(name);
     mController->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mController->setFont(QFont(mController->font().styleName(), 14, 0));
     if(!isReachable) {
         mController->setStyleSheet("background:rgba(0, 0, 0, 0%); font: bold; color: #333;");
     } else {
@@ -41,7 +44,6 @@ void LightsListWidget::setup(QString name, bool isOn, bool isReachable, QColor c
         mIndex = new QLabel(this);
         mIndex->setText(QString::number(index));
         mIndex->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        mIndex->setFont(QFont(mIndex->font().styleName(), 14, 0));
         if(!isReachable) {
             mIndex->setStyleSheet("background:rgba(0, 0, 0, 0%); font: bold; color: #333;");
         } else {
@@ -55,10 +57,14 @@ void LightsListWidget::setup(QString name, bool isOn, bool isReachable, QColor c
     if (index > 0) {
         mLayout->addWidget(mIndex);
     }
-    //mLayout->setSpacing(0);
-    mLayout->setContentsMargins(0,0,0,0);
+    mLayout->setContentsMargins(5,5,5,5);
     setLayout(mLayout);
     this->setStyleSheet("background:rgba(0, 0, 0, 0%)");
+
+    mLayout->setStretch(0, 1);
+    mLayout->setStretch(1, 10);
+    mLayout->setStretch(2, 1);
+
 }
 
 void LightsListWidget::updateColor(QColor color) {

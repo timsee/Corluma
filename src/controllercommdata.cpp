@@ -4,14 +4,14 @@
  * Released under the GNU General Public License.
  */
 
-#include "settingslistkey.h"
+#include "controllercommdata.h"
 
 #include <ostream>
 #include <iostream>
 #include <sstream>
 
 
-SSettingsListKeyData SettingsListKey::stringToStruct(QString inputString) {
+SControllerCommData ControllerCommData::stringToStruct(QString inputString) {
     // first split the values from comma delimited to a vector of strings
     std::vector<std::string> valueVector;
     std::stringstream input(inputString.toStdString());
@@ -21,7 +21,7 @@ SSettingsListKeyData SettingsListKey::stringToStruct(QString inputString) {
         valueVector.push_back(value);
     }
     // check validity
-    SSettingsListKeyData outputStruct;
+    SControllerCommData outputStruct;
     if (valueVector.size() == 3) {
         outputStruct.name = QString::fromStdString(valueVector[0]);
         outputStruct.index = QString::fromStdString(valueVector[1]).toInt();
@@ -33,9 +33,9 @@ SSettingsListKeyData SettingsListKey::stringToStruct(QString inputString) {
 }
 
 
-QString SettingsListKey::structToString(SSettingsListKeyData listStruct) {
+QString ControllerCommData::structToString(SControllerCommData dataStruct) {
     QString returnString = "";
-    returnString = returnString + listStruct.name + "," + QString::number(listStruct.index) + "," + QString::number((int)listStruct.type);
+    returnString = returnString + dataStruct.name + "," + QString::number(dataStruct.index) + "," + QString::number((int)dataStruct.type);
     //qDebug() << "this is the return string" << returnString;
     return returnString;
 }

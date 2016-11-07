@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Setup Backend
     // --------------
    // mComm =std::shared_ptr<CommLayer>(new CommLayer(this));
-    mComm->mData = mData;
+    mComm->dataLayer(mData);
     ui->singleColorPage->setup(mComm, mData);
     ui->customColorsPage->setup(mComm, mData);
     ui->presetColorsPage->setup(mComm, mData);
@@ -87,11 +87,11 @@ MainWindow::MainWindow(QWidget *parent) :
     // Final setup
     // --------------
     mIsOn = true;
-    // reset the LED array to defaults
-    mComm->sendReset();
+
     // Start on SingleColorPage
     pageChanged(0);
     // setup the SingleColorPage
+
     ui->singleColorPage->chooseColor(mData->mainColor());
 }
 
@@ -108,7 +108,7 @@ void MainWindow::toggleOnOff() {
         mIconData.setSolidColor(QColor(0,0,0));
         ui->onOffButton->setIcon(mIconData.renderAsQPixmap());
         mIsOn = false;
-        mComm->sendRoutineChange(0, ELightingRoutine::eOff);
+        mComm->sendRoutineChange(mData->currentDevicePair(), ELightingRoutine::eOff);
     } else {
         if (mData->currentRoutine() <= ELightingRoutine::eSingleSawtoothFadeOut) {
             mIconData.setSolidColor(mData->mainColor());
@@ -118,14 +118,14 @@ void MainWindow::toggleOnOff() {
             mIconData.setMultiFade(EColorGroup::eCustom, true);
         }
         ui->onOffButton->setIcon(mIconData.renderAsQPixmap());
-        mComm->sendRoutineChange(0, mData->currentRoutine());
+        mComm->sendRoutineChange(mData->currentDevicePair(), mData->currentRoutine());
         mIsOn = true;
     }
 }
 
 void MainWindow::brightnessChanged(int newBrightness) {
    mData->brightness(newBrightness);
-   mComm->sendBrightness(mComm->selectedDevice(), mData->brightness());
+   mComm->sendBrightness(mData->currentDevicePair(), mData->brightness());
    mIsOn = true;
 }
 

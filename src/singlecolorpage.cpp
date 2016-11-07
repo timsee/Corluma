@@ -26,7 +26,7 @@ SingleColorPage::~SingleColorPage() {
 }
 
 void SingleColorPage::chooseColor(QColor color) {
-  ui->colorPicker->chooseColor(color);
+    ui->colorPicker->chooseColor(color);
 }
 
 
@@ -89,14 +89,14 @@ void SingleColorPage::highlightRoutineButton(ELightingRoutine routine) {
 void SingleColorPage::modeChanged(int newMode, int newGroup) {
     Q_UNUSED(newGroup); // newGroup is ignored for single color routines
     mData->currentRoutine((ELightingRoutine)newMode);
-    mComm->sendRoutineChange(mComm->selectedDevice(), (ELightingRoutine)newMode);
+    mComm->sendRoutineChange(mData->currentDevicePair(), (ELightingRoutine)newMode);
     highlightRoutineButton((ELightingRoutine)newMode);
     emit updateMainIcons();
 }
 
 void SingleColorPage::colorChanged(QColor color) {
     mData->mainColor(color);
-    mComm->sendMainColorChange(mComm->selectedDevice(), mData->mainColor());
+    mComm->sendMainColorChange(mData->currentDevicePair(), mData->mainColor());
     if (!(mData->currentRoutine() == ELightingRoutine::eSingleBlink
             || mData->currentRoutine() == ELightingRoutine::eSingleSolid
             || mData->currentRoutine() == ELightingRoutine::eSingleWave
@@ -106,7 +106,7 @@ void SingleColorPage::colorChanged(QColor color) {
             || mData->currentRoutine() == ELightingRoutine::eSingleSawtoothFadeIn
             || mData->currentRoutine() == ELightingRoutine::eSingleSawtoothFadeOut)) {
         mData->currentRoutine(ELightingRoutine::eSingleGlimmer);
-        mComm->sendRoutineChange(mComm->selectedDevice(), ELightingRoutine::eSingleGlimmer);
+        mComm->sendRoutineChange(mData->currentDevicePair(), ELightingRoutine::eSingleGlimmer);
     }
 
     for (int i = 0; i < (int)mRoutineButtons->size(); ++i) {
@@ -125,7 +125,7 @@ void SingleColorPage::showEvent(QShowEvent *) {
   highlightRoutineButton(mData->currentRoutine());
   chooseColor(mData->mainColor());
 
-  if (mComm->currentCommType() == ECommType::eHue) {
+  if (mData->currentCommType() == ECommType::eHue) {
       ui->colorPicker->useHueWheel(true);
   } else {
       ui->colorPicker->useHueWheel(false);

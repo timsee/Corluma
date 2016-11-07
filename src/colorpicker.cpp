@@ -272,10 +272,10 @@ void ColorPicker::resizeEvent(QResizeEvent *event) {
         } else {
             pixmap = QPixmap(":/images/color_wheel.png");
         }
-        int wheelSize = (this->size().height() - rSlider->size().height() - gSlider->size().height() - bSlider->size().height()) * 0.75f;
-        rSlider->setMinimumHeight(wheelSize * 0.1f);
-        gSlider->setMinimumHeight(wheelSize * 0.1f);
-        bSlider->setMinimumHeight(wheelSize * 0.1f);
+        int wheelSize = (this->size().height() - rSlider->size().height() - gSlider->size().height() - bSlider->size().height()) * 0.8f;
+        rSlider->setMinimumHeight(wheelSize * 0.2f);
+        gSlider->setMinimumHeight(wheelSize * 0.2f);
+        bSlider->setMinimumHeight(wheelSize * 0.2f);
         colorWheel->setPixmap(pixmap.scaled(wheelSize,
                                             wheelSize,
                                             Qt::KeepAspectRatio,
