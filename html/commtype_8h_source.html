@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.4</span>
+   &#160;<span id="projectnumber">v0.9.55</span>
    </div>
   </td>
  </tr>
@@ -198,13 +198,19 @@
 <div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;    <span class="keywordtype">int</span> mSelectedDevice;</div>
 <div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;</div>
 <div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;    <span class="keywordtype">bool</span> mIsConnected;</div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;};</div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;</div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;<span class="preprocessor">#endif // COMMTYPE_H</span></div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;</div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;<span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;</div>
+<div class="line"><a name="l00392"></a><span class="lineno"><a class="line" href="class_comm_type.html#a5fad0675d5baa960558751025bc5ec3a">  392</a></span>&#160;    QTimer *<a class="code" href="class_comm_type.html#a5fad0675d5baa960558751025bc5ec3a">mStateUpdateTimer</a>;</div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;</div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;};</div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;</div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;<span class="preprocessor">#endif // COMMTYPE_H</span></div>
 <div class="ttc" id="class_comm_type_html_ae34447045c9c97a9792ad0b9051aa2e5"><div class="ttname"><a href="class_comm_type.html#ae34447045c9c97a9792ad0b9051aa2e5">CommType::updateDeviceColor</a></div><div class="ttdeci">void updateDeviceColor(int i, QColor color)</div><div class="ttdoc">updateDeviceColor update the color of the device at the given index </div><div class="ttdef"><b>Definition:</b> commtype.cpp:206</div></div>
 <div class="ttc" id="class_comm_type_html_a339e38c2d5b6c5aee882c1f2f676c6b8"><div class="ttname"><a href="class_comm_type.html#a339e38c2d5b6c5aee882c1f2f676c6b8">CommType::connected</a></div><div class="ttdeci">void connected(bool isConnected)</div><div class="ttdoc">connected used to change the connected state. </div><div class="ttdef"><b>Definition:</b> commtype.h:152</div></div>
 <div class="ttc" id="class_comm_type_html_af4f3b6b158b0dc5f0888801053ec2579"><div class="ttname"><a href="class_comm_type.html#af4f3b6b158b0dc5f0888801053ec2579">CommType::updateDevice</a></div><div class="ttdeci">void updateDevice(int controller, SLightDevice device)</div><div class="ttdoc">updateDevice update all the data on light device at the given index </div><div class="ttdef"><b>Definition:</b> commtype.cpp:195</div></div>
 <div class="ttc" id="class_comm_type_html_a26bb67df4c78cb55a2872f33fa38119e"><div class="ttname"><a href="class_comm_type.html#a26bb67df4c78cb55a2872f33fa38119e">CommType::selectDevice</a></div><div class="ttdeci">void selectDevice(int controller, uint32_t i)</div><div class="ttdoc">selectDevice setter for the currently selected device. If its greater than the number of devices...</div><div class="ttdef"><b>Definition:</b> commtype.cpp:226</div></div>
+<div class="ttc" id="class_comm_type_html_a5fad0675d5baa960558751025bc5ec3a"><div class="ttname"><a href="class_comm_type.html#a5fad0675d5baa960558751025bc5ec3a">CommType::mStateUpdateTimer</a></div><div class="ttdeci">QTimer * mStateUpdateTimer</div><div class="ttdoc">mStateUpdateTimer Polls the controller every few seconds requesting updates on all of its devices...</div><div class="ttdef"><b>Definition:</b> commtype.h:392</div></div>
 <div class="ttc" id="class_comm_type_html_a8bde6ea9fbb44fca8bc2d4a55924bfba"><div class="ttname"><a href="class_comm_type.html#a8bde6ea9fbb44fca8bc2d4a55924bfba">CommType::updateToDataLayer</a></div><div class="ttdeci">void updateToDataLayer(int controllerIndex, int deviceIndex, int type)</div><div class="ttdoc">updateToDataLayer signal that allow commtypes, which ordinarily don&#39;t interact with the data layer di...</div></div>
 <div class="ttc" id="class_comm_type_html_a7ca73568b03e3efbccb249168d6cc486"><div class="ttname"><a href="class_comm_type.html#a7ca73568b03e3efbccb249168d6cc486">CommType::ECommTypeToString</a></div><div class="ttdeci">static QString ECommTypeToString(ECommType type)</div><div class="ttdoc">ECommTypeToString utility function for converting a ECommType to a human readable string...</div><div class="ttdef"><b>Definition:</b> commtype.h:261</div></div>
 <div class="ttc" id="class_comm_type_html_aaa25ac27d5bdb85a13b8d461ca1a960c"><div class="ttname"><a href="class_comm_type.html#aaa25ac27d5bdb85a13b8d461ca1a960c">CommType::setupConnectionList</a></div><div class="ttdeci">void setupConnectionList(ECommType type)</div><div class="ttdoc">setupConnectionList initializes the connection list and reloads it from system memory, if needed </div><div class="ttdef"><b>Definition:</b> commtype.cpp:11</div></div>

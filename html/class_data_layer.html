@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.4</span>
+   &#160;<span id="projectnumber">v0.9.55</span>
    </div>
   </td>
  </tr>
@@ -48,7 +48,8 @@
 <div class="header">
   <div class="summary">
 <a href="class_data_layer-members.html">List of all members</a> &#124;
-<a href="#pub-methods">Public Member Functions</a>  </div>
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a>  </div>
   <div class="headertitle">
 <div class="title">DataLayer Class Reference</div>  </div>
 </div><!--header-->
@@ -154,9 +155,29 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:ab827001662a240be832a03858e219773"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#ab827001662a240be832a03858e219773">changeDevice</a> (SLightDevice newDevice, int index=0)</td></tr>
 <tr class="memdesc:ab827001662a240be832a03858e219773"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeCurrentDevice change current device that the datalayer is focused on.  <a href="#ab827001662a240be832a03858e219773">More...</a><br /></td></tr>
 <tr class="separator:ab827001662a240be832a03858e219773"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7dbbfb89065bedb56562db23ef4e665e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a7dbbfb89065bedb56562db23ef4e665e">changeControllerCommData</a> (<a class="el" href="struct_s_controller_comm_data.html">SControllerCommData</a> newCommData, int index=0)</td></tr>
+<tr class="memdesc:a7dbbfb89065bedb56562db23ef4e665e"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeControllerCommData change the controllerCommData in the data layer.  <a href="#a7dbbfb89065bedb56562db23ef4e665e">More...</a><br /></td></tr>
+<tr class="separator:a7dbbfb89065bedb56562db23ef4e665e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0346f77fbd81b7ac7adaf55a990c66a"><td class="memItemLeft" align="right" valign="top">std::pair&lt; <a class="el" href="struct_s_controller_comm_data.html">SControllerCommData</a>, <br class="typebreak" />
+SLightDevice &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#ab0346f77fbd81b7ac7adaf55a990c66a">currentDevicePair</a> ()</td></tr>
+<tr class="memdesc:ab0346f77fbd81b7ac7adaf55a990c66a"><td class="mdescLeft">&#160;</td><td class="mdescRight">currentDevicePair returns the current Device pair, which contains both controller connection info and device settings  <a href="#ab0346f77fbd81b7ac7adaf55a990c66a">More...</a><br /></td></tr>
+<tr class="separator:ab0346f77fbd81b7ac7adaf55a990c66a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad179decbbfce29a16e9ad1a9e992e6a"><td class="memItemLeft" align="right" valign="top">SLightDevice&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#aad179decbbfce29a16e9ad1a9e992e6a">currentDevice</a> ()</td></tr>
 <tr class="memdesc:aad179decbbfce29a16e9ad1a9e992e6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">currentDevice getter for current device of the datalayer.  <a href="#aad179decbbfce29a16e9ad1a9e992e6a">More...</a><br /></td></tr>
 <tr class="separator:aad179decbbfce29a16e9ad1a9e992e6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6fa1be247fe85ec4c871dab09228f554"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a6fa1be247fe85ec4c871dab09228f554">currentCommType</a> (ECommType type)</td></tr>
+<tr class="memdesc:a6fa1be247fe85ec4c871dab09228f554"><td class="mdescLeft">&#160;</td><td class="mdescRight">currentCommType sets the current comm type  <a href="#a6fa1be247fe85ec4c871dab09228f554">More...</a><br /></td></tr>
+<tr class="separator:a6fa1be247fe85ec4c871dab09228f554"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e89c6b70a04bfd15237466cf094f03f"><td class="memItemLeft" align="right" valign="top">ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a5e89c6b70a04bfd15237466cf094f03f">currentCommType</a> ()</td></tr>
+<tr class="memdesc:a5e89c6b70a04bfd15237466cf094f03f"><td class="mdescLeft">&#160;</td><td class="mdescRight">currentCommType returns the current comm type being used  <a href="#a5e89c6b70a04bfd15237466cf094f03f">More...</a><br /></td></tr>
+<tr class="separator:a5e89c6b70a04bfd15237466cf094f03f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:a69c0899c060cf9e5201966890b15cc7c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a69c0899c060cf9e5201966890b15cc7c"></a>
+static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a69c0899c060cf9e5201966890b15cc7c">kCommDefaultType</a> = QString(&quot;CommDefaultType&quot;)</td></tr>
+<tr class="memdesc:a69c0899c060cf9e5201966890b15cc7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">KCommDefaultType Settings key for default type of communication. This is saved whenever the user changes it and is restored at the start of each application session. <br /></td></tr>
+<tr class="separator:a69c0899c060cf9e5201966890b15cc7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2016. Released under the GNU General Public License.</dd></dl>
@@ -192,6 +213,40 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
       </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>a value between 0 and 100 that represents the current brightness. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a7dbbfb89065bedb56562db23ef4e665e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool DataLayer::changeControllerCommData </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_s_controller_comm_data.html">SControllerCommData</a>&#160;</td>
+          <td class="paramname"><em>newCommData</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>index</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newCommData</td><td>new information about the controller connection </td></tr>
+    <tr><td class="paramname">index</td><td>index of mCurrentDevices array to fill </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if added successfully, false otherwise. </dd></dl>
 
 </div>
 </div>
@@ -285,6 +340,60 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
+<a class="anchor" id="a6fa1be247fe85ec4c871dab09228f554"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void DataLayer::currentCommType </td>
+          <td>(</td>
+          <td class="paramtype">ECommType&#160;</td>
+          <td class="paramname"><em>type</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">type</td><td>sets the current commtype in the std::pair  remove this function and refactor away its need </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a5e89c6b70a04bfd15237466cf094f03f"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ECommType DataLayer::currentCommType </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>the current comm type being used </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="aad179decbbfce29a16e9ad1a9e992e6a"></a>
 <div class="memitem">
 <div class="memproto">
@@ -306,6 +415,30 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>the SLightDevice that represents the current device in the datalyer. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ab0346f77fbd81b7ac7adaf55a990c66a"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::pair&lt;<a class="el" href="struct_s_controller_comm_data.html">SControllerCommData</a>, SLightDevice&gt; DataLayer::currentDevicePair </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>the current device pair. </dd></dl>
 
 </div>
 </div>
