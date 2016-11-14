@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.55</span>
+   &#160;<span id="projectnumber">v0.9.6</span>
    </div>
   </td>
  </tr>
@@ -67,40 +67,41 @@
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <a class="code" href="class_comm_u_d_p.html#a12c6e22bbc58d1a0acdaba478a554167">CommUDP</a>();</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <a class="code" href="class_comm_u_d_p.html#a409c18aaaa17c1856848339424dbd4f0">~CommUDP</a>();</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_u_d_p.html#a61984fa31971dd698d10d5de7da144aa">changeConnection</a>(QString connectionName);</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_u_d_p.html#a38ff215fa806a3d2358853679436dee7">sendPacket</a>(QString packet);</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_u_d_p.html#ab83448169a2f1a0acbc003389f221143">closeConnection</a>();</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_u_d_p.html#ab83448169a2f1a0acbc003389f221143">closeConnection</a>();</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_u_d_p.html#a82d92a84ddb0d20fdc53734e8be1c2d8">changeConnection</a>(QString newConnection);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_u_d_p.html#a2c890154588c04bea80749e004179c0f">sendPacket</a>(QString controller, QString packet);</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="keyword">private</span> slots:</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordtype">void</span> readPendingDatagrams();</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keywordtype">void</span> discoveryRoutine();</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordtype">void</span> sendThrottleBuffer(QString);</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">void</span> stateUpdate();</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    QUdpSocket *mSocket;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    QTimer *mDiscoveryTimer;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keywordtype">bool</span> mBound;</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    CommThrottle *mThrottle;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    QString mBufferedConnection;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;};</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="preprocessor">#endif // COMMUDP_H</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="keyword">private</span> slots:</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">void</span> readPendingDatagrams();</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordtype">void</span> discoveryRoutine();</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordtype">void</span> sendThrottleBuffer(QString, QString);</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordtype">void</span> stateUpdate();</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    QUdpSocket *mSocket;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    QTimer *mDiscoveryTimer;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keywordtype">bool</span> mBound;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    std::list&lt;std::pair&lt;QString, CommThrottle*&gt; &gt; mThrottleList;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    std::list&lt;QString&gt; mDiscoveryList;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;};</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="preprocessor">#endif // COMMUDP_H</span></div>
 <div class="ttc" id="class_comm_u_d_p_html_a409c18aaaa17c1856848339424dbd4f0"><div class="ttname"><a href="class_comm_u_d_p.html#a409c18aaaa17c1856848339424dbd4f0">CommUDP::~CommUDP</a></div><div class="ttdeci">~CommUDP()</div><div class="ttdoc">CommUDP Deconstructor. </div><div class="ttdef"><b>Definition:</b> commudp.cpp:55</div></div>
-<div class="ttc" id="class_comm_u_d_p_html_a12c6e22bbc58d1a0acdaba478a554167"><div class="ttname"><a href="class_comm_u_d_p.html#a12c6e22bbc58d1a0acdaba478a554167">CommUDP::CommUDP</a></div><div class="ttdeci">CommUDP()</div><div class="ttdoc">CommUDP Constructor. </div><div class="ttdef"><b>Definition:</b> commudp.cpp:14</div></div>
+<div class="ttc" id="class_comm_u_d_p_html_a12c6e22bbc58d1a0acdaba478a554167"><div class="ttname"><a href="class_comm_u_d_p.html#a12c6e22bbc58d1a0acdaba478a554167">CommUDP::CommUDP</a></div><div class="ttdeci">CommUDP()</div><div class="ttdoc">CommUDP Constructor. </div><div class="ttdef"><b>Definition:</b> commudp.cpp:17</div></div>
 <div class="ttc" id="class_comm_u_d_p_html"><div class="ttname"><a href="class_comm_u_d_p.html">CommUDP</a></div><div class="ttdoc">Provides a UDP communication stream which allows the sending of UDP datagrams to a specific IP Addres...</div><div class="ttdef"><b>Definition:</b> commudp.h:20</div></div>
-<div class="ttc" id="class_comm_u_d_p_html_a61984fa31971dd698d10d5de7da144aa"><div class="ttname"><a href="class_comm_u_d_p.html#a61984fa31971dd698d10d5de7da144aa">CommUDP::changeConnection</a></div><div class="ttdeci">void changeConnection(QString connectionName)</div><div class="ttdoc">changeConnection changes the IP address that is currently connected. </div><div class="ttdef"><b>Definition:</b> commudp.cpp:63</div></div>
-<div class="ttc" id="class_comm_u_d_p_html_ab83448169a2f1a0acbc003389f221143"><div class="ttname"><a href="class_comm_u_d_p.html#ab83448169a2f1a0acbc003389f221143">CommUDP::closeConnection</a></div><div class="ttdeci">void closeConnection()</div><div class="ttdoc">closeConnection unnecesary, implemented only to comply with being a CommType, since UDP is connection...</div></div>
-<div class="ttc" id="class_comm_u_d_p_html_a38ff215fa806a3d2358853679436dee7"><div class="ttname"><a href="class_comm_u_d_p.html#a38ff215fa806a3d2358853679436dee7">CommUDP::sendPacket</a></div><div class="ttdeci">void sendPacket(QString packet)</div><div class="ttdoc">sendPacket sends the packet over UDP to a specified IP addres and port. Returns immediately and buffe...</div><div class="ttdef"><b>Definition:</b> commudp.cpp:70</div></div>
-<div class="ttc" id="class_comm_type_html"><div class="ttname"><a href="class_comm_type.html">CommType</a></div><div class="ttdoc">inherited by comm types, provides a general interface that can be used to do connections and sending ...</div><div class="ttdef"><b>Definition:</b> commtype.h:84</div></div>
+<div class="ttc" id="class_comm_u_d_p_html_a2c890154588c04bea80749e004179c0f"><div class="ttname"><a href="class_comm_u_d_p.html#a2c890154588c04bea80749e004179c0f">CommUDP::sendPacket</a></div><div class="ttdeci">void sendPacket(QString controller, QString packet)</div><div class="ttdoc">sendPacket sends the packet over UDP to a specified IP addres and port. Returns immediately and buffe...</div><div class="ttdef"><b>Definition:</b> commudp.cpp:70</div></div>
+<div class="ttc" id="class_comm_u_d_p_html_a82d92a84ddb0d20fdc53734e8be1c2d8"><div class="ttname"><a href="class_comm_u_d_p.html#a82d92a84ddb0d20fdc53734e8be1c2d8">CommUDP::changeConnection</a></div><div class="ttdeci">void changeConnection(QString newConnection)</div><div class="ttdoc">changeConnection changes the IP address that is currently connected. </div><div class="ttdef"><b>Definition:</b> commudp.cpp:66</div></div>
+<div class="ttc" id="class_comm_u_d_p_html_ab83448169a2f1a0acbc003389f221143"><div class="ttname"><a href="class_comm_u_d_p.html#ab83448169a2f1a0acbc003389f221143">CommUDP::closeConnection</a></div><div class="ttdeci">void closeConnection()</div><div class="ttdoc">closeConnection unnecesary, implemented only to comply with being a CommType, since UDP is connection...</div><div class="ttdef"><b>Definition:</b> commudp.cpp:62</div></div>
+<div class="ttc" id="class_comm_type_html"><div class="ttname"><a href="class_comm_type.html">CommType</a></div><div class="ttdoc">inherited by comm types, provides a general interface that can be used to do connections and sending ...</div><div class="ttdef"><b>Definition:</b> commtype.h:160</div></div>
 </div><!-- fragment --></div><!-- contents -->
 
 <hr>

@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.55</span>
+   &#160;<span id="projectnumber">v0.9.6</span>
    </div>
   </td>
  </tr>
@@ -66,12 +66,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab7303512e0f38263f68e193b72d27bf4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lights_list_widget.html#ab7303512e0f38263f68e193b72d27bf4">LightsListWidget</a> (QWidget *parent=0)</td></tr>
 <tr class="memdesc:ab7303512e0f38263f68e193b72d27bf4"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_lights_list_widget.html" title="The LightsListWidget class This widget is used on the SettingsPage as a replacement for a QListWidget...">LightsListWidget</a> constructor.  <a href="#ab7303512e0f38263f68e193b72d27bf4">More...</a><br /></td></tr>
 <tr class="separator:ab7303512e0f38263f68e193b72d27bf4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abbc549eeff2abf7c5fc332c24e39cabe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lights_list_widget.html#abbc549eeff2abf7c5fc332c24e39cabe">setup</a> (QString name, bool isOn, bool isReachable, QColor color, int index, <a class="el" href="class_data_layer.html">DataLayer</a> *data)</td></tr>
-<tr class="memdesc:abbc549eeff2abf7c5fc332c24e39cabe"><td class="mdescLeft">&#160;</td><td class="mdescRight">setup called after the constructor, required to set up the widget with the proper data  <a href="#abbc549eeff2abf7c5fc332c24e39cabe">More...</a><br /></td></tr>
-<tr class="separator:abbc549eeff2abf7c5fc332c24e39cabe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acac927f09f5be73dcf2ad850ad1366fd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lights_list_widget.html#acac927f09f5be73dcf2ad850ad1366fd">updateIcon</a> (QColor color, ELightingRoutine routine, EColorGroup group)</td></tr>
-<tr class="memdesc:acac927f09f5be73dcf2ad850ad1366fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateIcon update the icon to display a new lighting routine, color group, and color  <a href="#acac927f09f5be73dcf2ad850ad1366fd">More...</a><br /></td></tr>
-<tr class="separator:acac927f09f5be73dcf2ad850ad1366fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a223c2d3d0a21fa1dad1f8e9a08e85d95"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lights_list_widget.html#a223c2d3d0a21fa1dad1f8e9a08e85d95">setup</a> (const SLightDevice &amp;device, <a class="el" href="class_data_layer.html">DataLayer</a> *data)</td></tr>
+<tr class="memdesc:a223c2d3d0a21fa1dad1f8e9a08e85d95"><td class="mdescLeft">&#160;</td><td class="mdescRight">setup setsup an icon with a pointer to the datalyer and a default setting.  <a href="#a223c2d3d0a21fa1dad1f8e9a08e85d95">More...</a><br /></td></tr>
+<tr class="separator:a223c2d3d0a21fa1dad1f8e9a08e85d95"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acaca831044aaa369e29efa8f0e2ded34"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lights_list_widget.html#acaca831044aaa369e29efa8f0e2ded34">updateIcon</a> (const SLightDevice &amp;device)</td></tr>
+<tr class="memdesc:acaca831044aaa369e29efa8f0e2ded34"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateIcon update the icon with new light data  <a href="#acaca831044aaa369e29efa8f0e2ded34">More...</a><br /></td></tr>
+<tr class="separator:acaca831044aaa369e29efa8f0e2ded34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88365fc99a1cd91701f818329030c1f8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lights_list_widget.html#a88365fc99a1cd91701f818329030c1f8">updateColor</a> (QColor color)</td></tr>
 <tr class="memdesc:a88365fc99a1cd91701f818329030c1f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateColor update just the color of the icon.  <a href="#a88365fc99a1cd91701f818329030c1f8">More...</a><br /></td></tr>
 <tr class="separator:a88365fc99a1cd91701f818329030c1f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -132,39 +132,15 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="abbc549eeff2abf7c5fc332c24e39cabe"></a>
+<a class="anchor" id="a223c2d3d0a21fa1dad1f8e9a08e85d95"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void LightsListWidget::setup </td>
           <td>(</td>
-          <td class="paramtype">QString&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>isOn</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>isReachable</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">QColor&#160;</td>
-          <td class="paramname"><em>color</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>index</em>, </td>
+          <td class="paramtype">const SLightDevice &amp;&#160;</td>
+          <td class="paramname"><em>device</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -181,11 +157,7 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">name</td><td>name of the controller for the device </td></tr>
-    <tr><td class="paramname">isOn</td><td>true if on, false otherwise </td></tr>
-    <tr><td class="paramname">isReachable</td><td>true if reachable, false otherwise </td></tr>
-    <tr><td class="paramname">color</td><td>color to use for the icon </td></tr>
-    <tr><td class="paramname">index</td><td>index of the device </td></tr>
+    <tr><td class="paramname">device</td><td>the device to pull all of the light data from. </td></tr>
     <tr><td class="paramname">data</td><td>pointer to data layer. </td></tr>
   </table>
   </dd>
@@ -215,40 +187,22 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="acac927f09f5be73dcf2ad850ad1366fd"></a>
+<a class="anchor" id="acaca831044aaa369e29efa8f0e2ded34"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void LightsListWidget::updateIcon </td>
           <td>(</td>
-          <td class="paramtype">QColor&#160;</td>
-          <td class="paramname"><em>color</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">const SLightDevice &amp;&#160;</td>
+          <td class="paramname"><em>device</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">ELightingRoutine&#160;</td>
-          <td class="paramname"><em>routine</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">EColorGroup&#160;</td>
-          <td class="paramname"><em>group</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">color</td><td>new color for the icon </td></tr>
-    <tr><td class="paramname">routine</td><td>new lighting routine for the icon </td></tr>
-    <tr><td class="paramname">group</td><td>new group for the icon. </td></tr>
+    <tr><td class="paramname">device</td><td>the device data to use for the update </td></tr>
   </table>
   </dd>
 </dl>

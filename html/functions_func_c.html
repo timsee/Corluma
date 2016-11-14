@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.55</span>
+   &#160;<span id="projectnumber">v0.9.6</span>
    </div>
   </td>
  </tr>
@@ -57,7 +57,6 @@
       <li><a href="functions_func_b.html#index_b"><span>b</span></a></li>
       <li class="current"><a href="functions_func_c.html#index_c"><span>c</span></a></li>
       <li><a href="functions_func_d.html#index_d"><span>d</span></a></li>
-      <li><a href="functions_func_e.html#index_e"><span>e</span></a></li>
       <li><a href="functions_func_f.html#index_f"><span>f</span></a></li>
       <li><a href="functions_func_g.html#index_g"><span>g</span></a></li>
       <li><a href="functions_func_h.html#index_h"><span>h</span></a></li>
@@ -81,16 +80,13 @@
 
 <h3><a class="anchor" id="index_c"></a>- c -</h3><ul>
 <li>changeConnection()
-: <a class="el" href="class_comm_u_d_p.html#a61984fa31971dd698d10d5de7da144aa">CommUDP</a>
-</li>
-<li>changeControllerCommData()
-: <a class="el" href="class_data_layer.html#a7dbbfb89065bedb56562db23ef4e665e">DataLayer</a>
-</li>
-<li>changeDevice()
-: <a class="el" href="class_data_layer.html#ab827001662a240be832a03858e219773">DataLayer</a>
+: <a class="el" href="class_comm_h_t_t_p.html#a19155cae29b5ccf60cece612ca4490a3">CommHTTP</a>
+, <a class="el" href="class_comm_hue.html#a0ae91faf56b0937acccf6971852c5894">CommHue</a>
+, <a class="el" href="class_comm_serial.html#ad5243210a5bcbf7487f90520633cdc09">CommSerial</a>
+, <a class="el" href="class_comm_u_d_p.html#a82d92a84ddb0d20fdc53734e8be1c2d8">CommUDP</a>
 </li>
 <li>changeDeviceController()
-: <a class="el" href="class_comm_layer.html#ab40d262213f35aec8510da0d685d810d">CommLayer</a>
+: <a class="el" href="class_comm_layer.html#ac5ba259a60fbe98c2da324ea036d261c">CommLayer</a>
 </li>
 <li>changeLight()
 : <a class="el" href="class_comm_hue.html#a1fe74937f88a0c59551ea73d3b76467e">CommHue</a>
@@ -102,12 +98,14 @@
 <li>chooseLayout()
 : <a class="el" href="class_color_picker.html#a61227af0354561ac9ebdb128e25009a5">ColorPicker</a>
 </li>
-<li>closeConnection()
-: <a class="el" href="class_comm_serial.html#afaba94eacc72dcceed52627db3b3907a">CommSerial</a>
-, <a class="el" href="class_comm_u_d_p.html#ab83448169a2f1a0acbc003389f221143">CommUDP</a>
+<li>clearDevices()
+: <a class="el" href="class_data_layer.html#a67e246c9fd2a4d8362eee3602abc5cbd">DataLayer</a>
 </li>
-<li>closeCurrentConnection()
-: <a class="el" href="class_comm_layer.html#ac9674bd2b0711709897ed24bb1754e2e">CommLayer</a>
+<li>closeConnection()
+: <a class="el" href="class_comm_h_t_t_p.html#a89d8b3fd7be288ef13968ed06c5173f2">CommHTTP</a>
+, <a class="el" href="class_comm_hue.html#abf0d827df077607e66e0a04235a5d16f">CommHue</a>
+, <a class="el" href="class_comm_serial.html#afaba94eacc72dcceed52627db3b3907a">CommSerial</a>
+, <a class="el" href="class_comm_u_d_p.html#ab83448169a2f1a0acbc003389f221143">CommUDP</a>
 </li>
 <li>color()
 : <a class="el" href="group__gettersetters.html#gae0a97f86188c1d373af5153e7e311519">LightingRoutines</a>
@@ -129,9 +127,6 @@
 <li>colorUpdate()
 : <a class="el" href="class_color_picker.html#ad95c051a6395307fa20585f70d1d6939">ColorPicker</a>
 </li>
-<li>comm()
-: <a class="el" href="class_comm_layer.html#af87407ab58bd8c4aeda9907f940044de">CommLayer</a>
-</li>
 <li>CommHTTP()
 : <a class="el" href="class_comm_h_t_t_p.html#a9a11fe556853ebf18b796344dcc469f7">CommHTTP</a>
 </li>
@@ -150,9 +145,6 @@
 <li>CommUDP()
 : <a class="el" href="class_comm_u_d_p.html#a12c6e22bbc58d1a0acdaba478a554167">CommUDP</a>
 </li>
-<li>connected()
-: <a class="el" href="class_comm_type.html#a339e38c2d5b6c5aee882c1f2f676c6b8">CommType</a>
-</li>
 <li>connectedHues()
 : <a class="el" href="class_comm_hue.html#a17653732b8e7e7be66e9e7ccda3a428d">CommHue</a>
 </li>
@@ -166,25 +158,24 @@
 : <a class="el" href="class_comm_type.html#a420572b616aa972e1080da0535f2d429">CommType</a>
 </li>
 <li>controllerIndexByName()
-: <a class="el" href="class_comm_type.html#abc9ad3d61d228b397f1fff3385324342">CommType</a>
+: <a class="el" href="class_comm_layer.html#afa0b552ee65f751a72472c923a12a4ca">CommLayer</a>
+, <a class="el" href="class_comm_type.html#abc9ad3d61d228b397f1fff3385324342">CommType</a>
 </li>
 <li>controllerList()
-: <a class="el" href="class_comm_type.html#aef042541f8922ed351f6de40cc16d12d">CommType</a>
+: <a class="el" href="class_comm_layer.html#a70630e5c0cc38c2fcaa7aa2a2bd0cc03">CommLayer</a>
+, <a class="el" href="class_comm_type.html#aef042541f8922ed351f6de40cc16d12d">CommType</a>
 </li>
 <li>currentColorGroup()
 : <a class="el" href="class_data_layer.html#a5faaf8664d3f832c47d2de28d5f38ceb">DataLayer</a>
 </li>
 <li>currentCommType()
-: <a class="el" href="class_data_layer.html#a6fa1be247fe85ec4c871dab09228f554">DataLayer</a>
-</li>
-<li>currentConnection()
-: <a class="el" href="class_comm_type.html#a01204d728e1cc748374002d8c176620e">CommType</a>
+: <a class="el" href="class_data_layer.html#a5e89c6b70a04bfd15237466cf094f03f">DataLayer</a>
 </li>
 <li>currentDevice()
 : <a class="el" href="class_data_layer.html#aad179decbbfce29a16e9ad1a9e992e6a">DataLayer</a>
 </li>
-<li>currentDevicePair()
-: <a class="el" href="class_data_layer.html#ab0346f77fbd81b7ac7adaf55a990c66a">DataLayer</a>
+<li>currentDevices()
+: <a class="el" href="class_data_layer.html#ab66e1ea4324f9e1d0e06ad2bf560d40e">DataLayer</a>
 </li>
 <li>currentRoutine()
 : <a class="el" href="class_data_layer.html#aea842be21d9cb4beb9029b383bea4a4c">DataLayer</a>

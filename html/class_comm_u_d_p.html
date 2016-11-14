@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.55</span>
+   &#160;<span id="projectnumber">v0.9.6</span>
    </div>
   </td>
  </tr>
@@ -71,55 +71,34 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_u_d_p.html#a409c18aaaa17c1856848339424dbd4f0">~CommUDP</a> ()</td></tr>
 <tr class="memdesc:a409c18aaaa17c1856848339424dbd4f0"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_comm_u_d_p.html" title="Provides a UDP communication stream which allows the sending of UDP datagrams to a specific IP Addres...">CommUDP</a> Deconstructor. <br /></td></tr>
 <tr class="separator:a409c18aaaa17c1856848339424dbd4f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61984fa31971dd698d10d5de7da144aa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_u_d_p.html#a61984fa31971dd698d10d5de7da144aa">changeConnection</a> (QString connectionName)</td></tr>
-<tr class="memdesc:a61984fa31971dd698d10d5de7da144aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeConnection changes the IP address that is currently connected.  <a href="#a61984fa31971dd698d10d5de7da144aa">More...</a><br /></td></tr>
-<tr class="separator:a61984fa31971dd698d10d5de7da144aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a38ff215fa806a3d2358853679436dee7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_u_d_p.html#a38ff215fa806a3d2358853679436dee7">sendPacket</a> (QString packet)</td></tr>
-<tr class="memdesc:a38ff215fa806a3d2358853679436dee7"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendPacket sends the packet over UDP to a specified IP addres and port. Returns immediately and buffers unsent packets.  <a href="#a38ff215fa806a3d2358853679436dee7">More...</a><br /></td></tr>
-<tr class="separator:a38ff215fa806a3d2358853679436dee7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab83448169a2f1a0acbc003389f221143"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab83448169a2f1a0acbc003389f221143"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_u_d_p.html#ab83448169a2f1a0acbc003389f221143">closeConnection</a> ()</td></tr>
 <tr class="memdesc:ab83448169a2f1a0acbc003389f221143"><td class="mdescLeft">&#160;</td><td class="mdescRight">closeConnection unnecesary, implemented only to comply with being a <a class="el" href="class_comm_type.html" title="inherited by comm types, provides a general interface that can be used to do connections and sending ...">CommType</a>, since UDP is connectionless. <br /></td></tr>
 <tr class="separator:ab83448169a2f1a0acbc003389f221143"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82d92a84ddb0d20fdc53734e8be1c2d8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_u_d_p.html#a82d92a84ddb0d20fdc53734e8be1c2d8">changeConnection</a> (QString newConnection)</td></tr>
+<tr class="memdesc:a82d92a84ddb0d20fdc53734e8be1c2d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeConnection changes the IP address that is currently connected.  <a href="#a82d92a84ddb0d20fdc53734e8be1c2d8">More...</a><br /></td></tr>
+<tr class="separator:a82d92a84ddb0d20fdc53734e8be1c2d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c890154588c04bea80749e004179c0f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_u_d_p.html#a2c890154588c04bea80749e004179c0f">sendPacket</a> (QString controller, QString packet)</td></tr>
+<tr class="memdesc:a2c890154588c04bea80749e004179c0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendPacket sends the packet over UDP to a specified IP addres and port. Returns immediately and buffers unsent packets.  <a href="#a2c890154588c04bea80749e004179c0f">More...</a><br /></td></tr>
+<tr class="separator:a2c890154588c04bea80749e004179c0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
 <tr class="memitem:aea9af432f13faf2a28b6a9fd5d5000e9 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aea9af432f13faf2a28b6a9fd5d5000e9"></a>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aea9af432f13faf2a28b6a9fd5d5000e9">~CommType</a> ()</td></tr>
 <tr class="memdesc:aea9af432f13faf2a28b6a9fd5d5000e9 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">~CommType Deconstructor <br /></td></tr>
 <tr class="separator:aea9af432f13faf2a28b6a9fd5d5000e9 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a969466406ece43f5e76fc0223a80e3b4 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a969466406ece43f5e76fc0223a80e3b4">sendPacket</a> (QString packet)</td></tr>
-<tr class="memdesc:a969466406ece43f5e76fc0223a80e3b4 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendPacket Sends the provided string over the connection stream.  <a href="#a969466406ece43f5e76fc0223a80e3b4">More...</a><br /></td></tr>
-<tr class="separator:a969466406ece43f5e76fc0223a80e3b4 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a01204d728e1cc748374002d8c176620e inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a01204d728e1cc748374002d8c176620e">currentConnection</a> ()</td></tr>
-<tr class="memdesc:a01204d728e1cc748374002d8c176620e inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">currentConnection returns the "name" of the connection. This is the IP address or the serial port, depending on the connection type  <a href="#a01204d728e1cc748374002d8c176620e">More...</a><br /></td></tr>
-<tr class="separator:a01204d728e1cc748374002d8c176620e inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aef042541f8922ed351f6de40cc16d12d inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">std::deque&lt; QString &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aef042541f8922ed351f6de40cc16d12d">controllerList</a> ()</td></tr>
 <tr class="memdesc:aef042541f8922ed351f6de40cc16d12d inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">controllerList list of the controllers  <a href="#aef042541f8922ed351f6de40cc16d12d">More...</a><br /></td></tr>
 <tr class="separator:aef042541f8922ed351f6de40cc16d12d inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6089e65d8e9102f9a4a24d2a804ffe65 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">std::deque&lt; std::vector<br class="typebreak" />
-&lt; SLightDevice &gt; &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a6089e65d8e9102f9a4a24d2a804ffe65">deviceList</a> ()</td></tr>
-<tr class="memdesc:a6089e65d8e9102f9a4a24d2a804ffe65 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceList list of the light devices  <a href="#a6089e65d8e9102f9a4a24d2a804ffe65">More...</a><br /></td></tr>
-<tr class="separator:a6089e65d8e9102f9a4a24d2a804ffe65 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adfd16a5669078c82848964e668953f5e inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">std::deque&lt; std::vector<br class="typebreak" />
+&lt; SLightDevice &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#adfd16a5669078c82848964e668953f5e">deviceList</a> ()</td></tr>
+<tr class="memdesc:adfd16a5669078c82848964e668953f5e inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceList list of the light devices  <a href="#adfd16a5669078c82848964e668953f5e">More...</a><br /></td></tr>
+<tr class="separator:adfd16a5669078c82848964e668953f5e inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a420572b616aa972e1080da0535f2d429 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">std::vector&lt; SLightDevice &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a420572b616aa972e1080da0535f2d429">controllerDeviceList</a> (int controllerIndex)</td></tr>
 <tr class="memdesc:a420572b616aa972e1080da0535f2d429 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">controllerDeviceList returns the device list of a controller. This is a dynamically sized std::vector of SLightDevices.  <a href="#a420572b616aa972e1080da0535f2d429">More...</a><br /></td></tr>
 <tr class="separator:a420572b616aa972e1080da0535f2d429 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6cf29a0d0ca388e5cd78f7d67bcbc8e2 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a6cf29a0d0ca388e5cd78f7d67bcbc8e2">numberOfControllers</a> ()</td></tr>
 <tr class="memdesc:a6cf29a0d0ca388e5cd78f7d67bcbc8e2 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">numberOfConnections count of connections stored in the connections list  <a href="#a6cf29a0d0ca388e5cd78f7d67bcbc8e2">More...</a><br /></td></tr>
 <tr class="separator:a6cf29a0d0ca388e5cd78f7d67bcbc8e2 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9294e7288b760d9acc7b4870c6647ccc inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a9294e7288b760d9acc7b4870c6647ccc">listIndex</a> ()</td></tr>
-<tr class="memdesc:a9294e7288b760d9acc7b4870c6647ccc inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">listIndex the currently selected index of the connection list. Will always be smaller than numberOfConnections()  <a href="#a9294e7288b760d9acc7b4870c6647ccc">More...</a><br /></td></tr>
-<tr class="separator:a9294e7288b760d9acc7b4870c6647ccc inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed2f1d6cb2f919c0b369a5e3a7888003 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aed2f1d6cb2f919c0b369a5e3a7888003">isConnected</a> ()</td></tr>
-<tr class="memdesc:aed2f1d6cb2f919c0b369a5e3a7888003 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">isConnected returns true if connected, false otherwise.  <a href="#aed2f1d6cb2f919c0b369a5e3a7888003">More...</a><br /></td></tr>
-<tr class="separator:aed2f1d6cb2f919c0b369a5e3a7888003 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a339e38c2d5b6c5aee882c1f2f676c6b8 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a339e38c2d5b6c5aee882c1f2f676c6b8">connected</a> (bool <a class="el" href="class_comm_type.html#aed2f1d6cb2f919c0b369a5e3a7888003">isConnected</a>)</td></tr>
-<tr class="memdesc:a339e38c2d5b6c5aee882c1f2f676c6b8 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">connected used to change the connected state.  <a href="#a339e38c2d5b6c5aee882c1f2f676c6b8">More...</a><br /></td></tr>
-<tr class="separator:a339e38c2d5b6c5aee882c1f2f676c6b8 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a26bb67df4c78cb55a2872f33fa38119e inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a26bb67df4c78cb55a2872f33fa38119e">selectDevice</a> (int controller, uint32_t i)</td></tr>
-<tr class="memdesc:a26bb67df4c78cb55a2872f33fa38119e inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">selectDevice setter for the currently selected device. If its greater than the number of devices, no value is set.  <a href="#a26bb67df4c78cb55a2872f33fa38119e">More...</a><br /></td></tr>
-<tr class="separator:a26bb67df4c78cb55a2872f33fa38119e inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a455e5882a0de90b47506264924b72629 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a455e5882a0de90b47506264924b72629">selectedDevice</a> ()</td></tr>
-<tr class="memdesc:a455e5882a0de90b47506264924b72629 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">selectedDevice getter for the currently selected device.  <a href="#a455e5882a0de90b47506264924b72629">More...</a><br /></td></tr>
-<tr class="separator:a455e5882a0de90b47506264924b72629 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc9ad3d61d228b397f1fff3385324342 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#abc9ad3d61d228b397f1fff3385324342">controllerIndexByName</a> (QString name)</td></tr>
 <tr class="memdesc:abc9ad3d61d228b397f1fff3385324342 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">controllerIndexByName searches the controller list for the given name, returns -1 if no controller by that name is found.  <a href="#abc9ad3d61d228b397f1fff3385324342">More...</a><br /></td></tr>
 <tr class="separator:abc9ad3d61d228b397f1fff3385324342 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -129,9 +108,6 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr class="memitem:af4f3b6b158b0dc5f0888801053ec2579 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#af4f3b6b158b0dc5f0888801053ec2579">updateDevice</a> (int controller, SLightDevice device)</td></tr>
 <tr class="memdesc:af4f3b6b158b0dc5f0888801053ec2579 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDevice update all the data on light device at the given index  <a href="#af4f3b6b158b0dc5f0888801053ec2579">More...</a><br /></td></tr>
 <tr class="separator:af4f3b6b158b0dc5f0888801053ec2579 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae34447045c9c97a9792ad0b9051aa2e5 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ae34447045c9c97a9792ad0b9051aa2e5">updateDeviceColor</a> (int i, QColor color)</td></tr>
-<tr class="memdesc:ae34447045c9c97a9792ad0b9051aa2e5 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDeviceColor update the color of the device at the given index  <a href="#ae34447045c9c97a9792ad0b9051aa2e5">More...</a><br /></td></tr>
-<tr class="separator:ae34447045c9c97a9792ad0b9051aa2e5 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae62b998e5b2757478d27790726061241 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ae62b998e5b2757478d27790726061241">numberOfConnectedDevices</a> (uint32_t controllerIndex)</td></tr>
 <tr class="memdesc:ae62b998e5b2757478d27790726061241 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">numberOfConnectedDevices uses the controller index to determine the total number of connected devices  <a href="#ae62b998e5b2757478d27790726061241">More...</a><br /></td></tr>
 <tr class="separator:ae62b998e5b2757478d27790726061241 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -141,12 +117,6 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr class="memitem:abc9bdeb22fa404e9d2ea5b2ac5ee2f04 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#abc9bdeb22fa404e9d2ea5b2ac5ee2f04">addConnection</a> (QString connection, bool shouldIncrement=true)</td></tr>
 <tr class="memdesc:abc9bdeb22fa404e9d2ea5b2ac5ee2f04 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">addConnection attempts to add the connection to the connection list  <a href="#abc9bdeb22fa404e9d2ea5b2ac5ee2f04">More...</a><br /></td></tr>
 <tr class="separator:abc9bdeb22fa404e9d2ea5b2ac5ee2f04 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3dee0f3a680c795ff21466f016952a96 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a3dee0f3a680c795ff21466f016952a96">selectConnection</a> (QString connection)</td></tr>
-<tr class="memdesc:a3dee0f3a680c795ff21466f016952a96 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">selectConnection attempts to set the connction as the current conneciton in use.  <a href="#a3dee0f3a680c795ff21466f016952a96">More...</a><br /></td></tr>
-<tr class="separator:a3dee0f3a680c795ff21466f016952a96 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a968b21fceabbae08b2e6d163bb7ea88d inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a968b21fceabbae08b2e6d163bb7ea88d">selectConnection</a> (int connectionIndex)</td></tr>
-<tr class="memdesc:a968b21fceabbae08b2e6d163bb7ea88d inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">selectConnection attempts to the use the connection from the connection list at the given index.  <a href="#a968b21fceabbae08b2e6d163bb7ea88d">More...</a><br /></td></tr>
-<tr class="separator:a968b21fceabbae08b2e6d163bb7ea88d inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a38b1cfe7fe30b19d84e0e7bec006d960 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a38b1cfe7fe30b19d84e0e7bec006d960">removeConnection</a> (QString connection)</td></tr>
 <tr class="memdesc:a38b1cfe7fe30b19d84e0e7bec006d960 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeConnection attempts to remove the connection from the connection list  <a href="#a38b1cfe7fe30b19d84e0e7bec006d960">More...</a><br /></td></tr>
 <tr class="separator:a38b1cfe7fe30b19d84e0e7bec006d960 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -170,9 +140,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:a8bde6ea9fbb44fca8bc2d4a55924bfba inherit signals_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateToDataLayer signal that allow commtypes, which ordinarily don't interact with the data layer directly, to notify the <a class="el" href="class_comm_layer.html" title="The CommLayer class provides communication protocols that allow the user to connect and send packets ...">CommLayer</a> that it should update the data layer.  <a href="#a8bde6ea9fbb44fca8bc2d4a55924bfba">More...</a><br /></td></tr>
 <tr class="separator:a8bde6ea9fbb44fca8bc2d4a55924bfba inherit signals_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_static_methods_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
-<tr class="memitem:a7ca73568b03e3efbccb249168d6cc486 inherit pub_static_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">static QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a7ca73568b03e3efbccb249168d6cc486">ECommTypeToString</a> (ECommType type)</td></tr>
-<tr class="memdesc:a7ca73568b03e3efbccb249168d6cc486 inherit pub_static_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">ECommTypeToString utility function for converting a ECommType to a human readable string.  <a href="#a7ca73568b03e3efbccb249168d6cc486">More...</a><br /></td></tr>
-<tr class="separator:a7ca73568b03e3efbccb249168d6cc486 inherit pub_static_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf2b4c5f937d0937d0ab5490c4c3ba3c inherit pub_static_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">static QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aaf2b4c5f937d0937d0ab5490c4c3ba3c">structToString</a> (SLightDevice dataStruct)</td></tr>
+<tr class="memdesc:aaf2b4c5f937d0937d0ab5490c4c3ba3c inherit pub_static_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">structToString converts a SLightDevice struct to a string in the format of comma delimited values.  <a href="#aaf2b4c5f937d0937d0ab5490c4c3ba3c">More...</a><br /></td></tr>
+<tr class="separator:aaf2b4c5f937d0937d0ab5490c4c3ba3c inherit pub_static_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad65dc730568ee53e924b81fef647ab34 inherit pub_static_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">static SLightDevice&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ad65dc730568ee53e924b81fef647ab34">stringToStruct</a> (QString string)</td></tr>
+<tr class="memdesc:ad65dc730568ee53e924b81fef647ab34 inherit pub_static_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">stringToStruct converts a string represention of a SControllerCommData back to a struct.  <a href="#ad65dc730568ee53e924b81fef647ab34">More...</a><br /></td></tr>
+<tr class="separator:ad65dc730568ee53e924b81fef647ab34 inherit pub_static_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
 <tr class="memitem:a5fad0675d5baa960558751025bc5ec3a inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5fad0675d5baa960558751025bc5ec3a"></a>
 QTimer *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a5fad0675d5baa960558751025bc5ec3a">mStateUpdateTimer</a></td></tr>
@@ -182,18 +155,26 @@ QTimer *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2016. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a61984fa31971dd698d10d5de7da144aa"></a>
+<a class="anchor" id="a82d92a84ddb0d20fdc53734e8be1c2d8"></a>
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void CommUDP::changeConnection </td>
           <td>(</td>
           <td class="paramtype">QString&#160;</td>
-          <td class="paramname"><em>connectionName</em></td><td>)</td>
+          <td class="paramname"><em>newConnection</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -202,20 +183,40 @@ QTimer *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
   </dd>
 </dl>
 
+<p>Reimplemented from <a class="el" href="class_comm_type.html">CommType</a>.</p>
+
 </div>
 </div>
-<a class="anchor" id="a38ff215fa806a3d2358853679436dee7"></a>
+<a class="anchor" id="a2c890154588c04bea80749e004179c0f"></a>
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void CommUDP::sendPacket </td>
           <td>(</td>
           <td class="paramtype">QString&#160;</td>
-          <td class="paramname"><em>packet</em></td><td>)</td>
+          <td class="paramname"><em>controller</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">QString&#160;</td>
+          <td class="paramname"><em>packet</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -223,6 +224,8 @@ QTimer *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
   </table>
   </dd>
 </dl>
+
+<p>Reimplemented from <a class="el" href="class_comm_type.html#a278cb6c97f16bffda7a113b7864d6fe2">CommType</a>.</p>
 
 </div>
 </div>
