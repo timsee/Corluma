@@ -1,7 +1,6 @@
 #include "commthrottle.h"
 #include "commlayer.h"
 
-
 CommThrottle::CommThrottle(QWidget *parent) : QWidget(parent) {
     mThrottleTimer = new QTimer(this);
     connect(mThrottleTimer, SIGNAL(timeout()), this, SLOT(resetThrottleFlag()));
@@ -9,21 +8,23 @@ CommThrottle::CommThrottle(QWidget *parent) : QWidget(parent) {
 }
 
 
-void CommThrottle::startThrottle(int interval) {
+void CommThrottle::startThrottle(int interval, int throttleMax) {
     mThrottleTimer->stop();
+    mThrottleMax = throttleMax;
     mThrottleInterval = interval;
     mThrottleTimer->start(mThrottleInterval);
 }
 
 
-bool CommThrottle::checkThrottle(QString packet) {
-    if (!mThrottleFlag) {
+bool CommThrottle::checkThrottle(QString controller, QString packet) {
+    if (mThrottleCount <= mThrottleMax) {
         //mData->resetTimeoutCounter();
-        mThrottleFlag = true;
+        mThrottleCount++;
         return true;
     } else {
         mBufferedTime.restart();
         mBufferedMessage = packet;
+        mBufferedController = controller;
         return false;
     }
 }
@@ -31,14 +32,14 @@ bool CommThrottle::checkThrottle(QString packet) {
 void CommThrottle::resetThrottleFlag() {
     // nothing was sent for one throttle update, send the buffer
     // then empty it.
-    if (!mThrottleFlag && mShouldSendBuffer){
+    if ((mThrottleCount <= mThrottleMax)
+            && mShouldSendBuffer){
         mShouldSendBuffer = false;
-        emit sendThrottleBuffer(mBufferedMessage);
-        //mCommLayer->sendPacket(mBufferedMessage);
+        emit sendThrottleBuffer(mBufferedController, mBufferedMessage);
         mBufferedMessage = "";
     }
     // set throttle flag
-    mThrottleFlag = false;
+    mThrottleCount = 0;
 
     // Check the buffer and see if we shoudl send it on the update
     // this will send if and only if no other messages are sent druign the updates

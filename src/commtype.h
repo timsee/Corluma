@@ -1,3 +1,4 @@
+
 #ifndef COMMTYPE_H
 #define COMMTYPE_H
 
@@ -8,6 +9,7 @@
 #include <QWidget>
 #include <memory>
 #include <deque>
+#include <sstream>
 
 #include "lightingprotocols.h"
 
@@ -31,6 +33,29 @@ enum class ECommType {
     eHue
 };
 
+/*!
+ * \brief ECommTypeToString utility function for converting a ECommType to a human readable string
+ * \param type the ECommType to convert
+ * \return a simple english representation of the ECommType.
+ */
+QString static ECommTypeToString(ECommType type) {
+#ifndef MOBILE_BUILD
+    if (type == ECommType::eSerial) {
+        return "Serial";
+    }
+#endif //MOBILE_BUILD
+    if (type ==  ECommType::eHTTP) {
+        return "HTTP";
+    } else if (type ==  ECommType::eUDP) {
+        return "UDP";
+    } else if (type ==  ECommType::eHue) {
+        return "Hue";
+    } else {
+        return "CommType not recognized";
+    }
+}
+
+
 struct SLightDevice{
     /*!
      * \brief isReachable true if we can communicate with it, false otherwise
@@ -52,12 +77,6 @@ struct SLightDevice{
     bool isValid;
 
     /*!
-     * \brief index the index of the hue, each bridge gives an index for all of the
-     *        connected hues.
-     */
-    int index;
-
-    /*!
      * \brief color color of this device.
      */
     QColor color;
@@ -73,7 +92,64 @@ struct SLightDevice{
      * \brief brightness brightness for this device, between 0 and 100.
      */
     int brightness;
+
+    //-----------------------
+    // Connection Info
+    //-----------------------
+
+    /*!
+     * \brief index the index of the hue, each bridge gives an index for all of the
+     *        connected hues.
+     */
+    int index;
+
+    /*!
+     * \brief type determines whether the connection is based off of a hue, UDP, HTTP, etc.
+     */
+    ECommType type;
+    /*!
+     * \brief name the name of the connection. This varies by connection type. For example,
+     *        a UDP connection will use its IP address as a name, or a serial connection
+     *        will use its serial port.
+     */
+    QString name;
+
+
+    /*!
+     * \brief printLightDevice prints values of struct. used for debugging.
+     */
+    void printLightDevice() const {
+        qDebug() << "SLight Device: "
+                 << "isReachable: " << isReachable << "\n"
+                 << "isOn: " << isOn << "\n"
+                 << "isValid: " << isValid << "\n"
+                 << "color: " << color  << "\n"
+                 << "lightingRoutine: " << (int)lightingRoutine << "\n"
+                 << "colorGroup: " << (int)colorGroup << "\n"
+                 << "brightness: " << brightness << "\n"
+                 << "index: " << index << "\n"
+                 << "Type: " << ECommTypeToString(type) << "\n"
+                 << "name: " << name << "\n";
+    }
+
 };
+
+inline bool operator==(const SLightDevice& lhs, const SLightDevice& rhs)
+{
+    bool result = true;
+    if (lhs.isReachable !=  rhs.isReachable) result = false;
+    if (lhs.isOn !=  rhs.isOn) result = false;
+    if (lhs.isValid !=  rhs.isValid) result = false;
+    if (lhs.color !=  rhs.color) result = false;
+    if (lhs.lightingRoutine !=  rhs.lightingRoutine) result = false;
+    if (lhs.colorGroup !=  rhs.colorGroup) result = false;
+    if (lhs.brightness !=  rhs.brightness) result = false;
+    if (lhs.index !=  rhs.index) result = false;
+    if (lhs.type !=  rhs.type) result = false;
+    if (lhs.name.compare(rhs.name)) result = false;
+
+    return result;
+}
 
 /*!
  * \brief inherited by comm types, provides a general interface that can
@@ -89,20 +165,16 @@ public:
      */
     virtual ~CommType(){}
 
+    virtual void closeConnection();
+
+    virtual void changeConnection(QString newConnection);
+
     /*!
      * \brief sendPacket Sends the provided string over the
      *        connection stream.
      * \param packet the packet that is going to be sent
      */
-    void sendPacket(QString packet);
-
-    /*!
-     * \brief currentConnection returns the "name" of the connection. This is
-     *        the IP address or the serial port, depending on the
-     *        connection type
-     * \return the name of the connection.
-     */
-    QString currentConnection();
+    virtual void sendPacket(QString controller, QString packet);
 
     /*!
      * \brief controllerList list of the controllers
@@ -114,7 +186,7 @@ public:
      * \brief deviceList list of the light devices
      * \return list of the light devices
      */
-    std::deque <std::vector<SLightDevice> >* deviceList() { return mDeviceList; }
+    std::deque <std::vector<SLightDevice> > deviceList() { return mDeviceList; }
 
     /*!
      * \brief controllerDeviceList returns the device list of a controller. This is a dynamically sized std::vector
@@ -122,7 +194,7 @@ public:
      * \param controllerIndex index of controller in controllerList array.
      * \return the vector of connected devices to the controller requested.
      */
-    std::vector<SLightDevice> controllerDeviceList(int controllerIndex) { return (*mDeviceList)[controllerIndex]; }
+    std::vector<SLightDevice> controllerDeviceList(int controllerIndex) { return mDeviceList[controllerIndex]; }
 
     /*!
      * \brief numberOfConnections count of connections stored in the
@@ -130,39 +202,6 @@ public:
      * \return count of connections stored in the connections list
      */
     int numberOfControllers() { return mControllerListCurrentSize; }
-
-    /*!
-     * \brief listIndex the currently selected index of the connection list. Will always
-     *        be smaller than numberOfConnections()
-     * \return
-     */
-    int listIndex() { return mControllerIndex; }
-
-    /*!
-     * \brief isConnected returns true if connected, false otherwise.
-     * \return true if connected, false otherwise. A Connection requires
-     *         the communication stream to be connected and a discovery handshake.
-     */
-    bool isConnected() { return mIsConnected; }
-
-    /*!
-     * \brief connected used to change the connected state.
-     * \param isConnected true if connected, false otherwise
-     */
-    void connected(bool isConnected) { mIsConnected = isConnected; }
-
-    /*!
-     * \brief selectDevice setter for the currently selected device. If its greater
-     *        than the number of devices, no value is set.
-     * \param i the desired selected device.
-     */
-    void selectDevice(int controller, uint32_t i);
-
-    /*!
-     * \brief selectedDevice getter for the currently selected device.
-     * \return getter for the currently selected device.
-     */
-    int selectedDevice() { return mSelectedDevice + 1; }
 
     /*!
      * \brief controllerIndexByName searches the controller list for the given name, returns -1 if no controller
@@ -187,13 +226,6 @@ public:
      * \param device the new data for the light device.
      */
     void updateDevice(int controller, SLightDevice device);
-
-    /*!
-     * \brief updateDeviceColor update the color of the device at the given index
-     * \param i the index of the color that is going to get changed
-     * \param color the new color to apply at the index.
-     */
-    void updateDeviceColor(int i, QColor color);
 
     /*!
      * \brief numberOfConnectedDevices uses the controller index to determine the total
@@ -226,21 +258,6 @@ public:
     bool addConnection(QString connection, bool shouldIncrement = true);
 
     /*!
-     * \brief selectConnection attempts to set the connction as the current conneciton in use.
-     * \param connection the name of the connect that you want to use
-     * \return true if the connection exists and setup was successful, false otherwise
-     */
-    bool selectConnection(QString connection);
-
-    /*!
-     * \brief selectConnection attempts to the use the connection from the connection list
-     *        at the given index.
-     * \param connectionIndex the index of the connection name that you want you want to connect to.
-     * \return true if the index is valid, false otherwise.
-     */
-    bool selectConnection(int connectionIndex);
-
-    /*!
      * \brief removeConnection attempts to remove the connection from the connection list
      * \param connection the connection you want to remove
      * \return true if the connection exists and was removed, false if it wasn't there in the first place
@@ -253,26 +270,50 @@ public:
      */
     void saveConnectionList();
 
+    // ----------------------------
+    // Utilities
+    // ----------------------------
     /*!
-     * \brief ECommTypeToString utility function for converting a ECommType to a human readable string
-     * \param type the ECommType to convert
-     * \return a simple english representation of the ECommType.
+     * \brief structToString converts a SLightDevice struct to a string in the format
+     *        of comma delimited values.
+     * \param dataStruct the struct to convert to a string
+     * \return a comma delimited string that represents all values in the SLightDevice.
      */
-    QString static ECommTypeToString(ECommType type) {
-    #ifndef MOBILE_BUILD
-        if (type == ECommType::eSerial) {
-            return "Serial";
+    QString static structToString(SLightDevice dataStruct) {
+        QString returnString = "";
+        returnString = returnString + dataStruct.name + "," + QString::number(dataStruct.index) + "," + QString::number((int)dataStruct.type);
+        return returnString;
+    }
+
+    /*!
+     * \brief stringToStruct converts a string represention of a SControllerCommData
+     *        back to a struct.
+     * \param string the string to convert
+     * \return a SLightDevice struct based on the string given. an empty struct is returned if
+     *         the string is invalid.
+     */
+    SLightDevice static stringToStruct(QString string) {
+        // first split the values from comma delimited to a vector of strings
+        std::vector<std::string> valueVector;
+        std::stringstream input(string.toStdString());
+        while (input.good()) {
+            std::string value;
+            std::getline(input, value, ',');
+            valueVector.push_back(value);
         }
-    #endif //MOBILE_BUILD
-        if (type ==  ECommType::eHTTP) {
-            return "HTTP";
-        } else if (type ==  ECommType::eUDP) {
-            return "UDP";
-        } else if (type ==  ECommType::eHue) {
-            return "Hue";
+        // check validity
+        SLightDevice outputStruct;
+        if (valueVector.size() == 3) {
+            outputStruct.name = QString::fromStdString(valueVector[0]);
+            outputStruct.index = QString::fromStdString(valueVector[1]).toInt();
+            outputStruct.type = (ECommType)QString::fromStdString(valueVector[2]).toInt();
+            if (outputStruct.type == ECommType::eHue) {
+                outputStruct.name = "Bridge";
+            }
         } else {
-            return "CommType not recognized";
+            qDebug() << "something went wrong with the key...";
         }
+        return outputStruct;
     }
 
 signals:
@@ -352,36 +393,20 @@ private:
     /*!
      * \brief mControllerList the list of possible controllers. Not all are necessarily connected.
      */
-    std::deque<QString> *mControllerList;
+    std::deque<QString>* mControllerList;
 
     /*!
      * \brief mDeviceList list of all devices on the current controller. If the controller is connected,
      *        all of these are connected. However, in certain cases such as Phillips Hues, they may not be
      *        reachable.
      */
-    std::deque<std::vector<SLightDevice> > *mDeviceList;
-
-    /*!
-     * \brief mListIndex the index of the connection that is currently getting used.
-     */
-    int mControllerIndex;
+    std::deque<std::vector<SLightDevice> > mDeviceList;
 
     /*!
      * \brief mControllerListCurrentSize used only when adding and removing controllers,
      *        this value tracks how many controllers have been added and is saved between sessions.
      */
     int mControllerListCurrentSize;
-
-    /*!
-     * \brief mSelectedDevice the current device selected for the controller. Must be less than the
-     *        number of devices on the controller.
-     */
-    int mSelectedDevice;
-
-    /*!
-     * \brief mIsConnected true if connected, false otherwise
-     */
-    bool mIsConnected;
 
 protected:
 

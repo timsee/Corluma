@@ -8,9 +8,10 @@
 #include <QWidget>
 #include <QSettings>
 
+#include <list>
+
 #include "lightingprotocols.h"
 #include "commtype.h"
-#include "controllercommdata.h"
 
 /*!
  * \copyright
@@ -105,6 +106,7 @@ public:
      * \brief Time it takes the LEDs to turn off in minutes.
      */
     bool timeOut(int timeOut);
+
     /*!
      * \brief timeOut getter for the amount of minutes it takes for the LEDs
      *        to "time out." When this happens, they turn off, saving you
@@ -178,61 +180,54 @@ public:
     void resetToDefaults();
 
     /*!
-     * \brief singleLightMode toggles between a GUI set up to do a single light at a time
-     *        to a GUI set up to connect to a single piece of hardware at a time, and a
-     *        GUI set up to connect to multiple groups of varying sizes.
-     * \param setToSingleLightMode true sets the GUI to single light mode, false sets it to
-     *        multi light mode.
+     * \brief addDevice add new device to connected list. if device already exists,
+     *        update the device with new values.
+     * \param device new device for the connected devices list
+     * \return true if device was valid and added, false otherwise.
      */
-    void singleLightMode(bool setToSingleLightMode);
+    bool addDevice(SLightDevice device);
 
     /*!
-     * \brief singleLightMode returns true if in multi light mode, false othewrise.
-     * \return true if in multi light mode, false othewrise.
+     * \brief doesDeviceExist checks if device exist in connected device list
+     * \param device device to search for
+     * \return true if the device exists, false otherwise.
      */
-    bool singleLightMode();
+    bool doesDeviceExist(SLightDevice device);
 
     /*!
-     * \brief changeCurrentDevice change current device that the datalayer is focused on.
-     * \param newDevice the new device to add to the data layer
-     * \param index index of new device.
-     * \return true if device is successfully added, false othwerise.
+     * \brief clearDevices remove all devices from the current connected devices list.
+     * \return true if successful
      */
-    bool changeDevice(SLightDevice newDevice, int index = 0);
+    bool clearDevices();
 
     /*!
-     * \brief changeControllerCommData change the controllerCommData in the data layer.
-     * \param newCommData new information about the controller connection
-     * \param index index of mCurrentDevices array to fill
-     * \return true if added successfully, false otherwise.
+     * \brief removeDevice remove specific device from connected device list.
+     * \param device device to remove from the connected device list. For removal to be succesful,
+     *        only the device controllerName, index, and type need to match
+     * \return true if a device is removed, false otherwise.
      */
-    bool changeControllerCommData(SControllerCommData newCommData, int index = 0);
+    bool removeDevice(SLightDevice device);
+
 
     /*!
-     * \brief currentDevicePair returns the current Device pair, which contains both controller
+     * \brief currentDevices returns the current Device pair, which contains both controller
      *        connection info and device settings
      * \return the current device pair.
      */
-    std::pair<SControllerCommData, SLightDevice> currentDevicePair() { return mCurrentDevices[mDeviceIndex]; }
+    const std::list<SLightDevice>& currentDevices() { return mCurrentDevices; }
 
     /*!
      * \brief currentDevice getter for current device of the datalayer.
      * \return the SLightDevice that represents the current device in the datalyer.
      */
-    SLightDevice currentDevice() { return mCurrentDevices[mDeviceIndex].second; }
+    SLightDevice currentDevice() { return mCurrentDevices.front(); }
 
-    /*!
-     * \brief currentCommType sets the current comm type
-     * \param type sets the current commtype in the std::pair
-     * \TODO remove this function and refactor away its need
-     */
-    void currentCommType(ECommType type) { mCurrentDevices[mDeviceIndex].first.type = type; }
 
     /*!
      * \brief currentCommType returns the current comm type being used
      * \return the current comm type being used
      */
-    ECommType currentCommType() { return mCurrentDevices[mDeviceIndex].first.type; }
+    ECommType currentCommType() { return mCurrentDevices.front().type; }
 
 
     // --------------------------
@@ -283,11 +278,6 @@ private:
     int mSpeed;
 
     /*!
-     * \brief mIsSingleLightMode true if in multi light mode, false othewrise.
-     */
-    bool mIsSingleLightMode;
-
-    /*!
      * \brief mTimeoutTimer system that is used to detect when lights should be
      *        timed out.
      */
@@ -308,12 +298,9 @@ private:
      * \todo complete support of multiple devices in datalayer. currently this is a vector of
      *       size 1 in preparation.
      */
-    std::vector<std::pair<SControllerCommData, SLightDevice> > mCurrentDevices;
+    std::list<SLightDevice> mCurrentDevices;
 
-    /*!
-     * \brief mDeviceIndex index of device in data layer.
-     */
-    int mDeviceIndex;
+
 };
 
 #endif // DATALAYER_H

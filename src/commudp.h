@@ -31,10 +31,17 @@ public:
     ~CommUDP();
 
     /*!
+     * \brief closeConnection unnecesary, implemented
+     *        only to comply with being a CommType, since
+     *        UDP is connectionless.
+     */
+    void closeConnection();
+
+    /*!
      * \brief changeConnection changes the IP address that is currently connected.
      * \param connectionName the IP address that you want to connect to.
      */
-    void changeConnection(QString connectionName);
+    void changeConnection(QString newConnection);
 
     /*!
      * \brief sendPacket sends the packet over UDP to a specified
@@ -42,14 +49,8 @@ public:
      *        unsent packets.
      * \param packet the string that is going to get sent over UDP.
      */
-    void sendPacket(QString packet);
+    void sendPacket(QString controller, QString packet);
 
-    /*!
-     * \brief closeConnection unnecesary, implemented
-     *        only to comply with being a CommType, since
-     *        UDP is connectionless.
-     */
-    void closeConnection();
 
 private slots:
     /*!
@@ -64,7 +65,7 @@ private slots:
     /*!
      * \brief sendThrottleBuffer response to the throttle buffer wanting to clear itself.
      */
-    void sendThrottleBuffer(QString);
+    void sendThrottleBuffer(QString, QString);
 
     /*!
      * \brief stateUpdate used by the mStateUpdateTimer to request new
@@ -89,14 +90,15 @@ private:
     bool mBound;
 
     /*!
-     * \brief mThrottle used to prevent the communication stream from sending commands too frequently.
+     * \brief mThrottleList list of throttles paired with strings. This allows each different
+     *        discovered device to use a different throttle.
      */
-    CommThrottle *mThrottle;
+    std::list<std::pair<QString, CommThrottle*> > mThrottleList;
 
     /*!
-     * \brief mBufferedConnection buffer of last UDP IP address used.
+     * \brief mDiscoveryList list of devices that have been discovered properly.
      */
-    QString mBufferedConnection;
+    std::list<QString> mDiscoveryList;
 };
 
 #endif // COMMUDP_H

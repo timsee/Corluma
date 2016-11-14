@@ -150,7 +150,7 @@ void CustomColorsPage::customColorCountChanged(int newCount) {
         mData->customColorsUsed(colorCount);
         updateColorArray();
         updateIcons();
-        mComm->sendCustomArrayCount(mData->currentDevicePair(), mData->groupSize(EColorGroup::eCustom));
+        mComm->sendCustomArrayCount(mData->currentDevices(), mData->groupSize(EColorGroup::eCustom));
         emit updateMainIcons();
     }
 }
@@ -159,14 +159,14 @@ void CustomColorsPage::customColorCountChanged(int newCount) {
 void CustomColorsPage::modeChanged(int newMode) {
     mData->currentRoutine((ELightingRoutine)newMode);
     mData->currentColorGroup(EColorGroup::eCustom);
-    mComm->sendRoutineChange(mData->currentDevicePair(), mData->currentRoutine(), (int)EColorGroup::eCustom);
+    mComm->sendRoutineChange(mData->currentDevices(), mData->currentRoutine(), (int)EColorGroup::eCustom);
     highlightRoutineButton(mData->currentRoutine());
     emit updateMainIcons();
 }
 
 void CustomColorsPage::colorChanged(QColor color) {
     mData->customColor(mCurrentColorPickerIndex, color);
-    mComm->sendArrayColorChange(mData->currentDevicePair(), mCurrentColorPickerIndex, color);
+    mComm->sendArrayColorChange(mData->currentDevices(), mCurrentColorPickerIndex, color);
     ui->arraySlider->setSliderColorBackground(mData->colorsAverage(EColorGroup::eCustom));
     updateIcons();
     emit updateMainIcons();
@@ -177,7 +177,7 @@ void CustomColorsPage::routineButtonClicked(int newRoutine, int newColorGroup) {
     Q_UNUSED(newColorGroup); // new color group is always custom in this instance
     mData->currentRoutine((ELightingRoutine)newRoutine);
     mData->currentColorGroup(EColorGroup::eCustom);
-    mComm->sendRoutineChange(mData->currentDevicePair(), mData->currentRoutine(), (int)EColorGroup::eCustom);
+    mComm->sendRoutineChange(mData->currentDevices(), mData->currentRoutine(), (int)EColorGroup::eCustom);
     highlightRoutineButton(mData->currentRoutine());
     emit updateMainIcons();
 }

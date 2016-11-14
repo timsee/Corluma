@@ -256,7 +256,7 @@ void HueBridgeDiscovery::handleDiscoveryTimeout() {
             qDebug() << "full connection failed, but IP address works, check the username.";
             mHasKey = false;
         } else if (mUsernameValid) {
-            qDebug() << "We have a key and an IP validated but hasvent gotten packets how coudl this be?";
+            qDebug() << "We have a key and an IP validated but hasvent gotten packets how could this be?";
             qDebug() << "this state makes no sense, invalidate both";
             mHasKey = false;
             mHasIP = false;

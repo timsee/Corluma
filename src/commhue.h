@@ -63,6 +63,16 @@ public:
     ~CommHue();
 
     /*!
+     * \brief not used for hue communication.
+     */
+    void closeConnection();
+
+    /*!
+     * \brief changeConnection not used for hue communication
+     */
+    void changeConnection(QString newConnection);
+
+    /*!
      * \brief changeLight send a packet to a hue bridge to change the color of a given hue light.
      * \param lightIndex the index of the hue being changed.
      * \param saturation how saturated the color is. A higher number leads to more saturation. Must be in the range of 0 and 254, inclusive.
@@ -115,7 +125,7 @@ public:
      *        converts it into a Phillips Hue command
      * \param packet the comma delimited Corlum Light command.
      */
-    void sendPacket(QString packet);
+    void sendPacket(QString controller, QString packet);
 
     /*!
      * \brief dataLayer attach data layer
@@ -151,7 +161,7 @@ private slots:
     /*!
      * \brief sendThrottleBuffer response to the throttle buffer wanting to clear itself.
      */
-    void sendThrottleBuffer(QString);
+    void sendThrottleBuffer(QString, QString);
 
     /*!
      * \brief mainColorChange connected to CommPacketParser, this changes the main color.
@@ -250,11 +260,6 @@ private:
      * \brief mThrottle used to prevent the communication stream from sending commands too frequently.
      */
     CommThrottle *mThrottle;
-
-    /*!
-     * \brief mBufferedURL buffer of last url used for the hue commands.
-     */
-    QString mBufferedURL;
 
     /*!
      * \brief mParser used to parse the commands sent through the system format, which is a comma delimited

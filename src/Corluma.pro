@@ -118,8 +118,7 @@ SOURCES += main.cpp\
     lightslistwidget.cpp \
     lightingroutines.cpp \
     commthrottle.cpp \
-    commpacketparser.cpp \
-    controllercommdata.cpp
+    commpacketparser.cpp
 
 HEADERS  += mainwindow.h \
     singlecolorpage.h \
@@ -143,8 +142,7 @@ HEADERS  += mainwindow.h \
     lightslistwidget.h \
     lightingroutines.h \
     commthrottle.h \
-    commpacketparser.h \
-    controllercommdata.h
+    commpacketparser.h
 
 FORMS    += mainwindow.ui \
     singlecolorpage.ui \

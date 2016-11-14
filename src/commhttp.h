@@ -33,12 +33,26 @@ public:
     ~CommHTTP();
 
     /*!
+     * \brief closeConnection close current connection. Doesn't do anything
+     *        in HTTP but is used by most connection protocols. in HTTP, the
+     *        connection is reopened and closed for every packet.
+     */
+    void closeConnection();
+
+    /*!
+     * \brief changeConnection change to a new connection
+     * \param newConnection the new connection to use
+     * \TODO refactora way
+     */
+    void changeConnection(QString newConnection);
+
+    /*!
      * \brief sendPacket sends a packet in a way similar to am
      *        IP Camera: The packet is added to the end of the
      *        web address, and sent as an HTTP request
      * \param packet the string to be sent over HTTP.
      */
-    void sendPacket(QString packet);
+    void sendPacket(QString controller, QString packet);
 
 
 private slots:
@@ -51,7 +65,7 @@ private slots:
     /*!
      * \brief sendThrottleBuffer response to the throttle buffer wanting to clear itself.
      */
-    void sendThrottleBuffer(QString);
+    void sendThrottleBuffer(QString, QString);
 
     /*!
      * \brief stateUpdate used by the mStateUpdateTimer to request new
@@ -69,6 +83,12 @@ private:
      * \brief mThrottle used to prevent the communication stream from sending commands too frequently.
      */
     CommThrottle *mThrottle;
+
+    /*!
+     * \brief mConnection current HTTP address being used
+     * \TODO refactor away
+     */
+    QString mConnection;
 
 
 };

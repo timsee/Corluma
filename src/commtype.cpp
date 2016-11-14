@@ -10,8 +10,6 @@
 
 void CommType::setupConnectionList(ECommType type) {
     mType = type;
-    mSelectedDevice = 0;
-    mControllerIndex = 0;
     mControllerListCurrentSize = mSettings.value(settingsListSizeKey()).toInt();
 
     // handles an edge case thats more likely to come up in debugging than typical use
@@ -22,7 +20,7 @@ void CommType::setupConnectionList(ECommType type) {
     }
     // create the mList object
     mControllerList = new std::deque<QString>(10, nullptr);
-    mDeviceList = new std::deque<std::vector<SLightDevice> >(10, std::vector<SLightDevice>(10));
+    mDeviceList = std::deque<std::vector<SLightDevice> >(10, std::vector<SLightDevice>(10));
     // add in a default for specific cases
     if (mControllerListCurrentSize == 0) {
         if(mType == ECommType::eHTTP
@@ -48,18 +46,18 @@ bool CommType::addConnection(QString connection, bool shouldIncrement) {
         // add a default device
         SLightDevice device;
         device.index = 1;
+        device.name = connection;
+        device.type = mType;
         device.isReachable = false;
 
         SLightDevice invalidDevice;
         invalidDevice.isValid = false;
         invalidDevice.isReachable = false;
 
-
         std::vector<SLightDevice> tempNewList(10, invalidDevice);
         tempNewList[0] = device;
-        (*mDeviceList).push_front(tempNewList);
+        mDeviceList.push_front(tempNewList);
 
-        mControllerIndex = 0;
         if (shouldIncrement) {
             mControllerListCurrentSize++;
         }
@@ -68,28 +66,11 @@ bool CommType::addConnection(QString connection, bool shouldIncrement) {
     return false;
 }
 
-bool CommType::selectConnection(QString connection) {
-    // check if connection exists
-    if (checkIfConnectionExistsInList(connection)) {
-        // find the connection's index and save that as mListIndex
-        for (uint32_t i = 0; i < mControllerList->size(); ++i) {
-            if (connection.compare((*mControllerList)[i]) == 0) {
-                mControllerIndex = i;
-                return true;
-            }
-        }
-    }
-    return false;
-}
+void CommType::changeConnection(QString newConnection) {}
 
-bool CommType::selectConnection(int connectionIndex) {
-    if ((uint32_t)connectionIndex < mControllerList->size()) {
-        mControllerIndex = connectionIndex;
-        return true;
-    }
-    return false;
-}
+void CommType::closeConnection() {}
 
+void CommType::sendPacket(QString controller, QString packet) {}
 
 bool CommType::removeConnection(QString connection) {
     int controllerIndex = controllerIndexByName(connection);
@@ -111,7 +92,7 @@ bool CommType::removeConnection(QString connection) {
            (*mControllerList)[tempIndex] = QString("");
         } else if (mControllerListCurrentSize > 1) {
             (*mControllerList).erase((*mControllerList).begin() + tempIndex);
-            (*mDeviceList).erase((*mDeviceList).begin() + tempIndex);
+            mDeviceList.erase(mDeviceList.begin() + tempIndex);
         }
         // reduce the overall size.
         if ((mControllerListCurrentSize != 0)) mControllerListCurrentSize--;
@@ -194,20 +175,12 @@ bool CommType::checkIfConnectionIsValid(QString connection) {
 
 void CommType::updateDevice(int controller, SLightDevice device) {
     //qDebug() << "update device" << controller << "indevx" << device.index << "for type" << ECommTypeToString(mType);
-    if ((size_t)device.index > ((*mDeviceList)[controller]).size()) {
-        (*mDeviceList)[controller].resize(device.index);
-        (*mDeviceList)[controller][device.index - 1] = device;
+    if ((size_t)device.index > (mDeviceList[controller]).size()) {
+        mDeviceList[controller].resize(device.index);
+        mDeviceList[controller][device.index - 1] = device;
     } else {
         //qDebug() << "adding this" << device.index;
-        ((*mDeviceList)[controller])[device.index - 1] = device;
-    }
-}
-
-void CommType::updateDeviceColor(int i, QColor color) {
-    if ((size_t)i < mDeviceList[mControllerIndex].size()) {
-        (*mDeviceList)[mControllerIndex][i].color = color;
-    } else {
-
+        (mDeviceList[controller])[device.index - 1] = device;
     }
 }
 
@@ -222,20 +195,13 @@ int CommType::controllerIndexByName(QString name) {
     return returnValue;
 }
 
-
-void CommType::selectDevice(int controller, uint32_t i) {
-    if (i - 1 <= mDeviceList[controller].size()) {
-         mSelectedDevice = i - 1;
-    }
-}
-
 int CommType::numberOfConnectedDevices(uint32_t controllerIndex)
 {
     if (controllerIndex < (*mControllerList).size()) {
         // return only valid device count
         int x = 0;
         for (uint32_t i = 0; i < (*mControllerList).size(); ++i) {
-            if ((*mDeviceList)[controllerIndex][i].isValid) {
+            if (mDeviceList[controllerIndex][i].isValid) {
                 x++;
             }
         }
@@ -248,16 +214,12 @@ int CommType::numberOfConnectedDevices(uint32_t controllerIndex)
 
 bool CommType::deviceByControllerAndIndex(SLightDevice& device, int controllerIndex, int deviceIndex)
 {
-    if (controllerIndex < (int)mDeviceList->size()) {
-        if(deviceIndex < (int)((*mDeviceList)[controllerIndex]).size()) {
-            device = ((*mDeviceList)[controllerIndex])[deviceIndex];
+    if (controllerIndex < (int)mDeviceList.size()) {
+        if(deviceIndex < (int)(mDeviceList[controllerIndex]).size()) {
+            device = (mDeviceList[controllerIndex])[deviceIndex];
             // check if null
             return !(device.index == 0);
         }
     }
     return false;
-}
-
-QString CommType::currentConnection() {
-    return (*mControllerList)[mControllerIndex];
 }

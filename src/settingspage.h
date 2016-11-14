@@ -4,7 +4,6 @@
 
 #include "lightingpage.h"
 #include "lightsslider.h"
-#include "controllercommdata.h"
 
 #include <QWidget>
 #include <QListWidgetItem>
@@ -140,7 +139,14 @@ private:
     Ui::SettingsPage *ui;
 
     /*!
-     * \brief mCurrentListString name of the current comm list connection
+     * \brief mCommType current comm type being shown in the connection list.
+     */
+    ECommType mCommType;
+
+    /*!
+     * \brief mCurrentListString the string value of the last item clicked in the
+     *        connection list. Used only to remove that connection when the minus
+     *        button is clicked.
      */
     QString mCurrentListString;
 
@@ -155,12 +161,6 @@ private:
      *        This is udpated internally by the hueDiscoveryUpdate(int) slot.
      */
     EHueDiscoveryState mHueDiscoveryState;
-
-    /*!
-     * \brief mListIndexVector stores the current index of the of the connectionList
-     *        for each of the connection types.
-     */
-    std::vector<int> mListIndexVector;
 
     /*!
      * \brief mSettings object used to access persistent app memory

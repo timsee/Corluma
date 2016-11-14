@@ -43,7 +43,7 @@ public:
      *        in the GUI, this is the color displayed in the leftmost menu.
      * \param color a QColor representation of the color being used for single LED Routines.
      */
-    void sendMainColorChange(std::pair<SControllerCommData, SLightDevice> device,
+    void sendMainColorChange(const std::list<SLightDevice>& deviceList,
                              QColor color);
 
     /*!
@@ -51,7 +51,7 @@ public:
      * \param index index of array color
      * \param color the color being sent for the given index
      */
-    void sendArrayColorChange(std::pair<SControllerCommData, SLightDevice> device,
+    void sendArrayColorChange(const std::list<SLightDevice>& deviceList,
                               int index,
                               QColor color);
 
@@ -62,7 +62,7 @@ public:
      * \param routine the mode being sent to the LED system
      * \param colorGroupUsed -1 if single color routine, otherwise a EColorGroup.
      */
-    void sendRoutineChange(std::pair<SControllerCommData, SLightDevice> device,
+    void sendRoutineChange(const std::list<SLightDevice>& deviceList,
                            ELightingRoutine routine,
                            int colorGroupUsed = -1);
 
@@ -73,14 +73,14 @@ public:
      *        of colors.
      * \param count a value less than the size of the custom color array.
      */
-    void sendCustomArrayCount(std::pair<SControllerCommData, SLightDevice> device,
+    void sendCustomArrayCount(const std::list<SLightDevice>& deviceList,
                               int count);
 
     /*!
      * \brief sendBrightness sends a brightness value between 0 and 100, with 100 being full brightness.
      * \param brightness a value between 0 and 100
      */
-    void sendBrightness(std::pair<SControllerCommData, SLightDevice> device,
+    void sendBrightness(const std::list<SLightDevice>& deviceList,
                         int brightness);
 
     /*!
@@ -88,7 +88,7 @@ public:
      *        for example if you want a FPS of 5, send the value 500.
      * \param speed the FPS multiplied by 100.
      */
-    void sendSpeed(std::pair<SControllerCommData, SLightDevice> device,
+    void sendSpeed(const std::list<SLightDevice>& deviceList,
                    int speed);
 
     /*!
@@ -96,58 +96,25 @@ public:
      *        inactivity. Perfect for bedtime!
      * \param timeOut a number greater than 0
      */
-    void sendTimeOut(std::pair<SControllerCommData, SLightDevice> device,
+    void sendTimeOut(const std::list<SLightDevice>& deviceList,
                      int timeOut);
 
     /*!
      * \brief sendReset resets the board to its default settings.
      */
-    void sendReset();
-
-    /*!
-     * \brief comm returns a pointer to the current connection
-     * \return a pointer to the current connection
-     */
-    CommType *comm();
-
-    /*!
-     * \brief sendPacket sends the string over the currently
-     *        active connection
-     * \param packet a string that will be sent over the currently
-     *        active connection.
-     */
-    void sendPacket(QString packet);
+    void sendReset(const std::list<SLightDevice>& deviceList);
 
 
-    /*!
-     * \brief closeCurrentConnection required only for serial connections, closes
-     *        the current connectio before trying to open a new one.
-     */
-    void closeCurrentConnection();
-
-    /*!
-     * \brief isConnected returns true if a connection has been estbalished
-     *        with the given parameters for the current communication type.
-     *        If the communication type is connectionless, this returns
-     *        true.
-     * \return true if a conenction has been established for the current
-     *         communication type or if the communication type is connectionaless,
-     *         false otherwise.
-     */
-    bool isConnected() { return comm()->isConnected();}
+    // --------------------------
+    // Controller and Device Management
+    // --------------------------
 
     /*!
      * \brief numberOfConnectedDevices Count of devices connected to the current
      *        controller.
      * \return count of devices connected to the current controller.
      */
-    int numberOfConnectedDevices(int index) { return comm()->numberOfConnectedDevices(index); }
-
-    /*!
-     * \brief selectedDevice index of the currently selected device.
-     * \return index of the currently selected device.
-     */
-    int selectedDevice() { return comm()->selectedDevice(); }
+    int numberOfConnectedDevices(ECommType type, uint32_t controllerIndex);
 
     /*!
      * \brief changeDeviceController change to a different controller and its associated devices.
@@ -157,7 +124,50 @@ public:
      * \param controllerName the name of a controller, It is either its IP address for arduino yun samples,
      *        its serial port for arduino wired samples.
      */
-    void changeDeviceController(QString controllerName);
+    void changeDeviceController(ECommType type, QString controllerName);
+
+    /*!
+     * \brief controllerIndexByName returns the controller index of the controller provided in the provided
+     *        commtype, if one exists
+     * \param type the type of controller you're lookign for the index of
+     * \param name the name of the controller you're looking for the index of
+     * \return the index of the controller if it exists, -1 otherwise.
+     */
+    int controllerIndexByName(ECommType type, QString name);
+
+    /*!
+     * \brief removeConnection attempt to remove a controller in a connection list
+     * \param type the type of connection it is
+     * \param connection the name of the controller
+     * \return true if controller is removed, false othewrise.
+     */
+    bool removeConnection(ECommType type, QString connection);
+
+    /*!
+     * \brief addConnection attempt to add a controller to a connection list
+     * \param type the type of connection it is
+     * \param connection the name of the controller
+     * \return true if controller is added, false othewrise.
+     */
+    bool addConnection(ECommType type, QString connection);
+
+    /*!
+     * \brief controllerList list of controllers for a given commtype
+     * \param type the type of connection that you are requested controllers from
+     * \return the list of of controllers for the given commtype
+     */
+    std::deque<QString>* controllerList(ECommType type);
+
+    /*!
+     * \brief deviceByControllerAndIndex fills the given device with the controller described
+     *        by the type, controllerIndex, and deviceIndex provdied.
+     * \param type the commtype of the device being requested
+     * \param device the device to fill with the proper info
+     * \param controllerIndex the index of the controller
+     * \param deviceIndex the index of the device
+     * \return
+     */
+    bool deviceByControllerAndIndex(ECommType type, SLightDevice& device, int controllerIndex, int deviceIndex);
 
     /*!
      * \brief dataLayer attach the data layer to the comm layer.
@@ -178,17 +188,6 @@ public:
      */
     std::vector<SHueLight> hueList() { return mHue->connectedHues(); }
 
-    // --------------------------
-    // Const static strings
-    // --------------------------
-
-    /*!
-     * \brief KCommDefaultName Settings key for default name of communication.
-     *        This is saved whenever the user changes it and is restored at the
-     *        start of each application session.
-     */
-    const static QString kCommDefaultName;
-
 
 signals:
     /*!
@@ -202,19 +201,6 @@ signals:
     *        any of the lights.
     */
    void lightStateUpdate(int, int);
-
-public slots:
-    /*!
-     * \brief updateDataLayer runs a routine that updates the data layer based
-     *        on the light at the index of the current comm type. This will only
-     *        execute if this is the currently selected device, as the data layer
-     *        always reflects the currently connected device.
-     *
-     * \param controllerIndex. index of the controller for the commtype
-     * \param deviceIndex. index of the light on its controller.
-     * \param type int representation of the ECommType of the type.
-     */
-    void updateDataLayer(int controllerIndex, int deviceIndex, int type);
 
 private slots:
    /*!
@@ -270,11 +256,6 @@ private:
     DataLayer *mData;
 
     /*!
-     * \brief mSettings object used to access persistent app memory
-     */
-    QSettings *mSettings;
-
-    /*!
      * \brief verifyStateUpdatePacketValidity takes a vector and checks that all
      *        values are within the proper range. Returns true if the packet can
      *        be used.
@@ -283,6 +264,13 @@ private:
      * \return true if all values in the vector are in the proper range, false othewrise.
      */
     bool verifyStateUpdatePacketValidity(std::vector<int> packetIntVector, int x = 0);
+
+    /*!
+     * \brief sendPacket helper for sending packets
+     * \param device device to send a packet to
+     * \param payload packet to send to device
+     */
+    void sendPacket(const SLightDevice& device, const QString& payload);
 
     /*!
      * \brief commByType returns the raw CommPtr based off the given commType

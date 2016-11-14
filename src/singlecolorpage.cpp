@@ -89,14 +89,14 @@ void SingleColorPage::highlightRoutineButton(ELightingRoutine routine) {
 void SingleColorPage::modeChanged(int newMode, int newGroup) {
     Q_UNUSED(newGroup); // newGroup is ignored for single color routines
     mData->currentRoutine((ELightingRoutine)newMode);
-    mComm->sendRoutineChange(mData->currentDevicePair(), (ELightingRoutine)newMode);
+    mComm->sendRoutineChange(mData->currentDevices(), (ELightingRoutine)newMode);
     highlightRoutineButton((ELightingRoutine)newMode);
     emit updateMainIcons();
 }
 
 void SingleColorPage::colorChanged(QColor color) {
     mData->mainColor(color);
-    mComm->sendMainColorChange(mData->currentDevicePair(), mData->mainColor());
+    mComm->sendMainColorChange(mData->currentDevices(), mData->mainColor());
     if (!(mData->currentRoutine() == ELightingRoutine::eSingleBlink
             || mData->currentRoutine() == ELightingRoutine::eSingleSolid
             || mData->currentRoutine() == ELightingRoutine::eSingleWave
@@ -106,7 +106,7 @@ void SingleColorPage::colorChanged(QColor color) {
             || mData->currentRoutine() == ELightingRoutine::eSingleSawtoothFadeIn
             || mData->currentRoutine() == ELightingRoutine::eSingleSawtoothFadeOut)) {
         mData->currentRoutine(ELightingRoutine::eSingleGlimmer);
-        mComm->sendRoutineChange(mData->currentDevicePair(), ELightingRoutine::eSingleGlimmer);
+        mComm->sendRoutineChange(mData->currentDevices(), ELightingRoutine::eSingleGlimmer);
     }
 
     for (int i = 0; i < (int)mRoutineButtons->size(); ++i) {
@@ -123,7 +123,6 @@ void SingleColorPage::colorChanged(QColor color) {
 
 void SingleColorPage::showEvent(QShowEvent *) {
   highlightRoutineButton(mData->currentRoutine());
-  chooseColor(mData->mainColor());
 
   if (mData->currentCommType() == ECommType::eHue) {
       ui->colorPicker->useHueWheel(true);

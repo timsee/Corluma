@@ -7,6 +7,7 @@
 #include <QLayout>
 
 #include "icondata.h"
+#include "commtype.h"
 
 /*!
  * \copyright
@@ -30,24 +31,18 @@ public:
     explicit LightsListWidget(QWidget *parent = 0);
 
     /*!
-     * \brief setup called after the constructor, required to set up the widget with the
-     *        proper data
-     * \param name name of the controller for the device
-     * \param isOn true if on, false otherwise
-     * \param isReachable true if reachable, false otherwise
-     * \param color color to use for the icon
-     * \param index index of the device
+     * \brief setup setsup an icon with a pointer to the datalyer and
+     *        a default setting.
+     * \param device the device to pull all of the light data from.
      * \param data pointer to data layer.
      */
-    void setup(QString name, bool isOn, bool isReachable, QColor color, int index, DataLayer *data);
+    void setup(const SLightDevice& device, DataLayer *data);
 
     /*!
-     * \brief updateIcon update the icon to display a new lighting routine, color group, and color
-     * \param color new color for the icon
-     * \param routine new lighting routine for the icon
-     * \param group new group for the icon.
+     * \brief updateIcon update the icon with new light data
+     * \param device the device data to use for the update
      */
-    void updateIcon(QColor color, ELightingRoutine routine, EColorGroup group);
+    void updateIcon(const SLightDevice& device);
 
     /*!
      * \brief updateColor update just the color of the icon.

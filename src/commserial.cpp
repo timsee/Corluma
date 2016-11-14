@@ -14,8 +14,8 @@ CommSerial::CommSerial() {
     setupConnectionList(ECommType::eSerial);
 
     mThrottle = new CommThrottle();
-    connect(mThrottle, SIGNAL(sendThrottleBuffer(QString)), this, SLOT(sendThrottleBuffer(QString)));
-    mThrottle->startThrottle(50);
+    connect(mThrottle, SIGNAL(sendThrottleBuffer(QString, QString)), this, SLOT(sendThrottleBuffer(QString, QString)));
+    mThrottle->startThrottle(50, 3);
 
     mSerial = new QSerialPort(this);
 
@@ -36,6 +36,16 @@ CommSerial::~CommSerial() {
     closeConnection();
 }
 
+void CommSerial::closeConnection() {
+    if (mSerial->isOpen()) {
+        mSerial->clear();
+        mSerial->close();
+    }
+}
+
+void CommSerial::changeConnection(QString newConnection) {
+    connectSerialPort(newConnection);
+}
 
 void CommSerial::discoverSerialPorts() {
     if (QSerialPortInfo::availablePorts().size() > 0) {
@@ -70,24 +80,16 @@ void CommSerial::discoverSerialPorts() {
             qDebug() << "Description : " << info.description();
             qDebug() << "Manufacturer: " << info.manufacturer();
             if (!isSpecialCase) {
+                connectSerialPort(info.portName());
                 addConnection(info.portName());
-            }
-        }
-        // if none is connected, attempt automatic connection
-        if (!isConnected() && (numberOfControllers() > 0)) {
-            int index = 0;
-            while (!isConnected() && index < numberOfControllers()) {
-                selectConnection(index);
-                connected(connectSerialPort(currentConnection()));
-                index++;
             }
         }
     }
 }
 
-void CommSerial::sendPacket(QString packet) {
+void CommSerial::sendPacket(QString controller, QString packet) {
     if (mSerial->isOpen()) {
-        if (mThrottle->checkThrottle(packet)) {
+        if (mThrottle->checkThrottle(controller, packet)) {
             if (packet.at(0) !=  QChar('7')) {
                 mThrottle->sentPacket();
             }
@@ -100,32 +102,22 @@ void CommSerial::sendPacket(QString packet) {
     }
 }
 
-void CommSerial::sendThrottleBuffer(QString bufferedMessage) {
+void CommSerial::sendThrottleBuffer(QString bufferedConnection, QString bufferedMessage) {
     mSerial->write(bufferedMessage.toStdString().c_str());
 }
-
 
 void CommSerial::stateUpdate() {
    if (mThrottle->checkLastUpdate() < 15000) {
        QString packet = QString("%1").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
        // WARNING: this resets the throttle and gets called automatically!
-       sendPacket(packet);
-    }
-}
-
-void CommSerial::closeConnection() {
-    if (mSerial->isOpen()) {
-        mSerial->clear();
-        mSerial->close();
-        connected(false);
+       sendPacket(mSerial->portName(), packet);
     }
 }
 
 
 bool CommSerial::connectSerialPort(QString serialPortName) {
+
     // close a preexisting connection if it exists
-    //qDebug() << "serial port name: " << serialPortName;
-    closeConnection();
     bool serialPortFound = false;
     QSerialPortInfo connectInfo;
     if (!QString::compare(mSerial->portName(), serialPortName)) {
@@ -175,11 +167,10 @@ void CommSerial::handleReadyRead() {
         //qDebug() << "serial received payload" << payload << "size" << packet.size();
         if (payload.contains(discoveryPacket)) {
             QString packet = payload.mid(discoveryPacket.size() + 3);
-            emit discoveryReceived(currentConnection(), packet, (int)ECommType::eSerial);
-            connected(true);
+            emit discoveryReceived(mSerial->portName(), packet, (int)ECommType::eSerial);
             mDiscoveryTimer->stop();
         } else {
-            emit packetReceived(currentConnection(), payload, (int)ECommType::eSerial);
+            emit packetReceived(mSerial->portName(), payload, (int)ECommType::eSerial);
         }
     }
 }

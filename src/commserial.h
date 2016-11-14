@@ -37,6 +37,20 @@ public:
     ~CommSerial();
 
     /*!
+     * \brief closeConnection cleans up after the serial port. This
+     *        is required to be called during cleanup, in some
+     *        environments not closing a serial port leads to it
+     *        staying bound until the computer resets.
+     */
+    void closeConnection();
+
+    /*!
+     * \brief changeConnection change active serial connection
+     * \param newConnection new connection to use.
+     */
+    void changeConnection(QString newConnection);
+
+    /*!
      * \brief serialList list of possible serial ports
      *        for connection
      */
@@ -61,15 +75,7 @@ public:
      * \param packet the string that is going to be sent over
      *        serial.
      */
-    void sendPacket(QString packet);
-
-    /*!
-     * \brief closeConnection cleans up after the serial port. This
-     *        is required to be called during cleanup, in some
-     *        environments not closing a serial port leads to it
-     *        staying bound until the computer resets.
-     */
-    void closeConnection();
+    void sendPacket(QString controller, QString packet);
 
     /*!
      * \brief portName returns the name of the current connection.
@@ -95,7 +101,7 @@ private slots:
     /*!
      * \brief sendThrottleBuffer response to the throttle buffer wanting to clear itself.
      */
-    void sendThrottleBuffer(QString);
+    void sendThrottleBuffer(QString, QString);
 
     /*!
      * \brief stateUpdate used by the mStateUpdateTimer to request new

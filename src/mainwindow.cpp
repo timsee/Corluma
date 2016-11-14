@@ -14,6 +14,7 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow) {
+
     mComm = new CommLayer(this);
     mData = new DataLayer();
 
@@ -91,7 +92,6 @@ MainWindow::MainWindow(QWidget *parent) :
     // Start on SingleColorPage
     pageChanged(0);
     // setup the SingleColorPage
-
     ui->singleColorPage->chooseColor(mData->mainColor());
 }
 
@@ -108,7 +108,7 @@ void MainWindow::toggleOnOff() {
         mIconData.setSolidColor(QColor(0,0,0));
         ui->onOffButton->setIcon(mIconData.renderAsQPixmap());
         mIsOn = false;
-        mComm->sendRoutineChange(mData->currentDevicePair(), ELightingRoutine::eOff);
+        mComm->sendRoutineChange(mData->currentDevices(), ELightingRoutine::eOff);
     } else {
         if (mData->currentRoutine() <= ELightingRoutine::eSingleSawtoothFadeOut) {
             mIconData.setSolidColor(mData->mainColor());
@@ -118,14 +118,14 @@ void MainWindow::toggleOnOff() {
             mIconData.setMultiFade(EColorGroup::eCustom, true);
         }
         ui->onOffButton->setIcon(mIconData.renderAsQPixmap());
-        mComm->sendRoutineChange(mData->currentDevicePair(), mData->currentRoutine());
+        mComm->sendRoutineChange(mData->currentDevices(), mData->currentRoutine());
         mIsOn = true;
     }
 }
 
 void MainWindow::brightnessChanged(int newBrightness) {
    mData->brightness(newBrightness);
-   mComm->sendBrightness(mData->currentDevicePair(), mData->brightness());
+   mComm->sendBrightness(mData->currentDevices(), mData->brightness());
    mIsOn = true;
 }
 

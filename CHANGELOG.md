@@ -98,12 +98,12 @@
 * Changed CommLayer API.
 * Adjusted UI layout to be more mobile friendly.
 
-
-## Upcoming
-
 ### **v0.9.6** 
 #### Group Update
-This update is planned to introduce "groups" which contain one or more lighting devices on the same network. All lights in a groups can be controlled simulataneously, New groups can be made
-from the settings page and can combine any lighting devices. Groups are data stream agnostic, so multiple data streams can be used at a time.  
+- Added the ability to select multiple connections and control them all simultaneously. This includes support for simultaneous control of lights of different types (e.g. an arduino over serial and a Phillips Hue). 
+- Changes SettingsPage GUI slightly to accomodate connecting to multiple devices.
+- Refactored API to make heavier use of SLightDevice.
+- Fixed bugs.
 
- 
+
+

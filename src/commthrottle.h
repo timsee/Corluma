@@ -19,14 +19,15 @@ public:
     /*!
      * \brief startThrottle start up the throttle.
      * \param interval the minimum number of msec between each throttle reset.
+     * \param throttleMax maximum number of packets that can be sent between two resets
      */
-    void startThrottle(int interval);
+    void startThrottle(int interval, int throttleMax);
 
     /*!
      * \brief checkThrottle true if the throttle is not set and a packet can be sent, false otherwise.
      * \return true if the throttle is not set and a packet can be sent, false otherwise.
      */
-    bool checkThrottle(QString packet);
+    bool checkThrottle(QString controller, QString packet);
 
     /*!
      * \brief checkLastUpdate check how many msec its been since the the last update to the throttle
@@ -56,7 +57,7 @@ signals:
     /*!
      * \brief sendThrottleBuffer requests that this QString gets sent by the communication stream.
      */
-    void sendThrottleBuffer(QString);
+    void sendThrottleBuffer(QString, QString);
 
 private slots:
 
@@ -80,6 +81,12 @@ private:
      *        being sent to the controller.
      */
     QString mBufferedMessage;
+
+    /*!
+     * \brief mBufferedController name of controller being buffered for next packet.
+     */
+    QString mBufferedController;
+
     /*!
      * \brief mBufferedTime amount of time the buffer has contained a packet.
      */
@@ -111,10 +118,16 @@ private:
     int mThrottleInterval;
 
     /*!
-     * \brief mThrottleFlag flag used to enforced the throttle timer's throttle.
+     * \brief mThrottleCount count of number of times something is called in the time of an interval before the
+     *        thrtottle resets. If this reaches mThrottleMax, packets start to get buffered.
      */
-    bool mThrottleFlag;
+    int mThrottleCount;
 
+    /*!
+     * \brief mThrottleMax total number of times a packet can be sent in the timespawn of one interval. To allow
+     *        only one packet, set this to 1.
+     */
+    int mThrottleMax;
 };
 
 #endif // COMMTHROTTLE_H

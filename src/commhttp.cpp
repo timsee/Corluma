@@ -8,8 +8,8 @@
 
 CommHTTP::CommHTTP() {
     mThrottle = new CommThrottle();
-    connect(mThrottle, SIGNAL(sendThrottleBuffer(QString)), this, SLOT(sendThrottleBuffer(QString)));
-    mThrottle->startThrottle(500);
+    connect(mThrottle, SIGNAL(sendThrottleBuffer(QString, QString)), this, SLOT(sendThrottleBuffer(QString, QString)));
+    mThrottle->startThrottle(500, 3);
 
     mNetworkManager = new QNetworkAccessManager(this);
     setupConnectionList(ECommType::eHTTP);
@@ -25,11 +25,21 @@ CommHTTP::~CommHTTP() {
     delete mNetworkManager;
 }
 
-void CommHTTP::sendPacket(QString packet) {
+
+void CommHTTP::closeConnection() {
+
+}
+
+
+void CommHTTP::changeConnection(QString newConnection) {
+    mConnection = newConnection;
+}
+
+void CommHTTP::sendPacket(QString controller, QString packet) {
     // add the packet to the URL address.
-    QString urlString = "http://" + currentConnection() + "/arduino/" + packet;
+    QString urlString = "http://" + controller + "/arduino/" + packet;
     //qDebug() << "sending" << urlString;
-    if(mThrottle->checkThrottle(urlString)) {
+    if(mThrottle->checkThrottle(controller, urlString)) {
         if (packet.at(0) !=  QChar('7')) {
             mThrottle->sentPacket();
         }
@@ -42,11 +52,11 @@ void CommHTTP::stateUpdate() {
    if (mThrottle->checkLastSend() < 15000) {
        QString packet = QString("%1").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
        // WARNING: this resets the throttle and gets called automatically!
-       sendPacket(packet);
+       sendPacket(mConnection, packet);
     }
 }
 
-void CommHTTP::sendThrottleBuffer(QString bufferedMessage) {
+void CommHTTP::sendThrottleBuffer(QString bufferedConnection, QString bufferedMessage) {
     QNetworkRequest request = QNetworkRequest(QUrl(bufferedMessage));
     mNetworkManager->get(request);
 }
@@ -59,14 +69,13 @@ void CommHTTP::replyFinished(QNetworkReply* reply) {
         //qDebug() << "payload from HTTP" << payload;
         if (payload.contains(discoveryPacket)) {
             QString packet = payload.mid(discoveryPacket.size() + 3);
-            connected(true);
-            emit discoveryReceived(currentConnection(), packet, (int)ECommType::eHTTP);
+            emit discoveryReceived(mConnection, packet, (int)ECommType::eHTTP);
         } else {
             QString packet = payload.simplified();
             if (packet.at(0) == '7') {
-                emit packetReceived(currentConnection(), packet.mid(2), (int)ECommType::eHTTP);
+                emit packetReceived(mConnection, packet.mid(2), (int)ECommType::eHTTP);
             } else {
-                emit packetReceived(currentConnection(), packet, (int)ECommType::eHTTP);
+                emit packetReceived(mConnection, packet, (int)ECommType::eHTTP);
             }
         }
     }

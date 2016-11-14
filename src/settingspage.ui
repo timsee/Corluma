@@ -19,8 +19,8 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" rowstretch="5,5,3,5,3,20,2">
-   <item row="6" column="0" colspan="2">
+  <layout class="QGridLayout" name="gridLayout" rowstretch="5,5,3,3,20,2">
+   <item row="5" column="0" colspan="2">
     <widget class="QPushButton" name="resetButton">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -62,7 +62,7 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2">
+   <item row="2" column="0" colspan="2">
     <layout class="QHBoxLayout" name="commButtonLayout">
      <property name="topMargin">
       <number>0</number>
@@ -136,7 +136,7 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0" colspan="2">
+   <item row="4" column="0" colspan="2">
     <widget class="QListWidget" name="connectionList">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -156,27 +156,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="LightsSlider" name="speedSlider" native="true">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="LightsSlider" name="timeoutSlider" native="true">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0" colspan="2">
+   <item row="3" column="0" colspan="2">
     <layout class="QHBoxLayout" name="tableInputLayout" stretch="0,12,2,2">
      <item>
       <widget class="QLabel" name="connectionListLabel">
@@ -223,23 +203,25 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0" colspan="2">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QPushButton" name="singleModeButton">
-       <property name="text">
-        <string>Single</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="multiModeButton">
-       <property name="text">
-        <string>Groups</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+   <item row="0" column="1">
+    <widget class="LightsSlider" name="speedSlider" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="LightsSlider" name="timeoutSlider" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
