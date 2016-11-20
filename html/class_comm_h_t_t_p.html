@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.6</span>
+   &#160;<span id="projectnumber">v0.9.65</span>
    </div>
   </td>
  </tr>
@@ -70,13 +70,6 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_h_t_t_p.html#a621242b3ab5301ddf6afdd9cbdda9dbe">~CommHTTP</a> ()</td></tr>
 <tr class="memdesc:a621242b3ab5301ddf6afdd9cbdda9dbe"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_comm_h_t_t_p.html" title="provides a HTTP communication stream, which is similar to an IP Camera. Packets are sent as HTTP requ...">CommHTTP</a> Deconstructor. <br /></td></tr>
 <tr class="separator:a621242b3ab5301ddf6afdd9cbdda9dbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89d8b3fd7be288ef13968ed06c5173f2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a89d8b3fd7be288ef13968ed06c5173f2"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_h_t_t_p.html#a89d8b3fd7be288ef13968ed06c5173f2">closeConnection</a> ()</td></tr>
-<tr class="memdesc:a89d8b3fd7be288ef13968ed06c5173f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">closeConnection close current connection. Doesn't do anything in HTTP but is used by most connection protocols. in HTTP, the connection is reopened and closed for every packet. <br /></td></tr>
-<tr class="separator:a89d8b3fd7be288ef13968ed06c5173f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19155cae29b5ccf60cece612ca4490a3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_h_t_t_p.html#a19155cae29b5ccf60cece612ca4490a3">changeConnection</a> (QString newConnection)</td></tr>
-<tr class="memdesc:a19155cae29b5ccf60cece612ca4490a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeConnection change to a new connection  <a href="#a19155cae29b5ccf60cece612ca4490a3">More...</a><br /></td></tr>
-<tr class="separator:a19155cae29b5ccf60cece612ca4490a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad2f184165aad6a5efc1451e3bf0cdb2f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_h_t_t_p.html#ad2f184165aad6a5efc1451e3bf0cdb2f">sendPacket</a> (QString controller, QString packet)</td></tr>
 <tr class="memdesc:ad2f184165aad6a5efc1451e3bf0cdb2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendPacket sends a packet in a way similar to am IP Camera: The packet is added to the end of the web address, and sent as an HTTP request  <a href="#ad2f184165aad6a5efc1451e3bf0cdb2f">More...</a><br /></td></tr>
 <tr class="separator:ad2f184165aad6a5efc1451e3bf0cdb2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -85,40 +78,34 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aea9af432f13faf2a28b6a9fd5d5000e9">~CommType</a> ()</td></tr>
 <tr class="memdesc:aea9af432f13faf2a28b6a9fd5d5000e9 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">~CommType Deconstructor <br /></td></tr>
 <tr class="separator:aea9af432f13faf2a28b6a9fd5d5000e9 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef042541f8922ed351f6de40cc16d12d inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">std::deque&lt; QString &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aef042541f8922ed351f6de40cc16d12d">controllerList</a> ()</td></tr>
-<tr class="memdesc:aef042541f8922ed351f6de40cc16d12d inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">controllerList list of the controllers  <a href="#aef042541f8922ed351f6de40cc16d12d">More...</a><br /></td></tr>
-<tr class="separator:aef042541f8922ed351f6de40cc16d12d inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adfd16a5669078c82848964e668953f5e inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">std::deque&lt; std::vector<br class="typebreak" />
-&lt; SLightDevice &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#adfd16a5669078c82848964e668953f5e">deviceList</a> ()</td></tr>
-<tr class="memdesc:adfd16a5669078c82848964e668953f5e inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceList list of the light devices  <a href="#adfd16a5669078c82848964e668953f5e">More...</a><br /></td></tr>
-<tr class="separator:adfd16a5669078c82848964e668953f5e inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a420572b616aa972e1080da0535f2d429 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">std::vector&lt; SLightDevice &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a420572b616aa972e1080da0535f2d429">controllerDeviceList</a> (int controllerIndex)</td></tr>
-<tr class="memdesc:a420572b616aa972e1080da0535f2d429 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">controllerDeviceList returns the device list of a controller. This is a dynamically sized std::vector of SLightDevices.  <a href="#a420572b616aa972e1080da0535f2d429">More...</a><br /></td></tr>
-<tr class="separator:a420572b616aa972e1080da0535f2d429 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6cf29a0d0ca388e5cd78f7d67bcbc8e2 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a6cf29a0d0ca388e5cd78f7d67bcbc8e2">numberOfControllers</a> ()</td></tr>
-<tr class="memdesc:a6cf29a0d0ca388e5cd78f7d67bcbc8e2 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">numberOfConnections count of connections stored in the connections list  <a href="#a6cf29a0d0ca388e5cd78f7d67bcbc8e2">More...</a><br /></td></tr>
-<tr class="separator:a6cf29a0d0ca388e5cd78f7d67bcbc8e2 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc9ad3d61d228b397f1fff3385324342 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#abc9ad3d61d228b397f1fff3385324342">controllerIndexByName</a> (QString name)</td></tr>
-<tr class="memdesc:abc9ad3d61d228b397f1fff3385324342 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">controllerIndexByName searches the controller list for the given name, returns -1 if no controller by that name is found.  <a href="#abc9ad3d61d228b397f1fff3385324342">More...</a><br /></td></tr>
-<tr class="separator:abc9ad3d61d228b397f1fff3385324342 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:affddfa87dc7c89579a7c8c08eb0f35fc inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#affddfa87dc7c89579a7c8c08eb0f35fc">deviceByControllerAndIndex</a> (SLightDevice &amp;device, int controllerIndex, int deviceIndex)</td></tr>
-<tr class="memdesc:affddfa87dc7c89579a7c8c08eb0f35fc inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceByControllerAndIndex fills the referenced device based on the controller index and device index given. Returns whether or not it is successful.  <a href="#affddfa87dc7c89579a7c8c08eb0f35fc">More...</a><br /></td></tr>
-<tr class="separator:affddfa87dc7c89579a7c8c08eb0f35fc inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af4f3b6b158b0dc5f0888801053ec2579 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#af4f3b6b158b0dc5f0888801053ec2579">updateDevice</a> (int controller, SLightDevice device)</td></tr>
-<tr class="memdesc:af4f3b6b158b0dc5f0888801053ec2579 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDevice update all the data on light device at the given index  <a href="#af4f3b6b158b0dc5f0888801053ec2579">More...</a><br /></td></tr>
-<tr class="separator:af4f3b6b158b0dc5f0888801053ec2579 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae62b998e5b2757478d27790726061241 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ae62b998e5b2757478d27790726061241">numberOfConnectedDevices</a> (uint32_t controllerIndex)</td></tr>
-<tr class="memdesc:ae62b998e5b2757478d27790726061241 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">numberOfConnectedDevices uses the controller index to determine the total number of connected devices  <a href="#ae62b998e5b2757478d27790726061241">More...</a><br /></td></tr>
-<tr class="separator:ae62b998e5b2757478d27790726061241 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ee085c089155c088acd4ebb4ed41b4f inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3ee085c089155c088acd4ebb4ed41b4f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a3ee085c089155c088acd4ebb4ed41b4f">startDiscovery</a> ()</td></tr>
+<tr class="memdesc:a3ee085c089155c088acd4ebb4ed41b4f inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">startDiscovery start sending discovery packets if needed, and continually request state update packets. <br /></td></tr>
+<tr class="separator:a3ee085c089155c088acd4ebb4ed41b4f inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0e83c722a3afb0c1ceda26c55c76e85 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab0e83c722a3afb0c1ceda26c55c76e85"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ab0e83c722a3afb0c1ceda26c55c76e85">stopDiscovery</a> ()</td></tr>
+<tr class="memdesc:ab0e83c722a3afb0c1ceda26c55c76e85 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">stopDiscovery stop sending discovery packets and go back to requesting state update packets only when in use. <br /></td></tr>
+<tr class="separator:ab0e83c722a3afb0c1ceda26c55c76e85 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8e3ef4d4b075f7d53fcb6500c0d48e1 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ac8e3ef4d4b075f7d53fcb6500c0d48e1">addController</a> (QString controller)</td></tr>
+<tr class="memdesc:ac8e3ef4d4b075f7d53fcb6500c0d48e1 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">addController attempts to add a new controller to the device table.  <a href="#ac8e3ef4d4b075f7d53fcb6500c0d48e1">More...</a><br /></td></tr>
+<tr class="separator:ac8e3ef4d4b075f7d53fcb6500c0d48e1 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac6ed7947ba8860ee31946d36d083944 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aac6ed7947ba8860ee31946d36d083944">removeController</a> (QString controller)</td></tr>
+<tr class="memdesc:aac6ed7947ba8860ee31946d36d083944 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeController attempts to remove the controller from the device table.  <a href="#aac6ed7947ba8860ee31946d36d083944">More...</a><br /></td></tr>
+<tr class="separator:aac6ed7947ba8860ee31946d36d083944 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af821394409188dff6275f2810ca799ad inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#af821394409188dff6275f2810ca799ad">updateDevice</a> (SLightDevice device)</td></tr>
+<tr class="memdesc:af821394409188dff6275f2810ca799ad inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDevice update all the data in the light device that matches the same controller and index. if a light device doesn't exist with these properties, then it creates a new one.  <a href="#af821394409188dff6275f2810ca799ad">More...</a><br /></td></tr>
+<tr class="separator:af821394409188dff6275f2810ca799ad inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d82da9a4b796ccb66d9d5c155e082e1 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a4d82da9a4b796ccb66d9d5c155e082e1">fillDevice</a> (SLightDevice &amp;device)</td></tr>
+<tr class="memdesc:a4d82da9a4b796ccb66d9d5c155e082e1 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">fillDevice takes the controller and index of the referenced SLightDevice and overwrites all other values with the values stored in the device table.  <a href="#a4d82da9a4b796ccb66d9d5c155e082e1">More...</a><br /></td></tr>
+<tr class="separator:a4d82da9a4b796ccb66d9d5c155e082e1 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb1865d11bc8e1f01a925ed68e284691 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">const std::unordered_map<br class="typebreak" />
+&lt; std::string, std::list<br class="typebreak" />
+&lt; SLightDevice &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#acb1865d11bc8e1f01a925ed68e284691">deviceTable</a> ()</td></tr>
+<tr class="memdesc:acb1865d11bc8e1f01a925ed68e284691 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceList list of the light devices  <a href="#acb1865d11bc8e1f01a925ed68e284691">More...</a><br /></td></tr>
+<tr class="separator:acb1865d11bc8e1f01a925ed68e284691 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaa25ac27d5bdb85a13b8d461ca1a960c inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aaa25ac27d5bdb85a13b8d461ca1a960c">setupConnectionList</a> (ECommType type)</td></tr>
 <tr class="memdesc:aaa25ac27d5bdb85a13b8d461ca1a960c inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">setupConnectionList initializes the connection list and reloads it from system memory, if needed  <a href="#aaa25ac27d5bdb85a13b8d461ca1a960c">More...</a><br /></td></tr>
 <tr class="separator:aaa25ac27d5bdb85a13b8d461ca1a960c inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc9bdeb22fa404e9d2ea5b2ac5ee2f04 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#abc9bdeb22fa404e9d2ea5b2ac5ee2f04">addConnection</a> (QString connection, bool shouldIncrement=true)</td></tr>
-<tr class="memdesc:abc9bdeb22fa404e9d2ea5b2ac5ee2f04 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">addConnection attempts to add the connection to the connection list  <a href="#abc9bdeb22fa404e9d2ea5b2ac5ee2f04">More...</a><br /></td></tr>
-<tr class="separator:abc9bdeb22fa404e9d2ea5b2ac5ee2f04 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a38b1cfe7fe30b19d84e0e7bec006d960 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a38b1cfe7fe30b19d84e0e7bec006d960">removeConnection</a> (QString connection)</td></tr>
-<tr class="memdesc:a38b1cfe7fe30b19d84e0e7bec006d960 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeConnection attempts to remove the connection from the connection list  <a href="#a38b1cfe7fe30b19d84e0e7bec006d960">More...</a><br /></td></tr>
-<tr class="separator:a38b1cfe7fe30b19d84e0e7bec006d960 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acf39ac1fbdab41338549ea9010ed0f91 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acf39ac1fbdab41338549ea9010ed0f91"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#acf39ac1fbdab41338549ea9010ed0f91">saveConnectionList</a> ()</td></tr>
 <tr class="memdesc:acf39ac1fbdab41338549ea9010ed0f91 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">saveConnectionList must be called by deconstructors, saves the connection list to the app's persistent memory. <br /></td></tr>
@@ -135,21 +122,42 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#acbc434809e1145dff7f9cd3dcd7a068d">discoveryReceived</a> (QString, QString, int)</td></tr>
 <tr class="memdesc:acbc434809e1145dff7f9cd3dcd7a068d inherit signals_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">discoveryReceived emitted when a discovery packet is received, this contains the state of all connected devices. <br /></td></tr>
 <tr class="separator:acbc434809e1145dff7f9cd3dcd7a068d inherit signals_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8bde6ea9fbb44fca8bc2d4a55924bfba inherit signals_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a8bde6ea9fbb44fca8bc2d4a55924bfba">updateToDataLayer</a> (int controllerIndex, int deviceIndex, int type)</td></tr>
-<tr class="memdesc:a8bde6ea9fbb44fca8bc2d4a55924bfba inherit signals_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateToDataLayer signal that allow commtypes, which ordinarily don't interact with the data layer directly, to notify the <a class="el" href="class_comm_layer.html" title="The CommLayer class provides communication protocols that allow the user to connect and send packets ...">CommLayer</a> that it should update the data layer.  <a href="#a8bde6ea9fbb44fca8bc2d4a55924bfba">More...</a><br /></td></tr>
-<tr class="separator:a8bde6ea9fbb44fca8bc2d4a55924bfba inherit signals_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_static_methods_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
-<tr class="memitem:aaf2b4c5f937d0937d0ab5490c4c3ba3c inherit pub_static_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">static QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aaf2b4c5f937d0937d0ab5490c4c3ba3c">structToString</a> (SLightDevice dataStruct)</td></tr>
-<tr class="memdesc:aaf2b4c5f937d0937d0ab5490c4c3ba3c inherit pub_static_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">structToString converts a SLightDevice struct to a string in the format of comma delimited values.  <a href="#aaf2b4c5f937d0937d0ab5490c4c3ba3c">More...</a><br /></td></tr>
-<tr class="separator:aaf2b4c5f937d0937d0ab5490c4c3ba3c inherit pub_static_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad65dc730568ee53e924b81fef647ab34 inherit pub_static_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">static SLightDevice&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ad65dc730568ee53e924b81fef647ab34">stringToStruct</a> (QString string)</td></tr>
-<tr class="memdesc:ad65dc730568ee53e924b81fef647ab34 inherit pub_static_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">stringToStruct converts a string represention of a SControllerCommData back to a struct.  <a href="#ad65dc730568ee53e924b81fef647ab34">More...</a><br /></td></tr>
-<tr class="separator:ad65dc730568ee53e924b81fef647ab34 inherit pub_static_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_methods_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
+<tr class="memitem:a5b66737d5c7518453f138de385df52b2 inherit pro_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a5b66737d5c7518453f138de385df52b2">handleDiscoveryPacket</a> (QString sender, int throttleInterval, int throttleMax)</td></tr>
+<tr class="memdesc:a5b66737d5c7518453f138de385df52b2 inherit pro_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">handleDiscoveryPacket called whenever a discovery packet is received by a commtype. Although all commtypes may received a packet in different ways or in differnt formats, all ways get converted so that they work with this function. The function determines if the device sending the discovery packet has been discovered already, and if it hasn't, it adds it to its list. It also initiates a throttle timer for this particular controller. Finally, it determines if its looking for any other controllers, and if its not, it shuts off the discovery timer.  <a href="#a5b66737d5c7518453f138de385df52b2">More...</a><br /></td></tr>
+<tr class="separator:a5b66737d5c7518453f138de385df52b2 inherit pro_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
+<tr class="memitem:ab17df6d25cf2db9d844945d6f135e65c inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab17df6d25cf2db9d844945d6f135e65c"></a>
+std::unordered_map<br class="typebreak" />
+&lt; std::string, std::list<br class="typebreak" />
+&lt; SLightDevice &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ab17df6d25cf2db9d844945d6f135e65c">mDeviceTable</a></td></tr>
+<tr class="memdesc:ab17df6d25cf2db9d844945d6f135e65c inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mDeviceTable hash table of all available devices. the hash key is the controller name and the list associated with it is all known devices connected to that controller. <br /></td></tr>
+<tr class="separator:ab17df6d25cf2db9d844945d6f135e65c inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35f88dea2ab73337cef428d5aed5fec6 inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a35f88dea2ab73337cef428d5aed5fec6"></a>
+std::list&lt; std::pair&lt; QString, <br class="typebreak" />
+CommThrottle * &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a35f88dea2ab73337cef428d5aed5fec6">mThrottleList</a></td></tr>
+<tr class="memdesc:a35f88dea2ab73337cef428d5aed5fec6 inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mThrottleList list of throttles paired with strings. This allows each different discovered device to use a different throttle. <br /></td></tr>
+<tr class="separator:a35f88dea2ab73337cef428d5aed5fec6 inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72eb17fb724feb20de438b6c304e35ba inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a72eb17fb724feb20de438b6c304e35ba"></a>
+std::list&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a72eb17fb724feb20de438b6c304e35ba">mDiscoveryList</a></td></tr>
+<tr class="memdesc:a72eb17fb724feb20de438b6c304e35ba inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mDiscoveryList list of devices that have been discovered properly. <br /></td></tr>
+<tr class="separator:a72eb17fb724feb20de438b6c304e35ba inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5fad0675d5baa960558751025bc5ec3a inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5fad0675d5baa960558751025bc5ec3a"></a>
 QTimer *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a5fad0675d5baa960558751025bc5ec3a">mStateUpdateTimer</a></td></tr>
 <tr class="memdesc:a5fad0675d5baa960558751025bc5ec3a inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mStateUpdateTimer Polls the controller every few seconds requesting updates on all of its devices. <br /></td></tr>
 <tr class="separator:a5fad0675d5baa960558751025bc5ec3a inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a53ba509a1aa972b772c1c6f8f074a1cb inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a53ba509a1aa972b772c1c6f8f074a1cb"></a>
+QTimer *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a53ba509a1aa972b772c1c6f8f074a1cb">mDiscoveryTimer</a></td></tr>
+<tr class="memdesc:a53ba509a1aa972b772c1c6f8f074a1cb inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mDiscoveryTimer used during discovery to poll the device every few seconds. <br /></td></tr>
+<tr class="separator:a53ba509a1aa972b772c1c6f8f074a1cb inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed07e124f1bb8819e0452cb2621e5629 inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aed07e124f1bb8819e0452cb2621e5629"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aed07e124f1bb8819e0452cb2621e5629">mUpdateTimeoutInterval</a></td></tr>
+<tr class="memdesc:aed07e124f1bb8819e0452cb2621e5629 inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mUpdateTimeoutInterval number of msec that it takes the state update timer to time out and stop sending state update requests. <br /></td></tr>
+<tr class="separator:aed07e124f1bb8819e0452cb2621e5629 inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afcc75099b138addb3dc35692e819eabe inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afcc75099b138addb3dc35692e819eabe"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#afcc75099b138addb3dc35692e819eabe">mDiscoveryMode</a></td></tr>
+<tr class="memdesc:afcc75099b138addb3dc35692e819eabe inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mDiscoveryMode true if all discovery and state update threads for the commtype should be active, false if using the standard lifecyclef for all the threads. <br /></td></tr>
+<tr class="separator:afcc75099b138addb3dc35692e819eabe inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2016. Released under the GNU General Public License. </dd></dl>
@@ -171,38 +179,6 @@ QTimer *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a19155cae29b5ccf60cece612ca4490a3"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CommHTTP::changeConnection </td>
-          <td>(</td>
-          <td class="paramtype">QString&#160;</td>
-          <td class="paramname"><em>newConnection</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">newConnection</td><td>the new connection to use  refactora way </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Reimplemented from <a class="el" href="class_comm_type.html">CommType</a>.</p>
-
-</div>
-</div>
 <a class="anchor" id="ad2f184165aad6a5efc1451e3bf0cdb2f"></a>
 <div class="memitem">
 <div class="memproto">

@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.6</span>
+   &#160;<span id="projectnumber">v0.9.65</span>
    </div>
   </td>
  </tr>
@@ -73,6 +73,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af2cb8dcba65d31ccb565195238cb5cab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#af2cb8dcba65d31ccb565195238cb5cab">setLightingRoutine</a> (ELightingRoutine routine, EColorGroup colorGroup=EColorGroup::eCustom)</td></tr>
 <tr class="memdesc:af2cb8dcba65d31ccb565195238cb5cab"><td class="mdescLeft">&#160;</td><td class="mdescRight">setLightingRoutine use a lighting routine and color group to set up the <a class="el" href="class_icon_data.html" title="The IconData class creates all the pixel-y square icons that are seen throughout the app...">IconData</a>.  <a href="#af2cb8dcba65d31ccb565195238cb5cab">More...</a><br /></td></tr>
 <tr class="separator:af2cb8dcba65d31ccb565195238cb5cab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abede7bb476474e334c25c4fc4c5fd9bf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#abede7bb476474e334c25c4fc4c5fd9bf">setSingleLightingRoutine</a> (ELightingRoutine routine, QColor color)</td></tr>
+<tr class="memdesc:abede7bb476474e334c25c4fc4c5fd9bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">setSingleLightingRoutine use a lighting routine and a color to set up the <a class="el" href="class_icon_data.html" title="The IconData class creates all the pixel-y square icons that are seen throughout the app...">IconData</a> for a single color routine.  <a href="#abede7bb476474e334c25c4fc4c5fd9bf">More...</a><br /></td></tr>
+<tr class="separator:abede7bb476474e334c25c4fc4c5fd9bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a89217148fb16e8446f2c36760845522e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a89217148fb16e8446f2c36760845522e"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#a89217148fb16e8446f2c36760845522e">setSolidColor</a> (QColor color)</td></tr>
 <tr class="memdesc:a89217148fb16e8446f2c36760845522e"><td class="mdescLeft">&#160;</td><td class="mdescRight">setSolidColor sets the icon as a solid color <br /></td></tr>
@@ -350,6 +353,39 @@ uint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   <table class="params">
     <tr><td class="paramname">colorGroup</td><td>the colorGroup used for the <a class="el" href="class_icon_data.html" title="The IconData class creates all the pixel-y square icons that are seen throughout the app...">IconData</a> </td></tr>
     <tr><td class="paramname">set</td><td>to false in nearly all cases, this only gets set to true for the menu bar so the custom array shows a few more colors than 2 when defaulted to 2. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="abede7bb476474e334c25c4fc4c5fd9bf"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void IconData::setSingleLightingRoutine </td>
+          <td>(</td>
+          <td class="paramtype">ELightingRoutine&#160;</td>
+          <td class="paramname"><em>routine</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">QColor&#160;</td>
+          <td class="paramname"><em>color</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">routine</td><td>lighting routine to use for the icon. </td></tr>
+    <tr><td class="paramname">color</td><td>color to use for the icon. </td></tr>
   </table>
   </dd>
 </dl>

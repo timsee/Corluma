@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.6</span>
+   &#160;<span id="projectnumber">v0.9.65</span>
    </div>
   </td>
  </tr>
@@ -84,36 +84,38 @@
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;signals:</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_single_color_page.html#ac31af7084d1b49e61d1faf05d624c7a0">updateMainIcons</a>();</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="keyword">public</span> slots:</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_single_color_page.html#a4515facc033cd59a668de0423506799d">modeChanged</a>(<span class="keywordtype">int</span>, <span class="keywordtype">int</span>);</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_single_color_page.html#aa6d5cdd7bb694cbe483b6acc9a36c72b">colorChanged</a>(QColor);</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_single_color_page.html#a1f6a1d6107bc0f9710065d2ef735a42a">showEvent</a>(QShowEvent *);</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    Ui::SingleColorPage *ui;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    std::shared_ptr&lt;std::vector&lt;LightsButton*&gt; &gt; mRoutineButtons;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <a class="code" href="class_icon_data.html">IconData</a> mIconData;</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;};</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="preprocessor">#endif // SINGLECOLORPAGE_H</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_single_color_page.html#aaa55e5c17f67e97daaac4b8638924ba3">singleColorChanged</a>(QColor);</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="keyword">public</span> slots:</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_single_color_page.html#a4515facc033cd59a668de0423506799d">modeChanged</a>(<span class="keywordtype">int</span>, <span class="keywordtype">int</span>);</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_single_color_page.html#aa6d5cdd7bb694cbe483b6acc9a36c72b">colorChanged</a>(QColor);</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_single_color_page.html#a1f6a1d6107bc0f9710065d2ef735a42a">showEvent</a>(QShowEvent *);</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    Ui::SingleColorPage *ui;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    std::shared_ptr&lt;std::vector&lt;LightsButton*&gt; &gt; mRoutineButtons;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <a class="code" href="class_icon_data.html">IconData</a> mIconData;</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;};</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="preprocessor">#endif // SINGLECOLORPAGE_H</span></div>
 <div class="ttc" id="class_lighting_page_html"><div class="ttname"><a href="class_lighting_page.html">LightingPage</a></div><div class="ttdoc">Inherited by Lighting Pages, provides a link to the backend. </div><div class="ttdef"><b>Definition:</b> lightingpage.h:15</div></div>
 <div class="ttc" id="namespace_ui_html"><div class="ttname"><a href="namespace_ui.html">Ui</a></div><div class="ttdef"><b>Definition:</b> customcolorspage.h:16</div></div>
 <div class="ttc" id="class_single_color_page_html"><div class="ttname"><a href="class_single_color_page.html">SingleColorPage</a></div><div class="ttdoc">The SingleColorPage provides a way to change the main color of the LED system and to set it in single...</div><div class="ttdef"><b>Definition:</b> singlecolorpage.h:34</div></div>
 <div class="ttc" id="class_single_color_page_html_a9c7de86e718716598d5c92c8d17c6fdc"><div class="ttname"><a href="class_single_color_page.html#a9c7de86e718716598d5c92c8d17c6fdc">SingleColorPage::~SingleColorPage</a></div><div class="ttdeci">~SingleColorPage()</div><div class="ttdoc">Deconstructor. </div><div class="ttdef"><b>Definition:</b> singlecolorpage.cpp:24</div></div>
 <div class="ttc" id="class_single_color_page_html_aa6d5cdd7bb694cbe483b6acc9a36c72b"><div class="ttname"><a href="class_single_color_page.html#aa6d5cdd7bb694cbe483b6acc9a36c72b">SingleColorPage::colorChanged</a></div><div class="ttdeci">void colorChanged(QColor)</div><div class="ttdoc">colorChanged signaled whenever the ColorPicker chooses a new color. </div><div class="ttdef"><b>Definition:</b> singlecolorpage.cpp:97</div></div>
+<div class="ttc" id="class_single_color_page_html_aaa55e5c17f67e97daaac4b8638924ba3"><div class="ttname"><a href="class_single_color_page.html#aaa55e5c17f67e97daaac4b8638924ba3">SingleColorPage::singleColorChanged</a></div><div class="ttdeci">void singleColorChanged(QColor)</div><div class="ttdoc">singleColorChanged Used to signal back to the MainWindow that the main color of the single color page...</div></div>
 <div class="ttc" id="class_single_color_page_html_ad5479b6eff5c06bd4d1ac48df50c414e"><div class="ttname"><a href="class_single_color_page.html#ad5479b6eff5c06bd4d1ac48df50c414e">SingleColorPage::chooseColor</a></div><div class="ttdeci">void chooseColor(QColor color)</div><div class="ttdoc">chooseColor allows the color of the ColorPicker and the single color routines to be set programmatica...</div><div class="ttdef"><b>Definition:</b> singlecolorpage.cpp:28</div></div>
 <div class="ttc" id="class_single_color_page_html_a28bf3e52571206bbf70a7a675e8c9cab"><div class="ttname"><a href="class_single_color_page.html#a28bf3e52571206bbf70a7a675e8c9cab">SingleColorPage::SingleColorPage</a></div><div class="ttdeci">SingleColorPage(QWidget *parent=0)</div><div class="ttdoc">Constructor. </div><div class="ttdef"><b>Definition:</b> singlecolorpage.cpp:14</div></div>
-<div class="ttc" id="class_single_color_page_html_a03a746b6ddc669f8224775a3eb3bde8f"><div class="ttname"><a href="class_single_color_page.html#a03a746b6ddc669f8224775a3eb3bde8f">SingleColorPage::highlightRoutineButton</a></div><div class="ttdeci">void highlightRoutineButton(ELightingRoutine routine)</div><div class="ttdoc">highlightRoutineButton highlights the button that implements the routine parameter. If it can&#39;t find a button that implements the lighting routine, then all buttons are unhighlighted </div><div class="ttdef"><b>Definition:</b> singlecolorpage.cpp:62</div></div>
-<div class="ttc" id="class_single_color_page_html_a1f6a1d6107bc0f9710065d2ef735a42a"><div class="ttname"><a href="class_single_color_page.html#a1f6a1d6107bc0f9710065d2ef735a42a">SingleColorPage::showEvent</a></div><div class="ttdeci">void showEvent(QShowEvent *)</div><div class="ttdoc">showEvent called whenever the page is about to be shown, used to to make sure that the the hilighted ...</div><div class="ttdef"><b>Definition:</b> singlecolorpage.cpp:124</div></div>
-<div class="ttc" id="class_single_color_page_html_ae0e8e2220e894780443ef069ad3a34c5"><div class="ttname"><a href="class_single_color_page.html#ae0e8e2220e894780443ef069ad3a34c5">SingleColorPage::setupButtons</a></div><div class="ttdeci">void setupButtons()</div><div class="ttdoc">setupButtons sets up the routine buttons. Requires the DataLayer of the application to be set up firs...</div><div class="ttdef"><b>Definition:</b> singlecolorpage.cpp:33</div></div>
+<div class="ttc" id="class_single_color_page_html_a03a746b6ddc669f8224775a3eb3bde8f"><div class="ttname"><a href="class_single_color_page.html#a03a746b6ddc669f8224775a3eb3bde8f">SingleColorPage::highlightRoutineButton</a></div><div class="ttdeci">void highlightRoutineButton(ELightingRoutine routine)</div><div class="ttdoc">highlightRoutineButton highlights the button that implements the routine parameter. If it can&#39;t find a button that implements the lighting routine, then all buttons are unhighlighted </div><div class="ttdef"><b>Definition:</b> singlecolorpage.cpp:63</div></div>
+<div class="ttc" id="class_single_color_page_html_a1f6a1d6107bc0f9710065d2ef735a42a"><div class="ttname"><a href="class_single_color_page.html#a1f6a1d6107bc0f9710065d2ef735a42a">SingleColorPage::showEvent</a></div><div class="ttdeci">void showEvent(QShowEvent *)</div><div class="ttdoc">showEvent called whenever the page is about to be shown, used to to make sure that the the hilighted ...</div><div class="ttdef"><b>Definition:</b> singlecolorpage.cpp:122</div></div>
+<div class="ttc" id="class_single_color_page_html_ae0e8e2220e894780443ef069ad3a34c5"><div class="ttname"><a href="class_single_color_page.html#ae0e8e2220e894780443ef069ad3a34c5">SingleColorPage::setupButtons</a></div><div class="ttdeci">void setupButtons()</div><div class="ttdoc">setupButtons sets up the routine buttons. Requires the DataLayer of the application to be set up firs...</div><div class="ttdef"><b>Definition:</b> singlecolorpage.cpp:34</div></div>
 <div class="ttc" id="class_single_color_page_html_ac31af7084d1b49e61d1faf05d624c7a0"><div class="ttname"><a href="class_single_color_page.html#ac31af7084d1b49e61d1faf05d624c7a0">SingleColorPage::updateMainIcons</a></div><div class="ttdeci">void updateMainIcons()</div><div class="ttdoc">Used to signal back to the main page that it should update its top-left icon with new RGB values...</div></div>
 <div class="ttc" id="class_icon_data_html"><div class="ttname"><a href="class_icon_data.html">IconData</a></div><div class="ttdoc">The IconData class creates all the pixel-y square icons that are seen throughout the app...</div><div class="ttdef"><b>Definition:</b> icondata.h:24</div></div>
-<div class="ttc" id="class_single_color_page_html_a4515facc033cd59a668de0423506799d"><div class="ttname"><a href="class_single_color_page.html#a4515facc033cd59a668de0423506799d">SingleColorPage::modeChanged</a></div><div class="ttdeci">void modeChanged(int, int)</div><div class="ttdoc">modeChanged signaled whenever a mode button is pressed, used to to tell the LEDs to update...</div><div class="ttdef"><b>Definition:</b> singlecolorpage.cpp:89</div></div>
+<div class="ttc" id="class_single_color_page_html_a4515facc033cd59a668de0423506799d"><div class="ttname"><a href="class_single_color_page.html#a4515facc033cd59a668de0423506799d">SingleColorPage::modeChanged</a></div><div class="ttdeci">void modeChanged(int, int)</div><div class="ttdoc">modeChanged signaled whenever a mode button is pressed, used to to tell the LEDs to update...</div><div class="ttdef"><b>Definition:</b> singlecolorpage.cpp:90</div></div>
 </div><!-- fragment --></div><!-- contents -->
 
 <hr>

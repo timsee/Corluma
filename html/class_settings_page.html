@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.6</span>
+   &#160;<span id="projectnumber">v0.9.65</span>
    </div>
   </td>
  </tr>
@@ -74,10 +74,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_settings_page.html#a39e1e36f2ca99cbf37740c40fbe42c58">timeoutChanged</a> (int)</td></tr>
 <tr class="memdesc:a39e1e36f2ca99cbf37740c40fbe42c58"><td class="mdescLeft">&#160;</td><td class="mdescRight">timeoutChanged signaled whenever the slider that controls the LEDs idle time out changes its value. <br /></td></tr>
 <tr class="separator:a39e1e36f2ca99cbf37740c40fbe42c58"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a64c4cb5e7df16ecd46cc88daf94fce1f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a64c4cb5e7df16ecd46cc88daf94fce1f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_settings_page.html#a64c4cb5e7df16ecd46cc88daf94fce1f">lightStateChanged</a> (int, int)</td></tr>
-<tr class="memdesc:a64c4cb5e7df16ecd46cc88daf94fce1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">lightStateChanged called whenever theres any change in the state of any of the lights. <br /></td></tr>
-<tr class="separator:a64c4cb5e7df16ecd46cc88daf94fce1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a566f30f6ca4d9ec6ee2035f24d160e65"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a566f30f6ca4d9ec6ee2035f24d160e65"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_settings_page.html#a566f30f6ca4d9ec6ee2035f24d160e65">lightStateChanged</a> (int, QString)</td></tr>
+<tr class="memdesc:a566f30f6ca4d9ec6ee2035f24d160e65"><td class="mdescLeft">&#160;</td><td class="mdescRight">lightStateChanged called whenever theres any change in the state of any of the lights. <br /></td></tr>
+<tr class="separator:a566f30f6ca4d9ec6ee2035f24d160e65"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2834619870fa16f97f1b2fddad189eb7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2834619870fa16f97f1b2fddad189eb7"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_settings_page.html#a2834619870fa16f97f1b2fddad189eb7">listClicked</a> (QListWidgetItem *)</td></tr>
 <tr class="memdesc:a2834619870fa16f97f1b2fddad189eb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">listClicked signaled whenever the serial list is clicked. It attempts to connect to the serial device that is clicked, if its not already connected. <br /></td></tr>
@@ -137,6 +137,10 @@ Protected Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_settings_page.html#af2bafc60ea01bddbc3b046a5561d5a65">showEvent</a> (QShowEvent *)</td></tr>
 <tr class="memdesc:af2bafc60ea01bddbc3b046a5561d5a65"><td class="mdescLeft">&#160;</td><td class="mdescRight">showEvent called before the this page is shown. Used to sync up any changes that may have happened on other pages. <br /></td></tr>
 <tr class="separator:af2bafc60ea01bddbc3b046a5561d5a65"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b9580672781df7da04b27d6f2acc71d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1b9580672781df7da04b27d6f2acc71d"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_settings_page.html#a1b9580672781df7da04b27d6f2acc71d">hideEvent</a> (QHideEvent *)</td></tr>
+<tr class="memdesc:a1b9580672781df7da04b27d6f2acc71d"><td class="mdescLeft">&#160;</td><td class="mdescRight">hideEvent called as the page is hidden. This happens when a new page is displayed. <br /></td></tr>
+<tr class="separator:a1b9580672781df7da04b27d6f2acc71d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>

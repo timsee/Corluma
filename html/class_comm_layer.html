@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.6</span>
+   &#160;<span id="projectnumber">v0.9.65</span>
    </div>
   </td>
  </tr>
@@ -68,10 +68,10 @@ Signals</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a0a17dd140c665e5ce02e85d82c0bb813">hueDiscoveryStateChange</a> (int)</td></tr>
 <tr class="memdesc:a0a17dd140c665e5ce02e85d82c0bb813"><td class="mdescLeft">&#160;</td><td class="mdescRight">hueDiscoveryStateChange the state of the Hue discovery methods, forwarded from a private <a class="el" href="class_hue_bridge_discovery.html" title="The HueBridgeDiscovery class is an object that handles the discovery of a hue bridge by using a combi...">HueBridgeDiscovery</a> object. <br /></td></tr>
 <tr class="separator:a0a17dd140c665e5ce02e85d82c0bb813"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36aab7eb7c6340a35475d34d56e6005e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a36aab7eb7c6340a35475d34d56e6005e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a36aab7eb7c6340a35475d34d56e6005e">lightStateUpdate</a> (int, int)</td></tr>
-<tr class="memdesc:a36aab7eb7c6340a35475d34d56e6005e"><td class="mdescLeft">&#160;</td><td class="mdescRight">lightStateUpdate sent any time theres an update to the state of any of the lights. <br /></td></tr>
-<tr class="separator:a36aab7eb7c6340a35475d34d56e6005e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85466633108bc2c93a3a7d3b0a04359d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a85466633108bc2c93a3a7d3b0a04359d"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a85466633108bc2c93a3a7d3b0a04359d">lightStateUpdate</a> (int, QString)</td></tr>
+<tr class="memdesc:a85466633108bc2c93a3a7d3b0a04359d"><td class="mdescLeft">&#160;</td><td class="mdescRight">lightStateUpdate sent any time theres an update to the state of any of the lights. <br /></td></tr>
+<tr class="separator:a85466633108bc2c93a3a7d3b0a04359d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -103,27 +103,28 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ab2698aa7769e2ca64ff3ae9eddf1759f">sendReset</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList)</td></tr>
 <tr class="memdesc:ab2698aa7769e2ca64ff3ae9eddf1759f"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendReset resets the board to its default settings. <br /></td></tr>
 <tr class="separator:ab2698aa7769e2ca64ff3ae9eddf1759f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aadb98d3f7b723acafea7128d8b4a10aa"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#aadb98d3f7b723acafea7128d8b4a10aa">numberOfConnectedDevices</a> (ECommType type, uint32_t controllerIndex)</td></tr>
-<tr class="memdesc:aadb98d3f7b723acafea7128d8b4a10aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">numberOfConnectedDevices Count of devices connected to the current controller.  <a href="#aadb98d3f7b723acafea7128d8b4a10aa">More...</a><br /></td></tr>
-<tr class="separator:aadb98d3f7b723acafea7128d8b4a10aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5ba259a60fbe98c2da324ea036d261c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ac5ba259a60fbe98c2da324ea036d261c">changeDeviceController</a> (ECommType type, QString controllerName)</td></tr>
-<tr class="memdesc:ac5ba259a60fbe98c2da324ea036d261c"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeDeviceController change to a different controller and its associated devices. A "controller" is either a Hue Bridge or an arduino. A "device" is either a hue light bulb or any of the supported arduino light platforms. Currently the codebase only support one hue bridge so this function will not work for hues.  <a href="#ac5ba259a60fbe98c2da324ea036d261c">More...</a><br /></td></tr>
-<tr class="separator:ac5ba259a60fbe98c2da324ea036d261c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afa0b552ee65f751a72472c923a12a4ca"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#afa0b552ee65f751a72472c923a12a4ca">controllerIndexByName</a> (ECommType type, QString name)</td></tr>
-<tr class="memdesc:afa0b552ee65f751a72472c923a12a4ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">controllerIndexByName returns the controller index of the controller provided in the provided commtype, if one exists  <a href="#afa0b552ee65f751a72472c923a12a4ca">More...</a><br /></td></tr>
-<tr class="separator:afa0b552ee65f751a72472c923a12a4ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ab973b6b87d25cd3201b4db338ea12a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a1ab973b6b87d25cd3201b4db338ea12a">removeConnection</a> (ECommType type, QString connection)</td></tr>
-<tr class="memdesc:a1ab973b6b87d25cd3201b4db338ea12a"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeConnection attempt to remove a controller in a connection list  <a href="#a1ab973b6b87d25cd3201b4db338ea12a">More...</a><br /></td></tr>
-<tr class="separator:a1ab973b6b87d25cd3201b4db338ea12a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa9e193b07fad4032972b5510d77a4de6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#aa9e193b07fad4032972b5510d77a4de6">addConnection</a> (ECommType type, QString connection)</td></tr>
-<tr class="memdesc:aa9e193b07fad4032972b5510d77a4de6"><td class="mdescLeft">&#160;</td><td class="mdescRight">addConnection attempt to add a controller to a connection list  <a href="#aa9e193b07fad4032972b5510d77a4de6">More...</a><br /></td></tr>
-<tr class="separator:aa9e193b07fad4032972b5510d77a4de6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a70630e5c0cc38c2fcaa7aa2a2bd0cc03"><td class="memItemLeft" align="right" valign="top">std::deque&lt; QString &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a70630e5c0cc38c2fcaa7aa2a2bd0cc03">controllerList</a> (ECommType type)</td></tr>
-<tr class="memdesc:a70630e5c0cc38c2fcaa7aa2a2bd0cc03"><td class="mdescLeft">&#160;</td><td class="mdescRight">controllerList list of controllers for a given commtype  <a href="#a70630e5c0cc38c2fcaa7aa2a2bd0cc03">More...</a><br /></td></tr>
-<tr class="separator:a70630e5c0cc38c2fcaa7aa2a2bd0cc03"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3054eee28e7e8e8178cd97a193a0b4f8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a3054eee28e7e8e8178cd97a193a0b4f8">deviceByControllerAndIndex</a> (ECommType type, SLightDevice &amp;device, int controllerIndex, int deviceIndex)</td></tr>
-<tr class="memdesc:a3054eee28e7e8e8178cd97a193a0b4f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceByControllerAndIndex fills the given device with the controller described by the type, controllerIndex, and deviceIndex provdied.  <a href="#a3054eee28e7e8e8178cd97a193a0b4f8">More...</a><br /></td></tr>
-<tr class="separator:a3054eee28e7e8e8178cd97a193a0b4f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d98a1b89b961878a9c1fc0c802a4a88"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a2d98a1b89b961878a9c1fc0c802a4a88">addController</a> (ECommType type, QString controller)</td></tr>
+<tr class="memdesc:a2d98a1b89b961878a9c1fc0c802a4a88"><td class="mdescLeft">&#160;</td><td class="mdescRight">addController attempt to add a controller to the hash table  <a href="#a2d98a1b89b961878a9c1fc0c802a4a88">More...</a><br /></td></tr>
+<tr class="separator:a2d98a1b89b961878a9c1fc0c802a4a88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e5feb9a05ca5bf5c0db551c6d234cc1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a1e5feb9a05ca5bf5c0db551c6d234cc1">removeController</a> (ECommType type, QString controller)</td></tr>
+<tr class="memdesc:a1e5feb9a05ca5bf5c0db551c6d234cc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeConnection attempt to remove a controller to the hash table  <a href="#a1e5feb9a05ca5bf5c0db551c6d234cc1">More...</a><br /></td></tr>
+<tr class="separator:a1e5feb9a05ca5bf5c0db551c6d234cc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3892aa5d00310af6301aff695373cd64"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a3892aa5d00310af6301aff695373cd64">fillDevice</a> (SLightDevice &amp;device)</td></tr>
+<tr class="memdesc:a3892aa5d00310af6301aff695373cd64"><td class="mdescLeft">&#160;</td><td class="mdescRight">fillDevice use the controller name, type, and index to fill in the rest of the devices data.  <a href="#a3892aa5d00310af6301aff695373cd64">More...</a><br /></td></tr>
+<tr class="separator:a3892aa5d00310af6301aff695373cd64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4f599e9233fad8f33959b1025a9cf36"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae4f599e9233fad8f33959b1025a9cf36"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ae4f599e9233fad8f33959b1025a9cf36">startDiscovery</a> ()</td></tr>
+<tr class="memdesc:ae4f599e9233fad8f33959b1025a9cf36"><td class="mdescLeft">&#160;</td><td class="mdescRight">startDiscovery put all active connection types into a discovery mode. <br /></td></tr>
+<tr class="separator:ae4f599e9233fad8f33959b1025a9cf36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa83dd35288767413f37bf8b2d2152dd8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa83dd35288767413f37bf8b2d2152dd8"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#aa83dd35288767413f37bf8b2d2152dd8">stopDiscovery</a> ()</td></tr>
+<tr class="memdesc:aa83dd35288767413f37bf8b2d2152dd8"><td class="mdescLeft">&#160;</td><td class="mdescRight">stopDiscovery changes the mode of all communication types to no longer be in discovery. <br /></td></tr>
+<tr class="separator:aa83dd35288767413f37bf8b2d2152dd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2150b9b9f584a5064be8bae460361cbe"><td class="memItemLeft" align="right" valign="top">const std::unordered_map<br class="typebreak" />
+&lt; std::string, std::list<br class="typebreak" />
+&lt; SLightDevice &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a2150b9b9f584a5064be8bae460361cbe">deviceTable</a> (ECommType type)</td></tr>
+<tr class="memdesc:a2150b9b9f584a5064be8bae460361cbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceTable a hash table of all connected devices of a certain connection type. The controller names are used as keys.  <a href="#a2150b9b9f584a5064be8bae460361cbe">More...</a><br /></td></tr>
+<tr class="separator:a2150b9b9f584a5064be8bae460361cbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abdad51f50927248ecda80ea761d69931"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#abdad51f50927248ecda80ea761d69931">dataLayer</a> (<a class="el" href="class_data_layer.html">DataLayer</a> *data)</td></tr>
 <tr class="memdesc:abdad51f50927248ecda80ea761d69931"><td class="mdescLeft">&#160;</td><td class="mdescRight">dataLayer attach the data layer to the comm layer.  remove the need for this through refactoring the data layer.  <a href="#abdad51f50927248ecda80ea761d69931">More...</a><br /></td></tr>
 <tr class="separator:abdad51f50927248ecda80ea761d69931"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -152,12 +153,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="aa9e193b07fad4032972b5510d77a4de6"></a>
+<a class="anchor" id="a2d98a1b89b961878a9c1fc0c802a4a88"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool CommLayer::addConnection </td>
+          <td class="memname">bool CommLayer::addController </td>
           <td>(</td>
           <td class="paramtype">ECommType&#160;</td>
           <td class="paramname"><em>type</em>, </td>
@@ -166,7 +167,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">QString&#160;</td>
-          <td class="paramname"><em>connection</em>&#160;</td>
+          <td class="paramname"><em>controller</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -183,95 +184,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if controller is added, false othewrise. </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="ac5ba259a60fbe98c2da324ea036d261c"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CommLayer::changeDeviceController </td>
-          <td>(</td>
-          <td class="paramtype">ECommType&#160;</td>
-          <td class="paramname"><em>type</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">QString&#160;</td>
-          <td class="paramname"><em>controllerName</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">controllerName</td><td>the name of a controller, It is either its IP address for arduino yun samples, its serial port for arduino wired samples. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="afa0b552ee65f751a72472c923a12a4ca"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int CommLayer::controllerIndexByName </td>
-          <td>(</td>
-          <td class="paramtype">ECommType&#160;</td>
-          <td class="paramname"><em>type</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">QString&#160;</td>
-          <td class="paramname"><em>name</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">type</td><td>the type of controller you're lookign for the index of </td></tr>
-    <tr><td class="paramname">name</td><td>the name of the controller you're looking for the index of </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>the index of the controller if it exists, -1 otherwise. </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a70630e5c0cc38c2fcaa7aa2a2bd0cc03"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::deque&lt; QString &gt; * CommLayer::controllerList </td>
-          <td>(</td>
-          <td class="paramtype">ECommType&#160;</td>
-          <td class="paramname"><em>type</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">type</td><td>the type of connection that you are requested controllers from </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>the list of of controllers for the given commtype </dd></dl>
 
 </div>
 </div>
@@ -297,51 +209,57 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="a3054eee28e7e8e8178cd97a193a0b4f8"></a>
+<a class="anchor" id="a2150b9b9f584a5064be8bae460361cbe"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::unordered_map&lt;std::string, std::list&lt;SLightDevice&gt; &gt;&amp; CommLayer::deviceTable </td>
+          <td>(</td>
+          <td class="paramtype">ECommType&#160;</td>
+          <td class="paramname"><em>type</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">type</td><td>the communication type to request. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a hash table of all connected devices of the given type. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a3892aa5d00310af6301aff695373cd64"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool CommLayer::deviceByControllerAndIndex </td>
+          <td class="memname">bool CommLayer::fillDevice </td>
           <td>(</td>
-          <td class="paramtype">ECommType&#160;</td>
-          <td class="paramname"><em>type</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype">SLightDevice &amp;&#160;</td>
-          <td class="paramname"><em>device</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>device</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>controllerIndex</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>deviceIndex</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">type</td><td>the commtype of the device being requested </td></tr>
-    <tr><td class="paramname">device</td><td>the device to fill with the proper info </td></tr>
-    <tr><td class="paramname">controllerIndex</td><td>the index of the controller </td></tr>
-    <tr><td class="paramname">deviceIndex</td><td>the index of the device </td></tr>
+    <tr><td class="paramname">device</td><td>the device with a defined name, type, and index </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if controller is found and filled, false otherwise. </dd></dl>
 
 </div>
 </div>
@@ -369,39 +287,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="aadb98d3f7b723acafea7128d8b4a10aa"></a>
+<a class="anchor" id="a1e5feb9a05ca5bf5c0db551c6d234cc1"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int CommLayer::numberOfConnectedDevices </td>
-          <td>(</td>
-          <td class="paramtype">ECommType&#160;</td>
-          <td class="paramname"><em>type</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>controllerIndex</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>count of devices connected to the current controller. </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a1ab973b6b87d25cd3201b4db338ea12a"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool CommLayer::removeConnection </td>
+          <td class="memname">bool CommLayer::removeController </td>
           <td>(</td>
           <td class="paramtype">ECommType&#160;</td>
           <td class="paramname"><em>type</em>, </td>
@@ -410,7 +301,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">QString&#160;</td>
-          <td class="paramname"><em>connection</em>&#160;</td>
+          <td class="paramname"><em>controller</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

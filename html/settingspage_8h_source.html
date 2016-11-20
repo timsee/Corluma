@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.6</span>
+   &#160;<span id="projectnumber">v0.9.65</span>
    </div>
   </td>
  </tr>
@@ -85,7 +85,7 @@
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#a39e1e36f2ca99cbf37740c40fbe42c58">timeoutChanged</a>(<span class="keywordtype">int</span>);</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#a64c4cb5e7df16ecd46cc88daf94fce1f">lightStateChanged</a>(<span class="keywordtype">int</span>, <span class="keywordtype">int</span>);</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#a566f30f6ca4d9ec6ee2035f24d160e65">lightStateChanged</a>(<span class="keywordtype">int</span>, QString);</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#a2834619870fa16f97f1b2fddad189eb7">listClicked</a>(QListWidgetItem *);</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;</div>
@@ -107,32 +107,34 @@
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="keyword">protected</span>:</div>
 <div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#af2bafc60ea01bddbc3b046a5561d5a65">showEvent</a>(QShowEvent *);</div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    Ui::SettingsPage *ui;</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    ECommType mCommType;</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#a1b9580672781df7da04b27d6f2acc71d">hideEvent</a>(QHideEvent *);</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    Ui::SettingsPage *ui;</div>
 <div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    QString mCurrentListString;</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    <span class="keywordtype">int</span> mSliderSpeedValue;</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    EHueDiscoveryState mHueDiscoveryState;</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    QSettings *mSettings;</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;};</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;<span class="preprocessor">#endif // SETTINGSPAGE_H</span></div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    ECommType mCommType;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    QString mCurrentListString;</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="keywordtype">int</span> mSliderSpeedValue;</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    EHueDiscoveryState mHueDiscoveryState;</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    QSettings *mSettings;</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;};</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;<span class="preprocessor">#endif // SETTINGSPAGE_H</span></div>
 <div class="ttc" id="class_settings_page_html_a37925265d4bfe36f8ab1b68ecc50dc37"><div class="ttname"><a href="class_settings_page.html#a37925265d4bfe36f8ab1b68ecc50dc37">SettingsPage::highlightButton</a></div><div class="ttdeci">void highlightButton(ECommType currentCommType)</div><div class="ttdoc">highlightButton highlight the commtype button of the desired ECommType </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:151</div></div>
 <div class="ttc" id="class_lighting_page_html"><div class="ttname"><a href="class_lighting_page.html">LightingPage</a></div><div class="ttdoc">Inherited by Lighting Pages, provides a link to the backend. </div><div class="ttdef"><b>Definition:</b> lightingpage.h:15</div></div>
 <div class="ttc" id="class_settings_page_html_a13fe17ac61ace14cbac4882ee38f6b61"><div class="ttname"><a href="class_settings_page.html#a13fe17ac61ace14cbac4882ee38f6b61">SettingsPage::speedChanged</a></div><div class="ttdeci">void speedChanged(int)</div><div class="ttdoc">speedChanged signaled whenever the slider that controls the LEDs speed changes its value...</div><div class="ttdef"><b>Definition:</b> settingspage.cpp:103</div></div>
-<div class="ttc" id="class_settings_page_html_ab621ddb0ad88bbc8c71d2359c26804e8"><div class="ttname"><a href="class_settings_page.html#ab621ddb0ad88bbc8c71d2359c26804e8">SettingsPage::hueDiscoveryUpdate</a></div><div class="ttdeci">void hueDiscoveryUpdate(int)</div><div class="ttdoc">hueDiscoveryUpdate provides an int representation of the EHueDiscoveryState of Hue&#39;s discovery object...</div><div class="ttdef"><b>Definition:</b> settingspage.cpp:239</div></div>
+<div class="ttc" id="class_settings_page_html_ab621ddb0ad88bbc8c71d2359c26804e8"><div class="ttname"><a href="class_settings_page.html#ab621ddb0ad88bbc8c71d2359c26804e8">SettingsPage::hueDiscoveryUpdate</a></div><div class="ttdeci">void hueDiscoveryUpdate(int)</div><div class="ttdoc">hueDiscoveryUpdate provides an int representation of the EHueDiscoveryState of Hue&#39;s discovery object...</div><div class="ttdef"><b>Definition:</b> settingspage.cpp:237</div></div>
+<div class="ttc" id="class_settings_page_html_a1b9580672781df7da04b27d6f2acc71d"><div class="ttname"><a href="class_settings_page.html#a1b9580672781df7da04b27d6f2acc71d">SettingsPage::hideEvent</a></div><div class="ttdeci">void hideEvent(QHideEvent *)</div><div class="ttdoc">hideEvent called as the page is hidden. This happens when a new page is displayed. </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:295</div></div>
 <div class="ttc" id="namespace_ui_html"><div class="ttname"><a href="namespace_ui.html">Ui</a></div><div class="ttdef"><b>Definition:</b> customcolorspage.h:16</div></div>
-<div class="ttc" id="class_settings_page_html_af2bafc60ea01bddbc3b046a5561d5a65"><div class="ttname"><a href="class_settings_page.html#af2bafc60ea01bddbc3b046a5561d5a65">SettingsPage::showEvent</a></div><div class="ttdeci">void showEvent(QShowEvent *)</div><div class="ttdoc">showEvent called before the this page is shown. Used to sync up any changes that may have happened on...</div><div class="ttdef"><b>Definition:</b> settingspage.cpp:276</div></div>
+<div class="ttc" id="class_settings_page_html_af2bafc60ea01bddbc3b046a5561d5a65"><div class="ttname"><a href="class_settings_page.html#af2bafc60ea01bddbc3b046a5561d5a65">SettingsPage::showEvent</a></div><div class="ttdeci">void showEvent(QShowEvent *)</div><div class="ttdoc">showEvent called before the this page is shown. Used to sync up any changes that may have happened on...</div><div class="ttdef"><b>Definition:</b> settingspage.cpp:274</div></div>
+<div class="ttc" id="class_settings_page_html_a566f30f6ca4d9ec6ee2035f24d160e65"><div class="ttname"><a href="class_settings_page.html#a566f30f6ca4d9ec6ee2035f24d160e65">SettingsPage::lightStateChanged</a></div><div class="ttdeci">void lightStateChanged(int, QString)</div><div class="ttdoc">lightStateChanged called whenever theres any change in the state of any of the lights. </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:300</div></div>
 <div class="ttc" id="class_settings_page_html_a39e1e36f2ca99cbf37740c40fbe42c58"><div class="ttname"><a href="class_settings_page.html#a39e1e36f2ca99cbf37740c40fbe42c58">SettingsPage::timeoutChanged</a></div><div class="ttdeci">void timeoutChanged(int)</div><div class="ttdoc">timeoutChanged signaled whenever the slider that controls the LEDs idle time out changes its value...</div><div class="ttdef"><b>Definition:</b> settingspage.cpp:122</div></div>
 <div class="ttc" id="class_settings_page_html_a562dddf7846e0be2017ab2c4c059738b"><div class="ttname"><a href="class_settings_page.html#a562dddf7846e0be2017ab2c4c059738b">SettingsPage::minusButtonClicked</a></div><div class="ttdeci">void minusButtonClicked()</div><div class="ttdoc">minusButtonClicked called whenever the minus button is clicked </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:221</div></div>
 <div class="ttc" id="class_settings_page_html_a20888ad10de70f082260e916ced2e4fa"><div class="ttname"><a href="class_settings_page.html#a20888ad10de70f082260e916ced2e4fa">SettingsPage::~SettingsPage</a></div><div class="ttdeci">~SettingsPage()</div><div class="ttdoc">Deconstructor. </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:75</div></div>
-<div class="ttc" id="class_settings_page_html_a64c4cb5e7df16ecd46cc88daf94fce1f"><div class="ttname"><a href="class_settings_page.html#a64c4cb5e7df16ecd46cc88daf94fce1f">SettingsPage::lightStateChanged</a></div><div class="ttdeci">void lightStateChanged(int, int)</div><div class="ttdoc">lightStateChanged called whenever theres any change in the state of any of the lights. </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:294</div></div>
 <div class="ttc" id="class_settings_page_html_a1c1f0cce7608c863bc0499b3fdef4016"><div class="ttname"><a href="class_settings_page.html#a1c1f0cce7608c863bc0499b3fdef4016">SettingsPage::plusButtonClicked</a></div><div class="ttdeci">void plusButtonClicked()</div><div class="ttdoc">plusButtonClicked called whenever the plus button is clicked </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:212</div></div>
 <div class="ttc" id="class_settings_page_html"><div class="ttname"><a href="class_settings_page.html">SettingsPage</a></div><div class="ttdoc">The SettingsPage provides a way to configure the application settings. </div><div class="ttdef"><b>Definition:</b> settingspage.h:32</div></div>
 <div class="ttc" id="class_settings_page_html_a2f7b734cd4b293694140ed7504d19a55"><div class="ttname"><a href="class_settings_page.html#a2f7b734cd4b293694140ed7504d19a55">SettingsPage::SettingsPage</a></div><div class="ttdeci">SettingsPage(QWidget *parent=0)</div><div class="ttdoc">Constructor. </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:17</div></div>
