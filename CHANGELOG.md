@@ -106,4 +106,11 @@
 - Fixed bugs.
 
 
+### **v0.9.65** 
+#### CommType Update
+- Simplified internal data structures for storing and accessing lights.
+- Simplified APIs.
+- Fixed bugs with multiple simultaneous Serial and HTTP connections.
+- Finished converting DataLayer from maintaining only one device at a time to handling multiple devices. 
+- Fixed miscellaneous bugs.
 
