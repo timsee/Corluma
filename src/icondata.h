@@ -53,6 +53,14 @@ public:
     void setLightingRoutine(ELightingRoutine routine, EColorGroup colorGroup = EColorGroup::eCustom);
 
     /*!
+     * \brief setSingleLightingRoutine use a lighting routine and a color to set up the IconData
+     *        for a single color routine.
+     * \param routine lighting routine to use for the icon.
+     * \param color color to use for the icon.
+     */
+    void setSingleLightingRoutine(ELightingRoutine routine, QColor color);
+
+    /*!
      * \brief setSolidColor sets the icon as a solid color
      */
     void setSolidColor(QColor color);

@@ -31,26 +31,12 @@ public:
     ~CommUDP();
 
     /*!
-     * \brief closeConnection unnecesary, implemented
-     *        only to comply with being a CommType, since
-     *        UDP is connectionless.
-     */
-    void closeConnection();
-
-    /*!
-     * \brief changeConnection changes the IP address that is currently connected.
-     * \param connectionName the IP address that you want to connect to.
-     */
-    void changeConnection(QString newConnection);
-
-    /*!
      * \brief sendPacket sends the packet over UDP to a specified
      *        IP addres and port. Returns immediately and buffers
      *        unsent packets.
      * \param packet the string that is going to get sent over UDP.
      */
     void sendPacket(QString controller, QString packet);
-
 
 private slots:
     /*!
@@ -80,25 +66,9 @@ private:
     QUdpSocket *mSocket;
 
     /*!
-     * \brief mDiscoveryTimer used during discovery to poll the device every few seconds.
-     */
-    QTimer *mDiscoveryTimer;
-
-    /*!
      * \brief mBound true if already bound, false otherwise.
      */
     bool mBound;
-
-    /*!
-     * \brief mThrottleList list of throttles paired with strings. This allows each different
-     *        discovered device to use a different throttle.
-     */
-    std::list<std::pair<QString, CommThrottle*> > mThrottleList;
-
-    /*!
-     * \brief mDiscoveryList list of devices that have been discovered properly.
-     */
-    std::list<QString> mDiscoveryList;
 };
 
 #endif // COMMUDP_H

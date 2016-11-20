@@ -73,6 +73,11 @@ signals:
      */
     void updateMainIcons();
 
+    /*!
+     * \brief singleColorChanged Used to signal back to the MainWindow that the main color of the
+     *        single color page has changed.
+     */
+    void singleColorChanged(QColor);
 
 public slots:
     /*!

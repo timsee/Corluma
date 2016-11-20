@@ -43,6 +43,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->presetColorsPage, SIGNAL(updateMainIcons()), this, SLOT(updateMenuBar()));
     connect(ui->settingsPage, SIGNAL(updateMainIcons()), this, SLOT(updateMenuBar()));
 
+
+    connect(ui->singleColorPage, SIGNAL(singleColorChanged(QColor)),  this, SLOT(updateSingleColor(QColor)));
+    connect(ui->presetColorsPage, SIGNAL(presetColorGroupChanged(int, int)),  this, SLOT(updatePresetColorGroup(int, int)));
+
     // --------------
     // Setup Buttons
     // --------------
@@ -124,8 +128,7 @@ void MainWindow::toggleOnOff() {
 }
 
 void MainWindow::brightnessChanged(int newBrightness) {
-   mData->brightness(newBrightness);
-   mComm->sendBrightness(mData->currentDevices(), mData->brightness());
+   mComm->sendBrightness(mData->currentDevices(), newBrightness);
    mIsOn = true;
 }
 
@@ -180,6 +183,19 @@ void MainWindow::updateMenuBar() {
     }
 }
 
+void MainWindow::updateSingleColor(QColor color) {
+    mIconData.setSolidColor(color);
+    ui->singleColorButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, color);
+    ui->brightnessSlider->setSliderColorBackground(color);
+    ui->onOffButton->setIcon(mIconData.renderAsQPixmap());
+}
+
+void MainWindow::updatePresetColorGroup(int lightingRoutine, int colorGroup) {
+    mIconData.setMultiFade((EColorGroup)colorGroup);
+    ui->presetArrayButton->updateIconPresetColorRoutine((ELightingRoutine)lightingRoutine, (EColorGroup)colorGroup);
+    ui->brightnessSlider->setSliderColorBackground(mData->colorsAverage((EColorGroup)colorGroup));
+    ui->onOffButton->setIcon(mIconData.renderAsQPixmap());
+}
 
 // ----------------------------
 // Protected

@@ -7,9 +7,9 @@
 #include "commhttp.h"
 
 CommHTTP::CommHTTP() {
-    mThrottle = new CommThrottle();
-    connect(mThrottle, SIGNAL(sendThrottleBuffer(QString, QString)), this, SLOT(sendThrottleBuffer(QString, QString)));
-    mThrottle->startThrottle(500, 3);
+
+    mDiscoveryTimer = new QTimer(this);
+    connect(mDiscoveryTimer, SIGNAL(timeout()), this, SLOT(discoveryRoutine()));
 
     mNetworkManager = new QNetworkAccessManager(this);
     setupConnectionList(ECommType::eHTTP);
@@ -26,33 +26,38 @@ CommHTTP::~CommHTTP() {
 }
 
 
-void CommHTTP::closeConnection() {
-
-}
-
-
-void CommHTTP::changeConnection(QString newConnection) {
-    mConnection = newConnection;
-}
-
 void CommHTTP::sendPacket(QString controller, QString packet) {
-    // add the packet to the URL address.
-    QString urlString = "http://" + controller + "/arduino/" + packet;
-    //qDebug() << "sending" << urlString;
-    if(mThrottle->checkThrottle(controller, urlString)) {
-        if (packet.at(0) !=  QChar('7')) {
-            mThrottle->sentPacket();
+    for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
+        if (!throttle->first.compare(controller) && throttle->second->checkThrottle(controller, packet)) {
+            if (packet.at(0) !=  QChar('7')) {
+                throttle->second->sentPacket();
+            }
+            QString urlString = "http://" + controller + "/arduino/" + packet;
+            QNetworkRequest request = QNetworkRequest(QUrl(urlString));
+            //qDebug() << "sending" << urlString;
+            mNetworkManager->get(request);
         }
-        QNetworkRequest request = QNetworkRequest(QUrl(urlString));
-        mNetworkManager->get(request);
     }
 }
 
+
 void CommHTTP::stateUpdate() {
-   if (mThrottle->checkLastSend() < 15000) {
-       QString packet = QString("%1").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
-       // WARNING: this resets the throttle and gets called automatically!
-       sendPacket(mConnection, packet);
+    for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
+        if (mDiscoveryMode || throttle->second->checkLastSend() < mUpdateTimeoutInterval) {
+            QString packet = QString("%1").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
+            // WARNING: this resets the throttle and gets called automatically!
+             if (throttle->first.compare(QString(""))) {
+                 sendPacket(throttle->first, packet);
+             }
+        }
+    }
+
+    if (mDiscoveryMode
+            && mDiscoveryList.size() < mDeviceTable.size()
+            && !mDiscoveryTimer->isActive()) {
+        mDiscoveryTimer->start(1000);
+    } else if (!mDiscoveryMode && mDiscoveryTimer->isActive()) {
+        mDiscoveryTimer->stop();
     }
 }
 
@@ -61,22 +66,53 @@ void CommHTTP::sendThrottleBuffer(QString bufferedConnection, QString bufferedMe
     mNetworkManager->get(request);
 }
 
+void CommHTTP::discoveryRoutine() {
+   QString discoveryPacket = QString("DISCOVERY_PACKET");
+   for (auto&& it : mDeviceTable) {
+       QString controllerName = QString::fromUtf8(it.first.c_str());
+         bool found = (std::find(mDiscoveryList.begin(), mDiscoveryList.end(), controllerName) != mDiscoveryList.end());
+         if (!found) {
+             QString urlString = "http://" + controllerName + "/arduino/" + discoveryPacket;
+             QNetworkRequest request = QNetworkRequest(QUrl(urlString));
+             //qDebug() << "sending" << urlString;
+             mNetworkManager->get(request);
+         }
+    }
+}
+
+
+//--------------------
+// Receiving
+//--------------------
+
 void CommHTTP::replyFinished(QNetworkReply* reply) {
-    if (reply->error() == QNetworkReply::NoError) {
-        mThrottle->receivedUpdate();
-        QString payload = ((QString)reply->readAll()).trimmed();
-        QString discoveryPacket = "DISCOVERY_PACKET";
-        //qDebug() << "payload from HTTP" << payload;
-        if (payload.contains(discoveryPacket)) {
-            QString packet = payload.mid(discoveryPacket.size() + 3);
-            emit discoveryReceived(mConnection, packet, (int)ECommType::eHTTP);
-        } else {
-            QString packet = payload.simplified();
-            if (packet.at(0) == '7') {
-                emit packetReceived(mConnection, packet.mid(2), (int)ECommType::eHTTP);
-            } else {
-                emit packetReceived(mConnection, packet, (int)ECommType::eHTTP);
+    for (auto&& it : mDeviceTable) {
+        QString controllerName = QString::fromUtf8(it.first.c_str());
+        QString fullURL = reply->url().toEncoded();
+        if (fullURL.contains(controllerName)) {
+            if (reply->error() == QNetworkReply::NoError) {
+                for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
+                    if (!throttle->first.compare(controllerName)) throttle->second->receivedUpdate();
+                }
+
+                QString payload = ((QString)reply->readAll()).trimmed();
+                QString discoveryPacket = "DISCOVERY_PACKET";
+                //qDebug() << "payload from HTTP" << payload;
+
+                if (payload.contains(discoveryPacket)) {
+                    QString packet = payload.mid(discoveryPacket.size() + 3);
+                    handleDiscoveryPacket(controllerName, 500, 3);
+                    emit discoveryReceived(controllerName, packet, (int)ECommType::eHTTP);
+                } else {
+                    QString packet = payload.simplified();
+                    if (packet.at(0) == '7') {
+                        emit packetReceived(controllerName, packet.mid(2), (int)ECommType::eHTTP);
+                    } else {
+                        emit packetReceived(controllerName, packet, (int)ECommType::eHTTP);
+                    }
+                }
             }
         }
     }
 }
+

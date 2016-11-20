@@ -10,115 +10,196 @@
 
 void CommType::setupConnectionList(ECommType type) {
     mType = type;
-    mControllerListCurrentSize = mSettings.value(settingsListSizeKey()).toInt();
 
+    int controllerListCurrentSize = mSettings.value(settingsListSizeKey()).toInt();
     // handles an edge case thats more likely to come up in debugging than typical use
     // but it would cause a crash either way...
-    if (mControllerListCurrentSize >= 10) {
+    if (controllerListCurrentSize >= 10) {
         qDebug() << "WARNING! You have too many saved settings. Reverting all.";
-        mControllerListCurrentSize = 0;
+        controllerListCurrentSize = 0;
     }
-    // create the mList object
-    mControllerList = new std::deque<QString>(10, nullptr);
-    mDeviceList = std::deque<std::vector<SLightDevice> >(10, std::vector<SLightDevice>(10));
+
     // add in a default for specific cases
-    if (mControllerListCurrentSize == 0) {
+    if (controllerListCurrentSize == 0) {
         if(mType == ECommType::eHTTP
              || mType == ECommType::eUDP ) {
-            addConnection(DEFAULT_IP);
+            addController(DEFAULT_IP);
         }
     } else {
         // load preexisting settings, if they exist
-        for (int i = 0; i < mControllerListCurrentSize; ++i) {
+        for (int i = 0; i < controllerListCurrentSize; ++i) {
            QString value = mSettings.value(settingsIndexKey(i)).toString();
-           if (value.compare(QString("")) != 0) addConnection(value, false);
+           if (value.compare(QString("")) != 0) addController(value);
         }
     }
+
+    mDiscoveryMode = false;
+    mUpdateTimeoutInterval = 15000;
 }
-
-bool CommType::addConnection(QString connection, bool shouldIncrement) {
-    // check both that the connection is valid and that it doesn't already exist in the list
-    if (checkIfConnectionIsValid(connection) && !checkIfConnectionExistsInList(connection)) {
-        // when less than the max size of connections have been saved, update these values
-        // add the connection to the front of the list
-        (*mControllerList).push_front(connection);
-
-        // add a default device
-        SLightDevice device;
-        device.index = 1;
-        device.name = connection;
-        device.type = mType;
-        device.isReachable = false;
-
-        SLightDevice invalidDevice;
-        invalidDevice.isValid = false;
-        invalidDevice.isReachable = false;
-
-        std::vector<SLightDevice> tempNewList(10, invalidDevice);
-        tempNewList[0] = device;
-        mDeviceList.push_front(tempNewList);
-
-        if (shouldIncrement) {
-            mControllerListCurrentSize++;
-        }
-        return true;
-    }
-    return false;
-}
-
-void CommType::changeConnection(QString newConnection) {}
-
-void CommType::closeConnection() {}
 
 void CommType::sendPacket(QString controller, QString packet) {}
 
-bool CommType::removeConnection(QString connection) {
-    int controllerIndex = controllerIndexByName(connection);
-    //qDebug()  << "contrroller index" << controllerIndex
-    //          << "num of devices" << numberOfConnectedDevices(controllerIndex)
-    //          << "num controllers" <<numberOfControllers()
-    //          << "type" << ECommTypeToString(mType);
-    // check if connection exists in list and that its not the only connection
-    if (checkIfConnectionExistsInList(connection)
-            && (numberOfControllers() > 1)
-            && (controllerIndex > -1)) {
-        // get index of connection we're removing
-        int tempIndex;
-        for (int i = 0; i < mControllerListCurrentSize; ++i) {
-            if (connection.compare((*mControllerList)[i]) == 0) tempIndex = i;
-        }
-        // handle edge case
-        if (tempIndex == (mControllerListCurrentSize - 1)) {
-           (*mControllerList)[tempIndex] = QString("");
-        } else if (mControllerListCurrentSize > 1) {
-            (*mControllerList).erase((*mControllerList).begin() + tempIndex);
-            mDeviceList.erase(mDeviceList.begin() + tempIndex);
-        }
-        // reduce the overall size.
-        if ((mControllerListCurrentSize != 0)) mControllerListCurrentSize--;
+void CommType::startDiscovery() {
+    mDiscoveryMode = true;
+    //
+}
+
+void CommType::stopDiscovery() {
+    mDiscoveryMode = false;
+}
+
+bool CommType::addController(QString controller) {
+
+    auto search = mDeviceTable.find(controller.toStdString());
+    bool controllerExists = (search != mDeviceTable.end());
+
+    // check both that the connection is valid and that it doesn't already exist in the list
+    if (checkIfControllerIsValid(controller) && !controllerExists) {
+        // add junk device that is defaulted to off and disabled.
+        SLightDevice device;
+        device.isValid = true;
+        device.isOn = false;
+        device.isReachable = false;
+        device.brightness = 0;
+        device.colorGroup = EColorGroup::eCustom;
+        device.lightingRoutine = ELightingRoutine::eOff;
+        device.type = mType;
+        device.index = 1;
+        device.name = controller;
+        std::list<SLightDevice> newDeviceList;
+        newDeviceList.push_back(device);
+        mDeviceTable.insert(std::make_pair(controller.toStdString(), newDeviceList));
         return true;
     }
     return false;
 }
 
-void CommType::saveConnectionList() {
-    // save the values in the list
-    int testCount = mControllerListCurrentSize;
-    int x = 0;
-    for (int i = 0; i < testCount; ++i) {
-        if((*mControllerList)[i].compare(QString("")) == 0) {
-            testCount--;
-        } else {
-            mSettings.setValue(settingsIndexKey(x), (*mControllerList)[x]);
-            x++;
+bool CommType::removeController(QString controller) {
+    mDeviceTable.erase(controller.toStdString());
+    return true;
+}
+
+void CommType::updateDevice(SLightDevice device) {
+    bool foundDevice = false;
+    auto deviceList = mDeviceTable.find(device.name.toStdString());
+    if (deviceList != mDeviceTable.end()) {
+        for (auto it = deviceList->second.begin(); it != deviceList->second.end(); ++it) {
+            bool deviceExists = true;
+            // these three values do not change and can be used as a unique key for the device, even if
+            // things like the color or brightness change.
+            if (device.name.compare(it->name)) deviceExists = false;
+            if (device.index != it->index)     deviceExists = false;
+            if (device.type != it->type)       deviceExists = false;
+            if (deviceExists) {
+                foundDevice = true;
+                deviceList->second.remove((*it));
+                deviceList->second.push_front(device);
+                return;
+            }
         }
+        if (!foundDevice) {
+            qDebug() << "WARNING, tried to update device that didnt exist, adding it instead";
+            deviceList->second.push_front(device);
+        }
+    } else {
+        addController(device.name);
+        updateDevice(device);
+    }
+}
+
+
+bool CommType::fillDevice(SLightDevice& device)
+{
+    auto deviceList = mDeviceTable.find(device.name.toStdString());
+    if (deviceList != mDeviceTable.end()) {
+        for (auto it = deviceList->second.begin(); it != deviceList->second.end(); ++it) {
+            bool deviceExists = true;
+
+            // these three values do not change and can be used as a unique key for the device, even if
+            // things like the color or brightness change.
+            if (device.name.compare(it->name)) {
+                deviceExists = false;
+            }
+            if (device.index != it->index)  {
+                deviceExists = false;
+            }
+            if (device.type != it->type) {
+                deviceExists = false;
+            }
+            if (deviceExists) {
+                device = (*it);
+                return true;
+            }
+        }
+       qDebug() << "WARNING: controller found, but device not found in fill device!";
+       return false;
+    } else {
+        qDebug() << "WARNING: Device list doesn't exist!";
+        return false;
+    }
+}
+
+
+void CommType::saveConnectionList() {
+    int x = 0;
+    for (auto&& iterator = mDeviceTable.begin(); iterator != mDeviceTable.end(); ++iterator) {
+        mSettings.setValue(settingsIndexKey(x), QString::fromUtf8((*iterator).first.c_str()));
+        x++;
     }
     // save the current size
-    mSettings.setValue(settingsListSizeKey(), testCount);
+    mSettings.setValue(settingsListSizeKey(), x);
     // write settings to disk
     mSettings.sync();
 }
 
+
+bool CommType::checkIfControllerIsValid(QString controller) {
+    //TODO: write a stronger check...
+    if (mType == ECommType::eHTTP || mType == ECommType::eUDP) {
+        if (controller.count(QLatin1Char('.') != 3)) return false;
+    }
+    return true;
+}
+
+
+
+void CommType::handleDiscoveryPacket(QString sender, int throttleInterval, int throttleMax) {
+    // search for the sender in the list of discovered devices
+    bool found = (std::find(mDiscoveryList.begin(), mDiscoveryList.end(), sender) != mDiscoveryList.end());
+    if (!found) {
+        //if its not found, add it to the list
+        mDiscoveryList.push_front(sender);
+    }
+
+    // iterate through the throttle list and see if theres an associated throttle
+    bool foundThrottle = false;
+    for (std::list<std::pair<QString, CommThrottle*> >::iterator it = mThrottleList.begin(); it != mThrottleList.end(); ++it) {
+        if (!(*it).first.compare(sender)) foundThrottle = true;
+    }
+    // if a throttle isn't found, start one
+    if (!foundThrottle) {
+        std::pair<QString, CommThrottle*> throttlePair = std::pair<QString, CommThrottle*>(sender, new CommThrottle());
+        connect(throttlePair.second, SIGNAL(sendThrottleBuffer(QString, QString)), this, SLOT(sendThrottleBuffer(QString, QString)));
+        throttlePair.second->startThrottle(throttleInterval, throttleMax);
+        mThrottleList.push_front(throttlePair);
+    }
+
+    // iterate through controller list and compare to discovery list
+    // if all items on controller list have been found, stop discovery
+    bool stopTimer = true;
+    for (auto&& it : mDeviceTable) {
+        // returns true if the string is in discovery list
+        bool found = (std::find(mDiscoveryList.begin(), mDiscoveryList.end(), QString::fromUtf8(it.first.c_str())) != mDiscoveryList.end());
+        if (!found)  stopTimer = false;
+    }
+    if (stopTimer) {
+        mDiscoveryTimer->stop();
+    }
+}
+
+// ----------------------------
+// Utilities
+// ----------------------------
 
 QString CommType::settingsIndexKey(int index) {
     QString typeID;
@@ -155,71 +236,3 @@ QString CommType::settingsListSizeKey() {
     return (QString("CommList_%1_Size_Key").arg(typeID));
 }
 
-
-bool CommType::checkIfConnectionExistsInList(QString connection) {
-    for (int i = 0; i < mControllerListCurrentSize; ++i) {
-        if (connection.compare((*mControllerList)[i]) == 0) return true;
-    }
-    return false;
-}
-
-
-bool CommType::checkIfConnectionIsValid(QString connection) {
-    //TODO: write a stronger check...
-    if (mType == ECommType::eHTTP || mType == ECommType::eUDP) {
-        if (connection.count(QLatin1Char('.') != 3)) return false;
-    }
-    return true;
-}
-
-
-void CommType::updateDevice(int controller, SLightDevice device) {
-    //qDebug() << "update device" << controller << "indevx" << device.index << "for type" << ECommTypeToString(mType);
-    if ((size_t)device.index > (mDeviceList[controller]).size()) {
-        mDeviceList[controller].resize(device.index);
-        mDeviceList[controller][device.index - 1] = device;
-    } else {
-        //qDebug() << "adding this" << device.index;
-        (mDeviceList[controller])[device.index - 1] = device;
-    }
-}
-
-int CommType::controllerIndexByName(QString name) {
-    int returnValue = -1;
-    for (uint32_t i = 0; i < mControllerList->size(); ++i) {
-        if(!QString::compare((*mControllerList)[i], name)
-                && QString::compare(QString(""), name)) {
-            returnValue = i;
-        }
-    }
-    return returnValue;
-}
-
-int CommType::numberOfConnectedDevices(uint32_t controllerIndex)
-{
-    if (controllerIndex < (*mControllerList).size()) {
-        // return only valid device count
-        int x = 0;
-        for (uint32_t i = 0; i < (*mControllerList).size(); ++i) {
-            if (mDeviceList[controllerIndex][i].isValid) {
-                x++;
-            }
-        }
-        return x;
-    } else {
-        qDebug() << "WARNING: looking for a connected device that doesn't exist!";
-        return -1;
-    }
-}
-
-bool CommType::deviceByControllerAndIndex(SLightDevice& device, int controllerIndex, int deviceIndex)
-{
-    if (controllerIndex < (int)mDeviceList.size()) {
-        if(deviceIndex < (int)(mDeviceList[controllerIndex]).size()) {
-            device = (mDeviceList[controllerIndex])[deviceIndex];
-            // check if null
-            return !(device.index == 0);
-        }
-    }
-    return false;
-}

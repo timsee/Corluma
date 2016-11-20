@@ -78,7 +78,7 @@ public slots:
      * \brief lightStateChanged called whenever theres any change in the state of
      *        any of the lights.
      */
-    void lightStateChanged(int, int);
+    void lightStateChanged(int, QString);
 
     /*!
      * \brief listClicked signaled whenever the serial list is clicked. It
@@ -131,6 +131,11 @@ protected:
      */
     void showEvent(QShowEvent *);
 
+    /*!
+     * \brief hideEvent called as the page is hidden. This happens when a new page
+     *        is displayed.
+     */
+    void hideEvent(QHideEvent *);
 
 private:
     /*!

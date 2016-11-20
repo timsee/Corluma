@@ -61,6 +61,13 @@ signals:
      */
     void updateMainIcons();
 
+    /*!
+     * \brief presetColorGroupChanged emits data to the MainWindow about the changes
+     *        to the preset color page. The first int is a ELightingRoutine cast to an int,
+     *        the second is a EColorGroup cast to an int.
+     */
+    void presetColorGroupChanged(int, int);
+
 
 public slots:
     /*!

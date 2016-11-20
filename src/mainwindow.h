@@ -68,6 +68,19 @@ public slots:
      */
     void updateMenuBar();
 
+    /*!
+     * \brief updateSingleColor updates the icon for the single color page and the menu bar and on/off button
+     *         based off of the color emitted.
+     */
+    void updateSingleColor(QColor);
+
+    /*!
+     * \brief updatePresetColorGroup updates the icon for the preset color page and the menu bar and on/off button
+     *        based off of the two integers provided. The first integer should be cast to a ELightingRoutine and the
+     *        second should be cast to a EColorGroup.
+     */
+    void updatePresetColorGroup(int, int);
+
 protected:
     /*!
      * \brief paintEvent called whenever there is a paint update. This is used
@@ -119,7 +132,6 @@ private:
      * \todo remove isOn flag and use the systems built into the arduino API.
      */
     bool mIsOn;
-
 };
 
 #endif // MAINWINDOW_H

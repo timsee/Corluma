@@ -84,12 +84,12 @@ ColorPicker::ColorPicker(QWidget *parent) :
     // --------------
 
     mSliderLayout = new QGridLayout;
-    mSliderLayout->addWidget(rLabel,1,0);
-    mSliderLayout->addWidget(rSlider,1,1);
-    mSliderLayout->addWidget(gLabel,2,0);
-    mSliderLayout->addWidget(gSlider,2,1);
-    mSliderLayout->addWidget(bLabel,3,0);
-    mSliderLayout->addWidget(bSlider,3,1);
+    mSliderLayout->addWidget(rLabel, 1, 0);
+    mSliderLayout->addWidget(rSlider, 1, 1);
+    mSliderLayout->addWidget(gLabel, 2, 0);
+    mSliderLayout->addWidget(gSlider, 2, 1);
+    mSliderLayout->addWidget(bLabel, 3, 0);
+    mSliderLayout->addWidget(bSlider, 3, 1);
 }
 
 ColorPicker::~ColorPicker() {
@@ -272,7 +272,7 @@ void ColorPicker::resizeEvent(QResizeEvent *event) {
         } else {
             pixmap = QPixmap(":/images/color_wheel.png");
         }
-        int wheelSize = (this->size().height() - rSlider->size().height() - gSlider->size().height() - bSlider->size().height()) * 0.8f;
+        int wheelSize = (this->size().height() - rSlider->size().height() - gSlider->size().height() - bSlider->size().height()) * 0.7f;
         rSlider->setMinimumHeight(wheelSize * 0.2f);
         gSlider->setMinimumHeight(wheelSize * 0.2f);
         bSlider->setMinimumHeight(wheelSize * 0.2f);

@@ -7,6 +7,8 @@
 #include "datalayer.h"
 #include <QDebug>
 #include <algorithm>
+#include <vector>
+
 
 DataLayer::DataLayer() {
     int i = 0;
@@ -237,17 +239,14 @@ DataLayer::DataLayer() {
     connect(mTimeoutTimer, SIGNAL(timeout()), this, SLOT(timeoutHandler()));
 
     mSettings = new QSettings;
-
+    //TODO: move to startup page
     // check for last connection type
-    bool foundPrevious = false;
-    int previousType = -1;
     if (mSettings->value(kCommDefaultType).toString().compare("") != 0) {
-        previousType = mSettings->value(kCommDefaultType).toInt();
-        foundPrevious = true;
-        mCurrentDevices.front().type = (ECommType)previousType;
+        int previousType = mSettings->value(kCommDefaultType).toInt();
+        //mCurrentDevices.front().type = (ECommType)previousType;
     } else {
         // no connection found, defaults to hue.
-        mCurrentDevices.front().type = ECommType::eHue;
+        //mCurrentDevices.front().type = ECommType::eHue;
     }
 
 }
@@ -256,27 +255,32 @@ DataLayer::~DataLayer() {
 
 }
 
-bool DataLayer::brightness(int brightness) {
-    if (brightness >= 0 && brightness <= 100) {
-        mCurrentDevices.front().brightness = brightness;
-        return true;
-    } else {
-        return false;
-    }
-}
-
 int DataLayer::brightness() {
-    return mCurrentDevices.front().brightness;
-}
-
-
-bool DataLayer::mainColor(QColor newColor) {
-    mCurrentDevices.front().color = newColor;
-    return true;
+    int brightness = 0;
+    for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
+        brightness = brightness + device->brightness;
+    }
+    if (mCurrentDevices.size() > 0) {
+        brightness = brightness / mCurrentDevices.size();
+    }
+    return brightness;
 }
 
 QColor DataLayer::mainColor() {
-    return mCurrentDevices.front().color;
+    int r = 0;
+    int g = 0;
+    int b = 0;
+    if (mCurrentDevices.size() > 0) {
+        for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
+            r = r + device->color.red();
+            g = g + device->color.green();
+            b = b + device->color.blue();
+        }
+        r = r / mCurrentDevices.size();
+        g = g / mCurrentDevices.size();
+        b = b / mCurrentDevices.size();
+    }
+    return QColor(r,g,b);
 }
 
 uint8_t DataLayer::maxColorGroupSize() {
@@ -317,17 +321,25 @@ QColor DataLayer::colorsAverage(EColorGroup group) {
 }
 
 
-bool DataLayer::currentRoutine(ELightingRoutine routine) {
-    if ((int)routine >= 0 && (int)routine < (int)ELightingRoutine::eLightingRoutine_MAX) {
-        mCurrentDevices.front().lightingRoutine = routine;
-        return true;
-    } else {
-        return false;
+
+bool DataLayer::shouldUseHueAssets() {
+    int hueCount = 0;
+    for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
+        if (device->type == ECommType::eHue) hueCount++;
     }
+    if (hueCount >= (mCurrentDevices.size() / 2)) {
+        return true;
+    }
+    return false;
 }
 
 ELightingRoutine DataLayer::currentRoutine() {
-    return mCurrentDevices.front().lightingRoutine;
+    std::vector<int> routineCount((int)ELightingRoutine::eLightingRoutine_MAX, 0);
+    for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
+       routineCount[(int)device->lightingRoutine] = routineCount[(int)device->lightingRoutine] + 1;
+    }
+    std::vector<int>::iterator result = std::max_element(routineCount.begin(), routineCount.end());
+    return (ELightingRoutine)std::distance(routineCount.begin(), result);
 }
 
 bool DataLayer::timeOut(int timeOut) {
@@ -344,17 +356,13 @@ int DataLayer::timeOut() {
 }
 
 
-bool DataLayer::currentColorGroup(EColorGroup colorGroup) {
-    if (colorGroup < EColorGroup::eColorGroup_MAX) {
-        mCurrentDevices.front().colorGroup = colorGroup;
-        return true;
-    } else {
-        return false;
-    }
-}
-
 EColorGroup DataLayer::currentColorGroup() {
-    return mCurrentDevices.front().colorGroup;
+    std::vector<int> colorGroupCount((int)EColorGroup::eColorGroup_MAX, 0);
+    for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
+       colorGroupCount[(int)device->colorGroup] = colorGroupCount[(int)device->colorGroup] + 1;
+    }
+    std::vector<int>::iterator result = std::max_element(colorGroupCount.begin(), colorGroupCount.end());
+    return (EColorGroup)std::distance(colorGroupCount.begin(), result);
 }
 
 
@@ -438,25 +446,11 @@ bool DataLayer::clearDevices() {
     if (mCurrentDevices.size()) {
         mCurrentDevices.clear();
     }
-    // add junk data to list
-    //TODO: remove need for junk data
-    SLightDevice defaultDevice;
-    defaultDevice.isValid = false;
-    defaultDevice.isOn = false;
-    defaultDevice.isReachable = false;
-    defaultDevice.brightness = 0;
-    defaultDevice.colorGroup = EColorGroup::eCustom;
-    defaultDevice.lightingRoutine = ELightingRoutine::eOff;
-    defaultDevice.type = ECommType::eUDP;
-    defaultDevice.index = 10;
-    defaultDevice.name = "junk";
-    mCurrentDevices.push_front(defaultDevice);
     return true;
 }
 
 bool DataLayer::removeDevice(SLightDevice device){
     mCurrentDevices.remove(device);
-
     return true;
 }
 

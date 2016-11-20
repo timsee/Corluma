@@ -109,11 +109,9 @@ void PresetColorsPage::highlightRoutineButton(ELightingRoutine routine, EColorGr
 // ----------------------------
 
 void PresetColorsPage::multiButtonClicked(int routine, int colorGroup) {
-    mData->currentRoutine((ELightingRoutine)routine);
-    mData->currentColorGroup((EColorGroup)colorGroup);
     mComm->sendRoutineChange(mData->currentDevices(), (ELightingRoutine)routine, colorGroup);
-    highlightRoutineButton(mData->currentRoutine(), mData->currentColorGroup());
-    emit updateMainIcons();
+    highlightRoutineButton((ELightingRoutine)routine, (EColorGroup)colorGroup);
+    emit presetColorGroupChanged(routine, colorGroup);
 }
 
 

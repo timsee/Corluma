@@ -79,7 +79,7 @@ SettingsPage::~SettingsPage() {
 
 void SettingsPage::setupUI() {
    connect(mComm, SIGNAL(hueDiscoveryStateChange(int)), this, SLOT(hueDiscoveryUpdate(int)));
-   connect(mComm, SIGNAL(lightStateUpdate(int, int)), this, SLOT(lightStateChanged(int, int)));
+   connect(mComm, SIGNAL(lightStateUpdate(int, QString)), this, SLOT(lightStateChanged(int, QString)));
    commTypeSelected((int)mCommType);
 }
 
@@ -125,15 +125,15 @@ void SettingsPage::timeoutChanged(int newTimeout) {
 }
 
 void SettingsPage::listClicked(QListWidgetItem* item) {
-    SLightDevice output = CommType::stringToStruct(item->text());
-    SLightDevice device;
-    int controllerIndex = mComm->controllerIndexByName(output.type, output.name);
-    mComm->deviceByControllerAndIndex(output.type, device, controllerIndex, output.index - 1);
-    if (mData->doesDeviceExist(output)) {
+    SLightDevice device = stringToStruct(item->text());
+    mComm->fillDevice(device);
+
+    if (mData->doesDeviceExist(device)) {
         mData->removeDevice(device);
     } else {
         mData->addDevice(device);
     }
+
     // set the line edit to be last connection name clicked
     if (device.type == ECommType::eHTTP
             || device.type == ECommType::eUDP) {
@@ -210,7 +210,7 @@ void SettingsPage::commTypeSelected(int type) {
 
 
 void SettingsPage::plusButtonClicked() {
-    bool isSuccessful = mComm->addConnection(mCommType, ui->lineEdit->text());
+    bool isSuccessful = mComm->addController(mCommType, ui->lineEdit->text());
     if (isSuccessful) {
         // updates the connection list
         updateConnectionList((int)mCommType);
@@ -219,14 +219,12 @@ void SettingsPage::plusButtonClicked() {
 
 
 void SettingsPage::minusButtonClicked() {
-    SLightDevice listData = CommType::stringToStruct(mCurrentListString);
-    bool isSuccessful = mComm->removeConnection(mData->currentCommType(), listData.name);
+    SLightDevice listData = stringToStruct(mCurrentListString);
+    bool isSuccessful = mComm->removeController(mCommType, listData.name);
 
     if (isSuccessful) {
-        SLightDevice output = CommType::stringToStruct(mCurrentListString);
-        SLightDevice device;
-        int controllerIndex = mComm->controllerIndexByName(output.type, output.name);
-        mComm->deviceByControllerAndIndex(output.type, device, controllerIndex, output.index - 1);
+        SLightDevice device = stringToStruct(mCurrentListString);
+        mComm->fillDevice(device);
         isSuccessful = mData->removeDevice(device);
 
         // update the line edit text
@@ -275,9 +273,9 @@ void SettingsPage::hueDiscoveryUpdate(int newState) {
 
 void SettingsPage::showEvent(QShowEvent *event) {
     Q_UNUSED(event);
-
     updateUI((int)mCommType);
     highlightButton(mCommType);
+
     // default the settings bars to the current colors
     commTypeSelected((int)mCommType);
 
@@ -289,10 +287,18 @@ void SettingsPage::showEvent(QShowEvent *event) {
      }
      ui->speedSlider->slider->setValue(mSliderSpeedValue);
      ui->timeoutSlider->slider->setValue(mData->timeOut());
+
+     mComm->startDiscovery();
 }
 
-void SettingsPage::lightStateChanged(int type, int controllerIndex) {
-    Q_UNUSED(controllerIndex);
+
+void SettingsPage::hideEvent(QHideEvent *event) {
+     mComm->stopDiscovery();
+}
+
+
+void SettingsPage::lightStateChanged(int type, QString name) {
+    Q_UNUSED(name);
     if (type == (int)mCommType) {
         updateUI(type);
     }
@@ -309,54 +315,30 @@ void SettingsPage::updateConnectionList(int type) {
         int listIndex = 0; // used for inserting new entries on the list
         // get the pointer to the commtype of the connection list
         // iterate through all of its controllers
+         std::unordered_map<std::string, std::list<SLightDevice> > deviceTable = mComm->deviceTable((ECommType)type);
+         for (auto&& controllers : deviceTable) {
+            for (auto&& device = controllers.second.begin(); device != controllers.second.end(); ++device) {
+                // if the object is found, is valid, and has a name, add it
+                if (device->isValid) {
+                    LightsListWidget *lightsItem = new LightsListWidget;
+                    lightsItem->setup(*device, mData);
 
-        //TODO: refactor and simplify section
-        //================================================================
-        for (uint32_t i = 0; i < (*mComm->controllerList((ECommType)type)).size(); ++i) {
-            // get the controller name and if its not empty, continue
-            QString controllerName = (*mComm->controllerList((ECommType)type))[i];
-            if (QString::compare(QString(""), controllerName)) {
-                // grab the controller index
-                int controllerIndex = mComm->controllerIndexByName((ECommType)type, controllerName);
-                // iterate through all connected devices for that index
-                for (int x = 0; x < mComm->numberOfConnectedDevices((ECommType)type, controllerIndex); ++x)
-                {
-         //================================================================
+                    QString structString = structToString(*device);
+                    ui->connectionList->addItem(structString);
 
-                   // grab the device
-                   SLightDevice light;
-                   bool shouldAdd = mComm->deviceByControllerAndIndex((ECommType)type, light, i, x);
-                   bool itemFound = false;
-                   for (int i = 0; i < ui->connectionList->count(); i++) {
-                       if (!QString::compare(ui->connectionList->item(i)->text(), controllerName)) {
-                           itemFound = true;
-                       }
-                   }
+                    int minimumHeight = ui->connectionList->height() / 5;
+                    ui->connectionList->item(listIndex)->setSizeHint(QSize(ui->connectionList->item(listIndex)->sizeHint().width(),
+                                                                           minimumHeight));
 
-                   // if the object is found, is valid, and has a name, add it
-                   if (!itemFound && shouldAdd && light.isValid) {
-                       LightsListWidget *lightsItem = new LightsListWidget;
-                       lightsItem->setup(light, mData);
-
-                       QString structString = CommType::structToString(light);
-                       ui->connectionList->addItem(structString);
-
-                       int minimumHeight = ui->connectionList->height() / 5;
-                       ui->connectionList->item(listIndex)->setSizeHint(QSize(ui->connectionList->item(listIndex)->sizeHint().width(),
-                                                                              minimumHeight));
-
-                       ui->connectionList->setItemWidget(ui->connectionList->item(listIndex), lightsItem);
-                       // if it exists in current devices, set it as selected
-                       if (mData->doesDeviceExist(light)) {
-                          ui->connectionList->item(listIndex)->setSelected(true);
-                       }
-
-                       listIndex++;
-                   }                   
+                    ui->connectionList->setItemWidget(ui->connectionList->item(listIndex), lightsItem);
+                    // if it exists in current devices, set it as selected
+                    if (mData->doesDeviceExist(*device)) {
+                       ui->connectionList->item(listIndex)->setSelected(true);
+                    }
+                    listIndex++;
                 }
-            }
-        }
-
+             }
+         }
         emit updateMainIcons();
     }
 }

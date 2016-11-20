@@ -60,6 +60,22 @@ public:
     void updateIcon();
 
     /*!
+     * \brief updateIconSingleColorRoutine update the button's icon based off of a lighting
+     *        routine and color. This function requires single color routines to work properly.
+     * \param lightingRoutine lighting routine to use for the icon. must be single color routine.
+     * \param color color to use for the icon.
+     */
+    void updateIconSingleColorRoutine(ELightingRoutine lightingRoutine, QColor color);
+
+    /*!
+     * \brief updateIconPresetColorRoutine update the button's icon based off of a lighting routine
+     *        and color group. This function requires multi color routiens tow ork properly.
+     * \param lightingRoutine lighting routine to use for the icon. must be multi color routine.
+     * \param colorGroup the color group to use for the icon.
+     */
+    void updateIconPresetColorRoutine(ELightingRoutine lightingRoutine, EColorGroup colorGroup);
+
+    /*!
      * \brief lightingRoutine the ELightingRoutine assigned to the button by setupAsMultiButton.
      * \return the button's lighting routine
      */
@@ -159,7 +175,6 @@ private:
      *        as a signal whenever the button is clicked.
      */
     EColorGroup mColorGroup;
-
 };
 
 #endif // LIGHTSBUTTON_H

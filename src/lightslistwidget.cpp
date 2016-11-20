@@ -79,7 +79,7 @@ void LightsListWidget::updateIcon(const SLightDevice& device) {
             || !device.isValid) {
         mIconData->setSolidColor(QColor(0,0,0));
     } else if (device.lightingRoutine <= ELightingRoutine::eSingleSineFade) {
-        mIconData->setSolidColor(device.color);
+        mIconData->setSingleLightingRoutine(device.lightingRoutine, device.color);
     } else {
         mIconData->setLightingRoutine(device.lightingRoutine, device.colorGroup);
     }

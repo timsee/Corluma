@@ -133,6 +133,17 @@ void LightsButton::updateIcon() {
     }
 }
 
+void LightsButton::updateIconSingleColorRoutine(ELightingRoutine lightingRoutine, QColor color) {
+    mIconData.setSingleLightingRoutine(lightingRoutine, color);
+    button->setIcon(mIconData.renderAsQPixmap());
+}
+
+void LightsButton::updateIconPresetColorRoutine(ELightingRoutine lightingRoutine, EColorGroup colorGroup) {
+    mIconData.setLightingRoutine((ELightingRoutine)lightingRoutine, (EColorGroup)colorGroup);
+    button->setIcon(mIconData.renderAsQPixmap());
+}
+
+
 void LightsButton::handleButton() {
     if (mSetupHasBeenCalled) {
         if (mIsMenuButton) {

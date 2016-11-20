@@ -63,16 +63,6 @@ public:
     ~CommHue();
 
     /*!
-     * \brief not used for hue communication.
-     */
-    void closeConnection();
-
-    /*!
-     * \brief changeConnection not used for hue communication
-     */
-    void changeConnection(QString newConnection);
-
-    /*!
      * \brief changeLight send a packet to a hue bridge to change the color of a given hue light.
      * \param lightIndex the index of the hue being changed.
      * \param saturation how saturated the color is. A higher number leads to more saturation. Must be in the range of 0 and 254, inclusive.

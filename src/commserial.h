@@ -37,38 +37,10 @@ public:
     ~CommSerial();
 
     /*!
-     * \brief closeConnection cleans up after the serial port. This
-     *        is required to be called during cleanup, in some
-     *        environments not closing a serial port leads to it
-     *        staying bound until the computer resets.
-     */
-    void closeConnection();
-
-    /*!
-     * \brief changeConnection change active serial connection
-     * \param newConnection new connection to use.
-     */
-    void changeConnection(QString newConnection);
-
-    /*!
-     * \brief serialList list of possible serial ports
-     *        for connection
-     */
-    QList<QSerialPortInfo> serialList;
-
-    /*!
      * \brief discoverSerialPorts looks for new serial ports and adds it them to
      *        the connections page, if they are found.
      */
     void discoverSerialPorts();
-
-    /*!
-     * \brief connectSerialPort connect to a specific serial port, if possible.
-     * \param serialPortName The name of the serial port that you want
-     *        to connect to.
-     * \return true if connection is successful, false otherwise.
-     */
-    bool connectSerialPort(QString serialPortName);
 
     /*!
      * \brief sendPacket sends a string over serial
@@ -76,12 +48,6 @@ public:
      *        serial.
      */
     void sendPacket(QString controller, QString packet);
-
-    /*!
-     * \brief portName returns the name of the current connection.
-     * \return name of the port of the current connection.
-     */
-    QString portName() { return mSerial->portName(); }
 
 private slots:
     /*!
@@ -112,21 +78,32 @@ private slots:
 private:
 
     /*!
-     * \brief mThrottle used to prevent the communication stream from sending commands too frequently.
+     * \brief connectSerialPort connect to a specific serial port, if possible.
+     * \param serialPortName The name of the serial port that you want
+     *        to connect to.
+     * \return true if connection is successful, false otherwise.
      */
-    CommThrottle *mThrottle;
+    bool connectSerialPort(const QSerialPortInfo& info);
 
     /*!
-     * \brief mSerial the serial port currently in use
+     * \brief serialPortByName pointer to QSerialPort instance that is connectd
+     *        to the given serial port. Gives back a nullptr if no QSerialPort is found
+     * \param name name fo QSerialPort
+     * \return pointer to QSerialPort
      */
-    QSerialPort *mSerial;
+    QSerialPort *serialPortByName(QString name);
 
     /*!
-     * \brief mDiscoveryTimer used during discovery to poll
-     *        the serial port every few seconds.
+     * \brief mSerialList list of possible serial ports
+     *        for connection
      */
-    QTimer *mDiscoveryTimer;
+    std::list<QSerialPortInfo> mSerialInfoList;
 
+    /*!
+     * \brief mSerialPorts list of serial ports in use. For every controller, one QSerialPort object
+     *        gets instantiated and stored in this list.
+     */
+    std::list<QSerialPort*> mSerialPorts;
 };
 
 #endif // MOBILE_BUILD

@@ -39,14 +39,9 @@ void CommLayer::dataLayer(DataLayer *data) {
     mHue->dataLayer(data);
 }
 
-void CommLayer::changeDeviceController(ECommType type, QString controllerName) {
-    commByType(type)->closeConnection();
-    commByType(type)->changeConnection(controllerName);
-}
-
 void CommLayer::sendMainColorChange(const std::list<SLightDevice>& deviceList,
                                     QColor color) {
-    for (auto&& device : deviceList) {
+   for (auto&& device : deviceList) {
         QString packet = QString("%1,%2,%3,%4,%5").arg(QString::number((int)EPacketHeader::eMainColorChange),
                                                        QString::number(device.index),
                                                        QString::number(color.red()),
@@ -162,13 +157,7 @@ void CommLayer::parsePacket(QString sender, QString packet, int type) {
         intVector.push_back(i);
     }
 
-    // get the index of the connection of conntroller for the commtype
-    int controllerIndex = commByType((ECommType)type)->controllerIndexByName(sender);
-    // if the controller doesn't exist, add it.
-    if (controllerIndex == -1) {
-        commByType((ECommType)type)->addConnection(sender);
-        controllerIndex = commByType((ECommType)type)->controllerIndexByName(sender);
-    }
+
     bool shouldUpdateGUI = false;
     // check if its a valid size with the proper header for a state update packet
     if (!((intVector.size() - 1) % 9) && (intVector[0] == 7)) {
@@ -181,8 +170,12 @@ void CommLayer::parsePacket(QString sender, QString packet, int type) {
                 // all values are in the right range, set them on SLightDevice.
                 int lightIndex         = intVector[x];
                 SLightDevice device;
-                commByType((ECommType)type)->deviceByControllerAndIndex(device, controllerIndex, lightIndex);
                 device.index           = lightIndex;
+                device.type            = (ECommType)type;
+                device.name            = sender;
+
+                commByType((ECommType)type)->fillDevice(device);
+
                 device.isOn            = (bool)intVector[x + 1];
                 device.isReachable     = (bool)intVector[x + 2];
                 device.color           = QColor(intVector[x + 3], intVector[x + 4], intVector[x + 5]);
@@ -190,13 +183,13 @@ void CommLayer::parsePacket(QString sender, QString packet, int type) {
                 device.colorGroup      = (EColorGroup)intVector[x + 7];
                 device.brightness      = intVector[x + 8];
                 device.isValid         = true;
-                device.type            = (ECommType)type;
-                device.name            = sender;
-                commByType((ECommType)type)->updateDevice(controllerIndex, device);
+
+
+                commByType((ECommType)type)->updateDevice(device);
                 if (mData->doesDeviceExist(device)) {
                     mData->addDevice(device);
+                    shouldUpdateGUI = true;
                 }
-                shouldUpdateGUI = true;
             } else {
                qDebug() << "WARNING: Invalid packet for light index" << intVector[x];
             }
@@ -207,7 +200,7 @@ void CommLayer::parsePacket(QString sender, QString packet, int type) {
        qDebug() << "WARNING: Invalid packet size, " << ((intVector.size() - 1) % 9) << "parameters unaccounted for";
     }
     if (shouldUpdateGUI) {
-       emit lightStateUpdate(type, controllerIndex);
+       emit lightStateUpdate(type, sender);
     }
 }
 
@@ -233,7 +226,7 @@ void CommLayer::discoveryReceived(QString controller, QString lightStates, int c
 void CommLayer::hueDiscoveryUpdate(int newDiscoveryState) {
     emit hueDiscoveryStateChange(newDiscoveryState);
     if ((EHueDiscoveryState)newDiscoveryState == EHueDiscoveryState::eBridgeConnected) {
-        mHue->addConnection("Bridge");
+        mHue->addController("Bridge");
     }
 }
 
@@ -263,27 +256,34 @@ CommType *CommLayer::commByType(ECommType type) {
     return ptr;
 }
 
-
-int CommLayer::controllerIndexByName(ECommType type, QString name) {
-    return commByType(type)->controllerIndexByName(name);
+bool CommLayer::removeController(ECommType type, QString controller) {
+    return commByType(type)->removeController(controller);
 }
 
-bool CommLayer::removeConnection(ECommType type, QString connection) {
-    return commByType(type)->removeConnection(connection);
+bool CommLayer::addController(ECommType type, QString controller) {
+    return commByType(type)->addController(controller);
 }
 
-bool CommLayer::addConnection(ECommType type, QString connection) {
-    return commByType(type)->addConnection(connection);
+bool CommLayer::fillDevice(SLightDevice& device) {
+    return commByType(device.type)->fillDevice(device);
 }
 
-std::deque<QString>* CommLayer::controllerList(ECommType type) {
-    return commByType(type)->controllerList();
+void CommLayer::startDiscovery() {
+    commByType(ECommType::eHTTP)->startDiscovery();
+    commByType(ECommType::eHue)->startDiscovery();
+    commByType(ECommType::eUDP)->startDiscovery();
+
+#ifndef MOBILE_BUILD
+    commByType(ECommType::eSerial)->startDiscovery();
+#endif //MOBILE_BUILD
 }
 
-int CommLayer::numberOfConnectedDevices(ECommType type, uint32_t controllerIndex) {
-    return commByType(type)->numberOfConnectedDevices(controllerIndex);
-}
+void CommLayer::stopDiscovery() {
+    commByType(ECommType::eHTTP)->stopDiscovery();
+    commByType(ECommType::eHue)->stopDiscovery();
+    commByType(ECommType::eUDP)->stopDiscovery();
 
-bool CommLayer::deviceByControllerAndIndex(ECommType type, SLightDevice& device, int controllerIndex, int deviceIndex) {
-    return commByType(type)->deviceByControllerAndIndex(device, controllerIndex, deviceIndex);
+#ifndef MOBILE_BUILD
+    commByType(ECommType::eSerial)->stopDiscovery();
+#endif //MOBILE_BUILD
 }

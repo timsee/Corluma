@@ -156,11 +156,9 @@ void CustomColorsPage::customColorCountChanged(int newCount) {
 }
 
 
-void CustomColorsPage::modeChanged(int newMode) {
-    mData->currentRoutine((ELightingRoutine)newMode);
-    mData->currentColorGroup(EColorGroup::eCustom);
-    mComm->sendRoutineChange(mData->currentDevices(), mData->currentRoutine(), (int)EColorGroup::eCustom);
-    highlightRoutineButton(mData->currentRoutine());
+void CustomColorsPage::modeChanged(int newRoutine) {
+    mComm->sendRoutineChange(mData->currentDevices(), (ELightingRoutine)newRoutine, (int)EColorGroup::eCustom);
+    highlightRoutineButton((ELightingRoutine)newRoutine);
     emit updateMainIcons();
 }
 
@@ -174,11 +172,8 @@ void CustomColorsPage::colorChanged(QColor color) {
 
 
 void CustomColorsPage::routineButtonClicked(int newRoutine, int newColorGroup) {
-    Q_UNUSED(newColorGroup); // new color group is always custom in this instance
-    mData->currentRoutine((ELightingRoutine)newRoutine);
-    mData->currentColorGroup(EColorGroup::eCustom);
-    mComm->sendRoutineChange(mData->currentDevices(), mData->currentRoutine(), (int)EColorGroup::eCustom);
-    highlightRoutineButton(mData->currentRoutine());
+    mComm->sendRoutineChange(mData->currentDevices(), (ELightingRoutine)newRoutine, newColorGroup);
+    highlightRoutineButton((ELightingRoutine)newRoutine);
     emit updateMainIcons();
 }
 
@@ -201,7 +196,7 @@ void CustomColorsPage::showEvent(QShowEvent *event) {
     ui->arraySlider->slider->setValue(20);
   }
 
-  if (mData->currentCommType() == ECommType::eHue) {
+  if (mData->shouldUseHueAssets()) {
       ui->colorPicker->useHueWheel(true);
   } else {
       ui->colorPicker->useHueWheel(false);

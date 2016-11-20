@@ -46,23 +46,15 @@ CommHue::~CommHue() {
     saveConnectionList();
 }
 
-
-void CommHue::closeConnection() {
-
-}
-
-void CommHue::changeConnection(QString newConnection) {
-
-}
-
 void CommHue::sendPacket(QString controller, QString packet) {
     mParser->parsePacket(packet);
 }
 
+
 void CommHue::changeLight(int lightIndex, int saturation, int brightness, int hue) {
     // handle multicasting with light index 0
     if (lightIndex == 0) {
-        for (int i = 0; i <= numberOfConnectedDevices(0); ++i) {
+        for (int i = 0; i <= mConnectedHues.size(); ++i) {
             changeLight(i, saturation, brightness, hue);
         }
     }
@@ -88,6 +80,12 @@ void CommHue::sendThrottleBuffer(QString bufferedConnection, QString bufferedMes
     mNetworkManager->put(QNetworkRequest(QUrl(bufferedConnection)), bufferedMessage.toStdString().c_str());
 }
 
+void CommHue::updateLightStates() {
+    QString urlString = mUrlStart + "/lights/";
+    QNetworkRequest request = QNetworkRequest(QUrl(urlString));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("text/html; charset=utf-8"));
+    mNetworkManager->get(request);
+}
 
 void CommHue::turnOn(int lightIndex) {
     if (discovery()->isConnected()) {
@@ -102,104 +100,6 @@ void CommHue::turnOff(int lightIndex) {
         mNetworkManager->put(QNetworkRequest(QUrl(urlString)), "{\"on\":false}");
     }
 }
-
-void CommHue::replyFinished(QNetworkReply* reply) {
-    if (reply->error() == QNetworkReply::NoError) {
-        QString string = (QString)reply->readAll();
-        //qDebug() << "Response:" << string;
-        QJsonDocument jsonResponse = QJsonDocument::fromJson(string.toUtf8());
-        // check validity of the document
-        if(!jsonResponse.isNull())
-        {
-            if(jsonResponse.isObject()) {
-                mThrottle->receivedUpdate();
-                QJsonObject object = jsonResponse.object();
-                // update state LEDs
-                for (int i = 0; i < 10; ++i) {
-                    if (object.value(QString::number(i)).isObject()) {
-                        updateHueLightState(object.value(QString::number(i)).toObject(), i);
-                    }
-                }
-            }
-            else if(jsonResponse.isArray()) {
-                QJsonObject outsideObject = jsonResponse.array().at(0).toObject();
-                if (outsideObject.value("error").isObject()) {
-
-                } else if (outsideObject.value("success").isObject()) {
-
-                }
-            }
-            else {
-                qDebug() << "Document is not an object";
-            }
-        }
-        else {
-            qDebug() << "Invalid JSON...";
-        }
-    }
-}
-
-void CommHue::updateLightStates() {
-    QString urlString = mUrlStart + "/lights/";
-    QNetworkRequest request = QNetworkRequest(QUrl(urlString));
-    request.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("text/html; charset=utf-8"));
-    mNetworkManager->get(request);
-}
-
-
-bool CommHue::updateHueLightState(QJsonObject object, int i) {
-    // check if valid packet
-    if (object.value("type").isString()
-            && object.value("uniqueid").isString()
-            && object.value("state").isObject()) {
-        QJsonObject stateObject = object.value("state").toObject();
-        if (stateObject.value("on").isBool()
-                && stateObject.value("reachable").isBool()
-                && stateObject.value("hue").isDouble()
-                && stateObject.value("bri").isDouble()
-                && stateObject.value("sat").isDouble()) {
-
-            // packet passes valdiity check, set all values
-            SHueLight hue;
-            SLightDevice light;
-            light.isReachable = stateObject.value("reachable").toBool();
-            light.isOn = stateObject.value("on").toBool();
-            light.isValid = true;
-            light.color.setHsv(stateObject.value("hue").toDouble() / 182.0,
-                               stateObject.value("sat").toDouble(),
-                               stateObject.value("bri").toDouble());
-            light.colorGroup = EColorGroup::eAll;
-            light.lightingRoutine = ELightingRoutine::eSingleSolid;
-            light.brightness = stateObject.value("bri").toDouble() / 254.0f * 100;
-            light.index = i;
-            light.type = ECommType::eHue;
-            light.name = "Bridge";
-
-            hue.type = object.value("type").toString();
-            hue.uniqueID = object.value("uniqueid").toString();
-            updateDevice(0, light);
-            // update vector with new values
-            if ((size_t)light.index > mConnectedHues.size()) {
-                mConnectedHues.resize(light.index);
-                mConnectedHues[i - 1] = hue;
-            } else {
-                //qDebug() << "update" << i;
-                mConnectedHues[i - 1] = hue;
-            }
-
-            if (mData->doesDeviceExist(light)) {
-                mData->addDevice(light);
-            }
-            emit hueLightStatesUpdated();
-            return true;
-        } else {
-            qDebug() << "Invalid parameters...";
-        }
-    } else {
-        qDebug() << "Invalid parameters...";
-    }
-    return false;
- }
 
 void CommHue::connectionStatusHasChanged(bool status) {
     // always stop the timer if its active, we'll restart if its a new connection
@@ -275,3 +175,99 @@ void CommHue::timeOutChange(int deviceIndex, int timeout) {
 void CommHue::resetSettings() {
     //TODO: implement
 }
+
+//--------------------
+// Receiving
+//--------------------
+
+void CommHue::replyFinished(QNetworkReply* reply) {
+    if (reply->error() == QNetworkReply::NoError) {
+        QString string = (QString)reply->readAll();
+        //qDebug() << "Response:" << string;
+        QJsonDocument jsonResponse = QJsonDocument::fromJson(string.toUtf8());
+        // check validity of the document
+        if(!jsonResponse.isNull())
+        {
+            if(jsonResponse.isObject()) {
+                mThrottle->receivedUpdate();
+                QJsonObject object = jsonResponse.object();
+                // update state LEDs
+                for (int i = 0; i < 10; ++i) {
+                    if (object.value(QString::number(i)).isObject()) {
+                        updateHueLightState(object.value(QString::number(i)).toObject(), i);
+                    }
+                }
+            }
+            else if(jsonResponse.isArray()) {
+                QJsonObject outsideObject = jsonResponse.array().at(0).toObject();
+                if (outsideObject.value("error").isObject()) {
+
+                } else if (outsideObject.value("success").isObject()) {
+
+                }
+            }
+            else {
+                qDebug() << "Document is not an object";
+            }
+        }
+        else {
+            qDebug() << "Invalid JSON...";
+        }
+    }
+}
+
+bool CommHue::updateHueLightState(QJsonObject object, int i) {
+    // check if valid packet
+    if (object.value("type").isString()
+            && object.value("uniqueid").isString()
+            && object.value("state").isObject()) {
+        QJsonObject stateObject = object.value("state").toObject();
+        if (stateObject.value("on").isBool()
+                && stateObject.value("reachable").isBool()
+                && stateObject.value("hue").isDouble()
+                && stateObject.value("bri").isDouble()
+                && stateObject.value("sat").isDouble()) {
+
+            // packet passes valdiity check, set all values
+            SHueLight hue;
+            SLightDevice light;
+            light.isReachable = stateObject.value("reachable").toBool();
+            light.isOn = stateObject.value("on").toBool();
+            light.isValid = true;
+            light.color.setHsv(stateObject.value("hue").toDouble() / 182.0,
+                               stateObject.value("sat").toDouble(),
+                               stateObject.value("bri").toDouble());
+            light.colorGroup = EColorGroup::eAll;
+            light.lightingRoutine = ELightingRoutine::eSingleSolid;
+            light.brightness = stateObject.value("bri").toDouble() / 254.0f * 100;
+            light.index = i;
+            light.type = ECommType::eHue;
+            light.name = "Bridge";
+
+            hue.type = object.value("type").toString();
+            hue.uniqueID = object.value("uniqueid").toString();
+            updateDevice(light);
+            // update vector with new values
+            if ((size_t)light.index > mConnectedHues.size()) {
+                mConnectedHues.resize(light.index);
+                mConnectedHues[i - 1] = hue;
+            } else {
+                //qDebug() << "update" << i;
+                mConnectedHues[i - 1] = hue;
+            }
+
+            if (mData->doesDeviceExist(light)) {
+                mData->addDevice(light);
+                emit hueLightStatesUpdated();
+            }
+            return true;
+        } else {
+            qDebug() << "Invalid parameters...";
+        }
+    } else {
+        qDebug() << "Invalid parameters...";
+    }
+    return false;
+ }
+
+

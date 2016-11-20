@@ -142,7 +142,8 @@ HEADERS  += mainwindow.h \
     lightslistwidget.h \
     lightingroutines.h \
     commthrottle.h \
-    commpacketparser.h
+    commpacketparser.h \
+    lightdevice.h
 
 FORMS    += mainwindow.ui \
     singlecolorpage.ui \

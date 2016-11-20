@@ -178,6 +178,46 @@ void IconData::setLightingRoutine(ELightingRoutine routine, EColorGroup colorGro
     }
 }
 
+void IconData::setSingleLightingRoutine(ELightingRoutine routine, QColor color) {
+    switch (routine)
+    {
+        case ELightingRoutine::eSingleSolid:
+            setSolidColor(color);
+            break;
+        case ELightingRoutine::eSingleBlink:
+            setSolidColor(color);
+            addBlink();
+            break;
+        case ELightingRoutine::eSingleWave:
+            setSolidColor(color);
+            addWave();
+            break;
+        case ELightingRoutine::eSingleGlimmer:
+            setSolidColor(color);
+            addGlimmer();
+            break;
+        case ELightingRoutine::eSingleLinearFade:
+            setSolidColor(color);
+            addLinearFade();
+            break;
+        case ELightingRoutine::eSingleSawtoothFadeIn:
+            setSolidColor(color);
+            addSawtoothIn();
+            break;
+        case ELightingRoutine::eSingleSawtoothFadeOut:
+            setSolidColor(color);
+            addSawtoothOut();
+            break;
+        case ELightingRoutine::eSingleSineFade:
+            setSolidColor(color);
+            addSineFade();
+            break;
+        default:
+            qDebug() << "WARNING: used single light routine function with multi light routine.";
+            break;
+    }
+}
+
 void IconData::setSolidColor(QColor color) {
     for (uint i = 0; i < mBufferLength; i = i + 3) {
         mBuffer[i] = color.red();

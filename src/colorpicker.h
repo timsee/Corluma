@@ -184,11 +184,13 @@ private slots:
      *        changes its value.
      */
     void rSliderChanged(int);
+
     /*!
      * \brief gSliderChanged called whenever the slider in the green LightsSlider class
      *        changes its value.
      */
     void gSliderChanged(int);
+
     /*!
      * \brief bSliderChanged called whenever the slider in the blue LightsSlider class
      *        changes its value.
@@ -263,6 +265,7 @@ private:
      * \brief fullLayout layout used when in the full layout mode.
      */
     QVBoxLayout *mFullLayout;
+
     /*!
      * \brief condensedLayout layout used when in the condensed layout mode
      */

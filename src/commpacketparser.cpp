@@ -1,5 +1,7 @@
-#include "commpacketparser.h"
 
+#include <sstream>
+
+#include "commpacketparser.h"
 
 #define CUSTOM_COLOR_MAX 10
 

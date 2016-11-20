@@ -110,64 +110,49 @@ public:
     // --------------------------
 
     /*!
-     * \brief numberOfConnectedDevices Count of devices connected to the current
-     *        controller.
-     * \return count of devices connected to the current controller.
-     */
-    int numberOfConnectedDevices(ECommType type, uint32_t controllerIndex);
-
-    /*!
-     * \brief changeDeviceController change to a different controller and its associated devices.
-     *        A "controller" is either a Hue Bridge or an arduino. A "device" is either a hue light bulb
-     *        or any of the supported arduino light platforms. Currently the codebase only support one hue bridge
-     *        so this function will not work for hues.
-     * \param controllerName the name of a controller, It is either its IP address for arduino yun samples,
-     *        its serial port for arduino wired samples.
-     */
-    void changeDeviceController(ECommType type, QString controllerName);
-
-    /*!
-     * \brief controllerIndexByName returns the controller index of the controller provided in the provided
-     *        commtype, if one exists
-     * \param type the type of controller you're lookign for the index of
-     * \param name the name of the controller you're looking for the index of
-     * \return the index of the controller if it exists, -1 otherwise.
-     */
-    int controllerIndexByName(ECommType type, QString name);
-
-    /*!
-     * \brief removeConnection attempt to remove a controller in a connection list
-     * \param type the type of connection it is
-     * \param connection the name of the controller
-     * \return true if controller is removed, false othewrise.
-     */
-    bool removeConnection(ECommType type, QString connection);
-
-    /*!
-     * \brief addConnection attempt to add a controller to a connection list
+     * \brief addController attempt to add a controller to the hash table
      * \param type the type of connection it is
      * \param connection the name of the controller
      * \return true if controller is added, false othewrise.
      */
-    bool addConnection(ECommType type, QString connection);
+    bool addController(ECommType type, QString controller);
 
     /*!
-     * \brief controllerList list of controllers for a given commtype
-     * \param type the type of connection that you are requested controllers from
-     * \return the list of of controllers for the given commtype
+     * \brief removeConnection attempt to remove a controller to the hash table
+     * \param type the type of connection it is
+     * \param connection the name of the controller
+     * \return true if controller is removed, false othewrise.
      */
-    std::deque<QString>* controllerList(ECommType type);
+    bool removeController(ECommType type, QString controller);
 
     /*!
-     * \brief deviceByControllerAndIndex fills the given device with the controller described
-     *        by the type, controllerIndex, and deviceIndex provdied.
-     * \param type the commtype of the device being requested
-     * \param device the device to fill with the proper info
-     * \param controllerIndex the index of the controller
-     * \param deviceIndex the index of the device
-     * \return
+     * \brief fillDevice use the controller name, type, and index to fill in the rest
+     *        of the devices data.
+     * \param device the device with a defined name, type, and index
+     * \return true if controller is found and filled, false otherwise.
      */
-    bool deviceByControllerAndIndex(ECommType type, SLightDevice& device, int controllerIndex, int deviceIndex);
+    bool fillDevice(SLightDevice& device);
+
+    /*!
+     * \brief startDiscovery put all active connection types into a discovery mode.
+     */
+    void startDiscovery();
+
+    /*!
+     * \brief stopDiscovery changes the mode of all communication types to no longer be in discovery.
+     */
+    void stopDiscovery();
+
+
+    /*!
+     * \brief deviceTable a hash table of all connected devices of a certain connection type. The controller names
+     *        are used as keys.
+     * \param type the communication type to request.
+     * \return a hash table of all connected devices of the given type.
+     */
+    const std::unordered_map<std::string, std::list<SLightDevice> >& deviceTable(ECommType type) {
+        return commByType(type)->deviceTable();
+    }
 
     /*!
      * \brief dataLayer attach the data layer to the comm layer.
@@ -200,7 +185,7 @@ signals:
     * \brief lightStateUpdate sent any time theres an update to the state of
     *        any of the lights.
     */
-   void lightStateUpdate(int, int);
+   void lightStateUpdate(int, QString);
 
 private slots:
    /*!
@@ -213,7 +198,7 @@ private slots:
     * \brief hueLightStateUpdate forwards the hue light state changes
     *        from a prviate HueBridgeDiscovery object.
     */
-   void hueLightStateUpdate() { emit lightStateUpdate((int)ECommType::eHue, 0); }
+   void hueLightStateUpdate() { emit lightStateUpdate((int)ECommType::eHue, "Bridge"); }
 
    /*!
     * \brief parsePacket parses any packets sent from any of the commtypes. The

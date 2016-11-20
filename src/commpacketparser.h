@@ -4,8 +4,6 @@
 #include <QWidget>
 #include <QColor>
 
-#include <sstream>
-
 #include "lightingprotocols.h"
 
 /*!

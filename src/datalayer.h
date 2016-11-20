@@ -43,10 +43,6 @@ public:
     ~DataLayer();
 
     /*!
-     * \brief the main saved color, used for single color routines.
-     */
-    bool mainColor(QColor newColor);
-    /*!
      * \brief mainColor getter for mainColor, used for single color routines.
      * \return the mainColor, used for single color routines.
      */
@@ -82,19 +78,10 @@ public:
     QColor colorsAverage(EColorGroup group);
 
     /*!
-     * \brief current routine of LEDs
-     */
-    bool currentRoutine(ELightingRoutine mode);
-    /*!
      * \brief routine getter for the current ELightingRoutine.
      * \return the current lighting routine getting displayed on the LED array.
      */
     ELightingRoutine currentRoutine();
-
-    /*!
-     * \brief value between 0-100 that represents how bright the LEDs shine
-     */
-    bool brightness(int brightness);
 
     /*!
      * \brief brightness getter for the current brightness.
@@ -128,11 +115,6 @@ public:
      */
     void resetTimeoutCounter();
 
-    /*!
-     * \brief The EColorGroup currently in use by the LEDs. This is used
-     *        for multi color routines.
-     */
-    bool currentColorGroup(EColorGroup preset);
     /*!
      * \brief currentColorGroup getter for the current color preset.
      * \return the EColorGroup that represents the colors being displayed on
@@ -216,19 +198,14 @@ public:
      */
     const std::list<SLightDevice>& currentDevices() { return mCurrentDevices; }
 
-    /*!
-     * \brief currentDevice getter for current device of the datalayer.
-     * \return the SLightDevice that represents the current device in the datalyer.
-     */
-    SLightDevice currentDevice() { return mCurrentDevices.front(); }
-
 
     /*!
-     * \brief currentCommType returns the current comm type being used
-     * \return the current comm type being used
+     * \brief shouldUseHueAssets helper that determines if you should be using hue-related assets
+     *        on a GUI page or non hue related assets. It determines this by seeing if half or
+     *        more of the devices in the datalayer are hue devices. If they are, it returns true.
+     * \return true if half or more of the devices in the data layer are hue devices.
      */
-    ECommType currentCommType() { return mCurrentDevices.front().type; }
-
+    bool shouldUseHueAssets();
 
     // --------------------------
     // Const static strings
@@ -299,8 +276,6 @@ private:
      *       size 1 in preparation.
      */
     std::list<SLightDevice> mCurrentDevices;
-
-
 };
 
 #endif // DATALAYER_H

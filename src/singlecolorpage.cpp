@@ -27,6 +27,7 @@ SingleColorPage::~SingleColorPage() {
 
 void SingleColorPage::chooseColor(QColor color) {
     ui->colorPicker->chooseColor(color);
+    emit singleColorChanged(color);
 }
 
 
@@ -88,15 +89,13 @@ void SingleColorPage::highlightRoutineButton(ELightingRoutine routine) {
 // ----------------------------
 void SingleColorPage::modeChanged(int newMode, int newGroup) {
     Q_UNUSED(newGroup); // newGroup is ignored for single color routines
-    mData->currentRoutine((ELightingRoutine)newMode);
     mComm->sendRoutineChange(mData->currentDevices(), (ELightingRoutine)newMode);
     highlightRoutineButton((ELightingRoutine)newMode);
     emit updateMainIcons();
 }
 
 void SingleColorPage::colorChanged(QColor color) {
-    mData->mainColor(color);
-    mComm->sendMainColorChange(mData->currentDevices(), mData->mainColor());
+    mComm->sendMainColorChange(mData->currentDevices(), color);
     if (!(mData->currentRoutine() == ELightingRoutine::eSingleBlink
             || mData->currentRoutine() == ELightingRoutine::eSingleSolid
             || mData->currentRoutine() == ELightingRoutine::eSingleWave
@@ -105,15 +104,14 @@ void SingleColorPage::colorChanged(QColor color) {
             || mData->currentRoutine() == ELightingRoutine::eSingleSineFade
             || mData->currentRoutine() == ELightingRoutine::eSingleSawtoothFadeIn
             || mData->currentRoutine() == ELightingRoutine::eSingleSawtoothFadeOut)) {
-        mData->currentRoutine(ELightingRoutine::eSingleGlimmer);
         mComm->sendRoutineChange(mData->currentDevices(), ELightingRoutine::eSingleGlimmer);
     }
 
     for (int i = 0; i < (int)mRoutineButtons->size(); ++i) {
-         (*mRoutineButtons.get())[i]->updateIcon();
+        (*mRoutineButtons.get())[i]->updateIconSingleColorRoutine((ELightingRoutine)(i + 1), color);
     }
 
-    emit updateMainIcons();
+    emit singleColorChanged(color);
 }
 
 // ----------------------------
@@ -124,7 +122,7 @@ void SingleColorPage::colorChanged(QColor color) {
 void SingleColorPage::showEvent(QShowEvent *) {
   highlightRoutineButton(mData->currentRoutine());
 
-  if (mData->currentCommType() == ECommType::eHue) {
+  if (mData->shouldUseHueAssets()) {
       ui->colorPicker->useHueWheel(true);
   } else {
       ui->colorPicker->useHueWheel(false);
