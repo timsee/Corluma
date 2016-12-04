@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.65</span>
+   &#160;<span id="projectnumber">v0.9.7</span>
    </div>
   </td>
  </tr>
@@ -48,8 +48,8 @@
 <div class="header">
   <div class="summary">
 <a href="class_data_layer-members.html">List of all members</a> &#124;
-<a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-static-attribs">Static Public Attributes</a>  </div>
+<a href="#signals">Signals</a> &#124;
+<a href="#pub-methods">Public Member Functions</a>  </div>
   <div class="headertitle">
 <div class="title">DataLayer Class Reference</div>  </div>
 </div><!--header-->
@@ -62,6 +62,13 @@
 
 <p>Inherits QWidget.</p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
+Signals</h2></td></tr>
+<tr class="memitem:a690e7ed4141639a74d71fd32cc48cdc9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a690e7ed4141639a74d71fd32cc48cdc9"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a690e7ed4141639a74d71fd32cc48cdc9">devicesEmpty</a> ()</td></tr>
+<tr class="memdesc:a690e7ed4141639a74d71fd32cc48cdc9"><td class="mdescLeft">&#160;</td><td class="mdescRight">devicesEmpty signals when the currentDevices list is reduced to zero so that UI updates can react accordingly. <br /></td></tr>
+<tr class="separator:a690e7ed4141639a74d71fd32cc48cdc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a7e3fb24a879cc915e437d41e94a4d959"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a7e3fb24a879cc915e437d41e94a4d959">DataLayer</a> ()</td></tr>
@@ -142,19 +149,21 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a5d51a5e42729f73957439f024409ac41"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a5d51a5e42729f73957439f024409ac41">removeDevice</a> (SLightDevice device)</td></tr>
 <tr class="memdesc:a5d51a5e42729f73957439f024409ac41"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeDevice remove specific device from connected device list.  <a href="#a5d51a5e42729f73957439f024409ac41">More...</a><br /></td></tr>
 <tr class="separator:a5d51a5e42729f73957439f024409ac41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6cf956134ddfc9a45fc22a7c426c2a30"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a6cf956134ddfc9a45fc22a7c426c2a30">removeDevicesOfType</a> (ECommType type)</td></tr>
+<tr class="memdesc:a6cf956134ddfc9a45fc22a7c426c2a30"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeDevicesOfType if they exist, removes devices from currentDevices list that match the commtype provided.  <a href="#a6cf956134ddfc9a45fc22a7c426c2a30">More...</a><br /></td></tr>
+<tr class="separator:a6cf956134ddfc9a45fc22a7c426c2a30"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af89e4a6dd32842b5076f8770836e5620"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#af89e4a6dd32842b5076f8770836e5620">countDevicesOfType</a> (ECommType type)</td></tr>
+<tr class="memdesc:af89e4a6dd32842b5076f8770836e5620"><td class="mdescLeft">&#160;</td><td class="mdescRight">countDevicesOfType iterates through the currentDevices and determines how many exist of a certain commtype  <a href="#af89e4a6dd32842b5076f8770836e5620">More...</a><br /></td></tr>
+<tr class="separator:af89e4a6dd32842b5076f8770836e5620"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab66e1ea4324f9e1d0e06ad2bf560d40e"><td class="memItemLeft" align="right" valign="top">const std::list&lt; SLightDevice &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#ab66e1ea4324f9e1d0e06ad2bf560d40e">currentDevices</a> ()</td></tr>
 <tr class="memdesc:ab66e1ea4324f9e1d0e06ad2bf560d40e"><td class="mdescLeft">&#160;</td><td class="mdescRight">currentDevices returns the current Device pair, which contains both controller connection info and device settings  <a href="#ab66e1ea4324f9e1d0e06ad2bf560d40e">More...</a><br /></td></tr>
 <tr class="separator:ab66e1ea4324f9e1d0e06ad2bf560d40e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7130b93d4d8a0413b5be2f3a42962fee"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a7130b93d4d8a0413b5be2f3a42962fee">shouldUseHueAssets</a> ()</td></tr>
 <tr class="memdesc:a7130b93d4d8a0413b5be2f3a42962fee"><td class="mdescLeft">&#160;</td><td class="mdescRight">shouldUseHueAssets helper that determines if you should be using hue-related assets on a GUI page or non hue related assets. It determines this by seeing if half or more of the devices in the datalayer are hue devices. If they are, it returns true.  <a href="#a7130b93d4d8a0413b5be2f3a42962fee">More...</a><br /></td></tr>
 <tr class="separator:a7130b93d4d8a0413b5be2f3a42962fee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
-Static Public Attributes</h2></td></tr>
-<tr class="memitem:a69c0899c060cf9e5201966890b15cc7c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a69c0899c060cf9e5201966890b15cc7c"></a>
-static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a69c0899c060cf9e5201966890b15cc7c">kCommDefaultType</a> = QString(&quot;CommDefaultType&quot;)</td></tr>
-<tr class="memdesc:a69c0899c060cf9e5201966890b15cc7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">KCommDefaultType Settings key for default type of communication. This is saved whenever the user changes it and is restored at the start of each application session. <br /></td></tr>
-<tr class="separator:a69c0899c060cf9e5201966890b15cc7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac88bcdcd660567b0d8663edc13743209"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_comm_type_settings.html">CommTypeSettings</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#ac88bcdcd660567b0d8663edc13743209">commTypeSettings</a> ()</td></tr>
+<tr class="memdesc:ac88bcdcd660567b0d8663edc13743209"><td class="mdescLeft">&#160;</td><td class="mdescRight">commTypeSettings pointer to the current comm types settings, which maintains which commtypes are currently enabled or disabled  <a href="#ac88bcdcd660567b0d8663edc13743209">More...</a><br /></td></tr>
+<tr class="separator:ac88bcdcd660567b0d8663edc13743209"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2016. Released under the GNU General Public License.</dd></dl>
@@ -269,6 +278,53 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>a QColor that represents the average of all colors used by color group. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ac88bcdcd660567b0d8663edc13743209"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_comm_type_settings.html">CommTypeSettings</a>* DataLayer::commTypeSettings </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>pointer to the current stream settings </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="af89e4a6dd32842b5076f8770836e5620"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int DataLayer::countDevicesOfType </td>
+          <td>(</td>
+          <td class="paramtype">ECommType&#160;</td>
+          <td class="paramname"><em>type</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">type</td><td>the commtype to look for </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the number of devices that match that commtype. </dd></dl>
 
 </div>
 </div>
@@ -494,6 +550,29 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if a device is removed, false otherwise. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a6cf956134ddfc9a45fc22a7c426c2a30"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int DataLayer::removeDevicesOfType </td>
+          <td>(</td>
+          <td class="paramtype">ECommType&#160;</td>
+          <td class="paramname"><em>type</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">type</td><td>tpye of devices to remove </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>number of devices left in currentDevices list. </dd></dl>
 
 </div>
 </div>

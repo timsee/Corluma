@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.65</span>
+   &#160;<span id="projectnumber">v0.9.7</span>
    </div>
   </td>
  </tr>
@@ -112,10 +112,18 @@ Protected Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_preset_colors_page.html#aa95cb48f3ae7ce40431d28d2c3912b10">showEvent</a> (QShowEvent *)</td></tr>
 <tr class="memdesc:aa95cb48f3ae7ce40431d28d2c3912b10"><td class="mdescLeft">&#160;</td><td class="mdescRight">called whenever the page is shown on screen. <br /></td></tr>
 <tr class="separator:aa95cb48f3ae7ce40431d28d2c3912b10"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad55d479bd326488cc87c9ac21c0a17c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aad55d479bd326488cc87c9ac21c0a17c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_preset_colors_page.html#aad55d479bd326488cc87c9ac21c0a17c">hideEvent</a> (QHideEvent *)</td></tr>
+<tr class="memdesc:aad55d479bd326488cc87c9ac21c0a17c"><td class="mdescLeft">&#160;</td><td class="mdescRight">hideEvent called whenever the page is changed and this page is hidden from the screen. <br /></td></tr>
+<tr class="separator:aad55d479bd326488cc87c9ac21c0a17c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_attribs_class_lighting_page"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_lighting_page')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_lighting_page.html">LightingPage</a></td></tr>
+<tr class="memitem:a43fed23a3309333b8b699caa34e3f329 inherit pro_attribs_class_lighting_page"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a43fed23a3309333b8b699caa34e3f329"></a>
+QTimer *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#a43fed23a3309333b8b699caa34e3f329">mRenderThread</a></td></tr>
+<tr class="memdesc:a43fed23a3309333b8b699caa34e3f329 inherit pro_attribs_class_lighting_page"><td class="mdescLeft">&#160;</td><td class="mdescRight">mRenderThread timer that calls a renderUI() function on each of the pages. This function is used to render more expensive assets if and only if they received a change in state since the previous renderUI call. <br /></td></tr>
+<tr class="separator:a43fed23a3309333b8b699caa34e3f329 inherit pro_attribs_class_lighting_page"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5e2b53bd93f9f89c68e10cbba43e2ce inherit pro_attribs_class_lighting_page"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa5e2b53bd93f9f89c68e10cbba43e2ce"></a>
 <a class="el" href="class_comm_layer.html">CommLayer</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#aa5e2b53bd93f9f89c68e10cbba43e2ce">mComm</a></td></tr>
 <tr class="memdesc:aa5e2b53bd93f9f89c68e10cbba43e2ce inherit pro_attribs_class_lighting_page"><td class="mdescLeft">&#160;</td><td class="mdescRight">communication pointer to communication object for sending comannds to the lights <br /></td></tr>
@@ -124,6 +132,10 @@ Additional Inherited Members</h2></td></tr>
 <a class="el" href="class_data_layer.html">DataLayer</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#a13431dcc6aa10530a61bb9a11e32b386">mData</a></td></tr>
 <tr class="memdesc:a13431dcc6aa10530a61bb9a11e32b386 inherit pro_attribs_class_lighting_page"><td class="mdescLeft">&#160;</td><td class="mdescRight">data layer that maintains and tracks the states of the lights and the saved data of the GUI <br /></td></tr>
 <tr class="separator:a13431dcc6aa10530a61bb9a11e32b386 inherit pro_attribs_class_lighting_page"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f1078d30d704ce6392c6803ce5a11ff inherit pro_attribs_class_lighting_page"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8f1078d30d704ce6392c6803ce5a11ff"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#a8f1078d30d704ce6392c6803ce5a11ff">mRenderInterval</a> = 100</td></tr>
+<tr class="memdesc:a8f1078d30d704ce6392c6803ce5a11ff inherit pro_attribs_class_lighting_page"><td class="mdescLeft">&#160;</td><td class="mdescRight">mRenderInterval number of msec between each of the UI events. <br /></td></tr>
+<tr class="separator:a8f1078d30d704ce6392c6803ce5a11ff inherit pro_attribs_class_lighting_page"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2016. Released under the GNU General Public License.</dd></dl>

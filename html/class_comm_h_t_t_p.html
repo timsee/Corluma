@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.65</span>
+   &#160;<span id="projectnumber">v0.9.7</span>
    </div>
   </td>
  </tr>
@@ -70,6 +70,14 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_h_t_t_p.html#a621242b3ab5301ddf6afdd9cbdda9dbe">~CommHTTP</a> ()</td></tr>
 <tr class="memdesc:a621242b3ab5301ddf6afdd9cbdda9dbe"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_comm_h_t_t_p.html" title="provides a HTTP communication stream, which is similar to an IP Camera. Packets are sent as HTTP requ...">CommHTTP</a> Deconstructor. <br /></td></tr>
 <tr class="separator:a621242b3ab5301ddf6afdd9cbdda9dbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8edda42218bdc83af4748635f1cb48f4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8edda42218bdc83af4748635f1cb48f4"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_h_t_t_p.html#a8edda42218bdc83af4748635f1cb48f4">startup</a> ()</td></tr>
+<tr class="memdesc:a8edda42218bdc83af4748635f1cb48f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">startup defined in <a class="el" href="class_comm_type.html" title="inherited by comm types, provides a general interface that can be used to do connections and sending ...">CommType</a> <br /></td></tr>
+<tr class="separator:a8edda42218bdc83af4748635f1cb48f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3920b3d97c94dfbb526e9ea343bfbb9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae3920b3d97c94dfbb526e9ea343bfbb9"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_h_t_t_p.html#ae3920b3d97c94dfbb526e9ea343bfbb9">shutdown</a> ()</td></tr>
+<tr class="memdesc:ae3920b3d97c94dfbb526e9ea343bfbb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">shutdown defined in <a class="el" href="class_comm_type.html" title="inherited by comm types, provides a general interface that can be used to do connections and sending ...">CommType</a> <br /></td></tr>
+<tr class="separator:ae3920b3d97c94dfbb526e9ea343bfbb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad2f184165aad6a5efc1451e3bf0cdb2f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_h_t_t_p.html#ad2f184165aad6a5efc1451e3bf0cdb2f">sendPacket</a> (QString controller, QString packet)</td></tr>
 <tr class="memdesc:ad2f184165aad6a5efc1451e3bf0cdb2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendPacket sends a packet in a way similar to am IP Camera: The packet is added to the end of the web address, and sent as an HTTP request  <a href="#ad2f184165aad6a5efc1451e3bf0cdb2f">More...</a><br /></td></tr>
 <tr class="separator:ad2f184165aad6a5efc1451e3bf0cdb2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -78,6 +86,9 @@ Public Member Functions</h2></td></tr>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aea9af432f13faf2a28b6a9fd5d5000e9">~CommType</a> ()</td></tr>
 <tr class="memdesc:aea9af432f13faf2a28b6a9fd5d5000e9 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">~CommType Deconstructor <br /></td></tr>
 <tr class="separator:aea9af432f13faf2a28b6a9fd5d5000e9 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace6d7465b678fc3daf1e9580d331c8dc inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ace6d7465b678fc3daf1e9580d331c8dc">hasStarted</a> ()</td></tr>
+<tr class="memdesc:ace6d7465b678fc3daf1e9580d331c8dc inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">hasStarted true if startup has been called and a shutdown has not be called after it, false otherwise.  <a href="#ace6d7465b678fc3daf1e9580d331c8dc">More...</a><br /></td></tr>
+<tr class="separator:ace6d7465b678fc3daf1e9580d331c8dc inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3ee085c089155c088acd4ebb4ed41b4f inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3ee085c089155c088acd4ebb4ed41b4f"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a3ee085c089155c088acd4ebb4ed41b4f">startDiscovery</a> ()</td></tr>
 <tr class="memdesc:a3ee085c089155c088acd4ebb4ed41b4f inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">startDiscovery start sending discovery packets if needed, and continually request state update packets. <br /></td></tr>
@@ -86,6 +97,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ab0e83c722a3afb0c1ceda26c55c76e85">stopDiscovery</a> ()</td></tr>
 <tr class="memdesc:ab0e83c722a3afb0c1ceda26c55c76e85 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">stopDiscovery stop sending discovery packets and go back to requesting state update packets only when in use. <br /></td></tr>
 <tr class="separator:ab0e83c722a3afb0c1ceda26c55c76e85 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5b5c67a3a87429a342fb9e82cdcaf6d inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ab5b5c67a3a87429a342fb9e82cdcaf6d">runningDiscovery</a> ()</td></tr>
+<tr class="memdesc:ab5b5c67a3a87429a342fb9e82cdcaf6d inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">runningDiscovery true if theres any controller that is going through the discovery routines and hasn't been discovered, false otherwise.  <a href="#ab5b5c67a3a87429a342fb9e82cdcaf6d">More...</a><br /></td></tr>
+<tr class="separator:ab5b5c67a3a87429a342fb9e82cdcaf6d inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac8e3ef4d4b075f7d53fcb6500c0d48e1 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ac8e3ef4d4b075f7d53fcb6500c0d48e1">addController</a> (QString controller)</td></tr>
 <tr class="memdesc:ac8e3ef4d4b075f7d53fcb6500c0d48e1 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">addController attempts to add a new controller to the device table.  <a href="#ac8e3ef4d4b075f7d53fcb6500c0d48e1">More...</a><br /></td></tr>
 <tr class="separator:ac8e3ef4d4b075f7d53fcb6500c0d48e1 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -123,6 +137,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:acbc434809e1145dff7f9cd3dcd7a068d inherit signals_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">discoveryReceived emitted when a discovery packet is received, this contains the state of all connected devices. <br /></td></tr>
 <tr class="separator:acbc434809e1145dff7f9cd3dcd7a068d inherit signals_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
+<tr class="memitem:adb4143fad9f0cad9b4e0efff68614bf1 inherit pro_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adb4143fad9f0cad9b4e0efff68614bf1"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#adb4143fad9f0cad9b4e0efff68614bf1">resetDiscovery</a> ()</td></tr>
+<tr class="memdesc:adb4143fad9f0cad9b4e0efff68614bf1 inherit pro_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetDiscovery clears the throttle list and discovery list and treats the commtype as if nothing has been discovered. <br /></td></tr>
+<tr class="separator:adb4143fad9f0cad9b4e0efff68614bf1 inherit pro_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5b66737d5c7518453f138de385df52b2 inherit pro_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a5b66737d5c7518453f138de385df52b2">handleDiscoveryPacket</a> (QString sender, int throttleInterval, int throttleMax)</td></tr>
 <tr class="memdesc:a5b66737d5c7518453f138de385df52b2 inherit pro_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">handleDiscoveryPacket called whenever a discovery packet is received by a commtype. Although all commtypes may received a packet in different ways or in differnt formats, all ways get converted so that they work with this function. The function determines if the device sending the discovery packet has been discovered already, and if it hasn't, it adds it to its list. It also initiates a throttle timer for this particular controller. Finally, it determines if its looking for any other controllers, and if its not, it shuts off the discovery timer.  <a href="#a5b66737d5c7518453f138de385df52b2">More...</a><br /></td></tr>
 <tr class="separator:a5b66737d5c7518453f138de385df52b2 inherit pro_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -158,6 +176,14 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#afcc75099b138addb3dc35692e819eabe">mDiscoveryMode</a></td></tr>
 <tr class="memdesc:afcc75099b138addb3dc35692e819eabe inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mDiscoveryMode true if all discovery and state update threads for the commtype should be active, false if using the standard lifecyclef for all the threads. <br /></td></tr>
 <tr class="separator:afcc75099b138addb3dc35692e819eabe inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e8ea9e88347922939c9823e0f1488ea inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2e8ea9e88347922939c9823e0f1488ea"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a2e8ea9e88347922939c9823e0f1488ea">mFullyDiscovered</a></td></tr>
+<tr class="memdesc:a2e8ea9e88347922939c9823e0f1488ea inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mFullyDiscovered bool that tracks whether or not all the controllers the commtype is looking for have been discovered. This gets set to false if a discovery routine starts looking for a new controller. <br /></td></tr>
+<tr class="separator:a2e8ea9e88347922939c9823e0f1488ea inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47a3020ab06d49b995e22c7b4567017e inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a47a3020ab06d49b995e22c7b4567017e"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a47a3020ab06d49b995e22c7b4567017e">mHasStarted</a></td></tr>
+<tr class="memdesc:a47a3020ab06d49b995e22c7b4567017e inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mHasStarted bool that tracks whether or not the <a class="el" href="class_comm_type.html#a78d309086195c52051f007e693ff2b7a" title="startup Each comm type has a series of threads that maintain the connection and check for changes...">startup()</a> routine has been called. Gets set to false after the <a class="el" href="class_comm_type.html#ad2a24398eeaafa49cd376cb09be961ef" title="shutdown turns off all threads that maintain the connection and check for changes. Also shuts down any discovery threads, if they are currently running. ">shutdown()</a> routine is callsed. <br /></td></tr>
+<tr class="separator:a47a3020ab06d49b995e22c7b4567017e inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2016. Released under the GNU General Public License. </dd></dl>
@@ -217,7 +243,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </dd>
 </dl>
 
-<p>Reimplemented from <a class="el" href="class_comm_type.html#a278cb6c97f16bffda7a113b7864d6fe2">CommType</a>.</p>
+<p>Implements <a class="el" href="class_comm_type.html#af6455a9e3aaa20b95077339fa5502ea7">CommType</a>.</p>
 
 </div>
 </div>

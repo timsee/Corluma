@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.65</span>
+   &#160;<span id="projectnumber">v0.9.7</span>
    </div>
   </td>
  </tr>
@@ -53,7 +53,7 @@
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a>  </div>
   <div class="headertitle">
-<div class="title">CommType Class Reference</div>  </div>
+<div class="title">CommType Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -83,9 +83,20 @@ Public Member Functions</h2></td></tr>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aea9af432f13faf2a28b6a9fd5d5000e9">~CommType</a> ()</td></tr>
 <tr class="memdesc:aea9af432f13faf2a28b6a9fd5d5000e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">~CommType Deconstructor <br /></td></tr>
 <tr class="separator:aea9af432f13faf2a28b6a9fd5d5000e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a278cb6c97f16bffda7a113b7864d6fe2"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a278cb6c97f16bffda7a113b7864d6fe2">sendPacket</a> (QString controller, QString packet)</td></tr>
-<tr class="memdesc:a278cb6c97f16bffda7a113b7864d6fe2"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendPacket Sends the provided string over the connection stream.  <a href="#a278cb6c97f16bffda7a113b7864d6fe2">More...</a><br /></td></tr>
-<tr class="separator:a278cb6c97f16bffda7a113b7864d6fe2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a78d309086195c52051f007e693ff2b7a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a78d309086195c52051f007e693ff2b7a"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a78d309086195c52051f007e693ff2b7a">startup</a> ()=0</td></tr>
+<tr class="memdesc:a78d309086195c52051f007e693ff2b7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">startup Each comm type has a series of threads that maintain the connection and check for changes. startup starts all the threads associated with the commtype. If a device has not been discovered, it also starts up a discovery thread. <br /></td></tr>
+<tr class="separator:a78d309086195c52051f007e693ff2b7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2a24398eeaafa49cd376cb09be961ef"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad2a24398eeaafa49cd376cb09be961ef"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ad2a24398eeaafa49cd376cb09be961ef">shutdown</a> ()=0</td></tr>
+<tr class="memdesc:ad2a24398eeaafa49cd376cb09be961ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">shutdown turns off all threads that maintain the connection and check for changes. Also shuts down any discovery threads, if they are currently running. <br /></td></tr>
+<tr class="separator:ad2a24398eeaafa49cd376cb09be961ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace6d7465b678fc3daf1e9580d331c8dc"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ace6d7465b678fc3daf1e9580d331c8dc">hasStarted</a> ()</td></tr>
+<tr class="memdesc:ace6d7465b678fc3daf1e9580d331c8dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">hasStarted true if startup has been called and a shutdown has not be called after it, false otherwise.  <a href="#ace6d7465b678fc3daf1e9580d331c8dc">More...</a><br /></td></tr>
+<tr class="separator:ace6d7465b678fc3daf1e9580d331c8dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af6455a9e3aaa20b95077339fa5502ea7"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#af6455a9e3aaa20b95077339fa5502ea7">sendPacket</a> (QString controller, QString packet)=0</td></tr>
+<tr class="memdesc:af6455a9e3aaa20b95077339fa5502ea7"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendPacket Sends the provided string over the connection stream.  <a href="#af6455a9e3aaa20b95077339fa5502ea7">More...</a><br /></td></tr>
+<tr class="separator:af6455a9e3aaa20b95077339fa5502ea7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3ee085c089155c088acd4ebb4ed41b4f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3ee085c089155c088acd4ebb4ed41b4f"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a3ee085c089155c088acd4ebb4ed41b4f">startDiscovery</a> ()</td></tr>
 <tr class="memdesc:a3ee085c089155c088acd4ebb4ed41b4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">startDiscovery start sending discovery packets if needed, and continually request state update packets. <br /></td></tr>
@@ -94,6 +105,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ab0e83c722a3afb0c1ceda26c55c76e85">stopDiscovery</a> ()</td></tr>
 <tr class="memdesc:ab0e83c722a3afb0c1ceda26c55c76e85"><td class="mdescLeft">&#160;</td><td class="mdescRight">stopDiscovery stop sending discovery packets and go back to requesting state update packets only when in use. <br /></td></tr>
 <tr class="separator:ab0e83c722a3afb0c1ceda26c55c76e85"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5b5c67a3a87429a342fb9e82cdcaf6d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ab5b5c67a3a87429a342fb9e82cdcaf6d">runningDiscovery</a> ()</td></tr>
+<tr class="memdesc:ab5b5c67a3a87429a342fb9e82cdcaf6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">runningDiscovery true if theres any controller that is going through the discovery routines and hasn't been discovered, false otherwise.  <a href="#ab5b5c67a3a87429a342fb9e82cdcaf6d">More...</a><br /></td></tr>
+<tr class="separator:ab5b5c67a3a87429a342fb9e82cdcaf6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac8e3ef4d4b075f7d53fcb6500c0d48e1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ac8e3ef4d4b075f7d53fcb6500c0d48e1">addController</a> (QString controller)</td></tr>
 <tr class="memdesc:ac8e3ef4d4b075f7d53fcb6500c0d48e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">addController attempts to add a new controller to the device table.  <a href="#ac8e3ef4d4b075f7d53fcb6500c0d48e1">More...</a><br /></td></tr>
 <tr class="separator:ac8e3ef4d4b075f7d53fcb6500c0d48e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -121,6 +135,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
+<tr class="memitem:adb4143fad9f0cad9b4e0efff68614bf1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adb4143fad9f0cad9b4e0efff68614bf1"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#adb4143fad9f0cad9b4e0efff68614bf1">resetDiscovery</a> ()</td></tr>
+<tr class="memdesc:adb4143fad9f0cad9b4e0efff68614bf1"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetDiscovery clears the throttle list and discovery list and treats the commtype as if nothing has been discovered. <br /></td></tr>
+<tr class="separator:adb4143fad9f0cad9b4e0efff68614bf1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5b66737d5c7518453f138de385df52b2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a5b66737d5c7518453f138de385df52b2">handleDiscoveryPacket</a> (QString sender, int throttleInterval, int throttleMax)</td></tr>
 <tr class="memdesc:a5b66737d5c7518453f138de385df52b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">handleDiscoveryPacket called whenever a discovery packet is received by a commtype. Although all commtypes may received a packet in different ways or in differnt formats, all ways get converted so that they work with this function. The function determines if the device sending the discovery packet has been discovered already, and if it hasn't, it adds it to its list. It also initiates a throttle timer for this particular controller. Finally, it determines if its looking for any other controllers, and if its not, it shuts off the discovery timer.  <a href="#a5b66737d5c7518453f138de385df52b2">More...</a><br /></td></tr>
 <tr class="separator:a5b66737d5c7518453f138de385df52b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -158,6 +176,14 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#afcc75099b138addb3dc35692e819eabe">mDiscoveryMode</a></td></tr>
 <tr class="memdesc:afcc75099b138addb3dc35692e819eabe"><td class="mdescLeft">&#160;</td><td class="mdescRight">mDiscoveryMode true if all discovery and state update threads for the commtype should be active, false if using the standard lifecyclef for all the threads. <br /></td></tr>
 <tr class="separator:afcc75099b138addb3dc35692e819eabe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e8ea9e88347922939c9823e0f1488ea"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2e8ea9e88347922939c9823e0f1488ea"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a2e8ea9e88347922939c9823e0f1488ea">mFullyDiscovered</a></td></tr>
+<tr class="memdesc:a2e8ea9e88347922939c9823e0f1488ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">mFullyDiscovered bool that tracks whether or not all the controllers the commtype is looking for have been discovered. This gets set to false if a discovery routine starts looking for a new controller. <br /></td></tr>
+<tr class="separator:a2e8ea9e88347922939c9823e0f1488ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47a3020ab06d49b995e22c7b4567017e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a47a3020ab06d49b995e22c7b4567017e"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a47a3020ab06d49b995e22c7b4567017e">mHasStarted</a></td></tr>
+<tr class="memdesc:a47a3020ab06d49b995e22c7b4567017e"><td class="mdescLeft">&#160;</td><td class="mdescRight">mHasStarted bool that tracks whether or not the <a class="el" href="class_comm_type.html#a78d309086195c52051f007e693ff2b7a" title="startup Each comm type has a series of threads that maintain the connection and check for changes...">startup()</a> routine has been called. Gets set to false after the <a class="el" href="class_comm_type.html#ad2a24398eeaafa49cd376cb09be961ef" title="shutdown turns off all threads that maintain the connection and check for changes. Also shuts down any discovery threads, if they are currently running. ">shutdown()</a> routine is callsed. <br /></td></tr>
+<tr class="separator:a47a3020ab06d49b995e22c7b4567017e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2016. Released under the GNU General Public License. </dd></dl>
@@ -280,6 +306,30 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
+<a class="anchor" id="ace6d7465b678fc3daf1e9580d331c8dc"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool CommType::hasStarted </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>true if startup has been called and a shutdown has not be called after it, false otherwise. </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="aac6ed7947ba8860ee31946d36d083944"></a>
 <div class="memitem">
 <div class="memproto">
@@ -303,7 +353,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="a278cb6c97f16bffda7a113b7864d6fe2"></a>
+<a class="anchor" id="ab5b5c67a3a87429a342fb9e82cdcaf6d"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -311,7 +361,31 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void CommType::sendPacket </td>
+          <td class="memname">bool CommType::runningDiscovery </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>true if theres any controller that is going through the discovery routines and hasn't been discovered, false otherwise. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="af6455a9e3aaa20b95077339fa5502ea7"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void CommType::sendPacket </td>
           <td>(</td>
           <td class="paramtype">QString&#160;</td>
           <td class="paramname"><em>controller</em>, </td>
@@ -330,7 +404,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -341,7 +415,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </dd>
 </dl>
 
-<p>Reimplemented in <a class="el" href="class_comm_hue.html#a549a6fa8dfd50a1e241a538efc693376">CommHue</a>, <a class="el" href="class_comm_serial.html#ae46333922bcce379db388689ea778299">CommSerial</a>, <a class="el" href="class_comm_h_t_t_p.html#ad2f184165aad6a5efc1451e3bf0cdb2f">CommHTTP</a>, and <a class="el" href="class_comm_u_d_p.html#a2c890154588c04bea80749e004179c0f">CommUDP</a>.</p>
+<p>Implemented in <a class="el" href="class_comm_hue.html#a549a6fa8dfd50a1e241a538efc693376">CommHue</a>, <a class="el" href="class_comm_serial.html#ae46333922bcce379db388689ea778299">CommSerial</a>, <a class="el" href="class_comm_h_t_t_p.html#ad2f184165aad6a5efc1451e3bf0cdb2f">CommHTTP</a>, and <a class="el" href="class_comm_u_d_p.html#a2c890154588c04bea80749e004179c0f">CommUDP</a>.</p>
 
 </div>
 </div>

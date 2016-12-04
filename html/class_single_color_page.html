@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.65</span>
+   &#160;<span id="projectnumber">v0.9.7</span>
    </div>
   </td>
  </tr>
@@ -98,9 +98,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a03a746b6ddc669f8224775a3eb3bde8f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_single_color_page.html#a03a746b6ddc669f8224775a3eb3bde8f">highlightRoutineButton</a> (ELightingRoutine routine)</td></tr>
 <tr class="memdesc:a03a746b6ddc669f8224775a3eb3bde8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">highlightRoutineButton highlights the button that implements the routine parameter. If it can't find a button that implements the lighting routine, then all buttons are unhighlighted  <a href="#a03a746b6ddc669f8224775a3eb3bde8f">More...</a><br /></td></tr>
 <tr class="separator:a03a746b6ddc669f8224775a3eb3bde8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5479b6eff5c06bd4d1ac48df50c414e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_single_color_page.html#ad5479b6eff5c06bd4d1ac48df50c414e">chooseColor</a> (QColor color)</td></tr>
-<tr class="memdesc:ad5479b6eff5c06bd4d1ac48df50c414e"><td class="mdescLeft">&#160;</td><td class="mdescRight">chooseColor allows the color of the <a class="el" href="class_color_picker.html" title="The ColorPicker class is an object that combines three LightsSliders and a color wheel to create an i...">ColorPicker</a> and the single color routines to be set programmatically. Used by the <a class="el" href="class_main_window.html" title="The MainWindow class is the only window in this application. It contains a QStackedWidget which shows...">MainWindow</a> during startup.  <a href="#ad5479b6eff5c06bd4d1ac48df50c414e">More...</a><br /></td></tr>
-<tr class="separator:ad5479b6eff5c06bd4d1ac48df50c414e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae0e8e2220e894780443ef069ad3a34c5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae0e8e2220e894780443ef069ad3a34c5"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_single_color_page.html#ae0e8e2220e894780443ef069ad3a34c5">setupButtons</a> ()</td></tr>
 <tr class="memdesc:ae0e8e2220e894780443ef069ad3a34c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">setupButtons sets up the routine buttons. Requires the <a class="el" href="class_data_layer.html" title="The DataLayer class stores and maintains the data about the state and settings of the application...">DataLayer</a> of the application to be set up first. <br /></td></tr>
@@ -120,10 +117,18 @@ Protected Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_single_color_page.html#a1f6a1d6107bc0f9710065d2ef735a42a">showEvent</a> (QShowEvent *)</td></tr>
 <tr class="memdesc:a1f6a1d6107bc0f9710065d2ef735a42a"><td class="mdescLeft">&#160;</td><td class="mdescRight">showEvent called whenever the page is about to be shown, used to to make sure that the the hilighted buttons and the modes that could have changed from other pages are still in sync on this page. <br /></td></tr>
 <tr class="separator:a1f6a1d6107bc0f9710065d2ef735a42a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb13ef980d9e90648de478fd4d444aa7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abb13ef980d9e90648de478fd4d444aa7"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_single_color_page.html#abb13ef980d9e90648de478fd4d444aa7">hideEvent</a> (QHideEvent *)</td></tr>
+<tr class="memdesc:abb13ef980d9e90648de478fd4d444aa7"><td class="mdescLeft">&#160;</td><td class="mdescRight">hideEvent called as the page is hidden. This happens when a new page is displayed. <br /></td></tr>
+<tr class="separator:abb13ef980d9e90648de478fd4d444aa7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_attribs_class_lighting_page"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_lighting_page')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_lighting_page.html">LightingPage</a></td></tr>
+<tr class="memitem:a43fed23a3309333b8b699caa34e3f329 inherit pro_attribs_class_lighting_page"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a43fed23a3309333b8b699caa34e3f329"></a>
+QTimer *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#a43fed23a3309333b8b699caa34e3f329">mRenderThread</a></td></tr>
+<tr class="memdesc:a43fed23a3309333b8b699caa34e3f329 inherit pro_attribs_class_lighting_page"><td class="mdescLeft">&#160;</td><td class="mdescRight">mRenderThread timer that calls a renderUI() function on each of the pages. This function is used to render more expensive assets if and only if they received a change in state since the previous renderUI call. <br /></td></tr>
+<tr class="separator:a43fed23a3309333b8b699caa34e3f329 inherit pro_attribs_class_lighting_page"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5e2b53bd93f9f89c68e10cbba43e2ce inherit pro_attribs_class_lighting_page"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa5e2b53bd93f9f89c68e10cbba43e2ce"></a>
 <a class="el" href="class_comm_layer.html">CommLayer</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#aa5e2b53bd93f9f89c68e10cbba43e2ce">mComm</a></td></tr>
 <tr class="memdesc:aa5e2b53bd93f9f89c68e10cbba43e2ce inherit pro_attribs_class_lighting_page"><td class="mdescLeft">&#160;</td><td class="mdescRight">communication pointer to communication object for sending comannds to the lights <br /></td></tr>
@@ -132,6 +137,10 @@ Additional Inherited Members</h2></td></tr>
 <a class="el" href="class_data_layer.html">DataLayer</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#a13431dcc6aa10530a61bb9a11e32b386">mData</a></td></tr>
 <tr class="memdesc:a13431dcc6aa10530a61bb9a11e32b386 inherit pro_attribs_class_lighting_page"><td class="mdescLeft">&#160;</td><td class="mdescRight">data layer that maintains and tracks the states of the lights and the saved data of the GUI <br /></td></tr>
 <tr class="separator:a13431dcc6aa10530a61bb9a11e32b386 inherit pro_attribs_class_lighting_page"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f1078d30d704ce6392c6803ce5a11ff inherit pro_attribs_class_lighting_page"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8f1078d30d704ce6392c6803ce5a11ff"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#a8f1078d30d704ce6392c6803ce5a11ff">mRenderInterval</a> = 100</td></tr>
+<tr class="memdesc:a8f1078d30d704ce6392c6803ce5a11ff inherit pro_attribs_class_lighting_page"><td class="mdescLeft">&#160;</td><td class="mdescRight">mRenderInterval number of msec between each of the UI events. <br /></td></tr>
+<tr class="separator:a8f1078d30d704ce6392c6803ce5a11ff inherit pro_attribs_class_lighting_page"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2016. Released under the GNU General Public License.</dd></dl>
@@ -164,28 +173,6 @@ Additional Inherited Members</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="ad5479b6eff5c06bd4d1ac48df50c414e"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void SingleColorPage::chooseColor </td>
-          <td>(</td>
-          <td class="paramtype">QColor&#160;</td>
-          <td class="paramname"><em>color</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">color</td><td>the color that the <a class="el" href="class_single_color_page.html" title="The SingleColorPage provides a way to change the main color of the LED system and to set it in single...">SingleColorPage</a> should use for its colorPicker and its single color routines. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a class="anchor" id="a03a746b6ddc669f8224775a3eb3bde8f"></a>
 <div class="memitem">
 <div class="memproto">

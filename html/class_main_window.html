@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.65</span>
+   &#160;<span id="projectnumber">v0.9.7</span>
    </div>
   </td>
  </tr>
@@ -77,10 +77,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a010961d23849fe84507d887e0dbc2f89">pageChanged</a> (int)</td></tr>
 <tr class="memdesc:a010961d23849fe84507d887e0dbc2f89"><td class="mdescLeft">&#160;</td><td class="mdescRight">pageChanged Connected to the main menu buttons. Each button sends a different int, which opens a different page on the QStackedWidget. <br /></td></tr>
 <tr class="separator:a010961d23849fe84507d887e0dbc2f89"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc40a858ce1a64be4bb4260f3d90db4f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acc40a858ce1a64be4bb4260f3d90db4f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#acc40a858ce1a64be4bb4260f3d90db4f">settingsPressed</a> ()</td></tr>
-<tr class="memdesc:acc40a858ce1a64be4bb4260f3d90db4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">settingsPressed called whenever the settings button is pressed. <br /></td></tr>
-<tr class="separator:acc40a858ce1a64be4bb4260f3d90db4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c971ab4861887642f3e4f3abe96f810"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9c971ab4861887642f3e4f3abe96f810"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a9c971ab4861887642f3e4f3abe96f810">connectionButtonPressed</a> ()</td></tr>
+<tr class="memdesc:a9c971ab4861887642f3e4f3abe96f810"><td class="mdescLeft">&#160;</td><td class="mdescRight">connectionButtonPressed called whenever the connection button is pressed. <br /></td></tr>
+<tr class="separator:a9c971ab4861887642f3e4f3abe96f810"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a453d6501c8c4426bfe26cdff2a544c01"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a453d6501c8c4426bfe26cdff2a544c01"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a453d6501c8c4426bfe26cdff2a544c01">settingsButtonPressed</a> ()</td></tr>
+<tr class="memdesc:a453d6501c8c4426bfe26cdff2a544c01"><td class="mdescLeft">&#160;</td><td class="mdescRight">settingsPressed called whenever the settings button is pressed. <br /></td></tr>
+<tr class="separator:a453d6501c8c4426bfe26cdff2a544c01"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1358388cb3052efdaabb54f140d8add8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1358388cb3052efdaabb54f140d8add8"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a1358388cb3052efdaabb54f140d8add8">updateMenuBar</a> ()</td></tr>
 <tr class="memdesc:a1358388cb3052efdaabb54f140d8add8"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateMenuBar used to update the menu bar to app state changes. <br /></td></tr>
@@ -93,6 +97,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a29f7054b7516e6819519aa63fdb2d7f5">updatePresetColorGroup</a> (int, int)</td></tr>
 <tr class="memdesc:a29f7054b7516e6819519aa63fdb2d7f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">updatePresetColorGroup updates the icon for the preset color page and the menu bar and on/off button based off of the two integers provided. The first integer should be cast to a ELightingRoutine and the second should be cast to a EColorGroup. <br /></td></tr>
 <tr class="separator:a29f7054b7516e6819519aa63fdb2d7f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad64aef0b7c05e9ebfe7caaaa49a85f64"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad64aef0b7c05e9ebfe7caaaa49a85f64"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#ad64aef0b7c05e9ebfe7caaaa49a85f64">floatingLayoutButtonPressed</a> (QString)</td></tr>
+<tr class="memdesc:ad64aef0b7c05e9ebfe7caaaa49a85f64"><td class="mdescLeft">&#160;</td><td class="mdescRight">floatingLayoutButtonPressed handles whenever the floating layout has a button pressed. Parses the string that the layout emits, then updates the UI accordingly. <br /></td></tr>
+<tr class="separator:ad64aef0b7c05e9ebfe7caaaa49a85f64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b57847ed8f3752a055d07038240cb1a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9b57847ed8f3752a055d07038240cb1a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a9b57847ed8f3752a055d07038240cb1a">deviceCountChangedOnConnectionPage</a> ()</td></tr>
+<tr class="memdesc:a9b57847ed8f3752a055d07038240cb1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceCountChangedOnConnectionPage handles the case when the device count changes. <br /></td></tr>
+<tr class="separator:a9b57847ed8f3752a055d07038240cb1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26496d8918a24f8f96363a9b9703270d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a26496d8918a24f8f96363a9b9703270d"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a26496d8918a24f8f96363a9b9703270d">deviceCountReachedZero</a> ()</td></tr>
+<tr class="memdesc:a26496d8918a24f8f96363a9b9703270d"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceCountChangedOnConnectionPage handles the case when the device count reaches zero. This gets signaled from the data layer whereas deviceCOuntChangedOnConnectionPage gets signaled from the connection page. <br /></td></tr>
+<tr class="separator:a26496d8918a24f8f96363a9b9703270d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
