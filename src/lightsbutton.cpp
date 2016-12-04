@@ -7,6 +7,7 @@
 #include "lightsbutton.h"
 
 #include <QDebug>
+#include <QGraphicsOpacityEffect>
 
 LightsButton::LightsButton(QWidget *parent) : QWidget(parent) {
     mLightingRoutine = ELightingRoutine::eLightingRoutine_MAX;
@@ -96,6 +97,21 @@ ELightingRoutine LightsButton::lightingRoutine() {
 EColorGroup LightsButton::colorGroup() {
     return mColorGroup;
 }
+
+void LightsButton::enable(bool shouldEnable) {
+    if(shouldEnable) {
+        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(button);
+        effect->setOpacity(1.0);
+        button->setGraphicsEffect(effect);
+        this->setEnabled(true);
+    } else {
+        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(button);
+        effect->setOpacity(0.1);
+        button->setGraphicsEffect(effect);
+        this->setEnabled(false);
+    }
+}
+
 
 void LightsButton::resizeEvent(QResizeEvent *event) {
     Q_UNUSED(event);

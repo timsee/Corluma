@@ -4,6 +4,7 @@
 
 #include "lightingpage.h"
 #include "lightsslider.h"
+#include "lightcheckbox.h"
 
 #include <QWidget>
 #include <QListWidgetItem>
@@ -38,21 +39,21 @@ public:
      * \brief Constructor
      */
     explicit SettingsPage(QWidget *parent = 0);
+
     /*!
      * \brief Deconstructor
      */
     ~SettingsPage();
 
     /*!
-     * \brief setupUI called after mComm is constructed so that it can be used
-     *        to set up the UI of the Settings Page.
+     * \brief setupUI sets up initial UI elements.
      */
     void setupUI();
 
     /*!
      * \brief updateUI updates the colors of various settings in the UI.
      */
-    void updateUI(int type);
+    void updateUI();
 
 signals:
     /*!
@@ -75,54 +76,37 @@ public slots:
     void timeoutChanged(int);
 
     /*!
-     * \brief lightStateChanged called whenever theres any change in the state of
-     *        any of the lights.
+     * \brief hueCheckboxClicked checks and unchecks the hue checkbox.
      */
-    void lightStateChanged(int, QString);
+    void hueCheckboxClicked(bool);
 
     /*!
-     * \brief listClicked signaled whenever the serial list is clicked. It
-     *        attempts to connect to the serial device that is clicked, if
-     *        its not already connected.
+     * \brief httpCheckboxClicked checks and unchecks the HTTP checkbox.
      */
-    void listClicked(QListWidgetItem *);
+    void httpCheckboxClicked(bool);
 
     /*!
-     * \brief highlightButton highlight the commtype button of the desired ECommType
-     * \param currentCommType the button that you want to highlight
+     * \brief udpCheckboxClicked checks and unchecks the UDP checkbox.
      */
-    void highlightButton(ECommType currentCommType);
+    void udpCheckboxClicked(bool);
 
     /*!
-     * \brief plusButtonClicked called whenever the plus button is clicked
+     * \brief serialCheckboxClicked checks and unchecks the serial checkbox.
      */
-    void plusButtonClicked();
+    void serialCheckboxClicked(bool);
 
     /*!
-     * \brief minusButtonClicked called whenever the minus button is clicked
+     * \brief deviceCountReachedZero disable and greys out assets that require a device to be
+     *        connected to use.
      */
-    void minusButtonClicked();
-
-    /*!
-     * \brief hueDiscoveryUpdate provides an int representation of the EHueDiscoveryState
-     *        of Hue's discovery object. Used by the connectionList to display the current
-     *        state.
-     */
-    void hueDiscoveryUpdate(int);
+    void deviceCountReachedZero();
 
 private slots:
-
     /*!
-     * \brief commTypeSelected called when the comm type updates and changes
+     * \brief renderUI renders expensive assets if and only if the assets have had any
+     *        change of state.
      */
-    void commTypeSelected(int);
-
-
-    /*!
-     * \brief updateConnectionList updates the GUI elements that display the
-     *        CommLayer's connection list.
-     */
-    void updateConnectionList(int);
+    void renderUI();
 
 protected:
     /*!
@@ -132,45 +116,46 @@ protected:
     void showEvent(QShowEvent *);
 
     /*!
-     * \brief hideEvent called as the page is hidden. This happens when a new page
-     *        is displayed.
+     * \brief hideEvent called whenever the page is being hidden.
      */
     void hideEvent(QHideEvent *);
 
+    /*!
+     * \brief resizeEvent called whenever the widget resizes so that assets can be updated.
+     */
+    void resizeEvent(QResizeEvent *event);
+
 private:
+
+    /*!
+     * \brief checkBoxClicked helper for checking if a checkbox is checked. checkmate!
+     * \param type the type of comm type you're checking
+     * \param checked true if checked, false otherwise.
+     */
+    void checkBoxClicked(ECommType type, bool checked);
+
+    /*!
+     * \brief checkCheckBoxes checks the necessary check boxes based off of the data layer's
+     *        representation of which commtypes are in use.
+     */
+    void checkCheckBoxes();
+
     /*!
      * \brief ui pointer to Qt UI form.
      */
     Ui::SettingsPage *ui;
 
     /*!
-     * \brief mCommType current comm type being shown in the connection list.
+     * \brief mCheckBoxes pointers to all checkboxes so that they can be quickly iterated
+     *        through.
      */
-    ECommType mCommType;
-
-    /*!
-     * \brief mCurrentListString the string value of the last item clicked in the
-     *        connection list. Used only to remove that connection when the minus
-     *        button is clicked.
-     */
-    QString mCurrentListString;
+    std::vector<LightCheckBox*> mCheckBoxes;
 
     /*!
      * \brief mSliderSpeedValue storage for the current slider value, which
      *        differs from the actual slider speed saved in the data layer.
      */
     int mSliderSpeedValue;
-
-    /*!
-     * \brief mHueDiscoveryState stored state of the Hue Discovery methods.
-     *        This is udpated internally by the hueDiscoveryUpdate(int) slot.
-     */
-    EHueDiscoveryState mHueDiscoveryState;
-
-    /*!
-     * \brief mSettings object used to access persistent app memory
-     */
-    QSettings *mSettings;
 };
 
 #endif // SETTINGSPAGE_H

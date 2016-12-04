@@ -82,35 +82,27 @@
 * Fixed bugs on the settings page. 
 * Fixed miscellaneous bugs.
 
+## The Backend Updates
 ### **v0.9.5** 
 #### Obligatory Confusing Backend Update
 * Rewrote system that stores and switches between different connections.
-* Rewrote backend logic for the SettinsgPage's connection list.
-* Started to prep the backend for sending the same packet to multiple devices.
-* Removed a bunch of TODOs in the codebase.
-* Removed a bunch of known bugs and edge cases.
-
-
 ### **v0.9.55** 
 #### CommLayer Update
 * Adjusted from having only one connection (UDP, HTTP, Phillips Hue, etc.) active at a time to having all connections active simultaneously.
 * Added independent heartbeats and maintenance to each connection.
-* Changed CommLayer API.
-* Adjusted UI layout to be more mobile friendly.
-
 ### **v0.9.6** 
 #### Group Update
-- Added the ability to select multiple connections and control them all simultaneously. This includes support for simultaneous control of lights of different types (e.g. an arduino over serial and a Phillips Hue). 
-- Changes SettingsPage GUI slightly to accomodate connecting to multiple devices.
-- Refactored API to make heavier use of SLightDevice.
-- Fixed bugs.
-
-
+* Added the ability to select multiple connections and control them all simultaneously. This includes support for simultaneous control of lights of different types (e.g. an arduino over serial and a Phillips Hue). 
 ### **v0.9.65** 
 #### CommType Update
-- Simplified internal data structures for storing and accessing lights.
-- Simplified APIs.
-- Fixed bugs with multiple simultaneous Serial and HTTP connections.
-- Finished converting DataLayer from maintaining only one device at a time to handling multiple devices. 
-- Fixed miscellaneous bugs.
+* Simplified internal data structures for storing and accessing lights.
+* Simplified APIs.
+
+
+### **v0.9.7**
+#### Connection Page Update
+* Moved connecting to devices from Settings Page to the new Connection Page.
+* When no devices are connected, assets that can't be used now grey themselves out.
+* Rewrote system for turning on and off CommTypes.
+
 

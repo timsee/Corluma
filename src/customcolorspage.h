@@ -73,21 +73,26 @@ public slots:
      * \brief modeChanged called whenever a mode button is pressed.
      */
     void modeChanged(int);
+
     /*!
      * \brief colorsUsedChanged called whenever the colors used slider
      *        (the slider above the mode buttons) changes its value.
      */
     void customColorCountChanged(int);
+
     /*!
+     *
      * \brief colorChanged called whenever the color picker is used.
      */
     void colorChanged(QColor);
+
     /*!
      * \brief selectArrayColor called whenever a color array icon
      *        is clicked. This sets the that index of the color array
      *        as the color you can change with the color picker.
      */
     void selectArrayColor(int);
+
     /*!
      * \brief routineButtonClicked whenever a button is clicked, this signal
      *        is called. The first argument is the routine itself, the second
@@ -104,10 +109,21 @@ protected:
     void showEvent(QShowEvent *);
 
     /*!
+     * \brief hideEvent called whenever the page is hidden.
+     */
+    void hideEvent(QHideEvent *event);
+
+    /*!
      * \brief resizeEvent used to update the size of the custom color picker slider
      *        and buttons.
      */
     void resizeEvent(QResizeEvent *);
+
+private slots:
+    /*!
+     * \brief renderUI renders UI assets if and only if
+     */
+    void renderUI();
 
 private:
     /*!

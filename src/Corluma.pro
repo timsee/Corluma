@@ -118,7 +118,11 @@ SOURCES += main.cpp\
     lightslistwidget.cpp \
     lightingroutines.cpp \
     commthrottle.cpp \
-    commpacketparser.cpp
+    commpacketparser.cpp \
+    connectionpage.cpp \
+    floatinglayout.cpp \
+    lightcheckbox.cpp \
+    commtypesettings.cpp
 
 HEADERS  += mainwindow.h \
     singlecolorpage.h \
@@ -143,13 +147,18 @@ HEADERS  += mainwindow.h \
     lightingroutines.h \
     commthrottle.h \
     commpacketparser.h \
-    lightdevice.h
+    lightdevice.h \
+    connectionpage.h \
+    floatinglayout.h \
+    lightcheckbox.h \
+    commtypesettings.h
 
 FORMS    += mainwindow.ui \
     singlecolorpage.ui \
     settingspage.ui \
     customcolorspage.ui \
-    presetcolorspage.ui
+    presetcolorspage.ui \
+    connectionpage.ui
 
 #----------
 # Resources

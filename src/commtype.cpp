@@ -34,14 +34,14 @@ void CommType::setupConnectionList(ECommType type) {
     }
 
     mDiscoveryMode = false;
+    mFullyDiscovered = false;
     mUpdateTimeoutInterval = 15000;
 }
 
-void CommType::sendPacket(QString controller, QString packet) {}
-
 void CommType::startDiscovery() {
-    mDiscoveryMode = true;
-    //
+    if (!mFullyDiscovered) {
+        mDiscoveryMode = true;
+    }
 }
 
 void CommType::stopDiscovery() {
@@ -93,13 +93,13 @@ void CommType::updateDevice(SLightDevice device) {
             if (deviceExists) {
                 foundDevice = true;
                 deviceList->second.remove((*it));
-                deviceList->second.push_front(device);
+                deviceList->second.push_back(device);
                 return;
             }
         }
         if (!foundDevice) {
             qDebug() << "WARNING, tried to update device that didnt exist, adding it instead";
-            deviceList->second.push_front(device);
+            deviceList->second.push_back(device);
         }
     } else {
         addController(device.name);
@@ -162,13 +162,21 @@ bool CommType::checkIfControllerIsValid(QString controller) {
 }
 
 
+void CommType::resetDiscovery() {
+    mDiscoveryList.clear();
+    for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
+       throttle->second->stop();
+    }
+    mThrottleList.clear();
+    mFullyDiscovered = false;
+}
 
 void CommType::handleDiscoveryPacket(QString sender, int throttleInterval, int throttleMax) {
     // search for the sender in the list of discovered devices
     bool found = (std::find(mDiscoveryList.begin(), mDiscoveryList.end(), sender) != mDiscoveryList.end());
     if (!found) {
         //if its not found, add it to the list
-        mDiscoveryList.push_front(sender);
+        mDiscoveryList.push_back(sender);
     }
 
     // iterate through the throttle list and see if theres an associated throttle
@@ -181,7 +189,7 @@ void CommType::handleDiscoveryPacket(QString sender, int throttleInterval, int t
         std::pair<QString, CommThrottle*> throttlePair = std::pair<QString, CommThrottle*>(sender, new CommThrottle());
         connect(throttlePair.second, SIGNAL(sendThrottleBuffer(QString, QString)), this, SLOT(sendThrottleBuffer(QString, QString)));
         throttlePair.second->startThrottle(throttleInterval, throttleMax);
-        mThrottleList.push_front(throttlePair);
+        mThrottleList.push_back(throttlePair);
     }
 
     // iterate through controller list and compare to discovery list
@@ -194,6 +202,8 @@ void CommType::handleDiscoveryPacket(QString sender, int throttleInterval, int t
     }
     if (stopTimer) {
         mDiscoveryTimer->stop();
+        mDiscoveryMode = false;
+        mFullyDiscovered = true;
     }
 }
 

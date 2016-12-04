@@ -13,6 +13,8 @@
 DataLayer::DataLayer() {
     int i = 0;
 
+    mCommTypeSettings = new CommTypeSettings();
+
     //==========
     // Custom Colors
     //==========
@@ -237,18 +239,6 @@ DataLayer::DataLayer() {
     resetToDefaults();
     mTimeoutTimer = new QTimer(this);
     connect(mTimeoutTimer, SIGNAL(timeout()), this, SLOT(timeoutHandler()));
-
-    mSettings = new QSettings;
-    //TODO: move to startup page
-    // check for last connection type
-    if (mSettings->value(kCommDefaultType).toString().compare("") != 0) {
-        int previousType = mSettings->value(kCommDefaultType).toInt();
-        //mCurrentDevices.front().type = (ECommType)previousType;
-    } else {
-        // no connection found, defaults to hue.
-        //mCurrentDevices.front().type = ECommType::eHue;
-    }
-
 }
 
 DataLayer::~DataLayer() {
@@ -327,10 +317,14 @@ bool DataLayer::shouldUseHueAssets() {
     for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
         if (device->type == ECommType::eHue) hueCount++;
     }
-    if (hueCount >= (mCurrentDevices.size() / 2)) {
+
+    if (mCurrentDevices.size() == 1 && hueCount == 0) {
+        return false;
+    } else if (hueCount >= (int)(mCurrentDevices.size() / 2)) {
         return true;
+    } else {
+        return false;
     }
-    return false;
 }
 
 ELightingRoutine DataLayer::currentRoutine() {
@@ -451,6 +445,9 @@ bool DataLayer::clearDevices() {
 
 bool DataLayer::removeDevice(SLightDevice device){
     mCurrentDevices.remove(device);
+    if (mCurrentDevices.size() == 0) {
+        emit devicesEmpty();
+    }
     return true;
 }
 
@@ -519,5 +516,27 @@ bool DataLayer::doesDeviceExist(SLightDevice device) {
     return foundDevice;
 }
 
-const QString DataLayer::kCommDefaultType = QString("CommDefaultType");
+int DataLayer::removeDevicesOfType(ECommType type) {
+    std::list<SLightDevice>::const_iterator iterator;
+    std::list<SLightDevice> removeList;
+    for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
+        if (type == (*iterator).type) {
+            removeList.push_front((*iterator));
+        }
+    }
+    for (auto&& device : removeList) {
+        removeDevice(device);
+    }
+    return mCurrentDevices.size();
+}
 
+int DataLayer::countDevicesOfType(ECommType type) {
+    int count = 0;
+    std::list<SLightDevice>::const_iterator iterator;
+    for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
+        if (type == (*iterator).type) {
+            count++;
+        }
+    }
+    return count;
+}

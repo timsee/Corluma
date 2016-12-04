@@ -39,11 +39,30 @@ public:
     // ----------------------------
 
     /*!
+     * \brief startup Each comm type has a series of threads that maintain the connection and
+     *        check for changes. startup starts all the threads associated with the commtype.
+     *        If a device has not been discovered, it also starts up a discovery thread.
+     */
+    virtual void startup() = 0;
+
+    /*!
+     * \brief shutdown turns off all threads that maintain the connection and check for changes.
+     *        Also shuts down any discovery threads, if they are currently running.
+     */
+    virtual void shutdown() = 0;
+
+    /*!
+     * \brief hasStarted true if startup has been called and a shutdown has not be called after it, false otherwise.
+     * \return true if startup has been called and a shutdown has not be called after it, false otherwise.
+     */
+    bool hasStarted() { return mHasStarted; }
+
+    /*!
      * \brief sendPacket Sends the provided string over the
      *        connection stream.
      * \param packet the packet that is going to be sent
      */
-    virtual void sendPacket(QString controller, QString packet);
+    virtual void sendPacket(QString controller, QString packet) = 0;
 
 
     // ----------------------------
@@ -62,6 +81,13 @@ public:
      */
     void stopDiscovery();
 
+    /*!
+     * \brief runningDiscovery true if theres any controller that is going through the discovery
+     *        routines and hasn't been discovered, false otherwise.
+     * \return true if theres any controller that is going through the discovery
+     *        routines and hasn't been discovered, false otherwise.
+     */
+    bool runningDiscovery() { return mDiscoveryMode; }
 
     // ----------------------------
     // Controller and Device Management
@@ -139,6 +165,12 @@ signals:
 protected:
 
     /*!
+     * \brief resetDiscovery clears the throttle list and discovery list and treats the commtype as if
+     *        nothing has been discovered.
+     */
+    void resetDiscovery();
+
+    /*!
      * \brief handleDiscoveryPacket called whenever a discovery packet is received by a commtype.
      *        Although all commtypes may received a packet in different ways or in differnt formats,
      *        all ways get converted so that they work with this function. The function determines
@@ -191,6 +223,19 @@ protected:
      *        should be active, false if using the standard lifecyclef for all the threads.
      */
     bool mDiscoveryMode;
+
+    /*!
+     * \brief mFullyDiscovered bool that tracks whether or not all the controllers the commtype
+     *        is looking for have been discovered. This gets set to false if a discovery routine
+     *        starts looking for a new controller.
+     */
+    bool mFullyDiscovered;
+
+    /*!
+     * \brief mHasStarted bool that tracks whether or not the startup() routine has been called.
+     *        Gets set to false after the shutdown() routine is callsed.
+     */
+    bool mHasStarted;
 
 private:
 

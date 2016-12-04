@@ -33,6 +33,16 @@ public:
     ~CommHTTP();
 
     /*!
+     * \brief startup defined in CommType
+     */
+    void startup();
+
+    /*!
+     * \brief shutdown defined in CommType
+     */
+    void shutdown();
+
+    /*!
      * \brief sendPacket sends a packet in a way similar to am
      *        IP Camera: The packet is added to the end of the
      *        web address, and sent as an HTTP request

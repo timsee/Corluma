@@ -112,7 +112,6 @@ enum class ELightingRoutine
 };
 
 
-
 /*!
  * \enum EColorGroup used during multi color routines to determine
  *       which colors to use in the routine. eCustom uses the custom

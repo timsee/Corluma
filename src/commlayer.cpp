@@ -34,21 +34,46 @@ CommLayer::CommLayer(QWidget *parent) : QWidget(parent) {
     connect(mHue.get(), SIGNAL(hueLightStatesUpdated()), this, SLOT(hueLightStateUpdate()));
 }
 
-void CommLayer::dataLayer(DataLayer *data) {
+void CommLayer::initialSetup(DataLayer *data) {
     mData = data;
     mHue->dataLayer(data);
+
+    for (int i = 0; i < (int)ECommType::eCommType_MAX; ++i) {
+        ECommType type = (ECommType)i;
+        if (mData->commTypeSettings()->commTypeEnabled(type)) {
+            commByType(type)->startup();
+        }
+    }
+}
+
+
+bool CommLayer::runningDiscovery(ECommType type) {
+    return commByType(type)->runningDiscovery();
 }
 
 void CommLayer::sendMainColorChange(const std::list<SLightDevice>& deviceList,
                                     QColor color) {
-   for (auto&& device : deviceList) {
-        QString packet = QString("%1,%2,%3,%4,%5").arg(QString::number((int)EPacketHeader::eMainColorChange),
-                                                       QString::number(device.index),
-                                                       QString::number(color.red()),
-                                                       QString::number(color.green()),
-                                                       QString::number(color.blue()));
-        sendPacket(device, packet);
-    }
+    std::list<SLightDevice> routineFixList;
+    std::list<std::pair<QString, SLightDevice> > sendList;
+    for (auto&& device : deviceList) {
+        if (device.lightingRoutine > ELightingRoutine::eSingleSawtoothFadeOut) {
+            routineFixList.push_front(device);
+        }
+        if (color != device.color) {
+            QString packet = QString("%1,%2,%3,%4,%5").arg(QString::number((int)EPacketHeader::eMainColorChange),
+                                                           QString::number(device.index),
+                                                           QString::number(color.red()),
+                                                           QString::number(color.green()),
+                                                           QString::number(color.blue()));
+           sendList.push_front(std::make_pair(packet, device));
+        }
+   }
+   if (routineFixList.size() > 0) {
+       sendRoutineChange(routineFixList, ELightingRoutine::eSingleGlimmer);
+   }
+   for (auto&& pair : sendList) {
+        sendPacket(pair.second, pair.first);
+   }
 }
 
 void CommLayer::sendArrayColorChange(const std::list<SLightDevice>& deviceList,
@@ -254,6 +279,18 @@ CommType *CommLayer::commByType(ECommType type) {
             break;
     }
     return ptr;
+}
+
+void CommLayer::startupStream(ECommType type) {
+    commByType(type)->startup();
+}
+
+void CommLayer::shutdownStream(ECommType type) {
+    commByType(type)->shutdown();
+}
+
+bool CommLayer::streamHasStarted(ECommType type) {
+    return commByType(type)->hasStarted();
 }
 
 bool CommLayer::removeController(ECommType type, QString controller) {

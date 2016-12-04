@@ -58,11 +58,6 @@ QWidget:item:hover
     color: black;
 }
 
-QWidget:item:selected
-{
-    background-color: #3d8ec9;
-}
-
 QCheckBox
 {
     spacing: 5px;
@@ -75,12 +70,7 @@ QCheckBox:disabled
 {
     color: #777777;
 }
-QCheckBox::indicator,
-QGroupBox::indicator
-{
-    width: 18px;
-    height: 18px;
-}
+
 QGroupBox::indicator
 {
     margin-left: 2px;
@@ -632,11 +622,6 @@ QPushButton:disabled
     padding-right: 10px;
     /*border-radius: 2px;*/
     color: #454545;
-}
-
-QPushButton:focus {
-    background-color: #3d8ec9;
-    color: white;
 }
 
 QComboBox
@@ -1212,5 +1197,13 @@ QSplitter::handle {
 QSplitter::handle:hover {
     background-color: #787876;
     border: 1px solid #3A3939;
+}
+
+/*
+ * Corluma specific settings
+ */
+
+QWidget::!enabled {
+   background-color: rgba(58, 58, 57, 2);
 }
 

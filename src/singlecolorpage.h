@@ -40,10 +40,12 @@ public:
      * \brief Constructor
      */
     explicit SingleColorPage(QWidget *parent = 0);
+
     /*!
      * \brief Deconstructor
      */
     ~SingleColorPage();
+
     /*!
      * \brief highlightRoutineButton highlights the button that implements
      *        the routine parameter. If it can't find a button that
@@ -51,14 +53,7 @@ public:
      * \param routine the mode that the highlighted button implements.
      */
     void highlightRoutineButton(ELightingRoutine routine);
-    /*!
-     * \brief chooseColor allows the color of the ColorPicker and the single
-     *        color routines to be set programmatically. Used by the MainWindow
-     *        during startup.
-     * \param color the color that the SingleColorPage should use for its colorPicker
-     *        and its single color routines.
-     */
-    void chooseColor(QColor color);
+
 
     /*!
      * \brief setupButtons sets up the routine buttons. Requires the DataLayer
@@ -80,11 +75,13 @@ signals:
     void singleColorChanged(QColor);
 
 public slots:
+
     /*!
      * \brief modeChanged signaled whenever a mode button is pressed, used to
      *        to tell the LEDs to update.
      */
     void modeChanged(int, int);
+
     /*!
      * \brief colorChanged signaled whenever the ColorPicker chooses a new color.
      */
@@ -97,6 +94,19 @@ protected:
      *        have changed from other pages are still in sync on this page.
      */
     void showEvent(QShowEvent *);
+
+    /*!
+     * \brief hideEvent called as the page is hidden. This happens when a new page
+     *        is displayed.
+     */
+    void hideEvent(QHideEvent *);
+
+private slots:
+    /*!
+     * \brief renderUI renders expensive assets if and only if the assets have had any
+     *        change of state.
+     */
+    void renderUI();
 
 private:
     /*!

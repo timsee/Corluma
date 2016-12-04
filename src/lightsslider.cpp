@@ -9,11 +9,12 @@
 #include <QtCore>
 #include <QtGui>
 #include <QStyleOption>
-
+#include <QGraphicsOpacityEffect>
 
 LightsSlider::LightsSlider(QWidget *parent) : QWidget(parent) {
 
     mHeightScaleFactor = 1.0f;
+    mOpacity = 1.0f;
 
     // --------------
     // Setup Thrrole Timer
@@ -174,7 +175,11 @@ void LightsSlider::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
 
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.setPen(QColor(255, 255, 255, 60));
+    if (this->isEnabled()) {
+        painter.setPen(QColor(255, 255, 255, 60));
+    } else {
+        painter.setPen(QColor(255, 255, 255, 10));
+    }
     painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
 
     // draw tick marks
@@ -187,14 +192,13 @@ void LightsSlider::paintEvent(QPaintEvent *event) {
     if (slider->tickPosition() != QSlider::NoTicks) {
         for (int i = slider->minimum(); i <= slider->maximum(); i += interval) {
             int x = round((double)(((double)(i - slider->minimum()) / (slider->maximum() - slider->minimum())) * (slider->width()))) - 1;
-            int h = 2;
             if (slider->tickPosition() == QSlider::TicksBothSides || slider->tickPosition() == QSlider::TicksAbove) {
                 int y = slider->rect().top();
-                painter.drawLine(x, y, x, y / 2 + h);
+                painter.drawLine(x, y, x, y * 4 / 5);
             }
             if (slider->tickPosition() == QSlider::TicksBothSides || slider->tickPosition() == QSlider::TicksBelow) {
                 int y = this->rect().bottom();
-                painter.drawLine(x, y, x, y / 2 - h);
+                painter.drawLine(x, y, x, y * 4 / 5);
             }
         }
     }
@@ -223,4 +227,20 @@ void LightsSlider::resetThrottleFlag() {
 
 void LightsSlider::releasedSlider() {
     emit valueChanged(slider->value());
+}
+
+void LightsSlider::enable(bool shouldEnable) {
+    if(shouldEnable) {
+        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(slider.get());
+        mOpacity = 1.0f;
+        effect->setOpacity(mOpacity);
+        slider->setGraphicsEffect(effect);
+        this->setEnabled(true);
+    } else {
+        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(slider.get());
+        mOpacity = 0.5f;
+        effect->setOpacity(mOpacity);
+        slider->setGraphicsEffect(effect);
+        this->setEnabled(false);
+    }
 }

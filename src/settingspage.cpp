@@ -19,8 +19,6 @@ SettingsPage::SettingsPage(QWidget *parent) :
     ui(new Ui::SettingsPage) {
     ui->setupUi(this);
 
-    mSettings = new QSettings;
-
     // setup sliders
     mSliderSpeedValue = 425;
     ui->speedSlider->slider->setRange(1, 1000);
@@ -35,64 +33,46 @@ SettingsPage::SettingsPage(QWidget *parent) :
     ui->timeoutSlider->slider->setTickPosition(QSlider::TicksBelow);
     ui->timeoutSlider->slider->setTickInterval(40);
 
-    QSignalMapper *commTypeMapper = new QSignalMapper(this);
-
-#ifndef MOBILE_BUILD
-    ui->serialButton->setCheckable(true);
-    connect(ui->serialButton, SIGNAL(clicked(bool)), commTypeMapper, SLOT(map()));
-    commTypeMapper->setMapping(ui->serialButton, (int)ECommType::eSerial);
-    ui->connectionListLabel->setHidden(true);
-#else
-    // hide PC-specific elements
-    ui->serialButton->setHidden(true);
-    ui->connectionListLabel->setHidden(true);
-#endif //MOBILE_BUILD
-
-    ui->httpButton->setCheckable(true);
-    connect(ui->httpButton, SIGNAL(clicked(bool)), commTypeMapper, SLOT(map()));
-    commTypeMapper->setMapping(ui->httpButton, (int)ECommType::eHTTP);
-
-    ui->udpButton->setCheckable(true);
-    connect(ui->udpButton, SIGNAL(clicked(bool)), commTypeMapper, SLOT(map()));
-    commTypeMapper->setMapping(ui->udpButton, (int)ECommType::eUDP);
-
-    ui->hueButton->setCheckable(true);
-    connect(ui->hueButton, SIGNAL(clicked(bool)), commTypeMapper, SLOT(map()));
-    commTypeMapper->setMapping(ui->hueButton, (int)ECommType::eHue);
-
-    connect(commTypeMapper, SIGNAL(mapped(int)), this, SLOT(commTypeSelected(int)));
+    mCheckBoxes = { ui->httpCheckBox,
+                    ui->udpCheckBox,
+                    ui->hueCheckBox,
+                    ui->serialCheckBox };
 
     connect(ui->speedSlider, SIGNAL(valueChanged(int)), this, SLOT(speedChanged(int)));
     connect(ui->timeoutSlider, SIGNAL(valueChanged(int)), this, SLOT(timeoutChanged(int)));
-    connect(ui->connectionList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(listClicked(QListWidgetItem*)));
-    connect(ui->plusButton, SIGNAL(clicked(bool)), this, SLOT(plusButtonClicked()));
-    connect(ui->minusButton, SIGNAL(clicked(bool)), this, SLOT(minusButtonClicked()));
 
-    ui->connectionList->setSelectionMode(QAbstractItemView::MultiSelection);
-    mCommType = ECommType::eUDP;
+    connect(ui->hueCheckBox, SIGNAL(clicked(bool)), this, SLOT(hueCheckboxClicked(bool)));
+    ui->hueCheckBox->setText("Hue");
+
+    connect(ui->httpCheckBox, SIGNAL(clicked(bool)), this, SLOT(httpCheckboxClicked(bool)));
+    ui->httpCheckBox->setText("HTTP");
+
+    connect(ui->udpCheckBox, SIGNAL(clicked(bool)), this, SLOT(udpCheckboxClicked(bool)));
+    ui->udpCheckBox->setText("UDP");
+
+#ifndef MOBILE_BUILD
+    connect(ui->serialCheckBox, SIGNAL(clicked(bool)), this, SLOT(serialCheckboxClicked(bool)));
+    ui->serialCheckBox->setText("Serial");
+#else
+    ui->serialCheckBox->setHidden(true);
+#endif //MOBILE_BUILD
 }
 
 SettingsPage::~SettingsPage() {
     delete ui;
 }
 
-
 void SettingsPage::setupUI() {
-   connect(mComm, SIGNAL(hueDiscoveryStateChange(int)), this, SLOT(hueDiscoveryUpdate(int)));
-   connect(mComm, SIGNAL(lightStateUpdate(int, QString)), this, SLOT(lightStateChanged(int, QString)));
-   commTypeSelected((int)mCommType);
+    connect(mData, SIGNAL(devicesEmpty()), this, SLOT(deviceCountReachedZero()));
 }
 
-void SettingsPage::updateUI(int type) {
-    if (type == (int)mCommType) {
-        if (mData->currentRoutine() <= ELightingRoutine::eSingleSawtoothFadeOut) {
-            ui->speedSlider->setSliderColorBackground(mData->mainColor());
-            ui->timeoutSlider->setSliderColorBackground(mData->mainColor());
-        } else {
-            ui->speedSlider->setSliderColorBackground(mData->colorsAverage(mData->currentColorGroup()));
-            ui->timeoutSlider->setSliderColorBackground(mData->colorsAverage(mData->currentColorGroup()));
-        }
-        updateConnectionList(type);
+void SettingsPage::updateUI() {
+    if (mData->currentRoutine() <= ELightingRoutine::eSingleSawtoothFadeOut) {
+        ui->speedSlider->setSliderColorBackground(mData->mainColor());
+        ui->timeoutSlider->setSliderColorBackground(mData->mainColor());
+    } else {
+        ui->speedSlider->setSliderColorBackground(mData->colorsAverage(mData->currentColorGroup()));
+        ui->timeoutSlider->setSliderColorBackground(mData->colorsAverage(mData->currentColorGroup()));
     }
 }
 
@@ -124,148 +104,6 @@ void SettingsPage::timeoutChanged(int newTimeout) {
    mComm->sendTimeOut(mData->currentDevices(), mData->timeOut());
 }
 
-void SettingsPage::listClicked(QListWidgetItem* item) {
-    SLightDevice device = stringToStruct(item->text());
-    mComm->fillDevice(device);
-
-    if (mData->doesDeviceExist(device)) {
-        mData->removeDevice(device);
-    } else {
-        mData->addDevice(device);
-    }
-
-    // set the line edit to be last connection name clicked
-    if (device.type == ECommType::eHTTP
-            || device.type == ECommType::eUDP) {
-            ui->lineEdit->setText(device.name);
-    }
-
-    ui->lineEdit->setText(device.name);
-    mCurrentListString = item->text();
-    // update UI
-    updateUI((int)device.type);
-    emit updateMainIcons();
-}
-
-
-void SettingsPage::highlightButton(ECommType currentCommType) {
-    ui->serialButton->setChecked(false);
-    ui->httpButton->setChecked(false);
-    ui->udpButton->setChecked(false);
-    ui->hueButton->setChecked(false);
-    if (currentCommType == ECommType::eHTTP) {
-        ui->httpButton->setChecked(true);
-    } else if (currentCommType == ECommType::eUDP) {
-        ui->udpButton->setChecked(true);
-    } else if (currentCommType == ECommType::eHue) {
-        ui->hueButton->setChecked(true);
-    }
-#ifndef MOBILE_BUILD
-    else if (currentCommType == ECommType::eSerial) {
-        ui->serialButton->setChecked(true);
-    }
-#endif //MOBILE_BUILD
-}
-
-
-void SettingsPage::commTypeSelected(int type) {
-    if ((ECommType)type != mCommType) {
-        mCommType = (ECommType)type;
-
-        if ((ECommType)type == ECommType::eHue) {
-           // theres a hue bridge already connected, show bridge MAC and all available lights
-           ui->connectionListLabel->setText(QString("Hue Lights:"));
-        }
-#ifndef MOBILE_BUILD
-        if ((ECommType)type == ECommType::eSerial) {
-            ui->lineEdit->setHidden(true);
-            ui->plusButton->setHidden(true);
-            ui->minusButton->setHidden(true);
-            ui->connectionListLabel->setHidden(false);
-            ui->connectionListLabel->setText(QString("Available Serial Ports"));
-        }
-#endif //MOBILE_BUILD
-        if ((ECommType)type == ECommType::eUDP
-                ||(ECommType)type == ECommType::eHTTP ) {
-            ui->lineEdit->setHidden(false);
-            ui->plusButton->setHidden(false);
-            ui->minusButton->setHidden(false);
-            ui->connectionListLabel->setHidden(true);
-        } else if ((ECommType)type == ECommType::eHue) {
-            ui->lineEdit->setHidden(true);
-            ui->plusButton->setHidden(true);
-            ui->minusButton->setHidden(true);
-            ui->connectionListLabel->setHidden(false);
-        }
-
-        highlightButton((ECommType)type);
-        updateUI(type);
-        emit updateMainIcons();
-
-        // save setting to persistent memory
-        mSettings->setValue(DataLayer::kCommDefaultType, QString::number((int)type));
-        mSettings->sync();
-    }
-}
-
-
-void SettingsPage::plusButtonClicked() {
-    bool isSuccessful = mComm->addController(mCommType, ui->lineEdit->text());
-    if (isSuccessful) {
-        // updates the connection list
-        updateConnectionList((int)mCommType);
-    }
-}
-
-
-void SettingsPage::minusButtonClicked() {
-    SLightDevice listData = stringToStruct(mCurrentListString);
-    bool isSuccessful = mComm->removeController(mCommType, listData.name);
-
-    if (isSuccessful) {
-        SLightDevice device = stringToStruct(mCurrentListString);
-        mComm->fillDevice(device);
-        isSuccessful = mData->removeDevice(device);
-
-        // update the line edit text
-        ui->lineEdit->setText("");
-        // updates the connection list
-        updateConnectionList((int)device.type);
-    }
-}
-
-void SettingsPage::hueDiscoveryUpdate(int newState) {
-    switch((EHueDiscoveryState)newState)
-    {
-        case EHueDiscoveryState::eNoBridgeFound:
-            qDebug() << "Hue Update: no bridge found";
-            break;
-        case EHueDiscoveryState::eFindingIpAddress:
-            ui->connectionListLabel->setText(QString("Looking for Bridge IP..."));
-            qDebug() << "Hue Update: Finding IP Address";
-            break;
-        case EHueDiscoveryState::eTestingIPAddress:
-            ui->connectionListLabel->setText(QString("Looking for Bridge IP..."));
-            qDebug() << "Hue Update: Found IP, waiting for response";
-            break;
-        case EHueDiscoveryState::eFindingDeviceUsername:
-            ui->connectionListLabel->setText(QString("Bridge Found! Please press Link button..."));
-            qDebug() << "Hue Update: Bridge is waiting for link button to be pressed.";
-            break;
-        case EHueDiscoveryState::eTestingFullConnection:
-            ui->connectionListLabel->setText(QString("Bridge button pressed! Testing connection..."));
-            qDebug() << "Hue Update: IP and Username received, testing combination. ";
-            break;
-        case EHueDiscoveryState::eBridgeConnected:
-            ui->connectionListLabel->setText(QString("Hue Lights:"));
-            qDebug() << "Hue Update: Bridge Connected";
-            break;
-        default:
-            qDebug() << "Not a recognized state...";
-            break;
-    }
-}
-
 // ----------------------------
 // Protected
 // ----------------------------
@@ -273,73 +111,95 @@ void SettingsPage::hueDiscoveryUpdate(int newState) {
 
 void SettingsPage::showEvent(QShowEvent *event) {
     Q_UNUSED(event);
-    updateUI((int)mCommType);
-    highlightButton(mCommType);
+    updateUI();
 
-    // default the settings bars to the current colors
-    commTypeSelected((int)mCommType);
+    checkCheckBoxes();
 
-     if(mCommType == ECommType::eHue) {
-         ui->lineEdit->setHidden(true);
-         ui->plusButton->setHidden(true);
-         ui->minusButton->setHidden(true);
-         ui->connectionListLabel->setHidden(false);
-     }
-     ui->speedSlider->slider->setValue(mSliderSpeedValue);
-     ui->timeoutSlider->slider->setValue(mData->timeOut());
+    if (mData->currentDevices().size() == 0) {
+        deviceCountReachedZero();
+    } else {
+        ui->speedSlider->enable(true);
+        ui->timeoutSlider->enable(true);
 
-     mComm->startDiscovery();
-}
+        ui->speedSlider->setSliderColorBackground(mData->mainColor());
+        ui->timeoutSlider->setSliderColorBackground(mData->mainColor());
 
-
-void SettingsPage::hideEvent(QHideEvent *event) {
-     mComm->stopDiscovery();
-}
-
-
-void SettingsPage::lightStateChanged(int type, QString name) {
-    Q_UNUSED(name);
-    if (type == (int)mCommType) {
-        updateUI(type);
+        // default the settings bars to the current colors
+        ui->speedSlider->slider->setValue(mSliderSpeedValue);
+        ui->timeoutSlider->slider->setValue(mData->timeOut());
     }
 }
 
-// ----------------------------
-// Private
-// ----------------------------
+void SettingsPage::hideEvent(QHideEvent *) {
 
-void SettingsPage::updateConnectionList(int type) {
-   if ((ECommType)type == mCommType) {
-        // clear the list
-        ui->connectionList->clear();
-        int listIndex = 0; // used for inserting new entries on the list
-        // get the pointer to the commtype of the connection list
-        // iterate through all of its controllers
-         std::unordered_map<std::string, std::list<SLightDevice> > deviceTable = mComm->deviceTable((ECommType)type);
-         for (auto&& controllers : deviceTable) {
-            for (auto&& device = controllers.second.begin(); device != controllers.second.end(); ++device) {
-                // if the object is found, is valid, and has a name, add it
-                if (device->isValid) {
-                    LightsListWidget *lightsItem = new LightsListWidget;
-                    lightsItem->setup(*device, mData);
+}
 
-                    QString structString = structToString(*device);
-                    ui->connectionList->addItem(structString);
+void SettingsPage::resizeEvent(QResizeEvent *event) {
+    Q_UNUSED(event);
+    int height = static_cast<int>(ui->hueCheckBox->size().height() * 0.8f);
+    QString stylesheet = "QCheckBox::indicator { width: ";
+    stylesheet += QString::number(height);
+    stylesheet +=  "px; height: ";
+    stylesheet +=  QString::number(height);
+    stylesheet += "px; }";
+    ui->hueCheckBox->setStyleSheet(stylesheet);
+    ui->udpCheckBox->setStyleSheet(stylesheet);
+    ui->httpCheckBox->setStyleSheet(stylesheet);
+#ifndef MOBILE_BUILD
+    ui->serialCheckBox->setStyleSheet(stylesheet);
+#endif //MOBILE_BUILD
+}
 
-                    int minimumHeight = ui->connectionList->height() / 5;
-                    ui->connectionList->item(listIndex)->setSizeHint(QSize(ui->connectionList->item(listIndex)->sizeHint().width(),
-                                                                           minimumHeight));
-
-                    ui->connectionList->setItemWidget(ui->connectionList->item(listIndex), lightsItem);
-                    // if it exists in current devices, set it as selected
-                    if (mData->doesDeviceExist(*device)) {
-                       ui->connectionList->item(listIndex)->setSelected(true);
-                    }
-                    listIndex++;
-                }
-             }
-         }
-        emit updateMainIcons();
+void SettingsPage::checkCheckBoxes() {
+    for (int i = 0; i < (int)ECommType::eCommType_MAX; ++i) {
+        LightCheckBox* checkBox = mCheckBoxes[i];
+        ECommType type = (ECommType)i;
+        if (mData->commTypeSettings()->commTypeEnabled(type)) {
+            checkBox->setChecked(true);
+        } else {
+            checkBox->setChecked(false);
+        }
     }
 }
 
+void SettingsPage::checkBoxClicked(ECommType type, bool checked) {
+    if (!mData->commTypeSettings()->enableCommType(type, checked)) {
+        mCheckBoxes[(int)type]->setChecked(true);
+    } else if (!mComm->streamHasStarted(type) && checked) {
+        mComm->startupStream(type);
+    } else if (mComm->streamHasStarted(type) && !checked) {
+        mComm->shutdownStream(type);
+        mData->removeDevicesOfType(type);
+    }
+}
+
+void SettingsPage::hueCheckboxClicked(bool checked) {
+    checkBoxClicked(ECommType::eHue, checked);
+}
+
+void SettingsPage::httpCheckboxClicked(bool checked) {
+    checkBoxClicked(ECommType::eHTTP, checked);
+}
+
+void SettingsPage::udpCheckboxClicked(bool checked) {
+    checkBoxClicked(ECommType::eUDP, checked);
+}
+
+void SettingsPage::serialCheckboxClicked(bool checked) {
+#ifndef MOBILE_BUILD
+    checkBoxClicked(ECommType::eSerial, checked);
+#endif //MOBILE_BUILD
+}
+
+void SettingsPage::deviceCountReachedZero() {
+    ui->speedSlider->enable(false);
+    ui->timeoutSlider->enable(false);
+
+    ui->speedSlider->setSliderColorBackground(QColor(150, 150, 150));
+    ui->timeoutSlider->setSliderColorBackground(QColor(150, 150, 150));
+}
+
+
+void SettingsPage::renderUI() {
+
+}

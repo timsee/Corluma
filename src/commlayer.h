@@ -110,6 +110,27 @@ public:
     // --------------------------
 
     /*!
+     * \brief startupStream start stream of given type. This starts all of its maintence threads
+     *        and discovery threads
+     * \param type the type of communication stream to start.
+     */
+    void startupStream(ECommType type);
+
+    /*!
+     * \brief shutdownStream shuts down the stream of the given type. This stops all of its maintence threads
+     *        and discovery threads.
+     * \param type the type of communication stream to shutdown.
+     */
+    void shutdownStream(ECommType type);
+
+    /*!
+     * \brief streamHasStarted checks if a stream has been started and can currently be used.
+     * \param type the communication type to check for the stream
+     * \return true if its been started, false otherwise.
+     */
+    bool streamHasStarted(ECommType type);
+
+    /*!
      * \brief addController attempt to add a controller to the hash table
      * \param type the type of connection it is
      * \param connection the name of the controller
@@ -143,6 +164,14 @@ public:
      */
     void stopDiscovery();
 
+    /*!
+     * \brief runningDiscovery checks if discovery is being run actively. This means taht its expecting more
+     *        devices to be connected than there are currently connected.
+     * \param type the communication type to check the discovery status on
+     * \return true if still running discovery, false otherwise.
+     */
+    bool runningDiscovery(ECommType type);
+
 
     /*!
      * \brief deviceTable a hash table of all connected devices of a certain connection type. The controller names
@@ -155,11 +184,11 @@ public:
     }
 
     /*!
-     * \brief dataLayer attach the data layer to the comm layer.
-     * \TODO remove the need for this through refactoring the data layer.
-     * \param data pointer to the data layer
+     * \brief initialSetup connect the data layer to the comm layer and set up things such as which streams should be
+     *        enabled.
+     * \param data pointer to the data layer.
      */
-    void dataLayer(DataLayer *data);
+    void initialSetup(DataLayer *data);
 
     // --------------------------
     // Hardware specific functions

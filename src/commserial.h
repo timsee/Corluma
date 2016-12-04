@@ -43,6 +43,16 @@ public:
     void discoverSerialPorts();
 
     /*!
+     * \brief startup defined in CommType
+     */
+    void startup();
+
+    /*!
+     * \brief shutdown defined in CommType
+     */
+    void shutdown();
+
+    /*!
      * \brief sendPacket sends a string over serial
      * \param packet the string that is going to be sent over
      *        serial.

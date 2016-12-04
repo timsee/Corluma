@@ -52,6 +52,11 @@ public:
      */
     void sentPacket() { mLastSend.restart(); }
 
+    /*!
+     * \brief stop shut off the throttle completely by stopping its internal timer.
+     */
+    void stop();
+
 signals:
 
     /*!

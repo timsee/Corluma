@@ -12,6 +12,7 @@
 
 #include "lightingprotocols.h"
 #include "commtype.h"
+#include "commtypesettings.h"
 
 /*!
  * \copyright
@@ -127,6 +128,7 @@ public:
      *         a FPS of 5 is 500.
      */
     bool speed(int speed);
+
     /*!
      * \brief speed getter for the speed the LED's update.
      * \return the speed the LEDs update.
@@ -190,6 +192,21 @@ public:
      */
     bool removeDevice(SLightDevice device);
 
+    /*!
+     * \brief removeDevicesOfType if they exist, removes devices from currentDevices list that match
+     *        the commtype provided.
+     * \param type tpye of devices to remove
+     * \return number of devices left in currentDevices list.
+     */
+    int removeDevicesOfType(ECommType type);
+
+    /*!
+     * \brief countDevicesOfType iterates through the currentDevices and determines how many exist
+     *        of a certain commtype
+     * \param type the commtype to look for
+     * \return the number of devices that match that commtype.
+     */
+    int countDevicesOfType(ECommType type);
 
     /*!
      * \brief currentDevices returns the current Device pair, which contains both controller
@@ -197,7 +214,6 @@ public:
      * \return the current device pair.
      */
     const std::list<SLightDevice>& currentDevices() { return mCurrentDevices; }
-
 
     /*!
      * \brief shouldUseHueAssets helper that determines if you should be using hue-related assets
@@ -207,16 +223,19 @@ public:
      */
     bool shouldUseHueAssets();
 
-    // --------------------------
-    // Const static strings
-    // --------------------------
-
     /*!
-     * \brief KCommDefaultType Settings key for default type of communication.
-     *        This is saved whenever the user changes it and is restored at the
-     *        start of each application session.
+     * \brief commTypeSettings pointer to the current comm types settings, which maintains which commtypes
+     *        are currently enabled or disabled
+     * \return pointer to the current stream settings
      */
-    const static QString kCommDefaultType;
+    CommTypeSettings *commTypeSettings() { return mCommTypeSettings; }
+
+signals:
+    /*!
+     * \brief devicesEmpty signals when the currentDevices list is reduced to zero so that UI updates
+     *        can react accordingly.
+     */
+    void devicesEmpty();
 
 private slots:
     /*!
@@ -276,6 +295,11 @@ private:
      *       size 1 in preparation.
      */
     std::list<SLightDevice> mCurrentDevices;
+
+    /*!
+     * \brief mCommTypeSettings maintains which comnmtypes are currently enabled.
+     */
+    CommTypeSettings *mCommTypeSettings;
 };
 
 #endif // DATALAYER_H

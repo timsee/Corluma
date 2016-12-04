@@ -63,6 +63,16 @@ public:
     ~CommHue();
 
     /*!
+     * \brief startup defined in CommType
+     */
+    void startup();
+
+    /*!
+     * \brief shutdown defined in CommType
+     */
+    void shutdown();
+
+    /*!
      * \brief changeLight send a packet to a hue bridge to change the color of a given hue light.
      * \param lightIndex the index of the hue being changed.
      * \param saturation how saturated the color is. A higher number leads to more saturation. Must be in the range of 0 and 254, inclusive.
@@ -96,19 +106,6 @@ public:
      * \return the discovery object for finding the Hue Bridge.
      */
     HueBridgeDiscovery *discovery() { return mDiscovery; }
-
-    /*!
-     * \brief turnOnUpdates polls the lights every few seconds to get updates on their states.
-     *        This is used to detect when packets are dropped or when other devices change the
-     *        state of the lights.
-     */
-    void turnOnUpdates() { mStateUpdateTimer->start(3000); }
-
-    /*!
-     * \brief turnOffUpdates turns off the repeated polling of the lights. This happens after a connection
-     *        is closed or when the app detects that it is no longer in use.
-     */
-    void turnOffUpdates() { if (mStateUpdateTimer->isActive()) mStateUpdateTimer->stop(); }
 
     /*!
      * \brief sendPacket Takes a packet in the format of a Corluma lights command (a comma delimited QString) and

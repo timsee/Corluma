@@ -25,14 +25,9 @@ SingleColorPage::~SingleColorPage() {
     delete ui;
 }
 
-void SingleColorPage::chooseColor(QColor color) {
-    ui->colorPicker->chooseColor(color);
-    emit singleColorChanged(color);
-}
-
 
 void SingleColorPage::setupButtons() {
-    mIconData = IconData(128,128, mData);
+    mIconData = IconData(64,64, mData);
 
     std::vector<std::string> labels = {"Solid",
                                        "Blink",
@@ -96,16 +91,6 @@ void SingleColorPage::modeChanged(int newMode, int newGroup) {
 
 void SingleColorPage::colorChanged(QColor color) {
     mComm->sendMainColorChange(mData->currentDevices(), color);
-    if (!(mData->currentRoutine() == ELightingRoutine::eSingleBlink
-            || mData->currentRoutine() == ELightingRoutine::eSingleSolid
-            || mData->currentRoutine() == ELightingRoutine::eSingleWave
-            || mData->currentRoutine() == ELightingRoutine::eSingleGlimmer
-            || mData->currentRoutine() == ELightingRoutine::eSingleLinearFade
-            || mData->currentRoutine() == ELightingRoutine::eSingleSineFade
-            || mData->currentRoutine() == ELightingRoutine::eSingleSawtoothFadeIn
-            || mData->currentRoutine() == ELightingRoutine::eSingleSawtoothFadeOut)) {
-        mComm->sendRoutineChange(mData->currentDevices(), ELightingRoutine::eSingleGlimmer);
-    }
 
     for (int i = 0; i < (int)mRoutineButtons->size(); ++i) {
         (*mRoutineButtons.get())[i]->updateIconSingleColorRoutine((ELightingRoutine)(i + 1), color);
@@ -120,6 +105,12 @@ void SingleColorPage::colorChanged(QColor color) {
 
 
 void SingleColorPage::showEvent(QShowEvent *) {
+  QColor color = mData->mainColor();
+  ui->colorPicker->chooseColor(color, false);
+  for (int i = 0; i < (int)mRoutineButtons->size(); ++i) {
+      (*mRoutineButtons.get())[i]->updateIconSingleColorRoutine((ELightingRoutine)(i + 1), color);
+  }
+
   highlightRoutineButton(mData->currentRoutine());
 
   if (mData->shouldUseHueAssets()) {
@@ -127,5 +118,14 @@ void SingleColorPage::showEvent(QShowEvent *) {
   } else {
       ui->colorPicker->useHueWheel(false);
   }
+
+}
+
+void SingleColorPage::hideEvent(QHideEvent *event) {
+    Q_UNUSED(event);
+}
+
+void SingleColorPage::renderUI() {
+
 }
 

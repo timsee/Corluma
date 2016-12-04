@@ -17,7 +17,6 @@ CommHTTP::CommHTTP() {
 
     mStateUpdateTimer = new QTimer(this);
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(stateUpdate()));
-    mStateUpdateTimer->start(5000);
 }
 
 CommHTTP::~CommHTTP() {
@@ -25,6 +24,21 @@ CommHTTP::~CommHTTP() {
     delete mNetworkManager;
 }
 
+void CommHTTP::startup() {
+    mStateUpdateTimer->start(5000);
+    mHasStarted = true;
+}
+
+void CommHTTP::shutdown() {
+    if (mStateUpdateTimer->isActive()) {
+        mStateUpdateTimer->stop();
+    }
+    if (mDiscoveryTimer->isActive()) {
+        mDiscoveryTimer->stop();
+    }
+    resetDiscovery();
+    mHasStarted = false;
+}
 
 void CommHTTP::sendPacket(QString controller, QString packet) {
     for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
@@ -62,6 +76,8 @@ void CommHTTP::stateUpdate() {
 }
 
 void CommHTTP::sendThrottleBuffer(QString bufferedConnection, QString bufferedMessage) {
+    // buffered message contains the buffered connection
+    Q_UNUSED(bufferedConnection);
     QNetworkRequest request = QNetworkRequest(QUrl(bufferedMessage));
     mNetworkManager->get(request);
 }

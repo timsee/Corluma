@@ -14,7 +14,7 @@
 #include <math.h>
 
 IconData::IconData() {
-    setup(64, 64);
+    setup(32, 32);
 }
 
 IconData::IconData(int width, int height) {

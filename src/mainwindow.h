@@ -8,10 +8,24 @@
 #include "lightingpage.h"
 #include "icondata.h"
 #include "lightsbutton.h"
+#include "floatinglayout.h"
+#include "commtypesettings.h"
 
 namespace Ui {
 class MainWindow;
 }
+
+/*!
+ * \brief The EPage enum The main pages of the application, as they are ordered
+ *        in their QStackedWidget.
+ */
+enum class EPage {
+    eSinglePage,
+    eCustomArrayPage,
+    ePresetPage,
+    eSettingsPage,
+    eConnectionPage
+};
 
 /*!
  * \copyright
@@ -36,6 +50,7 @@ public:
      * \brief Constructor
      */
     explicit MainWindow(QWidget *parent = 0);
+
     /*!
      * \brief Deconstructor
      */
@@ -47,11 +62,13 @@ public slots:
      *        Toggles between running the current routine at current settings, and off.
      */
     void toggleOnOff();
+
     /*!
      * \brief brightnessChanged Connected to the the slider at the top, this takeas a value between 0-100
      *        and sends that value to the lights to control how bright they are.
      */
     void brightnessChanged(int);
+
     /*!
      * \brief pageChanged Connected to the main menu buttons. Each button sends a different int,
      *        which opens a different page on the QStackedWidget.
@@ -59,9 +76,14 @@ public slots:
     void pageChanged(int);
 
     /*!
+     * \brief connectionButtonPressed called whenever the connection button is pressed.
+     */
+    void connectionButtonPressed();
+
+    /*!
      * \brief settingsPressed called whenever the settings button is pressed.
      */
-    void settingsPressed();
+    void settingsButtonPressed();
 
     /*!
      * \brief updateMenuBar used to update the menu bar to app state changes.
@@ -81,6 +103,24 @@ public slots:
      */
     void updatePresetColorGroup(int, int);
 
+    /*!
+     * \brief floatingLayoutButtonPressed handles whenever the floating layout has a button pressed. Parses the string
+     *        that the layout emits, then updates the UI accordingly.
+     */
+    void floatingLayoutButtonPressed(QString);
+
+    /*!
+     * \brief deviceCountChangedOnConnectionPage handles the case when the device count changes.
+     */
+    void deviceCountChangedOnConnectionPage();
+
+    /*!
+     * \brief deviceCountChangedOnConnectionPage handles the case when the device count reaches zero. This gets signaled
+     *        from the data layer whereas deviceCOuntChangedOnConnectionPage gets signaled from the connection page.
+     */
+    void deviceCountReachedZero();
+
+
 protected:
     /*!
      * \brief paintEvent called whenever there is a paint update. This is used
@@ -99,6 +139,7 @@ protected:
 
 
 private:
+
     /*!
      * \brief ui pointer to Qt UI form.
      */
@@ -117,10 +158,11 @@ private:
     DataLayer *mData;
 
     /*!
-     * \brief mPageButtons pointers to all the main buttons, used
-     *        to iterate through them quickly.
+     * \brief mFloatingLayout a floating layout that provides an array of buttons on certain pages.
+     *        It floats near the top right of the page and is managed automatically through resizeEvents
+     *        as it does not correspond to the rest of the applications layout.
      */
-    std::shared_ptr<std::vector<LightsButton*> > mPageButtons;
+    FloatingLayout *mFloatingLayout;
 
     /*!
      * \brief mIconData used to generate the icons in the menu bar.
@@ -132,6 +174,18 @@ private:
      * \todo remove isOn flag and use the systems built into the arduino API.
      */
     bool mIsOn;
+
+    /*!
+     * \brief mShouldGreyOutIcons cahced satte of whether any device is selected. If none
+     *        are selected, icons that require a device are all greyed out.
+     */
+    bool mShouldGreyOutIcons;
+
+    /*!
+     * \brief mLastPageIsMultiColor true if the second page is currently multiple colors,
+     *        false if its a single color page.
+     */
+    bool mLastPageIsMultiColor;
 };
 
 #endif // MAINWINDOW_H

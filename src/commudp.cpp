@@ -20,10 +20,22 @@ CommUDP::CommUDP() {
 
     mDiscoveryTimer = new QTimer(this);
     connect(mDiscoveryTimer, SIGNAL(timeout()), this, SLOT(discoveryRoutine()));
-    mDiscoveryTimer->start(250);
 
     mStateUpdateTimer = new QTimer(this);
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(stateUpdate()));
+    mBound = false;
+}
+
+
+CommUDP::~CommUDP() {
+    saveConnectionList();
+    if (mSocket->isOpen()) {
+        mSocket->close();
+    }
+}
+
+void CommUDP::startup() {
+    mDiscoveryTimer->start(250);
     mStateUpdateTimer->start(1000);
 
     QString localIP;
@@ -41,7 +53,9 @@ CommUDP::CommUDP() {
          }
     }
     //qDebug() << "local IP" << localIP;
-    if (mSocket->bind(QHostAddress(localIP), PORT)) {
+    if (mBound) {
+        qDebug() << "Already bound!";
+    } else if (mSocket->bind(QHostAddress(localIP), PORT)) {
         connect(mSocket, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()));
         mDiscoveryTimer->start(250);
         mBound = true;
@@ -49,14 +63,20 @@ CommUDP::CommUDP() {
         qDebug() << "binding to UDP discovery server failed";
         mBound = false;
     }
+    mHasStarted = true;
 }
 
-
-CommUDP::~CommUDP() {
-    saveConnectionList();
-    if (mSocket->isOpen()) {
-        mSocket->close();
+void CommUDP::shutdown() {
+    if (mStateUpdateTimer->isActive()) {
+        mStateUpdateTimer->stop();
     }
+    if (mDiscoveryTimer->isActive()) {
+        mDiscoveryTimer->stop();
+    }
+    mSocket->close();
+    mBound = false;
+    resetDiscovery();
+    mHasStarted = false;
 }
 
 void CommUDP::sendPacket(QString controller, QString packet) {

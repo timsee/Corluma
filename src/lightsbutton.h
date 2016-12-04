@@ -76,6 +76,12 @@ public:
     void updateIconPresetColorRoutine(ELightingRoutine lightingRoutine, EColorGroup colorGroup);
 
     /*!
+     * \brief enable enables/disables the lightsbutton.
+     * \param shouldEnable true if button should be enabled, false otherwise
+     */
+    void enable(bool shouldEnable);
+
+    /*!
      * \brief lightingRoutine the ELightingRoutine assigned to the button by setupAsMultiButton.
      * \return the button's lighting routine
      */
@@ -168,6 +174,7 @@ private:
      *        as a signal whenever the button is clicked.
      */
     ELightingRoutine mLightingRoutine;
+
     /*!
      * \brief mColorGroup stored color group. can only be
      *        used if the button is set up as a presetButton.

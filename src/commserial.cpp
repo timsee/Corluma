@@ -18,19 +18,37 @@ CommSerial::CommSerial() {
 
     mStateUpdateTimer = new QTimer(this);
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(stateUpdate()));
-    mStateUpdateTimer->start(250);
-
-    discoverSerialPorts();
 }
+
 
 CommSerial::~CommSerial() {
     saveConnectionList();
+    shutdown();
+}
+
+void CommSerial::startup() {
+    mStateUpdateTimer->start(250);
+    discoverSerialPorts();
+    mHasStarted = true;
+}
+
+void CommSerial::shutdown() {
+    if (mStateUpdateTimer->isActive()) {
+        mStateUpdateTimer->stop();
+    }
+    if (mDiscoveryTimer->isActive()) {
+        mDiscoveryTimer->stop();
+    }
     for (auto&& serial : mSerialPorts) {
         if (serial->isOpen()) {
             serial->clear();
             serial->close();
         }
     }
+    mSerialPorts.clear();
+    mSerialInfoList.clear();
+    resetDiscovery();
+    mHasStarted = false;
 }
 
 void CommSerial::sendPacket(QString controller, QString packet) {

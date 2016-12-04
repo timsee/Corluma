@@ -31,6 +31,16 @@ public:
     ~CommUDP();
 
     /*!
+     * \brief startup defined in CommType
+     */
+    void startup();
+
+    /*!
+     * \brief shutdown defined in CommType
+     */
+    void shutdown();
+
+    /*!
      * \brief sendPacket sends the packet over UDP to a specified
      *        IP addres and port. Returns immediately and buffers
      *        unsent packets.
@@ -43,6 +53,7 @@ private slots:
      * \brief readPendingDatagrams reads and parses incoming data packets.
      */
     void readPendingDatagrams();
+
     /*!
      * \brief discoveryRoutine sends a discovery packet in order to test a connection.
      */

@@ -120,6 +120,11 @@ public:
     void stopBridgeDiscovery();
 
     /*!
+     * \brief stopTimers turns off all discovery timers.
+     */
+    void stopTimers();
+
+    /*!
      * \brief isConnected returns true if a bridge is connected and discovery was successful,
      *        false otherwise.
      * \return true if a bridge is connected and discovery was successful, false otherwise.

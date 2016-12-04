@@ -155,8 +155,7 @@ void ColorPicker::chooseLayout(ELayoutColorPicker layout) {
         mCondensedLayout->setStretch(1, 1);
         mCondensedLayout->setStretch(2, 8);
         setLayout(mCondensedLayout);
-    }
-    else {
+    } else {
         // setup the full layout
         mFullLayout = new QVBoxLayout;
        // QSpacerItem *item = new QSpacerItem(1,1, QSizePolicy::Expanding, QSizePolicy::Fixed);

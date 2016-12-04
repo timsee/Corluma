@@ -251,3 +251,11 @@ void CustomColorsPage::updateColorArray() {
      ui->arraySlider->setSliderColorBackground(mData->colorsAverage(EColorGroup::eCustom));
 }
 
+
+void CustomColorsPage::hideEvent(QHideEvent *event) {
+    Q_UNUSED(event);
+}
+
+void CustomColorsPage::renderUI() {
+
+}

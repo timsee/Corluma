@@ -80,6 +80,13 @@ public:
      */
     void setSliderHeight(float percent);
 
+    /*!
+     * \brief enable sets whether the slider is enabled or disabled. Disabling the slider adds opacity,
+     *        greys out the color, and disables user interaction.
+     * \param shouldEnable true if the asset should be enabled, false otherwise.
+     */
+    void enable(bool shouldEnable);
+
 signals:
     /*!
      * \brief Sends out the value that the slider has been set to after all the processing of snapping
@@ -196,6 +203,12 @@ private:
      *        nearly all communication streams.
      */
     QTimer *mThrottleTimer;
+
+    /*!
+     * \brief mOpacity opacity of the lights slider, which gets changed when its
+     *        enabled or disabled.
+     */
+    float mOpacity;
 
     /*!
      * \brief mThrottleFlag flag used to enforced the throttle timer's throttle.

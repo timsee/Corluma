@@ -5,5 +5,11 @@
         <file>images/icon.ico</file>
         <file>images/icon.icns</file>
         <file>images/hue_wheel.png</file>
+        <file>images/connectionIcon.png</file>
+        <file>images/redButton.png</file>
+        <file>images/yellowButton.png</file>
+        <file>images/blackButton.png</file>
+        <file>images/blueButton.png</file>
+        <file>images/greenButton.png</file>
     </qresource>
 </RCC>

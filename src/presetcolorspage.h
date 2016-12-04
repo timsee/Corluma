@@ -36,10 +36,12 @@ public:
      * \brief Constructor
      */
     explicit PresetColorsPage(QWidget *parent = 0);
+
     /*!
      * \brief Deconstructor
      */
     ~PresetColorsPage();
+
     /*!
      * \brief highlightRoutineButton highlights the button that implements
      *        the routine parameter. If it can't find a button that
@@ -48,6 +50,7 @@ public:
      * \param colorGroup the color group that the highlighted button implements.
      */
     void highlightRoutineButton(ELightingRoutine routine, EColorGroup colorGroup);
+
     /*!
      * \brief setupButtons sets up the routine buttons. Requires the DataLayer
      *        of the application to be set up first.
@@ -78,11 +81,24 @@ public slots:
      */
     void multiButtonClicked(int routine, int colorGroup);
 
+private slots:
+    /*!
+     * \brief renderUI renders expensive assets if and only if the assets have had any
+     *        change of state.
+     */
+    void renderUI();
+
 protected:
     /*!
      * \brief called whenever the page is shown on screen.
      */
     void showEvent(QShowEvent *);
+
+    /*!
+     * \brief hideEvent called whenever the page is changed and this page is hidden
+     *        from the screen.
+     */
+    void hideEvent(QHideEvent *);
 
 private:
     /*!
@@ -94,11 +110,13 @@ private:
      * \brief mButtonLayout layout used to put the buttons in the QScrollArea as a grid.
      */
     QGridLayout *mButtonLayout;
+
     /*!
      * \brief mPresetButtons Buttons used in the grid in the scroll area, each one signals
      *        a EColorPreset and a ELightingMode.
      */
     std::vector<LightsButton *> mPresetButtons;
+
     /*!
      * \brief mPresetLabels labels for the top of the columns of the preset buttons.
      */

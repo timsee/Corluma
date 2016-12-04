@@ -18,10 +18,6 @@ CommHue::CommHue() {
     mDiscovery = new HueBridgeDiscovery;
     connect(mDiscovery, SIGNAL(connectionStatusChanged(bool)), this, SLOT(connectionStatusHasChanged(bool)));
 
-    //TODO: When a better settings system is made, run this only IFF hue is enabled. Currently, we assume that
-    //      all communication streams are potentially used.
-    mDiscovery->startBridgeDiscovery(); // will verify it doesn't already have valid data before running.
-
     mNetworkManager = new QNetworkAccessManager;
     connect(mNetworkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 
@@ -40,6 +36,22 @@ CommHue::CommHue() {
     connect(mParser, SIGNAL(receivedSpeedChange(int, int)), this, SLOT(speedChange(int, int)));
     connect(mParser, SIGNAL(receivedTimeOutChange(int, int)), this, SLOT(timeOutChange(int, int)));
     connect(mParser, SIGNAL(receivedReset()), this, SLOT(resetSettings()));
+
+    mFullyDiscovered = false;
+
+}
+
+void CommHue::startup() {
+    mDiscovery->startBridgeDiscovery(); // will verify it doesn't already have valid data before running.
+    mHasStarted = true;
+}
+
+void CommHue::shutdown() {
+    mDiscovery->stopTimers();
+    if (mStateUpdateTimer->isActive()) {
+        mStateUpdateTimer->stop();
+    }
+    mHasStarted = false;
 }
 
 CommHue::~CommHue() {
@@ -47,6 +59,7 @@ CommHue::~CommHue() {
 }
 
 void CommHue::sendPacket(QString controller, QString packet) {
+    Q_UNUSED(controller);
     mParser->parsePacket(packet);
 }
 
@@ -54,7 +67,7 @@ void CommHue::sendPacket(QString controller, QString packet) {
 void CommHue::changeLight(int lightIndex, int saturation, int brightness, int hue) {
     // handle multicasting with light index 0
     if (lightIndex == 0) {
-        for (int i = 0; i <= mConnectedHues.size(); ++i) {
+        for (uint32_t i = 0; i <= mConnectedHues.size(); ++i) {
             changeLight(i, saturation, brightness, hue);
         }
     }
@@ -103,14 +116,18 @@ void CommHue::turnOff(int lightIndex) {
 
 void CommHue::connectionStatusHasChanged(bool status) {
     // always stop the timer if its active, we'll restart if its a new connection
-    turnOffUpdates();
+    if (mStateUpdateTimer->isActive()) {
+        mStateUpdateTimer->stop();
+    }
     if (status) {
         SHueBridge bridge = mDiscovery->bridge();
         mUrlStart = "http://" + bridge.IP + "/api/" + bridge.username;
-        turnOnUpdates();
+        mStateUpdateTimer->start(3000);
         // call update method immediately
-        mThrottle->startThrottle(250, 3);
+        mThrottle->startThrottle(500, 1);
         updateLightStates();
+        mDiscoveryMode = false;
+        mFullyDiscovered = true;
     }
 }
 
@@ -127,6 +144,9 @@ void CommHue::mainColorChange(int deviceIndex, QColor color){
 }
 
 void CommHue::arrayColorChange(int deviceIndex, int colorIndex, QColor color) {
+    Q_UNUSED(color);
+    Q_UNUSED(deviceIndex);
+    Q_UNUSED(colorIndex);
     //TODO: implement
 }
 
@@ -151,6 +171,8 @@ void CommHue::routineChange(int deviceIndex, int routineIndex, int colorGroup) {
 }
 
 void CommHue::customArrayCount(int deviceIndex, int customArrayCount) {
+    Q_UNUSED(deviceIndex);
+    Q_UNUSED(customArrayCount);
     //TODO: implement
 }
 
@@ -165,10 +187,14 @@ void CommHue::brightnessChange(int deviceIndex, int brightness) {
 }
 
 void CommHue::speedChange(int deviceIndex, int speed) {
+    Q_UNUSED(deviceIndex);
+    Q_UNUSED(speed);
     //TODO: implement
 }
 
 void CommHue::timeOutChange(int deviceIndex, int timeout) {
+    Q_UNUSED(deviceIndex);
+    Q_UNUSED(timeout);
     //TODO: implement
 }
 
@@ -247,6 +273,7 @@ bool CommHue::updateHueLightState(QJsonObject object, int i) {
             hue.type = object.value("type").toString();
             hue.uniqueID = object.value("uniqueid").toString();
             updateDevice(light);
+
             // update vector with new values
             if ((size_t)light.index > mConnectedHues.size()) {
                 mConnectedHues.resize(light.index);

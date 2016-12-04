@@ -15,6 +15,11 @@ void CommThrottle::startThrottle(int interval, int throttleMax) {
     mThrottleTimer->start(mThrottleInterval);
 }
 
+void CommThrottle::stop() {
+    if (mThrottleTimer->isActive()) {
+        mThrottleTimer->stop();
+    }
+}
 
 bool CommThrottle::checkThrottle(QString controller, QString packet) {
     if (mThrottleCount <= mThrottleMax) {

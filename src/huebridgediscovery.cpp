@@ -44,20 +44,10 @@ HueBridgeDiscovery::HueBridgeDiscovery(QObject *parent) : QObject(parent)
     // assume that all saved data is not valid until its checked.
     mIPValid = false;
     mUsernameValid = false;
-
-    if (mHasKey && mHasIP) {
-        //qDebug() << "Connection data is already saved, testing full connection";
-        attemptFinalCheck();
-    }
 }
 
 HueBridgeDiscovery::~HueBridgeDiscovery() {
-    if(mDiscoveryTimer->isActive()) {
-        mDiscoveryTimer->stop();
-    }
-    if(mTimeoutTimer->isActive()) {
-        mTimeoutTimer->stop();
-    }
+    stopBridgeDiscovery();
 }
 
 void HueBridgeDiscovery::startBridgeDiscovery() {
@@ -91,6 +81,13 @@ void HueBridgeDiscovery::stopBridgeDiscovery() {
     if (mUPnPSocket->isOpen()) {
         mUPnPSocket->close();
     }
+}
+
+void HueBridgeDiscovery::stopTimers() {
+    if (mTimeoutTimer->isActive()) {
+        mTimeoutTimer->stop();
+    }
+    stopBridgeDiscovery();
 }
 
 // ----------------------------
@@ -250,20 +247,27 @@ void HueBridgeDiscovery::handleDiscoveryTimeout() {
             mHasIP = false;
             emit connectionStatusChanged(false);
             startBridgeDiscovery();
-        } else if (mIPValid) {
+        } else if (mIPValid && !mUsernameValid) {
             // if we have a valid IP address but haven't validated
             // the key, check the key.
-            qDebug() << "full connection failed, but IP address works, check the username.";
+            qDebug() << "full connection failed, but IP address works, username fails" << mBridge.username;
             mHasKey = false;
-        } else if (mUsernameValid) {
+            startBridgeDiscovery();
+        } else if (!mIPValid && mUsernameValid) {
             qDebug() << "We have a key and an IP validated but hasvent gotten packets how could this be?";
             qDebug() << "this state makes no sense, invalidate both";
             mHasKey = false;
             mHasIP = false;
+            startBridgeDiscovery();
+        } else if (mIPValid && mUsernameValid){
+            mDiscoveryState = EHueDiscoveryState::eBridgeConnected;
+            emit bridgeDiscoveryStateChanged((int)mDiscoveryState);
+            emit connectionStatusChanged(true);
+            qDebug() << "IP and username is valid, stopping discovery and treating as connected!";
+            stopBridgeDiscovery();
         } else {
-            qDebug() << "Error: Something went wrong with a full connection test...";
+            qDebug() << "Error: Something went wrong with a Hue full connection test...";
         }
-        stopBridgeDiscovery();
     }
 }
 

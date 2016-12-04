@@ -133,3 +133,12 @@ void PresetColorsPage::showEvent(QShowEvent *) {
     }
 }
 
+void PresetColorsPage::hideEvent(QHideEvent *) {
+
+}
+
+void PresetColorsPage::renderUI() {
+
+}
+
+
