@@ -21,17 +21,16 @@ LightsButton::LightsButton(QWidget *parent) : QWidget(parent) {
 }
 
 
-void LightsButton::setupAsMenuButton(int pageNumber, DataLayer *dataLayer) {
-    mIconData = IconData(256, 256, dataLayer);
+void LightsButton::setupAsMenuButton(int pageNumber, const std::vector<QColor>& group) {
+    mIconData = IconData(256, 256);
     if (pageNumber == 0) {
         mIconData.setSolidColor(QColor(0,255,0));
     } else if (pageNumber == 1) {
-        mIconData.setMultiFade(EColorGroup::eCustom, true);
+        mIconData.setMultiFade(EColorGroup::eCustom, group, true);
     } else {
-        mIconData.setMultiFade(EColorGroup::eSevenColor);
+        mIconData.setMultiFade(EColorGroup::eSevenColor, group);
     }
     button->setIcon(mIconData.renderAsQPixmap());
-    mDataLayer = dataLayer;
     mSetupHasBeenCalled = true;
     mIsMenuButton = true;
     mPageNumber = pageNumber;
@@ -43,8 +42,8 @@ void LightsButton::setupAsMenuButton(int pageNumber, DataLayer *dataLayer) {
     setLayout(mLayout);
 }
 
-void LightsButton::setupAsStandardButton(ELightingRoutine routine, EColorGroup colorGroup, DataLayer *dataLayer, QString label) {
-    mIconData = IconData(256, 256, dataLayer);
+void LightsButton::setupAsStandardButton(ELightingRoutine routine, EColorGroup colorGroup, QString label, const std::vector<QColor>& group) {
+    mIconData = IconData(256, 256);
     mSetupHasBeenCalled = true;
     bool renderIcon = false;
     switch(routine) {
@@ -61,14 +60,12 @@ void LightsButton::setupAsStandardButton(ELightingRoutine routine, EColorGroup c
     }
 
     if (renderIcon) {
-        mIconData.setLightingRoutine(routine, colorGroup);
+        mIconData.setMultiLightingRoutine(routine, colorGroup, group);
         button->setIcon(mIconData.renderAsQPixmap());
     }
 
-
     mLightingRoutine = routine;
     mColorGroup = colorGroup;
-    mDataLayer = dataLayer;
 
     mLayout = new QVBoxLayout;
     mLayout->setSpacing(2);
@@ -133,30 +130,28 @@ void LightsButton::resizeEvent(QResizeEvent *event) {
     }
 }
 
-void LightsButton::updateIcon() {
+void LightsButton::updateIconSingleColorRoutine(ELightingRoutine lightingRoutine, QColor color) {
     if (!mIsMenuButton) {
-        mIconData.setLightingRoutine(mLightingRoutine, mColorGroup);
+        mIconData.setSingleLightingRoutine(lightingRoutine, color);
         button->setIcon(mIconData.renderAsQPixmap());
     } else {
         if (mPageNumber == 0) {
-            mIconData.setSolidColor(mDataLayer->mainColor());
-        } else if (mPageNumber == 1) {
-            mIconData.setMultiFade(EColorGroup::eCustom, true);
+            mIconData.setSolidColor(color);
         } else {
-            mIconData.setMultiFade(mDataLayer->currentColorGroup());
+            qDebug() << "LightsButton: shouldn't get here!";
         }
         button->setIcon(mIconData.renderAsQPixmap());
     }
 }
 
-void LightsButton::updateIconSingleColorRoutine(ELightingRoutine lightingRoutine, QColor color) {
-    mIconData.setSingleLightingRoutine(lightingRoutine, color);
-    button->setIcon(mIconData.renderAsQPixmap());
-}
-
-void LightsButton::updateIconPresetColorRoutine(ELightingRoutine lightingRoutine, EColorGroup colorGroup) {
-    mIconData.setLightingRoutine((ELightingRoutine)lightingRoutine, (EColorGroup)colorGroup);
-    button->setIcon(mIconData.renderAsQPixmap());
+void LightsButton::updateIconPresetColorRoutine(ELightingRoutine lightingRoutine, EColorGroup colorGroup, const std::vector<QColor>& colors, int colorMax) {
+    if (!mIsMenuButton) {
+        mIconData.setMultiLightingRoutine(lightingRoutine, colorGroup, colors, colorMax);
+        button->setIcon(mIconData.renderAsQPixmap());
+    } else {
+        mIconData.setMultiFade(colorGroup, colors);
+        button->setIcon(mIconData.renderAsQPixmap());
+    }
 }
 
 

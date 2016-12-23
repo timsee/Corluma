@@ -105,4 +105,9 @@
 * When no devices are connected, assets that can't be used now grey themselves out.
 * Rewrote system for turning on and off CommTypes.
 
+### **v0.9.8**
+#### Reliability Update
+* Added reliability layer to all packets. 
+* Added support for Hue Ambient Lights.
+* Added GUI for saving and choosing preset groups of lights.
 

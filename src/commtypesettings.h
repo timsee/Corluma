@@ -4,6 +4,11 @@
 #include <QSettings>
 #include "lightdevice.h"
 
+/*!
+ * \copyright
+ * Copyright (C) 2015 - 2016.
+ * Released under the GNU General Public License.
+ */
 
 /*!
  * \brief The CommTypeSettings class manages which CommTypes are enabled and disabled. It manages the settings

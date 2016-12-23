@@ -37,20 +37,11 @@ public:
     IconData(int width, int height);
 
     /*!
-     * \brief Required constructor when the icons use the color array.
-     *
-     * \param width the width
-     * \param height the height
-     * \param data pointer to the data layer to access array data.
-     */
-    IconData(int width, int height, DataLayer *data);
-
-    /*!
      * \brief setLightingRoutine use a lighting routine and color group to set up the IconData.
      * \param routine the routine that you want to use for the icon
      * \param colorGroup the group that you want to use for the icon.
      */
-    void setLightingRoutine(ELightingRoutine routine, EColorGroup colorGroup = EColorGroup::eCustom);
+    void setMultiLightingRoutine(ELightingRoutine routine, EColorGroup group, const std::vector<QColor>& colors, int colorMax = -1);
 
     /*!
      * \brief setSingleLightingRoutine use a lighting routine and a color to set up the IconData
@@ -68,13 +59,13 @@ public:
     /*!
      * \brief setMultiColors shows all array colors, repeating if necessary
      */
-    void setMultiColors(EColorGroup group);
+    void setMultiColors(EColorGroup group, const std::vector<QColor>& colors, int colorMax = -1);
 
     /*!
      * \brief setMultiGlimmer sets as mostly mainColor, but adds random colors
      *        as a glimmer effect
      */
-    void setMultiGlimmer(EColorGroup group);
+    void setMultiGlimmer(EColorGroup group, const std::vector<QColor>& colors, int colorMax = -1);
 
     /*!
      * \brief setMultiFade regions slowly fade from one array color to another
@@ -82,28 +73,28 @@ public:
      * \param set to false in nearly all cases, this only gets set to true for the menu bar
      *        so the custom array shows a few more colors than 2 when defaulted to 2.
      */
-    void setMultiFade(EColorGroup group, bool showMore = false);
+    void setMultiFade(EColorGroup group, const std::vector<QColor>& colors, bool showMore = false, int colorMax = -1);
 
     /*!
      * \brief setMultiRandomSolid sets icon as 4 colors from array
      */
-    void setMultiRandomSolid(EColorGroup group);
+    void setMultiRandomSolid(EColorGroup group, const std::vector<QColor>& colors, int colorMax = -1);
 
     /*!
      * \brief setMultiRandomIndividual sets each region a random color from the array
      */
-    void setMultiRandomIndividual(EColorGroup group);
+    void setMultiRandomIndividual(EColorGroup group, const std::vector<QColor>& colors, int colorMax = -1);
 
     /*!
      * \brief setMultiBarsSolid draws the bars with region sizes of 2
      */
-    void setMultiBarsSolid(EColorGroup group);
+    void setMultiBarsSolid(EColorGroup group, const std::vector<QColor>& colors, int colorMax = -1);
 
     /*!
      * \brief setMultiBarsSolid draws the bars with region sizes of 2 but slightly offset
      *        'cause its hard to show motion in a static icon.
      */
-    void setMultiBarsMoving(EColorGroup group);
+    void setMultiBarsMoving(EColorGroup group, const std::vector<QColor>& colors, int colorMax = -1);
 
     /*!
      * \brief addWave similar to a linear fade, but offset a bit since otherwise
@@ -173,17 +164,13 @@ public:
 
 private:
 
+
     /*!
      * \brief setup used by the constructors to set up the data buffers.
      * \param width the width of the data buffers.
      * \param height the height of the data buffers.
      */
     void setup(int width, int height);
-
-    /*!
-     * \brief mDataLayer a pointer to the data layer.
-     */
-    DataLayer *mDataLayer;
 
     /*!
      * the full data used when rendering an image.

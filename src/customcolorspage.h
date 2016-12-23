@@ -42,6 +42,7 @@ public:
      * \brief Constructor
      */
     explicit CustomColorsPage(QWidget *parent = 0);
+
     /*!
      * \brief Deconstructor
      */
@@ -60,6 +61,14 @@ public:
      *        of the application to be set up first.
      */
     void setupButtons();
+
+    /*!
+     * \brief connectCommLayer connect to commlayer. In a future update the commLayer pointer on
+     *        every page will be totally removed in favor of DataSync, but for now theres some
+     *        edge cases that require certain pages to have a commlayer pointer.
+     * \param layer commlayer
+     */
+    void connectCommLayer(CommLayer *layer) { mComm = layer; }
 
 signals:
     /*!
@@ -175,6 +184,12 @@ private:
      *        so that the icons can sync up to the new color values.
      */
     void updateIcons();
+
+    /*!
+     * \brief communication pointer to communication object
+     *        for sending comannds to the lights
+     */
+    CommLayer *mComm;
 };
 
 #endif // CUSTOMARRAYPAGE_H

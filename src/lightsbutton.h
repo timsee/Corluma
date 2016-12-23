@@ -38,26 +38,20 @@ public:
      *        presetClicked and will send its mode and preset in that signal.
      * \param routine the ELightingRoutine that emits when this button is pushed.
      * \param colorGroup The EColorGroup that emits when this button is pushed.
-     * \param dataLayer used to create the icon for the button
      */
     void setupAsStandardButton(ELightingRoutine routine,
                                EColorGroup colorGroup,
-                               DataLayer *dataLayer,
-                               QString label = QString(""));
+                               QString label = QString(""),
+                               const std::vector<QColor>& group = std::vector<QColor>());
 
     /*!
      * \brief setupAsMenuButton Used by the mainWindow for the top menu. Buttons send out
      *        their page number whenever they are clicked.
      * \param pageNumber the number that this menu button is getting set up to signal whenever
      *        its clicked.
-     * \param dataLayer pointer to the data layer, which is used for creating the icon.
-     */
-    void setupAsMenuButton(int pageNumber, DataLayer *dataLayer);
 
-    /*!
-     * \brief updateIcon update the icon of the of the lightsbutton.
      */
-    void updateIcon();
+    void setupAsMenuButton(int pageNumber, const std::vector<QColor>& group = std::vector<QColor>());
 
     /*!
      * \brief updateIconSingleColorRoutine update the button's icon based off of a lighting
@@ -73,7 +67,7 @@ public:
      * \param lightingRoutine lighting routine to use for the icon. must be multi color routine.
      * \param colorGroup the color group to use for the icon.
      */
-    void updateIconPresetColorRoutine(ELightingRoutine lightingRoutine, EColorGroup colorGroup);
+    void updateIconPresetColorRoutine(ELightingRoutine lightingRoutine, EColorGroup colorGroup, const std::vector<QColor>& colors, int colorMax = -1);
 
     /*!
      * \brief enable enables/disables the lightsbutton.
@@ -138,11 +132,6 @@ private:
      *        icon.
      */
     IconData mIconData;
-
-    /*!
-     * \brief mDataLayer pointer to the data layer of the application
-     */
-    DataLayer *mDataLayer;
 
     /*!
      * the string representation of the text of the QLabel of the button

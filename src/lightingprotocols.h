@@ -111,6 +111,7 @@ enum class ELightingRoutine
     eLightingRoutine_MAX //total number of modes
 };
 
+static ELightingRoutine ELightingRoutineSingleColorEnd = ELightingRoutine::eSingleSawtoothFadeOut;
 
 /*!
  * \enum EColorGroup used during multi color routines to determine

@@ -4,6 +4,11 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QHBoxLayout>
+/*!
+ * \copyright
+ * Copyright (C) 2015 - 2016.
+ * Released under the GNU General Public License.
+ */
 
 /*!
  * \brief The FloatingLayout class QWidget that floats in the top right corner of the screen instead

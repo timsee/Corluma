@@ -56,16 +56,30 @@ public:
                               QColor color);
 
     /*!
-     * \brief sendRoutineChange change the mode of the lights. The mode changes
-     *        how the lights look. some modes are a single color, some modes are random colors
-     *        and some use a saved array.
+     * \brief sendSingleRoutineChange change the mode of the lights. The mode changes
+     *        how the lights look. This function should be used for single color routines.
      * \param routine the mode being sent to the LED system
-     * \param colorGroupUsed -1 if single color routine, otherwise a EColorGroup.
      */
-    void sendRoutineChange(const std::list<SLightDevice>& deviceList,
-                           ELightingRoutine routine,
-                           int colorGroupUsed = -1);
+    void sendSingleRoutineChange(const std::list<SLightDevice>& deviceList,
+                                 ELightingRoutine routine);
+    /*!
+     * \brief sendMultiRoutineChange change the mode of the lights. The mode changes
+     *        how the lights look. This function should be used for multi color routines,
+     *        since it uses a color group.
+     * \param routine the mode being sent to the LED system
+     */
+    void sendMultiRoutineChange(const std::list<SLightDevice>& deviceList,
+                                ELightingRoutine routine,
+                                EColorGroup colorGroup);
 
+    /*!
+     * \brief sendColorTemperatureChange Hue only. Controls Ambient Lights and
+     *        Extended Color lights by sending them a color temperature instead
+     *        of color in HSV
+     * \param temperature desired temperature in mirek, must be bewteen 153 and 500
+     */
+    void sendColorTemperatureChange(const std::list<SLightDevice>& deviceList,
+                                    int temperature);
     /*!
      * \brief sendCustomArrayCount sends a new custom array count to the LED array. This count
      *        determines how many colors from the custom array should be used. It is different
@@ -110,25 +124,25 @@ public:
     // --------------------------
 
     /*!
-     * \brief startupStream start stream of given type. This starts all of its maintence threads
+     * \brief startup start stream of given type. This starts all of its maintence threads
      *        and discovery threads
      * \param type the type of communication stream to start.
      */
-    void startupStream(ECommType type);
+    void startup(ECommType type);
 
     /*!
-     * \brief shutdownStream shuts down the stream of the given type. This stops all of its maintence threads
+     * \brief shutdown shuts down the stream of the given type. This stops all of its maintence threads
      *        and discovery threads.
      * \param type the type of communication stream to shutdown.
      */
-    void shutdownStream(ECommType type);
+    void shutdown(ECommType type);
 
     /*!
-     * \brief streamHasStarted checks if a stream has been started and can currently be used.
+     * \brief hasStarted checks if a stream has been started and can currently be used.
      * \param type the communication type to check for the stream
      * \return true if its been started, false otherwise.
      */
-    bool streamHasStarted(ECommType type);
+    bool hasStarted(ECommType type);
 
     /*!
      * \brief addController attempt to add a controller to the hash table
@@ -183,25 +197,26 @@ public:
         return commByType(type)->deviceTable();
     }
 
-    /*!
-     * \brief initialSetup connect the data layer to the comm layer and set up things such as which streams should be
-     *        enabled.
-     * \param data pointer to the data layer.
-     */
-    void initialSetup(DataLayer *data);
-
     // --------------------------
     // Hardware specific functions
     // --------------------------
 
     /*!
-     * \brief connectedHues returns a vector of structs that contain all relevant
+     * \brief connectedHues returns a list of structs that contain all relevant
      *        states of all Hue lights connected to the Bridge. These values are
      *        updated every few seconds by a timer.
-     * \return a vector of SHueLight structs which contain info on all the connected lights.
+     * \return a list of SHueLight structs which contain info on all the connected lights.
      */
-    std::vector<SHueLight> hueList() { return mHue->connectedHues(); }
+    std::list<SHueLight> hueList() { return mHue->connectedHues(); }
 
+    /*!
+     * \brief hueLightFromLightDevice takes a SLightDevice and retrieves
+     *        the SHueLight that maps to the same device. The SHueLight struct provides
+     *        hue specific data for the more general SLightDevice.
+     * \param device the device for the hue you want to look up
+     * \return a SHueLight filled with all known data about the requested device.
+     */
+    SHueLight hueLightFromLightDevice(const SLightDevice& device);
 
 signals:
     /*!
@@ -211,10 +226,15 @@ signals:
    void hueDiscoveryStateChange(int);
 
    /*!
-    * \brief lightStateUpdate sent any time theres an update to the state of
-    *        any of the lights.
+    * \brief packetSent anotification that a packet was sent by one of the commtypes.
     */
-   void lightStateUpdate(int, QString);
+   void packetSent();
+
+   /*!
+    * \brief updateReceived a notification that a packet was received by one of the commtypes.
+    * \param type the int representation of the ECommType that has been updated.
+    */
+   void updateReceived(int);
 
 private slots:
    /*!
@@ -222,12 +242,6 @@ private slots:
     *        from a private HueBridgeDiscovery object.
     */
    void hueDiscoveryUpdate(int newDiscoveryState);
-
-   /*!
-    * \brief hueLightStateUpdate forwards the hue light state changes
-    *        from a prviate HueBridgeDiscovery object.
-    */
-   void hueLightStateUpdate() { emit lightStateUpdate((int)ECommType::eHue, "Bridge"); }
 
    /*!
     * \brief parsePacket parses any packets sent from any of the commtypes. The
@@ -241,6 +255,13 @@ private slots:
     *        successful.
     */
    void discoveryReceived(QString, QString, int);
+
+   /*!
+    * \brief receivedUpdate Each CommType signals out where it receives an update. This slot combines and forwards
+    *        these signals into its own updateReceived signal.
+    * \param type the ECommType that has been updated.
+    */
+   void receivedUpdate(int type) { emit updateReceived(type); }
 
 private:
 
@@ -263,11 +284,6 @@ private:
      * \brief mHue Phillip's Hue connection object
      */
     std::shared_ptr<CommHue> mHue;
-
-    /*!
-     * \brief mData pointer to the data layer
-     */
-    DataLayer *mData;
 
     /*!
      * \brief verifyStateUpdatePacketValidity takes a vector and checks that all

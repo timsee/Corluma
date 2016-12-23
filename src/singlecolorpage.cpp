@@ -27,7 +27,7 @@ SingleColorPage::~SingleColorPage() {
 
 
 void SingleColorPage::setupButtons() {
-    mIconData = IconData(64,64, mData);
+    mIconData = IconData(64, 64);
 
     std::vector<std::string> labels = {"Solid",
                                        "Blink",
@@ -50,7 +50,7 @@ void SingleColorPage::setupButtons() {
     mRoutineButtons = std::shared_ptr<std::vector<LightsButton*> >(new std::vector<LightsButton*>(buttons.size(), nullptr));
     for (int i = 0; i < (int)mRoutineButtons->size(); ++i) {
         (*mRoutineButtons.get())[i] = buttons[i];
-        (*mRoutineButtons.get())[i]->setupAsStandardButton((ELightingRoutine)(i + 1), mData->currentColorGroup(), mData, QString::fromStdString(labels[i]));
+        (*mRoutineButtons.get())[i]->setupAsStandardButton((ELightingRoutine)(i + 1), mData->currentColorGroup(), QString::fromStdString(labels[i]), mData->currentGroup());
         connect((*mRoutineButtons.get())[i], SIGNAL(buttonClicked(int, int)), this, SLOT(modeChanged(int, int)));
    }
 }
@@ -84,13 +84,23 @@ void SingleColorPage::highlightRoutineButton(ELightingRoutine routine) {
 // ----------------------------
 void SingleColorPage::modeChanged(int newMode, int newGroup) {
     Q_UNUSED(newGroup); // newGroup is ignored for single color routines
-    mComm->sendRoutineChange(mData->currentDevices(), (ELightingRoutine)newMode);
+    mData->updateRoutine((ELightingRoutine)newMode);
     highlightRoutineButton((ELightingRoutine)newMode);
     emit updateMainIcons();
 }
 
 void SingleColorPage::colorChanged(QColor color) {
-    mComm->sendMainColorChange(mData->currentDevices(), color);
+    std::list<SLightDevice> routineFix;
+    for (auto device : mData->currentDevices()) {
+        if ((int)device.lightingRoutine > (int)ELightingRoutineSingleColorEnd) {
+            routineFix.push_back(device);
+        }
+    }
+    if (routineFix.size() > 0) {
+        mData->updateRoutine(ELightingRoutine::eSingleGlimmer);
+    }
+    mData->updateColor(color);
+
 
     for (int i = 0; i < (int)mRoutineButtons->size(); ++i) {
         (*mRoutineButtons.get())[i]->updateIconSingleColorRoutine((ELightingRoutine)(i + 1), color);
@@ -112,7 +122,6 @@ void SingleColorPage::showEvent(QShowEvent *) {
   }
 
   highlightRoutineButton(mData->currentRoutine());
-
   if (mData->shouldUseHueAssets()) {
       ui->colorPicker->useHueWheel(true);
   } else {

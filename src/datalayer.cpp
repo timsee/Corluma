@@ -14,20 +14,19 @@ DataLayer::DataLayer() {
     int i = 0;
 
     mCommTypeSettings = new CommTypeSettings();
+    mColors = std::vector<std::vector<QColor> >((size_t)EColorGroup::eColorGroup_MAX);
 
     //==========
     // Custom Colors
     //==========
-    mArraySizes[i] = 10;
-    mColors[i] =  new QColor[mArraySizes[i]];
+    mColors[i] =  std::vector<QColor>(10);
     i++;
 
     //==========
     // Water Colors
     //==========
 
-    mArraySizes[i] = 5;
-    mColors[i] = new QColor[mArraySizes[i]];
+    mColors[i] =  std::vector<QColor>(5);
     mColors[i][0] = QColor(0,   0, 255);
     mColors[i][1] = QColor(0,   25,  225);
     mColors[i][2] = QColor(0,   0,   127);
@@ -38,8 +37,7 @@ DataLayer::DataLayer() {
     //==========
     // Frozen Colors
     //==========
-    mArraySizes[i] = 6;
-    mColors[i] = new QColor[mArraySizes[i]];
+    mColors[i] =  std::vector<QColor>(6);
     mColors[i][0] = QColor(0,   127, 255);
     mColors[i][1] = QColor(0,   127, 127);
     mColors[i][2] = QColor(200, 0,   255);
@@ -51,8 +49,7 @@ DataLayer::DataLayer() {
     //==========
     // Snow Colors
     //==========
-    mArraySizes[i] = 6;
-    mColors[i] = new QColor[mArraySizes[i]];
+    mColors[i] =  std::vector<QColor>(6);
     mColors[i][0] = QColor(255, 255, 255);
     mColors[i][1] = QColor(127, 127, 127);
     mColors[i][2] = QColor(200, 200, 200);
@@ -64,8 +61,7 @@ DataLayer::DataLayer() {
     //==========
     // Cool Colors
     //==========
-    mArraySizes[i] = 5;
-    mColors[i] = new QColor[mArraySizes[i]];
+    mColors[i] =  std::vector<QColor>(5);
     mColors[i][0] = QColor(0,   255, 0);
     mColors[i][1] = QColor(125, 0,   255);
     mColors[i][2] = QColor(0,   0,   255);
@@ -76,8 +72,7 @@ DataLayer::DataLayer() {
     //==========
     // Warm Colors
     //==========
-    mArraySizes[i] = 5;
-    mColors[i] = new QColor[mArraySizes[i]];
+    mColors[i] =  std::vector<QColor>(5);
     mColors[i][0] = QColor(255, 255, 0);
     mColors[i][1] = QColor(255, 0,   0);
     mColors[i][2] = QColor(255, 45,  0);
@@ -88,8 +83,7 @@ DataLayer::DataLayer() {
     //==========
     // Fire Colors
     //==========
-    mArraySizes[i] = 9;
-    mColors[i] = new QColor[mArraySizes[i]];
+    mColors[i] =  std::vector<QColor>(9);
     mColors[i][0] = QColor(255, 75,  0);
     mColors[i][1] = QColor(255, 20,  0);
     mColors[i][2] = QColor(255, 80,  0);
@@ -104,8 +98,7 @@ DataLayer::DataLayer() {
     //==========
     // Evil Colors
     //==========
-    mArraySizes[i] = 7;
-    mColors[i] = new QColor[mArraySizes[i]];
+    mColors[i] =  std::vector<QColor>(7);
     mColors[i][0] = QColor(255, 0, 0);
     mColors[i][1] = QColor(200, 0, 0);
     mColors[i][2] = QColor(127, 0, 0);
@@ -118,8 +111,7 @@ DataLayer::DataLayer() {
     //==========
     // Corrosive Colors
     //==========
-    mArraySizes[i] = 5;
-    mColors[i] = new QColor[mArraySizes[i]];
+    mColors[i] =  std::vector<QColor>(5);
     mColors[i][0] = QColor(0,   255, 0);
     mColors[i][1] = QColor(0,   200, 0);
     mColors[i][2] = QColor(60,  180,  60);
@@ -130,8 +122,7 @@ DataLayer::DataLayer() {
     //==========
     // Poison Colors
     //==========
-    mArraySizes[i] = 9;
-    mColors[i] = new QColor[mArraySizes[i]];
+    mColors[i] =  std::vector<QColor>(9);
     mColors[i][0] = QColor(80, 0, 180);
     mColors[i][1] = QColor(120, 0, 255);
     mColors[i][2] = QColor(0, 0,   0);
@@ -147,8 +138,7 @@ DataLayer::DataLayer() {
     //==========
     // Rose
     //==========
-    mArraySizes[i] = 6;
-    mColors[i] = new QColor[mArraySizes[i]];
+    mColors[i] =  std::vector<QColor>(6);
     mColors[i][0] = QColor(216, 30,  100);
     mColors[i][1] = QColor(255, 245, 251);
     mColors[i][2] = QColor(156, 62,  72);
@@ -160,8 +150,7 @@ DataLayer::DataLayer() {
     //==========
     // Pink Green
     //==========
-    mArraySizes[i] = 4;
-    mColors[i] = new QColor[mArraySizes[i]];
+    mColors[i] =  std::vector<QColor>(4);
     mColors[i][0]  = QColor(255, 20,  147);
     mColors[i][1]  = QColor(0,   255, 0);
     mColors[i][2]  = QColor(0,   200, 0);
@@ -171,8 +160,7 @@ DataLayer::DataLayer() {
     //==========
     // Red White Blue
     //==========
-    mArraySizes[i] = 4;
-    mColors[i] = new QColor[mArraySizes[i]];
+    mColors[i] =  std::vector<QColor>(4);
     mColors[i][0]  = QColor(255, 255, 255);
     mColors[i][1]  = QColor(255, 0,   0);
     mColors[i][2]  = QColor(0,   0,   255);
@@ -182,8 +170,7 @@ DataLayer::DataLayer() {
     //==========
     // RGB
     //==========
-    mArraySizes[i] = 3;
-    mColors[i] = new QColor[mArraySizes[i]];
+    mColors[i] =  std::vector<QColor>(3);
     mColors[i][0] = QColor(255, 0,   0);
     mColors[i][1] = QColor(0,   255, 0);
     mColors[i][2] = QColor(0,   0,   255);
@@ -192,8 +179,7 @@ DataLayer::DataLayer() {
     //==========
     // CMY
     //==========
-    mArraySizes[i] = 3;
-    mColors[i] = new QColor[mArraySizes[i]];
+    mColors[i] =  std::vector<QColor>(3);
     mColors[i][0] = QColor(255, 255, 0);
     mColors[i][1] = QColor(0,   255, 255);
     mColors[i][2] = QColor(255,   0, 255);
@@ -202,8 +188,7 @@ DataLayer::DataLayer() {
     //==========
     // Six Color
     //==========
-    mArraySizes[i] = 6;
-    mColors[i] = new QColor[mArraySizes[i]];
+    mColors[i] =  std::vector<QColor>(6);
     mColors[i][0] = QColor(255, 0,   0);
     mColors[i][1] = QColor(255, 255, 0);
     mColors[i][2] = QColor(0,   255, 0);
@@ -215,8 +200,7 @@ DataLayer::DataLayer() {
     //==========
     // Seven Color
     //==========
-    mArraySizes[i] = 7;
-    mColors[i] = new QColor[mArraySizes[i]];
+    mColors[i] =  std::vector<QColor>(7);
     mColors[i][0] = QColor(255, 0,   0);
     mColors[i][1] = QColor(255, 255, 0);
     mColors[i][2] = QColor(0,   255, 0);
@@ -229,9 +213,8 @@ DataLayer::DataLayer() {
     //==========
     // All Colors
     //==========
-    mArraySizes[i] = 12;
-    mColors[i] = new QColor[mArraySizes[i]];
-    for (int j = 0; j < mArraySizes[i]; j++) {
+    mColors[i] =  std::vector<QColor>(12);
+    for (int j = 0; j < mColors[i].size(); j++) {
         mColors[i][j] = QColor(rand() % 256, rand() % 256, rand() % 256);
     }
     i++;
@@ -250,7 +233,7 @@ int DataLayer::brightness() {
     for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
         brightness = brightness + device->brightness;
     }
-    if (mCurrentDevices.size() > 0) {
+    if (mCurrentDevices.size() > 1) {
         brightness = brightness / mCurrentDevices.size();
     }
     return brightness;
@@ -277,21 +260,11 @@ uint8_t DataLayer::maxColorGroupSize() {
     return 10;
 }
 
-uint8_t DataLayer::groupSize(EColorGroup group) {
-    if (group == EColorGroup::eCustom) {
-        return mCustomColorsUsed;
-    } else if ((int)group < (int)EColorGroup::eColorGroup_MAX) {
-        return mArraySizes[(int)group];
-    } else {
-        return 0;
-    }
-}
-
-QColor* DataLayer::colorGroup(EColorGroup group) {
+const std::vector<QColor>& DataLayer::colorGroup(EColorGroup group) {
     if ((int)group < (int)EColorGroup::eColorGroup_MAX) {
         return mColors[(int)group];
     } else {
-        return nullptr;
+        return std::vector<QColor>(1);
     }
 }
 
@@ -299,7 +272,7 @@ QColor DataLayer::colorsAverage(EColorGroup group) {
     int r = 0;
     int g = 0;
     int b = 0;
-    uint8_t count = groupSize(group);
+    uint8_t count = mColors[(size_t)group].size();
     for (int i = 0; i < count; ++i) {
        r = r + mColors[(int)group][i].red();
        g = g + mColors[(int)group][i].green();
@@ -333,7 +306,8 @@ ELightingRoutine DataLayer::currentRoutine() {
        routineCount[(int)device->lightingRoutine] = routineCount[(int)device->lightingRoutine] + 1;
     }
     std::vector<int>::iterator result = std::max_element(routineCount.begin(), routineCount.end());
-    return (ELightingRoutine)std::distance(routineCount.begin(), result);
+    ELightingRoutine modeRoutine = (ELightingRoutine)std::distance(routineCount.begin(), result);
+    return modeRoutine;
 }
 
 bool DataLayer::timeOut(int timeOut) {
@@ -351,17 +325,99 @@ int DataLayer::timeOut() {
 
 
 EColorGroup DataLayer::currentColorGroup() {
+    // count number of times each color group occurs
     std::vector<int> colorGroupCount((int)EColorGroup::eColorGroup_MAX, 0);
     for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
        colorGroupCount[(int)device->colorGroup] = colorGroupCount[(int)device->colorGroup] + 1;
     }
+    // find the most frequent color group occurence, return its index.
     std::vector<int>::iterator result = std::max_element(colorGroupCount.begin(), colorGroupCount.end());
     return (EColorGroup)std::distance(colorGroupCount.begin(), result);
 }
 
+void DataLayer::updateRoutine(ELightingRoutine routine) {
+    if (routine == ELightingRoutine::eOff) {
+        mLastRoutineBeforeOff = mCurrentDevices.begin()->lightingRoutine;
+    }
+    std::list<SLightDevice>::iterator iterator;
+    for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
+        iterator->lightingRoutine = routine;
+    }
+    emit dataUpdate();
+}
+
+void DataLayer::updateColorGroup(EColorGroup colorGroup) {
+    std::list<SLightDevice>::iterator iterator;
+    for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
+        iterator->colorGroup = colorGroup;
+    }
+    emit dataUpdate();
+}
+
+void DataLayer::updateCt(int ct) {
+    std::list<SLightDevice>::iterator iterator;
+    for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
+        if (iterator->type == ECommType::eHue) {
+            iterator->colorMode = EColorMode::eCT;
+            iterator->color = colorTemperatureToRGB(ct);
+        }
+    }
+    emit dataUpdate();
+}
+
+
+void DataLayer::turnOn(bool on) {
+    if (!on) {
+        mLastRoutineBeforeOff = mCurrentDevices.begin()->lightingRoutine;
+        std::list<SLightDevice>::iterator iterator;
+        for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
+            iterator->lightingRoutine = ELightingRoutine::eOff;
+        }
+    } else {
+        std::list<SLightDevice>::iterator iterator;
+        for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
+            iterator->lightingRoutine = mLastRoutineBeforeOff;
+        }
+    }
+    emit dataUpdate();
+}
+
+void DataLayer::updateColor(QColor color) {
+    std::list<SLightDevice>::iterator iterator;
+    for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
+        iterator->color = color;
+
+        // handle Hue special case
+        if (iterator->type == ECommType::eHue) {
+            iterator->colorMode = EColorMode::eHSV;
+        } else {
+            iterator->colorMode = EColorMode::eRGB;
+        }
+    }
+    emit dataUpdate();
+}
+
+void DataLayer::updateBrightness(int brightness) {
+    std::list<SLightDevice>::iterator iterator;
+    for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
+        iterator->brightness = brightness;
+    }
+    emit dataUpdate();
+}
+
+bool DataLayer::devicesContainCommType(ECommType type) {
+    std::list<SLightDevice>::iterator iterator;
+    bool foundCommType = false;
+    for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
+        if ((int)iterator->type == (int)type) {
+            foundCommType = true;
+        }
+    }
+    return foundCommType;
+}
 
 bool DataLayer::customColorsUsed(int count) {
-    if ((count > 0) && (count <= mArraySizes[0])) {
+    if ((count > 0) && (count <= mColors[0].size())) {
         mCustomColorsUsed = count;
         return true;
     }
@@ -369,12 +425,12 @@ bool DataLayer::customColorsUsed(int count) {
 }
 
 
-int DataLayer::customColorUsed() {
+int DataLayer::customColorsUsed() {
     return mCustomColorsUsed;
 }
 
 bool DataLayer::customColor(int index, QColor color) {
-    if ((index >= 0) && (index < mArraySizes[0])) {
+    if ((index >= 0) && (index < mColors[0].size())) {
         mColors[0][index] = color;
         return true;
     }
@@ -407,7 +463,7 @@ void DataLayer::resetToDefaults() {
 
     int j = 0;
     int customCount = 5;
-    for (int i = 0; i < mArraySizes[0]; i++) {
+    for (int i = 0; i < mColors[0].size(); i++) {
         if ((j % customCount) == 0) {
             mColors[0][i] = QColor(0,    255, 0);
         } else if ((j % customCount) == 1) {
@@ -422,6 +478,7 @@ void DataLayer::resetToDefaults() {
         j++;
     }
 }
+
 
 void DataLayer::resetTimeoutCounter() {
     mIsTimedOut = false;
@@ -444,13 +501,42 @@ bool DataLayer::clearDevices() {
 }
 
 bool DataLayer::removeDevice(SLightDevice device){
-    mCurrentDevices.remove(device);
-    if (mCurrentDevices.size() == 0) {
-        emit devicesEmpty();
+    bool foundDevice = false;
+    SLightDevice deviceFound;
+    std::list<SLightDevice>::const_iterator iterator;
+    for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
+        bool deviceExists = true;
+        // these three values do not change and can be used as a unique key for the device, even if
+        // things like the color or brightness change.
+        if (device.name.compare((*iterator).name)) deviceExists = false;
+        if (device.index != (*iterator).index)     deviceExists = false;
+        if (device.type != (*iterator).type)       deviceExists = false;
+        if (deviceExists) {
+            deviceFound = (*iterator);
+            foundDevice = true;
+        }
     }
-    return true;
+    if (foundDevice) {
+        mCurrentDevices.remove(deviceFound);
+        if (mCurrentDevices.size() == 0) {
+            emit devicesEmpty();
+        }
+        return true;
+    } else {
+        return false;
+    }
 }
 
+
+bool DataLayer::replaceDeviceList(const std::list<SLightDevice>& newList) {
+    clearDevices();
+    bool hasFailed = false;
+    for (auto&& device : newList) {
+        if (!addDevice(device)) hasFailed = true;
+    }
+    emit dataUpdate();
+    return hasFailed;
+}
 
 bool DataLayer::addDevice(SLightDevice device) {
     bool packetIsValid = true;
@@ -473,7 +559,7 @@ bool DataLayer::addDevice(SLightDevice device) {
         device.colorGroup = EColorGroup::eCustom;
     }
 
-    std::list<SLightDevice>::const_iterator iterator;
+    std::list<SLightDevice>::iterator iterator;
     bool foundDevice = false;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
         bool deviceExists = true;
@@ -484,10 +570,7 @@ bool DataLayer::addDevice(SLightDevice device) {
         if (device.type != (*iterator).type)       deviceExists = false;
         if (deviceExists) {
             foundDevice = true;
-            // remove old version
-            mCurrentDevices.remove(*iterator);
-            // add new version
-            mCurrentDevices.push_front(device);
+            *iterator = device;
             return true;
         }
     }
@@ -498,6 +581,7 @@ bool DataLayer::addDevice(SLightDevice device) {
     }
     return false;
 }
+
 
 bool DataLayer::doesDeviceExist(SLightDevice device) {
     bool foundDevice = false;

@@ -11,5 +11,6 @@
         <file>images/blackButton.png</file>
         <file>images/blueButton.png</file>
         <file>images/greenButton.png</file>
+        <file>resources/CorlumaGroups.json</file>
     </qresource>
 </RCC>

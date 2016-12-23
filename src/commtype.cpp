@@ -69,6 +69,7 @@ bool CommType::addController(QString controller) {
         std::list<SLightDevice> newDeviceList;
         newDeviceList.push_back(device);
         mDeviceTable.insert(std::make_pair(controller.toStdString(), newDeviceList));
+        emit updateReceived((int)mType);
         return true;
     }
     return false;
@@ -94,12 +95,14 @@ void CommType::updateDevice(SLightDevice device) {
                 foundDevice = true;
                 deviceList->second.remove((*it));
                 deviceList->second.push_back(device);
+                emit updateReceived((int)mType);
                 return;
             }
         }
         if (!foundDevice) {
-            qDebug() << "WARNING, tried to update device that didnt exist, adding it instead";
+            //qDebug() << "INFO: tried to update device that didnt exist, adding it instead";
             deviceList->second.push_back(device);
+            emit updateReceived((int)mType);
         }
     } else {
         addController(device.name);
@@ -131,10 +134,10 @@ bool CommType::fillDevice(SLightDevice& device)
                 return true;
             }
         }
-       qDebug() << "WARNING: controller found, but device not found in fill device!";
+       //qDebug() << "INFO: controller found, but device not found in fill device!";
        return false;
     } else {
-        qDebug() << "WARNING: Device list doesn't exist!";
+        //qDebug() << "INFO: Device list doesn't exist!";
         return false;
     }
 }
@@ -169,6 +172,22 @@ void CommType::resetDiscovery() {
     }
     mThrottleList.clear();
     mFullyDiscovered = false;
+}
+
+void CommType::resetStateUpdateTimeout() {
+    if (!mStateUpdateTimer->isActive()) {
+        mStateUpdateTimer->start(mStateUpdateInterval);
+    }
+    mLastSendTime = QTime::currentTime();
+}
+
+bool CommType::shouldContinueStateUpdate() {
+    if (mLastSendTime.elapsed() > 15000) {
+        //qDebug() << "INFO: Turning off state updates";
+        mStateUpdateTimer->stop();
+        return false;
+    }
+    return true;
 }
 
 void CommType::handleDiscoveryPacket(QString sender, int throttleInterval, int throttleMax) {
@@ -206,6 +225,7 @@ void CommType::handleDiscoveryPacket(QString sender, int throttleInterval, int t
         mFullyDiscovered = true;
     }
 }
+
 
 // ----------------------------
 // Utilities

@@ -7,7 +7,7 @@
 #include "settingspage.h"
 #include "ui_settingspage.h"
 #include "commhue.h"
-#include "lightslistwidget.h"
+#include "listcontrollerwidget.h"
 
 #include <QDebug>
 #include <QSignalMapper>
@@ -165,10 +165,10 @@ void SettingsPage::checkCheckBoxes() {
 void SettingsPage::checkBoxClicked(ECommType type, bool checked) {
     if (!mData->commTypeSettings()->enableCommType(type, checked)) {
         mCheckBoxes[(int)type]->setChecked(true);
-    } else if (!mComm->streamHasStarted(type) && checked) {
-        mComm->startupStream(type);
-    } else if (mComm->streamHasStarted(type) && !checked) {
-        mComm->shutdownStream(type);
+    } else if (!mComm->hasStarted(type) && checked) {
+        mComm->startup(type);
+    } else if (mComm->hasStarted(type) && !checked) {
+        mComm->shutdown(type);
         mData->removeDevicesOfType(type);
     }
 }

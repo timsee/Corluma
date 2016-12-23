@@ -162,6 +162,11 @@ signals:
      */
     void discoveryReceived(QString, QString, int);
 
+    /*!
+     * \brief updateReceived an update packet was received from any controller.
+     */
+    void updateReceived(int);
+
 protected:
 
     /*!
@@ -169,6 +174,24 @@ protected:
      *        nothing has been discovered.
      */
     void resetDiscovery();
+
+    /*!
+     * \brief resetStateUpdateTimeout reset the timer tracking when to shutdown the state update thread.
+     */
+    void resetStateUpdateTimeout();
+
+    /*!
+     * \brief shouldContinueStateUpdate checks internal states and determines if it should still keep requesting
+     *        state updates from the devices.
+     * \return true if it should request state updates, false otherwise.
+     */
+    bool shouldContinueStateUpdate();
+
+    /*!
+     * \brief mLastSendTime the last time a message was sent to the commtype. This is tracked to detect
+     *        when the device is no longer being actively used, so it can slow down or shut off state update packets.
+     */
+    QTime mLastSendTime;
 
     /*!
      * \brief handleDiscoveryPacket called whenever a discovery packet is received by a commtype.
@@ -206,6 +229,11 @@ protected:
      *        updates on all of its devices.
      */
     QTimer *mStateUpdateTimer;
+
+    /*!
+     * \brief mStateUpdateInterval number of msec between each state update request.
+     */
+    int mStateUpdateInterval;
 
     /*!
      * \brief mDiscoveryTimer used during discovery to poll the device every few seconds.
@@ -278,7 +306,6 @@ private:
      * \brief mType the type CommType this is, meaning UDP, Serial, HTTP, etc.
      */
     ECommType mType;
-
 };
 
 #endif // COMMTYPE_H

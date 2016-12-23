@@ -17,8 +17,8 @@ TEMPLATE = app
 #----------
 
 # check for proper version of Qt
-#message("DEBUG: QT_MAJOR_VERSION = $$QT_MAJOR_VERSION")
-#message("DEBUG: QT_MINOR_VERSION = $$QT_MINOR_VERSION")
+message("DEBUG: QT_MAJOR_VERSION = $$QT_MAJOR_VERSION")
+message("DEBUG: QT_MINOR_VERSION = $$QT_MINOR_VERSION")
 equals (QT_MAJOR_VERSION, 5)  {
   !greaterThan(QT_MINOR_VERSION, 1) {
     error(ERROR: Qt5 is installed, but it is not a recent enough version. This project uses QT5.2 or later)
@@ -45,7 +45,7 @@ CONFIG += c++11 #adds C++11 support
 #       although it is recommended as our testing shows it to be
 #       the quickest method of discovery.
 
-#message("DEBUG: QT_ARCH = $$QT_ARCH")
+message("DEBUG: QT_ARCH = $$QT_ARCH")
 win32{
     # uses default path for openSSL in 32 and 64 bit
     contains(QT_ARCH, i386) {
@@ -115,14 +115,18 @@ SOURCES += main.cpp\
     commtype.cpp \
     commhue.cpp \
     huebridgediscovery.cpp \
-    lightslistwidget.cpp \
     lightingroutines.cpp \
     commthrottle.cpp \
     commpacketparser.cpp \
     connectionpage.cpp \
     floatinglayout.cpp \
     lightcheckbox.cpp \
-    commtypesettings.cpp
+    commtypesettings.cpp \
+    groupsparser.cpp \
+    datasync.cpp \
+    listgroupwidget.cpp \
+    listcontrollerwidget.cpp \
+    huesinglecolorpage.cpp
 
 HEADERS  += mainwindow.h \
     singlecolorpage.h \
@@ -143,7 +147,6 @@ HEADERS  += mainwindow.h \
     commudp.h \
     commhue.h \
     huebridgediscovery.h \
-    lightslistwidget.h \
     lightingroutines.h \
     commthrottle.h \
     commpacketparser.h \
@@ -151,14 +154,20 @@ HEADERS  += mainwindow.h \
     connectionpage.h \
     floatinglayout.h \
     lightcheckbox.h \
-    commtypesettings.h
+    commtypesettings.h \
+    groupsparser.h \
+    datasync.h \
+    listgroupwidget.h \
+    listcontrollerwidget.h \
+    huesinglecolorpage.h
 
 FORMS    += mainwindow.ui \
     singlecolorpage.ui \
     settingspage.ui \
     customcolorspage.ui \
     presetcolorspage.ui \
-    connectionpage.ui
+    connectionpage.ui \
+    huesinglecolorpage.ui
 
 #----------
 # Resources

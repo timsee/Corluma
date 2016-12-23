@@ -7,6 +7,7 @@
 #include "lightingprotocols.h"
 
 #include <sstream>
+#include <cmath>
 
 /*!
  * \brief The ECommType enum The connection types
@@ -24,11 +25,64 @@ enum class ECommType {
 };
 
 /*!
+ * \brief The EColorMode enum the type of color
+ *        that the device uses. In the end, all
+ *        colors get converted to RGB for storage
+ *        but some devices such as a hue require packets
+ *        to be sent in different formats based on the mode
+ *        of their color.
+ */
+enum class EColorMode {
+    eRGB,
+    eHSV,
+    eCT,
+    EColorMode_MAX
+};
+
+/*!
+ * \brief colorModeToString helper for converting a color mode to a
+ *        human readable string
+ * \param mode color mode
+ * \return string representation of color mode
+ */
+static QString colorModeToString(EColorMode mode) {
+    if (mode ==  EColorMode::eRGB) {
+        return "RGB";
+    } else if (mode ==  EColorMode::eHSV) {
+        return "HSV";
+    } else if (mode ==  EColorMode::eCT) {
+        return "CT";
+    } else {
+        return "ColorMode not recognized";
+    }
+}
+
+/*!
+ * \brief stringtoColorMode helper for converting a string to
+ *        to a color mode. Strings are the same strings that are
+ *        returned by the function colorModeToString.
+ * \param mode string representation of mode
+ * \return EColorMode based off of string.
+ */
+static EColorMode stringtoColorMode(const QString& mode) {
+    if (mode.compare("RGB") == 0) {
+        return EColorMode::eRGB;
+    }else if (mode.compare("HSV") == 0) {
+        return EColorMode::eHSV;
+    } else if (mode.compare("CT") == 0) {
+        return EColorMode::eCT;
+    } else {
+        qDebug() << "WARNING:  color mode not recognized" << mode;
+        return EColorMode::EColorMode_MAX;
+    }
+}
+
+/*!
  * \brief ECommTypeToString utility function for converting a ECommType to a human readable string
  * \param type the ECommType to convert
  * \return a simple english representation of the ECommType.
  */
-QString static ECommTypeToString(ECommType type) {
+static QString ECommTypeToString(ECommType type) {
     if (type ==  ECommType::eHTTP) {
         return "HTTP";
     } else if (type ==  ECommType::eUDP) {
@@ -43,6 +97,90 @@ QString static ECommTypeToString(ECommType type) {
         return "CommType not recognized";
     }
 }
+
+/*!
+ * \brief stringToECommType helper function for converting a string to
+ *        to a commtype.
+ * \param type string representation of ECommType
+ * \return ECommType based off of string.
+ */
+static ECommType stringToECommType(QString type) {
+    if (type.compare("HTTP") == 0) {
+        return ECommType::eHTTP;
+    } else if (type.compare("UDP") == 0) {
+        return ECommType::eUDP;
+    } else if (type.compare("Hue") == 0) {
+        return ECommType::eHue;
+#ifndef MOBILE_BUILD
+    } else if (type.compare("Serial") == 0) {
+        return ECommType::eSerial;
+#endif //MOBILE_BUILD
+    } else {
+        return ECommType::eCommType_MAX;
+    }
+}
+
+
+/*!
+ * \brief colorTemperatureToRGB converts a color temperature value to a RGB representation.
+ *        Equation taken from http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/
+ * \param ct meriks of color temperature.
+ * \return QColor version of color temperature
+ */
+QColor static colorTemperatureToRGB(int ct) {
+    // convert to kelvin
+    float kelvin = (int)(1.0f / ct * 1000000.0f);
+    float temp = kelvin / 100;
+
+    float red, green, blue;
+    if (temp <= 66) {
+        red = 255;
+        green = temp;
+        green = 99.4708025861 * std::log(green) - 161.1195681661;
+        if (temp <= 19) {
+            blue = 0;
+        } else {
+            blue = temp - 10;
+            blue = 138.5177312231 * std::log(blue) - 305.0447927307;
+        }
+    } else {
+        red = temp - 60;
+        red = 329.698727446 * std::pow(red, -0.1332047592);
+
+        green = temp - 60;
+        green = 288.1221695283 * std::pow(green, -0.0755148492);
+
+        blue = 255;
+    }
+
+    red   = std::max(0.0f, std::min(red, 255.0f));
+    green = std::max(0.0f, std::min(green, 255.0f));
+    blue  = std::max(0.0f, std::min(blue, 255.0f));
+    return QColor(red, green, blue);
+}
+
+
+/*!
+ * \brief rgbToColorTemperature really inefficient way to convert RGB values to
+ *        their color temperature. This is really bad code, redesign!
+ * \TODO rewrite
+ */
+int static rgbToColorTemperature(QColor color) {
+    float minTemperature = 153;
+    float maxTemperature = 500;
+    for (int i = minTemperature; i <= maxTemperature; ++i) {
+        QColor testColor = colorTemperatureToRGB(i);
+        float r = std::abs(testColor.red() - color.red()) / 255.0f;
+        float g = std::abs(testColor.green() - color.green()) / 255.0f;
+        float b = std::abs(testColor.blue() - color.blue()) / 255.0f;
+        float difference = (r + g + b) / 3.0f;
+        if (difference < 0.02f) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 
 
 struct SLightDevice {
@@ -66,17 +204,26 @@ struct SLightDevice {
     bool isValid;
 
     /*!
+     * \brief colorMode mode of color. Most devices work in RGB but some work in
+     *        limited ranges or use an HSV representation internally.
+     */
+    EColorMode colorMode;
+
+    /*!
      * \brief color color of this device.
      */
     QColor color;
+
     /*!
      * \brief lightingRoutine current lighting routine for this device.
      */
     ELightingRoutine lightingRoutine;
+
     /*!
      * \brief colorGroup color group for this device.
      */
     EColorGroup colorGroup;
+
     /*!
      * \brief brightness brightness for this device, between 0 and 100.
      */
@@ -167,6 +314,7 @@ struct SLightDevice {
 
 };
 
+/// equal operator
 inline bool operator==(const SLightDevice& lhs, const SLightDevice& rhs)
 {
     bool result = true;
@@ -179,6 +327,7 @@ inline bool operator==(const SLightDevice& lhs, const SLightDevice& rhs)
     if (lhs.brightness      !=  rhs.brightness) result = false;
     if (lhs.index           !=  rhs.index) result = false;
     if (lhs.type            !=  rhs.type) result = false;
+    if (lhs.colorMode       !=  rhs.colorMode) result = false;
     if (lhs.name.compare(rhs.name)) result = false;
 
     return result;

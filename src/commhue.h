@@ -13,13 +13,18 @@
 #include "huebridgediscovery.h"
 #include "commthrottle.h"
 #include "commpacketparser.h"
-#include "datalayer.h"
 
 /*!
  * \copyright
  * Copyright (C) 2015 - 2016.
  * Released under the GNU General Public License.
  */
+
+enum class EHueType {
+    eExtended,
+    eAmbient,
+    EHueType_MAX
+};
 
 /*!
  * \brief The SHueLight struct a struct that stores all the relevant
@@ -29,14 +34,46 @@ struct SHueLight {
     /*!
      * \brief type the type of Hue product connected.
      */
-    QString type;
+    EHueType type;
 
     /*!
      * \brief uniqueID a unique identifier of that particular light.
      */
     QString uniqueID;
+
+    /*!
+     * \brief name name of light. not necessarily unique and can be assigned.
+     */
+    QString name;
+
+    /*!
+     * \brief modelID ID of specific model. changes between versions of the same light.
+     */
+    QString modelID;
+
+    /*!
+     * \brief manufacturer manfucturer of light.
+     */
+    QString manufacturer;
+
+    /*!
+     * \brief softwareVersion exact software version of light.
+     */
+    QString softwareVersion;
+
+    /*!
+     * \brief deviceIndex the index of the device on the bridge. Does not change unless
+     *        you forget and relearn devices in a different order.
+     */
+    int deviceIndex;
 };
 
+inline bool operator==(const SHueLight& lhs, const SHueLight& rhs)
+{
+    bool result = true;
+    if (lhs.deviceIndex     !=  rhs.deviceIndex) result = false;
+    return result;
+}
 
 /*!
  * \brief The CommHue class communicates with a Phillips Hue Bridge to control
@@ -52,6 +89,8 @@ class CommHue : public CommType
 {
      Q_OBJECT
 public:
+
+
     /*!
      * \brief CommHue Constructor
      */
@@ -79,7 +118,15 @@ public:
      * \param brightness how bright the light will be. A higher number leads to more brightness. Must be in the range of 0 and 254, inclusive.
      * \param hue the hue of the hue light's color. Must be in the range of 0 and 65535, with 0 representing pure red.
      */
-    void changeLight(int lightIndex, int saturation, int brightness, int hue);
+    void changeExtendedLight(int lightIndex, int saturation, int brightness, int hue);
+
+    /*!
+     * \brief changeAmbientLight changes the color of the bulb to match the color temperature given. This is the only way to interact with
+     *        white ambiance bulbs and it can also be used with the RGB bulbs.
+     * \param lightIndex index of light that you want to change the color temperature of.
+     * \param ct a new value for the color temperature, given in meriks. Must be between 153 and 500.
+     */
+    void changeAmbientLight(int lightIndex, int ct);
 
     /*!
      * \brief turnOn turns on the Hue light at a given index
@@ -98,7 +145,7 @@ public:
      *        to display the list.
      * \return  a vector of the currently connected hue lights.
      */
-    std::vector<SHueLight> connectedHues() { return mConnectedHues; }
+    std::list<SHueLight> connectedHues() { return mConnectedHues; }
 
     /*!
      * \brief discovery returns a pointer to the object used to discover the Hue Bridge. This can be used
@@ -115,16 +162,13 @@ public:
     void sendPacket(QString controller, QString packet);
 
     /*!
-     * \brief dataLayer attach data layer
-     * \param data pointer to the data layer.
+     * \brief hueLightFromLightDevice For every SLightDevice with type hue, there is a SHueLight that represents the same device.
+     *        The SHueLight contains hue-specific information such as the bulb's software version and model ID. This information
+     *        This function takes the SLightDevice and returns the mapped SHueLight
+     * \param device a SLightDevice that represents the SHueLight you want to receive
+     * \return the SHueLight that represents the same device as the SLightDevice given.
      */
-    void dataLayer(DataLayer *data) { mData = data; }
-
-signals:
-    /*!
-     * \brief hueLightStatesUpdated signals whenever the light states have updated.
-     */
-    void hueLightStatesUpdated();
+    SHueLight hueLightFromLightDevice(const SLightDevice& device);
 
 private slots:
 
@@ -231,11 +275,11 @@ private:
     HueBridgeDiscovery *mDiscovery;
 
     /*!
-     * \brief a vector of the struct that contains the states of the connected Hue
+     * \brief a list of the struct that contains the states of the connected Hue
      *        lights. This is maintained by a timer which updates this vector every
      *        few seconds.
      */
-    std::vector<SHueLight> mConnectedHues;
+    std::list<SHueLight> mConnectedHues;
 
     /*!
      * \brief mUrlStart Every packet sent to the hue bridge starts with
@@ -255,20 +299,48 @@ private:
     CommPacketParser *mParser;
 
     /*!
-     * \brief mData pointer to the data layer
+     * \brief stringToHueType helper that takes a string received from the hue and converts it to its type.
      */
-    DataLayer *mData;
+    EHueType stringToHueType(const QString& string);
 
     /*!
-     * \brief updateHueLightState used by the parser for network replies, this method
-     *        takes a JsonObject that should represent all the current states of a Hue
-     *        light, verifies that its values look correct. If all values are valid,
-     *        it updates mConnectedHues with a new struct representing the updated values.
-     * \param object the JSON representation of the Hue light's state.
-     * \param i The index of the hue.
-     * \param true if object is valid and the states are updated, false otherwise.
+     * \brief hueStringtoColorMode helper that takes a mode given by JSON data from the hue bridge and
+     *        and converts it to an enumerated type.
      */
-    bool updateHueLightState(QJsonObject object, int i);
+    EColorMode hueStringtoColorMode(const QString& mode);
+
+    /*!
+     * \brief handleSuccessPacket handles a packet received from the hue bridge that indicates a requested change
+     *        was successful. These packets are sent from the hue bridge ever time it receives and executes a command.
+     * \param key key of packet that suceeded
+     * \param value JSON data about what changed with the successful packet.
+     */
+    void handleSuccessPacket(QString key, QJsonValue value);
+
+
+    /*!
+     * \brief handleErrorPacket handles a packet received from the hue bridge that indicates a requested change
+     *        failed. These packets are sent from the hue bridge ever time it receives but cannot execute a command.
+     * \param key key of packet that failed
+     * \param value JSON data about what failed.
+     */
+    void handleErrorPacket(QString key, QJsonValue value);
+
+    /*!
+     * \brief updateHueLightState this function is called when an update packet is received to parse the update and then to
+     *        update the internal representations of the hue bridge and its connected lights.
+     * \param object json object that contains all the update information.
+     * \param i index of Hue Light.
+     * \return true if successful, false if failed.
+     */
+    bool updateHueLightState(QJsonValue object, int i);
+
+    /*!
+     * \brief sendString sends a the provided string to the hue light at the given index.
+     * \param index the index of the hue light you want to manipulate
+     * \param string the complete packet that you want to send to the hue light.
+     */
+    void sendString(int index, const QString& string);
 };
 
 #endif // COMMHUE_H

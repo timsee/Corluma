@@ -18,6 +18,8 @@ CommSerial::CommSerial() {
 
     mStateUpdateTimer = new QTimer(this);
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(stateUpdate()));
+
+    mStateUpdateInterval = 250;
 }
 
 
@@ -27,7 +29,7 @@ CommSerial::~CommSerial() {
 }
 
 void CommSerial::startup() {
-    mStateUpdateTimer->start(250);
+    resetStateUpdateTimeout();
     discoverSerialPorts();
     mHasStarted = true;
 }
@@ -53,17 +55,23 @@ void CommSerial::shutdown() {
 
 void CommSerial::sendPacket(QString controller, QString packet) {
     QSerialPort *serial = serialPortByName(controller);
+    bool isStateUpdate = false;
     if (serial != NULL) {
         if (serial->isOpen()) {
             for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
                 if (!throttle->first.compare(controller) && throttle->second->checkThrottle(controller, packet)) {
                      if (packet.at(0) !=  QChar('7')) {
                         throttle->second->sentPacket();
+                    } else {
+                        isStateUpdate = true;
                     }
                     QString packetString = packet + ";";
                     //qDebug() << "sending" << packetString << "to" <<  serial->portName();
                     serial->write(packetString.toStdString().c_str());
                 }
+            }
+            if (!isStateUpdate) {
+                resetStateUpdateTimeout();
             }
         }
     } else {
@@ -79,20 +87,22 @@ void CommSerial::sendThrottleBuffer(QString bufferedConnection, QString buffered
 }
 
 void CommSerial::stateUpdate() {
-    for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
-        if (mDiscoveryMode || throttle->second->checkLastSend() < mUpdateTimeoutInterval) {
-            QString packet = QString("%1").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
-            sendPacket(throttle->first, packet);
+    if (shouldContinueStateUpdate()) {
+        for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
+            if (mDiscoveryMode || throttle->second->checkLastSend() < mUpdateTimeoutInterval) {
+                QString packet = QString("%1").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
+                sendPacket(throttle->first, packet);
+            }
         }
-    }
 
-    // maintence
-    if (mDiscoveryMode
-            && mDiscoveryList.size() < deviceTable().size()
-            && !mDiscoveryTimer->isActive()) {
-        mDiscoveryTimer->start(250);
-    } else if (!mDiscoveryMode && mDiscoveryTimer->isActive()) {
-        mDiscoveryTimer->stop();
+        // maintence
+        if (mDiscoveryMode
+                && mDiscoveryList.size() < deviceTable().size()
+                && !mDiscoveryTimer->isActive()) {
+            mDiscoveryTimer->start(250);
+        } else if (!mDiscoveryMode && mDiscoveryTimer->isActive()) {
+            mDiscoveryTimer->stop();
+        }
     }
 }
 

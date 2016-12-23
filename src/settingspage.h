@@ -51,6 +51,12 @@ public:
     void setupUI();
 
     /*!
+     * \brief connectCommLayer connec the commlayer to this page.
+     * \param layer a pointer to the commlayer object.
+     */
+    void connectCommLayer(CommLayer *layer) { mComm = layer; }
+
+    /*!
      * \brief updateUI updates the colors of various settings in the UI.
      */
     void updateUI();
@@ -150,6 +156,12 @@ private:
      *        through.
      */
     std::vector<LightCheckBox*> mCheckBoxes;
+
+    /*!
+     * \brief communication pointer to communication object
+     *        for sending comannds to the lights
+     */
+    CommLayer *mComm;
 
     /*!
      * \brief mSliderSpeedValue storage for the current slider value, which

@@ -21,11 +21,6 @@ IconData::IconData(int width, int height) {
     setup(width, height);
 }
 
-IconData::IconData(int width, int height, DataLayer *data) {
-    mDataLayer = data;
-    setup(width, height);
-}
-
 void IconData::setup(int width, int height) {
     srand(time(NULL));
 
@@ -121,57 +116,26 @@ void IconData::bufferToOutput() {
     }
 }
 
-void IconData::setLightingRoutine(ELightingRoutine routine, EColorGroup colorGroup) {
+void IconData::setMultiLightingRoutine(ELightingRoutine routine, EColorGroup group, const std::vector<QColor>& colors, int colorMax) {
     switch (routine)
     {
-        case ELightingRoutine::eSingleSolid:
-            setSolidColor(mDataLayer->mainColor());
-            break;
-        case ELightingRoutine::eSingleBlink:
-            setSolidColor(mDataLayer->mainColor());
-            addBlink();
-            break;
-        case ELightingRoutine::eSingleWave:
-            setSolidColor(mDataLayer->mainColor());
-            addWave();
-            break;
-        case ELightingRoutine::eSingleGlimmer:
-            setSolidColor(mDataLayer->mainColor());
-            addGlimmer();
-            break;
-        case ELightingRoutine::eSingleLinearFade:
-            setSolidColor(mDataLayer->mainColor());
-            addLinearFade();
-            break;
-        case ELightingRoutine::eSingleSawtoothFadeIn:
-            setSolidColor(mDataLayer->mainColor());
-            addSawtoothIn();
-            break;
-        case ELightingRoutine::eSingleSawtoothFadeOut:
-            setSolidColor(mDataLayer->mainColor());
-            addSawtoothOut();
-            break;
-        case ELightingRoutine::eSingleSineFade:
-            setSolidColor(mDataLayer->mainColor());
-            addSineFade();
-            break;
         case ELightingRoutine::eMultiGlimmer:
-            setMultiGlimmer(colorGroup);
+            setMultiGlimmer(group, colors, colorMax);
             break;
         case ELightingRoutine::eMultiFade:
-            setMultiFade(colorGroup);
+            setMultiFade(group, colors, false, colorMax);
             break;
         case ELightingRoutine::eMultiRandomSolid:
-            setMultiRandomSolid(colorGroup);
+            setMultiRandomSolid(group, colors, colorMax);
             break;
         case ELightingRoutine::eMultiRandomIndividual:
-            setMultiRandomIndividual(colorGroup);
+            setMultiRandomIndividual(group, colors, colorMax);
             break;
         case ELightingRoutine::eMultiBarsSolid:
-            setMultiBarsSolid(colorGroup);
+            setMultiBarsSolid(group, colors, colorMax);
             break;
         case ELightingRoutine::eMultiBarsMoving:
-            setMultiBarsMoving(colorGroup);
+            setMultiBarsMoving(group, colors, colorMax);
             break;
         default:
             break;
@@ -181,6 +145,9 @@ void IconData::setLightingRoutine(ELightingRoutine routine, EColorGroup colorGro
 void IconData::setSingleLightingRoutine(ELightingRoutine routine, QColor color) {
     switch (routine)
     {
+        case ELightingRoutine::eOff:
+            setSolidColor(QColor(0,0,0));
+            break;
         case ELightingRoutine::eSingleSolid:
             setSolidColor(color);
             break;
@@ -228,12 +195,13 @@ void IconData::setSolidColor(QColor color) {
 }
 
 
-void IconData::setMultiColors(EColorGroup group) {
-    if (mDataLayer == NULL) {
-        qDebug() << "ERROR: the data layer is not set, cannot use the arary colors!";
+void IconData::setMultiColors(EColorGroup group, const std::vector<QColor>& colors, int colorMax) {
+    int colorCount;
+    if (colorMax == -1) {
+        colorCount = colors.size();
+    } else {
+        colorCount = colorMax;
     }
-    int colorCount = mDataLayer->groupSize(group);
-    QColor *colors = mDataLayer->colorGroup(group);
 
     int j = 0;
     for (uint i = 0; i < mBufferLength; i = i + 3) {
@@ -247,9 +215,14 @@ void IconData::setMultiColors(EColorGroup group) {
 
 
 
-void IconData::setMultiGlimmer(EColorGroup group) {
-    int colorCount = mDataLayer->groupSize(group);
-    QColor *colors = mDataLayer->colorGroup(group);
+void IconData::setMultiGlimmer(EColorGroup group, const std::vector<QColor>& colors, int colorMax) {
+    int colorCount;
+    if (colorMax == -1) {
+        colorCount = colors.size();
+    } else {
+        colorCount = colorMax;
+    }
+
     int j = 0;
     for (uint i = 0; i < mBufferLength; i = i + 3) {
         // the third element and the 8th element get their
@@ -281,17 +254,21 @@ void IconData::setMultiGlimmer(EColorGroup group) {
     addGlimmer(); // this already draws to output.
 }
 
-void IconData::setMultiFade(EColorGroup group, bool showMore) {
+void IconData::setMultiFade(EColorGroup group, const std::vector<QColor>& colors, bool showMore, int colorMax) {
     // By default, showMore is set to false because everything shows its
     // max, except the color count. For the menu bar we override this
     // feature. This handles a silly edge case.
     int colorCount;
+    if (colorMax == -1) {
+        colorCount = colors.size();
+    } else {
+        colorCount = colorMax;
+    }
     if (showMore) {
         colorCount = 10;
-    } else {
-        colorCount = mDataLayer->groupSize(group);
     }
-    QColor *colors = mDataLayer->colorGroup(group);
+
+
 
     int k = 0;
     int tempIndex = -1;
@@ -325,9 +302,13 @@ void IconData::setMultiFade(EColorGroup group, bool showMore) {
     bufferToOutput();
 }
 
-void IconData::setMultiRandomSolid(EColorGroup group) {
-    int colorCount = mDataLayer->groupSize(group);
-    QColor *colors = mDataLayer->colorGroup(group);
+void IconData::setMultiRandomSolid(EColorGroup group, const std::vector<QColor>& colors, int colorMax) {
+    int colorCount;
+    if (colorMax == -1) {
+        colorCount = colors.size();
+    } else {
+        colorCount = colorMax;
+    }
 
     int k = 0;
     for (uint i = 0; i < mBufferLength; i = i + 12) {
@@ -352,7 +333,7 @@ void IconData::setMultiRandomSolid(EColorGroup group) {
             }
         }
         for (int j = 0; j < 12; j = j + 3) {
-            mBuffer[i + j] = randomColor.red();
+            mBuffer[i + j]     = randomColor.red();
             mBuffer[i + j + 1] = randomColor.green();
             mBuffer[i + j + 2] = randomColor.blue();
         }
@@ -361,15 +342,19 @@ void IconData::setMultiRandomSolid(EColorGroup group) {
     bufferToOutput();
 }
 
-void IconData::setMultiRandomIndividual(EColorGroup group) {
+void IconData::setMultiRandomIndividual(EColorGroup group, const std::vector<QColor>& colors, int colorMax) {
     if (group == EColorGroup::eAll) {
         for (uint i = 0; i < mBufferLength; i++) {
             int random = rand() % 256;
             mBuffer[i] = (uchar)random;
         }
     } else {
-        int colorCount = mDataLayer->groupSize(group);
-        QColor *colors = mDataLayer->colorGroup(group);
+        int colorCount;
+        if (colorMax == -1) {
+            colorCount = colors.size();
+        } else {
+            colorCount = colorMax;
+        }
         int j = 0;
         for (uint i = 0; i < mBufferLength; i = i + 3) {
             int index;
@@ -387,7 +372,7 @@ void IconData::setMultiRandomIndividual(EColorGroup group) {
     bufferToOutput();
 }
 
-void IconData::setMultiBarsSolid(EColorGroup group) {
+void IconData::setMultiBarsSolid(EColorGroup group, const std::vector<QColor>& colors, int colorMax) {
      if (group == EColorGroup::eAll) {
          for (uint i = 0; i < mBufferLength; i = i + 12) {
              int r = rand() % 256;
@@ -400,8 +385,12 @@ void IconData::setMultiBarsSolid(EColorGroup group) {
              }
          }
      } else {
-         int colorCount = mDataLayer->groupSize(group);
-         QColor *colors = mDataLayer->colorGroup(group);
+         int colorCount;
+         if (colorMax == -1) {
+             colorCount = colors.size();
+         } else {
+             colorCount = colorMax;
+         }
 
          int colorIndex = 0;
          for (uint i = 0; i < mBufferLength; i = i + 12) {
@@ -423,9 +412,13 @@ void IconData::setMultiBarsSolid(EColorGroup group) {
     bufferToOutput();
 }
 
-void IconData::setMultiBarsMoving(EColorGroup group) {
-    int colorCount = mDataLayer->groupSize(group);
-    QColor *colors = mDataLayer->colorGroup(group);
+void IconData::setMultiBarsMoving(EColorGroup group, const std::vector<QColor>& colors, int colorMax) {
+    int colorCount;
+    if (colorMax == -1) {
+        colorCount = colors.size();
+    } else {
+        colorCount = colorMax;
+    }
 
     int colorIndex = 0;
     QColor color;

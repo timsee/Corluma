@@ -19,19 +19,36 @@ MainWindow::MainWindow(QWidget *parent) :
     mComm = new CommLayer(this);
     mData = new DataLayer();
     connect(mData, SIGNAL(devicesEmpty()), this, SLOT(deviceCountReachedZero()));
-
     ui->setupUi(this);
     this->setWindowTitle("Corluma");
 
     // --------------
     // Setup Backend
     // --------------
-    mComm->initialSetup(mData);
-    ui->connectionPage->setup(mComm, mData);
-    ui->singleColorPage->setup(mComm, mData);
-    ui->customColorsPage->setup(mComm, mData);
-    ui->presetColorsPage->setup(mComm, mData);
-    ui->settingsPage->setup(mComm, mData);
+    mDataSync = new DataSync(mData, mComm);
+    for (int i = 0; i < (int)ECommType::eCommType_MAX; ++i) {
+        ECommType type = (ECommType)i;
+        if (mData->commTypeSettings()->commTypeEnabled(type)) {
+            mComm->startup(type);
+        }
+    }
+
+    // --------------
+    // Setup Pages
+    // --------------
+
+    ui->connectionPage->setup(mData);
+
+    ui->singleColorPage->setup(mData);
+    ui->hueSingleColorPage->setup(mData);
+    ui->customColorsPage->setup(mData);
+
+    ui->presetColorsPage->setup(mData);
+    ui->settingsPage->setup(mData);
+
+    ui->customColorsPage->connectCommLayer(mComm);
+    ui->settingsPage->connectCommLayer(mComm);
+    ui->connectionPage->connectCommLayer(mComm);
 
     ui->connectionPage->setupUI();
     ui->settingsPage->setupUI();
@@ -39,9 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->customColorsPage->setupButtons();
     ui->presetColorsPage->setupButtons();
 
-    // --------------
-    // Setup Pages
-    // --------------    
+
     connect(ui->connectionPage, SIGNAL(updateMainIcons()),  this, SLOT(updateMenuBar()));
     connect(ui->singleColorPage, SIGNAL(updateMainIcons()),  this, SLOT(updateMenuBar()));
     connect(ui->customColorsPage, SIGNAL(updateMainIcons()), this, SLOT(updateMenuBar()));
@@ -50,6 +65,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     connect(ui->singleColorPage, SIGNAL(singleColorChanged(QColor)),  this, SLOT(updateSingleColor(QColor)));
+    connect(ui->hueSingleColorPage, SIGNAL(singleColorChanged(QColor)),  this, SLOT(updateSingleColor(QColor)));
+
     connect(ui->presetColorsPage, SIGNAL(presetColorGroupChanged(int, int)),  this, SLOT(updatePresetColorGroup(int, int)));
 
     connect(ui->connectionPage, SIGNAL(deviceCountChanged()), this, SLOT(deviceCountChangedOnConnectionPage()));
@@ -58,12 +75,12 @@ MainWindow::MainWindow(QWidget *parent) :
     // Setup Buttons
     // --------------
 
-    ui->singleColorButton->setupAsMenuButton(0, mData);
+    ui->singleColorButton->setupAsMenuButton((int)EPage::eSinglePage);
     ui->singleColorButton->button->setStyleSheet("background-color: rgb(52, 52, 52); ");
     ui->singleColorButton->button->setCheckable(true);
     connect(ui->singleColorButton, SIGNAL(menuButtonClicked(int)), this, SLOT(pageChanged(int)));
 
-    ui->presetArrayButton->setupAsMenuButton(2, mData);
+    ui->presetArrayButton->setupAsMenuButton((int)EPage::ePresetPage,  mData->colorGroup(EColorGroup::eSevenColor));
     ui->presetArrayButton->button->setStyleSheet("background-color: rgb(52, 52, 52); ");
     ui->presetArrayButton->button->setCheckable(true);
     connect(ui->presetArrayButton, SIGNAL(menuButtonClicked(int)), this, SLOT(pageChanged(int)));
@@ -74,10 +91,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->settingsButton->setCheckable(true);
     connect(ui->settingsButton, SIGNAL(clicked(bool)), this, SLOT(settingsButtonPressed()));
 
+
     // --------------
     // Setup Brightness Slider
     // --------------
-    connect(ui->brightnessSlider, SIGNAL(valueChanged(int)), this, SLOT(brightnessChanged(int)));
     // setup the slider that controls the LED's brightness
     ui->brightnessSlider->slider->setRange(0,100);
     ui->brightnessSlider->slider->setValue(50);
@@ -85,6 +102,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->brightnessSlider->slider->setTickInterval(20);
     ui->brightnessSlider->setSliderHeight(0.5f);
     ui->brightnessSlider->setSliderColorBackground(QColor(255,255,255));
+    connect(ui->brightnessSlider, SIGNAL(valueChanged(int)), this, SLOT(brightnessChanged(int)));
 
     // --------------
     // Setup Preview Button
@@ -92,7 +110,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->onOffButton, SIGNAL(clicked(bool)), this, SLOT(toggleOnOff()));
 
     // setup the icons
-    mIconData = IconData(124, 124, mData);
+    mIconData = IconData(124, 124);
     mIconData.setSolidColor(QColor(0,255,0));
     ui->onOffButton->setIcon(mIconData.renderAsQPixmap());
 
@@ -125,23 +143,23 @@ void MainWindow::toggleOnOff() {
         mIconData.setSolidColor(QColor(0,0,0));
         ui->onOffButton->setIcon(mIconData.renderAsQPixmap());
         mIsOn = false;
-        mComm->sendRoutineChange(mData->currentDevices(), ELightingRoutine::eOff);
+        mData->turnOn(false);
     } else {
         if (mData->currentRoutine() <= ELightingRoutine::eSingleSawtoothFadeOut) {
             mIconData.setSolidColor(mData->mainColor());
         } else if (mData->currentColorGroup() > EColorGroup::eCustom) {
-            mIconData.setLightingRoutine(mData->currentRoutine(), mData->currentColorGroup());
+            mIconData.setMultiLightingRoutine(mData->currentRoutine(), mData->currentColorGroup(), mData->currentGroup());
         } else {
-            mIconData.setMultiFade(EColorGroup::eCustom, true);
+            mIconData.setMultiFade(EColorGroup::eCustom, mData->colorGroup(EColorGroup::eCustom), true);
         }
         ui->onOffButton->setIcon(mIconData.renderAsQPixmap());
-        mComm->sendRoutineChange(mData->currentDevices(), mData->currentRoutine());
+        mData->turnOn(true);
         mIsOn = true;
     }
 }
 
 void MainWindow::brightnessChanged(int newBrightness) {
-   mComm->sendBrightness(mData->currentDevices(), newBrightness);
+   mData->updateBrightness(newBrightness);
    mIsOn = true;
 }
 
@@ -194,13 +212,15 @@ void MainWindow::pageChanged(int pageIndex) {
         ui->presetArrayButton->button->setStyleSheet("background-color: rgb(80, 80, 80); ");
     }
 
-    if (pageIndex == (int)EPage::eSinglePage || pageIndex == (int)EPage::eCustomArrayPage) {
+    if (pageIndex == (int)EPage::eSinglePage
+            || pageIndex == (int)EPage::eHueSinglePage
+            || pageIndex == (int)EPage::eCustomArrayPage) {
         ui->singleColorButton->button->setChecked(true);
         ui->singleColorButton->button->setStyleSheet("background-color: rgb(80, 80, 80); ");
-        if (mData->commTypeSettings()->commTypeEnabled(ECommType::eHTTP)
-                || mData->commTypeSettings()->commTypeEnabled(ECommType::eUDP)
+        if (mData->devicesContainCommType(ECommType::eHTTP)
+                || mData->devicesContainCommType(ECommType::eUDP)
 #ifndef MOBILE_BUILD
-                || mData->commTypeSettings()->commTypeEnabled(ECommType::eSerial)
+                || mData->devicesContainCommType(ECommType::eSerial)
 #endif //MOBILE_BUILD
                 ) {
             mFloatingLayout->setVisible(true);
@@ -212,7 +232,7 @@ void MainWindow::pageChanged(int pageIndex) {
             }
         } else {
             // hue only, only use the single page
-            ui->stackedWidget->setCurrentIndex((int)EPage::eSinglePage);
+            ui->stackedWidget->setCurrentIndex((int)EPage::eHueSinglePage);
         }
     } else {
         mFloatingLayout->setVisible(false);
@@ -224,14 +244,18 @@ void MainWindow::pageChanged(int pageIndex) {
 
 void MainWindow::updateMenuBar() {
     if (ui->stackedWidget->currentIndex() == (int)EPage::eCustomArrayPage) {
-        mIconData.setLightingRoutine(mData->currentRoutine(), mData->currentColorGroup());
-        ui->singleColorButton->updateIconPresetColorRoutine(mData->currentRoutine(), mData->currentColorGroup());
+        mIconData.setMultiLightingRoutine(mData->currentRoutine(), mData->currentColorGroup(), mData->currentGroup());
+        ui->singleColorButton->updateIconPresetColorRoutine(mData->currentRoutine(), mData->currentColorGroup(), mData->currentGroup());
         ui->brightnessSlider->setSliderColorBackground(mData->colorsAverage(EColorGroup::eCustom));
     } else {
         ui->singleColorButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, mData->mainColor());
     }
 
-    mIconData.setLightingRoutine(mData->currentRoutine(), mData->currentColorGroup());
+    if (mData->currentRoutine() <= ELightingRoutineSingleColorEnd) {
+        mIconData.setSingleLightingRoutine(mData->currentRoutine(), mData->mainColor());
+    } else {
+        mIconData.setMultiLightingRoutine(mData->currentRoutine(), mData->currentColorGroup(), mData->currentGroup());
+    }
     ui->onOffButton->setIcon(mIconData.renderAsQPixmap());
 
     if ((int)mData->currentRoutine() <= (int)ELightingRoutine::eSingleSawtoothFadeOut) {
@@ -257,8 +281,8 @@ void MainWindow::updateSingleColor(QColor color) {
 }
 
 void MainWindow::updatePresetColorGroup(int lightingRoutine, int colorGroup) {
-    mIconData.setMultiFade((EColorGroup)colorGroup);
-    ui->presetArrayButton->updateIconPresetColorRoutine((ELightingRoutine)lightingRoutine, (EColorGroup)colorGroup);
+    mIconData.setMultiFade((EColorGroup)colorGroup, mData->colorGroup((EColorGroup)colorGroup));
+    ui->presetArrayButton->updateIconPresetColorRoutine((ELightingRoutine)lightingRoutine, (EColorGroup)colorGroup, mData->colorGroup((EColorGroup)colorGroup));
     ui->brightnessSlider->setSliderColorBackground(mData->colorsAverage((EColorGroup)colorGroup));
     ui->onOffButton->setIcon(mIconData.renderAsQPixmap());
 }

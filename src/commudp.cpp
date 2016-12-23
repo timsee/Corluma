@@ -24,6 +24,8 @@ CommUDP::CommUDP() {
     mStateUpdateTimer = new QTimer(this);
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(stateUpdate()));
     mBound = false;
+
+    mStateUpdateInterval = 1000;
 }
 
 
@@ -36,7 +38,7 @@ CommUDP::~CommUDP() {
 
 void CommUDP::startup() {
     mDiscoveryTimer->start(250);
-    mStateUpdateTimer->start(1000);
+    resetStateUpdateTimeout();
 
     QString localIP;
     // lists all adresses associated with this device
@@ -81,10 +83,13 @@ void CommUDP::shutdown() {
 
 void CommUDP::sendPacket(QString controller, QString packet) {
     if (mBound) {
+        bool isStateUpdate = false;
         for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
             if (!throttle->first.compare(controller) && throttle->second->checkThrottle(controller, packet)) {
                 if (packet.at(0) !=  QChar('7')) {
                     throttle->second->sentPacket();
+                } else {
+                    isStateUpdate = true;
                 }
                 //qDebug() << "sending udp" << packet << "to " << controller;
                 mSocket->writeDatagram(packet.toUtf8().data(),
@@ -92,35 +97,39 @@ void CommUDP::sendPacket(QString controller, QString packet) {
                                        PORT);
             }
         }
+        if (!isStateUpdate) {
+            resetStateUpdateTimeout();
+        }
     } else {
         qDebug() << "WARNING: UDP port not bound";
     }
 }
 
 void CommUDP::stateUpdate() {
-    for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
-        if (mDiscoveryMode ||  throttle->second->checkLastSend() < mUpdateTimeoutInterval) {
-            QString packet = QString("%1").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
-            // WARNING: this resets the throttle and gets called automatically!
-             if (throttle->first.compare(QString(""))) {
-                 sendPacket(throttle->first, packet);
-             }
+    if (shouldContinueStateUpdate()) {
+        for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
+            if (mDiscoveryMode ||  throttle->second->checkLastSend() < mUpdateTimeoutInterval) {
+                QString packet = QString("%1").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
+                 if (throttle->first.compare(QString(""))) {
+                     sendPacket(throttle->first, packet);
+                 }
+            }
         }
-    }
 
-    if (mDiscoveryMode
-            && mDiscoveryList.size() < deviceTable().size()
-            && !mDiscoveryTimer->isActive()) {
-        mDiscoveryTimer->start(333);
-    } else if (!mDiscoveryMode && mDiscoveryTimer->isActive()) {
-        mDiscoveryTimer->stop();
+        if (mDiscoveryMode
+                && mDiscoveryList.size() < deviceTable().size()
+                && !mDiscoveryTimer->isActive()) {
+            mDiscoveryTimer->start(333);
+        } else if (!mDiscoveryMode && mDiscoveryTimer->isActive()) {
+            mDiscoveryTimer->stop();
+        }
     }
 }
 
 void CommUDP::sendThrottleBuffer(QString bufferedConnection, QString bufferedMessage) {
-    mSocket->writeDatagram(bufferedMessage.toUtf8().data(),
-                           QHostAddress(bufferedConnection),
-                           PORT);
+//    mSocket->writeDatagram(bufferedMessage.toUtf8().data(),
+//                           QHostAddress(bufferedConnection),
+//                           PORT);
 }
 
 
@@ -158,7 +167,7 @@ void CommUDP::readPendingDatagrams() {
         if (payload.contains(discoveryPacket)) {
             QString packet = payload.mid(discoveryPacket.size() + 3);
             // add to list of discovered devices
-            handleDiscoveryPacket(sender.toString(), 200, 3);
+            handleDiscoveryPacket(sender.toString(), 250, 1);
             emit discoveryReceived(sender.toString(), packet, (int)ECommType::eUDP);
         } else {
             emit packetReceived(sender.toString(), payload, (int)ECommType::eUDP);

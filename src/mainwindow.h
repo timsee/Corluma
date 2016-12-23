@@ -10,6 +10,7 @@
 #include "lightsbutton.h"
 #include "floatinglayout.h"
 #include "commtypesettings.h"
+#include "datasync.h"
 
 namespace Ui {
 class MainWindow;
@@ -21,6 +22,7 @@ class MainWindow;
  */
 enum class EPage {
     eSinglePage,
+    eHueSinglePage,
     eCustomArrayPage,
     ePresetPage,
     eSettingsPage,
@@ -156,6 +158,14 @@ private:
      *        and the saved data of the GUI
      */
     DataLayer *mData;
+
+    /*!
+     * \brief mDataSync Data Sync is a thread that gets turned on whenever the DataLayer's devices don't
+     *        match the commLayer's representation of the devices. It continually sends packets through
+     *        the comm layer until it receives acknowledgements that the commlayer and the datalayer
+     *        match exactly.
+     */
+    DataSync *mDataSync;
 
     /*!
      * \brief mFloatingLayout a floating layout that provides an array of buttons on certain pages.

@@ -17,6 +17,8 @@ CommHTTP::CommHTTP() {
 
     mStateUpdateTimer = new QTimer(this);
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(stateUpdate()));
+
+    mStateUpdateInterval = 5000;
 }
 
 CommHTTP::~CommHTTP() {
@@ -25,7 +27,7 @@ CommHTTP::~CommHTTP() {
 }
 
 void CommHTTP::startup() {
-    mStateUpdateTimer->start(5000);
+    resetStateUpdateTimeout();
     mHasStarted = true;
 }
 
@@ -41,10 +43,13 @@ void CommHTTP::shutdown() {
 }
 
 void CommHTTP::sendPacket(QString controller, QString packet) {
+    bool isStateUpdate = false;
     for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
         if (!throttle->first.compare(controller) && throttle->second->checkThrottle(controller, packet)) {
             if (packet.at(0) !=  QChar('7')) {
                 throttle->second->sentPacket();
+            } else {
+                isStateUpdate = true;
             }
             QString urlString = "http://" + controller + "/arduino/" + packet;
             QNetworkRequest request = QNetworkRequest(QUrl(urlString));
@@ -52,26 +57,31 @@ void CommHTTP::sendPacket(QString controller, QString packet) {
             mNetworkManager->get(request);
         }
     }
+    if (!isStateUpdate) {
+        resetStateUpdateTimeout();
+    }
 }
 
 
 void CommHTTP::stateUpdate() {
-    for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
-        if (mDiscoveryMode || throttle->second->checkLastSend() < mUpdateTimeoutInterval) {
-            QString packet = QString("%1").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
-            // WARNING: this resets the throttle and gets called automatically!
-             if (throttle->first.compare(QString(""))) {
-                 sendPacket(throttle->first, packet);
-             }
+    if (shouldContinueStateUpdate()) {
+        for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
+            if (mDiscoveryMode || throttle->second->checkLastSend() < mUpdateTimeoutInterval) {
+                QString packet = QString("%1").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
+                // WARNING: this resets the throttle and gets called automatically!
+                 if (throttle->first.compare(QString(""))) {
+                     sendPacket(throttle->first, packet);
+                 }
+            }
         }
-    }
 
-    if (mDiscoveryMode
-            && mDiscoveryList.size() < mDeviceTable.size()
-            && !mDiscoveryTimer->isActive()) {
-        mDiscoveryTimer->start(1000);
-    } else if (!mDiscoveryMode && mDiscoveryTimer->isActive()) {
-        mDiscoveryTimer->stop();
+        if (mDiscoveryMode
+                && mDiscoveryList.size() < mDeviceTable.size()
+                && !mDiscoveryTimer->isActive()) {
+            mDiscoveryTimer->start(1000);
+        } else if (!mDiscoveryMode && mDiscoveryTimer->isActive()) {
+            mDiscoveryTimer->stop();
+        }
     }
 }
 

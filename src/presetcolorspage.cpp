@@ -26,8 +26,7 @@ PresetColorsPage::~PresetColorsPage() {
 }
 
 
-void
-PresetColorsPage::setupButtons() {
+void PresetColorsPage::setupButtons() {
     int colorGroupMax = (int)EColorGroup::eColorGroup_MAX - 1;
     mButtonCount = colorGroupMax * ((int)ELightingRoutine::eLightingRoutine_MAX - (int)ELightingRoutine::eMultiGlimmer);
     std::vector<std::string> labels = {"Water",
@@ -70,7 +69,7 @@ PresetColorsPage::setupButtons() {
         layoutColumnIndex++;
         for (int routine = (int)ELightingRoutine::eMultiGlimmer; routine < (int)ELightingRoutine::eLightingRoutine_MAX; routine++) {
             mPresetButtons[modeIndex] = new LightsButton;
-            mPresetButtons[modeIndex]->setupAsStandardButton((ELightingRoutine)routine, (EColorGroup)preset, mData);
+            mPresetButtons[modeIndex]->setupAsStandardButton((ELightingRoutine)routine, (EColorGroup)preset, QString(""), mData->colorGroup((EColorGroup)preset));
             mPresetButtons[modeIndex]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
             connect(mPresetButtons[modeIndex], SIGNAL(buttonClicked(int, int)), this, SLOT(multiButtonClicked(int, int)));
 
@@ -109,7 +108,8 @@ void PresetColorsPage::highlightRoutineButton(ELightingRoutine routine, EColorGr
 // ----------------------------
 
 void PresetColorsPage::multiButtonClicked(int routine, int colorGroup) {
-    mComm->sendRoutineChange(mData->currentDevices(), (ELightingRoutine)routine, colorGroup);
+    mData->updateColorGroup((EColorGroup)colorGroup);
+    mData->updateRoutine((ELightingRoutine)routine);
     highlightRoutineButton((ELightingRoutine)routine, (EColorGroup)colorGroup);
     emit presetColorGroupChanged(routine, colorGroup);
 }

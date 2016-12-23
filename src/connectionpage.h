@@ -8,7 +8,13 @@
 
 #include "lightdevice.h"
 #include "lightingpage.h"
-#include "lightslistwidget.h"
+#include "listcontrollerwidget.h"
+#include "groupsparser.h"
+/*!
+ * \copyright
+ * Copyright (C) 2015 - 2016.
+ * Released under the GNU General Public License.
+ */
 
 namespace Ui {
 class ConnectionPage;
@@ -23,7 +29,8 @@ enum class EConnectionState {
     eDiscovering,
     eDiscoveredAndNotInUse,
     eSingleDeviceSelected,
-    eMultipleDevicesSelected
+    eMultipleDevicesSelected,
+    eConnectionState_MAX
 };
 
 /*!
@@ -70,6 +77,14 @@ public:
      * \brief updateUI updates the colors of various settings in the UI.
      */
     void updateUI(ECommType type);
+
+    /*!
+     * \brief connectCommLayer connect to commlayer. In a future update the commLayer pointer on
+     *        every page will be totally removed in favor of DataSync, but for now theres some
+     *        edge cases that require certain pages to have a commlayer pointer.
+     * \param layer commlayer
+     */
+    void connectCommLayer(CommLayer *layer) { mComm = layer; }
 
     /*!
      * \brief changeConnectionState change the connection state of the overall app.
@@ -163,6 +178,21 @@ private slots:
      */
     void groupsButtonClicked(bool);
 
+    /*!
+     * \brief saveGroup called when a group should be saved.
+     */
+    void saveGroup(bool);
+
+    /*!
+     * \brief saveCollection called when a collection should be saved.
+     */
+    void saveCollection(bool);
+
+    /*!
+     * \brief receivedCommUpdate called when an update has occurred on the commlayer.
+     */
+    void receivedCommUpdate(int);
+
 protected:
     /*!
      * \brief showEvent called before the this page is shown. Used to sync up
@@ -188,6 +218,12 @@ private:
     Ui::ConnectionPage *ui;
 
     /*!
+     * \brief mGroups manages the list of collections and moods and the JSON data
+     *        associated with them.
+     */
+    GroupsParser *mGroups;
+
+    /*!
      * \brief buttonByType helper for getting a QPushButton pointer based off
      *        of a commtype.
      * \param type the commtype to get a button for.
@@ -199,6 +235,12 @@ private:
      * \brief mSettings object used to access persistent app memory
      */
     QSettings *mSettings;
+
+    /*!
+     * \brief mLastUpdateConnectionList the time that the connection list
+     *        was last rendered. Used to throttle unnecessary rendering.
+     */
+    QTime mLastUpdateConnectionList;
 
     //-------------
     // Cached States and Assets
@@ -221,6 +263,11 @@ private:
      *        button is clicked.
      */
     QString mCurrentListString;
+
+    /*!
+     * \brief mCurrentMoodListString the name of the last connection group.
+     */
+    QString mCurrentMoodListString;
 
     /*!
      * \brief mCommType current comm type being shown in the connection list.
@@ -286,6 +333,21 @@ private:
      * \return true if any controller is connected, false otherwise.
      */
     bool checkForConnectedControllers();
+
+    /*!
+     * \brief checkConnectionStateOfGroup checks the connection states of each of the individual lights
+     *        and simplifies them down to one connection state. For instance, if all are connected it gives back
+     *        that all are connected. If one is still discovering, it gives back that the lights are in discovery mode.
+     * \param group the group of lights that you want to check the connection state of.
+     * \return a simplified connection state based off of all the connection states.
+     */
+    EConnectionState checkConnectionStateOfGroup(std::list<SLightDevice> group);
+
+    /*!
+     * \brief communication pointer to communication object
+     *        for sending comannds to the lights
+     */
+    CommLayer *mComm;
 };
 
 #endif // CONNECTIONPAGE_H

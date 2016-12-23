@@ -13,6 +13,7 @@
 #include "lightingprotocols.h"
 #include "commtype.h"
 #include "commtypesettings.h"
+#include "commhue.h"
 
 /*!
  * \copyright
@@ -50,19 +51,17 @@ public:
     QColor mainColor();
 
     /*!
-     * \brief groupSize number of colors used by a color group. For the custom color array,
-     *        this changes by changing the customColorCount. For all others, its the size of the
-     *        of the preset array.
-     * \return the number of colors used in the color group.
-     */
-    uint8_t groupSize(EColorGroup group);
-
-    /*!
      * \brief colorGroup the color group at the given index. Can be used
      *        to access the custom color array or any of the presets.
      * \return the color array at the given index.
      */
-    QColor *colorGroup(EColorGroup group);
+    const std::vector<QColor>& colorGroup(EColorGroup group);
+
+    /*!
+     * \brief colors getter for the vector of color group vectors.
+     * \return vector of vectors where each vector is a preset group of colors.
+     */
+    const std::vector<std::vector<QColor> >& colors() { return mColors; }
 
     /*!
      * \brief maxColorGroupSize the largest possible size for a color group. Can also
@@ -124,6 +123,12 @@ public:
     EColorGroup currentColorGroup();
 
     /*!
+     * \brief currentGroup returns all the colors of the current color group.
+     * \return returns all the colors of the current color group.
+     */
+    const std::vector<QColor>& currentGroup() { return mColors[(int)currentColorGroup()]; }
+
+    /*!
      *  \brief Time between LED updates as FPS * 100. For example,
      *         a FPS of 5 is 500.
      */
@@ -141,12 +146,12 @@ public:
     bool customColorsUsed(int count);
 
     /*!
-     * \brief colorCount getter for the number of colors usd by
+     * \brief customColorsUsed getter for the number of colors usd by
      *        the by the custom color routines. Will always be less
      *        than the total number of colors in the custom color array.
      * \return the number of colors used for a custom color routine.
      */
-    int customColorUsed();
+    int customColorsUsed();
 
     /*!
      * \brief customColor set an individual color in the custom color group
@@ -164,12 +169,51 @@ public:
     void resetToDefaults();
 
     /*!
+     * \brief turnOn turn all devices on or off based off of the boolean. Stores the previous state
+     *        when turned off so that turning on again can reset it back to its previous state.
+     * \param on true if you want to turn on, false if you want to turn off.
+     */
+    void turnOn(bool on);
+
+    /*!
+     * \brief updateRoutine update the lighting routine for all current devices.
+     * \param routine new lighting routine.
+     */
+    void updateRoutine(ELightingRoutine routine);
+
+    /*!
+     * \brief updateColorGroup update the color group for all current devices.
+     * \param colorGroup new color group
+     */
+    void updateColorGroup(EColorGroup colorGroup);
+
+    /*!
+     * \brief updateColor update the color used for single color routines for all current devices.
+     * \param color new color
+     */
+    void updateColor(QColor color);
+
+    /*!
+     * \brief updateBrightness update the brightness level of all current devices.
+     * \param brightness new brightness
+     */
+    void updateBrightness(int brightness);
+
+    /*!
+     * \brief updateCt update the color temperature. Only supported by Hue lights.
+     * \param ct new color temperature.
+     */
+    void updateCt(int ct);
+
+
+    /*!
      * \brief addDevice add new device to connected list. if device already exists,
      *        update the device with new values.
      * \param device new device for the connected devices list
      * \return true if device was valid and added, false otherwise.
      */
     bool addDevice(SLightDevice device);
+
 
     /*!
      * \brief doesDeviceExist checks if device exist in connected device list
@@ -183,6 +227,22 @@ public:
      * \return true if successful
      */
     bool clearDevices();
+
+    /*!
+     * \brief devicesContainCommType helper that checks all devices and returns
+     *        true if at least one of the devices is of a given commtype.
+     * \param type the commtype that you want to search the devices for.
+     * \return true if at least one device is a given commtype, false otherwise.
+     */
+    bool devicesContainCommType(ECommType type);
+
+    /*!
+     * \brief replaceDeviceList removes all current devices and replaces them
+     *        with the devices on the given list
+     * \param newList the new list of devices to control.
+     * \return true if sucessful, false otherwise.
+     */
+    bool replaceDeviceList(const std::list<SLightDevice>& newList);
 
     /*!
      * \brief removeDevice remove specific device from connected device list.
@@ -237,6 +297,11 @@ signals:
      */
     void devicesEmpty();
 
+    /*!
+     * \brief dataUpdate emits whenever theres a change to any device.
+     */
+    void dataUpdate();
+
 private slots:
     /*!
      * \brief timeoutHandler called by the mTimeoutTimer in order to detect timeouts.
@@ -246,15 +311,10 @@ private slots:
 private:
 
     /*!
-     * \brief mArraySizes the array that holds the sizes color arrays.
-     */
-    uint8_t mArraySizes[(int)EColorGroup::eColorGroup_MAX];
-
-    /*!
      * \brief mColors the color arrays used for routines. This contains
      *        the custom color array and all of the presets.
      */
-    QColor *mColors[(int)EColorGroup::eColorGroup_MAX];
+    std::vector<std::vector<QColor> > mColors;
 
     /*!
      * \brief mCustomColorsUsed the number of colors used multi color routines using the
@@ -290,6 +350,12 @@ private:
     bool mIsTimedOut;
 
     /*!
+     * \brief mLastRoutineBeforeOff used by turnOn function to save last lighting routine before
+     *        lights were turned off.
+     */
+    ELightingRoutine mLastRoutineBeforeOff;
+
+    /*!
      * \brief mCurrentDevices list of current devices in data layer
      * \todo complete support of multiple devices in datalayer. currently this is a vector of
      *       size 1 in preparation.
@@ -300,6 +366,7 @@ private:
      * \brief mCommTypeSettings maintains which comnmtypes are currently enabled.
      */
     CommTypeSettings *mCommTypeSettings;
+
 };
 
 #endif // DATALAYER_H

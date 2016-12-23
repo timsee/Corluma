@@ -16,33 +16,48 @@
  */
 
 /*!
- * \brief The LightsListWidget class This widget is used on the SettingsPage as a replacement
+ * \brief The ListControllerWidget class This widget is used on the SettingsPage as a replacement
  *        for a QListWidget on the connectionList. It shows more information than a standard
  *        QListWidget, by giving an icon that represents the lights states, the name of of the
  *        controller, and the index of the light.
  */
-class LightsListWidget : public QWidget
+class ListControllerWidget : public QWidget
 {
     Q_OBJECT
 public:
     /*!
      * \brief LightsListWidget constructor
      */
-    explicit LightsListWidget(QWidget *parent = 0);
+    explicit ListControllerWidget(QWidget *parent = 0);
 
     /*!
-     * \brief setup setsup an icon with a pointer to the datalyer and
-     *        a default setting.
+     * \brief setup setsup an icon using a SLightDevice to generate the data.
      * \param device the device to pull all of the light data from.
-     * \param data pointer to data layer.
      */
-    void setup(const SLightDevice& device, DataLayer *data);
+    void setup(const SLightDevice& device);
 
     /*!
-     * \brief updateIcon update the icon with new light data
-     * \param device the device data to use for the update
+     * \brief setup sets up an icon using a SLightDevice to generate the data.
+     *        This setup also contains a color group for multi color routines.
+     * \param device device to use for the presets of the controller.
+     * \param colors colors to use for a multi color routine.
      */
-    void updateIcon(const SLightDevice& device);
+    void setup(const SLightDevice& device, const std::vector<QColor>& colors);
+
+    /*!
+     * \brief updateSingleRoutineIcon update icon data to single color routine.
+     * \param routine routine to update icon data to.
+     * \param color color to use for single color routine.
+     */
+    void updateSingleRoutineIcon(ELightingRoutine routine, QColor color);
+
+    /*!
+     * \brief updateMultiRoutineIcon update icon data to a multi color routine.
+     * \param routine routine to update the icon data to
+     * \param group color group for multi color routine
+     * \param colors colors for color group.
+     */
+    void updateMultiRoutineIcon(ELightingRoutine routine, EColorGroup group, const std::vector<QColor>& colors);
 
     /*!
      * \brief updateColor update just the color of the icon.
@@ -66,7 +81,7 @@ private:
      * \brief mIconData creates a QPixmap that represents the current light states
      *        which gets displayed on the mStatusIcon.
      */
-    IconData *mIconData;
+    IconData mIconData;
 
     /*!
      * \brief mController name of the controller

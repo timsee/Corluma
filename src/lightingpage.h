@@ -28,13 +28,10 @@ public:
      * \brief setup called by the MainWindow after the commLayer and dataLayer
      *        of the application are set up. This connects these layers to
      *        all the other pages.
-     * \param commLayer the object that handles the commmunication to the LED array.
      * \param dataLayer the object that handles storing data about the application
      *                  and the LED array's state.
      */
-    void setup(CommLayer *commLayer,
-               DataLayer *dataLayer) {
-        mComm = commLayer;
+    void setup(DataLayer *dataLayer) {
         mData = dataLayer;
     }
 
@@ -58,12 +55,6 @@ protected:
      *        received a change in state since the previous renderUI call.
      */
     QTimer *mRenderThread;
-
-    /*!
-     * \brief communication pointer to communication object
-     *        for sending comannds to the lights
-     */
-    CommLayer *mComm;
 
     /*!
      * \brief data layer that maintains and tracks the states of the lights
