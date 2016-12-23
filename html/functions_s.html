@@ -83,6 +83,9 @@
 <li>saveConnectionList()
 : <a class="el" href="class_comm_type.html#acf39ac1fbdab41338549ea9010ed0f91">CommType</a>
 </li>
+<li>saveNewGroup()
+: <a class="el" href="class_groups_parser.html#a53d4e7e1c00288b4cdde23a81bce319a">GroupsParser</a>
+</li>
 <li>selectArrayColor()
 : <a class="el" href="class_custom_colors_page.html#aa5919f16282aa11d7ad8d6d9bc7ea71f">CustomColorsPage</a>
 </li>
@@ -92,11 +95,17 @@
 <li>sendBrightness()
 : <a class="el" href="class_comm_layer.html#a89203fcc2b2991f891ac47d0f5fac9e3">CommLayer</a>
 </li>
+<li>sendColorTemperatureChange()
+: <a class="el" href="class_comm_layer.html#a1e3ded2bd93ed90b329ab1b8ae7fd3e7">CommLayer</a>
+</li>
 <li>sendCustomArrayCount()
 : <a class="el" href="class_comm_layer.html#a070205837f82abbed152b7dd542a5145">CommLayer</a>
 </li>
 <li>sendMainColorChange()
 : <a class="el" href="class_comm_layer.html#a783bcfcf2995998a14065eb146f0c086">CommLayer</a>
+</li>
+<li>sendMultiRoutineChange()
+: <a class="el" href="class_comm_layer.html#a434a5a11d147c5879494e2816879c98b">CommLayer</a>
 </li>
 <li>sendPacket()
 : <a class="el" href="class_comm_h_t_t_p.html#ad2f184165aad6a5efc1451e3bf0cdb2f">CommHTTP</a>
@@ -108,8 +117,8 @@
 <li>sendReset()
 : <a class="el" href="class_comm_layer.html#ab2698aa7769e2ca64ff3ae9eddf1759f">CommLayer</a>
 </li>
-<li>sendRoutineChange()
-: <a class="el" href="class_comm_layer.html#a745be869caa96a1ca702e438381e7185">CommLayer</a>
+<li>sendSingleRoutineChange()
+: <a class="el" href="class_comm_layer.html#a58a7d5057af854bdd063e24959c77b18">CommLayer</a>
 </li>
 <li>sendSpeed()
 : <a class="el" href="class_comm_layer.html#a1e12e15feeda6a1322aa49314c4b278e">CommLayer</a>
@@ -129,9 +138,6 @@
 <li>setCustomColorCount()
 : <a class="el" href="group__gettersetters.html#ga1e199ecebaac3e1be7c03a91bd9d52b2">LightingRoutines</a>
 </li>
-<li>setLightingRoutine()
-: <a class="el" href="class_icon_data.html#af2cb8dcba65d31ccb565195238cb5cab">IconData</a>
-</li>
 <li>setMainColor()
 : <a class="el" href="group__gettersetters.html#ga2835d685009c99f0b1dcedfa65474019">LightingRoutines</a>
 </li>
@@ -139,25 +145,28 @@
 : <a class="el" href="class_lights_slider.html#af74be2a1971c006c02f7fcaf428560c5">LightsSlider</a>
 </li>
 <li>setMultiBarsMoving()
-: <a class="el" href="class_icon_data.html#ab86aa9a9424eacc14e083abba5f706b3">IconData</a>
+: <a class="el" href="class_icon_data.html#ad32c8144ff38a9e742c5d994160cc668">IconData</a>
 </li>
 <li>setMultiBarsSolid()
-: <a class="el" href="class_icon_data.html#ad0f81c02771769de7559311dad3a9b92">IconData</a>
+: <a class="el" href="class_icon_data.html#a1c72c2d84efc4ceb17251384cb68a176">IconData</a>
 </li>
 <li>setMultiColors()
-: <a class="el" href="class_icon_data.html#ac5b0dd3184dd9811740fb4a866bcab3a">IconData</a>
+: <a class="el" href="class_icon_data.html#a04ff044ec8b28025451362edc3e74423">IconData</a>
 </li>
 <li>setMultiFade()
-: <a class="el" href="class_icon_data.html#a2699e083b7488191856be7b4b84de51f">IconData</a>
+: <a class="el" href="class_icon_data.html#afa8bf36f3d60318af3944d16d49c68a9">IconData</a>
 </li>
 <li>setMultiGlimmer()
-: <a class="el" href="class_icon_data.html#ae9d6955a3e43a79a5f2134b412fa1af9">IconData</a>
+: <a class="el" href="class_icon_data.html#a440a30145b89971dd24de65216dcdccc">IconData</a>
+</li>
+<li>setMultiLightingRoutine()
+: <a class="el" href="class_icon_data.html#a7c2de142b7036de134fca700e297c75e">IconData</a>
 </li>
 <li>setMultiRandomIndividual()
-: <a class="el" href="class_icon_data.html#a2f856003fdec3857a0d5b47903c2669f">IconData</a>
+: <a class="el" href="class_icon_data.html#a7cbd91fe29a0182f2a9e85221abc5b35">IconData</a>
 </li>
 <li>setMultiRandomSolid()
-: <a class="el" href="class_icon_data.html#a5b48a282112225678999faccf3dc8e7e">IconData</a>
+: <a class="el" href="class_icon_data.html#a6d3b2a92788b0965bc55ffb7858eb2f5">IconData</a>
 </li>
 <li>setSingleLightingRoutine()
 : <a class="el" href="class_icon_data.html#abede7bb476474e334c25c4fc4c5fd9bf">IconData</a>
@@ -184,14 +193,15 @@
 : <a class="el" href="class_settings_page.html#a2f7b734cd4b293694140ed7504d19a55">SettingsPage</a>
 </li>
 <li>setup()
-: <a class="el" href="class_lighting_page.html#acbab3e2ce83064f77b8b68ab582675b2">LightingPage</a>
-, <a class="el" href="class_lights_list_widget.html#a223c2d3d0a21fa1dad1f8e9a08e85d95">LightsListWidget</a>
+: <a class="el" href="class_lighting_page.html#ad9b7726f55db9db3b46de6ef882a6373">LightingPage</a>
+, <a class="el" href="class_list_controller_widget.html#accdd1a0630f8c787b7c909c8db14d3d6">ListControllerWidget</a>
+, <a class="el" href="class_list_group_widget.html#a5be441d7ae23279133368e0e2ec0550e">ListGroupWidget</a>
 </li>
 <li>setupAsMenuButton()
-: <a class="el" href="class_lights_button.html#af6009d43525249f677d2e54086b4d9c1">LightsButton</a>
+: <a class="el" href="class_lights_button.html#a4faa8abc3312579516341d3b7f442b0b">LightsButton</a>
 </li>
 <li>setupAsStandardButton()
-: <a class="el" href="class_lights_button.html#a9bfff5636b554c9e8ec0c99bb9114cea">LightsButton</a>
+: <a class="el" href="class_lights_button.html#a7638cfcc0545fef611cb6ffcac51543d">LightsButton</a>
 </li>
 <li>setupButtons()
 : <a class="el" href="class_custom_colors_page.html#afef34175f36749770f06c608bd873aa8">CustomColorsPage</a>
@@ -205,6 +215,9 @@
 : <a class="el" href="class_connection_page.html#ac4543eed5acd1fe68f68d59bf3591193">ConnectionPage</a>
 , <a class="el" href="class_settings_page.html#a35689d7931d9c09a5923a7bd818b7367">SettingsPage</a>
 </li>
+<li>shouldContinueStateUpdate()
+: <a class="el" href="class_comm_type.html#a140fb846eeb4d24976e2a4f514f95f0f">CommType</a>
+</li>
 <li>shouldUseHueAssets()
 : <a class="el" href="class_data_layer.html#a7130b93d4d8a0413b5be2f3a42962fee">DataLayer</a>
 </li>
@@ -212,6 +225,7 @@
 : <a class="el" href="class_color_picker.html#a18f2c09e940d5a22b68179516cb40422">ColorPicker</a>
 , <a class="el" href="class_connection_page.html#a408645f97d22ff87fcf29d0d92223873">ConnectionPage</a>
 , <a class="el" href="class_custom_colors_page.html#acd927f874938d67e42f117f121d9a39d">CustomColorsPage</a>
+, <a class="el" href="class_hue_single_color_page.html#ac27ba1b0cf5351b67dffb5558a163bd9">HueSingleColorPage</a>
 , <a class="el" href="class_lighting_page.html#ac83bf991628db9cc5f9bc5de89a8ec0e">LightingPage</a>
 , <a class="el" href="class_lights_slider.html#a0d7eb24c899d99a8af86226d09932519">LightsSlider</a>
 , <a class="el" href="class_preset_colors_page.html#aa95cb48f3ae7ce40431d28d2c3912b10">PresetColorsPage</a>
@@ -221,18 +235,17 @@
 <li>shutdown()
 : <a class="el" href="class_comm_h_t_t_p.html#ae3920b3d97c94dfbb526e9ea343bfbb9">CommHTTP</a>
 , <a class="el" href="class_comm_hue.html#acdcd223b12613b92a682a2c8b50f17a6">CommHue</a>
+, <a class="el" href="class_comm_layer.html#ab23f9ea9bffe8271b5d0c5ec02057a43">CommLayer</a>
 , <a class="el" href="class_comm_serial.html#aaf8a568ff8f2ec4379e7c5014251d8be">CommSerial</a>
 , <a class="el" href="class_comm_type.html#ad2a24398eeaafa49cd376cb09be961ef">CommType</a>
 , <a class="el" href="class_comm_u_d_p.html#a924841d71b8b5a975fdbb39335a4f6a6">CommUDP</a>
-</li>
-<li>shutdownStream()
-: <a class="el" href="class_comm_layer.html#a3cc3a13a3961ab0bc6039f58137f8d7f">CommLayer</a>
 </li>
 <li>singleBlink()
 : <a class="el" href="group__single_routines.html#ga902f877716d156b6833dd7fb03ba7d02">LightingRoutines</a>
 </li>
 <li>singleColorChanged()
-: <a class="el" href="class_single_color_page.html#aaa55e5c17f67e97daaac4b8638924ba3">SingleColorPage</a>
+: <a class="el" href="class_hue_single_color_page.html#a3860d2045b185a0580704511a6c99902">HueSingleColorPage</a>
+, <a class="el" href="class_single_color_page.html#aaa55e5c17f67e97daaac4b8638924ba3">SingleColorPage</a>
 </li>
 <li>SingleColorPage()
 : <a class="el" href="class_single_color_page.html#a28bf3e52571206bbf70a7a675e8c9cab">SingleColorPage</a>
@@ -255,8 +268,11 @@
 <li>slider
 : <a class="el" href="class_lights_slider.html#ac42a66bbe82f26c4b26d15777443f5fb">LightsSlider</a>
 </li>
+<li>softwareVersion
+: <a class="el" href="struct_s_hue_light.html#a923c38d7294485944c987442202e0d49">SHueLight</a>
+</li>
 <li>speed()
-: <a class="el" href="class_data_layer.html#a3ca545b6b1dfdb8148f95ae364d8f183">DataLayer</a>
+: <a class="el" href="class_data_layer.html#a878df79749e4c8e9b2d3872d271da680">DataLayer</a>
 </li>
 <li>speedChanged()
 : <a class="el" href="class_settings_page.html#a13fe17ac61ace14cbac4882ee38f6b61">SettingsPage</a>
@@ -271,12 +287,10 @@
 <li>startup()
 : <a class="el" href="class_comm_h_t_t_p.html#a8edda42218bdc83af4748635f1cb48f4">CommHTTP</a>
 , <a class="el" href="class_comm_hue.html#a5d07b03566ff1f1bba48c95ccb04560f">CommHue</a>
+, <a class="el" href="class_comm_layer.html#a0eddb554aa1998362805890ad0141dd2">CommLayer</a>
 , <a class="el" href="class_comm_serial.html#a194612ca547d450451ce64494ac3c77d">CommSerial</a>
 , <a class="el" href="class_comm_type.html#a78d309086195c52051f007e693ff2b7a">CommType</a>
 , <a class="el" href="class_comm_u_d_p.html#a329ffb2e4cac0b38d98fa6e11584284c">CommUDP</a>
-</li>
-<li>startupStream()
-: <a class="el" href="class_comm_layer.html#ace7c3b73ae0a7103854eb449e364e19f">CommLayer</a>
 </li>
 <li>stopBridgeDiscovery()
 : <a class="el" href="class_hue_bridge_discovery.html#a3d3739ef3c74f0210f54cc2343cc8cfe">HueBridgeDiscovery</a>
@@ -287,9 +301,6 @@
 </li>
 <li>stopTimers()
 : <a class="el" href="class_hue_bridge_discovery.html#a0ed5c84e1201255015b4de84029b0faf">HueBridgeDiscovery</a>
-</li>
-<li>streamHasStarted()
-: <a class="el" href="class_comm_layer.html#a8addf743df9ec848b1438be17b787396">CommLayer</a>
 </li>
 </ul>
 </div><!-- contents -->

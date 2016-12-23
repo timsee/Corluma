@@ -67,12 +67,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a09890fc7eb2df5e21baebf13ef4f2197"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#a09890fc7eb2df5e21baebf13ef4f2197">IconData</a> (int <a class="el" href="class_icon_data.html#a8755dd01e0e70f41c60ee4a53a715669">width</a>, int <a class="el" href="class_icon_data.html#a6f96816a97aee839b03e87f2f0735725">height</a>)</td></tr>
 <tr class="memdesc:a09890fc7eb2df5e21baebf13ef4f2197"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard Constructor, values must be a multiple of four.  <a href="#a09890fc7eb2df5e21baebf13ef4f2197">More...</a><br /></td></tr>
 <tr class="separator:a09890fc7eb2df5e21baebf13ef4f2197"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2e6fec72c4df2205c7f53aa53ae5d074"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#a2e6fec72c4df2205c7f53aa53ae5d074">IconData</a> (int <a class="el" href="class_icon_data.html#a8755dd01e0e70f41c60ee4a53a715669">width</a>, int <a class="el" href="class_icon_data.html#a6f96816a97aee839b03e87f2f0735725">height</a>, <a class="el" href="class_data_layer.html">DataLayer</a> *data)</td></tr>
-<tr class="memdesc:a2e6fec72c4df2205c7f53aa53ae5d074"><td class="mdescLeft">&#160;</td><td class="mdescRight">Required constructor when the icons use the color array.  <a href="#a2e6fec72c4df2205c7f53aa53ae5d074">More...</a><br /></td></tr>
-<tr class="separator:a2e6fec72c4df2205c7f53aa53ae5d074"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af2cb8dcba65d31ccb565195238cb5cab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#af2cb8dcba65d31ccb565195238cb5cab">setLightingRoutine</a> (ELightingRoutine routine, EColorGroup colorGroup=EColorGroup::eCustom)</td></tr>
-<tr class="memdesc:af2cb8dcba65d31ccb565195238cb5cab"><td class="mdescLeft">&#160;</td><td class="mdescRight">setLightingRoutine use a lighting routine and color group to set up the <a class="el" href="class_icon_data.html" title="The IconData class creates all the pixel-y square icons that are seen throughout the app...">IconData</a>.  <a href="#af2cb8dcba65d31ccb565195238cb5cab">More...</a><br /></td></tr>
-<tr class="separator:af2cb8dcba65d31ccb565195238cb5cab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c2de142b7036de134fca700e297c75e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#a7c2de142b7036de134fca700e297c75e">setMultiLightingRoutine</a> (ELightingRoutine routine, EColorGroup group, const std::vector&lt; QColor &gt; &amp;colors, int colorMax=-1)</td></tr>
+<tr class="memdesc:a7c2de142b7036de134fca700e297c75e"><td class="mdescLeft">&#160;</td><td class="mdescRight">setLightingRoutine use a lighting routine and color group to set up the <a class="el" href="class_icon_data.html" title="The IconData class creates all the pixel-y square icons that are seen throughout the app...">IconData</a>.  <a href="#a7c2de142b7036de134fca700e297c75e">More...</a><br /></td></tr>
+<tr class="separator:a7c2de142b7036de134fca700e297c75e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abede7bb476474e334c25c4fc4c5fd9bf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#abede7bb476474e334c25c4fc4c5fd9bf">setSingleLightingRoutine</a> (ELightingRoutine routine, QColor color)</td></tr>
 <tr class="memdesc:abede7bb476474e334c25c4fc4c5fd9bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">setSingleLightingRoutine use a lighting routine and a color to set up the <a class="el" href="class_icon_data.html" title="The IconData class creates all the pixel-y square icons that are seen throughout the app...">IconData</a> for a single color routine.  <a href="#abede7bb476474e334c25c4fc4c5fd9bf">More...</a><br /></td></tr>
 <tr class="separator:abede7bb476474e334c25c4fc4c5fd9bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -80,33 +77,33 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#a89217148fb16e8446f2c36760845522e">setSolidColor</a> (QColor color)</td></tr>
 <tr class="memdesc:a89217148fb16e8446f2c36760845522e"><td class="mdescLeft">&#160;</td><td class="mdescRight">setSolidColor sets the icon as a solid color <br /></td></tr>
 <tr class="separator:a89217148fb16e8446f2c36760845522e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5b0dd3184dd9811740fb4a866bcab3a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac5b0dd3184dd9811740fb4a866bcab3a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#ac5b0dd3184dd9811740fb4a866bcab3a">setMultiColors</a> (EColorGroup group)</td></tr>
-<tr class="memdesc:ac5b0dd3184dd9811740fb4a866bcab3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">setMultiColors shows all array colors, repeating if necessary <br /></td></tr>
-<tr class="separator:ac5b0dd3184dd9811740fb4a866bcab3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9d6955a3e43a79a5f2134b412fa1af9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae9d6955a3e43a79a5f2134b412fa1af9"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#ae9d6955a3e43a79a5f2134b412fa1af9">setMultiGlimmer</a> (EColorGroup group)</td></tr>
-<tr class="memdesc:ae9d6955a3e43a79a5f2134b412fa1af9"><td class="mdescLeft">&#160;</td><td class="mdescRight">setMultiGlimmer sets as mostly mainColor, but adds random colors as a glimmer effect <br /></td></tr>
-<tr class="separator:ae9d6955a3e43a79a5f2134b412fa1af9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2699e083b7488191856be7b4b84de51f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#a2699e083b7488191856be7b4b84de51f">setMultiFade</a> (EColorGroup group, bool showMore=false)</td></tr>
-<tr class="memdesc:a2699e083b7488191856be7b4b84de51f"><td class="mdescLeft">&#160;</td><td class="mdescRight">setMultiFade regions slowly fade from one array color to another  <a href="#a2699e083b7488191856be7b4b84de51f">More...</a><br /></td></tr>
-<tr class="separator:a2699e083b7488191856be7b4b84de51f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b48a282112225678999faccf3dc8e7e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5b48a282112225678999faccf3dc8e7e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#a5b48a282112225678999faccf3dc8e7e">setMultiRandomSolid</a> (EColorGroup group)</td></tr>
-<tr class="memdesc:a5b48a282112225678999faccf3dc8e7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">setMultiRandomSolid sets icon as 4 colors from array <br /></td></tr>
-<tr class="separator:a5b48a282112225678999faccf3dc8e7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2f856003fdec3857a0d5b47903c2669f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2f856003fdec3857a0d5b47903c2669f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#a2f856003fdec3857a0d5b47903c2669f">setMultiRandomIndividual</a> (EColorGroup group)</td></tr>
-<tr class="memdesc:a2f856003fdec3857a0d5b47903c2669f"><td class="mdescLeft">&#160;</td><td class="mdescRight">setMultiRandomIndividual sets each region a random color from the array <br /></td></tr>
-<tr class="separator:a2f856003fdec3857a0d5b47903c2669f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0f81c02771769de7559311dad3a9b92"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad0f81c02771769de7559311dad3a9b92"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#ad0f81c02771769de7559311dad3a9b92">setMultiBarsSolid</a> (EColorGroup group)</td></tr>
-<tr class="memdesc:ad0f81c02771769de7559311dad3a9b92"><td class="mdescLeft">&#160;</td><td class="mdescRight">setMultiBarsSolid draws the bars with region sizes of 2 <br /></td></tr>
-<tr class="separator:ad0f81c02771769de7559311dad3a9b92"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab86aa9a9424eacc14e083abba5f706b3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab86aa9a9424eacc14e083abba5f706b3"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#ab86aa9a9424eacc14e083abba5f706b3">setMultiBarsMoving</a> (EColorGroup group)</td></tr>
-<tr class="memdesc:ab86aa9a9424eacc14e083abba5f706b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">setMultiBarsSolid draws the bars with region sizes of 2 but slightly offset 'cause its hard to show motion in a static icon. <br /></td></tr>
-<tr class="separator:ab86aa9a9424eacc14e083abba5f706b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04ff044ec8b28025451362edc3e74423"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a04ff044ec8b28025451362edc3e74423"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#a04ff044ec8b28025451362edc3e74423">setMultiColors</a> (EColorGroup group, const std::vector&lt; QColor &gt; &amp;colors, int colorMax=-1)</td></tr>
+<tr class="memdesc:a04ff044ec8b28025451362edc3e74423"><td class="mdescLeft">&#160;</td><td class="mdescRight">setMultiColors shows all array colors, repeating if necessary <br /></td></tr>
+<tr class="separator:a04ff044ec8b28025451362edc3e74423"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a440a30145b89971dd24de65216dcdccc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a440a30145b89971dd24de65216dcdccc"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#a440a30145b89971dd24de65216dcdccc">setMultiGlimmer</a> (EColorGroup group, const std::vector&lt; QColor &gt; &amp;colors, int colorMax=-1)</td></tr>
+<tr class="memdesc:a440a30145b89971dd24de65216dcdccc"><td class="mdescLeft">&#160;</td><td class="mdescRight">setMultiGlimmer sets as mostly mainColor, but adds random colors as a glimmer effect <br /></td></tr>
+<tr class="separator:a440a30145b89971dd24de65216dcdccc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa8bf36f3d60318af3944d16d49c68a9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#afa8bf36f3d60318af3944d16d49c68a9">setMultiFade</a> (EColorGroup group, const std::vector&lt; QColor &gt; &amp;colors, bool showMore=false, int colorMax=-1)</td></tr>
+<tr class="memdesc:afa8bf36f3d60318af3944d16d49c68a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">setMultiFade regions slowly fade from one array color to another  <a href="#afa8bf36f3d60318af3944d16d49c68a9">More...</a><br /></td></tr>
+<tr class="separator:afa8bf36f3d60318af3944d16d49c68a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d3b2a92788b0965bc55ffb7858eb2f5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6d3b2a92788b0965bc55ffb7858eb2f5"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#a6d3b2a92788b0965bc55ffb7858eb2f5">setMultiRandomSolid</a> (EColorGroup group, const std::vector&lt; QColor &gt; &amp;colors, int colorMax=-1)</td></tr>
+<tr class="memdesc:a6d3b2a92788b0965bc55ffb7858eb2f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">setMultiRandomSolid sets icon as 4 colors from array <br /></td></tr>
+<tr class="separator:a6d3b2a92788b0965bc55ffb7858eb2f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7cbd91fe29a0182f2a9e85221abc5b35"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7cbd91fe29a0182f2a9e85221abc5b35"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#a7cbd91fe29a0182f2a9e85221abc5b35">setMultiRandomIndividual</a> (EColorGroup group, const std::vector&lt; QColor &gt; &amp;colors, int colorMax=-1)</td></tr>
+<tr class="memdesc:a7cbd91fe29a0182f2a9e85221abc5b35"><td class="mdescLeft">&#160;</td><td class="mdescRight">setMultiRandomIndividual sets each region a random color from the array <br /></td></tr>
+<tr class="separator:a7cbd91fe29a0182f2a9e85221abc5b35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c72c2d84efc4ceb17251384cb68a176"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1c72c2d84efc4ceb17251384cb68a176"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#a1c72c2d84efc4ceb17251384cb68a176">setMultiBarsSolid</a> (EColorGroup group, const std::vector&lt; QColor &gt; &amp;colors, int colorMax=-1)</td></tr>
+<tr class="memdesc:a1c72c2d84efc4ceb17251384cb68a176"><td class="mdescLeft">&#160;</td><td class="mdescRight">setMultiBarsSolid draws the bars with region sizes of 2 <br /></td></tr>
+<tr class="separator:a1c72c2d84efc4ceb17251384cb68a176"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad32c8144ff38a9e742c5d994160cc668"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad32c8144ff38a9e742c5d994160cc668"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#ad32c8144ff38a9e742c5d994160cc668">setMultiBarsMoving</a> (EColorGroup group, const std::vector&lt; QColor &gt; &amp;colors, int colorMax=-1)</td></tr>
+<tr class="memdesc:ad32c8144ff38a9e742c5d994160cc668"><td class="mdescLeft">&#160;</td><td class="mdescRight">setMultiBarsSolid draws the bars with region sizes of 2 but slightly offset 'cause its hard to show motion in a static icon. <br /></td></tr>
+<tr class="separator:ad32c8144ff38a9e742c5d994160cc668"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab14c9f6354246cf7a8ea56516ffb8f37"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab14c9f6354246cf7a8ea56516ffb8f37"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#ab14c9f6354246cf7a8ea56516ffb8f37">addWave</a> ()</td></tr>
 <tr class="memdesc:ab14c9f6354246cf7a8ea56516ffb8f37"><td class="mdescLeft">&#160;</td><td class="mdescRight">addWave similar to a linear fade, but offset a bit since otherwise they would have the same static icon.. <br /></td></tr>
@@ -204,46 +201,6 @@ uint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="a2e6fec72c4df2205c7f53aa53ae5d074"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">IconData::IconData </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>width</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>height</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_data_layer.html">DataLayer</a> *&#160;</td>
-          <td class="paramname"><em>data</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">width</td><td>the width </td></tr>
-    <tr><td class="paramname">height</td><td>the height </td></tr>
-    <tr><td class="paramname">data</td><td>pointer to the data layer to access array data. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a class="anchor" id="a6f96816a97aee839b03e87f2f0735725"></a>
 <div class="memitem">
@@ -293,40 +250,7 @@ uint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="af2cb8dcba65d31ccb565195238cb5cab"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void IconData::setLightingRoutine </td>
-          <td>(</td>
-          <td class="paramtype">ELightingRoutine&#160;</td>
-          <td class="paramname"><em>routine</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">EColorGroup&#160;</td>
-          <td class="paramname"><em>colorGroup</em> = <code>EColorGroup::eCustom</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">routine</td><td>the routine that you want to use for the icon </td></tr>
-    <tr><td class="paramname">colorGroup</td><td>the group that you want to use for the icon. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="a2699e083b7488191856be7b4b84de51f"></a>
+<a class="anchor" id="afa8bf36f3d60318af3944d16d49c68a9"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -339,8 +263,20 @@ uint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::vector&lt; QColor &gt; &amp;&#160;</td>
+          <td class="paramname"><em>colors</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>showMore</em> = <code>false</code>&#160;</td>
+          <td class="paramname"><em>showMore</em> = <code>false</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>colorMax</em> = <code>-1</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -353,6 +289,51 @@ uint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   <table class="params">
     <tr><td class="paramname">colorGroup</td><td>the colorGroup used for the <a class="el" href="class_icon_data.html" title="The IconData class creates all the pixel-y square icons that are seen throughout the app...">IconData</a> </td></tr>
     <tr><td class="paramname">set</td><td>to false in nearly all cases, this only gets set to true for the menu bar so the custom array shows a few more colors than 2 when defaulted to 2. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a7c2de142b7036de134fca700e297c75e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void IconData::setMultiLightingRoutine </td>
+          <td>(</td>
+          <td class="paramtype">ELightingRoutine&#160;</td>
+          <td class="paramname"><em>routine</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">EColorGroup&#160;</td>
+          <td class="paramname"><em>group</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; QColor &gt; &amp;&#160;</td>
+          <td class="paramname"><em>colors</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>colorMax</em> = <code>-1</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">routine</td><td>the routine that you want to use for the icon </td></tr>
+    <tr><td class="paramname">colorGroup</td><td>the group that you want to use for the icon. </td></tr>
   </table>
   </dd>
 </dl>

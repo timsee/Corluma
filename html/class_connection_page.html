@@ -118,6 +118,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#a582aab553ffb48e300afaf11a3d3fc5a">updateUI</a> (ECommType type)</td></tr>
 <tr class="memdesc:a582aab553ffb48e300afaf11a3d3fc5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateUI updates the colors of various settings in the UI. <br /></td></tr>
 <tr class="separator:a582aab553ffb48e300afaf11a3d3fc5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a254da6dff4fe5c236295da18f5e83654"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#a254da6dff4fe5c236295da18f5e83654">connectCommLayer</a> (<a class="el" href="class_comm_layer.html">CommLayer</a> *layer)</td></tr>
+<tr class="memdesc:a254da6dff4fe5c236295da18f5e83654"><td class="mdescLeft">&#160;</td><td class="mdescRight">connectCommLayer connect to commlayer. In a future update the commLayer pointer on every page will be totally removed in favor of <a class="el" href="class_data_sync.html" title="The DataSync class compares the data layer&#39;s representation of devices with the commlayer&#39;s understan...">DataSync</a>, but for now theres some edge cases that require certain pages to have a commlayer pointer.  <a href="#a254da6dff4fe5c236295da18f5e83654">More...</a><br /></td></tr>
+<tr class="separator:a254da6dff4fe5c236295da18f5e83654"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aece0c5aaec67a5c072bc8c33ff404f31"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#aece0c5aaec67a5c072bc8c33ff404f31">changeConnectionState</a> (EConnectionState newState, bool skipCheck=false)</td></tr>
 <tr class="memdesc:aece0c5aaec67a5c072bc8c33ff404f31"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeConnectionState change the connection state of the overall app. This state is displayed as an icon in the top left of the page.  <a href="#aece0c5aaec67a5c072bc8c33ff404f31">More...</a><br /></td></tr>
 <tr class="separator:aece0c5aaec67a5c072bc8c33ff404f31"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -129,9 +132,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#afcd456d0f20296ac63c5d336b085f37b">~LightingPage</a> ()</td></tr>
 <tr class="memdesc:afcd456d0f20296ac63c5d336b085f37b inherit pub_methods_class_lighting_page"><td class="mdescLeft">&#160;</td><td class="mdescRight">~LightingPage Deconstructor <br /></td></tr>
 <tr class="separator:afcd456d0f20296ac63c5d336b085f37b inherit pub_methods_class_lighting_page"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acbab3e2ce83064f77b8b68ab582675b2 inherit pub_methods_class_lighting_page"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#acbab3e2ce83064f77b8b68ab582675b2">setup</a> (<a class="el" href="class_comm_layer.html">CommLayer</a> *commLayer, <a class="el" href="class_data_layer.html">DataLayer</a> *dataLayer)</td></tr>
-<tr class="memdesc:acbab3e2ce83064f77b8b68ab582675b2 inherit pub_methods_class_lighting_page"><td class="mdescLeft">&#160;</td><td class="mdescRight">setup called by the <a class="el" href="class_main_window.html" title="The MainWindow class is the only window in this application. It contains a QStackedWidget which shows...">MainWindow</a> after the commLayer and dataLayer of the application are set up. This connects these layers to all the other pages.  <a href="#acbab3e2ce83064f77b8b68ab582675b2">More...</a><br /></td></tr>
-<tr class="separator:acbab3e2ce83064f77b8b68ab582675b2 inherit pub_methods_class_lighting_page"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9b7726f55db9db3b46de6ef882a6373 inherit pub_methods_class_lighting_page"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#ad9b7726f55db9db3b46de6ef882a6373">setup</a> (<a class="el" href="class_data_layer.html">DataLayer</a> *dataLayer)</td></tr>
+<tr class="memdesc:ad9b7726f55db9db3b46de6ef882a6373 inherit pub_methods_class_lighting_page"><td class="mdescLeft">&#160;</td><td class="mdescRight">setup called by the <a class="el" href="class_main_window.html" title="The MainWindow class is the only window in this application. It contains a QStackedWidget which shows...">MainWindow</a> after the commLayer and dataLayer of the application are set up. This connects these layers to all the other pages.  <a href="#ad9b7726f55db9db3b46de6ef882a6373">More...</a><br /></td></tr>
+<tr class="separator:ad9b7726f55db9db3b46de6ef882a6373 inherit pub_methods_class_lighting_page"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -155,10 +158,6 @@ Additional Inherited Members</h2></td></tr>
 QTimer *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#a43fed23a3309333b8b699caa34e3f329">mRenderThread</a></td></tr>
 <tr class="memdesc:a43fed23a3309333b8b699caa34e3f329 inherit pro_attribs_class_lighting_page"><td class="mdescLeft">&#160;</td><td class="mdescRight">mRenderThread timer that calls a renderUI() function on each of the pages. This function is used to render more expensive assets if and only if they received a change in state since the previous renderUI call. <br /></td></tr>
 <tr class="separator:a43fed23a3309333b8b699caa34e3f329 inherit pro_attribs_class_lighting_page"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5e2b53bd93f9f89c68e10cbba43e2ce inherit pro_attribs_class_lighting_page"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa5e2b53bd93f9f89c68e10cbba43e2ce"></a>
-<a class="el" href="class_comm_layer.html">CommLayer</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#aa5e2b53bd93f9f89c68e10cbba43e2ce">mComm</a></td></tr>
-<tr class="memdesc:aa5e2b53bd93f9f89c68e10cbba43e2ce inherit pro_attribs_class_lighting_page"><td class="mdescLeft">&#160;</td><td class="mdescRight">communication pointer to communication object for sending comannds to the lights <br /></td></tr>
-<tr class="separator:aa5e2b53bd93f9f89c68e10cbba43e2ce inherit pro_attribs_class_lighting_page"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a13431dcc6aa10530a61bb9a11e32b386 inherit pro_attribs_class_lighting_page"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a13431dcc6aa10530a61bb9a11e32b386"></a>
 <a class="el" href="class_data_layer.html">DataLayer</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#a13431dcc6aa10530a61bb9a11e32b386">mData</a></td></tr>
 <tr class="memdesc:a13431dcc6aa10530a61bb9a11e32b386 inherit pro_attribs_class_lighting_page"><td class="mdescLeft">&#160;</td><td class="mdescRight">data layer that maintains and tracks the states of the lights and the saved data of the GUI <br /></td></tr>
@@ -260,6 +259,36 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
   <table class="params">
     <tr><td class="paramname">newState</td><td>new state for the connection </td></tr>
     <tr><td class="paramname">skipCheck</td><td>by default the function checks if the state has been changed and only runs if a new state is different from the current state. this skips that check. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a254da6dff4fe5c236295da18f5e83654"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ConnectionPage::connectCommLayer </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_comm_layer.html">CommLayer</a> *&#160;</td>
+          <td class="paramname"><em>layer</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">layer</td><td>commlayer </td></tr>
   </table>
   </dd>
 </dl>

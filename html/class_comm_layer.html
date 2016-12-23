@@ -68,10 +68,13 @@ Signals</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a0a17dd140c665e5ce02e85d82c0bb813">hueDiscoveryStateChange</a> (int)</td></tr>
 <tr class="memdesc:a0a17dd140c665e5ce02e85d82c0bb813"><td class="mdescLeft">&#160;</td><td class="mdescRight">hueDiscoveryStateChange the state of the Hue discovery methods, forwarded from a private <a class="el" href="class_hue_bridge_discovery.html" title="The HueBridgeDiscovery class is an object that handles the discovery of a hue bridge by using a combi...">HueBridgeDiscovery</a> object. <br /></td></tr>
 <tr class="separator:a0a17dd140c665e5ce02e85d82c0bb813"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a85466633108bc2c93a3a7d3b0a04359d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a85466633108bc2c93a3a7d3b0a04359d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a85466633108bc2c93a3a7d3b0a04359d">lightStateUpdate</a> (int, QString)</td></tr>
-<tr class="memdesc:a85466633108bc2c93a3a7d3b0a04359d"><td class="mdescLeft">&#160;</td><td class="mdescRight">lightStateUpdate sent any time theres an update to the state of any of the lights. <br /></td></tr>
-<tr class="separator:a85466633108bc2c93a3a7d3b0a04359d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ede109867955ef9a49b8b0dd8d094c7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7ede109867955ef9a49b8b0dd8d094c7"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a7ede109867955ef9a49b8b0dd8d094c7">packetSent</a> ()</td></tr>
+<tr class="memdesc:a7ede109867955ef9a49b8b0dd8d094c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">packetSent anotification that a packet was sent by one of the commtypes. <br /></td></tr>
+<tr class="separator:a7ede109867955ef9a49b8b0dd8d094c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefc972c9597ce651bb3bd498102581b8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#aefc972c9597ce651bb3bd498102581b8">updateReceived</a> (int)</td></tr>
+<tr class="memdesc:aefc972c9597ce651bb3bd498102581b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateReceived a notification that a packet was received by one of the commtypes.  <a href="#aefc972c9597ce651bb3bd498102581b8">More...</a><br /></td></tr>
+<tr class="separator:aefc972c9597ce651bb3bd498102581b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -84,9 +87,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5e2c45c0adf0fc22efe7550d5a1d0b41"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a5e2c45c0adf0fc22efe7550d5a1d0b41">sendArrayColorChange</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, int index, QColor color)</td></tr>
 <tr class="memdesc:a5e2c45c0adf0fc22efe7550d5a1d0b41"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendColorChange change an array color in the lighting system  <a href="#a5e2c45c0adf0fc22efe7550d5a1d0b41">More...</a><br /></td></tr>
 <tr class="separator:a5e2c45c0adf0fc22efe7550d5a1d0b41"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a745be869caa96a1ca702e438381e7185"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a745be869caa96a1ca702e438381e7185">sendRoutineChange</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, ELightingRoutine routine, int colorGroupUsed=-1)</td></tr>
-<tr class="memdesc:a745be869caa96a1ca702e438381e7185"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendRoutineChange change the mode of the lights. The mode changes how the lights look. some modes are a single color, some modes are random colors and some use a saved array.  <a href="#a745be869caa96a1ca702e438381e7185">More...</a><br /></td></tr>
-<tr class="separator:a745be869caa96a1ca702e438381e7185"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a58a7d5057af854bdd063e24959c77b18"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a58a7d5057af854bdd063e24959c77b18">sendSingleRoutineChange</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, ELightingRoutine routine)</td></tr>
+<tr class="memdesc:a58a7d5057af854bdd063e24959c77b18"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendSingleRoutineChange change the mode of the lights. The mode changes how the lights look. This function should be used for single color routines.  <a href="#a58a7d5057af854bdd063e24959c77b18">More...</a><br /></td></tr>
+<tr class="separator:a58a7d5057af854bdd063e24959c77b18"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a434a5a11d147c5879494e2816879c98b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a434a5a11d147c5879494e2816879c98b">sendMultiRoutineChange</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, ELightingRoutine routine, EColorGroup colorGroup)</td></tr>
+<tr class="memdesc:a434a5a11d147c5879494e2816879c98b"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendMultiRoutineChange change the mode of the lights. The mode changes how the lights look. This function should be used for multi color routines, since it uses a color group.  <a href="#a434a5a11d147c5879494e2816879c98b">More...</a><br /></td></tr>
+<tr class="separator:a434a5a11d147c5879494e2816879c98b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e3ded2bd93ed90b329ab1b8ae7fd3e7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a1e3ded2bd93ed90b329ab1b8ae7fd3e7">sendColorTemperatureChange</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, int temperature)</td></tr>
+<tr class="memdesc:a1e3ded2bd93ed90b329ab1b8ae7fd3e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendColorTemperatureChange Hue only. Controls Ambient Lights and Extended Color lights by sending them a color temperature instead of color in HSV  <a href="#a1e3ded2bd93ed90b329ab1b8ae7fd3e7">More...</a><br /></td></tr>
+<tr class="separator:a1e3ded2bd93ed90b329ab1b8ae7fd3e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a070205837f82abbed152b7dd542a5145"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a070205837f82abbed152b7dd542a5145">sendCustomArrayCount</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, int count)</td></tr>
 <tr class="memdesc:a070205837f82abbed152b7dd542a5145"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendCustomArrayCount sends a new custom array count to the LED array. This count determines how many colors from the custom array should be used. It is different from the size of the custom array, which provides a maximum possible amount of colors.  <a href="#a070205837f82abbed152b7dd542a5145">More...</a><br /></td></tr>
 <tr class="separator:a070205837f82abbed152b7dd542a5145"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -103,15 +112,15 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ab2698aa7769e2ca64ff3ae9eddf1759f">sendReset</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList)</td></tr>
 <tr class="memdesc:ab2698aa7769e2ca64ff3ae9eddf1759f"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendReset resets the board to its default settings. <br /></td></tr>
 <tr class="separator:ab2698aa7769e2ca64ff3ae9eddf1759f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ace7c3b73ae0a7103854eb449e364e19f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ace7c3b73ae0a7103854eb449e364e19f">startupStream</a> (ECommType type)</td></tr>
-<tr class="memdesc:ace7c3b73ae0a7103854eb449e364e19f"><td class="mdescLeft">&#160;</td><td class="mdescRight">startupStream start stream of given type. This starts all of its maintence threads and discovery threads  <a href="#ace7c3b73ae0a7103854eb449e364e19f">More...</a><br /></td></tr>
-<tr class="separator:ace7c3b73ae0a7103854eb449e364e19f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3cc3a13a3961ab0bc6039f58137f8d7f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a3cc3a13a3961ab0bc6039f58137f8d7f">shutdownStream</a> (ECommType type)</td></tr>
-<tr class="memdesc:a3cc3a13a3961ab0bc6039f58137f8d7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">shutdownStream shuts down the stream of the given type. This stops all of its maintence threads and discovery threads.  <a href="#a3cc3a13a3961ab0bc6039f58137f8d7f">More...</a><br /></td></tr>
-<tr class="separator:a3cc3a13a3961ab0bc6039f58137f8d7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8addf743df9ec848b1438be17b787396"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a8addf743df9ec848b1438be17b787396">streamHasStarted</a> (ECommType type)</td></tr>
-<tr class="memdesc:a8addf743df9ec848b1438be17b787396"><td class="mdescLeft">&#160;</td><td class="mdescRight">streamHasStarted checks if a stream has been started and can currently be used.  <a href="#a8addf743df9ec848b1438be17b787396">More...</a><br /></td></tr>
-<tr class="separator:a8addf743df9ec848b1438be17b787396"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0eddb554aa1998362805890ad0141dd2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a0eddb554aa1998362805890ad0141dd2">startup</a> (ECommType type)</td></tr>
+<tr class="memdesc:a0eddb554aa1998362805890ad0141dd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">startup start stream of given type. This starts all of its maintence threads and discovery threads  <a href="#a0eddb554aa1998362805890ad0141dd2">More...</a><br /></td></tr>
+<tr class="separator:a0eddb554aa1998362805890ad0141dd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab23f9ea9bffe8271b5d0c5ec02057a43"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ab23f9ea9bffe8271b5d0c5ec02057a43">shutdown</a> (ECommType type)</td></tr>
+<tr class="memdesc:ab23f9ea9bffe8271b5d0c5ec02057a43"><td class="mdescLeft">&#160;</td><td class="mdescRight">shutdown shuts down the stream of the given type. This stops all of its maintence threads and discovery threads.  <a href="#ab23f9ea9bffe8271b5d0c5ec02057a43">More...</a><br /></td></tr>
+<tr class="separator:ab23f9ea9bffe8271b5d0c5ec02057a43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a939bd9f19f44f0a6239c20cd695a7a90"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a939bd9f19f44f0a6239c20cd695a7a90">hasStarted</a> (ECommType type)</td></tr>
+<tr class="memdesc:a939bd9f19f44f0a6239c20cd695a7a90"><td class="mdescLeft">&#160;</td><td class="mdescRight">hasStarted checks if a stream has been started and can currently be used.  <a href="#a939bd9f19f44f0a6239c20cd695a7a90">More...</a><br /></td></tr>
+<tr class="separator:a939bd9f19f44f0a6239c20cd695a7a90"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2d98a1b89b961878a9c1fc0c802a4a88"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a2d98a1b89b961878a9c1fc0c802a4a88">addController</a> (ECommType type, QString controller)</td></tr>
 <tr class="memdesc:a2d98a1b89b961878a9c1fc0c802a4a88"><td class="mdescLeft">&#160;</td><td class="mdescRight">addController attempt to add a controller to the hash table  <a href="#a2d98a1b89b961878a9c1fc0c802a4a88">More...</a><br /></td></tr>
 <tr class="separator:a2d98a1b89b961878a9c1fc0c802a4a88"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -137,12 +146,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 &lt; SLightDevice &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a2150b9b9f584a5064be8bae460361cbe">deviceTable</a> (ECommType type)</td></tr>
 <tr class="memdesc:a2150b9b9f584a5064be8bae460361cbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceTable a hash table of all connected devices of a certain connection type. The controller names are used as keys.  <a href="#a2150b9b9f584a5064be8bae460361cbe">More...</a><br /></td></tr>
 <tr class="separator:a2150b9b9f584a5064be8bae460361cbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae8743daed331918ab78b29aeefd48268"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ae8743daed331918ab78b29aeefd48268">initialSetup</a> (<a class="el" href="class_data_layer.html">DataLayer</a> *data)</td></tr>
-<tr class="memdesc:ae8743daed331918ab78b29aeefd48268"><td class="mdescLeft">&#160;</td><td class="mdescRight">initialSetup connect the data layer to the comm layer and set up things such as which streams should be enabled.  <a href="#ae8743daed331918ab78b29aeefd48268">More...</a><br /></td></tr>
-<tr class="separator:ae8743daed331918ab78b29aeefd48268"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a492d25e627cd0d9d583e721613df94bc"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="struct_s_hue_light.html">SHueLight</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a492d25e627cd0d9d583e721613df94bc">hueList</a> ()</td></tr>
-<tr class="memdesc:a492d25e627cd0d9d583e721613df94bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">connectedHues returns a vector of structs that contain all relevant states of all Hue lights connected to the Bridge. These values are updated every few seconds by a timer.  <a href="#a492d25e627cd0d9d583e721613df94bc">More...</a><br /></td></tr>
-<tr class="separator:a492d25e627cd0d9d583e721613df94bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02f4985d011c992ee0bb4be0e218b68d"><td class="memItemLeft" align="right" valign="top">std::list&lt; <a class="el" href="struct_s_hue_light.html">SHueLight</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a02f4985d011c992ee0bb4be0e218b68d">hueList</a> ()</td></tr>
+<tr class="memdesc:a02f4985d011c992ee0bb4be0e218b68d"><td class="mdescLeft">&#160;</td><td class="mdescRight">connectedHues returns a list of structs that contain all relevant states of all Hue lights connected to the Bridge. These values are updated every few seconds by a timer.  <a href="#a02f4985d011c992ee0bb4be0e218b68d">More...</a><br /></td></tr>
+<tr class="separator:a02f4985d011c992ee0bb4be0e218b68d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8de881da54b74fa9ccccbc46a89de79e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_s_hue_light.html">SHueLight</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a8de881da54b74fa9ccccbc46a89de79e">hueLightFromLightDevice</a> (const SLightDevice &amp;device)</td></tr>
+<tr class="memdesc:a8de881da54b74fa9ccccbc46a89de79e"><td class="mdescLeft">&#160;</td><td class="mdescRight">hueLightFromLightDevice takes a SLightDevice and retrieves the <a class="el" href="struct_s_hue_light.html" title="The SHueLight struct a struct that stores all the relevant data received from a state update from the...">SHueLight</a> that maps to the same device. The <a class="el" href="struct_s_hue_light.html" title="The SHueLight struct a struct that stores all the relevant data received from a state update from the...">SHueLight</a> struct provides hue specific data for the more general SLightDevice.  <a href="#a8de881da54b74fa9ccccbc46a89de79e">More...</a><br /></td></tr>
+<tr class="separator:a8de881da54b74fa9ccccbc46a89de79e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2016. Released under the GNU General Public License. </dd></dl>
@@ -253,7 +262,53 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="a492d25e627cd0d9d583e721613df94bc"></a>
+<a class="anchor" id="a939bd9f19f44f0a6239c20cd695a7a90"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool CommLayer::hasStarted </td>
+          <td>(</td>
+          <td class="paramtype">ECommType&#160;</td>
+          <td class="paramname"><em>type</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">type</td><td>the communication type to check for the stream </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if its been started, false otherwise. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a8de881da54b74fa9ccccbc46a89de79e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_s_hue_light.html">SHueLight</a> CommLayer::hueLightFromLightDevice </td>
+          <td>(</td>
+          <td class="paramtype">const SLightDevice &amp;&#160;</td>
+          <td class="paramname"><em>device</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">device</td><td>the device for the hue you want to look up </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a <a class="el" href="struct_s_hue_light.html" title="The SHueLight struct a struct that stores all the relevant data received from a state update from the...">SHueLight</a> filled with all known data about the requested device. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a02f4985d011c992ee0bb4be0e218b68d"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -261,7 +316,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;<a class="el" href="struct_s_hue_light.html">SHueLight</a>&gt; CommLayer::hueList </td>
+          <td class="memname">std::list&lt;<a class="el" href="struct_s_hue_light.html">SHueLight</a>&gt; CommLayer::hueList </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -273,29 +328,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>a vector of <a class="el" href="struct_s_hue_light.html" title="The SHueLight struct a struct that stores all the relevant data received from a state update from the...">SHueLight</a> structs which contain info on all the connected lights. </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="ae8743daed331918ab78b29aeefd48268"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CommLayer::initialSetup </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="class_data_layer.html">DataLayer</a> *&#160;</td>
-          <td class="paramname"><em>data</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">data</td><td>pointer to the data layer. </td></tr>
-  </table>
-  </dd>
-</dl>
+<dl class="section return"><dt>Returns</dt><dd>a list of <a class="el" href="struct_s_hue_light.html" title="The SHueLight struct a struct that stores all the relevant data received from a state update from the...">SHueLight</a> structs which contain info on all the connected lights. </dd></dl>
 
 </div>
 </div>
@@ -427,6 +460,38 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
+<a class="anchor" id="a1e3ded2bd93ed90b329ab1b8ae7fd3e7"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CommLayer::sendColorTemperatureChange </td>
+          <td>(</td>
+          <td class="paramtype">const std::list&lt; SLightDevice &gt; &amp;&#160;</td>
+          <td class="paramname"><em>deviceList</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>temperature</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">temperature</td><td>desired temperature in mirek, must be bewteen 153 and 500 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="a070205837f82abbed152b7dd542a5145"></a>
 <div class="memitem">
 <div class="memproto">
@@ -491,12 +556,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="a745be869caa96a1ca702e438381e7185"></a>
+<a class="anchor" id="a434a5a11d147c5879494e2816879c98b"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void CommLayer::sendRoutineChange </td>
+          <td class="memname">void CommLayer::sendMultiRoutineChange </td>
           <td>(</td>
           <td class="paramtype">const std::list&lt; SLightDevice &gt; &amp;&#160;</td>
           <td class="paramname"><em>deviceList</em>, </td>
@@ -510,8 +575,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>colorGroupUsed</em> = <code>-1</code>&#160;</td>
+          <td class="paramtype">EColorGroup&#160;</td>
+          <td class="paramname"><em>colorGroup</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -523,7 +588,38 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">routine</td><td>the mode being sent to the LED system </td></tr>
-    <tr><td class="paramname">colorGroupUsed</td><td>-1 if single color routine, otherwise a EColorGroup. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a58a7d5057af854bdd063e24959c77b18"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CommLayer::sendSingleRoutineChange </td>
+          <td>(</td>
+          <td class="paramtype">const std::list&lt; SLightDevice &gt; &amp;&#160;</td>
+          <td class="paramname"><em>deviceList</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ELightingRoutine&#160;</td>
+          <td class="paramname"><em>routine</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">routine</td><td>the mode being sent to the LED system </td></tr>
   </table>
   </dd>
 </dl>
@@ -594,12 +690,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="a3cc3a13a3961ab0bc6039f58137f8d7f"></a>
+<a class="anchor" id="ab23f9ea9bffe8271b5d0c5ec02057a43"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void CommLayer::shutdownStream </td>
+          <td class="memname">void CommLayer::shutdown </td>
           <td>(</td>
           <td class="paramtype">ECommType&#160;</td>
           <td class="paramname"><em>type</em></td><td>)</td>
@@ -616,12 +712,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="ace7c3b73ae0a7103854eb449e364e19f"></a>
+<a class="anchor" id="a0eddb554aa1998362805890ad0141dd2"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void CommLayer::startupStream </td>
+          <td class="memname">void CommLayer::startup </td>
           <td>(</td>
           <td class="paramtype">ECommType&#160;</td>
           <td class="paramname"><em>type</em></td><td>)</td>
@@ -638,26 +734,33 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="a8addf743df9ec848b1438be17b787396"></a>
+<a class="anchor" id="aefc972c9597ce651bb3bd498102581b8"></a>
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool CommLayer::streamHasStarted </td>
+          <td class="memname">void CommLayer::updateReceived </td>
           <td>(</td>
-          <td class="paramtype">ECommType&#160;</td>
-          <td class="paramname"><em>type</em></td><td>)</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">signal</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">type</td><td>the communication type to check for the stream </td></tr>
+    <tr><td class="paramname">type</td><td>the int representation of the ECommType that has been updated. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if its been started, false otherwise. </dd></dl>
 
 </div>
 </div>

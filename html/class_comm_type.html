@@ -76,6 +76,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#acbc434809e1145dff7f9cd3dcd7a068d">discoveryReceived</a> (QString, QString, int)</td></tr>
 <tr class="memdesc:acbc434809e1145dff7f9cd3dcd7a068d"><td class="mdescLeft">&#160;</td><td class="mdescRight">discoveryReceived emitted when a discovery packet is received, this contains the state of all connected devices. <br /></td></tr>
 <tr class="separator:acbc434809e1145dff7f9cd3dcd7a068d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac61ed4af1b52a921138f7f97e5d15b9e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac61ed4af1b52a921138f7f97e5d15b9e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ac61ed4af1b52a921138f7f97e5d15b9e">updateReceived</a> (int)</td></tr>
+<tr class="memdesc:ac61ed4af1b52a921138f7f97e5d15b9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateReceived an update packet was received from any controller. <br /></td></tr>
+<tr class="separator:ac61ed4af1b52a921138f7f97e5d15b9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -139,12 +143,23 @@ Protected Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#adb4143fad9f0cad9b4e0efff68614bf1">resetDiscovery</a> ()</td></tr>
 <tr class="memdesc:adb4143fad9f0cad9b4e0efff68614bf1"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetDiscovery clears the throttle list and discovery list and treats the commtype as if nothing has been discovered. <br /></td></tr>
 <tr class="separator:adb4143fad9f0cad9b4e0efff68614bf1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae92c228926c3214a78e12d3519102555"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae92c228926c3214a78e12d3519102555"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ae92c228926c3214a78e12d3519102555">resetStateUpdateTimeout</a> ()</td></tr>
+<tr class="memdesc:ae92c228926c3214a78e12d3519102555"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetStateUpdateTimeout reset the timer tracking when to shutdown the state update thread. <br /></td></tr>
+<tr class="separator:ae92c228926c3214a78e12d3519102555"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a140fb846eeb4d24976e2a4f514f95f0f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a140fb846eeb4d24976e2a4f514f95f0f">shouldContinueStateUpdate</a> ()</td></tr>
+<tr class="memdesc:a140fb846eeb4d24976e2a4f514f95f0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">shouldContinueStateUpdate checks internal states and determines if it should still keep requesting state updates from the devices.  <a href="#a140fb846eeb4d24976e2a4f514f95f0f">More...</a><br /></td></tr>
+<tr class="separator:a140fb846eeb4d24976e2a4f514f95f0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5b66737d5c7518453f138de385df52b2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a5b66737d5c7518453f138de385df52b2">handleDiscoveryPacket</a> (QString sender, int throttleInterval, int throttleMax)</td></tr>
 <tr class="memdesc:a5b66737d5c7518453f138de385df52b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">handleDiscoveryPacket called whenever a discovery packet is received by a commtype. Although all commtypes may received a packet in different ways or in differnt formats, all ways get converted so that they work with this function. The function determines if the device sending the discovery packet has been discovered already, and if it hasn't, it adds it to its list. It also initiates a throttle timer for this particular controller. Finally, it determines if its looking for any other controllers, and if its not, it shuts off the discovery timer.  <a href="#a5b66737d5c7518453f138de385df52b2">More...</a><br /></td></tr>
 <tr class="separator:a5b66737d5c7518453f138de385df52b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
+<tr class="memitem:a93d86e18ed75c62c422d727cc4e25b8c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a93d86e18ed75c62c422d727cc4e25b8c"></a>
+QTime&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a93d86e18ed75c62c422d727cc4e25b8c">mLastSendTime</a></td></tr>
+<tr class="memdesc:a93d86e18ed75c62c422d727cc4e25b8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">mLastSendTime the last time a message was sent to the commtype. This is tracked to detect when the device is no longer being actively used, so it can slow down or shut off state update packets. <br /></td></tr>
+<tr class="separator:a93d86e18ed75c62c422d727cc4e25b8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab17df6d25cf2db9d844945d6f135e65c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab17df6d25cf2db9d844945d6f135e65c"></a>
 std::unordered_map<br class="typebreak" />
 &lt; std::string, std::list<br class="typebreak" />
@@ -164,6 +179,10 @@ std::list&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><a
 QTimer *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a5fad0675d5baa960558751025bc5ec3a">mStateUpdateTimer</a></td></tr>
 <tr class="memdesc:a5fad0675d5baa960558751025bc5ec3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">mStateUpdateTimer Polls the controller every few seconds requesting updates on all of its devices. <br /></td></tr>
 <tr class="separator:a5fad0675d5baa960558751025bc5ec3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe98ed3a9a537c126fcebdb6ac109a09"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afe98ed3a9a537c126fcebdb6ac109a09"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#afe98ed3a9a537c126fcebdb6ac109a09">mStateUpdateInterval</a></td></tr>
+<tr class="memdesc:afe98ed3a9a537c126fcebdb6ac109a09"><td class="mdescLeft">&#160;</td><td class="mdescRight">mStateUpdateInterval number of msec between each state update request. <br /></td></tr>
+<tr class="separator:afe98ed3a9a537c126fcebdb6ac109a09"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a53ba509a1aa972b772c1c6f8f074a1cb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a53ba509a1aa972b772c1c6f8f074a1cb"></a>
 QTimer *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a53ba509a1aa972b772c1c6f8f074a1cb">mDiscoveryTimer</a></td></tr>
 <tr class="memdesc:a53ba509a1aa972b772c1c6f8f074a1cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">mDiscoveryTimer used during discovery to poll the device every few seconds. <br /></td></tr>
@@ -438,6 +457,30 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a class="anchor" id="a140fb846eeb4d24976e2a4f514f95f0f"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool CommType::shouldContinueStateUpdate </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>true if it should request state updates, false otherwise. </dd></dl>
 
 </div>
 </div>

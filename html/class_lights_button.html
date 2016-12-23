@@ -80,22 +80,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ae68d92b5d8354db7b6ea47dd40917bb2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lights_button.html#ae68d92b5d8354db7b6ea47dd40917bb2">LightsButton</a> (QWidget *parent=0)</td></tr>
 <tr class="memdesc:ae68d92b5d8354db7b6ea47dd40917bb2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#ae68d92b5d8354db7b6ea47dd40917bb2">More...</a><br /></td></tr>
 <tr class="separator:ae68d92b5d8354db7b6ea47dd40917bb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9bfff5636b554c9e8ec0c99bb9114cea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lights_button.html#a9bfff5636b554c9e8ec0c99bb9114cea">setupAsStandardButton</a> (ELightingRoutine routine, EColorGroup <a class="el" href="class_lights_button.html#a93e1a4c442d4a6cee80a1a09b3bb2835">colorGroup</a>, <a class="el" href="class_data_layer.html">DataLayer</a> *dataLayer, QString label=QString(&quot;&quot;))</td></tr>
-<tr class="memdesc:a9bfff5636b554c9e8ec0c99bb9114cea"><td class="mdescLeft">&#160;</td><td class="mdescRight">setupAsMultiButton sets up the button for use with the PresetArrayPage. Assigns it a mode, a preset, and an icon. Whenever the button is clicked it will emit presetClicked and will send its mode and preset in that signal.  <a href="#a9bfff5636b554c9e8ec0c99bb9114cea">More...</a><br /></td></tr>
-<tr class="separator:a9bfff5636b554c9e8ec0c99bb9114cea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af6009d43525249f677d2e54086b4d9c1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lights_button.html#af6009d43525249f677d2e54086b4d9c1">setupAsMenuButton</a> (int pageNumber, <a class="el" href="class_data_layer.html">DataLayer</a> *dataLayer)</td></tr>
-<tr class="memdesc:af6009d43525249f677d2e54086b4d9c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">setupAsMenuButton Used by the mainWindow for the top menu. Buttons send out their page number whenever they are clicked.  <a href="#af6009d43525249f677d2e54086b4d9c1">More...</a><br /></td></tr>
-<tr class="separator:af6009d43525249f677d2e54086b4d9c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a94f304341194f15779c5fe8c9fb9dcdf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a94f304341194f15779c5fe8c9fb9dcdf"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lights_button.html#a94f304341194f15779c5fe8c9fb9dcdf">updateIcon</a> ()</td></tr>
-<tr class="memdesc:a94f304341194f15779c5fe8c9fb9dcdf"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateIcon update the icon of the of the lightsbutton. <br /></td></tr>
-<tr class="separator:a94f304341194f15779c5fe8c9fb9dcdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7638cfcc0545fef611cb6ffcac51543d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lights_button.html#a7638cfcc0545fef611cb6ffcac51543d">setupAsStandardButton</a> (ELightingRoutine routine, EColorGroup <a class="el" href="class_lights_button.html#a93e1a4c442d4a6cee80a1a09b3bb2835">colorGroup</a>, QString label=QString(&quot;&quot;), const std::vector&lt; QColor &gt; &amp;group=std::vector&lt; QColor &gt;())</td></tr>
+<tr class="memdesc:a7638cfcc0545fef611cb6ffcac51543d"><td class="mdescLeft">&#160;</td><td class="mdescRight">setupAsMultiButton sets up the button for use with the PresetArrayPage. Assigns it a mode, a preset, and an icon. Whenever the button is clicked it will emit presetClicked and will send its mode and preset in that signal.  <a href="#a7638cfcc0545fef611cb6ffcac51543d">More...</a><br /></td></tr>
+<tr class="separator:a7638cfcc0545fef611cb6ffcac51543d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4faa8abc3312579516341d3b7f442b0b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lights_button.html#a4faa8abc3312579516341d3b7f442b0b">setupAsMenuButton</a> (int pageNumber, const std::vector&lt; QColor &gt; &amp;group=std::vector&lt; QColor &gt;())</td></tr>
+<tr class="memdesc:a4faa8abc3312579516341d3b7f442b0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">setupAsMenuButton Used by the mainWindow for the top menu. Buttons send out their page number whenever they are clicked.  <a href="#a4faa8abc3312579516341d3b7f442b0b">More...</a><br /></td></tr>
+<tr class="separator:a4faa8abc3312579516341d3b7f442b0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f50bbec79f6639f830828a25eff6fcd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lights_button.html#a3f50bbec79f6639f830828a25eff6fcd">updateIconSingleColorRoutine</a> (ELightingRoutine <a class="el" href="class_lights_button.html#aebf97d7ca465530e46c403489d395a17">lightingRoutine</a>, QColor color)</td></tr>
 <tr class="memdesc:a3f50bbec79f6639f830828a25eff6fcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateIconSingleColorRoutine update the button's icon based off of a lighting routine and color. This function requires single color routines to work properly.  <a href="#a3f50bbec79f6639f830828a25eff6fcd">More...</a><br /></td></tr>
 <tr class="separator:a3f50bbec79f6639f830828a25eff6fcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af57c7c14770724e29654e0a9ef105f03"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lights_button.html#af57c7c14770724e29654e0a9ef105f03">updateIconPresetColorRoutine</a> (ELightingRoutine <a class="el" href="class_lights_button.html#aebf97d7ca465530e46c403489d395a17">lightingRoutine</a>, EColorGroup <a class="el" href="class_lights_button.html#a93e1a4c442d4a6cee80a1a09b3bb2835">colorGroup</a>)</td></tr>
-<tr class="memdesc:af57c7c14770724e29654e0a9ef105f03"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateIconPresetColorRoutine update the button's icon based off of a lighting routine and color group. This function requires multi color routiens tow ork properly.  <a href="#af57c7c14770724e29654e0a9ef105f03">More...</a><br /></td></tr>
-<tr class="separator:af57c7c14770724e29654e0a9ef105f03"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a841875d68b9c8b68b1fc1447e830afd8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lights_button.html#a841875d68b9c8b68b1fc1447e830afd8">updateIconPresetColorRoutine</a> (ELightingRoutine <a class="el" href="class_lights_button.html#aebf97d7ca465530e46c403489d395a17">lightingRoutine</a>, EColorGroup <a class="el" href="class_lights_button.html#a93e1a4c442d4a6cee80a1a09b3bb2835">colorGroup</a>, const std::vector&lt; QColor &gt; &amp;colors, int colorMax=-1)</td></tr>
+<tr class="memdesc:a841875d68b9c8b68b1fc1447e830afd8"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateIconPresetColorRoutine update the button's icon based off of a lighting routine and color group. This function requires multi color routiens tow ork properly.  <a href="#a841875d68b9c8b68b1fc1447e830afd8">More...</a><br /></td></tr>
+<tr class="separator:a841875d68b9c8b68b1fc1447e830afd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaae15c24d7cfde201d497b49aa2e487b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lights_button.html#aaae15c24d7cfde201d497b49aa2e487b">enable</a> (bool shouldEnable)</td></tr>
 <tr class="memdesc:aaae15c24d7cfde201d497b49aa2e487b"><td class="mdescLeft">&#160;</td><td class="mdescRight">enable enables/disables the lightsbutton.  <a href="#aaae15c24d7cfde201d497b49aa2e487b">More...</a><br /></td></tr>
 <tr class="separator:aaae15c24d7cfde201d497b49aa2e487b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -208,7 +204,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 </div>
 </div>
-<a class="anchor" id="af6009d43525249f677d2e54086b4d9c1"></a>
+<a class="anchor" id="a4faa8abc3312579516341d3b7f442b0b"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -221,8 +217,8 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_data_layer.html">DataLayer</a> *&#160;</td>
-          <td class="paramname"><em>dataLayer</em>&#160;</td>
+          <td class="paramtype">const std::vector&lt; QColor &gt; &amp;&#160;</td>
+          <td class="paramname"><em>group</em> = <code>std::vector&lt;QColor&gt;()</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -234,14 +230,13 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pageNumber</td><td>the number that this menu button is getting set up to signal whenever its clicked. </td></tr>
-    <tr><td class="paramname">dataLayer</td><td>pointer to the data layer, which is used for creating the icon. </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a class="anchor" id="a9bfff5636b554c9e8ec0c99bb9114cea"></a>
+<a class="anchor" id="a7638cfcc0545fef611cb6ffcac51543d"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -260,14 +255,14 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_data_layer.html">DataLayer</a> *&#160;</td>
-          <td class="paramname"><em>dataLayer</em>, </td>
+          <td class="paramtype">QString&#160;</td>
+          <td class="paramname"><em>label</em> = <code>QString(&quot;&quot;)</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">QString&#160;</td>
-          <td class="paramname"><em>label</em> = <code>QString(&quot;&quot;)</code>&#160;</td>
+          <td class="paramtype">const std::vector&lt; QColor &gt; &amp;&#160;</td>
+          <td class="paramname"><em>group</em> = <code>std::vector&lt;QColor&gt;()</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -280,14 +275,13 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
   <table class="params">
     <tr><td class="paramname">routine</td><td>the ELightingRoutine that emits when this button is pushed. </td></tr>
     <tr><td class="paramname">colorGroup</td><td>The EColorGroup that emits when this button is pushed. </td></tr>
-    <tr><td class="paramname">dataLayer</td><td>used to create the icon for the button </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a class="anchor" id="af57c7c14770724e29654e0a9ef105f03"></a>
+<a class="anchor" id="a841875d68b9c8b68b1fc1447e830afd8"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -301,7 +295,19 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">EColorGroup&#160;</td>
-          <td class="paramname"><em>colorGroup</em>&#160;</td>
+          <td class="paramname"><em>colorGroup</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; QColor &gt; &amp;&#160;</td>
+          <td class="paramname"><em>colors</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>colorMax</em> = <code>-1</code>&#160;</td>
         </tr>
         <tr>
           <td></td>

@@ -66,108 +66,143 @@
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;huebridgediscovery.h&quot;</span></div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;commthrottle.h&quot;</span></div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;commpacketparser.h&quot;</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;datalayer.h&quot;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div>
-<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="struct_s_hue_light.html">   28</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_s_hue_light.html">SHueLight</a> {</div>
-<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="struct_s_hue_light.html#a2c9de035861d957d4317869b323bb024">   32</a></span>&#160;    QString <a class="code" href="struct_s_hue_light.html#a2c9de035861d957d4317869b323bb024">type</a>;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
-<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="struct_s_hue_light.html#a74518894b1c8756cf42180f757d1e134">   37</a></span>&#160;    QString <a class="code" href="struct_s_hue_light.html#a74518894b1c8756cf42180f757d1e134">uniqueID</a>;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;};</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
-<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="class_comm_hue.html">   51</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_comm_hue.html">CommHue</a> : <span class="keyword">public</span> <a class="code" href="class_comm_type.html">CommType</a></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;{</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;     Q_OBJECT</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <a class="code" href="class_comm_hue.html#a6437a21abfd54172305bd1eda8c52845">CommHue</a>();</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <a class="code" href="class_comm_hue.html#a29d74852b7183e5fb0ffb77816969bee">~CommHue</a>();</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_hue.html#a5d07b03566ff1f1bba48c95ccb04560f">startup</a>();</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_hue.html#acdcd223b12613b92a682a2c8b50f17a6">shutdown</a>();</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_hue.html#a1fe74937f88a0c59551ea73d3b76467e">changeLight</a>(<span class="keywordtype">int</span> lightIndex, <span class="keywordtype">int</span> saturation, <span class="keywordtype">int</span> brightness, <span class="keywordtype">int</span> hue);</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_hue.html#ad7e58e5e30432d41ec5db8629aa96003">turnOn</a>(<span class="keywordtype">int</span> lightIndex);</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_hue.html#a14a5ac47af072e9573f4349552de3b8a">turnOff</a>(<span class="keywordtype">int</span> lightIndex);</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
-<div class="line"><a name="l00101"></a><span class="lineno"><a class="line" href="class_comm_hue.html#a17653732b8e7e7be66e9e7ccda3a428d">  101</a></span>&#160;    std::vector&lt;SHueLight&gt; <a class="code" href="class_comm_hue.html#a17653732b8e7e7be66e9e7ccda3a428d">connectedHues</a>() { <span class="keywordflow">return</span> mConnectedHues; }</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;</div>
-<div class="line"><a name="l00108"></a><span class="lineno"><a class="line" href="class_comm_hue.html#ae88f3e48667d971fcfb337a06fce28b7">  108</a></span>&#160;    <a class="code" href="class_hue_bridge_discovery.html">HueBridgeDiscovery</a> *<a class="code" href="class_comm_hue.html#ae88f3e48667d971fcfb337a06fce28b7">discovery</a>() { <span class="keywordflow">return</span> mDiscovery; }</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_hue.html#a549a6fa8dfd50a1e241a538efc693376">sendPacket</a>(QString controller, QString packet);</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;</div>
-<div class="line"><a name="l00121"></a><span class="lineno"><a class="line" href="class_comm_hue.html#af1318afbbc81e9229a2ff5398267611e">  121</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_hue.html#af1318afbbc81e9229a2ff5398267611e">dataLayer</a>(<a class="code" href="class_data_layer.html">DataLayer</a> *data) { mData = data; }</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">enum class</span> EHueType {</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    eExtended,</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    eAmbient,</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    EHueType_MAX</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;};</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div>
+<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="struct_s_hue_light.html">   33</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_s_hue_light.html">SHueLight</a> {</div>
+<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="struct_s_hue_light.html#ada39fcf62f1494d48bb66dedf8123c53">   37</a></span>&#160;    EHueType <a class="code" href="struct_s_hue_light.html#ada39fcf62f1494d48bb66dedf8123c53">type</a>;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
+<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="struct_s_hue_light.html#a74518894b1c8756cf42180f757d1e134">   42</a></span>&#160;    QString <a class="code" href="struct_s_hue_light.html#a74518894b1c8756cf42180f757d1e134">uniqueID</a>;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
+<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="struct_s_hue_light.html#a83f33c22c607f239e27b8a0f851ea5aa">   47</a></span>&#160;    QString <a class="code" href="struct_s_hue_light.html#a83f33c22c607f239e27b8a0f851ea5aa">name</a>;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
+<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="struct_s_hue_light.html#abe079775e919dd41109f62d91545e115">   52</a></span>&#160;    QString <a class="code" href="struct_s_hue_light.html#abe079775e919dd41109f62d91545e115">modelID</a>;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
+<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="struct_s_hue_light.html#acd2ce65aef7f7ffc89c821154e94a626">   57</a></span>&#160;    QString <a class="code" href="struct_s_hue_light.html#acd2ce65aef7f7ffc89c821154e94a626">manufacturer</a>;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="struct_s_hue_light.html#a923c38d7294485944c987442202e0d49">   62</a></span>&#160;    QString <a class="code" href="struct_s_hue_light.html#a923c38d7294485944c987442202e0d49">softwareVersion</a>;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
+<div class="line"><a name="l00068"></a><span class="lineno"><a class="line" href="struct_s_hue_light.html#a16850863ecdb913313a3b9db4d844de3">   68</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="struct_s_hue_light.html#a16850863ecdb913313a3b9db4d844de3">deviceIndex</a>;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;};</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span> operator==(<span class="keyword">const</span> <a class="code" href="struct_s_hue_light.html">SHueLight</a>&amp; lhs, <span class="keyword">const</span> <a class="code" href="struct_s_hue_light.html">SHueLight</a>&amp; rhs)</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;{</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">bool</span> result = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordflow">if</span> (lhs.<a class="code" href="struct_s_hue_light.html#a16850863ecdb913313a3b9db4d844de3">deviceIndex</a>     !=  rhs.<a class="code" href="struct_s_hue_light.html#a16850863ecdb913313a3b9db4d844de3">deviceIndex</a>) result = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordflow">return</span> result;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;}</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
+<div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="class_comm_hue.html">   88</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_comm_hue.html">CommHue</a> : <span class="keyword">public</span> <a class="code" href="class_comm_type.html">CommType</a></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;{</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;     Q_OBJECT</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <a class="code" href="class_comm_hue.html#a6437a21abfd54172305bd1eda8c52845">CommHue</a>();</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <a class="code" href="class_comm_hue.html#a29d74852b7183e5fb0ffb77816969bee">~CommHue</a>();</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_hue.html#a5d07b03566ff1f1bba48c95ccb04560f">startup</a>();</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_hue.html#acdcd223b12613b92a682a2c8b50f17a6">shutdown</a>();</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_hue.html#abcb81452a55b4bf4d2473c47845d1f37">changeExtendedLight</a>(<span class="keywordtype">int</span> lightIndex, <span class="keywordtype">int</span> saturation, <span class="keywordtype">int</span> brightness, <span class="keywordtype">int</span> hue);</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;signals:</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_hue.html#a0012f2210b2f43f725026469eb6bc3b8">hueLightStatesUpdated</a>();</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="keyword">private</span> slots:</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_hue.html#ae0bd56e1ed2b136716bb5c8a42f3d736">changeAmbientLight</a>(<span class="keywordtype">int</span> lightIndex, <span class="keywordtype">int</span> ct);</div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keywordtype">void</span> replyFinished(QNetworkReply*);</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_hue.html#ad7e58e5e30432d41ec5db8629aa96003">turnOn</a>(<span class="keywordtype">int</span> lightIndex);</div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    <span class="keywordtype">void</span> updateLightStates();</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <span class="keywordtype">void</span> connectionStatusHasChanged(<span class="keywordtype">bool</span>);</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    <span class="keywordtype">void</span> sendThrottleBuffer(QString, QString);</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <span class="keywordtype">void</span> mainColorChange(<span class="keywordtype">int</span> deviceIndex, QColor color);</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <span class="keywordtype">void</span> arrayColorChange(<span class="keywordtype">int</span> deviceIndex, <span class="keywordtype">int</span> arrayIndex, QColor color);</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    <span class="keywordtype">void</span> routineChange(<span class="keywordtype">int</span> deviceIndex, <span class="keywordtype">int</span> routineIndex, <span class="keywordtype">int</span> colorGroup);</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    <span class="keywordtype">void</span> customArrayCount(<span class="keywordtype">int</span> deviceIndex, <span class="keywordtype">int</span> customArrayCount);</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    <span class="keywordtype">void</span> brightnessChange(<span class="keywordtype">int</span> deviceIndex, <span class="keywordtype">int</span> brightness);</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_hue.html#a14a5ac47af072e9573f4349552de3b8a">turnOff</a>(<span class="keywordtype">int</span> lightIndex);</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;</div>
+<div class="line"><a name="l00148"></a><span class="lineno"><a class="line" href="class_comm_hue.html#a57ff41ac21bb508ba33f0402e5ab57b5">  148</a></span>&#160;    std::list&lt;SHueLight&gt; <a class="code" href="class_comm_hue.html#a57ff41ac21bb508ba33f0402e5ab57b5">connectedHues</a>() { <span class="keywordflow">return</span> mConnectedHues; }</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;</div>
+<div class="line"><a name="l00155"></a><span class="lineno"><a class="line" href="class_comm_hue.html#ae88f3e48667d971fcfb337a06fce28b7">  155</a></span>&#160;    <a class="code" href="class_hue_bridge_discovery.html">HueBridgeDiscovery</a> *<a class="code" href="class_comm_hue.html#ae88f3e48667d971fcfb337a06fce28b7">discovery</a>() { <span class="keywordflow">return</span> mDiscovery; }</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_hue.html#a549a6fa8dfd50a1e241a538efc693376">sendPacket</a>(QString controller, QString packet);</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    <a class="code" href="struct_s_hue_light.html">SHueLight</a> <a class="code" href="class_comm_hue.html#a84dfaf04e9d6f01b3bee479cf0a6d3e3">hueLightFromLightDevice</a>(<span class="keyword">const</span> SLightDevice&amp; device);</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="keyword">private</span> slots:</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    <span class="keywordtype">void</span> replyFinished(QNetworkReply*);</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    <span class="keywordtype">void</span> updateLightStates();</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    <span class="keywordtype">void</span> connectionStatusHasChanged(<span class="keywordtype">bool</span>);</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    <span class="keywordtype">void</span> sendThrottleBuffer(QString, QString);</div>
 <div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;    <span class="keywordtype">void</span> speedChange(<span class="keywordtype">int</span> deviceIndex, <span class="keywordtype">int</span> speed);</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;    <span class="keywordtype">void</span> timeOutChange(<span class="keywordtype">int</span> deviceIndex, <span class="keywordtype">int</span> timeout);</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;    <span class="keywordtype">void</span> resetSettings();</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;    QNetworkAccessManager *mNetworkManager;</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    <a class="code" href="class_hue_bridge_discovery.html">HueBridgeDiscovery</a> *mDiscovery;</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    <span class="keywordtype">void</span> mainColorChange(<span class="keywordtype">int</span> deviceIndex, QColor color);</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    <span class="keywordtype">void</span> arrayColorChange(<span class="keywordtype">int</span> deviceIndex, <span class="keywordtype">int</span> arrayIndex, QColor color);</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    <span class="keywordtype">void</span> routineChange(<span class="keywordtype">int</span> deviceIndex, <span class="keywordtype">int</span> routineIndex, <span class="keywordtype">int</span> colorGroup);</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    <span class="keywordtype">void</span> customArrayCount(<span class="keywordtype">int</span> deviceIndex, <span class="keywordtype">int</span> customArrayCount);</div>
 <div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    std::vector&lt;SHueLight&gt; mConnectedHues;</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;    QString mUrlStart;</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    CommThrottle *mThrottle;</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    <a class="code" href="class_comm_packet_parser.html">CommPacketParser</a> *mParser;</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    <a class="code" href="class_data_layer.html">DataLayer</a> *mData;</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    <span class="keywordtype">bool</span> updateHueLightState(QJsonObject <span class="keywordtype">object</span>, <span class="keywordtype">int</span> i);</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;};</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;<span class="preprocessor">#endif // COMMHUE_H</span></div>
-<div class="ttc" id="class_comm_hue_html_a549a6fa8dfd50a1e241a538efc693376"><div class="ttname"><a href="class_comm_hue.html#a549a6fa8dfd50a1e241a538efc693376">CommHue::sendPacket</a></div><div class="ttdeci">void sendPacket(QString controller, QString packet)</div><div class="ttdoc">sendPacket Takes a packet in the format of a Corluma lights command (a comma delimited QString) and c...</div><div class="ttdef"><b>Definition:</b> commhue.cpp:61</div></div>
-<div class="ttc" id="class_comm_hue_html"><div class="ttname"><a href="class_comm_hue.html">CommHue</a></div><div class="ttdoc">The CommHue class communicates with a Phillips Hue Bridge to control all of the currently connected H...</div><div class="ttdef"><b>Definition:</b> commhue.h:51</div></div>
-<div class="ttc" id="struct_s_hue_light_html_a74518894b1c8756cf42180f757d1e134"><div class="ttname"><a href="struct_s_hue_light.html#a74518894b1c8756cf42180f757d1e134">SHueLight::uniqueID</a></div><div class="ttdeci">QString uniqueID</div><div class="ttdoc">uniqueID a unique identifier of that particular light. </div><div class="ttdef"><b>Definition:</b> commhue.h:37</div></div>
-<div class="ttc" id="class_comm_hue_html_a17653732b8e7e7be66e9e7ccda3a428d"><div class="ttname"><a href="class_comm_hue.html#a17653732b8e7e7be66e9e7ccda3a428d">CommHue::connectedHues</a></div><div class="ttdeci">std::vector&lt; SHueLight &gt; connectedHues()</div><div class="ttdoc">connectedHues returns vector of the currently connected Hue lights. Used by the settings page to disp...</div><div class="ttdef"><b>Definition:</b> commhue.h:101</div></div>
-<div class="ttc" id="class_comm_hue_html_a29d74852b7183e5fb0ffb77816969bee"><div class="ttname"><a href="class_comm_hue.html#a29d74852b7183e5fb0ffb77816969bee">CommHue::~CommHue</a></div><div class="ttdeci">~CommHue()</div><div class="ttdoc">CommHue Deconstructor. </div><div class="ttdef"><b>Definition:</b> commhue.cpp:57</div></div>
-<div class="ttc" id="class_comm_hue_html_a1fe74937f88a0c59551ea73d3b76467e"><div class="ttname"><a href="class_comm_hue.html#a1fe74937f88a0c59551ea73d3b76467e">CommHue::changeLight</a></div><div class="ttdeci">void changeLight(int lightIndex, int saturation, int brightness, int hue)</div><div class="ttdoc">changeLight send a packet to a hue bridge to change the color of a given hue light. </div><div class="ttdef"><b>Definition:</b> commhue.cpp:67</div></div>
-<div class="ttc" id="struct_s_hue_light_html_a2c9de035861d957d4317869b323bb024"><div class="ttname"><a href="struct_s_hue_light.html#a2c9de035861d957d4317869b323bb024">SHueLight::type</a></div><div class="ttdeci">QString type</div><div class="ttdoc">type the type of Hue product connected. </div><div class="ttdef"><b>Definition:</b> commhue.h:32</div></div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    <span class="keywordtype">void</span> brightnessChange(<span class="keywordtype">int</span> deviceIndex, <span class="keywordtype">int</span> brightness);</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    <span class="keywordtype">void</span> speedChange(<span class="keywordtype">int</span> deviceIndex, <span class="keywordtype">int</span> speed);</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    <span class="keywordtype">void</span> timeOutChange(<span class="keywordtype">int</span> deviceIndex, <span class="keywordtype">int</span> timeout);</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    <span class="keywordtype">void</span> resetSettings();</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    QNetworkAccessManager *mNetworkManager;</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    <a class="code" href="class_hue_bridge_discovery.html">HueBridgeDiscovery</a> *mDiscovery;</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    std::list&lt;SHueLight&gt; mConnectedHues;</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;    QString mUrlStart;</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;    CommThrottle *mThrottle;</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    <a class="code" href="class_comm_packet_parser.html">CommPacketParser</a> *mParser;</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    EHueType stringToHueType(<span class="keyword">const</span> QString&amp; <span class="keywordtype">string</span>);</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;    EColorMode hueStringtoColorMode(<span class="keyword">const</span> QString&amp; mode);</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    <span class="keywordtype">void</span> handleSuccessPacket(QString key, QJsonValue value);</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;    <span class="keywordtype">void</span> handleErrorPacket(QString key, QJsonValue value);</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    <span class="keywordtype">bool</span> updateHueLightState(QJsonValue <span class="keywordtype">object</span>, <span class="keywordtype">int</span> i);</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;    <span class="keywordtype">void</span> sendString(<span class="keywordtype">int</span> index, <span class="keyword">const</span> QString&amp; <span class="keywordtype">string</span>);</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;};</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;<span class="preprocessor">#endif // COMMHUE_H</span></div>
+<div class="ttc" id="class_comm_hue_html_a549a6fa8dfd50a1e241a538efc693376"><div class="ttname"><a href="class_comm_hue.html#a549a6fa8dfd50a1e241a538efc693376">CommHue::sendPacket</a></div><div class="ttdeci">void sendPacket(QString controller, QString packet)</div><div class="ttdoc">sendPacket Takes a packet in the format of a Corluma lights command (a comma delimited QString) and c...</div><div class="ttdef"><b>Definition:</b> commhue.cpp:62</div></div>
+<div class="ttc" id="struct_s_hue_light_html_ada39fcf62f1494d48bb66dedf8123c53"><div class="ttname"><a href="struct_s_hue_light.html#ada39fcf62f1494d48bb66dedf8123c53">SHueLight::type</a></div><div class="ttdeci">EHueType type</div><div class="ttdoc">type the type of Hue product connected. </div><div class="ttdef"><b>Definition:</b> commhue.h:37</div></div>
+<div class="ttc" id="class_comm_hue_html"><div class="ttname"><a href="class_comm_hue.html">CommHue</a></div><div class="ttdoc">The CommHue class communicates with a Phillips Hue Bridge to control all of the currently connected H...</div><div class="ttdef"><b>Definition:</b> commhue.h:88</div></div>
+<div class="ttc" id="struct_s_hue_light_html_a923c38d7294485944c987442202e0d49"><div class="ttname"><a href="struct_s_hue_light.html#a923c38d7294485944c987442202e0d49">SHueLight::softwareVersion</a></div><div class="ttdeci">QString softwareVersion</div><div class="ttdoc">softwareVersion exact software version of light. </div><div class="ttdef"><b>Definition:</b> commhue.h:62</div></div>
+<div class="ttc" id="class_comm_hue_html_abcb81452a55b4bf4d2473c47845d1f37"><div class="ttname"><a href="class_comm_hue.html#abcb81452a55b4bf4d2473c47845d1f37">CommHue::changeExtendedLight</a></div><div class="ttdeci">void changeExtendedLight(int lightIndex, int saturation, int brightness, int hue)</div><div class="ttdoc">changeLight send a packet to a hue bridge to change the color of a given hue light. </div><div class="ttdef"><b>Definition:</b> commhue.cpp:68</div></div>
+<div class="ttc" id="class_comm_hue_html_a57ff41ac21bb508ba33f0402e5ab57b5"><div class="ttname"><a href="class_comm_hue.html#a57ff41ac21bb508ba33f0402e5ab57b5">CommHue::connectedHues</a></div><div class="ttdeci">std::list&lt; SHueLight &gt; connectedHues()</div><div class="ttdoc">connectedHues returns vector of the currently connected Hue lights. Used by the settings page to disp...</div><div class="ttdef"><b>Definition:</b> commhue.h:148</div></div>
+<div class="ttc" id="struct_s_hue_light_html_a74518894b1c8756cf42180f757d1e134"><div class="ttname"><a href="struct_s_hue_light.html#a74518894b1c8756cf42180f757d1e134">SHueLight::uniqueID</a></div><div class="ttdeci">QString uniqueID</div><div class="ttdoc">uniqueID a unique identifier of that particular light. </div><div class="ttdef"><b>Definition:</b> commhue.h:42</div></div>
+<div class="ttc" id="class_comm_hue_html_a29d74852b7183e5fb0ffb77816969bee"><div class="ttname"><a href="class_comm_hue.html#a29d74852b7183e5fb0ffb77816969bee">CommHue::~CommHue</a></div><div class="ttdeci">~CommHue()</div><div class="ttdoc">CommHue Deconstructor. </div><div class="ttdef"><b>Definition:</b> commhue.cpp:58</div></div>
 <div class="ttc" id="class_comm_packet_parser_html"><div class="ttname"><a href="class_comm_packet_parser.html">CommPacketParser</a></div><div class="ttdoc">The CommPacketParser class takes the packets used for communication with other devices as input...</div><div class="ttdef"><b>Definition:</b> commpacketparser.h:22</div></div>
-<div class="ttc" id="struct_s_hue_light_html"><div class="ttname"><a href="struct_s_hue_light.html">SHueLight</a></div><div class="ttdoc">The SHueLight struct a struct that stores all the relevant data received from a state update from the...</div><div class="ttdef"><b>Definition:</b> commhue.h:28</div></div>
-<div class="ttc" id="class_data_layer_html"><div class="ttname"><a href="class_data_layer.html">DataLayer</a></div><div class="ttdoc">The DataLayer class stores and maintains the data about the state and settings of the application...</div><div class="ttdef"><b>Definition:</b> datalayer.h:32</div></div>
-<div class="ttc" id="class_comm_hue_html_ae88f3e48667d971fcfb337a06fce28b7"><div class="ttname"><a href="class_comm_hue.html#ae88f3e48667d971fcfb337a06fce28b7">CommHue::discovery</a></div><div class="ttdeci">HueBridgeDiscovery * discovery()</div><div class="ttdoc">discovery returns a pointer to the object used to discover the Hue Bridge. This can be used to connec...</div><div class="ttdef"><b>Definition:</b> commhue.h:108</div></div>
-<div class="ttc" id="class_comm_hue_html_a14a5ac47af072e9573f4349552de3b8a"><div class="ttname"><a href="class_comm_hue.html#a14a5ac47af072e9573f4349552de3b8a">CommHue::turnOff</a></div><div class="ttdeci">void turnOff(int lightIndex)</div><div class="ttdoc">turnOff turns off the Hue light at a given index </div><div class="ttdef"><b>Definition:</b> commhue.cpp:110</div></div>
-<div class="ttc" id="class_comm_hue_html_acdcd223b12613b92a682a2c8b50f17a6"><div class="ttname"><a href="class_comm_hue.html#acdcd223b12613b92a682a2c8b50f17a6">CommHue::shutdown</a></div><div class="ttdeci">void shutdown()</div><div class="ttdoc">shutdown defined in CommType </div><div class="ttdef"><b>Definition:</b> commhue.cpp:49</div></div>
-<div class="ttc" id="class_comm_hue_html_a0012f2210b2f43f725026469eb6bc3b8"><div class="ttname"><a href="class_comm_hue.html#a0012f2210b2f43f725026469eb6bc3b8">CommHue::hueLightStatesUpdated</a></div><div class="ttdeci">void hueLightStatesUpdated()</div><div class="ttdoc">hueLightStatesUpdated signals whenever the light states have updated. </div></div>
+<div class="ttc" id="struct_s_hue_light_html"><div class="ttname"><a href="struct_s_hue_light.html">SHueLight</a></div><div class="ttdoc">The SHueLight struct a struct that stores all the relevant data received from a state update from the...</div><div class="ttdef"><b>Definition:</b> commhue.h:33</div></div>
+<div class="ttc" id="struct_s_hue_light_html_acd2ce65aef7f7ffc89c821154e94a626"><div class="ttname"><a href="struct_s_hue_light.html#acd2ce65aef7f7ffc89c821154e94a626">SHueLight::manufacturer</a></div><div class="ttdeci">QString manufacturer</div><div class="ttdoc">manufacturer manfucturer of light. </div><div class="ttdef"><b>Definition:</b> commhue.h:57</div></div>
+<div class="ttc" id="class_comm_hue_html_ae0bd56e1ed2b136716bb5c8a42f3d736"><div class="ttname"><a href="class_comm_hue.html#ae0bd56e1ed2b136716bb5c8a42f3d736">CommHue::changeAmbientLight</a></div><div class="ttdeci">void changeAmbientLight(int lightIndex, int ct)</div><div class="ttdoc">changeAmbientLight changes the color of the bulb to match the color temperature given. This is the only way to interact with white ambiance bulbs and it can also be used with the RGB bulbs. </div><div class="ttdef"><b>Definition:</b> commhue.cpp:87</div></div>
+<div class="ttc" id="struct_s_hue_light_html_a83f33c22c607f239e27b8a0f851ea5aa"><div class="ttname"><a href="struct_s_hue_light.html#a83f33c22c607f239e27b8a0f851ea5aa">SHueLight::name</a></div><div class="ttdeci">QString name</div><div class="ttdoc">name name of light. not necessarily unique and can be assigned. </div><div class="ttdef"><b>Definition:</b> commhue.h:47</div></div>
+<div class="ttc" id="class_comm_hue_html_ae88f3e48667d971fcfb337a06fce28b7"><div class="ttname"><a href="class_comm_hue.html#ae88f3e48667d971fcfb337a06fce28b7">CommHue::discovery</a></div><div class="ttdeci">HueBridgeDiscovery * discovery()</div><div class="ttdoc">discovery returns a pointer to the object used to discover the Hue Bridge. This can be used to connec...</div><div class="ttdef"><b>Definition:</b> commhue.h:155</div></div>
+<div class="ttc" id="class_comm_hue_html_a84dfaf04e9d6f01b3bee479cf0a6d3e3"><div class="ttname"><a href="class_comm_hue.html#a84dfaf04e9d6f01b3bee479cf0a6d3e3">CommHue::hueLightFromLightDevice</a></div><div class="ttdeci">SHueLight hueLightFromLightDevice(const SLightDevice &amp;device)</div><div class="ttdoc">hueLightFromLightDevice For every SLightDevice with type hue, there is a SHueLight that represents th...</div><div class="ttdef"><b>Definition:</b> commhue.cpp:466</div></div>
+<div class="ttc" id="struct_s_hue_light_html_abe079775e919dd41109f62d91545e115"><div class="ttname"><a href="struct_s_hue_light.html#abe079775e919dd41109f62d91545e115">SHueLight::modelID</a></div><div class="ttdeci">QString modelID</div><div class="ttdoc">modelID ID of specific model. changes between versions of the same light. </div><div class="ttdef"><b>Definition:</b> commhue.h:52</div></div>
+<div class="ttc" id="class_comm_hue_html_a14a5ac47af072e9573f4349552de3b8a"><div class="ttname"><a href="class_comm_hue.html#a14a5ac47af072e9573f4349552de3b8a">CommHue::turnOff</a></div><div class="ttdeci">void turnOff(int lightIndex)</div><div class="ttdoc">turnOff turns off the Hue light at a given index </div><div class="ttdef"><b>Definition:</b> commhue.cpp:123</div></div>
+<div class="ttc" id="class_comm_hue_html_acdcd223b12613b92a682a2c8b50f17a6"><div class="ttname"><a href="class_comm_hue.html#acdcd223b12613b92a682a2c8b50f17a6">CommHue::shutdown</a></div><div class="ttdeci">void shutdown()</div><div class="ttdoc">shutdown defined in CommType </div><div class="ttdef"><b>Definition:</b> commhue.cpp:50</div></div>
+<div class="ttc" id="struct_s_hue_light_html_a16850863ecdb913313a3b9db4d844de3"><div class="ttname"><a href="struct_s_hue_light.html#a16850863ecdb913313a3b9db4d844de3">SHueLight::deviceIndex</a></div><div class="ttdeci">int deviceIndex</div><div class="ttdoc">deviceIndex the index of the device on the bridge. Does not change unless you forget and relearn devi...</div><div class="ttdef"><b>Definition:</b> commhue.h:68</div></div>
 <div class="ttc" id="class_comm_type_html"><div class="ttname"><a href="class_comm_type.html">CommType</a></div><div class="ttdoc">inherited by comm types, provides a general interface that can be used to do connections and sending ...</div><div class="ttdef"><b>Definition:</b> commtype.h:29</div></div>
 <div class="ttc" id="class_comm_hue_html_a5d07b03566ff1f1bba48c95ccb04560f"><div class="ttname"><a href="class_comm_hue.html#a5d07b03566ff1f1bba48c95ccb04560f">CommHue::startup</a></div><div class="ttdeci">void startup()</div><div class="ttdoc">startup defined in CommType </div><div class="ttdef"><b>Definition:</b> commhue.cpp:44</div></div>
-<div class="ttc" id="class_comm_hue_html_ad7e58e5e30432d41ec5db8629aa96003"><div class="ttname"><a href="class_comm_hue.html#ad7e58e5e30432d41ec5db8629aa96003">CommHue::turnOn</a></div><div class="ttdeci">void turnOn(int lightIndex)</div><div class="ttdoc">turnOn turns on the Hue light at a given index </div><div class="ttdef"><b>Definition:</b> commhue.cpp:103</div></div>
+<div class="ttc" id="class_comm_hue_html_ad7e58e5e30432d41ec5db8629aa96003"><div class="ttname"><a href="class_comm_hue.html#ad7e58e5e30432d41ec5db8629aa96003">CommHue::turnOn</a></div><div class="ttdeci">void turnOn(int lightIndex)</div><div class="ttdoc">turnOn turns on the Hue light at a given index </div><div class="ttdef"><b>Definition:</b> commhue.cpp:116</div></div>
 <div class="ttc" id="class_hue_bridge_discovery_html"><div class="ttname"><a href="class_hue_bridge_discovery.html">HueBridgeDiscovery</a></div><div class="ttdoc">The HueBridgeDiscovery class is an object that handles the discovery of a hue bridge by using a combi...</div><div class="ttdef"><b>Definition:</b> huebridgediscovery.h:93</div></div>
-<div class="ttc" id="class_comm_hue_html_af1318afbbc81e9229a2ff5398267611e"><div class="ttname"><a href="class_comm_hue.html#af1318afbbc81e9229a2ff5398267611e">CommHue::dataLayer</a></div><div class="ttdeci">void dataLayer(DataLayer *data)</div><div class="ttdoc">dataLayer attach data layer </div><div class="ttdef"><b>Definition:</b> commhue.h:121</div></div>
 <div class="ttc" id="class_comm_hue_html_a6437a21abfd54172305bd1eda8c52845"><div class="ttname"><a href="class_comm_hue.html#a6437a21abfd54172305bd1eda8c52845">CommHue::CommHue</a></div><div class="ttdeci">CommHue()</div><div class="ttdoc">CommHue Constructor. </div><div class="ttdef"><b>Definition:</b> commhue.cpp:15</div></div>
 </div><!-- fragment --></div><!-- contents -->
 
