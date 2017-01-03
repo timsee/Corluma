@@ -1,157 +1,93 @@
 [
-	{
+    {
         "devices": [
             {
-                "blue": 0,
-                "brightness": 100,
-                "colorGroup": 8,
-				"colorMode": "RGB",
-                "controller": "192.168.0.125",
-                "green": 67,
-                "id": "device",
-                "index": 3,
-                "isOn": true,
-                "lightingRoutine": 9,
-                "red": 255,
-                "type": "UDP"
-            },
-            {
-                "blue": 0,
-                "brightness": 100,
-                "colorGroup": 8,
-				"colorMode": "RGB",
-                "controller": "192.168.0.125",
-                "green": 255,
+                "blue": 249,
+                "brightness": 98,
+                "colorGroup": 17,
+                "colorMode": "HSV",
+                "controller": "Bridge",
+                "green": 214,
                 "id": "device",
                 "index": 2,
                 "isOn": true,
-                "lightingRoutine": 10,
-                "red": 0,
+                "lightingRoutine": 1,
+                "red": 14,
+                "type": "Hue"
+            },
+            {
+                "blue": 236,
+                "brightness": 96,
+                "colorGroup": 17,
+                "colorMode": "CT",
+                "controller": "Bridge",
+                "green": 245,
+                "id": "device",
+                "index": 3,
+                "isOn": true,
+                "lightingRoutine": 1,
+                "red": 255,
+                "type": "Hue"
+            },
+			{
+                "blue": 255,
+                "brightness": 96,
+                "colorGroup": 17,
+                "colorMode": "CT",
+                "controller": "Bridge",
+                "green": 255,
+                "id": "device",
+                "index": 4,
+                "isOn": true,
+                "lightingRoutine": 1,
+                "red": 255,
+                "type": "Hue"
+            },
+            {
+                "blue": 255,
+                "brightness": 100,
+                "colorGroup": 8,
+                "colorMode": "RGB",
+                "controller": "192.168.0.125",
+                "green": 255,
+                "id": "device",
+                "index": 3,
+                "isOn": true,
+                "lightingRoutine": 1,
+                "red": 255,
                 "type": "UDP"
             },
             {
                 "blue": 255,
                 "brightness": 100,
                 "colorGroup": 8,
-				"colorMode": "RGB",
+                "colorMode": "RGB",
                 "controller": "192.168.0.125",
-                "green": 0,
-                "id": "device",
-                "index": 1,
-                "isOn": true,
-                "lightingRoutine": 14,
-                "red": 0,
-                "type": "UDP"
-            },
-            {
-                "blue": 223,
-                "brightness": 98,
-                "colorGroup": 17,
-				"colorMode": "HSV",
-                "controller": "Bridge",
-                "green": 0,
+                "green": 255,
                 "id": "device",
                 "index": 2,
                 "isOn": true,
-                "lightingRoutine": 4,
-                "red": 131,
-                "type": "Hue"
+                "lightingRoutine": 1,
+                "red": 255,
+                "type": "UDP"
+            },
+            {
+                "blue": 255,
+                "brightness": 100,
+                "colorGroup": 8,
+                "colorMode": "RGB",
+                "controller": "192.168.0.125",
+                "green": 255,
+                "id": "device",
+                "index": 1,
+                "isOn": true,
+                "lightingRoutine": 1,
+                "red": 255,
+                "type": "UDP"
             }
         ],
         "isMood": true,
-        "name": "Bedroom is Poisoned"
-    },
-    { 
-    "name": "bedroom",
-    "isMood": false,
-    "devices": [
-                { 
-                 "id":"device",
-                 "type" : "UDP",
-                 "controller" : "192.168.0.125",
-                 "index" : 1 
-                },
-                { 
-                "id":"device",
-                "type" : "UDP",
-                "controller" : "192.168.0.125",
-                "index" : 2 
-                },
-                { 
-                "id":"device",
-                "type" : "UDP",
-                "controller" : "192.168.0.125",
-                "index" : 3 
-                },
-                { 
-                "id":"device",
-                "type" : "Hue",
-                "controller" : "Bridge",
-                "index" : 1 
-                }
-                ]
-    },
-    { 
-    "name": "Bedroom on Fire",
-    "isMood": true,
-    "devices": [
-                { 
-                "id":"device",
-				"isOn":true,
-                "type" : "UDP",
-				"colorMode": "RGB",
-                "controller" : "192.168.0.125",
-                "index" : 1,
-                "colorGroup" : 5,
-                "lightingRoutine" : 13,
-                "brightness" : 100,
-                "red" : 255,
-                "green" : 60,
-                "blue" : 0   
-                },
-				{ 
-                "id":"device",
-				"isOn":true,
-                "type" : "UDP",
-				"colorMode": "RGB",
-                "controller" : "192.168.0.125",
-                "index" : 2,
-                "colorGroup" : 6,
-                "lightingRoutine" : 10,
-                "brightness" : 100,
-                "red" : 255,
-                "green" : 60,
-                "blue" : 0   
-                },
-				{
-				"id":"device",
-				"isOn":true,
-                "type" : "UDP",
-				"colorMode": "RGB",
-                "controller" : "192.168.0.125",
-                "index" : 3,
-                "colorGroup" : 6,
-                "lightingRoutine" : 9,
-                "brightness" : 100,
-                "red" : 255,
-                "green" : 60,
-                "blue" : 0   
-                },
-				{
-				"id":"device",
-				"isOn":true,
-                "type" : "Hue",
-				"colorMode": "HSV",
-                "controller" : "Bridge",
-                "index" : 2,
-                "colorGroup" : 0,
-                "lightingRoutine" : 1,
-                "brightness" : 100,
-                "red" : 255,
-                "green" : 60,
-                "blue" : 0   
-                }
-                ]
+        "name": "White Bedroom"
     },
     {
         "devices": [
@@ -211,6 +147,20 @@
                 "red": 84,
                 "type": "Hue"
             },
+			{
+                "blue": 0,
+                "brightness": 98,
+                "colorGroup": 17,
+                "colorMode": "HSV",
+                "controller": "Bridge",
+                "green": 255,
+                "id": "device",
+                "index": 4,
+                "isOn": true,
+                "lightingRoutine": 1,
+                "red": 0,
+                "type": "Hue"
+            },
             {
                 "blue": 28,
                 "brightness": 32,
@@ -229,13 +179,207 @@
         "isMood": true,
         "name": "Bedroom is Cool"
     },
-	{
+    {
+        "devices": [
+            {
+                "blue": 0,
+                "brightness": 100,
+                "colorGroup": 8,
+                "colorMode": "RGB",
+                "controller": "192.168.0.125",
+                "green": 67,
+                "id": "device",
+                "index": 3,
+                "isOn": true,
+                "lightingRoutine": 9,
+                "red": 255,
+                "type": "UDP"
+            },
+            {
+                "blue": 0,
+                "brightness": 100,
+                "colorGroup": 8,
+                "colorMode": "RGB",
+                "controller": "192.168.0.125",
+                "green": 255,
+                "id": "device",
+                "index": 2,
+                "isOn": true,
+                "lightingRoutine": 10,
+                "red": 0,
+                "type": "UDP"
+            },
+            {
+                "blue": 255,
+                "brightness": 100,
+                "colorGroup": 8,
+                "colorMode": "RGB",
+                "controller": "192.168.0.125",
+                "green": 0,
+                "id": "device",
+                "index": 1,
+                "isOn": true,
+                "lightingRoutine": 14,
+                "red": 0,
+                "type": "UDP"
+            },
+            {
+                "blue": 223,
+                "brightness": 98,
+                "colorGroup": 17,
+                "colorMode": "HSV",
+                "controller": "Bridge",
+                "green": 0,
+                "id": "device",
+                "index": 2,
+                "isOn": true,
+                "lightingRoutine": 4,
+                "red": 131,
+                "type": "Hue"
+            }
+        ],
+        "isMood": true,
+        "name": "Bedroom is Poisoned"
+    },
+    {
+        "devices": [
+            {
+                "controller": "192.168.0.125",
+                "id": "device",
+                "index": 1,
+                "type": "UDP"
+            },
+            {
+                "controller": "192.168.0.125",
+                "id": "device",
+                "index": 2,
+                "type": "UDP"
+            },
+            {
+                "controller": "192.168.0.125",
+                "id": "device",
+                "index": 3,
+                "type": "UDP"
+            },
+            {
+                "controller": "Bridge",
+                "id": "device",
+                "index": 2,
+                "type": "Hue"
+            },
+			{
+                "controller": "Bridge",
+                "id": "device",
+                "index": 3,
+                "type": "Hue"
+            },
+			{
+                "controller": "Bridge",
+                "id": "device",
+                "index": 4,
+                "type": "Hue"
+            }
+        ],
+        "isMood": false,
+        "name": "bedroom"
+    },
+    {
+        "devices": [
+            {
+                "blue": 0,
+                "brightness": 100,
+                "colorGroup": 5,
+                "colorMode": "RGB",
+                "controller": "192.168.0.125",
+                "green": 60,
+                "id": "device",
+                "index": 1,
+                "isOn": true,
+                "lightingRoutine": 13,
+                "red": 255,
+                "type": "UDP"
+            },
+			{
+                "blue": 0,
+                "brightness": 98,
+                "colorGroup": 17,
+                "colorMode": "HSV",
+                "controller": "Bridge",
+                "green": 40,
+                "id": "device",
+                "index": 4,
+                "isOn": true,
+                "lightingRoutine": 1,
+                "red": 255,
+                "type": "Hue"
+            },
+            {
+                "blue": 0,
+                "brightness": 100,
+                "colorGroup": 6,
+                "colorMode": "RGB",
+                "controller": "192.168.0.125",
+                "green": 60,
+                "id": "device",
+                "index": 2,
+                "isOn": true,
+                "lightingRoutine": 10,
+                "red": 255,
+                "type": "UDP"
+            },
+            {
+                "blue": 0,
+                "brightness": 100,
+                "colorGroup": 6,
+                "colorMode": "RGB",
+                "controller": "192.168.0.125",
+                "green": 60,
+                "id": "device",
+                "index": 3,
+                "isOn": true,
+                "lightingRoutine": 9,
+                "red": 255,
+                "type": "UDP"
+            },
+            {
+                "blue": 0,
+                "brightness": 100,
+                "colorGroup": 0,
+                "colorMode": "HSV",
+                "controller": "Bridge",
+                "green": 200,
+                "id": "device",
+                "index": 2,
+                "isOn": true,
+                "lightingRoutine": 1,
+                "red": 255,
+                "type": "Hue"
+            },
+			{
+                "blue": 28,
+                "brightness": 32,
+                "colorGroup": 17,
+                "colorMode": "CT",
+                "controller": "Bridge",
+                "green": 142,
+                "id": "device",
+                "index": 3,
+                "isOn": true,
+                "lightingRoutine": 1,
+                "red": 255,
+                "type": "Hue"
+            }
+        ],
+        "isMood": true,
+        "name": "Bedroom on Fire"
+    },
+    {
         "devices": [
             {
                 "blue": 42,
                 "brightness": 98,
                 "colorGroup": 17,
-				"colorMode": "HSV",
+                "colorMode": "HSV",
                 "controller": "Bridge",
                 "green": 177,
                 "id": "device",
@@ -245,11 +389,25 @@
                 "red": 249,
                 "type": "Hue"
             },
+			{
+                "blue": 0,
+                "brightness": 98,
+                "colorGroup": 17,
+                "colorMode": "HSV",
+                "controller": "Bridge",
+                "green": 255,
+                "id": "device",
+                "index": 4,
+                "isOn": true,
+                "lightingRoutine": 1,
+                "red": 255,
+                "type": "Hue"
+            },
             {
                 "blue": 255,
                 "brightness": 100,
                 "colorGroup": 5,
-				"colorMode": "RGB",
+                "colorMode": "RGB",
                 "controller": "192.168.0.125",
                 "green": 0,
                 "id": "device",
@@ -263,7 +421,7 @@
                 "blue": 255,
                 "brightness": 100,
                 "colorGroup": 6,
-				"colorMode": "RGB",
+                "colorMode": "RGB",
                 "controller": "192.168.0.125",
                 "green": 0,
                 "id": "device",
@@ -277,9 +435,9 @@
                 "blue": 0,
                 "brightness": 100,
                 "colorGroup": 6,
-				"colorMode": "RGB",
+                "colorMode": "RGB",
                 "controller": "192.168.0.125",
-                "green": 67,
+                "green": 100,
                 "id": "device",
                 "index": 3,
                 "isOn": true,

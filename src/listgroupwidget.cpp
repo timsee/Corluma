@@ -1,14 +1,15 @@
 #include "listgroupwidget.h"
 
-ListGroupWidget::ListGroupWidget(QWidget *parent) : QWidget(parent)
-{
-}
+ListGroupWidget::ListGroupWidget(const QString& name,
+                                 const std::list<SLightDevice>& devices,
+                                 const std::vector<std::vector<QColor> >& colors,
+                                 QPixmap statePixmap,
+                                 int width, int height,
+                                 bool isMood,
+                                 QWidget *parent) : QWidget(parent) {
+    Q_UNUSED(width);
+    Q_UNUSED(isMood);
 
-void ListGroupWidget::setup(const QString& name,
-                            const std::list<SLightDevice>& devices,
-                            const std::vector<std::vector<QColor> >& colors,
-                            QPixmap statePixmap,
-                            int width, int height) {
     // setup icon
     QString reachableStlyeSheet = "background:rgba(0, 0, 0, 0%); font: bold; color: #333;";
     QString backgroundStyleSheet = "background:rgba(0, 0, 0, 0%); font: bold;";
@@ -71,6 +72,7 @@ void ListGroupWidget::setup(const QString& name,
     mLayout->setStretch(temp, 6);
     temp++;
     for (auto label : mPreviews) {
+        Q_UNUSED(label);
         mLayout->setStretch(temp, 2);
         temp++;
     }
@@ -80,7 +82,7 @@ void ListGroupWidget::setup(const QString& name,
     int index = 0;
     for (auto&& device : devices) {
         if (index < previewNumber) {
-            if (device.lightingRoutine <= ELightingRoutineSingleColorEnd ) {
+            if (device.lightingRoutine <= utils::ELightingRoutineSingleColorEnd ) {
                 mIconData[index].setSingleLightingRoutine(device.lightingRoutine, device.color);
                 QPixmap iconRendered = mIconData[index].renderAsQPixmap();
                 mPreviews[index]->setMaximumHeight(height);
@@ -100,4 +102,6 @@ void ListGroupWidget::setup(const QString& name,
         }
     }
 }
+
+
 

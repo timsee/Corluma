@@ -5,7 +5,6 @@
 
 #include <memory>
 
-#include "commlayer.h"
 #include "datalayer.h"
 
 /*!

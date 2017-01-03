@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" stretch="6,2">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="8,2">
    <item>
     <widget class="ColorPicker" name="colorPicker" native="true">
      <property name="sizePolicy">
@@ -136,15 +136,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ColorPicker</class>
-   <extends>QWidget</extends>
-   <header location="global">colorpicker.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>LightsButton</class>
    <extends>QWidget</extends>
    <header location="global">lightsbutton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ColorPicker</class>
+   <extends>QWidget</extends>
+   <header location="global">colorpicker.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

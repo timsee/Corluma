@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QHBoxLayout>
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2016.
@@ -20,7 +21,7 @@ class FloatingLayout : public QWidget
     Q_OBJECT
 public:
     /*!
-     * \brief FloatingLayout
+     * Constructor
      * \param size the desired size of the widget
      * \param parent constructor
      */

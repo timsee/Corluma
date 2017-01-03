@@ -170,6 +170,9 @@ void CommHue::arrayColorChange(int deviceIndex, int colorIndex, QColor color) {
 }
 
 void CommHue::routineChange(int deviceIndex, int routineIndex, int colorGroup) {
+    Q_UNUSED(colorGroup);
+    Q_UNUSED(deviceIndex);
+    Q_UNUSED(routineIndex);
 //    ELightingRoutine routine = (ELightingRoutine)routineIndex;
 //    SLightDevice previousDevice;
 //    previousDevice.index = deviceIndex;
@@ -331,13 +334,14 @@ void CommHue::handleSuccessPacket(QString key, QJsonValue value) {
                     valueChanged = true;
                 } else if (key.compare("ct") == 0) {
                     int ct = value.toDouble();
-                    device.color = colorTemperatureToRGB(ct);
+                    device.color = utils::colorTemperatureToRGB(ct);
                     device.colorMode = EColorMode::eCT;
 
                     valueChanged = true;
                 }
                 if (valueChanged) {
                     updateDevice(device);
+                    emit stateChanged();
                 }
             }
         }
@@ -345,6 +349,7 @@ void CommHue::handleSuccessPacket(QString key, QJsonValue value) {
 }
 
 void CommHue::handleErrorPacket(QString key, QJsonValue value) {
+    Q_UNUSED(value); // remove when handling errors
     SLightDevice device;
     QStringList list = key.split("/");
     if (list[1].compare("lights") == 0) {
@@ -356,20 +361,20 @@ void CommHue::handleErrorPacket(QString key, QJsonValue value) {
 
 
                 } else if (key.compare("sat") == 0) {
-                    int saturation = value.toDouble();
+                   // int saturation = value.toDouble();
 
                 } else if (key.compare("hue") == 0) {
-                    int hue = value.toDouble();
+                   // int hue = value.toDouble();
 
                 } else if (key.compare("bri") == 0) {
-                    int brightness = value.toDouble();
+                   // int brightness = value.toDouble();
 
                 } else if (key.compare("colormode") == 0) {
-                    QString mode = value.toString();
-                    EColorMode colorMode = hueStringtoColorMode(mode);
+                   // QString mode = value.toString();
+                   // EColorMode colorMode = hueStringtoColorMode(mode);
 
                 } else if (key.compare("ct") == 0) {
-                    int ct = value.toDouble();
+                  //  int ct = value.toDouble();
                     qDebug() << "ct error";
 
                 }
@@ -408,7 +413,7 @@ bool CommHue::updateHueLightState(QJsonValue value, int i) {
                 hue.deviceIndex = i;
 
                 // packet passes valdiity check, set all values
-                SLightDevice light;
+                SLightDevice light = SLightDevice();
                 light.isReachable = stateObject.value("reachable").toBool();
                 light.isOn = stateObject.value("on").toBool();
                 light.isValid = true;
@@ -418,9 +423,10 @@ bool CommHue::updateHueLightState(QJsonValue value, int i) {
 
                 if (hue.type == EHueType::eAmbient) {
                     int ct = stateObject.value("ct").toDouble();
-                    light.color = colorTemperatureToRGB(ct);
+                    light.color = utils::colorTemperatureToRGB(ct);
                     light.colorMode = EColorMode::eCT;
-                } else if (hue.type == EHueType::eExtended) {
+                } else if (hue.type == EHueType::eExtended
+                           || hue.type == EHueType::eColor) {
                     if (stateObject.value("hue").isDouble()
                             && stateObject.value("sat").isDouble()) {
                         light.color.setHsv(stateObject.value("hue").toDouble() / 182.0,
@@ -436,6 +442,8 @@ bool CommHue::updateHueLightState(QJsonValue value, int i) {
                 light.lightingRoutine = ELightingRoutine::eSingleSolid;
                 light.brightness = stateObject.value("bri").toDouble() / 254.0f * 100;
                 light.index = i;
+                light.timeout = 0; // timeout doesn't matter to hues
+                light.speed = 0; // speed doesn't matter to hues
                 light.type = ECommType::eHue;
                 light.name = "Bridge";
 
@@ -478,6 +486,8 @@ EHueType CommHue::stringToHueType(const QString& string) {
         return EHueType::eExtended;
     } else if (string.compare("Color temperature light") == 0) {
         return EHueType::eAmbient;
+    } else if (string.compare("Color light") == 0) {
+        return EHueType::eColor;
     } else {
         qDebug() << "WARNING: Hue type not recognized" << string;
         return EHueType::EHueType_MAX;

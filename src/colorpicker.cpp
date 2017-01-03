@@ -71,13 +71,13 @@ ColorPicker::ColorPicker(QWidget *parent) :
     bLabel->setFont(QFont(rLabel->font().styleName(), 12, 0));
 
     connect(rSlider, SIGNAL(valueChanged(int)), this, SLOT(rSliderChanged(int)));
-    connect(rSlider->slider.get(), SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
+    connect(rSlider->slider, SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
 
     connect(gSlider, SIGNAL(valueChanged(int)), this, SLOT(gSliderChanged(int)));
-    connect(gSlider->slider.get(), SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
+    connect(gSlider->slider, SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
 
     connect(bSlider, SIGNAL(valueChanged(int)), this, SLOT(bSliderChanged(int)));
-    connect(bSlider->slider.get(), SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
+    connect(bSlider->slider, SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
 
     // --------------
     // Setup Slider/Label Layout

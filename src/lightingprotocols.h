@@ -111,8 +111,6 @@ enum class ELightingRoutine
     eLightingRoutine_MAX //total number of modes
 };
 
-static ELightingRoutine ELightingRoutineSingleColorEnd = ELightingRoutine::eSingleSawtoothFadeOut;
-
 /*!
  * \enum EColorGroup used during multi color routines to determine
  *       which colors to use in the routine. eCustom uses the custom
@@ -238,8 +236,10 @@ enum class EPacketHeader
   eMainColorChange,
   /*!
    * <b>2</b><br>
-   * <i>Takes four parameters, three parameters, the LED, a 0-255 representation
-   *  of Red, Green, and Blue.</i>
+   * <i>Takes four parameters. The first is the index of the custom color,
+   * the remaining three parameters are a 0-255 representation
+   * of Red, Green, and Blue.</i>
+   *
    */
   eCustomArrayColorChange,
   /*!
@@ -270,6 +270,11 @@ enum class EPacketHeader
   eStateUpdateRequest,
   /*!
    * <b>8</b><br>
+   * <i>Sends back a packet that contains the size of the custom array and all of the colors in it.
+   */
+  eCustomArrayUpdateRequest,
+  /*!
+   * <b>9</b><br>
    * <i>Resets all values inside of RoutinesRGB back to their
    * default values. Useful for soft reseting the LED hardware. </i>
    */

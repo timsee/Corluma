@@ -13,7 +13,7 @@ ConnectionPage::ConnectionPage(QWidget *parent) :
     ui->setupUi(this);
 
     mCurrentState = EConnectionState::eConnectionState_MAX;
-
+    mCurrentConnectionList = EConnectionList::eSingleDevices;
     mSettings = new QSettings;
     mGroups = new GroupsParser(this);
 
@@ -59,9 +59,11 @@ ConnectionPage::ConnectionPage(QWidget *parent) :
     ui->connectionList->setSelectionMode(QAbstractItemView::MultiSelection);
 
     ui->devicesButton->setCheckable(true);
-    ui->groupsButton->setCheckable(true);
+    ui->moodsButton->setCheckable(true);
+    ui->collectionsButton->setCheckable(true);
     connect(ui->devicesButton, SIGNAL(clicked(bool)), this, SLOT(devicesButtonClicked(bool)));
-    connect(ui->groupsButton, SIGNAL(clicked(bool)), this, SLOT(groupsButtonClicked(bool)));
+    connect(ui->moodsButton, SIGNAL(clicked(bool)), this, SLOT(moodsButtonClicked(bool)));
+    connect(ui->collectionsButton, SIGNAL(clicked(bool)), this, SLOT(collectionsButtonClicked(bool)));
 
     mRenderThread = new QTimer(this);
     connect(mRenderThread, SIGNAL(timeout()), this, SLOT(renderUI()));
@@ -106,14 +108,14 @@ ConnectionPage::~ConnectionPage() {
 
 void ConnectionPage::setupUI() {
    connect(mComm, SIGNAL(hueDiscoveryStateChange(int)), this, SLOT(hueDiscoveryUpdate(int)));
-   connect(mComm, SIGNAL(updateReceived(int)), this, SLOT(receivedCommUpdate(int)));
-   mCommType = mData->commTypeSettings()->defaultCommType();
-   commTypeSelected((int)mCommType);
+   connect(mComm, SIGNAL(updateReceived(int)), this, SLOT(receivedCommUpdate(int)));   
+   commTypeSelected((int)mData->commTypeSettings()->defaultCommType());
 }
 
 
 void  ConnectionPage::receivedCommUpdate(int) {
-    if (!ui->groupsButton->isChecked()) {
+    if (mCurrentConnectionList == EConnectionList::eSingleDevices
+            || mCurrentConnectionList == EConnectionList::eCollections) {
         if (mLastUpdateConnectionList.elapsed() > 1000) {
             mLastUpdateConnectionList = QTime::currentTime();
             updateConnectionList(mCommType);
@@ -213,32 +215,59 @@ QPushButton *ConnectionPage::buttonByType(ECommType type) {
             button = ui->hueButton;
             break;
         default:
+            button = nullptr;
             break;
     }
     return button;
 }
 
 void ConnectionPage::listClicked(QListWidgetItem* item) {
-    if (ui->groupsButton->isChecked()) {
+    if (mCurrentConnectionList == EConnectionList::eMoods) {
         for (auto&& moods : mGroups->moodList()) {
             if (item->text().compare(moods.first) == 0 ) {
-                qDebug() << "got this mood" << moods.first;
                 mCurrentMoodListString = moods.first;
                 mData->replaceDeviceList(moods.second);
                 emit deviceCountChanged();
                 emit updateMainIcons();
             }
         }
-    for(int row = 0; row < ui->connectionList->count(); row++) {
-        QListWidgetItem *item = ui->connectionList->item(row);
-        if (item->text().compare(mCurrentMoodListString) == 0) {
-            item->setSelected(true);
-        } else {
-            item->setSelected(false);
+        for(int row = 0; row < ui->connectionList->count(); row++) {
+            QListWidgetItem *item = ui->connectionList->item(row);
+            if (item->text().compare(mCurrentMoodListString) == 0) {
+                item->setSelected(true);
+            } else {
+                item->setSelected(false);
+            }
         }
-    }
+    } else if (mCurrentConnectionList == EConnectionList::eCollections) {
+        for (auto&& collection : mGroups->collectionList()) {
+            if (item->text().compare(collection.first) == 0 ) {
+                mCurrentCollectionListString = collection.first;
+                // create a new list filled with data from the comm layer.
+                // This allows a collection to be chosen without having to sync any additional data
+                // between the data layer and the comm layer.
+                std::list<SLightDevice> filledList;
+                for (auto&& device : collection.second) {
+                    SLightDevice filledDevice = device;
+                    mComm->fillDevice(filledDevice);
+                    filledList.push_back(filledDevice);
+                }
+                mData->replaceDeviceList(filledList);
+                emit deviceCountChanged();
+                emit updateMainIcons();
+            }
+        }
+        for(int row = 0; row < ui->connectionList->count(); row++) {
+            QListWidgetItem *item = ui->connectionList->item(row);
+            if (item->text().compare(mCurrentCollectionListString) == 0) {
+                item->setSelected(true);
+            } else {
+                item->setSelected(false);
+            }
+        }
     } else {
-        SLightDevice device = SLightDevice::stringToStruct(item->text());
+        SLightDevice device;
+        device = device.identifierStringToStruct(item->text());
         mComm->fillDevice(device);
 
         if (mData->doesDeviceExist(device)) {
@@ -271,11 +300,6 @@ void ConnectionPage::commTypeSelected(int type) {
     if ((ECommType)type != mCommType) {
         mCommType = (ECommType)type;
 
-        if ((ECommType)type == ECommType::eHue) {
-           // theres a hue bridge already connected, show bridge MAC and all available lights
-           ui->connectionListLabel->setText(QString("Hue Lights:"));
-        }
-
         if ((ECommType)type == ECommType::eUDP
                 ||(ECommType)type == ECommType::eHTTP ) {
             ui->lineEdit->setHidden(false);
@@ -284,6 +308,7 @@ void ConnectionPage::commTypeSelected(int type) {
             ui->minusButton->setHidden(false);
             ui->connectionListLabel->setHidden(true);
         } else if ((ECommType)type == ECommType::eHue) {
+            ui->connectionListLabel->setText(QString("Hue Lights:"));
             ui->lineEdit->setHidden(true);
             ui->plusButton->setHidden(true);
             ui->groupSaveButton->setHidden(true);
@@ -356,7 +381,8 @@ void ConnectionPage::saveCollection(bool) {
 
 
 void ConnectionPage::minusButtonClicked() {
-    if (ui->groupsButton->isChecked()) {
+    if (mCurrentConnectionList == EConnectionList::eMoods
+            || mCurrentConnectionList == EConnectionList::eCollections) {
         QMessageBox::StandardButton reply;
         QString message = "Delete ";
         message +=  mCurrentMoodListString;
@@ -367,11 +393,13 @@ void ConnectionPage::minusButtonClicked() {
              mGroups->removeGroup(mCurrentMoodListString);
          }
     } else {
-        SLightDevice listData = SLightDevice::stringToStruct(mCurrentListString);
+        SLightDevice listData;
+        listData = listData.identifierStringToStruct(mCurrentListString);
         bool isSuccessful = mComm->removeController(mCommType, listData.name);
 
         if (isSuccessful) {
-            SLightDevice device = SLightDevice::stringToStruct(mCurrentListString);
+            SLightDevice device;
+            device = device.identifierStringToStruct(mCurrentListString);
             mComm->fillDevice(device);
             isSuccessful = mData->removeDevice(device);
 
@@ -448,7 +476,7 @@ void ConnectionPage::showEvent(QShowEvent *event) {
     highlightButton(mCommType);
     commTypeSelected((int)mCommType);
     mComm->startDiscovery();
-    if (!ui->groupsButton->isChecked()) {
+    if (mCurrentConnectionList == EConnectionList::eSingleDevices) {
         setupStreamButtons();
     }
     updateUI(mCommType);
@@ -524,16 +552,38 @@ void ConnectionPage::lightStateChanged(int type, QString name) {
 
 
 void ConnectionPage::devicesButtonClicked(bool) {
+    mCurrentConnectionList = EConnectionList::eSingleDevices;
+
     ui->devicesButton->setChecked(true);
-    ui->groupsButton->setChecked(false);
+    ui->moodsButton->setChecked(false);
+    ui->collectionsButton->setChecked(false);
 
     setupStreamButtons();
     updateConnectionList(mCommType);
 }
 
-void ConnectionPage::groupsButtonClicked(bool) {
+void ConnectionPage::moodsButtonClicked(bool) {
+    mCurrentConnectionList = EConnectionList::eMoods;
+
     ui->devicesButton->setChecked(false);
-    ui->groupsButton->setChecked(true);
+    ui->moodsButton->setChecked(true);
+    ui->collectionsButton->setChecked(false);
+
+    ui->hueButton->setHidden(true);
+    ui->httpButton->setHidden(true);
+    ui->udpButton->setHidden(true);
+    ui->serialButton->setHidden(true);
+
+    updateConnectionList(mCommType);
+}
+
+
+void ConnectionPage::collectionsButtonClicked(bool) {
+    mCurrentConnectionList = EConnectionList::eCollections;
+
+    ui->devicesButton->setChecked(false);
+    ui->moodsButton->setChecked(false);
+    ui->collectionsButton->setChecked(true);
 
     ui->hueButton->setHidden(true);
     ui->httpButton->setHidden(true);
@@ -580,13 +630,20 @@ void ConnectionPage::setupStreamButtons() {
 }
 
 void ConnectionPage::updateConnectionList(ECommType type) {
-   if (ui->groupsButton->isChecked()) {
+   if (mCurrentConnectionList == EConnectionList::eMoods
+           || mCurrentConnectionList == EConnectionList::eCollections) {
        ui->connectionList->clear();
        int listIndex = 0; // used for inserting new entries on the list
 
-       for (auto&& moods : mGroups->moodList()) {
-           ListGroupWidget *lightsItem = new ListGroupWidget;
-           EConnectionState groupState = checkConnectionStateOfGroup(moods.second);
+       std::list<std::pair<QString, std::list<SLightDevice> > > groupList;
+       if (mCurrentConnectionList == EConnectionList::eMoods) {
+           groupList = mGroups->moodList();
+       } else {
+           groupList = mGroups->collectionList();
+       }
+       for (auto&& group : groupList) {
+           std::list<SLightDevice> devices = group.second;
+           EConnectionState groupState = checkConnectionStateOfGroup(group.second);
            QPixmap statePixmap;
            if (groupState == EConnectionState::eOff) {
                statePixmap = mButtonIcons[(int)EConnectionButtonIcons::eBlackButton];
@@ -597,11 +654,21 @@ void ConnectionPage::updateConnectionList(ECommType type) {
            } else if (groupState == EConnectionState::eMultipleDevicesSelected) {
                statePixmap = mButtonIcons[(int)EConnectionButtonIcons::eGreenButton];
            }
+
+           // collections only, fill devices with known states from comm type.
+           if (mCurrentConnectionList == EConnectionList::eCollections) {
+               fillGroupWithCommDevices(devices);
+           }
            // check for connection state
-           ui->connectionList->addItem(moods.first);
+           ui->connectionList->addItem(group.first);
            int height = ui->connectionList->height() / 5;
            int width = ui->connectionList->item(listIndex)->sizeHint().width();
-           lightsItem->setup(moods.first, moods.second, mData->colors(), statePixmap, width, height);
+           ListGroupWidget *lightsItem = new ListGroupWidget(group.first,
+                                                             devices,
+                                                             mData->colors(),
+                                                             statePixmap,
+                                                             width, height,
+                                                             true);
 
            ui->connectionList->item(listIndex)->setSizeHint(QSize(ui->connectionList->item(listIndex)->sizeHint().width(),
                                                                   height));
@@ -610,6 +677,7 @@ void ConnectionPage::updateConnectionList(ECommType type) {
 
            listIndex++;
        }
+       ui->connectionList->sortItems();
        for(int row = 0; row < ui->connectionList->count(); row++) {
            QListWidgetItem *item = ui->connectionList->item(row);
            if (item->text().compare(mCurrentMoodListString) == 0) {
@@ -630,15 +698,24 @@ void ConnectionPage::updateConnectionList(ECommType type) {
                 for (auto&& device = controllers.second.begin(); device != controllers.second.end(); ++device) {
                     // if the object is found, is valid, and has a name, add it
                     if (device->isValid) {
-                        ListControllerWidget *lightsItem = new ListControllerWidget;
-                        if (device->lightingRoutine <= ELightingRoutineSingleColorEnd) {
-                            lightsItem->setup(*device);
+
+                        // create a ListDeviceWidget for displaying info about devices
+                        ListDeviceWidget *lightsItem;
+                        QString name;
+                        if (device->type == ECommType::eHue) {
+                            SHueLight hue = mComm->hueLightFromLightDevice(*device);
+                            name = hue.name;
+                        } else {
+                            name = device->name;
+                        }
+                        if (device->lightingRoutine <= utils::ELightingRoutineSingleColorEnd) {
+                            lightsItem = new ListDeviceWidget(*device, name);
                         } else {
                             EColorGroup group = (*device).colorGroup;
-                            lightsItem->setup((*device), mData->colorGroup(group));
+                            lightsItem = new ListDeviceWidget((*device), name, mData->colorGroup(group));
                         }
 
-                        QString structString = SLightDevice::structToString(*device);
+                        QString structString = device->structToIdentifierString();
                         ui->connectionList->addItem(structString);
 
                         int minimumHeight = ui->connectionList->height() / 5;
@@ -654,6 +731,7 @@ void ConnectionPage::updateConnectionList(ECommType type) {
                     }
                  }
             }
+            ui->connectionList->sortItems();
             emit updateMainIcons();
         }
    }
@@ -763,5 +841,17 @@ void ConnectionPage::renderUI() {
     } else if (mData->currentDevices().size() > 1
                && mCurrentState != EConnectionState::eMultipleDevicesSelected) {
         changeConnectionState(EConnectionState::eMultipleDevicesSelected);
+    }
+}
+
+
+void ConnectionPage::fillGroupWithCommDevices(std::list<SLightDevice>& group) {
+    std::list<SLightDevice>::iterator iterator;
+    bool anyDeviceFailed = false;
+    for (iterator = group.begin(); iterator != group.end(); ++iterator) {
+        if (!mComm->fillDevice((*iterator))) anyDeviceFailed = true;
+    }
+    if (anyDeviceFailed) {
+        qDebug() << "WARNING: a device failed!";
     }
 }

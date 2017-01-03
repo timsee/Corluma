@@ -5,6 +5,7 @@
 #include <QTimer>
 
 #include "datalayer.h"
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2016.
@@ -32,6 +33,11 @@ public:
      * \param comm pointer to the app's comm layer.
      */
     DataSync(DataLayer *data, CommLayer *comm);
+
+    /*!
+     * \brief cancelSync cancel the data sync, regardless of it successfully completed.
+     */
+    void cancelSync();
 
 public slots:
     /*!

@@ -25,7 +25,7 @@ HueBridgeDiscovery::HueBridgeDiscovery(QObject *parent) : QObject(parent)
         mHasIP = true;
         mBridge.IP = mSettings->value(kPhillipsIPAddress).toString();
     } else {
-        qDebug() << "NO HUE IP FOUND";
+        //qDebug() << "NO HUE IP FOUND";
         mHasIP = false;
         mBridge.IP = QString("");
     }
@@ -34,9 +34,9 @@ HueBridgeDiscovery::HueBridgeDiscovery(QObject *parent) : QObject(parent)
     if (mSettings->value(kPhillipsUsername).toString().compare("") != 0) {
         mHasKey = true;
         mBridge.username = mSettings->value(kPhillipsUsername).toString();
-        qDebug() << "this is my username" << mBridge.username;
+        //qDebug() << "this is my username" << mBridge.username;
     } else {
-        qDebug() << "NO HUE USERNAME FOUND";
+        //qDebug() << "NO HUE USERNAME FOUND";
         mHasKey = false;
         mBridge.username = QString("");
     }

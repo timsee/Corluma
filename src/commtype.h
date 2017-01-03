@@ -89,10 +89,19 @@ public:
      */
     bool runningDiscovery() { return mDiscoveryMode; }
 
+    /*!
+     * \brief resetStateUpdateTimeout reset the timer tracking when to shutdown the state update thread.
+     */
+    void resetStateUpdateTimeout();
+
+    /*!
+     * \brief stopStateUpdates turn off the state update timers.
+     */
+    void stopStateUpdates();
+
     // ----------------------------
     // Controller and Device Management
     // ----------------------------
-
 
     /*!
      * \brief addController attempts to add a new controller to the device table.
@@ -176,11 +185,6 @@ protected:
     void resetDiscovery();
 
     /*!
-     * \brief resetStateUpdateTimeout reset the timer tracking when to shutdown the state update thread.
-     */
-    void resetStateUpdateTimeout();
-
-    /*!
      * \brief shouldContinueStateUpdate checks internal states and determines if it should still keep requesting
      *        state updates from the devices.
      * \return true if it should request state updates, false otherwise.
@@ -218,6 +222,12 @@ protected:
      *        discovered device to use a different throttle.
      */
     std::list<std::pair<QString, CommThrottle*> > mThrottleList;
+
+    /*!
+     * \brief mUndiscoveredList list of controllers that are not currently discovered but are running
+     *        discovery routines.
+     */
+    std::list<std::string> mUndiscoveredList;
 
     /*!
      * \brief mDiscoveryList list of devices that have been discovered properly.

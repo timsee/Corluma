@@ -60,7 +60,7 @@ void CommSerial::sendPacket(QString controller, QString packet) {
         if (serial->isOpen()) {
             for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
                 if (!throttle->first.compare(controller) && throttle->second->checkThrottle(controller, packet)) {
-                     if (packet.at(0) !=  QChar('7')) {
+                    if (packet.at(0) !=  QChar('7')) {
                         throttle->second->sentPacket();
                     } else {
                         isStateUpdate = true;
@@ -90,7 +90,7 @@ void CommSerial::stateUpdate() {
     if (shouldContinueStateUpdate()) {
         for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
             if (mDiscoveryMode || throttle->second->checkLastSend() < mUpdateTimeoutInterval) {
-                QString packet = QString("%1").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
+                QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
                 sendPacket(throttle->first, packet);
             }
         }
@@ -187,7 +187,7 @@ bool CommSerial::connectSerialPort(const QSerialPortInfo& info) {
     QSerialPort *serial = new QSerialPort(this);
     serial->setPort(info);
     if (serial->open(QIODevice::ReadWrite)) {
-        serial->setBaudRate(QSerialPort::Baud19200);
+        serial->setBaudRate(QSerialPort::Baud9600);
         serial->setStopBits(QSerialPort::OneStop);
         serial->setParity(QSerialPort::NoParity);
         serial->setDataBits(QSerialPort::Data8);
@@ -225,9 +225,8 @@ void CommSerial::handleReadyRead() {
 
             //qDebug() << "serial" << serial->portName() << "received payload" << payload << "size" << packet.size();
             if (payload.contains(discoveryPacket)) {
-                QString packet = payload.mid(discoveryPacket.size() + 3);
                 handleDiscoveryPacket(serial->portName(), 50, 3);
-                emit discoveryReceived(serial->portName(), packet, (int)ECommType::eSerial);
+                emit discoveryReceived(serial->portName(), payload, (int)ECommType::eSerial);
             } else {
                 emit packetReceived(serial->portName(), payload, (int)ECommType::eSerial);
             }

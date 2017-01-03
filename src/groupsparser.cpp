@@ -48,9 +48,9 @@ void GroupsParser::saveNewGroup(const QString& groupName, const std::list<SLight
         object["lightingRoutine"] = (double)device.lightingRoutine;
         object["colorGroup"] = (double)device.colorGroup;
 
-        object["type"] = ECommTypeToString(device.type);
+        object["type"] = utils::ECommTypeToString(device.type);
 
-        object["colorMode"] = colorModeToString(device.colorMode);
+        object["colorMode"] = utils::colorModeToString(device.colorMode);
 
         object["red"] = device.color.red();
         object["green"] = device.color.green();
@@ -130,7 +130,7 @@ void GroupsParser::parseCollection(const QJsonObject& object) {
         int index = device.value("index").toDouble();
 
         // convert to Corluma types from certain Qt types
-        ECommType type = stringToECommType(typeString);
+        ECommType type = utils::stringToECommType(typeString);
 
         SLightDevice lightDevice;
         lightDevice.type = type;
@@ -156,8 +156,8 @@ void GroupsParser::parseMood(const QJsonObject& object) {
         int index = device.value("index").toDouble();
 
         // convert to Corluma types from certain Qt types
-        ECommType type = stringToECommType(typeString);
-        EColorMode colorMode = stringtoColorMode(modeString);
+        ECommType type = utils::stringToECommType(typeString);
+        EColorMode colorMode = utils::stringtoColorMode(modeString);
 
         bool isOn = device.value("isOn").toBool();
         int red, green, blue;

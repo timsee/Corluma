@@ -43,12 +43,12 @@ void IconData::setup(int width, int height) {
     mWidth = width;
     mHeight = height;
     mDataLength = width * height * 3;
-    mData = QVector<uint8_t>(mDataLength);
+    mData = std::vector<uint8_t>(mDataLength);
 
     mBufferWidth = 4;
     mBufferHeight = 4;
     mBufferLength = mBufferWidth * mBufferHeight * 3;
-    mBuffer = QVector<uint8_t>(mBufferLength);
+    mBuffer = std::vector<uint8_t>(mBufferLength);
 
     // zero out the arrays
     for (uint i = 0; i < mBufferLength; i ++) {
@@ -63,6 +63,7 @@ void IconData::setup(int width, int height) {
     // and if the number is too large for that particular
     // color group's size, then it defaults to either 0
     // or 1, since all color groups are at least 2 in size.
+    mRandomIndividual = std::vector<int>(16);
     mRandomIndividual[0] = 0;
     mRandomIndividual[1] = 5;
     mRandomIndividual[2] = 5;
@@ -196,6 +197,8 @@ void IconData::setSolidColor(QColor color) {
 
 
 void IconData::setMultiColors(EColorGroup group, const std::vector<QColor>& colors, int colorMax) {
+    Q_UNUSED(group);
+
     int colorCount;
     if (colorMax == -1) {
         colorCount = colors.size();
@@ -216,6 +219,8 @@ void IconData::setMultiColors(EColorGroup group, const std::vector<QColor>& colo
 
 
 void IconData::setMultiGlimmer(EColorGroup group, const std::vector<QColor>& colors, int colorMax) {
+    Q_UNUSED(group);
+
     int colorCount;
     if (colorMax == -1) {
         colorCount = colors.size();
@@ -255,6 +260,8 @@ void IconData::setMultiGlimmer(EColorGroup group, const std::vector<QColor>& col
 }
 
 void IconData::setMultiFade(EColorGroup group, const std::vector<QColor>& colors, bool showMore, int colorMax) {
+    Q_UNUSED(group);
+
     // By default, showMore is set to false because everything shows its
     // max, except the color count. For the menu bar we override this
     // feature. This handles a silly edge case.
@@ -272,7 +279,7 @@ void IconData::setMultiFade(EColorGroup group, const std::vector<QColor>& colors
 
     int k = 0;
     int tempIndex = -1;
-    int *arrayIndices = new int[8];
+    std::vector<int> arrayIndices(8);
     while (k < 8) {
         tempIndex = (tempIndex + 1) % colorCount;
         arrayIndices[k] = tempIndex;
@@ -280,7 +287,7 @@ void IconData::setMultiFade(EColorGroup group, const std::vector<QColor>& colors
     }
 
     int count = 16;
-    QColor *output = new QColor[count];
+    std::vector<QColor> output(count);
     int colorIndex = 0;
     for (int i = 0; i < count - 2; i = i + 2) {
         output[i] = colors[arrayIndices[colorIndex]];
@@ -303,6 +310,7 @@ void IconData::setMultiFade(EColorGroup group, const std::vector<QColor>& colors
 }
 
 void IconData::setMultiRandomSolid(EColorGroup group, const std::vector<QColor>& colors, int colorMax) {
+    Q_UNUSED(group);
     int colorCount;
     if (colorMax == -1) {
         colorCount = colors.size();
@@ -413,6 +421,8 @@ void IconData::setMultiBarsSolid(EColorGroup group, const std::vector<QColor>& c
 }
 
 void IconData::setMultiBarsMoving(EColorGroup group, const std::vector<QColor>& colors, int colorMax) {
+    Q_UNUSED(group);
+
     int colorCount;
     if (colorMax == -1) {
         colorCount = colors.size();
@@ -605,11 +615,11 @@ uint IconData::height() {
     return mHeight;
 }
 
-QImage IconData::renderAsQImage() {
+const QImage IconData::renderAsQImage() {
     return QImage(mData.data(), mWidth, mHeight, QImage::Format_RGB888);
 }
 
-QPixmap IconData::renderAsQPixmap() {
+const QPixmap IconData::renderAsQPixmap() {
     return QPixmap::fromImage(renderAsQImage());
 }
 

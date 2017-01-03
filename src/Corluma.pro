@@ -124,9 +124,12 @@ SOURCES += main.cpp\
     commtypesettings.cpp \
     groupsparser.cpp \
     datasync.cpp \
+    huesinglecolorpage.cpp \
+    huepresetpage.cpp \
     listgroupwidget.cpp \
-    listcontrollerwidget.cpp \
-    huesinglecolorpage.cpp
+    discoverypage.cpp \
+    huesettingspage.cpp \
+    listdevicewidget.cpp
 
 HEADERS  += mainwindow.h \
     singlecolorpage.h \
@@ -157,9 +160,12 @@ HEADERS  += mainwindow.h \
     commtypesettings.h \
     groupsparser.h \
     datasync.h \
+    huesinglecolorpage.h \
+    huepresetpage.h \
     listgroupwidget.h \
-    listcontrollerwidget.h \
-    huesinglecolorpage.h
+    discoverypage.h \
+    huesettingspage.h \
+    listdevicewidget.h
 
 FORMS    += mainwindow.ui \
     singlecolorpage.ui \
@@ -167,7 +173,17 @@ FORMS    += mainwindow.ui \
     customcolorspage.ui \
     presetcolorspage.ui \
     connectionpage.ui \
-    huesinglecolorpage.ui
+    huesinglecolorpage.ui \
+    huepresetpage.ui \
+    discoverypage.ui \
+    huesettingspage.ui
+
+#----------
+# Optional Defines
+#----------
+
+# uncomment if its a hue only app
+#DEFINES += HUE_RELEASE=1
 
 #----------
 # Resources

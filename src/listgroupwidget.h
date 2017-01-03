@@ -23,11 +23,6 @@ class ListGroupWidget : public QWidget
 public:
     /*!
      * \brief ListGroupWidget constructor
-     */
-    explicit ListGroupWidget(QWidget *parent = 0);
-
-    /*!
-     * \brief setup create a ListGroupWidget
      * \param name name of group
      * \param devices devices in group
      * \param colors Color groups for devices using multi color routines.
@@ -35,12 +30,14 @@ public:
      * \param width width connectionList showing this group.
      * \param height desired height of this ListGroupWidget.
      */
-    void setup(const QString& name,
-               const std::list<SLightDevice>& devices,
-               const std::vector<std::vector<QColor> >& colors,
-               QPixmap statePixmap,
-               int width,
-               int height);
+    explicit ListGroupWidget(const QString& name,
+                             const std::list<SLightDevice>& devices,
+                             const std::vector<std::vector<QColor> >& colors,
+                             QPixmap statePixmap,
+                             int width,
+                             int height,
+                             bool isMood,
+                             QWidget *parent = 0);
 
 private:
 

@@ -4,6 +4,7 @@
 
 #include "datalayer.h"
 
+#include <QApplication>
 #include <QWidget>
 #include <QSlider>
 #include <QLabel>
@@ -43,7 +44,7 @@ public:
     /*!
      * \brief slider The actual and factual QSlider in this slider class
      */
-    std::shared_ptr<QSlider> slider;
+    QSlider *slider;
 
     /*!
      * \brief label label for the slider, allows you to label the slider, but by default its an empty value.
@@ -182,7 +183,7 @@ private:
      * \param newPos the position that user clicked.
      * \return the new position of the slider.
      */
-    int jumpSliderToPosition(std::shared_ptr<QSlider> slider, int newPos);
+    int jumpSliderToPosition(QSlider *slider, int newPos);
 
     /*!
      * \brief snapSliderToNearestTick checks the value that the slider is
@@ -195,7 +196,7 @@ private:
      * \param pos the position determined by jumpSliderToPosition.
      * \return the final position of the slider.
      */
-    int snapSliderToNearestTick(std::shared_ptr<QSlider> slider, int pos);
+    int snapSliderToNearestTick(QSlider *slider, int pos);
 
     /*!
      * \brief mThrottleTimer throttles the speed that the lights sliders update,

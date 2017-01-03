@@ -44,7 +44,10 @@
      <height>0</height>
     </size>
    </property>
-   <layout class="QGridLayout" name="gridLayout" rowstretch="2,4,20">
+   <layout class="QGridLayout" name="gridLayout" rowstretch="2,3,20">
+    <property name="spacing">
+     <number>0</number>
+    </property>
     <item row="1" column="0">
      <widget class="QPushButton" name="connectionButton">
       <property name="sizePolicy">
@@ -157,7 +160,7 @@
        </font>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>5</number>
       </property>
       <widget class="SingleColorPage" name="singleColorPage">
        <property name="sizePolicy">
@@ -192,6 +195,7 @@
         </sizepolicy>
        </property>
       </widget>
+      <widget class="HueSettingsPage" name="hueSettingsPage"/>
       <widget class="ConnectionPage" name="connectionPage"/>
      </widget>
     </item>
@@ -343,6 +347,12 @@
    <class>HueSingleColorPage</class>
    <extends>QWidget</extends>
    <header location="global">huesinglecolorpage.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>HueSettingsPage</class>
+   <extends>QWidget</extends>
+   <header>huesettingspage.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

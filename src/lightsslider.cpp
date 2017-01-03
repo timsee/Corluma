@@ -23,18 +23,18 @@ LightsSlider::LightsSlider(QWidget *parent) : QWidget(parent) {
     connect(mThrottleTimer, SIGNAL(timeout()), this, SLOT(resetThrottleFlag()));
 
     this->setAutoFillBackground(true);
-    slider = std::shared_ptr<QSlider>(new QSlider(Qt::Horizontal, this));
+    slider = new QSlider(Qt::Horizontal, this);
     slider->setAutoFillBackground(true);
     slider->setFixedSize(0,0);
     setMinimumPossible(false, 0);
     setSnapToNearestTick(false);
-    connect(slider.get(), SIGNAL(valueChanged(int)), this, SLOT(receivedValue(int)));
-    connect(slider.get(), SIGNAL(sliderReleased()),  this, SLOT(releasedSlider()));
+    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(receivedValue(int)));
+    connect(slider, SIGNAL(sliderReleased()),  this, SLOT(releasedSlider()));
 
     mLayout = new QVBoxLayout;
     mLayout->setSpacing(0);
     mLayout->setContentsMargins(0,0,0,0);
-    mLayout->addWidget(slider.get());
+    mLayout->addWidget(slider);
     setLayout(mLayout);
     mSliderColorSet = false;
 }
@@ -88,7 +88,7 @@ void LightsSlider::receivedValue(int value) {
  * solution based on this stack overflow response:
  * http://stackoverflow.com/a/15321654
  */
-int LightsSlider::jumpSliderToPosition(std::shared_ptr<QSlider> slider, int newPos) {
+int LightsSlider::jumpSliderToPosition(QSlider *slider, int newPos) {
 
     Qt::MouseButtons btns = QApplication::mouseButtons();
     QPoint localMousePos = slider->mapFromGlobal(QCursor::pos());
@@ -120,7 +120,7 @@ int LightsSlider::jumpSliderToPosition(std::shared_ptr<QSlider> slider, int newP
 }
 
 
-int LightsSlider::snapSliderToNearestTick(std::shared_ptr<QSlider> slider, int pos) {
+int LightsSlider::snapSliderToNearestTick(QSlider *slider, int pos) {
     int numberOfFullTicks = pos / slider->tickInterval();
     int leftTick = slider->minimum() + numberOfFullTicks * slider->tickInterval();
     int rightTick = slider->minimum()  + (numberOfFullTicks + 1) * slider->tickInterval();
@@ -231,13 +231,13 @@ void LightsSlider::releasedSlider() {
 
 void LightsSlider::enable(bool shouldEnable) {
     if(shouldEnable) {
-        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(slider.get());
+        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(slider);
         mOpacity = 1.0f;
         effect->setOpacity(mOpacity);
         slider->setGraphicsEffect(effect);
         this->setEnabled(true);
     } else {
-        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(slider.get());
+        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(slider);
         mOpacity = 0.5f;
         effect->setOpacity(mOpacity);
         slider->setGraphicsEffect(effect);

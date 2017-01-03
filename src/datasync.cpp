@@ -4,13 +4,21 @@
 DataSync::DataSync(DataLayer *data, CommLayer *comm) {
     mData = data;
     mComm = comm;
-    connect(mComm, SIGNAL(packetSent()), this, SLOT(resetSync()));
+    connect(mComm, SIGNAL(packetReceived()), this, SLOT(resetSync()));
     connect(mData, SIGNAL(dataUpdate()), this, SLOT(resetSync()));
 
     mSyncTimer = new QTimer(this);
     connect(mSyncTimer, SIGNAL(timeout()), this, SLOT(syncData()));
     mSyncTimer->start(100);
     mDataIsInSync = false;
+}
+
+void DataSync::cancelSync() {
+    mDataIsInSync = true;
+
+    if (mSyncTimer->isActive()) {
+        mSyncTimer->stop();
+    }
 }
 
 void DataSync::resetSync() {
@@ -61,7 +69,19 @@ bool DataSync::standardSync(const SLightDevice& dataDevice, const SLightDevice& 
     std::list<SLightDevice> list;
     list.push_back(dataDevice);
 
-    if (dataDevice.lightingRoutine <= ELightingRoutineSingleColorEnd) {
+    //-------------------
+    // On/Off Sync
+    //-------------------
+
+    if (dataDevice.isOn != commDevice.isOn) {
+        qDebug() << "ON/OFF not in sync" << dataDevice.isOn << " for " << dataDevice.index << "routine " << (int)dataDevice.lightingRoutine;
+        mComm->sendTurnOn(list, dataDevice.isOn);
+        tempInSync = false;
+    }
+
+
+    if (dataDevice.lightingRoutine <= utils::ELightingRoutineSingleColorEnd
+            && dataDevice.isOn) {
         //-------------------
         // Routine Sync
         //-------------------
@@ -73,13 +93,15 @@ bool DataSync::standardSync(const SLightDevice& dataDevice, const SLightDevice& 
         //-------------------
         // Single Color Sync
         //-------------------
-        if (commDevice.color != dataDevice.color) {
+        if (commDevice.color != dataDevice.color
+                && dataDevice.isOn) {
             mComm->sendMainColorChange(list, dataDevice.color);
             // Hue special case as it doesnt always convert 1 to 1.
             //qDebug() << "color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << colorDifference(dataDevice.color, commDevice.color);
             tempInSync = false;
         }
-    } else if (dataDevice.lightingRoutine > ELightingRoutineSingleColorEnd) {
+    } else if (dataDevice.lightingRoutine > utils::ELightingRoutineSingleColorEnd
+               && dataDevice.isOn) {
         //-------------------
         // Color Group Sync
         //-------------------
@@ -89,7 +111,7 @@ bool DataSync::standardSync(const SLightDevice& dataDevice, const SLightDevice& 
             mComm->sendMultiRoutineChange(list, dataDevice.lightingRoutine, dataDevice.colorGroup);
             tempInSync = false;
         }
-    } else {
+    } else if (dataDevice.isOn) {
         qDebug() << "lighting routine doesn't make sense...";
     }
 
@@ -97,12 +119,51 @@ bool DataSync::standardSync(const SLightDevice& dataDevice, const SLightDevice& 
     //-------------------
     // Brightness Sync
     //-------------------
-    if (commDevice.brightness != dataDevice.brightness) {
-        if (!(dataDevice.type == ECommType::eHue
-              && brightnessDifference(commDevice.brightness, dataDevice.brightness) < 0.05f)) {
-            //qDebug() << "brightness not in sync";
-            mComm->sendBrightness(list, dataDevice.brightness);
-            tempInSync = false;
+    if (commDevice.brightness != dataDevice.brightness
+            && dataDevice.isOn) {
+        //qDebug() << "brightness not in sync";
+        mComm->sendBrightness(list, dataDevice.brightness);
+        tempInSync = false;
+    }
+
+    //-------------------
+    // Timeout Sync
+    //-------------------
+    if (commDevice.timeout != dataDevice.timeout
+            && dataDevice.isOn) {
+        qDebug() << "time out not in sync";
+        mComm->sendTimeOut(list, dataDevice.timeout);
+        tempInSync = false;
+    }
+
+    //-------------------
+    // Speed Sync
+    //-------------------
+    if (commDevice.speed != dataDevice.speed
+            && dataDevice.isOn) {
+        qDebug() << "speed not in sync";
+        mComm->sendSpeed(list, dataDevice.speed);
+        tempInSync = false;
+    }
+
+    //-------------------
+    // Custom Color Count Sync
+    //-------------------
+    if (commDevice.customColorCount != dataDevice.customColorCount
+            && dataDevice.isOn) {
+        qDebug() << "custom color count not in sync" << commDevice.customColorCount << "vs" << dataDevice.customColorCount;
+        mComm->sendCustomArrayCount(list, dataDevice.customColorCount);
+        tempInSync = false;
+    }
+
+    //-------------------
+    // Custom Color Sync
+    //-------------------
+    for (int i = 0; i < dataDevice.customColorCount; ++i
+         && dataDevice.isOn) {
+        if (colorDifference(dataDevice.customColorArray[i], commDevice.customColorArray[i]) > 0.02f) {
+            qDebug() << "Custom color" << i << "not in sync";
+            mComm->sendArrayColorChange(list, i, dataDevice.customColorArray[i]);
         }
     }
 
@@ -115,34 +176,43 @@ bool DataSync::hueSync(const SLightDevice& dataDevice, const SLightDevice& commD
     std::list<SLightDevice> list;
     list.push_back(dataDevice);
 
-    if (dataDevice.colorMode == EColorMode::eHSV) {
+    //-------------------
+    // On/Off Sync
+    //-------------------
+
+    if (dataDevice.isOn != commDevice.isOn) {
+        qDebug() << "hue ON/OFF not in sync" << dataDevice.isOn;
+        mComm->sendTurnOn(list, dataDevice.isOn);
+        tempInSync = false;
+    }
+
+    if (dataDevice.colorMode == EColorMode::eHSV
+            && dataDevice.isOn) {
         //-------------------
         // Hue HSV Color Sync
         //-------------------
-        if (commDevice.color != dataDevice.color) {
-            // Hue special case as it doesnt always convert 1 to 1.
-            if (colorDifference(dataDevice.color, commDevice.color) > 0.07f) {
-                mComm->sendMainColorChange(list, dataDevice.color);
-                //qDebug() << "hue color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << colorDifference(dataDevice.color, commDevice.color);
-                tempInSync = false;
-            }
+        if (colorDifference(dataDevice.color, commDevice.color) > 0.07f) {
+            mComm->sendMainColorChange(list, dataDevice.color);
+            qDebug() << "hue color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << colorDifference(dataDevice.color, commDevice.color);
+            tempInSync = false;
         }
-    } else if (dataDevice.colorMode == EColorMode::eCT) {
+    } else if (dataDevice.colorMode == EColorMode::eCT
+               && dataDevice.isOn) {
         //-------------------
         // Hue Color Temperature Sync
         //-------------------
         if (colorDifference(commDevice.color, dataDevice.color) > 0.15f) {
-
-            mComm->sendColorTemperatureChange(list, rgbToColorTemperature(dataDevice.color));
+            mComm->sendColorTemperatureChange(list, utils::rgbToColorTemperature(dataDevice.color));
             tempInSync = false;
-            //qDebug() << "hue color temperature not in sync" << commDevice.color << "vs" <<  dataDevice.color << colorDifference(commDevice.color, dataDevice.color);
+            qDebug() << "hue color temperature not in sync" << commDevice.color << "vs" <<  dataDevice.color << colorDifference(commDevice.color, dataDevice.color);
         }
     }
     //-------------------
     // Hue Brightness Sync
     //-------------------
-    if (brightnessDifference(commDevice.brightness, dataDevice.brightness) > 0.05f) {
-        //qDebug() << "hue brightness not in sync" << brightnessDifference(commDevice.brightness, dataDevice.brightness);
+    if (brightnessDifference(commDevice.brightness, dataDevice.brightness) > 0.05f
+            && dataDevice.isOn) {
+        qDebug() << "hue brightness not in sync" << brightnessDifference(commDevice.brightness, dataDevice.brightness);
         mComm->sendBrightness(list, dataDevice.brightness);
         tempInSync = false;
     }

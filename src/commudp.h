@@ -1,11 +1,11 @@
 #ifndef COMMUDP_H
 #define COMMUDP_H
 
-#include "commtype.h"
-#include "commthrottle.h"
-
 #include <QUdpSocket>
 #include <QTimer>
+
+#include "commtype.h"
+#include "commthrottle.h"
 
 /*!
  * \copyright

@@ -67,7 +67,7 @@ void CommHTTP::stateUpdate() {
     if (shouldContinueStateUpdate()) {
         for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
             if (mDiscoveryMode || throttle->second->checkLastSend() < mUpdateTimeoutInterval) {
-                QString packet = QString("%1").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
+                QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
                 // WARNING: this resets the throttle and gets called automatically!
                  if (throttle->first.compare(QString(""))) {
                      sendPacket(throttle->first, packet);
@@ -132,7 +132,7 @@ void CommHTTP::replyFinished(QNetworkReply* reply) {
                 } else {
                     QString packet = payload.simplified();
                     if (packet.at(0) == '7') {
-                        emit packetReceived(controllerName, packet.mid(2), (int)ECommType::eHTTP);
+                        emit packetReceived(controllerName, packet, (int)ECommType::eHTTP);
                     } else {
                         emit packetReceived(controllerName, packet, (int)ECommType::eHTTP);
                     }

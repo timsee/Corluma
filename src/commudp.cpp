@@ -85,16 +85,19 @@ void CommUDP::sendPacket(QString controller, QString packet) {
     if (mBound) {
         bool isStateUpdate = false;
         for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
-            if (!throttle->first.compare(controller) && throttle->second->checkThrottle(controller, packet)) {
-                if (packet.at(0) !=  QChar('7')) {
-                    throttle->second->sentPacket();
-                } else {
+            if (!throttle->first.compare(controller)) {
+                if (packet.at(0) ==  QChar('7')) {
                     isStateUpdate = true;
                 }
-                //qDebug() << "sending udp" << packet << "to " << controller;
-                mSocket->writeDatagram(packet.toUtf8().data(),
-                                       QHostAddress(controller),
-                                       PORT);
+                if (isStateUpdate || throttle->second->checkThrottle(controller, packet)) {
+                    if (packet.at(0) !=  QChar('7')) {
+                        throttle->second->sentPacket();
+                    }
+                    //qDebug() << "sending udp" << packet << "to " << controller;
+                    mSocket->writeDatagram(packet.toUtf8().data(),
+                                           QHostAddress(controller),
+                                           PORT);
+                }
             }
         }
         if (!isStateUpdate) {
@@ -109,7 +112,7 @@ void CommUDP::stateUpdate() {
     if (shouldContinueStateUpdate()) {
         for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
             if (mDiscoveryMode ||  throttle->second->checkLastSend() < mUpdateTimeoutInterval) {
-                QString packet = QString("%1").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
+                QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
                  if (throttle->first.compare(QString(""))) {
                      sendPacket(throttle->first, packet);
                  }
@@ -127,6 +130,8 @@ void CommUDP::stateUpdate() {
 }
 
 void CommUDP::sendThrottleBuffer(QString bufferedConnection, QString bufferedMessage) {
+    Q_UNUSED(bufferedConnection);
+    Q_UNUSED(bufferedMessage);
 //    mSocket->writeDatagram(bufferedMessage.toUtf8().data(),
 //                           QHostAddress(bufferedConnection),
 //                           PORT);
@@ -157,7 +162,7 @@ void CommUDP::readPendingDatagrams() {
         quint16 senderPort;
         mSocket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
         QString payload = QString::fromUtf8(datagram);
-        //qDebug() << "UDP payload" << payload << "from" << sender.toString();
+        // qDebug() << "UDP payload" << payload << "from" << sender.toString();
         QString discoveryPacket = "DISCOVERY_PACKET";
 
         for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
@@ -165,10 +170,9 @@ void CommUDP::readPendingDatagrams() {
         }
 
         if (payload.contains(discoveryPacket)) {
-            QString packet = payload.mid(discoveryPacket.size() + 3);
             // add to list of discovered devices
             handleDiscoveryPacket(sender.toString(), 250, 1);
-            emit discoveryReceived(sender.toString(), packet, (int)ECommType::eUDP);
+            emit discoveryReceived(sender.toString(), payload, (int)ECommType::eUDP);
         } else {
             emit packetReceived(sender.toString(), payload, (int)ECommType::eUDP);
         }

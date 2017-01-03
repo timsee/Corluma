@@ -13,7 +13,55 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" stretch="8,2">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="1,8,2">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QPushButton" name="temperatureButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>RGB</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="rgbButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Temperature</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
    <item>
     <widget class="ColorPicker" name="colorPicker" native="true">
      <property name="sizePolicy">
@@ -44,15 +92,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ColorPicker</class>
+   <class>LightsSlider</class>
    <extends>QWidget</extends>
-   <header location="global">colorpicker.h</header>
+   <header>lightsslider.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>LightsSlider</class>
+   <class>ColorPicker</class>
    <extends>QWidget</extends>
-   <header location="global">lightsslider.h</header>
+   <header location="global">colorpicker.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

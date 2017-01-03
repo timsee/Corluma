@@ -39,13 +39,18 @@ enum class EColorMode {
     EColorMode_MAX
 };
 
+namespace utils
+{
+
+const ELightingRoutine ELightingRoutineSingleColorEnd = ELightingRoutine::eSingleSawtoothFadeOut;
+
 /*!
  * \brief colorModeToString helper for converting a color mode to a
  *        human readable string
  * \param mode color mode
  * \return string representation of color mode
  */
-static QString colorModeToString(EColorMode mode) {
+inline QString colorModeToString(EColorMode mode) {
     if (mode ==  EColorMode::eRGB) {
         return "RGB";
     } else if (mode ==  EColorMode::eHSV) {
@@ -64,7 +69,7 @@ static QString colorModeToString(EColorMode mode) {
  * \param mode string representation of mode
  * \return EColorMode based off of string.
  */
-static EColorMode stringtoColorMode(const QString& mode) {
+inline EColorMode stringtoColorMode(const QString& mode) {
     if (mode.compare("RGB") == 0) {
         return EColorMode::eRGB;
     }else if (mode.compare("HSV") == 0) {
@@ -72,7 +77,7 @@ static EColorMode stringtoColorMode(const QString& mode) {
     } else if (mode.compare("CT") == 0) {
         return EColorMode::eCT;
     } else {
-        qDebug() << "WARNING:  color mode not recognized" << mode;
+        qDebug() << "WARNING: color mode not recognized" << mode;
         return EColorMode::EColorMode_MAX;
     }
 }
@@ -82,7 +87,7 @@ static EColorMode stringtoColorMode(const QString& mode) {
  * \param type the ECommType to convert
  * \return a simple english representation of the ECommType.
  */
-static QString ECommTypeToString(ECommType type) {
+inline QString ECommTypeToString(ECommType type) {
     if (type ==  ECommType::eHTTP) {
         return "HTTP";
     } else if (type ==  ECommType::eUDP) {
@@ -104,7 +109,7 @@ static QString ECommTypeToString(ECommType type) {
  * \param type string representation of ECommType
  * \return ECommType based off of string.
  */
-static ECommType stringToECommType(QString type) {
+inline ECommType stringToECommType(QString type) {
     if (type.compare("HTTP") == 0) {
         return ECommType::eHTTP;
     } else if (type.compare("UDP") == 0) {
@@ -127,7 +132,7 @@ static ECommType stringToECommType(QString type) {
  * \param ct meriks of color temperature.
  * \return QColor version of color temperature
  */
-QColor static colorTemperatureToRGB(int ct) {
+inline QColor colorTemperatureToRGB(int ct) {
     // convert to kelvin
     float kelvin = (int)(1.0f / ct * 1000000.0f);
     float temp = kelvin / 100;
@@ -165,7 +170,7 @@ QColor static colorTemperatureToRGB(int ct) {
  *        their color temperature. This is really bad code, redesign!
  * \TODO rewrite
  */
-int static rgbToColorTemperature(QColor color) {
+inline int rgbToColorTemperature(QColor color) {
     float minTemperature = 153;
     float maxTemperature = 500;
     for (int i = minTemperature; i <= maxTemperature; ++i) {
@@ -181,6 +186,7 @@ int static rgbToColorTemperature(QColor color) {
     return -1;
 }
 
+}
 
 
 struct SLightDevice {
@@ -230,6 +236,42 @@ struct SLightDevice {
     int brightness;
 
     //-----------------------
+    // Settings
+    //-----------------------
+
+    /*!
+     * \brief minutesUntilTimeout number of minutes left until the device times out
+     *        and shuts off its lights.
+     */
+    int minutesUntilTimeout;
+
+    /*!
+     * \brief timeout total number of minutes it will take a device to time out.
+     */
+    int timeout;
+
+    /*!
+     * \brief speed speed of updates to lighting routines.
+     */
+    int speed;
+
+    //-----------------------
+    // Custom Colors
+    //-----------------------
+
+    /*!
+     * \brief customColorArray an array of 10 colors that is used to set the custom color group
+     *        that can be used in multi color routines.
+     */
+    std::vector<QColor> customColorArray;
+
+    /*!
+     * \brief customColorCount the number of colors used when working with the custom color group.
+     *        This allows the user to make a color group that has less than 10 colors in it.
+     */
+    uint32_t customColorCount;
+
+    //-----------------------
     // Connection Info
     //-----------------------
 
@@ -264,31 +306,31 @@ struct SLightDevice {
                  << "colorGroup: " << (int)colorGroup << "\n"
                  << "brightness: " << brightness << "\n"
                  << "index: " << index << "\n"
-                 << "Type: " << ECommTypeToString(type) << "\n"
+                 << "Type: " << utils::ECommTypeToString(type) << "\n"
                  << "name: " << name << "\n";
     }
 
 
     /*!
-     * \brief structToString converts a SLightDevice struct to a string in the format
-     *        of comma delimited values.
+     * \brief structToIdentifierString converts a SLightDevice struct to a string in the format
+     *        of comma delimited values with only the values needed to identiy if as unique.
      * \param dataStruct the struct to convert to a string
      * \return a comma delimited string that represents all values in the SLightDevice.
      */
-    QString static structToString(SLightDevice dataStruct) {
+    QString structToIdentifierString() {
         QString returnString = "";
-        returnString = returnString + dataStruct.name + "," + QString::number(dataStruct.index) + "," + QString::number((int)dataStruct.type);
+        returnString = returnString + this->name + "," + QString::number(this->index) + "," + QString::number((int)this->type);
         return returnString;
     }
 
     /*!
-     * \brief stringToStruct converts a string represention of a SControllerCommData
+     * \brief identifierStringToStruct converts a string represention of a SControllerCommData
      *        back to a struct.
      * \param string the string to convert
      * \return a SLightDevice struct based on the string given. an empty struct is returned if
      *         the string is invalid.
      */
-    SLightDevice static stringToStruct(QString string) {
+    SLightDevice identifierStringToStruct(QString string) {
         // first split the values from comma delimited to a vector of strings
         std::vector<std::string> valueVector;
         std::stringstream input(string.toStdString());
@@ -312,6 +354,31 @@ struct SLightDevice {
         return outputStruct;
     }
 
+    /*!
+     * \brief SLightDevice Constructor
+     */
+    SLightDevice()
+    {
+        customColorArray = std::vector<QColor>(10);
+        customColorCount = 2;
+
+        int j = 0;
+        int customCount = 5;
+        for (uint32_t i = 0; i < customColorArray.size(); i++) {
+            if ((j % customCount) == 0) {
+                customColorArray[i] = QColor(0,    255, 0);
+            } else if ((j % customCount) == 1) {
+                customColorArray[i] = QColor(125,  0,   255);
+            } else if ((j % customCount) == 2) {
+                customColorArray[i] = QColor(0,    0,   255);
+            } else if ((j % customCount) == 3) {
+                customColorArray[i] = QColor(40,   127, 40);
+            } else if ((j % customCount) == 4) {
+                customColorArray[i] = QColor(60,   0,   160);
+            }
+            j++;
+        }
+    }
 };
 
 /// equal operator
@@ -328,6 +395,8 @@ inline bool operator==(const SLightDevice& lhs, const SLightDevice& rhs)
     if (lhs.index           !=  rhs.index) result = false;
     if (lhs.type            !=  rhs.type) result = false;
     if (lhs.colorMode       !=  rhs.colorMode) result = false;
+    if (lhs.timeout         !=  rhs.timeout) result = false;
+    if (lhs.speed           !=  rhs.speed) result = false;
     if (lhs.name.compare(rhs.name)) result = false;
 
     return result;

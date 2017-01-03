@@ -22,6 +22,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowTitle("Corluma");
 
+    mUseStandardSettings = true;
+    connect(ui->settingsPage, SIGNAL(settingsPageIsStandard(bool)), this, SLOT(defaultSettingsPageChanged(bool)));
+    connect(ui->hueSettingsPage, SIGNAL(settingsPageIsStandard(bool)), this, SLOT(defaultSettingsPageChanged(bool)));
+
     // --------------
     // Setup Backend
     // --------------
@@ -46,7 +50,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->presetColorsPage->setup(mData);
     ui->settingsPage->setup(mData);
 
-    ui->customColorsPage->connectCommLayer(mComm);
     ui->settingsPage->connectCommLayer(mComm);
     ui->connectionPage->connectCommLayer(mComm);
 
@@ -120,7 +123,6 @@ MainWindow::MainWindow(QWidget *parent) :
     // --------------
     // Final setup
     // --------------
-    mIsOn = true;
 
     pageChanged((int)EPage::eConnectionPage);
     mLastPageIsMultiColor = false;
@@ -139,10 +141,9 @@ MainWindow::~MainWindow() {
 // Slots
 // ----------------------------
 void MainWindow::toggleOnOff() {
-    if (mIsOn) {
+    if (mData->isOn()) {
         mIconData.setSolidColor(QColor(0,0,0));
         ui->onOffButton->setIcon(mIconData.renderAsQPixmap());
-        mIsOn = false;
         mData->turnOn(false);
     } else {
         if (mData->currentRoutine() <= ELightingRoutine::eSingleSawtoothFadeOut) {
@@ -154,13 +155,12 @@ void MainWindow::toggleOnOff() {
         }
         ui->onOffButton->setIcon(mIconData.renderAsQPixmap());
         mData->turnOn(true);
-        mIsOn = true;
     }
 }
 
 void MainWindow::brightnessChanged(int newBrightness) {
    mData->updateBrightness(newBrightness);
-   mIsOn = true;
+   mData->turnOn(true);
 }
 
 
@@ -194,7 +194,11 @@ void MainWindow::settingsButtonPressed() {
 
     mFloatingLayout->setVisible(false);
 
-    ui->stackedWidget->setCurrentIndex((int)EPage::eSettingsPage);
+    if (mUseStandardSettings) {
+        ui->stackedWidget->setCurrentIndex((int)EPage::eSettingsPage);
+    } else {
+        ui->stackedWidget->setCurrentIndex((int)EPage::eHueSettingsPage);
+    }
 }
 
 void MainWindow::pageChanged(int pageIndex) {
@@ -243,23 +247,55 @@ void MainWindow::pageChanged(int pageIndex) {
 
 
 void MainWindow::updateMenuBar() {
-    if (ui->stackedWidget->currentIndex() == (int)EPage::eCustomArrayPage) {
-        mIconData.setMultiLightingRoutine(mData->currentRoutine(), mData->currentColorGroup(), mData->currentGroup());
-        ui->singleColorButton->updateIconPresetColorRoutine(mData->currentRoutine(), mData->currentColorGroup(), mData->currentGroup());
-        ui->brightnessSlider->setSliderColorBackground(mData->colorsAverage(EColorGroup::eCustom));
+
+    //-----------------
+    // Single Color Button Update
+    //-----------------
+
+    if (ui->stackedWidget->currentIndex() == (int)EPage::eCustomArrayPage
+            && mData->currentRoutine() > utils::ELightingRoutineSingleColorEnd) {
+        int count;
+        if (mData->currentColorGroup() == EColorGroup::eCustom) {
+            count = mData->customColorsUsed();
+        } else {
+            count = -1;
+        }
+        ui->singleColorButton->updateIconPresetColorRoutine(mData->currentRoutine(),
+                                                            mData->currentColorGroup(),
+                                                            mData->currentGroup(),
+                                                            count);
     } else {
         ui->singleColorButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, mData->mainColor());
     }
 
-    if (mData->currentRoutine() <= ELightingRoutineSingleColorEnd) {
+
+    //-----------------
+    // On/Off Button Update
+    //-----------------
+
+    if (!mData->isOn()) {
+        mIconData.setSingleLightingRoutine(ELightingRoutine::eOff, QColor(0,0,0));
+    } else if (mData->currentColorGroup() == EColorGroup::eCustom
+               && mData->currentRoutine() > utils::ELightingRoutineSingleColorEnd) {
+        mIconData.setMultiLightingRoutine(mData->currentRoutine(),
+                                          mData->currentColorGroup(),
+                                          mData->currentGroup(),
+                                          mData->customColorsUsed());
+    } else if (mData->currentRoutine() <= utils::ELightingRoutineSingleColorEnd) {
         mIconData.setSingleLightingRoutine(mData->currentRoutine(), mData->mainColor());
     } else {
         mIconData.setMultiLightingRoutine(mData->currentRoutine(), mData->currentColorGroup(), mData->currentGroup());
     }
     ui->onOffButton->setIcon(mIconData.renderAsQPixmap());
 
+    //-----------------
+    // Brightness Slider Update
+    //-----------------
+
     if ((int)mData->currentRoutine() <= (int)ELightingRoutine::eSingleSawtoothFadeOut) {
         ui->brightnessSlider->setSliderColorBackground(mData->mainColor());
+    } else if (ui->stackedWidget->currentIndex() == (int)EPage::eCustomArrayPage) {
+        ui->brightnessSlider->setSliderColorBackground(mData->colorsAverage(EColorGroup::eCustom));
     } else {
         ui->brightnessSlider->setSliderColorBackground(mData->colorsAverage(mData->currentColorGroup()));
     }
@@ -282,7 +318,9 @@ void MainWindow::updateSingleColor(QColor color) {
 
 void MainWindow::updatePresetColorGroup(int lightingRoutine, int colorGroup) {
     mIconData.setMultiFade((EColorGroup)colorGroup, mData->colorGroup((EColorGroup)colorGroup));
-    ui->presetArrayButton->updateIconPresetColorRoutine((ELightingRoutine)lightingRoutine, (EColorGroup)colorGroup, mData->colorGroup((EColorGroup)colorGroup));
+    ui->presetArrayButton->updateIconPresetColorRoutine((ELightingRoutine)lightingRoutine,
+                                                        (EColorGroup)colorGroup,
+                                                        mData->colorGroup((EColorGroup)colorGroup));
     ui->brightnessSlider->setSliderColorBackground(mData->colorsAverage((EColorGroup)colorGroup));
     ui->onOffButton->setIcon(mIconData.renderAsQPixmap());
 }
@@ -313,6 +351,15 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
 
     if (mFloatingLayout->isVisible()) {
        mFloatingLayout->move((ui->settingsButton->geometry().bottomRight()));
+    }
+}
+
+void MainWindow::changeEvent(QEvent *event) {
+    if(event->type() == QEvent::ActivationChange && this->isActiveWindow()) {
+        mComm->resetStateUpdates();
+    } else if (event->type() == QEvent::ActivationChange && !this->isActiveWindow()) {
+        mComm->stopStateUpdates();
+        mDataSync->cancelSync();
     }
 }
 
@@ -359,3 +406,13 @@ void MainWindow::deviceCountChangedOnConnectionPage() {
         deviceCountReachedZero();
     }
 }
+
+void MainWindow::defaultSettingsPageChanged(bool newPage) {
+    mUseStandardSettings = newPage;
+    if (mUseStandardSettings) {
+        ui->stackedWidget->setCurrentIndex((int)EPage::eSettingsPage);
+    } else {
+        ui->stackedWidget->setCurrentIndex((int)EPage::eHueSettingsPage);
+    }
+}
+

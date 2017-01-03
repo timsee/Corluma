@@ -60,6 +60,17 @@ private slots:
      */
     void ambientValueChanged(int);
 
+    /*!
+     * \brief rgbButtonPressed top menu button for displaying the RGB color wheel was pressed.
+     */
+    void rgbButtonPressed(bool);
+
+    /*!
+     * \brief temperatureButtonPressed top menu button for using the temperature slider
+     *        was pressed.
+     */
+    void temperatureButtonPressed(bool);
+
 private:
     Ui::HueSingleColorPage *ui;
 };

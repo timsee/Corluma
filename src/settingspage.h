@@ -2,12 +2,13 @@
 #ifndef SETTINGSPAGE_H
 #define SETTINGSPAGE_H
 
+#include <QWidget>
+#include <QListWidgetItem>
+
 #include "lightingpage.h"
 #include "lightsslider.h"
 #include "lightcheckbox.h"
-
-#include <QWidget>
-#include <QListWidgetItem>
+#include "commlayer.h"
 
 namespace Ui {
 class SettingsPage;
@@ -68,6 +69,12 @@ signals:
      */
     void updateMainIcons();
 
+    /*!
+     * \brief settingsPageIsStandard signaled when top menu is pressed. True if settings page should
+     *        show standard settings, false if showing hue-specific settings.
+     */
+    void settingsPageIsStandard(bool);
+
 public slots:
     /*!
      * \brief speedChanged signaled whenever the slider that controls
@@ -113,6 +120,16 @@ private slots:
      *        change of state.
      */
     void renderUI();
+
+    /*!
+     * \brief standardButtonPressed standard settings button pressed on the top menu.
+     */
+    void standardButtonPressed(bool);
+
+    /*!
+     * \brief hueButtonPressed hue settings bustton pressed on the top menu.
+     */
+    void hueButtonPressed(bool);
 
 protected:
     /*!

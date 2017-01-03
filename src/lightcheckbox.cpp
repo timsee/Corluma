@@ -46,6 +46,8 @@ void LightCheckBox::handleButton() {
 }
 
 void LightCheckBox::resizeEvent(QResizeEvent *event) {
+    Q_UNUSED(event);
+
     int height = static_cast<int>(mButton->size().height() * 0.8f);
     mButton->setIconSize(QSize(height, height));
     mCheckedIcon = QIcon(QPixmap(":/qss_icons/rc/checkbox_checked.png").scaled(height, height));

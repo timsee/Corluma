@@ -2,12 +2,10 @@
 #ifndef COMMLAYER_H
 #define COMMLAYER_H
 
-#include "lightingprotocols.h"
 #include <QColor>
-#include <memory>
 #include <QWidget>
-#include <QTimer>
-#include "datalayer.h"
+
+#include <memory>
 
 #ifndef MOBILE_BUILD
 #include "commserial.h"
@@ -15,6 +13,7 @@
 #include "commhttp.h"
 #include "commudp.h"
 #include "commhue.h"
+#include "lightingprotocols.h"
 
 /*!
  * \copyright
@@ -37,6 +36,13 @@ public:
      * \brief Constructor
      */
     CommLayer(QWidget *parent = 0);
+
+    /*!
+     * \brief sendTurnOn turn all devices in the provided list either on or off.
+     * \param turnOn true to turn devices on, false to turn them off.
+     */
+    void sendTurnOn(const std::list<SLightDevice>& deviceList,
+                    bool turnOn);
 
     /*!
      * \brief sendMainColorChange change the main color of the lighting settings
@@ -118,6 +124,16 @@ public:
      */
     void sendReset(const std::list<SLightDevice>& deviceList);
 
+    /*!
+     * \brief resetStateUpdates reset the state updates timeouts for all commtypes. If it isn't on already,
+     *        it gets turned on.
+     */
+    void resetStateUpdates();
+
+    /*!
+     * \brief stopStateUpdates turn off the state update threads for all commtypes.
+     */
+    void stopStateUpdates();
 
     // --------------------------
     // Controller and Device Management
@@ -226,9 +242,9 @@ signals:
    void hueDiscoveryStateChange(int);
 
    /*!
-    * \brief packetSent anotification that a packet was sent by one of the commtypes.
+    * \brief packetReceived anotification that a packet was receieved by one of the commtypes.
     */
-   void packetSent();
+   void packetReceived();
 
    /*!
     * \brief updateReceived a notification that a packet was received by one of the commtypes.
@@ -262,6 +278,11 @@ private slots:
     * \param type the ECommType that has been updated.
     */
    void receivedUpdate(int type) { emit updateReceived(type); }
+
+   /*!
+    * \brief hueStateChanged sent by hue whenever a packet is received that changes it state.
+    */
+   void hueStateChanged() { emit packetReceived(); }
 
 private:
 

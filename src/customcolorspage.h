@@ -62,14 +62,6 @@ public:
      */
     void setupButtons();
 
-    /*!
-     * \brief connectCommLayer connect to commlayer. In a future update the commLayer pointer on
-     *        every page will be totally removed in favor of DataSync, but for now theres some
-     *        edge cases that require certain pages to have a commlayer pointer.
-     * \param layer commlayer
-     */
-    void connectCommLayer(CommLayer *layer) { mComm = layer; }
-
 signals:
     /*!
      * \brief used to signal back to the main page that it should update its top-left icon
@@ -78,10 +70,6 @@ signals:
     void updateMainIcons();
 
 public slots:
-    /*!
-     * \brief modeChanged called whenever a mode button is pressed.
-     */
-    void modeChanged(int);
 
     /*!
      * \brief colorsUsedChanged called whenever the colors used slider
@@ -143,7 +131,7 @@ private:
     /*!
      * \brief mArrayColorsButtons buttons for changing the lighting mode.
      */
-    std::shared_ptr<std::vector<QPushButton *> > mArrayColorsButtons;
+    std::vector<QPushButton *> mArrayColorsButtons;
 
     /*!
      * \brief IconData for the Single Color Routine Icons
@@ -159,18 +147,18 @@ private:
      * \brief mRoutineButtons pointers to all the routine changes that can
      *        use the custom color array.
      */
-    std::shared_ptr<std::vector<LightsButton *> > mRoutineButtons;
+    std::vector<LightsButton *> mRoutineButtons;
 
     /*!
      * \brief mCurrentColorPickerIndex current index being set by the GUI.
      */
-    int mCurrentColorPickerIndex;
+    uint32_t mCurrentColorPickerIndex;
 
     /*!
      * \brief mCustomArraySize size of the custom color array, used to initialize
      *        and access vectors throughout this page.
      */
-    int mCustomArraySize;
+    uint32_t mCustomArraySize;
 
     /*!
      * \brief updateColorArray called whenever the color array experiences
@@ -184,12 +172,6 @@ private:
      *        so that the icons can sync up to the new color values.
      */
     void updateIcons();
-
-    /*!
-     * \brief communication pointer to communication object
-     *        for sending comannds to the lights
-     */
-    CommLayer *mComm;
 };
 
 #endif // CUSTOMARRAYPAGE_H

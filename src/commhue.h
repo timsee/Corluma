@@ -23,6 +23,7 @@
 enum class EHueType {
     eExtended,
     eAmbient,
+    eColor,
     EHueType_MAX
 };
 
@@ -169,6 +170,12 @@ public:
      * \return the SHueLight that represents the same device as the SLightDevice given.
      */
     SHueLight hueLightFromLightDevice(const SLightDevice& device);
+
+signals:
+    /*!
+     * \brief stateChanged emitted when any of the lights change in any way.
+     */
+    void stateChanged();
 
 private slots:
 

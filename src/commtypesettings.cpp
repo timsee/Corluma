@@ -17,15 +17,28 @@ CommTypeSettings::CommTypeSettings() {
             mDeviceInUse[(int)i] = shouldEnable;
             if (shouldEnable) mCommTypeCount++;
         } else {
-            mDeviceInUse[(int)i] = true;
+            mDeviceInUse[(int)i] = false;
+            mSettings->setValue(mCommTypeInUseSaveKeys[(int)i], QString::number((int)false));
+            mSettings->sync();
         }
     }
 
     //error handling, must always have at least one stream!
     if (mCommTypeCount == 0) {
         mDeviceInUse[(int)ECommType::eHue] = true;
+        mSettings->setValue(mCommTypeInUseSaveKeys[(int)ECommType::eHue], QString::number((int)false));
+        mSettings->sync();
         mCommTypeCount++;
     }
+
+#ifdef HUE_RELEASE
+    // turn off all connections
+    for (int i = 0; i < mDeviceInUse.size(); ++i) {
+        mDeviceInUse[i] = false;
+    }
+    // turn on only hue
+    mDeviceInUse[(int)ECommType::eHue] = true;
+#endif
 
     // check if a default commtype already exists
     ECommType previousType = ECommType::eCommType_MAX;
@@ -37,14 +50,14 @@ CommTypeSettings::CommTypeSettings() {
     // previous settings.
     if (mCommTypeCount == 1) {
         int x = 0;
-        for (int i = 0; i <  mDeviceInUse.size(); ++i) {
+        for (uint32_t i = 0; i <  mDeviceInUse.size(); ++i) {
             if (mDeviceInUse[i]) x = i;
         }
         mDefaultCommType = (ECommType)x;
     } else if (previousType == ECommType::eCommType_MAX) {
         // no previous type found, so find last connection.
         int x = 0;
-        for (int i = 0; i <  mDeviceInUse.size(); ++i) {
+        for (uint32_t i = 0; i <  mDeviceInUse.size(); ++i) {
             if (mDeviceInUse[i]) x = i;
         }
         mDefaultCommType = (ECommType)x;
@@ -71,7 +84,7 @@ ECommType CommTypeSettings::defaultCommType() {
 bool CommTypeSettings::enableCommType(ECommType type, bool shouldEnable) {
     bool previouslyEnabled = commTypeEnabled(type);
     if (!shouldEnable && previouslyEnabled && mCommTypeCount == 1) {
-        qDebug() << "WARNING: one commtype must always be active! Not removing commtype.";
+        qDebug() << "WARNING: one commtype must always be active! Not removing commtype." << mCommTypeCount;
         return false;
     }
     if (shouldEnable && !previouslyEnabled) {

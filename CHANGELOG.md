@@ -82,20 +82,17 @@
 * Fixed bugs on the settings page. 
 * Fixed miscellaneous bugs.
 
-
+## The Backend Updates
 ### **v0.9.5** 
 #### Obligatory Confusing Backend Update
 * Rewrote system that stores and switches between different connections.
-
 ### **v0.9.55** 
 #### CommLayer Update
 * Adjusted from having only one connection (UDP, HTTP, Phillips Hue, etc.) active at a time to having all connections active simultaneously.
 * Added independent heartbeats and maintenance to each connection.
-
 ### **v0.9.6** 
 #### Group Update
 * Added the ability to select multiple connections and control them all simultaneously. This includes support for simultaneous control of lights of different types (e.g. an arduino over serial and a Phillips Hue). 
-
 ### **v0.9.65** 
 #### CommType Update
 * Simplified internal data structures for storing and accessing lights.
@@ -113,4 +110,11 @@
 * Added reliability layer to all packets. 
 * Added support for Hue Ambient Lights.
 * Added GUI for saving and choosing preset groups of lights.
+
+### **v0.9.82
+#### Miscellaneous Cleanup Update
+* Fixed edge cases in DataSync.
+* Cleaned up old code.
+* Updated message parsing to match the new [RGB-LED-Routines](https://github.com/timsee/RGB-LED-Routines) protocols. 
+* Fixed miscellaneous bugs.
 

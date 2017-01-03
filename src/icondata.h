@@ -2,7 +2,7 @@
 #ifndef ICONDATA_H
 #define ICONDATA_H
 
-#include "datalayer.h"
+#include "lightingprotocols.h"
 
 #include <QPixmap>
 #include <QImage>
@@ -155,12 +155,12 @@ public:
      * \brief renderAsQImage takes the data and outputs it as a QImage
      * \return a QImage representation of the data
      */
-    QImage renderAsQImage();
+    const QImage renderAsQImage();
     /*!
      * \brief renderAsQPixmap takes the dat and outputs it as a QPixmap
      * \return a QPixmap representation of the data
      */
-    QPixmap renderAsQPixmap();
+    const QPixmap renderAsQPixmap();
 
 private:
 
@@ -176,7 +176,7 @@ private:
      * the full data used when rendering an image.
      * It matches in size the size of the image
      */
-    QVector<uint8_t> mData;
+    std::vector<uint8_t> mData;
     /*!
      * \brief mWidth the width of the resulting icon
      */
@@ -197,7 +197,7 @@ private:
      * region of the mData. A function bufferToOutput() must
      * be called in any function to map mBuffer to mData.
      */
-    QVector<uint8_t> mBuffer;
+    std::vector<uint8_t> mBuffer;
     /*!
      * \brief mBufferWidth the buffer's width.
      */
@@ -232,7 +232,7 @@ private:
     /*!
      * \brief mRandomIndividual used by random
      */
-    int mRandomIndividual[16];
+    std::vector<int> mRandomIndividual;
 };
 
 #endif // ICONDATA_H

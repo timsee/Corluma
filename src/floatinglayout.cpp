@@ -10,6 +10,7 @@ FloatingLayout::FloatingLayout(QSize size, QWidget *parent) : QWidget(parent) {
     mSingleButton->setText("Single");
 
 #ifdef MOBILE_BUILD
+    Q_UNUSED(size);
     //NOTE: on devices with high DPI size using a floating layout doesnt allow
     //      the views to scale up with the rest of the layout. To avoid this issue,
     //       we use the screens availableSize rather than just the application's size
@@ -64,6 +65,7 @@ void FloatingLayout::move(QPoint topRightPoint) {
 
 
 void FloatingLayout::singleButtonClicked(bool clicked) {
+    Q_UNUSED(clicked);
     mFloatingLayoutSingleSelected = true;
     mSingleButton->setChecked(true);
     mMultiButton->setChecked(false);
@@ -71,6 +73,7 @@ void FloatingLayout::singleButtonClicked(bool clicked) {
 }
 
 void FloatingLayout::multiButtonClicked(bool clicked) {
+    Q_UNUSED(clicked);
     mFloatingLayoutSingleSelected = false;
     mSingleButton->setChecked(false);
     mMultiButton->setChecked(true);

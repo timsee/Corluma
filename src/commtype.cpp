@@ -6,7 +6,6 @@
 
 #include "commtype.h"
 
-#define DEFAULT_IP "192.168.0.125"
 
 void CommType::setupConnectionList(ECommType type) {
     mType = type;
@@ -19,19 +18,13 @@ void CommType::setupConnectionList(ECommType type) {
         controllerListCurrentSize = 0;
     }
 
-    // add in a default for specific cases
-    if (controllerListCurrentSize == 0) {
-        if(mType == ECommType::eHTTP
-             || mType == ECommType::eUDP ) {
-            addController(DEFAULT_IP);
-        }
-    } else {
-        // load preexisting settings, if they exist
-        for (int i = 0; i < controllerListCurrentSize; ++i) {
-           QString value = mSettings.value(settingsIndexKey(i)).toString();
-           if (value.compare(QString("")) != 0) addController(value);
-        }
+
+    // load preexisting settings, if they exist
+    for (int i = 0; i < controllerListCurrentSize; ++i) {
+       QString value = mSettings.value(settingsIndexKey(i)).toString();
+       if (value.compare(QString("")) != 0) addController(value);
     }
+
 
     mDiscoveryMode = false;
     mFullyDiscovered = false;
@@ -55,20 +48,9 @@ bool CommType::addController(QString controller) {
 
     // check both that the connection is valid and that it doesn't already exist in the list
     if (checkIfControllerIsValid(controller) && !controllerExists) {
-        // add junk device that is defaulted to off and disabled.
-        SLightDevice device;
-        device.isValid = true;
-        device.isOn = false;
-        device.isReachable = false;
-        device.brightness = 0;
-        device.colorGroup = EColorGroup::eCustom;
-        device.lightingRoutine = ELightingRoutine::eOff;
-        device.type = mType;
-        device.index = 1;
-        device.name = controller;
         std::list<SLightDevice> newDeviceList;
-        newDeviceList.push_back(device);
         mDeviceTable.insert(std::make_pair(controller.toStdString(), newDeviceList));
+        mUndiscoveredList.push_front(controller.toStdString());
         emit updateReceived((int)mType);
         return true;
     }
@@ -77,6 +59,7 @@ bool CommType::addController(QString controller) {
 
 bool CommType::removeController(QString controller) {
     mDeviceTable.erase(controller.toStdString());
+    mUndiscoveredList.remove(controller.toStdString());
     return true;
 }
 
@@ -181,6 +164,12 @@ void CommType::resetStateUpdateTimeout() {
     mLastSendTime = QTime::currentTime();
 }
 
+void CommType::stopStateUpdates() {
+    if (mStateUpdateTimer->isActive()) {
+        mStateUpdateTimer->stop();
+    }
+}
+
 bool CommType::shouldContinueStateUpdate() {
     if (mLastSendTime.elapsed() > 15000) {
         //qDebug() << "INFO: Turning off state updates";
@@ -196,6 +185,7 @@ void CommType::handleDiscoveryPacket(QString sender, int throttleInterval, int t
     if (!found) {
         //if its not found, add it to the list
         mDiscoveryList.push_back(sender);
+        mUndiscoveredList.remove(sender.toStdString());
     }
 
     // iterate through the throttle list and see if theres an associated throttle

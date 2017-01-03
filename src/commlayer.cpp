@@ -33,6 +33,7 @@ CommLayer::CommLayer(QWidget *parent) : QWidget(parent) {
     connect(mHue.get(), SIGNAL(packetReceived(QString, QString, int)), this, SLOT(parsePacket(QString, QString, int)));
     connect(mHue.get(), SIGNAL(discoveryReceived(QString, QString, int)), this, SLOT(discoveryReceived(QString, QString, int)));
     connect(mHue.get(), SIGNAL(updateReceived(int)), this, SLOT(receivedUpdate(int)));
+    connect(mHue.get(), SIGNAL(stateChanged()), this, SLOT(hueStateChanged()));
 
     connect(mHue.get()->discovery(), SIGNAL(bridgeDiscoveryStateChanged(int)), this, SLOT(hueDiscoveryUpdate(int)));
 }
@@ -41,14 +42,41 @@ bool CommLayer::runningDiscovery(ECommType type) {
     return commByType(type)->runningDiscovery();
 }
 
+
+void CommLayer::sendTurnOn(const std::list<SLightDevice>& deviceList,
+                           bool turnOn) {
+    for (auto&& device : deviceList) {
+        if (device.type == ECommType::eHue) {
+            if (turnOn) {
+                mHue->turnOn(device.index);
+            } else {
+                mHue->turnOff(device.index);
+            }
+        } else {
+            QString packet;
+            if (turnOn) {
+                packet = QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::eModeChange),
+                                                  QString::number(device.index),
+                                                  QString::number((int)device.lightingRoutine));
+            } else {
+                packet = QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::eModeChange),
+                                                  QString::number(device.index),
+                                                  QString::number((int)ELightingRoutine::eOff));
+            }
+            sendPacket(device, packet);
+
+        }
+   }
+}
+
 void CommLayer::sendMainColorChange(const std::list<SLightDevice>& deviceList,
                                     QColor color) {
     for (auto&& device : deviceList) {
-            QString packet = QString("%1,%2,%3,%4,%5").arg(QString::number((int)EPacketHeader::eMainColorChange),
-                                                           QString::number(device.index),
-                                                           QString::number(color.red()),
-                                                           QString::number(color.green()),
-                                                           QString::number(color.blue()));
+            QString packet = QString("%1,%2,%3,%4,%5&").arg(QString::number((int)EPacketHeader::eMainColorChange),
+                                                            QString::number(device.index),
+                                                            QString::number(color.red()),
+                                                            QString::number(color.green()),
+                                                            QString::number(color.blue()));
             sendPacket(device, packet);
    }
 }
@@ -57,12 +85,12 @@ void CommLayer::sendArrayColorChange(const std::list<SLightDevice>& deviceList,
                                      int index,
                                      QColor color) {
     for (auto&& device : deviceList) {
-        QString packet = QString("%1,%2,%3,%4,%5,%6").arg(QString::number((int)EPacketHeader::eCustomArrayColorChange),
-                                                          QString::number(device.index),
-                                                          QString::number(index),
-                                                          QString::number(color.red()),
-                                                          QString::number(color.green()),
-                                                          QString::number(color.blue()));
+        QString packet = QString("%1,%2,%3,%4,%5,%6&").arg(QString::number((int)EPacketHeader::eCustomArrayColorChange),
+                                                           QString::number(device.index),
+                                                           QString::number(index),
+                                                           QString::number(color.red()),
+                                                           QString::number(color.green()),
+                                                           QString::number(color.blue()));
         sendPacket(device, packet);
     }
 }
@@ -71,10 +99,10 @@ void CommLayer::sendSingleRoutineChange(const std::list<SLightDevice>& deviceLis
                                         ELightingRoutine routine) {
     for (auto&& device : deviceList) {
         QString packet;
-        if ((int)routine <= (int)ELightingRoutineSingleColorEnd) {
-            packet = QString("%1,%2,%3").arg(QString::number((int)EPacketHeader::eModeChange),
-                                             QString::number(device.index),
-                                             QString::number((int)routine));
+        if ((int)routine <= (int)utils::ELightingRoutineSingleColorEnd) {
+            packet = QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::eModeChange),
+                                              QString::number(device.index),
+                                              QString::number((int)routine));
             sendPacket(device, packet);
         } else {
             qDebug() << __func__ << "error";
@@ -88,11 +116,11 @@ void CommLayer::sendMultiRoutineChange(const std::list<SLightDevice>& deviceList
                                         EColorGroup colorGroup) {
     for (auto&& device : deviceList) {
         QString packet;
-        if ((int)routine > (int)ELightingRoutineSingleColorEnd) {
-            packet = QString("%1,%2,%3,%4").arg(QString::number((int)EPacketHeader::eModeChange),
-                                                QString::number(device.index),
-                                                QString::number((int)routine),
-                                                QString::number((int)colorGroup));
+        if ((int)routine > (int)utils::ELightingRoutineSingleColorEnd) {
+            packet = QString("%1,%2,%3,%4&").arg(QString::number((int)EPacketHeader::eModeChange),
+                                                 QString::number(device.index),
+                                                 QString::number((int)routine),
+                                                 QString::number((int)colorGroup));
             sendPacket(device, packet);
         } else {
             qDebug() << __func__ << "error";
@@ -113,9 +141,9 @@ void CommLayer::sendColorTemperatureChange(const std::list<SLightDevice>& device
 void CommLayer::sendBrightness(const std::list<SLightDevice>& deviceList,
                                int brightness) {
     for (auto&& device : deviceList) {
-        QString packet = QString("%1,%2,%3").arg(QString::number((int)EPacketHeader::eBrightnessChange),
-                                                 QString::number(device.index),
-                                                 QString::number(brightness));
+        QString packet = QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::eBrightnessChange),
+                                                  QString::number(device.index),
+                                                  QString::number(brightness));
         sendPacket(device, packet);
     }
 }
@@ -123,9 +151,9 @@ void CommLayer::sendBrightness(const std::list<SLightDevice>& deviceList,
 void CommLayer::sendSpeed(const std::list<SLightDevice>& deviceList,
                           int speed) {
     for (auto&& device : deviceList) {
-        QString packet = QString("%1,%2,%3").arg(QString::number((int)EPacketHeader::eSpeedChange),
-                                                 QString::number(device.index),
-                                                 QString::number(speed));
+        QString packet = QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::eSpeedChange),
+                                                  QString::number(device.index),
+                                                  QString::number(speed));
         sendPacket(device, packet);
     }
 }
@@ -133,9 +161,9 @@ void CommLayer::sendSpeed(const std::list<SLightDevice>& deviceList,
 void CommLayer::sendCustomArrayCount(const std::list<SLightDevice>& deviceList,
                                      int count) {
     for (auto&& device : deviceList) {
-        QString packet = QString("%1,%2,%3").arg(QString::number((int)EPacketHeader::eCustomColorCountChange),
-                                                 QString::number(device.index),
-                                                 QString::number(count));
+        QString packet = QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::eCustomColorCountChange),
+                                                  QString::number(device.index),
+                                                  QString::number(count));
         sendPacket(device, packet);
     }
 }
@@ -143,9 +171,9 @@ void CommLayer::sendCustomArrayCount(const std::list<SLightDevice>& deviceList,
 void CommLayer::sendTimeOut(const std::list<SLightDevice>& deviceList,
                             int timeOut) {
     for (auto&& device : deviceList) {
-        QString packet = QString("%1,%2,%3").arg(QString::number((int)EPacketHeader::eIdleTimeoutChange),
-                                                 QString::number(device.index),
-                                                 QString::number(timeOut));
+        QString packet = QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::eIdleTimeoutChange),
+                                                  QString::number(device.index),
+                                                  QString::number(timeOut));
         sendPacket(device, packet);
     }
 }
@@ -153,8 +181,8 @@ void CommLayer::sendTimeOut(const std::list<SLightDevice>& deviceList,
 
 void CommLayer::sendReset(const std::list<SLightDevice>& deviceList) {
     for (auto&& device : deviceList) {
-        QString packet = QString("%1,%2,42,71").arg(QString::number(device.index),
-                                                   QString::number((int)EPacketHeader::eResetSettingsToDefaults));
+        QString packet = QString("%1,%2,42,71&").arg(QString::number(device.index),
+                                                    QString::number((int)EPacketHeader::eResetSettingsToDefaults));
         sendPacket(device, packet);
     }
 }
@@ -162,103 +190,164 @@ void CommLayer::sendReset(const std::list<SLightDevice>& deviceList) {
 void CommLayer::sendPacket(const SLightDevice& device, const QString& payload) {
     CommType* commPtr = commByType(device.type);
     commPtr->sendPacket(device.name, payload);
-    emit packetSent();
 }
 
 
 void CommLayer::parsePacket(QString sender, QString packet, int type) {
     //qDebug() << "the sender: " << sender << "packet:" << packet << "type:" << type;
-    // turn string into vector of ints
-    std::vector<int> intVector;
+    // split into vector of strings
+    std::vector<std::string> packetVector;
     std::istringstream input(packet.toStdString());
-    std::string number;
-    while (std::getline(input, number, ',')) {
-        std::istringstream iss(number);
-        int i;
-        iss >> i;
-        intVector.push_back(i);
+    std::string parsedPacket;
+    while (std::getline(input, parsedPacket, '&')) {
+        packetVector.push_back(parsedPacket);
     }
 
-    if (intVector.size() > 2) {
-        if (intVector[0] < (int)EPacketHeader::ePacketHeader_MAX) {
-            EPacketHeader packetHeader = (EPacketHeader)intVector[0];
-            SLightDevice device;
-            device.index =  intVector[1];
-            device.type = (ECommType)type;
-            device.name = sender;
-            commByType((ECommType)type)->fillDevice(device);
+    // Turn vector of strings into vector of vector of ints
+    std::vector<std::vector<int> > intVectors;
+    for (auto&& parsedPacket : packetVector) {
+        std::vector<int> intVector;
+        std::istringstream input(parsedPacket);
+        std::string number;
+        while (std::getline(input, number, ',')) {
+            std::istringstream iss(number);
+            int i;
+            iss >> i;
+            intVector.push_back(i);
+        }
+        intVectors.push_back(intVector);
+    }
 
-            // check if its a valid size with the proper header for a state update packet
-            if ((packetHeader == EPacketHeader::eStateUpdateRequest)) {
-                int count = intVector.size() / 9;
-                int index = 0;
-                int x = 1;
-                while (index < count) {
-                    // check all values fall in their proper ranges
-                    if (verifyStateUpdatePacketValidity(intVector, x)) {
-                        // all values are in the right range, set them on SLightDevice.
-                        device.index           = intVector[x];
+    for (auto&& intVector : intVectors) {
+        if (intVector.size() > 2) {
+            if (intVector[0] < (int)EPacketHeader::ePacketHeader_MAX) {
+                EPacketHeader packetHeader = (EPacketHeader)intVector[0];
+                SLightDevice device = SLightDevice();
+                device.index =  intVector[1];
+                if (device.index < 15 && device.index  >= 1) {
+                    device.type = (ECommType)type;
+                    device.name = sender;
+                    commByType((ECommType)type)->fillDevice(device);
 
-                        commByType((ECommType)type)->fillDevice(device);
+                    // check if its a valid size with the proper header for a state update packet
+                    if ((packetHeader == EPacketHeader::eStateUpdateRequest)) {
+                        // check all values fall in their proper ranges
+                        int x = 1;
+                        if (verifyStateUpdatePacketValidity(intVector, x)) {
+                            // all values are in the right range, set them on SLightDevice.
+                            device.index           = intVector[x];
 
-                        device.isOn            = (bool)intVector[x + 1];
-                        device.isReachable     = (bool)intVector[x + 2];
-                        device.color           = QColor(intVector[x + 3], intVector[x + 4], intVector[x + 5]);
-                        device.colorMode       = EColorMode::eRGB;
-                        device.lightingRoutine = (ELightingRoutine)intVector[x + 6];
-                        device.colorGroup      = (EColorGroup)intVector[x + 7];
-                        device.brightness      = intVector[x + 8];
-                        device.isValid         = true;
+                            commByType((ECommType)type)->fillDevice(device);
 
+                            device.isOn            = (bool)intVector[x + 1];
+                            device.isReachable     = (bool)intVector[x + 2];
+                            device.color           = QColor(intVector[x + 3], intVector[x + 4], intVector[x + 5]);
+                            device.colorMode       = EColorMode::eRGB;
+                            device.lightingRoutine = (ELightingRoutine)intVector[x + 6];
+                            device.colorGroup      = (EColorGroup)intVector[x + 7];
+                            device.brightness      = intVector[x + 8];
+
+                            device.speed                 = intVector[x + 9];
+                            device.timeout               = intVector[x + 10];
+                            device.minutesUntilTimeout   = intVector[x + 11];
+
+                            device.isValid         = true;
+
+                            commByType((ECommType)type)->updateDevice(device);
+                        } else {
+                           qDebug() << "WARNING: Invalid packet for light index" << intVector[x];
+                        }
+                    } else if ((packetHeader == EPacketHeader::eCustomArrayUpdateRequest)) {
+                        device.customColorCount = intVector[2];
+                        int j = 0;
+                        for (uint32_t i = 0; i < device.customColorCount; ++i) {
+                            device.customColorArray[i] = QColor(intVector[j],
+                                                                intVector[j + 1],
+                                                                intVector[j + 2]);
+                            j = j + 3;
+                        }
+                    } else if (packetHeader == EPacketHeader::eBrightnessChange
+                               && (intVector.size() % 3 == 0)) {
+                        device.brightness = intVector[2];
+                        commByType((ECommType)type)->updateDevice(device);
+                    } else if (packetHeader == EPacketHeader::eMainColorChange
+                               && (intVector.size() % 5 == 0)) {
+                        device.color = QColor(intVector[2], intVector[3], intVector[4]);
+                        device.isOn = true;
+                        commByType((ECommType)type)->updateDevice(device);
+                    } else if (packetHeader == EPacketHeader::eModeChange
+                               && (intVector.size() % 3 == 0)) {
+                        if (device.lightingRoutine == ELightingRoutine::eOff) {
+                            device.isOn = false;
+                        } else {
+                            device.isOn = true;
+                            device.lightingRoutine = (ELightingRoutine)intVector[2];
+                        }
+                        commByType((ECommType)type)->updateDevice(device);
+
+                   } else if (packetHeader == EPacketHeader::eModeChange
+                              && (intVector.size() % 4 == 0)) {
+                      device.lightingRoutine = (ELightingRoutine)intVector[2];
+                      device.isOn = true;
+                      device.colorGroup = (EColorGroup)intVector[3];
+                      commByType((ECommType)type)->updateDevice(device);
+                   } else if (packetHeader == EPacketHeader::eSpeedChange
+                              && (intVector.size() % 3 == 0)) {
+                       device.speed = intVector[2];
+                       commByType((ECommType)type)->updateDevice(device);
+                  } else if (packetHeader == EPacketHeader::eIdleTimeoutChange
+                                           && (intVector.size() % 3 == 0)) {
+                        device.timeout = intVector[2];
+                        device.minutesUntilTimeout = intVector[2];
+                        commByType((ECommType)type)->updateDevice(device);
+                   } else if (packetHeader == EPacketHeader::eCustomArrayColorChange
+                                && (intVector.size() % 6 == 0)) {
+                        int index = intVector[2];
+                        QColor color = QColor(intVector[3], intVector[4], intVector[5]);
+                        qDebug() << "UPDATE TO index" << index << "color" << color;
+                        if (index < 10) {
+                            device.customColorArray[index] = color;
+                            commByType((ECommType)type)->updateDevice(device);
+                        } else {
+                            qDebug() << "Something went wrong with custom array color change...";
+                        }
+                   } else if (packetHeader == EPacketHeader::eCustomColorCountChange
+                              && (intVector.size() % 3 == 0)) {
+
+                        device.customColorCount = intVector[2];
+                        qDebug() << "UPDATE TO custom color count" << device.customColorCount;
 
                         commByType((ECommType)type)->updateDevice(device);
-                    } else {
-                       qDebug() << "WARNING: Invalid packet for light index" << intVector[x];
+                   } else {
+                       if (intVector[0] == 7) {
+                           qDebug() << "WARNING: Invalid state update packet: " << packet;
+                       } else {
+                           qDebug() << "WARNING: Invalid packet size: " << intVector.size() << "for packet header" << intVector[0];
+                       }
                     }
-                    x = x + 9;
-                    index++;
+                    emit packetReceived();
+                } else {
+                    qDebug() << "packet header not valid...";
                 }
-            } else if (packetHeader == EPacketHeader::eBrightnessChange
-                       && (intVector.size() % 3 == 0)) {
-                device.brightness = intVector[2];
-                commByType((ECommType)type)->updateDevice(device);
-            } else if (packetHeader == EPacketHeader::eMainColorChange
-                       && (intVector.size() % 5 == 0)) {
-                device.color = QColor(intVector[2], intVector[3], intVector[4]);
-                commByType((ECommType)type)->updateDevice(device);
-            } else if (packetHeader == EPacketHeader::eModeChange
-                       && (intVector.size() % 3 == 0)) {
-               device.lightingRoutine = (ELightingRoutine)intVector[2];
-               commByType((ECommType)type)->updateDevice(device);
-           } else if (packetHeader == EPacketHeader::eModeChange
-                      && (intVector.size() % 4 == 0)) {
-              device.lightingRoutine = (ELightingRoutine)intVector[2];
-              device.colorGroup = (EColorGroup)intVector[3];
-              commByType((ECommType)type)->updateDevice(device);
-           } else {
-               if (intVector[0] == 7) {
-                   qDebug() << "WARNING: Invalid state update packet: " << packet;
-               } else {
-                   qDebug() << "WARNING: Invalid packet size: " << intVector.size() << "for packet header" << intVector[0];
-               }
             }
-        } else {
-            qDebug() << "packet header not valid...";
         }
     }
 }
 
 bool CommLayer::verifyStateUpdatePacketValidity(std::vector<int> packetIntVector, int x) {
     bool isValid = true;
-    if (!(packetIntVector[x] > 0       && packetIntVector[x] < 15))       isValid = false;
-    if (!(packetIntVector[x + 1] == 1  || packetIntVector[x + 1] == 0))   isValid = false;
-    if (!(packetIntVector[x + 2] == 1  || packetIntVector[x + 2] == 0))   isValid = false;
-    if (!(packetIntVector[x + 3] >= 0  && packetIntVector[x + 3] <= 255)) isValid = false;
-    if (!(packetIntVector[x + 4] >= 0  && packetIntVector[x + 4] <= 255)) isValid = false;
-    if (!(packetIntVector[x + 5] >= 0  && packetIntVector[x + 5] <= 255)) isValid = false;
-    if (!(packetIntVector[x + 6] >= 0  && packetIntVector[x + 6] < (int)ELightingRoutine::eLightingRoutine_MAX)) isValid = false;
-    if (!(packetIntVector[x + 7] >= 0  && packetIntVector[x + 7] < (int)EColorGroup::eColorGroup_MAX)) isValid = false;
-    if (!(packetIntVector[x + 8] >= 0  && packetIntVector[x + 8] <= 100)) isValid = false;
+    if (!(packetIntVector[x] > 0        && packetIntVector[x] < 15))        isValid = false;
+    if (!(packetIntVector[x + 1] == 1   || packetIntVector[x + 1] == 0))    isValid = false;
+    if (!(packetIntVector[x + 2] == 1   || packetIntVector[x + 2] == 0))    isValid = false;
+    if (!(packetIntVector[x + 3] >= 0   && packetIntVector[x + 3] <= 255))  isValid = false;
+    if (!(packetIntVector[x + 4] >= 0   && packetIntVector[x + 4] <= 255))  isValid = false;
+    if (!(packetIntVector[x + 5] >= 0   && packetIntVector[x + 5] <= 255))  isValid = false;
+    if (!(packetIntVector[x + 6] >= 0   && packetIntVector[x + 6] < (int)ELightingRoutine::eLightingRoutine_MAX)) isValid = false;
+    if (!(packetIntVector[x + 7] >= 0   && packetIntVector[x + 7] < (int)EColorGroup::eColorGroup_MAX)) isValid = false;
+    if (!(packetIntVector[x + 8] >= 0   && packetIntVector[x + 8] <= 100))   isValid = false;
+    if (!(packetIntVector[x + 9] >= 0   && packetIntVector[x + 9] <= 2000))  isValid = false;
+    if (!(packetIntVector[x + 10] >= 0  && packetIntVector[x + 10] <= 1000)) isValid = false;
+    if (!(packetIntVector[x + 11] >= 0  && packetIntVector[x + 11] <= 1000)) isValid = false;
     return isValid;
 }
 
@@ -320,6 +409,31 @@ bool CommLayer::addController(ECommType type, QString controller) {
 
 bool CommLayer::fillDevice(SLightDevice& device) {
     return commByType(device.type)->fillDevice(device);
+}
+
+
+void CommLayer::resetStateUpdates() {
+    qDebug() << "INFO: start state updates";
+
+    commByType(ECommType::eHTTP)->resetStateUpdateTimeout();
+    commByType(ECommType::eHue)->resetStateUpdateTimeout();
+    commByType(ECommType::eUDP)->resetStateUpdateTimeout();
+
+#ifndef MOBILE_BUILD
+    commByType(ECommType::eSerial)->resetStateUpdateTimeout();
+#endif //MOBILE_BUILD
+}
+
+void CommLayer::stopStateUpdates() {
+    qDebug() << "INFO: stop state updates";
+
+    commByType(ECommType::eHTTP)->stopStateUpdates();
+    commByType(ECommType::eHue)->stopStateUpdates();
+    commByType(ECommType::eUDP)->stopStateUpdates();
+
+#ifndef MOBILE_BUILD
+    commByType(ECommType::eSerial)->stopStateUpdates();
+#endif //MOBILE_BUILD
 }
 
 void CommLayer::startDiscovery() {

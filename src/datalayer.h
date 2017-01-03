@@ -2,18 +2,14 @@
 #ifndef DATALAYER_H
 #define DATALAYER_H
 
-#include <QApplication>
 #include <QColor>
-#include <QTimer>
 #include <QWidget>
-#include <QSettings>
 
 #include <list>
 
 #include "lightingprotocols.h"
 #include "commtype.h"
 #include "commtypesettings.h"
-#include "commhue.h"
 
 /*!
  * \copyright
@@ -90,30 +86,19 @@ public:
     int brightness();
 
     /*!
-     * \brief Time it takes the LEDs to turn off in minutes.
-     */
-    bool timeOut(int timeOut);
-
-    /*!
      * \brief timeOut getter for the amount of minutes it takes for the LEDs
      *        to "time out." When this happens, they turn off, saving you
      *        electricity!
      * \return the time it'll take for the LEDs to time out.
      */
-    int timeOut();
+    int timeout();
 
     /*!
-     * \brief isTimedOut true if the currently connected device timed out,
-     *        false otherwise.
-     * \return true if the currently connected device timed out, false otherwise.
+     * \brief customColorsUsed number of custom colors used from the custom color group in multi color
+     *        routines. Will be between 2 and 10 inclusively.
+     * \return the number of custom colors used in custom color routines.
      */
-    bool isTimedOut() { return mIsTimedOut; }
-
-    /*!
-     * \brief resetTimeoutCounter called upon every new update in order to
-     *        reset the counter that is detecting when lights are timed out.
-     */
-    void resetTimeoutCounter();
+    uint32_t customColorsUsed();
 
     /*!
      * \brief currentColorGroup getter for the current color preset.
@@ -126,13 +111,7 @@ public:
      * \brief currentGroup returns all the colors of the current color group.
      * \return returns all the colors of the current color group.
      */
-    const std::vector<QColor>& currentGroup() { return mColors[(int)currentColorGroup()]; }
-
-    /*!
-     *  \brief Time between LED updates as FPS * 100. For example,
-     *         a FPS of 5 is 500.
-     */
-    bool speed(int speed);
+    const std::vector<QColor>& currentGroup();
 
     /*!
      * \brief speed getter for the speed the LED's update.
@@ -141,32 +120,13 @@ public:
     int speed();
 
     /*!
-     * \brief number of colors in the color array
-     */
-    bool customColorsUsed(int count);
-
-    /*!
-     * \brief customColorsUsed getter for the number of colors usd by
-     *        the by the custom color routines. Will always be less
-     *        than the total number of colors in the custom color array.
-     * \return the number of colors used for a custom color routine.
-     */
-    int customColorsUsed();
-
-    /*!
      * \brief customColor set an individual color in the custom color group
      * \param index the index of the custom color. must be less than the size of custom
      *        color group.
      * \param color the new color that you want to set for that index.
      * \return true if successful, false otherwise.
      */
-    bool customColor(int index, QColor color);
-
-    /*!
-     * \brief resetToDefaults resets the GUI and the arduino to the default values,
-     *        as defined at compile time.
-     */
-    void resetToDefaults();
+    bool customColor(uint32_t index, QColor color);
 
     /*!
      * \brief turnOn turn all devices on or off based off of the boolean. Stores the previous state
@@ -174,6 +134,12 @@ public:
      * \param on true if you want to turn on, false if you want to turn off.
      */
     void turnOn(bool on);
+
+    /*!
+     * \brief isOn true if any device is on, false if all are off.
+     * \return true if any device is on, false if all are off.
+     */
+    bool isOn();
 
     /*!
      * \brief updateRoutine update the lighting routine for all current devices.
@@ -192,6 +158,34 @@ public:
      * \param color new color
      */
     void updateColor(QColor color);
+
+    /*!
+     * \brief updateSpeed update the speed of the lighting routines.
+     * \param speed the new speed value of the lighting routines.
+     */
+    void updateSpeed(int speed);
+
+    /*!
+     * \brief updateTimeout update how many minutes it takes for lights to turn themselves off automatically.
+     *        Use a value of 0 to keep lights on indefinitely (until you unplug them or change the setting).
+     * \param timeout the new number of minutes it takes for LEDs to time out and turn off.
+     */
+    void updateTimeout(int timeout);
+
+    /*!
+     * \brief updateCustomColorCount update the number of custom colors used in the custom color array for multi color routines.
+     *        Must be between 2 and 10 inclusively.
+     * \param count new count of custom colors.
+     */
+    void updateCustomColorCount(uint32_t count);
+
+    /*!
+     * \brief updateCustomColorArray update the color in the custom color array at the given index. If the index is 10 or larger,
+     *        it is ignored.
+     * \param index Must be bewteen 0 and 9.
+     * \param color new color
+     */
+    void updateCustomColorArray(int index, QColor color);
 
     /*!
      * \brief updateBrightness update the brightness level of all current devices.
@@ -213,7 +207,6 @@ public:
      * \return true if device was valid and added, false otherwise.
      */
     bool addDevice(SLightDevice device);
-
 
     /*!
      * \brief doesDeviceExist checks if device exist in connected device list
@@ -302,12 +295,6 @@ signals:
      */
     void dataUpdate();
 
-private slots:
-    /*!
-     * \brief timeoutHandler called by the mTimeoutTimer in order to detect timeouts.
-     */
-    void timeoutHandler();
-
 private:
 
     /*!
@@ -315,45 +302,6 @@ private:
      *        the custom color array and all of the presets.
      */
     std::vector<std::vector<QColor> > mColors;
-
-    /*!
-     * \brief mCustomColorsUsed the number of colors used multi color routines using the
-     *        custom color group.
-     */
-    int mCustomColorsUsed;
-
-    /*!
-     * \brief timeOut the amount of minutes before the lights turn off. If 0, then the
-     *        lights never turn off.
-     */
-    int mTimeOut;
-
-    /*!
-     * \brief mSpeed the current speed value of the arduino.
-     */
-    int mSpeed;
-
-    /*!
-     * \brief mTimeoutTimer system that is used to detect when lights should be
-     *        timed out.
-     */
-    QTimer *mTimeoutTimer;
-
-    /*!
-     * \brief mSettings object used to access persistent app memory
-     */
-    QSettings *mSettings;
-
-    /*!
-     * \brief mIsTimedOut true if timed out, false otherwise.
-     */
-    bool mIsTimedOut;
-
-    /*!
-     * \brief mLastRoutineBeforeOff used by turnOn function to save last lighting routine before
-     *        lights were turned off.
-     */
-    ELightingRoutine mLastRoutineBeforeOff;
 
     /*!
      * \brief mCurrentDevices list of current devices in data layer

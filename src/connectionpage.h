@@ -8,8 +8,10 @@
 
 #include "lightdevice.h"
 #include "lightingpage.h"
-#include "listcontrollerwidget.h"
+#include "listdevicewidget.h"
 #include "groupsparser.h"
+#include "commlayer.h"
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2016.
@@ -31,6 +33,16 @@ enum class EConnectionState {
     eSingleDeviceSelected,
     eMultipleDevicesSelected,
     eConnectionState_MAX
+};
+
+/*!
+ * \brief The EConnectionList enum contains the three types of states of the
+ *        connection list.
+ */
+enum class EConnectionList {
+    eSingleDevices,
+    eCollections,
+    eMoods
 };
 
 /*!
@@ -173,10 +185,16 @@ private slots:
     void devicesButtonClicked(bool);
 
     /*!
-     * \brief groupsButtonClicked handled whenever the button that changes the page
-     *        so that you choose devices are predefined groups.
+     * \brief moodsButtonClicked handled whenever the moods button is clicked and all
+     *        saved moods are being displayed.
      */
-    void groupsButtonClicked(bool);
+    void moodsButtonClicked(bool);
+
+    /*!
+     * \brief collectionsButtonClicked handled whenever the collections button is clicked and all
+     *        saved collections are being displayed.
+     */
+    void collectionsButtonClicked(bool);
 
     /*!
      * \brief saveGroup called when a group should be saved.
@@ -265,7 +283,12 @@ private:
     QString mCurrentListString;
 
     /*!
-     * \brief mCurrentMoodListString the name of the last connection group.
+     * \brief mCurrentCollectionListString the name of the last collection group.
+     */
+    QString mCurrentCollectionListString;
+
+    /*!
+     * \brief mCurrentMoodListString the name of the last mood group.
      */
     QString mCurrentMoodListString;
 
@@ -344,10 +367,23 @@ private:
     EConnectionState checkConnectionStateOfGroup(std::list<SLightDevice> group);
 
     /*!
+     * \brief fillGroupWithCommDevices Uses the comm layer to take partial verisons of SLightDevices and fill them completely.
+     *        Used by the collections so that you can retrieve the current settings of the collections when initializing them
+     *        as your selected devices.
+     * \param group group to fill.
+     */
+    void fillGroupWithCommDevices(std::list<SLightDevice>& group);
+
+    /*!
      * \brief communication pointer to communication object
      *        for sending comannds to the lights
      */
     CommLayer *mComm;
+
+    /*!
+     * \brief mCurrentConnectionList current type of collection list that is getting displayed.
+     */
+    EConnectionList mCurrentConnectionList;
 };
 
 #endif // CONNECTIONPAGE_H

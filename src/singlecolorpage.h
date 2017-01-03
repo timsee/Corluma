@@ -118,7 +118,7 @@ private:
      * \brief mRoutineButtons pointers to all the main buttons, used
      *        to iterate through them quickly.
      */
-    std::shared_ptr<std::vector<LightsButton*> > mRoutineButtons;
+    std::vector<LightsButton*> mRoutineButtons;
 
     /*!
      * \brief IconData for the Single Color Routine Icons

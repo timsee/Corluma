@@ -29,25 +29,26 @@ CustomColorsPage::CustomColorsPage(QWidget *parent) :
     ui->arraySlider->setMinimumPossible(true, 20);
     ui->arraySlider->setSliderHeight(0.6f);
 
+
     // --------------
     // Setup Color Array Array (array array  ... array array...)
     // --------------
 
-    mArrayColorsButtons = std::shared_ptr<std::vector<QPushButton*> >(new std::vector<QPushButton*>(mCustomArraySize, nullptr));
+    mArrayColorsButtons = std::vector<QPushButton*>(mCustomArraySize, nullptr);
     mIconData = IconData(128,128);
 
     QSignalMapper *arrayButtonsMapper = new QSignalMapper(this);
-    for (int i = 0; i < mCustomArraySize; ++i) {
-        (*mArrayColorsButtons.get())[i] = new QPushButton;
-        (*mArrayColorsButtons.get())[i]->setStyleSheet("border:none;");
-        int size = std::min((*mArrayColorsButtons.get())[i]->size().width() - 10,
-                            (*mArrayColorsButtons.get())[i]->size().height() - 10);
-        (*mArrayColorsButtons.get())[i]->setIconSize(QSize(size, size));
-        (*mArrayColorsButtons.get())[i]->setIcon(mIconData.renderAsQPixmap());
-        (*mArrayColorsButtons.get())[i]->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-        ui->arrayColorsLayout->addWidget((*mArrayColorsButtons.get())[i], 0 , i);
-        connect((*mArrayColorsButtons.get())[i], SIGNAL(clicked(bool)), arrayButtonsMapper, SLOT(map()));
-        arrayButtonsMapper->setMapping((*mArrayColorsButtons.get())[i], i);
+    for (uint32_t i = 0; i < mCustomArraySize; ++i) {
+        mArrayColorsButtons[i] = new QPushButton;
+        mArrayColorsButtons[i]->setStyleSheet("border:none;");
+        int size = std::min(mArrayColorsButtons[i]->size().width() - 10,
+                            mArrayColorsButtons[i]->size().height() - 10);
+        mArrayColorsButtons[i]->setIconSize(QSize(size, size));
+        mArrayColorsButtons[i]->setIcon(mIconData.renderAsQPixmap());
+        mArrayColorsButtons[i]->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        ui->arrayColorsLayout->addWidget(mArrayColorsButtons[i], 0 , i);
+        connect(mArrayColorsButtons[i], SIGNAL(clicked(bool)), arrayButtonsMapper, SLOT(map()));
+        arrayButtonsMapper->setMapping(mArrayColorsButtons[i], i);
     }
     connect(arrayButtonsMapper, SIGNAL(mapped(int)), this, SLOT(selectArrayColor(int)));
 
@@ -78,30 +79,27 @@ void CustomColorsPage::setupButtons() {
                                        "Bars Solid",
                                        "Bars Moving"};
 
-    std::vector<LightsButton *> buttons = {ui->glimmerButton,
-                                           ui->fadeButton,
-                                           ui->randomSolidButton,
-                                           ui->randomIndividualButton,
-                                           ui->barsSolidButton,
-                                           ui->barsMovingButton};
+    mRoutineButtons = {ui->glimmerButton,
+                       ui->fadeButton,
+                       ui->randomSolidButton,
+                       ui->randomIndividualButton,
+                       ui->barsSolidButton,
+                       ui->barsMovingButton};
 
-    mRoutineButtons = std::shared_ptr<std::vector<LightsButton*> >(new std::vector<LightsButton*>(buttons.size(), nullptr));
-    int routineIndex = (int)ELightingRoutine::eMultiGlimmer;
-    for (int i = 0; i < (int)buttons.size(); ++i) {
-        (*mRoutineButtons.get())[i] = buttons[i];
-        (*mRoutineButtons.get())[i]->setupAsStandardButton((ELightingRoutine)(routineIndex + i),
+    int routineIndex = (int)utils::ELightingRoutineSingleColorEnd + 1;
+    for (int i = 0; i < (int)mRoutineButtons.size(); ++i) {
+        mRoutineButtons[i]->setupAsStandardButton((ELightingRoutine)(routineIndex + i),
                                                            EColorGroup::eCustom,
                                                            QString::fromStdString(labels[i]),
                                                            mData->colorGroup(EColorGroup::eCustom));
-        connect((*mRoutineButtons.get())[i], SIGNAL(buttonClicked(int, int)), this, SLOT(routineButtonClicked(int, int)));
+        connect(mRoutineButtons[i], SIGNAL(buttonClicked(int, int)), this, SLOT(routineButtonClicked(int, int)));
    }
 }
 
 void CustomColorsPage::highlightRoutineButton(ELightingRoutine routine) {
 
-    for (uint i = 0; i < mRoutineButtons->size(); i++) {
-        QPushButton* button = (*mRoutineButtons.get())[i]->button;
-        button->setChecked(false);
+    for (uint32_t i = 0; i < mRoutineButtons.size(); i++) {
+        mRoutineButtons[i]->button->setChecked(false);
     }
 
     if (routine == ELightingRoutine::eMultiFade) {
@@ -117,27 +115,19 @@ void CustomColorsPage::highlightRoutineButton(ELightingRoutine routine) {
     } else if (routine == ELightingRoutine::eMultiBarsMoving) {
         ui->barsMovingButton->button->setChecked(true);
     }
-
-    if (mData->currentColorGroup() == EColorGroup::eCustom) {
-        for (int i = (int)ELightingRoutine::eSingleSawtoothFadeOut + 1; i < (int)ELightingRoutine::eLightingRoutine_MAX; i++) {
-            (*mRoutineButtons.get())[i - (int)ELightingRoutine::eSingleSawtoothFadeOut - 1]->updateIconPresetColorRoutine((ELightingRoutine)i,
-                                                                                                                          EColorGroup::eCustom,
-                                                                                                                          mData->colorGroup(EColorGroup::eCustom));
-        }
-    }
 }
 
 void CustomColorsPage::selectArrayColor(int index) {
     mCurrentColorPickerIndex = index;
     ui->colorPicker->chooseColor(mData->colorGroup(EColorGroup::eCustom)[mCurrentColorPickerIndex], false);
     updateColorArray();
-    for (int i = 0; i < mData->customColorsUsed(); ++i) {
-        (*mArrayColorsButtons.get())[i]->setChecked(false);
-        (*mArrayColorsButtons.get())[i]->setStyleSheet("border:none");
+    for (uint32_t i = 0; i < mData->customColorsUsed(); ++i) {
+        mArrayColorsButtons[i]->setChecked(false);
+        mArrayColorsButtons[i]->setStyleSheet("border:none");
     }
 
-    (*mArrayColorsButtons.get())[mCurrentColorPickerIndex]->setChecked(true);
-    (*mArrayColorsButtons.get())[mCurrentColorPickerIndex]->setStyleSheet("border: 4px solid white; ");
+    mArrayColorsButtons[mCurrentColorPickerIndex]->setChecked(true);
+    mArrayColorsButtons[mCurrentColorPickerIndex]->setStyleSheet("border: 4px solid white; ");
 }
 
 // ----------------------------
@@ -145,32 +135,22 @@ void CustomColorsPage::selectArrayColor(int index) {
 // ----------------------------
 
 void CustomColorsPage::customColorCountChanged(int newCount) {
-    int colorCount = newCount / 10;
-    if (colorCount != mData->customColorsUsed()) {
-        if (mCurrentColorPickerIndex > colorCount - 1) {
-            (*mArrayColorsButtons.get())[mCurrentColorPickerIndex]->setChecked(false);
-            (*mArrayColorsButtons.get())[mCurrentColorPickerIndex]->setStyleSheet("border:none");
-            selectArrayColor(colorCount - 1);
-        }
-        mData->customColorsUsed(colorCount);
-        updateColorArray();
-        updateIcons();
-        mComm->sendCustomArrayCount(mData->currentDevices(), mData->customColorsUsed());
-        emit updateMainIcons();
+    uint32_t newColorCount = newCount / 10;
+    if (mCurrentColorPickerIndex > newColorCount - 1) {
+        mArrayColorsButtons[mCurrentColorPickerIndex]->setChecked(false);
+        mArrayColorsButtons[mCurrentColorPickerIndex]->setStyleSheet("border:none");
+        selectArrayColor(newColorCount - 1);
     }
-}
-
-
-void CustomColorsPage::modeChanged(int newRoutine) {
-    mData->updateColorGroup(EColorGroup::eCustom);
-    mData->updateRoutine((ELightingRoutine)newRoutine);
-    highlightRoutineButton((ELightingRoutine)newRoutine);
+    mData->updateCustomColorCount(newColorCount);
+    updateColorArray();
+    updateIcons();
     emit updateMainIcons();
 }
 
+
+
 void CustomColorsPage::colorChanged(QColor color) {
-    mData->customColor(mCurrentColorPickerIndex, color);
-    mComm->sendArrayColorChange(mData->currentDevices(), mCurrentColorPickerIndex, color);
+    mData->updateCustomColorArray(mCurrentColorPickerIndex, color);
     ui->arraySlider->setSliderColorBackground(mData->colorsAverage(EColorGroup::eCustom));
     updateIcons();
     emit updateMainIcons();
@@ -190,36 +170,21 @@ void CustomColorsPage::routineButtonClicked(int newRoutine, int newColorGroup) {
 
 void CustomColorsPage::showEvent(QShowEvent *event) {
   Q_UNUSED(event);
-  // update all the mode icons to the current colors.
-  updateIcons();
-
   // highlight the current mode, if its in this page
   highlightRoutineButton(mData->currentRoutine());
 
-  // slider can't be set until mData is set up,
-  // TODO: remove this dependency. root cause is probably
-  // a signal sent out down the line.
-  if (ui->arraySlider->slider->value() < 20) {
-    ui->arraySlider->slider->setValue(20);
-  }
-
-  if (mData->shouldUseHueAssets()) {
-      ui->colorPicker->useHueWheel(true);
-  } else {
-      ui->colorPicker->useHueWheel(false);
-  }
-
-  selectArrayColor(mCurrentColorPickerIndex);
+  // update all the mode icons to the current colors.
+  updateIcons();
 }
 
 
 void CustomColorsPage::resizeEvent(QResizeEvent *event) {
     Q_UNUSED(event);
-    for (int i = 0; i < mCustomArraySize; ++i) {
+    for (uint32_t i = 0; i < mCustomArraySize; ++i) {
         int size = std::min(ui->arrayColorsLayout->geometry().size().width() / 10,
                             ui->arrayColorsLayout->geometry().size().height());
-        (*mArrayColorsButtons.get())[i]->setFixedSize(size,size);
-        (*mArrayColorsButtons.get())[i]->setIconSize(QSize(size - 5, size - 5));
+        mArrayColorsButtons[i]->setFixedSize(size,size);
+        mArrayColorsButtons[i]->setIconSize(QSize(size - 5, size - 5));
     }
 }
 
@@ -228,37 +193,38 @@ void CustomColorsPage::resizeEvent(QResizeEvent *event) {
 // ----------------------------
 
 void CustomColorsPage::updateIcons() {
-    for (int i = 0; i < mData->customColorsUsed(); ++i) {
+    for (uint32_t i = 0; i < mData->customColorsUsed(); ++i) {
         mIconData.setSolidColor(mData->colorGroup(EColorGroup::eCustom)[i]);
-        (*mArrayColorsButtons.get())[i]->setEnabled(true);
-        (*mArrayColorsButtons.get())[i]->setIcon(mIconData.renderAsQPixmap());
+        mArrayColorsButtons[i]->setEnabled(true);
+        mArrayColorsButtons[i]->setIcon(mIconData.renderAsQPixmap());
     }
 
-    for (int i = mData->customColorsUsed(); i < mData->maxColorGroupSize(); ++i) {
-        (*mArrayColorsButtons.get())[i]->setIcon(mGreyIcon.renderAsQPixmap());
-        (*mArrayColorsButtons.get())[i]->setEnabled(false);
+    for (uint32_t i = mData->customColorsUsed(); i < mData->maxColorGroupSize(); ++i) {
+        mArrayColorsButtons[i]->setIcon(mGreyIcon.renderAsQPixmap());
+        mArrayColorsButtons[i]->setEnabled(false);
     }
 
-    for (int i = (int)ELightingRoutine::eSingleSawtoothFadeOut + 1; i < (int)ELightingRoutine::eLightingRoutine_MAX; i++) {
-        (*mRoutineButtons.get())[i - (int)ELightingRoutine::eSingleSawtoothFadeOut - 1]->updateIconPresetColorRoutine((ELightingRoutine)i,
-                                                                                                                      EColorGroup::eCustom,
-                                                                                                                      mData->colorGroup(EColorGroup::eCustom),
-                                                                                                                      mData->customColorsUsed());
+    for (int i = (int)utils::ELightingRoutineSingleColorEnd + 1; i < (int)ELightingRoutine::eLightingRoutine_MAX; ++i) {
+        int vectorIndex = i - (int)utils::ELightingRoutineSingleColorEnd - 1;
+        mRoutineButtons[vectorIndex]->updateIconPresetColorRoutine((ELightingRoutine)i,
+                                                                    EColorGroup::eCustom,
+                                                                    mData->colorGroup(EColorGroup::eCustom),
+                                                                    mData->customColorsUsed());
     }
 }
 
 void CustomColorsPage::updateColorArray() {
-    for (int i = 0; i < mData->customColorsUsed(); ++i) {
-        (*mArrayColorsButtons.get())[i]->setEnabled(true);
+    for (uint32_t i = 0; i < mData->customColorsUsed(); ++i) {
+        mArrayColorsButtons[i]->setEnabled(true);
         mIconData.setSolidColor(mData->colorGroup(EColorGroup::eCustom)[i]);
-        (*mArrayColorsButtons.get())[i]->setIcon(mIconData.renderAsQPixmap());
+        mArrayColorsButtons[i]->setIcon(mIconData.renderAsQPixmap());
     }
 
     for (int i = mData->customColorsUsed(); i < mData->maxColorGroupSize(); ++i) {
-        (*mArrayColorsButtons.get())[i]->setIcon(mGreyIcon.renderAsQPixmap());
-        (*mArrayColorsButtons.get())[i]->setEnabled(false);
+        mArrayColorsButtons[i]->setIcon(mGreyIcon.renderAsQPixmap());
+        mArrayColorsButtons[i]->setEnabled(false);
     }
-     ui->arraySlider->setSliderColorBackground(mData->colorsAverage(EColorGroup::eCustom));
+    ui->arraySlider->setSliderColorBackground(mData->colorsAverage(EColorGroup::eCustom));
 }
 
 

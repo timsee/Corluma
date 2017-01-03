@@ -10,6 +10,7 @@
 #include "lightsbutton.h"
 #include "floatinglayout.h"
 #include "commtypesettings.h"
+#include "commlayer.h"
 #include "datasync.h"
 
 namespace Ui {
@@ -26,6 +27,7 @@ enum class EPage {
     eCustomArrayPage,
     ePresetPage,
     eSettingsPage,
+    eHueSettingsPage,
     eConnectionPage
 };
 
@@ -122,6 +124,11 @@ public slots:
      */
     void deviceCountReachedZero();
 
+    /*!
+     * \brief defaultSettingsPageChanged handles whenever the default settings page changes from standard to hue or vice versa.
+     * \param newPage true if should use the standard settings page, false if using the hue page.
+     */
+    void defaultSettingsPageChanged(bool newPage);
 
 protected:
     /*!
@@ -139,6 +146,12 @@ protected:
      */
     virtual void resizeEvent(QResizeEvent *);
 
+    /*!
+     * \brief changeEvent called whenever an event occurs. Currently used to off communication
+     *        threads when the application is put to sleep.
+     * \param event the event that has ocurred.
+     */
+    void changeEvent(QEvent *event);
 
 private:
 
@@ -180,12 +193,6 @@ private:
     IconData mIconData;
 
     /*!
-     * \brief mIsOn true if the LEDS are on, FALSE otherwise.
-     * \todo remove isOn flag and use the systems built into the arduino API.
-     */
-    bool mIsOn;
-
-    /*!
      * \brief mShouldGreyOutIcons cahced satte of whether any device is selected. If none
      *        are selected, icons that require a device are all greyed out.
      */
@@ -196,6 +203,11 @@ private:
      *        false if its a single color page.
      */
     bool mLastPageIsMultiColor;
+
+    /*!
+     * \brief mUseStandardSettings true if the standard settings page should be used, false otherwise.
+     */
+    bool mUseStandardSettings;
 };
 
 #endif // MAINWINDOW_H

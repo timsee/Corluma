@@ -7,7 +7,7 @@
 #include "settingspage.h"
 #include "ui_settingspage.h"
 #include "commhue.h"
-#include "listcontrollerwidget.h"
+#include "listdevicewidget.h"
 
 #include <QDebug>
 #include <QSignalMapper>
@@ -56,6 +56,14 @@ SettingsPage::SettingsPage(QWidget *parent) :
 #else
     ui->serialCheckBox->setHidden(true);
 #endif //MOBILE_BUILD
+
+    ui->standardButton->setCheckable(true);
+    connect(ui->standardButton, SIGNAL(clicked(bool)), this, SLOT(standardButtonPressed(bool)));
+
+    ui->hueButton->setCheckable(true);
+    connect(ui->hueButton, SIGNAL(clicked(bool)), this, SLOT(hueButtonPressed(bool)));
+
+    ui->standardButton->setChecked(true);
 }
 
 SettingsPage::~SettingsPage() {
@@ -95,13 +103,22 @@ void SettingsPage::speedChanged(int newSpeed) {
             finalSpeed = 2.0f;
         }
     }
-    mData->speed((int)finalSpeed);
-    mComm->sendSpeed(mData->currentDevices(), mData->speed());
+    mData->updateSpeed(finalSpeed);
 }
 
 void SettingsPage::timeoutChanged(int newTimeout) {
-   mData->timeOut(newTimeout);
-   mComm->sendTimeOut(mData->currentDevices(), mData->timeOut());
+   mData->updateTimeout(newTimeout);
+}
+
+
+void SettingsPage::standardButtonPressed(bool clicked) {
+    Q_UNUSED(clicked);
+    emit settingsPageIsStandard(true);
+}
+
+void SettingsPage::hueButtonPressed(bool clicked) {
+    Q_UNUSED(clicked);
+    emit settingsPageIsStandard(false);
 }
 
 // ----------------------------
@@ -112,6 +129,9 @@ void SettingsPage::timeoutChanged(int newTimeout) {
 void SettingsPage::showEvent(QShowEvent *event) {
     Q_UNUSED(event);
     updateUI();
+
+    ui->standardButton->setChecked(true);
+    ui->hueButton->setChecked(false);
 
     checkCheckBoxes();
 
@@ -126,7 +146,7 @@ void SettingsPage::showEvent(QShowEvent *event) {
 
         // default the settings bars to the current colors
         ui->speedSlider->slider->setValue(mSliderSpeedValue);
-        ui->timeoutSlider->slider->setValue(mData->timeOut());
+        ui->timeoutSlider->slider->setValue(mData->timeout());
     }
 }
 
@@ -188,6 +208,8 @@ void SettingsPage::udpCheckboxClicked(bool checked) {
 void SettingsPage::serialCheckboxClicked(bool checked) {
 #ifndef MOBILE_BUILD
     checkBoxClicked(ECommType::eSerial, checked);
+#else
+    Q_UNUSED(checked);
 #endif //MOBILE_BUILD
 }
 

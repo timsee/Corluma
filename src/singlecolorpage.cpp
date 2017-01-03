@@ -47,17 +47,17 @@ void SingleColorPage::setupButtons() {
                                            ui->sawtoothInButton,
                                            ui->sawtoothOutButton};
 
-    mRoutineButtons = std::shared_ptr<std::vector<LightsButton*> >(new std::vector<LightsButton*>(buttons.size(), nullptr));
-    for (int i = 0; i < (int)mRoutineButtons->size(); ++i) {
-        (*mRoutineButtons.get())[i] = buttons[i];
-        (*mRoutineButtons.get())[i]->setupAsStandardButton((ELightingRoutine)(i + 1), mData->currentColorGroup(), QString::fromStdString(labels[i]), mData->currentGroup());
-        connect((*mRoutineButtons.get())[i], SIGNAL(buttonClicked(int, int)), this, SLOT(modeChanged(int, int)));
+    mRoutineButtons = std::vector<LightsButton*>(buttons.size(), nullptr);
+    for (int i = 0; i < (int)mRoutineButtons.size(); ++i) {
+        mRoutineButtons[i] = buttons[i];
+        mRoutineButtons[i]->setupAsStandardButton((ELightingRoutine)(i + 1), mData->currentColorGroup(), QString::fromStdString(labels[i]), mData->currentGroup());
+        connect(mRoutineButtons[i], SIGNAL(buttonClicked(int, int)), this, SLOT(modeChanged(int, int)));
    }
 }
 
 void SingleColorPage::highlightRoutineButton(ELightingRoutine routine) {
-    for (uint i = 0; i < mRoutineButtons->size(); i++) {
-        (*mRoutineButtons.get())[i]->button->setChecked(false);
+    for (uint i = 0; i < mRoutineButtons.size(); i++) {
+        mRoutineButtons[i]->button->setChecked(false);
     }
 
     if (routine == ELightingRoutine::eSingleSolid) {
@@ -92,7 +92,7 @@ void SingleColorPage::modeChanged(int newMode, int newGroup) {
 void SingleColorPage::colorChanged(QColor color) {
     std::list<SLightDevice> routineFix;
     for (auto device : mData->currentDevices()) {
-        if ((int)device.lightingRoutine > (int)ELightingRoutineSingleColorEnd) {
+        if ((int)device.lightingRoutine > (int)utils::ELightingRoutineSingleColorEnd) {
             routineFix.push_back(device);
         }
     }
@@ -102,8 +102,8 @@ void SingleColorPage::colorChanged(QColor color) {
     mData->updateColor(color);
 
 
-    for (int i = 0; i < (int)mRoutineButtons->size(); ++i) {
-        (*mRoutineButtons.get())[i]->updateIconSingleColorRoutine((ELightingRoutine)(i + 1), color);
+    for (int i = 0; i < (int)mRoutineButtons.size(); ++i) {
+        mRoutineButtons[i]->updateIconSingleColorRoutine((ELightingRoutine)(i + 1), color);
     }
 
     emit singleColorChanged(color);
@@ -117,8 +117,8 @@ void SingleColorPage::colorChanged(QColor color) {
 void SingleColorPage::showEvent(QShowEvent *) {
   QColor color = mData->mainColor();
   ui->colorPicker->chooseColor(color, false);
-  for (int i = 0; i < (int)mRoutineButtons->size(); ++i) {
-      (*mRoutineButtons.get())[i]->updateIconSingleColorRoutine((ELightingRoutine)(i + 1), color);
+  for (int i = 0; i < (int)mRoutineButtons.size(); ++i) {
+      mRoutineButtons[i]->updateIconSingleColorRoutine((ELightingRoutine)(i + 1), color);
   }
 
   highlightRoutineButton(mData->currentRoutine());
