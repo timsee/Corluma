@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.7</span>
+   &#160;<span id="projectnumber">v0.9.82</span>
    </div>
   </td>
  </tr>
@@ -58,50 +58,54 @@
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;QTimer&gt;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;</div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;datalayer.h&quot;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">class </span><a class="code" href="class_comm_layer.html">CommLayer</a>;</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;</div>
-<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="class_data_sync.html">   24</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_data_sync.html">DataSync</a> : <span class="keyword">public</span> QObject</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;{</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    Q_OBJECT</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <a class="code" href="class_data_sync.html#ae065df4af6379691a544166b309b6bf3">DataSync</a>(<a class="code" href="class_data_layer.html">DataLayer</a> *data, <a class="code" href="class_comm_layer.html">CommLayer</a> *comm);</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keyword">public</span> slots:</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_sync.html#a10e6ed802214e9ea95d5457d784fb733">resetSync</a>();</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="keyword">private</span> slots:</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordtype">void</span> syncData();</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <a class="code" href="class_data_layer.html">DataLayer</a> *mData;</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">class </span><a class="code" href="class_comm_layer.html">CommLayer</a>;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="class_data_sync.html">   25</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_data_sync.html">DataSync</a> : <span class="keyword">public</span> QObject</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;{</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    Q_OBJECT</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <a class="code" href="class_data_sync.html#ae065df4af6379691a544166b309b6bf3">DataSync</a>(<a class="code" href="class_data_layer.html">DataLayer</a> *data, <a class="code" href="class_comm_layer.html">CommLayer</a> *comm);</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_sync.html#aedc1a7a5b65530a2ae492dbfe0e5d32c">cancelSync</a>();</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="keyword">public</span> slots:</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_sync.html#a10e6ed802214e9ea95d5457d784fb733">resetSync</a>();</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="keyword">private</span> slots:</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keywordtype">void</span> syncData();</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="keyword">private</span>:</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <a class="code" href="class_comm_layer.html">CommLayer</a> *mComm;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <a class="code" href="class_data_layer.html">DataLayer</a> *mData;</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">bool</span> standardSync(<span class="keyword">const</span> SLightDevice&amp; dataDevice, <span class="keyword">const</span> SLightDevice&amp; commDevice);</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordtype">bool</span> hueSync(<span class="keyword">const</span> SLightDevice&amp; dataDevice, <span class="keyword">const</span> SLightDevice&amp; commDevice);</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keywordtype">float</span> colorDifference(QColor first, QColor second);</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordtype">float</span> brightnessDifference(<span class="keywordtype">float</span> first, <span class="keywordtype">float</span> second);</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="keywordtype">float</span> ctDifference(<span class="keywordtype">float</span> first, <span class="keywordtype">float</span> second);</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    QTimer *mSyncTimer;</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    QTime mStartTime;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <a class="code" href="class_comm_layer.html">CommLayer</a> *mComm;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordtype">bool</span> standardSync(<span class="keyword">const</span> SLightDevice&amp; dataDevice, <span class="keyword">const</span> SLightDevice&amp; commDevice);</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">bool</span> hueSync(<span class="keyword">const</span> SLightDevice&amp; dataDevice, <span class="keyword">const</span> SLightDevice&amp; commDevice);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keywordtype">float</span> colorDifference(QColor first, QColor second);</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordtype">float</span> brightnessDifference(<span class="keywordtype">float</span> first, <span class="keywordtype">float</span> second);</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keywordtype">float</span> ctDifference(<span class="keywordtype">float</span> first, <span class="keywordtype">float</span> second);</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    QTimer *mSyncTimer;</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    <span class="keywordtype">bool</span> mDataIsInSync;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;};</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="preprocessor">#endif // DATASYNC_H</span></div>
-<div class="ttc" id="class_comm_layer_html"><div class="ttname"><a href="class_comm_layer.html">CommLayer</a></div><div class="ttdoc">The CommLayer class provides communication protocols that allow the user to connect and send packets ...</div><div class="ttdef"><b>Definition:</b> commlayer.h:32</div></div>
-<div class="ttc" id="class_data_layer_html"><div class="ttname"><a href="class_data_layer.html">DataLayer</a></div><div class="ttdoc">The DataLayer class stores and maintains the data about the state and settings of the application...</div><div class="ttdef"><b>Definition:</b> datalayer.h:33</div></div>
-<div class="ttc" id="class_data_sync_html_a10e6ed802214e9ea95d5457d784fb733"><div class="ttname"><a href="class_data_sync.html#a10e6ed802214e9ea95d5457d784fb733">DataSync::resetSync</a></div><div class="ttdeci">void resetSync()</div><div class="ttdoc">resetSync Tells the DataSync object that the commlayer and the datalayer are potentially no longer in...</div><div class="ttdef"><b>Definition:</b> datasync.cpp:16</div></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    QTime mStartTime;</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <span class="keywordtype">bool</span> mDataIsInSync;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;};</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="preprocessor">#endif // DATASYNC_H</span></div>
+<div class="ttc" id="class_comm_layer_html"><div class="ttname"><a href="class_comm_layer.html">CommLayer</a></div><div class="ttdoc">The CommLayer class provides communication protocols that allow the user to connect and send packets ...</div><div class="ttdef"><b>Definition:</b> commlayer.h:31</div></div>
+<div class="ttc" id="class_data_sync_html_aedc1a7a5b65530a2ae492dbfe0e5d32c"><div class="ttname"><a href="class_data_sync.html#aedc1a7a5b65530a2ae492dbfe0e5d32c">DataSync::cancelSync</a></div><div class="ttdeci">void cancelSync()</div><div class="ttdoc">cancelSync cancel the data sync, regardless of it successfully completed. </div><div class="ttdef"><b>Definition:</b> datasync.cpp:16</div></div>
+<div class="ttc" id="class_data_layer_html"><div class="ttname"><a href="class_data_layer.html">DataLayer</a></div><div class="ttdoc">The DataLayer class stores and maintains the data about the state and settings of the application...</div><div class="ttdef"><b>Definition:</b> datalayer.h:29</div></div>
+<div class="ttc" id="class_data_sync_html_a10e6ed802214e9ea95d5457d784fb733"><div class="ttname"><a href="class_data_sync.html#a10e6ed802214e9ea95d5457d784fb733">DataSync::resetSync</a></div><div class="ttdeci">void resetSync()</div><div class="ttdoc">resetSync Tells the DataSync object that the commlayer and the datalayer are potentially no longer in...</div><div class="ttdef"><b>Definition:</b> datasync.cpp:24</div></div>
 <div class="ttc" id="class_data_sync_html_ae065df4af6379691a544166b309b6bf3"><div class="ttname"><a href="class_data_sync.html#ae065df4af6379691a544166b309b6bf3">DataSync::DataSync</a></div><div class="ttdeci">DataSync(DataLayer *data, CommLayer *comm)</div><div class="ttdoc">DataSync Constructor for DataSync. </div><div class="ttdef"><b>Definition:</b> datasync.cpp:4</div></div>
-<div class="ttc" id="class_data_sync_html"><div class="ttname"><a href="class_data_sync.html">DataSync</a></div><div class="ttdoc">The DataSync class compares the data layer&#39;s representation of devices with the commlayer&#39;s understan...</div><div class="ttdef"><b>Definition:</b> datasync.h:24</div></div>
+<div class="ttc" id="class_data_sync_html"><div class="ttname"><a href="class_data_sync.html">DataSync</a></div><div class="ttdoc">The DataSync class compares the data layer&#39;s representation of devices with the commlayer&#39;s understan...</div><div class="ttdef"><b>Definition:</b> datasync.h:25</div></div>
 </div><!-- fragment --></div><!-- contents -->
 
 <hr>
@@ -110,7 +114,7 @@
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2016  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2017  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights MIT Licensed.  &nbsp; &nbsp; 
        </small>
        </p>

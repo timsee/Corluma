@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.7</span>
+   &#160;<span id="projectnumber">v0.9.82</span>
    </div>
   </td>
  </tr>
@@ -57,94 +57,95 @@
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;</div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;datalayer.h&quot;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;QWidget&gt;</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;QSlider&gt;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;QLabel&gt;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;QLayout&gt;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;</div>
-<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="class_lights_slider.html">   33</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_lights_slider.html">LightsSlider</a> : <span class="keyword">public</span> QWidget</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;{</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    Q_OBJECT</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_lights_slider.html#a8ab4e8379d78eeebd45e39de3f797231">LightsSlider</a>(QWidget *parent = 0);</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
-<div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="class_lights_slider.html#ac42a66bbe82f26c4b26d15777443f5fb">   46</a></span>&#160;    std::shared_ptr&lt;QSlider&gt; <a class="code" href="class_lights_slider.html#ac42a66bbe82f26c4b26d15777443f5fb">slider</a>;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="class_lights_slider.html#a2e3fb6d9b37c85f6110c174906486a13">   51</a></span>&#160;    QLabel *<a class="code" href="class_lights_slider.html#a2e3fb6d9b37c85f6110c174906486a13">label</a>;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_lights_slider.html#a87351e16ef21b9ada1e4d4bea0959f4f">setSliderColorBackground</a>(QColor color);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_lights_slider.html#a152a44f81bba0d6d4cea680a14a668d7">setSnapToNearestTick</a>(<span class="keywordtype">bool</span> shouldSnap);</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_lights_slider.html#af74be2a1971c006c02f7fcaf428560c5">setMinimumPossible</a>(<span class="keywordtype">bool</span> useMinimumPossible, <span class="keywordtype">int</span> minimumPossible);</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_lights_slider.html#a4d974b30ad6691482c323ce1d99edca2">setSliderHeight</a>(<span class="keywordtype">float</span> percent);</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_lights_slider.html#a8485ececdb53dcf6e7e23d74f9023cc7">enable</a>(<span class="keywordtype">bool</span> shouldEnable);</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;signals:</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_lights_slider.html#aa59ca731b29f88935d0443a334214cf7">valueChanged</a>(<span class="keywordtype">int</span>);</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="keyword">private</span> slots:</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keywordtype">void</span> receivedValue(<span class="keywordtype">int</span>);</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="keywordtype">void</span> resetThrottleFlag();</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <span class="keywordtype">void</span> releasedSlider();</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;QApplication&gt;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;QWidget&gt;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;QSlider&gt;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;QLabel&gt;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;QLayout&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div>
+<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="class_lights_slider.html">   34</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_lights_slider.html">LightsSlider</a> : <span class="keyword">public</span> QWidget</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;{</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    Q_OBJECT</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_lights_slider.html#a8ab4e8379d78eeebd45e39de3f797231">LightsSlider</a>(QWidget *parent = 0);</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
+<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="class_lights_slider.html#add19790105e40100fc1707784910d916">   47</a></span>&#160;    QSlider *<a class="code" href="class_lights_slider.html#add19790105e40100fc1707784910d916">slider</a>;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
+<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="class_lights_slider.html#a2e3fb6d9b37c85f6110c174906486a13">   52</a></span>&#160;    QLabel *<a class="code" href="class_lights_slider.html#a2e3fb6d9b37c85f6110c174906486a13">label</a>;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_lights_slider.html#a87351e16ef21b9ada1e4d4bea0959f4f">setSliderColorBackground</a>(QColor color);</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_lights_slider.html#a152a44f81bba0d6d4cea680a14a668d7">setSnapToNearestTick</a>(<span class="keywordtype">bool</span> shouldSnap);</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_lights_slider.html#af74be2a1971c006c02f7fcaf428560c5">setMinimumPossible</a>(<span class="keywordtype">bool</span> useMinimumPossible, <span class="keywordtype">int</span> minimumPossible);</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_lights_slider.html#a4d974b30ad6691482c323ce1d99edca2">setSliderHeight</a>(<span class="keywordtype">float</span> percent);</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_lights_slider.html#a8485ececdb53dcf6e7e23d74f9023cc7">enable</a>(<span class="keywordtype">bool</span> shouldEnable);</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;signals:</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_lights_slider.html#aa59ca731b29f88935d0443a334214cf7">valueChanged</a>(<span class="keywordtype">int</span>);</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="keyword">private</span> slots:</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keywordtype">void</span> receivedValue(<span class="keywordtype">int</span>);</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keywordtype">void</span> resetThrottleFlag();</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    <span class="keywordtype">void</span> releasedSlider();</div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_lights_slider.html#a4162bc17657138b21c94980ebd2d3c76">resizeEvent</a>(QResizeEvent *);</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_lights_slider.html#a98083db021dfbdd0d26df9ee33d47feb">paintEvent</a>(QPaintEvent *);</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_lights_slider.html#a0d7eb24c899d99a8af86226d09932519">showEvent</a>(QShowEvent *);</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_lights_slider.html#a0da90f45d5a260e808fff68f2e297ba3">hideEvent</a>(QHideEvent *);</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="keywordtype">float</span> mHeightScaleFactor;</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    QVBoxLayout *mLayout;</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <span class="keywordtype">bool</span> mShouldSnap;</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    <span class="keywordtype">bool</span> mUseMinimumPossible;</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    <span class="keywordtype">int</span> mMinimumPossible;</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    <span class="keywordtype">int</span> jumpSliderToPosition(std::shared_ptr&lt;QSlider&gt; slider, <span class="keywordtype">int</span> newPos);</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    <span class="keywordtype">int</span> snapSliderToNearestTick(std::shared_ptr&lt;QSlider&gt; slider, <span class="keywordtype">int</span> pos);</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;    QTimer *mThrottleTimer;</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    <span class="keywordtype">float</span> mOpacity;</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;    <span class="keywordtype">bool</span> mThrottleFlag;</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;    <span class="keywordtype">bool</span> mSliderColorSet;</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;    QColor mSliderColor;</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;};</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;<span class="preprocessor">#endif // LIGHTSSLIDER_H</span></div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_lights_slider.html#a4162bc17657138b21c94980ebd2d3c76">resizeEvent</a>(QResizeEvent *);</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_lights_slider.html#a98083db021dfbdd0d26df9ee33d47feb">paintEvent</a>(QPaintEvent *);</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_lights_slider.html#a0d7eb24c899d99a8af86226d09932519">showEvent</a>(QShowEvent *);</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_lights_slider.html#a0da90f45d5a260e808fff68f2e297ba3">hideEvent</a>(QHideEvent *);</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keywordtype">float</span> mHeightScaleFactor;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    QVBoxLayout *mLayout;</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <span class="keywordtype">bool</span> mShouldSnap;</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="keywordtype">bool</span> mUseMinimumPossible;</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    <span class="keywordtype">int</span> mMinimumPossible;</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    <span class="keywordtype">int</span> jumpSliderToPosition(QSlider *slider, <span class="keywordtype">int</span> newPos);</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    <span class="keywordtype">int</span> snapSliderToNearestTick(QSlider *slider, <span class="keywordtype">int</span> pos);</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    QTimer *mThrottleTimer;</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    <span class="keywordtype">float</span> mOpacity;</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;    <span class="keywordtype">bool</span> mThrottleFlag;</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    <span class="keywordtype">bool</span> mSliderColorSet;</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;    QColor mSliderColor;</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;};</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;<span class="preprocessor">#endif // LIGHTSSLIDER_H</span></div>
 <div class="ttc" id="class_lights_slider_html_aa59ca731b29f88935d0443a334214cf7"><div class="ttname"><a href="class_lights_slider.html#aa59ca731b29f88935d0443a334214cf7">LightsSlider::valueChanged</a></div><div class="ttdeci">void valueChanged(int)</div><div class="ttdoc">Sends out the value that the slider has been set to after all the processing of snapping it to a tick...</div></div>
 <div class="ttc" id="class_lights_slider_html_a4d974b30ad6691482c323ce1d99edca2"><div class="ttname"><a href="class_lights_slider.html#a4d974b30ad6691482c323ce1d99edca2">LightsSlider::setSliderHeight</a></div><div class="ttdeci">void setSliderHeight(float percent)</div><div class="ttdoc">setSliderHeight By default sliders take up all of the of the widget, but this covers ticks and leaves...</div><div class="ttdef"><b>Definition:</b> lightsslider.cpp:208</div></div>
 <div class="ttc" id="class_lights_slider_html_a87351e16ef21b9ada1e4d4bea0959f4f"><div class="ttname"><a href="class_lights_slider.html#a87351e16ef21b9ada1e4d4bea0959f4f">LightsSlider::setSliderColorBackground</a></div><div class="ttdeci">void setSliderColorBackground(QColor color)</div><div class="ttdoc">setSliderColorBackground Does a dark to light gradient on the color provided on the background of the...</div><div class="ttdef"><b>Definition:</b> lightsslider.cpp:43</div></div>
 <div class="ttc" id="class_lights_slider_html_a152a44f81bba0d6d4cea680a14a668d7"><div class="ttname"><a href="class_lights_slider.html#a152a44f81bba0d6d4cea680a14a668d7">LightsSlider::setSnapToNearestTick</a></div><div class="ttdeci">void setSnapToNearestTick(bool shouldSnap)</div><div class="ttdoc">setSnapToNearestTick set this if you want the slider to snap to the nearest tick instead of snapping ...</div><div class="ttdef"><b>Definition:</b> lightsslider.cpp:218</div></div>
 <div class="ttc" id="class_lights_slider_html_a8ab4e8379d78eeebd45e39de3f797231"><div class="ttname"><a href="class_lights_slider.html#a8ab4e8379d78eeebd45e39de3f797231">LightsSlider::LightsSlider</a></div><div class="ttdeci">LightsSlider(QWidget *parent=0)</div><div class="ttdoc">Constructor. </div><div class="ttdef"><b>Definition:</b> lightsslider.cpp:14</div></div>
-<div class="ttc" id="class_lights_slider_html_ac42a66bbe82f26c4b26d15777443f5fb"><div class="ttname"><a href="class_lights_slider.html#ac42a66bbe82f26c4b26d15777443f5fb">LightsSlider::slider</a></div><div class="ttdeci">std::shared_ptr&lt; QSlider &gt; slider</div><div class="ttdoc">slider The actual and factual QSlider in this slider class </div><div class="ttdef"><b>Definition:</b> lightsslider.h:46</div></div>
 <div class="ttc" id="class_lights_slider_html_a98083db021dfbdd0d26df9ee33d47feb"><div class="ttname"><a href="class_lights_slider.html#a98083db021dfbdd0d26df9ee33d47feb">LightsSlider::paintEvent</a></div><div class="ttdeci">void paintEvent(QPaintEvent *)</div><div class="ttdoc">paintEvent handles edge cases created by the having a QSlider and an elaborate stylesheet. Draws the application&#39;s background color and the slider&#39;s ticks. </div><div class="ttdef"><b>Definition:</b> lightsslider.cpp:171</div></div>
 <div class="ttc" id="class_lights_slider_html_a0d7eb24c899d99a8af86226d09932519"><div class="ttname"><a href="class_lights_slider.html#a0d7eb24c899d99a8af86226d09932519">LightsSlider::showEvent</a></div><div class="ttdeci">void showEvent(QShowEvent *)</div><div class="ttdoc">showEvent used to turn on the throttle timer </div><div class="ttdef"><b>Definition:</b> lightsslider.cpp:159</div></div>
 <div class="ttc" id="class_lights_slider_html_a4162bc17657138b21c94980ebd2d3c76"><div class="ttname"><a href="class_lights_slider.html#a4162bc17657138b21c94980ebd2d3c76">LightsSlider::resizeEvent</a></div><div class="ttdeci">void resizeEvent(QResizeEvent *)</div><div class="ttdoc">resizeEvent makes sure that the QSlider resizes with the QWidget </div><div class="ttdef"><b>Definition:</b> lightsslider.cpp:145</div></div>
+<div class="ttc" id="class_lights_slider_html_add19790105e40100fc1707784910d916"><div class="ttname"><a href="class_lights_slider.html#add19790105e40100fc1707784910d916">LightsSlider::slider</a></div><div class="ttdeci">QSlider * slider</div><div class="ttdoc">slider The actual and factual QSlider in this slider class </div><div class="ttdef"><b>Definition:</b> lightsslider.h:47</div></div>
 <div class="ttc" id="class_lights_slider_html_a0da90f45d5a260e808fff68f2e297ba3"><div class="ttname"><a href="class_lights_slider.html#a0da90f45d5a260e808fff68f2e297ba3">LightsSlider::hideEvent</a></div><div class="ttdeci">void hideEvent(QHideEvent *)</div><div class="ttdoc">hideEvent used to turn off the throttle timer </div><div class="ttdef"><b>Definition:</b> lightsslider.cpp:164</div></div>
-<div class="ttc" id="class_lights_slider_html"><div class="ttname"><a href="class_lights_slider.html">LightsSlider</a></div><div class="ttdoc">The LightsSlider class provides a slider with behaviors similiar to sliders on mobile devices...</div><div class="ttdef"><b>Definition:</b> lightsslider.h:33</div></div>
+<div class="ttc" id="class_lights_slider_html"><div class="ttname"><a href="class_lights_slider.html">LightsSlider</a></div><div class="ttdoc">The LightsSlider class provides a slider with behaviors similiar to sliders on mobile devices...</div><div class="ttdef"><b>Definition:</b> lightsslider.h:34</div></div>
 <div class="ttc" id="class_lights_slider_html_af74be2a1971c006c02f7fcaf428560c5"><div class="ttname"><a href="class_lights_slider.html#af74be2a1971c006c02f7fcaf428560c5">LightsSlider::setMinimumPossible</a></div><div class="ttdeci">void setMinimumPossible(bool useMinimumPossible, int minimumPossible)</div><div class="ttdoc">setMinimumPossible allows the user to set a value other than the minimum as the minimum possible valu...</div><div class="ttdef"><b>Definition:</b> lightsslider.cpp:136</div></div>
 <div class="ttc" id="class_lights_slider_html_a8485ececdb53dcf6e7e23d74f9023cc7"><div class="ttname"><a href="class_lights_slider.html#a8485ececdb53dcf6e7e23d74f9023cc7">LightsSlider::enable</a></div><div class="ttdeci">void enable(bool shouldEnable)</div><div class="ttdoc">enable sets whether the slider is enabled or disabled. Disabling the slider adds opacity, greys out the color, and disables user interaction. </div><div class="ttdef"><b>Definition:</b> lightsslider.cpp:232</div></div>
-<div class="ttc" id="class_lights_slider_html_a2e3fb6d9b37c85f6110c174906486a13"><div class="ttname"><a href="class_lights_slider.html#a2e3fb6d9b37c85f6110c174906486a13">LightsSlider::label</a></div><div class="ttdeci">QLabel * label</div><div class="ttdoc">label label for the slider, allows you to label the slider, but by default its an empty value...</div><div class="ttdef"><b>Definition:</b> lightsslider.h:51</div></div>
+<div class="ttc" id="class_lights_slider_html_a2e3fb6d9b37c85f6110c174906486a13"><div class="ttname"><a href="class_lights_slider.html#a2e3fb6d9b37c85f6110c174906486a13">LightsSlider::label</a></div><div class="ttdeci">QLabel * label</div><div class="ttdoc">label label for the slider, allows you to label the slider, but by default its an empty value...</div><div class="ttdef"><b>Definition:</b> lightsslider.h:52</div></div>
 </div><!-- fragment --></div><!-- contents -->
 
 <hr>
@@ -153,7 +154,7 @@
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2016  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2017  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights MIT Licensed.  &nbsp; &nbsp; 
        </small>
        </p>

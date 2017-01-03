@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.7</span>
+   &#160;<span id="projectnumber">v0.9.82</span>
    </div>
   </td>
  </tr>
@@ -55,96 +55,104 @@
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#ifndef SETTINGSPAGE_H</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#define SETTINGSPAGE_H</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;</div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;lightingpage.h&quot;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;lightsslider.h&quot;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;lightcheckbox.h&quot;</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;QWidget&gt;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;QListWidgetItem&gt;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_ui.html">Ui</a> {</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">class </span><a class="code" href="class_settings_page.html">SettingsPage</a>;</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;}</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;</div>
-<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="class_settings_page.html">   33</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_settings_page.html">SettingsPage</a> : <span class="keyword">public</span> QWidget, <span class="keyword">public</span> <a class="code" href="class_lighting_page.html">LightingPage</a></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;{</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    Q_OBJECT</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_settings_page.html#a2f7b734cd4b293694140ed7504d19a55">SettingsPage</a>(QWidget *parent = 0);</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <a class="code" href="class_settings_page.html#a20888ad10de70f082260e916ced2e4fa">~SettingsPage</a>();</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#a35689d7931d9c09a5923a7bd818b7367">setupUI</a>();</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
-<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="class_settings_page.html#a53041adaf2838c970df10152a2a60e9c">   57</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#a53041adaf2838c970df10152a2a60e9c">connectCommLayer</a>(<a class="code" href="class_comm_layer.html">CommLayer</a> *layer) { mComm = layer; }</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#aecc2d139ba62b0db8705efcdd026b331">updateUI</a>();</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;signals:</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#a0ab479e21a52d21757ae7c0adb00cad3">updateMainIcons</a>();</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="keyword">public</span> slots:</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#a13fe17ac61ace14cbac4882ee38f6b61">speedChanged</a>(<span class="keywordtype">int</span>);</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;QWidget&gt;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;QListWidgetItem&gt;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;lightingpage.h&quot;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;lightsslider.h&quot;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;lightcheckbox.h&quot;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;commlayer.h&quot;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_ui.html">Ui</a> {</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">class </span><a class="code" href="class_settings_page.html">SettingsPage</a>;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;}</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;</div>
+<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="class_settings_page.html">   34</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_settings_page.html">SettingsPage</a> : <span class="keyword">public</span> QWidget, <span class="keyword">public</span> <a class="code" href="class_lighting_page.html">LightingPage</a></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;{</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    Q_OBJECT</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_settings_page.html#a2f7b734cd4b293694140ed7504d19a55">SettingsPage</a>(QWidget *parent = 0);</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <a class="code" href="class_settings_page.html#a20888ad10de70f082260e916ced2e4fa">~SettingsPage</a>();</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#a35689d7931d9c09a5923a7bd818b7367">setupUI</a>();</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="class_settings_page.html#a53041adaf2838c970df10152a2a60e9c">   58</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#a53041adaf2838c970df10152a2a60e9c">connectCommLayer</a>(<a class="code" href="class_comm_layer.html">CommLayer</a> *layer) { mComm = layer; }</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#aecc2d139ba62b0db8705efcdd026b331">updateUI</a>();</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;signals:</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#a0ab479e21a52d21757ae7c0adb00cad3">updateMainIcons</a>();</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#a5d4751882c34a048cff8c889b365c5cf">settingsPageIsStandard</a>(<span class="keywordtype">bool</span>);</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#a39e1e36f2ca99cbf37740c40fbe42c58">timeoutChanged</a>(<span class="keywordtype">int</span>);</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#aae891c6d723a959386d13d469d2ba768">hueCheckboxClicked</a>(<span class="keywordtype">bool</span>);</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#afa1997aefca0cfda5ce31482bd48c399">httpCheckboxClicked</a>(<span class="keywordtype">bool</span>);</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#ab42e038999ac7fdb31c1ad716128a63e">udpCheckboxClicked</a>(<span class="keywordtype">bool</span>);</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#a705d467357203cee0f046eb270d29110">serialCheckboxClicked</a>(<span class="keywordtype">bool</span>);</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#adf389b3a7b80281508c85f83e07c9b45">deviceCountReachedZero</a>();</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="keyword">private</span> slots:</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <span class="keywordtype">void</span> renderUI();</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="keyword">public</span> slots:</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#a13fe17ac61ace14cbac4882ee38f6b61">speedChanged</a>(<span class="keywordtype">int</span>);</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#a39e1e36f2ca99cbf37740c40fbe42c58">timeoutChanged</a>(<span class="keywordtype">int</span>);</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#aae891c6d723a959386d13d469d2ba768">hueCheckboxClicked</a>(<span class="keywordtype">bool</span>);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#afa1997aefca0cfda5ce31482bd48c399">httpCheckboxClicked</a>(<span class="keywordtype">bool</span>);</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#ab42e038999ac7fdb31c1ad716128a63e">udpCheckboxClicked</a>(<span class="keywordtype">bool</span>);</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#a705d467357203cee0f046eb270d29110">serialCheckboxClicked</a>(<span class="keywordtype">bool</span>);</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#adf389b3a7b80281508c85f83e07c9b45">deviceCountReachedZero</a>();</div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#af2bafc60ea01bddbc3b046a5561d5a65">showEvent</a>(QShowEvent *);</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="keyword">private</span> slots:</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keywordtype">void</span> renderUI();</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#a1b9580672781df7da04b27d6f2acc71d">hideEvent</a>(QHideEvent *);</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="keywordtype">void</span> standardButtonPressed(<span class="keywordtype">bool</span>);</div>
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#aaa85cbe32bc8625e9382a0ddec36efec">resizeEvent</a>(QResizeEvent *event);</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keywordtype">void</span> hueButtonPressed(<span class="keywordtype">bool</span>);</div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    <span class="keywordtype">void</span> checkBoxClicked(ECommType type, <span class="keywordtype">bool</span> checked);</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    <span class="keywordtype">void</span> checkCheckBoxes();</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    Ui::SettingsPage *ui;</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    std::vector&lt;LightCheckBox*&gt; mCheckBoxes;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#af2bafc60ea01bddbc3b046a5561d5a65">showEvent</a>(QShowEvent *);</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#a1b9580672781df7da04b27d6f2acc71d">hideEvent</a>(QHideEvent *);</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_settings_page.html#aaa85cbe32bc8625e9382a0ddec36efec">resizeEvent</a>(QResizeEvent *event);</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    <span class="keywordtype">void</span> checkBoxClicked(ECommType type, <span class="keywordtype">bool</span> checked);</div>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    <a class="code" href="class_comm_layer.html">CommLayer</a> *mComm;</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    <span class="keywordtype">void</span> checkCheckBoxes();</div>
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    <span class="keywordtype">int</span> mSliderSpeedValue;</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;};</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="preprocessor">#endif // SETTINGSPAGE_H</span></div>
-<div class="ttc" id="class_lighting_page_html"><div class="ttname"><a href="class_lighting_page.html">LightingPage</a></div><div class="ttdoc">Inherited by Lighting Pages, provides a link to the backend. </div><div class="ttdef"><b>Definition:</b> lightingpage.h:18</div></div>
-<div class="ttc" id="class_settings_page_html_a13fe17ac61ace14cbac4882ee38f6b61"><div class="ttname"><a href="class_settings_page.html#a13fe17ac61ace14cbac4882ee38f6b61">SettingsPage::speedChanged</a></div><div class="ttdeci">void speedChanged(int)</div><div class="ttdoc">speedChanged signaled whenever the slider that controls the LEDs speed changes its value...</div><div class="ttdef"><b>Definition:</b> settingspage.cpp:83</div></div>
-<div class="ttc" id="class_settings_page_html_a1b9580672781df7da04b27d6f2acc71d"><div class="ttname"><a href="class_settings_page.html#a1b9580672781df7da04b27d6f2acc71d">SettingsPage::hideEvent</a></div><div class="ttdeci">void hideEvent(QHideEvent *)</div><div class="ttdoc">hideEvent called whenever the page is being hidden. </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:133</div></div>
-<div class="ttc" id="class_comm_layer_html"><div class="ttname"><a href="class_comm_layer.html">CommLayer</a></div><div class="ttdoc">The CommLayer class provides communication protocols that allow the user to connect and send packets ...</div><div class="ttdef"><b>Definition:</b> commlayer.h:32</div></div>
-<div class="ttc" id="class_settings_page_html_ab42e038999ac7fdb31c1ad716128a63e"><div class="ttname"><a href="class_settings_page.html#ab42e038999ac7fdb31c1ad716128a63e">SettingsPage::udpCheckboxClicked</a></div><div class="ttdeci">void udpCheckboxClicked(bool)</div><div class="ttdoc">udpCheckboxClicked checks and unchecks the UDP checkbox. </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:184</div></div>
-<div class="ttc" id="class_settings_page_html_afa1997aefca0cfda5ce31482bd48c399"><div class="ttname"><a href="class_settings_page.html#afa1997aefca0cfda5ce31482bd48c399">SettingsPage::httpCheckboxClicked</a></div><div class="ttdeci">void httpCheckboxClicked(bool)</div><div class="ttdoc">httpCheckboxClicked checks and unchecks the HTTP checkbox. </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:180</div></div>
-<div class="ttc" id="namespace_ui_html"><div class="ttname"><a href="namespace_ui.html">Ui</a></div><div class="ttdef"><b>Definition:</b> connectionpage.h:19</div></div>
-<div class="ttc" id="class_settings_page_html_af2bafc60ea01bddbc3b046a5561d5a65"><div class="ttname"><a href="class_settings_page.html#af2bafc60ea01bddbc3b046a5561d5a65">SettingsPage::showEvent</a></div><div class="ttdeci">void showEvent(QShowEvent *)</div><div class="ttdoc">showEvent called before the this page is shown. Used to sync up any changes that may have happened on...</div><div class="ttdef"><b>Definition:</b> settingspage.cpp:112</div></div>
-<div class="ttc" id="class_settings_page_html_a39e1e36f2ca99cbf37740c40fbe42c58"><div class="ttname"><a href="class_settings_page.html#a39e1e36f2ca99cbf37740c40fbe42c58">SettingsPage::timeoutChanged</a></div><div class="ttdeci">void timeoutChanged(int)</div><div class="ttdoc">timeoutChanged signaled whenever the slider that controls the LEDs idle time out changes its value...</div><div class="ttdef"><b>Definition:</b> settingspage.cpp:102</div></div>
-<div class="ttc" id="class_settings_page_html_a20888ad10de70f082260e916ced2e4fa"><div class="ttname"><a href="class_settings_page.html#a20888ad10de70f082260e916ced2e4fa">SettingsPage::~SettingsPage</a></div><div class="ttdeci">~SettingsPage()</div><div class="ttdoc">Deconstructor. </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:61</div></div>
-<div class="ttc" id="class_settings_page_html_adf389b3a7b80281508c85f83e07c9b45"><div class="ttname"><a href="class_settings_page.html#adf389b3a7b80281508c85f83e07c9b45">SettingsPage::deviceCountReachedZero</a></div><div class="ttdeci">void deviceCountReachedZero()</div><div class="ttdoc">deviceCountReachedZero disable and greys out assets that require a device to be connected to use...</div><div class="ttdef"><b>Definition:</b> settingspage.cpp:194</div></div>
-<div class="ttc" id="class_settings_page_html_a705d467357203cee0f046eb270d29110"><div class="ttname"><a href="class_settings_page.html#a705d467357203cee0f046eb270d29110">SettingsPage::serialCheckboxClicked</a></div><div class="ttdeci">void serialCheckboxClicked(bool)</div><div class="ttdoc">serialCheckboxClicked checks and unchecks the serial checkbox. </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:188</div></div>
-<div class="ttc" id="class_settings_page_html"><div class="ttname"><a href="class_settings_page.html">SettingsPage</a></div><div class="ttdoc">The SettingsPage provides a way to configure the application settings. </div><div class="ttdef"><b>Definition:</b> settingspage.h:33</div></div>
-<div class="ttc" id="class_settings_page_html_aecc2d139ba62b0db8705efcdd026b331"><div class="ttname"><a href="class_settings_page.html#aecc2d139ba62b0db8705efcdd026b331">SettingsPage::updateUI</a></div><div class="ttdeci">void updateUI()</div><div class="ttdoc">updateUI updates the colors of various settings in the UI. </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:69</div></div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    Ui::SettingsPage *ui;</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    std::vector&lt;LightCheckBox*&gt; mCheckBoxes;</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    <a class="code" href="class_comm_layer.html">CommLayer</a> *mComm;</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    <span class="keywordtype">int</span> mSliderSpeedValue;</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;};</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;<span class="preprocessor">#endif // SETTINGSPAGE_H</span></div>
+<div class="ttc" id="class_lighting_page_html"><div class="ttname"><a href="class_lighting_page.html">LightingPage</a></div><div class="ttdoc">Inherited by Lighting Pages, provides a link to the backend. </div><div class="ttdef"><b>Definition:</b> lightingpage.h:17</div></div>
+<div class="ttc" id="class_settings_page_html_a13fe17ac61ace14cbac4882ee38f6b61"><div class="ttname"><a href="class_settings_page.html#a13fe17ac61ace14cbac4882ee38f6b61">SettingsPage::speedChanged</a></div><div class="ttdeci">void speedChanged(int)</div><div class="ttdoc">speedChanged signaled whenever the slider that controls the LEDs speed changes its value...</div><div class="ttdef"><b>Definition:</b> settingspage.cpp:91</div></div>
+<div class="ttc" id="class_settings_page_html_a1b9580672781df7da04b27d6f2acc71d"><div class="ttname"><a href="class_settings_page.html#a1b9580672781df7da04b27d6f2acc71d">SettingsPage::hideEvent</a></div><div class="ttdeci">void hideEvent(QHideEvent *)</div><div class="ttdoc">hideEvent called whenever the page is being hidden. </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:153</div></div>
+<div class="ttc" id="class_comm_layer_html"><div class="ttname"><a href="class_comm_layer.html">CommLayer</a></div><div class="ttdoc">The CommLayer class provides communication protocols that allow the user to connect and send packets ...</div><div class="ttdef"><b>Definition:</b> commlayer.h:31</div></div>
+<div class="ttc" id="class_settings_page_html_ab42e038999ac7fdb31c1ad716128a63e"><div class="ttname"><a href="class_settings_page.html#ab42e038999ac7fdb31c1ad716128a63e">SettingsPage::udpCheckboxClicked</a></div><div class="ttdeci">void udpCheckboxClicked(bool)</div><div class="ttdoc">udpCheckboxClicked checks and unchecks the UDP checkbox. </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:204</div></div>
+<div class="ttc" id="class_settings_page_html_afa1997aefca0cfda5ce31482bd48c399"><div class="ttname"><a href="class_settings_page.html#afa1997aefca0cfda5ce31482bd48c399">SettingsPage::httpCheckboxClicked</a></div><div class="ttdeci">void httpCheckboxClicked(bool)</div><div class="ttdoc">httpCheckboxClicked checks and unchecks the HTTP checkbox. </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:200</div></div>
+<div class="ttc" id="namespace_ui_html"><div class="ttname"><a href="namespace_ui.html">Ui</a></div><div class="ttdef"><b>Definition:</b> connectionpage.h:21</div></div>
+<div class="ttc" id="class_settings_page_html_af2bafc60ea01bddbc3b046a5561d5a65"><div class="ttname"><a href="class_settings_page.html#af2bafc60ea01bddbc3b046a5561d5a65">SettingsPage::showEvent</a></div><div class="ttdeci">void showEvent(QShowEvent *)</div><div class="ttdoc">showEvent called before the this page is shown. Used to sync up any changes that may have happened on...</div><div class="ttdef"><b>Definition:</b> settingspage.cpp:129</div></div>
+<div class="ttc" id="class_settings_page_html_a39e1e36f2ca99cbf37740c40fbe42c58"><div class="ttname"><a href="class_settings_page.html#a39e1e36f2ca99cbf37740c40fbe42c58">SettingsPage::timeoutChanged</a></div><div class="ttdeci">void timeoutChanged(int)</div><div class="ttdoc">timeoutChanged signaled whenever the slider that controls the LEDs idle time out changes its value...</div><div class="ttdef"><b>Definition:</b> settingspage.cpp:109</div></div>
+<div class="ttc" id="class_settings_page_html_a20888ad10de70f082260e916ced2e4fa"><div class="ttname"><a href="class_settings_page.html#a20888ad10de70f082260e916ced2e4fa">SettingsPage::~SettingsPage</a></div><div class="ttdeci">~SettingsPage()</div><div class="ttdoc">Deconstructor. </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:69</div></div>
+<div class="ttc" id="class_settings_page_html_adf389b3a7b80281508c85f83e07c9b45"><div class="ttname"><a href="class_settings_page.html#adf389b3a7b80281508c85f83e07c9b45">SettingsPage::deviceCountReachedZero</a></div><div class="ttdeci">void deviceCountReachedZero()</div><div class="ttdoc">deviceCountReachedZero disable and greys out assets that require a device to be connected to use...</div><div class="ttdef"><b>Definition:</b> settingspage.cpp:216</div></div>
+<div class="ttc" id="class_settings_page_html_a705d467357203cee0f046eb270d29110"><div class="ttname"><a href="class_settings_page.html#a705d467357203cee0f046eb270d29110">SettingsPage::serialCheckboxClicked</a></div><div class="ttdeci">void serialCheckboxClicked(bool)</div><div class="ttdoc">serialCheckboxClicked checks and unchecks the serial checkbox. </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:208</div></div>
+<div class="ttc" id="class_settings_page_html"><div class="ttname"><a href="class_settings_page.html">SettingsPage</a></div><div class="ttdoc">The SettingsPage provides a way to configure the application settings. </div><div class="ttdef"><b>Definition:</b> settingspage.h:34</div></div>
+<div class="ttc" id="class_settings_page_html_aecc2d139ba62b0db8705efcdd026b331"><div class="ttname"><a href="class_settings_page.html#aecc2d139ba62b0db8705efcdd026b331">SettingsPage::updateUI</a></div><div class="ttdeci">void updateUI()</div><div class="ttdoc">updateUI updates the colors of various settings in the UI. </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:77</div></div>
 <div class="ttc" id="class_settings_page_html_a2f7b734cd4b293694140ed7504d19a55"><div class="ttname"><a href="class_settings_page.html#a2f7b734cd4b293694140ed7504d19a55">SettingsPage::SettingsPage</a></div><div class="ttdeci">SettingsPage(QWidget *parent=0)</div><div class="ttdoc">Constructor. </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:17</div></div>
-<div class="ttc" id="class_settings_page_html_a53041adaf2838c970df10152a2a60e9c"><div class="ttname"><a href="class_settings_page.html#a53041adaf2838c970df10152a2a60e9c">SettingsPage::connectCommLayer</a></div><div class="ttdeci">void connectCommLayer(CommLayer *layer)</div><div class="ttdoc">connectCommLayer connec the commlayer to this page. </div><div class="ttdef"><b>Definition:</b> settingspage.h:57</div></div>
+<div class="ttc" id="class_settings_page_html_a5d4751882c34a048cff8c889b365c5cf"><div class="ttname"><a href="class_settings_page.html#a5d4751882c34a048cff8c889b365c5cf">SettingsPage::settingsPageIsStandard</a></div><div class="ttdeci">void settingsPageIsStandard(bool)</div><div class="ttdoc">settingsPageIsStandard signaled when top menu is pressed. True if settings page should show standard ...</div></div>
+<div class="ttc" id="class_settings_page_html_a53041adaf2838c970df10152a2a60e9c"><div class="ttname"><a href="class_settings_page.html#a53041adaf2838c970df10152a2a60e9c">SettingsPage::connectCommLayer</a></div><div class="ttdeci">void connectCommLayer(CommLayer *layer)</div><div class="ttdoc">connectCommLayer connec the commlayer to this page. </div><div class="ttdef"><b>Definition:</b> settingspage.h:58</div></div>
 <div class="ttc" id="class_settings_page_html_a0ab479e21a52d21757ae7c0adb00cad3"><div class="ttname"><a href="class_settings_page.html#a0ab479e21a52d21757ae7c0adb00cad3">SettingsPage::updateMainIcons</a></div><div class="ttdeci">void updateMainIcons()</div><div class="ttdoc">Used to signal back to the main page that it should update its top-left icon with new RGB values...</div></div>
-<div class="ttc" id="class_settings_page_html_aaa85cbe32bc8625e9382a0ddec36efec"><div class="ttname"><a href="class_settings_page.html#aaa85cbe32bc8625e9382a0ddec36efec">SettingsPage::resizeEvent</a></div><div class="ttdeci">void resizeEvent(QResizeEvent *event)</div><div class="ttdoc">resizeEvent called whenever the widget resizes so that assets can be updated. </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:137</div></div>
-<div class="ttc" id="class_settings_page_html_aae891c6d723a959386d13d469d2ba768"><div class="ttname"><a href="class_settings_page.html#aae891c6d723a959386d13d469d2ba768">SettingsPage::hueCheckboxClicked</a></div><div class="ttdeci">void hueCheckboxClicked(bool)</div><div class="ttdoc">hueCheckboxClicked checks and unchecks the hue checkbox. </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:176</div></div>
-<div class="ttc" id="class_settings_page_html_a35689d7931d9c09a5923a7bd818b7367"><div class="ttname"><a href="class_settings_page.html#a35689d7931d9c09a5923a7bd818b7367">SettingsPage::setupUI</a></div><div class="ttdeci">void setupUI()</div><div class="ttdoc">setupUI sets up initial UI elements. </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:65</div></div>
+<div class="ttc" id="class_settings_page_html_aaa85cbe32bc8625e9382a0ddec36efec"><div class="ttname"><a href="class_settings_page.html#aaa85cbe32bc8625e9382a0ddec36efec">SettingsPage::resizeEvent</a></div><div class="ttdeci">void resizeEvent(QResizeEvent *event)</div><div class="ttdoc">resizeEvent called whenever the widget resizes so that assets can be updated. </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:157</div></div>
+<div class="ttc" id="class_settings_page_html_aae891c6d723a959386d13d469d2ba768"><div class="ttname"><a href="class_settings_page.html#aae891c6d723a959386d13d469d2ba768">SettingsPage::hueCheckboxClicked</a></div><div class="ttdeci">void hueCheckboxClicked(bool)</div><div class="ttdoc">hueCheckboxClicked checks and unchecks the hue checkbox. </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:196</div></div>
+<div class="ttc" id="class_settings_page_html_a35689d7931d9c09a5923a7bd818b7367"><div class="ttname"><a href="class_settings_page.html#a35689d7931d9c09a5923a7bd818b7367">SettingsPage::setupUI</a></div><div class="ttdeci">void setupUI()</div><div class="ttdoc">setupUI sets up initial UI elements. </div><div class="ttdef"><b>Definition:</b> settingspage.cpp:73</div></div>
 </div><!-- fragment --></div><!-- contents -->
 
 <hr>
@@ -153,7 +161,7 @@
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2016  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2017  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights MIT Licensed.  &nbsp; &nbsp; 
        </small>
        </p>

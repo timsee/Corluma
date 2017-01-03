@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.7</span>
+   &#160;<span id="projectnumber">v0.9.82</span>
    </div>
   </td>
  </tr>
@@ -48,6 +48,7 @@
 <div class="header">
   <div class="summary">
 <a href="class_comm_hue-members.html">List of all members</a> &#124;
+<a href="#signals">Signals</a> &#124;
 <a href="#pub-methods">Public Member Functions</a>  </div>
   <div class="headertitle">
 <div class="title">CommHue Class Reference</div>  </div>
@@ -61,6 +62,26 @@
 
 <p>Inherits <a class="el" href="class_comm_type.html">CommType</a>.</p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
+Signals</h2></td></tr>
+<tr class="memitem:a75205a9dd6e81b970b1313402b656736"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a75205a9dd6e81b970b1313402b656736"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a75205a9dd6e81b970b1313402b656736">stateChanged</a> ()</td></tr>
+<tr class="memdesc:a75205a9dd6e81b970b1313402b656736"><td class="mdescLeft">&#160;</td><td class="mdescRight">stateChanged emitted when any of the lights change in any way. <br /></td></tr>
+<tr class="separator:a75205a9dd6e81b970b1313402b656736"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header signals_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('signals_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Signals inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
+<tr class="memitem:a9186f5c260b29ec24d0e1666191afbf6 inherit signals_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9186f5c260b29ec24d0e1666191afbf6"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a9186f5c260b29ec24d0e1666191afbf6">packetReceived</a> (QString, QString, int)</td></tr>
+<tr class="memdesc:a9186f5c260b29ec24d0e1666191afbf6 inherit signals_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">packetReceived emitted whenever a packet that is not a discovery packet is received. Contains the full packet's contents as a QString. <br /></td></tr>
+<tr class="separator:a9186f5c260b29ec24d0e1666191afbf6 inherit signals_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acbc434809e1145dff7f9cd3dcd7a068d inherit signals_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acbc434809e1145dff7f9cd3dcd7a068d"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#acbc434809e1145dff7f9cd3dcd7a068d">discoveryReceived</a> (QString, QString, int)</td></tr>
+<tr class="memdesc:acbc434809e1145dff7f9cd3dcd7a068d inherit signals_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">discoveryReceived emitted when a discovery packet is received, this contains the state of all connected devices. <br /></td></tr>
+<tr class="separator:acbc434809e1145dff7f9cd3dcd7a068d inherit signals_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac61ed4af1b52a921138f7f97e5d15b9e inherit signals_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac61ed4af1b52a921138f7f97e5d15b9e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ac61ed4af1b52a921138f7f97e5d15b9e">updateReceived</a> (int)</td></tr>
+<tr class="memdesc:ac61ed4af1b52a921138f7f97e5d15b9e inherit signals_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateReceived an update packet was received from any controller. <br /></td></tr>
+<tr class="separator:ac61ed4af1b52a921138f7f97e5d15b9e inherit signals_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a6437a21abfd54172305bd1eda8c52845"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a6437a21abfd54172305bd1eda8c52845">CommHue</a> ()</td></tr>
@@ -121,6 +142,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:ab5b5c67a3a87429a342fb9e82cdcaf6d inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ab5b5c67a3a87429a342fb9e82cdcaf6d">runningDiscovery</a> ()</td></tr>
 <tr class="memdesc:ab5b5c67a3a87429a342fb9e82cdcaf6d inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">runningDiscovery true if theres any controller that is going through the discovery routines and hasn't been discovered, false otherwise.  <a href="#ab5b5c67a3a87429a342fb9e82cdcaf6d">More...</a><br /></td></tr>
 <tr class="separator:ab5b5c67a3a87429a342fb9e82cdcaf6d inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae92c228926c3214a78e12d3519102555 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae92c228926c3214a78e12d3519102555"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ae92c228926c3214a78e12d3519102555">resetStateUpdateTimeout</a> ()</td></tr>
+<tr class="memdesc:ae92c228926c3214a78e12d3519102555 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetStateUpdateTimeout reset the timer tracking when to shutdown the state update thread. <br /></td></tr>
+<tr class="separator:ae92c228926c3214a78e12d3519102555 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a684c569bb57248ae4b0b2e4563339f74 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a684c569bb57248ae4b0b2e4563339f74"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a684c569bb57248ae4b0b2e4563339f74">stopStateUpdates</a> ()</td></tr>
+<tr class="memdesc:a684c569bb57248ae4b0b2e4563339f74 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">stopStateUpdates turn off the state update timers. <br /></td></tr>
+<tr class="separator:a684c569bb57248ae4b0b2e4563339f74 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac8e3ef4d4b075f7d53fcb6500c0d48e1 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ac8e3ef4d4b075f7d53fcb6500c0d48e1">addController</a> (QString controller)</td></tr>
 <tr class="memdesc:ac8e3ef4d4b075f7d53fcb6500c0d48e1 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">addController attempts to add a new controller to the device table.  <a href="#ac8e3ef4d4b075f7d53fcb6500c0d48e1">More...</a><br /></td></tr>
 <tr class="separator:ac8e3ef4d4b075f7d53fcb6500c0d48e1 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -148,28 +177,11 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header signals_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('signals_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Signals inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
-<tr class="memitem:a9186f5c260b29ec24d0e1666191afbf6 inherit signals_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9186f5c260b29ec24d0e1666191afbf6"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a9186f5c260b29ec24d0e1666191afbf6">packetReceived</a> (QString, QString, int)</td></tr>
-<tr class="memdesc:a9186f5c260b29ec24d0e1666191afbf6 inherit signals_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">packetReceived emitted whenever a packet that is not a discovery packet is received. Contains the full packet's contents as a QString. <br /></td></tr>
-<tr class="separator:a9186f5c260b29ec24d0e1666191afbf6 inherit signals_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acbc434809e1145dff7f9cd3dcd7a068d inherit signals_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acbc434809e1145dff7f9cd3dcd7a068d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#acbc434809e1145dff7f9cd3dcd7a068d">discoveryReceived</a> (QString, QString, int)</td></tr>
-<tr class="memdesc:acbc434809e1145dff7f9cd3dcd7a068d inherit signals_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">discoveryReceived emitted when a discovery packet is received, this contains the state of all connected devices. <br /></td></tr>
-<tr class="separator:acbc434809e1145dff7f9cd3dcd7a068d inherit signals_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac61ed4af1b52a921138f7f97e5d15b9e inherit signals_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac61ed4af1b52a921138f7f97e5d15b9e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ac61ed4af1b52a921138f7f97e5d15b9e">updateReceived</a> (int)</td></tr>
-<tr class="memdesc:ac61ed4af1b52a921138f7f97e5d15b9e inherit signals_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateReceived an update packet was received from any controller. <br /></td></tr>
-<tr class="separator:ac61ed4af1b52a921138f7f97e5d15b9e inherit signals_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
 <tr class="memitem:adb4143fad9f0cad9b4e0efff68614bf1 inherit pro_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adb4143fad9f0cad9b4e0efff68614bf1"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#adb4143fad9f0cad9b4e0efff68614bf1">resetDiscovery</a> ()</td></tr>
 <tr class="memdesc:adb4143fad9f0cad9b4e0efff68614bf1 inherit pro_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetDiscovery clears the throttle list and discovery list and treats the commtype as if nothing has been discovered. <br /></td></tr>
 <tr class="separator:adb4143fad9f0cad9b4e0efff68614bf1 inherit pro_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae92c228926c3214a78e12d3519102555 inherit pro_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae92c228926c3214a78e12d3519102555"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ae92c228926c3214a78e12d3519102555">resetStateUpdateTimeout</a> ()</td></tr>
-<tr class="memdesc:ae92c228926c3214a78e12d3519102555 inherit pro_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetStateUpdateTimeout reset the timer tracking when to shutdown the state update thread. <br /></td></tr>
-<tr class="separator:ae92c228926c3214a78e12d3519102555 inherit pro_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a140fb846eeb4d24976e2a4f514f95f0f inherit pro_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a140fb846eeb4d24976e2a4f514f95f0f">shouldContinueStateUpdate</a> ()</td></tr>
 <tr class="memdesc:a140fb846eeb4d24976e2a4f514f95f0f inherit pro_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">shouldContinueStateUpdate checks internal states and determines if it should still keep requesting state updates from the devices.  <a href="#a140fb846eeb4d24976e2a4f514f95f0f">More...</a><br /></td></tr>
 <tr class="separator:a140fb846eeb4d24976e2a4f514f95f0f inherit pro_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -192,6 +204,10 @@ std::list&lt; std::pair&lt; QString, <br class="typebreak" />
 CommThrottle * &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a35f88dea2ab73337cef428d5aed5fec6">mThrottleList</a></td></tr>
 <tr class="memdesc:a35f88dea2ab73337cef428d5aed5fec6 inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mThrottleList list of throttles paired with strings. This allows each different discovered device to use a different throttle. <br /></td></tr>
 <tr class="separator:a35f88dea2ab73337cef428d5aed5fec6 inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4880167268de709a679fd25629eb397 inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa4880167268de709a679fd25629eb397"></a>
+std::list&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aa4880167268de709a679fd25629eb397">mUndiscoveredList</a></td></tr>
+<tr class="memdesc:aa4880167268de709a679fd25629eb397 inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mUndiscoveredList list of controllers that are not currently discovered but are running discovery routines. <br /></td></tr>
+<tr class="separator:aa4880167268de709a679fd25629eb397 inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a72eb17fb724feb20de438b6c304e35ba inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a72eb17fb724feb20de438b6c304e35ba"></a>
 std::list&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a72eb17fb724feb20de438b6c304e35ba">mDiscoveryList</a></td></tr>
 <tr class="memdesc:a72eb17fb724feb20de438b6c304e35ba inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mDiscoveryList list of devices that have been discovered properly. <br /></td></tr>
@@ -494,7 +510,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2016  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2017  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights MIT Licensed.  &nbsp; &nbsp; 
        </small>
        </p>

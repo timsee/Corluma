@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.7</span>
+   &#160;<span id="projectnumber">v0.9.82</span>
    </div>
   </td>
  </tr>
@@ -109,6 +109,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a26496d8918a24f8f96363a9b9703270d">deviceCountReachedZero</a> ()</td></tr>
 <tr class="memdesc:a26496d8918a24f8f96363a9b9703270d"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceCountChangedOnConnectionPage handles the case when the device count reaches zero. This gets signaled from the data layer whereas deviceCOuntChangedOnConnectionPage gets signaled from the connection page. <br /></td></tr>
 <tr class="separator:a26496d8918a24f8f96363a9b9703270d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab61d46312b9c8eebe9e1fb2e3ab2365c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#ab61d46312b9c8eebe9e1fb2e3ab2365c">defaultSettingsPageChanged</a> (bool newPage)</td></tr>
+<tr class="memdesc:ab61d46312b9c8eebe9e1fb2e3ab2365c"><td class="mdescLeft">&#160;</td><td class="mdescRight">defaultSettingsPageChanged handles whenever the default settings page changes from standard to hue or vice versa.  <a href="#ab61d46312b9c8eebe9e1fb2e3ab2365c">More...</a><br /></td></tr>
+<tr class="separator:ab61d46312b9c8eebe9e1fb2e3ab2365c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -129,6 +132,9 @@ Protected Member Functions</h2></td></tr>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a8851a931482834eeec527490eedaf20e">resizeEvent</a> (QResizeEvent *)</td></tr>
 <tr class="memdesc:a8851a931482834eeec527490eedaf20e"><td class="mdescLeft">&#160;</td><td class="mdescRight">resizeEvent called whenever the window resizes. This is used to override the resizing of the icons of the menu bar. <br /></td></tr>
 <tr class="separator:a8851a931482834eeec527490eedaf20e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7c881667b4ba4986b5a0030452ee3f0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#ac7c881667b4ba4986b5a0030452ee3f0">changeEvent</a> (QEvent *event)</td></tr>
+<tr class="memdesc:ac7c881667b4ba4986b5a0030452ee3f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeEvent called whenever an event occurs. Currently used to off communication threads when the application is put to sleep.  <a href="#ac7c881667b4ba4986b5a0030452ee3f0">More...</a><br /></td></tr>
+<tr class="separator:ac7c881667b4ba4986b5a0030452ee3f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2016. Released under the GNU General Public License.</dd></dl>
@@ -160,6 +166,66 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="ac7c881667b4ba4986b5a0030452ee3f0"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MainWindow::changeEvent </td>
+          <td>(</td>
+          <td class="paramtype">QEvent *&#160;</td>
+          <td class="paramname"><em>event</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event</td><td>the event that has ocurred. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="ab61d46312b9c8eebe9e1fb2e3ab2365c"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MainWindow::defaultSettingsPageChanged </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>newPage</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">slot</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newPage</td><td>true if should use the standard settings page, false if using the hue page. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="abf05d580e91f725777cdb6a5eb0bf08c"></a>
 <div class="memitem">
 <div class="memproto">
@@ -202,7 +268,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2016  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2017  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights MIT Licensed.  &nbsp; &nbsp; 
        </small>
        </p>

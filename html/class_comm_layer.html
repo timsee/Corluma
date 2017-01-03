@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.7</span>
+   &#160;<span id="projectnumber">v0.9.82</span>
    </div>
   </td>
  </tr>
@@ -68,10 +68,10 @@ Signals</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a0a17dd140c665e5ce02e85d82c0bb813">hueDiscoveryStateChange</a> (int)</td></tr>
 <tr class="memdesc:a0a17dd140c665e5ce02e85d82c0bb813"><td class="mdescLeft">&#160;</td><td class="mdescRight">hueDiscoveryStateChange the state of the Hue discovery methods, forwarded from a private <a class="el" href="class_hue_bridge_discovery.html" title="The HueBridgeDiscovery class is an object that handles the discovery of a hue bridge by using a combi...">HueBridgeDiscovery</a> object. <br /></td></tr>
 <tr class="separator:a0a17dd140c665e5ce02e85d82c0bb813"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7ede109867955ef9a49b8b0dd8d094c7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7ede109867955ef9a49b8b0dd8d094c7"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a7ede109867955ef9a49b8b0dd8d094c7">packetSent</a> ()</td></tr>
-<tr class="memdesc:a7ede109867955ef9a49b8b0dd8d094c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">packetSent anotification that a packet was sent by one of the commtypes. <br /></td></tr>
-<tr class="separator:a7ede109867955ef9a49b8b0dd8d094c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6183d6788b4f98e1a6c8de234ffc6d6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab6183d6788b4f98e1a6c8de234ffc6d6"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ab6183d6788b4f98e1a6c8de234ffc6d6">packetReceived</a> ()</td></tr>
+<tr class="memdesc:ab6183d6788b4f98e1a6c8de234ffc6d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">packetReceived anotification that a packet was receieved by one of the commtypes. <br /></td></tr>
+<tr class="separator:ab6183d6788b4f98e1a6c8de234ffc6d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aefc972c9597ce651bb3bd498102581b8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#aefc972c9597ce651bb3bd498102581b8">updateReceived</a> (int)</td></tr>
 <tr class="memdesc:aefc972c9597ce651bb3bd498102581b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateReceived a notification that a packet was received by one of the commtypes.  <a href="#aefc972c9597ce651bb3bd498102581b8">More...</a><br /></td></tr>
 <tr class="separator:aefc972c9597ce651bb3bd498102581b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -81,6 +81,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:adc880edb1c5b330353d6632898bf4797"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#adc880edb1c5b330353d6632898bf4797">CommLayer</a> (QWidget *parent=0)</td></tr>
 <tr class="memdesc:adc880edb1c5b330353d6632898bf4797"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#adc880edb1c5b330353d6632898bf4797">More...</a><br /></td></tr>
 <tr class="separator:adc880edb1c5b330353d6632898bf4797"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d829da5caee92c0cbe16cf55ab00db9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a0d829da5caee92c0cbe16cf55ab00db9">sendTurnOn</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, bool turnOn)</td></tr>
+<tr class="memdesc:a0d829da5caee92c0cbe16cf55ab00db9"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendTurnOn turn all devices in the provided list either on or off.  <a href="#a0d829da5caee92c0cbe16cf55ab00db9">More...</a><br /></td></tr>
+<tr class="separator:a0d829da5caee92c0cbe16cf55ab00db9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a783bcfcf2995998a14065eb146f0c086"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a783bcfcf2995998a14065eb146f0c086">sendMainColorChange</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, QColor color)</td></tr>
 <tr class="memdesc:a783bcfcf2995998a14065eb146f0c086"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendMainColorChange change the main color of the lighting settings in the GUI, this is the color displayed in the leftmost menu.  <a href="#a783bcfcf2995998a14065eb146f0c086">More...</a><br /></td></tr>
 <tr class="separator:a783bcfcf2995998a14065eb146f0c086"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -112,6 +115,14 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ab2698aa7769e2ca64ff3ae9eddf1759f">sendReset</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList)</td></tr>
 <tr class="memdesc:ab2698aa7769e2ca64ff3ae9eddf1759f"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendReset resets the board to its default settings. <br /></td></tr>
 <tr class="separator:ab2698aa7769e2ca64ff3ae9eddf1759f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3b4544d962705e6d1667e1857b53a17"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae3b4544d962705e6d1667e1857b53a17"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ae3b4544d962705e6d1667e1857b53a17">resetStateUpdates</a> ()</td></tr>
+<tr class="memdesc:ae3b4544d962705e6d1667e1857b53a17"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetStateUpdates reset the state updates timeouts for all commtypes. If it isn't on already, it gets turned on. <br /></td></tr>
+<tr class="separator:ae3b4544d962705e6d1667e1857b53a17"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad160264618636af5cc90ab6bf5fcdf97"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad160264618636af5cc90ab6bf5fcdf97"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ad160264618636af5cc90ab6bf5fcdf97">stopStateUpdates</a> ()</td></tr>
+<tr class="memdesc:ad160264618636af5cc90ab6bf5fcdf97"><td class="mdescLeft">&#160;</td><td class="mdescRight">stopStateUpdates turn off the state update threads for all commtypes. <br /></td></tr>
+<tr class="separator:ad160264618636af5cc90ab6bf5fcdf97"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0eddb554aa1998362805890ad0141dd2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a0eddb554aa1998362805890ad0141dd2">startup</a> (ECommType type)</td></tr>
 <tr class="memdesc:a0eddb554aa1998362805890ad0141dd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">startup start stream of given type. This starts all of its maintence threads and discovery threads  <a href="#a0eddb554aa1998362805890ad0141dd2">More...</a><br /></td></tr>
 <tr class="separator:a0eddb554aa1998362805890ad0141dd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -690,6 +701,38 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
+<a class="anchor" id="a0d829da5caee92c0cbe16cf55ab00db9"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CommLayer::sendTurnOn </td>
+          <td>(</td>
+          <td class="paramtype">const std::list&lt; SLightDevice &gt; &amp;&#160;</td>
+          <td class="paramname"><em>deviceList</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>turnOn</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">turnOn</td><td>true to turn devices on, false to turn them off. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="ab23f9ea9bffe8271b5d0c5ec02057a43"></a>
 <div class="memitem">
 <div class="memproto">
@@ -776,7 +819,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2016  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2017  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights MIT Licensed.  &nbsp; &nbsp; 
        </small>
        </p>

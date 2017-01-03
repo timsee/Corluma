@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.7</span>
+   &#160;<span id="projectnumber">v0.9.82</span>
    </div>
   </td>
  </tr>
@@ -112,6 +112,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:ab5b5c67a3a87429a342fb9e82cdcaf6d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ab5b5c67a3a87429a342fb9e82cdcaf6d">runningDiscovery</a> ()</td></tr>
 <tr class="memdesc:ab5b5c67a3a87429a342fb9e82cdcaf6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">runningDiscovery true if theres any controller that is going through the discovery routines and hasn't been discovered, false otherwise.  <a href="#ab5b5c67a3a87429a342fb9e82cdcaf6d">More...</a><br /></td></tr>
 <tr class="separator:ab5b5c67a3a87429a342fb9e82cdcaf6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae92c228926c3214a78e12d3519102555"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae92c228926c3214a78e12d3519102555"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ae92c228926c3214a78e12d3519102555">resetStateUpdateTimeout</a> ()</td></tr>
+<tr class="memdesc:ae92c228926c3214a78e12d3519102555"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetStateUpdateTimeout reset the timer tracking when to shutdown the state update thread. <br /></td></tr>
+<tr class="separator:ae92c228926c3214a78e12d3519102555"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a684c569bb57248ae4b0b2e4563339f74"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a684c569bb57248ae4b0b2e4563339f74"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a684c569bb57248ae4b0b2e4563339f74">stopStateUpdates</a> ()</td></tr>
+<tr class="memdesc:a684c569bb57248ae4b0b2e4563339f74"><td class="mdescLeft">&#160;</td><td class="mdescRight">stopStateUpdates turn off the state update timers. <br /></td></tr>
+<tr class="separator:a684c569bb57248ae4b0b2e4563339f74"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac8e3ef4d4b075f7d53fcb6500c0d48e1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ac8e3ef4d4b075f7d53fcb6500c0d48e1">addController</a> (QString controller)</td></tr>
 <tr class="memdesc:ac8e3ef4d4b075f7d53fcb6500c0d48e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">addController attempts to add a new controller to the device table.  <a href="#ac8e3ef4d4b075f7d53fcb6500c0d48e1">More...</a><br /></td></tr>
 <tr class="separator:ac8e3ef4d4b075f7d53fcb6500c0d48e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -143,10 +151,6 @@ Protected Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#adb4143fad9f0cad9b4e0efff68614bf1">resetDiscovery</a> ()</td></tr>
 <tr class="memdesc:adb4143fad9f0cad9b4e0efff68614bf1"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetDiscovery clears the throttle list and discovery list and treats the commtype as if nothing has been discovered. <br /></td></tr>
 <tr class="separator:adb4143fad9f0cad9b4e0efff68614bf1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae92c228926c3214a78e12d3519102555"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae92c228926c3214a78e12d3519102555"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ae92c228926c3214a78e12d3519102555">resetStateUpdateTimeout</a> ()</td></tr>
-<tr class="memdesc:ae92c228926c3214a78e12d3519102555"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetStateUpdateTimeout reset the timer tracking when to shutdown the state update thread. <br /></td></tr>
-<tr class="separator:ae92c228926c3214a78e12d3519102555"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a140fb846eeb4d24976e2a4f514f95f0f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a140fb846eeb4d24976e2a4f514f95f0f">shouldContinueStateUpdate</a> ()</td></tr>
 <tr class="memdesc:a140fb846eeb4d24976e2a4f514f95f0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">shouldContinueStateUpdate checks internal states and determines if it should still keep requesting state updates from the devices.  <a href="#a140fb846eeb4d24976e2a4f514f95f0f">More...</a><br /></td></tr>
 <tr class="separator:a140fb846eeb4d24976e2a4f514f95f0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -171,6 +175,10 @@ std::list&lt; std::pair&lt; QString, <br class="typebreak" />
 CommThrottle * &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a35f88dea2ab73337cef428d5aed5fec6">mThrottleList</a></td></tr>
 <tr class="memdesc:a35f88dea2ab73337cef428d5aed5fec6"><td class="mdescLeft">&#160;</td><td class="mdescRight">mThrottleList list of throttles paired with strings. This allows each different discovered device to use a different throttle. <br /></td></tr>
 <tr class="separator:a35f88dea2ab73337cef428d5aed5fec6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4880167268de709a679fd25629eb397"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa4880167268de709a679fd25629eb397"></a>
+std::list&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aa4880167268de709a679fd25629eb397">mUndiscoveredList</a></td></tr>
+<tr class="memdesc:aa4880167268de709a679fd25629eb397"><td class="mdescLeft">&#160;</td><td class="mdescRight">mUndiscoveredList list of controllers that are not currently discovered but are running discovery routines. <br /></td></tr>
+<tr class="separator:aa4880167268de709a679fd25629eb397"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a72eb17fb724feb20de438b6c304e35ba"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a72eb17fb724feb20de438b6c304e35ba"></a>
 std::list&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a72eb17fb724feb20de438b6c304e35ba">mDiscoveryList</a></td></tr>
 <tr class="memdesc:a72eb17fb724feb20de438b6c304e35ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">mDiscoveryList list of devices that have been discovered properly. <br /></td></tr>
@@ -453,10 +461,11 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">type</td><td>the ECommType of this specific connection. </td></tr>
+    <tr><td class="paramname">type</td><td>the ECommType of this specific connection.</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2016. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>
@@ -518,7 +527,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2016  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2017  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights MIT Licensed.  &nbsp; &nbsp; 
        </small>
        </p>

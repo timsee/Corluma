@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.7</span>
+   &#160;<span id="projectnumber">v0.9.82</span>
    </div>
   </td>
  </tr>
@@ -126,6 +126,9 @@
 <li>sendTimeOut()
 : <a class="el" href="class_comm_layer.html#abcb4196d7b103214845303a327401766">CommLayer</a>
 </li>
+<li>sendTurnOn()
+: <a class="el" href="class_comm_layer.html#a0d829da5caee92c0cbe16cf55ab00db9">CommLayer</a>
+</li>
 <li>serialCheckboxClicked()
 : <a class="el" href="class_settings_page.html#a705d467357203cee0f046eb270d29110">SettingsPage</a>
 </li>
@@ -192,10 +195,12 @@
 <li>SettingsPage()
 : <a class="el" href="class_settings_page.html#a2f7b734cd4b293694140ed7504d19a55">SettingsPage</a>
 </li>
+<li>settingsPageIsStandard()
+: <a class="el" href="class_hue_settings_page.html#ad19ac27fcd6ff7107e59ad4fa5d65352">HueSettingsPage</a>
+, <a class="el" href="class_settings_page.html#a5d4751882c34a048cff8c889b365c5cf">SettingsPage</a>
+</li>
 <li>setup()
 : <a class="el" href="class_lighting_page.html#ad9b7726f55db9db3b46de6ef882a6373">LightingPage</a>
-, <a class="el" href="class_list_controller_widget.html#accdd1a0630f8c787b7c909c8db14d3d6">ListControllerWidget</a>
-, <a class="el" href="class_list_group_widget.html#a5be441d7ae23279133368e0e2ec0550e">ListGroupWidget</a>
 </li>
 <li>setupAsMenuButton()
 : <a class="el" href="class_lights_button.html#a4faa8abc3312579516341d3b7f442b0b">LightsButton</a>
@@ -225,6 +230,7 @@
 : <a class="el" href="class_color_picker.html#a18f2c09e940d5a22b68179516cb40422">ColorPicker</a>
 , <a class="el" href="class_connection_page.html#a408645f97d22ff87fcf29d0d92223873">ConnectionPage</a>
 , <a class="el" href="class_custom_colors_page.html#acd927f874938d67e42f117f121d9a39d">CustomColorsPage</a>
+, <a class="el" href="class_hue_settings_page.html#a2a87b6f9ba40f75978ed9459370e6ed2">HueSettingsPage</a>
 , <a class="el" href="class_hue_single_color_page.html#ac27ba1b0cf5351b67dffb5558a163bd9">HueSingleColorPage</a>
 , <a class="el" href="class_lighting_page.html#ac83bf991628db9cc5f9bc5de89a8ec0e">LightingPage</a>
 , <a class="el" href="class_lights_slider.html#a0d7eb24c899d99a8af86226d09932519">LightsSlider</a>
@@ -266,7 +272,7 @@
 : <a class="el" href="group__single_routines.html#ga01e7ea17c971e488f36113e2046e7092">LightingRoutines</a>
 </li>
 <li>speed()
-: <a class="el" href="class_data_layer.html#a3ca545b6b1dfdb8148f95ae364d8f183">DataLayer</a>
+: <a class="el" href="class_data_layer.html#a878df79749e4c8e9b2d3872d271da680">DataLayer</a>
 </li>
 <li>speedChanged()
 : <a class="el" href="class_settings_page.html#a13fe17ac61ace14cbac4882ee38f6b61">SettingsPage</a>
@@ -286,12 +292,19 @@
 , <a class="el" href="class_comm_type.html#a78d309086195c52051f007e693ff2b7a">CommType</a>
 , <a class="el" href="class_comm_u_d_p.html#a329ffb2e4cac0b38d98fa6e11584284c">CommUDP</a>
 </li>
+<li>stateChanged()
+: <a class="el" href="class_comm_hue.html#a75205a9dd6e81b970b1313402b656736">CommHue</a>
+</li>
 <li>stopBridgeDiscovery()
 : <a class="el" href="class_hue_bridge_discovery.html#a3d3739ef3c74f0210f54cc2343cc8cfe">HueBridgeDiscovery</a>
 </li>
 <li>stopDiscovery()
 : <a class="el" href="class_comm_layer.html#aa83dd35288767413f37bf8b2d2152dd8">CommLayer</a>
 , <a class="el" href="class_comm_type.html#ab0e83c722a3afb0c1ceda26c55c76e85">CommType</a>
+</li>
+<li>stopStateUpdates()
+: <a class="el" href="class_comm_layer.html#ad160264618636af5cc90ab6bf5fcdf97">CommLayer</a>
+, <a class="el" href="class_comm_type.html#a684c569bb57248ae4b0b2e4563339f74">CommType</a>
 </li>
 <li>stopTimers()
 : <a class="el" href="class_hue_bridge_discovery.html#a0ed5c84e1201255015b4de84029b0faf">HueBridgeDiscovery</a>
@@ -305,7 +318,7 @@
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2016  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2017  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights MIT Licensed.  &nbsp; &nbsp; 
        </small>
        </p>

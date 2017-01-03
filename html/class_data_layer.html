@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.7</span>
+   &#160;<span id="projectnumber">v0.9.82</span>
    </div>
   </td>
  </tr>
@@ -104,50 +104,30 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af2b5821cbab5dd98b644c3f7577cf27e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#af2b5821cbab5dd98b644c3f7577cf27e">brightness</a> ()</td></tr>
 <tr class="memdesc:af2b5821cbab5dd98b644c3f7577cf27e"><td class="mdescLeft">&#160;</td><td class="mdescRight">brightness getter for the current brightness.  <a href="#af2b5821cbab5dd98b644c3f7577cf27e">More...</a><br /></td></tr>
 <tr class="separator:af2b5821cbab5dd98b644c3f7577cf27e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeae02a308b537bb1ce4000278c7d6e28"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeae02a308b537bb1ce4000278c7d6e28"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#aeae02a308b537bb1ce4000278c7d6e28">timeOut</a> (int timeOut)</td></tr>
-<tr class="memdesc:aeae02a308b537bb1ce4000278c7d6e28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time it takes the LEDs to turn off in minutes. <br /></td></tr>
-<tr class="separator:aeae02a308b537bb1ce4000278c7d6e28"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afffef45e84053c65c23e3ecb3934f91c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#afffef45e84053c65c23e3ecb3934f91c">timeOut</a> ()</td></tr>
-<tr class="memdesc:afffef45e84053c65c23e3ecb3934f91c"><td class="mdescLeft">&#160;</td><td class="mdescRight">timeOut getter for the amount of minutes it takes for the LEDs to "time out." When this happens, they turn off, saving you electricity!  <a href="#afffef45e84053c65c23e3ecb3934f91c">More...</a><br /></td></tr>
-<tr class="separator:afffef45e84053c65c23e3ecb3934f91c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a34eb66510cf6aaa33337608eb555a6b9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a34eb66510cf6aaa33337608eb555a6b9">isTimedOut</a> ()</td></tr>
-<tr class="memdesc:a34eb66510cf6aaa33337608eb555a6b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">isTimedOut true if the currently connected device timed out, false otherwise.  <a href="#a34eb66510cf6aaa33337608eb555a6b9">More...</a><br /></td></tr>
-<tr class="separator:a34eb66510cf6aaa33337608eb555a6b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab256fd86df2bc6ca794e100cf798c241"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab256fd86df2bc6ca794e100cf798c241"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#ab256fd86df2bc6ca794e100cf798c241">resetTimeoutCounter</a> ()</td></tr>
-<tr class="memdesc:ab256fd86df2bc6ca794e100cf798c241"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetTimeoutCounter called upon every new update in order to reset the counter that is detecting when lights are timed out. <br /></td></tr>
-<tr class="separator:ab256fd86df2bc6ca794e100cf798c241"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2786c72909dc049bb595310041ad6a3e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a2786c72909dc049bb595310041ad6a3e">timeout</a> ()</td></tr>
+<tr class="memdesc:a2786c72909dc049bb595310041ad6a3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">timeOut getter for the amount of minutes it takes for the LEDs to "time out." When this happens, they turn off, saving you electricity!  <a href="#a2786c72909dc049bb595310041ad6a3e">More...</a><br /></td></tr>
+<tr class="separator:a2786c72909dc049bb595310041ad6a3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad52a07c6e351fbb029142323bb1481d0"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#ad52a07c6e351fbb029142323bb1481d0">customColorsUsed</a> ()</td></tr>
+<tr class="memdesc:ad52a07c6e351fbb029142323bb1481d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">customColorsUsed number of custom colors used from the custom color group in multi color routines. Will be between 2 and 10 inclusively.  <a href="#ad52a07c6e351fbb029142323bb1481d0">More...</a><br /></td></tr>
+<tr class="separator:ad52a07c6e351fbb029142323bb1481d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a11a35046ae18b2515bce96ef85ef72da"><td class="memItemLeft" align="right" valign="top">EColorGroup&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a11a35046ae18b2515bce96ef85ef72da">currentColorGroup</a> ()</td></tr>
 <tr class="memdesc:a11a35046ae18b2515bce96ef85ef72da"><td class="mdescLeft">&#160;</td><td class="mdescRight">currentColorGroup getter for the current color preset.  <a href="#a11a35046ae18b2515bce96ef85ef72da">More...</a><br /></td></tr>
 <tr class="separator:a11a35046ae18b2515bce96ef85ef72da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a556bbe1a05690679e936b83eea4bf8b7"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; QColor &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a556bbe1a05690679e936b83eea4bf8b7">currentGroup</a> ()</td></tr>
-<tr class="memdesc:a556bbe1a05690679e936b83eea4bf8b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">currentGroup returns all the colors of the current color group.  <a href="#a556bbe1a05690679e936b83eea4bf8b7">More...</a><br /></td></tr>
-<tr class="separator:a556bbe1a05690679e936b83eea4bf8b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ca545b6b1dfdb8148f95ae364d8f183"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3ca545b6b1dfdb8148f95ae364d8f183"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a3ca545b6b1dfdb8148f95ae364d8f183">speed</a> (int speed)</td></tr>
-<tr class="memdesc:a3ca545b6b1dfdb8148f95ae364d8f183"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time between LED updates as FPS * 100. For example, a FPS of 5 is 500. <br /></td></tr>
-<tr class="separator:a3ca545b6b1dfdb8148f95ae364d8f183"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeaf3d0214c1df9aeea53e29a16b177d7"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; QColor &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#aeaf3d0214c1df9aeea53e29a16b177d7">currentGroup</a> ()</td></tr>
+<tr class="memdesc:aeaf3d0214c1df9aeea53e29a16b177d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">currentGroup returns all the colors of the current color group.  <a href="#aeaf3d0214c1df9aeea53e29a16b177d7">More...</a><br /></td></tr>
+<tr class="separator:aeaf3d0214c1df9aeea53e29a16b177d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a878df79749e4c8e9b2d3872d271da680"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a878df79749e4c8e9b2d3872d271da680">speed</a> ()</td></tr>
 <tr class="memdesc:a878df79749e4c8e9b2d3872d271da680"><td class="mdescLeft">&#160;</td><td class="mdescRight">speed getter for the speed the LED's update.  <a href="#a878df79749e4c8e9b2d3872d271da680">More...</a><br /></td></tr>
 <tr class="separator:a878df79749e4c8e9b2d3872d271da680"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a68e2d87bfd3216af8cac7b9e3712785e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a68e2d87bfd3216af8cac7b9e3712785e"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a68e2d87bfd3216af8cac7b9e3712785e">customColorsUsed</a> (int count)</td></tr>
-<tr class="memdesc:a68e2d87bfd3216af8cac7b9e3712785e"><td class="mdescLeft">&#160;</td><td class="mdescRight">number of colors in the color array <br /></td></tr>
-<tr class="separator:a68e2d87bfd3216af8cac7b9e3712785e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adbbfa9eca731e0c148e51af5b4678007"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#adbbfa9eca731e0c148e51af5b4678007">customColorsUsed</a> ()</td></tr>
-<tr class="memdesc:adbbfa9eca731e0c148e51af5b4678007"><td class="mdescLeft">&#160;</td><td class="mdescRight">customColorsUsed getter for the number of colors usd by the by the custom color routines. Will always be less than the total number of colors in the custom color array.  <a href="#adbbfa9eca731e0c148e51af5b4678007">More...</a><br /></td></tr>
-<tr class="separator:adbbfa9eca731e0c148e51af5b4678007"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adbf1c118cbf783c70cf1fd5d5fb8eba0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#adbf1c118cbf783c70cf1fd5d5fb8eba0">customColor</a> (int index, QColor color)</td></tr>
-<tr class="memdesc:adbf1c118cbf783c70cf1fd5d5fb8eba0"><td class="mdescLeft">&#160;</td><td class="mdescRight">customColor set an individual color in the custom color group  <a href="#adbf1c118cbf783c70cf1fd5d5fb8eba0">More...</a><br /></td></tr>
-<tr class="separator:adbf1c118cbf783c70cf1fd5d5fb8eba0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0716275f4a79ee910f5ae7b20a0deb90"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0716275f4a79ee910f5ae7b20a0deb90"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a0716275f4a79ee910f5ae7b20a0deb90">resetToDefaults</a> ()</td></tr>
-<tr class="memdesc:a0716275f4a79ee910f5ae7b20a0deb90"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetToDefaults resets the GUI and the arduino to the default values, as defined at compile time. <br /></td></tr>
-<tr class="separator:a0716275f4a79ee910f5ae7b20a0deb90"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f8010b92bbe5f139ef2f509fa891682"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a8f8010b92bbe5f139ef2f509fa891682">customColor</a> (uint32_t index, QColor color)</td></tr>
+<tr class="memdesc:a8f8010b92bbe5f139ef2f509fa891682"><td class="mdescLeft">&#160;</td><td class="mdescRight">customColor set an individual color in the custom color group  <a href="#a8f8010b92bbe5f139ef2f509fa891682">More...</a><br /></td></tr>
+<tr class="separator:a8f8010b92bbe5f139ef2f509fa891682"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a74d0a1ecc37a876f4cf407b01e2f5892"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a74d0a1ecc37a876f4cf407b01e2f5892">turnOn</a> (bool on)</td></tr>
 <tr class="memdesc:a74d0a1ecc37a876f4cf407b01e2f5892"><td class="mdescLeft">&#160;</td><td class="mdescRight">turnOn turn all devices on or off based off of the boolean. Stores the previous state when turned off so that turning on again can reset it back to its previous state.  <a href="#a74d0a1ecc37a876f4cf407b01e2f5892">More...</a><br /></td></tr>
 <tr class="separator:a74d0a1ecc37a876f4cf407b01e2f5892"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a383a0bd23b394e1b4a8df5df92bbb4b0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a383a0bd23b394e1b4a8df5df92bbb4b0">isOn</a> ()</td></tr>
+<tr class="memdesc:a383a0bd23b394e1b4a8df5df92bbb4b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">isOn true if any device is on, false if all are off.  <a href="#a383a0bd23b394e1b4a8df5df92bbb4b0">More...</a><br /></td></tr>
+<tr class="separator:a383a0bd23b394e1b4a8df5df92bbb4b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3bcd5465f2601dda4edd5991df0f6069"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a3bcd5465f2601dda4edd5991df0f6069">updateRoutine</a> (ELightingRoutine routine)</td></tr>
 <tr class="memdesc:a3bcd5465f2601dda4edd5991df0f6069"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateRoutine update the lighting routine for all current devices.  <a href="#a3bcd5465f2601dda4edd5991df0f6069">More...</a><br /></td></tr>
 <tr class="separator:a3bcd5465f2601dda4edd5991df0f6069"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -157,6 +137,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a008fc106bfc7c2d6cee2ed468dc921f6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a008fc106bfc7c2d6cee2ed468dc921f6">updateColor</a> (QColor color)</td></tr>
 <tr class="memdesc:a008fc106bfc7c2d6cee2ed468dc921f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateColor update the color used for single color routines for all current devices.  <a href="#a008fc106bfc7c2d6cee2ed468dc921f6">More...</a><br /></td></tr>
 <tr class="separator:a008fc106bfc7c2d6cee2ed468dc921f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55af919678bee831eb3c5ea75742c462"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a55af919678bee831eb3c5ea75742c462">updateSpeed</a> (int <a class="el" href="class_data_layer.html#a878df79749e4c8e9b2d3872d271da680">speed</a>)</td></tr>
+<tr class="memdesc:a55af919678bee831eb3c5ea75742c462"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateSpeed update the speed of the lighting routines.  <a href="#a55af919678bee831eb3c5ea75742c462">More...</a><br /></td></tr>
+<tr class="separator:a55af919678bee831eb3c5ea75742c462"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7024d8377a77514c20b4af58ebf5a1dd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a7024d8377a77514c20b4af58ebf5a1dd">updateTimeout</a> (int <a class="el" href="class_data_layer.html#a2786c72909dc049bb595310041ad6a3e">timeout</a>)</td></tr>
+<tr class="memdesc:a7024d8377a77514c20b4af58ebf5a1dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateTimeout update how many minutes it takes for lights to turn themselves off automatically. Use a value of 0 to keep lights on indefinitely (until you unplug them or change the setting).  <a href="#a7024d8377a77514c20b4af58ebf5a1dd">More...</a><br /></td></tr>
+<tr class="separator:a7024d8377a77514c20b4af58ebf5a1dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d3b27cd3731e3a0114962961eb7b630"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a6d3b27cd3731e3a0114962961eb7b630">updateCustomColorCount</a> (uint32_t count)</td></tr>
+<tr class="memdesc:a6d3b27cd3731e3a0114962961eb7b630"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateCustomColorCount update the number of custom colors used in the custom color array for multi color routines. Must be between 2 and 10 inclusively.  <a href="#a6d3b27cd3731e3a0114962961eb7b630">More...</a><br /></td></tr>
+<tr class="separator:a6d3b27cd3731e3a0114962961eb7b630"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7f3c934e0e353d851077ed436102dea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#ab7f3c934e0e353d851077ed436102dea">updateCustomColorArray</a> (int index, QColor color)</td></tr>
+<tr class="memdesc:ab7f3c934e0e353d851077ed436102dea"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateCustomColorArray update the color in the custom color array at the given index. If the index is 10 or larger, it is ignored.  <a href="#ab7f3c934e0e353d851077ed436102dea">More...</a><br /></td></tr>
+<tr class="separator:ab7f3c934e0e353d851077ed436102dea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0a7fec7492a5b364b2bddf14e834eaef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a0a7fec7492a5b364b2bddf14e834eaef">updateBrightness</a> (int <a class="el" href="class_data_layer.html#af2b5821cbab5dd98b644c3f7577cf27e">brightness</a>)</td></tr>
 <tr class="memdesc:a0a7fec7492a5b364b2bddf14e834eaef"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateBrightness update the brightness level of all current devices.  <a href="#a0a7fec7492a5b364b2bddf14e834eaef">More...</a><br /></td></tr>
 <tr class="separator:a0a7fec7492a5b364b2bddf14e834eaef"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -424,25 +416,17 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="a556bbe1a05690679e936b83eea4bf8b7"></a>
+<a class="anchor" id="aeaf3d0214c1df9aeea53e29a16b177d7"></a>
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const std::vector&lt;QColor&gt;&amp; DataLayer::currentGroup </td>
+          <td class="memname">const std::vector&lt; QColor &gt; &amp; DataLayer::currentGroup </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>returns all the colors of the current color group. </dd></dl>
 
@@ -464,14 +448,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="adbf1c118cbf783c70cf1fd5d5fb8eba0"></a>
+<a class="anchor" id="a8f8010b92bbe5f139ef2f509fa891682"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool DataLayer::customColor </td>
           <td>(</td>
-          <td class="paramtype">int&#160;</td>
+          <td class="paramtype">uint32_t&#160;</td>
           <td class="paramname"><em>index</em>, </td>
         </tr>
         <tr>
@@ -498,19 +482,19 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="adbbfa9eca731e0c148e51af5b4678007"></a>
+<a class="anchor" id="ad52a07c6e351fbb029142323bb1481d0"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int DataLayer::customColorsUsed </td>
+          <td class="memname">uint32_t DataLayer::customColorsUsed </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>the number of colors used for a custom color routine. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>the number of custom colors used in custom color routines. </dd></dl>
 
 </div>
 </div>
@@ -560,27 +544,19 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="a34eb66510cf6aaa33337608eb555a6b9"></a>
+<a class="anchor" id="a383a0bd23b394e1b4a8df5df92bbb4b0"></a>
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool DataLayer::isTimedOut </td>
+          <td class="memname">bool DataLayer::isOn </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>true if the currently connected device timed out, false otherwise. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if any device is on, false if all are off. </dd></dl>
 
 </div>
 </div>
@@ -717,12 +693,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="afffef45e84053c65c23e3ecb3934f91c"></a>
+<a class="anchor" id="a2786c72909dc049bb595310041ad6a3e"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int DataLayer::timeOut </td>
+          <td class="memname">int DataLayer::timeout </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -843,6 +819,61 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
+<a class="anchor" id="ab7f3c934e0e353d851077ed436102dea"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void DataLayer::updateCustomColorArray </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">QColor&#160;</td>
+          <td class="paramname"><em>color</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Must be bewteen 0 and 9. </td></tr>
+    <tr><td class="paramname">color</td><td>new color </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a6d3b27cd3731e3a0114962961eb7b630"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void DataLayer::updateCustomColorCount </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>count</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">count</td><td>new count of custom colors. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="a3bcd5465f2601dda4edd5991df0f6069"></a>
 <div class="memitem">
 <div class="memproto">
@@ -865,6 +896,50 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
+<a class="anchor" id="a55af919678bee831eb3c5ea75742c462"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void DataLayer::updateSpeed </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>speed</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">speed</td><td>the new speed value of the lighting routines. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a7024d8377a77514c20b4af58ebf5a1dd"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void DataLayer::updateTimeout </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>timeout</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">timeout</td><td>the new number of minutes it takes for LEDs to time out and turn off. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li><a class="el" href="datalayer_8h_source.html">datalayer.h</a></li>
 <li>datalayer.cpp</li>
@@ -877,7 +952,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2016  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2017  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights MIT Licensed.  &nbsp; &nbsp; 
        </small>
        </p>
