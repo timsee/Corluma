@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.82</span>
+   &#160;<span id="projectnumber">v0.9.85</span>
    </div>
   </td>
  </tr>
@@ -61,9 +61,8 @@
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a6e8bdec2da9597d2f166d40acd57569d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6e8bdec2da9597d2f166d40acd57569d"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type_settings.html#a6e8bdec2da9597d2f166d40acd57569d">CommTypeSettings</a> ()</td></tr>
-<tr class="memdesc:a6e8bdec2da9597d2f166d40acd57569d"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_comm_type_settings.html" title="The CommTypeSettings class manages which CommTypes are enabled and disabled. It manages the settings ...">CommTypeSettings</a> constructor. <br /></td></tr>
+<tr class="memitem:a6e8bdec2da9597d2f166d40acd57569d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type_settings.html#a6e8bdec2da9597d2f166d40acd57569d">CommTypeSettings</a> ()</td></tr>
+<tr class="memdesc:a6e8bdec2da9597d2f166d40acd57569d"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_comm_type_settings.html" title="The CommTypeSettings class manages which CommTypes are enabled and disabled. It manages the settings ...">CommTypeSettings</a> constructor.  <a href="#a6e8bdec2da9597d2f166d40acd57569d">More...</a><br /></td></tr>
 <tr class="separator:a6e8bdec2da9597d2f166d40acd57569d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a89de8295df3dbd5e5499cf8a6f35a8ff"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type_settings.html#a89de8295df3dbd5e5499cf8a6f35a8ff">enableCommType</a> (ECommType type, bool shouldEnable)</td></tr>
 <tr class="memdesc:a89de8295df3dbd5e5499cf8a6f35a8ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">enableCommType enables or disables the commtype provided. This saves immediately to persistent app memory, so your settings from previous sessions will be available in the next session  <a href="#a89de8295df3dbd5e5499cf8a6f35a8ff">More...</a><br /></td></tr>
@@ -71,41 +70,30 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aa3652f346b43214d49531c0b785a546a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type_settings.html#aa3652f346b43214d49531c0b785a546a">commTypeEnabled</a> (ECommType type)</td></tr>
 <tr class="memdesc:aa3652f346b43214d49531c0b785a546a"><td class="mdescLeft">&#160;</td><td class="mdescRight">commTypeEnabled check if a comm type is currently enabled.  <a href="#aa3652f346b43214d49531c0b785a546a">More...</a><br /></td></tr>
 <tr class="separator:aa3652f346b43214d49531c0b785a546a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a38f15a6cd4056429ac1b2f0f5d5b3c30"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type_settings.html#a38f15a6cd4056429ac1b2f0f5d5b3c30">changeDefaultCommType</a> (ECommType type)</td></tr>
-<tr class="memdesc:a38f15a6cd4056429ac1b2f0f5d5b3c30"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeDefaultCommType change the current default commtype into a new one. The default commtype is the commtype that is loaded when the application starts.  <a href="#a38f15a6cd4056429ac1b2f0f5d5b3c30">More...</a><br /></td></tr>
-<tr class="separator:a38f15a6cd4056429ac1b2f0f5d5b3c30"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad40f56bd7aef7b902b0a5f91ef42b7ed"><td class="memItemLeft" align="right" valign="top">ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type_settings.html#ad40f56bd7aef7b902b0a5f91ef42b7ed">defaultCommType</a> ()</td></tr>
-<tr class="memdesc:ad40f56bd7aef7b902b0a5f91ef42b7ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">defaultCommType getter for the current commtype  <a href="#ad40f56bd7aef7b902b0a5f91ef42b7ed">More...</a><br /></td></tr>
-<tr class="separator:ad40f56bd7aef7b902b0a5f91ef42b7ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa4bc5fbc36689b3fd131d0f084861776"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type_settings.html#aa4bc5fbc36689b3fd131d0f084861776">numberOfActiveCommTypes</a> ()</td></tr>
 <tr class="memdesc:aa4bc5fbc36689b3fd131d0f084861776"><td class="mdescLeft">&#160;</td><td class="mdescRight">numberOfActiveCommTypes The count of commtypes that are currently in use.  <a href="#aa4bc5fbc36689b3fd131d0f084861776">More...</a><br /></td></tr>
 <tr class="separator:aa4bc5fbc36689b3fd131d0f084861776"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2016. Released under the GNU General Public License. </dd></dl>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a38f15a6cd4056429ac1b2f0f5d5b3c30"></a>
+<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="a6e8bdec2da9597d2f166d40acd57569d"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void CommTypeSettings::changeDefaultCommType </td>
+          <td class="memname">CommTypeSettings::CommTypeSettings </td>
           <td>(</td>
-          <td class="paramtype">ECommType&#160;</td>
-          <td class="paramname"><em>type</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">type</td><td>the new setting for the commtype. </td></tr>
-  </table>
-  </dd>
-</dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>
+<h2 class="groupheader">Member Function Documentation</h2>
 <a class="anchor" id="aa3652f346b43214d49531c0b785a546a"></a>
 <div class="memitem">
 <div class="memproto">
@@ -126,22 +114,6 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if enabled, false otherwise. </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="ad40f56bd7aef7b902b0a5f91ef42b7ed"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">ECommType CommTypeSettings::defaultCommType </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>returns the current commtype. </dd></dl>
 
 </div>
 </div>

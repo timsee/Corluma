@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.82</span>
+   &#160;<span id="projectnumber">v0.9.85</span>
    </div>
   </td>
  </tr>
@@ -57,75 +57,69 @@
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;</div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;lightingpage.h&quot;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;lightsbutton.h&quot;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;QWidget&gt;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;QToolButton&gt;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;QGridLayout&gt;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;QLabel&gt;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;QPushButton&gt;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_ui.html">Ui</a> {</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">class </span><a class="code" href="class_preset_colors_page.html">PresetColorsPage</a>;</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;}</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div>
-<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="class_preset_colors_page.html">   30</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_preset_colors_page.html">PresetColorsPage</a> : <span class="keyword">public</span> QWidget, <span class="keyword">public</span> <a class="code" href="class_lighting_page.html">LightingPage</a></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;{</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    Q_OBJECT</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_preset_colors_page.html#a331f1fbe8e3da755597f510f95f33fb2">PresetColorsPage</a>(QWidget *parent = 0);</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <a class="code" href="class_preset_colors_page.html#ab148d62b00075b0b3fa74815292f5300">~PresetColorsPage</a>();</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_preset_colors_page.html#a3537f1916b722ae32c2acea51c2e0e8d">highlightRoutineButton</a>(ELightingRoutine routine, EColorGroup colorGroup);</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_preset_colors_page.html#a1efd8450d676066c60b3c62d11c53f49">setupButtons</a>();</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;signals:</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_preset_colors_page.html#a81688230a80b50ea54c237373d590b77">updateMainIcons</a>();</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_preset_colors_page.html#acc6d4e18a22d516e5b5d4d2e6f427718">presetColorGroupChanged</a>(<span class="keywordtype">int</span>, <span class="keywordtype">int</span>);</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;presetgroupwidget.h&quot;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;QWidget&gt;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;QToolButton&gt;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;QGridLayout&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;QLabel&gt;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;QPushButton&gt;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_ui.html">Ui</a> {</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">class </span><a class="code" href="class_preset_colors_page.html">PresetColorsPage</a>;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;}</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="class_preset_colors_page.html">   31</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_preset_colors_page.html">PresetColorsPage</a> : <span class="keyword">public</span> QWidget, <span class="keyword">public</span> <a class="code" href="class_lighting_page.html">LightingPage</a></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;{</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    Q_OBJECT</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_preset_colors_page.html#a331f1fbe8e3da755597f510f95f33fb2">PresetColorsPage</a>(QWidget *parent = 0);</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <a class="code" href="class_preset_colors_page.html#ab148d62b00075b0b3fa74815292f5300">~PresetColorsPage</a>();</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_preset_colors_page.html#a3537f1916b722ae32c2acea51c2e0e8d">highlightRoutineButton</a>(ELightingRoutine routine, EColorGroup colorGroup);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_preset_colors_page.html#a1efd8450d676066c60b3c62d11c53f49">setupButtons</a>();</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;signals:</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_preset_colors_page.html#a81688230a80b50ea54c237373d590b77">updateMainIcons</a>();</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_preset_colors_page.html#acc6d4e18a22d516e5b5d4d2e6f427718">presetColorGroupChanged</a>(<span class="keywordtype">int</span>, <span class="keywordtype">int</span>);</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="keyword">public</span> slots:</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_preset_colors_page.html#aec00977cc5a7d29b3d3897f0f770b7a9">multiButtonClicked</a>(<span class="keywordtype">int</span> routine, <span class="keywordtype">int</span> colorGroup);</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="keyword">private</span> slots:</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keywordtype">void</span> renderUI();</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_preset_colors_page.html#aa95cb48f3ae7ce40431d28d2c3912b10">showEvent</a>(QShowEvent *);</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_preset_colors_page.html#aad55d479bd326488cc87c9ac21c0a17c">hideEvent</a>(QHideEvent *);</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    Ui::PresetColorsPage *ui;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    QGridLayout *mButtonLayout;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    std::vector&lt;LightsButton *&gt; mPresetButtons;</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    std::vector&lt;QLabel *&gt; mPresetLabels;</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keywordtype">int</span> mButtonCount;</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    std::shared_ptr&lt;std::vector&lt;QToolButton *&gt; &gt; mPageButtons;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;};</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;<span class="preprocessor">#endif // PresetColorsPage_H</span></div>
-<div class="ttc" id="class_lighting_page_html"><div class="ttname"><a href="class_lighting_page.html">LightingPage</a></div><div class="ttdoc">Inherited by Lighting Pages, provides a link to the backend. </div><div class="ttdef"><b>Definition:</b> lightingpage.h:17</div></div>
-<div class="ttc" id="class_preset_colors_page_html_a1efd8450d676066c60b3c62d11c53f49"><div class="ttname"><a href="class_preset_colors_page.html#a1efd8450d676066c60b3c62d11c53f49">PresetColorsPage::setupButtons</a></div><div class="ttdeci">void setupButtons()</div><div class="ttdoc">setupButtons sets up the routine buttons. Requires the DataLayer of the application to be set up firs...</div><div class="ttdef"><b>Definition:</b> presetcolorspage.cpp:29</div></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="keyword">public</span> slots:</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_preset_colors_page.html#aec00977cc5a7d29b3d3897f0f770b7a9">multiButtonClicked</a>(<span class="keywordtype">int</span> routine, <span class="keywordtype">int</span> colorGroup);</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="keyword">private</span> slots:</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keywordtype">void</span> renderUI();</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_preset_colors_page.html#aa95cb48f3ae7ce40431d28d2c3912b10">showEvent</a>(QShowEvent *);</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_preset_colors_page.html#aad55d479bd326488cc87c9ac21c0a17c">hideEvent</a>(QHideEvent *);</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    Ui::PresetColorsPage *ui;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    std::vector&lt;PresetGroupWidget *&gt; mPresetWidgets;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    QVBoxLayout *mPresetLayout;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;};</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="preprocessor">#endif // PresetColorsPage_H</span></div>
+<div class="ttc" id="class_lighting_page_html"><div class="ttname"><a href="class_lighting_page.html">LightingPage</a></div><div class="ttdoc">Inherited by Lighting Pages, provides a link to the backend. </div><div class="ttdef"><b>Definition:</b> lightingpage.h:18</div></div>
+<div class="ttc" id="class_preset_colors_page_html_a1efd8450d676066c60b3c62d11c53f49"><div class="ttname"><a href="class_preset_colors_page.html#a1efd8450d676066c60b3c62d11c53f49">PresetColorsPage::setupButtons</a></div><div class="ttdeci">void setupButtons()</div><div class="ttdoc">setupButtons sets up the routine buttons. Requires the DataLayer of the application to be set up firs...</div><div class="ttdef"><b>Definition:</b> presetcolorspage.cpp:32</div></div>
 <div class="ttc" id="class_preset_colors_page_html_a331f1fbe8e3da755597f510f95f33fb2"><div class="ttname"><a href="class_preset_colors_page.html#a331f1fbe8e3da755597f510f95f33fb2">PresetColorsPage::PresetColorsPage</a></div><div class="ttdeci">PresetColorsPage(QWidget *parent=0)</div><div class="ttdoc">Constructor. </div><div class="ttdef"><b>Definition:</b> presetcolorspage.cpp:15</div></div>
-<div class="ttc" id="namespace_ui_html"><div class="ttname"><a href="namespace_ui.html">Ui</a></div><div class="ttdef"><b>Definition:</b> connectionpage.h:21</div></div>
-<div class="ttc" id="class_preset_colors_page_html_a3537f1916b722ae32c2acea51c2e0e8d"><div class="ttname"><a href="class_preset_colors_page.html#a3537f1916b722ae32c2acea51c2e0e8d">PresetColorsPage::highlightRoutineButton</a></div><div class="ttdeci">void highlightRoutineButton(ELightingRoutine routine, EColorGroup colorGroup)</div><div class="ttdoc">highlightRoutineButton highlights the button that implements the routine parameter. If it can&#39;t find a button that implements this lighting routine, then all buttons are unhighlighted </div><div class="ttdef"><b>Definition:</b> presetcolorspage.cpp:91</div></div>
+<div class="ttc" id="namespace_ui_html"><div class="ttname"><a href="namespace_ui.html">Ui</a></div><div class="ttdoc">The HuePresetPage class unimplemented page of preset moods made specifically for hues. </div><div class="ttdef"><b>Definition:</b> connectionpage.h:15</div></div>
+<div class="ttc" id="class_preset_colors_page_html_a3537f1916b722ae32c2acea51c2e0e8d"><div class="ttname"><a href="class_preset_colors_page.html#a3537f1916b722ae32c2acea51c2e0e8d">PresetColorsPage::highlightRoutineButton</a></div><div class="ttdeci">void highlightRoutineButton(ELightingRoutine routine, EColorGroup colorGroup)</div><div class="ttdoc">highlightRoutineButton highlights the button that implements the routine parameter. If it can&#39;t find a button that implements this lighting routine, then all buttons are unhighlighted </div><div class="ttdef"><b>Definition:</b> presetcolorspage.cpp:71</div></div>
 <div class="ttc" id="class_preset_colors_page_html_acc6d4e18a22d516e5b5d4d2e6f427718"><div class="ttname"><a href="class_preset_colors_page.html#acc6d4e18a22d516e5b5d4d2e6f427718">PresetColorsPage::presetColorGroupChanged</a></div><div class="ttdeci">void presetColorGroupChanged(int, int)</div><div class="ttdoc">presetColorGroupChanged emits data to the MainWindow about the changes to the preset color page...</div></div>
 <div class="ttc" id="class_preset_colors_page_html_a81688230a80b50ea54c237373d590b77"><div class="ttname"><a href="class_preset_colors_page.html#a81688230a80b50ea54c237373d590b77">PresetColorsPage::updateMainIcons</a></div><div class="ttdeci">void updateMainIcons()</div><div class="ttdoc">used to signal back to the main page that it should update its top-left icon with a new color mode ...</div></div>
-<div class="ttc" id="class_preset_colors_page_html_ab148d62b00075b0b3fa74815292f5300"><div class="ttname"><a href="class_preset_colors_page.html#ab148d62b00075b0b3fa74815292f5300">PresetColorsPage::~PresetColorsPage</a></div><div class="ttdeci">~PresetColorsPage()</div><div class="ttdoc">Deconstructor. </div><div class="ttdef"><b>Definition:</b> presetcolorspage.cpp:24</div></div>
-<div class="ttc" id="class_preset_colors_page_html"><div class="ttname"><a href="class_preset_colors_page.html">PresetColorsPage</a></div><div class="ttdoc">The PresetColorsPage provides a way to use the Color Presets from themed groups of colors to do Multi...</div><div class="ttdef"><b>Definition:</b> presetcolorspage.h:30</div></div>
-<div class="ttc" id="class_preset_colors_page_html_aad55d479bd326488cc87c9ac21c0a17c"><div class="ttname"><a href="class_preset_colors_page.html#aad55d479bd326488cc87c9ac21c0a17c">PresetColorsPage::hideEvent</a></div><div class="ttdeci">void hideEvent(QHideEvent *)</div><div class="ttdoc">hideEvent called whenever the page is changed and this page is hidden from the screen. </div><div class="ttdef"><b>Definition:</b> presetcolorspage.cpp:136</div></div>
-<div class="ttc" id="class_preset_colors_page_html_aec00977cc5a7d29b3d3897f0f770b7a9"><div class="ttname"><a href="class_preset_colors_page.html#aec00977cc5a7d29b3d3897f0f770b7a9">PresetColorsPage::multiButtonClicked</a></div><div class="ttdeci">void multiButtonClicked(int routine, int colorGroup)</div><div class="ttdoc">multiButtonClicked every button setup as a presetButton will signal this slot whenever they are click...</div><div class="ttdef"><b>Definition:</b> presetcolorspage.cpp:110</div></div>
-<div class="ttc" id="class_preset_colors_page_html_aa95cb48f3ae7ce40431d28d2c3912b10"><div class="ttname"><a href="class_preset_colors_page.html#aa95cb48f3ae7ce40431d28d2c3912b10">PresetColorsPage::showEvent</a></div><div class="ttdeci">void showEvent(QShowEvent *)</div><div class="ttdoc">called whenever the page is shown on screen. </div><div class="ttdef"><b>Definition:</b> presetcolorspage.cpp:122</div></div>
+<div class="ttc" id="class_preset_colors_page_html_ab148d62b00075b0b3fa74815292f5300"><div class="ttname"><a href="class_preset_colors_page.html#ab148d62b00075b0b3fa74815292f5300">PresetColorsPage::~PresetColorsPage</a></div><div class="ttdeci">~PresetColorsPage()</div><div class="ttdoc">Deconstructor. </div><div class="ttdef"><b>Definition:</b> presetcolorspage.cpp:27</div></div>
+<div class="ttc" id="class_preset_colors_page_html"><div class="ttname"><a href="class_preset_colors_page.html">PresetColorsPage</a></div><div class="ttdoc">The PresetColorsPage provides a way to use the Color Presets from themed groups of colors to do Multi...</div><div class="ttdef"><b>Definition:</b> presetcolorspage.h:31</div></div>
+<div class="ttc" id="class_preset_colors_page_html_aad55d479bd326488cc87c9ac21c0a17c"><div class="ttname"><a href="class_preset_colors_page.html#aad55d479bd326488cc87c9ac21c0a17c">PresetColorsPage::hideEvent</a></div><div class="ttdeci">void hideEvent(QHideEvent *)</div><div class="ttdoc">hideEvent called whenever the page is changed and this page is hidden from the screen. </div><div class="ttdef"><b>Definition:</b> presetcolorspage.cpp:124</div></div>
+<div class="ttc" id="class_preset_colors_page_html_aec00977cc5a7d29b3d3897f0f770b7a9"><div class="ttname"><a href="class_preset_colors_page.html#aec00977cc5a7d29b3d3897f0f770b7a9">PresetColorsPage::multiButtonClicked</a></div><div class="ttdeci">void multiButtonClicked(int routine, int colorGroup)</div><div class="ttdoc">multiButtonClicked every button setup as a presetButton will signal this slot whenever they are click...</div><div class="ttdef"><b>Definition:</b> presetcolorspage.cpp:90</div></div>
+<div class="ttc" id="class_preset_colors_page_html_aa95cb48f3ae7ce40431d28d2c3912b10"><div class="ttname"><a href="class_preset_colors_page.html#aa95cb48f3ae7ce40431d28d2c3912b10">PresetColorsPage::showEvent</a></div><div class="ttdeci">void showEvent(QShowEvent *)</div><div class="ttdoc">called whenever the page is shown on screen. </div><div class="ttdef"><b>Definition:</b> presetcolorspage.cpp:102</div></div>
 </div><!-- fragment --></div><!-- contents -->
 
 <hr>

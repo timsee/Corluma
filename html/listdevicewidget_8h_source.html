@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.82</span>
+   &#160;<span id="projectnumber">v0.9.85</span>
    </div>
   </td>
  </tr>
@@ -62,41 +62,43 @@
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;icondata.h&quot;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;commtype.h&quot;</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;</div>
-<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="class_list_device_widget.html">   24</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_list_device_widget.html">ListDeviceWidget</a> : <span class="keyword">public</span> QWidget</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;{</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    Q_OBJECT</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_list_device_widget.html#a3eddce1660cf06707238fa8721ea9afe">ListDeviceWidget</a>(<span class="keyword">const</span> SLightDevice&amp; device,</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;                              <span class="keyword">const</span> QString&amp; name,</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;                              QWidget *parent = 0);</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_list_device_widget.html#a3eddce1660cf06707238fa8721ea9afe">ListDeviceWidget</a>(<span class="keyword">const</span> SLightDevice&amp; device,</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;                              <span class="keyword">const</span> QString&amp; name,</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;                              <span class="keyword">const</span> std::vector&lt;QColor&gt;&amp; colors,</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                              QWidget *parent = 0);</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
-<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="class_list_device_widget.html#a3e9dfc18d45134305c9688b15cca77c3">   53</a></span>&#160;    QString <a class="code" href="class_list_device_widget.html#a3e9dfc18d45134305c9688b15cca77c3">itemIndex</a>() { <span class="keywordflow">return</span> mIndex-&gt;text(); }</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordtype">void</span> init(<span class="keyword">const</span> SLightDevice&amp; device, <span class="keyword">const</span> QString&amp; name);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    QLabel *mStatusIcon;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <a class="code" href="class_icon_data.html">IconData</a> mIconData;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    QLabel *mController;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    QLabel *mIndex;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    QHBoxLayout *mLayout;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;};</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="preprocessor">#endif // LIGHTSLISTWIDGET_H</span></div>
-<div class="ttc" id="class_list_device_widget_html_a3eddce1660cf06707238fa8721ea9afe"><div class="ttname"><a href="class_list_device_widget.html#a3eddce1660cf06707238fa8721ea9afe">ListDeviceWidget::ListDeviceWidget</a></div><div class="ttdeci">ListDeviceWidget(const SLightDevice &amp;device, const QString &amp;name, QWidget *parent=0)</div><div class="ttdoc">ListDeviceWidget Constructor for single color routines. </div><div class="ttdef"><b>Definition:</b> listdevicewidget.cpp:12</div></div>
-<div class="ttc" id="class_list_device_widget_html_a3e9dfc18d45134305c9688b15cca77c3"><div class="ttname"><a href="class_list_device_widget.html#a3e9dfc18d45134305c9688b15cca77c3">ListDeviceWidget::itemIndex</a></div><div class="ttdeci">QString itemIndex()</div><div class="ttdoc">itemIndex getter for the index of the lightslistwidget </div><div class="ttdef"><b>Definition:</b> listdevicewidget.h:53</div></div>
-<div class="ttc" id="class_list_device_widget_html"><div class="ttname"><a href="class_list_device_widget.html">ListDeviceWidget</a></div><div class="ttdoc">The ListDeviceWidget class This widget is used on the SettingsPage as a replacement for a QListWidget...</div><div class="ttdef"><b>Definition:</b> listdevicewidget.h:24</div></div>
-<div class="ttc" id="class_icon_data_html"><div class="ttname"><a href="class_icon_data.html">IconData</a></div><div class="ttdoc">The IconData class creates all the pixel-y square icons that are seen throughout the app...</div><div class="ttdef"><b>Definition:</b> icondata.h:24</div></div>
+<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="class_list_device_widget.html">   23</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_list_device_widget.html">ListDeviceWidget</a> : <span class="keyword">public</span> QWidget</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;{</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    Q_OBJECT</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_list_device_widget.html#a3eddce1660cf06707238fa8721ea9afe">ListDeviceWidget</a>(<span class="keyword">const</span> SLightDevice&amp; device,</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;                              <span class="keyword">const</span> QString&amp; name,</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;                              QWidget *parent = 0);</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_list_device_widget.html#a3eddce1660cf06707238fa8721ea9afe">ListDeviceWidget</a>(<span class="keyword">const</span> SLightDevice&amp; device,</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;                              <span class="keyword">const</span> QString&amp; name,</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;                              <span class="keyword">const</span> std::vector&lt;QColor&gt;&amp; colors,</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;                              QWidget *parent = 0);</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
+<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="class_list_device_widget.html#a3e9dfc18d45134305c9688b15cca77c3">   52</a></span>&#160;    QString <a class="code" href="class_list_device_widget.html#a3e9dfc18d45134305c9688b15cca77c3">itemIndex</a>() { <span class="keywordflow">return</span> mIndex-&gt;text(); }</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordtype">void</span> init(<span class="keyword">const</span> SLightDevice&amp; device, <span class="keyword">const</span> QString&amp; name);</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    QLabel *mStatusIcon;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <a class="code" href="class_icon_data.html">IconData</a> mIconData;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    QLabel *mType;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    QLabel *mController;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    QLabel *mIndex;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    QHBoxLayout *mLayout;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;};</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="preprocessor">#endif // LIGHTSLISTWIDGET_H</span></div>
+<div class="ttc" id="class_list_device_widget_html_a3eddce1660cf06707238fa8721ea9afe"><div class="ttname"><a href="class_list_device_widget.html#a3eddce1660cf06707238fa8721ea9afe">ListDeviceWidget::ListDeviceWidget</a></div><div class="ttdeci">ListDeviceWidget(const SLightDevice &amp;device, const QString &amp;name, QWidget *parent=0)</div><div class="ttdoc">ListDeviceWidget Constructor for single color routines. </div><div class="ttdef"><b>Definition:</b> listdevicewidget.cpp:11</div></div>
+<div class="ttc" id="class_list_device_widget_html_a3e9dfc18d45134305c9688b15cca77c3"><div class="ttname"><a href="class_list_device_widget.html#a3e9dfc18d45134305c9688b15cca77c3">ListDeviceWidget::itemIndex</a></div><div class="ttdeci">QString itemIndex()</div><div class="ttdoc">itemIndex getter for the index of the lightslistwidget </div><div class="ttdef"><b>Definition:</b> listdevicewidget.h:52</div></div>
+<div class="ttc" id="class_list_device_widget_html"><div class="ttname"><a href="class_list_device_widget.html">ListDeviceWidget</a></div><div class="ttdoc">The ListDeviceWidget class This widget is used on the SettingsPage as a replacement for a QListWidget...</div><div class="ttdef"><b>Definition:</b> listdevicewidget.h:23</div></div>
+<div class="ttc" id="class_icon_data_html"><div class="ttname"><a href="class_icon_data.html">IconData</a></div><div class="ttdoc">The IconData class creates all the pixel-y square icons that are seen throughout the app...</div><div class="ttdef"><b>Definition:</b> icondata.h:25</div></div>
 </div><!-- fragment --></div><!-- contents -->
 
 <hr>

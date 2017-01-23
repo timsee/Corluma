@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.82</span>
+   &#160;<span id="projectnumber">v0.9.85</span>
    </div>
   </td>
  </tr>
@@ -79,6 +79,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a87351e16ef21b9ada1e4d4bea0959f4f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lights_slider.html#a87351e16ef21b9ada1e4d4bea0959f4f">setSliderColorBackground</a> (QColor color)</td></tr>
 <tr class="memdesc:a87351e16ef21b9ada1e4d4bea0959f4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">setSliderColorBackground Does a dark to light gradient on the color provided on the background of the slider to the left of the thumb piece of the slider Uses a custom style sheet to achieve this effect.  <a href="#a87351e16ef21b9ada1e4d4bea0959f4f">More...</a><br /></td></tr>
 <tr class="separator:a87351e16ef21b9ada1e4d4bea0959f4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74eaef0e2d22031a393381023bfcef63"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lights_slider.html#a74eaef0e2d22031a393381023bfcef63">setSliderImageBackground</a> (QString path)</td></tr>
+<tr class="memdesc:a74eaef0e2d22031a393381023bfcef63"><td class="mdescLeft">&#160;</td><td class="mdescRight">setSliderImageBackground Adds a background image to the slider instead of using a color with a gradient.  <a href="#a74eaef0e2d22031a393381023bfcef63">More...</a><br /></td></tr>
+<tr class="separator:a74eaef0e2d22031a393381023bfcef63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a152a44f81bba0d6d4cea680a14a668d7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lights_slider.html#a152a44f81bba0d6d4cea680a14a668d7">setSnapToNearestTick</a> (bool shouldSnap)</td></tr>
 <tr class="memdesc:a152a44f81bba0d6d4cea680a14a668d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">setSnapToNearestTick set this if you want the slider to snap to the nearest tick instead of snapping to the direct location that the user clicked.  <a href="#a152a44f81bba0d6d4cea680a14a668d7">More...</a><br /></td></tr>
 <tr class="separator:a152a44f81bba0d6d4cea680a14a668d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -123,7 +126,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:a0da90f45d5a260e808fff68f2e297ba3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2016. Released under the GNU General Public License.</dd></dl>
+<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License.</dd></dl>
 <p>QSliders can have their tick marks break when the project uses a custom style sheet, so tick marks are drawn using QPaint, if needed.</p>
 <p>There is also an option for developers to set a value that above the slider's minimum as the "minmum possible." Users will see a slider that shows the minimum value, but they won't below the value set as the minimum possible. This is used by the Array Colors Page in order to prevent users from choosing less than 2 colors for the array routines. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -148,7 +151,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2016. Released under the GNU General Public License. </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>
@@ -246,6 +249,28 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">percent</td><td>a value between 0.0 and 1.0 that scales the slider to take up less of hte widget. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a74eaef0e2d22031a393381023bfcef63"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void LightsSlider::setSliderImageBackground </td>
+          <td>(</td>
+          <td class="paramtype">QString&#160;</td>
+          <td class="paramname"><em>path</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">path</td><td>path to the resource of the image  clean this up more </td></tr>
   </table>
   </dd>
 </dl>

@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.82</span>
+   &#160;<span id="projectnumber">v0.9.85</span>
    </div>
   </td>
  </tr>
@@ -62,32 +62,35 @@
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;{</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    Q_OBJECT</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_floating_layout.html#a9de4055f971fd053bfee8e899e8b8413">FloatingLayout</a>(QSize size, QWidget *parent = 0);</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_floating_layout.html#a7e72aa165c8cc79384bd650dc1d8fe67">move</a>(QPoint topRightPoint);</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;signals:</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_floating_layout.html#a66457bd1283af8a6c9d627f4db2947fa">buttonPressed</a>(QString);</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="keyword">private</span> slots:</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keywordtype">void</span> singleButtonClicked(<span class="keywordtype">bool</span>);</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordtype">void</span> multiButtonClicked(<span class="keywordtype">bool</span>);</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    QHBoxLayout *mFloatingLayout;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    QPushButton *mSingleButton;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    QPushButton *mMultiButton;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">bool</span> mFloatingLayoutSingleSelected;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;};</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_floating_layout.html#a8750799dd213e4f3c8c198dd529a994b">FloatingLayout</a>(QWidget *parent = 0);</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_floating_layout.html#a4c277ac44d3cd2a63ac32b66470fd56b">setupButtons</a>(std::vector&lt;QString&gt; buttonNames, QSize size);</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_floating_layout.html#a7e72aa165c8cc79384bd650dc1d8fe67">move</a>(QPoint topRightPoint);</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;signals:</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_floating_layout.html#a66457bd1283af8a6c9d627f4db2947fa">buttonPressed</a>(QString);</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="keyword">private</span> slots:</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordtype">void</span> buttonClicked(<span class="keywordtype">int</span>);</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    std::vector&lt;QPushButton*&gt; mButtons;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    std::vector&lt;QString&gt; mNames;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    QHBoxLayout *mFloatingLayout;</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="preprocessor">#endif // FLOATINGLAYOUT_H</span></div>
-<div class="ttc" id="class_floating_layout_html_a7e72aa165c8cc79384bd650dc1d8fe67"><div class="ttname"><a href="class_floating_layout.html#a7e72aa165c8cc79384bd650dc1d8fe67">FloatingLayout::move</a></div><div class="ttdeci">void move(QPoint topRightPoint)</div><div class="ttdoc">move move layout to a new location based off of the top right point provided. </div><div class="ttdef"><b>Definition:</b> floatinglayout.cpp:57</div></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;};</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="preprocessor">#endif // FLOATINGLAYOUT_H</span></div>
+<div class="ttc" id="class_floating_layout_html_a7e72aa165c8cc79384bd650dc1d8fe67"><div class="ttname"><a href="class_floating_layout.html#a7e72aa165c8cc79384bd650dc1d8fe67">FloatingLayout::move</a></div><div class="ttdeci">void move(QPoint topRightPoint)</div><div class="ttdoc">move move layout to a new location based off of the top right point provided. </div><div class="ttdef"><b>Definition:</b> floatinglayout.cpp:67</div></div>
 <div class="ttc" id="class_floating_layout_html_a66457bd1283af8a6c9d627f4db2947fa"><div class="ttname"><a href="class_floating_layout.html#a66457bd1283af8a6c9d627f4db2947fa">FloatingLayout::buttonPressed</a></div><div class="ttdeci">void buttonPressed(QString)</div><div class="ttdoc">buttonPressed emitted whenever a button is pressed with a QString representing the the button that wa...</div></div>
 <div class="ttc" id="class_floating_layout_html"><div class="ttname"><a href="class_floating_layout.html">FloatingLayout</a></div><div class="ttdoc">The FloatingLayout class QWidget that floats in the top right corner of the screen instead of using t...</div><div class="ttdef"><b>Definition:</b> floatinglayout.h:19</div></div>
-<div class="ttc" id="class_floating_layout_html_a9de4055f971fd053bfee8e899e8b8413"><div class="ttname"><a href="class_floating_layout.html#a9de4055f971fd053bfee8e899e8b8413">FloatingLayout::FloatingLayout</a></div><div class="ttdeci">FloatingLayout(QSize size, QWidget *parent=0)</div><div class="ttdef"><b>Definition:</b> floatinglayout.cpp:7</div></div>
+<div class="ttc" id="class_floating_layout_html_a8750799dd213e4f3c8c198dd529a994b"><div class="ttname"><a href="class_floating_layout.html#a8750799dd213e4f3c8c198dd529a994b">FloatingLayout::FloatingLayout</a></div><div class="ttdeci">FloatingLayout(QWidget *parent=0)</div><div class="ttdef"><b>Definition:</b> floatinglayout.cpp:14</div></div>
+<div class="ttc" id="class_floating_layout_html_a4c277ac44d3cd2a63ac32b66470fd56b"><div class="ttname"><a href="class_floating_layout.html#a4c277ac44d3cd2a63ac32b66470fd56b">FloatingLayout::setupButtons</a></div><div class="ttdeci">void setupButtons(std::vector&lt; QString &gt; buttonNames, QSize size)</div><div class="ttdoc">setupButtons takees the vector of names and the size given and updates the buttons so that theres a b...</div><div class="ttdef"><b>Definition:</b> floatinglayout.cpp:23</div></div>
 </div><!-- fragment --></div><!-- contents -->
 
 <hr>

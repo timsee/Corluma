@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.82</span>
+   &#160;<span id="projectnumber">v0.9.85</span>
    </div>
   </td>
  </tr>
@@ -56,7 +56,7 @@
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="class_main_window.html" title="The MainWindow class is the only window in this application. It contains a QStackedWidget which shows...">MainWindow</a> class is the only window in this application. It contains a QStackedWidget which shows 4 pages: <a class="el" href="class_single_color_page.html" title="The SingleColorPage provides a way to change the main color of the LED system and to set it in single...">SingleColorPage</a>, <a class="el" href="class_custom_colors_page.html" title="The CustomColorsPage provides a way to use an array of custom colors to do multi color routines...">CustomColorsPage</a>, <a class="el" href="class_preset_colors_page.html" title="The PresetColorsPage provides a way to use the Color Presets from themed groups of colors to do Multi...">PresetColorsPage</a>, and the <a class="el" href="class_settings_page.html" title="The SettingsPage provides a way to configure the application settings. ">SettingsPage</a>.  
+<p>The <a class="el" href="class_main_window.html" title="The MainWindow class is the only window in this application. It contains a QStackedWidget which shows...">MainWindow</a> class is the only window in this application. It contains a QStackedWidget which shows all the central pages of the application.  
  <a href="class_main_window.html#details">More...</a></p>
 
 <p><code>#include &quot;<a class="el" href="mainwindow_8h_source.html">mainwindow.h</a>&quot;</code></p>
@@ -109,9 +109,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a26496d8918a24f8f96363a9b9703270d">deviceCountReachedZero</a> ()</td></tr>
 <tr class="memdesc:a26496d8918a24f8f96363a9b9703270d"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceCountChangedOnConnectionPage handles the case when the device count reaches zero. This gets signaled from the data layer whereas deviceCOuntChangedOnConnectionPage gets signaled from the connection page. <br /></td></tr>
 <tr class="separator:a26496d8918a24f8f96363a9b9703270d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab61d46312b9c8eebe9e1fb2e3ab2365c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#ab61d46312b9c8eebe9e1fb2e3ab2365c">defaultSettingsPageChanged</a> (bool newPage)</td></tr>
-<tr class="memdesc:ab61d46312b9c8eebe9e1fb2e3ab2365c"><td class="mdescLeft">&#160;</td><td class="mdescRight">defaultSettingsPageChanged handles whenever the default settings page changes from standard to hue or vice versa.  <a href="#ab61d46312b9c8eebe9e1fb2e3ab2365c">More...</a><br /></td></tr>
-<tr class="separator:ab61d46312b9c8eebe9e1fb2e3ab2365c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ad9c67b64c68e706fc77eee79fe7c7f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4ad9c67b64c68e706fc77eee79fe7c7f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a4ad9c67b64c68e706fc77eee79fe7c7f">switchToDiscovery</a> ()</td></tr>
+<tr class="memdesc:a4ad9c67b64c68e706fc77eee79fe7c7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">switchToDiscovery discovery button pressed so the discovery page should be displayed. <br /></td></tr>
+<tr class="separator:a4ad9c67b64c68e706fc77eee79fe7c7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a227da0db736107db8673d9a259b33153"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a227da0db736107db8673d9a259b33153"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a227da0db736107db8673d9a259b33153">switchToConnection</a> ()</td></tr>
+<tr class="memdesc:a227da0db736107db8673d9a259b33153"><td class="mdescLeft">&#160;</td><td class="mdescRight">switchToConnection start button was pressed on discovery page so it should switch to the connection page. <br /></td></tr>
+<tr class="separator:a227da0db736107db8673d9a259b33153"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -137,7 +142,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr class="separator:ac7c881667b4ba4986b5a0030452ee3f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2016. Released under the GNU General Public License.</dd></dl>
+<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License.</dd></dl>
 <p>On the top of the <a class="el" href="class_main_window.html" title="The MainWindow class is the only window in this application. It contains a QStackedWidget which shows...">MainWindow</a>, there is an on/off button in the far left. This button will reflect the current mode when on, and will be black when off. There is also a slider to control the overall brightness of the LEDs. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a8b244be8b7b7db1b08de2a2acb9409db"></a>
@@ -161,7 +166,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2016. Released under the GNU General Public License. </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>
@@ -190,36 +195,6 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">event</td><td>the event that has ocurred. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="ab61d46312b9c8eebe9e1fb2e3ab2365c"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void MainWindow::defaultSettingsPageChanged </td>
-          <td>(</td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>newPage</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">slot</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">newPage</td><td>true if should use the standard settings page, false if using the hue page. </td></tr>
   </table>
   </dd>
 </dl>

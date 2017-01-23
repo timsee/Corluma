@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.82</span>
+   &#160;<span id="projectnumber">v0.9.85</span>
    </div>
   </td>
  </tr>
@@ -57,50 +57,56 @@
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;QWidget&gt;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;lightingpage.h&quot;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_ui.html">Ui</a> {</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keyword">class </span><a class="code" href="class_hue_single_color_page.html">HueSingleColorPage</a>;</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;}</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;</div>
-<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="class_hue_single_color_page.html">   16</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_hue_single_color_page.html">HueSingleColorPage</a> : <span class="keyword">public</span> QWidget, <span class="keyword">public</span> <a class="code" href="class_lighting_page.html">LightingPage</a></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;{</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    Q_OBJECT</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_hue_single_color_page.html#a48069de4a2f07dc8f663bc0e97d76ebc">HueSingleColorPage</a>(QWidget *parent = 0);</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <a class="code" href="class_hue_single_color_page.html#a86e089c06fffc84c59c538d645a955a2">~HueSingleColorPage</a>();</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">enum class</span> EHuePageType {</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    eRGB,</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    eAmbient</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;};</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_ui.html">Ui</a> {</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">class </span><a class="code" href="class_hue_single_color_page.html">HueSingleColorPage</a>;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;}</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
+<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="class_hue_single_color_page.html">   27</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_hue_single_color_page.html">HueSingleColorPage</a> : <span class="keyword">public</span> QWidget, <span class="keyword">public</span> <a class="code" href="class_lighting_page.html">LightingPage</a></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;{</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    Q_OBJECT</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;signals:</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_hue_single_color_page.html#a3860d2045b185a0580704511a6c99902">singleColorChanged</a>(QColor);</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_hue_single_color_page.html#ac27ba1b0cf5351b67dffb5558a163bd9">showEvent</a>(QShowEvent *);</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_hue_single_color_page.html#a9668b6cf7388bcc083a6ea7c3189dffb">hideEvent</a>(QHideEvent *);</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="keyword">private</span> slots:</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keywordtype">void</span> colorChanged(QColor);</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordtype">void</span> ambientValueChanged(<span class="keywordtype">int</span>);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordtype">void</span> rgbButtonPressed(<span class="keywordtype">bool</span>);</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_hue_single_color_page.html#a48069de4a2f07dc8f663bc0e97d76ebc">HueSingleColorPage</a>(QWidget *parent = 0);</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <a class="code" href="class_hue_single_color_page.html#a86e089c06fffc84c59c538d645a955a2">~HueSingleColorPage</a>();</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_hue_single_color_page.html#a89f389efc788fda80e8aab1688e8e19c">changePageType</a>(EHuePageType page);</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;signals:</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_hue_single_color_page.html#a3860d2045b185a0580704511a6c99902">singleColorChanged</a>(QColor);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_hue_single_color_page.html#ac27ba1b0cf5351b67dffb5558a163bd9">showEvent</a>(QShowEvent *);</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_hue_single_color_page.html#a9668b6cf7388bcc083a6ea7c3189dffb">hideEvent</a>(QHideEvent *);</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">void</span> temperatureButtonPressed(<span class="keywordtype">bool</span>);</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    Ui::HueSingleColorPage *ui;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;};</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="preprocessor">#endif // HUESINGLECOLORPAGE_H</span></div>
-<div class="ttc" id="class_lighting_page_html"><div class="ttname"><a href="class_lighting_page.html">LightingPage</a></div><div class="ttdoc">Inherited by Lighting Pages, provides a link to the backend. </div><div class="ttdef"><b>Definition:</b> lightingpage.h:17</div></div>
-<div class="ttc" id="class_hue_single_color_page_html"><div class="ttname"><a href="class_hue_single_color_page.html">HueSingleColorPage</a></div><div class="ttdoc">The HueSingleColorPage a single color page designed for hues only. It does not have the lighting rout...</div><div class="ttdef"><b>Definition:</b> huesinglecolorpage.h:16</div></div>
-<div class="ttc" id="class_hue_single_color_page_html_ac27ba1b0cf5351b67dffb5558a163bd9"><div class="ttname"><a href="class_hue_single_color_page.html#ac27ba1b0cf5351b67dffb5558a163bd9">HueSingleColorPage::showEvent</a></div><div class="ttdeci">void showEvent(QShowEvent *)</div><div class="ttdoc">showEvent called before the this page is shown. Used to sync up any changes that may have happened on...</div><div class="ttdef"><b>Definition:</b> huesinglecolorpage.cpp:50</div></div>
-<div class="ttc" id="namespace_ui_html"><div class="ttname"><a href="namespace_ui.html">Ui</a></div><div class="ttdef"><b>Definition:</b> connectionpage.h:21</div></div>
-<div class="ttc" id="class_hue_single_color_page_html_a48069de4a2f07dc8f663bc0e97d76ebc"><div class="ttname"><a href="class_hue_single_color_page.html#a48069de4a2f07dc8f663bc0e97d76ebc">HueSingleColorPage::HueSingleColorPage</a></div><div class="ttdeci">HueSingleColorPage(QWidget *parent=0)</div><div class="ttdef"><b>Definition:</b> huesinglecolorpage.cpp:4</div></div>
-<div class="ttc" id="class_hue_single_color_page_html_a86e089c06fffc84c59c538d645a955a2"><div class="ttname"><a href="class_hue_single_color_page.html#a86e089c06fffc84c59c538d645a955a2">HueSingleColorPage::~HueSingleColorPage</a></div><div class="ttdeci">~HueSingleColorPage()</div><div class="ttdef"><b>Definition:</b> huesinglecolorpage.cpp:30</div></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="keyword">private</span> slots:</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">void</span> colorChanged(QColor);</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordtype">void</span> ambientValueChanged(<span class="keywordtype">int</span>);</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    Ui::HueSingleColorPage *ui;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    EHuePageType mPageType;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;};</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="preprocessor">#endif // HUESINGLECOLORPAGE_H</span></div>
+<div class="ttc" id="class_lighting_page_html"><div class="ttname"><a href="class_lighting_page.html">LightingPage</a></div><div class="ttdoc">Inherited by Lighting Pages, provides a link to the backend. </div><div class="ttdef"><b>Definition:</b> lightingpage.h:18</div></div>
+<div class="ttc" id="class_hue_single_color_page_html"><div class="ttname"><a href="class_hue_single_color_page.html">HueSingleColorPage</a></div><div class="ttdoc">The HueSingleColorPage a single color page designed for hues only. It does not have the lighting rout...</div><div class="ttdef"><b>Definition:</b> huesinglecolorpage.h:27</div></div>
+<div class="ttc" id="class_hue_single_color_page_html_ac27ba1b0cf5351b67dffb5558a163bd9"><div class="ttname"><a href="class_hue_single_color_page.html#ac27ba1b0cf5351b67dffb5558a163bd9">HueSingleColorPage::showEvent</a></div><div class="ttdeci">void showEvent(QShowEvent *)</div><div class="ttdoc">showEvent called before the this page is shown. Used to sync up any changes that may have happened on...</div><div class="ttdef"><b>Definition:</b> huesinglecolorpage.cpp:48</div></div>
+<div class="ttc" id="namespace_ui_html"><div class="ttname"><a href="namespace_ui.html">Ui</a></div><div class="ttdoc">The HuePresetPage class unimplemented page of preset moods made specifically for hues. </div><div class="ttdef"><b>Definition:</b> connectionpage.h:15</div></div>
+<div class="ttc" id="class_hue_single_color_page_html_a48069de4a2f07dc8f663bc0e97d76ebc"><div class="ttname"><a href="class_hue_single_color_page.html#a48069de4a2f07dc8f663bc0e97d76ebc">HueSingleColorPage::HueSingleColorPage</a></div><div class="ttdeci">HueSingleColorPage(QWidget *parent=0)</div><div class="ttdef"><b>Definition:</b> huesinglecolorpage.cpp:10</div></div>
+<div class="ttc" id="class_hue_single_color_page_html_a86e089c06fffc84c59c538d645a955a2"><div class="ttname"><a href="class_hue_single_color_page.html#a86e089c06fffc84c59c538d645a955a2">HueSingleColorPage::~HueSingleColorPage</a></div><div class="ttdeci">~HueSingleColorPage()</div><div class="ttdef"><b>Definition:</b> huesinglecolorpage.cpp:28</div></div>
+<div class="ttc" id="class_hue_single_color_page_html_a89f389efc788fda80e8aab1688e8e19c"><div class="ttname"><a href="class_hue_single_color_page.html#a89f389efc788fda80e8aab1688e8e19c">HueSingleColorPage::changePageType</a></div><div class="ttdeci">void changePageType(EHuePageType page)</div><div class="ttdoc">changePageType change the hue page type to display a different color picker. </div><div class="ttdef"><b>Definition:</b> huesinglecolorpage.cpp:76</div></div>
 <div class="ttc" id="class_hue_single_color_page_html_a3860d2045b185a0580704511a6c99902"><div class="ttname"><a href="class_hue_single_color_page.html#a3860d2045b185a0580704511a6c99902">HueSingleColorPage::singleColorChanged</a></div><div class="ttdeci">void singleColorChanged(QColor)</div><div class="ttdoc">singleColorChanged Used to signal back to the MainWindow that the main color of the single color page...</div></div>
-<div class="ttc" id="class_hue_single_color_page_html_a9668b6cf7388bcc083a6ea7c3189dffb"><div class="ttname"><a href="class_hue_single_color_page.html#a9668b6cf7388bcc083a6ea7c3189dffb">HueSingleColorPage::hideEvent</a></div><div class="ttdeci">void hideEvent(QHideEvent *)</div><div class="ttdoc">hideEvent called as the page is hidden. This happens when a new page is displayed. </div><div class="ttdef"><b>Definition:</b> huesinglecolorpage.cpp:78</div></div>
+<div class="ttc" id="class_hue_single_color_page_html_a9668b6cf7388bcc083a6ea7c3189dffb"><div class="ttname"><a href="class_hue_single_color_page.html#a9668b6cf7388bcc083a6ea7c3189dffb">HueSingleColorPage::hideEvent</a></div><div class="ttdeci">void hideEvent(QHideEvent *)</div><div class="ttdoc">hideEvent called as the page is hidden. This happens when a new page is displayed. </div><div class="ttdef"><b>Definition:</b> huesinglecolorpage.cpp:95</div></div>
 </div><!-- fragment --></div><!-- contents -->
 
 <hr>

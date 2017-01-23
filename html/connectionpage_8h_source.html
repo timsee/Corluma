@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.82</span>
+   &#160;<span id="projectnumber">v0.9.85</span>
    </div>
   </td>
  </tr>
@@ -65,182 +65,152 @@
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;groupsparser.h&quot;</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;commlayer.h&quot;</span></div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
-<div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="namespace_ui.html">   21</a></span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_ui.html">Ui</a> {</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">class </span><a class="code" href="class_connection_page.html">ConnectionPage</a>;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;}</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">enum class</span> EConnectionState {</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    eOff,</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    eDiscovering,</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    eDiscoveredAndNotInUse,</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    eSingleDeviceSelected,</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    eMultipleDevicesSelected,</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    eConnectionState_MAX</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;};</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="keyword">enum class</span> EConnectionList {</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    eSingleDevices,</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    eCollections,</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    eMoods</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;};</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="keyword">enum class</span> EConnectionButtonIcons {</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    eBlackButton,</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    eRedButton,</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    eYellowButton,</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    eBlueButton,</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    eGreenButton,</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    EConnectionButtonIcons_MAX</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;};</div>
+<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="namespace_ui.html">   15</a></span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_ui.html">Ui</a> {</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">class </span><a class="code" href="class_connection_page.html">ConnectionPage</a>;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;}</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">enum class</span> EConnectionList {</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    eSingleDevices,</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    eCollections,</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    eMoods</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;};</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div>
+<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="class_connection_page.html">   39</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_connection_page.html">ConnectionPage</a> : <span class="keyword">public</span> QWidget, <span class="keyword">public</span> <a class="code" href="class_lighting_page.html">LightingPage</a></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;{</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    Q_OBJECT</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_connection_page.html#ae40a8743330a681f20cfb1fa7f8d8d35">ConnectionPage</a>(QWidget *parent = 0);</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <a class="code" href="class_connection_page.html#a2374d8b36f7e2c3b1c81bd85d92e6157">~ConnectionPage</a>();</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#ac4543eed5acd1fe68f68d59bf3591193">setupUI</a>();</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
-<div class="line"><a name="l00066"></a><span class="lineno"><a class="line" href="class_connection_page.html">   66</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_connection_page.html">ConnectionPage</a> : <span class="keyword">public</span> QWidget, <span class="keyword">public</span> <a class="code" href="class_lighting_page.html">LightingPage</a></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;{</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    Q_OBJECT</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_connection_page.html#ae40a8743330a681f20cfb1fa7f8d8d35">ConnectionPage</a>(QWidget *parent = 0);</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <a class="code" href="class_connection_page.html#a2374d8b36f7e2c3b1c81bd85d92e6157">~ConnectionPage</a>();</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#ac4543eed5acd1fe68f68d59bf3591193">setupUI</a>();</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#a582aab553ffb48e300afaf11a3d3fc5a">updateUI</a>(ECommType type);</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
-<div class="line"><a name="l00099"></a><span class="lineno"><a class="line" href="class_connection_page.html#a254da6dff4fe5c236295da18f5e83654">   99</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#a254da6dff4fe5c236295da18f5e83654">connectCommLayer</a>(<a class="code" href="class_comm_layer.html">CommLayer</a> *layer) { mComm = layer; }</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#aa32d85ac98e93b1caa7c5b2f31709d4b">updateUI</a>();</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="class_connection_page.html#a254da6dff4fe5c236295da18f5e83654">   72</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#a254da6dff4fe5c236295da18f5e83654">connectCommLayer</a>(<a class="code" href="class_comm_layer.html">CommLayer</a> *layer) { mComm = layer; }</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#aece0c5aaec67a5c072bc8c33ff404f31">changeConnectionState</a>(EConnectionState newState, <span class="keywordtype">bool</span> skipCheck = <span class="keyword">false</span>);</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;signals:</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#a7fd46cd70a8e0be65aaf8e8aae7e3577">updateMainIcons</a>();</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#ad4c2a2386e6a0ff6e365efec5b7d0fbe">deviceCountChanged</a>();</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#a5dcb7da9cac0475c3010af59056ad893">discoveryClicked</a>();</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#aece0c5aaec67a5c072bc8c33ff404f31">changeConnectionState</a>(EConnectionState newState, <span class="keywordtype">bool</span> skipCheck = <span class="keyword">false</span>);</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#adc661284ca8aedca3bdfb94e510c7304">changeCommTypeConnectionState</a>(ECommType type, EConnectionState newState);</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;signals:</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#a7fd46cd70a8e0be65aaf8e8aae7e3577">updateMainIcons</a>();</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#ad4c2a2386e6a0ff6e365efec5b7d0fbe">deviceCountChanged</a>();</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="keyword">public</span> slots:</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#aedc4f5d70bb897f795eddf23f792660f">lightStateChanged</a>(<span class="keywordtype">int</span>, QString);</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#afe4be80c329cf8cc5d0b342ca23eca55">listClicked</a>(QListWidgetItem *);</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#acc9f686b402ad70fc75c1b1d483ceabb">highlightButton</a>(ECommType currentCommType);</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#a41ce1760ac3d61f9598291c275ab6e45">plusButtonClicked</a>();</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="keyword">public</span> slots:</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#aedc4f5d70bb897f795eddf23f792660f">lightStateChanged</a>(<span class="keywordtype">int</span>, QString);</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#afe4be80c329cf8cc5d0b342ca23eca55">listClicked</a>(QListWidgetItem *);</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#acd61610fcde85bb3d6677cb2c9bd05f8">listPressed</a>(QListWidgetItem *);</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#a086d335c590ffff98fcedf6cfd0884f6">listSelectionChanged</a>();</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#a68ae748a051ddc977af7886b29a92643">clearButtonPressed</a>();</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#a0602243d0fe3aac143a4f25019d7afe6">discoveryButtonPressed</a>();</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="keyword">private</span> slots:</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    <span class="keywordtype">void</span> renderUI();</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keywordtype">void</span> devicesButtonClicked(<span class="keywordtype">bool</span>);</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    <span class="keywordtype">void</span> moodsButtonClicked(<span class="keywordtype">bool</span>);</div>
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#a28f91aace72c0183b8d31cad10be7d6b">minusButtonClicked</a>();</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#a39457245a69cbe82594c78b86e80796d">hueDiscoveryUpdate</a>(<span class="keywordtype">int</span>);</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;<span class="keyword">private</span> slots:</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    <span class="keywordtype">void</span> renderUI();</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    <span class="keywordtype">void</span> commTypeSelected(<span class="keywordtype">int</span>);</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    <span class="keywordtype">void</span> devicesButtonClicked(<span class="keywordtype">bool</span>);</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    <span class="keywordtype">void</span> moodsButtonClicked(<span class="keywordtype">bool</span>);</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    <span class="keywordtype">void</span> collectionsButtonClicked(<span class="keywordtype">bool</span>);</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    <span class="keywordtype">void</span> saveGroup(<span class="keywordtype">bool</span>);</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    <span class="keywordtype">void</span> saveCollection(<span class="keywordtype">bool</span>);</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    <span class="keywordtype">void</span> receivedCommUpdate(<span class="keywordtype">int</span>);</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    <span class="keywordtype">void</span> collectionsButtonClicked(<span class="keywordtype">bool</span>);</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="keywordtype">void</span> saveGroup(<span class="keywordtype">bool</span>);</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    <span class="keywordtype">void</span> saveCollection(<span class="keywordtype">bool</span>);</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    <span class="keywordtype">void</span> receivedCommUpdate(<span class="keywordtype">int</span>);</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;<span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#a408645f97d22ff87fcf29d0d92223873">showEvent</a>(QShowEvent *);</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#ae32f18fbe67f65694522da5e25686a1f">hideEvent</a>(QHideEvent *);</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#a352c9b503e48f5824d76eb68d1c2ae1e">resizeEvent</a>(QResizeEvent *);</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    Ui::ConnectionPage *ui;</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    <a class="code" href="class_groups_parser.html">GroupsParser</a> *mGroups;</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    QTime mLastUpdateConnectionList;</div>
 <div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;<span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#a408645f97d22ff87fcf29d0d92223873">showEvent</a>(QShowEvent *);</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#ae32f18fbe67f65694522da5e25686a1f">hideEvent</a>(QHideEvent *);</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_connection_page.html#a352c9b503e48f5824d76eb68d1c2ae1e">resizeEvent</a>(QResizeEvent *);</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    Ui::ConnectionPage *ui;</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    <a class="code" href="class_groups_parser.html">GroupsParser</a> *mGroups;</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;    QPushButton *buttonByType(ECommType type);</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;    QString structToIdentifierString(<span class="keyword">const</span> SLightDevice&amp; device);</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    SLightDevice identifierStringToStruct(QString <span class="keywordtype">string</span>);</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    <span class="comment">//-------------</span></div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    <span class="comment">// Cached States and Assets</span></div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    <span class="comment">//-------------</span></div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    EConnectionState mCurrentState;</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;    QString mCurrentListString;</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;    QString mCurrentCollectionListString;</div>
 <div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    QSettings *mSettings;</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    QString mCurrentMoodListString;</div>
 <div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    QTime mLastUpdateConnectionList;</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    <span class="comment">//-------------</span></div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    <span class="comment">// Cached States and Assets</span></div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    <span class="comment">//-------------</span></div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    EConnectionList mCurrentConnectionList;</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    std::vector&lt;QPixmap&gt; mButtonIcons;</div>
 <div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    EConnectionState mCurrentState;</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    std::vector&lt;EConnectionState&gt; mConnectionStates;</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    QString mCurrentListString;</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;    QString mCurrentCollectionListString;</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;    QString mCurrentMoodListString;</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    ECommType mCommType;</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    <span class="comment">//-------------</span></div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    <span class="comment">// UI Helpers</span></div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    <span class="comment">//-------------</span></div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    <span class="keywordtype">void</span> updateConnectionList();</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    <span class="keywordtype">void</span> resizeAssets();</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    <span class="comment">//-------------</span></div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    <span class="comment">// Helpers for Checking Model Data</span></div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    <span class="comment">//-------------</span></div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    <span class="keywordtype">bool</span> checkForDiscoveringControllers();</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    <span class="keywordtype">bool</span> checkForConnectedControllers();</div>
 <div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    EHueDiscoveryState mHueDiscoveryState;</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;    std::vector&lt;QPushButton*&gt; mCommButtons;</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    std::vector&lt;QPixmap&gt; mButtonIcons;</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;    EConnectionState checkConnectionStateOfGroup(std::list&lt;SLightDevice&gt; group);</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    <span class="keywordtype">void</span> fillGroupWithCommDevices(std::list&lt;SLightDevice&gt;&amp; group);</div>
 <div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;    <span class="comment">//-------------</span></div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    <span class="comment">// UI Helpers</span></div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;    <span class="comment">//-------------</span></div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    <span class="keywordtype">void</span> updateCommType();</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;    <span class="keywordtype">void</span> updateConnectionList(ECommType);</div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;</div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    <span class="keywordtype">void</span> setupStreamButtons();</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;    <span class="keywordtype">void</span> resizeAssets();</div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;    <span class="comment">//-------------</span></div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;    <span class="comment">// Helpers for Checking Model Data</span></div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;    <span class="comment">//-------------</span></div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;    <span class="keywordtype">bool</span> checkForDiscoveringControllers();</div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;</div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;    <span class="keywordtype">bool</span> checkForConnectedControllers();</div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;</div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;    EConnectionState checkConnectionStateOfGroup(std::list&lt;SLightDevice&gt; group);</div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;</div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;    <span class="keywordtype">void</span> fillGroupWithCommDevices(std::list&lt;SLightDevice&gt;&amp; group);</div>
-<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;</div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;    <a class="code" href="class_comm_layer.html">CommLayer</a> *mComm;</div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;</div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;    EConnectionList mCurrentConnectionList;</div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;};</div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;</div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;<span class="preprocessor">#endif // CONNECTIONPAGE_H</span></div>
-<div class="ttc" id="class_connection_page_html_ac4543eed5acd1fe68f68d59bf3591193"><div class="ttname"><a href="class_connection_page.html#ac4543eed5acd1fe68f68d59bf3591193">ConnectionPage::setupUI</a></div><div class="ttdeci">void setupUI()</div><div class="ttdoc">setupUI called after mComm is constructed so that it can be used to set up the UI of the Settings Pag...</div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:109</div></div>
-<div class="ttc" id="class_connection_page_html_aece0c5aaec67a5c072bc8c33ff404f31"><div class="ttname"><a href="class_connection_page.html#aece0c5aaec67a5c072bc8c33ff404f31">ConnectionPage::changeConnectionState</a></div><div class="ttdeci">void changeConnectionState(EConnectionState newState, bool skipCheck=false)</div><div class="ttdoc">changeConnectionState change the connection state of the overall app. This state is displayed as an i...</div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:133</div></div>
-<div class="ttc" id="class_lighting_page_html"><div class="ttname"><a href="class_lighting_page.html">LightingPage</a></div><div class="ttdoc">Inherited by Lighting Pages, provides a link to the backend. </div><div class="ttdef"><b>Definition:</b> lightingpage.h:17</div></div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    <a class="code" href="class_comm_layer.html">CommLayer</a> *mComm;</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;    <span class="keywordtype">void</span> highlightList();</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;};</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;<span class="preprocessor">#endif // CONNECTIONPAGE_H</span></div>
+<div class="ttc" id="class_connection_page_html_a0602243d0fe3aac143a4f25019d7afe6"><div class="ttname"><a href="class_connection_page.html#a0602243d0fe3aac143a4f25019d7afe6">ConnectionPage::discoveryButtonPressed</a></div><div class="ttdeci">void discoveryButtonPressed()</div><div class="ttdoc">discoveryButtonPressed discovery button is pressed and discovery overlay is displayed over the connec...</div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:626</div></div>
+<div class="ttc" id="class_connection_page_html_ac4543eed5acd1fe68f68d59bf3591193"><div class="ttname"><a href="class_connection_page.html#ac4543eed5acd1fe68f68d59bf3591193">ConnectionPage::setupUI</a></div><div class="ttdeci">void setupUI()</div><div class="ttdoc">setupUI called after mComm is constructed so that it can be used to set up the UI of the Settings Pag...</div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:79</div></div>
+<div class="ttc" id="class_connection_page_html_aece0c5aaec67a5c072bc8c33ff404f31"><div class="ttname"><a href="class_connection_page.html#aece0c5aaec67a5c072bc8c33ff404f31">ConnectionPage::changeConnectionState</a></div><div class="ttdeci">void changeConnectionState(EConnectionState newState, bool skipCheck=false)</div><div class="ttdoc">changeConnectionState change the connection state of the overall app. This state is displayed as an i...</div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:99</div></div>
+<div class="ttc" id="class_lighting_page_html"><div class="ttname"><a href="class_lighting_page.html">LightingPage</a></div><div class="ttdoc">Inherited by Lighting Pages, provides a link to the backend. </div><div class="ttdef"><b>Definition:</b> lightingpage.h:18</div></div>
 <div class="ttc" id="class_comm_layer_html"><div class="ttname"><a href="class_comm_layer.html">CommLayer</a></div><div class="ttdoc">The CommLayer class provides communication protocols that allow the user to connect and send packets ...</div><div class="ttdef"><b>Definition:</b> commlayer.h:31</div></div>
+<div class="ttc" id="class_connection_page_html_aa32d85ac98e93b1caa7c5b2f31709d4b"><div class="ttname"><a href="class_connection_page.html#aa32d85ac98e93b1caa7c5b2f31709d4b">ConnectionPage::updateUI</a></div><div class="ttdeci">void updateUI()</div><div class="ttdoc">updateUI updates the colors of various settings in the UI. </div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:95</div></div>
 <div class="ttc" id="class_connection_page_html_a7fd46cd70a8e0be65aaf8e8aae7e3577"><div class="ttname"><a href="class_connection_page.html#a7fd46cd70a8e0be65aaf8e8aae7e3577">ConnectionPage::updateMainIcons</a></div><div class="ttdeci">void updateMainIcons()</div><div class="ttdoc">Used to signal back to the main page that it should update its top-left icon with new RGB values...</div></div>
-<div class="ttc" id="namespace_ui_html"><div class="ttname"><a href="namespace_ui.html">Ui</a></div><div class="ttdef"><b>Definition:</b> connectionpage.h:21</div></div>
-<div class="ttc" id="class_connection_page_html_a28f91aace72c0183b8d31cad10be7d6b"><div class="ttname"><a href="class_connection_page.html#a28f91aace72c0183b8d31cad10be7d6b">ConnectionPage::minusButtonClicked</a></div><div class="ttdeci">void minusButtonClicked()</div><div class="ttdoc">minusButtonClicked called whenever the minus button is clicked </div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:383</div></div>
-<div class="ttc" id="class_connection_page_html_afe4be80c329cf8cc5d0b342ca23eca55"><div class="ttname"><a href="class_connection_page.html#afe4be80c329cf8cc5d0b342ca23eca55">ConnectionPage::listClicked</a></div><div class="ttdeci">void listClicked(QListWidgetItem *)</div><div class="ttdoc">listClicked signaled whenever the serial list is clicked. It attempts to connect to the serial device...</div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:224</div></div>
-<div class="ttc" id="class_connection_page_html_a352c9b503e48f5824d76eb68d1c2ae1e"><div class="ttname"><a href="class_connection_page.html#a352c9b503e48f5824d76eb68d1c2ae1e">ConnectionPage::resizeEvent</a></div><div class="ttdeci">void resizeEvent(QResizeEvent *)</div><div class="ttdoc">resizeEvent called every time the main window is resized. </div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:495</div></div>
-<div class="ttc" id="class_connection_page_html_aedc4f5d70bb897f795eddf23f792660f"><div class="ttname"><a href="class_connection_page.html#aedc4f5d70bb897f795eddf23f792660f">ConnectionPage::lightStateChanged</a></div><div class="ttdeci">void lightStateChanged(int, QString)</div><div class="ttdoc">lightStateChanged called whenever theres any change in the state of any of the lights. </div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:548</div></div>
-<div class="ttc" id="class_connection_page_html_a582aab553ffb48e300afaf11a3d3fc5a"><div class="ttname"><a href="class_connection_page.html#a582aab553ffb48e300afaf11a3d3fc5a">ConnectionPage::updateUI</a></div><div class="ttdeci">void updateUI(ECommType type)</div><div class="ttdoc">updateUI updates the colors of various settings in the UI. </div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:127</div></div>
-<div class="ttc" id="class_connection_page_html_acc9f686b402ad70fc75c1b1d483ceabb"><div class="ttname"><a href="class_connection_page.html#acc9f686b402ad70fc75c1b1d483ceabb">ConnectionPage::highlightButton</a></div><div class="ttdeci">void highlightButton(ECommType currentCommType)</div><div class="ttdoc">highlightButton highlight the commtype button of the desired ECommType </div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:415</div></div>
-<div class="ttc" id="class_connection_page_html_a39457245a69cbe82594c78b86e80796d"><div class="ttname"><a href="class_connection_page.html#a39457245a69cbe82594c78b86e80796d">ConnectionPage::hueDiscoveryUpdate</a></div><div class="ttdeci">void hueDiscoveryUpdate(int)</div><div class="ttdoc">hueDiscoveryUpdate provides an int representation of the EHueDiscoveryState of Hue&#39;s discovery object...</div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:435</div></div>
-<div class="ttc" id="class_connection_page_html_adc661284ca8aedca3bdfb94e510c7304"><div class="ttname"><a href="class_connection_page.html#adc661284ca8aedca3bdfb94e510c7304">ConnectionPage::changeCommTypeConnectionState</a></div><div class="ttdeci">void changeCommTypeConnectionState(ECommType type, EConnectionState newState)</div><div class="ttdoc">changeCommTypeConnectionState change the connection state and the associated UI elements based on the...</div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:168</div></div>
-<div class="ttc" id="class_connection_page_html_a2374d8b36f7e2c3b1c81bd85d92e6157"><div class="ttname"><a href="class_connection_page.html#a2374d8b36f7e2c3b1c81bd85d92e6157">ConnectionPage::~ConnectionPage</a></div><div class="ttdeci">~ConnectionPage()</div><div class="ttdoc">Deconstructor. </div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:104</div></div>
-<div class="ttc" id="class_connection_page_html"><div class="ttname"><a href="class_connection_page.html">ConnectionPage</a></div><div class="ttdoc">The ConnectionPage class is the page that manages which devices are currently in use. The ConnectionPage can be switched between choosing individual devices and choosing groups of devices. </div><div class="ttdef"><b>Definition:</b> connectionpage.h:66</div></div>
-<div class="ttc" id="class_connection_page_html_a254da6dff4fe5c236295da18f5e83654"><div class="ttname"><a href="class_connection_page.html#a254da6dff4fe5c236295da18f5e83654">ConnectionPage::connectCommLayer</a></div><div class="ttdeci">void connectCommLayer(CommLayer *layer)</div><div class="ttdoc">connectCommLayer connect to commlayer. In a future update the commLayer pointer on every page will be...</div><div class="ttdef"><b>Definition:</b> connectionpage.h:99</div></div>
-<div class="ttc" id="class_connection_page_html_a41ce1760ac3d61f9598291c275ab6e45"><div class="ttname"><a href="class_connection_page.html#a41ce1760ac3d61f9598291c275ab6e45">ConnectionPage::plusButtonClicked</a></div><div class="ttdeci">void plusButtonClicked()</div><div class="ttdoc">plusButtonClicked called whenever the plus button is clicked </div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:337</div></div>
-<div class="ttc" id="class_connection_page_html_ae32f18fbe67f65694522da5e25686a1f"><div class="ttname"><a href="class_connection_page.html#ae32f18fbe67f65694522da5e25686a1f">ConnectionPage::hideEvent</a></div><div class="ttdeci">void hideEvent(QHideEvent *)</div><div class="ttdoc">hideEvent called as the page is hidden. This happens when a new page is displayed. </div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:488</div></div>
+<div class="ttc" id="namespace_ui_html"><div class="ttname"><a href="namespace_ui.html">Ui</a></div><div class="ttdoc">The HuePresetPage class unimplemented page of preset moods made specifically for hues. </div><div class="ttdef"><b>Definition:</b> connectionpage.h:15</div></div>
+<div class="ttc" id="class_connection_page_html_afe4be80c329cf8cc5d0b342ca23eca55"><div class="ttname"><a href="class_connection_page.html#afe4be80c329cf8cc5d0b342ca23eca55">ConnectionPage::listClicked</a></div><div class="ttdeci">void listClicked(QListWidgetItem *)</div><div class="ttdoc">listClicked signaled whenever the serial list is clicked. It attempts to connect to the serial device...</div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:146</div></div>
+<div class="ttc" id="class_connection_page_html_a352c9b503e48f5824d76eb68d1c2ae1e"><div class="ttname"><a href="class_connection_page.html#a352c9b503e48f5824d76eb68d1c2ae1e">ConnectionPage::resizeEvent</a></div><div class="ttdeci">void resizeEvent(QResizeEvent *)</div><div class="ttdoc">resizeEvent called every time the main window is resized. </div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:313</div></div>
+<div class="ttc" id="class_connection_page_html_aedc4f5d70bb897f795eddf23f792660f"><div class="ttname"><a href="class_connection_page.html#aedc4f5d70bb897f795eddf23f792660f">ConnectionPage::lightStateChanged</a></div><div class="ttdeci">void lightStateChanged(int, QString)</div><div class="ttdoc">lightStateChanged called whenever theres any change in the state of any of the lights. </div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:339</div></div>
+<div class="ttc" id="class_connection_page_html_a086d335c590ffff98fcedf6cfd0884f6"><div class="ttname"><a href="class_connection_page.html#a086d335c590ffff98fcedf6cfd0884f6">ConnectionPage::listSelectionChanged</a></div><div class="ttdeci">void listSelectionChanged()</div><div class="ttdoc">listSelectionChanged event that gets called whenever a list selection is changed. ...</div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:108</div></div>
+<div class="ttc" id="class_connection_page_html_a2374d8b36f7e2c3b1c81bd85d92e6157"><div class="ttname"><a href="class_connection_page.html#a2374d8b36f7e2c3b1c81bd85d92e6157">ConnectionPage::~ConnectionPage</a></div><div class="ttdeci">~ConnectionPage()</div><div class="ttdoc">Deconstructor. </div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:74</div></div>
+<div class="ttc" id="class_connection_page_html_a68ae748a051ddc977af7886b29a92643"><div class="ttname"><a href="class_connection_page.html#a68ae748a051ddc977af7886b29a92643">ConnectionPage::clearButtonPressed</a></div><div class="ttdeci">void clearButtonPressed()</div><div class="ttdoc">clearButtonPressed clear button is pressed and all selected devices are deselected. </div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:630</div></div>
+<div class="ttc" id="class_connection_page_html"><div class="ttname"><a href="class_connection_page.html">ConnectionPage</a></div><div class="ttdoc">The ConnectionPage class is the page that manages which devices are currently in use. The ConnectionPage can be switched between choosing individual devices and choosing groups of devices. </div><div class="ttdef"><b>Definition:</b> connectionpage.h:39</div></div>
+<div class="ttc" id="class_connection_page_html_a254da6dff4fe5c236295da18f5e83654"><div class="ttname"><a href="class_connection_page.html#a254da6dff4fe5c236295da18f5e83654">ConnectionPage::connectCommLayer</a></div><div class="ttdeci">void connectCommLayer(CommLayer *layer)</div><div class="ttdoc">connectCommLayer connect to commlayer. In a future update the commLayer pointer on every page will be...</div><div class="ttdef"><b>Definition:</b> connectionpage.h:72</div></div>
+<div class="ttc" id="class_connection_page_html_ae32f18fbe67f65694522da5e25686a1f"><div class="ttname"><a href="class_connection_page.html#ae32f18fbe67f65694522da5e25686a1f">ConnectionPage::hideEvent</a></div><div class="ttdeci">void hideEvent(QHideEvent *)</div><div class="ttdoc">hideEvent called as the page is hidden. This happens when a new page is displayed. </div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:301</div></div>
 <div class="ttc" id="class_connection_page_html_ad4c2a2386e6a0ff6e365efec5b7d0fbe"><div class="ttname"><a href="class_connection_page.html#ad4c2a2386e6a0ff6e365efec5b7d0fbe">ConnectionPage::deviceCountChanged</a></div><div class="ttdeci">void deviceCountChanged()</div><div class="ttdoc">deviceCountChanged signaled to UI assets whenever a click on the page results in changing the number ...</div></div>
-<div class="ttc" id="class_connection_page_html_ae40a8743330a681f20cfb1fa7f8d8d35"><div class="ttname"><a href="class_connection_page.html#ae40a8743330a681f20cfb1fa7f8d8d35">ConnectionPage::ConnectionPage</a></div><div class="ttdeci">ConnectionPage(QWidget *parent=0)</div><div class="ttdoc">ConnectionPage constructor. </div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:10</div></div>
-<div class="ttc" id="class_groups_parser_html"><div class="ttname"><a href="class_groups_parser.html">GroupsParser</a></div><div class="ttdoc">The GroupsParser class Manipulates and Reads a JSON representation of multiple lights. There exists two types of "groups". The first is a collection which contains any number of light devices but does not contain any reference to the lights overall state. The second is a mood, which contains both the path to the light device and data such as its brightness, color, etc. </div><div class="ttdef"><b>Definition:</b> groupsparser.h:27</div></div>
-<div class="ttc" id="class_connection_page_html_a408645f97d22ff87fcf29d0d92223873"><div class="ttname"><a href="class_connection_page.html#a408645f97d22ff87fcf29d0d92223873">ConnectionPage::showEvent</a></div><div class="ttdeci">void showEvent(QShowEvent *)</div><div class="ttdoc">showEvent called before the this page is shown. Used to sync up any changes that may have happened on...</div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:473</div></div>
+<div class="ttc" id="class_connection_page_html_ae40a8743330a681f20cfb1fa7f8d8d35"><div class="ttname"><a href="class_connection_page.html#ae40a8743330a681f20cfb1fa7f8d8d35">ConnectionPage::ConnectionPage</a></div><div class="ttdeci">ConnectionPage(QWidget *parent=0)</div><div class="ttdoc">ConnectionPage constructor. </div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:17</div></div>
+<div class="ttc" id="class_connection_page_html_acd61610fcde85bb3d6677cb2c9bd05f8"><div class="ttname"><a href="class_connection_page.html#acd61610fcde85bb3d6677cb2c9bd05f8">ConnectionPage::listPressed</a></div><div class="ttdeci">void listPressed(QListWidgetItem *)</div><div class="ttdoc">listPressed only clicks are considered an actual selection in this application, so a press event hand...</div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:103</div></div>
+<div class="ttc" id="class_groups_parser_html"><div class="ttname"><a href="class_groups_parser.html">GroupsParser</a></div><div class="ttdoc">The GroupsParser class Manipulates and Reads a JSON representation of multiple lights. There exists two types of "groups". The first is a collection which contains any number of light devices but does not contain any reference to the lights overall state. The second is a mood, which contains both the path to the light device and data such as its brightness, color, etc. </div><div class="ttdef"><b>Definition:</b> groupsparser.h:25</div></div>
+<div class="ttc" id="class_connection_page_html_a408645f97d22ff87fcf29d0d92223873"><div class="ttname"><a href="class_connection_page.html#a408645f97d22ff87fcf29d0d92223873">ConnectionPage::showEvent</a></div><div class="ttdeci">void showEvent(QShowEvent *)</div><div class="ttdoc">showEvent called before the this page is shown. Used to sync up any changes that may have happened on...</div><div class="ttdef"><b>Definition:</b> connectionpage.cpp:286</div></div>
+<div class="ttc" id="class_connection_page_html_a5dcb7da9cac0475c3010af59056ad893"><div class="ttname"><a href="class_connection_page.html#a5dcb7da9cac0475c3010af59056ad893">ConnectionPage::discoveryClicked</a></div><div class="ttdeci">void discoveryClicked()</div><div class="ttdoc">discoveryClicked emited whenever the discovery button is clicked. </div></div>
 </div><!-- fragment --></div><!-- contents -->
 
 <hr>

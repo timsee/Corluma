@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.82</span>
+   &#160;<span id="projectnumber">v0.9.85</span>
    </div>
   </td>
  </tr>
@@ -137,6 +137,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 &lt; SLightDevice &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#acb1865d11bc8e1f01a925ed68e284691">deviceTable</a> ()</td></tr>
 <tr class="memdesc:acb1865d11bc8e1f01a925ed68e284691"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceList list of the light devices  <a href="#acb1865d11bc8e1f01a925ed68e284691">More...</a><br /></td></tr>
 <tr class="separator:acb1865d11bc8e1f01a925ed68e284691"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4567125718c3360cabf33c6ac1b00226"><td class="memItemLeft" align="right" valign="top">const std::list&lt; QString &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a4567125718c3360cabf33c6ac1b00226">discoveredList</a> ()</td></tr>
+<tr class="memdesc:a4567125718c3360cabf33c6ac1b00226"><td class="mdescLeft">&#160;</td><td class="mdescRight">discoveredList getter for list of discovered devices  <a href="#a4567125718c3360cabf33c6ac1b00226">More...</a><br /></td></tr>
+<tr class="separator:a4567125718c3360cabf33c6ac1b00226"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a301c069f2dc8787a9fb8bdf8ec5606c6"><td class="memItemLeft" align="right" valign="top">const std::list&lt; QString &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a301c069f2dc8787a9fb8bdf8ec5606c6">undiscoveredList</a> ()</td></tr>
+<tr class="memdesc:a301c069f2dc8787a9fb8bdf8ec5606c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">undiscoveredList getter for list of undiscovered devices.  <a href="#a301c069f2dc8787a9fb8bdf8ec5606c6">More...</a><br /></td></tr>
+<tr class="separator:a301c069f2dc8787a9fb8bdf8ec5606c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaa25ac27d5bdb85a13b8d461ca1a960c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aaa25ac27d5bdb85a13b8d461ca1a960c">setupConnectionList</a> (ECommType type)</td></tr>
 <tr class="memdesc:aaa25ac27d5bdb85a13b8d461ca1a960c"><td class="mdescLeft">&#160;</td><td class="mdescRight">setupConnectionList initializes the connection list and reloads it from system memory, if needed  <a href="#aaa25ac27d5bdb85a13b8d461ca1a960c">More...</a><br /></td></tr>
 <tr class="separator:aaa25ac27d5bdb85a13b8d461ca1a960c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -172,17 +178,17 @@ std::unordered_map<br class="typebreak" />
 <tr class="separator:ab17df6d25cf2db9d844945d6f135e65c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a35f88dea2ab73337cef428d5aed5fec6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a35f88dea2ab73337cef428d5aed5fec6"></a>
 std::list&lt; std::pair&lt; QString, <br class="typebreak" />
-CommThrottle * &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a35f88dea2ab73337cef428d5aed5fec6">mThrottleList</a></td></tr>
+<a class="el" href="class_comm_throttle.html">CommThrottle</a> * &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a35f88dea2ab73337cef428d5aed5fec6">mThrottleList</a></td></tr>
 <tr class="memdesc:a35f88dea2ab73337cef428d5aed5fec6"><td class="mdescLeft">&#160;</td><td class="mdescRight">mThrottleList list of throttles paired with strings. This allows each different discovered device to use a different throttle. <br /></td></tr>
 <tr class="separator:a35f88dea2ab73337cef428d5aed5fec6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4880167268de709a679fd25629eb397"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa4880167268de709a679fd25629eb397"></a>
-std::list&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aa4880167268de709a679fd25629eb397">mUndiscoveredList</a></td></tr>
-<tr class="memdesc:aa4880167268de709a679fd25629eb397"><td class="mdescLeft">&#160;</td><td class="mdescRight">mUndiscoveredList list of controllers that are not currently discovered but are running discovery routines. <br /></td></tr>
-<tr class="separator:aa4880167268de709a679fd25629eb397"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a72eb17fb724feb20de438b6c304e35ba"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a72eb17fb724feb20de438b6c304e35ba"></a>
-std::list&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a72eb17fb724feb20de438b6c304e35ba">mDiscoveryList</a></td></tr>
-<tr class="memdesc:a72eb17fb724feb20de438b6c304e35ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">mDiscoveryList list of devices that have been discovered properly. <br /></td></tr>
-<tr class="separator:a72eb17fb724feb20de438b6c304e35ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02ec483a63cf7b4946653ca8dea9ae46"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a02ec483a63cf7b4946653ca8dea9ae46"></a>
+std::list&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a02ec483a63cf7b4946653ca8dea9ae46">mUndiscoveredList</a></td></tr>
+<tr class="memdesc:a02ec483a63cf7b4946653ca8dea9ae46"><td class="mdescLeft">&#160;</td><td class="mdescRight">mUndiscoveredList list of controllers that are not currently discovered but are running discovery routines. <br /></td></tr>
+<tr class="separator:a02ec483a63cf7b4946653ca8dea9ae46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18c442a3f2068108009d49cab7e02050"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a18c442a3f2068108009d49cab7e02050"></a>
+std::list&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a18c442a3f2068108009d49cab7e02050">mDiscoveredList</a></td></tr>
+<tr class="memdesc:a18c442a3f2068108009d49cab7e02050"><td class="mdescLeft">&#160;</td><td class="mdescRight">mDiscoveredList list of devices that have been discovered properly. <br /></td></tr>
+<tr class="separator:a18c442a3f2068108009d49cab7e02050"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5fad0675d5baa960558751025bc5ec3a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5fad0675d5baa960558751025bc5ec3a"></a>
 QTimer *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a5fad0675d5baa960558751025bc5ec3a">mStateUpdateTimer</a></td></tr>
 <tr class="memdesc:a5fad0675d5baa960558751025bc5ec3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">mStateUpdateTimer Polls the controller every few seconds requesting updates on all of its devices. <br /></td></tr>
@@ -213,7 +219,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:a47a3020ab06d49b995e22c7b4567017e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2016. Released under the GNU General Public License. </dd></dl>
+<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a class="anchor" id="ac8e3ef4d4b075f7d53fcb6500c0d48e1"></a>
 <div class="memitem">
@@ -259,6 +265,30 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>list of the light devices </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a4567125718c3360cabf33c6ac1b00226"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::list&lt;QString&gt;&amp; CommType::discoveredList </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>list of discovered devices. </dd></dl>
 
 </div>
 </div>
@@ -465,7 +495,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </table>
   </dd>
 </dl>
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2016. Released under the GNU General Public License. </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>
@@ -490,6 +520,30 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>true if it should request state updates, false otherwise. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a301c069f2dc8787a9fb8bdf8ec5606c6"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::list&lt;QString&gt;&amp; CommType::undiscoveredList </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>list of undiscovered devices. </dd></dl>
 
 </div>
 </div>

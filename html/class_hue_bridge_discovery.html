@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.82</span>
+   &#160;<span id="projectnumber">v0.9.85</span>
    </div>
   </td>
  </tr>
@@ -102,8 +102,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:a1610d8e7546d672cff116aa503578dad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Upon creation, it checks the persistent app data for the last bridge that was used by the application. If this passes a validity check, no extra discovery methods are called. If there is no data or if the current data is not valid, this object begins to go through the various EHueDiscoveryStates in order to achieve a valid connection. Developers only need to call <a class="el" href="class_hue_bridge_discovery.html#abb046b50f418946672b5455a0fde3fa2" title="startBridgeDiscovery checks if a bridge is currently discovered. If a bridge is connected, it emits a signal saying its connected. If a bridge is not connected, it checks its current data and starts the discovery process. ">startBridgeDiscovery()</a> and <a class="el" href="class_hue_bridge_discovery.html#a3d3739ef3c74f0210f54cc2343cc8cfe" title="stopBridgeDiscovery turns off discovery methods if they are currently active. ">stopBridgeDiscovery()</a> in order to control it, it will automatically handle switching states as it receives and sends discovery packets. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License.</dd></dl>
+<pre class="fragment">   Upon creation, it checks the persistent app data for the last bridge that was used by
+   the application. If this passes a validity check, no extra discovery methods are called.
+   If there is no data or if the current data is not valid, this object begins to go through
+   the various EHueDiscoveryStates in order to achieve a valid connection. Developers only need
+   to call startBridgeDiscovery() and stopBridgeDiscovery() in order to control it, it will
+   automatically handle switching states as it receives and sends discovery packets.</pre> </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a2531f30276fd3f7d1f031dbb4b2f1fa0"></a>
 <div class="memitem">
 <div class="memproto">
@@ -125,7 +130,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2016. Released under the GNU General Public License. </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>

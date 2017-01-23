@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.82</span>
+   &#160;<span id="projectnumber">v0.9.85</span>
    </div>
   </td>
  </tr>
@@ -64,46 +64,46 @@
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;lightdevice.h&quot;</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;groupsparser.h&quot;</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;commhue.h&quot;</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="class_groups_parser.html">   27</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_groups_parser.html">GroupsParser</a> : <span class="keyword">public</span> QObject</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;{</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    Q_OBJECT</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_groups_parser.html#a32004bf5218a9c5b7921b15595586d1d">GroupsParser</a>(QObject *parent = 0);</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
-<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="class_groups_parser.html#a4cff6f1db69686b3132b01dcad77044c">   41</a></span>&#160;    <span class="keyword">const</span> std::list&lt;std::pair&lt;QString, std::list&lt;SLightDevice&gt; &gt; &gt;&amp; <a class="code" href="class_groups_parser.html#a4cff6f1db69686b3132b01dcad77044c">moodList</a>() { <span class="keywordflow">return</span> mMoodList; }</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
-<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="class_groups_parser.html#a4873107ce19ff51e0973aa5890a950a6">   48</a></span>&#160;    <span class="keyword">const</span> std::list&lt;std::pair&lt;QString, std::list&lt;SLightDevice&gt; &gt; &gt;&amp; <a class="code" href="class_groups_parser.html#a4873107ce19ff51e0973aa5890a950a6">collectionList</a>() { <span class="keywordflow">return</span> mCollectionList; }</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_groups_parser.html#a53d4e7e1c00288b4cdde23a81bce319a">saveNewGroup</a>(<span class="keyword">const</span> QString&amp; groupName, <span class="keyword">const</span> std::list&lt;SLightDevice&gt;&amp; devices);</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_groups_parser.html#aca808c740a3956028b3f10ec816f16e1">removeGroup</a>(<span class="keyword">const</span> QString&amp; groupName);</div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="class_groups_parser.html">   25</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_groups_parser.html">GroupsParser</a> : <span class="keyword">public</span> QObject</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;{</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    Q_OBJECT</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_groups_parser.html#a32004bf5218a9c5b7921b15595586d1d">GroupsParser</a>(QObject *parent = 0);</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
+<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="class_groups_parser.html#a4cff6f1db69686b3132b01dcad77044c">   39</a></span>&#160;    <span class="keyword">const</span> std::list&lt;std::pair&lt;QString, std::list&lt;SLightDevice&gt; &gt; &gt;&amp; <a class="code" href="class_groups_parser.html#a4cff6f1db69686b3132b01dcad77044c">moodList</a>() { <span class="keywordflow">return</span> mMoodList; }</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
+<div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="class_groups_parser.html#a4873107ce19ff51e0973aa5890a950a6">   46</a></span>&#160;    <span class="keyword">const</span> std::list&lt;std::pair&lt;QString, std::list&lt;SLightDevice&gt; &gt; &gt;&amp; <a class="code" href="class_groups_parser.html#a4873107ce19ff51e0973aa5890a950a6">collectionList</a>() { <span class="keywordflow">return</span> mCollectionList; }</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_groups_parser.html#a53d4e7e1c00288b4cdde23a81bce319a">saveNewGroup</a>(<span class="keyword">const</span> QString&amp; groupName, <span class="keyword">const</span> std::list&lt;SLightDevice&gt;&amp; devices);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_groups_parser.html#aca808c740a3956028b3f10ec816f16e1">removeGroup</a>(<span class="keyword">const</span> QString&amp; groupName);</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="keyword">private</span>:</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">bool</span> saveFile();</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordtype">bool</span> openFile();</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordtype">bool</span> checkIfGroupIsValid(<span class="keyword">const</span> QJsonObject&amp; <span class="keywordtype">object</span>);</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keywordtype">void</span> parseMood(<span class="keyword">const</span> QJsonObject&amp; <span class="keywordtype">object</span>);</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="keywordtype">void</span> parseCollection(<span class="keyword">const</span> QJsonObject&amp; <span class="keywordtype">object</span>);</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    std::list&lt;std::pair&lt;QString, std::list&lt;SLightDevice&gt; &gt; &gt; mMoodList;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    std::list&lt;std::pair&lt;QString, std::list&lt;SLightDevice&gt; &gt; &gt; mCollectionList;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    QJsonDocument mJsonData;</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;};</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="preprocessor">#endif // GROUPSPARSER_H</span></div>
-<div class="ttc" id="class_groups_parser_html_a32004bf5218a9c5b7921b15595586d1d"><div class="ttname"><a href="class_groups_parser.html#a32004bf5218a9c5b7921b15595586d1d">GroupsParser::GroupsParser</a></div><div class="ttdeci">GroupsParser(QObject *parent=0)</div><div class="ttdef"><b>Definition:</b> groupsparser.cpp:7</div></div>
-<div class="ttc" id="class_groups_parser_html_aca808c740a3956028b3f10ec816f16e1"><div class="ttname"><a href="class_groups_parser.html#aca808c740a3956028b3f10ec816f16e1">GroupsParser::removeGroup</a></div><div class="ttdeci">bool removeGroup(const QString &amp;groupName)</div><div class="ttdoc">removeGroup remove the group of devices associated with the name provided. If no group has this name...</div><div class="ttdef"><b>Definition:</b> groupsparser.cpp:82</div></div>
-<div class="ttc" id="class_groups_parser_html_a4873107ce19ff51e0973aa5890a950a6"><div class="ttname"><a href="class_groups_parser.html#a4873107ce19ff51e0973aa5890a950a6">GroupsParser::collectionList</a></div><div class="ttdeci">const std::list&lt; std::pair&lt; QString, std::list&lt; SLightDevice &gt; &gt; &gt; &amp; collectionList()</div><div class="ttdoc">collectionList getter for all known collections. </div><div class="ttdef"><b>Definition:</b> groupsparser.h:48</div></div>
-<div class="ttc" id="class_groups_parser_html_a53d4e7e1c00288b4cdde23a81bce319a"><div class="ttname"><a href="class_groups_parser.html#a53d4e7e1c00288b4cdde23a81bce319a">GroupsParser::saveNewGroup</a></div><div class="ttdeci">void saveNewGroup(const QString &amp;groupName, const std::list&lt; SLightDevice &gt; &amp;devices)</div><div class="ttdoc">saveNewGroup save a new group of devices to JSON data, which then gets saved to file in AppData...</div><div class="ttdef"><b>Definition:</b> groupsparser.cpp:34</div></div>
-<div class="ttc" id="class_groups_parser_html_a4cff6f1db69686b3132b01dcad77044c"><div class="ttname"><a href="class_groups_parser.html#a4cff6f1db69686b3132b01dcad77044c">GroupsParser::moodList</a></div><div class="ttdeci">const std::list&lt; std::pair&lt; QString, std::list&lt; SLightDevice &gt; &gt; &gt; &amp; moodList()</div><div class="ttdoc">moodList getter for all known moods. </div><div class="ttdef"><b>Definition:</b> groupsparser.h:41</div></div>
-<div class="ttc" id="class_groups_parser_html"><div class="ttname"><a href="class_groups_parser.html">GroupsParser</a></div><div class="ttdoc">The GroupsParser class Manipulates and Reads a JSON representation of multiple lights. There exists two types of "groups". The first is a collection which contains any number of light devices but does not contain any reference to the lights overall state. The second is a mood, which contains both the path to the light device and data such as its brightness, color, etc. </div><div class="ttdef"><b>Definition:</b> groupsparser.h:27</div></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordtype">bool</span> saveFile();</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordtype">bool</span> openFile();</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordtype">bool</span> checkIfGroupIsValid(<span class="keyword">const</span> QJsonObject&amp; <span class="keywordtype">object</span>);</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keywordtype">void</span> parseMood(<span class="keyword">const</span> QJsonObject&amp; <span class="keywordtype">object</span>);</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordtype">void</span> parseCollection(<span class="keyword">const</span> QJsonObject&amp; <span class="keywordtype">object</span>);</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    std::list&lt;std::pair&lt;QString, std::list&lt;SLightDevice&gt; &gt; &gt; mMoodList;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    std::list&lt;std::pair&lt;QString, std::list&lt;SLightDevice&gt; &gt; &gt; mCollectionList;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    QJsonDocument mJsonData;</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;};</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="preprocessor">#endif // GROUPSPARSER_H</span></div>
+<div class="ttc" id="class_groups_parser_html_a32004bf5218a9c5b7921b15595586d1d"><div class="ttname"><a href="class_groups_parser.html#a32004bf5218a9c5b7921b15595586d1d">GroupsParser::GroupsParser</a></div><div class="ttdeci">GroupsParser(QObject *parent=0)</div><div class="ttdef"><b>Definition:</b> groupsparser.cpp:13</div></div>
+<div class="ttc" id="class_groups_parser_html_aca808c740a3956028b3f10ec816f16e1"><div class="ttname"><a href="class_groups_parser.html#aca808c740a3956028b3f10ec816f16e1">GroupsParser::removeGroup</a></div><div class="ttdeci">bool removeGroup(const QString &amp;groupName)</div><div class="ttdoc">removeGroup remove the group of devices associated with the name provided. If no group has this name...</div><div class="ttdef"><b>Definition:</b> groupsparser.cpp:88</div></div>
+<div class="ttc" id="class_groups_parser_html_a4873107ce19ff51e0973aa5890a950a6"><div class="ttname"><a href="class_groups_parser.html#a4873107ce19ff51e0973aa5890a950a6">GroupsParser::collectionList</a></div><div class="ttdeci">const std::list&lt; std::pair&lt; QString, std::list&lt; SLightDevice &gt; &gt; &gt; &amp; collectionList()</div><div class="ttdoc">collectionList getter for all known collections. </div><div class="ttdef"><b>Definition:</b> groupsparser.h:46</div></div>
+<div class="ttc" id="class_groups_parser_html_a53d4e7e1c00288b4cdde23a81bce319a"><div class="ttname"><a href="class_groups_parser.html#a53d4e7e1c00288b4cdde23a81bce319a">GroupsParser::saveNewGroup</a></div><div class="ttdeci">void saveNewGroup(const QString &amp;groupName, const std::list&lt; SLightDevice &gt; &amp;devices)</div><div class="ttdoc">saveNewGroup save a new group of devices to JSON data, which then gets saved to file in AppData...</div><div class="ttdef"><b>Definition:</b> groupsparser.cpp:40</div></div>
+<div class="ttc" id="class_groups_parser_html_a4cff6f1db69686b3132b01dcad77044c"><div class="ttname"><a href="class_groups_parser.html#a4cff6f1db69686b3132b01dcad77044c">GroupsParser::moodList</a></div><div class="ttdeci">const std::list&lt; std::pair&lt; QString, std::list&lt; SLightDevice &gt; &gt; &gt; &amp; moodList()</div><div class="ttdoc">moodList getter for all known moods. </div><div class="ttdef"><b>Definition:</b> groupsparser.h:39</div></div>
+<div class="ttc" id="class_groups_parser_html"><div class="ttname"><a href="class_groups_parser.html">GroupsParser</a></div><div class="ttdoc">The GroupsParser class Manipulates and Reads a JSON representation of multiple lights. There exists two types of "groups". The first is a collection which contains any number of light devices but does not contain any reference to the lights overall state. The second is a mood, which contains both the path to the light device and data such as its brightness, color, etc. </div><div class="ttdef"><b>Definition:</b> groupsparser.h:25</div></div>
 </div><!-- fragment --></div><!-- contents -->
 
 <hr>

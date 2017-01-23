@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.82</span>
+   &#160;<span id="projectnumber">v0.9.85</span>
    </div>
   </td>
  </tr>
@@ -55,29 +55,102 @@
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#define DISCOVERYPAGE_H</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;</div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;QWidget&gt;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;</div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_ui.html">Ui</a> {</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">class </span><a class="code" href="class_discovery_page.html">DiscoveryPage</a>;</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;}</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;</div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="class_discovery_page.html">   14</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_discovery_page.html">DiscoveryPage</a> : <span class="keyword">public</span> QWidget</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;{</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    Q_OBJECT</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_discovery_page.html#a53c7702703db1aa84e70fceb6bf7873d">DiscoveryPage</a>(QWidget *parent = 0);</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <a class="code" href="class_discovery_page.html#a070ecb741593f4bb79a9eab09e9daa58">~DiscoveryPage</a>();</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    Ui::DiscoveryPage *ui;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;};</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="preprocessor">#endif // DISCOVERYPAGE_H</span></div>
-<div class="ttc" id="namespace_ui_html"><div class="ttname"><a href="namespace_ui.html">Ui</a></div><div class="ttdef"><b>Definition:</b> connectionpage.h:21</div></div>
-<div class="ttc" id="class_discovery_page_html_a53c7702703db1aa84e70fceb6bf7873d"><div class="ttname"><a href="class_discovery_page.html#a53c7702703db1aa84e70fceb6bf7873d">DiscoveryPage::DiscoveryPage</a></div><div class="ttdeci">DiscoveryPage(QWidget *parent=0)</div><div class="ttdef"><b>Definition:</b> discoverypage.cpp:4</div></div>
-<div class="ttc" id="class_discovery_page_html"><div class="ttname"><a href="class_discovery_page.html">DiscoveryPage</a></div><div class="ttdoc">The DiscoveryPage class An unimplemented page. Will be used to walk a user through the discovery step...</div><div class="ttdef"><b>Definition:</b> discoverypage.h:14</div></div>
-<div class="ttc" id="class_discovery_page_html_a070ecb741593f4bb79a9eab09e9daa58"><div class="ttname"><a href="class_discovery_page.html#a070ecb741593f4bb79a9eab09e9daa58">DiscoveryPage::~DiscoveryPage</a></div><div class="ttdeci">~DiscoveryPage()</div><div class="ttdef"><b>Definition:</b> discoverypage.cpp:11</div></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;QPushButton&gt;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;QListWidget&gt;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;lightingpage.h&quot;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;commlayer.h&quot;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_ui.html">Ui</a> {</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">class </span><a class="code" href="class_discovery_page.html">DiscoveryPage</a>;</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;}</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
+<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="class_discovery_page.html">   26</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_discovery_page.html">DiscoveryPage</a> : <span class="keyword">public</span> QWidget, <span class="keyword">public</span> <a class="code" href="class_lighting_page.html">LightingPage</a></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;{</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    Q_OBJECT</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_discovery_page.html#a53c7702703db1aa84e70fceb6bf7873d">DiscoveryPage</a>(QWidget *parent = 0);</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <a class="code" href="class_discovery_page.html#a070ecb741593f4bb79a9eab09e9daa58">~DiscoveryPage</a>();</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
+<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="class_discovery_page.html#abcb0ab4458528ff4b9878fc8cedddf8c">   47</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_discovery_page.html#abcb0ab4458528ff4b9878fc8cedddf8c">connectCommLayer</a>(<a class="code" href="class_comm_layer.html">CommLayer</a> *layer) {</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        mComm = layer;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        connect(mComm, SIGNAL(hueDiscoveryStateChange(<span class="keywordtype">int</span>)), <span class="keyword">this</span>, SLOT(<a class="code" href="class_discovery_page.html#a611cce4bdcd7886db424d2cb2d8c542a">hueDiscoveryUpdate</a>(<span class="keywordtype">int</span>)));</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    }</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;signals:</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_discovery_page.html#a1b9e6c3d67bc0784241ca527c1b7e082">startButtonClicked</a>();</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="keyword">public</span> slots:</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_discovery_page.html#a611cce4bdcd7886db424d2cb2d8c542a">hueDiscoveryUpdate</a>(<span class="keywordtype">int</span>);</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="keyword">private</span> slots:</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">void</span> startClicked() { emit <a class="code" href="class_discovery_page.html#a1b9e6c3d67bc0784241ca527c1b7e082">startButtonClicked</a>(); }</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordtype">void</span> plusButtonClicked();</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordtype">void</span> minusButtonClicked();</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keywordtype">void</span> connectedListClicked(QListWidgetItem *);</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keywordtype">void</span> discoveringListClicked(QListWidgetItem *);</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keywordtype">void</span> commTypeSelected(<span class="keywordtype">int</span>);</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="keywordtype">void</span> renderUI();</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_discovery_page.html#a890c5f936ce064e116992376bf91d8f0">showEvent</a>(QShowEvent *);</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_discovery_page.html#add1030b7c2bdb7ed205c1f1de3ffee58">hideEvent</a>(QHideEvent *);</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_discovery_page.html#a2e8442aae8deb7f1b3d4ebb58a54bd11">resizeEvent</a>(QResizeEvent *);</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_discovery_page.html#a554aa83d274773a031c3d42fa032dbaa">paintEvent</a>(QPaintEvent *);</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    Ui::DiscoveryPage *ui;</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    <span class="keywordtype">void</span> handleSerialDiscovery();</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    <span class="keywordtype">void</span> handleYunDiscovery();</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    <span class="keywordtype">void</span> fillList(QListWidget *list, std::list&lt;QString&gt;&amp; connections);</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    <span class="keywordtype">void</span> showAvailableCommTypeButtons();</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    <span class="keywordtype">void</span> changeCommTypeConnectionState(ECommType type, EConnectionState newState);</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    QPushButton *buttonByType(ECommType type);</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    <a class="code" href="class_comm_layer.html">CommLayer</a> *mComm;</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    ECommType mType;</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    EHueDiscoveryState mHueDiscoveryState;</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    std::vector&lt;QPixmap&gt; mButtonIcons;</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    std::vector&lt;EConnectionState&gt; mConnectionStates;</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;};</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;<span class="preprocessor">#endif // DISCOVERYPAGE_H</span></div>
+<div class="ttc" id="class_discovery_page_html_add1030b7c2bdb7ed205c1f1de3ffee58"><div class="ttname"><a href="class_discovery_page.html#add1030b7c2bdb7ed205c1f1de3ffee58">DiscoveryPage::hideEvent</a></div><div class="ttdeci">void hideEvent(QHideEvent *)</div><div class="ttdoc">hideEvent called as the page is hidden. This happens when a new page is displayed. </div><div class="ttdef"><b>Definition:</b> discoverypage.cpp:476</div></div>
+<div class="ttc" id="class_lighting_page_html"><div class="ttname"><a href="class_lighting_page.html">LightingPage</a></div><div class="ttdoc">Inherited by Lighting Pages, provides a link to the backend. </div><div class="ttdef"><b>Definition:</b> lightingpage.h:18</div></div>
+<div class="ttc" id="class_comm_layer_html"><div class="ttname"><a href="class_comm_layer.html">CommLayer</a></div><div class="ttdoc">The CommLayer class provides communication protocols that allow the user to connect and send packets ...</div><div class="ttdef"><b>Definition:</b> commlayer.h:31</div></div>
+<div class="ttc" id="namespace_ui_html"><div class="ttname"><a href="namespace_ui.html">Ui</a></div><div class="ttdoc">The HuePresetPage class unimplemented page of preset moods made specifically for hues. </div><div class="ttdef"><b>Definition:</b> connectionpage.h:15</div></div>
+<div class="ttc" id="class_discovery_page_html_a53c7702703db1aa84e70fceb6bf7873d"><div class="ttname"><a href="class_discovery_page.html#a53c7702703db1aa84e70fceb6bf7873d">DiscoveryPage::DiscoveryPage</a></div><div class="ttdeci">DiscoveryPage(QWidget *parent=0)</div><div class="ttdef"><b>Definition:</b> discoverypage.cpp:19</div></div>
+<div class="ttc" id="class_discovery_page_html_a611cce4bdcd7886db424d2cb2d8c542a"><div class="ttname"><a href="class_discovery_page.html#a611cce4bdcd7886db424d2cb2d8c542a">DiscoveryPage::hueDiscoveryUpdate</a></div><div class="ttdeci">void hueDiscoveryUpdate(int)</div><div class="ttdoc">hueDiscoveryUpdate provides an int representation of the EHueDiscoveryState of Hue&#39;s discovery object...</div><div class="ttdef"><b>Definition:</b> discoverypage.cpp:140</div></div>
+<div class="ttc" id="class_discovery_page_html"><div class="ttname"><a href="class_discovery_page.html">DiscoveryPage</a></div><div class="ttdoc">The DiscoveryPage class provides the user an interface to discover new connections with lights...</div><div class="ttdef"><b>Definition:</b> discoverypage.h:26</div></div>
+<div class="ttc" id="class_discovery_page_html_a890c5f936ce064e116992376bf91d8f0"><div class="ttname"><a href="class_discovery_page.html#a890c5f936ce064e116992376bf91d8f0">DiscoveryPage::showEvent</a></div><div class="ttdeci">void showEvent(QShowEvent *)</div><div class="ttdoc">showEvent called before the this page is shown. Used to sync up any changes that may have happened on...</div><div class="ttdef"><b>Definition:</b> discoverypage.cpp:468</div></div>
+<div class="ttc" id="class_discovery_page_html_abcb0ab4458528ff4b9878fc8cedddf8c"><div class="ttname"><a href="class_discovery_page.html#abcb0ab4458528ff4b9878fc8cedddf8c">DiscoveryPage::connectCommLayer</a></div><div class="ttdeci">void connectCommLayer(CommLayer *layer)</div><div class="ttdoc">connectCommLayer connect to commlayer. In a future update the commLayer pointer on every page will be...</div><div class="ttdef"><b>Definition:</b> discoverypage.h:47</div></div>
+<div class="ttc" id="class_discovery_page_html_a1b9e6c3d67bc0784241ca527c1b7e082"><div class="ttname"><a href="class_discovery_page.html#a1b9e6c3d67bc0784241ca527c1b7e082">DiscoveryPage::startButtonClicked</a></div><div class="ttdeci">void startButtonClicked()</div><div class="ttdoc">startButtonClicked sent whenver the start button is clicked so that the discovery page can be hidden...</div></div>
+<div class="ttc" id="class_discovery_page_html_a554aa83d274773a031c3d42fa032dbaa"><div class="ttname"><a href="class_discovery_page.html#a554aa83d274773a031c3d42fa032dbaa">DiscoveryPage::paintEvent</a></div><div class="ttdeci">void paintEvent(QPaintEvent *)</div><div class="ttdoc">paintEvent paint event for rendering. used to overwrite the background color of the discovery page so...</div><div class="ttdef"><b>Definition:</b> discoverypage.cpp:535</div></div>
+<div class="ttc" id="class_discovery_page_html_a2e8442aae8deb7f1b3d4ebb58a54bd11"><div class="ttname"><a href="class_discovery_page.html#a2e8442aae8deb7f1b3d4ebb58a54bd11">DiscoveryPage::resizeEvent</a></div><div class="ttdeci">void resizeEvent(QResizeEvent *)</div><div class="ttdoc">resizeEvent called every time the main window is resized. </div><div class="ttdef"><b>Definition:</b> discoverypage.cpp:482</div></div>
+<div class="ttc" id="class_discovery_page_html_a070ecb741593f4bb79a9eab09e9daa58"><div class="ttname"><a href="class_discovery_page.html#a070ecb741593f4bb79a9eab09e9daa58">DiscoveryPage::~DiscoveryPage</a></div><div class="ttdeci">~DiscoveryPage()</div><div class="ttdef"><b>Definition:</b> discoverypage.cpp:93</div></div>
 </div><!-- fragment --></div><!-- contents -->
 
 <hr>

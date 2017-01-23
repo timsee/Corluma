@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.82</span>
+   &#160;<span id="projectnumber">v0.9.85</span>
    </div>
   </td>
  </tr>
@@ -123,6 +123,39 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a84dfaf04e9d6f01b3bee479cf0a6d3e3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_s_hue_light.html">SHueLight</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a84dfaf04e9d6f01b3bee479cf0a6d3e3">hueLightFromLightDevice</a> (const SLightDevice &amp;device)</td></tr>
 <tr class="memdesc:a84dfaf04e9d6f01b3bee479cf0a6d3e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">hueLightFromLightDevice For every SLightDevice with type hue, there is a <a class="el" href="struct_s_hue_light.html" title="The SHueLight struct a struct that stores all the relevant data received from a state update from the...">SHueLight</a> that represents the same device. The <a class="el" href="struct_s_hue_light.html" title="The SHueLight struct a struct that stores all the relevant data received from a state update from the...">SHueLight</a> contains hue-specific information such as the bulb's software version and model ID. This information This function takes the SLightDevice and returns the mapped <a class="el" href="struct_s_hue_light.html" title="The SHueLight struct a struct that stores all the relevant data received from a state update from the...">SHueLight</a>  <a href="#a84dfaf04e9d6f01b3bee479cf0a6d3e3">More...</a><br /></td></tr>
 <tr class="separator:a84dfaf04e9d6f01b3bee479cf0a6d3e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b80833f0f35e62ea27427c139379fa7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a8b80833f0f35e62ea27427c139379fa7">sendSchedule</a> (<a class="el" href="struct_s_hue_schedule.html">SHueSchedule</a> schedule)</td></tr>
+<tr class="memdesc:a8b80833f0f35e62ea27427c139379fa7"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendSchedule send a schedule to the Hue Bridge. This schedule gets kept on the bridge and will not be deleted unless explicitly asked to be deleted.  <a href="#a8b80833f0f35e62ea27427c139379fa7">More...</a><br /></td></tr>
+<tr class="separator:a8b80833f0f35e62ea27427c139379fa7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adcca776fc1411c8719809ad2f200d4ad"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adcca776fc1411c8719809ad2f200d4ad"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#adcca776fc1411c8719809ad2f200d4ad">resetScheduleTimer</a> ()</td></tr>
+<tr class="memdesc:adcca776fc1411c8719809ad2f200d4ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetScheduleTimer schedules are updated on a separate thread from the rest of the hue state updates. This function resets the timer and continues requesting the schedule. <br /></td></tr>
+<tr class="separator:adcca776fc1411c8719809ad2f200d4ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86070a5c88cd7afdf0322c0e7da0d37c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a86070a5c88cd7afdf0322c0e7da0d37c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a86070a5c88cd7afdf0322c0e7da0d37c">stopScheduleTimer</a> ()</td></tr>
+<tr class="memdesc:a86070a5c88cd7afdf0322c0e7da0d37c"><td class="mdescLeft">&#160;</td><td class="mdescRight">stopScheduleTimer stop the schedule update thread. <br /></td></tr>
+<tr class="separator:a86070a5c88cd7afdf0322c0e7da0d37c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10504c9e160b93d89544ec5191de6cc3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a10504c9e160b93d89544ec5191de6cc3"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a10504c9e160b93d89544ec5191de6cc3">createIdleTimeoutsForConnectedLights</a> ()</td></tr>
+<tr class="memdesc:a10504c9e160b93d89544ec5191de6cc3"><td class="mdescLeft">&#160;</td><td class="mdescRight">createIdleTimeoutsForConnectedLights Hue lights don't have a default idle timeout option, RGB-LED-Routines lights do. What do!? We create a schedule that maps to each light individually, and after packets are done syncing if a timeout is enabled, the schedule is updated. <br /></td></tr>
+<tr class="separator:a10504c9e160b93d89544ec5191de6cc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b0fbc05c68eae8656ccf9ae2a2d1753"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a2b0fbc05c68eae8656ccf9ae2a2d1753">createIdleTimeout</a> (int i, int minutes)</td></tr>
+<tr class="memdesc:a2b0fbc05c68eae8656ccf9ae2a2d1753"><td class="mdescLeft">&#160;</td><td class="mdescRight">createIdleTimeout create an idle timeout schedule for a specific light.  <a href="#a2b0fbc05c68eae8656ccf9ae2a2d1753">More...</a><br /></td></tr>
+<tr class="separator:a2b0fbc05c68eae8656ccf9ae2a2d1753"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b6073064325473abf0459a3cdea3bde"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a3b6073064325473abf0459a3cdea3bde">postJson</a> (QString resource, QJsonObject object)</td></tr>
+<tr class="memdesc:a3b6073064325473abf0459a3cdea3bde"><td class="mdescLeft">&#160;</td><td class="mdescRight">postJson helper function that takes a JSON object and posts it to the hue bridge.  <a href="#a3b6073064325473abf0459a3cdea3bde">More...</a><br /></td></tr>
+<tr class="separator:a3b6073064325473abf0459a3cdea3bde"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5401aeb2a77f24454d55d4a2914ad488"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a5401aeb2a77f24454d55d4a2914ad488">putJson</a> (QString resource, QJsonObject object)</td></tr>
+<tr class="memdesc:a5401aeb2a77f24454d55d4a2914ad488"><td class="mdescLeft">&#160;</td><td class="mdescRight">putJson helper function that takes a JSON object and puts it on the hue bridge.  <a href="#a5401aeb2a77f24454d55d4a2914ad488">More...</a><br /></td></tr>
+<tr class="separator:a5401aeb2a77f24454d55d4a2914ad488"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7fed02de7e4c501b076860a18ac0eba"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#ae7fed02de7e4c501b076860a18ac0eba">updateIdleTimeout</a> (bool enable, int scheduleID, int minutes)</td></tr>
+<tr class="memdesc:ae7fed02de7e4c501b076860a18ac0eba"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateIdleTimeout upate the idle tieout for a specific schedule. This is called during data sync to turn off the idle timeout and after datasync it gets called again to turn the idle timeout back on.  <a href="#ae7fed02de7e4c501b076860a18ac0eba">More...</a><br /></td></tr>
+<tr class="separator:ae7fed02de7e4c501b076860a18ac0eba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e1b2d69fc4a3e4b4a56e8a712cf794f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_s_hue_bridge.html">SHueBridge</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a3e1b2d69fc4a3e4b4a56e8a712cf794f">bridge</a> ()</td></tr>
+<tr class="memdesc:a3e1b2d69fc4a3e4b4a56e8a712cf794f"><td class="mdescLeft">&#160;</td><td class="mdescRight">bridge getter for the bridge and its associated info  <a href="#a3e1b2d69fc4a3e4b4a56e8a712cf794f">More...</a><br /></td></tr>
+<tr class="separator:a3e1b2d69fc4a3e4b4a56e8a712cf794f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b39a6fa768af92c308428a2f597e649"><td class="memItemLeft" align="right" valign="top">std::list&lt; <a class="el" href="struct_s_hue_schedule.html">SHueSchedule</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a9b39a6fa768af92c308428a2f597e649">schedules</a> ()</td></tr>
+<tr class="memdesc:a9b39a6fa768af92c308428a2f597e649"><td class="mdescLeft">&#160;</td><td class="mdescRight">schedules getter for a list of all known schedules  <a href="#a9b39a6fa768af92c308428a2f597e649">More...</a><br /></td></tr>
+<tr class="separator:a9b39a6fa768af92c308428a2f597e649"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
 <tr class="memitem:aea9af432f13faf2a28b6a9fd5d5000e9 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aea9af432f13faf2a28b6a9fd5d5000e9"></a>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aea9af432f13faf2a28b6a9fd5d5000e9">~CommType</a> ()</td></tr>
@@ -167,6 +200,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 &lt; SLightDevice &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#acb1865d11bc8e1f01a925ed68e284691">deviceTable</a> ()</td></tr>
 <tr class="memdesc:acb1865d11bc8e1f01a925ed68e284691 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceList list of the light devices  <a href="#acb1865d11bc8e1f01a925ed68e284691">More...</a><br /></td></tr>
 <tr class="separator:acb1865d11bc8e1f01a925ed68e284691 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4567125718c3360cabf33c6ac1b00226 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">const std::list&lt; QString &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a4567125718c3360cabf33c6ac1b00226">discoveredList</a> ()</td></tr>
+<tr class="memdesc:a4567125718c3360cabf33c6ac1b00226 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">discoveredList getter for list of discovered devices  <a href="#a4567125718c3360cabf33c6ac1b00226">More...</a><br /></td></tr>
+<tr class="separator:a4567125718c3360cabf33c6ac1b00226 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a301c069f2dc8787a9fb8bdf8ec5606c6 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">const std::list&lt; QString &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a301c069f2dc8787a9fb8bdf8ec5606c6">undiscoveredList</a> ()</td></tr>
+<tr class="memdesc:a301c069f2dc8787a9fb8bdf8ec5606c6 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">undiscoveredList getter for list of undiscovered devices.  <a href="#a301c069f2dc8787a9fb8bdf8ec5606c6">More...</a><br /></td></tr>
+<tr class="separator:a301c069f2dc8787a9fb8bdf8ec5606c6 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaa25ac27d5bdb85a13b8d461ca1a960c inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aaa25ac27d5bdb85a13b8d461ca1a960c">setupConnectionList</a> (ECommType type)</td></tr>
 <tr class="memdesc:aaa25ac27d5bdb85a13b8d461ca1a960c inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">setupConnectionList initializes the connection list and reloads it from system memory, if needed  <a href="#aaa25ac27d5bdb85a13b8d461ca1a960c">More...</a><br /></td></tr>
 <tr class="separator:aaa25ac27d5bdb85a13b8d461ca1a960c inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -201,17 +240,17 @@ std::unordered_map<br class="typebreak" />
 <tr class="separator:ab17df6d25cf2db9d844945d6f135e65c inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a35f88dea2ab73337cef428d5aed5fec6 inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a35f88dea2ab73337cef428d5aed5fec6"></a>
 std::list&lt; std::pair&lt; QString, <br class="typebreak" />
-CommThrottle * &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a35f88dea2ab73337cef428d5aed5fec6">mThrottleList</a></td></tr>
+<a class="el" href="class_comm_throttle.html">CommThrottle</a> * &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a35f88dea2ab73337cef428d5aed5fec6">mThrottleList</a></td></tr>
 <tr class="memdesc:a35f88dea2ab73337cef428d5aed5fec6 inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mThrottleList list of throttles paired with strings. This allows each different discovered device to use a different throttle. <br /></td></tr>
 <tr class="separator:a35f88dea2ab73337cef428d5aed5fec6 inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4880167268de709a679fd25629eb397 inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa4880167268de709a679fd25629eb397"></a>
-std::list&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aa4880167268de709a679fd25629eb397">mUndiscoveredList</a></td></tr>
-<tr class="memdesc:aa4880167268de709a679fd25629eb397 inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mUndiscoveredList list of controllers that are not currently discovered but are running discovery routines. <br /></td></tr>
-<tr class="separator:aa4880167268de709a679fd25629eb397 inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a72eb17fb724feb20de438b6c304e35ba inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a72eb17fb724feb20de438b6c304e35ba"></a>
-std::list&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a72eb17fb724feb20de438b6c304e35ba">mDiscoveryList</a></td></tr>
-<tr class="memdesc:a72eb17fb724feb20de438b6c304e35ba inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mDiscoveryList list of devices that have been discovered properly. <br /></td></tr>
-<tr class="separator:a72eb17fb724feb20de438b6c304e35ba inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02ec483a63cf7b4946653ca8dea9ae46 inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a02ec483a63cf7b4946653ca8dea9ae46"></a>
+std::list&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a02ec483a63cf7b4946653ca8dea9ae46">mUndiscoveredList</a></td></tr>
+<tr class="memdesc:a02ec483a63cf7b4946653ca8dea9ae46 inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mUndiscoveredList list of controllers that are not currently discovered but are running discovery routines. <br /></td></tr>
+<tr class="separator:a02ec483a63cf7b4946653ca8dea9ae46 inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18c442a3f2068108009d49cab7e02050 inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a18c442a3f2068108009d49cab7e02050"></a>
+std::list&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a18c442a3f2068108009d49cab7e02050">mDiscoveredList</a></td></tr>
+<tr class="memdesc:a18c442a3f2068108009d49cab7e02050 inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mDiscoveredList list of devices that have been discovered properly. <br /></td></tr>
+<tr class="separator:a18c442a3f2068108009d49cab7e02050 inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5fad0675d5baa960558751025bc5ec3a inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5fad0675d5baa960558751025bc5ec3a"></a>
 QTimer *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a5fad0675d5baa960558751025bc5ec3a">mStateUpdateTimer</a></td></tr>
 <tr class="memdesc:a5fad0675d5baa960558751025bc5ec3a inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mStateUpdateTimer Polls the controller every few seconds requesting updates on all of its devices. <br /></td></tr>
@@ -242,8 +281,12 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:a47a3020ab06d49b995e22c7b4567017e inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>It uses a <a class="el" href="class_hue_bridge_discovery.html" title="The HueBridgeDiscovery class is an object that handles the discovery of a hue bridge by using a combi...">HueBridgeDiscovery</a> object to store data about the Hue Bridge and to run discovery methods if none is currently connected. Once a connection is established, it uses its mStateUpdateTimer to poll for updates from the Bridge about the current lights. This object also acts as a layer that takes the protocols from the rest of the application, and converts it to packets that the Bridge can understand. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License.</dd></dl>
+<pre class="fragment">   It uses a HueBridgeDiscovery object to store data about the Hue Bridge
+   and to run discovery methods if none is currently connected. Once a connection
+   is established, it uses its mStateUpdateTimer to poll for updates from the Bridge
+   about the current lights. This object also acts as a layer that takes the protocols from
+   the rest of the application, and converts it to packets that the Bridge can understand.</pre> </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a6437a21abfd54172305bd1eda8c52845"></a>
 <div class="memitem">
 <div class="memproto">
@@ -256,11 +299,35 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2016. Released under the GNU General Public License. </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a3e1b2d69fc4a3e4b4a56e8a712cf794f"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_s_hue_bridge.html">SHueBridge</a> CommHue::bridge </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>struct that represents the bridge. </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="ae0bd56e1ed2b136716bb5c8a42f3d736"></a>
 <div class="memitem">
 <div class="memproto">
@@ -365,6 +432,39 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
+<a class="anchor" id="a2b0fbc05c68eae8656ccf9ae2a2d1753"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CommHue::createIdleTimeout </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>i</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>minutes</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">i</td><td>the index of the light in the Hue Bridge. </td></tr>
+    <tr><td class="paramname">minutes</td><td>the amount of minutes it takes for a light to idle off. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="ae88f3e48667d971fcfb337a06fce28b7"></a>
 <div class="memitem">
 <div class="memproto">
@@ -412,6 +512,96 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
+<a class="anchor" id="a3b6073064325473abf0459a3cdea3bde"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CommHue::postJson </td>
+          <td>(</td>
+          <td class="paramtype">QString&#160;</td>
+          <td class="paramname"><em>resource</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">QJsonObject&#160;</td>
+          <td class="paramname"><em>object</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">resource</td><td>the resource that you want to control with the hue bridge. This may be a group, light, or schedule. </td></tr>
+    <tr><td class="paramname">object</td><td>the JSON object that you want to give to the resource. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a5401aeb2a77f24454d55d4a2914ad488"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CommHue::putJson </td>
+          <td>(</td>
+          <td class="paramtype">QString&#160;</td>
+          <td class="paramname"><em>resource</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">QJsonObject&#160;</td>
+          <td class="paramname"><em>object</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">resource</td><td>the resource that you want to control with the hue bridge. This may be a group, light, or schedule. </td></tr>
+    <tr><td class="paramname">object</td><td>the JSON object that you want to give to the resource. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a9b39a6fa768af92c308428a2f597e649"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::list&lt;<a class="el" href="struct_s_hue_schedule.html">SHueSchedule</a>&gt; CommHue::schedules </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>list of all known schedules. </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a549a6fa8dfd50a1e241a538efc693376"></a>
 <div class="memitem">
 <div class="memproto">
@@ -454,6 +644,28 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
+<a class="anchor" id="a8b80833f0f35e62ea27427c139379fa7"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CommHue::sendSchedule </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_s_hue_schedule.html">SHueSchedule</a>&#160;</td>
+          <td class="paramname"><em>schedule</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">schedule</td><td>the new schedule for the bridge. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="a14a5ac47af072e9573f4349552de3b8a"></a>
 <div class="memitem">
 <div class="memproto">
@@ -492,6 +704,46 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">lightIndex</td><td>the index of the hue you want to turn on. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="ae7fed02de7e4c501b076860a18ac0eba"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CommHue::updateIdleTimeout </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>enable</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>scheduleID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>minutes</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">enable</td><td>true to turn on the idle timeout, false to turn it off. </td></tr>
+    <tr><td class="paramname">scheduleID</td><td>The ID of the schedule that you want to turn on and off. This ID does not necessarily map to the resource or group ID. </td></tr>
+    <tr><td class="paramname">minutes</td><td>the number of minutes it should take to timeout. </td></tr>
   </table>
   </dd>
 </dl>
