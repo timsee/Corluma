@@ -1,8 +1,9 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
  */
+
 
 #include "commudp.h"
 
@@ -37,7 +38,7 @@ CommUDP::~CommUDP() {
 }
 
 void CommUDP::startup() {
-    mDiscoveryTimer->start(250);
+    mDiscoveryTimer->start(1000);
     resetStateUpdateTimeout();
 
     QString localIP;
@@ -59,7 +60,7 @@ void CommUDP::startup() {
         qDebug() << "Already bound!";
     } else if (mSocket->bind(QHostAddress(localIP), PORT)) {
         connect(mSocket, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()));
-        mDiscoveryTimer->start(250);
+        mDiscoveryTimer->start(1000);
         mBound = true;
     } else {
         qDebug() << "binding to UDP discovery server failed";
@@ -120,7 +121,7 @@ void CommUDP::stateUpdate() {
         }
 
         if (mDiscoveryMode
-                && mDiscoveryList.size() < deviceTable().size()
+                && mDiscoveredList.size() < deviceTable().size()
                 && !mDiscoveryTimer->isActive()) {
             mDiscoveryTimer->start(333);
         } else if (!mDiscoveryMode && mDiscoveryTimer->isActive()) {
@@ -141,8 +142,9 @@ void CommUDP::sendThrottleBuffer(QString bufferedConnection, QString bufferedMes
 void CommUDP::discoveryRoutine() {
    QString discoveryPacket = QString("DISCOVERY_PACKET");
    for (auto&& it : mDeviceTable) {
-         bool found = (std::find(mDiscoveryList.begin(), mDiscoveryList.end(), QString::fromUtf8(it.first.c_str())) != mDiscoveryList.end());
+         bool found = (std::find(mDiscoveredList.begin(), mDiscoveredList.end(), QString::fromUtf8(it.first.c_str())) != mDiscoveredList.end());
          if (!found) {
+             //qDebug() << "discovery packet to " << QString(it.first.c_str());
              mSocket->writeDatagram(discoveryPacket.toUtf8().data(),
                                     QHostAddress(QString::fromUtf8(it.first.c_str())),
                                     PORT);
@@ -162,7 +164,7 @@ void CommUDP::readPendingDatagrams() {
         quint16 senderPort;
         mSocket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
         QString payload = QString::fromUtf8(datagram);
-        // qDebug() << "UDP payload" << payload << "from" << sender.toString();
+        //qDebug() << "UDP payload" << payload << payload.size() << "from" << sender.toString();
         QString discoveryPacket = "DISCOVERY_PACKET";
 
         for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {

@@ -6,11 +6,10 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
- */
-
-/*!
+ *
+ *
  * \brief The CommTypeSettings class manages which CommTypes are enabled and disabled. It manages the settings
  *        between application sessions by saving to a QSettings instance.
  */
@@ -44,24 +43,6 @@ public:
     bool commTypeEnabled(ECommType type);
 
     //------------------
-    // Default CommType
-    //------------------
-    // kept between sessions
-
-    /*!
-     * \brief changeDefaultCommType change the current default commtype into a new one. The default commtype
-     *        is the commtype that is loaded when the application starts.
-     * \param type the new setting for the commtype.
-     */
-    void changeDefaultCommType(ECommType type);
-
-    /*!
-     * \brief defaultCommType getter for the current commtype
-     * \return returns the current commtype.
-     */
-    ECommType defaultCommType();
-
-    //------------------
     // Miscellaneous
     //------------------
 
@@ -80,11 +61,6 @@ private:
     std::vector<bool> mDeviceInUse;
 
     /*!
-     * \brief mDefaultCommType The CommType that will be used next time the app boots up
-     */
-    ECommType mDefaultCommType;
-
-    /*!
      * \brief mSettings pointer to QSettings, used to store and access data in persistent app memory.
      */
     QSettings *mSettings;
@@ -98,17 +74,6 @@ private:
      * \brief mCommTypeInUseSaveKeys Keys used for accessing and writing values to persistent app memory.
      */
     std::vector<QString> mCommTypeInUseSaveKeys;
-
-    // --------------------------
-    // Const static strings
-    // --------------------------
-
-    /*!
-     * \brief KCommDefaultType Settings key for default type of communication.
-     *        This is saved whenever the user changes it and is restored at the
-     *        start of each application session.
-     */
-    const static QString kCommDefaultType;
 
 };
 #endif // STREAMSETTINGS_H

@@ -13,8 +13,9 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
+ *
  *
  * \brief The IconData class creates all the pixel-y square icons that are seen throughout
  * the app. The grids are made by using a very small buffer of RGB values to do the

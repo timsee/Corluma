@@ -13,8 +13,9 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
+ *
  *
  * \brief The LightsSlider class provides a slider with behaviors similiar
  * to sliders on mobile devices. Clicking on the slider jumps the slider's value
@@ -57,6 +58,13 @@ public:
      * \param color the color that will be put into a custom style sheet
      */
     void setSliderColorBackground(QColor color);
+
+    /*!
+     * \brief setSliderImageBackground Adds a background image to the slider instead of using a color with a gradient.
+     * \param path path to the resource of the image
+     * \TODO clean this up more
+     */
+    void setSliderImageBackground(QString path);
 
     /*!
      * \brief setSnapToNearestTick set this if you want the slider to snap to the nearest tick instead
@@ -220,6 +228,16 @@ private:
      * \brief mSliderColorSet true if the slider color has been changed, false otherwise
      */
     bool mSliderColorSet;
+
+    /*!
+     * \brief mSliderImageSet true if slider has a background image, false otherwise
+     */
+    bool mSliderImageSet;
+
+    /*!
+     * \brief mPath path to resource for background image for the slider.
+     */
+    QString mPath;
 
     /*!
      * \brief mSliderColor the current slider color

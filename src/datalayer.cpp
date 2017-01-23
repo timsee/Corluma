@@ -1,8 +1,9 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
  */
+
 
 #include "datalayer.h"
 #include <QDebug>
@@ -412,6 +413,12 @@ void DataLayer::updateBrightness(int brightness) {
     std::list<SLightDevice>::iterator iterator;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
         iterator->brightness = brightness;
+        if (iterator->type == ECommType::eHue) {
+            // get the color as a HSV
+            QColor hsv = iterator->color.toHsv();
+            // update to new version of color
+            iterator->color.setHsv(hsv.hue(), hsv.saturation(), (int)(255.0f * (brightness / 100.0f)));
+        }
         iterator->isOn = true;
     }
     emit dataUpdate();

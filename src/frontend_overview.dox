@@ -19,6 +19,24 @@
 <table class="tableRightHandImage">
   <tr>
     <td> 
+        <h2>Discovery Page</h2>
+        \copydoc DiscoveryPage 
+    </td>
+    <td>         
+        \image html discoveryPagePreview.png
+    </td>
+  </tr>
+  <tr>
+    <td> 
+        <h2>Connection Page</h2>
+        \copydoc ConnectionPage 
+    </td>
+    <td>         
+        \image html connectionPagePreview.png
+    </td>
+  </tr>
+  <tr>
+    <td> 
         <h2>Single Color Page</h2>
         \copydoc SingleColorPage 
     </td>

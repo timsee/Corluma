@@ -13,7 +13,7 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
  *
  *
@@ -86,7 +86,6 @@ private slots:
     void stateUpdate();
 
 private:
-
     /*!
      * \brief connectSerialPort connect to a specific serial port, if possible.
      * \param serialPortName The name of the serial port that you want
@@ -110,10 +109,10 @@ private:
     std::list<QSerialPortInfo> mSerialInfoList;
 
     /*!
-     * \brief mSerialPorts list of serial ports in use. For every controller, one QSerialPort object
-     *        gets instantiated and stored in this list.
+     * \brief mSerialPorts list of serial ports in use. The second element in the pair is a buffer that contains the
+     *        most recent characters sent by the serial port.
      */
-    std::list<QSerialPort*> mSerialPorts;
+    std::list<std::pair<QSerialPort*, QString> > mSerialPorts;
 };
 
 #endif // MOBILE_BUILD

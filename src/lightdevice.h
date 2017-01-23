@@ -10,6 +10,12 @@
 #include <cmath>
 
 /*!
+ * \copyright
+ * Copyright (C) 2015 - 2017.
+ * Released under the GNU General Public License.
+ */
+
+/*!
  * \brief The ECommType enum The connection types
  *        supported by the GUI. For mobile builds,
  *        serial is not supported.
@@ -35,13 +41,43 @@ enum class ECommType {
 enum class EColorMode {
     eRGB,
     eHSV,
+    eDimmable,
     eCT,
     EColorMode_MAX
 };
 
+/*!
+ * \brief The EConnectionButtonIcons enum provides access to the different button
+ *        assets used as placeholders for graphics in the application.
+ */
+enum class EConnectionButtonIcons {
+    eBlackButton,
+    eRedButton,
+    eYellowButton,
+    eBlueButton,
+    eGreenButton,
+    EConnectionButtonIcons_MAX
+};
+
+
+/*!
+ * \brief The EConnectionState enum tracks the various connection states both
+ *        of each comm type and of the application overall.
+ */
+enum class EConnectionState {
+    eOff,
+    eDiscovering,
+    eDiscoveredAndNotInUse,
+    eSingleDeviceSelected,
+    eMultipleDevicesSelected,
+    eConnectionState_MAX
+};
+
+
 namespace utils
 {
 
+/// helper for getting the value of the last single color routine.
 const ELightingRoutine ELightingRoutineSingleColorEnd = ELightingRoutine::eSingleSawtoothFadeOut;
 
 /*!
@@ -308,50 +344,6 @@ struct SLightDevice {
                  << "index: " << index << "\n"
                  << "Type: " << utils::ECommTypeToString(type) << "\n"
                  << "name: " << name << "\n";
-    }
-
-
-    /*!
-     * \brief structToIdentifierString converts a SLightDevice struct to a string in the format
-     *        of comma delimited values with only the values needed to identiy if as unique.
-     * \param dataStruct the struct to convert to a string
-     * \return a comma delimited string that represents all values in the SLightDevice.
-     */
-    QString structToIdentifierString() {
-        QString returnString = "";
-        returnString = returnString + this->name + "," + QString::number(this->index) + "," + QString::number((int)this->type);
-        return returnString;
-    }
-
-    /*!
-     * \brief identifierStringToStruct converts a string represention of a SControllerCommData
-     *        back to a struct.
-     * \param string the string to convert
-     * \return a SLightDevice struct based on the string given. an empty struct is returned if
-     *         the string is invalid.
-     */
-    SLightDevice identifierStringToStruct(QString string) {
-        // first split the values from comma delimited to a vector of strings
-        std::vector<std::string> valueVector;
-        std::stringstream input(string.toStdString());
-        while (input.good()) {
-            std::string value;
-            std::getline(input, value, ',');
-            valueVector.push_back(value);
-        }
-        // check validity
-        SLightDevice outputStruct;
-        if (valueVector.size() == 3) {
-            outputStruct.name = QString::fromStdString(valueVector[0]);
-            outputStruct.index = QString::fromStdString(valueVector[1]).toInt();
-            outputStruct.type = (ECommType)QString::fromStdString(valueVector[2]).toInt();
-            if (outputStruct.type == ECommType::eHue) {
-                outputStruct.name = "Bridge";
-            }
-        } else {
-            qDebug() << "something went wrong with the key...";
-        }
-        return outputStruct;
     }
 
     /*!

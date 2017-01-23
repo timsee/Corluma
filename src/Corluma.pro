@@ -128,8 +128,8 @@ SOURCES += main.cpp\
     huepresetpage.cpp \
     listgroupwidget.cpp \
     discoverypage.cpp \
-    huesettingspage.cpp \
-    listdevicewidget.cpp
+    listdevicewidget.cpp \
+    presetgroupwidget.cpp
 
 HEADERS  += mainwindow.h \
     singlecolorpage.h \
@@ -164,8 +164,9 @@ HEADERS  += mainwindow.h \
     huepresetpage.h \
     listgroupwidget.h \
     discoverypage.h \
-    huesettingspage.h \
-    listdevicewidget.h
+    listdevicewidget.h \
+    hueprotocols.h \
+    presetgroupwidget.h
 
 FORMS    += mainwindow.ui \
     singlecolorpage.ui \
@@ -175,15 +176,7 @@ FORMS    += mainwindow.ui \
     connectionpage.ui \
     huesinglecolorpage.ui \
     huepresetpage.ui \
-    discoverypage.ui \
-    huesettingspage.ui
-
-#----------
-# Optional Defines
-#----------
-
-# uncomment if its a hue only app
-#DEFINES += HUE_RELEASE=1
+    discoverypage.ui
 
 #----------
 # Resources

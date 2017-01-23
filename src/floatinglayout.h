@@ -7,7 +7,7 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
  */
 
@@ -22,10 +22,18 @@ class FloatingLayout : public QWidget
 public:
     /*!
      * Constructor
-     * \param size the desired size of the widget
      * \param parent constructor
      */
-    explicit FloatingLayout(QSize size, QWidget *parent = 0);
+    explicit FloatingLayout(QWidget *parent = 0);
+
+    /*!
+     * \brief setupButtons takees the vector of names and the size given and updates the buttons
+     *        so that theres a button for every name
+     * \param buttonNames names of buttons provided. these names will be signaled out whenever the button
+     *        is clicked.
+     * \param size how large to make the floating layout.
+     */
+    void setupButtons(std::vector<QString> buttonNames, QSize size);
 
     /*!
      * \brief move move layout to a new location based off of the top right point provided.
@@ -41,36 +49,30 @@ signals:
     void buttonPressed(QString);
 
 private slots:
-    /*!
-     * \brief singleButtonClicked the button that opens the single color page.
-     */
-    void singleButtonClicked(bool);
 
     /*!
-     * \brief multiButtonClicked the button that opens the multi color page.
+     * \brief buttonClicked handles whenever any button is clicked. Converts the click into a signal of the button's
+     *        name.
      */
-    void multiButtonClicked(bool);
+    void buttonClicked(int);
 
 private:
+
+    /*!
+     * \brief mButtons vector of buttons
+     */
+    std::vector<QPushButton*> mButtons;
+
+    /*!
+     * \brief mNames vector of names of those buttons.
+     */
+    std::vector<QString> mNames;
 
     /*!
      * \brief mFloatingLayout layout for the buttons
      */
     QHBoxLayout *mFloatingLayout;
-    /*!
-     * \brief mSingleButton button for changing to the single color page.
-     */
-    QPushButton *mSingleButton;
-    /*!
-     * \brief mMultiButton button for changing to the multi color page.
-     */
-    QPushButton *mMultiButton;
 
-    /*!
-     * \brief mFloatingLayoutSingleSelected true if the last button pressed was the single color button,
-     *        false if it was the multi color button.
-     */
-    bool mFloatingLayoutSingleSelected;
 };
 
 #endif // FLOATINGLAYOUT_H

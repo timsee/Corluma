@@ -195,7 +195,6 @@
         </sizepolicy>
        </property>
       </widget>
-      <widget class="HueSettingsPage" name="hueSettingsPage"/>
       <widget class="ConnectionPage" name="connectionPage"/>
      </widget>
     </item>
@@ -347,12 +346,6 @@
    <class>HueSingleColorPage</class>
    <extends>QWidget</extends>
    <header location="global">huesinglecolorpage.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>HueSettingsPage</class>
-   <extends>QWidget</extends>
-   <header>huesettingspage.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

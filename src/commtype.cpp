@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
  */
 
@@ -42,7 +42,6 @@ void CommType::stopDiscovery() {
 }
 
 bool CommType::addController(QString controller) {
-
     auto search = mDeviceTable.find(controller.toStdString());
     bool controllerExists = (search != mDeviceTable.end());
 
@@ -50,8 +49,10 @@ bool CommType::addController(QString controller) {
     if (checkIfControllerIsValid(controller) && !controllerExists) {
         std::list<SLightDevice> newDeviceList;
         mDeviceTable.insert(std::make_pair(controller.toStdString(), newDeviceList));
-        mUndiscoveredList.push_front(controller.toStdString());
+        mUndiscoveredList.push_front(controller);
         emit updateReceived((int)mType);
+        mFullyDiscovered = false;
+        startDiscovery();
         return true;
     }
     return false;
@@ -59,7 +60,8 @@ bool CommType::addController(QString controller) {
 
 bool CommType::removeController(QString controller) {
     mDeviceTable.erase(controller.toStdString());
-    mUndiscoveredList.remove(controller.toStdString());
+    mDiscoveredList.remove(controller);
+    mUndiscoveredList.remove(controller);
     return true;
 }
 
@@ -94,8 +96,7 @@ void CommType::updateDevice(SLightDevice device) {
 }
 
 
-bool CommType::fillDevice(SLightDevice& device)
-{
+bool CommType::fillDevice(SLightDevice& device) {
     auto deviceList = mDeviceTable.find(device.name.toStdString());
     if (deviceList != mDeviceTable.end()) {
         for (auto it = deviceList->second.begin(); it != deviceList->second.end(); ++it) {
@@ -149,7 +150,7 @@ bool CommType::checkIfControllerIsValid(QString controller) {
 
 
 void CommType::resetDiscovery() {
-    mDiscoveryList.clear();
+    mDiscoveredList.clear();
     for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
        throttle->second->stop();
     }
@@ -181,11 +182,13 @@ bool CommType::shouldContinueStateUpdate() {
 
 void CommType::handleDiscoveryPacket(QString sender, int throttleInterval, int throttleMax) {
     // search for the sender in the list of discovered devices
-    bool found = (std::find(mDiscoveryList.begin(), mDiscoveryList.end(), sender) != mDiscoveryList.end());
+    bool found = (std::find(mDiscoveredList.begin(), mDiscoveredList.end(), sender) != mDiscoveredList.end());
     if (!found) {
         //if its not found, add it to the list
-        mDiscoveryList.push_back(sender);
-        mUndiscoveredList.remove(sender.toStdString());
+        mDiscoveredList.push_back(sender);
+        mUndiscoveredList.remove(sender);
+        resetStateUpdateTimeout();
+        saveConnectionList();
     }
 
     // iterate through the throttle list and see if theres an associated throttle
@@ -206,7 +209,7 @@ void CommType::handleDiscoveryPacket(QString sender, int throttleInterval, int t
     bool stopTimer = true;
     for (auto&& it : mDeviceTable) {
         // returns true if the string is in discovery list
-        bool found = (std::find(mDiscoveryList.begin(), mDiscoveryList.end(), QString::fromUtf8(it.first.c_str())) != mDiscoveryList.end());
+        bool found = (std::find(mDiscoveredList.begin(), mDiscoveredList.end(), QString::fromUtf8(it.first.c_str())) != mDiscoveredList.end());
         if (!found)  stopTimer = false;
     }
     if (stopTimer) {

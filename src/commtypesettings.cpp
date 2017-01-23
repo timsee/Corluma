@@ -1,3 +1,9 @@
+/*!
+ * \copyright
+ * Copyright (C) 2015 - 2017.
+ * Released under the GNU General Public License.
+ */
+
 #include "commtypesettings.h"
 
 CommTypeSettings::CommTypeSettings() {
@@ -30,56 +36,12 @@ CommTypeSettings::CommTypeSettings() {
         mSettings->sync();
         mCommTypeCount++;
     }
-
-#ifdef HUE_RELEASE
-    // turn off all connections
-    for (int i = 0; i < mDeviceInUse.size(); ++i) {
-        mDeviceInUse[i] = false;
-    }
-    // turn on only hue
-    mDeviceInUse[(int)ECommType::eHue] = true;
-#endif
-
-    // check if a default commtype already exists
-    ECommType previousType = ECommType::eCommType_MAX;
-    if (mSettings->value(kCommDefaultType).toString().compare("") != 0) {
-        previousType = (ECommType)mSettings->value(kCommDefaultType).toInt();
-    }
-
-    // set the applications commtype based off of the enabled commtypes and the
-    // previous settings.
-    if (mCommTypeCount == 1) {
-        int x = 0;
-        for (uint32_t i = 0; i <  mDeviceInUse.size(); ++i) {
-            if (mDeviceInUse[i]) x = i;
-        }
-        mDefaultCommType = (ECommType)x;
-    } else if (previousType == ECommType::eCommType_MAX) {
-        // no previous type found, so find last connection.
-        int x = 0;
-        for (uint32_t i = 0; i <  mDeviceInUse.size(); ++i) {
-            if (mDeviceInUse[i]) x = i;
-        }
-        mDefaultCommType = (ECommType)x;
-    } else {
-        //no default comm type, default to first commtype connected
-        mDefaultCommType = previousType;
-    }
 }
 
 bool CommTypeSettings::commTypeEnabled(ECommType type) {
     return mDeviceInUse[(int)type];
 }
 
-void CommTypeSettings::changeDefaultCommType(ECommType type) {
-    mDefaultCommType = type;
-    mSettings->setValue(kCommDefaultType, QString::number((int)type));
-    mSettings->sync();
-}
-
-ECommType CommTypeSettings::defaultCommType() {
-    return mDefaultCommType;
-}
 
 bool CommTypeSettings::enableCommType(ECommType type, bool shouldEnable) {
     bool previouslyEnabled = commTypeEnabled(type);
@@ -99,5 +61,3 @@ bool CommTypeSettings::enableCommType(ECommType type, bool shouldEnable) {
     mSettings->sync();
     return true;
 }
-
-const QString CommTypeSettings::kCommDefaultType = QString("CommDefaultType");

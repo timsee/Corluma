@@ -8,20 +8,19 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
- */
-
-
-class CommLayer;
-
-/*!
+ *
+ *
  * \brief The DataSync class compares the data layer's representation of devices with the commlayer's
  *        understanding of devices and tries to sync them up. The DataLayer's representation is used
  *        as the "desired" state of lights. The CommLayer's understanding is used as the current state.
  *        If the desired state and current state do not match, the commlayer is requested to send packets
  *        to try to update the devices.
  */
+
+class CommLayer;
+
 class DataSync : public QObject
 {
     Q_OBJECT
@@ -55,6 +54,14 @@ private slots:
      */
     void syncData();
 
+    /*!
+     * \brief cleanupSync After the sync is complete, certain actions need to be ran. For example, Hues
+     *        require a schedule to be kept synced to timeout properly. The cleanup thread starts after
+     *        the datasync to run the routines needed to keep data in sync in the long term. This function
+     *        contains all those routines.
+     */
+    void cleanupSync();
+
 private:
 
     /*!
@@ -87,6 +94,11 @@ private:
     bool hueSync(const SLightDevice& dataDevice, const SLightDevice& commDevice);
 
     /*!
+     * \brief endOfSync end the datasync thread and start the cleanup thread.
+     */
+    void endOfSync();
+
+    /*!
      * \brief colorDifference gives a percent difference between two colors
      * \param first first color to check
      * \param second second color to check
@@ -117,6 +129,17 @@ private:
      * \brief mSyncTimer Whenever data is not in sync,
      */
     QTimer *mSyncTimer;
+
+    /*!
+     * \brief mCleanupTimer timer for the cleanup thread.
+     */
+    QTimer *mCleanupTimer;
+
+    /*!
+     * \brief mCleanupStartTime time that sync the cleanup thread was started so that we know when
+     *        to end it.
+     */
+    QTime mCleanupStartTime;
 
     /*!
      * \brief mStartTime time that sync thread was started so in case something groes wrong it

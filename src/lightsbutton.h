@@ -11,8 +11,9 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
+ *
  *
  * \brief The LightsButton class provides all of the buttons used within the application.
  *        All buttons have an icon, while some have labels or extra logic attached.
@@ -67,7 +68,10 @@ public:
      * \param lightingRoutine lighting routine to use for the icon. must be multi color routine.
      * \param colorGroup the color group to use for the icon.
      */
-    void updateIconPresetColorRoutine(ELightingRoutine lightingRoutine, EColorGroup colorGroup, const std::vector<QColor>& colors, int colorMax = -1);
+    void updateIconPresetColorRoutine(ELightingRoutine lightingRoutine,
+                                      EColorGroup colorGroup,
+                                      const std::vector<QColor>& colors,
+                                      int colorMax = -1);
 
     /*!
      * \brief enable enables/disables the lightsbutton.

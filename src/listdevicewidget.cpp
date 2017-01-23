@@ -1,13 +1,12 @@
-#include <QGraphicsEffect>
-
-#include "listdevicewidget.h"
-
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
  */
 
+#include <QGraphicsEffect>
+
+#include "listdevicewidget.h"
 
 ListDeviceWidget::ListDeviceWidget(const SLightDevice& device,
                                            const QString& name,
@@ -64,10 +63,32 @@ void ListDeviceWidget::init(const SLightDevice& device, const QString& name) {
 #endif
     mStatusIcon->setStyleSheet(backgroundStyleSheet);
 
-    // setup main label
+    QString type;
+    if (device.type == ECommType::eHue) {
+        type = "";
+    } else if (device.type == ECommType::eHTTP
+               || device.type == ECommType::eUDP) {
+        type = "Yun";
+    }
+#ifndef MOBILE_BUILD
+    else if (device.type == ECommType::eSerial) {
+        type = "Serial";
+    }
+#endif
+
+    // setup type label
+    mType = new QLabel(this);
+    mType->setText(type);
+    mType->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    if(!device.isReachable) {
+        mType->setStyleSheet(reachableStlyeSheet);
+    } else {
+        mType->setStyleSheet(backgroundStyleSheet);
+    }
+
+    // setup controller label
     mController = new QLabel(this);
     mController->setText(name);
-
     mController->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     if(!device.isReachable) {
         mController->setStyleSheet(reachableStlyeSheet);
@@ -90,6 +111,7 @@ void ListDeviceWidget::init(const SLightDevice& device, const QString& name) {
     // setup layout
     mLayout = new QHBoxLayout(this);
     mLayout->addWidget(mStatusIcon);
+    mLayout->addWidget(mType);
     mLayout->addWidget(mController);
     if (device.index > 0) {
         mLayout->addWidget(mIndex);
@@ -99,6 +121,7 @@ void ListDeviceWidget::init(const SLightDevice& device, const QString& name) {
     this->setStyleSheet(backgroundStyleSheet);
 
     mLayout->setStretch(0, 1);
-    mLayout->setStretch(1, 10);
-    mLayout->setStretch(2, 1);
+    mLayout->setStretch(1, 2);
+    mLayout->setStretch(2, 10);
+    mLayout->setStretch(3, 1);
 }

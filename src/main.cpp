@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
  */
 
@@ -11,8 +11,7 @@
 #include <QTextStream>
 #include <QDebug>
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
     QCoreApplication::setOrganizationName("Corluma");
     QCoreApplication::setApplicationName("Corluma");
@@ -44,5 +43,6 @@ int main(int argc, char *argv[])
 
     // show the window
     w.show();
+
     return a.exec();
 }

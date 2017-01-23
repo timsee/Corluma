@@ -8,6 +8,11 @@
 #include <QPixmap>
 
 /*!
+ * \copyright
+ * Copyright (C) 2015 - 2017.
+ * Released under the GNU General Public License.
+ *
+ *
  * \brief The LightCheckBox class is a push button with a customizable checkbox which allows for
  *        most customization than the standard Qt radio button.
  */

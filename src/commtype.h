@@ -16,7 +16,7 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
  */
 
@@ -138,6 +138,18 @@ public:
      */
     const std::unordered_map<std::string, std::list<SLightDevice> >& deviceTable() { return mDeviceTable; }
 
+    /*!
+     * \brief discoveredList getter for list of discovered devices
+     * \return list of discovered devices.
+     */
+    const std::list<QString>& discoveredList() { return mDiscoveredList; }
+
+    /*!
+     * \brief undiscoveredList getter for list of undiscovered devices.
+     * \return list of undiscovered devices.
+     */
+    const std::list<QString>& undiscoveredList() { return mUndiscoveredList; }
+
     // ----------------------------
     // Persistent Connection list Handling
     // ----------------------------
@@ -227,12 +239,12 @@ protected:
      * \brief mUndiscoveredList list of controllers that are not currently discovered but are running
      *        discovery routines.
      */
-    std::list<std::string> mUndiscoveredList;
+    std::list<QString> mUndiscoveredList;
 
     /*!
-     * \brief mDiscoveryList list of devices that have been discovered properly.
+     * \brief mDiscoveredList list of devices that have been discovered properly.
      */
-    std::list<QString> mDiscoveryList;
+    std::list<QString> mDiscoveredList;
 
     /*!
      * \brief mStateUpdateTimer Polls the controller every few seconds requesting

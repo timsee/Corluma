@@ -1,3 +1,8 @@
+/*!
+ * \copyright
+ * Copyright (C) 2015 - 2017.
+ * Released under the GNU General Public License.
+ */
 
 #include "commthrottle.h"
 #include "commlayer.h"
@@ -47,8 +52,8 @@ void CommThrottle::resetThrottleFlag() {
     // set throttle flag
     mThrottleCount = 0;
 
-    // Check the buffer and see if we shoudl send it on the update
-    // this will send if and only if no other messages are sent druign the updates
+    // Check the buffer and see if we should send it on the update
+    // this will send if and only if no other messages are sent druing the updates
     if (mBufferedMessage.compare("")
             && (mBufferedTime.elapsed() < mLastThrottleCall.elapsed())) {
         mShouldSendBuffer = true;

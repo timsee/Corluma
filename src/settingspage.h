@@ -16,8 +16,9 @@ class SettingsPage;
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
+ *
  *
  * \brief The SettingsPage provides a way to configure the
  * application settings.
@@ -120,16 +121,6 @@ private slots:
      *        change of state.
      */
     void renderUI();
-
-    /*!
-     * \brief standardButtonPressed standard settings button pressed on the top menu.
-     */
-    void standardButtonPressed(bool);
-
-    /*!
-     * \brief hueButtonPressed hue settings bustton pressed on the top menu.
-     */
-    void hueButtonPressed(bool);
 
 protected:
     /*!

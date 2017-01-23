@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
  */
 
@@ -56,14 +56,6 @@ SettingsPage::SettingsPage(QWidget *parent) :
 #else
     ui->serialCheckBox->setHidden(true);
 #endif //MOBILE_BUILD
-
-    ui->standardButton->setCheckable(true);
-    connect(ui->standardButton, SIGNAL(clicked(bool)), this, SLOT(standardButtonPressed(bool)));
-
-    ui->hueButton->setCheckable(true);
-    connect(ui->hueButton, SIGNAL(clicked(bool)), this, SLOT(hueButtonPressed(bool)));
-
-    ui->standardButton->setChecked(true);
 }
 
 SettingsPage::~SettingsPage() {
@@ -111,16 +103,6 @@ void SettingsPage::timeoutChanged(int newTimeout) {
 }
 
 
-void SettingsPage::standardButtonPressed(bool clicked) {
-    Q_UNUSED(clicked);
-    emit settingsPageIsStandard(true);
-}
-
-void SettingsPage::hueButtonPressed(bool clicked) {
-    Q_UNUSED(clicked);
-    emit settingsPageIsStandard(false);
-}
-
 // ----------------------------
 // Protected
 // ----------------------------
@@ -130,8 +112,6 @@ void SettingsPage::showEvent(QShowEvent *event) {
     Q_UNUSED(event);
     updateUI();
 
-    ui->standardButton->setChecked(true);
-    ui->hueButton->setChecked(false);
 
     checkCheckBoxes();
 
@@ -157,8 +137,9 @@ void SettingsPage::hideEvent(QHideEvent *) {
 void SettingsPage::resizeEvent(QResizeEvent *event) {
     Q_UNUSED(event);
     int height = static_cast<int>(ui->hueCheckBox->size().height() * 0.8f);
+    int width = static_cast<int>(ui->hueCheckBox->size().width() * 0.6f);
     QString stylesheet = "QCheckBox::indicator { width: ";
-    stylesheet += QString::number(height);
+    stylesheet += QString::number(width);
     stylesheet +=  "px; height: ";
     stylesheet +=  QString::number(height);
     stylesheet += "px; }";
@@ -168,6 +149,12 @@ void SettingsPage::resizeEvent(QResizeEvent *event) {
 #ifndef MOBILE_BUILD
     ui->serialCheckBox->setStyleSheet(stylesheet);
 #endif //MOBILE_BUILD
+
+    ui->speedSlider->setMinimumSize(QSize(this->width() * 0.75f, this->height() * 0.15f));
+    ui->speedSlider->setMaximumSize(QSize(this->width() * 0.75f, this->height() * 0.15f));
+
+    ui->timeoutSlider->setMinimumSize(QSize(this->width() * 0.75f, this->height() * 0.15f));
+    ui->timeoutSlider->setMaximumSize(QSize(this->width() * 0.75f, this->height() * 0.15f));
 }
 
 void SettingsPage::checkCheckBoxes() {

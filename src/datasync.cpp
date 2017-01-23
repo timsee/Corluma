@@ -1,3 +1,9 @@
+/*!
+ * \copyright
+ * Copyright (C) 2015 - 2017.
+ * Released under the GNU General Public License.
+ */
+
 #include "datasync.h"
 #include "commlayer.h"
 
@@ -9,7 +15,11 @@ DataSync::DataSync(DataLayer *data, CommLayer *comm) {
 
     mSyncTimer = new QTimer(this);
     connect(mSyncTimer, SIGNAL(timeout()), this, SLOT(syncData()));
-    mSyncTimer->start(100);
+    mSyncTimer->start(500);
+
+    mCleanupTimer = new QTimer(this);
+    connect(mCleanupTimer, SIGNAL(timeout()), this, SLOT(cleanupSync()));
+
     mDataIsInSync = false;
 }
 
@@ -17,16 +27,19 @@ void DataSync::cancelSync() {
     mDataIsInSync = true;
 
     if (mSyncTimer->isActive()) {
-        mSyncTimer->stop();
+        endOfSync();
     }
 }
 
 void DataSync::resetSync() {
+    if (mCleanupTimer->isActive()) {
+        mCleanupTimer->stop();
+    }
     if (mData->currentDevices().size() > 0) {
         mDataIsInSync = false;
         if (!mSyncTimer->isActive()) {
             mStartTime = QTime::currentTime();
-            mSyncTimer->start(100);
+            mSyncTimer->start(500);
         }
     }
 }
@@ -54,12 +67,29 @@ void DataSync::syncData() {
         mDataIsInSync = tempInSync;
     }
 
-    if (mStartTime.elapsed() > 60000) {
+    // TODO: change interval based on how long its been
+    if (mStartTime.elapsed() < 15000) {
+        // do nothing
+    }  else if (mStartTime.elapsed() < 30000) {
+        mSyncTimer->setInterval(2000);
+    } else {
         mDataIsInSync = true;
     }
 
     if (mDataIsInSync
             || mData->currentDevices().size() == 0) {
+        endOfSync();
+    }
+}
+
+void DataSync::endOfSync() {
+    if (!mCleanupTimer->isActive()) {
+        mCleanupTimer->start(500);
+        mCleanupStartTime = QTime::currentTime();
+    }
+
+    // update schedules of hues to
+    if (mSyncTimer->isActive()) {
         mSyncTimer->stop();
     }
 }
@@ -74,7 +104,7 @@ bool DataSync::standardSync(const SLightDevice& dataDevice, const SLightDevice& 
     //-------------------
 
     if (dataDevice.isOn != commDevice.isOn) {
-        qDebug() << "ON/OFF not in sync" << dataDevice.isOn << " for " << dataDevice.index << "routine " << (int)dataDevice.lightingRoutine;
+        //qDebug() << "ON/OFF not in sync" << dataDevice.isOn << " for " << dataDevice.index << "routine " << (int)dataDevice.lightingRoutine;
         mComm->sendTurnOn(list, dataDevice.isOn);
         tempInSync = false;
     }
@@ -131,7 +161,7 @@ bool DataSync::standardSync(const SLightDevice& dataDevice, const SLightDevice& 
     //-------------------
     if (commDevice.timeout != dataDevice.timeout
             && dataDevice.isOn) {
-        qDebug() << "time out not in sync";
+        //qDebug() << "time out not in sync";
         mComm->sendTimeOut(list, dataDevice.timeout);
         tempInSync = false;
     }
@@ -141,7 +171,7 @@ bool DataSync::standardSync(const SLightDevice& dataDevice, const SLightDevice& 
     //-------------------
     if (commDevice.speed != dataDevice.speed
             && dataDevice.isOn) {
-        qDebug() << "speed not in sync";
+        //qDebug() << "speed not in sync";
         mComm->sendSpeed(list, dataDevice.speed);
         tempInSync = false;
     }
@@ -151,7 +181,7 @@ bool DataSync::standardSync(const SLightDevice& dataDevice, const SLightDevice& 
     //-------------------
     if (commDevice.customColorCount != dataDevice.customColorCount
             && dataDevice.isOn) {
-        qDebug() << "custom color count not in sync" << commDevice.customColorCount << "vs" << dataDevice.customColorCount;
+        //qDebug() << "custom color count not in sync" << commDevice.customColorCount << "vs" << dataDevice.customColorCount;
         mComm->sendCustomArrayCount(list, dataDevice.customColorCount);
         tempInSync = false;
     }
@@ -162,7 +192,7 @@ bool DataSync::standardSync(const SLightDevice& dataDevice, const SLightDevice& 
     for (int i = 0; i < dataDevice.customColorCount; ++i
          && dataDevice.isOn) {
         if (colorDifference(dataDevice.customColorArray[i], commDevice.customColorArray[i]) > 0.02f) {
-            qDebug() << "Custom color" << i << "not in sync";
+            //qDebug() << "Custom color" << i << "not in sync";
             mComm->sendArrayColorChange(list, i, dataDevice.customColorArray[i]);
         }
     }
@@ -181,7 +211,7 @@ bool DataSync::hueSync(const SLightDevice& dataDevice, const SLightDevice& commD
     //-------------------
 
     if (dataDevice.isOn != commDevice.isOn) {
-        qDebug() << "hue ON/OFF not in sync" << dataDevice.isOn;
+        //qDebug() << "hue ON/OFF not in sync" << dataDevice.isOn;
         mComm->sendTurnOn(list, dataDevice.isOn);
         tempInSync = false;
     }
@@ -193,7 +223,7 @@ bool DataSync::hueSync(const SLightDevice& dataDevice, const SLightDevice& commD
         //-------------------
         if (colorDifference(dataDevice.color, commDevice.color) > 0.07f) {
             mComm->sendMainColorChange(list, dataDevice.color);
-            qDebug() << "hue color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << colorDifference(dataDevice.color, commDevice.color);
+            //qDebug() << "hue color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << colorDifference(dataDevice.color, commDevice.color);
             tempInSync = false;
         }
     } else if (dataDevice.colorMode == EColorMode::eCT
@@ -204,7 +234,7 @@ bool DataSync::hueSync(const SLightDevice& dataDevice, const SLightDevice& commD
         if (colorDifference(commDevice.color, dataDevice.color) > 0.15f) {
             mComm->sendColorTemperatureChange(list, utils::rgbToColorTemperature(dataDevice.color));
             tempInSync = false;
-            qDebug() << "hue color temperature not in sync" << commDevice.color << "vs" <<  dataDevice.color << colorDifference(commDevice.color, dataDevice.color);
+            //qDebug() << "hue color temperature not in sync" << commDevice.color << "vs" <<  dataDevice.color << colorDifference(commDevice.color, dataDevice.color);
         }
     }
     //-------------------
@@ -212,11 +242,63 @@ bool DataSync::hueSync(const SLightDevice& dataDevice, const SLightDevice& commD
     //-------------------
     if (brightnessDifference(commDevice.brightness, dataDevice.brightness) > 0.05f
             && dataDevice.isOn) {
-        qDebug() << "hue brightness not in sync" << brightnessDifference(commDevice.brightness, dataDevice.brightness);
+        //qDebug() << "hue brightness not in sync" << brightnessDifference(commDevice.brightness, dataDevice.brightness);
         mComm->sendBrightness(list, dataDevice.brightness);
         tempInSync = false;
     }
+
+    //-------------------
+    // Turn off Hue timers
+    //-------------------
+    std::list<SHueSchedule> commSchedules = mComm->hueSchedules();
+    std::list<SHueSchedule>::iterator iterator;
+    for (iterator = commSchedules.begin(); iterator != commSchedules.end(); ++iterator) {
+        // if a device doesnt have a schedule, add it.
+        if (iterator->name.contains("Corluma_timeout")) {
+           QString indexString = iterator->name.split("_").last();
+           int givenIndex = indexString.toInt();
+           if (givenIndex == dataDevice.index
+                   && iterator->status) {
+               mComm->updateHueTimeout(false, iterator->index, dataDevice.timeout);
+           }
+        }
+    }
+
     return tempInSync;
+}
+
+
+void DataSync::cleanupSync() {
+    // repeats until things are synced up.
+    bool totallySynced = true;
+    std::list<SHueSchedule> commSchedules = mComm->hueSchedules();
+    for (auto&& device : mData->currentDevices()) {
+        if (device.type == ECommType::eHue) {
+            SLightDevice commLayerDevice = device;
+            bool successful = mComm->fillDevice(commLayerDevice);
+            if (!successful) qDebug() << "something is wronggg";
+            std::list<SHueSchedule>::iterator iterator;
+            for (iterator = commSchedules.begin(); iterator != commSchedules.end(); ++iterator) {
+                // if a device doesnt have a schedule, add it.
+                if (iterator->name.contains("Corluma_timeout")) {
+                   QString indexString = iterator->name.split("_").last();
+                   int givenIndex = indexString.toInt();
+                   if ((givenIndex == device.index)
+    //                       && commLayerDevice.isOn
+    //                       && commLayerDevice.isReachable
+                           && !iterator->status) {
+                       totallySynced = false;
+                       mComm->updateHueTimeout(true, iterator->index, device.timeout);
+                   }
+                }
+            }
+        }
+    }
+
+    if (totallySynced
+            && mCleanupStartTime.elapsed() > 15000) {
+        mCleanupTimer->stop();
+    }
 }
 
 float DataSync::brightnessDifference(float first, float second) {

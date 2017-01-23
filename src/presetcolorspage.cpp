@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
  */
 
@@ -17,6 +17,9 @@ PresetColorsPage::PresetColorsPage(QWidget *parent) :
     ui(new Ui::PresetColorsPage) {
     ui->setupUi(this);
 
+    this->grabGesture(Qt::SwipeGesture);
+    this->grabGesture(Qt::SwipeGesture);
+
     ui->scrollArea->setStyleSheet("background-color:transparent;");
     QScroller::grabGesture(ui->scrollArea->viewport(), QScroller::LeftMouseButtonGesture);
 }
@@ -27,8 +30,6 @@ PresetColorsPage::~PresetColorsPage() {
 
 
 void PresetColorsPage::setupButtons() {
-    int colorGroupMax = (int)EColorGroup::eColorGroup_MAX - 1;
-    mButtonCount = colorGroupMax * ((int)ELightingRoutine::eLightingRoutine_MAX - (int)ELightingRoutine::eMultiGlimmer);
     std::vector<std::string> labels = {"Water",
                                        "Frozen",
                                        "Snow",
@@ -39,7 +40,7 @@ void PresetColorsPage::setupButtons() {
                                        "Corrosive",
                                        "Poison",
                                        "Rose",
-                                       "PinkGreen",
+                                       "Pink Green",
                                        "RWB",
                                        "RGB",
                                        "CMY",
@@ -47,58 +48,37 @@ void PresetColorsPage::setupButtons() {
                                        "Seven",
                                        "All"};
 
-    mButtonLayout = new QGridLayout;
-    mButtonLayout->setSpacing(0);
-    mPresetButtons = std::vector<LightsButton *>(mButtonCount, nullptr);
-    mPresetLabels = std::vector<QLabel *>(colorGroupMax, nullptr);
-    this->grabGesture(Qt::SwipeGesture);
-    this->grabGesture(Qt::SwipeGesture);
+    mPresetWidgets = std::vector<PresetGroupWidget *>(labels.size(), nullptr);
+    mPresetLayout = new QVBoxLayout;
+    mPresetLayout->setSpacing(0);
+    mPresetLayout->setContentsMargins(9, 0, 0, 0);
 
-    int modeIndex = 0;
     int groupIndex = 0;
-    int layoutColumnIndex = 0;
     for (int preset = (int)EColorGroup::eWater; preset < (int)EColorGroup::eColorGroup_MAX; preset++) {
-        mPresetLabels[groupIndex] = new QLabel;
-        mPresetLabels[groupIndex]->setText(labels[groupIndex].c_str());
-        mPresetLabels[groupIndex]->setAlignment(Qt::AlignCenter);
-        mPresetLabels[groupIndex]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-
-        layoutColumnIndex = 0;
-        // add to layout
-        mButtonLayout->addWidget(mPresetLabels[groupIndex], layoutColumnIndex, groupIndex);
-        layoutColumnIndex++;
-        for (int routine = (int)ELightingRoutine::eMultiGlimmer; routine < (int)ELightingRoutine::eLightingRoutine_MAX; routine++) {
-            mPresetButtons[modeIndex] = new LightsButton;
-            mPresetButtons[modeIndex]->setupAsStandardButton((ELightingRoutine)routine, (EColorGroup)preset, QString(""), mData->colorGroup((EColorGroup)preset));
-            mPresetButtons[modeIndex]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-            connect(mPresetButtons[modeIndex], SIGNAL(buttonClicked(int, int)), this, SLOT(multiButtonClicked(int, int)));
-
-            // add to layout
-            mButtonLayout->addWidget(mPresetButtons[modeIndex], layoutColumnIndex, groupIndex);
-            layoutColumnIndex++;
-            modeIndex++;
-        }
+        mPresetWidgets[groupIndex] = new PresetGroupWidget(QString(labels[groupIndex].c_str()),
+                                                           (EColorGroup)preset,
+                                                           mData->colorGroup((EColorGroup)preset));
+        mPresetLayout->addWidget(mPresetWidgets[groupIndex]);
+        connect(mPresetWidgets[groupIndex], SIGNAL(presetButtonClicked(int, int)), this, SLOT(multiButtonClicked(int,int)));
         groupIndex++;
     }
 
     ui->scrollArea->setWidgetResizable(true);
-    mButtonLayout->setVerticalSpacing(0);
-    ui->scrollAreaWidgetContents->setLayout(mButtonLayout);
-
+    ui->scrollAreaWidgetContents->setLayout(mPresetLayout);
     ui->scrollArea->setStyleSheet("background-color:transparent;");
- }
+}
 
 void PresetColorsPage::highlightRoutineButton(ELightingRoutine routine, EColorGroup colorGroup) {
-    for (int i = 0; i < mButtonCount; i++) {
-        if ((mPresetButtons[i]->lightingRoutine() == routine)
-                && (mPresetButtons[i]->colorGroup() == colorGroup)) {
-            mPresetButtons[i]->button->setChecked(true);
-            mPresetButtons[i]->button->setStyleSheet("background-color: rgb(67, 67, 67); ");
+    int index = 0;
+    for (int iteratorGroup = (int)EColorGroup::eWater; iteratorGroup < (int)EColorGroup::eColorGroup_MAX; iteratorGroup++) {
+        for (int iteratorRoutine = (int)utils::ELightingRoutineSingleColorEnd + 1; iteratorRoutine < (int)ELightingRoutine::eLightingRoutine_MAX; iteratorRoutine++) {
+            if (iteratorRoutine == (int)routine && iteratorGroup == (int)colorGroup) {
+                mPresetWidgets[index]->setChecked((ELightingRoutine)iteratorRoutine, true);
+            } else {
+                mPresetWidgets[index]->setChecked((ELightingRoutine)iteratorRoutine, false);
+            }
         }
-        else {
-            mPresetButtons[i]->button->setChecked(false);
-            mPresetButtons[i]->button->setStyleSheet("background-color: rgb(47, 47, 47);");
-        }
+        index++;
     }
 }
 
@@ -122,14 +102,22 @@ void PresetColorsPage::multiButtonClicked(int routine, int colorGroup) {
 void PresetColorsPage::showEvent(QShowEvent *) {
     highlightRoutineButton(mData->currentRoutine(), mData->currentColorGroup());
     // calculate the largest element size
-    int maxWidth = 0;
-    for (int i = 0; i < mButtonLayout->count(); i++) {
-        if (mButtonLayout->itemAt(i)->geometry().width() > maxWidth) {
-            maxWidth = mButtonLayout->itemAt(i)->geometry().width();
+    int maxHeight = 0;
+    int index = 0;
+    for (int preset = (int)EColorGroup::eWater; preset < (int)EColorGroup::eColorGroup_MAX; preset++) {
+        if (mPresetWidgets[index]->height() > maxHeight) {
+            maxHeight = mPresetWidgets[index]->height();
         }
+        index++;
     }
-    for (int i = 0; i < mButtonCount; i++) {
-         mPresetButtons[i]->setMinimumWidth(maxWidth);
+    int scrollHeight = ui->scrollArea->height();
+    if ((scrollHeight / 6) > maxHeight) {
+        maxHeight = (scrollHeight / 6);
+    }
+    index = 0;
+    for (int preset = (int)EColorGroup::eWater; preset < (int)EColorGroup::eColorGroup_MAX; preset++) {
+        mPresetWidgets[index]->setMinimumHeight(maxHeight);
+        index++;
     }
 }
 

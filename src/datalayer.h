@@ -9,11 +9,12 @@
 
 #include "lightingprotocols.h"
 #include "commtype.h"
+#include "commhue.h"
 #include "commtypesettings.h"
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
  */
 

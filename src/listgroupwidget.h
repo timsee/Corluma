@@ -11,6 +11,11 @@
 #include "commtype.h"
 
 /*!
+ * \copyright
+ * Copyright (C) 2015 - 2017.
+ * Released under the GNU General Public License.
+ *
+ *
  * \brief The ListGroupWidget class is used to display a pre-saved group of
  *        devices and their settings in a single list widget. It displays the name
  *        of the group, up to 5 device previews as IconData, and the connection state

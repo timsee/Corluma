@@ -6,12 +6,14 @@
 #include <QPushButton>
 
 #include "lightingpage.h"
+#include "discoverypage.h"
 #include "icondata.h"
 #include "lightsbutton.h"
 #include "floatinglayout.h"
 #include "commtypesettings.h"
 #include "commlayer.h"
 #include "datasync.h"
+
 
 namespace Ui {
 class MainWindow;
@@ -27,18 +29,16 @@ enum class EPage {
     eCustomArrayPage,
     ePresetPage,
     eSettingsPage,
-    eHueSettingsPage,
     eConnectionPage
 };
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
  *
  * \brief The MainWindow class is the only window in this application.
- * It contains a QStackedWidget which shows 4 pages: SingleColorPage, CustomColorsPage,
- * PresetColorsPage, and the SettingsPage.
+ * It contains a QStackedWidget which shows all the central pages of the application.
  *
  * On the top of the MainWindow, there is an on/off button in the far left. This button
  * will reflect the current mode when on, and will be black when off. There is
@@ -125,10 +125,15 @@ public slots:
     void deviceCountReachedZero();
 
     /*!
-     * \brief defaultSettingsPageChanged handles whenever the default settings page changes from standard to hue or vice versa.
-     * \param newPage true if should use the standard settings page, false if using the hue page.
+     * \brief switchToDiscovery discovery button pressed so the discovery page should be displayed.
      */
-    void defaultSettingsPageChanged(bool newPage);
+    void switchToDiscovery();
+
+    /*!
+     * \brief switchToConnection start button was pressed on discovery page so it should switch to the connection
+     *        page.
+     */
+    void switchToConnection();
 
 protected:
     /*!
@@ -154,11 +159,23 @@ protected:
     void changeEvent(QEvent *event);
 
 private:
-
     /*!
      * \brief ui pointer to Qt UI form.
      */
     Ui::MainWindow *ui;
+
+    /*!
+     * \brief updateHueSingleColorFloatingMenu the hue single color menu follow specific logic on
+     *        what it displays based off of what types of hue lights are connected. This helper
+     *        handles the (somewhat messy) logic.
+     */
+    void updateHueSingleColorFloatingMenu();
+
+    /*!
+     * \brief mDiscoveryPage page devoted to discovering new connections. Previous connections
+     *        are saved so this page should only be used for configuring.
+     */
+    DiscoveryPage *mDiscoveryPage;
 
     /*!
      * \brief communication pointer to communication object
@@ -205,9 +222,10 @@ private:
     bool mLastPageIsMultiColor;
 
     /*!
-     * \brief mUseStandardSettings true if the standard settings page should be used, false otherwise.
+     * handles edge case
+     * \TODO remove this edgecase
      */
-    bool mUseStandardSettings;
+    bool mLastHuesWereOnlyWhite;
 };
 
 #endif // MAINWINDOW_H

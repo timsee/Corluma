@@ -12,28 +12,9 @@
 #include "groupsparser.h"
 #include "commlayer.h"
 
-/*!
- * \copyright
- * Copyright (C) 2015 - 2016.
- * Released under the GNU General Public License.
- */
-
 namespace Ui {
 class ConnectionPage;
 }
-
-/*!
- * \brief The EConnectionState enum tracks the various connection states both
- *        of each comm type and of the application overall.
- */
-enum class EConnectionState {
-    eOff,
-    eDiscovering,
-    eDiscoveredAndNotInUse,
-    eSingleDeviceSelected,
-    eMultipleDevicesSelected,
-    eConnectionState_MAX
-};
 
 /*!
  * \brief The EConnectionList enum contains the three types of states of the
@@ -46,19 +27,11 @@ enum class EConnectionList {
 };
 
 /*!
- * \brief The EConnectionButtonIcons enum provides access to the different button
- *        assets used as placeholders for graphics in the application.
- */
-enum class EConnectionButtonIcons {
-    eBlackButton,
-    eRedButton,
-    eYellowButton,
-    eBlueButton,
-    eGreenButton,
-    EConnectionButtonIcons_MAX
-};
-
-/*!
+ * \copyright
+ * Copyright (C) 2015 - 2017.
+ * Released under the GNU General Public License.
+ *
+ *
  * \brief The ConnectionPage class is the page that manages which devices are currently
  *        in use. The ConnectionPage can be switched between choosing individual devices
  *        and choosing groups of devices.
@@ -88,7 +61,7 @@ public:
     /*!
      * \brief updateUI updates the colors of various settings in the UI.
      */
-    void updateUI(ECommType type);
+    void updateUI();
 
     /*!
      * \brief connectCommLayer connect to commlayer. In a future update the commLayer pointer on
@@ -107,14 +80,6 @@ public:
      */
     void changeConnectionState(EConnectionState newState, bool skipCheck = false);
 
-    /*!
-     * \brief changeCommTypeConnectionState change the connection state and the associated UI
-     *        elements based on the parameters.
-     * \param type the commtype to change the connection state on
-     * \param newState the new state for the commtype.
-     */
-    void changeCommTypeConnectionState(ECommType type, EConnectionState newState);
-
 signals:
     /*!
      * \brief Used to signal back to the main page that it should update its top-left icon
@@ -127,6 +92,11 @@ signals:
      *        the number of devices connected.
      */
     void deviceCountChanged();
+
+    /*!
+     * \brief discoveryClicked emited whenever the discovery button is clicked.
+     */
+    void discoveryClicked();
 
 public slots:
 
@@ -144,27 +114,26 @@ public slots:
     void listClicked(QListWidgetItem *);
 
     /*!
-     * \brief highlightButton highlight the commtype button of the desired ECommType
-     * \param currentCommType the button that you want to highlight
+     * \brief listPressed only clicks are considered an actual selection in this application,
+     *        so a press event handles when theres a long press and ignores the selection it makes.
      */
-    void highlightButton(ECommType currentCommType);
+    void listPressed(QListWidgetItem *);
 
     /*!
-     * \brief plusButtonClicked called whenever the plus button is clicked
+     * \brief listSelectionChanged event that gets called whenever a list selection is changed.
      */
-    void plusButtonClicked();
+    void listSelectionChanged();
 
     /*!
-     * \brief minusButtonClicked called whenever the minus button is clicked
+     * \brief clearButtonPressed clear button is pressed and all selected devices are deselected.
      */
-    void minusButtonClicked();
+    void clearButtonPressed();
 
     /*!
-     * \brief hueDiscoveryUpdate provides an int representation of the EHueDiscoveryState
-     *        of Hue's discovery object. Used by the connectionList to display the current
-     *        state.
+     * \brief discoveryButtonPressed discovery button is pressed and discovery overlay is displayed
+     *        over the connection page.
      */
-    void hueDiscoveryUpdate(int);
+    void discoveryButtonPressed();
 
 private slots:
     /*!
@@ -172,11 +141,6 @@ private slots:
      *        change of state.
      */
     void renderUI();
-
-    /*!
-     * \brief commTypeSelected called when the comm type updates and changes
-     */
-    void commTypeSelected(int);
 
     /*!
      * \brief devicesButtonClicked handled whenver the button that changes the page
@@ -242,23 +206,27 @@ private:
     GroupsParser *mGroups;
 
     /*!
-     * \brief buttonByType helper for getting a QPushButton pointer based off
-     *        of a commtype.
-     * \param type the commtype to get a button for.
-     * \return a pointer to a button used for selecting a commtype.
-     */
-    QPushButton *buttonByType(ECommType type);
-
-    /*!
-     * \brief mSettings object used to access persistent app memory
-     */
-    QSettings *mSettings;
-
-    /*!
      * \brief mLastUpdateConnectionList the time that the connection list
      *        was last rendered. Used to throttle unnecessary rendering.
      */
     QTime mLastUpdateConnectionList;
+
+    /*!
+     * \brief structToIdentifierString converts a SLightDevice struct to a string in the format
+     *        of comma delimited values with only the values needed to identiy if as unique.
+     * \param dataStruct the struct to convert to a string
+     * \return a comma delimited string that represents all values in the SLightDevice.
+     */
+    QString structToIdentifierString(const SLightDevice& device);
+
+    /*!
+     * \brief identifierStringToStruct converts a string represention of a SControllerCommData
+     *        back to a struct.
+     * \param string the string to convert
+     * \return a SLightDevice struct based on the string given. an empty struct is returned if
+     *         the string is invalid.
+     */
+    SLightDevice identifierStringToStruct(QString string);
 
     //-------------
     // Cached States and Assets
@@ -268,12 +236,6 @@ private:
      * \brief mCurrentState The overall state of the app.
      */
     EConnectionState mCurrentState;
-
-    /*!
-     * \brief mConnectionStates The connection state of any
-     *        specific commtype
-     */
-    std::vector<EConnectionState> mConnectionStates;
 
     /*!
      * \brief mCurrentListString the string value of the last item clicked in the
@@ -293,21 +255,9 @@ private:
     QString mCurrentMoodListString;
 
     /*!
-     * \brief mCommType current comm type being shown in the connection list.
+     * \brief mCurrentConnectionList current type of collection list that is getting displayed.
      */
-    ECommType mCommType;
-
-    /*!
-     * \brief mHueDiscoveryState stored state of the Hue Discovery methods.
-     *        This is udpated internally by the hueDiscoveryUpdate(int) slot.
-     */
-    EHueDiscoveryState mHueDiscoveryState;
-
-    /*!
-     * \brief mCommButtons pointers for the button that control which commtype
-     *        you are working with.
-     */
-    std::vector<QPushButton*> mCommButtons;
+    EConnectionList mCurrentConnectionList;
 
     /*!
      * \brief mButtonIcons reference to a QPixmap for each of the comm buttons.
@@ -319,20 +269,10 @@ private:
     //-------------
 
     /*!
-     * \brief updateCommType update a commtype.
-     */
-    void updateCommType();
-
-    /*!
      * \brief updateConnectionList updates the GUI elements that display the
      *        CommLayer's connection list.
      */
-    void updateConnectionList(ECommType);
-
-    /*!
-     * \brief setupStreamButtons setup buttons for each of the commtypes.
-     */
-    void setupStreamButtons();
+    void updateConnectionList();
 
     /*!
      * \brief resizeAssets helper for resizing UI assets.
@@ -381,9 +321,10 @@ private:
     CommLayer *mComm;
 
     /*!
-     * \brief mCurrentConnectionList current type of collection list that is getting displayed.
+     * \brief highlightList helper that syncs the selected devices and groups in the backend data with the connectionList
+     *        so that the connection list only shows the devices and groups that are stored in the backend data as selected.
      */
-    EConnectionList mCurrentConnectionList;
+    void highlightList();
 };
 
 #endif // CONNECTIONPAGE_H

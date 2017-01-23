@@ -1,8 +1,9 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
  */
+
 
 #include "commlayer.h"
 #include <QDebug>
@@ -409,51 +410,6 @@ bool CommLayer::addController(ECommType type, QString controller) {
 
 bool CommLayer::fillDevice(SLightDevice& device) {
     return commByType(device.type)->fillDevice(device);
-}
-
-
-void CommLayer::resetStateUpdates() {
-    qDebug() << "INFO: start state updates";
-
-    commByType(ECommType::eHTTP)->resetStateUpdateTimeout();
-    commByType(ECommType::eHue)->resetStateUpdateTimeout();
-    commByType(ECommType::eUDP)->resetStateUpdateTimeout();
-
-#ifndef MOBILE_BUILD
-    commByType(ECommType::eSerial)->resetStateUpdateTimeout();
-#endif //MOBILE_BUILD
-}
-
-void CommLayer::stopStateUpdates() {
-    qDebug() << "INFO: stop state updates";
-
-    commByType(ECommType::eHTTP)->stopStateUpdates();
-    commByType(ECommType::eHue)->stopStateUpdates();
-    commByType(ECommType::eUDP)->stopStateUpdates();
-
-#ifndef MOBILE_BUILD
-    commByType(ECommType::eSerial)->stopStateUpdates();
-#endif //MOBILE_BUILD
-}
-
-void CommLayer::startDiscovery() {
-    commByType(ECommType::eHTTP)->startDiscovery();
-    commByType(ECommType::eHue)->startDiscovery();
-    commByType(ECommType::eUDP)->startDiscovery();
-
-#ifndef MOBILE_BUILD
-    commByType(ECommType::eSerial)->startDiscovery();
-#endif //MOBILE_BUILD
-}
-
-void CommLayer::stopDiscovery() {
-    commByType(ECommType::eHTTP)->stopDiscovery();
-    commByType(ECommType::eHue)->stopDiscovery();
-    commByType(ECommType::eUDP)->stopDiscovery();
-
-#ifndef MOBILE_BUILD
-    commByType(ECommType::eSerial)->stopDiscovery();
-#endif //MOBILE_BUILD
 }
 
 SHueLight CommLayer::hueLightFromLightDevice(const SLightDevice& device) {

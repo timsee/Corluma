@@ -1,3 +1,9 @@
+/*!
+ * \copyright
+ * Copyright (C) 2015 - 2017.
+ * Released under the GNU General Public License.
+ */
+
 #include "huesinglecolorpage.h"
 #include "ui_huesinglecolorpage.h"
 
@@ -10,21 +16,13 @@ HueSingleColorPage::HueSingleColorPage(QWidget *parent) :
     connect(ui->colorPicker, SIGNAL(colorUpdate(QColor)), this, SLOT(colorChanged(QColor)));
     ui->colorPicker->useHueWheel(true);
 
-    // setup the slider that controls the LED's brightness
+    // setup the slider that controls the LED's temperature color
     ui->ambientSlider->slider->setRange(153, 500);
     ui->ambientSlider->slider->setValue(173);
-    ui->ambientSlider->setSliderHeight(0.5f);
+    ui->ambientSlider->setSliderHeight(1.0f);
     ui->ambientSlider->setSliderColorBackground(QColor(255, 255, 255));
+    //ui->ambientSlider->setSliderImageBackground(":/images/huerange.png");
     connect(ui->ambientSlider, SIGNAL(valueChanged(int)), this, SLOT(ambientValueChanged(int)));
-
-
-    ui->temperatureButton->setCheckable(true);
-    connect(ui->temperatureButton, SIGNAL(clicked(bool)), this, SLOT(temperatureButtonPressed(bool)));
-
-    ui->rgbButton->setCheckable(true);
-    connect(ui->rgbButton, SIGNAL(clicked(bool)), this, SLOT(rgbButtonPressed(bool)));
-
-    ui->rgbButton->setChecked(true);
 }
 
 HueSingleColorPage::~HueSingleColorPage() {
@@ -42,8 +40,8 @@ void HueSingleColorPage::colorChanged(QColor color) {
 void HueSingleColorPage::ambientValueChanged(int newValue) {
     mData->updateCt(newValue);
     QColor ambientColor = utils::colorTemperatureToRGB(newValue);
-    ui->ambientSlider->setSliderColorBackground(ambientColor);
     ui->colorPicker->chooseColor(ambientColor, false);
+    ui->ambientSlider->setSliderColorBackground(ambientColor);
     emit singleColorChanged(ambientColor);
 }
 
@@ -75,17 +73,25 @@ void HueSingleColorPage::showEvent(QShowEvent *) {
     }
 }
 
+void HueSingleColorPage::changePageType(EHuePageType page) {
+    mPageType = page;
+    if (mPageType == EHuePageType::eRGB) {
+        ui->colorPicker->setVisible(true);
+        ui->ambientSlider->setVisible(false);
+
+        ((QHBoxLayout*)this->layout())->setStretch(0, 0);
+        ((QHBoxLayout*)this->layout())->setStretch(1, 10);
+        ((QHBoxLayout*)this->layout())->setStretch(2, 0);
+    } else if (mPageType == EHuePageType::eAmbient) {
+        ui->colorPicker->setVisible(false);
+        ui->ambientSlider->setVisible(true);
+
+        ((QHBoxLayout*)this->layout())->setStretch(0, 0);
+        ((QHBoxLayout*)this->layout())->setStretch(1, 0);
+        ((QHBoxLayout*)this->layout())->setStretch(2, 10);
+    }
+}
+
 void HueSingleColorPage::hideEvent(QHideEvent *) {
 
-}
-
-void HueSingleColorPage::rgbButtonPressed(bool) {
-    ui->rgbButton->setChecked(true);
-    ui->temperatureButton->setChecked(false);
-
-}
-
-void HueSingleColorPage::temperatureButtonPressed(bool) {
-    ui->rgbButton->setChecked(false);
-    ui->temperatureButton->setChecked(true);
 }

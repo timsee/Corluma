@@ -9,7 +9,7 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
  *
  * \brief Provides a UDP communication stream which allows

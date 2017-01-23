@@ -5,6 +5,11 @@
 #include <QTime>
 #include <QWidget>
 
+/*!
+ * \copyright
+ * Copyright (C) 2015 - 2017.
+ * Released under the GNU General Public License.
+ */
 
 class CommThrottle : public QWidget
 {

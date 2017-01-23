@@ -2,7 +2,7 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
  */
 
@@ -19,7 +19,7 @@ CommSerial::CommSerial() {
     mStateUpdateTimer = new QTimer(this);
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(stateUpdate()));
 
-    mStateUpdateInterval = 250;
+    mStateUpdateInterval = 500;
 }
 
 
@@ -42,9 +42,9 @@ void CommSerial::shutdown() {
         mDiscoveryTimer->stop();
     }
     for (auto&& serial : mSerialPorts) {
-        if (serial->isOpen()) {
-            serial->clear();
-            serial->close();
+        if (serial.first->isOpen()) {
+            serial.first->clear();
+            serial.first->close();
         }
     }
     mSerialPorts.clear();
@@ -97,7 +97,7 @@ void CommSerial::stateUpdate() {
 
         // maintence
         if (mDiscoveryMode
-                && mDiscoveryList.size() < deviceTable().size()
+                && mDiscoveredList.size() < deviceTable().size()
                 && !mDiscoveryTimer->isActive()) {
             mDiscoveryTimer->start(250);
         } else if (!mDiscoveryMode && mDiscoveryTimer->isActive()) {
@@ -108,9 +108,10 @@ void CommSerial::stateUpdate() {
 
 QSerialPort* CommSerial::serialPortByName(QString name) {
     QSerialPort *serial = NULL;
-    for (QSerialPort *savedPort : mSerialPorts) {
-        if (!QString::compare(savedPort->portName(), name)) {
-            serial = savedPort;
+    std::list<std::pair<QSerialPort*, QString> >::iterator iterator;
+    for (iterator = mSerialPorts.begin(); iterator != mSerialPorts.end(); ++iterator) {
+        if (!QString::compare(iterator->first->portName(), name)) {
+           serial = iterator->first;
         }
     }
     return serial;
@@ -126,7 +127,7 @@ void CommSerial::discoveryRoutine() {
     for (auto&& it : mDeviceTable) {
           QString controllerName = QString::fromUtf8(it.first.c_str());
           QSerialPort *serial = serialPortByName(controllerName);
-          bool found = (std::find(mDiscoveryList.begin(), mDiscoveryList.end(), controllerName) != mDiscoveryList.end());
+          bool found = (std::find(mDiscoveredList.begin(), mDiscoveredList.end(), controllerName) != mDiscoveredList.end());
           if (!found && serial != NULL) {
               // write to device
               serial->write(discoveryPacket.toStdString().c_str());
@@ -177,8 +178,9 @@ void CommSerial::discoverSerialPorts() {
 }
 
 bool CommSerial::connectSerialPort(const QSerialPortInfo& info) {
-    for (auto&& serial : mSerialPorts) {
-        if (!QString::compare(serial->portName(), info.portName())) {
+    std::list<std::pair<QSerialPort*, QString> >::iterator iterator;
+    for (iterator = mSerialPorts.begin(); iterator != mSerialPorts.end(); ++iterator) {
+        if (!QString::compare(iterator->first->portName(), info.portName())) {
             // its already connected, no need to connect again
             return true;
         }
@@ -194,7 +196,7 @@ bool CommSerial::connectSerialPort(const QSerialPortInfo& info) {
         serial->setFlowControl(QSerialPort::NoFlowControl);
         qDebug() << "Serial Port Connected!" << info.portName();
 
-        mSerialPorts.push_front(serial);
+        mSerialPorts.push_front(std::make_pair(serial, QString()));
         connect(serial, SIGNAL(readyRead()), this, SLOT(handleReadyRead()));
         connect(serial, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(handleError(QSerialPort::SerialPortError)));
 
@@ -212,25 +214,35 @@ bool CommSerial::connectSerialPort(const QSerialPortInfo& info) {
 //--------------------
 
 void CommSerial::handleReadyRead() {
+
     for (auto&& serial : mSerialPorts) {
-        while (serial->canReadLine()) {
-            for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
-                if (!throttle->first.compare(serial->portName())) throttle->second->receivedUpdate();
-            }
-
+        bool validPacket = false;
+        QString discoveryPacket = "DISCOVERY_PACKET";
+        while (serial.first->bytesAvailable()) {
             QByteArray packet;
-            packet.append(serial->readLine());
+            packet.append(serial.first->readAll());
             QString payload = QString::fromUtf8(packet.trimmed());
-            QString discoveryPacket = "DISCOVERY_PACKET";
-
-            //qDebug() << "serial" << serial->portName() << "received payload" << payload << "size" << packet.size();
-            if (payload.contains(discoveryPacket)) {
-                handleDiscoveryPacket(serial->portName(), 50, 3);
-                emit discoveryReceived(serial->portName(), payload, (int)ECommType::eSerial);
-            } else {
-                emit packetReceived(serial->portName(), payload, (int)ECommType::eSerial);
+            serial.second += payload;
+            if (serial.second.contains(";")
+                    || serial.second.contains(discoveryPacket)) {
+                validPacket = true;
             }
         }
+        if (validPacket) {
+            for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
+                if (!throttle->first.compare(serial.first->portName())) throttle->second->receivedUpdate();
+            }
+
+            //qDebug() << "serial" << serial.first->portName() << "received payload" << serial.second << "size" << serial.second.size();
+            if (serial.second.contains(discoveryPacket)) {
+                handleDiscoveryPacket(serial.first->portName(), 50, 3);
+                emit discoveryReceived(serial.first->portName(), serial.second, (int)ECommType::eSerial);
+            } else {
+                emit packetReceived(serial.first->portName(), serial.second, (int)ECommType::eSerial);
+            }
+            serial.second = "";
+        }
+
     }
 }
 

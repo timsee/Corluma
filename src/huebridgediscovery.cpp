@@ -1,12 +1,13 @@
-#include "huebridgediscovery.h"
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
  */
 
-HueBridgeDiscovery::HueBridgeDiscovery(QObject *parent) : QObject(parent)
-{
+#include "huebridgediscovery.h"
+
+HueBridgeDiscovery::HueBridgeDiscovery(QObject *parent) : QObject(parent) {
+
     mDiscoveryTimer = new QTimer;
     connect(mDiscoveryTimer, SIGNAL(timeout()), this, SLOT(testBridgeIP()));
 

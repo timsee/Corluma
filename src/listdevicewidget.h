@@ -11,11 +11,10 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
- */
-
-/*!
+ *
+ *
  * \brief The ListDeviceWidget class This widget is used on the SettingsPage as a replacement
  *        for a QListWidget on the connectionList. It shows more information than a standard
  *        QListWidget, by giving an icon that represents the lights states, the name of of the
@@ -67,6 +66,11 @@ private:
      *        which gets displayed on the mStatusIcon.
      */
     IconData mIconData;
+
+    /*!
+     * \brief mType the type of device it is. For example, a Hue or a Serial device.
+     */
+    QLabel *mType;
 
     /*!
      * \brief mController name of the controller

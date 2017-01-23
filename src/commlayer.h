@@ -17,7 +17,7 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
  */
 
@@ -125,15 +125,15 @@ public:
     void sendReset(const std::list<SLightDevice>& deviceList);
 
     /*!
-     * \brief resetStateUpdates reset the state updates timeouts for all commtypes. If it isn't on already,
+     * \brief resetStateUpdates reset the state updates timeouts for specified commtypes. If it isn't on already,
      *        it gets turned on.
      */
-    void resetStateUpdates();
+    void resetStateUpdates(ECommType type) { commByType(type)->resetStateUpdateTimeout(); }
 
     /*!
-     * \brief stopStateUpdates turn off the state update threads for all commtypes.
+     * \brief stopStateUpdates turn off the state update threads for specified commtypes.
      */
-    void stopStateUpdates();
+    void stopStateUpdates(ECommType type) { commByType(type)->stopStateUpdates(); }
 
     // --------------------------
     // Controller and Device Management
@@ -185,14 +185,14 @@ public:
     bool fillDevice(SLightDevice& device);
 
     /*!
-     * \brief startDiscovery put all active connection types into a discovery mode.
+     * \brief startDiscovery put given comm type into discovery mode.
      */
-    void startDiscovery();
+    void startDiscovery(ECommType type) { commByType(type)->startDiscovery(); }
 
     /*!
-     * \brief stopDiscovery changes the mode of all communication types to no longer be in discovery.
+     * \brief stopDiscovery stop the given comm type's discovery mode.
      */
-    void stopDiscovery();
+    void stopDiscovery(ECommType type) { commByType(type)->stopDiscovery(); }
 
     /*!
      * \brief runningDiscovery checks if discovery is being run actively. This means taht its expecting more
@@ -213,6 +213,23 @@ public:
         return commByType(type)->deviceTable();
     }
 
+    /*!
+     * \brief discoveredList getter for the list of all discovered devices from a specific commtype
+     * \param type commtype that you want the discovered devices from
+     * \return list of all discovered devices.
+     */
+    const std::list<QString>& discoveredList(ECommType type) {
+        return commByType(type)->discoveredList();
+    }
+    /*!
+     * \brief undiscoveredList getter for the list of all undiscovered devices from a specific commtype
+     * \param type commtype that you want the undiscovered devices from
+     * \return list of all undiscovered devices.
+     */
+    const std::list<QString>& undiscoveredList(ECommType type) {
+        return commByType(type)->undiscoveredList();
+    }
+
     // --------------------------
     // Hardware specific functions
     // --------------------------
@@ -224,6 +241,29 @@ public:
      * \return a list of SHueLight structs which contain info on all the connected lights.
      */
     std::list<SHueLight> hueList() { return mHue->connectedHues(); }
+
+    /*!
+     * \brief hueBridge getter for hue bridge
+     * \return hue bridge
+     */
+    SHueBridge hueBridge() { return mHue->bridge(); }
+
+    /*!
+     * \brief hueSchedules getter for a list of hue schedules. Hue schedules are predefined actions
+     *        stored on the bridge. These actions do not require an app to be connected and open in order
+     *        for them to execute.
+     * \return list of hue schedules.
+     */
+    std::list<SHueSchedule> hueSchedules() { return mHue->schedules(); }
+
+    /*!
+     * \brief updateHueTimeout update the hue timeout for a specific hue schedule.
+     * \param enable true to enable the timeout, false otherwise.
+     * \param index the index of the schedule on the bridge. This index is not necessarily the index of the group
+     *        or the device.
+     * \param timeout the number of minutes it should take the light to timeout.
+     */
+    void updateHueTimeout(bool enable, int index, int timeout) { mHue->updateIdleTimeout(enable, index, timeout); }
 
     /*!
      * \brief hueLightFromLightDevice takes a SLightDevice and retrieves

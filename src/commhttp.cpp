@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
  */
 
@@ -76,7 +76,7 @@ void CommHTTP::stateUpdate() {
         }
 
         if (mDiscoveryMode
-                && mDiscoveryList.size() < mDeviceTable.size()
+                && mDiscoveredList.size() < mDeviceTable.size()
                 && !mDiscoveryTimer->isActive()) {
             mDiscoveryTimer->start(1000);
         } else if (!mDiscoveryMode && mDiscoveryTimer->isActive()) {
@@ -96,7 +96,7 @@ void CommHTTP::discoveryRoutine() {
    QString discoveryPacket = QString("DISCOVERY_PACKET");
    for (auto&& it : mDeviceTable) {
        QString controllerName = QString::fromUtf8(it.first.c_str());
-         bool found = (std::find(mDiscoveryList.begin(), mDiscoveryList.end(), controllerName) != mDiscoveryList.end());
+         bool found = (std::find(mDiscoveredList.begin(), mDiscoveredList.end(), controllerName) != mDiscoveredList.end());
          if (!found) {
              QString urlString = "http://" + controllerName + "/arduino/" + discoveryPacket;
              QNetworkRequest request = QNetworkRequest(QUrl(urlString));

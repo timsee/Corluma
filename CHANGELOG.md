@@ -118,3 +118,11 @@
 * Updated message parsing to match the new [RGB-LED-Routines](https://github.com/timsee/RGB-LED-Routines) protocols. 
 * Fixed miscellaneous bugs.
 
+### **v0.9.85
+#### Discovery Page Update
+* Added page for discovering new connections.
+* Added support for Hue Light Strips, Blooms, and White bulbs.
+* Added initial Hue Schedule support.
+* Changed the layout of pages to be more uniform and require less clicks to use.
+* Fixed miscellaneous bugs.
+

@@ -19,8 +19,9 @@ class CustomColorsPage;
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
+ *
  *
  * \brief The CustomColorsPage provides a way to use an array of custom colors
  *        to do multi color routines.

@@ -13,73 +13,15 @@
 #include <QJsonValue>
 #include <QJsonObject>
 #include <QJsonArray>
+
+#include "hueprotocols.h"
+
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
- */
-
-
-/*!
- * \brief The SHueBridge struct stores all known data
- *        about the current hue bridge.
- */
-struct SHueBridge {
-    /*!
-     * \brief IP The IP address of the current bridge
-     */
-    QString IP;
-    /*!
-     * \brief username the username assigned by the bridge. Received
-     *        by sending a request packet ot the bridge.
-     */
-    QString username;
-};
-
-
-/*!
- * \brief The EHueDiscoveryState enum is used for keeping
- *        track of what step HueBridgeDiscovery object is in
- *        during a discovery routine.
- */
-enum class EHueDiscoveryState {
-    /*!
-     * \brief eNoBridgeFound default state, no discovery has started.
-     */
-    eNoBridgeFound,
-    /*!
-     * \brief eFindingIPAddress no valid IP address, looking for one over
-     *        UPnP and NUPnP.
-     */
-    eFindingIpAddress,
-    /*!
-     * \brief eTestingIPAddress an IP address has been received, sending
-     *        a test packet to this IP and awaiting a response before
-     *        accepting the IP address as a valid IP address.
-     */
-    eTestingIPAddress,
-    /*!
-     * \brief eFindingDeviceUsername There exists a valid IP address, but now
-     *        we are waiting for the Bridge to send back a new username so that
-     *        we can control lights and access their states.
-     */
-    eFindingDeviceUsername,
-    /*!
-     * \brief eTestingFullConnection We have a IP adderss and a username, but
-     *        we haven't confirmed they work together. Waiting for a response
-     *        that gives us access to their light states before stating that
-     *        we are connected.
-     */
-    eTestingFullConnection,
-    /*!
-     * \brief eBridgeConnected all necessary discovery methods have been ran
-     *        and have returned successfully, the application is connected
-     *        to a bridge.
-     */
-    eBridgeConnected
-};
-
-/*!
+ *
+ *
  * \brief The HueBridgeDiscovery class is an object that handles the discovery of a hue bridge by using
  *        a combination of UDP, HTTP, and JSON parsing.
  *

@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
  */
 
@@ -43,6 +43,7 @@ LightsSlider::LightsSlider(QWidget *parent) : QWidget(parent) {
 void LightsSlider::setSliderColorBackground(QColor color) {
     mSliderColor = color;
     mSliderColorSet = true;
+    mSliderImageSet = false;
     // compute a darker version for our gradient
     QColor darkColor = QColor((uint8_t)(color.red()   / 4),
                               (uint8_t)(color.green() / 4),
@@ -71,6 +72,23 @@ void LightsSlider::setSliderColorBackground(QColor color) {
     slider->setStyleSheet(styleSheetString);
 }
 
+void LightsSlider::setSliderImageBackground(QString path) {
+    mSliderImageSet = true;
+    mSliderColorSet = false;
+    mPath = path;
+    int sliderHandleSize = (int)std::min(this->size().width() / 12.0f, (float)slider->size().height());
+
+    QString styleSheetString = QString("QSlider::sub-page:horizontal{ "
+                                       " background-image: url(%1);"
+                                       "}"
+                                       "QSlider::handle:horizontal {"
+                                        "width: %2px;"
+                                        "}"
+                                       ).arg(path,
+                                             QString::number(sliderHandleSize));
+
+    slider->setStyleSheet(styleSheetString);
+}
 
 void LightsSlider::receivedValue(int value) {
     value = jumpSliderToPosition(slider, value);
@@ -152,8 +170,9 @@ void LightsSlider::resizeEvent(QResizeEvent *event) {
                         this->rect().height() * mHeightScaleFactor);
     if (mSliderColorSet) {
         setSliderColorBackground(mSliderColor);
+    } else if (mSliderImageSet) {
+        setSliderImageBackground(mPath);
     }
-
 }
 
 void LightsSlider::showEvent(QShowEvent *event) {

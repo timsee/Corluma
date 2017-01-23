@@ -4,6 +4,7 @@
 
 #include "lightingpage.h"
 #include "lightsbutton.h"
+#include "presetgroupwidget.h"
 
 #include <QWidget>
 #include <QToolButton>
@@ -107,33 +108,15 @@ private:
     Ui::PresetColorsPage *ui;
 
     /*!
-     * \brief mButtonLayout layout used to put the buttons in the QScrollArea as a grid.
+     * \brief mPresetWidgets vector of all preset widgets getting displayed in the
+     *        scroll area.
      */
-    QGridLayout *mButtonLayout;
+    std::vector<PresetGroupWidget *> mPresetWidgets;
 
     /*!
-     * \brief mPresetButtons Buttons used in the grid in the scroll area, each one signals
-     *        a EColorPreset and a ELightingMode.
+     * \brief mPresetLayout layout of all preset widgets.
      */
-    std::vector<LightsButton *> mPresetButtons;
-
-    /*!
-     * \brief mPresetLabels labels for the top of the columns of the preset buttons.
-     */
-    std::vector<QLabel *> mPresetLabels;
-
-    /*!
-     * \brief mButtonCount number of buttons used, equals the number of presets
-     *        multiplied by the number of lighting routines that the presets can use.
-     */
-    int mButtonCount;
-
-    /*!
-     * \brief mPageButtons pointers to all the main buttons, used
-     *        to iterate through them quickly.
-     */
-    std::shared_ptr<std::vector<QToolButton *> > mPageButtons;
-
+    QVBoxLayout *mPresetLayout;
 };
 
 #endif // PresetColorsPage_H

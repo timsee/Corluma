@@ -11,72 +11,16 @@
 #include <QJsonDocument>
 
 #include "huebridgediscovery.h"
+#include "hueprotocols.h"
 #include "commthrottle.h"
 #include "commpacketparser.h"
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
- */
-
-enum class EHueType {
-    eExtended,
-    eAmbient,
-    eColor,
-    EHueType_MAX
-};
-
-/*!
- * \brief The SHueLight struct a struct that stores all the relevant
- *        data received from a state update from the bridge.
- */
-struct SHueLight {
-    /*!
-     * \brief type the type of Hue product connected.
-     */
-    EHueType type;
-
-    /*!
-     * \brief uniqueID a unique identifier of that particular light.
-     */
-    QString uniqueID;
-
-    /*!
-     * \brief name name of light. not necessarily unique and can be assigned.
-     */
-    QString name;
-
-    /*!
-     * \brief modelID ID of specific model. changes between versions of the same light.
-     */
-    QString modelID;
-
-    /*!
-     * \brief manufacturer manfucturer of light.
-     */
-    QString manufacturer;
-
-    /*!
-     * \brief softwareVersion exact software version of light.
-     */
-    QString softwareVersion;
-
-    /*!
-     * \brief deviceIndex the index of the device on the bridge. Does not change unless
-     *        you forget and relearn devices in a different order.
-     */
-    int deviceIndex;
-};
-
-inline bool operator==(const SHueLight& lhs, const SHueLight& rhs)
-{
-    bool result = true;
-    if (lhs.deviceIndex     !=  rhs.deviceIndex) result = false;
-    return result;
-}
-
-/*!
+ *
+ *
  * \brief The CommHue class communicates with a Phillips Hue Bridge to control
  *        all of the currently connected Hue Lights.
  *
@@ -170,6 +114,76 @@ public:
      * \return the SHueLight that represents the same device as the SLightDevice given.
      */
     SHueLight hueLightFromLightDevice(const SLightDevice& device);
+
+    /*!
+     * \brief sendSchedule send a schedule to the Hue Bridge. This schedule gets kept on the bridge and will
+     *        not be deleted unless explicitly asked to be deleted.
+     * \param schedule the new schedule for the bridge.
+     */
+    void sendSchedule(SHueSchedule schedule);
+
+    /*!
+     * \brief resetScheduleTimer schedules are updated on a separate thread from the rest of the hue state updates.
+     *        This function resets the timer and continues requesting the schedule.
+     */
+    void resetScheduleTimer();
+
+    /*!
+     * \brief stopScheduleTimer stop the schedule update thread.
+     */
+    void stopScheduleTimer();
+
+    /*!
+     * \brief createIdleTimeoutsForConnectedLights Hue lights don't have a default idle timeout option, RGB-LED-Routines
+     *        lights do. What do!? We create a schedule that maps to each light individually, and after packets are done
+     *       syncing if a timeout is enabled, the schedule is updated.
+     */
+    void createIdleTimeoutsForConnectedLights();
+
+    /*!
+     * \brief createIdleTimeout create an idle timeout schedule for a specific light.
+     * \param i the index of the light in the Hue Bridge.
+     * \param minutes the amount of minutes it takes for a light to idle off.
+     */
+    void createIdleTimeout(int i, int minutes);
+
+    /*!
+     * \brief postJson helper function that takes a JSON object and posts it to the hue bridge.
+     * \param resource the resource that you want to control with the hue bridge. This may be a group,
+     *        light, or schedule.
+     * \param object the JSON object that you want to give to the resource.
+     */
+    void postJson(QString resource, QJsonObject object);
+
+    /*!
+     * \brief putJson helper function that takes a JSON object and puts it on the hue bridge.
+     * \param resource the resource that you want to control with the hue bridge. This may be a group,
+     *        light, or schedule.
+     * \param object the JSON object that you want to give to the resource.
+     */
+    void putJson(QString resource, QJsonObject object);
+
+    /*!
+     * \brief updateIdleTimeout upate the idle tieout for a specific schedule. This is called during data sync
+     *        to turn off the idle timeout and after datasync it gets called again to turn the idle timeout back on.
+     * \param enable true to turn on the idle timeout, false to turn it off.
+     * \param scheduleID The ID of the schedule that you want to turn on and off. This ID does not necessarily
+     *        map to the resource or group ID.
+     * \param minutes the number of minutes it should take to timeout.
+     */
+    void updateIdleTimeout(bool enable, int scheduleID, int minutes);
+
+    /*!
+     * \brief bridge getter for the bridge and its associated info
+     * \return struct that represents the bridge.
+     */
+    SHueBridge bridge() { return mDiscovery->bridge(); }
+
+    /*!
+     * \brief schedules getter for a list of all known schedules
+     * \return list of all known schedules.
+     */
+    std::list<SHueSchedule> schedules() { return mSchedules; }
 
 signals:
     /*!
@@ -270,6 +284,11 @@ private slots:
      */
     void resetSettings();
 
+    /*!
+     * \brief requestSchedules request schedules updates.
+     */
+    void requestSchedules();
+
 private:
     /*!
      * \brief mNetworkManager Qt's HTTP connection object
@@ -306,6 +325,23 @@ private:
     CommPacketParser *mParser;
 
     /*!
+     * \brief mScheduleTimer the timer that is used to periodically request updates for the schedules of hues.
+     *        This is separate from the state update timer as it needs to be around for longer in order to keep
+     *        idle timeouts in sync.
+     */
+    QTimer *mScheduleTimer;
+
+    /*!
+     * \brief mLastScheduleTime The point in time that the schedule timer was last reset.
+     */
+    QTime mLastScheduleTime;
+
+    /*!
+     * \brief mSchedules a list that stores all known data about the current schedules.
+     */
+    std::list<SHueSchedule> mSchedules;
+
+    /*!
      * \brief stringToHueType helper that takes a string received from the hue and converts it to its type.
      */
     EHueType stringToHueType(const QString& string);
@@ -324,14 +360,11 @@ private:
      */
     void handleSuccessPacket(QString key, QJsonValue value);
 
-
     /*!
-     * \brief handleErrorPacket handles a packet received from the hue bridge that indicates a requested change
-     *        failed. These packets are sent from the hue bridge ever time it receives but cannot execute a command.
-     * \param key key of packet that failed
-     * \param value JSON data about what failed.
+     * \brief handleErrorPacket handle errors received from the Hue Bridge. In most cases, we just print them out as debug messages.
+     * \param object the object that contains the error data.
      */
-    void handleErrorPacket(QString key, QJsonValue value);
+    void handleErrorPacket(QJsonObject object);
 
     /*!
      * \brief updateHueLightState this function is called when an update packet is received to parse the update and then to
@@ -340,7 +373,32 @@ private:
      * \param i index of Hue Light.
      * \return true if successful, false if failed.
      */
-    bool updateHueLightState(QJsonValue object, int i);
+    bool updateHueLightState(QJsonObject object, int i);
+
+    /*!
+     * \brief updateHueSchedule read an incoming packet from the Hue Brige and update the Hue Schedule based on the contents
+     * \param object thue QJsonObject that contains the data on the hue schedule.
+     * \param i the index of the hue schedule given by the bridge.
+     * \return true if successful, false if failed.
+     */
+    bool updateHueSchedule(QJsonObject object, int i);
+
+    /*!
+     * \brief checkTypeOfUpdate checks the JSON object received from the hue bridge and figures out whether its a
+     *        HueSchedule update, HueLight update, or anything else.
+     * \param object object to analyze and determine the contents of.
+     * \return a enumerated type representing the type of update data received from the Hue Bridge.
+     */
+    EHueUpdates checkTypeOfUpdate(QJsonObject object);
+
+    /*!
+     * \brief convertMinutesToTimeout hues use a specific format for the timers that are used to timeout the hue lights.
+     *        Tihs helper function takes integers and converts them into a string that represents the timeout.
+     * \param minutes the number of minutes you want it to take to timeout.
+     * \param stateUpdateTimeout number of seconds it takes the state update timer to turn off.
+     * \return a string that is in the format of `PTHH:MM:SS` which is used for sending a timeout to a hue bridge.
+     */
+    QString convertMinutesToTimeout(int minutes, int stateUpdateTimeout);
 
     /*!
      * \brief sendString sends a the provided string to the hue light at the given index.

@@ -4,6 +4,17 @@
 #include <QWidget>
 #include "lightingpage.h"
 
+/*!
+ * \copyright
+ * Copyright (C) 2015 - 2016.
+ * Released under the GNU General Public License.
+ */
+
+enum class EHuePageType {
+    eRGB,
+    eAmbient
+};
+
 namespace Ui {
 class HueSingleColorPage;
 }
@@ -27,6 +38,12 @@ public:
      * Deconstructor
      */
     ~HueSingleColorPage();
+
+    /*!
+     * \brief changePageType change the hue page type to display a different color picker.
+     * \param page the new page type for the hue page.
+     */
+    void changePageType(EHuePageType page);
 
 signals:
     /*!
@@ -60,19 +77,17 @@ private slots:
      */
     void ambientValueChanged(int);
 
-    /*!
-     * \brief rgbButtonPressed top menu button for displaying the RGB color wheel was pressed.
-     */
-    void rgbButtonPressed(bool);
-
-    /*!
-     * \brief temperatureButtonPressed top menu button for using the temperature slider
-     *        was pressed.
-     */
-    void temperatureButtonPressed(bool);
-
 private:
+    /*!
+     * \brief ui pointer to Qt UI form.
+     */
     Ui::HueSingleColorPage *ui;
+
+    /*!
+     * \brief mPageType the type of hue page being displayed. Currently it can be either
+     *        an RGB picker for RGB lights or a Ambient slider for ambient lights.
+     */
+    EHuePageType mPageType;
 };
 
 #endif // HUESINGLECOLORPAGE_H
