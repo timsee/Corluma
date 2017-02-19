@@ -21,9 +21,6 @@ CommHue::CommHue() {
     mNetworkManager = new QNetworkAccessManager;
     connect(mNetworkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 
-    mThrottle = new CommThrottle();
-    connect(mThrottle, SIGNAL(sendThrottleBuffer(QString, QString)), this, SLOT(sendThrottleBuffer(QString, QString)));
-
     mScheduleTimer = new QTimer;
     connect(mScheduleTimer, SIGNAL(timeout()), this, SLOT(requestSchedules()));
 
@@ -42,7 +39,6 @@ CommHue::CommHue() {
 
     mFullyDiscovered = false;
     mStateUpdateInterval = 1000;
-
 }
 
 void CommHue::startup() {
@@ -70,6 +66,12 @@ void CommHue::sendPacket(QString controller, QString packet) {
 
 
 void CommHue::changeExtendedLight(int lightIndex, int saturation, int brightness, int hue) {
+    SHueLight light;
+    for (auto&& hue : mConnectedHues) {
+        if (lightIndex == hue.deviceIndex) {
+            light = hue;
+        }
+    }
     // handle multicasting with light index 0
     if (lightIndex == 0) {
         for (uint32_t i = 1; i <= mConnectedHues.size(); ++i) {
@@ -82,13 +84,27 @@ void CommHue::changeExtendedLight(int lightIndex, int saturation, int brightness
     if (brightness > 254) {
         brightness = 254;
     }
-    QColor color;
-    color.setHsv(hue / 182.0, saturation, brightness);
-    QString body = "{\"on\":true ,\"colormode\":\"hs\",\"sat\":" + QString::number(saturation) + ", \"bri\":" + QString::number(brightness) + ",\"hue\":" + QString::number(hue) + "}";
-    sendString(lightIndex, body);
+
+    QJsonObject json;
+    json["on"] = true;
+    // 3rd gen bulbs don't seem to accept a color mode
+    //if (sendColorMode(light)) {
+     //   json["colormode"] = "hs";
+    //}
+    json["sat"] = saturation;
+    json["bri"] = brightness;
+    json["hue"] = hue;
+    putJson("/lights/" + QString::number(lightIndex) + "/state", json);
 }
 
 void CommHue::changeAmbientLight(int lightIndex, int ct) {
+    SHueLight light;
+    for (auto&& hue : mConnectedHues) {
+        if (lightIndex == hue.deviceIndex) {
+            light = hue;
+        }
+    }
+
     if (lightIndex == 0) {
         for (uint32_t i = 1; i <= mConnectedHues.size(); ++i) {
             changeAmbientLight(i, ct);
@@ -100,13 +116,16 @@ void CommHue::changeAmbientLight(int lightIndex, int ct) {
     if (ct < 153) {
         ct = 153;
     }
-    QString body = "{\"on\":true ,\"colormode\":\"ct\",\"ct\":" + QString::number(ct) + "}";
-    sendString(lightIndex, body);
+    QJsonObject json;
+    json["on"] = true;
+    // 3rd gen bulbs don't seem to accept a color mode
+    //if (sendColorMode(light)) {
+      //  json["colormode"] = "ct";
+    //}
+    json["ct"] = ct;
+    putJson("/lights/" + QString::number(lightIndex) + "/state", json);
 }
 
-void CommHue::sendThrottleBuffer(QString bufferedConnection, QString bufferedMessage) {
-    mNetworkManager->put(QNetworkRequest(QUrl(bufferedConnection)), bufferedMessage.toStdString().c_str());
-}
 
 void CommHue::updateLightStates() {
     //TODO: make a better way to delete schedules
@@ -127,15 +146,17 @@ void CommHue::updateLightStates() {
 
 void CommHue::turnOn(int lightIndex) {
     if (discovery()->isConnected()) {
-        QString urlString = mUrlStart + "/lights/" + QString::number(lightIndex) + "/state";
-        mNetworkManager->put(QNetworkRequest(QUrl(urlString)), "{\"on\":true}");
+        QJsonObject json;
+        json["on"] = true;
+        putJson("/lights/" + QString::number(lightIndex) + "/state", json);
     }
 }
 
 void CommHue::turnOff(int lightIndex) {
     if (discovery()->isConnected()) {
-        QString urlString = mUrlStart + "/lights/" + QString::number(lightIndex) + "/state";
-        mNetworkManager->put(QNetworkRequest(QUrl(urlString)), "{\"on\":false}");
+        QJsonObject json;
+        json["on"] = false;
+        putJson("/lights/" + QString::number(lightIndex) + "/state", json);
     }
 }
 
@@ -146,7 +167,8 @@ void CommHue::connectionStatusHasChanged(bool status) {
         mUrlStart = "http://" + bridge.IP + "/api/" + bridge.username;
         mStateUpdateTimer->start(mStateUpdateInterval);
         // call update method immediately
-        mThrottle->startThrottle(500, 1);
+        handleDiscoveryPacket("bridge");
+        //mThrottle->startThrottle();
         updateLightStates();
         mDiscoveryMode = false;
         mFullyDiscovered = true;
@@ -159,19 +181,10 @@ void CommHue::connectionStatusHasChanged(bool status) {
 //------------------------------------
 
 void CommHue::mainColorChange(int deviceIndex, QColor color){
-    SLightDevice brightnessLookup;
-    brightnessLookup.index = deviceIndex;
-    brightnessLookup.type = ECommType::eHue;
-    brightnessLookup.name = "Bridge";
-    if (fillDevice(brightnessLookup)) {
-        float brightness =  brightnessLookup.brightness * 2.55f;
-        changeExtendedLight(deviceIndex,
-                            color.saturation(),
-                            (int)(brightness),
-                            color.hue() * 182);
-    } else {
-        qDebug() << "WARNING: couldn't find hue light of type" << deviceIndex;
-    }
+    changeExtendedLight(deviceIndex,
+                        color.saturation(),
+                        color.value(),
+                        color.hue() * 182);
 }
 
 void CommHue::arrayColorChange(int deviceIndex, int colorIndex, QColor color) {
@@ -218,24 +231,15 @@ void CommHue::customArrayCount(int deviceIndex, int customArrayCount) {
     //TODO: implement
 }
 
-void CommHue::sendString(int index, const QString& string) {
-    if (discovery()->isConnected()) {
-        QString urlString = mUrlStart + "/lights/" + QString::number(index) + "/state";
-        if (mThrottle->checkThrottle(urlString, string)) {
-            //qDebug() << "Sending to" << urlString;
-            mNetworkManager->put(QNetworkRequest(QUrl(urlString)), string.toStdString().c_str());
-            resetStateUpdateTimeout();
-        }
-    }
-}
-
 void CommHue::brightnessChange(int deviceIndex, int brightness) {
     brightness = (int)(brightness * 2.5f);
     if (brightness > 254) {
         brightness = 254;
     }
-    QString body = "{\"bri\":" + QString::number(brightness) + "}";
-    sendString(deviceIndex, body);
+
+    QJsonObject json;
+    json["bri"] = brightness;
+    putJson("/lights/" + QString::number(deviceIndex) + "/state", json);
 }
 
 void CommHue::speedChange(int deviceIndex, int speed) {
@@ -265,7 +269,6 @@ void CommHue::replyFinished(QNetworkReply* reply) {
         // check validity of the document
         if(!jsonResponse.isNull()) {
             if(jsonResponse.isObject()) {
-                mThrottle->receivedUpdate();
                 QJsonObject object = jsonResponse.object();
                 QStringList keys = object.keys();
                 bool hadSchedules = false;
@@ -481,7 +484,6 @@ bool CommHue::updateHueLightState(QJsonObject object, int i) {
             SLightDevice light = SLightDevice();
             light.isReachable = stateObject.value("reachable").toBool();
             light.isOn = stateObject.value("on").toBool();
-            light.isValid = true;
 
             QString colorMode = stateObject.value("colormode").toString();
             light.colorMode = hueStringtoColorMode(colorMode);
@@ -687,7 +689,6 @@ void CommHue::updateIdleTimeout(bool enable, int scheduleID, int minutes) {
 
     QString resource = "/schedules/" + QString::number(scheduleID);
     putJson(resource, object);
-
 }
 
 QString CommHue::convertMinutesToTimeout(int minutes, int stateUpdateTimeout) {
@@ -743,11 +744,12 @@ void CommHue::postJson(QString resource, QJsonObject object) {
 void CommHue::putJson(QString resource, QJsonObject object) {
     if (discovery()->isConnected()) {
         QString urlString = mUrlStart + resource;
+        QJsonDocument doc(object);
+        QString strJson(doc.toJson(QJsonDocument::Compact));
+
         QNetworkRequest request = QNetworkRequest(QUrl(urlString));
         request.setHeader(QNetworkRequest::ContentTypeHeader,
                           QStringLiteral("text/html; charset=utf-8"));
-        QJsonDocument doc(object);
-        QString strJson(doc.toJson(QJsonDocument::Compact));
         //qDebug() << "request: " << urlString << "json" << strJson;
         mNetworkManager->put(request, strJson.toUtf8());
     }

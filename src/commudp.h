@@ -5,7 +5,6 @@
 #include <QTimer>
 
 #include "commtype.h"
-#include "commthrottle.h"
 
 /*!
  * \copyright
@@ -58,11 +57,6 @@ private slots:
      * \brief discoveryRoutine sends a discovery packet in order to test a connection.
      */
     void discoveryRoutine();
-
-    /*!
-     * \brief sendThrottleBuffer response to the throttle buffer wanting to clear itself.
-     */
-    void sendThrottleBuffer(QString, QString);
 
     /*!
      * \brief stateUpdate used by the mStateUpdateTimer to request new

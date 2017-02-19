@@ -9,15 +9,16 @@
 CommTypeSettings::CommTypeSettings() {
     mCommTypeCount = 0;
     mSettings = new QSettings();
-    mDeviceInUse = std::vector<bool>((int)ECommType::eCommType_MAX);
+    mDeviceInUse = std::vector<bool>(3);
 
-    mCommTypeInUseSaveKeys = std::vector<QString>(4);
-    mCommTypeInUseSaveKeys[0] = QString("HTTPInUse");
-    mCommTypeInUseSaveKeys[1] = QString("UDPInUse");
+    mCommTypeInUseSaveKeys = std::vector<QString>(3);
+    mCommTypeInUseSaveKeys[0] = QString("YunInUse");
+    mCommTypeInUseSaveKeys[1] = QString("SerialInUse");
     mCommTypeInUseSaveKeys[2] = QString("HueInUse");
-    mCommTypeInUseSaveKeys[3] = QString("SerialInUse");
 
-    for (int i = 0; i < (int)ECommType::eCommType_MAX; ++i) {
+    std::vector<ECommType> usedTypes = commTypes();
+    for (uint32_t x = 0; x < usedTypes.size(); ++x) {
+        int i = indexOfCommTypeSettings(usedTypes[x]);
         if (mSettings->value(mCommTypeInUseSaveKeys[i]).toString().compare("") != 0) {
             bool shouldEnable = mSettings->value(mCommTypeInUseSaveKeys[i]).toBool();
             mDeviceInUse[(int)i] = shouldEnable;
@@ -31,17 +32,52 @@ CommTypeSettings::CommTypeSettings() {
 
     //error handling, must always have at least one stream!
     if (mCommTypeCount == 0) {
-        mDeviceInUse[(int)ECommType::eHue] = true;
-        mSettings->setValue(mCommTypeInUseSaveKeys[(int)ECommType::eHue], QString::number((int)false));
+        mDeviceInUse[indexOfCommTypeSettings(ECommType::eHue)] = true;
+        mSettings->setValue(mCommTypeInUseSaveKeys[indexOfCommTypeSettings(ECommType::eHue)], QString::number((int)false));
         mSettings->sync();
         mCommTypeCount++;
     }
 }
 
 bool CommTypeSettings::commTypeEnabled(ECommType type) {
-    return mDeviceInUse[(int)type];
+    return mDeviceInUse[indexOfCommTypeSettings(type)];
 }
 
+int CommTypeSettings::indexOfCommTypeSettings(ECommType type) {
+    int index = -1;
+    switch (type) {
+        case ECommType::eHTTP:
+        case ECommType::eUDP:
+            index = 0;
+            break;
+#ifndef MOBILE_BUILD
+        case ECommType::eSerial:
+            index = 1;
+            break;
+#endif //MOBILE_BUILD
+        case ECommType::eHue:
+#ifndef MOBILE_BUILD
+            index = 2;
+#else
+            index = 1;
+#endif
+            break;
+        default:
+            qDebug() << "AM I GETTING HERE?";
+            index = 0;
+            break;
+    }
+    return index;
+}
+
+std::vector<ECommType> CommTypeSettings::commTypes() {
+    std::vector<ECommType> usedTypes = {ECommType::eUDP,
+                                    #ifndef MOBILE_BUILD
+                                        ECommType::eSerial,
+                                    #endif //MOBILE_BUILD
+                                        ECommType::eHue };
+    return usedTypes;
+}
 
 bool CommTypeSettings::enableCommType(ECommType type, bool shouldEnable) {
     bool previouslyEnabled = commTypeEnabled(type);
@@ -55,9 +91,9 @@ bool CommTypeSettings::enableCommType(ECommType type, bool shouldEnable) {
     if (!shouldEnable && previouslyEnabled) {
         mCommTypeCount--;
     }
-    mDeviceInUse[(int)type] = shouldEnable;
+    mDeviceInUse[indexOfCommTypeSettings(type)] = shouldEnable;
 
-    mSettings->setValue(mCommTypeInUseSaveKeys[(int)type], QString::number((int)shouldEnable));
+    mSettings->setValue(mCommTypeInUseSaveKeys[indexOfCommTypeSettings(type)], QString::number((int)shouldEnable));
     mSettings->sync();
     return true;
 }

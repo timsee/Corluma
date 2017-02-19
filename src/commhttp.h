@@ -2,11 +2,11 @@
 #define COMMHTTP_H
 
 #include "commtype.h"
-#include "commthrottle.h"
 
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QTimer>
 
 /*!
  * \copyright
@@ -56,11 +56,6 @@ private slots:
      *        sent from other methods.
      */
     void replyFinished(QNetworkReply*);
-
-    /*!
-     * \brief sendThrottleBuffer response to the throttle buffer wanting to clear itself.
-     */
-    void sendThrottleBuffer(QString, QString);
 
     /*!
      * \brief stateUpdate used by the mStateUpdateTimer to request new

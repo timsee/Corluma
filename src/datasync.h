@@ -10,8 +10,37 @@
  * \copyright
  * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
- *
- *
+ */
+
+
+/*!
+ * \brief The SThrottle struct tracks the last itme an individual controller
+ *        was throttled. In the current iteration, it also tracks the device index
+ *        of the throttled controller but that will be removed when combining
+ *        packets gets a bit smarter.
+ */
+struct SThrottle
+{
+    /*!
+     * \brief time time since last message was sent.
+     */
+    QTime time;
+    /*!
+     * \brief controller name of controller.
+     */
+    QString controller;
+    /*!
+     * \brief type communication type for controller.
+     */
+    ECommType type;
+    /*!
+     * \brief index index of device getting throttled.
+     */
+    int index; ///TODO: remove the need for this by combining packets better
+};
+
+
+/*!
  * \brief The DataSync class compares the data layer's representation of devices with the commlayer's
  *        understanding of devices and tries to sync them up. The DataLayer's representation is used
  *        as the "desired" state of lights. The CommLayer's understanding is used as the current state.
@@ -152,6 +181,40 @@ private:
      *        false otherwise.
      */
     bool mDataIsInSync;
+
+    /*!
+     * \brief mUpdateInterval number of milliseconds between each sync routine.
+     */
+    int mUpdateInterval;
+
+    //------------------
+    // Throttle
+    //------------------
+
+    /*!
+     * \brief mThrottleList list of all known controllers that packets have been sent to and the
+     *        the last time a packet was sent. Used to throttle messages from sending too frequently.
+     */
+    std::list<SThrottle> mThrottleList;
+
+    /*!
+     * \brief checkThrottle checks if any messages have been sent to this controller recently and throttles the messages
+     *        if too many are being sent in a single interval.
+     * \param controller name of controller.
+     * \param type communication type of controller
+     * \param index index of device on controller (temporary)
+     * \return true if a mesasge can be sent, false if the message shoudl be throttled
+     */
+    bool checkThrottle(QString controller, ECommType type, int index);
+
+    /*!
+     * \brief resetThrottle should be called immediately after sending a packet, resets the throttle so that no messages can
+     *        be sent until a certain interval has passed.
+     * \param controller name of controller.
+     * \param type communication type of controller
+     * \param index index of device on controller (temporary)
+     */
+    void resetThrottle(QString controller, ECommType type, int index);
 };
 
 #endif // DATASYNC_H

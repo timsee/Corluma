@@ -107,6 +107,7 @@ void SingleColorPage::colorChanged(QColor color) {
     }
 
     emit singleColorChanged(color);
+    emit updateMainIcons();
 }
 
 // ----------------------------
@@ -127,8 +128,21 @@ void SingleColorPage::showEvent(QShowEvent *) {
   } else {
       ui->colorPicker->useHueWheel(false);
   }
+//  resizeEvent(nullptr);
+  //TODO: resize if needed
 
 }
+
+//void SingleColorPage::resizeEvent(QResizeEvent *event) {
+//    Q_UNUSED(event);
+//    for (int i = 0; i < mRoutineButtons.size(); ++i) {
+//        LightsButton *lightsButton = mRoutineButtons[i];
+//        int size = (int)(std::min(lightsButton->size().width(), lightsButton->size().height()));
+//        lightsButton->button->setFixedSize(size, size);
+//        lightsButton->button->setIconSize(QSize(size * 0.8f,
+//                                  size * 0.8f));
+//    }
+//}
 
 void SingleColorPage::hideEvent(QHideEvent *event) {
     Q_UNUSED(event);

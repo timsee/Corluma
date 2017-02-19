@@ -47,6 +47,12 @@ public:
 
 signals:
     /*!
+     * \brief Used to signal back to the main page that it should update its top-left icon
+     *        with new RGB values
+     */
+    void updateMainIcons();
+
+    /*!
      * \brief singleColorChanged Used to signal back to the MainWindow that the main color of the
      *        single color page has changed.
      */

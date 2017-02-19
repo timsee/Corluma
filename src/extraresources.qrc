@@ -11,7 +11,13 @@
         <file>images/blackButton.png</file>
         <file>images/blueButton.png</file>
         <file>images/greenButton.png</file>
-        <file>resources/CorlumaGroups.json</file>
         <file>images/huerange.png</file>
+        <file>images/clearAllIcon.png</file>
+        <file>images/closedArrow.png</file>
+        <file>images/discoveryIcon.png</file>
+        <file>images/editIcon.png</file>
+        <file>images/openedArrow.png</file>
+        <file>images/selectAllIcon.png</file>
+        <file>resources/debugData.json</file>
     </qresource>
 </RCC>

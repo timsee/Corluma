@@ -126,3 +126,13 @@
 * Changed the layout of pages to be more uniform and require less clicks to use.
 * Fixed miscellaneous bugs.
 
+### **v0.9.9
+#### UX Update
+* Redesigned Connection Page so that it is easier to control multiple devices at once.
+* Added an edit page for groups of devices.
+* Sped up backend code for changing multiple devices at once. 
+* Added the ability to save and load groups of devices as JSON data.
+* Made minor tweaks to make actions require less clicks to execute.
+
+
+

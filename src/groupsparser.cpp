@@ -11,7 +11,11 @@
 #include <QDir>
 
 GroupsParser::GroupsParser(QObject *parent) : QObject(parent) {
-    openFile();
+    checkForSavedData();
+    loadJsonDataIntoAppData();
+}
+
+bool GroupsParser::loadJsonDataIntoAppData() {
     if(!mJsonData.isNull()) {
         if(mJsonData.isArray()) {
             QJsonArray array = mJsonData.array();
@@ -26,18 +30,19 @@ GroupsParser::GroupsParser(QObject *parent) : QObject(parent) {
                     }
                 }
             }
+            return true;
         }
     } else {
         qDebug() << "json object is null!";
     }
-
+    return false;
 }
 
 //-------------------
 // Saving JSON
 //-------------------
 
-void GroupsParser::saveNewGroup(const QString& groupName, const std::list<SLightDevice>& devices) {
+void GroupsParser::saveNewMood(const QString& groupName, const std::list<SLightDevice>& devices) {
     QJsonObject groupObject;
     groupObject["name"] = groupName;
     groupObject["isMood"] = true;
@@ -62,6 +67,41 @@ void GroupsParser::saveNewGroup(const QString& groupName, const std::list<SLight
         object["green"] = device.color.green();
         object["blue"] = device.color.blue();
 
+        object["controller"] = device.name;
+        object["index"] = device.index;
+        deviceArray.append(object);
+    }
+
+    groupObject["devices"] = deviceArray;
+    if(!mJsonData.isNull()) {
+        if(mJsonData.isArray()) {
+            qDebug() << "SAVING NEW MODE CORE FUNCTIONS";
+            QJsonArray array = mJsonData.array();
+            mJsonData.array().push_front(groupObject);
+            array.push_front(groupObject);
+            mJsonData.setArray(array);
+
+            // save file
+            saveFile(defaultSavePath());
+
+            // add to current mood list
+            mMoodList.push_back(std::make_pair(groupName, devices));
+        }
+    }
+}
+
+void GroupsParser::saveNewCollection(const QString& groupName, const std::list<SLightDevice>& devices) {
+    QJsonObject groupObject;
+    groupObject["name"] = groupName;
+    groupObject["isMood"] = false;
+
+    // create string of jsondata to add to file
+    QJsonArray deviceArray;
+    for (auto&& device : devices) {
+        QJsonObject object;
+        object["id"] = QString("device");
+
+        object["type"] = utils::ECommTypeToString(device.type);
 
         object["controller"] = device.name;
         object["index"] = device.index;
@@ -77,12 +117,16 @@ void GroupsParser::saveNewGroup(const QString& groupName, const std::list<SLight
             mJsonData.setArray(array);
 
             // save file
-            saveFile();
+            saveFile(defaultSavePath());
 
             // add to current mood list
-            mMoodList.push_back(std::make_pair(groupName, devices));
+            mCollectionList.push_back(std::make_pair(groupName, devices));
         }
     }
+}
+
+QString GroupsParser::defaultSavePath() {
+    return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/save.json";
 }
 
 bool GroupsParser::removeGroup(const QString& groupName) {
@@ -97,7 +141,7 @@ bool GroupsParser::removeGroup(const QString& groupName) {
                     if (group.compare(groupName) == 0) {
                         array.removeAt(i);
                         mJsonData.setArray(array);
-                        saveFile();
+                        saveFile(defaultSavePath());
                         std::pair<QString, std::list<SLightDevice> > groupFound;
                         bool foundGroup = false;
                         for (auto mood : mMoodList) {
@@ -108,6 +152,16 @@ bool GroupsParser::removeGroup(const QString& groupName) {
                         }
                         if (foundGroup) {
                             mMoodList.remove(groupFound);
+                            return true;
+                        }
+                        for (auto collection : mCollectionList) {
+                            if (collection.first.compare(groupName) == 0) {
+                                foundGroup = true;
+                                groupFound = collection;
+                            }
+                        }
+                        if (foundGroup) {
+                            mCollectionList.remove(groupFound);
                             return true;
                         }
                     }
@@ -181,7 +235,6 @@ void GroupsParser::parseMood(const QJsonObject& object) {
         SLightDevice lightDevice;
         lightDevice.isReachable = true;
         lightDevice.isOn = isOn;
-        lightDevice.isValid = true;
         lightDevice.color = QColor(red, green, blue);
         lightDevice.lightingRoutine = lightingRoutine;
         lightDevice.colorGroup = colorGroup;
@@ -199,14 +252,17 @@ void GroupsParser::parseMood(const QJsonObject& object) {
 // File Manipulation
 //-------------------
 
-bool GroupsParser::saveFile() {
-    QString savePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/save.json";
+bool GroupsParser::saveFile(QString savePath) {
+    QFileInfo saveInfo(savePath);
+    if (saveInfo.exists()) {
+        QFile saveFile(savePath);
+        saveFile.remove();
+    }
     QFile saveFile(savePath);
-
 
     if (!saveFile.open(QIODevice::ReadWrite | QIODevice::Text)) {
         qDebug() << "WARNING: Couldn't open save file.";
-       // return false;
+        return false;
     }
 
     if (mJsonData.isNull()) {
@@ -218,7 +274,87 @@ bool GroupsParser::saveFile() {
     return true;
 }
 
-bool GroupsParser::openFile() {
+QJsonDocument GroupsParser::loadJsonFile(QString file) {
+    QFile jsonFile(file);
+    jsonFile.open(QFile::ReadOnly);
+    QString data = jsonFile.readAll();
+    jsonFile.close();
+    return QJsonDocument::fromJson(data.toUtf8());
+}
+
+bool GroupsParser::mergeExternalData(QString file, bool keepFileChanges) {
+    QJsonDocument document = loadJsonFile(file);
+    return true;
+}
+
+
+bool GroupsParser::loadExternalData(QString file) {
+    QJsonDocument document = loadJsonFile(file);
+    // check if contains a jsonarray
+    if(!document.isNull()) {
+        if(document.isArray()) {
+            mJsonData = document;
+            if (!loadJsonDataIntoAppData()) {
+                qDebug() << "WARNING: Load external data is not valid Corluma Data";
+            }
+            if (!saveFile(defaultSavePath())) {
+                qDebug() << "WARNING: Load External Data couldn't save file";
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+
+std::list<SLightDevice> GroupsParser::loadDebugData() {
+    QJsonDocument document = loadJsonFile(":/resources/debugData.json");
+    std::list<SLightDevice> list;
+    if (!document.isNull() && document.isArray()) {
+        QJsonArray deviceArray = document.array();
+        foreach (const QJsonValue &value, deviceArray) {
+            QJsonObject device = value.toObject();
+
+            // convert to Qt types from json data
+            QString modeString = device.value("colorMode").toString();
+            QString typeString = device.value("type").toString();
+            QString controller = device.value("controller").toString();
+            int index = device.value("index").toDouble();
+
+            // convert to Corluma types from certain Qt types
+            ECommType type = utils::stringToECommType(typeString);
+            EColorMode colorMode = utils::stringtoColorMode(modeString);
+
+            bool isOn = device.value("isOn").toBool();
+            int red, green, blue;
+
+            red = device.value("red").toDouble();
+            green = device.value("green").toDouble();
+            blue = device.value("blue").toDouble();
+
+            int brightness = device.value("brightness").toDouble();
+
+            ELightingRoutine lightingRoutine = (ELightingRoutine)((int)device.value("lightingRoutine").toDouble());
+            EColorGroup colorGroup = (EColorGroup)((int)device.value("colorGroup").toDouble());
+
+            SLightDevice lightDevice;
+            lightDevice.isReachable = true;
+            lightDevice.isOn = isOn;
+            lightDevice.color = QColor(red, green, blue);
+            lightDevice.lightingRoutine = lightingRoutine;
+            lightDevice.colorGroup = colorGroup;
+            lightDevice.brightness = brightness;
+            lightDevice.type = type;
+            lightDevice.index = index;
+            lightDevice.colorMode = colorMode;
+            lightDevice.name = controller;
+            list.push_back(lightDevice);
+        }
+    }
+    return list;
+}
+
+bool GroupsParser::checkForSavedData() {
     QString appDataLocation = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     if (!QDir(appDataLocation).exists()) {
         QDir appDataDir(appDataLocation);
@@ -231,23 +367,23 @@ bool GroupsParser::openFile() {
     QString savePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/save.json";
     QFile saveFile(savePath);
 
-    if (saveFile.open(QIODevice::ReadWrite )) {
+
+    if (saveFile.open(QIODevice::ReadWrite)) {
         QString data = saveFile.readAll();
         saveFile.close();
         mJsonData = QJsonDocument::fromJson(data.toUtf8());
         if (!mJsonData.isNull()) {
             return true;
+        } else {
+            qDebug() << "WARNING: json was null";
         }
+    } else {
+        qDebug() << "WARNING: couldn't open JSON";
     }
 
     qDebug() << "WARNING: using default json data";
-
-    QFile jsonFile(":/resources/CorlumaGroups.json");
-    jsonFile.open(QFile::ReadOnly);
-
-    QString data = jsonFile.readAll();
-    jsonFile.close();
-    mJsonData = QJsonDocument::fromJson(data.toUtf8());
+    QJsonArray defaultArray;
+    mJsonData = QJsonDocument(defaultArray);
     if (mJsonData.isNull()) {
         qDebug() << "WARNING: JSON is null!";
     }
@@ -282,13 +418,13 @@ bool GroupsParser::checkIfGroupIsValid(const QJsonObject& object) {
                    && device.value("blue").isDouble()
                    && device.value("brightness").isDouble()
                    && device.value("lightingRoutine").isDouble()
-                   && device.value("colorGroup").isDouble()
-                   && device.value("colorMode").isString())) {
-                qDebug() << "one of the collection specific values is invalid!";
+                   && device.value("colorGroup").isDouble())) {
+                qDebug() << "one of the mood specific values is invalid! for"
+                         <<  object.value("name").toString()
+                         << device.value("type").toString()
+                         << device.value("index").toDouble();
                 return false;
-        }
-
-
+            }
         }
     }
     return true;

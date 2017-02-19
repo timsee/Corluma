@@ -24,6 +24,7 @@ DiscoveryPage::DiscoveryPage(QWidget *parent) :
 
     connect(ui->plusButton, SIGNAL(clicked(bool)), this, SLOT(plusButtonClicked()));
     connect(ui->minusButton, SIGNAL(clicked(bool)), this, SLOT(minusButtonClicked()));
+    connect(ui->settingsButton, SIGNAL(clicked(bool)), this, SLOT(settingsButtonClicked(bool)));
 
     QSignalMapper *commTypeMapper = new QSignalMapper(this);
 
@@ -88,6 +89,7 @@ DiscoveryPage::DiscoveryPage(QWidget *parent) :
     mRenderThread = new QTimer(this);
     connect(mRenderThread, SIGNAL(timeout()), this, SLOT(renderUI()));
 
+    mForceStartOpen = false;
 }
 
 DiscoveryPage::~DiscoveryPage()
@@ -115,7 +117,7 @@ void DiscoveryPage::renderUI() {
     }
 
     // Only allow moving to next page if something is connected
-    if (isAnyConnected) {
+    if (isAnyConnected || mForceStartOpen) {
         ui->startButton->setEnabled(true);
     } else {
         ui->startButton->setEnabled(false);
@@ -266,29 +268,40 @@ void DiscoveryPage::fillList(QListWidget *list, std::list<QString>& connections)
 
 
 void DiscoveryPage::plusButtonClicked() {
-    bool isSuccessful = mComm->addController(ECommType::eUDP, ui->lineEdit->text());
-    isSuccessful = mComm->addController(ECommType::eHTTP, ui->lineEdit->text());
+    if (!doesYunControllerExistAlready(ui->lineEdit->text())) {
+        bool isSuccessful = mComm->addController(ECommType::eUDP, ui->lineEdit->text());
+        if (!isSuccessful) qDebug() << "WARNING: failure adding" << ui->lineEdit->text() << "to UDP discovery list";
+        isSuccessful = mComm->addController(ECommType::eHTTP, ui->lineEdit->text());
+        if (!isSuccessful) qDebug() << "WARNING: failure adding" << ui->lineEdit->text() << "to HTTP discovery list";
+    } else {
+        qDebug() << "WARNING: trying to add controller that already exists: " << ui->lineEdit->text();
+    }
 }
 
 void DiscoveryPage::minusButtonClicked() {
-    QString controller = ui->lineEdit->text();
-    bool isSuccessful = mComm->removeController(ECommType::eUDP, ui->lineEdit->text());
-    isSuccessful = mComm->removeController(ECommType::eHTTP, ui->lineEdit->text());
+    if (doesYunControllerExistAlready(ui->lineEdit->text())) {
+        QString controller = ui->lineEdit->text();
+        bool isSuccessful = mComm->removeController(ECommType::eUDP, ui->lineEdit->text());
+        if (!isSuccessful) qDebug() << "WARNING: failure removing" << ui->lineEdit->text() << "from UDP discovery list";
+        isSuccessful = mComm->removeController(ECommType::eHTTP, ui->lineEdit->text());
+        if (!isSuccessful) qDebug() << "WARNING: failure removing" << ui->lineEdit->text() << "from HTTP discovery list";
 
-
-    for (int i = 0; i < ui->connectedList->count(); ++i) {
-        QListWidgetItem *item = ui->connectedList->item(i);
-        if (item->text().compare(controller) == 0) {
-            ui->connectedList->takeItem(i);
+        for (int i = 0; i < ui->connectedList->count(); ++i) {
+            QListWidgetItem *item = ui->connectedList->item(i);
+            if (item->text().compare(controller) == 0) {
+                ui->connectedList->takeItem(i);
+            }
         }
-    }
 
 
-    for (int i = 0; i < ui->discoveringList->count(); ++i) {
-        QListWidgetItem *item = ui->discoveringList->item(i);
-        if (item->text().compare(controller) == 0) {
-            ui->discoveringList->takeItem(i);
+        for (int i = 0; i < ui->discoveringList->count(); ++i) {
+            QListWidgetItem *item = ui->discoveringList->item(i);
+            if (item->text().compare(controller) == 0) {
+                ui->discoveringList->takeItem(i);
+            }
         }
+    } else {
+        qDebug() << "WARNING: trying to remove controller that doesn't exist: " << ui->lineEdit->text();
     }
 }
 
@@ -436,7 +449,6 @@ void DiscoveryPage::changeCommTypeConnectionState(ECommType type, EConnectionSta
     }
 }
 
-
 QPushButton *DiscoveryPage::buttonByType(ECommType type) {
     QPushButton *button;
     switch (type) {
@@ -457,6 +469,34 @@ QPushButton *DiscoveryPage::buttonByType(ECommType type) {
             break;
     }
     return button;
+}
+
+bool DiscoveryPage::doesYunControllerExistAlready(QString controller) {
+    bool deviceFound = false;
+    for (auto&& discoveredController : mComm->discoveredList(ECommType::eHTTP)) {
+        if (discoveredController.compare(controller) == 0) {
+            deviceFound = true;
+        }
+    }
+
+    for (auto&& discoveredController : mComm->discoveredList(ECommType::eUDP)) {
+        if (discoveredController.compare(controller) == 0) {
+            deviceFound = true;
+        }
+    }
+
+    for (auto&& unDiscoveredController : mComm->undiscoveredList(ECommType::eHTTP)) {
+        if (unDiscoveredController.compare(controller) == 0) {
+            deviceFound = true;
+        }
+    }
+
+    for (auto&& unDiscoveredController : mComm->undiscoveredList(ECommType::eUDP)) {
+        if (unDiscoveredController.compare(controller) == 0) {
+            deviceFound = true;
+        }
+    }
+    return deviceFound;
 }
 
 
@@ -530,6 +570,9 @@ void DiscoveryPage::resizeEvent(QResizeEvent *) {
                 break;
         }
     }
+
+    int iconSize = this->width() * 0.15f;
+    ui->settingsButton->setIconSize(QSize(iconSize, iconSize));
 }
 
 void DiscoveryPage::paintEvent(QPaintEvent *) {

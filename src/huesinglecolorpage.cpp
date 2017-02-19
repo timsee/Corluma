@@ -34,6 +34,7 @@ HueSingleColorPage::~HueSingleColorPage() {
 void HueSingleColorPage::colorChanged(QColor color) {
     mData->updateColor(color);
     emit singleColorChanged(color);
+    emit updateMainIcons();
 }
 
 

@@ -4,6 +4,7 @@
 #include <QString>
 #include <QColor>
 #include <QDebug>
+#include <QSize>
 #include "lightingprotocols.h"
 
 #include <sstream>
@@ -240,12 +241,6 @@ struct SLightDevice {
     bool isOn;
 
     /*!
-     * \brief isValid true if the device can be considered a valid packet, false
-     *        otherwise.
-     */
-    bool isValid;
-
-    /*!
      * \brief colorMode mode of color. Most devices work in RGB but some work in
      *        limited ranges or use an HSV representation internally.
      */
@@ -328,15 +323,13 @@ struct SLightDevice {
      */
     QString name;
 
-
     /*!
-     * \brief printLightDevice prints values of struct. used for debugging.
+     * \brief PRINT_DEBUG prints values of struct. used for debugging.
      */
-    void printLightDevice() const {
+    void PRINT_DEBUG() const {
         qDebug() << "SLight Device: "
                  << "isReachable: " << isReachable << "\n"
                  << "isOn: " << isOn << "\n"
-                 << "isValid: " << isValid << "\n"
                  << "color: " << color  << "\n"
                  << "lightingRoutine: " << (int)lightingRoutine << "\n"
                  << "colorGroup: " << (int)colorGroup << "\n"
@@ -345,6 +338,7 @@ struct SLightDevice {
                  << "Type: " << utils::ECommTypeToString(type) << "\n"
                  << "name: " << name << "\n";
     }
+
 
     /*!
      * \brief SLightDevice Constructor
@@ -371,7 +365,21 @@ struct SLightDevice {
             j++;
         }
     }
+
+    bool isValid() {
+        return (color.isValid()
+                && (brightness <= 100));
+    }
+
 };
+
+
+inline bool compareLightDevice(const SLightDevice& lhs, const SLightDevice& rhs) {
+    return ((lhs.index == rhs.index)
+            && (lhs.type == rhs.type)
+            && (lhs.name.compare(rhs.name) == 0));
+}
+
 
 /// equal operator
 inline bool operator==(const SLightDevice& lhs, const SLightDevice& rhs)
@@ -379,7 +387,6 @@ inline bool operator==(const SLightDevice& lhs, const SLightDevice& rhs)
     bool result = true;
     if (lhs.isReachable     !=  rhs.isReachable) result = false;
     if (lhs.isOn            !=  rhs.isOn) result = false;
-    if (lhs.isValid         !=  rhs.isValid) result = false;
     if (lhs.color           !=  rhs.color) result = false;
     if (lhs.lightingRoutine !=  rhs.lightingRoutine) result = false;
     if (lhs.colorGroup      !=  rhs.colorGroup) result = false;

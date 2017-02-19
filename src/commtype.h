@@ -10,8 +10,9 @@
 #include <memory>
 #include <unordered_map>
 #include <sstream>
+#include <QTime>
+#include <QTimer>
 
-#include "commthrottle.h"
 #include "lightdevice.h"
 
 /*!
@@ -218,22 +219,14 @@ protected:
      *        Finally, it determines if its looking for any other controllers, and if its not, it shuts off
      *        the discovery timer.
      * \param sender the controller that is sending the discovery packet.
-     * \param throttleInterval the amount of msec between each throttle restart
-     * \param throttleMax the total number of packets that can be sent in between each throttle restart.
      */
-    void handleDiscoveryPacket(QString sender, int throttleInterval, int throttleMax);
+    void handleDiscoveryPacket(QString sender);
 
     /*!
      * \brief mDeviceTable hash table of all available devices. the hash key is the controller name
      *        and the list associated with it is all known devices connected to that controller.
      */
     std::unordered_map<std::string, std::list<SLightDevice> > mDeviceTable;
-
-    /*!
-     * \brief mThrottleList list of throttles paired with strings. This allows each different
-     *        discovered device to use a different throttle.
-     */
-    std::list<std::pair<QString, CommThrottle*> > mThrottleList;
 
     /*!
      * \brief mUndiscoveredList list of controllers that are not currently discovered but are running

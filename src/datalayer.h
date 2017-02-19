@@ -143,6 +143,20 @@ public:
     bool isOn();
 
     /*!
+     * \brief anyDevicesReachable true if any device is reachable, false if all are not reachable.
+     * \return true if any device is reachable, false if all are not reachable.
+     */
+    bool anyDevicesReachable();
+
+    /*!
+     * \brief closestColorGroupToColor takes a color as input and checks the averages of the color groups
+     *        and determines the closest color group to your color.
+     * \param color input color
+     * \return the color group that, when averaged, is closest to the provided color.
+     */
+    EColorGroup closestColorGroupToColor(QColor color);
+
+    /*!
      * \brief updateRoutine update the lighting routine for all current devices.
      * \param routine new lighting routine.
      */
@@ -191,8 +205,9 @@ public:
     /*!
      * \brief updateBrightness update the brightness level of all current devices.
      * \param brightness new brightness
+     * \param specialCaseDevices certain hue devices handle brightness differently. This list contains all ambient and white hue lights.
      */
-    void updateBrightness(int brightness);
+    void updateBrightness(int brightness, std::list<SLightDevice> specialCaseDevices = std::list<SLightDevice>());
 
     /*!
      * \brief updateCt update the color temperature. Only supported by Hue lights.
@@ -231,12 +246,18 @@ public:
     bool devicesContainCommType(ECommType type);
 
     /*!
-     * \brief replaceDeviceList removes all current devices and replaces them
-     *        with the devices on the given list
-     * \param newList the new list of devices to control.
-     * \return true if sucessful, false otherwise.
+     * \brief addDeviceList attempts to add a list of devices instead of a single device at a time
+     * \param list list of devices to add
+     * \return true if all are added, false otherwise.
      */
-    bool replaceDeviceList(const std::list<SLightDevice>& newList);
+    bool addDeviceList(const std::list<SLightDevice>& list);
+
+    /*!
+     * \brief removeDeviceList
+     * \param list
+     * \return
+     */
+    bool removeDeviceList(const std::list<SLightDevice>& list);
 
     /*!
      * \brief removeDevice remove specific device from connected device list.
@@ -299,10 +320,23 @@ signals:
 private:
 
     /*!
+     * \brief averageGroup averages all the colors from a group into a single color.
+     * \param group group to average
+     * \return colors to average.
+     */
+    QColor averageGroup(EColorGroup group);
+
+    /*!
      * \brief mColors the color arrays used for routines. This contains
      *        the custom color array and all of the presets.
      */
     std::vector<std::vector<QColor> > mColors;
+
+    /*!
+     * \brief mColorAverages ector of all the avaerage colors of each group so that only the
+     *        custom group needs to be computed each time the averaging function is called.
+     */
+    std::vector<QColor> mColorAverages;
 
     /*!
      * \brief mCurrentDevices list of current devices in data layer

@@ -46,11 +46,18 @@ public:
     const std::list<std::pair<QString, std::list<SLightDevice> > >& collectionList() { return mCollectionList; }
 
     /*!
-     * \brief saveNewGroup save a new group of devices to JSON data, which then gets saved to file in AppData.
+     * \brief saveNewMood save a new group of devices to JSON data, which then gets saved to file in AppData.
      * \param groupName the name of the new group.
      * \param devices the devices to save into the group.
      */
-    void saveNewGroup(const QString& groupName, const std::list<SLightDevice>& devices);
+    void saveNewMood(const QString& groupName, const std::list<SLightDevice>& devices);
+
+    /*!
+     * \brief saveNewCollection save a new collection of devices to JSON data, which then gets saved to file in AppData.
+     * \param groupName name of colelction to save.
+     * \param devices devices in new collection.
+     */
+    void saveNewCollection(const QString& groupName, const std::list<SLightDevice>& devices);
 
     /*!
      * \brief removeGroup remove the group of devices associated with the name provided. If no group has this name,
@@ -61,19 +68,62 @@ public:
      */
     bool removeGroup(const QString& groupName);
 
-private:
+    /*!
+     * \brief loadExternalData
+     * \param file path to JSON file
+     * \return true if loaded successfully, false otherwise.
+     */
+    bool loadExternalData(QString file);
+
+    /*!
+     * \brief mergeExternalData merges JSON data into existing app data. When the same groups exists in both the JSON data and the
+     *        appdata, the parameter keepFileChanges determines which is kept.
+     * \param file path to JSON file.
+     * \param keepFileChanges true if you want to keep the groups from the JSON file, false if you want to keep the preexisting group
+     * \return true if merged successfully, false otherwise.
+     */
+    bool mergeExternalData(QString file, bool keepFileChanges);
+
+    /*!
+     * \brief loadDebugData creates a list of devices that are given to the UI as if they sent packets. Used for debugging
+     *        while off of a network that would have lights to control.
+     * \return a list of devices based on JSON data.
+     */
+    std::list<SLightDevice> loadDebugData();
 
     /*!
      * \brief saveFile save the JSON representation of groups to file.
      * \return true if successful, false otherwise
      */
-    bool saveFile();
+    bool saveFile(QString savePath);
+
+private:
 
     /*!
-     * \brief openFile open the JSON representation of groups and save it to mJsonData.
-     * \return true if successful, false otherwise
+     * \brief loadJsonFile loads json data at given path and turns it into a JsonDocument
+     * \param file path to a json file
+     * \return a JsonDocument representing the data in the file given.
      */
-    bool openFile();
+    QJsonDocument loadJsonFile(QString file);
+
+    /*!
+     * \brief defaultSavePath default save path on any machine. Typically saves to the Downloads folder.
+     * \return a writable path for saving JSON data.
+     */
+    QString defaultSavePath();
+
+    /*!
+     * \brief loadJsonDataIntoAppData takes JSON data and injects it into app data, saving it for future use
+     * \return true if successful, false otherwise.
+     */
+    bool loadJsonDataIntoAppData();
+
+    /*!
+     * \brief checkForSavedData. Check for saved data. If it exists, open it and load it into mJsonData
+     * \return true if successful and loads saved data, false otherwise
+     */
+    bool checkForSavedData();
+
 
     /*!
      * \brief checkIfGroupIsValid checks that the values of the JSON data actually map to

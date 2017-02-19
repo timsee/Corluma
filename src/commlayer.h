@@ -37,46 +37,54 @@ public:
      */
     CommLayer(QWidget *parent = 0);
 
+
+    /*!
+     * \brief sendPacket helper for sending packets
+     * \param device device to send a packet to
+     * \param payload packet to send to device
+     */
+    void sendPacket(const SLightDevice& device, const QString& payload);
+
     /*!
      * \brief sendTurnOn turn all devices in the provided list either on or off.
      * \param turnOn true to turn devices on, false to turn them off.
      */
-    void sendTurnOn(const std::list<SLightDevice>& deviceList,
-                    bool turnOn);
+    QString sendTurnOn(const std::list<SLightDevice>& deviceList,
+                       bool turnOn);
 
     /*!
      * \brief sendMainColorChange change the main color of the lighting settings
      *        in the GUI, this is the color displayed in the leftmost menu.
      * \param color a QColor representation of the color being used for single LED Routines.
      */
-    void sendMainColorChange(const std::list<SLightDevice>& deviceList,
-                             QColor color);
+    QString sendMainColorChange(const std::list<SLightDevice>& deviceList,
+                                QColor color);
 
     /*!
      * \brief sendColorChange change an array color in the lighting system
      * \param index index of array color
      * \param color the color being sent for the given index
      */
-    void sendArrayColorChange(const std::list<SLightDevice>& deviceList,
-                              int index,
-                              QColor color);
+    QString sendArrayColorChange(const std::list<SLightDevice>& deviceList,
+                                 int index,
+                                 QColor color);
 
     /*!
      * \brief sendSingleRoutineChange change the mode of the lights. The mode changes
      *        how the lights look. This function should be used for single color routines.
      * \param routine the mode being sent to the LED system
      */
-    void sendSingleRoutineChange(const std::list<SLightDevice>& deviceList,
-                                 ELightingRoutine routine);
+    QString sendSingleRoutineChange(const std::list<SLightDevice>& deviceList,
+                                    ELightingRoutine routine);
     /*!
      * \brief sendMultiRoutineChange change the mode of the lights. The mode changes
      *        how the lights look. This function should be used for multi color routines,
      *        since it uses a color group.
      * \param routine the mode being sent to the LED system
      */
-    void sendMultiRoutineChange(const std::list<SLightDevice>& deviceList,
-                                ELightingRoutine routine,
-                                EColorGroup colorGroup);
+    QString sendMultiRoutineChange(const std::list<SLightDevice>& deviceList,
+                                   ELightingRoutine routine,
+                                   EColorGroup colorGroup);
 
     /*!
      * \brief sendColorTemperatureChange Hue only. Controls Ambient Lights and
@@ -84,8 +92,8 @@ public:
      *        of color in HSV
      * \param temperature desired temperature in mirek, must be bewteen 153 and 500
      */
-    void sendColorTemperatureChange(const std::list<SLightDevice>& deviceList,
-                                    int temperature);
+    QString sendColorTemperatureChange(const std::list<SLightDevice>& deviceList,
+                                       int temperature);
     /*!
      * \brief sendCustomArrayCount sends a new custom array count to the LED array. This count
      *        determines how many colors from the custom array should be used. It is different
@@ -93,31 +101,31 @@ public:
      *        of colors.
      * \param count a value less than the size of the custom color array.
      */
-    void sendCustomArrayCount(const std::list<SLightDevice>& deviceList,
-                              int count);
+    QString sendCustomArrayCount(const std::list<SLightDevice>& deviceList,
+                                 int count);
 
     /*!
      * \brief sendBrightness sends a brightness value between 0 and 100, with 100 being full brightness.
      * \param brightness a value between 0 and 100
      */
-    void sendBrightness(const std::list<SLightDevice>& deviceList,
-                        int brightness);
+    QString sendBrightness(const std::list<SLightDevice>& deviceList,
+                           int brightness);
 
     /*!
      * \brief sendSpeed sends a desired FPS for light updates. This value is the FPS * 100,
      *        for example if you want a FPS of 5, send the value 500.
      * \param speed the FPS multiplied by 100.
      */
-    void sendSpeed(const std::list<SLightDevice>& deviceList,
-                   int speed);
+    QString sendSpeed(const std::list<SLightDevice>& deviceList,
+                      int speed);
 
     /*!
      * \brief sendTimeOut the amount of minutes that it takes for the LEDs to turn themselves off from
      *        inactivity. Perfect for bedtime!
      * \param timeOut a number greater than 0
      */
-    void sendTimeOut(const std::list<SLightDevice>& deviceList,
-                     int timeOut);
+    QString sendTimeOut(const std::list<SLightDevice>& deviceList,
+                        int timeOut);
 
     /*!
      * \brief sendReset resets the board to its default settings.
@@ -213,6 +221,9 @@ public:
         return commByType(type)->deviceTable();
     }
 
+    /// list of all devices from all comm types
+    const std::list<SLightDevice> allDevices();
+
     /*!
      * \brief discoveredList getter for the list of all discovered devices from a specific commtype
      * \param type commtype that you want the discovered devices from
@@ -274,55 +285,65 @@ public:
      */
     SHueLight hueLightFromLightDevice(const SLightDevice& device);
 
+
+    /*!
+     * \brief loadDebugData take a list of devices and load it into memory. Simulates receiving
+     *        packets from these devices and fills the GUI with example data. Useful for debugging
+     *        without an internet connection.
+     * \param debugDevices list of devices to load into the commtype
+     * \return true if successful, false otherwise
+     */
+    bool loadDebugData(const std::list<SLightDevice> debugDevices);
+
 signals:
     /*!
     * \brief hueDiscoveryStateChange the state of the Hue discovery methods,
     *        forwarded from a private HueBridgeDiscovery object.
     */
-   void hueDiscoveryStateChange(int);
+    void hueDiscoveryStateChange(int);
 
-   /*!
+    /*!
     * \brief packetReceived anotification that a packet was receieved by one of the commtypes.
     */
-   void packetReceived();
+    void packetReceived();
 
-   /*!
+    /*!
     * \brief updateReceived a notification that a packet was received by one of the commtypes.
     * \param type the int representation of the ECommType that has been updated.
     */
-   void updateReceived(int);
+    void updateReceived(int);
 
 private slots:
-   /*!
+    /*!
     * \brief hueStateUpdate forwards the hue discovery state changes
     *        from a private HueBridgeDiscovery object.
     */
-   void hueDiscoveryUpdate(int newDiscoveryState);
+    void hueDiscoveryUpdate(int newDiscoveryState);
 
-   /*!
+    /*!
     * \brief parsePacket parses any packets sent from any of the commtypes. The
     *        comm type that received the packet is given as an int
     */
-   void parsePacket(QString, QString, int);
+    void parsePacket(QString, QString, int);
 
-   /*!
+    /*!
     * \brief discoveryReceived sent from any of the commtypes, this QString
     *        should contain state update packet if the discovery packet was
     *        successful.
     */
-   void discoveryReceived(QString, QString, int);
+    void discoveryReceived(QString, QString, int);
 
-   /*!
+    /*!
     * \brief receivedUpdate Each CommType signals out where it receives an update. This slot combines and forwards
     *        these signals into its own updateReceived signal.
     * \param type the ECommType that has been updated.
     */
-   void receivedUpdate(int type) { emit updateReceived(type); }
+    void receivedUpdate(int type) { emit updateReceived(type); }
 
-   /*!
+    /*!
     * \brief hueStateChanged sent by hue whenever a packet is received that changes it state.
     */
-   void hueStateChanged() { emit packetReceived(); }
+    void hueStateChanged() { emit packetReceived(); }
 
 private:
 
@@ -355,13 +376,6 @@ private:
      * \return true if all values in the vector are in the proper range, false othewrise.
      */
     bool verifyStateUpdatePacketValidity(std::vector<int> packetIntVector, int x = 0);
-
-    /*!
-     * \brief sendPacket helper for sending packets
-     * \param device device to send a packet to
-     * \param payload packet to send to device
-     */
-    void sendPacket(const SLightDevice& device, const QString& payload);
 
     /*!
      * \brief commByType returns the raw CommPtr based off the given commType

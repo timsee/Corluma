@@ -13,6 +13,8 @@
 #include "commtypesettings.h"
 #include "commlayer.h"
 #include "datasync.h"
+#include "editgrouppage.h"
+#include "greyoutoverlay.h"
 
 
 namespace Ui {
@@ -135,6 +137,28 @@ public slots:
      */
     void switchToConnection();
 
+    /*!
+     * \brief editButtonClicked an edit button has been clicked for either a collection or mood.
+     */
+    void editButtonClicked(QString key, bool isMood);
+
+    /*!
+     * \brief editClosePressed close the edit page
+     */
+    void editClosePressed();
+
+    /*!
+     * \brief settingsButtonFromDiscoveryPressed settings button pressed on discovery page. Handled
+     *        as a bit of a special case.
+     */
+    void settingsButtonFromDiscoveryPressed();
+
+    /*!
+     * \brief settingsDebugPressed debug button pressed. Mocks incoming communication packets to make the
+     *        UI react as if some devices just connected.
+     */
+    void settingsDebugPressed();
+
 protected:
     /*!
      * \brief paintEvent called whenever there is a paint update. This is used
@@ -163,6 +187,17 @@ private:
      * \brief ui pointer to Qt UI form.
      */
     Ui::MainWindow *ui;
+
+    /*!
+     * \brief mEditPage overlay that allows editing and creating collections and moods.
+     */
+    EditGroupPage *mEditPage;
+
+    /*!
+     * \brief mGreyOut overlay that greys out the entire main window. Used in conjunction with the
+     *        mEditPage
+     */
+    GreyOutOverlay *mGreyOut;
 
     /*!
      * \brief updateHueSingleColorFloatingMenu the hue single color menu follow specific logic on
@@ -226,6 +261,9 @@ private:
      * \TODO remove this edgecase
      */
     bool mLastHuesWereOnlyWhite;
+
+    /// open the discovery page instead of the connection page
+    bool mForceDiscoveryPage;
 };
 
 #endif // MAINWINDOW_H

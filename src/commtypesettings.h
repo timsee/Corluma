@@ -52,6 +52,12 @@ public:
      */
     int numberOfActiveCommTypes() { return mCommTypeCount; }
 
+    /// list of all commtypes that get saved. UDP and HTTP are treated as one commtype.
+    std::vector<ECommType> commTypes();
+
+    /// index of a commtype in the commtype vector
+    int indexOfCommTypeSettings(ECommType type);
+
 private:
 
     /*!

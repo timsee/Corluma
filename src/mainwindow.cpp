@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mComm = new CommLayer(this);
     mData = new DataLayer();
+    GroupsParser *groups = new GroupsParser(this);
     connect(mData, SIGNAL(devicesEmpty()), this, SLOT(deviceCountReachedZero()));
     ui->setupUi(this);
     this->setWindowTitle("Corluma");
@@ -50,6 +51,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->settingsPage->connectCommLayer(mComm);
     ui->connectionPage->connectCommLayer(mComm);
 
+    ui->connectionPage->connectGroupsParser(groups);
+    ui->settingsPage->connectGroupsParser(groups);
+
     ui->connectionPage->setupUI();
     ui->settingsPage->setupUI();
     ui->singleColorPage->setupButtons();
@@ -59,10 +63,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->connectionPage, SIGNAL(updateMainIcons()),  this, SLOT(updateMenuBar()));
     connect(ui->singleColorPage, SIGNAL(updateMainIcons()),  this, SLOT(updateMenuBar()));
+    connect(ui->hueSingleColorPage, SIGNAL(updateMainIcons()),  this, SLOT(updateMenuBar()));
     connect(ui->customColorsPage, SIGNAL(updateMainIcons()), this, SLOT(updateMenuBar()));
     connect(ui->presetColorsPage, SIGNAL(updateMainIcons()), this, SLOT(updateMenuBar()));
     connect(ui->settingsPage, SIGNAL(updateMainIcons()), this, SLOT(updateMenuBar()));
-
 
     connect(ui->singleColorPage, SIGNAL(singleColorChanged(QColor)),  this, SLOT(updateSingleColor(QColor)));
     connect(ui->hueSingleColorPage, SIGNAL(singleColorChanged(QColor)),  this, SLOT(updateSingleColor(QColor)));
@@ -70,6 +74,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->presetColorsPage, SIGNAL(presetColorGroupChanged(int, int)),  this, SLOT(updatePresetColorGroup(int, int)));
 
     connect(ui->connectionPage, SIGNAL(deviceCountChanged()), this, SLOT(deviceCountChangedOnConnectionPage()));
+    connect(ui->connectionPage, SIGNAL(clickedEditButton(QString, bool)),  this, SLOT(editButtonClicked(QString, bool)));
+
+
+    connect(ui->settingsPage, SIGNAL(debugPressed()), this, SLOT(settingsDebugPressed()));
 
     // --------------
     // Setup Buttons
@@ -96,7 +104,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // --------------
     // setup the slider that controls the LED's brightness
     ui->brightnessSlider->slider->setRange(0,100);
-    ui->brightnessSlider->slider->setValue(50);
+    ui->brightnessSlider->slider->setValue(0);
     ui->brightnessSlider->slider->setTickPosition(QSlider::TicksBelow);
     ui->brightnessSlider->slider->setTickInterval(20);
     ui->brightnessSlider->setSliderHeight(0.5f);
@@ -124,7 +132,30 @@ MainWindow::MainWindow(QWidget *parent) :
     mDiscoveryPage->setup(mData);
     mDiscoveryPage->connectCommLayer(mComm);
     connect(mDiscoveryPage, SIGNAL(startButtonClicked()), this, SLOT(switchToConnection()));
+    connect(mDiscoveryPage, SIGNAL(settingsButtonClicked()), this, SLOT(settingsButtonFromDiscoveryPressed()));
+
     mDiscoveryPage->setVisible(false);
+
+
+    // --------------
+    // Setup GreyOut View
+    // --------------
+
+    mGreyOut = new GreyOutOverlay(this);
+    mGreyOut->setVisible(false);
+
+
+    // --------------
+    // Setup Editing Page
+    // --------------
+
+
+    mEditPage = new EditGroupPage(this);
+    mEditPage->setVisible(false);
+    mEditPage->setup(mData);
+    mEditPage->connectCommLayer(mComm);
+    mEditPage->connectGroupsParser(groups);
+    connect(mEditPage, SIGNAL(pressedClose()), this, SLOT(editClosePressed()));
 
     // --------------
     // Final setup
@@ -142,7 +173,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->connectionButton->setStyleSheet("background-color: rgb(80, 80, 80); ");
     // open discovery page by default
     ui->connectionPage->discoveryButtonPressed();
-
 }
 
 
@@ -154,6 +184,8 @@ MainWindow::~MainWindow() {
 // ----------------------------
 // Slots
 // ----------------------------
+
+
 void MainWindow::toggleOnOff() {
     if (mData->isOn()) {
         mIconData.setSolidColor(QColor(0,0,0));
@@ -173,7 +205,18 @@ void MainWindow::toggleOnOff() {
 }
 
 void MainWindow::brightnessChanged(int newBrightness) {
-   mData->updateBrightness(newBrightness);
+   // get list of all devices that just use brightness for hue
+   std::list<SLightDevice> specialCaseDevices;
+   for (auto&& device : mData->currentDevices()) {
+        if (device.type == ECommType::eHue) {
+            SHueLight hueDevice = mComm->hueLightFromLightDevice(device);
+            if (hueDevice.type == EHueType::eAmbient
+                    || hueDevice.type == EHueType::eWhite) {
+                specialCaseDevices.push_back(device);
+            }
+        }
+   }
+   mData->updateBrightness(newBrightness, specialCaseDevices);
    mData->turnOn(true);
 }
 
@@ -192,6 +235,10 @@ void MainWindow::connectionButtonPressed() {
 
     mFloatingLayout->setVisible(false);
 
+    if (mForceDiscoveryPage) {
+        mDiscoveryPage->setVisible(true);
+    }
+    mForceDiscoveryPage = false;
     ui->stackedWidget->setCurrentIndex((int)EPage::eConnectionPage);
 }
 
@@ -207,6 +254,18 @@ void MainWindow::settingsButtonPressed() {
     ui->settingsButton->setStyleSheet("background-color: rgb(80, 80, 80); ");
     mFloatingLayout->setVisible(false);
 
+    ui->stackedWidget->setCurrentIndex((int)EPage::eSettingsPage);
+}
+
+void MainWindow::settingsButtonFromDiscoveryPressed() {
+    mForceDiscoveryPage = true;
+    ui->connectionButton->setChecked(false);
+    ui->connectionButton->setStyleSheet("background-color: rgb(52, 52, 52); ");
+
+    ui->settingsButton->setChecked(true);
+    ui->settingsButton->setStyleSheet("background-color: rgb(80, 80, 80); ");
+    mFloatingLayout->setVisible(false);
+    mDiscoveryPage->setVisible(false);
     ui->stackedWidget->setCurrentIndex((int)EPage::eSettingsPage);
 }
 
@@ -274,8 +333,7 @@ void MainWindow::updateMenuBar() {
     // Single Color Button Update
     //-----------------
 
-    if (ui->stackedWidget->currentIndex() == (int)EPage::eCustomArrayPage
-            && mData->currentRoutine() > utils::ELightingRoutineSingleColorEnd) {
+    if (ui->stackedWidget->currentIndex() == (int)EPage::eCustomArrayPage) {
         int count;
         if (mData->currentColorGroup() == EColorGroup::eCustom) {
             count = mData->customColorsUsed();
@@ -286,18 +344,38 @@ void MainWindow::updateMenuBar() {
                                                             mData->currentColorGroup(),
                                                             mData->currentGroup(),
                                                             count);
-    } else {
-        ui->singleColorButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, mData->mainColor());
     }
 
 
-    //-----------------
-    // On/Off Button Update
-    //-----------------
+    mIconData.setSingleLightingRoutine(mData->currentRoutine(), mData->mainColor());
+    ui->singleColorButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, mData->mainColor());
 
-    if (!mData->isOn()) {
-        mIconData.setSingleLightingRoutine(ELightingRoutine::eOff, QColor(0,0,0));
-    } else if (mData->currentColorGroup() == EColorGroup::eCustom
+
+    //-----------------
+    // Multi Color Button Update
+    //-----------------
+    if (mData->currentRoutine() <= utils::ELightingRoutineSingleColorEnd) {
+        EColorGroup closestGroup = mData->closestColorGroupToColor(mData->mainColor());
+        ui->presetArrayButton->updateIconPresetColorRoutine(mData->currentRoutine(),
+                                                            closestGroup,
+                                                            mData->colorGroup(closestGroup));
+    } else {
+        if (mData->currentColorGroup() == EColorGroup::eCustom) {
+            ui->presetArrayButton->updateIconPresetColorRoutine(mData->currentRoutine(),
+                                                                mData->currentColorGroup(),
+                                                                mData->colorGroup(EColorGroup::eCustom),
+                                                                mData->customColorsUsed());
+        } else {
+            ui->presetArrayButton->updateIconPresetColorRoutine(mData->currentRoutine(),
+                                                                mData->currentColorGroup(),
+                                                                mData->currentGroup());
+        }
+    }
+
+    //-----------------
+    // On/Off Data
+    //-----------------
+    if (mData->currentColorGroup() == EColorGroup::eCustom
                && mData->currentRoutine() > utils::ELightingRoutineSingleColorEnd) {
         mIconData.setMultiLightingRoutine(mData->currentRoutine(),
                                           mData->currentColorGroup(),
@@ -308,6 +386,7 @@ void MainWindow::updateMenuBar() {
     } else {
         mIconData.setMultiLightingRoutine(mData->currentRoutine(), mData->currentColorGroup(), mData->currentGroup());
     }
+
     ui->onOffButton->setIcon(mIconData.renderAsQPixmap());
 
     //-----------------
@@ -347,6 +426,12 @@ void MainWindow::updatePresetColorGroup(int lightingRoutine, int colorGroup) {
     ui->onOffButton->setIcon(mIconData.renderAsQPixmap());
 }
 
+
+void MainWindow::settingsDebugPressed() {
+    mDiscoveryPage->openStartForDebug();
+}
+
+
 // ----------------------------
 // Protected
 // ----------------------------
@@ -376,6 +461,12 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
 
     if (mFloatingLayout->isVisible()) {
        mFloatingLayout->move((ui->settingsButton->geometry().bottomRight()));
+    }
+    if (mGreyOut->isVisible()) {
+        mGreyOut->resize();
+    }
+    if (mEditPage->isVisible()) {
+        mEditPage->resize();
     }
 }
 
@@ -430,7 +521,10 @@ void MainWindow::deviceCountReachedZero() {
 }
 
 void MainWindow::deviceCountChangedOnConnectionPage() {
-    if (mShouldGreyOutIcons && (mData->currentDevices().size() > 0)) {
+    bool anyDevicesReachable = mData->anyDevicesReachable();
+    if (mShouldGreyOutIcons
+            && (mData->currentDevices().size() > 0)
+            &&  anyDevicesReachable) {
         ui->singleColorButton->enable(true);
         ui->presetArrayButton->enable(true);
         ui->brightnessSlider->enable(true);
@@ -442,7 +536,9 @@ void MainWindow::deviceCountChangedOnConnectionPage() {
 
         mShouldGreyOutIcons = false;
     }
-    if (!mShouldGreyOutIcons && (mData->currentDevices().size() == 0)) {
+    if ((!mShouldGreyOutIcons
+            && (mData->currentDevices().size() == 0))
+            || !anyDevicesReachable) {
         deviceCountReachedZero();
     } else {
        updateHueSingleColorFloatingMenu();
@@ -450,9 +546,9 @@ void MainWindow::deviceCountChangedOnConnectionPage() {
 }
 
 void MainWindow::updateHueSingleColorFloatingMenu() {
-    int numberOfHueAmbientBulbs = 0;
-    int numberOfHueWhiteBulbs = 0;
-    int numberOfHueRGBBulbs = 0;
+    uint32_t numberOfHueAmbientBulbs = 0;
+    uint32_t numberOfHueWhiteBulbs = 0;
+    uint32_t numberOfHueRGBBulbs = 0;
     // check for all devices
     for (auto&& device : mData->currentDevices()) {
         // check if its a hue
@@ -522,4 +618,25 @@ void MainWindow::switchToDiscovery() {
 
 void MainWindow::switchToConnection() {
     mDiscoveryPage->setVisible(false);
+    mForceDiscoveryPage = false;
+}
+
+void MainWindow::editButtonClicked(QString key, bool isMood) {
+    mGreyOut->setVisible(true);
+    mEditPage->setVisible(true);
+    mEditPage->showGroup(key, ui->connectionPage->devicesFromKey(key), mComm->allDevices(), isMood);
+
+    if (mGreyOut->isVisible()) {
+        mGreyOut->resize();
+    }
+    if (mEditPage->isVisible()) {
+        mEditPage->resize();
+    }
+}
+
+
+void MainWindow::editClosePressed() {
+    mGreyOut->setVisible(false);
+    mEditPage->setVisible(false);
+    ui->connectionPage->reloadConnectionList();
 }

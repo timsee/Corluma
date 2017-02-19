@@ -18,7 +18,7 @@ CommHTTP::CommHTTP() {
     mStateUpdateTimer = new QTimer(this);
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(stateUpdate()));
 
-    mStateUpdateInterval = 5000;
+    mStateUpdateInterval = 4850;
 }
 
 CommHTTP::~CommHTTP() {
@@ -44,19 +44,13 @@ void CommHTTP::shutdown() {
 
 void CommHTTP::sendPacket(QString controller, QString packet) {
     bool isStateUpdate = false;
-    for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
-        if (!throttle->first.compare(controller) && throttle->second->checkThrottle(controller, packet)) {
-            if (packet.at(0) !=  QChar('7')) {
-                throttle->second->sentPacket();
-            } else {
-                isStateUpdate = true;
-            }
-            QString urlString = "http://" + controller + "/arduino/" + packet;
-            QNetworkRequest request = QNetworkRequest(QUrl(urlString));
-            //qDebug() << "sending" << urlString;
-            mNetworkManager->get(request);
-        }
+    if (packet.at(0) ==  QChar('7')) {
+        isStateUpdate = true;
     }
+    QString urlString = "http://" + controller + "/arduino/" + packet;
+    QNetworkRequest request = QNetworkRequest(QUrl(urlString));
+    //qDebug() << "sending" << urlString;
+    mNetworkManager->get(request);
     if (!isStateUpdate) {
         resetStateUpdateTimeout();
     }
@@ -65,12 +59,12 @@ void CommHTTP::sendPacket(QString controller, QString packet) {
 
 void CommHTTP::stateUpdate() {
     if (shouldContinueStateUpdate()) {
-        for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
-            if (mDiscoveryMode || throttle->second->checkLastSend() < mUpdateTimeoutInterval) {
+        for (auto&& controller : mDiscoveredList) {
+            if (!mDiscoveryMode) {
                 QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
                 // WARNING: this resets the throttle and gets called automatically!
-                 if (throttle->first.compare(QString(""))) {
-                     sendPacket(throttle->first, packet);
+                 if (controller.compare(QString(""))) {
+                     sendPacket(controller, packet);
                  }
             }
         }
@@ -85,12 +79,6 @@ void CommHTTP::stateUpdate() {
     }
 }
 
-void CommHTTP::sendThrottleBuffer(QString bufferedConnection, QString bufferedMessage) {
-    // buffered message contains the buffered connection
-    Q_UNUSED(bufferedConnection);
-    QNetworkRequest request = QNetworkRequest(QUrl(bufferedMessage));
-    mNetworkManager->get(request);
-}
 
 void CommHTTP::discoveryRoutine() {
    QString discoveryPacket = QString("DISCOVERY_PACKET");
@@ -117,17 +105,13 @@ void CommHTTP::replyFinished(QNetworkReply* reply) {
         QString fullURL = reply->url().toEncoded();
         if (fullURL.contains(controllerName)) {
             if (reply->error() == QNetworkReply::NoError) {
-                for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
-                    if (!throttle->first.compare(controllerName)) throttle->second->receivedUpdate();
-                }
-
                 QString payload = ((QString)reply->readAll()).trimmed();
                 QString discoveryPacket = "DISCOVERY_PACKET";
                 //qDebug() << "payload from HTTP" << payload;
 
                 if (payload.contains(discoveryPacket)) {
                     QString packet = payload.mid(discoveryPacket.size() + 3);
-                    handleDiscoveryPacket(controllerName, 500, 3);
+                    handleDiscoveryPacket(controllerName);
                     emit discoveryReceived(controllerName, packet, (int)ECommType::eHTTP);
                 } else {
                     QString packet = payload.simplified();

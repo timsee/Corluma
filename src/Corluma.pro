@@ -17,8 +17,7 @@ TEMPLATE = app
 #----------
 
 # check for proper version of Qt
-message("DEBUG: QT_MAJOR_VERSION = $$QT_MAJOR_VERSION")
-message("DEBUG: QT_MINOR_VERSION = $$QT_MINOR_VERSION")
+message("DEBUG: Qt Version: $$QT_MAJOR_VERSION _ $$QT_MINOR_VERSION arch: $$QT_ARCH " )
 equals (QT_MAJOR_VERSION, 5)  {
   !greaterThan(QT_MINOR_VERSION, 1) {
     error(ERROR: Qt5 is installed, but it is not a recent enough version. This project uses QT5.2 or later)
@@ -45,7 +44,6 @@ CONFIG += c++11 #adds C++11 support
 #       although it is recommended as our testing shows it to be
 #       the quickest method of discovery.
 
-message("DEBUG: QT_ARCH = $$QT_ARCH")
 win32{
     # uses default path for openSSL in 32 and 64 bit
     contains(QT_ARCH, i386) {
@@ -116,20 +114,23 @@ SOURCES += main.cpp\
     commhue.cpp \
     huebridgediscovery.cpp \
     lightingroutines.cpp \
-    commthrottle.cpp \
     commpacketparser.cpp \
     connectionpage.cpp \
     floatinglayout.cpp \
-    lightcheckbox.cpp \
     commtypesettings.cpp \
     groupsparser.cpp \
     datasync.cpp \
     huesinglecolorpage.cpp \
     huepresetpage.cpp \
-    listgroupwidget.cpp \
     discoverypage.cpp \
     listdevicewidget.cpp \
-    presetgroupwidget.cpp
+    presetgroupwidget.cpp \
+    listdevicesgroupwidget.cpp \
+    listcollectionwidget.cpp \
+    greyoutoverlay.cpp \
+    listmoodwidget.cpp \
+    listmoodgroupwidget.cpp \
+    editgrouppage.cpp
 
 HEADERS  += mainwindow.h \
     singlecolorpage.h \
@@ -151,22 +152,25 @@ HEADERS  += mainwindow.h \
     commhue.h \
     huebridgediscovery.h \
     lightingroutines.h \
-    commthrottle.h \
     commpacketparser.h \
     lightdevice.h \
     connectionpage.h \
     floatinglayout.h \
-    lightcheckbox.h \
     commtypesettings.h \
     groupsparser.h \
     datasync.h \
     huesinglecolorpage.h \
     huepresetpage.h \
-    listgroupwidget.h \
     discoverypage.h \
     listdevicewidget.h \
     hueprotocols.h \
-    presetgroupwidget.h
+    presetgroupwidget.h \
+    listdevicesgroupwidget.h \
+    listcollectionwidget.h \
+    greyoutoverlay.h \
+    listmoodwidget.h \
+    listmoodgroupwidget.h \
+    editgrouppage.h
 
 FORMS    += mainwindow.ui \
     singlecolorpage.ui \
@@ -176,7 +180,8 @@ FORMS    += mainwindow.ui \
     connectionpage.ui \
     huesinglecolorpage.ui \
     huepresetpage.ui \
-    discoverypage.ui
+    discoverypage.ui \
+    editcollectionpage.ui
 
 #----------
 # Resources

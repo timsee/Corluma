@@ -114,14 +114,14 @@ void LightsButton::resizeEvent(QResizeEvent *event) {
     Q_UNUSED(event);
     int size = (int)(std::min(this->size().width(), this->size().height()));
     if (mIsMenuButton) {
-        button->setMinimumSize(size,size);        
-        button->setIconSize(QSize(this->size().height() * 0.8f,
+        button->setMinimumSize(size,size);
+        button->setIconSize(QSize(this->size().width() * 0.8f,
                                   this->size().height() * 0.8f));
     } else {
         if (mLabel.compare(QString("")) != 0) {
             buttonLabel->setMinimumSize(0, buttonLabel->size().height());
-            button->setIconSize(QSize(size * 0.8f,
-                                      (size - buttonLabel->size().height()) * 0.8f));
+            button->setIconSize(QSize(size * 0.7f,
+                                      (size - buttonLabel->size().height()) * 0.7f));
         } else {
             button->setMinimumSize(size, size);
             button->setIconSize(QSize(size * 0.8f,

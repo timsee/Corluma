@@ -37,6 +37,15 @@
   </tr>
   <tr>
     <td> 
+        <h2>Edit Page</h2>
+        \copydoc EditGroupPage 
+    </td>
+    <td>         
+        \image html editPagePreview.png
+    </td>
+  </tr>
+  <tr>
+    <td> 
         <h2>Single Color Page</h2>
         \copydoc SingleColorPage 
     </td>

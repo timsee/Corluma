@@ -4,7 +4,6 @@
 #ifndef MOBILE_BUILD
 
 #include "commtype.h"
-#include "commthrottle.h"
 
 #include <QSerialPort>
 #include <QSerialPortInfo>
@@ -73,11 +72,6 @@ private slots:
      *        connected serial port to test its connection.
      */
     void discoveryRoutine();
-
-    /*!
-     * \brief sendThrottleBuffer response to the throttle buffer wanting to clear itself.
-     */
-    void sendThrottleBuffer(QString, QString);
 
     /*!
      * \brief stateUpdate used by the mStateUpdateTimer to request new

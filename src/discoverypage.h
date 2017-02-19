@@ -49,6 +49,8 @@ public:
         connect(mComm, SIGNAL(hueDiscoveryStateChange(int)), this, SLOT(hueDiscoveryUpdate(int)));
     }
 
+    /// debug function
+    void openStartForDebug() { mForceStartOpen = true; }
 
 signals:
     /*!
@@ -56,6 +58,11 @@ signals:
      *        page can be hidden.
      */
     void startButtonClicked();
+
+    /*!
+     * \brief settingsButtonClicked sent whenever the settings button is clicked.
+     */
+    void settingsButtonClicked();
 
 public slots:
 
@@ -76,6 +83,11 @@ private slots:
      * \brief plusButtonClicked called whenever the plus button is clicked
      */
     void plusButtonClicked();
+
+    /*!
+     * \brief settingsButtonClicked called whenever the settings button is clicked.
+     */
+    void settingsButtonClicked(bool) { emit settingsButtonClicked(); }
 
     /*!
      * \brief minusButtonClicked called whenever the minus button is clicked
@@ -179,6 +191,15 @@ private:
      */
     QPushButton *buttonByType(ECommType type);
 
+
+    /*!
+     * \brief doesYunControllerExistAlready checks both UDP and HTTP yun device lists to see if it has any knowledge
+     *        of the given controller.
+     * \param controller name of controller
+     * \return true if yun controller exists on discovered or undiscovered list, false otherwise
+     */
+    bool doesYunControllerExistAlready(QString controller);
+
     /*!
      * \brief mComm pointer to CommLayer.
      */
@@ -205,6 +226,12 @@ private:
      *        specific commtype
      */
     std::vector<EConnectionState> mConnectionStates;
+
+    /*!
+     * \brief mForceStartOpen set by debugging functions, forces the start button
+     *        to stay active.
+     */
+    bool mForceStartOpen;
 };
 
 #endif // DISCOVERYPAGE_H

@@ -4,11 +4,12 @@
 
 #include <QWidget>
 #include <QListWidgetItem>
+#include <QPushButton>
 
 #include "lightingpage.h"
 #include "lightsslider.h"
-#include "lightcheckbox.h"
 #include "commlayer.h"
+#include "groupsparser.h"
 
 namespace Ui {
 class SettingsPage;
@@ -63,6 +64,9 @@ public:
      */
     void updateUI();
 
+    /// connects the GroupsParser object to this UI widget.
+    void connectGroupsParser(GroupsParser *parser) { mGroups = parser; }
+
 signals:
     /*!
      * \brief Used to signal back to the main page that it should update its top-left icon
@@ -75,6 +79,12 @@ signals:
      *        show standard settings, false if showing hue-specific settings.
      */
     void settingsPageIsStandard(bool);
+
+    /*!
+     * \brief debugPressed emited when debug button is pressed. Feeds fake communication data into the app
+     *        to act as if some devices are connected.
+     */
+    void debugPressed();
 
 public slots:
     /*!
@@ -94,15 +104,11 @@ public slots:
      */
     void hueCheckboxClicked(bool);
 
-    /*!
-     * \brief httpCheckboxClicked checks and unchecks the HTTP checkbox.
-     */
-    void httpCheckboxClicked(bool);
 
     /*!
-     * \brief udpCheckboxClicked checks and unchecks the UDP checkbox.
+     * \brief yunCheckboxClicked checks and unchecks the Yun checkbox.
      */
-    void udpCheckboxClicked(bool);
+    void yunCheckboxClicked(bool);
 
     /*!
      * \brief serialCheckboxClicked checks and unchecks the serial checkbox.
@@ -121,6 +127,29 @@ private slots:
      *        change of state.
      */
     void renderUI();
+
+    /*!
+     * \brief loadButtonClicked loads json data from file and replaces all group and collection
+     *        data previously in the app.
+     */
+    void loadButtonClicked(bool);
+
+    /*!
+     * \brief mergeButtonClicked loads json data from file and merges all groups and collections
+     *        from the data into the existing data.
+     */
+    void mergeButtonClicked(bool);
+
+    /*!
+     * \brief debugPressed debug button is pressed. Feeds fake communication data into the app
+     *        to act as if some devices are connected.
+     */
+    void debugButtonClicked(bool);
+
+    /*!
+     * \brief saveDataButtonClicked saves all json data to an external file.
+     */
+    void saveDataButtonClicked(bool);
 
 protected:
     /*!
@@ -142,6 +171,12 @@ protected:
 private:
 
     /*!
+     * \brief mGroups manages the list of collections and moods and the JSON data
+     *        associated with them.
+     */
+    GroupsParser *mGroups;
+
+    /*!
      * \brief checkBoxClicked helper for checking if a checkbox is checked. checkmate!
      * \param type the type of comm type you're checking
      * \param checked true if checked, false otherwise.
@@ -160,10 +195,10 @@ private:
     Ui::SettingsPage *ui;
 
     /*!
-     * \brief mCheckBoxes pointers to all checkboxes so that they can be quickly iterated
+     * \brief mConnectionButtons pointers to all checkboxes so that they can be quickly iterated
      *        through.
      */
-    std::vector<LightCheckBox*> mCheckBoxes;
+    std::vector<QPushButton*> mConnectionButtons;
 
     /*!
      * \brief communication pointer to communication object

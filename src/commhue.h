@@ -12,7 +12,6 @@
 
 #include "huebridgediscovery.h"
 #include "hueprotocols.h"
-#include "commthrottle.h"
 #include "commpacketparser.h"
 
 /*!
@@ -185,6 +184,16 @@ public:
      */
     std::list<SHueSchedule> schedules() { return mSchedules; }
 
+public slots:
+
+    /*!
+     * \brief brightnessChange connected to CommPacketParser, this changes the brightness of a device.
+     * \param deviceIndex 0 for all indices, a specific index for a specific light.
+     *        Will do nothing if index doesn't exist.
+     * \param brightness a value between 0 and 100, 0 is off, 100 is full brightness
+     */
+    void brightnessChange(int deviceIndex, int brightness);
+
 signals:
     /*!
      * \brief stateChanged emitted when any of the lights change in any way.
@@ -209,11 +218,6 @@ private slots:
      *        changes.
      */
     void connectionStatusHasChanged(bool);
-
-    /*!
-     * \brief sendThrottleBuffer response to the throttle buffer wanting to clear itself.
-     */
-    void sendThrottleBuffer(QString, QString);
 
     /*!
      * \brief mainColorChange connected to CommPacketParser, this changes the main color.
@@ -252,14 +256,6 @@ private slots:
     void customArrayCount(int deviceIndex, int customArrayCount);
 
     /*!
-     * \brief brightnessChange connected to CommPacketParser, this changes the brightness of a device.
-     * \param deviceIndex 0 for all indices, a specific index for a specific light.
-     *        Will do nothing if index doesn't exist.
-     * \param brightness a value between 0 and 100, 0 is off, 100 is full brightness
-     */
-    void brightnessChange(int deviceIndex, int brightness);
-
-    /*!
      * \brief speedChange connected to CommPacketParser, this changes the speed of the device updates.
      * \param deviceIndex 0 for all indices, a specific index for a specific light.
      *        Will do nothing if index doesn't exist.
@@ -290,6 +286,7 @@ private slots:
     void requestSchedules();
 
 private:
+
     /*!
      * \brief mNetworkManager Qt's HTTP connection object
      */
@@ -312,11 +309,6 @@ private:
      *        this string, which is formatted as http://$BRIDGEIP/api/$USERNAME
      */
     QString mUrlStart;
-
-    /*!
-     * \brief mThrottle used to prevent the communication stream from sending commands too frequently.
-     */
-    CommThrottle *mThrottle;
 
     /*!
      * \brief mParser used to parse the commands sent through the system format, which is a comma delimited
@@ -399,13 +391,6 @@ private:
      * \return a string that is in the format of `PTHH:MM:SS` which is used for sending a timeout to a hue bridge.
      */
     QString convertMinutesToTimeout(int minutes, int stateUpdateTimeout);
-
-    /*!
-     * \brief sendString sends a the provided string to the hue light at the given index.
-     * \param index the index of the hue light you want to manipulate
-     * \param string the complete packet that you want to send to the hue light.
-     */
-    void sendString(int index, const QString& string);
 };
 
 #endif // COMMHUE_H

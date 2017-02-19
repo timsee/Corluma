@@ -9,8 +9,12 @@
 #include "commhue.h"
 #include "listdevicewidget.h"
 
+#include <QFileDialog>
 #include <QDebug>
 #include <QSignalMapper>
+#include <QScroller>
+#include <QMessageBox>
+#include <QStandardPaths>
 
 #include <algorithm>
 
@@ -33,29 +37,40 @@ SettingsPage::SettingsPage(QWidget *parent) :
     ui->timeoutSlider->slider->setTickPosition(QSlider::TicksBelow);
     ui->timeoutSlider->slider->setTickInterval(40);
 
-    mCheckBoxes = { ui->httpCheckBox,
-                    ui->udpCheckBox,
-                    ui->hueCheckBox,
-                    ui->serialCheckBox };
+    mConnectionButtons = { ui->yunButton,
+#ifndef MOBILE_BUILD
+                    ui->serialButton,
+#endif //MOBILE_BUILD
+                    ui->hueButton };
 
     connect(ui->speedSlider, SIGNAL(valueChanged(int)), this, SLOT(speedChanged(int)));
     connect(ui->timeoutSlider, SIGNAL(valueChanged(int)), this, SLOT(timeoutChanged(int)));
 
-    connect(ui->hueCheckBox, SIGNAL(clicked(bool)), this, SLOT(hueCheckboxClicked(bool)));
-    ui->hueCheckBox->setText("Hue");
+    connect(ui->debugButton, SIGNAL(clicked(bool)), this, SLOT(debugButtonClicked(bool)));
+    connect(ui->loadButton, SIGNAL(clicked(bool)), this, SLOT(loadButtonClicked(bool)));
+    connect(ui->mergeButton, SIGNAL(clicked(bool)), this, SLOT(mergeButtonClicked(bool)));
+    connect(ui->saveButton, SIGNAL(clicked(bool)), this, SLOT(saveDataButtonClicked(bool)));
 
-    connect(ui->httpCheckBox, SIGNAL(clicked(bool)), this, SLOT(httpCheckboxClicked(bool)));
-    ui->httpCheckBox->setText("HTTP");
+    connect(ui->hueButton, SIGNAL(clicked(bool)), this, SLOT(hueCheckboxClicked(bool)));
+    ui->hueButton->setText("Hue");
 
-    connect(ui->udpCheckBox, SIGNAL(clicked(bool)), this, SLOT(udpCheckboxClicked(bool)));
-    ui->udpCheckBox->setText("UDP");
+    connect(ui->yunButton, SIGNAL(clicked(bool)), this, SLOT(yunCheckboxClicked(bool)));
+    ui->yunButton->setText("Yun");
 
 #ifndef MOBILE_BUILD
-    connect(ui->serialCheckBox, SIGNAL(clicked(bool)), this, SLOT(serialCheckboxClicked(bool)));
-    ui->serialCheckBox->setText("Serial");
+    connect(ui->serialButton, SIGNAL(clicked(bool)), this, SLOT(serialCheckboxClicked(bool)));
+    ui->serialButton->setText("Serial");
 #else
-    ui->serialCheckBox->setHidden(true);
+    ui->serialButton->setHidden(true);
 #endif //MOBILE_BUILD
+
+    ui->yunButton->setCheckable(true);
+    ui->hueButton->setCheckable(true);
+#ifndef MOBILE_BUILD
+    ui->serialButton->setCheckable(true);
+#endif //MOBILE_BUILD
+
+    QScroller::grabGesture(ui->scrollArea->viewport(), QScroller::LeftMouseButtonGesture);
 }
 
 SettingsPage::~SettingsPage() {
@@ -110,10 +125,10 @@ void SettingsPage::timeoutChanged(int newTimeout) {
 
 void SettingsPage::showEvent(QShowEvent *event) {
     Q_UNUSED(event);
+
     updateUI();
-
-
     checkCheckBoxes();
+
 
     if (mData->currentDevices().size() == 0) {
         deviceCountReachedZero();
@@ -136,31 +151,61 @@ void SettingsPage::hideEvent(QHideEvent *) {
 
 void SettingsPage::resizeEvent(QResizeEvent *event) {
     Q_UNUSED(event);
-    int height = static_cast<int>(ui->hueCheckBox->size().height() * 0.8f);
-    int width = static_cast<int>(ui->hueCheckBox->size().width() * 0.6f);
-    QString stylesheet = "QCheckBox::indicator { width: ";
-    stylesheet += QString::number(width);
-    stylesheet +=  "px; height: ";
-    stylesheet +=  QString::number(height);
-    stylesheet += "px; }";
-    ui->hueCheckBox->setStyleSheet(stylesheet);
-    ui->udpCheckBox->setStyleSheet(stylesheet);
-    ui->httpCheckBox->setStyleSheet(stylesheet);
+//    int height = static_cast<int>(ui->hueButton->size().height() * 0.8f);
+//    int width = static_cast<int>(ui->hueButton->size().width() * 0.6f);
+//    QString stylesheet = "QPushButton::indicator { width: ";
+//    stylesheet += QString::number(width);
+//    stylesheet +=  "px; height: ";
+//    stylesheet +=  QString::number(height);
+//    stylesheet += "px; }";
+//    ui->hueButton->setStyleSheet(stylesheet);
+//    ui->yunButton->setStyleSheet(stylesheet);
+//#ifndef MOBILE_BUILD
+//    ui->serialButton->setStyleSheet(stylesheet);
+//#endif //MOBILE_BUILD
+
+    ui->hueButton->setMinimumHeight(ui->hueButton->width());
+    ui->hueButton->setMaximumHeight(ui->hueButton->width());
+
+    ui->yunButton->setMinimumHeight(ui->yunButton->width());
+    ui->yunButton->setMaximumHeight(ui->yunButton->width());
+
 #ifndef MOBILE_BUILD
-    ui->serialCheckBox->setStyleSheet(stylesheet);
+    ui->serialButton->setMinimumHeight(ui->serialButton->width());
+    ui->serialButton->setMaximumHeight(ui->serialButton->width());
 #endif //MOBILE_BUILD
 
-    ui->speedSlider->setMinimumSize(QSize(this->width() * 0.75f, this->height() * 0.15f));
-    ui->speedSlider->setMaximumSize(QSize(this->width() * 0.75f, this->height() * 0.15f));
 
-    ui->timeoutSlider->setMinimumSize(QSize(this->width() * 0.75f, this->height() * 0.15f));
-    ui->timeoutSlider->setMaximumSize(QSize(this->width() * 0.75f, this->height() * 0.15f));
+    ui->speedSlider->setMinimumSize(QSize(this->width() * 0.8f, this->height() * 0.15f));
+    ui->speedSlider->setMaximumSize(QSize(this->width() * 0.8f, this->height() * 0.15f));
+
+    ui->timeoutSlider->setMinimumSize(QSize(this->width() * 0.8f, this->height() * 0.15f));
+    ui->timeoutSlider->setMaximumSize(QSize(this->width() * 0.8f, this->height() * 0.15f));
+
+    ui->scrollArea->widget()->setMaximumWidth(this->width() * 0.9f);
+
+    ui->debugButton->setMinimumHeight(ui->debugButton->width());
+    ui->debugButton->setMaximumHeight(ui->debugButton->width());
+
+    ui->resetButton->setMinimumHeight(ui->debugButton->width());
+    ui->resetButton->setMaximumHeight(ui->debugButton->width());
+
+
+    ui->loadButton->setMinimumHeight(ui->loadButton->width());
+    ui->loadButton->setMaximumHeight(ui->loadButton->width());
+
+    ui->saveButton->setMinimumHeight(ui->saveButton->width());
+    ui->saveButton->setMaximumHeight(ui->saveButton->width());
+
+    ui->mergeButton->setMinimumHeight(ui->mergeButton->width());
+    ui->mergeButton->setMaximumHeight(ui->mergeButton->width());
 }
 
 void SettingsPage::checkCheckBoxes() {
-    for (int i = 0; i < (int)ECommType::eCommType_MAX; ++i) {
-        LightCheckBox* checkBox = mCheckBoxes[i];
-        ECommType type = (ECommType)i;
+    std::vector<ECommType> types =  mData->commTypeSettings()->commTypes();
+    for (int i = 0; i < 3; ++i) {
+        QPushButton* checkBox = mConnectionButtons[i];
+        ECommType type = types[i];
         if (mData->commTypeSettings()->commTypeEnabled(type)) {
             checkBox->setChecked(true);
         } else {
@@ -171,7 +216,7 @@ void SettingsPage::checkCheckBoxes() {
 
 void SettingsPage::checkBoxClicked(ECommType type, bool checked) {
     if (!mData->commTypeSettings()->enableCommType(type, checked)) {
-        mCheckBoxes[(int)type]->setChecked(true);
+        mConnectionButtons[mData->commTypeSettings()->indexOfCommTypeSettings(type)]->setChecked(true);
     } else if (!mComm->hasStarted(type) && checked) {
         mComm->startup(type);
     } else if (mComm->hasStarted(type) && !checked) {
@@ -180,15 +225,58 @@ void SettingsPage::checkBoxClicked(ECommType type, bool checked) {
     }
 }
 
+
+void SettingsPage::loadButtonClicked(bool) {
+    QFileDialog dialog(this);
+    dialog.setFileMode(QFileDialog::AnyFile);
+    dialog.setNameFilter(tr("JSON (*.json)"));
+    dialog.setViewMode(QFileDialog::Detail);
+    const QString downloadsFolder = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+    dialog.setDirectory(downloadsFolder);
+    QStringList fileNames;
+    if (dialog.exec()) {
+        fileNames = dialog.selectedFiles();
+        for (auto& name : fileNames){
+            if (!mGroups->loadExternalData(name)) {
+                qDebug() << "WARNING: loading external data failed at " << name;
+            }
+        }
+    }
+}
+
+void SettingsPage::mergeButtonClicked(bool) {
+    qDebug() << "Merge clicekd!";
+
+}
+
+void SettingsPage::debugButtonClicked(bool) {
+    std::list<SLightDevice> debugDevices = mGroups->loadDebugData();
+    if (debugDevices.size() > 0) {
+        mComm->loadDebugData(debugDevices);
+        emit debugPressed();
+    } else {
+        qDebug() << "WARNING: Debug devices not found!";
+    }
+}
+
+void SettingsPage::saveDataButtonClicked(bool) {
+    QString fileName = QFileDialog::getSaveFileName(this,
+          tr("Save Group Data"), "CorlumaGroups.json",
+          tr("JSON (*.json)"));
+    if (fileName.isEmpty()) {
+        qDebug() << "WARNING: save file name empty";
+        return;
+    }
+    if (!mGroups->saveFile(fileName)) {
+        qDebug() << "WARNING: Save failed!";
+    }
+}
+
 void SettingsPage::hueCheckboxClicked(bool checked) {
     checkBoxClicked(ECommType::eHue, checked);
 }
 
-void SettingsPage::httpCheckboxClicked(bool checked) {
-    checkBoxClicked(ECommType::eHTTP, checked);
-}
-
-void SettingsPage::udpCheckboxClicked(bool checked) {
+void SettingsPage::yunCheckboxClicked(bool checked) {
     checkBoxClicked(ECommType::eUDP, checked);
 }
 

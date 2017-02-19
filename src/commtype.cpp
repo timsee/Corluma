@@ -70,13 +70,7 @@ void CommType::updateDevice(SLightDevice device) {
     auto deviceList = mDeviceTable.find(device.name.toStdString());
     if (deviceList != mDeviceTable.end()) {
         for (auto it = deviceList->second.begin(); it != deviceList->second.end(); ++it) {
-            bool deviceExists = true;
-            // these three values do not change and can be used as a unique key for the device, even if
-            // things like the color or brightness change.
-            if (device.name.compare(it->name)) deviceExists = false;
-            if (device.index != it->index)     deviceExists = false;
-            if (device.type != it->type)       deviceExists = false;
-            if (deviceExists) {
+            if (compareLightDevice(device, *it)) {
                 foundDevice = true;
                 deviceList->second.remove((*it));
                 deviceList->second.push_back(device);
@@ -151,10 +145,7 @@ bool CommType::checkIfControllerIsValid(QString controller) {
 
 void CommType::resetDiscovery() {
     mDiscoveredList.clear();
-    for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
-       throttle->second->stop();
-    }
-    mThrottleList.clear();
+
     mFullyDiscovered = false;
 }
 
@@ -166,6 +157,7 @@ void CommType::resetStateUpdateTimeout() {
 }
 
 void CommType::stopStateUpdates() {
+    qDebug() << "INFO: Turning off state updates" << utils::ECommTypeToString(mType);
     if (mStateUpdateTimer->isActive()) {
         mStateUpdateTimer->stop();
     }
@@ -173,35 +165,24 @@ void CommType::stopStateUpdates() {
 
 bool CommType::shouldContinueStateUpdate() {
     if (mLastSendTime.elapsed() > 15000) {
-        //qDebug() << "INFO: Turning off state updates";
-        mStateUpdateTimer->stop();
+        stopStateUpdates();
         return false;
     }
     return true;
 }
 
-void CommType::handleDiscoveryPacket(QString sender, int throttleInterval, int throttleMax) {
+void CommType::handleDiscoveryPacket(QString sender) {
     // search for the sender in the list of discovered devices
     bool found = (std::find(mDiscoveredList.begin(), mDiscoveredList.end(), sender) != mDiscoveredList.end());
     if (!found) {
         //if its not found, add it to the list
         mDiscoveredList.push_back(sender);
         mUndiscoveredList.remove(sender);
-        resetStateUpdateTimeout();
         saveConnectionList();
     }
 
-    // iterate through the throttle list and see if theres an associated throttle
-    bool foundThrottle = false;
-    for (std::list<std::pair<QString, CommThrottle*> >::iterator it = mThrottleList.begin(); it != mThrottleList.end(); ++it) {
-        if (!(*it).first.compare(sender)) foundThrottle = true;
-    }
-    // if a throttle isn't found, start one
-    if (!foundThrottle) {
-        std::pair<QString, CommThrottle*> throttlePair = std::pair<QString, CommThrottle*>(sender, new CommThrottle());
-        connect(throttlePair.second, SIGNAL(sendThrottleBuffer(QString, QString)), this, SLOT(sendThrottleBuffer(QString, QString)));
-        throttlePair.second->startThrottle(throttleInterval, throttleMax);
-        mThrottleList.push_back(throttlePair);
+    if (!found) {
+        resetStateUpdateTimeout();
     }
 
     // iterate through controller list and compare to discovery list
