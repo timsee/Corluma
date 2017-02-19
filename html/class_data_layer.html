@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.85</span>
+   &#160;<span id="projectnumber">v0.9.9</span>
    </div>
   </td>
  </tr>
@@ -128,6 +128,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a383a0bd23b394e1b4a8df5df92bbb4b0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a383a0bd23b394e1b4a8df5df92bbb4b0">isOn</a> ()</td></tr>
 <tr class="memdesc:a383a0bd23b394e1b4a8df5df92bbb4b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">isOn true if any device is on, false if all are off.  <a href="#a383a0bd23b394e1b4a8df5df92bbb4b0">More...</a><br /></td></tr>
 <tr class="separator:a383a0bd23b394e1b4a8df5df92bbb4b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb68873885347721dd32a3893191c12e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#abb68873885347721dd32a3893191c12e">anyDevicesReachable</a> ()</td></tr>
+<tr class="memdesc:abb68873885347721dd32a3893191c12e"><td class="mdescLeft">&#160;</td><td class="mdescRight">anyDevicesReachable true if any device is reachable, false if all are not reachable.  <a href="#abb68873885347721dd32a3893191c12e">More...</a><br /></td></tr>
+<tr class="separator:abb68873885347721dd32a3893191c12e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac3d7cd218cf3d739d58357d5352d0621"><td class="memItemLeft" align="right" valign="top">EColorGroup&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#ac3d7cd218cf3d739d58357d5352d0621">closestColorGroupToColor</a> (QColor color)</td></tr>
+<tr class="memdesc:ac3d7cd218cf3d739d58357d5352d0621"><td class="mdescLeft">&#160;</td><td class="mdescRight">closestColorGroupToColor takes a color as input and checks the averages of the color groups and determines the closest color group to your color.  <a href="#ac3d7cd218cf3d739d58357d5352d0621">More...</a><br /></td></tr>
+<tr class="separator:ac3d7cd218cf3d739d58357d5352d0621"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3bcd5465f2601dda4edd5991df0f6069"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a3bcd5465f2601dda4edd5991df0f6069">updateRoutine</a> (ELightingRoutine routine)</td></tr>
 <tr class="memdesc:a3bcd5465f2601dda4edd5991df0f6069"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateRoutine update the lighting routine for all current devices.  <a href="#a3bcd5465f2601dda4edd5991df0f6069">More...</a><br /></td></tr>
 <tr class="separator:a3bcd5465f2601dda4edd5991df0f6069"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -149,9 +155,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab7f3c934e0e353d851077ed436102dea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#ab7f3c934e0e353d851077ed436102dea">updateCustomColorArray</a> (int index, QColor color)</td></tr>
 <tr class="memdesc:ab7f3c934e0e353d851077ed436102dea"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateCustomColorArray update the color in the custom color array at the given index. If the index is 10 or larger, it is ignored.  <a href="#ab7f3c934e0e353d851077ed436102dea">More...</a><br /></td></tr>
 <tr class="separator:ab7f3c934e0e353d851077ed436102dea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a7fec7492a5b364b2bddf14e834eaef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a0a7fec7492a5b364b2bddf14e834eaef">updateBrightness</a> (int <a class="el" href="class_data_layer.html#af2b5821cbab5dd98b644c3f7577cf27e">brightness</a>)</td></tr>
-<tr class="memdesc:a0a7fec7492a5b364b2bddf14e834eaef"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateBrightness update the brightness level of all current devices.  <a href="#a0a7fec7492a5b364b2bddf14e834eaef">More...</a><br /></td></tr>
-<tr class="separator:a0a7fec7492a5b364b2bddf14e834eaef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a477e091c77d4c6936cb6dd69b10e6857"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a477e091c77d4c6936cb6dd69b10e6857">updateBrightness</a> (int <a class="el" href="class_data_layer.html#af2b5821cbab5dd98b644c3f7577cf27e">brightness</a>, std::list&lt; SLightDevice &gt; specialCaseDevices=std::list&lt; SLightDevice &gt;())</td></tr>
+<tr class="memdesc:a477e091c77d4c6936cb6dd69b10e6857"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateBrightness update the brightness level of all current devices.  <a href="#a477e091c77d4c6936cb6dd69b10e6857">More...</a><br /></td></tr>
+<tr class="separator:a477e091c77d4c6936cb6dd69b10e6857"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acdf292093067fe9d8ed9c2e4a0fd55b3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#acdf292093067fe9d8ed9c2e4a0fd55b3">updateCt</a> (int ct)</td></tr>
 <tr class="memdesc:acdf292093067fe9d8ed9c2e4a0fd55b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateCt update the color temperature. Only supported by Hue lights.  <a href="#acdf292093067fe9d8ed9c2e4a0fd55b3">More...</a><br /></td></tr>
 <tr class="separator:acdf292093067fe9d8ed9c2e4a0fd55b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -167,9 +173,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab2f37870d7c0e00b0ff23f46d981c95e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#ab2f37870d7c0e00b0ff23f46d981c95e">devicesContainCommType</a> (ECommType type)</td></tr>
 <tr class="memdesc:ab2f37870d7c0e00b0ff23f46d981c95e"><td class="mdescLeft">&#160;</td><td class="mdescRight">devicesContainCommType helper that checks all devices and returns true if at least one of the devices is of a given commtype.  <a href="#ab2f37870d7c0e00b0ff23f46d981c95e">More...</a><br /></td></tr>
 <tr class="separator:ab2f37870d7c0e00b0ff23f46d981c95e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aba288783d10881a92e64dcf54088d18f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#aba288783d10881a92e64dcf54088d18f">replaceDeviceList</a> (const std::list&lt; SLightDevice &gt; &amp;newList)</td></tr>
-<tr class="memdesc:aba288783d10881a92e64dcf54088d18f"><td class="mdescLeft">&#160;</td><td class="mdescRight">replaceDeviceList removes all current devices and replaces them with the devices on the given list  <a href="#aba288783d10881a92e64dcf54088d18f">More...</a><br /></td></tr>
-<tr class="separator:aba288783d10881a92e64dcf54088d18f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52f5db74483ffd335e0e6bef5541c602"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a52f5db74483ffd335e0e6bef5541c602">addDeviceList</a> (const std::list&lt; SLightDevice &gt; &amp;list)</td></tr>
+<tr class="memdesc:a52f5db74483ffd335e0e6bef5541c602"><td class="mdescLeft">&#160;</td><td class="mdescRight">addDeviceList attempts to add a list of devices instead of a single device at a time  <a href="#a52f5db74483ffd335e0e6bef5541c602">More...</a><br /></td></tr>
+<tr class="separator:a52f5db74483ffd335e0e6bef5541c602"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa79248e05558d798beb8748f1da9d289"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#aa79248e05558d798beb8748f1da9d289">removeDeviceList</a> (const std::list&lt; SLightDevice &gt; &amp;list)</td></tr>
+<tr class="memdesc:aa79248e05558d798beb8748f1da9d289"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeDeviceList  <a href="#aa79248e05558d798beb8748f1da9d289">More...</a><br /></td></tr>
+<tr class="separator:aa79248e05558d798beb8748f1da9d289"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d51a5e42729f73957439f024409ac41"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a5d51a5e42729f73957439f024409ac41">removeDevice</a> (SLightDevice device)</td></tr>
 <tr class="memdesc:a5d51a5e42729f73957439f024409ac41"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeDevice remove specific device from connected device list.  <a href="#a5d51a5e42729f73957439f024409ac41">More...</a><br /></td></tr>
 <tr class="separator:a5d51a5e42729f73957439f024409ac41"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -233,6 +242,45 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a52f5db74483ffd335e0e6bef5541c602"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool DataLayer::addDeviceList </td>
+          <td>(</td>
+          <td class="paramtype">const std::list&lt; SLightDevice &gt; &amp;&#160;</td>
+          <td class="paramname"><em>list</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">list</td><td>list of devices to add </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if all are added, false otherwise. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="abb68873885347721dd32a3893191c12e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool DataLayer::anyDevicesReachable </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>true if any device is reachable, false if all are not reachable. </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="af2b5821cbab5dd98b644c3f7577cf27e"></a>
 <div class="memitem">
 <div class="memproto">
@@ -262,6 +310,29 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>true if successful </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ac3d7cd218cf3d739d58357d5352d0621"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">EColorGroup DataLayer::closestColorGroupToColor </td>
+          <td>(</td>
+          <td class="paramtype">QColor&#160;</td>
+          <td class="paramname"><em>color</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">color</td><td>input color </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the color group that, when averaged, is closest to the provided color. </dd></dl>
 
 </div>
 </div>
@@ -615,6 +686,29 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="aa79248e05558d798beb8748f1da9d289"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool DataLayer::removeDeviceList </td>
+          <td>(</td>
+          <td class="paramtype">const std::list&lt; SLightDevice &gt; &amp;&#160;</td>
+          <td class="paramname"><em>list</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">list</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a6cf956134ddfc9a45fc22a7c426c2a30"></a>
 <div class="memitem">
 <div class="memproto">
@@ -635,29 +729,6 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>number of devices left in currentDevices list. </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="aba288783d10881a92e64dcf54088d18f"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool DataLayer::replaceDeviceList </td>
-          <td>(</td>
-          <td class="paramtype">const std::list&lt; SLightDevice &gt; &amp;&#160;</td>
-          <td class="paramname"><em>newList</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">newList</td><td>the new list of devices to control. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>true if sucessful, false otherwise. </dd></dl>
 
 </div>
 </div>
@@ -731,7 +802,7 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a0a7fec7492a5b364b2bddf14e834eaef"></a>
+<a class="anchor" id="a477e091c77d4c6936cb6dd69b10e6857"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -739,14 +810,25 @@ Public Member Functions</h2></td></tr>
           <td class="memname">void DataLayer::updateBrightness </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>brightness</em></td><td>)</td>
+          <td class="paramname"><em>brightness</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">std::list&lt; SLightDevice &gt;&#160;</td>
+          <td class="paramname"><em>specialCaseDevices</em> = <code>std::list&lt;SLightDevice&gt;()</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">brightness</td><td>new brightness </td></tr>
+    <tr><td class="paramname">specialCaseDevices</td><td>certain hue devices handle brightness differently. This list contains all ambient and white hue lights. </td></tr>
   </table>
   </dd>
 </dl>

@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.85</span>
+   &#160;<span id="projectnumber">v0.9.9</span>
    </div>
   </td>
  </tr>
@@ -59,57 +59,83 @@
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;</div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;datalayer.h&quot;</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">class </span><a class="code" href="class_comm_layer.html">CommLayer</a>;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">class </span>DataSync : <span class="keyword">public</span> QObject</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;{</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    Q_OBJECT</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    DataSync(<a class="code" href="class_data_layer.html">DataLayer</a> *data, <a class="code" href="class_comm_layer.html">CommLayer</a> *comm);</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keywordtype">void</span> cancelSync();</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="keyword">public</span> slots:</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keywordtype">void</span> resetSync();</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="keyword">private</span> slots:</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordtype">void</span> syncData();</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordtype">void</span> cleanupSync();</div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="struct_s_throttle.html">   22</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_s_throttle.html">SThrottle</a></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;{</div>
+<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="struct_s_throttle.html#aa7dbcc22f48a05598d862445f4ec4f43">   27</a></span>&#160;    QTime <a class="code" href="struct_s_throttle.html#aa7dbcc22f48a05598d862445f4ec4f43">time</a>;</div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="struct_s_throttle.html#aca1f2cd2944d7e6ec440626f8e3d51c0">   31</a></span>&#160;    QString <a class="code" href="struct_s_throttle.html#aca1f2cd2944d7e6ec440626f8e3d51c0">controller</a>;</div>
+<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="struct_s_throttle.html#a7d661746123c75dd511ae1005aff20b4">   35</a></span>&#160;    ECommType <a class="code" href="struct_s_throttle.html#a7d661746123c75dd511ae1005aff20b4">type</a>;</div>
+<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="struct_s_throttle.html#aa04ef7548513dd159dde143b9edbc443">   39</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="struct_s_throttle.html#aa04ef7548513dd159dde143b9edbc443">index</a>; </div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;};</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="keyword">class </span><a class="code" href="class_comm_layer.html">CommLayer</a>;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="keyword">class </span>DataSync : <span class="keyword">public</span> QObject</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;{</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    Q_OBJECT</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    DataSync(<a class="code" href="class_data_layer.html">DataLayer</a> *data, <a class="code" href="class_comm_layer.html">CommLayer</a> *comm);</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <a class="code" href="class_data_layer.html">DataLayer</a> *mData;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <a class="code" href="class_comm_layer.html">CommLayer</a> *mComm;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordtype">bool</span> standardSync(<span class="keyword">const</span> SLightDevice&amp; dataDevice, <span class="keyword">const</span> SLightDevice&amp; commDevice);</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keywordtype">bool</span> hueSync(<span class="keyword">const</span> SLightDevice&amp; dataDevice, <span class="keyword">const</span> SLightDevice&amp; commDevice);</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordtype">void</span> cancelSync();</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="keyword">public</span> slots:</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">void</span> resetSync();</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="keyword">private</span> slots:</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordtype">void</span> syncData();</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordtype">void</span> cleanupSync();</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="keyword">private</span>:</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keywordtype">void</span> endOfSync();</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keywordtype">float</span> colorDifference(QColor first, QColor second);</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <span class="keywordtype">float</span> brightnessDifference(<span class="keywordtype">float</span> first, <span class="keywordtype">float</span> second);</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="keywordtype">float</span> ctDifference(<span class="keywordtype">float</span> first, <span class="keywordtype">float</span> second);</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    QTimer *mSyncTimer;</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    QTimer *mCleanupTimer;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <a class="code" href="class_data_layer.html">DataLayer</a> *mData;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <a class="code" href="class_comm_layer.html">CommLayer</a> *mComm;</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keywordtype">bool</span> standardSync(<span class="keyword">const</span> SLightDevice&amp; dataDevice, <span class="keyword">const</span> SLightDevice&amp; commDevice);</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <span class="keywordtype">bool</span> hueSync(<span class="keyword">const</span> SLightDevice&amp; dataDevice, <span class="keyword">const</span> SLightDevice&amp; commDevice);</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="keywordtype">void</span> endOfSync();</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="keywordtype">float</span> colorDifference(QColor first, QColor second);</div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    QTime mCleanupStartTime;</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    QTime mStartTime;</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    <span class="keywordtype">bool</span> mDataIsInSync;</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;};</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    <span class="keywordtype">float</span> brightnessDifference(<span class="keywordtype">float</span> first, <span class="keywordtype">float</span> second);</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    <span class="keywordtype">float</span> ctDifference(<span class="keywordtype">float</span> first, <span class="keywordtype">float</span> second);</div>
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;<span class="preprocessor">#endif // DATASYNC_H</span></div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    QTimer *mSyncTimer;</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    QTimer *mCleanupTimer;</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    QTime mCleanupStartTime;</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    QTime mStartTime;</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="keywordtype">bool</span> mDataIsInSync;</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    <span class="keywordtype">int</span> mUpdateInterval;</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    <span class="comment">//------------------</span></div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    <span class="comment">// Throttle</span></div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    <span class="comment">//------------------</span></div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    std::list&lt;SThrottle&gt; mThrottleList;</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;    <span class="keywordtype">bool</span> checkThrottle(QString controller, ECommType type, <span class="keywordtype">int</span> index);</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;    <span class="keywordtype">void</span> resetThrottle(QString controller, ECommType type, <span class="keywordtype">int</span> index);</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;};</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;<span class="preprocessor">#endif // DATASYNC_H</span></div>
 <div class="ttc" id="class_comm_layer_html"><div class="ttname"><a href="class_comm_layer.html">CommLayer</a></div><div class="ttdoc">The CommLayer class provides communication protocols that allow the user to connect and send packets ...</div><div class="ttdef"><b>Definition:</b> commlayer.h:31</div></div>
+<div class="ttc" id="struct_s_throttle_html_a7d661746123c75dd511ae1005aff20b4"><div class="ttname"><a href="struct_s_throttle.html#a7d661746123c75dd511ae1005aff20b4">SThrottle::type</a></div><div class="ttdeci">ECommType type</div><div class="ttdoc">type communication type for controller. </div><div class="ttdef"><b>Definition:</b> datasync.h:35</div></div>
 <div class="ttc" id="class_data_layer_html"><div class="ttname"><a href="class_data_layer.html">DataLayer</a></div><div class="ttdoc">The DataLayer class stores and maintains the data about the state and settings of the application...</div><div class="ttdef"><b>Definition:</b> datalayer.h:30</div></div>
+<div class="ttc" id="struct_s_throttle_html"><div class="ttname"><a href="struct_s_throttle.html">SThrottle</a></div><div class="ttdoc">The SThrottle struct tracks the last itme an individual controller was throttled. In the current iter...</div><div class="ttdef"><b>Definition:</b> datasync.h:22</div></div>
+<div class="ttc" id="struct_s_throttle_html_aa7dbcc22f48a05598d862445f4ec4f43"><div class="ttname"><a href="struct_s_throttle.html#aa7dbcc22f48a05598d862445f4ec4f43">SThrottle::time</a></div><div class="ttdeci">QTime time</div><div class="ttdoc">time time since last message was sent. </div><div class="ttdef"><b>Definition:</b> datasync.h:27</div></div>
+<div class="ttc" id="struct_s_throttle_html_aa04ef7548513dd159dde143b9edbc443"><div class="ttname"><a href="struct_s_throttle.html#aa04ef7548513dd159dde143b9edbc443">SThrottle::index</a></div><div class="ttdeci">int index</div><div class="ttdoc">index index of device getting throttled. </div><div class="ttdef"><b>Definition:</b> datasync.h:39</div></div>
+<div class="ttc" id="struct_s_throttle_html_aca1f2cd2944d7e6ec440626f8e3d51c0"><div class="ttname"><a href="struct_s_throttle.html#aca1f2cd2944d7e6ec440626f8e3d51c0">SThrottle::controller</a></div><div class="ttdeci">QString controller</div><div class="ttdoc">controller name of controller. </div><div class="ttdef"><b>Definition:</b> datasync.h:31</div></div>
 </div><!-- fragment --></div><!-- contents -->
 
 <hr>

@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.85</span>
+   &#160;<span id="projectnumber">v0.9.9</span>
    </div>
   </td>
  </tr>
@@ -81,36 +81,39 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:adc880edb1c5b330353d6632898bf4797"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#adc880edb1c5b330353d6632898bf4797">CommLayer</a> (QWidget *parent=0)</td></tr>
 <tr class="memdesc:adc880edb1c5b330353d6632898bf4797"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#adc880edb1c5b330353d6632898bf4797">More...</a><br /></td></tr>
 <tr class="separator:adc880edb1c5b330353d6632898bf4797"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d829da5caee92c0cbe16cf55ab00db9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a0d829da5caee92c0cbe16cf55ab00db9">sendTurnOn</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, bool turnOn)</td></tr>
-<tr class="memdesc:a0d829da5caee92c0cbe16cf55ab00db9"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendTurnOn turn all devices in the provided list either on or off.  <a href="#a0d829da5caee92c0cbe16cf55ab00db9">More...</a><br /></td></tr>
-<tr class="separator:a0d829da5caee92c0cbe16cf55ab00db9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a783bcfcf2995998a14065eb146f0c086"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a783bcfcf2995998a14065eb146f0c086">sendMainColorChange</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, QColor color)</td></tr>
-<tr class="memdesc:a783bcfcf2995998a14065eb146f0c086"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendMainColorChange change the main color of the lighting settings in the GUI, this is the color displayed in the leftmost menu.  <a href="#a783bcfcf2995998a14065eb146f0c086">More...</a><br /></td></tr>
-<tr class="separator:a783bcfcf2995998a14065eb146f0c086"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5e2c45c0adf0fc22efe7550d5a1d0b41"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a5e2c45c0adf0fc22efe7550d5a1d0b41">sendArrayColorChange</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, int index, QColor color)</td></tr>
-<tr class="memdesc:a5e2c45c0adf0fc22efe7550d5a1d0b41"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendColorChange change an array color in the lighting system  <a href="#a5e2c45c0adf0fc22efe7550d5a1d0b41">More...</a><br /></td></tr>
-<tr class="separator:a5e2c45c0adf0fc22efe7550d5a1d0b41"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a58a7d5057af854bdd063e24959c77b18"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a58a7d5057af854bdd063e24959c77b18">sendSingleRoutineChange</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, ELightingRoutine routine)</td></tr>
-<tr class="memdesc:a58a7d5057af854bdd063e24959c77b18"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendSingleRoutineChange change the mode of the lights. The mode changes how the lights look. This function should be used for single color routines.  <a href="#a58a7d5057af854bdd063e24959c77b18">More...</a><br /></td></tr>
-<tr class="separator:a58a7d5057af854bdd063e24959c77b18"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a434a5a11d147c5879494e2816879c98b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a434a5a11d147c5879494e2816879c98b">sendMultiRoutineChange</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, ELightingRoutine routine, EColorGroup colorGroup)</td></tr>
-<tr class="memdesc:a434a5a11d147c5879494e2816879c98b"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendMultiRoutineChange change the mode of the lights. The mode changes how the lights look. This function should be used for multi color routines, since it uses a color group.  <a href="#a434a5a11d147c5879494e2816879c98b">More...</a><br /></td></tr>
-<tr class="separator:a434a5a11d147c5879494e2816879c98b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e3ded2bd93ed90b329ab1b8ae7fd3e7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a1e3ded2bd93ed90b329ab1b8ae7fd3e7">sendColorTemperatureChange</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, int temperature)</td></tr>
-<tr class="memdesc:a1e3ded2bd93ed90b329ab1b8ae7fd3e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendColorTemperatureChange Hue only. Controls Ambient Lights and Extended Color lights by sending them a color temperature instead of color in HSV  <a href="#a1e3ded2bd93ed90b329ab1b8ae7fd3e7">More...</a><br /></td></tr>
-<tr class="separator:a1e3ded2bd93ed90b329ab1b8ae7fd3e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a070205837f82abbed152b7dd542a5145"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a070205837f82abbed152b7dd542a5145">sendCustomArrayCount</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, int count)</td></tr>
-<tr class="memdesc:a070205837f82abbed152b7dd542a5145"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendCustomArrayCount sends a new custom array count to the LED array. This count determines how many colors from the custom array should be used. It is different from the size of the custom array, which provides a maximum possible amount of colors.  <a href="#a070205837f82abbed152b7dd542a5145">More...</a><br /></td></tr>
-<tr class="separator:a070205837f82abbed152b7dd542a5145"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89203fcc2b2991f891ac47d0f5fac9e3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a89203fcc2b2991f891ac47d0f5fac9e3">sendBrightness</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, int brightness)</td></tr>
-<tr class="memdesc:a89203fcc2b2991f891ac47d0f5fac9e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendBrightness sends a brightness value between 0 and 100, with 100 being full brightness.  <a href="#a89203fcc2b2991f891ac47d0f5fac9e3">More...</a><br /></td></tr>
-<tr class="separator:a89203fcc2b2991f891ac47d0f5fac9e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e12e15feeda6a1322aa49314c4b278e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a1e12e15feeda6a1322aa49314c4b278e">sendSpeed</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, int speed)</td></tr>
-<tr class="memdesc:a1e12e15feeda6a1322aa49314c4b278e"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendSpeed sends a desired FPS for light updates. This value is the FPS * 100, for example if you want a FPS of 5, send the value 500.  <a href="#a1e12e15feeda6a1322aa49314c4b278e">More...</a><br /></td></tr>
-<tr class="separator:a1e12e15feeda6a1322aa49314c4b278e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abcb4196d7b103214845303a327401766"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#abcb4196d7b103214845303a327401766">sendTimeOut</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, int timeOut)</td></tr>
-<tr class="memdesc:abcb4196d7b103214845303a327401766"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendTimeOut the amount of minutes that it takes for the LEDs to turn themselves off from inactivity. Perfect for bedtime!  <a href="#abcb4196d7b103214845303a327401766">More...</a><br /></td></tr>
-<tr class="separator:abcb4196d7b103214845303a327401766"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c820db47adc653e61b1b55c15327a11"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a8c820db47adc653e61b1b55c15327a11">sendPacket</a> (const SLightDevice &amp;device, const QString &amp;payload)</td></tr>
+<tr class="memdesc:a8c820db47adc653e61b1b55c15327a11"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendPacket helper for sending packets  <a href="#a8c820db47adc653e61b1b55c15327a11">More...</a><br /></td></tr>
+<tr class="separator:a8c820db47adc653e61b1b55c15327a11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c875268df7d7820884846b6ac53438e"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a1c875268df7d7820884846b6ac53438e">sendTurnOn</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, bool turnOn)</td></tr>
+<tr class="memdesc:a1c875268df7d7820884846b6ac53438e"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendTurnOn turn all devices in the provided list either on or off.  <a href="#a1c875268df7d7820884846b6ac53438e">More...</a><br /></td></tr>
+<tr class="separator:a1c875268df7d7820884846b6ac53438e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aced06e9a9ae58c5e0c315928f9c2c525"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#aced06e9a9ae58c5e0c315928f9c2c525">sendMainColorChange</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, QColor color)</td></tr>
+<tr class="memdesc:aced06e9a9ae58c5e0c315928f9c2c525"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendMainColorChange change the main color of the lighting settings in the GUI, this is the color displayed in the leftmost menu.  <a href="#aced06e9a9ae58c5e0c315928f9c2c525">More...</a><br /></td></tr>
+<tr class="separator:aced06e9a9ae58c5e0c315928f9c2c525"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7111dd566124925d7456d8376fdd2585"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a7111dd566124925d7456d8376fdd2585">sendArrayColorChange</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, int index, QColor color)</td></tr>
+<tr class="memdesc:a7111dd566124925d7456d8376fdd2585"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendColorChange change an array color in the lighting system  <a href="#a7111dd566124925d7456d8376fdd2585">More...</a><br /></td></tr>
+<tr class="separator:a7111dd566124925d7456d8376fdd2585"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea0635bbe6e979e1e04e697ae6720950"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#aea0635bbe6e979e1e04e697ae6720950">sendSingleRoutineChange</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, ELightingRoutine routine)</td></tr>
+<tr class="memdesc:aea0635bbe6e979e1e04e697ae6720950"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendSingleRoutineChange change the mode of the lights. The mode changes how the lights look. This function should be used for single color routines.  <a href="#aea0635bbe6e979e1e04e697ae6720950">More...</a><br /></td></tr>
+<tr class="separator:aea0635bbe6e979e1e04e697ae6720950"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a36450e270b2aa9102ad65e6e45e2f22c"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a36450e270b2aa9102ad65e6e45e2f22c">sendMultiRoutineChange</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, ELightingRoutine routine, EColorGroup colorGroup)</td></tr>
+<tr class="memdesc:a36450e270b2aa9102ad65e6e45e2f22c"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendMultiRoutineChange change the mode of the lights. The mode changes how the lights look. This function should be used for multi color routines, since it uses a color group.  <a href="#a36450e270b2aa9102ad65e6e45e2f22c">More...</a><br /></td></tr>
+<tr class="separator:a36450e270b2aa9102ad65e6e45e2f22c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1eb3a914b7ef1e7d78cf0854e0810c15"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a1eb3a914b7ef1e7d78cf0854e0810c15">sendColorTemperatureChange</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, int temperature)</td></tr>
+<tr class="memdesc:a1eb3a914b7ef1e7d78cf0854e0810c15"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendColorTemperatureChange Hue only. Controls Ambient Lights and Extended Color lights by sending them a color temperature instead of color in HSV  <a href="#a1eb3a914b7ef1e7d78cf0854e0810c15">More...</a><br /></td></tr>
+<tr class="separator:a1eb3a914b7ef1e7d78cf0854e0810c15"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae1834371b3ae4789961f60fdaf11fabd"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ae1834371b3ae4789961f60fdaf11fabd">sendCustomArrayCount</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, int count)</td></tr>
+<tr class="memdesc:ae1834371b3ae4789961f60fdaf11fabd"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendCustomArrayCount sends a new custom array count to the LED array. This count determines how many colors from the custom array should be used. It is different from the size of the custom array, which provides a maximum possible amount of colors.  <a href="#ae1834371b3ae4789961f60fdaf11fabd">More...</a><br /></td></tr>
+<tr class="separator:ae1834371b3ae4789961f60fdaf11fabd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6760c58df0e7bcbb5989a0ecf27bb08f"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a6760c58df0e7bcbb5989a0ecf27bb08f">sendBrightness</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, int brightness)</td></tr>
+<tr class="memdesc:a6760c58df0e7bcbb5989a0ecf27bb08f"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendBrightness sends a brightness value between 0 and 100, with 100 being full brightness.  <a href="#a6760c58df0e7bcbb5989a0ecf27bb08f">More...</a><br /></td></tr>
+<tr class="separator:a6760c58df0e7bcbb5989a0ecf27bb08f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3251a868849d0d6b6bee9ac93731ee30"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a3251a868849d0d6b6bee9ac93731ee30">sendSpeed</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, int speed)</td></tr>
+<tr class="memdesc:a3251a868849d0d6b6bee9ac93731ee30"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendSpeed sends a desired FPS for light updates. This value is the FPS * 100, for example if you want a FPS of 5, send the value 500.  <a href="#a3251a868849d0d6b6bee9ac93731ee30">More...</a><br /></td></tr>
+<tr class="separator:a3251a868849d0d6b6bee9ac93731ee30"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeebb407a9d93926fd45808ded16756da"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#aeebb407a9d93926fd45808ded16756da">sendTimeOut</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList, int timeOut)</td></tr>
+<tr class="memdesc:aeebb407a9d93926fd45808ded16756da"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendTimeOut the amount of minutes that it takes for the LEDs to turn themselves off from inactivity. Perfect for bedtime!  <a href="#aeebb407a9d93926fd45808ded16756da">More...</a><br /></td></tr>
+<tr class="separator:aeebb407a9d93926fd45808ded16756da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab2698aa7769e2ca64ff3ae9eddf1759f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab2698aa7769e2ca64ff3ae9eddf1759f"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ab2698aa7769e2ca64ff3ae9eddf1759f">sendReset</a> (const std::list&lt; SLightDevice &gt; &amp;deviceList)</td></tr>
 <tr class="memdesc:ab2698aa7769e2ca64ff3ae9eddf1759f"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendReset resets the board to its default settings. <br /></td></tr>
@@ -157,6 +160,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 &lt; SLightDevice &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a2150b9b9f584a5064be8bae460361cbe">deviceTable</a> (ECommType type)</td></tr>
 <tr class="memdesc:a2150b9b9f584a5064be8bae460361cbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceTable a hash table of all connected devices of a certain connection type. The controller names are used as keys.  <a href="#a2150b9b9f584a5064be8bae460361cbe">More...</a><br /></td></tr>
 <tr class="separator:a2150b9b9f584a5064be8bae460361cbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96c895abe2b2f8b02393918b343aad33"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a96c895abe2b2f8b02393918b343aad33"></a>
+const std::list&lt; SLightDevice &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a96c895abe2b2f8b02393918b343aad33">allDevices</a> ()</td></tr>
+<tr class="memdesc:a96c895abe2b2f8b02393918b343aad33"><td class="mdescLeft">&#160;</td><td class="mdescRight">list of all devices from all comm types <br /></td></tr>
+<tr class="separator:a96c895abe2b2f8b02393918b343aad33"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9b3aaf675404c2afd515823f3ea4879d"><td class="memItemLeft" align="right" valign="top">const std::list&lt; QString &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a9b3aaf675404c2afd515823f3ea4879d">discoveredList</a> (ECommType type)</td></tr>
 <tr class="memdesc:a9b3aaf675404c2afd515823f3ea4879d"><td class="mdescLeft">&#160;</td><td class="mdescRight">discoveredList getter for the list of all discovered devices from a specific commtype  <a href="#a9b3aaf675404c2afd515823f3ea4879d">More...</a><br /></td></tr>
 <tr class="separator:a9b3aaf675404c2afd515823f3ea4879d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -178,6 +185,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a8de881da54b74fa9ccccbc46a89de79e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_s_hue_light.html">SHueLight</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a8de881da54b74fa9ccccbc46a89de79e">hueLightFromLightDevice</a> (const SLightDevice &amp;device)</td></tr>
 <tr class="memdesc:a8de881da54b74fa9ccccbc46a89de79e"><td class="mdescLeft">&#160;</td><td class="mdescRight">hueLightFromLightDevice takes a SLightDevice and retrieves the <a class="el" href="struct_s_hue_light.html" title="The SHueLight struct a struct that stores all the relevant data received from a state update from the...">SHueLight</a> that maps to the same device. The <a class="el" href="struct_s_hue_light.html" title="The SHueLight struct a struct that stores all the relevant data received from a state update from the...">SHueLight</a> struct provides hue specific data for the more general SLightDevice.  <a href="#a8de881da54b74fa9ccccbc46a89de79e">More...</a><br /></td></tr>
 <tr class="separator:a8de881da54b74fa9ccccbc46a89de79e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35546e3b2d2f7a3309b47c39858e1e83"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a35546e3b2d2f7a3309b47c39858e1e83">loadDebugData</a> (const std::list&lt; SLightDevice &gt; debugDevices)</td></tr>
+<tr class="memdesc:a35546e3b2d2f7a3309b47c39858e1e83"><td class="mdescLeft">&#160;</td><td class="mdescRight">loadDebugData take a list of devices and load it into memory. Simulates receiving packets from these devices and fills the GUI with example data. Useful for debugging without an internet connection.  <a href="#a35546e3b2d2f7a3309b47c39858e1e83">More...</a><br /></td></tr>
+<tr class="separator:a35546e3b2d2f7a3309b47c39858e1e83"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
@@ -437,6 +447,29 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
+<a class="anchor" id="a35546e3b2d2f7a3309b47c39858e1e83"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool CommLayer::loadDebugData </td>
+          <td>(</td>
+          <td class="paramtype">const std::list&lt; SLightDevice &gt;&#160;</td>
+          <td class="paramname"><em>debugDevices</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">debugDevices</td><td>list of devices to load into the commtype </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if successful, false otherwise </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a1e5feb9a05ca5bf5c0db551c6d234cc1"></a>
 <div class="memitem">
 <div class="memproto">
@@ -494,12 +527,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="a5e2c45c0adf0fc22efe7550d5a1d0b41"></a>
+<a class="anchor" id="a7111dd566124925d7456d8376fdd2585"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void CommLayer::sendArrayColorChange </td>
+          <td class="memname">QString CommLayer::sendArrayColorChange </td>
           <td>(</td>
           <td class="paramtype">const std::list&lt; SLightDevice &gt; &amp;&#160;</td>
           <td class="paramname"><em>deviceList</em>, </td>
@@ -533,12 +566,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="a89203fcc2b2991f891ac47d0f5fac9e3"></a>
+<a class="anchor" id="a6760c58df0e7bcbb5989a0ecf27bb08f"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void CommLayer::sendBrightness </td>
+          <td class="memname">QString CommLayer::sendBrightness </td>
           <td>(</td>
           <td class="paramtype">const std::list&lt; SLightDevice &gt; &amp;&#160;</td>
           <td class="paramname"><em>deviceList</em>, </td>
@@ -565,12 +598,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="a1e3ded2bd93ed90b329ab1b8ae7fd3e7"></a>
+<a class="anchor" id="a1eb3a914b7ef1e7d78cf0854e0810c15"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void CommLayer::sendColorTemperatureChange </td>
+          <td class="memname">QString CommLayer::sendColorTemperatureChange </td>
           <td>(</td>
           <td class="paramtype">const std::list&lt; SLightDevice &gt; &amp;&#160;</td>
           <td class="paramname"><em>deviceList</em>, </td>
@@ -597,12 +630,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="a070205837f82abbed152b7dd542a5145"></a>
+<a class="anchor" id="ae1834371b3ae4789961f60fdaf11fabd"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void CommLayer::sendCustomArrayCount </td>
+          <td class="memname">QString CommLayer::sendCustomArrayCount </td>
           <td>(</td>
           <td class="paramtype">const std::list&lt; SLightDevice &gt; &amp;&#160;</td>
           <td class="paramname"><em>deviceList</em>, </td>
@@ -629,12 +662,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="a783bcfcf2995998a14065eb146f0c086"></a>
+<a class="anchor" id="aced06e9a9ae58c5e0c315928f9c2c525"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void CommLayer::sendMainColorChange </td>
+          <td class="memname">QString CommLayer::sendMainColorChange </td>
           <td>(</td>
           <td class="paramtype">const std::list&lt; SLightDevice &gt; &amp;&#160;</td>
           <td class="paramname"><em>deviceList</em>, </td>
@@ -661,12 +694,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="a434a5a11d147c5879494e2816879c98b"></a>
+<a class="anchor" id="a36450e270b2aa9102ad65e6e45e2f22c"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void CommLayer::sendMultiRoutineChange </td>
+          <td class="memname">QString CommLayer::sendMultiRoutineChange </td>
           <td>(</td>
           <td class="paramtype">const std::list&lt; SLightDevice &gt; &amp;&#160;</td>
           <td class="paramname"><em>deviceList</em>, </td>
@@ -699,12 +732,45 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="a58a7d5057af854bdd063e24959c77b18"></a>
+<a class="anchor" id="a8c820db47adc653e61b1b55c15327a11"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void CommLayer::sendSingleRoutineChange </td>
+          <td class="memname">void CommLayer::sendPacket </td>
+          <td>(</td>
+          <td class="paramtype">const SLightDevice &amp;&#160;</td>
+          <td class="paramname"><em>device</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const QString &amp;&#160;</td>
+          <td class="paramname"><em>payload</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">device</td><td>device to send a packet to </td></tr>
+    <tr><td class="paramname">payload</td><td>packet to send to device </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="aea0635bbe6e979e1e04e697ae6720950"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">QString CommLayer::sendSingleRoutineChange </td>
           <td>(</td>
           <td class="paramtype">const std::list&lt; SLightDevice &gt; &amp;&#160;</td>
           <td class="paramname"><em>deviceList</em>, </td>
@@ -731,12 +797,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="a1e12e15feeda6a1322aa49314c4b278e"></a>
+<a class="anchor" id="a3251a868849d0d6b6bee9ac93731ee30"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void CommLayer::sendSpeed </td>
+          <td class="memname">QString CommLayer::sendSpeed </td>
           <td>(</td>
           <td class="paramtype">const std::list&lt; SLightDevice &gt; &amp;&#160;</td>
           <td class="paramname"><em>deviceList</em>, </td>
@@ -763,12 +829,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="abcb4196d7b103214845303a327401766"></a>
+<a class="anchor" id="aeebb407a9d93926fd45808ded16756da"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void CommLayer::sendTimeOut </td>
+          <td class="memname">QString CommLayer::sendTimeOut </td>
           <td>(</td>
           <td class="paramtype">const std::list&lt; SLightDevice &gt; &amp;&#160;</td>
           <td class="paramname"><em>deviceList</em>, </td>
@@ -795,12 +861,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="a0d829da5caee92c0cbe16cf55ab00db9"></a>
+<a class="anchor" id="a1c875268df7d7820884846b6ac53438e"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void CommLayer::sendTurnOn </td>
+          <td class="memname">QString CommLayer::sendTurnOn </td>
           <td>(</td>
           <td class="paramtype">const std::list&lt; SLightDevice &gt; &amp;&#160;</td>
           <td class="paramname"><em>deviceList</em>, </td>

@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.85</span>
+   &#160;<span id="projectnumber">v0.9.9</span>
    </div>
   </td>
  </tr>
@@ -160,9 +160,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a140fb846eeb4d24976e2a4f514f95f0f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a140fb846eeb4d24976e2a4f514f95f0f">shouldContinueStateUpdate</a> ()</td></tr>
 <tr class="memdesc:a140fb846eeb4d24976e2a4f514f95f0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">shouldContinueStateUpdate checks internal states and determines if it should still keep requesting state updates from the devices.  <a href="#a140fb846eeb4d24976e2a4f514f95f0f">More...</a><br /></td></tr>
 <tr class="separator:a140fb846eeb4d24976e2a4f514f95f0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b66737d5c7518453f138de385df52b2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a5b66737d5c7518453f138de385df52b2">handleDiscoveryPacket</a> (QString sender, int throttleInterval, int throttleMax)</td></tr>
-<tr class="memdesc:a5b66737d5c7518453f138de385df52b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">handleDiscoveryPacket called whenever a discovery packet is received by a commtype. Although all commtypes may received a packet in different ways or in differnt formats, all ways get converted so that they work with this function. The function determines if the device sending the discovery packet has been discovered already, and if it hasn't, it adds it to its list. It also initiates a throttle timer for this particular controller. Finally, it determines if its looking for any other controllers, and if its not, it shuts off the discovery timer.  <a href="#a5b66737d5c7518453f138de385df52b2">More...</a><br /></td></tr>
-<tr class="separator:a5b66737d5c7518453f138de385df52b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af1e45e76380497ca2f570822e21fc584"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#af1e45e76380497ca2f570822e21fc584">handleDiscoveryPacket</a> (QString sender)</td></tr>
+<tr class="memdesc:af1e45e76380497ca2f570822e21fc584"><td class="mdescLeft">&#160;</td><td class="mdescRight">handleDiscoveryPacket called whenever a discovery packet is received by a commtype. Although all commtypes may received a packet in different ways or in differnt formats, all ways get converted so that they work with this function. The function determines if the device sending the discovery packet has been discovered already, and if it hasn't, it adds it to its list. It also initiates a throttle timer for this particular controller. Finally, it determines if its looking for any other controllers, and if its not, it shuts off the discovery timer.  <a href="#af1e45e76380497ca2f570822e21fc584">More...</a><br /></td></tr>
+<tr class="separator:af1e45e76380497ca2f570822e21fc584"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -176,11 +176,6 @@ std::unordered_map<br class="typebreak" />
 &lt; SLightDevice &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ab17df6d25cf2db9d844945d6f135e65c">mDeviceTable</a></td></tr>
 <tr class="memdesc:ab17df6d25cf2db9d844945d6f135e65c"><td class="mdescLeft">&#160;</td><td class="mdescRight">mDeviceTable hash table of all available devices. the hash key is the controller name and the list associated with it is all known devices connected to that controller. <br /></td></tr>
 <tr class="separator:ab17df6d25cf2db9d844945d6f135e65c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a35f88dea2ab73337cef428d5aed5fec6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a35f88dea2ab73337cef428d5aed5fec6"></a>
-std::list&lt; std::pair&lt; QString, <br class="typebreak" />
-<a class="el" href="class_comm_throttle.html">CommThrottle</a> * &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a35f88dea2ab73337cef428d5aed5fec6">mThrottleList</a></td></tr>
-<tr class="memdesc:a35f88dea2ab73337cef428d5aed5fec6"><td class="mdescLeft">&#160;</td><td class="mdescRight">mThrottleList list of throttles paired with strings. This allows each different discovered device to use a different throttle. <br /></td></tr>
-<tr class="separator:a35f88dea2ab73337cef428d5aed5fec6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a02ec483a63cf7b4946653ca8dea9ae46"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a02ec483a63cf7b4946653ca8dea9ae46"></a>
 std::list&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a02ec483a63cf7b4946653ca8dea9ae46">mUndiscoveredList</a></td></tr>
 <tr class="memdesc:a02ec483a63cf7b4946653ca8dea9ae46"><td class="mdescLeft">&#160;</td><td class="mdescRight">mUndiscoveredList list of controllers that are not currently discovered but are running discovery routines. <br /></td></tr>
@@ -315,7 +310,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="a5b66737d5c7518453f138de385df52b2"></a>
+<a class="anchor" id="af1e45e76380497ca2f570822e21fc584"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -326,24 +321,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
           <td class="memname">void CommType::handleDiscoveryPacket </td>
           <td>(</td>
           <td class="paramtype">QString&#160;</td>
-          <td class="paramname"><em>sender</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>sender</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>throttleInterval</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>throttleMax</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -355,8 +334,6 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">sender</td><td>the controller that is sending the discovery packet. </td></tr>
-    <tr><td class="paramname">throttleInterval</td><td>the amount of msec between each throttle restart </td></tr>
-    <tr><td class="paramname">throttleMax</td><td>the total number of packets that can be sent in between each throttle restart. </td></tr>
   </table>
   </dd>
 </dl>

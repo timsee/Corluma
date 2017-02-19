@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.85</span>
+   &#160;<span id="projectnumber">v0.9.9</span>
    </div>
   </td>
  </tr>
@@ -66,38 +66,69 @@
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;{</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    Q_OBJECT</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_list_device_widget.html#a3eddce1660cf06707238fa8721ea9afe">ListDeviceWidget</a>(<span class="keyword">const</span> SLightDevice&amp; device,</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;                              <span class="keyword">const</span> QString&amp; name,</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;                              QWidget *parent = 0);</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_list_device_widget.html#a3eddce1660cf06707238fa8721ea9afe">ListDeviceWidget</a>(<span class="keyword">const</span> SLightDevice&amp; device,</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;                              <span class="keyword">const</span> QString&amp; name,</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;                              <span class="keyword">const</span> std::vector&lt;QColor&gt;&amp; colors,</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;                              QWidget *parent = 0);</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_list_device_widget.html#a537b2f827a1f7e59c62ace6700825265">ListDeviceWidget</a>(<span class="keyword">const</span> SLightDevice&amp; <a class="code" href="class_list_device_widget.html#aa4a1054e9b6ab3a3da793f12958125d1">device</a>,</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;                              <span class="keyword">const</span> QString&amp; name,</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;                              <span class="keyword">const</span> std::vector&lt;QColor&gt;&amp; colors,</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                              QWidget *parent = 0);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_list_device_widget.html#ab4c20a28dc49698a8ac41d40c91c4760">updateWidget</a>(<span class="keyword">const</span> SLightDevice&amp; device,</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;                      <span class="keyword">const</span> std::vector&lt;QColor&gt;&amp; colors);</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="class_list_device_widget.html#a3e9dfc18d45134305c9688b15cca77c3">   52</a></span>&#160;    QString <a class="code" href="class_list_device_widget.html#a3e9dfc18d45134305c9688b15cca77c3">itemIndex</a>() { <span class="keywordflow">return</span> mIndex-&gt;text(); }</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_list_device_widget.html#a9223b946988547d6c8336c7358e7e7b9">setChecked</a>(<span class="keywordtype">bool</span> <a class="code" href="class_list_device_widget.html#a1922b5650cecd3366a8d852e38a76ef3">checked</a>);</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordtype">void</span> init(<span class="keyword">const</span> SLightDevice&amp; device, <span class="keyword">const</span> QString&amp; name);</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    QLabel *mStatusIcon;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <a class="code" href="class_icon_data.html">IconData</a> mIconData;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    QLabel *mType;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    QLabel *mController;</div>
+<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="class_list_device_widget.html#a1922b5650cecd3366a8d852e38a76ef3">   60</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_list_device_widget.html#a1922b5650cecd3366a8d852e38a76ef3">checked</a>() { <span class="keywordflow">return</span> mIsChecked; }</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
+<div class="line"><a name="l00066"></a><span class="lineno"><a class="line" href="class_list_device_widget.html#aa4a1054e9b6ab3a3da793f12958125d1">   66</a></span>&#160;    <span class="keyword">const</span> SLightDevice&amp;  <a class="code" href="class_list_device_widget.html#aa4a1054e9b6ab3a3da793f12958125d1">device</a>()  { <span class="keywordflow">return</span> mDevice; }</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="class_list_device_widget.html#a94a8b0ad4aaff665507526b2c98d4afa">   72</a></span>&#160;    <span class="keyword">const</span> QString&amp; <a class="code" href="class_list_device_widget.html#a94a8b0ad4aaff665507526b2c98d4afa">key</a>() { <span class="keywordflow">return</span> mKey; }</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;signals:</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_list_device_widget.html#a7e72219cdf3c5cb3990c0b1bb37195c1">clicked</a>(QString);</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    QLabel *mIndex;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    QHBoxLayout *mLayout;</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;};</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="preprocessor">#endif // LIGHTSLISTWIDGET_H</span></div>
-<div class="ttc" id="class_list_device_widget_html_a3eddce1660cf06707238fa8721ea9afe"><div class="ttname"><a href="class_list_device_widget.html#a3eddce1660cf06707238fa8721ea9afe">ListDeviceWidget::ListDeviceWidget</a></div><div class="ttdeci">ListDeviceWidget(const SLightDevice &amp;device, const QString &amp;name, QWidget *parent=0)</div><div class="ttdoc">ListDeviceWidget Constructor for single color routines. </div><div class="ttdef"><b>Definition:</b> listdevicewidget.cpp:11</div></div>
-<div class="ttc" id="class_list_device_widget_html_a3e9dfc18d45134305c9688b15cca77c3"><div class="ttname"><a href="class_list_device_widget.html#a3e9dfc18d45134305c9688b15cca77c3">ListDeviceWidget::itemIndex</a></div><div class="ttdeci">QString itemIndex()</div><div class="ttdoc">itemIndex getter for the index of the lightslistwidget </div><div class="ttdef"><b>Definition:</b> listdevicewidget.h:52</div></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_list_device_widget.html#a0a17b3a29d040c0f5e1b43eebc7ac098">paintEvent</a>(QPaintEvent *event);</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="class_list_device_widget.html#a773fcb678680ea9165d6382cff1769e3">mouseReleaseEvent</a>(QMouseEvent *);</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    QString structToIdentifierString(<span class="keyword">const</span> SLightDevice&amp; device);</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keywordtype">void</span> init(<span class="keyword">const</span> SLightDevice&amp; device, <span class="keyword">const</span> QString&amp; name);</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    QString convertUglyHueNameToPrettyName(QString name);</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    QString createStyleSheet(<span class="keyword">const</span> SLightDevice&amp; device);</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    QLabel *mStatusIcon;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <a class="code" href="class_icon_data.html">IconData</a> mIconData;</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    QLabel *mController;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    QHBoxLayout *mLayout;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    SLightDevice mDevice;</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    QString mKey;</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keywordtype">bool</span> mIsChecked;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;};</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;<span class="preprocessor">#endif // LIGHTSLISTWIDGET_H</span></div>
+<div class="ttc" id="class_list_device_widget_html_a1922b5650cecd3366a8d852e38a76ef3"><div class="ttname"><a href="class_list_device_widget.html#a1922b5650cecd3366a8d852e38a76ef3">ListDeviceWidget::checked</a></div><div class="ttdeci">bool checked()</div><div class="ttdoc">checked getter for checked state </div><div class="ttdef"><b>Definition:</b> listdevicewidget.h:60</div></div>
+<div class="ttc" id="class_list_device_widget_html_a9223b946988547d6c8336c7358e7e7b9"><div class="ttname"><a href="class_list_device_widget.html#a9223b946988547d6c8336c7358e7e7b9">ListDeviceWidget::setChecked</a></div><div class="ttdeci">bool setChecked(bool checked)</div><div class="ttdoc">setChecked set the widget as checked or unchecked. When it is checked it it will be a light blue colo...</div><div class="ttdef"><b>Definition:</b> listdevicewidget.cpp:155</div></div>
+<div class="ttc" id="class_list_device_widget_html_a0a17b3a29d040c0f5e1b43eebc7ac098"><div class="ttname"><a href="class_list_device_widget.html#a0a17b3a29d040c0f5e1b43eebc7ac098">ListDeviceWidget::paintEvent</a></div><div class="ttdeci">void paintEvent(QPaintEvent *event)</div><div class="ttdoc">paintEvent paints the background of the widget </div><div class="ttdef"><b>Definition:</b> listdevicewidget.cpp:164</div></div>
+<div class="ttc" id="class_list_device_widget_html_a773fcb678680ea9165d6382cff1769e3"><div class="ttname"><a href="class_list_device_widget.html#a773fcb678680ea9165d6382cff1769e3">ListDeviceWidget::mouseReleaseEvent</a></div><div class="ttdeci">virtual void mouseReleaseEvent(QMouseEvent *)</div><div class="ttdoc">mouseReleaseEvent picks up when a click (or a tap on mobile) is released. </div><div class="ttdef"><b>Definition:</b> listdevicewidget.cpp:200</div></div>
+<div class="ttc" id="class_list_device_widget_html_a537b2f827a1f7e59c62ace6700825265"><div class="ttname"><a href="class_list_device_widget.html#a537b2f827a1f7e59c62ace6700825265">ListDeviceWidget::ListDeviceWidget</a></div><div class="ttdeci">ListDeviceWidget(const SLightDevice &amp;device, const QString &amp;name, const std::vector&lt; QColor &gt; &amp;colors, QWidget *parent=0)</div><div class="ttdoc">ListDeviceWidget Constructor for multi color routines. </div><div class="ttdef"><b>Definition:</b> listdevicewidget.cpp:12</div></div>
+<div class="ttc" id="class_list_device_widget_html_ab4c20a28dc49698a8ac41d40c91c4760"><div class="ttname"><a href="class_list_device_widget.html#ab4c20a28dc49698a8ac41d40c91c4760">ListDeviceWidget::updateWidget</a></div><div class="ttdeci">void updateWidget(const SLightDevice &amp;device, const std::vector&lt; QColor &gt; &amp;colors)</div><div class="ttdoc">updateWidget update the widget with a new state for the device. </div><div class="ttdef"><b>Definition:</b> listdevicewidget.cpp:88</div></div>
+<div class="ttc" id="class_list_device_widget_html_a7e72219cdf3c5cb3990c0b1bb37195c1"><div class="ttname"><a href="class_list_device_widget.html#a7e72219cdf3c5cb3990c0b1bb37195c1">ListDeviceWidget::clicked</a></div><div class="ttdeci">void clicked(QString)</div><div class="ttdoc">clicked emited whenever a mouse press is released anywhere on the widget </div></div>
+<div class="ttc" id="class_list_device_widget_html_a94a8b0ad4aaff665507526b2c98d4afa"><div class="ttname"><a href="class_list_device_widget.html#a94a8b0ad4aaff665507526b2c98d4afa">ListDeviceWidget::key</a></div><div class="ttdeci">const QString &amp; key()</div><div class="ttdoc">key getter for key for device </div><div class="ttdef"><b>Definition:</b> listdevicewidget.h:72</div></div>
 <div class="ttc" id="class_list_device_widget_html"><div class="ttname"><a href="class_list_device_widget.html">ListDeviceWidget</a></div><div class="ttdoc">The ListDeviceWidget class This widget is used on the SettingsPage as a replacement for a QListWidget...</div><div class="ttdef"><b>Definition:</b> listdevicewidget.h:23</div></div>
+<div class="ttc" id="class_list_device_widget_html_aa4a1054e9b6ab3a3da793f12958125d1"><div class="ttname"><a href="class_list_device_widget.html#aa4a1054e9b6ab3a3da793f12958125d1">ListDeviceWidget::device</a></div><div class="ttdeci">const SLightDevice &amp; device()</div><div class="ttdoc">device getter for device </div><div class="ttdef"><b>Definition:</b> listdevicewidget.h:66</div></div>
 <div class="ttc" id="class_icon_data_html"><div class="ttname"><a href="class_icon_data.html">IconData</a></div><div class="ttdoc">The IconData class creates all the pixel-y square icons that are seen throughout the app...</div><div class="ttdef"><b>Definition:</b> icondata.h:25</div></div>
 </div><!-- fragment --></div><!-- contents -->
 

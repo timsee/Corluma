@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.85</span>
+   &#160;<span id="projectnumber">v0.9.9</span>
    </div>
   </td>
  </tr>
@@ -48,7 +48,9 @@
 <div class="header">
   <div class="summary">
 <a href="class_list_device_widget-members.html">List of all members</a> &#124;
-<a href="#pub-methods">Public Member Functions</a>  </div>
+<a href="#signals">Signals</a> &#124;
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a>  </div>
   <div class="headertitle">
 <div class="title">ListDeviceWidget Class Reference</div>  </div>
 </div><!--header-->
@@ -61,70 +63,48 @@
 
 <p>Inherits QWidget.</p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
+Signals</h2></td></tr>
+<tr class="memitem:a7e72219cdf3c5cb3990c0b1bb37195c1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7e72219cdf3c5cb3990c0b1bb37195c1"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_device_widget.html#a7e72219cdf3c5cb3990c0b1bb37195c1">clicked</a> (QString)</td></tr>
+<tr class="memdesc:a7e72219cdf3c5cb3990c0b1bb37195c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">clicked emited whenever a mouse press is released anywhere on the widget <br /></td></tr>
+<tr class="separator:a7e72219cdf3c5cb3990c0b1bb37195c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3eddce1660cf06707238fa8721ea9afe"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_device_widget.html#a3eddce1660cf06707238fa8721ea9afe">ListDeviceWidget</a> (const SLightDevice &amp;device, const QString &amp;name, QWidget *parent=0)</td></tr>
-<tr class="memdesc:a3eddce1660cf06707238fa8721ea9afe"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_list_device_widget.html" title="The ListDeviceWidget class This widget is used on the SettingsPage as a replacement for a QListWidget...">ListDeviceWidget</a> Constructor for single color routines.  <a href="#a3eddce1660cf06707238fa8721ea9afe">More...</a><br /></td></tr>
-<tr class="separator:a3eddce1660cf06707238fa8721ea9afe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a537b2f827a1f7e59c62ace6700825265"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_device_widget.html#a537b2f827a1f7e59c62ace6700825265">ListDeviceWidget</a> (const SLightDevice &amp;device, const QString &amp;name, const std::vector&lt; QColor &gt; &amp;colors, QWidget *parent=0)</td></tr>
+<tr class="memitem:a537b2f827a1f7e59c62ace6700825265"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_device_widget.html#a537b2f827a1f7e59c62ace6700825265">ListDeviceWidget</a> (const SLightDevice &amp;<a class="el" href="class_list_device_widget.html#aa4a1054e9b6ab3a3da793f12958125d1">device</a>, const QString &amp;name, const std::vector&lt; QColor &gt; &amp;colors, QWidget *parent=0)</td></tr>
 <tr class="memdesc:a537b2f827a1f7e59c62ace6700825265"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_list_device_widget.html" title="The ListDeviceWidget class This widget is used on the SettingsPage as a replacement for a QListWidget...">ListDeviceWidget</a> Constructor for multi color routines.  <a href="#a537b2f827a1f7e59c62ace6700825265">More...</a><br /></td></tr>
 <tr class="separator:a537b2f827a1f7e59c62ace6700825265"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e9dfc18d45134305c9688b15cca77c3"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_device_widget.html#a3e9dfc18d45134305c9688b15cca77c3">itemIndex</a> ()</td></tr>
-<tr class="memdesc:a3e9dfc18d45134305c9688b15cca77c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">itemIndex getter for the index of the lightslistwidget  <a href="#a3e9dfc18d45134305c9688b15cca77c3">More...</a><br /></td></tr>
-<tr class="separator:a3e9dfc18d45134305c9688b15cca77c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab4c20a28dc49698a8ac41d40c91c4760"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_device_widget.html#ab4c20a28dc49698a8ac41d40c91c4760">updateWidget</a> (const SLightDevice &amp;<a class="el" href="class_list_device_widget.html#aa4a1054e9b6ab3a3da793f12958125d1">device</a>, const std::vector&lt; QColor &gt; &amp;colors)</td></tr>
+<tr class="memdesc:ab4c20a28dc49698a8ac41d40c91c4760"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateWidget update the widget with a new state for the device.  <a href="#ab4c20a28dc49698a8ac41d40c91c4760">More...</a><br /></td></tr>
+<tr class="separator:ab4c20a28dc49698a8ac41d40c91c4760"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9223b946988547d6c8336c7358e7e7b9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_device_widget.html#a9223b946988547d6c8336c7358e7e7b9">setChecked</a> (bool <a class="el" href="class_list_device_widget.html#a1922b5650cecd3366a8d852e38a76ef3">checked</a>)</td></tr>
+<tr class="memdesc:a9223b946988547d6c8336c7358e7e7b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">setChecked set the widget as checked or unchecked. When it is checked it it will be a light blue color. When it isn't, it will be dark grey.  <a href="#a9223b946988547d6c8336c7358e7e7b9">More...</a><br /></td></tr>
+<tr class="separator:a9223b946988547d6c8336c7358e7e7b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1922b5650cecd3366a8d852e38a76ef3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_device_widget.html#a1922b5650cecd3366a8d852e38a76ef3">checked</a> ()</td></tr>
+<tr class="memdesc:a1922b5650cecd3366a8d852e38a76ef3"><td class="mdescLeft">&#160;</td><td class="mdescRight">checked getter for checked state  <a href="#a1922b5650cecd3366a8d852e38a76ef3">More...</a><br /></td></tr>
+<tr class="separator:a1922b5650cecd3366a8d852e38a76ef3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4a1054e9b6ab3a3da793f12958125d1"><td class="memItemLeft" align="right" valign="top">const SLightDevice &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_device_widget.html#aa4a1054e9b6ab3a3da793f12958125d1">device</a> ()</td></tr>
+<tr class="memdesc:aa4a1054e9b6ab3a3da793f12958125d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">device getter for device  <a href="#aa4a1054e9b6ab3a3da793f12958125d1">More...</a><br /></td></tr>
+<tr class="separator:aa4a1054e9b6ab3a3da793f12958125d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94a8b0ad4aaff665507526b2c98d4afa"><td class="memItemLeft" align="right" valign="top">const QString &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_device_widget.html#a94a8b0ad4aaff665507526b2c98d4afa">key</a> ()</td></tr>
+<tr class="memdesc:a94a8b0ad4aaff665507526b2c98d4afa"><td class="mdescLeft">&#160;</td><td class="mdescRight">key getter for key for device  <a href="#a94a8b0ad4aaff665507526b2c98d4afa">More...</a><br /></td></tr>
+<tr class="separator:a94a8b0ad4aaff665507526b2c98d4afa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:a0a17b3a29d040c0f5e1b43eebc7ac098"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0a17b3a29d040c0f5e1b43eebc7ac098"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_device_widget.html#a0a17b3a29d040c0f5e1b43eebc7ac098">paintEvent</a> (QPaintEvent *event)</td></tr>
+<tr class="memdesc:a0a17b3a29d040c0f5e1b43eebc7ac098"><td class="mdescLeft">&#160;</td><td class="mdescRight">paintEvent paints the background of the widget <br /></td></tr>
+<tr class="separator:a0a17b3a29d040c0f5e1b43eebc7ac098"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a773fcb678680ea9165d6382cff1769e3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a773fcb678680ea9165d6382cff1769e3"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_device_widget.html#a773fcb678680ea9165d6382cff1769e3">mouseReleaseEvent</a> (QMouseEvent *)</td></tr>
+<tr class="memdesc:a773fcb678680ea9165d6382cff1769e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">mouseReleaseEvent picks up when a click (or a tap on mobile) is released. <br /></td></tr>
+<tr class="separator:a773fcb678680ea9165d6382cff1769e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a3eddce1660cf06707238fa8721ea9afe"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">ListDeviceWidget::ListDeviceWidget </td>
-          <td>(</td>
-          <td class="paramtype">const SLightDevice &amp;&#160;</td>
-          <td class="paramname"><em>device</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const QString &amp;&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">QWidget *&#160;</td>
-          <td class="paramname"><em>parent</em> = <code>0</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">device</td><td>device for the widget </td></tr>
-    <tr><td class="paramname">name</td><td>name for device on list </td></tr>
-    <tr><td class="paramname">parent</td><td>parent widget</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
-
-</div>
-</div>
 <a class="anchor" id="a537b2f827a1f7e59c62ace6700825265"></a>
 <div class="memitem">
 <div class="memproto">
@@ -172,15 +152,16 @@ Public Member Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">device</td><td>device for the widget </td></tr>
     <tr><td class="paramname">name</td><td>name for device on list </td></tr>
-    <tr><td class="paramname">parent</td><td>parent widget </td></tr>
+    <tr><td class="paramname">parent</td><td>parent widget</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a3e9dfc18d45134305c9688b15cca77c3"></a>
+<a class="anchor" id="a1922b5650cecd3366a8d852e38a76ef3"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -188,7 +169,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">QString ListDeviceWidget::itemIndex </td>
+          <td class="memname">bool ListDeviceWidget::checked </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -200,7 +181,111 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>string representation of the index of the lightslistwidget </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if checked, false otherwise </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aa4a1054e9b6ab3a3da793f12958125d1"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const SLightDevice&amp; ListDeviceWidget::device </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>device displayed by widget </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a94a8b0ad4aaff665507526b2c98d4afa"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const QString&amp; ListDeviceWidget::key </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>key for device </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a9223b946988547d6c8336c7358e7e7b9"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool ListDeviceWidget::setChecked </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>checked</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">checked</td><td>true to set to checked, false othwerise </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if successful, false otherwise </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ab4c20a28dc49698a8ac41d40c91c4760"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ListDeviceWidget::updateWidget </td>
+          <td>(</td>
+          <td class="paramtype">const SLightDevice &amp;&#160;</td>
+          <td class="paramname"><em>device</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; QColor &gt; &amp;&#160;</td>
+          <td class="paramname"><em>colors</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">device</td><td>the new state of the device </td></tr>
+    <tr><td class="paramname">colors</td><td>all the color groups in the data layer, in case the device uses the color groups </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

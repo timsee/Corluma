@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.85</span>
+   &#160;<span id="projectnumber">v0.9.9</span>
    </div>
   </td>
  </tr>
@@ -76,22 +76,28 @@
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
 <div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="class_comm_type_settings.html#aa4bc5fbc36689b3fd131d0f084861776">   53</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_comm_type_settings.html#aa4bc5fbc36689b3fd131d0f084861776">numberOfActiveCommTypes</a>() { <span class="keywordflow">return</span> mCommTypeCount; }</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    std::vector&lt;bool&gt; mDeviceInUse;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    std::vector&lt;ECommType&gt; <a class="code" href="class_comm_type_settings.html#ad1262ec9c971b9df5ca75dc2e6c7adb0">commTypes</a>();</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_comm_type_settings.html#ac53c37fd58f418574232dee937e1764b">indexOfCommTypeSettings</a>(ECommType type);</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="keyword">private</span>:</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    QSettings *mSettings;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordtype">int</span> mCommTypeCount;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    std::vector&lt;QString&gt; mCommTypeInUseSaveKeys;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;};</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="preprocessor">#endif // STREAMSETTINGS_H</span></div>
-<div class="ttc" id="class_comm_type_settings_html_a89de8295df3dbd5e5499cf8a6f35a8ff"><div class="ttname"><a href="class_comm_type_settings.html#a89de8295df3dbd5e5499cf8a6f35a8ff">CommTypeSettings::enableCommType</a></div><div class="ttdeci">bool enableCommType(ECommType type, bool shouldEnable)</div><div class="ttdoc">enableCommType enables or disables the commtype provided. This saves immediately to persistent app me...</div><div class="ttdef"><b>Definition:</b> commtypesettings.cpp:46</div></div>
-<div class="ttc" id="class_comm_type_settings_html_aa3652f346b43214d49531c0b785a546a"><div class="ttname"><a href="class_comm_type_settings.html#aa3652f346b43214d49531c0b785a546a">CommTypeSettings::commTypeEnabled</a></div><div class="ttdeci">bool commTypeEnabled(ECommType type)</div><div class="ttdoc">commTypeEnabled check if a comm type is currently enabled. </div><div class="ttdef"><b>Definition:</b> commtypesettings.cpp:41</div></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    std::vector&lt;bool&gt; mDeviceInUse;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    QSettings *mSettings;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordtype">int</span> mCommTypeCount;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    std::vector&lt;QString&gt; mCommTypeInUseSaveKeys;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;};</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="preprocessor">#endif // STREAMSETTINGS_H</span></div>
+<div class="ttc" id="class_comm_type_settings_html_a89de8295df3dbd5e5499cf8a6f35a8ff"><div class="ttname"><a href="class_comm_type_settings.html#a89de8295df3dbd5e5499cf8a6f35a8ff">CommTypeSettings::enableCommType</a></div><div class="ttdeci">bool enableCommType(ECommType type, bool shouldEnable)</div><div class="ttdoc">enableCommType enables or disables the commtype provided. This saves immediately to persistent app me...</div><div class="ttdef"><b>Definition:</b> commtypesettings.cpp:82</div></div>
+<div class="ttc" id="class_comm_type_settings_html_aa3652f346b43214d49531c0b785a546a"><div class="ttname"><a href="class_comm_type_settings.html#aa3652f346b43214d49531c0b785a546a">CommTypeSettings::commTypeEnabled</a></div><div class="ttdeci">bool commTypeEnabled(ECommType type)</div><div class="ttdoc">commTypeEnabled check if a comm type is currently enabled. </div><div class="ttdef"><b>Definition:</b> commtypesettings.cpp:42</div></div>
 <div class="ttc" id="class_comm_type_settings_html_aa4bc5fbc36689b3fd131d0f084861776"><div class="ttname"><a href="class_comm_type_settings.html#aa4bc5fbc36689b3fd131d0f084861776">CommTypeSettings::numberOfActiveCommTypes</a></div><div class="ttdeci">int numberOfActiveCommTypes()</div><div class="ttdoc">numberOfActiveCommTypes The count of commtypes that are currently in use. </div><div class="ttdef"><b>Definition:</b> commtypesettings.h:53</div></div>
 <div class="ttc" id="class_comm_type_settings_html"><div class="ttname"><a href="class_comm_type_settings.html">CommTypeSettings</a></div><div class="ttdoc">The CommTypeSettings class manages which CommTypes are enabled and disabled. It manages the settings ...</div><div class="ttdef"><b>Definition:</b> commtypesettings.h:16</div></div>
+<div class="ttc" id="class_comm_type_settings_html_ad1262ec9c971b9df5ca75dc2e6c7adb0"><div class="ttname"><a href="class_comm_type_settings.html#ad1262ec9c971b9df5ca75dc2e6c7adb0">CommTypeSettings::commTypes</a></div><div class="ttdeci">std::vector&lt; ECommType &gt; commTypes()</div><div class="ttdoc">list of all commtypes that get saved. UDP and HTTP are treated as one commtype. </div><div class="ttdef"><b>Definition:</b> commtypesettings.cpp:73</div></div>
+<div class="ttc" id="class_comm_type_settings_html_ac53c37fd58f418574232dee937e1764b"><div class="ttname"><a href="class_comm_type_settings.html#ac53c37fd58f418574232dee937e1764b">CommTypeSettings::indexOfCommTypeSettings</a></div><div class="ttdeci">int indexOfCommTypeSettings(ECommType type)</div><div class="ttdoc">index of a commtype in the commtype vector </div><div class="ttdef"><b>Definition:</b> commtypesettings.cpp:46</div></div>
 <div class="ttc" id="class_comm_type_settings_html_a6e8bdec2da9597d2f166d40acd57569d"><div class="ttname"><a href="class_comm_type_settings.html#a6e8bdec2da9597d2f166d40acd57569d">CommTypeSettings::CommTypeSettings</a></div><div class="ttdeci">CommTypeSettings()</div><div class="ttdoc">CommTypeSettings constructor. </div><div class="ttdef"><b>Definition:</b> commtypesettings.cpp:9</div></div>
 </div><!-- fragment --></div><!-- contents -->
 

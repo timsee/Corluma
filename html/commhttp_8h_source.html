@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.85</span>
+   &#160;<span id="projectnumber">v0.9.9</span>
    </div>
   </td>
  </tr>
@@ -55,11 +55,11 @@
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#define COMMHTTP_H</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;</div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;commtype.h&quot;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;commthrottle.h&quot;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;QNetworkAccessManager&gt;</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;QNetworkRequest&gt;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;QNetworkReply&gt;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;</div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;QNetworkAccessManager&gt;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;QNetworkRequest&gt;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;QNetworkReply&gt;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;QTimer&gt;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;</div>
 <div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="class_comm_h_t_t_p.html">   22</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_comm_h_t_t_p.html">CommHTTP</a> : <span class="keyword">public</span> <a class="code" href="class_comm_type.html">CommType</a></div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;{</div>
@@ -77,24 +77,22 @@
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="keyword">private</span> slots:</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordtype">void</span> replyFinished(QNetworkReply*);</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordtype">void</span> sendThrottleBuffer(QString, QString);</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordtype">void</span> stateUpdate();</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">void</span> discoveryRoutine();</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    QNetworkAccessManager *mNetworkManager;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;};</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="preprocessor">#endif // COMMHTTP_H</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keywordtype">void</span> stateUpdate();</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordtype">void</span> discoveryRoutine();</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    QNetworkAccessManager *mNetworkManager;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;};</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="preprocessor">#endif // COMMHTTP_H</span></div>
 <div class="ttc" id="class_comm_h_t_t_p_html_a9a11fe556853ebf18b796344dcc469f7"><div class="ttname"><a href="class_comm_h_t_t_p.html#a9a11fe556853ebf18b796344dcc469f7">CommHTTP::CommHTTP</a></div><div class="ttdeci">CommHTTP()</div><div class="ttdoc">CommHTTP Constructor. </div><div class="ttdef"><b>Definition:</b> commhttp.cpp:9</div></div>
 <div class="ttc" id="class_comm_h_t_t_p_html_ad2f184165aad6a5efc1451e3bf0cdb2f"><div class="ttname"><a href="class_comm_h_t_t_p.html#ad2f184165aad6a5efc1451e3bf0cdb2f">CommHTTP::sendPacket</a></div><div class="ttdeci">void sendPacket(QString controller, QString packet)</div><div class="ttdoc">sendPacket sends a packet in a way similar to am IP Camera: The packet is added to the end of the web...</div><div class="ttdef"><b>Definition:</b> commhttp.cpp:45</div></div>
 <div class="ttc" id="class_comm_h_t_t_p_html"><div class="ttname"><a href="class_comm_h_t_t_p.html">CommHTTP</a></div><div class="ttdoc">provides a HTTP communication stream, which is similar to an IP Camera. Packets are sent as HTTP requ...</div><div class="ttdef"><b>Definition:</b> commhttp.h:22</div></div>
 <div class="ttc" id="class_comm_h_t_t_p_html_a621242b3ab5301ddf6afdd9cbdda9dbe"><div class="ttname"><a href="class_comm_h_t_t_p.html#a621242b3ab5301ddf6afdd9cbdda9dbe">CommHTTP::~CommHTTP</a></div><div class="ttdeci">~CommHTTP()</div><div class="ttdoc">CommHTTP Deconstructor. </div><div class="ttdef"><b>Definition:</b> commhttp.cpp:24</div></div>
 <div class="ttc" id="class_comm_h_t_t_p_html_ae3920b3d97c94dfbb526e9ea343bfbb9"><div class="ttname"><a href="class_comm_h_t_t_p.html#ae3920b3d97c94dfbb526e9ea343bfbb9">CommHTTP::shutdown</a></div><div class="ttdeci">void shutdown()</div><div class="ttdoc">shutdown defined in CommType </div><div class="ttdef"><b>Definition:</b> commhttp.cpp:34</div></div>
-<div class="ttc" id="class_comm_type_html"><div class="ttname"><a href="class_comm_type.html">CommType</a></div><div class="ttdoc">inherited by comm types, provides a general interface that can be used to do connections and sending ...</div><div class="ttdef"><b>Definition:</b> commtype.h:29</div></div>
+<div class="ttc" id="class_comm_type_html"><div class="ttname"><a href="class_comm_type.html">CommType</a></div><div class="ttdoc">inherited by comm types, provides a general interface that can be used to do connections and sending ...</div><div class="ttdef"><b>Definition:</b> commtype.h:30</div></div>
 <div class="ttc" id="class_comm_h_t_t_p_html_a8edda42218bdc83af4748635f1cb48f4"><div class="ttname"><a href="class_comm_h_t_t_p.html#a8edda42218bdc83af4748635f1cb48f4">CommHTTP::startup</a></div><div class="ttdeci">void startup()</div><div class="ttdoc">startup defined in CommType </div><div class="ttdef"><b>Definition:</b> commhttp.cpp:29</div></div>
 </div><!-- fragment --></div><!-- contents -->
 
