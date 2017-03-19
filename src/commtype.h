@@ -149,7 +149,7 @@ public:
      * \brief undiscoveredList getter for list of undiscovered devices.
      * \return list of undiscovered devices.
      */
-    const std::list<QString>& undiscoveredList() { return mUndiscoveredList; }
+    std::list<QString> undiscoveredList() { return mUndiscoveredList; }
 
     // ----------------------------
     // Persistent Connection list Handling
@@ -315,7 +315,7 @@ private:
     /*!
      * \brief mSettings Device independent persistent application memory access
      */
-    QSettings mSettings;
+    QSettings *mSettings;
 
     /*!
      * \brief mType the type CommType this is, meaning UDP, Serial, HTTP, etc.

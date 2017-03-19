@@ -128,23 +128,6 @@ private:
     void endOfSync();
 
     /*!
-     * \brief colorDifference gives a percent difference between two colors
-     * \param first first color to check
-     * \param second second color to check
-     * \return a value between 0 and 1 which is how different two colors are.
-     */
-    float colorDifference(QColor first, QColor second);
-
-    /*!
-     * \brief brightnessDifference gives a percent difference between two brightness
-     *        values
-     * \param first first brightness to check
-     * \param second second brightness to check
-     * \return a value between 0 and 1 which represents how different the brightnesses are.
-     */
-    float brightnessDifference(float first, float second);
-
-    /*!
      * \brief ctDifference gives a percent difference between two color temperatures. This
      *        function currently assumes that only Hue lightss are using it and will need
      *        adjustment for other lights that use a different range of color temperatures.

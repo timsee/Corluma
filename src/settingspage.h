@@ -86,6 +86,11 @@ signals:
      */
     void debugPressed();
 
+    /*!
+     * \brief closePressed emitted when close button in top left is pressed.
+     */
+    void closePressed();
+
 public slots:
     /*!
      * \brief speedChanged signaled whenever the slider that controls
@@ -151,6 +156,11 @@ private slots:
      */
     void saveDataButtonClicked(bool);
 
+    /*!
+     * \brief closeButtonPressed signaled from close button, emits a close signal.
+     */
+    void closeButtonPressed(bool) { emit closePressed(); }
+
 protected:
     /*!
      * \brief showEvent called before the this page is shown. Used to sync up
@@ -167,6 +177,12 @@ protected:
      * \brief resizeEvent called whenever the widget resizes so that assets can be updated.
      */
     void resizeEvent(QResizeEvent *event);
+
+    /*!
+     * \brief paintEvent paint event for rendering. used to overwrite the background
+     *        color of the settings page so that it hides everything behind it.
+     */
+    void paintEvent(QPaintEvent *);
 
 private:
 

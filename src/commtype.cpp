@@ -9,8 +9,13 @@
 
 void CommType::setupConnectionList(ECommType type) {
     mType = type;
+    mUpdateTimeoutInterval = 15000;
 
-    int controllerListCurrentSize = mSettings.value(settingsListSizeKey()).toInt();
+    mDiscoveryTimer = new QTimer;
+    mStateUpdateTimer = new QTimer;
+    mSettings = new QSettings;
+
+    int controllerListCurrentSize = mSettings->value(settingsListSizeKey()).toInt();
     // handles an edge case thats more likely to come up in debugging than typical use
     // but it would cause a crash either way...
     if (controllerListCurrentSize >= 10) {
@@ -18,22 +23,21 @@ void CommType::setupConnectionList(ECommType type) {
         controllerListCurrentSize = 0;
     }
 
-
     // load preexisting settings, if they exist
     for (int i = 0; i < controllerListCurrentSize; ++i) {
-       QString value = mSettings.value(settingsIndexKey(i)).toString();
+       QString value = mSettings->value(settingsIndexKey(i)).toString();
        if (value.compare(QString("")) != 0) addController(value);
     }
 
 
     mDiscoveryMode = false;
     mFullyDiscovered = false;
-    mUpdateTimeoutInterval = 15000;
 }
 
 void CommType::startDiscovery() {
     if (!mFullyDiscovered) {
         mDiscoveryMode = true;
+        resetStateUpdateTimeout();
     }
 }
 
@@ -60,6 +64,7 @@ bool CommType::addController(QString controller) {
 
 bool CommType::removeController(QString controller) {
     mDeviceTable.erase(controller.toStdString());
+
     mDiscoveredList.remove(controller);
     mUndiscoveredList.remove(controller);
     return true;
@@ -83,10 +88,8 @@ void CommType::updateDevice(SLightDevice device) {
             deviceList->second.push_back(device);
             emit updateReceived((int)mType);
         }
-    } else {
-        addController(device.name);
-        updateDevice(device);
     }
+
 }
 
 
@@ -124,13 +127,13 @@ bool CommType::fillDevice(SLightDevice& device) {
 void CommType::saveConnectionList() {
     int x = 0;
     for (auto&& iterator = mDeviceTable.begin(); iterator != mDeviceTable.end(); ++iterator) {
-        mSettings.setValue(settingsIndexKey(x), QString::fromUtf8((*iterator).first.c_str()));
+        mSettings->setValue(settingsIndexKey(x), QString::fromUtf8((*iterator).first.c_str()));
         x++;
     }
     // save the current size
-    mSettings.setValue(settingsListSizeKey(), x);
+    mSettings->setValue(settingsListSizeKey(), x);
     // write settings to disk
-    mSettings.sync();
+    mSettings->sync();
 }
 
 

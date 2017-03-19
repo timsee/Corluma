@@ -6,9 +6,11 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
+#include <set>
 
 #include "datalayer.h"
 #include "commlayer.h"
+#include "listcollectionsubwidget.h"
 
 /*!
  * \copyright
@@ -75,6 +77,13 @@ public:
      */
     virtual void setShowButtons(bool show) = 0;
 
+    /*!
+     * \brief isMoodWidget true if ListMoodGroupWidget, false if ListDevicesGroupWidget.
+     * \TODO: remove the need for this...
+     * \return true if ListMoodGroupWidget, false if ListDevicesGroupWidget.
+     */
+    virtual bool isMoodWidget() = 0;
+
 signals:
 
     /*!
@@ -114,6 +123,24 @@ protected:
     void resizeRightHandIcon(QPixmap pixmap, QPushButton *button);
 
     /*!
+     * \brief insertWidgetIntoGrid insert ListCollectionSubWidget into the QGridLayout used for collection widgets
+     * \param widget widget to be inserted, if it doesn't already exist. Will reorganize widgets if needed.
+     */
+    void insertWidgetIntoGrid(ListCollectionSubWidget* widget);
+
+    /*!
+     * \brief removeWidgetFromGrid remove ListCollectionSubWidget from the QGridLayout used for collection widgets.
+     *        all widgets to the right of the removed widget get moved back one cell.
+     * \param widget widget to be removed, if it exists.
+     */
+    void removeWidgetFromGrid(ListCollectionSubWidget* widget);
+
+    /*!
+     * \brief mWidgets list of all device widgets displayed in this widget.
+     */
+    std::set<ListCollectionSubWidget*, subWidgetCompare> mWidgets;
+
+    /*!
      * \brief mName label for name of collection
      */
     QLabel *mName;
@@ -150,19 +177,14 @@ protected:
     QPixmap mOpenedPixmap;
 
     /*!
-     * \brief mIndex index of the maximum widget displayed.
+     * \brief mGridLayout layout that displays all of the sub widgets.
      */
-    int mIndex;
+    QGridLayout *mGridLayout;
 
     /*!
      * \brief mMinimumSize minimum size allowed for collection.
      */
     int mMinimumSize;
-
-    /*!
-     * \brief mListHeight the initial height of the widget given to the constructor.
-     */
-    int mListHeight;
 
     /*!
      * \brief mShowButtons true if buttons are showing, false otherwise.

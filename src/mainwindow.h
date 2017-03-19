@@ -15,6 +15,7 @@
 #include "datasync.h"
 #include "editgrouppage.h"
 #include "greyoutoverlay.h"
+#include "settingspage.h"
 
 
 namespace Ui {
@@ -30,7 +31,6 @@ enum class EPage {
     eHueSinglePage,
     eCustomArrayPage,
     ePresetPage,
-    eSettingsPage,
     eConnectionPage
 };
 
@@ -44,7 +44,7 @@ enum class EPage {
  *
  * On the top of the MainWindow, there is an on/off button in the far left. This button
  * will reflect the current mode when on, and will be black when off. There is
- * also a slider to control the overall brightness of the LEDs. 
+ * also a slider to control the overall brightness of the LEDs.
  *
  */
 class MainWindow : public QMainWindow
@@ -159,6 +159,18 @@ public slots:
      */
     void settingsDebugPressed();
 
+    /*!
+     * \brief settingsClosePressed slot that handles when the settings page is closed.
+     */
+    void settingsClosePressed();
+
+    /*!
+     * \brief resizeMenuIcon resizes the icon for either the settings button or the connections button
+     * \param button pointer to button to resize
+     * \param iconPath path to icon, if it needs to be loaded again.
+     */
+    void resizeMenuIcon(QPushButton *button, QString iconPath);
+
 protected:
     /*!
      * \brief paintEvent called whenever there is a paint update. This is used
@@ -192,6 +204,12 @@ private:
      * \brief mEditPage overlay that allows editing and creating collections and moods.
      */
     EditGroupPage *mEditPage;
+
+    /*!
+     * \brief mSettingsPage overlay widget that allows access to various app settings such as loading from
+     *        JSON or reseting things to defaults.
+     */
+    SettingsPage *mSettingsPage;
 
     /*!
      * \brief mGreyOut overlay that greys out the entire main window. Used in conjunction with the
@@ -243,6 +261,11 @@ private:
      * \brief mIconData used to generate the icons in the menu bar.
      */
     IconData mIconData;
+
+    /*!
+     * \brief mPageIndex index of current page.
+     */
+    int mPageIndex;
 
     /*!
      * \brief mShouldGreyOutIcons cahced satte of whether any device is selected. If none

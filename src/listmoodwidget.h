@@ -10,6 +10,7 @@
 
 #include "icondata.h"
 #include "commtype.h"
+#include "listcollectionsubwidget.h"
 
 /*!
  * \copyright
@@ -22,7 +23,7 @@
  *        of the group, up to 5 device previews as IconData, and the connection state
  *        of the associated devices.
  */
-class ListMoodWidget : public QWidget
+class ListMoodWidget : public ListCollectionSubWidget
 {
     Q_OBJECT
 
@@ -36,7 +37,6 @@ public:
     explicit ListMoodWidget(const QString& name,
                              const std::list<SLightDevice>& devices,
                              const std::vector<std::vector<QColor> >& colors,
-                             int height,
                              QWidget *parent = 0);
 
     /*!
@@ -52,12 +52,6 @@ public:
      * \return true if checked, false otherwise
      */
     bool checked() { return mIsChecked; }
-
-    /*!
-     * \brief key getter for key
-     * \return key of mood
-     */
-    const QString& key() { return mKey; }
 
     /*!
      * \brief moodName getter for name
@@ -107,12 +101,6 @@ private slots:
     void editButtonClicked(bool) { emit editClicked(mKey);  }
 
 private:
-
-
-    /*!
-     * \brief mKey stores the unique key used by the mood
-     */
-    QString mKey;
 
     /*!
      * \brief mIsChecked true if checked, false otherwise

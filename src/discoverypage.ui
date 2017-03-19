@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>375</width>
-    <height>394</height>
+    <height>411</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" stretch="2,1,1,1,8,1,8,1,4">
+  <layout class="QVBoxLayout" name="verticalLayout_2" stretch="2,20,5">
    <item>
     <layout class="QHBoxLayout" name="commButtonLayout">
      <property name="spacing">
@@ -64,12 +64,99 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout" stretch="8,1">
-     <property name="spacing">
-      <number>8</number>
-     </property>
+    <layout class="QVBoxLayout" name="contentLayout">
      <item>
-      <widget class="QLabel" name="descriptiveLabel">
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="7,1">
+       <property name="spacing">
+        <number>8</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="descriptiveLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="settingsButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="extraresources.qrc">
+           <normaloff>:/images/settingsgear.png</normaloff>:/images/settingsgear.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>50</width>
+           <height>50</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="tableInputLayout" stretch="12,2,2">
+       <item>
+        <widget class="QLineEdit" name="lineEdit">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="plusButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>+</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="minusButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>-</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QLabel" name="connectedLabel">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -78,142 +165,49 @@
        </property>
        <property name="font">
         <font>
-         <pointsize>14</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
+         <pointsize>12</pointsize>
         </font>
        </property>
        <property name="text">
-        <string/>
+        <string>Connected Arduinos:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="settingsButton">
+      <widget class="QListWidget" name="connectedList">
+       <property name="verticalScrollMode">
+        <enum>QAbstractItemView::ScrollPerPixel</enum>
+       </property>
+       <property name="horizontalScrollMode">
+        <enum>QAbstractItemView::ScrollPerPixel</enum>
+       </property>
+       <property name="spacing">
+        <number>0</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="discoveringLabel">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
        <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="extraresources.qrc">
-         <normaloff>:/images/settingsgear.png</normaloff>:/images/settingsgear.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>50</width>
-         <height>50</height>
-        </size>
+        <string>Looking for:</string>
        </property>
       </widget>
+     </item>
+     <item>
+      <widget class="QListWidget" name="discoveringList"/>
      </item>
     </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="tableInputLayout" stretch="12,2,2">
-     <item>
-      <widget class="QLineEdit" name="lineEdit">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="plusButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>+</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="minusButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>-</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QLabel" name="connectedLabel">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Connected Arduinos:</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QListWidget" name="connectedList">
-     <property name="verticalScrollMode">
-      <enum>QAbstractItemView::ScrollPerPixel</enum>
-     </property>
-     <property name="horizontalScrollMode">
-      <enum>QAbstractItemView::ScrollPerItem</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="discoveringLabel">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Looking for:</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QListWidget" name="discoveringList"/>
-   </item>
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
    </item>
    <item>
     <widget class="QPushButton" name="startButton">
@@ -234,6 +228,12 @@
     </widget>
    </item>
   </layout>
+  <zorder>connectedLabel</zorder>
+  <zorder>connectedList</zorder>
+  <zorder>discoveringLabel</zorder>
+  <zorder>discoveringList</zorder>
+  <zorder>startButton</zorder>
+  <zorder>descriptiveLabel</zorder>
  </widget>
  <resources>
   <include location="extraresources.qrc"/>

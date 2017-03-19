@@ -49,6 +49,13 @@ public:
     void showGroup(QString key, std::list<SLightDevice> groupDevices, std::list<SLightDevice> devices, bool isMood);
 
     /*!
+     * \brief updateDevices update the device widgets in the edit page with new values
+     * \param groupDevices all devices in the original group
+     * \param devices all devices known by the application.
+     */
+    void updateDevices(std::list<SLightDevice> groupDevices, std::list<SLightDevice> devices);
+
+    /*!
      * \brief resize the widget. Call this to explicitly resize this widget based off of the size of the
      *        parent. If the parent has not resized since this was last called, this does nothing.
      */
@@ -108,6 +115,18 @@ private slots:
     void deletePressed(bool);
 
     /*!
+     * \brief savePressed save button is pressed on edit page.
+     */
+    void savePressed(bool);
+
+
+    /*!
+     * \brief renderUI renders expensive assets if and only if the assets have had any
+     *        change of state.
+     */
+    void renderUI();
+
+    /*!
      * \brief deviceListClicked called when the device widget has any device clicked.
      */
     void deviceListClicked(QListWidgetItem*);
@@ -156,6 +175,11 @@ private:
      * \brief mOriginalDevices The original state of the group.
      */
     std::list<SLightDevice> mOriginalDevices;
+
+    /*!
+     * \brief mNewDevices new devices that will be used for the group.
+     */
+    std::list<SLightDevice> mNewDevices;
 
     /*!
      * \brief createCollection creates a collection based off of the state of the UI

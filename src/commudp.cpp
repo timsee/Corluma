@@ -16,17 +16,16 @@
 #define PORT 10008
 
 CommUDP::CommUDP() {
+    mStateUpdateInterval = 1000;
     setupConnectionList(ECommType::eUDP);
+
     mSocket = new QUdpSocket(this);
 
-    mDiscoveryTimer = new QTimer(this);
     connect(mDiscoveryTimer, SIGNAL(timeout()), this, SLOT(discoveryRoutine()));
 
-    mStateUpdateTimer = new QTimer(this);
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(stateUpdate()));
-    mBound = false;
 
-    mStateUpdateInterval = 1000;
+    mBound = false;
 }
 
 
@@ -101,6 +100,7 @@ void CommUDP::sendPacket(QString controller, QString packet) {
     }
 }
 
+
 void CommUDP::stateUpdate() {
     if (shouldContinueStateUpdate()) {
         for (auto&& controller : mDiscoveredList) {
@@ -125,15 +125,19 @@ void CommUDP::stateUpdate() {
 
 
 void CommUDP::discoveryRoutine() {
-   QString discoveryPacket = QString("DISCOVERY_PACKET");
-   for (auto&& it : mDeviceTable) {
-         bool found = (std::find(mDiscoveredList.begin(), mDiscoveredList.end(), QString::fromUtf8(it.first.c_str())) != mDiscoveredList.end());
-         if (!found) {
-             //qDebug() << "discovery packet to " << QString(it.first.c_str());
-             mSocket->writeDatagram(discoveryPacket.toUtf8().data(),
-                                    QHostAddress(QString::fromUtf8(it.first.c_str())),
-                                    PORT);
+    if (mBound) {
+        QString discoveryPacket = QString("DISCOVERY_PACKET");
+        for (auto&& it : mDeviceTable) {
+              bool found = (std::find(mDiscoveredList.begin(), mDiscoveredList.end(), QString::fromUtf8(it.first.c_str())) != mDiscoveredList.end());
+              if (!found) {
+                  //qDebug() << "discovery packet to " << QString(it.first.c_str());
+                  mSocket->writeDatagram(discoveryPacket.toUtf8().data(),
+                                         QHostAddress(QString::fromUtf8(it.first.c_str())),
+                                         PORT);
+              }
          }
+    } else {
+        qDebug() << "discovery when not bound";
     }
 }
 

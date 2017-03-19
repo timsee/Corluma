@@ -211,6 +211,12 @@ private:
      */
     const static QString kPhillipsIPAddress;
 
+    /*!
+     * \brief kAppName application name, required by Phillips in devicetype.
+     */
+    const static QString kAppName;
+
+
 };
 
 #endif // HUEBRIDGEDISCOVERY_H

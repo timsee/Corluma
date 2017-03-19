@@ -8,10 +8,13 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 
+#include <set>
+
 #include "listcollectionwidget.h"
 #include "listmoodwidget.h"
 #include "datalayer.h"
 #include "commlayer.h"
+
 
 /*!
  * \copyright
@@ -48,12 +51,26 @@ public:
                                   bool hideEdit = false);
 
     /*!
+     * \brief updateMoods update moods based off of the mood list and the vector of preset colors.
+     * \param moods list of moods
+     * \param colors vector of preset colors.
+     */
+    void updateMoods(std::list<std::pair<QString, std::list<SLightDevice> > > moods,
+                     const std::vector<std::vector<QColor> >& colors);
+
+    /*!
      * \brief setCheckedMoods takes a list of moods as input and compares it against the
      *        widgets displayed. If a mood is in both, it is set as checked. If it is only in the widgets,
      *        it is set as unchecked.
      * \param checkedMoods
      */
     void setCheckedMoods(std::list<QString> checkedMoods);
+
+    /*!
+     * \brief removeMood remove a mood from the ListCollectionWidget
+     * \param mood name of mood to remove.
+     */
+    void removeMood(QString mood);
 
     /*!
      * \brief moods getter for the mood data of this collection group
@@ -75,10 +92,17 @@ public:
      */
     void setShowButtons(bool show);
 
+    /*!
+     * \brief isMoodWidget true if ListMoodGroupWidget, false if ListDevicesGroupWidget. Always true in thise case.
+     * \return true if ListMoodGroupWidget, false if ListDevicesGroupWidget.
+     */
+    bool isMoodWidget() { return true; }
+
 signals:
 
     /*!
-     * \brief moodClicked
+     * \brief moodClicked emitted when a mood is clicked in a collection. Gives the key of the collection
+     *        and the key of the mood.
      */
     void moodClicked(QString, QString);
 
@@ -124,22 +148,11 @@ private slots:
 
 private:
 
-
-    /*!
-     * \brief mWidgets list of mood widgets that are displayed by this widget.
-     */
-    std::list<ListMoodWidget*> mWidgets;
-
     /*!
      * \brief mMoods the data that represents the mood widgets that are displayed
      *        by this widget.
      */
     std::list<std::pair<QString, std::list<SLightDevice> > > mMoods;
-
-    /*!
-     * \brief mGridLayout grid to display the mood widgets
-     */
-    QGridLayout *mGridLayout;
 
 };
 

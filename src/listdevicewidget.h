@@ -8,6 +8,7 @@
 
 #include "icondata.h"
 #include "commtype.h"
+#include "listcollectionsubwidget.h"
 
 /*!
  * \copyright
@@ -20,7 +21,7 @@
  *        QListWidget, by giving an icon that represents the lights states, the name of of the
  *        controller, and the index of the light.
  */
-class ListDeviceWidget : public QWidget
+class ListDeviceWidget : public ListCollectionSubWidget
 {
     Q_OBJECT
 public:
@@ -46,12 +47,12 @@ public:
                       const std::vector<QColor>& colors);
 
     /*!
-     * \brief setChecked set the widget as checked or unchecked. When it is checked it
+     * \brief setHighlightChecked set the widget as checked or unchecked. When it is checked it
      *        it will be a light blue color. When it isn't, it will be dark grey.
      * \param checked true to set to checked, false othwerise
      * \return true if successful, false otherwise
      */
-    bool setChecked(bool checked);
+    bool setHighlightChecked(bool checked);
 
     /*!
      * \brief checked getter for checked state
@@ -64,12 +65,6 @@ public:
      * \return device displayed by widget
      */
     const SLightDevice&  device()  { return mDevice; }
-
-    /*!
-     * \brief key getter for key for device
-     * \return key for device
-     */
-    const QString& key() { return mKey; }
 
 signals:
     /*!
@@ -137,11 +132,6 @@ private:
      * \brief mDevice stores the SLightDevice used by the widget.
      */
     SLightDevice mDevice;
-
-    /*!
-     * \brief mKey stores the unique key used by the SLightDevice
-     */
-    QString mKey;
 
     /*!
      * \brief mIsChecked true if checked, false otherwise

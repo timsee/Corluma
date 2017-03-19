@@ -126,6 +126,12 @@ protected:
    virtual void resizeEvent(QResizeEvent *);
 
 private:
+
+    /*!
+     * \brief resizeIcon resize icon used for QPushButton.
+     */
+    void resizeIcon();
+
     /*!
      * \brief mLayout layout of a lights button
      */

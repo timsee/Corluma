@@ -24,7 +24,6 @@ CommHue::CommHue() {
     mScheduleTimer = new QTimer;
     connect(mScheduleTimer, SIGNAL(timeout()), this, SLOT(requestSchedules()));
 
-    mStateUpdateTimer = new QTimer;
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(updateLightStates()));
 
     mParser = new CommPacketParser();
@@ -97,7 +96,7 @@ void CommHue::changeExtendedLight(int lightIndex, int saturation, int brightness
     putJson("/lights/" + QString::number(lightIndex) + "/state", json);
 }
 
-void CommHue::changeAmbientLight(int lightIndex, int ct) {
+void CommHue::changeAmbientLight(int lightIndex, int brightness, int ct) {
     SHueLight light;
     for (auto&& hue : mConnectedHues) {
         if (lightIndex == hue.deviceIndex) {
@@ -107,23 +106,29 @@ void CommHue::changeAmbientLight(int lightIndex, int ct) {
 
     if (lightIndex == 0) {
         for (uint32_t i = 1; i <= mConnectedHues.size(); ++i) {
-            changeAmbientLight(i, ct);
+            changeAmbientLight(i, brightness, ct);
         }
     }
+
     if (ct > 500) {
         ct = 500;
     }
     if (ct < 153) {
         ct = 153;
     }
-    QJsonObject json;
-    json["on"] = true;
-    // 3rd gen bulbs don't seem to accept a color mode
-    //if (sendColorMode(light)) {
-      //  json["colormode"] = "ct";
-    //}
-    json["ct"] = ct;
-    putJson("/lights/" + QString::number(lightIndex) + "/state", json);
+    brightness = brightness * 2.54f;
+    if (light.type == EHueType::eAmbient) {
+        QJsonObject json;
+        json["on"] = true;
+        json["ct"] = ct;
+        putJson("/lights/" + QString::number(lightIndex) + "/state", json);
+    } else {
+        QColor ambient = utils::colorTemperatureToRGB(ct);
+        changeExtendedLight(light.deviceIndex,
+                            ambient.saturation(),
+                            brightness,
+                            ambient.hue() * 182);
+    }
 }
 
 
@@ -632,7 +637,7 @@ EHueType CommHue::stringToHueType(const QString& string) {
     } else if (string.compare("Color temperature light") == 0) {
         return EHueType::eAmbient;
     } else if (string.compare("Color light") == 0) {
-        return EHueType::eColor;        
+        return EHueType::eColor;
     } else if (string.compare("Dimmable light") == 0) {
         return EHueType::eWhite;
     } else {

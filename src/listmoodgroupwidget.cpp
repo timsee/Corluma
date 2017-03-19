@@ -7,11 +7,11 @@
 #include "listmoodgroupwidget.h"
 
 ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
-                                           std::list<std::pair<QString, std::list<SLightDevice> > > moods,
-                                           const std::vector<std::vector<QColor> >& colors,
-                                           QString key,
-                                           int listHeight,
-                                           bool hideEdit)
+                                         std::list<std::pair<QString, std::list<SLightDevice> > > moods,
+                                         const std::vector<std::vector<QColor> >& colors,
+                                         QString key,
+                                         int listHeight,
+                                         bool hideEdit)
 {
     setup(name, key, listHeight, hideEdit);
 
@@ -32,22 +32,28 @@ ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
 
     mMoods = moods;
 
-    mIndex = 0;
+    updateMoods(moods, colors);
+}
+
+
+void ListMoodGroupWidget::updateMoods(std::list<std::pair<QString, std::list<SLightDevice> > > moods,
+                                      const std::vector<std::vector<QColor> >& colors) {
     for (auto&& mood : moods) {
-        ListMoodWidget *widget = new ListMoodWidget(mood.first, mood.second,
-                                                      colors,
-                                                      listHeight);
+        bool foundDevice = false;
+        for (auto&& existingWidget : mWidgets) {
+            if (mood.first.compare(existingWidget->key()) == 0) {
+                foundDevice = true;
+                //TODO update
+            }
+        }
 
-        connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
-        connect(widget, SIGNAL(editClicked(QString)), this, SLOT(clickedEdit(QString)));
-
-        int column = mIndex / 2 + 1;
-        int row = mIndex % 2;
-        //qDebug() << "CR" << column << row;
-        mGridLayout->addWidget(widget, column, row);
-        widget->setVisible(mShowButtons);
-        mIndex++;
-        mWidgets.push_back(widget);
+        if (!foundDevice) {
+            ListMoodWidget *widget = new ListMoodWidget(mood.first, mood.second,
+                                                        colors);
+            connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
+            connect(widget, SIGNAL(editClicked(QString)), this, SLOT(clickedEdit(QString)));
+            insertWidgetIntoGrid(widget);
+        }
     }
 }
 
@@ -63,14 +69,21 @@ void ListMoodGroupWidget::setShowButtons(bool show) {
 
     if (mShowButtons) {
         mHiddenStateIcon->setPixmap(mOpenedPixmap);
+        this->setFixedHeight(preferredSize().height());
     } else {
         mHiddenStateIcon->setPixmap(mClosedPixmap);
+        mName->setFixedHeight(mMinimumSize);
+        this->setFixedHeight(mMinimumSize);
     }
     emit buttonsShown(mKey, mShowButtons);
 }
 
 void ListMoodGroupWidget::setCheckedMoods(std::list<QString> checkedMoods) {
-    for (auto&& widget : mWidgets) {
+    for (auto&& existingWidget : mWidgets) {
+        ListMoodWidget *widget = qobject_cast<ListMoodWidget*>(existingWidget);
+        Q_ASSERT(widget);
+
+
         bool checkedNameFound = false;
         for (auto&& checkedName : checkedMoods) {
             if (widget->moodName().compare(checkedName) == 0) {
@@ -83,9 +96,9 @@ void ListMoodGroupWidget::setCheckedMoods(std::list<QString> checkedMoods) {
 }
 
 QSize ListMoodGroupWidget::preferredSize() {
-    int height = mName->height();
+    int height = mMinimumSize;
     if (mShowButtons && mWidgets.size() > 0) {
-        int widgetHeight = std::max(mName->height(), mListHeight / 6);
+        int widgetHeight = std::max(mName->height(), (int)(height * 1.2f));
         height = (mWidgets.size() / 2 * widgetHeight) + (mWidgets.size() % 2 * widgetHeight) + height;
     }
     return QSize(this->width(), height);
@@ -108,3 +121,21 @@ void ListMoodGroupWidget::mouseReleaseEvent(QMouseEvent *) {
     setShowButtons(!mShowButtons);
 }
 
+void ListMoodGroupWidget::removeMood(QString mood) {
+    // check if mood exists
+    bool foundMood = false;
+    ListMoodWidget *moodWidget;
+    for (auto&& widget : mWidgets) {
+        ListMoodWidget *existingWidget = qobject_cast<ListMoodWidget*>(widget);
+        Q_ASSERT(existingWidget);
+
+        if (mood.compare(existingWidget->key()) == 0) {
+            foundMood = true;
+            moodWidget = existingWidget;
+        }
+    }
+
+    if (foundMood) {
+        removeWidgetFromGrid(moodWidget);
+    }
+}

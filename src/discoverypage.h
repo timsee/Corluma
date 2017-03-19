@@ -144,6 +144,24 @@ protected:
     void paintEvent(QPaintEvent *);
 
 private:
+
+    /*!
+     * \brief resizeTopMenu resize buttons at top that switch between Hue, Serial, etc.
+     */
+    void resizeTopMenu();
+
+    /*!
+     * \brief yunLineEditHelper helper function for setting the yun line edit.
+     */
+    void yunLineEditHelper();
+
+    /*!
+     * \brief updateHueStatusIcon update the main image for the hue discovery page which
+     *        shows what step you're on.
+     * \param iconPath the path to the new icon for the page.
+     */
+    void updateHueStatusIcon(QString iconPath);
+
     /*!
      * \brief ui pointer to Qt UI form.
      */
@@ -153,13 +171,13 @@ private:
      * \brief handleSerialDiscovery called by render update thread to display and update
      *        the serial discovered list.
      */
-    void handleSerialDiscovery();
+    void handleSerialDiscovery(bool isCurrentCommType);
 
     /*!
      * \brief handleYunDiscovery called by render update thread to display and update
      *        the yun discovered list and undiscovered list.
      */
-    void handleYunDiscovery();
+    void handleYunDiscovery(bool isCurrentCommType);
 
     /*!
      * \brief fillList take the connections list and convert it to elements in the QListWidget provided.
@@ -201,6 +219,11 @@ private:
     bool doesYunControllerExistAlready(QString controller);
 
     /*!
+     * \brief mLastIP stores last IP address used for Yuns
+     */
+    QString mLastIP;
+
+    /*!
      * \brief mComm pointer to CommLayer.
      */
     CommLayer *mComm;
@@ -232,6 +255,12 @@ private:
      *        to stay active.
      */
     bool mForceStartOpen;
+
+    /*!
+     * \brief mStartTime start time for the application. If discovery happens quickly,
+     *        the app automatically hides this page. This timer tracks that.
+     */
+    QTime mStartTime;
 };
 
 #endif // DISCOVERYPAGE_H

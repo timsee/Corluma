@@ -13,6 +13,7 @@
 #include "datalayer.h"
 #include "commlayer.h"
 
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2017.
@@ -81,6 +82,17 @@ public:
      * \param show true to show, false otherwise.
      */
     void setShowButtons(bool show);
+
+    /*!
+     * \brief isMoodWidget true if ListMoodGroupWidget, false if ListDevicesGroupWidget. Always false in thise case.
+     * \return true if ListMoodGroupWidget, false if ListDevicesGroupWidget.
+     */
+    bool isMoodWidget() { return false; }
+
+    /*!
+     * \brief updateRightHandButtons update the edit, select all, select none buttons by resizing them.
+     */
+    void updateRightHandButtons();
 
 signals:
 
@@ -170,11 +182,6 @@ private:
     QPixmap mClearAllPixmap;
 
     /*!
-     * \brief mWidgets list of all device widgets displayed in this widget.
-     */
-    std::list<ListDeviceWidget*> mWidgets;
-
-    /*!
      * \brief mDevices list of current devices displayed by widgets
      */
     std::list<SLightDevice> mDevices;
@@ -189,10 +196,6 @@ private:
      */
     QPushButton *mClearAllButton;
 
-    /*!
-     * \brief mGridLayout layout that displays all of the ListDeviceWidgets.
-     */
-    QGridLayout *mGridLayout;
 
     /*!
      * \brief mCheckedDevices number of checked devices.

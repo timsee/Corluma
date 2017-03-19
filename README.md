@@ -2,12 +2,12 @@
 
 Corluma is a cross-platform GUI designed to control Phillips Hue lights, Corsair RGB Keyboards, and arduino sketches from the [RGB-LED-Routines project](https://github.com/timsee/RGB-LED-Routines). It supports Windows, Linux, Mac OS X, Android, and iOS. It requires on Qt5.2 or later and C++11.
 
-##<a name="documentation"></a>Documentation
+##<a name="documentation">Documentation</a>
 
 *  [Frontend Overview](https://timsee.github.io/Corluma/html/front_overview.html)
 *  [Backend Overview](https://timsee.github.io/Corluma/html/backend_overview.html)
 
-##<a name="mobile-support"></a>Mobile Builds
+##<a name="mobile-support">Mobile Builds</a>
 
 The GUI makes use of Qt5's support for Android and iOS. To use it, set up your Qt Development environment
 to work with either android or iOS, attach the device, and build to that target. You may need to update
@@ -29,7 +29,7 @@ Qt Creator and change the enable bitcode setting to off. For more information, [
 * On android screens with extremely high pixel density, some of the stylesheet and Qt resizeEvents are
 still a bit buggy and images may appear smaller than they are intended to be. 
 
-##<a name="credits"></a>Credits
+##<a name="credits">Credits</a>
 
 * The style sheet of the project is heavily based on [QDarkStyleSheet](https://github.com/ColinDuquesnoy/QDarkStyleSheet) 
   by Colin Duquesnoy. The major differences between our version and the original are that we handle some of the background 

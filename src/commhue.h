@@ -68,9 +68,10 @@ public:
      * \brief changeAmbientLight changes the color of the bulb to match the color temperature given. This is the only way to interact with
      *        white ambiance bulbs and it can also be used with the RGB bulbs.
      * \param lightIndex index of light that you want to change the color temperature of.
+     * \param brightness brightness between 0 and 100, with 100 being full brightness.
      * \param ct a new value for the color temperature, given in meriks. Must be between 153 and 500.
      */
-    void changeAmbientLight(int lightIndex, int ct);
+    void changeAmbientLight(int lightIndex, int brightness, int ct);
 
     /*!
      * \brief turnOn turns on the Hue light at a given index

@@ -22,6 +22,9 @@ DiscoveryPage::DiscoveryPage(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    mForceStartOpen = false;
+    ui->startButton->setEnabled(false);
+
     connect(ui->plusButton, SIGNAL(clicked(bool)), this, SLOT(plusButtonClicked()));
     connect(ui->minusButton, SIGNAL(clicked(bool)), this, SLOT(minusButtonClicked()));
     connect(ui->settingsButton, SIGNAL(clicked(bool)), this, SLOT(settingsButtonClicked(bool)));
@@ -77,7 +80,6 @@ DiscoveryPage::DiscoveryPage(QWidget *parent) :
 
 
     connect(ui->startButton, SIGNAL(clicked(bool)), this, SLOT(startClicked()));
-    ui->startButton->setEnabled(false);
 
     connect(ui->discoveringList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(discoveringListClicked(QListWidgetItem*)));
     connect(ui->connectedList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(connectedListClicked(QListWidgetItem*)));
@@ -86,14 +88,17 @@ DiscoveryPage::DiscoveryPage(QWidget *parent) :
     mType = ECommType::eHue;
     commTypeSelected((int)mType);
 
+    mRenderInterval = 100;
     mRenderThread = new QTimer(this);
     connect(mRenderThread, SIGNAL(timeout()), this, SLOT(renderUI()));
 
-    mForceStartOpen = false;
+    ui->startButton->setStyleSheet("background-color: #222222;");
+
+    mStartTime = QTime::currentTime();
 }
 
-DiscoveryPage::~DiscoveryPage()
-{
+
+DiscoveryPage::~DiscoveryPage() {
     delete ui;
 }
 
@@ -106,32 +111,50 @@ void DiscoveryPage::renderUI() {
         bool hasStarted = mComm->hasStarted(type);
         if (runningDiscovery) {
             //qDebug() << "comm type running discovery" << ECommTypeToString(type) << ++test;
-            changeCommTypeConnectionState(type, EConnectionState::eDiscovering);
             runningDiscovery = true;
         }
-        if (!runningDiscovery && hasStarted) {
-            changeCommTypeConnectionState(type, EConnectionState::eDiscoveredAndNotInUse);
+        if (!runningDiscovery
+                && hasStarted
+                && (mComm->discoveredList(type).size() > 0)) {
             hasStarted = true;
             isAnyConnected = true;
         }
+
+        if (type == ECommType::eUDP
+                   || mType == ECommType::eHTTP) {
+            handleYunDiscovery(mType == ECommType::eUDP
+                               || mType == ECommType::eHTTP);
+        }
+    #ifndef MOBILE_BUILD
+        if (type == ECommType::eSerial) {
+            handleSerialDiscovery(mType == ECommType::eSerial);
+        }
+    #endif
     }
+
+#ifndef MOBILE_BUILD
+    if (mComm->discoveredList(ECommType::eSerial).size() > 0) {
+        isAnyConnected = true;
+    }
+    if (mComm->discoveredList(ECommType::eUDP).size() > 0) {
+        isAnyConnected = true;
+    }
+    if (mComm->discoveredList(ECommType::eHTTP).size() > 0) {
+        isAnyConnected = true;
+    }
+#endif
 
     // Only allow moving to next page if something is connected
     if (isAnyConnected || mForceStartOpen) {
         ui->startButton->setEnabled(true);
+        if (mStartTime.elapsed() < 1000) {
+            emit startButtonClicked();
+        }
     } else {
         ui->startButton->setEnabled(false);
     }
 
-    if (mType == ECommType::eUDP
-               || mType == ECommType::eHTTP) {
-        handleYunDiscovery();
-    }
-#ifndef MOBILE_BUILD
-    else if (mType == ECommType::eSerial) {
-        handleSerialDiscovery();
-    }
-#endif
+    resizeTopMenu();
 }
 
 
@@ -146,30 +169,37 @@ void DiscoveryPage::hueDiscoveryUpdate(int newState) {
         case EHueDiscoveryState::eNoBridgeFound:
             qDebug() << "Hue Update: no bridge found";
             ui->descriptiveLabel->setText(QString("Looking for Bridge..."));
+            updateHueStatusIcon(":/images/wifi.png");
             changeCommTypeConnectionState(ECommType::eHue, EConnectionState::eDiscovering);
             break;
         case EHueDiscoveryState::eFindingIpAddress:
             ui->descriptiveLabel->setText(QString("Looking for Bridge..."));
+            updateHueStatusIcon(":/images/wifi.png");
             qDebug() << "Hue Update: Finding IP Address";
             changeCommTypeConnectionState(ECommType::eHue, EConnectionState::eDiscovering);
             break;
         case EHueDiscoveryState::eTestingIPAddress:
             ui->descriptiveLabel->setText(QString("Looking for Bridge..."));
+            updateHueStatusIcon(":/images/wifi.png");
             qDebug() << "Hue Update: Found IP, waiting for response";
+            ui->connectedLabel->setPixmap(QPixmap(":/images/pressHueBridgeImage.png"));
             changeCommTypeConnectionState(ECommType::eHue, EConnectionState::eDiscovering);
             break;
         case EHueDiscoveryState::eFindingDeviceUsername:
             ui->descriptiveLabel->setText(QString("Bridge Found! Please press Link button..."));
+            updateHueStatusIcon(":/images/pressHueBridgeImage.png");
             qDebug() << "Hue Update: Bridge is waiting for link button to be pressed.";
             changeCommTypeConnectionState(ECommType::eHue, EConnectionState::eDiscovering);
             break;
         case EHueDiscoveryState::eTestingFullConnection:
             ui->descriptiveLabel->setText(QString("Bridge button pressed! Testing connection..."));
+            updateHueStatusIcon(":/images/pressHueBridgeImage.png");
             qDebug() << "Hue Update: IP and Username received, testing combination. ";
             changeCommTypeConnectionState(ECommType::eHue, EConnectionState::eDiscovering);
             break;
         case EHueDiscoveryState::eBridgeConnected:
             ui->descriptiveLabel->setText(QString("Bridge Discovered!"));
+            updateHueStatusIcon(":/images/checkmark.png");
             qDebug() << "Hue Update: Bridge Connected";
             changeCommTypeConnectionState(ECommType::eHue, EConnectionState::eDiscoveredAndNotInUse);
             mComm->resetStateUpdates(ECommType::eHue);
@@ -181,57 +211,90 @@ void DiscoveryPage::hueDiscoveryUpdate(int newState) {
     }
 }
 
-void DiscoveryPage::handleYunDiscovery() {
+void DiscoveryPage::handleYunDiscovery(bool isCurrentCommType) {
 
     std::list<QString> deviceTableUDP = mComm->discoveredList(ECommType::eUDP);
     std::list<QString> deviceTableHTTP = mComm->discoveredList(ECommType::eHTTP);
-    fillList(ui->connectedList, deviceTableUDP);
-    fillList(ui->connectedList, deviceTableHTTP);
 
     std::list<QString> discoveringUDP = mComm->undiscoveredList(ECommType::eUDP);
     std::list<QString> discoveringHTTP = mComm->undiscoveredList(ECommType::eHTTP);
-    fillList(ui->discoveringList, discoveringUDP);
-    fillList(ui->discoveringList, discoveringHTTP);
 
-    // compare the two lists against each other
-    for (int i = 0; i < ui->connectedList->count(); ++i) {
-        QListWidgetItem *connectedItem = ui->connectedList->item(i);
-        for (int j = 0; j < ui->discoveringList->count(); ++j) {
-            QListWidgetItem *discoveringItem = ui->discoveringList->item(j);
-            if (connectedItem->text().compare(discoveringItem->text()) == 0) {
-                ui->discoveringList->takeItem(j);
+    if (isCurrentCommType) {
+        fillList(ui->connectedList, deviceTableUDP);
+        fillList(ui->connectedList, deviceTableHTTP);
+
+        fillList(ui->discoveringList, discoveringUDP);
+        fillList(ui->discoveringList, discoveringHTTP);
+
+        // compare the two lists against each other
+        for (int i = 0; i < ui->connectedList->count(); ++i) {
+            QListWidgetItem *connectedItem = ui->connectedList->item(i);
+            for (int j = 0; j < ui->discoveringList->count(); ++j) {
+                QListWidgetItem *discoveringItem = ui->discoveringList->item(j);
+                if (connectedItem->text().compare(discoveringItem->text()) == 0) {
+                    ui->discoveringList->takeItem(j);
+                }
+            }
+        }
+
+        // compare discovered list of UDP against HTTP, removing those that are discovering in HTTP
+        for (auto&& discovered : deviceTableUDP) {
+            for (auto&& undiscovered : discoveringHTTP) {
+                if (discovered.compare(undiscovered) == 0) {
+                    mComm->removeController(ECommType::eHTTP, discovered);
+                }
+            }
+        }
+
+        // compare discovered list of HTTP against UDP, removing those that are discovering in UDP
+        for (auto&& discovered : deviceTableHTTP) {
+            for (auto&& undiscovered : discoveringUDP) {
+                if (discovered.compare(undiscovered) == 0) {
+                    mComm->removeController(ECommType::eUDP, discovered);
+                }
             }
         }
     }
 
-    // compare discovered list of UDP against HTTP, removing those that are discovering in HTTP
-    for (auto&& discovered : deviceTableUDP) {
-        for (auto&& undiscovered : discoveringHTTP) {
-            if (discovered.compare(undiscovered) == 0) {
-                mComm->removeController(ECommType::eHTTP, discovered);
-            }
-        }
-    }
-
-    // compare discovered list of HTTP against UDP, removing those that are discovering in UDP
-    for (auto&& discovered : deviceTableHTTP) {
-        for (auto&& undiscovered : discoveringUDP) {
-            if (discovered.compare(undiscovered) == 0) {
-                mComm->removeController(ECommType::eUDP, discovered);
-            }
-        }
+    // handle button updates
+    if (discoveringHTTP.size() == 0
+            && discoveringUDP.size() == 0
+            && (deviceTableHTTP.size() > 0
+                || deviceTableUDP.size() > 0)) {
+        changeCommTypeConnectionState(ECommType::eUDP, EConnectionState::eDiscoveredAndNotInUse);
+    } else if (discoveringHTTP.size() > 0
+               || discoveringUDP.size() > 0) {
+        changeCommTypeConnectionState(ECommType::eUDP, EConnectionState::eDiscovering);
+    } else {
+        changeCommTypeConnectionState(ECommType::eUDP, EConnectionState::eOff);
     }
 }
 
-void DiscoveryPage::handleSerialDiscovery() {
+void DiscoveryPage::handleSerialDiscovery(bool isCurrentCommType) {
 #ifndef MOBILE_BUILD
     std::list<QString> deviceTable = mComm->discoveredList(ECommType::eSerial);
-    if (deviceTable.size() > 0) {
-        ui->descriptiveLabel->setText(QString("Serial devices found!"));
-    } else {
-        ui->descriptiveLabel->setText(QString("No serial devices found."));
+    bool runningDiscovery = mComm->lookingForActivePorts();
+    if (isCurrentCommType) {
+        if (deviceTable.size() > 0) {
+            ui->descriptiveLabel->setText(QString("Serial devices found!"));
+        } else {
+            ui->descriptiveLabel->setText(QString("No serial devices found."));
+        }
+        fillList(ui->connectedList, deviceTable);
     }
-    fillList(ui->connectedList, deviceTable);
+    // get serial state
+    if (!runningDiscovery && deviceTable.size() == 0) {
+        // no serial ports discovered
+        changeCommTypeConnectionState(ECommType::eSerial, EConnectionState::eOff);
+    } else if (!runningDiscovery && deviceTable.size() > 0) {
+        // all serial ports connect to corluma lights
+        changeCommTypeConnectionState(ECommType::eSerial, EConnectionState::eDiscoveredAndNotInUse);
+    } else if (runningDiscovery) {
+        // some did not connect to corluma lights
+        changeCommTypeConnectionState(ECommType::eSerial, EConnectionState::eDiscovering);
+    } else {
+        qDebug() << __func__ << "unhandled case";
+    }
 #endif
 }
 
@@ -254,7 +317,7 @@ void DiscoveryPage::fillList(QListWidget *list, std::list<QString>& connections)
             label->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
             label->setFont(QFont(label->font().styleName(), 14, 0));
             label->setStyleSheet("background:rgba(0, 0, 0, 0%); font: bold;");
-            int minimumHeight = list->size().height() / 6;
+            int minimumHeight = this->size().height() / 20.0f;
             list->item(index)->setSizeHint(QSize(list->item(index)->sizeHint().width(),
                                                     minimumHeight));
             list->setItemWidget(list->item(index), label);
@@ -312,24 +375,28 @@ void DiscoveryPage::minusButtonClicked() {
 
 
 void DiscoveryPage::connectedListClicked(QListWidgetItem *item) {
-    for (int i = 0; i < ui->discoveringList->count(); ++i) {
-        ui->discoveringList->item(i)->setSelected(false);
-    }
     if (mType == ECommType::eUDP
             || mType == ECommType::eHTTP) {
         ui->lineEdit->setText(item->text());
+        mLastIP = item->text();
     }
+    for (int i = 0; i < ui->discoveringList->count(); ++i) {
+        ui->discoveringList->item(i)->setSelected(false);
+    }
+    yunLineEditHelper();
 }
 
 
 void DiscoveryPage::discoveringListClicked(QListWidgetItem *item) {
-    for (int i = 0; i < ui->connectedList->count(); ++i) {
-        ui->connectedList->item(i)->setSelected(false);
-    }
     if (mType == ECommType::eUDP
             || mType == ECommType::eHTTP) {
         ui->lineEdit->setText(item->text());
+        mLastIP = item->text();
     }
+    for (int i = 0; i < ui->connectedList->count(); ++i) {
+        ui->connectedList->item(i)->setSelected(false);
+    }
+    yunLineEditHelper();
 }
 
 
@@ -354,41 +421,42 @@ void DiscoveryPage::commTypeSelected(int type) {
         ui->connectedLabel->setVisible(true);
         ui->connectedList->setVisible(true);
 
+        ui->connectedLabel->setAlignment(Qt::AlignLeft);
+
         ui->discoveringLabel->setVisible(true);
         ui->discoveringList->setVisible(true);
 
         ui->connectedLabel->setText("Connected Yuns:");
         ui->descriptiveLabel->setText("Add or remove IP Addresses:");
 
-        ((QHBoxLayout*)this->layout())->setStretch(0, 2);
-        ((QHBoxLayout*)this->layout())->setStretch(1, 2);
-        ((QHBoxLayout*)this->layout())->setStretch(2, 1);
-        ((QHBoxLayout*)this->layout())->setStretch(3, 1);
-        ((QHBoxLayout*)this->layout())->setStretch(4, 4);
-        ((QHBoxLayout*)this->layout())->setStretch(5, 2);
-        ((QHBoxLayout*)this->layout())->setStretch(6, 4);
-        ((QHBoxLayout*)this->layout())->setStretch(7, 0);
-        ((QHBoxLayout*)this->layout())->setStretch(8, 4);
+        ((QHBoxLayout*)ui->contentLayout)->setStretch(0, 2);
+        ((QHBoxLayout*)ui->contentLayout)->setStretch(1, 1);
+        ((QHBoxLayout*)ui->contentLayout)->setStretch(2, 1);
+        ((QHBoxLayout*)ui->contentLayout)->setStretch(3, 4);
+        ((QHBoxLayout*)ui->contentLayout)->setStretch(4, 2);
+        ((QHBoxLayout*)ui->contentLayout)->setStretch(5, 4);
 
-
+        handleYunDiscovery(true);
+        yunLineEditHelper();
     }  else if (currentCommType == ECommType::eHue) {
         ui->hueButton->setChecked(true);
         ui->plusButton->setVisible(false);
         ui->minusButton->setVisible(false);
         ui->lineEdit->setVisible(false);
 
-        ui->connectedLabel->setVisible(false);
+        ui->connectedLabel->setVisible(true);
         ui->connectedList->setVisible(false);
 
         ui->discoveringLabel->setVisible(false);
         ui->discoveringList->setVisible(false);
 
+        ui->connectedLabel->setAlignment(Qt::AlignCenter);
+
         hueDiscoveryUpdate((int)mHueDiscoveryState);
 
-        ((QHBoxLayout*)this->layout())->setStretch(0, 2);
-        ((QHBoxLayout*)this->layout())->setStretch(1, 2);
-        ((QHBoxLayout*)this->layout())->setStretch(2, 12);
-        ((QHBoxLayout*)this->layout())->setStretch(3, 4);
+        ((QHBoxLayout*)ui->contentLayout)->setStretch(0, 2);
+        ((QHBoxLayout*)ui->contentLayout)->setStretch(1, 2);
+        ((QHBoxLayout*)ui->contentLayout)->setStretch(2, 10);
     }
 #ifndef MOBILE_BUILD
     else if (currentCommType == ECommType::eSerial) {
@@ -400,19 +468,19 @@ void DiscoveryPage::commTypeSelected(int type) {
         ui->connectedLabel->setVisible(true);
         ui->connectedList->setVisible(true);
 
+        ui->connectedLabel->setAlignment(Qt::AlignLeft);
+
         ui->discoveringLabel->setVisible(false);
         ui->discoveringList->setVisible(false);
 
         ui->connectedLabel->setText("Connected Arduino:");
-        handleSerialDiscovery();
 
-        ((QHBoxLayout*)this->layout())->setStretch(0, 2);
-        ((QHBoxLayout*)this->layout())->setStretch(1, 2);
-        ((QHBoxLayout*)this->layout())->setStretch(2, 0);
-        ((QHBoxLayout*)this->layout())->setStretch(3, 0);
-        ((QHBoxLayout*)this->layout())->setStretch(4, 12);
-        ((QHBoxLayout*)this->layout())->setStretch(5, 0);
-        ((QHBoxLayout*)this->layout())->setStretch(6, 4);
+        ((QHBoxLayout*)ui->contentLayout)->setStretch(0, 2);
+        ((QHBoxLayout*)ui->contentLayout)->setStretch(1, 0);
+        ((QHBoxLayout*)ui->contentLayout)->setStretch(2, 0);
+        ((QHBoxLayout*)ui->contentLayout)->setStretch(3, 12);
+
+        handleSerialDiscovery(true);
     }
 #endif //MOBILE_BUILD
     changeCommTypeConnectionState(currentCommType, mConnectionStates[(int)currentCommType]);
@@ -499,6 +567,51 @@ bool DiscoveryPage::doesYunControllerExistAlready(QString controller) {
     return deviceFound;
 }
 
+void DiscoveryPage::yunLineEditHelper() {
+    // check last IP
+    bool foundLastIP = false;
+    if (mLastIP.compare("") != 0) {
+        for (int i = 0; i < ui->discoveringList->count(); ++i) {
+            if (mLastIP.compare(ui->discoveringList->item(i)->text()) == 0) {
+                ui->discoveringList->item(i)->setSelected(true);
+                foundLastIP = true;
+            }
+        }
+        for (int i = 0; i < ui->connectedList->count(); ++i) {
+            if (!ui->connectedList->item(i)->text().isNull()) {
+                if (mLastIP.compare(ui->connectedList->item(i)->text()) == 0) {
+                    ui->connectedList->item(i)->setSelected(true);
+                    foundLastIP = true;
+                }
+            }
+        }
+    }
+
+    if (!foundLastIP) {
+        bool anySelected = false;
+        // check if any are selected
+        for (int i = 0; i < ui->discoveringList->count(); ++i) {
+            if (ui->discoveringList->item(i)->isSelected()) anySelected = true;
+        }
+        for (int i = 0; i < ui->connectedList->count(); ++i) {
+            if (ui->connectedList->item(i)->isSelected()) anySelected = true;
+        }
+
+        // if none selected but some exist, select first one.
+        if (!anySelected && ((ui->discoveringList->count() > 0) || (ui->connectedList->count() > 0))) {
+            if (ui->connectedList->count() > 0) {
+                ui->connectedList->item(0)->setSelected(true);
+                ui->lineEdit->setText(ui->connectedList->item(0)->text());
+            } else {
+                ui->discoveringList->item(0)->setSelected(true);
+                ui->lineEdit->setText(ui->discoveringList->item(0)->text());
+            }
+        } else {
+            ui->lineEdit->setText("192.168.0.101");
+        }
+    }
+}
+
 
 // ----------------------------
 // Protected
@@ -510,6 +623,7 @@ void DiscoveryPage::showEvent(QShowEvent *event) {
     mRenderThread->start(mRenderInterval);
 
     showAvailableCommTypeButtons();
+
 }
 
 
@@ -520,6 +634,21 @@ void DiscoveryPage::hideEvent(QHideEvent *event) {
 }
 
 void DiscoveryPage::resizeEvent(QResizeEvent *) {
+    resizeTopMenu();
+    int iconSize = this->width() * 0.15f;
+    ui->settingsButton->setIconSize(QSize(iconSize, iconSize));
+}
+
+void DiscoveryPage::paintEvent(QPaintEvent *) {
+    QStyleOption opt;
+    opt.init(this);
+    QPainter painter(this);
+
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
+}
+
+void DiscoveryPage::resizeTopMenu() {
     int height = this->geometry().height() / 15;
     for (int commInt = 0; commInt != (int)ECommType::eCommType_MAX; ++commInt) {
         ECommType type = static_cast<ECommType>(commInt);
@@ -527,7 +656,7 @@ void DiscoveryPage::resizeEvent(QResizeEvent *) {
         button->setIconSize(QSize(height, height));
     }
     if (mData->commTypeSettings()->numberOfActiveCommTypes() > 1) {
-        int buttonSize = (int)((float)ui->hueButton->height() * 0.66f);
+        int buttonSize = (int)((float)ui->hueButton->height() * 0.8f);
         mButtonIcons = std::vector<QPixmap>((size_t)EConnectionButtonIcons::EConnectionButtonIcons_MAX);
         mButtonIcons[(int)EConnectionButtonIcons::eBlackButton]  = QPixmap("://images/blackButton.png").scaled(buttonSize, buttonSize,
                                                                                                                Qt::IgnoreAspectRatio,
@@ -570,18 +699,15 @@ void DiscoveryPage::resizeEvent(QResizeEvent *) {
                 break;
         }
     }
-
-    int iconSize = this->width() * 0.15f;
-    ui->settingsButton->setIconSize(QSize(iconSize, iconSize));
 }
 
-void DiscoveryPage::paintEvent(QPaintEvent *) {
-    QStyleOption opt;
-    opt.init(this);
-    QPainter painter(this);
-
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
+void DiscoveryPage::updateHueStatusIcon(QString iconPath) {
+    QPixmap pixmap(iconPath);
+    int size = this->width() * 0.6f;
+    ui->connectedLabel->setPixmap(pixmap.scaled(size,
+                                                size,
+                                                Qt::KeepAspectRatio,
+                                                Qt::SmoothTransformation));
 }
 
 void DiscoveryPage::showAvailableCommTypeButtons() {
@@ -633,8 +759,9 @@ void DiscoveryPage::showAvailableCommTypeButtons() {
         ui->yunButton->setHidden(true);
         ui->hueButton->setHidden(true);
         ui->serialButton->setHidden(true);
-        ((QHBoxLayout*)this->layout())->setStretch(0, 0);
+      //  ((QHBoxLayout*)this->l/ayout())->setStretch(0, 0);
     } else {
-        ((QHBoxLayout*)this->layout())->setStretch(0, 2);
+       // ((QHBoxLayout*)this->la/yout())->setStretch(0, 2);
     }
+    resizeTopMenu();
 }

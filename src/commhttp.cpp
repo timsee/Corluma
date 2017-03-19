@@ -7,18 +7,15 @@
 #include "commhttp.h"
 
 CommHTTP::CommHTTP() {
+    mStateUpdateInterval = 4850;
+    setupConnectionList(ECommType::eHTTP);
 
-    mDiscoveryTimer = new QTimer(this);
     connect(mDiscoveryTimer, SIGNAL(timeout()), this, SLOT(discoveryRoutine()));
 
-    mNetworkManager = new QNetworkAccessManager(this);
-    setupConnectionList(ECommType::eHTTP);
-    connect(mNetworkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
-
-    mStateUpdateTimer = new QTimer(this);
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(stateUpdate()));
 
-    mStateUpdateInterval = 4850;
+    mNetworkManager = new QNetworkAccessManager(this);
+    connect(mNetworkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 }
 
 CommHTTP::~CommHTTP() {

@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" stretch="8,2">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="10,3">
    <item>
     <widget class="ColorPicker" name="colorPicker" native="true">
      <property name="sizePolicy">

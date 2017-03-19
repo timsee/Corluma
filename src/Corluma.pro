@@ -170,7 +170,8 @@ HEADERS  += mainwindow.h \
     greyoutoverlay.h \
     listmoodwidget.h \
     listmoodgroupwidget.h \
-    editgrouppage.h
+    editgrouppage.h \
+    listcollectionsubwidget.h
 
 FORMS    += mainwindow.ui \
     singlecolorpage.ui \

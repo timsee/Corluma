@@ -26,8 +26,7 @@ ListDevicesGroupWidget::ListDevicesGroupWidget(const QString& name,
     connect(mClearAllButton, SIGNAL(clicked(bool)), this, SLOT(clearButtonClicked(bool)));
     mClearAllButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     mClearAllPixmap = QPixmap(":/images/clearAllIcon.png");
-    //mClearAllButton->setIconSize(QSize(mMinimumSize * mIconRatio, mMinimumSize * mIconRatio));
-
+    mClearAllButton->setIconSize(QSize(mMinimumSize * mIconRatio, mMinimumSize * mIconRatio));
     mClearAllButton->setIcon(QIcon((mClearAllPixmap)));
     mClearAllButton->setHidden(true);
 
@@ -36,8 +35,7 @@ ListDevicesGroupWidget::ListDevicesGroupWidget(const QString& name,
     connect(mSelectAllButton, SIGNAL(clicked(bool)), this, SLOT(selectAllButtonClicked(bool)));
     mSelectAllButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     mSelectAllPixmap = QPixmap(":/images/selectAllIcon.png");
-    //mSelectAllButton->setIconSize(QSize(mMinimumSize * mIconRatio, mMinimumSize * mIconRatio));
-
+    mSelectAllButton->setIconSize(QSize(mMinimumSize * mIconRatio, mMinimumSize * mIconRatio));
     mSelectAllButton->setIcon(QIcon((mSelectAllPixmap)));
     mSelectAllButton->setHidden(true);
 
@@ -59,7 +57,6 @@ ListDevicesGroupWidget::ListDevicesGroupWidget(const QString& name,
     mGridLayout->setVerticalSpacing(0);
     mGridLayout->setHorizontalSpacing(0);
 
-    mIndex = 0;
     mGridLayout->addLayout(mTopLayout, 0, 0, 1, 2);
     updateDevices(devices);
     setLayout(mGridLayout);
@@ -71,7 +68,10 @@ void ListDevicesGroupWidget::updateDevices(std::list<SLightDevice> devices) {
         if (inputDevice.isValid()) {
             bool foundDevice = false;
             // check if device widget exists
-            for (auto&& existingWidget : mWidgets) {
+            for (auto&& widget : mWidgets) {
+                ListDeviceWidget *existingWidget = qobject_cast<ListDeviceWidget*>(widget);
+                Q_ASSERT(existingWidget);
+
                 SLightDevice existingDevice = existingWidget->device();
                 if (compareLightDevice(inputDevice, existingDevice)) {
                     foundDevice = true;
@@ -90,18 +90,11 @@ void ListDevicesGroupWidget::updateDevices(std::list<SLightDevice> devices) {
                 }
                 if (name.size() > 0) {
                     ListDeviceWidget *widget = new ListDeviceWidget(inputDevice, name, mData->colorGroup(inputDevice.colorGroup));
-
                     connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
-                    int column = mIndex / 2 + 1;
-                    int row = mIndex % 2;
-                    //qDebug() << "CR" << column << row;
-                    mGridLayout->addWidget(widget, column, row);
-                    widget->setVisible(mShowButtons);
-                    mIndex++;
-                    mWidgets.push_back(widget);
+                    insertWidgetIntoGrid(widget);
                 }
             }
-        }   
+        }
     }
     if (mShowButtons) {
         mHiddenStateIcon->setPixmap(mOpenedPixmap);
@@ -111,10 +104,10 @@ void ListDevicesGroupWidget::updateDevices(std::list<SLightDevice> devices) {
 }
 
 QSize ListDevicesGroupWidget::preferredSize() {
-    int height = mName->height();
+    int height = mMinimumSize;
     if (mShowButtons && mWidgets.size() > 0) {
-        int widgetHeight = std::max(mName->height(), mListHeight / 8);
-        height = (mWidgets.size() / 2 * widgetHeight) + (mWidgets.size() % 2 * widgetHeight) + height;
+        int widgetHeight = std::max(mName->height(), mMinimumSize);
+        height = (mWidgets.size() / 2 * widgetHeight) + (mWidgets.size() % 2 * widgetHeight) + mMinimumSize;
     }
     return QSize(this->width(), height);
 }
@@ -131,13 +124,11 @@ void ListDevicesGroupWidget::setShowButtons(bool show) {
 
     if (mShowButtons) {
         mHiddenStateIcon->setPixmap(mOpenedPixmap);
+        this->setFixedHeight(preferredSize().height());
     } else {
         mHiddenStateIcon->setPixmap(mClosedPixmap);
-
-        mMinimumSize = mClosedPixmap.height();
-        this->setMinimumHeight(mMinimumSize);
-        mName->setMinimumHeight(mMinimumSize);
-        mName->setMaximumHeight(mMinimumSize);
+        mName->setFixedHeight(mMinimumSize);
+        this->setFixedHeight(mMinimumSize);
     }
 
     emit buttonsShown(mKey, mShowButtons);
@@ -145,30 +136,37 @@ void ListDevicesGroupWidget::setShowButtons(bool show) {
 
 void ListDevicesGroupWidget::setCheckedDevices(std::list<SLightDevice> devices) {
     mCheckedDevices = 0;
-    for (auto&& widget : mWidgets) {
+    for (auto&& existingWidget : mWidgets) {
+        ListDeviceWidget *widget = qobject_cast<ListDeviceWidget*>(existingWidget);
+        Q_ASSERT(widget);
+
         SLightDevice widgetDevice = widget->device();
         bool found = false;
         for (auto&& device : devices) {
             if (compareLightDevice(device, widgetDevice)) {
                 mCheckedDevices++;
                 found = true;
-                widget->setChecked(true);
+                widget->setHighlightChecked(true);
             }
         }
         if (!found) {
-            widget->setChecked(false);
+            widget->setHighlightChecked(false);
         }
     }
     repaint();
 }
 
+void ListDevicesGroupWidget::updateRightHandButtons() {
+
+    resizeRightHandIcon(mSelectAllPixmap, mSelectAllButton);
+    resizeRightHandIcon(mClearAllPixmap, mClearAllButton);
+}
+
 void ListDevicesGroupWidget::clearButtonClicked(bool) {
-    qDebug() << "CLEAR";
     emit clearAllClicked(mKey);
 }
 
 void ListDevicesGroupWidget::selectAllButtonClicked(bool) {
-    qDebug() << "SELECT ALL";
     if (!mShowButtons) {
         setShowButtons(true);
     }

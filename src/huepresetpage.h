@@ -3,6 +3,10 @@
 
 #include <QWidget>
 
+namespace Ui {
+class HuePresetPage;
+}
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2017.
@@ -11,10 +15,6 @@
  *
  * \brief The HuePresetPage class unimplemented page of preset moods made specifically for hues.
  */
-
-namespace Ui {
-class HuePresetPage;
-}
 
 class HuePresetPage : public QWidget
 {

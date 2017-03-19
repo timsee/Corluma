@@ -58,6 +58,12 @@ public:
      */
     void sendPacket(QString controller, QString packet);
 
+    /*!
+     * \brief lookingForActivePorts true if looking for active ports, false otherwise.
+     * \return true if looking for active ports, false otherwise.
+     */
+    bool lookingForActivePorts() { return mLookingForActivePorts; }
+
 private slots:
     /*!
      * \brief handleReadyRead parses incoming packets
@@ -107,6 +113,9 @@ private:
      *        most recent characters sent by the serial port.
      */
     std::list<std::pair<QSerialPort*, QString> > mSerialPorts;
+
+    /// set to true when looking for active ports, used on discovery page.
+    bool mLookingForActivePorts;
 };
 
 #endif // MOBILE_BUILD

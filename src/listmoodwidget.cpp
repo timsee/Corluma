@@ -11,8 +11,8 @@
 ListMoodWidget::ListMoodWidget(const QString& name,
                                  const std::list<SLightDevice>& devices,
                                  const std::vector<std::vector<QColor> >& colors,
-                                 int height,
-                                 QWidget *parent) : QWidget(parent) {
+                                 QWidget *parent) {
+    Q_UNUSED(parent);
 
 
     mMoodName = name;
@@ -20,14 +20,19 @@ ListMoodWidget::ListMoodWidget(const QString& name,
     mKey = name;
 
     // setup icon
-    QString reachableStlyeSheet = "background:rgba(0, 0, 0, 0%); font: bold; color: #333;";
-    QString backgroundStyleSheet = "background:rgba(0, 0, 0, 0%); font: bold;";
+    QString reachableStlyeSheet = "background:rgba(0, 0, 0, 0%); font: color: #333;";
+    QString backgroundStyleSheet = "background:rgba(0, 0, 0, 0%);";
 
     this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     // setup main label
     mName = new QLabel(this);
-    mName->setWordWrap(true);
+    QString modifiedName;
+    if (name.size() > 15) {
+        modifiedName = name.mid(0, 12) + "...";
+    } else {
+        modifiedName = name;
+    }
     mName->setText(name);
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -52,37 +57,49 @@ ListMoodWidget::ListMoodWidget(const QString& name,
     }
 
     int previewNumber = 5;
-    mIconData = std::vector<IconData>(previewNumber, IconData(64, 64));
+    mIconData = std::vector<IconData>(previewNumber, IconData(32, 32));
     mPreviews = std::vector<QLabel*>(previewNumber, nullptr);
 
     for (int i = 0; i < previewNumber; ++i) {
         mPreviews[i] = new QLabel;
-        mPreviews[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        mPreviews[i]->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
         mPreviews[i]->setStyleSheet(backgroundStyleSheet);
+//#ifndef MOBILE_BUILD
+//        mPreviews[i]->setMaximumWidth(this->width() / 5);
+//#endif
+
     }
 
     int index = 0;
     for (auto&& device : devices) {
         if (index < previewNumber) {
-            int size = (height / 8) * 0.5f;
+            //TODO: fix this ratio...
+#ifdef MOBILE_BUILD
+            int size = std::min(this->width() / 5, this->height() / 2);
+#else
+            int size = std::min(this->width() / 20, this->height() / 2);
+#endif
             if (device.lightingRoutine <= utils::ELightingRoutineSingleColorEnd ) {
                 mIconData[index].setSingleLightingRoutine(device.lightingRoutine, device.color);
                 QPixmap iconRendered = mIconData[index].renderAsQPixmap();
-                mPreviews[index]->setPixmap(iconRendered.scaled(size,
-                                                            size,
+                mPreviews[index]->setPixmap(iconRendered.scaled(size * 0.9f,
+                                                            size *  0.9f,
                                                             Qt::IgnoreAspectRatio,
                                                             Qt::FastTransformation));
+                mPreviews[index]->setFixedSize(size, size);
             } else {
                 mIconData[index].setMultiLightingRoutine(device.lightingRoutine, device.colorGroup, colors[(int)device.colorGroup]);
                 QPixmap iconRendered = mIconData[index].renderAsQPixmap();
-                mPreviews[index]->setPixmap(iconRendered.scaled(size,
-                                                            size,
+                mPreviews[index]->setPixmap(iconRendered.scaled(size * 0.9f,
+                                                            size * 0.9f,
                                                             Qt::IgnoreAspectRatio,
                                                             Qt::FastTransformation));
+                mPreviews[index]->setFixedSize(size, size);
             }
             index++;
         }
     }
+
 
 
     // setup layout
@@ -113,21 +130,14 @@ void ListMoodWidget::enterEvent(QEvent *) {
     //qDebug() << "ENTER EVENT";
     mEditButton->setHidden(false);
 
-#ifdef MOBILE_BUILD
-    float editSize = mName->height() * 0.5f;
-#else
-    float editSize = mName->height() * 1.0f;
-#endif
-
+    float editSize = mName->height() * 0.95f;
     mEditIcon = mEditIcon.scaled(editSize, editSize,
                                          Qt::KeepAspectRatio,
                                          Qt::SmoothTransformation);
     mEditButton->setIcon(QIcon(mEditIcon));
-    mEditButton->setFixedSize(editSize, editSize);
     mEditButton->setIconSize(QSize(editSize,
                                    editSize));
-    mEditButton->setMinimumHeight(editSize);
-    mEditButton->setMaximumHeight(editSize);
+    mEditButton->setFixedSize(editSize, editSize);
 }
 
 void ListMoodWidget::leaveEvent(QEvent *) {
@@ -160,5 +170,4 @@ void ListMoodWidget::mouseReleaseEvent(QMouseEvent *event) {
     Q_UNUSED(event);
     emit clicked(mKey);
 }
-
 

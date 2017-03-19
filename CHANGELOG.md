@@ -134,5 +134,11 @@
 * Added the ability to save and load groups of devices as JSON data.
 * Made minor tweaks to make actions require less clicks to execute.
 
+### **v0.9.91
+#### Why-Do-I-Name-These Update
+* Did a QA round, fixed a lot of edge cases and bugs.
+* Updated Discovery Page, Connection Page, and Settings Page.
+* Added a new version of the Hue Color Temperature Picker.
+* Fixed many layout issues, broke some in certain environments (woops).
 
 

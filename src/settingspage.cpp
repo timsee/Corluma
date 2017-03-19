@@ -15,6 +15,9 @@
 #include <QScroller>
 #include <QMessageBox>
 #include <QStandardPaths>
+#include <QStyleOption>
+#include <QGraphicsOpacityEffect>
+#include <QPainter>
 
 #include <algorithm>
 
@@ -57,6 +60,9 @@ SettingsPage::SettingsPage(QWidget *parent) :
     connect(ui->yunButton, SIGNAL(clicked(bool)), this, SLOT(yunCheckboxClicked(bool)));
     ui->yunButton->setText("Yun");
 
+
+    connect(ui->closeButton, SIGNAL(clicked(bool)), this, SLOT(closeButtonPressed(bool)));
+
 #ifndef MOBILE_BUILD
     connect(ui->serialButton, SIGNAL(clicked(bool)), this, SLOT(serialCheckboxClicked(bool)));
     ui->serialButton->setText("Serial");
@@ -70,6 +76,10 @@ SettingsPage::SettingsPage(QWidget *parent) :
     ui->serialButton->setCheckable(true);
 #endif //MOBILE_BUILD
 
+    QFont font = ui->closeButton->font();
+    font.setPointSize(36);
+    ui->closeButton->setFont(font);
+
     QScroller::grabGesture(ui->scrollArea->viewport(), QScroller::LeftMouseButtonGesture);
 }
 
@@ -82,6 +92,15 @@ void SettingsPage::setupUI() {
 }
 
 void SettingsPage::updateUI() {
+
+    if (mData->shouldUseHueAssets())  {
+        ui->timeoutSlider->setHidden(true);
+        ui->timeoutLabel->setHidden(true);
+    } else {
+        ui->timeoutSlider->setHidden(false);
+        ui->timeoutLabel->setHidden(false);
+    }
+
     if (mData->currentRoutine() <= ELightingRoutine::eSingleSawtoothFadeOut) {
         ui->speedSlider->setSliderColorBackground(mData->mainColor());
         ui->timeoutSlider->setSliderColorBackground(mData->mainColor());
@@ -125,13 +144,12 @@ void SettingsPage::timeoutChanged(int newTimeout) {
 
 void SettingsPage::showEvent(QShowEvent *event) {
     Q_UNUSED(event);
-
     updateUI();
     checkCheckBoxes();
 
-
     if (mData->currentDevices().size() == 0) {
         deviceCountReachedZero();
+
     } else {
         ui->speedSlider->enable(true);
         ui->timeoutSlider->enable(true);
@@ -176,34 +194,28 @@ void SettingsPage::resizeEvent(QResizeEvent *event) {
 #endif //MOBILE_BUILD
 
 
-    ui->speedSlider->setMinimumSize(QSize(this->width() * 0.8f, this->height() * 0.15f));
-    ui->speedSlider->setMaximumSize(QSize(this->width() * 0.8f, this->height() * 0.15f));
+    ui->speedSlider->setMinimumSize(QSize(this->width() * 0.8f, this->height() * 0.1f));
+    ui->speedSlider->setMaximumSize(QSize(this->width() * 0.8f, this->height() * 0.1f));
 
-    ui->timeoutSlider->setMinimumSize(QSize(this->width() * 0.8f, this->height() * 0.15f));
-    ui->timeoutSlider->setMaximumSize(QSize(this->width() * 0.8f, this->height() * 0.15f));
+    ui->timeoutSlider->setMinimumSize(QSize(this->width() * 0.8f, this->height() * 0.1f));
+    ui->timeoutSlider->setMaximumSize(QSize(this->width() * 0.8f, this->height() * 0.1f));
 
     ui->scrollArea->widget()->setMaximumWidth(this->width() * 0.9f);
 
     ui->debugButton->setMinimumHeight(ui->debugButton->width());
-    ui->debugButton->setMaximumHeight(ui->debugButton->width());
-
     ui->resetButton->setMinimumHeight(ui->debugButton->width());
-    ui->resetButton->setMaximumHeight(ui->debugButton->width());
-
-
     ui->loadButton->setMinimumHeight(ui->loadButton->width());
-    ui->loadButton->setMaximumHeight(ui->loadButton->width());
-
     ui->saveButton->setMinimumHeight(ui->saveButton->width());
-    ui->saveButton->setMaximumHeight(ui->saveButton->width());
-
     ui->mergeButton->setMinimumHeight(ui->mergeButton->width());
-    ui->mergeButton->setMaximumHeight(ui->mergeButton->width());
+
+    int min = std::min(ui->closeButton->width(), ui->closeButton->height()) * 0.85f;
+    ui->closeButton->setIconSize(QSize(min, min));
+
 }
 
 void SettingsPage::checkCheckBoxes() {
     std::vector<ECommType> types =  mData->commTypeSettings()->commTypes();
-    for (int i = 0; i < 3; ++i) {
+    for (uint32_t i = 0; i < types.size(); ++i) {
         QPushButton* checkBox = mConnectionButtons[i];
         ECommType type = types[i];
         if (mData->commTypeSettings()->commTypeEnabled(type)) {
@@ -215,11 +227,14 @@ void SettingsPage::checkCheckBoxes() {
 }
 
 void SettingsPage::checkBoxClicked(ECommType type, bool checked) {
-    if (!mData->commTypeSettings()->enableCommType(type, checked)) {
+    bool successful = mData->commTypeSettings()->enableCommType(type, checked);
+    if (!successful) {
         mConnectionButtons[mData->commTypeSettings()->indexOfCommTypeSettings(type)]->setChecked(true);
-    } else if (!mComm->hasStarted(type) && checked) {
+    }
+
+    if (checked) {
         mComm->startup(type);
-    } else if (mComm->hasStarted(type) && !checked) {
+    } else {
         mComm->shutdown(type);
         mData->removeDevicesOfType(type);
     }
@@ -231,6 +246,7 @@ void SettingsPage::loadButtonClicked(bool) {
     dialog.setFileMode(QFileDialog::AnyFile);
     dialog.setNameFilter(tr("JSON (*.json)"));
     dialog.setViewMode(QFileDialog::Detail);
+    dialog.setStyleSheet("color:silver;");
     const QString downloadsFolder = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
     dialog.setDirectory(downloadsFolder);
     QStringList fileNames;
@@ -299,4 +315,13 @@ void SettingsPage::deviceCountReachedZero() {
 
 void SettingsPage::renderUI() {
 
+}
+
+void SettingsPage::paintEvent(QPaintEvent *) {
+    QStyleOption opt;
+    opt.init(this);
+    QPainter painter(this);
+
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
 }

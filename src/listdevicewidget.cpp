@@ -12,7 +12,8 @@
 ListDeviceWidget::ListDeviceWidget(const SLightDevice& device,
                                            const QString& name,
                                            const std::vector<QColor>& colors,
-                                           QWidget *parent) : QWidget(parent) {
+                                           QWidget *parent)  {
+    Q_UNUSED(parent);
     init(device, name);
     updateWidget(device, colors);
 }
@@ -22,7 +23,7 @@ void ListDeviceWidget::init(const SLightDevice& device, const QString& name) {
     mIsChecked = false;
 
     // setup icon
-    mIconData = IconData(256, 256);
+    mIconData = IconData(32, 32);
     mStatusIcon = new QLabel(this);
     mStatusIcon->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -76,12 +77,6 @@ void ListDeviceWidget::init(const SLightDevice& device, const QString& name) {
     mLayout->setStretch(1, 10);
 
     mKey = structToIdentifierString(device);
-
-    mDevice = device;
-
-    QString stylesheet = createStyleSheet(mDevice);
-    mController->setStyleSheet(stylesheet);
-    mStatusIcon->setStyleSheet(stylesheet);
 }
 
 
@@ -107,11 +102,26 @@ void  ListDeviceWidget::updateWidget(const SLightDevice& device,
 
     if (!device.isReachable) {
         QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mStatusIcon);
+        QString styleSheet = "color: red;";
+#ifdef MOBILE_BUILD
+        styleSheet += "font: 14pt;";
+#else
+        styleSheet += "font: bold 8pt;";
+#endif
+        //mController->setStyleSheet(styleSheet);
         effect->setOpacity(0.25f);
         mStatusIcon->setGraphicsEffect(effect);
+        effect->setOpacity(0.5f);
+        mController->setGraphicsEffect(effect);
     } else if (!device.isOn) {
+        QLinearGradient alphaGradient(mStatusIcon->rect().topLeft(), mStatusIcon->rect().bottomLeft());
+        alphaGradient.setColorAt(0.8, Qt::transparent);
+        alphaGradient.setColorAt(0.05, Qt::gray);
         QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mStatusIcon);
-        effect->setOpacity(0.75f);
+        effect->setOpacityMask(alphaGradient);
+        mStatusIcon->setGraphicsEffect(effect);
+    } else {
+        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mStatusIcon);
         mStatusIcon->setGraphicsEffect(effect);
     }
 }
@@ -141,10 +151,8 @@ QString ListDeviceWidget::structToIdentifierString(const SLightDevice& device) {
         returnString = utils::ECommTypeToString(device.type);
     }
     QString onString;
-    if(device.isOn && device.isReachable) {
+    if(device.isReachable) {
         onString = "AA";
-    } else if (device.isReachable){
-        onString = "BB";
     } else {
         onString = "CC";
     }
@@ -152,11 +160,10 @@ QString ListDeviceWidget::structToIdentifierString(const SLightDevice& device) {
     return returnString;
 }
 
-bool ListDeviceWidget::setChecked(bool checked) {
+bool ListDeviceWidget::setHighlightChecked(bool checked) {
     mIsChecked = checked;
-    QString stylesheet = createStyleSheet(mDevice);
-    mController->setStyleSheet(stylesheet);
-    mStatusIcon->setStyleSheet(stylesheet);
+    mController->setStyleSheet(createStyleSheet(mDevice));
+    mStatusIcon->setStyleSheet(createStyleSheet(mDevice));
     repaint();
     return mIsChecked;
 }
@@ -177,13 +184,13 @@ void ListDeviceWidget::paintEvent(QPaintEvent *event) {
 
 QString ListDeviceWidget::createStyleSheet(const SLightDevice& device) {
     QString styleSheet;
-    QString backgroundStyleSheet = "";
-    QString offStyleSheet = "color: #555;";
-    QString unReachableStyleSheet = " color: #333;";
+    QString backgroundStyleSheet = "background-color: rgba(0,0,0,0);";
+    QString offStyleSheet = "color: #666; background-color: rgba(0,0,0,0);";
+    QString unReachableStyleSheet = " color: red; background-color: rgba(0,0,0,0);";
     QString checkedStyleSheet = "background-color: #3d8ec9;";
 
     if (mIsChecked) {
-        styleSheet = checkedStyleSheet;
+            styleSheet = checkedStyleSheet;
     } else if(!device.isReachable) {
        styleSheet = unReachableStyleSheet;
     } else if (!device.isOn) {
@@ -193,13 +200,15 @@ QString ListDeviceWidget::createStyleSheet(const SLightDevice& device) {
     }
 #ifdef MOBILE_BUILD
     styleSheet += "font: 14pt;";
+#else
+    styleSheet += "font: bold 8pt;";
 #endif
     return styleSheet;
 }
 
 void ListDeviceWidget::mouseReleaseEvent(QMouseEvent *event) {
     Q_UNUSED(event);
-    setChecked(!checked());
+    //setChecked(!checked());
     emit clicked(mKey);
 }
 

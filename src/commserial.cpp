@@ -11,15 +11,13 @@
 #include <QDebug>
 
 CommSerial::CommSerial() {
+    mStateUpdateInterval = 500;
+    mLookingForActivePorts = false;
     setupConnectionList(ECommType::eSerial);
 
-    mDiscoveryTimer = new QTimer(this);
     connect(mDiscoveryTimer, SIGNAL(timeout()), this, SLOT(discoveryRoutine()));
 
-    mStateUpdateTimer = new QTimer(this);
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(stateUpdate()));
-
-    mStateUpdateInterval = 500;
 }
 
 
@@ -110,15 +108,18 @@ QSerialPort* CommSerial::serialPortByName(QString name) {
 
 void CommSerial::discoveryRoutine() {
     QString discoveryPacket = QString("DISCOVERY_PACKET;");
+    bool runningDiscoveryOnSomething = false;
     for (auto&& it : mDeviceTable) {
           QString controllerName = QString::fromUtf8(it.first.c_str());
           QSerialPort *serial = serialPortByName(controllerName);
           bool found = (std::find(mDiscoveredList.begin(), mDiscoveredList.end(), controllerName) != mDiscoveredList.end());
           if (!found && serial != NULL) {
+              runningDiscoveryOnSomething = true;
               // write to device
               serial->write(discoveryPacket.toStdString().c_str());
           }
      }
+    if (!runningDiscoveryOnSomething) mLookingForActivePorts = false;
 }
 
 
@@ -152,12 +153,11 @@ void CommSerial::discoverSerialPorts() {
                 qDebug() << "Name : " << info.portName();
                 qDebug() << "Description : " << info.description();
                 qDebug() << "Manufacturer: " << info.manufacturer();
-
                 connectSerialPort(info);
                 addController(info.portName());
 
-                mSerialInfoList.push_front(info);
-
+                mSerialInfoList.push_back(info);
+                mLookingForActivePorts = true;
             }
         }
     }

@@ -217,7 +217,7 @@ public:
      * \param type the communication type to request.
      * \return a hash table of all connected devices of the given type.
      */
-    const std::unordered_map<std::string, std::list<SLightDevice> >& deviceTable(ECommType type) {
+    const std::unordered_map<std::string, std::list<SLightDevice> > deviceTable(ECommType type) {
         return commByType(type)->deviceTable();
     }
 
@@ -237,7 +237,7 @@ public:
      * \param type commtype that you want the undiscovered devices from
      * \return list of all undiscovered devices.
      */
-    const std::list<QString>& undiscoveredList(ECommType type) {
+    std::list<QString> undiscoveredList(ECommType type) {
         return commByType(type)->undiscoveredList();
     }
 
@@ -294,6 +294,15 @@ public:
      * \return true if successful, false otherwise
      */
     bool loadDebugData(const std::list<SLightDevice> debugDevices);
+
+
+#ifndef MOBILE_BUILD
+    /*!
+     * \brief lookingForActivePorts true if currently looking for ports, false if not looking
+     * \return true if currently looking for ports, false if not looking
+     */
+    bool lookingForActivePorts() { return mSerial->lookingForActivePorts(); }
+#endif //MOBILE_BUILD
 
 signals:
     /*!

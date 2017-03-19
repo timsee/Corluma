@@ -71,7 +71,7 @@ public:
     void reloadConnectionList();
 
     /// connects the GroupsParser object to this UI widget.
-    void connectGroupsParser(GroupsParser *parser) { mGroups = parser; }
+    void connectGroupsParser(GroupsParser *parser);
 
     /*!
      * \brief devicesFromKey take a key that represents a collection or mood and convert it into
@@ -129,6 +129,21 @@ public slots:
     void discoveryButtonPressed();
 
 private slots:
+
+    /*!
+     * \brief groupDeleted handles whenever a group is deleted on the edit page.
+     */
+    void groupDeleted(QString);
+
+    /*!
+     * \brief newCollectionAdded handles whenever a new collection was created on the edit page.
+     */
+    void newCollectionAdded(QString);
+
+    /*!
+     * \brief newMoodAdded handles whenever a new mood was created on the edit page.
+     */
+    void newMoodAdded(QString);
 
     /*!
      * \brief renderUI renders expensive assets if and only if the assets have had any
@@ -212,6 +227,16 @@ private slots:
      */
     void editGroupClicked(QString key);
 
+    //--------------------
+    // Groups Parser Slots
+    //--------------------
+
+    /*!
+     * \brief newConnectionFound Groups parser found a connection that wasn't in app data,
+     *        this handles that case so that discovery can start.
+     */
+    void newConnectionFound(QString);
+
 protected:
     /*!
      * \brief showEvent called before the this page is shown. Used to sync up
@@ -231,6 +256,31 @@ protected:
     void resizeEvent(QResizeEvent *);
 
 private:
+
+    /*!
+     * \brief mDevicesListWidget List widget for devices. Either the moods widget or this device widget
+     *        is shown at any given time but the other is kept around in memory since they are expensive to render.
+     */
+    QListWidget *mDevicesListWidget;
+
+    /*!
+     * \brief mMoodsListWidget List widget for devices. Either the moods widget or this device widget
+     *        is shown at any given time but the other is kept around in memory since they are expensive to render.
+     */
+    QListWidget *mMoodsListWidget;
+
+    /*!
+     * \brief mCurrentListWidget points to either the moods list widget or devices list widget, depending on which
+     *        is currentl displayed.
+     */
+    QListWidget *mCurrentListWidget;
+
+    /*!
+     * \brief hideUnusedWidgets hides either the moods list widget or the devices list widget. Displays the other.
+     * \param showMoodWidgets true to show the moods widget and hide the devices widget, false to show devices widget
+     *        and show the moods widget.
+     */
+    void hideUnusedWidgets(bool showMoodWidgets);
 
     /*!
      * \brief initDevicesCollectionWidget constructor helper for making a DeviceCollectionsWidget
@@ -368,6 +418,11 @@ private:
      */
     void updateConnectionList();
 
+    /*!
+     * \brief updateConnectionListHeight updates the height of resources in the
+     *        current connection list.
+     */
+    void updateConnectionListHeight();
 
     //-------------
     // Helpers for Checking Model Data

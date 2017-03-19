@@ -285,16 +285,6 @@ private:
      */
     void handleMouseEvent(QMouseEvent *event);
 
-    /*!
-     * \brief map map function from arduino: https://www.arduino.cc/en/Reference/Map
-     * \param x the value getting the map applied
-     * \param in_min the original minimum possible value of x
-     * \param in_max the original maximum possible value of x
-     * \param out_min the new minimum possible value of x
-     * \param out_max the new maximum possibel value of x
-     * \return x mapped from the range of in_min->in_max to the range of out_min->out_max
-     */
-    int map(int x, int in_min, int in_max, int out_min, int out_max);
 };
 
 #endif // COLORPICKER_H

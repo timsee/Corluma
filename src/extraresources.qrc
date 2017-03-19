@@ -19,5 +19,10 @@
         <file>images/openedArrow.png</file>
         <file>images/selectAllIcon.png</file>
         <file>resources/debugData.json</file>
+        <file>images/backArrow.png</file>
+        <file>images/huerangeFade.png</file>
+        <file>images/pressHueBridgeImage.png</file>
+        <file>images/checkmark.png</file>
+        <file>images/wifi.png</file>
     </qresource>
 </RCC>

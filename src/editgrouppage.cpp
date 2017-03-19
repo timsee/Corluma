@@ -22,6 +22,7 @@ EditGroupPage::EditGroupPage(QWidget *parent) :
     connect(ui->closeButton, SIGNAL(clicked(bool)), this, SLOT(closePressed(bool)));
     connect(ui->resetButton, SIGNAL(clicked(bool)), this, SLOT(resetPressed(bool)));
     connect(ui->deleteButton, SIGNAL(clicked(bool)), this, SLOT(deletePressed(bool)));
+    connect(ui->saveButton, SIGNAL(clicked(bool)), this, SLOT(savePressed(bool)));
 
     connect(ui->nameEdit, SIGNAL(textEdited(QString)), this, SLOT(lineEditChanged(QString)));
 
@@ -29,6 +30,8 @@ EditGroupPage::EditGroupPage(QWidget *parent) :
 
     QScroller::grabGesture(ui->deviceList->viewport(), QScroller::LeftMouseButtonGesture);
 
+    mRenderThread = new QTimer(this);
+    connect(mRenderThread, SIGNAL(timeout()), this, SLOT(renderUI()));
 }
 
 EditGroupPage::~EditGroupPage() {
@@ -40,12 +43,18 @@ void EditGroupPage::showGroup(QString key, std::list<SLightDevice> groupDevices,
     mNewName = key;
     mOriginalDevices = groupDevices;
     ui->nameEdit->setText(key);
+    ui->saveButton->setEnabled(false);
     mIsMood = isMood;
     if (mIsMood) {
         ui->helpLabel->setText("Edit the Mood...");
     } else {
         ui->helpLabel->setText("Edit the Collection...");
     }
+    updateDevices(groupDevices, devices);
+    repaint();
+}
+
+void EditGroupPage::updateDevices(std::list<SLightDevice> groupDevices, std::list<SLightDevice> devices) {
 
     for (auto&& device : devices) {
         bool widgetFound = false;
@@ -54,31 +63,34 @@ void EditGroupPage::showGroup(QString key, std::list<SLightDevice> groupDevices,
             if (compareLightDevice(device, widgetDevice)) {
                 widgetFound = true;
                 widget->updateWidget(device, mData->colorGroup(device.colorGroup));
-                widget->setChecked(shouldSetChecked(device, groupDevices));
+                widget->setHighlightChecked(shouldSetChecked(device, groupDevices));
             }
         }
 
         // no widget found for this device,
         if (!widgetFound) {
             QString name;
+            bool shouldAddWidget = true;
             if (device.type == ECommType::eHue) {
                 SHueLight hue = mComm->hueLightFromLightDevice(device);
+                if (hue.name.compare("") == 0) shouldAddWidget = false;
                 name = hue.name;
             } else {
                 name = device.name;
             }
 
-            ListDeviceWidget *widget = new ListDeviceWidget(device, name, mData->colorGroup(device.colorGroup));
-            widget->setChecked(shouldSetChecked(device, groupDevices));
+            if (shouldAddWidget) {
+                ListDeviceWidget *widget = new ListDeviceWidget(device, name, mData->colorGroup(device.colorGroup));
+                widget->setHighlightChecked(shouldSetChecked(device, groupDevices));
 
-            int index = ui->deviceList->count();
-            ui->deviceList->addItem(widget->key());
-            ui->deviceList->setItemWidget(ui->deviceList->item(index), widget);
-            mWidgets.push_back(widget);
+                int index = ui->deviceList->count();
+                ui->deviceList->addItem(widget->key());
+                ui->deviceList->setItemWidget(ui->deviceList->item(index), widget);
+                mWidgets.push_back(widget);
+            }
         }
     }
     ui->deviceList->sortItems();
-    repaint();
 }
 
 void EditGroupPage::resize() {
@@ -102,6 +114,18 @@ void EditGroupPage::resize() {
 // Slots
 // ----------------------------
 
+
+void EditGroupPage::deviceListClicked(QListWidgetItem* item) {
+     ListDeviceWidget *widget = qobject_cast<ListDeviceWidget*>(ui->deviceList->itemWidget(item));
+     widget->setHighlightChecked(!widget->checked());
+
+     if (checkForChanges()) {
+         ui->saveButton->setEnabled(true);
+     } else {
+         ui->saveButton->setEnabled(false);
+     }
+}
+
 void EditGroupPage::deletePressed(bool) {
     QMessageBox::StandardButton reply;
     QString text = "Delete the " + mOriginalName + " group?";
@@ -120,14 +144,10 @@ void EditGroupPage::closePressed(bool) {
                                       QMessageBox::Yes|QMessageBox::No);
         if (reply == QMessageBox::Yes) {
           saveChanges();
+          ui->saveButton->setEnabled(true);
         }
     }
     emit pressedClose();
-}
-
-void EditGroupPage::deviceListClicked(QListWidgetItem* item) {
-     ListDeviceWidget *widget = qobject_cast<ListDeviceWidget*>(ui->deviceList->itemWidget(item));
-     widget->setChecked(widget->checked());
 }
 
 void EditGroupPage::resetPressed(bool) {
@@ -137,10 +157,26 @@ void EditGroupPage::resetPressed(bool) {
             SLightDevice widgetDevice = widget->device();
             if (compareLightDevice(device, widgetDevice)) {
                 deviceFound = true;
-                widget->setChecked(true);
+                widget->setHighlightChecked(true);
             }
         }
-        if (!deviceFound) widget->setChecked(false);
+        if (!deviceFound) widget->setHighlightChecked(false);
+    }
+}
+
+void EditGroupPage::savePressed(bool) {
+    if (checkForChanges()) {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Changes", "Changes were made, save the changes?",
+                                      QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+          saveChanges();
+          // make new original devices
+          mOriginalDevices = createCollection();
+          // make new original name
+          mOriginalName = mNewName;
+          ui->saveButton->setEnabled(false);
+        }
     }
 }
 
@@ -152,14 +188,14 @@ void EditGroupPage::resetPressed(bool) {
 void EditGroupPage::showEvent(QShowEvent *event) {
     Q_UNUSED(event);
 
-    //mRenderThread->start(mRenderInterval);
+    mRenderThread->start(mRenderInterval);
 }
 
 
 void EditGroupPage::hideEvent(QHideEvent *event) {
     Q_UNUSED(event);
 
-    //mRenderThread->stop();
+    mRenderThread->stop();
 }
 
 void EditGroupPage::paintEvent(QPaintEvent *) {
@@ -173,8 +209,18 @@ void EditGroupPage::paintEvent(QPaintEvent *) {
 
 
 void EditGroupPage::lineEditChanged(const QString& newText) {
-    qDebug() << "line edit changted" << newText;
     mNewName = newText;
+
+    if (checkForChanges()) {
+        ui->saveButton->setEnabled(true);
+    } else {
+        ui->saveButton->setEnabled(false);
+    }
+}
+
+void EditGroupPage::renderUI() {
+    std::list<SLightDevice> allDevices = mComm->allDevices();
+   // updateDevices(std::list<SLightDevice>(), allDevices);
 }
 
 // ----------------------------
@@ -182,6 +228,53 @@ void EditGroupPage::lineEditChanged(const QString& newText) {
 // ----------------------------
 
 void EditGroupPage::saveChanges() {
+
+    //---------------------------------
+    // check if group has a name, at least one device, and all valid devices.
+    //---------------------------------
+    bool nameIsValid = false;
+    if (mNewName.size() > 0
+            && !(mNewName.compare("zzzAVAIALBLE_DEVICES") == 0
+                || mNewName.compare("zzzAVAIALBLE_DEVICES") == 0
+                || mNewName.compare("zzzAVAIALBLE_DEVICES") == 0
+                || mNewName.compare("zzzAVAIALBLE_DEVICES") == 0)) {
+            nameIsValid = true;
+    } else {
+        qDebug() << "WARNING: attempting to save a group without a valid name";
+    }
+
+    bool devicesAreValid = true;
+    if (mNewDevices.size() > 0) {
+        for (auto& device : mNewDevices) {
+            if (device.name.compare("") == 0
+                    || device.index == 0) {
+                devicesAreValid = false;
+            }
+        }
+    } else {
+        devicesAreValid = false;
+    }
+
+    if (!nameIsValid || !devicesAreValid) {
+        qDebug() << "Not saving this group: " << mNewName;
+        qDebug() << "---------------------";
+        for (auto& device : mNewDevices) {
+            device.PRINT_DEBUG();
+        }
+        qDebug() << "---------------------";
+
+        // pop up warning that it isn't saving
+        QMessageBox msgBox;
+        msgBox.setText("Trying to save invalid group, no changes will be made.");
+        msgBox.exec();
+        // close edit page anyway.
+        emit pressedClose();
+        return;
+    }
+
+    //---------------------------------
+    // Save if passing checks
+    //---------------------------------
     if (mIsMood) {
         mGroups->removeGroup(mOriginalName);
         mGroups->saveNewMood(mNewName, createCollection());
@@ -211,8 +304,10 @@ std::list<SLightDevice> EditGroupPage::createMood() {
 
 bool EditGroupPage::checkForChanges() {
     if (!(mNewName.compare(mOriginalName) == 0)) {
+        qDebug() << "names dont match";
         return true;
     }
+
     // check all checked devices are part of original group
     for (int i = 0; i < ui->deviceList->count(); ++i) {
         QListWidgetItem *item = ui->deviceList->item(i);
@@ -225,7 +320,10 @@ bool EditGroupPage::checkForChanges() {
                     foundDevice = true;
                 }
             }
-            if (!foundDevice) return true;
+            if (!foundDevice) {
+                qDebug() << "all devices are part of original group";
+                return true;
+            }
         }
     }
     // check all given devices are checked
@@ -235,10 +333,14 @@ bool EditGroupPage::checkForChanges() {
             ListDeviceWidget *widget = qobject_cast<ListDeviceWidget*>(ui->deviceList->itemWidget(item));
             Q_ASSERT(widget);
             if (compareLightDevice(widget->device(), device)) {
-                if (!widget->checked()) return true;
+                if (!widget->checked())  {
+                    qDebug() << "all given deviecs are checked";
+                    return true;
+                }
             }
         }
     }
+
     return false;
 }
 

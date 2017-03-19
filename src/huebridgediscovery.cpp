@@ -101,7 +101,15 @@ void HueBridgeDiscovery::testBridgeIP() {
      QNetworkRequest request = QNetworkRequest(QUrl(urlString));
      request.setHeader(QNetworkRequest::ContentTypeHeader,
                        QStringLiteral("text/html; charset=utf-8"));
-     mNetworkManager->post(request, "{\"devicetype\":\"my_hue_app#corluma device\"}");
+
+     ///TODO: give more specific device ID!
+     QString deviceID = kAppName + "#corluma device";
+     //qDebug() << "device ID" << deviceID;
+     QJsonObject json;
+     json["devicetype"] = deviceID;
+     QJsonDocument doc(json);
+     QString strJson(doc.toJson(QJsonDocument::Compact));
+     mNetworkManager->post(request, strJson.toUtf8());
 }
 
 
@@ -332,5 +340,5 @@ void HueBridgeDiscovery::attemptSearchForUsername() {
 
 const QString HueBridgeDiscovery::kPhillipsUsername = QString("PhillipsBridgeUsername");
 const QString HueBridgeDiscovery::kPhillipsIPAddress = QString("PhillipsBridgeIPAddress");
-
+const QString HueBridgeDiscovery::kAppName = QString("Corluma");
 

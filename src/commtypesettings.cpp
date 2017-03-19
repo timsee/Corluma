@@ -33,7 +33,7 @@ CommTypeSettings::CommTypeSettings() {
     //error handling, must always have at least one stream!
     if (mCommTypeCount == 0) {
         mDeviceInUse[indexOfCommTypeSettings(ECommType::eHue)] = true;
-        mSettings->setValue(mCommTypeInUseSaveKeys[indexOfCommTypeSettings(ECommType::eHue)], QString::number((int)false));
+        mSettings->setValue(mCommTypeInUseSaveKeys[indexOfCommTypeSettings(ECommType::eHue)], QString::number((int)true));
         mSettings->sync();
         mCommTypeCount++;
     }
@@ -63,7 +63,7 @@ int CommTypeSettings::indexOfCommTypeSettings(ECommType type) {
 #endif
             break;
         default:
-            qDebug() << "AM I GETTING HERE?";
+            throw "got invalid commtype in commtypesettings";
             index = 0;
             break;
     }

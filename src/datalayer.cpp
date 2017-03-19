@@ -423,7 +423,6 @@ void DataLayer::updateCt(int ct) {
     std::list<SLightDevice>::iterator iterator;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
         if (iterator->type == ECommType::eHue) {
-            iterator->colorMode = EColorMode::eCT;
             iterator->color = utils::colorTemperatureToRGB(ct);
         }
     }

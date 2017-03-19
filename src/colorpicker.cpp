@@ -33,7 +33,7 @@ ColorPicker::ColorPicker(QWidget *parent) :
     // --------------
 
     rSlider = new LightsSlider(this);
-    rSlider->setSliderColorBackground(QColor(255, 0, 0));    
+    rSlider->setSliderColorBackground(QColor(255, 0, 0));
     rSlider->slider->setRange(0, 255);
     rSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     rSlider->setSliderHeight(0.8f);
@@ -271,7 +271,7 @@ void ColorPicker::resizeEvent(QResizeEvent *event) {
         } else {
             pixmap = QPixmap(":/images/color_wheel.png");
         }
-        int wheelSize = (this->size().height() - rSlider->size().height() - gSlider->size().height() - bSlider->size().height()) * 0.7f;
+        int wheelSize = (this->size().height() - rSlider->size().height() - gSlider->size().height() - bSlider->size().height()) * 0.8f;
         rSlider->setMinimumHeight(wheelSize * 0.2f);
         gSlider->setMinimumHeight(wheelSize * 0.2f);
         bSlider->setMinimumHeight(wheelSize * 0.2f);
@@ -321,8 +321,8 @@ void ColorPicker::handleMouseEvent(QMouseEvent *event) {
             && event->pos().y() < deadZoneBottom)
             && mShowWheel) {
         // map numbers to more usable ranges
-        int x = map(event->pos().x(), deadZoneLeft, deadZoneRight, 0, colorWheel->pixmap()->width());
-        int y = map(event->pos().y(), deadZoneTop, deadZoneBottom, 0, colorWheel->pixmap()->height());
+        int x = (int)utils::map(event->pos().x(), deadZoneLeft, deadZoneRight, 0, colorWheel->pixmap()->width());
+        int y = (int)utils::map(event->pos().y(), deadZoneTop, deadZoneBottom, 0, colorWheel->pixmap()->height());
         // grab the color of the pixel that the user has clicked
         QColor color = QColor(colorWheel->pixmap()->toImage().pixel((int)x, (int)y));
 
@@ -352,8 +352,4 @@ void ColorPicker::useHueWheel(bool shouldUseHueWheel) {
 
 void ColorPicker::resetThrottleFlag() {
     mThrottleFlag = false;
-}
-
-int ColorPicker::map(int x, int in_min, int in_max, int out_min, int out_max) {
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }

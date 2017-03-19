@@ -97,7 +97,41 @@ public:
      */
     bool saveFile(QString savePath);
 
+    /*!
+     * \brief removeAppData delete .json file from local data. Will delete all saved json data permanently.
+     * \return true if successful, false otherwise.
+     */
+    bool removeAppData();
+
+signals:
+    /*!
+     * \brief newConnectionFound emitted whenever a new connection is found in JSON data. Only useful for
+     *        Yun connections, currently.
+     */
+    void newConnectionFound(QString);
+
+    /*!
+     * \brief groupDeleted signaled whenever a group is deleted, sending out its name to anyone, listening in the dark.
+     */
+    void groupDeleted(QString);
+
+    /*!
+     * \brief newCollectionAdded signaled whenever a collection is added, sending out its name to all listeners.
+     */
+    void newCollectionAdded(QString);
+
+    /*!
+     * \brief newMoodAdded signaled whenever a mood is added, sending out its name to all listeners.
+     */
+    void newMoodAdded(QString);
+
 private:
+
+    /*!
+     * \brief findNewControllers look to see if there are any new controllers in a mood or collection
+     * \param object JSON object that represents a mood or collection.
+     */
+    void findNewControllers(QJsonObject object);
 
     /*!
      * \brief loadJsonFile loads json data at given path and turns it into a JsonDocument
@@ -164,6 +198,12 @@ private:
      *        to file whenever it is changed.
      */
     QJsonDocument mJsonData;
+
+    /*!
+     * \brief mNewConnections used during parsing, contains a list of all new connections from a json file.
+     */
+    std::list<QString> mNewConnections;
+
 };
 
 #endif // GROUPSPARSER_H

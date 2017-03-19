@@ -223,6 +223,56 @@ inline int rgbToColorTemperature(QColor color) {
     return -1;
 }
 
+
+/*!
+ * \brief brightnessDifference gives a percent difference between two brightness
+ *        values
+ * \param first first brightness to check
+ * \param second second brightness to check
+ * \return a value between 0 and 1 which represents how different the brightnesses are.
+ */
+inline float brightnessDifference(float first, float second) {
+    return std::abs(first - second) / 100.0f;
+}
+
+/*!
+ * \brief colorDifference gives a percent difference between two colors
+ * \param first first color to check
+ * \param second second color to check
+ * \return a value between 0 and 1 which is how different two colors are.
+ */
+inline float colorDifference(QColor first, QColor second) {
+    float r = std::abs(first.red() - second.red()) / 255.0f;
+    float g = std::abs(first.green() - second.green()) / 255.0f;
+    float b = std::abs(first.blue() - second.blue()) / 255.0f;
+    float difference = (r + g + b) / 3.0f;
+    return difference;
+}
+
+
+/*!
+ * \brief map map function from arduino: https://www.arduino.cc/en/Reference/Map
+ * \param x the value getting the map applied
+ * \param in_min the original minimum possible value of x
+ * \param in_max the original maximum possible value of x
+ * \param out_min the new minimum possible value of x
+ * \param out_max the new maximum possibel value of x
+ * \return x mapped from the range of in_min->in_max to the range of out_min->out_max
+ */
+inline float map(float x, float in_min, float in_max, float out_min, float out_max) {
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+
+/*!
+ * \brief clamps a value between the lower and upper values given. So it can never be lower than
+ * the lower value or higher than the higher value.
+ */
+template <typename T>
+T clamp(const T& n, const T& lower, const T& upper) {
+  return std::max(lower, std::min(n, upper));
+}
+
 }
 
 
@@ -374,6 +424,7 @@ struct SLightDevice {
 };
 
 
+/// compares light devices, ignoring state data and paying attention only to values that don't change.
 inline bool compareLightDevice(const SLightDevice& lhs, const SLightDevice& rhs) {
     return ((lhs.index == rhs.index)
             && (lhs.type == rhs.type)

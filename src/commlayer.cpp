@@ -137,7 +137,7 @@ QString CommLayer::sendColorTemperatureChange(const std::list<SLightDevice>& dev
     QString packet;
     for (auto&& device : deviceList) {
         if (device.type == ECommType::eHue) {
-            mHue->changeAmbientLight(device.index, temperature);
+            mHue->changeAmbientLight(device.index, device.brightness, temperature);
         }
     }
     return packet;

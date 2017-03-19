@@ -13,7 +13,10 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" rowstretch="0,5,40">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="5">
+   <property name="spacing">
+    <number>0</number>
+   </property>
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -26,51 +29,7 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <property name="spacing">
-    <number>0</number>
-   </property>
-   <item row="2" column="0">
-    <widget class="QListWidget" name="connectionList">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>14</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="focusPolicy">
-      <enum>Qt::NoFocus</enum>
-     </property>
-     <property name="midLineWidth">
-      <number>0</number>
-     </property>
-     <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
-     <property name="sizeAdjustPolicy">
-      <enum>QAbstractScrollArea::AdjustToContents</enum>
-     </property>
-     <property name="selectionMode">
-      <enum>QAbstractItemView::NoSelection</enum>
-     </property>
-     <property name="selectionBehavior">
-      <enum>QAbstractItemView::SelectRows</enum>
-     </property>
-     <property name="verticalScrollMode">
-      <enum>QAbstractItemView::ScrollPerPixel</enum>
-     </property>
-     <property name="horizontalScrollMode">
-      <enum>QAbstractItemView::ScrollPerPixel</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,2,2,1">
      <property name="spacing">
       <number>0</number>
@@ -84,7 +43,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Discovery</string>
+        <string>Discover</string>
        </property>
       </widget>
      </item>
@@ -123,7 +82,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>New Group</string>
+        <string>New</string>
        </property>
       </widget>
      </item>

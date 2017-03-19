@@ -22,7 +22,7 @@ LightsButton::LightsButton(QWidget *parent) : QWidget(parent) {
 
 
 void LightsButton::setupAsMenuButton(int pageNumber, const std::vector<QColor>& group) {
-    mIconData = IconData(256, 256);
+    mIconData = IconData(32, 32);
     if (pageNumber == 0) {
         mIconData.setSolidColor(QColor(0,255,0));
     } else if (pageNumber == 1) {
@@ -40,6 +40,7 @@ void LightsButton::setupAsMenuButton(int pageNumber, const std::vector<QColor>& 
     mLayout->addWidget(button);
     button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setLayout(mLayout);
+    resizeIcon();
 }
 
 void LightsButton::setupAsStandardButton(ELightingRoutine routine, EColorGroup colorGroup, QString label, const std::vector<QColor>& group) {
@@ -85,6 +86,7 @@ void LightsButton::setupAsStandardButton(ELightingRoutine routine, EColorGroup c
     mLayout->setStretch(0, 50);
     mLayout->setStretch(1, 1);
     setLayout(mLayout);
+    resizeIcon();
 }
 
 ELightingRoutine LightsButton::lightingRoutine() {
@@ -112,46 +114,38 @@ void LightsButton::enable(bool shouldEnable) {
 
 void LightsButton::resizeEvent(QResizeEvent *event) {
     Q_UNUSED(event);
-    int size = (int)(std::min(this->size().width(), this->size().height()));
+    resizeIcon();
+}
+
+void LightsButton::resizeIcon() {
+    int size;
     if (mIsMenuButton) {
-        button->setMinimumSize(size,size);
-        button->setIconSize(QSize(this->size().width() * 0.8f,
-                                  this->size().height() * 0.8f));
+        size = (int)(std::min(this->size().width(), this->size().height()));
     } else {
-        if (mLabel.compare(QString("")) != 0) {
-            buttonLabel->setMinimumSize(0, buttonLabel->size().height());
-            button->setIconSize(QSize(size * 0.7f,
-                                      (size - buttonLabel->size().height()) * 0.7f));
-        } else {
-            button->setMinimumSize(size, size);
-            button->setIconSize(QSize(size * 0.8f,
-                                      size * 0.8f));
-        }
+        size = (int)(std::min(this->size().width(), (int)(this->size().height() / 1.33f)));
     }
+    button->setMinimumSize(size, size);
+    QSize newSize = QSize(size * 0.8f,
+                         size * 0.8f);
+    QPixmap pixmap = mIconData.renderAsQPixmap();
+    pixmap = pixmap.scaled(this->size().width() * 0.8f,
+                           this->size().height() * 0.8f,
+                           Qt::KeepAspectRatio,
+                           Qt::FastTransformation);
+    button->setIcon(QIcon(pixmap));
+    button->setIconSize(newSize);
 }
 
 void LightsButton::updateIconSingleColorRoutine(ELightingRoutine lightingRoutine, QColor color) {
-    if (!mIsMenuButton) {
-        mIconData.setSingleLightingRoutine(lightingRoutine, color);
-        button->setIcon(mIconData.renderAsQPixmap());
-    } else {
-        if (mPageNumber == 0) {
-            mIconData.setSolidColor(color);
-        } else {
-            qDebug() << "LightsButton: shouldn't get here!";
-        }
-        button->setIcon(mIconData.renderAsQPixmap());
-    }
+    mIconData.setSingleLightingRoutine(lightingRoutine, color);
+    button->setIcon(mIconData.renderAsQPixmap());
+    resizeIcon();
 }
 
 void LightsButton::updateIconPresetColorRoutine(ELightingRoutine lightingRoutine, EColorGroup colorGroup, const std::vector<QColor>& colors, int colorMax) {
-    if (!mIsMenuButton) {
-        mIconData.setMultiLightingRoutine(lightingRoutine, colorGroup, colors, colorMax);
-        button->setIcon(mIconData.renderAsQPixmap());
-    } else {
-        mIconData.setMultiFade(colorGroup, colors);
-        button->setIcon(mIconData.renderAsQPixmap());
-    }
+    mIconData.setMultiLightingRoutine(lightingRoutine, colorGroup, colors, colorMax);
+    button->setIcon(mIconData.renderAsQPixmap());
+    resizeIcon();
 }
 
 

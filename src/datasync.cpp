@@ -202,7 +202,7 @@ bool DataSync::standardSync(const SLightDevice& dataDevice, const SLightDevice& 
     //-------------------
     for (uint32_t i = 0; i < dataDevice.customColorCount; ++i) {
         if (dataDevice.isOn) {
-            if (colorDifference(dataDevice.customColorArray[i], commDevice.customColorArray[i]) > 0.02f) {
+            if (utils::colorDifference(dataDevice.customColorArray[i], commDevice.customColorArray[i]) > 0.02f) {
                 //qDebug() << "Custom color" << i << "not in sync";
                 packet = mComm->sendArrayColorChange(list, i, dataDevice.customColorArray[i]);
             }
@@ -239,9 +239,9 @@ bool DataSync::hueSync(const SLightDevice& dataDevice, const SLightDevice& commD
         //-------------------
         // Hue HSV Color Sync
         //-------------------
-        if (colorDifference(dataDevice.color, commDevice.color) > 0.1f) {
+        if (utils::colorDifference(dataDevice.color, commDevice.color) > 0.1f) {
             packet += mComm->sendMainColorChange(list, dataDevice.color);
-            qDebug() << "hue color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << colorDifference(dataDevice.color, commDevice.color);
+            qDebug() << "hue color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << utils::colorDifference(dataDevice.color, commDevice.color);
             tempInSync = false;
         }
     } else if (dataDevice.colorMode == EColorMode::eCT
@@ -249,13 +249,13 @@ bool DataSync::hueSync(const SLightDevice& dataDevice, const SLightDevice& commD
         //-------------------
         // Hue Color Temperature Sync
         //-------------------
-        if (colorDifference(commDevice.color, dataDevice.color) > 0.15f) {
+        if (utils::colorDifference(commDevice.color, dataDevice.color) > 0.15f) {
             packet += mComm->sendColorTemperatureChange(list, utils::rgbToColorTemperature(dataDevice.color));
             tempInSync = false;
-            qDebug() << "hue color temperature not in sync" << commDevice.color << "vs" << dataDevice.color << colorDifference(commDevice.color, dataDevice.color)  << "on device" << dataDevice.index;
+            qDebug() << "hue color temperature not in sync" << commDevice.color << "vs" << dataDevice.color << utils::colorDifference(commDevice.color, dataDevice.color)  << "on device" << dataDevice.index;
         }
 
-        if (brightnessDifference(commDevice.brightness, dataDevice.brightness) > 0.05f) {
+        if (utils::brightnessDifference(commDevice.brightness, dataDevice.brightness) > 0.05f) {
             qDebug() << "hue CT brightness not in sync" << commDevice.brightness << "vs" << dataDevice.brightness;
             packet += mComm->sendBrightness(list, dataDevice.brightness);
             tempInSync = false;
@@ -343,10 +343,11 @@ bool DataSync::checkThrottle(QString controller, ECommType type, int index) {
                 throttleInterval = 2000;
                 break;
             case ECommType::eHue:
-                throttleInterval = 200;
+                throttleInterval = 400;
                 break;
             case ECommType::eUDP:
-                throttleInterval = 250;
+                throttleInterval = 400
+                        ;
                 break;
             default:
                 throttleInterval = 1000;
@@ -382,20 +383,8 @@ void DataSync::resetThrottle(QString controller, ECommType type, int index) {
     }
 }
 
-float DataSync::brightnessDifference(float first, float second) {
-    return std::abs(first - second) / 100.0f;
-}
-
 float DataSync::ctDifference(float first, float second) {
     return std::abs(first - second) / 347.0f;
-}
-
-float DataSync::colorDifference(QColor first, QColor second) {
-    float r = std::abs(first.red() - second.red()) / 255.0f;
-    float g = std::abs(first.green() - second.green()) / 255.0f;
-    float b = std::abs(first.blue() - second.blue()) / 255.0f;
-    float difference = (r + g + b) / 3.0f;
-    return difference;
 }
 
 
