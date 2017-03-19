@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.9</span>
+   &#160;<span id="projectnumber">v0.9.91</span>
    </div>
   </td>
  </tr>
@@ -48,6 +48,7 @@
 <div class="header">
   <div class="summary">
 <a href="class_groups_parser-members.html">List of all members</a> &#124;
+<a href="#signals">Signals</a> &#124;
 <a href="#pub-methods">Public Member Functions</a>  </div>
   <div class="headertitle">
 <div class="title">GroupsParser Class Reference</div>  </div>
@@ -61,6 +62,25 @@
 
 <p>Inherits QObject.</p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
+Signals</h2></td></tr>
+<tr class="memitem:a976bd4499a64ae236c6680a9875bcc4b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a976bd4499a64ae236c6680a9875bcc4b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_groups_parser.html#a976bd4499a64ae236c6680a9875bcc4b">newConnectionFound</a> (QString)</td></tr>
+<tr class="memdesc:a976bd4499a64ae236c6680a9875bcc4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">newConnectionFound emitted whenever a new connection is found in JSON data. Only useful for Yun connections, currently. <br /></td></tr>
+<tr class="separator:a976bd4499a64ae236c6680a9875bcc4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace21f06371eca76b57a476f6764cfd05"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ace21f06371eca76b57a476f6764cfd05"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_groups_parser.html#ace21f06371eca76b57a476f6764cfd05">groupDeleted</a> (QString)</td></tr>
+<tr class="memdesc:ace21f06371eca76b57a476f6764cfd05"><td class="mdescLeft">&#160;</td><td class="mdescRight">groupDeleted signaled whenever a group is deleted, sending out its name to anyone, listening in the dark. <br /></td></tr>
+<tr class="separator:ace21f06371eca76b57a476f6764cfd05"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a305d1a4775c6ccfe753fa25b716e0cd5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a305d1a4775c6ccfe753fa25b716e0cd5"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_groups_parser.html#a305d1a4775c6ccfe753fa25b716e0cd5">newCollectionAdded</a> (QString)</td></tr>
+<tr class="memdesc:a305d1a4775c6ccfe753fa25b716e0cd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">newCollectionAdded signaled whenever a collection is added, sending out its name to all listeners. <br /></td></tr>
+<tr class="separator:a305d1a4775c6ccfe753fa25b716e0cd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0cd7c29805a53df4fb02953a2d411406"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0cd7c29805a53df4fb02953a2d411406"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_groups_parser.html#a0cd7c29805a53df4fb02953a2d411406">newMoodAdded</a> (QString)</td></tr>
+<tr class="memdesc:a0cd7c29805a53df4fb02953a2d411406"><td class="mdescLeft">&#160;</td><td class="mdescRight">newMoodAdded signaled whenever a mood is added, sending out its name to all listeners. <br /></td></tr>
+<tr class="separator:a0cd7c29805a53df4fb02953a2d411406"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a32004bf5218a9c5b7921b15595586d1d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_groups_parser.html#a32004bf5218a9c5b7921b15595586d1d">GroupsParser</a> (QObject *parent=0)</td></tr>
@@ -96,6 +116,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac428cf877f41f3d92117c07922569fe5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_groups_parser.html#ac428cf877f41f3d92117c07922569fe5">saveFile</a> (QString savePath)</td></tr>
 <tr class="memdesc:ac428cf877f41f3d92117c07922569fe5"><td class="mdescLeft">&#160;</td><td class="mdescRight">saveFile save the JSON representation of groups to file.  <a href="#ac428cf877f41f3d92117c07922569fe5">More...</a><br /></td></tr>
 <tr class="separator:ac428cf877f41f3d92117c07922569fe5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5577765c562919cc02f52af92161ecfa"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_groups_parser.html#a5577765c562919cc02f52af92161ecfa">removeAppData</a> ()</td></tr>
+<tr class="memdesc:a5577765c562919cc02f52af92161ecfa"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeAppData delete .json file from local data. Will delete all saved json data permanently.  <a href="#a5577765c562919cc02f52af92161ecfa">More...</a><br /></td></tr>
+<tr class="separator:a5577765c562919cc02f52af92161ecfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
@@ -245,6 +268,22 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>a list of all the moods. Each mood is represented as a pair with its name and a list of the devices with their associated state. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a5577765c562919cc02f52af92161ecfa"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool GroupsParser::removeAppData </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>true if successful, false otherwise. </dd></dl>
 
 </div>
 </div>

@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.9</span>
+   &#160;<span id="projectnumber">v0.9.91</span>
    </div>
   </td>
  </tr>
@@ -73,6 +73,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_hue_single_color_page.html#a3860d2045b185a0580704511a6c99902">singleColorChanged</a> (QColor)</td></tr>
 <tr class="memdesc:a3860d2045b185a0580704511a6c99902"><td class="mdescLeft">&#160;</td><td class="mdescRight">singleColorChanged Used to signal back to the <a class="el" href="class_main_window.html" title="The MainWindow class is the only window in this application. It contains a QStackedWidget which shows...">MainWindow</a> that the main color of the single color page has changed. <br /></td></tr>
 <tr class="separator:a3860d2045b185a0580704511a6c99902"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba4db5124cda170b32d765531da8bd51"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aba4db5124cda170b32d765531da8bd51"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_hue_single_color_page.html#aba4db5124cda170b32d765531da8bd51">brightnessChanged</a> (int)</td></tr>
+<tr class="memdesc:aba4db5124cda170b32d765531da8bd51"><td class="mdescLeft">&#160;</td><td class="mdescRight">brightnessChanged signaled whenever the brightness is changed from the color temperature asset. <br /></td></tr>
+<tr class="separator:aba4db5124cda170b32d765531da8bd51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -102,6 +106,26 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_hue_single_color_page.html#a9668b6cf7388bcc083a6ea7c3189dffb">hideEvent</a> (QHideEvent *)</td></tr>
 <tr class="memdesc:a9668b6cf7388bcc083a6ea7c3189dffb"><td class="mdescLeft">&#160;</td><td class="mdescRight">hideEvent called as the page is hidden. This happens when a new page is displayed. <br /></td></tr>
 <tr class="separator:a9668b6cf7388bcc083a6ea7c3189dffb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adbbcb3b530dad7c900b6edc2224378b4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adbbcb3b530dad7c900b6edc2224378b4"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_hue_single_color_page.html#adbbcb3b530dad7c900b6edc2224378b4">resizeEvent</a> (QResizeEvent *)</td></tr>
+<tr class="memdesc:adbbcb3b530dad7c900b6edc2224378b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">resizeEvent called every time the main window is resized. <br /></td></tr>
+<tr class="separator:adbbcb3b530dad7c900b6edc2224378b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f0da623aa0e2994b1c69b4c48bdb1e9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2f0da623aa0e2994b1c69b4c48bdb1e9"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_hue_single_color_page.html#a2f0da623aa0e2994b1c69b4c48bdb1e9">mousePressEvent</a> (QMouseEvent *)</td></tr>
+<tr class="memdesc:a2f0da623aa0e2994b1c69b4c48bdb1e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">mousePressEvent called only onnce when a mouse press is clicked down. Events not directly on top of the ambient picker are ignored. <br /></td></tr>
+<tr class="separator:a2f0da623aa0e2994b1c69b4c48bdb1e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e292e056ec6710c52afbe098337aa8b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7e292e056ec6710c52afbe098337aa8b"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_hue_single_color_page.html#a7e292e056ec6710c52afbe098337aa8b">mouseMoveEvent</a> (QMouseEvent *)</td></tr>
+<tr class="memdesc:a7e292e056ec6710c52afbe098337aa8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">mouseMoveEvent called when a mouse press is clicked down and moves. This event gets called very frequently, so the events are thorttled by a timer. Also, events not directly on top of the ambient picker are ignored. <br /></td></tr>
+<tr class="separator:a7e292e056ec6710c52afbe098337aa8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8910ec1f3c9aa5d1c2f933daa1280b75"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8910ec1f3c9aa5d1c2f933daa1280b75"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_hue_single_color_page.html#a8910ec1f3c9aa5d1c2f933daa1280b75">mouseReleaseEvent</a> (QMouseEvent *)</td></tr>
+<tr class="memdesc:a8910ec1f3c9aa5d1c2f933daa1280b75"><td class="mdescLeft">&#160;</td><td class="mdescRight">mouseReleaseEvent called when a mouse press is released Events not directly on top of the ambient picker are ignored. <br /></td></tr>
+<tr class="separator:a8910ec1f3c9aa5d1c2f933daa1280b75"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd500187d9631f81fb6791eab6ba84e2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abd500187d9631f81fb6791eab6ba84e2"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_hue_single_color_page.html#abd500187d9631f81fb6791eab6ba84e2">paintEvent</a> (QPaintEvent *)</td></tr>
+<tr class="memdesc:abd500187d9631f81fb6791eab6ba84e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">paintEvent used to repaint the widget to override standard rendering. <br /></td></tr>
+<tr class="separator:abd500187d9631f81fb6791eab6ba84e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>

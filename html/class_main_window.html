@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.9</span>
+   &#160;<span id="projectnumber">v0.9.91</span>
    </div>
   </td>
  </tr>
@@ -133,6 +133,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a7e3600f30beb68e79de54c57dc576b5d">settingsDebugPressed</a> ()</td></tr>
 <tr class="memdesc:a7e3600f30beb68e79de54c57dc576b5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">settingsDebugPressed debug button pressed. Mocks incoming communication packets to make the UI react as if some devices just connected. <br /></td></tr>
 <tr class="separator:a7e3600f30beb68e79de54c57dc576b5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ca7b7373bec37a993ad85c925c539ad"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8ca7b7373bec37a993ad85c925c539ad"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a8ca7b7373bec37a993ad85c925c539ad">settingsClosePressed</a> ()</td></tr>
+<tr class="memdesc:a8ca7b7373bec37a993ad85c925c539ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">settingsClosePressed slot that handles when the settings page is closed. <br /></td></tr>
+<tr class="separator:a8ca7b7373bec37a993ad85c925c539ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52ae298659e4170aaddcecdfe42d2e7c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a52ae298659e4170aaddcecdfe42d2e7c">resizeMenuIcon</a> (QPushButton *button, QString iconPath)</td></tr>
+<tr class="memdesc:a52ae298659e4170aaddcecdfe42d2e7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">resizeMenuIcon resizes the icon for either the settings button or the connections button  <a href="#a52ae298659e4170aaddcecdfe42d2e7c">More...</a><br /></td></tr>
+<tr class="separator:a52ae298659e4170aaddcecdfe42d2e7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -241,6 +248,47 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">event</td><td>event triggered that requires a repaint </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a52ae298659e4170aaddcecdfe42d2e7c"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MainWindow::resizeMenuIcon </td>
+          <td>(</td>
+          <td class="paramtype">QPushButton *&#160;</td>
+          <td class="paramname"><em>button</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">QString&#160;</td>
+          <td class="paramname"><em>iconPath</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">slot</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">button</td><td>pointer to button to resize </td></tr>
+    <tr><td class="paramname">iconPath</td><td>path to icon, if it needs to be loaded again. </td></tr>
   </table>
   </dd>
 </dl>

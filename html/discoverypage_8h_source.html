@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.9</span>
+   &#160;<span id="projectnumber">v0.9.91</span>
    </div>
   </td>
  </tr>
@@ -117,52 +117,63 @@
 <div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_discovery_page.html#a554aa83d274773a031c3d42fa032dbaa">paintEvent</a>(QPaintEvent *);</div>
 <div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;</div>
 <div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    Ui::DiscoveryPage *ui;</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    <span class="keywordtype">void</span> handleSerialDiscovery();</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    <span class="keywordtype">void</span> resizeTopMenu();</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    <span class="keywordtype">void</span> yunLineEditHelper();</div>
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="keywordtype">void</span> handleYunDiscovery();</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <span class="keywordtype">void</span> fillList(QListWidget *list, std::list&lt;QString&gt;&amp; connections);</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    <span class="keywordtype">void</span> showAvailableCommTypeButtons();</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    <span class="keywordtype">void</span> changeCommTypeConnectionState(ECommType type, EConnectionState newState);</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    QPushButton *buttonByType(ECommType type);</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    <span class="keywordtype">bool</span> doesYunControllerExistAlready(QString controller);</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    <a class="code" href="class_comm_layer.html">CommLayer</a> *mComm;</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    ECommType mType;</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    <span class="keywordtype">void</span> updateHueStatusIcon(QString iconPath);</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    Ui::DiscoveryPage *ui;</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    <span class="keywordtype">void</span> handleSerialDiscovery(<span class="keywordtype">bool</span> isCurrentCommType);</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    <span class="keywordtype">void</span> handleYunDiscovery(<span class="keywordtype">bool</span> isCurrentCommType);</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    <span class="keywordtype">void</span> fillList(QListWidget *list, std::list&lt;QString&gt;&amp; connections);</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    <span class="keywordtype">void</span> showAvailableCommTypeButtons();</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    <span class="keywordtype">void</span> changeCommTypeConnectionState(ECommType type, EConnectionState newState);</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    QPushButton *buttonByType(ECommType type);</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;</div>
 <div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;    EHueDiscoveryState mHueDiscoveryState;</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    std::vector&lt;QPixmap&gt; mButtonIcons;</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    std::vector&lt;EConnectionState&gt; mConnectionStates;</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;    <span class="keywordtype">bool</span> mForceStartOpen;</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;};</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;<span class="preprocessor">#endif // DISCOVERYPAGE_H</span></div>
-<div class="ttc" id="class_discovery_page_html_add1030b7c2bdb7ed205c1f1de3ffee58"><div class="ttname"><a href="class_discovery_page.html#add1030b7c2bdb7ed205c1f1de3ffee58">DiscoveryPage::hideEvent</a></div><div class="ttdeci">void hideEvent(QHideEvent *)</div><div class="ttdoc">hideEvent called as the page is hidden. This happens when a new page is displayed. </div><div class="ttdef"><b>Definition:</b> discoverypage.cpp:516</div></div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;    <span class="keywordtype">bool</span> doesYunControllerExistAlready(QString controller);</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    QString mLastIP;</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    <a class="code" href="class_comm_layer.html">CommLayer</a> *mComm;</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;    ECommType mType;</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    EHueDiscoveryState mHueDiscoveryState;</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;    std::vector&lt;QPixmap&gt; mButtonIcons;</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    std::vector&lt;EConnectionState&gt; mConnectionStates;</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    <span class="keywordtype">bool</span> mForceStartOpen;</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    QTime mStartTime;</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;};</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;<span class="preprocessor">#endif // DISCOVERYPAGE_H</span></div>
+<div class="ttc" id="class_discovery_page_html_add1030b7c2bdb7ed205c1f1de3ffee58"><div class="ttname"><a href="class_discovery_page.html#add1030b7c2bdb7ed205c1f1de3ffee58">DiscoveryPage::hideEvent</a></div><div class="ttdeci">void hideEvent(QHideEvent *)</div><div class="ttdoc">hideEvent called as the page is hidden. This happens when a new page is displayed. </div><div class="ttdef"><b>Definition:</b> discoverypage.cpp:630</div></div>
 <div class="ttc" id="class_lighting_page_html"><div class="ttname"><a href="class_lighting_page.html">LightingPage</a></div><div class="ttdoc">Inherited by Lighting Pages, provides a link to the backend. </div><div class="ttdef"><b>Definition:</b> lightingpage.h:18</div></div>
 <div class="ttc" id="class_comm_layer_html"><div class="ttname"><a href="class_comm_layer.html">CommLayer</a></div><div class="ttdoc">The CommLayer class provides communication protocols that allow the user to connect and send packets ...</div><div class="ttdef"><b>Definition:</b> commlayer.h:31</div></div>
-<div class="ttc" id="namespace_ui_html"><div class="ttname"><a href="namespace_ui.html">Ui</a></div><div class="ttdoc">The HuePresetPage class unimplemented page of preset moods made specifically for hues. </div><div class="ttdef"><b>Definition:</b> connectionpage.h:17</div></div>
+<div class="ttc" id="namespace_ui_html"><div class="ttname"><a href="namespace_ui.html">Ui</a></div><div class="ttdef"><b>Definition:</b> connectionpage.h:17</div></div>
 <div class="ttc" id="class_discovery_page_html_a53c7702703db1aa84e70fceb6bf7873d"><div class="ttname"><a href="class_discovery_page.html#a53c7702703db1aa84e70fceb6bf7873d">DiscoveryPage::DiscoveryPage</a></div><div class="ttdeci">DiscoveryPage(QWidget *parent=0)</div><div class="ttdef"><b>Definition:</b> discoverypage.cpp:19</div></div>
 <div class="ttc" id="class_discovery_page_html_ab4e9195be700bbf3ff27063cc5786ec6"><div class="ttname"><a href="class_discovery_page.html#ab4e9195be700bbf3ff27063cc5786ec6">DiscoveryPage::settingsButtonClicked</a></div><div class="ttdeci">void settingsButtonClicked()</div><div class="ttdoc">settingsButtonClicked sent whenever the settings button is clicked. </div></div>
-<div class="ttc" id="class_discovery_page_html_a611cce4bdcd7886db424d2cb2d8c542a"><div class="ttname"><a href="class_discovery_page.html#a611cce4bdcd7886db424d2cb2d8c542a">DiscoveryPage::hueDiscoveryUpdate</a></div><div class="ttdeci">void hueDiscoveryUpdate(int)</div><div class="ttdoc">hueDiscoveryUpdate provides an int representation of the EHueDiscoveryState of Hue&#39;s discovery object...</div><div class="ttdef"><b>Definition:</b> discoverypage.cpp:142</div></div>
+<div class="ttc" id="class_discovery_page_html_a611cce4bdcd7886db424d2cb2d8c542a"><div class="ttname"><a href="class_discovery_page.html#a611cce4bdcd7886db424d2cb2d8c542a">DiscoveryPage::hueDiscoveryUpdate</a></div><div class="ttdeci">void hueDiscoveryUpdate(int)</div><div class="ttdoc">hueDiscoveryUpdate provides an int representation of the EHueDiscoveryState of Hue&#39;s discovery object...</div><div class="ttdef"><b>Definition:</b> discoverypage.cpp:165</div></div>
 <div class="ttc" id="class_discovery_page_html"><div class="ttname"><a href="class_discovery_page.html">DiscoveryPage</a></div><div class="ttdoc">The DiscoveryPage class provides the user an interface to discover new connections with lights...</div><div class="ttdef"><b>Definition:</b> discoverypage.h:26</div></div>
 <div class="ttc" id="class_discovery_page_html_a7738fc86ab413d11a3f95b296f4dc026"><div class="ttname"><a href="class_discovery_page.html#a7738fc86ab413d11a3f95b296f4dc026">DiscoveryPage::openStartForDebug</a></div><div class="ttdeci">void openStartForDebug()</div><div class="ttdoc">debug function </div><div class="ttdef"><b>Definition:</b> discoverypage.h:53</div></div>
-<div class="ttc" id="class_discovery_page_html_a890c5f936ce064e116992376bf91d8f0"><div class="ttname"><a href="class_discovery_page.html#a890c5f936ce064e116992376bf91d8f0">DiscoveryPage::showEvent</a></div><div class="ttdeci">void showEvent(QShowEvent *)</div><div class="ttdoc">showEvent called before the this page is shown. Used to sync up any changes that may have happened on...</div><div class="ttdef"><b>Definition:</b> discoverypage.cpp:508</div></div>
+<div class="ttc" id="class_discovery_page_html_a890c5f936ce064e116992376bf91d8f0"><div class="ttname"><a href="class_discovery_page.html#a890c5f936ce064e116992376bf91d8f0">DiscoveryPage::showEvent</a></div><div class="ttdeci">void showEvent(QShowEvent *)</div><div class="ttdoc">showEvent called before the this page is shown. Used to sync up any changes that may have happened on...</div><div class="ttdef"><b>Definition:</b> discoverypage.cpp:621</div></div>
 <div class="ttc" id="class_discovery_page_html_abcb0ab4458528ff4b9878fc8cedddf8c"><div class="ttname"><a href="class_discovery_page.html#abcb0ab4458528ff4b9878fc8cedddf8c">DiscoveryPage::connectCommLayer</a></div><div class="ttdeci">void connectCommLayer(CommLayer *layer)</div><div class="ttdoc">connectCommLayer connect to commlayer. In a future update the commLayer pointer on every page will be...</div><div class="ttdef"><b>Definition:</b> discoverypage.h:47</div></div>
 <div class="ttc" id="class_discovery_page_html_a1b9e6c3d67bc0784241ca527c1b7e082"><div class="ttname"><a href="class_discovery_page.html#a1b9e6c3d67bc0784241ca527c1b7e082">DiscoveryPage::startButtonClicked</a></div><div class="ttdeci">void startButtonClicked()</div><div class="ttdoc">startButtonClicked sent whenver the start button is clicked so that the discovery page can be hidden...</div></div>
-<div class="ttc" id="class_discovery_page_html_a554aa83d274773a031c3d42fa032dbaa"><div class="ttname"><a href="class_discovery_page.html#a554aa83d274773a031c3d42fa032dbaa">DiscoveryPage::paintEvent</a></div><div class="ttdeci">void paintEvent(QPaintEvent *)</div><div class="ttdoc">paintEvent paint event for rendering. used to overwrite the background color of the discovery page so...</div><div class="ttdef"><b>Definition:</b> discoverypage.cpp:578</div></div>
-<div class="ttc" id="class_discovery_page_html_a2e8442aae8deb7f1b3d4ebb58a54bd11"><div class="ttname"><a href="class_discovery_page.html#a2e8442aae8deb7f1b3d4ebb58a54bd11">DiscoveryPage::resizeEvent</a></div><div class="ttdeci">void resizeEvent(QResizeEvent *)</div><div class="ttdoc">resizeEvent called every time the main window is resized. </div><div class="ttdef"><b>Definition:</b> discoverypage.cpp:522</div></div>
-<div class="ttc" id="class_discovery_page_html_a070ecb741593f4bb79a9eab09e9daa58"><div class="ttname"><a href="class_discovery_page.html#a070ecb741593f4bb79a9eab09e9daa58">DiscoveryPage::~DiscoveryPage</a></div><div class="ttdeci">~DiscoveryPage()</div><div class="ttdef"><b>Definition:</b> discoverypage.cpp:95</div></div>
+<div class="ttc" id="class_discovery_page_html_a554aa83d274773a031c3d42fa032dbaa"><div class="ttname"><a href="class_discovery_page.html#a554aa83d274773a031c3d42fa032dbaa">DiscoveryPage::paintEvent</a></div><div class="ttdeci">void paintEvent(QPaintEvent *)</div><div class="ttdoc">paintEvent paint event for rendering. used to overwrite the background color of the discovery page so...</div><div class="ttdef"><b>Definition:</b> discoverypage.cpp:642</div></div>
+<div class="ttc" id="class_discovery_page_html_a2e8442aae8deb7f1b3d4ebb58a54bd11"><div class="ttname"><a href="class_discovery_page.html#a2e8442aae8deb7f1b3d4ebb58a54bd11">DiscoveryPage::resizeEvent</a></div><div class="ttdeci">void resizeEvent(QResizeEvent *)</div><div class="ttdoc">resizeEvent called every time the main window is resized. </div><div class="ttdef"><b>Definition:</b> discoverypage.cpp:636</div></div>
+<div class="ttc" id="class_discovery_page_html_a070ecb741593f4bb79a9eab09e9daa58"><div class="ttname"><a href="class_discovery_page.html#a070ecb741593f4bb79a9eab09e9daa58">DiscoveryPage::~DiscoveryPage</a></div><div class="ttdeci">~DiscoveryPage()</div><div class="ttdef"><b>Definition:</b> discoverypage.cpp:101</div></div>
 </div><!-- fragment --></div><!-- contents -->
 
 <hr>
