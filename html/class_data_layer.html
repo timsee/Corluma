@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.91</span>
+   &#160;<span id="projectnumber">v0.9.92</span>
    </div>
   </td>
  </tr>
@@ -191,9 +191,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab66e1ea4324f9e1d0e06ad2bf560d40e"><td class="memItemLeft" align="right" valign="top">const std::list&lt; SLightDevice &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#ab66e1ea4324f9e1d0e06ad2bf560d40e">currentDevices</a> ()</td></tr>
 <tr class="memdesc:ab66e1ea4324f9e1d0e06ad2bf560d40e"><td class="mdescLeft">&#160;</td><td class="mdescRight">currentDevices returns the current Device pair, which contains both controller connection info and device settings  <a href="#ab66e1ea4324f9e1d0e06ad2bf560d40e">More...</a><br /></td></tr>
 <tr class="separator:ab66e1ea4324f9e1d0e06ad2bf560d40e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7130b93d4d8a0413b5be2f3a42962fee"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a7130b93d4d8a0413b5be2f3a42962fee">shouldUseHueAssets</a> ()</td></tr>
-<tr class="memdesc:a7130b93d4d8a0413b5be2f3a42962fee"><td class="mdescLeft">&#160;</td><td class="mdescRight">shouldUseHueAssets helper that determines if you should be using hue-related assets on a GUI page or non hue related assets. It determines this by seeing if half or more of the devices in the datalayer are hue devices. If they are, it returns true.  <a href="#a7130b93d4d8a0413b5be2f3a42962fee">More...</a><br /></td></tr>
-<tr class="separator:a7130b93d4d8a0413b5be2f3a42962fee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67c92434a6d120e85402ef707df06860"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a67c92434a6d120e85402ef707df06860">hasHueDevices</a> ()</td></tr>
+<tr class="memdesc:a67c92434a6d120e85402ef707df06860"><td class="mdescLeft">&#160;</td><td class="mdescRight">hasHueDevices helper that determines if you should be using hue-related assets on a GUI page or non hue related assets.  <a href="#a67c92434a6d120e85402ef707df06860">More...</a><br /></td></tr>
+<tr class="separator:a67c92434a6d120e85402ef707df06860"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d204dd98271ad04ef797e690ac6afd7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a9d204dd98271ad04ef797e690ac6afd7">hasArduinoDevices</a> ()</td></tr>
+<tr class="memdesc:a9d204dd98271ad04ef797e690ac6afd7"><td class="mdescLeft">&#160;</td><td class="mdescRight">hasArduinoDevices helper that determines if there are any arduino based devices in the current data.  <a href="#a9d204dd98271ad04ef797e690ac6afd7">More...</a><br /></td></tr>
+<tr class="separator:a9d204dd98271ad04ef797e690ac6afd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac88bcdcd660567b0d8663edc13743209"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_comm_type_settings.html">CommTypeSettings</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#ac88bcdcd660567b0d8663edc13743209">commTypeSettings</a> ()</td></tr>
 <tr class="memdesc:ac88bcdcd660567b0d8663edc13743209"><td class="mdescLeft">&#160;</td><td class="mdescRight">commTypeSettings pointer to the current comm types settings, which maintains which commtypes are currently enabled or disabled  <a href="#ac88bcdcd660567b0d8663edc13743209">More...</a><br /></td></tr>
 <tr class="separator:ac88bcdcd660567b0d8663edc13743209"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -615,6 +618,38 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a9d204dd98271ad04ef797e690ac6afd7"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool DataLayer::hasArduinoDevices </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>true if any device is an arduino over Serial, UDP, or HTTP </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a67c92434a6d120e85402ef707df06860"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool DataLayer::hasHueDevices </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>true if any device is a hue </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a383a0bd23b394e1b4a8df5df92bbb4b0"></a>
 <div class="memitem">
 <div class="memproto">
@@ -729,22 +764,6 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>number of devices left in currentDevices list. </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a7130b93d4d8a0413b5be2f3a42962fee"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool DataLayer::shouldUseHueAssets </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>true if half or more of the devices in the data layer are hue devices. </dd></dl>
 
 </div>
 </div>

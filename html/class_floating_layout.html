@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.91</span>
+   &#160;<span id="projectnumber">v0.9.92</span>
    </div>
   </td>
  </tr>
@@ -71,19 +71,34 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a8750799dd213e4f3c8c198dd529a994b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a8750799dd213e4f3c8c198dd529a994b">FloatingLayout</a> (QWidget *parent=0)</td></tr>
-<tr class="separator:a8750799dd213e4f3c8c198dd529a994b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c277ac44d3cd2a63ac32b66470fd56b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a4c277ac44d3cd2a63ac32b66470fd56b">setupButtons</a> (std::vector&lt; QString &gt; buttonNames, QSize size)</td></tr>
-<tr class="memdesc:a4c277ac44d3cd2a63ac32b66470fd56b"><td class="mdescLeft">&#160;</td><td class="mdescRight">setupButtons takees the vector of names and the size given and updates the buttons so that theres a button for every name  <a href="#a4c277ac44d3cd2a63ac32b66470fd56b">More...</a><br /></td></tr>
-<tr class="separator:a4c277ac44d3cd2a63ac32b66470fd56b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04f45ff5d3acb1c8cf5db7a511996742"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a04f45ff5d3acb1c8cf5db7a511996742">FloatingLayout</a> (bool makeVertical=false, QWidget *parent=0)</td></tr>
+<tr class="separator:a04f45ff5d3acb1c8cf5db7a511996742"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afae60c8a9867d2cdaa571cd00ae898dd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#afae60c8a9867d2cdaa571cd00ae898dd">setupButtons</a> (std::vector&lt; QString &gt; buttons)</td></tr>
+<tr class="memdesc:afae60c8a9867d2cdaa571cd00ae898dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">setupButtons takees the vector of names and the size given and updates the buttons so that theres a button for every name  <a href="#afae60c8a9867d2cdaa571cd00ae898dd">More...</a><br /></td></tr>
+<tr class="separator:afae60c8a9867d2cdaa571cd00ae898dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e72aa165c8cc79384bd650dc1d8fe67"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a7e72aa165c8cc79384bd650dc1d8fe67">move</a> (QPoint topRightPoint)</td></tr>
 <tr class="memdesc:a7e72aa165c8cc79384bd650dc1d8fe67"><td class="mdescLeft">&#160;</td><td class="mdescRight">move move layout to a new location based off of the top right point provided.  <a href="#a7e72aa165c8cc79384bd650dc1d8fe67">More...</a><br /></td></tr>
 <tr class="separator:a7e72aa165c8cc79384bd650dc1d8fe67"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac01a8727ae5be0910d6585060d52f6ab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#ac01a8727ae5be0910d6585060d52f6ab">updateRoutineSingleColor</a> (ELightingRoutine routine, QColor color)</td></tr>
+<tr class="memdesc:ac01a8727ae5be0910d6585060d52f6ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateRoutineSingleColor update routine icon when a single color routine is changed.  <a href="#ac01a8727ae5be0910d6585060d52f6ab">More...</a><br /></td></tr>
+<tr class="separator:ac01a8727ae5be0910d6585060d52f6ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92ee79b2cf21bce8b4a0404ca45429c5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a92ee79b2cf21bce8b4a0404ca45429c5">updateRoutineMultiColor</a> (ELightingRoutine routine, std::vector&lt; QColor &gt; colors, int colorCount)</td></tr>
+<tr class="memdesc:a92ee79b2cf21bce8b4a0404ca45429c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateRoutineMultiColor update routine icon with multi color routine.  <a href="#a92ee79b2cf21bce8b4a0404ca45429c5">More...</a><br /></td></tr>
+<tr class="separator:a92ee79b2cf21bce8b4a0404ca45429c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7127ba9b5265516594a116bd62e619ee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a7127ba9b5265516594a116bd62e619ee">addMultiRoutineIcon</a> (std::vector&lt; QColor &gt; colors)</td></tr>
+<tr class="memdesc:a7127ba9b5265516594a116bd62e619ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">addMultiRoutineIcon add a multi routine icon  <a href="#a7127ba9b5265516594a116bd62e619ee">More...</a><br /></td></tr>
+<tr class="separator:a7127ba9b5265516594a116bd62e619ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ff1fb657121342226f9a69418d3765e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a8ff1fb657121342226f9a69418d3765e">highlightButton</a> (QString key)</td></tr>
+<tr class="memdesc:a8ff1fb657121342226f9a69418d3765e"><td class="mdescLeft">&#160;</td><td class="mdescRight">highlightButton highlight the button with the given key. Unhighlights all other buttons.  <a href="#a8ff1fb657121342226f9a69418d3765e">More...</a><br /></td></tr>
+<tr class="separator:a8ff1fb657121342226f9a69418d3765e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afafdb7277bf506daf85fbccfade33979"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#afafdb7277bf506daf85fbccfade33979">highlightRoutineButton</a> (bool shouldHighlight)</td></tr>
+<tr class="memdesc:afafdb7277bf506daf85fbccfade33979"><td class="mdescLeft">&#160;</td><td class="mdescRight">highlightRoutineButton highlights the routine button. Allows the page that owns the floating layout to override its behavior, if it changes state.  <a href="#afafdb7277bf506daf85fbccfade33979">More...</a><br /></td></tr>
+<tr class="separator:afafdb7277bf506daf85fbccfade33979"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a8750799dd213e4f3c8c198dd529a994b"></a>
+<a class="anchor" id="a04f45ff5d3acb1c8cf5db7a511996742"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -93,9 +108,19 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">FloatingLayout::FloatingLayout </td>
           <td>(</td>
-          <td class="paramtype">QWidget *&#160;</td>
-          <td class="paramname"><em>parent</em> = <code>0</code></td><td>)</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>makeVertical</em> = <code>false</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">QWidget *&#160;</td>
+          <td class="paramname"><em>parent</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -106,7 +131,8 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Constructor </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">parent</td><td>constructor</td></tr>
+    <tr><td class="paramname">makeVertical</td><td>makes a vertical layout if true, makes a horizontal layout if false. </td></tr>
+    <tr><td class="paramname">parent</td><td>parent</td></tr>
   </table>
   </dd>
 </dl>
@@ -115,6 +141,72 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a7127ba9b5265516594a116bd62e619ee"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void FloatingLayout::addMultiRoutineIcon </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; QColor &gt;&#160;</td>
+          <td class="paramname"><em>colors</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">colors</td><td>colors to use for multi routine icon. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a8ff1fb657121342226f9a69418d3765e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void FloatingLayout::highlightButton </td>
+          <td>(</td>
+          <td class="paramtype">QString&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>key of button to highlight. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="afafdb7277bf506daf85fbccfade33979"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void FloatingLayout::highlightRoutineButton </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>shouldHighlight</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">shouldHighlight</td><td>true to highlight the button, false to leave the button unhighlighted. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="a7e72aa165c8cc79384bd650dc1d8fe67"></a>
 <div class="memitem">
 <div class="memproto">
@@ -137,7 +229,7 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a4c277ac44d3cd2a63ac32b66470fd56b"></a>
+<a class="anchor" id="afae60c8a9867d2cdaa571cd00ae898dd"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -145,13 +237,41 @@ Public Member Functions</h2></td></tr>
           <td class="memname">void FloatingLayout::setupButtons </td>
           <td>(</td>
           <td class="paramtype">std::vector&lt; QString &gt;&#160;</td>
-          <td class="paramname"><em>buttonNames</em>, </td>
+          <td class="paramname"><em>buttons</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buttons</td><td>names of buttons. these names will be signaled out whenever the button is clicked. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a92ee79b2cf21bce8b4a0404ca45429c5"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void FloatingLayout::updateRoutineMultiColor </td>
+          <td>(</td>
+          <td class="paramtype">ELightingRoutine&#160;</td>
+          <td class="paramname"><em>routine</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">QSize&#160;</td>
-          <td class="paramname"><em>size</em>&#160;</td>
+          <td class="paramtype">std::vector&lt; QColor &gt;&#160;</td>
+          <td class="paramname"><em>colors</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>colorCount</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -162,8 +282,42 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">buttonNames</td><td>names of buttons provided. these names will be signaled out whenever the button is clicked. </td></tr>
-    <tr><td class="paramname">size</td><td>how large to make the floating layout. </td></tr>
+    <tr><td class="paramname">routine</td><td>new routine for icon. </td></tr>
+    <tr><td class="paramname">colors</td><td>the full array of colors </td></tr>
+    <tr><td class="paramname">colorCount</td><td>the number of colors to use from the array. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="ac01a8727ae5be0910d6585060d52f6ab"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void FloatingLayout::updateRoutineSingleColor </td>
+          <td>(</td>
+          <td class="paramtype">ELightingRoutine&#160;</td>
+          <td class="paramname"><em>routine</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">QColor&#160;</td>
+          <td class="paramname"><em>color</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">routine</td><td>new routine for icon. </td></tr>
+    <tr><td class="paramname">color</td><td>new color for icon. </td></tr>
   </table>
   </dd>
 </dl>

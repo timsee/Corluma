@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.91</span>
+   &#160;<span id="projectnumber">v0.9.92</span>
    </div>
   </td>
  </tr>
@@ -73,29 +73,20 @@ Page Classes</h1>
 </div>
    </td></tr>
 <tr>
-<td><h2>Single Color Page</h2>
-<p>The <a class="el" href="class_single_color_page.html" title="The SingleColorPage provides a way to change the main color of the LED system and to set it in single...">SingleColorPage</a> provides a way to change the main color of the LED system and to set it in single-color modes. </p><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License.</dd></dl>
-<p>The page contains a <a class="el" href="class_color_picker.html" title="The ColorPicker class is an object that combines three LightsSliders and a color wheel to create an i...">ColorPicker</a> widget used to choose the color and a series of buttons that change the mode.</p>
-<p class="endtd">The single color modes currently supported are solid, blink, wave, glimmer, linear fade, sawtooth fade in, sawtooth fade out, and sine fade.  </p>
+<td><h2>Color Page</h2>
+<p>The <a class="el" href="class_color_page.html" title="The ColorPage provides a way to change the color of the lights selected in the app. ">ColorPage</a> provides a way to change the color of the lights selected in the app. </p><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License.</dd></dl>
+<p>The page contains a <a class="el" href="class_color_picker.html" title="The ColorPicker class is a GUI object designed to give the user ability to choose RGB values in a var...">ColorPicker</a> that allows the user to choose colors. The color picker has various modes such as standard, which gives full range of RGB, and ambient, which allows the user to choose different shades of white.</p>
+<p class="endtd">For arduino-based projects, there is also a pop up menu on the bottom that allows the user to choose routines for the arduino. To get the single color routines, the user should be on the standard color picker. To get the multi color routines, the user should be on the multi color picker.  </p>
 </td><td><div class="image">
-<img src="singleColorPagePreview.png" alt="singleColorPagePreview.png"/>
+<img src="colorPagePreview.png" alt="colorPagePreview.png"/>
 </div>
    </td></tr>
 <tr>
-<td><h2>Custom Colors Page</h2>
-<p>The <a class="el" href="class_custom_colors_page.html" title="The CustomColorsPage provides a way to use an array of custom colors to do multi color routines...">CustomColorsPage</a> provides a way to use an array of custom colors to do multi color routines. </p><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License.</dd></dl>
-<p>The page contains an interface to change the individual array colors and a series of buttons that change the mode.</p>
-<p class="endtd">The top interface is split into three parts: a <a class="el" href="class_color_picker.html" title="The ColorPicker class is an object that combines three LightsSliders and a color wheel to create an i...">ColorPicker</a>, a color array preview, and a <a class="el" href="class_lights_slider.html" title="The LightsSlider class provides a slider with behaviors similiar to sliders on mobile devices...">LightsSlider</a>. The <a class="el" href="class_color_picker.html" title="The ColorPicker class is an object that combines three LightsSliders and a color wheel to create an i...">ColorPicker</a> chooses the color that is currently selected from the color array preview. The <a class="el" href="class_lights_slider.html" title="The LightsSlider class provides a slider with behaviors similiar to sliders on mobile devices...">LightsSlider</a> below the preview is used to choose how many colors are active while using an array mode.  </p>
+<td><h2>Group Page</h2>
+<p class="endtd">The <a class="el" href="class_group_page.html" title="The GroupPage provides a way to use the Color Presets from themed groups of colors to do Multi Color ...">GroupPage</a> provides a way to use the Color Presets from themed groups of colors to do Multi Color Routines. </p><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2016. Released under the GNU General Public License.</dd></dl>
+<p>It contains a grid of buttons that map color presets to lighting modes. The list expands vertically into a QScrollArea.  </p>
 </td><td><div class="image">
-<img src="customColorsPagePreview.png" alt="customColorsPagePreview.png"/>
-</div>
-   </td></tr>
-<tr>
-<td><h2>Preset Colors Page</h2>
-<p class="endtd">The <a class="el" href="class_preset_colors_page.html" title="The PresetColorsPage provides a way to use the Color Presets from themed groups of colors to do Multi...">PresetColorsPage</a> provides a way to use the Color Presets from themed groups of colors to do Multi Color Routines. </p><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2016. Released under the GNU General Public License.</dd></dl>
-<p>It contains a grid of buttons that map color presets to lighting modes. The list expands horizontally into a QScrollArea.  </p>
-</td><td><div class="image">
-<img src="presetColorsPagePreview.png" alt="presetColorsPagePreview.png"/>
+<img src="groupPagePreview.png" alt="groupPagePreview.png"/>
 </div>
    </td></tr>
 <tr>
@@ -124,7 +115,7 @@ Custom UI Elements</h1>
 </div></div></div><div class="frontendOverview"><div class="overviewSection"><div class="overviewTitle"> </div> <div class="overviewImage"> <div class="image">
 <img src="colorPickerPreview.png" alt="colorPickerPreview.png"/>
 </div>
- </div><p> The <a class="el" href="class_color_picker.html" title="The ColorPicker class is an object that combines three LightsSliders and a color wheel to create an i...">ColorPicker</a> class is an object that combines three LightsSliders and a color wheel to create an interface for choosing colors. Whenever a color is selected, it signals out a QColor of to all connected slots. Colors can be selected by by moving the sliders or by clicking anywhere on the color wheel. A timer is used to throttle the signals to prevent sending messages too frequently.</div></div><div class="frontendOverview"><div class="overviewSection">A layout can be set during its construction, but cannot be changed on the fly. This layout uses ELayoutColorPicker as a parameter and this can be used to hide the sliders, hide the color wheel, or move the color wheel from the top of the sliders to the left of them. </div></div><div class="frontendOverview"></div> </div></div><!-- contents -->
+ </div><p> The <a class="el" href="class_color_picker.html" title="The ColorPicker class is a GUI object designed to give the user ability to choose RGB values in a var...">ColorPicker</a> class is a GUI object designed to give the user ability to choose RGB values in a variety of ways. The standard layout provides the user with a color wheel and three sliders, one for red, one for green, and one for blue. All other layouts use this style as a base but modify it slightly. For example, in the ambient layout, the RGB wheel is replaced by a wheel that contains only shades of white and the RGB sliders are replaced by one slider for choosing the temperature, and one slider for choosing the brightness. There also exists a multi color picker, which allows removes the sliders in favor of one slider and two rows of buttons. This layout is good for modifying multiple colors at once. </div></div><div class="frontendOverview"></div> </div></div><!-- contents -->
 
 <hr>
 <table style="width:100%">

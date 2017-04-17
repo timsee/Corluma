@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.91</span>
+   &#160;<span id="projectnumber">v0.9.92</span>
    </div>
   </td>
  </tr>
@@ -106,12 +106,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#acdcd223b12613b92a682a2c8b50f17a6">shutdown</a> ()</td></tr>
 <tr class="memdesc:acdcd223b12613b92a682a2c8b50f17a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">shutdown defined in <a class="el" href="class_comm_type.html" title="inherited by comm types, provides a general interface that can be used to do connections and sending ...">CommType</a> <br /></td></tr>
 <tr class="separator:acdcd223b12613b92a682a2c8b50f17a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abcb81452a55b4bf4d2473c47845d1f37"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#abcb81452a55b4bf4d2473c47845d1f37">changeExtendedLight</a> (int lightIndex, int saturation, int brightness, int hue)</td></tr>
-<tr class="memdesc:abcb81452a55b4bf4d2473c47845d1f37"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeLight send a packet to a hue bridge to change the color of a given hue light.  <a href="#abcb81452a55b4bf4d2473c47845d1f37">More...</a><br /></td></tr>
-<tr class="separator:abcb81452a55b4bf4d2473c47845d1f37"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad2a2c8425d7dbcf330382cdb82ab47f5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#ad2a2c8425d7dbcf330382cdb82ab47f5">changeAmbientLight</a> (int lightIndex, int brightness, int ct)</td></tr>
-<tr class="memdesc:ad2a2c8425d7dbcf330382cdb82ab47f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeAmbientLight changes the color of the bulb to match the color temperature given. This is the only way to interact with white ambiance bulbs and it can also be used with the RGB bulbs.  <a href="#ad2a2c8425d7dbcf330382cdb82ab47f5">More...</a><br /></td></tr>
-<tr class="separator:ad2a2c8425d7dbcf330382cdb82ab47f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39706ac1161e2b4787f9e29848953fa1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a39706ac1161e2b4787f9e29848953fa1">changeColorRGB</a> (int lightIndex, int saturation, int brightness, int hue)</td></tr>
+<tr class="memdesc:a39706ac1161e2b4787f9e29848953fa1"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeColorRGB send a packet to a hue bridge to change the color of a given hue light.  <a href="#a39706ac1161e2b4787f9e29848953fa1">More...</a><br /></td></tr>
+<tr class="separator:a39706ac1161e2b4787f9e29848953fa1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa3bd2ad9af191059d11ab1a7dc36efd9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#aa3bd2ad9af191059d11ab1a7dc36efd9">changeColorCT</a> (int lightIndex, int brightness, int ct)</td></tr>
+<tr class="memdesc:aa3bd2ad9af191059d11ab1a7dc36efd9"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeAmbientLight changes the color of the bulb to match the color temperature given. This is the only way to interact with white ambiance bulbs and it can also be used with the RGB bulbs.  <a href="#aa3bd2ad9af191059d11ab1a7dc36efd9">More...</a><br /></td></tr>
+<tr class="separator:aa3bd2ad9af191059d11ab1a7dc36efd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7e58e5e30432d41ec5db8629aa96003"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#ad7e58e5e30432d41ec5db8629aa96003">turnOn</a> (int lightIndex)</td></tr>
 <tr class="memdesc:ad7e58e5e30432d41ec5db8629aa96003"><td class="mdescLeft">&#160;</td><td class="mdescRight">turnOn turns on the Hue light at a given index  <a href="#ad7e58e5e30432d41ec5db8629aa96003">More...</a><br /></td></tr>
 <tr class="separator:ad7e58e5e30432d41ec5db8629aa96003"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -371,12 +371,12 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="ad2a2c8425d7dbcf330382cdb82ab47f5"></a>
+<a class="anchor" id="aa3bd2ad9af191059d11ab1a7dc36efd9"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void CommHue::changeAmbientLight </td>
+          <td class="memname">void CommHue::changeColorCT </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>lightIndex</em>, </td>
@@ -411,12 +411,12 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="abcb81452a55b4bf4d2473c47845d1f37"></a>
+<a class="anchor" id="a39706ac1161e2b4787f9e29848953fa1"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void CommHue::changeExtendedLight </td>
+          <td class="memname">void CommHue::changeColorRGB </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>lightIndex</em>, </td>

@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.91</span>
+   &#160;<span id="projectnumber">v0.9.92</span>
    </div>
   </td>
  </tr>
@@ -50,14 +50,13 @@
 <a href="class_color_picker-members.html">List of all members</a> &#124;
 <a href="#signals">Signals</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a>  </div>
   <div class="headertitle">
 <div class="title">ColorPicker Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="class_color_picker.html" title="The ColorPicker class is an object that combines three LightsSliders and a color wheel to create an i...">ColorPicker</a> class is an object that combines three LightsSliders and a color wheel to create an interface for choosing colors.  
+<p>The <a class="el" href="class_color_picker.html" title="The ColorPicker class is a GUI object designed to give the user ability to choose RGB values in a var...">ColorPicker</a> class is a GUI object designed to give the user ability to choose RGB values in a variety of ways. The standard layout provides the user with a color wheel and three sliders, one for red, one for green, and one for blue. All other layouts use this style as a base but modify it slightly. For example, in the ambient layout, the RGB wheel is replaced by a wheel that contains only shades of white and the RGB sliders are replaced by one slider for choosing the temperature, and one slider for choosing the brightness.  
  <a href="class_color_picker.html#details">More...</a></p>
 
 <p><code>#include &quot;<a class="el" href="colorpicker_8h_source.html">colorpicker.h</a>&quot;</code></p>
@@ -70,56 +69,50 @@ Signals</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#ad95c051a6395307fa20585f70d1d6939">colorUpdate</a> (QColor)</td></tr>
 <tr class="memdesc:ad95c051a6395307fa20585f70d1d6939"><td class="mdescLeft">&#160;</td><td class="mdescRight">colorUpdate should be connected to the slot of any other elements that utilize this color picker. Any time a color is chosen, it sends out the color using this signal. <br /></td></tr>
 <tr class="separator:ad95c051a6395307fa20585f70d1d6939"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad49d922003d76dd25d8646b48df3da19"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad49d922003d76dd25d8646b48df3da19"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#ad49d922003d76dd25d8646b48df3da19">multiColorChanged</a> (int, QColor)</td></tr>
+<tr class="memdesc:ad49d922003d76dd25d8646b48df3da19"><td class="mdescLeft">&#160;</td><td class="mdescRight">multiColorChanged emitted whenever the multi color picker has an update for any individual color. <br /></td></tr>
+<tr class="separator:ad49d922003d76dd25d8646b48df3da19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ec362fb26fb3f18fad87e3d2a0c8046"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0ec362fb26fb3f18fad87e3d2a0c8046"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a0ec362fb26fb3f18fad87e3d2a0c8046">ambientUpdate</a> (int, int)</td></tr>
+<tr class="memdesc:a0ec362fb26fb3f18fad87e3d2a0c8046"><td class="mdescLeft">&#160;</td><td class="mdescRight">ambientUpdate emitted whenever the ambient picker has an update. First value is the color temperature (ranged between 153 and 500) and the second is the brightness (ranged between 0 and 100) <br /></td></tr>
+<tr class="separator:a0ec362fb26fb3f18fad87e3d2a0c8046"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3263ef4864d9d1c460e917a6ac44c48"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae3263ef4864d9d1c460e917a6ac44c48"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#ae3263ef4864d9d1c460e917a6ac44c48">brightnessUpdate</a> (int)</td></tr>
+<tr class="memdesc:ae3263ef4864d9d1c460e917a6ac44c48"><td class="mdescLeft">&#160;</td><td class="mdescRight">brightnessUpdate emitted whenever brightness changes from any layout that has a brightness slider <br /></td></tr>
+<tr class="separator:ae3263ef4864d9d1c460e917a6ac44c48"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adedd44973bfccd2ed4af6029c000dbc0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adedd44973bfccd2ed4af6029c000dbc0"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#adedd44973bfccd2ed4af6029c000dbc0">multiColorCountChanged</a> (int)</td></tr>
+<tr class="memdesc:adedd44973bfccd2ed4af6029c000dbc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">multiColorCountChanged number of colors to use during multi color routines changed. <br /></td></tr>
+<tr class="separator:adedd44973bfccd2ed4af6029c000dbc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ac7ccd368b621703353772390702d6709"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#ac7ccd368b621703353772390702d6709">ColorPicker</a> (QWidget *parent=0)</td></tr>
-<tr class="memdesc:ac7ccd368b621703353772390702d6709"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_color_picker.html" title="The ColorPicker class is an object that combines three LightsSliders and a color wheel to create an i...">ColorPicker</a> constructor.  <a href="#ac7ccd368b621703353772390702d6709">More...</a><br /></td></tr>
+<tr class="memdesc:ac7ccd368b621703353772390702d6709"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_color_picker.html" title="The ColorPicker class is a GUI object designed to give the user ability to choose RGB values in a var...">ColorPicker</a> constructor.  <a href="#ac7ccd368b621703353772390702d6709">More...</a><br /></td></tr>
 <tr class="separator:ac7ccd368b621703353772390702d6709"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad431a9537f9fbb350f321abbe92c5f1a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad431a9537f9fbb350f321abbe92c5f1a"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#ad431a9537f9fbb350f321abbe92c5f1a">~ColorPicker</a> ()</td></tr>
 <tr class="memdesc:ad431a9537f9fbb350f321abbe92c5f1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deconstructor. <br /></td></tr>
 <tr class="separator:ad431a9537f9fbb350f321abbe92c5f1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61227af0354561ac9ebdb128e25009a5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a61227af0354561ac9ebdb128e25009a5">chooseLayout</a> (ELayoutColorPicker layout)</td></tr>
-<tr class="memdesc:a61227af0354561ac9ebdb128e25009a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">chooseLayout sets the layout using the available layout modes. This allows you to hide the sliders or color wheel, and change how things are ordered so they can fit more window sizes. This should be called only once as Qt doesn't seem to like it when you change between horizontal and vertical layouts.  <a href="#a61227af0354561ac9ebdb128e25009a5">More...</a><br /></td></tr>
-<tr class="separator:a61227af0354561ac9ebdb128e25009a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac13e418c985c8623908a155f212d0f2e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#ac13e418c985c8623908a155f212d0f2e">changeLayout</a> (ELayoutColorPicker layout, bool skipAnimation=false)</td></tr>
+<tr class="memdesc:ac13e418c985c8623908a155f212d0f2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeLayout sets the layout using the available layout modes. This allows you to hide the sliders or color wheel, and change how things are ordered so they can fit more window sizes. This should be called only once as Qt doesn't seem to like it when you change between horizontal and vertical layouts.  <a href="#ac13e418c985c8623908a155f212d0f2e">More...</a><br /></td></tr>
+<tr class="separator:ac13e418c985c8623908a155f212d0f2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0cf3f52806325b1fedffdce7a570bd59"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a0cf3f52806325b1fedffdce7a570bd59">enableWheel</a> (bool shouldEnable)</td></tr>
+<tr class="memdesc:a0cf3f52806325b1fedffdce7a570bd59"><td class="mdescLeft">&#160;</td><td class="mdescRight">enableWheel enables/disables the color wheel. If the color wheel is disabled, its faded out and mouse events don't work. If its enabled, its not faded out and um, mouse events do work.  <a href="#a0cf3f52806325b1fedffdce7a570bd59">More...</a><br /></td></tr>
+<tr class="separator:a0cf3f52806325b1fedffdce7a570bd59"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a862867fe879d8520595867a9c67cade2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a862867fe879d8520595867a9c67cade2">chooseColor</a> (QColor color, bool shouldSignal=true)</td></tr>
 <tr class="memdesc:a862867fe879d8520595867a9c67cade2"><td class="mdescLeft">&#160;</td><td class="mdescRight">chooseColor programmatically set the color of the picker. this will update the UI elements to reflect this color. By default it wil also signal its changes a flag can be used to disable the signal.  <a href="#a862867fe879d8520595867a9c67cade2">More...</a><br /></td></tr>
 <tr class="separator:a862867fe879d8520595867a9c67cade2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a75c9c574b8c5fd6c953e9aa7222d8849"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a75c9c574b8c5fd6c953e9aa7222d8849">useHueWheel</a> (bool shouldUseHueWheel)</td></tr>
-<tr class="memdesc:a75c9c574b8c5fd6c953e9aa7222d8849"><td class="mdescLeft">&#160;</td><td class="mdescRight">useHueWheel uses a wheel with more desaturated colors since a hue bulb has a different color gamut than standard RGB LEDs.  <a href="#a75c9c574b8c5fd6c953e9aa7222d8849">More...</a><br /></td></tr>
-<tr class="separator:a75c9c574b8c5fd6c953e9aa7222d8849"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a7216bf378a3870720b3b8e5224f2d943"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7216bf378a3870720b3b8e5224f2d943"></a>
-QLabel *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a7216bf378a3870720b3b8e5224f2d943">colorWheel</a></td></tr>
-<tr class="memdesc:a7216bf378a3870720b3b8e5224f2d943"><td class="mdescLeft">&#160;</td><td class="mdescRight">colorWheel the color wheel for the color picker. Uses an image asset, which needs to be included in the project. Used to pick the color with a single mouse event instead of setting 3 sliders. <br /></td></tr>
-<tr class="separator:a7216bf378a3870720b3b8e5224f2d943"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7dbba46c4771a666bda7ebba392a7bd8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7dbba46c4771a666bda7ebba392a7bd8"></a>
-<a class="el" href="class_lights_slider.html">LightsSlider</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a7dbba46c4771a666bda7ebba392a7bd8">rSlider</a></td></tr>
-<tr class="memdesc:a7dbba46c4771a666bda7ebba392a7bd8"><td class="mdescLeft">&#160;</td><td class="mdescRight">rSlider slider used for choosing the strength of the red LEDs <br /></td></tr>
-<tr class="separator:a7dbba46c4771a666bda7ebba392a7bd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a51e09d65c3e2b789a2f0facfcd58cf95"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a51e09d65c3e2b789a2f0facfcd58cf95"></a>
-<a class="el" href="class_lights_slider.html">LightsSlider</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a51e09d65c3e2b789a2f0facfcd58cf95">gSlider</a></td></tr>
-<tr class="memdesc:a51e09d65c3e2b789a2f0facfcd58cf95"><td class="mdescLeft">&#160;</td><td class="mdescRight">gSlider slider used for choosing the strength of the green LEDs <br /></td></tr>
-<tr class="separator:a51e09d65c3e2b789a2f0facfcd58cf95"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3a40ec235d8fafceab7ed028cf97f16"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad3a40ec235d8fafceab7ed028cf97f16"></a>
-<a class="el" href="class_lights_slider.html">LightsSlider</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#ad3a40ec235d8fafceab7ed028cf97f16">bSlider</a></td></tr>
-<tr class="memdesc:ad3a40ec235d8fafceab7ed028cf97f16"><td class="mdescLeft">&#160;</td><td class="mdescRight">bSlider slider used for choosing the strength of the blue LEDs <br /></td></tr>
-<tr class="separator:ad3a40ec235d8fafceab7ed028cf97f16"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a06ec77368bc1f1ce4b5c9ef2fe5a9d8d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a06ec77368bc1f1ce4b5c9ef2fe5a9d8d"></a>
-QLabel *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a06ec77368bc1f1ce4b5c9ef2fe5a9d8d">rLabel</a></td></tr>
-<tr class="memdesc:a06ec77368bc1f1ce4b5c9ef2fe5a9d8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">rLabel label for the rSlider, puts that little "R" in front of the slider. <br /></td></tr>
-<tr class="separator:a06ec77368bc1f1ce4b5c9ef2fe5a9d8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab197bb28ac960d9b141ac3e45d23feff"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab197bb28ac960d9b141ac3e45d23feff"></a>
-QLabel *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#ab197bb28ac960d9b141ac3e45d23feff">gLabel</a></td></tr>
-<tr class="memdesc:ab197bb28ac960d9b141ac3e45d23feff"><td class="mdescLeft">&#160;</td><td class="mdescRight">gLabel label for the gSlider, puts that little "G" in front of the slider. <br /></td></tr>
-<tr class="separator:ab197bb28ac960d9b141ac3e45d23feff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a948700e5f96b19cbabaccea3fd71d68a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a948700e5f96b19cbabaccea3fd71d68a"></a>
-QLabel *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a948700e5f96b19cbabaccea3fd71d68a">bLabel</a></td></tr>
-<tr class="memdesc:a948700e5f96b19cbabaccea3fd71d68a"><td class="mdescLeft">&#160;</td><td class="mdescRight">bLabel label for the bSlider, puts that little "B" in front of the slider. <br /></td></tr>
-<tr class="separator:a948700e5f96b19cbabaccea3fd71d68a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24d9195c59e1f623fcc4afe73bbaae65"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a24d9195c59e1f623fcc4afe73bbaae65">chooseAmbient</a> (int temperature, int brightness, bool shouldSignal=true)</td></tr>
+<tr class="memdesc:a24d9195c59e1f623fcc4afe73bbaae65"><td class="mdescLeft">&#160;</td><td class="mdescRight">chooseAmbient programmatically set the ambient color picker. This will update the UI elements to reflect the values provided. By default it will also signal its changes, but a flag can be used to override the signal.  <a href="#a24d9195c59e1f623fcc4afe73bbaae65">More...</a><br /></td></tr>
+<tr class="separator:a24d9195c59e1f623fcc4afe73bbaae65"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e28e95f6ca052a664f942e0b1b6e517"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a0e28e95f6ca052a664f942e0b1b6e517">chooseBrightness</a> (int brightness, bool shouldSignal=true)</td></tr>
+<tr class="memdesc:a0e28e95f6ca052a664f942e0b1b6e517"><td class="mdescLeft">&#160;</td><td class="mdescRight">chooseBrightness programmatically set the brightness.This will update the UI elements to reflect the values provided. By default it will also signal its changes, but a flag can be used to override the signal.  <a href="#a0e28e95f6ca052a664f942e0b1b6e517">More...</a><br /></td></tr>
+<tr class="separator:a0e28e95f6ca052a664f942e0b1b6e517"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a750ef03aba6f8787a9cfb8aaba43d4ee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a750ef03aba6f8787a9cfb8aaba43d4ee">updateMultiColor</a> (const std::vector&lt; QColor &gt; colors, int count)</td></tr>
+<tr class="memdesc:a750ef03aba6f8787a9cfb8aaba43d4ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateMultiColor programmatically set the colors in the multi color picker. This will update the UI elements to reflect the values provided. By default it will also signal its changes, but a flag can be used to override the signal.  <a href="#a750ef03aba6f8787a9cfb8aaba43d4ee">More...</a><br /></td></tr>
+<tr class="separator:a750ef03aba6f8787a9cfb8aaba43d4ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -149,8 +142,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:aa4070d7983c06235a31537d556acc188"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Whenever a color is selected, it signals out a QColor of to all connected slots. Colors can be selected by by moving the sliders or by clicking anywhere on the color wheel. A timer is used to throttle the signals to prevent sending messages too frequently.</p>
-<p>A layout can be set during its construction, but cannot be changed on the fly. This layout uses ELayoutColorPicker as a parameter and this can be used to hide the sliders, hide the color wheel, or move the color wheel from the top of the sliders to the left of them. </p>
+<div class="textblock"><p>There also exists a multi color picker, which allows removes the sliders in favor of one slider and two rows of buttons. This layout is good for modifying multiple colors at once. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="ac7ccd368b621703353772390702d6709"></a>
 <div class="memitem">
@@ -184,6 +176,112 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="ac13e418c985c8623908a155f212d0f2e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ColorPicker::changeLayout </td>
+          <td>(</td>
+          <td class="paramtype">ELayoutColorPicker&#160;</td>
+          <td class="paramname"><em>layout</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>skipAnimation</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">layout</td><td>the layout you want to use. </td></tr>
+    <tr><td class="paramname">skipAnimation</td><td>if true, skips animation </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a24d9195c59e1f623fcc4afe73bbaae65"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ColorPicker::chooseAmbient </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>temperature</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>brightness</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>shouldSignal</em> = <code>true</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">temperature</td><td>desired temperature of the color. </td></tr>
+    <tr><td class="paramname">brightness</td><td>brightness of the color </td></tr>
+    <tr><td class="paramname">shouldSignal</td><td>true to signal, false to skip this signal </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a0e28e95f6ca052a664f942e0b1b6e517"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ColorPicker::chooseBrightness </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>brightness</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>shouldSignal</em> = <code>true</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">brightness</td><td>brightness of the color </td></tr>
+    <tr><td class="paramname">shouldSignal</td><td>true to signal, false to skip this signal </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="a862867fe879d8520595867a9c67cade2"></a>
 <div class="memitem">
 <div class="memproto">
@@ -210,51 +308,62 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">color</td><td>a QColor representation of the color you want to use. </td></tr>
-    <tr><td class="paramname">shouldSignal</td><td>Defaulted to true, this flag </td></tr>
+    <tr><td class="paramname">shouldSignal</td><td>true to signal, false to skip this signal. </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a class="anchor" id="a61227af0354561ac9ebdb128e25009a5"></a>
+<a class="anchor" id="a0cf3f52806325b1fedffdce7a570bd59"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void ColorPicker::chooseLayout </td>
-          <td>(</td>
-          <td class="paramtype">ELayoutColorPicker&#160;</td>
-          <td class="paramname"><em>layout</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">layout</td><td>the layout you want to use. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="a75c9c574b8c5fd6c953e9aa7222d8849"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ColorPicker::useHueWheel </td>
+          <td class="memname">void ColorPicker::enableWheel </td>
           <td>(</td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>shouldUseHueWheel</em></td><td>)</td>
+          <td class="paramname"><em>shouldEnable</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">shouldUseHueWheel</td><td>true if it should use a hue wheel, false if it should use the standard wheel. </td></tr>
+    <tr><td class="paramname">shouldEnable</td><td>true to enable wheel, false otherwise. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a750ef03aba6f8787a9cfb8aaba43d4ee"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ColorPicker::updateMultiColor </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; QColor &gt;&#160;</td>
+          <td class="paramname"><em>colors</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>count</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">colors</td><td>the colors for the array in the multi color picker </td></tr>
+    <tr><td class="paramname">count</td><td>the number of colors to use from the vector </td></tr>
   </table>
   </dd>
 </dl>
