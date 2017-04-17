@@ -10,6 +10,7 @@
 #include <QPainter>
 #include <QSignalMapper>
 #include <QGraphicsOpacityEffect>
+#include <QPropertyAnimation>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -42,50 +43,43 @@ MainWindow::MainWindow(QWidget *parent) :
     // --------------
 
     ui->connectionPage->setup(mData);
-
-    ui->singleColorPage->setup(mData);
-    ui->hueSingleColorPage->setup(mData);
-    ui->customColorsPage->setup(mData);
-
-    ui->presetColorsPage->setup(mData);
+    ui->colorPage->setup(mData);
+    ui->groupPage->setup(mData);
 
     ui->connectionPage->connectCommLayer(mComm);
+    ui->colorPage->connectCommLayer(mComm);
 
     ui->connectionPage->connectGroupsParser(groups);
 
     ui->connectionPage->setupUI();
-    ui->singleColorPage->setupButtons();
-    ui->customColorsPage->setupButtons();
-    ui->presetColorsPage->setupButtons();
+    ui->groupPage->setupButtons();
+    ui->colorPage->setupButtons();
 
 
     connect(ui->connectionPage, SIGNAL(updateMainIcons()),  this, SLOT(updateMenuBar()));
-    connect(ui->singleColorPage, SIGNAL(updateMainIcons()),  this, SLOT(updateMenuBar()));
-    connect(ui->hueSingleColorPage, SIGNAL(updateMainIcons()),  this, SLOT(updateMenuBar()));
-    connect(ui->customColorsPage, SIGNAL(updateMainIcons()), this, SLOT(updateMenuBar()));
-    connect(ui->presetColorsPage, SIGNAL(updateMainIcons()), this, SLOT(updateMenuBar()));
+    connect(ui->colorPage, SIGNAL(updateMainIcons()),  this, SLOT(updateMenuBar()));
+    connect(ui->groupPage, SIGNAL(updateMainIcons()), this, SLOT(updateMenuBar()));
 
-    connect(ui->singleColorPage, SIGNAL(singleColorChanged(QColor)),  this, SLOT(updateSingleColor(QColor)));
-    connect(ui->hueSingleColorPage, SIGNAL(singleColorChanged(QColor)),  this, SLOT(updateSingleColor(QColor)));
+    connect(ui->colorPage, SIGNAL(singleColorChanged(QColor)),  this, SLOT(updateSingleColor(QColor)));
 
-    connect(ui->presetColorsPage, SIGNAL(presetColorGroupChanged(int, int)),  this, SLOT(updatePresetColorGroup(int, int)));
+    connect(ui->groupPage, SIGNAL(presetColorGroupChanged(int, int)),  this, SLOT(updatePresetColorGroup(int, int)));
 
     connect(ui->connectionPage, SIGNAL(deviceCountChanged()), this, SLOT(deviceCountChangedOnConnectionPage()));
     connect(ui->connectionPage, SIGNAL(clickedEditButton(QString, bool)),  this, SLOT(editButtonClicked(QString, bool)));
 
-    connect(ui->hueSingleColorPage, SIGNAL(brightnessChanged(int)), this, SLOT(brightnessChanged(int)));
+    connect(ui->colorPage, SIGNAL(brightnessChanged(int)), this, SLOT(brightnessChanged(int)));
 
 
     // --------------
     // Setup Buttons
     // --------------
 
-    ui->singleColorButton->setupAsMenuButton((int)EPage::eSinglePage);
-    ui->singleColorButton->button->setStyleSheet("background-color: rgb(52, 52, 52); ");
-    ui->singleColorButton->button->setCheckable(true);
-    connect(ui->singleColorButton, SIGNAL(menuButtonClicked(int)), this, SLOT(pageChanged(int)));
+    ui->colorPageButton->setupAsMenuButton((int)EPage::eColorPage);
+    ui->colorPageButton->button->setStyleSheet("background-color: rgb(52, 52, 52); ");
+    ui->colorPageButton->button->setCheckable(true);
+    connect(ui->colorPageButton, SIGNAL(menuButtonClicked(int)), this, SLOT(pageChanged(int)));
 
-    ui->presetArrayButton->setupAsMenuButton((int)EPage::ePresetPage,  mData->colorGroup(EColorGroup::eSevenColor));
+    ui->presetArrayButton->setupAsMenuButton((int)EPage::eGroupPage,  mData->colorGroup(EColorGroup::eSevenColor));
     ui->presetArrayButton->button->setStyleSheet("background-color: rgb(52, 52, 52); ");
     ui->presetArrayButton->button->setCheckable(true);
     connect(ui->presetArrayButton, SIGNAL(menuButtonClicked(int)), this, SLOT(pageChanged(int)));
@@ -117,9 +111,6 @@ MainWindow::MainWindow(QWidget *parent) :
     mIconData.setSolidColor(QColor(0,255,0));
     ui->onOffButton->setIcon(mIconData.renderAsQPixmap());
 
-    mFloatingLayout = new FloatingLayout(this);
-    connect(mFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
-
     // --------------
     // Setup Discovery Page
     // --------------
@@ -129,8 +120,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mDiscoveryPage->connectCommLayer(mComm);
     connect(mDiscoveryPage, SIGNAL(startButtonClicked()), this, SLOT(switchToConnection()));
     connect(mDiscoveryPage, SIGNAL(settingsButtonClicked()), this, SLOT(settingsButtonFromDiscoveryPressed()));
-
-    mDiscoveryPage->setVisible(false);
+    connect(mDiscoveryPage, SIGNAL(closeWithoutTransition()), this, SLOT(closeDiscoveryWithoutTransition()));
 
 
     // --------------
@@ -139,7 +129,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mGreyOut = new GreyOutOverlay(this);
     mGreyOut->setVisible(false);
-
 
     // --------------
     // Setup Editing Page
@@ -173,7 +162,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // --------------
 
     pageChanged((int)EPage::eConnectionPage);
-    mLastPageIsMultiColor = false;
+
     // grey out icons
     deviceCountReachedZero();
 
@@ -181,8 +170,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // check default page
     ui->connectionButton->setStyleSheet("background-color: rgb(80, 80, 80); ");
-    // open discovery page by default
-    ui->connectionPage->discoveryButtonPressed();
+
+    //TODO: fix edge case...
+#ifdef MOBILE_BUILD
+    this->setStyleSheet("QScrollBar:vertical { background-color: #2A2929;  width: 15px; margin: 15px 3px 15px 3px; border: 1px transparent #2A2929; border-radius: 4px; }");
+#endif
 }
 
 
@@ -215,9 +207,9 @@ void MainWindow::toggleOnOff() {
 }
 
 void MainWindow::brightnessChanged(int newBrightness) {
-   // get list of all devices that just use brightness for hue
-   std::list<SLightDevice> specialCaseDevices;
-   for (auto&& device : mData->currentDevices()) {
+    // get list of all devices that just use brightness for hue
+    std::list<SLightDevice> specialCaseDevices;
+    for (auto&& device : mData->currentDevices()) {
         if (device.type == ECommType::eHue) {
             SHueLight hueDevice = mComm->hueLightFromLightDevice(device);
             if (hueDevice.type == EHueType::eAmbient
@@ -225,9 +217,11 @@ void MainWindow::brightnessChanged(int newBrightness) {
                 specialCaseDevices.push_back(device);
             }
         }
-   }
-   mData->updateBrightness(newBrightness, specialCaseDevices);
-   mData->turnOn(true);
+    }
+    mData->updateBrightness(newBrightness, specialCaseDevices);
+    mData->turnOn(true);
+    // update the top menu bar
+    updateBrightnessSlider();
 }
 
 
@@ -237,98 +231,68 @@ void MainWindow::connectionButtonPressed() {
 }
 
 void MainWindow::settingsButtonPressed() {
-    ui->singleColorButton->button->setChecked(false);
-    ui->singleColorButton->button->setStyleSheet("background-color: rgb(52, 52, 52); ");
+    ui->colorPageButton->button->setChecked(false);
+    ui->colorPageButton->button->setStyleSheet("background-color: rgb(52, 52, 52); ");
     ui->presetArrayButton->button->setChecked(false);
     ui->presetArrayButton->button->setStyleSheet("background-color: rgb(52, 52, 52); ");
     ui->connectionButton->setChecked(false);
     ui->connectionButton->setStyleSheet("background-color: rgb(52, 52, 52); ");
 
-    mFloatingLayout->setVisible(false);
-
+    mSettingsPage->setGeometry(mSettingsPage->width(), 0, mSettingsPage->width(), mSettingsPage->height());
     mSettingsPage->setVisible(true);
+    QPropertyAnimation *animation = new QPropertyAnimation(mSettingsPage, "pos");
+    animation->setDuration(TRANSITION_TIME_MSEC);
+    animation->setStartValue(mSettingsPage->pos());
+    animation->setEndValue(QPoint(0,0));
+    animation->start();
+    mSettingsPageIsOpen = true;
 }
 
 void MainWindow::settingsButtonFromDiscoveryPressed() {
-    mForceDiscoveryPage = true;
     ui->connectionButton->setChecked(false);
     ui->connectionButton->setStyleSheet("background-color: rgb(52, 52, 52); ");
 
-    mFloatingLayout->setVisible(false);
-    mDiscoveryPage->setVisible(false);
-
+    mSettingsPage->setGeometry(mSettingsPage->width(), 0, mSettingsPage->width(), mSettingsPage->height());
     mSettingsPage->setVisible(true);
+    QPropertyAnimation *animation = new QPropertyAnimation(mSettingsPage, "pos");
+    animation->setDuration(TRANSITION_TIME_MSEC);
+    animation->setStartValue(mSettingsPage->pos());
+    animation->setEndValue(QPoint(0,0));
+    animation->start();
+    mSettingsPageIsOpen = true;
 }
 
 void MainWindow::pageChanged(int pageIndex) {
     // convert if necessary
     if (pageIndex == (int)EPage::eConnectionPage) {
-        ui->singleColorButton->button->setChecked(false);
-        ui->singleColorButton->button->setStyleSheet("background-color: rgb(52, 52, 52); ");
+        ui->colorPageButton->button->setChecked(false);
+        ui->colorPageButton->button->setStyleSheet("background-color: rgb(52, 52, 52); ");
         ui->presetArrayButton->button->setChecked(false);
         ui->presetArrayButton->button->setStyleSheet("background-color: rgb(52, 52, 52); ");
 
         ui->connectionButton->setChecked(true);
         ui->connectionButton->setStyleSheet("background-color: rgb(80, 80, 80); ");
 
-
-        mFloatingLayout->setVisible(false);
-
-        if (mForceDiscoveryPage) {
-            mDiscoveryPage->setVisible(true);
-        }
         ui->stackedWidget->setCurrentIndex((int)EPage::eConnectionPage);
     } else {
-        if (pageIndex == (int)EPage::eSinglePage
-                && mData->shouldUseHueAssets()) {
-            pageIndex = (int)EPage::eHueSinglePage;
-        }
 
-        ui->singleColorButton->button->setChecked(false);
-        ui->singleColorButton->button->setStyleSheet("background-color: rgb(52, 52, 52); ");
+        ui->colorPageButton->button->setChecked(false);
+        ui->colorPageButton->button->setStyleSheet("background-color: rgb(52, 52, 52); ");
         ui->presetArrayButton->button->setChecked(false);
         ui->presetArrayButton->button->setStyleSheet("background-color: rgb(52, 52, 52); ");
 
         ui->connectionButton->setChecked(false);
         ui->connectionButton->setStyleSheet("background-color: rgb(52, 52, 52); ");
-       if (pageIndex == (int)EPage::ePresetPage) {
+        if (pageIndex == (int)EPage::eGroupPage) {
             ui->presetArrayButton->button->setChecked(true);
             ui->presetArrayButton->button->setStyleSheet("background-color: rgb(80, 80, 80); ");
-        }
-
-        if (pageIndex == (int)EPage::eSinglePage
-                || pageIndex == (int)EPage::eHueSinglePage
-                || pageIndex == (int)EPage::eCustomArrayPage) {
-            ui->singleColorButton->button->setChecked(true);
-            ui->singleColorButton->button->setStyleSheet("background-color: rgb(80, 80, 80); ");
-            if (pageIndex == (int)EPage::eHueSinglePage) {
-                updateHueSingleColorFloatingMenu();
-            } else {
-                std::vector<QString> floatingButtons = {QString("Single"), QString("Multi")};
-                mFloatingLayout->setupButtons(floatingButtons, this->size());
-                mFloatingLayout->move((ui->settingsButton->geometry().bottomRight()));
-                mFloatingLayout->setVisible(true);
-            }
-
-            if (mData->devicesContainCommType(ECommType::eHTTP)
-                    || mData->devicesContainCommType(ECommType::eUDP)
-    #ifndef MOBILE_BUILD
-                    || mData->devicesContainCommType(ECommType::eSerial)
-    #endif //MOBILE_BUILD
-                    ) {
-                if (mLastPageIsMultiColor) {
-                    ui->stackedWidget->setCurrentIndex((int)EPage::eCustomArrayPage);
-                } else {
-                    ui->stackedWidget->setCurrentIndex((int)EPage::eSinglePage);
-                }
-            } else {
-                // hue only, only use the single page
-                ui->stackedWidget->setCurrentIndex((int)EPage::eHueSinglePage);
-                updateHueSingleColorFloatingMenu();
-            }
+            ui->stackedWidget->setCurrentIndex(pageIndex);
+        } else if (pageIndex == (int)EPage::eColorPage) {
+            ui->colorPageButton->button->setChecked(true);
+            ui->colorPageButton->button->setStyleSheet("background-color: rgb(80, 80, 80); ");
+            ui->stackedWidget->setCurrentIndex((int)EPage::eColorPage);
         } else {
             ui->stackedWidget->setCurrentIndex(pageIndex);
-            mFloatingLayout->setVisible(false);
         }
     }
     mPageIndex = pageIndex;
@@ -339,41 +303,16 @@ void MainWindow::pageChanged(int pageIndex) {
 void MainWindow::updateMenuBar() {
 
     //-----------------
-    // Single Color Button Update
-    //-----------------
-
-    if (ui->stackedWidget->currentIndex() == (int)EPage::eCustomArrayPage) {
-        int count;
-        if (mData->currentColorGroup() == EColorGroup::eCustom) {
-            count = mData->customColorsUsed();
-        } else {
-            count = -1;
-        }
-        ui->singleColorButton->updateIconPresetColorRoutine(mData->currentRoutine(),
-                                                            mData->currentColorGroup(),
-                                                            mData->currentGroup(),
-                                                            count);
-    }
-
-
-    mIconData.setSingleLightingRoutine(mData->currentRoutine(), mData->mainColor());
-    ui->singleColorButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, mData->mainColor());
-
-
-    //-----------------
     // Multi Color Button Update
     //-----------------
     if (mData->currentRoutine() <= utils::ELightingRoutineSingleColorEnd) {
         EColorGroup closestGroup = mData->closestColorGroupToColor(mData->mainColor());
-        ui->presetArrayButton->updateIconPresetColorRoutine(mData->currentRoutine(),
+        ui->presetArrayButton->updateIconPresetColorRoutine(ELightingRoutine::eMultiBarsMoving,
                                                             closestGroup,
                                                             mData->colorGroup(closestGroup));
     } else {
         if (mData->currentColorGroup() == EColorGroup::eCustom) {
-            ui->presetArrayButton->updateIconPresetColorRoutine(mData->currentRoutine(),
-                                                                mData->currentColorGroup(),
-                                                                mData->colorGroup(EColorGroup::eCustom),
-                                                                mData->customColorsUsed());
+            // do nothing
         } else {
             ui->presetArrayButton->updateIconPresetColorRoutine(mData->currentRoutine(),
                                                                 mData->currentColorGroup(),
@@ -385,7 +324,7 @@ void MainWindow::updateMenuBar() {
     // On/Off Data
     //-----------------
     if (mData->currentColorGroup() == EColorGroup::eCustom
-               && mData->currentRoutine() > utils::ELightingRoutineSingleColorEnd) {
+            && mData->currentRoutine() > utils::ELightingRoutineSingleColorEnd) {
         mIconData.setMultiLightingRoutine(mData->currentRoutine(),
                                           mData->currentColorGroup(),
                                           mData->currentGroup(),
@@ -402,10 +341,12 @@ void MainWindow::updateMenuBar() {
     // Brightness Slider Update
     //-----------------
 
+    updateBrightnessSlider();
+}
+
+void MainWindow::updateBrightnessSlider() {
     if ((int)mData->currentRoutine() <= (int)ELightingRoutine::eSingleSawtoothFadeOut) {
         ui->brightnessSlider->setSliderColorBackground(mData->mainColor());
-    } else if (ui->stackedWidget->currentIndex() == (int)EPage::eCustomArrayPage) {
-        ui->brightnessSlider->setSliderColorBackground(mData->colorsAverage(EColorGroup::eCustom));
     } else {
         ui->brightnessSlider->setSliderColorBackground(mData->colorsAverage(mData->currentColorGroup()));
     }
@@ -422,8 +363,7 @@ void MainWindow::updateSingleColor(QColor color) {
     mIconData.setSingleLightingRoutine(mData->currentRoutine(), color);
     ui->brightnessSlider->setSliderColorBackground(color);
     ui->onOffButton->setIcon(mIconData.renderAsQPixmap());
-
-    ui->singleColorButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, color);
+    ui->colorPageButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, color);
 }
 
 void MainWindow::updatePresetColorGroup(int lightingRoutine, int colorGroup) {
@@ -433,6 +373,7 @@ void MainWindow::updatePresetColorGroup(int lightingRoutine, int colorGroup) {
                                                         mData->colorGroup((EColorGroup)colorGroup));
     ui->brightnessSlider->setSliderColorBackground(mData->colorsAverage((EColorGroup)colorGroup));
     ui->onOffButton->setIcon(mIconData.renderAsQPixmap());
+
 }
 
 
@@ -472,12 +413,32 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
     ui->onOffButton->setMinimumHeight(onOffSize);
 
     QSize size = this->size();
-    mDiscoveryPage->setGeometry(0, 0, size.width(), size.height());
-    mSettingsPage->setGeometry(0, 0, size.width(), size.height());
 
-    if (mFloatingLayout->isVisible()) {
-       mFloatingLayout->move((ui->settingsButton->geometry().bottomRight()));
+    if (mDiscoveryPageIsOpen) {
+        mDiscoveryPage->setGeometry(mDiscoveryPage->geometry().x(),
+                                    mDiscoveryPage->geometry().y(),
+                                    size.width(), size.height());
+    } else {
+        //TODO: handle this edge case...
+#ifdef MOBILE_BUILD
+        mDiscoveryPage->setGeometry(this->geometry().width() * -1,
+                                    this->geometry().y(),
+                                    size.width(), size.height());
+#else
+        int diff = mDiscoveryPage->geometry().width() - size.width(); // adjust x coordinate of discovery page as it scales since its sitting next to main page.
+        mDiscoveryPage->setGeometry(mDiscoveryPage->geometry().x() + diff,
+                                    mDiscoveryPage->geometry().y(),
+                                    size.width(), size.height());
+#endif
     }
+
+    if (mSettingsPageIsOpen) {
+        mSettingsPage->setGeometry(mSettingsPage->geometry().x(), mSettingsPage->geometry().y(), size.width(), size.height());
+    } else {
+        int diff = mSettingsPage->geometry().width() - size.width(); // adjust x coordinate of discovery page as it scales since its sitting next to main page.
+        mSettingsPage->setGeometry(mSettingsPage->geometry().x() - diff, mSettingsPage->geometry().y(), size.width(), size.height());
+    }
+
     if (mGreyOut->isVisible()) {
         mGreyOut->resize();
     }
@@ -509,25 +470,9 @@ void MainWindow::changeEvent(QEvent *event) {
     }
 }
 
-void MainWindow::floatingLayoutButtonPressed(QString buttonType) {
-    if (buttonType.compare("Single") == 0) {
-        mLastPageIsMultiColor = false;
-        pageChanged((int)EPage::eSinglePage);
-    } else if (buttonType.compare("Multi") == 0) {
-        mLastPageIsMultiColor = true;
-        pageChanged((int)EPage::eCustomArrayPage);
-    } else if (buttonType.compare("RGB") == 0) {
-        ui->hueSingleColorPage->changePageType(EHuePageType::eRGB);
-    }  else if (buttonType.compare("Temperature") == 0) {
-        ui->hueSingleColorPage->changePageType(EHuePageType::eAmbient);
-    }  else {
-        qDebug() << "I don't recognize that button type...";
-    }
-}
-
 
 void MainWindow::deviceCountReachedZero() {
-    ui->singleColorButton->enable(false);
+    ui->colorPageButton->enable(false);
     ui->presetArrayButton->enable(false);
     ui->brightnessSlider->enable(false);
 
@@ -544,7 +489,7 @@ void MainWindow::deviceCountChangedOnConnectionPage() {
     if (mShouldGreyOutIcons
             && (mData->currentDevices().size() > 0)
             &&  anyDevicesReachable) {
-        ui->singleColorButton->enable(true);
+        ui->colorPageButton->enable(true);
         ui->presetArrayButton->enable(true);
         ui->brightnessSlider->enable(true);
 
@@ -556,15 +501,17 @@ void MainWindow::deviceCountChangedOnConnectionPage() {
         mShouldGreyOutIcons = false;
     }
     if ((!mShouldGreyOutIcons
-            && (mData->currentDevices().size() == 0))
+         && (mData->currentDevices().size() == 0))
             || !anyDevicesReachable) {
         deviceCountReachedZero();
     } else {
-       updateHueSingleColorFloatingMenu();
+        // TODO have a more elegant check
+        checkForHues();
     }
+    ui->colorPageButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, mData->mainColor());
 }
 
-void MainWindow::updateHueSingleColorFloatingMenu() {
+void MainWindow::checkForHues() {
     uint32_t numberOfHueAmbientBulbs = 0;
     uint32_t numberOfHueWhiteBulbs = 0;
     uint32_t numberOfHueRGBBulbs = 0;
@@ -579,34 +526,12 @@ void MainWindow::updateHueSingleColorFloatingMenu() {
             } else if (hueLight.type == EHueType::eAmbient) {
                 numberOfHueAmbientBulbs++;
             } else if (hueLight.type == EHueType::eColor) {
+                numberOfHueAmbientBulbs++; //NOTE: Color bulbs are using software to estimate ambient colors,
+                                           //      They only have RGB and not the extra LEDs of the extended bulbs.
                 numberOfHueRGBBulbs++;
             } else if (hueLight.type == EHueType::eWhite) {
                 numberOfHueWhiteBulbs++;
             }
-        }
-    }
-
-    if (ui->stackedWidget->currentIndex() == (int)EPage::eHueSinglePage) {
-        if ((numberOfHueRGBBulbs > 0)
-                  && (numberOfHueAmbientBulbs > 0)) {
-            // both
-            std::vector<QString> floatingButtons = {QString("RGB"), QString("Temperature")};
-            mFloatingLayout->setupButtons(floatingButtons, this->size());
-            mFloatingLayout->move((ui->settingsButton->geometry().bottomRight()));
-            mFloatingLayout->setVisible(true);
-            ui->hueSingleColorPage->changePageType(EHuePageType::eRGB);
-        } else if ((numberOfHueRGBBulbs == 0)
-                   && (numberOfHueAmbientBulbs > 0)) {
-            // Ambient only
-            mFloatingLayout->setVisible(false);
-            ui->hueSingleColorPage->changePageType(EHuePageType::eAmbient);
-        } else if ((numberOfHueRGBBulbs > 0)
-                  && (numberOfHueAmbientBulbs == 0)) {
-            // RGB only
-            mFloatingLayout->setVisible(false);
-            ui->hueSingleColorPage->changePageType(EHuePageType::eRGB);
-        } else {
-            qDebug() << "hue types error....";
         }
     }
 
@@ -615,14 +540,8 @@ void MainWindow::updateHueSingleColorFloatingMenu() {
                 && (numberOfHueRGBBulbs == 0)
                 && (numberOfHueAmbientBulbs == 0)) {
             // white only
-            ui->singleColorButton->enable(false);
+            ui->colorPageButton->enable(true);
             ui->presetArrayButton->enable(false);
-            ui->brightnessSlider->enable(true);
-            mLastHuesWereOnlyWhite = true;
-        } else if (mLastHuesWereOnlyWhite){
-            mLastHuesWereOnlyWhite = false;
-            ui->singleColorButton->enable(true);
-            ui->presetArrayButton->enable(true);
             ui->brightnessSlider->enable(true);
         }
     }
@@ -631,21 +550,40 @@ void MainWindow::updateHueSingleColorFloatingMenu() {
 void MainWindow::switchToDiscovery() {
     QSize size = this->size();
 
-    mDiscoveryPage->setGeometry(0, 0, size.width(), size.height());
-    mDiscoveryPage->setVisible(true);
+    mDiscoveryPage->setGeometry(-mDiscoveryPage->width(), 0, size.width(), size.height());
+    QPropertyAnimation *animation = new QPropertyAnimation(mDiscoveryPage, "pos");
+    animation->setDuration(TRANSITION_TIME_MSEC);
+    animation->setStartValue(mDiscoveryPage->pos());
+    animation->setEndValue(QPoint(0, 0));
+    animation->start();
+    mDiscoveryPageIsOpen = true;
 }
 
 void MainWindow::switchToConnection() {
-    mDiscoveryPage->setVisible(false);
-    mForceDiscoveryPage = false;
+    QPropertyAnimation *animation = new QPropertyAnimation(mDiscoveryPage, "pos");
+    animation->setDuration(TRANSITION_TIME_MSEC);
+    animation->setStartValue(mDiscoveryPage->pos());
+    animation->setEndValue(QPoint(-mDiscoveryPage->width(), 0));
+    animation->start();
+    mDiscoveryPageIsOpen = false;
 }
 
 void MainWindow::settingsClosePressed() {
-    mSettingsPage->setVisible(false);
+    QPropertyAnimation *animation = new QPropertyAnimation(mSettingsPage, "pos");
+    animation->setDuration(TRANSITION_TIME_MSEC);
+    animation->setStartValue(mSettingsPage->pos());
+    animation->setEndValue(QPoint(mSettingsPage->width(), 0));
+    animation->start();
     pageChanged(mPageIndex);
-    if (mForceDiscoveryPage) {
-        mDiscoveryPage->setVisible(true);
-    }
+    mSettingsPageIsOpen = false;
+}
+
+void MainWindow::closeDiscoveryWithoutTransition() {
+    mDiscoveryPage->setGeometry(QRect(-mDiscoveryPage->width(),
+                                      0,
+                                      mDiscoveryPage->geometry().width(),
+                                      mDiscoveryPage->geometry().height()));
+    mDiscoveryPageIsOpen = false;
 }
 
 void MainWindow::editButtonClicked(QString key, bool isMood) {
@@ -667,3 +605,4 @@ void MainWindow::editClosePressed() {
     mEditPage->setVisible(false);
     ui->connectionPage->reloadConnectionList();
 }
+

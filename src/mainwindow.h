@@ -27,10 +27,8 @@ class MainWindow;
  *        in their QStackedWidget.
  */
 enum class EPage {
-    eSinglePage,
-    eHueSinglePage,
-    eCustomArrayPage,
-    ePresetPage,
+    eColorPage,
+    eGroupPage,
     eConnectionPage
 };
 
@@ -110,12 +108,6 @@ public slots:
     void updatePresetColorGroup(int, int);
 
     /*!
-     * \brief floatingLayoutButtonPressed handles whenever the floating layout has a button pressed. Parses the string
-     *        that the layout emits, then updates the UI accordingly.
-     */
-    void floatingLayoutButtonPressed(QString);
-
-    /*!
      * \brief deviceCountChangedOnConnectionPage handles the case when the device count changes.
      */
     void deviceCountChangedOnConnectionPage();
@@ -171,6 +163,12 @@ public slots:
      */
     void resizeMenuIcon(QPushButton *button, QString iconPath);
 
+    /*!
+     * \brief closeDiscoveryWithoutTransition force close discovery page as quickly as possible. SKips
+     *        the standard transition.
+     */
+    void closeDiscoveryWithoutTransition();
+
 protected:
     /*!
      * \brief paintEvent called whenever there is a paint update. This is used
@@ -201,6 +199,17 @@ private:
     Ui::MainWindow *ui;
 
     /*!
+     * \brief checkForHues checks for the types of hues connected and updates the UI accordingly.
+     */
+    void checkForHues();
+
+    /*!
+     * \brief updateBrightnessSlider update the brightness slider at the top of the mnu based on the current
+     *        light data.
+     */
+    void updateBrightnessSlider();
+
+    /*!
      * \brief mEditPage overlay that allows editing and creating collections and moods.
      */
     EditGroupPage *mEditPage;
@@ -216,13 +225,6 @@ private:
      *        mEditPage
      */
     GreyOutOverlay *mGreyOut;
-
-    /*!
-     * \brief updateHueSingleColorFloatingMenu the hue single color menu follow specific logic on
-     *        what it displays based off of what types of hue lights are connected. This helper
-     *        handles the (somewhat messy) logic.
-     */
-    void updateHueSingleColorFloatingMenu();
 
     /*!
      * \brief mDiscoveryPage page devoted to discovering new connections. Previous connections
@@ -251,13 +253,6 @@ private:
     DataSync *mDataSync;
 
     /*!
-     * \brief mFloatingLayout a floating layout that provides an array of buttons on certain pages.
-     *        It floats near the top right of the page and is managed automatically through resizeEvents
-     *        as it does not correspond to the rest of the applications layout.
-     */
-    FloatingLayout *mFloatingLayout;
-
-    /*!
      * \brief mIconData used to generate the icons in the menu bar.
      */
     IconData mIconData;
@@ -273,20 +268,17 @@ private:
      */
     bool mShouldGreyOutIcons;
 
-    /*!
-     * \brief mLastPageIsMultiColor true if the second page is currently multiple colors,
-     *        false if its a single color page.
-     */
-    bool mLastPageIsMultiColor;
+    /// true if discovery page is open, false otherwise.
+    bool mDiscoveryPageIsOpen;
+
+    /// true if settings page is open, false otherwise.
+    bool mSettingsPageIsOpen;
 
     /*!
      * handles edge case
      * \TODO remove this edgecase
      */
     bool mLastHuesWereOnlyWhite;
-
-    /// open the discovery page instead of the connection page
-    bool mForceDiscoveryPage;
 };
 
 #endif // MAINWINDOW_H

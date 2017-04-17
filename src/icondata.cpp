@@ -139,6 +139,7 @@ void IconData::setMultiLightingRoutine(ELightingRoutine routine, EColorGroup gro
             setMultiBarsMoving(group, colors, colorMax);
             break;
         default:
+            throw "ERROR: used multi light routine function with single light routine.";
             break;
     }
 }
@@ -181,7 +182,7 @@ void IconData::setSingleLightingRoutine(ELightingRoutine routine, QColor color) 
             addSineFade();
             break;
         default:
-            qDebug() << "WARNING: used single light routine function with multi light routine.";
+            throw "ERROR: used single light routine function with multi light routine.";
             break;
     }
 }

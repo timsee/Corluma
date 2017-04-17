@@ -16,6 +16,10 @@
  * Released under the GNU General Public License.
  */
 
+
+#define TRANSITION_TIME_MSEC 150
+
+
 /*!
  * \brief The ECommType enum The connection types
  *        supported by the GUI. For mobile builds,

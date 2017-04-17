@@ -18,7 +18,12 @@ void ListCollectionWidget::setup(const QString& name,
 
     this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    QString backgroundStyleSheet = "background:rgba(0, 0, 0, 0%); font: bold; ";
+    QString backgroundStyleSheet = "border: none; background:rgba(0, 0, 0, 0%);";
+#ifdef MOBILE_BUILD
+    backgroundStyleSheet += "font: 14pt;";
+#else
+    backgroundStyleSheet += "font: bold;";
+#endif
     this->setStyleSheet(backgroundStyleSheet);
 
     // setup main label

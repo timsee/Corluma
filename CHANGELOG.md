@@ -141,4 +141,14 @@
 * Added a new version of the Hue Color Temperature Picker.
 * Fixed many layout issues, broke some in certain environments (woops).
 
+### **v0.9.92
+#### Why-Do-I-Name-These Update Part 2: The Great Refactor
+* Removed [QDarkStyleSheet](https://github.com/ColinDuquesnoy/QDarkStyleSheet) in favor of a project specific stylesheet.
+* Refactored ColorPicker to do more and pick colors better. 
+* Refactored FloatingLayout. 
+* Started to add transitions.
+* Removed ColorPickerAmbient and CustomColorsPage.
+* Fixed miscellaneous bugs.
+
+
 

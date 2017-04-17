@@ -15,6 +15,7 @@ LightsSlider::LightsSlider(QWidget *parent) : QWidget(parent) {
 
     mHeightScaleFactor = 1.0f;
     mOpacity = 1.0f;
+    mThrottleFlag = false;
 
     // --------------
     // Setup Thrrole Timer
@@ -25,7 +26,6 @@ LightsSlider::LightsSlider(QWidget *parent) : QWidget(parent) {
     this->setAutoFillBackground(true);
     slider = new QSlider(Qt::Horizontal, this);
     slider->setAutoFillBackground(true);
-    slider->setFixedSize(0,0);
     setMinimumPossible(false, 0);
     setSnapToNearestTick(false);
     connect(slider, SIGNAL(valueChanged(int)), this, SLOT(receivedValue(int)));
@@ -92,6 +92,7 @@ void LightsSlider::setSliderImageBackground(QString path) {
 
 void LightsSlider::receivedValue(int value) {
     value = jumpSliderToPosition(slider, value);
+
     slider->blockSignals(true);
     slider->setValue(value);
     if (!mThrottleFlag) {
@@ -122,6 +123,7 @@ int LightsSlider::jumpSliderToPosition(QSlider *slider, int newPos) {
         // calculate how far from the left the click on the slider is.
         float posRatio = localMousePos.x() / (float)slider->size().width();
         int sliderRange = slider->maximum() - slider->minimum();
+
         // update newPos to our new value
         newPos = slider->minimum() + sliderRange * posRatio;
     }
@@ -139,13 +141,15 @@ int LightsSlider::jumpSliderToPosition(QSlider *slider, int newPos) {
 
 
 int LightsSlider::snapSliderToNearestTick(QSlider *slider, int pos) {
-    int numberOfFullTicks = pos / slider->tickInterval();
-    int leftTick = slider->minimum() + numberOfFullTicks * slider->tickInterval();
-    int rightTick = slider->minimum()  + (numberOfFullTicks + 1) * slider->tickInterval();
-    if ((leftTick - pos) < (pos - rightTick)) {
-        pos = rightTick;
-    } else {
-        pos = leftTick;
+    if (slider->tickPosition() != QSlider::NoTicks) {
+        int numberOfFullTicks = pos / slider->tickInterval();
+        int leftTick = slider->minimum() + numberOfFullTicks * slider->tickInterval();
+        int rightTick = slider->minimum()  + (numberOfFullTicks + 1) * slider->tickInterval();
+        if ((leftTick - pos) < (pos - rightTick)) {
+            pos = rightTick;
+        } else {
+            pos = leftTick;
+        }
     }
     return pos;
 }
@@ -189,26 +193,25 @@ void LightsSlider::hideEvent(QHideEvent *event) {
 
 void LightsSlider::paintEvent(QPaintEvent *event) {
     Q_UNUSED (event);
-    QStyleOption opt;
-    opt.init(this);
-    QPainter painter(this);
-
-    painter.setRenderHint(QPainter::Antialiasing);
-    if (this->isEnabled()) {
-        painter.setPen(QColor(255, 255, 255, 60));
-    } else {
-        painter.setPen(QColor(255, 255, 255, 10));
-    }
-    painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
-
-    // draw tick marks
-    // do this manually because they are very badly behaved with style sheets
-    int interval = slider->tickInterval();
-    if (interval == 0) {
-        interval = slider->pageStep();
-    }
-
     if (slider->tickPosition() != QSlider::NoTicks) {
+        QStyleOption opt;
+        opt.init(this);
+        QPainter painter(this);
+
+        painter.setRenderHint(QPainter::Antialiasing);
+        if (this->isEnabled()) {
+            painter.setPen(QColor(255, 255, 255, 60));
+        } else {
+            painter.setPen(QColor(255, 255, 255, 10));
+        }
+
+        // draw tick marks
+        // do this manually because they are very badly behaved with style sheets
+        int interval = slider->tickInterval();
+        if (interval == 0) {
+            interval = slider->pageStep();
+        }
+
         for (int i = slider->minimum(); i <= slider->maximum(); i += interval) {
             int x = round((double)(((double)(i - slider->minimum()) / (slider->maximum() - slider->minimum())) * (slider->width()))) - 1;
             if (slider->tickPosition() == QSlider::TicksBothSides || slider->tickPosition() == QSlider::TicksAbove) {
@@ -231,6 +234,7 @@ void LightsSlider::setSliderHeight(float percent) {
                         newY,
                         this->rect().width(),
                         this->rect().height() * mHeightScaleFactor);
+    resizeEvent(nullptr);
 }
 
 

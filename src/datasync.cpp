@@ -52,7 +52,7 @@ void DataSync::syncData() {
             SLightDevice commLayerDevice = device;
             bool successful = mComm->fillDevice(commLayerDevice);
             if (!successful) {
-                qDebug() << "WARNING: Something is wrong with data sync";
+//                qDebug() << "INFO: device not found!";
                 return;
             }
 
@@ -112,6 +112,7 @@ bool DataSync::standardSync(const SLightDevice& dataDevice, const SLightDevice& 
     std::list<SLightDevice> list;
     list.push_back(dataDevice);
     QString packet;
+
     //-------------------
     // On/Off Sync
     //-------------------
@@ -204,7 +205,8 @@ bool DataSync::standardSync(const SLightDevice& dataDevice, const SLightDevice& 
         if (dataDevice.isOn) {
             if (utils::colorDifference(dataDevice.customColorArray[i], commDevice.customColorArray[i]) > 0.02f) {
                 //qDebug() << "Custom color" << i << "not in sync";
-                packet = mComm->sendArrayColorChange(list, i, dataDevice.customColorArray[i]);
+                packet += mComm->sendArrayColorChange(list, i, dataDevice.customColorArray[i]);
+                tempInSync = false;
             }
         }
     }
@@ -229,7 +231,7 @@ bool DataSync::hueSync(const SLightDevice& dataDevice, const SLightDevice& commD
     //-------------------
 
     if (dataDevice.isOn != commDevice.isOn) {
-        qDebug() << "hue ON/OFF not in sync" << dataDevice.isOn;
+        //qDebug() << "hue ON/OFF not in sync" << dataDevice.isOn;
         mComm->sendTurnOn(list, dataDevice.isOn);
         tempInSync = false;
     }
@@ -241,7 +243,7 @@ bool DataSync::hueSync(const SLightDevice& dataDevice, const SLightDevice& commD
         //-------------------
         if (utils::colorDifference(dataDevice.color, commDevice.color) > 0.1f) {
             packet += mComm->sendMainColorChange(list, dataDevice.color);
-            qDebug() << "hue color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << utils::colorDifference(dataDevice.color, commDevice.color);
+            //qDebug() << "hue color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << utils::colorDifference(dataDevice.color, commDevice.color);
             tempInSync = false;
         }
     } else if (dataDevice.colorMode == EColorMode::eCT
@@ -252,15 +254,27 @@ bool DataSync::hueSync(const SLightDevice& dataDevice, const SLightDevice& commD
         if (utils::colorDifference(commDevice.color, dataDevice.color) > 0.15f) {
             packet += mComm->sendColorTemperatureChange(list, utils::rgbToColorTemperature(dataDevice.color));
             tempInSync = false;
-            qDebug() << "hue color temperature not in sync" << commDevice.color << "vs" << dataDevice.color << utils::colorDifference(commDevice.color, dataDevice.color)  << "on device" << dataDevice.index;
+            //qDebug() << "hue color temperature not in sync" << commDevice.color << "vs" << dataDevice.color << utils::colorDifference(commDevice.color, dataDevice.color)  << "on device" << dataDevice.index;
         }
 
+        //-------------------
+        // Hue CT Brightness Sync
+        //-------------------
         if (utils::brightnessDifference(commDevice.brightness, dataDevice.brightness) > 0.05f) {
-            qDebug() << "hue CT brightness not in sync" << commDevice.brightness << "vs" << dataDevice.brightness;
+            //qDebug() << "hue CT brightness not in sync" << commDevice.brightness << "vs" << dataDevice.brightness;
             packet += mComm->sendBrightness(list, dataDevice.brightness);
             tempInSync = false;
         }
 
+    } else if (dataDevice.colorMode == EColorMode::eDimmable) {
+        //-------------------
+        // Hue Dimmable Brightness Sync
+        //-------------------
+        if (utils::brightnessDifference(commDevice.brightness, dataDevice.brightness) > 0.05f) {
+            //qDebug() << "hue dimmable brightness not in sync" << commDevice.brightness << "vs" << dataDevice.brightness;
+            packet += mComm->sendBrightness(list, dataDevice.brightness);
+            tempInSync = false;
+        }
     }
 
     //-------------------
@@ -305,8 +319,6 @@ void DataSync::cleanupSync() {
                     QString indexString = iterator->name.split("_").last();
                     int givenIndex = indexString.toInt();
                     if ((givenIndex == device.index)
-                            //                       && commLayerDevice.isOn
-                            //                       && commLayerDevice.isReachable
                             && !iterator->status) {
                         totallySynced = false;
                         mComm->updateHueTimeout(true, iterator->index, device.timeout);

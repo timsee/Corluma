@@ -190,7 +190,7 @@ QString ListDeviceWidget::createStyleSheet(const SLightDevice& device) {
     QString checkedStyleSheet = "background-color: #3d8ec9;";
 
     if (mIsChecked) {
-            styleSheet = checkedStyleSheet;
+       styleSheet = checkedStyleSheet;
     } else if(!device.isReachable) {
        styleSheet = unReachableStyleSheet;
     } else if (!device.isOn) {

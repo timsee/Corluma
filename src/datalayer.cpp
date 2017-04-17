@@ -347,23 +347,24 @@ QColor DataLayer::colorsAverage(EColorGroup group) {
 
 
 
-bool DataLayer::shouldUseHueAssets() {
-#ifdef HUE_RELEASE
-    return true;
-#else
+bool DataLayer::hasHueDevices() {
     int hueCount = 0;
     for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
         if (device->type == ECommType::eHue) hueCount++;
     }
+    return (hueCount > 0);
+}
 
-    if (mCurrentDevices.size() == 1 && hueCount == 0) {
-        return false;
-    } else if (hueCount >= (int)(mCurrentDevices.size() / 2)) {
-        return true;
-    } else {
-        return false;
+bool DataLayer::hasArduinoDevices() {
+    int arduinoCount = 0;
+    for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
+        if (device->type == ECommType::eHTTP
+        #ifndef MOBILE_BUILD
+                || device->type == ECommType::eSerial
+        #endif
+                || device->type == ECommType::eUDP) arduinoCount++;
     }
-#endif
+    return (arduinoCount > 0);
 }
 
 ELightingRoutine DataLayer::currentRoutine() {
@@ -423,6 +424,12 @@ void DataLayer::updateCt(int ct) {
     std::list<SLightDevice>::iterator iterator;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
         if (iterator->type == ECommType::eHue) {
+            iterator->color = utils::colorTemperatureToRGB(ct);
+        } else if (iterator->type == ECommType::eHTTP
+           #ifndef MOBILE_BUILD
+                   || iterator->type == ECommType::eSerial
+           #endif
+                   || iterator->type == ECommType::eUDP) {
             iterator->color = utils::colorTemperatureToRGB(ct);
         }
     }

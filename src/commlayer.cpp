@@ -137,7 +137,7 @@ QString CommLayer::sendColorTemperatureChange(const std::list<SLightDevice>& dev
     QString packet;
     for (auto&& device : deviceList) {
         if (device.type == ECommType::eHue) {
-            mHue->changeAmbientLight(device.index, device.brightness, temperature);
+            mHue->changeColorCT(device.index, device.brightness, temperature);
         }
     }
     return packet;
@@ -311,7 +311,7 @@ void CommLayer::parsePacket(QString sender, QString packet, int type) {
                                && (intVector.size() % 6 == 0)) {
                         int index = intVector[2];
                         QColor color = QColor(intVector[3], intVector[4], intVector[5]);
-                        qDebug() << "UPDATE TO index" << index << "color" << color;
+                        //qDebug() << "UPDATE TO index" << index << "color" << color;
                         if (index < 10) {
                             device.customColorArray[index] = color;
                             commByType((ECommType)type)->updateDevice(device);
@@ -322,7 +322,7 @@ void CommLayer::parsePacket(QString sender, QString packet, int type) {
                                && (intVector.size() % 3 == 0)) {
 
                         device.customColorCount = intVector[2];
-                        qDebug() << "UPDATE TO custom color count" << device.customColorCount;
+                        //qDebug() << "UPDATE TO custom color count" << device.customColorCount;
 
                         commByType((ECommType)type)->updateDevice(device);
                     } else {

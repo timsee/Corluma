@@ -112,6 +112,7 @@ void ConnectionPage::updateConnectionList() {
 
 
     resizeConnectionList();
+    highlightList(); //TODO: remove when theres a more efficient way...
 }
 
 void ConnectionPage::hideUnusedWidgets(bool showMoodWidgets) {
@@ -159,6 +160,7 @@ ListDevicesGroupWidget* ConnectionPage::initDevicesCollectionWidget(const QStrin
     mDevicesListWidget->addItem(widget->key());
     mDevicesListWidget->setItemWidget(mDevicesListWidget->item(index), widget);
     mDevicesListWidget->setStyleSheet("QListView::item { border: 0px; padding-left: 0px; }  QListView::icon { padding-left: 0px;  }  QListView::text { padding-left: 0px; }");
+
     return widget;
 }
 
@@ -341,7 +343,6 @@ ListMoodGroupWidget* ConnectionPage::initMoodsCollectionWidget(const QString& na
     int index = mMoodsListWidget->count();
     mMoodsListWidget->addItem(widget->key());
     mMoodsListWidget->setItemWidget(mMoodsListWidget->item(index), widget);
-
     return widget;
 }
 

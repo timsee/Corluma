@@ -56,13 +56,13 @@ public:
     void shutdown();
 
     /*!
-     * \brief changeLight send a packet to a hue bridge to change the color of a given hue light.
+     * \brief changeColorRGB send a packet to a hue bridge to change the color of a given hue light.
      * \param lightIndex the index of the hue being changed.
      * \param saturation how saturated the color is. A higher number leads to more saturation. Must be in the range of 0 and 254, inclusive.
      * \param brightness how bright the light will be. A higher number leads to more brightness. Must be in the range of 0 and 254, inclusive.
      * \param hue the hue of the hue light's color. Must be in the range of 0 and 65535, with 0 representing pure red.
      */
-    void changeExtendedLight(int lightIndex, int saturation, int brightness, int hue);
+    void changeColorRGB(int lightIndex, int saturation, int brightness, int hue);
 
     /*!
      * \brief changeAmbientLight changes the color of the bulb to match the color temperature given. This is the only way to interact with
@@ -71,7 +71,7 @@ public:
      * \param brightness brightness between 0 and 100, with 100 being full brightness.
      * \param ct a new value for the color temperature, given in meriks. Must be between 153 and 500.
      */
-    void changeAmbientLight(int lightIndex, int brightness, int ct);
+    void changeColorCT(int lightIndex, int brightness, int ct);
 
     /*!
      * \brief turnOn turns on the Hue light at a given index

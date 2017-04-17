@@ -9,7 +9,7 @@
 #include <QDebug>
 #include <QGraphicsOpacityEffect>
 
-LightsButton::LightsButton(QWidget *parent) : QWidget(parent) {
+LightsButton::LightsButton(QWidget *parent) : QPushButton(parent) {
     mLightingRoutine = ELightingRoutine::eLightingRoutine_MAX;
     mColorGroup = EColorGroup::eColorGroup_MAX;
     mSetupHasBeenCalled = false;
@@ -76,7 +76,6 @@ void LightsButton::setupAsStandardButton(ELightingRoutine routine, EColorGroup c
     if (mLabel.compare(QString("")) != 0) {
         buttonLabel = new QLabel;
         buttonLabel->setText(label);
-        buttonLabel->setFont(QFont(buttonLabel->font().styleName(), 10, 0));
 
         buttonLabel->setAlignment(Qt::AlignCenter);
         mLayout->addWidget(buttonLabel);

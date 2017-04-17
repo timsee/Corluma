@@ -1,8 +1,6 @@
-
 #ifndef LIGHTSSLIDER_H
 #define LIGHTSSLIDER_H
 
-#include "datalayer.h"
 
 #include <QApplication>
 #include <QWidget>
@@ -19,16 +17,16 @@
  *
  * \brief The LightsSlider class provides a slider with behaviors similiar
  * to sliders on mobile devices. Clicking on the slider jumps the slider's value
- * to the location you clicked instead of the QSlider default of jumping by the page 
- * value. There is also the option to use a gradient instead of a solid color as the 
+ * to the location you clicked instead of the QSlider default of jumping by the page
+ * value. There is also the option to use a gradient instead of a solid color as the
  * background color for the slider.
  *
  * QSliders can have their tick marks break when the project uses a custom style sheet,
  * so tick marks are drawn using QPaint, if needed.
  *
- * There is also an option for developers to set a value that above the slider's minimum 
+ * There is also an option for developers to set a value that above the slider's minimum
  * as the "minmum possible." Users will see a slider that shows the minimum value, but they
- * won't below the value set as the minimum possible. This is used by the Array Colors Page 
+ * won't below the value set as the minimum possible. This is used by the Array Colors Page
  * in order to prevent users from choosing less than 2 colors for the array routines.
  *
  */

@@ -179,6 +179,53 @@ enum class EHueDiscoveryState {
     eBridgeConnected
 };
 
+namespace utils
+{
 
+/*!
+ * \brief checkForHueWithMostFeatures takes a list of hue light structs, and returns
+ *        the light type that is the most fully featured. It orders the least
+ *        to most featured lights as: White, Ambient, then Extended or Color.
+ *        If no hue lights are found or none are recognized, EHueType::EHueType_MAX
+ *        is returned.
+ * \param lights vector of hues
+ * \return the most fully featured hue type found in the vector
+ */
+inline EHueType checkForHueWithMostFeatures(std::list<SHueLight> lights) {
+    uint32_t ambientCount = 0;
+    uint32_t whiteCount = 0;
+    uint32_t rgbCount = 0;
+    // check for all devices
+    for (auto&& hue : lights) {
+        // check if its a hue
+        if (hue.type == EHueType::eExtended
+                || hue.type == EHueType::eColor) {
+            rgbCount++;
+        } else if (hue.type == EHueType::eAmbient) {
+            qDebug() << "FOUDN AMBEITNQL";
+            ambientCount++;
+        } else if (hue.type == EHueType::eWhite) {
+            whiteCount++;
+        }
+    }
+
+    if (whiteCount > 0
+            && (ambientCount == 0)
+            && (rgbCount == 0)) {
+        return EHueType::eWhite;
+    }
+    if (ambientCount > 0
+            && (rgbCount == 0)) {
+        return EHueType::eAmbient;
+    }
+
+    if (rgbCount > 0) {
+        return EHueType::eExtended;
+    }
+
+    return EHueType::EHueType_MAX;
+}
+
+}
 
 #endif // HUEPROTOCOLS_H

@@ -46,29 +46,20 @@
   </tr>
   <tr>
     <td> 
-        <h2>Single Color Page</h2>
-        \copydoc SingleColorPage 
+        <h2>Color Page</h2>
+        \copydoc ColorPage 
     </td>
     <td>         
-        \image html singleColorPagePreview.png
-    </td>
-  </tr>
-  <tr>
-    <td>
-        <h2>Custom Colors Page</h2>        
-        \copydoc CustomColorsPage  
-    </td>
-    <td> 
-        \image html customColorsPagePreview.png
+        \image html colorPagePreview.png
     </td>
   </tr>
   <tr>
     <td>  
-       <h2>Preset Colors Page</h2>
-       \copydoc PresetColorsPage
+       <h2>Group Page</h2>
+       \copydoc GroupPage
     </td>
     <td>     
-       \image html presetColorsPagePreview.png
+       \image html groupPagePreview.png
     </td>
   </tr>
   <tr>

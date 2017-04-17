@@ -11,6 +11,8 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
+#include <QSplashScreen>
+#include <QTimer>
 
 /// uncomment to wipe out all QSettings Data.
 //#define WIPE_QSETTINGS 1
@@ -18,6 +20,12 @@
 //#define WIPE_JSON 1
 /// uncomment to print system info in debug statement
 //#define PRINT_SYSINFO 1
+
+
+/// uncomment to disable the splash screen.
+#define DISABLE_SPLASH_SCREEN 1
+/// uncomment to disable the style sheet.
+//#define DISABLE_STYLE_SHEET 1
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
@@ -33,14 +41,16 @@ int main(int argc, char *argv[]) {
     // load app style sheet
     //--------------------
 
-    QFile f(":qdarkstyle/style.qss");
+#ifndef DISABLE_STYLE_SHEET
+    QFile f(":stylesheet/corluma.qss");
     if (!f.exists()) {
-        qDebug() << "Unable to set stylesheet, file not found\n";
+        throw "Unable to set stylesheet, file not found\n";
     } else {
         f.open(QFile::ReadOnly | QFile::Text);
         QTextStream ts(&f);
         qApp->setStyleSheet(ts.readAll());
     }
+#endif
 
     //--------------------
     // create app icon
@@ -95,15 +105,33 @@ int main(int argc, char *argv[]) {
     qDebug() << "";
 #endif
 
+    //--------------------
+    // Create splash screen
+    //--------------------
+
+#ifndef DISABLE_SPLASH_SCREEN
+    QSplashScreen *splash = new QSplashScreen;
+    splash->setPixmap(QPixmap(":images/color_wheel.png"));
+    splash->show();
+#endif
 
     //--------------------
     // Create app window
     //--------------------
 
-    MainWindow w;
+    MainWindow window;
     // set the icon
-    w.setWindowIcon(icon);
-    // show the window
-    w.show();
+    window.setWindowIcon(icon);
+
+#ifndef DISABLE_SPLASH_SCREEN
+    // create single shot timer to add a delay before hiding the splash screen.
+    int splashScreenDelay = 2500; // in milliseconds
+    QTimer::singleShot(splashScreenDelay, splash, SLOT(close()));
+    QTimer::singleShot(splashScreenDelay, &window,SLOT(show()));
+#else
+    window.show();
+#endif
+
+    //splash.finish(*window);
     return a.exec();
 }

@@ -1,0 +1,155 @@
+/*
+ * Copyright (C) 2015 - 2017.
+ * Released under the GNU General Public License.
+ * by Tim Seemann
+ *
+ * Git Repo: https://github.com/timsee/Corluma
+ *
+ *
+ * Aimed for usage with the Corluma project.
+ * Inspired by https://github.com/ColinDuquesnoy/QDarkStyleSheet
+ */
+
+
+
+/* ---------------
+ * General
+ * ---------------
+ */
+
+QWidget {
+    color: silver;
+    background-color: #302F2F;
+    selection-background-color:#3d8ec9;
+    selection-color: black;
+    border-image: none;
+    outline: 0;
+}
+
+QScrollArea {
+    background-color: #201F1F;
+}
+
+QListWidget {
+    background-color: #201F1F;
+    color: #201F1F; /* hide text, these use custom widgets that are transparent */
+}
+
+QLineEdit {
+    border: none;
+    background-color: #201F1F;
+}
+
+/* ---------------
+ * Push Button
+ * ---------------
+ */
+
+QPushButton {
+    color: silver;
+    background-color: #302F2F;
+    border-width: 1px;
+    border-color: #4A4949;
+    border-style: solid;
+    outline: none;
+}
+
+QPushButton:disabled {
+    background-color: #302F2F;
+    border-width: 1px;
+    border-color: #3A3939;
+    border-style: solid;
+    color: #454545;
+}
+
+QPushButton:checked {
+    background-color: #4A4949;
+    border-color: #6A6969;
+}
+
+
+QPushButton:pressed {
+    background-color: #484846;
+}
+
+
+/* ---------------
+ * Scroll Bar
+ * ---------------
+ */
+
+
+QSlider::groove:horizontal {
+    border: 1px solid #3A3939;
+    background: #201F1F;
+    margin: 2px 0;
+    border-radius: 2px;
+}
+
+QSlider::handle:horizontal {
+    background: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1,
+      stop: 0.0 silver, stop: 0.2 #a8a8a8, stop: 1 #727272);
+    border: 1px solid #3A3939;
+    border-radius: 2px;
+    margin-top: -10px;
+    margin-bottom: -10px;
+}
+
+QSlider::groove:vertical {
+    border: 1px solid #3A3939;
+    background: #201F1F;
+    margin: 0 0px;
+    border-radius: 2px;
+}
+
+QSlider::handle:vertical {
+    background: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0.0 silver,
+      stop: 0.2 #a8a8a8, stop: 1 #727272);
+    border: 1px solid #3A3939;
+    margin: 0 -100px;
+    border-radius: 2px;
+    margin-top: -10px;
+    margin-bottom: -10px;
+    width:30px;
+}
+
+/* ---------------
+ * Scroll Bars
+ * ---------------
+ */
+
+QScrollBar::right-arrow:horizontal, QScrollBar::left-arrow:horizontal {
+      border: none;
+      background: none;
+      color: none;
+      background-color: #4A4949;
+}
+
+QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {
+      border: none;
+      background: none;
+      color: none;
+      background-color: #4A4949;
+}
+
+QScrollBar::add-line {
+    border: none;
+}
+
+QScrollBar::sub-line {
+    border: none;
+}
+
+QScrollBar::sub-page {
+    background-color: #201F1F;
+}
+
+QScrollBar::add-page {
+    background-color: #201F1F;
+}
+
+QScrollBar::handle {
+    border: 1px solid black;
+    background-color: #4A4949;
+}
+

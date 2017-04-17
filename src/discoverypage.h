@@ -64,6 +64,11 @@ signals:
      */
     void settingsButtonClicked();
 
+    /*!
+     * \brief closeWithoutTransition emits to a parent to close this page without transition.
+     */
+    void closeWithoutTransition();
+
 public slots:
 
     /*!

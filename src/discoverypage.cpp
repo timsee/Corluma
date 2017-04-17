@@ -85,6 +85,9 @@ DiscoveryPage::DiscoveryPage(QWidget *parent) :
     connect(ui->connectedList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(connectedListClicked(QListWidgetItem*)));
 
 
+    ui->discoveringList->setStyleSheet("color: silver;");
+    ui->connectedList->setStyleSheet("color: silver;");
+
     mType = ECommType::eHue;
     commTypeSelected((int)mType);
 
@@ -148,7 +151,7 @@ void DiscoveryPage::renderUI() {
     if (isAnyConnected || mForceStartOpen) {
         ui->startButton->setEnabled(true);
         if (mStartTime.elapsed() < 1000) {
-            emit startButtonClicked();
+            emit closeWithoutTransition();
         }
     } else {
         ui->startButton->setEnabled(false);
@@ -312,15 +315,9 @@ void DiscoveryPage::fillList(QListWidget *list, std::list<QString>& connections)
         if (!connectionFound) {
             list->addItem(connection);
             int index = list->count() - 1;
-            QLabel *label = new QLabel(this);
-            label->setText(connection);
-            label->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-            label->setFont(QFont(label->font().styleName(), 14, 0));
-            label->setStyleSheet("background:rgba(0, 0, 0, 0%); font: bold;");
             int minimumHeight = this->size().height() / 20.0f;
             list->item(index)->setSizeHint(QSize(list->item(index)->sizeHint().width(),
                                                     minimumHeight));
-            list->setItemWidget(list->item(index), label);
         }
     }
 }

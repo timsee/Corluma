@@ -291,12 +291,17 @@ public:
     const std::list<SLightDevice>& currentDevices() { return mCurrentDevices; }
 
     /*!
-     * \brief shouldUseHueAssets helper that determines if you should be using hue-related assets
-     *        on a GUI page or non hue related assets. It determines this by seeing if half or
-     *        more of the devices in the datalayer are hue devices. If they are, it returns true.
-     * \return true if half or more of the devices in the data layer are hue devices.
+     * \brief hasHueDevices helper that determines if you should be using hue-related assets
+     *        on a GUI page or non hue related assets.
+     * \return true if any device is a hue
      */
-    bool shouldUseHueAssets();
+    bool hasHueDevices();
+
+    /*!
+     * \brief hasArduinoDevices helper that determines if there are any arduino based devices in the current data.
+     * \return true if any device is an arduino over Serial, UDP, or HTTP
+     */
+    bool hasArduinoDevices();
 
     /*!
      * \brief commTypeSettings pointer to the current comm types settings, which maintains which commtypes

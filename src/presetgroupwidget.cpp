@@ -18,7 +18,6 @@ PresetGroupWidget::PresetGroupWidget(QString name,
     mLabel = new QLabel(this);
     mLabel->setWordWrap(true);
     mLabel->setText(name);
-    mLabel->setFont(QFont(mLabel->font().styleName(), 10, 0));
 
     mLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 

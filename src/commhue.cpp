@@ -64,39 +64,44 @@ void CommHue::sendPacket(QString controller, QString packet) {
 }
 
 
-void CommHue::changeExtendedLight(int lightIndex, int saturation, int brightness, int hue) {
+void CommHue::changeColorRGB(int lightIndex, int saturation, int brightness, int hue) {
     SHueLight light;
+
+    // grab the matching hue
     for (auto&& hue : mConnectedHues) {
         if (lightIndex == hue.deviceIndex) {
             light = hue;
         }
     }
+
     // handle multicasting with light index 0
     if (lightIndex == 0) {
         for (uint32_t i = 1; i <= mConnectedHues.size(); ++i) {
-            changeExtendedLight(i, saturation, brightness, hue);
+            changeColorRGB(i, saturation, brightness, hue);
         }
     }
-    if (saturation > 254) {
-        saturation = 254;
-    }
-    if (brightness > 254) {
-        brightness = 254;
-    }
 
-    QJsonObject json;
-    json["on"] = true;
-    // 3rd gen bulbs don't seem to accept a color mode
-    //if (sendColorMode(light)) {
-     //   json["colormode"] = "hs";
-    //}
-    json["sat"] = saturation;
-    json["bri"] = brightness;
-    json["hue"] = hue;
-    putJson("/lights/" + QString::number(lightIndex) + "/state", json);
+    if (light.type == EHueType::eExtended
+            || light.type == EHueType::eColor) {
+        if (saturation > 254) {
+            saturation = 254;
+        }
+        if (brightness > 254) {
+            brightness = 254;
+        }
+
+        QJsonObject json;
+        json["on"] = true;
+        json["sat"] = saturation;
+        json["bri"] = brightness;
+        json["hue"] = hue;
+        putJson("/lights/" + QString::number(lightIndex) + "/state", json);
+    } else {
+        qDebug() << "ignoring RGB value to " << light.deviceIndex;
+    }
 }
 
-void CommHue::changeAmbientLight(int lightIndex, int brightness, int ct) {
+void CommHue::changeColorCT(int lightIndex, int brightness, int ct) {
     SHueLight light;
     for (auto&& hue : mConnectedHues) {
         if (lightIndex == hue.deviceIndex) {
@@ -106,28 +111,23 @@ void CommHue::changeAmbientLight(int lightIndex, int brightness, int ct) {
 
     if (lightIndex == 0) {
         for (uint32_t i = 1; i <= mConnectedHues.size(); ++i) {
-            changeAmbientLight(i, brightness, ct);
+            changeColorCT(i, brightness, ct);
         }
     }
 
-    if (ct > 500) {
-        ct = 500;
-    }
-    if (ct < 153) {
-        ct = 153;
-    }
-    brightness = brightness * 2.54f;
     if (light.type == EHueType::eAmbient) {
+        if (ct > 500) {
+            ct = 500;
+        }
+        if (ct < 153) {
+            ct = 153;
+        }
+        brightness = brightness * 2.54f;
+
         QJsonObject json;
         json["on"] = true;
         json["ct"] = ct;
         putJson("/lights/" + QString::number(lightIndex) + "/state", json);
-    } else {
-        QColor ambient = utils::colorTemperatureToRGB(ct);
-        changeExtendedLight(light.deviceIndex,
-                            ambient.saturation(),
-                            brightness,
-                            ambient.hue() * 182);
     }
 }
 
@@ -186,7 +186,7 @@ void CommHue::connectionStatusHasChanged(bool status) {
 //------------------------------------
 
 void CommHue::mainColorChange(int deviceIndex, QColor color){
-    changeExtendedLight(deviceIndex,
+    changeColorRGB(deviceIndex,
                         color.saturation(),
                         color.value(),
                         color.hue() * 182);

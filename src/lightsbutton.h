@@ -24,7 +24,7 @@
  * the button. A menu button emits a page number, and is used by the main menu.
  *
  */
-class LightsButton : public QWidget
+class LightsButton : public QPushButton
 {
     Q_OBJECT
 public:
@@ -100,6 +100,12 @@ public:
      * \brief buttonLabel label used when setup as a label button
      */
     QLabel *buttonLabel;
+
+    /*!
+     * \brief setChecked checks the button inside of the LightsButton
+     * \param checked true to set to checked, false to uncheck.
+     */
+    void setChecked(bool checked) { return button->setChecked(checked); }
 
 signals:
     /*!

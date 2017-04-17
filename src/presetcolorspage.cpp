@@ -4,17 +4,17 @@
  * Released under the GNU General Public License.
  */
 
-#include "presetcolorspage.h"
+#include "grouppage.h"
 #include "icondata.h"
-#include "ui_presetcolorspage.h"
+#include "ui_grouppage.h"
 
 #include <QDebug>
 #include <QSignalMapper>
 #include <QScroller>
 
-PresetColorsPage::PresetColorsPage(QWidget *parent) :
+GroupPage::GroupPage(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::PresetColorsPage) {
+    ui(new Ui::GroupPage) {
     ui->setupUi(this);
 
     this->grabGesture(Qt::SwipeGesture);
@@ -24,12 +24,12 @@ PresetColorsPage::PresetColorsPage(QWidget *parent) :
     QScroller::grabGesture(ui->scrollArea->viewport(), QScroller::LeftMouseButtonGesture);
 }
 
-PresetColorsPage::~PresetColorsPage() {
+GroupPage::~GroupPage() {
     delete ui;
 }
 
 
-void PresetColorsPage::setupButtons() {
+void GroupPage::setupButtons() {
     std::vector<std::string> labels = {"Water",
                                        "Frozen",
                                        "Snow",
@@ -68,7 +68,7 @@ void PresetColorsPage::setupButtons() {
     ui->scrollArea->setStyleSheet("background-color:transparent;");
 }
 
-void PresetColorsPage::highlightRoutineButton(ELightingRoutine routine, EColorGroup colorGroup) {
+void GroupPage::highlightRoutineButton(ELightingRoutine routine, EColorGroup colorGroup) {
     int index = 0;
     for (int iteratorGroup = (int)EColorGroup::eWater; iteratorGroup < (int)EColorGroup::eColorGroup_MAX; iteratorGroup++) {
         for (int iteratorRoutine = (int)utils::ELightingRoutineSingleColorEnd + 1; iteratorRoutine < (int)ELightingRoutine::eLightingRoutine_MAX; iteratorRoutine++) {
@@ -87,7 +87,7 @@ void PresetColorsPage::highlightRoutineButton(ELightingRoutine routine, EColorGr
 // Slots
 // ----------------------------
 
-void PresetColorsPage::multiButtonClicked(int routine, int colorGroup) {
+void GroupPage::multiButtonClicked(int routine, int colorGroup) {
     mData->updateColorGroup((EColorGroup)colorGroup);
     mData->updateRoutine((ELightingRoutine)routine);
     highlightRoutineButton((ELightingRoutine)routine, (EColorGroup)colorGroup);
@@ -99,7 +99,7 @@ void PresetColorsPage::multiButtonClicked(int routine, int colorGroup) {
 // Protected
 // ----------------------------
 
-void PresetColorsPage::showEvent(QShowEvent *) {
+void GroupPage::showEvent(QShowEvent *) {
     highlightRoutineButton(mData->currentRoutine(), mData->currentColorGroup());
     // calculate the largest element size
     int maxHeight = 0;
@@ -121,11 +121,11 @@ void PresetColorsPage::showEvent(QShowEvent *) {
     }
 }
 
-void PresetColorsPage::hideEvent(QHideEvent *) {
+void GroupPage::hideEvent(QHideEvent *) {
 
 }
 
-void PresetColorsPage::renderUI() {
+void GroupPage::renderUI() {
 
 }
 

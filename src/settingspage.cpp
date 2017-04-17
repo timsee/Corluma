@@ -60,7 +60,6 @@ SettingsPage::SettingsPage(QWidget *parent) :
     connect(ui->yunButton, SIGNAL(clicked(bool)), this, SLOT(yunCheckboxClicked(bool)));
     ui->yunButton->setText("Yun");
 
-
     connect(ui->closeButton, SIGNAL(clicked(bool)), this, SLOT(closeButtonPressed(bool)));
 
 #ifndef MOBILE_BUILD
@@ -80,7 +79,8 @@ SettingsPage::SettingsPage(QWidget *parent) :
     font.setPointSize(36);
     ui->closeButton->setFont(font);
 
-    QScroller::grabGesture(ui->scrollArea->viewport(), QScroller::LeftMouseButtonGesture);
+    ui->settingsScrollArea->setStyleSheet("background-color: #201F1F;");
+    QScroller::grabGesture(ui->settingsScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
 }
 
 SettingsPage::~SettingsPage() {
@@ -93,7 +93,7 @@ void SettingsPage::setupUI() {
 
 void SettingsPage::updateUI() {
 
-    if (mData->shouldUseHueAssets())  {
+    if (mData->hasHueDevices())  {
         ui->timeoutSlider->setHidden(true);
         ui->timeoutLabel->setHidden(true);
     } else {
@@ -169,18 +169,6 @@ void SettingsPage::hideEvent(QHideEvent *) {
 
 void SettingsPage::resizeEvent(QResizeEvent *event) {
     Q_UNUSED(event);
-//    int height = static_cast<int>(ui->hueButton->size().height() * 0.8f);
-//    int width = static_cast<int>(ui->hueButton->size().width() * 0.6f);
-//    QString stylesheet = "QPushButton::indicator { width: ";
-//    stylesheet += QString::number(width);
-//    stylesheet +=  "px; height: ";
-//    stylesheet +=  QString::number(height);
-//    stylesheet += "px; }";
-//    ui->hueButton->setStyleSheet(stylesheet);
-//    ui->yunButton->setStyleSheet(stylesheet);
-//#ifndef MOBILE_BUILD
-//    ui->serialButton->setStyleSheet(stylesheet);
-//#endif //MOBILE_BUILD
 
     ui->hueButton->setMinimumHeight(ui->hueButton->width());
     ui->hueButton->setMaximumHeight(ui->hueButton->width());
@@ -200,7 +188,7 @@ void SettingsPage::resizeEvent(QResizeEvent *event) {
     ui->timeoutSlider->setMinimumSize(QSize(this->width() * 0.8f, this->height() * 0.1f));
     ui->timeoutSlider->setMaximumSize(QSize(this->width() * 0.8f, this->height() * 0.1f));
 
-    ui->scrollArea->widget()->setMaximumWidth(this->width() * 0.9f);
+    ui->settingsScrollArea->widget()->setMaximumWidth(this->width() * 0.9f);
 
     ui->debugButton->setMinimumHeight(ui->debugButton->width());
     ui->resetButton->setMinimumHeight(ui->debugButton->width());

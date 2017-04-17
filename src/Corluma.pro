@@ -97,15 +97,12 @@ ios {
 
 SOURCES += main.cpp\
     mainwindow.cpp \
-    singlecolorpage.cpp \
     settingspage.cpp \
     datalayer.cpp \
     commlayer.cpp \
     icondata.cpp \
     lightsslider.cpp \
-    colorpicker.cpp \
     lightsbutton.cpp \
-    customcolorspage.cpp \
     presetcolorspage.cpp \
     commserial.cpp \
     commhttp.cpp \
@@ -120,8 +117,6 @@ SOURCES += main.cpp\
     commtypesettings.cpp \
     groupsparser.cpp \
     datasync.cpp \
-    huesinglecolorpage.cpp \
-    huepresetpage.cpp \
     discoverypage.cpp \
     listdevicewidget.cpp \
     presetgroupwidget.cpp \
@@ -130,21 +125,20 @@ SOURCES += main.cpp\
     greyoutoverlay.cpp \
     listmoodwidget.cpp \
     listmoodgroupwidget.cpp \
-    editgrouppage.cpp
+    editgrouppage.cpp \
+    routinebuttonswidget.cpp \
+    colorpicker.cpp \
+    colorpage.cpp
 
 HEADERS  += mainwindow.h \
-    singlecolorpage.h \
     settingspage.h \
     datalayer.h \
     commlayer.h \
     icondata.h \
     lightsslider.h \
     lightingpage.h \
-    colorpicker.h \
     lightsbutton.h \
     lightingprotocols.h \
-    customcolorspage.h \
-    presetcolorspage.h \
     commtype.h \
     commserial.h \
     commhttp.h \
@@ -159,8 +153,6 @@ HEADERS  += mainwindow.h \
     commtypesettings.h \
     groupsparser.h \
     datasync.h \
-    huesinglecolorpage.h \
-    huepresetpage.h \
     discoverypage.h \
     listdevicewidget.h \
     hueprotocols.h \
@@ -171,25 +163,26 @@ HEADERS  += mainwindow.h \
     listmoodwidget.h \
     listmoodgroupwidget.h \
     editgrouppage.h \
-    listcollectionsubwidget.h
+    listcollectionsubwidget.h \
+    routinebuttonswidget.h \
+    colorpicker.h \
+    colorpage.h \
+    grouppage.h
 
 FORMS    += mainwindow.ui \
-    singlecolorpage.ui \
     settingspage.ui \
-    customcolorspage.ui \
-    presetcolorspage.ui \
     connectionpage.ui \
-    huesinglecolorpage.ui \
     huepresetpage.ui \
     discoverypage.ui \
-    editcollectionpage.ui
+    editcollectionpage.ui \
+    colorpage.ui \
+    grouppage.ui
 
 #----------
 # Resources
 #----------
 
-RESOURCES     = qdarkstyle/style.qrc \
-    extraresources.qrc
+RESOURCES  = resources.qrc
 
 RC_ICONS = images/icon.ico # Windows icon
 ICON = images/icon.icns    # Mac OS X icon

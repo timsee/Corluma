@@ -80,7 +80,7 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="extraresources.qrc">
+       <iconset resource="resources.qrc">
         <normaloff>:/images/connectionIcon.png</normaloff>:/images/connectionIcon.png</iconset>
       </property>
       <property name="iconSize">
@@ -123,7 +123,7 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="extraresources.qrc">
+       <iconset resource="resources.qrc">
         <normaloff>:/images/settingsgear.png</normaloff>:/images/settingsgear.png</iconset>
       </property>
       <property name="iconSize">
@@ -160,9 +160,9 @@
        </font>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>1</number>
       </property>
-      <widget class="SingleColorPage" name="singleColorPage">
+      <widget class="ColorPage" name="colorPage">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -170,16 +170,7 @@
         </sizepolicy>
        </property>
       </widget>
-      <widget class="HueSingleColorPage" name="hueSingleColorPage"/>
-      <widget class="CustomColorsPage" name="customColorsPage">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
-      <widget class="PresetColorsPage" name="presetColorsPage">
+      <widget class="GroupPage" name="groupPage">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -244,7 +235,7 @@
      </layout>
     </item>
     <item row="1" column="1">
-     <widget class="LightsButton" name="singleColorButton" native="true">
+     <widget class="LightsButton" name="colorPageButton" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
         <horstretch>0</horstretch>
@@ -305,44 +296,26 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>SingleColorPage</class>
-   <extends>QWidget</extends>
-   <header>singlecolorpage.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>SettingsPage</class>
-   <extends>QWidget</extends>
-   <header>settingspage.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>CustomColorsPage</class>
-   <extends>QWidget</extends>
-   <header>customcolorspage.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>PresetColorsPage</class>
-   <extends>QWidget</extends>
-   <header>presetcolorspage.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ConnectionPage</class>
    <extends>QWidget</extends>
    <header>connectionpage.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>HueSingleColorPage</class>
+   <class>ColorPage</class>
    <extends>QWidget</extends>
-   <header location="global">huesinglecolorpage.h</header>
+   <header>colorpage.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GroupPage</class>
+   <extends>QWidget</extends>
+   <header>grouppage.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="extraresources.qrc"/>
+  <include location="resources.qrc"/>
  </resources>
  <connections/>
 </ui>
