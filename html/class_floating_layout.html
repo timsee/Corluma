@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.92</span>
+   &#160;<span id="projectnumber">v0.9.96</span>
    </div>
   </td>
  </tr>
@@ -73,9 +73,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a04f45ff5d3acb1c8cf5db7a511996742"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a04f45ff5d3acb1c8cf5db7a511996742">FloatingLayout</a> (bool makeVertical=false, QWidget *parent=0)</td></tr>
 <tr class="separator:a04f45ff5d3acb1c8cf5db7a511996742"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afae60c8a9867d2cdaa571cd00ae898dd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#afae60c8a9867d2cdaa571cd00ae898dd">setupButtons</a> (std::vector&lt; QString &gt; buttons)</td></tr>
-<tr class="memdesc:afae60c8a9867d2cdaa571cd00ae898dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">setupButtons takees the vector of names and the size given and updates the buttons so that theres a button for every name  <a href="#afae60c8a9867d2cdaa571cd00ae898dd">More...</a><br /></td></tr>
-<tr class="separator:afae60c8a9867d2cdaa571cd00ae898dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af856f5ba6e64b541b4515cfccf8a1376"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#af856f5ba6e64b541b4515cfccf8a1376">setupButtons</a> (std::vector&lt; QString &gt; buttons, EButtonSize buttonSize=EButtonSize::eSmall)</td></tr>
+<tr class="memdesc:af856f5ba6e64b541b4515cfccf8a1376"><td class="mdescLeft">&#160;</td><td class="mdescRight">setupButtons takees the vector of names and the size given and updates the buttons so that theres a button for every name  <a href="#af856f5ba6e64b541b4515cfccf8a1376">More...</a><br /></td></tr>
+<tr class="separator:af856f5ba6e64b541b4515cfccf8a1376"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e72aa165c8cc79384bd650dc1d8fe67"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a7e72aa165c8cc79384bd650dc1d8fe67">move</a> (QPoint topRightPoint)</td></tr>
 <tr class="memdesc:a7e72aa165c8cc79384bd650dc1d8fe67"><td class="mdescLeft">&#160;</td><td class="mdescRight">move move layout to a new location based off of the top right point provided.  <a href="#a7e72aa165c8cc79384bd650dc1d8fe67">More...</a><br /></td></tr>
 <tr class="separator:a7e72aa165c8cc79384bd650dc1d8fe67"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -85,6 +85,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a92ee79b2cf21bce8b4a0404ca45429c5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a92ee79b2cf21bce8b4a0404ca45429c5">updateRoutineMultiColor</a> (ELightingRoutine routine, std::vector&lt; QColor &gt; colors, int colorCount)</td></tr>
 <tr class="memdesc:a92ee79b2cf21bce8b4a0404ca45429c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateRoutineMultiColor update routine icon with multi color routine.  <a href="#a92ee79b2cf21bce8b4a0404ca45429c5">More...</a><br /></td></tr>
 <tr class="separator:a92ee79b2cf21bce8b4a0404ca45429c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4098565f16dc0640c59df17938a4fc57"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a4098565f16dc0640c59df17938a4fc57">updateDiscoveryButton</a> (ECommType type, QIcon icon)</td></tr>
+<tr class="memdesc:a4098565f16dc0640c59df17938a4fc57"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDiscoveryButton update the icon of a discovery button. Shows the discovery state of the connection.  <a href="#a4098565f16dc0640c59df17938a4fc57">More...</a><br /></td></tr>
+<tr class="separator:a4098565f16dc0640c59df17938a4fc57"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7127ba9b5265516594a116bd62e619ee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a7127ba9b5265516594a116bd62e619ee">addMultiRoutineIcon</a> (std::vector&lt; QColor &gt; colors)</td></tr>
 <tr class="memdesc:a7127ba9b5265516594a116bd62e619ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">addMultiRoutineIcon add a multi routine icon  <a href="#a7127ba9b5265516594a116bd62e619ee">More...</a><br /></td></tr>
 <tr class="separator:a7127ba9b5265516594a116bd62e619ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -229,7 +232,7 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="afae60c8a9867d2cdaa571cd00ae898dd"></a>
+<a class="anchor" id="af856f5ba6e64b541b4515cfccf8a1376"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -237,14 +240,58 @@ Public Member Functions</h2></td></tr>
           <td class="memname">void FloatingLayout::setupButtons </td>
           <td>(</td>
           <td class="paramtype">std::vector&lt; QString &gt;&#160;</td>
-          <td class="paramname"><em>buttons</em></td><td>)</td>
+          <td class="paramname"><em>buttons</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">EButtonSize&#160;</td>
+          <td class="paramname"><em>buttonSize</em> = <code>EButtonSize::eSmall</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">buttons</td><td>names of buttons. these names will be signaled out whenever the button is clicked. </td></tr>
+    <tr><td class="paramname">buttonSize</td><td>preferred size for buttons </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a4098565f16dc0640c59df17938a4fc57"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void FloatingLayout::updateDiscoveryButton </td>
+          <td>(</td>
+          <td class="paramtype">ECommType&#160;</td>
+          <td class="paramname"><em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">QIcon&#160;</td>
+          <td class="paramname"><em>icon</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">type</td><td>comm type of discovery button </td></tr>
+    <tr><td class="paramname">icon</td><td>new icon for discovery button </td></tr>
   </table>
   </dd>
 </dl>

@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.92</span>
+   &#160;<span id="projectnumber">v0.9.96</span>
    </div>
   </td>
  </tr>
@@ -68,68 +68,74 @@
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;};</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="keyword">class </span><a class="code" href="class_comm_layer.html">CommLayer</a>;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="keyword">class </span>DataSync : <span class="keyword">public</span> QObject</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;{</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    Q_OBJECT</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    DataSync(<a class="code" href="class_data_layer.html">DataLayer</a> *data, <a class="code" href="class_comm_layer.html">CommLayer</a> *comm);</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordtype">void</span> cancelSync();</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="keyword">public</span> slots:</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">void</span> resetSync();</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="keyword">private</span> slots:</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordtype">void</span> syncData();</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordtype">void</span> cleanupSync();</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <a class="code" href="class_data_layer.html">DataLayer</a> *mData;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <a class="code" href="class_comm_layer.html">CommLayer</a> *mComm;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keywordtype">bool</span> standardSync(<span class="keyword">const</span> SLightDevice&amp; dataDevice, <span class="keyword">const</span> SLightDevice&amp; commDevice);</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <span class="keywordtype">bool</span> hueSync(<span class="keyword">const</span> SLightDevice&amp; dataDevice, <span class="keyword">const</span> SLightDevice&amp; commDevice);</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="keywordtype">void</span> endOfSync();</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    <span class="keywordtype">float</span> ctDifference(<span class="keywordtype">float</span> first, <span class="keywordtype">float</span> second);</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    QTimer *mSyncTimer;</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    QTimer *mCleanupTimer;</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    QTime mCleanupStartTime;</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    QTime mStartTime;</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="keywordtype">bool</span> mDataIsInSync;</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    <span class="keywordtype">int</span> mUpdateInterval;</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    <span class="comment">//------------------</span></div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    <span class="comment">// Throttle</span></div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="comment">//------------------</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="keyword">class </span><a class="code" href="class_comm_layer.html">CommLayer</a>;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
+<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="class_data_sync.html">   52</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_data_sync.html">DataSync</a> : <span class="keyword">public</span> QObject</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;{</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    Q_OBJECT</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <a class="code" href="class_data_sync.html#ae065df4af6379691a544166b309b6bf3">DataSync</a>(<a class="code" href="class_data_layer.html">DataLayer</a> *data, <a class="code" href="class_comm_layer.html">CommLayer</a> *comm);</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_sync.html#aedc1a7a5b65530a2ae492dbfe0e5d32c">cancelSync</a>();</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="keyword">public</span> slots:</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_sync.html#a10e6ed802214e9ea95d5457d784fb733">resetSync</a>();</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="keyword">private</span> slots:</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordtype">void</span> syncData();</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keywordtype">void</span> cleanupSync();</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <a class="code" href="class_data_layer.html">DataLayer</a> *mData;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    <a class="code" href="class_comm_layer.html">CommLayer</a> *mComm;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keywordtype">bool</span> standardSync(<span class="keyword">const</span> SLightDevice&amp; dataDevice, <span class="keyword">const</span> SLightDevice&amp; commDevice);</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keywordtype">bool</span> hueSync(<span class="keyword">const</span> SLightDevice&amp; dataDevice, <span class="keyword">const</span> SLightDevice&amp; commDevice);</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keywordtype">bool</span> appendToPacket(QString&amp; currentPacket, QString newAddition, <span class="keywordtype">int</span> maxPacketSize);</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    <span class="keywordtype">void</span> endOfSync();</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    <span class="keywordtype">float</span> ctDifference(<span class="keywordtype">float</span> first, <span class="keywordtype">float</span> second);</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    QTimer *mSyncTimer;</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    QTimer *mCleanupTimer;</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    QTime mCleanupStartTime;</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    QTime mStartTime;</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="keywordtype">bool</span> mDataIsInSync;</div>
 <div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    std::list&lt;SThrottle&gt; mThrottleList;</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    <span class="keywordtype">bool</span> checkThrottle(QString controller, ECommType type, <span class="keywordtype">int</span> index);</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    <span class="keywordtype">void</span> resetThrottle(QString controller, ECommType type, <span class="keywordtype">int</span> index);</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;};</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;<span class="preprocessor">#endif // DATASYNC_H</span></div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    <span class="keywordtype">int</span> mUpdateInterval;</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    <span class="comment">//------------------</span></div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="comment">// Throttle</span></div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    <span class="comment">//------------------</span></div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    std::list&lt;SThrottle&gt; mThrottleList;</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    <span class="keywordtype">bool</span> checkThrottle(QString controller, ECommType type, <span class="keywordtype">int</span> index);</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    <span class="keywordtype">void</span> resetThrottle(QString controller, ECommType type, <span class="keywordtype">int</span> index);</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;};</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;<span class="preprocessor">#endif // DATASYNC_H</span></div>
 <div class="ttc" id="class_comm_layer_html"><div class="ttname"><a href="class_comm_layer.html">CommLayer</a></div><div class="ttdoc">The CommLayer class provides communication protocols that allow the user to connect and send packets ...</div><div class="ttdef"><b>Definition:</b> commlayer.h:31</div></div>
 <div class="ttc" id="struct_s_throttle_html_a7d661746123c75dd511ae1005aff20b4"><div class="ttname"><a href="struct_s_throttle.html#a7d661746123c75dd511ae1005aff20b4">SThrottle::type</a></div><div class="ttdeci">ECommType type</div><div class="ttdoc">type communication type for controller. </div><div class="ttdef"><b>Definition:</b> datasync.h:35</div></div>
-<div class="ttc" id="class_data_layer_html"><div class="ttname"><a href="class_data_layer.html">DataLayer</a></div><div class="ttdoc">The DataLayer class stores and maintains the data about the state and settings of the application...</div><div class="ttdef"><b>Definition:</b> datalayer.h:30</div></div>
+<div class="ttc" id="class_data_sync_html_aedc1a7a5b65530a2ae492dbfe0e5d32c"><div class="ttname"><a href="class_data_sync.html#aedc1a7a5b65530a2ae492dbfe0e5d32c">DataSync::cancelSync</a></div><div class="ttdeci">void cancelSync()</div><div class="ttdoc">cancelSync cancel the data sync, regardless of it successfully completed. </div><div class="ttdef"><b>Definition:</b> datasync.cpp:28</div></div>
+<div class="ttc" id="class_data_layer_html"><div class="ttname"><a href="class_data_layer.html">DataLayer</a></div><div class="ttdoc">The DataLayer class stores and maintains the data about the state and settings of the application...</div><div class="ttdef"><b>Definition:</b> datalayer.h:28</div></div>
 <div class="ttc" id="struct_s_throttle_html"><div class="ttname"><a href="struct_s_throttle.html">SThrottle</a></div><div class="ttdoc">The SThrottle struct tracks the last itme an individual controller was throttled. In the current iter...</div><div class="ttdef"><b>Definition:</b> datasync.h:22</div></div>
+<div class="ttc" id="class_data_sync_html_a10e6ed802214e9ea95d5457d784fb733"><div class="ttname"><a href="class_data_sync.html#a10e6ed802214e9ea95d5457d784fb733">DataSync::resetSync</a></div><div class="ttdeci">void resetSync()</div><div class="ttdoc">resetSync Tells the DataSync object that the commlayer and the datalayer are potentially no longer in...</div><div class="ttdef"><b>Definition:</b> datasync.cpp:36</div></div>
+<div class="ttc" id="class_data_sync_html_ae065df4af6379691a544166b309b6bf3"><div class="ttname"><a href="class_data_sync.html#ae065df4af6379691a544166b309b6bf3">DataSync::DataSync</a></div><div class="ttdeci">DataSync(DataLayer *data, CommLayer *comm)</div><div class="ttdoc">DataSync Constructor for DataSync. </div><div class="ttdef"><b>Definition:</b> datasync.cpp:11</div></div>
 <div class="ttc" id="struct_s_throttle_html_aa7dbcc22f48a05598d862445f4ec4f43"><div class="ttname"><a href="struct_s_throttle.html#aa7dbcc22f48a05598d862445f4ec4f43">SThrottle::time</a></div><div class="ttdeci">QTime time</div><div class="ttdoc">time time since last message was sent. </div><div class="ttdef"><b>Definition:</b> datasync.h:27</div></div>
+<div class="ttc" id="class_data_sync_html"><div class="ttname"><a href="class_data_sync.html">DataSync</a></div><div class="ttdoc">The DataSync class compares the data layer&#39;s representation of devices with the commlayer&#39;s understan...</div><div class="ttdef"><b>Definition:</b> datasync.h:52</div></div>
 <div class="ttc" id="struct_s_throttle_html_aa04ef7548513dd159dde143b9edbc443"><div class="ttname"><a href="struct_s_throttle.html#aa04ef7548513dd159dde143b9edbc443">SThrottle::index</a></div><div class="ttdeci">int index</div><div class="ttdoc">index index of device getting throttled. </div><div class="ttdef"><b>Definition:</b> datasync.h:39</div></div>
 <div class="ttc" id="struct_s_throttle_html_aca1f2cd2944d7e6ec440626f8e3d51c0"><div class="ttname"><a href="struct_s_throttle.html#aca1f2cd2944d7e6ec440626f8e3d51c0">SThrottle::controller</a></div><div class="ttdeci">QString controller</div><div class="ttdoc">controller name of controller. </div><div class="ttdef"><b>Definition:</b> datasync.h:31</div></div>
 </div><!-- fragment --></div><!-- contents -->

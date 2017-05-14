@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.92</span>
+   &#160;<span id="projectnumber">v0.9.96</span>
    </div>
   </td>
  </tr>
@@ -57,6 +57,7 @@
       <li><a href="#index_c"><span>c</span></a></li>
       <li><a href="#index_d"><span>d</span></a></li>
       <li><a href="#index_i"><span>i</span></a></li>
+      <li><a href="#index_k"><span>k</span></a></li>
       <li><a href="#index_l"><span>l</span></a></li>
       <li><a href="#index_m"><span>m</span></a></li>
       <li><a href="#index_n"><span>n</span></a></li>
@@ -71,10 +72,10 @@
 
 <h3><a class="anchor" id="index_b"></a>- b -</h3><ul>
 <li>button
-: <a class="el" href="class_lights_button.html#a822abe38577b57d060cfff8071dee025">LightsButton</a>
+: <a class="el" href="class_corluma_button.html#aaf3a1ddae2ab54277bf304fe4bf6805b">CorlumaButton</a>
 </li>
 <li>buttonLabel
-: <a class="el" href="class_lights_button.html#a1d1350e107f7e8f12f7092fbb391328d">LightsButton</a>
+: <a class="el" href="class_corluma_button.html#a670a409e82b279e5afc3e5de7a58af4e">CorlumaButton</a>
 </li>
 </ul>
 
@@ -103,9 +104,16 @@
 </ul>
 
 
+<h3><a class="anchor" id="index_k"></a>- k -</h3><ul>
+<li>kDiscoveryPacketIdentifier
+: <a class="el" href="class_comm_type.html#a932133199df9b51ff3a368009e1b6d53">CommType</a>
+</li>
+</ul>
+
+
 <h3><a class="anchor" id="index_l"></a>- l -</h3><ul>
 <li>label
-: <a class="el" href="class_lights_slider.html#a2e3fb6d9b37c85f6110c174906486a13">LightsSlider</a>
+: <a class="el" href="class_corluma_slider.html#a66a32578bd67218e259caacd208fdb1c">CorlumaSlider</a>
 </li>
 </ul>
 
@@ -117,6 +125,12 @@
 <li>mClosedPixmap
 : <a class="el" href="class_list_collection_widget.html#a5cdb5c92eaf6dabadbc96ac8e0c41943">ListCollectionWidget</a>
 </li>
+<li>mComm
+: <a class="el" href="class_discovery_widget.html#af2fdbb1c32c871195678d960780b2403">DiscoveryWidget</a>
+</li>
+<li>mCRC
+: <a class="el" href="class_comm_type.html#a6c1a32e29697d8b08401a04b91921d85">CommType</a>
+</li>
 <li>mData
 : <a class="el" href="class_lighting_page.html#a13431dcc6aa10530a61bb9a11e32b386">LightingPage</a>
 </li>
@@ -124,13 +138,16 @@
 : <a class="el" href="class_comm_type.html#ab17df6d25cf2db9d844945d6f135e65c">CommType</a>
 </li>
 <li>mDiscoveredList
-: <a class="el" href="class_comm_type.html#a18c442a3f2068108009d49cab7e02050">CommType</a>
+: <a class="el" href="class_comm_type.html#a9daeb935ad4de1f56f246ae1d04157dc">CommType</a>
 </li>
 <li>mDiscoveryMode
 : <a class="el" href="class_comm_type.html#afcc75099b138addb3dc35692e819eabe">CommType</a>
 </li>
 <li>mDiscoveryTimer
 : <a class="el" href="class_comm_type.html#a53ba509a1aa972b772c1c6f8f074a1cb">CommType</a>
+</li>
+<li>mDiscoveryUpdateInterval
+: <a class="el" href="class_comm_type.html#ab283071f18b76741c90a25a06e61c763">CommType</a>
 </li>
 <li>mEditButton
 : <a class="el" href="class_list_collection_widget.html#a84ece6b5a73426814d6c451f36e429ae">ListCollectionWidget</a>
@@ -181,8 +198,14 @@
 <li>mRenderThread
 : <a class="el" href="class_lighting_page.html#a43fed23a3309333b8b699caa34e3f329">LightingPage</a>
 </li>
+<li>mSecondaryUpdatesInterval
+: <a class="el" href="class_comm_type.html#ad8c1f60fe67e3e018ee772d8d8e7a3f8">CommType</a>
+</li>
 <li>mShowButtons
 : <a class="el" href="class_list_collection_widget.html#a90a1170fb7da1a8390cee3630eed35d7">ListCollectionWidget</a>
+</li>
+<li>mStateUpdateCounter
+: <a class="el" href="class_comm_type.html#a079be5b6039a73ab74f242f834702d99">CommType</a>
 </li>
 <li>mStateUpdateInterval
 : <a class="el" href="class_comm_type.html#afe98ed3a9a537c126fcebdb6ac109a09">CommType</a>
@@ -214,7 +237,7 @@
 
 <h3><a class="anchor" id="index_s"></a>- s -</h3><ul>
 <li>slider
-: <a class="el" href="class_lights_slider.html#add19790105e40100fc1707784910d916">LightsSlider</a>
+: <a class="el" href="class_corluma_slider.html#aba53bee97c753e5049044f1320b9d0da">CorlumaSlider</a>
 </li>
 <li>softwareVersion
 : <a class="el" href="struct_s_hue_light.html#a923c38d7294485944c987442202e0d49">SHueLight</a>

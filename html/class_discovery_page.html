@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.92</span>
+   &#160;<span id="projectnumber">v0.9.96</span>
    </div>
   </td>
  </tr>
@@ -48,7 +48,6 @@
 <div class="header">
   <div class="summary">
 <a href="class_discovery_page-members.html">List of all members</a> &#124;
-<a href="#pub-slots">Public Slots</a> &#124;
 <a href="#signals">Signals</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a>  </div>
@@ -64,13 +63,6 @@
 
 <p>Inherits QWidget, and <a class="el" href="class_lighting_page.html">LightingPage</a>.</p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-slots"></a>
-Public Slots</h2></td></tr>
-<tr class="memitem:a611cce4bdcd7886db424d2cb2d8c542a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a611cce4bdcd7886db424d2cb2d8c542a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_discovery_page.html#a611cce4bdcd7886db424d2cb2d8c542a">hueDiscoveryUpdate</a> (int)</td></tr>
-<tr class="memdesc:a611cce4bdcd7886db424d2cb2d8c542a"><td class="mdescLeft">&#160;</td><td class="mdescRight">hueDiscoveryUpdate provides an int representation of the EHueDiscoveryState of Hue's discovery object. Used by the connectionList to display the current state. <br /></td></tr>
-<tr class="separator:a611cce4bdcd7886db424d2cb2d8c542a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
 <tr class="memitem:a1b9e6c3d67bc0784241ca527c1b7e082"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1b9e6c3d67bc0784241ca527c1b7e082"></a>
@@ -93,12 +85,16 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a070ecb741593f4bb79a9eab09e9daa58"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_discovery_page.html#a070ecb741593f4bb79a9eab09e9daa58">~DiscoveryPage</a> ()</td></tr>
 <tr class="separator:a070ecb741593f4bb79a9eab09e9daa58"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abcb0ab4458528ff4b9878fc8cedddf8c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_discovery_page.html#abcb0ab4458528ff4b9878fc8cedddf8c">connectCommLayer</a> (<a class="el" href="class_comm_layer.html">CommLayer</a> *layer)</td></tr>
-<tr class="memdesc:abcb0ab4458528ff4b9878fc8cedddf8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">connectCommLayer connect to commlayer. In a future update the commLayer pointer on every page will be totally removed in favor of DataSync, but for now theres some edge cases that require certain pages to have a commlayer pointer.  <a href="#abcb0ab4458528ff4b9878fc8cedddf8c">More...</a><br /></td></tr>
+<tr class="memdesc:abcb0ab4458528ff4b9878fc8cedddf8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">connectCommLayer connect to commlayer. In a future update the commLayer pointer on every page will be totally removed in favor of <a class="el" href="class_data_sync.html" title="The DataSync class compares the data layer&#39;s representation of devices with the commlayer&#39;s understan...">DataSync</a>, but for now theres some edge cases that require certain pages to have a commlayer pointer.  <a href="#abcb0ab4458528ff4b9878fc8cedddf8c">More...</a><br /></td></tr>
 <tr class="separator:abcb0ab4458528ff4b9878fc8cedddf8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7738fc86ab413d11a3f95b296f4dc026"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7738fc86ab413d11a3f95b296f4dc026"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_discovery_page.html#a7738fc86ab413d11a3f95b296f4dc026">openStartForDebug</a> ()</td></tr>
 <tr class="memdesc:a7738fc86ab413d11a3f95b296f4dc026"><td class="mdescLeft">&#160;</td><td class="mdescRight">debug function <br /></td></tr>
 <tr class="separator:a7738fc86ab413d11a3f95b296f4dc026"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a4048f85a2d212c5ee21b3bfe7a0663"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6a4048f85a2d212c5ee21b3bfe7a0663"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_discovery_page.html#a6a4048f85a2d212c5ee21b3bfe7a0663">updateTopMenu</a> ()</td></tr>
+<tr class="memdesc:a6a4048f85a2d212c5ee21b3bfe7a0663"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateTopMenu helper for adjusting the top menu to show only available CommTypes. If only one commtype is available, don't show any of the buttons. <br /></td></tr>
+<tr class="separator:a6a4048f85a2d212c5ee21b3bfe7a0663"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_lighting_page"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_lighting_page')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_lighting_page.html">LightingPage</a></td></tr>
 <tr class="memitem:afcd456d0f20296ac63c5d336b085f37b inherit pub_methods_class_lighting_page"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afcd456d0f20296ac63c5d336b085f37b"></a>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#afcd456d0f20296ac63c5d336b085f37b">~LightingPage</a> ()</td></tr>
@@ -184,7 +180,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Deconstructor </p>
+<p>Destructor </p>
 
 </div>
 </div>
@@ -192,9 +188,6 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <a class="anchor" id="abcb0ab4458528ff4b9878fc8cedddf8c"></a>
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void DiscoveryPage::connectCommLayer </td>
@@ -204,11 +197,6 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">

@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.92</span>
+   &#160;<span id="projectnumber">v0.9.96</span>
    </div>
   </td>
  </tr>
@@ -61,117 +61,116 @@
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;list&gt;</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;lightingprotocols.h&quot;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;commtype.h&quot;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;commhue.h&quot;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;commtypesettings.h&quot;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
-<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="class_data_layer.html">   30</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_data_layer.html">DataLayer</a> : <span class="keyword">public</span> QWidget</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;{</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    Q_OBJECT</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <a class="code" href="class_data_layer.html#a7e3fb24a879cc915e437d41e94a4d959">DataLayer</a>();</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <a class="code" href="class_data_layer.html#aa879ff7dc8dbb52fbaee5479e7a620a6">~DataLayer</a>();</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    QColor <a class="code" href="class_data_layer.html#a442919b8782e7bd35ba20eddf1b913dd">mainColor</a>();</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keyword">const</span> std::vector&lt;QColor&gt;&amp; <a class="code" href="class_data_layer.html#a29a5a68fbca1071a3a88faf1c4e9cd04">colorGroup</a>(EColorGroup group);</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
-<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="class_data_layer.html#a0b17d6a4e9ea9b2dad62a0ace11436cd">   61</a></span>&#160;    <span class="keyword">const</span> std::vector&lt;std::vector&lt;QColor&gt; &gt;&amp; <a class="code" href="class_data_layer.html#a0b17d6a4e9ea9b2dad62a0ace11436cd">colors</a>() { <span class="keywordflow">return</span> mColors; }</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    uint8_t <a class="code" href="class_data_layer.html#a4954f12785fd80574b6d4ee0496ded7c">maxColorGroupSize</a>();</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    QColor <a class="code" href="class_data_layer.html#a2d8a240d5f16b76a2ef143beffe52ca4">colorsAverage</a>(EColorGroup group);</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    ELightingRoutine <a class="code" href="class_data_layer.html#aea842be21d9cb4beb9029b383bea4a4c">currentRoutine</a>();</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_data_layer.html#af2b5821cbab5dd98b644c3f7577cf27e">brightness</a>();</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_data_layer.html#a2786c72909dc049bb595310041ad6a3e">timeout</a>();</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    uint32_t <a class="code" href="class_data_layer.html#ad52a07c6e351fbb029142323bb1481d0">customColorsUsed</a>();</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    EColorGroup <a class="code" href="class_data_layer.html#a11a35046ae18b2515bce96ef85ef72da">currentColorGroup</a>();</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <span class="keyword">const</span> std::vector&lt;QColor&gt;&amp; <a class="code" href="class_data_layer.html#aeaf3d0214c1df9aeea53e29a16b177d7">currentGroup</a>();</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_data_layer.html#a878df79749e4c8e9b2d3872d271da680">speed</a>();</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_data_layer.html#a8f8010b92bbe5f139ef2f509fa891682">customColor</a>(uint32_t index, QColor color);</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_layer.html#a74d0a1ecc37a876f4cf407b01e2f5892">turnOn</a>(<span class="keywordtype">bool</span> on);</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_data_layer.html#a383a0bd23b394e1b4a8df5df92bbb4b0">isOn</a>();</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_data_layer.html#abb68873885347721dd32a3893191c12e">anyDevicesReachable</a>();</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    EColorGroup <a class="code" href="class_data_layer.html#ac3d7cd218cf3d739d58357d5352d0621">closestColorGroupToColor</a>(QColor color);</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_layer.html#a3bcd5465f2601dda4edd5991df0f6069">updateRoutine</a>(ELightingRoutine routine);</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_layer.html#af70debb4b7d38640bb5df513de39d2b9">updateColorGroup</a>(EColorGroup colorGroup);</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_layer.html#a008fc106bfc7c2d6cee2ed468dc921f6">updateColor</a>(QColor color);</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_layer.html#a55af919678bee831eb3c5ea75742c462">updateSpeed</a>(<span class="keywordtype">int</span> <a class="code" href="class_data_layer.html#a878df79749e4c8e9b2d3872d271da680">speed</a>);</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_layer.html#a7024d8377a77514c20b4af58ebf5a1dd">updateTimeout</a>(<span class="keywordtype">int</span> <a class="code" href="class_data_layer.html#a2786c72909dc049bb595310041ad6a3e">timeout</a>);</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_layer.html#a6d3b27cd3731e3a0114962961eb7b630">updateCustomColorCount</a>(uint32_t count);</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_layer.html#ab7f3c934e0e353d851077ed436102dea">updateCustomColorArray</a>(<span class="keywordtype">int</span> index, QColor color);</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_layer.html#a477e091c77d4c6936cb6dd69b10e6857">updateBrightness</a>(<span class="keywordtype">int</span> <a class="code" href="class_data_layer.html#af2b5821cbab5dd98b644c3f7577cf27e">brightness</a>, std::list&lt;SLightDevice&gt; specialCaseDevices = std::list&lt;SLightDevice&gt;());</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_layer.html#acdf292093067fe9d8ed9c2e4a0fd55b3">updateCt</a>(<span class="keywordtype">int</span> ct);</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_data_layer.html#ac130d530c84785a44156f9b257dc287c">addDevice</a>(SLightDevice device);</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_data_layer.html#a82a91977ce515e0429d17c57a08dfe23">doesDeviceExist</a>(SLightDevice device);</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_data_layer.html#a67e246c9fd2a4d8362eee3602abc5cbd">clearDevices</a>();</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_data_layer.html#ab2f37870d7c0e00b0ff23f46d981c95e">devicesContainCommType</a>(ECommType type);</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_data_layer.html#a52f5db74483ffd335e0e6bef5541c602">addDeviceList</a>(<span class="keyword">const</span> std::list&lt;SLightDevice&gt;&amp; list);</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_data_layer.html#aa79248e05558d798beb8748f1da9d289">removeDeviceList</a>(<span class="keyword">const</span> std::list&lt;SLightDevice&gt;&amp; list);</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_data_layer.html#a5d51a5e42729f73957439f024409ac41">removeDevice</a>(SLightDevice device);</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_data_layer.html#a6cf956134ddfc9a45fc22a7c426c2a30">removeDevicesOfType</a>(ECommType type);</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_data_layer.html#af89e4a6dd32842b5076f8770836e5620">countDevicesOfType</a>(ECommType type);</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;</div>
-<div class="line"><a name="l00291"></a><span class="lineno"><a class="line" href="class_data_layer.html#ab66e1ea4324f9e1d0e06ad2bf560d40e">  291</a></span>&#160;    <span class="keyword">const</span> std::list&lt;SLightDevice&gt;&amp; <a class="code" href="class_data_layer.html#ab66e1ea4324f9e1d0e06ad2bf560d40e">currentDevices</a>() { <span class="keywordflow">return</span> mCurrentDevices; }</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_data_layer.html#a67c92434a6d120e85402ef707df06860">hasHueDevices</a>();</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_data_layer.html#a9d204dd98271ad04ef797e690ac6afd7">hasArduinoDevices</a>();</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;</div>
-<div class="line"><a name="l00311"></a><span class="lineno"><a class="line" href="class_data_layer.html#ac88bcdcd660567b0d8663edc13743209">  311</a></span>&#160;    <a class="code" href="class_comm_type_settings.html">CommTypeSettings</a> *<a class="code" href="class_data_layer.html#ac88bcdcd660567b0d8663edc13743209">commTypeSettings</a>() { <span class="keywordflow">return</span> mCommTypeSettings; }</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;signals:</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_layer.html#a690e7ed4141639a74d71fd32cc48cdc9">devicesEmpty</a>();</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_layer.html#a8f4dff73907e6cf950f88d67fb61a412">dataUpdate</a>();</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;comm/commhue.h&quot;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;comm/commtypesettings.h&quot;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div>
+<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="class_data_layer.html">   28</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_data_layer.html">DataLayer</a> : <span class="keyword">public</span> QWidget</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;{</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    Q_OBJECT</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <a class="code" href="class_data_layer.html#a7e3fb24a879cc915e437d41e94a4d959">DataLayer</a>();</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <a class="code" href="class_data_layer.html#aa879ff7dc8dbb52fbaee5479e7a620a6">~DataLayer</a>();</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    QColor <a class="code" href="class_data_layer.html#a442919b8782e7bd35ba20eddf1b913dd">mainColor</a>();</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keyword">const</span> std::vector&lt;QColor&gt;&amp; <a class="code" href="class_data_layer.html#a29a5a68fbca1071a3a88faf1c4e9cd04">colorGroup</a>(EColorGroup group);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
+<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="class_data_layer.html#a0b17d6a4e9ea9b2dad62a0ace11436cd">   59</a></span>&#160;    <span class="keyword">const</span> std::vector&lt;std::vector&lt;QColor&gt; &gt;&amp; <a class="code" href="class_data_layer.html#a0b17d6a4e9ea9b2dad62a0ace11436cd">colors</a>() { <span class="keywordflow">return</span> mColors; }</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    uint8_t <a class="code" href="class_data_layer.html#a4954f12785fd80574b6d4ee0496ded7c">maxColorGroupSize</a>();</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    QColor <a class="code" href="class_data_layer.html#a2d8a240d5f16b76a2ef143beffe52ca4">colorsAverage</a>(EColorGroup group);</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    ELightingRoutine <a class="code" href="class_data_layer.html#aea842be21d9cb4beb9029b383bea4a4c">currentRoutine</a>();</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_data_layer.html#af2b5821cbab5dd98b644c3f7577cf27e">brightness</a>();</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_data_layer.html#a2786c72909dc049bb595310041ad6a3e">timeout</a>();</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    uint32_t <a class="code" href="class_data_layer.html#ad52a07c6e351fbb029142323bb1481d0">customColorsUsed</a>();</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    EColorGroup <a class="code" href="class_data_layer.html#a11a35046ae18b2515bce96ef85ef72da">currentColorGroup</a>();</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keyword">const</span> std::vector&lt;QColor&gt;&amp; <a class="code" href="class_data_layer.html#aeaf3d0214c1df9aeea53e29a16b177d7">currentGroup</a>();</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_data_layer.html#a878df79749e4c8e9b2d3872d271da680">speed</a>();</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_data_layer.html#a8f8010b92bbe5f139ef2f509fa891682">customColor</a>(uint32_t index, QColor color);</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_layer.html#a74d0a1ecc37a876f4cf407b01e2f5892">turnOn</a>(<span class="keywordtype">bool</span> on);</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_data_layer.html#a383a0bd23b394e1b4a8df5df92bbb4b0">isOn</a>();</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_data_layer.html#abb68873885347721dd32a3893191c12e">anyDevicesReachable</a>();</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    EColorGroup <a class="code" href="class_data_layer.html#ac3d7cd218cf3d739d58357d5352d0621">closestColorGroupToColor</a>(QColor color);</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_layer.html#a3bcd5465f2601dda4edd5991df0f6069">updateRoutine</a>(ELightingRoutine routine);</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_layer.html#af70debb4b7d38640bb5df513de39d2b9">updateColorGroup</a>(EColorGroup colorGroup);</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_layer.html#a008fc106bfc7c2d6cee2ed468dc921f6">updateColor</a>(QColor color);</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_layer.html#a55af919678bee831eb3c5ea75742c462">updateSpeed</a>(<span class="keywordtype">int</span> <a class="code" href="class_data_layer.html#a878df79749e4c8e9b2d3872d271da680">speed</a>);</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_layer.html#a7024d8377a77514c20b4af58ebf5a1dd">updateTimeout</a>(<span class="keywordtype">int</span> <a class="code" href="class_data_layer.html#a2786c72909dc049bb595310041ad6a3e">timeout</a>);</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_layer.html#a6d3b27cd3731e3a0114962961eb7b630">updateCustomColorCount</a>(uint32_t count);</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_layer.html#ab7f3c934e0e353d851077ed436102dea">updateCustomColorArray</a>(<span class="keywordtype">int</span> index, QColor color);</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_layer.html#a477e091c77d4c6936cb6dd69b10e6857">updateBrightness</a>(<span class="keywordtype">int</span> <a class="code" href="class_data_layer.html#af2b5821cbab5dd98b644c3f7577cf27e">brightness</a>, std::list&lt;SLightDevice&gt; specialCaseDevices = std::list&lt;SLightDevice&gt;());</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_layer.html#acdf292093067fe9d8ed9c2e4a0fd55b3">updateCt</a>(<span class="keywordtype">int</span> ct);</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_data_layer.html#ac130d530c84785a44156f9b257dc287c">addDevice</a>(SLightDevice device);</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_data_layer.html#a82a91977ce515e0429d17c57a08dfe23">doesDeviceExist</a>(SLightDevice device);</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_data_layer.html#a67e246c9fd2a4d8362eee3602abc5cbd">clearDevices</a>();</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_data_layer.html#ab2f37870d7c0e00b0ff23f46d981c95e">devicesContainCommType</a>(ECommType type);</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_data_layer.html#a52f5db74483ffd335e0e6bef5541c602">addDeviceList</a>(<span class="keyword">const</span> std::list&lt;SLightDevice&gt;&amp; list);</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_data_layer.html#aa79248e05558d798beb8748f1da9d289">removeDeviceList</a>(<span class="keyword">const</span> std::list&lt;SLightDevice&gt;&amp; list);</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_data_layer.html#a5d51a5e42729f73957439f024409ac41">removeDevice</a>(SLightDevice device);</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_data_layer.html#a6cf956134ddfc9a45fc22a7c426c2a30">removeDevicesOfType</a>(ECommType type);</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_data_layer.html#af89e4a6dd32842b5076f8770836e5620">countDevicesOfType</a>(ECommType type);</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;</div>
+<div class="line"><a name="l00289"></a><span class="lineno"><a class="line" href="class_data_layer.html#ab66e1ea4324f9e1d0e06ad2bf560d40e">  289</a></span>&#160;    <span class="keyword">const</span> std::list&lt;SLightDevice&gt;&amp; <a class="code" href="class_data_layer.html#ab66e1ea4324f9e1d0e06ad2bf560d40e">currentDevices</a>() { <span class="keywordflow">return</span> mCurrentDevices; }</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_data_layer.html#a67c92434a6d120e85402ef707df06860">hasHueDevices</a>();</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_data_layer.html#a9d204dd98271ad04ef797e690ac6afd7">hasArduinoDevices</a>();</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;</div>
+<div class="line"><a name="l00309"></a><span class="lineno"><a class="line" href="class_data_layer.html#ac88bcdcd660567b0d8663edc13743209">  309</a></span>&#160;    <a class="code" href="class_comm_type_settings.html">CommTypeSettings</a> *<a class="code" href="class_data_layer.html#ac88bcdcd660567b0d8663edc13743209">commTypeSettings</a>() { <span class="keywordflow">return</span> mCommTypeSettings; }</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;signals:</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_layer.html#a690e7ed4141639a74d71fd32cc48cdc9">devicesEmpty</a>();</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_data_layer.html#a8f4dff73907e6cf950f88d67fb61a412">dataUpdate</a>();</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;<span class="keyword">private</span>:</div>
 <div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    QColor averageGroup(EColorGroup group);</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    std::vector&lt;std::vector&lt;QColor&gt; &gt; mColors;</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;    std::vector&lt;QColor&gt; mColorAverages;</div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;    std::list&lt;SLightDevice&gt; mCurrentDevices;</div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;</div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;    <a class="code" href="class_comm_type_settings.html">CommTypeSettings</a> *mCommTypeSettings;</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;    QColor averageGroup(EColorGroup group);</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    std::vector&lt;std::vector&lt;QColor&gt; &gt; mColors;</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;    std::vector&lt;QColor&gt; mColorAverages;</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;    std::list&lt;SLightDevice&gt; mCurrentDevices;</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;    <a class="code" href="class_comm_type_settings.html">CommTypeSettings</a> *mCommTypeSettings;</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;};</div>
 <div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;</div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;};</div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;</div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;<span class="preprocessor">#endif // DATALAYER_H</span></div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;<span class="preprocessor">#endif // DATALAYER_H</span></div>
 <div class="ttc" id="class_data_layer_html_aa879ff7dc8dbb52fbaee5479e7a620a6"><div class="ttname"><a href="class_data_layer.html#aa879ff7dc8dbb52fbaee5479e7a620a6">DataLayer::~DataLayer</a></div><div class="ttdeci">~DataLayer()</div><div class="ttdoc">Deconstructor. </div><div class="ttdef"><b>Definition:</b> datalayer.cpp:228</div></div>
 <div class="ttc" id="class_data_layer_html_ac3d7cd218cf3d739d58357d5352d0621"><div class="ttname"><a href="class_data_layer.html#ac3d7cd218cf3d739d58357d5352d0621">DataLayer::closestColorGroupToColor</a></div><div class="ttdeci">EColorGroup closestColorGroupToColor(QColor color)</div><div class="ttdoc">closestColorGroupToColor takes a color as input and checks the averages of the color groups and deter...</div><div class="ttdef"><b>Definition:</b> datalayer.cpp:283</div></div>
 <div class="ttc" id="class_data_layer_html_af2b5821cbab5dd98b644c3f7577cf27e"><div class="ttname"><a href="class_data_layer.html#af2b5821cbab5dd98b644c3f7577cf27e">DataLayer::brightness</a></div><div class="ttdeci">int brightness()</div><div class="ttdoc">brightness getter for the current brightness. </div><div class="ttdef"><b>Definition:</b> datalayer.cpp:232</div></div>
@@ -196,12 +195,12 @@
 <div class="ttc" id="class_data_layer_html_a52f5db74483ffd335e0e6bef5541c602"><div class="ttname"><a href="class_data_layer.html#a52f5db74483ffd335e0e6bef5541c602">DataLayer::addDeviceList</a></div><div class="ttdeci">bool addDeviceList(const std::list&lt; SLightDevice &gt; &amp;list)</div><div class="ttdoc">addDeviceList attempts to add a list of devices instead of a single device at a time ...</div><div class="ttdef"><b>Definition:</b> datalayer.cpp:615</div></div>
 <div class="ttc" id="class_data_layer_html_ad52a07c6e351fbb029142323bb1481d0"><div class="ttname"><a href="class_data_layer.html#ad52a07c6e351fbb029142323bb1481d0">DataLayer::customColorsUsed</a></div><div class="ttdeci">uint32_t customColorsUsed()</div><div class="ttdoc">customColorsUsed number of custom colors used from the custom color group in multi color routines...</div><div class="ttdef"><b>Definition:</b> datalayer.cpp:567</div></div>
 <div class="ttc" id="class_comm_type_settings_html"><div class="ttname"><a href="class_comm_type_settings.html">CommTypeSettings</a></div><div class="ttdoc">The CommTypeSettings class manages which CommTypes are enabled and disabled. It manages the settings ...</div><div class="ttdef"><b>Definition:</b> commtypesettings.h:16</div></div>
-<div class="ttc" id="class_data_layer_html_ac88bcdcd660567b0d8663edc13743209"><div class="ttname"><a href="class_data_layer.html#ac88bcdcd660567b0d8663edc13743209">DataLayer::commTypeSettings</a></div><div class="ttdeci">CommTypeSettings * commTypeSettings()</div><div class="ttdoc">commTypeSettings pointer to the current comm types settings, which maintains which commtypes are curr...</div><div class="ttdef"><b>Definition:</b> datalayer.h:311</div></div>
-<div class="ttc" id="class_data_layer_html"><div class="ttname"><a href="class_data_layer.html">DataLayer</a></div><div class="ttdoc">The DataLayer class stores and maintains the data about the state and settings of the application...</div><div class="ttdef"><b>Definition:</b> datalayer.h:30</div></div>
+<div class="ttc" id="class_data_layer_html_ac88bcdcd660567b0d8663edc13743209"><div class="ttname"><a href="class_data_layer.html#ac88bcdcd660567b0d8663edc13743209">DataLayer::commTypeSettings</a></div><div class="ttdeci">CommTypeSettings * commTypeSettings()</div><div class="ttdoc">commTypeSettings pointer to the current comm types settings, which maintains which commtypes are curr...</div><div class="ttdef"><b>Definition:</b> datalayer.h:309</div></div>
+<div class="ttc" id="class_data_layer_html"><div class="ttname"><a href="class_data_layer.html">DataLayer</a></div><div class="ttdoc">The DataLayer class stores and maintains the data about the state and settings of the application...</div><div class="ttdef"><b>Definition:</b> datalayer.h:28</div></div>
 <div class="ttc" id="class_data_layer_html_a11a35046ae18b2515bce96ef85ef72da"><div class="ttname"><a href="class_data_layer.html#a11a35046ae18b2515bce96ef85ef72da">DataLayer::currentColorGroup</a></div><div class="ttdeci">EColorGroup currentColorGroup()</div><div class="ttdoc">currentColorGroup getter for the current color preset. </div><div class="ttdef"><b>Definition:</b> datalayer.cpp:380</div></div>
 <div class="ttc" id="class_data_layer_html_af89e4a6dd32842b5076f8770836e5620"><div class="ttname"><a href="class_data_layer.html#af89e4a6dd32842b5076f8770836e5620">DataLayer::countDevicesOfType</a></div><div class="ttdeci">int countDevicesOfType(ECommType type)</div><div class="ttdoc">countDevicesOfType iterates through the currentDevices and determines how many exist of a certain com...</div><div class="ttdef"><b>Definition:</b> datalayer.cpp:734</div></div>
 <div class="ttc" id="class_data_layer_html_a383a0bd23b394e1b4a8df5df92bbb4b0"><div class="ttname"><a href="class_data_layer.html#a383a0bd23b394e1b4a8df5df92bbb4b0">DataLayer::isOn</a></div><div class="ttdeci">bool isOn()</div><div class="ttdoc">isOn true if any device is on, false if all are off. </div><div class="ttdef"><b>Definition:</b> datalayer.cpp:247</div></div>
-<div class="ttc" id="class_data_layer_html_ab66e1ea4324f9e1d0e06ad2bf560d40e"><div class="ttname"><a href="class_data_layer.html#ab66e1ea4324f9e1d0e06ad2bf560d40e">DataLayer::currentDevices</a></div><div class="ttdeci">const std::list&lt; SLightDevice &gt; &amp; currentDevices()</div><div class="ttdoc">currentDevices returns the current Device pair, which contains both controller connection info and de...</div><div class="ttdef"><b>Definition:</b> datalayer.h:291</div></div>
+<div class="ttc" id="class_data_layer_html_ab66e1ea4324f9e1d0e06ad2bf560d40e"><div class="ttname"><a href="class_data_layer.html#ab66e1ea4324f9e1d0e06ad2bf560d40e">DataLayer::currentDevices</a></div><div class="ttdeci">const std::list&lt; SLightDevice &gt; &amp; currentDevices()</div><div class="ttdoc">currentDevices returns the current Device pair, which contains both controller connection info and de...</div><div class="ttdef"><b>Definition:</b> datalayer.h:289</div></div>
 <div class="ttc" id="class_data_layer_html_a477e091c77d4c6936cb6dd69b10e6857"><div class="ttname"><a href="class_data_layer.html#a477e091c77d4c6936cb6dd69b10e6857">DataLayer::updateBrightness</a></div><div class="ttdeci">void updateBrightness(int brightness, std::list&lt; SLightDevice &gt; specialCaseDevices=std::list&lt; SLightDevice &gt;())</div><div class="ttdoc">updateBrightness update the brightness level of all current devices. </div><div class="ttdef"><b>Definition:</b> datalayer.cpp:464</div></div>
 <div class="ttc" id="class_data_layer_html_a82a91977ce515e0429d17c57a08dfe23"><div class="ttname"><a href="class_data_layer.html#a82a91977ce515e0429d17c57a08dfe23">DataLayer::doesDeviceExist</a></div><div class="ttdeci">bool doesDeviceExist(SLightDevice device)</div><div class="ttdoc">doesDeviceExist checks if device exist in connected device list </div><div class="ttdef"><b>Definition:</b> datalayer.cpp:688</div></div>
 <div class="ttc" id="class_data_layer_html_a878df79749e4c8e9b2d3872d271da680"><div class="ttname"><a href="class_data_layer.html#a878df79749e4c8e9b2d3872d271da680">DataLayer::speed</a></div><div class="ttdeci">int speed()</div><div class="ttdoc">speed getter for the speed the LED&#39;s update. </div><div class="ttdef"><b>Definition:</b> datalayer.cpp:545</div></div>
@@ -212,7 +211,7 @@
 <div class="ttc" id="class_data_layer_html_aea842be21d9cb4beb9029b383bea4a4c"><div class="ttname"><a href="class_data_layer.html#aea842be21d9cb4beb9029b383bea4a4c">DataLayer::currentRoutine</a></div><div class="ttdeci">ELightingRoutine currentRoutine()</div><div class="ttdoc">routine getter for the current ELightingRoutine. </div><div class="ttdef"><b>Definition:</b> datalayer.cpp:370</div></div>
 <div class="ttc" id="class_data_layer_html_a29a5a68fbca1071a3a88faf1c4e9cd04"><div class="ttname"><a href="class_data_layer.html#a29a5a68fbca1071a3a88faf1c4e9cd04">DataLayer::colorGroup</a></div><div class="ttdeci">const std::vector&lt; QColor &gt; &amp; colorGroup(EColorGroup group)</div><div class="ttdoc">colorGroup the color group at the given index. Can be used to access the custom color array or any of...</div><div class="ttdef"><b>Definition:</b> datalayer.cpp:304</div></div>
 <div class="ttc" id="class_data_layer_html_af70debb4b7d38640bb5df513de39d2b9"><div class="ttname"><a href="class_data_layer.html#af70debb4b7d38640bb5df513de39d2b9">DataLayer::updateColorGroup</a></div><div class="ttdeci">void updateColorGroup(EColorGroup colorGroup)</div><div class="ttdoc">updateColorGroup update the color group for all current devices. </div><div class="ttdef"><b>Definition:</b> datalayer.cpp:415</div></div>
-<div class="ttc" id="class_data_layer_html_a0b17d6a4e9ea9b2dad62a0ace11436cd"><div class="ttname"><a href="class_data_layer.html#a0b17d6a4e9ea9b2dad62a0ace11436cd">DataLayer::colors</a></div><div class="ttdeci">const std::vector&lt; std::vector&lt; QColor &gt; &gt; &amp; colors()</div><div class="ttdoc">colors getter for the vector of color group vectors. </div><div class="ttdef"><b>Definition:</b> datalayer.h:61</div></div>
+<div class="ttc" id="class_data_layer_html_a0b17d6a4e9ea9b2dad62a0ace11436cd"><div class="ttname"><a href="class_data_layer.html#a0b17d6a4e9ea9b2dad62a0ace11436cd">DataLayer::colors</a></div><div class="ttdeci">const std::vector&lt; std::vector&lt; QColor &gt; &gt; &amp; colors()</div><div class="ttdoc">colors getter for the vector of color group vectors. </div><div class="ttdef"><b>Definition:</b> datalayer.h:59</div></div>
 <div class="ttc" id="class_data_layer_html_a690e7ed4141639a74d71fd32cc48cdc9"><div class="ttname"><a href="class_data_layer.html#a690e7ed4141639a74d71fd32cc48cdc9">DataLayer::devicesEmpty</a></div><div class="ttdeci">void devicesEmpty()</div><div class="ttdoc">devicesEmpty signals when the currentDevices list is reduced to zero so that UI updates can react acc...</div></div>
 <div class="ttc" id="class_data_layer_html_a8f4dff73907e6cf950f88d67fb61a412"><div class="ttname"><a href="class_data_layer.html#a8f4dff73907e6cf950f88d67fb61a412">DataLayer::dataUpdate</a></div><div class="ttdeci">void dataUpdate()</div><div class="ttdoc">dataUpdate emits whenever theres a change to any device. </div></div>
 <div class="ttc" id="class_data_layer_html_a6cf956134ddfc9a45fc22a7c426c2a30"><div class="ttname"><a href="class_data_layer.html#a6cf956134ddfc9a45fc22a7c426c2a30">DataLayer::removeDevicesOfType</a></div><div class="ttdeci">int removeDevicesOfType(ECommType type)</div><div class="ttdoc">removeDevicesOfType if they exist, removes devices from currentDevices list that match the commtype p...</div><div class="ttdef"><b>Definition:</b> datalayer.cpp:720</div></div>

@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.92</span>
+   &#160;<span id="projectnumber">v0.9.96</span>
    </div>
   </td>
  </tr>
@@ -42,7 +42,7 @@
 <div class="title">Backend Overview </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>An overview of the backend classes of the Lighting GUI.</p>
+<div class="textblock"><p>An overview of the backend classes in Corluma.</p>
 <div class="backendOverview"></div><div class="backendOverview">The backend handles communicating with the lights, storing data about the session, and generating the icons for the GUI.</div><div class="backendOverview"></div><h1><a class="anchor" id="sec_1"></a>
 CommLayer</h1>
 <div class="backendOverview"> The <a class="el" href="class_comm_layer.html" title="The CommLayer class provides communication protocols that allow the user to connect and send packets ...">CommLayer</a> class provides communication protocols that allow the user to connect and send packets to an LED array. Currently it supports serial, UDP, and HTTP. </p><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License.</dd></dl>
@@ -51,6 +51,8 @@ DataLayer</h1>
 <div class="backendOverview"> The <a class="el" href="class_data_layer.html" title="The DataLayer class stores and maintains the data about the state and settings of the application...">DataLayer</a> class stores and maintains the data about the state and settings of the application. It also saves the settings sent to the LED hardware, such as the current brightness and current lighting routine. </p><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License.</dd></dl>
 <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd>Make this class save its data between sessions. </dd></dl>
 </div><div class="backendOverview"></div><h1><a class="anchor" id="sec_3"></a>
+DataSync</h1>
+<div class="backendOverview"> The <a class="el" href="class_data_sync.html" title="The DataSync class compares the data layer&#39;s representation of devices with the commlayer&#39;s understan...">DataSync</a> class compares the data layer's representation of devices with the commlayer's understanding of devices and tries to sync them up. The <a class="el" href="class_data_layer.html" title="The DataLayer class stores and maintains the data about the state and settings of the application...">DataLayer</a>'s representation is used as the "desired" state of lights. The <a class="el" href="class_comm_layer.html" title="The CommLayer class provides communication protocols that allow the user to connect and send packets ...">CommLayer</a>'s understanding is used as the current state. If the desired state and current state do not match, the commlayer is requested to send packets to try to update the devices.</div><div class="backendOverview"></div><h1><a class="anchor" id="sec_4"></a>
 IconData</h1>
 <div class="backendOverview"> The <a class="el" href="class_icon_data.html" title="The IconData class creates all the pixel-y square icons that are seen throughout the app...">IconData</a> class creates all the pixel-y square icons that are seen throughout the app. The grids are made by using a very small buffer of RGB values to do the computation. For display, this buffer gets upscaled to the desired icon size. </p><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License.</dd></dl>
 </div> </div></div><!-- contents -->

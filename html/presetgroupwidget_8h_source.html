@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.92</span>
+   &#160;<span id="projectnumber">v0.9.96</span>
    </div>
   </td>
  </tr>
@@ -57,7 +57,7 @@
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;QObject&gt;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;QWidget&gt;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;QLabel&gt;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;lightsbutton.h&quot;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;corlumabutton.h&quot;</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;</div>
 <div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="class_preset_group_widget.html">   19</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_preset_group_widget.html">PresetGroupWidget</a> : <span class="keyword">public</span> QWidget</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;{</div>
@@ -79,7 +79,7 @@
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keywordtype">void</span> multiButtonClicked(<span class="keywordtype">int</span> routine, <span class="keywordtype">int</span> group) { emit <a class="code" href="class_preset_group_widget.html#a553ee5bba90fd8036ff76cba018e8a25">presetButtonClicked</a>(routine, group); }</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    std::vector&lt;LightsButton *&gt; mButtons;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    std::vector&lt;CorlumaButton *&gt; mButtons;</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    QLabel *mLabel;</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
@@ -92,9 +92,9 @@
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="preprocessor">#endif // PRESETGROUPWIDGET_H</span></div>
-<div class="ttc" id="class_preset_group_widget_html_a5d30d7376092a725515db04cb280be8d"><div class="ttname"><a href="class_preset_group_widget.html#a5d30d7376092a725515db04cb280be8d">PresetGroupWidget::setChecked</a></div><div class="ttdeci">void setChecked(ELightingRoutine routine, bool isChecked)</div><div class="ttdoc">setChecked acts similarly to the setChecked of a standard QPushButton, but allows you to call the spe...</div><div class="ttdef"><b>Definition:</b> presetgroupwidget.cpp:44</div></div>
+<div class="ttc" id="class_preset_group_widget_html_a5d30d7376092a725515db04cb280be8d"><div class="ttname"><a href="class_preset_group_widget.html#a5d30d7376092a725515db04cb280be8d">PresetGroupWidget::setChecked</a></div><div class="ttdeci">void setChecked(ELightingRoutine routine, bool isChecked)</div><div class="ttdoc">setChecked acts similarly to the setChecked of a standard QPushButton, but allows you to call the spe...</div><div class="ttdef"><b>Definition:</b> presetgroupwidget.cpp:49</div></div>
 <div class="ttc" id="class_preset_group_widget_html_a553ee5bba90fd8036ff76cba018e8a25"><div class="ttname"><a href="class_preset_group_widget.html#a553ee5bba90fd8036ff76cba018e8a25">PresetGroupWidget::presetButtonClicked</a></div><div class="ttdeci">void presetButtonClicked(int, int)</div><div class="ttdoc">presetButtonClicked signal that any of the lightsbuttons were pressed and emitting their own signal...</div></div>
-<div class="ttc" id="class_preset_group_widget_html_afd62660bab052ef11352f2207ccf0342"><div class="ttname"><a href="class_preset_group_widget.html#afd62660bab052ef11352f2207ccf0342">PresetGroupWidget::PresetGroupWidget</a></div><div class="ttdeci">PresetGroupWidget(QString name, EColorGroup group, const std::vector&lt; QColor &gt; &amp;colors, QWidget *parent=0)</div><div class="ttdoc">PresetGroupWidget constructor for PresetGroupWidget. </div><div class="ttdef"><b>Definition:</b> presetgroupwidget.cpp:9</div></div>
+<div class="ttc" id="class_preset_group_widget_html_afd62660bab052ef11352f2207ccf0342"><div class="ttname"><a href="class_preset_group_widget.html#afd62660bab052ef11352f2207ccf0342">PresetGroupWidget::PresetGroupWidget</a></div><div class="ttdeci">PresetGroupWidget(QString name, EColorGroup group, const std::vector&lt; QColor &gt; &amp;colors, QWidget *parent=0)</div><div class="ttdoc">PresetGroupWidget constructor for PresetGroupWidget. </div><div class="ttdef"><b>Definition:</b> presetgroupwidget.cpp:10</div></div>
 <div class="ttc" id="class_preset_group_widget_html"><div class="ttname"><a href="class_preset_group_widget.html">PresetGroupWidget</a></div><div class="ttdoc">The PresetGroupWidget is a widget used on the Preset Color Groups Page to display the name and all th...</div><div class="ttdef"><b>Definition:</b> presetgroupwidget.h:19</div></div>
 </div><!-- fragment --></div><!-- contents -->
 
