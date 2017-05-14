@@ -17,9 +17,6 @@
  */
 
 
-#define TRANSITION_TIME_MSEC 150
-
-
 /*!
  * \brief The ECommType enum The connection types
  *        supported by the GUI. For mobile builds,
@@ -51,39 +48,11 @@ enum class EColorMode {
     EColorMode_MAX
 };
 
-/*!
- * \brief The EConnectionButtonIcons enum provides access to the different button
- *        assets used as placeholders for graphics in the application.
- */
-enum class EConnectionButtonIcons {
-    eBlackButton,
-    eRedButton,
-    eYellowButton,
-    eBlueButton,
-    eGreenButton,
-    EConnectionButtonIcons_MAX
-};
-
-
-/*!
- * \brief The EConnectionState enum tracks the various connection states both
- *        of each comm type and of the application overall.
- */
-enum class EConnectionState {
-    eOff,
-    eDiscovering,
-    eDiscoveredAndNotInUse,
-    eSingleDeviceSelected,
-    eMultipleDevicesSelected,
-    eConnectionState_MAX
-};
-
-
 namespace utils
 {
-
 /// helper for getting the value of the last single color routine.
 const ELightingRoutine ELightingRoutineSingleColorEnd = ELightingRoutine::eSingleSawtoothFadeOut;
+
 
 /*!
  * \brief colorModeToString helper for converting a color mode to a
@@ -122,7 +91,6 @@ inline EColorMode stringtoColorMode(const QString& mode) {
         return EColorMode::EColorMode_MAX;
     }
 }
-
 /*!
  * \brief ECommTypeToString utility function for converting a ECommType to a human readable string
  * \param type the ECommType to convert
@@ -166,118 +134,35 @@ inline ECommType stringToECommType(QString type) {
     }
 }
 
-
-/*!
- * \brief colorTemperatureToRGB converts a color temperature value to a RGB representation.
- *        Equation taken from http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/
- * \param ct meriks of color temperature.
- * \return QColor version of color temperature
- */
-inline QColor colorTemperatureToRGB(int ct) {
-    // convert to kelvin
-    float kelvin = (int)(1.0f / ct * 1000000.0f);
-    float temp = kelvin / 100;
-
-    float red, green, blue;
-    if (temp <= 66) {
-        red = 255;
-        green = temp;
-        green = 99.4708025861 * std::log(green) - 161.1195681661;
-        if (temp <= 19) {
-            blue = 0;
-        } else {
-            blue = temp - 10;
-            blue = 138.5177312231 * std::log(blue) - 305.0447927307;
-        }
-    } else {
-        red = temp - 60;
-        red = 329.698727446 * std::pow(red, -0.1332047592);
-
-        green = temp - 60;
-        green = 288.1221695283 * std::pow(green, -0.0755148492);
-
-        blue = 255;
-    }
-
-    red   = std::max(0.0f, std::min(red, 255.0f));
-    green = std::max(0.0f, std::min(green, 255.0f));
-    blue  = std::max(0.0f, std::min(blue, 255.0f));
-    return QColor(red, green, blue);
-}
-
-
-/*!
- * \brief rgbToColorTemperature really inefficient way to convert RGB values to
- *        their color temperature. This is really bad code, redesign!
- * \TODO rewrite
- */
-inline int rgbToColorTemperature(QColor color) {
-    float minTemperature = 153;
-    float maxTemperature = 500;
-    for (int i = minTemperature; i <= maxTemperature; ++i) {
-        QColor testColor = colorTemperatureToRGB(i);
-        float r = std::abs(testColor.red() - color.red()) / 255.0f;
-        float g = std::abs(testColor.green() - color.green()) / 255.0f;
-        float b = std::abs(testColor.blue() - color.blue()) / 255.0f;
-        float difference = (r + g + b) / 3.0f;
-        if (difference < 0.02f) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-
-/*!
- * \brief brightnessDifference gives a percent difference between two brightness
- *        values
- * \param first first brightness to check
- * \param second second brightness to check
- * \return a value between 0 and 1 which represents how different the brightnesses are.
- */
-inline float brightnessDifference(float first, float second) {
-    return std::abs(first - second) / 100.0f;
 }
 
 /*!
- * \brief colorDifference gives a percent difference between two colors
- * \param first first color to check
- * \param second second color to check
- * \return a value between 0 and 1 which is how different two colors are.
+ * \brief The EConnectionButtonIcons enum provides access to the different button
+ *        assets used as placeholders for graphics in the application.
  */
-inline float colorDifference(QColor first, QColor second) {
-    float r = std::abs(first.red() - second.red()) / 255.0f;
-    float g = std::abs(first.green() - second.green()) / 255.0f;
-    float b = std::abs(first.blue() - second.blue()) / 255.0f;
-    float difference = (r + g + b) / 3.0f;
-    return difference;
-}
+enum class EConnectionButtonIcons {
+    eBlackButton,
+    eRedButton,
+    eYellowButton,
+    eBlueButton,
+    eGreenButton,
+    EConnectionButtonIcons_MAX
+};
 
 
 /*!
- * \brief map map function from arduino: https://www.arduino.cc/en/Reference/Map
- * \param x the value getting the map applied
- * \param in_min the original minimum possible value of x
- * \param in_max the original maximum possible value of x
- * \param out_min the new minimum possible value of x
- * \param out_max the new maximum possibel value of x
- * \return x mapped from the range of in_min->in_max to the range of out_min->out_max
+ * \brief The EConnectionState enum tracks the various connection states both
+ *        of each comm type and of the application overall.
  */
-inline float map(float x, float in_min, float in_max, float out_min, float out_max) {
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
-
-
-/*!
- * \brief clamps a value between the lower and upper values given. So it can never be lower than
- * the lower value or higher than the higher value.
- */
-template <typename T>
-T clamp(const T& n, const T& lower, const T& upper) {
-  return std::max(lower, std::min(n, upper));
-}
-
-}
+enum class EConnectionState {
+    eOff,
+    eConnectionError,
+    eDiscovering,
+    eDiscoveredAndNotInUse,
+    eSingleDeviceSelected,
+    eMultipleDevicesSelected,
+    eConnectionState_MAX
+};
 
 
 struct SLightDevice {
@@ -397,8 +282,7 @@ struct SLightDevice {
     /*!
      * \brief SLightDevice Constructor
      */
-    SLightDevice()
-    {
+    SLightDevice() {
         customColorArray = std::vector<QColor>(10);
         customColorCount = 2;
 
@@ -419,12 +303,6 @@ struct SLightDevice {
             j++;
         }
     }
-
-    bool isValid() {
-        return (color.isValid()
-                && (brightness <= 100));
-    }
-
 };
 
 
@@ -437,8 +315,7 @@ inline bool compareLightDevice(const SLightDevice& lhs, const SLightDevice& rhs)
 
 
 /// equal operator
-inline bool operator==(const SLightDevice& lhs, const SLightDevice& rhs)
-{
+inline bool operator==(const SLightDevice& lhs, const SLightDevice& rhs) {
     bool result = true;
     if (lhs.isReachable     !=  rhs.isReachable) result = false;
     if (lhs.isOn            !=  rhs.isOn) result = false;

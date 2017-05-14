@@ -10,7 +10,7 @@
 
 #include "lightdevice.h"
 #include "groupsparser.h"
-#include "commhue.h"
+#include "comm/commhue.h"
 /*!
  * \copyright
  * Copyright (C) 2015 - 2017.

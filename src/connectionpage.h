@@ -10,7 +10,7 @@
 #include "lightingpage.h"
 #include "listdevicewidget.h"
 #include "groupsparser.h"
-#include "commlayer.h"
+#include "comm/commlayer.h"
 #include "listmoodgroupwidget.h"
 #include "listdevicesgroupwidget.h"
 

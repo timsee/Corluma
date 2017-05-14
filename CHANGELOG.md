@@ -82,6 +82,7 @@
 * Fixed bugs on the settings page. 
 * Fixed miscellaneous bugs.
 
+___
 ## The Backend Updates
 ### **v0.9.5** 
 #### Obligatory Confusing Backend Update
@@ -97,7 +98,7 @@
 #### CommType Update
 * Simplified internal data structures for storing and accessing lights.
 * Simplified APIs.
-
+___
 
 ### **v0.9.7**
 #### Connection Page Update
@@ -111,14 +112,14 @@
 * Added support for Hue Ambient Lights.
 * Added GUI for saving and choosing preset groups of lights.
 
-### **v0.9.82
+### **v0.9.82**
 #### Miscellaneous Cleanup Update
 * Fixed edge cases in DataSync.
 * Cleaned up old code.
 * Updated message parsing to match the new [RGB-LED-Routines](https://github.com/timsee/RGB-LED-Routines) protocols. 
 * Fixed miscellaneous bugs.
 
-### **v0.9.85
+### **v0.9.85**
 #### Discovery Page Update
 * Added page for discovering new connections.
 * Added support for Hue Light Strips, Blooms, and White bulbs.
@@ -126,7 +127,7 @@
 * Changed the layout of pages to be more uniform and require less clicks to use.
 * Fixed miscellaneous bugs.
 
-### **v0.9.9
+### **v0.9.9**
 #### UX Update
 * Redesigned Connection Page so that it is easier to control multiple devices at once.
 * Added an edit page for groups of devices.
@@ -134,14 +135,14 @@
 * Added the ability to save and load groups of devices as JSON data.
 * Made minor tweaks to make actions require less clicks to execute.
 
-### **v0.9.91
+### **v0.9.91**
 #### Why-Do-I-Name-These Update
 * Did a QA round, fixed a lot of edge cases and bugs.
 * Updated Discovery Page, Connection Page, and Settings Page.
 * Added a new version of the Hue Color Temperature Picker.
 * Fixed many layout issues, broke some in certain environments (woops).
 
-### **v0.9.92
+### **v0.9.92**
 #### Why-Do-I-Name-These Update Part 2: The Great Refactor
 * Removed [QDarkStyleSheet](https://github.com/ColinDuquesnoy/QDarkStyleSheet) in favor of a project specific stylesheet.
 * Refactored ColorPicker to do more and pick colors better. 
@@ -149,6 +150,15 @@
 * Started to add transitions.
 * Removed ColorPickerAmbient and CustomColorsPage.
 * Fixed miscellaneous bugs.
+
+### **v0.9.96**
+#### The Great Refactor Part 2: The CommLayer, Subwidget, and Continued Bad Naming Convention Update
+* Refactored complicated widgets into smaller subwidgets.
+* Improved iOS support.
+* Simplified commuincation with Arduino projects 
+* Added an optional CRC for Arduino projects.
+* Added directories to source code. 
+* Fixed miscellaneous issues.
 
 
 

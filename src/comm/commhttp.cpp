@@ -8,14 +8,14 @@
 
 CommHTTP::CommHTTP() {
     mStateUpdateInterval = 4850;
+    mDiscoveryUpdateInterval = 2000;
     setupConnectionList(ECommType::eHTTP);
 
-    connect(mDiscoveryTimer, SIGNAL(timeout()), this, SLOT(discoveryRoutine()));
-
-    connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(stateUpdate()));
-
     mNetworkManager = new QNetworkAccessManager(this);
+
     connect(mNetworkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
+    connect(mDiscoveryTimer, SIGNAL(timeout()), this, SLOT(discoveryRoutine()));
+    connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(stateUpdate()));
 }
 
 CommHTTP::~CommHTTP() {
@@ -24,7 +24,6 @@ CommHTTP::~CommHTTP() {
 }
 
 void CommHTTP::startup() {
-    resetStateUpdateTimeout();
     mHasStarted = true;
 }
 
@@ -39,51 +38,48 @@ void CommHTTP::shutdown() {
     mHasStarted = false;
 }
 
-void CommHTTP::sendPacket(QString controller, QString packet) {
-    bool isStateUpdate = false;
-    if (packet.at(0) ==  QChar('7')) {
-        isStateUpdate = true;
-    }
-    QString urlString = "http://" + controller + "/arduino/" + packet;
+void CommHTTP::sendPacket(SDeviceController controller, QString packet) {
+    // commtype function for adding CRC (if needed) and resetting flags (if needed)
+    preparePacketForTransmission(controller, packet);
+
+    // send packet over HTTP
+    QString urlString = "http://" + controller.name + "/arduino/" + packet;
     QNetworkRequest request = QNetworkRequest(QUrl(urlString));
     //qDebug() << "sending" << urlString;
     mNetworkManager->get(request);
-    if (!isStateUpdate) {
-        resetStateUpdateTimeout();
-    }
 }
 
 
 void CommHTTP::stateUpdate() {
     if (shouldContinueStateUpdate()) {
         for (auto&& controller : mDiscoveredList) {
-            if (!mDiscoveryMode) {
-                QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
-                // WARNING: this resets the throttle and gets called automatically!
-                 if (controller.compare(QString(""))) {
-                     sendPacket(controller, packet);
-                 }
+            QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
+            sendPacket(controller, packet);
+            if ((mStateUpdateCounter % mSecondaryUpdatesInterval) == 0) {
+                QString customArrayUpdateRequest = QString("%1&").arg(QString::number((int)EPacketHeader::eCustomArrayUpdateRequest));
+                sendPacket(controller, customArrayUpdateRequest);
             }
         }
 
         if (mDiscoveryMode
                 && mDiscoveredList.size() < mDeviceTable.size()
                 && !mDiscoveryTimer->isActive()) {
-            mDiscoveryTimer->start(1000);
+            mDiscoveryTimer->start(mDiscoveryUpdateInterval);
         } else if (!mDiscoveryMode && mDiscoveryTimer->isActive()) {
             mDiscoveryTimer->stop();
         }
+        mStateUpdateCounter++;
     }
 }
 
 
 void CommHTTP::discoveryRoutine() {
-   QString discoveryPacket = QString("DISCOVERY_PACKET");
    for (auto&& it : mDeviceTable) {
        QString controllerName = QString::fromUtf8(it.first.c_str());
-         bool found = (std::find(mDiscoveredList.begin(), mDiscoveredList.end(), controllerName) != mDiscoveredList.end());
+       SDeviceController output;
+       bool found = findDiscoveredController(controllerName, output);
          if (!found) {
-             QString urlString = "http://" + controllerName + "/arduino/" + discoveryPacket;
+             QString urlString = "http://" + controllerName + "/arduino/" + kDiscoveryPacketIdentifier;
              QNetworkRequest request = QNetworkRequest(QUrl(urlString));
              //qDebug() << "sending" << urlString;
              mNetworkManager->get(request);
@@ -103,21 +99,8 @@ void CommHTTP::replyFinished(QNetworkReply* reply) {
         if (fullURL.contains(controllerName)) {
             if (reply->error() == QNetworkReply::NoError) {
                 QString payload = ((QString)reply->readAll()).trimmed();
-                QString discoveryPacket = "DISCOVERY_PACKET";
                 //qDebug() << "payload from HTTP" << payload;
-
-                if (payload.contains(discoveryPacket)) {
-                    QString packet = payload.mid(discoveryPacket.size() + 3);
-                    handleDiscoveryPacket(controllerName);
-                    emit discoveryReceived(controllerName, packet, (int)ECommType::eHTTP);
-                } else {
-                    QString packet = payload.simplified();
-                    if (packet.at(0) == '7') {
-                        emit packetReceived(controllerName, packet, (int)ECommType::eHTTP);
-                    } else {
-                        emit packetReceived(controllerName, packet, (int)ECommType::eHTTP);
-                    }
-                }
+                handleIncomingPacket(controllerName, payload);
             }
         }
     }

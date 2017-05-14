@@ -95,26 +95,34 @@ ios {
 # Sources
 #----------
 
-SOURCES += main.cpp\
+SOURCES += main.cpp \
+    comm/commserial.cpp \
+    comm/commhttp.cpp \
+    comm/commudp.cpp \
+    comm/commtype.cpp \
+    comm/commhue.cpp \
+    comm/commpacketparser.cpp \
+    comm/commtypesettings.cpp \
+    comm/commlayer.cpp \
+    comm/huebridgediscovery.cpp \
+    comm/crccalculator.cpp \
+    colorpicker/colorpicker.cpp \
+    colorpicker/rgbsliders.cpp \
+    colorpicker/tempbrightsliders.cpp \
+    colorpicker/brightnessslider.cpp \
+    colorpicker/colorgrid.cpp \
+    discovery/discoveryserialwidget.cpp \
+    discovery/discoverywidget.cpp \
+    discovery/discoveryyunwidget.cpp \
+    discovery/discoveryhuewidget.cpp \
     mainwindow.cpp \
     settingspage.cpp \
     datalayer.cpp \
-    commlayer.cpp \
     icondata.cpp \
-    lightsslider.cpp \
-    lightsbutton.cpp \
     presetcolorspage.cpp \
-    commserial.cpp \
-    commhttp.cpp \
-    commudp.cpp \
-    commtype.cpp \
-    commhue.cpp \
-    huebridgediscovery.cpp \
     lightingroutines.cpp \
-    commpacketparser.cpp \
     connectionpage.cpp \
     floatinglayout.cpp \
-    commtypesettings.cpp \
     groupsparser.cpp \
     datasync.cpp \
     discoverypage.cpp \
@@ -127,35 +135,45 @@ SOURCES += main.cpp\
     listmoodgroupwidget.cpp \
     editgrouppage.cpp \
     routinebuttonswidget.cpp \
-    colorpicker.cpp \
-    colorpage.cpp
+    colorpage.cpp \
+    corlumabutton.cpp \
+    corlumaslider.cpp \
+    corlumautils.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS  +=  comm/commtype.h \
+    comm/commserial.h \
+    comm/commhttp.h \
+    comm/commudp.h \
+    comm/commhue.h \
+    comm/commtypesettings.h \
+    comm/commpacketparser.h \
+    comm/commlayer.h \
+    comm/huebridgediscovery.h \
+    comm/hueprotocols.h \
+    comm/crccalculator.h \
+    colorpicker/colorpicker.h \
+    colorpicker/rgbsliders.h \
+    colorpicker/tempbrightsliders.h \
+    colorpicker/brightnessslider.h \
+    colorpicker/colorgrid.h \
+    discovery/discoveryserialwidget.h \
+    discovery/discoverywidget.h \
+    discovery/discoveryyunwidget.h \
+    discovery/discoveryhuewidget.h \
+    mainwindow.h \
     settingspage.h \
     datalayer.h \
-    commlayer.h \
     icondata.h \
-    lightsslider.h \
     lightingpage.h \
-    lightsbutton.h \
     lightingprotocols.h \
-    commtype.h \
-    commserial.h \
-    commhttp.h \
-    commudp.h \
-    commhue.h \
-    huebridgediscovery.h \
     lightingroutines.h \
-    commpacketparser.h \
     lightdevice.h \
     connectionpage.h \
     floatinglayout.h \
-    commtypesettings.h \
     groupsparser.h \
     datasync.h \
     discoverypage.h \
     listdevicewidget.h \
-    hueprotocols.h \
     presetgroupwidget.h \
     listdevicesgroupwidget.h \
     listcollectionwidget.h \
@@ -165,9 +183,11 @@ HEADERS  += mainwindow.h \
     editgrouppage.h \
     listcollectionsubwidget.h \
     routinebuttonswidget.h \
-    colorpicker.h \
     colorpage.h \
-    grouppage.h
+    grouppage.h \
+    corlumabutton.h \
+    corlumaslider.h \
+    corlumautils.h
 
 FORMS    += mainwindow.ui \
     settingspage.ui \

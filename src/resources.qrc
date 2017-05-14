@@ -28,5 +28,7 @@
         <file>stylesheet/corluma.qss</file>
         <file>images/ambient_wheel.png</file>
         <file>images/white_wheel.png</file>
+        <file>images/splash_screen.png</file>
+        <file>images/loader.gif</file>
     </qresource>
 </RCC>

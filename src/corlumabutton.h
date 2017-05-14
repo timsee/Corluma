@@ -15,7 +15,7 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief The LightsButton class provides all of the buttons used within the application.
+ * \brief The CorlumaButton class provides all of the buttons used within the application.
  *        All buttons have an icon, while some have labels or extra logic attached.
  *
  * There are currently three different ways you can set up a button. A standard button
@@ -24,14 +24,14 @@
  * the button. A menu button emits a page number, and is used by the main menu.
  *
  */
-class LightsButton : public QPushButton
+class CorlumaButton : public QPushButton
 {
     Q_OBJECT
 public:
     /*!
      * \brief Constructor
      */
-    explicit LightsButton(QWidget *parent = 0);
+    explicit CorlumaButton(QWidget *parent = 0);
 
     /*!
      * \brief setupAsMultiButton sets up the button for use with the PresetArrayPage. Assigns

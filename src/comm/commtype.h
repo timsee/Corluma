@@ -14,12 +14,41 @@
 #include <QTimer>
 
 #include "lightdevice.h"
+#include "crccalculator.h"
 
 /*!
  * \copyright
  * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
  */
+
+
+struct SDeviceController {
+
+    QString name;
+
+    int maxHardwareIndex;
+
+    bool isUsingCRC;
+
+    uint32_t maxPacketSize;
+
+    QString to_string() {
+        QString string = name + "\r\n maxHardwareIndex: " + QString::number(maxHardwareIndex) + " \r\n CRC: " + QString::number(isUsingCRC) + " \r\n maxPacketSize: " + QString::number(maxPacketSize);
+        return string;
+    }
+};
+
+/// equal operator
+inline bool operator==(const SDeviceController& lhs, const SDeviceController& rhs)
+{
+    bool result = true;
+    if (lhs.name.compare(rhs.name)) result = false;
+    if (lhs.maxHardwareIndex    !=  rhs.maxHardwareIndex) result = false;
+    if (lhs.isUsingCRC          !=  rhs.isUsingCRC) result = false;
+    return result;
+}
+
 
 /*!
  * \brief inherited by comm types, provides a general interface that can
@@ -63,7 +92,7 @@ public:
      *        connection stream.
      * \param packet the packet that is going to be sent
      */
-    virtual void sendPacket(QString controller, QString packet) = 0;
+    virtual void sendPacket(SDeviceController controller, QString packet) = 0;
 
 
     // ----------------------------
@@ -105,18 +134,18 @@ public:
     // ----------------------------
 
     /*!
-     * \brief addController attempts to add a new controller to the device table.
+     * \brief startDiscoveringController attempts to add a new controller to the device table.
      * \param controller the name of the new controller
      * \return true if the controller is added, false otherwise
      */
-    bool addController(QString controller);
+    bool startDiscoveringController(QString controller);
 
     /*!
      * \brief removeController attempts to remove the controller from the device table.
      * \param connection the connection you want to remove
      * \return true if the connection exists and was removed, false if it wasn't there in the first place
      */
-    bool removeController(QString controller);
+    bool removeController(SDeviceController controller);
 
     /*!
      * \brief updateDevice update all the data in the light device that matches the same controller and index.
@@ -143,7 +172,7 @@ public:
      * \brief discoveredList getter for list of discovered devices
      * \return list of discovered devices.
      */
-    const std::list<QString>& discoveredList() { return mDiscoveredList; }
+    const std::list<SDeviceController>& discoveredList() { return mDiscoveredList; }
 
     /*!
      * \brief undiscoveredList getter for list of undiscovered devices.
@@ -171,6 +200,39 @@ public:
      */
     void saveConnectionList();
 
+
+    // ----------------------------
+    // SDeviceController helpers
+    // ----------------------------
+
+    /*!
+     * \brief deviceControllerFromDiscoveryString takes a discovery string, a controller name, and an empty SDeviceController as input.
+     *       If parsing the string  is successful, it fills the SDeviceController with the info from the discovery string. If its
+     *       unsucessful, it returns false.
+     * \param discovery string received as discovery string
+     * \param controllerName name of controller
+     * \param controller filled if discovery string is valid.
+     * \return true if discovery string is valid, false otherwise.
+     */
+    bool deviceControllerFromDiscoveryString(QString discovery, QString controllerName, SDeviceController& controller);
+
+    /*!
+     * \brief findDiscoveredController checks for a discovered controller with the given name. Returns true and fills the SDeviceController
+     *        given as input if one is found, returns false if one isnt found
+     * \param controllerName name of controller to look for
+     * \param output filled a controller is found
+     * \return true if one is found, false otherwise.
+     */
+    bool findDiscoveredController(QString controllerName, SDeviceController& output);
+
+    /*!
+     * \brief handleIncomingPacket All packets that are sent to any commtype get sent through this function to be sorted
+     *        and sent to the proper subsystems.
+     * \param controllerName name of controller sending payload
+     * \param payload payload received from controller
+     */
+    void handleIncomingPacket(QString controllerName, QString payload);
+
 signals:
     /*!
      * \brief packetReceived emitted whenever a packet that is not a discovery packet is received. Contains
@@ -179,17 +241,13 @@ signals:
     void packetReceived(QString, QString, int);
 
     /*!
-     * \brief discoveryReceived emitted when a discovery packet is received, this contains the state
-     *        of all connected devices.
-     */
-    void discoveryReceived(QString, QString, int);
-
-    /*!
      * \brief updateReceived an update packet was received from any controller.
      */
     void updateReceived(int);
 
 protected:
+
+    void preparePacketForTransmission(const SDeviceController& controller, QString& packet);
 
     /*!
      * \brief resetDiscovery clears the throttle list and discovery list and treats the commtype as if
@@ -220,7 +278,19 @@ protected:
      *        the discovery timer.
      * \param sender the controller that is sending the discovery packet.
      */
-    void handleDiscoveryPacket(QString sender);
+    void handleDiscoveryPacket(SDeviceController sender);
+
+    /// used to add CRC to outgoing packets.
+    CRCCalculator mCRC;
+
+    /// number of state updates sent out
+    uint32_t mStateUpdateCounter;
+
+    /*!
+     * how frequently secondary requests should happen. Secondary requests are things like the custom array update
+     * where they are not needed as frequently as state updates but are still useful on a semi regular basis.
+     */
+    uint32_t mSecondaryUpdatesInterval;
 
     /*!
      * \brief mDeviceTable hash table of all available devices. the hash key is the controller name
@@ -237,7 +307,7 @@ protected:
     /*!
      * \brief mDiscoveredList list of devices that have been discovered properly.
      */
-    std::list<QString> mDiscoveredList;
+    std::list<SDeviceController> mDiscoveredList;
 
     /*!
      * \brief mStateUpdateTimer Polls the controller every few seconds requesting
@@ -249,6 +319,11 @@ protected:
      * \brief mStateUpdateInterval number of msec between each state update request.
      */
     int mStateUpdateInterval;
+
+    /*!
+     * \brief mDiscoveryUpdateInterval number of msec between sending out each discovery packet.
+     */
+    int mDiscoveryUpdateInterval;
 
     /*!
      * \brief mDiscoveryTimer used during discovery to poll the device every few seconds.
@@ -279,6 +354,9 @@ protected:
      *        Gets set to false after the shutdown() routine is callsed.
      */
     bool mHasStarted;
+
+    /// string at the beginning of each discovery packet.
+    static const QString kDiscoveryPacketIdentifier;
 
 private:
 

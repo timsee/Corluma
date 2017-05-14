@@ -6,6 +6,8 @@
 
 #include "floatinglayout.h"
 #include "mainwindow.h"
+#include "corlumautils.h"
+
 #include <QDebug>
 #include <QApplication>
 #include <QScreen>
@@ -19,6 +21,7 @@ FloatingLayout::FloatingLayout(bool makeVertical, QWidget *parent) : QWidget(par
     mRoutineIsTranslucent = false;
     mRoutineIsHighlighted = false;
 
+    this->setContentsMargins(0,0,0,0);
     // setup up the layout
     if (mIsVertical) {
         mVerticalLayout = new QVBoxLayout;
@@ -59,29 +62,46 @@ void FloatingLayout::highlightButton(QString key) {
 // Setup Buttons
 //--------------------------------
 
-void FloatingLayout::setupButtons(std::vector<QString> buttons) {
+void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eButtonSize) {
     // set up the geometry
     QScreen *screen = QApplication::screens().at(0);
+
+    QSize size;
+    if (eButtonSize == EButtonSize::eSmall) {
+        size = QSize(screen->size().width() * 0.025f, screen->size().height() * 0.025f);
+    } else if (eButtonSize == EButtonSize::eMedium) {
+        size = QSize(screen->size().width() * 0.03f, screen->size().height() * 0.03f);
+    } else if (eButtonSize == EButtonSize::eRectangle) {
 #ifdef MOBILE_BUILD
-    QSize size = QSize(screen->availableSize().width() * 0.12f, screen->availableSize().height() * 0.12f);
+        size = QSize(screen->size().width() * 0.07f, screen->size().height() * 0.02f);
 #else
-    QSize size = QSize(screen->size().width() * 0.025f, screen->size().height() * 0.025f);
+        size = QSize(screen->size().width() * 0.07f, screen->size().height() * 0.05f);
+#endif
+    }
+#ifdef MOBILE_BUILD
+    size = QSize(size.width() * 5, size.height() * 5);
 #endif
 
-    if (mIsVertical) {
-        this->setMinimumWidth(size.width());
-        this->setMaximumWidth(size.width());
-
-        this->setMinimumHeight(size.width() * buttons.size());
-        this->setMaximumHeight(size.width() * buttons.size());
+    int fixedWidth;
+    int fixedHeight;
+    if (eButtonSize == EButtonSize::eRectangle) {
+        if (mIsVertical) {
+            fixedWidth = size.width();
+            fixedHeight = size.height() * buttons.size();
+        } else {
+            fixedWidth = size.width() * buttons.size();
+            fixedHeight = size.height();
+        }
     } else {
-        this->setMinimumWidth(size.width() * buttons.size());
-        this->setMaximumWidth(size.width() * buttons.size());
-
-        this->setMinimumHeight(size.width());
-        this->setMaximumHeight(size.width());
-
+        if (mIsVertical) {
+            fixedWidth = size.width();
+            fixedHeight = size.width() * buttons.size();
+        } else {
+            fixedWidth = size.width() * buttons.size();
+            fixedHeight = size.width();
+        }
     }
+    this->setFixedSize(QSize(fixedWidth, fixedHeight));
 
     // setup the horizontal buttons
     if (mButtons.size() > 0) {
@@ -108,7 +128,7 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons) {
             resizeIcon(mButtons[i], ":/images/colorWheel_icon.png");
         } else if (mNames[i].compare("Multi") == 0) {
             foundMatch = true;
-            LightsButton *lightsButton = new LightsButton(this);
+            CorlumaButton *lightsButton = new CorlumaButton(this);
             lightsButton->button->setCheckable(true);
             lightsButton->setupAsStandardButton(ELightingRoutine::eSingleSolid, EColorGroup::eAll);
             lightsButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, QColor(255,0,0));
@@ -121,12 +141,40 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons) {
             resizeIcon(mButtons[i], ":/images/hueRange_icon.png");
         } else if (mNames[i].compare("Routine") == 0) {
             foundMatch = true;
-            LightsButton *lightsButton = new LightsButton(this);
+            CorlumaButton *lightsButton = new CorlumaButton(this);
             lightsButton->button->setCheckable(true);
             lightsButton->setupAsStandardButton(ELightingRoutine::eSingleGlimmer, EColorGroup::eAll);
             lightsButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleGlimmer, QColor(0,255,0));
             mButtons[i] = static_cast<QPushButton*>(lightsButton);
             Q_ASSERT(mButtons[i]);
+        } else if (mNames[i].compare("Settings") == 0) {
+            foundMatch = true;
+            mButtons[i] = new QPushButton(this);
+            resizeIcon(mButtons[i], ":/images/settingsgear.png");
+        } else if (mNames[i].compare("Discovery_Yun") == 0) {
+            foundMatch = true;
+            mButtons[i] = new QPushButton(this);
+            mButtons[i]->setCheckable(true);
+            mButtons[i]->setStyleSheet("text-align:left");
+            mButtons[i]->setIconSize(QSize(mButtons[i]->size().height() * 0.9f,
+                                           mButtons[i]->size().height() * 0.9f));
+            mButtons[i]->setText("Yun");
+        } else if (mNames[i].compare("Discovery_Serial") == 0) {
+            foundMatch = true;
+            mButtons[i] = new QPushButton(this);
+            mButtons[i]->setCheckable(true);
+            mButtons[i]->setStyleSheet("text-align:left");
+            mButtons[i]->setIconSize(QSize(mButtons[i]->size().height() * 0.9f,
+                                           mButtons[i]->size().height() * 0.9f));
+            mButtons[i]->setText("Serial");
+        } else if (mNames[i].compare("Discovery_Hue") == 0) {
+            foundMatch = true;
+            mButtons[i] = new QPushButton(this);
+            mButtons[i]->setCheckable(true);
+            mButtons[i]->setStyleSheet("text-align:left");
+            mButtons[i]->setIconSize(QSize(mButtons[i]->size().height() * 0.9f,
+                                           mButtons[i]->size().height() * 0.9f));
+            mButtons[i]->setText("Hue");
         }
 
         if (foundMatch) {
@@ -144,7 +192,7 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons) {
                 connect(mButtons[i], SIGNAL(clicked(bool)), buttonsMapper, SLOT(map()));
                 buttonsMapper->setMapping(mButtons[i], i);
             } else {
-                LightsButton *lightsButton = static_cast<LightsButton*>(mButtons[i]);
+                CorlumaButton *lightsButton = static_cast<CorlumaButton*>(mButtons[i]);
                 connect(lightsButton->button, SIGNAL(clicked(bool)), buttonsMapper, SLOT(map()));
                 buttonsMapper->setMapping(lightsButton->button, i);
             }
@@ -161,7 +209,7 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons) {
 void FloatingLayout::updateRoutineSingleColor(ELightingRoutine routine, QColor color) {
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
         if (mNames[i].compare("Routine") == 0) {
-            LightsButton *lightsButton = static_cast<LightsButton*>(mButtons[i]);
+            CorlumaButton *lightsButton = static_cast<CorlumaButton*>(mButtons[i]);
             Q_ASSERT(lightsButton);
             if ((int)routine <= (int)utils::ELightingRoutineSingleColorEnd) {
                 lightsButton->updateIconSingleColorRoutine(routine, color);
@@ -186,7 +234,7 @@ void FloatingLayout::updateRoutineSingleColor(ELightingRoutine routine, QColor c
 void FloatingLayout::updateRoutineMultiColor(ELightingRoutine routine, std::vector<QColor> colors, int colorCount) {
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
         if (mNames[i].compare("Routine") == 0) {
-            LightsButton *lightsButton = static_cast<LightsButton*>(mButtons[i]);
+            CorlumaButton *lightsButton = static_cast<CorlumaButton*>(mButtons[i]);
             Q_ASSERT(lightsButton);
             if ((int)routine > (int)utils::ELightingRoutineSingleColorEnd) {
                 lightsButton->updateIconPresetColorRoutine(routine, EColorGroup::eCustom, colors, colorCount);
@@ -212,11 +260,36 @@ void FloatingLayout::updateRoutineMultiColor(ELightingRoutine routine, std::vect
 void FloatingLayout::addMultiRoutineIcon(std::vector<QColor> colors) {
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
         if (mNames[i].compare("Multi") == 0) {
-            LightsButton *lightsButton = static_cast<LightsButton*>(mButtons[i]);
+            CorlumaButton *lightsButton = static_cast<CorlumaButton*>(mButtons[i]);
             Q_ASSERT(lightsButton);
             lightsButton->updateIconPresetColorRoutine(ELightingRoutine::eMultiBarsMoving, EColorGroup::eSevenColor, colors);
         }
     }
+}
+void FloatingLayout::updateDiscoveryButton(ECommType type, QIcon icon) {
+    QString label;
+    switch (type)
+    {
+        case ECommType::eHue:
+            label = "Discovery_Hue";
+            break;
+#ifndef MOBILE_BUILD
+        case ECommType::eSerial:
+            label = "Discovery_Serial";
+            break;
+#endif
+        case ECommType::eUDP:
+            label = "Discovery_Yun";
+            break;
+        default:
+            break;
+    }
+    for (uint32_t i = 0; i < mButtons.size(); ++i) {
+        if (mNames[i].compare(label) == 0) {
+            mButtons[i]->setIcon(icon);
+        }
+    }
+
 }
 
 //--------------------------------
@@ -251,7 +324,7 @@ void FloatingLayout::buttonPressed(int buttonIndex) {
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
         mButtons[i]->setChecked(false);
         if (isALightsButton(i)) {
-            LightsButton *lightsButton = static_cast<LightsButton*>(mButtons[i]);
+            CorlumaButton *lightsButton = static_cast<CorlumaButton*>(mButtons[i]);
             Q_ASSERT(lightsButton);
             lightsButton->button->setChecked(false);
         }
@@ -260,7 +333,7 @@ void FloatingLayout::buttonPressed(int buttonIndex) {
     // check the proper button
     QString label = mNames[buttonIndex];
     if (isALightsButton(buttonIndex)) {
-        LightsButton *lightsButton = static_cast<LightsButton*>(mButtons[buttonIndex]);
+        CorlumaButton *lightsButton = static_cast<CorlumaButton*>(mButtons[buttonIndex]);
         Q_ASSERT(lightsButton);
         // handle edge case of routine button, its the only button that toggles independently...
         if (mNames[buttonIndex].compare("Routine") == 0) {
@@ -284,7 +357,7 @@ void FloatingLayout::buttonPressed(int buttonIndex) {
 void FloatingLayout::highlightRoutineButton(bool shouldHighlight) {
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
         if (mNames[i].compare("Routine") == 0) {
-            LightsButton *lightsButton = static_cast<LightsButton*>(mButtons[i]);
+            CorlumaButton *lightsButton = static_cast<CorlumaButton*>(mButtons[i]);
             Q_ASSERT(lightsButton);
             if (shouldHighlight) {
                 lightsButton->button->setChecked(true);

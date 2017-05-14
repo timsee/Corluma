@@ -1,4 +1,5 @@
 #include "commhue.h"
+#include "corlumautils.h"
 
 #include <QJsonValue>
 #include <QJsonDocument>
@@ -42,7 +43,6 @@ CommHue::CommHue() {
 
 void CommHue::startup() {
     mDiscovery->startBridgeDiscovery(); // will verify it doesn't already have valid data before running.
-    resetStateUpdateTimeout();
     mHasStarted = true;
 }
 
@@ -58,7 +58,7 @@ CommHue::~CommHue() {
     saveConnectionList();
 }
 
-void CommHue::sendPacket(QString controller, QString packet) {
+void CommHue::sendPacket(SDeviceController controller, QString packet) {
     Q_UNUSED(controller);
     mParser->parsePacket(packet);
 }
@@ -146,6 +146,7 @@ void CommHue::updateLightStates() {
         request.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("text/html; charset=utf-8"));
         mNetworkManager->get(request);
         resetScheduleTimer();
+        mStateUpdateCounter++;
     }
 }
 
@@ -171,8 +172,13 @@ void CommHue::connectionStatusHasChanged(bool status) {
         SHueBridge bridge = mDiscovery->bridge();
         mUrlStart = "http://" + bridge.IP + "/api/" + bridge.username;
         mStateUpdateTimer->start(mStateUpdateInterval);
+        SDeviceController controller;
+        controller.name = "Bridge";
+        controller.isUsingCRC = false; // not used by hue bridges
+        controller.maxHardwareIndex = 10; // not used by hue bridges
+        controller.maxPacketSize = 1000; // not used by hue bridges
         // call update method immediately
-        handleDiscoveryPacket("bridge");
+        handleDiscoveryPacket(controller);
         //mThrottle->startThrottle();
         updateLightStates();
         mDiscoveryMode = false;

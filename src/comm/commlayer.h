@@ -7,22 +7,22 @@
 
 #include <memory>
 
-#ifndef MOBILE_BUILD
-#include "commserial.h"
-#endif //MOBILE_BUILD
-#include "commhttp.h"
-#include "commudp.h"
-#include "commhue.h"
 #include "lightingprotocols.h"
+#include "lightdevice.h"
+#include "comm/commtype.h"
+#include "hueprotocols.h"
+
+class CommUDP;
+class CommHTTP;
+class CommSerial;
+class CommHue;
 
 /*!
  * \copyright
  * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
- */
-
-
-/*!
+ *
+ *
  * \brief The CommLayer class provides communication protocols
  *  that allow the user to connect and send packets to an LED
  *  array. Currently it supports serial, UDP, and HTTP.
@@ -128,6 +128,12 @@ public:
                         int timeOut);
 
     /*!
+     * \brief requestCustomArrayUpdate request an update for for custom arrays. Arduino projects only.
+     * \param deviceList list of devices to request an update from.
+     */
+    void requestCustomArrayUpdate(const std::list<SLightDevice>& deviceList);
+
+    /*!
      * \brief sendReset resets the board to its default settings.
      */
     void sendReset(const std::list<SLightDevice>& deviceList);
@@ -169,12 +175,12 @@ public:
     bool hasStarted(ECommType type);
 
     /*!
-     * \brief addController attempt to add a controller to the hash table
+     * \brief startDiscoveringController attempt to add a controller to the hash table
      * \param type the type of connection it is
      * \param connection the name of the controller
      * \return true if controller is added, false othewrise.
      */
-    bool addController(ECommType type, QString controller);
+    bool startDiscoveringController(ECommType type, QString controller);
 
     /*!
      * \brief removeConnection attempt to remove a controller to the hash table
@@ -182,7 +188,19 @@ public:
      * \param connection the name of the controller
      * \return true if controller is removed, false othewrise.
      */
-    bool removeController(ECommType type, QString controller);
+    bool removeController(ECommType type, SDeviceController controller);
+
+    /*!
+     * \brief findDiscoveredController find a SDeviceController based off the ECommType and name provided. Returns true if one is found
+     *        and fills the controller added as input, returns false if none is found
+     * \param type comm type
+     * \param name name of controller
+     * \param controller controller to fill if and only if something is found
+     * \return true if a controller is found, false othwerise.
+     */
+    bool findDiscoveredController(ECommType type, QString name, SDeviceController& controller) {
+        return commByType(type)->findDiscoveredController(name, controller);
+    }
 
     /*!
      * \brief fillDevice use the controller name, type, and index to fill in the rest
@@ -210,6 +228,8 @@ public:
      */
     bool runningDiscovery(ECommType type);
 
+    /// returns true if theres any known errors for the commtype.
+    bool discoveryErrorsExist(ECommType type);
 
     /*!
      * \brief deviceTable a hash table of all connected devices of a certain connection type. The controller names
@@ -229,7 +249,7 @@ public:
      * \param type commtype that you want the discovered devices from
      * \return list of all discovered devices.
      */
-    const std::list<QString>& discoveredList(ECommType type) {
+    const std::list<SDeviceController>& discoveredList(ECommType type) {
         return commByType(type)->discoveredList();
     }
     /*!
@@ -251,13 +271,14 @@ public:
      *        updated every few seconds by a timer.
      * \return a list of SHueLight structs which contain info on all the connected lights.
      */
-    std::list<SHueLight> hueList() { return mHue->connectedHues(); }
+    std::list<SHueLight> hueList();
+
 
     /*!
      * \brief hueBridge getter for hue bridge
      * \return hue bridge
      */
-    SHueBridge hueBridge() { return mHue->bridge(); }
+    SHueBridge hueBridge();
 
     /*!
      * \brief hueSchedules getter for a list of hue schedules. Hue schedules are predefined actions
@@ -265,7 +286,7 @@ public:
      *        for them to execute.
      * \return list of hue schedules.
      */
-    std::list<SHueSchedule> hueSchedules() { return mHue->schedules(); }
+    std::list<SHueSchedule> hueSchedules();
 
     /*!
      * \brief updateHueTimeout update the hue timeout for a specific hue schedule.
@@ -274,7 +295,7 @@ public:
      *        or the device.
      * \param timeout the number of minutes it should take the light to timeout.
      */
-    void updateHueTimeout(bool enable, int index, int timeout) { mHue->updateIdleTimeout(enable, index, timeout); }
+    void updateHueTimeout(bool enable, int index, int timeout);
 
     /*!
      * \brief hueLightFromLightDevice takes a SLightDevice and retrieves
@@ -301,7 +322,7 @@ public:
      * \brief lookingForActivePorts true if currently looking for ports, false if not looking
      * \return true if currently looking for ports, false if not looking
      */
-    bool lookingForActivePorts() { return mSerial->lookingForActivePorts(); }
+    bool lookingForActivePorts();
 #endif //MOBILE_BUILD
 
 signals:
@@ -334,13 +355,6 @@ private slots:
     *        comm type that received the packet is given as an int
     */
     void parsePacket(QString, QString, int);
-
-    /*!
-    * \brief discoveryReceived sent from any of the commtypes, this QString
-    *        should contain state update packet if the discovery packet was
-    *        successful.
-    */
-    void discoveryReceived(QString, QString, int);
 
     /*!
     * \brief receivedUpdate Each CommType signals out where it receives an update. This slot combines and forwards
@@ -392,6 +406,9 @@ private:
      * \return the raw CommType ptr based off the given commType
      */
     CommType *commByType(ECommType type);
+
+    /// used to check CRC on incoming packets.
+    CRCCalculator mCRC;
 };
 
 #endif // COMMLAYER_H

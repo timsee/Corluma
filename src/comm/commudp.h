@@ -45,7 +45,10 @@ public:
      *        unsent packets.
      * \param packet the string that is going to get sent over UDP.
      */
-    void sendPacket(QString controller, QString packet);
+    void sendPacket(SDeviceController controller, QString packet);
+
+    /// true is port is successfully bound, false if errors occur.
+    bool portBound();
 
 private slots:
     /*!

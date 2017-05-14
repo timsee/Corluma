@@ -4,12 +4,12 @@
  * Released under the GNU General Public License.
  */
 
-#include "lightsbutton.h"
+#include "corlumabutton.h"
 
 #include <QDebug>
 #include <QGraphicsOpacityEffect>
 
-LightsButton::LightsButton(QWidget *parent) : QPushButton(parent) {
+CorlumaButton::CorlumaButton(QWidget *parent) : QPushButton(parent) {
     mLightingRoutine = ELightingRoutine::eLightingRoutine_MAX;
     mColorGroup = EColorGroup::eColorGroup_MAX;
     mSetupHasBeenCalled = false;
@@ -21,7 +21,7 @@ LightsButton::LightsButton(QWidget *parent) : QPushButton(parent) {
 }
 
 
-void LightsButton::setupAsMenuButton(int pageNumber, const std::vector<QColor>& group) {
+void CorlumaButton::setupAsMenuButton(int pageNumber, const std::vector<QColor>& group) {
     mIconData = IconData(32, 32);
     if (pageNumber == 0) {
         mIconData.setSolidColor(QColor(0,255,0));
@@ -43,7 +43,7 @@ void LightsButton::setupAsMenuButton(int pageNumber, const std::vector<QColor>& 
     resizeIcon();
 }
 
-void LightsButton::setupAsStandardButton(ELightingRoutine routine, EColorGroup colorGroup, QString label, const std::vector<QColor>& group) {
+void CorlumaButton::setupAsStandardButton(ELightingRoutine routine, EColorGroup colorGroup, QString label, const std::vector<QColor>& group) {
     mIconData = IconData(256, 256);
     mSetupHasBeenCalled = true;
     bool renderIcon = false;
@@ -88,15 +88,15 @@ void LightsButton::setupAsStandardButton(ELightingRoutine routine, EColorGroup c
     resizeIcon();
 }
 
-ELightingRoutine LightsButton::lightingRoutine() {
+ELightingRoutine CorlumaButton::lightingRoutine() {
     return mLightingRoutine;
 }
 
-EColorGroup LightsButton::colorGroup() {
+EColorGroup CorlumaButton::colorGroup() {
     return mColorGroup;
 }
 
-void LightsButton::enable(bool shouldEnable) {
+void CorlumaButton::enable(bool shouldEnable) {
     if(shouldEnable) {
         QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(button);
         effect->setOpacity(1.0);
@@ -111,12 +111,12 @@ void LightsButton::enable(bool shouldEnable) {
 }
 
 
-void LightsButton::resizeEvent(QResizeEvent *event) {
+void CorlumaButton::resizeEvent(QResizeEvent *event) {
     Q_UNUSED(event);
     resizeIcon();
 }
 
-void LightsButton::resizeIcon() {
+void CorlumaButton::resizeIcon() {
     int size;
     if (mIsMenuButton) {
         size = (int)(std::min(this->size().width(), this->size().height()));
@@ -135,20 +135,20 @@ void LightsButton::resizeIcon() {
     button->setIconSize(newSize);
 }
 
-void LightsButton::updateIconSingleColorRoutine(ELightingRoutine lightingRoutine, QColor color) {
+void CorlumaButton::updateIconSingleColorRoutine(ELightingRoutine lightingRoutine, QColor color) {
     mIconData.setSingleLightingRoutine(lightingRoutine, color);
     button->setIcon(mIconData.renderAsQPixmap());
     resizeIcon();
 }
 
-void LightsButton::updateIconPresetColorRoutine(ELightingRoutine lightingRoutine, EColorGroup colorGroup, const std::vector<QColor>& colors, int colorMax) {
+void CorlumaButton::updateIconPresetColorRoutine(ELightingRoutine lightingRoutine, EColorGroup colorGroup, const std::vector<QColor>& colors, int colorMax) {
     mIconData.setMultiLightingRoutine(lightingRoutine, colorGroup, colors, colorMax);
     button->setIcon(mIconData.renderAsQPixmap());
     resizeIcon();
 }
 
 
-void LightsButton::handleButton() {
+void CorlumaButton::handleButton() {
     if (mSetupHasBeenCalled) {
         if (mIsMenuButton) {
             emit menuButtonClicked(mPageNumber);

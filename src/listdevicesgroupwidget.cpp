@@ -65,22 +65,23 @@ ListDevicesGroupWidget::ListDevicesGroupWidget(const QString& name,
 void ListDevicesGroupWidget::updateDevices(std::list<SLightDevice> devices) {
     mDevices = devices;
     for (auto&& inputDevice : devices) {
-        if (inputDevice.isValid()) {
-            bool foundDevice = false;
-            // check if device widget exists
-            for (auto&& widget : mWidgets) {
-                ListDeviceWidget *existingWidget = qobject_cast<ListDeviceWidget*>(widget);
-                Q_ASSERT(existingWidget);
+        bool foundDevice = false;
+        // check if device widget exists
+        for (auto&& widget : mWidgets) {
+            ListDeviceWidget *existingWidget = qobject_cast<ListDeviceWidget*>(widget);
+            Q_ASSERT(existingWidget);
 
-                SLightDevice existingDevice = existingWidget->device();
-                if (compareLightDevice(inputDevice, existingDevice)) {
-                    foundDevice = true;
-                    EColorGroup group = inputDevice.colorGroup;
-                    existingWidget->updateWidget(inputDevice, mData->colorGroup(group));
-                }
+            SLightDevice existingDevice = existingWidget->device();
+            if (compareLightDevice(inputDevice, existingDevice)) {
+                foundDevice = true;
+                EColorGroup group = inputDevice.colorGroup;
+                existingWidget->updateWidget(inputDevice, mData->colorGroup(group));
             }
+        }
 
-            if (!foundDevice) {
+        if (!foundDevice) {
+            // TODO: remove edge case...
+            if (inputDevice.color.isValid()) {
                 QString name;
                 if (inputDevice.type == ECommType::eHue) {
                     SHueLight hue = mComm->hueLightFromLightDevice(inputDevice);
@@ -135,7 +136,7 @@ void ListDevicesGroupWidget::setShowButtons(bool show) {
 }
 
 void ListDevicesGroupWidget::setCheckedDevices(std::list<SLightDevice> devices) {
-    mCheckedDevices = 0;
+    int numOfDevices = 0;
     for (auto&& existingWidget : mWidgets) {
         ListDeviceWidget *widget = qobject_cast<ListDeviceWidget*>(existingWidget);
         Q_ASSERT(widget);
@@ -144,7 +145,7 @@ void ListDevicesGroupWidget::setCheckedDevices(std::list<SLightDevice> devices) 
         bool found = false;
         for (auto&& device : devices) {
             if (compareLightDevice(device, widgetDevice)) {
-                mCheckedDevices++;
+                numOfDevices++;
                 found = true;
                 widget->setHighlightChecked(true);
             }
@@ -153,6 +154,7 @@ void ListDevicesGroupWidget::setCheckedDevices(std::list<SLightDevice> devices) 
             widget->setHighlightChecked(false);
         }
     }
+    mCheckedDevices = numOfDevices;
     repaint();
 }
 

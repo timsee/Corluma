@@ -15,7 +15,7 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief The LightsSlider class provides a slider with behaviors similiar
+ * \brief The CorlumaSlider class provides a slider with behaviors similiar
  * to sliders on mobile devices. Clicking on the slider jumps the slider's value
  * to the location you clicked instead of the QSlider default of jumping by the page
  * value. There is also the option to use a gradient instead of a solid color as the
@@ -30,7 +30,7 @@
  * in order to prevent users from choosing less than 2 colors for the array routines.
  *
  */
-class LightsSlider : public QWidget
+class CorlumaSlider : public QWidget
 {
     Q_OBJECT
 
@@ -38,7 +38,7 @@ public:
     /*!
      * \brief Constructor
      */
-    explicit LightsSlider(QWidget *parent = 0);
+    explicit CorlumaSlider(QWidget *parent = 0);
 
     /*!
      * \brief slider The actual and factual QSlider in this slider class

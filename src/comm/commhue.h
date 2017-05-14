@@ -104,7 +104,7 @@ public:
      *        converts it into a Phillips Hue command
      * \param packet the comma delimited Corlum Light command.
      */
-    void sendPacket(QString controller, QString packet);
+    void sendPacket(SDeviceController controller, QString packet);
 
     /*!
      * \brief hueLightFromLightDevice For every SLightDevice with type hue, there is a SHueLight that represents the same device.

@@ -29,11 +29,11 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector
                                            "Sawtooth In",
                                            "Sawtooth Out"};
 
-        mRoutineButtons = std::vector<LightsButton*>(labels.size(), nullptr);
+        mRoutineButtons = std::vector<CorlumaButton*>(labels.size(), nullptr);
         int rowCount = 0;
         int maxColumn = 4;
         for (int i = 0; i < (int)mRoutineButtons.size(); ++i) {
-            mRoutineButtons[i] = new LightsButton(this);
+            mRoutineButtons[i] = new CorlumaButton(this);
             mRoutineButtons[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
             mRoutineButtons[i]->setupAsStandardButton((ELightingRoutine)(i + 1), EColorGroup::eAll, QString::fromStdString(labels[i]));
             connect(mRoutineButtons[i], SIGNAL(buttonClicked(int, int)), this, SLOT(routineChanged(int, int)));
@@ -51,12 +51,12 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector
                                            "Bars Solid",
                                            "Bars Moving"};
 
-        mRoutineButtons = std::vector<LightsButton*>(labels.size(), nullptr);
+        mRoutineButtons = std::vector<CorlumaButton*>(labels.size(), nullptr);
         int rowCount = 0;
         int maxColumn = 3;
         int routineIndex = (int)utils::ELightingRoutineSingleColorEnd + 1;
         for (int i = 0; i < (int)mRoutineButtons.size(); ++i) {
-            mRoutineButtons[i] = new LightsButton(this);
+            mRoutineButtons[i] = new CorlumaButton(this);
             mRoutineButtons[i]->setStyleSheet("background-color: rgb(52, 52, 52); ");
             mRoutineButtons[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
             mRoutineButtons[i]->setupAsStandardButton((ELightingRoutine)(routineIndex + i),

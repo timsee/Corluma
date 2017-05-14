@@ -11,6 +11,7 @@
 #include "listmoodwidget.h"
 #include "listdevicesgroupwidget.h"
 #include "listmoodgroupwidget.h"
+#include "corlumautils.h"
 
 #include <QDebug>
 #include <QInputDialog>
@@ -519,27 +520,27 @@ void ConnectionPage::editMoodClicked(QString collectionKey, QString moodKey) {
 
 void ConnectionPage::newConnectionFound(QString newController) {
     // get list of all HTTP and UDP devices.
-    const std::list<QString> udpDevices = mComm->discoveredList(ECommType::eUDP);
-    const std::list<QString> httpDevices = mComm->discoveredList(ECommType::eHTTP);
+    const std::list<SDeviceController> udpDevices = mComm->discoveredList(ECommType::eUDP);
+    const std::list<SDeviceController> httpDevices = mComm->discoveredList(ECommType::eHTTP);
     bool foundController = false;
     // check combined list if new controller exists.
     for (auto&& udpController : udpDevices) {
-        if (udpController.compare(newController) == 0) {
+        if (udpController.name.compare(newController) == 0) {
             foundController = true;
         }
     }
 
     for (auto httpController : httpDevices) {
-        if (httpController.compare(newController) == 0) {
+        if (httpController.name.compare(newController) == 0) {
             foundController = true;
         }
     }
     // if not, add it to discovery.
     if (!foundController) {
         if (mData->commTypeSettings()->commTypeEnabled(ECommType::eUDP)) {
-            bool isSuccessful = mComm->addController(ECommType::eUDP, newController);
+            bool isSuccessful = mComm->startDiscoveringController(ECommType::eUDP, newController);
             if (!isSuccessful) qDebug() << "WARNING: failure adding" << newController << "to UDP discovery list";
-            isSuccessful = mComm->addController(ECommType::eHTTP, newController);
+            isSuccessful = mComm->startDiscoveringController(ECommType::eHTTP, newController);
             if (!isSuccessful) qDebug() << "WARNING: failure adding" << newController << "to HTTP discovery list";
             mComm->startDiscovery(ECommType::eUDP);
             mComm->startDiscovery(ECommType::eHTTP);

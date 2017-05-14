@@ -11,12 +11,15 @@
 #include <QSignalMapper>
 #include <QGraphicsOpacityEffect>
 #include <QPropertyAnimation>
+#include "corlumautils.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow) {
 
     mLastHuesWereOnlyWhite = false;
+    mDiscoveryPageIsOpen = true;
+    mSettingsPageIsOpen = false;
 
     mComm = new CommLayer(this);
     mData = new DataLayer();
@@ -189,19 +192,24 @@ MainWindow::~MainWindow() {
 
 
 void MainWindow::toggleOnOff() {
+    if (mData->currentRoutine() <= ELightingRoutine::eSingleSawtoothFadeOut) {
+        mIconData.setSingleLightingRoutine(mData->currentRoutine(), mData->mainColor());
+    } else if (mData->currentColorGroup() > EColorGroup::eCustom) {
+        mIconData.setMultiLightingRoutine(mData->currentRoutine(), mData->currentColorGroup(), mData->currentGroup());
+    } else {
+        mIconData.setMultiFade(EColorGroup::eCustom, mData->colorGroup(EColorGroup::eCustom), true);
+    }
+    ui->onOffButton->setIcon(mIconData.renderAsQPixmap());
     if (mData->isOn()) {
-        mIconData.setSolidColor(QColor(0,0,0));
-        ui->onOffButton->setIcon(mIconData.renderAsQPixmap());
+        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(ui->onOffButton);
+        effect->setOpacity(0.5f);
+        ui->onOffButton->setGraphicsEffect(effect);
         mData->turnOn(false);
     } else {
-        if (mData->currentRoutine() <= ELightingRoutine::eSingleSawtoothFadeOut) {
-            mIconData.setSolidColor(mData->mainColor());
-        } else if (mData->currentColorGroup() > EColorGroup::eCustom) {
-            mIconData.setMultiLightingRoutine(mData->currentRoutine(), mData->currentColorGroup(), mData->currentGroup());
-        } else {
-            mIconData.setMultiFade(EColorGroup::eCustom, mData->colorGroup(EColorGroup::eCustom), true);
-        }
         ui->onOffButton->setIcon(mIconData.renderAsQPixmap());
+        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(ui->onOffButton);
+        effect->setOpacity(1.0f);
+        ui->onOffButton->setGraphicsEffect(effect);
         mData->turnOn(true);
     }
 }
@@ -419,17 +427,9 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
                                     mDiscoveryPage->geometry().y(),
                                     size.width(), size.height());
     } else {
-        //TODO: handle this edge case...
-#ifdef MOBILE_BUILD
         mDiscoveryPage->setGeometry(this->geometry().width() * -1,
-                                    this->geometry().y(),
-                                    size.width(), size.height());
-#else
-        int diff = mDiscoveryPage->geometry().width() - size.width(); // adjust x coordinate of discovery page as it scales since its sitting next to main page.
-        mDiscoveryPage->setGeometry(mDiscoveryPage->geometry().x() + diff,
                                     mDiscoveryPage->geometry().y(),
                                     size.width(), size.height());
-#endif
     }
 
     if (mSettingsPageIsOpen) {
@@ -570,6 +570,9 @@ void MainWindow::switchToConnection() {
 
 void MainWindow::settingsClosePressed() {
     QPropertyAnimation *animation = new QPropertyAnimation(mSettingsPage, "pos");
+    if (mDiscoveryPageIsOpen) {
+        mDiscoveryPage->updateTopMenu();
+    }
     animation->setDuration(TRANSITION_TIME_MSEC);
     animation->setStartValue(mSettingsPage->pos());
     animation->setEndValue(QPoint(mSettingsPage->width(), 0));

@@ -7,7 +7,7 @@
 #include <QLayout>
 
 #include "icondata.h"
-#include "commtype.h"
+#include "comm/commtype.h"
 #include "listcollectionsubwidget.h"
 
 /*!

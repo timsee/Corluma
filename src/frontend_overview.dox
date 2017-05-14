@@ -2,7 +2,7 @@
 
 <div class="frontendOverview">
 \page front_overview Frontend Overview
-\brief An overview of the frontend classes of the Lighting GUI.
+\brief An overview of the frontend classes in Colruma.
 
 <div class="overviewSection">
   <div class="overviewTitle">
@@ -82,7 +82,7 @@
   <div class="overviewImage">
     \image html lightsButtonPreview.png 
   </div>
-  \copydoc LightsButton
+  \copydoc CorlumaButton
 </div>
 
 <div class="overviewSection">
@@ -92,7 +92,7 @@
   <div class="overviewImage">
     \image html lightsSliderPreview.png 
   </div>
-  \copydoc LightsSlider
+  \copydoc CorlumaSlider
 </div>
 
 <div class="overviewSection">

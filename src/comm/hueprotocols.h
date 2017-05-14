@@ -9,8 +9,9 @@
  * \copyright
  * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
- *
- *
+ */
+
+/*!
  * \brief The EHueType enum the types of Hue Lights
  *        that can be controlled from a bridge.
  */

@@ -3,13 +3,13 @@
 #define SINGLECOLORPAGE_H
 
 #include "icondata.h"
-#include "lightsslider.h"
+#include "corlumaslider.h"
 #include "lightingpage.h"
-#include "colorpicker.h"
-#include "lightsbutton.h"
+#include "colorpicker/colorpicker.h"
+#include "corlumabutton.h"
 #include "routinebuttonswidget.h"
 #include "floatinglayout.h"
-#include "commlayer.h"
+#include "comm/commlayer.h"
 
 #include <QWidget>
 #include <QSlider>
@@ -165,7 +165,7 @@ private slots:
      * \brief multiColorChanged called whenever an individual color changes in the multi color picker.
      *        Sends this new color's index and new color to the data layer.
      */
-    void multiColorChanged(int, QColor);
+    void multiColorChanged(QColor, int);
 
     /*!
      * \brief floatingLayoutButtonPressed handles whenever the floating layout has a button pressed. Parses the string

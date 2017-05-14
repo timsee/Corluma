@@ -9,7 +9,7 @@
 #include <QDebug>
 #include <algorithm>
 #include <vector>
-
+#include "corlumautils.h"
 
 DataLayer::DataLayer() {
     int i = 0;

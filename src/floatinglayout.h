@@ -4,7 +4,13 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QHBoxLayout>
-#include "lightsbutton.h"
+#include "corlumabutton.h"
+
+enum class EButtonSize {
+    eSmall,
+    eMedium,
+    eRectangle
+};
 
 /*!
  * \copyright
@@ -33,8 +39,9 @@ public:
      *        so that theres a button for every name
      * \param buttons names of buttons. these names will be signaled out whenever the button
      *        is clicked.
+     * \param buttonSize preferred size for buttons
      */
-    void setupButtons(std::vector<QString> buttons);
+    void setupButtons(std::vector<QString> buttons, EButtonSize buttonSize = EButtonSize::eSmall);
 
     /*!
      * \brief move move layout to a new location based off of the top right point provided.
@@ -56,6 +63,13 @@ public:
      * \param colorCount the number of colors to use from the array.
      */
     void updateRoutineMultiColor(ELightingRoutine routine, std::vector<QColor> colors, int colorCount);
+
+    /*!
+     * \brief updateDiscoveryButton update the icon of a discovery button. Shows the discovery state of the connection.
+     * \param type comm type of discovery button
+     * \param icon new icon for discovery button
+     */
+    void updateDiscoveryButton(ECommType type, QIcon icon);
 
     /*!
      * \brief addMultiRoutineIcon add a multi routine icon

@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QWidget>
 #include <QLabel>
-#include "lightsbutton.h"
+#include "corlumabutton.h"
 
 /*!
  * \copyright
@@ -64,7 +64,7 @@ private:
      * \brief mButtons Buttons used in the grid in the scroll area, each one signals
      *        a EColorPreset and a ELightingMode.
      */
-    std::vector<LightsButton *> mButtons;
+    std::vector<CorlumaButton *> mButtons;
 
     /*!
      * \brief mLabel label for name of preset group.

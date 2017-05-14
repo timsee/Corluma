@@ -2,7 +2,7 @@
 <div class="backendOverview">
 
 \page backend_overview Backend Overview
-\brief An overview of the backend classes of the Lighting GUI.
+\brief An overview of the backend classes in Corluma.
 
 The backend handles communicating with the lights, storing data about the session, and generating the icons for the GUI. 
 
@@ -14,7 +14,11 @@ The backend handles communicating with the lights, storing data about the sessio
 
 \copydoc DataLayer
 
-\section sec_3 IconData
+\section sec_3 DataSync
+
+\copydoc DataSync
+
+\section sec_4 IconData
 
 \copydoc IconData
 

@@ -7,8 +7,8 @@
 #include <QPushButton>
 
 #include "lightingpage.h"
-#include "lightsslider.h"
-#include "commlayer.h"
+#include "corlumaslider.h"
+#include "comm/commlayer.h"
 #include "groupsparser.h"
 
 namespace Ui {

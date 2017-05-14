@@ -11,7 +11,7 @@
 #include "listcollectionwidget.h"
 #include "listdevicewidget.h"
 #include "datalayer.h"
-#include "commlayer.h"
+#include "comm/commlayer.h"
 
 
 /*!

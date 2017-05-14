@@ -1,0 +1,65 @@
+/*!
+ * \copyright
+ * Copyright (C) 2015 - 2017.
+ * Released under the GNU General Public License.
+ */
+
+#include "brightnessslider.h"
+
+BrightnessSlider::BrightnessSlider(QWidget *parent) : QWidget(parent)
+{
+    // --------------
+    // Setup Slider
+    // --------------
+    mBrightnessSlider = new CorlumaSlider(this);
+    mBrightnessSlider->setSliderColorBackground(QColor(0, 0, 0));
+    mBrightnessSlider->slider->setRange(0, 100);
+    mBrightnessSlider->setSnapToNearestTick(true);
+    mBrightnessSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mBrightnessSlider->setSliderHeight(0.8f);
+    connect(mBrightnessSlider, SIGNAL(valueChanged(int)), this, SLOT(brightnessSliderChanged(int)));
+    connect(mBrightnessSlider->slider, SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
+
+
+    // --------------
+    // Setup Label
+    // --------------
+
+    mLabel = new QLabel(this);
+    mLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+
+    mPlaceholder = new QLabel(this);
+    mPlaceholder->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    mLayout = new QGridLayout;
+    mLayout->addWidget(mLabel, 0, 0);
+    mLayout->addWidget(mBrightnessSlider, 0, 1);
+    mLayout->addWidget(mPlaceholder, 1, 1);
+    setLayout(mLayout);
+}
+
+
+void BrightnessSlider::changeBrightness(int brightness) {
+    if (brightness >= 0
+            && brightness <= 100) {
+        mBrightness = brightness;
+
+        QColor brightColor(2.5f * brightness,
+                           2.5f * brightness,
+                           2.5f * brightness);
+
+        mBrightnessSlider->setSliderColorBackground(brightColor);
+
+        mBrightnessSlider->blockSignals(true);
+        mBrightnessSlider->slider->setValue(brightness);
+        mBrightnessSlider->blockSignals(false);
+    }
+}
+
+void BrightnessSlider::brightnessSliderChanged(int newValue) {
+    emit brightnessChanged(newValue);
+}
+
+void BrightnessSlider::releasedSlider() {
+
+}

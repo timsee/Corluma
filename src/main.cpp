@@ -13,6 +13,8 @@
 #include <QDebug>
 #include <QSplashScreen>
 #include <QTimer>
+#include <QThread>
+#include <QDesktopWidget>
 
 /// uncomment to wipe out all QSettings Data.
 //#define WIPE_QSETTINGS 1
@@ -23,9 +25,10 @@
 
 
 /// uncomment to disable the splash screen.
-#define DISABLE_SPLASH_SCREEN 1
+//#define DISABLE_SPLASH_SCREEN 1
 /// uncomment to disable the style sheet.
 //#define DISABLE_STYLE_SHEET 1
+
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
@@ -36,6 +39,16 @@ int main(int argc, char *argv[]) {
 
     QCoreApplication::setOrganizationName("Corluma");
     QCoreApplication::setApplicationName("Corluma");
+
+    //--------------------
+    // create app icon
+    //--------------------
+
+#ifdef __APPLE__
+    QIcon icon(":images/icon.icns");
+#else
+    QIcon icon(":images/icon.ico");
+#endif
 
     //--------------------
     // load app style sheet
@@ -52,32 +65,18 @@ int main(int argc, char *argv[]) {
     }
 #endif
 
-    //--------------------
-    // create app icon
-    //--------------------
-
-#ifdef __APPLE__
-    QIcon icon(":images/icon.icns");
-#else
-    QIcon icon(":images/icon.ico");
-#endif
-
 
     //--------------------
-    // optional macros
+    // Optional Data Cleaning
     //--------------------
 
-    // used to override settings that are persisent
-    // between sessions and clear them out, useful for debugging
+// removes saved controllers and app settings
 #ifdef WIPE_QSETTINGS
     QSettings mSettings;
     mSettings.clear();
 #endif
 
-    //--------------------
-    // Wipe JSON data
-    //--------------------
-
+// removes saved groups of devices
 #ifdef WIPE_JSON
     GroupsParser *parser = new GroupsParser();
     parser->removeAppData();
@@ -110,9 +109,11 @@ int main(int argc, char *argv[]) {
     //--------------------
 
 #ifndef DISABLE_SPLASH_SCREEN
-    QSplashScreen *splash = new QSplashScreen;
-    splash->setPixmap(QPixmap(":images/color_wheel.png"));
-    splash->show();
+#ifdef MOBILE_BUILD
+    QSplashScreen splash(QPixmap(":images/color_wheel.png"), Qt::WindowStaysOnTopHint);
+#else
+    QSplashScreen splash(QPixmap(":images/splash_screen.png"), Qt::WindowStaysOnTopHint);
+#endif
 #endif
 
     //--------------------
@@ -123,15 +124,26 @@ int main(int argc, char *argv[]) {
     // set the icon
     window.setWindowIcon(icon);
 
+    // center the application
+    QRect screenGeometry = QApplication::desktop()->screenGeometry();
+    int x = (screenGeometry.width()-window.width()) / 2;
+    int y = (screenGeometry.height()-window.height()) / 2;
+    window.move(x, y);
+
 #ifndef DISABLE_SPLASH_SCREEN
-    // create single shot timer to add a delay before hiding the splash screen.
-    int splashScreenDelay = 2500; // in milliseconds
-    QTimer::singleShot(splashScreenDelay, splash, SLOT(close()));
+    int splashScreenDelay = 3000; // in milliseconds
+    QTimer::singleShot(splashScreenDelay, &splash, SLOT(close()));
     QTimer::singleShot(splashScreenDelay, &window,SLOT(show()));
+    splash.show();
 #else
     window.show();
 #endif
 
-    //splash.finish(*window);
+    // bring window to front in some environments
+    window.activateWindow();
+
+    //--------------------
+    // Load Backend Data
+    //--------------------
     return a.exec();
 }

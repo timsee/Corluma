@@ -8,17 +8,15 @@
 #include <list>
 
 #include "lightingprotocols.h"
-#include "commtype.h"
-#include "commhue.h"
-#include "commtypesettings.h"
+#include "comm/commhue.h"
+#include "comm/commtypesettings.h"
 
 /*!
  * \copyright
  * Copyright (C) 2015 - 2017.
  * Released under the GNU General Public License.
- */
-
-/*!
+ *
+ *
  *
  * \brief The DataLayer class stores and maintains the data
  * about the state and settings of the application. It also saves

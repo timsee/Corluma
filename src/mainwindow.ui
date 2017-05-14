@@ -217,7 +217,7 @@
        </widget>
       </item>
       <item>
-       <widget class="LightsSlider" name="brightnessSlider" native="true">
+       <widget class="CorlumaSlider" name="brightnessSlider" native="true">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -235,7 +235,7 @@
      </layout>
     </item>
     <item row="1" column="1">
-     <widget class="LightsButton" name="colorPageButton" native="true">
+     <widget class="CorlumaButton" name="colorPageButton" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
         <horstretch>0</horstretch>
@@ -257,7 +257,7 @@
      </widget>
     </item>
     <item row="1" column="3">
-     <widget class="LightsButton" name="presetArrayButton" native="true">
+     <widget class="CorlumaButton" name="presetArrayButton" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
         <horstretch>0</horstretch>
@@ -284,18 +284,6 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>LightsSlider</class>
-   <extends>QWidget</extends>
-   <header>lightsslider.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>LightsButton</class>
-   <extends>QWidget</extends>
-   <header location="global">lightsbutton.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ConnectionPage</class>
    <extends>QWidget</extends>
    <header>connectionpage.h</header>
@@ -311,6 +299,18 @@
    <class>GroupPage</class>
    <extends>QWidget</extends>
    <header>grouppage.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CorlumaButton</class>
+   <extends>QWidget</extends>
+   <header location="global">corlumabutton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CorlumaSlider</class>
+   <extends>QWidget</extends>
+   <header location="global">corlumaslider.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

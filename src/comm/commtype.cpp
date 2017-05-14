@@ -10,6 +10,8 @@
 void CommType::setupConnectionList(ECommType type) {
     mType = type;
     mUpdateTimeoutInterval = 15000;
+    mStateUpdateCounter = 0;
+    mSecondaryUpdatesInterval = 5;
 
     mDiscoveryTimer = new QTimer;
     mStateUpdateTimer = new QTimer;
@@ -26,7 +28,7 @@ void CommType::setupConnectionList(ECommType type) {
     // load preexisting settings, if they exist
     for (int i = 0; i < controllerListCurrentSize; ++i) {
        QString value = mSettings->value(settingsIndexKey(i)).toString();
-       if (value.compare(QString("")) != 0) addController(value);
+       if (value.compare(QString("")) != 0) startDiscoveringController(value);
     }
 
 
@@ -45,7 +47,7 @@ void CommType::stopDiscovery() {
     mDiscoveryMode = false;
 }
 
-bool CommType::addController(QString controller) {
+bool CommType::startDiscoveringController(QString controller) {
     auto search = mDeviceTable.find(controller.toStdString());
     bool controllerExists = (search != mDeviceTable.end());
 
@@ -62,11 +64,11 @@ bool CommType::addController(QString controller) {
     return false;
 }
 
-bool CommType::removeController(QString controller) {
-    mDeviceTable.erase(controller.toStdString());
+bool CommType::removeController(SDeviceController controller) {
+    mDeviceTable.erase(controller.name.toStdString());
 
     mDiscoveredList.remove(controller);
-    mUndiscoveredList.remove(controller);
+    mUndiscoveredList.remove(controller.name);
     return true;
 }
 
@@ -140,7 +142,7 @@ void CommType::saveConnectionList() {
 bool CommType::checkIfControllerIsValid(QString controller) {
     //TODO: write a stronger check...
     if (mType == ECommType::eHTTP || mType == ECommType::eUDP) {
-        if (controller.count(QLatin1Char('.') != 3)) return false;
+        if (controller.count(QLatin1Char('.')) != 3) return false;
     }
     return true;
 }
@@ -174,13 +176,13 @@ bool CommType::shouldContinueStateUpdate() {
     return true;
 }
 
-void CommType::handleDiscoveryPacket(QString sender) {
+void CommType::handleDiscoveryPacket(SDeviceController sender) {
     // search for the sender in the list of discovered devices
     bool found = (std::find(mDiscoveredList.begin(), mDiscoveredList.end(), sender) != mDiscoveredList.end());
     if (!found) {
         //if its not found, add it to the list
         mDiscoveredList.push_back(sender);
-        mUndiscoveredList.remove(sender);
+        mUndiscoveredList.remove(sender.name);
         saveConnectionList();
     }
 
@@ -192,9 +194,10 @@ void CommType::handleDiscoveryPacket(QString sender) {
     // if all items on controller list have been found, stop discovery
     bool stopTimer = true;
     for (auto&& it : mDeviceTable) {
-        // returns true if the string is in discovery list
-        bool found = (std::find(mDiscoveredList.begin(), mDiscoveredList.end(), QString::fromUtf8(it.first.c_str())) != mDiscoveredList.end());
-        if (!found)  stopTimer = false;
+        // returns true if the device is in discovery list
+        SDeviceController output;
+        bool found = findDiscoveredController(QString::fromUtf8(it.first.c_str()), output);
+        if (!found) stopTimer = false;
     }
     if (stopTimer) {
         mDiscoveryTimer->stop();
@@ -203,6 +206,97 @@ void CommType::handleDiscoveryPacket(QString sender) {
     }
 }
 
+
+bool CommType::deviceControllerFromDiscoveryString(QString discovery, QString controllerName, SDeviceController& controller) {
+    //--------------
+    // Split string into an int vector
+    //--------------
+    std::string number;
+    std::vector<int> intVector;
+
+    // check end of string is &
+    if (discovery.at(discovery.length() - 1) != '&') {
+        return false;
+    }
+    // remove all data that isn't part of the int vector
+    int start = kDiscoveryPacketIdentifier.size() + 1;
+    int size = discovery.length() - start - 1;
+    discovery = discovery.mid(start, size);
+    std::istringstream input(discovery.toStdString());
+    while (std::getline(input, number, ',')) {
+        std::istringstream iss(number);
+        int i;
+        iss >> i;
+        intVector.push_back(i);
+    }
+
+    //--------------
+    // Check validity of int vector
+    //--------------
+    if (intVector.size() == 3) {
+        controller.name = controllerName;
+        if (controller.name.size() == 0) {
+            return false;
+        }
+        // get the max hardware index
+        controller.maxHardwareIndex = intVector[0];
+        if (controller.maxHardwareIndex > 10) {
+            return false;
+        }
+        // get the USE_CRC
+        controller.isUsingCRC = intVector[1];
+        // grab the max packet size
+        controller.maxPacketSize = intVector[2];
+        if (controller.maxPacketSize > 1000) {
+            return false;
+        }
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool CommType::findDiscoveredController(QString controllerName, SDeviceController& output) {
+    for (auto&& controller : mDiscoveredList) {
+        if (controller.name.compare(controllerName) == 0) {
+            output = controller;
+            return true;
+        }
+    }
+    return false;
+}
+
+
+void CommType::handleIncomingPacket(QString controllerName, QString payload) {
+    if (payload.contains(kDiscoveryPacketIdentifier)) {
+        // qDebug() << " this is payload " << payload;
+        SDeviceController controller;
+        bool success = deviceControllerFromDiscoveryString(payload,
+                                                           controllerName,
+                                                           controller);
+        if (success) {
+            handleDiscoveryPacket(controller);
+            resetStateUpdateTimeout();
+        }
+
+    } else {
+        emit packetReceived(controllerName, payload, (int)mType);
+    }
+}
+
+void CommType::preparePacketForTransmission(const SDeviceController& controller, QString& packet) {
+    // check if state update
+    if (packet.at(0) ==  QChar('7')
+            || packet.at(0) ==  QChar('8')) {
+        // if not state update, reset the state update timer.
+        resetStateUpdateTimeout();
+    }
+
+    // add CRC, if in use (not necessary for http but might as well support it...)
+    if (controller.isUsingCRC) {
+        packet = packet + QString::number(mCRC.calculate(packet)) + "&";
+    }
+}
 
 // ----------------------------
 // Utilities
@@ -243,3 +337,4 @@ QString CommType::settingsListSizeKey() {
     return (QString("CommList_%1_Size_Key").arg(typeID));
 }
 
+const QString CommType::kDiscoveryPacketIdentifier = "DISCOVERY_PACKET";

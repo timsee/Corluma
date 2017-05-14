@@ -7,13 +7,13 @@
 #include <QPainter>
 #include <QStyleOption>
 #include "listmoodwidget.h"
+#include "corlumautils.h"
 
 ListMoodWidget::ListMoodWidget(const QString& name,
                                  const std::list<SLightDevice>& devices,
                                  const std::vector<std::vector<QColor> >& colors,
                                  QWidget *parent) {
     Q_UNUSED(parent);
-
 
     mMoodName = name;
     mDevices = devices;

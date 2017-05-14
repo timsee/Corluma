@@ -27,9 +27,9 @@ void ListDeviceWidget::init(const SLightDevice& device, const QString& name) {
     mStatusIcon = new QLabel(this);
     mStatusIcon->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-#ifndef MOBILE_BUILD
-    mStatusIcon->setMaximumWidth(mStatusIcon->height());
-#endif
+//#ifndef MOBILE_BUILD
+//    mStatusIcon->setMaximumWidth(mStatusIcon->height());
+//#endif
 
     QString type;
     if (device.type == ECommType::eHue) {
@@ -84,42 +84,60 @@ void  ListDeviceWidget::updateWidget(const SLightDevice& device,
                                      const std::vector<QColor>& colors) {
     mDevice = device;
 
+    int size = std::min(this->width(), this->height()) * 0.666f;
     if (device.lightingRoutine <= utils::ELightingRoutineSingleColorEnd ) {
         mIconData.setSingleLightingRoutine(device.lightingRoutine, device.color);
         QPixmap iconRendered = mIconData.renderAsQPixmap();
-        mStatusIcon->setPixmap(iconRendered.scaled(mStatusIcon->width(),
-                                                    mStatusIcon->width(),
-                                                    Qt::IgnoreAspectRatio,
-                                                    Qt::FastTransformation));
+        mStatusIcon->setPixmap(iconRendered.scaled(size,
+                                                   size,
+                                                   Qt::IgnoreAspectRatio,
+                                                   Qt::FastTransformation));
+        mStatusIcon->setFixedSize(size, size);
     } else {
         mIconData.setMultiLightingRoutine(device.lightingRoutine, device.colorGroup, colors);
         QPixmap iconRendered = mIconData.renderAsQPixmap();
-        mStatusIcon->setPixmap(iconRendered.scaled(mStatusIcon->width(),
-                                                    mStatusIcon->width(),
-                                                    Qt::IgnoreAspectRatio,
-                                                    Qt::FastTransformation));
+        mStatusIcon->setPixmap(iconRendered.scaled(size,
+                                                   size,
+                                                   Qt::IgnoreAspectRatio,
+                                                   Qt::FastTransformation));
+        mStatusIcon->setFixedSize(size, size);
     }
 
     if (!device.isReachable) {
         QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mStatusIcon);
         QString styleSheet = "color: red;";
-#ifdef MOBILE_BUILD
-        styleSheet += "font: 14pt;";
-#else
         styleSheet += "font: bold 8pt;";
-#endif
-        //mController->setStyleSheet(styleSheet);
+
+//#ifdef MOBILE_BUILD
+//        styleSheet += "font: 14pt;";
+//#else
+//        styleSheet += "font: bold 8pt;";
+//#endif
+        mController->setStyleSheet(styleSheet);
         effect->setOpacity(0.25f);
         mStatusIcon->setGraphicsEffect(effect);
         effect->setOpacity(0.5f);
         mController->setGraphicsEffect(effect);
     } else if (!device.isOn) {
-        QLinearGradient alphaGradient(mStatusIcon->rect().topLeft(), mStatusIcon->rect().bottomLeft());
-        alphaGradient.setColorAt(0.8, Qt::transparent);
-        alphaGradient.setColorAt(0.05, Qt::gray);
+        QLinearGradient alphaGradient(mStatusIcon->rect().topRight(), mStatusIcon->rect().bottomLeft());
+        alphaGradient.setColorAt(1.0, Qt::gray);
+        alphaGradient.setColorAt(0.7, Qt::gray);
+        alphaGradient.setColorAt(0.5, Qt::transparent);
+        alphaGradient.setColorAt(0.3, Qt::gray);
+        alphaGradient.setColorAt(0.1, Qt::gray);
+        QLinearGradient alphaGradient2(mStatusIcon->rect().topLeft(), mStatusIcon->rect().bottomRight());
+        alphaGradient2.setColorAt(1.0, Qt::gray);
+        alphaGradient2.setColorAt(0.5, Qt::transparent);
+        alphaGradient2.setColorAt(0.0, Qt::gray);
         QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mStatusIcon);
         effect->setOpacityMask(alphaGradient);
+       // effect->setOpacityMask(alphaGradient2);
+
         mStatusIcon->setGraphicsEffect(effect);
+
+//        QGraphicsOpacityEffect *effect2 = new QGraphicsOpacityEffect(mStatusIcon);
+//        effect2->setOpacityMask(alphaGradient2);
+//        mStatusIcon->setGraphicsEffect(effect2);
     } else {
         QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mStatusIcon);
         mStatusIcon->setGraphicsEffect(effect);
@@ -198,11 +216,14 @@ QString ListDeviceWidget::createStyleSheet(const SLightDevice& device) {
     } else {
         styleSheet = backgroundStyleSheet;
     }
-#ifdef MOBILE_BUILD
-    styleSheet += "font: 14pt;";
-#else
+//#ifdef MOBILE_BUILD
+//    styleSheet += "font: 14pt;";
+//#else
+//    styleSheet += "font: bold 8pt;";
+//#endif
+
     styleSheet += "font: bold 8pt;";
-#endif
+
     return styleSheet;
 }
 

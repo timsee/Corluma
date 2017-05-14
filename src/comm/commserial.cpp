@@ -12,11 +12,12 @@
 
 CommSerial::CommSerial() {
     mStateUpdateInterval = 500;
+    mDiscoveryUpdateInterval = 250;
     mLookingForActivePorts = false;
+    mSerialPortFailed = false;
     setupConnectionList(ECommType::eSerial);
 
     connect(mDiscoveryTimer, SIGNAL(timeout()), this, SLOT(discoveryRoutine()));
-
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(stateUpdate()));
 }
 
@@ -27,8 +28,7 @@ CommSerial::~CommSerial() {
 }
 
 void CommSerial::startup() {
-    resetStateUpdateTimeout();
-    discoverSerialPorts();
+    discoveryRoutine();
     mHasStarted = true;
 }
 
@@ -51,20 +51,19 @@ void CommSerial::shutdown() {
     mHasStarted = false;
 }
 
-void CommSerial::sendPacket(QString controller, QString packet) {
-    QSerialPort *serial = serialPortByName(controller);
-    bool isStateUpdate = false;
+void CommSerial::sendPacket(SDeviceController controller, QString packet) {
+    QSerialPort *serial = serialPortByName(controller.name);
     if (serial != NULL) {
         if (serial->isOpen()) {
-            if (packet.at(0) ==  QChar('7')) {
-                isStateUpdate = true;
-            }
-            QString packetString = packet + ";";
+            // commtype function for adding CRC (if needed) and resetting flags (if needed)
+            preparePacketForTransmission(controller, packet);
+
+            // add ; to end of serial packet as delimiter
+            packet += ";";
+
+            // send packet over serial
             //qDebug() << "sending" << packetString << "to" <<  serial->portName();
-            serial->write(packetString.toStdString().c_str());
-            if (!isStateUpdate) {
-                resetStateUpdateTimeout();
-            }
+            serial->write(packet.toStdString().c_str());
         }
     } else {
         qDebug() << "Serial Device not open";
@@ -77,25 +76,29 @@ void CommSerial::stateUpdate() {
         for (auto&& controller : mDiscoveredList) {
             QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
             sendPacket(controller, packet);
+            if ((mStateUpdateCounter % mSecondaryUpdatesInterval) == 0) {
+                QString customArrayUpdateRequest = QString("%1&").arg(QString::number((int)EPacketHeader::eCustomArrayUpdateRequest));
+                sendPacket(controller, customArrayUpdateRequest);
+            }
         }
 
         // maintence
         if (mDiscoveryMode
                 && mDiscoveredList.size() < deviceTable().size()
                 && !mDiscoveryTimer->isActive()) {
-            mDiscoveryTimer->start(250);
+            mDiscoveryTimer->start(mDiscoveryUpdateInterval);
         } else if (!mDiscoveryMode && mDiscoveryTimer->isActive()) {
             mDiscoveryTimer->stop();
         }
+        mStateUpdateCounter++;
     }
 }
 
 QSerialPort* CommSerial::serialPortByName(QString name) {
     QSerialPort *serial = NULL;
-    std::list<std::pair<QSerialPort*, QString> >::iterator iterator;
-    for (iterator = mSerialPorts.begin(); iterator != mSerialPorts.end(); ++iterator) {
-        if (!QString::compare(iterator->first->portName(), name)) {
-           serial = iterator->first;
+    for (auto&& serialPorts : mSerialPorts) {
+        if (!QString::compare(serialPorts.first->portName(), name)) {
+           serial = serialPorts.first;
         }
     }
     return serial;
@@ -107,12 +110,14 @@ QSerialPort* CommSerial::serialPortByName(QString name) {
 //--------------------
 
 void CommSerial::discoveryRoutine() {
-    QString discoveryPacket = QString("DISCOVERY_PACKET;");
+    discoverSerialPorts();
+    QString discoveryPacket = kDiscoveryPacketIdentifier + ";";
     bool runningDiscoveryOnSomething = false;
     for (auto&& it : mDeviceTable) {
           QString controllerName = QString::fromUtf8(it.first.c_str());
           QSerialPort *serial = serialPortByName(controllerName);
-          bool found = (std::find(mDiscoveredList.begin(), mDiscoveredList.end(), controllerName) != mDiscoveredList.end());
+          SDeviceController output;
+          bool found = findDiscoveredController(controllerName, output);
           if (!found && serial != NULL) {
               runningDiscoveryOnSomething = true;
               // write to device
@@ -149,13 +154,10 @@ void CommSerial::discoverSerialPorts() {
 
 
             if (!isSpecialCase) {
-
-                qDebug() << "Name : " << info.portName();
-                qDebug() << "Description : " << info.description();
-                qDebug() << "Manufacturer: " << info.manufacturer();
+                // qDebug() << "Name : " << info.portName();
+                // qDebug() << "Description : " << info.description();
+                // qDebug() << "Manufacturer: " << info.manufacturer();
                 connectSerialPort(info);
-                addController(info.portName());
-
                 mSerialInfoList.push_back(info);
                 mLookingForActivePorts = true;
             }
@@ -164,9 +166,8 @@ void CommSerial::discoverSerialPorts() {
 }
 
 bool CommSerial::connectSerialPort(const QSerialPortInfo& info) {
-    std::list<std::pair<QSerialPort*, QString> >::iterator iterator;
-    for (iterator = mSerialPorts.begin(); iterator != mSerialPorts.end(); ++iterator) {
-        if (!QString::compare(iterator->first->portName(), info.portName())) {
+    for (auto&& serialPorts : mSerialPorts) {
+        if (!QString::compare(serialPorts.first->portName(), info.portName())) {
             // its already connected, no need to connect again
             return true;
         }
@@ -180,16 +181,18 @@ bool CommSerial::connectSerialPort(const QSerialPortInfo& info) {
         serial->setParity(QSerialPort::NoParity);
         serial->setDataBits(QSerialPort::Data8);
         serial->setFlowControl(QSerialPort::NoFlowControl);
-        qDebug() << "Serial Port Connected!" << info.portName();
+        //qDebug() << "INFO: Serial Port Connected!" << info.portName();
 
         mSerialPorts.push_front(std::make_pair(serial, QString()));
         connect(serial, SIGNAL(readyRead()), this, SLOT(handleReadyRead()));
         connect(serial, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(handleError(QSerialPort::SerialPortError)));
 
-        mDiscoveryTimer->start(250);
+        mDiscoveryTimer->start(mDiscoveryUpdateInterval);
+        mSerialPortFailed = false;
         return true;
     } else {
-        qDebug() << "serial port failed" << serial->errorString();
+        qDebug() << "WARNING: serial port failed" << serial->errorString();
+        mSerialPortFailed = true;
         delete serial;
         return false;
     }
@@ -200,29 +203,24 @@ bool CommSerial::connectSerialPort(const QSerialPortInfo& info) {
 //--------------------
 
 void CommSerial::handleReadyRead() {
-
     for (auto&& serial : mSerialPorts) {
         bool validPacket = false;
-        QString discoveryPacket = "DISCOVERY_PACKET";
         while (serial.first->bytesAvailable()) {
             QByteArray packet;
             packet.append(serial.first->readAll());
             QString payload = QString::fromUtf8(packet.trimmed());
             serial.second += payload;
-            if (serial.second.contains(";")
-                    || serial.second.contains(discoveryPacket)) {
+            if (serial.second.at(serial.second.length() - 1) == ';') {
                 validPacket = true;
             }
         }
         if (validPacket) {
+            // remove the ; from the end of the packet
+            QString payload = serial.second.mid(0, serial.second.length() - 1);
             //qDebug() << "serial" << serial.first->portName() << "received payload" << serial.second << "size" << serial.second.size();
-            if (serial.second.contains(discoveryPacket)) {
-                handleDiscoveryPacket(serial.first->portName());
-                emit discoveryReceived(serial.first->portName(), serial.second, (int)ECommType::eSerial);
-                mStateUpdateTimer->start(mStateUpdateInterval);
-            } else {
-                emit packetReceived(serial.first->portName(), serial.second, (int)ECommType::eSerial);
-            }
+            handleIncomingPacket(serial.first->portName(), payload);
+
+            // empty buffer
             serial.second = "";
         }
 

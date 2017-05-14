@@ -7,7 +7,8 @@
 #include "colorpage.h"
 #include "ui_colorpage.h"
 #include "mainwindow.h"
-#include "hueprotocols.h"
+#include "comm/hueprotocols.h"
+#include "corlumautils.h"
 
 #include <QColorDialog>
 #include <QDebug>
@@ -30,8 +31,8 @@ ColorPage::ColorPage(QWidget *parent) :
 
     connect(ui->colorPicker, SIGNAL(colorUpdate(QColor)), this, SLOT(colorChanged(QColor)));
     connect(ui->colorPicker, SIGNAL(ambientUpdate(int, int)), this, SLOT(ambientUpdateReceived(int, int)));
-    connect(ui->colorPicker, SIGNAL(multiColorCountChanged(int)), this, SLOT(customColorCountChanged(int)));
-    connect(ui->colorPicker, SIGNAL(multiColorChanged(int, QColor)), this, SLOT(multiColorChanged(int, QColor)));
+    connect(ui->colorPicker, SIGNAL(multiColorCountUpdate(int)), this, SLOT(customColorCountChanged(int)));
+    connect(ui->colorPicker, SIGNAL(multiColorUpdate(QColor, int)), this, SLOT(multiColorChanged(QColor, int)));
     connect(ui->colorPicker, SIGNAL(brightnessUpdate(int)), this, SLOT(brightnessUpdate(int)));
 
     mFloatingHorizontalLayout = new FloatingLayout(false, this);
@@ -65,6 +66,10 @@ void ColorPage::highlightRoutineButton(ELightingRoutine routine) {
 
 void ColorPage::changePageType(EColorPageType page, bool skipAnimation) {
     mPageType = page;
+    ui->colorPicker->updateColorStates(mData->mainColor(),
+                                       mData->brightness(),
+                                       mData->colorGroup(EColorGroup::eCustom),
+                                       mData->customColorsUsed());
     if (mPageType == EColorPageType::eRGB) {
         ui->colorPicker->changeLayout(ELayoutColorPicker::eStandardLayout, skipAnimation);
     } else if (mPageType == EColorPageType::eAmbient) {
@@ -72,7 +77,6 @@ void ColorPage::changePageType(EColorPageType page, bool skipAnimation) {
     } else if (mPageType == EColorPageType::eBrightness) {
         ui->colorPicker->changeLayout(ELayoutColorPicker::eBrightnessLayout, skipAnimation);
     } else if (mPageType == EColorPageType::eMulti) {
-        ui->colorPicker->updateMultiColor(mData->colorGroup(EColorGroup::eCustom), mData->customColorsUsed());
         ui->colorPicker->changeLayout(ELayoutColorPicker::eMultiColorLayout, skipAnimation);
     } else {
         qDebug() << "INFO: don't recognize this page type.. " << (int)page;
@@ -157,7 +161,10 @@ void ColorPage::colorChanged(QColor color) {
 
 void ColorPage::customColorCountChanged(int count) {
     mData->updateCustomColorCount(count);
-    ui->colorPicker->updateMultiColor(mData->colorGroup(EColorGroup::eCustom), mData->customColorsUsed());
+    ui->colorPicker->updateColorStates(mData->mainColor(),
+                                       mData->brightness(),
+                                       mData->colorGroup(EColorGroup::eCustom),
+                                       mData->customColorsUsed());
 
     if (mBottomMenuState == EBottomMenuShow::eShowMultiRoutines) {
         mMultiRoutineWidget->multiRoutineColorsChanged(mData->colorGroup(EColorGroup::eCustom),
@@ -168,7 +175,7 @@ void ColorPage::customColorCountChanged(int count) {
     updateRoutineButton(); // updates the routine button
 }
 
-void ColorPage::multiColorChanged(int index, QColor color) {
+void ColorPage::multiColorChanged(QColor color, int index) {
     mData->updateCustomColorArray(index, color);
     if (mBottomMenuState == EBottomMenuShow::eShowMultiRoutines) {
         mMultiRoutineWidget->multiRoutineColorsChanged(mData->colorGroup(EColorGroup::eCustom),
@@ -191,10 +198,12 @@ void ColorPage::ambientUpdateReceived(int newAmbientValue, int newBrightness) {
 
 
 void ColorPage::showEvent(QShowEvent *) {
-  QColor color = mData->mainColor();
-  mLastColor = color;
-  ui->colorPicker->chooseColor(color, false);
-  mSingleRoutineWidget->singleRoutineColorChanged(color);
+  mLastColor = mData->mainColor();
+  ui->colorPicker->updateColorStates(mData->mainColor(),
+                                     mData->brightness(),
+                                     mData->colorGroup(EColorGroup::eCustom),
+                                     mData->customColorsUsed());
+  mSingleRoutineWidget->singleRoutineColorChanged(mLastColor);
   mSingleRoutineWidget->setGeometry(0, this->height(), mSingleRoutineWidget->width(), mSingleRoutineWidget->height());
 
   highlightRoutineButton(mData->currentRoutine());

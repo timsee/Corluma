@@ -5,6 +5,7 @@
  */
 
 #include "groupsparser.h"
+#include "corlumautils.h"
 
 #include <QFileInfo>
 #include <QStandardPaths>

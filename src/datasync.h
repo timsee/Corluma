@@ -40,6 +40,8 @@ struct SThrottle
 };
 
 
+class CommLayer;
+
 /*!
  * \brief The DataSync class compares the data layer's representation of devices with the commlayer's
  *        understanding of devices and tries to sync them up. The DataLayer's representation is used
@@ -47,9 +49,6 @@ struct SThrottle
  *        If the desired state and current state do not match, the commlayer is requested to send packets
  *        to try to update the devices.
  */
-
-class CommLayer;
-
 class DataSync : public QObject
 {
     Q_OBJECT
@@ -121,6 +120,16 @@ private:
      * \return true if they match, false otherwise
      */
     bool hueSync(const SLightDevice& dataDevice, const SLightDevice& commDevice);
+
+    /*!
+     * \brief appendToPacket data sync builds up packets to send to devices. This takes a new addition to the packet,
+     *        checks if theres room to add it, and adds it if there is.
+     * \param currentPacket current packet datasync is building
+     * \param newAddition new addition
+     * \param maxPacketSize max size of packet that the controller can handle.
+     * \return true if packet is added, false otherwise.
+     */
+    bool appendToPacket(QString& currentPacket, QString newAddition, int maxPacketSize);
 
     /*!
      * \brief endOfSync end the datasync thread and start the cleanup thread.

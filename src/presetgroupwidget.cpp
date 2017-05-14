@@ -5,6 +5,7 @@
  */
 
 #include "presetgroupwidget.h"
+#include "corlumautils.h"
 
 PresetGroupWidget::PresetGroupWidget(QString name,
                                      EColorGroup group,
@@ -17,6 +18,9 @@ PresetGroupWidget::PresetGroupWidget(QString name,
 
     mLabel = new QLabel(this);
     mLabel->setWordWrap(true);
+    QFont font = mLabel->font();
+    font.setPointSize(10);
+    mLabel->setFont(font);
     mLabel->setText(name);
 
     mLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -24,13 +28,14 @@ PresetGroupWidget::PresetGroupWidget(QString name,
     mLayout->addWidget(mLabel);
 
     int buttonCount = (int)ELightingRoutine::eLightingRoutine_MAX - (int)utils::ELightingRoutineSingleColorEnd;
-    mButtons = std::vector<LightsButton *>(buttonCount, nullptr);
+    mButtons = std::vector<CorlumaButton *>(buttonCount, nullptr);
 
     int index = 0;
     for (int routine = (int)utils::ELightingRoutineSingleColorEnd + 1; routine < (int)ELightingRoutine::eLightingRoutine_MAX; routine++) {
-        mButtons[index] = new LightsButton();
+        mButtons[index] = new CorlumaButton();
         mButtons[index]->setupAsStandardButton((ELightingRoutine)routine, group, QString(""), colors);
         mButtons[index]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        mButtons[index]->setMaximumWidth(this->width() / (buttonCount + 1));
         connect(mButtons[index], SIGNAL(buttonClicked(int, int)), this, SLOT(multiButtonClicked(int, int)));
 
         // add to layout
@@ -38,7 +43,7 @@ PresetGroupWidget::PresetGroupWidget(QString name,
         index++;
     }
 
-    mLabel->setMinimumWidth(this->width() / (buttonCount + 5));
+    mLabel->setMaximumWidth(this->width() / (buttonCount + 1));
 }
 
 void PresetGroupWidget::setChecked(ELightingRoutine routine, bool isChecked) {

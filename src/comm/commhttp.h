@@ -48,7 +48,7 @@ public:
      *        web address, and sent as an HTTP request
      * \param packet the string to be sent over HTTP.
      */
-    void sendPacket(QString controller, QString packet);
+    void sendPacket(SDeviceController controller, QString packet);
 
 private slots:
     /*!

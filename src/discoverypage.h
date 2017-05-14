@@ -6,7 +6,15 @@
 #include <QListWidget>
 
 #include "lightingpage.h"
-#include "commlayer.h"
+#include "comm/commlayer.h"
+#include "floatinglayout.h"
+
+
+#ifndef MOBILE_BUILD
+class DiscoverySerialWidget;
+#endif
+class DiscoveryYunWidget;
+class DiscoveryHueWidget;
 
 namespace Ui {
 class DiscoveryPage;
@@ -34,7 +42,7 @@ public:
     explicit DiscoveryPage(QWidget *parent = 0);
 
     /*!
-     * Deconstructor
+     * Destructor
      */
     ~DiscoveryPage();
 
@@ -44,13 +52,17 @@ public:
      *        edge cases that require certain pages to have a commlayer pointer.
      * \param layer commlayer
      */
-    void connectCommLayer(CommLayer *layer) {
-        mComm = layer;
-        connect(mComm, SIGNAL(hueDiscoveryStateChange(int)), this, SLOT(hueDiscoveryUpdate(int)));
-    }
+    void connectCommLayer(CommLayer *layer);
 
     /// debug function
     void openStartForDebug() { mForceStartOpen = true; }
+
+    /*!
+     * \brief updateTopMenu helper for adjusting the top menu to show
+     *        only available CommTypes. If only one commtype is available, don't show
+     *        any of the buttons.
+     */
+    void updateTopMenu();
 
 signals:
     /*!
@@ -69,49 +81,11 @@ signals:
      */
     void closeWithoutTransition();
 
-public slots:
-
-    /*!
-     * \brief hueDiscoveryUpdate provides an int representation of the EHueDiscoveryState
-     *        of Hue's discovery object. Used by the connectionList to display the current
-     *        state.
-     */
-    void hueDiscoveryUpdate(int);
-
 private slots:
     /*!
      * \brief startClicked handle when the start button is clicked.
      */
     void startClicked() { emit startButtonClicked(); }
-
-    /*!
-     * \brief plusButtonClicked called whenever the plus button is clicked
-     */
-    void plusButtonClicked();
-
-    /*!
-     * \brief settingsButtonClicked called whenever the settings button is clicked.
-     */
-    void settingsButtonClicked(bool) { emit settingsButtonClicked(); }
-
-    /*!
-     * \brief minusButtonClicked called whenever the minus button is clicked
-     */
-    void minusButtonClicked();
-
-    /*!
-     * \brief connectedListClicked The connected list was clicked on a discovery page.
-     *        This allows the user to select one of the connections, but its internal logic
-     *        is handled differently between different CommTypes.
-     */
-    void connectedListClicked(QListWidgetItem *);
-
-    /*!
-     * \brief discoveringListClicked The discovering list was clicked on a discovery page.
-     *        This allows the user to select one of the connections, but its internal logic
-     *        is handled differently between different CommTypes.
-     */
-    void discoveringListClicked(QListWidgetItem *);
 
     /*!
      * \brief commTypeSelected called when the comm type updates and changes
@@ -123,6 +97,20 @@ private slots:
      *        change of state.
      */
     void renderUI();
+
+    /*!
+     * \brief widgetConnectionStateChanged handles whenever a connection status changes for any commtype
+     * \param type the commtype where the connection status changes
+     * \param connectionState int representation of a EConnectionState that gives the current connection
+     *        status.
+     */
+    void widgetConnectionStateChanged(int type, int connectionState);
+
+    /*!
+     * \brief floatingLayoutButtonPressed handles whenever a floating layout button is presed
+     * \param button key for floating layout button
+     */
+    void floatingLayoutButtonPressed(QString button);
 
 protected:
     /*!
@@ -150,53 +138,34 @@ protected:
 
 private:
 
+    void moveFloatingLayouts();
+
+    /// floating layout for commtype button
+    FloatingLayout *mHorizontalFloatingLayout;
+
+    /// floating layout for settings button
+    FloatingLayout *mVerticalFloatingLayout;
+
+#ifndef MOBILE_BUILD
+    /// discovery widget for serial devices
+    DiscoverySerialWidget *mSerialWidget;
+#endif
+
+    /// discovery widget for Arduino Yuns
+    DiscoveryYunWidget *mYunWidget;
+
+    /// discovery widget for hue products
+    DiscoveryHueWidget *mHueWidget;
+
     /*!
      * \brief resizeTopMenu resize buttons at top that switch between Hue, Serial, etc.
      */
     void resizeTopMenu();
 
     /*!
-     * \brief yunLineEditHelper helper function for setting the yun line edit.
-     */
-    void yunLineEditHelper();
-
-    /*!
-     * \brief updateHueStatusIcon update the main image for the hue discovery page which
-     *        shows what step you're on.
-     * \param iconPath the path to the new icon for the page.
-     */
-    void updateHueStatusIcon(QString iconPath);
-
-    /*!
      * \brief ui pointer to Qt UI form.
      */
     Ui::DiscoveryPage *ui;
-
-    /*!
-     * \brief handleSerialDiscovery called by render update thread to display and update
-     *        the serial discovered list.
-     */
-    void handleSerialDiscovery(bool isCurrentCommType);
-
-    /*!
-     * \brief handleYunDiscovery called by render update thread to display and update
-     *        the yun discovered list and undiscovered list.
-     */
-    void handleYunDiscovery(bool isCurrentCommType);
-
-    /*!
-     * \brief fillList take the connections list and convert it to elements in the QListWidget provided.
-     * \param list a QListWidget
-     * \param connections a list of connections to fill into the QListWidget.
-     */
-    void fillList(QListWidget *list, std::list<QString>& connections);
-
-    /*!
-     * \brief showAvailableCommTypeButtons helper for adjusting the top menu to show
-     *        only available CommTypes. If only one commtype is available, don't show
-     *        any of the buttons.
-     */
-    void showAvailableCommTypeButtons();
 
     /*!
      * \brief changeCommTypeConnectionState change the connection state and the associated UI
@@ -207,28 +176,6 @@ private:
     void changeCommTypeConnectionState(ECommType type, EConnectionState newState);
 
     /*!
-     * \brief buttonByType helper for getting a QPushButton pointer based off
-     *        of a commtype.
-     * \param type the commtype to get a button for.
-     * \return a pointer to a button used for selecting a commtype.
-     */
-    QPushButton *buttonByType(ECommType type);
-
-
-    /*!
-     * \brief doesYunControllerExistAlready checks both UDP and HTTP yun device lists to see if it has any knowledge
-     *        of the given controller.
-     * \param controller name of controller
-     * \return true if yun controller exists on discovered or undiscovered list, false otherwise
-     */
-    bool doesYunControllerExistAlready(QString controller);
-
-    /*!
-     * \brief mLastIP stores last IP address used for Yuns
-     */
-    QString mLastIP;
-
-    /*!
      * \brief mComm pointer to CommLayer.
      */
     CommLayer *mComm;
@@ -237,12 +184,6 @@ private:
      * \brief mType current CommType displaying its discovery page.
      */
     ECommType mType;
-
-    /*!
-     * \brief mHueDiscoveryState stored state of the Hue Discovery methods.
-     *        This is udpated internally by the hueDiscoveryUpdate(int) slot.
-     */
-    EHueDiscoveryState mHueDiscoveryState;
 
     /*!
      * \brief mButtonIcons reference to a QPixmap for each of the comm buttons.

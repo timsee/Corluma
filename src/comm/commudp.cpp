@@ -12,17 +12,18 @@
 
 #include <algorithm>
 
-// port used by the server
+// preffered port used by the server
 #define PORT 10008
 
 CommUDP::CommUDP() {
     mStateUpdateInterval = 1000;
+    mDiscoveryUpdateInterval = 500;
     setupConnectionList(ECommType::eUDP);
 
     mSocket = new QUdpSocket(this);
 
+    connect(mSocket, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()));
     connect(mDiscoveryTimer, SIGNAL(timeout()), this, SLOT(discoveryRoutine()));
-
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(stateUpdate()));
 
     mBound = false;
@@ -37,9 +38,6 @@ CommUDP::~CommUDP() {
 }
 
 void CommUDP::startup() {
-    mDiscoveryTimer->start(1000);
-    resetStateUpdateTimeout();
-
     QString localIP;
     // lists all adresses associated with this device
     QList<QHostAddress> list = QNetworkInterface::allAddresses();
@@ -56,15 +54,17 @@ void CommUDP::startup() {
     }
     //qDebug() << "local IP" << localIP;
     if (mBound) {
-        qDebug() << "Already bound!";
-    } else if (mSocket->bind(QHostAddress(localIP), PORT)) {
-        connect(mSocket, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()));
-        mDiscoveryTimer->start(1000);
-        mBound = true;
+        qDebug() << "WARNING: UDP already bound!";
     } else {
-        qDebug() << "binding to UDP discovery server failed";
-        mBound = false;
+        mBound = mSocket->bind(QHostAddress(localIP), PORT);
+        if (mBound) {
+            mDiscoveryTimer->start(1000);
+            discoveryRoutine();
+        } else {
+            qDebug() << "binding to UDP discovery server failed";
+        }
     }
+
     mHasStarted = true;
 }
 
@@ -81,44 +81,45 @@ void CommUDP::shutdown() {
     mHasStarted = false;
 }
 
-void CommUDP::sendPacket(QString controller, QString packet) {
+void CommUDP::sendPacket(SDeviceController controller, QString packet) {
     if (mBound) {
-        bool isStateUpdate = false;
-        if (packet.at(0) ==  QChar('7')) {
-            isStateUpdate = true;
-        }
-        //qDebug() << "sending udp" << packet << "to " << controller;
-        mSocket->writeDatagram(packet.toUtf8().data(),
-                               QHostAddress(controller),
-                               PORT);
+        // commtype function for adding CRC (if needed) and resetting flags (if needed)
+        preparePacketForTransmission(controller, packet);
 
-        if (!isStateUpdate) {
-            resetStateUpdateTimeout();
-        }
+        // send packet over UDP
+        //qDebug() << "sending udp" << packet << "to " << controller.name;
+        mSocket->writeDatagram(packet.toUtf8().data(),
+                               QHostAddress(controller.name),
+                               PORT);
     } else {
         qDebug() << "WARNING: UDP port not bound";
     }
 }
 
 
+bool CommUDP::portBound() {
+    return mBound;
+}
+
 void CommUDP::stateUpdate() {
     if (shouldContinueStateUpdate()) {
         for (auto&& controller : mDiscoveredList) {
-            if (!mDiscoveryMode) {
-                QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
-                 if (controller.compare(QString(""))) {
-                     sendPacket(controller, packet);
-                 }
+            QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
+            sendPacket(controller, packet);
+            if ((mStateUpdateCounter % mSecondaryUpdatesInterval) == 0) {
+                QString customArrayUpdateRequest = QString("%1&").arg(QString::number((int)EPacketHeader::eCustomArrayUpdateRequest));
+                sendPacket(controller, customArrayUpdateRequest);
             }
         }
 
         if (mDiscoveryMode
                 && mDiscoveredList.size() < deviceTable().size()
                 && !mDiscoveryTimer->isActive()) {
-            mDiscoveryTimer->start(333);
+            mDiscoveryTimer->start(mDiscoveryUpdateInterval);
         } else if (!mDiscoveryMode && mDiscoveryTimer->isActive()) {
             mDiscoveryTimer->stop();
         }
+        mStateUpdateCounter++;
     }
 }
 
@@ -126,18 +127,18 @@ void CommUDP::stateUpdate() {
 
 void CommUDP::discoveryRoutine() {
     if (mBound) {
-        QString discoveryPacket = QString("DISCOVERY_PACKET");
         for (auto&& it : mDeviceTable) {
-              bool found = (std::find(mDiscoveredList.begin(), mDiscoveredList.end(), QString::fromUtf8(it.first.c_str())) != mDiscoveredList.end());
+            SDeviceController output;
+            bool found = findDiscoveredController(QString::fromUtf8(it.first.c_str()), output);
               if (!found) {
                   //qDebug() << "discovery packet to " << QString(it.first.c_str());
-                  mSocket->writeDatagram(discoveryPacket.toUtf8().data(),
+                  mSocket->writeDatagram(kDiscoveryPacketIdentifier.toUtf8().data(),
                                          QHostAddress(QString::fromUtf8(it.first.c_str())),
                                          PORT);
               }
          }
     } else {
-        qDebug() << "discovery when not bound";
+       // qDebug() << "INFO: discovery when not bound";
     }
 }
 
@@ -154,14 +155,6 @@ void CommUDP::readPendingDatagrams() {
         mSocket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
         QString payload = QString::fromUtf8(datagram);
         //qDebug() << "UDP payload" << payload << payload.size() << "from" << sender.toString();
-        QString discoveryPacket = "DISCOVERY_PACKET";
-
-        if (payload.contains(discoveryPacket)) {
-            // add to list of discovered devices
-            handleDiscoveryPacket(sender.toString());
-            emit discoveryReceived(sender.toString(), payload, (int)ECommType::eUDP);
-        } else {
-            emit packetReceived(sender.toString(), payload, (int)ECommType::eUDP);
-        }
+        handleIncomingPacket(sender.toString(), payload);
     }
 }

@@ -3,7 +3,7 @@
 #define PresetColorsPage_H
 
 #include "lightingpage.h"
-#include "lightsbutton.h"
+#include "corlumabutton.h"
 #include "presetgroupwidget.h"
 
 #include <QWidget>

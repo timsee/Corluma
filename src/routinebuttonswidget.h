@@ -2,7 +2,7 @@
 #define SINGLECOLORROUTINEWIDGET_H
 
 #include <QWidget>
-#include "lightsbutton.h"
+#include "corlumabutton.h"
 
 
 /// different types of routinebuttonswidgets
@@ -96,7 +96,7 @@ private:
      * \brief mRoutineButtons pointers to all the main buttons, used
      *        to iterate through them quickly.
      */
-    std::vector<LightsButton*> mRoutineButtons;
+    std::vector<CorlumaButton*> mRoutineButtons;
 };
 
 #endif // SINGLECOLORROUTINEWIDGET_H

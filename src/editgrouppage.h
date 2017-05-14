@@ -7,7 +7,7 @@
 #include "lightdevice.h"
 #include "listdevicewidget.h"
 #include "lightingpage.h"
-#include "commlayer.h"
+#include "comm/commlayer.h"
 #include "groupsparser.h"
 
 namespace Ui {

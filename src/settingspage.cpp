@@ -6,7 +6,7 @@
 
 #include "settingspage.h"
 #include "ui_settingspage.h"
-#include "commhue.h"
+#include "comm/commhue.h"
 #include "listdevicewidget.h"
 
 #include <QFileDialog>
@@ -18,6 +18,7 @@
 #include <QStyleOption>
 #include <QGraphicsOpacityEffect>
 #include <QPainter>
+#include <QScrollBar>
 
 #include <algorithm>
 
@@ -69,18 +70,15 @@ SettingsPage::SettingsPage(QWidget *parent) :
     ui->serialButton->setHidden(true);
 #endif //MOBILE_BUILD
 
-    ui->yunButton->setCheckable(true);
-    ui->hueButton->setCheckable(true);
-#ifndef MOBILE_BUILD
-    ui->serialButton->setCheckable(true);
-#endif //MOBILE_BUILD
 
     QFont font = ui->closeButton->font();
     font.setPointSize(36);
     ui->closeButton->setFont(font);
 
-    ui->settingsScrollArea->setStyleSheet("background-color: #201F1F;");
+    ui->settingsScrollArea->widget()->setObjectName("contentWidget");
+    ui->settingsScrollArea->widget()->setStyleSheet("QWidget#contentWidget { background-color: #201F1F; } QLabel { background-color: #201F1F; }");
     QScroller::grabGesture(ui->settingsScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
+    ui->settingsScrollArea->horizontalScrollBar()->setEnabled(false);
 }
 
 SettingsPage::~SettingsPage() {
@@ -181,7 +179,6 @@ void SettingsPage::resizeEvent(QResizeEvent *event) {
     ui->serialButton->setMaximumHeight(ui->serialButton->width());
 #endif //MOBILE_BUILD
 
-
     ui->speedSlider->setMinimumSize(QSize(this->width() * 0.8f, this->height() * 0.1f));
     ui->speedSlider->setMaximumSize(QSize(this->width() * 0.8f, this->height() * 0.1f));
 
@@ -199,6 +196,35 @@ void SettingsPage::resizeEvent(QResizeEvent *event) {
     int min = std::min(ui->closeButton->width(), ui->closeButton->height()) * 0.85f;
     ui->closeButton->setIconSize(QSize(min, min));
 
+    std::vector<QPushButton*> buttonList = {ui->hueButton,
+                                            ui->yunButton,
+                                        #ifndef MOBILE_BUILD
+                                            ui->serialButton,
+                                        #endif
+                                            ui->debugButton,
+                                            ui->resetButton,
+                                            ui->loadButton,
+                                            ui->saveButton,
+                                            ui->mergeButton};
+
+    int minWidth = INT_MAX;
+    int minHeight = INT_MAX;
+    for (uint32_t i = 0; i < buttonList.size(); ++i) {
+        if (buttonList[i]->size().width() < minWidth) {
+            minWidth = buttonList[i]->size().width();
+        }
+        if (buttonList[i]->size().height() < minHeight) {
+            minHeight = buttonList[i]->size().height();
+        }
+    }
+    const int minSize = 60;
+    if (minHeight < minSize) minHeight = minSize;
+    if (minWidth < minSize)  minWidth = minSize;
+    QSize finalSize(minWidth, minHeight);
+    for (uint32_t i = 0; i < buttonList.size(); ++i) {
+        buttonList[i]->setMinimumSize(finalSize);
+        buttonList[i]->setMaximumSize(finalSize);
+    }
 }
 
 void SettingsPage::checkCheckBoxes() {
@@ -208,8 +234,10 @@ void SettingsPage::checkCheckBoxes() {
         ECommType type = types[i];
         if (mData->commTypeSettings()->commTypeEnabled(type)) {
             checkBox->setChecked(true);
+           // checkBox->setStyleSheet("background-color:#4A4949;");
         } else {
             checkBox->setChecked(false);
+           // checkBox->setStyleSheet("background-color: #000000;");
         }
     }
 }
@@ -218,6 +246,7 @@ void SettingsPage::checkBoxClicked(ECommType type, bool checked) {
     bool successful = mData->commTypeSettings()->enableCommType(type, checked);
     if (!successful) {
         mConnectionButtons[mData->commTypeSettings()->indexOfCommTypeSettings(type)]->setChecked(true);
+       // mConnectionButtons[mData->commTypeSettings()->indexOfCommTypeSettings(type)]->setStyleSheet("background-color:#4A4949;");
     }
 
     if (checked) {

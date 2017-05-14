@@ -9,7 +9,7 @@
 #include <set>
 
 #include "datalayer.h"
-#include "commlayer.h"
+#include "comm/commlayer.h"
 #include "listcollectionsubwidget.h"
 
 /*!

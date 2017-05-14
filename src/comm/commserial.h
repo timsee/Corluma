@@ -56,7 +56,7 @@ public:
      * \param packet the string that is going to be sent over
      *        serial.
      */
-    void sendPacket(QString controller, QString packet);
+    void sendPacket(SDeviceController controller, QString packet);
 
     /*!
      * \brief lookingForActivePorts true if looking for active ports, false otherwise.
@@ -64,6 +64,8 @@ public:
      */
     bool lookingForActivePorts() { return mLookingForActivePorts; }
 
+    /// returns true if a serial port has failed.
+    bool serialPortErrorsExist() { return mSerialPortFailed; }
 private slots:
     /*!
      * \brief handleReadyRead parses incoming packets
@@ -116,6 +118,9 @@ private:
 
     /// set to true when looking for active ports, used on discovery page.
     bool mLookingForActivePorts;
+
+    /// true if any serial port has failed, false otherwise
+    bool mSerialPortFailed;
 };
 
 #endif // MOBILE_BUILD

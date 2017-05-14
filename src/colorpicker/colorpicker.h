@@ -1,8 +1,7 @@
 #ifndef COLORPICKER_H
 #define COLORPICKER_H
 
-#include "lightsslider.h"
-#include "lightdevice.h"
+#include "corlumaslider.h"
 
 #include <QWidget>
 #include <QTimer>
@@ -15,6 +14,11 @@
 #include <QGraphicsOpacityEffect>
 #include <QPropertyAnimation>
 #include <QParallelAnimationGroup>
+
+#include "rgbsliders.h"
+#include "brightnessslider.h"
+#include "tempbrightsliders.h"
+#include "colorgrid.h"
 
 /*!
  * \copyright
@@ -35,10 +39,6 @@ enum class ELayoutColorPicker {
      * wheel grows vertically.
      */
     eStandardLayout,
-    /*!
-     * only the wheel is displayed.
-     */
-    eWheelOnlyLayout,
     /*!
      * The color wheel is changed to shades of white.
      * Can choose between the a blue-ish white or an
@@ -117,14 +117,6 @@ public:
     // Layout-Specific API
     //------------------------------
 
-    /*!
-     * \brief chooseColor programmatically set the color of the picker. this will update the
-     *        UI elements to reflect this color. By default it wil also signal its changes
-     *        a flag can be used to disable the signal.
-     * \param color a QColor representation of the color you want to use.
-     * \param shouldSignal true to signal, false to skip this signal.
-     */
-    void chooseColor(QColor color, bool shouldSignal = true);
 
     /*!
      * \brief chooseAmbient programmatically set the ambient color picker. This will update
@@ -137,22 +129,13 @@ public:
     void chooseAmbient(int temperature, int brightness, bool shouldSignal = true);
 
     /*!
-     * \brief chooseBrightness programmatically set the brightness.This will update
-     *        the UI elements to reflect the values provided. By default it will also signal its
-     *        changes, but a flag can be used to override the signal.
-     * \param brightness brightness of the color
-     * \param shouldSignal true to signal, false to skip this signal
+     * \brief updateColorStates update the layouts at the bottom of the ColorPicker with new values from the RGB devices
+     * \param mainColor main color from datalayer
+     * \param brightness brightness from data layer
+     * \param colorArray the custom color array from datalayer
+     * \param colorArrayCount the count of LEDs used in array from datalayer
      */
-    void chooseBrightness(int brightness, bool shouldSignal = true);
-
-    /*!
-     * \brief updateMultiColor programmatically set the colors in the multi color picker. This will update
-     *        the UI elements to reflect the values provided. By default it will also signal its
-     *        changes, but a flag can be used to override the signal.
-     * \param colors the colors for the array in the multi color picker
-     * \param count the number of colors to use from the vector
-     */
-    void updateMultiColor(const std::vector<QColor> colors, int count);
+    void updateColorStates(QColor mainColor, int brightness, const std::vector<QColor> colorArray, int colorArrayCount);
 
 signals:
     /*!
@@ -163,9 +146,9 @@ signals:
     void colorUpdate(QColor);
 
     /*!
-     * \brief multiColorChanged emitted whenever the multi color picker has an update for any individual color.
+     * \brief multiColorUpdate emitted whenever the multi color picker has an update for any individual color.
      */
-    void multiColorChanged(int, QColor);
+    void multiColorUpdate(QColor, int);
 
     /*!
      * \brief ambientUpdate emitted whenever the ambient picker has an update. First value is
@@ -182,7 +165,7 @@ signals:
     /*!
      * \brief multiColorCountChanged number of colors to use during multi color routines changed.
      */
-    void multiColorCountChanged(int);
+    void multiColorCountUpdate(int);
 
 protected:
     /*!
@@ -222,24 +205,6 @@ protected:
 private slots:
 
     /*!
-     * \brief topSliderChanged called whenever the slider in the top position
-     *        changes its value.
-     */
-    void topSliderChanged(int);
-
-    /*!
-     * \brief midSliderChanged called whenever the slider in the mid position
-     *        changes its value.
-     */
-    void midSliderChanged(int);
-
-    /*!
-     * \brief bottomSliderChanged called whenever the slider in the bottom position
-     *        changes its value.
-     */
-    void bottomSliderChanged(int);
-
-    /*!
      * \brief resetThrottleFlag called by the throttle timer to allow commands to
      *        be sent again. This gets called on a loop whenever color picker is being
      *        used in order to prevent clogging the communication stream.
@@ -247,60 +212,49 @@ private slots:
     void resetThrottleFlag();
 
     /*!
-     * \brief releasedSlider uses the QSlider inside of the LightsSlider to pick up
-     *        when the slider is released. This always sets the color of the color picker.
-     *        This system is used to prevent an edge case with throttling with a timer.
-     *        Without it, its possible to change the UI without updating the lights if you are
-     *        quick enough.
-     */
-    void releasedSlider();
-
-    /*!
-     * \brief selectArrayColor when called, the multi color array color at the given index is seletected
-     *        or deselected, depending on its current state.
-     */
-    void selectArrayColor(int);
-
-    /*!
      * \brief hideTempWheel hides the mTempWheel. Called by animations when its done fading the temp wheel out.
      */
     void hideTempWheel();
 
+
+    /*!
+     * \brief RGBSlidersColorChanged the color changed from the RGBSliders
+     * \param color new color.
+     */
+    void RGBSlidersColorChanged(QColor color);
+
+    /*!
+     * \brief tempBrightSlidersChanged the temperature and brightness changed from the TempBrightSliders
+     */
+    void tempBrightSlidersChanged(int, int);
+
+    /*!
+     * \brief brightnessSliderChanged brightness slider changed values from BrightnessSlider
+     */
+    void brightnessSliderChanged(int);
+
+    /*!
+     * \brief multiColorChanged the color at the index provided has changed.
+     */
+    void multiColorChanged(QColor color, int index);
+
+    /*!
+     * \brief multiColorCountChanged the number of possible selected devices has changed on the ColorGrid.
+     */
+    void multiColorCountChanged(int);
+
+    /*!
+     * \brief selectedCountChanged the number of selected buttons changed on the ColorGrid.
+     */
+    void selectedCountChanged(int);
+
 private:
-    //------------------------------
-    // General
-    //------------------------------
 
     /*!
-     * \brief mTopSlider top slider of the bottom layout. Used for red in standard mode, but is also
-     *        used in many of the other layouts for different functionality.
+     * \brief mPlaceholder placeholder for the bottom layouts. These, such as the RGBSliders or the ColorGrid get placed over
+     *        this mPlaceholder widget.
      */
-    LightsSlider *mTopSlider;
-
-    /*!
-     * \brief mMidSlider middle slider in the bottom layout. Used for green in standard mode, but is also
-     *        used in some of the other layouts for different functionality.
-     */
-    LightsSlider *mMidSlider;
-
-    /*!
-     * \brief mBottomSlider bottom slider in the bottom layout. Only used for blue in standard mode, is hidden
-     *        in all other modes.
-     */
-    LightsSlider *mBottomSlider;
-
-    /*!
-     * \brief mTopLabel label for the topSlider in RGB modes, puts that little "R" in front of the slider.
-     */
-    QLabel *mTopLabel;
-    /*!
-     * \brief mMidLabel label for the midSLider in RGB modes, puts that little "G" in front of the slider.
-     */
-    QLabel *mMidLabel;
-    /*!
-     * \brief mBottomSlider label for the bottomSlider in RGB modes, puts that little "B" in front of the slider.
-     */
-    QLabel *mBottomLabel;
+    QWidget *mPlaceholder;
 
     /*!
      * \brief mColorWheel the color wheel for the color picker. Uses an image asset,
@@ -309,76 +263,48 @@ private:
      */
     QLabel *mColorWheel;
 
-    //------------------------------
-    // Standard Layout-Specific
-    //------------------------------
+    /// bottom layout, gives 3 sliders for RGB.
+    RGBSliders *mRGBSliders;
+
+    /// bottom layout, gives 2 sliders, one for temperature and one for brightness
+    TempBrightSliders *mTempBrightSliders;
+
+    /// bottom layout, gives only 1 slider for brightness.
+    BrightnessSlider *mBrightnessSlider;
+
+    /// bottom layoutm, gives a slider and a grid of buttons
+    ColorGrid *mColorGrid;
 
     /*!
-     * \brief mColor the current color that the color picker is displaying
+     * \brief chooseColor programmatically set the color of the picker. this will update the
+     *        UI elements to reflect this color. By default it wil also signal its changes
+     *        a flag can be used to disable the signal.
+     * \param color a QColor representation of the color you want to use.
+     * \param shouldSignal true to signal, false to skip this signal.
      */
-    QColor mColor;
+    void chooseColor(QColor color, bool shouldSignal = true);
 
-    //------------------------------
-    // Brightness Layout-Specific
-    //------------------------------
-
-    /// brightness used in the brightness layout.
-    uint32_t mWhiteBrightness;
-
-    //------------------------------
-    // Ambient Layout-Specific
-    //------------------------------
-
-    /// color temperature used during ambient layout
-    int mAmbientTemperature;
-
-    /// brightness used doing ambient layout
-    int mAmbientBrightness;
-
-    //------------------------------
-    // Multi Layout-Specific
-    //------------------------------
 
     /*!
-     * \brief mMultiArraySize size of the multi color array, used to initialize
-     *        and access vectors throughout this page.
+     * \brief chooseBrightness programmatically set the brightness.This will update
+     *        the UI elements to reflect the values provided. By default it will also signal its
+     *        changes, but a flag can be used to override the signal.
+     * \param brightness brightness of the color
+     * \param shouldSignal true to signal, false to skip this signal
      */
-    uint32_t mMultiArraySize;
-
-    /// vector pushbuttons used for the multi layout
-    std::vector<QPushButton *> mArrayColorsButtons;
-
-    /// color values for the multi layout
-    std::vector<QColor> mMultiColors;
-
-    /// the number colors that are enabled in the multi color picker.
-    uint32_t mMultiUsed;
-
-    /// indices of selected colors in multi color layout.
-    std::list<uint32_t> mMultiSelected;
+    void chooseBrightness(int brightness, bool shouldSignal = true);
 
     /*!
-     * \brief updateMultiColorSlider averages all colors with indices less than mMultiUsed
-     *        and sets the top slider to be that averaged color.
+     * \brief updateMultiColor programmatically set the colors in the multi color picker. This will update
+     *        the UI elements to reflect the values provided. By default it will also signal its
+     *        changes, but a flag can be used to override the signal.
+     * \param colors the colors for the array in the multi color picker
+     * \param count the number of colors to use from the vector
      */
-    void updateMultiColorSlider();
-
-    /*!
-     * \brief manageMultiSelected handles the selected buttons in the Multi color layout. This
-     *        includes deselecting indices that are larger than the mMultiUsed value, highlighting
-     *        selected indices, and enabling/disabling the color wheel based on the count of selected
-     *        indices.
-     */
-    void manageMultiSelected();
-
+    void updateMultiColor(const std::vector<QColor> colors, int count);
     //------------------------------
     // Layout-Specific
     //------------------------------
-
-    /*!
-     * \brief mBottomLayout layout used to arrange the RGB sliders.
-     */
-    QGridLayout *mBottomLayout;
 
     /*!
      * \brief fullLayout layout used when in the full layout mode.
@@ -442,14 +368,6 @@ private:
      * \brief resize checks the geometry and resizes UI assets accordingly.
      */
     void resize();
-
-    /*!
-     * \brief createSolidColorIcon creates a QPushButton that has an icon that is a solid color that matches the QColor
-     *        that is provided as input.
-     * \param color the color of the QPushButton's icon.
-     * \return  a pixmap that is a single solid color that matches the input.
-     */
-    QPixmap createSolidColorIcon(QColor color);
 
     //------------------------------
     // Miscellaneous
