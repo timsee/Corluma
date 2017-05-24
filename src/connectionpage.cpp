@@ -147,7 +147,8 @@ ListDevicesGroupWidget* ConnectionPage::initDevicesCollectionWidget(const QStrin
                                                                 height,
                                                                 mComm,
                                                                 mData,
-                                                                hideEdit);
+                                                                hideEdit,
+                                                                this);
     QScroller::grabGesture(widget, QScroller::LeftMouseButtonGesture);
     connect(widget, SIGNAL(deviceClicked(QString,QString)), this, SLOT(deviceClicked(QString, QString)));
     connect(widget, SIGNAL(clearAllClicked(QString)), this, SLOT(clearGroupClicked(QString)));

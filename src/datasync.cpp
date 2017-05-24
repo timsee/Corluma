@@ -263,10 +263,18 @@ bool DataSync::hueSync(const SLightDevice& dataDevice, const SLightDevice& commD
         //-------------------
         // Hue HSV Color Sync
         //-------------------
-        if (utils::colorDifference(dataDevice.color, commDevice.color) > 0.1f) {
-            QString message = mComm->sendMainColorChange(list, dataDevice.color);
+        QColor hsvColor = dataDevice.color.toHsv();
+        // add brightness into lights
+        if (utils::colorDifference(hsvColor, commDevice.color) > 0.02f) {
+            QString message = mComm->sendMainColorChange(list, hsvColor);
             appendToPacket(packet, message, controller.maxPacketSize);
             //qDebug() << "hue color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << utils::colorDifference(dataDevice.color, commDevice.color);
+            countOutOfSync++;
+        }
+        if (utils::brightnessDifference(commDevice.brightness, dataDevice.brightness) > 0.05f) {
+            //qDebug() << "hue brightness not in sync" << commDevice.brightness << "vs" << dataDevice.brightness;
+            QString message = mComm->sendBrightness(list, dataDevice.brightness);
+            appendToPacket(packet, message, controller.maxPacketSize);
             countOutOfSync++;
         }
     } else if (dataDevice.colorMode == EColorMode::eCT

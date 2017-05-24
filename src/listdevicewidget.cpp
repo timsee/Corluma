@@ -12,8 +12,8 @@
 ListDeviceWidget::ListDeviceWidget(const SLightDevice& device,
                                            const QString& name,
                                            const std::vector<QColor>& colors,
-                                           QWidget *parent)  {
-    Q_UNUSED(parent);
+                                           QWidget *parent)    {
+    this->setParent(parent);
     init(device, name);
     updateWidget(device, colors);
 }
@@ -105,15 +105,9 @@ void  ListDeviceWidget::updateWidget(const SLightDevice& device,
 
     if (!device.isReachable) {
         QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mStatusIcon);
-        QString styleSheet = "color: red;";
-        styleSheet += "font: bold 8pt;";
+        mController->setStyleSheet(createStyleSheet(mDevice));
+        mStatusIcon->setStyleSheet(createStyleSheet(mDevice));
 
-//#ifdef MOBILE_BUILD
-//        styleSheet += "font: 14pt;";
-//#else
-//        styleSheet += "font: bold 8pt;";
-//#endif
-        mController->setStyleSheet(styleSheet);
         effect->setOpacity(0.25f);
         mStatusIcon->setGraphicsEffect(effect);
         effect->setOpacity(0.5f);
@@ -206,8 +200,11 @@ QString ListDeviceWidget::createStyleSheet(const SLightDevice& device) {
     QString offStyleSheet = "color: #666; background-color: rgba(0,0,0,0);";
     QString unReachableStyleSheet = " color: red; background-color: rgba(0,0,0,0);";
     QString checkedStyleSheet = "background-color: #3d8ec9;";
+    QString unreachableCheckedStylesheet = "color: red; background-color: #3d8ec9;";
 
-    if (mIsChecked) {
+    if (mIsChecked && !device.isReachable) {
+        styleSheet = unreachableCheckedStylesheet;
+    } else if (mIsChecked) {
        styleSheet = checkedStyleSheet;
     } else if(!device.isReachable) {
        styleSheet = unReachableStyleSheet;

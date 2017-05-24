@@ -23,16 +23,25 @@
  */
 
 
+/*!
+ * \brief The SDeviceController struct stores information about a Controller.
+ *        A controller allows control of one or more light "Devices"
+ */
 struct SDeviceController {
 
+    /// name of controller
     QString name;
 
+    /// maximum number of devices controller can control
     int maxHardwareIndex;
 
+    /// true if using CRC and appending to packets, false otherwise
     bool isUsingCRC;
 
+    /// max number of bytes for a packet.
     uint32_t maxPacketSize;
 
+    /// creates a debug string for Controllers
     QString to_string() {
         QString string = name + "\r\n maxHardwareIndex: " + QString::number(maxHardwareIndex) + " \r\n CRC: " + QString::number(isUsingCRC) + " \r\n maxPacketSize: " + QString::number(maxPacketSize);
         return string;

@@ -15,11 +15,6 @@
 #include <QSlider>
 #include <QToolButton>
 
-namespace Ui {
-class ColorPage;
-}
-
-
 /// different states of the color page.
 enum class EColorPageType {
     eRGB,
@@ -180,10 +175,6 @@ private slots:
     void brightnessUpdate(int brightness) { emit brightnessChanged(brightness); }
 
 private:
-    /*!
-     * \brief ui pointer to Qt UI form.
-     */
-    Ui::ColorPage *ui;
 
     /*!
      * \brief communication pointer to communication object
@@ -280,6 +271,15 @@ private:
 
     /// true if any bottom menu is open, false otherwise.
     bool mBottomMenuIsOpen;
+
+    /// adds space to the top of the widget
+    QWidget *mSpacer;
+
+    /// main feature of widget, this allows the user to select colors for the LEDs
+    ColorPicker *mColorPicker;
+
+    /// layout for widget
+    QVBoxLayout *mLayout;
 };
 
 #endif // SINGLECOLORPAGE_H

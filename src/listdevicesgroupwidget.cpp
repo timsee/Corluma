@@ -14,7 +14,10 @@ ListDevicesGroupWidget::ListDevicesGroupWidget(const QString& name,
                                                int listHeight,
                                                CommLayer *comm,
                                                DataLayer *data,
-                                               bool hideEdit) {
+                                               bool hideEdit,
+                                               QWidget *parent) {
+    this->setParent(parent);
+    this->setMaximumSize(parent->size());
     mCheckedDevices = 0;
     mData = data;
     mComm = comm;
@@ -90,7 +93,7 @@ void ListDevicesGroupWidget::updateDevices(std::list<SLightDevice> devices) {
                     name = inputDevice.name;
                 }
                 if (name.size() > 0) {
-                    ListDeviceWidget *widget = new ListDeviceWidget(inputDevice, name, mData->colorGroup(inputDevice.colorGroup));
+                    ListDeviceWidget *widget = new ListDeviceWidget(inputDevice, name, mData->colorGroup(inputDevice.colorGroup), this);
                     connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
                     insertWidgetIntoGrid(widget);
                 }

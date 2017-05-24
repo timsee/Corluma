@@ -177,11 +177,6 @@ private:
     std::list<SLightDevice> mOriginalDevices;
 
     /*!
-     * \brief mNewDevices new devices that will be used for the group.
-     */
-    std::list<SLightDevice> mNewDevices;
-
-    /*!
      * \brief createCollection creates a collection based off of the state of the UI
      * \return list of devices in the collection
      */

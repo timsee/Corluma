@@ -452,10 +452,11 @@ bool GroupsParser::checkForSavedData() {
         }
     }
     QString savePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/save.json";
+
     QFile saveFile(savePath);
+   // QFile saveFile(":resources/Corluma.json");
 
-
-    if (saveFile.open(QIODevice::ReadWrite)) {
+    if (saveFile.open(QIODevice::ReadOnly)) {
         QString data = saveFile.readAll();
         saveFile.close();
         mJsonData = QJsonDocument::fromJson(data.toUtf8());

@@ -46,7 +46,8 @@ public:
                            int listHeight,
                            CommLayer *comm,
                            DataLayer *data,
-                           bool hideEdit = false);
+                           bool hideEdit = false,
+                           QWidget *parent = 0);
 
 
     /*!

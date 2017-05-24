@@ -519,16 +519,6 @@ QString ColorPicker::getWheelPixmapPath(ELayoutColorPicker layout) {
 void ColorPicker::resize() {
     QPixmap pixmap(getWheelPixmapPath(mCurrentLayoutColorPicker));
 
-    if (mCurrentLayoutColorPicker == ELayoutColorPicker::eStandardLayout) {
-        mRGBSliders->setGeometry(mPlaceholder->geometry());
-    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::eBrightnessLayout) {
-        mBrightnessSlider->setGeometry(mPlaceholder->geometry());
-    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::eAmbientLayout) {
-        mTempBrightSliders->setGeometry(mPlaceholder->geometry());
-    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::eMultiColorLayout) {
-        mColorGrid->setGeometry(mPlaceholder->geometry());
-    }
-
     int wheelSize = this->size().height() * 0.55f;
     if (wheelSize > this->size().width() * 0.85f) {
         wheelSize = this->size().width() * 0.85f;
@@ -538,5 +528,14 @@ void ColorPicker::resize() {
                                         Qt::KeepAspectRatio,
                                         Qt::SmoothTransformation));
 
+    if (mCurrentLayoutColorPicker == ELayoutColorPicker::eStandardLayout) {
+        mRGBSliders->setGeometry(mPlaceholder->geometry());
+    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::eBrightnessLayout) {
+        mBrightnessSlider->setGeometry(mPlaceholder->geometry());
+    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::eAmbientLayout) {
+        mTempBrightSliders->setGeometry(mPlaceholder->geometry());
+    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::eMultiColorLayout) {
+        mColorGrid->setGeometry(mPlaceholder->geometry());
+    }
 }
 

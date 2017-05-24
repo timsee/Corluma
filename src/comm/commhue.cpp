@@ -192,10 +192,16 @@ void CommHue::connectionStatusHasChanged(bool status) {
 //------------------------------------
 
 void CommHue::mainColorChange(int deviceIndex, QColor color){
+    int hue;
+    if (color.hsvHue() == -1) {
+        hue = 1;
+    } else {
+        hue = color.hsvHue();
+    }
     changeColorRGB(deviceIndex,
-                        color.saturation(),
-                        color.value(),
-                        color.hue() * 182);
+                   color.hsvSaturation(),
+                   color.value(),
+                   hue * 182);
 }
 
 void CommHue::arrayColorChange(int deviceIndex, int colorIndex, QColor color) {

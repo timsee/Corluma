@@ -5,7 +5,6 @@
  */
 
 #include "colorpage.h"
-#include "ui_colorpage.h"
 #include "mainwindow.h"
 #include "comm/hueprotocols.h"
 #include "corlumautils.h"
@@ -16,9 +15,7 @@
 #include <QPropertyAnimation>
 
 ColorPage::ColorPage(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::ColorPage) {
-    ui->setupUi(this);
+    QWidget(parent) {
     mBottomMenuState = EBottomMenuShow::eShowStandard;
     mBottomMenuIsOpen = false;
 
@@ -29,11 +26,19 @@ ColorPage::ColorPage(QWidget *parent) :
     mSingleRoutineWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(mSingleRoutineWidget, SIGNAL(newRoutineSelected(int)), this, SLOT(newRoutineSelected(int)));
 
-    connect(ui->colorPicker, SIGNAL(colorUpdate(QColor)), this, SLOT(colorChanged(QColor)));
-    connect(ui->colorPicker, SIGNAL(ambientUpdate(int, int)), this, SLOT(ambientUpdateReceived(int, int)));
-    connect(ui->colorPicker, SIGNAL(multiColorCountUpdate(int)), this, SLOT(customColorCountChanged(int)));
-    connect(ui->colorPicker, SIGNAL(multiColorUpdate(QColor, int)), this, SLOT(multiColorChanged(QColor, int)));
-    connect(ui->colorPicker, SIGNAL(brightnessUpdate(int)), this, SLOT(brightnessUpdate(int)));
+    mSpacer = new QWidget(this);
+
+    mColorPicker = new ColorPicker(this);
+
+    mLayout = new QVBoxLayout(this);
+    mLayout->addWidget(mSpacer, 1);
+    mLayout->addWidget(mColorPicker, 10);
+
+    connect(mColorPicker, SIGNAL(colorUpdate(QColor)), this, SLOT(colorChanged(QColor)));
+    connect(mColorPicker, SIGNAL(ambientUpdate(int, int)), this, SLOT(ambientUpdateReceived(int, int)));
+    connect(mColorPicker, SIGNAL(multiColorCountUpdate(int)), this, SLOT(customColorCountChanged(int)));
+    connect(mColorPicker, SIGNAL(multiColorUpdate(QColor, int)), this, SLOT(multiColorChanged(QColor, int)));
+    connect(mColorPicker, SIGNAL(brightnessUpdate(int)), this, SLOT(brightnessUpdate(int)));
 
     mFloatingHorizontalLayout = new FloatingLayout(false, this);
     connect(mFloatingHorizontalLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
@@ -46,7 +51,6 @@ ColorPage::ColorPage(QWidget *parent) :
 
 
 ColorPage::~ColorPage() {
-    delete ui;
 }
 
 
@@ -66,18 +70,18 @@ void ColorPage::highlightRoutineButton(ELightingRoutine routine) {
 
 void ColorPage::changePageType(EColorPageType page, bool skipAnimation) {
     mPageType = page;
-    ui->colorPicker->updateColorStates(mData->mainColor(),
+    mColorPicker->updateColorStates(mData->mainColor(),
                                        mData->brightness(),
                                        mData->colorGroup(EColorGroup::eCustom),
                                        mData->customColorsUsed());
     if (mPageType == EColorPageType::eRGB) {
-        ui->colorPicker->changeLayout(ELayoutColorPicker::eStandardLayout, skipAnimation);
+        mColorPicker->changeLayout(ELayoutColorPicker::eStandardLayout, skipAnimation);
     } else if (mPageType == EColorPageType::eAmbient) {
-        ui->colorPicker->changeLayout(ELayoutColorPicker::eAmbientLayout, skipAnimation);
+        mColorPicker->changeLayout(ELayoutColorPicker::eAmbientLayout, skipAnimation);
     } else if (mPageType == EColorPageType::eBrightness) {
-        ui->colorPicker->changeLayout(ELayoutColorPicker::eBrightnessLayout, skipAnimation);
+        mColorPicker->changeLayout(ELayoutColorPicker::eBrightnessLayout, skipAnimation);
     } else if (mPageType == EColorPageType::eMulti) {
-        ui->colorPicker->changeLayout(ELayoutColorPicker::eMultiColorLayout, skipAnimation);
+        mColorPicker->changeLayout(ELayoutColorPicker::eMultiColorLayout, skipAnimation);
     } else {
         qDebug() << "INFO: don't recognize this page type.. " << (int)page;
     }
@@ -147,6 +151,10 @@ void ColorPage::colorChanged(QColor color) {
         mData->updateRoutine(ELightingRoutine::eSingleGlimmer);
     }
     mData->updateColor(color);
+    /// this is not always needed but sometimes it is and its a cheap operation if it isn't.
+    /// Some comm streams such as hue combine color and brightness with HSV.
+    /// By updating both, the system is forced to check both.
+    mData->updateBrightness(mData->brightness());
 
     if (mBottomMenuState == EBottomMenuShow::eShowSingleRoutines) {
         mSingleRoutineWidget->singleRoutineColorChanged(color);
@@ -161,7 +169,7 @@ void ColorPage::colorChanged(QColor color) {
 
 void ColorPage::customColorCountChanged(int count) {
     mData->updateCustomColorCount(count);
-    ui->colorPicker->updateColorStates(mData->mainColor(),
+    mColorPicker->updateColorStates(mData->mainColor(),
                                        mData->brightness(),
                                        mData->colorGroup(EColorGroup::eCustom),
                                        mData->customColorsUsed());
@@ -199,7 +207,7 @@ void ColorPage::ambientUpdateReceived(int newAmbientValue, int newBrightness) {
 
 void ColorPage::showEvent(QShowEvent *) {
   mLastColor = mData->mainColor();
-  ui->colorPicker->updateColorStates(mData->mainColor(),
+  mColorPicker->updateColorStates(mData->mainColor(),
                                      mData->brightness(),
                                      mData->colorGroup(EColorGroup::eCustom),
                                      mData->customColorsUsed());

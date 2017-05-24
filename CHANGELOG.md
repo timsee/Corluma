@@ -160,5 +160,10 @@ ___
 * Added directories to source code. 
 * Fixed miscellaneous issues.
 
-
+### **v0.9.98**
+#### The Minor Bug Fixes Update
+* Minor bug fixes. 
+* Removed some barely used .ui files.
+* Split the TopMenu of the MainWindow into its own widget. 
+* More minor bug fixes. 
 

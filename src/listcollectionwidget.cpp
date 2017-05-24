@@ -145,16 +145,9 @@ void ListCollectionWidget::removeWidgetFromGrid(ListCollectionSubWidget* widget)
     // store max index
     int maxIndex =  mWidgets.size() - 1;
 
-
     // if remove at end, easy case, just remove at end
     if (index == maxIndex) {
-        int row = index / 2 + 1;
-        int column = index % 2;
-        QWidget *widgetToDelete = mGridLayout->itemAtPosition(row, column)->widget();
-        // remove from internal data.
         mWidgets.erase(findResult);
-        delete widgetToDelete;
-
     } else {
         // remove first one and delete it
         bool isFirst = true;
@@ -174,10 +167,8 @@ void ListCollectionWidget::removeWidgetFromGrid(ListCollectionSubWidget* widget)
             QLayoutItem *layoutItem = mGridLayout->itemAtPosition(row, column);
             if (isFirst) {
                 isFirst = false;
-                QWidget *widgetToDelete = layoutItem->widget();
                 // remove from internal data.
                 mWidgets.erase(findResult);
-                delete widgetToDelete;
             } else {
                 mGridLayout->removeItem(layoutItem);
             }

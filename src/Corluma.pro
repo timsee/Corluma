@@ -138,7 +138,8 @@ SOURCES += main.cpp \
     colorpage.cpp \
     corlumabutton.cpp \
     corlumaslider.cpp \
-    corlumautils.cpp
+    corlumautils.cpp \
+    topmenu.cpp
 
 HEADERS  +=  comm/commtype.h \
     comm/commserial.h \
@@ -187,15 +188,13 @@ HEADERS  +=  comm/commtype.h \
     grouppage.h \
     corlumabutton.h \
     corlumaslider.h \
-    corlumautils.h
+    corlumautils.h \
+    topmenu.h
 
-FORMS    += mainwindow.ui \
-    settingspage.ui \
+FORMS    += settingspage.ui \
     connectionpage.ui \
-    huepresetpage.ui \
     discoverypage.ui \
     editcollectionpage.ui \
-    colorpage.ui \
     grouppage.ui
 
 #----------

@@ -76,7 +76,7 @@ SettingsPage::SettingsPage(QWidget *parent) :
     ui->closeButton->setFont(font);
 
     ui->settingsScrollArea->widget()->setObjectName("contentWidget");
-    ui->settingsScrollArea->widget()->setStyleSheet("QWidget#contentWidget { background-color: #201F1F; } QLabel { background-color: #201F1F; }");
+    ui->settingsScrollArea->widget()->setStyleSheet("QWidget#contentWidget { background-color: #201F1F; } QLabel { background-color: #201F1F; } CorlumaSlider { background-color: #201F1F; } ");
     QScroller::grabGesture(ui->settingsScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
     ui->settingsScrollArea->horizontalScrollBar()->setEnabled(false);
 }

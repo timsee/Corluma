@@ -243,9 +243,19 @@ void EditGroupPage::saveChanges() {
         qDebug() << "WARNING: attempting to save a group without a valid name";
     }
 
+    //--------------------------------
+    // Create a list of devices
+    //--------------------------------
+    std::list<SLightDevice> newDevices;
+    if (mIsMood) {
+        newDevices = createMood();
+    } else {
+        newDevices = createCollection();
+    }
+
     bool devicesAreValid = true;
-    if (mNewDevices.size() > 0) {
-        for (auto& device : mNewDevices) {
+    if (newDevices.size() > 0) {
+        for (auto& device : newDevices) {
             if (device.name.compare("") == 0
                     || device.index == 0) {
                 devicesAreValid = false;
@@ -258,7 +268,7 @@ void EditGroupPage::saveChanges() {
     if (!nameIsValid || !devicesAreValid) {
         qDebug() << "Not saving this group: " << mNewName;
         qDebug() << "---------------------";
-        for (auto& device : mNewDevices) {
+        for (auto& device : newDevices) {
             device.PRINT_DEBUG();
         }
         qDebug() << "---------------------";
@@ -277,10 +287,10 @@ void EditGroupPage::saveChanges() {
     //---------------------------------
     if (mIsMood) {
         mGroups->removeGroup(mOriginalName);
-        mGroups->saveNewMood(mNewName, createCollection());
+        mGroups->saveNewMood(mNewName, newDevices);
     } else {
         mGroups->removeGroup(mOriginalName);
-        mGroups->saveNewCollection(mNewName, createCollection());
+        mGroups->saveNewCollection(mNewName, newDevices);
     }
 }
 
@@ -304,7 +314,6 @@ std::list<SLightDevice> EditGroupPage::createMood() {
 
 bool EditGroupPage::checkForChanges() {
     if (!(mNewName.compare(mOriginalName) == 0)) {
-        qDebug() << "names dont match";
         return true;
     }
 

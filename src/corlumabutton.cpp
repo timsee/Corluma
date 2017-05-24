@@ -17,6 +17,7 @@ CorlumaButton::CorlumaButton(QWidget *parent) : QPushButton(parent) {
 
     button = new QPushButton(this);
     button->setCheckable(true);
+    button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(button, SIGNAL(clicked(bool)), this, SLOT(handleButton()));
 }
 
@@ -38,7 +39,6 @@ void CorlumaButton::setupAsMenuButton(int pageNumber, const std::vector<QColor>&
     mLayout->setSpacing(0);
     mLayout->setContentsMargins(0,0,0,0);
     mLayout->addWidget(button);
-    button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setLayout(mLayout);
     resizeIcon();
 }
@@ -82,7 +82,7 @@ void CorlumaButton::setupAsStandardButton(ELightingRoutine routine, EColorGroup 
         button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     }
     button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mLayout->setStretch(0, 50);
+    mLayout->setStretch(0, 5);
     mLayout->setStretch(1, 1);
     setLayout(mLayout);
     resizeIcon();

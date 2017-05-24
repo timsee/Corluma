@@ -44,7 +44,7 @@ public:
     explicit SettingsPage(QWidget *parent = 0);
 
     /*!
-     * \brief Deconstructor
+     * \brief Destructor
      */
     ~SettingsPage();
 

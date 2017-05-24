@@ -16,21 +16,11 @@
 #include "editgrouppage.h"
 #include "greyoutoverlay.h"
 #include "settingspage.h"
-
-
-namespace Ui {
-class MainWindow;
-}
-
-/*!
- * \brief The EPage enum The main pages of the application, as they are ordered
- *        in their QStackedWidget.
- */
-enum class EPage {
-    eColorPage,
-    eGroupPage,
-    eConnectionPage
-};
+#include "topmenu.h"
+#include "colorpage.h"
+#include "grouppage.h"
+#include "connectionpage.h"
+#include <QStackedWidget>
 
 /*!
  * \copyright
@@ -61,62 +51,12 @@ public:
     ~MainWindow();
 
 public slots:
-    /*!
-     * \brief toggleOnOff Connected to the button in the top left of the GUI at all times.
-     *        Toggles between running the current routine at current settings, and off.
-     */
-    void toggleOnOff();
 
     /*!
      * \brief brightnessChanged Connected to the the slider at the top, this takeas a value between 0-100
      *        and sends that value to the lights to control how bright they are.
      */
     void brightnessChanged(int);
-
-    /*!
-     * \brief pageChanged Connected to the main menu buttons. Each button sends a different int,
-     *        which opens a different page on the QStackedWidget.
-     */
-    void pageChanged(int);
-
-    /*!
-     * \brief connectionButtonPressed called whenever the connection button is pressed.
-     */
-    void connectionButtonPressed();
-
-    /*!
-     * \brief settingsPressed called whenever the settings button is pressed.
-     */
-    void settingsButtonPressed();
-
-    /*!
-     * \brief updateMenuBar used to update the menu bar to app state changes.
-     */
-    void updateMenuBar();
-
-    /*!
-     * \brief updateSingleColor updates the icon for the single color page and the menu bar and on/off button
-     *         based off of the color emitted.
-     */
-    void updateSingleColor(QColor);
-
-    /*!
-     * \brief updatePresetColorGroup updates the icon for the preset color page and the menu bar and on/off button
-     *        based off of the two integers provided. The first integer should be cast to a ELightingRoutine and the
-     *        second should be cast to a EColorGroup.
-     */
-    void updatePresetColorGroup(int, int);
-
-    /*!
-     * \brief deviceCountChangedOnConnectionPage handles the case when the device count changes.
-     */
-    void deviceCountChangedOnConnectionPage();
-
-    /*!
-     * \brief deviceCountChangedOnConnectionPage handles the case when the device count reaches zero. This gets signaled
-     *        from the data layer whereas deviceCOuntChangedOnConnectionPage gets signaled from the connection page.
-     */
-    void deviceCountReachedZero();
 
     /*!
      * \brief switchToDiscovery discovery button pressed so the discovery page should be displayed.
@@ -157,27 +97,22 @@ public slots:
     void settingsClosePressed();
 
     /*!
-     * \brief resizeMenuIcon resizes the icon for either the settings button or the connections button
-     * \param button pointer to button to resize
-     * \param iconPath path to icon, if it needs to be loaded again.
-     */
-    void resizeMenuIcon(QPushButton *button, QString iconPath);
-
-    /*!
      * \brief closeDiscoveryWithoutTransition force close discovery page as quickly as possible. SKips
      *        the standard transition.
      */
     void closeDiscoveryWithoutTransition();
 
-protected:
     /*!
-     * \brief paintEvent called whenever there is a paint update. This is used
-     *        to draw the dark grey background, since using the stylesheet
-     *        for backgrounds makes some lesser features of GUI elements break.
-     *
-     * \param event event triggered that requires a repaint
+     * \brief topMenuButtonPressed button is pressed from top menu. Gives back the key of the button.
      */
-    void paintEvent(QPaintEvent *event);
+    void topMenuButtonPressed(QString);
+
+    /*!
+     * \brief checkForHues checks for the types of hues connected and updates the UI accordingly.
+     */
+    void checkForHues();
+
+protected:
 
     /*!
      * \brief resizeEvent called whenever the window resizes. This is used to override
@@ -193,21 +128,37 @@ protected:
     void changeEvent(QEvent *event);
 
 private:
-    /*!
-     * \brief ui pointer to Qt UI form.
-     */
-    Ui::MainWindow *ui;
 
     /*!
-     * \brief checkForHues checks for the types of hues connected and updates the UI accordingly.
+     * \brief mStackedWidget widget that contains all the main pages of the application
      */
-    void checkForHues();
+    QStackedWidget *mStackedWidget;
+
+    /// page for choosing colors of the LEDs
+    ColorPage *mColorPage;
+
+    /// page for choosing group of colors for the LEDs
+    GroupPage *mGroupPage;
+
+    /// page for choosing which LEDs to control
+    ConnectionPage *mConnectionPage;
+
+    /// adds space to top of window
+    QWidget *mSpacer;
+
+    /// central widget for window
+    QWidget *mMainWidget;
+
+    /// layout for main window, applied to mMainWidget.
+    QVBoxLayout *mLayout;
+
+    /// top menu, contains buttons to different widget pages and global controls.
+    TopMenu *mTopMenu;
 
     /*!
-     * \brief updateBrightnessSlider update the brightness slider at the top of the mnu based on the current
-     *        light data.
+     * \brief pageChanged change the QStackedWidget to the page specified
      */
-    void updateBrightnessSlider();
+    void pageChanged(EPage page);
 
     /*!
      * \brief mEditPage overlay that allows editing and creating collections and moods.
@@ -253,14 +204,9 @@ private:
     DataSync *mDataSync;
 
     /*!
-     * \brief mIconData used to generate the icons in the menu bar.
-     */
-    IconData mIconData;
-
-    /*!
      * \brief mPageIndex index of current page.
      */
-    int mPageIndex;
+    EPage mPageIndex;
 
     /*!
      * \brief mShouldGreyOutIcons cahced satte of whether any device is selected. If none

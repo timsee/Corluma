@@ -251,6 +251,11 @@ private slots:
 private:
 
     /*!
+     * \brief resize checks the geometry and resizes UI assets accordingly.
+     */
+    void resize();
+
+    /*!
      * \brief mPlaceholder placeholder for the bottom layouts. These, such as the RGBSliders or the ColorGrid get placed over
      *        this mPlaceholder widget.
      */
@@ -363,11 +368,6 @@ private:
      * \return the proper path to the resource that should be used for the color wheel
      */
     QString getWheelPixmapPath(ELayoutColorPicker layout);
-
-    /*!
-     * \brief resize checks the geometry and resizes UI assets accordingly.
-     */
-    void resize();
 
     //------------------------------
     // Miscellaneous
