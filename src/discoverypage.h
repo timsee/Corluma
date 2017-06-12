@@ -138,6 +138,7 @@ protected:
 
 private:
 
+    /// moves floating layouts to top right position of screen.
     void moveFloatingLayouts();
 
     /// floating layout for commtype button

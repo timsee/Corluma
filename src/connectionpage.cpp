@@ -6,7 +6,6 @@
 
 
 #include "connectionpage.h"
-#include "ui_connectionpage.h"
 
 #include "listmoodwidget.h"
 #include "listdevicesgroupwidget.h"
@@ -19,71 +18,41 @@
 #include <QScroller>
 
 ConnectionPage::ConnectionPage(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::ConnectionPage) {
-    ui->setupUi(this);
+    QWidget(parent) {
 
-    QString listWidgetStylesheetOverride = "QListView::item { border: 0px; padding-left: 0px; }  QListView::icon { padding-left: 0px;  }  QListView::text { padding-left: 0px; }";
-
-    mDevicesListWidget = new QListWidget(this);
-    mDevicesListWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    mDevicesListWidget->setSelectionMode(QAbstractItemView::NoSelection);
-    mDevicesListWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    mDevicesListWidget = new CorlumaListWidget(this);
     mDevicesListWidget->setContentsMargins(0,0,0,0);
-    mDevicesListWidget->setSpacing(0);
-    mDevicesListWidget->setFocusPolicy(Qt::NoFocus);
-    mDevicesListWidget->setStyleSheet(listWidgetStylesheetOverride);
+    mDevicesListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QScroller::grabGesture(mDevicesListWidget->viewport(), QScroller::LeftMouseButtonGesture);
 
-
-    mMoodsListWidget = new QListWidget(this);
-    mMoodsListWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    mMoodsListWidget->setSelectionMode(QAbstractItemView::NoSelection);
-    mMoodsListWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-    mMoodsListWidget->setContentsMargins(0,0,0,0);
-    mMoodsListWidget->setSpacing(0);
-    mMoodsListWidget->setFocusPolicy(Qt::NoFocus);
-    mMoodsListWidget->setStyleSheet(listWidgetStylesheetOverride);
-    QScroller::grabGesture(mMoodsListWidget->viewport(), QScroller::LeftMouseButtonGesture);
-
     mSettings = new QSettings();
-
-    mCurrentConnectionList = EConnectionList::eSingleDevices;
-
-    ui->devicesButton->setCheckable(true);
-    ui->moodsButton->setCheckable(true);
-    connect(ui->devicesButton, SIGNAL(clicked(bool)), this, SLOT(devicesButtonClicked(bool)));
-    connect(ui->moodsButton, SIGNAL(clicked(bool)), this, SLOT(moodsButtonClicked(bool)));
-    connect(ui->newGroupButton, SIGNAL(clicked(bool)), this, SLOT(newGroupButtonClicked(bool)));
 
     mRenderThread = new QTimer(this);
     connect(mRenderThread, SIGNAL(timeout()), this, SLOT(renderUI()));
 
-    ui->devicesButton->setChecked(true);
-
     mLastUpdateConnectionList = QTime::currentTime();
 
-    connect(ui->discoveryButton, SIGNAL(clicked(bool)), this, SLOT(discoveryButtonPressed()));
+    mFloatingLayout = new FloatingLayout(false, this);
+    connect(mFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
+    std::vector<QString> buttons = { QString("Discovery"), QString("New_Collection")};
+    mFloatingLayout->setupButtons(buttons);
+
+    mSpacer = new QWidget(this);
+
+    mLayout = new QVBoxLayout(this);
+    mLayout->addWidget(mSpacer, 1);
+    mLayout->addWidget(mDevicesListWidget, 10);
 
     mRenderInterval = 1000;
 }
 
 ConnectionPage::~ConnectionPage() {
-    delete ui;
+
 }
 
 
 void ConnectionPage::setupUI() {
     connect(mComm, SIGNAL(updateReceived(int)), this, SLOT(receivedCommUpdate(int)));
-    devicesButtonClicked(true);
-}
-
-void ConnectionPage::reloadConnectionList() {
-    if (mCurrentConnectionList == EConnectionList::eMoods) {
-        moodsButtonClicked(true);
-    } else if (mCurrentConnectionList == EConnectionList::eSingleDevices) {
-        devicesButtonClicked(true);
-    }
 }
 
 void ConnectionPage::connectGroupsParser(GroupsParser *parser) {
@@ -91,7 +60,6 @@ void ConnectionPage::connectGroupsParser(GroupsParser *parser) {
     connect(mGroups, SIGNAL(newConnectionFound(QString)), this, SLOT(newConnectionFound(QString)));
     connect(mGroups, SIGNAL(groupDeleted(QString)), this, SLOT(groupDeleted(QString)));
     connect(mGroups, SIGNAL(newCollectionAdded(QString)), this, SLOT(newCollectionAdded(QString)));
-    connect(mGroups, SIGNAL(newMoodAdded(QString)), this, SLOT(newMoodAdded(QString)));
 }
 
 // ----------------------------
@@ -102,33 +70,10 @@ void ConnectionPage::connectGroupsParser(GroupsParser *parser) {
 void ConnectionPage::updateConnectionList() {
     std::list<SLightDevice> allDevices = mComm->allDevices();
 
-    std::list<std::pair<QString, std::list<SLightDevice> > > moodList = mGroups->moodList();
-    gatherAvailandAndNotReachableMoods(allDevices, moodList);
-    makeMoodsCollections(moodList);
-    mMoodsListWidget->sortItems();
-
     gatherAvailandAndNotReachableDevices(allDevices);
     makeDevicesCollections(allDevices);
-    mDevicesListWidget->sortItems();
-
-
-    resizeConnectionList();
-    highlightList(); //TODO: remove when theres a more efficient way...
 }
 
-void ConnectionPage::hideUnusedWidgets(bool showMoodWidgets) {
-    if (showMoodWidgets) {
-        mDevicesListWidget->setVisible(false);
-         ((QHBoxLayout*)this->layout())->removeItem(this->layout()->itemAt(1));
-         ((QHBoxLayout*)this->layout())->addWidget(mMoodsListWidget, 40);
-         mMoodsListWidget->setVisible(true);
-    } else {
-        mMoodsListWidget->setVisible(false);
-        ((QHBoxLayout*)this->layout())->removeItem(this->layout()->itemAt(1));
-        ((QHBoxLayout*)this->layout())->addWidget(mDevicesListWidget, 40);
-        mDevicesListWidget->setVisible(true);
-    }
-}
 
 // ------------------------------------
 // Devices Connection List
@@ -138,17 +83,15 @@ void ConnectionPage::hideUnusedWidgets(bool showMoodWidgets) {
 ListDevicesGroupWidget* ConnectionPage::initDevicesCollectionWidget(const QString& name,
                                                                     std::list<SLightDevice> devices,
                                                                     const QString& key,
-                                                                    int height,
                                                                     bool hideEdit) {
 
     ListDevicesGroupWidget *widget = new ListDevicesGroupWidget(name,
                                                                 devices,
                                                                 key,
-                                                                height,
                                                                 mComm,
                                                                 mData,
                                                                 hideEdit,
-                                                                this);
+                                                                mDevicesListWidget);
     QScroller::grabGesture(widget, QScroller::LeftMouseButtonGesture);
     connect(widget, SIGNAL(deviceClicked(QString,QString)), this, SLOT(deviceClicked(QString, QString)));
     connect(widget, SIGNAL(clearAllClicked(QString)), this, SLOT(clearGroupClicked(QString)));
@@ -157,78 +100,19 @@ ListDevicesGroupWidget* ConnectionPage::initDevicesCollectionWidget(const QStrin
     connect(widget, SIGNAL(buttonsShown(QString, bool)), this, SLOT(shouldShowButtons(QString, bool)));
 
     widget->setShowButtons(mSettings->value(keyForCollection(widget->key())).toBool());
+    ListCollectionWidget *collectionWidget = qobject_cast<ListCollectionWidget*>(widget);
 
-    int index = mDevicesListWidget->count();
-    mDevicesListWidget->addItem(widget->key());
-    mDevicesListWidget->setItemWidget(mDevicesListWidget->item(index), widget);
-    mDevicesListWidget->setStyleSheet("QListView::item { border: 0px; padding-left: 0px; }  QListView::icon { padding-left: 0px;  }  QListView::text { padding-left: 0px; }");
-
+    mDevicesListWidget->addWidget(collectionWidget);
     return widget;
-}
-
-void ConnectionPage::makeMoodsCollections(const std::list<std::pair<QString, std::list<SLightDevice> > >& moods) {
-    std::list<std::pair<QString, std::list<SLightDevice> > > collectionList = mGroups->collectionList();
-    for (auto&& collection : collectionList) {
-        bool collectionFound = false;
-        int index = -1;
-        for (int i = 0; i < mMoodsListWidget->count(); ++i) {
-            QListWidgetItem *item = mMoodsListWidget->item(i);
-            if (item->text().compare(collection.first) == 0) {
-                collectionFound = true;
-                index = i;
-                ListMoodGroupWidget *moodWidget = qobject_cast<ListMoodGroupWidget*>(mMoodsListWidget->itemWidget(mMoodsListWidget->item(index)));
-                Q_ASSERT(moodWidget);
-               // moodWidget->updateMoods(moods, mData->colors());
-            }
-        }
-
-        if (!collectionFound) {
-            std::list<std::pair<QString, std::list<SLightDevice> > > allCollectionMoods;
-            for (auto&& mood : moods) {
-                int devicesToTest = mood.second.size();
-                int devicesFound = 0;
-                for (auto&& moodDevice : mood.second) {
-                    for (auto&& deviceData : collection.second) {
-                        if (compareLightDevice(moodDevice, deviceData)) {
-                            devicesFound++;
-                        }
-                    }
-                }
-                if (devicesFound == devicesToTest) {
-                    allCollectionMoods.push_back(mood);
-                }
-            }
-            if (allCollectionMoods.size() > 0) {
-                initMoodsCollectionWidget(collection.first, allCollectionMoods, collection.first, mMoodsListWidget->height());
-            }
-        }
-    }
-
-    // now check for missing ones. Reiterate through widgets and remove any that can't be found in collection list
-    for (int i = 0; i < mMoodsListWidget->count(); ++i) {
-        QListWidgetItem *item = mMoodsListWidget->item(i);
-        if (!(item->text().compare("zzzAVAILABLE_MOODS") == 0
-                || item->text().compare("zzzUNAVAILABLE_MOODS") == 0)) {
-            bool collectionFound = false;
-            for (auto&& collection : collectionList) {
-                if (item->text().compare(collection.first) == 0) {
-                    collectionFound = true;
-                }
-            }
-            if (!collectionFound) {
-                mMoodsListWidget->takeItem(i);
-            }
-        }
-    }
 }
 
 void ConnectionPage::makeDevicesCollections(const std::list<SLightDevice>& allDevices) {
     std::list<std::pair<QString, std::list<SLightDevice> > > collectionList = mGroups->collectionList();
     for (auto&& collection : collectionList) {
         bool collectionFound = false;
-        for (int i = 0; i < mDevicesListWidget->count(); ++i) {
-            QListWidgetItem *item = mDevicesListWidget->item(i);
-            if (item->text().compare(collection.first) == 0) {
+        for (uint32_t i = 0; i < mDevicesListWidget->count(); ++i) {
+            ListCollectionWidget *item = mDevicesListWidget->widget(i);
+            if (item->key().compare(collection.first) == 0) {
                 collectionFound = true;
 
                 std::list<SLightDevice> filledList;
@@ -240,9 +124,10 @@ void ConnectionPage::makeDevicesCollections(const std::list<SLightDevice>& allDe
                     }
                 }
 
-                ListDevicesGroupWidget *widget = qobject_cast<ListDevicesGroupWidget*>(mDevicesListWidget->itemWidget(item));
-                Q_ASSERT(widget);
-                widget->updateDevices(filledList);
+                ListDevicesGroupWidget *widget = qobject_cast<ListDevicesGroupWidget*>(item);
+                if (widget) {
+                    widget->updateDevices(filledList);
+                }
             }
         }
         if (!collectionFound) {
@@ -251,21 +136,21 @@ void ConnectionPage::makeDevicesCollections(const std::list<SLightDevice>& allDe
     }
 
     // now check for missing ones. Reiterate through widgets and remove any that can't be found in collection list
-    for (int i = 0; i < mDevicesListWidget->count(); ++i) {
-        QListWidgetItem *item = mDevicesListWidget->item(i);
-        if (!(item->text().compare("zzzAVAILABLE_DEVICES") == 0
-                || item->text().compare("zzzUNAVAILABLE_DEVICES") == 0)) {
-            bool collectionFound = false;
-            for (auto&& collection : collectionList) {
-                if (item->text().compare(collection.first) == 0) {
-                    collectionFound = true;
-                }
-            }
-            if (!collectionFound) {
-                mDevicesListWidget->takeItem(i);
-            }
-        }
-    }
+//    for (uint32_t i = 0; i < mDevicesListWidget->count(); ++i) {
+//        ListCollectionWidget *item = mDevicesListWidget->widget(i);
+//        if (!(item->key().compare("zzzAVAILABLE_DEVICES") == 0
+//                || item->key().compare("zzzUNAVAILABLE_DEVICES") == 0)) {
+//            bool collectionFound = false;
+//            for (auto&& collection : collectionList) {
+//                if (item->key().compare(collection.first) == 0) {
+//                    collectionFound = true;
+//                }
+//            }
+//            if (!collectionFound) {
+//                mMoodsListWidget->removeWidget(item->key());
+//            }
+//        }
+//    }
 }
 
 void ConnectionPage::gatherAvailandAndNotReachableDevices(const std::list<SLightDevice>& allDevices) {
@@ -293,137 +178,30 @@ void ConnectionPage::gatherAvailandAndNotReachableDevices(const std::list<SLight
 
     bool foundAvailable = false;
     bool foundUnavailable = false;
-    for (int i = 0; i < mDevicesListWidget->count(); ++i) {
-        QListWidgetItem *item = mDevicesListWidget->item(i);
-        if (item->text().compare(kAvailableDevicesKey) == 0) {
+    for (uint32_t i = 0; i < mDevicesListWidget->count(); ++i) {
+        ListCollectionWidget *item = mDevicesListWidget->widget(i);
+        if (item->key().compare(kAvailableDevicesKey) == 0) {
             foundAvailable = true;
-            ListDevicesGroupWidget *widget = qobject_cast<ListDevicesGroupWidget*>(mDevicesListWidget->itemWidget(item));
+            ListDevicesGroupWidget *widget = qobject_cast<ListDevicesGroupWidget*>(item);
             Q_ASSERT(widget);
             widget->updateDevices(availableDevices);
         }
-        if (item->text().compare(kUnavailableDevicesKey) == 0) {
+        if (item->key().compare(kUnavailableDevicesKey) == 0) {
             foundUnavailable = true;
-            ListDevicesGroupWidget *widget = qobject_cast<ListDevicesGroupWidget*>(mDevicesListWidget->itemWidget(item));
+            ListDevicesGroupWidget *widget = qobject_cast<ListDevicesGroupWidget*>(item);
             Q_ASSERT(widget);
             widget->updateDevices(unavailableDevices);
         }
     }
 
     if (!foundAvailable) {
-        initDevicesCollectionWidget("Available", availableDevices, kAvailableDevicesKey, mDevicesListWidget->height(), true);
+        initDevicesCollectionWidget("Available", availableDevices, kAvailableDevicesKey, true);
     }
 
     if (!foundUnavailable) {
-        initDevicesCollectionWidget("Not Reachable", unavailableDevices, kUnavailableDevicesKey, mDevicesListWidget->height(), true);
+        initDevicesCollectionWidget("Not Reachable", unavailableDevices, kUnavailableDevicesKey, true);
     }
 }
-
-
-// ------------------------------------
-// Moods Connection List
-// ------------------------------------
-
-ListMoodGroupWidget* ConnectionPage::initMoodsCollectionWidget(const QString& name,
-                                                                std::list<std::pair<QString, std::list<SLightDevice> > > moods,
-                                                                const QString& key,
-                                                                int height,
-                                                                bool hideEdit) {
-    ListMoodGroupWidget *widget = new ListMoodGroupWidget(name,
-                                                            moods,
-                                                            mData->colors(),
-                                                            key,
-                                                            height,
-                                                            hideEdit);
-    connect(widget, SIGNAL(moodClicked(QString,QString)), this, SLOT(moodClicked(QString, QString)));
-    connect(widget, SIGNAL(editClicked(QString)), this, SLOT(editGroupClicked(QString)));
-    connect(widget, SIGNAL(editClicked(QString, QString)), this, SLOT(editMoodClicked(QString, QString)));
-    connect(widget, SIGNAL(buttonsShown(QString, bool)), this, SLOT(shouldShowButtons(QString, bool)));
-
-
-    widget->setShowButtons(mSettings->value(keyForCollection(widget->key())).toBool());
-
-    int index = mMoodsListWidget->count();
-    mMoodsListWidget->addItem(widget->key());
-    mMoodsListWidget->setItemWidget(mMoodsListWidget->item(index), widget);
-    return widget;
-}
-
-void ConnectionPage::gatherAvailandAndNotReachableMoods(const std::list<SLightDevice>& allDevices,
-                                                        const std::list<std::pair<QString, std::list<SLightDevice> > >& moodList) {
-
-    std::list<std::pair<QString, std::list<SLightDevice> > > availableMoods;
-    std::list<std::pair<QString, std::list<SLightDevice> > > unavailableMoods;
-    QString kAvailableMoodsKey = "zzzAVAILABLE_MOODS";
-    QString kUnavailableMoodsKey = "zzzUNAVAILABLE_MOODS";
-
-    for (auto&& mood : moodList) {
-        int devicesToTest = mood.second.size();
-        int devicesReachable = 0;
-        for (auto&& moodDevice : mood.second) {
-            for (auto&& deviceData : allDevices) {
-                if (compareLightDevice(moodDevice, deviceData)
-                        && deviceData.isReachable) {
-                    devicesReachable++;
-                }
-            }
-        }
-        if (devicesToTest == devicesReachable) {
-            availableMoods.push_back(mood);
-        } else {
-            unavailableMoods.push_back(mood);
-        }
-    }
-
-    // ------------------------------------
-    // add available and not reachable collections
-    // ------------------------------------
-
-    bool foundAvailable = false;
-    bool foundUnavailable = false;
-    for (int i = 0; i < mMoodsListWidget->count(); ++i) {
-        QListWidgetItem *item = mMoodsListWidget->item(i);
-        if (item->text().compare(kAvailableMoodsKey) == 0) {
-            foundAvailable = true;
-        }
-        if (item->text().compare(kUnavailableMoodsKey) == 0) {
-            foundUnavailable = true;
-        }
-    }
-
-
-    if (!foundAvailable) {
-        initMoodsCollectionWidget("Available", availableMoods, kAvailableMoodsKey, mMoodsListWidget->height(), true);
-    }
-
-    if (!foundUnavailable) {
-        initMoodsCollectionWidget("Not Reachable", unavailableMoods, kUnavailableMoodsKey, mMoodsListWidget->height(), true);
-    }
-}
-
-
-// ------------------------------------
-// ui->connectionList Slots
-// ------------------------------------
-
-
-void ConnectionPage::moodClicked(QString collectionKey, QString moodKey) {
-    Q_UNUSED(collectionKey);
-//    qDebug() << "collection key:" << collectionKey
-//             << "device key:" << deviceKey;
-
-    for (auto&& group :  mGroups->moodList()) {
-        if (group.first.compare(moodKey) == 0) {
-            mData->clearDevices();
-            mData->addDeviceList(group.second);
-        }
-    }
-
-    // update UI
-    emit updateMainIcons();
-    emit deviceCountChanged();
-    highlightList();
-}
-
 
 void ConnectionPage::deviceClicked(QString collectionKey, QString deviceKey) {
     Q_UNUSED(collectionKey);
@@ -453,15 +231,15 @@ void ConnectionPage::deviceClicked(QString collectionKey, QString deviceKey) {
 void ConnectionPage::shouldShowButtons(QString key, bool isShowing) {
     mSettings->setValue(keyForCollection(key), QString::number((int)isShowing));
     mSettings->sync();
-    resizeConnectionList();
+    mDevicesListWidget->resizeWidgets();
 }
 
 
 void ConnectionPage::clearGroupClicked(QString key) {
-    for(int row = 0; row < mDevicesListWidget->count(); row++) {
-        QListWidgetItem *item = mDevicesListWidget->item(row);
-        if (item->text().compare(key) == 0) {
-            ListDevicesGroupWidget *widget = qobject_cast<ListDevicesGroupWidget*>(mDevicesListWidget->itemWidget(item));
+    for (uint32_t row = 0; row < mDevicesListWidget->count(); row++) {
+        ListCollectionWidget *item = mDevicesListWidget->widget(row);
+        if (item->key().compare(key) == 0) {
+            ListDevicesGroupWidget *widget = qobject_cast<ListDevicesGroupWidget*>(item);
             Q_ASSERT(widget);
             mData->removeDeviceList(widget->devices());
         }
@@ -474,10 +252,10 @@ void ConnectionPage::clearGroupClicked(QString key) {
 
 
 void ConnectionPage::selectGroupClicked(QString key) {
-    for(int row = 0; row < mDevicesListWidget->count(); row++) {
-        QListWidgetItem *item = mDevicesListWidget->item(row);
-        if (item->text().compare(key) == 0) {
-            ListDevicesGroupWidget *widget = qobject_cast<ListDevicesGroupWidget*>(mDevicesListWidget->itemWidget(item));
+    for(uint32_t row = 0; row < mDevicesListWidget->count(); row++) {
+        ListCollectionWidget *item = mDevicesListWidget->widget(row);
+        if (item->key().compare(key) == 0) {
+            ListDevicesGroupWidget *widget = qobject_cast<ListDevicesGroupWidget*>(item);
             Q_ASSERT(widget);
             mData->addDeviceList(widget->devices());
         }
@@ -490,30 +268,9 @@ void ConnectionPage::selectGroupClicked(QString key) {
 
 
 void ConnectionPage::editGroupClicked(QString key) {
-//    mGreyOut->setVisible(true);
-//    mEditPage->setVisible(true);
     emit clickedEditButton(key, false);
 }
 
-
-void ConnectionPage::newGroupButtonClicked(bool) {
-    if (mCurrentConnectionList == EConnectionList::eMoods) {
-        emit clickedEditButton("", true);
-    } else if (mCurrentConnectionList == EConnectionList::eSingleDevices) {
-        emit clickedEditButton("", false);
-    }
-}
-
-void ConnectionPage::editMoodClicked(QString collectionKey, QString moodKey) {
-    Q_UNUSED(collectionKey);
-    for (auto&& group :  mGroups->moodList()) {
-        if (group.first.compare(moodKey) == 0) {
-            mData->clearDevices();
-            mData->addDeviceList(group.second);
-        }
-    }
-    emit clickedEditButton(moodKey, true);
-}
 
 // ------------------------------------
 // GroupsParser Slots
@@ -555,43 +312,21 @@ void ConnectionPage::newConnectionFound(QString newController) {
 
 void ConnectionPage::groupDeleted(QString group) {
     qDebug() << "group deleted" << group;
-    for (int i = 0; i < mCurrentListWidget->count(); ++i) {
-        QListWidgetItem *item = mCurrentListWidget->item(i);
-        ListCollectionWidget *widget = qobject_cast<ListCollectionWidget*>(mCurrentListWidget->itemWidget(item));
+    for (uint32_t i = 0; i < mDevicesListWidget->count(); ++i) {
+        ListCollectionWidget *widget = mDevicesListWidget->widget(i);
         Q_ASSERT(widget);
-        if (widget->isMoodWidget()) {
-            ListMoodGroupWidget *moodWidget = qobject_cast<ListMoodGroupWidget*>(mCurrentListWidget->itemWidget(item));
-            for (auto&& widgetMood : moodWidget->moods()) {
-                qDebug() << "MOOD check" << widgetMood.first;
-                if (widgetMood.first.compare(group) == 0) {
-                    qDebug() << "REMOVE THIS GROUPPPP passed" << widgetMood.first;
-                    moodWidget->removeMood(widgetMood.first);
-                }
-            }
-            if (moodWidget->key().compare(group) == 0) {
-                qDebug() << "REMOVE THIS COLLECTION FOR MOODS passed TODO" << group;
-                //devicesWidget->removeMood(group);
-            }
-        } else {
-            ListDevicesGroupWidget *devicesWidget = qobject_cast<ListDevicesGroupWidget*>(mCurrentListWidget->itemWidget(item));
-            if (devicesWidget->key().compare(group) == 0) {
-                qDebug() << "REMOVE THIS COLLECTION FOR DEVICES passed TODO" << group;
-                //devicesWidget->removeMood(group);
-            }
+        ListDevicesGroupWidget *devicesWidget = qobject_cast<ListDevicesGroupWidget*>(widget);
+        if (devicesWidget->key().compare(group) == 0) {
+           // qDebug() << "REMOVE THIS COLLECTION FOR DEVICES passed TODO" << group;
+            //devicesWidget->removeMood(group);
         }
     }
-
 }
 
 void ConnectionPage::newCollectionAdded(QString collection) {
     qDebug() << "collection added" << collection;
 }
 
-void ConnectionPage::newMoodAdded(QString mood) {
-    qDebug() << "mood added" << mood;
-
-
-}
 
 // ------------------------------------
 // ConnectionPage Slots
@@ -604,41 +339,6 @@ void ConnectionPage::lightStateChanged(int type, QString name) {
     updateConnectionList();
 }
 
-
-void ConnectionPage::devicesButtonClicked(bool) {
-
-    mCurrentConnectionList = EConnectionList::eSingleDevices;
-    mCurrentListWidget = mDevicesListWidget;
-
-    ui->devicesButton->setChecked(true);
-    ui->moodsButton->setChecked(false);
-
-    hideUnusedWidgets(false);
-    highlightList();
-    updateConnectionList();
-    openDefaultCollections();
-    updateConnectionListHeight();
-}
-
-void ConnectionPage::moodsButtonClicked(bool) {
-    mCurrentConnectionList = EConnectionList::eMoods;
-    mCurrentListWidget = mMoodsListWidget;
-
-    hideUnusedWidgets(true);
-    highlightList();
-    updateConnectionList();
-    resizeConnectionList();
-    updateConnectionListHeight();
-    openDefaultCollections();
-
-    ui->devicesButton->setChecked(false);
-    ui->moodsButton->setChecked(true);
-}
-
-void ConnectionPage::discoveryButtonPressed() {
-    emit discoveryClicked();
-}
-
 void ConnectionPage::clearButtonPressed() {
     mData->clearDevices();
     emit deviceCountChanged();
@@ -646,11 +346,9 @@ void ConnectionPage::clearButtonPressed() {
 }
 
 void ConnectionPage::receivedCommUpdate(int) {
-    if (mCurrentConnectionList == EConnectionList::eSingleDevices) {
-        if (mLastUpdateConnectionList.elapsed() > 250) {
-            mLastUpdateConnectionList = QTime::currentTime();
-            updateConnectionList();
-        }
+    if (mLastUpdateConnectionList.elapsed() > 250) {
+        mLastUpdateConnectionList = QTime::currentTime();
+        updateConnectionList();
     }
 }
 
@@ -658,79 +356,12 @@ void ConnectionPage::receivedCommUpdate(int) {
 // ConnectionList Helpers
 // ------------------------------------
 
-
-void ConnectionPage::resizeConnectionList() {
-    for (int i = 0; i < mCurrentListWidget->count(); ++i) {
-        QListWidgetItem *item = mCurrentListWidget->item(i);
-        ListCollectionWidget *widget = qobject_cast<ListCollectionWidget*>(mCurrentListWidget->itemWidget(item));
-        Q_ASSERT(widget);
-        QSize size(mCurrentListWidget->size().width(), widget->preferredSize().height());
-        widget->setMinimumSize(size);
-        widget->setMaximumSize(size);
-        item->setSizeHint(size);
-    }
-}
-
-
-void ConnectionPage::updateConnectionListHeight() {
-    for (int i = 0; i < mCurrentListWidget->count(); ++i) {
-        QListWidgetItem *item = mCurrentListWidget->item(i);
-        ListCollectionWidget *widget = qobject_cast<ListCollectionWidget*>(mCurrentListWidget->itemWidget(item));
-        Q_ASSERT(widget);
-        widget->setListHeight(mCurrentListWidget->height());
-        if (!widget->isMoodWidget()) {
-            ListDevicesGroupWidget *devicesWidget = qobject_cast<ListDevicesGroupWidget*>(mCurrentListWidget->itemWidget(item));
-            devicesWidget->updateRightHandButtons();
-        }
-    }
-}
-
-
 void ConnectionPage::highlightList() {
-    for(int row = 0; row < mCurrentListWidget->count(); row++) {
-        ListCollectionWidget *collectionWidget = qobject_cast<ListCollectionWidget*>(mCurrentListWidget->itemWidget(mCurrentListWidget->item(row)));
-        if (collectionWidget->isMoodWidget()) {
-            ListMoodGroupWidget *widget = qobject_cast<ListMoodGroupWidget*>(collectionWidget);
-            Q_ASSERT(widget);
-            std::list<QString> connectedMoods = moodsConnected(widget->moods());
-            widget->setCheckedMoods(connectedMoods);
-        } else {
-            ListDevicesGroupWidget *widget = qobject_cast<ListDevicesGroupWidget*>(collectionWidget);
-            Q_ASSERT(widget);
-            widget->setCheckedDevices(mData->currentDevices());
-        }
+    for (uint32_t row = 0; row < mDevicesListWidget->count(); row++) {
+        ListDevicesGroupWidget *widget = qobject_cast<ListDevicesGroupWidget*>(mDevicesListWidget->widget(row));
+        Q_ASSERT(widget);
+        widget->setCheckedDevices(mData->currentDevices());
     }
-}
-
-std::list<QString> ConnectionPage::moodsConnected(std::list<std::pair<QString, std::list<SLightDevice> > > moods) {
-    std::list<SLightDevice> deviceList = mData->currentDevices();
-    std::list<QString> connectedMood;
-
-    for (auto&& mood : moods) {
-        uint32_t devicesFound = 0;
-        bool moodIsConnected = true;
-        // check each device in specific mood
-        for (auto&& moodDevice : mood.second) {
-            bool deviceMatches = false;
-            // compare against all data devices
-            for (auto&& device : deviceList) {
-                //TODO: complete this check
-                if (compareLightDevice(device, moodDevice)
-                    && device.lightingRoutine == moodDevice.lightingRoutine
-                    && (utils::colorDifference(device.color, moodDevice.color) <= 0.05f)
-                    && (utils::brightnessDifference(device.brightness, moodDevice.brightness) <= 0.05f)
-                    && device.colorGroup == moodDevice.colorGroup
-                    && device.isOn == moodDevice.isOn) {
-                    deviceMatches = true;
-                    devicesFound++;
-                 }
-            }
-            if (!deviceMatches) moodIsConnected = false;
-        }
-        if (devicesFound != mood.second.size()) moodIsConnected = false;
-        if (moodIsConnected) connectedMood.push_back(mood.first);
-    }
-    return connectedMood;
 }
 
 
@@ -742,22 +373,11 @@ std::list<QString> ConnectionPage::moodsConnected(std::list<std::pair<QString, s
 std::list<SLightDevice> ConnectionPage::devicesFromKey(QString key) {
     if (key.compare("") == 0) {
         return mData->currentDevices();
-    } else if (mCurrentConnectionList == EConnectionList::eMoods) {
-        for(int row = 0; row < mMoodsListWidget->count(); row++) {
-            ListMoodGroupWidget *widget = qobject_cast<ListMoodGroupWidget*>(mMoodsListWidget->itemWidget(mMoodsListWidget->item(row)));
-            Q_ASSERT(widget);
-            auto moodPairs = widget->moods();
-            for (auto&& moodPair : moodPairs) {
-                if (moodPair.first.compare(key) == 0) {
-                    return moodPair.second;
-                }
-            }
-        }
-    }
-    else if (mCurrentConnectionList == EConnectionList::eSingleDevices) {
-        for(int row = 0; row < mDevicesListWidget->count(); row++) {
-            if (mDevicesListWidget->item(row)->text().compare(key) == 0) {
-                ListDevicesGroupWidget *widget = qobject_cast<ListDevicesGroupWidget*>(mDevicesListWidget->itemWidget(mDevicesListWidget->item(row)));
+    } else {
+        for (uint32_t row = 0; row < mDevicesListWidget->count(); row++) {
+            if (mDevicesListWidget->widget(row)->key().compare(key) == 0) {
+                ListCollectionWidget *item = mDevicesListWidget->widget(row);
+                ListDevicesGroupWidget *widget = qobject_cast<ListDevicesGroupWidget*>(item);
                 Q_ASSERT(widget);
                 return widget->devices();
             }
@@ -772,8 +392,8 @@ QString ConnectionPage::keyForCollection(const QString& key) {
 
 
 void ConnectionPage::renderUI() {
-    updateConnectionList();
-    openDefaultCollections();
+   // updateConnectionList();
+   // openDefaultCollections();
     //highlightList();
 }
 
@@ -839,6 +459,12 @@ void ConnectionPage::saveGroup(bool) {
     }
 }
 
+void ConnectionPage::moveFloatingLayout() {
+    int padding = 0;
+    QPoint topRight(this->width(), padding);
+    mFloatingLayout->move(topRight);
+    mFloatingLayout->raise();
+}
 
 // ----------------------------
 // Protected
@@ -856,15 +482,23 @@ void ConnectionPage::showEvent(QShowEvent *event) {
     updateConnectionList();
     openDefaultCollections();
     mRenderThread->start(mRenderInterval);
+    moveFloatingLayout();
+    highlightList();
 }
 
 void ConnectionPage::openDefaultCollections() {
-    for (int i = 0; i < mCurrentListWidget->count(); ++i) {
-        QListWidgetItem *item = mCurrentListWidget->item(i);
-        ListCollectionWidget *widget = qobject_cast<ListCollectionWidget*>(mCurrentListWidget->itemWidget(item));
+    for (uint32_t i = 0; i < mDevicesListWidget->count(); ++i) {
+        ListCollectionWidget *widget = mDevicesListWidget->widget(i);
         widget->setShowButtons(mSettings->value(keyForCollection(widget->key())).toBool());
     }
-    resizeConnectionList();
+}
+
+void ConnectionPage::floatingLayoutButtonPressed(QString button) {
+    if (button.compare("Discovery") == 0) {
+        emit discoveryClicked();
+    } else if (button.compare("New_Collection") == 0) {
+        emit clickedEditButton("", false);
+    }
 }
 
 void ConnectionPage::hideEvent(QHideEvent *event) {
@@ -880,7 +514,7 @@ void ConnectionPage::hideEvent(QHideEvent *event) {
 
 void ConnectionPage::resizeEvent(QResizeEvent *) {
     updateConnectionList();
-    resizeConnectionList();
-    updateConnectionListHeight();
+    mDevicesListWidget->setMaximumSize(this->size());
+    moveFloatingLayout();
 }
 

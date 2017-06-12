@@ -80,7 +80,11 @@ void EditGroupPage::updateDevices(std::list<SLightDevice> groupDevices, std::lis
             }
 
             if (shouldAddWidget) {
-                ListDeviceWidget *widget = new ListDeviceWidget(device, name, mData->colorGroup(device.colorGroup));
+                ListDeviceWidget *widget = new ListDeviceWidget(device,
+                                                                name,
+                                                                mData->colorGroup(device.colorGroup),
+                                                                QSize(this->width() * 0.9f, this->height() / 6),
+                                                                this);
                 widget->setHighlightChecked(shouldSetChecked(device, groupDevices));
 
                 int index = ui->deviceList->count();

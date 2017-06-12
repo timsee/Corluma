@@ -6,7 +6,8 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
-#include <set>
+#include <vector>
+#include <QScrollArea>
 
 #include "datalayer.h"
 #include "comm/commlayer.h"
@@ -36,13 +37,11 @@ public:
      *        collection widgets
      * \param name name of collection
      * \param key unique key for collection
-     * \param listHeight maximum height for collection
      * \param hideEdit true for groups that can't be edited such as available and not reachable,
      *        false otherwise
      */
     void setup(const QString& name,
                const QString& key,
-               int listHeight,
                bool hideEdit);
 
     /*!
@@ -62,6 +61,8 @@ public:
      * \param newHeight new height for the list.
      */
     void setListHeight(int newHeight);
+
+    void resize();
 
     /*!
      * \brief preferredSize all collection widgets must implement a preferred size. this is the size
@@ -96,6 +97,12 @@ signals:
      *        representing whether the buttons are shown.
      */
     void buttonsShown(QString, bool);
+
+    /*!
+     * \brief rowCountChanged emits when the row count changes so that the parent holding this listcollectionwidget
+     *        can know if it needs to move its collection of listcollectionwidgets around. Emits the new row count
+     */
+    void rowCountChanged(int);
 
 protected:
 
@@ -136,9 +143,18 @@ protected:
     void removeWidgetFromGrid(ListCollectionSubWidget* widget);
 
     /*!
+     * \brief widgetPosition gives the widget position based off of the given widget. Position is not *actual* position,
+     *        but where it falls in the group overall. For example, top left widget is (0,0). Next widget is (0,1). First
+     *        widget in second row is (1,0)
+     * \param widget widget to look for position for.
+     * \return Position of widget as a point.
+     */
+    QPoint widgetPosition(QWidget *widget);
+
+    /*!
      * \brief mWidgets list of all device widgets displayed in this widget.
      */
-    std::set<ListCollectionSubWidget*, subWidgetCompare> mWidgets;
+    std::vector<ListCollectionSubWidget*> mWidgets;
 
     /*!
      * \brief mName label for name of collection
@@ -176,15 +192,21 @@ protected:
     /// pixmap for icon that conveys all buttons being shown
     QPixmap mOpenedPixmap;
 
-    /*!
-     * \brief mGridLayout layout that displays all of the sub widgets.
-     */
-    QGridLayout *mGridLayout;
+    /// widget used for background of grid
+    QWidget *mWidget;
+
+    /// size of overall background of grid.
+    QSize mWidgetSize;
 
     /*!
-     * \brief mMinimumSize minimum size allowed for collection.
+     * \brief mLayout layout that displays all of the sub widgets.
      */
-    int mMinimumSize;
+    QVBoxLayout *mLayout;
+
+    /*!
+     * \brief mMinimumHeight minimum size allowed for collection.
+     */
+    int mMinimumHeight;
 
     /*!
      * \brief mShowButtons true if buttons are showing, false otherwise.
@@ -209,6 +231,13 @@ public slots:
     */
    void editButtonClicked(bool) { emit editClicked(mKey);  }
 
+private:
+
+   /// stored count of how many rows there are. Used to detect changes
+   uint32_t mRowCount;
+
+   /// moves widgets into their proper location on a grid.
+   void moveWidgets();
 };
 
 #endif // LISTCOLLECTIONWIDGET_H

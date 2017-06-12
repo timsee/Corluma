@@ -175,6 +175,37 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             mButtons[i]->setIconSize(QSize(mButtons[i]->size().height() * 0.9f,
                                            mButtons[i]->size().height() * 0.9f));
             mButtons[i]->setText("Hue");
+        } else if (mNames[i].compare("Discovery") == 0) {
+            foundMatch = true;
+            mButtons[i] = new QPushButton(this);
+            mButtons[i]->setCheckable(false);
+            resizeIcon(mButtons[i], ":/images/wifi.png");
+        } else if (mNames[i].compare("Select_Devices") == 0) {
+            foundMatch = true;
+            mButtons[i] = new QPushButton(this);
+            mButtons[i]->setCheckable(true);
+            resizeIcon(mButtons[i], ":/images/colorWheel_icon.png");
+        } else if (mNames[i].compare("Select_Moods") == 0) {
+            foundMatch = true;
+            CorlumaButton *lightsButton = new CorlumaButton(this);
+            lightsButton->button->setCheckable(true);
+            lightsButton->setupAsStandardButton(ELightingRoutine::eSingleSolid, EColorGroup::eAll);
+            lightsButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, QColor(255,255,0));
+            mButtons[i] = static_cast<QPushButton*>(lightsButton);
+            Q_ASSERT(mButtons[i]);
+        } else if (mNames[i].compare("New_Collection") == 0) {
+            foundMatch = true;
+            mButtons[i] = new QPushButton(this);
+            mButtons[i]->setCheckable(false);
+            resizeIcon(mButtons[i], ":/images/editIcon.png");
+        } else if (mNames[i].compare("Preset_Groups") == 0) {
+            foundMatch = true;
+            CorlumaButton *lightsButton = new CorlumaButton(this);
+            lightsButton->button->setCheckable(true);
+            lightsButton->setupAsStandardButton(ELightingRoutine::eSingleSolid, EColorGroup::eAll);
+            lightsButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, QColor(255,0,0));
+            mButtons[i] = static_cast<QPushButton*>(lightsButton);
+            Q_ASSERT(mButtons[i]);
         }
 
         if (foundMatch) {
@@ -256,6 +287,23 @@ void FloatingLayout::updateRoutineMultiColor(ELightingRoutine routine, std::vect
     }
 }
 
+void FloatingLayout::updateGroupPageButtons(const std::vector<std::vector<QColor> >& colors, int colorCount) {
+    for (uint32_t i = 0; i < mButtons.size(); ++i) {
+        if (mNames[i].compare("Preset_Groups") == 0) {
+            CorlumaButton *lightsButton = static_cast<CorlumaButton*>(mButtons[i]);
+            lightsButton->updateIconPresetColorRoutine(ELightingRoutine::eMultiRandomIndividual,
+                                                       EColorGroup::eWater,
+                                                       colors[(int)EColorGroup::eWater]);
+            Q_ASSERT(lightsButton);
+        } else if (mNames[i].compare("Select_Moods") == 0) {
+            CorlumaButton *lightsButton = static_cast<CorlumaButton*>(mButtons[i]);
+            Q_ASSERT(lightsButton);
+            lightsButton->updateIconPresetColorRoutine(ELightingRoutine::eMultiFade,
+                                                       EColorGroup::eSevenColor,
+                                                       colors[(int)EColorGroup::eSevenColor]);
+        }
+    }
+}
 
 void FloatingLayout::addMultiRoutineIcon(std::vector<QColor> colors) {
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
@@ -266,7 +314,7 @@ void FloatingLayout::addMultiRoutineIcon(std::vector<QColor> colors) {
         }
     }
 }
-void FloatingLayout::updateDiscoveryButton(ECommType type, QIcon icon) {
+void FloatingLayout::updateDiscoveryButton(ECommType type, QPixmap pixmap) {
     QString label;
     switch (type)
     {
@@ -286,7 +334,13 @@ void FloatingLayout::updateDiscoveryButton(ECommType type, QIcon icon) {
     }
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
         if (mNames[i].compare(label) == 0) {
-            mButtons[i]->setIcon(icon);
+            int size = mButtons[i]->size().width() * 0.25f;
+            mButtons[i]->setIcon(QIcon(pixmap.scaled(size,
+                                                size,
+                                                Qt::IgnoreAspectRatio,
+                                                Qt::SmoothTransformation)));
+            mButtons[i]->setIconSize(QSize(size,
+                                           size));
         }
     }
 
@@ -319,7 +373,6 @@ void FloatingLayout::move(QPoint topRightPoint) {
 //--------------------------------
 
 void FloatingLayout::buttonPressed(int buttonIndex) {
-
     // uncheck all other buttons
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
         mButtons[i]->setChecked(false);
@@ -371,7 +424,9 @@ void FloatingLayout::highlightRoutineButton(bool shouldHighlight) {
 
 bool FloatingLayout::isALightsButton(int index) {
     if (mNames[index].compare("Multi") == 0
-            || mNames[index].compare("Routine") == 0) {
+            || mNames[index].compare("Routine") == 0
+            || mNames[index].compare("Preset_Groups") == 0
+            || mNames[index].compare("Select_Moods") == 0) {
         return true;
     }
     return false;

@@ -167,3 +167,10 @@ ___
 * Split the TopMenu of the MainWindow into its own widget. 
 * More minor bug fixes. 
 
+### **v0.9.10**
+#### Another Optimizations Update
+* Redid the ConnectionPage's UI code to run smoother.
+* Moved the Moods picker to the GroupPage. 
+* Fixed quality of life issues like inconsistent UX and hard to press buttons.
+* Fixed miscellaneous bugs. 
+

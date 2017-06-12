@@ -54,6 +54,7 @@ DiscoveryPage::DiscoveryPage(QWidget *parent) :
     mStartTime = QTime::currentTime();
 
     int buttonSize = (int)((float)this->geometry().height() * 0.1f);
+
     mButtonIcons = std::vector<QPixmap>((size_t)EConnectionButtonIcons::EConnectionButtonIcons_MAX);
     mButtonIcons[(int)EConnectionButtonIcons::eBlackButton]  = QPixmap("://images/blackButton.png").scaled(buttonSize, buttonSize,
                                                                                                            Qt::IgnoreAspectRatio,
@@ -70,7 +71,6 @@ DiscoveryPage::DiscoveryPage(QWidget *parent) :
     mButtonIcons[(int)EConnectionButtonIcons::eGreenButton]  = QPixmap("://images/greenButton.png").scaled(buttonSize, buttonSize,
                                                                                                            Qt::IgnoreAspectRatio,
                                                                                                            Qt::SmoothTransformation);
-
     mType = ECommType::eHue;
 }
 
@@ -201,31 +201,32 @@ void DiscoveryPage::commTypeSelected(int type) {
 
 void DiscoveryPage::changeCommTypeConnectionState(ECommType type, EConnectionState newState) {
     if (mConnectionStates[(size_t)type] != newState) {
-        QIcon icon;
+        QPixmap pixmap;
         switch (mConnectionStates[(int)type])
         {
             case EConnectionState::eOff:
-                icon = QIcon(mButtonIcons[(int)EConnectionButtonIcons::eBlackButton]);
+                pixmap = mButtonIcons[(int)EConnectionButtonIcons::eBlackButton];
+                break;
             case EConnectionState::eConnectionError:
-                icon = QIcon(mButtonIcons[(int)EConnectionButtonIcons::eYellowButton]);
+                pixmap = mButtonIcons[(int)EConnectionButtonIcons::eYellowButton];
                 break;
             case EConnectionState::eDiscovering:
-                icon = QIcon(mButtonIcons[(int)EConnectionButtonIcons::eYellowButton]);
+                pixmap = mButtonIcons[(int)EConnectionButtonIcons::eYellowButton];
                 break;
             case EConnectionState::eDiscoveredAndNotInUse:
-                icon = QIcon(mButtonIcons[(int)EConnectionButtonIcons::eBlueButton]);
+                pixmap = mButtonIcons[(int)EConnectionButtonIcons::eBlueButton];
                 break;
             case EConnectionState::eSingleDeviceSelected:
-                icon = QIcon(mButtonIcons[(int)EConnectionButtonIcons::eGreenButton]);
+                pixmap = mButtonIcons[(int)EConnectionButtonIcons::eGreenButton];
                 break;
             case EConnectionState::eMultipleDevicesSelected:
-                icon = QIcon(mButtonIcons[(int)EConnectionButtonIcons::eGreenButton]);
+                pixmap = mButtonIcons[(int)EConnectionButtonIcons::eGreenButton];
                 break;
             default:
                 qDebug() << "WARNING: change resize assets sees type is does not recognize.." << (int)mConnectionStates[(int)type];
                 break;
         }
-        mHorizontalFloatingLayout->updateDiscoveryButton(type, icon);
+        mHorizontalFloatingLayout->updateDiscoveryButton(type, pixmap);
         mConnectionStates[(size_t)type] = newState;
     }
 }
@@ -279,32 +280,33 @@ void DiscoveryPage::resizeTopMenu() {
     for (int commInt = 0; commInt != (int)ECommType::eCommType_MAX; ++commInt) {
         ECommType type = static_cast<ECommType>(commInt);
         if (type != ECommType::eHTTP) {
-            QIcon icon;
+            QPixmap pixmap;
             switch (mConnectionStates[(int)type])
             {
                 case EConnectionState::eOff:
-                    icon = QIcon(mButtonIcons[(int)EConnectionButtonIcons::eBlackButton]);
+                    pixmap = mButtonIcons[(int)EConnectionButtonIcons::eBlackButton];
+                    break;
                 case EConnectionState::eConnectionError:
-                    icon = QIcon(mButtonIcons[(int)EConnectionButtonIcons::eYellowButton]);
+                    pixmap = mButtonIcons[(int)EConnectionButtonIcons::eYellowButton];
                     break;
                 case EConnectionState::eDiscovering:
-                    icon = QIcon(mButtonIcons[(int)EConnectionButtonIcons::eYellowButton]);
+                    pixmap = mButtonIcons[(int)EConnectionButtonIcons::eYellowButton];
                     break;
                 case EConnectionState::eDiscoveredAndNotInUse:
-                    icon = QIcon(mButtonIcons[(int)EConnectionButtonIcons::eBlueButton]);
+                    pixmap = mButtonIcons[(int)EConnectionButtonIcons::eBlueButton];
                     break;
                 case EConnectionState::eSingleDeviceSelected:
-                    icon = QIcon(mButtonIcons[(int)EConnectionButtonIcons::eGreenButton]);
+                    pixmap = mButtonIcons[(int)EConnectionButtonIcons::eGreenButton];
                     break;
                 case EConnectionState::eMultipleDevicesSelected:
-                    icon = QIcon(mButtonIcons[(int)EConnectionButtonIcons::eGreenButton]);
+                    pixmap = mButtonIcons[(int)EConnectionButtonIcons::eGreenButton];
                     break;
                 default:
                     qDebug() << "WARNING: change resize assets sees type is does not recognize.." << (int)mConnectionStates[(int)type];
                     break;
             }
 
-            mHorizontalFloatingLayout->updateDiscoveryButton(type, icon);
+            mHorizontalFloatingLayout->updateDiscoveryButton(type, pixmap);
         }
     }
 }

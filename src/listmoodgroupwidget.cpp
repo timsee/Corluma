@@ -10,10 +10,12 @@ ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
                                          std::list<std::pair<QString, std::list<SLightDevice> > > moods,
                                          const std::vector<std::vector<QColor> >& colors,
                                          QString key,
-                                         int listHeight,
-                                         bool hideEdit)
+                                         bool hideEdit,
+                                         QWidget *parent)
 {
-    setup(name, key, listHeight, hideEdit);
+    this->setParent(parent);
+    this->setMaximumSize(parent->size());
+    setup(name, key, hideEdit);
 
     mTopLayout = new QHBoxLayout();
     mTopLayout->addWidget(mName);
@@ -24,15 +26,13 @@ ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
     mTopLayout->setStretch(1, 2);
     mTopLayout->setStretch(2, 2);
 
-    mGridLayout = new QGridLayout(this);
-    mGridLayout->setContentsMargins(0,0, this->size().width() / 40,0);
-    mGridLayout->setVerticalSpacing(0);
-    mGridLayout->setHorizontalSpacing(0);
-    mGridLayout->addLayout(mTopLayout, 0, 0, 1, 2);
-
     mMoods = moods;
 
     updateMoods(moods, colors);
+
+    mLayout->addLayout(mTopLayout);
+    mLayout->addWidget(mWidget);
+
 }
 
 
@@ -72,8 +72,8 @@ void ListMoodGroupWidget::setShowButtons(bool show) {
         this->setFixedHeight(preferredSize().height());
     } else {
         mHiddenStateIcon->setPixmap(mClosedPixmap);
-        mName->setFixedHeight(mMinimumSize);
-        this->setFixedHeight(mMinimumSize);
+        mName->setFixedHeight(mMinimumHeight);
+        this->setFixedHeight(mMinimumHeight);
     }
     emit buttonsShown(mKey, mShowButtons);
 }
@@ -96,12 +96,12 @@ void ListMoodGroupWidget::setCheckedMoods(std::list<QString> checkedMoods) {
 }
 
 QSize ListMoodGroupWidget::preferredSize() {
-    int height = mMinimumSize;
+    int height = mMinimumHeight;
     if (mShowButtons && mWidgets.size() > 0) {
         int widgetHeight = std::max(mName->height(), (int)(height * 1.2f));
         height = (mWidgets.size() / 2 * widgetHeight) + (mWidgets.size() % 2 * widgetHeight) + height;
     }
-    return QSize(this->width(), height);
+    return QSize(this->parentWidget()->size().width(), height);
 }
 
 void ListMoodGroupWidget::enterEvent(QEvent *) {

@@ -24,7 +24,6 @@ TopMenu::TopMenu(DataLayer* data, QWidget *parent) : QWidget(parent) {
     mColorPageButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(mColorPageButton->button, SIGNAL(clicked(bool)), this, SLOT(colorButtonPressed()));
 
-
     mGroupPageButton = new CorlumaButton(this);
     mGroupPageButton->setupAsMenuButton((int)EPage::eGroupPage,  mData->colorGroup(EColorGroup::eSevenColor));
     mGroupPageButton->button->setStyleSheet("background-color: rgb(52, 52, 52); ");
@@ -87,6 +86,7 @@ TopMenu::TopMenu(DataLayer* data, QWidget *parent) : QWidget(parent) {
     setLayout(mLayout);
 
     deviceCountReachedZero();
+    highlightButton(EPage::eConnectionPage);
 }
 
 TopMenu::~TopMenu() {
@@ -246,6 +246,18 @@ void TopMenu::deviceCountChangedOnConnectionPage() {
         deviceCountReachedZero();
     }
     mColorPageButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, mData->mainColor());
+}
+
+void TopMenu::highlightButton(EPage button) {
+    if (button == EPage::eColorPage) {
+        colorButtonPressed();
+    } else if (button == EPage::eConnectionPage) {
+        connectionButtonPressed();
+    } else if (button == EPage::eGroupPage) {
+        groupButtonPressed();
+    } else if (button == EPage::eSettingsPage) {
+        settingsButtonPressed();
+    }
 }
 
 void TopMenu::settingsButtonPressed() {

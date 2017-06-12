@@ -12,6 +12,13 @@
 TARGET = Corluma
 TEMPLATE = app
 
+
+# Define these paths to include libcrypto and libssl from your machine. This is
+# required for android 7.0 and later but is optional for other builds.
+# For more info on how to build and install: http://doc.qt.io/qt-5/opensslsupport.html
+LIB_CRYPTO_ANDROID = $$PWD/../../../Dev/Libraries/openssl/libcrypto.so
+LIB_SSL_ANDROID = $$PWD/../../../Dev/Libraries/openssl/libssl.so
+
 #----------
 # Minimum Requirements Check
 #----------
@@ -44,7 +51,7 @@ CONFIG += c++11 #adds C++11 support
 #       although it is recommended as our testing shows it to be
 #       the quickest method of discovery.
 
-win32{
+win32 {
     # uses default path for openSSL in 32 and 64 bit
     contains(QT_ARCH, i386) {
         # message("Using windows 32 bit libraries")
@@ -61,7 +68,6 @@ win32{
 #----------
 # Qt Linking
 #----------
-
 QT   += core gui widgets network
 
 # Does not set up the qt serial port on mobile devices
@@ -79,6 +85,12 @@ android {
    # app name, icons, screen orientations, etc.
    OTHER_FILES += android-sources/AndroidManifest.xml
    ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android-sources
+    # adds prebuilt libcrypto and libssl for android versions 6 and later
+    contains(ANDROID_TARGET_ARCH, armeabi-v7a) {
+        ANDROID_EXTRA_LIBS = \
+            $$LIB_CRYPTO_ANDROID \
+            $$LIB_SSL_ANDROID
+    }
 }
 
 ios {
@@ -119,7 +131,6 @@ SOURCES += main.cpp \
     settingspage.cpp \
     datalayer.cpp \
     icondata.cpp \
-    presetcolorspage.cpp \
     lightingroutines.cpp \
     connectionpage.cpp \
     floatinglayout.cpp \
@@ -139,7 +150,9 @@ SOURCES += main.cpp \
     corlumabutton.cpp \
     corlumaslider.cpp \
     corlumautils.cpp \
-    topmenu.cpp
+    topmenu.cpp \
+    corlumalistwidget.cpp \
+    grouppage.cpp
 
 HEADERS  +=  comm/commtype.h \
     comm/commserial.h \
@@ -189,13 +202,12 @@ HEADERS  +=  comm/commtype.h \
     corlumabutton.h \
     corlumaslider.h \
     corlumautils.h \
-    topmenu.h
+    topmenu.h \
+    corlumalistwidget.h
 
 FORMS    += settingspage.ui \
-    connectionpage.ui \
     discoverypage.ui \
-    editcollectionpage.ui \
-    grouppage.ui
+    editcollectionpage.ui
 
 #----------
 # Resources

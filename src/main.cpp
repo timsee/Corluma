@@ -131,7 +131,7 @@ int main(int argc, char *argv[]) {
     window.move(x, y);
 
 #ifndef DISABLE_SPLASH_SCREEN
-    int splashScreenDelay = 3000; // in milliseconds
+    uint32_t splashScreenDelay = 3000; // in milliseconds
     QTimer::singleShot(splashScreenDelay, &splash, SLOT(close()));
     QTimer::singleShot(splashScreenDelay, &window,SLOT(show()));
     splash.show();

@@ -51,10 +51,13 @@ ColorGrid::ColorGrid(QWidget *parent) : QWidget(parent)
         arrayButtonsMapper->setMapping(mArrayColorsButtons[i], i);
         connect(mArrayColorsButtons[i], SIGNAL(clicked(bool)), arrayButtonsMapper, SLOT(map()));
         int size = std::min(this->size().width(), this->size().height());
-        mArrayColorsButtons[i]->setMinimumSize(QSize(size, size));
         size = size * 0.8f;
         mArrayColorsButtons[i]->setIconSize(QSize(size, size));
-        QPixmap icon = createSolidColorIcon(QColor(0,0,0));
+        QPixmap pixmap = createSolidColorIcon(QColor(0,0,0));
+        mArrayColorsButtons[i]->setIcon(QIcon(pixmap.scaled(size,
+                                                            size,
+                                                            Qt::IgnoreAspectRatio,
+                                                            Qt::SmoothTransformation)));
         mLayout->addWidget(mArrayColorsButtons[i], row, col);
         col++;
         if (((i + 1) % halfway) == 0) {
@@ -62,7 +65,6 @@ ColorGrid::ColorGrid(QWidget *parent) : QWidget(parent)
             col = 0;
         }
 
-        mArrayColorsButtons[i]->setIcon(icon);
     }
     connect(arrayButtonsMapper, SIGNAL(mapped(int)), this, SLOT(selectArrayColor(int)));
     setLayout(mLayout);
@@ -186,4 +188,18 @@ QPixmap ColorGrid::createSolidColorIcon(QColor color) {
 
 void ColorGrid::countSliderChanged(int newValue) {
     emit multiColorCountChanged(newValue / 10);
+}
+
+
+void ColorGrid::resizeEvent(QResizeEvent *) {
+    for (uint32_t i = 0; i < mMaximumSize; ++i) {
+        int size = this->size().width() / 6;
+        size = size * 0.66f;
+        mArrayColorsButtons[i]->setIconSize(QSize(size, size));
+        QPixmap pixmap = mArrayColorsButtons[i]->icon().pixmap(QSize(size,size));
+        mArrayColorsButtons[i]->setIcon(QIcon(pixmap.scaled(size,
+                                                            size,
+                                                            Qt::IgnoreAspectRatio,
+                                                            Qt::SmoothTransformation)));
+    }
 }

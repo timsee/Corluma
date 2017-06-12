@@ -7,14 +7,17 @@
 #include <QGraphicsEffect>
 #include <QPainter>
 #include <QStyleOption>
+
 #include "listdevicewidget.h"
 
 ListDeviceWidget::ListDeviceWidget(const SLightDevice& device,
                                            const QString& name,
                                            const std::vector<QColor>& colors,
+                                           QSize size,
                                            QWidget *parent)    {
     this->setParent(parent);
     init(device, name);
+    this->setMaximumSize(size);
     updateWidget(device, colors);
 }
 
@@ -25,11 +28,8 @@ void ListDeviceWidget::init(const SLightDevice& device, const QString& name) {
     // setup icon
     mIconData = IconData(32, 32);
     mStatusIcon = new QLabel(this);
-    mStatusIcon->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-//#ifndef MOBILE_BUILD
-//    mStatusIcon->setMaximumWidth(mStatusIcon->height());
-//#endif
+    //mStatusIcon->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mStatusIcon->setMaximumSize(QSize(this->height(), this->height()));
 
     QString type;
     if (device.type == ECommType::eHue) {
@@ -77,6 +77,9 @@ void ListDeviceWidget::init(const SLightDevice& device, const QString& name) {
     mLayout->setStretch(1, 10);
 
     mKey = structToIdentifierString(device);
+
+    mController->setStyleSheet(createStyleSheet(device));
+    mStatusIcon->setStyleSheet(createStyleSheet(device));
 }
 
 
@@ -174,11 +177,10 @@ QString ListDeviceWidget::structToIdentifierString(const SLightDevice& device) {
 
 bool ListDeviceWidget::setHighlightChecked(bool checked) {
     mIsChecked = checked;
-    mController->setStyleSheet(createStyleSheet(mDevice));
-    mStatusIcon->setStyleSheet(createStyleSheet(mDevice));
     repaint();
     return mIsChecked;
 }
+
 
 void ListDeviceWidget::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event);
@@ -193,33 +195,28 @@ void ListDeviceWidget::paintEvent(QPaintEvent *event) {
     }
 }
 
-
 QString ListDeviceWidget::createStyleSheet(const SLightDevice& device) {
     QString styleSheet;
-    QString backgroundStyleSheet = "background-color: rgba(0,0,0,0);";
-    QString offStyleSheet = "color: #666; background-color: rgba(0,0,0,0);";
-    QString unReachableStyleSheet = " color: red; background-color: rgba(0,0,0,0);";
-    QString checkedStyleSheet = "background-color: #3d8ec9;";
-    QString unreachableCheckedStylesheet = "color: red; background-color: #3d8ec9;";
+
+    QString offStyleSheet = "color: #666;";
+    QString unReachableStyleSheet = " color: red;";
+    QString unreachableCheckedStylesheet = "color: red;";
 
     if (mIsChecked && !device.isReachable) {
         styleSheet = unreachableCheckedStylesheet;
-    } else if (mIsChecked) {
-       styleSheet = checkedStyleSheet;
-    } else if(!device.isReachable) {
+    }  else if(!device.isReachable) {
        styleSheet = unReachableStyleSheet;
     } else if (!device.isOn) {
         styleSheet = offStyleSheet;
-    } else {
-        styleSheet = backgroundStyleSheet;
     }
+
 //#ifdef MOBILE_BUILD
 //    styleSheet += "font: 14pt;";
 //#else
 //    styleSheet += "font: bold 8pt;";
 //#endif
 
-    styleSheet += "font: bold 8pt;";
+    styleSheet += "background-color: rgba(0,0,0,0); font: bold 8pt;";
 
     return styleSheet;
 }

@@ -5,6 +5,7 @@
 #include <QListWidget>
 #include <QSignalMapper>
 #include <QPushButton>
+#include <QLayout>
 
 #include "lightdevice.h"
 #include "lightingpage.h"
@@ -13,19 +14,9 @@
 #include "comm/commlayer.h"
 #include "listmoodgroupwidget.h"
 #include "listdevicesgroupwidget.h"
+#include "corlumalistwidget.h"
+#include "floatinglayout.h"
 
-namespace Ui {
-class ConnectionPage;
-}
-
-/*!
- * \brief The EConnectionList enum contains the three types of states of the
- *        connection list.
- */
-enum class EConnectionList {
-    eSingleDevices,
-    eMoods
-};
 
 /*!
  * \copyright
@@ -67,9 +58,6 @@ public:
      */
     void connectCommLayer(CommLayer *layer) { mComm = layer; }
 
-    /// clears all data in the connection list and reloads it
-    void reloadConnectionList();
-
     /// connects the GroupsParser object to this UI widget.
     void connectGroupsParser(GroupsParser *parser);
 
@@ -82,8 +70,11 @@ public:
      */
     std::list<SLightDevice> devicesFromKey(QString key);
 
-    /// getter to check whether the connection list is displaying moods or devices.
-    EConnectionList currentConnectionList() { return mCurrentConnectionList; }
+    /*!
+     * \brief updateConnectionList updates the GUI elements that display the
+     *        CommLayer's connection list.
+     */
+    void updateConnectionList();
 
 signals:
     /*!
@@ -122,12 +113,6 @@ public slots:
      */
     void clearButtonPressed();
 
-    /*!
-     * \brief discoveryButtonPressed discovery button is pressed and discovery overlay is displayed
-     *        over the connection page.
-     */
-    void discoveryButtonPressed();
-
 private slots:
 
     /*!
@@ -141,33 +126,10 @@ private slots:
     void newCollectionAdded(QString);
 
     /*!
-     * \brief newMoodAdded handles whenever a new mood was created on the edit page.
-     */
-    void newMoodAdded(QString);
-
-    /*!
      * \brief renderUI renders expensive assets if and only if the assets have had any
      *        change of state.
      */
     void renderUI();
-
-    /*!
-     * \brief devicesButtonClicked handled whenver the button that changes the page
-     *        so that you choose devices individually is clicked.
-     */
-    void devicesButtonClicked(bool);
-
-    /*!
-     * \brief moodsButtonClicked handled whenever the moods button is clicked and all
-     *        saved moods are being displayed.
-     */
-    void moodsButtonClicked(bool);
-
-    /*!
-     * \brief newGroupButtonClicked new button clicked. Loads the edit page so you can create
-     *        a new collection or mood.
-     */
-    void newGroupButtonClicked(bool);
 
     /*!
      * \brief saveGroup called when a group should be saved.
@@ -179,16 +141,15 @@ private slots:
      */
     void receivedCommUpdate(int);
 
+    /*!
+     * \brief floatingLayoutButtonPressed handles whenever a floating layout button is presed
+     * \param button key for floating layout button
+     */
+    void floatingLayoutButtonPressed(QString button);
+
     //--------------------
     // Connection List Slots
     //--------------------
-
-    /*!
-     * \brief moodClicked called whenever an individual mood is clicked
-     * \param collectionKey key for the collection of lights that the mood fits into
-     * \param moodKey name of the specific mood
-     */
-    void moodClicked(QString collectionKey, QString moodKey);
 
     /*!
      * \brief deviceClicked called whenever a device is clicked
@@ -215,12 +176,6 @@ private slots:
      *        moods/devices for any given collection.
      */
     void shouldShowButtons(QString key, bool isShowing);
-
-    /*!
-     * \brief editMoodClicked the edit button has been pressed for a specific mood. This
-     *        gets sent to the main window and tells it to open the edit page.
-     */
-    void editMoodClicked(QString collectionKey, QString moodKey);
 
     /*!
      * \brief editGroupClicked the edit button has been pressed for a specific collection
@@ -261,40 +216,19 @@ private:
      * \brief mDevicesListWidget List widget for devices. Either the moods widget or this device widget
      *        is shown at any given time but the other is kept around in memory since they are expensive to render.
      */
-    QListWidget *mDevicesListWidget;
-
-    /*!
-     * \brief mMoodsListWidget List widget for devices. Either the moods widget or this device widget
-     *        is shown at any given time but the other is kept around in memory since they are expensive to render.
-     */
-    QListWidget *mMoodsListWidget;
-
-    /*!
-     * \brief mCurrentListWidget points to either the moods list widget or devices list widget, depending on which
-     *        is currentl displayed.
-     */
-    QListWidget *mCurrentListWidget;
-
-    /*!
-     * \brief hideUnusedWidgets hides either the moods list widget or the devices list widget. Displays the other.
-     * \param showMoodWidgets true to show the moods widget and hide the devices widget, false to show devices widget
-     *        and show the moods widget.
-     */
-    void hideUnusedWidgets(bool showMoodWidgets);
+    CorlumaListWidget *mDevicesListWidget;
 
     /*!
      * \brief initDevicesCollectionWidget constructor helper for making a DeviceCollectionsWidget
      * \param name name of collection
      * \param devices devices in collection
      * \param key key for collection
-     * \param height maximum height of widget
      * \param hideEdit true for special case groups (Available and Not Reachable), false otherwise
      * \return pointer to the newly created ListDevicesGroupWidget
      */
     ListDevicesGroupWidget* initDevicesCollectionWidget(const QString& name,
                                                         std::list<SLightDevice> devices,
                                                         const QString& key,
-                                                        int height,
                                                         bool hideEdit = false);
 
     /*!
@@ -313,64 +247,26 @@ private:
      */
     void gatherAvailandAndNotReachableDevices(const std::list<SLightDevice>& allDevices);
 
-    /*!
-     * \brief initMoodsCollectionWidget constructor helper for making a ListGroupGroupWidget
-     * \param name name of mood
-     * \param devices devices in mood
-     * \param key key for mood
-     * \param height maximum height of widget
-     * \param hideEdit true for special case groups (Available and Not Reachable), false otherwise
-     * \return pointer to the newly created ListGroupGroupWidget
-     */
-    ListMoodGroupWidget* initMoodsCollectionWidget(const QString& name,
-                                                    std::list<std::pair<QString, std::list<SLightDevice> > > moods,
-                                                    const QString& key,
-                                                    int height,
-                                                    bool hideEdit = false);
-
-    /*!
-     * \brief makeMoodsCollections make all the mood-based UI widgets based on the saved JSON data in the application
-     * \param moods list of all saved moods
-     */
-    void makeMoodsCollections(const std::list<std::pair<QString, std::list<SLightDevice> > >& moods);
-
-
-    /*!
-     * \brief gatherAvailandAndNotReachableMoods creates the special case groups of moods: Avaiable
-     *        and Not Reachable. These groups always exist as long as at least one moods falls into them.
-     *        Avaialble moods are moods where every light has sent an update packet recently. Not Reachable
-     *        moods have at least one device that have not sent an update packet recently.
-     * \param allDevices list of all devices that have sent communication packets of some sort.
-     * \param moods list of all moods that exist in memory.
-     */
-    void gatherAvailandAndNotReachableMoods(const std::list<SLightDevice>& allDevices,
-                                            const std::list<std::pair<QString, std::list<SLightDevice> > >& moods);
-
-
-
     /// checks saved data and determines which collections to open and which to leave closed when rendering the connection page.
     void openDefaultCollections();
 
     /// helper to get a unique key for a collection.
     QString keyForCollection(const QString& key);
 
-    /*!
-     * \brief moodsConnected checks list of moods and determines which contain all connected lights
-     * \param moods a list of all connected moods and their associated devices
-     * \return a list of names of moods that contain only connected devices.
-     */
-    std::list<QString> moodsConnected(std::list<std::pair<QString, std::list<SLightDevice> > > moods);
-
-    /// resizing helpoer
-    void resizeConnectionList();
+    /// move floating layout to top right of screen
+    void moveFloatingLayout();
 
     /// pointer to QSettings instance
     QSettings *mSettings;
 
-    /*!
-     * \brief ui pointer to Qt UI form.
-     */
-    Ui::ConnectionPage *ui;
+    /// floating layout in top right of widget
+    FloatingLayout *mFloatingLayout;
+
+    /// spacer used for giving space to floating layout
+    QWidget *mSpacer;
+
+    /// layout of widget
+    QVBoxLayout *mLayout;
 
     /*!
      * \brief mGroups manages the list of collections and moods and the JSON data
@@ -402,32 +298,9 @@ private:
      */
     EConnectionState mCurrentState;
 
-
-    /*!
-     * \brief mCurrentConnectionList current type of collection list that is getting displayed.
-     */
-    EConnectionList mCurrentConnectionList;
-
-    //-------------
-    // UI Helpers
-    //-------------
-
-    /*!
-     * \brief updateConnectionList updates the GUI elements that display the
-     *        CommLayer's connection list.
-     */
-    void updateConnectionList();
-
-    /*!
-     * \brief updateConnectionListHeight updates the height of resources in the
-     *        current connection list.
-     */
-    void updateConnectionListHeight();
-
     //-------------
     // Helpers for Checking Model Data
     //-------------
-
 
     /*!
      * \brief checkForConnectedControllers checks if any controller is currently

@@ -14,6 +14,7 @@ ListMoodWidget::ListMoodWidget(const QString& name,
                                  const std::vector<std::vector<QColor> >& colors,
                                  QWidget *parent) {
     Q_UNUSED(parent);
+    mIsChecked = false;
 
     mMoodName = name;
     mDevices = devices;

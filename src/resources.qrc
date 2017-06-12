@@ -30,5 +30,6 @@
         <file>images/white_wheel.png</file>
         <file>images/splash_screen.png</file>
         <file>images/loader.gif</file>
+        <file>resources/Corluma.json</file>
     </qresource>
 </RCC>

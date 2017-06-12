@@ -65,11 +65,18 @@ public:
     void updateRoutineMultiColor(ELightingRoutine routine, std::vector<QColor> colors, int colorCount);
 
     /*!
+     * \brief updateGroupPageButtons update group page buttons using colors only found in the datalayer
+     * \param colors mData->colors()
+     * \param colorCount mData->colorCount()
+     */
+    void updateGroupPageButtons(const std::vector<std::vector<QColor> >& colors, int colorCount);
+
+    /*!
      * \brief updateDiscoveryButton update the icon of a discovery button. Shows the discovery state of the connection.
      * \param type comm type of discovery button
-     * \param icon new icon for discovery button
+     * \param pixmap new pixmap for discovery button
      */
-    void updateDiscoveryButton(ECommType type, QIcon icon);
+    void updateDiscoveryButton(ECommType type, QPixmap pixmap);
 
     /*!
      * \brief addMultiRoutineIcon add a multi routine icon

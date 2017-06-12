@@ -5,18 +5,19 @@
  */
 
 #include "listcollectionwidget.h"
-
+#include "listcollectionsubwidget.h"
+#include <algorithm>
 
 void ListCollectionWidget::setup(const QString& name,
                                  const QString& key,
-                                 int listHeight,
                                  bool hideEdit) {
     mHideEdit = hideEdit;
     mShowButtons = false;
 
     mIconRatio = 0.5f;
+    mRowCount = 0;
 
-    this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    //this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     QString backgroundStyleSheet = "border: none; background:rgba(0, 0, 0, 0%);";
 #ifdef MOBILE_BUILD
@@ -32,106 +33,84 @@ void ListCollectionWidget::setup(const QString& name,
     mName->setText(name);
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     mName->setStyleSheet("margin-left: 5px;");
-    mMinimumSize = std::max(mName->height(), listHeight / 8);
+    mMinimumHeight = mName->height();
 
     mEditButton = new QPushButton(this);
     mEditButton->setStyleSheet("border: none;");
-    mEditButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    mEditButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     connect(mEditButton, SIGNAL(clicked(bool)), this, SLOT(editButtonClicked(bool)));
     mEditIcon = QPixmap(":/images/editIcon.png");
     mEditButton->setIcon(QIcon(mEditIcon));
-    mEditButton->setFixedSize(mMinimumSize * mIconRatio, mMinimumSize * mIconRatio);
+    mEditButton->setFixedSize(mMinimumHeight * mIconRatio, mMinimumHeight * mIconRatio);
     mEditButton->setHidden(true);
 
     mClosedPixmap = QPixmap(":/images/closedArrow.png");
-    mClosedPixmap = mClosedPixmap.scaled(mMinimumSize, mMinimumSize,
+    mClosedPixmap = mClosedPixmap.scaled(mMinimumHeight, mMinimumHeight,
                                          Qt::KeepAspectRatio,
                                          Qt::SmoothTransformation);
 
 
     mOpenedPixmap = QPixmap(":/images/openedArrow.png");
-    mOpenedPixmap = mOpenedPixmap.scaled(mMinimumSize, mMinimumSize,
+    mOpenedPixmap = mOpenedPixmap.scaled(mMinimumHeight, mMinimumHeight,
                                          Qt::KeepAspectRatio,
                                          Qt::SmoothTransformation);
 
     mHiddenStateIcon = new QLabel(this);
     mHiddenStateIcon->setPixmap(mClosedPixmap);
-    mHiddenStateIcon->setFixedSize(mMinimumSize, mMinimumSize);
+    mHiddenStateIcon->setFixedSize(mMinimumHeight, mMinimumHeight);
     mHiddenStateIcon->setAlignment(Qt::AlignCenter);
 
-    this->setMinimumHeight(mMinimumSize);
-    mName->setMinimumHeight(mMinimumSize);
-    mName->setMaximumHeight(mMinimumSize);
+    mWidgetSize = QSize(this->width() / 2, mMinimumHeight);
+
+    mName->setFixedHeight(mMinimumHeight);
+
+    mWidget = new QWidget(this);
+    mWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 
     mKey = key;
+
+    mLayout = new QVBoxLayout(this);
+    mLayout->setContentsMargins(0, 0, this->size().width() / 40, 0);
+    mLayout->setSpacing(0);
+
+    setLayout(mLayout);
 }
 
 void ListCollectionWidget::setListHeight(int newHeight) {
-    mMinimumSize = newHeight / 8;
+    mMinimumHeight = newHeight / 8;
     mClosedPixmap = QPixmap(":/images/closedArrow.png");
-    mClosedPixmap = mClosedPixmap.scaled(mMinimumSize, mMinimumSize,
+    mClosedPixmap = mClosedPixmap.scaled(mMinimumHeight, mMinimumHeight,
                                          Qt::KeepAspectRatio,
                                          Qt::SmoothTransformation);
 
     mOpenedPixmap = QPixmap(":/images/openedArrow.png");
-    mOpenedPixmap = mOpenedPixmap.scaled(mMinimumSize, mMinimumSize,
+    mOpenedPixmap = mOpenedPixmap.scaled(mMinimumHeight, mMinimumHeight,
                                          Qt::KeepAspectRatio,
                                          Qt::SmoothTransformation);
-    mHiddenStateIcon->setFixedSize(mMinimumSize, mMinimumSize);
-    mName->setFixedHeight(mMinimumSize);
+    mHiddenStateIcon->setFixedSize(mMinimumHeight, mMinimumHeight);
+    mName->setFixedHeight(mMinimumHeight);
     resizeRightHandIcon(mEditIcon, mEditButton);
+    resize();
 }
 
 void ListCollectionWidget::resizeRightHandIcon(QPixmap pixmap, QPushButton *button) {
-    button->setIconSize(QSize(mMinimumSize * mIconRatio, mMinimumSize * mIconRatio));
-    pixmap = pixmap.scaled(mMinimumSize * mIconRatio, mMinimumSize * mIconRatio,
+    button->setIconSize(QSize(mMinimumHeight * mIconRatio, mMinimumHeight * mIconRatio));
+    pixmap = pixmap.scaled(mMinimumHeight * mIconRatio, mMinimumHeight * mIconRatio,
                                          Qt::KeepAspectRatio,
                                          Qt::SmoothTransformation);
     button->setIcon(QIcon(pixmap));
-    button->setFixedSize(mMinimumSize, mMinimumSize);
+    button->setFixedSize(mMinimumHeight, mMinimumHeight);
 }
 
 
 
 void ListCollectionWidget::insertWidgetIntoGrid(ListCollectionSubWidget* widget) {
     // insert into sorted set
-    auto result = mWidgets.insert(widget);
-    if (!result.second) {
-        qDebug() << "Warning: insertion failed in " << __func__;
-    }
-    // store index of inserted element
-    int index = std::distance(mWidgets.begin(), result.first);
-    // store max index
-    int maxIndex =  mWidgets.size() - 1;
-    // if inserting at end, easy case, just insert at end
-    if (index == maxIndex) {
-        int row = maxIndex / 2 + 1;
-        int column = maxIndex % 2;
-        mGridLayout->addWidget(widget, row, column);
-        widget->setVisible(mShowButtons);
-    } else {
-        // if not inserting at end, push all elements after insertion back
-        int tempIndex = maxIndex;
-        while (tempIndex > index) {
-            // get previous element
-            int prev = tempIndex - 1;
-            int row = prev / 2 + 1;
-            int column = prev % 2;
-            QWidget *tempWidget = mGridLayout->itemAtPosition(row, column)->widget();
-            // remove from location
-            mGridLayout->removeWidget(tempWidget);
-            // add to new location instead
-            row = tempIndex / 2 + 1;
-            column = tempIndex % 2;
-            mGridLayout->addWidget(tempWidget, row, column);
-            tempIndex--;
-        }
-        // place final element in the now open spot.
-        int row = tempIndex / 2 + 1;
-        int column = tempIndex % 2;
-        mGridLayout->addWidget(widget, row, column);
-        widget->setVisible(mShowButtons);
-    }
+    mWidgets.push_back(widget);
+    widget->setParent(mWidget);
+    std::sort(mWidgets.begin(), mWidgets.end(), subWidgetCompare());
+
+    moveWidgets();
 }
 
 void ListCollectionWidget::removeWidgetFromGrid(ListCollectionSubWidget* widget) {
@@ -140,41 +119,58 @@ void ListCollectionWidget::removeWidgetFromGrid(ListCollectionSubWidget* widget)
         qDebug() << "WARNING: Could not find widget in set" << __func__;
         return;
     }
+    (*findResult)->setVisible(false);
+    // store index of inserted element
+    mWidgets.erase(findResult);
+    mWidgets.shrink_to_fit();
+    moveWidgets();
+}
+
+QPoint ListCollectionWidget::widgetPosition(QWidget *widget) {
+    auto findResult = std::find(mWidgets.begin(), mWidgets.end(), widget);
+    if (findResult == mWidgets.end()) {
+        qDebug() << "WARNING: Could not find widget in set" << __func__;
+        return QPoint(-1, -1);
+    }
     // store index of inserted element
     int index = std::distance(mWidgets.begin(), findResult);
-    // store max index
-    int maxIndex =  mWidgets.size() - 1;
+    int x = index % 2;     // 2 rows per column
+    int y = index / 2;     // new column every other index
+    return QPoint(x, y);
+}
 
-    // if remove at end, easy case, just remove at end
-    if (index == maxIndex) {
-        mWidgets.erase(findResult);
-    } else {
-        // remove first one and delete it
-        bool isFirst = true;
 
-        // if not inserting at end, shift all elements one to the left
-        int tempIndex = index;
-        while (tempIndex < maxIndex) {
-            // get next element
-            int next = tempIndex + 1;
-            int row = next / 2 + 1;
-            int column = next % 2;
-            QWidget *tempWidget = mGridLayout->itemAtPosition(row, column)->widget();
-            // get current location instead
-            row = tempIndex / 2 + 1;
-            column = tempIndex % 2;
-            // remove old item from GUI
-            QLayoutItem *layoutItem = mGridLayout->itemAtPosition(row, column);
-            if (isFirst) {
-                isFirst = false;
-                // remove from internal data.
-                mWidgets.erase(findResult);
-            } else {
-                mGridLayout->removeItem(layoutItem);
-            }
-
-            mGridLayout->addWidget(tempWidget, row, column);
-            tempIndex++;
+void ListCollectionWidget::moveWidgets() {
+    uint32_t tempRowCount = 0;
+    for (uint32_t i = 0; i < mWidgets.size(); ++i) {
+        QPoint position = widgetPosition(mWidgets[i]);
+        mWidgets[i]->setGeometry(position.x() * mWidgetSize.width(),
+                                 position.y() * mWidgetSize.height(),
+                                 mWidgetSize.width(),
+                                 mWidgetSize.height());
+        mWidgets[i]->setVisible(mShowButtons);
+       // qDebug() << "this is the widget position of " << i << position << "and geometry"  << mWidgets[i]->geometry();
+        if (((uint32_t)position.y() + 1) > tempRowCount) {
+            tempRowCount = (position.y() + 1);
         }
+      //  qDebug() << "widget hieght" << mWidget->height() << "vs " << this->height() << "vs " << preferredSize().height() << " pos " << position.y() * mWidgetSize.height();
+    }
+    if (mRowCount != tempRowCount) {
+      //  mWidget->setMinimumHeight(tempRowCount * mWidgetSize.height());
+        mRowCount = tempRowCount;
+        emit rowCountChanged((int)mRowCount);
     }
 }
+
+
+void ListCollectionWidget::resize() {
+   // qDebug() << "parent size" << this->parentWidget()->size();
+    this->setFixedSize(preferredSize());
+    mWidgetSize = QSize(this->width() / 2, mMinimumHeight);
+   // qDebug() << "widget size" << mWidgetSize << "total size" << this->size();
+    for (uint32_t i = 0; i < mWidgets.size(); ++i) {
+        mWidgets[i]->setMaximumSize(mWidgetSize);
+    }
+    moveWidgets();
+}
+

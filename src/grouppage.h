@@ -5,16 +5,17 @@
 #include "lightingpage.h"
 #include "corlumabutton.h"
 #include "presetgroupwidget.h"
+#include "floatinglayout.h"
+#include "corlumalistwidget.h"
+#include "listmoodgroupwidget.h"
+#include "groupsparser.h"
 
 #include <QWidget>
 #include <QToolButton>
 #include <QGridLayout>
 #include <QLabel>
 #include <QPushButton>
-
-namespace Ui {
-class GroupPage;
-}
+#include <QScrollArea>
 
 /*!
  * \copyright
@@ -58,7 +59,29 @@ public:
      */
     void setupButtons();
 
+    /// connects the GroupsParser object to this UI widget.
+    void connectGroupsParser(GroupsParser *parser);
+
+    /// show the custom moods widget, hide the preset groups
+    void showCustomMoods();
+
+    /// show the preset groups widgets, hide the custom moods
+    void showPresetGroups();
+
+    /*!
+     * \brief connectCommLayer connec the commlayer to this page.
+     * \param layer a pointer to the commlayer object.
+     */
+    void connectCommLayer(CommLayer *layer) { mComm = layer; }
+
 signals:
+
+    /*!
+     * \brief deviceCountChanged signaled to UI assets whenever a click on the page results in changing
+     *        the number of devices connected.
+     */
+    void deviceCountChanged();
+
     /*!
      * \brief used to signal back to the main page that it should update its
      *        top-left icon with a new color mode
@@ -72,8 +95,14 @@ signals:
      */
     void presetColorGroupChanged(int, int);
 
+    /*!
+     * \brief clickedEditButton sent whenever an edit button is clicked so that the main page can load
+     *        the edit page.
+     */
+    void clickedEditButton(QString key, bool isMood);
 
 public slots:
+
     /*!
      * \brief multiButtonClicked every button setup as a presetButton will signal
      *        this slot whenever they are clicked.
@@ -89,6 +118,46 @@ private slots:
      */
     void renderUI();
 
+    /*!
+     * \brief floatingLayoutButtonPressed handles whenever a floating layout button is presed
+     * \param button key for floating layout button
+     */
+    void floatingLayoutButtonPressed(QString button);
+
+    /*!
+     * \brief newMoodAdded handles whenever a new mood was created on the edit page.
+     */
+    void newMoodAdded(QString);
+
+    /*!
+     * \brief groupDeleted handles whenever a group is deleted on the edit page.
+     */
+    void groupDeleted(QString);
+
+    /*!
+     * \brief moodClicked called whenever an individual mood is clicked
+     * \param collectionKey key for the collection of lights that the mood fits into
+     * \param moodKey name of the specific mood
+     */
+    void moodClicked(QString collectionKey, QString moodKey);
+
+    /*!
+     * \brief shouldShowButtons saves to persistent memory whether or not you should show the individual
+     *        moods/devices for any given collection.
+     */
+    void shouldShowButtons(QString key, bool isShowing);
+
+    /*!
+     * \brief editMoodClicked the edit button has been pressed for a specific mood. This
+     *        gets sent to the main window and tells it to open the edit page.
+     */
+    void editMoodClicked(QString collectionKey, QString moodKey);
+
+    /*!
+     * \brief editGroupClicked the edit button has been pressed for a specific collection
+     */
+    void editGroupClicked(QString key);
+
 protected:
     /*!
      * \brief called whenever the page is shown on screen.
@@ -101,11 +170,12 @@ protected:
      */
     void hideEvent(QHideEvent *);
 
-private:
     /*!
-     * \brief ui pointer to Qt UI form.
+     * \brief resizeEvent called every time the main window is resized.
      */
-    Ui::GroupPage *ui;
+    void resizeEvent(QResizeEvent *);
+
+private:
 
     /*!
      * \brief mPresetWidgets vector of all preset widgets getting displayed in the
@@ -113,10 +183,112 @@ private:
      */
     std::vector<PresetGroupWidget *> mPresetWidgets;
 
+    /// vector of labels used in the Preset Groups
+    std::vector<QLabel*> mLabels;
+
+    /*!
+     * \brief communication pointer to communication object
+     *        for sending comannds to the lights
+     */
+    CommLayer *mComm;
+
+    /// spacer that adds space for the floating layout
+    QWidget *mSpacer;
+
+    /// main layout of grouppage
+    QVBoxLayout *mLayout;
+
+    /// layout of labels for preset group
+    QHBoxLayout *mTopLayout;
+
+    /// scroll area for preset groups
+    QScrollArea *mScrollArea;
+
+    /// widget used as main widget of QScrollArea
+    QWidget *mScrollWidget;
+
     /*!
      * \brief mPresetLayout layout of all preset widgets.
      */
     QVBoxLayout *mPresetLayout;
+
+    /// floating layout used to show buttons to toggle between functionalities of this page.
+    FloatingLayout *mFloatingLayout;
+
+    /// move the floating layout to top right of page
+    void moveFloatingLayout();
+
+    //-------------------
+    // Mood Widget
+    //-------------------
+
+    /// true if showing mood list widget, false if showing preset groups
+    bool mShowingMoodsListWidget;
+
+    /// update teh moodListWidget
+    void updateConnectionList();
+
+    /*!
+     * \brief highlightList helper that syncs the selected devices and groups in the backend data with the connectionList
+     *        so that the connection list only shows the devices and groups that are stored in the backend data as selected.
+     */
+    void highlightList();
+
+    /*!
+     * \brief moodsConnected checks list of moods and determines which contain all connected lights
+     * \param moods a list of all connected moods and their associated devices
+     * \return a list of names of moods that contain only connected devices.
+     */
+    std::list<QString> moodsConnected(std::list<std::pair<QString, std::list<SLightDevice> > > moods);
+
+    /*!
+     * \brief mGroups manages the list of collections and moods and the JSON data
+     *        associated with them.
+     */
+    GroupsParser *mGroups;
+
+    /*!
+     * \brief mMoodsListWidget List widget for devices. Either the moods widget or this device widget
+     *        is shown at any given time but the other is kept around in memory since they are expensive to render.
+     */
+    CorlumaListWidget *mMoodsListWidget;
+
+    /// pointer to QSettings instance
+    QSettings *mSettings;
+
+    /// helper to get a unique key for a collection.
+    QString keyForCollection(const QString& key);
+
+    /*!
+     * \brief initMoodsCollectionWidget constructor helper for making a ListGroupGroupWidget
+     * \param name name of mood
+     * \param devices devices in mood
+     * \param key key for mood
+     * \param hideEdit true for special case groups (Available and Not Reachable), false otherwise
+     * \return pointer to the newly created ListGroupGroupWidget
+     */
+    ListMoodGroupWidget* initMoodsCollectionWidget(const QString& name,
+                                                    std::list<std::pair<QString, std::list<SLightDevice> > > moods,
+                                                    const QString& key,
+                                                    bool hideEdit = false);
+
+    /*!
+     * \brief makeMoodsCollections make all the mood-based UI widgets based on the saved JSON data in the application
+     * \param moods list of all saved moods
+     */
+    void makeMoodsCollections(const std::list<std::pair<QString, std::list<SLightDevice> > >& moods);
+
+
+    /*!
+     * \brief gatherAvailandAndNotReachableMoods creates the special case groups of moods: Avaiable
+     *        and Not Reachable. These groups always exist as long as at least one moods falls into them.
+     *        Avaialble moods are moods where every light has sent an update packet recently. Not Reachable
+     *        moods have at least one device that have not sent an update packet recently.
+     * \param allDevices list of all devices that have sent communication packets of some sort.
+     * \param moods list of all moods that exist in memory.
+     */
+    void gatherAvailandAndNotReachableMoods(const std::list<SLightDevice>& allDevices,
+                                            const std::list<std::pair<QString, std::list<SLightDevice> > >& moods);
 };
 
 #endif // PresetColorsPage_H

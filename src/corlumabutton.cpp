@@ -76,7 +76,7 @@ void CorlumaButton::setupAsStandardButton(ELightingRoutine routine, EColorGroup 
     if (mLabel.compare(QString("")) != 0) {
         buttonLabel = new QLabel;
         buttonLabel->setText(label);
-
+        buttonLabel->setStyleSheet("font: 12pt;");
         buttonLabel->setAlignment(Qt::AlignCenter);
         mLayout->addWidget(buttonLabel);
         button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);

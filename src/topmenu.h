@@ -18,7 +18,8 @@
 enum class EPage {
     eColorPage,
     eGroupPage,
-    eConnectionPage
+    eConnectionPage,
+    eSettingsPage
 };
 
 
@@ -31,6 +32,7 @@ class TopMenu : public QWidget
 {
     Q_OBJECT
 public:
+    /// constructor
     explicit TopMenu(DataLayer* data, QWidget *parent = 0);
 
     /*!
@@ -51,6 +53,9 @@ public:
 
     /// special case, happens only if only white LEDs are found. Opens a special color page and disables the group page.
     void hueWhiteLightsFound();
+
+    /// highlight specified button
+    void highlightButton(EPage button);
 
 signals:
 

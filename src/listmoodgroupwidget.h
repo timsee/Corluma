@@ -38,7 +38,6 @@ public:
      * \param colors all color groups from the data layer. used for displaying icons
      *        for collections.
      * \param key key for collection
-     * \param listHeight given height for the widget
      * \param hideEdit true if edit button should be hidden, such as in special case collections.
      *        An example of a special case is "Not Reachable" moods, which contains moods you can't
      *        connect to.
@@ -47,8 +46,8 @@ public:
                                   std::list<std::pair<QString, std::list<SLightDevice> > > moods,
                                   const std::vector<std::vector<QColor> >& colors,
                                   QString key,
-                                  int listHeight,
-                                  bool hideEdit = false);
+                                  bool hideEdit = false,
+                                  QWidget *parent = 0);
 
     /*!
      * \brief updateMoods update moods based off of the mood list and the vector of preset colors.

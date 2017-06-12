@@ -61,6 +61,8 @@ void ColorPage::setupButtons() {
     mMultiRoutineWidget->setGeometry(0, this->height(), mMultiRoutineWidget->width(), mMultiRoutineWidget->height());
     mMultiRoutineWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(mMultiRoutineWidget, SIGNAL(newRoutineSelected(int)), this, SLOT(newRoutineSelected(int)));
+    // raise single since its default
+    mSingleRoutineWidget->raise();
 }
 
 void ColorPage::highlightRoutineButton(ELightingRoutine routine) {
@@ -101,6 +103,7 @@ void ColorPage::showSingleRoutineWidget(bool shouldShow) {
         animation->start();
         mBottomMenuState = EBottomMenuShow::eShowStandard;
     } else if (mBottomMenuState != EBottomMenuShow::eShowSingleRoutines && shouldShow) {
+        mSingleRoutineWidget->raise();
         mSingleRoutineWidget->singleRoutineColorChanged(mData->mainColor());  // update colors of single color routine
         QPropertyAnimation *animation = new QPropertyAnimation(mSingleRoutineWidget, "pos");
         animation->setDuration(TRANSITION_TIME_MSEC);
@@ -120,6 +123,7 @@ void ColorPage::showMultiRoutineWidget(bool shouldShow) {
         animation->start();
         mBottomMenuState = EBottomMenuShow::eShowStandard;
     } else if (mBottomMenuState != EBottomMenuShow::eShowMultiRoutines && shouldShow) {
+        mMultiRoutineWidget->raise();
         QPropertyAnimation *animation = new QPropertyAnimation(mMultiRoutineWidget, "pos");
         animation->setDuration(TRANSITION_TIME_MSEC);
         animation->setStartValue(mMultiRoutineWidget->pos());

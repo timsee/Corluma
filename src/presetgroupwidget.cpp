@@ -19,7 +19,7 @@ PresetGroupWidget::PresetGroupWidget(QString name,
     mLabel = new QLabel(this);
     mLabel->setWordWrap(true);
     QFont font = mLabel->font();
-    font.setPointSize(10);
+    font.setPointSize(8);
     mLabel->setFont(font);
     mLabel->setText(name);
 

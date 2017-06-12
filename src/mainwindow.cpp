@@ -50,6 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mColorPage->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     mGroupPage = new GroupPage(this);
+    mGroupPage->connectGroupsParser(groups);
     mGroupPage->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     mConnectionPage = new ConnectionPage(this);
@@ -63,6 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mConnectionPage->connectCommLayer(mComm);
     mColorPage->connectCommLayer(mComm);
+    mGroupPage->connectCommLayer(mComm);
 
     mConnectionPage->setupUI();
     mGroupPage->setupButtons();
@@ -411,6 +413,7 @@ void MainWindow::editButtonClicked(QString key, bool isMood) {
 void MainWindow::editClosePressed() {
     mGreyOut->setVisible(false);
     mEditPage->setVisible(false);
-    mConnectionPage->reloadConnectionList();
+    //TODO: handle group page too..
+    mConnectionPage->updateConnectionList();
 }
 

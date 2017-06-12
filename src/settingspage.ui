@@ -21,7 +21,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2" stretch="2,15">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="6,20">
+    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="2,10">
      <property name="spacing">
       <number>7</number>
      </property>
@@ -31,7 +31,7 @@
      <item>
       <widget class="QPushButton" name="closeButton">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -54,7 +54,7 @@
      <item>
       <widget class="QLabel" name="label_3">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -101,7 +101,7 @@
         <x>0</x>
         <y>0</y>
         <width>398</width>
-        <height>321</height>
+        <height>258</height>
        </rect>
       </property>
       <property name="sizePolicy">

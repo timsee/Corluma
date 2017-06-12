@@ -30,11 +30,13 @@ public:
      * \brief ListDeviceWidget Constructor for multi color routines.
      * \param device device for the widget
      * \param name name for device on list
+     * \param size desired size of widget
      * \param parent parent widget
      */
     explicit ListDeviceWidget(const SLightDevice& device,
                               const QString& name,
                               const std::vector<QColor>& colors,
+                              QSize size,
                               QWidget *parent = 0);
 
     /*!
@@ -75,14 +77,14 @@ signals:
 protected:
 
     /*!
-     * \brief paintEvent paints the background of the widget
-     */
-    void paintEvent(QPaintEvent *event);
-
-    /*!
      * \brief mouseReleaseEvent picks up when a click (or a tap on mobile) is released.
      */
     virtual void mouseReleaseEvent(QMouseEvent *);
+
+    /*!
+     * \brief paintEvent paints the background of the widget
+     */
+    void paintEvent(QPaintEvent *event);
 
 private:
     /*!

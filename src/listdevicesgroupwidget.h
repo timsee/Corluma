@@ -34,7 +34,6 @@ public:
      * \param name name of collection
      * \param devices list of devices contained within the ListDeviceGroupWidget
      * \param key unique key for collection
-     * \param listHeight maximum height for collection
      * \param comm pointer to commlayer
      * \param data pointer to datalayer
      * \param hideEdit true for groups that can't be edited such as available and not reachable,
@@ -43,7 +42,6 @@ public:
     ListDevicesGroupWidget(const QString& name,
                            std::list<SLightDevice> devices,
                            QString key,
-                           int listHeight,
                            CommLayer *comm,
                            DataLayer *data,
                            bool hideEdit = false,

@@ -88,6 +88,11 @@ private slots:
      *        quick enough.
      */
     void releasedSlider();
+
+protected:
+    /// resize the grid and its assets.
+    void resizeEvent(QResizeEvent *);
+
 private:
 
     /*!
