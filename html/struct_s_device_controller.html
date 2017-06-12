@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.96</span>
+   &#160;<span id="projectnumber">v0.9.10</span>
    </div>
   </td>
  </tr>
@@ -47,13 +47,45 @@
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="struct_s_device_controller-members.html">List of all members</a>  </div>
+<a href="struct_s_device_controller-members.html">List of all members</a> &#124;
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-attribs">Public Attributes</a>  </div>
   <div class="headertitle">
 <div class="title">SDeviceController Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
+<p>The <a class="el" href="struct_s_device_controller.html" title="The SDeviceController struct stores information about a Controller. A controller allows control of on...">SDeviceController</a> struct stores information about a Controller. A controller allows control of one or more light "Devices".  
+ <a href="struct_s_device_controller.html#details">More...</a></p>
+
 <p><code>#include &quot;<a class="el" href="commtype_8h_source.html">commtype.h</a>&quot;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a117524d6253bbaa9112cff6582c9c19b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a117524d6253bbaa9112cff6582c9c19b"></a>
+QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_s_device_controller.html#a117524d6253bbaa9112cff6582c9c19b">to_string</a> ()</td></tr>
+<tr class="memdesc:a117524d6253bbaa9112cff6582c9c19b"><td class="mdescLeft">&#160;</td><td class="mdescRight">creates a debug string for Controllers <br /></td></tr>
+<tr class="separator:a117524d6253bbaa9112cff6582c9c19b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
+Public Attributes</h2></td></tr>
+<tr class="memitem:ac63ecbce9db180677867ce8e01b95f98"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac63ecbce9db180677867ce8e01b95f98"></a>
+QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_s_device_controller.html#ac63ecbce9db180677867ce8e01b95f98">name</a></td></tr>
+<tr class="memdesc:ac63ecbce9db180677867ce8e01b95f98"><td class="mdescLeft">&#160;</td><td class="mdescRight">name of controller <br /></td></tr>
+<tr class="separator:ac63ecbce9db180677867ce8e01b95f98"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85e3c136419db9d6a7e1670a9d1faac9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a85e3c136419db9d6a7e1670a9d1faac9"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_s_device_controller.html#a85e3c136419db9d6a7e1670a9d1faac9">maxHardwareIndex</a></td></tr>
+<tr class="memdesc:a85e3c136419db9d6a7e1670a9d1faac9"><td class="mdescLeft">&#160;</td><td class="mdescRight">maximum number of devices controller can control <br /></td></tr>
+<tr class="separator:a85e3c136419db9d6a7e1670a9d1faac9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:affb299781bb5f3463b2e9a935fafdfe6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="affb299781bb5f3463b2e9a935fafdfe6"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_s_device_controller.html#affb299781bb5f3463b2e9a935fafdfe6">isUsingCRC</a></td></tr>
+<tr class="memdesc:affb299781bb5f3463b2e9a935fafdfe6"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if using CRC and appending to packets, false otherwise <br /></td></tr>
+<tr class="separator:affb299781bb5f3463b2e9a935fafdfe6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a289a94cea669a39354a2da52fcbf0050"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a289a94cea669a39354a2da52fcbf0050"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_s_device_controller.html#a289a94cea669a39354a2da52fcbf0050">maxPacketSize</a></td></tr>
+<tr class="memdesc:a289a94cea669a39354a2da52fcbf0050"><td class="mdescLeft">&#160;</td><td class="mdescRight">max number of bytes for a packet. <br /></td></tr>
+<tr class="separator:a289a94cea669a39354a2da52fcbf0050"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>

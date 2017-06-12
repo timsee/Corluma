@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.96</span>
+   &#160;<span id="projectnumber">v0.9.10</span>
    </div>
   </td>
  </tr>
@@ -130,36 +130,34 @@
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;</div>
 <div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    std::list&lt;SLightDevice&gt; mOriginalDevices;</div>
 <div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    std::list&lt;SLightDevice&gt; mNewDevices;</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    std::list&lt;SLightDevice&gt; createCollection();</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    std::list&lt;SLightDevice&gt; createMood();</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    QString mOriginalName;</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    QString mNewName;</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    <a class="code" href="class_comm_layer.html">CommLayer</a> *mComm;</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    std::list&lt;ListDeviceWidget *&gt; mWidgets;</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;};</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;<span class="preprocessor">#endif // EDITCOLLECTIONPAGE_H</span></div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    std::list&lt;SLightDevice&gt; createCollection();</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    std::list&lt;SLightDevice&gt; createMood();</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    QString mOriginalName;</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    QString mNewName;</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    <a class="code" href="class_comm_layer.html">CommLayer</a> *mComm;</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    std::list&lt;ListDeviceWidget *&gt; mWidgets;</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;};</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;<span class="preprocessor">#endif // EDITCOLLECTIONPAGE_H</span></div>
 <div class="ttc" id="class_edit_group_page_html_a025df9d37ad1b8b093a95178487704a9"><div class="ttname"><a href="class_edit_group_page.html#a025df9d37ad1b8b093a95178487704a9">EditGroupPage::EditGroupPage</a></div><div class="ttdeci">EditGroupPage(QWidget *parent=0)</div><div class="ttdoc">constructor </div><div class="ttdef"><b>Definition:</b> editgrouppage.cpp:17</div></div>
 <div class="ttc" id="class_lighting_page_html"><div class="ttname"><a href="class_lighting_page.html">LightingPage</a></div><div class="ttdoc">Inherited by Lighting Pages, provides a link to the backend. </div><div class="ttdef"><b>Definition:</b> lightingpage.h:18</div></div>
 <div class="ttc" id="class_comm_layer_html"><div class="ttname"><a href="class_comm_layer.html">CommLayer</a></div><div class="ttdoc">The CommLayer class provides communication protocols that allow the user to connect and send packets ...</div><div class="ttdef"><b>Definition:</b> commlayer.h:31</div></div>
 <div class="ttc" id="class_edit_group_page_html_a55bc62dbdae64e29c45db147a11bb600"><div class="ttname"><a href="class_edit_group_page.html#a55bc62dbdae64e29c45db147a11bb600">EditGroupPage::showGroup</a></div><div class="ttdeci">void showGroup(QString key, std::list&lt; SLightDevice &gt; groupDevices, std::list&lt; SLightDevice &gt; devices, bool isMood)</div><div class="ttdoc">showGroup open the edit page with the given data </div><div class="ttdef"><b>Definition:</b> editgrouppage.cpp:41</div></div>
-<div class="ttc" id="namespace_ui_html"><div class="ttname"><a href="namespace_ui.html">Ui</a></div><div class="ttdef"><b>Definition:</b> colorpage.h:18</div></div>
+<div class="ttc" id="namespace_ui_html"><div class="ttname"><a href="namespace_ui.html">Ui</a></div><div class="ttdef"><b>Definition:</b> discoverypage.h:19</div></div>
 <div class="ttc" id="class_edit_group_page_html_a91bb0029bf3c8afee2260ee2d5f36078"><div class="ttname"><a href="class_edit_group_page.html#a91bb0029bf3c8afee2260ee2d5f36078">EditGroupPage::connectGroupsParser</a></div><div class="ttdeci">void connectGroupsParser(GroupsParser *parser)</div><div class="ttdoc">connects the GroupsParser object to this UI widget. </div><div class="ttdef"><b>Definition:</b> editgrouppage.h:71</div></div>
 <div class="ttc" id="class_edit_group_page_html_aab3911400357fd7e884015c89fc0c326"><div class="ttname"><a href="class_edit_group_page.html#aab3911400357fd7e884015c89fc0c326">EditGroupPage::connectCommLayer</a></div><div class="ttdeci">void connectCommLayer(CommLayer *layer)</div><div class="ttdoc">connectCommLayer connec the commlayer to this page. </div><div class="ttdef"><b>Definition:</b> editgrouppage.h:68</div></div>
 <div class="ttc" id="class_edit_group_page_html_a8e4e50aa97d254516f00e3ab29cc4453"><div class="ttname"><a href="class_edit_group_page.html#a8e4e50aa97d254516f00e3ab29cc4453">EditGroupPage::pressedClose</a></div><div class="ttdeci">void pressedClose()</div><div class="ttdoc">pressedClose emited when the close button is pressed. </div></div>
 <div class="ttc" id="class_edit_group_page_html_a9e0bd98e7581d1d8a69c7c23ad91617f"><div class="ttname"><a href="class_edit_group_page.html#a9e0bd98e7581d1d8a69c7c23ad91617f">EditGroupPage::updateDevices</a></div><div class="ttdeci">void updateDevices(std::list&lt; SLightDevice &gt; groupDevices, std::list&lt; SLightDevice &gt; devices)</div><div class="ttdoc">updateDevices update the device widgets in the edit page with new values </div><div class="ttdef"><b>Definition:</b> editgrouppage.cpp:57</div></div>
-<div class="ttc" id="class_edit_group_page_html_a2a6e0d76fd0f510615d0ed0e1e9f38c9"><div class="ttname"><a href="class_edit_group_page.html#a2a6e0d76fd0f510615d0ed0e1e9f38c9">EditGroupPage::paintEvent</a></div><div class="ttdeci">void paintEvent(QPaintEvent *)</div><div class="ttdoc">paintEvent used to draw the background of the widget. </div><div class="ttdef"><b>Definition:</b> editgrouppage.cpp:201</div></div>
+<div class="ttc" id="class_edit_group_page_html_a2a6e0d76fd0f510615d0ed0e1e9f38c9"><div class="ttname"><a href="class_edit_group_page.html#a2a6e0d76fd0f510615d0ed0e1e9f38c9">EditGroupPage::paintEvent</a></div><div class="ttdeci">void paintEvent(QPaintEvent *)</div><div class="ttdoc">paintEvent used to draw the background of the widget. </div><div class="ttdef"><b>Definition:</b> editgrouppage.cpp:205</div></div>
 <div class="ttc" id="class_edit_group_page_html_a175fb0af4a2b4563cb7be54240a731ac"><div class="ttname"><a href="class_edit_group_page.html#a175fb0af4a2b4563cb7be54240a731ac">EditGroupPage::~EditGroupPage</a></div><div class="ttdeci">~EditGroupPage()</div><div class="ttdoc">deconstructor </div><div class="ttdef"><b>Definition:</b> editgrouppage.cpp:37</div></div>
-<div class="ttc" id="class_edit_group_page_html_aaec0ad0dfe75dbdd41cff086933fd7f5"><div class="ttname"><a href="class_edit_group_page.html#aaec0ad0dfe75dbdd41cff086933fd7f5">EditGroupPage::hideEvent</a></div><div class="ttdeci">void hideEvent(QHideEvent *)</div><div class="ttdoc">hideEvent called as the page is hidden. This happens when a new page is displayed. </div><div class="ttdef"><b>Definition:</b> editgrouppage.cpp:195</div></div>
-<div class="ttc" id="class_edit_group_page_html_a702bfbe73db2e4ef8544db3fc3f9c83d"><div class="ttname"><a href="class_edit_group_page.html#a702bfbe73db2e4ef8544db3fc3f9c83d">EditGroupPage::resize</a></div><div class="ttdeci">void resize()</div><div class="ttdoc">resize the widget. Call this to explicitly resize this widget based off of the size of the parent...</div><div class="ttdef"><b>Definition:</b> editgrouppage.cpp:96</div></div>
-<div class="ttc" id="class_edit_group_page_html_aa46025116f42761767cc23f1fca54942"><div class="ttname"><a href="class_edit_group_page.html#aa46025116f42761767cc23f1fca54942">EditGroupPage::showEvent</a></div><div class="ttdeci">void showEvent(QShowEvent *)</div><div class="ttdoc">showEvent called before the this page is shown. Used to sync up any changes that may have happened on...</div><div class="ttdef"><b>Definition:</b> editgrouppage.cpp:188</div></div>
+<div class="ttc" id="class_edit_group_page_html_aaec0ad0dfe75dbdd41cff086933fd7f5"><div class="ttname"><a href="class_edit_group_page.html#aaec0ad0dfe75dbdd41cff086933fd7f5">EditGroupPage::hideEvent</a></div><div class="ttdeci">void hideEvent(QHideEvent *)</div><div class="ttdoc">hideEvent called as the page is hidden. This happens when a new page is displayed. </div><div class="ttdef"><b>Definition:</b> editgrouppage.cpp:199</div></div>
+<div class="ttc" id="class_edit_group_page_html_a702bfbe73db2e4ef8544db3fc3f9c83d"><div class="ttname"><a href="class_edit_group_page.html#a702bfbe73db2e4ef8544db3fc3f9c83d">EditGroupPage::resize</a></div><div class="ttdeci">void resize()</div><div class="ttdoc">resize the widget. Call this to explicitly resize this widget based off of the size of the parent...</div><div class="ttdef"><b>Definition:</b> editgrouppage.cpp:100</div></div>
+<div class="ttc" id="class_edit_group_page_html_aa46025116f42761767cc23f1fca54942"><div class="ttname"><a href="class_edit_group_page.html#aa46025116f42761767cc23f1fca54942">EditGroupPage::showEvent</a></div><div class="ttdeci">void showEvent(QShowEvent *)</div><div class="ttdoc">showEvent called before the this page is shown. Used to sync up any changes that may have happened on...</div><div class="ttdef"><b>Definition:</b> editgrouppage.cpp:192</div></div>
 <div class="ttc" id="class_edit_group_page_html"><div class="ttname"><a href="class_edit_group_page.html">EditGroupPage</a></div><div class="ttdoc">The EditGroupPage class is a page that is used to edit existing groups of lights. It can edit both co...</div><div class="ttdef"><b>Definition:</b> editgrouppage.h:31</div></div>
 <div class="ttc" id="class_groups_parser_html"><div class="ttname"><a href="class_groups_parser.html">GroupsParser</a></div><div class="ttdoc">The GroupsParser class Manipulates and Reads a JSON representation of multiple lights. There exists two types of "groups". The first is a collection which contains any number of light devices but does not contain any reference to the lights overall state. The second is a mood, which contains both the path to the light device and data such as its brightness, color, etc. </div><div class="ttdef"><b>Definition:</b> groupsparser.h:25</div></div>
 </div><!-- fragment --></div><!-- contents -->

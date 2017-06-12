@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.96</span>
+   &#160;<span id="projectnumber">v0.9.10</span>
    </div>
   </td>
  </tr>
@@ -82,12 +82,16 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_widget.html#abd50fac149535093c8f76c634f33bc48">buttonsShown</a> (QString, bool)</td></tr>
 <tr class="memdesc:abd50fac149535093c8f76c634f33bc48 inherit signals_class_list_collection_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">buttonsShown emitted when the buttons are shown or hidden. emits the key and a boolean representing whether the buttons are shown. <br /></td></tr>
 <tr class="separator:abd50fac149535093c8f76c634f33bc48 inherit signals_class_list_collection_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3063aa7246c3a343c2a0b287d9fe5f36 inherit signals_class_list_collection_widget"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3063aa7246c3a343c2a0b287d9fe5f36"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_widget.html#a3063aa7246c3a343c2a0b287d9fe5f36">rowCountChanged</a> (int)</td></tr>
+<tr class="memdesc:a3063aa7246c3a343c2a0b287d9fe5f36 inherit signals_class_list_collection_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">rowCountChanged emits when the row count changes so that the parent holding this listcollectionwidget can know if it needs to move its collection of listcollectionwidgets around. Emits the new row count <br /></td></tr>
+<tr class="separator:a3063aa7246c3a343c2a0b287d9fe5f36 inherit signals_class_list_collection_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a1c878cec2040ee1d63903bafc2316af0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_group_widget.html#a1c878cec2040ee1d63903bafc2316af0">ListMoodGroupWidget</a> (const QString &amp;name, std::list&lt; std::pair&lt; QString, std::list&lt; SLightDevice &gt; &gt; &gt; <a class="el" href="class_list_mood_group_widget.html#a65c901862402c9b6b9152b677930fc63">moods</a>, const std::vector&lt; std::vector&lt; QColor &gt; &gt; &amp;colors, QString <a class="el" href="class_list_collection_widget.html#a8e51936bec113cd68b5089680040de98">key</a>, int listHeight, bool hideEdit=false)</td></tr>
-<tr class="memdesc:a1c878cec2040ee1d63903bafc2316af0"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_list_mood_group_widget.html" title="The ListMoodGroupWidget class is a subclass of a ListCollectionWidget. It displays a collection of mo...">ListMoodGroupWidget</a> constructor.  <a href="#a1c878cec2040ee1d63903bafc2316af0">More...</a><br /></td></tr>
-<tr class="separator:a1c878cec2040ee1d63903bafc2316af0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5795f62a8fb8f38e9c00c4bfdee05c80"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_group_widget.html#a5795f62a8fb8f38e9c00c4bfdee05c80">ListMoodGroupWidget</a> (const QString &amp;name, std::list&lt; std::pair&lt; QString, std::list&lt; SLightDevice &gt; &gt; &gt; <a class="el" href="class_list_mood_group_widget.html#a65c901862402c9b6b9152b677930fc63">moods</a>, const std::vector&lt; std::vector&lt; QColor &gt; &gt; &amp;colors, QString <a class="el" href="class_list_collection_widget.html#a8e51936bec113cd68b5089680040de98">key</a>, bool hideEdit=false, QWidget *parent=0)</td></tr>
+<tr class="memdesc:a5795f62a8fb8f38e9c00c4bfdee05c80"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_list_mood_group_widget.html" title="The ListMoodGroupWidget class is a subclass of a ListCollectionWidget. It displays a collection of mo...">ListMoodGroupWidget</a> constructor.  <a href="#a5795f62a8fb8f38e9c00c4bfdee05c80">More...</a><br /></td></tr>
+<tr class="separator:a5795f62a8fb8f38e9c00c4bfdee05c80"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab4368956a496da582c2ec6fce448ff62"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_group_widget.html#ab4368956a496da582c2ec6fce448ff62">updateMoods</a> (std::list&lt; std::pair&lt; QString, std::list&lt; SLightDevice &gt; &gt; &gt; <a class="el" href="class_list_mood_group_widget.html#a65c901862402c9b6b9152b677930fc63">moods</a>, const std::vector&lt; std::vector&lt; QColor &gt; &gt; &amp;colors)</td></tr>
 <tr class="memdesc:ab4368956a496da582c2ec6fce448ff62"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateMoods update moods based off of the mood list and the vector of preset colors.  <a href="#ab4368956a496da582c2ec6fce448ff62">More...</a><br /></td></tr>
 <tr class="separator:ab4368956a496da582c2ec6fce448ff62"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -116,9 +120,9 @@ Public Member Functions</h2></td></tr>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_widget.html#a2584e41280efb84b27bdcb9d51be7787">~ListCollectionWidget</a> ()</td></tr>
 <tr class="memdesc:a2584e41280efb84b27bdcb9d51be7787 inherit pub_methods_class_list_collection_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">deconstructor <br /></td></tr>
 <tr class="separator:a2584e41280efb84b27bdcb9d51be7787 inherit pub_methods_class_list_collection_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9f24c214fc169fca906a7fa0bc1eebd7 inherit pub_methods_class_list_collection_widget"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_widget.html#a9f24c214fc169fca906a7fa0bc1eebd7">setup</a> (const QString &amp;name, const QString &amp;<a class="el" href="class_list_collection_widget.html#a8e51936bec113cd68b5089680040de98">key</a>, int listHeight, bool hideEdit)</td></tr>
-<tr class="memdesc:a9f24c214fc169fca906a7fa0bc1eebd7 inherit pub_methods_class_list_collection_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">setup called from constructors, sets up objects that are used in all collection widgets  <a href="#a9f24c214fc169fca906a7fa0bc1eebd7">More...</a><br /></td></tr>
-<tr class="separator:a9f24c214fc169fca906a7fa0bc1eebd7 inherit pub_methods_class_list_collection_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8652ae27a3e03a7742812d8441a4d29 inherit pub_methods_class_list_collection_widget"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_widget.html#ad8652ae27a3e03a7742812d8441a4d29">setup</a> (const QString &amp;name, const QString &amp;<a class="el" href="class_list_collection_widget.html#a8e51936bec113cd68b5089680040de98">key</a>, bool hideEdit)</td></tr>
+<tr class="memdesc:ad8652ae27a3e03a7742812d8441a4d29 inherit pub_methods_class_list_collection_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">setup called from constructors, sets up objects that are used in all collection widgets  <a href="#ad8652ae27a3e03a7742812d8441a4d29">More...</a><br /></td></tr>
+<tr class="separator:ad8652ae27a3e03a7742812d8441a4d29 inherit pub_methods_class_list_collection_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8e51936bec113cd68b5089680040de98 inherit pub_methods_class_list_collection_widget"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_widget.html#a8e51936bec113cd68b5089680040de98">key</a> ()</td></tr>
 <tr class="memdesc:a8e51936bec113cd68b5089680040de98 inherit pub_methods_class_list_collection_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">key getter for key  <a href="#a8e51936bec113cd68b5089680040de98">More...</a><br /></td></tr>
 <tr class="separator:a8e51936bec113cd68b5089680040de98 inherit pub_methods_class_list_collection_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -153,6 +157,9 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr class="memitem:a2f54a0677cd86a9a8377a17b4fcf4755 inherit pro_methods_class_list_collection_widget"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_widget.html#a2f54a0677cd86a9a8377a17b4fcf4755">removeWidgetFromGrid</a> (<a class="el" href="class_list_collection_sub_widget.html">ListCollectionSubWidget</a> *widget)</td></tr>
 <tr class="memdesc:a2f54a0677cd86a9a8377a17b4fcf4755 inherit pro_methods_class_list_collection_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeWidgetFromGrid remove <a class="el" href="class_list_collection_sub_widget.html" title="ListCollectionSubwidget is an object used by all widgets that are used as items in a ListCollectionWi...">ListCollectionSubWidget</a> from the QGridLayout used for collection widgets. all widgets to the right of the removed widget get moved back one cell.  <a href="#a2f54a0677cd86a9a8377a17b4fcf4755">More...</a><br /></td></tr>
 <tr class="separator:a2f54a0677cd86a9a8377a17b4fcf4755 inherit pro_methods_class_list_collection_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d3da4c81df68c440561dac3b432d77a inherit pro_methods_class_list_collection_widget"><td class="memItemLeft" align="right" valign="top">QPoint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_widget.html#a2d3da4c81df68c440561dac3b432d77a">widgetPosition</a> (QWidget *widget)</td></tr>
+<tr class="memdesc:a2d3da4c81df68c440561dac3b432d77a inherit pro_methods_class_list_collection_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">widgetPosition gives the widget position based off of the given widget. Position is not <em>actual</em> position, but where it falls in the group overall. For example, top left widget is (0,0). Next widget is (0,1). First widget in second row is (1,0)  <a href="#a2d3da4c81df68c440561dac3b432d77a">More...</a><br /></td></tr>
+<tr class="separator:a2d3da4c81df68c440561dac3b432d77a inherit pro_methods_class_list_collection_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -162,12 +169,11 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:ac2efbec2012780428af5a602ea6fcdca inherit pub_slots_class_list_collection_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">editButtonClicked called when edit button is pressed, sends out an edit signal <br /></td></tr>
 <tr class="separator:ac2efbec2012780428af5a602ea6fcdca inherit pub_slots_class_list_collection_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_class_list_collection_widget"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_list_collection_widget')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_list_collection_widget.html">ListCollectionWidget</a></td></tr>
-<tr class="memitem:a8fb79a7641f2958fdd3ee02ec9828f2b inherit pro_attribs_class_list_collection_widget"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8fb79a7641f2958fdd3ee02ec9828f2b"></a>
-std::set<br class="typebreak" />
-&lt; <a class="el" href="class_list_collection_sub_widget.html">ListCollectionSubWidget</a> <br class="typebreak" />
-*, <a class="el" href="structsub_widget_compare.html">subWidgetCompare</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_widget.html#a8fb79a7641f2958fdd3ee02ec9828f2b">mWidgets</a></td></tr>
-<tr class="memdesc:a8fb79a7641f2958fdd3ee02ec9828f2b inherit pro_attribs_class_list_collection_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">mWidgets list of all device widgets displayed in this widget. <br /></td></tr>
-<tr class="separator:a8fb79a7641f2958fdd3ee02ec9828f2b inherit pro_attribs_class_list_collection_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac1f9625b659b5dd7841a1364a4aa6cde inherit pro_attribs_class_list_collection_widget"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac1f9625b659b5dd7841a1364a4aa6cde"></a>
+std::vector<br class="typebreak" />
+&lt; <a class="el" href="class_list_collection_sub_widget.html">ListCollectionSubWidget</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_widget.html#ac1f9625b659b5dd7841a1364a4aa6cde">mWidgets</a></td></tr>
+<tr class="memdesc:ac1f9625b659b5dd7841a1364a4aa6cde inherit pro_attribs_class_list_collection_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">mWidgets list of all device widgets displayed in this widget. <br /></td></tr>
+<tr class="separator:ac1f9625b659b5dd7841a1364a4aa6cde inherit pro_attribs_class_list_collection_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5eb1ee805a2eb089d8e839a46c36fef4 inherit pro_attribs_class_list_collection_widget"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5eb1ee805a2eb089d8e839a46c36fef4"></a>
 QLabel *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_widget.html#a5eb1ee805a2eb089d8e839a46c36fef4">mName</a></td></tr>
 <tr class="memdesc:a5eb1ee805a2eb089d8e839a46c36fef4 inherit pro_attribs_class_list_collection_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">mName label for name of collection <br /></td></tr>
@@ -200,14 +206,22 @@ QPixmap&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 QPixmap&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_widget.html#ae2598f46125fe0661e6c33f28c2155e2">mOpenedPixmap</a></td></tr>
 <tr class="memdesc:ae2598f46125fe0661e6c33f28c2155e2 inherit pro_attribs_class_list_collection_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">pixmap for icon that conveys all buttons being shown <br /></td></tr>
 <tr class="separator:ae2598f46125fe0661e6c33f28c2155e2 inherit pro_attribs_class_list_collection_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69df08e215445b2641f4d26cbb6569c0 inherit pro_attribs_class_list_collection_widget"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a69df08e215445b2641f4d26cbb6569c0"></a>
-QGridLayout *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_widget.html#a69df08e215445b2641f4d26cbb6569c0">mGridLayout</a></td></tr>
-<tr class="memdesc:a69df08e215445b2641f4d26cbb6569c0 inherit pro_attribs_class_list_collection_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">mGridLayout layout that displays all of the sub widgets. <br /></td></tr>
-<tr class="separator:a69df08e215445b2641f4d26cbb6569c0 inherit pro_attribs_class_list_collection_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8fb3b11d15cd347ecfdd41b78b9176fe inherit pro_attribs_class_list_collection_widget"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8fb3b11d15cd347ecfdd41b78b9176fe"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_widget.html#a8fb3b11d15cd347ecfdd41b78b9176fe">mMinimumSize</a></td></tr>
-<tr class="memdesc:a8fb3b11d15cd347ecfdd41b78b9176fe inherit pro_attribs_class_list_collection_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">mMinimumSize minimum size allowed for collection. <br /></td></tr>
-<tr class="separator:a8fb3b11d15cd347ecfdd41b78b9176fe inherit pro_attribs_class_list_collection_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72ba0ae23e21529c2d69a73df19ef295 inherit pro_attribs_class_list_collection_widget"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a72ba0ae23e21529c2d69a73df19ef295"></a>
+QWidget *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_widget.html#a72ba0ae23e21529c2d69a73df19ef295">mWidget</a></td></tr>
+<tr class="memdesc:a72ba0ae23e21529c2d69a73df19ef295 inherit pro_attribs_class_list_collection_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">widget used for background of grid <br /></td></tr>
+<tr class="separator:a72ba0ae23e21529c2d69a73df19ef295 inherit pro_attribs_class_list_collection_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f27fc404d29cf1aa7ac7a76de3887e5 inherit pro_attribs_class_list_collection_widget"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6f27fc404d29cf1aa7ac7a76de3887e5"></a>
+QSize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_widget.html#a6f27fc404d29cf1aa7ac7a76de3887e5">mWidgetSize</a></td></tr>
+<tr class="memdesc:a6f27fc404d29cf1aa7ac7a76de3887e5 inherit pro_attribs_class_list_collection_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">size of overall background of grid. <br /></td></tr>
+<tr class="separator:a6f27fc404d29cf1aa7ac7a76de3887e5 inherit pro_attribs_class_list_collection_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8e3cffc5742a7d56f3619c9e485fffd inherit pro_attribs_class_list_collection_widget"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae8e3cffc5742a7d56f3619c9e485fffd"></a>
+QVBoxLayout *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_widget.html#ae8e3cffc5742a7d56f3619c9e485fffd">mLayout</a></td></tr>
+<tr class="memdesc:ae8e3cffc5742a7d56f3619c9e485fffd inherit pro_attribs_class_list_collection_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">mLayout layout that displays all of the sub widgets. <br /></td></tr>
+<tr class="separator:ae8e3cffc5742a7d56f3619c9e485fffd inherit pro_attribs_class_list_collection_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c099ab48d7784009c70c799d5500a00 inherit pro_attribs_class_list_collection_widget"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8c099ab48d7784009c70c799d5500a00"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_widget.html#a8c099ab48d7784009c70c799d5500a00">mMinimumHeight</a></td></tr>
+<tr class="memdesc:a8c099ab48d7784009c70c799d5500a00 inherit pro_attribs_class_list_collection_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">mMinimumHeight minimum size allowed for collection. <br /></td></tr>
+<tr class="separator:a8c099ab48d7784009c70c799d5500a00 inherit pro_attribs_class_list_collection_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a90a1170fb7da1a8390cee3630eed35d7 inherit pro_attribs_class_list_collection_widget"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a90a1170fb7da1a8390cee3630eed35d7"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_widget.html#a90a1170fb7da1a8390cee3630eed35d7">mShowButtons</a></td></tr>
 <tr class="memdesc:a90a1170fb7da1a8390cee3630eed35d7 inherit pro_attribs_class_list_collection_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">mShowButtons true if buttons are showing, false otherwise. <br /></td></tr>
@@ -224,7 +238,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a1c878cec2040ee1d63903bafc2316af0"></a>
+<a class="anchor" id="a5795f62a8fb8f38e9c00c4bfdee05c80"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -258,14 +272,14 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>listHeight</em>, </td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>hideEdit</em> = <code>false</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>hideEdit</em> = <code>false</code>&#160;</td>
+          <td class="paramtype">QWidget *&#160;</td>
+          <td class="paramname"><em>parent</em> = <code>0</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -285,7 +299,6 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
     <tr><td class="paramname">moods</td><td>moods to display for collection </td></tr>
     <tr><td class="paramname">colors</td><td>all color groups from the data layer. used for displaying icons for collections. </td></tr>
     <tr><td class="paramname">key</td><td>key for collection </td></tr>
-    <tr><td class="paramname">listHeight</td><td>given height for the widget </td></tr>
     <tr><td class="paramname">hideEdit</td><td>true if edit button should be hidden, such as in special case collections. An example of a special case is "Not Reachable" moods, which contains moods you can't connect to.</td></tr>
   </table>
   </dd>

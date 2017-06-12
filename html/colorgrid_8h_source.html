@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.96</span>
+   &#160;<span id="projectnumber">v0.9.10</span>
    </div>
   </td>
  </tr>
@@ -86,41 +86,46 @@
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordtype">void</span> selectArrayColor(<span class="keywordtype">int</span>);</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keywordtype">void</span> releasedSlider();</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    QPixmap createSolidColorIcon(QColor color);</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <a class="code" href="class_corluma_slider.html">CorlumaSlider</a> *mCountSlider;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_color_grid.html#a307f7c4ab0cb589f52e67f61e7446aa3">resizeEvent</a>(QResizeEvent *);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    QPixmap createSolidColorIcon(QColor color);</div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    QLabel *mLabel;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    uint32_t mMaximumSize;</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    std::vector&lt;QPushButton *&gt; mArrayColorsButtons;</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    std::vector&lt;QColor&gt; mColors;</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    uint32_t mColorsUsed;</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    std::list&lt;uint32_t&gt; mSelectedIndices;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <span class="keywordtype">void</span> updateMultiColorSlider();</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    <span class="keywordtype">void</span> manageMultiSelected();</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    QGridLayout *mLayout;</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;};</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;<span class="preprocessor">#endif // COLORGRID_H</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <a class="code" href="class_corluma_slider.html">CorlumaSlider</a> *mCountSlider;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    QLabel *mLabel;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    uint32_t mMaximumSize;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    std::vector&lt;QPushButton *&gt; mArrayColorsButtons;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    std::vector&lt;QColor&gt; mColors;</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    uint32_t mColorsUsed;</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    std::list&lt;uint32_t&gt; mSelectedIndices;</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="keywordtype">void</span> updateMultiColorSlider();</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    <span class="keywordtype">void</span> manageMultiSelected();</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    QGridLayout *mLayout;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;};</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="preprocessor">#endif // COLORGRID_H</span></div>
 <div class="ttc" id="class_color_grid_html"><div class="ttname"><a href="class_color_grid.html">ColorGrid</a></div><div class="ttdoc">The ColorGrid class is a bottom layout for the color picker that allows the user to choose up to 10 c...</div><div class="ttdef"><b>Definition:</b> colorgrid.h:19</div></div>
+<div class="ttc" id="class_color_grid_html_a307f7c4ab0cb589f52e67f61e7446aa3"><div class="ttname"><a href="class_color_grid.html#a307f7c4ab0cb589f52e67f61e7446aa3">ColorGrid::resizeEvent</a></div><div class="ttdeci">void resizeEvent(QResizeEvent *)</div><div class="ttdoc">resize the grid and its assets. </div><div class="ttdef"><b>Definition:</b> colorgrid.cpp:194</div></div>
 <div class="ttc" id="class_color_grid_html_a078e63945286922e455924ef10652808"><div class="ttname"><a href="class_color_grid.html#a078e63945286922e455924ef10652808">ColorGrid::multiColorCountChanged</a></div><div class="ttdeci">void multiColorCountChanged(int)</div><div class="ttdoc">multiColorCountChanged number of colors to use during multi color routines changed. </div></div>
 <div class="ttc" id="class_color_grid_html_a2eb73b1c702f2c280398d735e002d690"><div class="ttname"><a href="class_color_grid.html#a2eb73b1c702f2c280398d735e002d690">ColorGrid::selectedCount</a></div><div class="ttdeci">uint32_t selectedCount()</div><div class="ttdoc">selectedCount number of selected devices by the ColorGrid </div><div class="ttdef"><b>Definition:</b> colorgrid.h:46</div></div>
 <div class="ttc" id="class_color_grid_html_a43484942462cc5ba0707847b1bcfe981"><div class="ttname"><a href="class_color_grid.html#a43484942462cc5ba0707847b1bcfe981">ColorGrid::ColorGrid</a></div><div class="ttdeci">ColorGrid(QWidget *parent=0)</div><div class="ttdoc">Constructor. </div><div class="ttdef"><b>Definition:</b> colorgrid.cpp:10</div></div>
 <div class="ttc" id="class_corluma_slider_html"><div class="ttname"><a href="class_corluma_slider.html">CorlumaSlider</a></div><div class="ttdoc">The CorlumaSlider class provides a slider with behaviors similiar to sliders on mobile devices...</div><div class="ttdef"><b>Definition:</b> corlumaslider.h:33</div></div>
-<div class="ttc" id="class_color_grid_html_adf84e06d9195f5d8d320b37a74722343"><div class="ttname"><a href="class_color_grid.html#adf84e06d9195f5d8d320b37a74722343">ColorGrid::updateSelected</a></div><div class="ttdeci">void updateSelected(QColor color)</div><div class="ttdoc">updateSelected progrmatically update the selected buttons with a new color. Does not emit a signal wh...</div><div class="ttdef"><b>Definition:</b> colorgrid.cpp:71</div></div>
+<div class="ttc" id="class_color_grid_html_adf84e06d9195f5d8d320b37a74722343"><div class="ttname"><a href="class_color_grid.html#adf84e06d9195f5d8d320b37a74722343">ColorGrid::updateSelected</a></div><div class="ttdeci">void updateSelected(QColor color)</div><div class="ttdoc">updateSelected progrmatically update the selected buttons with a new color. Does not emit a signal wh...</div><div class="ttdef"><b>Definition:</b> colorgrid.cpp:73</div></div>
 <div class="ttc" id="class_color_grid_html_a6c6b67f0ba5e8d94e27afa59798a3dd6"><div class="ttname"><a href="class_color_grid.html#a6c6b67f0ba5e8d94e27afa59798a3dd6">ColorGrid::multiColorChanged</a></div><div class="ttdeci">void multiColorChanged(QColor, int)</div><div class="ttdoc">multiColorChanged emitted whenever the multi color picker has an update for any individual color...</div></div>
 <div class="ttc" id="class_color_grid_html_ac01e4860ec0a11c650a5d2c744227e86"><div class="ttname"><a href="class_color_grid.html#ac01e4860ec0a11c650a5d2c744227e86">ColorGrid::selected</a></div><div class="ttdeci">std::list&lt; uint32_t &gt; selected()</div><div class="ttdoc">selected list of all selected indices </div><div class="ttdef"><b>Definition:</b> colorgrid.h:52</div></div>
-<div class="ttc" id="class_color_grid_html_ac1eb20418100a555284f420adb49fe24"><div class="ttname"><a href="class_color_grid.html#ac1eb20418100a555284f420adb49fe24">ColorGrid::updateMultiColor</a></div><div class="ttdeci">void updateMultiColor(const std::vector&lt; QColor &gt; colors, int count)</div><div class="ttdoc">updateMultiColor programmatically set the colors in the multi color picker. This will update the UI e...</div><div class="ttdef"><b>Definition:</b> colorgrid.cpp:91</div></div>
+<div class="ttc" id="class_color_grid_html_ac1eb20418100a555284f420adb49fe24"><div class="ttname"><a href="class_color_grid.html#ac1eb20418100a555284f420adb49fe24">ColorGrid::updateMultiColor</a></div><div class="ttdeci">void updateMultiColor(const std::vector&lt; QColor &gt; colors, int count)</div><div class="ttdoc">updateMultiColor programmatically set the colors in the multi color picker. This will update the UI e...</div><div class="ttdef"><b>Definition:</b> colorgrid.cpp:93</div></div>
 <div class="ttc" id="class_color_grid_html_a2b622f53d11c33f74007f1f9da4ac6f3"><div class="ttname"><a href="class_color_grid.html#a2b622f53d11c33f74007f1f9da4ac6f3">ColorGrid::selectedCountChanged</a></div><div class="ttdeci">void selectedCountChanged(int)</div><div class="ttdoc">selectedCountChanged a button was pressed so the selected count has changed. emits new count...</div></div>
 </div><!-- fragment --></div><!-- contents -->
 

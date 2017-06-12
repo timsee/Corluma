@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.96</span>
+   &#160;<span id="projectnumber">v0.9.10</span>
    </div>
   </td>
  </tr>
@@ -74,10 +74,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#a68ae748a051ddc977af7886b29a92643">clearButtonPressed</a> ()</td></tr>
 <tr class="memdesc:a68ae748a051ddc977af7886b29a92643"><td class="mdescLeft">&#160;</td><td class="mdescRight">clearButtonPressed clear button is pressed and all selected devices are deselected. <br /></td></tr>
 <tr class="separator:a68ae748a051ddc977af7886b29a92643"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0602243d0fe3aac143a4f25019d7afe6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0602243d0fe3aac143a4f25019d7afe6"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#a0602243d0fe3aac143a4f25019d7afe6">discoveryButtonPressed</a> ()</td></tr>
-<tr class="memdesc:a0602243d0fe3aac143a4f25019d7afe6"><td class="mdescLeft">&#160;</td><td class="mdescRight">discoveryButtonPressed discovery button is pressed and discovery overlay is displayed over the connection page. <br /></td></tr>
-<tr class="separator:a0602243d0fe3aac143a4f25019d7afe6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
@@ -114,10 +110,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a254da6dff4fe5c236295da18f5e83654"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#a254da6dff4fe5c236295da18f5e83654">connectCommLayer</a> (<a class="el" href="class_comm_layer.html">CommLayer</a> *layer)</td></tr>
 <tr class="memdesc:a254da6dff4fe5c236295da18f5e83654"><td class="mdescLeft">&#160;</td><td class="mdescRight">connectCommLayer connect to commlayer. In a future update the commLayer pointer on every page will be totally removed in favor of <a class="el" href="class_data_sync.html" title="The DataSync class compares the data layer&#39;s representation of devices with the commlayer&#39;s understan...">DataSync</a>, but for now theres some edge cases that require certain pages to have a commlayer pointer.  <a href="#a254da6dff4fe5c236295da18f5e83654">More...</a><br /></td></tr>
 <tr class="separator:a254da6dff4fe5c236295da18f5e83654"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3294ee4eeab6f2afcfbb3056805ccdd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad3294ee4eeab6f2afcfbb3056805ccdd"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#ad3294ee4eeab6f2afcfbb3056805ccdd">reloadConnectionList</a> ()</td></tr>
-<tr class="memdesc:ad3294ee4eeab6f2afcfbb3056805ccdd"><td class="mdescLeft">&#160;</td><td class="mdescRight">clears all data in the connection list and reloads it <br /></td></tr>
-<tr class="separator:ad3294ee4eeab6f2afcfbb3056805ccdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1868d779155e071a6563a1d0a2e6450"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa1868d779155e071a6563a1d0a2e6450"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#aa1868d779155e071a6563a1d0a2e6450">connectGroupsParser</a> (<a class="el" href="class_groups_parser.html">GroupsParser</a> *parser)</td></tr>
 <tr class="memdesc:aa1868d779155e071a6563a1d0a2e6450"><td class="mdescLeft">&#160;</td><td class="mdescRight">connects the <a class="el" href="class_groups_parser.html" title="The GroupsParser class Manipulates and Reads a JSON representation of multiple lights. There exists two types of &quot;groups&quot;. The first is a collection which contains any number of light devices but does not contain any reference to the lights overall state. The second is a mood, which contains both the path to the light device and data such as its brightness, color, etc. ">GroupsParser</a> object to this UI widget. <br /></td></tr>
@@ -125,10 +117,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:af2fffa3c7a465764cddf56abf1f15e0e"><td class="memItemLeft" align="right" valign="top">std::list&lt; SLightDevice &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#af2fffa3c7a465764cddf56abf1f15e0e">devicesFromKey</a> (QString key)</td></tr>
 <tr class="memdesc:af2fffa3c7a465764cddf56abf1f15e0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">devicesFromKey take a key that represents a collection or mood and convert it into a list of devices that are represented by that key. An example use of this is the edit page and it is used to highlight specific devices.  <a href="#af2fffa3c7a465764cddf56abf1f15e0e">More...</a><br /></td></tr>
 <tr class="separator:af2fffa3c7a465764cddf56abf1f15e0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5787ef6257028259be10bd8a54c3030b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5787ef6257028259be10bd8a54c3030b"></a>
-EConnectionList&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#a5787ef6257028259be10bd8a54c3030b">currentConnectionList</a> ()</td></tr>
-<tr class="memdesc:a5787ef6257028259be10bd8a54c3030b"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter to check whether the connection list is displaying moods or devices. <br /></td></tr>
-<tr class="separator:a5787ef6257028259be10bd8a54c3030b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab565890a97717688f9c9bf13165ce5e8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab565890a97717688f9c9bf13165ce5e8"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#ab565890a97717688f9c9bf13165ce5e8">updateConnectionList</a> ()</td></tr>
+<tr class="memdesc:ab565890a97717688f9c9bf13165ce5e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateConnectionList updates the GUI elements that display the <a class="el" href="class_comm_layer.html" title="The CommLayer class provides communication protocols that allow the user to connect and send packets ...">CommLayer</a>'s connection list. <br /></td></tr>
+<tr class="separator:ab565890a97717688f9c9bf13165ce5e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_lighting_page"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_lighting_page')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_lighting_page.html">LightingPage</a></td></tr>
 <tr class="memitem:afcd456d0f20296ac63c5d336b085f37b inherit pub_methods_class_lighting_page"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afcd456d0f20296ac63c5d336b085f37b"></a>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#afcd456d0f20296ac63c5d336b085f37b">~LightingPage</a> ()</td></tr>
