@@ -203,7 +203,6 @@ inline EHueType checkForHueWithMostFeatures(std::list<SHueLight> lights) {
                 || hue.type == EHueType::eColor) {
             rgbCount++;
         } else if (hue.type == EHueType::eAmbient) {
-            qDebug() << "FOUDN AMBEITNQL";
             ambientCount++;
         } else if (hue.type == EHueType::eWhite) {
             whiteCount++;

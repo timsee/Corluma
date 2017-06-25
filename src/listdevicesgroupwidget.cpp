@@ -88,7 +88,12 @@ void ListDevicesGroupWidget::updateDevices(std::list<SLightDevice> devices) {
                     name = inputDevice.name;
                 }
                 if (name.size() > 0) {
-                    ListDeviceWidget *widget = new ListDeviceWidget(inputDevice, name, mData->colorGroup(inputDevice.colorGroup), mWidgetSize, this);
+                    ListDeviceWidget *widget = new ListDeviceWidget(inputDevice,
+                                                                    name,
+                                                                    mData->colorGroup(inputDevice.colorGroup),
+                                                                    false,
+                                                                    mWidgetSize,
+                                                                    this);
                     connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
                     //widget->setFixedSize(mWidgetSize);
                     insertWidgetIntoGrid(widget);
@@ -237,9 +242,6 @@ QColor ListDevicesGroupWidget::computeHighlightColor() {
 }
 
 void ListDevicesGroupWidget::mouseReleaseEvent(QMouseEvent *) {
-//    int width = this->width();
-//    this->setMaximumWidth(width);
     setShowButtons(!mShowButtons);
-//    this->setMaximumWidth(width);
 }
 

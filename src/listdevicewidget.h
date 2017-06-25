@@ -9,6 +9,7 @@
 #include "icondata.h"
 #include "comm/commtype.h"
 #include "listcollectionsubwidget.h"
+#include "corlumastatusicon.h"
 
 /*!
  * \copyright
@@ -30,12 +31,15 @@ public:
      * \brief ListDeviceWidget Constructor for multi color routines.
      * \param device device for the widget
      * \param name name for device on list
+     * \param setHighlightable if true, the widget highlights itself, if false,
+     *        it does not highlight.
      * \param size desired size of widget
      * \param parent parent widget
      */
     explicit ListDeviceWidget(const SLightDevice& device,
                               const QString& name,
                               const std::vector<QColor>& colors,
+                              bool setHighlightable,
                               QSize size,
                               QWidget *parent = 0);
 
@@ -109,10 +113,28 @@ private:
      */
     QString createStyleSheet(const SLightDevice& device);
 
+    /// resize the mIcon and its associated pixmap.
+    void resizeIconPixmap();
+
+    /// create the type label, which may be an image or text
+    void prepareTypeLabel(ECommType type);
+
     /*!
-     * \brief mStatusIcon uses mIconData to display an icon
+     * \brief mDeviceIcon uses mIconData to display an icon
      */
-    QLabel *mStatusIcon;
+    QLabel *mDeviceIcon;
+
+    /// Shows the status of the device. Shows if it is off, on, how bright it is, or if it is unreachable.
+    CorlumaStatusIcon *mStatusIcon;
+
+    /// label for the type icon, used to show what type of device it is (a hue, or an arduino)
+    QLabel *mTypeIcon;
+
+    /// pixmap used by main icon
+    QPixmap mIconPixmap;
+
+    /// true if should highlight, false otherwise
+    bool mShouldHighlight;
 
     /*!
      * \brief mIconData creates a QPixmap that represents the current light states
@@ -128,7 +150,7 @@ private:
     /*!
      * \brief mLayout layout of widget
      */
-    QHBoxLayout *mLayout;
+    QGridLayout *mLayout;
 
     /*!
      * \brief mDevice stores the SLightDevice used by the widget.

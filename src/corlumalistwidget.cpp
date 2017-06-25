@@ -5,12 +5,10 @@
 CorlumaListWidget::CorlumaListWidget(QWidget *parent) {
     this->setParent(parent);
     this->setMaximumSize(parent->size());
-    mScaleWidth = 0.9f;
 
     mWidget = new QWidget(this);
-    mWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-    mWidget->setMaximumWidth(parent->width() * mScaleWidth);
-    mWidget->setMinimumWidth(parent->width() * mScaleWidth);
+    mWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum);
+    mWidget->setFixedWidth(this->viewport()->width());
 
     QString backgroundStyleSheet = "border: none; background:rgba(0, 0, 0, 0%);";
     mWidget->setStyleSheet(backgroundStyleSheet);
@@ -20,17 +18,14 @@ CorlumaListWidget::CorlumaListWidget(QWidget *parent) {
 
 
 void CorlumaListWidget::resizeEvent(QResizeEvent *) {
-    mWidget->setMaximumWidth(this->parentWidget()->width() * mScaleWidth);
-    mWidget->setMinimumWidth(this->parentWidget()->width()  * mScaleWidth);
+    // disable horizontal scorlling by always forcing scroll area to be width
+    // of viewport.
+    mWidget->setFixedWidth(this->viewport()->width());
+
     for (uint32_t i = 0; i < mWidgets.size(); ++i) {
         mWidgets[i]->resize();
     }
     resizeWidgets();
-
-//    mWidget->setMinimumWidth(this->parentWidget()->width() * mScaleWidth);
-//    for (uint32_t i = 0; i < mWidgets.size(); ++i) {
-//        mWidgets[i]->setMaximumSize(this->size());
-//    }
 }
 
 void CorlumaListWidget::addWidget(ListCollectionWidget *widget) {

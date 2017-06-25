@@ -17,15 +17,14 @@ TopMenu::TopMenu(DataLayer* data, QWidget *parent) : QWidget(parent) {
     mConnectionButton->setIcon(QIcon(":images/connectionIcon.png"));
     connect(mConnectionButton, SIGNAL(clicked(bool)), this, SLOT(connectionButtonPressed()));
 
-    mColorPageButton = new CorlumaButton(this);
-    mColorPageButton->setupAsMenuButton((int)EPage::eColorPage);
-    mColorPageButton->button->setStyleSheet("background-color: rgb(52, 52, 52); ");
-    mColorPageButton->button->setCheckable(true);
+    mColorPageButton = new QPushButton(this);
+    mColorPageButton->setStyleSheet("background-color: rgb(52, 52, 52); ");
     mColorPageButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(mColorPageButton->button, SIGNAL(clicked(bool)), this, SLOT(colorButtonPressed()));
+    mColorPageButton->setIcon(QIcon(":images/colorWheel_icon.png"));
+    connect(mColorPageButton, SIGNAL(clicked(bool)), this, SLOT(colorButtonPressed()));
 
     mGroupPageButton = new CorlumaButton(this);
-    mGroupPageButton->setupAsMenuButton((int)EPage::eGroupPage,  mData->colorGroup(EColorGroup::eSevenColor));
+    mGroupPageButton->setupAsMenuButton((int)EPage::eGroupPage,  mData->colorGroup(EColorGroup::eFire));
     mGroupPageButton->button->setStyleSheet("background-color: rgb(52, 52, 52); ");
     mGroupPageButton->button->setCheckable(true);
     mGroupPageButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -81,7 +80,7 @@ TopMenu::TopMenu(DataLayer* data, QWidget *parent) : QWidget(parent) {
     mLayout->setSpacing(5);
     mLayout->setContentsMargins(0,0,0,0);
     mLayout->addLayout(mTopLayout, 2);
-    mLayout->addLayout(mBottomLayout, 4);
+    mLayout->addLayout(mBottomLayout, 3);
 
     setLayout(mLayout);
 
@@ -124,25 +123,6 @@ void TopMenu::brightnessSliderChanged(int newBrightness) {
 
 
 void TopMenu::updateMenuBar() {
-
-    //-----------------
-    // Multi Color Button Update
-    //-----------------
-    if (mData->currentRoutine() <= utils::ELightingRoutineSingleColorEnd) {
-        EColorGroup closestGroup = mData->closestColorGroupToColor(mData->mainColor());
-        mGroupPageButton->updateIconPresetColorRoutine(ELightingRoutine::eMultiBarsMoving,
-                                                            closestGroup,
-                                                            mData->colorGroup(closestGroup));
-    } else {
-        if (mData->currentColorGroup() == EColorGroup::eCustom) {
-            // do nothing
-        } else {
-            mGroupPageButton->updateIconPresetColorRoutine(mData->currentRoutine(),
-                                                                mData->currentColorGroup(),
-                                                                mData->currentGroup());
-        }
-    }
-
     //-----------------
     // On/Off Data
     //-----------------
@@ -188,22 +168,18 @@ void TopMenu::updateSingleColor(QColor color) {
     mIconData.setSingleLightingRoutine(mData->currentRoutine(), color);
     mBrightnessSlider->setSliderColorBackground(color);
     mOnOffButton->setIcon(mIconData.renderAsQPixmap());
-    mColorPageButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, color);
 }
 
 void TopMenu::updatePresetColorGroup(int lightingRoutine, int colorGroup) {
     mIconData.setMultiFade((EColorGroup)colorGroup, mData->colorGroup((EColorGroup)colorGroup));
-    mGroupPageButton->updateIconPresetColorRoutine((ELightingRoutine)lightingRoutine,
-                                                        (EColorGroup)colorGroup,
-                                                        mData->colorGroup((EColorGroup)colorGroup));
     mBrightnessSlider->setSliderColorBackground(mData->colorsAverage((EColorGroup)colorGroup));
     mOnOffButton->setIcon(mIconData.renderAsQPixmap());
 }
 
 
-void TopMenu::resizeMenuIcon(QPushButton *button, QString iconPath) {
+void TopMenu::resizeMenuIcon(QPushButton *button, QString iconPath, float scale) {
     QPixmap pixmap(iconPath);
-    int size = std::min(this->width() / 4 * 0.7f, (float)button->height());
+    int size = std::min(this->width() / 4 * 0.7f, (float)button->height()) * scale;
     button->setIcon(QIcon(pixmap.scaled(size,
                                         size,
                                         Qt::KeepAspectRatio,
@@ -212,8 +188,7 @@ void TopMenu::resizeMenuIcon(QPushButton *button, QString iconPath) {
 }
 
 void TopMenu::deviceCountReachedZero() {
-    mColorPageButton->enable(false);
-    mGroupPageButton->enable(false);
+    mColorPageButton->setEnabled(false);
     mBrightnessSlider->enable(false);
 
     QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mOnOffButton);
@@ -229,8 +204,7 @@ void TopMenu::deviceCountChangedOnConnectionPage() {
     if (mShouldGreyOutIcons
             && (mData->currentDevices().size() > 0)
             &&  anyDevicesReachable) {
-        mColorPageButton->enable(true);
-        mGroupPageButton->enable(true);
+        mColorPageButton->setEnabled(true);
         mBrightnessSlider->enable(true);
 
         QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mOnOffButton);
@@ -245,7 +219,6 @@ void TopMenu::deviceCountChangedOnConnectionPage() {
             || !anyDevicesReachable) {
         deviceCountReachedZero();
     }
-    mColorPageButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, mData->mainColor());
 }
 
 void TopMenu::highlightButton(EPage button) {
@@ -268,8 +241,8 @@ void TopMenu::connectionButtonPressed() {
     mConnectionButton->setChecked(true);
     mConnectionButton->setStyleSheet("background-color: rgb(80, 80, 80); ");
 
-    mColorPageButton->button->setChecked(false);
-    mColorPageButton->button->setStyleSheet("background-color: rgb(52, 52, 52); ");
+    mColorPageButton->setChecked(false);
+    mColorPageButton->setStyleSheet("background-color: rgb(52, 52, 52); ");
 
     mGroupPageButton->button->setChecked(false);
     mGroupPageButton->button->setStyleSheet("background-color: rgb(52, 52, 52); ");
@@ -281,8 +254,8 @@ void TopMenu::colorButtonPressed() {
     mConnectionButton->setChecked(false);
     mConnectionButton->setStyleSheet("background-color: rgb(52, 52, 52); ");
 
-    mColorPageButton->button->setChecked(true);
-    mColorPageButton->button->setStyleSheet("background-color: rgb(80, 80, 80); ");
+    mColorPageButton->setChecked(true);
+    mColorPageButton->setStyleSheet("background-color: rgb(80, 80, 80); ");
 
     mGroupPageButton->button->setChecked(false);
     mGroupPageButton->button->setStyleSheet("background-color: rgb(52, 52, 52); ");
@@ -294,8 +267,8 @@ void TopMenu::groupButtonPressed() {
     mConnectionButton->setChecked(false);
     mConnectionButton->setStyleSheet("background-color: rgb(52, 52, 52); ");
 
-    mColorPageButton->button->setChecked(false);
-    mColorPageButton->button->setStyleSheet("background-color: rgb(52, 52, 52); ");
+    mColorPageButton->setChecked(false);
+    mColorPageButton->setStyleSheet("background-color: rgb(52, 52, 52); ");
 
     mGroupPageButton->button->setChecked(true);
     mGroupPageButton->button->setStyleSheet("background-color: rgb(80, 80, 80); ");
@@ -304,10 +277,9 @@ void TopMenu::groupButtonPressed() {
 }
 
 void TopMenu::hueWhiteLightsFound() {
-    mColorPageButton->enable(true);
+    mColorPageButton->setEnabled(true);
     mGroupPageButton->enable(false);
     mBrightnessSlider->enable(true);
-    mColorPageButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, QColor(255,255,255));
 }
 
 void TopMenu::resizeEvent(QResizeEvent *event) {
@@ -317,4 +289,6 @@ void TopMenu::resizeEvent(QResizeEvent *event) {
     mOnOffButton->setMinimumHeight(onOffSize);
     resizeMenuIcon(mSettingsButton, ":images/settingsgear.png");
     resizeMenuIcon(mConnectionButton, ":images/connectionIcon.png");
+    resizeMenuIcon(mColorPageButton, ":images/colorWheel_icon.png", 0.75f);
+
 }

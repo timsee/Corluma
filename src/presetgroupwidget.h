@@ -41,6 +41,9 @@ public:
      */
     void setChecked(ELightingRoutine routine, bool isChecked);
 
+    /// resize this widget and all subwidgets
+    void resize();
+
 signals:
 
     /*!
@@ -60,6 +63,7 @@ private slots:
     void multiButtonClicked(int routine, int group) { emit presetButtonClicked(routine, group); }
 
 private:
+
     /*!
      * \brief mButtons Buttons used in the grid in the scroll area, each one signals
      *        a EColorPreset and a ELightingMode.
@@ -74,7 +78,7 @@ private:
     /*!
      * \brief mLayout layout of widget
      */
-    QHBoxLayout *mLayout;
+    QGridLayout *mLayout;
 
     /*!
      * \brief kCheckedStyleSheet stylesheet for when the icon is checked

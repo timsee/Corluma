@@ -41,7 +41,7 @@ ConnectionPage::ConnectionPage(QWidget *parent) :
 
     mLayout = new QVBoxLayout(this);
     mLayout->addWidget(mSpacer, 1);
-    mLayout->addWidget(mDevicesListWidget, 10);
+    mLayout->addWidget(mDevicesListWidget, 12);
 
     mRenderInterval = 1000;
 }

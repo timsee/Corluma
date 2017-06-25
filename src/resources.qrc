@@ -31,5 +31,7 @@
         <file>images/splash_screen.png</file>
         <file>images/loader.gif</file>
         <file>resources/Corluma.json</file>
+        <file>images/arduino-logo.png</file>
+        <file>images/whiteButton.png</file>
     </qresource>
 </RCC>

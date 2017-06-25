@@ -17,14 +17,7 @@ void ListCollectionWidget::setup(const QString& name,
     mIconRatio = 0.5f;
     mRowCount = 0;
 
-    //this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
     QString backgroundStyleSheet = "border: none; background:rgba(0, 0, 0, 0%);";
-#ifdef MOBILE_BUILD
-    backgroundStyleSheet += "font: 14pt;";
-#else
-    backgroundStyleSheet += "font: bold;";
-#endif
     this->setStyleSheet(backgroundStyleSheet);
 
     // setup main label
@@ -32,7 +25,7 @@ void ListCollectionWidget::setup(const QString& name,
     mName->setWordWrap(true);
     mName->setText(name);
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    mName->setStyleSheet("margin-left: 5px;");
+    mName->setStyleSheet("margin-left: 5px; font: bold;");
     mMinimumHeight = mName->height();
 
     mEditButton = new QPushButton(this);

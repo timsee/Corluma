@@ -32,6 +32,7 @@ EditGroupPage::EditGroupPage(QWidget *parent) :
 
     mRenderThread = new QTimer(this);
     connect(mRenderThread, SIGNAL(timeout()), this, SLOT(renderUI()));
+    ui->deviceList->setStyleSheet("background-color:rgba(33,32,32,255);");
 }
 
 EditGroupPage::~EditGroupPage() {
@@ -83,6 +84,7 @@ void EditGroupPage::updateDevices(std::list<SLightDevice> groupDevices, std::lis
                 ListDeviceWidget *widget = new ListDeviceWidget(device,
                                                                 name,
                                                                 mData->colorGroup(device.colorGroup),
+                                                                true,
                                                                 QSize(this->width() * 0.9f, this->height() / 6),
                                                                 this);
                 widget->setHighlightChecked(shouldSetChecked(device, groupDevices));

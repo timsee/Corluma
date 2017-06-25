@@ -152,7 +152,8 @@ SOURCES += main.cpp \
     corlumautils.cpp \
     topmenu.cpp \
     corlumalistwidget.cpp \
-    grouppage.cpp
+    grouppage.cpp \
+    corlumastatusicon.cpp
 
 HEADERS  +=  comm/commtype.h \
     comm/commserial.h \
@@ -203,7 +204,8 @@ HEADERS  +=  comm/commtype.h \
     corlumaslider.h \
     corlumautils.h \
     topmenu.h \
-    corlumalistwidget.h
+    corlumalistwidget.h \
+    corlumastatusicon.h
 
 FORMS    += settingspage.ui \
     discoverypage.ui \

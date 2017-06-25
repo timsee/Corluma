@@ -176,7 +176,6 @@ protected:
     void resizeEvent(QResizeEvent *);
 
 private:
-
     /*!
      * \brief mPresetWidgets vector of all preset widgets getting displayed in the
      *        scroll area.

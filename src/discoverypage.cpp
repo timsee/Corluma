@@ -355,6 +355,7 @@ void DiscoveryPage::updateTopMenu() {
         mHorizontalFloatingLayout->setupButtons(emptyVector);
     } else {
         mHorizontalFloatingLayout->setupButtons(buttons, EButtonSize::eRectangle);
+        mVerticalFloatingLayout->highlightButton("");
     }
     commTypeSelected((int)mType);
     moveFloatingLayouts();

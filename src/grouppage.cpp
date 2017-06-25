@@ -24,8 +24,7 @@ GroupPage::GroupPage(QWidget *parent) :
     mSpacer = new QWidget(this);
 
     mTopLayout = new QHBoxLayout;
-    std::vector<std::string> labels = {"",
-                                       "Glimmer",
+    std::vector<std::string> labels = {"Glimmer",
                                        "Fade",
                                        "Random Solid",
                                        "Random Individual",
@@ -39,12 +38,13 @@ GroupPage::GroupPage(QWidget *parent) :
         mLabels[i]->setText(QString(labels[i].c_str()));
         mLabels[i]->setWordWrap(true);
         mLabels[i]->setAlignment(Qt::AlignCenter);
-        mLabels[i]->setStyleSheet("font: bold 8pt;");
+        mLabels[i]->setStyleSheet("font: bold;");
+        mLabels[i]->setVisible(false);
         mTopLayout->addWidget(mLabels[i], 1);
     }
 
     mLayout->addWidget(mSpacer, 1);
-    mLayout->addLayout(mTopLayout, 1);
+   // mLayout->addLayout(mTopLayout, 1);
 
 
     mScrollWidget = new QWidget;
@@ -52,19 +52,17 @@ GroupPage::GroupPage(QWidget *parent) :
     mScrollArea->setWidget(mScrollWidget);
     mScrollArea->setStyleSheet("background-color:transparent;");
     QScroller::grabGesture(mScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
+    mScrollArea->setVisible(false);
 
     mMoodsListWidget = new CorlumaListWidget(this);
     mMoodsListWidget->setContentsMargins(0,0,0,0);
     mMoodsListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QScroller::grabGesture(mMoodsListWidget->viewport(), QScroller::LeftMouseButtonGesture);
-    mMoodsListWidget->setVisible(false);
 
     mFloatingLayout = new FloatingLayout(false, this);
     connect(mFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
-    std::vector<QString> buttons = { QString("Preset_Groups"), QString("Select_Moods"), QString("New_Collection")};
-    mFloatingLayout->setupButtons(buttons);
 
-    mShowingMoodsListWidget = false;
+    mShowingMoodsListWidget = true;
 }
 
 GroupPage::~GroupPage() {
@@ -108,12 +106,12 @@ void GroupPage::setupButtons() {
 
     mScrollArea->setWidgetResizable(true);
     mScrollArea->widget()->setLayout(mPresetLayout);
-    mScrollArea->setStyleSheet("background-color:transparent;");
+    mScrollArea->setStyleSheet("background-color:rgb(33, 32, 32);");
 
-    mLayout->addWidget(mScrollArea, 8);
+    mLayout->addWidget(mMoodsListWidget, 8);
 
-    mFloatingLayout->updateGroupPageButtons(mData->colors(), mData->colorCount());
-    mFloatingLayout->highlightButton("Preset_Groups");
+    mFloatingLayout->updateGroupPageButtons(mData->colors(), mData->customColorsUsed());
+    mFloatingLayout->highlightButton("Select_Moods");
 }
 
 void GroupPage::highlightRoutineButton(ELightingRoutine routine, EColorGroup colorGroup) {
@@ -149,23 +147,8 @@ void GroupPage::multiButtonClicked(int routine, int colorGroup) {
 
 void GroupPage::showEvent(QShowEvent *) {
     highlightRoutineButton(mData->currentRoutine(), mData->currentColorGroup());
-    // calculate the largest element size
-    int maxHeight = 0;
-    int index = 0;
-    for (int preset = (int)EColorGroup::eWater; preset < (int)EColorGroup::eColorGroup_MAX; preset++) {
-        if (mPresetWidgets[index]->height() > maxHeight) {
-            maxHeight = mPresetWidgets[index]->height();
-        }
-        index++;
-    }
-    int scrollHeight = mScrollArea->height();
-    if ((scrollHeight / 6) > maxHeight) {
-        maxHeight = (scrollHeight / 6);
-    }
-    index = 0;
-    for (int preset = (int)EColorGroup::eWater; preset < (int)EColorGroup::eColorGroup_MAX; preset++) {
-        mPresetWidgets[index]->setMinimumHeight(maxHeight);
-        index++;
+    for (uint32_t x = 0; x < mPresetWidgets.size(); ++x) {
+        mPresetWidgets[x]->resize();
     }
     moveFloatingLayout();
     updateConnectionList();
@@ -174,6 +157,20 @@ void GroupPage::showEvent(QShowEvent *) {
         item->setListHeight(this->height());
         item->setShowButtons(mSettings->value(keyForCollection(item->key())).toBool());
     }
+
+    bool hasArduino = mData->hasArduinoDevices();
+    std::vector<QString> buttons;
+    if (hasArduino) {
+        buttons = { QString("Select_Moods"), QString("Preset_Groups"), QString("New_Collection")};
+        showPresetGroups();
+    } else {
+        buttons = { QString("Select_Moods"), QString("New_Collection")};
+        showCustomMoods();
+    }
+    mFloatingLayout->setupButtons(buttons);
+    mFloatingLayout->updateGroupPageButtons(mData->colors(), mData->customColorsUsed());
+    mFloatingLayout->highlightButton(buttons[0]);
+    moveFloatingLayout();
 }
 
 void GroupPage::hideEvent(QHideEvent *) {
@@ -195,6 +192,7 @@ void GroupPage::floatingLayoutButtonPressed(QString button) {
     if (button.compare("Preset_Groups") == 0) {
         showPresetGroups();
     } else if (button.compare("New_Collection") == 0) {
+        emit clickedEditButton("", true);
        // devicesButtonClicked(true);
     } else if (button.compare("Select_Moods") == 0) {
         showCustomMoods();
@@ -202,6 +200,7 @@ void GroupPage::floatingLayoutButtonPressed(QString button) {
 }
 
 void GroupPage::resizeEvent(QResizeEvent *) {
+   // mScrollWidget->setFixedWidth(mScrollArea->viewport()->width());
     moveFloatingLayout();
     mMoodsListWidget->setMaximumSize(this->size());
     updateConnectionList();
@@ -216,11 +215,11 @@ void GroupPage::showCustomMoods() {
     if (!mShowingMoodsListWidget) {
         // hide existing
         mLayout->removeItem(mLayout->itemAt(1));
-        mLayout->removeItem(mLayout->itemAt(2));
+        //mLayout->removeItem(mLayout->itemAt(2));
         // loop through all widgets in top layout, hide all
-        for (uint32_t i = 0; i < mLabels.size(); ++i) {
-            mLabels[i]->setHidden(true);
-        }
+//        for (uint32_t i = 0; i < mLabels.size(); ++i) {
+//            mLabels[i]->setHidden(true);
+//        }
         mScrollArea->setVisible(false);
 
         // add new
@@ -237,12 +236,6 @@ void GroupPage::showPresetGroups() {
         mLayout->removeItem(mLayout->itemAt(1));
         mMoodsListWidget->setVisible(false);
 
-        // add new
-        // loop through all widgets in top layout, show all
-        for (uint32_t i = 0; i < mLabels.size(); ++i) {
-            mLabels[i]->setHidden(false);
-        }
-        mLayout->addLayout(mTopLayout);
         mLayout->addWidget(mScrollArea, 10);
         mScrollArea->setVisible(true);
 

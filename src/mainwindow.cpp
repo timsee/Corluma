@@ -71,6 +71,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mColorPage->setupButtons();
 
     connect(mConnectionPage, SIGNAL(clickedEditButton(QString, bool)),  this, SLOT(editButtonClicked(QString, bool)));
+    connect(mGroupPage, SIGNAL(clickedEditButton(QString, bool)),  this, SLOT(editButtonClicked(QString, bool)));
 
     // --------------
     // Setup Stacked Widget
@@ -114,7 +115,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(mConnectionPage, SIGNAL(deviceCountChanged()), this, SLOT(checkForHues()));
     connect(mColorPage, SIGNAL(brightnessChanged(int)), mTopMenu, SLOT(brightnessSliderChanged(int)));
 
-    mTopMenu->setGeometry(0, 0, this->width(), this->height() * 0.2f);
+    mTopMenu->setGeometry(0, 0, this->width(), this->height() * 0.1666f);
 
     // --------------
     // Setup Discovery Page
@@ -166,11 +167,6 @@ MainWindow::MainWindow(QWidget *parent) :
     pageChanged(EPage::eConnectionPage);
 
     connect(mConnectionPage, SIGNAL(discoveryClicked()), this, SLOT(switchToDiscovery()));
-
-    //TODO: fix edge case...
-#ifdef MOBILE_BUILD
-    this->setStyleSheet("QScrollBar:vertical { background-color: #2A2929;  width: 15px; margin: 15px 3px 15px 3px; border: 1px transparent #2A2929; border-radius: 4px; }");
-#endif
 }
 
 

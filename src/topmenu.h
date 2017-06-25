@@ -107,8 +107,9 @@ public slots:
      * \brief resizeMenuIcon resizes the icon for either the settings button or the connections button
      * \param button pointer to button to resize
      * \param iconPath path to icon, if it needs to be loaded again.
+     * \param scale defaulted to 1.0, amount of additional scaling that should be done to button.
      */
-    void resizeMenuIcon(QPushButton *button, QString iconPath);
+    void resizeMenuIcon(QPushButton *button, QString iconPath, float scale = 1.0f);
 protected:
     /// resizes assets in the widget
     void resizeEvent(QResizeEvent *event);
@@ -151,7 +152,7 @@ private:
     /*!
      * \brief mColorPageButton button for color page
      */
-    CorlumaButton *mColorPageButton;
+    QPushButton *mColorPageButton;
 
     /*!
      * \brief mGroupPageButton button for group page

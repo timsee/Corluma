@@ -14,6 +14,7 @@
  */
 
 CommHue::CommHue() {
+    mStateUpdateInterval = 1000;
     setupConnectionList(ECommType::eHue);
 
     mDiscovery = new HueBridgeDiscovery;
@@ -38,7 +39,6 @@ CommHue::CommHue() {
     connect(mParser, SIGNAL(receivedReset()), this, SLOT(resetSettings()));
 
     mFullyDiscovered = false;
-    mStateUpdateInterval = 1000;
 }
 
 void CommHue::startup() {

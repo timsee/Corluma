@@ -75,9 +75,6 @@ private:
     /// search function. returns the index of the widget with the key, and -1 if none is found
     int searchForWidget(QString key);
 
-    /// amount to scale with the width of the subwidgets down.
-    float mScaleWidth;
-
 private slots:
 
     /*!

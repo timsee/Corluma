@@ -70,11 +70,6 @@ SettingsPage::SettingsPage(QWidget *parent) :
     ui->serialButton->setHidden(true);
 #endif //MOBILE_BUILD
 
-
-    QFont font = ui->closeButton->font();
-    font.setPointSize(36);
-    ui->closeButton->setFont(font);
-
     ui->settingsScrollArea->widget()->setObjectName("contentWidget");
     ui->settingsScrollArea->widget()->setStyleSheet("QWidget#contentWidget { background-color: #201F1F; } QLabel { background-color: #201F1F; } CorlumaSlider { background-color: #201F1F; } ");
     QScroller::grabGesture(ui->settingsScrollArea->viewport(), QScroller::LeftMouseButtonGesture);

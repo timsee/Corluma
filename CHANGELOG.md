@@ -174,3 +174,11 @@ ___
 * Fixed quality of life issues like inconsistent UX and hard to press buttons.
 * Fixed miscellaneous bugs. 
 
+### **v0.9.11**
+#### A Miscelleanous GUI Update
+* Fixed inconsistencies with text size across environments.
+* Fixed issues with scrollbars in some environments.
+* Changed the ListDeviceWidget.
+* Fixed miscellaneous bugs.
+
+
