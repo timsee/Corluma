@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.8"/>
-<title>Corluma: BrightnessSlider Class Reference</title>
+<title>Corluma: CorlumaStatusIcon Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -47,41 +47,33 @@
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="class_brightness_slider-members.html">List of all members</a> &#124;
-<a href="#signals">Signals</a> &#124;
+<a href="class_corluma_status_icon-members.html">List of all members</a> &#124;
 <a href="#pub-methods">Public Member Functions</a>  </div>
   <div class="headertitle">
-<div class="title">BrightnessSlider Class Reference</div>  </div>
+<div class="title">CorlumaStatusIcon Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="class_brightness_slider.html" title="The BrightnessSlider class is a single slider that controls the brightness of the connected RGB LEDs...">BrightnessSlider</a> class is a single slider that controls the brightness of the connected RGB LEDs. This mode is only available on the <a class="el" href="class_color_picker.html" title="The ColorPicker class is a GUI object designed to give the user ability to choose RGB values in a var...">ColorPicker</a> if the connected lights have no color options.  
- <a href="class_brightness_slider.html#details">More...</a></p>
+<p>The CorlumastatusIcon class is a very simple QWidget that displays an indicator of the current status of a device. If it is showing red, the device cannot be reached. If it showing black or white, it is off or on respectively. It also shows the current brightness as a shade of grey.  
+ <a href="class_corluma_status_icon.html#details">More...</a></p>
 
-<p><code>#include &quot;<a class="el" href="brightnessslider_8h_source.html">brightnessslider.h</a>&quot;</code></p>
+<p><code>#include &quot;<a class="el" href="corlumastatusicon_8h_source.html">corlumastatusicon.h</a>&quot;</code></p>
 
 <p>Inherits QWidget.</p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
-Signals</h2></td></tr>
-<tr class="memitem:a7cc89757796198843e0618c11cb25586"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7cc89757796198843e0618c11cb25586"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_brightness_slider.html#a7cc89757796198843e0618c11cb25586">brightnessChanged</a> (int)</td></tr>
-<tr class="memdesc:a7cc89757796198843e0618c11cb25586"><td class="mdescLeft">&#160;</td><td class="mdescRight">brightnessChanged emitted whenever the brightness slider is used, emits the new brightness value. <br /></td></tr>
-<tr class="separator:a7cc89757796198843e0618c11cb25586"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a221a84a9ae545983995e6288e978b631"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_brightness_slider.html#a221a84a9ae545983995e6288e978b631">BrightnessSlider</a> (QWidget *parent=0)</td></tr>
-<tr class="memdesc:a221a84a9ae545983995e6288e978b631"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#a221a84a9ae545983995e6288e978b631">More...</a><br /></td></tr>
-<tr class="separator:a221a84a9ae545983995e6288e978b631"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3b16555c28fbc2bcc8505edb67a2c2ec"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_brightness_slider.html#a3b16555c28fbc2bcc8505edb67a2c2ec">changeBrightness</a> (int brightness)</td></tr>
-<tr class="memdesc:a3b16555c28fbc2bcc8505edb67a2c2ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeBrightness programmatically change the slider's position to a new brightness. Does not emit a signal of the new brightness when completed.  <a href="#a3b16555c28fbc2bcc8505edb67a2c2ec">More...</a><br /></td></tr>
-<tr class="separator:a3b16555c28fbc2bcc8505edb67a2c2ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00dbb476204c691e6b607c83a216c18f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_corluma_status_icon.html#a00dbb476204c691e6b607c83a216c18f">CorlumaStatusIcon</a> (QWidget *parent=0)</td></tr>
+<tr class="memdesc:a00dbb476204c691e6b607c83a216c18f"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#a00dbb476204c691e6b607c83a216c18f">More...</a><br /></td></tr>
+<tr class="separator:a00dbb476204c691e6b607c83a216c18f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa3a245344c7771631bef0ce6108af59"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_corluma_status_icon.html#afa3a245344c7771631bef0ce6108af59">update</a> (bool isReachable, bool isOn, float brightness)</td></tr>
+<tr class="memdesc:afa3a245344c7771631bef0ce6108af59"><td class="mdescLeft">&#160;</td><td class="mdescRight">update update the icon's state.  <a href="#afa3a245344c7771631bef0ce6108af59">More...</a><br /></td></tr>
+<tr class="separator:afa3a245344c7771631bef0ce6108af59"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a221a84a9ae545983995e6288e978b631"></a>
+<a class="anchor" id="a00dbb476204c691e6b607c83a216c18f"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -89,7 +81,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">BrightnessSlider::BrightnessSlider </td>
+          <td class="memname">CorlumaStatusIcon::CorlumaStatusIcon </td>
           <td>(</td>
           <td class="paramtype">QWidget *&#160;</td>
           <td class="paramname"><em>parent</em> = <code>0</code></td><td>)</td>
@@ -107,22 +99,40 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a3b16555c28fbc2bcc8505edb67a2c2ec"></a>
+<a class="anchor" id="afa3a245344c7771631bef0ce6108af59"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void BrightnessSlider::changeBrightness </td>
+          <td class="memname">void CorlumaStatusIcon::update </td>
           <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>brightness</em></td><td>)</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>isReachable</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>isOn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>brightness</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">brightness</td><td>new brightness to set the slider to. </td></tr>
+    <tr><td class="paramname">isReachable</td><td>true if reachable, false otherwise </td></tr>
+    <tr><td class="paramname">isOn</td><td>true if on, false otherwise. </td></tr>
+    <tr><td class="paramname">brightness</td><td>brightness between 0 and 100. </td></tr>
   </table>
   </dd>
 </dl>
@@ -130,8 +140,8 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li><a class="el" href="brightnessslider_8h_source.html">brightnessslider.h</a></li>
-<li>brightnessslider.cpp</li>
+<li><a class="el" href="corlumastatusicon_8h_source.html">corlumastatusicon.h</a></li>
+<li>corlumastatusicon.cpp</li>
 </ul>
 </div><!-- contents -->
 

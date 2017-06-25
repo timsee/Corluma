@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.10</span>
+   &#160;<span id="projectnumber">v0.9.11</span>
    </div>
   </td>
  </tr>
@@ -90,9 +90,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#afacc54557f26c5e5afc492a5dea99fc9">deviceCountReachedZero</a> ()</td></tr>
 <tr class="memdesc:afacc54557f26c5e5afc492a5dea99fc9"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceCountChangedOnConnectionPage handles the case when the device count reaches zero. This gets signaled from the data layer whereas deviceCOuntChangedOnConnectionPage gets signaled from the connection page. <br /></td></tr>
 <tr class="separator:afacc54557f26c5e5afc492a5dea99fc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a14c1725b0ff723fd1f85c3fbc3379bb5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a14c1725b0ff723fd1f85c3fbc3379bb5">resizeMenuIcon</a> (QPushButton *button, QString iconPath)</td></tr>
-<tr class="memdesc:a14c1725b0ff723fd1f85c3fbc3379bb5"><td class="mdescLeft">&#160;</td><td class="mdescRight">resizeMenuIcon resizes the icon for either the settings button or the connections button  <a href="#a14c1725b0ff723fd1f85c3fbc3379bb5">More...</a><br /></td></tr>
-<tr class="separator:a14c1725b0ff723fd1f85c3fbc3379bb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae89dc587b8df0dd7b5fda5fd88f13c41"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#ae89dc587b8df0dd7b5fda5fd88f13c41">resizeMenuIcon</a> (QPushButton *button, QString iconPath, float scale=1.0f)</td></tr>
+<tr class="memdesc:ae89dc587b8df0dd7b5fda5fd88f13c41"><td class="mdescLeft">&#160;</td><td class="mdescRight">resizeMenuIcon resizes the icon for either the settings button or the connections button  <a href="#ae89dc587b8df0dd7b5fda5fd88f13c41">More...</a><br /></td></tr>
+<tr class="separator:ae89dc587b8df0dd7b5fda5fd88f13c41"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
@@ -140,7 +140,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:af5e3203eae35489ae1507ce9a61feb4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a14c1725b0ff723fd1f85c3fbc3379bb5"></a>
+<a class="anchor" id="ae89dc587b8df0dd7b5fda5fd88f13c41"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -157,7 +157,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">QString&#160;</td>
-          <td class="paramname"><em>iconPath</em>&#160;</td>
+          <td class="paramname"><em>iconPath</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>scale</em> = <code>1.0f</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -175,6 +181,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   <table class="params">
     <tr><td class="paramname">button</td><td>pointer to button to resize </td></tr>
     <tr><td class="paramname">iconPath</td><td>path to icon, if it needs to be loaded again. </td></tr>
+    <tr><td class="paramname">scale</td><td>defaulted to 1.0, amount of additional scaling that should be done to button. </td></tr>
   </table>
   </dd>
 </dl>
