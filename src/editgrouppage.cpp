@@ -14,6 +14,16 @@
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
 
+struct sortListDeviceWidget {
+  bool operator() (ListDeviceWidget *i, ListDeviceWidget *j) {
+      if (i->key().compare(j->key()) < 0) {
+          return true;
+      } else {
+          return false;
+      }
+  }
+} listDeviceSort;
+
 EditGroupPage::EditGroupPage(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::EditCollectionPage) {
@@ -26,9 +36,16 @@ EditGroupPage::EditGroupPage(QWidget *parent) :
 
     connect(ui->nameEdit, SIGNAL(textEdited(QString)), this, SLOT(lineEditChanged(QString)));
 
-    connect(ui->deviceList, SIGNAL(itemPressed(QListWidgetItem*)), this, SLOT(deviceListClicked(QListWidgetItem*)));
-
     QScroller::grabGesture(ui->deviceList->viewport(), QScroller::LeftMouseButtonGesture);
+
+    mScrollAreaWidget = new QWidget(this);
+    mScrollAreaWidget->setContentsMargins(0,0,0,0);
+    ui->deviceList->setWidget(mScrollAreaWidget);
+
+    mLayout = new QVBoxLayout(mScrollAreaWidget);
+    mLayout->setSpacing(0);
+    mLayout->setContentsMargins(0, 0, 0, 0);
+    mScrollAreaWidget->setLayout(mLayout);
 
     mRenderThread = new QTimer(this);
     connect(mRenderThread, SIGNAL(timeout()), this, SLOT(renderUI()));
@@ -85,31 +102,43 @@ void EditGroupPage::updateDevices(std::list<SLightDevice> groupDevices, std::lis
                                                                 name,
                                                                 mData->colorGroup(device.colorGroup),
                                                                 true,
-                                                                QSize(this->width() * 0.9f, this->height() / 6),
-                                                                this);
+                                                                QSize(this->width() * 0.9f, this->height() / 8),
+                                                                mScrollAreaWidget);
+                connect(widget, SIGNAL(clicked(QString)), this, SLOT(listDeviceWidgetClicked(QString)));
                 widget->setHighlightChecked(shouldSetChecked(device, groupDevices));
-
-                int index = ui->deviceList->count();
-                ui->deviceList->addItem(widget->key());
-                ui->deviceList->setItemWidget(ui->deviceList->item(index), widget);
                 mWidgets.push_back(widget);
             }
         }
     }
-    ui->deviceList->sortItems();
+
+    // sort widgets
+    std::sort(mWidgets.begin(), mWidgets.end(), listDeviceSort);
+
+    // add sorted widgets into layout
+    for (auto widget : mWidgets) {
+        mLayout->addWidget(widget);
+    }
+
+    resize(false);
 }
 
-void EditGroupPage::resize() {
+void EditGroupPage::resize(bool resizeFullWidget) {
     QSize size = qobject_cast<QWidget*>(this->parent())->size();
-    this->setGeometry(size.width() * 0.125f, size.height() * 0.125f, size.width() * 0.75f, size.height() * 0.75f);
+    if (resizeFullWidget) {
+        this->setGeometry(size.width() * 0.125f,
+                          size.height() * 0.125f,
+                          size.width() * 0.75f,
+                          size.height() * 0.75f);
+    }
     QSize widgetSize(this->width(), this->height() / 8);
-    for (int i = 0; i < ui->deviceList->count(); ++i) {
-        QListWidgetItem *item = ui->deviceList->item(i);
-        ListDeviceWidget *widget = qobject_cast<ListDeviceWidget*>(ui->deviceList->itemWidget(item));
-        Q_ASSERT(widget);
-        widget->setMinimumSize(widgetSize);
-        widget->setMaximumSize(widgetSize);
-        item->setSizeHint(widgetSize);
+    uint32_t yPos = 0;
+    // draw widgets in content region
+    for (auto widget : mWidgets) {
+        widget->setGeometry(0,
+                            yPos,
+                            widgetSize.width(),
+                            widgetSize.height());
+        yPos += widgetSize.height();
     }
 }
 
@@ -120,16 +149,25 @@ void EditGroupPage::resize() {
 // Slots
 // ----------------------------
 
+void EditGroupPage::listDeviceWidgetClicked(QString key) {
+    ListDeviceWidget *widget;
+    bool widgetFound = false;
 
-void EditGroupPage::deviceListClicked(QListWidgetItem* item) {
-     ListDeviceWidget *widget = qobject_cast<ListDeviceWidget*>(ui->deviceList->itemWidget(item));
-     widget->setHighlightChecked(!widget->checked());
+    for (auto w : mWidgets) {
+        if (w->key().compare(key) == 0) {
+            widget = w;
+            widgetFound = true;
+        }
+    }
+    if (widgetFound) {
+         widget->setHighlightChecked(!widget->checked());
 
-     if (checkForChanges()) {
-         ui->saveButton->setEnabled(true);
-     } else {
-         ui->saveButton->setEnabled(false);
-     }
+         if (checkForChanges()) {
+             ui->saveButton->setEnabled(true);
+         } else {
+             ui->saveButton->setEnabled(false);
+         }
+    }
 }
 
 void EditGroupPage::deletePressed(bool) {
@@ -225,8 +263,7 @@ void EditGroupPage::lineEditChanged(const QString& newText) {
 }
 
 void EditGroupPage::renderUI() {
-    std::list<SLightDevice> allDevices = mComm->allDevices();
-   // updateDevices(std::list<SLightDevice>(), allDevices);
+
 }
 
 // ----------------------------
@@ -301,16 +338,13 @@ void EditGroupPage::saveChanges() {
 }
 
 std::list<SLightDevice> EditGroupPage::createCollection() {
-   std::list<SLightDevice> list;
-   for (int i = 0; i < ui->deviceList->count(); ++i) {
-       QListWidgetItem *item = ui->deviceList->item(i);
-       ListDeviceWidget *widget = qobject_cast<ListDeviceWidget*>(ui->deviceList->itemWidget(item));
-       Q_ASSERT(widget);
-       if (widget->checked()) {
-           list.push_back(widget->device());
+   std::list<SLightDevice> devices;
+   for (uint32_t i = 0; i < mWidgets.size(); ++i) {
+       if (mWidgets[i]->checked()) {
+           devices.push_back(mWidgets[i]->device());
        }
    }
-   return list;
+   return devices;
 }
 
 std::list<SLightDevice> EditGroupPage::createMood() {
@@ -324,14 +358,11 @@ bool EditGroupPage::checkForChanges() {
     }
 
     // check all checked devices are part of original group
-    for (int i = 0; i < ui->deviceList->count(); ++i) {
-        QListWidgetItem *item = ui->deviceList->item(i);
-        ListDeviceWidget *widget = qobject_cast<ListDeviceWidget*>(ui->deviceList->itemWidget(item));
-        Q_ASSERT(widget);
-        if (widget->checked()) {
+    for (uint32_t i = 0; i < mWidgets.size(); ++i) {
+        if (mWidgets[i]->checked()) {
             bool foundDevice = false;
             for (auto&& device : mOriginalDevices) {
-                if (compareLightDevice(widget->device(), device)) {
+                if (compareLightDevice(mWidgets[i]->device(), device)) {
                     foundDevice = true;
                 }
             }
@@ -343,12 +374,9 @@ bool EditGroupPage::checkForChanges() {
     }
     // check all given devices are checked
     for (auto&& device : mOriginalDevices) {
-        for (int i = 0; i < ui->deviceList->count(); ++i) {
-            QListWidgetItem *item = ui->deviceList->item(i);
-            ListDeviceWidget *widget = qobject_cast<ListDeviceWidget*>(ui->deviceList->itemWidget(item));
-            Q_ASSERT(widget);
-            if (compareLightDevice(widget->device(), device)) {
-                if (!widget->checked())  {
+        for (uint32_t i = 0; i < mWidgets.size(); ++i) {
+            if (compareLightDevice(mWidgets[i]->device(), device)) {
+                if (!mWidgets[i]->checked())  {
                     qDebug() << "all given deviecs are checked";
                     return true;
                 }

@@ -59,8 +59,10 @@ public:
     /*!
      * \brief updateDevices update the state and number of devices displayed in the widget.
      * \param devices the current state of all desired devices for the widget.
+     * \param removeIfNotFound if a widget exists already in the listwidget but doesn't exist in the list provided,
+     *        this widget gets removed and all other widgets get shifted.
      */
-    void updateDevices(std::list<SLightDevice> devices);
+    void updateDevices(std::list<SLightDevice> devices, bool removeIfNotFound = false);
 
     /*!
      * \brief devices getter for all devices being displayed by the widget.

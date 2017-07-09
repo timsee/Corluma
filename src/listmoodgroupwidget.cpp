@@ -98,11 +98,12 @@ void ListMoodGroupWidget::setCheckedMoods(std::list<QString> checkedMoods) {
 QSize ListMoodGroupWidget::preferredSize() {
     int height = mMinimumHeight;
     if (mShowButtons && mWidgets.size() > 0) {
-        int widgetHeight = std::max(mName->height(), (int)(height * 1.2f));
-        height = (mWidgets.size() / 2 * widgetHeight) + (mWidgets.size() % 2 * widgetHeight) + height;
+        int widgetHeight = std::max(mName->height(), mMinimumHeight);
+        height = (mWidgets.size() / 2 * widgetHeight) + (mWidgets.size() % 2 * widgetHeight) + mMinimumHeight;
     }
-    return QSize(this->parentWidget()->size().width(), height);
+    return QSize(this->parentWidget()->width(), height);
 }
+
 
 void ListMoodGroupWidget::enterEvent(QEvent *) {
     if (!mHideEdit) {

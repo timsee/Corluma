@@ -11,6 +11,8 @@
 
 #include "listdevicewidget.h"
 
+#include <algorithm>    // std::sort
+
 ListDeviceWidget::ListDeviceWidget(const SLightDevice& device,
                                            const QString& name,
                                            const std::vector<QColor>& colors,
@@ -22,6 +24,7 @@ ListDeviceWidget::ListDeviceWidget(const SLightDevice& device,
     init(device, name);
     this->setMaximumSize(size);
     updateWidget(device, colors);
+    resizeIconPixmap();
 }
 
 
@@ -50,7 +53,10 @@ void ListDeviceWidget::init(const SLightDevice& device, const QString& name) {
     mController = new QLabel(this);
     QString nameText;
     if (device.type == ECommType::eHTTP
-                  || device.type == ECommType::eUDP) {
+#ifndef MOBILE_BUILD
+            || device.type == ECommType::eSerial
+#endif
+            || device.type == ECommType::eUDP) {
            nameText += name;
            nameText += "_";
            nameText += QString::number(device.index);
@@ -73,7 +79,7 @@ void ListDeviceWidget::init(const SLightDevice& device, const QString& name) {
     mLayout->addWidget(mDeviceIcon, 0, 0, 2, 2);
     mLayout->addWidget(mStatusIcon, 0, 2, 1, 1);
     mLayout->addWidget(mTypeIcon,   1, 2, 1, 1);
-    mLayout->addWidget(mController, 1, 3, 1, 7);
+    mLayout->addWidget(mController, 1, 3, 1, 20); // large number so that the controller name takes up as much space as possible.
 
     mLayout->setContentsMargins(2,2,2,2);
     mLayout->setSpacing(0);
@@ -88,7 +94,6 @@ void ListDeviceWidget::init(const SLightDevice& device, const QString& name) {
 
     mStatusIcon->update(device.isReachable, device.isOn, device.brightness);
     prepareTypeLabel(device.type);
-    resizeIconPixmap();
 }
 
 
@@ -110,29 +115,6 @@ void  ListDeviceWidget::updateWidget(const SLightDevice& device,
     if (!device.isReachable) {
         mController->setStyleSheet(createStyleSheet(mDevice));
         mDeviceIcon->setStyleSheet(createStyleSheet(mDevice));
-    } else if (!device.isOn) {
-        QLinearGradient alphaGradient(mDeviceIcon->rect().topRight(), mDeviceIcon->rect().bottomLeft());
-        alphaGradient.setColorAt(1.0, Qt::gray);
-        alphaGradient.setColorAt(0.7, Qt::gray);
-        alphaGradient.setColorAt(0.5, Qt::transparent);
-        alphaGradient.setColorAt(0.3, Qt::gray);
-        alphaGradient.setColorAt(0.1, Qt::gray);
-        QLinearGradient alphaGradient2(mDeviceIcon->rect().topLeft(), mDeviceIcon->rect().bottomRight());
-        alphaGradient2.setColorAt(1.0, Qt::gray);
-        alphaGradient2.setColorAt(0.5, Qt::transparent);
-        alphaGradient2.setColorAt(0.0, Qt::gray);
-        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mDeviceIcon);
-        effect->setOpacityMask(alphaGradient);
-       // effect->setOpacityMask(alphaGradient2);
-
-        mDeviceIcon->setGraphicsEffect(effect);
-
-//        QGraphicsOpacityEffect *effect2 = new QGraphicsOpacityEffect(mDeviceIcon);
-//        effect2->setOpacityMask(alphaGradient2);
-//        mDeviceIcon->setGraphicsEffect(effect2);
-    } else {
-        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mDeviceIcon);
-        mDeviceIcon->setGraphicsEffect(effect);
     }
 
     mStatusIcon->update(device.isReachable, device.isOn, device.brightness);
@@ -198,10 +180,10 @@ void ListDeviceWidget::paintEvent(QPaintEvent *event) {
         }
     }
 
-    QRect rect(mDeviceIcon->geometry().x(),
-               mDeviceIcon->geometry().y() + mDeviceIcon->height() / 4,
-               mDeviceIcon->height() * 0.666f,
-               mDeviceIcon->height() * 0.666f);
+    int diameter = mDeviceIcon->height() * 0.55f;
+    QRect rect((mDeviceIcon->width() - diameter) / 2,
+               (mDeviceIcon->height() - diameter) / 2,
+               diameter, diameter);
 
     // make brush with icon data in it
     QBrush brush(mIconPixmap);
@@ -217,8 +199,10 @@ void ListDeviceWidget::resizeIconPixmap() {
                mDeviceIcon->height() * 0.666f,
                mDeviceIcon->height() * 0.666f);
 
-    if ((mIconPixmap.size().width() != rect.width())
-            || (mIconPixmap.size().height() != rect.height())) {
+    if (((mIconPixmap.size().width() != rect.width())
+            || (mIconPixmap.size().height() != rect.height()))
+            && (mIconPixmap.size().width() > 0)
+            && (mIconPixmap.size().height() > 0)) {
         mIconPixmap = mIconPixmap.scaled(rect.width(),
                                          rect.height(),
                                          Qt::KeepAspectRatio,

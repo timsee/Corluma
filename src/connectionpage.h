@@ -15,7 +15,6 @@
 #include "listmoodgroupwidget.h"
 #include "listdevicesgroupwidget.h"
 #include "corlumalistwidget.h"
-#include "floatinglayout.h"
 
 
 /*!
@@ -141,12 +140,6 @@ private slots:
      */
     void receivedCommUpdate(int);
 
-    /*!
-     * \brief floatingLayoutButtonPressed handles whenever a floating layout button is presed
-     * \param button key for floating layout button
-     */
-    void floatingLayoutButtonPressed(QString button);
-
     //--------------------
     // Connection List Slots
     //--------------------
@@ -253,17 +246,8 @@ private:
     /// helper to get a unique key for a collection.
     QString keyForCollection(const QString& key);
 
-    /// move floating layout to top right of screen
-    void moveFloatingLayout();
-
     /// pointer to QSettings instance
     QSettings *mSettings;
-
-    /// floating layout in top right of widget
-    FloatingLayout *mFloatingLayout;
-
-    /// spacer used for giving space to floating layout
-    QWidget *mSpacer;
 
     /// layout of widget
     QVBoxLayout *mLayout;

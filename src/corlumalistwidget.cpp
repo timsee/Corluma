@@ -7,7 +7,7 @@ CorlumaListWidget::CorlumaListWidget(QWidget *parent) {
     this->setMaximumSize(parent->size());
 
     mWidget = new QWidget(this);
-    mWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum);
+    mWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mWidget->setFixedWidth(this->viewport()->width());
 
     QString backgroundStyleSheet = "border: none; background:rgba(0, 0, 0, 0%);";
@@ -89,7 +89,8 @@ void CorlumaListWidget::resizeWidgets() {
             devicesWidget->updateRightHandButtons();
         }
     }
-    mWidget->setMinimumHeight(yPos);
+    uint32_t newHeight = std::max(yPos, (uint32_t)this->viewport()->height());
+    mWidget->setFixedHeight(newHeight);
 }
 
 

@@ -8,8 +8,6 @@
 #include "colorpicker/colorpicker.h"
 #include "corlumabutton.h"
 #include "routinebuttonswidget.h"
-#include "floatinglayout.h"
-#include "comm/commlayer.h"
 
 #include <QWidget>
 #include <QSlider>
@@ -84,11 +82,17 @@ public:
     void setupButtons();
 
     /*!
-     * \brief connectCommLayer connec the commlayer to this page.
-     * \param layer a pointer to the commlayer object.
+     * \brief updateRoutineButton helper to update the Routine button in the floating layout.
+     *        Requires a bit of logic to abstract away the proper function call from the current
+     *        app state.
      */
-    void connectCommLayer(CommLayer *layer) { mComm = layer; }
+    void updateRoutineButton();
 
+    /// detemines which routine widget to show and shows, if needed.
+    void handleRoutineWidget();
+
+    /// getter for current type of color page (ambiance, RGB, etc.)
+    EColorPageType pageType();
 
 signals:
     /*!
@@ -163,24 +167,12 @@ private slots:
     void multiColorChanged(QColor, int);
 
     /*!
-     * \brief floatingLayoutButtonPressed handles whenever the floating layout has a button pressed. Parses the string
-     *        that the layout emits, then updates the UI accordingly.
-     */
-    void floatingLayoutButtonPressed(QString);
-
-    /*!
      * \brief brightnessUpdate handles whenever a color picker updates brightness, forwards the signal.
      * \param brightness new brightness for the selected lights.
      */
     void brightnessUpdate(int brightness) { emit brightnessChanged(brightness); }
 
 private:
-
-    /*!
-     * \brief communication pointer to communication object
-     *        for sending comannds to the lights
-     */
-    CommLayer *mComm;
 
     /*!
      * \brief mSingleRoutineWidget widget that pops up from the bottom and contains buttons for all of the
@@ -221,53 +213,6 @@ private:
      *        an RGB picker for RGB lights or a Ambient slider for ambient lights.
      */
     EColorPageType mPageType;
-
-
-    //----------------
-    // Floating Layout
-    //----------------
-
-    /*!
-     * \brief mFloatingHorizontalLayout a floating layout that provides an array of buttons for the Color Picker.
-     *        It floats near the top right of the page and is managed automatically through resizeEvents
-     *        as it does not correspond to the rest of the applications layout.
-     */
-    FloatingLayout *mFloatingHorizontalLayout;
-
-    /*!
-     * \brief mFloatingHorizontalLayout a floating layout that provides additional buttons for this page.
-     *        It always floats right under the mFloatingHorizontalLayout.
-     */
-    FloatingLayout *mFloatingVerticalLayout;
-
-    /*!
-     * \brief setupFloatingLayout add the buttons to the floating layout.
-     */
-    void setupFloatingLayout();
-
-    /*!
-     * \brief showFloatingLayout true to show the floating layout, false otherwise.
-     * \param show true to show the floating layout, false otherwise.
-     */
-    void showFloatingLayout(bool show);
-
-    /*!
-     * \brief moveFloatingLayout move the floating layout to a new position.
-     * \param topRightPoint Where the top right point of the floating layout would be.
-     */
-    void moveFloatingLayout(QPoint topRightPoint);
-
-    /*!
-     * \brief mLastButtonKey the last key sent out by either of the floating layouts.
-     */
-    QString mLastButtonKey;
-
-    /*!
-     * \brief updateRoutineButton helper to update the Routine button in the floating layout.
-     *        Requires a bit of logic to abstract away the proper function call from the current
-     *        app state.
-     */
-    void updateRoutineButton();
 
     /// true if any bottom menu is open, false otherwise.
     bool mBottomMenuIsOpen;

@@ -182,3 +182,11 @@ ___
 * Fixed miscellaneous bugs.
 
 
+### **v0.10.0**
+#### The Menus Update
+* Rearranged the menus.
+* Added more page transitions. 
+* Cleaned up the layout of scrolling widgets.
+* Minor bug fixes. 
+
+

@@ -60,23 +60,32 @@ ListDevicesGroupWidget::ListDevicesGroupWidget(const QString& name,
     mLayout->addWidget(mWidget);
 }
 
-void ListDevicesGroupWidget::updateDevices(std::list<SLightDevice> devices) {
+void ListDevicesGroupWidget::updateDevices(std::list<SLightDevice> devices, bool removeIfNotFound) {
     mDevices = devices;
+
     for (auto&& inputDevice : devices) {
         bool foundDevice = false;
         // check if device widget exists
+        uint32_t x = 0;
         for (auto&& widget : mWidgets) {
             ListDeviceWidget *existingWidget = qobject_cast<ListDeviceWidget*>(widget);
             Q_ASSERT(existingWidget);
 
+            //----------------
+            // Update Widget, if it already exists
+            //----------------
             SLightDevice existingDevice = existingWidget->device();
             if (compareLightDevice(inputDevice, existingDevice)) {
                 foundDevice = true;
                 EColorGroup group = inputDevice.colorGroup;
                 existingWidget->updateWidget(inputDevice, mData->colorGroup(group));
             }
+            ++x;
         }
 
+        //----------------
+        // Create Widget, if not found
+        //----------------
         if (!foundDevice) {
             // TODO: remove edge case...
             if (inputDevice.color.isValid()) {
@@ -101,6 +110,30 @@ void ListDevicesGroupWidget::updateDevices(std::list<SLightDevice> devices) {
             }
         }
     }
+
+    //----------------
+    // Remove widgets that are not found
+    //----------------
+    if (removeIfNotFound) {
+        for (auto&& widget : mWidgets) {
+            ListDeviceWidget *existingWidget = qobject_cast<ListDeviceWidget*>(widget);
+            Q_ASSERT(existingWidget);
+
+            bool found = false;
+            for (auto device : devices) {
+                if (compareLightDevice(device, existingWidget->device())) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                removeWidgetFromGrid(existingWidget);
+            }
+        }
+    }
+
+    //----------------
+    // Set right arrow
+    //----------------
     if (mShowButtons) {
         mHiddenStateIcon->setPixmap(mOpenedPixmap);
     } else {

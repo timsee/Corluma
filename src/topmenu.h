@@ -10,7 +10,13 @@
 #include "corlumabutton.h"
 #include "icondata.h"
 #include "datalayer.h"
+#include "floatinglayout.h"
+#include "connectionpage.h"
+#include "grouppage.h"
+#include "colorpage.h"
+#include "comm/commlayer.h"
 
+class MainWindow;
 /*!
  * \brief The EPage enum The main pages of the application, as they are ordered
  *        in their QStackedWidget.
@@ -33,7 +39,7 @@ class TopMenu : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit TopMenu(DataLayer* data, QWidget *parent = 0);
+    explicit TopMenu(DataLayer* data, CommLayer *comm, QWidget *parent = 0);
 
     /*!
      * \brief Destructor
@@ -46,16 +52,18 @@ public:
      */
     void updateBrightnessSlider();
 
-    /*!
-     * \brief deviceCountChangedOnConnectionPage handles the case when the device count changes.
-     */
-    void deviceCountChangedOnConnectionPage();
-
-    /// special case, happens only if only white LEDs are found. Opens a special color page and disables the group page.
-    void hueWhiteLightsFound();
-
     /// highlight specified button
     void highlightButton(EPage button);
+
+    /*!
+     * \brief setup connect the top menu to pages it can open and close
+     * \param mainWindow main window for the application
+     * \param groupPage group page, shows moods and groups
+     * \param colorPage color page, allows you to set all devices to one color.
+     */
+    void setup(MainWindow *mainWindow,
+               GroupPage *groupPage,
+               ColorPage *colorPage);
 
 signals:
 
@@ -66,6 +74,12 @@ signals:
     void brightnessChanged(int newValue);
 
 public slots:
+
+    /*!
+     * \brief deviceCountChangedOnConnectionPage handles the case when the device count changes.
+     */
+    void deviceCountChangedOnConnectionPage();
+
     /*!
      * \brief toggleOnOff Connected to the button in the top left of the GUI at all times.
      *        Toggles between running the current routine at current settings, and off.
@@ -127,6 +141,9 @@ private slots:
 
     /// called when the settings button is pressed.
     void settingsButtonPressed();
+
+    /// called when any button in a floating layout is pressed.
+    void floatingLayoutButtonPressed(QString);
 private:
 
     /*!
@@ -154,6 +171,9 @@ private:
      */
     QPushButton *mColorPageButton;
 
+    /// spacer for row of buttons
+    QWidget *mSpacer;
+
     /*!
      * \brief mGroupPageButton button for group page
      */
@@ -171,6 +191,39 @@ private:
     /// data layer, contains intended state for all devices.
     DataLayer *mData;
 
+    /// pointer to commlayer
+    CommLayer *mComm;
+
+    /// returns a pointer to the current floating layout.
+    FloatingLayout *currentFloatingLayout();
+
+    /// floating layout for the connection page.
+    FloatingLayout *mConnectionFloatingLayout;
+
+    /// floating layout for group page.
+    FloatingLayout *mGroupFloatingLayout;
+
+    /// floating layout for color page.
+    FloatingLayout *mColorFloatingLayout;
+
+    /// vertical floating menu, used by color page.
+    FloatingLayout *mColorVerticalFloatingLayout;
+
+    /// last key for color page.
+    QString mLastColorButtonKey;
+
+    /// pushes the floating layout specified out to the right and off screen.
+    void pushRightFloatingLayout(FloatingLayout *layout);
+
+    /// pulls the floating layout specified in from the right to the left and places it in the top right.
+    void pullLeftFloatingLayout(FloatingLayout *layout);
+
+    /// sets up the colorPage's horizontal floating layout.
+    void setupColorFloatingLayout();
+
+    /// update the colorpage's vertical floating layout.
+    void updateColorVerticalRoutineButton();
+
     /*!
      * \brief mShouldGreyOutIcons cahced satte of whether any device is selected. If none
      *        are selected, icons that require a device are all greyed out.
@@ -182,6 +235,29 @@ private:
      */
     IconData mIconData;
 
+    /// pointer to main window, used for public function calls.
+    MainWindow *mMainWindow;
+
+    /// pointer to group page, used during floating layout clicks
+    GroupPage *mGroupPage;
+
+    /// pointer to color page, used during floating layouts clicks
+    ColorPage *mColorPage;
+
+    /// switch the floating layout to show the menu for the given page
+    void showFloatingLayout(EPage newPage);
+
+    /// current page being displayed
+    EPage mCurrentPage;
+
+    /// move the floating layout to a new position due to a resize
+    void moveFloatingLayout();
+
+    /// moves the layouts that are hidden so that they remain hidden during resizes
+    void moveHiddenLayouts();
+
+    /// update the button for the color page based off the group of devices selected.
+    void updateColorGroupButton();
 };
 
 #endif // TOPMENU_H

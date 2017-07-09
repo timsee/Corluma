@@ -107,10 +107,8 @@ public slots:
      */
     void topMenuButtonPressed(QString);
 
-    /*!
-     * \brief checkForHues checks for the types of hues connected and updates the UI accordingly.
-     */
-    void checkForHues();
+    /// slot called when greyout fade is complete.
+    void greyOutFadeComplete();
 
 protected:
 
@@ -129,10 +127,7 @@ protected:
 
 private:
 
-    /*!
-     * \brief mStackedWidget widget that contains all the main pages of the application
-     */
-    QStackedWidget *mStackedWidget;
+    QWidget *mMainViewport;
 
     /// page for choosing colors of the LEDs
     ColorPage *mColorPage;
@@ -159,6 +154,46 @@ private:
      * \brief pageChanged change the QStackedWidget to the page specified
      */
     void pageChanged(EPage page);
+
+    /// fades in the greyout
+    void fadeInGreyOut();
+
+    /// fades out the greyout
+    void fadeOutGreyOut();
+
+
+    /*!
+     * \brief showMainPage transitions either the color page, group page, or connection page onto the
+     *        the main screen. The widgets come in from the left or the right, depending on the particular
+     *        widget
+     * \param page the widget to put on the screen.
+     */
+    void showMainPage(EPage page);
+
+    /*!
+     * \brief hideMainPage transitions either the color page, group page, or connection page off of the
+     *        main screen. The widgets go to the left or the right depending the particular widget
+     * \param page the page to push off of the screen
+     * \param newPage the new page being displayed. This sometimes affects whether the widget goes to the left
+     *        or right.
+     */
+    void hideMainPage(EPage page, EPage newPage);
+
+    /*!
+     * \brief shouldTransitionOutLeft returns true if the page provided should leave the screen to the left,
+     *        false if it should go to the right
+     * \param page the page that you want to remove from the main screen
+     * \param newPage the new page getting added. This soemtiems affects whether the widget goes to the left
+     *         or right
+     * \return  true if teh page provided should leave to the left, false if it should leave to the right.
+     */
+    bool shouldTransitionOutLeft(EPage page, EPage newPage);
+
+    /// returns true if the page should come from the left, false if it should come from the right.
+    bool shouldTranitionInFromLeft(EPage page);
+
+    /// Gives a QWidget representation of any of the main widgets (ConnectionPage, GroupPage, ColorPage)
+    QWidget *mainPageWidget(EPage page);
 
     /*!
      * \brief mEditPage overlay that allows editing and creating collections and moods.
@@ -219,6 +254,9 @@ private:
 
     /// true if settings page is open, false otherwise.
     bool mSettingsPageIsOpen;
+
+    /// true if edit page is open, false otherwise.
+    bool mEditPageIsOpen;
 
     /*!
      * handles edge case

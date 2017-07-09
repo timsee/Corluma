@@ -291,7 +291,7 @@ void CommLayer::parsePacket(QString sender, QString packet, int type) {
             uint32_t givenCRC =  checksumString.toUInt();
 
             if (givenCRC != computedCRC) {
-                qDebug() << "INFO: failed CRC check for" << controller.name << "computed:" << QString::number(computedCRC) << "given:" << QString::number(givenCRC);
+                //qDebug() << "INFO: failed CRC check for" << controller.name << "computed:" << QString::number(computedCRC) << "given:" << QString::number(givenCRC);
                 return;
             } else {
                //' qDebug() << "INFO: CRC check passed!!!!";

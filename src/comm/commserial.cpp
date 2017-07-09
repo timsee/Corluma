@@ -62,7 +62,7 @@ void CommSerial::sendPacket(SDeviceController controller, QString packet) {
             packet += ";";
 
             // send packet over serial
-            //qDebug() << "sending" << packetString << "to" <<  serial->portName();
+            //qDebug() << "sending" << packet << "to" <<  serial->portName();
             serial->write(packet.toStdString().c_str());
         }
     } else {
@@ -111,7 +111,7 @@ QSerialPort* CommSerial::serialPortByName(QString name) {
 
 void CommSerial::discoveryRoutine() {
     discoverSerialPorts();
-    QString discoveryPacket = kDiscoveryPacketIdentifier + ";";
+    QString discoveryPacket = kDiscoveryPacketIdentifier + "&;";
     bool runningDiscoveryOnSomething = false;
     for (auto&& it : mDeviceTable) {
           QString controllerName = QString::fromUtf8(it.first.c_str());
@@ -121,6 +121,7 @@ void CommSerial::discoveryRoutine() {
           if (!found && serial != NULL) {
               runningDiscoveryOnSomething = true;
               // write to device
+              //qDebug() << "discovery packet to " << controllerName << "payload" << discoveryPacket;
               serial->write(discoveryPacket.toStdString().c_str());
           }
      }
@@ -142,6 +143,9 @@ void CommSerial::discoverSerialPorts() {
             if (!QString::compare(info.portName(), QString("Bluetooth-Incoming-Port"))) {
                 isSpecialCase = true;
             }
+            if (!QString::compare(info.portName(), QString("tty.Bluetooth-Incoming-Port"))) {
+                isSpecialCase = true;
+            }
             if (!QString::compare(info.portName(), QString("cu.Bluetooth-Incoming-Port"))) {
                 isSpecialCase = true;
             }
@@ -154,10 +158,11 @@ void CommSerial::discoverSerialPorts() {
 
 
             if (!isSpecialCase) {
-                // qDebug() << "Name : " << info.portName();
-                // qDebug() << "Description : " << info.description();
-                // qDebug() << "Manufacturer: " << info.manufacturer();
+//                 qDebug() << "Name : " << info.portName();
+//                 qDebug() << "Description : " << info.description();
+//                 qDebug() << "Manufacturer: " << info.manufacturer();
                 connectSerialPort(info);
+                startDiscoveringController(info.portName());
                 mSerialInfoList.push_back(info);
                 mLookingForActivePorts = true;
             }
@@ -187,12 +192,12 @@ bool CommSerial::connectSerialPort(const QSerialPortInfo& info) {
         connect(serial, SIGNAL(readyRead()), this, SLOT(handleReadyRead()));
         connect(serial, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(handleError(QSerialPort::SerialPortError)));
 
-        mDiscoveryTimer->start(mDiscoveryUpdateInterval);
         mSerialPortFailed = false;
         return true;
     } else {
         qDebug() << "WARNING: serial port failed" << serial->errorString();
         mSerialPortFailed = true;
+
         delete serial;
         return false;
     }

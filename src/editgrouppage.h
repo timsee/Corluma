@@ -58,8 +58,10 @@ public:
     /*!
      * \brief resize the widget. Call this to explicitly resize this widget based off of the size of the
      *        parent. If the parent has not resized since this was last called, this does nothing.
+     * \brief resizeFullWidget if true, resizes full widget including its geometry. If false, the geometry is not
+     *        resized, just the contents.
      */
-    void resize();
+    void resize(bool resizeFullWidget = true);
 
     /*!
      * \brief connectCommLayer connec the commlayer to this page.
@@ -127,9 +129,9 @@ private slots:
     void renderUI();
 
     /*!
-     * \brief deviceListClicked called when the device widget has any device clicked.
+     * \brief listDeviceWidgetClicked called when the device widget has any device clicked.
      */
-    void deviceListClicked(QListWidgetItem*);
+    void listDeviceWidgetClicked(QString);
 
     /*!
      * \brief lineEditChanged called whenever a new character is typed into the QLineEdit. Used to change the
@@ -200,10 +202,16 @@ private:
      */
     CommLayer *mComm;
 
+    /// widget used for scroll area.
+    QWidget *mScrollAreaWidget;
+
+    /// vertical layout for widget
+    QVBoxLayout *mLayout;
+
     /*!
      * \brief mWidgets widgets used to display all connected devices.
      */
-    std::list<ListDeviceWidget *> mWidgets;
+    std::vector<ListDeviceWidget *> mWidgets;
 };
 
 #endif // EDITCOLLECTIONPAGE_H

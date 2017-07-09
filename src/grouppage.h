@@ -5,7 +5,6 @@
 #include "lightingpage.h"
 #include "corlumabutton.h"
 #include "presetgroupwidget.h"
-#include "floatinglayout.h"
 #include "corlumalistwidget.h"
 #include "listmoodgroupwidget.h"
 #include "groupsparser.h"
@@ -119,12 +118,6 @@ private slots:
     void renderUI();
 
     /*!
-     * \brief floatingLayoutButtonPressed handles whenever a floating layout button is presed
-     * \param button key for floating layout button
-     */
-    void floatingLayoutButtonPressed(QString button);
-
-    /*!
      * \brief newMoodAdded handles whenever a new mood was created on the edit page.
      */
     void newMoodAdded(QString);
@@ -191,9 +184,6 @@ private:
      */
     CommLayer *mComm;
 
-    /// spacer that adds space for the floating layout
-    QWidget *mSpacer;
-
     /// main layout of grouppage
     QVBoxLayout *mLayout;
 
@@ -210,12 +200,6 @@ private:
      * \brief mPresetLayout layout of all preset widgets.
      */
     QVBoxLayout *mPresetLayout;
-
-    /// floating layout used to show buttons to toggle between functionalities of this page.
-    FloatingLayout *mFloatingLayout;
-
-    /// move the floating layout to top right of page
-    void moveFloatingLayout();
 
     //-------------------
     // Mood Widget

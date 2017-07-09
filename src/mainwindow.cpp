@@ -10,6 +10,8 @@
 #include <QSignalMapper>
 #include <QGraphicsOpacityEffect>
 #include <QPropertyAnimation>
+#include <QDesktopWidget>
+
 #include "corlumautils.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -17,13 +19,30 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->setWindowTitle("Corluma");
 
-    this->setGeometry(0,0,400,600);
-    this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-    this->setMinimumSize(400,600);
+        // mobile devices take up the full screen
+#ifdef MOBILE_BUILD
+        QRect rect = QApplication::desktop()->screenGeometry();
+        this->setGeometry(0,
+                          0,
+                          rect.width(),
+                          rect.height());
+        this->setMinimumSize(QSize(rect.width(),
+                                   rect.height()));
 
+#else
+        // desktop builds have a minimum size of 400 x 600
+        this->setGeometry(0,0,400,600);
+        this->setMinimumSize(QSize(400,600));
+#endif
+        
+        
+    this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+
+    mPageIndex = EPage::eConnectionPage;
     mLastHuesWereOnlyWhite = false;
     mDiscoveryPageIsOpen = true;
     mSettingsPageIsOpen = false;
+    mEditPageIsOpen = false;
 
     // --------------
     // Setup Backend
@@ -42,19 +61,54 @@ MainWindow::MainWindow(QWidget *parent) :
         }
     }
 
+
+    // --------------
+    // Setup main widget space
+    // --------------
+
+    mMainViewport = new QWidget(this);
+    mMainViewport->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    // --------------
+    // Setup Layout
+    // --------------
+
+    mSpacer = new QWidget(this);
+    mSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    mMainWidget = new QWidget(this);
+    mMainWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    mLayout = new QVBoxLayout(mMainWidget);
+    mLayout->setSpacing(0);
+    mLayout->addWidget(mSpacer, 3);
+    mLayout->addWidget(mMainViewport, 12);
+    mMainWidget->setLayout(mLayout);
+#ifdef MOBILE_BUILD
+    QRect mobileRect = this->geometry();
+    mLayout->setGeometry(QRect(0,
+                               0,
+                               mobileRect.width(),
+                               (int)(mobileRect.height() * 0.95f)));
+#else
+    mLayout->setGeometry(this->geometry());
+#endif
+
+    setCentralWidget(mMainWidget);
+
     // --------------
     // Setup Pages
     // --------------
 
     mColorPage = new ColorPage(this);
-    mColorPage->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mColorPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     mGroupPage = new GroupPage(this);
     mGroupPage->connectGroupsParser(groups);
-    mGroupPage->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mGroupPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     mConnectionPage = new ConnectionPage(this);
-    mConnectionPage->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mConnectionPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     mConnectionPage->connectGroupsParser(groups);
 
@@ -63,7 +117,6 @@ MainWindow::MainWindow(QWidget *parent) :
     mGroupPage->setup(mData);
 
     mConnectionPage->connectCommLayer(mComm);
-    mColorPage->connectCommLayer(mComm);
     mGroupPage->connectCommLayer(mComm);
 
     mConnectionPage->setupUI();
@@ -74,37 +127,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(mGroupPage, SIGNAL(clickedEditButton(QString, bool)),  this, SLOT(editButtonClicked(QString, bool)));
 
     // --------------
-    // Setup Stacked Widget
-    // --------------
-
-    mStackedWidget = new QStackedWidget(this);
-    mStackedWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mStackedWidget->addWidget(mConnectionPage);
-    mStackedWidget->addWidget(mColorPage);
-    mStackedWidget->addWidget(mGroupPage);
-
-    // --------------
-    // Setup Layout
-    // --------------
-
-    mSpacer = new QWidget(this);
-    mSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-    mLayout = new QVBoxLayout();
-    mLayout->setSpacing(0);
-    mLayout->addWidget(mSpacer, 3);
-    mLayout->addWidget(mStackedWidget, 12);
-
-    mMainWidget = new QWidget(this);
-    mMainWidget->setLayout(mLayout);
-
-    setCentralWidget(mMainWidget);
-
-    // --------------
     // Top Menu
     // --------------
 
-    mTopMenu = new TopMenu(mData, this);
+    mTopMenu = new TopMenu(mData, mComm, this);
     connect(mTopMenu, SIGNAL(buttonPressed(QString)), this, SLOT(topMenuButtonPressed(QString)));
     connect(mTopMenu, SIGNAL(brightnessChanged(int)), this, SLOT(brightnessChanged(int)));
     connect(mColorPage, SIGNAL(singleColorChanged(QColor)),  mTopMenu, SLOT(updateSingleColor(QColor)));
@@ -112,10 +138,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(mConnectionPage, SIGNAL(updateMainIcons()),  mTopMenu, SLOT(updateMenuBar()));
     connect(mColorPage, SIGNAL(updateMainIcons()),  mTopMenu, SLOT(updateMenuBar()));
     connect(mGroupPage, SIGNAL(updateMainIcons()), mTopMenu, SLOT(updateMenuBar()));
-    connect(mConnectionPage, SIGNAL(deviceCountChanged()), this, SLOT(checkForHues()));
+    connect(mConnectionPage, SIGNAL(deviceCountChanged()), mTopMenu, SLOT(deviceCountChangedOnConnectionPage()));
     connect(mColorPage, SIGNAL(brightnessChanged(int)), mTopMenu, SLOT(brightnessSliderChanged(int)));
 
-    mTopMenu->setGeometry(0, 0, this->width(), this->height() * 0.1666f);
+    mTopMenu->setGeometry(0, 0, this->width(), this->height() * 0.1667);
 
     // --------------
     // Setup Discovery Page
@@ -140,11 +166,13 @@ MainWindow::MainWindow(QWidget *parent) :
     // --------------
 
     mEditPage = new EditGroupPage(this);
-    mEditPage->setVisible(false);
     mEditPage->setup(mData);
     mEditPage->connectCommLayer(mComm);
     mEditPage->connectGroupsParser(groups);
     connect(mEditPage, SIGNAL(pressedClose()), this, SLOT(editClosePressed()));
+    mEditPage->setGeometry(0,
+                        -1 * this->height(),
+                        this->width(), this->height());
 
     // --------------
     // Settings Page
@@ -161,11 +189,26 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(mSettingsPage, SIGNAL(closePressed()), this, SLOT(settingsClosePressed()));
 
     // --------------
-    // Final setup
+    // Set up the floating layouts
     // --------------
 
-    pageChanged(EPage::eConnectionPage);
+    mTopMenu->setup(this, mGroupPage, mColorPage);
 
+    // --------------
+    // Resize pages to proper sizes
+    // --------------
+    mConnectionPage->setGeometry(mMainViewport->geometry());
+    // create rect for other widgets
+    QRect geometry(-1 * mMainViewport->width(),
+                   mMainViewport->pos().y(),
+                   mMainViewport->width(),
+                   mMainViewport->height());
+    mGroupPage->setGeometry(geometry);
+    mColorPage->setGeometry(geometry);
+
+    // --------------
+    // Final setup
+    // --------------
     connect(mConnectionPage, SIGNAL(discoveryClicked()), this, SLOT(switchToDiscovery()));
 }
 
@@ -233,23 +276,101 @@ void MainWindow::settingsButtonFromDiscoveryPressed() {
 }
 
 void MainWindow::pageChanged(EPage pageIndex) {
-
-    switch (pageIndex)
-    {
-    case EPage::eColorPage:
-        mStackedWidget->setCurrentWidget(mColorPage);
-        break;
-    case EPage::eGroupPage:
-        mStackedWidget->setCurrentWidget(mGroupPage);
-        break;
-    case EPage::eConnectionPage:
-        mStackedWidget->setCurrentWidget(mConnectionPage);
-        break;
-    default:
-        throw "Incorrect page";
-        break;
+    if (pageIndex != mPageIndex) {
+        showMainPage(pageIndex);
+        hideMainPage(mPageIndex, pageIndex);
+        mPageIndex = pageIndex;
     }
-    mPageIndex = pageIndex;
+}
+
+
+QWidget* MainWindow::mainPageWidget(EPage page) {
+    QWidget *widget;
+
+    switch (page) {
+        case EPage::eColorPage:
+            widget = qobject_cast<QWidget*>(mColorPage);
+            break;
+        case EPage::eConnectionPage:
+            widget = qobject_cast<QWidget*>(mConnectionPage);
+            break;
+        case EPage::eGroupPage:
+            widget = qobject_cast<QWidget*>(mGroupPage);
+            break;
+        case EPage::eSettingsPage:
+            widget = qobject_cast<QWidget*>(mSettingsPage);
+            break;
+    }
+    Q_ASSERT(widget);
+    return widget;
+}
+
+
+bool MainWindow::shouldTransitionOutLeft(EPage page, EPage newPage) {
+    if (page == EPage::eColorPage) {
+        if (newPage == EPage::eGroupPage) {
+            return true;
+        } else {
+            return false;
+        }
+    } else if (page == EPage::eConnectionPage) {
+        return true;
+    } else if (page == EPage::eGroupPage) {
+        return false;
+    } else {
+        throw "incorrect page";
+    }
+
+}
+
+bool MainWindow::shouldTranitionInFromLeft(EPage page) {
+    if (page == EPage::eColorPage) {
+        if (mPageIndex == EPage::eGroupPage) {
+            return true;
+        } else {
+            return false;
+        }
+    } else if (page == EPage::eConnectionPage) {
+        return true;
+    } else if (page == EPage::eGroupPage) {
+        return false;
+    } else {
+        throw "incorrect page";
+    }
+}
+
+void MainWindow::showMainPage(EPage page) {
+    QWidget *widget = mainPageWidget(page);
+    int x;
+    bool transitionLeft = shouldTranitionInFromLeft(page);
+    if (transitionLeft) {
+        x = widget->width() * -1;
+    } else {
+        x = this->width() + widget->width();
+    }
+    QPoint startPoint(x, widget->pos().y());
+    QPropertyAnimation *animation = new QPropertyAnimation(widget, "pos");
+    animation->setDuration(TRANSITION_TIME_MSEC);
+    animation->setStartValue(startPoint);
+    animation->setEndValue(mMainViewport->pos());
+    animation->start();
+}
+
+void MainWindow::hideMainPage(EPage page, EPage newPage) {
+    QWidget *widget = mainPageWidget(page);
+    int x;
+    bool transitionLeft = shouldTransitionOutLeft(page, newPage);
+    if (transitionLeft) {
+        x = widget->width() * -1;
+    } else {
+        x = this->width() + widget->width();
+    }
+    QPoint endPoint(x, widget->pos().y());
+    QPropertyAnimation *animation = new QPropertyAnimation(widget, "pos");
+    animation->setDuration(TRANSITION_TIME_MSEC);
+    animation->setStartValue(mMainViewport->pos());
+    animation->setEndValue(endPoint);
+    animation->start();
 }
 
 
@@ -264,6 +385,8 @@ void MainWindow::settingsDebugPressed() {
 
 void MainWindow::resizeEvent(QResizeEvent *event) {
     Q_UNUSED(event);
+
+    mMainWidget->setGeometry(this->geometry());
 
     mTopMenu->setGeometry(0,0,this->width(), this->height() * 0.2f);
 
@@ -289,10 +412,29 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
     if (mGreyOut->isVisible()) {
         mGreyOut->resize();
     }
-    if (mEditPage->isVisible()) {
+    if (mEditPageIsOpen) {
         mEditPage->resize();
     }
 
+    if (!mDiscoveryPageIsOpen && !mSettingsPageIsOpen) {
+        QWidget *widget = mainPageWidget(mPageIndex);
+        widget->setGeometry(mMainViewport->geometry());
+
+        QRect geometry(this->width() + mMainViewport->width(),
+                       mMainViewport->geometry().y(),
+                       mMainViewport->geometry().width(),
+                       mMainViewport->geometry().height());
+
+        if (mPageIndex != EPage::eColorPage) {
+            mColorPage->setGeometry(geometry);
+        }
+        if (mPageIndex != EPage::eGroupPage) {
+            mGroupPage->setGeometry(geometry);
+        }
+        if (mPageIndex != EPage::eConnectionPage) {
+            mConnectionPage->setGeometry(geometry);
+        }
+    }
 }
 
 void MainWindow::changeEvent(QEvent *event) {
@@ -312,41 +454,6 @@ void MainWindow::changeEvent(QEvent *event) {
             }
         }
         mDataSync->cancelSync();
-    }
-}
-
-void MainWindow::checkForHues() {
-    uint32_t numberOfHueAmbientBulbs = 0;
-    uint32_t numberOfHueWhiteBulbs = 0;
-    uint32_t numberOfHueRGBBulbs = 0;
-    // check for all devices
-    for (auto&& device : mData->currentDevices()) {
-        // check if its a hue
-        if (device.type == ECommType::eHue) {
-            SHueLight hueLight = mComm->hueLightFromLightDevice(device);
-            if (hueLight.type == EHueType::eExtended) {
-                numberOfHueAmbientBulbs++;
-                numberOfHueRGBBulbs++;
-            } else if (hueLight.type == EHueType::eAmbient) {
-                numberOfHueAmbientBulbs++;
-            } else if (hueLight.type == EHueType::eColor) {
-                numberOfHueAmbientBulbs++; //NOTE: Color bulbs are using software to estimate ambient colors,
-                                           //      They only have RGB and not the extra LEDs of the extended bulbs.
-                numberOfHueRGBBulbs++;
-            } else if (hueLight.type == EHueType::eWhite) {
-                numberOfHueWhiteBulbs++;
-            }
-        }
-    }
-
-    if ((numberOfHueWhiteBulbs == mData->currentDevices().size())
-            && (numberOfHueRGBBulbs == 0)
-            && (mData->currentDevices().size() != 0)
-            && (numberOfHueAmbientBulbs == 0)) {
-        // white only
-        mTopMenu->hueWhiteLightsFound();
-    } else {
-        mTopMenu->deviceCountChangedOnConnectionPage();
     }
 }
 
@@ -393,23 +500,76 @@ void MainWindow::closeDiscoveryWithoutTransition() {
 }
 
 void MainWindow::editButtonClicked(QString key, bool isMood) {
-    mGreyOut->setVisible(true);
-    mEditPage->setVisible(true);
+    fadeInGreyOut();
+    mEditPageIsOpen = true;
+
+    QSize size = this->size();
+    mEditPage->setGeometry(size.width() * 0.125f,
+                      -1 * this->height(),
+                      size.width() * 0.75f,
+                      size.height() * 0.75f);
+
+    QPoint finishPoint(size.width() * 0.125f,
+                       size.height() * 0.125f);
+    QPropertyAnimation *animation = new QPropertyAnimation(mEditPage, "pos");
+    animation->setDuration(TRANSITION_TIME_MSEC);
+    animation->setStartValue(mEditPage->pos());
+    animation->setEndValue(finishPoint);
+    animation->start();
+
     mEditPage->showGroup(key, mConnectionPage->devicesFromKey(key), mComm->allDevices(), isMood);
 
     if (mGreyOut->isVisible()) {
         mGreyOut->resize();
     }
-    if (mEditPage->isVisible()) {
-        mEditPage->resize();
-    }
 }
 
 
 void MainWindow::editClosePressed() {
-    mGreyOut->setVisible(false);
-    mEditPage->setVisible(false);
-    //TODO: handle group page too..
+    fadeOutGreyOut();
+    mEditPageIsOpen = false;
+
+    QSize size = this->size();
+    mEditPage->setGeometry(size.width() * 0.125f,
+                           size.height() * 0.125f,
+                           size.width() * 0.75f,
+                           size.height() * 0.75f);
+
+    QPoint finishPoint(size.width() * 0.125f, -1 * this->height());
+
+    QPropertyAnimation *animation = new QPropertyAnimation(mEditPage, "pos");
+    animation->setDuration(TRANSITION_TIME_MSEC);
+    animation->setStartValue(mEditPage->pos());
+    animation->setEndValue(finishPoint);
+    animation->start();
+
     mConnectionPage->updateConnectionList();
+}
+
+
+void MainWindow::fadeInGreyOut() {
+    mGreyOut->setVisible(true);
+    QGraphicsOpacityEffect *fadeOutEffect = new QGraphicsOpacityEffect(mGreyOut);
+    mGreyOut->setGraphicsEffect(fadeOutEffect);
+    QPropertyAnimation *fadeOutAnimation = new QPropertyAnimation(fadeOutEffect, "opacity");
+    fadeOutAnimation->setDuration(TRANSITION_TIME_MSEC);
+    fadeOutAnimation->setStartValue(0.0f);
+    fadeOutAnimation->setEndValue(1.0f);
+    fadeOutAnimation->start();
+}
+
+void MainWindow::fadeOutGreyOut() {
+    QGraphicsOpacityEffect *fadeInEffect = new QGraphicsOpacityEffect(mGreyOut);
+    mGreyOut->setGraphicsEffect(fadeInEffect);
+    QPropertyAnimation *fadeInAnimation = new QPropertyAnimation(fadeInEffect, "opacity");
+    fadeInAnimation->setDuration(TRANSITION_TIME_MSEC);
+    fadeInAnimation->setStartValue(1.0f);
+    fadeInAnimation->setEndValue(0.0f);
+    fadeInAnimation->start();
+    connect(fadeInAnimation, SIGNAL(finished()), this, SLOT(greyOutFadeComplete()));
+}
+
+void MainWindow::greyOutFadeComplete() {
+    mGreyOut->setVisible(false);
 }
 

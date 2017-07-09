@@ -21,8 +21,6 @@ GroupPage::GroupPage(QWidget *parent) :
 
     mLayout = new QVBoxLayout(this);
 
-    mSpacer = new QWidget(this);
-
     mTopLayout = new QHBoxLayout;
     std::vector<std::string> labels = {"Glimmer",
                                        "Fade",
@@ -43,9 +41,6 @@ GroupPage::GroupPage(QWidget *parent) :
         mTopLayout->addWidget(mLabels[i], 1);
     }
 
-    mLayout->addWidget(mSpacer, 1);
-   // mLayout->addLayout(mTopLayout, 1);
-
 
     mScrollWidget = new QWidget;
     mScrollArea = new QScrollArea(this);
@@ -58,9 +53,6 @@ GroupPage::GroupPage(QWidget *parent) :
     mMoodsListWidget->setContentsMargins(0,0,0,0);
     mMoodsListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QScroller::grabGesture(mMoodsListWidget->viewport(), QScroller::LeftMouseButtonGesture);
-
-    mFloatingLayout = new FloatingLayout(false, this);
-    connect(mFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
 
     mShowingMoodsListWidget = true;
 }
@@ -109,9 +101,6 @@ void GroupPage::setupButtons() {
     mScrollArea->setStyleSheet("background-color:rgb(33, 32, 32);");
 
     mLayout->addWidget(mMoodsListWidget, 8);
-
-    mFloatingLayout->updateGroupPageButtons(mData->colors(), mData->customColorsUsed());
-    mFloatingLayout->highlightButton("Select_Moods");
 }
 
 void GroupPage::highlightRoutineButton(ELightingRoutine routine, EColorGroup colorGroup) {
@@ -147,30 +136,7 @@ void GroupPage::multiButtonClicked(int routine, int colorGroup) {
 
 void GroupPage::showEvent(QShowEvent *) {
     highlightRoutineButton(mData->currentRoutine(), mData->currentColorGroup());
-    for (uint32_t x = 0; x < mPresetWidgets.size(); ++x) {
-        mPresetWidgets[x]->resize();
-    }
-    moveFloatingLayout();
     updateConnectionList();
-    for (uint32_t i = 0; i < mMoodsListWidget->count(); ++i) {
-        ListCollectionWidget *item = mMoodsListWidget->widget(i);
-        item->setListHeight(this->height());
-        item->setShowButtons(mSettings->value(keyForCollection(item->key())).toBool());
-    }
-
-    bool hasArduino = mData->hasArduinoDevices();
-    std::vector<QString> buttons;
-    if (hasArduino) {
-        buttons = { QString("Select_Moods"), QString("Preset_Groups"), QString("New_Collection")};
-        showPresetGroups();
-    } else {
-        buttons = { QString("Select_Moods"), QString("New_Collection")};
-        showCustomMoods();
-    }
-    mFloatingLayout->setupButtons(buttons);
-    mFloatingLayout->updateGroupPageButtons(mData->colors(), mData->customColorsUsed());
-    mFloatingLayout->highlightButton(buttons[0]);
-    moveFloatingLayout();
 }
 
 void GroupPage::hideEvent(QHideEvent *) {
@@ -181,27 +147,8 @@ void GroupPage::renderUI() {
 
 }
 
-void GroupPage::moveFloatingLayout() {
-    int padding = 0;
-    QPoint topRight(this->width(), padding);
-    mFloatingLayout->move(topRight);
-    mFloatingLayout->raise();
-}
-
-void GroupPage::floatingLayoutButtonPressed(QString button) {
-    if (button.compare("Preset_Groups") == 0) {
-        showPresetGroups();
-    } else if (button.compare("New_Collection") == 0) {
-        emit clickedEditButton("", true);
-       // devicesButtonClicked(true);
-    } else if (button.compare("Select_Moods") == 0) {
-        showCustomMoods();
-     }
-}
-
 void GroupPage::resizeEvent(QResizeEvent *) {
    // mScrollWidget->setFixedWidth(mScrollArea->viewport()->width());
-    moveFloatingLayout();
     mMoodsListWidget->setMaximumSize(this->size());
     updateConnectionList();
     for (uint32_t i = 0; i < mMoodsListWidget->count(); ++i) {
@@ -214,7 +161,7 @@ void GroupPage::resizeEvent(QResizeEvent *) {
 void GroupPage::showCustomMoods() {
     if (!mShowingMoodsListWidget) {
         // hide existing
-        mLayout->removeItem(mLayout->itemAt(1));
+        mLayout->removeItem(mLayout->itemAt(0));
         //mLayout->removeItem(mLayout->itemAt(2));
         // loop through all widgets in top layout, hide all
 //        for (uint32_t i = 0; i < mLabels.size(); ++i) {
@@ -223,7 +170,7 @@ void GroupPage::showCustomMoods() {
         mScrollArea->setVisible(false);
 
         // add new
-        mLayout->addWidget(mMoodsListWidget, 11);
+        mLayout->addWidget(mMoodsListWidget, 20);
         mMoodsListWidget->setVisible(true);
 
         mShowingMoodsListWidget = true;
@@ -233,10 +180,10 @@ void GroupPage::showCustomMoods() {
 void GroupPage::showPresetGroups() {
     if (mShowingMoodsListWidget) {
         // hide existing
-        mLayout->removeItem(mLayout->itemAt(1));
+        mLayout->removeItem(mLayout->itemAt(0));
         mMoodsListWidget->setVisible(false);
 
-        mLayout->addWidget(mScrollArea, 10);
+        mLayout->addWidget(mScrollArea, 20);
         mScrollArea->setVisible(true);
 
         mShowingMoodsListWidget = false;

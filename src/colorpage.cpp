@@ -39,14 +39,6 @@ ColorPage::ColorPage(QWidget *parent) :
     connect(mColorPicker, SIGNAL(multiColorCountUpdate(int)), this, SLOT(customColorCountChanged(int)));
     connect(mColorPicker, SIGNAL(multiColorUpdate(QColor, int)), this, SLOT(multiColorChanged(QColor, int)));
     connect(mColorPicker, SIGNAL(brightnessUpdate(int)), this, SLOT(brightnessUpdate(int)));
-
-    mFloatingHorizontalLayout = new FloatingLayout(false, this);
-    connect(mFloatingHorizontalLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
-
-    mFloatingVerticalLayout = new FloatingLayout(true, this);
-    connect(mFloatingVerticalLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
-
-    mLastButtonKey = "RGB";
 }
 
 
@@ -91,6 +83,26 @@ void ColorPage::changePageType(EColorPageType page, bool skipAnimation) {
     showSingleRoutineWidget(false);
     showMultiRoutineWidget(false);
     mBottomMenuIsOpen = false;
+}
+
+
+void ColorPage::handleRoutineWidget() {
+    bool showSingle = false;
+    bool showMulti = false;
+    if (mPageType == EColorPageType::eRGB
+            && !mBottomMenuIsOpen) {
+        showSingle = true;
+    } else if (mPageType == EColorPageType::eMulti
+               && !mBottomMenuIsOpen) {
+        showMulti = true;
+    }
+    showSingleRoutineWidget(showSingle);
+    showMultiRoutineWidget(showMulti);
+    mBottomMenuIsOpen = !mBottomMenuIsOpen;
+}
+
+EColorPageType ColorPage::pageType() {
+    return mPageType;
 }
 
 
@@ -141,7 +153,6 @@ void ColorPage::showMultiRoutineWidget(bool shouldShow) {
 
 void ColorPage::newRoutineSelected(int newRoutine) {
     mData->updateRoutine((ELightingRoutine)newRoutine);
-    updateRoutineButton();
 }
 
 void ColorPage::colorChanged(QColor color) {
@@ -167,8 +178,6 @@ void ColorPage::colorChanged(QColor color) {
     mLastColor = color;
     emit singleColorChanged(color);
     emit updateMainIcons();
-
-    mFloatingVerticalLayout->updateRoutineSingleColor(mData->currentRoutine(), mData->mainColor());
 }
 
 void ColorPage::customColorCountChanged(int count) {
@@ -184,7 +193,6 @@ void ColorPage::customColorCountChanged(int count) {
     }
 
     emit updateMainIcons();
-    updateRoutineButton(); // updates the routine button
 }
 
 void ColorPage::multiColorChanged(QColor color, int index) {
@@ -194,7 +202,6 @@ void ColorPage::multiColorChanged(QColor color, int index) {
                                                        mData->customColorsUsed());
     }
 
-    updateRoutineButton(); // updates the colors of the multi routine
     emit updateMainIcons();
 }
 
@@ -215,27 +222,14 @@ void ColorPage::showEvent(QShowEvent *) {
                                      mData->brightness(),
                                      mData->colorGroup(EColorGroup::eCustom),
                                      mData->customColorsUsed());
-  mSingleRoutineWidget->singleRoutineColorChanged(mLastColor);
-  mSingleRoutineWidget->setGeometry(0, this->height(), mSingleRoutineWidget->width(), mSingleRoutineWidget->height());
-
-  highlightRoutineButton(mData->currentRoutine());
-
-  setupFloatingLayout();
-  QPoint topRight(this->width(), 0);
-  moveFloatingLayout(topRight);
-  showFloatingLayout(true);
 }
 
 void ColorPage::hideEvent(QHideEvent *event) {
     Q_UNUSED(event);
-    showFloatingLayout(false);
-
 }
 
 void ColorPage::resizeEvent(QResizeEvent *) {
     mSingleRoutineWidget->resize(QSize(this->width(), this->height()));
-    QPoint topRight(this->width(), 0);
-    moveFloatingLayout(topRight);
 
     if (mBottomMenuState == EBottomMenuShow::eShowSingleRoutines) {
         mSingleRoutineWidget->setGeometry(0, this->height() - mSingleRoutineWidget->height(), mSingleRoutineWidget->width(), mSingleRoutineWidget->height());
@@ -252,109 +246,3 @@ void ColorPage::resizeEvent(QResizeEvent *) {
 }
 
 
-// ----------------------------
-// Floating Layout
-// ----------------------------
-
-void ColorPage::setupFloatingLayout() {
-    bool hasHue = mData->hasHueDevices();
-    bool hasArduino = mData->hasArduinoDevices();
-    std::vector<QString> horizontalButtons;
-    std::vector<QString> verticalButtons;
-    if (hasHue && !hasArduino) {
-        // get list of all current devices
-        std::list<SLightDevice> devices = mData->currentDevices();
-        std::list<SHueLight> hues;
-        for (auto& device : devices) {
-            hues.push_back(mComm->hueLightFromLightDevice(device));
-        }
-        EHueType bestHueType = utils::checkForHueWithMostFeatures(hues);
-        // get a vector of all the possible hue types for a check.
-        if (bestHueType == EHueType::eWhite) {
-            changePageType(EColorPageType::eBrightness, true);
-        } else if (bestHueType == EHueType::eAmbient) {
-            changePageType(EColorPageType::eAmbient, true);
-        } else if (bestHueType == EHueType::eExtended){
-            horizontalButtons = {QString("Temperature"), QString("RGB")};
-            changePageType(EColorPageType::eRGB, true);
-        } else {
-            throw "did not find any hue lights when expecting hue lights";
-        }
-    } else if (hasArduino){
-        horizontalButtons = {QString("Temperature"), QString("RGB"), QString("Multi")};
-        verticalButtons = {QString("Routine")};
-
-        mFloatingHorizontalLayout->highlightButton(mLastButtonKey);
-        mFloatingHorizontalLayout->addMultiRoutineIcon(mData->colorGroup(EColorGroup::eRGB));
-        updateRoutineButton();
-        changePageType(EColorPageType::eRGB, true);
-    } else if (!hasHue && !hasArduino) {
-        // shouldn't get here...
-        throw "trying to open single color page when no recognized devices are selected";
-    }
-
-    mFloatingVerticalLayout->setupButtons(verticalButtons);
-    mFloatingHorizontalLayout->setupButtons(horizontalButtons);
-    mFloatingHorizontalLayout->highlightButton("RGB");
-    QPoint topRight(this->width(), 0);
-    moveFloatingLayout(topRight);
-
-    updateRoutineButton();
-    mFloatingHorizontalLayout->addMultiRoutineIcon(mData->colorGroup(EColorGroup::eRGB));
-}
-
-void ColorPage::showFloatingLayout(bool show) {
-    mFloatingHorizontalLayout->setVisible(show);
-    mFloatingVerticalLayout->setVisible(show);
-}
-
-void ColorPage::moveFloatingLayout(QPoint point) {
-    mFloatingHorizontalLayout->move(point);
-    mFloatingVerticalLayout->move(QPoint(point.x(), point.y() + mFloatingHorizontalLayout->geometry().height()));
-}
-
-void ColorPage::floatingLayoutButtonPressed(QString buttonType) {
-    mLastButtonKey = buttonType;
-    if (buttonType.compare("Multi") == 0) {
-        changePageType(EColorPageType::eMulti);
-        mFloatingVerticalLayout->setVisible(true);
-        mFloatingVerticalLayout->highlightRoutineButton(false);
-        updateRoutineButton();
-    } else if (buttonType.compare("RGB") == 0) {
-        changePageType(EColorPageType::eRGB);
-        mFloatingVerticalLayout->setVisible(true);
-        mFloatingVerticalLayout->highlightRoutineButton(false);
-        updateRoutineButton();
-    }  else if (buttonType.compare("Temperature") == 0) {
-        changePageType(EColorPageType::eAmbient);
-        mFloatingVerticalLayout->setVisible(false);
-    } else if (buttonType.compare("Routine") == 0) {
-        bool showSingle = false;
-        bool showMulti = false;
-        if (mPageType == EColorPageType::eRGB
-                && !mBottomMenuIsOpen) {
-            showSingle = true;
-        } else if (mPageType == EColorPageType::eMulti
-                   && !mBottomMenuIsOpen) {
-            showMulti = true;
-        }
-        showSingleRoutineWidget(showSingle);
-        showMultiRoutineWidget(showMulti);
-        mBottomMenuIsOpen = !mBottomMenuIsOpen;
-        updateRoutineButton();
-    } else {
-        qDebug() << "I don't recognize that button type...";
-    }
-}
-
-
-void ColorPage::updateRoutineButton() {
-    if (mPageType == EColorPageType::eRGB) {
-        mFloatingVerticalLayout->updateRoutineSingleColor(mData->currentRoutine(),
-                                                          mData->mainColor());
-    } else if (mPageType == EColorPageType::eMulti) {
-        mFloatingVerticalLayout->updateRoutineMultiColor(mData->currentRoutine(),
-                                                         mData->colorGroup(EColorGroup::eCustom),
-                                                         mData->customColorsUsed());
-    }
-}

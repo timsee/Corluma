@@ -198,6 +198,11 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(false);
             resizeIcon(mButtons[i], ":/images/editIcon.png");
+        } else if (mNames[i].compare("New_Mood") == 0) {
+            foundMatch = true;
+            mButtons[i] = new QPushButton(this);
+            mButtons[i]->setCheckable(false);
+            resizeIcon(mButtons[i], ":/images/editIcon.png");
         } else if (mNames[i].compare("Preset_Groups") == 0) {
             foundMatch = true;
             CorlumaButton *lightsButton = new CorlumaButton(this);

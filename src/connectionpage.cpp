@@ -32,16 +32,8 @@ ConnectionPage::ConnectionPage(QWidget *parent) :
 
     mLastUpdateConnectionList = QTime::currentTime();
 
-    mFloatingLayout = new FloatingLayout(false, this);
-    connect(mFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
-    std::vector<QString> buttons = { QString("Discovery"), QString("New_Collection")};
-    mFloatingLayout->setupButtons(buttons);
-
-    mSpacer = new QWidget(this);
-
     mLayout = new QVBoxLayout(this);
-    mLayout->addWidget(mSpacer, 1);
-    mLayout->addWidget(mDevicesListWidget, 12);
+    mLayout->addWidget(mDevicesListWidget);
 
     mRenderInterval = 1000;
 }
@@ -134,23 +126,6 @@ void ConnectionPage::makeDevicesCollections(const std::list<SLightDevice>& allDe
             initDevicesCollectionWidget(collection.first, collection.second, collection.first, mDevicesListWidget->height());
         }
     }
-
-    // now check for missing ones. Reiterate through widgets and remove any that can't be found in collection list
-//    for (uint32_t i = 0; i < mDevicesListWidget->count(); ++i) {
-//        ListCollectionWidget *item = mDevicesListWidget->widget(i);
-//        if (!(item->key().compare("zzzAVAILABLE_DEVICES") == 0
-//                || item->key().compare("zzzUNAVAILABLE_DEVICES") == 0)) {
-//            bool collectionFound = false;
-//            for (auto&& collection : collectionList) {
-//                if (item->key().compare(collection.first) == 0) {
-//                    collectionFound = true;
-//                }
-//            }
-//            if (!collectionFound) {
-//                mMoodsListWidget->removeWidget(item->key());
-//            }
-//        }
-//    }
 }
 
 void ConnectionPage::gatherAvailandAndNotReachableDevices(const std::list<SLightDevice>& allDevices) {
@@ -175,7 +150,6 @@ void ConnectionPage::gatherAvailandAndNotReachableDevices(const std::list<SLight
     // ------------------------------------
     // add special case ListGroupWidgets
     // ------------------------------------
-
     bool foundAvailable = false;
     bool foundUnavailable = false;
     for (uint32_t i = 0; i < mDevicesListWidget->count(); ++i) {
@@ -184,13 +158,13 @@ void ConnectionPage::gatherAvailandAndNotReachableDevices(const std::list<SLight
             foundAvailable = true;
             ListDevicesGroupWidget *widget = qobject_cast<ListDevicesGroupWidget*>(item);
             Q_ASSERT(widget);
-            widget->updateDevices(availableDevices);
+            widget->updateDevices(availableDevices, true);
         }
         if (item->key().compare(kUnavailableDevicesKey) == 0) {
             foundUnavailable = true;
             ListDevicesGroupWidget *widget = qobject_cast<ListDevicesGroupWidget*>(item);
             Q_ASSERT(widget);
-            widget->updateDevices(unavailableDevices);
+            widget->updateDevices(unavailableDevices, true);
         }
     }
 
@@ -459,12 +433,6 @@ void ConnectionPage::saveGroup(bool) {
     }
 }
 
-void ConnectionPage::moveFloatingLayout() {
-    int padding = 0;
-    QPoint topRight(this->width(), padding);
-    mFloatingLayout->move(topRight);
-    mFloatingLayout->raise();
-}
 
 // ----------------------------
 // Protected
@@ -479,11 +447,8 @@ void ConnectionPage::showEvent(QShowEvent *event) {
             mComm->startDiscovery(type);
         }
     }
-    updateConnectionList();
-    openDefaultCollections();
-    mRenderThread->start(mRenderInterval);
-    moveFloatingLayout();
     highlightList();
+    mRenderThread->start(mRenderInterval);
 }
 
 void ConnectionPage::openDefaultCollections() {
@@ -493,13 +458,6 @@ void ConnectionPage::openDefaultCollections() {
     }
 }
 
-void ConnectionPage::floatingLayoutButtonPressed(QString button) {
-    if (button.compare("Discovery") == 0) {
-        emit discoveryClicked();
-    } else if (button.compare("New_Collection") == 0) {
-        emit clickedEditButton("", false);
-    }
-}
 
 void ConnectionPage::hideEvent(QHideEvent *event) {
     Q_UNUSED(event);
@@ -515,6 +473,5 @@ void ConnectionPage::hideEvent(QHideEvent *event) {
 void ConnectionPage::resizeEvent(QResizeEvent *) {
     updateConnectionList();
     mDevicesListWidget->setMaximumSize(this->size());
-    moveFloatingLayout();
 }
 

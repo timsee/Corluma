@@ -159,7 +159,8 @@ void ListCollectionWidget::moveWidgets() {
 void ListCollectionWidget::resize() {
    // qDebug() << "parent size" << this->parentWidget()->size();
     this->setFixedSize(preferredSize());
-    mWidgetSize = QSize(this->width() / 2, mMinimumHeight);
+    // pad the width a bit in case its an odd sized width so it takes up the whole region.
+    mWidgetSize = QSize(this->width() / 2 + 2, mMinimumHeight);
    // qDebug() << "widget size" << mWidgetSize << "total size" << this->size();
     for (uint32_t i = 0; i < mWidgets.size(); ++i) {
         mWidgets[i]->setMaximumSize(mWidgetSize);
