@@ -1,0 +1,5 @@
+src/Corluma.pro.user
+src/libs/libcrypto.so
+src/libs/libssl.so
+src/resources/Corluma.json
+

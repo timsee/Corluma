@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.9.11</span>
+   &#160;<span id="projectnumber">v0.10.0</span>
    </div>
   </td>
  </tr>
@@ -99,9 +99,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:acf38a0bfd8fa36d7e4e8670922e9baae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_devices_group_widget.html#acf38a0bfd8fa36d7e4e8670922e9baae">setCheckedDevices</a> (std::list&lt; SLightDevice &gt; <a class="el" href="class_list_devices_group_widget.html#aa2f61f66cc7fee21f3071b1fd78d6559">devices</a>)</td></tr>
 <tr class="memdesc:acf38a0bfd8fa36d7e4e8670922e9baae"><td class="mdescLeft">&#160;</td><td class="mdescRight">setCheckedDevices takes a list of devices and compares it against all devices in the widget. If the device exists in both the widgets and the devices, it is set as checked. Otherwise, the widget is set to unchecked.  <a href="#acf38a0bfd8fa36d7e4e8670922e9baae">More...</a><br /></td></tr>
 <tr class="separator:acf38a0bfd8fa36d7e4e8670922e9baae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad9415e96ecdb4810bb6b0308363d7491"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_devices_group_widget.html#ad9415e96ecdb4810bb6b0308363d7491">updateDevices</a> (std::list&lt; SLightDevice &gt; <a class="el" href="class_list_devices_group_widget.html#aa2f61f66cc7fee21f3071b1fd78d6559">devices</a>)</td></tr>
-<tr class="memdesc:ad9415e96ecdb4810bb6b0308363d7491"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDevices update the state and number of devices displayed in the widget.  <a href="#ad9415e96ecdb4810bb6b0308363d7491">More...</a><br /></td></tr>
-<tr class="separator:ad9415e96ecdb4810bb6b0308363d7491"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0568ba13fe6e4ae8fbfdee81286f4fc9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_devices_group_widget.html#a0568ba13fe6e4ae8fbfdee81286f4fc9">updateDevices</a> (std::list&lt; SLightDevice &gt; <a class="el" href="class_list_devices_group_widget.html#aa2f61f66cc7fee21f3071b1fd78d6559">devices</a>, bool removeIfNotFound=false)</td></tr>
+<tr class="memdesc:a0568ba13fe6e4ae8fbfdee81286f4fc9"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDevices update the state and number of devices displayed in the widget.  <a href="#a0568ba13fe6e4ae8fbfdee81286f4fc9">More...</a><br /></td></tr>
+<tr class="separator:a0568ba13fe6e4ae8fbfdee81286f4fc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa2f61f66cc7fee21f3071b1fd78d6559"><td class="memItemLeft" align="right" valign="top">const std::list&lt; SLightDevice &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_devices_group_widget.html#aa2f61f66cc7fee21f3071b1fd78d6559">devices</a> ()</td></tr>
 <tr class="memdesc:aa2f61f66cc7fee21f3071b1fd78d6559"><td class="mdescLeft">&#160;</td><td class="mdescRight">devices getter for all devices being displayed by the widget.  <a href="#aa2f61f66cc7fee21f3071b1fd78d6559">More...</a><br /></td></tr>
 <tr class="separator:aa2f61f66cc7fee21f3071b1fd78d6559"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -444,7 +444,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="ad9415e96ecdb4810bb6b0308363d7491"></a>
+<a class="anchor" id="a0568ba13fe6e4ae8fbfdee81286f4fc9"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -452,14 +452,25 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
           <td class="memname">void ListDevicesGroupWidget::updateDevices </td>
           <td>(</td>
           <td class="paramtype">std::list&lt; SLightDevice &gt;&#160;</td>
-          <td class="paramname"><em>devices</em></td><td>)</td>
+          <td class="paramname"><em>devices</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>removeIfNotFound</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">devices</td><td>the current state of all desired devices for the widget. </td></tr>
+    <tr><td class="paramname">removeIfNotFound</td><td>if a widget exists already in the listwidget but doesn't exist in the list provided, this widget gets removed and all other widgets get shifted. </td></tr>
   </table>
   </dd>
 </dl>
