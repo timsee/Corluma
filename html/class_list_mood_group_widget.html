@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.10.0</span>
+   &#160;<span id="projectnumber">v0.10.1</span>
    </div>
   </td>
  </tr>
@@ -92,9 +92,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5795f62a8fb8f38e9c00c4bfdee05c80"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_group_widget.html#a5795f62a8fb8f38e9c00c4bfdee05c80">ListMoodGroupWidget</a> (const QString &amp;name, std::list&lt; std::pair&lt; QString, std::list&lt; SLightDevice &gt; &gt; &gt; <a class="el" href="class_list_mood_group_widget.html#a65c901862402c9b6b9152b677930fc63">moods</a>, const std::vector&lt; std::vector&lt; QColor &gt; &gt; &amp;colors, QString <a class="el" href="class_list_collection_widget.html#a8e51936bec113cd68b5089680040de98">key</a>, bool hideEdit=false, QWidget *parent=0)</td></tr>
 <tr class="memdesc:a5795f62a8fb8f38e9c00c4bfdee05c80"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_list_mood_group_widget.html" title="The ListMoodGroupWidget class is a subclass of a ListCollectionWidget. It displays a collection of mo...">ListMoodGroupWidget</a> constructor.  <a href="#a5795f62a8fb8f38e9c00c4bfdee05c80">More...</a><br /></td></tr>
 <tr class="separator:a5795f62a8fb8f38e9c00c4bfdee05c80"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4368956a496da582c2ec6fce448ff62"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_group_widget.html#ab4368956a496da582c2ec6fce448ff62">updateMoods</a> (std::list&lt; std::pair&lt; QString, std::list&lt; SLightDevice &gt; &gt; &gt; <a class="el" href="class_list_mood_group_widget.html#a65c901862402c9b6b9152b677930fc63">moods</a>, const std::vector&lt; std::vector&lt; QColor &gt; &gt; &amp;colors)</td></tr>
-<tr class="memdesc:ab4368956a496da582c2ec6fce448ff62"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateMoods update moods based off of the mood list and the vector of preset colors.  <a href="#ab4368956a496da582c2ec6fce448ff62">More...</a><br /></td></tr>
-<tr class="separator:ab4368956a496da582c2ec6fce448ff62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38dca81ee44d2583614340995b292d92"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_group_widget.html#a38dca81ee44d2583614340995b292d92">updateMoods</a> (std::list&lt; std::pair&lt; QString, std::list&lt; SLightDevice &gt; &gt; &gt; <a class="el" href="class_list_mood_group_widget.html#a65c901862402c9b6b9152b677930fc63">moods</a>, const std::vector&lt; std::vector&lt; QColor &gt; &gt; &amp;colors, bool removeIfNotFound=false)</td></tr>
+<tr class="memdesc:a38dca81ee44d2583614340995b292d92"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateMoods update moods based off of the mood list and the vector of preset colors.  <a href="#a38dca81ee44d2583614340995b292d92">More...</a><br /></td></tr>
+<tr class="separator:a38dca81ee44d2583614340995b292d92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8f2b5958ab52f3d0618084226b97ad0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_group_widget.html#aa8f2b5958ab52f3d0618084226b97ad0">setCheckedMoods</a> (std::list&lt; QString &gt; checkedMoods)</td></tr>
 <tr class="memdesc:aa8f2b5958ab52f3d0618084226b97ad0"><td class="mdescLeft">&#160;</td><td class="mdescRight">setCheckedMoods takes a list of moods as input and compares it against the widgets displayed. If a mood is in both, it is set as checked. If it is only in the widgets, it is set as unchecked.  <a href="#aa8f2b5958ab52f3d0618084226b97ad0">More...</a><br /></td></tr>
 <tr class="separator:aa8f2b5958ab52f3d0618084226b97ad0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -132,6 +132,10 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr class="memitem:a42439969eb207a5b5e45bdb20e06e686 inherit pub_methods_class_list_collection_widget"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_widget.html#a42439969eb207a5b5e45bdb20e06e686">setListHeight</a> (int newHeight)</td></tr>
 <tr class="memdesc:a42439969eb207a5b5e45bdb20e06e686 inherit pub_methods_class_list_collection_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">setListHeight set the height of the list when displayed  <a href="#a42439969eb207a5b5e45bdb20e06e686">More...</a><br /></td></tr>
 <tr class="separator:a42439969eb207a5b5e45bdb20e06e686 inherit pub_methods_class_list_collection_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5cade5edeb4e66382c28be4f265f01c3 inherit pub_methods_class_list_collection_widget"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5cade5edeb4e66382c28be4f265f01c3"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_widget.html#a5cade5edeb4e66382c28be4f265f01c3">resize</a> ()</td></tr>
+<tr class="memdesc:a5cade5edeb4e66382c28be4f265f01c3 inherit pub_methods_class_list_collection_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">resizes the widget <br /></td></tr>
+<tr class="separator:a5cade5edeb4e66382c28be4f265f01c3 inherit pub_methods_class_list_collection_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -460,7 +464,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="ab4368956a496da582c2ec6fce448ff62"></a>
+<a class="anchor" id="a38dca81ee44d2583614340995b292d92"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -474,7 +478,13 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const std::vector&lt; std::vector&lt; QColor &gt; &gt; &amp;&#160;</td>
-          <td class="paramname"><em>colors</em>&#160;</td>
+          <td class="paramname"><em>colors</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>removeIfNotFound</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -487,6 +497,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   <table class="params">
     <tr><td class="paramname">moods</td><td>list of moods </td></tr>
     <tr><td class="paramname">colors</td><td>vector of preset colors. </td></tr>
+    <tr><td class="paramname">bool</td><td>removeIfNotFound if a widget already exists but this flag is set to true and it doesn't exist in the mood list provided, the widget gets removed from the list. </td></tr>
   </table>
   </dd>
 </dl>

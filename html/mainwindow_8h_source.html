@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.10.0</span>
+   &#160;<span id="projectnumber">v0.10.1</span>
    </div>
   </td>
  </tr>
@@ -108,102 +108,104 @@
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_main_window.html#ad332cdca3c6e9f4a464f9b04072d7431">greyOutFadeComplete</a>();</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <a class="code" href="class_settings_page.html">SettingsPage</a> *settings() { <span class="keywordflow">return</span> mSettingsPage; }</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="class_main_window.html#a8851a931482834eeec527490eedaf20e">resizeEvent</a>(QResizeEvent *);</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_main_window.html#ac7c881667b4ba4986b5a0030452ee3f0">changeEvent</a>(QEvent *event);</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="class_main_window.html#a8851a931482834eeec527490eedaf20e">resizeEvent</a>(QResizeEvent *);</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_main_window.html#ac7c881667b4ba4986b5a0030452ee3f0">changeEvent</a>(QEvent *event);</div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    QWidget *mMainViewport;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="keyword">private</span>:</div>
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <a class="code" href="class_color_page.html">ColorPage</a> *mColorPage;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <a class="code" href="class_group_page.html">GroupPage</a> *mGroupPage;</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    QWidget *mMainViewport;</div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    <a class="code" href="class_connection_page.html">ConnectionPage</a> *mConnectionPage;</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    <a class="code" href="class_color_page.html">ColorPage</a> *mColorPage;</div>
 <div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    QWidget *mSpacer;</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    <a class="code" href="class_group_page.html">GroupPage</a> *mGroupPage;</div>
 <div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    QWidget *mMainWidget;</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    <a class="code" href="class_connection_page.html">ConnectionPage</a> *mConnectionPage;</div>
 <div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    QVBoxLayout *mLayout;</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    QWidget *mSpacer;</div>
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    <a class="code" href="class_top_menu.html">TopMenu</a> *mTopMenu;</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    QWidget *mMainWidget;</div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    <span class="keywordtype">void</span> pageChanged(EPage page);</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <span class="keywordtype">void</span> fadeInGreyOut();</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="keywordtype">void</span> fadeOutGreyOut();</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    QVBoxLayout *mLayout;</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    <a class="code" href="class_top_menu.html">TopMenu</a> *mTopMenu;</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="keywordtype">void</span> pageChanged(EPage page);</div>
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    <span class="keywordtype">void</span> showMainPage(EPage page);</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    <span class="keywordtype">void</span> hideMainPage(EPage page, EPage newPage);</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    <span class="keywordtype">bool</span> shouldTransitionOutLeft(EPage page, EPage newPage);</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    <span class="keywordtype">bool</span> shouldTranitionInFromLeft(EPage page);</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    QWidget *mainPageWidget(EPage page);</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    <span class="keywordtype">void</span> fadeInGreyOut();</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <span class="keywordtype">void</span> fadeOutGreyOut();</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    <span class="keywordtype">void</span> showMainPage(EPage page);</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    <span class="keywordtype">void</span> hideMainPage(EPage page, EPage newPage);</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    <span class="keywordtype">bool</span> shouldTransitionOutLeft(EPage page, EPage newPage);</div>
 <div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    <a class="code" href="class_edit_group_page.html">EditGroupPage</a> *mEditPage;</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    <a class="code" href="class_settings_page.html">SettingsPage</a> *mSettingsPage;</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    <span class="keywordtype">bool</span> shouldTranitionInFromLeft(EPage page);</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    QWidget *mainPageWidget(EPage page);</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    <a class="code" href="class_edit_group_page.html">EditGroupPage</a> *mEditPage;</div>
 <div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;    <a class="code" href="class_grey_out_overlay.html">GreyOutOverlay</a> *mGreyOut;</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;    <a class="code" href="class_settings_page.html">SettingsPage</a> *mSettingsPage;</div>
 <div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;    <a class="code" href="class_discovery_page.html">DiscoveryPage</a> *mDiscoveryPage;</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;    <a class="code" href="class_grey_out_overlay.html">GreyOutOverlay</a> *mGreyOut;</div>
 <div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    <a class="code" href="class_comm_layer.html">CommLayer</a> *mComm;</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    <a class="code" href="class_discovery_page.html">DiscoveryPage</a> *mDiscoveryPage;</div>
 <div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    <a class="code" href="class_data_layer.html">DataLayer</a> *mData;</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    <a class="code" href="class_comm_layer.html">CommLayer</a> *mComm;</div>
 <div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    <a class="code" href="class_data_sync.html">DataSync</a> *mDataSync;</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;    EPage mPageIndex;</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;    <span class="keywordtype">bool</span> mShouldGreyOutIcons;</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    <a class="code" href="class_data_layer.html">DataLayer</a> *mData;</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;    <a class="code" href="class_data_sync.html">DataSync</a> *mDataSync;</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;    EPage mPageIndex;</div>
 <div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    <span class="keywordtype">bool</span> mDiscoveryPageIsOpen;</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    <span class="keywordtype">bool</span> mSettingsPageIsOpen;</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    <span class="keywordtype">bool</span> mShouldGreyOutIcons;</div>
 <div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    <span class="keywordtype">bool</span> mEditPageIsOpen;</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    <span class="keywordtype">bool</span> mDiscoveryPageIsOpen;</div>
 <div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    <span class="keywordtype">bool</span> mLastHuesWereOnlyWhite;</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;};</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;<span class="preprocessor">#endif // MAINWINDOW_H</span></div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    <span class="keywordtype">bool</span> mSettingsPageIsOpen;</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    <span class="keywordtype">bool</span> mEditPageIsOpen;</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    <span class="keywordtype">bool</span> mLastHuesWereOnlyWhite;</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;};</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;<span class="preprocessor">#endif // MAINWINDOW_H</span></div>
 <div class="ttc" id="class_comm_layer_html"><div class="ttname"><a href="class_comm_layer.html">CommLayer</a></div><div class="ttdoc">The CommLayer class provides communication protocols that allow the user to connect and send packets ...</div><div class="ttdef"><b>Definition:</b> commlayer.h:31</div></div>
-<div class="ttc" id="class_main_window_html_ae98d00a93bc118200eeef9f9bba1dba7"><div class="ttname"><a href="class_main_window.html#ae98d00a93bc118200eeef9f9bba1dba7">MainWindow::~MainWindow</a></div><div class="ttdeci">~MainWindow()</div><div class="ttdoc">Deconstructor. </div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:216</div></div>
-<div class="ttc" id="class_main_window_html_a8ca7b7373bec37a993ad85c925c539ad"><div class="ttname"><a href="class_main_window.html#a8ca7b7373bec37a993ad85c925c539ad">MainWindow::settingsClosePressed</a></div><div class="ttdeci">void settingsClosePressed()</div><div class="ttdoc">settingsClosePressed slot that handles when the settings page is closed. </div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:481</div></div>
-<div class="ttc" id="class_main_window_html_a1af2155014146e191aba3266cef989b1"><div class="ttname"><a href="class_main_window.html#a1af2155014146e191aba3266cef989b1">MainWindow::brightnessChanged</a></div><div class="ttdeci">void brightnessChanged(int)</div><div class="ttdoc">brightnessChanged Connected to the the slider at the top, this takeas a value between 0-100 and sends...</div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:248</div></div>
-<div class="ttc" id="class_main_window_html_a46ec33812e3a1bf8661650dc8e1e2bac"><div class="ttname"><a href="class_main_window.html#a46ec33812e3a1bf8661650dc8e1e2bac">MainWindow::topMenuButtonPressed</a></div><div class="ttdeci">void topMenuButtonPressed(QString)</div><div class="ttdoc">topMenuButtonPressed button is pressed from top menu. Gives back the key of the button. </div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:224</div></div>
+<div class="ttc" id="class_main_window_html_ae98d00a93bc118200eeef9f9bba1dba7"><div class="ttname"><a href="class_main_window.html#ae98d00a93bc118200eeef9f9bba1dba7">MainWindow::~MainWindow</a></div><div class="ttdeci">~MainWindow()</div><div class="ttdoc">Deconstructor. </div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:219</div></div>
+<div class="ttc" id="class_main_window_html_a8ca7b7373bec37a993ad85c925c539ad"><div class="ttname"><a href="class_main_window.html#a8ca7b7373bec37a993ad85c925c539ad">MainWindow::settingsClosePressed</a></div><div class="ttdeci">void settingsClosePressed()</div><div class="ttdoc">settingsClosePressed slot that handles when the settings page is closed. </div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:498</div></div>
+<div class="ttc" id="class_main_window_html_a1af2155014146e191aba3266cef989b1"><div class="ttname"><a href="class_main_window.html#a1af2155014146e191aba3266cef989b1">MainWindow::brightnessChanged</a></div><div class="ttdeci">void brightnessChanged(int)</div><div class="ttdoc">brightnessChanged Connected to the the slider at the top, this takeas a value between 0-100 and sends...</div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:252</div></div>
+<div class="ttc" id="class_main_window_html_a46ec33812e3a1bf8661650dc8e1e2bac"><div class="ttname"><a href="class_main_window.html#a46ec33812e3a1bf8661650dc8e1e2bac">MainWindow::topMenuButtonPressed</a></div><div class="ttdeci">void topMenuButtonPressed(QString)</div><div class="ttdoc">topMenuButtonPressed button is pressed from top menu. Gives back the key of the button. </div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:227</div></div>
 <div class="ttc" id="class_grey_out_overlay_html"><div class="ttname"><a href="class_grey_out_overlay.html">GreyOutOverlay</a></div><div class="ttdoc">The GreyOutOverlay class is a QWidget that can be applied over any UI and it provides a black layer w...</div><div class="ttdef"><b>Definition:</b> greyoutoverlay.h:17</div></div>
-<div class="ttc" id="class_main_window_html_a9b88572d10d46ab20efc369215b71f6c"><div class="ttname"><a href="class_main_window.html#a9b88572d10d46ab20efc369215b71f6c">MainWindow::editClosePressed</a></div><div class="ttdeci">void editClosePressed()</div><div class="ttdoc">editClosePressed close the edit page </div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:528</div></div>
+<div class="ttc" id="class_main_window_html_a9b88572d10d46ab20efc369215b71f6c"><div class="ttname"><a href="class_main_window.html#a9b88572d10d46ab20efc369215b71f6c">MainWindow::editClosePressed</a></div><div class="ttdeci">void editClosePressed()</div><div class="ttdoc">editClosePressed close the edit page </div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:549</div></div>
 <div class="ttc" id="class_data_layer_html"><div class="ttname"><a href="class_data_layer.html">DataLayer</a></div><div class="ttdoc">The DataLayer class stores and maintains the data about the state and settings of the application...</div><div class="ttdef"><b>Definition:</b> datalayer.h:28</div></div>
-<div class="ttc" id="class_main_window_html_ac7c881667b4ba4986b5a0030452ee3f0"><div class="ttname"><a href="class_main_window.html#ac7c881667b4ba4986b5a0030452ee3f0">MainWindow::changeEvent</a></div><div class="ttdeci">void changeEvent(QEvent *event)</div><div class="ttdoc">changeEvent called whenever an event occurs. Currently used to off communication threads when the app...</div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:440</div></div>
-<div class="ttc" id="class_main_window_html_a4ad9c67b64c68e706fc77eee79fe7c7f"><div class="ttname"><a href="class_main_window.html#a4ad9c67b64c68e706fc77eee79fe7c7f">MainWindow::switchToDiscovery</a></div><div class="ttdeci">void switchToDiscovery()</div><div class="ttdoc">switchToDiscovery discovery button pressed so the discovery page should be displayed. </div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:460</div></div>
+<div class="ttc" id="class_main_window_html_ac7c881667b4ba4986b5a0030452ee3f0"><div class="ttname"><a href="class_main_window.html#ac7c881667b4ba4986b5a0030452ee3f0">MainWindow::changeEvent</a></div><div class="ttdeci">void changeEvent(QEvent *event)</div><div class="ttdoc">changeEvent called whenever an event occurs. Currently used to off communication threads when the app...</div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:455</div></div>
+<div class="ttc" id="class_main_window_html_a4ad9c67b64c68e706fc77eee79fe7c7f"><div class="ttname"><a href="class_main_window.html#a4ad9c67b64c68e706fc77eee79fe7c7f">MainWindow::switchToDiscovery</a></div><div class="ttdeci">void switchToDiscovery()</div><div class="ttdoc">switchToDiscovery discovery button pressed so the discovery page should be displayed. </div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:475</div></div>
 <div class="ttc" id="class_group_page_html"><div class="ttname"><a href="class_group_page.html">GroupPage</a></div><div class="ttdoc">The GroupPage provides a way to use the Color Presets from themed groups of colors to do Multi Color ...</div><div class="ttdef"><b>Definition:</b> grouppage.h:31</div></div>
 <div class="ttc" id="class_connection_page_html"><div class="ttname"><a href="class_connection_page.html">ConnectionPage</a></div><div class="ttdoc">The ConnectionPage class is the page that manages which devices are currently in use. The ConnectionPage can be switched between choosing individual devices and choosing groups of devices. </div><div class="ttdef"><b>Definition:</b> connectionpage.h:30</div></div>
-<div class="ttc" id="class_main_window_html_a09ff1200b688614b07ed7fa2e77fda52"><div class="ttname"><a href="class_main_window.html#a09ff1200b688614b07ed7fa2e77fda52">MainWindow::closeDiscoveryWithoutTransition</a></div><div class="ttdeci">void closeDiscoveryWithoutTransition()</div><div class="ttdoc">closeDiscoveryWithoutTransition force close discovery page as quickly as possible. SKips the standard transition. </div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:494</div></div>
+<div class="ttc" id="class_main_window_html_a09ff1200b688614b07ed7fa2e77fda52"><div class="ttname"><a href="class_main_window.html#a09ff1200b688614b07ed7fa2e77fda52">MainWindow::closeDiscoveryWithoutTransition</a></div><div class="ttdeci">void closeDiscoveryWithoutTransition()</div><div class="ttdoc">closeDiscoveryWithoutTransition force close discovery page as quickly as possible. SKips the standard transition. </div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:514</div></div>
 <div class="ttc" id="class_color_page_html"><div class="ttname"><a href="class_color_page.html">ColorPage</a></div><div class="ttdoc">The ColorPage provides a way to change the color of the lights selected in the app. </div><div class="ttdef"><b>Definition:</b> colorpage.h:47</div></div>
-<div class="ttc" id="class_main_window_html_a227da0db736107db8673d9a259b33153"><div class="ttname"><a href="class_main_window.html#a227da0db736107db8673d9a259b33153">MainWindow::switchToConnection</a></div><div class="ttdeci">void switchToConnection()</div><div class="ttdoc">switchToConnection start button was pressed on discovery page so it should switch to the connection p...</div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:472</div></div>
-<div class="ttc" id="class_main_window_html_a18b9a72ba97d6edaafafb8dee7a88e9d"><div class="ttname"><a href="class_main_window.html#a18b9a72ba97d6edaafafb8dee7a88e9d">MainWindow::settingsButtonFromDiscoveryPressed</a></div><div class="ttdeci">void settingsButtonFromDiscoveryPressed()</div><div class="ttdoc">settingsButtonFromDiscoveryPressed settings button pressed on discovery page. Handled as a bit of a s...</div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:267</div></div>
+<div class="ttc" id="class_main_window_html_a227da0db736107db8673d9a259b33153"><div class="ttname"><a href="class_main_window.html#a227da0db736107db8673d9a259b33153">MainWindow::switchToConnection</a></div><div class="ttdeci">void switchToConnection()</div><div class="ttdoc">switchToConnection start button was pressed on discovery page so it should switch to the connection p...</div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:488</div></div>
+<div class="ttc" id="class_main_window_html_a18b9a72ba97d6edaafafb8dee7a88e9d"><div class="ttname"><a href="class_main_window.html#a18b9a72ba97d6edaafafb8dee7a88e9d">MainWindow::settingsButtonFromDiscoveryPressed</a></div><div class="ttdeci">void settingsButtonFromDiscoveryPressed()</div><div class="ttdoc">settingsButtonFromDiscoveryPressed settings button pressed on discovery page. Handled as a bit of a s...</div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:271</div></div>
 <div class="ttc" id="class_top_menu_html"><div class="ttname"><a href="class_top_menu.html">TopMenu</a></div><div class="ttdoc">The TopMenu class is the top menu on the main window of Corluma. It contains brightness and on/off co...</div><div class="ttdef"><b>Definition:</b> topmenu.h:37</div></div>
 <div class="ttc" id="class_main_window_html_a8b244be8b7b7db1b08de2a2acb9409db"><div class="ttname"><a href="class_main_window.html#a8b244be8b7b7db1b08de2a2acb9409db">MainWindow::MainWindow</a></div><div class="ttdeci">MainWindow(QWidget *parent=0)</div><div class="ttdoc">Constructor. </div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:17</div></div>
 <div class="ttc" id="class_discovery_page_html"><div class="ttname"><a href="class_discovery_page.html">DiscoveryPage</a></div><div class="ttdoc">The DiscoveryPage class provides the user an interface to discover new connections with lights...</div><div class="ttdef"><b>Definition:</b> discoverypage.h:34</div></div>
-<div class="ttc" id="class_main_window_html_a8851a931482834eeec527490eedaf20e"><div class="ttname"><a href="class_main_window.html#a8851a931482834eeec527490eedaf20e">MainWindow::resizeEvent</a></div><div class="ttdeci">virtual void resizeEvent(QResizeEvent *)</div><div class="ttdoc">resizeEvent called whenever the window resizes. This is used to override the resizing of the icons of...</div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:386</div></div>
+<div class="ttc" id="class_main_window_html_a8851a931482834eeec527490eedaf20e"><div class="ttname"><a href="class_main_window.html#a8851a931482834eeec527490eedaf20e">MainWindow::resizeEvent</a></div><div class="ttdeci">virtual void resizeEvent(QResizeEvent *)</div><div class="ttdoc">resizeEvent called whenever the window resizes. This is used to override the resizing of the icons of...</div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:402</div></div>
 <div class="ttc" id="class_data_sync_html"><div class="ttname"><a href="class_data_sync.html">DataSync</a></div><div class="ttdoc">The DataSync class compares the data layer&#39;s representation of devices with the commlayer&#39;s understan...</div><div class="ttdef"><b>Definition:</b> datasync.h:52</div></div>
-<div class="ttc" id="class_main_window_html_a7e3600f30beb68e79de54c57dc576b5d"><div class="ttname"><a href="class_main_window.html#a7e3600f30beb68e79de54c57dc576b5d">MainWindow::settingsDebugPressed</a></div><div class="ttdeci">void settingsDebugPressed()</div><div class="ttdoc">settingsDebugPressed debug button pressed. Mocks incoming communication packets to make the UI react ...</div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:377</div></div>
-<div class="ttc" id="class_settings_page_html"><div class="ttname"><a href="class_settings_page.html">SettingsPage</a></div><div class="ttdoc">The SettingsPage provides a way to configure the application settings. </div><div class="ttdef"><b>Definition:</b> settingspage.h:36</div></div>
+<div class="ttc" id="class_main_window_html_a7e3600f30beb68e79de54c57dc576b5d"><div class="ttname"><a href="class_main_window.html#a7e3600f30beb68e79de54c57dc576b5d">MainWindow::settingsDebugPressed</a></div><div class="ttdeci">void settingsDebugPressed()</div><div class="ttdoc">settingsDebugPressed debug button pressed. Mocks incoming communication packets to make the UI react ...</div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:393</div></div>
+<div class="ttc" id="class_settings_page_html"><div class="ttname"><a href="class_settings_page.html">SettingsPage</a></div><div class="ttdoc">The SettingsPage provides a way to configure the application settings. </div><div class="ttdef"><b>Definition:</b> settingspage.h:43</div></div>
 <div class="ttc" id="class_edit_group_page_html"><div class="ttname"><a href="class_edit_group_page.html">EditGroupPage</a></div><div class="ttdoc">The EditGroupPage class is a page that is used to edit existing groups of lights. It can edit both co...</div><div class="ttdef"><b>Definition:</b> editgrouppage.h:31</div></div>
 <div class="ttc" id="class_main_window_html"><div class="ttname"><a href="class_main_window.html">MainWindow</a></div><div class="ttdoc">The MainWindow class is the only window in this application. It contains a QStackedWidget which shows...</div><div class="ttdef"><b>Definition:</b> mainwindow.h:38</div></div>
-<div class="ttc" id="class_main_window_html_af20d37aafb7075d6d699a6cdfec9bfcf"><div class="ttname"><a href="class_main_window.html#af20d37aafb7075d6d699a6cdfec9bfcf">MainWindow::editButtonClicked</a></div><div class="ttdeci">void editButtonClicked(QString key, bool isMood)</div><div class="ttdoc">editButtonClicked an edit button has been clicked for either a collection or mood. </div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:502</div></div>
-<div class="ttc" id="class_main_window_html_ad332cdca3c6e9f4a464f9b04072d7431"><div class="ttname"><a href="class_main_window.html#ad332cdca3c6e9f4a464f9b04072d7431">MainWindow::greyOutFadeComplete</a></div><div class="ttdeci">void greyOutFadeComplete()</div><div class="ttdoc">slot called when greyout fade is complete. </div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:572</div></div>
+<div class="ttc" id="class_main_window_html_af20d37aafb7075d6d699a6cdfec9bfcf"><div class="ttname"><a href="class_main_window.html#af20d37aafb7075d6d699a6cdfec9bfcf">MainWindow::editButtonClicked</a></div><div class="ttdeci">void editButtonClicked(QString key, bool isMood)</div><div class="ttdoc">editButtonClicked an edit button has been clicked for either a collection or mood. </div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:523</div></div>
+<div class="ttc" id="class_main_window_html_ad332cdca3c6e9f4a464f9b04072d7431"><div class="ttname"><a href="class_main_window.html#ad332cdca3c6e9f4a464f9b04072d7431">MainWindow::greyOutFadeComplete</a></div><div class="ttdeci">void greyOutFadeComplete()</div><div class="ttdoc">slot called when greyout fade is complete. </div><div class="ttdef"><b>Definition:</b> mainwindow.cpp:593</div></div>
 </div><!-- fragment --></div><!-- contents -->
 
 <hr>
