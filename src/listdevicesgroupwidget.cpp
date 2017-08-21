@@ -127,6 +127,7 @@ void ListDevicesGroupWidget::updateDevices(std::list<SLightDevice> devices, bool
             }
             if (!found) {
                 removeWidgetFromGrid(existingWidget);
+                break;
             }
         }
     }

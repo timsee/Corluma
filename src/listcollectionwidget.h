@@ -62,6 +62,7 @@ public:
      */
     void setListHeight(int newHeight);
 
+    /// resizes the widget
     void resize();
 
     /*!

@@ -61,9 +61,16 @@ void ConnectionPage::connectGroupsParser(GroupsParser *parser) {
 
 void ConnectionPage::updateConnectionList() {
     std::list<SLightDevice> allDevices = mComm->allDevices();
+    std::list<SLightDevice> allAvailableDevices;
+    // remove non available devices
+    for (auto&& device : allDevices) {
+        if (mData->commTypeSettings()->commTypeEnabled(device.type)) {
+            allAvailableDevices.push_back(device);
+        }
+    }
 
-    gatherAvailandAndNotReachableDevices(allDevices);
-    makeDevicesCollections(allDevices);
+    gatherAvailandAndNotReachableDevices(allAvailableDevices);
+    makeDevicesCollections(allAvailableDevices);
 }
 
 
@@ -441,15 +448,21 @@ void ConnectionPage::saveGroup(bool) {
 
 void ConnectionPage::showEvent(QShowEvent *event) {
     Q_UNUSED(event);
+    show();
+}
+
+void ConnectionPage::show() {
     for (int commInt = 0; commInt != (int)ECommType::eCommType_MAX; ++commInt) {
         ECommType type = static_cast<ECommType>(commInt);
         if (mData->commTypeSettings()->commTypeEnabled(type)) {
             mComm->startDiscovery(type);
         }
     }
+    cleanupList();
     highlightList();
     mRenderThread->start(mRenderInterval);
 }
+
 
 void ConnectionPage::openDefaultCollections() {
     for (uint32_t i = 0; i < mDevicesListWidget->count(); ++i) {
@@ -461,6 +474,11 @@ void ConnectionPage::openDefaultCollections() {
 
 void ConnectionPage::hideEvent(QHideEvent *event) {
     Q_UNUSED(event);
+    hide();
+}
+
+
+void ConnectionPage::hide() {
     for (int commInt = 0; commInt != (int)ECommType::eCommType_MAX; ++commInt) {
         ECommType type = static_cast<ECommType>(commInt);
         if (mData->commTypeSettings()->commTypeEnabled(type)) {
@@ -475,3 +493,24 @@ void ConnectionPage::resizeEvent(QResizeEvent *) {
     mDevicesListWidget->setMaximumSize(this->size());
 }
 
+
+void ConnectionPage::cleanupList() {
+    // first remove all devices that are no longer available
+    emit deviceCountChanged();
+
+    for (uint32_t i = 0; i < mDevicesListWidget->count(); ++i) {
+        ListCollectionWidget *widget = mDevicesListWidget->widget(i);
+        ListDevicesGroupWidget *devicesWidget = qobject_cast<ListDevicesGroupWidget*>(widget);
+        Q_ASSERT(devicesWidget);
+
+        std::list<SLightDevice> newDeviceList;
+        std::list<SLightDevice> currentDeviceList = devicesWidget->devices();
+        for (auto&& device : currentDeviceList) {
+            if (mData->commTypeSettings()->commTypeEnabled(device.type)) {
+                newDeviceList.push_back(device);
+            }
+        }
+        // now remove all devices that are not found
+        devicesWidget->updateDevices(newDeviceList, true);
+    }
+}

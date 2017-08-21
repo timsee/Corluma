@@ -94,6 +94,9 @@ public:
     /// getter for current type of color page (ambiance, RGB, etc.)
     EColorPageType pageType();
 
+    /// called when the widget is shown
+    void show();
+
 signals:
     /*!
      * \brief Used to signal back to the main page that it should update its top-left icon
@@ -120,19 +123,6 @@ public slots:
     void colorChanged(QColor);
 
 protected:
-    /*!
-     * \brief showEvent called whenever the page is about to be shown, used to
-     *        to make sure that the the hilighted buttons and the modes that could
-     *        have changed from other pages are still in sync on this page.
-     */
-    void showEvent(QShowEvent *);
-
-    /*!
-     * \brief hideEvent called as the page is hidden. This happens when a new page
-     *        is displayed.
-     */
-    void hideEvent(QHideEvent *);
-
 
     /*!
      * \brief resizeEvent called every time the main window is resized.

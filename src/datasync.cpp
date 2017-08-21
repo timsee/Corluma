@@ -127,7 +127,7 @@ bool DataSync::standardSync(const SLightDevice& dataDevice, const SLightDevice& 
     //-------------------
 
     if (dataDevice.isOn != commDevice.isOn) {
-        //qDebug() << "ON/OFF not in sync" << dataDevice.isOn << " for " << dataDevice.index << "routine " << (int)dataDevice.lightingRoutine;
+        qDebug() << "ON/OFF not in sync" << dataDevice.isOn << " for " << dataDevice.index << "routine " << (int)dataDevice.lightingRoutine;
         QString message = mComm->sendTurnOn(list, dataDevice.isOn);
         appendToPacket(packet, message, controller.maxPacketSize);
         countOutOfSync++;
@@ -208,7 +208,7 @@ bool DataSync::standardSync(const SLightDevice& dataDevice, const SLightDevice& 
     //-------------------
     if (commDevice.customColorCount != dataDevice.customColorCount
             && dataDevice.isOn) {
-        qDebug() << "Custom color count not in sync";
+        //qDebug() << "Custom color count not in sync";
         QString message = mComm->sendCustomArrayCount(list, dataDevice.customColorCount);
         appendToPacket(packet, message, controller.maxPacketSize);
         countOutOfSync++;
@@ -220,7 +220,7 @@ bool DataSync::standardSync(const SLightDevice& dataDevice, const SLightDevice& 
     for (uint32_t i = 0; i < dataDevice.customColorCount; ++i) {
         if (dataDevice.isOn) {
             if (utils::colorDifference(dataDevice.customColorArray[i], commDevice.customColorArray[i]) > 0.02f) {
-                qDebug() << "Custom color" << i << "not in sync";
+                //qDebug() << "Custom color" << i << "not in sync";
                 QString message = mComm->sendArrayColorChange(list, i, dataDevice.customColorArray[i]);
                 appendToPacket(packet, message, controller.maxPacketSize);
                 countOutOfSync++;

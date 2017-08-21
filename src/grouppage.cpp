@@ -393,9 +393,17 @@ void GroupPage::gatherAvailandAndNotReachableMoods(const std::list<SLightDevice>
         ListCollectionWidget *item = mMoodsListWidget->widget(i);
         if (item->key().compare(kAvailableMoodsKey) == 0) {
             foundAvailable = true;
+            // update
+            ListMoodGroupWidget *widget = qobject_cast<ListMoodGroupWidget*>(item);
+            Q_ASSERT(widget);
+            widget->updateMoods(availableMoods, mData->colors());
         }
         if (item->key().compare(kUnavailableMoodsKey) == 0) {
             foundUnavailable = true;
+            // update
+            ListMoodGroupWidget *widget = qobject_cast<ListMoodGroupWidget*>(item);
+            Q_ASSERT(widget);
+            widget->updateMoods(unavailableMoods, mData->colors());
         }
     }
 

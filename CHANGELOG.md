@@ -190,3 +190,11 @@ ___
 * Minor bug fixes. 
 
 
+### **v0.10.1**
+#### The Settings Page Update Part 2
+* Added a Copyright Page and FAQ page.
+* Refactored and redesigned the settings page.
+* standardized more UI elements.
+* Fixed miscellaneous bugs. 
+
+

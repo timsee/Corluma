@@ -64,6 +64,12 @@ public:
      */
     void updateTopMenu();
 
+    /// called when the widget is shown
+    void show();
+
+    /// called when the widget is hidden
+    void hide();
+
 signals:
     /*!
      * \brief startButtonClicked sent whenver the start button is clicked so that the discovery
@@ -113,17 +119,6 @@ private slots:
     void floatingLayoutButtonPressed(QString button);
 
 protected:
-    /*!
-     * \brief showEvent called before the this page is shown. Used to sync up
-     *        any changes that may have happened on other pages.
-     */
-    void showEvent(QShowEvent *);
-
-    /*!
-     * \brief hideEvent called as the page is hidden. This happens when a new page
-     *        is displayed.
-     */
-    void hideEvent(QHideEvent *);
 
     /*!
      * \brief resizeEvent called every time the main window is resized.

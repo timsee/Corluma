@@ -33,5 +33,8 @@
         <file>resources/Corluma.json</file>
         <file>images/arduino-logo.png</file>
         <file>images/whiteButton.png</file>
+        <file>resources/Copyright.html</file>
+        <file>resources/FAQ.html</file>
+        <file>images/closeX.png</file>
     </qresource>
 </RCC>

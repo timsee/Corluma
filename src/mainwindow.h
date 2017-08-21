@@ -110,6 +110,8 @@ public slots:
     /// slot called when greyout fade is complete.
     void greyOutFadeComplete();
 
+    SettingsPage *settings() { return mSettingsPage; }
+
 protected:
 
     /*!
@@ -127,6 +129,10 @@ protected:
 
 private:
 
+    /*!
+     * \brief mMainViewport widget that fills the main view port of the application.
+     *        This is used for animations.
+     */
     QWidget *mMainViewport;
 
     /// page for choosing colors of the LEDs

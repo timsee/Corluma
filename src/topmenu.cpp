@@ -10,6 +10,8 @@ TopMenu::TopMenu(DataLayer* data, CommLayer* comm, QWidget *parent) : QWidget(pa
     mData = data;
     mComm = comm;
 
+    mCurrentPage = EPage::eConnectionPage;
+
     // --------------
     // Setup Buttons
     // --------------
@@ -229,6 +231,7 @@ void TopMenu::deviceCountReachedZero() {
     mColorPageButton->setEnabled(false);
     mBrightnessSlider->enable(false);
 
+    mBrightnessSlider->slider->setValue(0);
     QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mOnOffButton);
     effect->setOpacity(0.5f);
     mOnOffButton->setGraphicsEffect(effect);
@@ -446,15 +449,19 @@ void TopMenu::showFloatingLayout(EPage newPage) {
                 }
                 mGroupFloatingLayout->setupButtons(buttons);
                 pullLeftFloatingLayout(mGroupFloatingLayout);
-                mGroupFloatingLayout->updateGroupPageButtons(mData->colors(), mData->customColorsUsed());
+                mGroupFloatingLayout->updateGroupPageButtons(mData->colors());
                 mGroupFloatingLayout->highlightButton(buttons[0]);
                 break;
             }
             case EPage::eSettingsPage:
+                mColorVerticalFloatingLayout->setVisible(false);
                 break;
         }
 
-        mCurrentPage = newPage;
+        // settings handled as special case and is not stored here
+        if (newPage != EPage::eSettingsPage) {
+            mCurrentPage = newPage;
+        }
     }
 }
 

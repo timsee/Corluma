@@ -211,6 +211,7 @@ void ListDeviceWidget::resizeIconPixmap() {
 }
 
 QString ListDeviceWidget::createStyleSheet(const SLightDevice& device) {
+    Q_UNUSED(device);
     QString styleSheet;
 
 #ifdef MOBILE_BUILD

@@ -13,6 +13,8 @@
 #include "discovery/discoveryyunwidget.h"
 #include "discovery/discoveryhuewidget.h"
 
+#include "mainwindow.h"
+
 #include <QSignalMapper>
 #include <QInputDialog>
 #include <QMessageBox>
@@ -141,7 +143,15 @@ void DiscoveryPage::renderUI() {
 
     // Only allow moving to next page if something is connected
     if (isAnyConnected || mForceStartOpen) {
+        //---------------------
+        // Connection Detected!
+        //---------------------
         ui->startButton->setEnabled(true);
+        // remove the debug options from settings menu
+        MainWindow *mainWindow = qobject_cast<MainWindow*>(this->parentWidget());
+        Q_ASSERT(mainWindow);
+        mainWindow->settings()->removeDebug();
+
         if (mStartTime.elapsed() < 2750) {
             emit closeWithoutTransition();
         }
@@ -176,6 +186,7 @@ void DiscoveryPage::commTypeSelected(int type) {
 
         mYunWidget->handleDiscovery(true);
         mYunWidget->yunLineEditHelper();
+        mHorizontalFloatingLayout->highlightButton("Discovery_Yun");
     }  else if (currentCommType == ECommType::eHue) {
 #ifndef MOBILE_BUILD
         mHueWidget->setGeometry(ui->placeholder->geometry());
@@ -183,6 +194,7 @@ void DiscoveryPage::commTypeSelected(int type) {
 #endif //MOBILE_BUILD
         mYunWidget->setVisible(false);
         mHueWidget->setVisible(true);
+        mHorizontalFloatingLayout->highlightButton("Discovery_Hue");
     }
 #ifndef MOBILE_BUILD
     else if (currentCommType == ECommType::eSerial) {
@@ -193,6 +205,7 @@ void DiscoveryPage::commTypeSelected(int type) {
         mHueWidget->setVisible(false);
 
         mSerialWidget->handleDiscovery(true);
+        mHorizontalFloatingLayout->highlightButton("Discovery_Serial");
     }
 #endif //MOBILE_BUILD
     mType = currentCommType;
@@ -237,20 +250,18 @@ void DiscoveryPage::changeCommTypeConnectionState(ECommType type, EConnectionSta
 // ----------------------------
 
 
-void DiscoveryPage::showEvent(QShowEvent *event) {
-    Q_UNUSED(event);
+
+void DiscoveryPage::show() {
     mRenderThread->start(mRenderInterval);
     updateTopMenu();
     moveFloatingLayouts();
-
- //   resizeTopMenu();
 }
 
-void DiscoveryPage::hideEvent(QHideEvent *event) {
-    Q_UNUSED(event);
+
+void DiscoveryPage::hide() {
     mRenderThread->stop();
-
 }
+
 
 void DiscoveryPage::resizeEvent(QResizeEvent *) {
     if (mType == ECommType::eUDP) {

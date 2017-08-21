@@ -5,9 +5,9 @@
  */
 
 #include "settingspage.h"
-#include "ui_settingspage.h"
 #include "comm/commhue.h"
 #include "listdevicewidget.h"
+#include "corlumautils.h"
 
 #include <QFileDialog>
 #include <QDebug>
@@ -19,241 +19,165 @@
 #include <QGraphicsOpacityEffect>
 #include <QPainter>
 #include <QScrollBar>
+#include <QPropertyAnimation>
 
 #include <algorithm>
 
+
+#include <QDesktopWidget>
+#include <QScreen>
+
 SettingsPage::SettingsPage(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::SettingsPage) {
-    ui->setupUi(this);
+    QWidget(parent) {
+    mShowingDebug = true;
 
-    // setup sliders
-    mSliderSpeedValue = 425;
-    ui->speedSlider->slider->setRange(1, 1000);
-    ui->speedSlider->slider->setValue(mSliderSpeedValue);
-    ui->speedSlider->setSliderHeight(0.5f);
-    ui->speedSlider->slider->setTickPosition(QSlider::TicksBelow);
-    ui->speedSlider->slider->setTickInterval(100);
+    mCurrentWebView = ECorlumaWebView::eNone;
 
-    ui->timeoutSlider->slider->setRange(0,240);
-    ui->timeoutSlider->slider->setValue(120);
-    ui->timeoutSlider->setSliderHeight(0.5f);
-    ui->timeoutSlider->slider->setTickPosition(QSlider::TicksBelow);
-    ui->timeoutSlider->slider->setTickInterval(40);
+    //------------
+    // Top Layout
+    //------------
 
-    mConnectionButtons = { ui->yunButton,
-#ifndef MOBILE_BUILD
-                    ui->serialButton,
-#endif //MOBILE_BUILD
-                    ui->hueButton };
+    mTopWidget = new CorlumaTopWidget("Settings", ":images/closedArrow.png");
+    connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(closeButtonPressed(bool)));
 
-    connect(ui->speedSlider, SIGNAL(valueChanged(int)), this, SLOT(speedChanged(int)));
-    connect(ui->timeoutSlider, SIGNAL(valueChanged(int)), this, SLOT(timeoutChanged(int)));
+    //------------
+    // ScrollArea Widget
+    //------------
 
-    connect(ui->debugButton, SIGNAL(clicked(bool)), this, SLOT(debugButtonClicked(bool)));
-    connect(ui->loadButton, SIGNAL(clicked(bool)), this, SLOT(loadButtonClicked(bool)));
-    connect(ui->mergeButton, SIGNAL(clicked(bool)), this, SLOT(mergeButtonClicked(bool)));
-    connect(ui->saveButton, SIGNAL(clicked(bool)), this, SLOT(saveDataButtonClicked(bool)));
+    mScrollArea = new QScrollArea(this);
+    mScrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    connect(ui->hueButton, SIGNAL(clicked(bool)), this, SLOT(hueCheckboxClicked(bool)));
-    ui->hueButton->setText("Hue");
+    mScrollAreaWidget = new QWidget(this);
+    mScrollAreaWidget->setObjectName("contentWidget");
+    QScroller::grabGesture(mScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
+    mScrollAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mScrollAreaWidget->setContentsMargins(0,0,0,0);
+    mScrollAreaWidget->setStyleSheet("QWidget#contentWidget{ background-color: #201F1F; } QLabel { background-color: #201F1F; } CorlumaSlider { background-color: #201F1F; } ");
 
-    connect(ui->yunButton, SIGNAL(clicked(bool)), this, SLOT(yunCheckboxClicked(bool)));
-    ui->yunButton->setText("Yun");
+    mScrollLayout = new QVBoxLayout(mScrollAreaWidget);
+    mScrollLayout->setSpacing(7);
+    mScrollLayout->setContentsMargins(9, 9, 9, 9);
+    mScrollAreaWidget->setLayout(mScrollLayout);
 
-    connect(ui->closeButton, SIGNAL(clicked(bool)), this, SLOT(closeButtonPressed(bool)));
+    //------------
+    // Main Layout
+    //------------
 
-#ifndef MOBILE_BUILD
-    connect(ui->serialButton, SIGNAL(clicked(bool)), this, SLOT(serialCheckboxClicked(bool)));
-    ui->serialButton->setText("Serial");
-#else
-    ui->serialButton->setHidden(true);
-#endif //MOBILE_BUILD
+    mMainLayout = new QVBoxLayout(this);
+    mMainLayout->addWidget(mTopWidget, 1);
+    mMainLayout->addWidget(mScrollArea, 10);
+    mMainLayout->setContentsMargins(9,9,9,9);
+    mMainLayout->setSpacing(6);
 
-    ui->settingsScrollArea->widget()->setObjectName("contentWidget");
-    ui->settingsScrollArea->widget()->setStyleSheet("QWidget#contentWidget { background-color: #201F1F; } QLabel { background-color: #201F1F; } CorlumaSlider { background-color: #201F1F; } ");
-    QScroller::grabGesture(ui->settingsScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
-    ui->settingsScrollArea->horizontalScrollBar()->setEnabled(false);
+    //------------
+    // Scroll Area Contents
+    //------------
+
+    mSectionTitles = { "Saved Data",
+                       "About",
+                       "Debug"};
+
+    mTitles = { "Save",
+                "Load",
+                "Reset",
+                "Copyright",
+                "FAQ",
+                "Mock Connection"};
+
+    mDescriptions = { "Save to JSON.",
+                      "Erase old data, load new data from JSON.",
+                      "Resets all app data and all app settings.",
+                      "",
+                      "",
+                      "Mock a device state update packet to get past the start screen."};
+
+    mButtons = std::vector<SettingsButton*>(mTitles.size());
+    mSectionLabels = std::vector<QLabel*>(mSectionTitles.size());
+
+    uint32_t sectionIndex = 0;
+    for (uint32_t x = 0; x < mTitles.size(); ++x) {
+        if (mTitles[x].compare("Save") == 0
+                || mTitles[x].compare("Mock Connection") == 0
+                || mTitles[x].compare("Copyright") == 0) {
+            mSectionLabels[sectionIndex] = new QLabel(mSectionTitles[sectionIndex].c_str());
+            mSectionLabels[sectionIndex]->setStyleSheet("font:bold; font-size:20pt; color:rgba(61, 142, 201,255);");
+            mScrollLayout->addWidget(mSectionLabels[sectionIndex]);
+            sectionIndex++;
+        }
+        mButtons[x] = new SettingsButton(QString(mTitles[x].c_str()), QString(mDescriptions[x].c_str()));
+        connect(mButtons[x], SIGNAL(buttonPressed(QString)), this, SLOT(settingsButtonPressed(QString)));
+        mScrollLayout->addWidget(mButtons[x]);
+    }
+
+    mCopyrightWidget = new CorlumaWebView("Copyright", ":/resources/Copyright.html", this);
+    mCopyrightWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mCopyrightWidget->setGeometry(this->geometry());
+    connect(mCopyrightWidget, SIGNAL(closePressed()), this, SLOT(hideCurrentWebView()));
+
+
+    mFAQWidget = new CorlumaWebView("FAQ", ":/resources/FAQ.html", this);
+    mFAQWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mFAQWidget->setGeometry(this->geometry());
+    connect(mFAQWidget, SIGNAL(closePressed()), this, SLOT(hideCurrentWebView()));
+
+    //------------
+    // Global Widget
+    //------------
+    mGlobalWidget = new GlobalSettingsWidget(mScrollAreaWidget);
+    mGlobalWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mScrollLayout->addWidget(mGlobalWidget);
+
+    //------------
+    // Final Cleanup
+    //------------
+    this->setLayout(mMainLayout);
+
+    mScrollArea->setWidget(mScrollAreaWidget);
+    mScrollAreaWidget->setFixedWidth(mScrollArea->width() * 0.9f);
+
 }
 
 SettingsPage::~SettingsPage() {
-    delete ui;
 }
-
-void SettingsPage::setupUI() {
-    connect(mData, SIGNAL(devicesEmpty()), this, SLOT(deviceCountReachedZero()));
-}
-
-void SettingsPage::updateUI() {
-
-    if (mData->hasHueDevices())  {
-        ui->timeoutSlider->setHidden(true);
-        ui->timeoutLabel->setHidden(true);
-    } else {
-        ui->timeoutSlider->setHidden(false);
-        ui->timeoutLabel->setHidden(false);
-    }
-
-    if (mData->currentRoutine() <= ELightingRoutine::eSingleSawtoothFadeOut) {
-        ui->speedSlider->setSliderColorBackground(mData->mainColor());
-        ui->timeoutSlider->setSliderColorBackground(mData->mainColor());
-    } else {
-        ui->speedSlider->setSliderColorBackground(mData->colorsAverage(mData->currentColorGroup()));
-        ui->timeoutSlider->setSliderColorBackground(mData->colorsAverage(mData->currentColorGroup()));
-    }
-}
-
-// ----------------------------
-// Slots
-// ----------------------------
-
-void SettingsPage::speedChanged(int newSpeed) {
-    mSliderSpeedValue = newSpeed;
-    int finalSpeed;
-    // first half of slider is going linearly between 20 FPS down to 1 FPS
-    if (newSpeed < 500) {
-        float percent = newSpeed / 500.0f;
-        finalSpeed = (int)((1.0f - percent) * 2000.0f);
-    } else {
-        // second half maps 1FPS to 0.01FPS
-        float percent = newSpeed - 500.0f;
-        finalSpeed = (500 - percent) / 5.0f;
-        if (finalSpeed < 2.0f) {
-            finalSpeed = 2.0f;
-        }
-    }
-    mData->updateSpeed(finalSpeed);
-}
-
-void SettingsPage::timeoutChanged(int newTimeout) {
-   mData->updateTimeout(newTimeout);
-}
-
 
 // ----------------------------
 // Protected
 // ----------------------------
 
+void SettingsPage::show() {
+    mGlobalWidget->updateUI();
+    mGlobalWidget->show();
 
-void SettingsPage::showEvent(QShowEvent *event) {
-    Q_UNUSED(event);
-    updateUI();
-    checkCheckBoxes();
-
-    if (mData->currentDevices().size() == 0) {
-        deviceCountReachedZero();
-
-    } else {
-        ui->speedSlider->enable(true);
-        ui->timeoutSlider->enable(true);
-
-        ui->speedSlider->setSliderColorBackground(mData->mainColor());
-        ui->timeoutSlider->setSliderColorBackground(mData->mainColor());
-
-        // default the settings bars to the current colors
-        ui->speedSlider->slider->setValue(mSliderSpeedValue);
-        ui->timeoutSlider->slider->setValue(mData->timeout());
-    }
-}
-
-void SettingsPage::hideEvent(QHideEvent *) {
-
+    mCopyrightWidget->setGeometry(this->geometry());
 }
 
 void SettingsPage::resizeEvent(QResizeEvent *event) {
     Q_UNUSED(event);
 
-    ui->hueButton->setMinimumHeight(ui->hueButton->width());
-    ui->hueButton->setMaximumHeight(ui->hueButton->width());
+    mScrollAreaWidget->setFixedWidth(this->width() * 0.9f);
 
-    ui->yunButton->setMinimumHeight(ui->yunButton->width());
-    ui->yunButton->setMaximumHeight(ui->yunButton->width());
+    QRect shownWidget = this->geometry();
+    QRect hiddenWidget = QRect(0, this->geometry().height(), this->width(), this->height());
 
-#ifndef MOBILE_BUILD
-    ui->serialButton->setMinimumHeight(ui->serialButton->width());
-    ui->serialButton->setMaximumHeight(ui->serialButton->width());
-#endif //MOBILE_BUILD
-
-    ui->speedSlider->setMinimumSize(QSize(this->width() * 0.8f, this->height() * 0.1f));
-    ui->speedSlider->setMaximumSize(QSize(this->width() * 0.8f, this->height() * 0.1f));
-
-    ui->timeoutSlider->setMinimumSize(QSize(this->width() * 0.8f, this->height() * 0.1f));
-    ui->timeoutSlider->setMaximumSize(QSize(this->width() * 0.8f, this->height() * 0.1f));
-
-    ui->settingsScrollArea->widget()->setMaximumWidth(this->width() * 0.9f);
-
-    ui->debugButton->setMinimumHeight(ui->debugButton->width());
-    ui->resetButton->setMinimumHeight(ui->debugButton->width());
-    ui->loadButton->setMinimumHeight(ui->loadButton->width());
-    ui->saveButton->setMinimumHeight(ui->saveButton->width());
-    ui->mergeButton->setMinimumHeight(ui->mergeButton->width());
-
-    int min = std::min(ui->closeButton->width(), ui->closeButton->height()) * 0.85f;
-    ui->closeButton->setIconSize(QSize(min, min));
-
-    std::vector<QPushButton*> buttonList = {ui->hueButton,
-                                            ui->yunButton,
-                                        #ifndef MOBILE_BUILD
-                                            ui->serialButton,
-                                        #endif
-                                            ui->debugButton,
-                                            ui->resetButton,
-                                            ui->loadButton,
-                                            ui->saveButton,
-                                            ui->mergeButton};
-
-    int minWidth = INT_MAX;
-    int minHeight = INT_MAX;
-    for (uint32_t i = 0; i < buttonList.size(); ++i) {
-        if (buttonList[i]->size().width() < minWidth) {
-            minWidth = buttonList[i]->size().width();
-        }
-        if (buttonList[i]->size().height() < minHeight) {
-            minHeight = buttonList[i]->size().height();
-        }
-    }
-    const int minSize = 60;
-    if (minHeight < minSize) minHeight = minSize;
-    if (minWidth < minSize)  minWidth = minSize;
-    QSize finalSize(minWidth, minHeight);
-    for (uint32_t i = 0; i < buttonList.size(); ++i) {
-        buttonList[i]->setMinimumSize(finalSize);
-        buttonList[i]->setMaximumSize(finalSize);
-    }
-}
-
-void SettingsPage::checkCheckBoxes() {
-    std::vector<ECommType> types =  mData->commTypeSettings()->commTypes();
-    for (uint32_t i = 0; i < types.size(); ++i) {
-        QPushButton* checkBox = mConnectionButtons[i];
-        ECommType type = types[i];
-        if (mData->commTypeSettings()->commTypeEnabled(type)) {
-            checkBox->setChecked(true);
-           // checkBox->setStyleSheet("background-color:#4A4949;");
-        } else {
-            checkBox->setChecked(false);
-           // checkBox->setStyleSheet("background-color: #000000;");
-        }
-    }
-}
-
-void SettingsPage::checkBoxClicked(ECommType type, bool checked) {
-    bool successful = mData->commTypeSettings()->enableCommType(type, checked);
-    if (!successful) {
-        mConnectionButtons[mData->commTypeSettings()->indexOfCommTypeSettings(type)]->setChecked(true);
-       // mConnectionButtons[mData->commTypeSettings()->indexOfCommTypeSettings(type)]->setStyleSheet("background-color:#4A4949;");
-    }
-
-    if (checked) {
-        mComm->startup(type);
-    } else {
-        mComm->shutdown(type);
-        mData->removeDevicesOfType(type);
+    switch (mCurrentWebView) {
+        case ECorlumaWebView::eCopyright:
+            mCopyrightWidget->setGeometry(shownWidget);
+            mFAQWidget->setGeometry(hiddenWidget);
+            break;
+        case ECorlumaWebView::eFAQ:
+            mCopyrightWidget->setGeometry(hiddenWidget);
+            mFAQWidget->setGeometry(shownWidget);
+            break;
+        default:
+            mCopyrightWidget->setGeometry(hiddenWidget);
+            mFAQWidget->setGeometry(hiddenWidget);
+            return;
     }
 }
 
 
-void SettingsPage::loadButtonClicked(bool) {
+void SettingsPage::loadButtonClicked() {
     QFileDialog dialog(this);
     dialog.setFileMode(QFileDialog::AnyFile);
     dialog.setNameFilter(tr("JSON (*.json)"));
@@ -272,22 +196,7 @@ void SettingsPage::loadButtonClicked(bool) {
     }
 }
 
-void SettingsPage::mergeButtonClicked(bool) {
-    qDebug() << "Merge clicekd!";
-
-}
-
-void SettingsPage::debugButtonClicked(bool) {
-    std::list<SLightDevice> debugDevices = mGroups->loadDebugData();
-    if (debugDevices.size() > 0) {
-        mComm->loadDebugData(debugDevices);
-        emit debugPressed();
-    } else {
-        qDebug() << "WARNING: Debug devices not found!";
-    }
-}
-
-void SettingsPage::saveDataButtonClicked(bool) {
+void SettingsPage::saveButtonClicked() {
     QString fileName = QFileDialog::getSaveFileName(this,
           tr("Save Group Data"), "CorlumaGroups.json",
           tr("JSON (*.json)"));
@@ -300,33 +209,52 @@ void SettingsPage::saveDataButtonClicked(bool) {
     }
 }
 
-void SettingsPage::hueCheckboxClicked(bool checked) {
-    checkBoxClicked(ECommType::eHue, checked);
+void SettingsPage::resetButtonClicked() {
+    QMessageBox::StandardButton reply;
+    QString text = "Reset all App Data? This will remove the settings, saved collections, and saved moods. This cannot be undone.";
+    reply = QMessageBox::question(this, "Reset?", text,
+                                  QMessageBox::Yes|QMessageBox::No);
+    if (reply == QMessageBox::Yes) {
+        resetToDefaults();
+    }
 }
 
-void SettingsPage::yunCheckboxClicked(bool checked) {
-    checkBoxClicked(ECommType::eUDP, checked);
-}
-
-void SettingsPage::serialCheckboxClicked(bool checked) {
+void SettingsPage::resetToDefaults() {
+    mGlobalWidget->checkBoxClicked(ECommType::eHue, true);
+    mGlobalWidget->checkBoxClicked(ECommType::eUDP, false);
 #ifndef MOBILE_BUILD
-    checkBoxClicked(ECommType::eSerial, checked);
-#else
-    Q_UNUSED(checked);
+    mGlobalWidget->checkBoxClicked(ECommType::eSerial, false);
 #endif //MOBILE_BUILD
+
+    mGlobalWidget->advanceModeButtonPressed(false);
+    mGlobalWidget->timeoutButtonPressed(true);
+
+    // load no data, deleting everything.
+    mGroups->loadExternalData("");
 }
 
-void SettingsPage::deviceCountReachedZero() {
-    ui->speedSlider->enable(false);
-    ui->timeoutSlider->enable(false);
+void SettingsPage::removeDebug() {
+    if (mShowingDebug) {
+        mShowingDebug = false;
+        // parse section labels for debug and remove it from layout
+        for (uint32_t x = 0; x < mSectionLabels.size(); ++x) {
+            if (mSectionLabels[x]->text().compare("Debug") == 0) {
+                mScrollLayout->removeWidget(mSectionLabels[x]);
+                mSectionLabels[x]->setVisible(false);
+            }
+        }
 
-    ui->speedSlider->setSliderColorBackground(QColor(150, 150, 150));
-    ui->timeoutSlider->setSliderColorBackground(QColor(150, 150, 150));
-}
+        // parse section labels for debug and remove it from layout
+        for (uint32_t x = 0; x < mButtons.size(); ++x) {
+            if (mButtons[x]->text().compare("Mock Connection") == 0) {
+                mScrollLayout->removeWidget(mButtons[x]);
+                mButtons[x]->setVisible(false);
+            }
+        }
 
-
-void SettingsPage::renderUI() {
-
+        // adjust the size to new missing content
+        adjustSize();
+    }
 }
 
 void SettingsPage::paintEvent(QPaintEvent *) {
@@ -336,4 +264,80 @@ void SettingsPage::paintEvent(QPaintEvent *) {
 
     painter.setRenderHint(QPainter::Antialiasing);
     painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
+}
+
+void SettingsPage::settingsButtonPressed(QString title) {
+    //qDebug() << "settings button pressed: " << title;
+    if (title.compare("Debug") == 0) {
+        std::list<SLightDevice> debugDevices = mGroups->loadDebugData();
+        if (debugDevices.size() > 0) {
+            mComm->loadDebugData(debugDevices);
+            emit debugPressed();
+        } else {
+            qDebug() << "WARNING: Debug devices not found!";
+        }
+    } else if (title.compare("Reset") == 0) {
+        resetButtonClicked();
+    } else if (title.compare("Load") == 0) {
+        loadButtonClicked();
+    } else if (title.compare("Save") == 0) {
+        saveButtonClicked();
+    } else if (title.compare("Copyright") == 0) {
+        showWebView(ECorlumaWebView::eCopyright);
+    } else if (title.compare("FAQ") == 0) {
+        showWebView(ECorlumaWebView::eFAQ);
+    }
+}
+
+
+void SettingsPage::showWebView(ECorlumaWebView newWebView) {
+    if (newWebView != mCurrentWebView) {
+        mCurrentWebView = newWebView;
+
+        CorlumaWebView *widget;
+        switch (newWebView) {
+            case ECorlumaWebView::eCopyright:
+                widget = mCopyrightWidget;
+                break;
+            case ECorlumaWebView::eFAQ:
+                widget = mFAQWidget;
+                break;
+            default:
+                // none, return
+                return;
+        }
+        QSize size = this->size();
+        widget->setGeometry(0, widget->height(), size.width(), size.height());
+        QPropertyAnimation *animation = new QPropertyAnimation(widget, "pos");
+        animation->setDuration(TRANSITION_TIME_MSEC);
+        animation->setStartValue(widget->pos());
+        animation->setEndValue(QPoint(0, 0));
+        animation->start();
+        widget->raise();
+    }
+}
+
+void SettingsPage::hideCurrentWebView() {
+
+    CorlumaWebView *widget;
+    switch (mCurrentWebView) {
+        case ECorlumaWebView::eCopyright:
+            widget = mCopyrightWidget;
+            break;
+        case ECorlumaWebView::eFAQ:
+            widget = mFAQWidget;
+            break;
+        default:
+            // none, return
+            return;
+    }
+
+    QPropertyAnimation *animation = new QPropertyAnimation(widget, "pos");
+    animation->setDuration(TRANSITION_TIME_MSEC);
+    animation->setStartValue(widget->pos());
+    animation->setEndValue(QPoint(0, widget->height()));
+    animation->start();
+    widget->raise();
+
+    mCurrentWebView = ECorlumaWebView::eNone;
 }

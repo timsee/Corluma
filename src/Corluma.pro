@@ -31,7 +31,7 @@ equals (QT_MAJOR_VERSION, 5)  {
   }
 }
 !greaterThan(QT_MAJOR_VERSION, 4) {
-    error(ERROR: Qt5 is not installed. This project uses QT5.2 or later)
+    error(ERROR: Qt5 is not installed. This project uses QT5.4 or later)
 }
 
 #todo: check for C++11
@@ -153,7 +153,12 @@ SOURCES += main.cpp \
     topmenu.cpp \
     corlumalistwidget.cpp \
     grouppage.cpp \
-    corlumastatusicon.cpp
+    corlumastatusicon.cpp \
+    settingsbutton.cpp \
+    corlumawebview.cpp \
+    globalsettingswidget.cpp \
+    corlumacheckbox.cpp \
+    corlumatopwidget.cpp
 
 HEADERS  +=  comm/commtype.h \
     comm/commserial.h \
@@ -205,10 +210,14 @@ HEADERS  +=  comm/commtype.h \
     corlumautils.h \
     topmenu.h \
     corlumalistwidget.h \
-    corlumastatusicon.h
+    corlumastatusicon.h \
+    settingsbutton.h \
+    corlumawebview.h \
+    globalsettingswidget.h \
+    corlumacheckbox.h \
+    corlumatopwidget.h
 
-FORMS    += settingspage.ui \
-    discoverypage.ui \
+FORMS    += discoverypage.ui \
     editcollectionpage.ui
 
 #----------

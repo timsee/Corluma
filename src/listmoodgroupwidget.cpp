@@ -37,22 +37,41 @@ ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
 
 
 void ListMoodGroupWidget::updateMoods(std::list<std::pair<QString, std::list<SLightDevice> > > moods,
-                                      const std::vector<std::vector<QColor> >& colors) {
+                                      const std::vector<std::vector<QColor> >& colors,
+                                      bool removeIfNotFound) {
+    std::vector<bool> foundWidgets(mWidgets.size(), false);
     for (auto&& mood : moods) {
-        bool foundDevice = false;
+        bool foundMood = false;
+        uint32_t x = 0;
         for (auto&& existingWidget : mWidgets) {
             if (mood.first.compare(existingWidget->key()) == 0) {
-                foundDevice = true;
+                foundMood = true;
                 //TODO update
+                foundWidgets[x] = true;
+                ++x;
             }
         }
 
-        if (!foundDevice) {
+        if (!foundMood) {
             ListMoodWidget *widget = new ListMoodWidget(mood.first, mood.second,
                                                         colors);
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
             connect(widget, SIGNAL(editClicked(QString)), this, SLOT(clickedEdit(QString)));
             insertWidgetIntoGrid(widget);
+        }
+    }
+
+    //----------------
+    // Remove widgets that are not found
+    //----------------
+    if (removeIfNotFound) {
+        uint32_t x = 0;
+        for (auto widgetFound : foundWidgets) {
+            if (!widgetFound) {
+                // remove this widget
+                removeWidgetFromGrid(mWidgets[x]);
+            }
+            ++x;
         }
     }
 }

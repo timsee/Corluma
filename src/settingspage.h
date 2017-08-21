@@ -5,15 +5,22 @@
 #include <QWidget>
 #include <QListWidgetItem>
 #include <QPushButton>
+#include <QScrollArea>
 
-#include "lightingpage.h"
 #include "corlumaslider.h"
 #include "comm/commlayer.h"
 #include "groupsparser.h"
+#include "settingsbutton.h"
+#include "corlumawebview.h"
+#include "globalsettingswidget.h"
 
-namespace Ui {
-class SettingsPage;
-}
+
+/// enum for state of corluma web views, tracks which is shown
+enum class ECorlumaWebView {
+    eFAQ,
+    eCopyright,
+    eNone
+};
 
 /*!
  * \copyright
@@ -33,7 +40,7 @@ class SettingsPage;
  * add and remove connections for UDP and HTTP.
  *
  */
-class SettingsPage : public QWidget, public LightingPage
+class SettingsPage : public QWidget
 {
     Q_OBJECT
 
@@ -49,23 +56,22 @@ public:
     ~SettingsPage();
 
     /*!
-     * \brief setupUI sets up initial UI elements.
-     */
-    void setupUI();
-
-    /*!
      * \brief connectCommLayer connec the commlayer to this page.
      * \param layer a pointer to the commlayer object.
      */
     void connectCommLayer(CommLayer *layer) { mComm = layer; }
 
-    /*!
-     * \brief updateUI updates the colors of various settings in the UI.
-     */
-    void updateUI();
-
     /// connects the GroupsParser object to this UI widget.
     void connectGroupsParser(GroupsParser *parser) { mGroups = parser; }
+
+    /// called when the widget is shown
+    void show();
+
+    /// returns pointer to global widget
+    GlobalSettingsWidget *globalWidget() { return mGlobalWidget; }
+
+    /// remove debug options from settings page
+    void removeDebug();
 
 signals:
     /*!
@@ -91,87 +97,22 @@ signals:
      */
     void closePressed();
 
-public slots:
-    /*!
-     * \brief speedChanged signaled whenever the slider that controls
-     *        the LEDs speed changes its value.
-     */
-    void speedChanged(int);
-
-    /*!
-     * \brief timeoutChanged signaled whenever the slider that controls
-     *        the LEDs idle time out changes its value.
-     */
-    void timeoutChanged(int);
-
-    /*!
-     * \brief hueCheckboxClicked checks and unchecks the hue checkbox.
-     */
-    void hueCheckboxClicked(bool);
-
-
-    /*!
-     * \brief yunCheckboxClicked checks and unchecks the Yun checkbox.
-     */
-    void yunCheckboxClicked(bool);
-
-    /*!
-     * \brief serialCheckboxClicked checks and unchecks the serial checkbox.
-     */
-    void serialCheckboxClicked(bool);
-
-    /*!
-     * \brief deviceCountReachedZero disable and greys out assets that require a device to be
-     *        connected to use.
-     */
-    void deviceCountReachedZero();
-
 private slots:
-    /*!
-     * \brief renderUI renders expensive assets if and only if the assets have had any
-     *        change of state.
-     */
-    void renderUI();
-
-    /*!
-     * \brief loadButtonClicked loads json data from file and replaces all group and collection
-     *        data previously in the app.
-     */
-    void loadButtonClicked(bool);
-
-    /*!
-     * \brief mergeButtonClicked loads json data from file and merges all groups and collections
-     *        from the data into the existing data.
-     */
-    void mergeButtonClicked(bool);
-
-    /*!
-     * \brief debugPressed debug button is pressed. Feeds fake communication data into the app
-     *        to act as if some devices are connected.
-     */
-    void debugButtonClicked(bool);
-
-    /*!
-     * \brief saveDataButtonClicked saves all json data to an external file.
-     */
-    void saveDataButtonClicked(bool);
-
     /*!
      * \brief closeButtonPressed signaled from close button, emits a close signal.
      */
     void closeButtonPressed(bool) { emit closePressed(); }
 
-protected:
     /*!
-     * \brief showEvent called before the this page is shown. Used to sync up
-     *        any changes that may have happened on other pages.
+     * \brief settingsButtonPressed a settings button has been pressed
+     * \param title the title of the button that was pressed
      */
-    void showEvent(QShowEvent *);
+    void settingsButtonPressed(QString title);
 
-    /*!
-     * \brief hideEvent called whenever the page is being hidden.
-     */
-    void hideEvent(QHideEvent *);
+    /// hides whatever webview is showing. If none is showing, this does nothing.
+    void hideCurrentWebView();
+
+protected:
 
     /*!
      * \brief resizeEvent called whenever the widget resizes so that assets can be updated.
@@ -186,35 +127,58 @@ protected:
 
 private:
 
+    /// top widget with settings title and close button
+    CorlumaTopWidget *mTopWidget;
+
+    /// scroll area that contains all the information in the widget
+    QScrollArea *mScrollArea;
+
+    /// widget used for scroll area.
+    QWidget *mScrollAreaWidget;
+
+    /// layout for scoll area
+    QVBoxLayout *mScrollLayout;
+
+    /// layout for the widget
+    QVBoxLayout *mMainLayout;
+
     /*!
      * \brief mGroups manages the list of collections and moods and the JSON data
      *        associated with them.
      */
     GroupsParser *mGroups;
 
-    /*!
-     * \brief checkBoxClicked helper for checking if a checkbox is checked. checkmate!
-     * \param type the type of comm type you're checking
-     * \param checked true if checked, false otherwise.
-     */
-    void checkBoxClicked(ECommType type, bool checked);
+    /// widget that contains all the advanced settings that affect the app globally
+    GlobalSettingsWidget *mGlobalWidget;
+
+    /// current webview displayed
+    ECorlumaWebView mCurrentWebView;
 
     /*!
-     * \brief checkCheckBoxes checks the necessary check boxes based off of the data layer's
-     *        representation of which commtypes are in use.
+     * \brief showWebView show one of the webviews
+     * \param newWebView the new webview to show
      */
-    void checkCheckBoxes();
+    void showWebView(ECorlumaWebView newWebView);
 
     /*!
-     * \brief ui pointer to Qt UI form.
+     * \brief loadButtonClicked loads json data from file and replaces all group
+     *         and collection data previously in the app.
      */
-    Ui::SettingsPage *ui;
+    void loadButtonClicked();
 
     /*!
-     * \brief mConnectionButtons pointers to all checkboxes so that they can be quickly iterated
-     *        through.
+     * \brief saveButtonClicked saves all json data to an external file.
      */
-    std::vector<QPushButton*> mConnectionButtons;
+    void saveButtonClicked();
+
+    /// handles when the settings button pressed is the reset button
+    void resetButtonClicked();
+
+    /*!
+     * \brief resetToDefaults reset the app to all default settings and
+     *        remove all saved memory
+     */
+    void resetToDefaults();
 
     /*!
      * \brief communication pointer to communication object
@@ -222,11 +186,29 @@ private:
      */
     CommLayer *mComm;
 
-    /*!
-     * \brief mSliderSpeedValue storage for the current slider value, which
-     *        differs from the actual slider speed saved in the data layer.
-     */
-    int mSliderSpeedValue;
+    /// titles of the sections, such as About, Debug, Data
+    std::vector<std::string> mSectionTitles;
+
+    /// titles of specific buttons, such as Load, Copyright, or Reset.
+    std::vector<std::string> mTitles;
+
+    /// descriptions of buttons, gives more info on what the button does
+    std::vector<std::string> mDescriptions;
+
+    /// labels for sections.
+    std::vector<QLabel*> mSectionLabels;
+
+    /// vector of buttons. contains all buttons on the settings page
+    std::vector<SettingsButton*> mButtons;
+
+    /// widget displaying copyright information
+    CorlumaWebView *mCopyrightWidget;
+
+    /// widget displaying an FAQ
+    CorlumaWebView *mFAQWidget;
+
+    /// true if showing debug options, false otherwise.
+    bool mShowingDebug;
 };
 
 #endif // SETTINGSPAGE_H

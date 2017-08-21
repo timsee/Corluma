@@ -470,6 +470,9 @@ void CommLayer::startup(ECommType type) {
 }
 
 void CommLayer::shutdown(ECommType type) {
+    if (commByType(type)->runningDiscovery()) {
+        commByType(type)->stopDiscovery();
+    }
     commByType(type)->shutdown();
 }
 

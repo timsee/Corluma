@@ -5,6 +5,7 @@
  */
 
 #include "commtypesettings.h"
+#include "corlumautils.h"
 
 CommTypeSettings::CommTypeSettings() {
     mCommTypeCount = 0;
@@ -12,23 +13,35 @@ CommTypeSettings::CommTypeSettings() {
     mDeviceInUse = std::vector<bool>(3);
 
     mCommTypeInUseSaveKeys = std::vector<QString>(3);
-    mCommTypeInUseSaveKeys[0] = QString("YunInUse");
-    mCommTypeInUseSaveKeys[1] = QString("SerialInUse");
-    mCommTypeInUseSaveKeys[2] = QString("HueInUse");
+    mCommTypeInUseSaveKeys[0] = kUseYunKey;
+    mCommTypeInUseSaveKeys[1] = kUseSerialKey;
+    mCommTypeInUseSaveKeys[2] = kUseHueKey;
 
     std::vector<ECommType> usedTypes = commTypes();
+    bool useAdvanceMode = mSettings->value(kAdvanceModeKey).toBool();
     for (uint32_t x = 0; x < usedTypes.size(); ++x) {
         int i = indexOfCommTypeSettings(usedTypes[x]);
-        if (mSettings->value(mCommTypeInUseSaveKeys[i]).toString().compare("") != 0) {
-            bool shouldEnable = mSettings->value(mCommTypeInUseSaveKeys[i]).toBool();
-            mDeviceInUse[(int)i] = shouldEnable;
-            if (shouldEnable) mCommTypeCount++;
-        } else {
+        if (!useAdvanceMode
+                && (usedTypes[x] == ECommType::eHTTP
+    #ifndef MOBILE_BUILD
+                || usedTypes[x] == ECommType::eSerial
+    #endif //MOBILE_BUILD
+                || usedTypes[x] == ECommType::eUDP)) {
+            // its not advance mode, don't enable this!
             mDeviceInUse[(int)i] = false;
             mSettings->setValue(mCommTypeInUseSaveKeys[(int)i], QString::number((int)false));
-            mSettings->sync();
+        } else {
+            if (mSettings->value(mCommTypeInUseSaveKeys[i]).toString().compare("") != 0) {
+                bool shouldEnable = mSettings->value(mCommTypeInUseSaveKeys[i]).toBool();
+                mDeviceInUse[(int)i] = shouldEnable;
+                if (shouldEnable) mCommTypeCount++;
+            } else {
+                mDeviceInUse[(int)i] = false;
+                mSettings->setValue(mCommTypeInUseSaveKeys[(int)i], QString::number((int)false));
+            }
         }
     }
+    mSettings->sync();
 
     //error handling, must always have at least one stream!
     if (mCommTypeCount == 0) {
@@ -80,6 +93,17 @@ std::vector<ECommType> CommTypeSettings::commTypes() {
 }
 
 bool CommTypeSettings::enableCommType(ECommType type, bool shouldEnable) {
+    bool useAdvanceMode = mSettings->value(kAdvanceModeKey).toBool();
+    // check if trying to enable connections that can't be enabled without advanced mode
+    if (!useAdvanceMode && shouldEnable
+            && (type == ECommType::eHTTP
+#ifndef MOBILE_BUILD
+            || type == ECommType::eSerial
+#endif //MOBILE_BUILD
+            || type == ECommType::eUDP)) {
+        return false;
+    }
+    // now that the edge case is out of the way, handle enabling or disabling the communication
     bool previouslyEnabled = commTypeEnabled(type);
     if (!shouldEnable && previouslyEnabled && mCommTypeCount == 1) {
         qDebug() << "WARNING: one commtype must always be active! Not removing commtype." << mCommTypeCount;

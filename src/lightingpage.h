@@ -37,17 +37,6 @@ public:
 
 protected:
 
-    /*!
-     * \brief showEvent called before the this page is shown. Used to sync up
-     *        any changes that may have happened on other pages.
-     */
-    virtual void showEvent(QShowEvent *) = 0;
-
-    /*!
-     * \brief hideEvent called as the page is hidden. This happens when a new page
-     *        is displayed.
-     */
-    virtual void hideEvent(QHideEvent *) = 0;
 
     /*!
      * \brief mRenderThread timer that calls a renderUI() function on each of the pages.

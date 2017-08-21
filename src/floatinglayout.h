@@ -67,9 +67,8 @@ public:
     /*!
      * \brief updateGroupPageButtons update group page buttons using colors only found in the datalayer
      * \param colors mData->colors()
-     * \param colorCount mData->colorCount()
      */
-    void updateGroupPageButtons(const std::vector<std::vector<QColor> >& colors, int colorCount);
+    void updateGroupPageButtons(const std::vector<std::vector<QColor> >& colors);
 
     /*!
      * \brief updateDiscoveryButton update the icon of a discovery button. Shows the discovery state of the connection.
@@ -126,13 +125,6 @@ private:
      * \return size of any individual button
      */
     QSize buttonSize();
-
-    /*!
-     * \brief resizeIcon resize an icon in a QPushButton based off of the size of the icon.
-     * \param button button whose icon is going to get resized
-     * \param iconPath path to the icon resource.
-     */
-    void resizeIcon(QPushButton *button, QString iconPath);
 
     /*!
      * \brief mButtons vector of buttons

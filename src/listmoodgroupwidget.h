@@ -53,9 +53,12 @@ public:
      * \brief updateMoods update moods based off of the mood list and the vector of preset colors.
      * \param moods list of moods
      * \param colors vector of preset colors.
+     * \param bool removeIfNotFound if a widget already exists but this flag is set to true and it doesn't exist
+     *        in the mood list provided, the widget gets removed from the list.
      */
     void updateMoods(std::list<std::pair<QString, std::list<SLightDevice> > > moods,
-                     const std::vector<std::vector<QColor> >& colors);
+                     const std::vector<std::vector<QColor> >& colors,
+                     bool removeIfNotFound = false);
 
     /*!
      * \brief setCheckedMoods takes a list of moods as input and compares it against the

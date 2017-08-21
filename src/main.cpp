@@ -6,6 +6,7 @@
 
 #include "mainwindow.h"
 #include "groupsparser.h"
+#include "corlumautils.h"
 
 #include <QApplication>
 #include <QFile>
@@ -30,8 +31,12 @@
 //#define DISABLE_STYLE_SHEET 1
 
 
+const static QString kFirstTimeOpenKey = QString("Corluma_FirstTimeOpen");
+
+
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
+    QSettings settings;
 
     //--------------------
     // set app name
@@ -61,7 +66,7 @@ int main(int argc, char *argv[]) {
     } else {
         f.open(QFile::ReadOnly | QFile::Text);
         QTextStream ts(&f);
-        qApp->setStyleSheet(ts.readAll());
+        a.setStyleSheet(ts.readAll());
     }
 #endif
 
@@ -69,11 +74,9 @@ int main(int argc, char *argv[]) {
     //--------------------
     // Optional Data Cleaning
     //--------------------
-
 // removes saved controllers and app settings
 #ifdef WIPE_QSETTINGS
-    QSettings mSettings;
-    mSettings.clear();
+    settings.clear();
 #endif
 
 // removes saved groups of devices
@@ -115,6 +118,28 @@ int main(int argc, char *argv[]) {
     QSplashScreen splash(QPixmap(":images/splash_screen.png"), Qt::WindowStaysOnTopHint);
 #endif
 #endif
+
+
+    //--------------------
+    // check for first time opening
+    //--------------------
+    /*!
+     * check for default value here, if its a default its the first time opening,
+     * since the value function will return the default value if none is found
+     */
+    if (settings.value(kFirstTimeOpenKey, QVariant(127)) == QVariant(127)) {
+        //add default settings
+        settings.setValue(kAdvanceModeKey, QString::number((int)false));
+        settings.setValue(kUseTimeoutKey,  QString::number((int)true));
+
+        // comm settings
+        settings.setValue(kUseYunKey,    QString::number((int)false));
+        settings.setValue(kUseSerialKey, QString::number((int)false));
+        settings.setValue(kUseHueKey,    QString::number((int)true));
+
+        // set the value so it no longer gives a default back.
+        settings.setValue(kFirstTimeOpenKey, QString::number(10));
+    }
 
     //--------------------
     // Create app window

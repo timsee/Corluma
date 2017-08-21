@@ -21,7 +21,7 @@ ListMoodWidget::ListMoodWidget(const QString& name,
     mKey = name;
 
     // setup icon
-    QString reachableStlyeSheet = "background:rgba(0, 0, 0, 0%); font: color: #333;";
+    QString reachableStlyeSheet = "background:rgba(0, 0, 0, 0%); color: #333;";
     QString backgroundStyleSheet = "background:rgba(0, 0, 0, 0%);";
 
     this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -128,7 +128,6 @@ ListMoodWidget::ListMoodWidget(const QString& name,
 
 
 void ListMoodWidget::enterEvent(QEvent *) {
-    //qDebug() << "ENTER EVENT";
     mEditButton->setHidden(false);
 
     float editSize = mName->height() * 0.95f;
@@ -142,7 +141,6 @@ void ListMoodWidget::enterEvent(QEvent *) {
 }
 
 void ListMoodWidget::leaveEvent(QEvent *) {
-    //qDebug() << "LEAVE EVENT";
     mEditButton->setHidden(true);
 }
 

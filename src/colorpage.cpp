@@ -216,16 +216,12 @@ void ColorPage::ambientUpdateReceived(int newAmbientValue, int newBrightness) {
 // ----------------------------
 
 
-void ColorPage::showEvent(QShowEvent *) {
-  mLastColor = mData->mainColor();
-  mColorPicker->updateColorStates(mData->mainColor(),
-                                     mData->brightness(),
-                                     mData->colorGroup(EColorGroup::eCustom),
-                                     mData->customColorsUsed());
-}
-
-void ColorPage::hideEvent(QHideEvent *event) {
-    Q_UNUSED(event);
+void ColorPage::show() {
+    mLastColor = mData->mainColor();
+    mColorPicker->updateColorStates(mData->mainColor(),
+                                       mData->brightness(),
+                                       mData->colorGroup(EColorGroup::eCustom),
+                                       mData->customColorsUsed());
 }
 
 void ColorPage::resizeEvent(QResizeEvent *) {

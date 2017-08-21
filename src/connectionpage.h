@@ -75,6 +75,12 @@ public:
      */
     void updateConnectionList();
 
+    /// called when the widget is shown
+    void show();
+
+    /// called when the widget is hidden
+    void hide();
+
 signals:
     /*!
      * \brief Used to signal back to the main page that it should update its top-left icon
@@ -210,6 +216,8 @@ private:
      *        is shown at any given time but the other is kept around in memory since they are expensive to render.
      */
     CorlumaListWidget *mDevicesListWidget;
+
+    void cleanupList();
 
     /*!
      * \brief initDevicesCollectionWidget constructor helper for making a DeviceCollectionsWidget

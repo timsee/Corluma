@@ -72,11 +72,7 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
     } else if (eButtonSize == EButtonSize::eMedium) {
         size = QSize(screen->size().width() * 0.03f, screen->size().height() * 0.03f);
     } else if (eButtonSize == EButtonSize::eRectangle) {
-#ifdef MOBILE_BUILD
-        size = QSize(screen->size().width() * 0.07f, screen->size().height() * 0.02f);
-#else
         size = QSize(screen->size().width() * 0.07f, screen->size().height() * 0.05f);
-#endif
     }
 #ifdef MOBILE_BUILD
     size = QSize(size.width() * 5, size.height() * 5);
@@ -125,7 +121,7 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(true);
-            resizeIcon(mButtons[i], ":/images/colorWheel_icon.png");
+            mButtons[i]->setMinimumSize(buttonSize());
         } else if (mNames[i].compare("Multi") == 0) {
             foundMatch = true;
             CorlumaButton *lightsButton = new CorlumaButton(this);
@@ -138,7 +134,8 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(true);
-            resizeIcon(mButtons[i], ":/images/hueRange_icon.png");
+            utils::resizeIcon(mButtons[i], ":/images/hueRange_icon.png");
+            mButtons[i]->setMinimumSize(buttonSize());
         } else if (mNames[i].compare("Routine") == 0) {
             foundMatch = true;
             CorlumaButton *lightsButton = new CorlumaButton(this);
@@ -150,7 +147,7 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
         } else if (mNames[i].compare("Settings") == 0) {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
-            resizeIcon(mButtons[i], ":/images/settingsgear.png");
+            mButtons[i]->setMinimumSize(buttonSize());
         } else if (mNames[i].compare("Discovery_Yun") == 0) {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
@@ -179,12 +176,12 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(false);
-            resizeIcon(mButtons[i], ":/images/wifi.png");
+            mButtons[i]->setMinimumSize(buttonSize());
         } else if (mNames[i].compare("Select_Devices") == 0) {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(true);
-            resizeIcon(mButtons[i], ":/images/colorWheel_icon.png");
+            mButtons[i]->setMinimumSize(buttonSize());
         } else if (mNames[i].compare("Select_Moods") == 0) {
             foundMatch = true;
             CorlumaButton *lightsButton = new CorlumaButton(this);
@@ -197,12 +194,12 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(false);
-            resizeIcon(mButtons[i], ":/images/editIcon.png");
+            mButtons[i]->setMinimumSize(buttonSize());
         } else if (mNames[i].compare("New_Mood") == 0) {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(false);
-            resizeIcon(mButtons[i], ":/images/editIcon.png");
+            mButtons[i]->setMinimumSize(buttonSize());
         } else if (mNames[i].compare("Preset_Groups") == 0) {
             foundMatch = true;
             CorlumaButton *lightsButton = new CorlumaButton(this);
@@ -227,6 +224,22 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             if (!isLightsButton) {
                 connect(mButtons[i], SIGNAL(clicked(bool)), buttonsMapper, SLOT(map()));
                 buttonsMapper->setMapping(mButtons[i], i);
+                // resize icon
+                if (mNames[i].compare("RGB") == 0) {
+                    utils::resizeIcon(mButtons[i], ":/images/colorWheel_icon.png");
+                } else if (mNames[i].compare("Temperature") == 0) {
+                    utils::resizeIcon(mButtons[i], ":/images/hueRange_icon.png");
+                } else if (mNames[i].compare("Settings") == 0) {
+                    utils::resizeIcon(mButtons[i], ":/images/settingsgear.png");
+                } else if (mNames[i].compare("Discovery") == 0) {
+                    utils::resizeIcon(mButtons[i], ":/images/wifi.png");
+                } else if (mNames[i].compare("Select_Devices") == 0) {
+                    utils::resizeIcon(mButtons[i], ":/images/colorWheel_icon.png");
+                } else if (mNames[i].compare("New_Collection") == 0) {
+                    utils::resizeIcon(mButtons[i], ":/images/editIcon.png");
+                } else if (mNames[i].compare("New_Mood") == 0) {
+                    utils::resizeIcon(mButtons[i], ":/images/editIcon.png");
+                }
             } else {
                 CorlumaButton *lightsButton = static_cast<CorlumaButton*>(mButtons[i]);
                 connect(lightsButton->button, SIGNAL(clicked(bool)), buttonsMapper, SLOT(map()));
@@ -292,7 +305,7 @@ void FloatingLayout::updateRoutineMultiColor(ELightingRoutine routine, std::vect
     }
 }
 
-void FloatingLayout::updateGroupPageButtons(const std::vector<std::vector<QColor> >& colors, int colorCount) {
+void FloatingLayout::updateGroupPageButtons(const std::vector<std::vector<QColor> >& colors) {
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
         if (mNames[i].compare("Preset_Groups") == 0) {
             CorlumaButton *lightsButton = static_cast<CorlumaButton*>(mButtons[i]);
@@ -352,19 +365,9 @@ void FloatingLayout::updateDiscoveryButton(ECommType type, QPixmap pixmap) {
 }
 
 //--------------------------------
-// Resizing and Moving
+// Moving
 //--------------------------------
 
-
-void FloatingLayout::resizeIcon(QPushButton *button, QString iconPath) {
-    QPixmap pixmap(iconPath);
-    int size = buttonSize().width() * 0.66f;
-    button->setIcon(QIcon(pixmap.scaled(size,
-                                        size,
-                                        Qt::IgnoreAspectRatio,
-                                        Qt::SmoothTransformation)));
-    button->setIconSize(QSize(size, size));
-}
 
 void FloatingLayout::move(QPoint topRightPoint) {
 

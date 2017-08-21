@@ -2,6 +2,9 @@
 #define CORLUMAUTILS_H
 
 #include <QColor>
+#include <QPushButton>
+#include <QLabel>
+#include <QDebug>
 
 #include <sstream>
 #include <cmath>
@@ -17,6 +20,22 @@
 
 namespace utils
 {
+
+/*!
+ * \brief changeLabelToTitleLabel Takes a label, and increases its font size and makes the font bold.
+ *        The font size provided varies from platform to platform, but will always be a factor larger
+ *        than the standard font size recommended by the system.
+ *        NOTE: This function overwrites the stylesheet for the label.
+ * \param label the label to change the font size on.
+ */
+inline void changeLabelToTitleLabel(QLabel *label) {
+    // get the system preferred font size
+    QLabel tempLabel("font");
+    // make the size larger
+    int newSize = tempLabel.font().pointSize() * 1.33;
+    QString styleSheet = "background-color:rgba(0,0,0,0); font:bold; font-size:" + QString::number(newSize) + "pt;";
+    label->setStyleSheet(styleSheet);
+}
 
 /*!
  * \brief colorTemperatureToRGB converts a color temperature value to a RGB representation.
@@ -78,6 +97,23 @@ inline int rgbToColorTemperature(QColor color) {
     return -1;
 }
 
+/*!
+ * \brief resizeIcon resize an icon in a QPushButton based off of the size of the icon.
+ * \param button button whose icon is going to get resized
+ * \param iconPath path to the icon resource.
+ * \param sizeRatio determines the ratio between icon size and button size. If none is provided,
+ *        the icon takes up 80% of the button.
+ */
+inline void resizeIcon(QPushButton *button, QString iconPath, float sizeRatio = 0.66f) {
+    QPixmap pixmap(iconPath);
+    int min = std::min(button->width(), button->height());
+    int finalSize = min * sizeRatio;
+    button->setIconSize(QSize(finalSize, finalSize));
+    button->setIcon(QIcon(pixmap.scaled(finalSize,
+                                        finalSize,
+                                        Qt::IgnoreAspectRatio,
+                                        Qt::SmoothTransformation)));
+}
 
 /*!
  * \brief brightnessDifference gives a percent difference between two brightness
@@ -129,5 +165,16 @@ T clamp(const T& n, const T& lower, const T& upper) {
 }
 
 }
+
+//------------------------
+// Keys
+//------------------------
+
+const static QString kAdvanceModeKey = QString("Settings_AdvanceMode");
+const static QString kUseTimeoutKey  = QString("Settings_UseTimeout");
+
+const static QString kUseYunKey  = QString("YunInUse");
+const static QString kUseSerialKey  = QString("SerialInUse");
+const static QString kUseHueKey  = QString("HueInUse");
 
 #endif // CORLUMAUTILS_H

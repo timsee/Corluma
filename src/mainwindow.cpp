@@ -34,8 +34,8 @@ MainWindow::MainWindow(QWidget *parent) :
         this->setGeometry(0,0,400,600);
         this->setMinimumSize(QSize(400,600));
 #endif
-        
-        
+
+
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
     mPageIndex = EPage::eConnectionPage;
@@ -139,7 +139,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(mColorPage, SIGNAL(updateMainIcons()),  mTopMenu, SLOT(updateMenuBar()));
     connect(mGroupPage, SIGNAL(updateMainIcons()), mTopMenu, SLOT(updateMenuBar()));
     connect(mConnectionPage, SIGNAL(deviceCountChanged()), mTopMenu, SLOT(deviceCountChangedOnConnectionPage()));
+    connect(mGroupPage, SIGNAL(deviceCountChanged()), mTopMenu, SLOT(deviceCountChangedOnConnectionPage()));
     connect(mColorPage, SIGNAL(brightnessChanged(int)), mTopMenu, SLOT(brightnessSliderChanged(int)));
+    connect(mData, SIGNAL(devicesEmpty()), mTopMenu, SLOT(deviceCountReachedZero()));
 
     mTopMenu->setGeometry(0, 0, this->width(), this->height() * 0.1667);
 
@@ -150,6 +152,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mDiscoveryPage = new DiscoveryPage(this);
     mDiscoveryPage->setup(mData);
     mDiscoveryPage->connectCommLayer(mComm);
+    mDiscoveryPage->show();
     connect(mDiscoveryPage, SIGNAL(startButtonClicked()), this, SLOT(switchToConnection()));
     connect(mDiscoveryPage, SIGNAL(settingsButtonClicked()), this, SLOT(settingsButtonFromDiscoveryPressed()));
     connect(mDiscoveryPage, SIGNAL(closeWithoutTransition()), this, SLOT(closeDiscoveryWithoutTransition()));
@@ -180,10 +183,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mSettingsPage = new SettingsPage(this);
     mSettingsPage->setVisible(false);
-    mSettingsPage->setup(mData);
     mSettingsPage->connectCommLayer(mComm);
     mSettingsPage->connectGroupsParser(groups);
-    mSettingsPage->setupUI();
+    mSettingsPage->globalWidget()->connectBackendLayers(mComm, mData);
+    connect(mData, SIGNAL(devicesEmpty()), mSettingsPage->globalWidget(), SLOT(deviceCountReachedZero()));
     connect(mSettingsPage, SIGNAL(updateMainIcons()), mTopMenu, SLOT(updateMenuBar()));
     connect(mSettingsPage, SIGNAL(debugPressed()), this, SLOT(settingsDebugPressed()));
     connect(mSettingsPage, SIGNAL(closePressed()), this, SLOT(settingsClosePressed()));
@@ -238,6 +241,7 @@ void MainWindow::topMenuButtonPressed(QString key) {
         animation->setStartValue(mSettingsPage->pos());
         animation->setEndValue(QPoint(0,0));
         animation->start();
+        mSettingsPage->show();
         mSettingsPageIsOpen = true;
     } else {
         qDebug() << "Do not recognize key" << key;
@@ -272,6 +276,7 @@ void MainWindow::settingsButtonFromDiscoveryPressed() {
     animation->setStartValue(mSettingsPage->pos());
     animation->setEndValue(QPoint(0,0));
     animation->start();
+    mSettingsPage->show();
     mSettingsPageIsOpen = true;
 }
 
@@ -299,6 +304,9 @@ QWidget* MainWindow::mainPageWidget(EPage page) {
             break;
         case EPage::eSettingsPage:
             widget = qobject_cast<QWidget*>(mSettingsPage);
+            break;
+        default:
+            widget = qobject_cast<QWidget*>(mColorPage);
             break;
     }
     Q_ASSERT(widget);
@@ -354,6 +362,11 @@ void MainWindow::showMainPage(EPage page) {
     animation->setStartValue(startPoint);
     animation->setEndValue(mMainViewport->pos());
     animation->start();
+    if (page == EPage::eConnectionPage) {
+        mConnectionPage->show();
+    } else if (page == EPage::eColorPage) {
+        mColorPage->show();
+    }
 }
 
 void MainWindow::hideMainPage(EPage page, EPage newPage) {
@@ -371,6 +384,9 @@ void MainWindow::hideMainPage(EPage page, EPage newPage) {
     animation->setStartValue(mMainViewport->pos());
     animation->setEndValue(endPoint);
     animation->start();
+    if (page == EPage::eConnectionPage) {
+        mConnectionPage->hide();
+    }
 }
 
 
@@ -416,25 +432,24 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
         mEditPage->resize();
     }
 
-    if (!mDiscoveryPageIsOpen && !mSettingsPageIsOpen) {
-        QWidget *widget = mainPageWidget(mPageIndex);
-        widget->setGeometry(mMainViewport->geometry());
+    QWidget *widget = mainPageWidget(mPageIndex);
+    widget->setGeometry(mMainViewport->geometry());
 
-        QRect geometry(this->width() + mMainViewport->width(),
-                       mMainViewport->geometry().y(),
-                       mMainViewport->geometry().width(),
-                       mMainViewport->geometry().height());
+    QRect geometry(this->width() + mMainViewport->width(),
+                   mMainViewport->geometry().y(),
+                   mMainViewport->geometry().width(),
+                   mMainViewport->geometry().height());
 
-        if (mPageIndex != EPage::eColorPage) {
-            mColorPage->setGeometry(geometry);
-        }
-        if (mPageIndex != EPage::eGroupPage) {
-            mGroupPage->setGeometry(geometry);
-        }
-        if (mPageIndex != EPage::eConnectionPage) {
-            mConnectionPage->setGeometry(geometry);
-        }
+    if (mPageIndex != EPage::eColorPage) {
+        mColorPage->setGeometry(geometry);
     }
+    if (mPageIndex != EPage::eGroupPage) {
+        mGroupPage->setGeometry(geometry);
+    }
+    if (mPageIndex != EPage::eConnectionPage) {
+        mConnectionPage->setGeometry(geometry);
+    }
+
 }
 
 void MainWindow::changeEvent(QEvent *event) {
@@ -466,6 +481,7 @@ void MainWindow::switchToDiscovery() {
     animation->setStartValue(mDiscoveryPage->pos());
     animation->setEndValue(QPoint(0, 0));
     animation->start();
+    mDiscoveryPage->show();
     mDiscoveryPageIsOpen = true;
 }
 
@@ -475,6 +491,7 @@ void MainWindow::switchToConnection() {
     animation->setStartValue(mDiscoveryPage->pos());
     animation->setEndValue(QPoint(-mDiscoveryPage->width(), 0));
     animation->start();
+    mDiscoveryPage->hide();
     mDiscoveryPageIsOpen = false;
 }
 
@@ -488,6 +505,9 @@ void MainWindow::settingsClosePressed() {
     animation->setEndValue(QPoint(mSettingsPage->width(), 0));
     animation->start();
     pageChanged((EPage)mPageIndex);
+    if (mPageIndex == EPage::eConnectionPage) {
+        mConnectionPage->show();
+    }
     mSettingsPageIsOpen = false;
 }
 
@@ -496,6 +516,7 @@ void MainWindow::closeDiscoveryWithoutTransition() {
                                       0,
                                       mDiscoveryPage->geometry().width(),
                                       mDiscoveryPage->geometry().height()));
+    mDiscoveryPage->hide();
     mDiscoveryPageIsOpen = false;
 }
 
@@ -572,4 +593,5 @@ void MainWindow::fadeOutGreyOut() {
 void MainWindow::greyOutFadeComplete() {
     mGreyOut->setVisible(false);
 }
+
 
