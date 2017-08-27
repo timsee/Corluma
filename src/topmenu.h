@@ -106,10 +106,9 @@ public slots:
 
     /*!
      * \brief updatePresetColorGroup updates the icon for the preset color page and the menu bar and on/off button
-     *        based off of the two integers provided. The first integer should be cast to a ELightingRoutine and the
-     *        second should be cast to a EColorGroup.
+     *        based off of the integer provided. The integer should be cast to a EColorGroup.
      */
-    void updatePresetColorGroup(int, int);
+    void updatePresetColorGroup(int);
 
     /*!
      * \brief deviceCountChangedOnConnectionPage handles the case when the device count reaches zero. This gets signaled

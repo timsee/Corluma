@@ -390,10 +390,19 @@ void DiscoveryPage::floatingLayoutButtonPressed(QString button) {
 
 void DiscoveryPage::moveFloatingLayouts() {
     int padding = 0;
-    QPoint topRight(this->width(), padding);
-    mHorizontalFloatingLayout->move(topRight);
-    QPoint verticalStart(this->width(), padding + mHorizontalFloatingLayout->size().height());
+    QPoint verticalStart;
+    if (mHorizontalFloatingLayout->buttonCount() == 0) {
+        // theres no horizontal floating layout, so move vertical to top right
+        verticalStart = QPoint(this->width(), padding);
+    } else {
+        // theres a horizontal and vertical menu, horizontal is in top right
+        QPoint topRight(this->width(), padding);
+        mHorizontalFloatingLayout->move(topRight);
+        // vertical is directly under it.
+        verticalStart = QPoint(this->width(), padding + mHorizontalFloatingLayout->size().height());
+        mHorizontalFloatingLayout->raise();
+    }
+
     mVerticalFloatingLayout->move(verticalStart);
     mVerticalFloatingLayout->raise();
-    mHorizontalFloatingLayout->raise();
 }

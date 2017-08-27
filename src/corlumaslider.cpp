@@ -10,12 +10,14 @@
 #include <QtGui>
 #include <QStyleOption>
 #include <QGraphicsOpacityEffect>
+#include <QFontMetrics>
 
 CorlumaSlider::CorlumaSlider(QWidget *parent) : QWidget(parent) {
 
     mHeightScaleFactor = 1.0f;
     mOpacity = 1.0f;
     mThrottleFlag = false;
+    mShouldDrawTickLabels = false;
 
     // --------------
     // Setup Thrrole Timer
@@ -24,17 +26,17 @@ CorlumaSlider::CorlumaSlider(QWidget *parent) : QWidget(parent) {
     connect(mThrottleTimer, SIGNAL(timeout()), this, SLOT(resetThrottleFlag()));
 
     this->setAutoFillBackground(true);
-    slider = new QSlider(Qt::Horizontal, this);
-    slider->setAutoFillBackground(true);
+    mSlider = new QSlider(Qt::Horizontal, this);
+    mSlider->setAutoFillBackground(true);
     setMinimumPossible(false, 0);
     setSnapToNearestTick(false);
-    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(receivedValue(int)));
-    connect(slider, SIGNAL(sliderReleased()),  this, SLOT(releasedSlider()));
+    connect(mSlider, SIGNAL(valueChanged(int)), this, SLOT(receivedValue(int)));
+    connect(mSlider, SIGNAL(sliderReleased()),  this, SLOT(releasedSlider()));
 
     mLayout = new QVBoxLayout;
     mLayout->setSpacing(0);
     mLayout->setContentsMargins(0,0,0,0);
-    mLayout->addWidget(slider);
+    mLayout->addWidget(mSlider);
     setLayout(mLayout);
     mSliderColorSet = false;
 }
@@ -52,7 +54,7 @@ void CorlumaSlider::setSliderColorBackground(QColor color) {
     // slider handle is only controllable via stylesheets but the values needed for style sheets
     // breaks in some environments (such as high pixel density android screens). to get around this,
     // we always set the handle size programmatically whenever we udpate the stylesheet.
-    int sliderHandleSize = (int)std::min(this->size().width() / 12.0f, (float)slider->size().height());
+    int sliderHandleSize = (int)std::min(this->size().width() / 12.0f, (float)mSlider->size().height());
 
     // generate a stylesheet based off of the color with a gradient
     QString styleSheetString = QString("QSlider::sub-page:horizontal{ "
@@ -69,14 +71,14 @@ void CorlumaSlider::setSliderColorBackground(QColor color) {
                                                 QString::number(color.green()),
                                                 QString::number(color.blue()),
                                                 QString::number(sliderHandleSize));
-    slider->setStyleSheet(styleSheetString);
+    mSlider->setStyleSheet(styleSheetString);
 }
 
 void CorlumaSlider::setSliderImageBackground(QString path) {
     mSliderImageSet = true;
     mSliderColorSet = false;
     mPath = path;
-    int sliderHandleSize = (int)std::min(this->size().width() / 12.0f, (float)slider->size().height());
+    int sliderHandleSize = (int)std::min(this->size().width() / 12.0f, (float)mSlider->size().height());
 
     QString styleSheetString = QString("QSlider::sub-page:horizontal{ "
                                        " background-image: url(%1);"
@@ -87,20 +89,20 @@ void CorlumaSlider::setSliderImageBackground(QString path) {
                                        ).arg(path,
                                              QString::number(sliderHandleSize));
 
-    slider->setStyleSheet(styleSheetString);
+    mSlider->setStyleSheet(styleSheetString);
 }
 
 void CorlumaSlider::receivedValue(int value) {
-    value = jumpSliderToPosition(slider, value);
+    value = jumpSliderToPosition(mSlider, value);
 
-    slider->blockSignals(true);
-    slider->setValue(value);
+    mSlider->blockSignals(true);
+    mSlider->setValue(value);
     if (!mThrottleFlag) {
         emit valueChanged(value);
         mThrottleFlag = true;
     }
 
-    slider->blockSignals(false);
+    mSlider->blockSignals(false);
 }
 
 /*!
@@ -158,17 +160,17 @@ int CorlumaSlider::snapSliderToNearestTick(QSlider *slider, int pos) {
 void CorlumaSlider::setMinimumPossible(bool useMinimumPossible, int minimumPossible) {
     mUseMinimumPossible = useMinimumPossible;
     mMinimumPossible = minimumPossible;
-    if (mUseMinimumPossible && (slider->value() < mMinimumPossible)) {
-        jumpSliderToPosition(slider, mMinimumPossible);
+    if (mUseMinimumPossible && (mSlider->value() < mMinimumPossible)) {
+        jumpSliderToPosition(mSlider, mMinimumPossible);
     }
 }
 
 
 void CorlumaSlider::resizeEvent(QResizeEvent *event) {
     Q_UNUSED (event);
-    slider->setFixedSize(this->rect().width(), this->rect().height() * mHeightScaleFactor);
+    mSlider->setFixedSize(this->rect().width(), this->rect().height() * mHeightScaleFactor);
     float newY = this->rect().height() * (1.0 - mHeightScaleFactor) / 2.0f;
-    slider->setGeometry(slider->rect().x(),
+    mSlider->setGeometry(mSlider->rect().x(),
                         newY,
                         this->rect().width(),
                         this->rect().height() * mHeightScaleFactor);
@@ -193,13 +195,15 @@ void CorlumaSlider::hideEvent(QHideEvent *event) {
 
 void CorlumaSlider::paintEvent(QPaintEvent *event) {
     Q_UNUSED (event);
-    if (slider->tickPosition() != QSlider::NoTicks) {
+    if (mSlider->tickPosition() != QSlider::NoTicks) {
         QStyleOption opt;
         opt.init(this);
         QPainter painter(this);
 
         painter.setRenderHint(QPainter::Antialiasing);
-        if (this->isEnabled()) {
+        if (mShouldDrawTickLabels) {
+            painter.setPen(QColor(255, 255, 255, 80));
+        } else if (this->isEnabled()) {
             painter.setPen(QColor(255, 255, 255, 60));
         } else {
             painter.setPen(QColor(255, 255, 255, 10));
@@ -207,21 +211,59 @@ void CorlumaSlider::paintEvent(QPaintEvent *event) {
 
         // draw tick marks
         // do this manually because they are very badly behaved with style sheets
-        int interval = slider->tickInterval();
+        int interval = mSlider->tickInterval();
         if (interval == 0) {
-            interval = slider->pageStep();
+            interval = mSlider->pageStep();
         }
 
-        for (int i = slider->minimum(); i <= slider->maximum(); i += interval) {
-            int x = round((double)(((double)(i - slider->minimum()) / (slider->maximum() - slider->minimum())) * (slider->width()))) - 1;
-            if (slider->tickPosition() == QSlider::TicksBothSides || slider->tickPosition() == QSlider::TicksAbove) {
-                int y = slider->rect().top();
-                painter.drawLine(x, y, x, y * 4 / 5);
-            }
-            if (slider->tickPosition() == QSlider::TicksBothSides || slider->tickPosition() == QSlider::TicksBelow) {
+        // get tick count
+        QFontMetrics fontMetrics(painter.font());
+        int currentStep = mSlider->minimum();
+        bool shouldSubtractOne = (mSlider->minimum() == 1);
+        bool isFirstLabel = true;
+
+        int maximum = mSlider->maximum();
+        if (shouldSubtractOne) {
+            maximum += 1;
+        }
+        for (int i = mSlider->minimum(); i <= maximum; i += interval) {
+            int x = round((double)(((double)(i - mSlider->minimum()) / (mSlider->maximum() - mSlider->minimum())) * (mSlider->width()))) - 1;
+            if (mShouldDrawTickLabels)
+            {
                 int y = this->rect().bottom();
-                painter.drawLine(x, y, x, y * 4 / 5);
+                // handle edge case that makes ugly labels...
+                int labelValue = currentStep;
+                if (shouldSubtractOne && !isFirstLabel) {
+                    labelValue = labelValue - 1;
+                }
+
+                // create label and compute its offset
+                QString label = QString::number(labelValue);
+                int labelOffset = fontMetrics.boundingRect(label).width();
+
+                if (isFirstLabel) {
+                    isFirstLabel = false;
+                    painter.drawText(x, y, label);
+                } else if (i == maximum) {
+                   // painter.drawText(x - labelOffset, y, label);
+                } else {
+                    painter.drawText(x - labelOffset / 2, y, label);
+                }
             }
+            else
+            {
+                if (mSlider->tickPosition() == QSlider::TicksBothSides
+                        || mSlider->tickPosition() == QSlider::TicksAbove) {
+                    int y = mSlider->rect().top();
+                    painter.drawLine(x, y, x, y * 4 / 5);
+                }
+                if (mSlider->tickPosition() == QSlider::TicksBothSides
+                        || mSlider->tickPosition() == QSlider::TicksBelow) {
+                    int y = this->rect().bottom();
+                    painter.drawLine(x, y, x, y * 4 / 5);
+                }
+            }
+            currentStep += interval;
         }
     }
 }
@@ -230,7 +272,7 @@ void CorlumaSlider::paintEvent(QPaintEvent *event) {
 void CorlumaSlider::setSliderHeight(float percent) {
     mHeightScaleFactor = percent;
     float newY = this->rect().height() * (1.0 - mHeightScaleFactor) / 2.0f;
-    slider->setGeometry(slider->rect().x(),
+    mSlider->setGeometry(mSlider->rect().x(),
                         newY,
                         this->rect().width(),
                         this->rect().height() * mHeightScaleFactor);
@@ -249,21 +291,28 @@ void CorlumaSlider::resetThrottleFlag() {
 
 
 void CorlumaSlider::releasedSlider() {
-    emit valueChanged(slider->value());
+    emit valueChanged(mSlider->value());
+}
+
+void CorlumaSlider::setShouldDrawTickLabels(bool shouldDraw) {
+    if (mShouldDrawTickLabels != shouldDraw) {
+        mShouldDrawTickLabels = shouldDraw;
+        repaint();
+    }
 }
 
 void CorlumaSlider::enable(bool shouldEnable) {
     if(shouldEnable) {
-        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(slider);
+        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mSlider);
         mOpacity = 1.0f;
         effect->setOpacity(mOpacity);
-        slider->setGraphicsEffect(effect);
+        mSlider->setGraphicsEffect(effect);
         this->setEnabled(true);
     } else {
-        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(slider);
+        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mSlider);
         mOpacity = 0.5f;
         effect->setOpacity(mOpacity);
-        slider->setGraphicsEffect(effect);
+        mSlider->setGraphicsEffect(effect);
         this->setEnabled(false);
     }
 }

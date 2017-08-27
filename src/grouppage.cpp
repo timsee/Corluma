@@ -126,7 +126,7 @@ void GroupPage::multiButtonClicked(int routine, int colorGroup) {
     mData->updateColorGroup((EColorGroup)colorGroup);
     mData->updateRoutine((ELightingRoutine)routine);
     highlightRoutineButton((ELightingRoutine)routine, (EColorGroup)colorGroup);
-    emit presetColorGroupChanged(routine, colorGroup);
+    emit presetColorGroupChanged(colorGroup);
 }
 
 

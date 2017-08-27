@@ -134,7 +134,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(mTopMenu, SIGNAL(buttonPressed(QString)), this, SLOT(topMenuButtonPressed(QString)));
     connect(mTopMenu, SIGNAL(brightnessChanged(int)), this, SLOT(brightnessChanged(int)));
     connect(mColorPage, SIGNAL(singleColorChanged(QColor)),  mTopMenu, SLOT(updateSingleColor(QColor)));
-    connect(mGroupPage, SIGNAL(presetColorGroupChanged(int, int)),  mTopMenu, SLOT(updatePresetColorGroup(int, int)));
+    connect(mGroupPage, SIGNAL(presetColorGroupChanged(int)),  mTopMenu, SLOT(updatePresetColorGroup(int)));
     connect(mConnectionPage, SIGNAL(updateMainIcons()),  mTopMenu, SLOT(updateMenuBar()));
     connect(mColorPage, SIGNAL(updateMainIcons()),  mTopMenu, SLOT(updateMenuBar()));
     connect(mGroupPage, SIGNAL(updateMainIcons()), mTopMenu, SLOT(updateMenuBar()));

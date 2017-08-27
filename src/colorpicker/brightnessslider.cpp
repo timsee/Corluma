@@ -13,12 +13,12 @@ BrightnessSlider::BrightnessSlider(QWidget *parent) : QWidget(parent)
     // --------------
     mBrightnessSlider = new CorlumaSlider(this);
     mBrightnessSlider->setSliderColorBackground(QColor(0, 0, 0));
-    mBrightnessSlider->slider->setRange(0, 100);
+    mBrightnessSlider->slider()->setRange(0, 100);
     mBrightnessSlider->setSnapToNearestTick(true);
     mBrightnessSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mBrightnessSlider->setSliderHeight(0.8f);
     connect(mBrightnessSlider, SIGNAL(valueChanged(int)), this, SLOT(brightnessSliderChanged(int)));
-    connect(mBrightnessSlider->slider, SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
+    connect(mBrightnessSlider->slider(), SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
 
 
     // --------------
@@ -51,7 +51,7 @@ void BrightnessSlider::changeBrightness(int brightness) {
         mBrightnessSlider->setSliderColorBackground(brightColor);
 
         mBrightnessSlider->blockSignals(true);
-        mBrightnessSlider->slider->setValue(brightness);
+        mBrightnessSlider->slider()->setValue(brightness);
         mBrightnessSlider->blockSignals(false);
     }
 }

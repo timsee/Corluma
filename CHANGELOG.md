@@ -197,4 +197,8 @@ ___
 * standardized more UI elements.
 * Fixed miscellaneous bugs. 
 
+### **v0.10.12**
+#### Minor Bug Fixes Update
+* Fixed layout of SettingsPage in some environments.
+* Fixed miscellaneous bugs. 
 

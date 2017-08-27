@@ -41,16 +41,6 @@ public:
     explicit CorlumaSlider(QWidget *parent = 0);
 
     /*!
-     * \brief slider The actual and factual QSlider in this slider class
-     */
-    QSlider *slider;
-
-    /*!
-     * \brief label label for the slider, allows you to label the slider, but by default its an empty value.
-     */
-    QLabel *label;
-
-    /*!
      * \brief setSliderColorBackground Does a dark to light gradient on the color provided on the background
      *        of the slider to the left of the thumb piece of the slider Uses a custom style sheet to achieve this effect.
      * \param color the color that will be put into a custom style sheet
@@ -93,6 +83,11 @@ public:
      * \param shouldEnable true if the asset should be enabled, false otherwise.
      */
     void enable(bool shouldEnable);
+
+    void setShouldDrawTickLabels(bool shouldDraw);
+
+    /// pointer to internal QSlider
+    QSlider *slider() { return mSlider; }
 
 signals:
     /*!
@@ -147,6 +142,11 @@ protected:
     void hideEvent(QHideEvent *);
 
 private:
+
+    /*!
+     * \brief slider The actual and factual QSlider in this slider class
+     */
+    QSlider *mSlider;
 
     /*!
      * \brief mHeightScaleFactor used to scale the slider inside of its qwidget so it takes up
@@ -216,6 +216,12 @@ private:
      *        enabled or disabled.
      */
     float mOpacity;
+
+    /*!
+     * \brief mShouldDrawTickLabels if true, instead of ticks labels of the values at that
+     *        region are drawn instead
+     */
+    bool mShouldDrawTickLabels;
 
     /*!
      * \brief mThrottleFlag flag used to enforced the throttle timer's throttle.

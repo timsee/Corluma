@@ -54,10 +54,10 @@ TopMenu::TopMenu(DataLayer* data, CommLayer* comm, QWidget *parent) : QWidget(pa
     // setup the slider that controls the LED's brightness
     mBrightnessSlider = new CorlumaSlider(this);
     mBrightnessSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mBrightnessSlider->slider->setRange(0,100);
-    mBrightnessSlider->slider->setValue(0);
-    mBrightnessSlider->slider->setTickPosition(QSlider::TicksBelow);
-    mBrightnessSlider->slider->setTickInterval(20);
+    mBrightnessSlider->slider()->setRange(0,100);
+    mBrightnessSlider->slider()->setValue(0);
+    mBrightnessSlider->slider()->setTickPosition(QSlider::TicksBelow);
+    mBrightnessSlider->slider()->setTickInterval(20);
     mBrightnessSlider->setSliderHeight(0.5f);
     mBrightnessSlider->setSliderColorBackground(QColor(255,255,255));
     connect(mBrightnessSlider, SIGNAL(valueChanged(int)), this, SLOT(brightnessSliderChanged(int)));
@@ -194,9 +194,9 @@ void TopMenu::updateBrightnessSlider() {
         mBrightnessSlider->setSliderColorBackground(mData->colorsAverage(mData->currentColorGroup()));
     }
 
-    if (mData->brightness() != mBrightnessSlider->slider->value()) {
+    if (mData->brightness() != mBrightnessSlider->slider()->value()) {
         mBrightnessSlider->blockSignals(true);
-        mBrightnessSlider->slider->setValue(mData->brightness());
+        mBrightnessSlider->slider()->setValue(mData->brightness());
         mBrightnessSlider->blockSignals(false);
     }
 }
@@ -210,7 +210,7 @@ void TopMenu::updateSingleColor(QColor color) {
     mOnOffButton->setIcon(mIconData.renderAsQPixmap());
 }
 
-void TopMenu::updatePresetColorGroup(int lightingRoutine, int colorGroup) {
+void TopMenu::updatePresetColorGroup(int colorGroup) {
     mIconData.setMultiFade((EColorGroup)colorGroup, mData->colorGroup((EColorGroup)colorGroup));
     mBrightnessSlider->setSliderColorBackground(mData->colorsAverage((EColorGroup)colorGroup));
     mOnOffButton->setIcon(mIconData.renderAsQPixmap());
@@ -231,7 +231,7 @@ void TopMenu::deviceCountReachedZero() {
     mColorPageButton->setEnabled(false);
     mBrightnessSlider->enable(false);
 
-    mBrightnessSlider->slider->setValue(0);
+    mBrightnessSlider->slider()->setValue(0);
     QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mOnOffButton);
     effect->setOpacity(0.5f);
     mOnOffButton->setGraphicsEffect(effect);

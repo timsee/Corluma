@@ -4,13 +4,15 @@
  * Released under the GNU General Public License.
  */
 
+#include <QDebug>
+
 #include "corlumacheckbox.h"
 
 CorlumaCheckBox::CorlumaCheckBox(QString title, QWidget *parent) : QWidget(parent) {
     mIsChecked = false;
     mSpacer = 5;
 
-    const QString transparentStyleSheet = "background-color: rgba(0,0,0,0)";
+    const QString transparentStyleSheet = "background-color: rgba(0,0,0,0);";
 
     mTitle = new QLabel(title, this);
     mTitle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -27,6 +29,34 @@ CorlumaCheckBox::CorlumaCheckBox(QString title, QWidget *parent) : QWidget(paren
     mCheckBox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     this->setMinimumHeight(mTitle->height() * 1.5f);
+}
+
+void CorlumaCheckBox::downsizeTextWidthToFit(int maxWidth) {
+    QLabel label(mTitle->text());
+    int systemFontWidth  = label.fontMetrics().boundingRect(label.text()).width();
+    int fontPtSize       = label.font().pointSize();
+    int nonTitleSize     = mCheckBox->width() + mSpacer * 3;
+    int computedSize     = systemFontWidth;
+    maxWidth             = maxWidth - nonTitleSize;
+    if (maxWidth > computedSize) {
+        // just use the systems font instead of scaling up
+        QFont font = mTitle->font();
+        font.setPointSize(fontPtSize);
+        mTitle->setFont(font);
+        QRect r = mTitle->fontMetrics().boundingRect(mTitle->text());
+        mTitle->setFixedWidth(r.width());
+    } else {
+        while((maxWidth < computedSize) && (fontPtSize > 2)) {
+            fontPtSize--;
+            QFont font = mTitle->font();
+            font.setPointSize(fontPtSize);
+            mTitle->setFont(font);
+            QRect r = mTitle->fontMetrics().boundingRect(mTitle->text());
+            mTitle->setFixedWidth(r.width());
+            computedSize = mTitle->width();
+        }
+    }
+    adjustSize();
 }
 
 void CorlumaCheckBox::setChecked(bool shouldCheck) {

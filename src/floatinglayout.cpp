@@ -72,7 +72,11 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
     } else if (eButtonSize == EButtonSize::eMedium) {
         size = QSize(screen->size().width() * 0.03f, screen->size().height() * 0.03f);
     } else if (eButtonSize == EButtonSize::eRectangle) {
+#ifdef MOBILE_BUILD
+        size = QSize(screen->size().width() * 0.07f, screen->size().height() * 0.02f);
+#else
         size = QSize(screen->size().width() * 0.07f, screen->size().height() * 0.05f);
+#endif
     }
 #ifdef MOBILE_BUILD
     size = QSize(size.width() * 5, size.height() * 5);

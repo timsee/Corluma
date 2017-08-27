@@ -14,18 +14,18 @@ ColorGrid::ColorGrid(QWidget *parent) : QWidget(parent)
 
     mCountSlider = new CorlumaSlider(this);
     mCountSlider->setSliderColorBackground(QColor(0, 0, 0));
-    mCountSlider->slider->setRange(0, mMaximumSize * 10);
-    mCountSlider->slider->blockSignals(true);
-    mCountSlider->slider->setValue(20);
-    mCountSlider->slider->blockSignals(false);
-    mCountSlider->slider->setTickInterval(10);
+    mCountSlider->slider()->setRange(0, mMaximumSize * 10);
+    mCountSlider->slider()->blockSignals(true);
+    mCountSlider->slider()->setValue(20);
+    mCountSlider->slider()->blockSignals(false);
+    mCountSlider->slider()->setTickInterval(10);
     mCountSlider->setSnapToNearestTick(true);
-    mCountSlider->slider->setTickPosition(QSlider::TicksBelow);
+    mCountSlider->slider()->setTickPosition(QSlider::TicksBelow);
     mCountSlider->setMinimumPossible(true, 20);
     mCountSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mCountSlider->setSliderHeight(0.6f);
     connect(mCountSlider, SIGNAL(valueChanged(int)), this, SLOT(countSliderChanged(int)));
-    connect(mCountSlider->slider, SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
+    connect(mCountSlider->slider(), SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
 
     // --------------
     // Setup Layout
@@ -175,7 +175,7 @@ void ColorGrid::manageMultiSelected() {
 
 
 void ColorGrid::releasedSlider() {
-    emit multiColorCountChanged(mCountSlider->slider->value() / 10);
+    emit multiColorCountChanged(mCountSlider->slider()->value() / 10);
 }
 
 QPixmap ColorGrid::createSolidColorIcon(QColor color) {

@@ -7,13 +7,28 @@
 #include <QtCore>
 #include <QtGui>
 #include <QStyleOption>
+#include <QDesktopWidget>
 
 #include "corlumautils.h"
 #include "globalsettingswidget.h"
 
 GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
 
-    this->setContentsMargins(10, 10, 10, 10);
+#ifdef MOBILE_BUILD
+    // get screen size, use it to figure out spacers
+    QRect rect = QApplication::desktop()->screenGeometry();
+    int min = std::min(rect.width(), rect.height());
+    mSpacerPixels = min * 0.04f;
+#else
+    mSpacerPixels = 5;
+#endif //MOBILE_BUILD
+
+    // set margins as spacer * 2
+    this->setContentsMargins(mSpacerPixels * 2,
+                             mSpacerPixels * 2,
+                             mSpacerPixels * 2,
+                             mSpacerPixels * 2);
+
 
     //-----------
     // Labels
@@ -25,8 +40,6 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
 
     mEnabledConnectionsLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mEnabledConnectionsLabel->setStyleSheet(labelStyleSheet);
-
-    mSpacerPixels = 5;
 
     //-----------
     // CheckBoxes
@@ -51,19 +64,21 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
     mSliderSpeedValue = 425;
     mSpeedSlider = new CorlumaSlider(this);
     mSpeedSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mSpeedSlider->slider->setRange(1, 1000);
-    mSpeedSlider->slider->setValue(mSliderSpeedValue);
+    mSpeedSlider->slider()->setRange(1, 1000);
+    mSpeedSlider->slider()->setValue(mSliderSpeedValue);
     mSpeedSlider->setSliderHeight(0.5f);
-    mSpeedSlider->slider->setTickPosition(QSlider::TicksBelow);
-    mSpeedSlider->slider->setTickInterval(100);
+    mSpeedSlider->slider()->setTickPosition(QSlider::TicksBelow);
+    mSpeedSlider->slider()->setTickInterval(250);
+    mSpeedSlider->setShouldDrawTickLabels(true);
 
     mTimeoutSlider = new CorlumaSlider(this);
     mTimeoutSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mTimeoutSlider->slider->setRange(0,240);
-    mTimeoutSlider->slider->setValue(120);
+    mTimeoutSlider->slider()->setRange(0, 300);
+    mTimeoutSlider->slider()->setValue(120);
     mTimeoutSlider->setSliderHeight(0.5f);
-    mTimeoutSlider->slider->setTickPosition(QSlider::TicksBelow);
-    mTimeoutSlider->slider->setTickInterval(40);
+    mTimeoutSlider->slider()->setTickPosition(QSlider::TicksBelow);
+    mTimeoutSlider->slider()->setTickInterval(60);
+    mTimeoutSlider->setShouldDrawTickLabels(true);
 
     //-----------
     // Slider Labels
@@ -257,8 +272,8 @@ void GlobalSettingsWidget::show() {
         mTimeoutSlider->setSliderColorBackground(mData->mainColor());
 
         // default the settings bars to the current colors
-        mSpeedSlider->slider->setValue(mSliderSpeedValue);
-        mTimeoutSlider->slider->setValue(mData->timeout());
+        mSpeedSlider->slider()->setValue(mSliderSpeedValue);
+        mTimeoutSlider->slider()->setValue(mData->timeout());
     }
     resize();
 }
@@ -330,10 +345,21 @@ void GlobalSettingsWidget::showAdvanceMode(bool showAdvanceMode) {
 }
 
 void GlobalSettingsWidget::resize() {
+    
+    // resize the checkboxes widths, if needed
+    mTimeoutCheckBox->downsizeTextWidthToFit(this->width() * 0.45f);
+    mAdvanceModeCheckBox->downsizeTextWidthToFit(this->width() * 0.45f);
+
     uint32_t currentY = 0;
     mSliderMinWidth = this->width() * 0.66f;
+    int sliderHeight =  mEnabledConnectionsLabel->height() * 2.75f;
 
-    mAdvanceModeCheckBox->setGeometry(mTimeoutCheckBox->geometry().width() + mSpacerPixels,
+    mTimeoutCheckBox->setGeometry(mSpacerPixels,
+                                  mSpacerPixels,
+                                  mTimeoutCheckBox->geometry().width(),
+                                  mTimeoutCheckBox->geometry().height());
+
+    mAdvanceModeCheckBox->setGeometry(mTimeoutCheckBox->geometry().width() + mSpacerPixels * 2,
                                       mTimeoutCheckBox->geometry().y(),
                                       mAdvanceModeCheckBox->geometry().width(),
                                       mTimeoutCheckBox->geometry().height());
@@ -344,12 +370,12 @@ void GlobalSettingsWidget::resize() {
         mTimeoutLabel->setGeometry(mSpacerPixels,
                                  currentY,
                                  mTimeoutLabel->width(),
-                                 mTimeoutLabel->height());
+                                 sliderHeight);
         mTimeoutSlider->setGeometry(mTimeoutLabel->geometry().width() + 2 * mSpacerPixels,
                                   currentY,
                                   mSliderMinWidth,
-                                  mTimeoutLabel->height());
-        currentY += mTimeoutLabel->height() + mSpacerPixels;
+                                  sliderHeight);
+        currentY += mTimeoutSlider->height() + mSpacerPixels;
     }
 
     if (mSpeedSlider->isVisible()) {
@@ -360,12 +386,12 @@ void GlobalSettingsWidget::resize() {
         mSpeedLabel->setGeometry(mSpacerPixels,
                                  currentY,
                                  width,
-                                 mSpeedLabel->height());
+                                 sliderHeight);
         mSpeedSlider->setGeometry(mSpeedLabel->geometry().width() + 2 * mSpacerPixels,
                                   currentY,
                                   mSliderMinWidth,
-                                  mSpeedLabel->height());
-        currentY += mSpeedLabel->height() + mSpacerPixels;
+                                  sliderHeight);
+        currentY += mSpeedSlider->height() + mSpacerPixels;
     }
 
     if (mEnabledConnectionsLabel->isVisible()) {
@@ -394,6 +420,11 @@ void GlobalSettingsWidget::resize() {
 #endif //MOBILE_BUILD
 
         currentY += mHueButton->height() + 2 * mSpacerPixels;
+    }
+
+    if (!mTimeoutSlider->isVisible() && !mSpeedSlider->isVisible())
+    {
+        currentY += mSpacerPixels;
     }
 
     this->setMinimumHeight(currentY);

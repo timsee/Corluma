@@ -89,10 +89,9 @@ signals:
 
     /*!
      * \brief presetColorGroupChanged emits data to the MainWindow about the changes
-     *        to the preset color page. The first int is a ELightingRoutine cast to an int,
-     *        the second is a EColorGroup cast to an int.
+     *        to the preset color page. The int should be cast to an EColorGroup.
      */
-    void presetColorGroupChanged(int, int);
+    void presetColorGroupChanged(int);
 
     /*!
      * \brief clickedEditButton sent whenever an edit button is clicked so that the main page can load

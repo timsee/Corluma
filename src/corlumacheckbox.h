@@ -23,6 +23,16 @@ public:
 
     /// checks and unchecks the checkbox
     void setChecked(bool shouldCheck);
+    
+    /*!
+     * \brief downsizeTextWidthToFit downsize the font's point size until this entire widget
+     *        fits into the width provided. If downsizing is not needed, the system's font
+     *        size is used instead.
+     *
+     * NOTE: this is hacky and inefficient!
+     * \param maxWidth max width for the entire widget.
+     */
+    void downsizeTextWidthToFit(int maxWidth);
 
 signals:
 
@@ -42,7 +52,7 @@ protected:
 private:
     /// true if checked, false if not checked
     bool mIsChecked;
-
+    
     /// spacer between checkbox and title
     int mSpacer;
 

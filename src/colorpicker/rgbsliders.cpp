@@ -12,30 +12,30 @@ RGBSliders::RGBSliders(QWidget *parent) : QWidget(parent) {
     // --------------
     mRedSlider = new CorlumaSlider(this);
     mRedSlider->setSliderColorBackground(QColor(255, 0, 0));
-    mRedSlider->slider->setRange(0, 255);
+    mRedSlider->slider()->setRange(0, 255);
     mRedSlider->setSnapToNearestTick(true);
     mRedSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mRedSlider->setSliderHeight(0.8f);
     connect(mRedSlider, SIGNAL(valueChanged(int)), this, SLOT(redSliderChanged(int)));
-    connect(mRedSlider->slider, SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
+    connect(mRedSlider->slider(), SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
 
     mGreenSlider = new CorlumaSlider(this);
     mGreenSlider->setSliderColorBackground(QColor(0, 255, 0));
-    mGreenSlider->slider->setRange(0, 255);
+    mGreenSlider->slider()->setRange(0, 255);
     mRedSlider->setSnapToNearestTick(true);
     mGreenSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mGreenSlider->setSliderHeight(0.8f);
     connect(mGreenSlider, SIGNAL(valueChanged(int)), this, SLOT(greenSliderChanged(int)));
-    connect(mGreenSlider->slider, SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
+    connect(mGreenSlider->slider(), SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
 
     mBlueSlider = new CorlumaSlider(this);
-    mBlueSlider->slider->setRange(0, 255);
+    mBlueSlider->slider()->setRange(0, 255);
     mBlueSlider->setSliderColorBackground(QColor(0, 0, 255));
     mRedSlider->setSnapToNearestTick(true);
     mBlueSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mBlueSlider->setSliderHeight(0.8f);
     connect(mBlueSlider, SIGNAL(valueChanged(int)), this, SLOT(blueSliderChanged(int)));
-    connect(mBlueSlider->slider, SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
+    connect(mBlueSlider->slider(), SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
 
     // --------------
     // Setup RGB Labels
@@ -66,17 +66,17 @@ RGBSliders::RGBSliders(QWidget *parent) : QWidget(parent) {
 void RGBSliders::changeColor(QColor color) {
     mColor = color;
 
-    bool blocked = mRedSlider->slider->blockSignals(true);
-    mRedSlider->slider->setValue(color.red());
-    mRedSlider->slider->blockSignals(blocked);
+    bool blocked = mRedSlider->slider()->blockSignals(true);
+    mRedSlider->slider()->setValue(color.red());
+    mRedSlider->slider()->blockSignals(blocked);
 
-    blocked = mGreenSlider->slider->blockSignals(true);
-    mGreenSlider->slider->setValue(color.green());
-    mGreenSlider->slider->blockSignals(blocked);
+    blocked = mGreenSlider->slider()->blockSignals(true);
+    mGreenSlider->slider()->setValue(color.green());
+    mGreenSlider->slider()->blockSignals(blocked);
 
-    blocked = mBlueSlider->slider->blockSignals(true);
-    mBlueSlider->slider->setValue(color.blue());
-    mBlueSlider->slider->blockSignals(blocked);
+    blocked = mBlueSlider->slider()->blockSignals(true);
+    mBlueSlider->slider()->setValue(color.blue());
+    mBlueSlider->slider()->blockSignals(blocked);
 }
 
 void RGBSliders::redSliderChanged(int newValue) {
@@ -92,7 +92,7 @@ void RGBSliders::blueSliderChanged(int newValue) {
 }
 
 void RGBSliders::releasedSlider() {
-    emit colorChanged(QColor(mRedSlider->slider->value(),
-                             mGreenSlider->slider->value(),
-                             mBlueSlider->slider->value()));
+    emit colorChanged(QColor(mRedSlider->slider()->value(),
+                             mGreenSlider->slider()->value(),
+                             mBlueSlider->slider()->value()));
 }

@@ -96,6 +96,12 @@ public:
      */
     void highlightRoutineButton(bool shouldHighlight);
 
+    /*!
+     * \brief buttonCount returns the number of buttons in the floating layout
+     * \return the number of buttons in the floating layout
+     */
+    uint32_t buttonCount() { return mButtons.size(); }
+
 signals:
     /*!
      * \brief buttonPressed emitted whenever a button is pressed with a QString representing the
