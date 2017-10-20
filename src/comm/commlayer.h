@@ -289,6 +289,22 @@ public:
     std::list<SHueSchedule> hueSchedules();
 
     /*!
+     * \brief createHueGroup create a hue group to store on the hue bridge
+     * \param name name of new group
+     * \param lights lights to be part of the hue group.
+     */
+    void createHueGroup(QString name, std::list<SHueLight> lights);
+
+    /// getter for list of hue groups stored on bridge
+    std::list<SHueGroup> hueGroups();
+
+    /// true if its received any data about groups from the hue bridge, false otherwise.
+    bool haveHueGroups();
+
+    /// true if its received any data about schedules from the hue bridge, false otherwise.
+    bool haveHueSchedules();
+
+    /*!
      * \brief updateHueTimeout update the hue timeout for a specific hue schedule.
      * \param enable true to enable the timeout, false otherwise.
      * \param index the index of the schedule on the bridge. This index is not necessarily the index of the group
@@ -306,6 +322,13 @@ public:
      */
     SHueLight hueLightFromLightDevice(const SLightDevice& device);
 
+    /*!
+     * \brief lightDeviceFromHueLight take a SHueLight and generate a SLightDevice that maps to teh same device
+     * \param light the hue light to turn into a SLightDevice
+     * \return a filled SLightDevice with its necessary data if a SLightDevice exists for the hue light, an empty SLightDevice
+     *         otherwise.
+     */
+    SLightDevice lightDeviceFromHueLight(const SHueLight& light);
 
     /*!
      * \brief loadDebugData take a list of devices and load it into memory. Simulates receiving
@@ -335,7 +358,7 @@ signals:
     /*!
     * \brief packetReceived anotification that a packet was receieved by one of the commtypes.
     */
-    void packetReceived();
+    void packetReceived(int);
 
     /*!
     * \brief updateReceived a notification that a packet was received by one of the commtypes.
@@ -366,7 +389,7 @@ private slots:
     /*!
     * \brief hueStateChanged sent by hue whenever a packet is received that changes it state.
     */
-    void hueStateChanged() { emit packetReceived(); }
+    void hueStateChanged() { emit packetReceived((int)ECommType::eHue); }
 
 private:
 

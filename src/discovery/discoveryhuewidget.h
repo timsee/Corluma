@@ -2,6 +2,7 @@
 #define DISCOVERYHUEWIDGET_H
 
 #include "discovery/discoverywidget.h"
+#include "discovery/hardwareconnectionwidget.h"
 
 /*!
  * \copyright
@@ -41,6 +42,12 @@ public slots:
      */
     void hueDiscoveryUpdate(int);
 
+protected:
+    /*!
+     * \brief resizeEvent called every time the main window is resized.
+     */
+    void resizeEvent(QResizeEvent *);
+
 private:
 
     /// label to prompt the user through the application.
@@ -51,6 +58,15 @@ private:
 
     /// placeholder to add blank space to the hue widget
     QLabel *mPlaceholder;
+
+    /// cachced pixmap of hue bridge
+    QPixmap mBridgePixmap;
+
+    /// widget for displaying the hadware connection state
+    HardwareConnectionWidget *mHardwareConnectionWidget;
+
+    /// scaling value for size of pngs
+    float mScale;
 
     /*!
      * \brief updateHueStatusIcon update the main image for the hue discovery page which

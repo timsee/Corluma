@@ -84,6 +84,7 @@ public:
      */
     void enable(bool shouldEnable);
 
+    /// set to true to draw ticks, set to false to hide them
     void setShouldDrawTickLabels(bool shouldDraw);
 
     /// pointer to internal QSlider

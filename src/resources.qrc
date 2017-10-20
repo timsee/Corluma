@@ -36,5 +36,11 @@
         <file>resources/Copyright.html</file>
         <file>resources/FAQ.html</file>
         <file>images/closeX.png</file>
+        <file>images/ColorSchemePicker_icon.png</file>
+        <file>images/Hue-Bridge.png</file>
+        <file>images/incomingBrokenArrow.png</file>
+        <file>images/incomingCompleteArrow.png</file>
+        <file>images/outgoingBrokenArrow.png</file>
+        <file>images/outgoingCompleteArrow.png</file>
     </qresource>
 </RCC>

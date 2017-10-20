@@ -202,3 +202,19 @@ ___
 * Fixed layout of SettingsPage in some environments.
 * Fixed miscellaneous bugs. 
 
+### **v0.10.15**
+#### The Moar Threads Update
+* Turned DataSync into a Base class with a separate derived class for syncing arduinos, syncing hues, and syncing global settings.
+* Added better support for groups and schedules being stored on a Hue Bridge
+* Added initial prototype for the ColorSchemePicker. 
+* Fixed miscellaneous bugs.
+
+### Coming Soon
+#### The Advanced Hue Integration Update (Working Title)
+* Fully integrate Rooms and Schedules stored on the Hue Bridge.
+* Add manual discovery of Hue lights and Bridges. 
+* Add a widget that shows more information about Hue hardware. 
+* Rigorously test the timeout functionality of Hues.
+
+
+

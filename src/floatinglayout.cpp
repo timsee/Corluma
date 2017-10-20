@@ -134,6 +134,12 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             lightsButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, QColor(255,0,0));
             mButtons[i] = static_cast<QPushButton*>(lightsButton);
             Q_ASSERT(mButtons[i]);
+        } else if (mNames[i].compare("ColorScheme") == 0) {
+            foundMatch = true;
+            mButtons[i] = new QPushButton(this);
+            mButtons[i]->setCheckable(true);
+            utils::resizeIcon(mButtons[i], ":/images/ColorSchemePicker_icon.png");
+            mButtons[i]->setMinimumSize(buttonSize());
         } else if (mNames[i].compare("Temperature") == 0) {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
@@ -243,6 +249,8 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
                     utils::resizeIcon(mButtons[i], ":/images/editIcon.png");
                 } else if (mNames[i].compare("New_Mood") == 0) {
                     utils::resizeIcon(mButtons[i], ":/images/editIcon.png");
+                } else if (mNames[i].compare("ColorScheme") == 0) {
+                    utils::resizeIcon(mButtons[i], ":/images/ColorSchemePicker_icon.png");
                 }
             } else {
                 CorlumaButton *lightsButton = static_cast<CorlumaButton*>(mButtons[i]);

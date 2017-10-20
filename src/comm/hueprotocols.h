@@ -30,6 +30,7 @@ enum class EHueType {
 enum class EHueUpdates {
     eDeviceUpdate,
     eScheduleUpdate,
+    eGroupUpdate,
     eHueUpdates_MAX
 };
 
@@ -42,7 +43,6 @@ struct SHueCommand {
     QString method;
     SLightDevice body;
 };
-
 
 /*!
  * \brief The SHueSchedule struct a schedule for hues. Schedules are stored
@@ -112,6 +112,22 @@ struct SHueLight {
      */
     int deviceIndex;
 };
+
+struct SHueGroup {
+    QString name;
+    QString type;
+    int index;
+    std::list<SHueLight> lights;
+};
+
+/// SHueSchedule equal operator
+inline bool operator==(const SHueGroup& lhs, const SHueGroup& rhs) {
+    bool result = true;
+    if (lhs.name.compare(rhs.name)) result = false;
+    if (lhs.type.compare(rhs.type)) result = false;
+    return result;
+}
+
 
 /// SHueLight equal operator
 inline bool operator==(const SHueLight& lhs, const SHueLight& rhs)

@@ -19,6 +19,8 @@
 #include "brightnessslider.h"
 #include "tempbrightsliders.h"
 #include "colorgrid.h"
+#include "colorschemecircles.h"
+#include "colorschemegrid.h"
 
 /*!
  * \copyright
@@ -58,6 +60,11 @@ enum class ELayoutColorPicker {
      * wheel and a single slider that both do that.
      */
     eBrightnessLayout,
+    /*!
+     * This layout allows the user to choose multiple colors at once and
+     * computes a good color scheme based on the user's selections.
+     */
+    eColorSchemeLayout,
     /*!
      * The full color wheel is shown, but instead of
      * three sliders underneath theres one and 2 rows
@@ -133,9 +140,11 @@ public:
      * \param mainColor main color from datalayer
      * \param brightness brightness from data layer
      * \param colorArray the custom color array from datalayer
+     * \param colorSchemes the colors of the selected devices
      * \param colorArrayCount the count of LEDs used in array from datalayer
      */
-    void updateColorStates(QColor mainColor, int brightness, const std::vector<QColor> colorArray, int colorArrayCount);
+    void updateColorStates(QColor mainColor, int brightness, const std::vector<QColor> colorArray, const std::vector<QColor> colorSchemes, int colorArrayCount);
+
 
 signals:
     /*!
@@ -166,6 +175,12 @@ signals:
      * \brief multiColorCountChanged number of colors to use during multi color routines changed.
      */
     void multiColorCountUpdate(int);
+
+    /*!
+     * \brief colorsUpdate update to a full color scheme
+     */
+    void colorsUpdate(std::vector<QColor>);
+
 
 protected:
     /*!
@@ -268,6 +283,16 @@ private:
      */
     QLabel *mColorWheel;
 
+    /*!
+     * \brief mColorSchemeCircles top layout, overlays circles on the color wheel for color selection
+     */
+    ColorSchemeCircles *mColorSchemeCircles;
+
+    /*!
+     * \brief mColorSchemeGrid bottom layout, gives a few color swatches
+     */
+    ColorSchemeGrid *mColorSchemeGrid;
+
     /// bottom layout, gives 3 sliders for RGB.
     RGBSliders *mRGBSliders;
 
@@ -279,6 +304,9 @@ private:
 
     /// bottom layoutm, gives a slider and a grid of buttons
     ColorGrid *mColorGrid;
+
+    /// cached rendered version of the color wheel
+    QImage mRenderedColorWheel;
 
     /*!
      * \brief chooseColor programmatically set the color of the picker. this will update the
@@ -396,6 +424,9 @@ private:
 
     /// true if wheel is enabled, false othwerise.
     bool mWheelIsEnabled;
+
+    /// index of circle that is currently clicked and being dragged
+    int mCircleIndex;
 
     /*!
      * \brief mCurrentLayout The current layout of the color picker. Used

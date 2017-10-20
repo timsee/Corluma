@@ -276,7 +276,6 @@ void CommType::handleIncomingPacket(QString controllerName, QString payload) {
                                                            controller);
         if (success) {
             handleDiscoveryPacket(controller);
-            resetStateUpdateTimeout();
         }
 
     } else {
@@ -286,8 +285,8 @@ void CommType::handleIncomingPacket(QString controllerName, QString payload) {
 
 void CommType::preparePacketForTransmission(const SDeviceController& controller, QString& packet) {
     // check if state update
-    if (packet.at(0) ==  QChar('7')
-            || packet.at(0) ==  QChar('8')) {
+    if (!(packet.at(0) ==  QChar('7')
+            || packet.at(0) ==  QChar('8'))) {
         // if not state update, reset the state update timer.
         resetStateUpdateTimeout();
     }

@@ -53,7 +53,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     GroupsParser *groups = new GroupsParser(this);
 
-    mDataSync = new DataSync(mData, mComm);
+    mDataSyncArduino  = new DataSyncArduino(mData, mComm);
+    mDataSyncHue      = new DataSyncHue(mData, mComm);
+    mDataSyncSettings = new DataSyncSettings(mData, mComm);
+
+    mDataSyncHue->connectGroupsParser(groups);
+
     for (int i = 0; i < (int)ECommType::eCommType_MAX; ++i) {
         ECommType type = (ECommType)i;
         if (mData->commTypeSettings()->commTypeEnabled(type)) {
@@ -186,7 +191,6 @@ MainWindow::MainWindow(QWidget *parent) :
     mSettingsPage->connectCommLayer(mComm);
     mSettingsPage->connectGroupsParser(groups);
     mSettingsPage->globalWidget()->connectBackendLayers(mComm, mData);
-    connect(mData, SIGNAL(devicesEmpty()), mSettingsPage->globalWidget(), SLOT(deviceCountReachedZero()));
     connect(mSettingsPage, SIGNAL(updateMainIcons()), mTopMenu, SLOT(updateMenuBar()));
     connect(mSettingsPage, SIGNAL(debugPressed()), this, SLOT(settingsDebugPressed()));
     connect(mSettingsPage, SIGNAL(closePressed()), this, SLOT(settingsClosePressed()));
@@ -208,6 +212,16 @@ MainWindow::MainWindow(QWidget *parent) :
                    mMainViewport->height());
     mGroupPage->setGeometry(geometry);
     mColorPage->setGeometry(geometry);
+
+    // --------------
+    // Setup app data with saved and global settings
+    // --------------
+    QSettings* settings = new QSettings();
+    mData->enableTimeout(settings->value(kUseTimeoutKey).toBool());
+    if (mData->timeoutEnabled()) {
+        mData->updateTimeout(mSettingsPage->globalWidget()->timeoutValue());
+    }
+    mData->updateSpeed(mSettingsPage->globalWidget()->speedValue());
 
     // --------------
     // Final setup
@@ -468,7 +482,9 @@ void MainWindow::changeEvent(QEvent *event) {
                 mComm->stopStateUpdates(type);
             }
         }
-        mDataSync->cancelSync();
+        mDataSyncArduino->cancelSync();
+        mDataSyncHue->cancelSync();
+        mDataSyncSettings->cancelSync();
     }
 }
 
@@ -593,5 +609,4 @@ void MainWindow::fadeOutGreyOut() {
 void MainWindow::greyOutFadeComplete() {
     mGreyOut->setVisible(false);
 }
-
 

@@ -24,8 +24,9 @@
  *
  *
  * \brief The ConnectionPage class is the page that manages which devices are currently
- *        in use. The ConnectionPage can be switched between choosing individual devices
- *        and choosing groups of devices.
+ *        in use. The ConnectionPage can choose either individual devices, or select/deselect
+ *        collections of devices. This page also provides users with a button that allows them
+ *        to create new collections of devices.
  */
 class ConnectionPage : public QWidget, public LightingPage
 {
@@ -217,6 +218,10 @@ private:
      */
     CorlumaListWidget *mDevicesListWidget;
 
+    /*!
+     * \brief cleanupList resync the list of collections and devices, deleting old ones that no longer exist and
+     *        updating existing ones.
+     */
     void cleanupList();
 
     /*!

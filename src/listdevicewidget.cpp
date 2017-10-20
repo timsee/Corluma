@@ -112,11 +112,6 @@ void  ListDeviceWidget::updateWidget(const SLightDevice& device,
     mIconPixmap = mIconData.renderAsQPixmap();
     resizeIconPixmap();
 
-    if (!device.isReachable) {
-        mController->setStyleSheet(createStyleSheet(mDevice));
-        mDeviceIcon->setStyleSheet(createStyleSheet(mDevice));
-    }
-
     mStatusIcon->update(device.isReachable, device.isOn, device.brightness);
     prepareTypeLabel(device.type);
 }

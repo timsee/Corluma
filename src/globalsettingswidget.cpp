@@ -164,15 +164,6 @@ void GlobalSettingsWidget::serialCheckboxClicked(bool checked) {
 #endif //MOBILE_BUILD
 }
 
-void GlobalSettingsWidget::deviceCountReachedZero() {
-    mSpeedSlider->enable(false);
-    mTimeoutSlider->enable(false);
-
-    mSpeedSlider->setSliderColorBackground(QColor(150, 150, 150));
-    mTimeoutSlider->setSliderColorBackground(QColor(150, 150, 150));
-}
-
-
 void GlobalSettingsWidget::checkCheckBoxes() {
     std::vector<ECommType> types =  mData->commTypeSettings()->commTypes();
     for (uint32_t i = 0; i < types.size(); ++i) {
@@ -261,20 +252,16 @@ void GlobalSettingsWidget::updateUI() {
 void GlobalSettingsWidget::show() {
     checkCheckBoxes();
 
-    if (mData->currentDevices().size() == 0) {
-        deviceCountReachedZero();
+    mSpeedSlider->enable(true);
+    mTimeoutSlider->enable(true);
 
-    } else {
-        mSpeedSlider->enable(true);
-        mTimeoutSlider->enable(true);
+    mSpeedSlider->setSliderColorBackground(mData->mainColor());
+    mTimeoutSlider->setSliderColorBackground(mData->mainColor());
 
-        mSpeedSlider->setSliderColorBackground(mData->mainColor());
-        mTimeoutSlider->setSliderColorBackground(mData->mainColor());
+    // default the settings bars to the current colors
+    mSpeedSlider->slider()->setValue(mSliderSpeedValue);
+    mTimeoutSlider->slider()->setValue(mData->timeout());
 
-        // default the settings bars to the current colors
-        mSpeedSlider->slider()->setValue(mSliderSpeedValue);
-        mTimeoutSlider->slider()->setValue(mData->timeout());
-    }
     resize();
 }
 
@@ -320,9 +307,17 @@ void GlobalSettingsWidget::advanceModeButtonPressed(bool isChecked) {
 
 void GlobalSettingsWidget::timeoutButtonPressed(bool isChecked) {
     mSettings->setValue(kUseTimeoutKey, QString::number((int)isChecked));
+    mData->enableTimeout(isChecked);
     showTimeout(isChecked);
 }
 
+int GlobalSettingsWidget::timeoutValue() {
+    return mTimeoutSlider->slider()->value();
+}
+
+int GlobalSettingsWidget::speedValue() {
+    return mSpeedSlider->slider()->value();
+}
 
 void GlobalSettingsWidget::showTimeout(bool showTimeout) {
     mTimeoutLabel->setVisible(showTimeout);

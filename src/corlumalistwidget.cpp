@@ -1,3 +1,9 @@
+/*!
+ * \copyright
+ * Copyright (C) 2015 - 2017.
+ * Released under the GNU General Public License.
+ */
+
 #include "corlumalistwidget.h"
 #include "listdevicesgroupwidget.h"
 #include "listmoodgroupwidget.h"
@@ -22,10 +28,11 @@ void CorlumaListWidget::resizeEvent(QResizeEvent *) {
     // of viewport.
     mWidget->setFixedWidth(this->viewport()->width());
 
-    for (uint32_t i = 0; i < mWidgets.size(); ++i) {
-        mWidgets[i]->resize();
-    }
     resizeWidgets();
+    for (auto widget : mWidgets) {
+       widget->setFixedWidth(this->viewport()->width());
+       widget->resize();
+    }
 }
 
 void CorlumaListWidget::addWidget(ListCollectionWidget *widget) {
@@ -41,10 +48,9 @@ void CorlumaListWidget::addWidget(ListCollectionWidget *widget) {
 void CorlumaListWidget::removeWidget(QString key) {
     int widgetIndex = searchForWidget(key);
     if (widgetIndex != -1) {
-
-        //mWidgets[widgetIndex];
-
+        mWidgets.remove(widget(widgetIndex));
         // move all widgets below it up.
+        resizeWidgets();
     }
 }
 
@@ -52,42 +58,57 @@ ListCollectionWidget *CorlumaListWidget::widget(uint32_t index) {
     if (index >= mWidgets.size()) {
         throw "ERROR: requested a widget that is out of bounds";
     }
-    return mWidgets[index];
+    uint32_t i = 0;
+    for (auto widget : mWidgets) {
+        if (i == index) {
+            return widget;
+        }
+        ++i;
+    }
+    return nullptr;
 }
 
 ListCollectionWidget *CorlumaListWidget::widget(QString key) {
     int widgetIndex = searchForWidget(key);
     if (widgetIndex != -1) {
-        // if it exists, return it
-        return mWidgets[widgetIndex];
-    } else {
-        // if it doesn't exist, return nullptr
-        return nullptr;
+        int i = 0;
+        for (auto widget : mWidgets) {
+            if (i == widgetIndex) {
+                return widget;
+            }
+            ++i;
+        }
     }
+    return nullptr;
 }
 
 int CorlumaListWidget::searchForWidget(QString key) {
     int widgetIndex = -1;
-    for (uint32_t i = 0; i < mWidgets.size(); ++i) {
-        if (mWidgets[i]->key().compare(key) == 0) {
+    int i = 0;
+    for (auto widget : mWidgets) {
+        if (widget->key().compare(key) == 0) {
             widgetIndex = i;
         }
+        ++i;
     }
     return widgetIndex;
 }
 
 void CorlumaListWidget::resizeWidgets() {
     uint32_t yPos = 0;
-    for (uint32_t i = 0; i < mWidgets.size(); ++i) {
-        mWidgets[i]->setListHeight(this->height());
-        QSize preferredSize = mWidgets[i]->preferredSize();
-        mWidgets[i]->setGeometry(0, yPos, preferredSize.width(), preferredSize.height());
+    for (auto widget : mWidgets) {
+        widget->setListHeight(this->height());
+        QSize preferredSize = widget->preferredSize();
+        widget->setGeometry(0, yPos, preferredSize.width(), preferredSize.height());
+        widget->setHidden(false);
+
         yPos += preferredSize.height();
 
-        if (!mWidgets[i]->isMoodWidget()) {
-            ListDevicesGroupWidget *devicesWidget = qobject_cast<ListDevicesGroupWidget*>(mWidgets[i]);
+        if (!widget->isMoodWidget()) {
+            ListDevicesGroupWidget *devicesWidget = qobject_cast<ListDevicesGroupWidget*>(widget);
             devicesWidget->updateRightHandButtons();
         }
+
     }
     uint32_t newHeight = std::max(yPos, (uint32_t)this->viewport()->height());
     mWidget->setFixedHeight(newHeight);

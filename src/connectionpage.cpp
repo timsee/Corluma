@@ -69,8 +69,8 @@ void ConnectionPage::updateConnectionList() {
         }
     }
 
-    gatherAvailandAndNotReachableDevices(allAvailableDevices);
     makeDevicesCollections(allAvailableDevices);
+    gatherAvailandAndNotReachableDevices(allAvailableDevices);
 }
 
 
@@ -130,7 +130,7 @@ void ConnectionPage::makeDevicesCollections(const std::list<SLightDevice>& allDe
             }
         }
         if (!collectionFound) {
-            initDevicesCollectionWidget(collection.first, collection.second, collection.first, mDevicesListWidget->height());
+            initDevicesCollectionWidget(collection.first, collection.second, collection.first);
         }
     }
 }
@@ -194,18 +194,16 @@ void ConnectionPage::deviceClicked(QString collectionKey, QString deviceKey) {
     device = identifierStringToStruct(deviceKey);
     mComm->fillDevice(device);
 
- //   if (device.isReachable) {
-        if (mData->doesDeviceExist(device)) {
-            mData->removeDevice(device);
-        } else {
-            mData->addDevice(device);
-        }
+    if (mData->doesDeviceExist(device)) {
+        mData->removeDevice(device);
+    } else {
+        mData->addDevice(device);
+    }
 
-        // update UI
-        emit updateMainIcons();
-        emit deviceCountChanged();
-        highlightList();
- //   }
+    // update UI
+    emit updateMainIcons();
+    emit deviceCountChanged();
+    highlightList();
 }
 
 
@@ -249,6 +247,7 @@ void ConnectionPage::selectGroupClicked(QString key) {
 
 
 void ConnectionPage::editGroupClicked(QString key) {
+    qDebug()  << " edit group " << key;
     emit clickedEditButton(key, false);
 }
 
@@ -298,8 +297,7 @@ void ConnectionPage::groupDeleted(QString group) {
         Q_ASSERT(widget);
         ListDevicesGroupWidget *devicesWidget = qobject_cast<ListDevicesGroupWidget*>(widget);
         if (devicesWidget->key().compare(group) == 0) {
-           // qDebug() << "REMOVE THIS COLLECTION FOR DEVICES passed TODO" << group;
-            //devicesWidget->removeMood(group);
+            mDevicesListWidget->removeWidget(group);
         }
     }
 }
@@ -434,7 +432,7 @@ void ConnectionPage::saveGroup(bool) {
         } else {
             // check if all values are valid
             // save to JSON
-            mGroups->saveNewMood(text, mData->currentDevices());
+            mGroups->saveNewCollection(text, mData->currentDevices());
             return;
         }
     }

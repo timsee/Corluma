@@ -405,7 +405,7 @@ void CommLayer::parsePacket(QString sender, QString packet, int type) {
                                 qDebug() << "WARNING: Invalid packet size: " << intVector.size() << "for packet header" << intVector[0];
                             }
                         }
-                        emit packetReceived();
+                        emit packetReceived((int)type);
                     } else {
                         qDebug() << "packet header not valid...";
                     }
@@ -496,6 +496,10 @@ SHueLight CommLayer::hueLightFromLightDevice(const SLightDevice& device) {
     return mHue->hueLightFromLightDevice(device);
 }
 
+SLightDevice CommLayer::lightDeviceFromHueLight(const SHueLight& light) {
+    return mHue->lightDeviceFromHueLight(light);
+}
+
 const std::list<SLightDevice>  CommLayer::allDevices() {
     std::list<SLightDevice> list;
     for (int i = 0; i < (int)ECommType::eCommType_MAX; ++i) {
@@ -516,7 +520,6 @@ bool CommLayer::loadDebugData(const std::list<SLightDevice> debugDevices) {
     return true;
 }
 
-
 //------------------
 // Serial Specific
 //------------------
@@ -531,6 +534,18 @@ bool CommLayer::lookingForActivePorts() {
 // Hue Specific
 //------------------
 
+bool CommLayer::haveHueGroups() {
+    return mHue->haveGroups();
+}
+
+bool CommLayer::haveHueSchedules() {
+    return mHue->haveSchedules();
+}
+
+void CommLayer::createHueGroup(QString name, std::list<SHueLight> lights) {
+    mHue->createGroup(name, lights);
+}
+
 std::list<SHueLight> CommLayer::hueList() {
     return mHue->connectedHues();
 }
@@ -541,6 +556,10 @@ SHueBridge CommLayer::hueBridge() {
 
 std::list<SHueSchedule> CommLayer::hueSchedules() {
     return mHue->schedules();
+}
+
+std::list<SHueGroup> CommLayer::hueGroups() {
+    return mHue->groups();
 }
 
 void CommLayer::updateHueTimeout(bool enable, int index, int timeout) {

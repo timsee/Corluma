@@ -24,7 +24,10 @@ CommHue::CommHue() {
     connect(mNetworkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 
     mScheduleTimer = new QTimer;
-    connect(mScheduleTimer, SIGNAL(timeout()), this, SLOT(requestSchedules()));
+    connect(mScheduleTimer, SIGNAL(timeout()), this, SLOT(getSchedules()));
+
+    mGroupTimer = new QTimer;
+    connect(mGroupTimer, SIGNAL(timeout()), this, SLOT(getGroups()));
 
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(updateLightStates()));
 
@@ -39,6 +42,8 @@ CommHue::CommHue() {
     connect(mParser, SIGNAL(receivedReset()), this, SLOT(resetSettings()));
 
     mFullyDiscovered = false;
+    mHaveGroups = false;
+    mHaveSchedules = false;
 }
 
 void CommHue::startup() {
@@ -60,6 +65,7 @@ CommHue::~CommHue() {
 
 void CommHue::sendPacket(SDeviceController controller, QString packet) {
     Q_UNUSED(controller);
+    preparePacketForTransmission(controller, packet);
     mParser->parsePacket(packet);
 }
 
@@ -95,6 +101,8 @@ void CommHue::changeColorRGB(int lightIndex, int saturation, int brightness, int
         json["sat"] = saturation;
         json["bri"] = brightness;
         json["hue"] = hue;
+
+        resetBackgroundTimers();
         putJson("/lights/" + QString::number(lightIndex) + "/state", json);
     } else {
         qDebug() << "ignoring RGB value to " << light.deviceIndex;
@@ -127,6 +135,9 @@ void CommHue::changeColorCT(int lightIndex, int brightness, int ct) {
         QJsonObject json;
         json["on"] = true;
         json["ct"] = ct;
+
+        qDebug() << "chagne color CT";
+        resetBackgroundTimers();
         putJson("/lights/" + QString::number(lightIndex) + "/state", json);
     }
 }
@@ -145,7 +156,6 @@ void CommHue::updateLightStates() {
         QNetworkRequest request = QNetworkRequest(QUrl(urlString));
         request.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("text/html; charset=utf-8"));
         mNetworkManager->get(request);
-        resetScheduleTimer();
         mStateUpdateCounter++;
     }
 }
@@ -256,6 +266,7 @@ void CommHue::brightnessChange(int deviceIndex, int brightness) {
 
     QJsonObject json;
     json["bri"] = brightness;
+    resetBackgroundTimers();
     putJson("/lights/" + QString::number(deviceIndex) + "/state", json);
 }
 
@@ -297,18 +308,25 @@ void CommHue::replyFinished(QNetworkReply* reply) {
                             updateHueLightState(innerObject, key.toDouble());
                         } else if (updateType == EHueUpdates::eScheduleUpdate) {
                             updateHueSchedule(innerObject, key.toDouble());
+                            mHaveSchedules = true;
                             hadSchedules = true;
+                        } else if (updateType == EHueUpdates::eGroupUpdate) {
+                            mHaveGroups = true;
+                            updateHueGroups(innerObject, key.toDouble());
                         } else {
                             qDebug() << "json not recognized....";
+                            qDebug() << "Response:" << string;
                         }
                     }
                 }
                 if (keys.size() == 0) {
                     hadSchedules = true;
                 }
+
                 if (hadSchedules) {
-                    createIdleTimeoutsForConnectedLights();
+                   // createIdleTimeoutsForConnectedLights();
                 }
+
             } else if(jsonResponse.isArray()) {
                 for (auto value : jsonResponse.array()) {
                     if (value.isObject()) {
@@ -505,7 +523,49 @@ bool CommHue::updateHueLightState(QJsonObject object, int i) {
             QString colorMode = stateObject.value("colormode").toString();
             light.colorMode = hueStringtoColorMode(colorMode);
 
-            if (hue.type == EHueType::eAmbient) {
+            if (light.colorMode == EColorMode::eXY) {
+                bool isValid = false;
+                if (stateObject.value("xy").isArray()
+                        && stateObject.value("bri").isDouble()) {
+                    QJsonArray array = stateObject.value("xy").toArray();
+                    if (array.size() == 2) {
+                        if (array.at(0).isDouble()
+                                && array.at(1).isDouble()) {
+                            isValid = true;
+                            // take from objC code from here: https://developers.meethue.com/documentation/color-conversions-rgb-xy
+                            float x = array.at(0).toDouble();
+                            float y = array.at(1).toDouble();
+
+                            float z = 1.0f - x - y;
+                            float Y = stateObject.value("bri").toDouble() / 254; // The given brightness value
+                            float X = (Y / y) * x;
+                            float Z = (Y / y) * z;
+
+                            // Convert to RGB using Wide RGB D65 conversion
+                            float r =  X * 1.656492f - Y * 0.354851f - Z * 0.255038f;
+                            float g = -X * 0.707196f + Y * 1.655397f + Z * 0.036152f;
+                            float b =  X * 0.051713f - Y * 0.121364f + Z * 1.011530f;
+
+                            // Apply reverse gamma correction
+                            r = r <= 0.0031308f ? 12.92f * r : (1.0f + 0.055f) * pow(r, (1.0f / 2.4f)) - 0.055f;
+                            g = g <= 0.0031308f ? 12.92f * g : (1.0f + 0.055f) * pow(g, (1.0f / 2.4f)) - 0.055f;
+                            b = b <= 0.0031308f ? 12.92f * b : (1.0f + 0.055f) * pow(b, (1.0f / 2.4f)) - 0.055f;
+
+                            r = utils::clamp(r, 0.0f, 1.0f);
+                            g = utils::clamp(g, 0.0f, 1.0f);
+                            b = utils::clamp(b, 0.0f, 1.0f);
+
+                            light.color.setRgbF(r,g,b);
+                            light.colorMode = EColorMode::eHSV;
+                        }
+                    }
+
+                }
+                if (!isValid) {
+                    qDebug() << "something went wrong with the hue xy";
+                    return false;
+                }
+            } else if (hue.type == EHueType::eAmbient) {
                 int ct = stateObject.value("ct").toDouble();
                 light.color = utils::colorTemperatureToRGB(ct);
                 light.colorMode = EColorMode::eCT;
@@ -584,6 +644,7 @@ bool CommHue::updateHueSchedule(QJsonObject object, int i) {
         }
 
         schedule.index = i;
+       // qDebug() << "status received " << status << " for" << schedule.name << "createad" << schedule.created  << " index" << i;
         //qDebug() << "NAME: " << schedule.name << i << schedule.time << schedule.status;
         if (object.value("autodelete").isBool()) {
             schedule.autodelete = object.value("autodelete").toBool();
@@ -597,10 +658,15 @@ bool CommHue::updateHueSchedule(QJsonObject object, int i) {
         bool foundSchedule = false;
         std::list<SHueSchedule>::iterator iterator;
         for (iterator = mSchedules.begin(); iterator != mSchedules.end(); ++iterator) {
-            if ((*iterator) == schedule)  {
+            if ((*iterator).index == schedule.index)  {
+             //   qDebug() << "ITERATOR received for" << (*iterator).name << "createad" << (*iterator).created  << " index" << (*iterator).index << " status" << (*iterator).status << " autodelte" << (*iterator).autodelete;
+
+              //  qDebug() << "ITERATOR received for" << schedule.name << "createad" << schedule.created  << " index" << schedule.index << " status" << schedule.status << " autodelte" << (*iterator).autodelete;
                 //qDebug() << "update hue schedule";
                 *iterator = schedule;
                 foundSchedule = true;
+            } else {
+             //   qDebug() << "iterator index" << (*iterator).index << " vs" << schedule.index;
             }
         }
         // if it doesn't add it.
@@ -619,6 +685,51 @@ bool CommHue::updateHueSchedule(QJsonObject object, int i) {
 
 }
 
+bool CommHue::updateHueGroups(QJsonObject object, int i) {
+    if (object.value("name").isString()
+                   && object.value("lights").isArray()
+                   && object.value("type").isString()
+                   && object.value("state").isObject()) {
+
+        SHueGroup group;
+        group.name = object.value("name").toString();
+        group.index = i;
+        group.type = object.value("type").toString();
+
+      //  QJsonObject action = object.value("action").toObject();
+        QJsonArray  lights = object.value("lights").toArray();
+
+        std::list<SHueLight> lightsInGroup;
+
+        foreach (const QJsonValue &value, lights) {
+            int index = value.toString().toInt();
+            for (auto light : mConnectedHues) {
+                if (light.deviceIndex == index) {
+                    lightsInGroup.push_back(light);
+                }
+            }
+        }
+        group.lights = lightsInGroup;
+
+        // check if schedule exists in list
+        bool foundGroup = false;
+        std::list<SHueGroup>::iterator iterator;
+        for (iterator = mGroups.begin(); iterator != mGroups.end(); ++iterator) {
+            if ((*iterator) == group)  {
+                //qDebug() << "update hue group";
+                *iterator = group;
+                foundGroup = true;
+            }
+        }
+        // if it doesn't add it.
+        if (!foundGroup) {
+            mGroups.push_front(group);
+        }
+        return true;
+    }
+    return false;
+}
+
 EHueUpdates CommHue::checkTypeOfUpdate(QJsonObject object) {
     if (object.value("name").isString()
            && object.value("uniqueid").isString()
@@ -628,6 +739,11 @@ EHueUpdates CommHue::checkTypeOfUpdate(QJsonObject object) {
                && object.value("description").isString()
                && object.value("time").isString()) {
         return EHueUpdates::eScheduleUpdate;
+    } else if (object.value("name").isString()
+               && object.value("lights").isArray()
+               && object.value("type").isString()
+               && object.value("action").isObject()) {
+        return EHueUpdates::eGroupUpdate;
     } else {
         return EHueUpdates::eHueUpdates_MAX;
     }
@@ -641,6 +757,18 @@ SHueLight CommHue::hueLightFromLightDevice(const SLightDevice& device) {
     }
     qDebug() << "Warning: no hue device found, this shouldnt be!";
     return SHueLight();
+}
+
+SLightDevice CommHue::lightDeviceFromHueLight(const SHueLight& light) {
+    for (auto&& controllers : mDeviceTable) {
+        for (auto&& device = controllers.second.begin(); device != controllers.second.end(); ++device) {
+              if ((*device).index == light.deviceIndex) {
+                  return (*device);
+              }
+        }
+    }
+    qDebug() << "Warning: no hue light found, this shouldnt be!";
+    return SLightDevice();
 }
 
 EHueType CommHue::stringToHueType(const QString& string) {
@@ -665,6 +793,8 @@ EColorMode CommHue::hueStringtoColorMode(const QString& mode) {
         return EColorMode::eCT;
     } else if (mode.compare("") == 0) {
         return EColorMode::eDimmable;
+    } else if (mode.compare("xy") == 0) {
+        return EColorMode::eXY;
     } else {
         qDebug() << "WARNING: Hue color mode not recognized" << mode;
         return EColorMode::EColorMode_MAX;
@@ -695,6 +825,7 @@ void CommHue::createIdleTimeout(int i, int minutes) {
 
 void CommHue::updateIdleTimeout(bool enable, int scheduleID, int minutes) {
     // get index of schedule for this light
+    qDebug() << " update idles!";
     QJsonObject object;
     object["localtime"] = convertMinutesToTimeout(minutes, 15);
     // disable light first
@@ -767,33 +898,213 @@ void CommHue::putJson(QString resource, QJsonObject object) {
         QNetworkRequest request = QNetworkRequest(QUrl(urlString));
         request.setHeader(QNetworkRequest::ContentTypeHeader,
                           QStringLiteral("text/html; charset=utf-8"));
-        //qDebug() << "request: " << urlString << "json" << strJson;
+       // qDebug() << "request: " << urlString << "json" << strJson;
         mNetworkManager->put(request, strJson.toUtf8());
     }
 }
 
-void CommHue::requestSchedules() {
-    if (mLastScheduleTime.elapsed() > 15000) {
-        stopScheduleTimer();
-    } else {
-        if (discovery()->isConnected()) {
-            QString urlString = mUrlStart + "/schedules";
-            mNetworkManager->get(QNetworkRequest(QUrl(urlString)));
+
+void CommHue::resetBackgroundTimers() {
+    // if we dont have any data for these, request them right away.
+    if (!mHaveGroups) {
+        getGroups();
+    }
+    if (!mHaveSchedules) {
+        getSchedules();
+    }
+    if (!mScheduleTimer->isActive()) {
+        mScheduleTimer->start(mStateUpdateInterval * 5);
+    }
+    if (!mGroupTimer->isActive()) {
+        mGroupTimer->start(mStateUpdateInterval * 8);
+    }
+    mLastBackgroundTime = QTime::currentTime();
+}
+
+void CommHue::stopBackgroundTimers() {
+    qDebug() << "INFO: stopping background Hue timers";
+    if (mScheduleTimer->isActive()) {
+        mScheduleTimer->stop();
+    }
+    if (mGroupTimer->isActive()) {
+        mGroupTimer->stop();
+    }
+}
+
+
+//---------------
+// Groups
+//---------------
+
+void CommHue::createGroup(QString name, std::list<SHueLight> lights) {
+    if (discovery()->isConnected()) {
+        QString urlString = mUrlStart + "/groups";
+
+        QJsonObject object;
+        object["name"] = name;
+
+        QJsonArray array;
+        for (auto light : lights) {
+            array.append(QString::number(light.deviceIndex));
+        }
+        if (array.size() > 1) {
+            object["lights"] = array;
+            object["type"] = "LightGroup";
+            //object["class"] = "Living room";
+
+            QJsonDocument doc(object);
+            QString payload = doc.toJson(QJsonDocument::Compact);
+
+            QNetworkRequest request = QNetworkRequest(QUrl(urlString));
+            request.setHeader(QNetworkRequest::ContentTypeHeader,
+                              QStringLiteral("text/html; charset=utf-8"));
+        //    qDebug() << " Create Group URL STRING" << urlString;
+         //   mNetworkManager->post(request, payload.toUtf8());
         }
     }
 }
 
-void CommHue::resetScheduleTimer() {
-    if (!mScheduleTimer->isActive()) {
-        mScheduleTimer->start(mStateUpdateInterval);
+void CommHue::updateGroup(SHueGroup group, std::list<SHueLight> lights) {
+    if (discovery()->isConnected()) {
+        QString urlString = mUrlStart + "/lights/"  + QString::number(group.index);
+
+        QJsonObject object;
+        object["name"] = group.name;
+
+        QJsonArray array;
+        for (auto light : lights) {
+            array.append(QString::number(light.deviceIndex));
+        }
+        object["lights"] = array;
+
+        QJsonDocument doc(object);
+        QString payload = doc.toJson(QJsonDocument::Compact);
+        //qDebug() << "this is my payload" << payload;
+
+        QNetworkRequest request = QNetworkRequest(QUrl(urlString));
+        request.setHeader(QNetworkRequest::ContentTypeHeader,
+                          QStringLiteral("text/html; charset=utf-8"));
+        //qDebug() << "URL STRING" << urlString;
+        mNetworkManager->post(request, payload.toUtf8());
     }
-    mLastScheduleTime = QTime::currentTime();
 }
 
-void CommHue::stopScheduleTimer() {
-    qDebug() << "INFO: stopping schedule timer";
-    if (mScheduleTimer->isActive()) {
-        mScheduleTimer->stop();
+
+void CommHue::deleteGroup(SHueGroup group) {
+    if (discovery()->isConnected()) {
+        QString urlString = mUrlStart + "/lights/"  + QString::number(group.index);
+        mNetworkManager->deleteResource(QNetworkRequest(QUrl(urlString)));
     }
 }
 
+
+QJsonObject CommHue::SHueCommandToJsonObject(SHueCommand command) {
+    QJsonObject object;
+    object["address"] = command.address;
+    object["method"]  = command.method;
+    QJsonObject body;
+    object["body"] = body;
+    return body;
+}
+
+QJsonObject CommHue::SLightDeviceToJsonObject(SLightDevice device) {
+    //TODO
+    Q_UNUSED(device);
+    return QJsonObject();
+}
+
+
+//---------------
+// Groups
+//---------------
+
+void CommHue::getGroups() {
+    if (mLastBackgroundTime.elapsed() > 15000) {
+        stopBackgroundTimers();
+    } else if (discovery()->isConnected()) {
+        QString urlString = mUrlStart + "/groups";
+        mNetworkManager->get(QNetworkRequest(QUrl(urlString)));
+    }
+}
+
+//---------------
+// Schedules
+//---------------
+
+void CommHue::getSchedules() {
+    if (mLastBackgroundTime.elapsed() > 15000) {
+        stopBackgroundTimers();
+    } else if (discovery()->isConnected()) {
+        QString urlString = mUrlStart + "/schedules";
+        mNetworkManager->get(QNetworkRequest(QUrl(urlString)));
+    }
+}
+
+
+//---------------
+// Schedules
+//---------------
+
+void CommHue::createSchedule(QString name, QString description, SHueCommand command, QString localtime) {
+    //TODO
+}
+
+void CommHue::updateSchedule(SHueSchedule schedule, SHueSchedule newSchedule) {
+    //TODO
+}
+
+void CommHue::deleteSchedule(SHueSchedule schedule) {
+    if (discovery()->isConnected()) {
+        QString urlString = mUrlStart + "/schedules/" + QString::number(schedule.index);
+        mNetworkManager->deleteResource(QNetworkRequest(QUrl(urlString)));
+    }
+}
+
+//---------------
+// Discovery And Device Maintence
+//---------------
+
+void CommHue::searchForNewLights(std::list<QString> serialNumbers) {
+    if (discovery()->isConnected()) {
+        QString urlString = mUrlStart + "/lights";
+
+        QString payload = "";
+        if (serialNumbers.size()) {
+            QJsonArray array;
+            for (auto serial : serialNumbers) {
+                array.append(serial);
+            }
+            QJsonObject object;
+            object["devices"] = array;
+            QJsonDocument doc(object);
+            payload = doc.toJson(QJsonDocument::Compact);
+        }
+        QNetworkRequest request = QNetworkRequest(QUrl(urlString));
+        request.setHeader(QNetworkRequest::ContentTypeHeader,
+                          QStringLiteral("text/html; charset=utf-8"));
+        mNetworkManager->post(request, payload.toUtf8());
+    }
+}
+
+void CommHue::renameLight(SHueLight light, QString newName) {
+    if (discovery()->isConnected()) {
+        QString urlString = mUrlStart + "/lights/"  + QString::number(light.deviceIndex);
+
+        QJsonObject object;
+        object["name"] = newName;
+        QJsonDocument doc(object);
+        QString payload = doc.toJson(QJsonDocument::Compact);
+
+        QNetworkRequest request = QNetworkRequest(QUrl(urlString));
+        request.setHeader(QNetworkRequest::ContentTypeHeader,
+                          QStringLiteral("text/html; charset=utf-8"));
+        mNetworkManager->post(QNetworkRequest(QUrl(urlString)), payload.toUtf8());
+    }
+}
+
+void CommHue::deleteLight(SHueLight light) {
+    if (discovery()->isConnected()) {
+        QString urlString = mUrlStart + "/lights/"  + QString::number(light.deviceIndex);
+        mNetworkManager->deleteResource(QNetworkRequest(QUrl(urlString)));
+    }
+}

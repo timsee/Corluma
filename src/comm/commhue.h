@@ -116,22 +116,21 @@ public:
     SHueLight hueLightFromLightDevice(const SLightDevice& device);
 
     /*!
+     * \brief lightDeviceFromHueLight create a light device based off of the data provided in a SHueLight
+     * \param light the SHueLight representation that you want to convert intoa  SLightDevice
+     * \return  a SLightDevice if one with data exists, otherwise an empty SLightDevice
+     */
+    SLightDevice lightDeviceFromHueLight(const SHueLight& light);
+
+    /*!
      * \brief sendSchedule send a schedule to the Hue Bridge. This schedule gets kept on the bridge and will
      *        not be deleted unless explicitly asked to be deleted.
      * \param schedule the new schedule for the bridge.
      */
     void sendSchedule(SHueSchedule schedule);
 
-    /*!
-     * \brief resetScheduleTimer schedules are updated on a separate thread from the rest of the hue state updates.
-     *        This function resets the timer and continues requesting the schedule.
-     */
-    void resetScheduleTimer();
-
-    /*!
-     * \brief stopScheduleTimer stop the schedule update thread.
-     */
-    void stopScheduleTimer();
+    /// stop the timers that sync things like schedules and groups in the background.
+    void stopBackgroundTimers();
 
     /*!
      * \brief createIdleTimeoutsForConnectedLights Hue lights don't have a default idle timeout option, RGB-LED-Routines
@@ -180,10 +179,107 @@ public:
     SHueBridge bridge() { return mDiscovery->bridge(); }
 
     /*!
+     * \brief SHueCommandToJsonObject converts a SHueCommand into a Json object that
+     *        can be sent to a hue as a command. Neat!
+     * \param command the command to convert into json
+     * \return a json representation of a command
+     */
+    QJsonObject SHueCommandToJsonObject(SHueCommand command);
+
+    /*!
+     * \brief SLightDeviceToJsonObject a SLightDevice to convert into a light representation in json
+     * \param device the device to turn into a json object
+     * \return a json representation of the SLightDevice.
+     */
+    QJsonObject SLightDeviceToJsonObject(SLightDevice device);
+
+    //---------------
+    // Groups
+    //---------------
+
+    /// true if its received any data about groups from the hue bridge, false otherwise.
+    bool haveGroups() { return mHaveGroups; }
+
+    /*!
+     * \brief createGroup create a new group of lights on the hue bridge
+     * \param name the new name for the bridge
+     * \param lights the lights to include in the new group
+     */
+    void createGroup(QString name, std::list<SHueLight> lights);
+
+    /*!
+     * \brief updateGroup change the lights in an already-existing hue group
+     * \param group the group to change the lights in
+     * \param lights the new lights to provide to the group.
+     */
+    void updateGroup(SHueGroup group, std::list<SHueLight> lights);
+
+    /*!
+     * \brief deleteGroup delete a group from the hue bridge
+     * \param group the group to delete from the bridge
+     */
+    void deleteGroup(SHueGroup group);
+
+    /// getter for list of groups
+    std::list<SHueGroup> groups() { return mGroups; }
+
+    //---------------
+    // Schedules
+    //---------------
+
+    /// true if its received any data about schedules from the hue bridge, false otherwise.
+    bool haveSchedules() { return mHaveSchedules; }
+
+    /*!
+     * \brief createSchedule create a hue schedule to be stored on the bridge
+     * \param name the name of the schedule
+     * \param description a description of the scheedule
+     * \param command the command to do when the schedule should execute
+     * \param localtime the localtime of the schedule.
+     */
+    void createSchedule(QString name, QString description, SHueCommand command, QString localtime);
+
+    /*!
+     * \brief updateSchedule update a hue schedule with new information
+     * \param schedule the schedule to update
+     * \param newSchedule the new information to provide to the scheudle
+     */
+    void updateSchedule(SHueSchedule schedule, SHueSchedule newSchedule);
+
+    /*!
+     * \brief deleteSchedule delete a hue schedule from the bridge
+     * \param schedule the schedule to delete.
+     */
+    void deleteSchedule(SHueSchedule schedule);
+
+    /*!
      * \brief schedules getter for a list of all known schedules
      * \return list of all known schedules.
      */
     std::list<SHueSchedule> schedules() { return mSchedules; }
+
+    //---------------
+    // Discovery And Maintence
+    //---------------
+
+    /*!
+     * \brief searchForNewLights search for new lights that havent been paired with the bridge yet
+     * \param serialNumbers serial numbers to search for manually.
+     */
+    void searchForNewLights(std::list<QString> serialNumbers = std::list<QString>());
+
+    /*!
+     * \brief renameLight rename the light's name stored on the hue bridge.
+     * \param light the light to rename
+     * \param newName the new name to assign to it.
+     */
+    void renameLight(SHueLight light, QString newName);
+
+    /*!
+     * \brief deleteLight delete the light and its stored data from the bridge
+     * \param light the light to delete.
+     */
+    void deleteLight(SHueLight light);
 
 public slots:
 
@@ -282,11 +378,22 @@ private slots:
     void resetSettings();
 
     /*!
-     * \brief requestSchedules request schedules updates.
+     * \brief getSchedules request schedules updates.
      */
-    void requestSchedules();
+    void getSchedules();
+
+    /*!
+     * \brief getGroups request groups updates
+     */
+    void getGroups();
 
 private:
+
+    /*!
+     * \brief resetBackgroundTimers reset the background timers that sync things such as groups
+     *        and schedules.
+     */
+    void resetBackgroundTimers();
 
     /*!
      * \brief mNetworkManager Qt's HTTP connection object
@@ -325,14 +432,30 @@ private:
     QTimer *mScheduleTimer;
 
     /*!
-     * \brief mLastScheduleTime The point in time that the schedule timer was last reset.
+     * \brief mGroupTimer the timer that is used to perpetually request updates for teh groups stored on the hue bridge.
      */
-    QTime mLastScheduleTime;
+    QTimer *mGroupTimer;
+
+    /*!
+     * \brief mLastBackgroundTime The point in time that the schedule timer was last reset.
+     */
+    QTime mLastBackgroundTime;
+
+    /// true if its received any data about groups from the hue bridge, false otherwise.
+    bool mHaveGroups;
+
+    /// true if its received any data about schedules from the Hue bridge, false otherwise.
+    bool mHaveSchedules;
 
     /*!
      * \brief mSchedules a list that stores all known data about the current schedules.
      */
     std::list<SHueSchedule> mSchedules;
+
+    /*!
+     * \brief mGroups a list that stores all known data about the current groups.
+     */
+    std::list<SHueGroup> mGroups;
 
     /*!
      * \brief stringToHueType helper that takes a string received from the hue and converts it to its type.
@@ -367,6 +490,15 @@ private:
      * \return true if successful, false if failed.
      */
     bool updateHueLightState(QJsonObject object, int i);
+
+    /*!
+     * \brief updateHueGroups read an incoming packet from the hue bridge and update the internal representation of
+     *        the hue's known groups.
+     * \param object json representationof a group
+     * \param i the index of the group given by the bridge
+     * \return true if successful, false if failed.
+     */
+    bool updateHueGroups(QJsonObject object, int i);
 
     /*!
      * \brief updateHueSchedule read an incoming packet from the Hue Brige and update the Hue Schedule based on the contents

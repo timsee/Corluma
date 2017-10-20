@@ -1,8 +1,6 @@
 #ifndef DATASYNC_H
 #define DATASYNC_H
 
-#include <QObject>
-#include <QTimer>
 
 #include "datalayer.h"
 
@@ -43,54 +41,63 @@ struct SThrottle
 class CommLayer;
 
 /*!
- * \brief The DataSync class compares the data layer's representation of devices with the commlayer's
- *        understanding of devices and tries to sync them up. The DataLayer's representation is used
+ * \brief The DataSync base class is used for datasync threads. These threads compares the data layer's representation
+ *        of devices with the commlayer's  understanding of devices and tries to sync them up. The DataLayer's representation is used
  *        as the "desired" state of lights. The CommLayer's understanding is used as the current state.
  *        If the desired state and current state do not match, the commlayer is requested to send packets
- *        to try to update the devices.
+ *        to try to update the devices. Different datasync threads run at different speeds and have different criteria for how to handle
+ *        syncing. Phillips hue lights, for instance, require syncing of schedules and groups on top of standard information. Because of this,
+ *        derived classes impelement the different rules for handling syncing data.
  */
-class DataSync : public QObject
+class DataSync
 {
-    Q_OBJECT
 public:
-
-    /*!
-     * \brief DataSync Constructor for DataSync.
-     * \param data pointer to the app's data layer.
-     * \param comm pointer to the app's comm layer.
-     */
-    DataSync(DataLayer *data, CommLayer *comm);
+    /// destructor
+    virtual ~DataSync(){}
 
     /*!
      * \brief cancelSync cancel the data sync, regardless of it successfully completed.
      */
-    void cancelSync();
+    virtual void cancelSync() = 0;
 
 public slots:
     /*!
      * \brief resetSync Tells the DataSync object that the commlayer and the datalayer are potentially
      *        no longer in sync and the syncData() function needs to get called on the timer again.
      */
-    void resetSync();
+    virtual void resetSync() = 0;
 
-private slots:
+    /*!
+     * \brief commPacketReceived a packet was received from a given CommType. In some cases, receiving a packet
+     *        will reset the sync for that commtype.
+     */
+    virtual void commPacketReceived(int) = 0;
+
+protected slots:
+
     /*!
      * \brief syncData called by the SyncTimer. Runs the sync routine, which checks
      *        the data layer's desired representation of devices against the comm layers
      *        understanding of the current state of devices. Sends packets through the commlayer
      *        to try to bring them mmore in sync.
      */
-    void syncData();
+    virtual void syncData() = 0;
 
     /*!
      * \brief cleanupSync After the sync is complete, certain actions need to be ran. For example, Hues
      *        require a schedule to be kept synced to timeout properly. The cleanup thread starts after
-     *        the datasync to run the routines needed to keep data in sync in the long term. This function
+     *        the ArduinoDataSync to run the routines needed to keep data in sync in the long term. This function
      *        contains all those routines.
      */
-    void cleanupSync();
+    virtual void cleanupSync() = 0;
 
-private:
+protected:
+
+
+    /*!
+     * \brief endOfSync end the sync thread and start the cleanup thread.
+     */
+    virtual void endOfSync() = 0;
 
     /*!
      * \brief mData pointer to data layer. Used for checking what state the data layer
@@ -103,48 +110,6 @@ private:
      *        thinks the devices are in and for sending packets to the devices.
      */
     CommLayer *mComm;
-
-    /*!
-     * \brief standardSync checks if the light device of a comm layer and a data layer are in sync.
-     * \param dataDevice device from the data layer
-     * \param commDevice device from the comm layer
-     * \return true if they match, false otherwise
-     */
-    bool standardSync(const SLightDevice& dataDevice, const SLightDevice& commDevice);
-
-    /*!
-     * \brief hueSync checks if the light device of a comm layer and a data layer are in sync. Handles
-     *        hue devices as they have some unique issues, such as syncing color temperature.
-     * \param dataDevice device from the data layer
-     * \param commDevice device from the comm layer
-     * \return true if they match, false otherwise
-     */
-    bool hueSync(const SLightDevice& dataDevice, const SLightDevice& commDevice);
-
-    /*!
-     * \brief appendToPacket data sync builds up packets to send to devices. This takes a new addition to the packet,
-     *        checks if theres room to add it, and adds it if there is.
-     * \param currentPacket current packet datasync is building
-     * \param newAddition new addition
-     * \param maxPacketSize max size of packet that the controller can handle.
-     * \return true if packet is added, false otherwise.
-     */
-    bool appendToPacket(QString& currentPacket, QString newAddition, int maxPacketSize);
-
-    /*!
-     * \brief endOfSync end the datasync thread and start the cleanup thread.
-     */
-    void endOfSync();
-
-    /*!
-     * \brief ctDifference gives a percent difference between two color temperatures. This
-     *        function currently assumes that only Hue lightss are using it and will need
-     *        adjustment for other lights that use a different range of color temperatures.
-     * \param first first color temperature to check.
-     * \param second second color temperature to check.
-     * \return a value between 0 and 1 which represents how different the temperatures are.
-     */
-    float ctDifference(float first, float second);
 
     /*!
      * \brief mSyncTimer Whenever data is not in sync,
@@ -178,6 +143,38 @@ private:
      * \brief mUpdateInterval number of milliseconds between each sync routine.
      */
     int mUpdateInterval;
+
+    /*!
+     * \brief sync checks if the light device of a comm layer and a data layer are in sync.
+     * \param dataDevice device from the data layer
+     * \param commDevice device from the comm layer
+     * \return true if they match, false otherwise
+     */
+    virtual bool sync(const SLightDevice& dataDevice, const SLightDevice& commDevice);
+
+    //------------------
+    // Helpers
+    //------------------
+
+    /*!
+     * \brief appendToPacket data sync builds up packets to send to devices. This takes a new addition to the packet,
+     *        checks if theres room to add it, and adds it if there is.
+     * \param currentPacket current packet ArduinoDataSync is building
+     * \param newAddition new addition
+     * \param maxPacketSize max size of packet that the controller can handle.
+     * \return true if packet is added, false otherwise.
+     */
+    bool appendToPacket(QString& currentPacket, QString newAddition, int maxPacketSize);
+
+    /*!
+     * \brief ctDifference gives a percent difference between two color temperatures. This
+     *        function currently assumes that only Hue lightss are using it and will need
+     *        adjustment for other lights that use a different range of color temperatures.
+     * \param first first color temperature to check.
+     * \param second second color temperature to check.
+     * \return a value between 0 and 1 which represents how different the temperatures are.
+     */
+    float ctDifference(float first, float second);
 
     //------------------
     // Throttle

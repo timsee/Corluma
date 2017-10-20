@@ -247,7 +247,8 @@ void GroupPage::updateConnectionList() {
 }
 
 void GroupPage::newMoodAdded(QString mood) {
-    qDebug() << "mood added" << mood;
+   // qDebug() << "mood added" << mood;
+    updateConnectionList();
 }
 
 
@@ -258,15 +259,13 @@ void GroupPage::groupDeleted(QString group) {
         Q_ASSERT(widget);
         ListMoodGroupWidget *moodWidget = qobject_cast<ListMoodGroupWidget*>(widget);
         for (auto&& widgetMood : moodWidget->moods()) {
-            qDebug() << "MOOD check" << widgetMood.first;
             if (widgetMood.first.compare(group) == 0) {
-                qDebug() << "REMOVE THIS GROUPPPP passed" << widgetMood.first;
                 moodWidget->removeMood(widgetMood.first);
             }
         }
-        if (moodWidget->key().compare(group) == 0) {
-            qDebug() << "REMOVE THIS COLLECTION FOR MOODS passed TODO" << group;
-            //devicesWidget->removeMood(group);
+        if (moodWidget->moods().size() == 0) {
+            qDebug() << " group deleted" << widget->key();
+            mMoodsListWidget->removeWidget(widget->key());
         }
     }
 
@@ -310,7 +309,7 @@ void GroupPage::makeMoodsCollections(const std::list<std::pair<QString, std::lis
                 }
             }
             if (allCollectionMoods.size() > 0) {
-                initMoodsCollectionWidget(collection.first, allCollectionMoods, collection.first, mMoodsListWidget->height());
+                initMoodsCollectionWidget(collection.first, allCollectionMoods, collection.first);
             }
         }
     }
@@ -443,7 +442,7 @@ void GroupPage::editMoodClicked(QString collectionKey, QString moodKey) {
 void GroupPage::editGroupClicked(QString key) {
 //    mGreyOut->setVisible(true);
 //    mEditPage->setVisible(true);
-    emit clickedEditButton(key, false);
+    emit clickedEditButton(key, true);
 }
 
 

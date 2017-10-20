@@ -349,6 +349,11 @@ std::list<SLightDevice> EditGroupPage::createCollection() {
 
 std::list<SLightDevice> EditGroupPage::createMood() {
     std::list<SLightDevice> list;
+    for (uint32_t i = 0; i < mWidgets.size(); ++i) {
+        if (mWidgets[i]->checked()) {
+            list.push_back(mWidgets[i]->device());
+        }
+    }
     return list;
 }
 

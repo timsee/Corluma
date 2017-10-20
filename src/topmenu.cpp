@@ -1,3 +1,9 @@
+/*!
+ * \copyright
+ * Copyright (C) 2015 - 2017.
+ * Released under the GNU General Public License.
+ */
+
 #include <QGraphicsEffect>
 
 #include "mainwindow.h"
@@ -241,10 +247,8 @@ void TopMenu::deviceCountReachedZero() {
 }
 
 void TopMenu::deviceCountChangedOnConnectionPage() {
-    bool anyDevicesReachable = mData->anyDevicesReachable();
     if (mShouldGreyOutIcons
-            && (mData->currentDevices().size() > 0)
-            &&  anyDevicesReachable) {
+            && (mData->currentDevices().size() > 0)) {
         mColorPageButton->setEnabled(true);
         mBrightnessSlider->enable(true);
 
@@ -256,8 +260,7 @@ void TopMenu::deviceCountChangedOnConnectionPage() {
         mShouldGreyOutIcons = false;
     }
     if ((!mShouldGreyOutIcons
-         && (mData->currentDevices().size() == 0))
-            || !anyDevicesReachable) {
+         && (mData->currentDevices().size() == 0))) {
         deviceCountReachedZero();
     }
    updateColorGroupButton();
@@ -397,9 +400,12 @@ void TopMenu::floatingLayoutButtonPressed(QString button) {
         mColorPage->changePageType(EColorPageType::eRGB);
         mColorVerticalFloatingLayout->highlightRoutineButton(false);
         updateColorVerticalRoutineButton();
-    }  else if (button.compare("Temperature") == 0) {
+    } else if (button.compare("Temperature") == 0) {
         mLastColorButtonKey = button;
         mColorPage->changePageType(EColorPageType::eAmbient);
+    } else if (button.compare("ColorScheme") == 0) {
+        mLastColorButtonKey = button;
+        mColorPage->changePageType(EColorPageType::eColorScheme);
     } else if (button.compare("Routine") == 0) {
         mLastColorButtonKey = button;
         mColorPage->handleRoutineWidget();
@@ -516,12 +522,15 @@ void TopMenu::setupColorFloatingLayout() {
             mColorPage->changePageType(EColorPageType::eAmbient, true);
         } else if (bestHueType == EHueType::eExtended){
             horizontalButtons = {QString("Temperature"), QString("RGB")};
+            if (mData->currentDevices().size() > 1) {
+                horizontalButtons.push_back(QString("ColorScheme"));
+            }
             mColorPage->changePageType(EColorPageType::eRGB, true);
         } else {
             throw "did not find any hue lights when expecting hue lights";
         }
     } else if (hasArduino){
-        horizontalButtons = {QString("Temperature"), QString("RGB"), QString("Multi")};
+        horizontalButtons = {QString("Temperature"), QString("RGB"), QString("Multi"), QString("ColorScheme")};
         verticalButtons = {QString("Routine")};
 
         mColorFloatingLayout->highlightButton(mLastColorButtonKey);

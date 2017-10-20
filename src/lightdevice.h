@@ -45,6 +45,7 @@ enum class EColorMode {
     eHSV,
     eDimmable,
     eCT,
+    eXY,
     EColorMode_MAX
 };
 

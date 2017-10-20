@@ -39,6 +39,7 @@ ColorPage::ColorPage(QWidget *parent) :
     connect(mColorPicker, SIGNAL(multiColorCountUpdate(int)), this, SLOT(customColorCountChanged(int)));
     connect(mColorPicker, SIGNAL(multiColorUpdate(QColor, int)), this, SLOT(multiColorChanged(QColor, int)));
     connect(mColorPicker, SIGNAL(brightnessUpdate(int)), this, SLOT(brightnessUpdate(int)));
+    connect(mColorPicker, SIGNAL(colorsUpdate(std::vector<QColor>)), this, SLOT(colorsChanged(std::vector<QColor>)));
 }
 
 
@@ -64,9 +65,11 @@ void ColorPage::highlightRoutineButton(ELightingRoutine routine) {
 
 void ColorPage::changePageType(EColorPageType page, bool skipAnimation) {
     mPageType = page;
+
     mColorPicker->updateColorStates(mData->mainColor(),
                                        mData->brightness(),
                                        mData->colorGroup(EColorGroup::eCustom),
+                                       createColorScheme(mData->currentDevices()),
                                        mData->customColorsUsed());
     if (mPageType == EColorPageType::eRGB) {
         mColorPicker->changeLayout(ELayoutColorPicker::eStandardLayout, skipAnimation);
@@ -76,6 +79,8 @@ void ColorPage::changePageType(EColorPageType page, bool skipAnimation) {
         mColorPicker->changeLayout(ELayoutColorPicker::eBrightnessLayout, skipAnimation);
     } else if (mPageType == EColorPageType::eMulti) {
         mColorPicker->changeLayout(ELayoutColorPicker::eMultiColorLayout, skipAnimation);
+    } else if (mPageType == EColorPageType::eColorScheme) {
+        mColorPicker->changeLayout(ELayoutColorPicker::eColorSchemeLayout, skipAnimation);
     } else {
         qDebug() << "INFO: don't recognize this page type.. " << (int)page;
     }
@@ -147,6 +152,21 @@ void ColorPage::showMultiRoutineWidget(bool shouldShow) {
     }
 }
 
+std::vector<QColor> ColorPage::createColorScheme(std::list<SLightDevice> devices) {
+    std::vector<QColor> colorScheme;
+    int count = 0;
+    int max = 5;
+    for (auto&& device : devices) {
+        if (count >= max) {
+            break;
+        } else {
+           colorScheme.push_back(device.color);
+        }
+        count++;
+    }
+    return colorScheme;
+}
+
 // ----------------------------
 // Slots
 // ----------------------------
@@ -156,15 +176,6 @@ void ColorPage::newRoutineSelected(int newRoutine) {
 }
 
 void ColorPage::colorChanged(QColor color) {
-    std::list<SLightDevice> routineFix;
-    for (auto device : mData->currentDevices()) {
-        if ((int)device.lightingRoutine > (int)utils::ELightingRoutineSingleColorEnd) {
-            routineFix.push_back(device);
-        }
-    }
-    if (routineFix.size() > 0) {
-        mData->updateRoutine(ELightingRoutine::eSingleGlimmer);
-    }
     mData->updateColor(color);
     /// this is not always needed but sometimes it is and its a cheap operation if it isn't.
     /// Some comm streams such as hue combine color and brightness with HSV.
@@ -183,9 +194,10 @@ void ColorPage::colorChanged(QColor color) {
 void ColorPage::customColorCountChanged(int count) {
     mData->updateCustomColorCount(count);
     mColorPicker->updateColorStates(mData->mainColor(),
-                                       mData->brightness(),
-                                       mData->colorGroup(EColorGroup::eCustom),
-                                       mData->customColorsUsed());
+                                    mData->brightness(),
+                                    mData->colorGroup(EColorGroup::eCustom),
+                                    createColorScheme(mData->currentDevices()),
+                                    mData->customColorsUsed());
 
     if (mBottomMenuState == EBottomMenuShow::eShowMultiRoutines) {
         mMultiRoutineWidget->multiRoutineColorsChanged(mData->colorGroup(EColorGroup::eCustom),
@@ -211,6 +223,16 @@ void ColorPage::ambientUpdateReceived(int newAmbientValue, int newBrightness) {
     emit brightnessChanged(newBrightness);
 }
 
+void ColorPage::colorsChanged(std::vector<QColor> colors) {
+    mData->updateColorScheme(colors);
+    /// this is not always needed but sometimes it is and its a cheap operation if it isn't.
+    /// Some comm streams such as hue combine color and brightness with HSV.
+    /// By updating both, the system is forced to che
+    /// ck both.
+    mData->updateBrightness(mData->brightness());
+    emit updateMainIcons();
+}
+
 // ----------------------------
 // Protected
 // ----------------------------
@@ -219,9 +241,10 @@ void ColorPage::ambientUpdateReceived(int newAmbientValue, int newBrightness) {
 void ColorPage::show() {
     mLastColor = mData->mainColor();
     mColorPicker->updateColorStates(mData->mainColor(),
-                                       mData->brightness(),
-                                       mData->colorGroup(EColorGroup::eCustom),
-                                       mData->customColorsUsed());
+                                    mData->brightness(),
+                                    mData->colorGroup(EColorGroup::eCustom),
+                                    createColorScheme(mData->currentDevices()),
+                                    mData->customColorsUsed());
 }
 
 void ColorPage::resizeEvent(QResizeEvent *) {

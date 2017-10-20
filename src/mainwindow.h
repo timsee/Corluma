@@ -12,7 +12,9 @@
 #include "floatinglayout.h"
 #include "comm/commtypesettings.h"
 #include "comm/commlayer.h"
-#include "datasync.h"
+#include "comm/datasyncsettings.h"
+#include "comm/datasyncarduino.h"
+#include "comm/datasynchue.h"
 #include "editgrouppage.h"
 #include "greyoutoverlay.h"
 #include "settingspage.h"
@@ -49,6 +51,9 @@ public:
      * \brief Deconstructor
      */
     ~MainWindow();
+
+    /// pointer to settings page
+    SettingsPage *settings() { return mSettingsPage; }
 
 public slots:
 
@@ -109,8 +114,6 @@ public slots:
 
     /// slot called when greyout fade is complete.
     void greyOutFadeComplete();
-
-    SettingsPage *settings() { return mSettingsPage; }
 
 protected:
 
@@ -237,12 +240,19 @@ private:
     DataLayer *mData;
 
     /*!
-     * \brief mDataSync Data Sync is a thread that gets turned on whenever the DataLayer's devices don't
-     *        match the commLayer's representation of the devices. It continually sends packets through
-     *        the comm layer until it receives acknowledgements that the commlayer and the datalayer
-     *        match exactly.
+     * \brief mDataSyncArduino sync thread for data coming from arduinos
      */
-    DataSync *mDataSync;
+    DataSyncArduino *mDataSyncArduino;
+
+    /*!
+     * \brief mDataSyncHue sync thread for data coming from hues
+     */
+    DataSyncHue *mDataSyncHue;
+
+    /*!
+     * \brief mDataSyncSettings sync thread for data coming from settings
+     */
+    DataSyncSettings *mDataSyncSettings;
 
     /*!
      * \brief mPageIndex index of current page.

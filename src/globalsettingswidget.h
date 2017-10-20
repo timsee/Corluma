@@ -86,12 +86,6 @@ public slots:
     void serialCheckboxClicked(bool);
 
     /*!
-     * \brief deviceCountReachedZero disable and greys out assets that require a device to be
-     *        connected to use.
-     */
-    void deviceCountReachedZero();
-
-    /*!
      * \brief advanceModeButtonPressed called when advance mode button is pressed
      * \param isChecked true if checked, false if not
      */
@@ -102,6 +96,12 @@ public slots:
      * \param isChecked true if checked, false if not
      */
     void timeoutButtonPressed(bool isChecked);
+
+    /// value set for how long it takes the lights to timeout.
+    int timeoutValue();
+
+    /// value set for how quick color routines run.
+    int speedValue();
 
 protected:
     /*!

@@ -461,6 +461,26 @@ void DataLayer::updateColor(QColor color) {
     emit dataUpdate();
 }
 
+void DataLayer::updateColorScheme(std::vector<QColor> colors) {
+    int i = 0;
+    std::list<SLightDevice>::iterator iterator;
+    for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
+        iterator->color = colors[i];
+        iterator->isOn = true;
+
+        // handle Hue special case
+        if (iterator->type == ECommType::eHue) {
+            iterator->colorMode = EColorMode::eHSV;
+        } else {
+            iterator->colorMode = EColorMode::eRGB;
+        }
+
+        i++;
+        i = i % colors.size();
+    }
+    emit dataUpdate();
+}
+
 void DataLayer::updateBrightness(int brightness, std::list<SLightDevice> specialCaseDevices) {
     std::list<SLightDevice>::iterator iterator;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
@@ -485,19 +505,13 @@ void DataLayer::updateBrightness(int brightness, std::list<SLightDevice> special
 }
 
 void DataLayer::updateSpeed(int speed) {
-    std::list<SLightDevice>::iterator iterator;
-    for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
-        iterator->speed = speed;
-    }
-    emit dataUpdate();
+    mSpeed = speed;
+    emit settingsUpdate();
 }
 
 void DataLayer::updateTimeout(int timeout) {
-    std::list<SLightDevice>::iterator iterator;
-    for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
-        iterator->timeout = timeout;
-    }
-    emit dataUpdate();
+    mTimeout = timeout;
+    emit settingsUpdate();
 }
 
 void DataLayer::updateCustomColorCount(uint32_t count) {
@@ -542,26 +556,9 @@ bool DataLayer::customColor(uint32_t index, QColor color) {
 }
 
 
-int DataLayer::speed() {
-    int speed = 0;
-    for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
-        speed = speed + device->speed;
-    }
-    if (mCurrentDevices.size() > 1) {
-        speed = speed / mCurrentDevices.size();
-    }
-    return speed;
-}
-
-int DataLayer::timeout() {
-    int timeout = 0;
-    for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
-        timeout = timeout + device->timeout;
-    }
-    if (mCurrentDevices.size() > 1) {
-        timeout = timeout / mCurrentDevices.size();
-    }
-    return timeout;
+void DataLayer::enableTimeout(bool timeout) {
+    mTimeoutEnabled = timeout;
+    emit settingsUpdate();
 }
 
 uint32_t DataLayer::customColorsUsed() {

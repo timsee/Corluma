@@ -32,7 +32,6 @@ ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
 
     mLayout->addLayout(mTopLayout);
     mLayout->addWidget(mWidget);
-
 }
 
 

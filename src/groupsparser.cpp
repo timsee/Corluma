@@ -110,6 +110,7 @@ void GroupsParser::saveNewMood(const QString& groupName, const std::list<SLightD
     }
 }
 
+
 void GroupsParser::saveNewCollection(const QString& groupName, const std::list<SLightDevice>& devices) {
     QJsonObject groupObject;
     groupObject["name"] = groupName;
@@ -225,10 +226,12 @@ void GroupsParser::parseCollection(const QJsonObject& object) {
                 lightDevice.index = index;
                 lightDevice.name = controller;
                 list.push_back(lightDevice);
-                mCollectionList.push_back(std::make_pair(name, list));
             } else {
                 qDebug() << __func__ << " device broken";
             }
+        }
+        if (list.size()) {
+            mCollectionList.push_back(std::make_pair(name, list));
         }
     } else {
         qDebug() << __func__ << " not recognized";

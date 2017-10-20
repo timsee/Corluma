@@ -18,6 +18,7 @@ enum class EColorPageType {
     eRGB,
     eAmbient,
     eMulti,
+    eColorScheme,
     eBrightness
 };
 
@@ -115,12 +116,19 @@ signals:
      */
     void brightnessChanged(int);
 
+
 public slots:
 
     /*!
      * \brief colorChanged signaled whenever the ColorPicker chooses a new color.
      */
     void colorChanged(QColor);
+
+    /*!
+     * \brief colorsChanged multiple colors have changed and should be sent to the ColorPicker as a
+     *        color scheme
+     */
+    void colorsChanged(std::vector<QColor>);
 
 protected:
 
@@ -163,6 +171,13 @@ private slots:
     void brightnessUpdate(int brightness) { emit brightnessChanged(brightness); }
 
 private:
+
+    /*!
+     * \brief createColorScheme create a color scheme based off of the colorsed used by a list of devices
+     * \param devices the devices to use as a basis for a color scheme
+     * \return a vector of colors reqpresenting a color scheme
+     */
+    std::vector<QColor> createColorScheme(std::list<SLightDevice> devices);
 
     /*!
      * \brief mSingleRoutineWidget widget that pops up from the bottom and contains buttons for all of the

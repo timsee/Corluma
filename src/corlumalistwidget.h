@@ -66,8 +66,8 @@ protected:
 
 private:
 
-    /// vector of all widgets displayed in this widget.
-    std::vector<ListCollectionWidget*> mWidgets;
+    /// list of all widgets displayed in this widget.
+    std::list<ListCollectionWidget*> mWidgets;
 
     /// widget used for scroll area.
     QWidget *mWidget;

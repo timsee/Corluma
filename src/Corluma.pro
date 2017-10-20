@@ -118,6 +118,7 @@ SOURCES += main.cpp \
     comm/commlayer.cpp \
     comm/huebridgediscovery.cpp \
     comm/crccalculator.cpp \
+    comm/datasync.cpp \
     colorpicker/colorpicker.cpp \
     colorpicker/rgbsliders.cpp \
     colorpicker/tempbrightsliders.cpp \
@@ -135,7 +136,6 @@ SOURCES += main.cpp \
     connectionpage.cpp \
     floatinglayout.cpp \
     groupsparser.cpp \
-    datasync.cpp \
     discoverypage.cpp \
     listdevicewidget.cpp \
     presetgroupwidget.cpp \
@@ -158,7 +158,14 @@ SOURCES += main.cpp \
     corlumawebview.cpp \
     globalsettingswidget.cpp \
     corlumacheckbox.cpp \
-    corlumatopwidget.cpp
+    corlumatopwidget.cpp \
+    comm/datasynchue.cpp \
+    comm/datasyncarduino.cpp \
+    colorpicker/colorschemegrid.cpp \
+    colorpicker/colorschemecircles.cpp \
+    comm/datasyncsettings.cpp \
+    discovery/hardwareconnectionwidget.cpp
+
 
 HEADERS  +=  comm/commtype.h \
     comm/commserial.h \
@@ -171,6 +178,7 @@ HEADERS  +=  comm/commtype.h \
     comm/huebridgediscovery.h \
     comm/hueprotocols.h \
     comm/crccalculator.h \
+    comm/datasync.h \
     colorpicker/colorpicker.h \
     colorpicker/rgbsliders.h \
     colorpicker/tempbrightsliders.h \
@@ -191,7 +199,6 @@ HEADERS  +=  comm/commtype.h \
     connectionpage.h \
     floatinglayout.h \
     groupsparser.h \
-    datasync.h \
     discoverypage.h \
     listdevicewidget.h \
     presetgroupwidget.h \
@@ -215,7 +222,13 @@ HEADERS  +=  comm/commtype.h \
     corlumawebview.h \
     globalsettingswidget.h \
     corlumacheckbox.h \
-    corlumatopwidget.h
+    corlumatopwidget.h \
+    comm/datasynchue.h \
+    comm/datasyncarduino.h \
+    colorpicker/colorschemegrid.h \
+    colorpicker/colorschemecircles.h \
+    comm/datasyncsettings.h \
+    discovery/hardwareconnectionwidget.h
 
 FORMS    += discoverypage.ui \
     editcollectionpage.ui

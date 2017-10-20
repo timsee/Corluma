@@ -69,7 +69,7 @@ class CommType : public QWidget {
     Q_OBJECT
 public:
     /*!
-     * \brief ~CommType Deconstructor
+     * \brief ~CommType Destructor
      */
     virtual ~CommType(){}
 
@@ -256,6 +256,12 @@ signals:
 
 protected:
 
+    /*!
+     * \brief preparePacketForTransmission prepare internal states and variables for sending a new packet and adjust packet
+     *        to fix issues with sending it, if needed
+     * \param controller the controller to send the packet the to
+     * \param packet the packet that is about to be sent
+     */
     void preparePacketForTransmission(const SDeviceController& controller, QString& packet);
 
     /*!
