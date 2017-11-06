@@ -72,7 +72,7 @@ void DataSyncSettings::syncData() {
                     return;
                 }
 
-                if (checkThrottle(device.name, device.type, device.index)) {
+                if (checkThrottle(device.controller, device.type, device.index)) {
                     bool result = sync(device);
                     if (!result) {
                         countOutOfSync++;
@@ -111,7 +111,7 @@ void DataSyncSettings::endOfSync() {
 bool DataSyncSettings::sync(const SLightDevice& availableDevice) {
     int countOutOfSync = 0;
     SDeviceController controller;
-    if (!mComm->findDiscoveredController(availableDevice.type, availableDevice.name, controller)) {
+    if (!mComm->findDiscoveredController(availableDevice.type, availableDevice.controller, controller)) {
         return false;
     }
 
@@ -166,7 +166,7 @@ bool DataSyncSettings::sync(const SLightDevice& availableDevice) {
     if (countOutOfSync) {
         //qDebug() << "packet size" << packet.size() <<"count out of sync" << countOutOfSync;
         mComm->sendPacket(availableDevice, packet);
-        resetThrottle(availableDevice.name, availableDevice.type, availableDevice.index);
+        resetThrottle(availableDevice.controller, availableDevice.type, availableDevice.index);
     }
 
     return (countOutOfSync == 0);

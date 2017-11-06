@@ -30,14 +30,12 @@ public:
     /*!
      * \brief ListDeviceWidget Constructor for multi color routines.
      * \param device device for the widget
-     * \param name name for device on list
      * \param setHighlightable if true, the widget highlights itself, if false,
      *        it does not highlight.
      * \param size desired size of widget
      * \param parent parent widget
      */
     explicit ListDeviceWidget(const SLightDevice& device,
-                              const QString& name,
                               const std::vector<QColor>& colors,
                               bool setHighlightable,
                               QSize size,
@@ -100,7 +98,7 @@ private:
     QString structToIdentifierString(const SLightDevice& device);
 
     /// Called by constructors
-    void init(const SLightDevice& device, const QString& name);
+    void init(const SLightDevice& device);
 
     /// adds capitalization and stuff like that to a hue name.
     QString convertUglyHueNameToPrettyName(QString name);
@@ -112,6 +110,8 @@ private:
      * \return a string that represents the style sheet
      */
     QString createStyleSheet(const SLightDevice& device);
+
+    QString createName(const SLightDevice& device);
 
     /// resize the mIcon and its associated pixmap.
     void resizeIconPixmap();

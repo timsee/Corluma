@@ -74,7 +74,7 @@ bool CommType::removeController(SDeviceController controller) {
 
 void CommType::updateDevice(SLightDevice device) {
     bool foundDevice = false;
-    auto deviceList = mDeviceTable.find(device.name.toStdString());
+    auto deviceList = mDeviceTable.find(device.controller.toStdString());
     if (deviceList != mDeviceTable.end()) {
         for (auto it = deviceList->second.begin(); it != deviceList->second.end(); ++it) {
             if (compareLightDevice(device, *it)) {
@@ -85,25 +85,25 @@ void CommType::updateDevice(SLightDevice device) {
                 return;
             }
         }
-        if (!foundDevice) {
-            //qDebug() << "INFO: tried to update device that didnt exist, adding it instead";
-            deviceList->second.push_back(device);
-            emit updateReceived((int)mType);
-        }
     }
 
+    if (!foundDevice) {
+        //qDebug() << "INFO: tried to update device that didnt exist, adding it instead";
+        deviceList->second.push_back(device);
+        emit updateReceived((int)mType);
+    }
 }
 
 
 bool CommType::fillDevice(SLightDevice& device) {
-    auto deviceList = mDeviceTable.find(device.name.toStdString());
+    auto deviceList = mDeviceTable.find(device.controller.toStdString());
     if (deviceList != mDeviceTable.end()) {
         for (auto it = deviceList->second.begin(); it != deviceList->second.end(); ++it) {
             bool deviceExists = true;
 
             // these three values do not change and can be used as a unique key for the device, even if
             // things like the color or brightness change.
-            if (device.name.compare(it->name)) {
+            if (device.controller.compare(it->controller)) {
                 deviceExists = false;
             }
             if (device.index != it->index)  {

@@ -18,7 +18,7 @@ class ListCollectionSubWidget : public QWidget
     Q_OBJECT
 
 public:
-    /// virtual deconstructor
+    /// virtual destructor
     virtual ~ListCollectionSubWidget(){}
 
     /*!

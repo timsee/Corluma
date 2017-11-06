@@ -43,6 +43,8 @@ MainWindow::MainWindow(QWidget *parent) :
     mDiscoveryPageIsOpen = true;
     mSettingsPageIsOpen = false;
     mEditPageIsOpen = false;
+    mHueInfoWidgetIsOpen = false;
+    mHueLightDiscoveryIsOpen = false;
 
     // --------------
     // Setup Backend
@@ -163,6 +165,21 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(mDiscoveryPage, SIGNAL(closeWithoutTransition()), this, SLOT(closeDiscoveryWithoutTransition()));
 
     // --------------
+    // Settings Page
+    // --------------
+
+    mSettingsPage = new SettingsPage(this);
+    mSettingsPage->setVisible(false);
+    mSettingsPage->connectCommLayer(mComm);
+    mSettingsPage->connectGroupsParser(groups);
+    mSettingsPage->globalWidget()->connectBackendLayers(mComm, mData);
+    connect(mSettingsPage, SIGNAL(updateMainIcons()), mTopMenu, SLOT(updateMenuBar()));
+    connect(mSettingsPage, SIGNAL(debugPressed()), this, SLOT(settingsDebugPressed()));
+    connect(mSettingsPage, SIGNAL(closePressed()), this, SLOT(settingsClosePressed()));
+    connect(mSettingsPage, SIGNAL(clickedHueInfoWidget()), this, SLOT(hueInfoWidgetClicked()));
+    connect(mSettingsPage, SIGNAL(clickedHueDiscovery()), this, SLOT(showHueLightDiscovery()));
+
+    // --------------
     // Setup GreyOut View
     // --------------
 
@@ -182,24 +199,41 @@ MainWindow::MainWindow(QWidget *parent) :
                         -1 * this->height(),
                         this->width(), this->height());
 
+
     // --------------
-    // Settings Page
+    // Setup Hue Info Widget
     // --------------
 
-    mSettingsPage = new SettingsPage(this);
-    mSettingsPage->setVisible(false);
-    mSettingsPage->connectCommLayer(mComm);
-    mSettingsPage->connectGroupsParser(groups);
-    mSettingsPage->globalWidget()->connectBackendLayers(mComm, mData);
-    connect(mSettingsPage, SIGNAL(updateMainIcons()), mTopMenu, SLOT(updateMenuBar()));
-    connect(mSettingsPage, SIGNAL(debugPressed()), this, SLOT(settingsDebugPressed()));
-    connect(mSettingsPage, SIGNAL(closePressed()), this, SLOT(settingsClosePressed()));
+    mHueInfoWidget = new HueLightInfoListWidget(this);
+    connect(mHueInfoWidget, SIGNAL(hueChangedName(QString, QString)), this, SLOT(hueNameChanged(QString, QString)));
+    connect(mHueInfoWidget, SIGNAL(hueDeleted(QString)), this, SLOT(deleteHue(QString)));
+    connect(mHueInfoWidget, SIGNAL(pressedClose()), this, SLOT(hueInfoClosePressed()));
+
+    mHueInfoWidget->setGeometry(0,
+                                -1 * this->height(),
+                                this->width(), this->height());
 
     // --------------
     // Set up the floating layouts
     // --------------
 
+    mBottomRightFloatingLayout = new FloatingLayout(false, this);
+    connect(mBottomRightFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
+    std::vector<QString> buttons = { QString("HueLightSearch")};
+    mBottomRightFloatingLayout->setupButtons(buttons);
+    mBottomRightFloatingLayout->setVisible(false);
+
     mTopMenu->setup(this, mGroupPage, mColorPage);
+
+
+    // --------------
+    // Set up HueLightInfoDiscovery
+    // --------------
+
+    mHueLightDiscovery = new HueLightDiscovery(this);
+    mHueLightDiscovery->setVisible(false);
+    mHueLightDiscovery->connectCommLayer(mComm);
+    connect(mHueLightDiscovery, SIGNAL(closePressed()), this, SLOT(hueDiscoveryClosePressed()));
 
     // --------------
     // Resize pages to proper sizes
@@ -380,6 +414,8 @@ void MainWindow::showMainPage(EPage page) {
         mConnectionPage->show();
     } else if (page == EPage::eColorPage) {
         mColorPage->show();
+    } else if (page == EPage::eGroupPage) {
+        mGroupPage->resize();
     }
 }
 
@@ -416,6 +452,7 @@ void MainWindow::settingsDebugPressed() {
 void MainWindow::resizeEvent(QResizeEvent *event) {
     Q_UNUSED(event);
 
+    moveFloatingLayout();
     mMainWidget->setGeometry(this->geometry());
 
     mTopMenu->setGeometry(0,0,this->width(), this->height() * 0.2f);
@@ -442,8 +479,17 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
     if (mGreyOut->isVisible()) {
         mGreyOut->resize();
     }
+
     if (mEditPageIsOpen) {
         mEditPage->resize();
+    }
+
+    if (mHueInfoWidgetIsOpen) {
+        mHueInfoWidget->resize();
+    }
+
+    if (mHueLightDiscoveryIsOpen) {
+        mHueLightDiscovery->resize();
     }
 
     QWidget *widget = mainPageWidget(mPageIndex);
@@ -561,6 +607,31 @@ void MainWindow::editButtonClicked(QString key, bool isMood) {
     }
 }
 
+void MainWindow::hueInfoWidgetClicked() {
+    fadeInGreyOut();
+    mHueInfoWidgetIsOpen = true;
+
+    mHueInfoWidget->updateLights(mComm->hueList());
+    mBottomRightFloatingLayout->setVisible(true);
+
+    QSize size = this->size();
+    mHueInfoWidget->setGeometry(size.width() * 0.125f,
+                                -1 * this->height(),
+                                size.width() * 0.75f,
+                                size.height() * 0.75f);
+
+    QPoint finishPoint(size.width() * 0.125f,
+                       size.height() * 0.125f);
+    QPropertyAnimation *animation = new QPropertyAnimation(mHueInfoWidget, "pos");
+    animation->setDuration(TRANSITION_TIME_MSEC);
+    animation->setStartValue(mHueInfoWidget->pos());
+    animation->setEndValue(finishPoint);
+    animation->start();
+
+    if (mGreyOut->isVisible()) {
+        mGreyOut->resize();
+    }
+}
 
 void MainWindow::editClosePressed() {
     fadeOutGreyOut();
@@ -583,6 +654,69 @@ void MainWindow::editClosePressed() {
     mConnectionPage->updateConnectionList();
 }
 
+
+void MainWindow::hueInfoClosePressed() {
+    fadeOutGreyOut();
+    mHueInfoWidgetIsOpen = false;
+
+    QSize size = this->size();
+    mHueInfoWidget->setGeometry(size.width() * 0.125f,
+                           size.height() * 0.125f,
+                           size.width() * 0.75f,
+                           size.height() * 0.75f);
+
+    QPoint finishPoint(size.width() * 0.125f, -1 * this->height());
+    mBottomRightFloatingLayout->setVisible(false);
+
+    QPropertyAnimation *animation = new QPropertyAnimation(mHueInfoWidget, "pos");
+    animation->setDuration(TRANSITION_TIME_MSEC);
+    animation->setStartValue(mHueInfoWidget->pos());
+    animation->setEndValue(finishPoint);
+    animation->start();
+}
+
+
+void MainWindow::hueNameChanged(QString key, QString name) {
+
+    // get hue light from key
+    std::list<SHueLight> hueLights = mComm->hueList();
+    int keyNumber = key.toInt();
+    SHueLight light;
+    bool lightFound = false;
+    for (auto hue : hueLights) {
+        if (hue.deviceIndex == keyNumber) {
+            lightFound = true;
+            light = hue;
+        }
+    }
+
+    if (lightFound) {
+        mComm->renameHue(light, name);
+    } else {
+        qDebug() << " could NOT change this key: " << key << " to this name " << name;
+    }
+}
+
+void MainWindow::deleteHue(QString key) {
+    // get hue light from key
+    std::list<SHueLight> hueLights = mComm->hueList();
+    int keyNumber = key.toInt();
+    SHueLight light;
+    bool lightFound = false;
+    for (auto hue : hueLights) {
+        if (hue.deviceIndex == keyNumber) {
+            lightFound = true;
+            light = hue;
+        }
+    }
+
+    if (lightFound) {
+        qDebug() << " deleting hue" << light.name;
+        mComm->deleteHue(light);
+    } else {
+        qDebug() << " could NOT Delete" << key;
+    }
+}
 
 void MainWindow::fadeInGreyOut() {
     mGreyOut->setVisible(true);
@@ -610,3 +744,29 @@ void MainWindow::greyOutFadeComplete() {
     mGreyOut->setVisible(false);
 }
 
+void MainWindow::floatingLayoutButtonPressed(QString button) {
+    if (button.compare("HueLightSearch") == 0) {
+        showHueLightDiscovery();
+    }
+}
+
+void MainWindow::showHueLightDiscovery() {
+    mHueLightDiscoveryIsOpen = true;
+    mHueLightDiscovery->resize();
+    mHueLightDiscovery->setVisible(true);
+    mHueLightDiscovery->show();
+}
+
+
+void MainWindow::hueDiscoveryClosePressed() {
+    mHueLightDiscoveryIsOpen = false;
+    mHueLightDiscovery->setVisible(false);
+    mHueLightDiscovery->hide();
+}
+
+void MainWindow::moveFloatingLayout() {
+    QPoint bottomRight(this->width(),
+                       this->height() - mBottomRightFloatingLayout->height());
+    mBottomRightFloatingLayout->move(bottomRight);
+    mBottomRightFloatingLayout->raise();
+}

@@ -21,6 +21,9 @@ public:
     /// constructor
     explicit CorlumaTopWidget(QString title, QString resource = QString(), QWidget *parent = 0);
 
+    /// set the font point size.
+    void setFontPoint(int pt);
+
 signals:
     /// emitted whenever its button is clicked
     void clicked(bool);

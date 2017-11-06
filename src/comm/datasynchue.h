@@ -35,6 +35,10 @@ public:
     /// destructor
     ~DataSyncHue() {}
 
+    /*!
+     * \brief connectGroupsParser connect groups parser to DataSyncHue
+     * \param groups pointer to the GroupsParser
+     */
     void connectGroupsParser(GroupsParser *groups) { mGroups = groups; }
 
     /*!

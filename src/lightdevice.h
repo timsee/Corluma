@@ -257,9 +257,14 @@ struct SLightDevice {
      */
     ECommType type;
     /*!
-     * \brief name the name of the connection. This varies by connection type. For example,
+     * \brief controller the name of the connection. This varies by connection type. For example,
      *        a UDP connection will use its IP address as a name, or a serial connection
      *        will use its serial port.
+     */
+    QString controller;
+
+    /*!
+     * \brief name name of the light, as stored in its controller.
      */
     QString name;
 
@@ -276,7 +281,7 @@ struct SLightDevice {
                  << "brightness: " << brightness << "\n"
                  << "index: " << index << "\n"
                  << "Type: " << utils::ECommTypeToString(type) << "\n"
-                 << "name: " << name << "\n";
+                 << "controller: " << controller << "\n";
     }
 
 
@@ -311,7 +316,7 @@ struct SLightDevice {
 inline bool compareLightDevice(const SLightDevice& lhs, const SLightDevice& rhs) {
     return ((lhs.index == rhs.index)
             && (lhs.type == rhs.type)
-            && (lhs.name.compare(rhs.name) == 0));
+            && (lhs.controller.compare(rhs.controller) == 0));
 }
 
 
@@ -329,7 +334,7 @@ inline bool operator==(const SLightDevice& lhs, const SLightDevice& rhs) {
     if (lhs.colorMode       !=  rhs.colorMode) result = false;
     if (lhs.timeout         !=  rhs.timeout) result = false;
     if (lhs.speed           !=  rhs.speed) result = false;
-    if (lhs.name.compare(rhs.name)) result = false;
+    if (lhs.controller.compare(rhs.controller)) result = false;
 
     return result;
 }

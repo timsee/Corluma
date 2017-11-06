@@ -5,6 +5,7 @@
 #include <QLineEdit>
 
 #include "discovery/discoverywidget.h"
+#include "searchwidget.h"
 
 /*!
  * \copyright
@@ -36,11 +37,6 @@ public:
     /// See DiscoveryWidget.h
     void handleDiscovery(bool isActive);
 
-    /*!
-     * \brief yunLineEditHelper helper function for setting the yun line edit.
-     */
-    void yunLineEditHelper();
-
 private slots:
 
     /*!
@@ -53,23 +49,7 @@ private slots:
      */
     void minusButtonClicked();
 
-    /*!
-     * \brief connectedListClicked The connected list was clicked on a discovery page.
-     *        This allows the user to select one of the connections, but its internal logic
-     *        is handled differently between different CommTypes.
-     */
-    void connectedListClicked(QListWidgetItem *);
-
-    /*!
-     * \brief discoveringListClicked The discovering list was clicked on a discovery page.
-     *        This allows the user to select one of the connections, but its internal logic
-     *        is handled differently between different CommTypes.
-     */
-    void discoveringListClicked(QListWidgetItem *);
-
 private:
-
-
     /*!
      * \brief doesYunControllerExistAlready checks both UDP and HTTP yun device lists to see if it has any knowledge
      *        of the given controller.
@@ -78,35 +58,14 @@ private:
      */
     bool doesYunControllerExistAlready(QString controller);
 
+    /// widget that is used for searching for IP addresses and listing the connected ones.
+    SearchWidget *mSearchWidget;
+
     /// buffer for last IP address used
     QString mLastIP;
 
     /// top label that explains the widget
     QLabel *mTopLabel;
-
-    /// layout for the QLineEdit and QPushButtons used for input
-    QHBoxLayout *mInputLayout;
-
-    /// plus button in input layout. adds current string to discovery
-    QPushButton *mPlusButton;
-
-    /// minus button for input layout. removes current string from discovery
-    QPushButton *mMinusButton;
-
-    /// Displays current IP address and allows user to edit it. Can be added or removed from discovery with QPushButtons
-    QLineEdit *mLineEdit;
-
-    /// label for connected list
-    QLabel *mConnectedLabel;
-
-    /// label for discovering list
-    QLabel *mDiscoveringLabel;
-
-    /// widget for displaying connected IP addresses
-    QListWidget *mConnectedListWidget;
-
-    /// widget for displaying discovering IP addresses
-    QListWidget *mDiscoveringListWidget;
 
     /// layout for widget
     QVBoxLayout *mLayout;

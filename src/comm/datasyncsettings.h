@@ -9,6 +9,10 @@
 #include "datasync.h"
 
 /*!
+ * \copyright
+ * Copyright (C) 2015 - 2017.
+ * Released under the GNU General Public License.
+ *
  * \brief The DataSyncSettings class is a datasync thread that syncs the desired global settings from the datalayer with all
  *        connected lights on the commlayer.
  */

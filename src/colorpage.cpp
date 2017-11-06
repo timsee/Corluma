@@ -177,6 +177,13 @@ void ColorPage::newRoutineSelected(int newRoutine) {
 
 void ColorPage::colorChanged(QColor color) {
     mData->updateColor(color);
+
+    for (auto device : mData->currentDevices()) {
+        if (device.lightingRoutine > utils::ELightingRoutineSingleColorEnd) {
+            mData->updateRoutine(ELightingRoutine::eSingleGlimmer);
+        }
+    }
+
     /// this is not always needed but sometimes it is and its a cheap operation if it isn't.
     /// Some comm streams such as hue combine color and brightness with HSV.
     /// By updating both, the system is forced to check both.

@@ -164,7 +164,12 @@ SOURCES += main.cpp \
     colorpicker/colorschemegrid.cpp \
     colorpicker/colorschemecircles.cpp \
     comm/datasyncsettings.cpp \
-    discovery/hardwareconnectionwidget.cpp
+    discovery/hardwareconnectionwidget.cpp \
+    huelightdiscovery.cpp \
+    huelightinfowidget.cpp \
+    huelightinfolistwidget.cpp \
+    editablefieldwidget.cpp \
+    searchwidget.cpp
 
 
 HEADERS  +=  comm/commtype.h \
@@ -228,7 +233,12 @@ HEADERS  +=  comm/commtype.h \
     colorpicker/colorschemegrid.h \
     colorpicker/colorschemecircles.h \
     comm/datasyncsettings.h \
-    discovery/hardwareconnectionwidget.h
+    discovery/hardwareconnectionwidget.h \
+    huelightdiscovery.h \
+    huelightinfowidget.h \
+    huelightinfolistwidget.h \
+    editablefieldwidget.h \
+    searchwidget.h
 
 FORMS    += discoverypage.ui \
     editcollectionpage.ui

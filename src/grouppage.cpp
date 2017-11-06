@@ -90,8 +90,9 @@ void GroupPage::setupButtons() {
     for (int preset = (int)EColorGroup::eWater; preset < (int)EColorGroup::eColorGroup_MAX; preset++) {
         mPresetWidgets[groupIndex] = new PresetGroupWidget(QString(labels[groupIndex].c_str()),
                                                            (EColorGroup)preset,
-                                                           mData->colorGroup((EColorGroup)preset));
-        mPresetLayout->addWidget(mPresetWidgets[groupIndex]);
+                                                           mData->colorGroup((EColorGroup)preset),
+                                                           this);
+        mPresetLayout->addWidget(mPresetWidgets[groupIndex], 1);
         connect(mPresetWidgets[groupIndex], SIGNAL(presetButtonClicked(int, int)), this, SLOT(multiButtonClicked(int,int)));
         groupIndex++;
     }
@@ -137,6 +138,8 @@ void GroupPage::multiButtonClicked(int routine, int colorGroup) {
 void GroupPage::showEvent(QShowEvent *) {
     highlightRoutineButton(mData->currentRoutine(), mData->currentColorGroup());
     updateConnectionList();
+
+    resize();
 }
 
 void GroupPage::hideEvent(QHideEvent *) {
@@ -149,12 +152,22 @@ void GroupPage::renderUI() {
 
 void GroupPage::resizeEvent(QResizeEvent *) {
    // mScrollWidget->setFixedWidth(mScrollArea->viewport()->width());
+    resize();
+
+}
+
+void GroupPage::resize() {
     mMoodsListWidget->setMaximumSize(this->size());
     updateConnectionList();
     for (uint32_t i = 0; i < mMoodsListWidget->count(); ++i) {
         ListCollectionWidget *item = mMoodsListWidget->widget(i);
         item->setListHeight(this->height());
         item->setShowButtons(mSettings->value(keyForCollection(item->key())).toBool());
+    }
+
+    mScrollArea->setFixedSize(this->size());
+    for (uint32_t i = 0; i < mPresetWidgets.size(); ++i) {
+        mPresetWidgets[i]->resize();
     }
 }
 
@@ -247,6 +260,7 @@ void GroupPage::updateConnectionList() {
 }
 
 void GroupPage::newMoodAdded(QString mood) {
+    Q_UNUSED(mood);
    // qDebug() << "mood added" << mood;
     updateConnectionList();
 }

@@ -138,13 +138,11 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(true);
-            utils::resizeIcon(mButtons[i], ":/images/ColorSchemePicker_icon.png");
             mButtons[i]->setMinimumSize(buttonSize());
         } else if (mNames[i].compare("Temperature") == 0) {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(true);
-            utils::resizeIcon(mButtons[i], ":/images/hueRange_icon.png");
             mButtons[i]->setMinimumSize(buttonSize());
         } else if (mNames[i].compare("Routine") == 0) {
             foundMatch = true;
@@ -188,6 +186,11 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             mButtons[i]->setCheckable(false);
             mButtons[i]->setMinimumSize(buttonSize());
         } else if (mNames[i].compare("Select_Devices") == 0) {
+            foundMatch = true;
+            mButtons[i] = new QPushButton(this);
+            mButtons[i]->setCheckable(true);
+            mButtons[i]->setMinimumSize(buttonSize());
+        } else if (mNames[i].compare("HueLightSearch") == 0) {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(true);
@@ -251,6 +254,8 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
                     utils::resizeIcon(mButtons[i], ":/images/editIcon.png");
                 } else if (mNames[i].compare("ColorScheme") == 0) {
                     utils::resizeIcon(mButtons[i], ":/images/ColorSchemePicker_icon.png");
+                } else if (mNames[i].compare("HueLightSearch") == 0) {
+                    utils::resizeIcon(mButtons[i], ":/images/plusIcon.png");
                 }
             } else {
                 CorlumaButton *lightsButton = static_cast<CorlumaButton*>(mButtons[i]);

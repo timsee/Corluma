@@ -255,8 +255,14 @@ void GlobalSettingsWidget::show() {
     mSpeedSlider->enable(true);
     mTimeoutSlider->enable(true);
 
-    mSpeedSlider->setSliderColorBackground(mData->mainColor());
-    mTimeoutSlider->setSliderColorBackground(mData->mainColor());
+    if (mData->currentDevices().size() > 0) {
+        mSpeedSlider->setSliderColorBackground(mData->mainColor());
+        mTimeoutSlider->setSliderColorBackground(mData->mainColor());
+    } else {
+        QColor color = QColor(61, 142, 201, 255);
+        mSpeedSlider->setSliderColorBackground(color);
+        mTimeoutSlider->setSliderColorBackground(color);
+    }
 
     // default the settings bars to the current colors
     mSpeedSlider->slider()->setValue(mSliderSpeedValue);
@@ -397,21 +403,22 @@ void GlobalSettingsWidget::resize() {
         currentY += mEnabledConnectionsLabel->height() + mSpacerPixels;
     }
 
+    int buttonSize = this->width() * 0.2f;
     if (mHueButton->isVisible()) {
         mHueButton->setGeometry(mSpacerPixels,
                                 currentY,
-                                mSpeedLabel->width(),
-                                mSpeedLabel->width());
+                                buttonSize,
+                                buttonSize);
 
         mYunButton->setGeometry(mHueButton->geometry().x() + mHueButton->width() + mSpacerPixels,
                                 currentY,
-                                mSpeedLabel->width(),
-                                mSpeedLabel->width());
+                                buttonSize,
+                                buttonSize);
 #ifndef MOBILE_BUILD
         mSerialButton->setGeometry(mYunButton->geometry().x() + mYunButton->width() + mSpacerPixels,
                                 currentY,
-                                mSpeedLabel->width(),
-                                mSpeedLabel->width());
+                                buttonSize,
+                                buttonSize);
 #endif //MOBILE_BUILD
 
         currentY += mHueButton->height() + 2 * mSpacerPixels;

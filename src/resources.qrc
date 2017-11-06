@@ -42,5 +42,6 @@
         <file>images/incomingCompleteArrow.png</file>
         <file>images/outgoingBrokenArrow.png</file>
         <file>images/outgoingCompleteArrow.png</file>
+        <file>images/plusIcon.png</file>
     </qresource>
 </RCC>

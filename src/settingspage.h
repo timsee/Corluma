@@ -97,6 +97,16 @@ signals:
      */
     void closePressed();
 
+    /*!
+     * \brief clickedHueDiscovery emits when hue discovery button is clicked
+     */
+    void clickedHueDiscovery();
+
+    /*!
+     * \brief clickedHueInfoWidget emits when hue info widget is clicked
+     */
+    void clickedHueInfoWidget();
+
 private slots:
     /*!
      * \brief closeButtonPressed signaled from close button, emits a close signal.

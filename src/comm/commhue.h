@@ -223,6 +223,15 @@ public:
     /// getter for list of groups
     std::list<SHueGroup> groups() { return mGroups; }
 
+    /// list of lights recently discovered by a scan
+    std::list<SHueLight> newLights() { return mNewLights; }
+
+    /// request a list of all recently discovered lights
+    void requestNewLights();
+
+    /// true if scan is active, false otherwise
+    bool scanIsActive() { return mScanIsActive; }
+
     //---------------
     // Schedules
     //---------------
@@ -458,15 +467,23 @@ private:
     std::list<SHueGroup> mGroups;
 
     /*!
-     * \brief stringToHueType helper that takes a string received from the hue and converts it to its type.
-     */
-    EHueType stringToHueType(const QString& string);
-
-    /*!
      * \brief hueStringtoColorMode helper that takes a mode given by JSON data from the hue bridge and
      *        and converts it to an enumerated type.
      */
     EColorMode hueStringtoColorMode(const QString& mode);
+
+    /*!
+     * \brief updateHueLight update the internal SHueLight based on the provided SHueLight
+     * \param hue the SHueLight to use for updating
+     * \return true if light is found and updated, false if it isn't found and its added to the list.
+     */
+    bool updateHueLight(SHueLight& hue);
+
+    /// list of new lights found from light scan
+    std::list<SHueLight> mNewLights;
+
+    /// true if scanning for lights, false otherwise.
+    bool mScanIsActive;
 
     /*!
      * \brief handleSuccessPacket handles a packet received from the hue bridge that indicates a requested change
@@ -490,6 +507,22 @@ private:
      * \return true if successful, false if failed.
      */
     bool updateHueLightState(QJsonObject object, int i);
+
+    /*!
+     * \brief updateNewHueLight a new hue light was discovered from scanning, add the meta data to the list of newly discovered lights
+     * \param object json object that contains all the light information
+     * \param i index of hue light
+     * \return true if successful, false if failed
+     */
+    bool updateNewHueLight(QJsonObject object, int i);
+
+    /*!
+     * \brief updateScanState a new update containing a scan state. This will say if the scan is on or off, and if its off it will
+     *        say how long it was since it was last scanning.
+     * \param object json object that contains the scan state update
+     * \return true if successful, false if failed.
+     */
+    bool updateScanState(QJsonObject object);
 
     /*!
      * \brief updateHueGroups read an incoming packet from the hue bridge and update the internal representation of

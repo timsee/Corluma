@@ -212,12 +212,7 @@ void CommLayer::sendReset(const std::list<SLightDevice>& deviceList) {
 void CommLayer::sendPacket(const SLightDevice& device, const QString& payload) {
     CommType* commPtr = commByType(device.type);
     SDeviceController controller;
-    QString name;
-    if (device.type == ECommType::eHue) {
-        name = "Bridge";
-    } else {
-        name = device.name;
-    }
+    QString name = device.controller;
     if (commPtr->findDiscoveredController(name, controller)) {
         commPtr->sendPacket(controller, payload);
     }
@@ -308,7 +303,7 @@ void CommLayer::parsePacket(QString sender, QString packet, int type) {
                     device.index =  intVector[1];
                     if (device.index < 15 && device.index  >= 1) {
                         device.type = (ECommType)type;
-                        device.name = sender;
+                        device.controller = sender;
                         commByType((ECommType)type)->fillDevice(device);
 
                         // check if its a valid size with the proper header for a state update packet
@@ -435,9 +430,6 @@ bool CommLayer::verifyStateUpdatePacketValidity(std::vector<int> packetIntVector
 
 void CommLayer::hueDiscoveryUpdate(int newDiscoveryState) {
     emit hueDiscoveryStateChange(newDiscoveryState);
-    if ((EHueDiscoveryState)newDiscoveryState == EHueDiscoveryState::eBridgeConnected) {
-        mHue->startDiscoveringController(QString("Bridge"));
-    }
 }
 
 CommType *CommLayer::commByType(ECommType type) {
@@ -498,6 +490,10 @@ SHueLight CommLayer::hueLightFromLightDevice(const SLightDevice& device) {
 
 SLightDevice CommLayer::lightDeviceFromHueLight(const SHueLight& light) {
     return mHue->lightDeviceFromHueLight(light);
+}
+
+void CommLayer::renameHue(SHueLight hue, QString newName) {
+    mHue->renameLight(hue, newName);
 }
 
 const std::list<SLightDevice>  CommLayer::allDevices() {
@@ -562,6 +558,22 @@ std::list<SHueGroup> CommLayer::hueGroups() {
     return mHue->groups();
 }
 
+void CommLayer::searchForHueLights(std::list<QString> serialNumbers) {
+    return mHue->searchForNewLights(serialNumbers);
+}
+
 void CommLayer::updateHueTimeout(bool enable, int index, int timeout) {
     mHue->updateIdleTimeout(enable, index, timeout);
+}
+
+void CommLayer::deleteHue(SHueLight hue) {
+    mHue->deleteLight(hue);
+}
+
+void CommLayer::requestNewHueLights() {
+    mHue->requestNewLights();
+}
+
+std::list<SHueLight> CommLayer::newHueLights() {
+    return mHue->newLights();
 }

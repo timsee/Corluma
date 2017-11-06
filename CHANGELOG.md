@@ -209,12 +209,20 @@ ___
 * Added initial prototype for the ColorSchemePicker. 
 * Fixed miscellaneous bugs.
 
+
+### **v0.11.0**
+#### The Hue Bridge Update 
+*The point of this update is to make Corluma do everything that the Phillips Hue app can do, with some minor caveats. The next few updates will remove those caveats and will give the Hue's all the capabilities that RGB-LED-Routines has.*
+* Added new widgets for Hue Light information and discovery.
+* Added backend support for Hue light discovery.
+* Added frontend support for renaming and deleting Hue lights. 
+* Added new widgets for common tasks, like searching and editing fields.
+* Fixed miscellaneous layout issues.
+
 ### Coming Soon
-#### The Advanced Hue Integration Update (Working Title)
-* Fully integrate Rooms and Schedules stored on the Hue Bridge.
-* Add manual discovery of Hue lights and Bridges. 
-* Add a widget that shows more information about Hue hardware. 
-* Rigorously test the timeout functionality of Hues.
+* Fully integrate Rooms, Groups, and Schedules stored on the Hue Bridge.
+* Finish manual discovery of Hues and Bridges
+* Add Color Group support to Hues.
 
 
 

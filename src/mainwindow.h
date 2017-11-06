@@ -22,6 +22,8 @@
 #include "colorpage.h"
 #include "grouppage.h"
 #include "connectionpage.h"
+#include "huelightinfolistwidget.h"
+#include "huelightdiscovery.h"
 #include <QStackedWidget>
 
 /*!
@@ -79,6 +81,12 @@ public slots:
      */
     void editButtonClicked(QString key, bool isMood);
 
+    /// show the hue info widget.
+    void hueInfoWidgetClicked();
+
+    /// hue info widget close button pressed.
+    void hueInfoClosePressed();
+
     /*!
      * \brief editClosePressed close the edit page
      */
@@ -114,6 +122,28 @@ public slots:
 
     /// slot called when greyout fade is complete.
     void greyOutFadeComplete();
+
+    /*!
+     * \brief hueNameChanged change the name of a hue widget given the key and the new name.
+     * \param key the key for the hue, which is the device index for the hue.
+     * \param name the new name for the hue.
+     */
+    void hueNameChanged(QString key, QString name);
+
+    /*!
+     * \brief deleteHue Delete the hue with the given key as a device index
+     * \param key device index for a hue provided as a key.
+     */
+    void deleteHue(QString key);
+
+    /// called when any button in a floating layout is pressed.
+    void floatingLayoutButtonPressed(QString);
+
+    /// show the hue light discovery widget
+    void showHueLightDiscovery();
+
+    /// close the hue light discovery widget
+    void hueDiscoveryClosePressed();
 
 protected:
 
@@ -170,7 +200,6 @@ private:
     /// fades out the greyout
     void fadeOutGreyOut();
 
-
     /*!
      * \brief showMainPage transitions either the color page, group page, or connection page onto the
      *        the main screen. The widgets come in from the left or the right, depending on the particular
@@ -201,6 +230,9 @@ private:
     /// returns true if the page should come from the left, false if it should come from the right.
     bool shouldTranitionInFromLeft(EPage page);
 
+    /// programmatically trigger moving the floating layout
+    void moveFloatingLayout();
+
     /// Gives a QWidget representation of any of the main widgets (ConnectionPage, GroupPage, ColorPage)
     QWidget *mainPageWidget(EPage page);
 
@@ -208,6 +240,12 @@ private:
      * \brief mEditPage overlay that allows editing and creating collections and moods.
      */
     EditGroupPage *mEditPage;
+
+    /*!
+     * \brief mHueInfoWidget displays information about hue lights, including their serial numbers and their
+     *        software versions. Can edit light names and delete lights from the Bridge.
+     */
+    HueLightInfoListWidget *mHueInfoWidget;
 
     /*!
      * \brief mSettingsPage overlay widget that allows access to various app settings such as loading from
@@ -222,10 +260,21 @@ private:
     GreyOutOverlay *mGreyOut;
 
     /*!
+     * \brief mHueLightDiscovery widget for
+     */
+    HueLightDiscovery *mHueLightDiscovery;
+
+    /*!
      * \brief mDiscoveryPage page devoted to discovering new connections. Previous connections
      *        are saved so this page should only be used for configuring.
      */
     DiscoveryPage *mDiscoveryPage;
+
+    /*!
+     * \brief mBottomRightFloatingLayout floating layout in bottom right for special cases where
+     *        the top right just isn't good enough.
+     */
+    FloatingLayout *mBottomRightFloatingLayout;
 
     /*!
      * \brief communication pointer to communication object
@@ -273,6 +322,12 @@ private:
 
     /// true if edit page is open, false otherwise.
     bool mEditPageIsOpen;
+
+    /// true if hue widget is open, false otherwise.
+    bool mHueInfoWidgetIsOpen;
+
+    /// true if hue light discovery widget is open, false otherwise.
+    bool mHueLightDiscoveryIsOpen;
 
     /*!
      * handles edge case

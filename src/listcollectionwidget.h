@@ -29,7 +29,7 @@ class ListCollectionWidget : public QWidget
     Q_OBJECT
 public:
 
-    /// deconstructor
+    /// destructor
     virtual ~ListCollectionWidget(){}
 
     /*!

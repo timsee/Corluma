@@ -4,11 +4,14 @@
 #include <QLabel>
 #include <QWidget>
 #include <QLayout>
-
+/*!
+ * \copyright
+ * Copyright (C) 2015 - 2017.
+ * Released under the GNU General Public License.
+ */
 
 /// states for the HardwareConnectionWidget
-enum class EHardwareConnectionStates
-{
+enum class EHardwareConnectionStates {
     eNoOutgoingFound,
     eAttemptingOutgoing,
     eAttemptingIncoming,

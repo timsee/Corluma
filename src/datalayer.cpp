@@ -588,7 +588,7 @@ bool DataLayer::removeDevice(SLightDevice device){
         bool deviceExists = true;
         // these three values do not change and can be used as a unique key for the device, even if
         // things like the color or brightness change.
-        if (device.name.compare((*iterator).name)) deviceExists = false;
+        if (device.controller.compare((*iterator).controller)) deviceExists = false;
         if (device.index != (*iterator).index)     deviceExists = false;
         if (device.type != (*iterator).type)       deviceExists = false;
         if (deviceExists) {
@@ -664,7 +664,7 @@ bool DataLayer::addDevice(SLightDevice device) {
         bool deviceExists = true;
         // these three values do not change and can be used as a unique key for the device, even if
         // things like the color or brightness change.
-        if (device.name.compare((*iterator).name)) deviceExists = false;
+        if (device.controller.compare((*iterator).controller)) deviceExists = false;
         if (device.index != (*iterator).index)     deviceExists = false;
         if (device.type != (*iterator).type)       deviceExists = false;
         if (deviceExists) {
@@ -689,7 +689,7 @@ bool DataLayer::doesDeviceExist(SLightDevice device) {
         bool deviceExists = true;
         // these three values do not change and can be used as a unique key for the device, even if
         // things like the color or brightness change.
-        if (device.name.compare((*iterator).name)) deviceExists = false;
+        if (device.controller.compare((*iterator).controller)) deviceExists = false;
         if (device.index != (*iterator).index)     deviceExists = false;
         if (device.type != (*iterator).type)       deviceExists = false;
         if (deviceExists) {

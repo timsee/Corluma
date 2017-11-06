@@ -289,6 +289,21 @@ public:
     std::list<SHueSchedule> hueSchedules();
 
     /*!
+     * \brief deleteHue delete a hue from the bridge, removing all knowledge of it
+     * \param hue hue to delete.
+     */
+    void deleteHue(SHueLight hue);
+
+    /// list of new hue lights discovered from scanning.
+    std::list<SHueLight> newHueLights();
+
+    /// request a list of hue lights discovered from scanning
+    void requestNewHueLights();
+
+    /// activate new light scanning. If this is called when scanning is active, reset its timer.
+    void searchForHueLights(std::list<QString> serialNumbers = std::list<QString>());
+
+    /*!
      * \brief createHueGroup create a hue group to store on the hue bridge
      * \param name name of new group
      * \param lights lights to be part of the hue group.
@@ -303,6 +318,13 @@ public:
 
     /// true if its received any data about schedules from the hue bridge, false otherwise.
     bool haveHueSchedules();
+
+    /*!
+     * \brief renameHue rename a hue. This requires a SHueLight representing the hue and the new name you want to name it
+     * \param hue a SHueLight that represents the light you want to rename.
+     * \param newName the new name for the light. Must be at most 32 characters in length.
+     */
+    void renameHue(SHueLight hue, QString newName);
 
     /*!
      * \brief updateHueTimeout update the hue timeout for a specific hue schedule.

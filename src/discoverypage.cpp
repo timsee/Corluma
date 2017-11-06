@@ -185,7 +185,6 @@ void DiscoveryPage::commTypeSelected(int type) {
         mYunWidget->setGeometry(ui->placeholder->geometry());
 
         mYunWidget->handleDiscovery(true);
-        mYunWidget->yunLineEditHelper();
         mHorizontalFloatingLayout->highlightButton("Discovery_Yun");
     }  else if (currentCommType == ECommType::eHue) {
 #ifndef MOBILE_BUILD

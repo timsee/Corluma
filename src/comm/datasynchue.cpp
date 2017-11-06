@@ -69,7 +69,7 @@ void DataSyncHue::syncData() {
                 return;
             }
             if (device.type == ECommType::eHue) {
-                if (checkThrottle(device.name, device.type, device.index)) {
+                if (checkThrottle(device.controller, device.type, device.index)) {
                     bool result = sync(device, commLayerDevice);
                     if (!result) {
                         countOutOfSync++;
@@ -115,7 +115,7 @@ void DataSyncHue::endOfSync() {
 bool DataSyncHue::sync(const SLightDevice& dataDevice, const SLightDevice& commDevice) {
     int countOutOfSync = 0;
     SDeviceController controller;
-    if (!mComm->findDiscoveredController(dataDevice.type, dataDevice.name, controller)) {
+    if (!mComm->findDiscoveredController(dataDevice.type, dataDevice.controller, controller)) {
         return false;
     }
     std::list<SLightDevice> list;
@@ -211,7 +211,7 @@ bool DataSyncHue::sync(const SLightDevice& dataDevice, const SLightDevice& commD
 
     if (countOutOfSync && packet.size()) {
         mComm->sendPacket(dataDevice, packet);
-        resetThrottle(dataDevice.name, dataDevice.type, dataDevice.index);
+        resetThrottle(dataDevice.controller, dataDevice.type, dataDevice.index);
     }
 
     return (countOutOfSync == 0);

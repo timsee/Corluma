@@ -87,27 +87,14 @@ void EditGroupPage::updateDevices(std::list<SLightDevice> groupDevices, std::lis
 
         // no widget found for this device,
         if (!widgetFound) {
-            QString name;
-            bool shouldAddWidget = true;
-            if (device.type == ECommType::eHue) {
-                SHueLight hue = mComm->hueLightFromLightDevice(device);
-                if (hue.name.compare("") == 0) shouldAddWidget = false;
-                name = hue.name;
-            } else {
-                name = device.name;
-            }
-
-            if (shouldAddWidget) {
-                ListDeviceWidget *widget = new ListDeviceWidget(device,
-                                                                name,
-                                                                mData->colorGroup(device.colorGroup),
-                                                                true,
-                                                                QSize(this->width() * 0.9f, this->height() / 8),
-                                                                mScrollAreaWidget);
-                connect(widget, SIGNAL(clicked(QString)), this, SLOT(listDeviceWidgetClicked(QString)));
-                widget->setHighlightChecked(shouldSetChecked(device, groupDevices));
-                mWidgets.push_back(widget);
-            }
+            ListDeviceWidget *widget = new ListDeviceWidget(device,
+                                                            mData->colorGroup(device.colorGroup),
+                                                            true,
+                                                            QSize(this->width() * 0.9f, this->height() / 8),
+                                                            mScrollAreaWidget);
+            connect(widget, SIGNAL(clicked(QString)), this, SLOT(listDeviceWidgetClicked(QString)));
+            widget->setHighlightChecked(shouldSetChecked(device, groupDevices));
+            mWidgets.push_back(widget);
         }
     }
 
@@ -299,7 +286,7 @@ void EditGroupPage::saveChanges() {
     bool devicesAreValid = true;
     if (newDevices.size() > 0) {
         for (auto& device : newDevices) {
-            if (device.name.compare("") == 0
+            if (device.controller.compare("") == 0
                     || device.index == 0) {
                 devicesAreValid = false;
             }

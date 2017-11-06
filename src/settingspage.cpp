@@ -37,7 +37,7 @@ SettingsPage::SettingsPage(QWidget *parent) :
     // Top Layout
     //------------
 
-    mTopWidget = new CorlumaTopWidget("Settings", ":images/closedArrow.png");
+    mTopWidget = new CorlumaTopWidget("", ":images/closeX.png");
     connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(closeButtonPressed(bool)));
 
     //------------
@@ -66,7 +66,7 @@ SettingsPage::SettingsPage(QWidget *parent) :
 
     mMainLayout = new QVBoxLayout(this);
     mMainLayout->addWidget(mTopWidget, 1);
-    mMainLayout->addWidget(mScrollArea, 10);
+    mMainLayout->addWidget(mScrollArea, 12);
     mMainLayout->setContentsMargins(9,9,9,9);
     mMainLayout->setSpacing(6);
 
@@ -74,19 +74,23 @@ SettingsPage::SettingsPage(QWidget *parent) :
     // Scroll Area Contents
     //------------
 
-    mSectionTitles = { "Saved Data",
+    mSectionTitles = { "Data",
                        "About",
                        "Debug"};
 
-    mTitles = { "Save",
+    mTitles = { "Hue Info",
+                "Discover New Hues",
+                "Save",
                 "Load",
                 "Reset",
                 "Copyright",
                 "FAQ",
                 "Mock Connection"};
 
-    mDescriptions = { "Save to JSON.",
-                      "Erase old data, load new data from JSON.",
+    mDescriptions = { "Read and manage the hardware information stored on the Hue Bridge.",
+                      "Discover new Hue lights.",
+                      "Save light moods and collections to JSON.",
+                      "Erase old moods and collections, load new data from JSON.",
                       "Resets all app data and all app settings.",
                       "",
                       "",
@@ -267,7 +271,7 @@ void SettingsPage::paintEvent(QPaintEvent *) {
 }
 
 void SettingsPage::settingsButtonPressed(QString title) {
-    //qDebug() << "settings button pressed: " << title;
+   // qDebug() << "settings button pressed: " << title;
     if (title.compare("Debug") == 0) {
         std::list<SLightDevice> debugDevices = mGroups->loadDebugData();
         if (debugDevices.size() > 0) {
@@ -282,6 +286,10 @@ void SettingsPage::settingsButtonPressed(QString title) {
         loadButtonClicked();
     } else if (title.compare("Save") == 0) {
         saveButtonClicked();
+    } else if (title.compare("Discover New Hues") == 0) {
+        emit clickedHueDiscovery();
+    } else if (title.compare("Hue Info") == 0) {
+        emit clickedHueInfoWidget();
     } else if (title.compare("Copyright") == 0) {
         showWebView(ECorlumaWebView::eCopyright);
     } else if (title.compare("FAQ") == 0) {

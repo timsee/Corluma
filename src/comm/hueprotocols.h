@@ -31,6 +31,8 @@ enum class EHueUpdates {
     eDeviceUpdate,
     eScheduleUpdate,
     eGroupUpdate,
+    eScanStateUpdate,
+    eNewLightNameUpdate,
     eHueUpdates_MAX
 };
 
@@ -240,6 +242,40 @@ inline EHueType checkForHueWithMostFeatures(std::list<SHueLight> lights) {
     }
 
     return EHueType::EHueType_MAX;
+}
+
+/*!
+ * \brief stringToHueType helper that takes a string received from the hue and converts it to its type.
+ */
+inline EHueType stringToHueType(const QString& string) {
+    if (string.compare("Extended color light") == 0) {
+        return EHueType::eExtended;
+    } else if (string.compare("Color temperature light") == 0) {
+        return EHueType::eAmbient;
+    } else if (string.compare("Color light") == 0) {
+        return EHueType::eColor;
+    } else if (string.compare("Dimmable light") == 0) {
+        return EHueType::eWhite;
+    } else {
+        qDebug() << "WARNING: Hue type not recognized" << string;
+        return EHueType::EHueType_MAX;
+    }
+}
+
+
+
+inline QString hueTypeToString(const EHueType& type) {
+    if (type == EHueType::eExtended) {
+        return "Extended color light";
+    } else if (type == EHueType::eAmbient) {
+        return "Color temperature light";
+    } else if (type == EHueType::eColor) {
+        return "Color light";
+    } else if (type == EHueType::eWhite) {
+        return "Dimmable light";
+    } else {
+        return "Not recognized";
+    }
 }
 
 }

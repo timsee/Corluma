@@ -77,8 +77,7 @@ void ListDevicesGroupWidget::updateDevices(std::list<SLightDevice> devices, bool
             SLightDevice existingDevice = existingWidget->device();
             if (compareLightDevice(inputDevice, existingDevice)) {
                 foundDevice = true;
-                EColorGroup group = inputDevice.colorGroup;
-                existingWidget->updateWidget(inputDevice, mData->colorGroup(group));
+                existingWidget->updateWidget(inputDevice, mData->colorGroup(inputDevice.colorGroup));
             }
             ++x;
         }
@@ -89,24 +88,14 @@ void ListDevicesGroupWidget::updateDevices(std::list<SLightDevice> devices, bool
         if (!foundDevice) {
             // TODO: remove edge case...
             if (inputDevice.color.isValid()) {
-                QString name;
-                if (inputDevice.type == ECommType::eHue) {
-                    SHueLight hue = mComm->hueLightFromLightDevice(inputDevice);
-                    name = hue.name;
-                } else {
-                    name = inputDevice.name;
-                }
-                if (name.size() > 0) {
-                    ListDeviceWidget *widget = new ListDeviceWidget(inputDevice,
-                                                                    name,
-                                                                    mData->colorGroup(inputDevice.colorGroup),
-                                                                    false,
-                                                                    mWidgetSize,
-                                                                    this);
-                    connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
-                    //widget->setFixedSize(mWidgetSize);
-                    insertWidgetIntoGrid(widget);
-                }
+                ListDeviceWidget *widget = new ListDeviceWidget(inputDevice,
+                                                                mData->colorGroup(inputDevice.colorGroup),
+                                                                false,
+                                                                mWidgetSize,
+                                                                this);
+                connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
+                //widget->setFixedSize(mWidgetSize);
+                insertWidgetIntoGrid(widget);
             }
         }
     }

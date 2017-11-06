@@ -66,7 +66,7 @@ void DataSyncArduino::syncData() {
                     return;
                 }
 
-                if (checkThrottle(device.name, device.type, device.index)) {
+                if (checkThrottle(device.controller, device.type, device.index)) {
                     bool result = sync(device, commLayerDevice);
                     if (!result) {
                         countOutOfSync++;
@@ -112,7 +112,7 @@ void DataSyncArduino::endOfSync() {
 bool DataSyncArduino::sync(const SLightDevice& dataDevice, const SLightDevice& commDevice) {
     int countOutOfSync = 0;
     SDeviceController controller;
-    if (!mComm->findDiscoveredController(dataDevice.type, dataDevice.name, controller)) {
+    if (!mComm->findDiscoveredController(dataDevice.type, dataDevice.controller, controller)) {
         return false;
     }
 
@@ -134,42 +134,43 @@ bool DataSyncArduino::sync(const SLightDevice& dataDevice, const SLightDevice& c
     // if a lights off, no need to sync the rest of the states
     if (dataDevice.isOn)
     {
+
         if (dataDevice.lightingRoutine <= utils::ELightingRoutineSingleColorEnd)
         {
             //-------------------
             // Single Color Sync
             //-------------------
             if (commDevice.color != dataDevice.color) {
-                QString message = mComm->sendMainColorChange(list, dataDevice.color);
-                appendToPacket(packet, message, controller.maxPacketSize);
-                //qDebug() << "color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << utils::colorDifference(dataDevice.color, commDevice.color);
-                countOutOfSync++;
+                 QString message = mComm->sendMainColorChange(list, dataDevice.color);
+                 appendToPacket(packet, message, controller.maxPacketSize);
+                // qDebug() << "color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << utils::colorDifference(dataDevice.color, commDevice.color);
+                 countOutOfSync++;
             }
 
             //-------------------
             // Single Color Routine Sync
             //-------------------
             if (commDevice.lightingRoutine != dataDevice.lightingRoutine) {
-                //qDebug() << "single light routine not in sync";
+              //  qDebug() << "single light routine not in sync";
                 QString message = mComm->sendSingleRoutineChange(list, dataDevice.lightingRoutine);
                 appendToPacket(packet, message, controller.maxPacketSize);
                 countOutOfSync++;
             }
-
         }
         else
         {
             //-------------------
             // Multi Color Routine Sync
             //-------------------
-            if ((commDevice.colorGroup != dataDevice.colorGroup)
-                    || (commDevice.lightingRoutine != dataDevice.lightingRoutine)) {
-                //qDebug() << "color group routine not in sync routines:" << (int)dataDevice.lightingRoutine << " vs " << (int)commDevice.lightingRoutine;
+            if (((commDevice.colorGroup != dataDevice.colorGroup)
+                    || (commDevice.lightingRoutine != dataDevice.lightingRoutine))) {
+              //  qDebug() << "color group routine not in sync routines:" << (int)dataDevice.lightingRoutine << " vs " << (int)commDevice.lightingRoutine;
                 QString message = mComm->sendMultiRoutineChange(list, dataDevice.lightingRoutine, dataDevice.colorGroup);
                 appendToPacket(packet, message, controller.maxPacketSize);
                 countOutOfSync++;
             }
         }
+
 
         //-------------------
         // Brightness Sync
@@ -207,7 +208,7 @@ bool DataSyncArduino::sync(const SLightDevice& dataDevice, const SLightDevice& c
     if (countOutOfSync) {
         //qDebug() << "packet size" << packet.size() <<"count out of sync" << countOutOfSync;
         mComm->sendPacket(dataDevice, packet);
-        resetThrottle(dataDevice.name, dataDevice.type, dataDevice.index);
+        resetThrottle(dataDevice.controller, dataDevice.type, dataDevice.index);
     }
 
     return (countOutOfSync == 0);

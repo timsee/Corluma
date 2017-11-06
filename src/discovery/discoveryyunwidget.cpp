@@ -11,54 +11,14 @@ DiscoveryYunWidget::DiscoveryYunWidget(CommLayer *comm, QWidget *parent) :
 
     mComm = comm;
 
-    //----------
-    // Top layout
-    //----------
-
-    mLineEdit = new QLineEdit(this);
-
-    mPlusButton = new QPushButton(this);
-    connect(mPlusButton, SIGNAL(clicked(bool)), this, SLOT(plusButtonClicked()));
-    mPlusButton->setText("+");
-
-    mMinusButton = new QPushButton(this);
-    connect(mMinusButton, SIGNAL(clicked(bool)), this, SLOT(minusButtonClicked()));
-    mMinusButton->setText("-");
-
-
-    mInputLayout = new QHBoxLayout;
-    mInputLayout->addWidget(mLineEdit, 10);
-    mInputLayout->addWidget(mPlusButton, 2);
-    mInputLayout->addWidget(mMinusButton, 2);
-
-    //----------
-    // UI assets
-    //----------
+    mSearchWidget = new SearchWidget("192.168.0.101", this);
+    connect(mSearchWidget, SIGNAL(plusClicked()), this, SLOT(plusButtonClicked()));
+    connect(mSearchWidget, SIGNAL(minusClicked()), this, SLOT(minusButtonClicked()));
 
     mTopLabel = new QLabel(this);
     mTopLabel->setText("Add or remove IP Addresses:");
     mTopLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mTopLabel->setAlignment(Qt::AlignLeft | Qt::AlignBottom);
-
-    mConnectedLabel = new QLabel(this);
-    mConnectedLabel->setText("Connected Yuns:");
-    mConnectedLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mConnectedLabel->setAlignment(Qt::AlignLeft | Qt::AlignBottom);
-
-    mConnectedListWidget = new QListWidget(this);
-    mConnectedListWidget->setStyleSheet("color: silver;");
-    mConnectedListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(mConnectedListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(connectedListClicked(QListWidgetItem*)));
-
-    mDiscoveringLabel = new QLabel(this);
-    mDiscoveringLabel->setText("Looking For:");
-    mDiscoveringLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mDiscoveringLabel->setAlignment(Qt::AlignLeft | Qt::AlignBottom);
-
-    mDiscoveringListWidget = new QListWidget(this);
-    mDiscoveringListWidget->setStyleSheet("color: silver;");
-    mDiscoveringListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(mDiscoveringListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(discoveringListClicked(QListWidgetItem*)));
 
     //----------
     // Main Layout
@@ -66,11 +26,7 @@ DiscoveryYunWidget::DiscoveryYunWidget(CommLayer *comm, QWidget *parent) :
 
     mLayout = new QVBoxLayout;
     mLayout->addWidget(mTopLabel, 4);
-    mLayout->addLayout(mInputLayout, 2);
-    mLayout->addWidget(mConnectedLabel, 2);
-    mLayout->addWidget(mConnectedListWidget, 10);
-    mLayout->addWidget(mDiscoveringLabel, 2);
-    mLayout->addWidget(mDiscoveringListWidget, 10);
+    mLayout->addWidget(mSearchWidget, 28);
     setLayout(mLayout);
 }
 
@@ -86,21 +42,20 @@ void DiscoveryYunWidget::handleDiscovery(bool isCurrentCommType) {
     std::list<QString> discoveringHTTP = mComm->undiscoveredList(ECommType::eHTTP);
 
     if (isCurrentCommType) {
-        fillList(mConnectedListWidget, deviceTableUDP);
-        fillList(mConnectedListWidget, deviceTableHTTP);
+        for (auto device : deviceTableUDP) {
+            mSearchWidget->addToConnectedList(device.name);
+        }
 
-        fillList(mDiscoveringListWidget, discoveringUDP);
-        fillList(mDiscoveringListWidget, discoveringHTTP);
+        for (auto device : deviceTableHTTP) {
+            mSearchWidget->addToConnectedList(device.name);
+        }
 
-        // compare the two lists against each other
-        for (int i = 0; i < mConnectedListWidget->count(); ++i) {
-            QListWidgetItem *connectedItem = mConnectedListWidget->item(i);
-            for (int j = 0; j < mDiscoveringListWidget->count(); ++j) {
-                QListWidgetItem *discoveringItem = mDiscoveringListWidget->item(j);
-                if (connectedItem->text().compare(discoveringItem->text()) == 0) {
-                    mDiscoveringListWidget->takeItem(j);
-                }
-            }
+        for (auto name : discoveringUDP) {
+            mSearchWidget->addToSearchList(name);
+        }
+
+        for (auto name : discoveringHTTP) {
+            mSearchWidget->addToSearchList(name);
         }
 
         // compare discovered list of UDP against HTTP, removing those that are discovering in HTTP
@@ -145,122 +100,34 @@ void DiscoveryYunWidget::handleDiscovery(bool isCurrentCommType) {
 
 
 void DiscoveryYunWidget::plusButtonClicked() {
-    if (!doesYunControllerExistAlready(mLineEdit->text())) {
-        QString controller =  mLineEdit->text();
+    if (!doesYunControllerExistAlready(mSearchWidget->lineEditText())) {
+        QString controller = mSearchWidget->lineEditText();
         bool isSuccessful = mComm->startDiscoveringController(ECommType::eUDP, controller);
         if (!isSuccessful) qDebug() << "WARNING: failure adding" << controller << "to UDP discovery list";
         isSuccessful = mComm->startDiscoveringController(ECommType::eHTTP, controller);
         if (!isSuccessful) qDebug() << "WARNING: failure adding" << controller << "to HTTP discovery list";
     } else {
-        qDebug() << "WARNING: trying to add controller that already exists: " << mLineEdit->text();
+        qDebug() << "WARNING: trying to add controller that already exists: " << mSearchWidget->lineEditText();
     }
 }
 
 void DiscoveryYunWidget::minusButtonClicked() {
-    if (doesYunControllerExistAlready(mLineEdit->text())) {
+    if (doesYunControllerExistAlready(mSearchWidget->lineEditText())) {
         SDeviceController controller;
-        controller.name =  mLineEdit->text();
+        controller.name =  mSearchWidget->lineEditText();
         bool isSuccessful = mComm->removeController(ECommType::eUDP, controller);
         if (!isSuccessful) qDebug() << "WARNING: failure removing" << controller.name << "from UDP discovery list";
         isSuccessful = mComm->removeController(ECommType::eHTTP, controller);
         if (!isSuccessful) qDebug() << "WARNING: failure removing" << controller.name << "from HTTP discovery list";
-
-        for (int i = 0; i < mConnectedListWidget->count(); ++i) {
-            QListWidgetItem *item = mConnectedListWidget->item(i);
-            if (item->text().compare(controller.name) == 0) {
-                mConnectedListWidget->takeItem(i);
-            }
-        }
-
-
-        for (int i = 0; i < mDiscoveringListWidget->count(); ++i) {
-            QListWidgetItem *item = mDiscoveringListWidget->item(i);
-            if (item->text().compare(controller.name) == 0) {
-                mDiscoveringListWidget->takeItem(i);
-            }
-        }
     } else {
-        qDebug() << "WARNING: trying to remove controller that doesn't exist: " << mLineEdit->text();
+        qDebug() << "WARNING: trying to remove controller that doesn't exist: " << mSearchWidget->lineEditText();
     }
 }
-
-
-// ----------------------------
-// Discovery Lists
-// ----------------------------
-
-
-void DiscoveryYunWidget::connectedListClicked(QListWidgetItem *item) {
-    mLineEdit->setText(item->text());
-    mLastIP = item->text();
-    for (int i = 0; i < mDiscoveringListWidget->count(); ++i) {
-        mDiscoveringListWidget->item(i)->setSelected(false);
-    }
-    yunLineEditHelper();
-}
-
-
-void DiscoveryYunWidget::discoveringListClicked(QListWidgetItem *item) {
-    mLineEdit->setText(item->text());
-    mLastIP = item->text();
-    for (int i = 0; i < mConnectedListWidget->count(); ++i) {
-       mConnectedListWidget->item(i)->setSelected(false);
-    }
-    yunLineEditHelper();
-}
-
 
 
 // ----------------------------
 // Helpers
 // ----------------------------
-
-
-
-void DiscoveryYunWidget::yunLineEditHelper() {
-    // check last IP
-    bool foundLastIP = false;
-    if (mLastIP.compare("") != 0) {
-        for (int i = 0; i < mDiscoveringListWidget->count(); ++i) {
-            if (mLastIP.compare(mDiscoveringListWidget->item(i)->text()) == 0) {
-                mDiscoveringListWidget->item(i)->setSelected(true);
-                foundLastIP = true;
-            }
-        }
-        for (int i = 0; i < mConnectedListWidget->count(); ++i) {
-            if (!mConnectedListWidget->item(i)->text().isNull()) {
-                if (mLastIP.compare(mConnectedListWidget->item(i)->text()) == 0) {
-                    mConnectedListWidget->item(i)->setSelected(true);
-                    foundLastIP = true;
-                }
-            }
-        }
-    }
-
-    if (!foundLastIP) {
-        bool anySelected = false;
-        // check if any are selected
-        for (int i = 0; i < mDiscoveringListWidget->count(); ++i) {
-            if (mDiscoveringListWidget->item(i)->isSelected()) anySelected = true;
-        }
-        for (int i = 0; i < mConnectedListWidget->count(); ++i) {
-            if (mConnectedListWidget->item(i)->isSelected()) anySelected = true;
-        }
-
-        // if none selected but some exist, select first one.
-        if (!anySelected && ((mDiscoveringListWidget->count() > 0) || (mConnectedListWidget->count() > 0))) {
-            if (mConnectedListWidget->count() > 0) {
-                mConnectedListWidget->item(0)->setSelected(true);
-                mLineEdit->setText(mConnectedListWidget->item(0)->text());
-            } else {
-                mDiscoveringListWidget->item(0)->setSelected(true);
-                mLineEdit->setText(mDiscoveringListWidget->item(0)->text());
-            }
-        } else {
-            mLineEdit->setText("192.168.0.101");
-        }
-    }
-}
 
 
 bool DiscoveryYunWidget::doesYunControllerExistAlready(QString controller) {

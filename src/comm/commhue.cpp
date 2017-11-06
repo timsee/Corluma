@@ -313,9 +313,17 @@ void CommHue::replyFinished(QNetworkReply* reply) {
                         } else if (updateType == EHueUpdates::eGroupUpdate) {
                             mHaveGroups = true;
                             updateHueGroups(innerObject, key.toDouble());
+                        } else if (updateType == EHueUpdates::eNewLightNameUpdate) {
+                            updateNewHueLight(innerObject, key.toDouble());
                         } else {
                             qDebug() << "json not recognized....";
                             qDebug() << "Response:" << string;
+                        }
+                    } else if (object.value(key).isString()) {
+                        EHueUpdates updateType = checkTypeOfUpdate(object);
+                        if (updateType == EHueUpdates::eScanStateUpdate) {
+                            // should udpate state instead, while the keys are decoupled
+                            updateScanState(object);
                         }
                     }
                 }
@@ -385,55 +393,74 @@ void CommHue::createIdleTimeoutsForConnectedLights() {
 
 void CommHue::handleSuccessPacket(QString key, QJsonValue value) {
     SLightDevice device;
-    device.name = "Bridge";
     device.type = ECommType::eHue;
+    device.controller = "Bridge";
     QStringList list = key.split("/");
     if (list[1].compare("lights") == 0) {
-        device.index = list[2].toInt();
-        if (fillDevice(device)) {
-            if (list[3].compare("state") == 0) {
-                QString key = list[4];
-                bool valueChanged = false;
-                if (key.compare("on") == 0) {
-                    device.isOn = value.toBool();
-                    valueChanged = true;
-                } else if (key.compare("sat") == 0) {
-                    int saturation = value.toDouble();
-                    device.color.setHsv(device.color.hue(), saturation, device.color.value());
-                    device.color = device.color.toRgb();
-                    valueChanged = true;
-                } else if (key.compare("hue") == 0) {
-                    int hue = value.toDouble();
-                    device.color.setHsv(hue / 182, device.color.saturation(), device.color.value());
-                    device.color = device.color.toRgb();
-                    device.colorMode = EColorMode::eHSV;
+        if (list.size() > 2) {
+            device.index = list[2].toInt();
+            if (fillDevice(device)) {
+                if (list[3].compare("state") == 0) {
+                    QString key = list[4];
+                    bool valueChanged = false;
+                    if (key.compare("on") == 0) {
+                        device.isOn = value.toBool();
+                        valueChanged = true;
+                    } else if (key.compare("sat") == 0) {
+                        int saturation = value.toDouble();
+                        device.color.setHsv(device.color.hue(), saturation, device.color.value());
+                        device.color = device.color.toRgb();
+                        valueChanged = true;
+                    } else if (key.compare("hue") == 0) {
+                        int hue = value.toDouble();
+                        device.color.setHsv(hue / 182, device.color.saturation(), device.color.value());
+                        device.color = device.color.toRgb();
+                        device.colorMode = EColorMode::eHSV;
 
-                    valueChanged = true;
-                } else if (key.compare("bri") == 0) {
-                    int brightness = value.toDouble();
-                    device.color.setHsv(device.color.hue(), device.color.saturation(), brightness);
-                    device.color = device.color.toRgb();
-                    device.brightness = brightness / 254.0f * 100;
+                        valueChanged = true;
+                    } else if (key.compare("bri") == 0) {
+                        int brightness = value.toDouble();
+                        device.color.setHsv(device.color.hue(), device.color.saturation(), brightness);
+                        device.color = device.color.toRgb();
+                        device.brightness = brightness / 254.0f * 100;
 
-                    valueChanged = true;
-                } else if (key.compare("colormode") == 0) {
-                    QString mode = value.toString();
-                    EColorMode colorMode = hueStringtoColorMode(mode);
-                    device.colorMode = colorMode;
+                        valueChanged = true;
+                    } else if (key.compare("colormode") == 0) {
+                        QString mode = value.toString();
+                        EColorMode colorMode = hueStringtoColorMode(mode);
+                        device.colorMode = colorMode;
 
-                    valueChanged = true;
-                } else if (key.compare("ct") == 0) {
-                    int ct = value.toDouble();
-                    device.color = utils::colorTemperatureToRGB(ct);
-                    device.colorMode = EColorMode::eCT;
+                        valueChanged = true;
+                    } else if (key.compare("ct") == 0) {
+                        int ct = value.toDouble();
+                        device.color = utils::colorTemperatureToRGB(ct);
+                        device.colorMode = EColorMode::eCT;
 
-                    valueChanged = true;
-                }
-                if (valueChanged) {
-                    updateDevice(device);
-                    emit stateChanged();
+                        valueChanged = true;
+                    }
+
+                    if (valueChanged) {
+                        updateDevice(device);
+                        emit stateChanged();
+                    }
+                } else if (list[3].compare("name") == 0) {
+                    // fill device
+                    if (fillDevice(device)) {
+                        device.name = value.toString();
+                        updateDevice(device);
+
+                        SHueLight light;
+                        hueLightFromLightDevice(device);
+                        light.name = device.name;
+                        updateHueLight(light);
+
+                        emit stateChanged();
+                    }
+                    qDebug() << "found the nanme update!";
                 }
             }
+        } else {
+            qDebug() << " searching for new devices success packet";
         }
     }
 }
@@ -504,10 +531,11 @@ bool CommHue::updateHueLightState(QJsonObject object, int i) {
             SHueLight hue;
 
             QString type = object.value("type").toString();
-            hue.type = stringToHueType(type);
+            hue.type = utils::stringToHueType(type);
 
 
             hue.name = object.value("name").toString();
+
             hue.modelID = object.value("modelid").toString();
             hue.manufacturer = object.value("manufacturername").toString();
             hue.uniqueID = object.value("uniqueid").toString();
@@ -596,13 +624,15 @@ bool CommHue::updateHueLightState(QJsonObject object, int i) {
             light.timeout = 120;
             light.speed = 0; // speed doesn't matter to hues
             light.type = ECommType::eHue;
-            light.name = "Bridge";
+            light.controller = "Bridge";
+            light.name = hue.name;
 
             updateDevice(light);
 
             bool hueFound = false;
             for (auto oldHue : mConnectedHues) {
                 if (hue.uniqueID.compare(oldHue.uniqueID) == 0) {
+                    // TODO: handle when name is different
                     hueFound = true;
                     oldHue = hue;
                 }
@@ -730,6 +760,49 @@ bool CommHue::updateHueGroups(QJsonObject object, int i) {
     return false;
 }
 
+
+bool CommHue::updateNewHueLight(QJsonObject object, int i) {
+    if (object.value("name").isString())  {
+        QString name = object.value("name").toString();
+
+        SHueLight light;
+        light.deviceIndex = i;
+        light.name = name;
+
+        if (!updateHueLight(light)) {
+            mNewLights.push_front(light);
+        }
+
+        // update the SLightDevice as well
+        SLightDevice device;
+        device.type = ECommType::eHue;
+        device.index = i;
+        device.controller = "Bridge";
+        if (fillDevice(device)) {
+            device.name = light.name;
+            updateDevice(device);
+        } else {
+            qDebug() << "Could not find device " << __func__;
+            return false;
+        }
+        return true;
+    }
+    return false;
+}
+
+bool CommHue::updateScanState(QJsonObject object) {
+    if (object.value("lastscan").isString())  {
+        QString lastScanString = object.value("lastscan").toString();
+        if (lastScanString.compare("active") == 0) {
+            mScanIsActive = true;
+        } else {
+            mScanIsActive = false;
+        }
+
+      //  qDebug() << "update scan satte";
+    }
+}
+
 EHueUpdates CommHue::checkTypeOfUpdate(QJsonObject object) {
     if (object.value("name").isString()
            && object.value("uniqueid").isString()
@@ -744,6 +817,10 @@ EHueUpdates CommHue::checkTypeOfUpdate(QJsonObject object) {
                && object.value("type").isString()
                && object.value("action").isObject()) {
         return EHueUpdates::eGroupUpdate;
+    } else if (object.value("lastscan").isString()) {
+        return EHueUpdates::eScanStateUpdate;
+    } else if (object.value("name").isString()) {
+        return EHueUpdates::eNewLightNameUpdate;
     } else {
         return EHueUpdates::eHueUpdates_MAX;
     }
@@ -759,6 +836,24 @@ SHueLight CommHue::hueLightFromLightDevice(const SLightDevice& device) {
     return SHueLight();
 }
 
+bool CommHue::updateHueLight(SHueLight& hue) {
+    bool foundLight = false;
+    std::list<SHueLight>::iterator iterator;
+    for (iterator = mNewLights.begin(); iterator != mNewLights.end(); ++iterator) {
+        if ((*iterator).deviceIndex == hue.deviceIndex)  {
+            mConnectedHues.remove((*iterator));
+            mConnectedHues.push_back(hue);
+        }
+    }
+    // if it doesn't add it.
+    if (!foundLight) {
+        mConnectedHues.push_front(hue);
+        return false;
+    } else {
+        return true;
+    }
+}
+
 SLightDevice CommHue::lightDeviceFromHueLight(const SHueLight& light) {
     for (auto&& controllers : mDeviceTable) {
         for (auto&& device = controllers.second.begin(); device != controllers.second.end(); ++device) {
@@ -771,20 +866,6 @@ SLightDevice CommHue::lightDeviceFromHueLight(const SHueLight& light) {
     return SLightDevice();
 }
 
-EHueType CommHue::stringToHueType(const QString& string) {
-    if (string.compare("Extended color light") == 0) {
-        return EHueType::eExtended;
-    } else if (string.compare("Color temperature light") == 0) {
-        return EHueType::eAmbient;
-    } else if (string.compare("Color light") == 0) {
-        return EHueType::eColor;
-    } else if (string.compare("Dimmable light") == 0) {
-        return EHueType::eWhite;
-    } else {
-        qDebug() << "WARNING: Hue type not recognized" << string;
-        return EHueType::EHueType_MAX;
-    }
-}
 
 EColorMode CommHue::hueStringtoColorMode(const QString& mode) {
     if (mode.compare("hs") == 0) {
@@ -931,7 +1012,6 @@ void CommHue::stopBackgroundTimers() {
     }
 }
 
-
 //---------------
 // Groups
 //---------------
@@ -1064,6 +1144,19 @@ void CommHue::deleteSchedule(SHueSchedule schedule) {
 // Discovery And Device Maintence
 //---------------
 
+
+void CommHue::requestNewLights() {
+    if (discovery()->isConnected()) {
+        QString urlString = mUrlStart + "/lights/new";
+        QNetworkRequest request = QNetworkRequest(QUrl(urlString));
+        request.setHeader(QNetworkRequest::ContentTypeHeader,
+                          QStringLiteral("text/html; charset=utf-8"));
+        mNetworkManager->get(request);
+    }
+}
+
+
+
 void CommHue::searchForNewLights(std::list<QString> serialNumbers) {
     if (discovery()->isConnected()) {
         QString urlString = mUrlStart + "/lights";
@@ -1075,7 +1168,7 @@ void CommHue::searchForNewLights(std::list<QString> serialNumbers) {
                 array.append(serial);
             }
             QJsonObject object;
-            object["devices"] = array;
+            object["deviceid"] = array;
             QJsonDocument doc(object);
             payload = doc.toJson(QJsonDocument::Compact);
         }
@@ -1098,7 +1191,7 @@ void CommHue::renameLight(SHueLight light, QString newName) {
         QNetworkRequest request = QNetworkRequest(QUrl(urlString));
         request.setHeader(QNetworkRequest::ContentTypeHeader,
                           QStringLiteral("text/html; charset=utf-8"));
-        mNetworkManager->post(QNetworkRequest(QUrl(urlString)), payload.toUtf8());
+        mNetworkManager->put(QNetworkRequest(QUrl(urlString)), payload.toUtf8());
     }
 }
 

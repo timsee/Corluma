@@ -32,7 +32,7 @@ PresetGroupWidget::PresetGroupWidget(QString name,
         mButtons[index]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         connect(mButtons[index], SIGNAL(buttonClicked(int, int)), this, SLOT(multiButtonClicked(int, int)));
         // add to layout
-        mLayout->addWidget(mButtons[index], 1, index + 1, 2, 1);
+        mLayout->addWidget(mButtons[index], 1, index + 1, 6, 1);
         index++;
     }
 }

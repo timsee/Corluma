@@ -87,7 +87,7 @@ void GroupsParser::saveNewMood(const QString& groupName, const std::list<SLightD
         object["green"] = device.color.green();
         object["blue"] = device.color.blue();
 
-        object["controller"] = device.name;
+        object["controller"] = device.controller;
         object["index"] = device.index;
         deviceArray.append(object);
     }
@@ -124,7 +124,7 @@ void GroupsParser::saveNewCollection(const QString& groupName, const std::list<S
 
         object["type"] = utils::ECommTypeToString(device.type);
 
-        object["controller"] = device.name;
+        object["controller"] = device.controller;
         object["index"] = device.index;
         deviceArray.append(object);
     }
@@ -224,7 +224,7 @@ void GroupsParser::parseCollection(const QJsonObject& object) {
                 SLightDevice lightDevice;
                 lightDevice.type = type;
                 lightDevice.index = index;
-                lightDevice.name = controller;
+                lightDevice.controller = controller;
                 list.push_back(lightDevice);
             } else {
                 qDebug() << __func__ << " device broken";
@@ -293,7 +293,7 @@ void GroupsParser::parseMood(const QJsonObject& object) {
                 lightDevice.type = type;
                 lightDevice.index = index;
                 lightDevice.colorMode = colorMode;
-                lightDevice.name = controller;
+                lightDevice.controller = controller;
                 list.push_back(lightDevice);
             } else {
                 qDebug() << __func__ << " device broken";
@@ -437,7 +437,7 @@ std::list<SLightDevice> GroupsParser::loadDebugData() {
             lightDevice.type = type;
             lightDevice.index = index;
             lightDevice.colorMode = colorMode;
-            lightDevice.name = controller;
+            lightDevice.controller = controller;
             list.push_back(lightDevice);
         }
     }

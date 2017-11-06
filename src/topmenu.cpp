@@ -211,7 +211,7 @@ void TopMenu::updateBrightnessSlider() {
 
 void TopMenu::updateSingleColor(QColor color) {
     mIconData.setSolidColor(color);
-    mIconData.setSingleLightingRoutine(mData->currentRoutine(), color);
+    mIconData.setSingleLightingRoutine(ELightingRoutine::eSingleGlimmer, color);
     mBrightnessSlider->setSliderColorBackground(color);
     mOnOffButton->setIcon(mIconData.renderAsQPixmap());
 }
@@ -263,7 +263,7 @@ void TopMenu::deviceCountChangedOnConnectionPage() {
          && (mData->currentDevices().size() == 0))) {
         deviceCountReachedZero();
     }
-   updateColorGroupButton();
+    updateColorGroupButton();
 }
 
 void TopMenu::highlightButton(EPage button) {
@@ -384,10 +384,10 @@ void TopMenu::floatingLayoutButtonPressed(QString button) {
     } else if (button.compare("New_Collection") == 0) {
         mMainWindow->editButtonClicked("", false);
     } else if (button.compare("Preset_Groups") == 0) {
-       mGroupPage->showPresetGroups();
+        mGroupPage->showPresetGroups();
     } else if (button.compare("New_Mood") == 0) {
         mMainWindow->editButtonClicked("", true);
-       // devicesButtonClicked(true);
+        // devicesButtonClicked(true);
     } else if (button.compare("Select_Moods") == 0) {
         mGroupPage->showCustomMoods();
     } else if (button.compare("Multi") == 0) {
@@ -403,9 +403,11 @@ void TopMenu::floatingLayoutButtonPressed(QString button) {
     } else if (button.compare("Temperature") == 0) {
         mLastColorButtonKey = button;
         mColorPage->changePageType(EColorPageType::eAmbient);
+        updateColorVerticalRoutineButton();
     } else if (button.compare("ColorScheme") == 0) {
         mLastColorButtonKey = button;
         mColorPage->changePageType(EColorPageType::eColorScheme);
+        updateColorVerticalRoutineButton();
     } else if (button.compare("Routine") == 0) {
         mLastColorButtonKey = button;
         mColorPage->handleRoutineWidget();
@@ -419,49 +421,52 @@ void TopMenu::showFloatingLayout(EPage newPage) {
     if (newPage != mCurrentPage) {
         // move old menu back
         switch(mCurrentPage) {
-            case EPage::eColorPage:
-                pushRightFloatingLayout(mColorFloatingLayout);
-                break;
-            case EPage::eConnectionPage:
-                if (newPage != EPage::eSettingsPage) {
-                    pushRightFloatingLayout(mConnectionFloatingLayout);
-                }
-                break;
-            case EPage::eGroupPage:
-                pushRightFloatingLayout(mGroupFloatingLayout);
-                break;
+        case EPage::eColorPage:
+            pushRightFloatingLayout(mColorFloatingLayout);
+            break;
+        case EPage::eConnectionPage:
+            if (newPage != EPage::eSettingsPage) {
+                pushRightFloatingLayout(mConnectionFloatingLayout);
+            }
+            break;
+        case EPage::eGroupPage:
+            pushRightFloatingLayout(mGroupFloatingLayout);
+            break;
+        case EPage::eSettingsPage:
+            // execution won't reach here (trademarked)
+            break;
         }
 
         // move new menu forward
         switch(newPage) {
-            case EPage::eColorPage:
-                setupColorFloatingLayout();
-                mColorVerticalFloatingLayout->setVisible(true);
-                pullLeftFloatingLayout(mColorFloatingLayout);
-                break;
-            case EPage::eConnectionPage:
-                pullLeftFloatingLayout(mConnectionFloatingLayout);
-                break;
-            case EPage::eGroupPage:
-            {
-                bool hasArduino = mData->hasArduinoDevices();
-                std::vector<QString> buttons;
-                if (hasArduino) {
-                    buttons = { QString("Select_Moods"), QString("Preset_Groups"), QString("New_Mood")};
-                    mGroupPage->showCustomMoods();
-                } else {
-                    buttons = { QString("Select_Moods"), QString("New_Mood")};
-                    mGroupPage->showCustomMoods();
-                }
-                mGroupFloatingLayout->setupButtons(buttons);
-                pullLeftFloatingLayout(mGroupFloatingLayout);
-                mGroupFloatingLayout->updateGroupPageButtons(mData->colors());
-                mGroupFloatingLayout->highlightButton(buttons[0]);
-                break;
+        case EPage::eColorPage:
+            setupColorFloatingLayout();
+            mColorVerticalFloatingLayout->setVisible(true);
+            pullLeftFloatingLayout(mColorFloatingLayout);
+            break;
+        case EPage::eConnectionPage:
+            pullLeftFloatingLayout(mConnectionFloatingLayout);
+            break;
+        case EPage::eGroupPage:
+        {
+            bool hasArduino = mData->hasArduinoDevices();
+            std::vector<QString> buttons;
+            if (hasArduino) {
+                buttons = { QString("Select_Moods"), QString("Preset_Groups"), QString("New_Mood")};
+                mGroupPage->showCustomMoods();
+            } else {
+                buttons = { QString("Select_Moods"), QString("New_Mood")};
+                mGroupPage->showCustomMoods();
             }
-            case EPage::eSettingsPage:
-                mColorVerticalFloatingLayout->setVisible(false);
-                break;
+            mGroupFloatingLayout->setupButtons(buttons);
+            pullLeftFloatingLayout(mGroupFloatingLayout);
+            mGroupFloatingLayout->updateGroupPageButtons(mData->colors());
+            mGroupFloatingLayout->highlightButton(buttons[0]);
+            break;
+        }
+        case EPage::eSettingsPage:
+            mColorVerticalFloatingLayout->setVisible(false);
+            break;
         }
 
         // settings handled as special case and is not stored here
@@ -553,12 +558,18 @@ void TopMenu::setupColorFloatingLayout() {
 
 void TopMenu::updateColorVerticalRoutineButton() {
     if (mColorPage->pageType() == EColorPageType::eRGB) {
+        mColorVerticalFloatingLayout->setVisible(true);
         mColorVerticalFloatingLayout->updateRoutineSingleColor(mData->currentRoutine(),
-                                                          mData->mainColor());
+                                                               mData->mainColor());
     } else if (mColorPage->pageType() == EColorPageType::eMulti) {
+        mColorVerticalFloatingLayout->setVisible(true);
         mColorVerticalFloatingLayout->updateRoutineMultiColor(mData->currentRoutine(),
-                                                         mData->colorGroup(EColorGroup::eCustom),
-                                                         mData->customColorsUsed());
+                                                              mData->colorGroup(EColorGroup::eCustom),
+                                                              mData->customColorsUsed());
+    } else if (mColorPage->pageType() == EColorPageType::eAmbient
+               || mColorPage->pageType() == EColorPageType::eBrightness
+               || mColorPage->pageType() == EColorPageType::eColorScheme) {
+        mColorVerticalFloatingLayout->setVisible(false);
     }
 }
 
@@ -616,7 +627,7 @@ void TopMenu::pullLeftFloatingLayout(FloatingLayout *layout) {
 void TopMenu::moveHiddenLayouts() {
     FloatingLayout *layout = currentFloatingLayout();
     if (layout != mColorFloatingLayout) {
-        QPoint topRight(this->width() - mColorFloatingLayout->width(),
+        QPoint topRight(this->width(),
                         mBottomLayout->geometry().y());
         mColorFloatingLayout->setGeometry(topRight.x(),
                                           topRight.y(),
@@ -628,7 +639,7 @@ void TopMenu::moveHiddenLayouts() {
                                                   mColorFloatingLayout->height());
     }
     if (layout != mGroupFloatingLayout) {
-        QPoint topRight(this->width() - mGroupFloatingLayout->width(),
+        QPoint topRight(this->width(),
                         mBottomLayout->geometry().y());
         mGroupFloatingLayout->setGeometry(topRight.x(),
                                           topRight.y(),
@@ -636,7 +647,7 @@ void TopMenu::moveHiddenLayouts() {
                                           mGroupFloatingLayout->height());
     }
     if (layout != mConnectionFloatingLayout) {
-        QPoint topRight(this->width() - mConnectionFloatingLayout->width(),
+        QPoint topRight(this->width(),
                         mBottomLayout->geometry().y());
         mConnectionFloatingLayout->setGeometry(topRight.x(),
                                                topRight.y(),

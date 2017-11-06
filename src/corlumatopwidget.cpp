@@ -17,15 +17,21 @@ CorlumaTopWidget::CorlumaTopWidget(QString title, QString resource, QWidget *par
 
     mTitle = new QLabel(title, this);
     mTitle->setStyleSheet("font-size:30pt;");
+    mTitle->setAlignment(Qt::AlignBottom);
     mTitle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     mResource = resource;
 
-    mLayout->addWidget(mButton, 1);
     mLayout->addWidget(mTitle, 10);
+    mLayout->addWidget(mButton, 1);
     mLayout->setContentsMargins(0,0,0,0);
     mLayout->setSpacing(6);
     this->setLayout(mLayout);
+}
+
+void CorlumaTopWidget::setFontPoint(int pt) {
+    QString stylesheet = "font-size:" + QString::number(pt)+ "pt;";
+    mTitle->setStyleSheet(stylesheet);
 }
 
 void CorlumaTopWidget::buttonPressed(bool pressed) {

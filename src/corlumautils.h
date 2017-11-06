@@ -37,6 +37,16 @@ inline void changeLabelToTitleLabel(QLabel *label) {
     label->setStyleSheet(styleSheet);
 }
 
+/// debug function for checking basic states of widget
+inline void debugWhyWidgetIsNotShowing(QWidget *widget) {
+    qDebug() << "----------";
+    qDebug() << "Widget is Visible: " << widget->isVisible();
+    qDebug() << "Geometry " << widget->geometry();
+    qDebug() << "Min Size" << widget->minimumSize();
+    qDebug() << "Max Size" << widget->maximumSize();
+    qDebug() << "----------";
+}
+
 /*!
  * \brief colorTemperatureToRGB converts a color temperature value to a RGB representation.
  *        Equation taken from http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/

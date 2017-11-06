@@ -395,11 +395,8 @@ SLightDevice ConnectionPage::identifierStringToStruct(QString string) {
             secondValue = secondValue.mid(3);
         }
         outputStruct.type = utils::stringToECommType(secondValue);
-        outputStruct.name = QString::fromStdString(valueVector[2]);
+        outputStruct.controller = QString::fromStdString(valueVector[2]);
         outputStruct.index = QString::fromStdString(valueVector[3]).toInt();
-        if (outputStruct.type == ECommType::eHue) {
-            outputStruct.name = "Bridge";
-        }
     } else {
         qDebug() << "something went wrong with the key in" << __func__;
     }

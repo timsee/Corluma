@@ -73,6 +73,9 @@ public:
      */
     void connectCommLayer(CommLayer *layer) { mComm = layer; }
 
+    /// called to programmatically resize the widget
+    void resize();
+
 signals:
 
     /*!

@@ -16,6 +16,12 @@
 #include "colorpage.h"
 #include "comm/commlayer.h"
 
+/*!
+ * \copyright
+ * Copyright (C) 2015 - 2017.
+ * Released under the GNU General Public License.
+ */
+
 class MainWindow;
 /*!
  * \brief The EPage enum The main pages of the application, as they are ordered
