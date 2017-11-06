@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.10.15</span>
+   &#160;<span id="projectnumber">v0.11.0</span>
    </div>
   </td>
  </tr>
@@ -181,6 +181,21 @@ const std::list&lt; SLightDevice &gt;&#160;</td><td class="memItemRight" valign=
 <tr class="memitem:a8f79abe3114ce3e63ab8e267b1d27f5c"><td class="memItemLeft" align="right" valign="top">std::list&lt; <a class="el" href="struct_s_hue_schedule.html">SHueSchedule</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a8f79abe3114ce3e63ab8e267b1d27f5c">hueSchedules</a> ()</td></tr>
 <tr class="memdesc:a8f79abe3114ce3e63ab8e267b1d27f5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">hueSchedules getter for a list of hue schedules. Hue schedules are predefined actions stored on the bridge. These actions do not require an app to be connected and open in order for them to execute.  <a href="#a8f79abe3114ce3e63ab8e267b1d27f5c">More...</a><br /></td></tr>
 <tr class="separator:a8f79abe3114ce3e63ab8e267b1d27f5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acca3b90e99293581b2ed892369c1bf78"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#acca3b90e99293581b2ed892369c1bf78">deleteHue</a> (<a class="el" href="struct_s_hue_light.html">SHueLight</a> hue)</td></tr>
+<tr class="memdesc:acca3b90e99293581b2ed892369c1bf78"><td class="mdescLeft">&#160;</td><td class="mdescRight">deleteHue delete a hue from the bridge, removing all knowledge of it  <a href="#acca3b90e99293581b2ed892369c1bf78">More...</a><br /></td></tr>
+<tr class="separator:acca3b90e99293581b2ed892369c1bf78"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a649fdcb975914107a5585d4d14125eff"><td class="memItemLeft" align="right" valign="top"><a id="a649fdcb975914107a5585d4d14125eff"></a>
+std::list&lt; <a class="el" href="struct_s_hue_light.html">SHueLight</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a649fdcb975914107a5585d4d14125eff">newHueLights</a> ()</td></tr>
+<tr class="memdesc:a649fdcb975914107a5585d4d14125eff"><td class="mdescLeft">&#160;</td><td class="mdescRight">list of new hue lights discovered from scanning. <br /></td></tr>
+<tr class="separator:a649fdcb975914107a5585d4d14125eff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0507589bce2076c3d92e8967afb5cc46"><td class="memItemLeft" align="right" valign="top"><a id="a0507589bce2076c3d92e8967afb5cc46"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a0507589bce2076c3d92e8967afb5cc46">requestNewHueLights</a> ()</td></tr>
+<tr class="memdesc:a0507589bce2076c3d92e8967afb5cc46"><td class="mdescLeft">&#160;</td><td class="mdescRight">request a list of hue lights discovered from scanning <br /></td></tr>
+<tr class="separator:a0507589bce2076c3d92e8967afb5cc46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15b12d0e9b680b013d886c3c3b5a670c"><td class="memItemLeft" align="right" valign="top"><a id="a15b12d0e9b680b013d886c3c3b5a670c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a15b12d0e9b680b013d886c3c3b5a670c">searchForHueLights</a> (std::list&lt; QString &gt; serialNumbers=std::list&lt; QString &gt;())</td></tr>
+<tr class="memdesc:a15b12d0e9b680b013d886c3c3b5a670c"><td class="mdescLeft">&#160;</td><td class="mdescRight">activate new light scanning. If this is called when scanning is active, reset its timer. <br /></td></tr>
+<tr class="separator:a15b12d0e9b680b013d886c3c3b5a670c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a21e68269041fdc0c172971d1e0f61e77"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a21e68269041fdc0c172971d1e0f61e77">createHueGroup</a> (QString name, std::list&lt; <a class="el" href="struct_s_hue_light.html">SHueLight</a> &gt; lights)</td></tr>
 <tr class="memdesc:a21e68269041fdc0c172971d1e0f61e77"><td class="mdescLeft">&#160;</td><td class="mdescRight">createHueGroup create a hue group to store on the hue bridge  <a href="#a21e68269041fdc0c172971d1e0f61e77">More...</a><br /></td></tr>
 <tr class="separator:a21e68269041fdc0c172971d1e0f61e77"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -196,6 +211,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#aa2675b571b2ea0619aab1b820ca66330">haveHueSchedules</a> ()</td></tr>
 <tr class="memdesc:aa2675b571b2ea0619aab1b820ca66330"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if its received any data about schedules from the hue bridge, false otherwise. <br /></td></tr>
 <tr class="separator:aa2675b571b2ea0619aab1b820ca66330"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e6fdffa5bd1ef40eb8a4847bd80ac83"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a8e6fdffa5bd1ef40eb8a4847bd80ac83">renameHue</a> (<a class="el" href="struct_s_hue_light.html">SHueLight</a> hue, QString newName)</td></tr>
+<tr class="memdesc:a8e6fdffa5bd1ef40eb8a4847bd80ac83"><td class="mdescLeft">&#160;</td><td class="mdescRight">renameHue rename a hue. This requires a <a class="el" href="struct_s_hue_light.html" title="The SHueLight struct a struct that stores all the relevant data received from a state update from the...">SHueLight</a> representing the hue and the new name you want to name it  <a href="#a8e6fdffa5bd1ef40eb8a4847bd80ac83">More...</a><br /></td></tr>
+<tr class="separator:a8e6fdffa5bd1ef40eb8a4847bd80ac83"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2ddd0cb53830df5c34df8aee961ab8dc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a2ddd0cb53830df5c34df8aee961ab8dc">updateHueTimeout</a> (bool enable, int index, int timeout)</td></tr>
 <tr class="memdesc:a2ddd0cb53830df5c34df8aee961ab8dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateHueTimeout update the hue timeout for a specific hue schedule.  <a href="#a2ddd0cb53830df5c34df8aee961ab8dc">More...</a><br /></td></tr>
 <tr class="separator:a2ddd0cb53830df5c34df8aee961ab8dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -264,6 +282,30 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   <table class="params">
     <tr><td class="paramname">name</td><td>name of new group </td></tr>
     <tr><td class="paramname">lights</td><td>lights to be part of the hue group. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="acca3b90e99293581b2ed892369c1bf78"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acca3b90e99293581b2ed892369c1bf78">&#9670;&nbsp;</a></span>deleteHue()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CommLayer::deleteHue </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_s_hue_light.html">SHueLight</a>&#160;</td>
+          <td class="paramname"><em>hue</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">hue</td><td>hue to delete. </td></tr>
   </table>
   </dd>
 </dl>
@@ -617,6 +659,41 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if controller is removed, false othewrise. </dd></dl>
+
+</div>
+</div>
+<a id="a8e6fdffa5bd1ef40eb8a4847bd80ac83"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e6fdffa5bd1ef40eb8a4847bd80ac83">&#9670;&nbsp;</a></span>renameHue()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CommLayer::renameHue </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_s_hue_light.html">SHueLight</a>&#160;</td>
+          <td class="paramname"><em>hue</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">QString&#160;</td>
+          <td class="paramname"><em>newName</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">hue</td><td>a <a class="el" href="struct_s_hue_light.html" title="The SHueLight struct a struct that stores all the relevant data received from a state update from the...">SHueLight</a> that represents the light you want to rename. </td></tr>
+    <tr><td class="paramname">newName</td><td>the new name for the light. Must be at most 32 characters in length. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -1261,14 +1338,14 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
       <p align="left">
       <small>
           &nbsp; &nbsp; LightingGUI Copyright 2015 - 2017  &nbsp; &nbsp; <br>
-          &nbsp; &nbsp; All Rights MIT Licensed.  &nbsp; &nbsp; 
+          &nbsp; &nbsp; All Rights GPL v3.0 Licensed.  &nbsp; &nbsp;
        </small>
        </p>
     </td>
     <td>
       <p align="right">
       <small>
-          &nbsp; &nbsp;  Generated by doxygen 1.8.11  &nbsp; &nbsp;
+          &nbsp; &nbsp;  Generated by doxygen &nbsp; &nbsp;
        </small>
        </p>
     </td>
