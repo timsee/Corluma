@@ -62,6 +62,7 @@ public:
     /// true if details are hidden, false otherwise
     bool detailsHidden() { return mHideDetails; }
 
+    /// set height of info widget
     void setHeight(int);
 
 signals:

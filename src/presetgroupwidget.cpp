@@ -10,46 +10,75 @@
 PresetGroupWidget::PresetGroupWidget(QString name,
                                      EColorGroup group,
                                      const std::vector<QColor>& colors,
+                                     EPresetWidgetMode mode,
                                      QWidget *parent) : QWidget(parent) {
 
+    mMode = mode;
     mLayout = new QGridLayout(this);
 
     mLabel = new QLabel(this);
     mLabel->setWordWrap(true);
     mLabel->setText(name);
 
-
     mLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    int buttonCount = (int)ELightingRoutine::eLightingRoutine_MAX - (int)utils::ELightingRoutineSingleColorEnd - 1;
-    mButtons = std::vector<CorlumaButton *>(buttonCount, nullptr);
-    mLayout->addWidget(mLabel, 0, 0, 1, buttonCount + 1);
+    if (mode == EPresetWidgetMode::eArduino) {
+        int buttonCount = (int)ELightingRoutine::eLightingRoutine_MAX - (int)utils::ELightingRoutineSingleColorEnd - 1;
+        mButtons = std::vector<CorlumaButton *>(buttonCount, nullptr);
+        mLayout->addWidget(mLabel, 0, 0, 1, buttonCount + 1);
 
-    int index = 0;
-    for (int routine = (int)utils::ELightingRoutineSingleColorEnd + 1; routine < (int)ELightingRoutine::eLightingRoutine_MAX; routine++) {
+        int index = 0;
+        for (int routine = (int)utils::ELightingRoutineSingleColorEnd + 1; routine < (int)ELightingRoutine::eLightingRoutine_MAX; routine++) {
+            mButtons[index] = new CorlumaButton(this);
+            mButtons[index]->setupAsStandardButton((ELightingRoutine)routine, group, QString(""), colors);
+            mButtons[index]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+            mButtons[index]->button->setStyleSheet(kUncheckedStyleSheet);
+            connect(mButtons[index], SIGNAL(buttonClicked(int, int)), this, SLOT(multiButtonClicked(int, int)));
+            // add to layout
+            mLayout->addWidget(mButtons[index], 1, index + 1, 6, 1);
+            index++;
+        }
+    } else {
+        mButtons = std::vector<CorlumaButton *>(1, nullptr);
+        mLayout->addWidget(mLabel, 0, 0, 1, 2);
+
+        int index = 0;
         mButtons[index] = new CorlumaButton(this);
-        mButtons[index]->setupAsStandardButton((ELightingRoutine)routine, group, QString(""), colors);
+        mButtons[index]->setupAsStandardButton(ELightingRoutine::eMultiFade, group, QString(""), colors);
         mButtons[index]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        mButtons[index]->button->setStyleSheet(kUncheckedStyleSheet);
         connect(mButtons[index], SIGNAL(buttonClicked(int, int)), this, SLOT(multiButtonClicked(int, int)));
         // add to layout
-        mLayout->addWidget(mButtons[index], 1, index + 1, 6, 1);
-        index++;
+        mLayout->addWidget(mButtons[index], 1, 1, 6, 1);
     }
 }
 
 void PresetGroupWidget::setChecked(ELightingRoutine routine, bool isChecked) {
-    int index = (int)routine - (int)utils::ELightingRoutineSingleColorEnd - 1;
-    mButtons[index]->button->setChecked(isChecked);
-    if (isChecked) {
-        mButtons[index]->button->setStyleSheet(kCheckedStyleSheet);
+    if (mMode == EPresetWidgetMode::eArduino) {
+        int index = (int)routine - (int)utils::ELightingRoutineSingleColorEnd - 1;
+        mButtons[index]->button->setChecked(isChecked);
+        if (isChecked) {
+            mButtons[index]->button->setStyleSheet(kCheckedStyleSheet);
+        } else {
+            mButtons[index]->button->setStyleSheet(kUncheckedStyleSheet);
+        }
     } else {
-        mButtons[index]->button->setStyleSheet(kUncheckedStyleSheet);
+        mButtons[0]->button->setChecked(isChecked);
+        if (isChecked) {
+            mButtons[0]->button->setStyleSheet(kCheckedStyleSheet);
+        } else {
+            mButtons[0]->button->setStyleSheet(kUncheckedStyleSheet);
+        }
     }
 }
 
 void PresetGroupWidget::resize() {
-    for (uint32_t x = 0; x < mButtons.size(); ++x) {
-        mButtons[x]->setFixedHeight(mButtons[x]->width());
+    if (mMode == EPresetWidgetMode::eArduino) {
+        for (uint32_t x = 0; x < mButtons.size(); ++x) {
+            mButtons[x]->setFixedHeight(mButtons[x]->width());
+        }
+    } else {
+        mButtons[0]->setFixedHeight(this->width() / 2);
     }
 }
 

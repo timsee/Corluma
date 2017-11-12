@@ -3,6 +3,7 @@
 
 #include "discovery/discoverywidget.h"
 #include "discovery/hardwareconnectionwidget.h"
+#include "editablefieldwidget.h"
 
 /*!
  * \copyright
@@ -42,6 +43,12 @@ public slots:
      */
     void hueDiscoveryUpdate(int);
 
+    /*!
+     * \brief IPFieldChanged IP Address field has changed, try to discover the IP
+     *        address provided.
+     */
+    void IPFieldChanged(QString);
+
 protected:
     /*!
      * \brief resizeEvent called every time the main window is resized.
@@ -59,8 +66,17 @@ private:
     /// placeholder to add blank space to the hue widget
     QLabel *mPlaceholder;
 
+    /// label for displaying before the IP Address editable field.
+    QLabel *mIPAddressInfo;
+
     /// cachced pixmap of hue bridge
     QPixmap mBridgePixmap;
+
+    /// IP address of bridge
+    EditableFieldWidget *mIPAddress;
+
+    /// instructions on what to do with IP address
+    QLabel *mIPAddressDebug;
 
     /// widget for displaying the hadware connection state
     HardwareConnectionWidget *mHardwareConnectionWidget;
@@ -83,6 +99,9 @@ private:
 
     /// layout for widget
     QVBoxLayout *mLayout;
+
+    /// layout for IP information
+    QHBoxLayout *mIPLayout;
 };
 
 #endif // DISCOVERYHUEWIDGET_H

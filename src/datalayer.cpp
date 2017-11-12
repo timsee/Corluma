@@ -414,7 +414,21 @@ void DataLayer::updateRoutine(ELightingRoutine routine) {
 
 void DataLayer::updateColorGroup(EColorGroup colorGroup) {
     std::list<SLightDevice>::iterator iterator;
+    int hueCount = 0;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
+        /*!
+         * hues are not individually addressable, mock a color group by setting
+         * each individual light as a color
+         */
+        std::vector<QColor> colors = this->colorGroup(colorGroup);
+        if (iterator->type == ECommType::eHue) {
+            int colorIndex = hueCount % colors.size();
+            iterator->color = colors[colorIndex];
+            // update the brightness to match the brightness of the color
+            int brightness = iterator->color.toHsv().valueF() * 100;
+            iterator->brightness = brightness;
+            hueCount++;
+        }
         iterator->colorGroup = colorGroup;
     }
     emit dataUpdate();

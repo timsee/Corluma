@@ -4,10 +4,12 @@
  * Released under the GNU General Public License.
  */
 
+#include <QMessageBox>
+
 #include "editablefieldwidget.h"
 #include "corlumautils.h"
 
-EditableFieldWidget::EditableFieldWidget(const QString& text, QWidget *parent) : QWidget(parent) {
+EditableFieldWidget::EditableFieldWidget(const QString& text, QWidget *parent, int maxFieldSize, const QString maxFieldError) : QWidget(parent) {
     mStoredText = text;
 
     mText = new QLabel(text, this);
@@ -48,7 +50,11 @@ EditableFieldWidget::EditableFieldWidget(const QString& text, QWidget *parent) :
     mLayout->setContentsMargins(0,0,0,0);
     mLayout->setSpacing(0);
 
+    mMaxFieldSize = maxFieldSize;
+    mMaxFieldError = maxFieldError;
     mIsEditing = false;
+    mEnableEditing = true;
+    mRequireIP  = false;
 }
 
 void EditableFieldWidget::setFontPointSize(int pt) {
@@ -74,10 +80,30 @@ void EditableFieldWidget::lineEditChanged(QString newText) {
 
 void EditableFieldWidget::rightButtonClicked(bool) {
     if (mIsEditing) {
-        setInEditMode(false);
+        if (mRequireIP) {
+            // check for IP address
+            if (!utils::checkIfValidIP(mStoredText)) {
+                QMessageBox reply;
+                reply.setText(mStoredText + "is not a valid IP address.");
+                reply.exec();
+                return;
+            }
+        }
         if (mStoredText.compare(mText->text()) != 0) {
-            setText(mStoredText);
-            emit updatedField(mStoredText);
+            if (mMaxFieldSize != -1
+                    && mStoredText.size() > mMaxFieldSize) {
+                QMessageBox reply;
+                reply.setText(mMaxFieldError);
+                reply.exec();
+                return;
+            } else {
+                // passed checks
+                setText(mStoredText);
+                emit updatedField(mStoredText);
+                setInEditMode(false);
+            }
+        } else {
+            setInEditMode(false);
         }
     } else {
         setInEditMode(true);
@@ -106,4 +132,21 @@ void EditableFieldWidget::setInEditMode(bool inEditMode) {
         mLeftButton->setVisible(false);
         mRightButton->setIcon(mEditIcon);
     }
+}
+
+void EditableFieldWidget::enableEditing(bool enableEditing) {
+    if (enableEditing != mEnableEditing) {
+        mEnableEditing = enableEditing;
+        if (mEnableEditing) {
+            mRightButton->setVisible(true);
+        } else {
+            setInEditMode(false);
+            mLeftButton->setVisible(false);
+            mRightButton->setVisible(false);
+        }
+    }
+}
+
+void EditableFieldWidget::requireIPAddress(bool requireIP) {
+    mRequireIP = requireIP;
 }

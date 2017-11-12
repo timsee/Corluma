@@ -384,7 +384,11 @@ void TopMenu::floatingLayoutButtonPressed(QString button) {
     } else if (button.compare("New_Collection") == 0) {
         mMainWindow->editButtonClicked("", false);
     } else if (button.compare("Preset_Groups") == 0) {
-        mGroupPage->showPresetGroups();
+        if (mData->hasArduinoDevices()) {
+            mGroupPage->showPresetArduinoGroups();
+        } else {
+            mGroupPage->showPresetHueGroups();
+        }
     } else if (button.compare("New_Mood") == 0) {
         mMainWindow->editButtonClicked("", true);
         // devicesButtonClicked(true);
@@ -449,15 +453,10 @@ void TopMenu::showFloatingLayout(EPage newPage) {
             break;
         case EPage::eGroupPage:
         {
-            bool hasArduino = mData->hasArduinoDevices();
             std::vector<QString> buttons;
-            if (hasArduino) {
-                buttons = { QString("Select_Moods"), QString("Preset_Groups"), QString("New_Mood")};
-                mGroupPage->showCustomMoods();
-            } else {
-                buttons = { QString("Select_Moods"), QString("New_Mood")};
-                mGroupPage->showCustomMoods();
-            }
+            buttons = { QString("Select_Moods"), QString("Preset_Groups"), QString("New_Mood")};
+            mGroupPage->showCustomMoods();
+
             mGroupFloatingLayout->setupButtons(buttons);
             pullLeftFloatingLayout(mGroupFloatingLayout);
             mGroupFloatingLayout->updateGroupPageButtons(mData->colors());

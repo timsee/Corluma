@@ -18,7 +18,7 @@ HueLightDiscovery::HueLightDiscovery(QWidget *parent) : QWidget(parent) {
     connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(closeButtonPressed(bool)));
     mTopWidget->setFontPoint(20);
 
-    mSearchWidget = new SearchWidget("", this);
+    mSearchWidget = new SearchWidget("", this, 10, QString("You may only search for 10 Hues manually at a time."));
     mSearchWidget->enableSizeChecks(6, 6, "Hue serial numbers must be 6 characters long.");
     mSearchWidget->forceUpperCase(true);
     connect(mSearchWidget, SIGNAL(plusClicked()), this, SLOT(plusButtonClicked()));
@@ -75,11 +75,27 @@ void HueLightDiscovery::hide() {
 }
 
 void HueLightDiscovery::discoveryRoutine() {
-    qDebug() << " discover";
     // get new lights, which also checks if a scan is active
     mComm->requestNewHueLights();
+    // see if any new lights have been added to UI
+    bool newLightsAdded = false;
+    for (auto serial : mSearchWidget->searchingFor()) {
+        bool foundSerial = false;
+        for (auto searchingSerial : mComm->hueSearchingSerials()) {
+            if (serial.compare(searchingSerial) == 0) {
+                foundSerial = true;
+            }
+        }
+        if (!foundSerial) {
+            newLightsAdded = true;
+        }
+    }
 
-    // if a scan is not active, reactivate it
+    // if scan is not active or if new lights have been added, restart scan
+    if (!mComm->hueScanIsActive() || newLightsAdded) {
+        qDebug() << " search for new lights! active: " << mComm->hueScanIsActive()  << " new lgihts added" << newLightsAdded;
+        mComm->searchForHueLights(mSearchWidget->searchingFor());
+    }
 
     // if any changes happen, update UI
     std::list<SHueLight> hues = mComm->newHueLights();

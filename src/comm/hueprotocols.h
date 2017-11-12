@@ -262,9 +262,12 @@ inline EHueType stringToHueType(const QString& string) {
     }
 }
 
-
-
-inline QString hueTypeToString(const EHueType& type) {
+/*!
+ * \brief hueTypeToString helper that takes a EHueType and converts it to a string.
+ * \param type type to use as input
+ * \return string representation of type.
+ */
+inline QString hueTypeToString(EHueType type) {
     if (type == EHueType::eExtended) {
         return "Extended color light";
     } else if (type == EHueType::eAmbient) {

@@ -80,6 +80,12 @@ public:
      */
     SHueBridge bridge() { return mBridge; }
 
+    /*!
+     * \brief attemptIPAddress attempts to connect to an IP address entered manually
+     * \param ip new ip address to attempt.
+     */
+    void attemptIPAddress(QString ip);
+
 signals:
 
     /*!
@@ -172,11 +178,18 @@ private:
      *        received from a tested IP Address
      */
     bool mIPValid;
+
     /*!
      * \brief mUsernameValid defaults to false, only gets set to true when a mesasge is
      *        received that shows that the username gives access to state variables.
      */
     bool mUsernameValid;
+
+    /*!
+     * \brief mUseManualIP default false, if true the discovery methods only use IP addresses
+     *        entered manually.
+     */
+    bool mUseManualIP;
 
     /*!
      * \brief attemptUPnPDiscovery attempts a UPnP connection by binding to the proper port

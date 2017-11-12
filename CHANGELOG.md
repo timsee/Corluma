@@ -219,10 +219,19 @@ ___
 * Added new widgets for common tasks, like searching and editing fields.
 * Fixed miscellaneous layout issues.
 
+
+### **v0.11.1**
+#### The Boring Hue Update 
+*This update handles some of the more "boring" support of the Phillips Hue Bridge. This fixes support for things like discovery edge cases, string length edge cases, etc.*
+* Added better support for manual Hue discovery based off of serial numbers.
+* Added better support for manual Hue Bridge discovery based off of IP address.
+* Added support for using Hues in preset color groups such as ice, water, fire, etc. 
+* Added better UI catches for incorrect string lengths and illegal arguments.
+* Fixed miscellaneous bugs.
+
+
 ### Coming Soon
 * Fully integrate Rooms, Groups, and Schedules stored on the Hue Bridge.
-* Finish manual discovery of Hues and Bridges
-* Add Color Group support to Hues.
 
 
 

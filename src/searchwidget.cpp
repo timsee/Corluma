@@ -5,11 +5,11 @@
  */
 
 #include <QMessageBox>
-
+#include <QDebug>
 
 #include "searchwidget.h"
 
-SearchWidget::SearchWidget(QString defaultLineEditValue, QWidget *parent) : QWidget(parent) {
+SearchWidget::SearchWidget(QString defaultLineEditValue, QWidget *parent, int maxSearchingCount, const QString errorMaxSearchString) : QWidget(parent) {
     //----------
     // Top layout
     //----------
@@ -80,6 +80,8 @@ SearchWidget::SearchWidget(QString defaultLineEditValue, QWidget *parent) : QWid
     mCheckSize = false;
     mMinSizeCheck = -1;
     mMaxSizeCheck = -1;
+    maxSearchingCount = maxSearchingCount;
+    mMaxSearchError = errorMaxSearchString;
     mSizeCheckError = "";
 }
 
@@ -90,6 +92,20 @@ SearchWidget::SearchWidget(QString defaultLineEditValue, QWidget *parent) : QWid
 
 
 void SearchWidget::plusButtonClicked() {
+    //-----------
+    // Checks
+    //-----------
+    // check count
+    if (mMaxSearchingCount != -1
+            && (mDiscoveringListWidget->count() >= mMaxSearchingCount)) {
+        qDebug() << mDiscoveringListWidget->count()  << " is greater than" << mMaxSearchingCount;
+        // give error
+        QMessageBox reply;
+        reply.setText(mMaxSearchError);
+        reply.exec();
+        return;
+    }
+    // check size
     if (mCheckSize) {
         int textSize = mLineEdit->text().size();
         if (!(textSize >= mMinSizeCheck
@@ -98,13 +114,19 @@ void SearchWidget::plusButtonClicked() {
             QMessageBox reply;
             reply.setText(mSizeCheckError);
             reply.exec();
-
             return;
         }
     }
+    //-----------
+    // Preprocess, if checks passed
+    //-----------
+    // adjust string if needed
     if (mForceUpperCase) {
         mLineEdit->setText(mLineEdit->text().toUpper());
     }
+    //-----------
+    // Update
+    //-----------
     emit plusClicked();
     // add to searching widget
     addToSearchList(mLineEdit->text());

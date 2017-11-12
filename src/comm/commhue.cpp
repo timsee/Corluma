@@ -187,6 +187,8 @@ void CommHue::connectionStatusHasChanged(bool status) {
         controller.isUsingCRC = false; // not used by hue bridges
         controller.maxHardwareIndex = 10; // not used by hue bridges
         controller.maxPacketSize = 1000; // not used by hue bridges
+        std::list<SLightDevice> newDeviceList;
+        mDeviceTable.insert(std::make_pair(controller.name.toStdString(), newDeviceList));
         // call update method immediately
         handleDiscoveryPacket(controller);
         //mThrottle->startThrottle();
@@ -796,11 +798,14 @@ bool CommHue::updateScanState(QJsonObject object) {
         if (lastScanString.compare("active") == 0) {
             mScanIsActive = true;
         } else {
+            mSearchingSerialNumbers.clear();
             mScanIsActive = false;
         }
 
+        return true;
       //  qDebug() << "update scan satte";
     }
+    return false;
 }
 
 EHueUpdates CommHue::checkTypeOfUpdate(QJsonObject object) {
@@ -1163,10 +1168,8 @@ void CommHue::searchForNewLights(std::list<QString> serialNumbers) {
 
         QString payload = "";
         if (serialNumbers.size()) {
+            mSearchingSerialNumbers = serialNumbers;
             QJsonArray array;
-            for (auto serial : serialNumbers) {
-                array.append(serial);
-            }
             QJsonObject object;
             object["deviceid"] = array;
             QJsonDocument doc(object);

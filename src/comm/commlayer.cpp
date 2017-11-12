@@ -574,6 +574,18 @@ void CommLayer::requestNewHueLights() {
     mHue->requestNewLights();
 }
 
+std::list<QString> CommLayer::hueSearchingSerials() {
+    return mHue->searchingLights();
+}
+
+bool CommLayer::hueScanIsActive() {
+    return mHue->scanIsActive();
+}
+
 std::list<SHueLight> CommLayer::newHueLights() {
     return mHue->newLights();
+}
+
+void CommLayer::attemptManualHueBridgeIPAddress(QString IP) {
+    mHue->discovery()->attemptIPAddress(IP);
 }

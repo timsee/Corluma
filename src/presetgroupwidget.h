@@ -6,6 +6,11 @@
 #include <QLabel>
 #include "corlumabutton.h"
 
+enum class EPresetWidgetMode {
+    eArduino,
+    eHue
+};
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2017.
@@ -30,6 +35,7 @@ public:
     explicit PresetGroupWidget(QString name,
                                EColorGroup group,
                                const std::vector<QColor>& colors,
+                               EPresetWidgetMode mode,
                                QWidget *parent = 0);
 
     /*!
@@ -79,6 +85,9 @@ private:
      * \brief mLayout layout of widget
      */
     QGridLayout *mLayout;
+
+    /// mode for preset widget
+    EPresetWidgetMode mMode;
 
     /*!
      * \brief kCheckedStyleSheet stylesheet for when the icon is checked

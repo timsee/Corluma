@@ -5,6 +5,7 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QDebug>
+#include <QHostAddress>
 
 #include <sstream>
 #include <cmath>
@@ -172,6 +173,18 @@ inline float map(float x, float in_min, float in_max, float out_min, float out_m
 template <typename T>
 T clamp(const T& n, const T& lower, const T& upper) {
   return std::max(lower, std::min(n, upper));
+}
+
+
+inline bool checkIfValidIP(QString ip) {
+    QHostAddress address(ip);
+    if (QAbstractSocket::IPv4Protocol == address.protocol()) {
+        return true;
+    } else if (QAbstractSocket::IPv6Protocol == address.protocol()) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 }

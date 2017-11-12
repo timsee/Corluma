@@ -23,10 +23,16 @@ class EditableFieldWidget : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit EditableFieldWidget(const QString& text, QWidget *parent = 0);
+    explicit EditableFieldWidget(const QString& text, QWidget *parent = 0, int maxFieldSize = -1, const QString maxFieldError = QString());
 
     /// programmatically set the text
     void setText(const QString& text);
+
+    /// true to enable editing, false to disable editing.
+    void enableEditing(bool enableEditing);
+
+    /// true to force the field to be a valid IP address to accept edit, false otherwise.
+    void requireIPAddress(bool requireIP);
 
     /*!
      * \brief setFontPointSize set the font point size, updating the minimum size
@@ -82,6 +88,18 @@ private:
 
     /// cached version of check icon.
     QIcon mCheckIcon;
+
+    /// max number of characters for the editable field to be changed
+    int mMaxFieldSize;
+
+    /// error message if editable field has too long of string
+    QString mMaxFieldError;
+
+    /// true if can edit, false otherwise.
+    bool mEnableEditing;
+
+    /// true if requiring an IP address, false otherwise.
+    bool mRequireIP;
 };
 
 

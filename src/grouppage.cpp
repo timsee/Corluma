@@ -21,40 +21,26 @@ GroupPage::GroupPage(QWidget *parent) :
 
     mLayout = new QVBoxLayout(this);
 
-    mTopLayout = new QHBoxLayout;
-    std::vector<std::string> labels = {"Glimmer",
-                                       "Fade",
-                                       "Random Solid",
-                                       "Random Individual",
-                                       "Bars Solid ",
-                                       "Bars Moving"};
+    mScrollWidgetArduino = new QWidget(this);
+    mScrollAreaArduino = new QScrollArea(this);
+    mScrollAreaArduino->setWidget(mScrollWidgetArduino);
+    mScrollAreaArduino->setStyleSheet("background-color:transparent;");
+    QScroller::grabGesture(mScrollAreaArduino->viewport(), QScroller::LeftMouseButtonGesture);
+    mScrollAreaArduino->setVisible(false);
 
-    mLabels = std::vector<QLabel*>(labels.size());
-    for (uint32_t i = 0; i < labels.size(); ++i) {
-        mLabels[i] = new QLabel(this);
-        mLabels[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        mLabels[i]->setText(QString(labels[i].c_str()));
-        mLabels[i]->setWordWrap(true);
-        mLabels[i]->setAlignment(Qt::AlignCenter);
-        mLabels[i]->setStyleSheet("font: bold;");
-        mLabels[i]->setVisible(false);
-        mTopLayout->addWidget(mLabels[i], 1);
-    }
-
-
-    mScrollWidget = new QWidget;
-    mScrollArea = new QScrollArea(this);
-    mScrollArea->setWidget(mScrollWidget);
-    mScrollArea->setStyleSheet("background-color:transparent;");
-    QScroller::grabGesture(mScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
-    mScrollArea->setVisible(false);
+    mScrollWidgetHue = new QWidget(this);
+    mScrollAreaHue = new QScrollArea(this);
+    mScrollAreaHue->setWidget(mScrollWidgetHue);
+    mScrollAreaHue->setStyleSheet("background-color:transparent;");
+    QScroller::grabGesture(mScrollAreaHue->viewport(), QScroller::LeftMouseButtonGesture);
+    mScrollAreaHue->setVisible(false);
 
     mMoodsListWidget = new CorlumaListWidget(this);
     mMoodsListWidget->setContentsMargins(0,0,0,0);
     mMoodsListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QScroller::grabGesture(mMoodsListWidget->viewport(), QScroller::LeftMouseButtonGesture);
 
-    mShowingMoodsListWidget = true;
+    mMode = EGroupMode::eMoods;
 }
 
 GroupPage::~GroupPage() {
@@ -81,25 +67,67 @@ void GroupPage::setupButtons() {
                                        "Seven",
                                        "All"};
 
-    mPresetWidgets = std::vector<PresetGroupWidget *>(labels.size(), nullptr);
-    mPresetLayout = new QVBoxLayout;
-    mPresetLayout->setSpacing(0);
-    mPresetLayout->setContentsMargins(9, 0, 0, 0);
+    //---------------
+    // Arduino
+    //---------------
+
+    mPresetArduinoWidgets = std::vector<PresetGroupWidget *>(labels.size(), nullptr);
+    mPresetArduinoLayout = new QVBoxLayout;
+    mPresetArduinoLayout->setSpacing(0);
+    mPresetArduinoLayout->setContentsMargins(9, 0, 0, 0);
 
     int groupIndex = 0;
     for (int preset = (int)EColorGroup::eWater; preset < (int)EColorGroup::eColorGroup_MAX; preset++) {
-        mPresetWidgets[groupIndex] = new PresetGroupWidget(QString(labels[groupIndex].c_str()),
-                                                           (EColorGroup)preset,
-                                                           mData->colorGroup((EColorGroup)preset),
-                                                           this);
-        mPresetLayout->addWidget(mPresetWidgets[groupIndex], 1);
-        connect(mPresetWidgets[groupIndex], SIGNAL(presetButtonClicked(int, int)), this, SLOT(multiButtonClicked(int,int)));
+        mPresetArduinoWidgets[groupIndex] = new PresetGroupWidget(QString(labels[groupIndex].c_str()),
+                                                                  (EColorGroup)preset,
+                                                                  mData->colorGroup((EColorGroup)preset),
+                                                                  EPresetWidgetMode::eArduino,
+                                                                  this);
+        mPresetArduinoLayout->addWidget(mPresetArduinoWidgets[groupIndex], 1);
+        connect(mPresetArduinoWidgets[groupIndex], SIGNAL(presetButtonClicked(int, int)), this, SLOT(multiButtonClicked(int,int)));
         groupIndex++;
     }
 
-    mScrollArea->setWidgetResizable(true);
-    mScrollArea->widget()->setLayout(mPresetLayout);
-    mScrollArea->setStyleSheet("background-color:rgb(33, 32, 32);");
+    mScrollAreaArduino->setWidgetResizable(true);
+    mScrollAreaArduino->widget()->setLayout(mPresetArduinoLayout);
+    mScrollAreaArduino->setStyleSheet("background-color:rgb(33, 32, 32);");
+
+    //---------------
+    // Hue
+    //---------------
+
+    mPresetHueWidgets = std::vector<PresetGroupWidget *>(labels.size(), nullptr);
+    mPresetHueLayout = new QGridLayout;
+    mPresetHueLayout->setSpacing(0);
+    mPresetHueLayout->setContentsMargins(9, 0, 0, 0);
+
+    groupIndex = 0;
+    int rowIndex = 0;
+    int columnIndex = 0;
+    for (int preset = (int)EColorGroup::eWater; preset < (int)EColorGroup::eColorGroup_MAX; preset++) {
+        mPresetHueWidgets[groupIndex] = new PresetGroupWidget(QString(labels[groupIndex].c_str()),
+                                                                  (EColorGroup)preset,
+                                                                  mData->colorGroup((EColorGroup)preset),
+                                                                  EPresetWidgetMode::eHue,
+                                                                  this);
+        mPresetHueLayout->addWidget(mPresetHueWidgets[groupIndex], rowIndex, columnIndex);
+        connect(mPresetHueWidgets[groupIndex], SIGNAL(presetButtonClicked(int, int)), this, SLOT(multiButtonClicked(int,int)));
+        if (columnIndex == 0) {
+            columnIndex = 1;
+        } else {
+            columnIndex = 0;
+            rowIndex++;
+        }
+        groupIndex++;
+    }
+
+    mScrollAreaHue->setWidgetResizable(true);
+    mScrollAreaHue->widget()->setLayout(mPresetHueLayout);
+    mScrollAreaHue->setStyleSheet("background-color:rgb(33, 32, 32);");
+
+    //---------------
+    // Final Setup
+    //---------------
 
     mLayout->addWidget(mMoodsListWidget, 8);
 }
@@ -108,10 +136,18 @@ void GroupPage::highlightRoutineButton(ELightingRoutine routine, EColorGroup col
     int index = 0;
     for (int iteratorGroup = (int)EColorGroup::eWater; iteratorGroup < (int)EColorGroup::eColorGroup_MAX; iteratorGroup++) {
         for (int iteratorRoutine = (int)utils::ELightingRoutineSingleColorEnd + 1; iteratorRoutine < (int)ELightingRoutine::eLightingRoutine_MAX; iteratorRoutine++) {
-            if (iteratorRoutine == (int)routine && iteratorGroup == (int)colorGroup) {
-                mPresetWidgets[index]->setChecked((ELightingRoutine)iteratorRoutine, true);
-            } else {
-                mPresetWidgets[index]->setChecked((ELightingRoutine)iteratorRoutine, false);
+            if (mMode == EGroupMode::eArduinoPresets) {
+                if (iteratorRoutine == (int)routine && iteratorGroup == (int)colorGroup) {
+                    mPresetArduinoWidgets[index]->setChecked((ELightingRoutine)iteratorRoutine, true);
+                } else {
+                    mPresetArduinoWidgets[index]->setChecked((ELightingRoutine)iteratorRoutine, false);
+                }
+            } else if (mMode == EGroupMode::eHuePresets) {
+                if (iteratorRoutine == (int)routine && iteratorGroup == (int)colorGroup) {
+                    mPresetHueWidgets[index]->setChecked((ELightingRoutine)iteratorRoutine, true);
+                } else {
+                    mPresetHueWidgets[index]->setChecked((ELightingRoutine)iteratorRoutine, false);
+                }
             }
         }
         index++;
@@ -165,44 +201,59 @@ void GroupPage::resize() {
         item->setShowButtons(mSettings->value(keyForCollection(item->key())).toBool());
     }
 
-    mScrollArea->setFixedSize(this->size());
-    for (uint32_t i = 0; i < mPresetWidgets.size(); ++i) {
-        mPresetWidgets[i]->resize();
+    mScrollAreaArduino->setFixedSize(this->size());
+    for (uint32_t i = 0; i < mPresetArduinoWidgets.size(); ++i) {
+        mPresetArduinoWidgets[i]->resize();
+    }
+
+    mScrollAreaHue->setFixedSize(this->size());
+    for (uint32_t i = 0; i < mPresetHueWidgets.size(); ++i) {
+        mPresetHueWidgets[i]->resize();
     }
 }
 
 void GroupPage::showCustomMoods() {
-    if (!mShowingMoodsListWidget) {
+    if (mMode != EGroupMode::eMoods) {
         // hide existing
         mLayout->removeItem(mLayout->itemAt(0));
-        //mLayout->removeItem(mLayout->itemAt(2));
-        // loop through all widgets in top layout, hide all
-//        for (uint32_t i = 0; i < mLabels.size(); ++i) {
-//            mLabels[i]->setHidden(true);
-//        }
-        mScrollArea->setVisible(false);
+        mScrollAreaArduino->setVisible(false);
 
         // add new
         mLayout->addWidget(mMoodsListWidget, 20);
         mMoodsListWidget->setVisible(true);
 
-        mShowingMoodsListWidget = true;
+        mMode = EGroupMode::eMoods;
     }
 }
 
-void GroupPage::showPresetGroups() {
-    if (mShowingMoodsListWidget) {
+void GroupPage::showPresetArduinoGroups() {
+    if (mMode != EGroupMode::eArduinoPresets) {
         // hide existing
         mLayout->removeItem(mLayout->itemAt(0));
         mMoodsListWidget->setVisible(false);
 
-        mLayout->addWidget(mScrollArea, 20);
-        mScrollArea->setVisible(true);
+        mScrollAreaHue->setVisible(false);
+        mLayout->addWidget(mScrollAreaArduino, 20);
+        mScrollAreaArduino->setVisible(true);
 
-        mShowingMoodsListWidget = false;
+        mMode = EGroupMode::eArduinoPresets;
     }
 }
 
+
+void GroupPage::showPresetHueGroups() {
+    if (mMode != EGroupMode::eHuePresets) {
+        // hide existing
+        mLayout->removeItem(mLayout->itemAt(0));
+        mMoodsListWidget->setVisible(false);
+
+        mScrollAreaArduino->setVisible(false);
+        mLayout->addWidget(mScrollAreaHue, 20);
+        mScrollAreaHue->setVisible(true);
+
+        mMode = EGroupMode::eHuePresets;
+    }
+}
 
 //--------------------
 // Mood Widget

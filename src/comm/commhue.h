@@ -226,6 +226,9 @@ public:
     /// list of lights recently discovered by a scan
     std::list<SHueLight> newLights() { return mNewLights; }
 
+    /// serial numbers for lights that we are searching for.
+    std::list<QString> searchingLights() { return mSearchingSerialNumbers; }
+
     /// request a list of all recently discovered lights
     void requestNewLights();
 
@@ -481,6 +484,9 @@ private:
 
     /// list of new lights found from light scan
     std::list<SHueLight> mNewLights;
+
+    /// list of serial numbers the hue is searching for
+    std::list<QString> mSearchingSerialNumbers;
 
     /// true if scanning for lights, false otherwise.
     bool mScanIsActive;

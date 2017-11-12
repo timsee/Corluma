@@ -45,6 +45,7 @@ HueBridgeDiscovery::HueBridgeDiscovery(QObject *parent) : QObject(parent) {
     // assume that all saved data is not valid until its checked.
     mIPValid = false;
     mUsernameValid = false;
+    mUseManualIP = false;
 }
 
 HueBridgeDiscovery::~HueBridgeDiscovery() {
@@ -64,8 +65,10 @@ void HueBridgeDiscovery::startBridgeDiscovery() {
         // while NUPnP does a HTTP GET request to a website set up
         // by Phillips that returns a JSON value that contains
         // all the Bridges on your network.
-        attemptUPnPDiscovery();
-        attemptNUPnPDiscovery();
+        if (!mUseManualIP) {
+            attemptUPnPDiscovery();
+            attemptNUPnPDiscovery();
+        }
     } else if(!mHasKey) {
          attemptSearchForUsername();
     } else if (mHasKey) {
@@ -239,9 +242,11 @@ void HueBridgeDiscovery::readPendingUPnPDatagrams() {
 void HueBridgeDiscovery::handleDiscoveryTimeout() {
     if (mDiscoveryState == EHueDiscoveryState::eFindingIpAddress) {
         qDebug() << "UPnP timed out...";
-        // leave UPnP bound, but call the NUPnP again just in case...
-        attemptNUPnPDiscovery();
-        attemptUPnPDiscovery();
+        if (!mUseManualIP) {
+            // leave UPnP bound, but call the NUPnP again just in case...
+            attemptNUPnPDiscovery();
+            attemptUPnPDiscovery();
+        }
         // TODO: prompt the user if this state gets hit too many times?
     } else if (mDiscoveryState == EHueDiscoveryState::eTestingIPAddress) {
         // search for IP again, the one we have is no longer valid.
@@ -305,6 +310,20 @@ void HueBridgeDiscovery::attemptNUPnPDiscovery() {
     QNetworkRequest request = QNetworkRequest(QUrl(urlString));
     request.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("text/html; charset=utf-8"));
     mNetworkManager->get(request);
+}
+
+void HueBridgeDiscovery::attemptIPAddress(QString ip) {
+    mIPValid = false;
+    mHasIP = false;
+    mBridge.IP = ip;
+    mUseManualIP = true;
+
+    mTimeoutTimer->stop();
+    mDiscoveryState = EHueDiscoveryState::eTestingIPAddress;
+    emit bridgeDiscoveryStateChanged((int)mDiscoveryState);
+    mTimeoutTimer->start(4000);
+    // call bridge discovery again, now that we have an IP
+    startBridgeDiscovery();
 }
 
 void HueBridgeDiscovery::attemptFinalCheck() {

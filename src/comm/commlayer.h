@@ -266,6 +266,13 @@ public:
     // --------------------------
 
     /*!
+     * \brief attemptManualHueBridgeIPAddress attempts feeding a manual IP address to to the HueBridgeDiscovery class
+     *        and connecting to this. Hue docs recommend this as a last-ditch effort to try to connect to a Hue Bridge.
+     * \param IP ip address to send to Hue Bridge Discovery
+     */
+    void attemptManualHueBridgeIPAddress(QString IP);
+
+    /*!
      * \brief connectedHues returns a list of structs that contain all relevant
      *        states of all Hue lights connected to the Bridge. These values are
      *        updated every few seconds by a timer.
@@ -302,6 +309,12 @@ public:
 
     /// activate new light scanning. If this is called when scanning is active, reset its timer.
     void searchForHueLights(std::list<QString> serialNumbers = std::list<QString>());
+
+    /// list of serial numbers that the hue search routine is looking for.
+    std::list<QString> hueSearchingSerials();
+
+    /// true if hue scan is active, false othewrise.
+    bool hueScanIsActive();
 
     /*!
      * \brief createHueGroup create a hue group to store on the hue bridge

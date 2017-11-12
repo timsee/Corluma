@@ -96,6 +96,7 @@ private:
      */
     void endOfSync() override;
 
+    /// pointer to the groups parser system
     GroupsParser *mGroups;
 };
 

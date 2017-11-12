@@ -23,28 +23,48 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer *comm, QWidget *parent) :
    // mLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     mImage = new QLabel(this);
+    mImage->setAlignment(Qt::AlignHCenter);
+
     //mImage->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     mPlaceholder = new QLabel(this);
 
     mHardwareConnectionWidget = new HardwareConnectionWidget(":images/Hue-Bridge.png", this);
 
+    mIPAddress = new EditableFieldWidget("192.168.0.1", this);
+    connect(mIPAddress, SIGNAL(updatedField(QString)), this, SLOT(IPFieldChanged(QString)));
+    mIPAddress->requireIPAddress(true);
+
+    mIPAddressInfo = new QLabel("IP Address:", this);
+
+    mIPAddressDebug = new QLabel("Incorrect IP Address? Press the edit button to change.", this);
+    mIPAddressDebug->setWordWrap(true);
+    mIPAddressDebug->setVisible(false);
+
+    mIPLayout = new QHBoxLayout;
+    mIPLayout->addWidget(mIPAddressInfo);
+    mIPLayout->addWidget(mIPAddress);
+
+
     mLayout = new QVBoxLayout;
     mLayout->addWidget(mLabel, 6);
     mLayout->addWidget(mImage, 6);
-    mLayout->addWidget(mHardwareConnectionWidget, 4);
-    mLayout->addWidget(mPlaceholder, 14);
+    mLayout->addWidget(mHardwareConnectionWidget, 2);
+    mLayout->addLayout(mIPLayout, 4);
+    mLayout->addWidget(mIPAddressDebug, 4);
+    mLayout->addWidget(mPlaceholder, 8);
     mLayout->setAlignment(Qt::AlignHCenter);
     setLayout(mLayout);
 
-    int size = this->width() * mScale;
-    mImage->setMaximumSize(QSize(size, size));
-    mBridgePixmap = QPixmap(":images/Hue-Bridge.png");
-    mImage->setPixmap(mBridgePixmap.scaled(size,
-                                           size,
-                                           Qt::KeepAspectRatio,
-                                           Qt::SmoothTransformation));
+//    int size = this->width() * mScale;
+//    mImage->setMaximumSize(QSize(size, size));
+//    mBridgePixmap = QPixmap(":images/Hue-Bridge.png");
+//    mImage->setPixmap(mBridgePixmap.scaled(size,
+//                                           size,
+//                                           Qt::KeepAspectRatio,
+//                                           Qt::SmoothTransformation));
 
+    updateHueStatusIcon(":images/Hue-Bridge.png");
 }
 
 DiscoveryHueWidget::~DiscoveryHueWidget() {
@@ -60,12 +80,12 @@ void DiscoveryHueWidget::updateHueStatusIcon(QString iconPath) {
 //    mImage->setMovie(movie);
 //    movie->start();
 
-    //    QPixmap pixmap(iconPath);
-//    int size = this->width() * 0.6f;
-//    mImage->setPixmap(pixmap.scaled(size,
-//                                    size,
-//                                    Qt::KeepAspectRatio,
-//                                    Qt::SmoothTransformation));
+    int size = this->width() * mScale;
+    mBridgePixmap = QPixmap(iconPath);
+    mImage->setPixmap(mBridgePixmap.scaled(size,
+                                    size,
+                                    Qt::KeepAspectRatio,
+                                    Qt::SmoothTransformation));
 }
 
 
@@ -90,29 +110,38 @@ void DiscoveryHueWidget::hueDiscoveryUpdate(int newState) {
         case EHueDiscoveryState::eTestingIPAddress:
             mLabel->setText(QString("Looking for Bridge..."));
             updateHueStatusIcon(":/images/wifi.png");
+            qDebug() << "testing IP address";
+            mIPAddress->setText(mComm->hueBridge().IP);
+            mIPAddressDebug->setVisible(true);
             qDebug() << "Hue Update: Found IP, waiting for response";
-            mImage->setPixmap(QPixmap(":/images/pressHueBridgeImage.png"));
             mHardwareConnectionWidget->changeState(EHardwareConnectionStates::eAttemptingIncoming);
             emit connectionStatusChanged((int)ECommType::eHue, (int)EConnectionState::eDiscovering);
             break;
         case EHueDiscoveryState::eFindingDeviceUsername:
             mLabel->setText(QString("Bridge Found! Please press Link button..."));
             updateHueStatusIcon(":/images/pressHueBridgeImage.png");
+            mIPAddress->setText(mComm->hueBridge().IP);
+            mIPAddressDebug->setVisible(true);
             qDebug() << "Hue Update: Bridge is waiting for link button to be pressed.";
             mHardwareConnectionWidget->changeState(EHardwareConnectionStates::eAttemptingIncoming);
             emit connectionStatusChanged((int)ECommType::eHue, (int)EConnectionState::eDiscovering);
             break;
         case EHueDiscoveryState::eTestingFullConnection:
             mLabel->setText(QString("Bridge button pressed! Testing connection..."));
+            mIPAddress->setText(mComm->hueBridge().IP);
             updateHueStatusIcon(":/images/pressHueBridgeImage.png");
+            mIPAddressDebug->setVisible(true);
             qDebug() << "Hue Update: IP and Username received, testing combination. ";
             mHardwareConnectionWidget->changeState(EHardwareConnectionStates::eAttemptingIncoming);
             emit connectionStatusChanged((int)ECommType::eHue, (int)EConnectionState::eDiscovering);
             break;
         case EHueDiscoveryState::eBridgeConnected:
             mLabel->setText(QString("Bridge Discovered!"));
+            mIPAddress->setText(mComm->hueBridge().IP);
+            mIPAddress->enableEditing(false);
             updateHueStatusIcon(":/images/checkmark.png");
-            qDebug() << "Hue Update: Bridge Connected";
+            qDebug() << "Hue Update: Bridge Connected" << mComm->hueBridge().IP;
+            mIPAddressDebug->setVisible(false);
             mHardwareConnectionWidget->changeState(EHardwareConnectionStates::eConnected);
             emit connectionStatusChanged((int)ECommType::eHue, (int)EConnectionState::eDiscoveredAndNotInUse);
             mComm->resetStateUpdates(ECommType::eHue);
@@ -126,6 +155,10 @@ void DiscoveryHueWidget::hueDiscoveryUpdate(int newState) {
 
 void DiscoveryHueWidget::handleDiscovery(bool isCurrentCommType) {
     Q_UNUSED(isCurrentCommType);
+}
+
+void DiscoveryHueWidget::IPFieldChanged(QString ipAddress) {
+    mComm->attemptManualHueBridgeIPAddress(ipAddress);
 }
 
 void DiscoveryHueWidget::resizeEvent(QResizeEvent *) {

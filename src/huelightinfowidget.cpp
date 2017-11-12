@@ -20,7 +20,7 @@ HueLightInfoWidget::HueLightInfoWidget(SHueLight light, QWidget *parent) : QWidg
 
     mLight = light;
 
-    mName = new EditableFieldWidget(light.name, this);
+    mName = new EditableFieldWidget(light.name, this, 32, "A hue's name must be at most 32 characters long.");
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mName->setFontPointSize(14);
     connect(mName, SIGNAL(updatedField(QString)), this, SLOT(nameChanged(QString)));

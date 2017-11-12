@@ -25,7 +25,7 @@ class SearchWidget : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit SearchWidget(QString defaultLineEditValue, QWidget *parent = 0);
+    explicit SearchWidget(QString defaultLineEditValue, QWidget *parent = 0, int maxSearchingCount = -1, const QString errorMaxSearchString = QString());
 
     /*!
      * \brief lineEditText text in line edit
@@ -152,6 +152,12 @@ private:
 
     /// maximum size of a string if mCheckSize is disabled, must be this size or less.
     int mMaxSizeCheck;
+
+    /// maximum number of strings allowed in the searching field
+    int mMaxSearchingCount;
+
+    /// error string for when trying to add more searching strings than possible.
+    QString mMaxSearchError;
 
     /// error string to give as popup if check size is out of range.
     QString mSizeCheckError;

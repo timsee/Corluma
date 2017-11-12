@@ -16,6 +16,12 @@
 #include <QPushButton>
 #include <QScrollArea>
 
+enum class EGroupMode {
+    eMoods,
+    eArduinoPresets,
+    eHuePresets
+};
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2016.
@@ -65,7 +71,13 @@ public:
     void showCustomMoods();
 
     /// show the preset groups widgets, hide the custom moods
-    void showPresetGroups();
+    void showPresetArduinoGroups();
+
+    /*!
+     * show the preset greset group widgets, but show the version
+     * with less features designed for selecting hue colors.
+     */
+    void showPresetHueGroups();
 
     /*!
      * \brief connectCommLayer connec the commlayer to this page.
@@ -175,10 +187,12 @@ private:
      * \brief mPresetWidgets vector of all preset widgets getting displayed in the
      *        scroll area.
      */
-    std::vector<PresetGroupWidget *> mPresetWidgets;
+    std::vector<PresetGroupWidget *> mPresetArduinoWidgets;
 
-    /// vector of labels used in the Preset Groups
-    std::vector<QLabel*> mLabels;
+    /*!
+     * \brief mPresetHueWidgets vector of all preset hue widgets.
+     */
+    std::vector<PresetGroupWidget *> mPresetHueWidgets;
 
     /*!
      * \brief communication pointer to communication object
@@ -189,26 +203,34 @@ private:
     /// main layout of grouppage
     QVBoxLayout *mLayout;
 
-    /// layout of labels for preset group
-    QHBoxLayout *mTopLayout;
-
     /// scroll area for preset groups
-    QScrollArea *mScrollArea;
+    QScrollArea *mScrollAreaArduino;
 
-    /// widget used as main widget of QScrollArea
-    QWidget *mScrollWidget;
+    /// scroll area for preset hue groups
+    QScrollArea *mScrollAreaHue;
+
+    /// widget used as main widget of QScrollArea when any arduinos are connected.
+    QWidget *mScrollWidgetArduino;
+
+    /// widget used as main widget of QScrollArea when only hues are connected.
+    QWidget *mScrollWidgetHue;
 
     /*!
-     * \brief mPresetLayout layout of all preset widgets.
+     * \brief mPresetLayout layout of all arduino preset widgets.
      */
-    QVBoxLayout *mPresetLayout;
+    QVBoxLayout *mPresetArduinoLayout;
+
+    /*!
+     * \brief mPresetHueLayout layout of all hue preset widgets.
+     */
+    QGridLayout *mPresetHueLayout;
 
     //-------------------
     // Mood Widget
     //-------------------
 
-    /// true if showing mood list widget, false if showing preset groups
-    bool mShowingMoodsListWidget;
+    /// mode
+    EGroupMode mMode;
 
     /// update teh moodListWidget
     void updateConnectionList();
