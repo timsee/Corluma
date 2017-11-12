@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.11.0</span>
+   &#160;<span id="projectnumber">v0.11.1</span>
    </div>
   </td>
  </tr>
@@ -172,6 +172,9 @@ const std::list&lt; SLightDevice &gt;&#160;</td><td class="memItemRight" valign=
 <tr class="memitem:a9045586245e1f3f4c8358dc1d7164cb8"><td class="memItemLeft" align="right" valign="top">std::list&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a9045586245e1f3f4c8358dc1d7164cb8">undiscoveredList</a> (ECommType type)</td></tr>
 <tr class="memdesc:a9045586245e1f3f4c8358dc1d7164cb8"><td class="mdescLeft">&#160;</td><td class="mdescRight">undiscoveredList getter for the list of all undiscovered devices from a specific commtype  <a href="#a9045586245e1f3f4c8358dc1d7164cb8">More...</a><br /></td></tr>
 <tr class="separator:a9045586245e1f3f4c8358dc1d7164cb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f8ce134d4fc6f1b75ed29535438f253"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a4f8ce134d4fc6f1b75ed29535438f253">attemptManualHueBridgeIPAddress</a> (QString IP)</td></tr>
+<tr class="memdesc:a4f8ce134d4fc6f1b75ed29535438f253"><td class="mdescLeft">&#160;</td><td class="mdescRight">attemptManualHueBridgeIPAddress attempts feeding a manual IP address to to the <a class="el" href="class_hue_bridge_discovery.html" title="The HueBridgeDiscovery class is an object that handles the discovery of a hue bridge by using a combi...">HueBridgeDiscovery</a> class and connecting to this. Hue docs recommend this as a last-ditch effort to try to connect to a Hue Bridge.  <a href="#a4f8ce134d4fc6f1b75ed29535438f253">More...</a><br /></td></tr>
+<tr class="separator:a4f8ce134d4fc6f1b75ed29535438f253"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7aaad8907ae8140ca892bd72dc2031d0"><td class="memItemLeft" align="right" valign="top">std::list&lt; <a class="el" href="struct_s_hue_light.html">SHueLight</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a7aaad8907ae8140ca892bd72dc2031d0">hueList</a> ()</td></tr>
 <tr class="memdesc:a7aaad8907ae8140ca892bd72dc2031d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">connectedHues returns a list of structs that contain all relevant states of all Hue lights connected to the Bridge. These values are updated every few seconds by a timer.  <a href="#a7aaad8907ae8140ca892bd72dc2031d0">More...</a><br /></td></tr>
 <tr class="separator:a7aaad8907ae8140ca892bd72dc2031d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -196,6 +199,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a15b12d0e9b680b013d886c3c3b5a670c">searchForHueLights</a> (std::list&lt; QString &gt; serialNumbers=std::list&lt; QString &gt;())</td></tr>
 <tr class="memdesc:a15b12d0e9b680b013d886c3c3b5a670c"><td class="mdescLeft">&#160;</td><td class="mdescRight">activate new light scanning. If this is called when scanning is active, reset its timer. <br /></td></tr>
 <tr class="separator:a15b12d0e9b680b013d886c3c3b5a670c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a46782154ea1ecb822d9bea2a1279be9b"><td class="memItemLeft" align="right" valign="top"><a id="a46782154ea1ecb822d9bea2a1279be9b"></a>
+std::list&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a46782154ea1ecb822d9bea2a1279be9b">hueSearchingSerials</a> ()</td></tr>
+<tr class="memdesc:a46782154ea1ecb822d9bea2a1279be9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">list of serial numbers that the hue search routine is looking for. <br /></td></tr>
+<tr class="separator:a46782154ea1ecb822d9bea2a1279be9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab72ff4fce2031d07c6f0bf1f384ea09a"><td class="memItemLeft" align="right" valign="top"><a id="ab72ff4fce2031d07c6f0bf1f384ea09a"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ab72ff4fce2031d07c6f0bf1f384ea09a">hueScanIsActive</a> ()</td></tr>
+<tr class="memdesc:ab72ff4fce2031d07c6f0bf1f384ea09a"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if hue scan is active, false othewrise. <br /></td></tr>
+<tr class="separator:ab72ff4fce2031d07c6f0bf1f384ea09a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a21e68269041fdc0c172971d1e0f61e77"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a21e68269041fdc0c172971d1e0f61e77">createHueGroup</a> (QString name, std::list&lt; <a class="el" href="struct_s_hue_light.html">SHueLight</a> &gt; lights)</td></tr>
 <tr class="memdesc:a21e68269041fdc0c172971d1e0f61e77"><td class="mdescLeft">&#160;</td><td class="mdescRight">createHueGroup create a hue group to store on the hue bridge  <a href="#a21e68269041fdc0c172971d1e0f61e77">More...</a><br /></td></tr>
 <tr class="separator:a21e68269041fdc0c172971d1e0f61e77"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -253,6 +264,30 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a4f8ce134d4fc6f1b75ed29535438f253"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4f8ce134d4fc6f1b75ed29535438f253">&#9670;&nbsp;</a></span>attemptManualHueBridgeIPAddress()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CommLayer::attemptManualHueBridgeIPAddress </td>
+          <td>(</td>
+          <td class="paramtype">QString&#160;</td>
+          <td class="paramname"><em>IP</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">IP</td><td>ip address to send to Hue Bridge Discovery </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a21e68269041fdc0c172971d1e0f61e77"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a21e68269041fdc0c172971d1e0f61e77">&#9670;&nbsp;</a></span>createHueGroup()</h2>
 
