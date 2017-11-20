@@ -80,6 +80,7 @@ SearchWidget::SearchWidget(QString defaultLineEditValue, QWidget *parent, int ma
     mCheckSize = false;
     mMinSizeCheck = -1;
     mMaxSizeCheck = -1;
+    mMaxSearchingCount = maxSearchingCount;
     maxSearchingCount = maxSearchingCount;
     mMaxSearchError = errorMaxSearchString;
     mSizeCheckError = "";

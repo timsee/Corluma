@@ -229,9 +229,13 @@ ___
 * Added better UI catches for incorrect string lengths and illegal arguments.
 * Fixed miscellaneous bugs.
 
+### **v0.11.11**
+#### Minor Bug Fixes Update
+*This update fixes some bugs with layout and resizing*
+*  Minor Bug Fixes
 
 ### Coming Soon
 * Fully integrate Rooms, Groups, and Schedules stored on the Hue Bridge.
-
-
+* Finish manual discovery of Hues and Bridges
+* Fix platform-specific layout and resizing issues (buttons that are too small on Mac OS X, images that are cutoff on iOS, etc.)
 

@@ -282,7 +282,7 @@ void MainWindow::topMenuButtonPressed(QString key) {
     }  else if (key.compare("Connection") == 0) {
         pageChanged(EPage::eConnectionPage);
     }  else if (key.compare("Settings") == 0) {
-        mSettingsPage->setGeometry(mSettingsPage->width(), 0, mSettingsPage->width(), mSettingsPage->height());
+        mSettingsPage->setGeometry(this->width(), 0, this->width(), mSettingsPage->height());
         mSettingsPage->setVisible(true);
         QPropertyAnimation *animation = new QPropertyAnimation(mSettingsPage, "pos");
         animation->setDuration(TRANSITION_TIME_MSEC);
@@ -317,7 +317,7 @@ void MainWindow::brightnessChanged(int newBrightness) {
 
 
 void MainWindow::settingsButtonFromDiscoveryPressed() {
-    mSettingsPage->setGeometry(mSettingsPage->width(), 0, mSettingsPage->width(), mSettingsPage->height());
+    mSettingsPage->setGeometry(this->width(), 0, this->width(), mSettingsPage->height());
     mSettingsPage->setVisible(true);
     QPropertyAnimation *animation = new QPropertyAnimation(mSettingsPage, "pos");
     animation->setDuration(TRANSITION_TIME_MSEC);
