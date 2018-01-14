@@ -253,6 +253,9 @@ private:
      */
     SettingsPage *mSettingsPage;
 
+    /// groups parser
+    GroupsParser *mGroups;
+
     /*!
      * \brief mGreyOut overlay that greys out the entire main window. Used in conjunction with the
      *        mEditPage

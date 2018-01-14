@@ -61,15 +61,23 @@ public:
     /// highlight specified button
     void highlightButton(EPage button);
 
+    /// highlight the groups button on the connection widget
+    void highlightGroupsButton();
+
+    /// highlight the rooms button on the connection widget
+    void highlightRoomsButton();
+
     /*!
      * \brief setup connect the top menu to pages it can open and close
      * \param mainWindow main window for the application
      * \param groupPage group page, shows moods and groups
      * \param colorPage color page, allows you to set all devices to one color.
+     * \param connectionPage connection page, allows you to choose groups and rooms of lights
      */
     void setup(MainWindow *mainWindow,
                GroupPage *groupPage,
-               ColorPage *colorPage);
+               ColorPage *colorPage,
+               ConnectionPage *connectionPage);
 
 signals:
 
@@ -248,6 +256,9 @@ private:
 
     /// pointer to color page, used during floating layouts clicks
     ColorPage *mColorPage;
+
+    /// pointer to connection page, used during floating layout clicks.
+    ConnectionPage *mConnectionPage;
 
     /// switch the floating layout to show the menu for the given page
     void showFloatingLayout(EPage newPage);

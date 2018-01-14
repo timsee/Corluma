@@ -93,7 +93,11 @@ void ListDeviceWidget::updateWidget(const SLightDevice& device,
         mIconData.setSingleLightingRoutine(device.lightingRoutine, device.color);
         mDeviceIcon->setFixedSize(widgetSize, widgetSize);
     } else {
-        mIconData.setMultiLightingRoutine(device.lightingRoutine, device.colorGroup, colors);
+        if ((int)device.lightingRoutine > (int)ELightingRoutine::eLightingRoutine_MAX) {
+            qDebug() << "devices " << (int)device.lightingRoutine << " and color group " << (int)device.colorGroup;
+        } else {
+            mIconData.setMultiLightingRoutine(device.lightingRoutine, device.colorGroup, colors);
+        }
     }
 
     QString nameText = createName(device);

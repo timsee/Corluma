@@ -175,3 +175,10 @@ bool DataSyncSettings::sync(const SLightDevice& availableDevice) {
 void DataSyncSettings::cleanupSync() {
 }
 
+
+
+bool DataSyncSettings::sync(const SLightDevice& dataDevice, const SLightDevice& commDevice) {
+    Q_UNUSED(dataDevice);
+    Q_UNUSED(commDevice);
+    return false;
+}

@@ -12,6 +12,7 @@
 #include "listdevicewidget.h"
 #include "datalayer.h"
 #include "comm/commlayer.h"
+#include "groupsparser.h"
 
 
 /*!
@@ -31,16 +32,14 @@ public:
 
     /*!
      * \brief ListDevicesGroupWidget constructor
-     * \param name name of collection
-     * \param devices list of devices contained within the ListDeviceGroupWidget
+     * \param group group of lights
      * \param key unique key for collection
      * \param comm pointer to commlayer
      * \param data pointer to datalayer
      * \param hideEdit true for groups that can't be edited such as available and not reachable,
      *        false otherwise
      */
-    ListDevicesGroupWidget(const QString& name,
-                           std::list<SLightDevice> devices,
+    ListDevicesGroupWidget(const SLightGroup& group,
                            QString key,
                            CommLayer *comm,
                            DataLayer *data,
@@ -68,7 +67,7 @@ public:
      * \brief devices getter for all devices being displayed by the widget.
      * \return all devices being displayed by the widget.
      */
-    const std::list<SLightDevice>& devices() { return mDevices; }
+    const std::list<SLightDevice>& devices() { return mGroup.devices; }
 
     /*!
      * \brief preferredSize all collection widgets must implement a preferred size. this is the size
@@ -94,6 +93,9 @@ public:
      * \brief updateRightHandButtons update the edit, select all, select none buttons by resizing them.
      */
     void updateRightHandButtons();
+
+    /// getter for the group data.
+    const SLightGroup& group() { return mGroup; }
 
 signals:
 
@@ -182,10 +184,8 @@ private:
     /// pixmap for the clear all button
     QPixmap mClearAllPixmap;
 
-    /*!
-     * \brief mDevices list of current devices displayed by widgets
-     */
-    std::list<SLightDevice> mDevices;
+    /// stored data for the group.
+    SLightGroup mGroup;
 
     /*!
      * \brief mSelectAllButton button that selects all devices when pushed and adds them to the data layer.

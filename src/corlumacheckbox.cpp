@@ -8,7 +8,7 @@
 
 #include "corlumacheckbox.h"
 
-CorlumaCheckBox::CorlumaCheckBox(QString title, QWidget *parent) : QWidget(parent) {
+CorlumaCheckBox::CorlumaCheckBox(QWidget *parent, QString title) : QWidget(parent) {
     mIsChecked = false;
     mSpacer = 5;
 
@@ -28,6 +28,14 @@ CorlumaCheckBox::CorlumaCheckBox(QString title, QWidget *parent) : QWidget(paren
     mCheckBox->setStyleSheet("QPushButton:checked{ background-color:rgb(61, 142, 201); }");
     mCheckBox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
+    this->setMinimumHeight(mTitle->height() * 1.5f);
+}
+
+void CorlumaCheckBox::setTitle(QString title) {
+    mTitle->setText(title);
+    QRect r = mTitle->fontMetrics().boundingRect(mTitle->text());
+    mTitle->setFixedWidth(r.width());
+    mTitle->setFixedHeight(r.height());
     this->setMinimumHeight(mTitle->height() * 1.5f);
 }
 

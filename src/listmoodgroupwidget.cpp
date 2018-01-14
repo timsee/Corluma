@@ -7,7 +7,7 @@
 #include "listmoodgroupwidget.h"
 
 ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
-                                         std::list<std::pair<QString, std::list<SLightDevice> > > moods,
+                                         std::list<SLightGroup> moods,
                                          const std::vector<std::vector<QColor> >& colors,
                                          QString key,
                                          bool hideEdit,
@@ -35,7 +35,7 @@ ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
 }
 
 
-void ListMoodGroupWidget::updateMoods(std::list<std::pair<QString, std::list<SLightDevice> > > moods,
+void ListMoodGroupWidget::updateMoods(std::list<SLightGroup> moods,
                                       const std::vector<std::vector<QColor> >& colors,
                                       bool removeIfNotFound) {
     std::vector<bool> foundWidgets(mWidgets.size(), false);
@@ -43,7 +43,7 @@ void ListMoodGroupWidget::updateMoods(std::list<std::pair<QString, std::list<SLi
         bool foundMood = false;
         uint32_t x = 0;
         for (auto&& existingWidget : mWidgets) {
-            if (mood.first.compare(existingWidget->key()) == 0) {
+            if (mood.name.compare(existingWidget->key()) == 0) {
                 foundMood = true;
                 //TODO update
                 foundWidgets[x] = true;
@@ -52,8 +52,7 @@ void ListMoodGroupWidget::updateMoods(std::list<std::pair<QString, std::list<SLi
         }
 
         if (!foundMood) {
-            ListMoodWidget *widget = new ListMoodWidget(mood.first, mood.second,
-                                                        colors);
+            ListMoodWidget *widget = new ListMoodWidget(mood, colors);
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
             connect(widget, SIGNAL(editClicked(QString)), this, SLOT(clickedEdit(QString)));
             insertWidgetIntoGrid(widget);

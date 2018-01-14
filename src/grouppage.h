@@ -246,7 +246,7 @@ private:
      * \param moods a list of all connected moods and their associated devices
      * \return a list of names of moods that contain only connected devices.
      */
-    std::list<QString> moodsConnected(std::list<std::pair<QString, std::list<SLightDevice> > > moods);
+    std::list<QString> moodsConnected(std::list<SLightGroup> moods);
 
     /*!
      * \brief mGroups manages the list of collections and moods and the JSON data
@@ -275,7 +275,7 @@ private:
      * \return pointer to the newly created ListGroupGroupWidget
      */
     ListMoodGroupWidget* initMoodsCollectionWidget(const QString& name,
-                                                    std::list<std::pair<QString, std::list<SLightDevice> > > moods,
+                                                    std::list<SLightGroup> moods,
                                                     const QString& key,
                                                     bool hideEdit = false);
 
@@ -283,7 +283,7 @@ private:
      * \brief makeMoodsCollections make all the mood-based UI widgets based on the saved JSON data in the application
      * \param moods list of all saved moods
      */
-    void makeMoodsCollections(const std::list<std::pair<QString, std::list<SLightDevice> > >& moods);
+    void makeMoodsCollections(const std::list<SLightGroup>& moods);
 
 
     /*!
@@ -295,7 +295,7 @@ private:
      * \param moods list of all moods that exist in memory.
      */
     void gatherAvailandAndNotReachableMoods(const std::list<SLightDevice>& allDevices,
-                                            const std::list<std::pair<QString, std::list<SLightDevice> > >& moods);
+                                            const std::list<SLightGroup>& moods);
 };
 
 #endif // PresetColorsPage_H

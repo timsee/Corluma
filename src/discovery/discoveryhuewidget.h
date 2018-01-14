@@ -57,6 +57,9 @@ protected:
 
 private:
 
+    /// true if bridge is discovered, false if not.
+    bool mBridgeDiscovered;
+
     /// label to prompt the user through the application.
     QLabel *mLabel;
 

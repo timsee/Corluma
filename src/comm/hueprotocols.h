@@ -115,10 +115,15 @@ struct SHueLight {
     int deviceIndex;
 };
 
+/// struct for group data
 struct SHueGroup {
+    /// name of group
     QString name;
+    /// Type of group, either "Room" or "LightGroup"
     QString type;
+    /// index of group
     int index;
+    /// list of lights
     std::list<SHueLight> lights;
 };
 
@@ -195,7 +200,23 @@ enum class EHueDiscoveryState {
      *        and have returned successfully, the application is connected
      *        to a bridge.
      */
-    eBridgeConnected
+    eBridgeConnected,
+    /*!
+     * \brief Once a bridge is discovered, the application next requests a list of
+     *        all available lights.
+     */
+    eFindingLightInfo,
+    /*!
+     * \brief Once all available lights have been received, the application requests
+     *        all schedules and groups so that there is a local copy of all Hue related
+     *        data.
+     */
+    eFindingGroupAndScheduleInfo,
+    /*!
+     * \brief The bridge is connected, and there is a local copy of all the lights, groups,
+     *        and schedules on the Hue Bridge.
+     */
+    eFullyConnected,
 };
 
 namespace utils

@@ -17,6 +17,11 @@
 #include "corlumalistwidget.h"
 
 
+enum class ECurrentConnectionWidget {
+    eGroups,
+    eRooms
+};
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2017.
@@ -61,14 +66,11 @@ public:
     /// connects the GroupsParser object to this UI widget.
     void connectGroupsParser(GroupsParser *parser);
 
-    /*!
-     * \brief devicesFromKey take a key that represents a collection or mood and convert it into
-     *        a list of devices that are represented by that key. An example use of this is the
-     *        edit page and it is used to highlight specific devices.
-     * \param key key to look for devices from.
-     * \return list of devices that match the key
-     */
-    std::list<SLightDevice> devicesFromKey(QString key);
+    /// display the rooms in the connection page widget
+    void displayRooms();
+
+    /// displays the groups in the connection page widget.
+    void displayGroups();
 
     /*!
      * \brief updateConnectionList updates the GUI elements that display the
@@ -81,6 +83,9 @@ public:
 
     /// called when the widget is hidden
     void hide();
+
+    /// getter for current connection widget
+    ECurrentConnectionWidget currentList() { return mCurrentConnectionWidget; }
 
 signals:
     /*!
@@ -136,11 +141,6 @@ private slots:
      *        change of state.
      */
     void renderUI();
-
-    /*!
-     * \brief saveGroup called when a group should be saved.
-     */
-    void saveGroup(bool);
 
     /*!
      * \brief receivedCommUpdate called when an update has occurred on the commlayer.
@@ -212,11 +212,14 @@ protected:
 
 private:
 
-    /*!
-     * \brief mDevicesListWidget List widget for devices. Either the moods widget or this device widget
-     *        is shown at any given time but the other is kept around in memory since they are expensive to render.
-     */
-    CorlumaListWidget *mDevicesListWidget;
+    /// widget for displaying the groups in the app data
+    CorlumaListWidget *mGroupsWidget;
+
+    /// widget for displaying the rooms in the app data.
+    CorlumaListWidget *mRoomsWidget;
+
+    /// getter for the current widget.
+    CorlumaListWidget *currentWidget();
 
     /*!
      * \brief cleanupList resync the list of collections and devices, deleting old ones that no longer exist and
@@ -226,23 +229,15 @@ private:
 
     /*!
      * \brief initDevicesCollectionWidget constructor helper for making a DeviceCollectionsWidget
-     * \param name name of collection
-     * \param devices devices in collection
+     * \param group group of lights for collection
      * \param key key for collection
      * \param hideEdit true for special case groups (Available and Not Reachable), false otherwise
      * \return pointer to the newly created ListDevicesGroupWidget
      */
-    ListDevicesGroupWidget* initDevicesCollectionWidget(const QString& name,
-                                                        std::list<SLightDevice> devices,
+    ListDevicesGroupWidget* initDevicesCollectionWidget(const SLightGroup& group,
                                                         const QString& key,
                                                         bool hideEdit = false);
 
-    /*!
-     * \brief makeDevicesCollections make all the collections based on the saved collections and
-     *        and known devices
-     * \param allDevices list have of all devices that have sent communication packets of some sort.
-     */
-    void makeDevicesCollections(const std::list<SLightDevice>& allDevices);
 
     /*!
      * \brief gatherAvailandAndNotReachableDevices creates the special case groups of devices: Avaiable
@@ -258,6 +253,30 @@ private:
 
     /// helper to get a unique key for a collection.
     QString keyForCollection(const QString& key);
+
+    /// gathers all light groups, from both arduinos and hues.
+    std::list<SLightGroup> gatherAllDataGroups();
+
+    /// gathers all light groups, as displayed in the UI
+    std::list<SLightGroup> gatherAllUIGroups();
+
+    /*!
+     * \brief updateDataGroupInUI using the new SLightGroup, update the UI assets with up-to-date light info. This function matches the dataGroup group
+     *        to all UI groups that match it, then takes the up to date version from the allDevices list to display that info
+     * \param dataGroup the group to update in the UI
+     * \param uiGroups all UI groups
+     * \param allDevices all up-to-date information about all devices.
+     */
+    void updateDataGroupInUI(const SLightGroup dataGroup, const std::list<SLightGroup>& uiGroups, const std::list<SLightDevice>& allDevices);
+
+    /*!
+     * \brief updateDeviceList create an up-to-date version of a list of SLightDevices. The SLightDevices may be obtained from the UI or from
+     *        out of date buffers, so the oldDevices are turne dinto a new list based off of the data given by the up-to-date allDeviceData
+     * \param oldDevices the list of devices that you want to update
+     * \param allDeviceData all the up-to-date information about all the devices
+     * \return a new list that matches the oldDevices list, only it has up-to-date information.
+     */
+    std::list<SLightDevice> updateDeviceList(const std::list<SLightDevice>& oldDevices, const std::list<SLightDevice>& allDeviceData);
 
     /// pointer to QSettings instance
     QSettings *mSettings;
@@ -294,6 +313,11 @@ private:
      * \brief mCurrentState The overall state of the app.
      */
     EConnectionState mCurrentState;
+
+    /*!
+     * \brief mCurrentConnectionWidget The current connection widget. Can be either Groups or Rooms.
+     */
+    ECurrentConnectionWidget mCurrentConnectionWidget;
 
     //-------------
     // Helpers for Checking Model Data

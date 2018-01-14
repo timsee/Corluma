@@ -39,6 +39,9 @@ public:
     /// number of widgets in the scroll area.
     uint32_t count() { return mWidgets.size(); }
 
+    /// getter for all collection widgets.
+    const std::list<ListCollectionWidget*>& widgets() { return mWidgets; }
+
     /*!
      * \brief widget get a ListCollectionWidget by its index.
      * \param index index of widget to return

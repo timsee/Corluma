@@ -271,7 +271,7 @@ void GroupPage::highlightList() {
     }
 }
 
-std::list<QString> GroupPage::moodsConnected(std::list<std::pair<QString, std::list<SLightDevice> > > moods) {
+std::list<QString> GroupPage::moodsConnected(std::list<SLightGroup> moods) {
     std::list<SLightDevice> deviceList = mData->currentDevices();
     std::list<QString> connectedMood;
 
@@ -279,7 +279,7 @@ std::list<QString> GroupPage::moodsConnected(std::list<std::pair<QString, std::l
         uint32_t devicesFound = 0;
         bool moodIsConnected = true;
         // check each device in specific mood
-        for (auto&& moodDevice : mood.second) {
+        for (auto&& moodDevice : mood.devices) {
             bool deviceMatches = false;
             // compare against all data devices
             for (auto&& device : deviceList) {
@@ -296,8 +296,8 @@ std::list<QString> GroupPage::moodsConnected(std::list<std::pair<QString, std::l
             }
             if (!deviceMatches) moodIsConnected = false;
         }
-        if (devicesFound != mood.second.size()) moodIsConnected = false;
-        if (moodIsConnected) connectedMood.push_back(mood.first);
+        if (devicesFound != mood.devices.size()) moodIsConnected = false;
+        if (moodIsConnected) connectedMood.push_back(mood.name);
     }
     return connectedMood;
 }
@@ -305,7 +305,7 @@ std::list<QString> GroupPage::moodsConnected(std::list<std::pair<QString, std::l
 void GroupPage::updateConnectionList() {
     std::list<SLightDevice> allDevices = mComm->allDevices();
 
-    std::list<std::pair<QString, std::list<SLightDevice> > > moodList = mGroups->moodList();
+    std::list<SLightGroup> moodList = mGroups->moodList();
     gatherAvailandAndNotReachableMoods(allDevices, moodList);
     makeMoodsCollections(moodList);
 }
@@ -324,8 +324,8 @@ void GroupPage::groupDeleted(QString group) {
         Q_ASSERT(widget);
         ListMoodGroupWidget *moodWidget = qobject_cast<ListMoodGroupWidget*>(widget);
         for (auto&& widgetMood : moodWidget->moods()) {
-            if (widgetMood.first.compare(group) == 0) {
-                moodWidget->removeMood(widgetMood.first);
+            if (widgetMood.name.compare(group) == 0) {
+                moodWidget->removeMood(widgetMood.name);
             }
         }
         if (moodWidget->moods().size() == 0) {
@@ -343,13 +343,13 @@ void GroupPage::connectGroupsParser(GroupsParser *parser) {
 }
 
 
-void GroupPage::makeMoodsCollections(const std::list<std::pair<QString, std::list<SLightDevice> > >& moods) {
-    std::list<std::pair<QString, std::list<SLightDevice> > > collectionList = mGroups->collectionList();
+void GroupPage::makeMoodsCollections(const std::list<SLightGroup>& moods) {
+    std::list<SLightGroup> collectionList = mGroups->collectionList();
     for (auto&& collection : collectionList) {
         bool collectionFound = false;
         for (uint32_t i = 0; i < mMoodsListWidget->count(); ++i) {
             ListCollectionWidget *item = mMoodsListWidget->widget(i);
-            if (item->key().compare(collection.first) == 0) {
+            if (item->key().compare(collection.name) == 0) {
                 collectionFound = true;
                 ListMoodGroupWidget *moodWidget = qobject_cast<ListMoodGroupWidget*>(item);
                 Q_ASSERT(moodWidget);
@@ -358,12 +358,12 @@ void GroupPage::makeMoodsCollections(const std::list<std::pair<QString, std::lis
         }
 
         if (!collectionFound) {
-            std::list<std::pair<QString, std::list<SLightDevice> > > allCollectionMoods;
+            std::list<SLightGroup> allCollectionMoods;
             for (auto&& mood : moods) {
-                int devicesToTest = mood.second.size();
+                int devicesToTest = mood.devices.size();
                 int devicesFound = 0;
-                for (auto&& moodDevice : mood.second) {
-                    for (auto&& deviceData : collection.second) {
+                for (auto&& moodDevice : mood.devices) {
+                    for (auto&& deviceData : collection.devices) {
                         if (compareLightDevice(moodDevice, deviceData)) {
                             devicesFound++;
                         }
@@ -374,7 +374,7 @@ void GroupPage::makeMoodsCollections(const std::list<std::pair<QString, std::lis
                 }
             }
             if (allCollectionMoods.size() > 0) {
-                initMoodsCollectionWidget(collection.first, allCollectionMoods, collection.first);
+                initMoodsCollectionWidget(collection.name, allCollectionMoods, collection.name);
             }
         }
     }
@@ -386,7 +386,7 @@ void GroupPage::makeMoodsCollections(const std::list<std::pair<QString, std::lis
                 || item->key().compare("zzzUNAVAILABLE_MOODS") == 0)) {
             bool collectionFound = false;
             for (auto&& collection : collectionList) {
-                if (item->key().compare(collection.first) == 0) {
+                if (item->key().compare(collection.name) == 0) {
                     collectionFound = true;
                 }
             }
@@ -400,7 +400,7 @@ void GroupPage::makeMoodsCollections(const std::list<std::pair<QString, std::lis
 
 
 ListMoodGroupWidget* GroupPage::initMoodsCollectionWidget(const QString& name,
-                                                                std::list<std::pair<QString, std::list<SLightDevice> > > moods,
+                                                                std::list<SLightGroup> moods,
                                                                 const QString& key,
                                                                 bool hideEdit) {
     ListMoodGroupWidget *widget = new ListMoodGroupWidget(name,
@@ -422,17 +422,17 @@ ListMoodGroupWidget* GroupPage::initMoodsCollectionWidget(const QString& name,
 }
 
 void GroupPage::gatherAvailandAndNotReachableMoods(const std::list<SLightDevice>& allDevices,
-                                                   const std::list<std::pair<QString, std::list<SLightDevice> > >& moodList) {
+                                                   const std::list<SLightGroup >& moodList) {
 
-    std::list<std::pair<QString, std::list<SLightDevice> > > availableMoods;
-    std::list<std::pair<QString, std::list<SLightDevice> > > unavailableMoods;
+    std::list<SLightGroup> availableMoods;
+    std::list<SLightGroup> unavailableMoods;
     QString kAvailableMoodsKey = "zzzAVAILABLE_MOODS";
     QString kUnavailableMoodsKey = "zzzUNAVAILABLE_MOODS";
 
     for (auto&& mood : moodList) {
-        int devicesToTest = mood.second.size();
+        int devicesToTest = mood.devices.size();
         int devicesReachable = 0;
-        for (auto&& moodDevice : mood.second) {
+        for (auto&& moodDevice : mood.devices) {
             for (auto&& deviceData : allDevices) {
                 if (compareLightDevice(moodDevice, deviceData)
                         && deviceData.isReachable) {
@@ -495,12 +495,6 @@ void GroupPage::shouldShowButtons(QString key, bool isShowing) {
 
 void GroupPage::editMoodClicked(QString collectionKey, QString moodKey) {
     Q_UNUSED(collectionKey);
-    for (auto&& group :  mGroups->moodList()) {
-        if (group.first.compare(moodKey) == 0) {
-            mData->clearDevices();
-            mData->addDeviceList(group.second);
-        }
-    }
     emit clickedEditButton(moodKey, true);
 }
 
@@ -517,9 +511,9 @@ void GroupPage::moodClicked(QString collectionKey, QString moodKey) {
              << "mood key:" << moodKey;
 
     for (auto&& group :  mGroups->moodList()) {
-        if (group.first.compare(moodKey) == 0) {
+        if (group.name.compare(moodKey) == 0) {
             mData->clearDevices();
-            mData->addDeviceList(group.second);
+            mData->addDeviceList(group.devices);
         }
     }
 

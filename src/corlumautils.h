@@ -176,6 +176,7 @@ T clamp(const T& n, const T& lower, const T& upper) {
 }
 
 
+/// hacky check as to whether or not an IP address is valid
 inline bool checkIfValidIP(QString ip) {
     QHostAddress address(ip);
     if (QAbstractSocket::IPv4Protocol == address.protocol()) {
@@ -195,6 +196,8 @@ inline bool checkIfValidIP(QString ip) {
 
 const static QString kAdvanceModeKey = QString("Settings_AdvanceMode");
 const static QString kUseTimeoutKey  = QString("Settings_UseTimeout");
+const static QString kTimeoutValue = QString("Settings_TimeoutValue");
+const static QString kSpeedValue = QString("Settings_SpeedValue");
 
 const static QString kUseYunKey  = QString("YunInUse");
 const static QString kUseSerialKey  = QString("SerialInUse");

@@ -8,8 +8,7 @@
 #include <QPainter>
 #include <QStyleOption>
 
-ListDevicesGroupWidget::ListDevicesGroupWidget(const QString& name,
-                                               std::list<SLightDevice> devices,
+ListDevicesGroupWidget::ListDevicesGroupWidget(const SLightGroup& group,
                                                QString key,
                                                CommLayer *comm,
                                                DataLayer *data,
@@ -21,7 +20,7 @@ ListDevicesGroupWidget::ListDevicesGroupWidget(const QString& name,
     mData = data;
     mComm = comm;
 
-    setup(name, key, hideEdit);
+    setup(group.name, key, hideEdit);
 
     mClearAllButton = new QPushButton(this);
     mClearAllButton->setStyleSheet("border: none;");
@@ -54,15 +53,15 @@ ListDevicesGroupWidget::ListDevicesGroupWidget(const QString& name,
     mTopLayout->setStretch(3, 2);
     mTopLayout->setStretch(4, 2);
 
-    updateDevices(devices);
+    mGroup = group;
+    updateDevices(mGroup.devices);
 
     mLayout->addLayout(mTopLayout);
     mLayout->addWidget(mWidget);
 }
 
 void ListDevicesGroupWidget::updateDevices(std::list<SLightDevice> devices, bool removeIfNotFound) {
-    mDevices = devices;
-
+    mGroup.devices = devices;
     for (auto&& inputDevice : devices) {
         bool foundDevice = false;
         // check if device widget exists

@@ -111,6 +111,11 @@ private:
      */
     QString createStyleSheet(const SLightDevice& device);
 
+    /*!
+     * \brief createName create the name to display in the Qlabel
+     * \param device the device information to generate the name
+     * \return A "pretty" version of the name of the light device.
+     */
     QString createName(const SLightDevice& device);
 
     /// resize the mIcon and its associated pixmap.

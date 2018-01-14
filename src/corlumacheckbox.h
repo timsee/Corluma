@@ -19,10 +19,13 @@ class CorlumaCheckBox : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit CorlumaCheckBox(QString title = QString(), QWidget *parent = 0);
+    explicit CorlumaCheckBox(QWidget *parent = 0, QString title = QString());
 
     /// checks and unchecks the checkbox
     void setChecked(bool shouldCheck);
+
+    /// set the title for the corluma checkbox
+    void setTitle(QString title);
     
     /*!
      * \brief downsizeTextWidthToFit downsize the font's point size until this entire widget

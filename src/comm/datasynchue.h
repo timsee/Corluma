@@ -86,12 +86,6 @@ private:
     bool sync(const SLightDevice& dataDevice, const SLightDevice& commDevice) override;
 
     /*!
-     * \brief syncGroups syncs data in regarding groups of lights
-     * \return true if in sync
-     */
-    bool syncGroups();
-
-    /*!
      * \brief endOfSync end the sync thread and start the cleanup thread.
      */
     void endOfSync() override;

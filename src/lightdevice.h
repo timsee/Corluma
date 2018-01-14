@@ -289,6 +289,18 @@ struct SLightDevice {
      * \brief SLightDevice Constructor
      */
     SLightDevice() {
+
+        isReachable = false;
+        isOn = false;
+        colorMode = EColorMode::eRGB;
+        color = QColor(0, 0, 0);
+        lightingRoutine = ELightingRoutine::eSingleSolid;
+        colorGroup = EColorGroup::eFire;
+        brightness = 0;
+        minutesUntilTimeout = 0;
+        timeout = 0;
+        speed = 0;
+
         customColorArray = std::vector<QColor>(10);
         customColorCount = 2;
 

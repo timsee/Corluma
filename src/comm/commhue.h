@@ -99,6 +99,9 @@ public:
      */
     HueBridgeDiscovery *discovery() { return mDiscovery; }
 
+    /// getter for current discovery state of hue lights
+    EHueDiscoveryState discoveryState();
+
     /*!
      * \brief sendPacket Takes a packet in the format of a Corluma lights command (a comma delimited QString) and
      *        converts it into a Phillips Hue command
@@ -131,13 +134,6 @@ public:
 
     /// stop the timers that sync things like schedules and groups in the background.
     void stopBackgroundTimers();
-
-    /*!
-     * \brief createIdleTimeoutsForConnectedLights Hue lights don't have a default idle timeout option, RGB-LED-Routines
-     *        lights do. What do!? We create a schedule that maps to each light individually, and after packets are done
-     *       syncing if a timeout is enabled, the schedule is updated.
-     */
-    void createIdleTimeoutsForConnectedLights();
 
     /*!
      * \brief createIdleTimeout create an idle timeout schedule for a specific light.
@@ -186,13 +182,6 @@ public:
      */
     QJsonObject SHueCommandToJsonObject(SHueCommand command);
 
-    /*!
-     * \brief SLightDeviceToJsonObject a SLightDevice to convert into a light representation in json
-     * \param device the device to turn into a json object
-     * \return a json representation of the SLightDevice.
-     */
-    QJsonObject SLightDeviceToJsonObject(SLightDevice device);
-
     //---------------
     // Groups
     //---------------
@@ -205,7 +194,7 @@ public:
      * \param name the new name for the bridge
      * \param lights the lights to include in the new group
      */
-    void createGroup(QString name, std::list<SHueLight> lights);
+    void createGroup(QString name, std::list<SHueLight> lights, bool isRoom);
 
     /*!
      * \brief updateGroup change the lights in an already-existing hue group
@@ -308,6 +297,9 @@ signals:
      * \brief stateChanged emitted when any of the lights change in any way.
      */
     void stateChanged();
+
+    /// signals during discovery things like when the bridge is discovered and when light data is received
+    void discoveryStateChanged(int);
 
 private slots:
 
@@ -453,6 +445,9 @@ private:
      */
     QTime mLastBackgroundTime;
 
+    /// true if we have information on hue lights, false if we have none.
+    bool mLightUpdateReceived;
+
     /// true if its received any data about groups from the hue bridge, false otherwise.
     bool mHaveGroups;
 
@@ -559,10 +554,9 @@ private:
      * \brief convertMinutesToTimeout hues use a specific format for the timers that are used to timeout the hue lights.
      *        Tihs helper function takes integers and converts them into a string that represents the timeout.
      * \param minutes the number of minutes you want it to take to timeout.
-     * \param stateUpdateTimeout number of seconds it takes the state update timer to turn off.
      * \return a string that is in the format of `PTHH:MM:SS` which is used for sending a timeout to a hue bridge.
      */
-    QString convertMinutesToTimeout(int minutes, int stateUpdateTimeout);
+    QString convertMinutesToTimeout(int minutes);
 };
 
 #endif // COMMHUE_H

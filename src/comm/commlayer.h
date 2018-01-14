@@ -304,6 +304,13 @@ public:
     /// list of new hue lights discovered from scanning.
     std::list<SHueLight> newHueLights();
 
+    /*!
+     * \brief hueLightsToDevices helper to convert a list of hue lights into a list of SLightDevices
+     * \param hues list of hue lights to convert
+     * \return a list of SLightDevices
+     */
+    std::list<SLightDevice> hueLightsToDevices(std::list<SHueLight> hues);
+
     /// request a list of hue lights discovered from scanning
     void requestNewHueLights();
 
@@ -321,16 +328,20 @@ public:
      * \param name name of new group
      * \param lights lights to be part of the hue group.
      */
-    void createHueGroup(QString name, std::list<SHueLight> lights);
+    void createHueGroup(QString name, std::list<SHueLight> lights, bool isRoom);
+
+    /*!
+     * \brief updateHueGroup update the hue group data on the bridge to use new lights.
+     * \param name name of group to update
+     * \param lights the new set of lights to define this group.
+     */
+    void updateHueGroup(QString name, std::list<SHueLight> lights);
 
     /// getter for list of hue groups stored on bridge
     std::list<SHueGroup> hueGroups();
 
-    /// true if its received any data about groups from the hue bridge, false otherwise.
-    bool haveHueGroups();
-
-    /// true if its received any data about schedules from the hue bridge, false otherwise.
-    bool haveHueSchedules();
+    /// deletes a hue group by name
+    void deleteHueGroup(QString name);
 
     /*!
      * \brief renameHue rename a hue. This requires a SHueLight representing the hue and the new name you want to name it
@@ -347,6 +358,14 @@ public:
      * \param timeout the number of minutes it should take the light to timeout.
      */
     void updateHueTimeout(bool enable, int index, int timeout);
+
+    /*!
+     * \brief createHueTimeout create a hue timeout schedule for a hue light if one does not exist. Hue Timeout schedules
+     *        are used to turn the Hues off after X minutes and do not require the app to be connected to do this.
+     * \param index index of the hue light to create a timer for
+     * \param minutes amount of minutes until light times out.
+     */
+    void createHueTimeout(int index, int minutes);
 
     /*!
      * \brief hueLightFromLightDevice takes a SLightDevice and retrieves

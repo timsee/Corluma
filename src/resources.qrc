@@ -30,7 +30,6 @@
         <file>images/white_wheel.png</file>
         <file>images/splash_screen.png</file>
         <file>images/loader.gif</file>
-        <file>resources/Corluma.json</file>
         <file>images/arduino-logo.png</file>
         <file>images/whiteButton.png</file>
         <file>resources/Copyright.html</file>
@@ -43,5 +42,8 @@
         <file>images/outgoingBrokenArrow.png</file>
         <file>images/outgoingCompleteArrow.png</file>
         <file>images/plusIcon.png</file>
+        <file>images/groupsIcon.png</file>
+        <file>images/roomIcon.png</file>
+        <file>images/mobileLaunchScreen.png</file>
     </qresource>
 </RCC>

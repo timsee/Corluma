@@ -45,10 +45,10 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
     // CheckBoxes
     //-----------
 
-    mTimeoutCheckBox = new CorlumaCheckBox("Use Timeout", this);
+    mTimeoutCheckBox = new CorlumaCheckBox(this, "Use Timeout");
     connect(mTimeoutCheckBox, SIGNAL(boxChecked(bool)), this, SLOT(timeoutButtonPressed(bool)));
 
-    mAdvanceModeCheckBox = new CorlumaCheckBox("Advance Mode", this);
+    mAdvanceModeCheckBox = new CorlumaCheckBox(this, "Advance Mode");
     connect(mAdvanceModeCheckBox, SIGNAL(boxChecked(bool)), this, SLOT(advanceModeButtonPressed(bool)));
     mAdvanceModeCheckBox->setGeometry(mTimeoutCheckBox->geometry().width() + mSpacerPixels,
                                       mTimeoutCheckBox->geometry().y(),
@@ -57,15 +57,15 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
 
     mMinHeight = mTimeoutCheckBox->height();
 
+    mSettings = new QSettings();
     //-----------
     // Sliders
     //-----------
 
-    mSliderSpeedValue = 425;
     mSpeedSlider = new CorlumaSlider(this);
     mSpeedSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mSpeedSlider->slider()->setRange(1, 1000);
-    mSpeedSlider->slider()->setValue(mSliderSpeedValue);
+    mSpeedSlider->slider()->setValue(mSettings->value(kSpeedValue).toInt());
     mSpeedSlider->setSliderHeight(0.5f);
     mSpeedSlider->slider()->setTickPosition(QSlider::TicksBelow);
     mSpeedSlider->slider()->setTickInterval(250);
@@ -74,7 +74,7 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
     mTimeoutSlider = new CorlumaSlider(this);
     mTimeoutSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mTimeoutSlider->slider()->setRange(0, 300);
-    mTimeoutSlider->slider()->setValue(120);
+    mTimeoutSlider->slider()->setValue(mSettings->value(kTimeoutValue).toInt());
     mTimeoutSlider->setSliderHeight(0.5f);
     mTimeoutSlider->slider()->setTickPosition(QSlider::TicksBelow);
     mTimeoutSlider->slider()->setTickInterval(60);
@@ -137,7 +137,6 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
     //-----------
 
     // check check boxes if they were checked previously
-    mSettings = new QSettings();
     bool useAdvanceMode = mSettings->value(kAdvanceModeKey).toBool();
     mAdvanceModeCheckBox->setChecked(useAdvanceMode);
     showAdvanceMode(useAdvanceMode);
@@ -180,7 +179,6 @@ void GlobalSettingsWidget::checkCheckBoxes() {
 }
 
 void GlobalSettingsWidget::speedChanged(int newSpeed) {
-    mSliderSpeedValue = newSpeed;
     int finalSpeed;
     // first half of slider is going linearly between 20 FPS down to 1 FPS
     if (newSpeed < 500) {
@@ -195,10 +193,12 @@ void GlobalSettingsWidget::speedChanged(int newSpeed) {
         }
     }
     mData->updateSpeed(finalSpeed);
+    mSettings->setValue(kSpeedValue, QString::number(finalSpeed));
 }
 
 void GlobalSettingsWidget::timeoutChanged(int newTimeout) {
    mData->updateTimeout(newTimeout);
+   mSettings->setValue(kTimeoutValue, QString::number(newTimeout));
 }
 
 
@@ -263,10 +263,6 @@ void GlobalSettingsWidget::show() {
         mSpeedSlider->setSliderColorBackground(color);
         mTimeoutSlider->setSliderColorBackground(color);
     }
-
-    // default the settings bars to the current colors
-    mSpeedSlider->slider()->setValue(mSliderSpeedValue);
-    mTimeoutSlider->slider()->setValue(mData->timeout());
 
     resize();
 }

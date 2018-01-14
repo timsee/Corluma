@@ -66,6 +66,7 @@ void GroupsParser::saveNewMood(const QString& groupName, const std::list<SLightD
     QJsonObject groupObject;
     groupObject["name"] = groupName;
     groupObject["isMood"] = true;
+    groupObject["isRoom"] = false;
 
     // create string of jsondata to add to file
     QJsonArray deviceArray;
@@ -103,34 +104,41 @@ void GroupsParser::saveNewMood(const QString& groupName, const std::list<SLightD
             // save file
             saveFile(defaultSavePath());
 
+            SLightGroup group;
+            group.devices = devices;
+            group.name = groupName;
+            group.isRoom = false;
             // add to current mood list
-            mMoodList.push_back(std::make_pair(groupName, devices));
+            mMoodList.push_back(group);
             emit newMoodAdded(groupName);
         }
     }
 }
 
 
-void GroupsParser::saveNewCollection(const QString& groupName, const std::list<SLightDevice>& devices) {
+void GroupsParser::saveNewCollection(const QString& groupName, const std::list<SLightDevice>& devices, bool isRoom) {
     QJsonObject groupObject;
     groupObject["name"] = groupName;
     groupObject["isMood"] = false;
+    groupObject["isRoom"] = isRoom;
 
     // create string of jsondata to add to file
     QJsonArray deviceArray;
     for (auto&& device : devices) {
-        QJsonObject object;
-        object["id"] = QString("device");
+        if (device.type != ECommType::eHue) {
+            QJsonObject object;
+            object["id"] = QString("device");
 
-        object["type"] = utils::ECommTypeToString(device.type);
+            object["type"] = utils::ECommTypeToString(device.type);
 
-        object["controller"] = device.controller;
-        object["index"] = device.index;
-        deviceArray.append(object);
+            object["controller"] = device.controller;
+            object["index"] = device.index;
+            deviceArray.append(object);
+        }
     }
 
     groupObject["devices"] = deviceArray;
-    if(!mJsonData.isNull()) {
+    if(!mJsonData.isNull() && deviceArray.size() > 0) {
         if(mJsonData.isArray()) {
             QJsonArray array = mJsonData.array();
             mJsonData.array().push_front(groupObject);
@@ -140,8 +148,13 @@ void GroupsParser::saveNewCollection(const QString& groupName, const std::list<S
             // save file
             saveFile(defaultSavePath());
 
-            // add to current mood list
-            mCollectionList.push_back(std::make_pair(groupName, devices));
+            SLightGroup group;
+            group.devices = devices;
+            group.name = groupName;
+            group.isRoom = isRoom;
+
+            // add to current collection list
+            mCollectionList.push_back(group);
             emit newCollectionAdded(groupName);
         }
     }
@@ -156,7 +169,7 @@ bool GroupsParser::removeGroup(const QString& groupName) {
         if(mJsonData.isArray()) {
             QJsonArray array = mJsonData.array();
             int i = 0;
-            foreach (const QJsonValue &value, array) {
+            for (auto value : array) {
                 QJsonObject object = value.toObject();
                 if (checkIfGroupIsValid(object)) {
                     QString group = object.value("name").toString();
@@ -164,29 +177,20 @@ bool GroupsParser::removeGroup(const QString& groupName) {
                         array.removeAt(i);
                         mJsonData.setArray(array);
                         saveFile(defaultSavePath());
-                        std::pair<QString, std::list<SLightDevice> > groupFound;
-                        bool foundGroup = false;
                         for (auto mood : mMoodList) {
-                            if (mood.first.compare(groupName) == 0) {
-                                foundGroup = true;
-                                groupFound = mood;
+                            if (mood.name.compare(groupName) == 0) {
+                                mMoodList.remove(mood);
+                                emit groupDeleted(groupName);
+                                return true;
                             }
                         }
-                        if (foundGroup) {
-                            mMoodList.remove(groupFound);
-                            emit groupDeleted(groupName);
-                            return true;
-                        }
+
                         for (auto collection : mCollectionList) {
-                            if (collection.first.compare(groupName) == 0) {
-                                foundGroup = true;
-                                groupFound = collection;
+                            if (collection.name.compare(groupName) == 0) {
+                                mCollectionList.remove(collection);
+                                emit groupDeleted(groupName);
+                                return true;
                             }
-                        }
-                        if (foundGroup) {
-                            mCollectionList.remove(groupFound);
-                            emit groupDeleted(groupName);
-                            return true;
                         }
                     }
                 }
@@ -205,6 +209,12 @@ void GroupsParser::parseCollection(const QJsonObject& object) {
     if (object.value("name").isString()
             && object.value("devices").isArray()) {
         QString name = object.value("name").toString();
+        bool isRoom;
+        if (object.value("isRoom").isBool()) {
+            isRoom = object.value("isRoom").toBool();
+        } else {
+            isRoom = false;
+        }
         QJsonArray deviceArray = object.value("devices").toArray();
         std::list<SLightDevice> list;
         foreach (const QJsonValue &value, deviceArray) {
@@ -231,7 +241,11 @@ void GroupsParser::parseCollection(const QJsonObject& object) {
             }
         }
         if (list.size()) {
-            mCollectionList.push_back(std::make_pair(name, list));
+            SLightGroup group;
+            group.name = name;
+            group.devices = list;
+            group.isRoom = isRoom;
+            mCollectionList.push_back(group);
         }
     } else {
         qDebug() << __func__ << " not recognized";
@@ -302,7 +316,11 @@ void GroupsParser::parseMood(const QJsonObject& object) {
         if (list.size() == 0) {
             qDebug() << __func__ << " no valid devices for" << name;
         } else {
-            mMoodList.push_back(std::make_pair(name, list));
+            SLightGroup group;
+            group.name = name;
+            group.devices = list;
+            group.isRoom = false;
+            mMoodList.push_back(group);
         }
     } else {
         qDebug() << __func__ << " not recognized";
@@ -455,6 +473,7 @@ bool GroupsParser::checkForSavedData() {
         }
     }
     QString savePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/save.json";
+    //qDebug() << " save path is " << savePath;
 
     QFile saveFile(savePath);
    // QFile saveFile(":resources/Corluma.json");

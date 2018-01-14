@@ -44,6 +44,7 @@ CommHue::CommHue() {
     mFullyDiscovered = false;
     mHaveGroups = false;
     mHaveSchedules = false;
+    mLightUpdateReceived = false;
 }
 
 void CommHue::startup() {
@@ -61,6 +62,19 @@ void CommHue::shutdown() {
 
 CommHue::~CommHue() {
     saveConnectionList();
+}
+
+EHueDiscoveryState CommHue::discoveryState() {
+    if (mDiscovery->discoveryState() != EHueDiscoveryState::eBridgeConnected) {
+        return mDiscovery->discoveryState();
+    }
+    if (!mLightUpdateReceived) {
+        return EHueDiscoveryState::eFindingLightInfo;
+    }
+    if (!haveGroups() || !haveSchedules()) {
+        return EHueDiscoveryState::eFindingGroupAndScheduleInfo;
+    }
+    return EHueDiscoveryState::eFullyConnected;
 }
 
 void CommHue::sendPacket(SDeviceController controller, QString packet) {
@@ -144,13 +158,15 @@ void CommHue::changeColorCT(int lightIndex, int brightness, int ct) {
 
 
 void CommHue::updateLightStates() {
-    //TODO: make a better way to delete schedules
+ //   TODO: make a better way to delete schedules
 //    if (discovery()->isConnected()) {
-//        QString urlString = mUrlStart + "/schedules/" + QString::number(i);
-//        qDebug() << deleting " << i;
-//        i++;
-//        mNetworkManager->deleteResource(QNetworkRequest(QUrl(urlString)));
+//        for (uint32_t i = 0; i < 30; ++i) {
+//            QString urlString = mUrlStart + "/schedules/" + QString::number(i);
+//            qDebug() << "deleting " << i;
+//            mNetworkManager->deleteResource(QNetworkRequest(QUrl(urlString)));
+//        }
 //    }
+
     if (shouldContinueStateUpdate()) {
         QString urlString = mUrlStart + "/lights/";
         QNetworkRequest request = QNetworkRequest(QUrl(urlString));
@@ -194,7 +210,6 @@ void CommHue::connectionStatusHasChanged(bool status) {
         //mThrottle->startThrottle();
         updateLightStates();
         mDiscoveryMode = false;
-        mFullyDiscovered = true;
     }
 }
 
@@ -310,9 +325,19 @@ void CommHue::replyFinished(QNetworkReply* reply) {
                             updateHueLightState(innerObject, key.toDouble());
                         } else if (updateType == EHueUpdates::eScheduleUpdate) {
                             updateHueSchedule(innerObject, key.toDouble());
+                            // only send this out if its the first schedule update and you have the first group update
+                            if (!mHaveSchedules && mHaveGroups) {
+                                emit discoveryStateChanged((int)EHueDiscoveryState::eFullyConnected);
+                                mFullyDiscovered = true;
+                            }
                             mHaveSchedules = true;
                             hadSchedules = true;
                         } else if (updateType == EHueUpdates::eGroupUpdate) {
+                            // only send this out if its the first group update and you have the first schedule update
+                            if (mHaveSchedules && !mHaveGroups) {
+                                emit discoveryStateChanged((int)EHueDiscoveryState::eFullyConnected);
+                                mFullyDiscovered = true;
+                            }
                             mHaveGroups = true;
                             updateHueGroups(innerObject, key.toDouble());
                         } else if (updateType == EHueUpdates::eNewLightNameUpdate) {
@@ -331,10 +356,6 @@ void CommHue::replyFinished(QNetworkReply* reply) {
                 }
                 if (keys.size() == 0) {
                     hadSchedules = true;
-                }
-
-                if (hadSchedules) {
-                   // createIdleTimeoutsForConnectedLights();
                 }
 
             } else if(jsonResponse.isArray()) {
@@ -365,30 +386,6 @@ void CommHue::replyFinished(QNetworkReply* reply) {
         }
         else {
             qDebug() << "Invalid JSON...";
-        }
-    }
-}
-
-void CommHue::createIdleTimeoutsForConnectedLights() {
-    // iterate through all comm devices
-    for (auto&& controllers : mDeviceTable) {
-        for (auto&& device = controllers.second.begin(); device != controllers.second.end(); ++device) {
-            bool foundTimer = false;
-            int index = -1;
-            std::list<SHueSchedule>::iterator iterator;
-            for (iterator = mSchedules.begin(); iterator != mSchedules.end(); ++iterator) {
-                // if a device doesnt have a schedule, add it.
-                if (iterator->name.contains("Corluma_timeout")) {
-                   QString indexString = iterator->name.split("_").last();
-                   index = indexString.toInt();
-                   if (index == device->index) {
-                       foundTimer = true;
-                   }
-                }
-            }
-            if (!foundTimer) {
-                createIdleTimeout(device->index, device->timeout);
-            }
         }
     }
 }
@@ -619,16 +616,19 @@ bool CommHue::updateHueLightState(QJsonObject object, int i) {
                 light.color = white;
             }
             light.color = light.color.toRgb();
-            light.colorGroup = EColorGroup::eAll;
-            light.lightingRoutine = ELightingRoutine::eSingleSolid;
             light.brightness = stateObject.value("bri").toDouble() / 254.0f * 100;
             light.index = i;
-            light.timeout = 120;
-            light.speed = 0; // speed doesn't matter to hues
             light.type = ECommType::eHue;
             light.controller = "Bridge";
             light.name = hue.name;
 
+            // only send this if its the first light update
+            if (!mLightUpdateReceived) {
+                resetBackgroundTimers();
+                discoveryStateChanged((int)EHueDiscoveryState::eFindingGroupAndScheduleInfo);
+            }
+
+            mLightUpdateReceived = true;
             updateDevice(light);
 
             bool hueFound = false;
@@ -691,7 +691,7 @@ bool CommHue::updateHueSchedule(QJsonObject object, int i) {
         std::list<SHueSchedule>::iterator iterator;
         for (iterator = mSchedules.begin(); iterator != mSchedules.end(); ++iterator) {
             if ((*iterator).index == schedule.index)  {
-             //   qDebug() << "ITERATOR received for" << (*iterator).name << "createad" << (*iterator).created  << " index" << (*iterator).index << " status" << (*iterator).status << " autodelte" << (*iterator).autodelete;
+              // qDebug() << "ITERATOR received for" << (*iterator).name << "createad" << (*iterator).created  << " index" << (*iterator).index << " status" << (*iterator).status << " autodelte" << (*iterator).autodelete;
 
               //  qDebug() << "ITERATOR received for" << schedule.name << "createad" << schedule.created  << " index" << schedule.index << " status" << schedule.status << " autodelte" << (*iterator).autodelete;
                 //qDebug() << "update hue schedule";
@@ -732,7 +732,6 @@ bool CommHue::updateHueGroups(QJsonObject object, int i) {
         QJsonArray  lights = object.value("lights").toArray();
 
         std::list<SHueLight> lightsInGroup;
-
         foreach (const QJsonValue &value, lights) {
             int index = value.toString().toInt();
             for (auto light : mConnectedHues) {
@@ -902,7 +901,7 @@ void CommHue::createIdleTimeout(int i, int minutes) {
 
     command["body"] = body;
     object["command"] = command;
-    object["localtime"] = convertMinutesToTimeout(minutes, 15);
+    object["localtime"] = convertMinutesToTimeout(minutes);
 
     object["autodelete"] = false;
 
@@ -911,9 +910,10 @@ void CommHue::createIdleTimeout(int i, int minutes) {
 
 void CommHue::updateIdleTimeout(bool enable, int scheduleID, int minutes) {
     // get index of schedule for this light
-    qDebug() << " update idles!";
     QJsonObject object;
-    object["localtime"] = convertMinutesToTimeout(minutes, 15);
+    QString timeout = convertMinutesToTimeout(minutes);
+    object["localtime"] = timeout;
+   // qDebug() << " update idles!" << scheduleID << " timeout: " << timeout;
     // disable light first
     if (enable) {
         object["status"] = "enabled";
@@ -925,7 +925,7 @@ void CommHue::updateIdleTimeout(bool enable, int scheduleID, int minutes) {
     putJson(resource, object);
 }
 
-QString CommHue::convertMinutesToTimeout(int minutes, int stateUpdateTimeout) {
+QString CommHue::convertMinutesToTimeout(int minutes) {
     //TODO hours dont get minutes right
     int hours;
     int realMinutes;
@@ -938,7 +938,7 @@ QString CommHue::convertMinutesToTimeout(int minutes, int stateUpdateTimeout) {
         realMinutes = 0;
     }
 
-    int seconds = 60 - stateUpdateTimeout;
+    int seconds = 0;
 
     QString time = "PT";
     if (hours < 10) {
@@ -1021,7 +1021,7 @@ void CommHue::stopBackgroundTimers() {
 // Groups
 //---------------
 
-void CommHue::createGroup(QString name, std::list<SHueLight> lights) {
+void CommHue::createGroup(QString name, std::list<SHueLight> lights, bool isRoom) {
     if (discovery()->isConnected()) {
         QString urlString = mUrlStart + "/groups";
 
@@ -1032,9 +1032,13 @@ void CommHue::createGroup(QString name, std::list<SHueLight> lights) {
         for (auto light : lights) {
             array.append(QString::number(light.deviceIndex));
         }
-        if (array.size() > 1) {
+        if (array.size() > 0) {
             object["lights"] = array;
-            object["type"] = "LightGroup";
+            if (isRoom) {
+                object["type"] = "Room";
+            } else {
+                object["type"] = "LightGroup";
+            }
             //object["class"] = "Living room";
 
             QJsonDocument doc(object);
@@ -1043,15 +1047,15 @@ void CommHue::createGroup(QString name, std::list<SHueLight> lights) {
             QNetworkRequest request = QNetworkRequest(QUrl(urlString));
             request.setHeader(QNetworkRequest::ContentTypeHeader,
                               QStringLiteral("text/html; charset=utf-8"));
-        //    qDebug() << " Create Group URL STRING" << urlString;
-         //   mNetworkManager->post(request, payload.toUtf8());
+            //qDebug() << " Create Group URL STRING" << urlString;
+             mNetworkManager->post(request, payload.toUtf8());
         }
     }
 }
 
 void CommHue::updateGroup(SHueGroup group, std::list<SHueLight> lights) {
     if (discovery()->isConnected()) {
-        QString urlString = mUrlStart + "/lights/"  + QString::number(group.index);
+        QString urlString = mUrlStart + "/groups/"  + QString::number(group.index);
 
         QJsonObject object;
         object["name"] = group.name;
@@ -1070,14 +1074,14 @@ void CommHue::updateGroup(SHueGroup group, std::list<SHueLight> lights) {
         request.setHeader(QNetworkRequest::ContentTypeHeader,
                           QStringLiteral("text/html; charset=utf-8"));
         //qDebug() << "URL STRING" << urlString;
-        mNetworkManager->post(request, payload.toUtf8());
+        mNetworkManager->put(request, payload.toUtf8());
     }
 }
 
 
 void CommHue::deleteGroup(SHueGroup group) {
     if (discovery()->isConnected()) {
-        QString urlString = mUrlStart + "/lights/"  + QString::number(group.index);
+        QString urlString = mUrlStart + "/groups/"  + QString::number(group.index);
         mNetworkManager->deleteResource(QNetworkRequest(QUrl(urlString)));
     }
 }
@@ -1090,12 +1094,6 @@ QJsonObject CommHue::SHueCommandToJsonObject(SHueCommand command) {
     QJsonObject body;
     object["body"] = body;
     return body;
-}
-
-QJsonObject CommHue::SLightDeviceToJsonObject(SLightDevice device) {
-    //TODO
-    Q_UNUSED(device);
-    return QJsonObject();
 }
 
 

@@ -150,7 +150,7 @@ protected:
      * \param commDevice device from the comm layer
      * \return true if they match, false otherwise
      */
-    virtual bool sync(const SLightDevice& dataDevice, const SLightDevice& commDevice);
+    virtual bool sync(const SLightDevice& dataDevice, const SLightDevice& commDevice) = 0;
 
     //------------------
     // Helpers

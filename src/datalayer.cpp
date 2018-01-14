@@ -307,7 +307,7 @@ const std::vector<QColor>& DataLayer::colorGroup(EColorGroup group) {
     } else if ((int)group < (int)EColorGroup::eColorGroup_MAX) {
         return mColors[(int)group];
     } else {
-        qDebug() << "WARNING: color group returned probably shouldn't get here!";
+        qDebug() << "WARNING: color group returned probably shouldn't get here!" << (int) group;
         return mColors[0];
     }
 }

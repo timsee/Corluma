@@ -53,13 +53,13 @@ MainWindow::MainWindow(QWidget *parent) :
     mComm = new CommLayer(this);
     mData = new DataLayer();
 
-    GroupsParser *groups = new GroupsParser(this);
+    mGroups = new GroupsParser(this);
 
     mDataSyncArduino  = new DataSyncArduino(mData, mComm);
     mDataSyncHue      = new DataSyncHue(mData, mComm);
     mDataSyncSettings = new DataSyncSettings(mData, mComm);
 
-    mDataSyncHue->connectGroupsParser(groups);
+    mDataSyncHue->connectGroupsParser(mGroups);
 
     for (int i = 0; i < (int)ECommType::eCommType_MAX; ++i) {
         ECommType type = (ECommType)i;
@@ -111,13 +111,13 @@ MainWindow::MainWindow(QWidget *parent) :
     mColorPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     mGroupPage = new GroupPage(this);
-    mGroupPage->connectGroupsParser(groups);
+    mGroupPage->connectGroupsParser(mGroups);
     mGroupPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     mConnectionPage = new ConnectionPage(this);
     mConnectionPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    mConnectionPage->connectGroupsParser(groups);
+    mConnectionPage->connectGroupsParser(mGroups);
 
     mConnectionPage->setup(mData);
     mColorPage->setup(mData);
@@ -151,6 +151,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(mData, SIGNAL(devicesEmpty()), mTopMenu, SLOT(deviceCountReachedZero()));
 
     mTopMenu->setGeometry(0, 0, this->width(), this->height() * 0.1667);
+    mTopMenu->highlightRoomsButton();
 
     // --------------
     // Setup Discovery Page
@@ -171,7 +172,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mSettingsPage = new SettingsPage(this);
     mSettingsPage->setVisible(false);
     mSettingsPage->connectCommLayer(mComm);
-    mSettingsPage->connectGroupsParser(groups);
+    mSettingsPage->connectGroupsParser(mGroups);
     mSettingsPage->globalWidget()->connectBackendLayers(mComm, mData);
     connect(mSettingsPage, SIGNAL(updateMainIcons()), mTopMenu, SLOT(updateMenuBar()));
     connect(mSettingsPage, SIGNAL(debugPressed()), this, SLOT(settingsDebugPressed()));
@@ -193,7 +194,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mEditPage = new EditGroupPage(this);
     mEditPage->setup(mData);
     mEditPage->connectCommLayer(mComm);
-    mEditPage->connectGroupsParser(groups);
+    mEditPage->connectGroupsParser(mGroups);
     connect(mEditPage, SIGNAL(pressedClose()), this, SLOT(editClosePressed()));
     mEditPage->setGeometry(0,
                         -1 * this->height(),
@@ -223,7 +224,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mBottomRightFloatingLayout->setupButtons(buttons);
     mBottomRightFloatingLayout->setVisible(false);
 
-    mTopMenu->setup(this, mGroupPage, mColorPage);
+    mTopMenu->setup(this, mGroupPage, mColorPage, mConnectionPage);
 
 
     // --------------
@@ -555,6 +556,12 @@ void MainWindow::switchToConnection() {
     animation->start();
     mDiscoveryPage->hide();
     mDiscoveryPageIsOpen = false;
+
+    if (mConnectionPage->currentList() == ECurrentConnectionWidget::eGroups) {
+        mTopMenu->highlightGroupsButton();
+    } else {
+        mTopMenu->highlightRoomsButton();
+    }
 }
 
 void MainWindow::settingsClosePressed() {
@@ -600,7 +607,39 @@ void MainWindow::editButtonClicked(QString key, bool isMood) {
     animation->setEndValue(finishPoint);
     animation->start();
 
-    mEditPage->showGroup(key, mConnectionPage->devicesFromKey(key), mComm->allDevices(), isMood);
+
+    // find the group in app data
+
+
+    std::list<SLightDevice> groupDevices;
+    bool isRoom = false;
+    if (isMood) {
+        for (auto&& group :  mGroups->moodList()) {
+            if (group.name.compare(key) == 0) {
+                groupDevices = group.devices;
+            }
+        }
+    } else {
+        // look for group in arduino data
+        for (auto&& group : mGroups->collectionList()) {
+            if (group.name.compare(key) == 0) {
+                groupDevices = group.devices;
+                isRoom = group.isRoom;
+            }
+        }
+
+        // look for group in hue data
+        for (auto&& group : mComm->hueGroups()) {
+            if (group.name.compare(key) == 0) {
+                for (auto hue : group.lights) {
+                    SLightDevice device = mComm->lightDeviceFromHueLight(hue);
+                    groupDevices.push_back(device);
+                }
+                isRoom = (group.type.compare("Room") == 0);
+            }
+        }
+    }
+    mEditPage->showGroup(key, groupDevices, mComm->allDevices(), isMood, isRoom);
 
     if (mGreyOut->isVisible()) {
         mGreyOut->resize();
@@ -651,6 +690,11 @@ void MainWindow::editClosePressed() {
     animation->setEndValue(finishPoint);
     animation->start();
 
+    if (mConnectionPage->currentList() == ECurrentConnectionWidget::eGroups) {
+        mTopMenu->highlightGroupsButton();
+    } else {
+        mTopMenu->highlightRoomsButton();
+    }
     mConnectionPage->updateConnectionList();
 }
 

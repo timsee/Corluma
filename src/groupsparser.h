@@ -11,6 +11,23 @@
 #include "lightdevice.h"
 #include "groupsparser.h"
 #include "comm/commhue.h"
+
+
+struct SLightGroup
+{
+    QString name;
+    std::list<SLightDevice> devices;
+    bool isRoom;
+};
+
+
+/// equal operator
+inline bool operator==(const SLightGroup& lhs, const SLightGroup& rhs) {
+    bool result = true;
+    if (lhs.name.compare(rhs.name)) result = false;
+    return result;
+}
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2017.
@@ -36,14 +53,14 @@ public:
      * \return a list of all the moods. Each mood is represented as a pair with its name
      *         and a list of the devices with their associated state.
      */
-    const std::list<std::pair<QString, std::list<SLightDevice> > >& moodList() { return mMoodList; }
+    const std::list<SLightGroup>& moodList() { return mMoodList; }
 
     /*!
      * \brief collectionList getter for all known collections.
      * \return a list of all the collections. Each collection is represented as a pair with its name and a list
      *         of the devices.
      */
-    const std::list<std::pair<QString, std::list<SLightDevice> > >& collectionList() { return mCollectionList; }
+    const std::list<SLightGroup>& collectionList() { return mCollectionList; }
 
     /*!
      * \brief saveNewMood save a new group of devices to JSON data, which then gets saved to file in AppData.
@@ -56,8 +73,9 @@ public:
      * \brief saveNewCollection save a new collection of devices to JSON data, which then gets saved to file in AppData.
      * \param groupName name of colelction to save.
      * \param devices devices in new collection.
+     * \param isRoom true if it is a room, false otherwise
      */
-    void saveNewCollection(const QString& groupName, const std::list<SLightDevice>& devices);
+    void saveNewCollection(const QString& groupName, const std::list<SLightDevice>& devices, bool isRoom);
 
     /*!
      * \brief removeGroup remove the group of devices associated with the name provided. If no group has this name,
@@ -185,13 +203,13 @@ private:
      * \brief mMoodList non-JSON representation of moods. This list is kept so that it is
      *        easy to pull all possible moods without having to re-parse the JSON data each time.
      */
-    std::list<std::pair<QString, std::list<SLightDevice> > > mMoodList;
+    std::list<SLightGroup> mMoodList;
 
     /*!
      * \brief mMoodList non-JSON representation of collections. This list is kept so that it is
      *        easy to pull all possible collections without having to re-parse the JSON data each time.
      */
-    std::list<std::pair<QString, std::list<SLightDevice> > > mCollectionList;
+    std::list<SLightGroup> mCollectionList;
 
     /*!
      * \brief mJsonData a JSON representation of all moods and collections. Gets saved

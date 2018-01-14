@@ -108,7 +108,7 @@ TopMenu::TopMenu(DataLayer* data, CommLayer* comm, QWidget *parent) : QWidget(pa
     // --------------
     mConnectionFloatingLayout = new FloatingLayout(false, this);
     connect(mConnectionFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
-    std::vector<QString> buttons = { QString("Discovery"), QString("New_Collection")};
+    std::vector<QString> buttons = { QString("Discovery"), QString("New_Collection"), QString("Rooms"), QString("Groups")};
     mConnectionFloatingLayout->setupButtons(buttons);
 
     // --------------
@@ -278,6 +278,15 @@ void TopMenu::highlightButton(EPage button) {
     }
 }
 
+
+void TopMenu::highlightGroupsButton() {
+    mConnectionFloatingLayout->highlightButton("Groups");
+}
+
+void TopMenu::highlightRoomsButton() {
+    mConnectionFloatingLayout->highlightButton("Rooms");
+}
+
 void TopMenu::settingsButtonPressed() {
     showFloatingLayout(EPage::eSettingsPage);
     emit buttonPressed("Settings");
@@ -372,10 +381,12 @@ void TopMenu::updateColorGroupButton() {
 
 void TopMenu::setup(MainWindow *mainWindow,
                     GroupPage *groupPage,
-                    ColorPage *colorPage) {
+                    ColorPage *colorPage,
+                    ConnectionPage *connectionPage) {
     mMainWindow = mainWindow;
     mGroupPage = groupPage;
     mColorPage = colorPage;
+    mConnectionPage = connectionPage;
 }
 
 void TopMenu::floatingLayoutButtonPressed(QString button) {
@@ -416,6 +427,10 @@ void TopMenu::floatingLayoutButtonPressed(QString button) {
         mLastColorButtonKey = button;
         mColorPage->handleRoutineWidget();
         updateColorVerticalRoutineButton();
+    } else if (button.compare("Groups") == 0) {
+        mConnectionPage->displayGroups();
+    } else if (button.compare("Rooms") == 0) {
+        mConnectionPage->displayRooms();
     } else {
         qDebug() << "I don't recognize that button type...";
     }

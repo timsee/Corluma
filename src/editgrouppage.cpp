@@ -38,6 +38,11 @@ EditGroupPage::EditGroupPage(QWidget *parent) :
 
     QScroller::grabGesture(ui->deviceList->viewport(), QScroller::LeftMouseButtonGesture);
 
+    ui->roomCheckBox->setTitle("Room:");
+    connect(ui->roomCheckBox, SIGNAL(boxChecked(bool)), this, SLOT(isRoomChecked(bool)));
+
+    mIsRoomOriginal = false;
+
     mScrollAreaWidget = new QWidget(this);
     mScrollAreaWidget->setContentsMargins(0,0,0,0);
     ui->deviceList->setWidget(mScrollAreaWidget);
@@ -56,17 +61,27 @@ EditGroupPage::~EditGroupPage() {
     delete ui;
 }
 
-void EditGroupPage::showGroup(QString key, std::list<SLightDevice> groupDevices, std::list<SLightDevice> devices, bool isMood) {
+void EditGroupPage::showGroup(QString key, std::list<SLightDevice> groupDevices, std::list<SLightDevice> devices, bool isMood, bool isRoom) {
     mOriginalName = key;
     mNewName = key;
+
     mOriginalDevices = groupDevices;
     ui->nameEdit->setText(key);
     ui->saveButton->setEnabled(false);
     mIsMood = isMood;
+    mIsRoomOriginal = isRoom;
+    mIsRoomCurrent = mIsRoomOriginal;
     if (mIsMood) {
         ui->helpLabel->setText("Edit the Mood...");
+        ui->helpRoomButton->setVisible(false);
+        ui->roomSpacer->setVisible(false);
+        ui->roomCheckBox->setVisible(false);
     } else {
         ui->helpLabel->setText("Edit the Collection...");
+        ui->helpRoomButton->setVisible(true);
+        ui->roomSpacer->setVisible(true);
+        ui->roomCheckBox->setVisible(true);
+        ui->roomCheckBox->setChecked(mIsRoomOriginal);
     }
     updateDevices(groupDevices, devices);
     repaint();
@@ -164,6 +179,8 @@ void EditGroupPage::deletePressed(bool) {
                                   QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes) {
       mGroups->removeGroup(mOriginalName);
+      // delete from hue bridge, if applicable.
+      mComm->deleteHueGroup(mOriginalName);
       emit pressedClose();
     }
 }
@@ -209,6 +226,17 @@ void EditGroupPage::savePressed(bool) {
           ui->saveButton->setEnabled(false);
         }
     }
+}
+
+void EditGroupPage::isRoomChecked(bool checked) {
+      qDebug() << "is Room Checked " << checked;
+      mIsRoomCurrent = checked;
+
+      if (checkForChanges()) {
+          ui->saveButton->setEnabled(true);
+      } else {
+          ui->saveButton->setEnabled(false);
+      }
 }
 
 // ----------------------------
@@ -320,7 +348,31 @@ void EditGroupPage::saveChanges() {
         mGroups->saveNewMood(mNewName, newDevices);
     } else {
         mGroups->removeGroup(mOriginalName);
-        mGroups->saveNewCollection(mNewName, newDevices);
+        mGroups->saveNewCollection(mNewName, newDevices, mIsRoomCurrent);
+
+        // convert any group devices to Hue Lights, if applicable.
+        std::list<SHueLight> hueLights;
+        for (auto device : newDevices) {
+            if (device.type == ECommType::eHue) {
+                SHueLight hue = mComm->hueLightFromLightDevice(device);
+                hueLights.push_back(hue);
+            }
+        }
+        if (hueLights.size() > 0) {
+            // check if group already exists
+            auto hueGroups = mComm->hueGroups();
+            bool groupExists = false;
+            for (auto group : hueGroups) {
+                if (group.name.compare(mNewName) == 0) {
+                    groupExists = true;
+                }
+            }
+            if (groupExists) {
+                mComm->updateHueGroup(mNewName, hueLights);
+            } else {
+                mComm->createHueGroup(mNewName, hueLights, mIsRoomCurrent);
+            }
+        }
     }
 }
 
@@ -346,6 +398,10 @@ std::list<SLightDevice> EditGroupPage::createMood() {
 
 bool EditGroupPage::checkForChanges() {
     if (!(mNewName.compare(mOriginalName) == 0)) {
+        return true;
+    }
+
+    if (mIsRoomCurrent != mIsRoomOriginal) {
         return true;
     }
 

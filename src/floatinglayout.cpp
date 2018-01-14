@@ -185,6 +185,16 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(false);
             mButtons[i]->setMinimumSize(buttonSize());
+        } else if (mNames[i].compare("Rooms") == 0) {
+            foundMatch = true;
+            mButtons[i] = new QPushButton(this);
+            mButtons[i]->setCheckable(true);
+            mButtons[i]->setMinimumSize(buttonSize());
+        } else if (mNames[i].compare("Groups") == 0) {
+            foundMatch = true;
+            mButtons[i] = new QPushButton(this);
+            mButtons[i]->setCheckable(true);
+            mButtons[i]->setMinimumSize(buttonSize());
         } else if (mNames[i].compare("Select_Devices") == 0) {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
@@ -256,6 +266,10 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
                     utils::resizeIcon(mButtons[i], ":/images/ColorSchemePicker_icon.png");
                 } else if (mNames[i].compare("HueLightSearch") == 0) {
                     utils::resizeIcon(mButtons[i], ":/images/plusIcon.png");
+                } else if (mNames[i].compare("Groups") == 0) {
+                    utils::resizeIcon(mButtons[i], ":/images/groupsIcon.png");
+                } else if (mNames[i].compare("Rooms") == 0) {
+                    utils::resizeIcon(mButtons[i], ":/images/roomIcon.png");
                 }
             } else {
                 CorlumaButton *lightsButton = static_cast<CorlumaButton*>(mButtons[i]);

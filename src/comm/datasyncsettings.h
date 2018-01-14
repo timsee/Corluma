@@ -74,6 +74,9 @@ private:
      */
     bool sync(const SLightDevice& availableDevice);
 
+    /// standard sync, not implemented for settings
+    bool sync(const SLightDevice& dataDevice, const SLightDevice& commDevice) override;
+
     /*!
      * \brief endOfSync end the sync thread and start the cleanup thread.
      */

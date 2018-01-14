@@ -218,12 +218,6 @@ private:
     //----------------
     // Stored Variables
     //----------------
-    /*!
-     * \brief mSliderSpeedValue storage for the current slider value, which
-     *        differs from the actual slider speed saved in the data layer.
-     */
-    int mSliderSpeedValue;
-
 
     /*!
      * \brief mConnectionButtons pointers to all checkboxes so that they can be quickly iterated

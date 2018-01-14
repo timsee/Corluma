@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,10">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,1,10">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="10,2">
      <property name="spacing">
@@ -57,7 +57,7 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout" stretch="20,2,0,2">
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="20,0,0,2">
      <item>
       <widget class="QLineEdit" name="nameEdit">
        <property name="sizePolicy">
@@ -110,6 +110,43 @@
     </layout>
    </item>
    <item>
+    <layout class="QHBoxLayout" name="roomLayout" stretch="5,3,10">
+     <item>
+      <widget class="CorlumaCheckBox" name="roomCheckBox" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="helpRoomButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>?</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QWidget" name="roomSpacer" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
     <widget class="QScrollArea" name="deviceList">
      <property name="widgetResizable">
       <bool>true</bool>
@@ -120,7 +157,7 @@
         <x>0</x>
         <y>0</y>
         <width>384</width>
-        <height>340</height>
+        <height>306</height>
        </rect>
       </property>
      </widget>
@@ -128,6 +165,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CorlumaCheckBox</class>
+   <extends>QWidget</extends>
+   <header location="global">corlumacheckbox.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="resources.qrc"/>
  </resources>

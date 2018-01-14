@@ -113,7 +113,7 @@ int main(int argc, char *argv[]) {
 
 #ifndef DISABLE_SPLASH_SCREEN
 #ifdef MOBILE_BUILD
-    QSplashScreen splash(QPixmap(":images/color_wheel.png"), Qt::WindowStaysOnTopHint);
+    QSplashScreen splash(QPixmap(":images/mobileLaunchScreen.png"), Qt::WindowStaysOnTopHint);
 #else
     QSplashScreen splash(QPixmap(":images/splash_screen.png"), Qt::WindowStaysOnTopHint);
 #endif
@@ -129,8 +129,10 @@ int main(int argc, char *argv[]) {
      */
     if (settings.value(kFirstTimeOpenKey, QVariant(127)) == QVariant(127)) {
         //add default settings
-        settings.setValue(kAdvanceModeKey, QString::number((int)false));
-        settings.setValue(kUseTimeoutKey,  QString::number((int)true));
+        settings.setValue(kAdvanceModeKey,  QString::number((int)false));
+        settings.setValue(kUseTimeoutKey,   QString::number((int)true));
+        settings.setValue(kTimeoutValue,    QString::number(120));
+        settings.setValue(kSpeedValue,      QString::number(425));
 
         // comm settings
         settings.setValue(kUseYunKey,    QString::number((int)false));

@@ -9,6 +9,8 @@
 #include "lightingpage.h"
 #include "comm/commlayer.h"
 #include "groupsparser.h"
+#include "corlumacheckbox.h"
+
 
 namespace Ui {
 class EditCollectionPage;
@@ -44,9 +46,10 @@ public:
      * \param key key for the group that you are displaying
      * \param groupDevices all devicess contained in the group
      * \param devices all devicess known by the commlayer
-     * \param isMood true if a moood, false if a collection.
+     * \param isMood true if a mood, false if a collection.
+     * \param isRoom true if a room, false if a lightgroup.
      */
-    void showGroup(QString key, std::list<SLightDevice> groupDevices, std::list<SLightDevice> devices, bool isMood);
+    void showGroup(QString key, std::list<SLightDevice> groupDevices, std::list<SLightDevice> devices, bool isMood, bool isRoom);
 
     /*!
      * \brief updateDevices update the device widgets in the edit page with new values
@@ -99,6 +102,10 @@ protected:
     void paintEvent(QPaintEvent *);
 
 private slots:
+
+    /// updates when the isRoom checkbox is checked
+    void isRoomChecked(bool);
+
     /*!
      * \brief closePressed called when close button is pressed. Checks if changes were made, asks for user
      *        input if needed, and then closes the window.
@@ -192,6 +199,12 @@ private:
 
     /// original name of group we're editing.
     QString mOriginalName;
+
+    /// stores whether the room flag is set or not
+    bool mIsRoomCurrent;
+
+    /// stores whether the room flag was originally set or not.
+    bool mIsRoomOriginal;
 
     /// new name for group, saved by QLineEdit
     QString mNewName;

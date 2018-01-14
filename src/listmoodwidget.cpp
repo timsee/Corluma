@@ -9,16 +9,14 @@
 #include "listmoodwidget.h"
 #include "corlumautils.h"
 
-ListMoodWidget::ListMoodWidget(const QString& name,
-                                 const std::list<SLightDevice>& devices,
+ListMoodWidget::ListMoodWidget(const SLightGroup& group,
                                  const std::vector<std::vector<QColor> >& colors,
                                  QWidget *parent) {
     Q_UNUSED(parent);
     mIsChecked = false;
 
-    mMoodName = name;
-    mDevices = devices;
-    mKey = name;
+    mGroup = group ;
+    mKey = mGroup.name;
 
     // setup icon
     QString reachableStlyeSheet = "background:rgba(0, 0, 0, 0%); color: #333;";
@@ -29,12 +27,12 @@ ListMoodWidget::ListMoodWidget(const QString& name,
     // setup main label
     mName = new QLabel(this);
     QString modifiedName;
-    if (name.size() > 15) {
-        modifiedName = name.mid(0, 12) + "...";
+    if (mGroup.name.size() > 15) {
+        modifiedName = mGroup.name.mid(0, 12) + "...";
     } else {
-        modifiedName = name;
+        modifiedName = mGroup.name;
     }
-    mName->setText(name);
+    mName->setText(modifiedName);
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     mEditButton = new QPushButton(this);
@@ -50,7 +48,7 @@ ListMoodWidget::ListMoodWidget(const QString& name,
                                    editSize));
     mEditButton->setHidden(true);
 
-    SLightDevice device = *devices.begin();
+    SLightDevice device = *mGroup.devices.begin();
     if(!device.isReachable) {
         mName->setStyleSheet(reachableStlyeSheet);
     } else {
@@ -72,7 +70,7 @@ ListMoodWidget::ListMoodWidget(const QString& name,
     }
 
     int index = 0;
-    for (auto&& device : devices) {
+    for (auto&& device : mGroup.devices) {
         if (index < previewNumber) {
             //TODO: fix this ratio...
 #ifdef MOBILE_BUILD

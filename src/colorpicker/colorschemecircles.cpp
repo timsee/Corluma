@@ -17,6 +17,8 @@ ColorSchemeCircles::ColorSchemeCircles(QImage renderedColorWheel, QWidget *paren
 
     mRadius = this->height() * 0.05f;
     mShadowSize = this->height() * 0.025f;
+
+    this->setStyleSheet("background-color:rgba(0,0,0,0);");
 }
 
 void ColorSchemeCircles::updateColorScheme(const std::vector<QColor> colorScheme) {
@@ -39,7 +41,7 @@ void ColorSchemeCircles::updateColorScheme(const std::vector<QColor> colorScheme
 
     numberOfSelectedDevices = std::min((int)mColorCount, numberOfSelectedDevices);
 
-    for (int i = 0; i < mCircles.size(); ++i) {
+    for (int i = 0; i < (int)mCircles.size(); ++i) {
         if (i < numberOfSelectedDevices - 1) {
             mCircles[i].shouldShow = true;
 
@@ -200,7 +202,7 @@ void ColorSchemeCircles::moveStandardCircle(int i, QPointF newPos) {
     //---------------
     // adjust angles
     //---------------
-    for (int x = 0; x < mCircles.size(); ++x) {
+    for (int x = 0; x < (int)mCircles.size(); ++x) {
         if (i != x) {
             if (x == 0) {
                 mCircles[x].angle = mCircles[x].angle + mDeltaAngle * 2;

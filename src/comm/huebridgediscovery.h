@@ -66,6 +66,9 @@ public:
      */
     void stopTimers();
 
+    /// getter for discovery state
+    EHueDiscoveryState discoveryState() { return mDiscoveryState; }
+
     /*!
      * \brief isConnected returns true if a bridge is connected and discovery was successful,
      *        false otherwise.

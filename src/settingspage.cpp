@@ -53,7 +53,7 @@ SettingsPage::SettingsPage(QWidget *parent) :
     QScroller::grabGesture(mScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
     mScrollAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mScrollAreaWidget->setContentsMargins(0,0,0,0);
-    mScrollAreaWidget->setStyleSheet("QWidget#contentWidget{ background-color: #201F1F; } QLabel { background-color: #201F1F; } CorlumaSlider { background-color: #201F1F; } ");
+    mScrollAreaWidget->setStyleSheet("QWidget#contentWidget{ background-color: #201F1F; } QLabel { background-color: #201F1F; } ");
 
     mScrollLayout = new QVBoxLayout(mScrollAreaWidget);
     mScrollLayout->setSpacing(7);

@@ -42,7 +42,8 @@ CommLayer::CommLayer(QWidget *parent) : QWidget(parent) {
     connect(mHue.get(), SIGNAL(updateReceived(int)), this, SLOT(receivedUpdate(int)));
     connect(mHue.get(), SIGNAL(stateChanged()), this, SLOT(hueStateChanged()));
 
-    connect(mHue.get()->discovery(), SIGNAL(bridgeDiscoveryStateChanged(int)), this, SLOT(hueDiscoveryUpdate(int)));
+    connect(mHue->discovery(), SIGNAL(bridgeDiscoveryStateChanged(int)), this, SLOT(hueDiscoveryUpdate(int)));
+    connect(mHue.get(), SIGNAL(discoveryStateChanged(int)), this, SLOT(hueDiscoveryUpdate(int)));
 }
 
 bool CommLayer::runningDiscovery(ECommType type) {
@@ -530,16 +531,37 @@ bool CommLayer::lookingForActivePorts() {
 // Hue Specific
 //------------------
 
-bool CommLayer::haveHueGroups() {
-    return mHue->haveGroups();
+void CommLayer::createHueGroup(QString name, std::list<SHueLight> lights, bool isRoom) {
+    mHue->createGroup(name, lights, isRoom);
 }
 
-bool CommLayer::haveHueSchedules() {
-    return mHue->haveSchedules();
+void CommLayer::updateHueGroup(QString name, std::list<SHueLight> lights) {
+    bool hueGroupExists = false;
+    SHueGroup groupToUpdate;
+    for (auto group : mHue->groups()) {
+        if (group.name.compare(name) == 0) {
+            groupToUpdate = group;
+            hueGroupExists = true;
+        }
+    }
+    if (hueGroupExists) {
+        mHue->updateGroup(groupToUpdate, lights);
+    }
 }
 
-void CommLayer::createHueGroup(QString name, std::list<SHueLight> lights) {
-    mHue->createGroup(name, lights);
+void CommLayer::deleteHueGroup(QString name) {
+    // check if group exists
+    bool hueGroupExists = false;
+    SHueGroup groupToDelete;
+    for (auto group : mHue->groups()) {
+        if (group.name.compare(name) == 0) {
+            groupToDelete = group;
+            hueGroupExists = true;
+        }
+    }
+    if (hueGroupExists) {
+        mHue->deleteGroup(groupToDelete);
+    }
 }
 
 std::list<SHueLight> CommLayer::hueList() {
@@ -564,6 +586,19 @@ void CommLayer::searchForHueLights(std::list<QString> serialNumbers) {
 
 void CommLayer::updateHueTimeout(bool enable, int index, int timeout) {
     mHue->updateIdleTimeout(enable, index, timeout);
+}
+
+void CommLayer::createHueTimeout(int index, int minutes) {
+    mHue->createIdleTimeout(index, minutes);
+}
+
+std::list<SLightDevice> CommLayer::hueLightsToDevices(std::list<SHueLight> hues) {
+    std::list<SLightDevice> list;
+    for (auto&& hue : hues) {
+        SLightDevice device = mHue->lightDeviceFromHueLight(hue);
+        list.push_back(device);
+    }
+    return list;
 }
 
 void CommLayer::deleteHue(SHueLight hue) {

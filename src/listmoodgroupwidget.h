@@ -12,6 +12,7 @@
 
 #include "listcollectionwidget.h"
 #include "listmoodwidget.h"
+#include "groupsparser.h"
 #include "datalayer.h"
 #include "comm/commlayer.h"
 
@@ -43,7 +44,7 @@ public:
      *        connect to.
      */
     explicit ListMoodGroupWidget(const QString& name,
-                                  std::list<std::pair<QString, std::list<SLightDevice> > > moods,
+                                  std::list<SLightGroup> moods,
                                   const std::vector<std::vector<QColor> >& colors,
                                   QString key,
                                   bool hideEdit = false,
@@ -56,7 +57,7 @@ public:
      * \param bool removeIfNotFound if a widget already exists but this flag is set to true and it doesn't exist
      *        in the mood list provided, the widget gets removed from the list.
      */
-    void updateMoods(std::list<std::pair<QString, std::list<SLightDevice> > > moods,
+    void updateMoods(std::list<SLightGroup> moods,
                      const std::vector<std::vector<QColor> >& colors,
                      bool removeIfNotFound = false);
 
@@ -78,7 +79,7 @@ public:
      * \brief moods getter for the mood data of this collection group
      * \return all the mood data for this collection group
      */
-    const std::list<std::pair<QString, std::list<SLightDevice> > >& moods() { return mMoods; }
+    const std::list<SLightGroup>& moods() { return mMoods; }
 
     /*!
      * \brief preferredSize all collection widgets must implement a preferred size. this is the size
@@ -154,7 +155,7 @@ private:
      * \brief mMoods the data that represents the mood widgets that are displayed
      *        by this widget.
      */
-    std::list<std::pair<QString, std::list<SLightDevice> > > mMoods;
+    std::list<SLightGroup> mMoods;
 
 };
 

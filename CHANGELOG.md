@@ -234,8 +234,18 @@ ___
 *This update fixes some bugs with layout and resizing*
 *  Minor Bug Fixes
 
+### **v0.11.5**
+#### The Rooms Update
+*This update refactors how Phillips Hue data is stored to more closely match how it is handled in the Phillips Hue app.*
+* Added backend support for Rooms and LightGroups for both Phillips Hue and Arduino. Lights can only be in one room, but can be in multiple light groups.
+* All Hue Room and LightGroup data is now stored and saved on the Bridge, instead of in JSON. 
+* Changed discovery methods of Phillips Hue lights to not count as fully discovered until the app is aware of all lights, schedules, and groups. 
+* Changed Connection Page to show Rooms and Light Groups separately. 
+* Fixed android rendering and display bugs. 
+* Fixed miscellaneous bugs.
+
 ### Coming Soon
-* Fully integrate Rooms, Groups, and Schedules stored on the Hue Bridge.
+* Support for Raspberry Pi 3 controlling multiple LED arrays. 
 * Finish manual discovery of Hues and Bridges
 * Fix platform-specific layout and resizing issues (buttons that are too small on Mac OS X, images that are cutoff on iOS, etc.)
 
