@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.11.1</span>
+   &#160;<span id="projectnumber">v0.11.5</span>
    </div>
   </td>
  </tr>
@@ -79,18 +79,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a32004bf5218a9c5b7921b15595586d1d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_groups_parser.html#a32004bf5218a9c5b7921b15595586d1d">GroupsParser</a> (QObject *parent=0)</td></tr>
 <tr class="separator:a32004bf5218a9c5b7921b15595586d1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4cff6f1db69686b3132b01dcad77044c"><td class="memItemLeft" align="right" valign="top">const std::list&lt; std::pair&lt; QString, std::list&lt; SLightDevice &gt; &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_groups_parser.html#a4cff6f1db69686b3132b01dcad77044c">moodList</a> ()</td></tr>
-<tr class="memdesc:a4cff6f1db69686b3132b01dcad77044c"><td class="mdescLeft">&#160;</td><td class="mdescRight">moodList getter for all known moods.  <a href="#a4cff6f1db69686b3132b01dcad77044c">More...</a><br /></td></tr>
-<tr class="separator:a4cff6f1db69686b3132b01dcad77044c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4873107ce19ff51e0973aa5890a950a6"><td class="memItemLeft" align="right" valign="top">const std::list&lt; std::pair&lt; QString, std::list&lt; SLightDevice &gt; &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_groups_parser.html#a4873107ce19ff51e0973aa5890a950a6">collectionList</a> ()</td></tr>
-<tr class="memdesc:a4873107ce19ff51e0973aa5890a950a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">collectionList getter for all known collections.  <a href="#a4873107ce19ff51e0973aa5890a950a6">More...</a><br /></td></tr>
-<tr class="separator:a4873107ce19ff51e0973aa5890a950a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2aa12b56c65a5efb36d0b51edcb6c886"><td class="memItemLeft" align="right" valign="top">const std::list&lt; SLightGroup &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_groups_parser.html#a2aa12b56c65a5efb36d0b51edcb6c886">moodList</a> ()</td></tr>
+<tr class="memdesc:a2aa12b56c65a5efb36d0b51edcb6c886"><td class="mdescLeft">&#160;</td><td class="mdescRight">moodList getter for all known moods.  <a href="#a2aa12b56c65a5efb36d0b51edcb6c886">More...</a><br /></td></tr>
+<tr class="separator:a2aa12b56c65a5efb36d0b51edcb6c886"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45a9c07cb8dd494cf7ff00f0291dbf74"><td class="memItemLeft" align="right" valign="top">const std::list&lt; SLightGroup &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_groups_parser.html#a45a9c07cb8dd494cf7ff00f0291dbf74">collectionList</a> ()</td></tr>
+<tr class="memdesc:a45a9c07cb8dd494cf7ff00f0291dbf74"><td class="mdescLeft">&#160;</td><td class="mdescRight">collectionList getter for all known collections.  <a href="#a45a9c07cb8dd494cf7ff00f0291dbf74">More...</a><br /></td></tr>
+<tr class="separator:a45a9c07cb8dd494cf7ff00f0291dbf74"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a81e470525cdb96d111a90d23779638f4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_groups_parser.html#a81e470525cdb96d111a90d23779638f4">saveNewMood</a> (const QString &amp;groupName, const std::list&lt; SLightDevice &gt; &amp;devices)</td></tr>
 <tr class="memdesc:a81e470525cdb96d111a90d23779638f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">saveNewMood save a new group of devices to JSON data, which then gets saved to file in AppData.  <a href="#a81e470525cdb96d111a90d23779638f4">More...</a><br /></td></tr>
 <tr class="separator:a81e470525cdb96d111a90d23779638f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a603a669ef80819dbdfe53310b275d51e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_groups_parser.html#a603a669ef80819dbdfe53310b275d51e">saveNewCollection</a> (const QString &amp;groupName, const std::list&lt; SLightDevice &gt; &amp;devices)</td></tr>
-<tr class="memdesc:a603a669ef80819dbdfe53310b275d51e"><td class="mdescLeft">&#160;</td><td class="mdescRight">saveNewCollection save a new collection of devices to JSON data, which then gets saved to file in AppData.  <a href="#a603a669ef80819dbdfe53310b275d51e">More...</a><br /></td></tr>
-<tr class="separator:a603a669ef80819dbdfe53310b275d51e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a006f79d1ff4cb94773388f2723125bc9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_groups_parser.html#a006f79d1ff4cb94773388f2723125bc9">saveNewCollection</a> (const QString &amp;groupName, const std::list&lt; SLightDevice &gt; &amp;devices, bool isRoom)</td></tr>
+<tr class="memdesc:a006f79d1ff4cb94773388f2723125bc9"><td class="mdescLeft">&#160;</td><td class="mdescRight">saveNewCollection save a new collection of devices to JSON data, which then gets saved to file in AppData.  <a href="#a006f79d1ff4cb94773388f2723125bc9">More...</a><br /></td></tr>
+<tr class="separator:a006f79d1ff4cb94773388f2723125bc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca808c740a3956028b3f10ec816f16e1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_groups_parser.html#aca808c740a3956028b3f10ec816f16e1">removeGroup</a> (const QString &amp;groupName)</td></tr>
 <tr class="memdesc:aca808c740a3956028b3f10ec816f16e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeGroup remove the group of devices associated with the name provided. If no group has this name, nothing happens and it returns false. If a group does have this name, it is removed and this is saved to JSON which is then saved to AppData  <a href="#aca808c740a3956028b3f10ec816f16e1">More...</a><br /></td></tr>
 <tr class="separator:aca808c740a3956028b3f10ec816f16e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -142,8 +142,8 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a4873107ce19ff51e0973aa5890a950a6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4873107ce19ff51e0973aa5890a950a6">&#9670;&nbsp;</a></span>collectionList()</h2>
+<a id="a45a9c07cb8dd494cf7ff00f0291dbf74"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a45a9c07cb8dd494cf7ff00f0291dbf74">&#9670;&nbsp;</a></span>collectionList()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -152,7 +152,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const std::list&lt;std::pair&lt;QString, std::list&lt;SLightDevice&gt; &gt; &gt;&amp; GroupsParser::collectionList </td>
+          <td class="memname">const std::list&lt;SLightGroup&gt;&amp; GroupsParser::collectionList </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -247,8 +247,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a4cff6f1db69686b3132b01dcad77044c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4cff6f1db69686b3132b01dcad77044c">&#9670;&nbsp;</a></span>moodList()</h2>
+<a id="a2aa12b56c65a5efb36d0b51edcb6c886"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2aa12b56c65a5efb36d0b51edcb6c886">&#9670;&nbsp;</a></span>moodList()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -257,7 +257,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const std::list&lt;std::pair&lt;QString, std::list&lt;SLightDevice&gt; &gt; &gt;&amp; GroupsParser::moodList </td>
+          <td class="memname">const std::list&lt;SLightGroup&gt;&amp; GroupsParser::moodList </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -335,8 +335,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a603a669ef80819dbdfe53310b275d51e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a603a669ef80819dbdfe53310b275d51e">&#9670;&nbsp;</a></span>saveNewCollection()</h2>
+<a id="a006f79d1ff4cb94773388f2723125bc9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a006f79d1ff4cb94773388f2723125bc9">&#9670;&nbsp;</a></span>saveNewCollection()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -351,7 +351,13 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const std::list&lt; SLightDevice &gt; &amp;&#160;</td>
-          <td class="paramname"><em>devices</em>&#160;</td>
+          <td class="paramname"><em>devices</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>isRoom</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -364,6 +370,7 @@ Public Member Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">groupName</td><td>name of colelction to save. </td></tr>
     <tr><td class="paramname">devices</td><td>devices in new collection. </td></tr>
+    <tr><td class="paramname">isRoom</td><td>true if it is a room, false otherwise </td></tr>
   </table>
   </dd>
 </dl>

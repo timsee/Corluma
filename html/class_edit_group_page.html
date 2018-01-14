@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.11.1</span>
+   &#160;<span id="projectnumber">v0.11.5</span>
    </div>
   </td>
  </tr>
@@ -74,9 +74,9 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_edit_group_page.html#a175fb0af4a2b4563cb7be54240a731ac">~EditGroupPage</a> ()</td></tr>
 <tr class="memdesc:a175fb0af4a2b4563cb7be54240a731ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">deconstructor <br /></td></tr>
 <tr class="separator:a175fb0af4a2b4563cb7be54240a731ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a55bc62dbdae64e29c45db147a11bb600"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_edit_group_page.html#a55bc62dbdae64e29c45db147a11bb600">showGroup</a> (QString key, std::list&lt; SLightDevice &gt; groupDevices, std::list&lt; SLightDevice &gt; devices, bool isMood)</td></tr>
-<tr class="memdesc:a55bc62dbdae64e29c45db147a11bb600"><td class="mdescLeft">&#160;</td><td class="mdescRight">showGroup open the edit page with the given data  <a href="#a55bc62dbdae64e29c45db147a11bb600">More...</a><br /></td></tr>
-<tr class="separator:a55bc62dbdae64e29c45db147a11bb600"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2810c54e6dd19b70b21fc52b0e4e772b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_edit_group_page.html#a2810c54e6dd19b70b21fc52b0e4e772b">showGroup</a> (QString key, std::list&lt; SLightDevice &gt; groupDevices, std::list&lt; SLightDevice &gt; devices, bool isMood, bool isRoom)</td></tr>
+<tr class="memdesc:a2810c54e6dd19b70b21fc52b0e4e772b"><td class="mdescLeft">&#160;</td><td class="mdescRight">showGroup open the edit page with the given data  <a href="#a2810c54e6dd19b70b21fc52b0e4e772b">More...</a><br /></td></tr>
+<tr class="separator:a2810c54e6dd19b70b21fc52b0e4e772b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e0bd98e7581d1d8a69c7c23ad91617f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_edit_group_page.html#a9e0bd98e7581d1d8a69c7c23ad91617f">updateDevices</a> (std::list&lt; SLightDevice &gt; groupDevices, std::list&lt; SLightDevice &gt; devices)</td></tr>
 <tr class="memdesc:a9e0bd98e7581d1d8a69c7c23ad91617f"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDevices update the device widgets in the edit page with new values  <a href="#a9e0bd98e7581d1d8a69c7c23ad91617f">More...</a><br /></td></tr>
 <tr class="separator:a9e0bd98e7581d1d8a69c7c23ad91617f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -184,8 +184,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 
 </div>
 </div>
-<a id="a55bc62dbdae64e29c45db147a11bb600"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a55bc62dbdae64e29c45db147a11bb600">&#9670;&nbsp;</a></span>showGroup()</h2>
+<a id="a2810c54e6dd19b70b21fc52b0e4e772b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2810c54e6dd19b70b21fc52b0e4e772b">&#9670;&nbsp;</a></span>showGroup()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -212,7 +212,13 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>isMood</em>&#160;</td>
+          <td class="paramname"><em>isMood</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>isRoom</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -226,7 +232,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
     <tr><td class="paramname">key</td><td>key for the group that you are displaying </td></tr>
     <tr><td class="paramname">groupDevices</td><td>all devicess contained in the group </td></tr>
     <tr><td class="paramname">devices</td><td>all devicess known by the commlayer </td></tr>
-    <tr><td class="paramname">isMood</td><td>true if a moood, false if a collection. </td></tr>
+    <tr><td class="paramname">isMood</td><td>true if a mood, false if a collection. </td></tr>
+    <tr><td class="paramname">isRoom</td><td>true if a room, false if a lightgroup. </td></tr>
   </table>
   </dd>
 </dl>

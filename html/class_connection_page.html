@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.11.1</span>
+   &#160;<span id="projectnumber">v0.11.5</span>
    </div>
   </td>
  </tr>
@@ -108,9 +108,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#aa1868d779155e071a6563a1d0a2e6450">connectGroupsParser</a> (<a class="el" href="class_groups_parser.html">GroupsParser</a> *parser)</td></tr>
 <tr class="memdesc:aa1868d779155e071a6563a1d0a2e6450"><td class="mdescLeft">&#160;</td><td class="mdescRight">connects the <a class="el" href="class_groups_parser.html" title="The GroupsParser class Manipulates and Reads a JSON representation of multiple lights. There exists two types of &quot;groups&quot;. The first is a collection which contains any number of light devices but does not contain any reference to the lights overall state. The second is a mood, which contains both the path to the light device and data such as its brightness, color, etc. ">GroupsParser</a> object to this UI widget. <br /></td></tr>
 <tr class="separator:aa1868d779155e071a6563a1d0a2e6450"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af2fffa3c7a465764cddf56abf1f15e0e"><td class="memItemLeft" align="right" valign="top">std::list&lt; SLightDevice &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#af2fffa3c7a465764cddf56abf1f15e0e">devicesFromKey</a> (QString key)</td></tr>
-<tr class="memdesc:af2fffa3c7a465764cddf56abf1f15e0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">devicesFromKey take a key that represents a collection or mood and convert it into a list of devices that are represented by that key. An example use of this is the edit page and it is used to highlight specific devices.  <a href="#af2fffa3c7a465764cddf56abf1f15e0e">More...</a><br /></td></tr>
-<tr class="separator:af2fffa3c7a465764cddf56abf1f15e0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e87a9909253532dc3ba7672ea41eccd"><td class="memItemLeft" align="right" valign="top"><a id="a0e87a9909253532dc3ba7672ea41eccd"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#a0e87a9909253532dc3ba7672ea41eccd">displayRooms</a> ()</td></tr>
+<tr class="memdesc:a0e87a9909253532dc3ba7672ea41eccd"><td class="mdescLeft">&#160;</td><td class="mdescRight">display the rooms in the connection page widget <br /></td></tr>
+<tr class="separator:a0e87a9909253532dc3ba7672ea41eccd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8facf4f512cb6d17a688a43505c2812"><td class="memItemLeft" align="right" valign="top"><a id="ab8facf4f512cb6d17a688a43505c2812"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#ab8facf4f512cb6d17a688a43505c2812">displayGroups</a> ()</td></tr>
+<tr class="memdesc:ab8facf4f512cb6d17a688a43505c2812"><td class="mdescLeft">&#160;</td><td class="mdescRight">displays the groups in the connection page widget. <br /></td></tr>
+<tr class="separator:ab8facf4f512cb6d17a688a43505c2812"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab565890a97717688f9c9bf13165ce5e8"><td class="memItemLeft" align="right" valign="top"><a id="ab565890a97717688f9c9bf13165ce5e8"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#ab565890a97717688f9c9bf13165ce5e8">updateConnectionList</a> ()</td></tr>
 <tr class="memdesc:ab565890a97717688f9c9bf13165ce5e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateConnectionList updates the GUI elements that display the <a class="el" href="class_comm_layer.html" title="The CommLayer class provides communication protocols that allow the user to connect and send packets ...">CommLayer</a>'s connection list. <br /></td></tr>
@@ -123,6 +128,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#a5aeb7676bc3abe95b4f4289486815985">hide</a> ()</td></tr>
 <tr class="memdesc:a5aeb7676bc3abe95b4f4289486815985"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when the widget is hidden <br /></td></tr>
 <tr class="separator:a5aeb7676bc3abe95b4f4289486815985"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb8a611f8f43ccccca02e36553755035"><td class="memItemLeft" align="right" valign="top"><a id="aeb8a611f8f43ccccca02e36553755035"></a>
+ECurrentConnectionWidget&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#aeb8a611f8f43ccccca02e36553755035">currentList</a> ()</td></tr>
+<tr class="memdesc:aeb8a611f8f43ccccca02e36553755035"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for current connection widget <br /></td></tr>
+<tr class="separator:aeb8a611f8f43ccccca02e36553755035"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_lighting_page"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_lighting_page')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_lighting_page.html">LightingPage</a></td></tr>
 <tr class="memitem:afcd456d0f20296ac63c5d336b085f37b inherit pub_methods_class_lighting_page"><td class="memItemLeft" align="right" valign="top"><a id="afcd456d0f20296ac63c5d336b085f37b"></a>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#afcd456d0f20296ac63c5d336b085f37b">~LightingPage</a> ()</td></tr>
@@ -229,31 +238,6 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
   </table>
   </dd>
 </dl>
-
-</div>
-</div>
-<a id="af2fffa3c7a465764cddf56abf1f15e0e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af2fffa3c7a465764cddf56abf1f15e0e">&#9670;&nbsp;</a></span>devicesFromKey()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::list&lt; SLightDevice &gt; ConnectionPage::devicesFromKey </td>
-          <td>(</td>
-          <td class="paramtype">QString&#160;</td>
-          <td class="paramname"><em>key</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">key</td><td>key to look for devices from. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>list of devices that match the key </dd></dl>
 
 </div>
 </div>

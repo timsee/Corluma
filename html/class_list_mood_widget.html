@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.11.1</span>
+   &#160;<span id="projectnumber">v0.11.5</span>
    </div>
   </td>
  </tr>
@@ -70,9 +70,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3a6fd8670d77a911654ae47d6122e6a3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_widget.html#a3a6fd8670d77a911654ae47d6122e6a3">ListMoodWidget</a> (const QString &amp;name, const std::list&lt; SLightDevice &gt; &amp;devices, const std::vector&lt; std::vector&lt; QColor &gt; &gt; &amp;colors, QWidget *parent=0)</td></tr>
-<tr class="memdesc:a3a6fd8670d77a911654ae47d6122e6a3"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_list_mood_widget.html" title="The ListMoodWidget class is used to display a pre-saved group of devices and their settings in a sing...">ListMoodWidget</a> constructor.  <a href="#a3a6fd8670d77a911654ae47d6122e6a3">More...</a><br /></td></tr>
-<tr class="separator:a3a6fd8670d77a911654ae47d6122e6a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f83ecacc438aa0724a3ca2cf8aeb4f2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_widget.html#a9f83ecacc438aa0724a3ca2cf8aeb4f2">ListMoodWidget</a> (const SLightGroup &amp;group, const std::vector&lt; std::vector&lt; QColor &gt; &gt; &amp;colors, QWidget *parent=0)</td></tr>
+<tr class="memdesc:a9f83ecacc438aa0724a3ca2cf8aeb4f2"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_list_mood_widget.html" title="The ListMoodWidget class is used to display a pre-saved group of devices and their settings in a sing...">ListMoodWidget</a> constructor.  <a href="#a9f83ecacc438aa0724a3ca2cf8aeb4f2">More...</a><br /></td></tr>
+<tr class="separator:a9f83ecacc438aa0724a3ca2cf8aeb4f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a933f4dc81660860f0881ea5ae9b0c114"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_widget.html#a933f4dc81660860f0881ea5ae9b0c114">setChecked</a> (bool <a class="el" href="class_list_mood_widget.html#a6d1f982b6dc6a9846d4c3a84d88c666e">checked</a>)</td></tr>
 <tr class="memdesc:a933f4dc81660860f0881ea5ae9b0c114"><td class="mdescLeft">&#160;</td><td class="mdescRight">setChecked set the widget as checked or unchecked. When it is checked it it will be a light blue color. When it isn't, it will be dark grey.  <a href="#a933f4dc81660860f0881ea5ae9b0c114">More...</a><br /></td></tr>
 <tr class="separator:a933f4dc81660860f0881ea5ae9b0c114"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -121,8 +121,8 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a3a6fd8670d77a911654ae47d6122e6a3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3a6fd8670d77a911654ae47d6122e6a3">&#9670;&nbsp;</a></span>ListMoodWidget()</h2>
+<a id="a9f83ecacc438aa0724a3ca2cf8aeb4f2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f83ecacc438aa0724a3ca2cf8aeb4f2">&#9670;&nbsp;</a></span>ListMoodWidget()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -133,14 +133,8 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
         <tr>
           <td class="memname">ListMoodWidget::ListMoodWidget </td>
           <td>(</td>
-          <td class="paramtype">const QString &amp;&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::list&lt; SLightDevice &gt; &amp;&#160;</td>
-          <td class="paramname"><em>devices</em>, </td>
+          <td class="paramtype">const SLightGroup &amp;&#160;</td>
+          <td class="paramname"><em>group</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -168,8 +162,7 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">name</td><td>name of group </td></tr>
-    <tr><td class="paramname">devices</td><td>devices in group </td></tr>
+    <tr><td class="paramname">group</td><td>group of lights in mood </td></tr>
     <tr><td class="paramname">colors</td><td>Color groups for devices using multi color routines.</td></tr>
   </table>
   </dd>
