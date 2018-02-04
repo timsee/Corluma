@@ -233,21 +233,31 @@ bool CommType::deviceControllerFromDiscoveryString(QString discovery, QString co
     //--------------
     // Check validity of int vector
     //--------------
-    if (intVector.size() == 3) {
+    if (intVector.size() == 5) {
         controller.name = controllerName;
         if (controller.name.size() == 0) {
             return false;
         }
-        // get the max hardware index
-        controller.maxHardwareIndex = intVector[0];
-        if (controller.maxHardwareIndex > 10) {
+        // get the API level
+        controller.majorAPI = intVector[0];
+        controller.minorAPI = intVector[1];
+
+        // get the USE_CRC
+        int crc = intVector[2];
+        if (!(crc == 1 || crc == 0)) {
             return false;
         }
-        // get the USE_CRC
-        controller.isUsingCRC = intVector[1];
+        controller.isUsingCRC = crc;
+
+        // get the max hardware index
+        controller.maxHardwareIndex = intVector[3];
+        if (controller.maxHardwareIndex > 20) {
+            return false;
+        }
         // grab the max packet size
-        controller.maxPacketSize = intVector[2];
-        if (controller.maxPacketSize > 1000) {
+        controller.maxPacketSize = intVector[4];
+        controller.type = mType;
+        if (controller.maxPacketSize > 500) {
             return false;
         }
         return true;
@@ -291,9 +301,9 @@ void CommType::preparePacketForTransmission(const SDeviceController& controller,
         resetStateUpdateTimeout();
     }
 
-    // add CRC, if in use (not necessary for http but might as well support it...)
+    // add CRC, if in use
     if (controller.isUsingCRC) {
-        packet = packet + QString::number(mCRC.calculate(packet)) + "&";
+        packet = packet + "#" + QString::number(mCRC.calculate(packet)) + "&";
     }
 }
 

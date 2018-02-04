@@ -16,8 +16,8 @@
 #define PORT 10008
 
 CommUDP::CommUDP() {
-    mStateUpdateInterval = 1000;
-    mDiscoveryUpdateInterval = 500;
+    mStateUpdateInterval = 500;
+    mDiscoveryUpdateInterval = 1000;
     setupConnectionList(ECommType::eUDP);
 
     mSocket = new QUdpSocket(this);
@@ -87,7 +87,7 @@ void CommUDP::sendPacket(SDeviceController controller, QString packet) {
         preparePacketForTransmission(controller, packet);
 
         // send packet over UDP
-        //qDebug() << "sending udp" << packet << "to " << controller.name;
+        //Debug() << "sending udp" << packet << "to " << controller.name;
         mSocket->writeDatagram(packet.toUtf8().data(),
                                QHostAddress(controller.name),
                                PORT);
@@ -155,6 +155,15 @@ void CommUDP::readPendingDatagrams() {
         mSocket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
         QString payload = QString::fromUtf8(datagram);
         //qDebug() << "UDP payload" << payload << payload.size() << "from" << sender.toString();
-        handleIncomingPacket(sender.toString(), payload);
+        if (payload.contains(";")) {
+            // this may contain multiple packets in a single packet, split and handle as separate messages.
+            QRegExp rx("(\\;)");
+            QStringList payloads = payload.split(rx);
+            for (auto payload : payloads) {
+                handleIncomingPacket(sender.toString(), payload);
+            }
+        } else {
+            handleIncomingPacket(sender.toString(), payload);
+        }
     }
 }

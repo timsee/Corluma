@@ -57,7 +57,14 @@ void HueBridgeDiscovery::startBridgeDiscovery() {
         mDiscoveryState = EHueDiscoveryState::eBridgeConnected;
         emit bridgeDiscoveryStateChanged((int)mDiscoveryState);
     }
-    if (!mHasIP) {
+    if (!mHasIP && mUseManualIP) {
+        attemptSearchForUsername();
+        mDiscoveryState = EHueDiscoveryState::eTestingIPAddress;
+        emit bridgeDiscoveryStateChanged((int)mDiscoveryState);
+        mSettings->setValue(kPhillipsIPAddress, mBridge.IP);
+        mSettings->sync();
+
+    } else if (!mHasIP) {
         mDiscoveryState = EHueDiscoveryState::eFindingIpAddress;
         emit bridgeDiscoveryStateChanged((int)mDiscoveryState);
         // Attempt both UPnP and NUPnP asynchronously
@@ -65,10 +72,8 @@ void HueBridgeDiscovery::startBridgeDiscovery() {
         // while NUPnP does a HTTP GET request to a website set up
         // by Phillips that returns a JSON value that contains
         // all the Bridges on your network.
-        if (!mUseManualIP) {
-            attemptUPnPDiscovery();
-            attemptNUPnPDiscovery();
-        }
+        attemptUPnPDiscovery();
+        attemptNUPnPDiscovery();
     } else if(!mHasKey) {
          attemptSearchForUsername();
     } else if (mHasKey) {
@@ -317,7 +322,6 @@ void HueBridgeDiscovery::attemptIPAddress(QString ip) {
     mHasIP = false;
     mBridge.IP = ip;
     mUseManualIP = true;
-
     mTimeoutTimer->stop();
     mDiscoveryState = EHueDiscoveryState::eTestingIPAddress;
     emit bridgeDiscoveryStateChanged((int)mDiscoveryState);

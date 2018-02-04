@@ -208,6 +208,9 @@ private:
     /// state as to whether the bottom of the screen is showing the standard buttons, or one of the routine widgets
     EBottomMenuShow mBottomMenuState;
 
+    /// current single color lighting routine, stored in buffer for when going from multi color to single color routines.
+    ELightingRoutine mCurrentSingleRoutine;
+
     /*!
      * \brief mLastColor last color chosen by the RGB color picker.
      */

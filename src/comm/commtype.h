@@ -41,9 +41,23 @@ struct SDeviceController {
     /// max number of bytes for a packet.
     uint32_t maxPacketSize;
 
+    /// major API level of controller
+    uint32_t majorAPI;
+
+    /// minor API level of controller
+    uint32_t minorAPI;
+
+    /// type of controller
+    ECommType type;
+
     /// creates a debug string for Controllers
     QString to_string() {
-        QString string = name + "\r\n maxHardwareIndex: " + QString::number(maxHardwareIndex) + " \r\n CRC: " + QString::number(isUsingCRC) + " \r\n maxPacketSize: " + QString::number(maxPacketSize);
+        QString string = name
+                + "\r\n API Level: " + QString::number(majorAPI) + "." + QString::number(minorAPI)
+                + "\r\n maxHardwareIndex: "
+                + QString::number(maxHardwareIndex)
+                + " \r\n CRC: " + QString::number(isUsingCRC)
+                + " \r\n maxPacketSize: " + QString::number(maxPacketSize);
         return string;
     }
 };
@@ -55,6 +69,7 @@ inline bool operator==(const SDeviceController& lhs, const SDeviceController& rh
     if (lhs.name.compare(rhs.name)) result = false;
     if (lhs.maxHardwareIndex    !=  rhs.maxHardwareIndex) result = false;
     if (lhs.isUsingCRC          !=  rhs.isUsingCRC) result = false;
+    if (lhs.type                !=  rhs.type) result = false;
     return result;
 }
 

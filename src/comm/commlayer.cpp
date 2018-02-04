@@ -268,31 +268,22 @@ void CommLayer::parsePacket(QString sender, QString packet, int type) {
     if (success && (packet.length() > 0)) {
         // check if it should use CRC
         if (controller.isUsingCRC) {
-            int lastAmpIndex = 0;
-            bool foundFirstAmp = false;
-            for (uint32_t i = packet.length() - 1; i > 0; --i) {
-                if (packet.at(i) == QChar('&')) {
-                    if (!foundFirstAmp) {
-                        foundFirstAmp = true;
-                    } else {
-                        lastAmpIndex = i;
-                        break;
-                    }
+            QStringList crcPacketList = packet.split("#");
+            if (crcPacketList.size() == 2) {
+                // compute CRC
+                uint32_t computedCRC = mCRC.calculate(crcPacketList[0]);
+                uint32_t givenCRC =  crcPacketList[1].left(crcPacketList[1].length() - 1).toUInt();
+                if (givenCRC != computedCRC) {
+                    //qDebug() << "INFO: failed CRC check for" << controller.name << "computed:" << QString::number(computedCRC) << "given:" << QString::number(givenCRC);
+                    return;
+                } else {
+                    //qDebug() << "INFO: CRC check passed!!!!";
+                    // pass the CRC check
+                    intVectors.pop_back();
                 }
-            }
-
-            // compute CRC
-            QString checksumString = packet.mid(lastAmpIndex + 1, packet.size() - (lastAmpIndex + 2));
-            uint32_t computedCRC = mCRC.calculate(packet.mid(0, lastAmpIndex + 1));
-            uint32_t givenCRC =  checksumString.toUInt();
-
-            if (givenCRC != computedCRC) {
-                //qDebug() << "INFO: failed CRC check for" << controller.name << "computed:" << QString::number(computedCRC) << "given:" << QString::number(givenCRC);
-                return;
             } else {
-               //' qDebug() << "INFO: CRC check passed!!!!";
-                // pass the CRC check
-                intVectors.pop_back();
+                //qDebug() << "received too many # in a single packet";
+                return;
             }
         }
         // if it should,
@@ -314,22 +305,25 @@ void CommLayer::parsePacket(QString sender, QString packet, int type) {
                             if (verifyStateUpdatePacketValidity(intVector, x)) {
                                 // all values are in the right range, set them on SLightDevice.
                                 device.index           = intVector[x];
+                                // 0 means multicast in arduino apps, but one successful multi cast does not mean all packets received
+                                bool skipMultiCast = (device.index == 0) && (type != (int)ECommType::eHue);
+                                if (!skipMultiCast) {
+                                    commByType((ECommType)type)->fillDevice(device);
 
-                                commByType((ECommType)type)->fillDevice(device);
+                                    device.isOn            = (bool)intVector[x + 1];
+                                    device.isReachable     = (bool)intVector[x + 2];
+                                    device.color           = QColor(intVector[x + 3], intVector[x + 4], intVector[x + 5]);
+                                    device.colorMode       = EColorMode::eRGB;
+                                    device.lightingRoutine = (ELightingRoutine)intVector[x + 6];
+                                    device.colorGroup      = (EColorGroup)intVector[x + 7];
+                                    device.brightness      = intVector[x + 8];
 
-                                device.isOn            = (bool)intVector[x + 1];
-                                device.isReachable     = (bool)intVector[x + 2];
-                                device.color           = QColor(intVector[x + 3], intVector[x + 4], intVector[x + 5]);
-                                device.colorMode       = EColorMode::eRGB;
-                                device.lightingRoutine = (ELightingRoutine)intVector[x + 6];
-                                device.colorGroup      = (EColorGroup)intVector[x + 7];
-                                device.brightness      = intVector[x + 8];
+                                    device.speed                 = intVector[x + 9];
+                                    device.timeout               = intVector[x + 10];
+                                    device.minutesUntilTimeout   = intVector[x + 11];
 
-                                device.speed                 = intVector[x + 9];
-                                device.timeout               = intVector[x + 10];
-                                device.minutesUntilTimeout   = intVector[x + 11];
-
-                                commByType((ECommType)type)->updateDevice(device);
+                                    commByType((ECommType)type)->updateDevice(device);
+                                }
                             } else {
                                 qDebug() << "WARNING: Invalid packet for light index" << intVector[x];
                             }
@@ -495,6 +489,21 @@ SLightDevice CommLayer::lightDeviceFromHueLight(const SHueLight& light) {
 
 void CommLayer::renameHue(SHueLight hue, QString newName) {
     mHue->renameLight(hue, newName);
+}
+
+const std::list<SDeviceController> CommLayer::allArduinoControllers() {
+    std::list<ECommType> commTypes = { ECommType::eHTTP,
+                                   #ifndef MOBILE_BUILD
+                                       ECommType::eSerial,
+                                   #endif
+                                       ECommType::eUDP };
+
+    std::list<SDeviceController> controllers;
+    for (auto type : commTypes) {
+        std::list<SDeviceController> list = commByType(type)->discoveredList();
+        controllers.insert(controllers.begin(), list.begin(), list.end());
+    }
+    return controllers;
 }
 
 const std::list<SLightDevice>  CommLayer::allDevices() {

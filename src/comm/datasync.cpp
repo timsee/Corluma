@@ -16,13 +16,12 @@ bool DataSync::appendToPacket(QString& currentPacket, QString newAddition, int m
 }
 
 
-bool DataSync::checkThrottle(QString controller, ECommType type, int index) {
+bool DataSync::checkThrottle(QString controller, ECommType type) {
     bool foundThrottle = false;
     bool throttlePasses = false;
     for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
         if ((throttle->controller.compare(controller) == 0)
-                && ((int)throttle->type == (int)type)
-                && (throttle->index == index)) {
+                && ((int)throttle->type == (int)type)) {
             foundThrottle = true;
 
             int throttleInterval = 0;
@@ -37,10 +36,10 @@ bool DataSync::checkThrottle(QString controller, ECommType type, int index) {
                 throttleInterval = 2000;
                 break;
             case ECommType::eHue:
-                throttleInterval = 400;
+                throttleInterval = 200;
                 break;
             case ECommType::eUDP:
-                throttleInterval = 400;
+                throttleInterval = 100;
                 break;
             default:
                 throttleInterval = 1000;
@@ -58,18 +57,16 @@ bool DataSync::checkThrottle(QString controller, ECommType type, int index) {
         SThrottle throttle;
         throttle.controller = controller;
         throttle.type = type;
-        throttle.index = index;
         throttle.time = QTime::currentTime();
         mThrottleList.push_back(throttle);
     }
     return throttlePasses;
 }
 
-void DataSync::resetThrottle(QString controller, ECommType type, int index) {
+void DataSync::resetThrottle(QString controller, ECommType type) {
     for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
         if ((throttle->controller.compare(controller) == 0)
-                && ((int)throttle->type == (int)type)
-                && (throttle->index == index)) {
+                && ((int)throttle->type == (int)type)) {
             //qDebug() << "passed throttle" << controller << throttle->time.elapsed();
             throttle->time.restart();
         }

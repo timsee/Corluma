@@ -64,7 +64,7 @@ void DataSyncHue::syncData() {
             SLightDevice commLayerDevice = device;
             if (mComm->fillDevice(commLayerDevice)) {
                 if (device.type == ECommType::eHue) {
-                    if (checkThrottle(device.controller, device.type, device.index)) {
+                    if (checkThrottle(device.controller, device.type)) {
                         if (!sync(device, commLayerDevice)) {
                             countOutOfSync++;
                         }
@@ -203,7 +203,7 @@ bool DataSyncHue::sync(const SLightDevice& dataDevice, const SLightDevice& commD
 
     if (countOutOfSync && packet.size()) {
         mComm->sendPacket(dataDevice, packet);
-        resetThrottle(dataDevice.controller, dataDevice.type, dataDevice.index);
+        resetThrottle(dataDevice.controller, dataDevice.type);
     }
 
     return (countOutOfSync == 0);

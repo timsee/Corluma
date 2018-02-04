@@ -31,7 +31,7 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer *comm, QWidget *parent) :
     mHardwareConnectionWidget = new HardwareConnectionWidget(":images/Hue-Bridge.png", this);
     mHardwareConnectionWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    mIPAddress = new EditableFieldWidget("192.168.0.1", this);
+    mIPAddress = new EditableFieldWidget("192.168.0.100", this);
     mIPAddress->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(mIPAddress, SIGNAL(updatedField(QString)), this, SLOT(IPFieldChanged(QString)));
     mIPAddress->requireIPAddress(true);

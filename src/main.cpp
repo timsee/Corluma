@@ -102,6 +102,10 @@ int main(int argc, char *argv[]) {
     qDebug() << "product type: "        << QSysInfo::productType();
     qDebug() << "product version: "     << QSysInfo::productVersion();
     qDebug() << "windows version: "     << QSysInfo::windowsVersion();
+    qDebug() << "";
+    qDebug() << "Supports SSL:"         << QSslSocket::supportsSsl();
+    qDebug() << "SSL Library Build Version: " << QSslSocket::sslLibraryBuildVersionString();
+    qDebug() << "SSL Library Version: "  << QSslSocket::sslLibraryVersionString();
     qDebug() << "--------------------";
     qDebug() << "";
     qDebug() << "";

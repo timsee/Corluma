@@ -18,6 +18,7 @@ ColorPage::ColorPage(QWidget *parent) :
     QWidget(parent) {
     mBottomMenuState = EBottomMenuShow::eShowStandard;
     mBottomMenuIsOpen = false;
+    mCurrentSingleRoutine = ELightingRoutine::eSingleGlimmer;
 
     mSingleRoutineWidget = new RoutineButtonsWidget(EWidgetGroup::eSingleRoutines, std::vector<QColor>(), this);
     mSingleRoutineWidget->setMaximumWidth(this->width());
@@ -172,15 +173,19 @@ std::vector<QColor> ColorPage::createColorScheme(std::list<SLightDevice> devices
 // ----------------------------
 
 void ColorPage::newRoutineSelected(int newRoutine) {
-    mData->updateRoutine((ELightingRoutine)newRoutine);
+    ELightingRoutine routine = (ELightingRoutine)newRoutine;
+    mData->updateRoutine(routine);
+    if (routine <= utils::ELightingRoutineSingleColorEnd) {
+        mCurrentSingleRoutine = routine;
+    }
 }
 
 void ColorPage::colorChanged(QColor color) {
     mData->updateColor(color);
 
     for (auto device : mData->currentDevices()) {
-        if (device.lightingRoutine > utils::ELightingRoutineSingleColorEnd) {
-            mData->updateRoutine(ELightingRoutine::eSingleGlimmer);
+        if (device.lightingRoutine != mCurrentSingleRoutine) {
+            mData->updateRoutine(mCurrentSingleRoutine);
         }
     }
 
@@ -225,6 +230,11 @@ void ColorPage::multiColorChanged(QColor color, int index) {
 }
 
 void ColorPage::ambientUpdateReceived(int newAmbientValue, int newBrightness) {
+    for (auto device : mData->currentDevices()) {
+        if (device.lightingRoutine != ELightingRoutine::eSingleSolid) {
+            mData->updateRoutine(ELightingRoutine::eSingleSolid);
+        }
+    }
     mData->updateCt(newAmbientValue);
     emit singleColorChanged(utils::colorTemperatureToRGB(newAmbientValue));
     emit brightnessChanged(newBrightness);

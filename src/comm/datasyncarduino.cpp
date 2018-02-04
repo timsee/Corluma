@@ -46,8 +46,8 @@ void DataSyncArduino::resetSync() {
     }
     if (mData->currentDevices().size() > 0) {
         mDataIsInSync = false;
+        mStartTime = QTime::currentTime();
         if (!mSyncTimer->isActive()) {
-            mStartTime = QTime::currentTime();
             mSyncTimer->start(mUpdateInterval);
         }
     }
@@ -56,12 +56,13 @@ void DataSyncArduino::resetSync() {
 
 void DataSyncArduino::syncData() {
     if (!mDataIsInSync) {
+        mMessages.clear();
         int countOutOfSync = 0;
         for (auto&& device : mData->currentDevices()) {
             SLightDevice commLayerDevice = device;
             if (device.type != ECommType::eHue) {
                 if (mComm->fillDevice(commLayerDevice)) {
-                    if (checkThrottle(device.controller, device.type, device.index)) {
+                    if (checkThrottle(device.controller, device.type)) {
                         if (!sync(device, commLayerDevice)) {
                             countOutOfSync++;
                         }
@@ -71,6 +72,41 @@ void DataSyncArduino::syncData() {
                 }
             }
         }
+
+        //qDebug() << "----------------------";
+        std::list<SDeviceController> allControllers = mComm->allArduinoControllers();
+        for (auto&& map : mMessages) {
+            //TODO: this isnt the safest way, it relies on unique names for each controller, but ignores
+            //      the ECommType.
+            SDeviceController controller;
+            for (auto discoveredController : allControllers) {
+                if (discoveredController.name.compare(QString(map.first.c_str())) == 0) {
+                    controller = discoveredController;
+                }
+            }
+
+            // make a copy of the list of mesasges
+            std::list<QString> allMessages = map.second;
+
+            // simplify the packet by looking at all messages and changing to more efficient versions,
+            // when applicable.
+            simplifyPackets(controller, allMessages);
+
+            // create the message to send based off of the simplified packets
+            QString finalPacket = createPacket(controller, allMessages);
+
+//            qDebug() << controller.name;
+//            qDebug() << "\t" << finalPacket;
+
+            SLightDevice device;
+            device.controller = controller.name;
+            device.type = controller.type;
+            mComm->sendPacket(device, finalPacket);
+            resetThrottle(controller.name, device.type);
+
+            //qDebug() << "----------------------";
+        }
+
         mDataIsInSync = (countOutOfSync == 0);
     }
 
@@ -90,7 +126,60 @@ void DataSyncArduino::syncData() {
 
 }
 
+void DataSyncArduino::simplifyPackets(const SDeviceController& controller, std::list<QString>& allMessages) {
+    // count number of packets for each of the headers
+    if (controller.maxHardwareIndex != 1) {
+        std::vector<int> packetCount((int)EPacketHeader::ePacketHeader_MAX, 0);
+        // rest of packet
+        std::vector<QString> restOfPacket((int)EPacketHeader::ePacketHeader_MAX);
+        for (auto&& message : allMessages) {
+           // qDebug() << "\t" << message;
+            QStringList packetArray = message.split(",");
+            if (packetArray.size() > 1) {
+                int packetHeader = packetArray.at(0).toInt();
+                QString packetRemainder = message.section(",", 2);
+                if (restOfPacket[packetHeader].isEmpty()) {
+                    // inesrt in, first occurence
+                    restOfPacket[packetHeader] = packetRemainder;
+                    packetCount[packetHeader]++;
+                } else if (restOfPacket[packetHeader].compare(packetRemainder) == 0) {
+                    // count if its the same occurence
+                    packetCount[packetHeader]++;
+                }
+            }
+        }
 
+        int i = 0;
+        for (auto count : packetCount) {
+            if (count == controller.maxHardwareIndex) {
+                std::list<QString>::iterator iterator = allMessages.begin();
+                while (iterator != allMessages.end()) {
+                    QStringList packetArray = iterator->split(",");
+                    int packetHeader = packetArray.at(0).toInt();
+                    if (packetHeader == i) {
+                        iterator = allMessages.erase(iterator);
+                    } else {
+                        iterator++;
+                    }
+                }
+
+                QString newPacket = QString::number(i) + ",0," + restOfPacket[i];
+                allMessages.push_back(newPacket);
+            }
+            ++i;
+        }
+    }
+}
+
+const QString DataSyncArduino::createPacket(const SDeviceController& controller, const std::list<QString>& allMessages) {
+    QString finalPacket;
+    for (auto&& message : allMessages) {
+        if (finalPacket.size() + message.size() < controller.maxPacketSize - 12) {
+            finalPacket.append(message + "&");
+        }
+    }
+    return finalPacket;
+}
 
 void DataSyncArduino::endOfSync() {
     if (!mCleanupTimer->isActive()) {
@@ -133,16 +222,6 @@ bool DataSyncArduino::sync(const SLightDevice& dataDevice, const SLightDevice& c
         if (dataDevice.lightingRoutine <= utils::ELightingRoutineSingleColorEnd)
         {
             //-------------------
-            // Single Color Sync
-            //-------------------
-            if (commDevice.color != dataDevice.color) {
-                 QString message = mComm->sendMainColorChange(list, dataDevice.color);
-                 appendToPacket(packet, message, controller.maxPacketSize);
-                 //qDebug() << "color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << utils::colorDifference(dataDevice.color, commDevice.color);
-                 countOutOfSync++;
-            }
-
-            //-------------------
             // Single Color Routine Sync
             //-------------------
             if (commDevice.lightingRoutine != dataDevice.lightingRoutine) {
@@ -150,6 +229,16 @@ bool DataSyncArduino::sync(const SLightDevice& dataDevice, const SLightDevice& c
                 QString message = mComm->sendSingleRoutineChange(list, dataDevice.lightingRoutine);
                 appendToPacket(packet, message, controller.maxPacketSize);
                 countOutOfSync++;
+            }
+
+            //-------------------
+            // Single Color Sync
+            //-------------------
+            if (commDevice.color != dataDevice.color) {
+                 QString message = mComm->sendMainColorChange(list, dataDevice.color);
+                 appendToPacket(packet, message, controller.maxPacketSize);
+                 //qDebug() << "color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << utils::colorDifference(dataDevice.color, commDevice.color);
+                 countOutOfSync++;
             }
         }
         else
@@ -201,9 +290,19 @@ bool DataSyncArduino::sync(const SLightDevice& dataDevice, const SLightDevice& c
     }
 
     if (countOutOfSync) {
-        //qDebug() << "packet size" << packet.size() <<"count out of sync" << countOutOfSync;
-        mComm->sendPacket(dataDevice, packet);
-        resetThrottle(dataDevice.controller, dataDevice.type, dataDevice.index);
+        QStringList messageArray = packet.split("&");
+        for (auto message : messageArray) {
+            // look if the key already exists.
+            if (!message.isEmpty()) {
+                auto messageGroup = mMessages.find(dataDevice.controller.toStdString());
+                if (messageGroup == mMessages.end()) {
+                    std::list<QString> list = {message};
+                    mMessages.insert(std::make_pair(dataDevice.controller.toStdString(), list));
+                } else {
+                    messageGroup->second.push_back(message);
+                }
+            }
+        }
     }
 
     return (countOutOfSync == 0);

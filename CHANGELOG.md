@@ -244,8 +244,15 @@ ___
 * Fixed android rendering and display bugs. 
 * Fixed miscellaneous bugs.
 
+### **v0.11.7**
+#### Communication Update
+* Updated the messaging protocols to match RGB-LED-Routines protocols introduced in v2.8.
+* Added system to DataSyncArduino to send more efficient packets to arduinos.
+* Sped up communication to arduinos over wireless. 
+* Fixed bug with using manual IP addresses to discovery Hue Bridges.
+
+
 ### Coming Soon
-* Support for Raspberry Pi 3 controlling multiple LED arrays. 
 * Finish manual discovery of Hues and Bridges
 * Fix platform-specific layout and resizing issues (buttons that are too small on Mac OS X, images that are cutoff on iOS, etc.)
 

@@ -252,6 +252,10 @@ public:
     const std::list<SDeviceController>& discoveredList(ECommType type) {
         return commByType(type)->discoveredList();
     }
+
+    /// list containing all arduino based SDeviceControllers
+    const std::list<SDeviceController> allArduinoControllers();
+
     /*!
      * \brief undiscoveredList getter for the list of all undiscovered devices from a specific commtype
      * \param type commtype that you want the undiscovered devices from

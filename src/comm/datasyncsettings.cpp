@@ -72,7 +72,7 @@ void DataSyncSettings::syncData() {
                     return;
                 }
 
-                if (checkThrottle(device.controller, device.type, device.index)) {
+                if (checkThrottle(device.controller, device.type)) {
                     bool result = sync(device);
                     if (!result) {
                         countOutOfSync++;
@@ -166,7 +166,7 @@ bool DataSyncSettings::sync(const SLightDevice& availableDevice) {
     if (countOutOfSync) {
         //qDebug() << "packet size" << packet.size() <<"count out of sync" << countOutOfSync;
         mComm->sendPacket(availableDevice, packet);
-        resetThrottle(availableDevice.controller, availableDevice.type, availableDevice.index);
+        resetThrottle(availableDevice.controller, availableDevice.type);
     }
 
     return (countOutOfSync == 0);

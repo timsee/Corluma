@@ -4,7 +4,7 @@
 
 #include <QObject>
 #include <QTimer>
-
+#include <unordered_map>
 #include "datasync.h"
 
 /*!
@@ -81,9 +81,31 @@ private:
     bool sync(const SLightDevice& dataDevice, const SLightDevice& commDevice) override;
 
     /*!
+     * \brief simplifyPackets takes a controller and a list of messages to send to it as input,
+     *        and looks for ways to simplify the packets, such as sending a multicast signal
+     *        packet instead of sending multiple instances of the same packet
+     * \param controller the controller to received all the messages
+     * \param allMessages the messages to send to the controller.
+     */
+    void simplifyPackets(const SDeviceController& controller, std::list<QString>& allMessages);
+
+    /*!
+     * \brief createPacket takes a constroller and a list of messages to send to it as input,
+     *        and turns them into a valid packet to send to the controller. This checks that the packet
+     *        is not too large, adds delimiters, and adds a CRC, if necessary.
+     * \param controller the controller to send the packet to.
+     * \param allMessages All the messages to turn into a packet
+     * \return the string representation of the packet.
+     */
+    const QString createPacket(const SDeviceController& controller, const std::list<QString>& allMessages);
+
+    /*!
      * \brief endOfSync end the sync thread and start the cleanup thread.
      */
     void endOfSync() override;
+
+    /// a sorted list of messages sorted by the name of the controller to receive them.
+    std::unordered_map<std::string, std::list<QString> > mMessages;
 };
 
 #endif // DATASYNCARDUINO_H

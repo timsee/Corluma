@@ -31,10 +31,6 @@ struct SThrottle
      * \brief type communication type for controller.
      */
     ECommType type;
-    /*!
-     * \brief index index of device getting throttled.
-     */
-    int index; ///TODO: remove the need for this by combining packets better
 };
 
 
@@ -191,19 +187,17 @@ protected:
      *        if too many are being sent in a single interval.
      * \param controller name of controller.
      * \param type communication type of controller
-     * \param index index of device on controller (temporary)
      * \return true if a mesasge can be sent, false if the message shoudl be throttled
      */
-    bool checkThrottle(QString controller, ECommType type, int index);
+    bool checkThrottle(QString controller, ECommType type);
 
     /*!
      * \brief resetThrottle should be called immediately after sending a packet, resets the throttle so that no messages can
      *        be sent until a certain interval has passed.
      * \param controller name of controller.
      * \param type communication type of controller
-     * \param index index of device on controller (temporary)
      */
-    void resetThrottle(QString controller, ECommType type, int index);
+    void resetThrottle(QString controller, ECommType type);
 };
 
 #endif // DATASYNC_H
