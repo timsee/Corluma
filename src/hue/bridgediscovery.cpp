@@ -1,12 +1,15 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
-#include "huebridgediscovery.h"
+#include "hue/bridgediscovery.h"
 
-HueBridgeDiscovery::HueBridgeDiscovery(QObject *parent) : QObject(parent) {
+namespace hue
+{
+
+BridgeDiscovery::BridgeDiscovery(QObject *parent) : QObject(parent) {
 
     mDiscoveryTimer = new QTimer;
     connect(mDiscoveryTimer, SIGNAL(timeout()), this, SLOT(testBridgeIP()));
@@ -48,11 +51,11 @@ HueBridgeDiscovery::HueBridgeDiscovery(QObject *parent) : QObject(parent) {
     mUseManualIP = false;
 }
 
-HueBridgeDiscovery::~HueBridgeDiscovery() {
+BridgeDiscovery::~BridgeDiscovery() {
     stopBridgeDiscovery();
 }
 
-void HueBridgeDiscovery::startBridgeDiscovery() {
+void BridgeDiscovery::startBridgeDiscovery() {
     if (isConnected()) {
         mDiscoveryState = EHueDiscoveryState::eBridgeConnected;
         emit bridgeDiscoveryStateChanged((int)mDiscoveryState);
@@ -83,7 +86,7 @@ void HueBridgeDiscovery::startBridgeDiscovery() {
     }
 }
 
-void HueBridgeDiscovery::stopBridgeDiscovery() {
+void BridgeDiscovery::stopBridgeDiscovery() {
     if (mDiscoveryTimer->isActive()) {
         mDiscoveryTimer->stop();
     }
@@ -92,7 +95,7 @@ void HueBridgeDiscovery::stopBridgeDiscovery() {
     }
 }
 
-void HueBridgeDiscovery::stopTimers() {
+void BridgeDiscovery::stopTimers() {
     if (mTimeoutTimer->isActive()) {
         mTimeoutTimer->stop();
     }
@@ -104,7 +107,7 @@ void HueBridgeDiscovery::stopTimers() {
 // ----------------------------
 
 
-void HueBridgeDiscovery::testBridgeIP() {
+void BridgeDiscovery::testBridgeIP() {
      QString urlString = "http://" + mBridge.IP + "/api";
      QNetworkRequest request = QNetworkRequest(QUrl(urlString));
      request.setHeader(QNetworkRequest::ContentTypeHeader,
@@ -121,7 +124,7 @@ void HueBridgeDiscovery::testBridgeIP() {
 }
 
 
-void HueBridgeDiscovery::replyFinished(QNetworkReply* reply) {
+void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
     if (reply->error() == QNetworkReply::NoError) {
         QString string = (QString)reply->readAll();
         //qDebug() << "Response:" << string;
@@ -208,7 +211,7 @@ void HueBridgeDiscovery::replyFinished(QNetworkReply* reply) {
     }
 }
 
-void HueBridgeDiscovery::readPendingUPnPDatagrams() {
+void BridgeDiscovery::readPendingUPnPDatagrams() {
     while (mUPnPSocket->hasPendingDatagrams()) {
         QByteArray datagram;
         datagram.resize(mUPnPSocket->pendingDatagramSize());
@@ -244,7 +247,7 @@ void HueBridgeDiscovery::readPendingUPnPDatagrams() {
 }
 
 
-void HueBridgeDiscovery::handleDiscoveryTimeout() {
+void BridgeDiscovery::handleDiscoveryTimeout() {
     if (mDiscoveryState == EHueDiscoveryState::eFindingIpAddress) {
         qDebug() << "UPnP timed out...";
         if (!mUseManualIP) {
@@ -295,7 +298,7 @@ void HueBridgeDiscovery::handleDiscoveryTimeout() {
 // Private Discovery Attempts
 // ----------------------------
 
-void HueBridgeDiscovery::attemptUPnPDiscovery() {
+void BridgeDiscovery::attemptUPnPDiscovery() {
     QHostAddress standardUPnPAddress = QHostAddress(QString("239.255.255.250"));
     // timeout after waiting 5 seconds
     if (mTimeoutTimer->isActive()) {
@@ -309,7 +312,7 @@ void HueBridgeDiscovery::attemptUPnPDiscovery() {
     }
 }
 
-void HueBridgeDiscovery::attemptNUPnPDiscovery() {
+void BridgeDiscovery::attemptNUPnPDiscovery() {
     // start bridge IP discovery
     QString urlString = "https://www.meethue.com/api/nupnp";
     QNetworkRequest request = QNetworkRequest(QUrl(urlString));
@@ -317,7 +320,7 @@ void HueBridgeDiscovery::attemptNUPnPDiscovery() {
     mNetworkManager->get(request);
 }
 
-void HueBridgeDiscovery::attemptIPAddress(QString ip) {
+void BridgeDiscovery::attemptIPAddress(QString ip) {
     mIPValid = false;
     mHasIP = false;
     mBridge.IP = ip;
@@ -330,7 +333,7 @@ void HueBridgeDiscovery::attemptIPAddress(QString ip) {
     startBridgeDiscovery();
 }
 
-void HueBridgeDiscovery::attemptFinalCheck() {
+void BridgeDiscovery::attemptFinalCheck() {
     //create the start of the URL
     QString urlString = "http://" + mBridge.IP + "/api/" + mBridge.username;
 
@@ -349,7 +352,7 @@ void HueBridgeDiscovery::attemptFinalCheck() {
     stopBridgeDiscovery();
 }
 
-void HueBridgeDiscovery::attemptSearchForUsername() {
+void BridgeDiscovery::attemptSearchForUsername() {
     mTimeoutTimer->stop();
     mDiscoveryState = EHueDiscoveryState::eFindingDeviceUsername;
     emit bridgeDiscoveryStateChanged((int)mDiscoveryState);
@@ -361,7 +364,9 @@ void HueBridgeDiscovery::attemptSearchForUsername() {
 // Settings Keys
 // ----------------------------
 
-const QString HueBridgeDiscovery::kPhillipsUsername = QString("PhillipsBridgeUsername");
-const QString HueBridgeDiscovery::kPhillipsIPAddress = QString("PhillipsBridgeIPAddress");
-const QString HueBridgeDiscovery::kAppName = QString("Corluma");
+const QString BridgeDiscovery::kPhillipsUsername = QString("PhillipsBridgeUsername");
+const QString BridgeDiscovery::kPhillipsIPAddress = QString("PhillipsBridgeIPAddress");
+const QString BridgeDiscovery::kAppName = QString("Corluma");
 
+
+}

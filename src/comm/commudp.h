@@ -8,7 +8,7 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  * \brief Provides a UDP communication stream which allows
@@ -45,7 +45,7 @@ public:
      *        unsent packets.
      * \param packet the string that is going to get sent over UDP.
      */
-    void sendPacket(SDeviceController controller, QString packet);
+    void sendPacket(const cor::Controller& controller, QString& packet);
 
     /// true is port is successfully bound, false if errors occur.
     bool portBound();

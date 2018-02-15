@@ -1,13 +1,13 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
 #include "datasyncsettings.h"
 
 #include "comm/commlayer.h"
-#include "corlumautils.h"
+#include "cor/utils.h"
 
 DataSyncSettings::DataSyncSettings(DataLayer *data, CommLayer *comm)
 {
@@ -54,25 +54,25 @@ void DataSyncSettings::syncData() {
 
         int countOutOfSync = 0;
         // grab all available devices, instead of all current devices like most syncs
-        std::list<SLightDevice> allDevices = mComm->allDevices();
-        std::list<SLightDevice> allAvailableDevices;
+        std::list<cor::Light> allDevices = mComm->allDevices();
+        std::list<cor::Light> allAvailableDevices;
         // remove non available devices
         for (auto&& device : allDevices) {
-            if (mData->commTypeSettings()->commTypeEnabled(device.type)) {
+            if (mData->commTypeSettings()->commTypeEnabled(device.type())) {
                 allAvailableDevices.push_back(device);
             }
         }
 
         for (auto&& device : allAvailableDevices) {
-            SLightDevice commLayerDevice = device;
-            if (device.type != ECommType::eHue) {
+            cor::Light commLayerDevice = device;
+            if (device.type() != ECommType::eHue) {
                 bool successful = mComm->fillDevice(commLayerDevice);
                 if (!successful) {
                     //qDebug() << "INFO: device not found!";
                     return;
                 }
 
-                if (checkThrottle(device.controller, device.type)) {
+                if (checkThrottle(device.controller(), device.type())) {
                     bool result = sync(device);
                     if (!result) {
                         countOutOfSync++;
@@ -108,18 +108,18 @@ void DataSyncSettings::endOfSync() {
     }
 }
 
-bool DataSyncSettings::sync(const SLightDevice& availableDevice) {
+bool DataSyncSettings::sync(const cor::Light& availableDevice) {
     int countOutOfSync = 0;
-    SDeviceController controller;
-    if (!mComm->findDiscoveredController(availableDevice.type, availableDevice.controller, controller)) {
+    cor::Controller controller;
+    if (!mComm->findDiscoveredController(availableDevice.type(), availableDevice.controller(), controller)) {
         return false;
     }
 
-    std::list<SLightDevice> list;
+    std::list<cor::Light> list;
     list.push_back(availableDevice);
     QString packet;
 
-    if (availableDevice.type == ECommType::eHue) {
+    if (availableDevice.type() == ECommType::eHue) {
 
 //        //-------------------
 //        // Timeout Sync
@@ -166,7 +166,7 @@ bool DataSyncSettings::sync(const SLightDevice& availableDevice) {
     if (countOutOfSync) {
         //qDebug() << "packet size" << packet.size() <<"count out of sync" << countOutOfSync;
         mComm->sendPacket(availableDevice, packet);
-        resetThrottle(availableDevice.controller, availableDevice.type);
+        resetThrottle(availableDevice.controller(), availableDevice.type());
     }
 
     return (countOutOfSync == 0);
@@ -177,7 +177,7 @@ void DataSyncSettings::cleanupSync() {
 
 
 
-bool DataSyncSettings::sync(const SLightDevice& dataDevice, const SLightDevice& commDevice) {
+bool DataSyncSettings::sync(const cor::Light& dataDevice, const cor::Light& commDevice) {
     Q_UNUSED(dataDevice);
     Q_UNUSED(commDevice);
     return false;

@@ -10,13 +10,14 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
-#include "huebridgediscovery.h"
-#include "hueprotocols.h"
 #include "commpacketparser.h"
+#include "hue/bridgediscovery.h"
+#include "hue/huelight.h"
+#include "hue/hueprotocols.h"
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  *
@@ -75,29 +76,29 @@ public:
 
     /*!
      * \brief turnOn turns on the Hue light at a given index
-     * \param lightIndex the index of the hue you want to turn on.
+     * \param light light to modify
      */
-    void turnOn(int lightIndex);
+    void turnOn(const cor::Light& light);
 
     /*!
      * \brief turnOff turns off the Hue light at a given index
-     * \param lightIndex the index of the hue you want to turn off.
+     * \param light light to modify
      */
-    void turnOff(int lightIndex);
+    void turnOff(const cor::Light& light);
 
     /*!
      * \brief connectedHues returns vector of the currently connected Hue lights. Used by the settings page
      *        to display the list.
      * \return  a vector of the currently connected hue lights.
      */
-    std::list<SHueLight> connectedHues() { return mConnectedHues; }
+    const std::list<HueLight>& connectedHues() { return mConnectedHues; }
 
     /*!
      * \brief discovery returns a pointer to the object used to discover the Hue Bridge. This can be used
      *        to connect to its signals or to check its current state.
      * \return the discovery object for finding the Hue Bridge.
      */
-    HueBridgeDiscovery *discovery() { return mDiscovery; }
+    hue::BridgeDiscovery *discovery() { return mDiscovery; }
 
     /// getter for current discovery state of hue lights
     EHueDiscoveryState discoveryState();
@@ -107,23 +108,16 @@ public:
      *        converts it into a Phillips Hue command
      * \param packet the comma delimited Corlum Light command.
      */
-    void sendPacket(SDeviceController controller, QString packet);
+    void sendPacket(const cor::Controller& controller, QString& packet);
 
     /*!
-     * \brief hueLightFromLightDevice For every SLightDevice with type hue, there is a SHueLight that represents the same device.
+     * \brief hueLightFromLight For every cor::Light with type hue, there is a SHueLight that represents the same device.
      *        The SHueLight contains hue-specific information such as the bulb's software version and model ID. This information
-     *        This function takes the SLightDevice and returns the mapped SHueLight
-     * \param device a SLightDevice that represents the SHueLight you want to receive
-     * \return the SHueLight that represents the same device as the SLightDevice given.
+     *        This function takes the cor::Light and returns the mapped SHueLight
+     * \param device a cor::Light that represents the SHueLight you want to receive
+     * \return the SHueLight that represents the same device as the cor::Light given.
      */
-    SHueLight hueLightFromLightDevice(const SLightDevice& device);
-
-    /*!
-     * \brief lightDeviceFromHueLight create a light device based off of the data provided in a SHueLight
-     * \param light the SHueLight representation that you want to convert intoa  SLightDevice
-     * \return  a SLightDevice if one with data exists, otherwise an empty SLightDevice
-     */
-    SLightDevice lightDeviceFromHueLight(const SHueLight& light);
+    HueLight hueLightFromLight(const cor::Light& device);
 
     /*!
      * \brief sendSchedule send a schedule to the Hue Bridge. This schedule gets kept on the bridge and will
@@ -194,14 +188,14 @@ public:
      * \param name the new name for the bridge
      * \param lights the lights to include in the new group
      */
-    void createGroup(QString name, std::list<SHueLight> lights, bool isRoom);
+    void createGroup(QString name, std::list<HueLight> lights, bool isRoom);
 
     /*!
      * \brief updateGroup change the lights in an already-existing hue group
      * \param group the group to change the lights in
      * \param lights the new lights to provide to the group.
      */
-    void updateGroup(SHueGroup group, std::list<SHueLight> lights);
+    void updateGroup(SHueGroup group, std::list<HueLight> lights);
 
     /*!
      * \brief deleteGroup delete a group from the hue bridge
@@ -210,13 +204,13 @@ public:
     void deleteGroup(SHueGroup group);
 
     /// getter for list of groups
-    std::list<SHueGroup> groups() { return mGroups; }
+    const std::list<SHueGroup>& groups() { return mGroups; }
 
     /// list of lights recently discovered by a scan
-    std::list<SHueLight> newLights() { return mNewLights; }
+    const std::list<HueLight>& newLights() { return mNewLights; }
 
     /// serial numbers for lights that we are searching for.
-    std::list<QString> searchingLights() { return mSearchingSerialNumbers; }
+    const std::list<QString>& searchingLights() { return mSearchingSerialNumbers; }
 
     /// request a list of all recently discovered lights
     void requestNewLights();
@@ -257,7 +251,7 @@ public:
      * \brief schedules getter for a list of all known schedules
      * \return list of all known schedules.
      */
-    std::list<SHueSchedule> schedules() { return mSchedules; }
+    const std::list<SHueSchedule> schedules() { return mSchedules; }
 
     //---------------
     // Discovery And Maintence
@@ -274,13 +268,13 @@ public:
      * \param light the light to rename
      * \param newName the new name to assign to it.
      */
-    void renameLight(SHueLight light, QString newName);
+    void renameLight(HueLight light, QString newName);
 
     /*!
      * \brief deleteLight delete the light and its stored data from the bridge
      * \param light the light to delete.
      */
-    void deleteLight(SHueLight light);
+    void deleteLight(HueLight light);
 
 public slots:
 
@@ -407,14 +401,14 @@ private:
     /*!
      * \brief mDiscovery object used to discover and connect to a Hue Bridge.
      */
-    HueBridgeDiscovery *mDiscovery;
+    hue::BridgeDiscovery *mDiscovery;
 
     /*!
      * \brief a list of the struct that contains the states of the connected Hue
      *        lights. This is maintained by a timer which updates this vector every
      *        few seconds.
      */
-    std::list<SHueLight> mConnectedHues;
+    std::list<HueLight> mConnectedHues;
 
     /*!
      * \brief mUrlStart Every packet sent to the hue bridge starts with
@@ -475,10 +469,10 @@ private:
      * \param hue the SHueLight to use for updating
      * \return true if light is found and updated, false if it isn't found and its added to the list.
      */
-    bool updateHueLight(SHueLight& hue);
+    bool updateHueLight(HueLight& hue);
 
     /// list of new lights found from light scan
-    std::list<SHueLight> mNewLights;
+    std::list<HueLight> mNewLights;
 
     /// list of serial numbers the hue is searching for
     std::list<QString> mSearchingSerialNumbers;

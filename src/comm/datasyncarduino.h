@@ -9,7 +9,7 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -78,7 +78,7 @@ private:
      * \param commDevice device from the comm layer
      * \return true if they match, false otherwise
      */
-    bool sync(const SLightDevice& dataDevice, const SLightDevice& commDevice) override;
+    bool sync(const cor::Light& dataDevice, const cor::Light& commDevice) override;
 
     /*!
      * \brief simplifyPackets takes a controller and a list of messages to send to it as input,
@@ -87,7 +87,7 @@ private:
      * \param controller the controller to received all the messages
      * \param allMessages the messages to send to the controller.
      */
-    void simplifyPackets(const SDeviceController& controller, std::list<QString>& allMessages);
+    void simplifyPackets(const cor::Controller& controller, std::list<QString>& allMessages);
 
     /*!
      * \brief createPacket takes a constroller and a list of messages to send to it as input,
@@ -97,7 +97,7 @@ private:
      * \param allMessages All the messages to turn into a packet
      * \return the string representation of the packet.
      */
-    const QString createPacket(const SDeviceController& controller, const std::list<QString>& allMessages);
+    const QString createPacket(const cor::Controller& controller, const std::list<QString>& allMessages);
 
     /*!
      * \brief endOfSync end the sync thread and start the cleanup thread.

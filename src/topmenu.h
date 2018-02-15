@@ -6,8 +6,8 @@
 #include <QGridLayout>
 
 #include "lightingpage.h"
-#include "corlumaslider.h"
-#include "corlumabutton.h"
+#include "cor/slider.h"
+#include "cor/button.h"
 #include "icondata.h"
 #include "datalayer.h"
 #include "floatinglayout.h"
@@ -18,7 +18,7 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -162,7 +162,7 @@ private:
     /*!
      * \brief mBrightnessSlider slider for adjusting the brightness of all selected devices.
      */
-    CorlumaSlider *mBrightnessSlider;
+    cor::Slider *mBrightnessSlider;
 
     /*!
      * \brief mOnOffButton button for turning all lights on and off.
@@ -190,7 +190,7 @@ private:
     /*!
      * \brief mGroupPageButton button for group page
      */
-    CorlumaButton *mGroupPageButton;
+    cor::Button *mGroupPageButton;
 
     /// layout for entire widget
     QVBoxLayout *mLayout;

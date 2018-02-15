@@ -1,12 +1,12 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
 #include "floatinglayout.h"
 #include "mainwindow.h"
-#include "corlumautils.h"
+#include "cor/utils.h"
 
 #include <QDebug>
 #include <QApplication>
@@ -128,7 +128,7 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             mButtons[i]->setMinimumSize(buttonSize());
         } else if (mNames[i].compare("Multi") == 0) {
             foundMatch = true;
-            CorlumaButton *lightsButton = new CorlumaButton(this);
+            cor::Button *lightsButton = new cor::Button(this);
             lightsButton->button->setCheckable(true);
             lightsButton->setupAsStandardButton(ELightingRoutine::eSingleSolid, EColorGroup::eAll);
             lightsButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, QColor(255,0,0));
@@ -146,7 +146,7 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             mButtons[i]->setMinimumSize(buttonSize());
         } else if (mNames[i].compare("Routine") == 0) {
             foundMatch = true;
-            CorlumaButton *lightsButton = new CorlumaButton(this);
+            cor::Button *lightsButton = new cor::Button(this);
             lightsButton->button->setCheckable(true);
             lightsButton->setupAsStandardButton(ELightingRoutine::eSingleGlimmer, EColorGroup::eAll);
             lightsButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleGlimmer, QColor(0,255,0));
@@ -207,7 +207,7 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             mButtons[i]->setMinimumSize(buttonSize());
         } else if (mNames[i].compare("Select_Moods") == 0) {
             foundMatch = true;
-            CorlumaButton *lightsButton = new CorlumaButton(this);
+            cor::Button *lightsButton = new cor::Button(this);
             lightsButton->button->setCheckable(true);
             lightsButton->setupAsStandardButton(ELightingRoutine::eSingleSolid, EColorGroup::eAll);
             lightsButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, QColor(255,255,0));
@@ -225,7 +225,7 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             mButtons[i]->setMinimumSize(buttonSize());
         } else if (mNames[i].compare("Preset_Groups") == 0) {
             foundMatch = true;
-            CorlumaButton *lightsButton = new CorlumaButton(this);
+            cor::Button *lightsButton = new cor::Button(this);
             lightsButton->button->setCheckable(true);
             lightsButton->setupAsStandardButton(ELightingRoutine::eSingleSolid, EColorGroup::eAll);
             lightsButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, QColor(255,0,0));
@@ -249,30 +249,30 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
                 buttonsMapper->setMapping(mButtons[i], i);
                 // resize icon
                 if (mNames[i].compare("RGB") == 0) {
-                    utils::resizeIcon(mButtons[i], ":/images/colorWheel_icon.png");
+                    cor::resizeIcon(mButtons[i], ":/images/colorWheel_icon.png");
                 } else if (mNames[i].compare("Temperature") == 0) {
-                    utils::resizeIcon(mButtons[i], ":/images/hueRange_icon.png");
+                    cor::resizeIcon(mButtons[i], ":/images/hueRange_icon.png");
                 } else if (mNames[i].compare("Settings") == 0) {
-                    utils::resizeIcon(mButtons[i], ":/images/settingsgear.png");
+                    cor::resizeIcon(mButtons[i], ":/images/settingsgear.png");
                 } else if (mNames[i].compare("Discovery") == 0) {
-                    utils::resizeIcon(mButtons[i], ":/images/wifi.png");
+                    cor::resizeIcon(mButtons[i], ":/images/wifi.png");
                 } else if (mNames[i].compare("Select_Devices") == 0) {
-                    utils::resizeIcon(mButtons[i], ":/images/colorWheel_icon.png");
+                    cor::resizeIcon(mButtons[i], ":/images/colorWheel_icon.png");
                 } else if (mNames[i].compare("New_Collection") == 0) {
-                    utils::resizeIcon(mButtons[i], ":/images/editIcon.png");
+                    cor::resizeIcon(mButtons[i], ":/images/editIcon.png");
                 } else if (mNames[i].compare("New_Mood") == 0) {
-                    utils::resizeIcon(mButtons[i], ":/images/editIcon.png");
+                    cor::resizeIcon(mButtons[i], ":/images/editIcon.png");
                 } else if (mNames[i].compare("ColorScheme") == 0) {
-                    utils::resizeIcon(mButtons[i], ":/images/ColorSchemePicker_icon.png");
+                    cor::resizeIcon(mButtons[i], ":/images/ColorSchemePicker_icon.png");
                 } else if (mNames[i].compare("HueLightSearch") == 0) {
-                    utils::resizeIcon(mButtons[i], ":/images/plusIcon.png");
+                    cor::resizeIcon(mButtons[i], ":/images/plusIcon.png");
                 } else if (mNames[i].compare("Groups") == 0) {
-                    utils::resizeIcon(mButtons[i], ":/images/groupsIcon.png");
+                    cor::resizeIcon(mButtons[i], ":/images/groupsIcon.png");
                 } else if (mNames[i].compare("Rooms") == 0) {
-                    utils::resizeIcon(mButtons[i], ":/images/roomIcon.png");
+                    cor::resizeIcon(mButtons[i], ":/images/roomIcon.png");
                 }
             } else {
-                CorlumaButton *lightsButton = static_cast<CorlumaButton*>(mButtons[i]);
+                cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
                 connect(lightsButton->button, SIGNAL(clicked(bool)), buttonsMapper, SLOT(map()));
                 buttonsMapper->setMapping(lightsButton->button, i);
             }
@@ -289,9 +289,9 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
 void FloatingLayout::updateRoutineSingleColor(ELightingRoutine routine, QColor color) {
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
         if (mNames[i].compare("Routine") == 0) {
-            CorlumaButton *lightsButton = static_cast<CorlumaButton*>(mButtons[i]);
+            cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
             Q_ASSERT(lightsButton);
-            if ((int)routine <= (int)utils::ELightingRoutineSingleColorEnd) {
+            if ((int)routine <= (int)cor::ELightingRoutineSingleColorEnd) {
                 lightsButton->updateIconSingleColorRoutine(routine, color);
                 if (mRoutineIsTranslucent) {
                     mRoutineIsTranslucent = false;
@@ -314,9 +314,9 @@ void FloatingLayout::updateRoutineSingleColor(ELightingRoutine routine, QColor c
 void FloatingLayout::updateRoutineMultiColor(ELightingRoutine routine, std::vector<QColor> colors, int colorCount) {
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
         if (mNames[i].compare("Routine") == 0) {
-            CorlumaButton *lightsButton = static_cast<CorlumaButton*>(mButtons[i]);
+            cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
             Q_ASSERT(lightsButton);
-            if ((int)routine > (int)utils::ELightingRoutineSingleColorEnd) {
+            if ((int)routine > (int)cor::ELightingRoutineSingleColorEnd) {
                 lightsButton->updateIconPresetColorRoutine(routine, EColorGroup::eCustom, colors, colorCount);
                 if (mRoutineIsTranslucent) {
                     mRoutineIsTranslucent = false;
@@ -339,13 +339,13 @@ void FloatingLayout::updateRoutineMultiColor(ELightingRoutine routine, std::vect
 void FloatingLayout::updateGroupPageButtons(const std::vector<std::vector<QColor> >& colors) {
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
         if (mNames[i].compare("Preset_Groups") == 0) {
-            CorlumaButton *lightsButton = static_cast<CorlumaButton*>(mButtons[i]);
+            cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
             lightsButton->updateIconPresetColorRoutine(ELightingRoutine::eMultiRandomIndividual,
                                                        EColorGroup::eWater,
                                                        colors[(int)EColorGroup::eWater]);
             Q_ASSERT(lightsButton);
         } else if (mNames[i].compare("Select_Moods") == 0) {
-            CorlumaButton *lightsButton = static_cast<CorlumaButton*>(mButtons[i]);
+            cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
             Q_ASSERT(lightsButton);
             lightsButton->updateIconPresetColorRoutine(ELightingRoutine::eMultiFade,
                                                        EColorGroup::eSevenColor,
@@ -357,7 +357,7 @@ void FloatingLayout::updateGroupPageButtons(const std::vector<std::vector<QColor
 void FloatingLayout::addMultiRoutineIcon(std::vector<QColor> colors) {
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
         if (mNames[i].compare("Multi") == 0) {
-            CorlumaButton *lightsButton = static_cast<CorlumaButton*>(mButtons[i]);
+            cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
             Q_ASSERT(lightsButton);
             lightsButton->updateIconPresetColorRoutine(ELightingRoutine::eMultiBarsMoving, EColorGroup::eSevenColor, colors);
         }
@@ -416,7 +416,7 @@ void FloatingLayout::buttonPressed(int buttonIndex) {
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
         mButtons[i]->setChecked(false);
         if (isALightsButton(i)) {
-            CorlumaButton *lightsButton = static_cast<CorlumaButton*>(mButtons[i]);
+            cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
             Q_ASSERT(lightsButton);
             lightsButton->button->setChecked(false);
         }
@@ -425,7 +425,7 @@ void FloatingLayout::buttonPressed(int buttonIndex) {
     // check the proper button
     QString label = mNames[buttonIndex];
     if (isALightsButton(buttonIndex)) {
-        CorlumaButton *lightsButton = static_cast<CorlumaButton*>(mButtons[buttonIndex]);
+        cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[buttonIndex]);
         Q_ASSERT(lightsButton);
         // handle edge case of routine button, its the only button that toggles independently...
         if (mNames[buttonIndex].compare("Routine") == 0) {
@@ -449,7 +449,7 @@ void FloatingLayout::buttonPressed(int buttonIndex) {
 void FloatingLayout::highlightRoutineButton(bool shouldHighlight) {
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
         if (mNames[i].compare("Routine") == 0) {
-            CorlumaButton *lightsButton = static_cast<CorlumaButton*>(mButtons[i]);
+            cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
             Q_ASSERT(lightsButton);
             if (shouldHighlight) {
                 lightsButton->button->setChecked(true);

@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -12,7 +12,8 @@
 #include <QPropertyAnimation>
 #include <QDesktopWidget>
 
-#include "corlumautils.h"
+#include "cor/utils.h"
+#include "comm/commhue.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent) {
@@ -205,7 +206,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Setup Hue Info Widget
     // --------------
 
-    mHueInfoWidget = new HueLightInfoListWidget(this);
+    mHueInfoWidget = new hue::LightInfoListWidget(this);
     connect(mHueInfoWidget, SIGNAL(hueChangedName(QString, QString)), this, SLOT(hueNameChanged(QString, QString)));
     connect(mHueInfoWidget, SIGNAL(hueDeleted(QString)), this, SLOT(deleteHue(QString)));
     connect(mHueInfoWidget, SIGNAL(pressedClose()), this, SLOT(hueInfoClosePressed()));
@@ -220,7 +221,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mBottomRightFloatingLayout = new FloatingLayout(false, this);
     connect(mBottomRightFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
-    std::vector<QString> buttons = { QString("HueLightSearch")};
+    std::vector<QString> buttons = { QString("HueLightSearch") };
     mBottomRightFloatingLayout->setupButtons(buttons);
     mBottomRightFloatingLayout->setVisible(false);
 
@@ -231,7 +232,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Set up HueLightInfoDiscovery
     // --------------
 
-    mHueLightDiscovery = new HueLightDiscovery(this);
+    mHueLightDiscovery = new hue::LightDiscovery(this);
     mHueLightDiscovery->setVisible(false);
     mHueLightDiscovery->connectCommLayer(mComm);
     connect(mHueLightDiscovery, SIGNAL(closePressed()), this, SLOT(hueDiscoveryClosePressed()));
@@ -300,12 +301,12 @@ void MainWindow::topMenuButtonPressed(QString key) {
 
 void MainWindow::brightnessChanged(int newBrightness) {
     // get list of all devices that just use brightness for hue
-    std::list<SLightDevice> specialCaseDevices;
+    std::list<cor::Light> specialCaseDevices;
     for (auto&& device : mData->currentDevices()) {
-        if (device.type == ECommType::eHue) {
-            SHueLight hueDevice = mComm->hueLightFromLightDevice(device);
-            if (hueDevice.type == EHueType::eAmbient
-                    || hueDevice.type == EHueType::eWhite) {
+        if (device.type() == ECommType::eHue) {
+            HueLight hueDevice = mComm->hue()->hueLightFromLight(device);
+            if (hueDevice.hueType == EHueType::eAmbient
+                    || hueDevice.hueType == EHueType::eWhite) {
                 specialCaseDevices.push_back(device);
             }
         }
@@ -525,7 +526,7 @@ void MainWindow::changeEvent(QEvent *event) {
         for (int commInt = 0; commInt != (int)ECommType::eCommType_MAX; ++commInt) {
             ECommType type = static_cast<ECommType>(commInt);
             if (mData->commTypeSettings()->commTypeEnabled((ECommType)type)) {
-                qDebug() << "INFO: stop state updates" << utils::ECommTypeToString(type);
+                qDebug() << "INFO: stop state updates" << cor::ECommTypeToString(type);
                 mComm->stopStateUpdates(type);
             }
         }
@@ -611,7 +612,7 @@ void MainWindow::editButtonClicked(QString key, bool isMood) {
     // find the group in app data
 
 
-    std::list<SLightDevice> groupDevices;
+    std::list<cor::Light> groupDevices;
     bool isRoom = false;
     if (isMood) {
         for (auto&& group :  mGroups->moodList()) {
@@ -629,10 +630,10 @@ void MainWindow::editButtonClicked(QString key, bool isMood) {
         }
 
         // look for group in hue data
-        for (auto&& group : mComm->hueGroups()) {
+        for (auto&& group : mComm->hue()->groups()) {
             if (group.name.compare(key) == 0) {
                 for (auto hue : group.lights) {
-                    SLightDevice device = mComm->lightDeviceFromHueLight(hue);
+                    cor::Light device = static_cast<cor::Light>(hue);
                     groupDevices.push_back(device);
                 }
                 isRoom = (group.type.compare("Room") == 0);
@@ -650,7 +651,7 @@ void MainWindow::hueInfoWidgetClicked() {
     fadeInGreyOut();
     mHueInfoWidgetIsOpen = true;
 
-    mHueInfoWidget->updateLights(mComm->hueList());
+    mHueInfoWidget->updateLights(mComm->hue()->connectedHues());
     mBottomRightFloatingLayout->setVisible(true);
 
     QSize size = this->size();
@@ -723,19 +724,19 @@ void MainWindow::hueInfoClosePressed() {
 void MainWindow::hueNameChanged(QString key, QString name) {
 
     // get hue light from key
-    std::list<SHueLight> hueLights = mComm->hueList();
+    std::list<HueLight> hueLights = mComm->hue()->connectedHues();
     int keyNumber = key.toInt();
-    SHueLight light;
+    HueLight light;
     bool lightFound = false;
     for (auto hue : hueLights) {
-        if (hue.deviceIndex == keyNumber) {
+        if (hue.index() == keyNumber) {
             lightFound = true;
             light = hue;
         }
     }
 
     if (lightFound) {
-        mComm->renameHue(light, name);
+        mComm->hue()->renameLight(light, name);
     } else {
         qDebug() << " could NOT change this key: " << key << " to this name " << name;
     }
@@ -743,12 +744,12 @@ void MainWindow::hueNameChanged(QString key, QString name) {
 
 void MainWindow::deleteHue(QString key) {
     // get hue light from key
-    std::list<SHueLight> hueLights = mComm->hueList();
+    std::list<HueLight> hueLights = mComm->hue()->connectedHues();
     int keyNumber = key.toInt();
-    SHueLight light;
+    HueLight light;
     bool lightFound = false;
     for (auto hue : hueLights) {
-        if (hue.deviceIndex == keyNumber) {
+        if (hue.index() == keyNumber) {
             lightFound = true;
             light = hue;
         }
@@ -756,7 +757,7 @@ void MainWindow::deleteHue(QString key) {
 
     if (lightFound) {
         qDebug() << " deleting hue" << light.name;
-        mComm->deleteHue(light);
+        mComm->hue()->deleteLight(light);
     } else {
         qDebug() << " could NOT Delete" << key;
     }

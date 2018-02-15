@@ -7,10 +7,11 @@
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
+#include <vector>
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  */
@@ -356,9 +357,9 @@ private:
     Color m_main_color;
 
     // buffers used for storing the RGB LED values
-    uint8_t *r_buffer;
-    uint8_t *g_buffer;
-    uint8_t *b_buffer;
+    std::vector<uint8_t> r_buffer;
+    std::vector<uint8_t> g_buffer;
+    std::vector<uint8_t> b_buffer;
 
     // settings and stored values
     uint16_t m_LED_count;
@@ -371,7 +372,7 @@ private:
     bool  m_is_on;
 
     // temp values
-    uint8_t *m_temp_buffer;
+    std::vector<uint8_t> m_temp_buffer;
     uint16_t m_temp_counter;
     uint16_t m_temp_index;
     bool  m_temp_bool;

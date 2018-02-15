@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -10,9 +10,12 @@
 #include <QGraphicsScene>
 #include <QDebug>
 
-#include "corlumastatusicon.h"
+#include "cor/statusicon.h"
 
-CorlumaStatusIcon::CorlumaStatusIcon(QWidget *parent) : QWidget(parent) {
+namespace cor
+{
+
+StatusIcon::StatusIcon(QWidget *parent) : QWidget(parent) {
     mIcon = new QLabel(this);
     mIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
@@ -23,7 +26,7 @@ CorlumaStatusIcon::CorlumaStatusIcon(QWidget *parent) : QWidget(parent) {
 }
 
 
-void CorlumaStatusIcon::update(bool isReachable, bool isOn, float brightness) {
+void StatusIcon::update(bool isReachable, bool isOn, float brightness) {
     mIcon->setFixedSize(this->width(), this->height());
     QPixmap buttonIcon;
     if (!isReachable) {
@@ -53,4 +56,6 @@ void CorlumaStatusIcon::update(bool isReachable, bool isOn, float brightness) {
                                    Qt::KeepAspectRatio,
                                    Qt::SmoothTransformation);
     mIcon->setPixmap(buttonIcon);
+}
+
 }

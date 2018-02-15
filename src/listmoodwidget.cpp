@@ -1,13 +1,13 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
 #include <QPainter>
 #include <QStyleOption>
 #include "listmoodwidget.h"
-#include "corlumautils.h"
+#include "cor/utils.h"
 
 ListMoodWidget::ListMoodWidget(const SLightGroup& group,
                                  const std::vector<std::vector<QColor> >& colors,
@@ -48,7 +48,7 @@ ListMoodWidget::ListMoodWidget(const SLightGroup& group,
                                    editSize));
     mEditButton->setHidden(true);
 
-    SLightDevice device = *mGroup.devices.begin();
+    cor::Light device = *mGroup.devices.begin();
     if(!device.isReachable) {
         mName->setStyleSheet(reachableStlyeSheet);
     } else {
@@ -78,7 +78,7 @@ ListMoodWidget::ListMoodWidget(const SLightGroup& group,
 #else
             int size = std::min(this->width() / 20, this->height() / 2);
 #endif
-            if (device.lightingRoutine <= utils::ELightingRoutineSingleColorEnd ) {
+            if (device.lightingRoutine <= cor::ELightingRoutineSingleColorEnd ) {
                 mIconData[index].setSingleLightingRoutine(device.lightingRoutine, device.color);
                 QPixmap iconRendered = mIconData[index].renderAsQPixmap();
                 mPreviews[index]->setPixmap(iconRendered.scaled(size * 0.9f,

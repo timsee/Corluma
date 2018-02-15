@@ -3,9 +3,9 @@
 #define PresetColorsPage_H
 
 #include "lightingpage.h"
-#include "corlumabutton.h"
+#include "cor/button.h"
 #include "presetgroupwidget.h"
-#include "corlumalistwidget.h"
+#include "cor/listwidget.h"
 #include "listmoodgroupwidget.h"
 #include "groupsparser.h"
 
@@ -258,7 +258,7 @@ private:
      * \brief mMoodsListWidget List widget for devices. Either the moods widget or this device widget
      *        is shown at any given time but the other is kept around in memory since they are expensive to render.
      */
-    CorlumaListWidget *mMoodsListWidget;
+    cor::ListWidget *mMoodsListWidget;
 
     /// pointer to QSettings instance
     QSettings *mSettings;
@@ -294,7 +294,7 @@ private:
      * \param allDevices list of all devices that have sent communication packets of some sort.
      * \param moods list of all moods that exist in memory.
      */
-    void gatherAvailandAndNotReachableMoods(const std::list<SLightDevice>& allDevices,
+    void gatherAvailandAndNotReachableMoods(const std::list<cor::Light>& allDevices,
                                             const std::list<SLightGroup>& moods);
 };
 

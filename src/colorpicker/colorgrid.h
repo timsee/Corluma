@@ -2,12 +2,12 @@
 #define COLORGRID_H
 
 #include <QWidget>
-#include "corlumabutton.h"
-#include "corlumaslider.h"
+#include "cor/button.h"
+#include "cor/slider.h"
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  *
@@ -106,7 +106,7 @@ private:
     /*!
      * \brief mCountSlider slider that determines how many colors are used.
      */
-    CorlumaSlider *mCountSlider;
+    cor::Slider *mCountSlider;
 
     /// currently unused, but in place so that slider sizes match other layouts
     QLabel *mLabel;

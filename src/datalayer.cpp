@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -9,7 +9,7 @@
 #include <QDebug>
 #include <algorithm>
 #include <vector>
-#include "corlumautils.h"
+#include "cor/utils.h"
 
 DataLayer::DataLayer() {
     int i = 0;
@@ -261,7 +261,7 @@ QColor DataLayer::mainColor() {
         int b = 0;
         if (mCurrentDevices.size() > 0) {
             for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
-                if ((int)device->lightingRoutine <= (int)utils::ELightingRoutineSingleColorEnd) {
+                if ((int)device->lightingRoutine <= (int)cor::ELightingRoutineSingleColorEnd) {
                     r = r + device->color.red();
                     g = g + device->color.green();
                     b = b + device->color.blue();
@@ -331,9 +331,14 @@ QColor DataLayer::averageGroup(EColorGroup group) {
        g = g + colorGroup[i].green();
        b = b + colorGroup[i].blue();
     }
-    return QColor(r / count,
-                  g / count,
-                  b / count);
+    if (count > 0) {
+        return QColor(r / count,
+                      g / count,
+                      b / count);
+        return QColor();
+    } else {
+        return QColor();
+    }
 }
 
 
@@ -350,7 +355,7 @@ QColor DataLayer::colorsAverage(EColorGroup group) {
 bool DataLayer::hasHueDevices() {
     int hueCount = 0;
     for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
-        if (device->type == ECommType::eHue) hueCount++;
+        if (device->type() == ECommType::eHue) hueCount++;
     }
     return (hueCount > 0);
 }
@@ -358,11 +363,11 @@ bool DataLayer::hasHueDevices() {
 bool DataLayer::hasArduinoDevices() {
     int arduinoCount = 0;
     for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
-        if (device->type == ECommType::eHTTP
+        if (device->type() == ECommType::eHTTP
         #ifndef MOBILE_BUILD
-                || device->type == ECommType::eSerial
+                || device->type() == ECommType::eSerial
         #endif
-                || device->type == ECommType::eUDP) arduinoCount++;
+                || device->type() == ECommType::eUDP) arduinoCount++;
     }
     return (arduinoCount > 0);
 }
@@ -398,12 +403,12 @@ const std::vector<QColor>& DataLayer::currentGroup() {
 
 void DataLayer::updateRoutine(ELightingRoutine routine) {
     if (routine == ELightingRoutine::eOff) {
-        std::list<SLightDevice>::iterator iterator;
+        std::list<cor::Light>::iterator iterator;
         for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
             iterator->isOn = false;
         }
     } else {
-        std::list<SLightDevice>::iterator iterator;
+        std::list<cor::Light>::iterator iterator;
         for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
             iterator->lightingRoutine = routine;
             iterator->isOn = true;
@@ -413,7 +418,7 @@ void DataLayer::updateRoutine(ELightingRoutine routine) {
 }
 
 void DataLayer::updateColorGroup(EColorGroup colorGroup) {
-    std::list<SLightDevice>::iterator iterator;
+    std::list<cor::Light>::iterator iterator;
     int hueCount = 0;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
         /*!
@@ -421,7 +426,7 @@ void DataLayer::updateColorGroup(EColorGroup colorGroup) {
          * each individual light as a color
          */
         std::vector<QColor> colors = this->colorGroup(colorGroup);
-        if (iterator->type == ECommType::eHue) {
+        if (iterator->type() == ECommType::eHue) {
             int colorIndex = hueCount % colors.size();
             iterator->color = colors[colorIndex];
             // update the brightness to match the brightness of the color
@@ -435,16 +440,16 @@ void DataLayer::updateColorGroup(EColorGroup colorGroup) {
 }
 
 void DataLayer::updateCt(int ct) {
-    std::list<SLightDevice>::iterator iterator;
+    std::list<cor::Light>::iterator iterator;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
-        if (iterator->type == ECommType::eHue) {
-            iterator->color = utils::colorTemperatureToRGB(ct);
-        } else if (iterator->type == ECommType::eHTTP
+        if (iterator->type() == ECommType::eHue) {
+            iterator->color = cor::colorTemperatureToRGB(ct);
+        } else if (iterator->type() == ECommType::eHTTP
            #ifndef MOBILE_BUILD
-                   || iterator->type == ECommType::eSerial
+                   || iterator->type() == ECommType::eSerial
            #endif
-                   || iterator->type == ECommType::eUDP) {
-            iterator->color = utils::colorTemperatureToRGB(ct);
+                   || iterator->type() == ECommType::eUDP) {
+            iterator->color = cor::colorTemperatureToRGB(ct);
         }
     }
     emit dataUpdate();
@@ -452,7 +457,7 @@ void DataLayer::updateCt(int ct) {
 
 
 void DataLayer::turnOn(bool on) {
-    std::list<SLightDevice>::iterator iterator;
+    std::list<cor::Light>::iterator iterator;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
         iterator->isOn = on;
     }
@@ -460,13 +465,13 @@ void DataLayer::turnOn(bool on) {
 }
 
 void DataLayer::updateColor(QColor color) {
-    std::list<SLightDevice>::iterator iterator;
+    std::list<cor::Light>::iterator iterator;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
         iterator->color = color;
         iterator->isOn = true;
 
         // handle Hue special case
-        if (iterator->type == ECommType::eHue) {
+        if (iterator->type() == ECommType::eHue) {
             iterator->colorMode = EColorMode::eHSV;
         } else {
             iterator->colorMode = EColorMode::eRGB;
@@ -477,13 +482,13 @@ void DataLayer::updateColor(QColor color) {
 
 void DataLayer::updateColorScheme(std::vector<QColor> colors) {
     int i = 0;
-    std::list<SLightDevice>::iterator iterator;
+    std::list<cor::Light>::iterator iterator;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
         iterator->color = colors[i];
         iterator->isOn = true;
 
         // handle Hue special case
-        if (iterator->type == ECommType::eHue) {
+        if (iterator->type() == ECommType::eHue) {
             iterator->colorMode = EColorMode::eHSV;
         } else {
             iterator->colorMode = EColorMode::eRGB;
@@ -495,14 +500,14 @@ void DataLayer::updateColorScheme(std::vector<QColor> colors) {
     emit dataUpdate();
 }
 
-void DataLayer::updateBrightness(int brightness, std::list<SLightDevice> specialCaseDevices) {
-    std::list<SLightDevice>::iterator iterator;
+void DataLayer::updateBrightness(int brightness, std::list<cor::Light> specialCaseDevices) {
+    std::list<cor::Light>::iterator iterator;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
         iterator->brightness = brightness;
-        if (iterator->type == ECommType::eHue) {
+        if (iterator->type() == ECommType::eHue) {
             bool isSpecialCase = false;
             for (auto&& specialDevice : specialCaseDevices) {
-                if (compareLightDevice(specialDevice, *iterator)) {
+                if (compareLight(specialDevice, *iterator)) {
                     isSpecialCase = true;
                 }
             }
@@ -529,7 +534,7 @@ void DataLayer::updateTimeout(int timeout) {
 }
 
 void DataLayer::updateCustomColorCount(uint32_t count) {
-    std::list<SLightDevice>::iterator iterator;
+    std::list<cor::Light>::iterator iterator;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
         iterator->customColorCount = count;
     }
@@ -538,9 +543,9 @@ void DataLayer::updateCustomColorCount(uint32_t count) {
 
 void DataLayer::updateCustomColorArray(int index, QColor color) {
     if (index <= 10) {
-        std::list<SLightDevice>::iterator iterator;
+        std::list<cor::Light>::iterator iterator;
         for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
-            if (iterator->type != ECommType::eHue) { // hues dont use this custom color array
+            if (iterator->type() != ECommType::eHue) { // hues dont use this custom color array
                 iterator->customColorArray[index] = color;
             }
         }
@@ -550,10 +555,10 @@ void DataLayer::updateCustomColorArray(int index, QColor color) {
 
 
 bool DataLayer::devicesContainCommType(ECommType type) {
-    std::list<SLightDevice>::iterator iterator;
+    std::list<cor::Light>::iterator iterator;
     bool foundCommType = false;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
-        if ((int)iterator->type == (int)type) {
+        if ((int)iterator->type() == (int)type) {
             foundCommType = true;
         }
     }
@@ -594,17 +599,12 @@ bool DataLayer::clearDevices() {
     return true;
 }
 
-bool DataLayer::removeDevice(SLightDevice device){
+bool DataLayer::removeDevice(cor::Light device){
     bool foundDevice = false;
-    SLightDevice deviceFound;
-    std::list<SLightDevice>::const_iterator iterator;
+    cor::Light deviceFound;
+    std::list<cor::Light>::const_iterator iterator;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
-        bool deviceExists = true;
-        // these three values do not change and can be used as a unique key for the device, even if
-        // things like the color or brightness change.
-        if (device.controller.compare((*iterator).controller)) deviceExists = false;
-        if (device.index != (*iterator).index)     deviceExists = false;
-        if (device.type != (*iterator).type)       deviceExists = false;
+        bool deviceExists = compareLight(device, *iterator);
         if (deviceExists) {
             deviceFound = (*iterator);
             foundDevice = true;
@@ -623,14 +623,14 @@ bool DataLayer::removeDevice(SLightDevice device){
 
 
 
-bool DataLayer::addDeviceList(const std::list<SLightDevice>& list) {
+bool DataLayer::addDeviceList(const std::list<cor::Light>& list) {
     bool hasFailed = false;
     for (auto&& device : list) {
         if (!addDevice(device)) hasFailed = true;
     }
 
     //TODO: remove this edge case that always autofills the timeout and speed to default values
-    std::list<SLightDevice>::iterator iterator;
+    std::list<cor::Light>::iterator iterator;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
         iterator->timeout = 120;
         iterator->speed = 300;
@@ -640,7 +640,7 @@ bool DataLayer::addDeviceList(const std::list<SLightDevice>& list) {
     return hasFailed;
 }
 
-bool DataLayer::removeDeviceList(const std::list<SLightDevice>& list) {
+bool DataLayer::removeDeviceList(const std::list<cor::Light>& list) {
     bool hasFailed = false;
     for (auto&& device : list) {
         if (!removeDevice(device)) hasFailed = true;
@@ -652,7 +652,7 @@ bool DataLayer::removeDeviceList(const std::list<SLightDevice>& list) {
 
 
 
-bool DataLayer::addDevice(SLightDevice device) {
+bool DataLayer::addDevice(cor::Light device) {
     bool packetIsValid = true;
     if (device.lightingRoutine >= ELightingRoutine::eLightingRoutine_MAX) {
        packetIsValid = false;
@@ -672,40 +672,25 @@ bool DataLayer::addDevice(SLightDevice device) {
         device.colorGroup = EColorGroup::eCustom;
     }
 
-    std::list<SLightDevice>::iterator iterator;
-    bool foundDevice = false;
+    std::list<cor::Light>::iterator iterator;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
-        bool deviceExists = true;
-        // these three values do not change and can be used as a unique key for the device, even if
-        // things like the color or brightness change.
-        if (device.controller.compare((*iterator).controller)) deviceExists = false;
-        if (device.index != (*iterator).index)     deviceExists = false;
-        if (device.type != (*iterator).type)       deviceExists = false;
+        bool deviceExists = compareLight(device, *iterator);
         if (deviceExists) {
-            foundDevice = true;
             *iterator = device;
             return true;
         }
     }
     // device doesn't exist, add it to the device
-    if (!foundDevice) {
-        mCurrentDevices.push_front(device);
-        return true;
-    }
+    mCurrentDevices.push_front(device);
     return false;
 }
 
 
-bool DataLayer::doesDeviceExist(SLightDevice device) {
+bool DataLayer::doesDeviceExist(cor::Light device) {
     bool foundDevice = false;
-    std::list<SLightDevice>::const_iterator iterator;
+    std::list<cor::Light>::const_iterator iterator;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
-        bool deviceExists = true;
-        // these three values do not change and can be used as a unique key for the device, even if
-        // things like the color or brightness change.
-        if (device.controller.compare((*iterator).controller)) deviceExists = false;
-        if (device.index != (*iterator).index)     deviceExists = false;
-        if (device.type != (*iterator).type)       deviceExists = false;
+        bool deviceExists = compareLight(device, *iterator);
         if (deviceExists) {
             foundDevice = true;
         }
@@ -729,10 +714,10 @@ bool DataLayer::anyDevicesReachable() {
 }
 
 int DataLayer::removeDevicesOfType(ECommType type) {
-    std::list<SLightDevice>::const_iterator iterator;
-    std::list<SLightDevice> removeList;
+    std::list<cor::Light>::const_iterator iterator;
+    std::list<cor::Light> removeList;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
-        if (type == (*iterator).type) {
+        if (type == iterator->type()) {
             removeList.push_front((*iterator));
         }
     }
@@ -744,9 +729,9 @@ int DataLayer::removeDevicesOfType(ECommType type) {
 
 int DataLayer::countDevicesOfType(ECommType type) {
     int count = 0;
-    std::list<SLightDevice>::const_iterator iterator;
+    std::list<cor::Light>::const_iterator iterator;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
-        if (type == (*iterator).type) {
+        if (type == iterator->type()) {
             count++;
         }
     }

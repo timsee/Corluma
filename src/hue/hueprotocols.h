@@ -3,11 +3,11 @@
 
 #include <list>
 #include <QString>
-#include "lightdevice.h"
+#include "cor/light.h"
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -43,7 +43,7 @@ enum class EHueUpdates {
 struct SHueCommand {
     QString address;
     QString method;
-    SLightDevice body;
+    cor::Light body;
 };
 
 /*!
@@ -70,77 +70,6 @@ inline bool operator==(const SHueSchedule& lhs, const SHueSchedule& rhs) {
     if (lhs.description.compare(rhs.description)) result = false;
     if (lhs.index     !=  rhs.index) result = false;
 
-    return result;
-}
-
-/*!
- * \brief The SHueLight struct a struct that stores all the relevant
- *        data received from a state update from the bridge.
- */
-struct SHueLight {
-    /*!
-     * \brief type the type of Hue product connected.
-     */
-    EHueType type;
-
-    /*!
-     * \brief uniqueID a unique identifier of that particular light.
-     */
-    QString uniqueID;
-
-    /*!
-     * \brief name name of light. not necessarily unique and can be assigned.
-     */
-    QString name;
-
-    /*!
-     * \brief modelID ID of specific model. changes between versions of the same light.
-     */
-    QString modelID;
-
-    /*!
-     * \brief manufacturer manfucturer of light.
-     */
-    QString manufacturer;
-
-    /*!
-     * \brief softwareVersion exact software version of light.
-     */
-    QString softwareVersion;
-
-    /*!
-     * \brief deviceIndex the index of the device on the bridge. Does not change unless
-     *        you forget and relearn devices in a different order.
-     */
-    int deviceIndex;
-};
-
-/// struct for group data
-struct SHueGroup {
-    /// name of group
-    QString name;
-    /// Type of group, either "Room" or "LightGroup"
-    QString type;
-    /// index of group
-    int index;
-    /// list of lights
-    std::list<SHueLight> lights;
-};
-
-/// SHueSchedule equal operator
-inline bool operator==(const SHueGroup& lhs, const SHueGroup& rhs) {
-    bool result = true;
-    if (lhs.name.compare(rhs.name)) result = false;
-    if (lhs.type.compare(rhs.type)) result = false;
-    return result;
-}
-
-
-/// SHueLight equal operator
-inline bool operator==(const SHueLight& lhs, const SHueLight& rhs)
-{
-    bool result = true;
-    if (lhs.deviceIndex     !=  rhs.deviceIndex) result = false;
     return result;
 }
 
@@ -219,51 +148,8 @@ enum class EHueDiscoveryState {
     eFullyConnected,
 };
 
-namespace utils
+namespace cor
 {
-
-/*!
- * \brief checkForHueWithMostFeatures takes a list of hue light structs, and returns
- *        the light type that is the most fully featured. It orders the least
- *        to most featured lights as: White, Ambient, then Extended or Color.
- *        If no hue lights are found or none are recognized, EHueType::EHueType_MAX
- *        is returned.
- * \param lights vector of hues
- * \return the most fully featured hue type found in the vector
- */
-inline EHueType checkForHueWithMostFeatures(std::list<SHueLight> lights) {
-    uint32_t ambientCount = 0;
-    uint32_t whiteCount = 0;
-    uint32_t rgbCount = 0;
-    // check for all devices
-    for (auto&& hue : lights) {
-        // check if its a hue
-        if (hue.type == EHueType::eExtended
-                || hue.type == EHueType::eColor) {
-            rgbCount++;
-        } else if (hue.type == EHueType::eAmbient) {
-            ambientCount++;
-        } else if (hue.type == EHueType::eWhite) {
-            whiteCount++;
-        }
-    }
-
-    if (whiteCount > 0
-            && (ambientCount == 0)
-            && (rgbCount == 0)) {
-        return EHueType::eWhite;
-    }
-    if (ambientCount > 0
-            && (rgbCount == 0)) {
-        return EHueType::eAmbient;
-    }
-
-    if (rgbCount > 0) {
-        return EHueType::eExtended;
-    }
-
-    return EHueType::EHueType_MAX;
-}
 
 /*!
  * \brief stringToHueType helper that takes a string received from the hue and converts it to its type.

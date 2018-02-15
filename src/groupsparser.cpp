@@ -1,11 +1,11 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
 #include "groupsparser.h"
-#include "corlumautils.h"
+#include "cor/utils.h"
 
 #include <QFileInfo>
 #include <QStandardPaths>
@@ -62,7 +62,7 @@ bool GroupsParser::removeAppData() {
 // Saving JSON
 //-------------------
 
-void GroupsParser::saveNewMood(const QString& groupName, const std::list<SLightDevice>& devices) {
+void GroupsParser::saveNewMood(const QString& groupName, const std::list<cor::Light>& devices) {
     QJsonObject groupObject;
     groupObject["name"] = groupName;
     groupObject["isMood"] = true;
@@ -80,16 +80,16 @@ void GroupsParser::saveNewMood(const QString& groupName, const std::list<SLightD
         object["lightingRoutine"] = (double)device.lightingRoutine;
         object["colorGroup"] = (double)device.colorGroup;
 
-        object["type"] = utils::ECommTypeToString(device.type);
+        object["type"] = cor::ECommTypeToString(device.type());
 
-        object["colorMode"] = utils::colorModeToString(device.colorMode);
+        object["colorMode"] = cor::colorModeToString(device.colorMode);
 
         object["red"] = device.color.red();
         object["green"] = device.color.green();
         object["blue"] = device.color.blue();
 
-        object["controller"] = device.controller;
-        object["index"] = device.index;
+        object["controller"] = device.controller();
+        object["index"] = device.index();
         deviceArray.append(object);
     }
 
@@ -116,7 +116,7 @@ void GroupsParser::saveNewMood(const QString& groupName, const std::list<SLightD
 }
 
 
-void GroupsParser::saveNewCollection(const QString& groupName, const std::list<SLightDevice>& devices, bool isRoom) {
+void GroupsParser::saveNewCollection(const QString& groupName, const std::list<cor::Light>& devices, bool isRoom) {
     QJsonObject groupObject;
     groupObject["name"] = groupName;
     groupObject["isMood"] = false;
@@ -125,14 +125,14 @@ void GroupsParser::saveNewCollection(const QString& groupName, const std::list<S
     // create string of jsondata to add to file
     QJsonArray deviceArray;
     for (auto&& device : devices) {
-        if (device.type != ECommType::eHue) {
+        if (device.type() != ECommType::eHue) {
             QJsonObject object;
             object["id"] = QString("device");
 
-            object["type"] = utils::ECommTypeToString(device.type);
+            object["type"] = cor::ECommTypeToString(device.type());
 
-            object["controller"] = device.controller;
-            object["index"] = device.index;
+            object["controller"] = device.controller();
+            object["index"] = device.index();
             deviceArray.append(object);
         }
     }
@@ -216,7 +216,7 @@ void GroupsParser::parseCollection(const QJsonObject& object) {
             isRoom = false;
         }
         QJsonArray deviceArray = object.value("devices").toArray();
-        std::list<SLightDevice> list;
+        std::list<cor::Light> list;
         foreach (const QJsonValue &value, deviceArray) {
             QJsonObject device = value.toObject();
             if ( device.value("type").isString()
@@ -229,13 +229,10 @@ void GroupsParser::parseCollection(const QJsonObject& object) {
                 int index = device.value("index").toDouble();
 
                 // convert to Corluma types from certain Qt types
-                ECommType type = utils::stringToECommType(typeString);
+                ECommType type = cor::stringToECommType(typeString);
 
-                SLightDevice lightDevice;
-                lightDevice.type = type;
-                lightDevice.index = index;
-                lightDevice.controller = controller;
-                list.push_back(lightDevice);
+                cor::Light light(index, type, controller);
+                list.push_back(light);
             } else {
                 qDebug() << __func__ << " device broken";
             }
@@ -257,7 +254,7 @@ void GroupsParser::parseMood(const QJsonObject& object) {
             && object.value("devices").isArray()) {
         QString name = object.value("name").toString();
         QJsonArray deviceArray = object.value("devices").toArray();
-        std::list<SLightDevice> list;
+        std::list<cor::Light> list;
         foreach (const QJsonValue &value, deviceArray) {
             QJsonObject device = value.toObject();
             if ( device.value("colorMode").isString()
@@ -281,8 +278,8 @@ void GroupsParser::parseMood(const QJsonObject& object) {
                 int index = device.value("index").toDouble();
 
                 // convert to Corluma types from certain Qt types
-                ECommType type = utils::stringToECommType(typeString);
-                EColorMode colorMode = utils::stringtoColorMode(modeString);
+                ECommType type = cor::stringToECommType(typeString);
+                EColorMode colorMode = cor::stringtoColorMode(modeString);
 
                 bool isOn = device.value("isOn").toBool();
                 int red, green, blue;
@@ -297,18 +294,15 @@ void GroupsParser::parseMood(const QJsonObject& object) {
                 ELightingRoutine lightingRoutine = (ELightingRoutine)((int)device.value("lightingRoutine").toDouble());
                 EColorGroup colorGroup = (EColorGroup)((int)device.value("colorGroup").toDouble());
 
-                SLightDevice lightDevice;
-                lightDevice.isReachable = true;
-                lightDevice.isOn = isOn;
-                lightDevice.color = QColor(red, green, blue);
-                lightDevice.lightingRoutine = lightingRoutine;
-                lightDevice.colorGroup = colorGroup;
-                lightDevice.brightness = brightness;
-                lightDevice.type = type;
-                lightDevice.index = index;
-                lightDevice.colorMode = colorMode;
-                lightDevice.controller = controller;
-                list.push_back(lightDevice);
+                cor::Light light(index, type, controller);
+                light.isReachable = true;
+                light.isOn = isOn;
+                light.color = QColor(red, green, blue);
+                light.lightingRoutine = lightingRoutine;
+                light.colorGroup = colorGroup;
+                light.brightness = brightness;
+                light.colorMode = colorMode;
+                list.push_back(light);
             } else {
                 qDebug() << __func__ << " device broken";
             }
@@ -334,8 +328,8 @@ void GroupsParser::findNewControllers(QJsonObject object) {
         // check if connection exists in app memory already
         if (device.value("type").isString()
                 && device.value("controller").isString()) {
-            if( device.value("type").toString().compare(utils::ECommTypeToString(ECommType::eHTTP)) == 0
-                || device.value("type").toString().compare(utils::ECommTypeToString(ECommType::eUDP)) == 0) {
+            if( device.value("type").toString().compare(cor::ECommTypeToString(ECommType::eHTTP)) == 0
+                || device.value("type").toString().compare(cor::ECommTypeToString(ECommType::eUDP)) == 0) {
                 bool foundConnectionInList = false;
                 QString controllerName = device.value("controller").toString();
                 for (auto&& connection : mNewConnections) {
@@ -415,9 +409,9 @@ bool GroupsParser::loadExternalData(QString file) {
 }
 
 
-std::list<SLightDevice> GroupsParser::loadDebugData() {
+std::list<cor::Light> GroupsParser::loadDebugData() {
     QJsonDocument document = loadJsonFile(":/resources/debugData.json");
-    std::list<SLightDevice> list;
+    std::list<cor::Light> list;
     if (!document.isNull() && document.isArray()) {
         QJsonArray deviceArray = document.array();
         foreach (const QJsonValue &value, deviceArray) {
@@ -430,8 +424,8 @@ std::list<SLightDevice> GroupsParser::loadDebugData() {
             int index = device.value("index").toDouble();
 
             // convert to Corluma types from certain Qt types
-            ECommType type = utils::stringToECommType(typeString);
-            EColorMode colorMode = utils::stringtoColorMode(modeString);
+            ECommType type = cor::stringToECommType(typeString);
+            EColorMode colorMode = cor::stringtoColorMode(modeString);
 
             bool isOn = device.value("isOn").toBool();
             int red, green, blue;
@@ -445,18 +439,15 @@ std::list<SLightDevice> GroupsParser::loadDebugData() {
             ELightingRoutine lightingRoutine = (ELightingRoutine)((int)device.value("lightingRoutine").toDouble());
             EColorGroup colorGroup = (EColorGroup)((int)device.value("colorGroup").toDouble());
 
-            SLightDevice lightDevice;
-            lightDevice.isReachable = true;
-            lightDevice.isOn = isOn;
-            lightDevice.color = QColor(red, green, blue);
-            lightDevice.lightingRoutine = lightingRoutine;
-            lightDevice.colorGroup = colorGroup;
-            lightDevice.brightness = brightness;
-            lightDevice.type = type;
-            lightDevice.index = index;
-            lightDevice.colorMode = colorMode;
-            lightDevice.controller = controller;
-            list.push_back(lightDevice);
+            cor::Light light(index, type, controller);
+            light.isReachable = true;
+            light.isOn = isOn;
+            light.color = QColor(red, green, blue);
+            light.lightingRoutine = lightingRoutine;
+            light.colorGroup = colorGroup;
+            light.brightness = brightness;
+            light.colorMode = colorMode;
+            list.push_back(light);
         }
     }
     return list;

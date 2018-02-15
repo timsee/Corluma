@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -11,10 +11,13 @@
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
 
-#include "huelightinfowidget.h"
-#include "corlumautils.h"
+#include "hue/lightinfowidget.h"
+#include "cor/utils.h"
 
-HueLightInfoWidget::HueLightInfoWidget(SHueLight light, QWidget *parent) : QWidget(parent) {
+namespace hue
+{
+
+LightInfoWidget::LightInfoWidget(HueLight light, QWidget *parent) : QWidget(parent) {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     this->setStyleSheet(styleSheet);
 
@@ -37,7 +40,7 @@ HueLightInfoWidget::HueLightInfoWidget(SHueLight light, QWidget *parent) : QWidg
     mUniqueID->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mUniqueID->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mType = new QLabel(utils::hueTypeToString(light.type), this);
+    mType = new QLabel(cor::hueTypeToString(light.hueType), this);
     mType->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mType->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
@@ -49,13 +52,13 @@ HueLightInfoWidget::HueLightInfoWidget(SHueLight light, QWidget *parent) : QWidg
     mLayout->addWidget(mSoftwareVersion, 3, 0);
     mLayout->addWidget(mUniqueID, 4, 0);
 
-    mKey = QString::number(light.deviceIndex);
+    mKey = QString::number(light.index());
 
     mIsChecked = false;
     hideDetails(true);
 }
 
-void HueLightInfoWidget::updateLight(SHueLight light) {
+void LightInfoWidget::updateLight(HueLight light) {
 
     // many fields such as the mac address and the type of light won't update, only check the fields that do
     if (light.name.compare(mLight.name) != 0) {
@@ -69,17 +72,17 @@ void HueLightInfoWidget::updateLight(SHueLight light) {
     mLight = light;
 }
 
-void HueLightInfoWidget::mouseReleaseEvent(QMouseEvent *event) {
+void LightInfoWidget::mouseReleaseEvent(QMouseEvent *event) {
     Q_UNUSED(event);
     emit clicked(mKey);
 }
 
-void HueLightInfoWidget::setChecked(bool checked) {
+void LightInfoWidget::setChecked(bool checked) {
     mIsChecked = checked;
     repaint();
 }
 
-void HueLightInfoWidget::setHeight(int height) {
+void LightInfoWidget::setHeight(int height) {
     if (mHideDetails) {
         height = height / 2;
     }
@@ -88,14 +91,14 @@ void HueLightInfoWidget::setHeight(int height) {
     this->setFixedHeight(height);
 }
 
-void HueLightInfoWidget::hideDetails(bool shouldHide) {
+void LightInfoWidget::hideDetails(bool shouldHide) {
     mModelID->setHidden(shouldHide);
     mSoftwareVersion->setHidden(shouldHide);
     mUniqueID->setHidden(shouldHide);
     mHideDetails = shouldHide;
 }
 
-void HueLightInfoWidget::paintEvent(QPaintEvent *event) {
+void LightInfoWidget::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event);
     QStyleOption opt;
     opt.init(this);
@@ -117,3 +120,6 @@ void HueLightInfoWidget::paintEvent(QPaintEvent *event) {
     QLine spacerLine(QPoint(area.x(), area.height() - 3), QPoint(area.width(), area.height() - 3));
     linePainter.drawLine(spacerLine);
 }
+
+}
+

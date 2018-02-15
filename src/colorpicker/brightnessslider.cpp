@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -11,7 +11,7 @@ BrightnessSlider::BrightnessSlider(QWidget *parent) : QWidget(parent)
     // --------------
     // Setup Slider
     // --------------
-    mBrightnessSlider = new CorlumaSlider(this);
+    mBrightnessSlider = new cor::Slider(this);
     mBrightnessSlider->setSliderColorBackground(QColor(0, 0, 0));
     mBrightnessSlider->slider()->setRange(0, 100);
     mBrightnessSlider->setSnapToNearestTick(true);

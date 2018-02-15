@@ -1,10 +1,10 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
-#include "corlumaslider.h"
+#include "cor/slider.h"
 
 #include <QtCore>
 #include <QtGui>
@@ -12,7 +12,10 @@
 #include <QGraphicsOpacityEffect>
 #include <QFontMetrics>
 
-CorlumaSlider::CorlumaSlider(QWidget *parent) : QWidget(parent) {
+namespace cor
+{
+
+Slider::Slider(QWidget *parent) : QWidget(parent) {
 
     mHeightScaleFactor = 1.0f;
     mOpacity = 1.0f;
@@ -42,7 +45,7 @@ CorlumaSlider::CorlumaSlider(QWidget *parent) : QWidget(parent) {
 }
 
 
-void CorlumaSlider::setSliderColorBackground(QColor color) {
+void Slider::setSliderColorBackground(QColor color) {
     mSliderColor = color;
     mSliderColorSet = true;
     mSliderImageSet = false;
@@ -74,7 +77,7 @@ void CorlumaSlider::setSliderColorBackground(QColor color) {
     mSlider->setStyleSheet(styleSheetString);
 }
 
-void CorlumaSlider::setSliderImageBackground(QString path) {
+void Slider::setSliderImageBackground(QString path) {
     mSliderImageSet = true;
     mSliderColorSet = false;
     mPath = path;
@@ -92,7 +95,7 @@ void CorlumaSlider::setSliderImageBackground(QString path) {
     mSlider->setStyleSheet(styleSheetString);
 }
 
-void CorlumaSlider::receivedValue(int value) {
+void Slider::receivedValue(int value) {
     value = jumpSliderToPosition(mSlider, value);
 
     mSlider->blockSignals(true);
@@ -109,7 +112,7 @@ void CorlumaSlider::receivedValue(int value) {
  * solution based on this stack overflow response:
  * http://stackoverflow.com/a/15321654
  */
-int CorlumaSlider::jumpSliderToPosition(QSlider *slider, int newPos) {
+int Slider::jumpSliderToPosition(QSlider *slider, int newPos) {
 
     Qt::MouseButtons btns = QApplication::mouseButtons();
     QPoint localMousePos = slider->mapFromGlobal(QCursor::pos());
@@ -142,7 +145,7 @@ int CorlumaSlider::jumpSliderToPosition(QSlider *slider, int newPos) {
 }
 
 
-int CorlumaSlider::snapSliderToNearestTick(QSlider *slider, int pos) {
+int Slider::snapSliderToNearestTick(QSlider *slider, int pos) {
     if (slider->tickPosition() != QSlider::NoTicks) {
         int numberOfFullTicks = pos / slider->tickInterval();
         int leftTick = slider->minimum() + numberOfFullTicks * slider->tickInterval();
@@ -157,7 +160,7 @@ int CorlumaSlider::snapSliderToNearestTick(QSlider *slider, int pos) {
 }
 
 
-void CorlumaSlider::setMinimumPossible(bool useMinimumPossible, int minimumPossible) {
+void Slider::setMinimumPossible(bool useMinimumPossible, int minimumPossible) {
     mUseMinimumPossible = useMinimumPossible;
     mMinimumPossible = minimumPossible;
     if (mUseMinimumPossible && (mSlider->value() < mMinimumPossible)) {
@@ -166,7 +169,7 @@ void CorlumaSlider::setMinimumPossible(bool useMinimumPossible, int minimumPossi
 }
 
 
-void CorlumaSlider::resizeEvent(QResizeEvent *event) {
+void Slider::resizeEvent(QResizeEvent *event) {
     Q_UNUSED (event);
     mSlider->setFixedSize(this->rect().width(), this->rect().height() * mHeightScaleFactor);
     float newY = this->rect().height() * (1.0 - mHeightScaleFactor) / 2.0f;
@@ -181,19 +184,19 @@ void CorlumaSlider::resizeEvent(QResizeEvent *event) {
     }
 }
 
-void CorlumaSlider::showEvent(QShowEvent *event) {
+void Slider::showEvent(QShowEvent *event) {
     Q_UNUSED(event);
     mThrottleTimer->start(200);
 }
 
-void CorlumaSlider::hideEvent(QHideEvent *event) {
+void Slider::hideEvent(QHideEvent *event) {
     Q_UNUSED(event);
     mThrottleTimer->stop();
     mThrottleFlag = false;
 }
 
 
-void CorlumaSlider::paintEvent(QPaintEvent *event) {
+void Slider::paintEvent(QPaintEvent *event) {
     Q_UNUSED (event);
     if (mSlider->tickPosition() != QSlider::NoTicks) {
         QStyleOption opt;
@@ -269,7 +272,7 @@ void CorlumaSlider::paintEvent(QPaintEvent *event) {
 }
 
 
-void CorlumaSlider::setSliderHeight(float percent) {
+void Slider::setSliderHeight(float percent) {
     mHeightScaleFactor = percent;
     float newY = this->rect().height() * (1.0 - mHeightScaleFactor) / 2.0f;
     mSlider->setGeometry(mSlider->rect().x(),
@@ -280,28 +283,28 @@ void CorlumaSlider::setSliderHeight(float percent) {
 }
 
 
-void CorlumaSlider::setSnapToNearestTick(bool shouldSnap) {
+void Slider::setSnapToNearestTick(bool shouldSnap) {
     mShouldSnap = shouldSnap;
 }
 
 
-void CorlumaSlider::resetThrottleFlag() {
+void Slider::resetThrottleFlag() {
     mThrottleFlag = false;
 }
 
 
-void CorlumaSlider::releasedSlider() {
+void Slider::releasedSlider() {
     emit valueChanged(mSlider->value());
 }
 
-void CorlumaSlider::setShouldDrawTickLabels(bool shouldDraw) {
+void Slider::setShouldDrawTickLabels(bool shouldDraw) {
     if (mShouldDrawTickLabels != shouldDraw) {
         mShouldDrawTickLabels = shouldDraw;
         repaint();
     }
 }
 
-void CorlumaSlider::enable(bool shouldEnable) {
+void Slider::enable(bool shouldEnable) {
     if(shouldEnable) {
         QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mSlider);
         mOpacity = 1.0f;
@@ -315,4 +318,6 @@ void CorlumaSlider::enable(bool shouldEnable) {
         mSlider->setGraphicsEffect(effect);
         this->setEnabled(false);
     }
+}
+
 }

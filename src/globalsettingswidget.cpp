@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -9,7 +9,7 @@
 #include <QStyleOption>
 #include <QDesktopWidget>
 
-#include "corlumautils.h"
+#include "cor/utils.h"
 #include "globalsettingswidget.h"
 
 GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
@@ -45,10 +45,10 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
     // CheckBoxes
     //-----------
 
-    mTimeoutCheckBox = new CorlumaCheckBox(this, "Use Timeout");
+    mTimeoutCheckBox = new cor::CheckBox(this, "Use Timeout");
     connect(mTimeoutCheckBox, SIGNAL(boxChecked(bool)), this, SLOT(timeoutButtonPressed(bool)));
 
-    mAdvanceModeCheckBox = new CorlumaCheckBox(this, "Advance Mode");
+    mAdvanceModeCheckBox = new cor::CheckBox(this, "Advance Mode");
     connect(mAdvanceModeCheckBox, SIGNAL(boxChecked(bool)), this, SLOT(advanceModeButtonPressed(bool)));
     mAdvanceModeCheckBox->setGeometry(mTimeoutCheckBox->geometry().width() + mSpacerPixels,
                                       mTimeoutCheckBox->geometry().y(),
@@ -62,7 +62,7 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
     // Sliders
     //-----------
 
-    mSpeedSlider = new CorlumaSlider(this);
+    mSpeedSlider = new cor::Slider(this);
     mSpeedSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mSpeedSlider->slider()->setRange(1, 1000);
     mSpeedSlider->slider()->setValue(mSettings->value(kSpeedValue).toInt());
@@ -71,7 +71,7 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
     mSpeedSlider->slider()->setTickInterval(250);
     mSpeedSlider->setShouldDrawTickLabels(true);
 
-    mTimeoutSlider = new CorlumaSlider(this);
+    mTimeoutSlider = new cor::Slider(this);
     mTimeoutSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mTimeoutSlider->slider()->setRange(0, 300);
     mTimeoutSlider->slider()->setValue(mSettings->value(kTimeoutValue).toInt());

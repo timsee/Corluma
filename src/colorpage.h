@@ -3,10 +3,10 @@
 #define SINGLECOLORPAGE_H
 
 #include "icondata.h"
-#include "corlumaslider.h"
+#include "cor/slider.h"
 #include "lightingpage.h"
 #include "colorpicker/colorpicker.h"
-#include "corlumabutton.h"
+#include "cor/button.h"
 #include "routinebuttonswidget.h"
 
 #include <QWidget>
@@ -31,7 +31,7 @@ enum class EBottomMenuShow {
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  *
@@ -177,7 +177,7 @@ private:
      * \param devices the devices to use as a basis for a color scheme
      * \return a vector of colors reqpresenting a color scheme
      */
-    std::vector<QColor> createColorScheme(std::list<SLightDevice> devices);
+    std::vector<QColor> createColorScheme(std::list<cor::Light> devices);
 
     /*!
      * \brief mSingleRoutineWidget widget that pops up from the bottom and contains buttons for all of the

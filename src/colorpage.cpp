@@ -1,13 +1,13 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
 #include "colorpage.h"
 #include "mainwindow.h"
-#include "comm/hueprotocols.h"
-#include "corlumautils.h"
+#include "hue/hueprotocols.h"
+#include "cor/utils.h"
 
 #include <QColorDialog>
 #include <QDebug>
@@ -153,7 +153,7 @@ void ColorPage::showMultiRoutineWidget(bool shouldShow) {
     }
 }
 
-std::vector<QColor> ColorPage::createColorScheme(std::list<SLightDevice> devices) {
+std::vector<QColor> ColorPage::createColorScheme(std::list<cor::Light> devices) {
     std::vector<QColor> colorScheme;
     int count = 0;
     int max = 5;
@@ -175,7 +175,7 @@ std::vector<QColor> ColorPage::createColorScheme(std::list<SLightDevice> devices
 void ColorPage::newRoutineSelected(int newRoutine) {
     ELightingRoutine routine = (ELightingRoutine)newRoutine;
     mData->updateRoutine(routine);
-    if (routine <= utils::ELightingRoutineSingleColorEnd) {
+    if (routine <= cor::ELightingRoutineSingleColorEnd) {
         mCurrentSingleRoutine = routine;
     }
 }
@@ -236,7 +236,7 @@ void ColorPage::ambientUpdateReceived(int newAmbientValue, int newBrightness) {
         }
     }
     mData->updateCt(newAmbientValue);
-    emit singleColorChanged(utils::colorTemperatureToRGB(newAmbientValue));
+    emit singleColorChanged(cor::colorTemperatureToRGB(newAmbientValue));
     emit brightnessChanged(newBrightness);
 }
 

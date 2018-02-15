@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -12,7 +12,7 @@ ColorGrid::ColorGrid(QWidget *parent) : QWidget(parent)
     mMaximumSize = 10;
     mColorsUsed = 2;
 
-    mCountSlider = new CorlumaSlider(this);
+    mCountSlider = new cor::Slider(this);
     mCountSlider->setSliderColorBackground(QColor(0, 0, 0));
     mCountSlider->slider()->setRange(0, mMaximumSize * 10);
     mCountSlider->slider()->blockSignals(true);
@@ -139,9 +139,15 @@ void ColorGrid::updateMultiColorSlider() {
         g = g + mColors[i].green();
         b = b + mColors[i].blue();
     }
-    QColor average(r / mColorsUsed,
-                   g / mColorsUsed,
-                   b / mColorsUsed);
+    QColor average;
+    if (mColorsUsed == 0) {
+      average = QColor(r, g, b);
+    } else {
+      average = QColor(r / mColorsUsed,
+                       g / mColorsUsed,
+                       b / mColorsUsed);
+    }
+
     mCountSlider->setSliderColorBackground(average);
 }
 

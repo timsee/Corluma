@@ -1,14 +1,17 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
-#include "corlumalistwidget.h"
+#include "cor/listwidget.h"
 #include "listdevicesgroupwidget.h"
 #include "listmoodgroupwidget.h"
 
-CorlumaListWidget::CorlumaListWidget(QWidget *parent) {
+namespace cor
+{
+
+ListWidget::ListWidget(QWidget *parent) {
     this->setParent(parent);
     this->setMaximumSize(parent->size());
 
@@ -23,7 +26,7 @@ CorlumaListWidget::CorlumaListWidget(QWidget *parent) {
 }
 
 
-void CorlumaListWidget::resizeEvent(QResizeEvent *) {
+void ListWidget::resizeEvent(QResizeEvent *) {
     // disable horizontal scorlling by always forcing scroll area to be width
     // of viewport.
     mWidget->setFixedWidth(this->viewport()->width());
@@ -35,7 +38,7 @@ void CorlumaListWidget::resizeEvent(QResizeEvent *) {
     }
 }
 
-void CorlumaListWidget::addWidget(ListCollectionWidget *widget) {
+void ListWidget::addWidget(ListCollectionWidget *widget) {
     int widgetIndex = searchForWidget(widget->key());
     if (widgetIndex == -1) {
         widget->setParent(mWidget);
@@ -45,7 +48,7 @@ void CorlumaListWidget::addWidget(ListCollectionWidget *widget) {
     }
 }
 
-void CorlumaListWidget::removeWidget(QString key) {
+void ListWidget::removeWidget(QString key) {
     int widgetIndex = searchForWidget(key);
     if (widgetIndex != -1) {
         mWidgets.remove(widget(widgetIndex));
@@ -54,7 +57,7 @@ void CorlumaListWidget::removeWidget(QString key) {
     }
 }
 
-ListCollectionWidget *CorlumaListWidget::widget(uint32_t index) {
+ListCollectionWidget *ListWidget::widget(uint32_t index) {
     if (index >= mWidgets.size()) {
         throw "ERROR: requested a widget that is out of bounds";
     }
@@ -68,7 +71,7 @@ ListCollectionWidget *CorlumaListWidget::widget(uint32_t index) {
     return nullptr;
 }
 
-ListCollectionWidget *CorlumaListWidget::widget(QString key) {
+ListCollectionWidget *ListWidget::widget(QString key) {
     int widgetIndex = searchForWidget(key);
     if (widgetIndex != -1) {
         int i = 0;
@@ -82,7 +85,7 @@ ListCollectionWidget *CorlumaListWidget::widget(QString key) {
     return nullptr;
 }
 
-int CorlumaListWidget::searchForWidget(QString key) {
+int ListWidget::searchForWidget(QString key) {
     int widgetIndex = -1;
     int i = 0;
     for (auto widget : mWidgets) {
@@ -94,7 +97,7 @@ int CorlumaListWidget::searchForWidget(QString key) {
     return widgetIndex;
 }
 
-void CorlumaListWidget::resizeWidgets() {
+void ListWidget::resizeWidgets() {
     uint32_t yPos = 0;
     for (auto widget : mWidgets) {
         widget->setListHeight(this->height());
@@ -115,7 +118,9 @@ void CorlumaListWidget::resizeWidgets() {
 }
 
 
-void CorlumaListWidget::widgetHeightChanged(int rowCount) {
+void ListWidget::widgetHeightChanged(int rowCount) {
     Q_UNUSED(rowCount);
     resizeWidgets();
+}
+
 }

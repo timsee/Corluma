@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -29,11 +29,11 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector
                                            "Sawtooth In",
                                            "Sawtooth Out"};
 
-        mRoutineButtons = std::vector<CorlumaButton*>(labels.size(), nullptr);
+        mRoutineButtons = std::vector<cor::Button*>(labels.size(), nullptr);
         int rowCount = 0;
         int maxColumn = 4;
         for (int i = 0; i < (int)mRoutineButtons.size(); ++i) {
-            mRoutineButtons[i] = new CorlumaButton(this);
+            mRoutineButtons[i] = new cor::Button(this);
             mRoutineButtons[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
             mRoutineButtons[i]->setupAsStandardButton((ELightingRoutine)(i + 1), EColorGroup::eAll, QString::fromStdString(labels[i]));
             connect(mRoutineButtons[i], SIGNAL(buttonClicked(int, int)), this, SLOT(routineChanged(int, int)));
@@ -51,12 +51,12 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector
                                            "Bars Solid",
                                            "Bars Moving"};
 
-        mRoutineButtons = std::vector<CorlumaButton*>(labels.size(), nullptr);
+        mRoutineButtons = std::vector<cor::Button*>(labels.size(), nullptr);
         int rowCount = 0;
         int maxColumn = 3;
-        int routineIndex = (int)utils::ELightingRoutineSingleColorEnd + 1;
+        int routineIndex = (int)cor::ELightingRoutineSingleColorEnd + 1;
         for (int i = 0; i < (int)mRoutineButtons.size(); ++i) {
-            mRoutineButtons[i] = new CorlumaButton(this);
+            mRoutineButtons[i] = new cor::Button(this);
             mRoutineButtons[i]->setStyleSheet("background-color: rgb(52, 52, 52); ");
             mRoutineButtons[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
             mRoutineButtons[i]->setupAsStandardButton((ELightingRoutine)(routineIndex + i),
@@ -89,8 +89,8 @@ void RoutineButtonsWidget::highlightRoutineButton(ELightingRoutine routine) {
 }
 
 void RoutineButtonsWidget::multiRoutineColorsChanged(const std::vector<QColor>& colors, int colorCount) {
-    for (int i = (int)utils::ELightingRoutineSingleColorEnd + 1; i < (int)ELightingRoutine::eLightingRoutine_MAX; ++i) {
-        int vectorIndex = i - (int)utils::ELightingRoutineSingleColorEnd - 1;
+    for (int i = (int)cor::ELightingRoutineSingleColorEnd + 1; i < (int)ELightingRoutine::eLightingRoutine_MAX; ++i) {
+        int vectorIndex = i - (int)cor::ELightingRoutineSingleColorEnd - 1;
         mRoutineButtons[vectorIndex]->updateIconPresetColorRoutine((ELightingRoutine)i,
                                                                     EColorGroup::eCustom,
                                                                     colors,

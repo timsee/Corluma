@@ -1,25 +1,29 @@
-#ifndef CORLUMATOPWIDGET_H
-#define CORLUMATOPWIDGET_H
+#ifndef COR_TOP_WIDGET_H
+#define COR_TOP_WIDGET_H
 
 #include <QWidget>
 #include <QPushButton>
 #include <QLayout>
 #include <QLabel>
+
+namespace cor
+{
+
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  *
- * \brief The CorlumaTopWidget class is a standardized way to put a title and a button as the header
+ * \brief The TopWidget class is a standardized way to put a title and a button as the header
  *        of a widget. It is used on widgets like the SettingsPage or the CorlumaWebView.
  */
-class CorlumaTopWidget : public QWidget
+class TopWidget : public QWidget
 {
     Q_OBJECT
 public:
     /// constructor
-    explicit CorlumaTopWidget(QString title, QString resource = QString(), QWidget *parent = 0);
+    explicit TopWidget(QString title, QString resource = QString(), QWidget *parent = 0);
 
     /// set the font point size.
     void setFontPoint(int pt);
@@ -50,4 +54,5 @@ private:
     QHBoxLayout *mLayout;
 };
 
-#endif // CORLUMATOPWIDGET_H
+}
+#endif // COR_TOP_WIDGET_H

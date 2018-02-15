@@ -112,7 +112,7 @@
    <item>
     <layout class="QHBoxLayout" name="roomLayout" stretch="5,3,10">
      <item>
-      <widget class="CorlumaCheckBox" name="roomCheckBox" native="true">
+      <widget class="cor::CheckBox" name="roomCheckBox" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -135,7 +135,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QWidget" name="roomSpacer" native="true">
+      <widget class="cor::CheckBox" name="roomSpacer" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -157,7 +157,7 @@
         <x>0</x>
         <y>0</y>
         <width>384</width>
-        <height>306</height>
+        <height>305</height>
        </rect>
       </property>
      </widget>
@@ -167,9 +167,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>CorlumaCheckBox</class>
+   <class>cor::CheckBox</class>
    <extends>QWidget</extends>
-   <header location="global">corlumacheckbox.h</header>
+   <header location="global">cor/checkbox.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

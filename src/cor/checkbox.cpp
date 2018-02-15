@@ -1,14 +1,17 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
 #include <QDebug>
 
-#include "corlumacheckbox.h"
+#include "checkbox.h"
 
-CorlumaCheckBox::CorlumaCheckBox(QWidget *parent, QString title) : QWidget(parent) {
+namespace cor
+{
+
+CheckBox::CheckBox(QWidget *parent, QString title) : QWidget(parent) {
     mIsChecked = false;
     mSpacer = 5;
 
@@ -31,7 +34,7 @@ CorlumaCheckBox::CorlumaCheckBox(QWidget *parent, QString title) : QWidget(paren
     this->setMinimumHeight(mTitle->height() * 1.5f);
 }
 
-void CorlumaCheckBox::setTitle(QString title) {
+void CheckBox::setTitle(QString title) {
     mTitle->setText(title);
     QRect r = mTitle->fontMetrics().boundingRect(mTitle->text());
     mTitle->setFixedWidth(r.width());
@@ -39,7 +42,7 @@ void CorlumaCheckBox::setTitle(QString title) {
     this->setMinimumHeight(mTitle->height() * 1.5f);
 }
 
-void CorlumaCheckBox::downsizeTextWidthToFit(int maxWidth) {
+void CheckBox::downsizeTextWidthToFit(int maxWidth) {
     QLabel label(mTitle->text());
     int systemFontWidth  = label.fontMetrics().boundingRect(label.text()).width();
     int fontPtSize       = label.font().pointSize();
@@ -67,19 +70,19 @@ void CorlumaCheckBox::downsizeTextWidthToFit(int maxWidth) {
     adjustSize();
 }
 
-void CorlumaCheckBox::setChecked(bool shouldCheck) {
+void CheckBox::setChecked(bool shouldCheck) {
     mCheckBox->setChecked(shouldCheck);
     mIsChecked = shouldCheck;
 }
 
-void CorlumaCheckBox::buttonPressed(bool pressed) {
+void CheckBox::buttonPressed(bool pressed) {
     Q_UNUSED(pressed);
 
     mIsChecked = !mIsChecked;
     emit boxChecked(mIsChecked);
 }
 
-void CorlumaCheckBox::resizeEvent(QResizeEvent *event) {
+void CheckBox::resizeEvent(QResizeEvent *event) {
     Q_UNUSED(event);
 
     mTitle->setGeometry(mSpacer,
@@ -95,3 +98,4 @@ void CorlumaCheckBox::resizeEvent(QResizeEvent *event) {
     adjustSize();
 }
 
+}

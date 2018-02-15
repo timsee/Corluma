@@ -6,7 +6,7 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -146,7 +146,7 @@ protected:
      * \param commDevice device from the comm layer
      * \return true if they match, false otherwise
      */
-    virtual bool sync(const SLightDevice& dataDevice, const SLightDevice& commDevice) = 0;
+    virtual bool sync(const cor::Light& dataDevice, const cor::Light& commDevice) = 0;
 
     //------------------
     // Helpers

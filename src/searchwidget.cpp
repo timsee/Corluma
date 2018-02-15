@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -81,7 +81,6 @@ SearchWidget::SearchWidget(QString defaultLineEditValue, QWidget *parent, int ma
     mMinSizeCheck = -1;
     mMaxSizeCheck = -1;
     mMaxSearchingCount = maxSearchingCount;
-    maxSearchingCount = maxSearchingCount;
     mMaxSearchError = errorMaxSearchString;
     mSizeCheckError = "";
 }

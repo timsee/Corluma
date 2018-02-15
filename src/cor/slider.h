@@ -1,5 +1,5 @@
-#ifndef LIGHTSSLIDER_H
-#define LIGHTSSLIDER_H
+#ifndef COR_SLIDER_H
+#define COR_SLIDER_H
 
 
 #include <QApplication>
@@ -9,13 +9,16 @@
 #include <QLayout>
 #include <memory>
 
+namespace cor
+{
+
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  *
- * \brief The CorlumaSlider class provides a slider with behaviors similiar
+ * \brief The Slider class provides a slider with behaviors similiar
  * to sliders on mobile devices. Clicking on the slider jumps the slider's value
  * to the location you clicked instead of the QSlider default of jumping by the page
  * value. There is also the option to use a gradient instead of a solid color as the
@@ -30,7 +33,7 @@
  * in order to prevent users from choosing less than 2 colors for the array routines.
  *
  */
-class CorlumaSlider : public QWidget
+class Slider : public QWidget
 {
     Q_OBJECT
 
@@ -38,7 +41,7 @@ public:
     /*!
      * \brief Constructor
      */
-    explicit CorlumaSlider(QWidget *parent = 0);
+    explicit Slider(QWidget *parent = 0);
 
     /*!
      * \brief setSliderColorBackground Does a dark to light gradient on the color provided on the background
@@ -250,4 +253,5 @@ private:
     QColor mSliderColor;
 };
 
-#endif // LIGHTSSLIDER_H
+}
+#endif // COR_SLIDER_H

@@ -2,7 +2,7 @@
 #define SINGLECOLORROUTINEWIDGET_H
 
 #include <QWidget>
-#include "corlumabutton.h"
+#include "cor/button.h"
 
 
 /// different types of routinebuttonswidgets
@@ -13,7 +13,7 @@ enum class EWidgetGroup {
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  * \brief The RoutineButtonsWidget class is a basic widget that holds a grid of lightsbuttons that each map to a set of routines.
@@ -96,7 +96,7 @@ private:
      * \brief mRoutineButtons pointers to all the main buttons, used
      *        to iterate through them quickly.
      */
-    std::vector<CorlumaButton*> mRoutineButtons;
+    std::vector<cor::Button*> mRoutineButtons;
 };
 
 #endif // SINGLECOLORROUTINEWIDGET_H

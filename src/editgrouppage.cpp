@@ -1,10 +1,11 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
 #include "editgrouppage.h"
+#include "comm/commhue.h"
 #include "ui_editcollectionpage.h"
 
 #include <QtCore>
@@ -61,7 +62,7 @@ EditGroupPage::~EditGroupPage() {
     delete ui;
 }
 
-void EditGroupPage::showGroup(QString key, std::list<SLightDevice> groupDevices, std::list<SLightDevice> devices, bool isMood, bool isRoom) {
+void EditGroupPage::showGroup(QString key, std::list<cor::Light> groupDevices, std::list<cor::Light> devices, bool isMood, bool isRoom) {
     mOriginalName = key;
     mNewName = key;
 
@@ -87,13 +88,13 @@ void EditGroupPage::showGroup(QString key, std::list<SLightDevice> groupDevices,
     repaint();
 }
 
-void EditGroupPage::updateDevices(std::list<SLightDevice> groupDevices, std::list<SLightDevice> devices) {
+void EditGroupPage::updateDevices(std::list<cor::Light> groupDevices, std::list<cor::Light> devices) {
 
     for (auto&& device : devices) {
         bool widgetFound = false;
         for (auto&& widget : mWidgets) {
-            SLightDevice widgetDevice = widget->device();
-            if (compareLightDevice(device, widgetDevice)) {
+            cor::Light widgetDevice = widget->device();
+            if (compareLight(device, widgetDevice)) {
                 widgetFound = true;
                 widget->updateWidget(device, mData->colorGroup(device.colorGroup));
                 widget->setHighlightChecked(shouldSetChecked(device, groupDevices));
@@ -202,8 +203,8 @@ void EditGroupPage::resetPressed(bool) {
     for (auto&& widget : mWidgets) {
         bool deviceFound = false;
         for (auto&& device : mOriginalDevices) {
-            SLightDevice widgetDevice = widget->device();
-            if (compareLightDevice(device, widgetDevice)) {
+            cor::Light widgetDevice = widget->device();
+            if (compareLight(device, widgetDevice)) {
                 deviceFound = true;
                 widget->setHighlightChecked(true);
             }
@@ -304,7 +305,7 @@ void EditGroupPage::saveChanges() {
     //--------------------------------
     // Create a list of devices
     //--------------------------------
-    std::list<SLightDevice> newDevices;
+    std::list<cor::Light> newDevices;
     if (mIsMood) {
         newDevices = createMood();
     } else {
@@ -314,8 +315,8 @@ void EditGroupPage::saveChanges() {
     bool devicesAreValid = true;
     if (newDevices.size() > 0) {
         for (auto& device : newDevices) {
-            if (device.controller.compare("") == 0
-                    || device.index == 0) {
+            if (device.controller().compare("") == 0
+                    || device.index() == 0) {
                 devicesAreValid = false;
             }
         }
@@ -351,16 +352,16 @@ void EditGroupPage::saveChanges() {
         mGroups->saveNewCollection(mNewName, newDevices, mIsRoomCurrent);
 
         // convert any group devices to Hue Lights, if applicable.
-        std::list<SHueLight> hueLights;
+        std::list<HueLight> hueLights;
         for (auto device : newDevices) {
-            if (device.type == ECommType::eHue) {
-                SHueLight hue = mComm->hueLightFromLightDevice(device);
+            if (device.type() == ECommType::eHue) {
+                HueLight hue = mComm->hue()->hueLightFromLight(device);
                 hueLights.push_back(hue);
             }
         }
         if (hueLights.size() > 0) {
             // check if group already exists
-            auto hueGroups = mComm->hueGroups();
+            auto hueGroups = mComm->hue()->groups();
             bool groupExists = false;
             for (auto group : hueGroups) {
                 if (group.name.compare(mNewName) == 0) {
@@ -370,14 +371,14 @@ void EditGroupPage::saveChanges() {
             if (groupExists) {
                 mComm->updateHueGroup(mNewName, hueLights);
             } else {
-                mComm->createHueGroup(mNewName, hueLights, mIsRoomCurrent);
+                mComm->hue()->createGroup(mNewName, hueLights, mIsRoomCurrent);
             }
         }
     }
 }
 
-std::list<SLightDevice> EditGroupPage::createCollection() {
-   std::list<SLightDevice> devices;
+std::list<cor::Light> EditGroupPage::createCollection() {
+   std::list<cor::Light> devices;
    for (uint32_t i = 0; i < mWidgets.size(); ++i) {
        if (mWidgets[i]->checked()) {
            devices.push_back(mWidgets[i]->device());
@@ -386,8 +387,8 @@ std::list<SLightDevice> EditGroupPage::createCollection() {
    return devices;
 }
 
-std::list<SLightDevice> EditGroupPage::createMood() {
-    std::list<SLightDevice> list;
+std::list<cor::Light> EditGroupPage::createMood() {
+    std::list<cor::Light> list;
     for (uint32_t i = 0; i < mWidgets.size(); ++i) {
         if (mWidgets[i]->checked()) {
             list.push_back(mWidgets[i]->device());
@@ -410,7 +411,7 @@ bool EditGroupPage::checkForChanges() {
         if (mWidgets[i]->checked()) {
             bool foundDevice = false;
             for (auto&& device : mOriginalDevices) {
-                if (compareLightDevice(mWidgets[i]->device(), device)) {
+                if (compareLight(mWidgets[i]->device(), device)) {
                     foundDevice = true;
                 }
             }
@@ -423,7 +424,7 @@ bool EditGroupPage::checkForChanges() {
     // check all given devices are checked
     for (auto&& device : mOriginalDevices) {
         for (uint32_t i = 0; i < mWidgets.size(); ++i) {
-            if (compareLightDevice(mWidgets[i]->device(), device)) {
+            if (compareLight(mWidgets[i]->device(), device)) {
                 if (!mWidgets[i]->checked())  {
                     qDebug() << "all given deviecs are checked";
                     return true;
@@ -435,9 +436,9 @@ bool EditGroupPage::checkForChanges() {
     return false;
 }
 
-bool EditGroupPage::shouldSetChecked(const SLightDevice& device, const std::list<SLightDevice>& groupDevices) {
+bool EditGroupPage::shouldSetChecked(const cor::Light& device, const std::list<cor::Light>& groupDevices) {
     for (auto&& collectionDevice : groupDevices) {
-        if (compareLightDevice(device, collectionDevice)) {
+        if (compareLight(device, collectionDevice)) {
             return true;
         }
     }

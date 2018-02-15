@@ -1,13 +1,13 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
 #include "settingspage.h"
 #include "comm/commhue.h"
 #include "listdevicewidget.h"
-#include "corlumautils.h"
+#include "cor/utils.h"
 
 #include <QFileDialog>
 #include <QDebug>
@@ -37,7 +37,7 @@ SettingsPage::SettingsPage(QWidget *parent) :
     // Top Layout
     //------------
 
-    mTopWidget = new CorlumaTopWidget("", ":images/closeX.png");
+    mTopWidget = new cor::TopWidget("", ":images/closeX.png");
     connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(closeButtonPressed(bool)));
 
     //------------
@@ -114,13 +114,13 @@ SettingsPage::SettingsPage(QWidget *parent) :
         mScrollLayout->addWidget(mButtons[x]);
     }
 
-    mCopyrightWidget = new CorlumaWebView("Copyright", ":/resources/Copyright.html", this);
+    mCopyrightWidget = new cor::WebView("Copyright", ":/resources/Copyright.html", this);
     mCopyrightWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mCopyrightWidget->setGeometry(this->geometry());
     connect(mCopyrightWidget, SIGNAL(closePressed()), this, SLOT(hideCurrentWebView()));
 
 
-    mFAQWidget = new CorlumaWebView("FAQ", ":/resources/FAQ.html", this);
+    mFAQWidget = new cor::WebView("FAQ", ":/resources/FAQ.html", this);
     mFAQWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mFAQWidget->setGeometry(this->geometry());
     connect(mFAQWidget, SIGNAL(closePressed()), this, SLOT(hideCurrentWebView()));
@@ -273,7 +273,7 @@ void SettingsPage::paintEvent(QPaintEvent *) {
 void SettingsPage::settingsButtonPressed(QString title) {
    // qDebug() << "settings button pressed: " << title;
     if (title.compare("Debug") == 0) {
-        std::list<SLightDevice> debugDevices = mGroups->loadDebugData();
+        std::list<cor::Light> debugDevices = mGroups->loadDebugData();
         if (debugDevices.size() > 0) {
             mComm->loadDebugData(debugDevices);
             emit debugPressed();
@@ -302,7 +302,7 @@ void SettingsPage::showWebView(ECorlumaWebView newWebView) {
     if (newWebView != mCurrentWebView) {
         mCurrentWebView = newWebView;
 
-        CorlumaWebView *widget;
+        cor::WebView *widget;
         switch (newWebView) {
             case ECorlumaWebView::eCopyright:
                 widget = mCopyrightWidget;
@@ -327,7 +327,7 @@ void SettingsPage::showWebView(ECorlumaWebView newWebView) {
 
 void SettingsPage::hideCurrentWebView() {
 
-    CorlumaWebView *widget;
+    cor::WebView *widget;
     switch (mCurrentWebView) {
         case ECorlumaWebView::eCopyright:
             widget = mCopyrightWidget;

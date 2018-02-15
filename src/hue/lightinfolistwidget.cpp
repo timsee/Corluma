@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -11,11 +11,14 @@
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
 
-#include "huelightinfolistwidget.h"
-#include "corlumautils.h"
+#include "hue/lightinfolistwidget.h"
+#include "cor/utils.h"
 
-HueLightInfoListWidget::HueLightInfoListWidget(QWidget *parent) : QWidget(parent) {
-    mTopWidget = new CorlumaTopWidget("Hue Lights", ":images/closeX.png", this);
+namespace hue
+{
+
+LightInfoListWidget::LightInfoListWidget(QWidget *parent) : QWidget(parent) {
+    mTopWidget = new cor::TopWidget("Hue Lights", ":images/closeX.png", this);
     connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(closePressed(bool)));
     mTopWidget->setFontPoint(20);
 
@@ -49,13 +52,13 @@ HueLightInfoListWidget::HueLightInfoListWidget(QWidget *parent) : QWidget(parent
     mLastKey = "";
 }
 
-void HueLightInfoListWidget::updateLights(std::list<SHueLight> lights) {
+void LightInfoListWidget::updateLights(std::list<HueLight> lights) {
     for (auto light : lights) {
         // check if light already exists in list
         int widgetIndex = -1;
         int i = 0;
         for (auto widget : mWidgets) {
-            if (widget->light().deviceIndex == light.deviceIndex) {
+            if (widget->light().index() == light.index()) {
                 widgetIndex = i;
                 widget->updateLight(light);
             }
@@ -63,7 +66,7 @@ void HueLightInfoListWidget::updateLights(std::list<SHueLight> lights) {
         }
         // if it doesnt exist, add it
         if (widgetIndex == -1) {
-            HueLightInfoWidget *widget = new HueLightInfoWidget(light, mScrollAreaWidget);
+            hue::LightInfoWidget *widget = new hue::LightInfoWidget(light, mScrollAreaWidget);
             widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(lightInfoWidgetClicked(QString)));
             connect(widget, SIGNAL(changedName(QString, QString)), this, SLOT(nameChanged(QString, QString)));
@@ -75,7 +78,7 @@ void HueLightInfoListWidget::updateLights(std::list<SHueLight> lights) {
     resize(true);
 }
 
-void HueLightInfoListWidget::resize(bool resizeFullWidget) {
+void LightInfoListWidget::resize(bool resizeFullWidget) {
     QSize size = qobject_cast<QWidget*>(this->parent())->size();
     if (resizeFullWidget) {
         this->setGeometry(size.width() * 0.125f,
@@ -102,9 +105,9 @@ void HueLightInfoListWidget::resize(bool resizeFullWidget) {
 }
 
 
-void HueLightInfoListWidget::deleteButtonPressed(bool) {
+void LightInfoListWidget::deleteButtonPressed(bool) {
     QMessageBox::StandardButton reply;
-    SHueLight light;
+    HueLight light;
     for (auto widget : mWidgets) {
         if (widget->key().compare(mLastKey) == 0) {
             light = widget->light();
@@ -126,7 +129,7 @@ void HueLightInfoListWidget::deleteButtonPressed(bool) {
     }
 }
 
-void HueLightInfoListWidget::paintEvent(QPaintEvent *) {
+void LightInfoListWidget::paintEvent(QPaintEvent *) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
@@ -135,11 +138,11 @@ void HueLightInfoListWidget::paintEvent(QPaintEvent *) {
     painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
 }
 
-void HueLightInfoListWidget::closePressed(bool) {
+void LightInfoListWidget::closePressed(bool) {
     emit pressedClose();
 }
 
-void HueLightInfoListWidget::lightInfoWidgetClicked(QString key) {
+void LightInfoListWidget::lightInfoWidgetClicked(QString key) {
    // qDebug() << " clicked " << key;
     for (auto widget : mWidgets) {
         if (widget->checked()) {
@@ -170,4 +173,6 @@ void HueLightInfoListWidget::lightInfoWidgetClicked(QString key) {
     }
 
     resize(false);
+}
+
 }

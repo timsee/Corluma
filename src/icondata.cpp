@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -14,7 +14,7 @@
 #include <math.h>
 
 IconData::IconData() {
-    setup(32, 32);
+    setup(4, 4);
 }
 
 IconData::IconData(int width, int height) {

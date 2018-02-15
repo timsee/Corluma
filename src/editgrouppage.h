@@ -4,12 +4,12 @@
 #include <QWidget>
 #include <QListWidget>
 
-#include "lightdevice.h"
+#include "cor/light.h"
 #include "listdevicewidget.h"
 #include "lightingpage.h"
 #include "comm/commlayer.h"
 #include "groupsparser.h"
-#include "corlumacheckbox.h"
+#include "cor/checkbox.h"
 
 
 namespace Ui {
@@ -18,7 +18,7 @@ class EditCollectionPage;
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  *
@@ -49,14 +49,14 @@ public:
      * \param isMood true if a mood, false if a collection.
      * \param isRoom true if a room, false if a lightgroup.
      */
-    void showGroup(QString key, std::list<SLightDevice> groupDevices, std::list<SLightDevice> devices, bool isMood, bool isRoom);
+    void showGroup(QString key, std::list<cor::Light> groupDevices, std::list<cor::Light> devices, bool isMood, bool isRoom);
 
     /*!
      * \brief updateDevices update the device widgets in the edit page with new values
      * \param groupDevices all devices in the original group
      * \param devices all devices known by the application.
      */
-    void updateDevices(std::list<SLightDevice> groupDevices, std::list<SLightDevice> devices);
+    void updateDevices(std::list<cor::Light> groupDevices, std::list<cor::Light> devices);
 
     /*!
      * \brief resize the widget. Call this to explicitly resize this widget based off of the size of the
@@ -159,7 +159,7 @@ private:
      * \param groupDevices all known devices in the group
      * \return true if should be set checked, false otherwise.
      */
-    bool shouldSetChecked(const SLightDevice& device, const std::list<SLightDevice>& groupDevices);
+    bool shouldSetChecked(const cor::Light& device, const std::list<cor::Light>& groupDevices);
 
     /*!
      * \brief checkForChanges checks if the name or the selected devices are changed.
@@ -183,19 +183,19 @@ private:
     /*!
      * \brief mOriginalDevices The original state of the group.
      */
-    std::list<SLightDevice> mOriginalDevices;
+    std::list<cor::Light> mOriginalDevices;
 
     /*!
      * \brief createCollection creates a collection based off of the state of the UI
      * \return list of devices in the collection
      */
-    std::list<SLightDevice> createCollection();
+    std::list<cor::Light> createCollection();
 
     /*!
      * \brief createMood creates a mood based off of the state of the UI
      * \return list of devices in the mood
      */
-    std::list<SLightDevice> createMood();
+    std::list<cor::Light> createMood();
 
     /// original name of group we're editing.
     QString mOriginalName;

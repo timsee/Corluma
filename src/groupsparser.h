@@ -8,7 +8,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-#include "lightdevice.h"
+#include "cor/light.h"
 #include "groupsparser.h"
 #include "comm/commhue.h"
 
@@ -16,7 +16,7 @@
 struct SLightGroup
 {
     QString name;
-    std::list<SLightDevice> devices;
+    std::list<cor::Light> devices;
     bool isRoom;
 };
 
@@ -30,7 +30,7 @@ inline bool operator==(const SLightGroup& lhs, const SLightGroup& rhs) {
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  *
@@ -67,7 +67,7 @@ public:
      * \param groupName the name of the new group.
      * \param devices the devices to save into the group.
      */
-    void saveNewMood(const QString& groupName, const std::list<SLightDevice>& devices);
+    void saveNewMood(const QString& groupName, const std::list<cor::Light>& devices);
 
     /*!
      * \brief saveNewCollection save a new collection of devices to JSON data, which then gets saved to file in AppData.
@@ -75,7 +75,7 @@ public:
      * \param devices devices in new collection.
      * \param isRoom true if it is a room, false otherwise
      */
-    void saveNewCollection(const QString& groupName, const std::list<SLightDevice>& devices, bool isRoom);
+    void saveNewCollection(const QString& groupName, const std::list<cor::Light>& devices, bool isRoom);
 
     /*!
      * \brief removeGroup remove the group of devices associated with the name provided. If no group has this name,
@@ -107,7 +107,7 @@ public:
      *        while off of a network that would have lights to control.
      * \return a list of devices based on JSON data.
      */
-    std::list<SLightDevice> loadDebugData();
+    std::list<cor::Light> loadDebugData();
 
     /*!
      * \brief saveFile save the JSON representation of groups to file.

@@ -19,7 +19,7 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  * \brief The ListMoodGroupWidget class is a subclass of a ListCollectionWidget. It displays a collection of moods.

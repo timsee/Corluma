@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -81,7 +81,7 @@ void CommUDP::shutdown() {
     mHasStarted = false;
 }
 
-void CommUDP::sendPacket(SDeviceController controller, QString packet) {
+void CommUDP::sendPacket(const cor::Controller& controller, QString& packet) {
     if (mBound) {
         // commtype function for adding CRC (if needed) and resetting flags (if needed)
         preparePacketForTransmission(controller, packet);
@@ -128,7 +128,7 @@ void CommUDP::stateUpdate() {
 void CommUDP::discoveryRoutine() {
     if (mBound) {
         for (auto&& it : mDeviceTable) {
-            SDeviceController output;
+            cor::Controller output;
             bool found = findDiscoveredController(QString::fromUtf8(it.first.c_str()), output);
               if (!found) {
                   //qDebug() << "discovery packet to " << QString(it.first.c_str());

@@ -1,11 +1,11 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
 #include "presetgroupwidget.h"
-#include "corlumautils.h"
+#include "cor/utils.h"
 
 PresetGroupWidget::PresetGroupWidget(QString name,
                                      EColorGroup group,
@@ -23,13 +23,13 @@ PresetGroupWidget::PresetGroupWidget(QString name,
     mLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     if (mode == EPresetWidgetMode::eArduino) {
-        int buttonCount = (int)ELightingRoutine::eLightingRoutine_MAX - (int)utils::ELightingRoutineSingleColorEnd - 1;
-        mButtons = std::vector<CorlumaButton *>(buttonCount, nullptr);
+        int buttonCount = (int)ELightingRoutine::eLightingRoutine_MAX - (int)cor::ELightingRoutineSingleColorEnd - 1;
+        mButtons = std::vector<cor::Button *>(buttonCount, nullptr);
         mLayout->addWidget(mLabel, 0, 0, 1, buttonCount + 1);
 
         int index = 0;
-        for (int routine = (int)utils::ELightingRoutineSingleColorEnd + 1; routine < (int)ELightingRoutine::eLightingRoutine_MAX; routine++) {
-            mButtons[index] = new CorlumaButton(this);
+        for (int routine = (int)cor::ELightingRoutineSingleColorEnd + 1; routine < (int)ELightingRoutine::eLightingRoutine_MAX; routine++) {
+            mButtons[index] = new cor::Button(this);
             mButtons[index]->setupAsStandardButton((ELightingRoutine)routine, group, QString(""), colors);
             mButtons[index]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
             mButtons[index]->button->setStyleSheet(kUncheckedStyleSheet);
@@ -39,11 +39,11 @@ PresetGroupWidget::PresetGroupWidget(QString name,
             index++;
         }
     } else {
-        mButtons = std::vector<CorlumaButton *>(1, nullptr);
+        mButtons = std::vector<cor::Button *>(1, nullptr);
         mLayout->addWidget(mLabel, 0, 0, 1, 2);
 
         int index = 0;
-        mButtons[index] = new CorlumaButton(this);
+        mButtons[index] = new cor::Button(this);
         mButtons[index]->setupAsStandardButton(ELightingRoutine::eMultiFade, group, QString(""), colors);
         mButtons[index]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         mButtons[index]->button->setStyleSheet(kUncheckedStyleSheet);
@@ -55,7 +55,7 @@ PresetGroupWidget::PresetGroupWidget(QString name,
 
 void PresetGroupWidget::setChecked(ELightingRoutine routine, bool isChecked) {
     if (mMode == EPresetWidgetMode::eArduino) {
-        int index = (int)routine - (int)utils::ELightingRoutineSingleColorEnd - 1;
+        int index = (int)routine - (int)cor::ELightingRoutineSingleColorEnd - 1;
         mButtons[index]->button->setChecked(isChecked);
         if (isChecked) {
             mButtons[index]->button->setStyleSheet(kCheckedStyleSheet);

@@ -7,11 +7,11 @@
 #include <QPushButton>
 #include <QScrollArea>
 
-#include "corlumaslider.h"
+#include "cor/slider.h"
 #include "comm/commlayer.h"
 #include "groupsparser.h"
 #include "settingsbutton.h"
-#include "corlumawebview.h"
+#include "cor/webview.h"
 #include "globalsettingswidget.h"
 
 
@@ -24,7 +24,7 @@ enum class ECorlumaWebView {
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  *
@@ -138,7 +138,7 @@ protected:
 private:
 
     /// top widget with settings title and close button
-    CorlumaTopWidget *mTopWidget;
+    cor::TopWidget *mTopWidget;
 
     /// scroll area that contains all the information in the widget
     QScrollArea *mScrollArea;
@@ -212,10 +212,10 @@ private:
     std::vector<SettingsButton*> mButtons;
 
     /// widget displaying copyright information
-    CorlumaWebView *mCopyrightWidget;
+    cor::WebView *mCopyrightWidget;
 
     /// widget displaying an FAQ
-    CorlumaWebView *mFAQWidget;
+    cor::WebView *mFAQWidget;
 
     /// true if showing debug options, false otherwise.
     bool mShowingDebug;

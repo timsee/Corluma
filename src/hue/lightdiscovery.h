@@ -6,31 +6,34 @@
 #include <QLabel>
 #include <QPushButton>
 
-#include "corlumatopwidget.h"
+#include "cor/topwidget.h"
 #include "searchwidget.h"
 #include "comm/commlayer.h"
 
+namespace hue
+{
+
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
 /*!
- * \brief The HueLightDiscovery class is a widget that provides a UI for
+ * \brief The LightDiscovery class is a widget that provides a UI for
  *        discovering new hue lights. The Bridge gets its scanning state turned
  *        on for automatic discovery. The user can also input serial numbers for the bridge
  *        to use for manual discovery. All new lights found from this discovery state are added
  *        to the widget in a list.
  */
-class HueLightDiscovery : public QWidget
+class LightDiscovery : public QWidget
 {
     Q_OBJECT
 
 public:
 
     /// constructor
-    explicit HueLightDiscovery(QWidget *parent = 0);
+    explicit LightDiscovery(QWidget *parent = 0);
 
     /// connect the comm layer
     void connectCommLayer(CommLayer *layer) { mComm = layer; }
@@ -92,7 +95,7 @@ private:
     QTimer *mDiscoveryTimer;
 
     /// top widget with title and close button
-    CorlumaTopWidget *mTopWidget;
+    cor::TopWidget *mTopWidget;
 
     /// widget for entering serial numbers and displaying names of discovered lights
     SearchWidget *mSearchWidget;
@@ -102,4 +105,5 @@ private:
 
 };
 
+}
 #endif // HUELIGHTDISCOVERY_H

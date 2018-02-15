@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -8,8 +8,8 @@
 
 #include "mainwindow.h"
 #include "topmenu.h"
-#include "corlumautils.h"
-
+#include "cor/utils.h"
+#include "hue/huelight.h"
 
 TopMenu::TopMenu(DataLayer* data, CommLayer* comm, QWidget *parent) : QWidget(parent) {
 
@@ -34,7 +34,7 @@ TopMenu::TopMenu(DataLayer* data, CommLayer* comm, QWidget *parent) : QWidget(pa
     mColorPageButton->setIcon(QIcon(":images/colorWheel_icon.png"));
     connect(mColorPageButton, SIGNAL(clicked(bool)), this, SLOT(colorButtonPressed()));
 
-    mGroupPageButton = new CorlumaButton(this);
+    mGroupPageButton = new cor::Button(this);
     mGroupPageButton->setupAsMenuButton((int)EPage::eGroupPage,  mData->colorGroup(EColorGroup::eFire));
     mGroupPageButton->button->setStyleSheet("background-color: rgb(52, 52, 52); ");
     mGroupPageButton->button->setCheckable(true);
@@ -58,7 +58,7 @@ TopMenu::TopMenu(DataLayer* data, CommLayer* comm, QWidget *parent) : QWidget(pa
     // Setup Brightness Slider
     // --------------
     // setup the slider that controls the LED's brightness
-    mBrightnessSlider = new CorlumaSlider(this);
+    mBrightnessSlider = new cor::Slider(this);
     mBrightnessSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mBrightnessSlider->slider()->setRange(0,100);
     mBrightnessSlider->slider()->setValue(0);
@@ -173,12 +173,12 @@ void TopMenu::updateMenuBar() {
     // On/Off Data
     //-----------------
     if (mData->currentColorGroup() == EColorGroup::eCustom
-            && mData->currentRoutine() > utils::ELightingRoutineSingleColorEnd) {
+            && mData->currentRoutine() > cor::ELightingRoutineSingleColorEnd) {
         mIconData.setMultiLightingRoutine(mData->currentRoutine(),
                                           mData->currentColorGroup(),
                                           mData->currentGroup(),
                                           mData->customColorsUsed());
-    } else if (mData->currentRoutine() <= utils::ELightingRoutineSingleColorEnd) {
+    } else if (mData->currentRoutine() <= cor::ELightingRoutineSingleColorEnd) {
         mIconData.setSingleLightingRoutine(mData->currentRoutine(), mData->mainColor());
     } else {
         mIconData.setMultiLightingRoutine(mData->currentRoutine(), mData->currentColorGroup(), mData->currentGroup());
@@ -349,13 +349,13 @@ void TopMenu::updateColorGroupButton() {
     bool hasHue = mData->hasHueDevices();
     bool hasArduino = mData->hasArduinoDevices();
     if (hasHue && !hasArduino) {
-        std::list<SLightDevice> devices = mData->currentDevices();
-        std::list<SHueLight> hues;
+        std::list<cor::Light> devices = mData->currentDevices();
+        std::list<HueLight> hues;
         for (auto& device : devices) {
-            hues.push_back(mComm->hueLightFromLightDevice(device));
+            hues.push_back(mComm->hue()->hueLightFromLight(device));
         }
 
-        EHueType bestHueType = utils::checkForHueWithMostFeatures(hues);
+        EHueType bestHueType = checkForHueWithMostFeatures(hues);
         // get a vector of all the possible hue types for a check.
         if (bestHueType == EHueType::eWhite) {
             resizeMenuIcon(mColorPageButton, ":images/white_wheel.png", 0.75f);
@@ -528,12 +528,12 @@ void TopMenu::setupColorFloatingLayout() {
     std::vector<QString> verticalButtons;
     if (hasHue && !hasArduino) {
         // get list of all current devices
-        std::list<SLightDevice> devices = mData->currentDevices();
-        std::list<SHueLight> hues;
+        std::list<cor::Light> devices = mData->currentDevices();
+        std::list<HueLight> hues;
         for (auto& device : devices) {
-            hues.push_back(mComm->hueLightFromLightDevice(device));
+            hues.push_back(mComm->hue()->hueLightFromLight(device));
         }
-        EHueType bestHueType = utils::checkForHueWithMostFeatures(hues);
+        EHueType bestHueType = checkForHueWithMostFeatures(hues);
         // get a vector of all the possible hue types for a check.
         if (bestHueType == EHueType::eWhite) {
             mColorPage->changePageType(EColorPageType::eBrightness, true);

@@ -8,7 +8,7 @@
 #include "lightingpage.h"
 #include "discoverypage.h"
 #include "icondata.h"
-#include "corlumabutton.h"
+#include "cor/button.h"
 #include "floatinglayout.h"
 #include "comm/commtypesettings.h"
 #include "comm/commlayer.h"
@@ -22,13 +22,13 @@
 #include "colorpage.h"
 #include "grouppage.h"
 #include "connectionpage.h"
-#include "huelightinfolistwidget.h"
-#include "huelightdiscovery.h"
+#include "hue/lightinfolistwidget.h"
+#include "hue/lightdiscovery.h"
 #include <QStackedWidget>
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  * \brief The MainWindow class is the only window in this application.
@@ -245,7 +245,7 @@ private:
      * \brief mHueInfoWidget displays information about hue lights, including their serial numbers and their
      *        software versions. Can edit light names and delete lights from the Bridge.
      */
-    HueLightInfoListWidget *mHueInfoWidget;
+    hue::LightInfoListWidget *mHueInfoWidget;
 
     /*!
      * \brief mSettingsPage overlay widget that allows access to various app settings such as loading from
@@ -265,7 +265,7 @@ private:
     /*!
      * \brief mHueLightDiscovery widget for
      */
-    HueLightDiscovery *mHueLightDiscovery;
+    hue::LightDiscovery *mHueLightDiscovery;
 
     /*!
      * \brief mDiscoveryPage page devoted to discovering new connections. Previous connections

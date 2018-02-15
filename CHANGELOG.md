@@ -251,6 +251,14 @@ ___
 * Sped up communication to arduinos over wireless. 
 * Fixed bug with using manual IP addresses to discovery Hue Bridges.
 
+### **v0.12.0**
+#### The Second Great Refactor Update
+* Added support for RGB-LED-Routines API 2.1, which adds unique names to arduino lights.
+* Added namespace `hue` for hue specific code.
+* Added namespace `cor` for files that started with `Corluma` and functions that were previously part of `utils`.
+* Removed namespace `utils`.
+* Turned structs `SDeviceController`, `SLightDevice`, and `SHueLight` into classes.
+* Fixed warnings from Clang Static Analyzer and expensive functions found by Valgrind function profiler.
 
 ### Coming Soon
 * Finish manual discovery of Hues and Bridges

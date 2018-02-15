@@ -11,7 +11,7 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -83,7 +83,7 @@ private:
      * \param commDevice device from the comm layer
      * \return true if they match, false otherwise
      */
-    bool sync(const SLightDevice& dataDevice, const SLightDevice& commDevice) override;
+    bool sync(const cor::Light& dataDevice, const cor::Light& commDevice) override;
 
     /*!
      * \brief endOfSync end the sync thread and start the cleanup thread.

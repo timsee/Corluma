@@ -1,12 +1,12 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
 #include "tempbrightsliders.h"
-#include "lightdevice.h"
-#include "corlumautils.h"
+#include "cor/light.h"
+#include "cor/utils.h"
 
 TempBrightSliders::TempBrightSliders(QWidget *parent) : QWidget(parent) {
 
@@ -16,7 +16,7 @@ TempBrightSliders::TempBrightSliders(QWidget *parent) : QWidget(parent) {
     // --------------
     // Setup Slider
     // --------------
-    mBrightnessSlider = new CorlumaSlider(this);
+    mBrightnessSlider = new cor::Slider(this);
     mBrightnessSlider->setSliderColorBackground(QColor(255.0f * mBrightness / 100.0f,
                                                        255.0f * mBrightness / 100.0f,
                                                        255.0f * mBrightness / 100.0f));
@@ -31,8 +31,8 @@ TempBrightSliders::TempBrightSliders(QWidget *parent) : QWidget(parent) {
     connect(mBrightnessSlider->slider(), SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
 
 
-    mTemperatureSlider = new CorlumaSlider(this);
-    mTemperatureSlider->setSliderColorBackground(utils::colorTemperatureToRGB(300));
+    mTemperatureSlider = new cor::Slider(this);
+    mTemperatureSlider->setSliderColorBackground(cor::colorTemperatureToRGB(300));
     mTemperatureSlider->slider()->setRange(153, 500);
     mTemperatureSlider->slider()->blockSignals(true);
     mTemperatureSlider->slider()->setValue(mTemperature);
@@ -74,7 +74,7 @@ void TempBrightSliders::changeTemperatureAndBrightness(int temperature, int brig
         mTemperature = temperature;
         mBrightness = brightness;
 
-        mTemperatureSlider->setSliderColorBackground(utils::colorTemperatureToRGB(temperature));
+        mTemperatureSlider->setSliderColorBackground(cor::colorTemperatureToRGB(temperature));
 
         mTemperatureSlider->blockSignals(true);
         mTemperatureSlider->slider()->setValue(temperature);

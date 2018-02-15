@@ -2,10 +2,10 @@
 #define RGBSLIDERS_H
 
 #include <QWidget>
-#include "corlumaslider.h"
+#include "cor/slider.h"
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  *
@@ -68,17 +68,17 @@ private:
     /*!
      * \brief mRedSlider top slider. Used for choosing amount of red in color.
      */
-    CorlumaSlider *mRedSlider;
+    cor::Slider *mRedSlider;
 
     /*!
      * \brief mGreenSlider middle slider. Used for choosing amount of green in color.
      */
-    CorlumaSlider *mGreenSlider;
+    cor::Slider *mGreenSlider;
 
     /*!
      * \brief mBlueSlider bottom slider. Used for choosing amount of blue in color.
      */
-    CorlumaSlider *mBlueSlider;
+    cor::Slider *mBlueSlider;
 
     /*!
      * \brief mRLabel puts that little "R" in front of the slider.

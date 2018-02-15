@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QWidget>
 #include <QLabel>
-#include "corlumabutton.h"
+#include "cor/button.h"
 
 enum class EPresetWidgetMode {
     eArduino,
@@ -13,7 +13,7 @@ enum class EPresetWidgetMode {
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  *
@@ -74,7 +74,7 @@ private:
      * \brief mButtons Buttons used in the grid in the scroll area, each one signals
      *        a EColorPreset and a ELightingMode.
      */
-    std::vector<CorlumaButton *> mButtons;
+    std::vector<cor::Button *> mButtons;
 
     /*!
      * \brief mLabel label for name of preset group.

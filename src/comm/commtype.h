@@ -13,65 +13,15 @@
 #include <QTime>
 #include <QTimer>
 
-#include "lightdevice.h"
+#include "cor/light.h"
+#include "cor/controller.h"
 #include "crccalculator.h"
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
-
-
-/*!
- * \brief The SDeviceController struct stores information about a Controller.
- *        A controller allows control of one or more light "Devices"
- */
-struct SDeviceController {
-
-    /// name of controller
-    QString name;
-
-    /// maximum number of devices controller can control
-    int maxHardwareIndex;
-
-    /// true if using CRC and appending to packets, false otherwise
-    bool isUsingCRC;
-
-    /// max number of bytes for a packet.
-    uint32_t maxPacketSize;
-
-    /// major API level of controller
-    uint32_t majorAPI;
-
-    /// minor API level of controller
-    uint32_t minorAPI;
-
-    /// type of controller
-    ECommType type;
-
-    /// creates a debug string for Controllers
-    QString to_string() {
-        QString string = name
-                + "\r\n API Level: " + QString::number(majorAPI) + "." + QString::number(minorAPI)
-                + "\r\n maxHardwareIndex: "
-                + QString::number(maxHardwareIndex)
-                + " \r\n CRC: " + QString::number(isUsingCRC)
-                + " \r\n maxPacketSize: " + QString::number(maxPacketSize);
-        return string;
-    }
-};
-
-/// equal operator
-inline bool operator==(const SDeviceController& lhs, const SDeviceController& rhs)
-{
-    bool result = true;
-    if (lhs.name.compare(rhs.name)) result = false;
-    if (lhs.maxHardwareIndex    !=  rhs.maxHardwareIndex) result = false;
-    if (lhs.isUsingCRC          !=  rhs.isUsingCRC) result = false;
-    if (lhs.type                !=  rhs.type) result = false;
-    return result;
-}
 
 
 /*!
@@ -116,7 +66,7 @@ public:
      *        connection stream.
      * \param packet the packet that is going to be sent
      */
-    virtual void sendPacket(SDeviceController controller, QString packet) = 0;
+    virtual void sendPacket(const cor::Controller& controller, QString& packet) = 0;
 
 
     // ----------------------------
@@ -169,34 +119,34 @@ public:
      * \param connection the connection you want to remove
      * \return true if the connection exists and was removed, false if it wasn't there in the first place
      */
-    bool removeController(SDeviceController controller);
+    bool removeController(cor::Controller controller);
 
     /*!
      * \brief updateDevice update all the data in the light device that matches the same controller and index.
      *        if a light device doesn't exist with these properties, then it creates a new one.
      * \param device the new data for the light device.
      */
-    void updateDevice(SLightDevice device);
+    void updateDevice(cor::Light device);
 
     /*!
-     * \brief fillDevice takes the controller and index of the referenced SLightDevice and overwrites all other
+     * \brief fillDevice takes the controller and index of the referenced cor::Light and overwrites all other
      *        values with the values stored in the device table.
-     * \param device a SLightDevice struct that has its index and controller filled in.
+     * \param device a cor::Light struct that has its index and controller filled in.
      * \return true if device is found and filled, false otherwise.
      */
-    bool fillDevice(SLightDevice& device);
+    bool fillDevice(cor::Light& device);
 
     /*!
      * \brief deviceList list of the light devices
      * \return list of the light devices
      */
-    const std::unordered_map<std::string, std::list<SLightDevice> >& deviceTable() { return mDeviceTable; }
+    const std::unordered_map<std::string, std::list<cor::Light> >& deviceTable() { return mDeviceTable; }
 
     /*!
      * \brief discoveredList getter for list of discovered devices
      * \return list of discovered devices.
      */
-    const std::list<SDeviceController>& discoveredList() { return mDiscoveredList; }
+    const std::list<cor::Controller>& discoveredList() { return mDiscoveredList; }
 
     /*!
      * \brief undiscoveredList getter for list of undiscovered devices.
@@ -226,28 +176,28 @@ public:
 
 
     // ----------------------------
-    // SDeviceController helpers
+    // cor::Controller helpers
     // ----------------------------
 
     /*!
-     * \brief deviceControllerFromDiscoveryString takes a discovery string, a controller name, and an empty SDeviceController as input.
-     *       If parsing the string  is successful, it fills the SDeviceController with the info from the discovery string. If its
+     * \brief deviceControllerFromDiscoveryString takes a discovery string, a controller name, and an empty cor::Controller as input.
+     *       If parsing the string  is successful, it fills the cor::Controller with the info from the discovery string. If its
      *       unsucessful, it returns false.
      * \param discovery string received as discovery string
      * \param controllerName name of controller
      * \param controller filled if discovery string is valid.
      * \return true if discovery string is valid, false otherwise.
      */
-    bool deviceControllerFromDiscoveryString(QString discovery, QString controllerName, SDeviceController& controller);
+    bool deviceControllerFromDiscoveryString(QString discovery, QString controllerName, cor::Controller& controller);
 
     /*!
-     * \brief findDiscoveredController checks for a discovered controller with the given name. Returns true and fills the SDeviceController
+     * \brief findDiscoveredController checks for a discovered controller with the given name. Returns true and fills the cor::Controller
      *        given as input if one is found, returns false if one isnt found
      * \param controllerName name of controller to look for
      * \param output filled a controller is found
      * \return true if one is found, false otherwise.
      */
-    bool findDiscoveredController(QString controllerName, SDeviceController& output);
+    bool findDiscoveredController(QString controllerName, cor::Controller& output);
 
     /*!
      * \brief handleIncomingPacket All packets that are sent to any commtype get sent through this function to be sorted
@@ -255,7 +205,7 @@ public:
      * \param controllerName name of controller sending payload
      * \param payload payload received from controller
      */
-    void handleIncomingPacket(QString controllerName, QString payload);
+    void handleIncomingPacket(const QString& controllerName, const QString& payload);
 
 signals:
     /*!
@@ -277,7 +227,7 @@ protected:
      * \param controller the controller to send the packet the to
      * \param packet the packet that is about to be sent
      */
-    void preparePacketForTransmission(const SDeviceController& controller, QString& packet);
+    void preparePacketForTransmission(const cor::Controller& controller, QString& packet);
 
     /*!
      * \brief resetDiscovery clears the throttle list and discovery list and treats the commtype as if
@@ -308,7 +258,7 @@ protected:
      *        the discovery timer.
      * \param sender the controller that is sending the discovery packet.
      */
-    void handleDiscoveryPacket(SDeviceController sender);
+    void handleDiscoveryPacket(cor::Controller sender);
 
     /// used to add CRC to outgoing packets.
     CRCCalculator mCRC;
@@ -326,7 +276,7 @@ protected:
      * \brief mDeviceTable hash table of all available devices. the hash key is the controller name
      *        and the list associated with it is all known devices connected to that controller.
      */
-    std::unordered_map<std::string, std::list<SLightDevice> > mDeviceTable;
+    std::unordered_map<std::string, std::list<cor::Light> > mDeviceTable;
 
     /*!
      * \brief mUndiscoveredList list of controllers that are not currently discovered but are running
@@ -337,7 +287,7 @@ protected:
     /*!
      * \brief mDiscoveredList list of devices that have been discovered properly.
      */
-    std::list<SDeviceController> mDiscoveredList;
+    std::list<cor::Controller> mDiscoveredList;
 
     /*!
      * \brief mStateUpdateTimer Polls the controller every few seconds requesting

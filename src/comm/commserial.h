@@ -12,7 +12,7 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  *
@@ -56,7 +56,7 @@ public:
      * \param packet the string that is going to be sent over
      *        serial.
      */
-    void sendPacket(SDeviceController controller, QString packet);
+    void sendPacket(const cor::Controller& controller, QString& packet);
 
     /*!
      * \brief lookingForActivePorts true if looking for active ports, false otherwise.

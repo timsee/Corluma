@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -36,21 +36,11 @@ LightingRoutines::LightingRoutines(uint16_t ledCount)
     }
 
     // allocate the arrays not known at runtime.
-    if((r_buffer = (uint8_t*)malloc(ledCount))) {
-        memset(r_buffer, 0, ledCount);
-    }
+    r_buffer = std::vector<uint8_t>(ledCount, 0);
+    g_buffer = std::vector<uint8_t>(ledCount, 0);
+    b_buffer = std::vector<uint8_t>(ledCount, 0);
 
-    if((g_buffer = (uint8_t*)malloc(ledCount))) {
-        memset(g_buffer, 0, ledCount);
-    }
-
-    if((b_buffer = (uint8_t*)malloc(ledCount))) {
-        memset(b_buffer, 0, ledCount);
-    }
-
-    if((m_temp_buffer = (uint8_t*)malloc(ledCount))) {
-        memset(m_temp_buffer, 0, ledCount);
-    }
+    m_temp_buffer = std::vector<uint8_t>(ledCount, 0);
 
     // all colors gets set before use since it changes each times
     resetToDefaults();
@@ -752,9 +742,9 @@ LightingRoutines::movingBufferSetup(uint16_t colorCount, uint8_t groupSize, uint
 void
 LightingRoutines::fillColorBuffers(uint8_t r, uint8_t g, uint8_t b)
 {
-    memset(r_buffer, r, m_LED_count);
-    memset(g_buffer, g, m_LED_count);
-    memset(b_buffer, b, m_LED_count);
+    std::fill(r_buffer.begin(), r_buffer.end(), r);
+    std::fill(g_buffer.begin(), r_buffer.end(), g);
+    std::fill(b_buffer.begin(), r_buffer.end(), b);
 }
 
 void

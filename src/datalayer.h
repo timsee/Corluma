@@ -13,7 +13,7 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  *
@@ -222,7 +222,7 @@ public:
      * \param brightness new brightness
      * \param specialCaseDevices certain hue devices handle brightness differently. This list contains all ambient and white hue lights.
      */
-    void updateBrightness(int brightness, std::list<SLightDevice> specialCaseDevices = std::list<SLightDevice>());
+    void updateBrightness(int brightness, std::list<cor::Light> specialCaseDevices = std::list<cor::Light>());
 
     /*!
      * \brief updateCt update the color temperature. Only supported by Hue lights.
@@ -237,14 +237,14 @@ public:
      * \param device new device for the connected devices list
      * \return true if device was valid and added, false otherwise.
      */
-    bool addDevice(SLightDevice device);
+    bool addDevice(cor::Light device);
 
     /*!
      * \brief doesDeviceExist checks if device exist in connected device list
      * \param device device to search for
      * \return true if the device exists, false otherwise.
      */
-    bool doesDeviceExist(SLightDevice device);
+    bool doesDeviceExist(cor::Light device);
 
     /*!
      * \brief clearDevices remove all devices from the current connected devices list.
@@ -265,14 +265,14 @@ public:
      * \param list list of devices to add
      * \return true if all are added, false otherwise.
      */
-    bool addDeviceList(const std::list<SLightDevice>& list);
+    bool addDeviceList(const std::list<cor::Light>& list);
 
     /*!
      * \brief removeDeviceList
      * \param list
      * \return
      */
-    bool removeDeviceList(const std::list<SLightDevice>& list);
+    bool removeDeviceList(const std::list<cor::Light>& list);
 
     /*!
      * \brief removeDevice remove specific device from connected device list.
@@ -280,7 +280,7 @@ public:
      *        only the device controllerName, index, and type need to match
      * \return true if a device is removed, false otherwise.
      */
-    bool removeDevice(SLightDevice device);
+    bool removeDevice(cor::Light device);
 
     /*!
      * \brief removeDevicesOfType if they exist, removes devices from currentDevices list that match
@@ -303,7 +303,7 @@ public:
      *        connection info and device settings
      * \return the current device pair.
      */
-    const std::list<SLightDevice>& currentDevices() { return mCurrentDevices; }
+    const std::list<cor::Light>& currentDevices() { return mCurrentDevices; }
 
     /*!
      * \brief hasHueDevices helper that determines if you should be using hue-related assets
@@ -369,7 +369,7 @@ private:
      * \todo complete support of multiple devices in datalayer. currently this is a vector of
      *       size 1 in preparation.
      */
-    std::list<SLightDevice> mCurrentDevices;
+    std::list<cor::Light> mCurrentDevices;
 
     /*!
      * \brief mCommTypeSettings maintains which comnmtypes are currently enabled.

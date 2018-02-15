@@ -9,11 +9,11 @@
 #include "icondata.h"
 #include "comm/commtype.h"
 #include "listcollectionsubwidget.h"
-#include "corlumastatusicon.h"
+#include "cor/statusicon.h"
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  *
@@ -35,7 +35,7 @@ public:
      * \param size desired size of widget
      * \param parent parent widget
      */
-    explicit ListDeviceWidget(const SLightDevice& device,
+    explicit ListDeviceWidget(const cor::Light& device,
                               const std::vector<QColor>& colors,
                               bool setHighlightable,
                               QSize size,
@@ -47,7 +47,7 @@ public:
      * \param colors all the color groups in the data layer, in case the device uses
      *        the color groups
      */
-    void updateWidget(const SLightDevice& device,
+    void updateWidget(const cor::Light& device,
                       const std::vector<QColor>& colors);
 
     /*!
@@ -68,7 +68,7 @@ public:
      * \brief device getter for device
      * \return device displayed by widget
      */
-    const SLightDevice&  device()  { return mDevice; }
+    const cor::Light&  device()  { return mDevice; }
 
 signals:
     /*!
@@ -90,15 +90,15 @@ protected:
 
 private:
     /*!
-     * \brief structToIdentifierString converts a SLightDevice struct to a string in the format
+     * \brief structToIdentifierString converts a cor::Light struct to a string in the format
      *        of comma delimited values with only the values needed to identiy if as unique.
      * \param dataStruct the struct to convert to a string
-     * \return a comma delimited string that represents all values in the SLightDevice.
+     * \return a comma delimited string that represents all values in the cor::Light.
      */
-    QString structToIdentifierString(const SLightDevice& device);
+    QString structToIdentifierString(const cor::Light& device);
 
     /// Called by constructors
-    void init(const SLightDevice& device);
+    void init(const cor::Light& device);
 
     /// adds capitalization and stuff like that to a hue name.
     QString convertUglyHueNameToPrettyName(QString name);
@@ -109,14 +109,14 @@ private:
      * \param device a read only version of the device
      * \return a string that represents the style sheet
      */
-    QString createStyleSheet(const SLightDevice& device);
+    QString createStyleSheet(const cor::Light& device);
 
     /*!
      * \brief createName create the name to display in the Qlabel
      * \param device the device information to generate the name
      * \return A "pretty" version of the name of the light device.
      */
-    QString createName(const SLightDevice& device);
+    QString createName(const cor::Light& device);
 
     /// resize the mIcon and its associated pixmap.
     void resizeIconPixmap();
@@ -130,7 +130,7 @@ private:
     QLabel *mDeviceIcon;
 
     /// Shows the status of the device. Shows if it is off, on, how bright it is, or if it is unreachable.
-    CorlumaStatusIcon *mStatusIcon;
+    cor::StatusIcon *mStatusIcon;
 
     /// label for the type icon, used to show what type of device it is (a hue, or an arduino)
     QLabel *mTypeIcon;
@@ -158,9 +158,9 @@ private:
     QGridLayout *mLayout;
 
     /*!
-     * \brief mDevice stores the SLightDevice used by the widget.
+     * \brief mDevice stores the cor::Light used by the widget.
      */
-    SLightDevice mDevice;
+    cor::Light mDevice;
 
     /*!
      * \brief mIsChecked true if checked, false otherwise

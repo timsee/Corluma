@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -38,7 +38,7 @@ void CommHTTP::shutdown() {
     mHasStarted = false;
 }
 
-void CommHTTP::sendPacket(SDeviceController controller, QString packet) {
+void CommHTTP::sendPacket(const cor::Controller& controller, QString& packet) {
     // commtype function for adding CRC (if needed) and resetting flags (if needed)
     preparePacketForTransmission(controller, packet);
 
@@ -76,7 +76,7 @@ void CommHTTP::stateUpdate() {
 void CommHTTP::discoveryRoutine() {
    for (auto&& it : mDeviceTable) {
        QString controllerName = QString::fromUtf8(it.first.c_str());
-       SDeviceController output;
+       cor::Controller output;
        bool found = findDiscoveredController(controllerName, output);
          if (!found) {
              QString urlString = "http://" + controllerName + "/arduino/" + kDiscoveryPacketIdentifier;

@@ -1,13 +1,16 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
-#include "corlumatopwidget.h"
-#include "corlumautils.h"
+#include "topwidget.h"
+#include "cor/utils.h"
 
-CorlumaTopWidget::CorlumaTopWidget(QString title, QString resource, QWidget *parent) : QWidget(parent)
+namespace cor
+{
+
+TopWidget::TopWidget(QString title, QString resource, QWidget *parent) : QWidget(parent)
 {
     mLayout = new QHBoxLayout();
 
@@ -29,16 +32,18 @@ CorlumaTopWidget::CorlumaTopWidget(QString title, QString resource, QWidget *par
     this->setLayout(mLayout);
 }
 
-void CorlumaTopWidget::setFontPoint(int pt) {
+void TopWidget::setFontPoint(int pt) {
     QString stylesheet = "font-size:" + QString::number(pt)+ "pt;";
     mTitle->setStyleSheet(stylesheet);
 }
 
-void CorlumaTopWidget::buttonPressed(bool pressed) {
+void TopWidget::buttonPressed(bool pressed) {
     emit clicked(pressed);
 }
 
-void CorlumaTopWidget::resizeEvent(QResizeEvent *) {
+void TopWidget::resizeEvent(QResizeEvent *) {
     mButton->setFixedWidth(mButton->height());
-    utils::resizeIcon(mButton, mResource, 0.5f);
+    cor::resizeIcon(mButton, mResource, 0.5f);
+}
+
 }

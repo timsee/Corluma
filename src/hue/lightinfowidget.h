@@ -7,32 +7,37 @@
 
 #include "editablefieldwidget.h"
 
-#include "comm/hueprotocols.h"
+#include "hue/hueprotocols.h"
+#include "hue/huelight.h"
+
+namespace hue
+{
+
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
 /*!
- * \brief The HueLightInfoWidget class is a widget made to be displayed in lists
+ * \brief The LightInfoWidget class is a widget made to be displayed in lists
  *        that contains the name of a light and much of its hardware information such
  *        as its model number and software version. The user can also edit the name of
  *        light from this widget. If an edit is made, this widget signals out the new name
  *        for it to be sent to the bridge.
  */
-class HueLightInfoWidget : public QWidget
+class LightInfoWidget : public QWidget
 {
     Q_OBJECT
 public:
     /// constructor
-    explicit HueLightInfoWidget(SHueLight light, QWidget *parent = 0);
+    explicit LightInfoWidget(HueLight light, QWidget *parent = 0);
 
     /*!
      * \brief updateLight update the light used internally to fill the widget
      * \param light new data for the light.
      */
-    void updateLight(SHueLight light);
+    void updateLight(HueLight light);
 
     /*!
      * \brief hideDetails true to show only the basic details of a widget, false
@@ -57,7 +62,7 @@ public:
     const QString& key() { return mKey; }
 
     /// getter for SHueLight being represented.
-    SHueLight light() { return mLight; }
+    HueLight light() { return mLight; }
 
     /// true if details are hidden, false otherwise
     bool detailsHidden() { return mHideDetails; }
@@ -129,10 +134,12 @@ private:
     QLabel *mSoftwareVersion;
 
     /// stored data the Hue Light being displayed by this widget.
-    SHueLight mLight;
+    HueLight mLight;
 
     /// used for setting the height;
     int mHeight;
 };
+
+}
 
 #endif // HUELIGHTINFOWIDGET_H

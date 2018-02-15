@@ -10,7 +10,7 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  * \brief The DataSyncSettings class is a datasync thread that syncs the desired global settings from the datalayer with all
@@ -72,10 +72,10 @@ private:
      * \param dataDevice device from the data layer
      * \return true if they match, false otherwise
      */
-    bool sync(const SLightDevice& availableDevice);
+    bool sync(const cor::Light& availableDevice);
 
     /// standard sync, not implemented for settings
-    bool sync(const SLightDevice& dataDevice, const SLightDevice& commDevice) override;
+    bool sync(const cor::Light& dataDevice, const cor::Light& commDevice) override;
 
     /*!
      * \brief endOfSync end the sync thread and start the cleanup thread.

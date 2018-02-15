@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -60,7 +60,7 @@ ListDevicesGroupWidget::ListDevicesGroupWidget(const SLightGroup& group,
     mLayout->addWidget(mWidget);
 }
 
-void ListDevicesGroupWidget::updateDevices(std::list<SLightDevice> devices, bool removeIfNotFound) {
+void ListDevicesGroupWidget::updateDevices(std::list<cor::Light> devices, bool removeIfNotFound) {
     mGroup.devices = devices;
     for (auto&& inputDevice : devices) {
         bool foundDevice = false;
@@ -73,8 +73,8 @@ void ListDevicesGroupWidget::updateDevices(std::list<SLightDevice> devices, bool
             //----------------
             // Update Widget, if it already exists
             //----------------
-            SLightDevice existingDevice = existingWidget->device();
-            if (compareLightDevice(inputDevice, existingDevice)) {
+            cor::Light existingDevice = existingWidget->device();
+            if (compareLight(inputDevice, existingDevice)) {
                 foundDevice = true;
                 existingWidget->updateWidget(inputDevice, mData->colorGroup(inputDevice.colorGroup));
             }
@@ -84,17 +84,20 @@ void ListDevicesGroupWidget::updateDevices(std::list<SLightDevice> devices, bool
         //----------------
         // Create Widget, if not found
         //----------------
+
         if (!foundDevice) {
             // TODO: remove edge case...
-            if (inputDevice.color.isValid()) {
-                ListDeviceWidget *widget = new ListDeviceWidget(inputDevice,
-                                                                mData->colorGroup(inputDevice.colorGroup),
-                                                                false,
-                                                                mWidgetSize,
-                                                                this);
-                connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
-                //widget->setFixedSize(mWidgetSize);
-                insertWidgetIntoGrid(widget);
+            if ((inputDevice.type() != ECommType::eHue && inputDevice.isReachable)
+                    || inputDevice.type() == ECommType::eHue) {
+                if (inputDevice.color.isValid()) {
+                    ListDeviceWidget *widget = new ListDeviceWidget(inputDevice,
+                                                                    mData->colorGroup(inputDevice.colorGroup),
+                                                                    false,
+                                                                    mWidgetSize,
+                                                                    this);
+                    connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
+                    insertWidgetIntoGrid(widget);
+                }
             }
         }
     }
@@ -109,7 +112,7 @@ void ListDevicesGroupWidget::updateDevices(std::list<SLightDevice> devices, bool
 
             bool found = false;
             for (auto device : devices) {
-                if (compareLightDevice(device, existingWidget->device())) {
+                if (compareLight(device, existingWidget->device())) {
                     found = true;
                 }
             }
@@ -161,16 +164,16 @@ void ListDevicesGroupWidget::setShowButtons(bool show) {
     emit buttonsShown(mKey, mShowButtons);
 }
 
-void ListDevicesGroupWidget::setCheckedDevices(std::list<SLightDevice> devices) {
+void ListDevicesGroupWidget::setCheckedDevices(std::list<cor::Light> devices) {
     int numOfDevices = 0;
     for (auto&& existingWidget : mWidgets) {
         ListDeviceWidget *widget = qobject_cast<ListDeviceWidget*>(existingWidget);
         Q_ASSERT(widget);
 
-        SLightDevice widgetDevice = widget->device();
+        cor::Light widgetDevice = widget->device();
         bool found = false;
         for (auto&& device : devices) {
-            if (compareLightDevice(device, widgetDevice)) {
+            if (compareLight(device, widgetDevice)) {
                 numOfDevices++;
                 found = true;
                 widget->setHighlightChecked(true);

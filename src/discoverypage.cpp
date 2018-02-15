@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -106,15 +106,12 @@ void DiscoveryPage::renderUI() {
         ECommType type = static_cast<ECommType>(commInt);
         if (type != ECommType::eHTTP) {
             bool runningDiscovery =  mComm->runningDiscovery(type);
-            bool hasStarted = mComm->hasStarted(type);
             if (runningDiscovery) {
                 //qDebug() << "comm type running discovery" << ECommTypeToString(type) << ++test;
                 runningDiscovery = true;
             }
             if (!runningDiscovery
-                    && hasStarted
                     && (mComm->discoveredList(type).size() > 0)) {
-                hasStarted = true;
                 isAnyConnected = true;
             }
 

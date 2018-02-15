@@ -1,11 +1,11 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
 #include "settingsbutton.h"
-#include "corlumautils.h"
+#include "cor/utils.h"
 
 #include <QDebug>
 #include <QtCore>
@@ -16,7 +16,7 @@ SettingsButton::SettingsButton(QString title, QString description, QWidget *pare
     mIsHighlighted = false;
 
     mTitle = new QLabel(title);
-    utils::changeLabelToTitleLabel(mTitle);
+    cor::changeLabelToTitleLabel(mTitle);
 
     mDescription = new QLabel(description);
     mDescription->setWordWrap(true);

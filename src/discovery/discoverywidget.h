@@ -10,7 +10,7 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  *
@@ -53,11 +53,11 @@ protected:
     CommLayer *mComm;
 
     /*!
-     * \brief fillList helper to fill a list with SDeviceControllers
+     * \brief fillList helper to fill a list with cor::Controllers
      * \param list list widget to fill
-     * \param connections SDeviceControllers to use during filling.
+     * \param connections cor::Controllers to use during filling.
      */
-    void fillList(QListWidget *list, std::list<SDeviceController>& connections);
+    void fillList(QListWidget *list, std::list<cor::Controller>& connections);
 
     /*!
      * \brief fillList helper to fill a QListWidget with QStrings

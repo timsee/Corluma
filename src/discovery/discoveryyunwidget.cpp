@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -35,8 +35,8 @@ DiscoveryYunWidget::~DiscoveryYunWidget() {
 }
 
 void DiscoveryYunWidget::handleDiscovery(bool isCurrentCommType) {
-    std::list<SDeviceController> deviceTableUDP = mComm->discoveredList(ECommType::eUDP);
-    std::list<SDeviceController> deviceTableHTTP = mComm->discoveredList(ECommType::eHTTP);
+    std::list<cor::Controller> deviceTableUDP = mComm->discoveredList(ECommType::eUDP);
+    std::list<cor::Controller> deviceTableHTTP = mComm->discoveredList(ECommType::eHTTP);
 
     std::list<QString> discoveringUDP = mComm->undiscoveredList(ECommType::eUDP);
     std::list<QString> discoveringHTTP = mComm->undiscoveredList(ECommType::eHTTP);
@@ -113,7 +113,7 @@ void DiscoveryYunWidget::plusButtonClicked() {
 
 void DiscoveryYunWidget::minusButtonClicked() {
     if (doesYunControllerExistAlready(mSearchWidget->lineEditText())) {
-        SDeviceController controller;
+        cor::Controller controller;
         controller.name =  mSearchWidget->lineEditText();
         bool isSuccessful = mComm->removeController(ECommType::eUDP, controller);
         if (!isSuccessful) qDebug() << "WARNING: failure removing" << controller.name << "from UDP discovery list";

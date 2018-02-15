@@ -1,11 +1,11 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
-#include "corlumawebview.h"
-#include "corlumautils.h"
+#include "cor/webview.h"
+#include "cor/utils.h"
 
 #include <QFile>
 #include <QTextStream>
@@ -15,13 +15,16 @@
 #include <QStyleOption>
 #include <QScroller>
 
-CorlumaWebView::CorlumaWebView(QString title, QString htmlPath, QWidget *parent) : QWidget(parent) {
+namespace cor
+{
+
+WebView::WebView(QString title, QString htmlPath, QWidget *parent) : QWidget(parent) {
     mTextBrowser = new QTextBrowser(this);
     QScroller::grabGesture(mTextBrowser->viewport(), QScroller::LeftMouseButtonGesture);
     mTextBrowser->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mTextBrowser->setTextInteractionFlags(Qt::LinksAccessibleByMouse);
 
-    mTopWidget = new CorlumaTopWidget(title, ":images/closeX.png");
+    mTopWidget = new cor::TopWidget(title, ":images/closeX.png");
     connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(closeButtonPressed(bool)));
 
     QFile file(htmlPath);
@@ -47,7 +50,7 @@ CorlumaWebView::CorlumaWebView(QString title, QString htmlPath, QWidget *parent)
 }
 
 
-void CorlumaWebView::paintEvent(QPaintEvent *) {
+void WebView::paintEvent(QPaintEvent *) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
@@ -56,8 +59,9 @@ void CorlumaWebView::paintEvent(QPaintEvent *) {
     painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
 }
 
-void CorlumaWebView::closeButtonPressed(bool clicked) {
+void WebView::closeButtonPressed(bool clicked) {
     Q_UNUSED(clicked);
     emit closePressed();
 }
 
+}

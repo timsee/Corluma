@@ -7,13 +7,16 @@
 #include <QLayout>
 #include <QLabel>
 
-#include "huelightinfowidget.h"
+#include "hue/lightinfowidget.h"
 #include "comm/commhue.h"
-#include "corlumatopwidget.h"
+#include "cor/topwidget.h"
+
+namespace hue
+{
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -24,19 +27,19 @@
  *        from the Bridge. If the light is deleted from the Bridge, then it cannot be controlled again until
  *        it is rediscovered.
  */
-class HueLightInfoListWidget : public QWidget
+class LightInfoListWidget : public QWidget
 {
     Q_OBJECT
 public:
     /// constructor
-    explicit HueLightInfoListWidget(QWidget *parent = 0);
+    explicit LightInfoListWidget(QWidget *parent = 0);
 
     /*!
      * \brief updateLights update the lights displayed in the widget, normally called
      *        right before displaying the widget.
      * \param lights list of lights to load into the HusLightInfoListWidget
      */
-    void updateLights(std::list<SHueLight> lights);
+    void updateLights(std::list<HueLight> lights);
 
     /*!
      * \brief resize size the widget programmatically
@@ -97,7 +100,7 @@ private:
     QWidget *mScrollAreaWidget;
 
     /// title and close button at top of widget.
-    CorlumaTopWidget *mTopWidget;
+    cor::TopWidget *mTopWidget;
 
     /// button for deleting the currently selected widget
     QPushButton *mDeleteButton;
@@ -115,8 +118,10 @@ private:
     QScrollArea *mScrollArea;
 
     /// widgets displayed in scroll area
-    std::vector<HueLightInfoWidget *> mWidgets;
+    std::vector<LightInfoWidget *> mWidgets;
 
 };
+
+}
 
 #endif // HUELIGHTINFOLISTWIDGET_H

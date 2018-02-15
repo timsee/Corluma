@@ -9,7 +9,7 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  *
@@ -36,7 +36,6 @@ public:
     }
 
 protected:
-
 
     /*!
      * \brief mRenderThread timer that calls a renderUI() function on each of the pages.

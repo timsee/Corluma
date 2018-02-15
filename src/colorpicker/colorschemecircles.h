@@ -2,7 +2,7 @@
 #define COLORSCHEMECIRCLES_H
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 

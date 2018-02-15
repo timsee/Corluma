@@ -1,11 +1,11 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
 #include "colorpicker.h"
-#include "corlumautils.h"
+#include "cor/utils.h"
 
 #include <QDebug>
 #include <QSignalMapper>
@@ -327,7 +327,7 @@ void ColorPicker::handleMouseEvent(QMouseEvent *event) {
                              color.saturation(),
                              255);
                 // then calculate then use the resulting QColor to convert to color temperature.
-                int ct = utils::rgbToColorTemperature(color);
+                int ct = cor::rgbToColorTemperature(color);
                 chooseAmbient(ct, brightness);
                 mTempBrightSliders->changeTemperatureAndBrightness(ct, brightness);
             } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::eBrightnessLayout) {

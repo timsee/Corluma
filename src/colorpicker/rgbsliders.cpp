@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -10,7 +10,7 @@ RGBSliders::RGBSliders(QWidget *parent) : QWidget(parent) {
     // --------------
     // Setup Sliders
     // --------------
-    mRedSlider = new CorlumaSlider(this);
+    mRedSlider = new cor::Slider(this);
     mRedSlider->setSliderColorBackground(QColor(255, 0, 0));
     mRedSlider->slider()->setRange(0, 255);
     mRedSlider->setSnapToNearestTick(true);
@@ -19,7 +19,7 @@ RGBSliders::RGBSliders(QWidget *parent) : QWidget(parent) {
     connect(mRedSlider, SIGNAL(valueChanged(int)), this, SLOT(redSliderChanged(int)));
     connect(mRedSlider->slider(), SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
 
-    mGreenSlider = new CorlumaSlider(this);
+    mGreenSlider = new cor::Slider(this);
     mGreenSlider->setSliderColorBackground(QColor(0, 255, 0));
     mGreenSlider->slider()->setRange(0, 255);
     mRedSlider->setSnapToNearestTick(true);
@@ -28,7 +28,7 @@ RGBSliders::RGBSliders(QWidget *parent) : QWidget(parent) {
     connect(mGreenSlider, SIGNAL(valueChanged(int)), this, SLOT(greenSliderChanged(int)));
     connect(mGreenSlider->slider(), SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
 
-    mBlueSlider = new CorlumaSlider(this);
+    mBlueSlider = new cor::Slider(this);
     mBlueSlider->slider()->setRange(0, 255);
     mBlueSlider->setSliderColorBackground(QColor(0, 0, 255));
     mRedSlider->setSnapToNearestTick(true);

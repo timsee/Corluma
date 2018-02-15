@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -8,13 +8,17 @@
 #include <QtGui>
 #include <QStyleOption>
 
-#include "huelightdiscovery.h"
+#include "hue/lightdiscovery.h"
+#include "comm/commhue.h"
 
-HueLightDiscovery::HueLightDiscovery(QWidget *parent) : QWidget(parent) {
+namespace hue
+{
+
+LightDiscovery::LightDiscovery(QWidget *parent) : QWidget(parent) {
     //------------
     // Top Layout
     //------------
-    mTopWidget = new CorlumaTopWidget("Discover Hues", ":images/closeX.png");
+    mTopWidget = new cor::TopWidget("Discover Hues", ":images/closeX.png");
     connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(closeButtonPressed(bool)));
     mTopWidget->setFontPoint(20);
 
@@ -38,7 +42,7 @@ HueLightDiscovery::HueLightDiscovery(QWidget *parent) : QWidget(parent) {
 }
 
 
-void HueLightDiscovery::resize(bool resizeFullWidget) {
+void LightDiscovery::resize(bool resizeFullWidget) {
     QSize size = qobject_cast<QWidget*>(this->parent())->size();
     if (resizeFullWidget) {
         this->setGeometry(size.width() * 0.125f,
@@ -48,7 +52,7 @@ void HueLightDiscovery::resize(bool resizeFullWidget) {
     }
 }
 
-void HueLightDiscovery::paintEvent(QPaintEvent *) {
+void LightDiscovery::paintEvent(QPaintEvent *) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
@@ -57,31 +61,31 @@ void HueLightDiscovery::paintEvent(QPaintEvent *) {
     painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
 }
 
-void HueLightDiscovery::closeButtonPressed(bool) {
+void LightDiscovery::closeButtonPressed(bool) {
     emit closePressed();
 }
 
-void HueLightDiscovery::show() {
+void LightDiscovery::show() {
     mDiscoveryTimer->start(2500);
     discoveryRoutine();
-    mComm->searchForHueLights();
+    mComm->hue()->searchForNewLights();
 }
 
-void HueLightDiscovery::hide() {
+void LightDiscovery::hide() {
     if (mDiscoveryTimer->isActive()) {
         mDiscoveryTimer->stop();
     }
 
 }
 
-void HueLightDiscovery::discoveryRoutine() {
+void LightDiscovery::discoveryRoutine() {
     // get new lights, which also checks if a scan is active
-    mComm->requestNewHueLights();
+    mComm->hue()->requestNewLights();
     // see if any new lights have been added to UI
     bool newLightsAdded = false;
     for (auto serial : mSearchWidget->searchingFor()) {
         bool foundSerial = false;
-        for (auto searchingSerial : mComm->hueSearchingSerials()) {
+        for (auto searchingSerial : mComm->hue()->searchingLights()) {
             if (serial.compare(searchingSerial) == 0) {
                 foundSerial = true;
             }
@@ -92,13 +96,13 @@ void HueLightDiscovery::discoveryRoutine() {
     }
 
     // if scan is not active or if new lights have been added, restart scan
-    if (!mComm->hueScanIsActive() || newLightsAdded) {
-        qDebug() << " search for new lights! active: " << mComm->hueScanIsActive()  << " new lgihts added" << newLightsAdded;
-        mComm->searchForHueLights(mSearchWidget->searchingFor());
+    if (!mComm->hue()->scanIsActive() || newLightsAdded) {
+        qDebug() << " search for new lights! active: " << mComm->hue()->scanIsActive()  << " new lgihts added" << newLightsAdded;
+        mComm->hue()->searchForNewLights(mSearchWidget->searchingFor());
     }
 
     // if any changes happen, update UI
-    std::list<SHueLight> hues = mComm->newHueLights();
+    std::list<HueLight> hues = mComm->hue()->newLights();
 
     // iterate through all hues found
     for (auto hue : hues) {
@@ -111,11 +115,12 @@ void HueLightDiscovery::discoveryRoutine() {
 // ----------------------------
 
 
-void HueLightDiscovery::plusButtonClicked() {
+void LightDiscovery::plusButtonClicked() {
 
 }
 
-void HueLightDiscovery::minusButtonClicked() {
+void LightDiscovery::minusButtonClicked() {
 
 }
 
+}

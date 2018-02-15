@@ -2,11 +2,11 @@
 #define COMMTYPESETTINGS_H
 
 #include <QSettings>
-#include "lightdevice.h"
+#include "cor/light.h"
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  *

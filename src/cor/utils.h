@@ -12,15 +12,16 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
 
 #define TRANSITION_TIME_MSEC 150
 
-namespace utils
+namespace cor
 {
+
 
 /*!
  * \brief changeLabelToTitleLabel Takes a label, and increases its font size and makes the font bold.

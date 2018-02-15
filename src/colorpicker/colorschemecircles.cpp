@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -8,7 +8,7 @@
 #include <QStyleOption>
 #include <QDebug>
 #include "colorschemecircles.h"
-#include "corlumautils.h"
+#include "cor/utils.h"
 
 ColorSchemeCircles::ColorSchemeCircles(QImage renderedColorWheel, QWidget *parent) : QWidget(parent) {
     mCircles = std::vector<SPickerSelection>(4);
@@ -262,7 +262,7 @@ std::vector<SPickerSelection> ColorSchemeCircles::circles() {
 QPointF ColorSchemeCircles::findColorInWheel(QColor color) {
     for (int x = 0; x < mRenderedColorWheel.width(); ++x) {
         for (int y = 0; y < mRenderedColorWheel.height(); ++y) {
-            float colorDifference = utils::colorDifference(QColor(mRenderedColorWheel.pixel(x, y)), color);
+            float colorDifference = cor::colorDifference(QColor(mRenderedColorWheel.pixel(x, y)), color);
             // try specific values first, then try more general ones if none are found
             if (colorDifference < 0.01f) {
                 return QPointF(x / (float)mRenderedColorWheel.width(), y / (float)mRenderedColorWheel.height());

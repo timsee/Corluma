@@ -1,5 +1,5 @@
-#ifndef HUEBRIDGEDISCOVERY_H
-#define HUEBRIDGEDISCOVERY_H
+#ifndef HUE_BRIDGE_DISCOVERY_H
+#define HUE_BRIDGE_DISCOVERY_H
 
 #include <QObject>
 #include <QTimer>
@@ -14,11 +14,14 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-#include "hueprotocols.h"
+#include "hue/hueprotocols.h"
+
+namespace hue
+{
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  *
@@ -32,20 +35,20 @@
  *        to call startBridgeDiscovery() and stopBridgeDiscovery() in order to control it, it will
  *        automatically handle switching states as it receives and sends discovery packets.
  */
-class HueBridgeDiscovery : public QObject
+class BridgeDiscovery : public QObject
 {
     Q_OBJECT
 public:
 
     /*!
-     * \brief HueBridgeDiscovery Constructor
+     * \brief BridgeDiscovery Constructor
      */
-    explicit HueBridgeDiscovery(QObject *parent = 0);
+    explicit BridgeDiscovery(QObject *parent = 0);
 
     /*!
      * \brief Deconstructor
      */
-    ~HueBridgeDiscovery();
+    ~BridgeDiscovery();
 
     /*!
      * \brief startBridgeDiscovery checks if a bridge is currently discovered.
@@ -235,4 +238,6 @@ private:
 
 };
 
-#endif // HUEBRIDGEDISCOVERY_H
+}
+
+#endif // HUE_BRIDGE_DISCOVERY_H

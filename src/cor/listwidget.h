@@ -1,28 +1,32 @@
-#ifndef CORLUMALISTWIDGET_H
-#define CORLUMALISTWIDGET_H
+#ifndef COR_LIST_WIDGET_H
+#define COR_LIST_WIDGET_H
 
 #include <QWidget>
 #include <QScrollArea>
 
 #include "listcollectionwidget.h"
+
+namespace cor
+{
+
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
 /*!
- * \brief The CorlumaListWidget class is an instance of a QScrollArea designed
+ * \brief The ListWidget class is an instance of a QScrollArea designed
  *        to hold multiple ListCollectionWidgets in a scroll area that extends vertically.
  *        This widget also handles cases where the ListCollectionWidgets grow and shrink
  *        dynamically.
  */
-class CorlumaListWidget : public QScrollArea
+class ListWidget : public QScrollArea
 {
     Q_OBJECT
 public:
     /// constructor
-    CorlumaListWidget(QWidget *parent = 0);
+    ListWidget(QWidget *parent = 0);
 
     /*!
      * \brief addWidget add a ListCollectionWidget to the scroll area of this widget.
@@ -87,4 +91,5 @@ private slots:
     void widgetHeightChanged(int);
 };
 
-#endif // CORLUMALISTWIDGET_H
+}
+#endif // COR_LIST_WIDGET_H

@@ -3,11 +3,11 @@
 
 
 #include <QWidget>
-#include "corlumaslider.h"
+#include "cor/slider.h"
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  *
@@ -67,12 +67,12 @@ private:
      * \brief mTemperatureSlider slider that determines the "temperature" of the white LEDs. cooler whites
      *        have a blue tint and warmer whites have an orange tint.
      */
-    CorlumaSlider *mTemperatureSlider;
+    cor::Slider *mTemperatureSlider;
 
     /*!
      * \brief mBrightnessSlider slider that determines how bright the LEDs will shine.
      */
-    CorlumaSlider *mBrightnessSlider;
+    cor::Slider *mBrightnessSlider;
 
     /// currently unused, but in place so that slider sizes match other layouts
     QLabel *mTopLabel;

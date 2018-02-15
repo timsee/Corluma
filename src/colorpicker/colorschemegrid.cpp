@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 #include "colorschemegrid.h"
@@ -33,7 +33,7 @@ ColorSchemeGrid::ColorSchemeGrid(QWidget *parent) : QWidget(parent) {
 
 void ColorSchemeGrid::updateColorScheme(const std::vector<QColor> colorScheme) {
     int smallest = std::min(mColorCount, mMaximumSize);
-    for (uint32_t i = 0; i < mMaximumSize; ++i) {
+    for (int i = 0; i < (int)mMaximumSize; ++i) {
         if (i < smallest) {
             mColors[i] = colorScheme[i];
             int count = std::min((uint32_t)mMaximumSize, (uint32_t)colorScheme.size());

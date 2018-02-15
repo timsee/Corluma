@@ -116,18 +116,38 @@ SOURCES += main.cpp \
     comm/commpacketparser.cpp \
     comm/commtypesettings.cpp \
     comm/commlayer.cpp \
-    comm/huebridgediscovery.cpp \
     comm/crccalculator.cpp \
     comm/datasync.cpp \
+    comm/datasynchue.cpp \
+    comm/datasyncarduino.cpp \
+    comm/datasyncsettings.cpp \
     colorpicker/colorpicker.cpp \
     colorpicker/rgbsliders.cpp \
     colorpicker/tempbrightsliders.cpp \
     colorpicker/brightnessslider.cpp \
     colorpicker/colorgrid.cpp \
+    colorpicker/colorschemegrid.cpp \
+    colorpicker/colorschemecircles.cpp \
     discovery/discoveryserialwidget.cpp \
     discovery/discoverywidget.cpp \
     discovery/discoveryyunwidget.cpp \
     discovery/discoveryhuewidget.cpp \
+    discovery/hardwareconnectionwidget.cpp \
+    cor/light.cpp \
+    cor/utils.cpp \
+    cor/controller.cpp \
+    cor/button.cpp \
+    cor/checkbox.cpp \
+    cor/slider.cpp \
+    cor/listwidget.cpp \
+    cor/statusicon.cpp \
+    cor/topwidget.cpp \
+    cor/webview.cpp \
+    hue/lightdiscovery.cpp \
+    hue/lightinfolistwidget.cpp \
+    hue/lightinfowidget.cpp \
+    hue/bridgediscovery.cpp \
+    hue/huelight.cpp \
     mainwindow.cpp \
     settingspage.cpp \
     datalayer.cpp \
@@ -147,27 +167,10 @@ SOURCES += main.cpp \
     editgrouppage.cpp \
     routinebuttonswidget.cpp \
     colorpage.cpp \
-    corlumabutton.cpp \
-    corlumaslider.cpp \
-    corlumautils.cpp \
     topmenu.cpp \
-    corlumalistwidget.cpp \
     grouppage.cpp \
-    corlumastatusicon.cpp \
     settingsbutton.cpp \
-    corlumawebview.cpp \
     globalsettingswidget.cpp \
-    corlumacheckbox.cpp \
-    corlumatopwidget.cpp \
-    comm/datasynchue.cpp \
-    comm/datasyncarduino.cpp \
-    colorpicker/colorschemegrid.cpp \
-    colorpicker/colorschemecircles.cpp \
-    comm/datasyncsettings.cpp \
-    discovery/hardwareconnectionwidget.cpp \
-    huelightdiscovery.cpp \
-    huelightinfowidget.cpp \
-    huelightinfolistwidget.cpp \
     editablefieldwidget.cpp \
     searchwidget.cpp
 
@@ -180,19 +183,40 @@ HEADERS  +=  comm/commtype.h \
     comm/commtypesettings.h \
     comm/commpacketparser.h \
     comm/commlayer.h \
-    comm/huebridgediscovery.h \
-    comm/hueprotocols.h \
     comm/crccalculator.h \
     comm/datasync.h \
+    comm/datasynchue.h \
+    comm/datasyncarduino.h \
+    comm/datasyncsettings.h \
     colorpicker/colorpicker.h \
     colorpicker/rgbsliders.h \
     colorpicker/tempbrightsliders.h \
     colorpicker/brightnessslider.h \
     colorpicker/colorgrid.h \
+    colorpicker/colorschemegrid.h \
+    colorpicker/colorschemecircles.h \
     discovery/discoveryserialwidget.h \
     discovery/discoverywidget.h \
     discovery/discoveryyunwidget.h \
     discovery/discoveryhuewidget.h \
+    discovery/hardwareconnectionwidget.h \
+    cor/light.h \
+    cor/protocols.h \
+    cor/controller.h \
+    cor/utils.h \
+    cor/button.h \
+    cor/checkbox.h \
+    cor/slider.h \
+    cor/listwidget.h \
+    cor/statusicon.h \
+    cor/topwidget.h \
+    cor/webview.h \
+    hue/lightdiscovery.h \
+    hue/lightinfolistwidget.h \
+    hue/lightinfowidget.h \
+    hue/bridgediscovery.h \
+    hue/hueprotocols.h \
+    hue/huelight.h \
     mainwindow.h \
     settingspage.h \
     datalayer.h \
@@ -200,7 +224,6 @@ HEADERS  +=  comm/commtype.h \
     lightingpage.h \
     lightingprotocols.h \
     lightingroutines.h \
-    lightdevice.h \
     connectionpage.h \
     floatinglayout.h \
     groupsparser.h \
@@ -217,26 +240,9 @@ HEADERS  +=  comm/commtype.h \
     routinebuttonswidget.h \
     colorpage.h \
     grouppage.h \
-    corlumabutton.h \
-    corlumaslider.h \
-    corlumautils.h \
     topmenu.h \
-    corlumalistwidget.h \
-    corlumastatusicon.h \
     settingsbutton.h \
-    corlumawebview.h \
     globalsettingswidget.h \
-    corlumacheckbox.h \
-    corlumatopwidget.h \
-    comm/datasynchue.h \
-    comm/datasyncarduino.h \
-    colorpicker/colorschemegrid.h \
-    colorpicker/colorschemecircles.h \
-    comm/datasyncsettings.h \
-    discovery/hardwareconnectionwidget.h \
-    huelightdiscovery.h \
-    huelightinfowidget.h \
-    huelightinfolistwidget.h \
     editablefieldwidget.h \
     searchwidget.h
 

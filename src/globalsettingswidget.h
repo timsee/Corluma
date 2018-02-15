@@ -6,13 +6,13 @@
 #include <QLabel>
 #include <QCheckBox>
 
-#include "corlumaslider.h"
-#include "corlumacheckbox.h"
+#include "cor/slider.h"
+#include "cor/checkbox.h"
 #include "comm/commlayer.h"
 #include "datalayer.h"
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  *
@@ -164,12 +164,12 @@ private:
     /*!
      * \brief mAdvanceModeCheckBox checkbox for turning advanced mode on and off
      */
-    CorlumaCheckBox *mAdvanceModeCheckBox;
+    cor::CheckBox *mAdvanceModeCheckBox;
 
     /*!
      * \brief mTimeoutCheckBox checkbox for turning timeouts on and off
      */
-    CorlumaCheckBox *mTimeoutCheckBox;
+    cor::CheckBox *mTimeoutCheckBox;
 
     //----------------
     // Sliders
@@ -184,7 +184,7 @@ private:
      * \brief mTimeoutSlider slider for determining how short/long timeouts
      *        will be.
      */
-    CorlumaSlider *mTimeoutSlider;
+    cor::Slider *mTimeoutSlider;
 
     /*!
      * \brief mSpeedLabel label for speed slider, says "speed."
@@ -195,7 +195,7 @@ private:
      * \brief mSpeedSlider slider for determing how fast routines will be
      *        on RGB-LED-Routines powered devices.
      */
-    CorlumaSlider *mSpeedSlider;
+    cor::Slider *mSpeedSlider;
 
     //----------------
     // Enabled Connections

@@ -10,7 +10,7 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  * \brief provides a HTTP communication stream, which is
@@ -48,7 +48,7 @@ public:
      *        web address, and sent as an HTTP request
      * \param packet the string to be sent over HTTP.
      */
-    void sendPacket(SDeviceController controller, QString packet);
+    void sendPacket(const cor::Controller& controller, QString& packet);
 
 private slots:
     /*!

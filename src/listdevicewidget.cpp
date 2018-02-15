@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -13,7 +13,7 @@
 
 #include <algorithm>    // std::sort
 
-ListDeviceWidget::ListDeviceWidget(const SLightDevice& device,
+ListDeviceWidget::ListDeviceWidget(const cor::Light& device,
                                    const std::vector<QColor>& colors,
                                    bool setHighlightable,
                                    QSize size,
@@ -27,7 +27,7 @@ ListDeviceWidget::ListDeviceWidget(const SLightDevice& device,
 }
 
 
-void ListDeviceWidget::init(const SLightDevice& device) {
+void ListDeviceWidget::init(const cor::Light& device) {
     mIsChecked = false;
 
     // setup icon
@@ -36,14 +36,14 @@ void ListDeviceWidget::init(const SLightDevice& device) {
     mDeviceIcon->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     mDeviceIcon->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     QString type;
-    if (device.type == ECommType::eHue) {
+    if (device.type() == ECommType::eHue) {
         type = "Hue";
-    } else if (device.type == ECommType::eHTTP
-               || device.type == ECommType::eUDP) {
+    } else if (device.type() == ECommType::eHTTP
+               || device.type() == ECommType::eUDP) {
         type = "Yun";
     }
 #ifndef MOBILE_BUILD
-    else if (device.type == ECommType::eSerial) {
+    else if (device.type() == ECommType::eSerial) {
         type = "Serial";
     }
 #endif
@@ -55,7 +55,7 @@ void ListDeviceWidget::init(const SLightDevice& device) {
     mController->setText(nameText);
     mController->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    mStatusIcon = new CorlumaStatusIcon(this);
+    mStatusIcon = new cor::StatusIcon(this);
     mStatusIcon->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
 
     mTypeIcon = new QLabel(this);
@@ -79,17 +79,17 @@ void ListDeviceWidget::init(const SLightDevice& device) {
     mDeviceIcon->setStyleSheet(createStyleSheet(device));
     mTypeIcon->setStyleSheet(createStyleSheet(device));
 
-    mStatusIcon->update(device.isReachable, device.isOn, device.brightness);
-    prepareTypeLabel(device.type);
+    mStatusIcon->update(device.isReachable, device.isOn, ((200 - device.brightness) / 200) * 100);
+    prepareTypeLabel(device.type());
 }
 
 
-void ListDeviceWidget::updateWidget(const SLightDevice& device,
+void ListDeviceWidget::updateWidget(const cor::Light& device,
                                      const std::vector<QColor>& colors) {
     mDevice = device;
 
     int widgetSize = std::min(this->width(), this->height());
-    if (device.lightingRoutine <= utils::ELightingRoutineSingleColorEnd ) {
+    if (device.lightingRoutine <= cor::ELightingRoutineSingleColorEnd ) {
         mIconData.setSingleLightingRoutine(device.lightingRoutine, device.color);
         mDeviceIcon->setFixedSize(widgetSize, widgetSize);
     } else {
@@ -109,8 +109,10 @@ void ListDeviceWidget::updateWidget(const SLightDevice& device,
     mIconPixmap = mIconData.renderAsQPixmap();
     resizeIconPixmap();
 
+    mKey = structToIdentifierString(device);
+
     mStatusIcon->update(device.isReachable, device.isOn, device.brightness);
-    prepareTypeLabel(device.type);
+    prepareTypeLabel(device.type());
 }
 
 QString ListDeviceWidget::convertUglyHueNameToPrettyName(QString name) {
@@ -131,13 +133,13 @@ QString ListDeviceWidget::convertUglyHueNameToPrettyName(QString name) {
     return name;
 }
 
-QString ListDeviceWidget::structToIdentifierString(const SLightDevice& device) {
+QString ListDeviceWidget::structToIdentifierString(const cor::Light& device) {
     QString returnString = "";
-    if (device.type == ECommType::eHTTP
-            || device.type == ECommType::eUDP) {
-        returnString = "Yun" + utils::ECommTypeToString(device.type);
+    if (device.type() == ECommType::eHTTP
+            || device.type() == ECommType::eUDP) {
+        returnString = "Yun" + cor::ECommTypeToString(device.type());
     } else {
-        returnString = utils::ECommTypeToString(device.type);
+        returnString = cor::ECommTypeToString(device.type());
     }
     QString onString;
     if(device.isReachable) {
@@ -145,7 +147,7 @@ QString ListDeviceWidget::structToIdentifierString(const SLightDevice& device) {
     } else {
         onString = "CC";
     }
-    returnString = onString + "," + returnString + "," + device.controller + "," + QString::number(device.index);
+    returnString = onString + "," + returnString + "," + device.controller() + "," + QString::number(device.index());
     return returnString;
 }
 
@@ -202,7 +204,7 @@ void ListDeviceWidget::resizeIconPixmap() {
     }
 }
 
-QString ListDeviceWidget::createStyleSheet(const SLightDevice& device) {
+QString ListDeviceWidget::createStyleSheet(const cor::Light& device) {
     Q_UNUSED(device);
     QString styleSheet;
 
@@ -240,20 +242,18 @@ void ListDeviceWidget::prepareTypeLabel(ECommType type) {
 }
 
 
-QString ListDeviceWidget::createName(const SLightDevice& device) {
+QString ListDeviceWidget::createName(const cor::Light& device) {
     QString nameText;
-    if (device.type == ECommType::eHTTP
+    if (device.type() == ECommType::eHTTP
 #ifndef MOBILE_BUILD
-            || device.type == ECommType::eSerial
+            || device.type() == ECommType::eSerial
 #endif
-            || device.type == ECommType::eUDP) {
-           nameText += device.controller;
-           nameText += "_";
-           nameText += QString::number(device.index);
-    } else if (device.type == ECommType::eHue) {
+            || device.type() == ECommType::eUDP) {
+        nameText = device.name;
+    } else if (device.type() == ECommType::eHue) {
         nameText = convertUglyHueNameToPrettyName(device.name);
     } else {
-        nameText = device.controller;
+        nameText = device.controller();
     }
     return nameText;
 }

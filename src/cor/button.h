@@ -1,5 +1,5 @@
-#ifndef LIGHTSBUTTON_H
-#define LIGHTSBUTTON_H
+#ifndef COR_BUTTON_H
+#define COR_BUTTON_H
 
 #include <QWidget>
 #include <QLayout>
@@ -9,9 +9,12 @@
 #include "icondata.h"
 #include "lightingprotocols.h"
 
+namespace cor
+{
+
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  *
@@ -24,14 +27,14 @@
  * the button. A menu button emits a page number, and is used by the main menu.
  *
  */
-class CorlumaButton : public QPushButton
+class Button : public QPushButton
 {
     Q_OBJECT
 public:
     /*!
      * \brief Constructor
      */
-    explicit CorlumaButton(QWidget *parent = 0);
+    explicit Button(QWidget *parent = 0);
 
     /*!
      * \brief setupAsMultiButton sets up the button for use with the PresetArrayPage. Assigns
@@ -189,4 +192,6 @@ private:
     EColorGroup mColorGroup;
 };
 
-#endif // LIGHTSBUTTON_H
+}
+
+#endif // COR_BUTTON_H

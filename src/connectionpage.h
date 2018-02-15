@@ -7,14 +7,14 @@
 #include <QPushButton>
 #include <QLayout>
 
-#include "lightdevice.h"
+#include "cor/light.h"
 #include "lightingpage.h"
 #include "listdevicewidget.h"
 #include "groupsparser.h"
 #include "comm/commlayer.h"
 #include "listmoodgroupwidget.h"
 #include "listdevicesgroupwidget.h"
-#include "corlumalistwidget.h"
+#include "cor/listwidget.h"
 
 
 enum class ECurrentConnectionWidget {
@@ -24,7 +24,7 @@ enum class ECurrentConnectionWidget {
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  *
@@ -213,13 +213,13 @@ protected:
 private:
 
     /// widget for displaying the groups in the app data
-    CorlumaListWidget *mGroupsWidget;
+    cor::ListWidget *mGroupsWidget;
 
     /// widget for displaying the rooms in the app data.
-    CorlumaListWidget *mRoomsWidget;
+    cor::ListWidget *mRoomsWidget;
 
     /// getter for the current widget.
-    CorlumaListWidget *currentWidget();
+    cor::ListWidget *currentWidget();
 
     /*!
      * \brief cleanupList resync the list of collections and devices, deleting old ones that no longer exist and
@@ -246,7 +246,7 @@ private:
      *        are available in memory somehow but have not sent an update packet recently.
      * \param allDevices list of all devices that have sent communication packets of some sort.
      */
-    void gatherAvailandAndNotReachableDevices(const std::list<SLightDevice>& allDevices);
+    void gatherAvailandAndNotReachableDevices(const std::list<cor::Light>& allDevices);
 
     /// checks saved data and determines which collections to open and which to leave closed when rendering the connection page.
     void openDefaultCollections();
@@ -267,16 +267,16 @@ private:
      * \param uiGroups all UI groups
      * \param allDevices all up-to-date information about all devices.
      */
-    void updateDataGroupInUI(const SLightGroup dataGroup, const std::list<SLightGroup>& uiGroups, const std::list<SLightDevice>& allDevices);
+    void updateDataGroupInUI(const SLightGroup dataGroup, const std::list<SLightGroup>& uiGroups, const std::list<cor::Light>& allDevices);
 
     /*!
-     * \brief updateDeviceList create an up-to-date version of a list of SLightDevices. The SLightDevices may be obtained from the UI or from
+     * \brief updateDeviceList create an up-to-date version of a list of cor::Lights. The cor::Lights may be obtained from the UI or from
      *        out of date buffers, so the oldDevices are turne dinto a new list based off of the data given by the up-to-date allDeviceData
      * \param oldDevices the list of devices that you want to update
      * \param allDeviceData all the up-to-date information about all the devices
      * \return a new list that matches the oldDevices list, only it has up-to-date information.
      */
-    std::list<SLightDevice> updateDeviceList(const std::list<SLightDevice>& oldDevices, const std::list<SLightDevice>& allDeviceData);
+    std::list<cor::Light> updateDeviceList(const std::list<cor::Light>& oldDevices, const std::list<cor::Light>& allDeviceData);
 
     /// pointer to QSettings instance
     QSettings *mSettings;
@@ -297,13 +297,13 @@ private:
     QTime mLastUpdateConnectionList;
 
     /*!
-     * \brief identifierStringToStruct converts a string represention of a SControllerCommData
+     * \brief identifierStringToLight converts a string represention of a SControllerCommData
      *        back to a struct.
      * \param string the string to convert
-     * \return a SLightDevice struct based on the string given. an empty struct is returned if
+     * \return a cor::Light struct based on the string given. an empty struct is returned if
      *         the string is invalid.
      */
-    SLightDevice identifierStringToStruct(QString string);
+    cor::Light identifierStringToLight(QString string);
 
     //-------------
     // Cached States and Assets

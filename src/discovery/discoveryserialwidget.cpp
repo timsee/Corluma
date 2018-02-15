@@ -1,7 +1,7 @@
 #ifndef MOBILE_BUILD
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -30,7 +30,7 @@ DiscoverySerialWidget::~DiscoverySerialWidget() {
 }
 
 void DiscoverySerialWidget::handleDiscovery(bool isCurrentCommType) {
-    std::list<SDeviceController> deviceTable = mComm->discoveredList(ECommType::eSerial);
+    std::list<cor::Controller> deviceTable = mComm->discoveredList(ECommType::eSerial);
     bool runningDiscovery = mComm->lookingForActivePorts();
     if (isCurrentCommType) {
         if (deviceTable.size() > 0) {

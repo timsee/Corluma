@@ -17,7 +17,7 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  * \brief The ListDevicesGroupWidget class is a subclassed ListCollectionWidget that
@@ -53,7 +53,7 @@ public:
      *        is set to unchecked.
      * \param devices list of devices to compare to the widget.
      */
-    void setCheckedDevices(std::list<SLightDevice> devices);
+    void setCheckedDevices(std::list<cor::Light> devices);
 
     /*!
      * \brief updateDevices update the state and number of devices displayed in the widget.
@@ -61,13 +61,13 @@ public:
      * \param removeIfNotFound if a widget exists already in the listwidget but doesn't exist in the list provided,
      *        this widget gets removed and all other widgets get shifted.
      */
-    void updateDevices(std::list<SLightDevice> devices, bool removeIfNotFound = false);
+    void updateDevices(std::list<cor::Light> devices, bool removeIfNotFound = false);
 
     /*!
      * \brief devices getter for all devices being displayed by the widget.
      * \return all devices being displayed by the widget.
      */
-    const std::list<SLightDevice>& devices() { return mGroup.devices; }
+    const std::list<cor::Light>& devices() { return mGroup.devices; }
 
     /*!
      * \brief preferredSize all collection widgets must implement a preferred size. this is the size

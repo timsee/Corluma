@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -77,7 +77,7 @@ float DataSync::ctDifference(float first, float second) {
     return std::abs(first - second) / 347.0f;
 }
 
-bool DataSync::sync(const SLightDevice& dataDevice, const SLightDevice& commDevice) {
+bool DataSync::sync(const cor::Light& dataDevice, const cor::Light& commDevice) {
     Q_UNUSED(dataDevice);
     Q_UNUSED(commDevice);
     return false;

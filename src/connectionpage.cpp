@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -10,7 +10,7 @@
 #include "listmoodwidget.h"
 #include "listdevicesgroupwidget.h"
 #include "listmoodgroupwidget.h"
-#include "corlumautils.h"
+#include "cor/utils.h"
 
 #include <QDebug>
 #include <QInputDialog>
@@ -20,14 +20,14 @@
 ConnectionPage::ConnectionPage(QWidget *parent) :
     QWidget(parent) {
 
-    mGroupsWidget = new CorlumaListWidget(this);
+    mGroupsWidget = new cor::ListWidget(this);
     mGroupsWidget->setContentsMargins(0,0,0,0);
     mGroupsWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QScroller::grabGesture(mGroupsWidget->viewport(), QScroller::LeftMouseButtonGesture);
     mGroupsWidget->setVisible(false);
 
 
-    mRoomsWidget = new CorlumaListWidget(this);
+    mRoomsWidget = new cor::ListWidget(this);
     mRoomsWidget->setContentsMargins(0,0,0,0);
     mRoomsWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QScroller::grabGesture(mRoomsWidget->viewport(), QScroller::LeftMouseButtonGesture);
@@ -77,7 +77,7 @@ void ConnectionPage::updateConnectionList() {
     // get all UI groups
     std::list<SLightGroup> uiGroups    = gatherAllUIGroups();
     // get all devices
-    std::list<SLightDevice> allDevices = mComm->allDevices();
+    std::list<cor::Light> allDevices = mComm->allDevices();
 
     //--------------
     // 2. Update Existing Groups and Add New Groups
@@ -105,10 +105,10 @@ void ConnectionPage::updateConnectionList() {
 
     if (mCurrentConnectionWidget == ECurrentConnectionWidget::eGroups) {
         // Make Available and Not Reachable Devices
-        std::list<SLightDevice> allAvailableDevices;
+        std::list<cor::Light> allAvailableDevices;
         // remove non available devices
         for (auto&& device : allDevices) {
-            if (mData->commTypeSettings()->commTypeEnabled(device.type)) {
+            if (mData->commTypeSettings()->commTypeEnabled(device.type())) {
                 allAvailableDevices.push_back(device);
             }
         }
@@ -122,7 +122,7 @@ std::list<SLightGroup> ConnectionPage::gatherAllDataGroups() {
     // get a List of all preexisting groups
     std::list<SLightGroup> dataGroups = mGroups->collectionList();
     // get hue groups
-    std::list<SHueGroup> hueGroups = mComm->hueGroups();
+    std::list<SHueGroup> hueGroups = mComm->hue()->groups();
     // combine groups
     std::list<SLightGroup>  newGroups;
     // loop through all hue groups
@@ -132,7 +132,7 @@ std::list<SLightGroup> ConnectionPage::gatherAllDataGroups() {
         for (auto& dataGroup : dataGroups) {
             if (hueGroup.name.compare(dataGroup.name) == 0) {
                 existsInData = true;
-                std::list<SLightDevice> hues = mComm->hueLightsToDevices(hueGroup.lights);
+                std::list<cor::Light> hues = mComm->hueLightsToDevices(hueGroup.lights);
                 dataGroup.devices.splice(dataGroup.devices.end(), hues);
             }
         }
@@ -166,7 +166,7 @@ std::list<SLightGroup> ConnectionPage::gatherAllUIGroups() {
     return uiGroups;
 }
 
-void ConnectionPage::updateDataGroupInUI(const SLightGroup dataGroup, const std::list<SLightGroup>& uiGroups, const std::list<SLightDevice>& allDevices) {
+void ConnectionPage::updateDataGroupInUI(const SLightGroup dataGroup, const std::list<SLightGroup>& uiGroups, const std::list<cor::Light>& allDevices) {
     bool existsInUIGroups = false;
     for (auto uiGroup : uiGroups) {
         if (uiGroup.name.compare(dataGroup.name) == 0) {
@@ -174,7 +174,7 @@ void ConnectionPage::updateDataGroupInUI(const SLightGroup dataGroup, const std:
              for (auto widget : currentWidget()->widgets()) {
                  ListDevicesGroupWidget *groupWidget = qobject_cast<ListDevicesGroupWidget*>(widget);
                  if (groupWidget->key().compare(dataGroup.name) == 0) {
-                     std::list<SLightDevice> devices = updateDeviceList(dataGroup.devices, allDevices);
+                     std::list<cor::Light> devices = updateDeviceList(dataGroup.devices, allDevices);
                      groupWidget->updateDevices(devices);
                  }
              }
@@ -187,11 +187,11 @@ void ConnectionPage::updateDataGroupInUI(const SLightGroup dataGroup, const std:
 }
 
 
-std::list<SLightDevice> ConnectionPage::updateDeviceList(const std::list<SLightDevice>& oldDevices,  const std::list<SLightDevice>& allDeviceData) {
-    std::list<SLightDevice> filledList;
+std::list<cor::Light> ConnectionPage::updateDeviceList(const std::list<cor::Light>& oldDevices,  const std::list<cor::Light>& allDeviceData) {
+    std::list<cor::Light> filledList;
     for (auto&& device : oldDevices) {
         for (auto&& dataDevice : allDeviceData) {
-            if(compareLightDevice(dataDevice, device)) {
+            if(compareLight(dataDevice, device)) {
                 filledList.push_back(dataDevice);
             }
         }
@@ -209,7 +209,7 @@ ListDevicesGroupWidget* ConnectionPage::initDevicesCollectionWidget(const SLight
                                                                     const QString& key,
                                                                     bool hideEdit) {
 
-    CorlumaListWidget *parent;
+    cor::ListWidget *parent;
     if (group.isRoom)
     {
         parent = mRoomsWidget;
@@ -243,13 +243,13 @@ ListDevicesGroupWidget* ConnectionPage::initDevicesCollectionWidget(const SLight
     return widget;
 }
 
-void ConnectionPage::gatherAvailandAndNotReachableDevices(const std::list<SLightDevice>& allDevices) {
+void ConnectionPage::gatherAvailandAndNotReachableDevices(const std::list<cor::Light>& allDevices) {
     // ------------------------------------
     // make a list of all devices
     // ------------------------------------
 
-    std::list<SLightDevice> availableDevices;
-    std::list<SLightDevice> unavailableDevices;
+    std::list<cor::Light> availableDevices;
+    std::list<cor::Light> unavailableDevices;
     QString kAvailableDevicesKey = "zzzAVAILABLE_DEVICES";
     QString kUnavailableDevicesKey = "zzzUNAVAILABLE_DEVICES";
 
@@ -306,8 +306,7 @@ void ConnectionPage::deviceClicked(QString collectionKey, QString deviceKey) {
 //    qDebug() << "collection key:" << collectionKey
 //             << "device key:" << deviceKey;
 
-    SLightDevice device;
-    device = identifierStringToStruct(deviceKey);
+    cor::Light device = identifierStringToLight(deviceKey);
     mComm->fillDevice(device);
 
     if (mData->doesDeviceExist(device)) {
@@ -375,8 +374,8 @@ void ConnectionPage::editGroupClicked(QString key) {
 
 void ConnectionPage::newConnectionFound(QString newController) {
     // get list of all HTTP and UDP devices.
-    const std::list<SDeviceController> udpDevices = mComm->discoveredList(ECommType::eUDP);
-    const std::list<SDeviceController> httpDevices = mComm->discoveredList(ECommType::eHTTP);
+    const std::list<cor::Controller> udpDevices = mComm->discoveredList(ECommType::eUDP);
+    const std::list<cor::Controller> httpDevices = mComm->discoveredList(ECommType::eHTTP);
     bool foundController = false;
     // check combined list if new controller exists.
     for (auto&& udpController : udpDevices) {
@@ -478,7 +477,7 @@ void ConnectionPage::renderUI() {
 
 
 
-SLightDevice ConnectionPage::identifierStringToStruct(QString string) {
+cor::Light ConnectionPage::identifierStringToLight(QString string) {
     // first split the values from comma delimited to a vector of strings
     std::vector<std::string> valueVector;
     std::stringstream input(string.toStdString());
@@ -488,15 +487,17 @@ SLightDevice ConnectionPage::identifierStringToStruct(QString string) {
         valueVector.push_back(value);
     }
     // check validity
-    SLightDevice outputStruct;
+    cor::Light outputStruct;
     if (valueVector.size() == 4) {
         QString secondValue = QString::fromStdString(valueVector[1]);
         if (secondValue.contains("Yun")) {
             secondValue = secondValue.mid(3);
         }
-        outputStruct.type = utils::stringToECommType(secondValue);
-        outputStruct.controller = QString::fromStdString(valueVector[2]);
-        outputStruct.index = QString::fromStdString(valueVector[3]).toInt();
+        cor::Light temp(QString::fromStdString(valueVector[3]).toInt(),
+                        cor::stringToECommType(secondValue),
+                        QString::fromStdString(valueVector[2]));
+        mComm->fillDevice(temp);
+        outputStruct = temp;
     } else {
         qDebug() << "something went wrong with the key in" << __func__;
     }
@@ -566,10 +567,10 @@ void ConnectionPage::cleanupList() {
         ListDevicesGroupWidget *devicesWidget = qobject_cast<ListDevicesGroupWidget*>(widget);
         Q_ASSERT(devicesWidget);
 
-        std::list<SLightDevice> newDeviceList;
-        std::list<SLightDevice> currentDeviceList = devicesWidget->devices();
+        std::list<cor::Light> newDeviceList;
+        std::list<cor::Light> currentDeviceList = devicesWidget->devices();
         for (auto&& device : currentDeviceList) {
-            if (mData->commTypeSettings()->commTypeEnabled(device.type)) {
+            if (mData->commTypeSettings()->commTypeEnabled(device.type())) {
                 newDeviceList.push_back(device);
             }
         }
@@ -604,7 +605,7 @@ void ConnectionPage::displayGroups() {
     updateConnectionList();
 }
 
-CorlumaListWidget *ConnectionPage::currentWidget() {
+cor::ListWidget *ConnectionPage::currentWidget() {
     if (mCurrentConnectionWidget == ECurrentConnectionWidget::eGroups) {
         return mGroupsWidget;
     } else {

@@ -2,7 +2,7 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -51,7 +51,7 @@ void CommSerial::shutdown() {
     mHasStarted = false;
 }
 
-void CommSerial::sendPacket(SDeviceController controller, QString packet) {
+void CommSerial::sendPacket(const cor::Controller& controller, QString& packet) {
     QSerialPort *serial = serialPortByName(controller.name);
     if (serial != NULL) {
         if (serial->isOpen()) {
@@ -116,7 +116,7 @@ void CommSerial::discoveryRoutine() {
     for (auto&& it : mDeviceTable) {
           QString controllerName = QString::fromUtf8(it.first.c_str());
           QSerialPort *serial = serialPortByName(controllerName);
-          SDeviceController output;
+          cor::Controller output;
           bool found = findDiscoveredController(controllerName, output);
           if (!found && serial != NULL) {
               runningDiscoveryOnSomething = true;

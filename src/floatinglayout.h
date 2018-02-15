@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QHBoxLayout>
-#include "corlumabutton.h"
+#include "cor/button.h"
 
 enum class EButtonSize {
     eSmall,
@@ -14,7 +14,7 @@ enum class EButtonSize {
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 

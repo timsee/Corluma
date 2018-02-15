@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -53,7 +53,7 @@ bool CommType::startDiscoveringController(QString controller) {
 
     // check both that the connection is valid and that it doesn't already exist in the list
     if (checkIfControllerIsValid(controller) && !controllerExists) {
-        std::list<SLightDevice> newDeviceList;
+        std::list<cor::Light> newDeviceList;
         mDeviceTable.insert(std::make_pair(controller.toStdString(), newDeviceList));
         mUndiscoveredList.push_front(controller);
         emit updateReceived((int)mType);
@@ -64,7 +64,7 @@ bool CommType::startDiscoveringController(QString controller) {
     return false;
 }
 
-bool CommType::removeController(SDeviceController controller) {
+bool CommType::removeController(cor::Controller controller) {
     mDeviceTable.erase(controller.name.toStdString());
 
     mDiscoveredList.remove(controller);
@@ -72,13 +72,11 @@ bool CommType::removeController(SDeviceController controller) {
     return true;
 }
 
-void CommType::updateDevice(SLightDevice device) {
-    bool foundDevice = false;
-    auto deviceList = mDeviceTable.find(device.controller.toStdString());
+void CommType::updateDevice(cor::Light device) {
+    auto deviceList = mDeviceTable.find(device.controller().toStdString());
     if (deviceList != mDeviceTable.end()) {
         for (auto it = deviceList->second.begin(); it != deviceList->second.end(); ++it) {
-            if (compareLightDevice(device, *it)) {
-                foundDevice = true;
+            if (compareLight(device, *it)) {
                 deviceList->second.remove((*it));
                 deviceList->second.push_back(device);
                 emit updateReceived((int)mType);
@@ -87,29 +85,28 @@ void CommType::updateDevice(SLightDevice device) {
         }
     }
 
-    if (!foundDevice) {
-        //qDebug() << "INFO: tried to update device that didnt exist, adding it instead";
-        deviceList->second.push_back(device);
-        emit updateReceived((int)mType);
-    }
+    // device not found
+    //qDebug() << "INFO: tried to update device that didnt exist, adding it instead" << device.name;
+    deviceList->second.push_back(device);
+    emit updateReceived((int)mType);
 }
 
 
-bool CommType::fillDevice(SLightDevice& device) {
-    auto deviceList = mDeviceTable.find(device.controller.toStdString());
+bool CommType::fillDevice(cor::Light& device) {
+    auto deviceList = mDeviceTable.find(device.controller().toStdString());
     if (deviceList != mDeviceTable.end()) {
         for (auto it = deviceList->second.begin(); it != deviceList->second.end(); ++it) {
             bool deviceExists = true;
 
             // these three values do not change and can be used as a unique key for the device, even if
             // things like the color or brightness change.
-            if (device.controller.compare(it->controller)) {
+            if (device.controller().compare(it->controller())) {
                 deviceExists = false;
             }
-            if (device.index != it->index)  {
+            if (device.index() != it->index())  {
                 deviceExists = false;
             }
-            if (device.type != it->type) {
+            if (device.type() != it->type()) {
                 deviceExists = false;
             }
             if (deviceExists) {
@@ -162,7 +159,7 @@ void CommType::resetStateUpdateTimeout() {
 }
 
 void CommType::stopStateUpdates() {
-    qDebug() << "INFO: Turning off state updates" << utils::ECommTypeToString(mType);
+    qDebug() << "INFO: Turning off state updates" << cor::ECommTypeToString(mType);
     if (mStateUpdateTimer->isActive()) {
         mStateUpdateTimer->stop();
     }
@@ -176,7 +173,7 @@ bool CommType::shouldContinueStateUpdate() {
     return true;
 }
 
-void CommType::handleDiscoveryPacket(SDeviceController sender) {
+void CommType::handleDiscoveryPacket(cor::Controller sender) {
     // search for the sender in the list of discovered devices
     bool found = (std::find(mDiscoveredList.begin(), mDiscoveredList.end(), sender) != mDiscoveredList.end());
     if (!found) {
@@ -195,7 +192,7 @@ void CommType::handleDiscoveryPacket(SDeviceController sender) {
     bool stopTimer = true;
     for (auto&& it : mDeviceTable) {
         // returns true if the device is in discovery list
-        SDeviceController output;
+        cor::Controller output;
         bool found = findDiscoveredController(QString::fromUtf8(it.first.c_str()), output);
         if (!found) stopTimer = false;
     }
@@ -207,12 +204,15 @@ void CommType::handleDiscoveryPacket(SDeviceController sender) {
 }
 
 
-bool CommType::deviceControllerFromDiscoveryString(QString discovery, QString controllerName, SDeviceController& controller) {
+bool CommType::deviceControllerFromDiscoveryString(QString discovery, QString controllerName, cor::Controller& controller) {
     //--------------
     // Split string into an int vector
     //--------------
     std::string number;
+    std::string name;
+    std::vector<QString> discoveryAndNameVector;
     std::vector<int> intVector;
+    std::vector<QString> nameVector;
 
     // check end of string is &
     if (discovery.at(discovery.length() - 1) != '&') {
@@ -222,12 +222,28 @@ bool CommType::deviceControllerFromDiscoveryString(QString discovery, QString co
     int start = kDiscoveryPacketIdentifier.size() + 1;
     int size = discovery.length() - start - 1;
     discovery = discovery.mid(start, size);
-    std::istringstream input(discovery.toStdString());
-    while (std::getline(input, number, ',')) {
+
+    std::istringstream discoveryInput(discovery.toStdString());
+    while (std::getline(discoveryInput, name, '@')) {
+        discoveryAndNameVector.push_back(QString(name.c_str()));
+    }
+
+    if (discoveryAndNameVector.size() != 2) {
+        qDebug() << "does not include names";
+        return false;
+    }
+
+    std::istringstream integerInput(discoveryAndNameVector[0].toStdString());
+    while (std::getline(integerInput, number, ',')) {
         std::istringstream iss(number);
         int i;
         iss >> i;
         intVector.push_back(i);
+    }
+
+    std::istringstream nameInput(discoveryAndNameVector[1].toStdString());
+    while (std::getline(nameInput, name, ',')) {
+        nameVector.push_back(QString(name.c_str()));
     }
 
     //--------------
@@ -249,24 +265,29 @@ bool CommType::deviceControllerFromDiscoveryString(QString discovery, QString co
         }
         controller.isUsingCRC = crc;
 
-        // get the max hardware index
-        controller.maxHardwareIndex = intVector[3];
-        if (controller.maxHardwareIndex > 20) {
-            return false;
-        }
         // grab the max packet size
-        controller.maxPacketSize = intVector[4];
+        controller.maxPacketSize = intVector[3];
         controller.type = mType;
         if (controller.maxPacketSize > 500) {
             return false;
         }
+
+        // get the max hardware index
+        controller.maxHardwareIndex = intVector[4];
+        if (controller.maxHardwareIndex > 20) {
+            return false;
+        }
+
+        // get the names
+        controller.names = nameVector;
+
         return true;
     } else {
         return false;
     }
 }
 
-bool CommType::findDiscoveredController(QString controllerName, SDeviceController& output) {
+bool CommType::findDiscoveredController(QString controllerName, cor::Controller& output) {
     for (auto&& controller : mDiscoveredList) {
         if (controller.name.compare(controllerName) == 0) {
             output = controller;
@@ -277,10 +298,10 @@ bool CommType::findDiscoveredController(QString controllerName, SDeviceControlle
 }
 
 
-void CommType::handleIncomingPacket(QString controllerName, QString payload) {
+void CommType::handleIncomingPacket(const QString& controllerName, const QString& payload) {
     if (payload.contains(kDiscoveryPacketIdentifier)) {
         // qDebug() << " this is payload " << payload;
-        SDeviceController controller;
+        cor::Controller controller;
         bool success = deviceControllerFromDiscoveryString(payload,
                                                            controllerName,
                                                            controller);
@@ -293,7 +314,7 @@ void CommType::handleIncomingPacket(QString controllerName, QString payload) {
     }
 }
 
-void CommType::preparePacketForTransmission(const SDeviceController& controller, QString& packet) {
+void CommType::preparePacketForTransmission(const cor::Controller& controller, QString& packet) {
     // check if state update
     if (!(packet.at(0) ==  QChar('7')
             || packet.at(0) ==  QChar('8'))) {

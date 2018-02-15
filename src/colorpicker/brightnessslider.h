@@ -2,11 +2,11 @@
 #define BRIGHTNESSSLIDER_H
 
 #include <QWidget>
-#include "corlumaslider.h"
+#include "cor/slider.h"
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  *
  *
@@ -57,7 +57,7 @@ private:
     /*!
      * \brief mBrightnessSlider slider that determines how bright the LEDs will shine.
      */
-    CorlumaSlider *mBrightnessSlider;
+    cor::Slider *mBrightnessSlider;
 
     /// currently unused, but in place so that slider sizes match other layouts
     QLabel *mLabel;

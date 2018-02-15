@@ -1,13 +1,13 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
 
 
 #include "commlayer.h"
-#include "corlumautils.h"
+#include "cor/utils.h"
 
 #ifndef MOBILE_BUILD
 #include "comm/commserial.h"
@@ -51,24 +51,24 @@ bool CommLayer::runningDiscovery(ECommType type) {
 }
 
 
-QString CommLayer::sendTurnOn(const std::list<SLightDevice>& deviceList,
+QString CommLayer::sendTurnOn(const std::list<cor::Light>& deviceList,
                               bool turnOn) {
     QString packet;
     for (auto&& device : deviceList) {
-        if (device.type == ECommType::eHue) {
+        if (device.type() == ECommType::eHue) {
             if (turnOn) {
-                mHue->turnOn(device.index);
+                mHue->turnOn(device);
             } else {
-                mHue->turnOff(device.index);
+                mHue->turnOff(device);
             }
         } else {
             if (turnOn) {
                 packet += QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::eModeChange),
-                                                   QString::number(device.index),
+                                                   QString::number(device.index()),
                                                    QString::number((int)device.lightingRoutine));
             } else {
                 packet += QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::eModeChange),
-                                                   QString::number(device.index),
+                                                   QString::number(device.index()),
                                                    QString::number((int)ELightingRoutine::eOff));
             }
         }
@@ -76,12 +76,12 @@ QString CommLayer::sendTurnOn(const std::list<SLightDevice>& deviceList,
     return packet;
 }
 
-QString CommLayer::sendMainColorChange(const std::list<SLightDevice>& deviceList,
+QString CommLayer::sendMainColorChange(const std::list<cor::Light>& deviceList,
                                        QColor color) {
     QString packet;
     for (auto&& device : deviceList) {
         packet += QString("%1,%2,%3,%4,%5&").arg(QString::number((int)EPacketHeader::eMainColorChange),
-                                                 QString::number(device.index),
+                                                 QString::number(device.index()),
                                                  QString::number(color.red()),
                                                  QString::number(color.green()),
                                                  QString::number(color.blue()));
@@ -89,14 +89,14 @@ QString CommLayer::sendMainColorChange(const std::list<SLightDevice>& deviceList
     return packet;
 }
 
-QString CommLayer::sendArrayColorChange(const std::list<SLightDevice>& deviceList,
+QString CommLayer::sendArrayColorChange(const std::list<cor::Light>& deviceList,
                                         int index,
                                         QColor color) {
 
     QString packet;
     for (auto&& device : deviceList) {
         packet += QString("%1,%2,%3,%4,%5,%6&").arg(QString::number((int)EPacketHeader::eCustomArrayColorChange),
-                                                    QString::number(device.index),
+                                                    QString::number(device.index()),
                                                     QString::number(index),
                                                     QString::number(color.red()),
                                                     QString::number(color.green()),
@@ -105,13 +105,13 @@ QString CommLayer::sendArrayColorChange(const std::list<SLightDevice>& deviceLis
     return packet;
 }
 
-QString CommLayer::sendSingleRoutineChange(const std::list<SLightDevice>& deviceList,
+QString CommLayer::sendSingleRoutineChange(const std::list<cor::Light>& deviceList,
                                            ELightingRoutine routine) {
     QString packet;
     for (auto&& device : deviceList) {
-        if ((int)routine <= (int)utils::ELightingRoutineSingleColorEnd) {
+        if ((int)routine <= (int)cor::ELightingRoutineSingleColorEnd) {
             packet += QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::eModeChange),
-                                               QString::number(device.index),
+                                               QString::number(device.index()),
                                                QString::number((int)routine));
         } else {
             qDebug() << __func__ << "error";
@@ -121,14 +121,14 @@ QString CommLayer::sendSingleRoutineChange(const std::list<SLightDevice>& device
 }
 
 
-QString CommLayer::sendMultiRoutineChange(const std::list<SLightDevice>& deviceList,
+QString CommLayer::sendMultiRoutineChange(const std::list<cor::Light>& deviceList,
                                           ELightingRoutine routine,
                                           EColorGroup colorGroup) {
     QString packet;
     for (auto&& device : deviceList) {
-        if ((int)routine > (int)utils::ELightingRoutineSingleColorEnd) {
+        if ((int)routine > (int)cor::ELightingRoutineSingleColorEnd) {
             packet += QString("%1,%2,%3,%4&").arg(QString::number((int)EPacketHeader::eModeChange),
-                                                  QString::number(device.index),
+                                                  QString::number(device.index()),
                                                   QString::number((int)routine),
                                                   QString::number((int)colorGroup));
         } else {
@@ -139,81 +139,81 @@ QString CommLayer::sendMultiRoutineChange(const std::list<SLightDevice>& deviceL
 }
 
 
-QString CommLayer::sendColorTemperatureChange(const std::list<SLightDevice>& deviceList,
+QString CommLayer::sendColorTemperatureChange(const std::list<cor::Light>& deviceList,
                                               int temperature) {
     QString packet;
     for (auto&& device : deviceList) {
-        if (device.type == ECommType::eHue) {
-            mHue->changeColorCT(device.index, device.brightness, temperature);
+        if (device.type() == ECommType::eHue) {
+            mHue->changeColorCT(device.index(), device.brightness, temperature);
         }
     }
     return packet;
 }
 
-QString CommLayer::sendBrightness(const std::list<SLightDevice>& deviceList,
+QString CommLayer::sendBrightness(const std::list<cor::Light>& deviceList,
                                   int brightness) {
     QString packet;
     for (auto&& device : deviceList) {
         packet += QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::eBrightnessChange),
-                                           QString::number(device.index),
+                                           QString::number(device.index()),
                                            QString::number(brightness));
     }
     return packet;
 }
 
-QString CommLayer::sendSpeed(const std::list<SLightDevice>& deviceList,
+QString CommLayer::sendSpeed(const std::list<cor::Light>& deviceList,
                              int speed) {
     QString packet;
     for (auto&& device : deviceList) {
         packet += QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::eSpeedChange),
-                                           QString::number(device.index),
+                                           QString::number(device.index()),
                                            QString::number(speed));
     }
     return packet;
 }
 
-QString CommLayer::sendCustomArrayCount(const std::list<SLightDevice>& deviceList,
+QString CommLayer::sendCustomArrayCount(const std::list<cor::Light>& deviceList,
                                         int count) {
     QString packet;
     for (auto&& device : deviceList) {
         packet += QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::eCustomColorCountChange),
-                                           QString::number(device.index),
+                                           QString::number(device.index()),
                                            QString::number(count));
     }
     return packet;
 }
 
-QString CommLayer::sendTimeOut(const std::list<SLightDevice>& deviceList,
+QString CommLayer::sendTimeOut(const std::list<cor::Light>& deviceList,
                                int timeOut) {
     QString packet;
     for (auto&& device : deviceList) {
         packet += QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::eIdleTimeoutChange),
-                                           QString::number(device.index),
+                                           QString::number(device.index()),
                                            QString::number(timeOut));
     }
     return packet;
 }
 
 
-void CommLayer::requestCustomArrayUpdate(const std::list<SLightDevice>& deviceList) {
+void CommLayer::requestCustomArrayUpdate(const std::list<cor::Light>& deviceList) {
     for (auto&& device : deviceList) {
         QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::eCustomArrayUpdateRequest));
         sendPacket(device, packet);
     }
 }
 
-void CommLayer::sendReset(const std::list<SLightDevice>& deviceList) {
+void CommLayer::sendReset(const std::list<cor::Light>& deviceList) {
     for (auto&& device : deviceList) {
-        QString packet = QString("%1,%2,42,71&").arg(QString::number(device.index),
+        QString packet = QString("%1,%2,42,71&").arg(QString::number(device.index()),
                                                      QString::number((int)EPacketHeader::eResetSettingsToDefaults));
         sendPacket(device, packet);
     }
 }
 
-void CommLayer::sendPacket(const SLightDevice& device, const QString& payload) {
-    CommType* commPtr = commByType(device.type);
-    SDeviceController controller;
-    QString name = device.controller;
+void CommLayer::sendPacket(const cor::Light& device, QString& payload) {
+    CommType* commPtr = commByType(device.type());
+    cor::Controller controller;
+    QString name = device.controller();
     if (commPtr->findDiscoveredController(name, controller)) {
         commPtr->sendPacket(controller, payload);
     }
@@ -263,7 +263,7 @@ void CommLayer::parsePacket(QString sender, QString packet, int type) {
     //------------------
     // Check for CRC
     //------------------
-    SDeviceController controller;
+    cor::Controller controller;
     bool success = commByType((ECommType)type)->findDiscoveredController(sender, controller);
     if (success && (packet.length() > 0)) {
         // check if it should use CRC
@@ -291,11 +291,10 @@ void CommLayer::parsePacket(QString sender, QString packet, int type) {
             if (intVector.size() > 2) {
                 if (intVector[0] < (int)EPacketHeader::ePacketHeader_MAX) {
                     EPacketHeader packetHeader = (EPacketHeader)intVector[0];
-                    SLightDevice device = SLightDevice();
-                    device.index =  intVector[1];
-                    if (device.index < 15 && device.index  >= 1) {
-                        device.type = (ECommType)type;
-                        device.controller = sender;
+                    int index = intVector[1];
+                    if (index < 20 && index  >= 1) {
+
+                        cor::Light device = cor::Light(index, (ECommType)type, sender);
                         commByType((ECommType)type)->fillDevice(device);
 
                         // check if its a valid size with the proper header for a state update packet
@@ -303,11 +302,13 @@ void CommLayer::parsePacket(QString sender, QString packet, int type) {
                             // check all values fall in their proper ranges
                             int x = 1;
                             if (verifyStateUpdatePacketValidity(intVector, x)) {
-                                // all values are in the right range, set them on SLightDevice.
-                                device.index           = intVector[x];
+                                // all values are in the right range, set them on cor::Light.
+                                int index = intVector[x];
                                 // 0 means multicast in arduino apps, but one successful multi cast does not mean all packets received
-                                bool skipMultiCast = (device.index == 0) && (type != (int)ECommType::eHue);
+                                bool skipMultiCast = (index == 0) && (type != (int)ECommType::eHue);
                                 if (!skipMultiCast) {
+                                    cor::Light light(index, (ECommType)type, sender);
+                                    device = light;
                                     commByType((ECommType)type)->fillDevice(device);
 
                                     device.isOn            = (bool)intVector[x + 1];
@@ -321,6 +322,8 @@ void CommLayer::parsePacket(QString sender, QString packet, int type) {
                                     device.speed                 = intVector[x + 9];
                                     device.timeout               = intVector[x + 10];
                                     device.minutesUntilTimeout   = intVector[x + 11];
+
+                                    device.name                  = controller.names[device.index() - 1];
 
                                     commByType((ECommType)type)->updateDevice(device);
                                 }
@@ -467,7 +470,7 @@ bool CommLayer::hasStarted(ECommType type) {
     return commByType(type)->hasStarted();
 }
 
-bool CommLayer::removeController(ECommType type, SDeviceController controller) {
+bool CommLayer::removeController(ECommType type, cor::Controller controller) {
     return commByType(type)->removeController(controller);
 }
 
@@ -475,41 +478,29 @@ bool CommLayer::startDiscoveringController(ECommType type, QString controller) {
     return commByType(type)->startDiscoveringController(controller);
 }
 
-bool CommLayer::fillDevice(SLightDevice& device) {
-    return commByType(device.type)->fillDevice(device);
+bool CommLayer::fillDevice(cor::Light& device) {
+    return commByType(device.type())->fillDevice(device);
 }
 
-SHueLight CommLayer::hueLightFromLightDevice(const SLightDevice& device) {
-    return mHue->hueLightFromLightDevice(device);
-}
-
-SLightDevice CommLayer::lightDeviceFromHueLight(const SHueLight& light) {
-    return mHue->lightDeviceFromHueLight(light);
-}
-
-void CommLayer::renameHue(SHueLight hue, QString newName) {
-    mHue->renameLight(hue, newName);
-}
-
-const std::list<SDeviceController> CommLayer::allArduinoControllers() {
+const std::list<cor::Controller> CommLayer::allArduinoControllers() {
     std::list<ECommType> commTypes = { ECommType::eHTTP,
                                    #ifndef MOBILE_BUILD
                                        ECommType::eSerial,
                                    #endif
                                        ECommType::eUDP };
 
-    std::list<SDeviceController> controllers;
+    std::list<cor::Controller> controllers;
     for (auto type : commTypes) {
-        std::list<SDeviceController> list = commByType(type)->discoveredList();
+        std::list<cor::Controller> list = commByType(type)->discoveredList();
         controllers.insert(controllers.begin(), list.begin(), list.end());
     }
     return controllers;
 }
 
-const std::list<SLightDevice>  CommLayer::allDevices() {
-    std::list<SLightDevice> list;
+const std::list<cor::Light> CommLayer::allDevices() {
+    std::list<cor::Light> list;
     for (int i = 0; i < (int)ECommType::eCommType_MAX; ++i) {
-        std::unordered_map<std::string, std::list<SLightDevice> > table = deviceTable((ECommType)i);
+        std::unordered_map<std::string, std::list<cor::Light> > table = deviceTable((ECommType)i);
         for (auto&& controllers : table) {
             for (auto&& device : controllers.second) {
                 list.push_back(device);
@@ -519,9 +510,9 @@ const std::list<SLightDevice>  CommLayer::allDevices() {
     return list;
 }
 
-bool CommLayer::loadDebugData(const std::list<SLightDevice> debugDevices) {
+bool CommLayer::loadDebugData(const std::list<cor::Light> debugDevices) {
     for (auto& device : debugDevices) {
-        commByType(device.type)->updateDevice(device);
+        commByType(device.type())->updateDevice(device);
     }
     return true;
 }
@@ -540,11 +531,8 @@ bool CommLayer::lookingForActivePorts() {
 // Hue Specific
 //------------------
 
-void CommLayer::createHueGroup(QString name, std::list<SHueLight> lights, bool isRoom) {
-    mHue->createGroup(name, lights, isRoom);
-}
 
-void CommLayer::updateHueGroup(QString name, std::list<SHueLight> lights) {
+void CommLayer::updateHueGroup(QString name, std::list<HueLight> lights) {
     bool hueGroupExists = false;
     SHueGroup groupToUpdate;
     for (auto group : mHue->groups()) {
@@ -573,63 +561,12 @@ void CommLayer::deleteHueGroup(QString name) {
     }
 }
 
-std::list<SHueLight> CommLayer::hueList() {
-    return mHue->connectedHues();
-}
 
-SHueBridge CommLayer::hueBridge() {
-    return mHue->bridge();
-}
-
-std::list<SHueSchedule> CommLayer::hueSchedules() {
-    return mHue->schedules();
-}
-
-std::list<SHueGroup> CommLayer::hueGroups() {
-    return mHue->groups();
-}
-
-void CommLayer::searchForHueLights(std::list<QString> serialNumbers) {
-    return mHue->searchForNewLights(serialNumbers);
-}
-
-void CommLayer::updateHueTimeout(bool enable, int index, int timeout) {
-    mHue->updateIdleTimeout(enable, index, timeout);
-}
-
-void CommLayer::createHueTimeout(int index, int minutes) {
-    mHue->createIdleTimeout(index, minutes);
-}
-
-std::list<SLightDevice> CommLayer::hueLightsToDevices(std::list<SHueLight> hues) {
-    std::list<SLightDevice> list;
+std::list<cor::Light> CommLayer::hueLightsToDevices(std::list<HueLight> hues) {
+    std::list<cor::Light> list;
     for (auto&& hue : hues) {
-        SLightDevice device = mHue->lightDeviceFromHueLight(hue);
+        cor::Light device = static_cast<cor::Light>(hue);
         list.push_back(device);
     }
     return list;
-}
-
-void CommLayer::deleteHue(SHueLight hue) {
-    mHue->deleteLight(hue);
-}
-
-void CommLayer::requestNewHueLights() {
-    mHue->requestNewLights();
-}
-
-std::list<QString> CommLayer::hueSearchingSerials() {
-    return mHue->searchingLights();
-}
-
-bool CommLayer::hueScanIsActive() {
-    return mHue->scanIsActive();
-}
-
-std::list<SHueLight> CommLayer::newHueLights() {
-    return mHue->newLights();
-}
-
-void CommLayer::attemptManualHueBridgeIPAddress(QString IP) {
-    mHue->discovery()->attemptIPAddress(IP);
 }

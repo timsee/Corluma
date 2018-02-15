@@ -1,13 +1,13 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
 #include <QMessageBox>
 
 #include "editablefieldwidget.h"
-#include "corlumautils.h"
+#include "cor/utils.h"
 
 EditableFieldWidget::EditableFieldWidget(const QString& text, QWidget *parent, int maxFieldSize, const QString maxFieldError) : QWidget(parent) {
     mStoredText = text;
@@ -82,7 +82,7 @@ void EditableFieldWidget::rightButtonClicked(bool) {
     if (mIsEditing) {
         if (mRequireIP) {
             // check for IP address
-            if (!utils::checkIfValidIP(mStoredText)) {
+            if (!cor::checkIfValidIP(mStoredText)) {
                 QMessageBox reply;
                 reply.setText(mStoredText + "is not a valid IP address.");
                 reply.exec();

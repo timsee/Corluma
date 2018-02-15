@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2017.
+ * Copyright (C) 2015 - 2018.
  * Released under the GNU General Public License.
  */
 
@@ -12,7 +12,7 @@ DiscoveryWidget::DiscoveryWidget(QWidget *parent):
 
 }
 
-void DiscoveryWidget::fillList(QListWidget *list, std::list<SDeviceController>& connections) {
+void DiscoveryWidget::fillList(QListWidget *list, std::list<cor::Controller>& connections) {
     std::list<QString> strings;
     for (auto&& connection : connections) {
         strings.push_back(connection.name);
