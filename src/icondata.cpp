@@ -147,9 +147,6 @@ void IconData::setMultiLightingRoutine(ELightingRoutine routine, EColorGroup gro
 void IconData::setSingleLightingRoutine(ELightingRoutine routine, QColor color) {
     switch (routine)
     {
-        case ELightingRoutine::eOff:
-            setSolidColor(QColor(0,0,0));
-            break;
         case ELightingRoutine::eSingleSolid:
             setSolidColor(color);
             break;

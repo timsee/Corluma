@@ -25,9 +25,9 @@ BridgeDiscovery::BridgeDiscovery(QObject *parent) : QObject(parent) {
 
     mSettings = new QSettings;
     // check for bridge IP in app memory
-    if (mSettings->value(kPhillipsIPAddress).toString().compare("") != 0) {
+    if (mSettings->value(kPhilipsIPAddress).toString().compare("") != 0) {
         mHasIP = true;
-        mBridge.IP = mSettings->value(kPhillipsIPAddress).toString();
+        mBridge.IP = mSettings->value(kPhilipsIPAddress).toString();
     } else {
         //qDebug() << "NO HUE IP FOUND";
         mHasIP = false;
@@ -35,9 +35,9 @@ BridgeDiscovery::BridgeDiscovery(QObject *parent) : QObject(parent) {
     }
 
     // check for bridge username in app memory
-    if (mSettings->value(kPhillipsUsername).toString().compare("") != 0) {
+    if (mSettings->value(kPhilipsUsername).toString().compare("") != 0) {
         mHasKey = true;
-        mBridge.username = mSettings->value(kPhillipsUsername).toString();
+        mBridge.username = mSettings->value(kPhilipsUsername).toString();
         //qDebug() << "this is my username" << mBridge.username;
     } else {
         //qDebug() << "NO HUE USERNAME FOUND";
@@ -64,7 +64,7 @@ void BridgeDiscovery::startBridgeDiscovery() {
         attemptSearchForUsername();
         mDiscoveryState = EHueDiscoveryState::eTestingIPAddress;
         emit bridgeDiscoveryStateChanged((int)mDiscoveryState);
-        mSettings->setValue(kPhillipsIPAddress, mBridge.IP);
+        mSettings->setValue(kPhilipsIPAddress, mBridge.IP);
         mSettings->sync();
 
     } else if (!mHasIP) {
@@ -73,7 +73,7 @@ void BridgeDiscovery::startBridgeDiscovery() {
         // Attempt both UPnP and NUPnP asynchronously
         // UPnP polls a standard multicast UDP address on your network
         // while NUPnP does a HTTP GET request to a website set up
-        // by Phillips that returns a JSON value that contains
+        // by Philips that returns a JSON value that contains
         // all the Bridges on your network.
         attemptUPnPDiscovery();
         attemptNUPnPDiscovery();
@@ -168,7 +168,7 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
 
                         // save the username into persistent memory so it can be accessed in
                         // future sessions of the application.
-                        mSettings->setValue(kPhillipsUsername, mBridge.username);
+                        mSettings->setValue(kPhilipsUsername, mBridge.username);
                         mSettings->sync();
 
                         // at this point you should have a valid IP and now need to just check
@@ -184,7 +184,7 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
                         mHasIP = true;
                         qDebug() << "discovered IP via NUPnP: " << mBridge.IP;
                         // future sessions of the application.
-                        mSettings->setValue(kPhillipsIPAddress, mBridge.IP);
+                        mSettings->setValue(kPhilipsIPAddress, mBridge.IP);
                         mSettings->sync();
 
                         if (mHasKey) {
@@ -226,7 +226,7 @@ void BridgeDiscovery::readPendingUPnPDatagrams() {
             mHasIP = true;
             qDebug() << "discovered IP via UPnP: " << mBridge.IP;
             // future sessions of the application.
-            mSettings->setValue(kPhillipsIPAddress, mBridge.IP);
+            mSettings->setValue(kPhilipsIPAddress, mBridge.IP);
             mSettings->sync();
             //TODO: handle MAC Address in this case...
 
@@ -364,8 +364,8 @@ void BridgeDiscovery::attemptSearchForUsername() {
 // Settings Keys
 // ----------------------------
 
-const QString BridgeDiscovery::kPhillipsUsername = QString("PhillipsBridgeUsername");
-const QString BridgeDiscovery::kPhillipsIPAddress = QString("PhillipsBridgeIPAddress");
+const QString BridgeDiscovery::kPhilipsUsername = QString("PhilipsBridgeUsername");
+const QString BridgeDiscovery::kPhilipsIPAddress = QString("PhilipsBridgeIPAddress");
 const QString BridgeDiscovery::kAppName = QString("Corluma");
 
 

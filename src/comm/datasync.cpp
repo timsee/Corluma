@@ -29,7 +29,7 @@ bool DataSync::checkThrottle(QString controller, ECommType type) {
             {
 #ifndef MOBILE_BUILD
             case ECommType::eSerial:
-                throttleInterval = 50;
+                throttleInterval = 100;
                 break;
 #endif //MOBILE_BUILD
             case ECommType::eHTTP:

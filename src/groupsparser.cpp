@@ -88,6 +88,9 @@ void GroupsParser::saveNewMood(const QString& groupName, const std::list<cor::Li
         object["green"] = device.color.green();
         object["blue"] = device.color.blue();
 
+        object["majorAPI"]   = device.majorAPI;
+        object["minorAPI"]   = device.minorAPI;
+
         object["controller"] = device.controller();
         object["index"] = device.index();
         deviceArray.append(object);
@@ -104,7 +107,7 @@ void GroupsParser::saveNewMood(const QString& groupName, const std::list<cor::Li
             // save file
             saveFile(defaultSavePath());
 
-            SLightGroup group;
+            cor::LightGroup group;
             group.devices = devices;
             group.name = groupName;
             group.isRoom = false;
@@ -148,7 +151,7 @@ void GroupsParser::saveNewCollection(const QString& groupName, const std::list<c
             // save file
             saveFile(defaultSavePath());
 
-            SLightGroup group;
+            cor::LightGroup group;
             group.devices = devices;
             group.name = groupName;
             group.isRoom = isRoom;
@@ -238,7 +241,7 @@ void GroupsParser::parseCollection(const QJsonObject& object) {
             }
         }
         if (list.size()) {
-            SLightGroup group;
+            cor::LightGroup group;
             group.name = name;
             group.devices = list;
             group.isRoom = isRoom;
@@ -282,12 +285,10 @@ void GroupsParser::parseMood(const QJsonObject& object) {
                 EColorMode colorMode = cor::stringtoColorMode(modeString);
 
                 bool isOn = device.value("isOn").toBool();
-                int red, green, blue;
 
-
-                red = device.value("red").toDouble();
-                green = device.value("green").toDouble();
-                blue = device.value("blue").toDouble();
+                int red = device.value("red").toDouble();
+                int green = device.value("green").toDouble();
+                int blue = device.value("blue").toDouble();
 
                 int brightness = device.value("brightness").toDouble();
 
@@ -310,7 +311,7 @@ void GroupsParser::parseMood(const QJsonObject& object) {
         if (list.size() == 0) {
             qDebug() << __func__ << " no valid devices for" << name;
         } else {
-            SLightGroup group;
+            cor::LightGroup group;
             group.name = name;
             group.devices = list;
             group.isRoom = false;
@@ -463,10 +464,8 @@ bool GroupsParser::checkForSavedData() {
             qDebug() << "ERROR: could not make app data location!";
         }
     }
-    QString savePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/save.json";
-    //qDebug() << " save path is " << savePath;
 
-    QFile saveFile(savePath);
+    QFile saveFile(defaultSavePath());
    // QFile saveFile(":resources/Corluma.json");
 
     if (saveFile.open(QIODevice::ReadOnly)) {

@@ -22,6 +22,8 @@ Light::Light(int index, ECommType type, QString controller) {
     timeout = 0;
     speed = 0;
 
+    hardwareType = ELightHardwareType::eSingleLED;
+
     customColorArray = std::vector<QColor>(10);
     customColorCount = 2;
 

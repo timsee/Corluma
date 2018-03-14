@@ -16,8 +16,6 @@ GroupPage::GroupPage(QWidget *parent) :
     QWidget(parent) {
 
     this->grabGesture(Qt::SwipeGesture);
-    this->grabGesture(Qt::SwipeGesture);
-    mSettings = new QSettings();
 
     mLayout = new QVBoxLayout(this);
 
@@ -26,21 +24,16 @@ GroupPage::GroupPage(QWidget *parent) :
     mScrollAreaArduino->setWidget(mScrollWidgetArduino);
     mScrollAreaArduino->setStyleSheet("background-color:transparent;");
     QScroller::grabGesture(mScrollAreaArduino->viewport(), QScroller::LeftMouseButtonGesture);
-    mScrollAreaArduino->setVisible(false);
 
     mScrollWidgetHue = new QWidget(this);
     mScrollAreaHue = new QScrollArea(this);
     mScrollAreaHue->setWidget(mScrollWidgetHue);
     mScrollAreaHue->setStyleSheet("background-color:transparent;");
     QScroller::grabGesture(mScrollAreaHue->viewport(), QScroller::LeftMouseButtonGesture);
-    mScrollAreaHue->setVisible(false);
 
-    mMoodsListWidget = new cor::ListWidget(this);
-    mMoodsListWidget->setContentsMargins(0,0,0,0);
-    mMoodsListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    QScroller::grabGesture(mMoodsListWidget->viewport(), QScroller::LeftMouseButtonGesture);
-
-    mMode = EGroupMode::eMoods;
+    mLayout->addWidget(mScrollAreaArduino, 8);
+    mMode = EGroupMode::eArduinoPresets;
+    setMode(EGroupMode::eHuePresets);
 }
 
 GroupPage::~GroupPage() {
@@ -124,12 +117,6 @@ void GroupPage::setupButtons() {
     mScrollAreaHue->setWidgetResizable(true);
     mScrollAreaHue->widget()->setLayout(mPresetHueLayout);
     mScrollAreaHue->setStyleSheet("background-color:rgb(33, 32, 32);");
-
-    //---------------
-    // Final Setup
-    //---------------
-
-    mLayout->addWidget(mMoodsListWidget, 8);
 }
 
 void GroupPage::highlightRoutineButton(ELightingRoutine routine, EColorGroup colorGroup) {
@@ -172,9 +159,6 @@ void GroupPage::multiButtonClicked(int routine, int colorGroup) {
 // ----------------------------
 
 void GroupPage::showEvent(QShowEvent *) {
-    highlightRoutineButton(mData->currentRoutine(), mData->currentColorGroup());
-    updateConnectionList();
-
     resize();
 }
 
@@ -189,18 +173,18 @@ void GroupPage::renderUI() {
 void GroupPage::resizeEvent(QResizeEvent *) {
    // mScrollWidget->setFixedWidth(mScrollArea->viewport()->width());
     resize();
+}
 
+
+void GroupPage::show() {
+    if (mMode == EGroupMode::eHuePresets && mData->hasArduinoDevices()) {
+        setMode(EGroupMode::eArduinoPresets);
+    } else if (mMode == EGroupMode::eArduinoPresets && !mData->hasArduinoDevices()) {
+        setMode(EGroupMode::eHuePresets);
+    }
 }
 
 void GroupPage::resize() {
-    mMoodsListWidget->setMaximumSize(this->size());
-    updateConnectionList();
-    for (uint32_t i = 0; i < mMoodsListWidget->count(); ++i) {
-        ListCollectionWidget *item = mMoodsListWidget->widget(i);
-        item->setListHeight(this->height());
-        item->setShowButtons(mSettings->value(keyForCollection(item->key())).toBool());
-    }
-
     mScrollAreaArduino->setFixedSize(this->size());
     for (uint32_t i = 0; i < mPresetArduinoWidgets.size(); ++i) {
         mPresetArduinoWidgets[i]->resize();
@@ -212,313 +196,22 @@ void GroupPage::resize() {
     }
 }
 
-void GroupPage::showCustomMoods() {
-    if (mMode != EGroupMode::eMoods) {
-        // hide existing
-        mLayout->removeItem(mLayout->itemAt(0));
-        mScrollAreaArduino->setVisible(false);
-
-        // add new
-        mLayout->addWidget(mMoodsListWidget, 20);
-        mMoodsListWidget->setVisible(true);
-
-        mMode = EGroupMode::eMoods;
-    }
-}
-
-void GroupPage::showPresetArduinoGroups() {
-    if (mMode != EGroupMode::eArduinoPresets) {
-        // hide existing
-        mLayout->removeItem(mLayout->itemAt(0));
-        mMoodsListWidget->setVisible(false);
-
-        mScrollAreaHue->setVisible(false);
-        mLayout->addWidget(mScrollAreaArduino, 20);
-        mScrollAreaArduino->setVisible(true);
-
-        mMode = EGroupMode::eArduinoPresets;
-    }
-}
-
-
-void GroupPage::showPresetHueGroups() {
-    if (mMode != EGroupMode::eHuePresets) {
-        // hide existing
-        mLayout->removeItem(mLayout->itemAt(0));
-        mMoodsListWidget->setVisible(false);
-
-        mScrollAreaArduino->setVisible(false);
-        mLayout->addWidget(mScrollAreaHue, 20);
-        mScrollAreaHue->setVisible(true);
-
-        mMode = EGroupMode::eHuePresets;
-    }
-}
-
-//--------------------
-// Mood Widget
-//--------------------
-
-void GroupPage::highlightList() {
-    for (uint32_t row = 0; row < mMoodsListWidget->count(); row++) {
-        ListCollectionWidget *collectionWidget = mMoodsListWidget->widget(row);
-        if (collectionWidget->isMoodWidget()) {
-            ListMoodGroupWidget *widget = qobject_cast<ListMoodGroupWidget*>(collectionWidget);
-            Q_ASSERT(widget);
-            std::list<QString> connectedMoods = moodsConnected(widget->moods());
-            widget->setCheckedMoods(connectedMoods);
+void GroupPage::setMode(EGroupMode mode) {
+    if (mMode != mode) {
+        switch (mode) {
+            case EGroupMode::eArduinoPresets:
+                mLayout->removeItem(mLayout->itemAt(0));
+                mScrollAreaHue->setVisible(false);
+                mScrollAreaArduino->setVisible(true);
+                mLayout->addWidget(mScrollAreaArduino, 20);
+                break;
+            case EGroupMode::eHuePresets:
+                mLayout->removeItem(mLayout->itemAt(0));
+                mScrollAreaArduino->setVisible(false);
+                mScrollAreaHue->setVisible(true);
+                mLayout->addWidget(mScrollAreaHue, 20);
+                break;
         }
+        mMode = mode;
     }
-}
-
-std::list<QString> GroupPage::moodsConnected(std::list<SLightGroup> moods) {
-    std::list<cor::Light> deviceList = mData->currentDevices();
-    std::list<QString> connectedMood;
-
-    for (auto&& mood : moods) {
-        uint32_t devicesFound = 0;
-        bool moodIsConnected = true;
-        // check each device in specific mood
-        for (auto&& moodDevice : mood.devices) {
-            bool deviceMatches = false;
-            // compare against all data devices
-            for (auto&& device : deviceList) {
-                //TODO: complete this check
-                if (compareLight(device, moodDevice)
-                    && device.lightingRoutine == moodDevice.lightingRoutine
-                    && (cor::colorDifference(device.color, moodDevice.color) <= 0.05f)
-                    && (cor::brightnessDifference(device.brightness, moodDevice.brightness) <= 0.05f)
-                    && device.colorGroup == moodDevice.colorGroup
-                    && device.isOn == moodDevice.isOn) {
-                    deviceMatches = true;
-                    devicesFound++;
-                 }
-            }
-            if (!deviceMatches) moodIsConnected = false;
-        }
-        if (devicesFound != mood.devices.size()) moodIsConnected = false;
-        if (moodIsConnected) connectedMood.push_back(mood.name);
-    }
-    return connectedMood;
-}
-
-void GroupPage::updateConnectionList() {
-    std::list<cor::Light> allDevices = mComm->allDevices();
-
-    std::list<SLightGroup> moodList = mGroups->moodList();
-    gatherAvailandAndNotReachableMoods(allDevices, moodList);
-    makeMoodsCollections(moodList);
-}
-
-void GroupPage::newMoodAdded(QString mood) {
-    Q_UNUSED(mood);
-   // qDebug() << "mood added" << mood;
-    updateConnectionList();
-}
-
-
-void GroupPage::groupDeleted(QString group) {
-    qDebug() << "group deleted" << group;
-    for (uint32_t i = 0; i < mMoodsListWidget->count(); ++i) {
-        ListCollectionWidget *widget = mMoodsListWidget->widget(i);
-        Q_ASSERT(widget);
-        ListMoodGroupWidget *moodWidget = qobject_cast<ListMoodGroupWidget*>(widget);
-        for (auto&& widgetMood : moodWidget->moods()) {
-            if (widgetMood.name.compare(group) == 0) {
-                moodWidget->removeMood(widgetMood.name);
-            }
-        }
-        if (moodWidget->moods().size() == 0) {
-            qDebug() << " group deleted" << widget->key();
-            mMoodsListWidget->removeWidget(widget->key());
-        }
-    }
-
-}
-
-void GroupPage::connectGroupsParser(GroupsParser *parser) {
-    mGroups = parser;
-    connect(mGroups, SIGNAL(groupDeleted(QString)), this, SLOT(groupDeleted(QString)));
-    connect(mGroups, SIGNAL(newMoodAdded(QString)), this, SLOT(newMoodAdded(QString)));
-}
-
-
-void GroupPage::makeMoodsCollections(const std::list<SLightGroup>& moods) {
-    std::list<SLightGroup> collectionList = mGroups->collectionList();
-    for (auto&& collection : collectionList) {
-        bool collectionFound = false;
-        for (uint32_t i = 0; i < mMoodsListWidget->count(); ++i) {
-            ListCollectionWidget *item = mMoodsListWidget->widget(i);
-            if (item->key().compare(collection.name) == 0) {
-                collectionFound = true;
-                ListMoodGroupWidget *moodWidget = qobject_cast<ListMoodGroupWidget*>(item);
-                Q_ASSERT(moodWidget);
-               // moodWidget->updateMoods(moods, mData->colors());
-            }
-        }
-
-        if (!collectionFound) {
-            std::list<SLightGroup> allCollectionMoods;
-            for (auto&& mood : moods) {
-                int devicesToTest = mood.devices.size();
-                int devicesFound = 0;
-                for (auto&& moodDevice : mood.devices) {
-                    for (auto&& deviceData : collection.devices) {
-                        if (compareLight(moodDevice, deviceData)) {
-                            devicesFound++;
-                        }
-                    }
-                }
-                if (devicesFound == devicesToTest) {
-                    allCollectionMoods.push_back(mood);
-                }
-            }
-            if (allCollectionMoods.size() > 0) {
-                initMoodsCollectionWidget(collection.name, allCollectionMoods, collection.name);
-            }
-        }
-    }
-
-    // now check for missing ones. Reiterate through widgets and remove any that can't be found in collection list
-    for (uint32_t i = 0; i < mMoodsListWidget->count(); ++i) {
-        ListCollectionWidget *item = mMoodsListWidget->widget(i);
-        if (!(item->key().compare("zzzAVAILABLE_MOODS") == 0
-                || item->key().compare("zzzUNAVAILABLE_MOODS") == 0)) {
-            bool collectionFound = false;
-            for (auto&& collection : collectionList) {
-                if (item->key().compare(collection.name) == 0) {
-                    collectionFound = true;
-                }
-            }
-            if (!collectionFound) {
-                mMoodsListWidget->removeWidget(item->key());
-            }
-        }
-    }
-}
-
-
-
-ListMoodGroupWidget* GroupPage::initMoodsCollectionWidget(const QString& name,
-                                                                std::list<SLightGroup> moods,
-                                                                const QString& key,
-                                                                bool hideEdit) {
-    ListMoodGroupWidget *widget = new ListMoodGroupWidget(name,
-                                                            moods,
-                                                            mData->colors(),
-                                                            key,
-                                                            hideEdit,
-                                                            mMoodsListWidget);
-    connect(widget, SIGNAL(moodClicked(QString,QString)), this, SLOT(moodClicked(QString, QString)));
-    connect(widget, SIGNAL(editClicked(QString)), this, SLOT(editGroupClicked(QString)));
-    connect(widget, SIGNAL(editClicked(QString, QString)), this, SLOT(editMoodClicked(QString, QString)));
-    connect(widget, SIGNAL(buttonsShown(QString, bool)), this, SLOT(shouldShowButtons(QString, bool)));
-
-    widget->setShowButtons(mSettings->value(keyForCollection(widget->key())).toBool());
-
-    ListCollectionWidget *collectionWidget = qobject_cast<ListCollectionWidget*>(widget);
-    mMoodsListWidget->addWidget(collectionWidget);
-    return widget;
-}
-
-void GroupPage::gatherAvailandAndNotReachableMoods(const std::list<cor::Light>& allDevices,
-                                                   const std::list<SLightGroup >& moodList) {
-
-    std::list<SLightGroup> availableMoods;
-    std::list<SLightGroup> unavailableMoods;
-    QString kAvailableMoodsKey = "zzzAVAILABLE_MOODS";
-    QString kUnavailableMoodsKey = "zzzUNAVAILABLE_MOODS";
-
-    for (auto&& mood : moodList) {
-        int devicesToTest = mood.devices.size();
-        int devicesReachable = 0;
-        for (auto&& moodDevice : mood.devices) {
-            for (auto&& deviceData : allDevices) {
-                if (compareLight(moodDevice, deviceData)
-                        && deviceData.isReachable) {
-                    devicesReachable++;
-                }
-            }
-        }
-        if (devicesToTest == devicesReachable) {
-            availableMoods.push_back(mood);
-        } else {
-            unavailableMoods.push_back(mood);
-        }
-    }
-
-    // ------------------------------------
-    // add available and not reachable collections
-    // ------------------------------------
-
-    bool foundAvailable = false;
-    bool foundUnavailable = false;
-    for (uint32_t i = 0; i < mMoodsListWidget->count(); ++i) {
-        ListCollectionWidget *item = mMoodsListWidget->widget(i);
-        if (item->key().compare(kAvailableMoodsKey) == 0) {
-            foundAvailable = true;
-            // update
-            ListMoodGroupWidget *widget = qobject_cast<ListMoodGroupWidget*>(item);
-            Q_ASSERT(widget);
-            widget->updateMoods(availableMoods, mData->colors());
-        }
-        if (item->key().compare(kUnavailableMoodsKey) == 0) {
-            foundUnavailable = true;
-            // update
-            ListMoodGroupWidget *widget = qobject_cast<ListMoodGroupWidget*>(item);
-            Q_ASSERT(widget);
-            widget->updateMoods(unavailableMoods, mData->colors());
-        }
-    }
-
-
-    if (!foundAvailable) {
-        initMoodsCollectionWidget("Available", availableMoods, kAvailableMoodsKey, true);
-    }
-
-    if (!foundUnavailable) {
-        initMoodsCollectionWidget("Not Reachable", unavailableMoods, kUnavailableMoodsKey, true);
-    }
-}
-
-
-QString GroupPage::keyForCollection(const QString& key) {
-    return (QString("COLLECTION_" + key));
-}
-
-
-void GroupPage::shouldShowButtons(QString key, bool isShowing) {
-    mSettings->setValue(keyForCollection(key), QString::number((int)isShowing));
-    mSettings->sync();
-    mMoodsListWidget->resizeWidgets();
-}
-
-void GroupPage::editMoodClicked(QString collectionKey, QString moodKey) {
-    Q_UNUSED(collectionKey);
-    emit clickedEditButton(moodKey, true);
-}
-
-void GroupPage::editGroupClicked(QString key) {
-//    mGreyOut->setVisible(true);
-//    mEditPage->setVisible(true);
-    emit clickedEditButton(key, true);
-}
-
-
-void GroupPage::moodClicked(QString collectionKey, QString moodKey) {
-    Q_UNUSED(collectionKey);
-    qDebug() << "collection key:" << collectionKey
-             << "mood key:" << moodKey;
-
-    for (auto&& group :  mGroups->moodList()) {
-        if (group.name.compare(moodKey) == 0) {
-            mData->clearDevices();
-            mData->addDeviceList(group.devices);
-        }
-    }
-
-    // update UI
-    emit updateMainIcons();
-    emit deviceCountChanged();
-    highlightList();
 }

@@ -58,14 +58,20 @@ public:
      */
     void updateBrightnessSlider();
 
-    /// highlight specified button
-    void highlightButton(EPage button);
+    /*!
+     * \brief highlightButton highlight the button of any of the floating layouts, based on the key
+     * \param key the key to use to highlight the buttons.
+     */
+    void highlightButton(QString key);
 
-    /// highlight the groups button on the connection widget
-    void highlightGroupsButton();
+    /*!
+     * \brief pageButtonPressed main page button pressed, such as the color page or connection page
+     * \param pageButtonType page type of button pressed.
+     */
+    void pageButtonPressed(EPage pageButtonType);
 
-    /// highlight the rooms button on the connection widget
-    void highlightRoomsButton();
+    /// switch the floating layout to show the menu for the given page
+    void showFloatingLayout(EPage newPage);
 
     /*!
      * \brief setup connect the top menu to pages it can open and close
@@ -90,9 +96,9 @@ signals:
 public slots:
 
     /*!
-     * \brief deviceCountChangedOnConnectionPage handles the case when the device count changes.
+     * \brief deviceCountChanged handles the case when the device count changes.
      */
-    void deviceCountChangedOnConnectionPage();
+    void deviceCountChanged();
 
     /*!
      * \brief toggleOnOff Connected to the button in the top left of the GUI at all times.
@@ -143,15 +149,6 @@ protected:
 
 private slots:
 
-    /// called when connection button is pressed.
-    void connectionButtonPressed();
-
-    /// called when the color button is pressed.
-    void colorButtonPressed();
-
-    /// called when the group button is pressed.
-    void groupButtonPressed();
-
     /// called when the settings button is pressed.
     void settingsButtonPressed();
 
@@ -174,23 +171,8 @@ private:
      */
     QPushButton *mSettingsButton;
 
-    /*!
-     * \brief mConnectionButton button for connection page
-     */
-    QPushButton *mConnectionButton;
-
-    /*!
-     * \brief mColorPageButton button for color page
-     */
-    QPushButton *mColorPageButton;
-
     /// spacer for row of buttons
     QWidget *mSpacer;
-
-    /*!
-     * \brief mGroupPageButton button for group page
-     */
-    cor::Button *mGroupPageButton;
 
     /// layout for entire widget
     QVBoxLayout *mLayout;
@@ -207,11 +189,17 @@ private:
     /// pointer to commlayer
     CommLayer *mComm;
 
+    /// layout for the left buttons that control the main pages of the application.
+    FloatingLayout *mMainLayout;
+
     /// returns a pointer to the current floating layout.
     FloatingLayout *currentFloatingLayout();
 
     /// floating layout for the connection page.
     FloatingLayout *mConnectionFloatingLayout;
+
+    /// vertical floating layout for the connection page.
+    FloatingLayout *mConnectionSecondFloatingLayout;
 
     /// floating layout for group page.
     FloatingLayout *mGroupFloatingLayout;
@@ -259,9 +247,6 @@ private:
 
     /// pointer to connection page, used during floating layout clicks.
     ConnectionPage *mConnectionPage;
-
-    /// switch the floating layout to show the menu for the given page
-    void showFloatingLayout(EPage newPage);
 
     /// current page being displayed
     EPage mCurrentPage;

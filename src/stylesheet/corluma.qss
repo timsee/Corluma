@@ -32,7 +32,6 @@ QScrollArea {
 
 QListWidget {
     background-color: #201F1F;
-    color: #201F1F; /* hide text, these use custom widgets that are transparent */
 }
 
 QLineEdit {

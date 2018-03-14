@@ -12,7 +12,6 @@
 
 #include "listcollectionwidget.h"
 #include "listmoodwidget.h"
-#include "groupsparser.h"
 #include "datalayer.h"
 #include "comm/commlayer.h"
 
@@ -44,7 +43,7 @@ public:
      *        connect to.
      */
     explicit ListMoodGroupWidget(const QString& name,
-                                  std::list<SLightGroup> moods,
+                                  std::list<cor::LightGroup> moods,
                                   const std::vector<std::vector<QColor> >& colors,
                                   QString key,
                                   bool hideEdit = false,
@@ -57,7 +56,7 @@ public:
      * \param bool removeIfNotFound if a widget already exists but this flag is set to true and it doesn't exist
      *        in the mood list provided, the widget gets removed from the list.
      */
-    void updateMoods(std::list<SLightGroup> moods,
+    void updateMoods(std::list<cor::LightGroup> moods,
                      const std::vector<std::vector<QColor> >& colors,
                      bool removeIfNotFound = false);
 
@@ -79,7 +78,7 @@ public:
      * \brief moods getter for the mood data of this collection group
      * \return all the mood data for this collection group
      */
-    const std::list<SLightGroup>& moods() { return mMoods; }
+    const std::list<cor::LightGroup>& moods() { return mMoods; }
 
     /*!
      * \brief preferredSize all collection widgets must implement a preferred size. this is the size
@@ -95,11 +94,11 @@ public:
      */
     void setShowButtons(bool show);
 
-    /*!
-     * \brief isMoodWidget true if ListMoodGroupWidget, false if ListDevicesGroupWidget. Always true in thise case.
-     * \return true if ListMoodGroupWidget, false if ListDevicesGroupWidget.
-     */
-    bool isMoodWidget() { return true; }
+    /// getter for type of widget contents
+    EWidgetContents widgetContents() { return EWidgetContents::eMoods; }
+
+    /// resize the widgets displayed in the group
+    void resizeInteralWidgets();
 
 signals:
 
@@ -117,16 +116,6 @@ signals:
     void editClicked(QString, QString);
 
 protected:
-
-    /*!
-     * \brief enterEvent picks up when the mouse pointer (or finger on mobile) enters the area of the widget.
-     */
-    virtual void enterEvent(QEvent *);
-
-    /*!
-     * \brief leaveEvent picks up when the mouse pointer (or finger on mobile) leaves the area of the widget.
-     */
-    virtual void leaveEvent(QEvent *);
 
     /*!
      * \brief mouseReleaseEvent picks up when a click (or a tap on mobile) is released.
@@ -155,7 +144,7 @@ private:
      * \brief mMoods the data that represents the mood widgets that are displayed
      *        by this widget.
      */
-    std::list<SLightGroup> mMoods;
+    std::list<cor::LightGroup> mMoods;
 
 };
 

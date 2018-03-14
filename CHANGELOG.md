@@ -260,6 +260,14 @@ ___
 * Turned structs `SDeviceController`, `SLightDevice`, and `SHueLight` into classes.
 * Fixed warnings from Clang Static Analyzer and expensive functions found by Valgrind function profiler.
 
+### **v0.12.5**
+#### The List and Light Switches Update
+* Added support for ArduCor API 3.0.
+* Added an on/off light switch to the ListDeviceWidget.
+* Added the product type (a lightbulb, light cube, etc.) to the ListDeviceWidget.
+* Refactored the ColorSchemeGrid to cor::Palette.
+* Refactored the ListCollectionWidgets to be easier to maintain.
+
 ### Coming Soon
 * Finish manual discovery of Hues and Bridges
 * Fix platform-specific layout and resizing issues (buttons that are too small on Mac OS X, images that are cutoff on iOS, etc.)

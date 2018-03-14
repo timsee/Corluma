@@ -20,7 +20,7 @@ enum class EHardwareConnectionStates {
 
 /*!
  * \brief The HardwareConnectionWidget class is a simple widget that shows the current state of connecting
- *        communication between the Corluma application and a hardware device such as a Phillips Bridge.
+ *        communication between the Corluma application and a hardware device such as a Philips Bridge.
  *        It displays this through the use of two icons and arrows connecting the two icons.
  */
 class HardwareConnectionWidget : public QWidget

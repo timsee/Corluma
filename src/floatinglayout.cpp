@@ -70,7 +70,7 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
     if (eButtonSize == EButtonSize::eSmall) {
         size = QSize(screen->size().width() * 0.025f, screen->size().height() * 0.025f);
     } else if (eButtonSize == EButtonSize::eMedium) {
-        size = QSize(screen->size().width() * 0.03f, screen->size().height() * 0.03f);
+        size = QSize(screen->size().width() * 0.035f, screen->size().height() * 0.035f);
     } else if (eButtonSize == EButtonSize::eRectangle) {
 #ifdef MOBILE_BUILD
         size = QSize(screen->size().width() * 0.07f, screen->size().height() * 0.02f);
@@ -156,22 +156,32 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setMinimumSize(buttonSize());
-        } else if (mNames[i].compare("Discovery_Yun") == 0) {
+        } else if (mNames[i].compare("Connection_Page") == 0) {
+            foundMatch = true;
+            mButtons[i] = new QPushButton(this);
+            mButtons[i]->setCheckable(true);
+            mButtons[i]->setMinimumSize(buttonSize());
+        } else if (mNames[i].compare("Colors_Page") == 0) {
+            foundMatch = true;
+            mButtons[i] = new QPushButton(this);
+            mButtons[i]->setCheckable(true);
+            mButtons[i]->setMinimumSize(buttonSize());
+        } else if (mNames[i].compare("Multi_Colors_Page") == 0) {
+            foundMatch = true;
+            cor::Button *lightsButton = new cor::Button(this);
+            lightsButton->button->setCheckable(true);
+            lightsButton->setupAsStandardButton(ELightingRoutine::eSingleSolid, EColorGroup::eAll);
+            lightsButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, QColor(255,0,0));
+            mButtons[i] = static_cast<QPushButton*>(lightsButton);
+            Q_ASSERT(mButtons[i]);
+        } else if (mNames[i].compare("Discovery_ArduCor") == 0) {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(true);
             mButtons[i]->setStyleSheet("text-align:left");
             mButtons[i]->setIconSize(QSize(mButtons[i]->size().height() * 0.9f,
                                            mButtons[i]->size().height() * 0.9f));
-            mButtons[i]->setText("Yun");
-        } else if (mNames[i].compare("Discovery_Serial") == 0) {
-            foundMatch = true;
-            mButtons[i] = new QPushButton(this);
-            mButtons[i]->setCheckable(true);
-            mButtons[i]->setStyleSheet("text-align:left");
-            mButtons[i]->setIconSize(QSize(mButtons[i]->size().height() * 0.9f,
-                                           mButtons[i]->size().height() * 0.9f));
-            mButtons[i]->setText("Serial");
+            mButtons[i]->setText("ArduCor");
         } else if (mNames[i].compare("Discovery_Hue") == 0) {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
@@ -213,24 +223,11 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             lightsButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, QColor(255,255,0));
             mButtons[i] = static_cast<QPushButton*>(lightsButton);
             Q_ASSERT(mButtons[i]);
-        } else if (mNames[i].compare("New_Collection") == 0) {
+        } else if (mNames[i].compare("New_Group") == 0) {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(false);
             mButtons[i]->setMinimumSize(buttonSize());
-        } else if (mNames[i].compare("New_Mood") == 0) {
-            foundMatch = true;
-            mButtons[i] = new QPushButton(this);
-            mButtons[i]->setCheckable(false);
-            mButtons[i]->setMinimumSize(buttonSize());
-        } else if (mNames[i].compare("Preset_Groups") == 0) {
-            foundMatch = true;
-            cor::Button *lightsButton = new cor::Button(this);
-            lightsButton->button->setCheckable(true);
-            lightsButton->setupAsStandardButton(ELightingRoutine::eSingleSolid, EColorGroup::eAll);
-            lightsButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, QColor(255,0,0));
-            mButtons[i] = static_cast<QPushButton*>(lightsButton);
-            Q_ASSERT(mButtons[i]);
         }
 
         if (foundMatch) {
@@ -258,9 +255,7 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
                     cor::resizeIcon(mButtons[i], ":/images/wifi.png");
                 } else if (mNames[i].compare("Select_Devices") == 0) {
                     cor::resizeIcon(mButtons[i], ":/images/colorWheel_icon.png");
-                } else if (mNames[i].compare("New_Collection") == 0) {
-                    cor::resizeIcon(mButtons[i], ":/images/editIcon.png");
-                } else if (mNames[i].compare("New_Mood") == 0) {
+                } else if (mNames[i].compare("New_Group") == 0) {
                     cor::resizeIcon(mButtons[i], ":/images/editIcon.png");
                 } else if (mNames[i].compare("ColorScheme") == 0) {
                     cor::resizeIcon(mButtons[i], ":/images/ColorSchemePicker_icon.png");
@@ -270,6 +265,10 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
                     cor::resizeIcon(mButtons[i], ":/images/groupsIcon.png");
                 } else if (mNames[i].compare("Rooms") == 0) {
                     cor::resizeIcon(mButtons[i], ":/images/roomIcon.png");
+                } else if (mNames[i].compare("Connection_Page") == 0) {
+                    cor::resizeIcon(mButtons[i], ":/images/connectionIcon.png");
+                } else if (mNames[i].compare("Colors_Page") == 0) {
+                    cor::resizeIcon(mButtons[i], ":/images/colorWheel_icon.png");
                 }
             } else {
                 cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
@@ -338,13 +337,7 @@ void FloatingLayout::updateRoutineMultiColor(ELightingRoutine routine, std::vect
 
 void FloatingLayout::updateGroupPageButtons(const std::vector<std::vector<QColor> >& colors) {
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
-        if (mNames[i].compare("Preset_Groups") == 0) {
-            cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
-            lightsButton->updateIconPresetColorRoutine(ELightingRoutine::eMultiRandomIndividual,
-                                                       EColorGroup::eWater,
-                                                       colors[(int)EColorGroup::eWater]);
-            Q_ASSERT(lightsButton);
-        } else if (mNames[i].compare("Select_Moods") == 0) {
+        if (mNames[i].compare("Select_Moods") == 0) {
             cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
             Q_ASSERT(lightsButton);
             lightsButton->updateIconPresetColorRoutine(ELightingRoutine::eMultiFade,
@@ -354,15 +347,46 @@ void FloatingLayout::updateGroupPageButtons(const std::vector<std::vector<QColor
     }
 }
 
-void FloatingLayout::addMultiRoutineIcon(std::vector<QColor> colors) {
+
+void FloatingLayout::updateMultiPageButton(const std::vector<std::vector<QColor> >& colors) {
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
         if (mNames[i].compare("Multi") == 0) {
             cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
             Q_ASSERT(lightsButton);
-            lightsButton->updateIconPresetColorRoutine(ELightingRoutine::eMultiBarsMoving, EColorGroup::eSevenColor, colors);
+            lightsButton->updateIconPresetColorRoutine(ELightingRoutine::eMultiFade,
+                                                       EColorGroup::eCool,
+                                                       colors[(int)EColorGroup::eCool]);
         }
     }
 }
+
+void FloatingLayout::updateColorPageButton(QString resource) {
+    for (uint32_t i = 0; i < mButtons.size(); ++i) {
+        if (mNames[i].compare("Colors_Page") == 0) {
+            cor::resizeIcon(mButtons[i], resource);
+        }
+    }
+}
+
+void FloatingLayout::updateCollectionButton(QString resource) {
+    for (uint32_t i = 0; i < mButtons.size(); ++i) {
+        if (mNames[i].compare("New_Group") == 0) {
+            cor::resizeIcon(mButtons[i], resource);
+        }
+    }
+}
+
+
+void FloatingLayout::addMultiRoutineIcon(std::vector<QColor> colors) {
+    for (uint32_t i = 0; i < mButtons.size(); ++i) {
+        if (mNames[i].compare("Multi_Colors_Page") == 0) {
+            cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
+            Q_ASSERT(lightsButton);
+            lightsButton->updateIconPresetColorRoutine(ELightingRoutine::eMultiBarsMoving, EColorGroup::eWater, colors);
+        }
+    }
+}
+
 void FloatingLayout::updateDiscoveryButton(ECommType type, QPixmap pixmap) {
     QString label;
     switch (type)
@@ -370,13 +394,8 @@ void FloatingLayout::updateDiscoveryButton(ECommType type, QPixmap pixmap) {
         case ECommType::eHue:
             label = "Discovery_Hue";
             break;
-#ifndef MOBILE_BUILD
-        case ECommType::eSerial:
-            label = "Discovery_Serial";
-            break;
-#endif
         case ECommType::eUDP:
-            label = "Discovery_Yun";
+            label = "Discovery_ArduCor";
             break;
         default:
             break;
@@ -395,13 +414,26 @@ void FloatingLayout::updateDiscoveryButton(ECommType type, QPixmap pixmap) {
 
 }
 
+void FloatingLayout::enableButton(QString key, bool enable) {
+    for (uint32_t i = 0; i < mButtons.size(); ++i) {
+        if (mNames[i].compare(key) == 0) {
+            if (isALightsButton(i)) {
+                cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
+                Q_ASSERT(lightsButton);
+                lightsButton->enable(enable);
+            } else {
+                mButtons[i]->setEnabled(enable);
+            }
+        }
+    }
+}
+
 //--------------------------------
 // Moving
 //--------------------------------
 
 
 void FloatingLayout::move(QPoint topRightPoint) {
-
     // add floating region to far right of screen under main icon menu
     this->setGeometry(topRightPoint.x() - this->width(), topRightPoint.y(), this->width(), this->height());
 }
@@ -464,8 +496,8 @@ void FloatingLayout::highlightRoutineButton(bool shouldHighlight) {
 bool FloatingLayout::isALightsButton(int index) {
     if (mNames[index].compare("Multi") == 0
             || mNames[index].compare("Routine") == 0
-            || mNames[index].compare("Preset_Groups") == 0
-            || mNames[index].compare("Select_Moods") == 0) {
+            || mNames[index].compare("Select_Moods") == 0
+            || mNames[index].compare("Multi_Colors_Page") == 0) {
         return true;
     }
     return false;

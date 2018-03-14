@@ -12,6 +12,7 @@
 #include "comm/commtype.h"
 #include "hue/hueprotocols.h"
 #include "hue/huelight.h"
+#include "groupsparser.h"
 
 class CommUDP;
 class CommHTTP;
@@ -270,6 +271,7 @@ public:
     // Hardware specific functions
     // --------------------------
 
+    /// pointer to the hue comm type
     std::shared_ptr<CommHue> hue() { return mHue; }
 
     /*!
@@ -288,6 +290,18 @@ public:
 
     /// deletes a hue group by name
     void deleteHueGroup(QString name);
+
+    /// pointer to the groups parser
+    GroupsParser* groups() { return mGroups; }
+
+    /// list of all collections from all comm types
+    std::list<cor::LightGroup> collectionList();
+
+    /// list of all rooms from all comm types
+    std::list<cor::LightGroup> roomList();
+
+    /// list of all groups from all comm types
+    std::list<cor::LightGroup> groupList();
 
     /*!
      * \brief loadDebugData take a list of devices and load it into memory. Simulates receiving
@@ -371,6 +385,9 @@ private:
      * \brief mHue Phillip's Hue connection object
      */
     std::shared_ptr<CommHue> mHue;
+
+    /// groups parser
+    GroupsParser *mGroups;
 
     /*!
      * \brief verifyStateUpdatePacketValidity takes a vector and checks that all

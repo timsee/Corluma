@@ -77,9 +77,13 @@ void Button::setupAsStandardButton(ELightingRoutine routine, EColorGroup colorGr
     mLayout->addWidget(button);
     mLabel = label;
     if (mLabel.compare(QString("")) != 0) {
-        buttonLabel = new QLabel;
+        buttonLabel = new QLabel(this);
+        if (label.size() > 12) {
+            label = label.mid(0, 9);
+            label += "...";
+        }
         buttonLabel->setText(label);
-        buttonLabel->setStyleSheet("font: 12pt;");
+        buttonLabel->setStyleSheet("font: 8pt;");
         buttonLabel->setAlignment(Qt::AlignCenter);
         mLayout->addWidget(buttonLabel);
         button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
@@ -159,6 +163,10 @@ void Button::handleButton() {
             emit buttonClicked((int)mLightingRoutine,(int)mColorGroup);
         }
     }
+}
+
+void Button::hideContent() {
+    button->setVisible(false);
 }
 
 }

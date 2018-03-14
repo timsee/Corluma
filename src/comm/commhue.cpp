@@ -32,6 +32,7 @@ CommHue::CommHue() {
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(updateLightStates()));
 
     mParser = new CommPacketParser();
+    connect(mParser, SIGNAL(receivedOnOffChange(int, bool)), this, SLOT(onOffChange(int, bool)));
     connect(mParser, SIGNAL(receivedMainColorChange(int, QColor)), this, SLOT(mainColorChange(int, QColor)));
     connect(mParser, SIGNAL(receivedArrayColorChange(int, int, QColor)), this, SLOT(arrayColorChange(int, int, QColor)));
     connect(mParser, SIGNAL(receivedRoutineChange(int, int, int)), this, SLOT(routineChange(int, int, int)));
@@ -83,6 +84,22 @@ void CommHue::sendPacket(const cor::Controller& controller, QString& packet) {
     mParser->parsePacket(packet);
 }
 
+
+void CommHue::onOffChange(int lightIndex, bool shouldTurnOn) {
+    HueLight light;
+    for (auto&& hue : mConnectedHues) {
+        if (lightIndex == hue.index()) {
+            light = hue;
+        }
+    }
+    light.isOn = shouldTurnOn;
+
+    if (shouldTurnOn) {
+        turnOn(light);
+    } else {
+        turnOff(light);
+    }
+}
 
 void CommHue::changeColorRGB(int lightIndex, int saturation, int brightness, int hue) {
     HueLight light;
@@ -388,6 +405,7 @@ void CommHue::handleSuccessPacket(QString key, QJsonValue value) {
     if (list[1].compare("lights") == 0) {
         if (list.size() > 2) {
             cor::Light device(list[2].toInt(), ECommType::eHue, "Bridge");
+
             if (fillDevice(device)) {
                 if (list[3].compare("state") == 0) {
                     QString key = list[4];
@@ -416,7 +434,7 @@ void CommHue::handleSuccessPacket(QString key, QJsonValue value) {
                         valueChanged = true;
                     } else if (key.compare("colormode") == 0) {
                         QString mode = value.toString();
-                        EColorMode colorMode = hueStringtoColorMode(mode);
+                        EColorMode colorMode = cor::stringtoColorMode(mode);
                         device.colorMode = colorMode;
 
                         valueChanged = true;
@@ -438,8 +456,7 @@ void CommHue::handleSuccessPacket(QString key, QJsonValue value) {
                         device.name = value.toString();
                         updateDevice(device);
 
-                        HueLight light;
-                        hueLightFromLight(device);
+                        HueLight light = hueLightFromLight(device);
                         light.name = device.name;
                         updateHueLight(light);
 
@@ -525,6 +542,24 @@ bool CommHue::updateHueLightState(QJsonObject object, int i) {
             hue.name = object.value("name").toString();
 
             hue.modelID = object.value("modelid").toString();
+
+            if (hue.modelID.compare("LCT001") == 0
+                    || hue.modelID.compare("LCT007") == 0
+                    || hue.modelID.compare("LCT010") == 0
+                    || hue.modelID.compare("LCT014") == 0
+                    || hue.modelID.compare("LCT015") == 0
+                    || hue.modelID.compare("LCT016") == 0) {
+                hue.hardwareType = ELightHardwareType::eLightbulb;
+            } else if (hue.modelID.compare("LLC011") == 0
+                       || hue.modelID.compare("LLC012") == 0) {
+                hue.hardwareType = ELightHardwareType::eBloom;
+            } else if (hue.modelID.compare("LST001") == 0
+                       || hue.modelID.compare("LST002") == 0) {
+                hue.hardwareType = ELightHardwareType::eLightStrip;
+            } else {
+                hue.hardwareType = ELightHardwareType::eLightbulb;
+            }
+
             hue.manufacturer = object.value("manufacturername").toString();
             hue.uniqueID = object.value("uniqueid").toString();
             hue.softwareVersion = object.value("swversion").toString();
@@ -533,7 +568,8 @@ bool CommHue::updateHueLightState(QJsonObject object, int i) {
             hue.isOn = stateObject.value("on").toBool();
 
             QString colorMode = stateObject.value("colormode").toString();
-            hue.colorMode = hueStringtoColorMode(colorMode);
+            hue.colorMode = cor::stringtoColorMode(colorMode);
+            hue.productType = EProductType::eHue;
 
             if (hue.colorMode == EColorMode::eXY) {
                 bool isValid = false;
@@ -610,6 +646,7 @@ bool CommHue::updateHueLightState(QJsonObject object, int i) {
             }
 
             mLightUpdateReceived = true;
+
             updateDevice(hue);
 
             bool hueFound = false;
@@ -704,15 +741,20 @@ bool CommHue::updateHueGroups(QJsonObject object, int i) {
                    && object.value("type").isString()
                    && object.value("state").isObject()) {
 
-        SHueGroup group;
+        cor::LightGroup group;
         group.name = object.value("name").toString();
         group.index = i;
-        group.type = object.value("type").toString();
+
+        if (object.value("type").toString().compare("Room") == 0) {
+            group.isRoom = true;
+        } else {
+            group.isRoom = false;
+        }
 
       //  QJsonObject action = object.value("action").toObject();
         QJsonArray  lights = object.value("lights").toArray();
 
-        std::list<HueLight> lightsInGroup;
+        std::list<cor::Light> lightsInGroup;
         foreach (const QJsonValue &value, lights) {
             int index = value.toString().toInt();
             for (auto light : mConnectedHues) {
@@ -721,11 +763,11 @@ bool CommHue::updateHueGroups(QJsonObject object, int i) {
                 }
             }
         }
-        group.lights = lightsInGroup;
+        group.devices = lightsInGroup;
 
         // check if schedule exists in list
         bool foundGroup = false;
-        std::list<SHueGroup>::iterator iterator;
+        std::list<cor::LightGroup>::iterator iterator;
         for (iterator = mGroups.begin(); iterator != mGroups.end(); ++iterator) {
             if ((*iterator) == group)  {
                 //qDebug() << "update hue group";
@@ -835,21 +877,6 @@ bool CommHue::updateHueLight(HueLight& hue) {
     }
 }
 
-
-EColorMode CommHue::hueStringtoColorMode(const QString& mode) {
-    if (mode.compare("hs") == 0) {
-        return EColorMode::eHSV;
-    } else if (mode.compare("ct") == 0) {
-        return EColorMode::eCT;
-    } else if (mode.compare("") == 0) {
-        return EColorMode::eDimmable;
-    } else if (mode.compare("xy") == 0) {
-        return EColorMode::eXY;
-    } else {
-        qDebug() << "WARNING: Hue color mode not recognized" << mode;
-        return EColorMode::EColorMode_MAX;
-    }
-}
 
 void CommHue::createIdleTimeout(int i, int minutes) {
     SHueBridge bridge = mDiscovery->bridge();
@@ -1018,7 +1045,7 @@ void CommHue::createGroup(QString name, std::list<HueLight> lights, bool isRoom)
     }
 }
 
-void CommHue::updateGroup(SHueGroup group, std::list<HueLight> lights) {
+void CommHue::updateGroup(cor::LightGroup group, std::list<HueLight> lights) {
     if (discovery()->isConnected()) {
         QString urlString = mUrlStart + "/groups/"  + QString::number(group.index);
 
@@ -1044,7 +1071,7 @@ void CommHue::updateGroup(SHueGroup group, std::list<HueLight> lights) {
 }
 
 
-void CommHue::deleteGroup(SHueGroup group) {
+void CommHue::deleteGroup(cor::LightGroup group) {
     if (discovery()->isConnected()) {
         QString urlString = mUrlStart + "/groups/"  + QString::number(group.index);
         mNetworkManager->deleteResource(QNetworkRequest(QUrl(urlString)));

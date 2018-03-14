@@ -10,16 +10,16 @@
 #include "cor/light.h"
 #include "lightingpage.h"
 #include "listdevicewidget.h"
-#include "groupsparser.h"
 #include "comm/commlayer.h"
 #include "listmoodgroupwidget.h"
 #include "listdevicesgroupwidget.h"
 #include "cor/listwidget.h"
 
-
+/// current connection widget displayed in this page
 enum class ECurrentConnectionWidget {
     eGroups,
-    eRooms
+    eRooms,
+    eMoods
 };
 
 /*!
@@ -63,14 +63,8 @@ public:
      */
     void connectCommLayer(CommLayer *layer) { mComm = layer; }
 
-    /// connects the GroupsParser object to this UI widget.
-    void connectGroupsParser(GroupsParser *parser);
-
-    /// display the rooms in the connection page widget
-    void displayRooms();
-
-    /// displays the groups in the connection page widget.
-    void displayGroups();
+    /// programmatically change the currently displayed widget
+    void displayListWidget(ECurrentConnectionWidget widget);
 
     /*!
      * \brief updateConnectionList updates the GUI elements that display the
@@ -95,10 +89,10 @@ signals:
     void updateMainIcons();
 
     /*!
-     * \brief deviceCountChanged signaled to UI assets whenever a click on the page results in changing
+     * \brief changedDeviceCount signaled to UI assets whenever a click on the page results in changing
      *        the number of devices connected.
      */
-    void deviceCountChanged();
+    void changedDeviceCount();
 
     /*!
      * \brief discoveryClicked emited whenever the discovery button is clicked.
@@ -125,6 +119,14 @@ public slots:
     void clearButtonPressed();
 
 private slots:
+
+    /*!
+     * \brief deviceSwitchClicked the on/off switch for a specific device is clicked on the
+     *        groups or room page
+     * \param deviceKey key of the device
+     * \param isOn true if switched to on, false if switched to off
+     */
+    void deviceSwitchClicked(QString deviceKey, bool isOn);
 
     /*!
      * \brief groupDeleted handles whenever a group is deleted on the edit page.
@@ -160,22 +162,11 @@ private slots:
     void deviceClicked(QString collectionKey, QString deviceKey);
 
     /*!
-     * \brief clearGroupClicked called from the devices page, clears all devices from the collection
-     *        that matches the key from the selected devices list
+     * \brief groupSelected a group is clicked on a group or room page
+     * \param key key of group selected
+     * \param shouldSelect true if selected, false if deselected
      */
-    void clearGroupClicked(QString key);
-
-    /*!
-     * \brief selectGroupClicked called from the devices page, selects all devices from the
-     *        collection that matches the key from the selected devices list
-     */
-    void selectGroupClicked(QString);
-
-    /*!
-     * \brief shouldShowButtons saves to persistent memory whether or not you should show the individual
-     *        moods/devices for any given collection.
-     */
-    void shouldShowButtons(QString key, bool isShowing);
+    void groupSelected(QString key, bool shouldSelect);
 
     /*!
      * \brief editGroupClicked the edit button has been pressed for a specific collection
@@ -191,6 +182,28 @@ private slots:
      *        this handles that case so that discovery can start.
      */
     void newConnectionFound(QString);
+
+    //--------------------
+    // Moods
+    //--------------------
+
+    /*!
+     * \brief editMoodClicked the edit button has been pressed for a specific mood. This
+     *        gets sent to the main window and tells it to open the edit page.
+     */
+    void editMoodClicked(QString collectionKey, QString moodKey);
+
+    /*!
+     * \brief moodClicked called whenever an individual mood is clicked
+     * \param collectionKey key for the collection of lights that the mood fits into
+     * \param moodKey name of the specific mood
+     */
+    void moodClicked(QString collectionKey, QString moodKey);
+
+    /*!
+     * \brief newMoodAdded handles whenever a new mood was created on the edit page.
+     */
+    void newMoodAdded(QString);
 
 protected:
     /*!
@@ -218,8 +231,15 @@ private:
     /// widget for displaying the rooms in the app data.
     cor::ListWidget *mRoomsWidget;
 
+    /*!
+     * \brief mMoodsListWidget List widget for devices. Either the moods widget or this device widget
+     *        is shown at any given time but the other is kept around in memory since they are expensive to render.
+     */
+    cor::ListWidget *mMoodsListWidget;
+
     /// getter for the current widget.
     cor::ListWidget *currentWidget();
+
 
     /*!
      * \brief cleanupList resync the list of collections and devices, deleting old ones that no longer exist and
@@ -234,9 +254,8 @@ private:
      * \param hideEdit true for special case groups (Available and Not Reachable), false otherwise
      * \return pointer to the newly created ListDevicesGroupWidget
      */
-    ListDevicesGroupWidget* initDevicesCollectionWidget(const SLightGroup& group,
-                                                        const QString& key,
-                                                        bool hideEdit = false);
+    ListDevicesGroupWidget* initDevicesCollectionWidget(const cor::LightGroup& group,
+                                                        const QString& key);
 
 
     /*!
@@ -248,26 +267,17 @@ private:
      */
     void gatherAvailandAndNotReachableDevices(const std::list<cor::Light>& allDevices);
 
-    /// checks saved data and determines which collections to open and which to leave closed when rendering the connection page.
-    void openDefaultCollections();
-
-    /// helper to get a unique key for a collection.
-    QString keyForCollection(const QString& key);
-
-    /// gathers all light groups, from both arduinos and hues.
-    std::list<SLightGroup> gatherAllDataGroups();
-
     /// gathers all light groups, as displayed in the UI
-    std::list<SLightGroup> gatherAllUIGroups();
+    std::list<cor::LightGroup> gatherAllUIGroups();
 
     /*!
-     * \brief updateDataGroupInUI using the new SLightGroup, update the UI assets with up-to-date light info. This function matches the dataGroup group
+     * \brief updateDataGroupInUI using the new cor::LightGroup, update the UI assets with up-to-date light info. This function matches the dataGroup group
      *        to all UI groups that match it, then takes the up to date version from the allDevices list to display that info
      * \param dataGroup the group to update in the UI
      * \param uiGroups all UI groups
      * \param allDevices all up-to-date information about all devices.
      */
-    void updateDataGroupInUI(const SLightGroup dataGroup, const std::list<SLightGroup>& uiGroups, const std::list<cor::Light>& allDevices);
+    void updateDataGroupInUI(const cor::LightGroup dataGroup, const std::list<cor::LightGroup>& uiGroups, const std::list<cor::Light>& allDevices);
 
     /*!
      * \brief updateDeviceList create an up-to-date version of a list of cor::Lights. The cor::Lights may be obtained from the UI or from
@@ -285,12 +295,6 @@ private:
     QVBoxLayout *mLayout;
 
     /*!
-     * \brief mGroups manages the list of collections and moods and the JSON data
-     *        associated with them.
-     */
-    GroupsParser *mGroups;
-
-    /*!
      * \brief mLastUpdateConnectionList the time that the connection list
      *        was last rendered. Used to throttle unnecessary rendering.
      */
@@ -304,6 +308,29 @@ private:
      *         the string is invalid.
      */
     cor::Light identifierStringToLight(QString string);
+
+    //---------------
+    // Moods
+    //---------------
+
+    /*!
+     * \brief initMoodsCollectionWidget constructor helper for making a ListGroupGroupWidget
+     * \param name name of mood
+     * \param devices devices in mood
+     * \param key key for mood
+     * \param hideEdit true for special case groups (Available and Not Reachable), false otherwise
+     * \return pointer to the newly created ListGroupGroupWidget
+     */
+    ListMoodGroupWidget* initMoodsCollectionWidget(const QString& name,
+                                                    std::list<cor::LightGroup> moods,
+                                                    const QString& key,
+                                                    bool hideEdit = false);
+
+    /*!
+     * \brief makeMoodsCollections make all the mood-based UI widgets based on the saved JSON data in the application
+     * \param moods list of all saved moods
+     */
+    void makeMoodsCollections(const std::list<cor::LightGroup>& moods);
 
     //-------------
     // Cached States and Assets

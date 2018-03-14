@@ -7,6 +7,8 @@
 #include <QDebug>
 #include <QHostAddress>
 
+#include "lightingprotocols.h"
+
 #include <sstream>
 #include <cmath>
 
@@ -186,6 +188,24 @@ inline bool checkIfValidIP(QString ip) {
         return true;
     } else {
         return false;
+    }
+}
+
+/// converts the enum for an arduio hardware type to a more generalized corluma type
+inline ELightHardwareType convertArduinoTypeToLightType(EArduinoHardwareType type) {
+    switch (type) {
+        case EArduinoHardwareType::eSingleLED:
+            return ELightHardwareType::eSingleLED;
+        case EArduinoHardwareType::eCube:
+            return ELightHardwareType::eCube;
+        case EArduinoHardwareType::e2DArray:
+            return ELightHardwareType::e2DArray;
+        case EArduinoHardwareType::eLightStrip:
+            return ELightHardwareType::eLightStrip;
+        case EArduinoHardwareType::eRing:
+            return ELightHardwareType::eRing;
+        default:
+            return ELightHardwareType::ELightHardwareType_MAX;
     }
 }
 

@@ -6,6 +6,7 @@
 #include <QHBoxLayout>
 #include "cor/button.h"
 
+/// size of buttons in widget
 enum class EButtonSize {
     eSmall,
     eMedium,
@@ -65,6 +66,12 @@ public:
     void updateRoutineMultiColor(ELightingRoutine routine, std::vector<QColor> colors, int colorCount);
 
     /*!
+     * \brief updateMultiPageButton update the multi page button to display a prettier icon
+     * \param colors all the colorgroups.
+     */
+    void updateMultiPageButton(const std::vector<std::vector<QColor> >& colors);
+
+    /*!
      * \brief updateGroupPageButtons update group page buttons using colors only found in the datalayer
      * \param colors mData->colors()
      */
@@ -84,10 +91,29 @@ public:
     void addMultiRoutineIcon(std::vector<QColor> colors);
 
     /*!
+     * \brief updateColorPageButton update the color page button with given resource
+     * \param resource the resource to draw on the color page button.
+     */
+    void updateColorPageButton(QString resource);
+
+    /*!
+     * \brief updateCollectionButton update the collection's edit or new icon.
+     * \param resource the resource to draw on the collection button
+     */
+    void updateCollectionButton(QString resource);
+
+    /*!
      * \brief highlightButton highlight the button with the given key. Unhighlights all other buttons.
      * \param key key of button to highlight.
      */
     void highlightButton(QString key);
+
+    /*!
+     * \brief enableButton programmatically enable or disable buttons
+     * \param key key of button to enable or disable
+     * \param enable true to enable, false to disable.
+     */
+    void enableButton(QString key, bool enable);
 
     /*!
      * \brief highlightRoutineButton highlights the routine button. Allows the page that owns the floating layout

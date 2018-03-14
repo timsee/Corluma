@@ -16,6 +16,7 @@ class Controller
 {
 
 public:
+    /// constructor
     Controller();
 
     /// name of controller
@@ -41,6 +42,12 @@ public:
 
     /// names of hardware connected to this controller
     std::vector<QString> names;
+
+    /// hardware types for the controller's lights
+    std::vector<ELightHardwareType> hardwareTypes;
+
+    /// product types for the controller's lights
+    std::vector<EProductType> productTypes;
 
     /// converts the controller's identifier information to a string
     QString toString();

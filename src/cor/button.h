@@ -110,6 +110,9 @@ public:
      */
     void setChecked(bool checked) { return button->setChecked(checked); }
 
+    /// hides all the content in the widget without resizing the widget
+    void hideContent();
+
 signals:
     /*!
      * \brief buttonClicked sent only when setupAsPresetButton has been called.

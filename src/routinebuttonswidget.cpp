@@ -35,7 +35,7 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector
         for (int i = 0; i < (int)mRoutineButtons.size(); ++i) {
             mRoutineButtons[i] = new cor::Button(this);
             mRoutineButtons[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-            mRoutineButtons[i]->setupAsStandardButton((ELightingRoutine)(i + 1), EColorGroup::eAll, QString::fromStdString(labels[i]));
+            mRoutineButtons[i]->setupAsStandardButton((ELightingRoutine)(i), EColorGroup::eAll, QString::fromStdString(labels[i]));
             connect(mRoutineButtons[i], SIGNAL(buttonClicked(int, int)), this, SLOT(routineChanged(int, int)));
             if ((i % maxColumn) == 0 && i != 0) {
                 rowCount++;
@@ -106,7 +106,7 @@ void RoutineButtonsWidget::routineChanged(int newRoutine, int newGroup) {
 
 void RoutineButtonsWidget::singleRoutineColorChanged(QColor color) {
     for (int i = 0; i < (int)mRoutineButtons.size(); ++i) {
-        mRoutineButtons[i]->updateIconSingleColorRoutine((ELightingRoutine)(i + 1), color);
+        mRoutineButtons[i]->updateIconSingleColorRoutine((ELightingRoutine)(i), color);
     }
 }
 

@@ -14,7 +14,7 @@
  * \brief The TempBrightSliders class is a class designed for choosing shades of white and how bright they shine.
  *        The top slider is as "temperature" slider which determines the temperature of the white of the LEDs. Cooler
  *        whites have a blue tint and warmer whites have an orange tint. The sliders use the temperature range available
- *        on Phillips hue lights: 153-500. If lights do not have a temperature mode, they emulate it with their RGB mode.
+ *        on Philips hue lights: 153-500. If lights do not have a temperature mode, they emulate it with their RGB mode.
  *        The second slider is a  brightness slider, which determine how bright the LEDs will shine.
  */
 class TempBrightSliders: public QWidget

@@ -98,22 +98,15 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
     // Enabled Connections
     //-----------
 
-    mYunButton    = new QPushButton(this);
-    mYunButton->setCheckable(true);
-    mYunButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-    mSerialButton = new QPushButton(this);
-    mSerialButton->setCheckable(true);
-    mSerialButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mArduCorButton    = new QPushButton(this);
+    mArduCorButton->setCheckable(true);
+    mArduCorButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     mHueButton    = new QPushButton(this);
     mHueButton->setCheckable(true);
     mHueButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    mConnectionButtons = { mYunButton,
-#ifndef MOBILE_BUILD
-                    mSerialButton,
-#endif //MOBILE_BUILD
+    mConnectionButtons = { mArduCorButton,
                     mHueButton};
 
     connect(mSpeedSlider, SIGNAL(valueChanged(int)), this, SLOT(speedChanged(int)));
@@ -122,15 +115,8 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
     connect(mHueButton, SIGNAL(clicked(bool)), this, SLOT(hueCheckboxClicked(bool)));
     mHueButton->setText("Hue");
 
-    connect(mYunButton, SIGNAL(clicked(bool)), this, SLOT(yunCheckboxClicked(bool)));
-    mYunButton->setText("Yun");
-
-#ifndef MOBILE_BUILD
-    connect(mSerialButton, SIGNAL(clicked(bool)), this, SLOT(serialCheckboxClicked(bool)));
-    mSerialButton->setText("Serial");
-#else
-    mSerialButton->setHidden(true);
-#endif //MOBILE_BUILD
+    connect(mArduCorButton, SIGNAL(clicked(bool)), this, SLOT(arduCorButtonClicked(bool)));
+    mArduCorButton->setText("ArduCor");
 
     //-----------
     // Access Persistent Memory
@@ -151,30 +137,26 @@ void GlobalSettingsWidget::hueCheckboxClicked(bool checked) {
     checkBoxClicked(ECommType::eHue, checked);
 }
 
-void GlobalSettingsWidget::yunCheckboxClicked(bool checked) {
+void GlobalSettingsWidget::arduCorButtonClicked(bool checked) {
     checkBoxClicked(ECommType::eUDP, checked);
 }
 
-void GlobalSettingsWidget::serialCheckboxClicked(bool checked) {
-#ifndef MOBILE_BUILD
-    checkBoxClicked(ECommType::eSerial, checked);
-#else
-    Q_UNUSED(checked);
-#endif //MOBILE_BUILD
-}
 
 void GlobalSettingsWidget::checkCheckBoxes() {
-    std::vector<ECommType> types =  mData->commTypeSettings()->commTypes();
-    for (uint32_t i = 0; i < types.size(); ++i) {
-        QPushButton* checkBox = mConnectionButtons[i];
-        ECommType type = types[i];
-        if (mData->commTypeSettings()->commTypeEnabled(type)) {
-            checkBox->setChecked(true);
-           // checkBox->setStyleSheet("background-color:#4A4949;");
-        } else {
-            checkBox->setChecked(false);
-           // checkBox->setStyleSheet("background-color: #000000;");
-        }
+    if (mData->commTypeSettings()->commTypeEnabled(ECommType::eHue)) {
+        mHueButton->setChecked(true);
+       // checkBox->setStyleSheet("background-color:#4A4949;");
+    } else {
+        mHueButton->setChecked(false);
+       // checkBox->setStyleSheet("background-color: #000000;");
+    }
+
+    if (mData->commTypeSettings()->commTypeEnabled(ECommType::eUDP)) {
+        mArduCorButton->setChecked(true);
+       // checkBox->setStyleSheet("background-color:#4A4949;");
+    } else {
+        mArduCorButton->setChecked(false);
+       // checkBox->setStyleSheet("background-color: #000000;");
     }
 }
 
@@ -207,6 +189,9 @@ void GlobalSettingsWidget::checkBoxClicked(ECommType type, bool checked) {
     bool successful = mData->commTypeSettings()->enableCommType(type, checked);
     if (type == ECommType::eUDP) {
         mData->commTypeSettings()->enableCommType(ECommType::eHTTP, checked);
+#ifndef MOBILE_BUILD
+        mData->commTypeSettings()->enableCommType(ECommType::eSerial, checked);
+#endif
     }
     if (!successful) {
         mConnectionButtons[mData->commTypeSettings()->indexOfCommTypeSettings(type)]->setChecked(true);
@@ -217,6 +202,9 @@ void GlobalSettingsWidget::checkBoxClicked(ECommType type, bool checked) {
         mComm->startup(type);
         if (type == ECommType::eUDP) {
             mComm->startup(ECommType::eHTTP);
+#ifndef MOBILE_BUILD
+            mComm->startup(ECommType::eSerial);
+#endif
         }
     } else {
         mComm->shutdown(type);
@@ -224,17 +212,17 @@ void GlobalSettingsWidget::checkBoxClicked(ECommType type, bool checked) {
         if (type == ECommType::eUDP) {
             mComm->shutdown(ECommType::eHTTP);
             mData->removeDevicesOfType(ECommType::eHTTP);
+#ifndef MOBILE_BUILD
+            mComm->shutdown(ECommType::eSerial);
+            mData->removeDevicesOfType(ECommType::eSerial);
+#endif
         }
 
         // update the UI accordingly
         if (type == ECommType::eHue) {
             mHueButton->setChecked(false);
         } else if (type == ECommType::eUDP) {
-            mYunButton->setChecked(false);
-#ifndef MOBILE_BUILD
-        } else if (type == ECommType::eSerial) {
-            mSerialButton->setChecked(false);
-#endif //MOBILE_BUILD
+            mArduCorButton->setChecked(false);
         }
     }
 }
@@ -334,10 +322,7 @@ void GlobalSettingsWidget::showAdvanceMode(bool showAdvanceMode) {
     mEnabledConnectionsLabel->setVisible(showAdvanceMode);
 
     mHueButton->setVisible(showAdvanceMode);
-    mYunButton->setVisible(showAdvanceMode);
-#ifndef MOBILE_BUILD
-    mSerialButton->setVisible(showAdvanceMode);
-#endif //MOBILE_BUILD
+    mArduCorButton->setVisible(showAdvanceMode);
     resize();
 }
 
@@ -406,16 +391,10 @@ void GlobalSettingsWidget::resize() {
                                 buttonSize,
                                 buttonSize);
 
-        mYunButton->setGeometry(mHueButton->geometry().x() + mHueButton->width() + mSpacerPixels,
+        mArduCorButton->setGeometry(mHueButton->geometry().x() + mHueButton->width() + mSpacerPixels,
                                 currentY,
                                 buttonSize,
                                 buttonSize);
-#ifndef MOBILE_BUILD
-        mSerialButton->setGeometry(mYunButton->geometry().x() + mYunButton->width() + mSpacerPixels,
-                                currentY,
-                                buttonSize,
-                                buttonSize);
-#endif //MOBILE_BUILD
 
         currentY += mHueButton->height() + 2 * mSpacerPixels;
     }

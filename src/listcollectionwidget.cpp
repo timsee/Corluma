@@ -4,21 +4,26 @@
  * Released under the GNU General Public License.
  */
 
+#include <QPainter>
+#include <QStyleOption>
+
 #include "listcollectionwidget.h"
 #include "listcollectionsubwidget.h"
 #include <algorithm>
 
+ListCollectionWidget::ListCollectionWidget(QWidget *parent) : QWidget(parent) {}
+
 void ListCollectionWidget::setup(const QString& name,
                                  const QString& key,
+                                 EListType type,
                                  bool hideEdit) {
     mHideEdit = hideEdit;
     mShowButtons = false;
 
+    mType = type;
+
     mIconRatio = 0.5f;
     mRowCount = 0;
-
-    QString backgroundStyleSheet = "border: none; background:rgba(0, 0, 0, 0%);";
-    this->setStyleSheet(backgroundStyleSheet);
 
     // setup main label
     mName = new QLabel(this);
@@ -26,7 +31,11 @@ void ListCollectionWidget::setup(const QString& name,
     mName->setText(name);
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     mName->setStyleSheet("margin-left: 5px; font: bold;");
-    mMinimumHeight = mName->height();
+    if (mType == EListType::eGrid) {
+        mMinimumHeight = mName->height();
+    } else if (mType == EListType::eLinear || mType == EListType::eLinear2X) {
+        mMinimumHeight = mName->height();
+    }
 
     mEditButton = new QPushButton(this);
     mEditButton->setStyleSheet("border: none;");
@@ -53,7 +62,11 @@ void ListCollectionWidget::setup(const QString& name,
     mHiddenStateIcon->setFixedSize(mMinimumHeight, mMinimumHeight);
     mHiddenStateIcon->setAlignment(Qt::AlignCenter);
 
-    mWidgetSize = QSize(this->width() / 2, mMinimumHeight);
+    if (mType == EListType::eGrid) {
+        mWidgetSize = QSize(this->width() / 2, mMinimumHeight);
+    } else if (mType == EListType::eLinear || mType == EListType::eLinear2X) {
+        mWidgetSize = QSize(this->width(), mMinimumHeight);
+    }
 
     mName->setFixedHeight(mMinimumHeight);
 
@@ -70,7 +83,12 @@ void ListCollectionWidget::setup(const QString& name,
 }
 
 void ListCollectionWidget::setListHeight(int newHeight) {
-    mMinimumHeight = newHeight / 8;
+    if (mType == EListType::eGrid) {
+        mMinimumHeight = newHeight / 8;
+    } else if (mType == EListType::eLinear || mType == EListType::eLinear2X) {
+        mMinimumHeight = newHeight / 8;
+    }
+
     mClosedPixmap = QPixmap(":/images/closedArrow.png");
     mClosedPixmap = mClosedPixmap.scaled(mMinimumHeight, mMinimumHeight,
                                          Qt::KeepAspectRatio,
@@ -97,7 +115,7 @@ void ListCollectionWidget::resizeRightHandIcon(QPixmap pixmap, QPushButton *butt
 
 
 
-void ListCollectionWidget::insertWidgetIntoGrid(ListCollectionSubWidget* widget) {
+void ListCollectionWidget::insertWidget(ListCollectionSubWidget* widget) {
     // insert into sorted set
     mWidgets.push_back(widget);
     widget->setParent(mWidget);
@@ -106,7 +124,7 @@ void ListCollectionWidget::insertWidgetIntoGrid(ListCollectionSubWidget* widget)
     moveWidgets();
 }
 
-void ListCollectionWidget::removeWidgetFromGrid(ListCollectionSubWidget* widget) {
+void ListCollectionWidget::removeWidget(ListCollectionSubWidget* widget) {
     auto findResult = std::find(mWidgets.begin(), mWidgets.end(), widget);
     if (findResult == mWidgets.end()) {
         qDebug() << "WARNING: Could not find widget in set" << __func__;
@@ -127,9 +145,16 @@ QPoint ListCollectionWidget::widgetPosition(QWidget *widget) {
     }
     // store index of inserted element
     int index = std::distance(mWidgets.begin(), findResult);
-    int x = index % 2;     // 2 rows per column
-    int y = index / 2;     // new column every other index
-    return QPoint(x, y);
+    if (mType == EListType::eGrid) {
+        int x = index % 2;     // 2 rows per column
+        int y = index / 2;     // new column every other index
+        return QPoint(x, y);
+    } else if (mType == EListType::eLinear || mType == EListType::eLinear2X) {
+        int x = 0;     // 1 row per column
+        int y = index; // new column every index
+        return QPoint(x, y);
+    }
+    return QPoint(-1, -1);
 }
 
 
@@ -146,7 +171,6 @@ void ListCollectionWidget::moveWidgets() {
         if (((uint32_t)position.y() + 1) > tempRowCount) {
             tempRowCount = (position.y() + 1);
         }
-      //  qDebug() << "widget hieght" << mWidget->height() << "vs " << this->height() << "vs " << preferredSize().height() << " pos " << position.y() * mWidgetSize.height();
     }
     if (mRowCount != tempRowCount) {
       //  mWidget->setMinimumHeight(tempRowCount * mWidgetSize.height());
@@ -160,11 +184,16 @@ void ListCollectionWidget::resize() {
    // qDebug() << "parent size" << this->parentWidget()->size();
     this->setFixedSize(preferredSize());
     // pad the width a bit in case its an odd sized width so it takes up the whole region.
-    mWidgetSize = QSize(this->width() / 2 + 2, mMinimumHeight);
+    if (mType == EListType::eGrid) {
+        mWidgetSize = QSize(this->width() / 2, mMinimumHeight);
+    } else if (mType == EListType::eLinear) {
+        mWidgetSize = QSize(this->width(), mMinimumHeight);
+    } else if (mType == EListType::eLinear2X) {
+        mWidgetSize = QSize(this->width(), mMinimumHeight * 2);
+    }
    // qDebug() << "widget size" << mWidgetSize << "total size" << this->size();
     for (uint32_t i = 0; i < mWidgets.size(); ++i) {
         mWidgets[i]->setMaximumSize(mWidgetSize);
     }
     moveWidgets();
 }
-

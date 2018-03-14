@@ -60,6 +60,14 @@ void CommPacketParser::parsePacket(QString packet) {
                        }
                     }
                     break;
+                case EPacketHeader::eOnOffChange:
+                    if (intVector.size() == 3) {
+                        if (intVector[2] < 0 || intVector[2] > 1) validPacket = false;
+                        if (validPacket) {
+                            emit receivedOnOffChange(intVector[1], (bool)intVector[2]);
+                        }
+                    }
+                    break;
                 case EPacketHeader::eModeChange:
                     if (intVector.size() == 3 || intVector.size() == 4) {
                        if ((intVector[2] < 0) || (intVector[2] >= (int)ELightingRoutine::eLightingRoutine_MAX)) validPacket = false;

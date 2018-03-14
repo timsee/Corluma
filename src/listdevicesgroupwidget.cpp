@@ -8,47 +8,36 @@
 #include <QPainter>
 #include <QStyleOption>
 
-ListDevicesGroupWidget::ListDevicesGroupWidget(const SLightGroup& group,
+ListDevicesGroupWidget::ListDevicesGroupWidget(const cor::LightGroup& group,
                                                QString key,
                                                CommLayer *comm,
                                                DataLayer *data,
-                                               bool hideEdit,
                                                QWidget *parent) {
     this->setParent(parent);
     this->setMaximumSize(parent->size());
-    mCheckedDevices = 0;
     mData = data;
     mComm = comm;
+    mSelectAllIsClear = false;
 
-    setup(group.name, key, hideEdit);
-
-    mClearAllButton = new QPushButton(this);
-    mClearAllButton->setStyleSheet("border: none;");
-    connect(mClearAllButton, SIGNAL(clicked(bool)), this, SLOT(clearButtonClicked(bool)));
-    mClearAllButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    mClearAllPixmap = QPixmap(":/images/clearAllIcon.png");
-    mClearAllButton->setIconSize(QSize(mMinimumHeight * mIconRatio, mMinimumHeight * mIconRatio));
-    mClearAllButton->setIcon(QIcon((mClearAllPixmap)));
-    mClearAllButton->setHidden(true);
+    setup(group.name, key, EListType::eGrid, true);
 
     mSelectAllButton = new QPushButton(this);
     mSelectAllButton->setStyleSheet("border: none;");
     connect(mSelectAllButton, SIGNAL(clicked(bool)), this, SLOT(selectAllButtonClicked(bool)));
     mSelectAllButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     mSelectAllPixmap = QPixmap(":/images/selectAllIcon.png");
+    mClearAllPixmap = QPixmap(":/images/clearAllIcon.png");
     mSelectAllButton->setIconSize(QSize(mMinimumHeight * mIconRatio, mMinimumHeight * mIconRatio));
     mSelectAllButton->setIcon(QIcon((mSelectAllPixmap)));
     mSelectAllButton->setHidden(true);
 
     mTopLayout = new QHBoxLayout();
     mTopLayout->addWidget(mName);
-    mTopLayout->addWidget(mClearAllButton);
     mTopLayout->addWidget(mSelectAllButton);
     mTopLayout->addWidget(mEditButton);
     mTopLayout->addWidget(mHiddenStateIcon);
 
-    mTopLayout->setStretch(0, 10);
-    mTopLayout->setStretch(1, 2);
+    mTopLayout->setStretch(0, 12);
     mTopLayout->setStretch(2, 2);
     mTopLayout->setStretch(3, 2);
     mTopLayout->setStretch(4, 2);
@@ -96,7 +85,8 @@ void ListDevicesGroupWidget::updateDevices(std::list<cor::Light> devices, bool r
                                                                     mWidgetSize,
                                                                     this);
                     connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
-                    insertWidgetIntoGrid(widget);
+                    connect(widget, SIGNAL(switchToggled(QString,bool)), this, SLOT(handleToggledSwitch(QString, bool)));
+                    insertWidget(widget);
                 }
             }
         }
@@ -117,7 +107,7 @@ void ListDevicesGroupWidget::updateDevices(std::list<cor::Light> devices, bool r
                 }
             }
             if (!found) {
-                removeWidgetFromGrid(existingWidget);
+                removeWidget(existingWidget);
                 break;
             }
         }
@@ -183,40 +173,32 @@ void ListDevicesGroupWidget::setCheckedDevices(std::list<cor::Light> devices) {
             widget->setHighlightChecked(false);
         }
     }
-    mCheckedDevices = numOfDevices;
+
+    handleSelectAllButton();
     repaint();
 }
 
-void ListDevicesGroupWidget::updateRightHandButtons() {
-    resizeRightHandIcon(mSelectAllPixmap, mSelectAllButton);
-    resizeRightHandIcon(mClearAllPixmap, mClearAllButton);
+void ListDevicesGroupWidget::resizeInteralWidgets() {
+    handleSelectAllButton();
 }
 
-void ListDevicesGroupWidget::clearButtonClicked(bool) {
-    emit clearAllClicked(mKey);
+void ListDevicesGroupWidget::handleSelectAllButton() {
+    if (checkedDevices().size() > 0) {
+        resizeRightHandIcon(mClearAllPixmap, mSelectAllButton);
+        mSelectAllIsClear = true;
+        mSelectAllButton->setVisible(true);
+    } else if (mShowButtons) {
+        resizeRightHandIcon(mSelectAllPixmap, mSelectAllButton);
+        mSelectAllIsClear = false;
+        mSelectAllButton->setVisible(true);
+    } else {
+        mSelectAllButton->setVisible(false);
+    }
 }
 
 void ListDevicesGroupWidget::selectAllButtonClicked(bool) {
-    if (!mShowButtons) {
-        setShowButtons(true);
-    }
-    emit selectAllClicked(mKey);
-}
-
-void ListDevicesGroupWidget::enterEvent(QEvent *) {
-    if (!mHideEdit) {
-        mEditButton->setHidden(false);
-    }
-    mSelectAllButton->setHidden(false);
-    mClearAllButton->setHidden(false);
-}
-
-void ListDevicesGroupWidget::leaveEvent(QEvent *) {
-    if (!mHideEdit) {
-        mEditButton->setHidden(true);
-    }
-    mSelectAllButton->setHidden(true);
-    mClearAllButton->setHidden(true);
+    handleSelectAllButton();
+    emit allButtonPressed(mKey, !mSelectAllIsClear);
 }
 
 void ListDevicesGroupWidget::paintEvent(QPaintEvent *event) {
@@ -227,29 +209,10 @@ void ListDevicesGroupWidget::paintEvent(QPaintEvent *event) {
     painter.setRenderHint(QPainter::Antialiasing);
     QRect nameRect = mName->rect();
     QRect topRect(nameRect.x(), nameRect.y(), this->width(), nameRect.height());
-    if (mCheckedDevices) {
+    if (checkedDevices().size()) {
         painter.fillRect(topRect, QBrush(computeHighlightColor()));
     } else {
         painter.fillRect(topRect, QBrush(QColor(32, 31, 31)));
-    }
-
-    QBrush blueBrush = QBrush(QColor(61, 142, 201));
-    QBrush blackBrush = QBrush(QColor(32, 31, 31));
-
-    // now loop through and draw the higlights on all the boxes
-    for (uint32_t i = 0; i < mWidgets.size(); ++i) {
-        QPoint position = widgetPosition(mWidgets[i]);
-        QRect widgetRect = QRect(position.x() * mWidgetSize.width(),
-                                 topRect.height() + position.y() * mWidgetSize.height(),
-                                 mWidgetSize.width(),
-                                 mWidgetSize.height());
-        ListDeviceWidget *widget = qobject_cast<ListDeviceWidget*>(mWidgets[i]);
-        Q_ASSERT(widget);
-        if (widget->checked()) {
-            painter.fillRect(widgetRect, blueBrush);
-        } else {
-            painter.fillRect(widgetRect, blackBrush);
-        }
     }
 }
 
@@ -260,7 +223,7 @@ QColor ListDevicesGroupWidget::computeHighlightColor() {
                       pureBlue.green() - pureBlack.green(),
                       pureBlue.blue() - pureBlack.blue());
 
-    float amountOfBlue = (float)mCheckedDevices / (float)mWidgets.size();
+    float amountOfBlue = (float)checkedDevices().size() / (float)mWidgets.size();
     return QColor(amountOfBlue * difference.red() + pureBlack.red(),
                   amountOfBlue * difference.green() + pureBlack.green(),
                   amountOfBlue * difference.blue() + pureBlack.blue());
@@ -268,5 +231,17 @@ QColor ListDevicesGroupWidget::computeHighlightColor() {
 
 void ListDevicesGroupWidget::mouseReleaseEvent(QMouseEvent *) {
     setShowButtons(!mShowButtons);
+}
+
+const std::list<cor::Light> ListDevicesGroupWidget::checkedDevices() {
+    std::list<cor::Light> devices;
+    for (auto&& widget : mWidgets) {
+        ListDeviceWidget *existingWidget = qobject_cast<ListDeviceWidget*>(widget);
+        Q_ASSERT(existingWidget);
+        if (existingWidget->checked()) {
+            devices.push_back(existingWidget->device());
+        }
+    }
+    return devices;
 }
 

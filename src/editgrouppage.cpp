@@ -15,51 +15,71 @@
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
 
-struct sortListDeviceWidget {
-  bool operator() (ListDeviceWidget *i, ListDeviceWidget *j) {
-      if (i->key().compare(j->key()) < 0) {
-          return true;
-      } else {
-          return false;
-      }
-  }
-} listDeviceSort;
-
 EditGroupPage::EditGroupPage(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::EditCollectionPage) {
-    ui->setupUi(this);
+    QWidget(parent) {
 
-    connect(ui->closeButton, SIGNAL(clicked(bool)), this, SLOT(closePressed(bool)));
-    connect(ui->resetButton, SIGNAL(clicked(bool)), this, SLOT(resetPressed(bool)));
-    connect(ui->deleteButton, SIGNAL(clicked(bool)), this, SLOT(deletePressed(bool)));
-    connect(ui->saveButton, SIGNAL(clicked(bool)), this, SLOT(savePressed(bool)));
+    mCloseButton = new QPushButton(this);
+    mCloseButton->setText("X");
+    connect(mCloseButton, SIGNAL(clicked(bool)), this, SLOT(closePressed(bool)));
 
-    connect(ui->nameEdit, SIGNAL(textEdited(QString)), this, SLOT(lineEditChanged(QString)));
+    mResetButton = new QPushButton(this);
+    connect(mResetButton, SIGNAL(clicked(bool)), this, SLOT(resetPressed(bool)));
+    mResetButton->setText("Reset");
 
-    QScroller::grabGesture(ui->deviceList->viewport(), QScroller::LeftMouseButtonGesture);
+    mDeleteButton = new QPushButton(this);
+    connect(mDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deletePressed(bool)));
+    mDeleteButton->setText("Delete");
 
-    ui->roomCheckBox->setTitle("Room:");
-    connect(ui->roomCheckBox, SIGNAL(boxChecked(bool)), this, SLOT(isRoomChecked(bool)));
+    mSaveButton = new QPushButton(this);
+    connect(mSaveButton, SIGNAL(clicked(bool)), this, SLOT(savePressed(bool)));
+    mSaveButton->setText("Save");
+
+    mNameEdit = new QLineEdit(this);
+    connect(mNameEdit, SIGNAL(textEdited(QString)), this, SLOT(lineEditChanged(QString)));
+
+    mRoomCheckBox = new cor::CheckBox(this);
+    mRoomCheckBox->setTitle("Room:");
+    connect(mRoomCheckBox, SIGNAL(boxChecked(bool)), this, SLOT(isRoomChecked(bool)));
+
+    mHelpRoomButton = new QPushButton(this);
+    mHelpRoomButton->setText("?");
 
     mIsRoomOriginal = false;
 
-    mScrollAreaWidget = new QWidget(this);
-    mScrollAreaWidget->setContentsMargins(0,0,0,0);
-    ui->deviceList->setWidget(mScrollAreaWidget);
+    mDevicesList = new cor::ListWidget(this);
+    mDevicesList->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mDevicesList->setContentsMargins(0,0,0,0);
+    QScroller::grabGesture(mDevicesList->viewport(), QScroller::LeftMouseButtonGesture);
 
-    mLayout = new QVBoxLayout(mScrollAreaWidget);
-    mLayout->setSpacing(0);
-    mLayout->setContentsMargins(0, 0, 0, 0);
-    mScrollAreaWidget->setLayout(mLayout);
+    mScrollAreaWidget = new ListEditWidget(this);
+    connect(mScrollAreaWidget, SIGNAL(deviceClicked(QString, QString)), this, SLOT(clickedDevice(QString, QString)));
+    mScrollAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mDevicesList->addWidget(mScrollAreaWidget);
 
     mRenderThread = new QTimer(this);
     connect(mRenderThread, SIGNAL(timeout()), this, SLOT(renderUI()));
-    ui->deviceList->setStyleSheet("background-color:rgba(33,32,32,255);");
+    mScrollAreaWidget->setStyleSheet("background-color:rgba(33,32,32,255);");
+
+
+    mHelpLabel = new QLabel(this);
+    //  setup layouts
+
+    mLayout = new QGridLayout(this);
+    mLayout->addWidget(mHelpLabel,    0, 0,  1, 22);
+    mLayout->addWidget(mCloseButton,  0, 23, 1, 2);
+
+    mLayout->addWidget(mNameEdit,     1, 0,  1, 20);
+    mLayout->addWidget(mResetButton,  1, 21, 1, 1);
+    mLayout->addWidget(mDeleteButton, 1, 22, 1, 1);
+    mLayout->addWidget(mSaveButton,   1, 23, 1, 2);
+
+    mLayout->addWidget(mRoomCheckBox,   2, 0, 1, 15);
+    mLayout->addWidget(mHelpRoomButton, 2, 16, 1, 4);
+
+    mLayout->addWidget(mDevicesList,  3,  0, 10, 0);
 }
 
 EditGroupPage::~EditGroupPage() {
-    delete ui;
 }
 
 void EditGroupPage::showGroup(QString key, std::list<cor::Light> groupDevices, std::list<cor::Light> devices, bool isMood, bool isRoom) {
@@ -67,61 +87,28 @@ void EditGroupPage::showGroup(QString key, std::list<cor::Light> groupDevices, s
     mNewName = key;
 
     mOriginalDevices = groupDevices;
-    ui->nameEdit->setText(key);
-    ui->saveButton->setEnabled(false);
+    mNameEdit->setText(key);
+    mSaveButton->setEnabled(false);
     mIsMood = isMood;
     mIsRoomOriginal = isRoom;
     mIsRoomCurrent = mIsRoomOriginal;
     if (mIsMood) {
-        ui->helpLabel->setText("Edit the Mood...");
-        ui->helpRoomButton->setVisible(false);
-        ui->roomSpacer->setVisible(false);
-        ui->roomCheckBox->setVisible(false);
+        mHelpLabel->setText("Edit the Mood...");
+        mHelpRoomButton->setVisible(false);
+        mRoomCheckBox->setVisible(false);
     } else {
-        ui->helpLabel->setText("Edit the Collection...");
-        ui->helpRoomButton->setVisible(true);
-        ui->roomSpacer->setVisible(true);
-        ui->roomCheckBox->setVisible(true);
-        ui->roomCheckBox->setChecked(mIsRoomOriginal);
+        mHelpLabel->setText("Edit the Collection...");
+        mHelpRoomButton->setVisible(true);
+        mRoomCheckBox->setVisible(true);
+        mRoomCheckBox->setChecked(mIsRoomOriginal);
     }
     updateDevices(groupDevices, devices);
     repaint();
 }
 
 void EditGroupPage::updateDevices(std::list<cor::Light> groupDevices, std::list<cor::Light> devices) {
-
-    for (auto&& device : devices) {
-        bool widgetFound = false;
-        for (auto&& widget : mWidgets) {
-            cor::Light widgetDevice = widget->device();
-            if (compareLight(device, widgetDevice)) {
-                widgetFound = true;
-                widget->updateWidget(device, mData->colorGroup(device.colorGroup));
-                widget->setHighlightChecked(shouldSetChecked(device, groupDevices));
-            }
-        }
-
-        // no widget found for this device,
-        if (!widgetFound) {
-            ListDeviceWidget *widget = new ListDeviceWidget(device,
-                                                            mData->colorGroup(device.colorGroup),
-                                                            true,
-                                                            QSize(this->width() * 0.9f, this->height() / 8),
-                                                            mScrollAreaWidget);
-            connect(widget, SIGNAL(clicked(QString)), this, SLOT(listDeviceWidgetClicked(QString)));
-            widget->setHighlightChecked(shouldSetChecked(device, groupDevices));
-            mWidgets.push_back(widget);
-        }
-    }
-
-    // sort widgets
-    std::sort(mWidgets.begin(), mWidgets.end(), listDeviceSort);
-
-    // add sorted widgets into layout
-    for (auto widget : mWidgets) {
-        mLayout->addWidget(widget);
-    }
-
+    mScrollAreaWidget->updateDevices(devices, true);
+    mScrollAreaWidget->setCheckedDevices(groupDevices);
     resize(false);
 }
 
@@ -133,19 +120,14 @@ void EditGroupPage::resize(bool resizeFullWidget) {
                           size.width() * 0.75f,
                           size.height() * 0.75f);
     }
-    QSize widgetSize(this->width(), this->height() / 8);
-    uint32_t yPos = 0;
-    // draw widgets in content region
-    for (auto widget : mWidgets) {
-        widget->setGeometry(0,
-                            yPos,
-                            widgetSize.width(),
-                            widgetSize.height());
-        yPos += widgetSize.height();
-    }
+    mScrollAreaWidget->resize();
 }
 
 
+void EditGroupPage::setup(CommLayer *layer, DataLayer* data) {
+    mComm = layer;
+    mScrollAreaWidget->connectLayers(mComm, data);
+}
 
 
 // ----------------------------
@@ -153,24 +135,7 @@ void EditGroupPage::resize(bool resizeFullWidget) {
 // ----------------------------
 
 void EditGroupPage::listDeviceWidgetClicked(QString key) {
-    ListDeviceWidget *widget;
-    bool widgetFound = false;
-
-    for (auto w : mWidgets) {
-        if (w->key().compare(key) == 0) {
-            widget = w;
-            widgetFound = true;
-        }
-    }
-    if (widgetFound) {
-         widget->setHighlightChecked(!widget->checked());
-
-         if (checkForChanges()) {
-             ui->saveButton->setEnabled(true);
-         } else {
-             ui->saveButton->setEnabled(false);
-         }
-    }
+    Q_UNUSED(key);
 }
 
 void EditGroupPage::deletePressed(bool) {
@@ -179,7 +144,7 @@ void EditGroupPage::deletePressed(bool) {
     reply = QMessageBox::question(this, "Delete?", text,
                                   QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes) {
-      mGroups->removeGroup(mOriginalName);
+      mComm->groups()->removeGroup(mOriginalName);
       // delete from hue bridge, if applicable.
       mComm->deleteHueGroup(mOriginalName);
       emit pressedClose();
@@ -193,24 +158,14 @@ void EditGroupPage::closePressed(bool) {
                                       QMessageBox::Yes|QMessageBox::No);
         if (reply == QMessageBox::Yes) {
           saveChanges();
-          ui->saveButton->setEnabled(true);
+          mSaveButton->setEnabled(true);
         }
     }
     emit pressedClose();
 }
 
 void EditGroupPage::resetPressed(bool) {
-    for (auto&& widget : mWidgets) {
-        bool deviceFound = false;
-        for (auto&& device : mOriginalDevices) {
-            cor::Light widgetDevice = widget->device();
-            if (compareLight(device, widgetDevice)) {
-                deviceFound = true;
-                widget->setHighlightChecked(true);
-            }
-        }
-        if (!deviceFound) widget->setHighlightChecked(false);
-    }
+    mScrollAreaWidget->setCheckedDevices(mOriginalDevices);
 }
 
 void EditGroupPage::savePressed(bool) {
@@ -221,22 +176,21 @@ void EditGroupPage::savePressed(bool) {
         if (reply == QMessageBox::Yes) {
           saveChanges();
           // make new original devices
-          mOriginalDevices = createCollection();
+          mOriginalDevices = mScrollAreaWidget->checkedDevices();
           // make new original name
           mOriginalName = mNewName;
-          ui->saveButton->setEnabled(false);
+          mSaveButton->setEnabled(false);
         }
     }
 }
 
 void EditGroupPage::isRoomChecked(bool checked) {
-      qDebug() << "is Room Checked " << checked;
       mIsRoomCurrent = checked;
 
       if (checkForChanges()) {
-          ui->saveButton->setEnabled(true);
+          mSaveButton->setEnabled(true);
       } else {
-          ui->saveButton->setEnabled(false);
+          mSaveButton->setEnabled(false);
       }
 }
 
@@ -268,15 +222,20 @@ void EditGroupPage::paintEvent(QPaintEvent *) {
 }
 
 
+void EditGroupPage::resizeEvent(QResizeEvent *) {
+    mDevicesList->setMaximumSize(this->size());
+}
+
 void EditGroupPage::lineEditChanged(const QString& newText) {
     mNewName = newText;
 
     if (checkForChanges()) {
-        ui->saveButton->setEnabled(true);
+        mSaveButton->setEnabled(true);
     } else {
-        ui->saveButton->setEnabled(false);
+        mSaveButton->setEnabled(false);
     }
 }
+
 
 void EditGroupPage::renderUI() {
 
@@ -293,10 +252,7 @@ void EditGroupPage::saveChanges() {
     //---------------------------------
     bool nameIsValid = false;
     if (mNewName.size() > 0
-            && !(mNewName.compare("zzzAVAIALBLE_DEVICES") == 0
-                || mNewName.compare("zzzAVAIALBLE_DEVICES") == 0
-                || mNewName.compare("zzzAVAIALBLE_DEVICES") == 0
-                || mNewName.compare("zzzAVAIALBLE_DEVICES") == 0)) {
+            && !(mNewName.compare("zzzAVAIALBLE_DEVICES") == 0)) {
             nameIsValid = true;
     } else {
         qDebug() << "WARNING: attempting to save a group without a valid name";
@@ -305,12 +261,7 @@ void EditGroupPage::saveChanges() {
     //--------------------------------
     // Create a list of devices
     //--------------------------------
-    std::list<cor::Light> newDevices;
-    if (mIsMood) {
-        newDevices = createMood();
-    } else {
-        newDevices = createCollection();
-    }
+    std::list<cor::Light> newDevices = mScrollAreaWidget->checkedDevices();
 
     bool devicesAreValid = true;
     if (newDevices.size() > 0) {
@@ -345,11 +296,11 @@ void EditGroupPage::saveChanges() {
     // Save if passing checks
     //---------------------------------
     if (mIsMood) {
-        mGroups->removeGroup(mOriginalName);
-        mGroups->saveNewMood(mNewName, newDevices);
+        mComm->groups()->removeGroup(mOriginalName);
+        mComm->groups()->saveNewMood(mNewName, newDevices);
     } else {
-        mGroups->removeGroup(mOriginalName);
-        mGroups->saveNewCollection(mNewName, newDevices, mIsRoomCurrent);
+        mComm->groups()->removeGroup(mOriginalName);
+        mComm->groups()->saveNewCollection(mNewName, newDevices, mIsRoomCurrent);
 
         // convert any group devices to Hue Lights, if applicable.
         std::list<HueLight> hueLights;
@@ -377,26 +328,6 @@ void EditGroupPage::saveChanges() {
     }
 }
 
-std::list<cor::Light> EditGroupPage::createCollection() {
-   std::list<cor::Light> devices;
-   for (uint32_t i = 0; i < mWidgets.size(); ++i) {
-       if (mWidgets[i]->checked()) {
-           devices.push_back(mWidgets[i]->device());
-       }
-   }
-   return devices;
-}
-
-std::list<cor::Light> EditGroupPage::createMood() {
-    std::list<cor::Light> list;
-    for (uint32_t i = 0; i < mWidgets.size(); ++i) {
-        if (mWidgets[i]->checked()) {
-            list.push_back(mWidgets[i]->device());
-        }
-    }
-    return list;
-}
-
 bool EditGroupPage::checkForChanges() {
     if (!(mNewName.compare(mOriginalName) == 0)) {
         return true;
@@ -407,26 +338,24 @@ bool EditGroupPage::checkForChanges() {
     }
 
     // check all checked devices are part of original group
-    for (uint32_t i = 0; i < mWidgets.size(); ++i) {
-        if (mWidgets[i]->checked()) {
-            bool foundDevice = false;
-            for (auto&& device : mOriginalDevices) {
-                if (compareLight(mWidgets[i]->device(), device)) {
-                    foundDevice = true;
-                }
-            }
-            if (!foundDevice) {
-                qDebug() << "all devices are part of original group";
-                return true;
+    for (auto&& checkedDevice : mScrollAreaWidget->checkedDevices()) {
+        bool foundDevice = false;
+        for (auto&& device : mOriginalDevices) {
+            if (compareLight(checkedDevice, device)) {
+                foundDevice = true;
             }
         }
+        if (!foundDevice) {
+            return true;
+        }
     }
+
     // check all given devices are checked
     for (auto&& device : mOriginalDevices) {
-        for (uint32_t i = 0; i < mWidgets.size(); ++i) {
-            if (compareLight(mWidgets[i]->device(), device)) {
-                if (!mWidgets[i]->checked())  {
-                    qDebug() << "all given deviecs are checked";
+        for (uint32_t i = 0; i < mScrollAreaWidget->widgets().size(); ++i) {
+            ListDeviceWidget *existingWidget = qobject_cast<ListDeviceWidget*>(mScrollAreaWidget->widgets()[i]);
+            if (compareLight(existingWidget->device(), device)) {
+                if (!existingWidget->checked())  {
                     return true;
                 }
             }
@@ -443,4 +372,17 @@ bool EditGroupPage::shouldSetChecked(const cor::Light& device, const std::list<c
         }
     }
     return false;
+}
+
+void EditGroupPage::clickedDevice(QString key, QString deviceName) {
+    Q_UNUSED(key);
+    Q_UNUSED(deviceName);
+   // qDebug() << " device clicked " << key << " vs" << deviceName;
+
+    // call the highlight button
+    if (checkForChanges()) {
+        mSaveButton->setEnabled(true);
+    } else {
+        mSaveButton->setEnabled(false);
+    }
 }

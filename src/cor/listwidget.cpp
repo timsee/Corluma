@@ -19,6 +19,7 @@ ListWidget::ListWidget(QWidget *parent) {
     mWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mWidget->setFixedWidth(this->viewport()->width());
 
+    this->setContentsMargins(0,0,0,0);
     QString backgroundStyleSheet = "border: none; background:rgba(0, 0, 0, 0%);";
     mWidget->setStyleSheet(backgroundStyleSheet);
 
@@ -43,6 +44,7 @@ void ListWidget::addWidget(ListCollectionWidget *widget) {
     if (widgetIndex == -1) {
         widget->setParent(mWidget);
         connect(widget, SIGNAL(rowCountChanged(int)), this, SLOT(widgetHeightChanged(int)));
+        connect(widget, SIGNAL(buttonsShown(QString, bool)), this, SLOT(shouldShowButtons(QString, bool)));
         mWidgets.push_back(widget);
         resizeWidgets();
     }
@@ -107,9 +109,15 @@ void ListWidget::resizeWidgets() {
 
         yPos += preferredSize.height();
 
-        if (!widget->isMoodWidget()) {
+        if (widget->widgetContents() == EWidgetContents::eGroups) {
             ListDevicesGroupWidget *devicesWidget = qobject_cast<ListDevicesGroupWidget*>(widget);
-            devicesWidget->updateRightHandButtons();
+            devicesWidget->resize();
+
+            devicesWidget->resizeInteralWidgets();
+        } else if (widget->widgetContents() == EWidgetContents::eMoods) {
+            ListMoodGroupWidget *moodsWidget = qobject_cast<ListMoodGroupWidget*>(widget);
+            moodsWidget->resize();
+            moodsWidget->resizeInteralWidgets();
         }
 
     }
@@ -120,6 +128,19 @@ void ListWidget::resizeWidgets() {
 
 void ListWidget::widgetHeightChanged(int rowCount) {
     Q_UNUSED(rowCount);
+    resizeWidgets();
+}
+
+void ListWidget::shouldShowButtons(QString key, bool isShowing) {
+    Q_UNUSED(isShowing);
+    for (auto widget : mWidgets) {
+        if (widget->key().compare(key) != 0) {
+            bool blocked = widget->blockSignals(true);
+            widget->setShowButtons(false);
+            widget->blockSignals(blocked);
+        }
+    }
+
     resizeWidgets();
 }
 

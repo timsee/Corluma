@@ -72,13 +72,13 @@ ColorPicker::ColorPicker(QWidget *parent) :
     connect(mTempBrightSliders, SIGNAL(temperatureAndBrightnessChanged(int, int)), this, SLOT(tempBrightSlidersChanged(int, int)));
     mTempBrightSliders->setVisible(false);
 
-    mColorGrid = new ColorGrid(this);
+    mColorGrid = new  cor::Palette(5, 2, true, this);
     mColorGrid->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mColorGrid, SIGNAL(multiColorCountChanged(int)), this, SLOT(multiColorCountChanged(int)));
     connect(mColorGrid, SIGNAL(selectedCountChanged(int)), this, SLOT(selectedCountChanged(int)));
     mColorGrid->setVisible(false);
 
-    mColorSchemeGrid = new ColorSchemeGrid(this);
+    mColorSchemeGrid = new  cor::Palette(5, 1, false, this);
     mColorSchemeGrid->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mColorSchemeGrid->setVisible(false);
 
@@ -180,8 +180,7 @@ void ColorPicker::updateColorStates(QColor mainColor,
     mColorSchemeCircles->updateColorScheme(colorSchemes);
     mColorSchemeCircles->updateColorCount(colorSchemes.size()),
 
-    mColorSchemeGrid->updateColorCount(colorSchemes.size()),
-    mColorSchemeGrid->updateColorScheme(colorSchemes);
+    mColorSchemeGrid->updateMultiColor(colorSchemes, colorSchemes.size());
 }
 
 void ColorPicker::enableWheel(bool shouldEnable) {
@@ -354,7 +353,7 @@ void ColorPicker::handleMouseEvent(QMouseEvent *event) {
                 for (auto&& circle : circles) {
                     colors.push_back(circle.color);
                 }
-                mColorSchemeGrid->updateColorScheme(colors);
+                mColorSchemeGrid->updateMultiColor(colors, colors.size());
                 emit colorsUpdate(colors);
                // mColorSchemeGrid->setColor(2, color);
             }

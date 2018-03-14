@@ -6,11 +6,11 @@
 
 #include "cor/light.h"
 #include "listdevicewidget.h"
+#include "listeditwidget.h"
 #include "lightingpage.h"
 #include "comm/commlayer.h"
-#include "groupsparser.h"
 #include "cor/checkbox.h"
-
+#include "cor/listwidget.h"
 
 namespace Ui {
 class EditCollectionPage;
@@ -66,14 +66,8 @@ public:
      */
     void resize(bool resizeFullWidget = true);
 
-    /*!
-     * \brief connectCommLayer connec the commlayer to this page.
-     * \param layer a pointer to the commlayer object.
-     */
-    void connectCommLayer(CommLayer *layer) { mComm = layer; }
-
-    /// connects the GroupsParser object to this UI widget.
-    void connectGroupsParser(GroupsParser *parser) { mGroups = parser; }
+    /// setup the connections to the backend
+    void setup(CommLayer *layer, DataLayer* data);
 
 signals:
 
@@ -100,6 +94,11 @@ protected:
      * \brief paintEvent used to draw the background of the widget.
      */
     void paintEvent(QPaintEvent *);
+
+    /*!
+     * \brief resizeEvent called whenever the widget resizes
+     */
+    void resizeEvent(QResizeEvent *);
 
 private slots:
 
@@ -146,12 +145,10 @@ private slots:
      */
     void lineEditChanged(const QString&);
 
-private:
+    /// called whenever a device is clicked in the edit widget
+    void clickedDevice(QString, QString);
 
-    /*!
-     * \brief ui pointer to Qt UI form.
-     */
-    Ui::EditCollectionPage *ui;
+private:
 
     /*!
      * \brief shouldSetChecked true if should be set checked, false otherwise.
@@ -172,9 +169,6 @@ private:
      */
     void saveChanges();
 
-    /// connects the GroupsParser object to this UI widget.
-    GroupsParser *mGroups;
-
     /*!
      * \brief mIsMood true if mood, false if collection
      */
@@ -184,18 +178,6 @@ private:
      * \brief mOriginalDevices The original state of the group.
      */
     std::list<cor::Light> mOriginalDevices;
-
-    /*!
-     * \brief createCollection creates a collection based off of the state of the UI
-     * \return list of devices in the collection
-     */
-    std::list<cor::Light> createCollection();
-
-    /*!
-     * \brief createMood creates a mood based off of the state of the UI
-     * \return list of devices in the mood
-     */
-    std::list<cor::Light> createMood();
 
     /// original name of group we're editing.
     QString mOriginalName;
@@ -215,16 +197,38 @@ private:
      */
     CommLayer *mComm;
 
+    /// list widget displaying devices
+    cor::ListWidget *mDevicesList;
+
     /// widget used for scroll area.
-    QWidget *mScrollAreaWidget;
+    ListEditWidget *mScrollAreaWidget;
 
     /// vertical layout for widget
-    QVBoxLayout *mLayout;
+    QGridLayout *mLayout;
 
-    /*!
-     * \brief mWidgets widgets used to display all connected devices.
-     */
-    std::vector<ListDeviceWidget *> mWidgets;
+    /// label for top of box
+    QLabel *mHelpLabel;
+
+    /// close button
+    QPushButton *mCloseButton;
+
+    /// button to save group
+    QPushButton *mSaveButton;
+
+    /// button to delete group
+    QPushButton *mDeleteButton;
+
+    /// button to reset to original settings
+    QPushButton *mResetButton;
+
+    /// line edit for changing the name of a group
+    QLineEdit *mNameEdit;
+
+    /// help button to explain the edit page
+    QPushButton *mHelpRoomButton;
+
+    /// checkbox denoting whether its a room or a group
+    cor::CheckBox *mRoomCheckBox;
 };
 
 #endif // EDITCOLLECTIONPAGE_H

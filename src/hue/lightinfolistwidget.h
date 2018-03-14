@@ -21,7 +21,7 @@ namespace hue
  */
 
 /*!
- * \brief The HueLightInfoListWidget class contains a list of Phillips Hue lights. Clicking on
+ * \brief The HueLightInfoListWidget class contains a list of Philips Hue lights. Clicking on
  *        an entry of the list shows more information about the light, such as its software version
  *        and model number. This widget also allows the user to rename individual lights or delete the light
  *        from the Bridge. If the light is deleted from the Bridge, then it cannot be controlled again until

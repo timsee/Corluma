@@ -123,12 +123,12 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
 
     if (dataDevice.isOn != commDevice.isOn) {
         //qDebug() << "hue ON/OFF not in sync" << dataDevice.isOn;
-        mComm->sendTurnOn(list, dataDevice.isOn);
+        QString message = mComm->sendTurnOn(list, dataDevice.isOn);
+        appendToPacket(packet, message, controller.maxPacketSize);
         countOutOfSync++;
     }
 
-    if (dataDevice.colorMode == EColorMode::eHSV
-            && dataDevice.isOn) {
+    if (dataDevice.colorMode == EColorMode::eHSV) {
         //-------------------
         // Hue HSV Color Sync
         //-------------------
@@ -146,8 +146,7 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
             appendToPacket(packet, message, controller.maxPacketSize);
             countOutOfSync++;
         }
-    } else if (dataDevice.colorMode == EColorMode::eCT
-               && dataDevice.isOn) {
+    } else if (dataDevice.colorMode == EColorMode::eCT) {
         //-------------------
         // Hue Color Temperature Sync
         //-------------------

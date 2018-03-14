@@ -87,7 +87,7 @@ void CommUDP::sendPacket(const cor::Controller& controller, QString& packet) {
         preparePacketForTransmission(controller, packet);
 
         // send packet over UDP
-        //Debug() << "sending udp" << packet << "to " << controller.name;
+        //qDebug() << "sending udp" << packet << "to " << controller.name;
         mSocket->writeDatagram(packet.toUtf8().data(),
                                QHostAddress(controller.name),
                                PORT);
@@ -154,7 +154,7 @@ void CommUDP::readPendingDatagrams() {
         quint16 senderPort;
         mSocket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
         QString payload = QString::fromUtf8(datagram);
-        //qDebug() << "UDP payload" << payload << payload.size() << "from" << sender.toString();
+       // qDebug() << "UDP payload" << payload << payload.size() << "from" << sender.toString();
         if (payload.contains(";")) {
             // this may contain multiple packets in a single packet, split and handle as separate messages.
             QRegExp rx("(\\;)");

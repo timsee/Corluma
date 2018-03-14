@@ -12,8 +12,10 @@
 class HueLight : public cor::Light
 {
 public:
+    /// default constructor
     HueLight();
 
+    /// constructor
     HueLight(int index, ECommType type, QString controller);
 
     /*!
@@ -41,26 +43,6 @@ public:
      */
     QString softwareVersion;
 };
-
-/// struct for group data
-struct SHueGroup {
-    /// name of group
-    QString name;
-    /// Type of group, either "Room" or "LightGroup"
-    QString type;
-    /// index of group
-    int index;
-    /// list of lights
-    std::list<HueLight> lights;
-};
-
-/// SHueSchedule equal operator
-inline bool operator==(const SHueGroup& lhs, const SHueGroup& rhs) {
-    bool result = true;
-    if (lhs.name.compare(rhs.name)) result = false;
-    if (lhs.type.compare(rhs.type)) result = false;
-    return result;
-}
 
 
 /// SHueLight equal operator

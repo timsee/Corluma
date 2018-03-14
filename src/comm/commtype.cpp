@@ -6,6 +6,7 @@
 
 #include "commtype.h"
 
+#include "cor/utils.h"
 
 void CommType::setupConnectionList(ECommType type) {
     mType = type;
@@ -213,6 +214,8 @@ bool CommType::deviceControllerFromDiscoveryString(QString discovery, QString co
     std::vector<QString> discoveryAndNameVector;
     std::vector<int> intVector;
     std::vector<QString> nameVector;
+    std::vector<ELightHardwareType> hardwareTypeVector;
+    std::vector<EProductType> productTypeVector;
 
     // check end of string is &
     if (discovery.at(discovery.length() - 1) != '&') {
@@ -242,8 +245,55 @@ bool CommType::deviceControllerFromDiscoveryString(QString discovery, QString co
     }
 
     std::istringstream nameInput(discoveryAndNameVector[1].toStdString());
+    int nameIndex = 0;
     while (std::getline(nameInput, name, ',')) {
-        nameVector.push_back(QString(name.c_str()));
+        if (nameIndex == 0) {
+            nameVector.push_back(QString(name.c_str()));
+            nameIndex = 1;
+        } else if (nameIndex == 1) {
+            bool conversionSuccessful;
+            int hardwareTypeIndex = QString(name.c_str()).toInt(&conversionSuccessful);
+            if (!conversionSuccessful) {
+                qDebug() << "Received an incorrect value when expecting a hardware type";
+                return false;
+            }
+            ELightHardwareType hardwareType;
+            if (mType == ECommType::eHTTP
+#ifndef MOBILE_BUILD
+                    || mType  == ECommType::eSerial
+#endif
+                    || mType == ECommType::eUDP) {
+                // convert to
+                hardwareType = cor::convertArduinoTypeToLightType((EArduinoHardwareType)hardwareTypeIndex);
+            } else {
+                hardwareType = (ELightHardwareType)hardwareTypeIndex;
+            }
+            hardwareTypeVector.push_back(hardwareType);
+            nameIndex = 2;
+        } else if (nameIndex == 2) {
+            bool conversionSuccessful;
+            int productTypeIndex = QString(name.c_str()).toInt(&conversionSuccessful);
+            if (!conversionSuccessful) {
+                qDebug() << "Received an incorrect value when expecting a product type";
+                return false;
+            }
+            productTypeVector.push_back((EProductType)productTypeIndex);
+            nameIndex = 0;
+        }
+    }
+
+    if (nameVector.size() != hardwareTypeVector.size() || nameVector.size() != productTypeVector.size()) {
+        qDebug() << "hardware type vector size and name vector don't match! " << nameVector.size() << " vs " << hardwareTypeVector.size();
+        for (auto name : nameVector) {
+            qDebug() << " name: " << name;
+        }
+        for (auto type : hardwareTypeVector) {
+            qDebug() << " type: " << (int)type;
+        }
+        for (auto product : productTypeVector) {
+            qDebug() << " product: " << (int)product;
+        }
+        return false;
     }
 
     //--------------
@@ -280,6 +330,8 @@ bool CommType::deviceControllerFromDiscoveryString(QString discovery, QString co
 
         // get the names
         controller.names = nameVector;
+        controller.hardwareTypes = hardwareTypeVector;
+        controller.productTypes = productTypeVector;
 
         return true;
     } else {

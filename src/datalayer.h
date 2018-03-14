@@ -325,6 +325,9 @@ public:
      */
     CommTypeSettings *commTypeSettings() { return mCommTypeSettings; }
 
+    /// compute the best candidate for a collection based on the current devices.
+    QString findCurrentCollection(const std::list<cor::LightGroup>& collections);
+
 signals:
     /*!
      * \brief devicesEmpty signals when the currentDevices list is reduced to zero so that UI updates

@@ -9,13 +9,13 @@
 #include "listmoodwidget.h"
 #include "cor/utils.h"
 
-ListMoodWidget::ListMoodWidget(const SLightGroup& group,
+ListMoodWidget::ListMoodWidget(const cor::LightGroup& group,
                                  const std::vector<std::vector<QColor> >& colors,
                                  QWidget *parent) {
     Q_UNUSED(parent);
     mIsChecked = false;
 
-    mGroup = group ;
+    mGroup = group;
     mKey = mGroup.name;
 
     // setup icon
@@ -32,7 +32,7 @@ ListMoodWidget::ListMoodWidget(const SLightGroup& group,
     } else {
         modifiedName = mGroup.name;
     }
-    mName->setText(modifiedName);
+    mName->setText("<b>" + modifiedName + "</b>");
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     mEditButton = new QPushButton(this);
@@ -55,69 +55,22 @@ ListMoodWidget::ListMoodWidget(const SLightGroup& group,
         mName->setStyleSheet(backgroundStyleSheet);
     }
 
-    int previewNumber = 5;
-    mIconData = std::vector<IconData>(previewNumber, IconData(32, 32));
-    mPreviews = std::vector<QLabel*>(previewNumber, nullptr);
-
-    for (int i = 0; i < previewNumber; ++i) {
-        mPreviews[i] = new QLabel;
-        mPreviews[i]->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
-        mPreviews[i]->setStyleSheet(backgroundStyleSheet);
-//#ifndef MOBILE_BUILD
-//        mPreviews[i]->setMaximumWidth(this->width() / 5);
-//#endif
-
-    }
-
-    int index = 0;
-    for (auto&& device : mGroup.devices) {
-        if (index < previewNumber) {
-            //TODO: fix this ratio...
-#ifdef MOBILE_BUILD
-            int size = std::min(this->width() / 5, this->height() / 2);
-#else
-            int size = std::min(this->width() / 20, this->height() / 2);
-#endif
-            if (device.lightingRoutine <= cor::ELightingRoutineSingleColorEnd ) {
-                mIconData[index].setSingleLightingRoutine(device.lightingRoutine, device.color);
-                QPixmap iconRendered = mIconData[index].renderAsQPixmap();
-                mPreviews[index]->setPixmap(iconRendered.scaled(size * 0.9f,
-                                                            size *  0.9f,
-                                                            Qt::IgnoreAspectRatio,
-                                                            Qt::FastTransformation));
-                mPreviews[index]->setFixedSize(size, size);
-            } else {
-                mIconData[index].setMultiLightingRoutine(device.lightingRoutine, device.colorGroup, colors[(int)device.colorGroup]);
-                QPixmap iconRendered = mIconData[index].renderAsQPixmap();
-                mPreviews[index]->setPixmap(iconRendered.scaled(size * 0.9f,
-                                                            size * 0.9f,
-                                                            Qt::IgnoreAspectRatio,
-                                                            Qt::FastTransformation));
-                mPreviews[index]->setFixedSize(size, size);
-            }
-            index++;
-        }
-    }
-
-
+    mPalette = new  cor::Palette(4, 1, false, this);
+    mPalette->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mPalette->loadColorGroups(colors);
+    mPalette->setupButtons(mGroup.devices);
+    mPalette->enableButtonInteraction(false);
+    mPalette->updateDevices(mGroup.devices);
 
     // setup layout
     mTopLayout = new QHBoxLayout;
     mTopLayout->addWidget(mName, 5);
     mTopLayout->addWidget(mEditButton, 1);
     mTopLayout->setContentsMargins(0,0,0,0);
-
-    mBottomLayout = new QHBoxLayout;
-    int temp = 1;
-    for (auto moodWidget : mPreviews) {
-        mBottomLayout->addWidget(moodWidget, 2);
-        temp++;
-    }
-    mBottomLayout->setContentsMargins(0,0,0,0);
-
     mFullLayout = new QVBoxLayout(this);
     mFullLayout->addLayout(mTopLayout, 1);
-    mFullLayout->addLayout(mBottomLayout, 1);
+    mFullLayout->addWidget(mPalette, 2);
+
     setLayout(mFullLayout);
 
     this->setStyleSheet(backgroundStyleSheet);

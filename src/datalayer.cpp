@@ -40,9 +40,9 @@ DataLayer::DataLayer() {
     //==========
     mColors[i] =  std::vector<QColor>(6);
     mColors[i][0] = QColor(0,   127, 255);
-    mColors[i][1] = QColor(0,   127, 127);
+    mColors[i][1] = QColor(169, 228, 247);
     mColors[i][2] = QColor(200, 0,   255);
-    mColors[i][3] = QColor(40,  127, 40);
+    mColors[i][3] = QColor(200, 200, 200);
     mColors[i][4] = QColor(127, 127, 127);
     mColors[i][5] = QColor(127, 127, 255);
     i++;
@@ -231,16 +231,17 @@ DataLayer::~DataLayer() {
 
 int DataLayer::brightness() {
     int brightness = 0;
+    size_t deviceCount = 0;
     for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
-        brightness = brightness + device->brightness;
+        if (device->isReachable) {
+            brightness = brightness + device->brightness;
+            deviceCount++;
+        }
     }
-    if (mCurrentDevices.size() > 1) {
-        brightness = brightness / mCurrentDevices.size();
+    if (mCurrentDevices.size() > 1 && (deviceCount > 0)) {
+        brightness = brightness / deviceCount;
     }
 
-    if (!anyDevicesReachable()) {
-        brightness = 0;
-    }
     return brightness;
 }
 
@@ -259,22 +260,28 @@ QColor DataLayer::mainColor() {
         int r = 0;
         int g = 0;
         int b = 0;
+        size_t deviceCount = 0;
         if (mCurrentDevices.size() > 0) {
             for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
-                if ((int)device->lightingRoutine <= (int)cor::ELightingRoutineSingleColorEnd) {
-                    r = r + device->color.red();
-                    g = g + device->color.green();
-                    b = b + device->color.blue();
-                } else {
-                    QColor color = colorsAverage(device->colorGroup);
-                    r = r + color.red();
-                    g = g + color.green();
-                    b = b + color.blue();
+                if (device->isReachable) {
+                    if ((int)device->lightingRoutine <= (int)cor::ELightingRoutineSingleColorEnd) {
+                        r = r + device->color.red();
+                        g = g + device->color.green();
+                        b = b + device->color.blue();
+                    } else {
+                        QColor color = colorsAverage(device->colorGroup);
+                        r = r + color.red();
+                        g = g + color.green();
+                        b = b + color.blue();
+                    }
+                    deviceCount++;
                 }
             }
-            r = r / mCurrentDevices.size();
-            g = g / mCurrentDevices.size();
-            b = b / mCurrentDevices.size();
+            if (deviceCount > 0) {
+                r = r / deviceCount;
+                g = g / deviceCount;
+                b = b / deviceCount;
+            }
         }
         return QColor(r,g,b);
     }
@@ -375,7 +382,9 @@ bool DataLayer::hasArduinoDevices() {
 ELightingRoutine DataLayer::currentRoutine() {
     std::vector<int> routineCount((int)ELightingRoutine::eLightingRoutine_MAX, 0);
     for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
-       routineCount[(int)device->lightingRoutine] = routineCount[(int)device->lightingRoutine] + 1;
+        if (device->isReachable) {
+            routineCount[(int)device->lightingRoutine] = routineCount[(int)device->lightingRoutine] + 1;
+        }
     }
     std::vector<int>::iterator result = std::max_element(routineCount.begin(), routineCount.end());
     ELightingRoutine modeRoutine = (ELightingRoutine)std::distance(routineCount.begin(), result);
@@ -386,7 +395,9 @@ EColorGroup DataLayer::currentColorGroup() {
     // count number of times each color group occurs
     std::vector<int> colorGroupCount((int)EColorGroup::eColorGroup_MAX, 0);
     for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
-       colorGroupCount[(int)device->colorGroup] = colorGroupCount[(int)device->colorGroup] + 1;
+        if (device->isReachable) {
+            colorGroupCount[(int)device->colorGroup] = colorGroupCount[(int)device->colorGroup] + 1;
+        }
     }
     // find the most frequent color group occurence, return its index.
     std::vector<int>::iterator result = std::max_element(colorGroupCount.begin(), colorGroupCount.end());
@@ -402,17 +413,10 @@ const std::vector<QColor>& DataLayer::currentGroup() {
 }
 
 void DataLayer::updateRoutine(ELightingRoutine routine) {
-    if (routine == ELightingRoutine::eOff) {
-        std::list<cor::Light>::iterator iterator;
-        for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
-            iterator->isOn = false;
-        }
-    } else {
-        std::list<cor::Light>::iterator iterator;
-        for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
-            iterator->lightingRoutine = routine;
-            iterator->isOn = true;
-        }
+    //TODO make an on/off?
+    std::list<cor::Light>::iterator iterator;
+    for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
+        iterator->lightingRoutine = routine;
     }
     emit dataUpdate();
 }
@@ -653,35 +657,18 @@ bool DataLayer::removeDeviceList(const std::list<cor::Light>& list) {
 
 
 bool DataLayer::addDevice(cor::Light device) {
-    bool packetIsValid = true;
-    if (device.lightingRoutine >= ELightingRoutine::eLightingRoutine_MAX) {
-       packetIsValid = false;
-    }
-    if (device.colorGroup >= EColorGroup::eColorGroup_MAX) {
-        packetIsValid = false;
-    }
-    if (device.brightness < 0 || device.brightness > 100) {
-        packetIsValid = false;
-    }
-
-    if (!packetIsValid) {
-        device.isReachable = true;
-        device.isOn = false;
-        device.color = QColor(0,0,0);
-        device.lightingRoutine = ELightingRoutine::eOff;
-        device.colorGroup = EColorGroup::eCustom;
-    }
-
     std::list<cor::Light>::iterator iterator;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
         bool deviceExists = compareLight(device, *iterator);
         if (deviceExists) {
             *iterator = device;
+            emit dataUpdate();
             return true;
         }
     }
     // device doesn't exist, add it to the device
     mCurrentDevices.push_front(device);
+    emit dataUpdate();
     return false;
 }
 
@@ -736,4 +723,63 @@ int DataLayer::countDevicesOfType(ECommType type) {
         }
     }
     return count;
+}
+
+QString DataLayer::findCurrentCollection(const std::list<cor::LightGroup>& collections) {
+
+    // count number of lights in each collection currently selected
+    std::vector<uint32_t> lightCount(collections.size(), 0);
+    uint32_t index = 0;
+    for (auto&& collection : collections) {
+        for (auto&& device : mCurrentDevices) {
+            for (auto&& collectionDevice : collection.devices) {
+                if (compareLight(device, collectionDevice)) {
+                    ++lightCount[index];
+                }
+            }
+        }
+        ++index;
+    }
+
+    // check how many collections are currently fully selected
+    std::vector<bool> allLightsFound(collections.size(), false);
+    index = 0;
+    uint32_t completeGroupCount = 0;
+    for (auto&& collection : collections) {
+        if (lightCount[index] == collection.devices.size()) {
+            allLightsFound[index] = true;
+            ++completeGroupCount;
+        }
+        ++index;
+    }
+
+    // if count is higher than 1, check if any have too many
+    if (completeGroupCount > 1) {
+        index = 0;
+        for (auto&& collection : collections) {
+            if (allLightsFound[index]) {
+                // check if there exists more devices than counted correct
+                if (collection.devices.size() != mCurrentDevices.size()) {
+                    allLightsFound[index] = false;
+                    --completeGroupCount;
+                }
+            }
+            ++index;
+        }
+    }
+
+    // if only one group is connected, this is easy, return that group.
+    if (completeGroupCount == 1) {
+        auto result = std::find(allLightsFound.begin(), allLightsFound.end(), true);
+        int allLightsIndex = std::distance(allLightsFound.begin(), result);
+        int currentIndex = 0;
+        for (auto collection : collections) {
+            if (allLightsIndex == currentIndex) {
+                return collection.name;
+            }
+            ++currentIndex;
+        }
+    }
+
+    return "";
 }

@@ -305,36 +305,6 @@ LightingRoutines::preProcess(ELightingRoutine routine, EColorGroup group)
 }
 
 
-//void
-//LightingRoutines::setupColorGroup(EColorGroup colorGroup)
-//{
-//    // Set up the m_temp_array used for the multi color routines
-//    // This is done by copying the relevant colors into the
-//    // m_temp_array and storing the number of colors in m_temp_size.
-//    if (colorGroup == eCustom) {
-//        m_temp_size = m_custom_count;
-//        memcpy(m_temp_array, m_custom_colors, sizeof(m_custom_colors));
-//    } else if (colorGroup == eAll) {
-//        // create a random color for every color in the temp array.
-//        m_temp_size = (sizeof(m_temp_array) / sizeof(Color));
-//        for (x = 0 ; x < (sizeof(m_temp_array) / sizeof(Color)); ++x) {
-//            m_temp_array[x] = { (uint8_t)random(0, 256),
-//                                (uint8_t)random(0, 256),
-//                                (uint8_t)random(0, 256)};
-//        }
-//    } else {
-//        // For our PROGMEM we aimed to have as small of footprint as possible.
-//        // We currently store a 2D array of color colorGroups, and another array of
-//        // the sizes of those colorGroups groups. First we grab the size, then we copy
-//        // the buffer directly from the 2D array.
-//        m_temp_size = pgm_read_word_near(presetSizes + colorGroup - 1);
-//        memcpy_P(m_temp_array,
-//                (void*)pgm_read_word_near(colorPresets + colorGroup - 1),
-//                (m_temp_size * 3));
-//    }
-//}
-
-
 //================================================================================
 // Single Color Routines
 //================================================================================

@@ -221,17 +221,17 @@ private:
     void attemptSearchForUsername();
 
     /*!
-     * \brief KPhillipsUsername Settings Key for a valid username.
+     * \brief KPhilipsUsername Settings Key for a valid username.
      */
-    const static QString kPhillipsUsername;
+    const static QString kPhilipsUsername;
 
     /*!
-     * \brief kPhillipsIPAddress Settings Key for the current Hue Bridge's IP Address.
+     * \brief kPhilipsIPAddress Settings Key for the current Hue Bridge's IP Address.
      */
-    const static QString kPhillipsIPAddress;
+    const static QString kPhilipsIPAddress;
 
     /*!
-     * \brief kAppName application name, required by Phillips in devicetype.
+     * \brief kAppName application name, required by Philips in devicetype.
      */
     const static QString kAppName;
 

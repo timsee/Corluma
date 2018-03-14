@@ -11,10 +11,9 @@
 #include <QDebug>
 
 CommSerial::CommSerial() {
-    mStateUpdateInterval = 500;
-    mDiscoveryUpdateInterval = 250;
+    mStateUpdateInterval = 750;
+    mDiscoveryUpdateInterval = 500;
     mLookingForActivePorts = false;
-    mSerialPortFailed = false;
     setupConnectionList(ECommType::eSerial);
 
     connect(mDiscoveryTimer, SIGNAL(timeout()), this, SLOT(discoveryRoutine()));
@@ -111,7 +110,7 @@ QSerialPort* CommSerial::serialPortByName(QString name) {
 
 void CommSerial::discoveryRoutine() {
     discoverSerialPorts();
-    QString discoveryPacket = kDiscoveryPacketIdentifier + "&;";
+    QString discoveryPacket = kDiscoveryPacketIdentifier + ";";
     bool runningDiscoveryOnSomething = false;
     for (auto&& it : mDeviceTable) {
           QString controllerName = QString::fromUtf8(it.first.c_str());
@@ -172,7 +171,7 @@ void CommSerial::discoverSerialPorts() {
 
 bool CommSerial::connectSerialPort(const QSerialPortInfo& info) {
     for (auto&& serialPorts : mSerialPorts) {
-        if (!QString::compare(serialPorts.first->portName(), info.portName())) {
+        if (QString::compare(serialPorts.first->portName(), info.portName()) == 0) {
             // its already connected, no need to connect again
             return true;
         }
@@ -186,17 +185,15 @@ bool CommSerial::connectSerialPort(const QSerialPortInfo& info) {
         serial->setParity(QSerialPort::NoParity);
         serial->setDataBits(QSerialPort::Data8);
         serial->setFlowControl(QSerialPort::NoFlowControl);
-        //qDebug() << "INFO: Serial Port Connected!" << info.portName();
+        qDebug() << "INFO: Serial Port Connected!" << info.portName();
 
         mSerialPorts.push_front(std::make_pair(serial, QString()));
         connect(serial, SIGNAL(readyRead()), this, SLOT(handleReadyRead()));
         connect(serial, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(handleError(QSerialPort::SerialPortError)));
 
-        mSerialPortFailed = false;
         return true;
     } else {
-        qDebug() << "WARNING: serial port failed" << serial->errorString();
-        mSerialPortFailed = true;
+        qDebug() << "WARNING: serial port failed" << info.portName() << serial->errorString();
 
         delete serial;
         return false;

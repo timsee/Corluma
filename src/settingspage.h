@@ -9,7 +9,6 @@
 
 #include "cor/slider.h"
 #include "comm/commlayer.h"
-#include "groupsparser.h"
 #include "settingsbutton.h"
 #include "cor/webview.h"
 #include "globalsettingswidget.h"
@@ -61,9 +60,6 @@ public:
      */
     void connectCommLayer(CommLayer *layer) { mComm = layer; }
 
-    /// connects the GroupsParser object to this UI widget.
-    void connectGroupsParser(GroupsParser *parser) { mGroups = parser; }
-
     /// called when the widget is shown
     void show();
 
@@ -106,6 +102,11 @@ signals:
      * \brief clickedHueInfoWidget emits when hue info widget is clicked
      */
     void clickedHueInfoWidget();
+
+    /*!
+     * \brief clickedDiscovery emits when discovery button is clicked
+     */
+    void clickedDiscovery();
 
 private slots:
     /*!
@@ -151,12 +152,6 @@ private:
 
     /// layout for the widget
     QVBoxLayout *mMainLayout;
-
-    /*!
-     * \brief mGroups manages the list of collections and moods and the JSON data
-     *        associated with them.
-     */
-    GroupsParser *mGroups;
 
     /// widget that contains all the advanced settings that affect the app globally
     GlobalSettingsWidget *mGlobalWidget;

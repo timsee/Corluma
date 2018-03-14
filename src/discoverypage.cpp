@@ -7,9 +7,6 @@
 #include "discoverypage.h"
 #include "ui_discoverypage.h"
 
-#ifndef MOBILE_BUILD
-#include "discovery/discoveryserialwidget.h"
-#endif
 #include "discovery/discoveryyunwidget.h"
 #include "discovery/discoveryhuewidget.h"
 
@@ -80,12 +77,6 @@ DiscoveryPage::DiscoveryPage(QWidget *parent) :
 void DiscoveryPage::connectCommLayer(CommLayer *layer) {
     mComm = layer;
 
-#ifndef MOBILE_BUILD
-    mSerialWidget = new DiscoverySerialWidget(mComm, this);
-    connect(mSerialWidget, SIGNAL(connectionStatusChanged(int, int)), this, SLOT(widgetConnectionStateChanged(int, int)));
-    mSerialWidget->setVisible(false);
-#endif //MOBILE_BUILD
-
     mYunWidget = new DiscoveryYunWidget(mComm, this);
     connect(mYunWidget, SIGNAL(connectionStatusChanged(int, int)), this, SLOT(widgetConnectionStateChanged(int, int)));
     mYunWidget->setVisible(false);
@@ -118,11 +109,6 @@ void DiscoveryPage::renderUI() {
             if (type == ECommType::eUDP) {
                 mYunWidget->handleDiscovery(mType == ECommType::eUDP);
             }
-    #ifndef MOBILE_BUILD
-            if (type == ECommType::eSerial) {
-                mSerialWidget->handleDiscovery(mType == ECommType::eSerial);
-            }
-    #endif
         }
     }
 
@@ -173,37 +159,18 @@ void DiscoveryPage::widgetConnectionStateChanged(int type, int connectionState) 
 void DiscoveryPage::commTypeSelected(int type) {
     ECommType currentCommType = (ECommType)type;
     if (currentCommType == ECommType::eUDP) {
-#ifndef MOBILE_BUILD
-        mSerialWidget->setVisible(false);
-#endif //MOBILE_BUILD
         mYunWidget->setVisible(true);
         mHueWidget->setVisible(false);
 
         mYunWidget->setGeometry(ui->placeholder->geometry());
 
         mYunWidget->handleDiscovery(true);
-        mHorizontalFloatingLayout->highlightButton("Discovery_Yun");
+        mHorizontalFloatingLayout->highlightButton("Discovery_ArduCor");
     }  else if (currentCommType == ECommType::eHue) {
-#ifndef MOBILE_BUILD
-        mHueWidget->setGeometry(ui->placeholder->geometry());
-        mSerialWidget->setVisible(false);
-#endif //MOBILE_BUILD
         mYunWidget->setVisible(false);
         mHueWidget->setVisible(true);
         mHorizontalFloatingLayout->highlightButton("Discovery_Hue");
     }
-#ifndef MOBILE_BUILD
-    else if (currentCommType == ECommType::eSerial) {
-        mSerialWidget->setGeometry(ui->placeholder->geometry());
-
-        mSerialWidget->setVisible(true);
-        mYunWidget->setVisible(false);
-        mHueWidget->setVisible(false);
-
-        mSerialWidget->handleDiscovery(true);
-        mHorizontalFloatingLayout->highlightButton("Discovery_Serial");
-    }
-#endif //MOBILE_BUILD
     mType = currentCommType;
 }
 
@@ -265,11 +232,6 @@ void DiscoveryPage::resizeEvent(QResizeEvent *) {
     }  else if (mType == ECommType::eHue) {
         mHueWidget->setGeometry(ui->placeholder->geometry());
     }
-#ifndef MOBILE_BUILD
-    else if (mType == ECommType::eSerial) {
-        mSerialWidget->setGeometry(ui->placeholder->geometry());
-    }
-#endif
     resizeTopMenu();
     moveFloatingLayouts();
 }
@@ -326,7 +288,7 @@ void DiscoveryPage::updateTopMenu() {
     // hide and show buttons based on their usage
     int count = 0;
     if (mData->commTypeSettings()->commTypeEnabled(ECommType::eUDP)) {
-        buttons.push_back("Discovery_Yun");
+        buttons.push_back("Discovery_ArduCor");
         count++;
     }
 
@@ -335,12 +297,6 @@ void DiscoveryPage::updateTopMenu() {
         count++;
     }
 
-#ifndef MOBILE_BUILD
-    if (mData->commTypeSettings()->commTypeEnabled(ECommType::eSerial)) {
-        buttons.push_back("Discovery_Serial");
-        count++;
-    }
-#endif
 
     // check that commtype being shown is available, if not, adjust
     if (!mData->commTypeSettings()->commTypeEnabled(mType)) {
@@ -349,11 +305,6 @@ void DiscoveryPage::updateTopMenu() {
         } else if (mData->commTypeSettings()->commTypeEnabled(ECommType::eUDP)) {
             mType = ECommType::eUDP;
         }
-#ifndef MOBILE_BUILD
-        else if (mData->commTypeSettings()->commTypeEnabled(ECommType::eSerial)) {
-            mType = ECommType::eSerial;
-        }
-#endif
     }
 
     // check that if only one is available that the top menu doesn't show.
@@ -372,16 +323,11 @@ void DiscoveryPage::updateTopMenu() {
 void DiscoveryPage::floatingLayoutButtonPressed(QString button) {
     if (button.compare("Settings") == 0) {
         emit settingsButtonClicked();
-    } else if (button.compare("Discovery_Yun") == 0) {
+    } else if (button.compare("Discovery_ArduCor") == 0) {
         commTypeSelected((int)ECommType::eUDP);
     } else if (button.compare("Discovery_Hue") == 0) {
         commTypeSelected((int)ECommType::eHue);
     }
-#ifndef MOBILE_BUILD
-    else if (button.compare("Discovery_Serial") == 0) {
-        commTypeSelected((int)ECommType::eSerial);
-    }
-#endif
 }
 
 void DiscoveryPage::moveFloatingLayouts() {

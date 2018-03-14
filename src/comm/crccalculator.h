@@ -11,7 +11,7 @@
  *
  *
  * \class CRCCalculator takes a string and calculates its CRC. It uses CRC-32 implementation that matches
- *        the one used by RGB-LED-Routines: https://github.com/timsee/RGB-LED-Routines . A CRC gets calculated
+ *        the one used by ArduCor: https://github.com/timsee/ArduCor . A CRC gets calculated
  *        based off of the contents of a packet and then appended to the end of it. The CRC is used to check
  *        packet integrity, so it gets used in streams like serial where data can be garbled.
  */

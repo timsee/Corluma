@@ -44,6 +44,8 @@ CommLayer::CommLayer(QWidget *parent) : QWidget(parent) {
 
     connect(mHue->discovery(), SIGNAL(bridgeDiscoveryStateChanged(int)), this, SLOT(hueDiscoveryUpdate(int)));
     connect(mHue.get(), SIGNAL(discoveryStateChanged(int)), this, SLOT(hueDiscoveryUpdate(int)));
+
+    mGroups = new GroupsParser(this);
 }
 
 bool CommLayer::runningDiscovery(ECommType type) {
@@ -55,23 +57,9 @@ QString CommLayer::sendTurnOn(const std::list<cor::Light>& deviceList,
                               bool turnOn) {
     QString packet;
     for (auto&& device : deviceList) {
-        if (device.type() == ECommType::eHue) {
-            if (turnOn) {
-                mHue->turnOn(device);
-            } else {
-                mHue->turnOff(device);
-            }
-        } else {
-            if (turnOn) {
-                packet += QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::eModeChange),
-                                                   QString::number(device.index()),
-                                                   QString::number((int)device.lightingRoutine));
-            } else {
-                packet += QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::eModeChange),
-                                                   QString::number(device.index()),
-                                                   QString::number((int)ELightingRoutine::eOff));
-            }
-        }
+        packet += QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::eOnOffChange),
+                                           QString::number(device.index()),
+                                           QString::number(turnOn));
     }
     return packet;
 }
@@ -274,7 +262,7 @@ void CommLayer::parsePacket(QString sender, QString packet, int type) {
                 uint32_t computedCRC = mCRC.calculate(crcPacketList[0]);
                 uint32_t givenCRC =  crcPacketList[1].left(crcPacketList[1].length() - 1).toUInt();
                 if (givenCRC != computedCRC) {
-                    //qDebug() << "INFO: failed CRC check for" << controller.name << "computed:" << QString::number(computedCRC) << "given:" << QString::number(givenCRC);
+                    //qDebug() << "INFO: failed CRC check for" << controller.name << "string:" << crcPacketList[0] << "computed:" << QString::number(computedCRC) << "given:" << QString::number(givenCRC);
                     return;
                 } else {
                     //qDebug() << "INFO: CRC check passed!!!!";
@@ -291,6 +279,7 @@ void CommLayer::parsePacket(QString sender, QString packet, int type) {
             if (intVector.size() > 2) {
                 if (intVector[0] < (int)EPacketHeader::ePacketHeader_MAX) {
                     EPacketHeader packetHeader = (EPacketHeader)intVector[0];
+
                     int index = intVector[1];
                     if (index < 20 && index  >= 1) {
 
@@ -324,11 +313,16 @@ void CommLayer::parsePacket(QString sender, QString packet, int type) {
                                     device.minutesUntilTimeout   = intVector[x + 11];
 
                                     device.name                  = controller.names[device.index() - 1];
+                                    device.hardwareType          = controller.hardwareTypes[device.index() - 1];
+                                    device.productType           = controller.productTypes[device.index() -1];
+
+                                    device.majorAPI              = controller.majorAPI;
+                                    device.minorAPI              = controller.minorAPI;
 
                                     commByType((ECommType)type)->updateDevice(device);
                                 }
                             } else {
-                                qDebug() << "WARNING: Invalid packet for light index" << intVector[x];
+                                //qDebug() << "WARNING: Invalid packet for light index" << intVector[x];
                             }
                         } else if (packetHeader == EPacketHeader::eCustomArrayUpdateRequest) {
                             device.customColorCount = intVector[2];
@@ -348,16 +342,19 @@ void CommLayer::parsePacket(QString sender, QString packet, int type) {
                             device.color = QColor(intVector[2], intVector[3], intVector[4]);
                             device.isOn = true;
                             commByType((ECommType)type)->updateDevice(device);
-                        } else if (packetHeader == EPacketHeader::eModeChange
+                        } else if (packetHeader == EPacketHeader::eOnOffChange
                                    && (intVector.size() % 3 == 0)) {
-                            if (device.lightingRoutine == ELightingRoutine::eOff) {
+                            int onOff = intVector[2];
+                            if (onOff == 0) {
                                 device.isOn = false;
-                            } else {
+                            } else if (onOff == 1) {
                                 device.isOn = true;
-                                device.lightingRoutine = (ELightingRoutine)intVector[2];
                             }
                             commByType((ECommType)type)->updateDevice(device);
-
+                        } else if (packetHeader == EPacketHeader::eModeChange
+                                   && (intVector.size() % 3 == 0)) {
+                            device.lightingRoutine = (ELightingRoutine)intVector[2];
+                            commByType((ECommType)type)->updateDevice(device);
                         } else if (packetHeader == EPacketHeader::eModeChange
                                    && (intVector.size() % 4 == 0)) {
                             device.lightingRoutine = (ELightingRoutine)intVector[2];
@@ -534,7 +531,7 @@ bool CommLayer::lookingForActivePorts() {
 
 void CommLayer::updateHueGroup(QString name, std::list<HueLight> lights) {
     bool hueGroupExists = false;
-    SHueGroup groupToUpdate;
+    cor::LightGroup groupToUpdate;
     for (auto group : mHue->groups()) {
         if (group.name.compare(name) == 0) {
             groupToUpdate = group;
@@ -549,7 +546,7 @@ void CommLayer::updateHueGroup(QString name, std::list<HueLight> lights) {
 void CommLayer::deleteHueGroup(QString name) {
     // check if group exists
     bool hueGroupExists = false;
-    SHueGroup groupToDelete;
+    cor::LightGroup groupToDelete;
     for (auto group : mHue->groups()) {
         if (group.name.compare(name) == 0) {
             groupToDelete = group;
@@ -569,4 +566,38 @@ std::list<cor::Light> CommLayer::hueLightsToDevices(std::list<HueLight> hues) {
         list.push_back(device);
     }
     return list;
+}
+
+
+std::list<cor::LightGroup> CommLayer::collectionList() {
+    return cor::LightGroup::mergeLightGroups(mGroups->collectionList(),
+                                             mHue->groups());
+}
+
+std::list<cor::LightGroup> CommLayer::roomList() {
+    std::list<cor::LightGroup> collectionList;
+    collectionList = cor::LightGroup::mergeLightGroups(mGroups->collectionList(),
+                                                       mHue->groups());
+
+    std::list<cor::LightGroup> retList;
+    for (auto&& collection : collectionList) {
+        if (collection.isRoom) {
+            retList.push_back(collection);
+        }
+    }
+    return retList;
+}
+
+std::list<cor::LightGroup> CommLayer::groupList() {
+    std::list<cor::LightGroup> collectionList;
+    collectionList = cor::LightGroup::mergeLightGroups(mGroups->collectionList(),
+                                                       mHue->groups());
+
+    std::list<cor::LightGroup> retList;
+    for (auto&& collection : collectionList) {
+        if (!collection.isRoom) {
+            retList.push_back(collection);
+        }
+    }
+    return retList;
 }

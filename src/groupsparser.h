@@ -8,25 +8,9 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-#include "cor/light.h"
-#include "groupsparser.h"
+#include "cor/lightgroup.h"
 #include "comm/commhue.h"
 
-
-struct SLightGroup
-{
-    QString name;
-    std::list<cor::Light> devices;
-    bool isRoom;
-};
-
-
-/// equal operator
-inline bool operator==(const SLightGroup& lhs, const SLightGroup& rhs) {
-    bool result = true;
-    if (lhs.name.compare(rhs.name)) result = false;
-    return result;
-}
 
 /*!
  * \copyright
@@ -53,14 +37,14 @@ public:
      * \return a list of all the moods. Each mood is represented as a pair with its name
      *         and a list of the devices with their associated state.
      */
-    const std::list<SLightGroup>& moodList() { return mMoodList; }
+    const std::list<cor::LightGroup>& moodList() { return mMoodList; }
 
     /*!
      * \brief collectionList getter for all known collections.
      * \return a list of all the collections. Each collection is represented as a pair with its name and a list
      *         of the devices.
      */
-    const std::list<SLightGroup>& collectionList() { return mCollectionList; }
+    const std::list<cor::LightGroup>& collectionList() { return mCollectionList; }
 
     /*!
      * \brief saveNewMood save a new group of devices to JSON data, which then gets saved to file in AppData.
@@ -203,13 +187,13 @@ private:
      * \brief mMoodList non-JSON representation of moods. This list is kept so that it is
      *        easy to pull all possible moods without having to re-parse the JSON data each time.
      */
-    std::list<SLightGroup> mMoodList;
+    std::list<cor::LightGroup> mMoodList;
 
     /*!
      * \brief mMoodList non-JSON representation of collections. This list is kept so that it is
      *        easy to pull all possible collections without having to re-parse the JSON data each time.
      */
-    std::list<SLightGroup> mCollectionList;
+    std::list<cor::LightGroup> mCollectionList;
 
     /*!
      * \brief mJsonData a JSON representation of all moods and collections. Gets saved

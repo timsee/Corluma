@@ -78,7 +78,8 @@ SettingsPage::SettingsPage(QWidget *parent) :
                        "About",
                        "Debug"};
 
-    mTitles = { "Hue Info",
+    mTitles = { "Discover Controllers",
+                "Hue Info",
                 "Discover New Hues",
                 "Save",
                 "Load",
@@ -87,7 +88,8 @@ SettingsPage::SettingsPage(QWidget *parent) :
                 "FAQ",
                 "Mock Connection"};
 
-    mDescriptions = { "Read and manage the hardware information stored on the Hue Bridge.",
+    mDescriptions = { "Discover a Philips Bridge or Arduino controllers.",
+                      "Read and manage the hardware information stored on the Hue Bridge.",
                       "Discover new Hue lights.",
                       "Save light moods and collections to JSON.",
                       "Erase old moods and collections, load new data from JSON.",
@@ -193,7 +195,7 @@ void SettingsPage::loadButtonClicked() {
     if (dialog.exec()) {
         fileNames = dialog.selectedFiles();
         for (auto& name : fileNames){
-            if (!mGroups->loadExternalData(name)) {
+            if (!mComm->groups()->loadExternalData(name)) {
                 qDebug() << "WARNING: loading external data failed at " << name;
             }
         }
@@ -208,7 +210,7 @@ void SettingsPage::saveButtonClicked() {
         qDebug() << "WARNING: save file name empty";
         return;
     }
-    if (!mGroups->saveFile(fileName)) {
+    if (!mComm->groups()->saveFile(fileName)) {
         qDebug() << "WARNING: Save failed!";
     }
 }
@@ -234,7 +236,7 @@ void SettingsPage::resetToDefaults() {
     mGlobalWidget->timeoutButtonPressed(true);
 
     // load no data, deleting everything.
-    mGroups->loadExternalData("");
+    mComm->groups()->loadExternalData("");
 }
 
 void SettingsPage::removeDebug() {
@@ -273,7 +275,7 @@ void SettingsPage::paintEvent(QPaintEvent *) {
 void SettingsPage::settingsButtonPressed(QString title) {
    // qDebug() << "settings button pressed: " << title;
     if (title.compare("Debug") == 0) {
-        std::list<cor::Light> debugDevices = mGroups->loadDebugData();
+        std::list<cor::Light> debugDevices = mComm->groups()->loadDebugData();
         if (debugDevices.size() > 0) {
             mComm->loadDebugData(debugDevices);
             emit debugPressed();
@@ -288,6 +290,8 @@ void SettingsPage::settingsButtonPressed(QString title) {
         saveButtonClicked();
     } else if (title.compare("Discover New Hues") == 0) {
         emit clickedHueDiscovery();
+    } else if (title.compare("Discover Controllers") == 0) {
+        emit clickedDiscovery();
     } else if (title.compare("Hue Info") == 0) {
         emit clickedHueInfoWidget();
     } else if (title.compare("Copyright") == 0) {

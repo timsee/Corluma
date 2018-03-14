@@ -22,7 +22,7 @@ namespace cor
 
 /*!
  * \brief The Light class is the base datatype used for controlling
- *        and displaying the state of the light devices, such as Phillips
+ *        and displaying the state of the light devices, such as Philips
  *        Hue or an arduino-controlled light cube.
  */
 class Light {
@@ -117,6 +117,22 @@ public:
      *        This allows the user to make a color group that has less than 10 colors in it.
      */
     uint32_t customColorCount;
+
+    //-----------------------
+    // types and metadata
+    //-----------------------
+
+    /// type of hardware for a light (lightbulb, LED, cube, etc.)
+    ELightHardwareType hardwareType;
+
+    /// type of product (Neopixels, Rainbowduino, Hue, etc.)
+    EProductType productType;
+
+    /// major API level
+    int majorAPI;
+
+    /// minor API level
+    int minorAPI;
 
     //-----------------------
     // Connection Info

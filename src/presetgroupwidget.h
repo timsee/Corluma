@@ -6,6 +6,7 @@
 #include <QLabel>
 #include "cor/button.h"
 
+/// mode of this widget
 enum class EPresetWidgetMode {
     eArduino,
     eHue

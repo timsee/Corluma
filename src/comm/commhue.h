@@ -11,6 +11,7 @@
 #include <QJsonDocument>
 
 #include "commpacketparser.h"
+#include "cor/lightgroup.h"
 #include "hue/bridgediscovery.h"
 #include "hue/huelight.h"
 #include "hue/hueprotocols.h"
@@ -21,7 +22,7 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief The CommHue class communicates with a Phillips Hue Bridge to control
+ * \brief The CommHue class communicates with a Philips Hue Bridge to control
  *        all of the currently connected Hue Lights.
  *
  *        It uses a HueBridgeDiscovery object to store data about the Hue Bridge
@@ -42,7 +43,7 @@ public:
     CommHue();
 
     /*!
-     * \brief CommHue Deconstructor
+     * \brief CommHue Destructor
      */
     ~CommHue();
 
@@ -105,7 +106,7 @@ public:
 
     /*!
      * \brief sendPacket Takes a packet in the format of a Corluma lights command (a comma delimited QString) and
-     *        converts it into a Phillips Hue command
+     *        converts it into a Philips Hue command
      * \param packet the comma delimited Corlum Light command.
      */
     void sendPacket(const cor::Controller& controller, QString& packet);
@@ -195,16 +196,16 @@ public:
      * \param group the group to change the lights in
      * \param lights the new lights to provide to the group.
      */
-    void updateGroup(SHueGroup group, std::list<HueLight> lights);
+    void updateGroup(cor::LightGroup group, std::list<HueLight> lights);
 
     /*!
      * \brief deleteGroup delete a group from the hue bridge
      * \param group the group to delete from the bridge
      */
-    void deleteGroup(SHueGroup group);
+    void deleteGroup(cor::LightGroup group);
 
     /// getter for list of groups
-    const std::list<SHueGroup>& groups() { return mGroups; }
+    const std::list<cor::LightGroup>& groups() { return mGroups; }
 
     /// list of lights recently discovered by a scan
     const std::list<HueLight>& newLights() { return mNewLights; }
@@ -313,6 +314,13 @@ private slots:
      *        changes.
      */
     void connectionStatusHasChanged(bool);
+
+    /*!
+     * \brief onOffChange turn a light on or off
+     * \param lightIndex index of the light
+     * \param turnOn true to turn on, false to turn off
+     */
+    void onOffChange(int lightIndex, bool turnOn);
 
     /*!
      * \brief mainColorChange connected to CommPacketParser, this changes the main color.
@@ -456,13 +464,7 @@ private:
     /*!
      * \brief mGroups a list that stores all known data about the current groups.
      */
-    std::list<SHueGroup> mGroups;
-
-    /*!
-     * \brief hueStringtoColorMode helper that takes a mode given by JSON data from the hue bridge and
-     *        and converts it to an enumerated type.
-     */
-    EColorMode hueStringtoColorMode(const QString& mode);
+    std::list<cor::LightGroup> mGroups;
 
     /*!
      * \brief updateHueLight update the internal SHueLight based on the provided SHueLight

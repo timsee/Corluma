@@ -107,10 +107,16 @@ inline QString colorModeToString(EColorMode mode) {
 inline EColorMode stringtoColorMode(const QString& mode) {
     if (mode.compare("RGB") == 0) {
         return EColorMode::eRGB;
-    }else if (mode.compare("HSV") == 0) {
+    } else if (mode.compare("HSV") == 0
+              || mode.compare("hs") == 0) {
         return EColorMode::eHSV;
-    } else if (mode.compare("CT") == 0) {
+    } else if (mode.compare("CT") == 0
+               || mode.compare("ct") == 0) {
         return EColorMode::eCT;
+    } else if (mode.compare("") == 0) {
+        return EColorMode::eDimmable;
+    } else if (mode.compare("xy") == 0) {
+        return EColorMode::eXY;
     } else {
         qDebug() << "WARNING: color mode not recognized" << mode;
         return EColorMode::EColorMode_MAX;

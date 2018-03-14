@@ -15,7 +15,7 @@
  * \brief The CommPacketParser class takes the packets used for communication with other devices as input,
  *        parses them, and emits signals based on the contents of a packet. For example, a main color change
  *        packet will emit a `receivedMainColorChange(int, QColor)`  signal. This class is used to emulate the
- *        functionality of the parser that is embedded on the arduino platforms on devices like the Phillips Hue.
+ *        functionality of the parser that is embedded on the arduino platforms on devices like the Philips Hue.
  */
 class CommPacketParser: public QWidget
 {
@@ -36,6 +36,13 @@ public:
     void parsePacket(QString packet);
 
 signals:
+
+    /*!
+     * \brief receivedOnOffChange received a message to turn light on or off.
+     * \param deviceIndex index of device to control
+     * \param turnOn true to turn on, false to turn off
+     */
+    void receivedOnOffChange(int deviceIndex, bool turnOn);
 
     /*!
      * \brief receivedMainColorChange signal that requests a main color change for a device.

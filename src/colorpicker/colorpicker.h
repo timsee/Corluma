@@ -18,9 +18,8 @@
 #include "rgbsliders.h"
 #include "brightnessslider.h"
 #include "tempbrightsliders.h"
-#include "colorgrid.h"
+#include "cor/palette.h"
 #include "colorschemecircles.h"
-#include "colorschemegrid.h"
 
 /*!
  * \copyright
@@ -99,7 +98,7 @@ public:
     explicit ColorPicker(QWidget *parent = 0);
 
     /*!
-     * \brief Deconstructor
+     * \brief Destructor
      */
     ~ColorPicker();
 
@@ -291,7 +290,7 @@ private:
     /*!
      * \brief mColorSchemeGrid bottom layout, gives a few color swatches
      */
-    ColorSchemeGrid *mColorSchemeGrid;
+     cor::Palette *mColorSchemeGrid;
 
     /// bottom layout, gives 3 sliders for RGB.
     RGBSliders *mRGBSliders;
@@ -303,7 +302,7 @@ private:
     BrightnessSlider *mBrightnessSlider;
 
     /// bottom layoutm, gives a slider and a grid of buttons
-    ColorGrid *mColorGrid;
+    cor::Palette *mColorGrid;
 
     /// cached rendered version of the color wheel
     QImage mRenderedColorWheel;

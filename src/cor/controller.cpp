@@ -3,10 +3,7 @@
 namespace cor
 {
 
-Controller::Controller()
-{
-
-}
+Controller::Controller() {}
 
 QString Controller::toString() {
     QString string = name

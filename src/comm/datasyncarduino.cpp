@@ -4,6 +4,8 @@
  * Released under the GNU General Public License.
  */
 
+#include <QDebug>
+
 #include "datasyncarduino.h"
 #include "comm/commlayer.h"
 #include "cor/utils.h"
@@ -207,85 +209,82 @@ bool DataSyncArduino::sync(const cor::Light& dataDevice, const cor::Light& commD
     //-------------------
 
     if (dataDevice.isOn != commDevice.isOn) {
-        //qDebug() << "ON/OFF not in sync" << dataDevice.isOn << " for " << dataDevice.index << "routine " << (int)dataDevice.lightingRoutine;
+        //qDebug() << "ON/OFF not in sync" << dataDevice.isOn << " for " << dataDevice.index();
         QString message = mComm->sendTurnOn(list, dataDevice.isOn);
         appendToPacket(packet, message, controller.maxPacketSize);
         countOutOfSync++;
     }
 
     // if a lights off, no need to sync the rest of the states
-    if (dataDevice.isOn)
+    if (dataDevice.lightingRoutine <= cor::ELightingRoutineSingleColorEnd)
     {
-
-        if (dataDevice.lightingRoutine <= cor::ELightingRoutineSingleColorEnd)
-        {
-            //-------------------
-            // Single Color Routine Sync
-            //-------------------
-            if (commDevice.lightingRoutine != dataDevice.lightingRoutine) {
-               // qDebug() << "single light routine not in sync";
-                QString message = mComm->sendSingleRoutineChange(list, dataDevice.lightingRoutine);
-                appendToPacket(packet, message, controller.maxPacketSize);
-                countOutOfSync++;
-            }
-
-            //-------------------
-            // Single Color Sync
-            //-------------------
-            if (commDevice.color != dataDevice.color) {
-                 QString message = mComm->sendMainColorChange(list, dataDevice.color);
-                 appendToPacket(packet, message, controller.maxPacketSize);
-                 //qDebug() << "color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << utils::colorDifference(dataDevice.color, commDevice.color);
-                 countOutOfSync++;
-            }
-        }
-        else
-        {
-            //-------------------
-            // Multi Color Routine Sync
-            //-------------------
-            if (((commDevice.colorGroup != dataDevice.colorGroup)
-                    || (commDevice.lightingRoutine != dataDevice.lightingRoutine))) {
-               // qDebug() << "color group routine not in sync routines:" << (int)dataDevice.lightingRoutine << " vs " << (int)commDevice.lightingRoutine;
-                QString message = mComm->sendMultiRoutineChange(list, dataDevice.lightingRoutine, dataDevice.colorGroup);
-                appendToPacket(packet, message, controller.maxPacketSize);
-                countOutOfSync++;
-            }
-        }
-
-
         //-------------------
-        // Brightness Sync
+        // Single Color Routine Sync
         //-------------------
-        if (commDevice.brightness != dataDevice.brightness) {
-          //  qDebug() << "brightness not in sync";
-            QString message = mComm->sendBrightness(list, dataDevice.brightness);
+        if (commDevice.lightingRoutine != dataDevice.lightingRoutine) {
+           // qDebug() << "single light routine not in sync";
+            QString message = mComm->sendSingleRoutineChange(list, dataDevice.lightingRoutine);
             appendToPacket(packet, message, controller.maxPacketSize);
             countOutOfSync++;
         }
 
         //-------------------
-        // Custom Color Count Sync
+        // Single Color Sync
         //-------------------
-        if (commDevice.customColorCount != dataDevice.customColorCount) {
-           // qDebug() << "Custom color count not in sync";
-            QString message = mComm->sendCustomArrayCount(list, dataDevice.customColorCount);
-            appendToPacket(packet, message, controller.maxPacketSize);
-            countOutOfSync++;
-        }
-
-        //-------------------
-        // Custom Color Sync
-        //-------------------
-        for (uint32_t i = 0; i < dataDevice.customColorCount; ++i) {
-            if (cor::colorDifference(dataDevice.customColorArray[i], commDevice.customColorArray[i]) > 0.02f) {
-             //   qDebug() << "Custom color" << i << "not in sync";
-                QString message = mComm->sendArrayColorChange(list, i, dataDevice.customColorArray[i]);
-                appendToPacket(packet, message, controller.maxPacketSize);
-                countOutOfSync++;
-            }
+        if (commDevice.color != dataDevice.color) {
+             QString message = mComm->sendMainColorChange(list, dataDevice.color);
+             appendToPacket(packet, message, controller.maxPacketSize);
+             //qDebug() << "color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << utils::colorDifference(dataDevice.color, commDevice.color);
+             countOutOfSync++;
         }
     }
+    else
+    {
+        //-------------------
+        // Multi Color Routine Sync
+        //-------------------
+        if (((commDevice.colorGroup != dataDevice.colorGroup)
+                || (commDevice.lightingRoutine != dataDevice.lightingRoutine))) {
+           // qDebug() << "color group routine not in sync routines:" << (int)dataDevice.lightingRoutine << " vs " << (int)commDevice.lightingRoutine;
+            QString message = mComm->sendMultiRoutineChange(list, dataDevice.lightingRoutine, dataDevice.colorGroup);
+            appendToPacket(packet, message, controller.maxPacketSize);
+            countOutOfSync++;
+        }
+    }
+
+
+    //-------------------
+    // Brightness Sync
+    //-------------------
+    if (commDevice.brightness != dataDevice.brightness) {
+      //  qDebug() << "brightness not in sync";
+        QString message = mComm->sendBrightness(list, dataDevice.brightness);
+        appendToPacket(packet, message, controller.maxPacketSize);
+        countOutOfSync++;
+    }
+
+    //-------------------
+    // Custom Color Count Sync
+    //-------------------
+    if (commDevice.customColorCount != dataDevice.customColorCount) {
+       // qDebug() << "Custom color count not in sync";
+        QString message = mComm->sendCustomArrayCount(list, dataDevice.customColorCount);
+        appendToPacket(packet, message, controller.maxPacketSize);
+        countOutOfSync++;
+    }
+
+    //-------------------
+    // Custom Color Sync
+    //-------------------
+    for (uint32_t i = 0; i < dataDevice.customColorCount; ++i) {
+        if (cor::colorDifference(dataDevice.customColorArray[i], commDevice.customColorArray[i]) > 0.02f) {
+         //   qDebug() << "Custom color" << i << "not in sync";
+            QString message = mComm->sendArrayColorChange(list, i, dataDevice.customColorArray[i]);
+            appendToPacket(packet, message, controller.maxPacketSize);
+            countOutOfSync++;
+        }
+    }
+
 
     if (countOutOfSync) {
         QStringList messageArray = packet.split("&");

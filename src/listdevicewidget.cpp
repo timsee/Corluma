@@ -11,7 +11,7 @@
 
 #include "listdevicewidget.h"
 
-#include <algorithm>    // std::sort
+#include <algorithm>
 
 ListDeviceWidget::ListDeviceWidget(const cor::Light& device,
                                    const std::vector<QColor>& colors,
@@ -22,19 +22,23 @@ ListDeviceWidget::ListDeviceWidget(const cor::Light& device,
     this->setParent(parent);
     init(device);
     this->setMaximumSize(size);
+
+    mBlockStateUpdates = false;
+    mHideSwitch = false;
+    mIsChecked = false;
+
+    mCooldownTimer = new QTimer(this);
+    mCooldownTimer->setSingleShot(true);
+    connect(mCooldownTimer, SIGNAL(timeout()), this, SLOT(coolDownClick()));
+
     updateWidget(device, colors);
-    resizeIconPixmap();
 }
 
 
 void ListDeviceWidget::init(const cor::Light& device) {
-    mIsChecked = false;
 
     // setup icon
     mIconData = IconData(32, 32);
-    mDeviceIcon = new QLabel(this);
-    mDeviceIcon->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
-    mDeviceIcon->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     QString type;
     if (device.type() == ECommType::eHue) {
         type = "Hue";
@@ -51,36 +55,34 @@ void ListDeviceWidget::init(const cor::Light& device) {
     // setup controller label
     mController = new QLabel(this);
 
+    mTypeIcon = new QLabel(this);
+    mTypeIcon->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    updateTypeIcon(device.hardwareType);
+
+    mOnOffSwitch = new cor::Switch(this);
+    mOnOffSwitch->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+    connect(mOnOffSwitch, SIGNAL(switchChanged(bool)), this, SLOT(changedSwitchState(bool)));
+
     QString nameText = createName(device);
     mController->setText(nameText);
     mController->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    mStatusIcon = new cor::StatusIcon(this);
-    mStatusIcon->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
-
-    mTypeIcon = new QLabel(this);
-    mTypeIcon->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
-
     // setup layout
     mLayout = new QGridLayout(this);
-    mLayout->addWidget(mDeviceIcon, 0, 0, 2, 2);
-    mLayout->addWidget(mStatusIcon, 0, 2, 1, 1);
-    mLayout->addWidget(mTypeIcon,   1, 2, 1, 1);
-    mLayout->addWidget(mController, 1, 3, 1, 20); // large number so that the controller name takes up as much space as possible.
+    mLayout->addWidget(mTypeIcon,    0, 0, 2, 2);
+    mLayout->addWidget(mOnOffSwitch, 0, 2, 2, 4);
 
-    mLayout->setContentsMargins(2,2,2,2);
-    mLayout->setSpacing(0);
+    mLayout->addWidget(mController,  2, 0, 1, 18);
+
+    mLayout->setContentsMargins(0,0,0,0);
+    mLayout->setSpacing(2);
 
     setLayout(mLayout);
 
     mKey = structToIdentifierString(device);
 
-    mController->setStyleSheet(createStyleSheet(device));
-    mDeviceIcon->setStyleSheet(createStyleSheet(device));
-    mTypeIcon->setStyleSheet(createStyleSheet(device));
-
-    mStatusIcon->update(device.isReachable, device.isOn, ((200 - device.brightness) / 200) * 100);
-    prepareTypeLabel(device.type());
+    mOnOffSwitch->setSwitchState(ESwitchState::eDisabled);
 }
 
 
@@ -88,16 +90,10 @@ void ListDeviceWidget::updateWidget(const cor::Light& device,
                                      const std::vector<QColor>& colors) {
     mDevice = device;
 
-    int widgetSize = std::min(this->width(), this->height());
     if (device.lightingRoutine <= cor::ELightingRoutineSingleColorEnd ) {
         mIconData.setSingleLightingRoutine(device.lightingRoutine, device.color);
-        mDeviceIcon->setFixedSize(widgetSize, widgetSize);
     } else {
-        if ((int)device.lightingRoutine > (int)ELightingRoutine::eLightingRoutine_MAX) {
-            qDebug() << "devices " << (int)device.lightingRoutine << " and color group " << (int)device.colorGroup;
-        } else {
-            mIconData.setMultiLightingRoutine(device.lightingRoutine, device.colorGroup, colors);
-        }
+        mIconData.setMultiLightingRoutine(device.lightingRoutine, device.colorGroup, colors);
     }
 
     QString nameText = createName(device);
@@ -105,14 +101,17 @@ void ListDeviceWidget::updateWidget(const cor::Light& device,
         mController->setText(nameText);
     }
 
-    mDeviceIcon->setFixedSize(widgetSize * 0.75f, widgetSize);
-    mIconPixmap = mIconData.renderAsQPixmap();
-    resizeIconPixmap();
-
     mKey = structToIdentifierString(device);
+    if (!device.isReachable) {
+        mOnOffSwitch->setSwitchState(ESwitchState::eDisabled);
+    } else if (device.isOn && !mBlockStateUpdates) {
+        mOnOffSwitch->setSwitchState(ESwitchState::eOn);
+    } else if (!mBlockStateUpdates) {
+        mOnOffSwitch->setSwitchState(ESwitchState::eOff);
+    }
 
-    mStatusIcon->update(device.isReachable, device.isOn, device.brightness);
-    prepareTypeLabel(device.type());
+    mIconPixmap = mIconData.renderAsQPixmap();
+    updateTypeIcon(device.hardwareType);
 }
 
 QString ListDeviceWidget::convertUglyHueNameToPrettyName(QString name) {
@@ -153,6 +152,21 @@ QString ListDeviceWidget::structToIdentifierString(const cor::Light& device) {
 
 bool ListDeviceWidget::setHighlightChecked(bool checked) {
     mIsChecked = checked;
+    if (mIsChecked) {
+        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mOnOffSwitch);
+        effect->setOpacity(1.0);
+        mOnOffSwitch->setGraphicsEffect(effect);
+        mOnOffSwitch->setEnabled(true);
+        mOnOffSwitch->setAttribute(Qt::WA_TransparentForMouseEvents, false);
+        this->setStyleSheet("background-color:rgb(61,142,201);");
+    } else {
+        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mOnOffSwitch);
+        effect->setOpacity(0.15);
+        mOnOffSwitch->setGraphicsEffect(effect);
+        mOnOffSwitch->setEnabled(false);
+        mOnOffSwitch->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+        this->setStyleSheet("background-color:rgb(32,31,31);");
+    }
     repaint();
     return mIsChecked;
 }
@@ -164,83 +178,67 @@ void ListDeviceWidget::paintEvent(QPaintEvent *event) {
     opt.init(this);
     QPainter painter(this);
 
-    painter.setRenderHint(QPainter::Antialiasing);
-    if (mShouldHighlight) {
-        if (mIsChecked) {
-            painter.fillRect(this->rect(), QBrush(QColor(61, 142, 201, 255)));
-        } else {
-            //TODO: could I make this transparent in all cases?
-            painter.fillRect(this->rect(), QBrush(QColor(32, 31, 31, 255)));
-        }
+    if (mIsChecked) {
+        painter.fillRect(this->rect(), QBrush(QColor(61, 142, 201, 255)));
+    } else {
+        //TODO: could I make this transparent in all cases?
+        painter.fillRect(this->rect(), QBrush(QColor(32, 31, 31, 255)));
     }
 
-    int diameter = mDeviceIcon->height() * 0.55f;
-    QRect rect((mDeviceIcon->width() - diameter) / 2,
-               (mDeviceIcon->height() - diameter) / 2,
-               diameter, diameter);
+    int x;
+    if (mHideSwitch) {
+        x = mTypeIcon->x() + mTypeIcon->width() + 5;
+    } else {
+        x = mOnOffSwitch->x() + mOnOffSwitch->width() + 5;
+    }
+
+    QRect rect(x,
+               10,
+               this->width() / 3,
+               this->height() * 0.6f / 2);
+
 
     // make brush with icon data in it
-    QBrush brush(mIconPixmap);
+    QBrush brush(QColor(0,0,0));
+
+    mIconPixmap = mIconPixmap.scaled(rect.width(),
+                                     rect.height(),
+                                     Qt::IgnoreAspectRatio,
+                                     Qt::SmoothTransformation);
+    QBrush brush2(mIconPixmap);
+
     painter.setBrush(brush);
+    painter.drawRect(rect);
 
-    painter.drawEllipse(rect);
-}
-
-
-void ListDeviceWidget::resizeIconPixmap() {
-    QRect rect(mDeviceIcon->geometry().x(),
-               mDeviceIcon->geometry().y() + mDeviceIcon->height() / 4,
-               mDeviceIcon->height() * 0.666f,
-               mDeviceIcon->height() * 0.666f);
-
-    if (((mIconPixmap.size().width() != rect.width())
-            || (mIconPixmap.size().height() != rect.height()))
-            && (mIconPixmap.size().width() > 0)
-            && (mIconPixmap.size().height() > 0)) {
-        mIconPixmap = mIconPixmap.scaled(rect.width(),
-                                         rect.height(),
-                                         Qt::KeepAspectRatio,
-                                         Qt::SmoothTransformation);
+    if (mDevice.isReachable) {
+        // set brightness width
+        rect.setWidth((float)rect.width() * mDevice.brightness / 100.0f);
+        painter.setBrush(brush2);
+        painter.drawRect(rect);
+        if (!mDevice.isOn) {
+            QBrush brush3(QColor(0,0,0,200));
+            painter.setBrush(brush3);
+            painter.drawRect(rect);
+        }
     }
-}
-
-QString ListDeviceWidget::createStyleSheet(const cor::Light& device) {
-    Q_UNUSED(device);
-    QString styleSheet;
-
-#ifdef MOBILE_BUILD
-    styleSheet += " font: 10pt;";
-#endif
-    styleSheet += "background-color: rgba(0,0,0,0);";
-
-    return styleSheet;
 }
 
 void ListDeviceWidget::mouseReleaseEvent(QMouseEvent *event) {
     Q_UNUSED(event);
-    //setChecked(!checked());
+    setHighlightChecked(!mIsChecked);
     emit clicked(mKey);
 }
 
 
-void ListDeviceWidget::prepareTypeLabel(ECommType type) {
-    if (type == ECommType::eHTTP
-#ifndef MOBILE_BUILD
-            || type == ECommType::eSerial
-#endif
-            || type == ECommType::eUDP) {
-        QPixmap logoIcon(QPixmap(":/images/arduino-logo.png"));
-        logoIcon = logoIcon.scaled(mStatusIcon->height() * 0.6f,
-                                       mStatusIcon->height() * 0.6f,
-                                       Qt::KeepAspectRatio,
-                                       Qt::SmoothTransformation);
-        mTypeIcon->setPixmap(logoIcon);
-    } else if (type == ECommType::eHue) {
-        mTypeIcon->setText("Hue");
-    }
-
+void ListDeviceWidget::changedSwitchState(bool newState) {
+    mBlockStateUpdates = true;
+    mCooldownTimer->start(4000);
+    emit switchToggled(mKey, newState);
 }
 
+void ListDeviceWidget::coolDownClick() {
+    mBlockStateUpdates = false;
+}
 
 QString ListDeviceWidget::createName(const cor::Light& device) {
     QString nameText;
@@ -258,3 +256,52 @@ QString ListDeviceWidget::createName(const cor::Light& device) {
     return nameText;
 }
 
+void ListDeviceWidget::hideOnOffSwitch(bool shouldHide) {
+    mHideSwitch = shouldHide;
+    if (shouldHide) {
+        mOnOffSwitch->setHidden(mHideSwitch);
+    }
+}
+
+void ListDeviceWidget::updateTypeIcon(ELightHardwareType type) {
+    QString typeResource;
+    switch (type) {
+        case ELightHardwareType::eSingleLED:
+            typeResource = QString(":/images/led_icon.png");
+            break;
+        case ELightHardwareType::eLightbulb:
+            typeResource = QString(":/images/hue_bulb.png");
+            break;
+        case ELightHardwareType::eCube:
+            typeResource = QString(":/images/cube_icon.png");
+            break;
+        case ELightHardwareType::e2DArray:
+            typeResource = QString(":/images/array_icon.jpg");
+            break;
+        case ELightHardwareType::eLightStrip:
+            typeResource = QString(":/images/light_strip.png");
+            break;
+        case ELightHardwareType::eRing:
+            typeResource = QString(":/images/ring_icon.png");
+            break;
+        case ELightHardwareType::eBloom:
+            typeResource = QString(":/images/hue_bloom.png");
+            break;
+//        case ELightHardwareType::eAurora:
+//            typeResource = QString(":/images/hue_bloom.png");
+//            break;
+        case ELightHardwareType::ELightHardwareType_MAX:
+        default:
+            typeResource = QString(":/images/led_icon.png");
+            break;
+    }
+    QSize size(this->height() * 0.5f,
+               this->height() * 0.5f);
+    mTypePixmap = QPixmap(typeResource);
+    mTypePixmap = mTypePixmap.scaled(size.width(),
+                                     size.height(),
+                                     Qt::IgnoreAspectRatio,
+                                     Qt::SmoothTransformation);
+    mTypeIcon->setMaximumSize(size.width(), size.height());
+    mTypeIcon->setPixmap(mTypePixmap);
+}

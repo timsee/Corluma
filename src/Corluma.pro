@@ -47,7 +47,7 @@ CONFIG += c++11 #adds C++11 support
 # http://slproweb.com/products/Win32OpenSSL.html
 #
 # NOTE: This dependency is currently only used for discovering
-#       Phillips Hues, It is an optional dependency for discovery
+#       Philips Hues, It is an optional dependency for discovery
 #       although it is recommended as our testing shows it to be
 #       the quickest method of discovery.
 
@@ -125,10 +125,7 @@ SOURCES += main.cpp \
     colorpicker/rgbsliders.cpp \
     colorpicker/tempbrightsliders.cpp \
     colorpicker/brightnessslider.cpp \
-    colorpicker/colorgrid.cpp \
-    colorpicker/colorschemegrid.cpp \
     colorpicker/colorschemecircles.cpp \
-    discovery/discoveryserialwidget.cpp \
     discovery/discoverywidget.cpp \
     discovery/discoveryyunwidget.cpp \
     discovery/discoveryhuewidget.cpp \
@@ -143,6 +140,9 @@ SOURCES += main.cpp \
     cor/statusicon.cpp \
     cor/topwidget.cpp \
     cor/webview.cpp \
+    cor/switch.cpp \
+    cor/lightgroup.cpp \
+    cor/palette.cpp \
     hue/lightdiscovery.cpp \
     hue/lightinfolistwidget.cpp \
     hue/lightinfowidget.cpp \
@@ -172,8 +172,8 @@ SOURCES += main.cpp \
     settingsbutton.cpp \
     globalsettingswidget.cpp \
     editablefieldwidget.cpp \
-    searchwidget.cpp
-
+    searchwidget.cpp \
+    listeditwidget.cpp
 
 HEADERS  +=  comm/commtype.h \
     comm/commserial.h \
@@ -192,10 +192,7 @@ HEADERS  +=  comm/commtype.h \
     colorpicker/rgbsliders.h \
     colorpicker/tempbrightsliders.h \
     colorpicker/brightnessslider.h \
-    colorpicker/colorgrid.h \
-    colorpicker/colorschemegrid.h \
     colorpicker/colorschemecircles.h \
-    discovery/discoveryserialwidget.h \
     discovery/discoverywidget.h \
     discovery/discoveryyunwidget.h \
     discovery/discoveryhuewidget.h \
@@ -211,6 +208,9 @@ HEADERS  +=  comm/commtype.h \
     cor/statusicon.h \
     cor/topwidget.h \
     cor/webview.h \
+    cor/switch.h \
+    cor/palette.h \
+    cor/lightgroup.h \
     hue/lightdiscovery.h \
     hue/lightinfolistwidget.h \
     hue/lightinfowidget.h \
@@ -244,7 +244,8 @@ HEADERS  +=  comm/commtype.h \
     settingsbutton.h \
     globalsettingswidget.h \
     editablefieldwidget.h \
-    searchwidget.h
+    searchwidget.h \
+    listeditwidget.h
 
 FORMS    += discoverypage.ui \
     editcollectionpage.ui

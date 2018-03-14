@@ -45,5 +45,14 @@
         <file>images/groupsIcon.png</file>
         <file>images/roomIcon.png</file>
         <file>images/mobileLaunchScreen.png</file>
+        <file>images/offSwitch.png</file>
+        <file>images/onSwitch.png</file>
+        <file>images/cube_icon.png</file>
+        <file>images/ring_icon.png</file>
+        <file>images/array_icon.jpg</file>
+        <file>images/light_strip.png</file>
+        <file>images/hue_bloom.png</file>
+        <file>images/hue_bulb.png</file>
+        <file>images/led_icon.png</file>
     </qresource>
 </RCC>

@@ -42,7 +42,7 @@ class CommLayer;
  *        as the "desired" state of lights. The CommLayer's understanding is used as the current state.
  *        If the desired state and current state do not match, the commlayer is requested to send packets
  *        to try to update the devices. Different datasync threads run at different speeds and have different criteria for how to handle
- *        syncing. Phillips hue lights, for instance, require syncing of schedules and groups on top of standard information. Because of this,
+ *        syncing. Philips hue lights, for instance, require syncing of schedules and groups on top of standard information. Because of this,
  *        derived classes impelement the different rules for handling syncing data.
  */
 class DataSync

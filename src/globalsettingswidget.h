@@ -76,14 +76,9 @@ public slots:
 
 
     /*!
-     * \brief yunCheckboxClicked checks and unchecks the Yun checkbox.
+     * \brief arduCorButtonClicked checks and unchecks the ArduCor checkbox.
      */
-    void yunCheckboxClicked(bool);
-
-    /*!
-     * \brief serialCheckboxClicked checks and unchecks the serial checkbox.
-     */
-    void serialCheckboxClicked(bool);
+    void arduCorButtonClicked(bool);
 
     /*!
      * \brief advanceModeButtonPressed called when advance mode button is pressed
@@ -193,7 +188,7 @@ private:
 
     /*!
      * \brief mSpeedSlider slider for determing how fast routines will be
-     *        on RGB-LED-Routines powered devices.
+     *        on ArduCor powered devices.
      */
     cor::Slider *mSpeedSlider;
 
@@ -201,19 +196,14 @@ private:
     // Enabled Connections
     //----------------
     /*!
-     * \brief mYunButton button to enable/disable yun devices
+     * \brief mArduCorButton button to enable/disable yun devices
      */
-    QPushButton *mYunButton;
+    QPushButton *mArduCorButton;
 
     /*!
      * \brief mHueButton button to enable/disable hue devices.
      */
     QPushButton *mHueButton;
-
-    /*!
-     * \brief mSerialButton button to enable/disable serial devices
-     */
-    QPushButton *mSerialButton;
 
     //----------------
     // Stored Variables

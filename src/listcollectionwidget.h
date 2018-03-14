@@ -13,6 +13,21 @@
 #include "comm/commlayer.h"
 #include "listcollectionsubwidget.h"
 
+/// type of list
+enum class EListType {
+    eGrid,
+    eLinear,
+    eLinear2X
+};
+
+
+/// contents of the widget
+enum class EWidgetContents {
+    eMoods,
+    eGroups,
+    eDevices
+};
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2018.
@@ -28,6 +43,10 @@ class ListCollectionWidget : public QWidget
 {
     Q_OBJECT
 public:
+    /*!
+     * \brief Constructor
+     */
+    explicit ListCollectionWidget(QWidget *parent = 0);
 
     /// destructor
     virtual ~ListCollectionWidget(){}
@@ -37,11 +56,13 @@ public:
      *        collection widgets
      * \param name name of collection
      * \param key unique key for collection
+     * \param type type of list, determines how the list displays
      * \param hideEdit true for groups that can't be edited such as available and not reachable,
      *        false otherwise
      */
     void setup(const QString& name,
                const QString& key,
+               EListType type,
                bool hideEdit);
 
     /*!
@@ -65,6 +86,9 @@ public:
     /// resizes the widget
     void resize();
 
+    /// vector of all sub widgets in the list.
+    const std::vector<ListCollectionSubWidget*>& widgets() { return mWidgets; }
+
     /*!
      * \brief preferredSize all collection widgets must implement a preferred size. this is the size
      *        the widget wants to be. It may not end up this size but its a baseline if theres no other
@@ -80,11 +104,11 @@ public:
     virtual void setShowButtons(bool show) = 0;
 
     /*!
-     * \brief isMoodWidget true if ListMoodGroupWidget, false if ListDevicesGroupWidget.
-     * \TODO: remove the need for this...
-     * \return true if ListMoodGroupWidget, false if ListDevicesGroupWidget.
+     * \brief widgetContents contents of the widget, this is a hack and should be removed.
+     * \TODO remove this
+     * \return type of contents.
      */
-    virtual bool isMoodWidget() = 0;
+    virtual EWidgetContents widgetContents() = 0;
 
 signals:
 
@@ -108,16 +132,6 @@ signals:
 protected:
 
     /*!
-     * \brief enterEvent picks up when the mouse pointer (or finger on mobile) enters the area of the widget.
-     */
-    virtual void enterEvent(QEvent *) = 0;
-
-    /*!
-     * \brief leaveEvent picks up when the mouse pointer (or finger on mobile) leaves the area of the widget.
-     */
-    virtual void leaveEvent(QEvent *) = 0;
-
-    /*!
      * \brief mouseReleaseEvent picks up when a click (or a tap on mobile) is released.
      */
     virtual void mouseReleaseEvent(QMouseEvent *) = 0;
@@ -131,17 +145,17 @@ protected:
     void resizeRightHandIcon(QPixmap pixmap, QPushButton *button);
 
     /*!
-     * \brief insertWidgetIntoGrid insert ListCollectionSubWidget into the QGridLayout used for collection widgets
+     * \brief insertWidget insert ListCollectionSubWidget into the QGridLayout used for collection widgets
      * \param widget widget to be inserted, if it doesn't already exist. Will reorganize widgets if needed.
      */
-    void insertWidgetIntoGrid(ListCollectionSubWidget* widget);
+    void insertWidget(ListCollectionSubWidget* widget);
 
     /*!
-     * \brief removeWidgetFromGrid remove ListCollectionSubWidget from the QGridLayout used for collection widgets.
+     * \brief removeWidget remove ListCollectionSubWidget from the QGridLayout used for collection widgets.
      *        all widgets to the right of the removed widget get moved back one cell.
      * \param widget widget to be removed, if it exists.
      */
-    void removeWidgetFromGrid(ListCollectionSubWidget* widget);
+    void removeWidget(ListCollectionSubWidget* widget);
 
     /*!
      * \brief widgetPosition gives the widget position based off of the given widget. Position is not *actual* position,
@@ -224,8 +238,10 @@ protected:
      */
     bool mHideEdit;
 
-public slots:
+    /// type of list
+    EListType mType;
 
+public slots:
 
     /*!
     * \brief editButtonClicked called when edit button is pressed, sends out an edit signal

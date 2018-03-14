@@ -147,20 +147,13 @@
     </layout>
    </item>
    <item>
-    <widget class="QScrollArea" name="deviceList">
-     <property name="widgetResizable">
-      <bool>true</bool>
+    <widget class="ListEditWidget" name="deviceList" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
-     <widget class="QWidget" name="scrollAreaWidgetContents">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>384</width>
-        <height>305</height>
-       </rect>
-      </property>
-     </widget>
     </widget>
    </item>
   </layout>
@@ -170,6 +163,12 @@
    <class>cor::CheckBox</class>
    <extends>QWidget</extends>
    <header location="global">cor/checkbox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ListEditWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">listeditwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -10,6 +10,7 @@
 #include "comm/commtype.h"
 #include "listcollectionsubwidget.h"
 #include "cor/statusicon.h"
+#include "cor/switch.h"
 
 /*!
  * \copyright
@@ -58,6 +59,9 @@ public:
      */
     bool setHighlightChecked(bool checked);
 
+    /// hides if set to true, shows if set to false.
+    void hideOnOffSwitch(bool shouldHide);
+
     /*!
      * \brief checked getter for checked state
      * \return true if checked, false otherwise
@@ -76,6 +80,9 @@ signals:
      */
     void clicked(QString);
 
+    /// emits the key and the state of the on/off switch when its clicked
+    void switchToggled(QString, bool);
+
 protected:
 
     /*!
@@ -87,6 +94,14 @@ protected:
      * \brief paintEvent paints the background of the widget
      */
     void paintEvent(QPaintEvent *event);
+
+private slots:
+
+    /// handles when the switch state changes
+    void changedSwitchState(bool);
+
+    /// cool down timer used to override drawing on the device widget until the cooldown is complete.
+    void coolDownClick();
 
 private:
     /*!
@@ -104,36 +119,20 @@ private:
     QString convertUglyHueNameToPrettyName(QString name);
 
     /*!
-     * \brief createStyleSheet creates a custom style sheet for controlling
-     *        how the widget looks
-     * \param device a read only version of the device
-     * \return a string that represents the style sheet
-     */
-    QString createStyleSheet(const cor::Light& device);
-
-    /*!
      * \brief createName create the name to display in the Qlabel
      * \param device the device information to generate the name
      * \return A "pretty" version of the name of the light device.
      */
     QString createName(const cor::Light& device);
 
-    /// resize the mIcon and its associated pixmap.
-    void resizeIconPixmap();
+    /// update the type icon to reflect the hardware type.
+    void updateTypeIcon(ELightHardwareType type);
 
-    /// create the type label, which may be an image or text
-    void prepareTypeLabel(ECommType type);
-
-    /*!
-     * \brief mDeviceIcon uses mIconData to display an icon
-     */
-    QLabel *mDeviceIcon;
-
-    /// Shows the status of the device. Shows if it is off, on, how bright it is, or if it is unreachable.
-    cor::StatusIcon *mStatusIcon;
-
-    /// label for the type icon, used to show what type of device it is (a hue, or an arduino)
+    /// displays the type of light, such as a lightbulb or a light cube.
     QLabel *mTypeIcon;
+
+    /// pixmap for the type.
+    QPixmap mTypePixmap;
 
     /// pixmap used by main icon
     QPixmap mIconPixmap;
@@ -161,6 +160,18 @@ private:
      * \brief mDevice stores the cor::Light used by the widget.
      */
     cor::Light mDevice;
+
+    /// switch for turning on and off a device
+    cor::Switch *mOnOffSwitch;
+
+    /// timer for tracking when the last click happened
+    QTimer *mCooldownTimer;
+
+    /// true to hide switch, false to show it
+    bool mHideSwitch;
+
+    /// used by cooldown timer, if true state updates are blocked.
+    bool mBlockStateUpdates;
 
     /*!
      * \brief mIsChecked true if checked, false otherwise

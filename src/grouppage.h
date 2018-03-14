@@ -7,7 +7,6 @@
 #include "presetgroupwidget.h"
 #include "cor/listwidget.h"
 #include "listmoodgroupwidget.h"
-#include "groupsparser.h"
 
 #include <QWidget>
 #include <QToolButton>
@@ -16,8 +15,8 @@
 #include <QPushButton>
 #include <QScrollArea>
 
+/// mode of the page
 enum class EGroupMode {
-    eMoods,
     eArduinoPresets,
     eHuePresets
 };
@@ -64,14 +63,14 @@ public:
      */
     void setupButtons();
 
-    /// connects the GroupsParser object to this UI widget.
-    void connectGroupsParser(GroupsParser *parser);
+    /// called whenever the group page is shown
+    void show();
 
-    /// show the custom moods widget, hide the preset groups
-    void showCustomMoods();
+    /// getter for current mode of page
+    EGroupMode mode() { return mMode; }
 
-    /// show the preset groups widgets, hide the custom moods
-    void showPresetArduinoGroups();
+    /// programmatically set the mode of the page
+    void setMode(EGroupMode mode);
 
     /*!
      * show the preset greset group widgets, but show the version
@@ -83,7 +82,7 @@ public:
      * \brief connectCommLayer connec the commlayer to this page.
      * \param layer a pointer to the commlayer object.
      */
-    void connectCommLayer(CommLayer *layer) { mComm = layer; }
+    void connectCommLayer(CommLayer *layer);
 
     /// called to programmatically resize the widget
     void resize();
@@ -91,10 +90,10 @@ public:
 signals:
 
     /*!
-     * \brief deviceCountChanged signaled to UI assets whenever a click on the page results in changing
+     * \brief changedDeviceCount signaled to UI assets whenever a click on the page results in changing
      *        the number of devices connected.
      */
-    void deviceCountChanged();
+    void changedDeviceCount();
 
     /*!
      * \brief used to signal back to the main page that it should update its
@@ -131,39 +130,6 @@ private slots:
      */
     void renderUI();
 
-    /*!
-     * \brief newMoodAdded handles whenever a new mood was created on the edit page.
-     */
-    void newMoodAdded(QString);
-
-    /*!
-     * \brief groupDeleted handles whenever a group is deleted on the edit page.
-     */
-    void groupDeleted(QString);
-
-    /*!
-     * \brief moodClicked called whenever an individual mood is clicked
-     * \param collectionKey key for the collection of lights that the mood fits into
-     * \param moodKey name of the specific mood
-     */
-    void moodClicked(QString collectionKey, QString moodKey);
-
-    /*!
-     * \brief shouldShowButtons saves to persistent memory whether or not you should show the individual
-     *        moods/devices for any given collection.
-     */
-    void shouldShowButtons(QString key, bool isShowing);
-
-    /*!
-     * \brief editMoodClicked the edit button has been pressed for a specific mood. This
-     *        gets sent to the main window and tells it to open the edit page.
-     */
-    void editMoodClicked(QString collectionKey, QString moodKey);
-
-    /*!
-     * \brief editGroupClicked the edit button has been pressed for a specific collection
-     */
-    void editGroupClicked(QString key);
 
 protected:
     /*!
@@ -194,12 +160,6 @@ private:
      */
     std::vector<PresetGroupWidget *> mPresetHueWidgets;
 
-    /*!
-     * \brief communication pointer to communication object
-     *        for sending comannds to the lights
-     */
-    CommLayer *mComm;
-
     /// main layout of grouppage
     QVBoxLayout *mLayout;
 
@@ -225,77 +185,9 @@ private:
      */
     QGridLayout *mPresetHueLayout;
 
-    //-------------------
-    // Mood Widget
-    //-------------------
-
     /// mode
     EGroupMode mMode;
 
-    /// update teh moodListWidget
-    void updateConnectionList();
-
-    /*!
-     * \brief highlightList helper that syncs the selected devices and groups in the backend data with the connectionList
-     *        so that the connection list only shows the devices and groups that are stored in the backend data as selected.
-     */
-    void highlightList();
-
-    /*!
-     * \brief moodsConnected checks list of moods and determines which contain all connected lights
-     * \param moods a list of all connected moods and their associated devices
-     * \return a list of names of moods that contain only connected devices.
-     */
-    std::list<QString> moodsConnected(std::list<SLightGroup> moods);
-
-    /*!
-     * \brief mGroups manages the list of collections and moods and the JSON data
-     *        associated with them.
-     */
-    GroupsParser *mGroups;
-
-    /*!
-     * \brief mMoodsListWidget List widget for devices. Either the moods widget or this device widget
-     *        is shown at any given time but the other is kept around in memory since they are expensive to render.
-     */
-    cor::ListWidget *mMoodsListWidget;
-
-    /// pointer to QSettings instance
-    QSettings *mSettings;
-
-    /// helper to get a unique key for a collection.
-    QString keyForCollection(const QString& key);
-
-    /*!
-     * \brief initMoodsCollectionWidget constructor helper for making a ListGroupGroupWidget
-     * \param name name of mood
-     * \param devices devices in mood
-     * \param key key for mood
-     * \param hideEdit true for special case groups (Available and Not Reachable), false otherwise
-     * \return pointer to the newly created ListGroupGroupWidget
-     */
-    ListMoodGroupWidget* initMoodsCollectionWidget(const QString& name,
-                                                    std::list<SLightGroup> moods,
-                                                    const QString& key,
-                                                    bool hideEdit = false);
-
-    /*!
-     * \brief makeMoodsCollections make all the mood-based UI widgets based on the saved JSON data in the application
-     * \param moods list of all saved moods
-     */
-    void makeMoodsCollections(const std::list<SLightGroup>& moods);
-
-
-    /*!
-     * \brief gatherAvailandAndNotReachableMoods creates the special case groups of moods: Avaiable
-     *        and Not Reachable. These groups always exist as long as at least one moods falls into them.
-     *        Avaialble moods are moods where every light has sent an update packet recently. Not Reachable
-     *        moods have at least one device that have not sent an update packet recently.
-     * \param allDevices list of all devices that have sent communication packets of some sort.
-     * \param moods list of all moods that exist in memory.
-     */
-    void gatherAvailandAndNotReachableMoods(const std::list<cor::Light>& allDevices,
-                                            const std::list<SLightGroup>& moods);
 };
 
 #endif // PresetColorsPage_H

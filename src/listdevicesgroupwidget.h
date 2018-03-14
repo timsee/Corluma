@@ -12,7 +12,6 @@
 #include "listdevicewidget.h"
 #include "datalayer.h"
 #include "comm/commlayer.h"
-#include "groupsparser.h"
 
 
 /*!
@@ -36,14 +35,11 @@ public:
      * \param key unique key for collection
      * \param comm pointer to commlayer
      * \param data pointer to datalayer
-     * \param hideEdit true for groups that can't be edited such as available and not reachable,
-     *        false otherwise
      */
-    ListDevicesGroupWidget(const SLightGroup& group,
+    ListDevicesGroupWidget(const cor::LightGroup& group,
                            QString key,
                            CommLayer *comm,
                            DataLayer *data,
-                           bool hideEdit = false,
                            QWidget *parent = 0);
 
 
@@ -69,6 +65,9 @@ public:
      */
     const std::list<cor::Light>& devices() { return mGroup.devices; }
 
+    /// getter for checked devices
+    const std::list<cor::Light> checkedDevices();
+
     /*!
      * \brief preferredSize all collection widgets must implement a preferred size. this is the size
      *        the widget wants to be. It may not end up this size but its a baseline if theres no other
@@ -77,25 +76,20 @@ public:
      */
     QSize preferredSize();
 
+    /// resize all the children widgets
+    void resizeInteralWidgets();
+
     /*!
      * \brief setShowButtons shows and hides all buttons on the widget
      * \param show true to show, false otherwise.
      */
     void setShowButtons(bool show);
 
-    /*!
-     * \brief isMoodWidget true if ListMoodGroupWidget, false if ListDevicesGroupWidget. Always false in thise case.
-     * \return true if ListMoodGroupWidget, false if ListDevicesGroupWidget.
-     */
-    bool isMoodWidget() { return false; }
-
-    /*!
-     * \brief updateRightHandButtons update the edit, select all, select none buttons by resizing them.
-     */
-    void updateRightHandButtons();
+    /// getter for the type of widget
+    EWidgetContents widgetContents() { return EWidgetContents::eGroups; }
 
     /// getter for the group data.
-    const SLightGroup& group() { return mGroup; }
+    const cor::LightGroup& group() { return mGroup; }
 
 signals:
 
@@ -105,27 +99,15 @@ signals:
      */
     void deviceClicked(QString, QString);
 
-    /*!
-     * \brief clearAllClicked emitted when clear all is clicked. Should remove all devices from data layer.
-     */
-    void clearAllClicked(QString);
+    /// emits the key and state when on/off switch for a device toggled.
+    void deviceSwitchToggled(QString, bool);
 
     /*!
      * \brief selectAllClicked emitted when select all is clicked. Should add all devices to data layer.
      */
-    void selectAllClicked(QString);
+    void allButtonPressed(QString, bool);
 
 protected:
-
-    /*!
-     * \brief enterEvent picks up when the mouse pointer (or finger on mobile) enters the area of the widget.
-     */
-    virtual void enterEvent(QEvent *);
-
-    /*!
-     * \brief leaveEvent picks up when the mouse pointer (or finger on mobile) leaves the area of the widget.
-     */
-    virtual void leaveEvent(QEvent *);
 
     /*!
      * \brief mouseReleaseEvent picks up when a click (or a tap on mobile) is released.
@@ -146,16 +128,17 @@ private slots:
     void handleClicked(QString key) { emit deviceClicked(mKey, key); }
 
     /*!
-     * \brief clearButtonClicked clear button is clicked.
-     */
-    void clearButtonClicked(bool);
-
-    /*!
      * \brief selectAllButtonClicked select all button is clicked.
      */
     void selectAllButtonClicked(bool);
 
+    /// handles when an on/off switch switch for any given device is toggled
+    void handleToggledSwitch(QString key, bool isOn) { emit deviceSwitchToggled(key, isOn); }
+
 private:
+
+    /// handle the state of the select all button
+    void handleSelectAllButton();
 
     /*!
      * \brief data layer that maintains and tracks the states of the lights
@@ -185,23 +168,15 @@ private:
     QPixmap mClearAllPixmap;
 
     /// stored data for the group.
-    SLightGroup mGroup;
+    cor::LightGroup mGroup;
+
+    /// true if select all is in clear state, false if its in select state
+    bool mSelectAllIsClear;
 
     /*!
      * \brief mSelectAllButton button that selects all devices when pushed and adds them to the data layer.
      */
     QPushButton *mSelectAllButton;
-
-    /*!
-     * \brief mClearAllButton button that clears all devices when pushed and removes them from the data layer.
-     */
-    QPushButton *mClearAllButton;
-
-
-    /*!
-     * \brief mCheckedDevices number of checked devices.
-     */
-    int mCheckedDevices;
 };
 
 #endif // LISTDEVICESGROUPWIDGET_H

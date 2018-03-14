@@ -7,24 +7,23 @@
 #include "listmoodgroupwidget.h"
 
 ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
-                                         std::list<SLightGroup> moods,
+                                         std::list<cor::LightGroup> moods,
                                          const std::vector<std::vector<QColor> >& colors,
                                          QString key,
                                          bool hideEdit,
-                                         QWidget *parent)
-{
+                                         QWidget *parent) {
     this->setParent(parent);
     this->setMaximumSize(parent->size());
-    setup(name, key, hideEdit);
+    setup(name, key, EListType::eLinear2X, hideEdit);
 
     mTopLayout = new QHBoxLayout();
     mTopLayout->addWidget(mName);
-    mTopLayout->addWidget(mEditButton);
     mTopLayout->addWidget(mHiddenStateIcon);
 
-    mTopLayout->setStretch(0, 14);
+    mEditButton->setVisible(false);
+
+    mTopLayout->setStretch(0, 16);
     mTopLayout->setStretch(1, 2);
-    mTopLayout->setStretch(2, 2);
 
     mMoods = moods;
 
@@ -35,7 +34,7 @@ ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
 }
 
 
-void ListMoodGroupWidget::updateMoods(std::list<SLightGroup> moods,
+void ListMoodGroupWidget::updateMoods(std::list<cor::LightGroup> moods,
                                       const std::vector<std::vector<QColor> >& colors,
                                       bool removeIfNotFound) {
     std::vector<bool> foundWidgets(mWidgets.size(), false);
@@ -55,7 +54,7 @@ void ListMoodGroupWidget::updateMoods(std::list<SLightGroup> moods,
             ListMoodWidget *widget = new ListMoodWidget(mood, colors);
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
             connect(widget, SIGNAL(editClicked(QString)), this, SLOT(clickedEdit(QString)));
-            insertWidgetIntoGrid(widget);
+            insertWidget(widget);
         }
     }
 
@@ -67,7 +66,7 @@ void ListMoodGroupWidget::updateMoods(std::list<SLightGroup> moods,
         for (auto widgetFound : foundWidgets) {
             if (!widgetFound) {
                 // remove this widget
-                removeWidgetFromGrid(mWidgets[x]);
+                removeWidget(mWidgets[x]);
             }
             ++x;
         }
@@ -84,6 +83,11 @@ void ListMoodGroupWidget::setShowButtons(bool show) {
         }
     }
 
+    resizeInteralWidgets();
+    emit buttonsShown(mKey, mShowButtons);
+}
+
+void ListMoodGroupWidget::resizeInteralWidgets() {
     if (mShowButtons) {
         mHiddenStateIcon->setPixmap(mOpenedPixmap);
         this->setFixedHeight(preferredSize().height());
@@ -92,7 +96,6 @@ void ListMoodGroupWidget::setShowButtons(bool show) {
         mName->setFixedHeight(mMinimumHeight);
         this->setFixedHeight(mMinimumHeight);
     }
-    emit buttonsShown(mKey, mShowButtons);
 }
 
 void ListMoodGroupWidget::setCheckedMoods(std::list<QString> checkedMoods) {
@@ -115,24 +118,12 @@ void ListMoodGroupWidget::setCheckedMoods(std::list<QString> checkedMoods) {
 QSize ListMoodGroupWidget::preferredSize() {
     int height = mMinimumHeight;
     if (mShowButtons && mWidgets.size() > 0) {
-        int widgetHeight = std::max(mName->height(), mMinimumHeight);
-        height = (mWidgets.size() / 2 * widgetHeight) + (mWidgets.size() % 2 * widgetHeight) + mMinimumHeight;
+        int widgetHeight = std::max(mName->height(), mMinimumHeight * 2);
+        height = mWidgets.size() * widgetHeight + mMinimumHeight;
     }
     return QSize(this->parentWidget()->width(), height);
 }
 
-
-void ListMoodGroupWidget::enterEvent(QEvent *) {
-    if (!mHideEdit) {
-        mEditButton->setHidden(false);
-    }
-}
-
-void ListMoodGroupWidget::leaveEvent(QEvent *) {
-    if (!mHideEdit) {
-        mEditButton->setHidden(true);
-    }
-}
 
 
 void ListMoodGroupWidget::mouseReleaseEvent(QMouseEvent *) {
@@ -154,6 +145,6 @@ void ListMoodGroupWidget::removeMood(QString mood) {
     }
 
     if (foundMood) {
-        removeWidgetFromGrid(moodWidget);
+        removeWidget(moodWidget);
     }
 }
