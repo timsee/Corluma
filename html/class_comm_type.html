@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.11.5</span>
+   &#160;<span id="projectnumber">v0.12.5</span>
    </div>
   </td>
  </tr>
@@ -53,7 +53,7 @@ $(function() {
 <div class="contents">
 
 <p>inherited by comm types, provides a general interface that can be used to do connections and sending packets. Each <a class="el" href="class_comm_type.html" title="inherited by comm types, provides a general interface that can be used to do connections and sending ...">CommType</a> also has its own conenctionList(), which lists up to 5 of the previous connections. This list persists in the application's memory after the application closes.  
-</p>
+ <a href="class_comm_type.html#details">More...</a></p>
 
 <p><code>#include &quot;<a class="el" href="commtype_8h_source.html">commtype.h</a>&quot;</code></p>
 
@@ -89,9 +89,9 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr class="memitem:ace6d7465b678fc3daf1e9580d331c8dc"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ace6d7465b678fc3daf1e9580d331c8dc">hasStarted</a> ()</td></tr>
 <tr class="memdesc:ace6d7465b678fc3daf1e9580d331c8dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">hasStarted true if startup has been called and a shutdown has not be called after it, false otherwise.  <a href="#ace6d7465b678fc3daf1e9580d331c8dc">More...</a><br /></td></tr>
 <tr class="separator:ace6d7465b678fc3daf1e9580d331c8dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a937222fbbe69a6485a18fe2ba1d58a5f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a937222fbbe69a6485a18fe2ba1d58a5f">sendPacket</a> (<a class="el" href="struct_s_device_controller.html">SDeviceController</a> controller, QString packet)=0</td></tr>
-<tr class="memdesc:a937222fbbe69a6485a18fe2ba1d58a5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendPacket Sends the provided string over the connection stream.  <a href="#a937222fbbe69a6485a18fe2ba1d58a5f">More...</a><br /></td></tr>
-<tr class="separator:a937222fbbe69a6485a18fe2ba1d58a5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f7c925caf447b57eec75187133ba460"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a1f7c925caf447b57eec75187133ba460">sendPacket</a> (const cor::Controller &amp;controller, QString &amp;packet)=0</td></tr>
+<tr class="memdesc:a1f7c925caf447b57eec75187133ba460"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendPacket Sends the provided string over the connection stream.  <a href="#a1f7c925caf447b57eec75187133ba460">More...</a><br /></td></tr>
+<tr class="separator:a1f7c925caf447b57eec75187133ba460"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3ee085c089155c088acd4ebb4ed41b4f"><td class="memItemLeft" align="right" valign="top"><a id="a3ee085c089155c088acd4ebb4ed41b4f"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a3ee085c089155c088acd4ebb4ed41b4f">startDiscovery</a> ()</td></tr>
 <tr class="memdesc:a3ee085c089155c088acd4ebb4ed41b4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">startDiscovery start sending discovery packets if needed, and continually request state update packets. <br /></td></tr>
@@ -114,21 +114,21 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a92bed4ee74af1ae3a9b5d007fe878524"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a92bed4ee74af1ae3a9b5d007fe878524">startDiscoveringController</a> (QString controller)</td></tr>
 <tr class="memdesc:a92bed4ee74af1ae3a9b5d007fe878524"><td class="mdescLeft">&#160;</td><td class="mdescRight">startDiscoveringController attempts to add a new controller to the device table.  <a href="#a92bed4ee74af1ae3a9b5d007fe878524">More...</a><br /></td></tr>
 <tr class="separator:a92bed4ee74af1ae3a9b5d007fe878524"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae92edbc5226b05f4767a8650ac713ac5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ae92edbc5226b05f4767a8650ac713ac5">removeController</a> (<a class="el" href="struct_s_device_controller.html">SDeviceController</a> controller)</td></tr>
-<tr class="memdesc:ae92edbc5226b05f4767a8650ac713ac5"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeController attempts to remove the controller from the device table.  <a href="#ae92edbc5226b05f4767a8650ac713ac5">More...</a><br /></td></tr>
-<tr class="separator:ae92edbc5226b05f4767a8650ac713ac5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af821394409188dff6275f2810ca799ad"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#af821394409188dff6275f2810ca799ad">updateDevice</a> (SLightDevice device)</td></tr>
-<tr class="memdesc:af821394409188dff6275f2810ca799ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDevice update all the data in the light device that matches the same controller and index. if a light device doesn't exist with these properties, then it creates a new one.  <a href="#af821394409188dff6275f2810ca799ad">More...</a><br /></td></tr>
-<tr class="separator:af821394409188dff6275f2810ca799ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d82da9a4b796ccb66d9d5c155e082e1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a4d82da9a4b796ccb66d9d5c155e082e1">fillDevice</a> (SLightDevice &amp;device)</td></tr>
-<tr class="memdesc:a4d82da9a4b796ccb66d9d5c155e082e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">fillDevice takes the controller and index of the referenced SLightDevice and overwrites all other values with the values stored in the device table.  <a href="#a4d82da9a4b796ccb66d9d5c155e082e1">More...</a><br /></td></tr>
-<tr class="separator:a4d82da9a4b796ccb66d9d5c155e082e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb1865d11bc8e1f01a925ed68e284691"><td class="memItemLeft" align="right" valign="top">const std::unordered_map&lt; std::string, std::list&lt; SLightDevice &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#acb1865d11bc8e1f01a925ed68e284691">deviceTable</a> ()</td></tr>
-<tr class="memdesc:acb1865d11bc8e1f01a925ed68e284691"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceList list of the light devices  <a href="#acb1865d11bc8e1f01a925ed68e284691">More...</a><br /></td></tr>
-<tr class="separator:acb1865d11bc8e1f01a925ed68e284691"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ec827112012957f7a7efb36d6fef94f"><td class="memItemLeft" align="right" valign="top">const std::list&lt; <a class="el" href="struct_s_device_controller.html">SDeviceController</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a1ec827112012957f7a7efb36d6fef94f">discoveredList</a> ()</td></tr>
-<tr class="memdesc:a1ec827112012957f7a7efb36d6fef94f"><td class="mdescLeft">&#160;</td><td class="mdescRight">discoveredList getter for list of discovered devices  <a href="#a1ec827112012957f7a7efb36d6fef94f">More...</a><br /></td></tr>
-<tr class="separator:a1ec827112012957f7a7efb36d6fef94f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aafeecb6de1f5e389953dd7204e13060a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aafeecb6de1f5e389953dd7204e13060a">removeController</a> (cor::Controller controller)</td></tr>
+<tr class="memdesc:aafeecb6de1f5e389953dd7204e13060a"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeController attempts to remove the controller from the device table.  <a href="#aafeecb6de1f5e389953dd7204e13060a">More...</a><br /></td></tr>
+<tr class="separator:aafeecb6de1f5e389953dd7204e13060a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41a7c990b8c8490414ae89a0b7f43f64"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a41a7c990b8c8490414ae89a0b7f43f64">updateDevice</a> (cor::Light device)</td></tr>
+<tr class="memdesc:a41a7c990b8c8490414ae89a0b7f43f64"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDevice update all the data in the light device that matches the same controller and index. if a light device doesn't exist with these properties, then it creates a new one.  <a href="#a41a7c990b8c8490414ae89a0b7f43f64">More...</a><br /></td></tr>
+<tr class="separator:a41a7c990b8c8490414ae89a0b7f43f64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9d8ebeecae39e95cd2d2647379cadec"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ab9d8ebeecae39e95cd2d2647379cadec">fillDevice</a> (cor::Light &amp;device)</td></tr>
+<tr class="memdesc:ab9d8ebeecae39e95cd2d2647379cadec"><td class="mdescLeft">&#160;</td><td class="mdescRight">fillDevice takes the controller and index of the referenced cor::Light and overwrites all other values with the values stored in the device table.  <a href="#ab9d8ebeecae39e95cd2d2647379cadec">More...</a><br /></td></tr>
+<tr class="separator:ab9d8ebeecae39e95cd2d2647379cadec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8590d7e52f0825afc22269dc73f70cd"><td class="memItemLeft" align="right" valign="top">const std::unordered_map&lt; std::string, std::list&lt; cor::Light &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ae8590d7e52f0825afc22269dc73f70cd">deviceTable</a> ()</td></tr>
+<tr class="memdesc:ae8590d7e52f0825afc22269dc73f70cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceList list of the light devices  <a href="#ae8590d7e52f0825afc22269dc73f70cd">More...</a><br /></td></tr>
+<tr class="separator:ae8590d7e52f0825afc22269dc73f70cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a58d90b94f70298c3cdbeac1f81f0e6ad"><td class="memItemLeft" align="right" valign="top">const std::list&lt; cor::Controller &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a58d90b94f70298c3cdbeac1f81f0e6ad">discoveredList</a> ()</td></tr>
+<tr class="memdesc:a58d90b94f70298c3cdbeac1f81f0e6ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">discoveredList getter for list of discovered devices  <a href="#a58d90b94f70298c3cdbeac1f81f0e6ad">More...</a><br /></td></tr>
+<tr class="separator:a58d90b94f70298c3cdbeac1f81f0e6ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a23c71147fb8b134d56969281486f2f"><td class="memItemLeft" align="right" valign="top">std::list&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a2a23c71147fb8b134d56969281486f2f">undiscoveredList</a> ()</td></tr>
 <tr class="memdesc:a2a23c71147fb8b134d56969281486f2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">undiscoveredList getter for list of undiscovered devices.  <a href="#a2a23c71147fb8b134d56969281486f2f">More...</a><br /></td></tr>
 <tr class="separator:a2a23c71147fb8b134d56969281486f2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -139,21 +139,21 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#acf39ac1fbdab41338549ea9010ed0f91">saveConnectionList</a> ()</td></tr>
 <tr class="memdesc:acf39ac1fbdab41338549ea9010ed0f91"><td class="mdescLeft">&#160;</td><td class="mdescRight">saveConnectionList must be called by deconstructors, saves the connection list to the app's persistent memory. <br /></td></tr>
 <tr class="separator:acf39ac1fbdab41338549ea9010ed0f91"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a947fb8ccab594d6177e861e096795414"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a947fb8ccab594d6177e861e096795414">deviceControllerFromDiscoveryString</a> (QString discovery, QString controllerName, <a class="el" href="struct_s_device_controller.html">SDeviceController</a> &amp;controller)</td></tr>
-<tr class="memdesc:a947fb8ccab594d6177e861e096795414"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceControllerFromDiscoveryString takes a discovery string, a controller name, and an empty <a class="el" href="struct_s_device_controller.html" title="The SDeviceController struct stores information about a Controller. A controller allows control of on...">SDeviceController</a> as input. If parsing the string is successful, it fills the <a class="el" href="struct_s_device_controller.html" title="The SDeviceController struct stores information about a Controller. A controller allows control of on...">SDeviceController</a> with the info from the discovery string. If its unsucessful, it returns false.  <a href="#a947fb8ccab594d6177e861e096795414">More...</a><br /></td></tr>
-<tr class="separator:a947fb8ccab594d6177e861e096795414"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1b985f6292f611420c73a5d14f29de30"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a1b985f6292f611420c73a5d14f29de30">findDiscoveredController</a> (QString controllerName, <a class="el" href="struct_s_device_controller.html">SDeviceController</a> &amp;output)</td></tr>
-<tr class="memdesc:a1b985f6292f611420c73a5d14f29de30"><td class="mdescLeft">&#160;</td><td class="mdescRight">findDiscoveredController checks for a discovered controller with the given name. Returns true and fills the <a class="el" href="struct_s_device_controller.html" title="The SDeviceController struct stores information about a Controller. A controller allows control of on...">SDeviceController</a> given as input if one is found, returns false if one isnt found  <a href="#a1b985f6292f611420c73a5d14f29de30">More...</a><br /></td></tr>
-<tr class="separator:a1b985f6292f611420c73a5d14f29de30"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aae7e4f61858d208f0832d737819cc93a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aae7e4f61858d208f0832d737819cc93a">handleIncomingPacket</a> (QString controllerName, QString payload)</td></tr>
-<tr class="memdesc:aae7e4f61858d208f0832d737819cc93a"><td class="mdescLeft">&#160;</td><td class="mdescRight">handleIncomingPacket All packets that are sent to any commtype get sent through this function to be sorted and sent to the proper subsystems.  <a href="#aae7e4f61858d208f0832d737819cc93a">More...</a><br /></td></tr>
-<tr class="separator:aae7e4f61858d208f0832d737819cc93a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a3ecf22ab83dd97abb4493f3a515ee2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a8a3ecf22ab83dd97abb4493f3a515ee2">deviceControllerFromDiscoveryString</a> (QString discovery, QString controllerName, cor::Controller &amp;controller)</td></tr>
+<tr class="memdesc:a8a3ecf22ab83dd97abb4493f3a515ee2"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceControllerFromDiscoveryString takes a discovery string, a controller name, and an empty cor::Controller as input. If parsing the string is successful, it fills the cor::Controller with the info from the discovery string. If its unsucessful, it returns false.  <a href="#a8a3ecf22ab83dd97abb4493f3a515ee2">More...</a><br /></td></tr>
+<tr class="separator:a8a3ecf22ab83dd97abb4493f3a515ee2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af104cca344ce5489ce58e21ba930498b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#af104cca344ce5489ce58e21ba930498b">findDiscoveredController</a> (QString controllerName, cor::Controller &amp;output)</td></tr>
+<tr class="memdesc:af104cca344ce5489ce58e21ba930498b"><td class="mdescLeft">&#160;</td><td class="mdescRight">findDiscoveredController checks for a discovered controller with the given name. Returns true and fills the cor::Controller given as input if one is found, returns false if one isnt found  <a href="#af104cca344ce5489ce58e21ba930498b">More...</a><br /></td></tr>
+<tr class="separator:af104cca344ce5489ce58e21ba930498b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1bec29627ea4517a904d2bc17d1508dc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a1bec29627ea4517a904d2bc17d1508dc">handleIncomingPacket</a> (const QString &amp;controllerName, const QString &amp;payload)</td></tr>
+<tr class="memdesc:a1bec29627ea4517a904d2bc17d1508dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">handleIncomingPacket All packets that are sent to any commtype get sent through this function to be sorted and sent to the proper subsystems.  <a href="#a1bec29627ea4517a904d2bc17d1508dc">More...</a><br /></td></tr>
+<tr class="separator:a1bec29627ea4517a904d2bc17d1508dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a5290e848b002321ddbdf1895bb59977e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a5290e848b002321ddbdf1895bb59977e">preparePacketForTransmission</a> (const <a class="el" href="struct_s_device_controller.html">SDeviceController</a> &amp;controller, QString &amp;packet)</td></tr>
-<tr class="memdesc:a5290e848b002321ddbdf1895bb59977e"><td class="mdescLeft">&#160;</td><td class="mdescRight">preparePacketForTransmission prepare internal states and variables for sending a new packet and adjust packet to fix issues with sending it, if needed  <a href="#a5290e848b002321ddbdf1895bb59977e">More...</a><br /></td></tr>
-<tr class="separator:a5290e848b002321ddbdf1895bb59977e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5588068f90b425623fba2fdd2836f3cb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a5588068f90b425623fba2fdd2836f3cb">preparePacketForTransmission</a> (const cor::Controller &amp;controller, QString &amp;packet)</td></tr>
+<tr class="memdesc:a5588068f90b425623fba2fdd2836f3cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">preparePacketForTransmission prepare internal states and variables for sending a new packet and adjust packet to fix issues with sending it, if needed  <a href="#a5588068f90b425623fba2fdd2836f3cb">More...</a><br /></td></tr>
+<tr class="separator:a5588068f90b425623fba2fdd2836f3cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb4143fad9f0cad9b4e0efff68614bf1"><td class="memItemLeft" align="right" valign="top"><a id="adb4143fad9f0cad9b4e0efff68614bf1"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#adb4143fad9f0cad9b4e0efff68614bf1">resetDiscovery</a> ()</td></tr>
 <tr class="memdesc:adb4143fad9f0cad9b4e0efff68614bf1"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetDiscovery clears the throttle list and discovery list and treats the commtype as if nothing has been discovered. <br /></td></tr>
@@ -161,9 +161,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a140fb846eeb4d24976e2a4f514f95f0f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a140fb846eeb4d24976e2a4f514f95f0f">shouldContinueStateUpdate</a> ()</td></tr>
 <tr class="memdesc:a140fb846eeb4d24976e2a4f514f95f0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">shouldContinueStateUpdate checks internal states and determines if it should still keep requesting state updates from the devices.  <a href="#a140fb846eeb4d24976e2a4f514f95f0f">More...</a><br /></td></tr>
 <tr class="separator:a140fb846eeb4d24976e2a4f514f95f0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae93d4f182250a259f6a551e9a77ea2a6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ae93d4f182250a259f6a551e9a77ea2a6">handleDiscoveryPacket</a> (<a class="el" href="struct_s_device_controller.html">SDeviceController</a> sender)</td></tr>
-<tr class="memdesc:ae93d4f182250a259f6a551e9a77ea2a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">handleDiscoveryPacket called whenever a discovery packet is received by a commtype. Although all commtypes may received a packet in different ways or in differnt formats, all ways get converted so that they work with this function. The function determines if the device sending the discovery packet has been discovered already, and if it hasn't, it adds it to its list. It also initiates a throttle timer for this particular controller. Finally, it determines if its looking for any other controllers, and if its not, it shuts off the discovery timer.  <a href="#ae93d4f182250a259f6a551e9a77ea2a6">More...</a><br /></td></tr>
-<tr class="separator:ae93d4f182250a259f6a551e9a77ea2a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4467ae6c75527903dbaca863f98d4f2d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a4467ae6c75527903dbaca863f98d4f2d">handleDiscoveryPacket</a> (cor::Controller sender)</td></tr>
+<tr class="memdesc:a4467ae6c75527903dbaca863f98d4f2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">handleDiscoveryPacket called whenever a discovery packet is received by a commtype. Although all commtypes may received a packet in different ways or in differnt formats, all ways get converted so that they work with this function. The function determines if the device sending the discovery packet has been discovered already, and if it hasn't, it adds it to its list. It also initiates a throttle timer for this particular controller. Finally, it determines if its looking for any other controllers, and if its not, it shuts off the discovery timer.  <a href="#a4467ae6c75527903dbaca863f98d4f2d">More...</a><br /></td></tr>
+<tr class="separator:a4467ae6c75527903dbaca863f98d4f2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -181,18 +181,18 @@ uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 <tr class="separator:a079be5b6039a73ab74f242f834702d99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8c1f60fe67e3e018ee772d8d8e7a3f8"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ad8c1f60fe67e3e018ee772d8d8e7a3f8">mSecondaryUpdatesInterval</a></td></tr>
 <tr class="separator:ad8c1f60fe67e3e018ee772d8d8e7a3f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab17df6d25cf2db9d844945d6f135e65c"><td class="memItemLeft" align="right" valign="top"><a id="ab17df6d25cf2db9d844945d6f135e65c"></a>
-std::unordered_map&lt; std::string, std::list&lt; SLightDevice &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ab17df6d25cf2db9d844945d6f135e65c">mDeviceTable</a></td></tr>
-<tr class="memdesc:ab17df6d25cf2db9d844945d6f135e65c"><td class="mdescLeft">&#160;</td><td class="mdescRight">mDeviceTable hash table of all available devices. the hash key is the controller name and the list associated with it is all known devices connected to that controller. <br /></td></tr>
-<tr class="separator:ab17df6d25cf2db9d844945d6f135e65c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a10deed636eba4f960d47c3776cd31c"><td class="memItemLeft" align="right" valign="top"><a id="a9a10deed636eba4f960d47c3776cd31c"></a>
+std::unordered_map&lt; std::string, std::list&lt; cor::Light &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a9a10deed636eba4f960d47c3776cd31c">mDeviceTable</a></td></tr>
+<tr class="memdesc:a9a10deed636eba4f960d47c3776cd31c"><td class="mdescLeft">&#160;</td><td class="mdescRight">mDeviceTable hash table of all available devices. the hash key is the controller name and the list associated with it is all known devices connected to that controller. <br /></td></tr>
+<tr class="separator:a9a10deed636eba4f960d47c3776cd31c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a02ec483a63cf7b4946653ca8dea9ae46"><td class="memItemLeft" align="right" valign="top"><a id="a02ec483a63cf7b4946653ca8dea9ae46"></a>
 std::list&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a02ec483a63cf7b4946653ca8dea9ae46">mUndiscoveredList</a></td></tr>
 <tr class="memdesc:a02ec483a63cf7b4946653ca8dea9ae46"><td class="mdescLeft">&#160;</td><td class="mdescRight">mUndiscoveredList list of controllers that are not currently discovered but are running discovery routines. <br /></td></tr>
 <tr class="separator:a02ec483a63cf7b4946653ca8dea9ae46"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9daeb935ad4de1f56f246ae1d04157dc"><td class="memItemLeft" align="right" valign="top"><a id="a9daeb935ad4de1f56f246ae1d04157dc"></a>
-std::list&lt; <a class="el" href="struct_s_device_controller.html">SDeviceController</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a9daeb935ad4de1f56f246ae1d04157dc">mDiscoveredList</a></td></tr>
-<tr class="memdesc:a9daeb935ad4de1f56f246ae1d04157dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">mDiscoveredList list of devices that have been discovered properly. <br /></td></tr>
-<tr class="separator:a9daeb935ad4de1f56f246ae1d04157dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65f6482f8920afd6ff6e99118801eccf"><td class="memItemLeft" align="right" valign="top"><a id="a65f6482f8920afd6ff6e99118801eccf"></a>
+std::list&lt; cor::Controller &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a65f6482f8920afd6ff6e99118801eccf">mDiscoveredList</a></td></tr>
+<tr class="memdesc:a65f6482f8920afd6ff6e99118801eccf"><td class="mdescLeft">&#160;</td><td class="mdescRight">mDiscoveredList list of devices that have been discovered properly. <br /></td></tr>
+<tr class="separator:a65f6482f8920afd6ff6e99118801eccf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5fad0675d5baa960558751025bc5ec3a"><td class="memItemLeft" align="right" valign="top"><a id="a5fad0675d5baa960558751025bc5ec3a"></a>
 QTimer *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a5fad0675d5baa960558751025bc5ec3a">mStateUpdateTimer</a></td></tr>
 <tr class="memdesc:a5fad0675d5baa960558751025bc5ec3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">mStateUpdateTimer Polls the controller every few seconds requesting updates on all of its devices. <br /></td></tr>
@@ -233,9 +233,11 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 <tr class="memdesc:a932133199df9b51ff3a368009e1b6d53"><td class="mdescLeft">&#160;</td><td class="mdescRight">string at the beginning of each discovery packet. <br /></td></tr>
 <tr class="separator:a932133199df9b51ff3a368009e1b6d53"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a947fb8ccab594d6177e861e096795414"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a947fb8ccab594d6177e861e096795414">&#9670;&nbsp;</a></span>deviceControllerFromDiscoveryString()</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a8a3ecf22ab83dd97abb4493f3a515ee2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a3ecf22ab83dd97abb4493f3a515ee2">&#9670;&nbsp;</a></span>deviceControllerFromDiscoveryString()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -255,7 +257,7 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="struct_s_device_controller.html">SDeviceController</a> &amp;&#160;</td>
+          <td class="paramtype">cor::Controller &amp;&#160;</td>
           <td class="paramname"><em>controller</em>&#160;</td>
         </tr>
         <tr>
@@ -277,8 +279,8 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 
 </div>
 </div>
-<a id="acb1865d11bc8e1f01a925ed68e284691"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acb1865d11bc8e1f01a925ed68e284691">&#9670;&nbsp;</a></span>deviceTable()</h2>
+<a id="ae8590d7e52f0825afc22269dc73f70cd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae8590d7e52f0825afc22269dc73f70cd">&#9670;&nbsp;</a></span>deviceTable()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -287,7 +289,7 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const std::unordered_map&lt;std::string, std::list&lt;SLightDevice&gt; &gt;&amp; CommType::deviceTable </td>
+          <td class="memname">const std::unordered_map&lt;std::string, std::list&lt;cor::Light&gt; &gt;&amp; CommType::deviceTable </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -303,8 +305,8 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 
 </div>
 </div>
-<a id="a1ec827112012957f7a7efb36d6fef94f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1ec827112012957f7a7efb36d6fef94f">&#9670;&nbsp;</a></span>discoveredList()</h2>
+<a id="a58d90b94f70298c3cdbeac1f81f0e6ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a58d90b94f70298c3cdbeac1f81f0e6ad">&#9670;&nbsp;</a></span>discoveredList()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -313,7 +315,7 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const std::list&lt;<a class="el" href="struct_s_device_controller.html">SDeviceController</a>&gt;&amp; CommType::discoveredList </td>
+          <td class="memname">const std::list&lt;cor::Controller&gt;&amp; CommType::discoveredList </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -329,8 +331,8 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 
 </div>
 </div>
-<a id="a4d82da9a4b796ccb66d9d5c155e082e1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4d82da9a4b796ccb66d9d5c155e082e1">&#9670;&nbsp;</a></span>fillDevice()</h2>
+<a id="ab9d8ebeecae39e95cd2d2647379cadec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab9d8ebeecae39e95cd2d2647379cadec">&#9670;&nbsp;</a></span>fillDevice()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -338,7 +340,7 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
         <tr>
           <td class="memname">bool CommType::fillDevice </td>
           <td>(</td>
-          <td class="paramtype">SLightDevice &amp;&#160;</td>
+          <td class="paramtype">cor::Light &amp;&#160;</td>
           <td class="paramname"><em>device</em></td><td>)</td>
           <td></td>
         </tr>
@@ -346,7 +348,7 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">device</td><td>a SLightDevice struct that has its index and controller filled in. </td></tr>
+    <tr><td class="paramname">device</td><td>a cor::Light struct that has its index and controller filled in. </td></tr>
   </table>
   </dd>
 </dl>
@@ -354,8 +356,8 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 
 </div>
 </div>
-<a id="a1b985f6292f611420c73a5d14f29de30"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1b985f6292f611420c73a5d14f29de30">&#9670;&nbsp;</a></span>findDiscoveredController()</h2>
+<a id="af104cca344ce5489ce58e21ba930498b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af104cca344ce5489ce58e21ba930498b">&#9670;&nbsp;</a></span>findDiscoveredController()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -369,7 +371,7 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="struct_s_device_controller.html">SDeviceController</a> &amp;&#160;</td>
+          <td class="paramtype">cor::Controller &amp;&#160;</td>
           <td class="paramname"><em>output</em>&#160;</td>
         </tr>
         <tr>
@@ -390,8 +392,8 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 
 </div>
 </div>
-<a id="ae93d4f182250a259f6a551e9a77ea2a6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae93d4f182250a259f6a551e9a77ea2a6">&#9670;&nbsp;</a></span>handleDiscoveryPacket()</h2>
+<a id="a4467ae6c75527903dbaca863f98d4f2d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4467ae6c75527903dbaca863f98d4f2d">&#9670;&nbsp;</a></span>handleDiscoveryPacket()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -402,7 +404,7 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
         <tr>
           <td class="memname">void CommType::handleDiscoveryPacket </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_s_device_controller.html">SDeviceController</a>&#160;</td>
+          <td class="paramtype">cor::Controller&#160;</td>
           <td class="paramname"><em>sender</em></td><td>)</td>
           <td></td>
         </tr>
@@ -422,8 +424,8 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 
 </div>
 </div>
-<a id="aae7e4f61858d208f0832d737819cc93a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aae7e4f61858d208f0832d737819cc93a">&#9670;&nbsp;</a></span>handleIncomingPacket()</h2>
+<a id="a1bec29627ea4517a904d2bc17d1508dc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1bec29627ea4517a904d2bc17d1508dc">&#9670;&nbsp;</a></span>handleIncomingPacket()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -431,13 +433,13 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
         <tr>
           <td class="memname">void CommType::handleIncomingPacket </td>
           <td>(</td>
-          <td class="paramtype">QString&#160;</td>
+          <td class="paramtype">const QString &amp;&#160;</td>
           <td class="paramname"><em>controllerName</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">QString&#160;</td>
+          <td class="paramtype">const QString &amp;&#160;</td>
           <td class="paramname"><em>payload</em>&#160;</td>
         </tr>
         <tr>
@@ -483,8 +485,8 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 
 </div>
 </div>
-<a id="a5290e848b002321ddbdf1895bb59977e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5290e848b002321ddbdf1895bb59977e">&#9670;&nbsp;</a></span>preparePacketForTransmission()</h2>
+<a id="a5588068f90b425623fba2fdd2836f3cb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5588068f90b425623fba2fdd2836f3cb">&#9670;&nbsp;</a></span>preparePacketForTransmission()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -495,7 +497,7 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
         <tr>
           <td class="memname">void CommType::preparePacketForTransmission </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_s_device_controller.html">SDeviceController</a> &amp;&#160;</td>
+          <td class="paramtype">const cor::Controller &amp;&#160;</td>
           <td class="paramname"><em>controller</em>, </td>
         </tr>
         <tr>
@@ -526,8 +528,8 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 
 </div>
 </div>
-<a id="ae92edbc5226b05f4767a8650ac713ac5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae92edbc5226b05f4767a8650ac713ac5">&#9670;&nbsp;</a></span>removeController()</h2>
+<a id="aafeecb6de1f5e389953dd7204e13060a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aafeecb6de1f5e389953dd7204e13060a">&#9670;&nbsp;</a></span>removeController()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -535,7 +537,7 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
         <tr>
           <td class="memname">bool CommType::removeController </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_s_device_controller.html">SDeviceController</a>&#160;</td>
+          <td class="paramtype">cor::Controller&#160;</td>
           <td class="paramname"><em>controller</em></td><td>)</td>
           <td></td>
         </tr>
@@ -577,8 +579,8 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 
 </div>
 </div>
-<a id="a937222fbbe69a6485a18fe2ba1d58a5f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a937222fbbe69a6485a18fe2ba1d58a5f">&#9670;&nbsp;</a></span>sendPacket()</h2>
+<a id="a1f7c925caf447b57eec75187133ba460"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f7c925caf447b57eec75187133ba460">&#9670;&nbsp;</a></span>sendPacket()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -589,13 +591,13 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
         <tr>
           <td class="memname">virtual void CommType::sendPacket </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_s_device_controller.html">SDeviceController</a>&#160;</td>
+          <td class="paramtype">const cor::Controller &amp;&#160;</td>
           <td class="paramname"><em>controller</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">QString&#160;</td>
+          <td class="paramtype">QString &amp;&#160;</td>
           <td class="paramname"><em>packet</em>&#160;</td>
         </tr>
         <tr>
@@ -617,7 +619,7 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="class_comm_hue.html#aa0ea74e3a990f775cf9c9f5188370c49">CommHue</a>, <a class="el" href="class_comm_serial.html#a00d5125c6f6a96a146c64a769f07b09c">CommSerial</a>, <a class="el" href="class_comm_h_t_t_p.html#ae664f6d3caba5128c76e40dd7948958e">CommHTTP</a>, and <a class="el" href="class_comm_u_d_p.html#adc18532d75f73d0ad8d7274355ccefd6">CommUDP</a>.</p>
+<p>Implemented in <a class="el" href="class_comm_hue.html#a734c0cd741157978d4f1c6dcd262a23d">CommHue</a>, <a class="el" href="class_comm_serial.html#a4d9cc9e12732805ea62774a684a9f048">CommSerial</a>, <a class="el" href="class_comm_h_t_t_p.html#a96a2da15cbc18e6dead5de5929419948">CommHTTP</a>, and <a class="el" href="class_comm_u_d_p.html#a677d431bb94ae07d8fd03e17bfd159fc">CommUDP</a>.</p>
 
 </div>
 </div>
@@ -642,7 +644,7 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
   </table>
   </dd>
 </dl>
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>
@@ -723,8 +725,8 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 
 </div>
 </div>
-<a id="af821394409188dff6275f2810ca799ad"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af821394409188dff6275f2810ca799ad">&#9670;&nbsp;</a></span>updateDevice()</h2>
+<a id="a41a7c990b8c8490414ae89a0b7f43f64"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a41a7c990b8c8490414ae89a0b7f43f64">&#9670;&nbsp;</a></span>updateDevice()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -732,7 +734,7 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
         <tr>
           <td class="memname">void CommType::updateDevice </td>
           <td>(</td>
-          <td class="paramtype">SLightDevice&#160;</td>
+          <td class="paramtype">cor::Light&#160;</td>
           <td class="paramname"><em>device</em></td><td>)</td>
           <td></td>
         </tr>
@@ -783,7 +785,7 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2017  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2018  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights GPL v3.0 Licensed.  &nbsp; &nbsp;
        </small>
        </p>

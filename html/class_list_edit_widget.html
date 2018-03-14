@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Corluma: ListDevicesGroupWidget Class Reference</title>
+<title>Corluma: ListEditWidget Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -41,36 +41,32 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="class_list_devices_group_widget-members.html">List of all members</a> &#124;
+<a href="class_list_edit_widget-members.html">List of all members</a> &#124;
 <a href="#signals">Signals</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a>  </div>
   <div class="headertitle">
-<div class="title">ListDevicesGroupWidget Class Reference</div>  </div>
+<div class="title">ListEditWidget Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="class_list_devices_group_widget.html" title="The ListDevicesGroupWidget class is a subclassed ListCollectionWidget that displays all the devices i...">ListDevicesGroupWidget</a> class is a subclassed <a class="el" href="class_list_collection_widget.html" title="The ListCollectionWidget class is parent class for widgets shown on the connection page...">ListCollectionWidget</a> that displays all the devices in a collection. It contains a widget at the top that gives info on the collection and the ability to edit it. It also contains an array of ListDeviceWidgets, which can be shown or hidden by clicking the top widget.  
- <a href="class_list_devices_group_widget.html#details">More...</a></p>
+<p>The <a class="el" href="class_list_edit_widget.html" title="The ListEditWidget class is a ListCollectionWidget that is used on the edit page to list devices...">ListEditWidget</a> class is a <a class="el" href="class_list_collection_widget.html" title="The ListCollectionWidget class is parent class for widgets shown on the connection page...">ListCollectionWidget</a> that is used on the edit page to list devices.  
+ <a href="class_list_edit_widget.html#details">More...</a></p>
 
-<p><code>#include &quot;<a class="el" href="listdevicesgroupwidget_8h_source.html">listdevicesgroupwidget.h</a>&quot;</code></p>
+<p><code>#include &quot;<a class="el" href="listeditwidget_8h_source.html">listeditwidget.h</a>&quot;</code></p>
 
 <p>Inherits <a class="el" href="class_list_collection_widget.html">ListCollectionWidget</a>.</p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
-<tr class="memitem:a06d3eeeaf645efb0f5211e6e142313b5"><td class="memItemLeft" align="right" valign="top"><a id="a06d3eeeaf645efb0f5211e6e142313b5"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_devices_group_widget.html#a06d3eeeaf645efb0f5211e6e142313b5">deviceClicked</a> (QString, QString)</td></tr>
-<tr class="memdesc:a06d3eeeaf645efb0f5211e6e142313b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceClicked emitted whenever a device is clicked on the widget. Emits both the widget key and the device key. <br /></td></tr>
-<tr class="separator:a06d3eeeaf645efb0f5211e6e142313b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd0c1fae1618e6c81113d07f97cf5158"><td class="memItemLeft" align="right" valign="top"><a id="acd0c1fae1618e6c81113d07f97cf5158"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_devices_group_widget.html#acd0c1fae1618e6c81113d07f97cf5158">deviceSwitchToggled</a> (QString, bool)</td></tr>
-<tr class="memdesc:acd0c1fae1618e6c81113d07f97cf5158"><td class="mdescLeft">&#160;</td><td class="mdescRight">emits the key and state when on/off switch for a device toggled. <br /></td></tr>
-<tr class="separator:acd0c1fae1618e6c81113d07f97cf5158"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4fc7406d40f3750c3c25679d72fd0bbc"><td class="memItemLeft" align="right" valign="top"><a id="a4fc7406d40f3750c3c25679d72fd0bbc"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_devices_group_widget.html#a4fc7406d40f3750c3c25679d72fd0bbc">allButtonPressed</a> (QString, bool)</td></tr>
-<tr class="memdesc:a4fc7406d40f3750c3c25679d72fd0bbc"><td class="mdescLeft">&#160;</td><td class="mdescRight">selectAllClicked emitted when select all is clicked. Should add all devices to data layer. <br /></td></tr>
-<tr class="separator:a4fc7406d40f3750c3c25679d72fd0bbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f7af6cdb5bf807390f0ae31e5d03a8a"><td class="memItemLeft" align="right" valign="top"><a id="a7f7af6cdb5bf807390f0ae31e5d03a8a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_edit_widget.html#a7f7af6cdb5bf807390f0ae31e5d03a8a">deviceClicked</a> (QString, QString)</td></tr>
+<tr class="memdesc:a7f7af6cdb5bf807390f0ae31e5d03a8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceClicked emitted whenever a device is clicked on the widget. Emits both the widget key and the device key. <br /></td></tr>
+<tr class="separator:a7f7af6cdb5bf807390f0ae31e5d03a8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a9d9849593559a43a7158f0d74a22d4"><td class="memItemLeft" align="right" valign="top"><a id="a3a9d9849593559a43a7158f0d74a22d4"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_edit_widget.html#a3a9d9849593559a43a7158f0d74a22d4">deviceSwitchToggled</a> (QString, bool)</td></tr>
+<tr class="memdesc:a3a9d9849593559a43a7158f0d74a22d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">emitted when a device switch is toggled. Emits the key and the state of the switch <br /></td></tr>
+<tr class="separator:a3a9d9849593559a43a7158f0d74a22d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header signals_class_list_collection_widget"><td colspan="2" onclick="javascript:toggleInherit('signals_class_list_collection_widget')"><img src="closed.png" alt="-"/>&#160;Signals inherited from <a class="el" href="class_list_collection_widget.html">ListCollectionWidget</a></td></tr>
 <tr class="memitem:acf99ae4fab02d2771502651fe673afaf inherit signals_class_list_collection_widget"><td class="memItemLeft" align="right" valign="top"><a id="acf99ae4fab02d2771502651fe673afaf"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_widget.html#acf99ae4fab02d2771502651fe673afaf">editClicked</a> (QString)</td></tr>
@@ -87,40 +83,37 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3442c3859fa0eb4a3eeff21edb2bedf0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_devices_group_widget.html#a3442c3859fa0eb4a3eeff21edb2bedf0">ListDevicesGroupWidget</a> (const cor::LightGroup &amp;<a class="el" href="class_list_devices_group_widget.html#a29f7bd0e490d4984712553867104468c">group</a>, QString <a class="el" href="class_list_collection_widget.html#a8e51936bec113cd68b5089680040de98">key</a>, <a class="el" href="class_comm_layer.html">CommLayer</a> *comm, <a class="el" href="class_data_layer.html">DataLayer</a> *data, QWidget *parent=0)</td></tr>
-<tr class="memdesc:a3442c3859fa0eb4a3eeff21edb2bedf0"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_list_devices_group_widget.html" title="The ListDevicesGroupWidget class is a subclassed ListCollectionWidget that displays all the devices i...">ListDevicesGroupWidget</a> constructor.  <a href="#a3442c3859fa0eb4a3eeff21edb2bedf0">More...</a><br /></td></tr>
-<tr class="separator:a3442c3859fa0eb4a3eeff21edb2bedf0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6971c2c752711519be91a4f81391f3a7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_devices_group_widget.html#a6971c2c752711519be91a4f81391f3a7">setCheckedDevices</a> (std::list&lt; cor::Light &gt; <a class="el" href="class_list_devices_group_widget.html#a6c3a593498a4fa6f7345560d9d4433f5">devices</a>)</td></tr>
-<tr class="memdesc:a6971c2c752711519be91a4f81391f3a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">setCheckedDevices takes a list of devices and compares it against all devices in the widget. If the device exists in both the widgets and the devices, it is set as checked. Otherwise, the widget is set to unchecked.  <a href="#a6971c2c752711519be91a4f81391f3a7">More...</a><br /></td></tr>
-<tr class="separator:a6971c2c752711519be91a4f81391f3a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a90154e40be04cb26d0f1a0f596e9243a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_devices_group_widget.html#a90154e40be04cb26d0f1a0f596e9243a">updateDevices</a> (std::list&lt; cor::Light &gt; <a class="el" href="class_list_devices_group_widget.html#a6c3a593498a4fa6f7345560d9d4433f5">devices</a>, bool removeIfNotFound=false)</td></tr>
-<tr class="memdesc:a90154e40be04cb26d0f1a0f596e9243a"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDevices update the state and number of devices displayed in the widget.  <a href="#a90154e40be04cb26d0f1a0f596e9243a">More...</a><br /></td></tr>
-<tr class="separator:a90154e40be04cb26d0f1a0f596e9243a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c3a593498a4fa6f7345560d9d4433f5"><td class="memItemLeft" align="right" valign="top">const std::list&lt; cor::Light &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_devices_group_widget.html#a6c3a593498a4fa6f7345560d9d4433f5">devices</a> ()</td></tr>
-<tr class="memdesc:a6c3a593498a4fa6f7345560d9d4433f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">devices getter for all devices being displayed by the widget.  <a href="#a6c3a593498a4fa6f7345560d9d4433f5">More...</a><br /></td></tr>
-<tr class="separator:a6c3a593498a4fa6f7345560d9d4433f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeefc840b4baae29ecb32814310c93c55"><td class="memItemLeft" align="right" valign="top"><a id="aeefc840b4baae29ecb32814310c93c55"></a>
-const std::list&lt; cor::Light &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_devices_group_widget.html#aeefc840b4baae29ecb32814310c93c55">checkedDevices</a> ()</td></tr>
-<tr class="memdesc:aeefc840b4baae29ecb32814310c93c55"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for checked devices <br /></td></tr>
-<tr class="separator:aeefc840b4baae29ecb32814310c93c55"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aba5660024119e638a311c59eebb2c2bb"><td class="memItemLeft" align="right" valign="top">QSize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_devices_group_widget.html#aba5660024119e638a311c59eebb2c2bb">preferredSize</a> ()</td></tr>
-<tr class="memdesc:aba5660024119e638a311c59eebb2c2bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">preferredSize all collection widgets must implement a preferred size. this is the size the widget wants to be. It may not end up this size but its a baseline if theres no other widgets pushing against it.  <a href="#aba5660024119e638a311c59eebb2c2bb">More...</a><br /></td></tr>
-<tr class="separator:aba5660024119e638a311c59eebb2c2bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa059bf52e199089ead8b918300bb8cd4"><td class="memItemLeft" align="right" valign="top"><a id="aa059bf52e199089ead8b918300bb8cd4"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_devices_group_widget.html#aa059bf52e199089ead8b918300bb8cd4">resizeInteralWidgets</a> ()</td></tr>
-<tr class="memdesc:aa059bf52e199089ead8b918300bb8cd4"><td class="mdescLeft">&#160;</td><td class="mdescRight">resize all the children widgets <br /></td></tr>
-<tr class="separator:aa059bf52e199089ead8b918300bb8cd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89622b35f30486b617c5d871b6327c30"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_devices_group_widget.html#a89622b35f30486b617c5d871b6327c30">setShowButtons</a> (bool show)</td></tr>
-<tr class="memdesc:a89622b35f30486b617c5d871b6327c30"><td class="mdescLeft">&#160;</td><td class="mdescRight">setShowButtons shows and hides all buttons on the widget  <a href="#a89622b35f30486b617c5d871b6327c30">More...</a><br /></td></tr>
-<tr class="separator:a89622b35f30486b617c5d871b6327c30"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4f97c2b4526a5b572a86c1643568266b"><td class="memItemLeft" align="right" valign="top"><a id="a4f97c2b4526a5b572a86c1643568266b"></a>
-EWidgetContents&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_devices_group_widget.html#a4f97c2b4526a5b572a86c1643568266b">widgetContents</a> ()</td></tr>
-<tr class="memdesc:a4f97c2b4526a5b572a86c1643568266b"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the type of widget <br /></td></tr>
-<tr class="separator:a4f97c2b4526a5b572a86c1643568266b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a29f7bd0e490d4984712553867104468c"><td class="memItemLeft" align="right" valign="top"><a id="a29f7bd0e490d4984712553867104468c"></a>
-const cor::LightGroup &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_devices_group_widget.html#a29f7bd0e490d4984712553867104468c">group</a> ()</td></tr>
-<tr class="memdesc:a29f7bd0e490d4984712553867104468c"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the group data. <br /></td></tr>
-<tr class="separator:a29f7bd0e490d4984712553867104468c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aceb27eab909ac5701188f08eb2dcec2f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_edit_widget.html#aceb27eab909ac5701188f08eb2dcec2f">ListEditWidget</a> (QWidget *parent=0)</td></tr>
+<tr class="memdesc:aceb27eab909ac5701188f08eb2dcec2f"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_list_edit_widget.html" title="The ListEditWidget class is a ListCollectionWidget that is used on the edit page to list devices...">ListEditWidget</a> constructor.  <a href="#aceb27eab909ac5701188f08eb2dcec2f">More...</a><br /></td></tr>
+<tr class="separator:aceb27eab909ac5701188f08eb2dcec2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a354cb340d3883d9f2b95097140cebbe0"><td class="memItemLeft" align="right" valign="top"><a id="a354cb340d3883d9f2b95097140cebbe0"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_edit_widget.html#a354cb340d3883d9f2b95097140cebbe0">connectLayers</a> (<a class="el" href="class_comm_layer.html">CommLayer</a> *comm, <a class="el" href="class_data_layer.html">DataLayer</a> *data)</td></tr>
+<tr class="memdesc:a354cb340d3883d9f2b95097140cebbe0"><td class="mdescLeft">&#160;</td><td class="mdescRight">connects to backend data <br /></td></tr>
+<tr class="separator:a354cb340d3883d9f2b95097140cebbe0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2f18194c48fa16cb2f1bdff8645a2d5"><td class="memItemLeft" align="right" valign="top"><a id="ae2f18194c48fa16cb2f1bdff8645a2d5"></a>
+QSize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_edit_widget.html#ae2f18194c48fa16cb2f1bdff8645a2d5">preferredSize</a> ()</td></tr>
+<tr class="memdesc:ae2f18194c48fa16cb2f1bdff8645a2d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">preferred size for widget <br /></td></tr>
+<tr class="separator:ae2f18194c48fa16cb2f1bdff8645a2d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70169c3d130ee1b8f9ffe5815c511a14"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_edit_widget.html#a70169c3d130ee1b8f9ffe5815c511a14">setShowButtons</a> (bool show)</td></tr>
+<tr class="memdesc:a70169c3d130ee1b8f9ffe5815c511a14"><td class="mdescLeft">&#160;</td><td class="mdescRight">setShowButtons shows and hides all buttons on the widget  <a href="#a70169c3d130ee1b8f9ffe5815c511a14">More...</a><br /></td></tr>
+<tr class="separator:a70169c3d130ee1b8f9ffe5815c511a14"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1708a9e537f5958d477d5a65bf95a07"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_edit_widget.html#ad1708a9e537f5958d477d5a65bf95a07">setCheckedDevices</a> (std::list&lt; cor::Light &gt; <a class="el" href="class_list_edit_widget.html#ac2c4999566691470f65029a146593dfe">devices</a>)</td></tr>
+<tr class="memdesc:ad1708a9e537f5958d477d5a65bf95a07"><td class="mdescLeft">&#160;</td><td class="mdescRight">setCheckedDevices takes a list of devices and compares it against all devices in the widget. If the device exists in both the widgets and the devices, it is set as checked. Otherwise, the widget is set to unchecked.  <a href="#ad1708a9e537f5958d477d5a65bf95a07">More...</a><br /></td></tr>
+<tr class="separator:ad1708a9e537f5958d477d5a65bf95a07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a373bab691f9861ffe6cfd3cb9a5694fe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_edit_widget.html#a373bab691f9861ffe6cfd3cb9a5694fe">updateDevices</a> (std::list&lt; cor::Light &gt; <a class="el" href="class_list_edit_widget.html#ac2c4999566691470f65029a146593dfe">devices</a>, bool removeIfNotFound=false)</td></tr>
+<tr class="memdesc:a373bab691f9861ffe6cfd3cb9a5694fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDevices update the state and number of devices displayed in the widget.  <a href="#a373bab691f9861ffe6cfd3cb9a5694fe">More...</a><br /></td></tr>
+<tr class="separator:a373bab691f9861ffe6cfd3cb9a5694fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a185ee0a2a996ba1de69bdf4b12cf6988"><td class="memItemLeft" align="right" valign="top"><a id="a185ee0a2a996ba1de69bdf4b12cf6988"></a>
+EWidgetContents&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_edit_widget.html#a185ee0a2a996ba1de69bdf4b12cf6988">widgetContents</a> ()</td></tr>
+<tr class="memdesc:a185ee0a2a996ba1de69bdf4b12cf6988"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for widget contents <br /></td></tr>
+<tr class="separator:a185ee0a2a996ba1de69bdf4b12cf6988"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2c4999566691470f65029a146593dfe"><td class="memItemLeft" align="right" valign="top">const std::list&lt; cor::Light &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_edit_widget.html#ac2c4999566691470f65029a146593dfe">devices</a> ()</td></tr>
+<tr class="memdesc:ac2c4999566691470f65029a146593dfe"><td class="mdescLeft">&#160;</td><td class="mdescRight">devices getter for all devices being displayed by the widget.  <a href="#ac2c4999566691470f65029a146593dfe">More...</a><br /></td></tr>
+<tr class="separator:ac2c4999566691470f65029a146593dfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a75424d3fa8d4ee8c08ee3d500959cb"><td class="memItemLeft" align="right" valign="top"><a id="a1a75424d3fa8d4ee8c08ee3d500959cb"></a>
+const std::list&lt; cor::Light &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_edit_widget.html#a1a75424d3fa8d4ee8c08ee3d500959cb">checkedDevices</a> ()</td></tr>
+<tr class="memdesc:a1a75424d3fa8d4ee8c08ee3d500959cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for checked devices <br /></td></tr>
+<tr class="separator:a1a75424d3fa8d4ee8c08ee3d500959cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_list_collection_widget"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_list_collection_widget')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_list_collection_widget.html">ListCollectionWidget</a></td></tr>
 <tr class="memitem:ad50e0a7baa55437f453cb5799d44ce08 inherit pub_methods_class_list_collection_widget"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_widget.html#ad50e0a7baa55437f453cb5799d44ce08">ListCollectionWidget</a> (QWidget *parent=0)</td></tr>
 <tr class="memdesc:ad50e0a7baa55437f453cb5799d44ce08 inherit pub_methods_class_list_collection_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="class_list_collection_widget.html#ad50e0a7baa55437f453cb5799d44ce08">More...</a><br /></td></tr>
@@ -152,14 +145,10 @@ const std::vector&lt; <a class="el" href="class_list_collection_sub_widget.html"
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a04ddeff21a1da53d32e946cbda3f2351"><td class="memItemLeft" align="right" valign="top"><a id="a04ddeff21a1da53d32e946cbda3f2351"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_devices_group_widget.html#a04ddeff21a1da53d32e946cbda3f2351">mouseReleaseEvent</a> (QMouseEvent *)</td></tr>
-<tr class="memdesc:a04ddeff21a1da53d32e946cbda3f2351"><td class="mdescLeft">&#160;</td><td class="mdescRight">mouseReleaseEvent picks up when a click (or a tap on mobile) is released. <br /></td></tr>
-<tr class="separator:a04ddeff21a1da53d32e946cbda3f2351"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9997868831fa57e52af887633f6f94c0"><td class="memItemLeft" align="right" valign="top"><a id="a9997868831fa57e52af887633f6f94c0"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_devices_group_widget.html#a9997868831fa57e52af887633f6f94c0">paintEvent</a> (QPaintEvent *event)</td></tr>
-<tr class="memdesc:a9997868831fa57e52af887633f6f94c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">paintEvent paints the background of the widget <br /></td></tr>
-<tr class="separator:a9997868831fa57e52af887633f6f94c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abbaf2e72e17c435afdf16ae8b7dbfe42"><td class="memItemLeft" align="right" valign="top"><a id="abbaf2e72e17c435afdf16ae8b7dbfe42"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_edit_widget.html#abbaf2e72e17c435afdf16ae8b7dbfe42">mouseReleaseEvent</a> (QMouseEvent *)</td></tr>
+<tr class="memdesc:abbaf2e72e17c435afdf16ae8b7dbfe42"><td class="mdescLeft">&#160;</td><td class="mdescRight">mouseReleaseEvent picks up when a click (or a tap on mobile) is released. <br /></td></tr>
+<tr class="separator:abbaf2e72e17c435afdf16ae8b7dbfe42"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_class_list_collection_widget"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_list_collection_widget')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_list_collection_widget.html">ListCollectionWidget</a></td></tr>
 <tr class="memitem:a5fe036994f37b0c551421a20960fec00 inherit pro_methods_class_list_collection_widget"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_widget.html#a5fe036994f37b0c551421a20960fec00">resizeRightHandIcon</a> (QPixmap pixmap, QPushButton *button)</td></tr>
 <tr class="memdesc:a5fe036994f37b0c551421a20960fec00 inherit pro_methods_class_list_collection_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">resizeRightHandIcon helper to resize any icon on the right hand side of the widget except the mHiddenStateIcon.  <a href="class_list_collection_widget.html#a5fe036994f37b0c551421a20960fec00">More...</a><br /></td></tr>
@@ -254,46 +243,18 @@ EListType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a3442c3859fa0eb4a3eeff21edb2bedf0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3442c3859fa0eb4a3eeff21edb2bedf0">&#9670;&nbsp;</a></span>ListDevicesGroupWidget()</h2>
+<a id="aceb27eab909ac5701188f08eb2dcec2f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aceb27eab909ac5701188f08eb2dcec2f">&#9670;&nbsp;</a></span>ListEditWidget()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">ListDevicesGroupWidget::ListDevicesGroupWidget </td>
+          <td class="memname">ListEditWidget::ListEditWidget </td>
           <td>(</td>
-          <td class="paramtype">const cor::LightGroup &amp;&#160;</td>
-          <td class="paramname"><em>group</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">QString&#160;</td>
-          <td class="paramname"><em>key</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_comm_layer.html">CommLayer</a> *&#160;</td>
-          <td class="paramname"><em>comm</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_data_layer.html">DataLayer</a> *&#160;</td>
-          <td class="paramname"><em>data</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype">QWidget *&#160;</td>
-          <td class="paramname"><em>parent</em> = <code>0</code>&#160;</td>
-        </tr>
-        <tr>
+          <td class="paramname"><em>parent</em> = <code>0</code></td><td>)</td>
           <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -311,8 +272,8 @@ EListType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a6c3a593498a4fa6f7345560d9d4433f5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6c3a593498a4fa6f7345560d9d4433f5">&#9670;&nbsp;</a></span>devices()</h2>
+<a id="ac2c4999566691470f65029a146593dfe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac2c4999566691470f65029a146593dfe">&#9670;&nbsp;</a></span>devices()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -321,7 +282,7 @@ EListType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const std::list&lt;cor::Light&gt;&amp; ListDevicesGroupWidget::devices </td>
+          <td class="memname">const std::list&lt;cor::Light&gt;&amp; ListEditWidget::devices </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -337,42 +298,14 @@ EListType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 </div>
 </div>
-<a id="aba5660024119e638a311c59eebb2c2bb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aba5660024119e638a311c59eebb2c2bb">&#9670;&nbsp;</a></span>preferredSize()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">QSize ListDevicesGroupWidget::preferredSize </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>a QSize representing its ideal size. </dd></dl>
-
-<p>Implements <a class="el" href="class_list_collection_widget.html#a6f39c365052d8f16d6de2624a59d4282">ListCollectionWidget</a>.</p>
-
-</div>
-</div>
-<a id="a6971c2c752711519be91a4f81391f3a7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6971c2c752711519be91a4f81391f3a7">&#9670;&nbsp;</a></span>setCheckedDevices()</h2>
+<a id="ad1708a9e537f5958d477d5a65bf95a07"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad1708a9e537f5958d477d5a65bf95a07">&#9670;&nbsp;</a></span>setCheckedDevices()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void ListDevicesGroupWidget::setCheckedDevices </td>
+          <td class="memname">void ListEditWidget::setCheckedDevices </td>
           <td>(</td>
           <td class="paramtype">std::list&lt; cor::Light &gt;&#160;</td>
           <td class="paramname"><em>devices</em></td><td>)</td>
@@ -389,8 +322,8 @@ EListType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 </div>
 </div>
-<a id="a89622b35f30486b617c5d871b6327c30"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a89622b35f30486b617c5d871b6327c30">&#9670;&nbsp;</a></span>setShowButtons()</h2>
+<a id="a70169c3d130ee1b8f9ffe5815c511a14"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a70169c3d130ee1b8f9ffe5815c511a14">&#9670;&nbsp;</a></span>setShowButtons()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -399,7 +332,7 @@ EListType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void ListDevicesGroupWidget::setShowButtons </td>
+          <td class="memname">void ListEditWidget::setShowButtons </td>
           <td>(</td>
           <td class="paramtype">bool&#160;</td>
           <td class="paramname"><em>show</em></td><td>)</td>
@@ -423,14 +356,14 @@ EListType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 </div>
 </div>
-<a id="a90154e40be04cb26d0f1a0f596e9243a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a90154e40be04cb26d0f1a0f596e9243a">&#9670;&nbsp;</a></span>updateDevices()</h2>
+<a id="a373bab691f9861ffe6cfd3cb9a5694fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a373bab691f9861ffe6cfd3cb9a5694fe">&#9670;&nbsp;</a></span>updateDevices()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void ListDevicesGroupWidget::updateDevices </td>
+          <td class="memname">void ListEditWidget::updateDevices </td>
           <td>(</td>
           <td class="paramtype">std::list&lt; cor::Light &gt;&#160;</td>
           <td class="paramname"><em>devices</em>, </td>
@@ -459,8 +392,8 @@ EListType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li><a class="el" href="listdevicesgroupwidget_8h_source.html">listdevicesgroupwidget.h</a></li>
-<li>listdevicesgroupwidget.cpp</li>
+<li><a class="el" href="listeditwidget_8h_source.html">listeditwidget.h</a></li>
+<li>listeditwidget.cpp</li>
 </ul>
 </div><!-- contents -->
 

@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.11.5</span>
+   &#160;<span id="projectnumber">v0.12.5</span>
    </div>
   </td>
  </tr>
@@ -49,7 +49,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="class_comm_packet_parser.html" title="The CommPacketParser class takes the packets used for communication with other devices as input...">CommPacketParser</a> class takes the packets used for communication with other devices as input, parses them, and emits signals based on the contents of a packet. For example, a main color change packet will emit a <code><a class="el" href="class_comm_packet_parser.html#aaab6bd346a89f23b75c96122f0c71078" title="receivedMainColorChange signal that requests a main color change for a device. ">receivedMainColorChange(int, QColor)</a></code> signal. This class is used to emulate the functionality of the parser that is embedded on the arduino platforms on devices like the Phillips Hue.  
+<p>The <a class="el" href="class_comm_packet_parser.html" title="The CommPacketParser class takes the packets used for communication with other devices as input...">CommPacketParser</a> class takes the packets used for communication with other devices as input, parses them, and emits signals based on the contents of a packet. For example, a main color change packet will emit a <code><a class="el" href="class_comm_packet_parser.html#aaab6bd346a89f23b75c96122f0c71078" title="receivedMainColorChange signal that requests a main color change for a device. ">receivedMainColorChange(int, QColor)</a></code> signal. This class is used to emulate the functionality of the parser that is embedded on the arduino platforms on devices like the Philips Hue.  
  <a href="class_comm_packet_parser.html#details">More...</a></p>
 
 <p><code>#include &quot;<a class="el" href="commpacketparser_8h_source.html">commpacketparser.h</a>&quot;</code></p>
@@ -58,6 +58,9 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
+<tr class="memitem:a5ff5ad03ed77bd3232779645f48bdb39"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_packet_parser.html#a5ff5ad03ed77bd3232779645f48bdb39">receivedOnOffChange</a> (int deviceIndex, bool turnOn)</td></tr>
+<tr class="memdesc:a5ff5ad03ed77bd3232779645f48bdb39"><td class="mdescLeft">&#160;</td><td class="mdescRight">receivedOnOffChange received a message to turn light on or off.  <a href="#a5ff5ad03ed77bd3232779645f48bdb39">More...</a><br /></td></tr>
+<tr class="separator:a5ff5ad03ed77bd3232779645f48bdb39"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaab6bd346a89f23b75c96122f0c71078"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_packet_parser.html#aaab6bd346a89f23b75c96122f0c71078">receivedMainColorChange</a> (int deviceIndex, QColor color)</td></tr>
 <tr class="memdesc:aaab6bd346a89f23b75c96122f0c71078"><td class="mdescLeft">&#160;</td><td class="mdescRight">receivedMainColorChange signal that requests a main color change for a device.  <a href="#aaab6bd346a89f23b75c96122f0c71078">More...</a><br /></td></tr>
 <tr class="separator:aaab6bd346a89f23b75c96122f0c71078"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -95,7 +98,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a9e7b82d6fdc96d9ce3c4e235641d482c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
+<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a9e7b82d6fdc96d9ce3c4e235641d482c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9e7b82d6fdc96d9ce3c4e235641d482c">&#9670;&nbsp;</a></span>parsePacket()</h2>
@@ -300,6 +303,49 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a5ff5ad03ed77bd3232779645f48bdb39"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ff5ad03ed77bd3232779645f48bdb39">&#9670;&nbsp;</a></span>receivedOnOffChange</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CommPacketParser::receivedOnOffChange </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>deviceIndex</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>turnOn</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">signal</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">deviceIndex</td><td>index of device to control </td></tr>
+    <tr><td class="paramname">turnOn</td><td>true to turn on, false to turn off </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a087789c9fa08dfcb4db6b943e3594b39"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a087789c9fa08dfcb4db6b943e3594b39">&#9670;&nbsp;</a></span>receivedRoutineChange</h2>
 
@@ -448,7 +494,7 @@ Public Member Functions</h2></td></tr>
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2017  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2018  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights GPL v3.0 Licensed.  &nbsp; &nbsp;
        </small>
        </p>

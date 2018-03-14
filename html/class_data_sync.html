@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.11.5</span>
+   &#160;<span id="projectnumber">v0.12.5</span>
    </div>
   </td>
  </tr>
@@ -52,7 +52,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="class_data_sync.html" title="The DataSync base class is used for datasync threads. These threads compares the data layer&#39;s represe...">DataSync</a> base class is used for datasync threads. These threads compares the data layer's representation of devices with the commlayer's understanding of devices and tries to sync them up. The <a class="el" href="class_data_layer.html" title="The DataLayer class stores and maintains the data about the state and settings of the application...">DataLayer</a>'s representation is used as the "desired" state of lights. The <a class="el" href="class_comm_layer.html" title="The CommLayer class provides communication protocols that allow the user to connect and send packets ...">CommLayer</a>'s understanding is used as the current state. If the desired state and current state do not match, the commlayer is requested to send packets to try to update the devices. Different datasync threads run at different speeds and have different criteria for how to handle syncing. Phillips hue lights, for instance, require syncing of schedules and groups on top of standard information. Because of this, derived classes impelement the different rules for handling syncing data.  
+<p>The <a class="el" href="class_data_sync.html" title="The DataSync base class is used for datasync threads. These threads compares the data layer&#39;s represe...">DataSync</a> base class is used for datasync threads. These threads compares the data layer's representation of devices with the commlayer's understanding of devices and tries to sync them up. The <a class="el" href="class_data_layer.html" title="The DataLayer class stores and maintains the data about the state and settings of the application...">DataLayer</a>'s representation is used as the "desired" state of lights. The <a class="el" href="class_comm_layer.html" title="The CommLayer class provides communication protocols that allow the user to connect and send packets ...">CommLayer</a>'s understanding is used as the current state. If the desired state and current state do not match, the commlayer is requested to send packets to try to update the devices. Different datasync threads run at different speeds and have different criteria for how to handle syncing. Philips hue lights, for instance, require syncing of schedules and groups on top of standard information. Because of this, derived classes impelement the different rules for handling syncing data.  
 </p>
 
 <p><code>#include &quot;<a class="el" href="datasync_8h_source.html">datasync.h</a>&quot;</code></p>
@@ -98,21 +98,21 @@ Protected Member Functions</h2></td></tr>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a27eecd4b4623fd0e1210497d5613a364">endOfSync</a> ()=0</td></tr>
 <tr class="memdesc:a27eecd4b4623fd0e1210497d5613a364"><td class="mdescLeft">&#160;</td><td class="mdescRight">endOfSync end the sync thread and start the cleanup thread. <br /></td></tr>
 <tr class="separator:a27eecd4b4623fd0e1210497d5613a364"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a821e5a82c6288ba45b3f3fdbaedb79fb"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a821e5a82c6288ba45b3f3fdbaedb79fb">sync</a> (const SLightDevice &amp;dataDevice, const SLightDevice &amp;commDevice)=0</td></tr>
-<tr class="memdesc:a821e5a82c6288ba45b3f3fdbaedb79fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">sync checks if the light device of a comm layer and a data layer are in sync.  <a href="#a821e5a82c6288ba45b3f3fdbaedb79fb">More...</a><br /></td></tr>
-<tr class="separator:a821e5a82c6288ba45b3f3fdbaedb79fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45c054e275f1621ff3d0071b5ae4ae74"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a45c054e275f1621ff3d0071b5ae4ae74">sync</a> (const cor::Light &amp;dataDevice, const cor::Light &amp;commDevice)=0</td></tr>
+<tr class="memdesc:a45c054e275f1621ff3d0071b5ae4ae74"><td class="mdescLeft">&#160;</td><td class="mdescRight">sync checks if the light device of a comm layer and a data layer are in sync.  <a href="#a45c054e275f1621ff3d0071b5ae4ae74">More...</a><br /></td></tr>
+<tr class="separator:a45c054e275f1621ff3d0071b5ae4ae74"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a359f38c1bf3eff08faf80296a50f1c28"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a359f38c1bf3eff08faf80296a50f1c28">appendToPacket</a> (QString &amp;currentPacket, QString newAddition, int maxPacketSize)</td></tr>
 <tr class="memdesc:a359f38c1bf3eff08faf80296a50f1c28"><td class="mdescLeft">&#160;</td><td class="mdescRight">appendToPacket data sync builds up packets to send to devices. This takes a new addition to the packet, checks if theres room to add it, and adds it if there is.  <a href="#a359f38c1bf3eff08faf80296a50f1c28">More...</a><br /></td></tr>
 <tr class="separator:a359f38c1bf3eff08faf80296a50f1c28"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad68c78f9e20223ef90bdde9551bc76d3"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#ad68c78f9e20223ef90bdde9551bc76d3">ctDifference</a> (float first, float second)</td></tr>
 <tr class="memdesc:ad68c78f9e20223ef90bdde9551bc76d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">ctDifference gives a percent difference between two color temperatures. This function currently assumes that only Hue lightss are using it and will need adjustment for other lights that use a different range of color temperatures.  <a href="#ad68c78f9e20223ef90bdde9551bc76d3">More...</a><br /></td></tr>
 <tr class="separator:ad68c78f9e20223ef90bdde9551bc76d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5459cb352bc70cfc5868a44c5b38ebb6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a5459cb352bc70cfc5868a44c5b38ebb6">checkThrottle</a> (QString controller, ECommType type, int index)</td></tr>
-<tr class="memdesc:a5459cb352bc70cfc5868a44c5b38ebb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">checkThrottle checks if any messages have been sent to this controller recently and throttles the messages if too many are being sent in a single interval.  <a href="#a5459cb352bc70cfc5868a44c5b38ebb6">More...</a><br /></td></tr>
-<tr class="separator:a5459cb352bc70cfc5868a44c5b38ebb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1aeef2262316d09e87eb0dc7bb7cb875"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a1aeef2262316d09e87eb0dc7bb7cb875">resetThrottle</a> (QString controller, ECommType type, int index)</td></tr>
-<tr class="memdesc:a1aeef2262316d09e87eb0dc7bb7cb875"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetThrottle should be called immediately after sending a packet, resets the throttle so that no messages can be sent until a certain interval has passed.  <a href="#a1aeef2262316d09e87eb0dc7bb7cb875">More...</a><br /></td></tr>
-<tr class="separator:a1aeef2262316d09e87eb0dc7bb7cb875"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7d7831f1d499a1dcb5886f0a3ed1def"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#ac7d7831f1d499a1dcb5886f0a3ed1def">checkThrottle</a> (QString controller, ECommType type)</td></tr>
+<tr class="memdesc:ac7d7831f1d499a1dcb5886f0a3ed1def"><td class="mdescLeft">&#160;</td><td class="mdescRight">checkThrottle checks if any messages have been sent to this controller recently and throttles the messages if too many are being sent in a single interval.  <a href="#ac7d7831f1d499a1dcb5886f0a3ed1def">More...</a><br /></td></tr>
+<tr class="separator:ac7d7831f1d499a1dcb5886f0a3ed1def"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a540fcf9523c2c58deb74ee215c07140a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a540fcf9523c2c58deb74ee215c07140a">resetThrottle</a> (QString controller, ECommType type)</td></tr>
+<tr class="memdesc:a540fcf9523c2c58deb74ee215c07140a"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetThrottle should be called immediately after sending a packet, resets the throttle so that no messages can be sent until a certain interval has passed.  <a href="#a540fcf9523c2c58deb74ee215c07140a">More...</a><br /></td></tr>
+<tr class="separator:a540fcf9523c2c58deb74ee215c07140a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -202,12 +202,12 @@ std::list&lt; <a class="el" href="struct_s_throttle.html">SThrottle</a> &gt;&#16
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if packet is added, false otherwise.</dd></dl>
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>
-<a id="a5459cb352bc70cfc5868a44c5b38ebb6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5459cb352bc70cfc5868a44c5b38ebb6">&#9670;&nbsp;</a></span>checkThrottle()</h2>
+<a id="ac7d7831f1d499a1dcb5886f0a3ed1def"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac7d7831f1d499a1dcb5886f0a3ed1def">&#9670;&nbsp;</a></span>checkThrottle()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -225,13 +225,7 @@ std::list&lt; <a class="el" href="struct_s_throttle.html">SThrottle</a> &gt;&#16
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">ECommType&#160;</td>
-          <td class="paramname"><em>type</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>index</em>&#160;</td>
+          <td class="paramname"><em>type</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -249,7 +243,6 @@ std::list&lt; <a class="el" href="struct_s_throttle.html">SThrottle</a> &gt;&#16
   <table class="params">
     <tr><td class="paramname">controller</td><td>name of controller. </td></tr>
     <tr><td class="paramname">type</td><td>communication type of controller </td></tr>
-    <tr><td class="paramname">index</td><td>index of device on controller (temporary) </td></tr>
   </table>
   </dd>
 </dl>
@@ -301,8 +294,8 @@ std::list&lt; <a class="el" href="struct_s_throttle.html">SThrottle</a> &gt;&#16
 
 </div>
 </div>
-<a id="a1aeef2262316d09e87eb0dc7bb7cb875"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1aeef2262316d09e87eb0dc7bb7cb875">&#9670;&nbsp;</a></span>resetThrottle()</h2>
+<a id="a540fcf9523c2c58deb74ee215c07140a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a540fcf9523c2c58deb74ee215c07140a">&#9670;&nbsp;</a></span>resetThrottle()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -320,13 +313,7 @@ std::list&lt; <a class="el" href="struct_s_throttle.html">SThrottle</a> &gt;&#16
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">ECommType&#160;</td>
-          <td class="paramname"><em>type</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>index</em>&#160;</td>
+          <td class="paramname"><em>type</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -344,15 +331,14 @@ std::list&lt; <a class="el" href="struct_s_throttle.html">SThrottle</a> &gt;&#16
   <table class="params">
     <tr><td class="paramname">controller</td><td>name of controller. </td></tr>
     <tr><td class="paramname">type</td><td>communication type of controller </td></tr>
-    <tr><td class="paramname">index</td><td>index of device on controller (temporary) </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="a821e5a82c6288ba45b3f3fdbaedb79fb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a821e5a82c6288ba45b3f3fdbaedb79fb">&#9670;&nbsp;</a></span>sync()</h2>
+<a id="a45c054e275f1621ff3d0071b5ae4ae74"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a45c054e275f1621ff3d0071b5ae4ae74">&#9670;&nbsp;</a></span>sync()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -363,13 +349,13 @@ std::list&lt; <a class="el" href="struct_s_throttle.html">SThrottle</a> &gt;&#16
         <tr>
           <td class="memname">bool DataSync::sync </td>
           <td>(</td>
-          <td class="paramtype">const SLightDevice &amp;&#160;</td>
+          <td class="paramtype">const cor::Light &amp;&#160;</td>
           <td class="paramname"><em>dataDevice</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const SLightDevice &amp;&#160;</td>
+          <td class="paramtype">const cor::Light &amp;&#160;</td>
           <td class="paramname"><em>commDevice</em>&#160;</td>
         </tr>
         <tr>
@@ -407,7 +393,7 @@ std::list&lt; <a class="el" href="struct_s_throttle.html">SThrottle</a> &gt;&#16
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2017  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2018  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights GPL v3.0 Licensed.  &nbsp; &nbsp;
        </small>
        </p>

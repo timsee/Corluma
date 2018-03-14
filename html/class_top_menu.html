@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.11.5</span>
+   &#160;<span id="projectnumber">v0.12.5</span>
    </div>
   </td>
  </tr>
@@ -60,10 +60,10 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-slots"></a>
 Public Slots</h2></td></tr>
-<tr class="memitem:ae97e45a3b596cd7c1f548b0ce0b36f27"><td class="memItemLeft" align="right" valign="top"><a id="ae97e45a3b596cd7c1f548b0ce0b36f27"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#ae97e45a3b596cd7c1f548b0ce0b36f27">deviceCountChangedOnConnectionPage</a> ()</td></tr>
-<tr class="memdesc:ae97e45a3b596cd7c1f548b0ce0b36f27"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceCountChangedOnConnectionPage handles the case when the device count changes. <br /></td></tr>
-<tr class="separator:ae97e45a3b596cd7c1f548b0ce0b36f27"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f478fd868c297f2368873fea0a68397"><td class="memItemLeft" align="right" valign="top"><a id="a5f478fd868c297f2368873fea0a68397"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a5f478fd868c297f2368873fea0a68397">deviceCountChanged</a> ()</td></tr>
+<tr class="memdesc:a5f478fd868c297f2368873fea0a68397"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceCountChanged handles the case when the device count changes. <br /></td></tr>
+<tr class="separator:a5f478fd868c297f2368873fea0a68397"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa623143258f102120273eb7f54a35f71"><td class="memItemLeft" align="right" valign="top"><a id="aa623143258f102120273eb7f54a35f71"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#aa623143258f102120273eb7f54a35f71">toggleOnOff</a> ()</td></tr>
 <tr class="memdesc:aa623143258f102120273eb7f54a35f71"><td class="mdescLeft">&#160;</td><td class="mdescRight">toggleOnOff Connected to the button in the top left of the GUI at all times. Toggles between running the current routine at current settings, and off. <br /></td></tr>
@@ -116,18 +116,16 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a99ea50fdac79452f7eae1e115492558d">updateBrightnessSlider</a> ()</td></tr>
 <tr class="memdesc:a99ea50fdac79452f7eae1e115492558d"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateBrightnessSlider update the brightness slider at the top of the mnu based on the current light data. <br /></td></tr>
 <tr class="separator:a99ea50fdac79452f7eae1e115492558d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f40cdf06c8c81e00c240fb0dda3bf52"><td class="memItemLeft" align="right" valign="top"><a id="a7f40cdf06c8c81e00c240fb0dda3bf52"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a7f40cdf06c8c81e00c240fb0dda3bf52">highlightButton</a> (EPage button)</td></tr>
-<tr class="memdesc:a7f40cdf06c8c81e00c240fb0dda3bf52"><td class="mdescLeft">&#160;</td><td class="mdescRight">highlight specified button <br /></td></tr>
-<tr class="separator:a7f40cdf06c8c81e00c240fb0dda3bf52"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8738502a20d63d3bc20efe04ddaca02b"><td class="memItemLeft" align="right" valign="top"><a id="a8738502a20d63d3bc20efe04ddaca02b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a8738502a20d63d3bc20efe04ddaca02b">highlightGroupsButton</a> ()</td></tr>
-<tr class="memdesc:a8738502a20d63d3bc20efe04ddaca02b"><td class="mdescLeft">&#160;</td><td class="mdescRight">highlight the groups button on the connection widget <br /></td></tr>
-<tr class="separator:a8738502a20d63d3bc20efe04ddaca02b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a837c0f78f2c745f7c73938c406438c20"><td class="memItemLeft" align="right" valign="top"><a id="a837c0f78f2c745f7c73938c406438c20"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a837c0f78f2c745f7c73938c406438c20">highlightRoomsButton</a> ()</td></tr>
-<tr class="memdesc:a837c0f78f2c745f7c73938c406438c20"><td class="mdescLeft">&#160;</td><td class="mdescRight">highlight the rooms button on the connection widget <br /></td></tr>
-<tr class="separator:a837c0f78f2c745f7c73938c406438c20"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa04531ef540961b2ed4a1d6ccabefc56"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#aa04531ef540961b2ed4a1d6ccabefc56">highlightButton</a> (QString key)</td></tr>
+<tr class="memdesc:aa04531ef540961b2ed4a1d6ccabefc56"><td class="mdescLeft">&#160;</td><td class="mdescRight">highlightButton highlight the button of any of the floating layouts, based on the key  <a href="#aa04531ef540961b2ed4a1d6ccabefc56">More...</a><br /></td></tr>
+<tr class="separator:aa04531ef540961b2ed4a1d6ccabefc56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f03a7d5ecf6c20de416a2b48dfa2c33"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a8f03a7d5ecf6c20de416a2b48dfa2c33">pageButtonPressed</a> (EPage pageButtonType)</td></tr>
+<tr class="memdesc:a8f03a7d5ecf6c20de416a2b48dfa2c33"><td class="mdescLeft">&#160;</td><td class="mdescRight">pageButtonPressed main page button pressed, such as the color page or connection page  <a href="#a8f03a7d5ecf6c20de416a2b48dfa2c33">More...</a><br /></td></tr>
+<tr class="separator:a8f03a7d5ecf6c20de416a2b48dfa2c33"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3eb3451aabd87281a9628b07d9140d94"><td class="memItemLeft" align="right" valign="top"><a id="a3eb3451aabd87281a9628b07d9140d94"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a3eb3451aabd87281a9628b07d9140d94">showFloatingLayout</a> (EPage newPage)</td></tr>
+<tr class="memdesc:a3eb3451aabd87281a9628b07d9140d94"><td class="mdescLeft">&#160;</td><td class="mdescRight">switch the floating layout to show the menu for the given page <br /></td></tr>
+<tr class="separator:a3eb3451aabd87281a9628b07d9140d94"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aea26a6a18aed85c38f412e2863634f15"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#aea26a6a18aed85c38f412e2863634f15">setup</a> (<a class="el" href="class_main_window.html">MainWindow</a> *mainWindow, <a class="el" href="class_group_page.html">GroupPage</a> *groupPage, <a class="el" href="class_color_page.html">ColorPage</a> *colorPage, <a class="el" href="class_connection_page.html">ConnectionPage</a> *connectionPage)</td></tr>
 <tr class="memdesc:aea26a6a18aed85c38f412e2863634f15"><td class="mdescLeft">&#160;</td><td class="mdescRight">setup connect the top menu to pages it can open and close  <a href="#aea26a6a18aed85c38f412e2863634f15">More...</a><br /></td></tr>
 <tr class="separator:aea26a6a18aed85c38f412e2863634f15"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -179,11 +177,59 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="aa04531ef540961b2ed4a1d6ccabefc56"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa04531ef540961b2ed4a1d6ccabefc56">&#9670;&nbsp;</a></span>highlightButton()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void TopMenu::highlightButton </td>
+          <td>(</td>
+          <td class="paramtype">QString&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>the key to use to highlight the buttons. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a8f03a7d5ecf6c20de416a2b48dfa2c33"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f03a7d5ecf6c20de416a2b48dfa2c33">&#9670;&nbsp;</a></span>pageButtonPressed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void TopMenu::pageButtonPressed </td>
+          <td>(</td>
+          <td class="paramtype">EPage&#160;</td>
+          <td class="paramname"><em>pageButtonType</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pageButtonType</td><td>page type of button pressed. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="ae89dc587b8df0dd7b5fda5fd88f13c41"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae89dc587b8df0dd7b5fda5fd88f13c41">&#9670;&nbsp;</a></span>resizeMenuIcon</h2>
 
@@ -295,7 +341,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2017  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2018  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights GPL v3.0 Licensed.  &nbsp; &nbsp;
        </small>
        </p>

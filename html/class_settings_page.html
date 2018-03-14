@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.11.5</span>
+   &#160;<span id="projectnumber">v0.12.5</span>
    </div>
   </td>
  </tr>
@@ -83,6 +83,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_settings_page.html#ae7e3d9e01763561cc0e37a80d5b0c2d8">clickedHueInfoWidget</a> ()</td></tr>
 <tr class="memdesc:ae7e3d9e01763561cc0e37a80d5b0c2d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">clickedHueInfoWidget emits when hue info widget is clicked <br /></td></tr>
 <tr class="separator:ae7e3d9e01763561cc0e37a80d5b0c2d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b6215602f07eb13cbcb67f209e53d6b"><td class="memItemLeft" align="right" valign="top"><a id="a3b6215602f07eb13cbcb67f209e53d6b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_settings_page.html#a3b6215602f07eb13cbcb67f209e53d6b">clickedDiscovery</a> ()</td></tr>
+<tr class="memdesc:a3b6215602f07eb13cbcb67f209e53d6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">clickedDiscovery emits when discovery button is clicked <br /></td></tr>
+<tr class="separator:a3b6215602f07eb13cbcb67f209e53d6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -96,10 +100,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a53041adaf2838c970df10152a2a60e9c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_settings_page.html#a53041adaf2838c970df10152a2a60e9c">connectCommLayer</a> (<a class="el" href="class_comm_layer.html">CommLayer</a> *layer)</td></tr>
 <tr class="memdesc:a53041adaf2838c970df10152a2a60e9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">connectCommLayer connec the commlayer to this page.  <a href="#a53041adaf2838c970df10152a2a60e9c">More...</a><br /></td></tr>
 <tr class="separator:a53041adaf2838c970df10152a2a60e9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7094b8519afdb6a77db844f1396da5e3"><td class="memItemLeft" align="right" valign="top"><a id="a7094b8519afdb6a77db844f1396da5e3"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_settings_page.html#a7094b8519afdb6a77db844f1396da5e3">connectGroupsParser</a> (<a class="el" href="class_groups_parser.html">GroupsParser</a> *parser)</td></tr>
-<tr class="memdesc:a7094b8519afdb6a77db844f1396da5e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">connects the <a class="el" href="class_groups_parser.html" title="The GroupsParser class Manipulates and Reads a JSON representation of multiple lights. There exists two types of &quot;groups&quot;. The first is a collection which contains any number of light devices but does not contain any reference to the lights overall state. The second is a mood, which contains both the path to the light device and data such as its brightness, color, etc. ">GroupsParser</a> object to this UI widget. <br /></td></tr>
-<tr class="separator:a7094b8519afdb6a77db844f1396da5e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeff9510f916fa4b3913ee78c5e64c5cb"><td class="memItemLeft" align="right" valign="top"><a id="aeff9510f916fa4b3913ee78c5e64c5cb"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_settings_page.html#aeff9510f916fa4b3913ee78c5e64c5cb">show</a> ()</td></tr>
 <tr class="memdesc:aeff9510f916fa4b3913ee78c5e64c5cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when the widget is shown <br /></td></tr>
@@ -125,7 +125,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:a8822dbbffb5e9fd1c20df6d26fbdd893"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License.</dd></dl>
+<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License.</dd></dl>
 <p>It provides the ability to change the speed the LEDs update and the amount of minutes it takes for the LEDs to timeout.</p>
 <p>It also provides a way to switch between different communication types. It currently support Serial, HTTP, UDP, and Hue lights. This interface automatically populates serial and Hue connections, but allows users to add and remove connections for UDP and HTTP. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -152,7 +152,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>
@@ -201,7 +201,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2017  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2018  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights GPL v3.0 Licensed.  &nbsp; &nbsp;
        </small>
        </p>

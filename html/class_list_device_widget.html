@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.11.5</span>
+   &#160;<span id="projectnumber">v0.12.5</span>
    </div>
   </td>
  </tr>
@@ -63,24 +63,32 @@ Signals</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_device_widget.html#a7e72219cdf3c5cb3990c0b1bb37195c1">clicked</a> (QString)</td></tr>
 <tr class="memdesc:a7e72219cdf3c5cb3990c0b1bb37195c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">clicked emited whenever a mouse press is released anywhere on the widget <br /></td></tr>
 <tr class="separator:a7e72219cdf3c5cb3990c0b1bb37195c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69ff2a860508ddb9ce2770dad48acd2f"><td class="memItemLeft" align="right" valign="top"><a id="a69ff2a860508ddb9ce2770dad48acd2f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_device_widget.html#a69ff2a860508ddb9ce2770dad48acd2f">switchToggled</a> (QString, bool)</td></tr>
+<tr class="memdesc:a69ff2a860508ddb9ce2770dad48acd2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">emits the key and the state of the on/off switch when its clicked <br /></td></tr>
+<tr class="separator:a69ff2a860508ddb9ce2770dad48acd2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac0a8cbdca220719dd9262431a3957a6d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_device_widget.html#ac0a8cbdca220719dd9262431a3957a6d">ListDeviceWidget</a> (const SLightDevice &amp;<a class="el" href="class_list_device_widget.html#aa4a1054e9b6ab3a3da793f12958125d1">device</a>, const std::vector&lt; QColor &gt; &amp;colors, bool setHighlightable, QSize size, QWidget *parent=0)</td></tr>
-<tr class="memdesc:ac0a8cbdca220719dd9262431a3957a6d"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_list_device_widget.html" title="The ListDeviceWidget class This widget is used on the SettingsPage as a replacement for a QListWidget...">ListDeviceWidget</a> Constructor for multi color routines.  <a href="#ac0a8cbdca220719dd9262431a3957a6d">More...</a><br /></td></tr>
-<tr class="separator:ac0a8cbdca220719dd9262431a3957a6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4c20a28dc49698a8ac41d40c91c4760"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_device_widget.html#ab4c20a28dc49698a8ac41d40c91c4760">updateWidget</a> (const SLightDevice &amp;<a class="el" href="class_list_device_widget.html#aa4a1054e9b6ab3a3da793f12958125d1">device</a>, const std::vector&lt; QColor &gt; &amp;colors)</td></tr>
-<tr class="memdesc:ab4c20a28dc49698a8ac41d40c91c4760"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateWidget update the widget with a new state for the device.  <a href="#ab4c20a28dc49698a8ac41d40c91c4760">More...</a><br /></td></tr>
-<tr class="separator:ab4c20a28dc49698a8ac41d40c91c4760"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3028082c0a5dd9202553e73f27e8ea57"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_device_widget.html#a3028082c0a5dd9202553e73f27e8ea57">ListDeviceWidget</a> (const cor::Light &amp;<a class="el" href="class_list_device_widget.html#a94bf5318aac7edb0d75991e4700730e9">device</a>, const std::vector&lt; QColor &gt; &amp;colors, bool setHighlightable, QSize size, QWidget *parent=0)</td></tr>
+<tr class="memdesc:a3028082c0a5dd9202553e73f27e8ea57"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_list_device_widget.html" title="The ListDeviceWidget class This widget is used on the SettingsPage as a replacement for a QListWidget...">ListDeviceWidget</a> Constructor for multi color routines.  <a href="#a3028082c0a5dd9202553e73f27e8ea57">More...</a><br /></td></tr>
+<tr class="separator:a3028082c0a5dd9202553e73f27e8ea57"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71b57788418cfb67514f789aa0111753"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_device_widget.html#a71b57788418cfb67514f789aa0111753">updateWidget</a> (const cor::Light &amp;<a class="el" href="class_list_device_widget.html#a94bf5318aac7edb0d75991e4700730e9">device</a>, const std::vector&lt; QColor &gt; &amp;colors)</td></tr>
+<tr class="memdesc:a71b57788418cfb67514f789aa0111753"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateWidget update the widget with a new state for the device.  <a href="#a71b57788418cfb67514f789aa0111753">More...</a><br /></td></tr>
+<tr class="separator:a71b57788418cfb67514f789aa0111753"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab848b67108c7f1f9413b59ac44141343"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_device_widget.html#ab848b67108c7f1f9413b59ac44141343">setHighlightChecked</a> (bool <a class="el" href="class_list_device_widget.html#a1922b5650cecd3366a8d852e38a76ef3">checked</a>)</td></tr>
 <tr class="memdesc:ab848b67108c7f1f9413b59ac44141343"><td class="mdescLeft">&#160;</td><td class="mdescRight">setHighlightChecked set the widget as checked or unchecked. When it is checked it it will be a light blue color. When it isn't, it will be dark grey.  <a href="#ab848b67108c7f1f9413b59ac44141343">More...</a><br /></td></tr>
 <tr class="separator:ab848b67108c7f1f9413b59ac44141343"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0952afdca863f059771a7b3dceadebaa"><td class="memItemLeft" align="right" valign="top"><a id="a0952afdca863f059771a7b3dceadebaa"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_device_widget.html#a0952afdca863f059771a7b3dceadebaa">hideOnOffSwitch</a> (bool shouldHide)</td></tr>
+<tr class="memdesc:a0952afdca863f059771a7b3dceadebaa"><td class="mdescLeft">&#160;</td><td class="mdescRight">hides if set to true, shows if set to false. <br /></td></tr>
+<tr class="separator:a0952afdca863f059771a7b3dceadebaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1922b5650cecd3366a8d852e38a76ef3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_device_widget.html#a1922b5650cecd3366a8d852e38a76ef3">checked</a> ()</td></tr>
 <tr class="memdesc:a1922b5650cecd3366a8d852e38a76ef3"><td class="mdescLeft">&#160;</td><td class="mdescRight">checked getter for checked state  <a href="#a1922b5650cecd3366a8d852e38a76ef3">More...</a><br /></td></tr>
 <tr class="separator:a1922b5650cecd3366a8d852e38a76ef3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4a1054e9b6ab3a3da793f12958125d1"><td class="memItemLeft" align="right" valign="top">const SLightDevice &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_device_widget.html#aa4a1054e9b6ab3a3da793f12958125d1">device</a> ()</td></tr>
-<tr class="memdesc:aa4a1054e9b6ab3a3da793f12958125d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">device getter for device  <a href="#aa4a1054e9b6ab3a3da793f12958125d1">More...</a><br /></td></tr>
-<tr class="separator:aa4a1054e9b6ab3a3da793f12958125d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94bf5318aac7edb0d75991e4700730e9"><td class="memItemLeft" align="right" valign="top">const cor::Light &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_device_widget.html#a94bf5318aac7edb0d75991e4700730e9">device</a> ()</td></tr>
+<tr class="memdesc:a94bf5318aac7edb0d75991e4700730e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">device getter for device  <a href="#a94bf5318aac7edb0d75991e4700730e9">More...</a><br /></td></tr>
+<tr class="separator:a94bf5318aac7edb0d75991e4700730e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_list_collection_sub_widget"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_list_collection_sub_widget')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_list_collection_sub_widget.html">ListCollectionSubWidget</a></td></tr>
 <tr class="memitem:aa21dc57432942e21cba66faf827288fd inherit pub_methods_class_list_collection_sub_widget"><td class="memItemLeft" align="right" valign="top"><a id="aa21dc57432942e21cba66faf827288fd"></a>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_collection_sub_widget.html#aa21dc57432942e21cba66faf827288fd">~ListCollectionSubWidget</a> ()</td></tr>
@@ -110,10 +118,10 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr class="separator:aae220b722fb47daa4ac5fe65d16058d6 inherit pro_attribs_class_list_collection_sub_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
+<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ac0a8cbdca220719dd9262431a3957a6d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac0a8cbdca220719dd9262431a3957a6d">&#9670;&nbsp;</a></span>ListDeviceWidget()</h2>
+<a id="a3028082c0a5dd9202553e73f27e8ea57"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3028082c0a5dd9202553e73f27e8ea57">&#9670;&nbsp;</a></span>ListDeviceWidget()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -124,7 +132,7 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
         <tr>
           <td class="memname">ListDeviceWidget::ListDeviceWidget </td>
           <td>(</td>
-          <td class="paramtype">const SLightDevice &amp;&#160;</td>
+          <td class="paramtype">const cor::Light &amp;&#160;</td>
           <td class="paramname"><em>device</em>, </td>
         </tr>
         <tr>
@@ -172,7 +180,7 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
   </table>
   </dd>
 </dl>
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>
@@ -203,8 +211,8 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 
 </div>
 </div>
-<a id="aa4a1054e9b6ab3a3da793f12958125d1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa4a1054e9b6ab3a3da793f12958125d1">&#9670;&nbsp;</a></span>device()</h2>
+<a id="a94bf5318aac7edb0d75991e4700730e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a94bf5318aac7edb0d75991e4700730e9">&#9670;&nbsp;</a></span>device()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -213,7 +221,7 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const SLightDevice&amp; ListDeviceWidget::device </td>
+          <td class="memname">const cor::Light&amp; ListDeviceWidget::device </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -254,8 +262,8 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 
 </div>
 </div>
-<a id="ab4c20a28dc49698a8ac41d40c91c4760"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab4c20a28dc49698a8ac41d40c91c4760">&#9670;&nbsp;</a></span>updateWidget()</h2>
+<a id="a71b57788418cfb67514f789aa0111753"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71b57788418cfb67514f789aa0111753">&#9670;&nbsp;</a></span>updateWidget()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -263,7 +271,7 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
         <tr>
           <td class="memname">void ListDeviceWidget::updateWidget </td>
           <td>(</td>
-          <td class="paramtype">const SLightDevice &amp;&#160;</td>
+          <td class="paramtype">const cor::Light &amp;&#160;</td>
           <td class="paramname"><em>device</em>, </td>
         </tr>
         <tr>
@@ -301,7 +309,7 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2017  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2018  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights GPL v3.0 Licensed.  &nbsp; &nbsp;
        </small>
        </p>

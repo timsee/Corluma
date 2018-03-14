@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.11.5</span>
+   &#160;<span id="projectnumber">v0.12.5</span>
    </div>
   </td>
  </tr>
@@ -64,8 +64,9 @@ $(function() {
 <li>changeColorRGB()
 : <a class="el" href="class_comm_hue.html#a39706ac1161e2b4787f9e29848953fa1">CommHue</a>
 </li>
-<li>changedName()
-: <a class="el" href="class_hue_light_info_widget.html#a57ce6d5b4f1af0a26a69abc541e4ed92">HueLightInfoWidget</a>
+<li>changedDeviceCount()
+: <a class="el" href="class_connection_page.html#a0c2d02665dd86234286ad1f6e53c5e89">ConnectionPage</a>
+, <a class="el" href="class_group_page.html#ad0c3865862727fc0d3631b30032e36a3">GroupPage</a>
 </li>
 <li>changeEvent()
 : <a class="el" href="class_main_window.html#ac7c881667b4ba4986b5a0030452ee3f0">MainWindow</a>
@@ -86,12 +87,15 @@ $(function() {
 : <a class="el" href="class_global_settings_widget.html#ac27fdf81c02a2e8c8524d86259093d25">GlobalSettingsWidget</a>
 </li>
 <li>checked()
-: <a class="el" href="class_hue_light_info_widget.html#a55b32baa1c5ddd23770d1fb26f5a7189">HueLightInfoWidget</a>
-, <a class="el" href="class_list_device_widget.html#a1922b5650cecd3366a8d852e38a76ef3">ListDeviceWidget</a>
+: <a class="el" href="class_list_device_widget.html#a1922b5650cecd3366a8d852e38a76ef3">ListDeviceWidget</a>
 , <a class="el" href="class_list_mood_widget.html#a6d1f982b6dc6a9846d4c3a84d88c666e">ListMoodWidget</a>
 </li>
+<li>checkedDevices()
+: <a class="el" href="class_list_devices_group_widget.html#aeefc840b4baae29ecb32814310c93c55">ListDevicesGroupWidget</a>
+, <a class="el" href="class_list_edit_widget.html#a1a75424d3fa8d4ee8c08ee3d500959cb">ListEditWidget</a>
+</li>
 <li>checkThrottle()
-: <a class="el" href="class_data_sync.html#a5459cb352bc70cfc5868a44c5b38ebb6">DataSync</a>
+: <a class="el" href="class_data_sync.html#ac7d7831f1d499a1dcb5886f0a3ed1def">DataSync</a>
 </li>
 <li>chooseAmbient()
 : <a class="el" href="class_color_picker.html#a24d9195c59e1f623fcc4afe73bbaae65">ColorPicker</a>
@@ -102,9 +106,6 @@ $(function() {
 <li>cleanupSync()
 : <a class="el" href="class_data_sync.html#af54792d62253f5749e4d164f3b058219">DataSync</a>
 </li>
-<li>clearAllClicked()
-: <a class="el" href="class_list_devices_group_widget.html#ac20c3ac56fba4ad9d8d305d342b5ccc4">ListDevicesGroupWidget</a>
-</li>
 <li>clearButtonPressed()
 : <a class="el" href="class_connection_page.html#a68ae748a051ddc977af7886b29a92643">ConnectionPage</a>
 </li>
@@ -112,10 +113,11 @@ $(function() {
 : <a class="el" href="class_data_layer.html#a67e246c9fd2a4d8362eee3602abc5cbd">DataLayer</a>
 </li>
 <li>clicked()
-: <a class="el" href="class_corluma_top_widget.html#a1dacba4ea3b4ebcb8b8983285198719e">CorlumaTopWidget</a>
-, <a class="el" href="class_hue_light_info_widget.html#a8cf6e8100daab2060cb598500e91034c">HueLightInfoWidget</a>
-, <a class="el" href="class_list_device_widget.html#a7e72219cdf3c5cb3990c0b1bb37195c1">ListDeviceWidget</a>
+: <a class="el" href="class_list_device_widget.html#a7e72219cdf3c5cb3990c0b1bb37195c1">ListDeviceWidget</a>
 , <a class="el" href="class_list_mood_widget.html#a81af6de39d4f4c3e9a5d61aab00be58c">ListMoodWidget</a>
+</li>
+<li>clickedDiscovery()
+: <a class="el" href="class_settings_page.html#a3b6215602f07eb13cbcb67f209e53d6b">SettingsPage</a>
 </li>
 <li>clickedEditButton()
 : <a class="el" href="class_connection_page.html#aa252ffd87e84f533f6a4b777c5865867">ConnectionPage</a>
@@ -131,9 +133,7 @@ $(function() {
 : <a class="el" href="class_main_window.html#a09ff1200b688614b07ed7fa2e77fda52">MainWindow</a>
 </li>
 <li>closePressed()
-: <a class="el" href="class_corluma_web_view.html#ade94d29f5a289e6341f263f6a7e613fa">CorlumaWebView</a>
-, <a class="el" href="class_hue_light_discovery.html#ab7e5260a7decac42380bd440410e8d5d">HueLightDiscovery</a>
-, <a class="el" href="class_settings_page.html#a6e98bb704319821f92ca2f7c38a2bdb5">SettingsPage</a>
+: <a class="el" href="class_settings_page.html#a6e98bb704319821f92ca2f7c38a2bdb5">SettingsPage</a>
 </li>
 <li>closestColorGroupToColor()
 : <a class="el" href="class_data_layer.html#ac3d7cd218cf3d739d58357d5352d0621">DataLayer</a>
@@ -142,7 +142,8 @@ $(function() {
 : <a class="el" href="class_discovery_page.html#a31dc989cbddd3d1abd781a0a3a288202">DiscoveryPage</a>
 </li>
 <li>collectionList()
-: <a class="el" href="class_groups_parser.html#a45a9c07cb8dd494cf7ff00f0291dbf74">GroupsParser</a>
+: <a class="el" href="class_comm_layer.html#aaedd632ad6bf8c316976d3095164bd1b">CommLayer</a>
+, <a class="el" href="class_groups_parser.html#adcfd011f898b6ae2f6288356aaef2f9c">GroupsParser</a>
 </li>
 <li>color()
 : <a class="el" href="group__gettersetters.html#gae0a97f86188c1d373af5153e7e311519">LightingRoutines</a>
@@ -151,12 +152,8 @@ $(function() {
 : <a class="el" href="class_color_page.html#aeca3e41f88b362a02d9262de3280d179">ColorPage</a>
 , <a class="el" href="class_r_g_b_sliders.html#a443ac1367bfc37d8669c0a35b519bcfa">RGBSliders</a>
 </li>
-<li>ColorGrid()
-: <a class="el" href="class_color_grid.html#a43484942462cc5ba0707847b1bcfe981">ColorGrid</a>
-</li>
 <li>colorGroup()
-: <a class="el" href="class_corluma_button.html#a7b7ab2ecc19eabe6534be715dcc2f32a">CorlumaButton</a>
-, <a class="el" href="class_data_layer.html#a29a5a68fbca1071a3a88faf1c4e9cd04">DataLayer</a>
+: <a class="el" href="class_data_layer.html#a29a5a68fbca1071a3a88faf1c4e9cd04">DataLayer</a>
 </li>
 <li>ColorPage()
 : <a class="el" href="class_color_page.html#ab33b2af1b7bb75eed9b281791b158e0b">ColorPage</a>
@@ -175,9 +172,6 @@ $(function() {
 </li>
 <li>ColorSchemeCircles()
 : <a class="el" href="class_color_scheme_circles.html#ad09ed6791a61d6dcda0d5a100e82a91a">ColorSchemeCircles</a>
-</li>
-<li>ColorSchemeGrid()
-: <a class="el" href="class_color_scheme_grid.html#afee558f63a14c6d942ef9a346f0171e7">ColorSchemeGrid</a>
 </li>
 <li>colorsUpdate()
 : <a class="el" href="class_color_picker.html#a774cfe4eb3ff95358c490f1e08ac659f">ColorPicker</a>
@@ -227,51 +221,23 @@ $(function() {
 <li>connectCommLayer()
 : <a class="el" href="class_connection_page.html#a254da6dff4fe5c236295da18f5e83654">ConnectionPage</a>
 , <a class="el" href="class_discovery_page.html#abcb0ab4458528ff4b9878fc8cedddf8c">DiscoveryPage</a>
-, <a class="el" href="class_edit_group_page.html#aab3911400357fd7e884015c89fc0c326">EditGroupPage</a>
 , <a class="el" href="class_group_page.html#a9d075826108642bcec4f5f95019a2a2a">GroupPage</a>
-, <a class="el" href="class_hue_light_discovery.html#ab02573556eafe8f27bbbe88cd1026d92">HueLightDiscovery</a>
 , <a class="el" href="class_settings_page.html#a53041adaf2838c970df10152a2a60e9c">SettingsPage</a>
 </li>
 <li>connectedHues()
-: <a class="el" href="class_comm_hue.html#a57ff41ac21bb508ba33f0402e5ab57b5">CommHue</a>
+: <a class="el" href="class_comm_hue.html#a7f8dc965a76d29371339205f75645326">CommHue</a>
 </li>
 <li>connectGroupsParser()
-: <a class="el" href="class_connection_page.html#aa1868d779155e071a6563a1d0a2e6450">ConnectionPage</a>
-, <a class="el" href="class_data_sync_hue.html#a1ac5ace689a25c17059825308050b136">DataSyncHue</a>
-, <a class="el" href="class_edit_group_page.html#a91bb0029bf3c8afee2260ee2d5f36078">EditGroupPage</a>
-, <a class="el" href="class_group_page.html#af12217cce215e88627f8e98c0100b76a">GroupPage</a>
-, <a class="el" href="class_settings_page.html#a7094b8519afdb6a77db844f1396da5e3">SettingsPage</a>
+: <a class="el" href="class_data_sync_hue.html#a1ac5ace689a25c17059825308050b136">DataSyncHue</a>
 </li>
 <li>ConnectionPage()
 : <a class="el" href="class_connection_page.html#ae40a8743330a681f20cfb1fa7f8d8d35">ConnectionPage</a>
 </li>
 <li>connectionStatusChanged()
 : <a class="el" href="class_discovery_widget.html#a4c45425d7037188b1f16e5d685d68610">DiscoveryWidget</a>
-, <a class="el" href="class_hue_bridge_discovery.html#aeaa4fa24d9d442379b0f25cbe601a540">HueBridgeDiscovery</a>
 </li>
-<li>CorlumaButton()
-: <a class="el" href="class_corluma_button.html#abd18ef3e46070188737e1dad13f4c806">CorlumaButton</a>
-</li>
-<li>CorlumaCheckBox()
-: <a class="el" href="class_corluma_check_box.html#a3df22b47b828b08c61ec980dd4fc1f05">CorlumaCheckBox</a>
-</li>
-<li>CorlumaListWidget()
-: <a class="el" href="class_corluma_list_widget.html#aa4e5055b6ae831d480b35d8194cd9c73">CorlumaListWidget</a>
-</li>
-<li>CorlumaSlider()
-: <a class="el" href="class_corluma_slider.html#a25431f2253b63e2ad2ce7ea98d810b89">CorlumaSlider</a>
-</li>
-<li>CorlumaStatusIcon()
-: <a class="el" href="class_corluma_status_icon.html#a00dbb476204c691e6b607c83a216c18f">CorlumaStatusIcon</a>
-</li>
-<li>CorlumaTopWidget()
-: <a class="el" href="class_corluma_top_widget.html#ab7d174d9128afc9d852d742f48ee1da5">CorlumaTopWidget</a>
-</li>
-<li>CorlumaWebView()
-: <a class="el" href="class_corluma_web_view.html#ad329a0abdac0d9770b71e3cca2a16d06">CorlumaWebView</a>
-</li>
-<li>count()
-: <a class="el" href="class_corluma_list_widget.html#a758811160e33965817fd26c078a16ca3">CorlumaListWidget</a>
+<li>connectLayers()
+: <a class="el" href="class_list_edit_widget.html#a354cb340d3883d9f2b95097140cebbe0">ListEditWidget</a>
 </li>
 <li>countDevicesOfType()
 : <a class="el" href="class_data_layer.html#af89e4a6dd32842b5076f8770836e5620">DataLayer</a>
@@ -280,13 +246,7 @@ $(function() {
 : <a class="el" href="class_c_r_c_calculator.html#ad0289e1f6f6cdd9ec92d2e5553c8e260">CRCCalculator</a>
 </li>
 <li>createGroup()
-: <a class="el" href="class_comm_hue.html#a55b15eacf687834370493dc4a2e993ab">CommHue</a>
-</li>
-<li>createHueGroup()
-: <a class="el" href="class_comm_layer.html#af436fa8543834d585d66edd64e251f19">CommLayer</a>
-</li>
-<li>createHueTimeout()
-: <a class="el" href="class_comm_layer.html#a7fa720d1c21a893e0da4c4c19f1ba4a7">CommLayer</a>
+: <a class="el" href="class_comm_hue.html#a78d7772252e786d50204224eb6a5795b">CommHue</a>
 </li>
 <li>createIdleTimeout()
 : <a class="el" href="class_comm_hue.html#a2b0fbc05c68eae8656ccf9ae2a2d1753">CommHue</a>
@@ -301,7 +261,7 @@ $(function() {
 : <a class="el" href="class_data_layer.html#a11a35046ae18b2515bce96ef85ef72da">DataLayer</a>
 </li>
 <li>currentDevices()
-: <a class="el" href="class_data_layer.html#ab66e1ea4324f9e1d0e06ad2bf560d40e">DataLayer</a>
+: <a class="el" href="class_data_layer.html#adf48d7a30d824211e10aba6a82e3399f">DataLayer</a>
 </li>
 <li>currentGroup()
 : <a class="el" href="class_data_layer.html#aeaf3d0214c1df9aeea53e29a16b177d7">DataLayer</a>
@@ -330,7 +290,7 @@ $(function() {
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2017  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2018  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights GPL v3.0 Licensed.  &nbsp; &nbsp;
        </small>
        </p>

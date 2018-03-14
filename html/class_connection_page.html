@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.11.5</span>
+   &#160;<span id="projectnumber">v0.12.5</span>
    </div>
   </td>
  </tr>
@@ -75,10 +75,10 @@ Signals</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#a7fd46cd70a8e0be65aaf8e8aae7e3577">updateMainIcons</a> ()</td></tr>
 <tr class="memdesc:a7fd46cd70a8e0be65aaf8e8aae7e3577"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used to signal back to the main page that it should update its top-left icon with new RGB values. <br /></td></tr>
 <tr class="separator:a7fd46cd70a8e0be65aaf8e8aae7e3577"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad4c2a2386e6a0ff6e365efec5b7d0fbe"><td class="memItemLeft" align="right" valign="top"><a id="ad4c2a2386e6a0ff6e365efec5b7d0fbe"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#ad4c2a2386e6a0ff6e365efec5b7d0fbe">deviceCountChanged</a> ()</td></tr>
-<tr class="memdesc:ad4c2a2386e6a0ff6e365efec5b7d0fbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceCountChanged signaled to UI assets whenever a click on the page results in changing the number of devices connected. <br /></td></tr>
-<tr class="separator:ad4c2a2386e6a0ff6e365efec5b7d0fbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c2d02665dd86234286ad1f6e53c5e89"><td class="memItemLeft" align="right" valign="top"><a id="a0c2d02665dd86234286ad1f6e53c5e89"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#a0c2d02665dd86234286ad1f6e53c5e89">changedDeviceCount</a> ()</td></tr>
+<tr class="memdesc:a0c2d02665dd86234286ad1f6e53c5e89"><td class="mdescLeft">&#160;</td><td class="mdescRight">changedDeviceCount signaled to UI assets whenever a click on the page results in changing the number of devices connected. <br /></td></tr>
+<tr class="separator:a0c2d02665dd86234286ad1f6e53c5e89"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5dcb7da9cac0475c3010af59056ad893"><td class="memItemLeft" align="right" valign="top"><a id="a5dcb7da9cac0475c3010af59056ad893"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#a5dcb7da9cac0475c3010af59056ad893">discoveryClicked</a> ()</td></tr>
 <tr class="memdesc:a5dcb7da9cac0475c3010af59056ad893"><td class="mdescLeft">&#160;</td><td class="mdescRight">discoveryClicked emited whenever the discovery button is clicked. <br /></td></tr>
@@ -104,18 +104,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a254da6dff4fe5c236295da18f5e83654"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#a254da6dff4fe5c236295da18f5e83654">connectCommLayer</a> (<a class="el" href="class_comm_layer.html">CommLayer</a> *layer)</td></tr>
 <tr class="memdesc:a254da6dff4fe5c236295da18f5e83654"><td class="mdescLeft">&#160;</td><td class="mdescRight">connectCommLayer connect to commlayer. In a future update the commLayer pointer on every page will be totally removed in favor of <a class="el" href="class_data_sync.html" title="The DataSync base class is used for datasync threads. These threads compares the data layer&#39;s represe...">DataSync</a>, but for now theres some edge cases that require certain pages to have a commlayer pointer.  <a href="#a254da6dff4fe5c236295da18f5e83654">More...</a><br /></td></tr>
 <tr class="separator:a254da6dff4fe5c236295da18f5e83654"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa1868d779155e071a6563a1d0a2e6450"><td class="memItemLeft" align="right" valign="top"><a id="aa1868d779155e071a6563a1d0a2e6450"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#aa1868d779155e071a6563a1d0a2e6450">connectGroupsParser</a> (<a class="el" href="class_groups_parser.html">GroupsParser</a> *parser)</td></tr>
-<tr class="memdesc:aa1868d779155e071a6563a1d0a2e6450"><td class="mdescLeft">&#160;</td><td class="mdescRight">connects the <a class="el" href="class_groups_parser.html" title="The GroupsParser class Manipulates and Reads a JSON representation of multiple lights. There exists two types of &quot;groups&quot;. The first is a collection which contains any number of light devices but does not contain any reference to the lights overall state. The second is a mood, which contains both the path to the light device and data such as its brightness, color, etc. ">GroupsParser</a> object to this UI widget. <br /></td></tr>
-<tr class="separator:aa1868d779155e071a6563a1d0a2e6450"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0e87a9909253532dc3ba7672ea41eccd"><td class="memItemLeft" align="right" valign="top"><a id="a0e87a9909253532dc3ba7672ea41eccd"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#a0e87a9909253532dc3ba7672ea41eccd">displayRooms</a> ()</td></tr>
-<tr class="memdesc:a0e87a9909253532dc3ba7672ea41eccd"><td class="mdescLeft">&#160;</td><td class="mdescRight">display the rooms in the connection page widget <br /></td></tr>
-<tr class="separator:a0e87a9909253532dc3ba7672ea41eccd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab8facf4f512cb6d17a688a43505c2812"><td class="memItemLeft" align="right" valign="top"><a id="ab8facf4f512cb6d17a688a43505c2812"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#ab8facf4f512cb6d17a688a43505c2812">displayGroups</a> ()</td></tr>
-<tr class="memdesc:ab8facf4f512cb6d17a688a43505c2812"><td class="mdescLeft">&#160;</td><td class="mdescRight">displays the groups in the connection page widget. <br /></td></tr>
-<tr class="separator:ab8facf4f512cb6d17a688a43505c2812"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a036f85d767b4fad0de1a8b3e4e47ba97"><td class="memItemLeft" align="right" valign="top"><a id="a036f85d767b4fad0de1a8b3e4e47ba97"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#a036f85d767b4fad0de1a8b3e4e47ba97">displayListWidget</a> (ECurrentConnectionWidget widget)</td></tr>
+<tr class="memdesc:a036f85d767b4fad0de1a8b3e4e47ba97"><td class="mdescLeft">&#160;</td><td class="mdescRight">programmatically change the currently displayed widget <br /></td></tr>
+<tr class="separator:a036f85d767b4fad0de1a8b3e4e47ba97"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab565890a97717688f9c9bf13165ce5e8"><td class="memItemLeft" align="right" valign="top"><a id="ab565890a97717688f9c9bf13165ce5e8"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_connection_page.html#ab565890a97717688f9c9bf13165ce5e8">updateConnectionList</a> ()</td></tr>
 <tr class="memdesc:ab565890a97717688f9c9bf13165ce5e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateConnectionList updates the GUI elements that display the <a class="el" href="class_comm_layer.html" title="The CommLayer class provides communication protocols that allow the user to connect and send packets ...">CommLayer</a>'s connection list. <br /></td></tr>
@@ -173,7 +165,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <tr class="separator:a8f1078d30d704ce6392c6803ce5a11ff inherit pro_attribs_class_lighting_page"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
+<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ae40a8743330a681f20cfb1fa7f8d8d35"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae40a8743330a681f20cfb1fa7f8d8d35">&#9670;&nbsp;</a></span>ConnectionPage()</h2>
@@ -204,7 +196,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
   </table>
   </dd>
 </dl>
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>
@@ -253,7 +245,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2017  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2018  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights GPL v3.0 Licensed.  &nbsp; &nbsp;
        </small>
        </p>

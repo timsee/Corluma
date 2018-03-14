@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.11.5</span>
+   &#160;<span id="projectnumber">v0.12.5</span>
    </div>
   </td>
  </tr>
@@ -66,10 +66,10 @@ Public Slots</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
-<tr class="memitem:aaca332ce600cf1249d5e9da7a05db2b5"><td class="memItemLeft" align="right" valign="top"><a id="aaca332ce600cf1249d5e9da7a05db2b5"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_page.html#aaca332ce600cf1249d5e9da7a05db2b5">deviceCountChanged</a> ()</td></tr>
-<tr class="memdesc:aaca332ce600cf1249d5e9da7a05db2b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceCountChanged signaled to UI assets whenever a click on the page results in changing the number of devices connected. <br /></td></tr>
-<tr class="separator:aaca332ce600cf1249d5e9da7a05db2b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0c3865862727fc0d3631b30032e36a3"><td class="memItemLeft" align="right" valign="top"><a id="ad0c3865862727fc0d3631b30032e36a3"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_page.html#ad0c3865862727fc0d3631b30032e36a3">changedDeviceCount</a> ()</td></tr>
+<tr class="memdesc:ad0c3865862727fc0d3631b30032e36a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">changedDeviceCount signaled to UI assets whenever a click on the page results in changing the number of devices connected. <br /></td></tr>
+<tr class="separator:ad0c3865862727fc0d3631b30032e36a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a79ea3f5463a3b73584adef7daa55f433"><td class="memItemLeft" align="right" valign="top"><a id="a79ea3f5463a3b73584adef7daa55f433"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_page.html#a79ea3f5463a3b73584adef7daa55f433">updateMainIcons</a> ()</td></tr>
 <tr class="memdesc:a79ea3f5463a3b73584adef7daa55f433"><td class="mdescLeft">&#160;</td><td class="mdescRight">used to signal back to the main page that it should update its top-left icon with a new color mode <br /></td></tr>
@@ -99,18 +99,18 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_page.html#ae90c87acbd8521a19e2c0fc1e7c5f79c">setupButtons</a> ()</td></tr>
 <tr class="memdesc:ae90c87acbd8521a19e2c0fc1e7c5f79c"><td class="mdescLeft">&#160;</td><td class="mdescRight">setupButtons sets up the routine buttons. Requires the <a class="el" href="class_data_layer.html" title="The DataLayer class stores and maintains the data about the state and settings of the application...">DataLayer</a> of the application to be set up first. <br /></td></tr>
 <tr class="separator:ae90c87acbd8521a19e2c0fc1e7c5f79c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af12217cce215e88627f8e98c0100b76a"><td class="memItemLeft" align="right" valign="top"><a id="af12217cce215e88627f8e98c0100b76a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_page.html#af12217cce215e88627f8e98c0100b76a">connectGroupsParser</a> (<a class="el" href="class_groups_parser.html">GroupsParser</a> *parser)</td></tr>
-<tr class="memdesc:af12217cce215e88627f8e98c0100b76a"><td class="mdescLeft">&#160;</td><td class="mdescRight">connects the <a class="el" href="class_groups_parser.html" title="The GroupsParser class Manipulates and Reads a JSON representation of multiple lights. There exists two types of &quot;groups&quot;. The first is a collection which contains any number of light devices but does not contain any reference to the lights overall state. The second is a mood, which contains both the path to the light device and data such as its brightness, color, etc. ">GroupsParser</a> object to this UI widget. <br /></td></tr>
-<tr class="separator:af12217cce215e88627f8e98c0100b76a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7372bb8204dad0c2938f1b6a4daf091d"><td class="memItemLeft" align="right" valign="top"><a id="a7372bb8204dad0c2938f1b6a4daf091d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_page.html#a7372bb8204dad0c2938f1b6a4daf091d">showCustomMoods</a> ()</td></tr>
-<tr class="memdesc:a7372bb8204dad0c2938f1b6a4daf091d"><td class="mdescLeft">&#160;</td><td class="mdescRight">show the custom moods widget, hide the preset groups <br /></td></tr>
-<tr class="separator:a7372bb8204dad0c2938f1b6a4daf091d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac3cadd610dc83aa75d89302e1ca2a84c"><td class="memItemLeft" align="right" valign="top"><a id="ac3cadd610dc83aa75d89302e1ca2a84c"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_page.html#ac3cadd610dc83aa75d89302e1ca2a84c">showPresetArduinoGroups</a> ()</td></tr>
-<tr class="memdesc:ac3cadd610dc83aa75d89302e1ca2a84c"><td class="mdescLeft">&#160;</td><td class="mdescRight">show the preset groups widgets, hide the custom moods <br /></td></tr>
-<tr class="separator:ac3cadd610dc83aa75d89302e1ca2a84c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ffdc767ed5f62781a629193b768eaa4"><td class="memItemLeft" align="right" valign="top"><a id="a8ffdc767ed5f62781a629193b768eaa4"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_page.html#a8ffdc767ed5f62781a629193b768eaa4">show</a> ()</td></tr>
+<tr class="memdesc:a8ffdc767ed5f62781a629193b768eaa4"><td class="mdescLeft">&#160;</td><td class="mdescRight">called whenever the group page is shown <br /></td></tr>
+<tr class="separator:a8ffdc767ed5f62781a629193b768eaa4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ba21f9ed2aedf7476595d49c21e01e8"><td class="memItemLeft" align="right" valign="top"><a id="a1ba21f9ed2aedf7476595d49c21e01e8"></a>
+EGroupMode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_page.html#a1ba21f9ed2aedf7476595d49c21e01e8">mode</a> ()</td></tr>
+<tr class="memdesc:a1ba21f9ed2aedf7476595d49c21e01e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for current mode of page <br /></td></tr>
+<tr class="separator:a1ba21f9ed2aedf7476595d49c21e01e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace0436fc1ffc69b2c75f615d003087b4"><td class="memItemLeft" align="right" valign="top"><a id="ace0436fc1ffc69b2c75f615d003087b4"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_page.html#ace0436fc1ffc69b2c75f615d003087b4">setMode</a> (EGroupMode <a class="el" href="class_group_page.html#a1ba21f9ed2aedf7476595d49c21e01e8">mode</a>)</td></tr>
+<tr class="memdesc:ace0436fc1ffc69b2c75f615d003087b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">programmatically set the mode of the page <br /></td></tr>
+<tr class="separator:ace0436fc1ffc69b2c75f615d003087b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac8307fb358e521fe3e2660c622f1eb50"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_page.html#ac8307fb358e521fe3e2660c622f1eb50">showPresetHueGroups</a> ()</td></tr>
 <tr class="separator:ac8307fb358e521fe3e2660c622f1eb50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d075826108642bcec4f5f95019a2a2a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_page.html#a9d075826108642bcec4f5f95019a2a2a">connectCommLayer</a> (<a class="el" href="class_comm_layer.html">CommLayer</a> *layer)</td></tr>
@@ -187,7 +187,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2017. Released under the GNU General Public License. </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>
@@ -197,9 +197,6 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void GroupPage::connectCommLayer </td>
@@ -209,11 +206,6 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -332,7 +324,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2017  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; LightingGUI Copyright 2015 - 2018  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights GPL v3.0 Licensed.  &nbsp; &nbsp;
        </small>
        </p>
