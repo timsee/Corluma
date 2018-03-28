@@ -118,10 +118,10 @@ public slots:
     /*!
      * \brief multiButtonClicked every button setup as a presetButton will signal
      *        this slot whenever they are clicked.
-     * \param routine the stored ELightingRoutine of the button cast to an int.
-     * \param colorGroup the stored EColorGroup of the button cast to an int.
+     * \param routine the stored ELightingRoutine of the button
+     * \param colorGroup the stored EColorGroup of the button
      */
-    void multiButtonClicked(int routine, int colorGroup);
+    void multiButtonClicked(ELightingRoutine routine, EColorGroup colorGroup);
 
 private slots:
     /*!

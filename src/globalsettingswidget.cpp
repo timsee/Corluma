@@ -29,7 +29,6 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
                              mSpacerPixels * 2,
                              mSpacerPixels * 2);
 
-
     //-----------
     // Labels
     //-----------
@@ -102,12 +101,17 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
     mArduCorButton->setCheckable(true);
     mArduCorButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    mHueButton    = new QPushButton(this);
+    mHueButton        = new QPushButton(this);
     mHueButton->setCheckable(true);
     mHueButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
+    mNanoLeafButton    = new QPushButton(this);
+    mNanoLeafButton->setCheckable(true);
+    mNanoLeafButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
     mConnectionButtons = { mArduCorButton,
-                    mHueButton};
+                         mHueButton,
+                         mNanoLeafButton};
 
     connect(mSpeedSlider, SIGNAL(valueChanged(int)), this, SLOT(speedChanged(int)));
     connect(mTimeoutSlider, SIGNAL(valueChanged(int)), this, SLOT(timeoutChanged(int)));
@@ -117,6 +121,9 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
 
     connect(mArduCorButton, SIGNAL(clicked(bool)), this, SLOT(arduCorButtonClicked(bool)));
     mArduCorButton->setText("ArduCor");
+
+    connect(mNanoLeafButton, SIGNAL(clicked(bool)), this, SLOT(nanoLeafButtonClicked(bool)));
+    mNanoLeafButton->setText("NanoLeaf");
 
     //-----------
     // Access Persistent Memory
@@ -134,29 +141,34 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
 
 
 void GlobalSettingsWidget::hueCheckboxClicked(bool checked) {
-    checkBoxClicked(ECommType::eHue, checked);
+    checkBoxClicked(ECommTypeSettings::eHue, checked);
 }
 
 void GlobalSettingsWidget::arduCorButtonClicked(bool checked) {
-    checkBoxClicked(ECommType::eUDP, checked);
+    checkBoxClicked(ECommTypeSettings::eArduCor, checked);
 }
 
+void GlobalSettingsWidget::nanoLeafButtonClicked(bool checked) {
+    checkBoxClicked(ECommTypeSettings::eNanoLeaf, checked);
+}
 
 void GlobalSettingsWidget::checkCheckBoxes() {
-    if (mData->commTypeSettings()->commTypeEnabled(ECommType::eHue)) {
+    if (mData->commTypeSettings()->commTypeSettingsEnabled(ECommTypeSettings::eHue)) {
         mHueButton->setChecked(true);
-       // checkBox->setStyleSheet("background-color:#4A4949;");
     } else {
         mHueButton->setChecked(false);
-       // checkBox->setStyleSheet("background-color: #000000;");
     }
 
-    if (mData->commTypeSettings()->commTypeEnabled(ECommType::eUDP)) {
+    if (mData->commTypeSettings()->commTypeSettingsEnabled(ECommTypeSettings::eArduCor)) {
         mArduCorButton->setChecked(true);
-       // checkBox->setStyleSheet("background-color:#4A4949;");
     } else {
         mArduCorButton->setChecked(false);
-       // checkBox->setStyleSheet("background-color: #000000;");
+    }
+
+    if (mData->commTypeSettings()->commTypeSettingsEnabled(ECommTypeSettings::eNanoLeaf)) {
+        mNanoLeafButton->setChecked(true);
+    } else {
+        mNanoLeafButton->setChecked(false);
     }
 }
 
@@ -185,44 +197,43 @@ void GlobalSettingsWidget::timeoutChanged(int newTimeout) {
 
 
 
-void GlobalSettingsWidget::checkBoxClicked(ECommType type, bool checked) {
+void GlobalSettingsWidget::checkBoxClicked(ECommTypeSettings type, bool checked) {
     bool successful = mData->commTypeSettings()->enableCommType(type, checked);
-    if (type == ECommType::eUDP) {
-        mData->commTypeSettings()->enableCommType(ECommType::eHTTP, checked);
-#ifndef MOBILE_BUILD
-        mData->commTypeSettings()->enableCommType(ECommType::eSerial, checked);
-#endif
+    if (type == ECommTypeSettings::eArduCor) {
+        mData->commTypeSettings()->enableCommType(ECommTypeSettings::eArduCor, checked);
     }
     if (!successful) {
-        mConnectionButtons[mData->commTypeSettings()->indexOfCommTypeSettings(type)]->setChecked(true);
+        mConnectionButtons[(uint32_t)type]->setChecked(true);
        // mConnectionButtons[mData->commTypeSettings()->indexOfCommTypeSettings(type)]->setStyleSheet("background-color:#4A4949;");
     }
 
     if (checked) {
         mComm->startup(type);
-        if (type == ECommType::eUDP) {
-            mComm->startup(ECommType::eHTTP);
-#ifndef MOBILE_BUILD
-            mComm->startup(ECommType::eSerial);
-#endif
-        }
     } else {
-        mComm->shutdown(type);
-        mData->removeDevicesOfType(type);
-        if (type == ECommType::eUDP) {
-            mComm->shutdown(ECommType::eHTTP);
+        if (type == ECommTypeSettings::eArduCor) {
+            mComm->shutdown(type);
+            mData->removeDevicesOfType(ECommType::eUDP);
             mData->removeDevicesOfType(ECommType::eHTTP);
 #ifndef MOBILE_BUILD
-            mComm->shutdown(ECommType::eSerial);
             mData->removeDevicesOfType(ECommType::eSerial);
 #endif
+        } else if (type == ECommTypeSettings::eHue) {
+            mComm->shutdown(type);
+            mData->removeDevicesOfType(ECommType::eHue);
+
+        } else if (type == ECommTypeSettings::eNanoLeaf) {
+            mComm->shutdown(type);
+            mData->removeDevicesOfType(ECommType::eNanoLeaf);
         }
 
+
         // update the UI accordingly
-        if (type == ECommType::eHue) {
+        if (type == ECommTypeSettings::eHue) {
             mHueButton->setChecked(false);
-        } else if (type == ECommType::eUDP) {
+        } else if (type == ECommTypeSettings::eArduCor) {
             mArduCorButton->setChecked(false);
+        } else if (type == ECommTypeSettings::eNanoLeaf) {
+            mNanoLeafButton->setChecked(false);
         }
     }
 }
@@ -275,23 +286,6 @@ void GlobalSettingsWidget::paintEvent(QPaintEvent *) {
 
 void GlobalSettingsWidget::advanceModeButtonPressed(bool isChecked) {
     showAdvanceMode(isChecked);
-    mData->commTypeSettings()->commTypes();
-    // turn off advanced comm streams
-    if (!isChecked) {
-        std::vector<ECommType> usedTypes = mData->commTypeSettings()->commTypes();
-        for (uint32_t x = 0; x < usedTypes.size(); ++x) {
-            if (usedTypes[x] == ECommType::eUDP) {
-                if (mData->commTypeSettings()->commTypeEnabled(usedTypes[x])) {
-                    checkBoxClicked(ECommType::eUDP, false);
-                }
-            } else if (usedTypes[x] != ECommType::eHue){
-                if (mData->commTypeSettings()->commTypeEnabled(usedTypes[x])) {
-                    checkBoxClicked(usedTypes[x], false);
-                }
-            }
-
-        }
-    }
     mSettings->setValue(kAdvanceModeKey, QString::number((int)isChecked));
 }
 
@@ -391,7 +385,12 @@ void GlobalSettingsWidget::resize() {
                                 buttonSize,
                                 buttonSize);
 
-        mArduCorButton->setGeometry(mHueButton->geometry().x() + mHueButton->width() + mSpacerPixels,
+        mNanoLeafButton->setGeometry(mHueButton->geometry().x() + mHueButton->width() + mSpacerPixels,
+                                currentY,
+                                buttonSize,
+                                buttonSize);
+
+        mArduCorButton->setGeometry(mNanoLeafButton->geometry().x() + mNanoLeafButton->width() + mSpacerPixels,
                                 currentY,
                                 buttonSize,
                                 buttonSize);

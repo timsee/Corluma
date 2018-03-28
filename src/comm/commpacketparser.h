@@ -69,7 +69,7 @@ signals:
      * \param colorGroupUsed the color group to use for the custom routine. If its a single
      *        color routine, this value will be -1.
      */
-    void receivedRoutineChange(int deviceIndex, int routine, int colorGroupUsed);
+    void receivedRoutineChange(int deviceIndex, ELightingRoutine routine, EColorGroup colorGroupUsed);
 
     /*!
      * \brief receivedCustomArrayCount signal that requests change of te count of colors

@@ -4,6 +4,7 @@
 #include <QSettings>
 #include "cor/light.h"
 
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2018.
@@ -33,7 +34,7 @@ public:
      * \param shouldEnable true if enabled, false otherwise
      * \return true if successful, false otherwise.
      */
-    bool enableCommType(ECommType type, bool shouldEnable);
+    bool enableCommType(ECommTypeSettings type, bool shouldEnable);
 
     /*!
      * \brief commTypeEnabled check if a comm type is currently enabled.
@@ -42,39 +43,31 @@ public:
      */
     bool commTypeEnabled(ECommType type);
 
+    /*!
+     * \brief commTypeSettingsEnabled check if a commtypesettings is currently enabled.
+     * \param type the ECommTypeSettings to check
+     * \return true if enabled, false otherwise.
+     */
+    bool commTypeSettingsEnabled(ECommTypeSettings type);
+
     //------------------
     // Miscellaneous
     //------------------
 
-    /*!
-     * \brief numberOfActiveCommTypes The count of commtypes that are currently in use.
-     * \return The count of commtypes that are currently in use.
-     */
-    int numberOfActiveCommTypes() { return mCommTypeCount; }
-
-    /// list of all commtypes that get saved. UDP and HTTP are treated as one commtype.
-    std::vector<ECommType> commTypes();
-
-    /// index of a commtype in the commtype vector
-    int indexOfCommTypeSettings(ECommType type);
-
+    /// getter for count of commtypesettings enabled
+    uint32_t commTypeSettingsEnabled();
 private:
 
     /*!
-     * \brief mDeviceInUse a vector of bools that store which CommTypes are currently
+     * \brief mCommTypesInUse a vector of bools that store which CommTypes are currently
      *        connected.
      */
-    std::vector<bool> mDeviceInUse;
+    std::vector<bool> mCommTypesInUse;
 
     /*!
      * \brief mSettings pointer to QSettings, used to store and access data in persistent app memory.
      */
     QSettings *mSettings;
-
-    /*!
-     * \brief mCommTypeCount count of commTypes currently set to true.
-     */
-    int mCommTypeCount;
 
     /*!
      * \brief mCommTypeInUseSaveKeys Keys used for accessing and writing values to persistent app memory.

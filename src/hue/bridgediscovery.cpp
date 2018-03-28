@@ -17,9 +17,6 @@ BridgeDiscovery::BridgeDiscovery(QObject *parent) : QObject(parent) {
     mTimeoutTimer = new QTimer;
     connect(mTimeoutTimer, SIGNAL(timeout()), this, SLOT(handleDiscoveryTimeout()));
 
-    mUPnPSocket = new QUdpSocket(this);
-    connect(mUPnPSocket, SIGNAL(readyRead()), this, SLOT(readPendingUPnPDatagrams()));
-
     mNetworkManager = new QNetworkAccessManager;
     connect(mNetworkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 
@@ -58,24 +55,21 @@ BridgeDiscovery::~BridgeDiscovery() {
 void BridgeDiscovery::startBridgeDiscovery() {
     if (isConnected()) {
         mDiscoveryState = EHueDiscoveryState::eBridgeConnected;
-        emit bridgeDiscoveryStateChanged((int)mDiscoveryState);
+        emit bridgeDiscoveryStateChanged(mDiscoveryState);
     }
     if (!mHasIP && mUseManualIP) {
         attemptSearchForUsername();
         mDiscoveryState = EHueDiscoveryState::eTestingIPAddress;
-        emit bridgeDiscoveryStateChanged((int)mDiscoveryState);
+        emit bridgeDiscoveryStateChanged(mDiscoveryState);
         mSettings->setValue(kPhilipsIPAddress, mBridge.IP);
         mSettings->sync();
 
     } else if (!mHasIP) {
         mDiscoveryState = EHueDiscoveryState::eFindingIpAddress;
-        emit bridgeDiscoveryStateChanged((int)mDiscoveryState);
-        // Attempt both UPnP and NUPnP asynchronously
-        // UPnP polls a standard multicast UDP address on your network
-        // while NUPnP does a HTTP GET request to a website set up
+        emit bridgeDiscoveryStateChanged(mDiscoveryState);
+        // Attempt NUPnP, which is a HTTP GET request to a website set up
         // by Philips that returns a JSON value that contains
         // all the Bridges on your network.
-        attemptUPnPDiscovery();
         attemptNUPnPDiscovery();
     } else if(!mHasKey) {
          attemptSearchForUsername();
@@ -90,9 +84,6 @@ void BridgeDiscovery::stopBridgeDiscovery() {
     if (mDiscoveryTimer->isActive()) {
         mDiscoveryTimer->stop();
     }
-    if (mUPnPSocket->isOpen()) {
-        mUPnPSocket->close();
-    }
 }
 
 void BridgeDiscovery::stopTimers() {
@@ -100,6 +91,14 @@ void BridgeDiscovery::stopTimers() {
         mTimeoutTimer->stop();
     }
     stopBridgeDiscovery();
+}
+
+void BridgeDiscovery::connectUPnPDiscovery(UPnPDiscovery* UPnP) {
+    mUPnP = UPnP;
+    connect(UPnP, SIGNAL(UPnPPacketReceived(QHostAddress,QString)), this, SLOT(receivedUPnP(QHostAddress,QString)));
+    if (!isConnected()) {
+        mUPnP->addListener();
+    }
 }
 
 // ----------------------------
@@ -135,7 +134,8 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
             if(jsonResponse.isObject()) {
                 if (!mIPValid || !mUsernameValid) {
                     mDiscoveryState = EHueDiscoveryState::eBridgeConnected;
-                    emit bridgeDiscoveryStateChanged((int)mDiscoveryState);
+                    mUPnP->removeListener();
+                    emit bridgeDiscoveryStateChanged(mDiscoveryState);
                     mIPValid = true;
                     mUsernameValid = true;
                     emit connectionStatusChanged(true);
@@ -191,7 +191,7 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
                             attemptFinalCheck();
                         } else {
                             mDiscoveryState = EHueDiscoveryState::eTestingIPAddress;
-                            emit bridgeDiscoveryStateChanged((int)mDiscoveryState);
+                            emit bridgeDiscoveryStateChanged(mDiscoveryState);
                             mTimeoutTimer->start(4000);
                             // call bridge discovery again, now that we have an IP
                             startBridgeDiscovery();
@@ -211,17 +211,9 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
     }
 }
 
-void BridgeDiscovery::readPendingUPnPDatagrams() {
-    while (mUPnPSocket->hasPendingDatagrams()) {
-        QByteArray datagram;
-        datagram.resize(mUPnPSocket->pendingDatagramSize());
-        QHostAddress sender;
-        quint16 senderPort;
-        mUPnPSocket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
-
-        QString payload = QString::fromUtf8(datagram);
-        //qDebug() << "this is the payload" << payload;
-        if(payload.contains(QString("IpBridge")) && !mHasIP) {
+void BridgeDiscovery::receivedUPnP(QHostAddress sender, QString payload) {
+    if (!mHasIP) {
+        if(payload.contains(QString("IpBridge"))) {
             mBridge.IP = sender.toString();
             mHasIP = true;
             qDebug() << "discovered IP via UPnP: " << mBridge.IP;
@@ -235,17 +227,14 @@ void BridgeDiscovery::readPendingUPnPDatagrams() {
             } else {
                 mTimeoutTimer->stop();
                 mDiscoveryState = EHueDiscoveryState::eTestingIPAddress;
-                emit bridgeDiscoveryStateChanged((int)mDiscoveryState);
+                emit bridgeDiscoveryStateChanged(mDiscoveryState);
                 mTimeoutTimer->start(4000);
                 // call bridge discovery again, now that we have an IP
                 startBridgeDiscovery();
             }
-
         }
-
     }
 }
-
 
 void BridgeDiscovery::handleDiscoveryTimeout() {
     if (mDiscoveryState == EHueDiscoveryState::eFindingIpAddress) {
@@ -253,7 +242,6 @@ void BridgeDiscovery::handleDiscoveryTimeout() {
         if (!mUseManualIP) {
             // leave UPnP bound, but call the NUPnP again just in case...
             attemptNUPnPDiscovery();
-            attemptUPnPDiscovery();
         }
         // TODO: prompt the user if this state gets hit too many times?
     } else if (mDiscoveryState == EHueDiscoveryState::eTestingIPAddress) {
@@ -283,7 +271,8 @@ void BridgeDiscovery::handleDiscoveryTimeout() {
             startBridgeDiscovery();
         } else if (mIPValid && mUsernameValid){
             mDiscoveryState = EHueDiscoveryState::eBridgeConnected;
-            emit bridgeDiscoveryStateChanged((int)mDiscoveryState);
+            mUPnP->removeListener();
+            emit bridgeDiscoveryStateChanged(mDiscoveryState);
             emit connectionStatusChanged(true);
             qDebug() << "IP and username is valid, stopping discovery and treating as connected!";
             stopBridgeDiscovery();
@@ -298,19 +287,6 @@ void BridgeDiscovery::handleDiscoveryTimeout() {
 // Private Discovery Attempts
 // ----------------------------
 
-void BridgeDiscovery::attemptUPnPDiscovery() {
-    QHostAddress standardUPnPAddress = QHostAddress(QString("239.255.255.250"));
-    // timeout after waiting 5 seconds
-    if (mTimeoutTimer->isActive()) {
-        mTimeoutTimer->stop();
-    }
-    mTimeoutTimer->start(5000);
-    // used for discovery
-    if (mUPnPSocket->state() == QAbstractSocket::UnconnectedState) {
-        mUPnPSocket->bind(standardUPnPAddress, 1900, QUdpSocket::ShareAddress);
-        mUPnPSocket->joinMulticastGroup(standardUPnPAddress);
-    }
-}
 
 void BridgeDiscovery::attemptNUPnPDiscovery() {
     // start bridge IP discovery
@@ -327,7 +303,7 @@ void BridgeDiscovery::attemptIPAddress(QString ip) {
     mUseManualIP = true;
     mTimeoutTimer->stop();
     mDiscoveryState = EHueDiscoveryState::eTestingIPAddress;
-    emit bridgeDiscoveryStateChanged((int)mDiscoveryState);
+    emit bridgeDiscoveryStateChanged(mDiscoveryState);
     mTimeoutTimer->start(4000);
     // call bridge discovery again, now that we have an IP
     startBridgeDiscovery();
@@ -347,7 +323,7 @@ void BridgeDiscovery::attemptFinalCheck() {
     mNetworkManager->get(request);
 
     mDiscoveryState = EHueDiscoveryState::eTestingFullConnection;
-    emit bridgeDiscoveryStateChanged((int)mDiscoveryState);
+    emit bridgeDiscoveryStateChanged(mDiscoveryState);
     // no more need for discovery packets, we've been discovered!
     stopBridgeDiscovery();
 }
@@ -355,7 +331,7 @@ void BridgeDiscovery::attemptFinalCheck() {
 void BridgeDiscovery::attemptSearchForUsername() {
     mTimeoutTimer->stop();
     mDiscoveryState = EHueDiscoveryState::eFindingDeviceUsername;
-    emit bridgeDiscoveryStateChanged((int)mDiscoveryState);
+    emit bridgeDiscoveryStateChanged(mDiscoveryState);
     // start bridge username discovery
     mDiscoveryTimer->start(1000);
 }

@@ -8,6 +8,7 @@
 #include <QHostAddress>
 
 #include "lightingprotocols.h"
+#include "cor/protocols.h"
 
 #include <sstream>
 #include <cmath>
@@ -209,7 +210,26 @@ inline ELightHardwareType convertArduinoTypeToLightType(EArduinoHardwareType typ
     }
 }
 
+
+inline ECommTypeSettings convertCommTypeToCommTypeSettings(ECommType type) {
+    switch (type) {
+        case ECommType::eHTTP:
+        case ECommType::eUDP:
+#ifndef MOBILE_BUILD
+        case ECommType::eSerial:
+#endif
+            return ECommTypeSettings::eArduCor;
+        case ECommType::eNanoLeaf:
+            return ECommTypeSettings::eNanoLeaf;
+        case ECommType::eHue:
+            return ECommTypeSettings::eHue;
+        default:
+            return ECommTypeSettings::eCommTypeSettings_MAX;
+    }
 }
+
+}
+
 
 //------------------------
 // Keys
@@ -220,8 +240,8 @@ const static QString kUseTimeoutKey  = QString("Settings_UseTimeout");
 const static QString kTimeoutValue = QString("Settings_TimeoutValue");
 const static QString kSpeedValue = QString("Settings_SpeedValue");
 
-const static QString kUseYunKey  = QString("YunInUse");
-const static QString kUseSerialKey  = QString("SerialInUse");
+const static QString kUseArduCorKey  = QString("ArduCorInUse");
 const static QString kUseHueKey  = QString("HueInUse");
+const static QString kUseNanoLeafKey  = QString("NanoLeafInUse");
 
 #endif // CORLUMAUTILS_H

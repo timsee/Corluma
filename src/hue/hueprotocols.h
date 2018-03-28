@@ -147,6 +147,7 @@ enum class EHueDiscoveryState {
      */
     eFullyConnected,
 };
+Q_DECLARE_METATYPE(EHueDiscoveryState)
 
 namespace cor
 {

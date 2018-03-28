@@ -117,7 +117,7 @@ signals:
     /*!
      * \brief buttonClicked sent only when setupAsPresetButton has been called.
      */
-    void buttonClicked(int, int);
+    void buttonClicked(ELightingRoutine, EColorGroup);
 
     /*!
      * \brief menuButtonClicked sent out if and only if the button is set up

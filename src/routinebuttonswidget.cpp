@@ -36,7 +36,7 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector
             mRoutineButtons[i] = new cor::Button(this);
             mRoutineButtons[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
             mRoutineButtons[i]->setupAsStandardButton((ELightingRoutine)(i), EColorGroup::eAll, QString::fromStdString(labels[i]));
-            connect(mRoutineButtons[i], SIGNAL(buttonClicked(int, int)), this, SLOT(routineChanged(int, int)));
+            connect(mRoutineButtons[i], SIGNAL(buttonClicked(ELightingRoutine, EColorGroup)), this, SLOT(routineChanged(ELightingRoutine, EColorGroup)));
             if ((i % maxColumn) == 0 && i != 0) {
                 rowCount++;
             }
@@ -63,7 +63,7 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector
                                                                EColorGroup::eCustom,
                                                                QString::fromStdString(labels[i]),
                                                                colors);
-            connect(mRoutineButtons[i], SIGNAL(buttonClicked(int, int)), this, SLOT(routineChanged(int, int)));
+            connect(mRoutineButtons[i], SIGNAL(buttonClicked(ELightingRoutine, EColorGroup)), this, SLOT(routineChanged(ELightingRoutine, EColorGroup)));
             if ((i % maxColumn) == 0 && i != 0) {
                 rowCount++;
             }
@@ -98,9 +98,9 @@ void RoutineButtonsWidget::multiRoutineColorsChanged(const std::vector<QColor>& 
     }
 }
 
-void RoutineButtonsWidget::routineChanged(int newRoutine, int newGroup) {
+void RoutineButtonsWidget::routineChanged(ELightingRoutine newRoutine, EColorGroup newGroup) {
     Q_UNUSED(newGroup); // newGroup is ignored for single color routines
-    highlightRoutineButton((ELightingRoutine)newRoutine);
+    highlightRoutineButton(newRoutine);
     emit newRoutineSelected(newRoutine);
 }
 

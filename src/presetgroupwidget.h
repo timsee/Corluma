@@ -57,17 +57,17 @@ signals:
      * \brief presetButtonClicked signal that any of the lightsbuttons were pressed and emitting
      *        their own signal.
      */
-    void presetButtonClicked(int, int);
+    void presetButtonClicked(ELightingRoutine, EColorGroup);
 
 private slots:
 
     /*!
      * \brief multiButtonClicked takes the multiButtonClicked LightsButton signals emitted from each of its buttons
      *        and forwards them as a single signal.
-     * \param routine int representation of ELightingRoutine
-     * \param group int representation of EColorGroup
+     * \param routine widget's lighting routine
+     * \param group widget's color palette
      */
-    void multiButtonClicked(int routine, int group) { emit presetButtonClicked(routine, group); }
+    void multiButtonClicked(ELightingRoutine routine, EColorGroup group) { emit presetButtonClicked(routine, group); }
 
 private:
 

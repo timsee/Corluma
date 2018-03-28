@@ -68,7 +68,7 @@ signals:
      * \brief newRoutineSelected emitted whenever a button is pressed with the int representation
      *        of the routine that it represents.
      */
-    void newRoutineSelected(int);
+    void newRoutineSelected(ELightingRoutine);
 
 protected:
     /*!
@@ -83,7 +83,7 @@ private slots:
      * \brief routineChanged signaled whenever a routine button is pressed, used to
      *        to tell the LEDs to update.
      */
-    void routineChanged(int, int);
+    void routineChanged(ELightingRoutine, EColorGroup);
 
 private:
 

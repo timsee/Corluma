@@ -54,5 +54,6 @@
         <file>images/hue_bloom.png</file>
         <file>images/hue_bulb.png</file>
         <file>images/led_icon.png</file>
+        <file>images/nanoleaf_icon.png</file>
     </qresource>
 </RCC>

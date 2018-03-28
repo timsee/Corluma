@@ -10,6 +10,7 @@
 #include "lightingprotocols.h"
 #include "cor/light.h"
 #include "comm/commtype.h"
+#include "comm/upnpdiscovery.h"
 #include "hue/hueprotocols.h"
 #include "hue/huelight.h"
 #include "groupsparser.h"
@@ -18,6 +19,7 @@ class CommUDP;
 class CommHTTP;
 class CommSerial;
 class CommHue;
+class CommNanoLeaf;
 
 /*!
  * \copyright
@@ -30,14 +32,14 @@ class CommHue;
  *  array. Currently it supports serial, UDP, and HTTP.
  *
  */
-class CommLayer : public QWidget
+class CommLayer : public QObject
 {
     Q_OBJECT
 public:
     /*!
      * \brief Constructor
      */
-    CommLayer(QWidget *parent = 0);
+    CommLayer(QObject *parent = 0);
 
 
     /*!
@@ -144,12 +146,12 @@ public:
      * \brief resetStateUpdates reset the state updates timeouts for specified commtypes. If it isn't on already,
      *        it gets turned on.
      */
-    void resetStateUpdates(ECommType type) { commByType(type)->resetStateUpdateTimeout(); }
+    void resetStateUpdates(ECommTypeSettings type);
 
     /*!
      * \brief stopStateUpdates turn off the state update threads for specified commtypes.
      */
-    void stopStateUpdates(ECommType type) { commByType(type)->stopStateUpdates(); }
+    void stopStateUpdates(ECommTypeSettings type);
 
     // --------------------------
     // Controller and Device Management
@@ -160,21 +162,21 @@ public:
      *        and discovery threads
      * \param type the type of communication stream to start.
      */
-    void startup(ECommType type);
+    void startup(ECommTypeSettings type);
 
     /*!
      * \brief shutdown shuts down the stream of the given type. This stops all of its maintence threads
      *        and discovery threads.
      * \param type the type of communication stream to shutdown.
      */
-    void shutdown(ECommType type);
+    void shutdown(ECommTypeSettings type);
 
     /*!
      * \brief hasStarted checks if a stream has been started and can currently be used.
      * \param type the communication type to check for the stream
      * \return true if its been started, false otherwise.
      */
-    bool hasStarted(ECommType type);
+    bool hasStarted(ECommTypeSettings type);
 
     /*!
      * \brief startDiscoveringController attempt to add a controller to the hash table
@@ -215,12 +217,12 @@ public:
     /*!
      * \brief startDiscovery put given comm type into discovery mode.
      */
-    void startDiscovery(ECommType type) { commByType(type)->startDiscovery(); }
+    void startDiscovery(ECommTypeSettings type);
 
     /*!
      * \brief stopDiscovery stop the given comm type's discovery mode.
      */
-    void stopDiscovery(ECommType type) { commByType(type)->stopDiscovery(); }
+    void stopDiscovery(ECommTypeSettings type);
 
     /*!
      * \brief runningDiscovery checks if discovery is being run actively. This means taht its expecting more
@@ -266,6 +268,8 @@ public:
     const std::list<QString> undiscoveredList(ECommType type) {
         return commByType(type)->undiscoveredList();
     }
+
+    std::shared_ptr<CommNanoLeaf> nanoLeaf() { return mNanoLeaf; }
 
     // --------------------------
     // Hardware specific functions
@@ -326,43 +330,43 @@ signals:
     * \brief hueDiscoveryStateChange the state of the Hue discovery methods,
     *        forwarded from a private HueBridgeDiscovery object.
     */
-    void hueDiscoveryStateChange(int);
+    void hueDiscoveryStateChange(EHueDiscoveryState);
 
     /*!
     * \brief packetReceived anotification that a packet was receieved by one of the commtypes.
     */
-    void packetReceived(int);
+    void packetReceived(ECommType);
 
     /*!
     * \brief updateReceived a notification that a packet was received by one of the commtypes.
     * \param type the int representation of the ECommType that has been updated.
     */
-    void updateReceived(int);
+    void updateReceived(ECommType);
 
 private slots:
     /*!
     * \brief hueStateUpdate forwards the hue discovery state changes
     *        from a private HueBridgeDiscovery object.
     */
-    void hueDiscoveryUpdate(int newDiscoveryState);
+    void hueDiscoveryUpdate(EHueDiscoveryState newDiscoveryState);
 
     /*!
     * \brief parsePacket parses any packets sent from any of the commtypes. The
     *        comm type that received the packet is given as an int
     */
-    void parsePacket(QString, QString, int);
+    void parsePacket(QString, QString, ECommType);
 
     /*!
     * \brief receivedUpdate Each CommType signals out where it receives an update. This slot combines and forwards
     *        these signals into its own updateReceived signal.
     * \param type the ECommType that has been updated.
     */
-    void receivedUpdate(int type) { emit updateReceived(type); }
+    void receivedUpdate(ECommType type) { emit updateReceived(type); }
 
     /*!
     * \brief hueStateChanged sent by hue whenever a packet is received that changes it state.
     */
-    void hueStateChanged() { emit packetReceived((int)ECommType::eHue); }
+    void hueStateChanged() { emit packetReceived(ECommType::eHue); }
 
 private:
 
@@ -382,9 +386,17 @@ private:
     std::shared_ptr<CommUDP>  mUDP;
 
     /*!
-     * \brief mHue Phillip's Hue connection object
+     * \brief mHue Philips Hue connection object
      */
     std::shared_ptr<CommHue> mHue;
+
+    /*!
+     * \brief mNanoLeaf NanoLeaf Aurora connection object
+     */
+    std::shared_ptr<CommNanoLeaf> mNanoLeaf;
+
+    /// Handles discovery of devices over UPnP
+    UPnPDiscovery* mUpnP;
 
     /// groups parser
     GroupsParser *mGroups;

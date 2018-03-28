@@ -20,11 +20,22 @@ enum class ECommType {
     eHTTP,
     eUDP,
     eHue,
+    eNanoLeaf,
 #ifndef MOBILE_BUILD
     eSerial,
 #endif //MOBILE_BUILD
     eCommType_MAX
 };
+Q_DECLARE_METATYPE(ECommType)
+
+enum class ECommTypeSettings {
+    eHue,
+    eNanoLeaf,
+    eArduCor,
+    eCommTypeSettings_MAX
+};
+Q_DECLARE_METATYPE(ECommTypeSettings)
+
 
 /*!
  * \brief The EColorMode enum the type of color
@@ -71,7 +82,7 @@ enum class EConnectionState {
     eMultipleDevicesSelected,
     eConnectionState_MAX
 };
-
+Q_DECLARE_METATYPE(EConnectionState)
 
 namespace cor
 {
@@ -132,12 +143,27 @@ inline QString ECommTypeToString(ECommType type) {
         return "HTTP";
     } else if (type ==  ECommType::eUDP) {
         return "UDP";
+    } else if (type ==  ECommType::eNanoLeaf) {
+        return "NanoLeaf";
     } else if (type ==  ECommType::eHue) {
         return "Hue";
 #ifndef MOBILE_BUILD
     } else if (type == ECommType::eSerial) {
         return "Serial";
 #endif //MOBILE_BUILD
+    } else {
+        return "CommType not recognized";
+    }
+}
+
+
+inline QString ECommTypeSettingsToString(ECommTypeSettings type) {
+    if (type ==  ECommTypeSettings::eArduCor) {
+        return "ArduCor";
+    } else if (type ==  ECommTypeSettings::eNanoLeaf) {
+        return "NanoLeaf";
+    } else if (type ==  ECommTypeSettings::eHue) {
+        return "Hue";
     } else {
         return "CommType not recognized";
     }
@@ -154,6 +180,8 @@ inline ECommType stringToECommType(QString type) {
         return ECommType::eHTTP;
     } else if (type.compare("UDP") == 0) {
         return ECommType::eUDP;
+    } else if (type.compare("NanoLeaf") == 0) {
+        return ECommType::eNanoLeaf;
     } else if (type.compare("Hue") == 0) {
         return ECommType::eHue;
 #ifndef MOBILE_BUILD

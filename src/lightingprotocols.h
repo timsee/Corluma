@@ -309,7 +309,7 @@ enum class ELightHardwareType {
     eLightStrip,
     eRing,
     eBloom,
-    eAurora,
+    eNanoLeaf,
     ELightHardwareType_MAX
 };
 

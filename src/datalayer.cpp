@@ -367,6 +367,14 @@ bool DataLayer::hasHueDevices() {
     return (hueCount > 0);
 }
 
+bool DataLayer::hasNanoLeafDevices() {
+    int nanoLeafCount = 0;
+    for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
+        if (device->type() == ECommType::eNanoLeaf) nanoLeafCount++;
+    }
+    return (nanoLeafCount > 0);
+}
+
 bool DataLayer::hasArduinoDevices() {
     int arduinoCount = 0;
     for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
@@ -480,6 +488,10 @@ void DataLayer::updateColor(QColor color) {
         } else {
             iterator->colorMode = EColorMode::eRGB;
         }
+
+        if (iterator->type() == ECommType::eNanoLeaf) {
+            iterator->lightingRoutine = ELightingRoutine::eSingleSolid;
+        }
     }
     emit dataUpdate();
 }
@@ -508,7 +520,8 @@ void DataLayer::updateBrightness(int brightness, std::list<cor::Light> specialCa
     std::list<cor::Light>::iterator iterator;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
         iterator->brightness = brightness;
-        if (iterator->type() == ECommType::eHue) {
+        if (iterator->type() == ECommType::eHue
+                || iterator->type() == ECommType::eNanoLeaf) {
             bool isSpecialCase = false;
             for (auto&& specialDevice : specialCaseDevices) {
                 if (compareLight(specialDevice, *iterator)) {

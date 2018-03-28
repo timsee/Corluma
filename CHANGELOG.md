@@ -268,7 +268,16 @@ ___
 * Refactored the ColorSchemeGrid to cor::Palette.
 * Refactored the ListCollectionWidgets to be easier to maintain.
 
+### **v0.12.8**
+#### The Nanoleaf Update
+* Added support for the Nanoleaf Aurora.
+* Made better use of Q_DECLARE_METATYPE so that more signals and slots used enums. 
+* Grouped the various CommTypes of the ArduCor (Serial, HTTP, UDP) into ArduCor specific settings instead of their own settings.
+* Added a UPnPDiscovery object, so that the same UPnP stream can be used for multiple types of hardware.
+* Fixed miscellaneous bugs.
+
 ### Coming Soon
+* Add support for connecting to multiple Nanoleaf Aurora Controllers.
 * Finish manual discovery of Hues and Bridges
 * Fix platform-specific layout and resizing issues (buttons that are too small on Mac OS X, images that are cutoff on iOS, etc.)
 

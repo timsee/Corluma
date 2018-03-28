@@ -14,7 +14,7 @@ DataSyncSettings::DataSyncSettings(DataLayer *data, CommLayer *comm)
     mData = data;
     mComm = comm;
     mUpdateInterval = 200;
-    connect(mComm, SIGNAL(packetReceived(int)), this, SLOT(commPacketReceived(int)));
+    connect(mComm, SIGNAL(packetReceived(ECommType)), this, SLOT(commPacketReceived(ECommType)));
     connect(mData, SIGNAL(settingsUpdate()), this, SLOT(resetSync()));
 
     mSyncTimer = new QTimer(this);
@@ -34,7 +34,7 @@ void DataSyncSettings::cancelSync() {
     }
 }
 
-void DataSyncSettings::commPacketReceived(int type) {
+void DataSyncSettings::commPacketReceived(ECommType type) {
     Q_UNUSED(type);
     if (!mDataIsInSync) {
         resetSync();
@@ -65,7 +65,7 @@ void DataSyncSettings::syncData() {
 
         for (auto&& device : allAvailableDevices) {
             cor::Light commLayerDevice = device;
-            if (device.type() != ECommType::eHue) {
+            if (device.type() != ECommType::eHue && device.type() != ECommType::eNanoLeaf) {
                 bool successful = mComm->fillDevice(commLayerDevice);
                 if (!successful) {
                     //qDebug() << "INFO: device not found!";

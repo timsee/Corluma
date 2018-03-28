@@ -30,7 +30,7 @@
  * own conenctionList(), which lists up to 5 of the previous connections. This
  * list persists in the application's memory after the application closes.
  */
-class CommType : public QWidget {
+class CommType : public QObject {
     Q_OBJECT
 public:
     /*!
@@ -212,12 +212,12 @@ signals:
      * \brief packetReceived emitted whenever a packet that is not a discovery packet is received. Contains
      *        the full packet's contents as a QString.
      */
-    void packetReceived(QString, QString, int);
+    void packetReceived(QString, QString, ECommType);
 
     /*!
      * \brief updateReceived an update packet was received from any controller.
      */
-    void updateReceived(int);
+    void updateReceived(ECommType);
 
 protected:
 

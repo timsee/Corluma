@@ -160,7 +160,7 @@ void Button::handleButton() {
         if (mIsMenuButton) {
             emit menuButtonClicked(mPageNumber);
         } else {
-            emit buttonClicked((int)mLightingRoutine,(int)mColorGroup);
+            emit buttonClicked(mLightingRoutine, mColorGroup);
         }
     }
 }

@@ -41,7 +41,7 @@ public slots:
      *        of Hue's discovery object. Used by the connectionList to display the current
      *        state.
      */
-    void hueDiscoveryUpdate(int);
+    void hueDiscoveryUpdate(EHueDiscoveryState);
 
     /*!
      * \brief IPFieldChanged IP Address field has changed, try to discover the IP

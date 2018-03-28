@@ -14,6 +14,7 @@
 
 #include "cor/utils.h"
 #include "comm/commhue.h"
+#include "comm/commnanoleaf.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent) {
@@ -56,17 +57,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mDataSyncArduino  = new DataSyncArduino(mData, mComm);
     mDataSyncHue      = new DataSyncHue(mData, mComm);
+    mDataSyncNanoLeaf = new DataSyncNanoLeaf(mData, mComm);
     mDataSyncSettings = new DataSyncSettings(mData, mComm);
 
     mDataSyncHue->connectGroupsParser(mComm->groups());
 
-    for (int i = 0; i < (int)ECommType::eCommType_MAX; ++i) {
-        ECommType type = (ECommType)i;
-        if (mData->commTypeSettings()->commTypeEnabled(type)) {
-            mComm->startup(type);
-        }
-    }
-
+    mComm->nanoLeaf()->addColorPalettes(mData->colors());
 
     // --------------
     // Setup main widget space
@@ -261,9 +257,10 @@ MainWindow::MainWindow(QWidget *parent) :
     // --------------
     // Start Discovery
     // --------------
-    for (int commInt = 0; commInt != (int)ECommType::eCommType_MAX; ++commInt) {
-        ECommType type = static_cast<ECommType>(commInt);
-        if (mData->commTypeSettings()->commTypeEnabled(type)) {
+    for (int i = 0; i < (int)ECommTypeSettings::eCommTypeSettings_MAX; ++i) {
+        ECommTypeSettings type = (ECommTypeSettings)i;
+        if (mData->commTypeSettings()->commTypeSettingsEnabled(type)) {
+            mComm->startup(type);
             mComm->startDiscovery(type);
         }
     }
@@ -525,22 +522,22 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
 
 void MainWindow::changeEvent(QEvent *event) {
     if(event->type() == QEvent::ActivationChange && this->isActiveWindow()) {
-        for (int commInt = 0; commInt != (int)ECommType::eCommType_MAX; ++commInt) {
-            ECommType type = static_cast<ECommType>(commInt);
-            if (mData->commTypeSettings()->commTypeEnabled((ECommType)type)) {
+        for (int commInt = 0; commInt != (int)ECommTypeSettings::eCommTypeSettings_MAX; ++commInt) {
+            ECommTypeSettings type = static_cast<ECommTypeSettings>(commInt);
+            if (mData->commTypeSettings()->commTypeSettingsEnabled(type)) {
                 mComm->resetStateUpdates(type);
             }
         }
     } else if (event->type() == QEvent::ActivationChange && !this->isActiveWindow()) {
-        for (int commInt = 0; commInt != (int)ECommType::eCommType_MAX; ++commInt) {
-            ECommType type = static_cast<ECommType>(commInt);
-            if (mData->commTypeSettings()->commTypeEnabled((ECommType)type)) {
-                qDebug() << "INFO: stop state updates" << cor::ECommTypeToString(type);
+        for (int commInt = 0; commInt != (int)ECommTypeSettings::eCommTypeSettings_MAX; ++commInt) {
+            ECommTypeSettings type = static_cast<ECommTypeSettings>(commInt);
+            if (mData->commTypeSettings()->commTypeSettingsEnabled(type)) {
                 mComm->stopStateUpdates(type);
             }
         }
         mDataSyncArduino->cancelSync();
         mDataSyncHue->cancelSync();
+        mDataSyncNanoLeaf->cancelSync();
         mDataSyncSettings->cancelSync();
     }
 }

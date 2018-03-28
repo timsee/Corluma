@@ -13,6 +13,13 @@ enum class ESwitchState {
 
 namespace cor
 {
+
+/*!
+ * \copyright
+ * Copyright (C) 2015 - 2018.
+ * Released under the GNU General Public License.
+ */
+
 /*!
  * \brief The Switch class provides a very basic GUI for an on/off switch.
  *        The switch can have its state set programmatically or will have it swapped

@@ -14,7 +14,7 @@ DataSyncArduino::DataSyncArduino(DataLayer *data, CommLayer *comm) {
     mData = data;
     mComm = comm;
     mUpdateInterval = 100;
-    connect(mComm, SIGNAL(packetReceived(int)), this, SLOT(commPacketReceived(int)));
+    connect(mComm, SIGNAL(packetReceived(ECommType)), this, SLOT(commPacketReceived(ECommType)));
     connect(mData, SIGNAL(dataUpdate()), this, SLOT(resetSync()));
 
     mSyncTimer = new QTimer(this);
@@ -34,8 +34,12 @@ void DataSyncArduino::cancelSync() {
     }
 }
 
-void DataSyncArduino::commPacketReceived(int type) {
-    if ((ECommType)type != ECommType::eHue) {
+void DataSyncArduino::commPacketReceived(ECommType type) {
+    if (type == ECommType::eUDP
+#ifndef MOBILE_BUILD
+            || type == ECommType::eSerial
+#endif
+            || type == ECommType::eHTTP) {
         if (!mDataIsInSync) {
             resetSync();
         }

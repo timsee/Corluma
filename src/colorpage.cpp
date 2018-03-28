@@ -25,7 +25,7 @@ ColorPage::ColorPage(QWidget *parent) :
     mSingleRoutineWidget->setMaximumHeight(this->height() / 3);
     mSingleRoutineWidget->setGeometry(0, this->height(), mSingleRoutineWidget->width(), mSingleRoutineWidget->height());
     mSingleRoutineWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(mSingleRoutineWidget, SIGNAL(newRoutineSelected(int)), this, SLOT(newRoutineSelected(int)));
+    connect(mSingleRoutineWidget, SIGNAL(newRoutineSelected(ELightingRoutine)), this, SLOT(newRoutineSelected(ELightingRoutine)));
 
     mSpacer = new QWidget(this);
 
@@ -54,7 +54,7 @@ void ColorPage::setupButtons() {
     mMultiRoutineWidget->setMaximumHeight(this->height() / 3);
     mMultiRoutineWidget->setGeometry(0, this->height(), mMultiRoutineWidget->width(), mMultiRoutineWidget->height());
     mMultiRoutineWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(mMultiRoutineWidget, SIGNAL(newRoutineSelected(int)), this, SLOT(newRoutineSelected(int)));
+    connect(mMultiRoutineWidget, SIGNAL(newRoutineSelected(ELightingRoutine)), this, SLOT(newRoutineSelected(ELightingRoutine)));
     // raise single since its default
     mSingleRoutineWidget->raise();
 }
@@ -172,11 +172,10 @@ std::vector<QColor> ColorPage::createColorScheme(std::list<cor::Light> devices) 
 // Slots
 // ----------------------------
 
-void ColorPage::newRoutineSelected(int newRoutine) {
-    ELightingRoutine routine = (ELightingRoutine)newRoutine;
-    mData->updateRoutine(routine);
-    if (routine <= cor::ELightingRoutineSingleColorEnd) {
-        mCurrentSingleRoutine = routine;
+void ColorPage::newRoutineSelected(ELightingRoutine newRoutine) {
+    mData->updateRoutine(newRoutine);
+    if (newRoutine <= cor::ELightingRoutineSingleColorEnd) {
+        mCurrentSingleRoutine = newRoutine;
     }
 }
 

@@ -190,6 +190,14 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             mButtons[i]->setIconSize(QSize(mButtons[i]->size().height() * 0.9f,
                                            mButtons[i]->size().height() * 0.9f));
             mButtons[i]->setText("Hue");
+        } else if (mNames[i].compare("Discovery_NanoLeaf") == 0) {
+            foundMatch = true;
+            mButtons[i] = new QPushButton(this);
+            mButtons[i]->setCheckable(true);
+            mButtons[i]->setStyleSheet("text-align:left");
+            mButtons[i]->setIconSize(QSize(mButtons[i]->size().height() * 0.9f,
+                                           mButtons[i]->size().height() * 0.9f));
+            mButtons[i]->setText("NanoLeaf");
         } else if (mNames[i].compare("Discovery") == 0) {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
@@ -387,15 +395,18 @@ void FloatingLayout::addMultiRoutineIcon(std::vector<QColor> colors) {
     }
 }
 
-void FloatingLayout::updateDiscoveryButton(ECommType type, QPixmap pixmap) {
+void FloatingLayout::updateDiscoveryButton(ECommTypeSettings type, QPixmap pixmap) {
     QString label;
     switch (type)
     {
-        case ECommType::eHue:
+        case ECommTypeSettings::eHue:
             label = "Discovery_Hue";
             break;
-        case ECommType::eUDP:
+        case ECommTypeSettings::eArduCor:
             label = "Discovery_ArduCor";
+            break;
+        case ECommTypeSettings::eNanoLeaf:
+            label = "Discovery_NanoLeaf";
             break;
         default:
             break;

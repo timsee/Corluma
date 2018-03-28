@@ -8,6 +8,7 @@
 
 #include "comm/commlayer.h"
 
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2018.
@@ -46,7 +47,7 @@ signals:
      * \param type the CommType, such as Hue or Serial
      * \param status the new status for the CommType. Maps to a EConnectionState value.
      */
-    void connectionStatusChanged(int type, int status);
+    void connectionStatusChanged(ECommTypeSettings type, EConnectionState status);
 
 protected:
     /// pointer to commlayer, used for discovery
@@ -67,5 +68,4 @@ protected:
     void fillList(QListWidget *list, std::list<QString>& connections);
 
 };
-
 #endif // DISCOVERYWIDGET_H

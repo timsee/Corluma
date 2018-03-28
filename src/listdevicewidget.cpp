@@ -39,18 +39,6 @@ void ListDeviceWidget::init(const cor::Light& device) {
 
     // setup icon
     mIconData = IconData(32, 32);
-    QString type;
-    if (device.type() == ECommType::eHue) {
-        type = "Hue";
-    } else if (device.type() == ECommType::eHTTP
-               || device.type() == ECommType::eUDP) {
-        type = "Yun";
-    }
-#ifndef MOBILE_BUILD
-    else if (device.type() == ECommType::eSerial) {
-        type = "Serial";
-    }
-#endif
 
     // setup controller label
     mController = new QLabel(this);
@@ -133,13 +121,7 @@ QString ListDeviceWidget::convertUglyHueNameToPrettyName(QString name) {
 }
 
 QString ListDeviceWidget::structToIdentifierString(const cor::Light& device) {
-    QString returnString = "";
-    if (device.type() == ECommType::eHTTP
-            || device.type() == ECommType::eUDP) {
-        returnString = "Yun" + cor::ECommTypeToString(device.type());
-    } else {
-        returnString = cor::ECommTypeToString(device.type());
-    }
+    QString returnString = cor::ECommTypeToString(device.type());
     QString onString;
     if(device.isReachable) {
         onString = "AA";
@@ -287,9 +269,9 @@ void ListDeviceWidget::updateTypeIcon(ELightHardwareType type) {
         case ELightHardwareType::eBloom:
             typeResource = QString(":/images/hue_bloom.png");
             break;
-//        case ELightHardwareType::eAurora:
-//            typeResource = QString(":/images/hue_bloom.png");
-//            break;
+        case ELightHardwareType::eNanoLeaf:
+            typeResource = QString(":/images/nanoleaf_icon.png");
+            break;
         case ELightHardwareType::ELightHardwareType_MAX:
         default:
             typeResource = QString(":/images/led_icon.png");

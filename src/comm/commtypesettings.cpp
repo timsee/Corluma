@@ -8,116 +8,67 @@
 #include "cor/utils.h"
 
 CommTypeSettings::CommTypeSettings() {
-    mCommTypeCount = 0;
     mSettings = new QSettings();
-    mDeviceInUse = std::vector<bool>(3);
+    mCommTypesInUse = std::vector<bool>(3, false);
 
     mCommTypeInUseSaveKeys = std::vector<QString>(3);
-    mCommTypeInUseSaveKeys[0] = kUseYunKey;
-    mCommTypeInUseSaveKeys[1] = kUseSerialKey;
-    mCommTypeInUseSaveKeys[2] = kUseHueKey;
+    mCommTypeInUseSaveKeys[0] = kUseHueKey;
+    mCommTypeInUseSaveKeys[1] = kUseNanoLeafKey;
+    mCommTypeInUseSaveKeys[2] = kUseArduCorKey;
 
-    std::vector<ECommType> usedTypes = commTypes();
     bool useAdvanceMode = mSettings->value(kAdvanceModeKey).toBool();
-    for (uint32_t x = 0; x < usedTypes.size(); ++x) {
-        int i = indexOfCommTypeSettings(usedTypes[x]);
-        if (!useAdvanceMode
-                && (usedTypes[x] == ECommType::eHTTP
-    #ifndef MOBILE_BUILD
-                || usedTypes[x] == ECommType::eSerial
-    #endif //MOBILE_BUILD
-                || usedTypes[x] == ECommType::eUDP)) {
+    for (uint32_t x = 0; x < mCommTypesInUse.size(); ++x) {
+        if (!useAdvanceMode && ((ECommTypeSettings)x == ECommTypeSettings::eArduCor)) {
             // its not advance mode, don't enable this!
-            mDeviceInUse[(int)i] = false;
-            mSettings->setValue(mCommTypeInUseSaveKeys[(int)i], QString::number((int)false));
+            mCommTypesInUse[x] = false;
+            mSettings->setValue(mCommTypeInUseSaveKeys[x], QString::number((int)false));
         } else {
-            if (mSettings->value(mCommTypeInUseSaveKeys[i]).toString().compare("") != 0) {
-                bool shouldEnable = mSettings->value(mCommTypeInUseSaveKeys[i]).toBool();
-                mDeviceInUse[(int)i] = shouldEnable;
-                if (shouldEnable) mCommTypeCount++;
+            if (mSettings->value(mCommTypeInUseSaveKeys[x]).toString().compare("") != 0) {
+                bool shouldEnable = mSettings->value(mCommTypeInUseSaveKeys[x]).toBool();
+                mCommTypesInUse[x] = shouldEnable;
             } else {
-                mDeviceInUse[(int)i] = false;
-                mSettings->setValue(mCommTypeInUseSaveKeys[(int)i], QString::number((int)false));
+                mCommTypesInUse[x] = false;
+                mSettings->setValue(mCommTypeInUseSaveKeys[x], QString::number((int)false));
             }
         }
     }
     mSettings->sync();
 
     //error handling, must always have at least one stream!
-    if (mCommTypeCount == 0) {
-        mDeviceInUse[indexOfCommTypeSettings(ECommType::eHue)] = true;
-        mSettings->setValue(mCommTypeInUseSaveKeys[indexOfCommTypeSettings(ECommType::eHue)], QString::number((int)true));
+    if (commTypeSettingsEnabled() == 0) {
+        mCommTypesInUse[1] = true; // this is Hue
+        mSettings->setValue(mCommTypeInUseSaveKeys[(uint32_t)ECommTypeSettings::eHue], QString::number((int)true));
         mSettings->sync();
-        mCommTypeCount++;
     }
 }
 
 bool CommTypeSettings::commTypeEnabled(ECommType type) {
-    return mDeviceInUse[indexOfCommTypeSettings(type)];
+    return mCommTypesInUse[(uint32_t)cor::convertCommTypeToCommTypeSettings(type)];
 }
 
-int CommTypeSettings::indexOfCommTypeSettings(ECommType type) {
-    int index = -1;
-    switch (type) {
-        case ECommType::eHTTP:
-        case ECommType::eUDP:
-            index = 0;
-            break;
-#ifndef MOBILE_BUILD
-        case ECommType::eSerial:
-            index = 1;
-            break;
-#endif //MOBILE_BUILD
-        case ECommType::eHue:
-#ifndef MOBILE_BUILD
-            index = 2;
-#else
-            index = 1;
-#endif
-            break;
-        default:
-            throw "got invalid commtype in commtypesettings";
-            index = 0;
-            break;
-    }
-    return index;
+bool CommTypeSettings::commTypeSettingsEnabled(ECommTypeSettings type) {
+    return mCommTypesInUse[(uint32_t)type];
 }
 
-std::vector<ECommType> CommTypeSettings::commTypes() {
-    std::vector<ECommType> usedTypes = {ECommType::eUDP,
-                                    #ifndef MOBILE_BUILD
-                                        ECommType::eSerial,
-                                    #endif //MOBILE_BUILD
-                                        ECommType::eHue };
-    return usedTypes;
-}
-
-bool CommTypeSettings::enableCommType(ECommType type, bool shouldEnable) {
+bool CommTypeSettings::enableCommType(ECommTypeSettings type, bool shouldEnable) {
     bool useAdvanceMode = mSettings->value(kAdvanceModeKey).toBool();
     // check if trying to enable connections that can't be enabled without advanced mode
-    if (!useAdvanceMode && shouldEnable
-            && (type == ECommType::eHTTP
-#ifndef MOBILE_BUILD
-            || type == ECommType::eSerial
-#endif //MOBILE_BUILD
-            || type == ECommType::eUDP)) {
+    if (!useAdvanceMode && shouldEnable && type == ECommTypeSettings::eArduCor) {
         return false;
     }
     // now that the edge case is out of the way, handle enabling or disabling the communication
-    bool previouslyEnabled = commTypeEnabled(type);
-    if (!shouldEnable && previouslyEnabled && mCommTypeCount == 1) {
-        qDebug() << "WARNING: one commtype must always be active! Not removing commtype." << mCommTypeCount;
+    bool previouslyEnabled = commTypeSettingsEnabled(type);
+    if (!shouldEnable && previouslyEnabled && commTypeSettingsEnabled() == 1) {
+        qDebug() << "WARNING: one commtype must always be active! Not removing commtype.";
         return false;
     }
-    if (shouldEnable && !previouslyEnabled) {
-        mCommTypeCount++;
-    }
-    if (!shouldEnable && previouslyEnabled) {
-        mCommTypeCount--;
-    }
-    mDeviceInUse[indexOfCommTypeSettings(type)] = shouldEnable;
+    mCommTypesInUse[(uint32_t)type] = shouldEnable;
 
-    mSettings->setValue(mCommTypeInUseSaveKeys[indexOfCommTypeSettings(type)], QString::number((int)shouldEnable));
+    mSettings->setValue(mCommTypeInUseSaveKeys[(uint32_t)type], QString::number((int)shouldEnable));
     mSettings->sync();
     return true;
+}
+
+uint32_t CommTypeSettings::commTypeSettingsEnabled() {
+   return std::count(mCommTypesInUse.begin(), mCommTypesInUse.end(), true);
 }

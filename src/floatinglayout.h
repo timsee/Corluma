@@ -82,7 +82,7 @@ public:
      * \param type comm type of discovery button
      * \param pixmap new pixmap for discovery button
      */
-    void updateDiscoveryButton(ECommType type, QPixmap pixmap);
+    void updateDiscoveryButton(ECommTypeSettings type, QPixmap pixmap);
 
     /*!
      * \brief addMultiRoutineIcon add a multi routine icon

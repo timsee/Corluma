@@ -74,11 +74,11 @@ void CommPacketParser::parsePacket(QString packet) {
                        if (intVector.size() == 4) {
                            if ((intVector[3] < 0) || (intVector[3] >= (int)EColorGroup::eColorGroup_MAX)) validPacket = false;
                            if (validPacket) {
-                               emit receivedRoutineChange(intVector[1], intVector[2], intVector[3]);
+                               emit receivedRoutineChange(intVector[1],(ELightingRoutine)intVector[2], (EColorGroup)intVector[3]);
                            }
                        } else {
                            if (validPacket) {
-                               emit receivedRoutineChange(intVector[1],intVector[2], -1);
+                               emit receivedRoutineChange(intVector[1],(ELightingRoutine)intVector[2], EColorGroup::eColorGroup_MAX);
                            }
                        }
                     }

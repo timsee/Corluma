@@ -226,11 +226,9 @@ void SettingsPage::resetButtonClicked() {
 }
 
 void SettingsPage::resetToDefaults() {
-    mGlobalWidget->checkBoxClicked(ECommType::eHue, true);
-    mGlobalWidget->checkBoxClicked(ECommType::eUDP, false);
-#ifndef MOBILE_BUILD
-    mGlobalWidget->checkBoxClicked(ECommType::eSerial, false);
-#endif //MOBILE_BUILD
+    mGlobalWidget->checkBoxClicked(ECommTypeSettings::eHue, true);
+    mGlobalWidget->checkBoxClicked(ECommTypeSettings::eArduCor, false);
+    mGlobalWidget->checkBoxClicked(ECommTypeSettings::eNanoLeaf, false);
 
     mGlobalWidget->advanceModeButtonPressed(false);
     mGlobalWidget->timeoutButtonPressed(true);

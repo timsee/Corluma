@@ -33,7 +33,7 @@ PresetGroupWidget::PresetGroupWidget(QString name,
             mButtons[index]->setupAsStandardButton((ELightingRoutine)routine, group, QString(""), colors);
             mButtons[index]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
             mButtons[index]->button->setStyleSheet(kUncheckedStyleSheet);
-            connect(mButtons[index], SIGNAL(buttonClicked(int, int)), this, SLOT(multiButtonClicked(int, int)));
+            connect(mButtons[index], SIGNAL(buttonClicked(ELightingRoutine, EColorGroup)), this, SLOT(multiButtonClicked(ELightingRoutine, EColorGroup)));
             // add to layout
             mLayout->addWidget(mButtons[index], 1, index + 1, 6, 1);
             index++;
@@ -47,7 +47,7 @@ PresetGroupWidget::PresetGroupWidget(QString name,
         mButtons[index]->setupAsStandardButton(ELightingRoutine::eMultiFade, group, QString(""), colors);
         mButtons[index]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         mButtons[index]->button->setStyleSheet(kUncheckedStyleSheet);
-        connect(mButtons[index], SIGNAL(buttonClicked(int, int)), this, SLOT(multiButtonClicked(int, int)));
+        connect(mButtons[index], SIGNAL(buttonClicked(ELightingRoutine, EColorGroup)), this, SLOT(multiButtonClicked(ELightingRoutine, EColorGroup)));
         // add to layout
         mLayout->addWidget(mButtons[index], 1, 1, 6, 1);
     }

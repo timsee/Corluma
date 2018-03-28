@@ -47,7 +47,7 @@ public:
      * \param type the type of comm type you're checking
      * \param checked true if checked, false otherwise.
      */
-    void checkBoxClicked(ECommType type, bool checked);
+    void checkBoxClicked(ECommTypeSettings type, bool checked);
 
     /// called whenever the widget is shown
     void show();
@@ -74,11 +74,15 @@ public slots:
      */
     void hueCheckboxClicked(bool);
 
-
     /*!
      * \brief arduCorButtonClicked checks and unchecks the ArduCor checkbox.
      */
     void arduCorButtonClicked(bool);
+
+    /*!
+     * \brief nanoLeafButtonClicked checks and unchecks the NanoLeaf checkbox.
+     */
+    void nanoLeafButtonClicked(bool);
 
     /*!
      * \brief advanceModeButtonPressed called when advance mode button is pressed
@@ -204,6 +208,11 @@ private:
      * \brief mHueButton button to enable/disable hue devices.
      */
     QPushButton *mHueButton;
+
+    /*!
+     * \brief mNanoLeafButton button to enable/disable hue devices.
+     */
+    QPushButton *mNanoLeafButton;
 
     //----------------
     // Stored Variables

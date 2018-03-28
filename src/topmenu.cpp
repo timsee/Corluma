@@ -492,9 +492,18 @@ void TopMenu::setupColorFloatingLayout() {
 
     bool hasHue = mData->hasHueDevices();
     bool hasArduino = mData->hasArduinoDevices();
+    bool hasNanoLeaf = mData->hasNanoLeafDevices();
     std::vector<QString> horizontalButtons;
     std::vector<QString> verticalButtons;
-    if (hasHue && !hasArduino) {
+    if (hasArduino || hasNanoLeaf){
+        horizontalButtons = {QString("Temperature"), QString("RGB"), QString("Multi"), QString("ColorScheme")};
+        verticalButtons = {QString("Routine")};
+
+        mColorFloatingLayout->highlightButton(mLastColorButtonKey);
+        mColorFloatingLayout->addMultiRoutineIcon(mData->colorGroup(EColorGroup::eRGB));
+        updateColorVerticalRoutineButton();
+        mColorPage->changePageType(EColorPageType::eRGB, true);
+    } else if (hasHue) {
         // get list of all current devices
         std::list<cor::Light> devices = mData->currentDevices();
         std::list<HueLight> hues;
@@ -516,15 +525,7 @@ void TopMenu::setupColorFloatingLayout() {
         } else {
             throw "did not find any hue lights when expecting hue lights";
         }
-    } else if (hasArduino){
-        horizontalButtons = {QString("Temperature"), QString("RGB"), QString("Multi"), QString("ColorScheme")};
-        verticalButtons = {QString("Routine")};
-
-        mColorFloatingLayout->highlightButton(mLastColorButtonKey);
-        mColorFloatingLayout->addMultiRoutineIcon(mData->colorGroup(EColorGroup::eRGB));
-        updateColorVerticalRoutineButton();
-        mColorPage->changePageType(EColorPageType::eRGB, true);
-    } else if (!hasHue && !hasArduino) {
+    } else {
         // shouldn't get here...
         throw "trying to open single color page when no recognized devices are selected";
     }

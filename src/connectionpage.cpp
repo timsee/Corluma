@@ -55,7 +55,7 @@ ConnectionPage::~ConnectionPage() {
 
 
 void ConnectionPage::setupUI() {
-    connect(mComm, SIGNAL(updateReceived(int)), this, SLOT(receivedCommUpdate(int)));
+    connect(mComm, SIGNAL(updateReceived(ECommType)), this, SLOT(receivedCommUpdate(ECommType)));
     connect(mComm->groups(), SIGNAL(newConnectionFound(QString)), this, SLOT(newConnectionFound(QString)));
     connect(mComm->groups(), SIGNAL(groupDeleted(QString)), this, SLOT(groupDeleted(QString)));
     connect(mComm->groups(), SIGNAL(newCollectionAdded(QString)), this, SLOT(newCollectionAdded(QString)));
@@ -347,8 +347,7 @@ void ConnectionPage::newConnectionFound(QString newController) {
             if (!isSuccessful) qDebug() << "WARNING: failure adding" << newController << "to UDP discovery list";
             isSuccessful = mComm->startDiscoveringController(ECommType::eHTTP, newController);
             if (!isSuccessful) qDebug() << "WARNING: failure adding" << newController << "to HTTP discovery list";
-            mComm->startDiscovery(ECommType::eUDP);
-            mComm->startDiscovery(ECommType::eHTTP);
+            mComm->startDiscovery(ECommTypeSettings::eArduCor);
         } else {
             qDebug() << "WARNING: UDP and HTTP not enabled but they are found in the json data being loaded...";
         }
@@ -379,7 +378,7 @@ void ConnectionPage::newCollectionAdded(QString collection) {
 // ------------------------------------
 
 
-void ConnectionPage::lightStateChanged(int type, QString name) {
+void ConnectionPage::lightStateChanged(ECommType type, QString name) {
     Q_UNUSED(name);
     Q_UNUSED(type);
     updateConnectionList();
@@ -391,7 +390,7 @@ void ConnectionPage::clearButtonPressed() {
     emit updateMainIcons();
 }
 
-void ConnectionPage::receivedCommUpdate(int) {
+void ConnectionPage::receivedCommUpdate(ECommType) {
     if (mLastUpdateConnectionList.elapsed() > 250) {
         mLastUpdateConnectionList = QTime::currentTime();
         updateConnectionList();
@@ -479,9 +478,9 @@ void ConnectionPage::hideEvent(QHideEvent *event) {
 
 
 void ConnectionPage::hide() {
-    for (int commInt = 0; commInt != (int)ECommType::eCommType_MAX; ++commInt) {
-        ECommType type = static_cast<ECommType>(commInt);
-        if (mData->commTypeSettings()->commTypeEnabled(type)) {
+    for (int i = 0; i < (int)ECommTypeSettings::eCommTypeSettings_MAX; ++i) {
+        ECommTypeSettings type = (ECommTypeSettings)i;
+        if (mData->commTypeSettings()->commTypeSettingsEnabled(type)) {
             mComm->stopDiscovery(type);
         }
     }

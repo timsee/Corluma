@@ -465,6 +465,7 @@ bool GroupsParser::checkForSavedData() {
         }
     }
 
+   // qDebug() << defaultSavePath();
     QFile saveFile(defaultSavePath());
    // QFile saveFile(":resources/Corluma.json");
 

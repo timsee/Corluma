@@ -111,7 +111,7 @@ public slots:
      * \brief lightStateChanged called whenever theres any change in the state of
      *        any of the lights.
      */
-    void lightStateChanged(int, QString);
+    void lightStateChanged(ECommType, QString);
 
     /*!
      * \brief clearButtonPressed clear button is pressed and all selected devices are deselected.
@@ -147,7 +147,7 @@ private slots:
     /*!
      * \brief receivedCommUpdate called when an update has occurred on the commlayer.
      */
-    void receivedCommUpdate(int);
+    void receivedCommUpdate(ECommType);
 
     //--------------------
     // Connection List Slots

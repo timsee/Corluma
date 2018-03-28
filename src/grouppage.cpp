@@ -77,7 +77,7 @@ void GroupPage::setupButtons() {
                                                                   EPresetWidgetMode::eArduino,
                                                                   this);
         mPresetArduinoLayout->addWidget(mPresetArduinoWidgets[groupIndex], 1);
-        connect(mPresetArduinoWidgets[groupIndex], SIGNAL(presetButtonClicked(int, int)), this, SLOT(multiButtonClicked(int,int)));
+        connect(mPresetArduinoWidgets[groupIndex], SIGNAL(presetButtonClicked(ELightingRoutine, EColorGroup)), this, SLOT(multiButtonClicked(ELightingRoutine, EColorGroup)));
         groupIndex++;
     }
 
@@ -104,7 +104,7 @@ void GroupPage::setupButtons() {
                                                                   EPresetWidgetMode::eHue,
                                                                   this);
         mPresetHueLayout->addWidget(mPresetHueWidgets[groupIndex], rowIndex, columnIndex);
-        connect(mPresetHueWidgets[groupIndex], SIGNAL(presetButtonClicked(int, int)), this, SLOT(multiButtonClicked(int,int)));
+        connect(mPresetHueWidgets[groupIndex], SIGNAL(presetButtonClicked(ELightingRoutine, EColorGroup)), this, SLOT(multiButtonClicked(ELightingRoutine, EColorGroup)));
         if (columnIndex == 0) {
             columnIndex = 1;
         } else {
@@ -146,10 +146,10 @@ void GroupPage::highlightRoutineButton(ELightingRoutine routine, EColorGroup col
 // Slots
 // ----------------------------
 
-void GroupPage::multiButtonClicked(int routine, int colorGroup) {
-    mData->updateColorGroup((EColorGroup)colorGroup);
-    mData->updateRoutine((ELightingRoutine)routine);
-    highlightRoutineButton((ELightingRoutine)routine, (EColorGroup)colorGroup);
+void GroupPage::multiButtonClicked(ELightingRoutine routine, EColorGroup colorGroup) {
+    mData->updateColorGroup(colorGroup);
+    mData->updateRoutine(routine);
+    highlightRoutineButton(routine, colorGroup);
     emit presetColorGroupChanged(colorGroup);
 }
 
@@ -177,9 +177,9 @@ void GroupPage::resizeEvent(QResizeEvent *) {
 
 
 void GroupPage::show() {
-    if (mMode == EGroupMode::eHuePresets && mData->hasArduinoDevices()) {
+    if (mMode == EGroupMode::eHuePresets && (mData->hasArduinoDevices() || mData->hasNanoLeafDevices())) {
         setMode(EGroupMode::eArduinoPresets);
-    } else if (mMode == EGroupMode::eArduinoPresets && !mData->hasArduinoDevices()) {
+    } else if (mMode == EGroupMode::eArduinoPresets && !(mData->hasArduinoDevices() || mData->hasNanoLeafDevices())) {
         setMode(EGroupMode::eHuePresets);
     }
 }

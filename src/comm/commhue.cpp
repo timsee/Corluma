@@ -35,7 +35,7 @@ CommHue::CommHue() {
     connect(mParser, SIGNAL(receivedOnOffChange(int, bool)), this, SLOT(onOffChange(int, bool)));
     connect(mParser, SIGNAL(receivedMainColorChange(int, QColor)), this, SLOT(mainColorChange(int, QColor)));
     connect(mParser, SIGNAL(receivedArrayColorChange(int, int, QColor)), this, SLOT(arrayColorChange(int, int, QColor)));
-    connect(mParser, SIGNAL(receivedRoutineChange(int, int, int)), this, SLOT(routineChange(int, int, int)));
+    connect(mParser, SIGNAL(receivedRoutineChange(int, ELightingRoutine, EColorGroup)), this, SLOT(routineChange(int, ELightingRoutine, EColorGroup)));
     connect(mParser, SIGNAL(receivedCustomArrayCount(int, int)), this, SLOT(customArrayCount(int, int)));
     connect(mParser, SIGNAL(receivedBrightnessChange(int, int)), this, SLOT(brightnessChange(int, int)));
     connect(mParser, SIGNAL(receivedSpeedChange(int, int)), this, SLOT(speedChange(int, int)));
@@ -254,7 +254,7 @@ void CommHue::arrayColorChange(int deviceIndex, int colorIndex, QColor color) {
     //TODO: implement
 }
 
-void CommHue::routineChange(int deviceIndex, int routineIndex, int colorGroup) {
+void CommHue::routineChange(int deviceIndex, ELightingRoutine routineIndex, EColorGroup colorGroup) {
     Q_UNUSED(colorGroup);
     Q_UNUSED(deviceIndex);
     Q_UNUSED(routineIndex);
@@ -342,14 +342,14 @@ void CommHue::replyFinished(QNetworkReply* reply) {
                             updateHueSchedule(innerObject, key.toDouble());
                             // only send this out if its the first schedule update and you have the first group update
                             if (!mHaveSchedules && mHaveGroups) {
-                                emit discoveryStateChanged((int)EHueDiscoveryState::eFullyConnected);
+                                emit discoveryStateChanged(EHueDiscoveryState::eFullyConnected);
                                 mFullyDiscovered = true;
                             }
                             mHaveSchedules = true;
                         } else if (updateType == EHueUpdates::eGroupUpdate) {
                             // only send this out if its the first group update and you have the first schedule update
                             if (mHaveSchedules && !mHaveGroups) {
-                                emit discoveryStateChanged((int)EHueDiscoveryState::eFullyConnected);
+                                emit discoveryStateChanged(EHueDiscoveryState::eFullyConnected);
                                 mFullyDiscovered = true;
                             }
                             mHaveGroups = true;
@@ -642,7 +642,7 @@ bool CommHue::updateHueLightState(QJsonObject object, int i) {
             // only send this if its the first light update
             if (!mLightUpdateReceived) {
                 resetBackgroundTimers();
-                discoveryStateChanged((int)EHueDiscoveryState::eFindingGroupAndScheduleInfo);
+                discoveryStateChanged(EHueDiscoveryState::eFindingGroupAndScheduleInfo);
             }
 
             mLightUpdateReceived = true;

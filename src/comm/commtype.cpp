@@ -57,7 +57,7 @@ bool CommType::startDiscoveringController(QString controller) {
         std::list<cor::Light> newDeviceList;
         mDeviceTable.insert(std::make_pair(controller.toStdString(), newDeviceList));
         mUndiscoveredList.push_front(controller);
-        emit updateReceived((int)mType);
+        emit updateReceived(mType);
         mFullyDiscovered = false;
         startDiscovery();
         return true;
@@ -80,7 +80,7 @@ void CommType::updateDevice(cor::Light device) {
             if (compareLight(device, *it)) {
                 deviceList->second.remove((*it));
                 deviceList->second.push_back(device);
-                emit updateReceived((int)mType);
+                emit updateReceived(mType);
                 return;
             }
         }
@@ -89,7 +89,7 @@ void CommType::updateDevice(cor::Light device) {
     // device not found
     //qDebug() << "INFO: tried to update device that didnt exist, adding it instead" << device.name;
     deviceList->second.push_back(device);
-    emit updateReceived((int)mType);
+    emit updateReceived(mType);
 }
 
 
@@ -362,7 +362,7 @@ void CommType::handleIncomingPacket(const QString& controllerName, const QString
         }
 
     } else {
-        emit packetReceived(controllerName, payload, (int)mType);
+        emit packetReceived(controllerName, payload, mType);
     }
 }
 
@@ -392,6 +392,8 @@ QString CommType::settingsIndexKey(int index) {
         typeID = QString("UDP");
     } else if (mType == ECommType::eHue) {
         typeID = QString("HUE");
+    } else if (mType == ECommType::eNanoLeaf) {
+        typeID = QString("NANOLEAF");
     }
 #ifndef MOBILE_BUILD
     else if (mType == ECommType::eSerial) {
@@ -410,6 +412,8 @@ QString CommType::settingsListSizeKey() {
         typeID = QString("UDP");
     } else if (mType == ECommType::eHue) {
         typeID = QString("HUE");
+    } else if (mType == ECommType::eNanoLeaf) {
+        typeID = QString("NANOLEAF");
     }
 #ifndef MOBILE_BUILD
     else if (mType == ECommType::eSerial) {

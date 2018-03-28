@@ -1,7 +1,7 @@
 #-------------------------------------------------
 #
 # Corluma
-# Copyright (C) 2015 - 2016.
+# Copyright (C) 2015 - 2018.
 # Released under the GNU General Public License.
 # Full license in root of git repo.
 #
@@ -113,6 +113,7 @@ SOURCES += main.cpp \
     comm/commudp.cpp \
     comm/commtype.cpp \
     comm/commhue.cpp \
+    comm/commnanoleaf.cpp \
     comm/commpacketparser.cpp \
     comm/commtypesettings.cpp \
     comm/commlayer.cpp \
@@ -120,7 +121,9 @@ SOURCES += main.cpp \
     comm/datasync.cpp \
     comm/datasynchue.cpp \
     comm/datasyncarduino.cpp \
+    comm/datasyncnanoleaf.cpp \
     comm/datasyncsettings.cpp \
+    comm/upnpdiscovery.cpp \
     colorpicker/colorpicker.cpp \
     colorpicker/rgbsliders.cpp \
     colorpicker/tempbrightsliders.cpp \
@@ -129,9 +132,9 @@ SOURCES += main.cpp \
     discovery/discoverywidget.cpp \
     discovery/discoveryyunwidget.cpp \
     discovery/discoveryhuewidget.cpp \
+    discovery/discoverynanoleafwidget.cpp \
     discovery/hardwareconnectionwidget.cpp \
     cor/light.cpp \
-    cor/utils.cpp \
     cor/controller.cpp \
     cor/button.cpp \
     cor/checkbox.cpp \
@@ -148,6 +151,9 @@ SOURCES += main.cpp \
     hue/lightinfowidget.cpp \
     hue/bridgediscovery.cpp \
     hue/huelight.cpp \
+    nanoleaf/panels.cpp \
+    nanoleaf/rhythmcontroller.cpp \
+    nanoleaf/leafcontroller.cpp \
     mainwindow.cpp \
     settingspage.cpp \
     datalayer.cpp \
@@ -180,6 +186,7 @@ HEADERS  +=  comm/commtype.h \
     comm/commhttp.h \
     comm/commudp.h \
     comm/commhue.h \
+    comm/commnanoleaf.h \
     comm/commtypesettings.h \
     comm/commpacketparser.h \
     comm/commlayer.h \
@@ -188,6 +195,8 @@ HEADERS  +=  comm/commtype.h \
     comm/datasynchue.h \
     comm/datasyncarduino.h \
     comm/datasyncsettings.h \
+    comm/datasyncnanoleaf.h \
+    comm/upnpdiscovery.h \
     colorpicker/colorpicker.h \
     colorpicker/rgbsliders.h \
     colorpicker/tempbrightsliders.h \
@@ -196,6 +205,7 @@ HEADERS  +=  comm/commtype.h \
     discovery/discoverywidget.h \
     discovery/discoveryyunwidget.h \
     discovery/discoveryhuewidget.h \
+    discovery/discoverynanoleafwidget.h \
     discovery/hardwareconnectionwidget.h \
     cor/light.h \
     cor/protocols.h \
@@ -211,12 +221,16 @@ HEADERS  +=  comm/commtype.h \
     cor/switch.h \
     cor/palette.h \
     cor/lightgroup.h \
+    cor/range.h \
     hue/lightdiscovery.h \
     hue/lightinfolistwidget.h \
     hue/lightinfowidget.h \
     hue/bridgediscovery.h \
     hue/hueprotocols.h \
     hue/huelight.h \
+    nanoleaf/panels.h \
+    nanoleaf/rhythmcontroller.h \
+    nanoleaf/leafcontroller.h \
     mainwindow.h \
     settingspage.h \
     datalayer.h \

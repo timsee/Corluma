@@ -319,6 +319,12 @@ public:
     bool hasArduinoDevices();
 
     /*!
+     * \brief hasNanoLeafDevices helper that determines if there are any nanoleaf devices in the current data
+     * \return true if any device is a nanoleaf
+     */
+    bool hasNanoLeafDevices();
+
+    /*!
      * \brief commTypeSettings pointer to the current comm types settings, which maintains which commtypes
      *        are currently enabled or disabled
      * \return pointer to the current stream settings

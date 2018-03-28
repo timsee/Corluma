@@ -14,7 +14,7 @@ DataSyncHue::DataSyncHue(DataLayer *data, CommLayer *comm) {
     mData = data;
     mComm = comm;
     mUpdateInterval = 250;
-    connect(mComm, SIGNAL(packetReceived(int)), this, SLOT(commPacketReceived(int)));
+    connect(mComm, SIGNAL(packetReceived(ECommType)), this, SLOT(commPacketReceived(ECommType)));
     connect(mData, SIGNAL(dataUpdate()), this, SLOT(resetSync()));
 
     mSyncTimer = new QTimer(this);
@@ -35,7 +35,7 @@ void DataSyncHue::cancelSync() {
     }
 }
 
-void DataSyncHue::commPacketReceived(int type) {
+void DataSyncHue::commPacketReceived(ECommType type) {
     if ((ECommType)type == ECommType::eHue) {
         if (!mDataIsInSync) {
             resetSync();
@@ -137,7 +137,7 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
         if (cor::colorDifference(hsvColor, commDevice.color) > 0.02f) {
             QString message = mComm->sendMainColorChange(list, hsvColor);
             appendToPacket(packet, message, controller.maxPacketSize);
-            //qDebug() << "hue color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << utils::colorDifference(dataDevice.color, commDevice.color);
+            //qDebug() << "hue color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << cor::colorDifference(dataDevice.color, commDevice.color);
             countOutOfSync++;
         }
         if (cor::brightnessDifference(commDevice.brightness, dataDevice.brightness) > 0.05f) {

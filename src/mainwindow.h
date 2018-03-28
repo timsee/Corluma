@@ -14,6 +14,7 @@
 #include "comm/commlayer.h"
 #include "comm/datasyncsettings.h"
 #include "comm/datasyncarduino.h"
+#include "comm/datasyncnanoleaf.h"
 #include "comm/datasynchue.h"
 #include "editgrouppage.h"
 #include "greyoutoverlay.h"
@@ -297,6 +298,11 @@ private:
      * \brief mDataSyncHue sync thread for data coming from hues
      */
     DataSyncHue *mDataSyncHue;
+
+    /*!
+     * \brief mDataSyncNanoLeaf sync thread for data coming from NanoLeaf
+     */
+    DataSyncNanoLeaf *mDataSyncNanoLeaf;
 
     /*!
      * \brief mDataSyncSettings sync thread for data coming from settings

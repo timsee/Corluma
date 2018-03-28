@@ -10,11 +10,9 @@
 #include "floatinglayout.h"
 
 
-#ifndef MOBILE_BUILD
-class DiscoverySerialWidget;
-#endif
 class DiscoveryYunWidget;
 class DiscoveryHueWidget;
+class DiscoveryNanoLeafWidget;
 
 namespace Ui {
 class DiscoveryPage;
@@ -96,7 +94,7 @@ private slots:
     /*!
      * \brief commTypeSelected called when the comm type updates and changes
      */
-    void commTypeSelected(int);
+    void commTypeSelected(ECommTypeSettings);
 
     /*!
      * \brief renderUI renders expensive assets if and only if the assets have had any
@@ -110,7 +108,7 @@ private slots:
      * \param connectionState int representation of a EConnectionState that gives the current connection
      *        status.
      */
-    void widgetConnectionStateChanged(int type, int connectionState);
+    void widgetConnectionStateChanged(ECommTypeSettings type, EConnectionState connectionState);
 
     /*!
      * \brief floatingLayoutButtonPressed handles whenever a floating layout button is presed
@@ -136,22 +134,22 @@ private:
     /// moves floating layouts to top right position of screen.
     void moveFloatingLayouts();
 
+    bool checkIfDiscovered(ECommTypeSettings type);
+
     /// floating layout for commtype button
     FloatingLayout *mHorizontalFloatingLayout;
 
     /// floating layout for settings button
     FloatingLayout *mVerticalFloatingLayout;
 
-#ifndef MOBILE_BUILD
-    /// discovery widget for serial devices
-    DiscoverySerialWidget *mSerialWidget;
-#endif
-
     /// discovery widget for Arduino Yuns
     DiscoveryYunWidget *mYunWidget;
 
     /// discovery widget for hue products
     DiscoveryHueWidget *mHueWidget;
+
+    /// discovery widget for nanoleaf products
+    DiscoveryNanoLeafWidget *mNanoLeafWidget;
 
     /*!
      * \brief resizeTopMenu resize buttons at top that switch between Hue, Serial, etc.
@@ -169,7 +167,7 @@ private:
      * \param type the commtype to change the connection state on
      * \param newState the new state for the commtype.
      */
-    void changeCommTypeConnectionState(ECommType type, EConnectionState newState);
+    void changeCommTypeConnectionState(ECommTypeSettings type, EConnectionState newState);
 
     /*!
      * \brief mComm pointer to CommLayer.
@@ -177,9 +175,9 @@ private:
     CommLayer *mComm;
 
     /*!
-     * \brief mType current CommType displaying its discovery page.
+     * \brief mType current CommTypeSettings displaying its discovery page.
      */
-    ECommType mType;
+    ECommTypeSettings mType;
 
     /*!
      * \brief mButtonIcons reference to a QPixmap for each of the comm buttons.

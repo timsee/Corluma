@@ -15,6 +15,7 @@
 #include <QJsonArray>
 
 #include "hue/hueprotocols.h"
+#include "comm/upnpdiscovery.h"
 
 namespace hue
 {
@@ -92,13 +93,16 @@ public:
      */
     void attemptIPAddress(QString ip);
 
+    /// connects UPnP object to the discovery object.
+    void connectUPnPDiscovery(UPnPDiscovery* UPnP);
+
 signals:
 
     /*!
      * \brief bridgeDiscoveryStateChanged int representation of the EHueDiscoveryState that
      *        the discovery object is currently in.
      */
-    void bridgeDiscoveryStateChanged(int);
+    void bridgeDiscoveryStateChanged(EHueDiscoveryState);
 
     /*!
      * \brief connectionStatusChanged If returning true, it has a valid Bridge that has had
@@ -122,16 +126,13 @@ private slots:
     void replyFinished(QNetworkReply*);
 
     /*!
-     * \brief readPendingUPnPDatagrams caleld by the mUPnPSocket, receives UPnP packets and
-     *        parses for a Hue Bridge.
-     */
-    void readPendingUPnPDatagrams();
-
-    /*!
      * \brief handleDiscoveryTimeout Some discovery states have timeouts associated with them.
      *        This method handles when a timeout is called.
      */
     void handleDiscoveryTimeout();
+
+    /// called when a UPnP packet is received
+    void receivedUPnP(QHostAddress, QString);
 
 private:
     /*!
@@ -154,6 +155,9 @@ private:
      */
     QSettings *mSettings;
 
+    /// pointer to the UPnP object
+    UPnPDiscovery *mUPnP;
+
     /*!
      * \brief mDiscoveryTimer timer used for repeating discovery events
      */
@@ -162,10 +166,6 @@ private:
      * \brief mTimeoutTimer single shot timer that determines when a discovery method is timing out.
      */
     QTimer *mTimeoutTimer;
-    /*!
-     * \brief mUPnPSocket Socket for UPnP discovery.
-     */
-    QUdpSocket *mUPnPSocket;
 
     /*!
      * \brief mHasKey true if a key has been found in the QSettings or discovered via

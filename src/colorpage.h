@@ -144,7 +144,7 @@ private slots:
      * \brief newRoutineSelected called whenever a routine button is clicked. Sends
      *        the routine to the datalayer so that it can get sent to the connected devices.
      */
-    void newRoutineSelected(int);
+    void newRoutineSelected(ELightingRoutine);
 
     /*!
      * \brief ambientUpdateReceived called whenever the colorpicker gives back an ambient update.

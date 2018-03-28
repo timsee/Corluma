@@ -7,6 +7,11 @@ namespace cor
 {
 
 /*!
+ * \copyright
+ * Copyright (C) 2015 - 2018.
+ * Released under the GNU General Public License.
+ *
+ *
  * \brief The LightGroup class is data type that stores a group lights and some metadata
  *        about that group such as a name and a unique index. This is used for rooms, groups,
  *        moods, and any other groups used in UI.

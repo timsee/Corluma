@@ -6,6 +6,11 @@
 #include "cor/light.h"
 
 /*!
+ * \copyright
+ * Copyright (C) 2015 - 2018.
+ * Released under the GNU General Public License.
+ *
+ *
  * \brief The HueLight class is a class that stores all the relevant
  *        data received from a state update from the bridge.
  */

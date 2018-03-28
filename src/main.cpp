@@ -139,9 +139,9 @@ int main(int argc, char *argv[]) {
         settings.setValue(kSpeedValue,      QString::number(425));
 
         // comm settings
-        settings.setValue(kUseYunKey,    QString::number((int)false));
-        settings.setValue(kUseSerialKey, QString::number((int)false));
-        settings.setValue(kUseHueKey,    QString::number((int)true));
+        settings.setValue(kUseArduCorKey,   QString::number((int)false));
+        settings.setValue(kUseHueKey,       QString::number((int)true));
+        settings.setValue(kUseNanoLeafKey,  QString::number((int)false));
 
         // set the value so it no longer gives a default back.
         settings.setValue(kFirstTimeOpenKey, QString::number(10));

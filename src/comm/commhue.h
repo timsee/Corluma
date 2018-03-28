@@ -294,7 +294,7 @@ signals:
     void stateChanged();
 
     /// signals during discovery things like when the bridge is discovered and when light data is received
-    void discoveryStateChanged(int);
+    void discoveryStateChanged(EHueDiscoveryState);
 
 private slots:
 
@@ -347,7 +347,7 @@ private slots:
      * \param colorGroupUsed the color group to use for the custom routine. If its a single
      *        color routine, this value will be -1.
      */
-    void routineChange(int deviceIndex, int routineIndex, int colorGroup);
+    void routineChange(int deviceIndex, ELightingRoutine routineIndex, EColorGroup colorGroup);
 
     /*!
      * \brief customArrayCount connected to CommPacketParser, this changes the number of colors used

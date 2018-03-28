@@ -9,6 +9,10 @@
 namespace cor
 {
 /*!
+ * \copyright
+ * Copyright (C) 2015 - 2018.
+ * Released under the GNU General Public License.
+ *
  * \brief The Controller class stores information about a Controller.
  *        A controller allows control of one or more light "Devices"
  */
