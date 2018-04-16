@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.12.5</span>
+   &#160;<span id="projectnumber">v0.12.9</span>
    </div>
   </td>
  </tr>
@@ -59,25 +59,28 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
-<tr class="memitem:a1c3391ff0057ebde7a1ec0f0e2708d71"><td class="memItemLeft" align="right" valign="top"><a id="a1c3391ff0057ebde7a1ec0f0e2708d71"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#a1c3391ff0057ebde7a1ec0f0e2708d71">newRoutineSelected</a> (int)</td></tr>
-<tr class="memdesc:a1c3391ff0057ebde7a1ec0f0e2708d71"><td class="mdescLeft">&#160;</td><td class="mdescRight">newRoutineSelected emitted whenever a button is pressed with the int representation of the routine that it represents. <br /></td></tr>
-<tr class="separator:a1c3391ff0057ebde7a1ec0f0e2708d71"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71c28f4421898494a79ab4e7453022c2"><td class="memItemLeft" align="right" valign="top"><a id="a71c28f4421898494a79ab4e7453022c2"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#a71c28f4421898494a79ab4e7453022c2">newRoutineSelected</a> (QJsonObject)</td></tr>
+<tr class="memdesc:a71c28f4421898494a79ab4e7453022c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">newRoutineSelected emitted whenever a button is pressed with the int representation of the routine that it represents. <br /></td></tr>
+<tr class="separator:a71c28f4421898494a79ab4e7453022c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a6a5f0991cfca337f83b754b68e1b53ba"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#a6a5f0991cfca337f83b754b68e1b53ba">RoutineButtonsWidget</a> (EWidgetGroup widgetGroup, std::vector&lt; QColor &gt; colors=std::vector&lt; QColor &gt;(), QWidget *parent=0)</td></tr>
 <tr class="memdesc:a6a5f0991cfca337f83b754b68e1b53ba"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_routine_buttons_widget.html" title="The RoutineButtonsWidget class is a basic widget that holds a grid of lightsbuttons that each map to ...">RoutineButtonsWidget</a> constructor.  <a href="#a6a5f0991cfca337f83b754b68e1b53ba">More...</a><br /></td></tr>
 <tr class="separator:a6a5f0991cfca337f83b754b68e1b53ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed4a79cb92b63ea55acce0e224e9a184"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#aed4a79cb92b63ea55acce0e224e9a184">highlightRoutineButton</a> (ELightingRoutine routine)</td></tr>
-<tr class="memdesc:aed4a79cb92b63ea55acce0e224e9a184"><td class="mdescLeft">&#160;</td><td class="mdescRight">highlightRoutineButton highlights the button that implements the routine parameter. If it can't find a button that implements the lighting routine, then all buttons are unhighlighted  <a href="#aed4a79cb92b63ea55acce0e224e9a184">More...</a><br /></td></tr>
-<tr class="separator:aed4a79cb92b63ea55acce0e224e9a184"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6c6ab324fa8ba6e12f8af2601bd8697"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#aa6c6ab324fa8ba6e12f8af2601bd8697">highlightRoutineButton</a> (const QString &amp;label)</td></tr>
+<tr class="memdesc:aa6c6ab324fa8ba6e12f8af2601bd8697"><td class="mdescLeft">&#160;</td><td class="mdescRight">highlightRoutineButton highlights the button that implements the routine parameter. If it can't find a button that implements the lighting routine, then all buttons are unhighlighted  <a href="#aa6c6ab324fa8ba6e12f8af2601bd8697">More...</a><br /></td></tr>
+<tr class="separator:aa6c6ab324fa8ba6e12f8af2601bd8697"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30a80b11ab77c4ba888f435e6d6428df"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#a30a80b11ab77c4ba888f435e6d6428df">jsonToButtonName</a> (const QJsonObject &amp;routineObject)</td></tr>
+<tr class="memdesc:a30a80b11ab77c4ba888f435e6d6428df"><td class="mdescLeft">&#160;</td><td class="mdescRight">jsonToButtonName takes a json object that represents a routine as input and if it matches any of the json objects used by routine buttons, it returns the name. Otherwise, it returns an empty string  <a href="#a30a80b11ab77c4ba888f435e6d6428df">More...</a><br /></td></tr>
+<tr class="separator:a30a80b11ab77c4ba888f435e6d6428df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1698b3d3c51b033a073dd0e665628b2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#aa1698b3d3c51b033a073dd0e665628b2">singleRoutineColorChanged</a> (QColor newColor)</td></tr>
 <tr class="memdesc:aa1698b3d3c51b033a073dd0e665628b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">singleRoutineColorChanged can only be used by a eSingleRoutines version of the widget, this updates the color of of all of the icons to reflect the new color.  <a href="#aa1698b3d3c51b033a073dd0e665628b2">More...</a><br /></td></tr>
 <tr class="separator:aa1698b3d3c51b033a073dd0e665628b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9bb9b9b2fcc8ea397183d762bec365d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#af9bb9b9b2fcc8ea397183d762bec365d">multiRoutineColorsChanged</a> (const std::vector&lt; QColor &gt; &amp;colors, int colorCount)</td></tr>
-<tr class="memdesc:af9bb9b9b2fcc8ea397183d762bec365d"><td class="mdescLeft">&#160;</td><td class="mdescRight">multiRoutineColorsChanged can only be used by eMultiRotuiens version of this widget, this updates all the colors of all the icons to reflect the new group of custom colors.  <a href="#af9bb9b9b2fcc8ea397183d762bec365d">More...</a><br /></td></tr>
-<tr class="separator:af9bb9b9b2fcc8ea397183d762bec365d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26e21e83d43742935e0af8bbe8dd4b70"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#a26e21e83d43742935e0af8bbe8dd4b70">multiRoutineColorsChanged</a> (const std::vector&lt; QColor &gt; &amp;colors)</td></tr>
+<tr class="memdesc:a26e21e83d43742935e0af8bbe8dd4b70"><td class="mdescLeft">&#160;</td><td class="mdescRight">multiRoutineColorsChanged can only be used by eMultiRotuiens version of this widget, this updates all the colors of all the icons to reflect the new group of custom colors.  <a href="#a26e21e83d43742935e0af8bbe8dd4b70">More...</a><br /></td></tr>
+<tr class="separator:a26e21e83d43742935e0af8bbe8dd4b70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac80813faf389f3a9f4a93e9ba66b5bef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#ac80813faf389f3a9f4a93e9ba66b5bef">resize</a> (QSize size)</td></tr>
 <tr class="memdesc:ac80813faf389f3a9f4a93e9ba66b5bef"><td class="mdescLeft">&#160;</td><td class="mdescRight">resize resize widget to given size  <a href="#ac80813faf389f3a9f4a93e9ba66b5bef">More...</a><br /></td></tr>
 <tr class="separator:ac80813faf389f3a9f4a93e9ba66b5bef"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -144,8 +147,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="aed4a79cb92b63ea55acce0e224e9a184"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aed4a79cb92b63ea55acce0e224e9a184">&#9670;&nbsp;</a></span>highlightRoutineButton()</h2>
+<a id="aa6c6ab324fa8ba6e12f8af2601bd8697"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa6c6ab324fa8ba6e12f8af2601bd8697">&#9670;&nbsp;</a></span>highlightRoutineButton()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -153,23 +156,48 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="memname">void RoutineButtonsWidget::highlightRoutineButton </td>
           <td>(</td>
-          <td class="paramtype">ELightingRoutine&#160;</td>
-          <td class="paramname"><em>routine</em></td><td>)</td>
+          <td class="paramtype">const QString &amp;&#160;</td>
+          <td class="paramname"><em>label</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">routine</td><td>the mode that the highlighted button implements. </td></tr>
+    <tr><td class="paramname">label</td><td>the name of the button </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="af9bb9b9b2fcc8ea397183d762bec365d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af9bb9b9b2fcc8ea397183d762bec365d">&#9670;&nbsp;</a></span>multiRoutineColorsChanged()</h2>
+<a id="a30a80b11ab77c4ba888f435e6d6428df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a30a80b11ab77c4ba888f435e6d6428df">&#9670;&nbsp;</a></span>jsonToButtonName()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">QString RoutineButtonsWidget::jsonToButtonName </td>
+          <td>(</td>
+          <td class="paramtype">const QJsonObject &amp;&#160;</td>
+          <td class="paramname"><em>routineObject</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">routineObject</td><td>the routine object to match to a button </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the name of the json button. </dd></dl>
+
+</div>
+</div>
+<a id="a26e21e83d43742935e0af8bbe8dd4b70"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26e21e83d43742935e0af8bbe8dd4b70">&#9670;&nbsp;</a></span>multiRoutineColorsChanged()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -178,25 +206,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
           <td class="memname">void RoutineButtonsWidget::multiRoutineColorsChanged </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; QColor &gt; &amp;&#160;</td>
-          <td class="paramname"><em>colors</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>colors</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>colorCount</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">colors</td><td>full group of custom colors </td></tr>
-    <tr><td class="paramname">colorCount</td><td>how many custom colors to use from that group. </td></tr>
   </table>
   </dd>
 </dl>

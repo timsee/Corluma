@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.12.5</span>
+   &#160;<span id="projectnumber">v0.12.9</span>
    </div>
   </td>
  </tr>
@@ -96,9 +96,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ae4501b93b8383486c16775e35a7c95e9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#ae4501b93b8383486c16775e35a7c95e9">changePageType</a> (EColorPageType page, bool skipAnimation=false)</td></tr>
 <tr class="memdesc:ae4501b93b8383486c16775e35a7c95e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">changePageType change the hue page type to display a different color picker.  <a href="#ae4501b93b8383486c16775e35a7c95e9">More...</a><br /></td></tr>
 <tr class="separator:ae4501b93b8383486c16775e35a7c95e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aabd54a9e49f72396182533b317d99a47"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#aabd54a9e49f72396182533b317d99a47">highlightRoutineButton</a> (ELightingRoutine routine)</td></tr>
-<tr class="memdesc:aabd54a9e49f72396182533b317d99a47"><td class="mdescLeft">&#160;</td><td class="mdescRight">highlightRoutineButton highlights the button that implements the routine parameter. If it can't find a button that implements the lighting routine, then all buttons are unhighlighted  <a href="#aabd54a9e49f72396182533b317d99a47">More...</a><br /></td></tr>
-<tr class="separator:aabd54a9e49f72396182533b317d99a47"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c65d5770f195ea4c6b63f9544f65fee"><td class="memItemLeft" align="right" valign="top"><a id="a2c65d5770f195ea4c6b63f9544f65fee"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a2c65d5770f195ea4c6b63f9544f65fee">setupButtons</a> ()</td></tr>
 <tr class="memdesc:a2c65d5770f195ea4c6b63f9544f65fee"><td class="mdescLeft">&#160;</td><td class="mdescRight">setupButtons sets up the routine buttons. Requires the <a class="el" href="class_data_layer.html" title="The DataLayer class stores and maintains the data about the state and settings of the application...">DataLayer</a> of the application to be set up first. <br /></td></tr>
@@ -127,6 +124,14 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr class="memitem:ad9b7726f55db9db3b46de6ef882a6373 inherit pub_methods_class_lighting_page"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#ad9b7726f55db9db3b46de6ef882a6373">setup</a> (<a class="el" href="class_data_layer.html">DataLayer</a> *dataLayer)</td></tr>
 <tr class="memdesc:ad9b7726f55db9db3b46de6ef882a6373 inherit pub_methods_class_lighting_page"><td class="mdescLeft">&#160;</td><td class="mdescRight">setup called by the <a class="el" href="class_main_window.html" title="The MainWindow class is the only window in this application. It contains a QStackedWidget which shows...">MainWindow</a> after the commLayer and dataLayer of the application are set up. This connects these layers to all the other pages.  <a href="class_lighting_page.html#ad9b7726f55db9db3b46de6ef882a6373">More...</a><br /></td></tr>
 <tr class="separator:ad9b7726f55db9db3b46de6ef882a6373 inherit pub_methods_class_lighting_page"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a151f37c753780206341b1c7f3c576f52 inherit pub_methods_class_lighting_page"><td class="memItemLeft" align="right" valign="top"><a id="a151f37c753780206341b1c7f3c576f52"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#a151f37c753780206341b1c7f3c576f52">isOpen</a> (bool open)</td></tr>
+<tr class="memdesc:a151f37c753780206341b1c7f3c576f52 inherit pub_methods_class_lighting_page"><td class="mdescLeft">&#160;</td><td class="mdescRight">setter for open flag <br /></td></tr>
+<tr class="separator:a151f37c753780206341b1c7f3c576f52 inherit pub_methods_class_lighting_page"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f1b92f607851bd14664bad4d1c09bde inherit pub_methods_class_lighting_page"><td class="memItemLeft" align="right" valign="top"><a id="a7f1b92f607851bd14664bad4d1c09bde"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#a7f1b92f607851bd14664bad4d1c09bde">isOpen</a> ()</td></tr>
+<tr class="memdesc:a7f1b92f607851bd14664bad4d1c09bde inherit pub_methods_class_lighting_page"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if open, false otherwise <br /></td></tr>
+<tr class="separator:a7f1b92f607851bd14664bad4d1c09bde inherit pub_methods_class_lighting_page"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -146,6 +151,10 @@ QTimer *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 <a class="el" href="class_data_layer.html">DataLayer</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#a13431dcc6aa10530a61bb9a11e32b386">mData</a></td></tr>
 <tr class="memdesc:a13431dcc6aa10530a61bb9a11e32b386 inherit pro_attribs_class_lighting_page"><td class="mdescLeft">&#160;</td><td class="mdescRight">data layer that maintains and tracks the states of the lights and the saved data of the GUI <br /></td></tr>
 <tr class="separator:a13431dcc6aa10530a61bb9a11e32b386 inherit pro_attribs_class_lighting_page"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab60a03fecd215e011cfb94781e544215 inherit pro_attribs_class_lighting_page"><td class="memItemLeft" align="right" valign="top"><a id="ab60a03fecd215e011cfb94781e544215"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#ab60a03fecd215e011cfb94781e544215">mIsOpen</a></td></tr>
+<tr class="memdesc:ab60a03fecd215e011cfb94781e544215 inherit pro_attribs_class_lighting_page"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if page is open, false if hidden. <br /></td></tr>
+<tr class="separator:ab60a03fecd215e011cfb94781e544215 inherit pro_attribs_class_lighting_page"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f1078d30d704ce6392c6803ce5a11ff inherit pro_attribs_class_lighting_page"><td class="memItemLeft" align="right" valign="top"><a id="a8f1078d30d704ce6392c6803ce5a11ff"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#a8f1078d30d704ce6392c6803ce5a11ff">mRenderInterval</a> = 100</td></tr>
 <tr class="memdesc:a8f1078d30d704ce6392c6803ce5a11ff inherit pro_attribs_class_lighting_page"><td class="mdescLeft">&#160;</td><td class="mdescRight">mRenderInterval number of msec between each of the UI events. <br /></td></tr>
@@ -213,30 +222,6 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
   <table class="params">
     <tr><td class="paramname">page</td><td>the new page type for the hue page. </td></tr>
     <tr><td class="paramname">skipAnimation</td><td>if true, skips animation </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="aabd54a9e49f72396182533b317d99a47"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aabd54a9e49f72396182533b317d99a47">&#9670;&nbsp;</a></span>highlightRoutineButton()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ColorPage::highlightRoutineButton </td>
-          <td>(</td>
-          <td class="paramtype">ELightingRoutine&#160;</td>
-          <td class="paramname"><em>routine</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">routine</td><td>the mode that the highlighted button implements. </td></tr>
   </table>
   </dd>
 </dl>

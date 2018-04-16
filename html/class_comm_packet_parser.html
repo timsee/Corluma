@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.12.5</span>
+   &#160;<span id="projectnumber">v0.12.9</span>
    </div>
   </td>
  </tr>
@@ -49,7 +49,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="class_comm_packet_parser.html" title="The CommPacketParser class takes the packets used for communication with other devices as input...">CommPacketParser</a> class takes the packets used for communication with other devices as input, parses them, and emits signals based on the contents of a packet. For example, a main color change packet will emit a <code><a class="el" href="class_comm_packet_parser.html#aaab6bd346a89f23b75c96122f0c71078" title="receivedMainColorChange signal that requests a main color change for a device. ">receivedMainColorChange(int, QColor)</a></code> signal. This class is used to emulate the functionality of the parser that is embedded on the arduino platforms on devices like the Philips Hue.  
+<p>The <a class="el" href="class_comm_packet_parser.html" title="The CommPacketParser class takes the packets used for communication with other devices as input...">CommPacketParser</a> class takes the packets used for communication with other devices as input, parses them, and emits signals based on the contents of a packet. For example, a main color change packet will emit a <code>receivedMainColorChange(int, QColor)</code> signal. This class is used to emulate the functionality of the parser that is embedded on the arduino platforms on devices like the Philips Hue.  
  <a href="class_comm_packet_parser.html#details">More...</a></p>
 
 <p><code>#include &quot;<a class="el" href="commpacketparser_8h_source.html">commpacketparser.h</a>&quot;</code></p>
@@ -61,31 +61,21 @@ Signals</h2></td></tr>
 <tr class="memitem:a5ff5ad03ed77bd3232779645f48bdb39"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_packet_parser.html#a5ff5ad03ed77bd3232779645f48bdb39">receivedOnOffChange</a> (int deviceIndex, bool turnOn)</td></tr>
 <tr class="memdesc:a5ff5ad03ed77bd3232779645f48bdb39"><td class="mdescLeft">&#160;</td><td class="mdescRight">receivedOnOffChange received a message to turn light on or off.  <a href="#a5ff5ad03ed77bd3232779645f48bdb39">More...</a><br /></td></tr>
 <tr class="separator:a5ff5ad03ed77bd3232779645f48bdb39"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaab6bd346a89f23b75c96122f0c71078"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_packet_parser.html#aaab6bd346a89f23b75c96122f0c71078">receivedMainColorChange</a> (int deviceIndex, QColor color)</td></tr>
-<tr class="memdesc:aaab6bd346a89f23b75c96122f0c71078"><td class="mdescLeft">&#160;</td><td class="mdescRight">receivedMainColorChange signal that requests a main color change for a device.  <a href="#aaab6bd346a89f23b75c96122f0c71078">More...</a><br /></td></tr>
-<tr class="separator:aaab6bd346a89f23b75c96122f0c71078"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8dd1a74ad3afd1eb51690e6bd71ef442"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_packet_parser.html#a8dd1a74ad3afd1eb51690e6bd71ef442">receivedArrayColorChange</a> (int deviceIndex, int index, QColor color)</td></tr>
 <tr class="memdesc:a8dd1a74ad3afd1eb51690e6bd71ef442"><td class="mdescLeft">&#160;</td><td class="mdescRight">receivedArrayColorChange signal that requests that the custom array changes a color.  <a href="#a8dd1a74ad3afd1eb51690e6bd71ef442">More...</a><br /></td></tr>
 <tr class="separator:a8dd1a74ad3afd1eb51690e6bd71ef442"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a087789c9fa08dfcb4db6b943e3594b39"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_packet_parser.html#a087789c9fa08dfcb4db6b943e3594b39">receivedRoutineChange</a> (int deviceIndex, int routine, int colorGroupUsed)</td></tr>
-<tr class="memdesc:a087789c9fa08dfcb4db6b943e3594b39"><td class="mdescLeft">&#160;</td><td class="mdescRight">receivedRoutineChange signal that requests a routine change for a device.  <a href="#a087789c9fa08dfcb4db6b943e3594b39">More...</a><br /></td></tr>
-<tr class="separator:a087789c9fa08dfcb4db6b943e3594b39"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37f227b9483fa691de5effb0077adf5f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_packet_parser.html#a37f227b9483fa691de5effb0077adf5f">receivedRoutineChange</a> (int deviceIndex, QJsonObject routineObject)</td></tr>
+<tr class="memdesc:a37f227b9483fa691de5effb0077adf5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">receivedRoutineChange signal that requests that the lighting routine change.  <a href="#a37f227b9483fa691de5effb0077adf5f">More...</a><br /></td></tr>
+<tr class="separator:a37f227b9483fa691de5effb0077adf5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76471d813772bbba03f00ef1be81b0e1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_packet_parser.html#a76471d813772bbba03f00ef1be81b0e1">receivedCustomArrayCount</a> (int deviceIndex, int count)</td></tr>
 <tr class="memdesc:a76471d813772bbba03f00ef1be81b0e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">receivedCustomArrayCount signal that requests change of te count of colors used from the custom color array.  <a href="#a76471d813772bbba03f00ef1be81b0e1">More...</a><br /></td></tr>
 <tr class="separator:a76471d813772bbba03f00ef1be81b0e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae2e6d5244b1cf3433feaba8a7735de9f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_packet_parser.html#ae2e6d5244b1cf3433feaba8a7735de9f">receivedBrightnessChange</a> (int deviceIndex, int brightness)</td></tr>
 <tr class="memdesc:ae2e6d5244b1cf3433feaba8a7735de9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">receivedBrightnessChange signal that requests a light brightness change  <a href="#ae2e6d5244b1cf3433feaba8a7735de9f">More...</a><br /></td></tr>
 <tr class="separator:ae2e6d5244b1cf3433feaba8a7735de9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4dd34387befe7a1369b1a4615bcdf4e9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_packet_parser.html#a4dd34387befe7a1369b1a4615bcdf4e9">receivedSpeedChange</a> (int deviceIndex, int speed)</td></tr>
-<tr class="memdesc:a4dd34387befe7a1369b1a4615bcdf4e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">receivedSpeedChange signal that requests a light speed change.  <a href="#a4dd34387befe7a1369b1a4615bcdf4e9">More...</a><br /></td></tr>
-<tr class="separator:a4dd34387befe7a1369b1a4615bcdf4e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a653c6576e85eac5d031f735629984cd4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_packet_parser.html#a653c6576e85eac5d031f735629984cd4">receivedTimeOutChange</a> (int deviceIndex, int timeOut)</td></tr>
 <tr class="memdesc:a653c6576e85eac5d031f735629984cd4"><td class="mdescLeft">&#160;</td><td class="mdescRight">receivedTimeOutChange signal that requests that the idle timeout of the hardware changes. A value of 0 will disable the timeout, each other value will be the number of minutes it takes to time out.  <a href="#a653c6576e85eac5d031f735629984cd4">More...</a><br /></td></tr>
 <tr class="separator:a653c6576e85eac5d031f735629984cd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4df4e989a7cf598b12a5dea49cbf67a8"><td class="memItemLeft" align="right" valign="top"><a id="a4df4e989a7cf598b12a5dea49cbf67a8"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_packet_parser.html#a4df4e989a7cf598b12a5dea49cbf67a8">receivedReset</a> ()</td></tr>
-<tr class="memdesc:a4df4e989a7cf598b12a5dea49cbf67a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">receivedReset reset all lights to their default settings. <br /></td></tr>
-<tr class="separator:a4df4e989a7cf598b12a5dea49cbf67a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -260,49 +250,6 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="aaab6bd346a89f23b75c96122f0c71078"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaab6bd346a89f23b75c96122f0c71078">&#9670;&nbsp;</a></span>receivedMainColorChange</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CommPacketParser::receivedMainColorChange </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>deviceIndex</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">QColor&#160;</td>
-          <td class="paramname"><em>color</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">signal</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">deviceIndex</td><td>0 for all indices, a specific index for a specific light. Will do nothing if index doesn't exist. </td></tr>
-    <tr><td class="paramname">color</td><td>the new color for the device. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a id="a5ff5ad03ed77bd3232779645f48bdb39"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5ff5ad03ed77bd3232779645f48bdb39">&#9670;&nbsp;</a></span>receivedOnOffChange</h2>
 
@@ -346,8 +293,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a087789c9fa08dfcb4db6b943e3594b39"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a087789c9fa08dfcb4db6b943e3594b39">&#9670;&nbsp;</a></span>receivedRoutineChange</h2>
+<a id="a37f227b9483fa691de5effb0077adf5f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a37f227b9483fa691de5effb0077adf5f">&#9670;&nbsp;</a></span>receivedRoutineChange</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -364,14 +311,8 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>routine</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>colorGroupUsed</em>&#160;</td>
+          <td class="paramtype">QJsonObject&#160;</td>
+          <td class="paramname"><em>routineObject</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -388,51 +329,7 @@ Public Member Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">deviceIndex</td><td>0 for all indices, a specific index for a specific light. Will do nothing if index doesn't exist. </td></tr>
-    <tr><td class="paramname">routine</td><td>the new color routine. </td></tr>
-    <tr><td class="paramname">colorGroupUsed</td><td>the color group to use for the custom routine. If its a single color routine, this value will be -1. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a4dd34387befe7a1369b1a4615bcdf4e9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4dd34387befe7a1369b1a4615bcdf4e9">&#9670;&nbsp;</a></span>receivedSpeedChange</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CommPacketParser::receivedSpeedChange </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>deviceIndex</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>speed</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">signal</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">deviceIndex</td><td>0 for all indices, a specific index for a specific light. Will do nothing if index doesn't exist. </td></tr>
-    <tr><td class="paramname">speed</td><td>a value between 1 and 2000. To get the FPS, take this value and divide it by 100. For example, 500 would be 5 FPS. </td></tr>
+    <tr><td class="paramname">routineObject</td><td>json object representing the new routine for the device </td></tr>
   </table>
   </dd>
 </dl>

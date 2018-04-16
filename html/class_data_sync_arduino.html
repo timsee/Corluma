@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.12.5</span>
+   &#160;<span id="projectnumber">v0.12.9</span>
    </div>
   </td>
  </tr>
@@ -62,10 +62,10 @@ Public Slots</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync_arduino.html#a05bc2462996fd9208a98a45fc5d1bd52">resetSync</a> () override</td></tr>
 <tr class="memdesc:a05bc2462996fd9208a98a45fc5d1bd52"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetSync Tells the <a class="el" href="class_data_sync_arduino.html" title="The DataSyncArduino class compares the data layer&#39;s representation of devices with the commlayer&#39;s un...">DataSyncArduino</a> object that the commlayer and the datalayer are potentially no longer in sync and the syncData() function needs to get called on the timer again. <br /></td></tr>
 <tr class="separator:a05bc2462996fd9208a98a45fc5d1bd52"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae58ec9a3e1415552ea6beed223f58c4e"><td class="memItemLeft" align="right" valign="top"><a id="ae58ec9a3e1415552ea6beed223f58c4e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync_arduino.html#ae58ec9a3e1415552ea6beed223f58c4e">commPacketReceived</a> (int) override</td></tr>
-<tr class="memdesc:ae58ec9a3e1415552ea6beed223f58c4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">commPacketReceived a packet was received from a given <a class="el" href="class_comm_type.html" title="inherited by comm types, provides a general interface that can be used to do connections and sending ...">CommType</a>. In some cases, receiving a packet will reset the sync for that commtype. <br /></td></tr>
-<tr class="separator:ae58ec9a3e1415552ea6beed223f58c4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9842b4da81e9689ca2bf983bf353b816"><td class="memItemLeft" align="right" valign="top"><a id="a9842b4da81e9689ca2bf983bf353b816"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync_arduino.html#a9842b4da81e9689ca2bf983bf353b816">commPacketReceived</a> (EProtocolType) override</td></tr>
+<tr class="memdesc:a9842b4da81e9689ca2bf983bf353b816"><td class="mdescLeft">&#160;</td><td class="mdescRight">commPacketReceived a packet was received from a given EProtocolType. In some cases, receiving a packet will reset the sync for that protocol type. <br /></td></tr>
+<tr class="separator:a9842b4da81e9689ca2bf983bf353b816"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>

@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.12.5</span>
+   &#160;<span id="projectnumber">v0.12.9</span>
    </div>
   </td>
  </tr>
@@ -62,19 +62,19 @@ Public Slots</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync_settings.html#a20acd0beaace757932dab375a0549d3f">resetSync</a> () override</td></tr>
 <tr class="memdesc:a20acd0beaace757932dab375a0549d3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetSync Tells the <a class="el" href="class_data_sync_arduino.html" title="The DataSyncArduino class compares the data layer&#39;s representation of devices with the commlayer&#39;s un...">DataSyncArduino</a> object that the commlayer and the datalayer are potentially no longer in sync and the syncData() function needs to get called on the timer again. <br /></td></tr>
 <tr class="separator:a20acd0beaace757932dab375a0549d3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af94c51aa39c8de657275d4f6330ead6c"><td class="memItemLeft" align="right" valign="top"><a id="af94c51aa39c8de657275d4f6330ead6c"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync_settings.html#af94c51aa39c8de657275d4f6330ead6c">commPacketReceived</a> (int) override</td></tr>
-<tr class="memdesc:af94c51aa39c8de657275d4f6330ead6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">commPacketReceived a packet was received from a given <a class="el" href="class_comm_type.html" title="inherited by comm types, provides a general interface that can be used to do connections and sending ...">CommType</a>. In some cases, receiving a packet will reset the sync for that commtype. <br /></td></tr>
-<tr class="separator:af94c51aa39c8de657275d4f6330ead6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab58406377e1fb8e49402f0383e1b7048"><td class="memItemLeft" align="right" valign="top"><a id="ab58406377e1fb8e49402f0383e1b7048"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync_settings.html#ab58406377e1fb8e49402f0383e1b7048">commPacketReceived</a> (EProtocolType) override</td></tr>
+<tr class="memdesc:ab58406377e1fb8e49402f0383e1b7048"><td class="mdescLeft">&#160;</td><td class="mdescRight">commPacketReceived a packet was received from a given protocol type. In some cases, receiving a packet will reset the sync for that protocol type. <br /></td></tr>
+<tr class="separator:ab58406377e1fb8e49402f0383e1b7048"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_slots_class_data_sync"><td colspan="2" onclick="javascript:toggleInherit('pub_slots_class_data_sync')"><img src="closed.png" alt="-"/>&#160;Public Slots inherited from <a class="el" href="class_data_sync.html">DataSync</a></td></tr>
 <tr class="memitem:ad297cadc581f1113c8862c554c9b40dd inherit pub_slots_class_data_sync"><td class="memItemLeft" align="right" valign="top"><a id="ad297cadc581f1113c8862c554c9b40dd"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#ad297cadc581f1113c8862c554c9b40dd">resetSync</a> ()=0</td></tr>
 <tr class="memdesc:ad297cadc581f1113c8862c554c9b40dd inherit pub_slots_class_data_sync"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetSync Tells the <a class="el" href="class_data_sync.html" title="The DataSync base class is used for datasync threads. These threads compares the data layer&#39;s represe...">DataSync</a> object that the commlayer and the datalayer are potentially no longer in sync and the <a class="el" href="class_data_sync.html#a0c68d026ca50c0c1c4dce244be86f0bb" title="syncData called by the SyncTimer. Runs the sync routine, which checks the data layer&#39;s desired repres...">syncData()</a> function needs to get called on the timer again. <br /></td></tr>
 <tr class="separator:ad297cadc581f1113c8862c554c9b40dd inherit pub_slots_class_data_sync"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc9fb9d3f26d57cdb307bb6e0e83eb72 inherit pub_slots_class_data_sync"><td class="memItemLeft" align="right" valign="top"><a id="adc9fb9d3f26d57cdb307bb6e0e83eb72"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#adc9fb9d3f26d57cdb307bb6e0e83eb72">commPacketReceived</a> (int)=0</td></tr>
-<tr class="memdesc:adc9fb9d3f26d57cdb307bb6e0e83eb72 inherit pub_slots_class_data_sync"><td class="mdescLeft">&#160;</td><td class="mdescRight">commPacketReceived a packet was received from a given <a class="el" href="class_comm_type.html" title="inherited by comm types, provides a general interface that can be used to do connections and sending ...">CommType</a>. In some cases, receiving a packet will reset the sync for that commtype. <br /></td></tr>
-<tr class="separator:adc9fb9d3f26d57cdb307bb6e0e83eb72 inherit pub_slots_class_data_sync"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b745d856c5f49ecbc79cf2aaedc7bd6 inherit pub_slots_class_data_sync"><td class="memItemLeft" align="right" valign="top"><a id="a6b745d856c5f49ecbc79cf2aaedc7bd6"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a6b745d856c5f49ecbc79cf2aaedc7bd6">commPacketReceived</a> (EProtocolType)=0</td></tr>
+<tr class="memdesc:a6b745d856c5f49ecbc79cf2aaedc7bd6 inherit pub_slots_class_data_sync"><td class="mdescLeft">&#160;</td><td class="mdescRight">commPacketReceived a packet was received from a given protocol type. In some cases, receiving a packet will reset the sync for that commtype. <br /></td></tr>
+<tr class="separator:a6b745d856c5f49ecbc79cf2aaedc7bd6 inherit pub_slots_class_data_sync"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>

@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.12.5</span>
+   &#160;<span id="projectnumber">v0.12.9</span>
    </div>
   </td>
  </tr>
@@ -85,31 +85,20 @@ $(function() {
 <li>sendCustomArrayCount()
 : <a class="el" href="class_comm_layer.html#af488d89d4c2571b6e0ef944d9392b5fc">CommLayer</a>
 </li>
-<li>sendMainColorChange()
-: <a class="el" href="class_comm_layer.html#a7ddd4fb804d5160441168cb37087ebc9">CommLayer</a>
-</li>
-<li>sendMultiRoutineChange()
-: <a class="el" href="class_comm_layer.html#ac9aa5fe2e13b6d5a3782ff6a92907f05">CommLayer</a>
-</li>
 <li>sendPacket()
 : <a class="el" href="class_comm_h_t_t_p.html#a96a2da15cbc18e6dead5de5929419948">CommHTTP</a>
 , <a class="el" href="class_comm_hue.html#a734c0cd741157978d4f1c6dcd262a23d">CommHue</a>
 , <a class="el" href="class_comm_layer.html#aa068ecdc82f7043223e86223fd6c8eb6">CommLayer</a>
+, <a class="el" href="class_comm_nano_leaf.html#a59f3719ecdc0395e8484e1c834602fa2">CommNanoLeaf</a>
 , <a class="el" href="class_comm_serial.html#a4d9cc9e12732805ea62774a684a9f048">CommSerial</a>
 , <a class="el" href="class_comm_type.html#a1f7c925caf447b57eec75187133ba460">CommType</a>
 , <a class="el" href="class_comm_u_d_p.html#a677d431bb94ae07d8fd03e17bfd159fc">CommUDP</a>
 </li>
-<li>sendReset()
-: <a class="el" href="class_comm_layer.html#a7dd7beaa21be66d0509dff58fa31d852">CommLayer</a>
+<li>sendRoutineChange()
+: <a class="el" href="class_comm_layer.html#a295e7f0b32f96d3bb0ba7bb8e8a6e991">CommLayer</a>
 </li>
 <li>sendSchedule()
 : <a class="el" href="class_comm_hue.html#a8b80833f0f35e62ea27427c139379fa7">CommHue</a>
-</li>
-<li>sendSingleRoutineChange()
-: <a class="el" href="class_comm_layer.html#acdd762cbbc66156966c41fc5234422d6">CommLayer</a>
-</li>
-<li>sendSpeed()
-: <a class="el" href="class_comm_layer.html#ab49e62bfdfa4241ed3b4f5482ee4b0f3">CommLayer</a>
 </li>
 <li>sendTimeOut()
 : <a class="el" href="class_comm_layer.html#af31492c7ee3ce111f815d5e353dac1ee">CommLayer</a>
@@ -122,7 +111,7 @@ $(function() {
 </li>
 <li>setChecked()
 : <a class="el" href="class_list_mood_widget.html#a933f4dc81660860f0881ea5ae9b0c114">ListMoodWidget</a>
-, <a class="el" href="class_preset_group_widget.html#a5d30d7376092a725515db04cb280be8d">PresetGroupWidget</a>
+, <a class="el" href="class_preset_group_widget.html#a4b25cb8324a1a222aa07c779aadf19f0">PresetGroupWidget</a>
 </li>
 <li>setCheckedDevices()
 : <a class="el" href="class_list_devices_group_widget.html#a6971c2c752711519be91a4f81391f3a7">ListDevicesGroupWidget</a>
@@ -130,12 +119,6 @@ $(function() {
 </li>
 <li>setCheckedMoods()
 : <a class="el" href="class_list_mood_group_widget.html#aa8f2b5958ab52f3d0618084226b97ad0">ListMoodGroupWidget</a>
-</li>
-<li>setColor()
-: <a class="el" href="group__gettersetters.html#gae8b8f17bf10404f70817616b5684197c">LightingRoutines</a>
-</li>
-<li>setCustomColorCount()
-: <a class="el" href="group__gettersetters.html#ga1e199ecebaac3e1be7c03a91bd9d52b2">LightingRoutines</a>
 </li>
 <li>setFontPointSize()
 : <a class="el" href="class_editable_field_widget.html#af0afa46fb6cd1ca530994d0f90a309cc">EditableFieldWidget</a>
@@ -146,44 +129,32 @@ $(function() {
 <li>setListHeight()
 : <a class="el" href="class_list_collection_widget.html#a42439969eb207a5b5e45bdb20e06e686">ListCollectionWidget</a>
 </li>
-<li>setMainColor()
-: <a class="el" href="group__gettersetters.html#ga2835d685009c99f0b1dcedfa65474019">LightingRoutines</a>
-</li>
 <li>setMode()
 : <a class="el" href="class_group_page.html#ace0436fc1ffc69b2c75f615d003087b4">GroupPage</a>
 </li>
-<li>setMultiBarsMoving()
-: <a class="el" href="class_icon_data.html#ad32c8144ff38a9e742c5d994160cc668">IconData</a>
-</li>
-<li>setMultiBarsSolid()
-: <a class="el" href="class_icon_data.html#a1c72c2d84efc4ceb17251384cb68a176">IconData</a>
-</li>
-<li>setMultiColors()
-: <a class="el" href="class_icon_data.html#a04ff044ec8b28025451362edc3e74423">IconData</a>
+<li>setMultiBars()
+: <a class="el" href="class_icon_data.html#a5f0987b5a16561b61cf6b3cd5e0f768a">IconData</a>
 </li>
 <li>setMultiFade()
-: <a class="el" href="class_icon_data.html#afa8bf36f3d60318af3944d16d49c68a9">IconData</a>
+: <a class="el" href="class_icon_data.html#a35ee15f77eaf20ffc570810513c38cc3">IconData</a>
 </li>
 <li>setMultiGlimmer()
-: <a class="el" href="class_icon_data.html#a440a30145b89971dd24de65216dcdccc">IconData</a>
-</li>
-<li>setMultiLightingRoutine()
-: <a class="el" href="class_icon_data.html#a7c2de142b7036de134fca700e297c75e">IconData</a>
+: <a class="el" href="class_icon_data.html#a82f58bb1399b66640464fc68d96643a1">IconData</a>
 </li>
 <li>setMultiRandomIndividual()
-: <a class="el" href="class_icon_data.html#a7cbd91fe29a0182f2a9e85221abc5b35">IconData</a>
+: <a class="el" href="class_icon_data.html#af762ef405e3351f69031b67be19bbfed">IconData</a>
 </li>
 <li>setMultiRandomSolid()
-: <a class="el" href="class_icon_data.html#a6d3b2a92788b0965bc55ffb7858eb2f5">IconData</a>
+: <a class="el" href="class_icon_data.html#a004ac360676d63ba16f5c59bfa13d987">IconData</a>
+</li>
+<li>setRoutine()
+: <a class="el" href="class_icon_data.html#a0d093e612c02cb2a438ba33d7714254e">IconData</a>
 </li>
 <li>setShowButtons()
 : <a class="el" href="class_list_collection_widget.html#a6622f02092ba38d3dd40782a502ebae3">ListCollectionWidget</a>
 , <a class="el" href="class_list_devices_group_widget.html#a89622b35f30486b617c5d871b6327c30">ListDevicesGroupWidget</a>
 , <a class="el" href="class_list_edit_widget.html#a70169c3d130ee1b8f9ffe5815c511a14">ListEditWidget</a>
 , <a class="el" href="class_list_mood_group_widget.html#abc90fc1ef21bb233e1747ad9069c0904">ListMoodGroupWidget</a>
-</li>
-<li>setSingleLightingRoutine()
-: <a class="el" href="class_icon_data.html#abede7bb476474e334c25c4fc4c5fd9bf">IconData</a>
 </li>
 <li>setSolidColor()
 : <a class="el" href="class_icon_data.html#a89217148fb16e8446f2c36760845522e">IconData</a>
@@ -276,43 +247,20 @@ $(function() {
 <li>shutdown()
 : <a class="el" href="class_comm_h_t_t_p.html#ae3920b3d97c94dfbb526e9ea343bfbb9">CommHTTP</a>
 , <a class="el" href="class_comm_hue.html#acdcd223b12613b92a682a2c8b50f17a6">CommHue</a>
-, <a class="el" href="class_comm_layer.html#ab23f9ea9bffe8271b5d0c5ec02057a43">CommLayer</a>
+, <a class="el" href="class_comm_layer.html#aeee121cc6b33f7963382d83180661f4f">CommLayer</a>
+, <a class="el" href="class_comm_nano_leaf.html#a53a99f2193731c1e315a1916ea2017bb">CommNanoLeaf</a>
 , <a class="el" href="class_comm_serial.html#aaf8a568ff8f2ec4379e7c5014251d8be">CommSerial</a>
 , <a class="el" href="class_comm_type.html#ad2a24398eeaafa49cd376cb09be961ef">CommType</a>
 , <a class="el" href="class_comm_u_d_p.html#a924841d71b8b5a975fdbb39335a4f6a6">CommUDP</a>
 </li>
-<li>singleBlink()
-: <a class="el" href="group__single_routines.html#ga902f877716d156b6833dd7fb03ba7d02">LightingRoutines</a>
-</li>
 <li>singleColorChanged()
 : <a class="el" href="class_color_page.html#a635779278b0106b4eea689ff251e2acc">ColorPage</a>
-</li>
-<li>singleFade()
-: <a class="el" href="group__single_routines.html#ga4d1e83486886b003dbc8dfc4942eb6cc">LightingRoutines</a>
-</li>
-<li>singleGlimmer()
-: <a class="el" href="group__single_routines.html#ga5deb5eb3ddd75c6cdc1cc5ecfcdd70bf">LightingRoutines</a>
 </li>
 <li>singleRoutineColorChanged()
 : <a class="el" href="class_routine_buttons_widget.html#aa1698b3d3c51b033a073dd0e665628b2">RoutineButtonsWidget</a>
 </li>
-<li>singleSawtoothFade()
-: <a class="el" href="group__single_routines.html#ga76e81ac0777bd10b1868f50df9a7be04">LightingRoutines</a>
-</li>
-<li>singleSolid()
-: <a class="el" href="group__single_routines.html#ga2e8ad4948e3778454ee376c35bb06358">LightingRoutines</a>
-</li>
-<li>singleWave()
-: <a class="el" href="group__single_routines.html#ga01e7ea17c971e488f36113e2046e7092">LightingRoutines</a>
-</li>
 <li>speed()
 : <a class="el" href="class_data_layer.html#a878df79749e4c8e9b2d3872d271da680">DataLayer</a>
-</li>
-<li>speedChanged()
-: <a class="el" href="class_global_settings_widget.html#acf2186b5c1cde8f68f2af55856843c68">GlobalSettingsWidget</a>
-</li>
-<li>speedValue()
-: <a class="el" href="class_global_settings_widget.html#af7c84e9319db1ab2fc05e9566798ca1e">GlobalSettingsWidget</a>
 </li>
 <li>startButtonClicked()
 : <a class="el" href="class_discovery_page.html#a1b9e6c3d67bc0784241ca527c1b7e082">DiscoveryPage</a>
@@ -322,13 +270,14 @@ $(function() {
 , <a class="el" href="class_comm_type.html#a92bed4ee74af1ae3a9b5d007fe878524">CommType</a>
 </li>
 <li>startDiscovery()
-: <a class="el" href="class_comm_layer.html#a84aae569e7e07c662c827ca4750d418e">CommLayer</a>
+: <a class="el" href="class_comm_layer.html#a66ab15d3f8c31727bc4f6fed6004dc71">CommLayer</a>
 , <a class="el" href="class_comm_type.html#a3ee085c089155c088acd4ebb4ed41b4f">CommType</a>
 </li>
 <li>startup()
 : <a class="el" href="class_comm_h_t_t_p.html#a8edda42218bdc83af4748635f1cb48f4">CommHTTP</a>
 , <a class="el" href="class_comm_hue.html#a5d07b03566ff1f1bba48c95ccb04560f">CommHue</a>
-, <a class="el" href="class_comm_layer.html#a0eddb554aa1998362805890ad0141dd2">CommLayer</a>
+, <a class="el" href="class_comm_layer.html#ab47f0c2e4f391d0af4c848aa975f1c56">CommLayer</a>
+, <a class="el" href="class_comm_nano_leaf.html#a65cbd25a71231b7f21d2d1151d22fbb3">CommNanoLeaf</a>
 , <a class="el" href="class_comm_serial.html#a194612ca547d450451ce64494ac3c77d">CommSerial</a>
 , <a class="el" href="class_comm_type.html#a78d309086195c52051f007e693ff2b7a">CommType</a>
 , <a class="el" href="class_comm_u_d_p.html#a329ffb2e4cac0b38d98fa6e11584284c">CommUDP</a>
@@ -340,11 +289,11 @@ $(function() {
 : <a class="el" href="class_comm_hue.html#ac12170f5466d258751a228029ac7aedd">CommHue</a>
 </li>
 <li>stopDiscovery()
-: <a class="el" href="class_comm_layer.html#a6abe231e460889ca2b0f3b0725571ad8">CommLayer</a>
+: <a class="el" href="class_comm_layer.html#a9fbd806e7abcdf340ad2e91d0c113484">CommLayer</a>
 , <a class="el" href="class_comm_type.html#ab0e83c722a3afb0c1ceda26c55c76e85">CommType</a>
 </li>
 <li>stopStateUpdates()
-: <a class="el" href="class_comm_layer.html#a4a0fda28fdcd8383fd7575abf9851cc5">CommLayer</a>
+: <a class="el" href="class_comm_layer.html#adfbf4b32b9137e7015f5b7c14c1ae784">CommLayer</a>
 , <a class="el" href="class_comm_type.html#a684c569bb57248ae4b0b2e4563339f74">CommType</a>
 </li>
 <li>switchToConnection()

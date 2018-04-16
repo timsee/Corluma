@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.12.5</span>
+   &#160;<span id="projectnumber">v0.12.9</span>
    </div>
   </td>
  </tr>
@@ -54,7 +54,7 @@ $(function() {
 
 <p><code>#include &quot;<a class="el" href="lightingpage_8h_source.html">lightingpage.h</a>&quot;</code></p>
 
-<p>Inherited by <a class="el" href="class_color_page.html">ColorPage</a>, <a class="el" href="class_connection_page.html">ConnectionPage</a>, <a class="el" href="class_discovery_page.html">DiscoveryPage</a>, <a class="el" href="class_edit_group_page.html">EditGroupPage</a>, and <a class="el" href="class_group_page.html">GroupPage</a>.</p>
+<p>Inherited by <a class="el" href="class_color_page.html">ColorPage</a>, <a class="el" href="class_connection_page.html">ConnectionPage</a>, <a class="el" href="class_discovery_page.html">DiscoveryPage</a>, <a class="el" href="class_edit_group_page.html">EditGroupPage</a>, <a class="el" href="class_group_page.html">GroupPage</a>, and <a class="el" href="class_settings_page.html">SettingsPage</a>.</p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -65,6 +65,14 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr class="memitem:ad9b7726f55db9db3b46de6ef882a6373"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#ad9b7726f55db9db3b46de6ef882a6373">setup</a> (<a class="el" href="class_data_layer.html">DataLayer</a> *dataLayer)</td></tr>
 <tr class="memdesc:ad9b7726f55db9db3b46de6ef882a6373"><td class="mdescLeft">&#160;</td><td class="mdescRight">setup called by the <a class="el" href="class_main_window.html" title="The MainWindow class is the only window in this application. It contains a QStackedWidget which shows...">MainWindow</a> after the commLayer and dataLayer of the application are set up. This connects these layers to all the other pages.  <a href="#ad9b7726f55db9db3b46de6ef882a6373">More...</a><br /></td></tr>
 <tr class="separator:ad9b7726f55db9db3b46de6ef882a6373"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a151f37c753780206341b1c7f3c576f52"><td class="memItemLeft" align="right" valign="top"><a id="a151f37c753780206341b1c7f3c576f52"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#a151f37c753780206341b1c7f3c576f52">isOpen</a> (bool open)</td></tr>
+<tr class="memdesc:a151f37c753780206341b1c7f3c576f52"><td class="mdescLeft">&#160;</td><td class="mdescRight">setter for open flag <br /></td></tr>
+<tr class="separator:a151f37c753780206341b1c7f3c576f52"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f1b92f607851bd14664bad4d1c09bde"><td class="memItemLeft" align="right" valign="top"><a id="a7f1b92f607851bd14664bad4d1c09bde"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#a7f1b92f607851bd14664bad4d1c09bde">isOpen</a> ()</td></tr>
+<tr class="memdesc:a7f1b92f607851bd14664bad4d1c09bde"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if open, false otherwise <br /></td></tr>
+<tr class="separator:a7f1b92f607851bd14664bad4d1c09bde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -76,6 +84,10 @@ QTimer *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 <a class="el" href="class_data_layer.html">DataLayer</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#a13431dcc6aa10530a61bb9a11e32b386">mData</a></td></tr>
 <tr class="memdesc:a13431dcc6aa10530a61bb9a11e32b386"><td class="mdescLeft">&#160;</td><td class="mdescRight">data layer that maintains and tracks the states of the lights and the saved data of the GUI <br /></td></tr>
 <tr class="separator:a13431dcc6aa10530a61bb9a11e32b386"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab60a03fecd215e011cfb94781e544215"><td class="memItemLeft" align="right" valign="top"><a id="ab60a03fecd215e011cfb94781e544215"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#ab60a03fecd215e011cfb94781e544215">mIsOpen</a></td></tr>
+<tr class="memdesc:ab60a03fecd215e011cfb94781e544215"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if page is open, false if hidden. <br /></td></tr>
+<tr class="separator:ab60a03fecd215e011cfb94781e544215"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f1078d30d704ce6392c6803ce5a11ff"><td class="memItemLeft" align="right" valign="top"><a id="a8f1078d30d704ce6392c6803ce5a11ff"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lighting_page.html#a8f1078d30d704ce6392c6803ce5a11ff">mRenderInterval</a> = 100</td></tr>
 <tr class="memdesc:a8f1078d30d704ce6392c6803ce5a11ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">mRenderInterval number of msec between each of the UI events. <br /></td></tr>

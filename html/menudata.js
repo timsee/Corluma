@@ -1,3 +1,2 @@
 var menudata={children:[
-{text:"Related Pages",url:"pages.html"},
-{text:"Modules",url:"modules.html"}]}
+{text:"Related Pages",url:"pages.html"}]}

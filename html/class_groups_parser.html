@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.12.5</span>
+   &#160;<span id="projectnumber">v0.12.9</span>
    </div>
   </td>
  </tr>
@@ -43,7 +43,8 @@ $(function() {
   <div class="summary">
 <a href="class_groups_parser-members.html">List of all members</a> &#124;
 <a href="#signals">Signals</a> &#124;
-<a href="#pub-methods">Public Member Functions</a>  </div>
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a>  </div>
   <div class="headertitle">
 <div class="title">GroupsParser Class Reference</div>  </div>
 </div><!--header-->
@@ -109,6 +110,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5577765c562919cc02f52af92161ecfa"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_groups_parser.html#a5577765c562919cc02f52af92161ecfa">removeAppData</a> ()</td></tr>
 <tr class="memdesc:a5577765c562919cc02f52af92161ecfa"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeAppData delete .json file from local data. Will delete all saved json data permanently.  <a href="#a5577765c562919cc02f52af92161ecfa">More...</a><br /></td></tr>
 <tr class="separator:a5577765c562919cc02f52af92161ecfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a3cf566de63724b7f8b15ea812451d184"><td class="memItemLeft" align="right" valign="top">static QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_groups_parser.html#a3cf566de63724b7f8b15ea812451d184">defaultSavePath</a> ()</td></tr>
+<tr class="memdesc:a3cf566de63724b7f8b15ea812451d184"><td class="mdescLeft">&#160;</td><td class="mdescRight">defaultSavePath default save path on any machine. Uses QStandardPath's App Data Location  <a href="#a3cf566de63724b7f8b15ea812451d184">More...</a><br /></td></tr>
+<tr class="separator:a3cf566de63724b7f8b15ea812451d184"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
@@ -165,6 +172,32 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>a list of all the collections. Each collection is represented as a pair with its name and a list of the devices. </dd></dl>
+
+</div>
+</div>
+<a id="a3cf566de63724b7f8b15ea812451d184"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3cf566de63724b7f8b15ea812451d184">&#9670;&nbsp;</a></span>defaultSavePath()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">QString GroupsParser::defaultSavePath </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>a writable path for saving JSON data. </dd></dl>
 
 </div>
 </div>

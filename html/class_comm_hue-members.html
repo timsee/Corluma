@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.12.5</span>
+   &#160;<span id="projectnumber">v0.12.9</span>
    </div>
   </td>
  </tr>
@@ -64,7 +64,7 @@ $(function() {
   <tr class="even"><td class="entry"><a class="el" href="class_comm_type.html#a58d90b94f70298c3cdbeac1f81f0e6ad">discoveredList</a>()</td><td class="entry"><a class="el" href="class_comm_type.html">CommType</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_comm_hue.html#a5b3814c455232c84e2215d16aadddab1">discovery</a>()</td><td class="entry"><a class="el" href="class_comm_hue.html">CommHue</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_comm_hue.html#a9a521b1b000afd1ae34b11d60dc74578">discoveryState</a>()</td><td class="entry"><a class="el" href="class_comm_hue.html">CommHue</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="class_comm_hue.html#a2ec89cc9babca336b6b896150dd212d9">discoveryStateChanged</a>(int)</td><td class="entry"><a class="el" href="class_comm_hue.html">CommHue</a></td><td class="entry"><span class="mlabel">signal</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_comm_hue.html#a081202319f5ec20fa553ff0ff6f5f503">discoveryStateChanged</a>(EHueDiscoveryState)</td><td class="entry"><a class="el" href="class_comm_hue.html">CommHue</a></td><td class="entry"><span class="mlabel">signal</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_comm_type.html#ab9d8ebeecae39e95cd2d2647379cadec">fillDevice</a>(cor::Light &amp;device)</td><td class="entry"><a class="el" href="class_comm_type.html">CommType</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="class_comm_type.html#af104cca344ce5489ce58e21ba930498b">findDiscoveredController</a>(QString controllerName, cor::Controller &amp;output)</td><td class="entry"><a class="el" href="class_comm_type.html">CommType</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_comm_hue.html#a116fcdf464d9eea003346b379099e5dc">groups</a>()</td><td class="entry"><a class="el" href="class_comm_hue.html">CommHue</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
@@ -91,7 +91,7 @@ $(function() {
   <tr><td class="entry"><a class="el" href="class_comm_type.html#a02ec483a63cf7b4946653ca8dea9ae46">mUndiscoveredList</a></td><td class="entry"><a class="el" href="class_comm_type.html">CommType</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_comm_type.html#aed07e124f1bb8819e0452cb2621e5629">mUpdateTimeoutInterval</a></td><td class="entry"><a class="el" href="class_comm_type.html">CommType</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_comm_hue.html#a2899ae97ab10813d804a7bb3bfa414cd">newLights</a>()</td><td class="entry"><a class="el" href="class_comm_hue.html">CommHue</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_comm_type.html#a9186f5c260b29ec24d0e1666191afbf6">packetReceived</a>(QString, QString, int)</td><td class="entry"><a class="el" href="class_comm_type.html">CommType</a></td><td class="entry"><span class="mlabel">signal</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_comm_type.html#abd0309d4508fbb127aeedfdacc212995">packetReceived</a>(QString, QString, ECommType)</td><td class="entry"><a class="el" href="class_comm_type.html">CommType</a></td><td class="entry"><span class="mlabel">signal</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_comm_hue.html#a3b6073064325473abf0459a3cdea3bde">postJson</a>(QString resource, QJsonObject object)</td><td class="entry"><a class="el" href="class_comm_hue.html">CommHue</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_comm_type.html#a5588068f90b425623fba2fdd2836f3cb">preparePacketForTransmission</a>(const cor::Controller &amp;controller, QString &amp;packet)</td><td class="entry"><a class="el" href="class_comm_type.html">CommType</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_comm_hue.html#a5401aeb2a77f24454d55d4a2914ad488">putJson</a>(QString resource, QJsonObject object)</td><td class="entry"><a class="el" href="class_comm_hue.html">CommHue</a></td><td class="entry"></td></tr>
@@ -125,7 +125,7 @@ $(function() {
   <tr><td class="entry"><a class="el" href="class_comm_type.html#a41a7c990b8c8490414ae89a0b7f43f64">updateDevice</a>(cor::Light device)</td><td class="entry"><a class="el" href="class_comm_type.html">CommType</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_comm_hue.html#afd6c35797f9e03d2c7a1ed9a864f58ab">updateGroup</a>(cor::LightGroup group, std::list&lt; HueLight &gt; lights)</td><td class="entry"><a class="el" href="class_comm_hue.html">CommHue</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="class_comm_hue.html#ae7fed02de7e4c501b076860a18ac0eba">updateIdleTimeout</a>(bool enable, int scheduleID, int minutes)</td><td class="entry"><a class="el" href="class_comm_hue.html">CommHue</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_comm_type.html#ac61ed4af1b52a921138f7f97e5d15b9e">updateReceived</a>(int)</td><td class="entry"><a class="el" href="class_comm_type.html">CommType</a></td><td class="entry"><span class="mlabel">signal</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_comm_type.html#a6a99e8e95b8ce5ac36a605634b6a460f">updateReceived</a>(ECommType)</td><td class="entry"><a class="el" href="class_comm_type.html">CommType</a></td><td class="entry"><span class="mlabel">signal</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_comm_hue.html#a76bceccaa3425c88f9f971a74423d4dd">updateSchedule</a>(SHueSchedule schedule, SHueSchedule newSchedule)</td><td class="entry"><a class="el" href="class_comm_hue.html">CommHue</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_comm_hue.html#a29d74852b7183e5fb0ffb77816969bee">~CommHue</a>()</td><td class="entry"><a class="el" href="class_comm_hue.html">CommHue</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="class_comm_type.html#aea9af432f13faf2a28b6a9fd5d5000e9">~CommType</a>()</td><td class="entry"><a class="el" href="class_comm_type.html">CommType</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>

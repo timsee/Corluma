@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.12.5</span>
+   &#160;<span id="projectnumber">v0.12.9</span>
    </div>
   </td>
  </tr>
@@ -54,45 +54,39 @@ $(function() {
 
 <p><code>#include &quot;<a class="el" href="commlayer_8h_source.html">commlayer.h</a>&quot;</code></p>
 
-<p>Inherits QWidget.</p>
+<p>Inherits QObject.</p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
-<tr class="memitem:a0a17dd140c665e5ce02e85d82c0bb813"><td class="memItemLeft" align="right" valign="top"><a id="a0a17dd140c665e5ce02e85d82c0bb813"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a0a17dd140c665e5ce02e85d82c0bb813">hueDiscoveryStateChange</a> (int)</td></tr>
-<tr class="memdesc:a0a17dd140c665e5ce02e85d82c0bb813"><td class="mdescLeft">&#160;</td><td class="mdescRight">hueDiscoveryStateChange the state of the Hue discovery methods, forwarded from a private HueBridgeDiscovery object. <br /></td></tr>
-<tr class="separator:a0a17dd140c665e5ce02e85d82c0bb813"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a399c09285cb3e03c2bffef986fd7b089"><td class="memItemLeft" align="right" valign="top"><a id="a399c09285cb3e03c2bffef986fd7b089"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a399c09285cb3e03c2bffef986fd7b089">packetReceived</a> (int)</td></tr>
-<tr class="memdesc:a399c09285cb3e03c2bffef986fd7b089"><td class="mdescLeft">&#160;</td><td class="mdescRight">packetReceived anotification that a packet was receieved by one of the commtypes. <br /></td></tr>
-<tr class="separator:a399c09285cb3e03c2bffef986fd7b089"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aefc972c9597ce651bb3bd498102581b8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#aefc972c9597ce651bb3bd498102581b8">updateReceived</a> (int)</td></tr>
-<tr class="memdesc:aefc972c9597ce651bb3bd498102581b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateReceived a notification that a packet was received by one of the commtypes.  <a href="#aefc972c9597ce651bb3bd498102581b8">More...</a><br /></td></tr>
-<tr class="separator:aefc972c9597ce651bb3bd498102581b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb081c3a9d20cd4ae1597a65ff9e17aa"><td class="memItemLeft" align="right" valign="top"><a id="aeb081c3a9d20cd4ae1597a65ff9e17aa"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#aeb081c3a9d20cd4ae1597a65ff9e17aa">hueDiscoveryStateChange</a> (EHueDiscoveryState)</td></tr>
+<tr class="memdesc:aeb081c3a9d20cd4ae1597a65ff9e17aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">hueDiscoveryStateChange the state of the Hue discovery methods, forwarded from a private HueBridgeDiscovery object. <br /></td></tr>
+<tr class="separator:aeb081c3a9d20cd4ae1597a65ff9e17aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a123e00f7e95da05ae136dd3204da834c"><td class="memItemLeft" align="right" valign="top"><a id="a123e00f7e95da05ae136dd3204da834c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a123e00f7e95da05ae136dd3204da834c">packetReceived</a> (EProtocolType)</td></tr>
+<tr class="memdesc:a123e00f7e95da05ae136dd3204da834c"><td class="mdescLeft">&#160;</td><td class="mdescRight">packetReceived anotification that a packet was receieved by one of the commtypes. <br /></td></tr>
+<tr class="separator:a123e00f7e95da05ae136dd3204da834c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92c7b37bf51d4e8592d0eba768a39655"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a92c7b37bf51d4e8592d0eba768a39655">updateReceived</a> (ECommType)</td></tr>
+<tr class="memdesc:a92c7b37bf51d4e8592d0eba768a39655"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateReceived a notification that a packet was received by one of the commtypes.  <a href="#a92c7b37bf51d4e8592d0eba768a39655">More...</a><br /></td></tr>
+<tr class="separator:a92c7b37bf51d4e8592d0eba768a39655"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:adc880edb1c5b330353d6632898bf4797"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#adc880edb1c5b330353d6632898bf4797">CommLayer</a> (QWidget *parent=0)</td></tr>
-<tr class="memdesc:adc880edb1c5b330353d6632898bf4797"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#adc880edb1c5b330353d6632898bf4797">More...</a><br /></td></tr>
-<tr class="separator:adc880edb1c5b330353d6632898bf4797"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02acfdc713064cdfd2c5a01fc88e8e5b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a02acfdc713064cdfd2c5a01fc88e8e5b">CommLayer</a> (QObject *parent=0)</td></tr>
+<tr class="memdesc:a02acfdc713064cdfd2c5a01fc88e8e5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a02acfdc713064cdfd2c5a01fc88e8e5b">More...</a><br /></td></tr>
+<tr class="separator:a02acfdc713064cdfd2c5a01fc88e8e5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa068ecdc82f7043223e86223fd6c8eb6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#aa068ecdc82f7043223e86223fd6c8eb6">sendPacket</a> (const cor::Light &amp;device, QString &amp;payload)</td></tr>
 <tr class="memdesc:aa068ecdc82f7043223e86223fd6c8eb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendPacket helper for sending packets  <a href="#aa068ecdc82f7043223e86223fd6c8eb6">More...</a><br /></td></tr>
 <tr class="separator:aa068ecdc82f7043223e86223fd6c8eb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7c14ace09ec0ec4652dc0ee6fd70b46"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ad7c14ace09ec0ec4652dc0ee6fd70b46">sendTurnOn</a> (const std::list&lt; cor::Light &gt; &amp;deviceList, bool turnOn)</td></tr>
 <tr class="memdesc:ad7c14ace09ec0ec4652dc0ee6fd70b46"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendTurnOn turn all devices in the provided list either on or off.  <a href="#ad7c14ace09ec0ec4652dc0ee6fd70b46">More...</a><br /></td></tr>
 <tr class="separator:ad7c14ace09ec0ec4652dc0ee6fd70b46"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7ddd4fb804d5160441168cb37087ebc9"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a7ddd4fb804d5160441168cb37087ebc9">sendMainColorChange</a> (const std::list&lt; cor::Light &gt; &amp;deviceList, QColor color)</td></tr>
-<tr class="memdesc:a7ddd4fb804d5160441168cb37087ebc9"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendMainColorChange change the main color of the lighting settings in the GUI, this is the color displayed in the leftmost menu.  <a href="#a7ddd4fb804d5160441168cb37087ebc9">More...</a><br /></td></tr>
-<tr class="separator:a7ddd4fb804d5160441168cb37087ebc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8cd94a8be08dbf6b094457dcda69f8dc"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a8cd94a8be08dbf6b094457dcda69f8dc">sendArrayColorChange</a> (const std::list&lt; cor::Light &gt; &amp;deviceList, int index, QColor color)</td></tr>
 <tr class="memdesc:a8cd94a8be08dbf6b094457dcda69f8dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendColorChange change an array color in the lighting system  <a href="#a8cd94a8be08dbf6b094457dcda69f8dc">More...</a><br /></td></tr>
 <tr class="separator:a8cd94a8be08dbf6b094457dcda69f8dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acdd762cbbc66156966c41fc5234422d6"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#acdd762cbbc66156966c41fc5234422d6">sendSingleRoutineChange</a> (const std::list&lt; cor::Light &gt; &amp;deviceList, ELightingRoutine routine)</td></tr>
-<tr class="memdesc:acdd762cbbc66156966c41fc5234422d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendSingleRoutineChange change the mode of the lights. The mode changes how the lights look. This function should be used for single color routines.  <a href="#acdd762cbbc66156966c41fc5234422d6">More...</a><br /></td></tr>
-<tr class="separator:acdd762cbbc66156966c41fc5234422d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac9aa5fe2e13b6d5a3782ff6a92907f05"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ac9aa5fe2e13b6d5a3782ff6a92907f05">sendMultiRoutineChange</a> (const std::list&lt; cor::Light &gt; &amp;deviceList, ELightingRoutine routine, EColorGroup colorGroup)</td></tr>
-<tr class="memdesc:ac9aa5fe2e13b6d5a3782ff6a92907f05"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendMultiRoutineChange change the mode of the lights. The mode changes how the lights look. This function should be used for multi color routines, since it uses a color group.  <a href="#ac9aa5fe2e13b6d5a3782ff6a92907f05">More...</a><br /></td></tr>
-<tr class="separator:ac9aa5fe2e13b6d5a3782ff6a92907f05"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a295e7f0b32f96d3bb0ba7bb8e8a6e991"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a295e7f0b32f96d3bb0ba7bb8e8a6e991">sendRoutineChange</a> (const std::list&lt; cor::Light &gt; &amp;deviceList, const QJsonObject &amp;routineObject)</td></tr>
+<tr class="memdesc:a295e7f0b32f96d3bb0ba7bb8e8a6e991"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendRoutineChange change the mode of the lights. The mode changes how the lights look.  <a href="#a295e7f0b32f96d3bb0ba7bb8e8a6e991">More...</a><br /></td></tr>
+<tr class="separator:a295e7f0b32f96d3bb0ba7bb8e8a6e991"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae5275b28a66912c151c84a284ed06617"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ae5275b28a66912c151c84a284ed06617">sendColorTemperatureChange</a> (const std::list&lt; cor::Light &gt; &amp;deviceList, int temperature)</td></tr>
 <tr class="memdesc:ae5275b28a66912c151c84a284ed06617"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendColorTemperatureChange Hue only. Controls Ambient Lights and Extended Color lights by sending them a color temperature instead of color in HSV  <a href="#ae5275b28a66912c151c84a284ed06617">More...</a><br /></td></tr>
 <tr class="separator:ae5275b28a66912c151c84a284ed06617"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -102,36 +96,29 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac1c3e29595d1a83de8d3729863512e1c"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ac1c3e29595d1a83de8d3729863512e1c">sendBrightness</a> (const std::list&lt; cor::Light &gt; &amp;deviceList, int brightness)</td></tr>
 <tr class="memdesc:ac1c3e29595d1a83de8d3729863512e1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendBrightness sends a brightness value between 0 and 100, with 100 being full brightness.  <a href="#ac1c3e29595d1a83de8d3729863512e1c">More...</a><br /></td></tr>
 <tr class="separator:ac1c3e29595d1a83de8d3729863512e1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab49e62bfdfa4241ed3b4f5482ee4b0f3"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ab49e62bfdfa4241ed3b4f5482ee4b0f3">sendSpeed</a> (const std::list&lt; cor::Light &gt; &amp;deviceList, int speed)</td></tr>
-<tr class="memdesc:ab49e62bfdfa4241ed3b4f5482ee4b0f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendSpeed sends a desired FPS for light updates. This value is the FPS * 100, for example if you want a FPS of 5, send the value 500.  <a href="#ab49e62bfdfa4241ed3b4f5482ee4b0f3">More...</a><br /></td></tr>
-<tr class="separator:ab49e62bfdfa4241ed3b4f5482ee4b0f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af31492c7ee3ce111f815d5e353dac1ee"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#af31492c7ee3ce111f815d5e353dac1ee">sendTimeOut</a> (const std::list&lt; cor::Light &gt; &amp;deviceList, int timeOut)</td></tr>
 <tr class="memdesc:af31492c7ee3ce111f815d5e353dac1ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendTimeOut the amount of minutes that it takes for the LEDs to turn themselves off from inactivity. Perfect for bedtime!  <a href="#af31492c7ee3ce111f815d5e353dac1ee">More...</a><br /></td></tr>
 <tr class="separator:af31492c7ee3ce111f815d5e353dac1ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a630e7823f98d358196e32921bbf4af20"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a630e7823f98d358196e32921bbf4af20">requestCustomArrayUpdate</a> (const std::list&lt; cor::Light &gt; &amp;deviceList)</td></tr>
 <tr class="memdesc:a630e7823f98d358196e32921bbf4af20"><td class="mdescLeft">&#160;</td><td class="mdescRight">requestCustomArrayUpdate request an update for for custom arrays. Arduino projects only.  <a href="#a630e7823f98d358196e32921bbf4af20">More...</a><br /></td></tr>
 <tr class="separator:a630e7823f98d358196e32921bbf4af20"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7dd7beaa21be66d0509dff58fa31d852"><td class="memItemLeft" align="right" valign="top"><a id="a7dd7beaa21be66d0509dff58fa31d852"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a7dd7beaa21be66d0509dff58fa31d852">sendReset</a> (const std::list&lt; cor::Light &gt; &amp;deviceList)</td></tr>
-<tr class="memdesc:a7dd7beaa21be66d0509dff58fa31d852"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendReset resets the board to its default settings. <br /></td></tr>
-<tr class="separator:a7dd7beaa21be66d0509dff58fa31d852"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5577d9185036f00c79072045066c86c"><td class="memItemLeft" align="right" valign="top"><a id="ab5577d9185036f00c79072045066c86c"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ab5577d9185036f00c79072045066c86c">resetStateUpdates</a> (ECommType type)</td></tr>
-<tr class="memdesc:ab5577d9185036f00c79072045066c86c"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetStateUpdates reset the state updates timeouts for specified commtypes. If it isn't on already, it gets turned on. <br /></td></tr>
-<tr class="separator:ab5577d9185036f00c79072045066c86c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4a0fda28fdcd8383fd7575abf9851cc5"><td class="memItemLeft" align="right" valign="top"><a id="a4a0fda28fdcd8383fd7575abf9851cc5"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a4a0fda28fdcd8383fd7575abf9851cc5">stopStateUpdates</a> (ECommType type)</td></tr>
-<tr class="memdesc:a4a0fda28fdcd8383fd7575abf9851cc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">stopStateUpdates turn off the state update threads for specified commtypes. <br /></td></tr>
-<tr class="separator:a4a0fda28fdcd8383fd7575abf9851cc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0eddb554aa1998362805890ad0141dd2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a0eddb554aa1998362805890ad0141dd2">startup</a> (ECommType type)</td></tr>
-<tr class="memdesc:a0eddb554aa1998362805890ad0141dd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">startup start stream of given type. This starts all of its maintence threads and discovery threads  <a href="#a0eddb554aa1998362805890ad0141dd2">More...</a><br /></td></tr>
-<tr class="separator:a0eddb554aa1998362805890ad0141dd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab23f9ea9bffe8271b5d0c5ec02057a43"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ab23f9ea9bffe8271b5d0c5ec02057a43">shutdown</a> (ECommType type)</td></tr>
-<tr class="memdesc:ab23f9ea9bffe8271b5d0c5ec02057a43"><td class="mdescLeft">&#160;</td><td class="mdescRight">shutdown shuts down the stream of the given type. This stops all of its maintence threads and discovery threads.  <a href="#ab23f9ea9bffe8271b5d0c5ec02057a43">More...</a><br /></td></tr>
-<tr class="separator:ab23f9ea9bffe8271b5d0c5ec02057a43"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a939bd9f19f44f0a6239c20cd695a7a90"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a939bd9f19f44f0a6239c20cd695a7a90">hasStarted</a> (ECommType type)</td></tr>
-<tr class="memdesc:a939bd9f19f44f0a6239c20cd695a7a90"><td class="mdescLeft">&#160;</td><td class="mdescRight">hasStarted checks if a stream has been started and can currently be used.  <a href="#a939bd9f19f44f0a6239c20cd695a7a90">More...</a><br /></td></tr>
-<tr class="separator:a939bd9f19f44f0a6239c20cd695a7a90"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a70a6c68dd4de56ad6c999e66ad4bff"><td class="memItemLeft" align="right" valign="top"><a id="a5a70a6c68dd4de56ad6c999e66ad4bff"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a5a70a6c68dd4de56ad6c999e66ad4bff">resetStateUpdates</a> (EProtocolType type)</td></tr>
+<tr class="memdesc:a5a70a6c68dd4de56ad6c999e66ad4bff"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetStateUpdates reset the state updates timeouts for specified commtypes. If it isn't on already, it gets turned on. <br /></td></tr>
+<tr class="separator:a5a70a6c68dd4de56ad6c999e66ad4bff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adfbf4b32b9137e7015f5b7c14c1ae784"><td class="memItemLeft" align="right" valign="top"><a id="adfbf4b32b9137e7015f5b7c14c1ae784"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#adfbf4b32b9137e7015f5b7c14c1ae784">stopStateUpdates</a> (EProtocolType type)</td></tr>
+<tr class="memdesc:adfbf4b32b9137e7015f5b7c14c1ae784"><td class="mdescLeft">&#160;</td><td class="mdescRight">stopStateUpdates turn off the state update threads for specified commtypes. <br /></td></tr>
+<tr class="separator:adfbf4b32b9137e7015f5b7c14c1ae784"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab47f0c2e4f391d0af4c848aa975f1c56"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ab47f0c2e4f391d0af4c848aa975f1c56">startup</a> (EProtocolType type)</td></tr>
+<tr class="memdesc:ab47f0c2e4f391d0af4c848aa975f1c56"><td class="mdescLeft">&#160;</td><td class="mdescRight">startup start stream of given type. This starts all of its maintence threads and discovery threads  <a href="#ab47f0c2e4f391d0af4c848aa975f1c56">More...</a><br /></td></tr>
+<tr class="separator:ab47f0c2e4f391d0af4c848aa975f1c56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeee121cc6b33f7963382d83180661f4f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#aeee121cc6b33f7963382d83180661f4f">shutdown</a> (EProtocolType type)</td></tr>
+<tr class="memdesc:aeee121cc6b33f7963382d83180661f4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">shutdown shuts down the stream of the given type. This stops all of its maintence threads and discovery threads.  <a href="#aeee121cc6b33f7963382d83180661f4f">More...</a><br /></td></tr>
+<tr class="separator:aeee121cc6b33f7963382d83180661f4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4491166260a0479656653aef953d57d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#aa4491166260a0479656653aef953d57d">hasStarted</a> (EProtocolType type)</td></tr>
+<tr class="memdesc:aa4491166260a0479656653aef953d57d"><td class="mdescLeft">&#160;</td><td class="mdescRight">hasStarted checks if a stream has been started and can currently be used.  <a href="#aa4491166260a0479656653aef953d57d">More...</a><br /></td></tr>
+<tr class="separator:aa4491166260a0479656653aef953d57d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa49af6a13478783c7332b4b3d66150ed"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#aa49af6a13478783c7332b4b3d66150ed">startDiscoveringController</a> (ECommType type, QString controller)</td></tr>
 <tr class="memdesc:aa49af6a13478783c7332b4b3d66150ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">startDiscoveringController attempt to add a controller to the hash table  <a href="#aa49af6a13478783c7332b4b3d66150ed">More...</a><br /></td></tr>
 <tr class="separator:aa49af6a13478783c7332b4b3d66150ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -144,14 +131,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a62b21d48e62cbcba64b1dd249b26af15"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a62b21d48e62cbcba64b1dd249b26af15">fillDevice</a> (cor::Light &amp;device)</td></tr>
 <tr class="memdesc:a62b21d48e62cbcba64b1dd249b26af15"><td class="mdescLeft">&#160;</td><td class="mdescRight">fillDevice use the controller name, type, and index to fill in the rest of the devices data.  <a href="#a62b21d48e62cbcba64b1dd249b26af15">More...</a><br /></td></tr>
 <tr class="separator:a62b21d48e62cbcba64b1dd249b26af15"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a84aae569e7e07c662c827ca4750d418e"><td class="memItemLeft" align="right" valign="top"><a id="a84aae569e7e07c662c827ca4750d418e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a84aae569e7e07c662c827ca4750d418e">startDiscovery</a> (ECommType type)</td></tr>
-<tr class="memdesc:a84aae569e7e07c662c827ca4750d418e"><td class="mdescLeft">&#160;</td><td class="mdescRight">startDiscovery put given comm type into discovery mode. <br /></td></tr>
-<tr class="separator:a84aae569e7e07c662c827ca4750d418e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6abe231e460889ca2b0f3b0725571ad8"><td class="memItemLeft" align="right" valign="top"><a id="a6abe231e460889ca2b0f3b0725571ad8"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a6abe231e460889ca2b0f3b0725571ad8">stopDiscovery</a> (ECommType type)</td></tr>
-<tr class="memdesc:a6abe231e460889ca2b0f3b0725571ad8"><td class="mdescLeft">&#160;</td><td class="mdescRight">stopDiscovery stop the given comm type's discovery mode. <br /></td></tr>
-<tr class="separator:a6abe231e460889ca2b0f3b0725571ad8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66ab15d3f8c31727bc4f6fed6004dc71"><td class="memItemLeft" align="right" valign="top"><a id="a66ab15d3f8c31727bc4f6fed6004dc71"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a66ab15d3f8c31727bc4f6fed6004dc71">startDiscovery</a> (EProtocolType type)</td></tr>
+<tr class="memdesc:a66ab15d3f8c31727bc4f6fed6004dc71"><td class="mdescLeft">&#160;</td><td class="mdescRight">startDiscovery put given comm type into discovery mode. <br /></td></tr>
+<tr class="separator:a66ab15d3f8c31727bc4f6fed6004dc71"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9fbd806e7abcdf340ad2e91d0c113484"><td class="memItemLeft" align="right" valign="top"><a id="a9fbd806e7abcdf340ad2e91d0c113484"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a9fbd806e7abcdf340ad2e91d0c113484">stopDiscovery</a> (EProtocolType type)</td></tr>
+<tr class="memdesc:a9fbd806e7abcdf340ad2e91d0c113484"><td class="mdescLeft">&#160;</td><td class="mdescRight">stopDiscovery stop the given comm type's discovery mode. <br /></td></tr>
+<tr class="separator:a9fbd806e7abcdf340ad2e91d0c113484"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a53fafbcedf238932572438c713150609"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a53fafbcedf238932572438c713150609">runningDiscovery</a> (ECommType type)</td></tr>
 <tr class="memdesc:a53fafbcedf238932572438c713150609"><td class="mdescLeft">&#160;</td><td class="mdescRight">runningDiscovery checks if discovery is being run actively. This means taht its expecting more devices to be connected than there are currently connected.  <a href="#a53fafbcedf238932572438c713150609">More...</a><br /></td></tr>
 <tr class="separator:a53fafbcedf238932572438c713150609"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -216,8 +203,8 @@ std::list&lt; cor::LightGroup &gt;&#160;</td><td class="memItemRight" valign="bo
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="adc880edb1c5b330353d6632898bf4797"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adc880edb1c5b330353d6632898bf4797">&#9670;&nbsp;</a></span>CommLayer()</h2>
+<a id="a02acfdc713064cdfd2c5a01fc88e8e5b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a02acfdc713064cdfd2c5a01fc88e8e5b">&#9670;&nbsp;</a></span>CommLayer()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -225,7 +212,7 @@ std::list&lt; cor::LightGroup &gt;&#160;</td><td class="memItemRight" valign="bo
         <tr>
           <td class="memname">CommLayer::CommLayer </td>
           <td>(</td>
-          <td class="paramtype">QWidget *&#160;</td>
+          <td class="paramtype">QObject *&#160;</td>
           <td class="paramname"><em>parent</em> = <code>0</code></td><td>)</td>
           <td></td>
         </tr>
@@ -378,8 +365,8 @@ std::list&lt; cor::LightGroup &gt;&#160;</td><td class="memItemRight" valign="bo
 
 </div>
 </div>
-<a id="a939bd9f19f44f0a6239c20cd695a7a90"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a939bd9f19f44f0a6239c20cd695a7a90">&#9670;&nbsp;</a></span>hasStarted()</h2>
+<a id="aa4491166260a0479656653aef953d57d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa4491166260a0479656653aef953d57d">&#9670;&nbsp;</a></span>hasStarted()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -387,7 +374,7 @@ std::list&lt; cor::LightGroup &gt;&#160;</td><td class="memItemRight" valign="bo
         <tr>
           <td class="memname">bool CommLayer::hasStarted </td>
           <td>(</td>
-          <td class="paramtype">ECommType&#160;</td>
+          <td class="paramtype">EProtocolType&#160;</td>
           <td class="paramname"><em>type</em></td><td>)</td>
           <td></td>
         </tr>
@@ -699,80 +686,6 @@ std::list&lt; cor::LightGroup &gt;&#160;</td><td class="memItemRight" valign="bo
 
 </div>
 </div>
-<a id="a7ddd4fb804d5160441168cb37087ebc9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7ddd4fb804d5160441168cb37087ebc9">&#9670;&nbsp;</a></span>sendMainColorChange()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">QString CommLayer::sendMainColorChange </td>
-          <td>(</td>
-          <td class="paramtype">const std::list&lt; cor::Light &gt; &amp;&#160;</td>
-          <td class="paramname"><em>deviceList</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">QColor&#160;</td>
-          <td class="paramname"><em>color</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">color</td><td>a QColor representation of the color being used for single LED Routines. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="ac9aa5fe2e13b6d5a3782ff6a92907f05"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac9aa5fe2e13b6d5a3782ff6a92907f05">&#9670;&nbsp;</a></span>sendMultiRoutineChange()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">QString CommLayer::sendMultiRoutineChange </td>
-          <td>(</td>
-          <td class="paramtype">const std::list&lt; cor::Light &gt; &amp;&#160;</td>
-          <td class="paramname"><em>deviceList</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ELightingRoutine&#160;</td>
-          <td class="paramname"><em>routine</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">EColorGroup&#160;</td>
-          <td class="paramname"><em>colorGroup</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">routine</td><td>the mode being sent to the LED system </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a id="aa068ecdc82f7043223e86223fd6c8eb6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa068ecdc82f7043223e86223fd6c8eb6">&#9670;&nbsp;</a></span>sendPacket()</h2>
 
@@ -808,14 +721,14 @@ std::list&lt; cor::LightGroup &gt;&#160;</td><td class="memItemRight" valign="bo
 
 </div>
 </div>
-<a id="acdd762cbbc66156966c41fc5234422d6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acdd762cbbc66156966c41fc5234422d6">&#9670;&nbsp;</a></span>sendSingleRoutineChange()</h2>
+<a id="a295e7f0b32f96d3bb0ba7bb8e8a6e991"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a295e7f0b32f96d3bb0ba7bb8e8a6e991">&#9670;&nbsp;</a></span>sendRoutineChange()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">QString CommLayer::sendSingleRoutineChange </td>
+          <td class="memname">QString CommLayer::sendRoutineChange </td>
           <td>(</td>
           <td class="paramtype">const std::list&lt; cor::Light &gt; &amp;&#160;</td>
           <td class="paramname"><em>deviceList</em>, </td>
@@ -823,8 +736,8 @@ std::list&lt; cor::LightGroup &gt;&#160;</td><td class="memItemRight" valign="bo
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">ELightingRoutine&#160;</td>
-          <td class="paramname"><em>routine</em>&#160;</td>
+          <td class="paramtype">const QJsonObject &amp;&#160;</td>
+          <td class="paramname"><em>routineObject</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -835,41 +748,7 @@ std::list&lt; cor::LightGroup &gt;&#160;</td><td class="memItemRight" valign="bo
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">routine</td><td>the mode being sent to the LED system </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="ab49e62bfdfa4241ed3b4f5482ee4b0f3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab49e62bfdfa4241ed3b4f5482ee4b0f3">&#9670;&nbsp;</a></span>sendSpeed()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">QString CommLayer::sendSpeed </td>
-          <td>(</td>
-          <td class="paramtype">const std::list&lt; cor::Light &gt; &amp;&#160;</td>
-          <td class="paramname"><em>deviceList</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>speed</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">speed</td><td>the FPS multiplied by 100. </td></tr>
+    <tr><td class="paramname">routineObject</td><td>the mode being sent to the LED system </td></tr>
   </table>
   </dd>
 </dl>
@@ -944,8 +823,8 @@ std::list&lt; cor::LightGroup &gt;&#160;</td><td class="memItemRight" valign="bo
 
 </div>
 </div>
-<a id="ab23f9ea9bffe8271b5d0c5ec02057a43"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab23f9ea9bffe8271b5d0c5ec02057a43">&#9670;&nbsp;</a></span>shutdown()</h2>
+<a id="aeee121cc6b33f7963382d83180661f4f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeee121cc6b33f7963382d83180661f4f">&#9670;&nbsp;</a></span>shutdown()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -953,7 +832,7 @@ std::list&lt; cor::LightGroup &gt;&#160;</td><td class="memItemRight" valign="bo
         <tr>
           <td class="memname">void CommLayer::shutdown </td>
           <td>(</td>
-          <td class="paramtype">ECommType&#160;</td>
+          <td class="paramtype">EProtocolType&#160;</td>
           <td class="paramname"><em>type</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1004,8 +883,8 @@ std::list&lt; cor::LightGroup &gt;&#160;</td><td class="memItemRight" valign="bo
 
 </div>
 </div>
-<a id="a0eddb554aa1998362805890ad0141dd2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0eddb554aa1998362805890ad0141dd2">&#9670;&nbsp;</a></span>startup()</h2>
+<a id="ab47f0c2e4f391d0af4c848aa975f1c56"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab47f0c2e4f391d0af4c848aa975f1c56">&#9670;&nbsp;</a></span>startup()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1013,7 +892,7 @@ std::list&lt; cor::LightGroup &gt;&#160;</td><td class="memItemRight" valign="bo
         <tr>
           <td class="memname">void CommLayer::startup </td>
           <td>(</td>
-          <td class="paramtype">ECommType&#160;</td>
+          <td class="paramtype">EProtocolType&#160;</td>
           <td class="paramname"><em>type</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1096,8 +975,8 @@ std::list&lt; cor::LightGroup &gt;&#160;</td><td class="memItemRight" valign="bo
 
 </div>
 </div>
-<a id="aefc972c9597ce651bb3bd498102581b8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aefc972c9597ce651bb3bd498102581b8">&#9670;&nbsp;</a></span>updateReceived</h2>
+<a id="a92c7b37bf51d4e8592d0eba768a39655"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a92c7b37bf51d4e8592d0eba768a39655">&#9670;&nbsp;</a></span>updateReceived</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1108,7 +987,7 @@ std::list&lt; cor::LightGroup &gt;&#160;</td><td class="memItemRight" valign="bo
         <tr>
           <td class="memname">void CommLayer::updateReceived </td>
           <td>(</td>
-          <td class="paramtype">int&#160;</td>
+          <td class="paramtype">ECommType&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>

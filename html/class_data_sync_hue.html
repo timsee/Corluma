@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.12.5</span>
+   &#160;<span id="projectnumber">v0.12.9</span>
    </div>
   </td>
  </tr>
@@ -62,10 +62,10 @@ Public Slots</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync_hue.html#aa4129e577575f1da96921b74f467aee1">resetSync</a> () override</td></tr>
 <tr class="memdesc:aa4129e577575f1da96921b74f467aee1"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetSync Tells the ArduinoDataSync object that the commlayer and the datalayer are potentially no longer in sync and the syncData() function needs to get called on the timer again. <br /></td></tr>
 <tr class="separator:aa4129e577575f1da96921b74f467aee1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a97f2206f66991235ceaded93e73a1a17"><td class="memItemLeft" align="right" valign="top"><a id="a97f2206f66991235ceaded93e73a1a17"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync_hue.html#a97f2206f66991235ceaded93e73a1a17">commPacketReceived</a> (int) override</td></tr>
-<tr class="memdesc:a97f2206f66991235ceaded93e73a1a17"><td class="mdescLeft">&#160;</td><td class="mdescRight">commPacketReceived a packet was received from a given <a class="el" href="class_comm_type.html" title="inherited by comm types, provides a general interface that can be used to do connections and sending ...">CommType</a>. In some cases, receiving a packet will reset the sync for that commtype. <br /></td></tr>
-<tr class="separator:a97f2206f66991235ceaded93e73a1a17"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af036f80f0824a212f986381c831f3e10"><td class="memItemLeft" align="right" valign="top"><a id="af036f80f0824a212f986381c831f3e10"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync_hue.html#af036f80f0824a212f986381c831f3e10">commPacketReceived</a> (EProtocolType) override</td></tr>
+<tr class="memdesc:af036f80f0824a212f986381c831f3e10"><td class="mdescLeft">&#160;</td><td class="mdescRight">commPacketReceived a packet was received from a given protocol type. In some cases, receiving a packet will reset the sync for that protocol type. <br /></td></tr>
+<tr class="separator:af036f80f0824a212f986381c831f3e10"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>

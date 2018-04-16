@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.12.5</span>
+   &#160;<span id="projectnumber">v0.12.9</span>
    </div>
   </td>
  </tr>
@@ -73,21 +73,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a7e72aa165c8cc79384bd650dc1d8fe67"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a7e72aa165c8cc79384bd650dc1d8fe67">move</a> (QPoint topRightPoint)</td></tr>
 <tr class="memdesc:a7e72aa165c8cc79384bd650dc1d8fe67"><td class="mdescLeft">&#160;</td><td class="mdescRight">move move layout to a new location based off of the top right point provided.  <a href="#a7e72aa165c8cc79384bd650dc1d8fe67">More...</a><br /></td></tr>
 <tr class="separator:a7e72aa165c8cc79384bd650dc1d8fe67"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac01a8727ae5be0910d6585060d52f6ab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#ac01a8727ae5be0910d6585060d52f6ab">updateRoutineSingleColor</a> (ELightingRoutine routine, QColor color)</td></tr>
-<tr class="memdesc:ac01a8727ae5be0910d6585060d52f6ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateRoutineSingleColor update routine icon when a single color routine is changed.  <a href="#ac01a8727ae5be0910d6585060d52f6ab">More...</a><br /></td></tr>
-<tr class="separator:ac01a8727ae5be0910d6585060d52f6ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a92ee79b2cf21bce8b4a0404ca45429c5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a92ee79b2cf21bce8b4a0404ca45429c5">updateRoutineMultiColor</a> (ELightingRoutine routine, std::vector&lt; QColor &gt; colors, int colorCount)</td></tr>
-<tr class="memdesc:a92ee79b2cf21bce8b4a0404ca45429c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateRoutineMultiColor update routine icon with multi color routine.  <a href="#a92ee79b2cf21bce8b4a0404ca45429c5">More...</a><br /></td></tr>
-<tr class="separator:a92ee79b2cf21bce8b4a0404ca45429c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aedee803f9d8571bc61a52810521d54cd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#aedee803f9d8571bc61a52810521d54cd">updateRoutine</a> (const QJsonObject &amp;routineObject, std::vector&lt; QColor &gt; colors)</td></tr>
+<tr class="memdesc:aedee803f9d8571bc61a52810521d54cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateRoutine show a routine on the button  <a href="#aedee803f9d8571bc61a52810521d54cd">More...</a><br /></td></tr>
+<tr class="separator:aedee803f9d8571bc61a52810521d54cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a047de47a1fbbb8676e0e70212ce670ed"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a047de47a1fbbb8676e0e70212ce670ed">updateMultiPageButton</a> (const std::vector&lt; std::vector&lt; QColor &gt; &gt; &amp;colors)</td></tr>
 <tr class="memdesc:a047de47a1fbbb8676e0e70212ce670ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateMultiPageButton update the multi page button to display a prettier icon  <a href="#a047de47a1fbbb8676e0e70212ce670ed">More...</a><br /></td></tr>
 <tr class="separator:a047de47a1fbbb8676e0e70212ce670ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f77924ee0fa8b224a2dfa8e6b80d14c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a3f77924ee0fa8b224a2dfa8e6b80d14c">updateGroupPageButtons</a> (const std::vector&lt; std::vector&lt; QColor &gt; &gt; &amp;colors)</td></tr>
 <tr class="memdesc:a3f77924ee0fa8b224a2dfa8e6b80d14c"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateGroupPageButtons update group page buttons using colors only found in the datalayer  <a href="#a3f77924ee0fa8b224a2dfa8e6b80d14c">More...</a><br /></td></tr>
 <tr class="separator:a3f77924ee0fa8b224a2dfa8e6b80d14c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a13741f9671c654a48cca0d85fb68e1eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a13741f9671c654a48cca0d85fb68e1eb">updateDiscoveryButton</a> (ECommType type, QPixmap pixmap)</td></tr>
-<tr class="memdesc:a13741f9671c654a48cca0d85fb68e1eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDiscoveryButton update the icon of a discovery button. Shows the discovery state of the connection.  <a href="#a13741f9671c654a48cca0d85fb68e1eb">More...</a><br /></td></tr>
-<tr class="separator:a13741f9671c654a48cca0d85fb68e1eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ab5d1a63b1f0f6600b0e4f2b0e85a38"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a2ab5d1a63b1f0f6600b0e4f2b0e85a38">updateDiscoveryButton</a> (EProtocolType type, QPixmap pixmap)</td></tr>
+<tr class="memdesc:a2ab5d1a63b1f0f6600b0e4f2b0e85a38"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDiscoveryButton update the icon of a discovery button. Shows the discovery state of the connection.  <a href="#a2ab5d1a63b1f0f6600b0e4f2b0e85a38">More...</a><br /></td></tr>
+<tr class="separator:a2ab5d1a63b1f0f6600b0e4f2b0e85a38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7127ba9b5265516594a116bd62e619ee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a7127ba9b5265516594a116bd62e619ee">addMultiRoutineIcon</a> (std::vector&lt; QColor &gt; colors)</td></tr>
 <tr class="memdesc:a7127ba9b5265516594a116bd62e619ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">addMultiRoutineIcon add a multi routine icon  <a href="#a7127ba9b5265516594a116bd62e619ee">More...</a><br /></td></tr>
 <tr class="separator:a7127ba9b5265516594a116bd62e619ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -398,8 +395,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a13741f9671c654a48cca0d85fb68e1eb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a13741f9671c654a48cca0d85fb68e1eb">&#9670;&nbsp;</a></span>updateDiscoveryButton()</h2>
+<a id="a2ab5d1a63b1f0f6600b0e4f2b0e85a38"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2ab5d1a63b1f0f6600b0e4f2b0e85a38">&#9670;&nbsp;</a></span>updateDiscoveryButton()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -407,7 +404,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">void FloatingLayout::updateDiscoveryButton </td>
           <td>(</td>
-          <td class="paramtype">ECommType&#160;</td>
+          <td class="paramtype">EProtocolType&#160;</td>
           <td class="paramname"><em>type</em>, </td>
         </tr>
         <tr>
@@ -481,29 +478,23 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a92ee79b2cf21bce8b4a0404ca45429c5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a92ee79b2cf21bce8b4a0404ca45429c5">&#9670;&nbsp;</a></span>updateRoutineMultiColor()</h2>
+<a id="aedee803f9d8571bc61a52810521d54cd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aedee803f9d8571bc61a52810521d54cd">&#9670;&nbsp;</a></span>updateRoutine()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void FloatingLayout::updateRoutineMultiColor </td>
+          <td class="memname">void FloatingLayout::updateRoutine </td>
           <td>(</td>
-          <td class="paramtype">ELightingRoutine&#160;</td>
-          <td class="paramname"><em>routine</em>, </td>
+          <td class="paramtype">const QJsonObject &amp;&#160;</td>
+          <td class="paramname"><em>routineObject</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">std::vector&lt; QColor &gt;&#160;</td>
-          <td class="paramname"><em>colors</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>colorCount</em>&#160;</td>
+          <td class="paramname"><em>colors</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -514,44 +505,8 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">routine</td><td>new routine for icon. </td></tr>
-    <tr><td class="paramname">colors</td><td>the full array of colors </td></tr>
-    <tr><td class="paramname">colorCount</td><td>the number of colors to use from the array. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="ac01a8727ae5be0910d6585060d52f6ab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac01a8727ae5be0910d6585060d52f6ab">&#9670;&nbsp;</a></span>updateRoutineSingleColor()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void FloatingLayout::updateRoutineSingleColor </td>
-          <td>(</td>
-          <td class="paramtype">ELightingRoutine&#160;</td>
-          <td class="paramname"><em>routine</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">QColor&#160;</td>
-          <td class="paramname"><em>color</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">routine</td><td>new routine for icon. </td></tr>
-    <tr><td class="paramname">color</td><td>new color for icon. </td></tr>
+    <tr><td class="paramname">routineObject</td><td>the json representatino of the routine </td></tr>
+    <tr><td class="paramname">colors</td><td>the colors used for multi color routines </td></tr>
   </table>
   </dd>
 </dl>

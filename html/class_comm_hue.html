@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.12.5</span>
+   &#160;<span id="projectnumber">v0.12.9</span>
    </div>
   </td>
  </tr>
@@ -69,19 +69,19 @@ Signals</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a75205a9dd6e81b970b1313402b656736">stateChanged</a> ()</td></tr>
 <tr class="memdesc:a75205a9dd6e81b970b1313402b656736"><td class="mdescLeft">&#160;</td><td class="mdescRight">stateChanged emitted when any of the lights change in any way. <br /></td></tr>
 <tr class="separator:a75205a9dd6e81b970b1313402b656736"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ec89cc9babca336b6b896150dd212d9"><td class="memItemLeft" align="right" valign="top"><a id="a2ec89cc9babca336b6b896150dd212d9"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a2ec89cc9babca336b6b896150dd212d9">discoveryStateChanged</a> (int)</td></tr>
-<tr class="memdesc:a2ec89cc9babca336b6b896150dd212d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">signals during discovery things like when the bridge is discovered and when light data is received <br /></td></tr>
-<tr class="separator:a2ec89cc9babca336b6b896150dd212d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a081202319f5ec20fa553ff0ff6f5f503"><td class="memItemLeft" align="right" valign="top"><a id="a081202319f5ec20fa553ff0ff6f5f503"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a081202319f5ec20fa553ff0ff6f5f503">discoveryStateChanged</a> (EHueDiscoveryState)</td></tr>
+<tr class="memdesc:a081202319f5ec20fa553ff0ff6f5f503"><td class="mdescLeft">&#160;</td><td class="mdescRight">signals during discovery things like when the bridge is discovered and when light data is received <br /></td></tr>
+<tr class="separator:a081202319f5ec20fa553ff0ff6f5f503"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header signals_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('signals_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Signals inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
-<tr class="memitem:a9186f5c260b29ec24d0e1666191afbf6 inherit signals_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a9186f5c260b29ec24d0e1666191afbf6"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a9186f5c260b29ec24d0e1666191afbf6">packetReceived</a> (QString, QString, int)</td></tr>
-<tr class="memdesc:a9186f5c260b29ec24d0e1666191afbf6 inherit signals_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">packetReceived emitted whenever a packet that is not a discovery packet is received. Contains the full packet's contents as a QString. <br /></td></tr>
-<tr class="separator:a9186f5c260b29ec24d0e1666191afbf6 inherit signals_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac61ed4af1b52a921138f7f97e5d15b9e inherit signals_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="ac61ed4af1b52a921138f7f97e5d15b9e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ac61ed4af1b52a921138f7f97e5d15b9e">updateReceived</a> (int)</td></tr>
-<tr class="memdesc:ac61ed4af1b52a921138f7f97e5d15b9e inherit signals_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateReceived an update packet was received from any controller. <br /></td></tr>
-<tr class="separator:ac61ed4af1b52a921138f7f97e5d15b9e inherit signals_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd0309d4508fbb127aeedfdacc212995 inherit signals_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="abd0309d4508fbb127aeedfdacc212995"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#abd0309d4508fbb127aeedfdacc212995">packetReceived</a> (QString, QString, ECommType)</td></tr>
+<tr class="memdesc:abd0309d4508fbb127aeedfdacc212995 inherit signals_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">packetReceived emitted whenever a packet that is not a discovery packet is received. Contains the full packet's contents as a QString. <br /></td></tr>
+<tr class="separator:abd0309d4508fbb127aeedfdacc212995 inherit signals_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a99e8e95b8ce5ac36a605634b6a460f inherit signals_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a6a99e8e95b8ce5ac36a605634b6a460f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a6a99e8e95b8ce5ac36a605634b6a460f">updateReceived</a> (ECommType)</td></tr>
+<tr class="memdesc:a6a99e8e95b8ce5ac36a605634b6a460f inherit signals_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateReceived an update packet was received from any controller. <br /></td></tr>
+<tr class="separator:a6a99e8e95b8ce5ac36a605634b6a460f inherit signals_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
