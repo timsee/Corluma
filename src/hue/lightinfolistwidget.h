@@ -7,6 +7,7 @@
 #include <QLayout>
 #include <QLabel>
 
+#include "lightingpage.h"
 #include "hue/lightinfowidget.h"
 #include "comm/commhue.h"
 #include "cor/topwidget.h"
@@ -27,7 +28,7 @@ namespace hue
  *        from the Bridge. If the light is deleted from the Bridge, then it cannot be controlled again until
  *        it is rediscovered.
  */
-class LightInfoListWidget : public QWidget
+class LightInfoListWidget : public QWidget, public LightingPage
 {
     Q_OBJECT
 public:

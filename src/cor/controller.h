@@ -41,6 +41,9 @@ public:
     /// minor API level of controller
     uint32_t minorAPI;
 
+    /// capabilities of hardware (0 is arduino-level with no added capabilities)
+    uint32_t hardwareCapabilities;
+
     /// type of controller
     ECommType type;
 

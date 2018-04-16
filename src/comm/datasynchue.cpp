@@ -14,7 +14,7 @@ DataSyncHue::DataSyncHue(DataLayer *data, CommLayer *comm) {
     mData = data;
     mComm = comm;
     mUpdateInterval = 250;
-    connect(mComm, SIGNAL(packetReceived(ECommType)), this, SLOT(commPacketReceived(ECommType)));
+    connect(mComm, SIGNAL(packetReceived(EProtocolType)), this, SLOT(commPacketReceived(EProtocolType)));
     connect(mData, SIGNAL(dataUpdate()), this, SLOT(resetSync()));
 
     mSyncTimer = new QTimer(this);
@@ -35,8 +35,8 @@ void DataSyncHue::cancelSync() {
     }
 }
 
-void DataSyncHue::commPacketReceived(ECommType type) {
-    if ((ECommType)type == ECommType::eHue) {
+void DataSyncHue::commPacketReceived(EProtocolType type) {
+    if (type == EProtocolType::eHue) {
         if (!mDataIsInSync) {
             resetSync();
         }
@@ -63,8 +63,8 @@ void DataSyncHue::syncData() {
         for (auto&& device : mData->currentDevices()) {
             cor::Light commLayerDevice = device;
             if (mComm->fillDevice(commLayerDevice)) {
-                if (device.type() == ECommType::eHue) {
-                    if (checkThrottle(device.controller(), device.type())) {
+                if (device.commType() == ECommType::eHue) {
+                    if (checkThrottle(device.controller(), device.commType())) {
                         if (!sync(device, commLayerDevice)) {
                             countOutOfSync++;
                         }
@@ -110,73 +110,61 @@ void DataSyncHue::endOfSync() {
 bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevice) {
     int countOutOfSync = 0;
     cor::Controller controller;
-    if (!mComm->findDiscoveredController(dataDevice.type(), dataDevice.controller(), controller)) {
+    if (!mComm->findDiscoveredController(dataDevice.commType(), dataDevice.controller(), controller)) {
         return false;
     }
     std::list<cor::Light> list;
     list.push_back(dataDevice);
     QString packet;
 
-    //-------------------
-    // On/Off Sync
-    //-------------------
+    if (dataDevice.isOn) {
+        if (dataDevice.colorMode == EColorMode::eHSV) {
+            //-------------------
+            // Hue HSV Color Sync
+            //-------------------
+            QColor hsvColor = dataDevice.color.toHsv();
+            // add brightness into lights
+            if (cor::colorDifference(hsvColor, commDevice.color) > 0.02f) {
+                QJsonObject routineObject;
+                routineObject["routine"] = routineToString(ERoutine::eSingleSolid);
+                routineObject["red"]     = hsvColor.red();
+                routineObject["green"]   = hsvColor.green();
+                routineObject["blue"]    = hsvColor.blue();
 
-    if (dataDevice.isOn != commDevice.isOn) {
-        //qDebug() << "hue ON/OFF not in sync" << dataDevice.isOn;
-        QString message = mComm->sendTurnOn(list, dataDevice.isOn);
-        appendToPacket(packet, message, controller.maxPacketSize);
-        countOutOfSync++;
-    }
-
-    if (dataDevice.colorMode == EColorMode::eHSV) {
-        //-------------------
-        // Hue HSV Color Sync
-        //-------------------
-        QColor hsvColor = dataDevice.color.toHsv();
-        // add brightness into lights
-        if (cor::colorDifference(hsvColor, commDevice.color) > 0.02f) {
-            QString message = mComm->sendMainColorChange(list, hsvColor);
-            appendToPacket(packet, message, controller.maxPacketSize);
-            //qDebug() << "hue color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << cor::colorDifference(dataDevice.color, commDevice.color);
-            countOutOfSync++;
+                QString message = mComm->sendRoutineChange(list, routineObject);
+                appendToPacket(packet, message, controller.maxPacketSize);
+    //            qDebug() << "hue color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << cor::colorDifference(dataDevice.color, commDevice.color);
+    //            qDebug() << " packet " << message;
+                countOutOfSync++;
+            }
+        } else if (dataDevice.colorMode == EColorMode::eCT) {
+            //-------------------
+            // Hue Color Temperature Sync
+            //-------------------
+            if (cor::colorDifference(commDevice.color, dataDevice.color) > 0.15f) {
+                QString message = mComm->sendColorTemperatureChange(list, cor::rgbToColorTemperature(dataDevice.color));
+                appendToPacket(packet, message, controller.maxPacketSize);
+                countOutOfSync++;
+               // qDebug() << "hue color temperature not in sync" << commDevice.color << "vs" << dataDevice.color << utils::colorDifference(commDevice.color, dataDevice.color)  << "on device" << dataDevice.index;
+            }
         }
+
         if (cor::brightnessDifference(commDevice.brightness, dataDevice.brightness) > 0.05f) {
             //qDebug() << "hue brightness not in sync" << commDevice.brightness << "vs" << dataDevice.brightness;
             QString message = mComm->sendBrightness(list, dataDevice.brightness);
             appendToPacket(packet, message, controller.maxPacketSize);
             countOutOfSync++;
         }
-    } else if (dataDevice.colorMode == EColorMode::eCT) {
-        //-------------------
-        // Hue Color Temperature Sync
-        //-------------------
-        if (cor::colorDifference(commDevice.color, dataDevice.color) > 0.15f) {
-            QString message = mComm->sendColorTemperatureChange(list, cor::rgbToColorTemperature(dataDevice.color));
-            appendToPacket(packet, message, controller.maxPacketSize);
-            countOutOfSync++;
-           // qDebug() << "hue color temperature not in sync" << commDevice.color << "vs" << dataDevice.color << utils::colorDifference(commDevice.color, dataDevice.color)  << "on device" << dataDevice.index;
-        }
+    }
 
-        //-------------------
-        // Hue CT Brightness Sync
-        //-------------------
-        if (cor::brightnessDifference(commDevice.brightness, dataDevice.brightness) > 0.05f) {
-            //qDebug() << "hue CT brightness not in sync" << commDevice.brightness << "vs" << dataDevice.brightness;
-            QString message = mComm->sendBrightness(list, dataDevice.brightness);
-            appendToPacket(packet, message, controller.maxPacketSize);
-            countOutOfSync++;
-        }
-
-    } else if (dataDevice.colorMode == EColorMode::eDimmable) {
-        //-------------------
-        // Hue Dimmable Brightness Sync
-        //-------------------
-        if (cor::brightnessDifference(commDevice.brightness, dataDevice.brightness) > 0.05f) {
-            //qDebug() << "hue dimmable brightness not in sync" << commDevice.brightness << "vs" << dataDevice.brightness;
-            QString message = mComm->sendBrightness(list, dataDevice.brightness);
-            appendToPacket(packet, message, controller.maxPacketSize);
-            countOutOfSync++;
-        }
+    //-------------------
+    // On/Off Sync
+    //-------------------
+    if (dataDevice.isOn != commDevice.isOn) {
+        //qDebug() << "hue ON/OFF not in sync" << dataDevice.isOn;
+        QString message = mComm->sendTurnOn(list, dataDevice.isOn);
+        appendToPacket(packet, message, controller.maxPacketSize);
+        countOutOfSync++;
     }
 
     //-------------------
@@ -202,7 +190,7 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
 
     if (countOutOfSync && packet.size()) {
         mComm->sendPacket(dataDevice, packet);
-        resetThrottle(dataDevice.controller(), dataDevice.type());
+        resetThrottle(dataDevice.controller(), dataDevice.commType());
     }
 
     return (countOutOfSync == 0);
@@ -214,7 +202,7 @@ void DataSyncHue::cleanupSync() {
     if (mData->timeoutEnabled()) {
         std::list<SHueSchedule> commSchedules = mComm->hue()->schedules();
         for (auto&& device : mData->currentDevices()) {
-            if (device.type() == ECommType::eHue) {
+            if (device.commType() == ECommType::eHue) {
                 cor::Light commLayerDevice = device;
                 bool successful = mComm->fillDevice(commLayerDevice);
                 if (!successful) qDebug() << "something is wronggg";

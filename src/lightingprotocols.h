@@ -1,5 +1,8 @@
 #ifndef LIGHTINGPROTOCOLS_H
 #define LIGHTINGPROTOCOLS_H
+#include <QMetaType>
+#include <QString>
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2018.
@@ -15,11 +18,11 @@
  */
 
 /*!
- * \enum ELightingRoutine Each routine makes the LEDs shine in different ways. There are
+ * \enum ERoutine Each routine makes the LEDs shine in different ways. There are
  *       two main types of routines: Single Color Routines use a single color while Multi
- *       Color Routines rely on an EColorGroup.
+ *       Color Routines rely on an EPalette.
  */
-enum class ELightingRoutine
+enum class ERoutine
 {
     /*!
      * <b>0</b><br>
@@ -44,77 +47,118 @@ enum class ELightingRoutine
     eSingleGlimmer,
     /*!
      * <b>4</b><br>
-     * <i>Linear fade of the brightness of the LEDs.</i>
+     * <i>Fades the brightness in and out of the LEDs. Takes a parameter of either
+     * 0 or 1. If its 0, it fades linearly. If its 1, it fades using a sine wave, so less time
+     * in the mid range of brightness and more time in the full and very dim light.</i>
      */
-    eSingleLinearFade,
+    eSingleFade,
     /*!
      * <b>5</b><br>
-     * <i>Uses a sine function to fade in and out. This makes it spend more time near the
-     *  extremes of full brightness and very dim light, and less time in the mid range.
-     *  of the LEDs.</i>
+     * <i>fades in or out using a sawtooth function. Takes a parameter of either 0 or
+     * 1. If its 0, it starts off and fades to full brightness. If its 1, it starts at full
+     * brightness and fades to zero. The fade is linear. </i>
      */
-    eSingleSineFade,
+    eSingleSawtoothFade,
     /*!
      * <b>6</b><br>
-     * <i>fades in starting at 0 brightness and  increases a constant rate.
-     * Once it reaches  full brightness, it resets back to zero and repeats.</i>
-     */
-    eSingleSawtoothFadeIn,
-    /*!
-     * <b>7</b><br>
-     * <i>fades out starting at 0 brightness and decreases at a constant rate.
-     *  Once it reaches 0, it resets back to full brightness and repeats.</i>
-     */
-    eSingleSawtoothFadeOut,
-    /*!
-     * <b>8</b><br>
      * <i> Uses the first color of the array as the base color
      * and uses the other colors for a glimmer effect.</i>
      */
     eMultiGlimmer,
     /*!
-     * <b>9</b><br>
+     * <b>7</b><br>
      * <i>Fades slowly between each color in the array.</i>
      */
     eMultiFade,
     /*!
-     * <b>10</b><br>
+     * <b>8</b><br>
      * <i>Chooses a random color from the array and lights all
      * all LEDs to match that color.</i>
      */
     eMultiRandomSolid,
     /*!
-     * <b>11</b><br>
+     * <b>9</b><br>
      * <i>Chooses a random color from the array for each
      * individual LED.</i>
      */
     eMultiRandomIndividual,
     /*!
-     * <b>12</b><br>
+     * <b>10</b><br>
      * <i>Draws the colors of the array in alternating
      *  groups of equal size.</i>
      */
-    eMultiBarsSolid,
-    /*!
-     * <b>13</b><br>
-     * <i>Draws the colors of the array in alternating
-     *  groups of equal size. On each update, it moves those
-     *  groups one index to the right, creating a scrolling
-     *  effect.</i>
-     */
-    eMultiBarsMoving,
-    eLightingRoutine_MAX //total number of modes
+    eMultiBars,
+    eRoutine_MAX //total number of modes
 };
+Q_DECLARE_METATYPE(ERoutine)
 
+/// converts a ERoutine object to a string
+inline QString routineToString(ERoutine routine) {
+    switch (routine) {
+        case ERoutine::eSingleSolid:
+            return "Single Solid";
+        case ERoutine::eSingleBlink:
+            return "Single Blink";
+        case ERoutine::eSingleGlimmer:
+            return "Single Glimmer";
+        case ERoutine::eSingleWave:
+            return "Single Wave";
+        case ERoutine::eSingleFade:
+            return "Single Fade";
+        case ERoutine::eSingleSawtoothFade:
+            return "Single Sawtooth Fade";
+        case ERoutine::eMultiFade:
+            return "Multi Fade";
+        case ERoutine::eMultiGlimmer:
+            return "Multi Glimmer";
+        case ERoutine::eMultiRandomIndividual:
+            return "Multi Random Individual";
+        case ERoutine::eMultiRandomSolid:
+            return "Multi Random Solid";
+        case ERoutine::eMultiBars:
+            return "Multi Bars";
+        default:
+            return "Not Recognized";
+    }
+}
+
+/// converts a string to an ERoutine object
+inline ERoutine stringToRoutine(QString routine) {
+    if (routine.compare("Single Solid") == 0) {
+        return ERoutine::eSingleSolid;
+    } else if (routine.compare("Single Blink") == 0) {
+        return ERoutine::eSingleBlink;
+    } else if (routine.compare("Single Glimmer") == 0) {
+        return ERoutine::eSingleGlimmer;
+    } else if (routine.compare("Single Wave") == 0) {
+        return ERoutine::eSingleWave;
+    } else if (routine.compare("Single Fade") == 0) {
+        return ERoutine::eSingleFade;
+    } else if (routine.compare("Single Sawtooth Fade") == 0) {
+        return ERoutine::eSingleSawtoothFade;
+    } else if (routine.compare("Multi Fade") == 0) {
+        return ERoutine::eMultiFade;
+    } else if (routine.compare("Multi Glimmer") == 0) {
+        return ERoutine::eMultiGlimmer;
+    } else if (routine.compare("Multi Random Individual") == 0) {
+        return ERoutine::eMultiRandomIndividual;
+    } else if (routine.compare("Multi Random Solid") == 0) {
+        return ERoutine::eMultiRandomSolid;
+    } else if (routine.compare("Multi Bars") == 0) {
+        return ERoutine::eMultiBars;
+    } else {
+        return ERoutine::eRoutine_MAX;
+    }
+}
 
 
 /*!
- * \enum EColorGroup used during multi color routines to determine
+ * \enum EPalette used during multi color routines to determine
  *       which colors to use in the routine. eCustom uses the custom
  *       color array, eAll generates its colors randomly. All
  *       other values use presets based around overall themes.
  */
-enum EColorGroup
+enum class EPalette
 {
     /*!
      * <b>0</b><br>
@@ -206,15 +250,92 @@ enum EColorGroup
      * <i>Red, yellow, green, cyan, blue, magenta, white.</i>
      */
     eSevenColor,
-    /*!
-     * <b>17</b><br>
-     * <i>Rather than using using preset colors, it uses all
-     * possible colors.</i>
-     */
-    eAll,
-    eColorGroup_MAX //total number of presets
+    ePalette_MAX //total number of palettes
 };
+Q_DECLARE_METATYPE(EPalette)
 
+/// converts a EPalette to a string
+inline QString paletteToString(EPalette palette) {
+    switch (palette) {
+        case EPalette::eCustom:
+            return "Custom";
+        case EPalette::eWater:
+            return "Water";
+        case EPalette::eSnow:
+            return "Snow";
+        case EPalette::eFrozen:
+            return "Frozen";
+        case EPalette::eCool:
+            return "Cool";
+        case EPalette::eWarm:
+            return "Warm";
+        case EPalette::eFire:
+            return "Fire";
+        case EPalette::eEvil:
+            return "Evil";
+        case EPalette::eCorrorsive:
+            return "Corrorsive";
+        case EPalette::ePoison:
+            return "Poison";
+        case EPalette::eRose:
+            return "Rose";
+        case EPalette::ePinkGreen:
+            return "PinkGreen";
+        case EPalette::eRedWhiteBlue:
+            return "RedWhiteBlue";
+        case EPalette::eRGB:
+            return "RGB";
+        case EPalette::eCMY:
+            return "CMY";
+        case EPalette::eSixColor:
+            return "Six";
+        case EPalette::eSevenColor:
+            return "Seven";
+        default:
+            return "Not Recognized";
+    }
+}
+
+/// converts a string to a EPalette
+inline EPalette stringToPalette(QString palette) {
+    if (palette.compare("Custom") == 0) {
+        return EPalette::eCustom;
+    } else if (palette.compare("Water") == 0) {
+        return EPalette::eWater;
+    } else if (palette.compare("Snow") == 0) {
+        return EPalette::eSnow;
+    } else if (palette.compare("Frozen") == 0) {
+        return EPalette::eFrozen;
+    } else if (palette.compare("Cool") == 0) {
+        return EPalette::eCool;
+    } else if (palette.compare("Warm") == 0) {
+        return EPalette::eWarm;
+    } else if (palette.compare("Fire") == 0) {
+        return EPalette::eFire;
+    } else if (palette.compare("Evil") == 0) {
+        return EPalette::eEvil;
+    } else if (palette.compare("Corrorsive") == 0) {
+        return EPalette::eCorrorsive;
+    } else if (palette.compare("Poison") == 0) {
+        return EPalette::ePoison;
+    } else if (palette.compare("Rose") == 0) {
+        return EPalette::eRose;
+    } else if (palette.compare("PinkGreen") == 0) {
+        return EPalette::ePinkGreen;
+    } else if (palette.compare("RedWhiteBlue") == 0) {
+        return EPalette::eRedWhiteBlue;
+    } else if (palette.compare("RGB") == 0) {
+        return EPalette::eRGB;
+    } else if (palette.compare("CMY") == 0) {
+        return EPalette::eCMY;
+    } else if (palette.compare("Six") == 0) {
+        return EPalette::eSixColor;
+    } else if (palette.compare("Seven") == 0) {
+        return EPalette::eSevenColor;
+    } else {
+        return EPalette::ePalette_MAX;
+    }
+}
 
 /*!
  * \enum EPacketHeader Message headers for packets coming over serial.
@@ -233,55 +354,63 @@ enum class EPacketHeader
   eModeChange,
   /*!
    * <b>2</b><br>
-   * <i>Takes 3 parameters, a 0-255 representation of Red, Green, and Blue.</i>
-   */
-  eMainColorChange,
-  /*!
-   * <b>3</b><br>
    * <i>Takes four parameters. The first is the index of the custom color,
    * the remaining three parameters are a 0-255 representation
    * of Red, Green, and Blue.</i>
    */
   eCustomArrayColorChange,
   /*!
-   * <b>4</b><br>
+   * <b>3</b><br>
    * <i>Takes one parameter, sets the brightness between 0 and 100.</i>
    */
   eBrightnessChange,
   /*!
-   * <b>5</b><br>
-   * <i>Takes one parameter, sets the delay value 1 - 23767.</i>
-   */
-  eSpeedChange,
-  /*!
-   * <b>6</b><br>
+   * <b>4</b><br>
    * <i>Change the number of colors used in a custom array routine.</i>
    */
   eCustomColorCountChange,
   /*!
-   * <b>7</b><br>
+   * <b>5</b><br>
    * <i>Set to 0 to turn off, set to any other number minutes until
    * idle timeout happens.</i>
    */
   eIdleTimeoutChange,
   /*!
-   * <b>8</b><br>
+   * <b>6</b><br>
    * <i>Sends back a packet that contains basic LED state information.</i>
    */
   eStateUpdateRequest,
   /*!
-   * <b>9</b><br>
+   * <b>7</b><br>
    * <i>Sends back a packet that contains the size of the custom array and all of the colors in it. </i>
    */
   eCustomArrayUpdateRequest,
-  /*!
-   * <b>10</b><br>
-   * <i>Resets all values inside of RoutinesRGB back to their
-   * default values. Useful for soft reseting the LED hardware. </i>
-   */
-  eResetSettingsToDefaults,
   ePacketHeader_MAX //total number of Packet Headers
 };
+
+
+inline QString packetHeaderToString(EPacketHeader header) {
+    switch (header) {
+        case EPacketHeader::eOnOffChange:
+            return "On/Off Change";
+        case EPacketHeader::eModeChange:
+            return "Mode Change";
+        case EPacketHeader::eCustomArrayColorChange:
+            return "Custom Array Color Change";
+        case EPacketHeader::eBrightnessChange:
+            return "Brightness Change";
+        case EPacketHeader::eCustomColorCountChange:
+            return "Custom Color Count Change";
+        case EPacketHeader::eIdleTimeoutChange:
+            return "Idle Timeout Change";
+        case EPacketHeader::eStateUpdateRequest:
+            return "State Update Request";
+        case EPacketHeader::eCustomArrayUpdateRequest:
+            return "Custom Array Update Request";
+        default:
+            return "Not Recognized";
+    }
+}
 
 /*!
  * \brief The EArduinoHardwareType enum is the enum used for hardware
@@ -309,7 +438,7 @@ enum class ELightHardwareType {
     eLightStrip,
     eRing,
     eBloom,
-    eNanoLeaf,
+    eNanoleaf,
     ELightHardwareType_MAX
 };
 

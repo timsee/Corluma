@@ -2,7 +2,6 @@
 #define HUEPROTOCOLS_H
 
 #include <list>
-#include <QString>
 #include "cor/light.h"
 
 /*!

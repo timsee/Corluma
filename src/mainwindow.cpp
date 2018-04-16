@@ -41,12 +41,6 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
     mPageIndex = EPage::eConnectionPage;
-    mLastHuesWereOnlyWhite = false;
-    mDiscoveryPageIsOpen = true;
-    mSettingsPageIsOpen = false;
-    mEditPageIsOpen = false;
-    mHueInfoWidgetIsOpen = false;
-    mHueLightDiscoveryIsOpen = false;
 
     // --------------
     // Setup Backend
@@ -61,7 +55,6 @@ MainWindow::MainWindow(QWidget *parent) :
     mDataSyncSettings = new DataSyncSettings(mData, mComm);
 
     mDataSyncHue->connectGroupsParser(mComm->groups());
-
     mComm->nanoLeaf()->addColorPalettes(mData->colors());
 
     // --------------
@@ -132,7 +125,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(mTopMenu, SIGNAL(buttonPressed(QString)), this, SLOT(topMenuButtonPressed(QString)));
     connect(mTopMenu, SIGNAL(brightnessChanged(int)), this, SLOT(brightnessChanged(int)));
     connect(mColorPage, SIGNAL(singleColorChanged(QColor)),  mTopMenu, SLOT(updateSingleColor(QColor)));
-    connect(mGroupPage, SIGNAL(presetColorGroupChanged(int)),  mTopMenu, SLOT(updatePresetColorGroup(int)));
+    connect(mGroupPage, SIGNAL(presetPaletteChanged(EPalette)),  mTopMenu, SLOT(updatePresetPalette(EPalette)));
     connect(mConnectionPage, SIGNAL(updateMainIcons()),  mTopMenu, SLOT(updateMenuBar()));
     connect(mColorPage, SIGNAL(updateMainIcons()),  mTopMenu, SLOT(updateMenuBar()));
     connect(mGroupPage, SIGNAL(updateMainIcons()), mTopMenu, SLOT(updateMenuBar()));
@@ -151,6 +144,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mSettingsPage = new SettingsPage(this);
     mSettingsPage->setVisible(false);
+    mSettingsPage->isOpen(false);
     mSettingsPage->connectCommLayer(mComm);
     mSettingsPage->globalWidget()->connectBackendLayers(mComm, mData);
     connect(mSettingsPage, SIGNAL(updateMainIcons()), mTopMenu, SLOT(updateMenuBar()));
@@ -169,6 +163,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mDiscoveryPage->setup(mData);
     mDiscoveryPage->connectCommLayer(mComm);
     mDiscoveryPage->show();
+    mDiscoveryPage->isOpen(true);
     connect(mDiscoveryPage, SIGNAL(startButtonClicked()), this, SLOT(switchToConnection()));
     connect(mDiscoveryPage, SIGNAL(settingsButtonClicked()), this, SLOT(settingsButtonFromDiscoveryPressed()));
     connect(mDiscoveryPage, SIGNAL(closeWithoutTransition()), this, SLOT(closeDiscoveryWithoutTransition()));
@@ -186,6 +181,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mEditPage = new EditGroupPage(this);
     mEditPage->setup(mComm, mData);
+    mEditPage->isOpen(false);
     connect(mEditPage, SIGNAL(pressedClose()), this, SLOT(editClosePressed()));
     mEditPage->setGeometry(0,
                         -1 * this->height(),
@@ -197,6 +193,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // --------------
 
     mHueInfoWidget = new hue::LightInfoListWidget(this);
+    mHueInfoWidget->isOpen(false);
     connect(mHueInfoWidget, SIGNAL(hueChangedName(QString, QString)), this, SLOT(hueNameChanged(QString, QString)));
     connect(mHueInfoWidget, SIGNAL(hueDeleted(QString)), this, SLOT(deleteHue(QString)));
     connect(mHueInfoWidget, SIGNAL(pressedClose()), this, SLOT(hueInfoClosePressed()));
@@ -224,6 +221,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mHueLightDiscovery = new hue::LightDiscovery(this);
     mHueLightDiscovery->setVisible(false);
+    mHueLightDiscovery->isOpen(false);
     mHueLightDiscovery->connectCommLayer(mComm);
     connect(mHueLightDiscovery, SIGNAL(closePressed()), this, SLOT(hueDiscoveryClosePressed()));
 
@@ -247,7 +245,6 @@ MainWindow::MainWindow(QWidget *parent) :
     if (mData->timeoutEnabled()) {
         mData->updateTimeout(mSettingsPage->globalWidget()->timeoutValue());
     }
-    mData->updateSpeed(mSettingsPage->globalWidget()->speedValue());
 
     // --------------
     // Final setup
@@ -257,9 +254,9 @@ MainWindow::MainWindow(QWidget *parent) :
     // --------------
     // Start Discovery
     // --------------
-    for (int i = 0; i < (int)ECommTypeSettings::eCommTypeSettings_MAX; ++i) {
-        ECommTypeSettings type = (ECommTypeSettings)i;
-        if (mData->commTypeSettings()->commTypeSettingsEnabled(type)) {
+    for (int i = 0; i < (int)EProtocolType::eProtocolType_MAX; ++i) {
+        EProtocolType type = (EProtocolType)i;
+        if (mData->protocolSettings()->enabled(type)) {
             mComm->startup(type);
             mComm->startDiscovery(type);
         }
@@ -293,7 +290,7 @@ void MainWindow::topMenuButtonPressed(QString key) {
         animation->setEndValue(QPoint(0,0));
         animation->start();
         mSettingsPage->show();
-        mSettingsPageIsOpen = true;
+        mSettingsPage->isOpen(true);
     } else {
         qDebug() << "Do not recognize key" << key;
     }
@@ -304,7 +301,7 @@ void MainWindow::brightnessChanged(int newBrightness) {
     // get list of all devices that just use brightness for hue
     std::list<cor::Light> specialCaseDevices;
     for (auto&& device : mData->currentDevices()) {
-        if (device.type() == ECommType::eHue) {
+        if (device.commType() == ECommType::eHue) {
             HueLight hueDevice = mComm->hue()->hueLightFromLight(device);
             if (hueDevice.hueType == EHueType::eAmbient
                     || hueDevice.hueType == EHueType::eWhite) {
@@ -320,15 +317,20 @@ void MainWindow::brightnessChanged(int newBrightness) {
 
 
 void MainWindow::settingsButtonFromDiscoveryPressed() {
-    mSettingsPage->setGeometry(this->width(), 0, this->width(), mSettingsPage->height());
-    mSettingsPage->setVisible(true);
-    QPropertyAnimation *animation = new QPropertyAnimation(mSettingsPage, "pos");
-    animation->setDuration(TRANSITION_TIME_MSEC);
-    animation->setStartValue(mSettingsPage->pos());
-    animation->setEndValue(QPoint(0,0));
-    animation->start();
-    mSettingsPage->show();
-    mSettingsPageIsOpen = true;
+    // hide discovery
+    switchToConnection();
+    // open settings if needed
+    if (!mSettingsPage->isOpen()) {
+        mSettingsPage->setGeometry(this->width(), 0, this->width(), mSettingsPage->height());
+        mSettingsPage->setVisible(true);
+        QPropertyAnimation *animation = new QPropertyAnimation(mSettingsPage, "pos");
+        animation->setDuration(TRANSITION_TIME_MSEC);
+        animation->setStartValue(mSettingsPage->pos());
+        animation->setEndValue(QPoint(0,0));
+        animation->start();
+        mSettingsPage->show();
+        mSettingsPage->isOpen(true);
+    }
 }
 
 void MainWindow::pageChanged(EPage pageIndex) {
@@ -467,7 +469,7 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
 
     QSize size = this->size();
 
-    if (mDiscoveryPageIsOpen) {
+    if (mDiscoveryPage->isOpen()) {
         mDiscoveryPage->setGeometry(mDiscoveryPage->geometry().x(),
                                     mDiscoveryPage->geometry().y(),
                                     size.width(), size.height());
@@ -477,7 +479,7 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
                                     size.width(), size.height());
     }
 
-    if (mSettingsPageIsOpen) {
+    if (mSettingsPage->isOpen()) {
         mSettingsPage->setGeometry(mSettingsPage->geometry().x(), mSettingsPage->geometry().y(), size.width(), size.height());
     } else {
         int diff = mSettingsPage->geometry().width() - size.width(); // adjust x coordinate of discovery page as it scales since its sitting next to main page.
@@ -488,15 +490,15 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
         mGreyOut->resize();
     }
 
-    if (mEditPageIsOpen) {
+    if (mEditPage->isOpen()) {
         mEditPage->resize();
     }
 
-    if (mHueInfoWidgetIsOpen) {
+    if (mHueInfoWidget->isOpen()) {
         mHueInfoWidget->resize();
     }
 
-    if (mHueLightDiscoveryIsOpen) {
+    if (mHueLightDiscovery->isOpen()) {
         mHueLightDiscovery->resize();
     }
 
@@ -522,16 +524,16 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
 
 void MainWindow::changeEvent(QEvent *event) {
     if(event->type() == QEvent::ActivationChange && this->isActiveWindow()) {
-        for (int commInt = 0; commInt != (int)ECommTypeSettings::eCommTypeSettings_MAX; ++commInt) {
-            ECommTypeSettings type = static_cast<ECommTypeSettings>(commInt);
-            if (mData->commTypeSettings()->commTypeSettingsEnabled(type)) {
+        for (int commInt = 0; commInt != (int)EProtocolType::eProtocolType_MAX; ++commInt) {
+            EProtocolType type = static_cast<EProtocolType>(commInt);
+            if (mData->protocolSettings()->enabled(type)) {
                 mComm->resetStateUpdates(type);
             }
         }
     } else if (event->type() == QEvent::ActivationChange && !this->isActiveWindow()) {
-        for (int commInt = 0; commInt != (int)ECommTypeSettings::eCommTypeSettings_MAX; ++commInt) {
-            ECommTypeSettings type = static_cast<ECommTypeSettings>(commInt);
-            if (mData->commTypeSettings()->commTypeSettingsEnabled(type)) {
+        for (int commInt = 0; commInt != (int)EProtocolType::eProtocolType_MAX; ++commInt) {
+            EProtocolType type = static_cast<EProtocolType>(commInt);
+            if (mData->protocolSettings()->enabled(type)) {
                 mComm->stopStateUpdates(type);
             }
         }
@@ -552,7 +554,7 @@ void MainWindow::switchToDiscovery() {
     animation->setEndValue(QPoint(0, 0));
     animation->start();
     mDiscoveryPage->show();
-    mDiscoveryPageIsOpen = true;
+    mDiscoveryPage->isOpen(true);
 }
 
 void MainWindow::switchToConnection() {
@@ -562,7 +564,7 @@ void MainWindow::switchToConnection() {
     animation->setEndValue(QPoint(-mDiscoveryPage->width(), 0));
     animation->start();
     mDiscoveryPage->hide();
-    mDiscoveryPageIsOpen = false;
+    mDiscoveryPage->isOpen(false);
 
     if (mConnectionPage->currentList() == ECurrentConnectionWidget::eGroups) {
         mTopMenu->highlightButton("Groups");
@@ -573,7 +575,7 @@ void MainWindow::switchToConnection() {
 
 void MainWindow::settingsClosePressed() {
     QPropertyAnimation *animation = new QPropertyAnimation(mSettingsPage, "pos");
-    if (mDiscoveryPageIsOpen) {
+    if (mDiscoveryPage->isOpen()) {
         mDiscoveryPage->updateTopMenu();
     }
     animation->setDuration(TRANSITION_TIME_MSEC);
@@ -585,7 +587,7 @@ void MainWindow::settingsClosePressed() {
         mConnectionPage->show();
     }
     mTopMenu->showFloatingLayout(mPageIndex);
-    mSettingsPageIsOpen = false;
+    mSettingsPage->isOpen(false);
 }
 
 void MainWindow::closeDiscoveryWithoutTransition() {
@@ -594,12 +596,12 @@ void MainWindow::closeDiscoveryWithoutTransition() {
                                       mDiscoveryPage->geometry().width(),
                                       mDiscoveryPage->geometry().height()));
     mDiscoveryPage->hide();
-    mDiscoveryPageIsOpen = false;
+    mDiscoveryPage->isOpen(false);
 }
 
 void MainWindow::editButtonClicked(QString key, bool isMood) {
-    fadeInGreyOut();
-    mEditPageIsOpen = true;
+    greyOut(true);
+    mEditPage->isOpen(true);
 
     QSize size = this->size();
     mEditPage->setGeometry(size.width() * 0.125f,
@@ -655,8 +657,8 @@ void MainWindow::editButtonClicked(QString key, bool isMood) {
 }
 
 void MainWindow::hueInfoWidgetClicked() {
-    fadeInGreyOut();
-    mHueInfoWidgetIsOpen = true;
+    greyOut(true);
+    mHueInfoWidget->isOpen(true);
 
     mHueInfoWidget->updateLights(mComm->hue()->connectedHues());
     mBottomRightFloatingLayout->setVisible(true);
@@ -681,8 +683,8 @@ void MainWindow::hueInfoWidgetClicked() {
 }
 
 void MainWindow::editClosePressed() {
-    fadeOutGreyOut();
-    mEditPageIsOpen = false;
+    greyOut(false);
+    mEditPage->isOpen(false);
 
     QSize size = this->size();
     mEditPage->setGeometry(size.width() * 0.125f,
@@ -708,8 +710,8 @@ void MainWindow::editClosePressed() {
 
 
 void MainWindow::hueInfoClosePressed() {
-    fadeOutGreyOut();
-    mHueInfoWidgetIsOpen = false;
+    greyOut(false);
+    mHueInfoWidget->isOpen(false);
 
     QSize size = this->size();
     mHueInfoWidget->setGeometry(size.width() * 0.125f,
@@ -770,27 +772,28 @@ void MainWindow::deleteHue(QString key) {
     }
 }
 
-void MainWindow::fadeInGreyOut() {
-    mGreyOut->setVisible(true);
-    QGraphicsOpacityEffect *fadeOutEffect = new QGraphicsOpacityEffect(mGreyOut);
-    mGreyOut->setGraphicsEffect(fadeOutEffect);
-    QPropertyAnimation *fadeOutAnimation = new QPropertyAnimation(fadeOutEffect, "opacity");
-    fadeOutAnimation->setDuration(TRANSITION_TIME_MSEC);
-    fadeOutAnimation->setStartValue(0.0f);
-    fadeOutAnimation->setEndValue(1.0f);
-    fadeOutAnimation->start();
+void MainWindow::greyOut(bool show) {
+    if (show) {
+        mGreyOut->setVisible(true);
+        QGraphicsOpacityEffect *fadeOutEffect = new QGraphicsOpacityEffect(mGreyOut);
+        mGreyOut->setGraphicsEffect(fadeOutEffect);
+        QPropertyAnimation *fadeOutAnimation = new QPropertyAnimation(fadeOutEffect, "opacity");
+        fadeOutAnimation->setDuration(TRANSITION_TIME_MSEC);
+        fadeOutAnimation->setStartValue(0.0f);
+        fadeOutAnimation->setEndValue(1.0f);
+        fadeOutAnimation->start();
+    } else {
+        QGraphicsOpacityEffect *fadeInEffect = new QGraphicsOpacityEffect(mGreyOut);
+        mGreyOut->setGraphicsEffect(fadeInEffect);
+        QPropertyAnimation *fadeInAnimation = new QPropertyAnimation(fadeInEffect, "opacity");
+        fadeInAnimation->setDuration(TRANSITION_TIME_MSEC);
+        fadeInAnimation->setStartValue(1.0f);
+        fadeInAnimation->setEndValue(0.0f);
+        fadeInAnimation->start();
+        connect(fadeInAnimation, SIGNAL(finished()), this, SLOT(greyOutFadeComplete()));
+    }
 }
 
-void MainWindow::fadeOutGreyOut() {
-    QGraphicsOpacityEffect *fadeInEffect = new QGraphicsOpacityEffect(mGreyOut);
-    mGreyOut->setGraphicsEffect(fadeInEffect);
-    QPropertyAnimation *fadeInAnimation = new QPropertyAnimation(fadeInEffect, "opacity");
-    fadeInAnimation->setDuration(TRANSITION_TIME_MSEC);
-    fadeInAnimation->setStartValue(1.0f);
-    fadeInAnimation->setEndValue(0.0f);
-    fadeInAnimation->start();
-    connect(fadeInAnimation, SIGNAL(finished()), this, SLOT(greyOutFadeComplete()));
-}
 
 void MainWindow::greyOutFadeComplete() {
     mGreyOut->setVisible(false);
@@ -803,7 +806,7 @@ void MainWindow::floatingLayoutButtonPressed(QString button) {
 }
 
 void MainWindow::showHueLightDiscovery() {
-    mHueLightDiscoveryIsOpen = true;
+    mHueLightDiscovery->isOpen(true);
     mHueLightDiscovery->resize();
     mHueLightDiscovery->setVisible(true);
     mHueLightDiscovery->show();
@@ -811,7 +814,7 @@ void MainWindow::showHueLightDiscovery() {
 
 
 void MainWindow::hueDiscoveryClosePressed() {
-    mHueLightDiscoveryIsOpen = false;
+    mHueLightDiscovery->isOpen(false);
     mHueLightDiscovery->setVisible(false);
     mHueLightDiscovery->hide();
 }

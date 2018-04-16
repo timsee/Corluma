@@ -9,7 +9,7 @@
 
 #include "lightingprotocols.h"
 #include "comm/commhue.h"
-#include "comm/commtypesettings.h"
+#include "comm/protocolsettings.h"
 
 /*!
  * \copyright
@@ -46,11 +46,11 @@ public:
     QColor mainColor();
 
     /*!
-     * \brief colorGroup the color group at the given index. Can be used
+     * \brief palette the palette at the given index. Can be used
      *        to access the custom color array or any of the presets.
      * \return the color array at the given index.
      */
-    const std::vector<QColor>& colorGroup(EColorGroup group);
+    const std::vector<QColor>& palette(EPalette palette);
 
     /*!
      * \brief colors getter for the vector of color group vectors.
@@ -61,7 +61,7 @@ public:
     /*!
      * \brief maxColorGroupSize the largest possible size for a color group. Can also
      *        be used as the size of the custom color group.
-     * \return the size of the largest EColorGroup.
+     * \return the size of the largest EPalette.
      */
     uint8_t maxColorGroupSize();
 
@@ -70,13 +70,21 @@ public:
      * \param group a color group
      * \return a QColor that represents the average of all colors used by color group.
      */
-    QColor colorsAverage(EColorGroup group);
+    QColor colorsAverage(EPalette palette);
 
     /*!
-     * \brief routine getter for the current ELightingRoutine.
+     * \brief routine getter for the current ERoutine.
      * \return the current lighting routine getting displayed on the LED array.
      */
-    ELightingRoutine currentRoutine();
+    ERoutine currentRoutine();
+
+    /*!
+     * \brief currentRoutineObject a QJsonObject representation of the current data layer.
+     *        This uses an average of all the lights, so it may not represent any individual light
+     *        perfect
+     * \return a json representation of the current routine.
+     */
+    QJsonObject currentRoutineObject();
 
     /*!
      * \brief brightness getter for the current brightness.
@@ -100,23 +108,23 @@ public:
     uint32_t customColorsUsed();
 
     /*!
-     * \brief currentColorGroup getter for the current color preset.
-     * \return the EColorGroup that represents the colors being displayed on
+     * \brief palette getter for the current palette.
+     * \return the EPalette that represents the colors being displayed on
      *         the LED array.
      */
-    EColorGroup currentColorGroup();
+    EPalette palette();
 
     /*!
-     * \brief currentGroup returns all the colors of the current color group.
+     * \brief paletteColors returns all the colors of the current color group.
      * \return returns all the colors of the current color group.
      */
-    const std::vector<QColor>& currentGroup();
+    const std::vector<QColor>& paletteColors();
 
     /*!
      * \brief speed getter for the speed the LED's update.
      * \return the speed the LEDs update.
      */
-    int speed() { return mSpeed; }
+    int speed();
 
     /*!
      * \brief customColor set an individual color in the custom color group
@@ -146,12 +154,6 @@ public:
     bool timeoutEnabled() { return mTimeoutEnabled; }
 
     /*!
-     * \brief updateSpeed update the speed of the lighting routines.
-     * \param speed the new speed value of the lighting routines.
-     */
-    void updateSpeed(int speed);
-
-    /*!
      * \brief updateTimeout update how many minutes it takes for lights to turn themselves off automatically.
      *        Use a value of 0 to keep lights on indefinitely (until you unplug them or change the setting).
      * \param timeout the new number of minutes it takes for LEDs to time out and turn off.
@@ -176,25 +178,25 @@ public:
      * \param color input color
      * \return the color group that, when averaged, is closest to the provided color.
      */
-    EColorGroup closestColorGroupToColor(QColor color);
+    EPalette closestColorGroupToColor(QColor color);
 
     /*!
      * \brief updateRoutine update the lighting routine for all current devices.
      * \param routine new lighting routine.
      */
-    void updateRoutine(ELightingRoutine routine);
+    void updateRoutine(const QJsonObject& routine);
 
     /*!
-     * \brief updateColorGroup update the color group for all current devices.
+     * \brief updateSpeed update the speed of the lighting routines.
+     * \param speed the new speed value of the lighting routines.
+     */
+    void updateSpeed(int speed);
+
+    /*!
+     * \brief updatePalette update the color group for all current devices.
      * \param colorGroup new color group
      */
-    void updateColorGroup(EColorGroup colorGroup);
-
-    /*!
-     * \brief updateColor update the color used for single color routines for all current devices.
-     * \param color new color
-     */
-    void updateColor(QColor color);
+    void updatePalette(EPalette palette);
 
     /*!
      * \brief updateColorScheme update the colors of all the current devices based off of a color scheme.
@@ -325,11 +327,11 @@ public:
     bool hasNanoLeafDevices();
 
     /*!
-     * \brief commTypeSettings pointer to the current comm types settings, which maintains which commtypes
+     * \brief ProtocolSettings pointer to the current comm types settings, which maintains which commtypes
      *        are currently enabled or disabled
      * \return pointer to the current stream settings
      */
-    CommTypeSettings *commTypeSettings() { return mCommTypeSettings; }
+    ProtocolSettings *protocolSettings() { return mProtocolSettings; }
 
     /// compute the best candidate for a collection based on the current devices.
     QString findCurrentCollection(const std::list<cor::LightGroup>& collections);
@@ -359,7 +361,7 @@ private:
      * \param group group to average
      * \return colors to average.
      */
-    QColor averageGroup(EColorGroup group);
+    QColor averageGroup(EPalette palette);
 
     /*!
      * \brief mColors the color arrays used for routines. This contains
@@ -381,15 +383,12 @@ private:
     std::list<cor::Light> mCurrentDevices;
 
     /*!
-     * \brief mCommTypeSettings maintains which comnmtypes are currently enabled.
+     * \brief mProtocolSettings maintains which comnmtypes are currently enabled.
      */
-    CommTypeSettings *mCommTypeSettings;
+    ProtocolSettings *mProtocolSettings;
 
     /// true if lights should turn off after X hours of no use, false othwerise.
     bool mTimeoutEnabled;
-
-    /// value for speed used globally across all lights
-    int mSpeed;
 
     /// value for how long lights should stay on before timeout used globally across all lights
     int mTimeout;

@@ -59,7 +59,7 @@ void ListCollectionWidget::setup(const QString& name,
 
     mHiddenStateIcon = new QLabel(this);
     mHiddenStateIcon->setPixmap(mClosedPixmap);
-    mHiddenStateIcon->setFixedSize(mMinimumHeight, mMinimumHeight);
+    mHiddenStateIcon->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     mHiddenStateIcon->setAlignment(Qt::AlignCenter);
 
     if (mType == EListType::eGrid) {
@@ -98,7 +98,7 @@ void ListCollectionWidget::setListHeight(int newHeight) {
     mOpenedPixmap = mOpenedPixmap.scaled(mMinimumHeight, mMinimumHeight,
                                          Qt::KeepAspectRatio,
                                          Qt::SmoothTransformation);
-    mHiddenStateIcon->setFixedSize(mMinimumHeight, mMinimumHeight);
+  //  mHiddenStateIcon->setFixedSize(mMinimumHeight, mMinimumHeight);
     mName->setFixedHeight(mMinimumHeight);
     resizeRightHandIcon(mEditIcon, mEditButton);
     resize();

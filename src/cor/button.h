@@ -22,8 +22,8 @@ namespace cor
  *        All buttons have an icon, while some have labels or extra logic attached.
  *
  * There are currently three different ways you can set up a button. A standard button
- * emits a EColorGroup and a ELightingRoutine and doesn't have a label. A labeled button
- * emits a EColorGroup and a ELightingRoutine, and it also has a label at the bottom of
+ * emits a EPalette and a ERoutine and doesn't have a label. A labeled button
+ * emits a EPalette and a ERoutine, and it also has a label at the bottom of
  * the button. A menu button emits a page number, and is used by the main menu.
  *
  */
@@ -40,11 +40,9 @@ public:
      * \brief setupAsMultiButton sets up the button for use with the PresetArrayPage. Assigns
      *        it a mode, a preset, and an icon. Whenever the button is clicked it will emit
      *        presetClicked and will send its mode and preset in that signal.
-     * \param routine the ELightingRoutine that emits when this button is pushed.
-     * \param colorGroup The EColorGroup that emits when this button is pushed.
+     * \param routine the json object representation of the routine.
      */
-    void setupAsStandardButton(ELightingRoutine routine,
-                               EColorGroup colorGroup,
+    void setupAsStandardButton(QJsonObject routine,
                                QString label = QString(""),
                                const std::vector<QColor>& group = std::vector<QColor>());
 
@@ -58,23 +56,11 @@ public:
     void setupAsMenuButton(int pageNumber, const std::vector<QColor>& group = std::vector<QColor>());
 
     /*!
-     * \brief updateIconSingleColorRoutine update the button's icon based off of a lighting
-     *        routine and color. This function requires single color routines to work properly.
-     * \param lightingRoutine lighting routine to use for the icon. must be single color routine.
-     * \param color color to use for the icon.
+     * \brief updateRoutine show a routine on the button
+     * \param routineObject the json representatino of the routine
+     * \param colors the colors used for multi color routines
      */
-    void updateIconSingleColorRoutine(ELightingRoutine lightingRoutine, QColor color);
-
-    /*!
-     * \brief updateIconPresetColorRoutine update the button's icon based off of a lighting routine
-     *        and color group. This function requires multi color routiens tow ork properly.
-     * \param lightingRoutine lighting routine to use for the icon. must be multi color routine.
-     * \param colorGroup the color group to use for the icon.
-     */
-    void updateIconPresetColorRoutine(ELightingRoutine lightingRoutine,
-                                      EColorGroup colorGroup,
-                                      const std::vector<QColor>& colors,
-                                      int colorMax = -1);
+    void updateRoutine(const QJsonObject& routineObject, const std::vector<QColor>& colors);
 
     /*!
      * \brief enable enables/disables the lightsbutton.
@@ -82,17 +68,8 @@ public:
      */
     void enable(bool shouldEnable);
 
-    /*!
-     * \brief lightingRoutine the ELightingRoutine assigned to the button by setupAsMultiButton.
-     * \return the button's lighting routine
-     */
-    ELightingRoutine lightingRoutine();
-
-    /*!
-     * \brief colorGroup the EColorGroup assigned to the button by setupAsMultiButton.
-     * \return the button's color group
-     */
-    EColorGroup colorGroup();
+    /// getter for routine object
+    const QJsonObject& routine() { return mRoutineObject; }
 
     /*!
      * \brief button The QPushButton that this QWidget wraps.
@@ -113,11 +90,14 @@ public:
     /// hides all the content in the widget without resizing the widget
     void hideContent();
 
+    /// getter for label
+    QString label();
+
 signals:
     /*!
-     * \brief buttonClicked sent only when setupAsPresetButton has been called.
+     * \brief buttonClicked sent only when setupAsStandardButton has been called.
      */
-    void buttonClicked(ELightingRoutine, EColorGroup);
+    void buttonClicked(QJsonObject);
 
     /*!
      * \brief menuButtonClicked sent out if and only if the button is set up
@@ -178,21 +158,11 @@ private:
      */
     int mPageNumber;
 
-    /*!
-     * \brief mLightingRoutine stored lighting routine. can only be
-     *        used if the button is set up as a presetButton.
-     *        If it is a preset button, this will be emitted
-     *        as a signal whenever the button is clicked.
-     */
-    ELightingRoutine mLightingRoutine;
+    /// the json representation of the routine
+    QJsonObject mRoutineObject;
 
-    /*!
-     * \brief mColorGroup stored color group. can only be
-     *        used if the button is set up as a presetButton.
-     *        If it is a preset button, this will be emitted
-     *        as a signal whenever the button is clicked.
-     */
-    EColorGroup mColorGroup;
+    /// full name of the label
+    QString mKey;
 };
 
 }

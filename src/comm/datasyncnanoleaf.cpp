@@ -14,7 +14,7 @@ DataSyncNanoLeaf::DataSyncNanoLeaf(DataLayer *data, CommLayer *comm) {
     mComm = comm;
     mUpdateInterval = 250;
 
-    connect(mComm, SIGNAL(packetReceived(ECommType)), this, SLOT(commPacketReceived(ECommType)));
+    connect(mComm, SIGNAL(packetReceived(EProtocolType)), this, SLOT(commPacketReceived(EProtocolType)));
     connect(mData, SIGNAL(dataUpdate()), this, SLOT(resetSync()));
 
     mSyncTimer = new QTimer(this);
@@ -47,8 +47,8 @@ void DataSyncNanoLeaf::resetSync() {
     }
 }
 
-void DataSyncNanoLeaf::commPacketReceived(ECommType type) {
-    if (type == ECommType::eNanoLeaf) {
+void DataSyncNanoLeaf::commPacketReceived(EProtocolType type) {
+    if (type == EProtocolType::eNanoleaf) {
         if (!mDataIsInSync) {
             resetSync();
         }
@@ -61,8 +61,8 @@ void DataSyncNanoLeaf::syncData() {
         for (auto&& device : mData->currentDevices()) {
             cor::Light commLayerDevice = device;
             if (mComm->fillDevice(commLayerDevice)) {
-                if (device.type() == ECommType::eNanoLeaf) {
-                    if (checkThrottle(device.controller(), device.type())) {
+                if (device.protocol() == EProtocolType::eNanoleaf) {
+                    if (checkThrottle(device.controller(), device.commType())) {
                         if (!sync(device, commLayerDevice)) {
                             countOutOfSync++;
                         }
@@ -106,12 +106,80 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
     int countOutOfSync = 0;
     cor::Controller controller;
 
-    if (!mComm->findDiscoveredController(dataDevice.type(), dataDevice.controller(), controller)) {
+    if (!mComm->findDiscoveredController(dataDevice.commType(), dataDevice.controller(), controller)) {
         return false;
     }
     std::list<cor::Light> list;
     list.push_back(dataDevice);
     QString packet;
+
+    if (dataDevice.isOn) {
+        //-------------------
+        // Routine Sync
+        //-------------------
+        // these are required by all packets
+        bool routineInSync = (commDevice.routine == dataDevice.routine);
+        bool speedInSync   = (commDevice.speed == dataDevice.speed);
+        // speed is not used only in single solid routines
+        if (dataDevice.routine == ERoutine::eSingleSolid) {
+            speedInSync = true;
+        }
+
+        // these are optional parameters depending on the routine
+        bool paramsInSync       = true;
+        bool colorInSync        = (cor::colorDifference(dataDevice.color, commDevice.color) <= 0.02f);
+        bool paletteInSync      = (commDevice.palette == dataDevice.palette);
+        if (!colorInSync && dataDevice.routine <= cor::ERoutineSingleColorEnd) {
+            paramsInSync = false;
+        }
+        if (!paletteInSync && dataDevice.routine > cor::ERoutineSingleColorEnd) {
+            paramsInSync = false;
+        }
+
+        if (dataDevice.routine == ERoutine::eSingleSolid) {
+            if (mComm->nanoLeaf()->controller().effect.compare("*Static*") == 0) {
+                routineInSync = false;
+            }
+        } else {
+            if (mComm->nanoLeaf()->controller().effect.compare("*Dynamic*") != 0) {
+                routineInSync = false;
+            }
+        }
+
+        if (!routineInSync || !speedInSync || !paramsInSync) {
+            QJsonObject routineObject;
+            routineObject["routine"] = routineToString(dataDevice.routine);
+
+            if (dataDevice.routine <= cor::ERoutineSingleColorEnd) {
+                QColor color = dataDevice.color;
+                routineObject["red"]     = color.red();
+                routineObject["green"]   = color.green();
+                routineObject["blue"]    = color.blue();
+            } else {
+                routineObject["palette"]   = paletteToString(dataDevice.palette);
+            }
+
+            if (dataDevice.routine != ERoutine::eSingleSolid) {
+                // all other routines don't have this edge case and have speed instead
+                routineObject["speed"]   = dataDevice.speed;
+            }
+
+            //qDebug() << " Nanoleaf single routine not in sync";
+            QString message = mComm->sendRoutineChange(list, routineObject);
+            appendToPacket(packet, message, controller.maxPacketSize);
+            countOutOfSync++;
+        }
+
+        //-------------------
+        // Brightness Sync
+        //-------------------
+        if (cor::brightnessDifference(commDevice.brightness, dataDevice.brightness) > 0.02f && dataDevice.routine != ERoutine::eSingleSolid) {
+            //qDebug() << "nanoleaf brightness not in sync" << commDevice.brightness << "vs" << dataDevice.brightness;
+            QString message = mComm->sendBrightness(list, dataDevice.brightness);
+            appendToPacket(packet, message, controller.maxPacketSize);
+            countOutOfSync++;
+        }
+    }
 
     //-------------------
     // On/Off Sync
@@ -124,70 +192,9 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
         countOutOfSync++;
     }
 
-    if (dataDevice.isOn) {
-        bool routineInSync = (dataDevice.lightingRoutine == commDevice.lightingRoutine);
-        bool paletteInSync = (dataDevice.colorGroup == commDevice.colorGroup);
-
-        //-------------------
-        // Single Routine Sync
-        //-------------------
-        if (dataDevice.lightingRoutine <= cor::ELightingRoutineSingleColorEnd) {
-            if (dataDevice.lightingRoutine == ELightingRoutine::eSingleSolid) {
-                if (cor::colorDifference(dataDevice.color, commDevice.color) > 0.02f) {
-                    //qDebug() << "nanoleaf color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << cor::colorDifference(dataDevice.color, commDevice.color);
-                    QString message = mComm->sendMainColorChange(list, dataDevice.color);
-                    appendToPacket(packet, message, controller.maxPacketSize);
-                    countOutOfSync++;
-                }
-                if (mComm->nanoLeaf()->controller().effect.compare("*Dynamic*") == 0) {
-                    routineInSync = false;
-                }
-            } else {
-                //qDebug() << " routine not in sync " << (int)dataDevice.lightingRoutine << " routine in sync" << routineInSync << mComm->nanoLeaf()->controller().effect;
-                if (cor::colorDifference(dataDevice.color,  mComm->nanoLeaf()->controller().color) > 0.02f) {
-                    mComm->nanoLeaf()->addColor(dataDevice.color);
-                    routineInSync = false;
-                }
-                 if (mComm->nanoLeaf()->controller().effect.compare("*Static*") == 0) {
-                     routineInSync = false;
-                 }
-            }
-
-            if (!routineInSync) {
-                //qDebug() << " Nanoleaf single routine not in sync";
-                mComm->nanoLeaf()->addColor(dataDevice.color);
-                QString message = mComm->sendSingleRoutineChange(list, dataDevice.lightingRoutine);
-                appendToPacket(packet, message, controller.maxPacketSize);
-                countOutOfSync++;
-            }
-
-        //-------------------
-        // Multi Routine Sync
-        //-------------------
-        } else {
-            if (!paletteInSync || !routineInSync) {
-                //qDebug() << " Nanoleaf palette in sync: " << paletteInSync << " routine in sync " << routineInSync;
-                QString message = mComm->sendMultiRoutineChange(list, dataDevice.lightingRoutine, dataDevice.colorGroup);
-                appendToPacket(packet, message, controller.maxPacketSize);
-                countOutOfSync++;
-            }
-        }
-
-
-        //-------------------
-        // Brightness Sync
-        //-------------------
-        if (cor::brightnessDifference(commDevice.brightness, dataDevice.brightness) > 0.05f) {
-            //qDebug() << "nanoleaf brightness not in sync" << commDevice.brightness << "vs" << dataDevice.brightness;
-            QString message = mComm->sendBrightness(list, dataDevice.brightness);
-            appendToPacket(packet, message, controller.maxPacketSize);
-            countOutOfSync++;
-        }
-    }
-
     if (countOutOfSync && packet.size()) {
         mComm->sendPacket(dataDevice, packet);
-        resetThrottle(dataDevice.controller(), dataDevice.type());
+        resetThrottle(dataDevice.controller(), dataDevice.commType());
     }
 
     return (countOutOfSync == 0);

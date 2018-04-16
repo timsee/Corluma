@@ -125,10 +125,10 @@ public slots:
     void updateSingleColor(QColor);
 
     /*!
-     * \brief updatePresetColorGroup updates the icon for the preset color page and the menu bar and on/off button
-     *        based off of the integer provided. The integer should be cast to a EColorGroup.
+     * \brief updatePresetPalette updates the icon for the preset color page and the menu bar and on/off button
+     *        based off of the enum provided.
      */
-    void updatePresetColorGroup(int);
+    void updatePresetPalette(EPalette);
 
     /*!
      * \brief deviceCountChangedOnConnectionPage handles the case when the device count reaches zero. This gets signaled
@@ -258,7 +258,7 @@ private:
     void moveHiddenLayouts();
 
     /// update the button for the color page based off the group of devices selected.
-    void updateColorGroupButton();
+    void updatePaletteButton();
 };
 
 #endif // TOPMENU_H

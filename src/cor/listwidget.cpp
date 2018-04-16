@@ -15,6 +15,8 @@ ListWidget::ListWidget(QWidget *parent) {
     this->setParent(parent);
     this->setMaximumSize(parent->size());
 
+    this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+
     mWidget = new QWidget(this);
     mWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mWidget->setFixedWidth(this->viewport()->width());

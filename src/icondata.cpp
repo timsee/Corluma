@@ -7,7 +7,7 @@
 #include "icondata.h"
 
 #include <QDebug>
-
+#include "cor/light.h"
 #include <stdlib.h>
 #include <ctime>
 #include <algorithm>
@@ -117,69 +117,67 @@ void IconData::bufferToOutput() {
     }
 }
 
-void IconData::setMultiLightingRoutine(ELightingRoutine routine, EColorGroup group, const std::vector<QColor>& colors, int colorMax) {
-    switch (routine)
-    {
-        case ELightingRoutine::eMultiGlimmer:
-            setMultiGlimmer(group, colors, colorMax);
-            break;
-        case ELightingRoutine::eMultiFade:
-            setMultiFade(group, colors, false, colorMax);
-            break;
-        case ELightingRoutine::eMultiRandomSolid:
-            setMultiRandomSolid(group, colors, colorMax);
-            break;
-        case ELightingRoutine::eMultiRandomIndividual:
-            setMultiRandomIndividual(group, colors, colorMax);
-            break;
-        case ELightingRoutine::eMultiBarsSolid:
-            setMultiBarsSolid(group, colors, colorMax);
-            break;
-        case ELightingRoutine::eMultiBarsMoving:
-            setMultiBarsMoving(group, colors, colorMax);
-            break;
-        default:
-            throw "ERROR: used multi light routine function with single light routine.";
-            break;
-    }
-}
 
-void IconData::setSingleLightingRoutine(ELightingRoutine routine, QColor color) {
+void IconData::setRoutine(const QJsonObject& routineObject, const std::vector<QColor>& colors) {
+    cor::Light routineInfo = cor::jsonToLight(routineObject);
+
+    ERoutine routine = routineInfo.routine;
+    EPalette palette = routineInfo.palette;
+    QColor color = routineInfo.color;
+    int param = INT_MIN;
+    if (routineObject["param"].isDouble()) {
+        param = routineObject["param"].toDouble();
+    }
     switch (routine)
     {
-        case ELightingRoutine::eSingleSolid:
+        case ERoutine::eSingleSolid:
             setSolidColor(color);
             break;
-        case ELightingRoutine::eSingleBlink:
+        case ERoutine::eSingleBlink:
             setSolidColor(color);
             addBlink();
             break;
-        case ELightingRoutine::eSingleWave:
+        case ERoutine::eSingleWave:
             setSolidColor(color);
             addWave();
             break;
-        case ELightingRoutine::eSingleGlimmer:
+        case ERoutine::eSingleGlimmer:
             setSolidColor(color);
             addGlimmer();
             break;
-        case ELightingRoutine::eSingleLinearFade:
+        case ERoutine::eSingleFade:
             setSolidColor(color);
-            addLinearFade();
+            if (param == 1) {
+                addSineFade();
+            } else {
+                addLinearFade();
+            }
             break;
-        case ELightingRoutine::eSingleSawtoothFadeIn:
+        case ERoutine::eSingleSawtoothFade:
             setSolidColor(color);
-            addSawtoothIn();
+            if (param == 1) {
+                addSawtoothIn();
+            } else {
+                addSawtoothOut();
+            }
             break;
-        case ELightingRoutine::eSingleSawtoothFadeOut:
-            setSolidColor(color);
-            addSawtoothOut();
+        case ERoutine::eMultiGlimmer:
+            setMultiGlimmer(palette, colors);
             break;
-        case ELightingRoutine::eSingleSineFade:
-            setSolidColor(color);
-            addSineFade();
+        case ERoutine::eMultiFade:
+            setMultiFade(palette, colors, false);
+            break;
+        case ERoutine::eMultiRandomSolid:
+            setMultiRandomSolid(palette, colors);
+            break;
+        case ERoutine::eMultiRandomIndividual:
+            setMultiRandomIndividual(palette, colors);
+            break;
+        case ERoutine::eMultiBars:
+            setMultiBars(palette, colors);
             break;
         default:
-            throw "ERROR: used single light routine function with multi light routine.";
+            throw "ERROR: Do not recognize routine.";
             break;
     }
 }
@@ -194,37 +192,10 @@ void IconData::setSolidColor(QColor color) {
 }
 
 
-void IconData::setMultiColors(EColorGroup group, const std::vector<QColor>& colors, int colorMax) {
-    Q_UNUSED(group);
+void IconData::setMultiGlimmer(EPalette palette, const std::vector<QColor>& colors) {
+    Q_UNUSED(palette);
 
-    int colorCount;
-    if (colorMax == -1) {
-        colorCount = colors.size();
-    } else {
-        colorCount = colorMax;
-    }
-
-    int j = 0;
-    for (uint i = 0; i < mBufferLength; i = i + 3) {
-        mBuffer[i] = colors[j].red();
-        mBuffer[i + 1] = colors[j].green();
-        mBuffer[i + 2] = colors[j].blue();
-        j = (j + 1) % colorCount;
-    }
-    bufferToOutput();
-}
-
-
-
-void IconData::setMultiGlimmer(EColorGroup group, const std::vector<QColor>& colors, int colorMax) {
-    Q_UNUSED(group);
-
-    int colorCount;
-    if (colorMax == -1) {
-        colorCount = colors.size();
-    } else {
-        colorCount = colorMax;
-    }
+    int colorCount = colors.size();
 
     int j = 0;
     for (uint i = 0; i < mBufferLength; i = i + 3) {
@@ -257,23 +228,13 @@ void IconData::setMultiGlimmer(EColorGroup group, const std::vector<QColor>& col
     addGlimmer(); // this already draws to output.
 }
 
-void IconData::setMultiFade(EColorGroup group, const std::vector<QColor>& colors, bool showMore, int colorMax) {
-    Q_UNUSED(group);
+void IconData::setMultiFade(EPalette palette, const std::vector<QColor>& colors, bool showMore) {
+    Q_UNUSED(palette);
 
-    // By default, showMore is set to false because everything shows its
-    // max, except the color count. For the menu bar we override this
-    // feature. This handles a silly edge case.
-    int colorCount;
-    if (colorMax == -1) {
-        colorCount = colors.size();
-    } else {
-        colorCount = colorMax;
-    }
+    int colorCount = colors.size();
     if (showMore) {
         colorCount = 10;
     }
-
-
 
     int k = 0;
     int tempIndex = -1;
@@ -307,14 +268,10 @@ void IconData::setMultiFade(EColorGroup group, const std::vector<QColor>& colors
     bufferToOutput();
 }
 
-void IconData::setMultiRandomSolid(EColorGroup group, const std::vector<QColor>& colors, int colorMax) {
-    Q_UNUSED(group);
-    int colorCount;
-    if (colorMax == -1) {
-        colorCount = colors.size();
-    } else {
-        colorCount = colorMax;
-    }
+void IconData::setMultiRandomSolid(EPalette palette, const std::vector<QColor>& colors) {
+    Q_UNUSED(palette);
+
+    int colorCount = colors.size();
 
     int k = 0;
     for (uint i = 0; i < mBufferLength; i = i + 12) {
@@ -348,85 +305,31 @@ void IconData::setMultiRandomSolid(EColorGroup group, const std::vector<QColor>&
     bufferToOutput();
 }
 
-void IconData::setMultiRandomIndividual(EColorGroup group, const std::vector<QColor>& colors, int colorMax) {
-    if (group == EColorGroup::eAll) {
-        for (uint i = 0; i < mBufferLength; i++) {
-            int random = rand() % 256;
-            mBuffer[i] = (uchar)random;
-        }
-    } else {
-        int colorCount;
-        if (colorMax == -1) {
-            colorCount = colors.size();
+void IconData::setMultiRandomIndividual(EPalette palette, const std::vector<QColor>& colors) {
+    Q_UNUSED(palette);
+
+    int colorCount = colors.size();
+
+    int j = 0;
+    for (uint i = 0; i < mBufferLength; i = i + 3) {
+        int index;
+        if (mRandomIndividual[j] >= colorCount) {
+            index = j % 2; // even number use 0, odd numbers use 1
         } else {
-            colorCount = colorMax;
+            index = mRandomIndividual[j];
         }
-        int j = 0;
-        for (uint i = 0; i < mBufferLength; i = i + 3) {
-            int index;
-            if (mRandomIndividual[j] >= colorCount) {
-                index = j % 2; // even number use 0, odd numbers use 1
-            } else {
-                index = mRandomIndividual[j];
-            }
-            mBuffer[i] = colors[index].red();
-            mBuffer[i + 1] = colors[index].green();
-            mBuffer[i + 2] = colors[index].blue();
-            j++;
-        }
+        mBuffer[i] = colors[index].red();
+        mBuffer[i + 1] = colors[index].green();
+        mBuffer[i + 2] = colors[index].blue();
+        j++;
     }
     bufferToOutput();
 }
 
-void IconData::setMultiBarsSolid(EColorGroup group, const std::vector<QColor>& colors, int colorMax) {
-     if (group == EColorGroup::eAll) {
-         for (uint i = 0; i < mBufferLength; i = i + 12) {
-             int r = rand() % 256;
-             int g = rand() % 256;
-             int b = rand() % 256;
-             for (int j = 0; j < 12; j = j + 3) {
-                 mBuffer[i + j] = (uchar)r;
-                 mBuffer[i + j + 1] = (uchar)g;
-                 mBuffer[i + j + 2] = (uchar)b;
-             }
-         }
-     } else {
-         int colorCount;
-         if (colorMax == -1) {
-             colorCount = colors.size();
-         } else {
-             colorCount = colorMax;
-         }
+void IconData::setMultiBars(EPalette palette, const std::vector<QColor>& colors) {
+    Q_UNUSED(palette);
 
-         int colorIndex = 0;
-         for (uint i = 0; i < mBufferLength; i = i + 12) {
-             QColor color = colors[colorIndex % colorCount];
-             for (int j = 0; j < 6; j = j + 3) {
-                 mBuffer[i + j] = color.red();
-                 mBuffer[i + j + 1] = color.green();
-                 mBuffer[i + j + 2] = color.blue();
-             }
-             color = colors[(colorIndex + 1) % colorCount];
-             for (int j = 6; j < 12; j = j + 3) {
-                 mBuffer[i + j] = color.red();
-                 mBuffer[i + j + 1] = color.green();
-                 mBuffer[i + j + 2] = color.blue();
-             }
-             colorIndex = (colorIndex + 2) % colorCount;
-         }
-     }
-    bufferToOutput();
-}
-
-void IconData::setMultiBarsMoving(EColorGroup group, const std::vector<QColor>& colors, int colorMax) {
-    Q_UNUSED(group);
-
-    int colorCount;
-    if (colorMax == -1) {
-        colorCount = colors.size();
-    } else {
-        colorCount = colorMax;
-    }
+    int colorCount = colors.size();
 
     int colorIndex = 0;
     QColor color;

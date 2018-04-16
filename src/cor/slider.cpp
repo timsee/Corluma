@@ -231,6 +231,7 @@ void Slider::paintEvent(QPaintEvent *event) {
         }
         for (int i = mSlider->minimum(); i <= maximum; i += interval) {
             int x = round((double)(((double)(i - mSlider->minimum()) / (mSlider->maximum() - mSlider->minimum())) * (mSlider->width()))) - 1;
+            x = x + this->contentsMargins().left();
             if (mShouldDrawTickLabels)
             {
                 int y = this->rect().bottom();
@@ -247,8 +248,6 @@ void Slider::paintEvent(QPaintEvent *event) {
                 if (isFirstLabel) {
                     isFirstLabel = false;
                     painter.drawText(x, y, label);
-                } else if (i == maximum) {
-                   // painter.drawText(x - labelOffset, y, label);
                 } else {
                     painter.drawText(x - labelOffset / 2, y, label);
                 }
@@ -286,7 +285,6 @@ void Slider::setSliderHeight(float percent) {
 void Slider::setSnapToNearestTick(bool shouldSnap) {
     mShouldSnap = shouldSnap;
 }
-
 
 void Slider::resetThrottleFlag() {
     mThrottleFlag = false;

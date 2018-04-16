@@ -14,7 +14,7 @@ DataSyncSettings::DataSyncSettings(DataLayer *data, CommLayer *comm)
     mData = data;
     mComm = comm;
     mUpdateInterval = 200;
-    connect(mComm, SIGNAL(packetReceived(ECommType)), this, SLOT(commPacketReceived(ECommType)));
+    connect(mComm, SIGNAL(packetReceived(EProtocolType)), this, SLOT(commPacketReceived(EProtocolType)));
     connect(mData, SIGNAL(settingsUpdate()), this, SLOT(resetSync()));
 
     mSyncTimer = new QTimer(this);
@@ -34,7 +34,7 @@ void DataSyncSettings::cancelSync() {
     }
 }
 
-void DataSyncSettings::commPacketReceived(ECommType type) {
+void DataSyncSettings::commPacketReceived(EProtocolType type) {
     Q_UNUSED(type);
     if (!mDataIsInSync) {
         resetSync();
@@ -58,21 +58,21 @@ void DataSyncSettings::syncData() {
         std::list<cor::Light> allAvailableDevices;
         // remove non available devices
         for (auto&& device : allDevices) {
-            if (mData->commTypeSettings()->commTypeEnabled(device.type())) {
+            if (mData->protocolSettings()->enabled(device.protocol())) {
                 allAvailableDevices.push_back(device);
             }
         }
 
         for (auto&& device : allAvailableDevices) {
             cor::Light commLayerDevice = device;
-            if (device.type() != ECommType::eHue && device.type() != ECommType::eNanoLeaf) {
+            if (device.commType() != ECommType::eHue && device.commType() != ECommType::eNanoleaf) {
                 bool successful = mComm->fillDevice(commLayerDevice);
                 if (!successful) {
                     //qDebug() << "INFO: device not found!";
                     return;
                 }
 
-                if (checkThrottle(device.controller(), device.type())) {
+                if (checkThrottle(device.controller(), device.commType())) {
                     bool result = sync(device);
                     if (!result) {
                         countOutOfSync++;
@@ -111,7 +111,7 @@ void DataSyncSettings::endOfSync() {
 bool DataSyncSettings::sync(const cor::Light& availableDevice) {
     int countOutOfSync = 0;
     cor::Controller controller;
-    if (!mComm->findDiscoveredController(availableDevice.type(), availableDevice.controller(), controller)) {
+    if (!mComm->findDiscoveredController(availableDevice.commType(), availableDevice.controller(), controller)) {
         return false;
     }
 
@@ -119,7 +119,7 @@ bool DataSyncSettings::sync(const cor::Light& availableDevice) {
     list.push_back(availableDevice);
     QString packet;
 
-    if (availableDevice.type() == ECommType::eHue) {
+    if (availableDevice.commType() == ECommType::eHue) {
 
 //        //-------------------
 //        // Timeout Sync
@@ -152,21 +152,11 @@ bool DataSyncSettings::sync(const cor::Light& availableDevice) {
                 countOutOfSync++;
             }
         }
-
-        //-------------------
-        // Speed Sync
-        //-------------------
-        if (availableDevice.speed !=  mData->speed()) {
-           // qDebug() << "speed not in sync";
-            QString message = mComm->sendSpeed(list, mData->speed());
-            appendToPacket(packet, message, controller.maxPacketSize);
-            countOutOfSync++;
-        }
     }
     if (countOutOfSync) {
         //qDebug() << "packet size" << packet.size() <<"count out of sync" << countOutOfSync;
         mComm->sendPacket(availableDevice, packet);
-        resetThrottle(availableDevice.controller(), availableDevice.type());
+        resetThrottle(availableDevice.controller(), availableDevice.commType());
     }
 
     return (countOutOfSync == 0);

@@ -37,9 +37,17 @@ public:
      * \brief highlightRoutineButton highlights the button that implements
      *        the routine parameter. If it can't find a button that
      *        implements the lighting routine, then all buttons are unhighlighted
-     * \param routine the mode that the highlighted button implements.
+     * \param label the name of the button
      */
-    void highlightRoutineButton(ELightingRoutine routine);
+    void highlightRoutineButton(const QString& label);
+
+    /*!
+     * \brief jsonToButtonName takes a json object that represents a routine as input and if it matches
+     *        any of the json objects used by routine buttons, it returns the name. Otherwise, it returns an empty string
+     * \param routineObject the routine object to match to a button
+     * \return the name of the json button.
+     */
+    QString jsonToButtonName(const QJsonObject& routineObject);
 
     /*!
      * \brief singleRoutineColorChanged can only be used by a eSingleRoutines version of the widget, this updates the color of
@@ -52,9 +60,8 @@ public:
      * \brief multiRoutineColorsChanged can only be used by eMultiRotuiens version of this widget, this updates all the colors
      *        of all the icons to reflect the new group of custom colors.
      * \param colors full group of custom colors
-     * \param colorCount how many custom colors to use from that group.
      */
-    void multiRoutineColorsChanged(const std::vector<QColor>& colors, int colorCount);
+    void multiRoutineColorsChanged(const std::vector<QColor>& colors);
 
     /*!
      * \brief resize resize widget to given size
@@ -62,13 +69,16 @@ public:
      */
     void resize(QSize size);
 
+    // getter for routines
+    const std::vector<std::pair<QString, QJsonObject> > routines() { return mRoutines; }
+
 signals:
 
     /*!
      * \brief newRoutineSelected emitted whenever a button is pressed with the int representation
      *        of the routine that it represents.
      */
-    void newRoutineSelected(ELightingRoutine);
+    void newRoutineSelected(QJsonObject);
 
 protected:
     /*!
@@ -83,7 +93,7 @@ private slots:
      * \brief routineChanged signaled whenever a routine button is pressed, used to
      *        to tell the LEDs to update.
      */
-    void routineChanged(ELightingRoutine, EColorGroup);
+    void routineChanged(QJsonObject);
 
 private:
 
@@ -91,6 +101,9 @@ private:
      * \brief mLayout layout for widget
      */
     QGridLayout *mLayout;
+
+    /// vector of routines
+    std::vector<std::pair<QString, QJsonObject> > mRoutines;
 
     /*!
      * \brief mRoutineButtons pointers to all the main buttons, used

@@ -84,7 +84,7 @@ TopMenu::TopMenu(DataLayer* data, CommLayer* comm, QWidget *parent) : QWidget(pa
     connect(mMainLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
     std::vector<QString> buttons = { QString("Connection_Page"), QString("Colors_Page"), QString("Multi_Colors_Page")};
     mMainLayout->setupButtons(buttons, EButtonSize::eMedium);
-    mMainLayout->addMultiRoutineIcon(mData->colorGroup(EColorGroup::eFire));
+    mMainLayout->addMultiRoutineIcon(mData->palette(EPalette::eFire));
 
     // --------------
     // Connection Floating Layout
@@ -132,13 +132,15 @@ TopMenu::~TopMenu() {
 }
 
 void TopMenu::toggleOnOff() {
-    if (mData->currentRoutine() <= ELightingRoutine::eSingleSawtoothFadeOut) {
-        mIconData.setSingleLightingRoutine(mData->currentRoutine(), mData->mainColor());
-    } else if (mData->currentColorGroup() > EColorGroup::eCustom) {
-        mIconData.setMultiLightingRoutine(mData->currentRoutine(), mData->currentColorGroup(), mData->currentGroup());
-    } else {
-        mIconData.setMultiFade(EColorGroup::eCustom, mData->colorGroup(EColorGroup::eCustom), true);
-    }
+
+    cor::Light light;
+    light.routine = mData->currentRoutine();
+    light.palette = mData->palette();
+    light.color   = mData->mainColor();
+    QJsonObject object = cor::lightToJson(light);
+    mIconData.setRoutine(object,
+                         mData->paletteColors());
+
     mOnOffButton->setIcon(mIconData.renderAsQPixmap());
     if (mData->isOn()) {
         QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mOnOffButton);
@@ -165,17 +167,13 @@ void TopMenu::updateMenuBar() {
     //-----------------
     // On/Off Data
     //-----------------
-    if (mData->currentColorGroup() == EColorGroup::eCustom
-            && mData->currentRoutine() > cor::ELightingRoutineSingleColorEnd) {
-        mIconData.setMultiLightingRoutine(mData->currentRoutine(),
-                                          mData->currentColorGroup(),
-                                          mData->currentGroup(),
-                                          mData->customColorsUsed());
-    } else if (mData->currentRoutine() <= cor::ELightingRoutineSingleColorEnd) {
-        mIconData.setSingleLightingRoutine(mData->currentRoutine(), mData->mainColor());
-    } else {
-        mIconData.setMultiLightingRoutine(mData->currentRoutine(), mData->currentColorGroup(), mData->currentGroup());
-    }
+    cor::Light light;
+    light.routine = mData->currentRoutine();
+    light.palette = mData->palette();
+    light.color   = mData->mainColor();
+    QJsonObject object = cor::lightToJson(light);
+    mIconData.setRoutine(object,
+                         mData->paletteColors());
 
     mOnOffButton->setIcon(mIconData.renderAsQPixmap());
 
@@ -187,10 +185,10 @@ void TopMenu::updateMenuBar() {
 }
 
 void TopMenu::updateBrightnessSlider() {
-    if ((int)mData->currentRoutine() <= (int)ELightingRoutine::eSingleSawtoothFadeOut) {
+    if ((int)mData->currentRoutine() <= (int)cor::ERoutineSingleColorEnd) {
         mBrightnessSlider->setSliderColorBackground(mData->mainColor());
     } else {
-        mBrightnessSlider->setSliderColorBackground(mData->colorsAverage(mData->currentColorGroup()));
+        mBrightnessSlider->setSliderColorBackground(mData->colorsAverage(mData->palette()));
     }
 
     if (mData->brightness() != mBrightnessSlider->slider()->value()) {
@@ -204,14 +202,20 @@ void TopMenu::updateBrightnessSlider() {
 
 void TopMenu::updateSingleColor(QColor color) {
     mIconData.setSolidColor(color);
-    mIconData.setSingleLightingRoutine(ELightingRoutine::eSingleGlimmer, color);
+    cor::Light light;
+    light.routine = ERoutine::eSingleGlimmer;
+    light.color = color;
+    QJsonObject object = cor::lightToJson(light);
+    mIconData.setRoutine(object, std::vector<QColor>());
     mBrightnessSlider->setSliderColorBackground(color);
     mOnOffButton->setIcon(mIconData.renderAsQPixmap());
+
+    updateColorVerticalRoutineButton();
 }
 
-void TopMenu::updatePresetColorGroup(int colorGroup) {
-    mIconData.setMultiFade((EColorGroup)colorGroup, mData->colorGroup((EColorGroup)colorGroup));
-    mBrightnessSlider->setSliderColorBackground(mData->colorsAverage((EColorGroup)colorGroup));
+void TopMenu::updatePresetPalette(EPalette palette) {
+    mIconData.setMultiFade(palette, mData->palette(palette));
+    mBrightnessSlider->setSliderColorBackground(mData->colorsAverage(palette));
     mOnOffButton->setIcon(mIconData.renderAsQPixmap());
 }
 
@@ -267,7 +271,7 @@ void TopMenu::deviceCountChanged() {
          && (mData->currentDevices().size() == 0))) {
         deviceCountReachedZero();
     }
-    updateColorGroupButton();
+    updatePaletteButton();
 }
 
 void TopMenu::highlightButton(QString key) {
@@ -308,11 +312,11 @@ void TopMenu::resizeEvent(QResizeEvent *event) {
     mOnOffButton->setIconSize(QSize(onOffSize * 0.8f, onOffSize * 0.8f));
     mOnOffButton->setMinimumHeight(onOffSize);
     resizeMenuIcon(mSettingsButton, ":images/settingsgear.png");
-    updateColorGroupButton();
+    updatePaletteButton();
     moveFloatingLayout();
 }
 
-void TopMenu::updateColorGroupButton() {
+void TopMenu::updatePaletteButton() {
     bool hasHue = mData->hasHueDevices();
     bool hasArduino = mData->hasArduinoDevices();
     if (hasHue && !hasArduino) {
@@ -500,7 +504,7 @@ void TopMenu::setupColorFloatingLayout() {
         verticalButtons = {QString("Routine")};
 
         mColorFloatingLayout->highlightButton(mLastColorButtonKey);
-        mColorFloatingLayout->addMultiRoutineIcon(mData->colorGroup(EColorGroup::eRGB));
+        mColorFloatingLayout->addMultiRoutineIcon(mData->palette(EPalette::eRGB));
         updateColorVerticalRoutineButton();
         mColorPage->changePageType(EColorPageType::eRGB, true);
     } else if (hasHue) {
@@ -533,24 +537,21 @@ void TopMenu::setupColorFloatingLayout() {
     mColorVerticalFloatingLayout->setupButtons(verticalButtons);
     mColorFloatingLayout->setupButtons(horizontalButtons);
     mColorFloatingLayout->highlightButton("RGB");
-    updateColorGroupButton();
+    updatePaletteButton();
 
     mColorFloatingLayout->updateMultiPageButton(mData->colors());
 
     updateColorVerticalRoutineButton();
-    mColorFloatingLayout->addMultiRoutineIcon(mData->colorGroup(EColorGroup::eRGB));
+    mColorFloatingLayout->addMultiRoutineIcon(mData->palette(EPalette::eRGB));
 }
 
 void TopMenu::updateColorVerticalRoutineButton() {
     if (mColorPage->pageType() == EColorPageType::eRGB) {
         mColorVerticalFloatingLayout->setVisible(true);
-        mColorVerticalFloatingLayout->updateRoutineSingleColor(mData->currentRoutine(),
-                                                               mData->mainColor());
+        mColorVerticalFloatingLayout->updateRoutine(mData->currentRoutineObject(), mData->paletteColors());
     } else if (mColorPage->pageType() == EColorPageType::eMulti) {
         mColorVerticalFloatingLayout->setVisible(true);
-        mColorVerticalFloatingLayout->updateRoutineMultiColor(mData->currentRoutine(),
-                                                              mData->colorGroup(EColorGroup::eCustom),
-                                                              mData->customColorsUsed());
+        mColorVerticalFloatingLayout->updateRoutine(mData->currentRoutineObject(), mData->palette(EPalette::eCustom));
     } else if (mColorPage->pageType() == EColorPageType::eAmbient
                || mColorPage->pageType() == EColorPageType::eBrightness
                || mColorPage->pageType() == EColorPageType::eColorScheme) {

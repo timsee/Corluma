@@ -69,9 +69,6 @@ public:
     /// list of names of all effects on the controller
     std::vector<QString> effectsList;
 
-    /// current color of controller
-    QColor color;
-
     //-----------
     // Other Hardware
     //-----------

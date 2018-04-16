@@ -33,14 +33,11 @@ CommHue::CommHue() {
 
     mParser = new CommPacketParser();
     connect(mParser, SIGNAL(receivedOnOffChange(int, bool)), this, SLOT(onOffChange(int, bool)));
-    connect(mParser, SIGNAL(receivedMainColorChange(int, QColor)), this, SLOT(mainColorChange(int, QColor)));
     connect(mParser, SIGNAL(receivedArrayColorChange(int, int, QColor)), this, SLOT(arrayColorChange(int, int, QColor)));
-    connect(mParser, SIGNAL(receivedRoutineChange(int, ELightingRoutine, EColorGroup)), this, SLOT(routineChange(int, ELightingRoutine, EColorGroup)));
+    connect(mParser, SIGNAL(receivedRoutineChange(int, QJsonObject)), this, SLOT(routineChange(int, QJsonObject)));
     connect(mParser, SIGNAL(receivedCustomArrayCount(int, int)), this, SLOT(customArrayCount(int, int)));
     connect(mParser, SIGNAL(receivedBrightnessChange(int, int)), this, SLOT(brightnessChange(int, int)));
-    connect(mParser, SIGNAL(receivedSpeedChange(int, int)), this, SLOT(speedChange(int, int)));
     connect(mParser, SIGNAL(receivedTimeOutChange(int, int)), this, SLOT(timeOutChange(int, int)));
-    connect(mParser, SIGNAL(receivedReset()), this, SLOT(resetSettings()));
 
     mFullyDiscovered = false;
     mHaveGroups = false;
@@ -234,19 +231,6 @@ void CommHue::connectionStatusHasChanged(bool status) {
 // Corluma Command Parsed Handlers
 //------------------------------------
 
-void CommHue::mainColorChange(int deviceIndex, QColor color){
-    int hue;
-    if (color.hsvHue() == -1) {
-        hue = 1;
-    } else {
-        hue = color.hsvHue();
-    }
-    changeColorRGB(deviceIndex,
-                   color.hsvSaturation(),
-                   color.value(),
-                   hue * 182);
-}
-
 void CommHue::arrayColorChange(int deviceIndex, int colorIndex, QColor color) {
     Q_UNUSED(color);
     Q_UNUSED(deviceIndex);
@@ -254,35 +238,20 @@ void CommHue::arrayColorChange(int deviceIndex, int colorIndex, QColor color) {
     //TODO: implement
 }
 
-void CommHue::routineChange(int deviceIndex, ELightingRoutine routineIndex, EColorGroup colorGroup) {
-    Q_UNUSED(colorGroup);
+void CommHue::routineChange(int deviceIndex, QJsonObject routineObject) {
     Q_UNUSED(deviceIndex);
-    Q_UNUSED(routineIndex);
-//    ELightingRoutine routine = (ELightingRoutine)routineIndex;
-//    cor::Light previousDevice;
-//    previousDevice.index = deviceIndex;
-//    previousDevice.type = ECommType::eHue;
-//    previousDevice.name = "Bridge";
-//    if (fillDevice(previousDevice)) {
-//        if (colorGroup == -1) {
-//            if ((int)routine == 0) {
-//                turnOff(deviceIndex);
-//            } else {
-//                changeLight(deviceIndex,
-//                            previousDevice.color.saturation(),
-//                            previousDevice.color.value(),
-//                            previousDevice.color.hue() * 182);
-//            }
-//        } else {
-//            qDebug() << "multi color routine on hue, are you sure you want to do this?";
-//            changeLight(deviceIndex,
-//                        previousDevice.color.saturation(),
-//                        previousDevice.color.value(),
-//                        previousDevice.color.hue() * 182);
-//        }
-//    } else {
-//        qDebug() << "WARNING: couldn't find hue light of index" << deviceIndex;
-//    }
+    QColor color;
+    if (routineObject["red"].isDouble()
+            && routineObject["green"].isDouble()
+            && routineObject["blue"].isDouble()) {
+        color.setRgb(routineObject["red"].toDouble(),
+                routineObject["green"].toDouble(),
+                routineObject["blue"].toDouble());
+        changeColorRGB(deviceIndex,
+                       color.saturation(),
+                       color.value(),
+                       color.hue() * 182);
+    }
 }
 
 void CommHue::customArrayCount(int deviceIndex, int customArrayCount) {
@@ -303,19 +272,9 @@ void CommHue::brightnessChange(int deviceIndex, int brightness) {
     putJson("/lights/" + QString::number(deviceIndex) + "/state", json);
 }
 
-void CommHue::speedChange(int deviceIndex, int speed) {
-    Q_UNUSED(deviceIndex);
-    Q_UNUSED(speed);
-    //TODO: implement
-}
-
 void CommHue::timeOutChange(int deviceIndex, int timeout) {
     Q_UNUSED(deviceIndex);
     Q_UNUSED(timeout);
-    //TODO: implement
-}
-
-void CommHue::resetSettings() {
     //TODO: implement
 }
 
@@ -434,7 +393,7 @@ void CommHue::handleSuccessPacket(QString key, QJsonValue value) {
                         valueChanged = true;
                     } else if (key.compare("colormode") == 0) {
                         QString mode = value.toString();
-                        EColorMode colorMode = cor::stringtoColorMode(mode);
+                        EColorMode colorMode = stringtoColorMode(mode);
                         device.colorMode = colorMode;
 
                         valueChanged = true;
@@ -568,7 +527,7 @@ bool CommHue::updateHueLightState(QJsonObject object, int i) {
             hue.isOn = stateObject.value("on").toBool();
 
             QString colorMode = stateObject.value("colormode").toString();
-            hue.colorMode = cor::stringtoColorMode(colorMode);
+            hue.colorMode = stringtoColorMode(colorMode);
             hue.productType = EProductType::eHue;
 
             if (hue.colorMode == EColorMode::eXY) {

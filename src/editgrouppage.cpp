@@ -305,7 +305,7 @@ void EditGroupPage::saveChanges() {
         // convert any group devices to Hue Lights, if applicable.
         std::list<HueLight> hueLights;
         for (auto device : newDevices) {
-            if (device.type() == ECommType::eHue) {
+            if (device.commType() == ECommType::eHue) {
                 HueLight hue = mComm->hue()->hueLightFromLight(device);
                 hueLights.push_back(hue);
             }

@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QColor>
-
+#include <QJsonObject>
 #include "lightingprotocols.h"
 
 /*!
@@ -45,14 +45,6 @@ signals:
     void receivedOnOffChange(int deviceIndex, bool turnOn);
 
     /*!
-     * \brief receivedMainColorChange signal that requests a main color change for a device.
-     * \param deviceIndex 0 for all indices, a specific index for a specific light.
-     *        Will do nothing if index doesn't exist.
-     * \param color the new color for the device.
-     */
-    void receivedMainColorChange(int deviceIndex, QColor color);
-
-    /*!
      * \brief receivedArrayColorChange signal that requests that the custom array changes a color.
      * \param deviceIndex 0 for all indices, a specific index for a specific light.
      *        Will do nothing if index doesn't exist.
@@ -62,14 +54,12 @@ signals:
     void receivedArrayColorChange(int deviceIndex, int index, QColor color);
 
     /*!
-     * \brief receivedRoutineChange signal that requests a routine change for a device.
+     * \brief receivedRoutineChange signal that requests that the lighting routine change.
      * \param deviceIndex 0 for all indices, a specific index for a specific light.
      *        Will do nothing if index doesn't exist.
-     * \param routine the new color routine.
-     * \param colorGroupUsed the color group to use for the custom routine. If its a single
-     *        color routine, this value will be -1.
+     * \param routineObject json object representing the new routine for the device
      */
-    void receivedRoutineChange(int deviceIndex, ELightingRoutine routine, EColorGroup colorGroupUsed);
+    void receivedRoutineChange(int deviceIndex, QJsonObject routineObject);
 
     /*!
      * \brief receivedCustomArrayCount signal that requests change of te count of colors
@@ -89,15 +79,6 @@ signals:
     void receivedBrightnessChange(int deviceIndex, int brightness);
 
     /*!
-     * \brief receivedSpeedChange signal that requests a light speed change.
-     * \param deviceIndex 0 for all indices, a specific index for a specific light.
-     *        Will do nothing if index doesn't exist.
-     * \param speed a value between 1 and 2000. To get the FPS, take this value and
-     *        divide it by 100. For example, 500 would be 5 FPS.
-     */
-    void receivedSpeedChange(int deviceIndex, int speed);
-
-    /*!
      * \brief receivedTimeOutChange signal that requests that the idle timeout of the hardware
      *        changes. A value of 0 will disable the timeout, each other value will be the number
      *        of minutes it takes to time out.
@@ -108,10 +89,10 @@ signals:
      */
     void receivedTimeOutChange(int deviceIndex, int timeOut);
 
-    /*!
-     * \brief receivedReset reset all lights to their default settings.
-     */
-    void receivedReset();
+private:
+
+    /// parses an int vector representation of a routine object.
+    void routineChange(const std::vector<int>& intVector);
 };
 
 #endif // COMMPACKETPARSER_H

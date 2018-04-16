@@ -65,7 +65,7 @@ void ListDevicesGroupWidget::updateDevices(std::list<cor::Light> devices, bool r
             cor::Light existingDevice = existingWidget->device();
             if (compareLight(inputDevice, existingDevice)) {
                 foundDevice = true;
-                existingWidget->updateWidget(inputDevice, mData->colorGroup(inputDevice.colorGroup));
+                existingWidget->updateWidget(inputDevice, mData->palette(inputDevice.palette));
             }
             ++x;
         }
@@ -76,11 +76,11 @@ void ListDevicesGroupWidget::updateDevices(std::list<cor::Light> devices, bool r
 
         if (!foundDevice) {
             // TODO: remove edge case...
-            if ((inputDevice.type() != ECommType::eHue && inputDevice.isReachable)
-                    || inputDevice.type() == ECommType::eHue) {
+            if ((inputDevice.commType() != ECommType::eHue && inputDevice.isReachable)
+                    || inputDevice.commType() == ECommType::eHue) {
                 if (inputDevice.color.isValid()) {
                     ListDeviceWidget *widget = new ListDeviceWidget(inputDevice,
-                                                                    mData->colorGroup(inputDevice.colorGroup),
+                                                                    mData->palette(inputDevice.palette),
                                                                     false,
                                                                     mWidgetSize,
                                                                     this);

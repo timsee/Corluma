@@ -47,7 +47,7 @@ signals:
      * \param type the CommType, such as Hue or Serial
      * \param status the new status for the CommType. Maps to a EConnectionState value.
      */
-    void connectionStatusChanged(ECommTypeSettings type, EConnectionState status);
+    void connectionStatusChanged(EProtocolType type, EConnectionState status);
 
 protected:
     /// pointer to commlayer, used for discovery

@@ -1,7 +1,7 @@
 #ifndef COR_PROTOCOLS_H
 #define COR_PROTOCOLS_H
 
-#include "lightingroutines.h"
+#include "lightingprotocols.h"
 #include <QDebug>
 
 /*!
@@ -20,7 +20,7 @@ enum class ECommType {
     eHTTP,
     eUDP,
     eHue,
-    eNanoLeaf,
+    eNanoleaf,
 #ifndef MOBILE_BUILD
     eSerial,
 #endif //MOBILE_BUILD
@@ -28,13 +28,88 @@ enum class ECommType {
 };
 Q_DECLARE_METATYPE(ECommType)
 
-enum class ECommTypeSettings {
+/*!
+ * \brief commTypeToString utility function for converting a ECommType to a human readable string
+ * \param type the ECommType to convert
+ * \return a simple english representation of the ECommType.
+ */
+inline QString commTypeToString(ECommType type) {
+    if (type ==  ECommType::eHTTP) {
+        return "HTTP";
+    } else if (type ==  ECommType::eUDP) {
+        return "UDP";
+    } else if (type ==  ECommType::eNanoleaf) {
+        return "NanoLeaf";
+    } else if (type ==  ECommType::eHue) {
+        return "Hue";
+#ifndef MOBILE_BUILD
+    } else if (type == ECommType::eSerial) {
+        return "Serial";
+#endif //MOBILE_BUILD
+    } else {
+        return "CommType not recognized";
+    }
+}
+
+
+/*!
+ * \brief stringToCommType helper function for converting a string to
+ *        to a commtype.
+ * \param type string representation of ECommType
+ * \return ECommType based off of string.
+ */
+inline ECommType stringToCommType(const QString& type) {
+    if (type.compare("HTTP") == 0) {
+        return ECommType::eHTTP;
+    } else if (type.compare("UDP") == 0) {
+        return ECommType::eUDP;
+    } else if (type.compare("NanoLeaf") == 0) {
+        return ECommType::eNanoleaf;
+    } else if (type.compare("Hue") == 0) {
+        return ECommType::eHue;
+#ifndef MOBILE_BUILD
+    } else if (type.compare("Serial") == 0) {
+        return ECommType::eSerial;
+#endif //MOBILE_BUILD
+    } else {
+        return ECommType::eCommType_MAX;
+    }
+}
+
+
+
+enum class EProtocolType {
     eHue,
-    eNanoLeaf,
+    eNanoleaf,
     eArduCor,
-    eCommTypeSettings_MAX
+    eProtocolType_MAX
 };
-Q_DECLARE_METATYPE(ECommTypeSettings)
+Q_DECLARE_METATYPE(EProtocolType)
+
+inline QString protocolToString(EProtocolType protocol) {
+    switch (protocol) {
+        case EProtocolType::eArduCor:
+            return "ArduCor";
+        case EProtocolType::eNanoleaf:
+            return "Nanoleaf";
+        case EProtocolType::eHue:
+            return "Hue";
+        default:
+            return "Not Recognized";
+    }
+}
+
+inline EProtocolType stringToProtocol(const QString& protocol) {
+    if (protocol.compare("ArduCor") == 0) {
+        return EProtocolType::eArduCor;
+    } else if (protocol.compare("Nanoleaf") == 0) {
+        return EProtocolType::eNanoleaf;
+    } else if (protocol.compare("Hue") == 0) {
+        return EProtocolType::eHue;
+    } else {
+        return EProtocolType::eProtocolType_MAX;
+    }
+}
 
 
 /*!
@@ -53,42 +128,6 @@ enum class EColorMode {
     eXY,
     EColorMode_MAX
 };
-
-
-/*!
- * \brief The EConnectionButtonIcons enum provides access to the different button
- *        assets used as placeholders for graphics in the application.
- */
-enum class EConnectionButtonIcons {
-    eBlackButton,
-    eRedButton,
-    eYellowButton,
-    eBlueButton,
-    eGreenButton,
-    EConnectionButtonIcons_MAX
-};
-
-
-/*!
- * \brief The EConnectionState enum tracks the various connection states both
- *        of each comm type and of the application overall.
- */
-enum class EConnectionState {
-    eOff,
-    eConnectionError,
-    eDiscovering,
-    eDiscoveredAndNotInUse,
-    eSingleDeviceSelected,
-    eMultipleDevicesSelected,
-    eConnectionState_MAX
-};
-Q_DECLARE_METATYPE(EConnectionState)
-
-namespace cor
-{
-/// helper for getting the value of the last single color routine.
-const ELightingRoutine ELightingRoutineSingleColorEnd = ELightingRoutine::eSingleSawtoothFadeOut;
-
 
 /*!
  * \brief colorModeToString helper for converting a color mode to a
@@ -125,6 +164,7 @@ inline EColorMode stringtoColorMode(const QString& mode) {
                || mode.compare("ct") == 0) {
         return EColorMode::eCT;
     } else if (mode.compare("") == 0) {
+        // edge case from phillips hue
         return EColorMode::eDimmable;
     } else if (mode.compare("xy") == 0) {
         return EColorMode::eXY;
@@ -133,65 +173,42 @@ inline EColorMode stringtoColorMode(const QString& mode) {
         return EColorMode::EColorMode_MAX;
     }
 }
-/*!
- * \brief ECommTypeToString utility function for converting a ECommType to a human readable string
- * \param type the ECommType to convert
- * \return a simple english representation of the ECommType.
- */
-inline QString ECommTypeToString(ECommType type) {
-    if (type ==  ECommType::eHTTP) {
-        return "HTTP";
-    } else if (type ==  ECommType::eUDP) {
-        return "UDP";
-    } else if (type ==  ECommType::eNanoLeaf) {
-        return "NanoLeaf";
-    } else if (type ==  ECommType::eHue) {
-        return "Hue";
-#ifndef MOBILE_BUILD
-    } else if (type == ECommType::eSerial) {
-        return "Serial";
-#endif //MOBILE_BUILD
-    } else {
-        return "CommType not recognized";
-    }
-}
 
-
-inline QString ECommTypeSettingsToString(ECommTypeSettings type) {
-    if (type ==  ECommTypeSettings::eArduCor) {
-        return "ArduCor";
-    } else if (type ==  ECommTypeSettings::eNanoLeaf) {
-        return "NanoLeaf";
-    } else if (type ==  ECommTypeSettings::eHue) {
-        return "Hue";
-    } else {
-        return "CommType not recognized";
-    }
-}
 
 /*!
- * \brief stringToECommType helper function for converting a string to
- *        to a commtype.
- * \param type string representation of ECommType
- * \return ECommType based off of string.
+ * \brief The EConnectionButtonIcons enum provides access to the different button
+ *        assets used as placeholders for graphics in the application.
  */
-inline ECommType stringToECommType(QString type) {
-    if (type.compare("HTTP") == 0) {
-        return ECommType::eHTTP;
-    } else if (type.compare("UDP") == 0) {
-        return ECommType::eUDP;
-    } else if (type.compare("NanoLeaf") == 0) {
-        return ECommType::eNanoLeaf;
-    } else if (type.compare("Hue") == 0) {
-        return ECommType::eHue;
-#ifndef MOBILE_BUILD
-    } else if (type.compare("Serial") == 0) {
-        return ECommType::eSerial;
-#endif //MOBILE_BUILD
-    } else {
-        return ECommType::eCommType_MAX;
-    }
-}
+enum class EConnectionButtonIcons {
+    eBlackButton,
+    eRedButton,
+    eYellowButton,
+    eBlueButton,
+    eGreenButton,
+    EConnectionButtonIcons_MAX
+};
+
+
+/*!
+ * \brief The EConnectionState enum tracks the various connection states both
+ *        of each comm type and of the application overall.
+ */
+enum class EConnectionState {
+    eOff,
+    eConnectionError,
+    eDiscovering,
+    eDiscoveredAndNotInUse,
+    eSingleDeviceSelected,
+    eMultipleDevicesSelected,
+    eConnectionState_MAX
+};
+Q_DECLARE_METATYPE(EConnectionState)
+
+namespace cor
+{
+/// helper for getting the value of the last single color routine.
+const ERoutine ERoutineSingleColorEnd = ERoutine::eSingleSawtoothFade;
+
 
 }
 

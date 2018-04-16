@@ -323,14 +323,6 @@ private slots:
     void onOffChange(int lightIndex, bool turnOn);
 
     /*!
-     * \brief mainColorChange connected to CommPacketParser, this changes the main color.
-     * \param deviceIndex 0 for all indices, a specific index for a specific light.
-     *        Will do nothing if index doesn't exist.
-     * \param color the new color for the device.
-     */
-    void mainColorChange(int deviceIndex, QColor color);
-
-    /*!
      * \brief arrayColorChange connected to CommPacketParser, this changes custom color array at a given index
      * \param deviceIndex 0 for all indices, a specific index for a specific light.
      *        Will do nothing if index doesn't exist.
@@ -340,14 +332,10 @@ private slots:
     void arrayColorChange(int deviceIndex, int arrayIndex, QColor color);
 
     /*!
-     * \brief routineChange connected to CommPacketParser, this changes the color routine of a device
-     * \param deviceIndex 0 for all indices, a specific index for a specific light.
-     *        Will do nothing if index doesn't exist.
-     * \param routine the new color routine.
-     * \param colorGroupUsed the color group to use for the custom routine. If its a single
-     *        color routine, this value will be -1.
+     * \brief routineChange change the light state of the hue. This JSON object will contain a color and other
+     *        information about the light.
      */
-    void routineChange(int deviceIndex, ELightingRoutine routineIndex, EColorGroup colorGroup);
+    void routineChange(int deviceIndex, QJsonObject);
 
     /*!
      * \brief customArrayCount connected to CommPacketParser, this changes the number of colors used
@@ -359,15 +347,6 @@ private slots:
     void customArrayCount(int deviceIndex, int customArrayCount);
 
     /*!
-     * \brief speedChange connected to CommPacketParser, this changes the speed of the device updates.
-     * \param deviceIndex 0 for all indices, a specific index for a specific light.
-     *        Will do nothing if index doesn't exist.
-     * \param speed a value between 1 and 2000. To get the FPS, take this value and
-     *        divide it by 100. For example, 500 would be 5 FPS.
-     */
-    void speedChange(int deviceIndex, int speed);
-
-    /*!
      * \brief timeOutChange connected to CommPacketParser, this changes the idle timeout.
      *        A value of 0 will disable the timeout, each other value will be the number
      *        of minutes it takes to time out.
@@ -377,11 +356,6 @@ private slots:
      *        lights automatically turn off. 0 disables this feature.
      */
     void timeOutChange(int deviceIndex, int timeout);
-
-    /*!
-     * \brief resetSettings reset all lights to their default settings.
-     */
-    void resetSettings();
 
     /*!
      * \brief getSchedules request schedules updates.

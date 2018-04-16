@@ -107,7 +107,7 @@ bool CommType::fillDevice(cor::Light& device) {
             if (device.index() != it->index())  {
                 deviceExists = false;
             }
-            if (device.type() != it->type()) {
+            if (device.commType() != it->commType()) {
                 deviceExists = false;
             }
             if (deviceExists) {
@@ -160,7 +160,7 @@ void CommType::resetStateUpdateTimeout() {
 }
 
 void CommType::stopStateUpdates() {
-    qDebug() << "INFO: Turning off state updates" << cor::ECommTypeToString(mType);
+    qDebug() << "INFO: Turning off state updates" << commTypeToString(mType);
     if (mStateUpdateTimer->isActive()) {
         mStateUpdateTimer->stop();
     }
@@ -299,7 +299,7 @@ bool CommType::deviceControllerFromDiscoveryString(QString discovery, QString co
     //--------------
     // Check validity of int vector
     //--------------
-    if (intVector.size() == 5) {
+    if (intVector.size() == 6) {
         controller.name = controllerName;
         if (controller.name.size() == 0) {
             return false;
@@ -314,16 +314,17 @@ bool CommType::deviceControllerFromDiscoveryString(QString discovery, QString co
             return false;
         }
         controller.isUsingCRC = crc;
+        controller.hardwareCapabilities = intVector[3];
 
         // grab the max packet size
-        controller.maxPacketSize = intVector[3];
+        controller.maxPacketSize = intVector[4];
         controller.type = mType;
         if (controller.maxPacketSize > 500) {
             return false;
         }
 
         // get the max hardware index
-        controller.maxHardwareIndex = intVector[4];
+        controller.maxHardwareIndex = intVector[5];
         if (controller.maxHardwareIndex > 20) {
             return false;
         }
@@ -392,7 +393,7 @@ QString CommType::settingsIndexKey(int index) {
         typeID = QString("UDP");
     } else if (mType == ECommType::eHue) {
         typeID = QString("HUE");
-    } else if (mType == ECommType::eNanoLeaf) {
+    } else if (mType == ECommType::eNanoleaf) {
         typeID = QString("NANOLEAF");
     }
 #ifndef MOBILE_BUILD
@@ -412,7 +413,7 @@ QString CommType::settingsListSizeKey() {
         typeID = QString("UDP");
     } else if (mType == ECommType::eHue) {
         typeID = QString("HUE");
-    } else if (mType == ECommType::eNanoLeaf) {
+    } else if (mType == ECommType::eNanoleaf) {
         typeID = QString("NANOLEAF");
     }
 #ifndef MOBILE_BUILD

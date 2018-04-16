@@ -105,6 +105,12 @@ public:
      */
     bool removeAppData();
 
+    /*!
+     * \brief defaultSavePath default save path on any machine. Uses QStandardPath's App Data Location
+     * \return a writable path for saving JSON data.
+     */
+    static QString defaultSavePath();
+
 signals:
     /*!
      * \brief newConnectionFound emitted whenever a new connection is found in JSON data. Only useful for
@@ -141,12 +147,6 @@ private:
      * \return a JsonDocument representing the data in the file given.
      */
     QJsonDocument loadJsonFile(QString file);
-
-    /*!
-     * \brief defaultSavePath default save path on any machine. Typically saves to the Downloads folder.
-     * \return a writable path for saving JSON data.
-     */
-    QString defaultSavePath();
 
     /*!
      * \brief loadJsonDataIntoAppData takes JSON data and injects it into app data, saving it for future use

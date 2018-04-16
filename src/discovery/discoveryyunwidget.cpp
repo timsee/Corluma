@@ -79,17 +79,17 @@ void DiscoveryYunWidget::handleDiscovery(bool isCurrentCommType) {
 
     // handle button updates
     if (mComm->discoveryErrorsExist(ECommType::eUDP)) {
-        emit connectionStatusChanged(ECommTypeSettings::eArduCor, EConnectionState::eConnectionError);
+        emit connectionStatusChanged(EProtocolType::eArduCor, EConnectionState::eConnectionError);
     } else if (discoveringHTTP.size() == 0
             && discoveringUDP.size() == 0
             && (deviceTableHTTP.size() > 0
                 || deviceTableUDP.size() > 0)) {
-       emit connectionStatusChanged(ECommTypeSettings::eArduCor, EConnectionState::eDiscoveredAndNotInUse);
+       emit connectionStatusChanged(EProtocolType::eArduCor, EConnectionState::eDiscoveredAndNotInUse);
     } else if (discoveringHTTP.size() > 0
                || discoveringUDP.size() > 0) {
-        emit connectionStatusChanged(ECommTypeSettings::eArduCor, EConnectionState::eDiscovering);
+        emit connectionStatusChanged(EProtocolType::eArduCor, EConnectionState::eDiscovering);
     } else {
-        emit connectionStatusChanged(ECommTypeSettings::eArduCor, EConnectionState::eOff);
+        emit connectionStatusChanged(EProtocolType::eArduCor, EConnectionState::eOff);
     }
 
 }

@@ -47,7 +47,7 @@ public:
      * \param type the type of comm type you're checking
      * \param checked true if checked, false otherwise.
      */
-    void checkBoxClicked(ECommTypeSettings type, bool checked);
+    void checkBoxClicked(EProtocolType type, bool checked);
 
     /// called whenever the widget is shown
     void show();
@@ -56,12 +56,6 @@ public:
     void resize();
 
 public slots:
-
-    /*!
-     * \brief speedChanged signaled whenever the slider that controls
-     *        the LEDs speed changes its value.
-     */
-    void speedChanged(int);
 
     /*!
      * \brief timeoutChanged signaled whenever the slider that controls
@@ -85,12 +79,6 @@ public slots:
     void nanoLeafButtonClicked(bool);
 
     /*!
-     * \brief advanceModeButtonPressed called when advance mode button is pressed
-     * \param isChecked true if checked, false if not
-     */
-    void advanceModeButtonPressed(bool isChecked);
-
-    /*!
      * \brief timeoutButtonPressed called when timeout button is pressed
      * \param isChecked true if checked, false if not
      */
@@ -98,9 +86,6 @@ public slots:
 
     /// value set for how long it takes the lights to timeout.
     int timeoutValue();
-
-    /// value set for how quick color routines run.
-    int speedValue();
 
 protected:
     /*!
@@ -130,13 +115,6 @@ private:
      */
     void showTimeout(bool showTimeout);
 
-    /*!
-     * \brief showAdvanceMode shows/hides the advance mode settings
-     * \param showAdvanceMode true to show the advance mode slider and enabled connections
-     *        list, false to hide them.
-     */
-    void showAdvanceMode(bool showAdvanceMode);
-
     /// value for minimum possible height of widget
     int mMinHeight;
 
@@ -161,11 +139,6 @@ private:
     //----------------
 
     /*!
-     * \brief mAdvanceModeCheckBox checkbox for turning advanced mode on and off
-     */
-    cor::CheckBox *mAdvanceModeCheckBox;
-
-    /*!
      * \brief mTimeoutCheckBox checkbox for turning timeouts on and off
      */
     cor::CheckBox *mTimeoutCheckBox;
@@ -184,17 +157,6 @@ private:
      *        will be.
      */
     cor::Slider *mTimeoutSlider;
-
-    /*!
-     * \brief mSpeedLabel label for speed slider, says "speed."
-     */
-    QLabel *mSpeedLabel;
-
-    /*!
-     * \brief mSpeedSlider slider for determing how fast routines will be
-     *        on ArduCor powered devices.
-     */
-    cor::Slider *mSpeedSlider;
 
     //----------------
     // Enabled Connections

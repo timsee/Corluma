@@ -5,6 +5,8 @@
 #include <QColor>
 #include <QDebug>
 #include <QSize>
+#include <QJsonObject>
+
 #include "lightingprotocols.h"
 #include "protocols.h"
 
@@ -36,7 +38,7 @@ public:
     /*!
      * \brief Light Constructor
      */
-    Light(int index, ECommType type, QString controller);
+    Light(int index, ECommType commType, QString controller);
 
     /*!
      * \brief PRINT_DEBUG prints values of struct. used for debugging.
@@ -63,27 +65,42 @@ public:
     EColorMode colorMode;
 
     /*!
-     * \brief color color of this device.
-     */
-    QColor color;
-
-    /*!
-     * \brief lightingRoutine current lighting routine for this device.
-     */
-    ELightingRoutine lightingRoutine;
-
-    /*!
-     * \brief colorGroup color group for this device.
-     */
-    EColorGroup colorGroup;
-
-    /*!
      * \brief brightness brightness for this device, between 0 and 100.
      */
     int brightness;
 
     //-----------------------
-    // Settings
+    // Routines
+    //-----------------------
+
+    /*!
+     * \brief routine current lighting routine for this device.
+     */
+    ERoutine routine;
+
+    /*!
+     * \brief color color of this device.
+     */
+    QColor color;
+
+    /*!
+     * \brief palette for this device.
+     */
+    EPalette palette;
+
+    /*!
+     * \brief speed speed of updates to lighting routines.
+     */
+    int speed;
+
+    /*!
+     * \brief param optional parameter used for certain routines. Different
+     *        between different routines.
+     */
+    int param;
+
+    //-----------------------
+    // Timeout
     //-----------------------
 
     /*!
@@ -96,11 +113,6 @@ public:
      * \brief timeout total number of minutes it will take a device to time out.
      */
     int timeout;
-
-    /*!
-     * \brief speed speed of updates to lighting routines.
-     */
-    int speed;
 
     //-----------------------
     // Custom Colors
@@ -147,7 +159,9 @@ public:
     int index() const { return mIndex; }
 
     /// getter for type
-    ECommType type() const { return mType; }
+    ECommType commType() const { return mCommType; }
+
+    EProtocolType protocol() const { return mProtocol; }
 
     /// getter for controller
     QString controller() const { return mController; }
@@ -158,11 +172,12 @@ public:
         if (isReachable     !=  rhs.isReachable) result = false;
         if (isOn            !=  rhs.isOn) result = false;
         if (color           !=  rhs.color) result = false;
-        if (lightingRoutine !=  rhs.lightingRoutine) result = false;
-        if (colorGroup      !=  rhs.colorGroup) result = false;
+        if (routine         !=  rhs.routine) result = false;
+        if (palette         !=  rhs.palette) result = false;
         if (brightness      !=  rhs.brightness) result = false;
         if (index()         !=  rhs.index()) result = false;
-        if (type()          !=  rhs.type()) result = false;
+        if (commType()      !=  rhs.commType()) result = false;
+        if (protocol()      !=  rhs.protocol()) result = false;
         if (colorMode       !=  rhs.colorMode) result = false;
         if (timeout         !=  rhs.timeout) result = false;
         if (speed           !=  rhs.speed) result = false;
@@ -180,25 +195,34 @@ private:
     int mIndex;
 
     /*!
-     * \brief mType determines whether the connection is based off of a hue, UDP, HTTP, etc.
+     * \brief mCommType determines whether the connection is based off of a hue, UDP, HTTP, etc.
      */
-    ECommType mType;
+    ECommType mCommType;
+
+    /// type of protocol for packets
+    EProtocolType mProtocol;
+
     /*!
      * \brief mController the name of the connection. This varies by connection type. For example,
      *        a UDP connection will use its IP address as a name, or a serial connection
      *        will use its serial port.
      */
     QString mController;
-
 };
 
-}
+/// converts json representation of routine to cor::Light
+cor::Light jsonToLight(const QJsonObject& object);
 
+/// converts a cor::Light to a json representation of its routine.
+QJsonObject lightToJson(const cor::Light& light);
+
+}
 
 /// compares light devices, ignoring state data and paying attention only to values that don't change.
 inline bool compareLight(const cor::Light& lhs, const cor::Light& rhs) {
     return ((lhs.index() == rhs.index())
-            && (lhs.type() == rhs.type())
+            && (lhs.commType() == rhs.commType())
+            && (lhs.protocol() == rhs.protocol())
             && (lhs.controller().compare(rhs.controller()) == 0));
 }
 

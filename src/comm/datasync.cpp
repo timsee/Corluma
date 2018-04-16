@@ -38,7 +38,7 @@ bool DataSync::checkThrottle(QString controller, ECommType type) {
             case ECommType::eHue:
                 throttleInterval = 200;
                 break;
-            case ECommType::eNanoLeaf:
+            case ECommType::eNanoleaf:
                 throttleInterval = 200;
                 break;
             case ECommType::eUDP:

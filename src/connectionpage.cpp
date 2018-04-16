@@ -108,7 +108,7 @@ void ConnectionPage::updateConnectionList() {
             std::list<cor::Light> allAvailableDevices;
             // remove non available devices
             for (auto&& device : allDevices) {
-                if (mData->commTypeSettings()->commTypeEnabled(device.type())) {
+                if (mData->protocolSettings()->enabled(device.protocol())) {
                     allAvailableDevices.push_back(device);
                 }
             }
@@ -342,12 +342,12 @@ void ConnectionPage::newConnectionFound(QString newController) {
     }
     // if not, add it to discovery.
     if (!foundController) {
-        if (mData->commTypeSettings()->commTypeEnabled(ECommType::eUDP)) {
+        if (mData->protocolSettings()->enabled(EProtocolType::eArduCor)) {
             bool isSuccessful = mComm->startDiscoveringController(ECommType::eUDP, newController);
             if (!isSuccessful) qDebug() << "WARNING: failure adding" << newController << "to UDP discovery list";
             isSuccessful = mComm->startDiscoveringController(ECommType::eHTTP, newController);
             if (!isSuccessful) qDebug() << "WARNING: failure adding" << newController << "to HTTP discovery list";
-            mComm->startDiscovery(ECommTypeSettings::eArduCor);
+            mComm->startDiscovery(EProtocolType::eArduCor);
         } else {
             qDebug() << "WARNING: UDP and HTTP not enabled but they are found in the json data being loaded...";
         }
@@ -443,7 +443,7 @@ cor::Light ConnectionPage::identifierStringToLight(QString string) {
             secondValue = secondValue.mid(3);
         }
         cor::Light temp(QString::fromStdString(valueVector[3]).toInt(),
-                        cor::stringToECommType(secondValue),
+                        stringToCommType(secondValue),
                         QString::fromStdString(valueVector[2]));
         mComm->fillDevice(temp);
         outputStruct = temp;
@@ -478,10 +478,10 @@ void ConnectionPage::hideEvent(QHideEvent *event) {
 
 
 void ConnectionPage::hide() {
-    for (int i = 0; i < (int)ECommTypeSettings::eCommTypeSettings_MAX; ++i) {
-        ECommTypeSettings type = (ECommTypeSettings)i;
-        if (mData->commTypeSettings()->commTypeSettingsEnabled(type)) {
-            mComm->stopDiscovery(type);
+    for (int i = 0; i < (int)EProtocolType::eProtocolType_MAX; ++i) {
+        EProtocolType protocol = (EProtocolType)i;
+        if (mData->protocolSettings()->enabled(protocol)) {
+            mComm->stopDiscovery(protocol);
         }
     }
     mRenderThread->stop();
@@ -513,7 +513,7 @@ void ConnectionPage::cleanupList() {
             std::list<cor::Light> newDeviceList;
             std::list<cor::Light> currentDeviceList = devicesWidget->devices();
             for (auto&& device : currentDeviceList) {
-                if (mData->commTypeSettings()->commTypeEnabled(device.type())) {
+                if (mData->protocolSettings()->enabled(device.protocol())) {
                     newDeviceList.push_back(device);
                 }
             }
@@ -616,7 +616,6 @@ void ConnectionPage::makeMoodsCollections(const std::list<cor::LightGroup>& mood
             if (!foundRoom) {
                 auto roomIt = std::find(roomNames.begin(), roomNames.end(), "Miscellaneous");
                 if (roomIt == roomNames.end()) {
-                    //qDebug() << " THIS IS THE LIGHT THAT IS CREATING MISC";
                     roomNames.push_back("Miscellaneous");
                 }
             }

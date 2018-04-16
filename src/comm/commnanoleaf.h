@@ -12,11 +12,13 @@
 
 
 /// states for discovering and connecting to a NanoLeaf.
-enum class ENanoLeafDiscoveryState {
+enum class ENanoleafDiscoveryState {
     eConnectionError,
     eTestingIP,
+    eTestingAuth,
     eRunningUPnP,
     eAwaitingAuthToken,
+    eTestingPreviousData,
     eFullyConnected
 };
 
@@ -68,9 +70,6 @@ public:
     /// takes the color palette data from thne datalayer and converts it into JSON data for nanoleaf packets
     void addColorPalettes(const std::vector<std::vector<QColor> >& palettes);
 
-    /// updates the comm layer's colors based on brightness from datasync.
-    void addColor(QColor color) { mController.color = color; }
-
     /// connects UPnP object to the discovery object.
     void connectUPnPDiscovery(UPnPDiscovery* UPnP);
 
@@ -78,7 +77,7 @@ public:
     const nano::LeafController& controller() { return mController; }
 
     /// getter for the discovery state of the nanoleaf
-    ENanoLeafDiscoveryState discoveryState() { return mDiscoveryState; }
+    ENanoleafDiscoveryState discoveryState() { return mDiscoveryState; }
 
 private slots:
     /*!
@@ -93,15 +92,6 @@ private slots:
      * \param turnOn true to turn on, false to turn off
      */
     void onOffChange(int lightIndex, bool turnOn);
-
-    /*!
-     * \brief mainColorChange connected to CommPacketParser, this changes the main color.
-     * \param deviceIndex 0 for all indices, a specific index for a specific light.
-     *        Will do nothing if index doesn't exist.
-     * \param color the new color for the device.
-     */
-    void mainColorChange(int deviceIndex, QColor color);
-
 
     /*!
      * \brief brightnessChange connected to CommPacketParser, this changes the brightness of a device.
@@ -121,14 +111,10 @@ private slots:
     void arrayColorChange(int deviceIndex, int arrayIndex, QColor color);
 
     /*!
-     * \brief routineChange connected to CommPacketParser, this changes the color routine of a device
-     * \param deviceIndex 0 for all indices, a specific index for a specific light.
-     *        Will do nothing if index doesn't exist.
-     * \param routine the new color routine.
-     * \param colorGroupUsed the color group to use for the custom routine. If its a single
-     *        color routine, this value will be -1.
+     * \brief routineChange change the light state of the hue. This JSON object will contain a color and other
+     *        information about the light.
      */
-    void routineChange(int deviceIndex, ELightingRoutine routineIndex, EColorGroup colorGroup);
+    void routineChange(int deviceIndex, QJsonObject);
 
     /*!
      * \brief customArrayCount connected to CommPacketParser, this changes the number of colors used
@@ -138,15 +124,6 @@ private slots:
      * \param count the new count for the custom color array.
      */
     void customArrayCount(int deviceIndex, int customArrayCount);
-
-    /*!
-     * \brief speedChange connected to CommPacketParser, this changes the speed of the device updates.
-     * \param deviceIndex 0 for all indices, a specific index for a specific light.
-     *        Will do nothing if index doesn't exist.
-     * \param speed a value between 1 and 2000. To get the FPS, take this value and
-     *        divide it by 100. For example, 500 would be 5 FPS.
-     */
-    void speedChange(int deviceIndex, int speed);
 
     /*!
      * \brief timeOutChange connected to CommPacketParser, this changes the idle timeout.
@@ -159,11 +136,6 @@ private slots:
      */
     void timeOutChange(int deviceIndex, int timeout);
 
-    /*!
-     * \brief resetSettings reset all lights to their default settings.
-     */
-    void resetSettings();
-
     /// called when a UPnP packet is received
     void receivedUPnP(QHostAddress, QString);
 
@@ -172,6 +144,9 @@ private slots:
 
     /// requests the state of the lights
     void stateUpdate();
+
+    /// failed testing the saved data about the nanoleaf.
+    void failedTestingData();
 
 private:
 
@@ -206,22 +181,25 @@ private:
      * \param routine the routine to use for the QJsonObject
      * \return the object that contains the routine data
      */
-    QJsonObject createRoutinePacket(ELightingRoutine routine);
+    QJsonObject createRoutinePacket(ERoutine routine, int speed);
 
     /*!
-     * \brief createColorGroup Takes the Corluma Lighting Routine and Color Group and converts
+     * \brief createPalette Takes the Corluma Lighting Routine and Color Group and converts
      *        it into a QJsonArray based on the Palette
      * \param routine the routine to use for the jsonarray
      * \param group the palette to use for the jsonarray
      * \return a jsonarray that matches the lighting routine and palette
      */
-    QJsonArray createColorGroup(ELightingRoutine routine, EColorGroup group);
+    QJsonArray createPalette(ERoutine routine, EPalette palette);
 
     /// true if controller has all connection information, false otherwise.
     bool isControllerConnected(const nano::LeafController& controller);
 
     /// start the state update timer
     void startupStateUpdates();
+
+    /// changes the main color of a nanoleaf
+    void singleSolidColorChange(int deviceIndex, QColor color);
 
     /*!
      * \brief mNetworkManager Qt's HTTP connection object
@@ -242,6 +220,9 @@ private:
      */
     CommPacketParser *mParser;
 
+    /// timer that tests whether the app data about the nanoleafs path (IP address, port, etc.) is valid
+    QTimer *mTestingTimer;
+
     /// stored json palettes for each color group
     std::vector<QJsonArray> mPalettes;
 
@@ -256,7 +237,7 @@ private:
     nano::LeafController mController;
 
     /// discovery state for the nanoleaf
-    ENanoLeafDiscoveryState mDiscoveryState;
+    ENanoleafDiscoveryState mDiscoveryState;
 
     //-----------
     // Keys

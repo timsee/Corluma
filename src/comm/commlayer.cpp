@@ -73,19 +73,6 @@ QString CommLayer::sendTurnOn(const std::list<cor::Light>& deviceList,
     return packet;
 }
 
-QString CommLayer::sendMainColorChange(const std::list<cor::Light>& deviceList,
-                                       QColor color) {
-    QString packet;
-    for (auto&& device : deviceList) {
-        packet += QString("%1,%2,%3,%4,%5&").arg(QString::number((int)EPacketHeader::eMainColorChange),
-                                                 QString::number(device.index()),
-                                                 QString::number(color.red()),
-                                                 QString::number(color.green()),
-                                                 QString::number(color.blue()));
-    }
-    return packet;
-}
-
 QString CommLayer::sendArrayColorChange(const std::list<cor::Light>& deviceList,
                                         int index,
                                         QColor color) {
@@ -102,34 +89,112 @@ QString CommLayer::sendArrayColorChange(const std::list<cor::Light>& deviceList,
     return packet;
 }
 
-QString CommLayer::sendSingleRoutineChange(const std::list<cor::Light>& deviceList,
-                                           ELightingRoutine routine) {
+
+QString CommLayer::sendRoutineChange(const std::list<cor::Light>& deviceList,
+                                     const QJsonObject& routineObject) {
     QString packet;
     for (auto&& device : deviceList) {
-        if ((int)routine <= (int)cor::ELightingRoutineSingleColorEnd) {
-            packet += QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::eModeChange),
-                                               QString::number(device.index()),
-                                               QString::number((int)routine));
-        } else {
-            qDebug() << __func__ << "error";
-        }
-    }
-    return packet;
-}
+        if (routineObject.value("routine").isString()) {
+            //------------
+            // get routine
+            //------------
+            ERoutine routine = stringToRoutine(routineObject.value("routine").toString());
+
+            //------------
+            // get either speed or palette, depending on routine type
+            //------------
+            QColor color;
+            EPalette palette = EPalette::ePalette_MAX;
+            bool isValidJSON = true;
+            if (routine <= cor::ERoutineSingleColorEnd) {
+                if (routineObject["red"].isDouble()
+                        && routineObject["green"].isDouble()
+                        && routineObject["blue"].isDouble()) {
+                    color.setRgb(routineObject["red"].toDouble(),
+                            routineObject["green"].toDouble(),
+                            routineObject["blue"].toDouble());
+                } else {
+                    isValidJSON = false;
+                }
+            } else if (routineObject.value("palette").isString()) {
+                palette = stringToPalette(routineObject.value("palette").toString());
+                if (palette == EPalette::ePalette_MAX) {
+                    isValidJSON = false;
+                }
+            }
+
+            //------------
+            // get speed if theres a speed value
+            //------------
+            int speed = INT_MIN;
+            if (routine != ERoutine::eSingleSolid) {
+                if (routineObject.value("speed").isDouble()) {
+                    speed = routineObject.value("speed").toDouble();
+                }
+            }
+
+            //------------
+            // get optional parameter
+            //------------
+            int optionalParameter = INT_MIN;
+            if (routineObject.value("param").isDouble()) {
+                optionalParameter = routineObject.value("param").toDouble();
+            }
+            switch (routine) {
+                case ERoutine::eMultiBars:
+                    optionalParameter = 4;
+                    break;
+                case ERoutine::eSingleGlimmer:
+                case ERoutine::eMultiGlimmer:
+                    optionalParameter = 15;
+                    break;
+                case ERoutine::eSingleFade:
+                case ERoutine::eSingleSawtoothFade:
+                case ERoutine::eMultiRandomSolid:
+                case ERoutine::eSingleWave:
+                case ERoutine::eMultiFade:
+                case ERoutine::eMultiRandomIndividual:
+                case ERoutine::eSingleSolid:
+                case ERoutine::eSingleBlink:
+                default:
+                break;
+            }
 
 
-QString CommLayer::sendMultiRoutineChange(const std::list<cor::Light>& deviceList,
-                                          ELightingRoutine routine,
-                                          EColorGroup colorGroup) {
-    QString packet;
-    for (auto&& device : deviceList) {
-        if ((int)routine > (int)cor::ELightingRoutineSingleColorEnd) {
-            packet += QString("%1,%2,%3,%4&").arg(QString::number((int)EPacketHeader::eModeChange),
-                                                  QString::number(device.index()),
-                                                  QString::number((int)routine),
-                                                  QString::number((int)colorGroup));
-        } else {
-            qDebug() << __func__ << "error";
+            if (isValidJSON) {
+                packet += QString::number((int)EPacketHeader::eModeChange);
+                packet += ",";
+                packet += QString::number(device.index());
+                packet += ",";
+                packet += QString::number((int)routine);
+
+                if (color.isValid()) {
+                    packet += ",";
+                    packet += QString::number(color.red());
+                    packet += ",";
+                    packet += QString::number(color.green());
+                    packet += ",";
+                    packet += QString::number(color.blue());
+                } else if (palette != EPalette::ePalette_MAX) {
+                    packet += ",";
+                    packet += QString::number((int)palette);
+                }
+
+                if (routine != ERoutine::eSingleSolid) {
+                    // TODO: fix edge case
+                    if (speed == INT_MIN) {
+                        speed = 100;
+                    }
+                    packet += ",";
+                    packet += QString::number(speed);
+                }
+
+                if (optionalParameter != INT_MIN) {
+                    packet += ",";
+                    packet += QString::number(optionalParameter);
+                }
+                packet += "&";
+            }
         }
     }
     return packet;
@@ -140,7 +205,7 @@ QString CommLayer::sendColorTemperatureChange(const std::list<cor::Light>& devic
                                               int temperature) {
     QString packet;
     for (auto&& device : deviceList) {
-        if (device.type() == ECommType::eHue) {
+        if (device.commType() == ECommType::eHue) {
             mHue->changeColorCT(device.index(), device.brightness, temperature);
         }
     }
@@ -154,17 +219,6 @@ QString CommLayer::sendBrightness(const std::list<cor::Light>& deviceList,
         packet += QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::eBrightnessChange),
                                            QString::number(device.index()),
                                            QString::number(brightness));
-    }
-    return packet;
-}
-
-QString CommLayer::sendSpeed(const std::list<cor::Light>& deviceList,
-                             int speed) {
-    QString packet;
-    for (auto&& device : deviceList) {
-        packet += QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::eSpeedChange),
-                                           QString::number(device.index()),
-                                           QString::number(speed));
     }
     return packet;
 }
@@ -199,16 +253,8 @@ void CommLayer::requestCustomArrayUpdate(const std::list<cor::Light>& deviceList
     }
 }
 
-void CommLayer::sendReset(const std::list<cor::Light>& deviceList) {
-    for (auto&& device : deviceList) {
-        QString packet = QString("%1,%2,42,71&").arg(QString::number(device.index()),
-                                                     QString::number((int)EPacketHeader::eResetSettingsToDefaults));
-        sendPacket(device, packet);
-    }
-}
-
 void CommLayer::sendPacket(const cor::Light& device, QString& payload) {
-    CommType* commPtr = commByType(device.type());
+    CommType* commPtr = commByType(device.commType());
     cor::Controller controller;
     QString name = device.controller();
     if (commPtr->findDiscoveredController(name, controller)) {
@@ -220,7 +266,7 @@ bool CommLayer::discoveryErrorsExist(ECommType type) {
         return false; // can only error out if no bridge is found...
     } else if (type == ECommType::eHTTP) {
         return false; // cant error out...
-    } else if (type == ECommType::eNanoLeaf) {
+    } else if (type == ECommType::eNanoleaf) {
         return false; // cant error out...
     }
 #ifndef MOBILE_BUILD
@@ -235,7 +281,6 @@ bool CommLayer::discoveryErrorsExist(ECommType type) {
 }
 
 void CommLayer::parsePacket(QString sender, QString packet, ECommType type) {
-    //qDebug() << "the sender: " << sender << "packet:" << packet << "type:" << type;
     // split into vector of strings
     std::vector<std::string> packetVector;
     std::istringstream input(packet.toStdString());
@@ -285,13 +330,14 @@ void CommLayer::parsePacket(QString sender, QString packet, ECommType type) {
                 return;
             }
         }
+        //qDebug() << "the sender: " << sender << "packet:" << packet << "type:" << commTypeToString(type);
         // if it should,
         for (auto&& intVector : intVectors) {
             if (intVector.size() > 2) {
                 if (intVector[0] < (int)EPacketHeader::ePacketHeader_MAX) {
                     EPacketHeader packetHeader = (EPacketHeader)intVector[0];
-
                     int index = intVector[1];
+                    bool isValid = true;
                     if (index < 20 && index  >= 1) {
 
                         cor::Light device = cor::Light(index, type, sender);
@@ -315,8 +361,8 @@ void CommLayer::parsePacket(QString sender, QString packet, ECommType type) {
                                     device.isReachable     = (bool)intVector[x + 2];
                                     device.color           = QColor(intVector[x + 3], intVector[x + 4], intVector[x + 5]);
                                     device.colorMode       = EColorMode::eRGB;
-                                    device.lightingRoutine = (ELightingRoutine)intVector[x + 6];
-                                    device.colorGroup      = (EColorGroup)intVector[x + 7];
+                                    device.routine         = (ERoutine)intVector[x + 6];
+                                    device.palette         = (EPalette)intVector[x + 7];
                                     device.brightness      = intVector[x + 8];
 
                                     device.speed                 = intVector[x + 9];
@@ -348,11 +394,6 @@ void CommLayer::parsePacket(QString sender, QString packet, ECommType type) {
                                    && (intVector.size() % 3 == 0)) {
                             device.brightness = intVector[2];
                             commByType(type)->updateDevice(device);
-                        } else if (packetHeader == EPacketHeader::eMainColorChange
-                                   && (intVector.size() % 5 == 0)) {
-                            device.color = QColor(intVector[2], intVector[3], intVector[4]);
-                            device.isOn = true;
-                            commByType(type)->updateDevice(device);
                         } else if (packetHeader == EPacketHeader::eOnOffChange
                                    && (intVector.size() % 3 == 0)) {
                             int onOff = intVector[2];
@@ -363,19 +404,51 @@ void CommLayer::parsePacket(QString sender, QString packet, ECommType type) {
                             }
                             commByType(type)->updateDevice(device);
                         } else if (packetHeader == EPacketHeader::eModeChange
-                                   && (intVector.size() % 3 == 0)) {
-                            device.lightingRoutine = (ELightingRoutine)intVector[2];
-                            commByType(type)->updateDevice(device);
-                        } else if (packetHeader == EPacketHeader::eModeChange
-                                   && (intVector.size() % 4 == 0)) {
-                            device.lightingRoutine = (ELightingRoutine)intVector[2];
-                            device.isOn = true;
-                            device.colorGroup = (EColorGroup)intVector[3];
-                            commByType(type)->updateDevice(device);
-                        } else if (packetHeader == EPacketHeader::eSpeedChange
-                                   && (intVector.size() % 3 == 0)) {
-                            device.speed = intVector[2];
-                            commByType(type)->updateDevice(device);
+                                   && intVector.size() > 3) {
+                            uint32_t tempIndex = 2;
+                            device.routine = (ERoutine)intVector[tempIndex];
+                            ++tempIndex;
+                            // get either the color or the palette
+                            if ((int)device.routine <= (int)cor::ERoutineSingleColorEnd) {
+                                if (intVector.size() > 5) {
+                                    int red = intVector[tempIndex];
+                                    ++tempIndex;
+                                    int green = intVector[tempIndex];
+                                    ++tempIndex;
+                                    int blue = intVector[tempIndex];
+                                    ++tempIndex;
+                                    if ((red < 0)   || (red > 255))    isValid = false;
+                                    if ((green < 0) || (green > 255))  isValid = false;
+                                    if ((blue < 0)  || (blue > 255))   isValid = false;
+                                    device.color = QColor(red, green, blue);
+                                } else {
+                                    isValid = false;
+                                }
+                            } else {
+                                if (intVector.size() > 4) {
+                                    device.palette = (EPalette)intVector[tempIndex];
+                                    ++tempIndex;
+                                    if (device.palette == EPalette::ePalette_MAX) isValid = false;
+                                } else {
+                                    isValid = false;
+                                }
+                            }
+
+                            // get speed, if it exists
+                            if (intVector.size() > tempIndex) {
+                                device.speed = intVector[tempIndex];
+                                ++tempIndex;
+                            }
+
+                            // get optional parameter
+                            if (intVector.size() > tempIndex) {
+                                device.param = intVector[tempIndex];
+                                ++tempIndex;
+                            }
+
+                            if (isValid) {
+                                commByType(type)->updateDevice(device);
+                            }
                         } else if (packetHeader == EPacketHeader::eIdleTimeoutChange
                                    && (intVector.size() % 3 == 0)) {
                             device.timeout = intVector[2];
@@ -400,13 +473,18 @@ void CommLayer::parsePacket(QString sender, QString packet, ECommType type) {
 
                             commByType(type)->updateDevice(device);
                         } else {
-                            if (intVector[0] == 7) {
+                            if (!isValid) {
+                                qDebug() << "WARNING: Invalid packet: " << packet;
+                            } else if (intVector[0] == 7) {
                                 qDebug() << "WARNING: Invalid state update packet: " << packet;
                             } else {
-                                qDebug() << "WARNING: Invalid packet size: " << intVector.size() << "for packet header" << intVector[0];
+                                qDebug() << "WARNING: Invalid packet size: " << intVector.size() << "for packet header" << packetHeaderToString((EPacketHeader)intVector[0]);
                             }
+                            isValid = false;
                         }
-                        emit packetReceived(type);
+                        if (isValid) {
+                            emit packetReceived(cor::convertCommTypeToProtocolType(type));
+                        }
                     } else {
                         qDebug() << "packet header not valid...";
                     }
@@ -425,8 +503,8 @@ bool CommLayer::verifyStateUpdatePacketValidity(std::vector<int> packetIntVector
     if (!(packetIntVector[x + 3] >= 0   && packetIntVector[x + 3] <= 255))  isValid = false;
     if (!(packetIntVector[x + 4] >= 0   && packetIntVector[x + 4] <= 255))  isValid = false;
     if (!(packetIntVector[x + 5] >= 0   && packetIntVector[x + 5] <= 255))  isValid = false;
-    if (!(packetIntVector[x + 6] >= 0   && packetIntVector[x + 6] < (int)ELightingRoutine::eLightingRoutine_MAX)) isValid = false;
-    if (!(packetIntVector[x + 7] >= 0   && packetIntVector[x + 7] < (int)EColorGroup::eColorGroup_MAX)) isValid = false;
+    if (!(packetIntVector[x + 6] >= 0   && packetIntVector[x + 6] < (int)ERoutine::eRoutine_MAX)) isValid = false;
+    if (!(packetIntVector[x + 7] >= 0   && packetIntVector[x + 7] < (int)EPalette::ePalette_MAX)) isValid = false;
     if (!(packetIntVector[x + 8] >= 0   && packetIntVector[x + 8] <= 100))   isValid = false;
     if (!(packetIntVector[x + 9] >= 0   && packetIntVector[x + 9] <= 2000))  isValid = false;
     if (!(packetIntVector[x + 10] >= 0  && packetIntVector[x + 10] <= 1000)) isValid = false;
@@ -456,11 +534,11 @@ CommType *CommLayer::commByType(ECommType type) {
     case ECommType::eUDP:
         ptr = (CommType*)mUDP.get();
         break;
-    case ECommType::eNanoLeaf:
+    case ECommType::eNanoleaf:
         ptr = (CommType*)mNanoLeaf.get();
         break;
     default:
-        ptr = (CommType*)mUDP.get();
+        throw "no type for this commtype";
         break;
     }
     return ptr;
@@ -475,7 +553,7 @@ bool CommLayer::startDiscoveringController(ECommType type, QString controller) {
 }
 
 bool CommLayer::fillDevice(cor::Light& device) {
-    return commByType(device.type())->fillDevice(device);
+    return commByType(device.commType())->fillDevice(device);
 }
 
 const std::list<cor::Controller> CommLayer::allArduinoControllers() {
@@ -508,7 +586,7 @@ const std::list<cor::Light> CommLayer::allDevices() {
 
 bool CommLayer::loadDebugData(const std::list<cor::Light> debugDevices) {
     for (auto& device : debugDevices) {
-        commByType(device.type())->updateDevice(device);
+        commByType(device.commType())->updateDevice(device);
     }
     return true;
 }
@@ -601,54 +679,54 @@ std::list<cor::LightGroup> CommLayer::groupList() {
     return retList;
 }
 
-void CommLayer::resetStateUpdates(ECommTypeSettings type) {
-    if (type == ECommTypeSettings::eArduCor) {
+void CommLayer::resetStateUpdates(EProtocolType type) {
+    if (type == EProtocolType::eArduCor) {
         commByType(ECommType::eUDP)->resetStateUpdateTimeout();
         commByType(ECommType::eHTTP)->resetStateUpdateTimeout();
 #ifndef MOBILE_BUILD
         commByType(ECommType::eSerial)->resetStateUpdateTimeout();
 #endif
-    } else if (type == ECommTypeSettings::eHue) {
+    } else if (type == EProtocolType::eHue) {
         commByType(ECommType::eHue)->resetStateUpdateTimeout();
-    } else if (type == ECommTypeSettings::eNanoLeaf) {
-        commByType(ECommType::eNanoLeaf)->resetStateUpdateTimeout();
+    } else if (type == EProtocolType::eNanoleaf) {
+        commByType(ECommType::eNanoleaf)->resetStateUpdateTimeout();
     }
-    //qDebug() << "INFO: reset state updates" << cor::ECommTypeSettingsToString(type);
+    //qDebug() << "INFO: reset state updates" << cor::EProtocolTypeToString(type);
 }
 
 
-void CommLayer::stopStateUpdates(ECommTypeSettings type) {
-    if (type == ECommTypeSettings::eArduCor) {
+void CommLayer::stopStateUpdates(EProtocolType type) {
+    if (type == EProtocolType::eArduCor) {
         commByType(ECommType::eUDP)->stopStateUpdates();
         commByType(ECommType::eHTTP)->stopStateUpdates();
 #ifndef MOBILE_BUILD
         commByType(ECommType::eSerial)->stopStateUpdates();
 #endif
-    } else if (type == ECommTypeSettings::eHue) {
+    } else if (type == EProtocolType::eHue) {
         commByType(ECommType::eHue)->stopStateUpdates();
-    } else if (type == ECommTypeSettings::eNanoLeaf) {
-        commByType(ECommType::eNanoLeaf)->stopStateUpdates();
+    } else if (type == EProtocolType::eNanoleaf) {
+        commByType(ECommType::eNanoleaf)->stopStateUpdates();
     }
-    qDebug() << "INFO: stop state updates" << cor::ECommTypeSettingsToString(type);
+    qDebug() << "INFO: stop state updates" << protocolToString(type);
 }
 
 
-void CommLayer::startup(ECommTypeSettings type) {
-    if (type == ECommTypeSettings::eArduCor) {
+void CommLayer::startup(EProtocolType type) {
+    if (type == EProtocolType::eArduCor) {
         commByType(ECommType::eUDP)->startup();
         commByType(ECommType::eHTTP)->startup();
 #ifndef MOBILE_BUILD
         commByType(ECommType::eSerial)->startup();
 #endif
-    } else if (type == ECommTypeSettings::eHue) {
+    } else if (type == EProtocolType::eHue) {
         commByType(ECommType::eHue)->startup();
-    } else if (type == ECommTypeSettings::eNanoLeaf) {
-        commByType(ECommType::eNanoLeaf)->startup();
+    } else if (type == EProtocolType::eNanoleaf) {
+        commByType(ECommType::eNanoleaf)->startup();
     }
 }
 
-void CommLayer::shutdown(ECommTypeSettings type) {
-    if (type == ECommTypeSettings::eArduCor) {
+void CommLayer::shutdown(EProtocolType type) {
+    if (type == EProtocolType::eArduCor) {
         if (commByType(ECommType::eUDP)->runningDiscovery()) {
             commByType(ECommType::eUDP)->stopDiscovery();
         }
@@ -663,55 +741,55 @@ void CommLayer::shutdown(ECommTypeSettings type) {
         }
         commByType(ECommType::eSerial)->shutdown();
 #endif
-    } else if (type == ECommTypeSettings::eHue) {
+    } else if (type == EProtocolType::eHue) {
         if (commByType(ECommType::eHue)->runningDiscovery()) {
             commByType(ECommType::eHue)->stopDiscovery();
         }
         commByType(ECommType::eHue)->shutdown();
-    } else if (type == ECommTypeSettings::eNanoLeaf) {
-        if (commByType(ECommType::eNanoLeaf)->runningDiscovery()) {
-            commByType(ECommType::eNanoLeaf)->stopDiscovery();
+    } else if (type == EProtocolType::eNanoleaf) {
+        if (commByType(ECommType::eNanoleaf)->runningDiscovery()) {
+            commByType(ECommType::eNanoleaf)->stopDiscovery();
         }
-        commByType(ECommType::eNanoLeaf)->shutdown();
+        commByType(ECommType::eNanoleaf)->shutdown();
     }
 }
 
-bool CommLayer::hasStarted(ECommTypeSettings type) {
-    if (type == ECommTypeSettings::eArduCor) {
+bool CommLayer::hasStarted(EProtocolType type) {
+    if (type == EProtocolType::eArduCor) {
         return commByType(ECommType::eUDP)->hasStarted();
-    } else if (type == ECommTypeSettings::eHue) {
+    } else if (type == EProtocolType::eHue) {
         return commByType(ECommType::eHue)->hasStarted();
-    } else if (type == ECommTypeSettings::eNanoLeaf) {
-        return commByType(ECommType::eNanoLeaf)->hasStarted();
+    } else if (type == EProtocolType::eNanoleaf) {
+        return commByType(ECommType::eNanoleaf)->hasStarted();
     }
     return false;
 }
 
-void CommLayer::startDiscovery(ECommTypeSettings type) {
-    if (type == ECommTypeSettings::eArduCor) {
+void CommLayer::startDiscovery(EProtocolType type) {
+    if (type == EProtocolType::eArduCor) {
         commByType(ECommType::eUDP)->startDiscovery();
         commByType(ECommType::eHTTP)->startDiscovery();
 #ifndef MOBILE_BUILD
         commByType(ECommType::eSerial)->startDiscovery();
 #endif
-    } else if (type == ECommTypeSettings::eHue) {
+    } else if (type == EProtocolType::eHue) {
         commByType(ECommType::eHue)->startDiscovery();
-    } else if (type == ECommTypeSettings::eNanoLeaf) {
-        commByType(ECommType::eNanoLeaf)->startDiscovery();
+    } else if (type == EProtocolType::eNanoleaf) {
+        commByType(ECommType::eNanoleaf)->startDiscovery();
     }
 }
 
 
-void CommLayer::stopDiscovery(ECommTypeSettings type) {
-    if (type == ECommTypeSettings::eArduCor) {
+void CommLayer::stopDiscovery(EProtocolType type) {
+    if (type == EProtocolType::eArduCor) {
         commByType(ECommType::eUDP)->stopDiscovery();
         commByType(ECommType::eHTTP)->stopDiscovery();
 #ifndef MOBILE_BUILD
         commByType(ECommType::eSerial)->stopDiscovery();
 #endif
-    } else if (type == ECommTypeSettings::eHue) {
+    } else if (type == EProtocolType::eHue) {
         commByType(ECommType::eHue)->stopDiscovery();
-    } else if (type == ECommTypeSettings::eNanoLeaf) {
-        commByType(ECommType::eNanoLeaf)->stopDiscovery();
+    } else if (type == EProtocolType::eNanoleaf) {
+        commByType(ECommType::eNanoleaf)->stopDiscovery();
     }
 }

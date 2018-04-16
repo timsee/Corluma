@@ -77,12 +77,8 @@ void ListDeviceWidget::init(const cor::Light& device) {
 void ListDeviceWidget::updateWidget(const cor::Light& device,
                                      const std::vector<QColor>& colors) {
     mDevice = device;
-
-    if (device.lightingRoutine <= cor::ELightingRoutineSingleColorEnd ) {
-        mIconData.setSingleLightingRoutine(device.lightingRoutine, device.color);
-    } else {
-        mIconData.setMultiLightingRoutine(device.lightingRoutine, device.colorGroup, colors);
-    }
+    QJsonObject object = cor::lightToJson(device);
+    mIconData.setRoutine(object, colors);
 
     QString nameText = createName(device);
     if (nameText.compare(mController->text()) != 0) {
@@ -121,7 +117,7 @@ QString ListDeviceWidget::convertUglyHueNameToPrettyName(QString name) {
 }
 
 QString ListDeviceWidget::structToIdentifierString(const cor::Light& device) {
-    QString returnString = cor::ECommTypeToString(device.type());
+    QString returnString = commTypeToString(device.commType());
     QString onString;
     if(device.isReachable) {
         onString = "AA";
@@ -224,13 +220,9 @@ void ListDeviceWidget::coolDownClick() {
 
 QString ListDeviceWidget::createName(const cor::Light& device) {
     QString nameText;
-    if (device.type() == ECommType::eHTTP
-#ifndef MOBILE_BUILD
-            || device.type() == ECommType::eSerial
-#endif
-            || device.type() == ECommType::eUDP) {
+    if (device.protocol() == EProtocolType::eArduCor) {
         nameText = device.name;
-    } else if (device.type() == ECommType::eHue) {
+    } else if (device.protocol() == EProtocolType::eHue) {
         nameText = convertUglyHueNameToPrettyName(device.name);
     } else {
         nameText = device.controller();
@@ -269,7 +261,7 @@ void ListDeviceWidget::updateTypeIcon(ELightHardwareType type) {
         case ELightHardwareType::eBloom:
             typeResource = QString(":/images/hue_bloom.png");
             break;
-        case ELightHardwareType::eNanoLeaf:
+        case ELightHardwareType::eNanoleaf:
             typeResource = QString(":/images/nanoleaf_icon.png");
             break;
         case ELightHardwareType::ELightHardwareType_MAX:

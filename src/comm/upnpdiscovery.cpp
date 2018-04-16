@@ -7,6 +7,7 @@
 #include "upnpdiscovery.h"
 
 UPnPDiscovery::UPnPDiscovery(QObject *parent) : QObject(parent) {
+    mListenerCount = 0;
     mSocket = new QUdpSocket(this);
     connect(mSocket, SIGNAL(readyRead()), this, SLOT(readPendingUPnPDatagrams()));
 }

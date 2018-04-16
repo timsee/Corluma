@@ -115,7 +115,6 @@ SOURCES += main.cpp \
     comm/commhue.cpp \
     comm/commnanoleaf.cpp \
     comm/commpacketparser.cpp \
-    comm/commtypesettings.cpp \
     comm/commlayer.cpp \
     comm/crccalculator.cpp \
     comm/datasync.cpp \
@@ -158,7 +157,6 @@ SOURCES += main.cpp \
     settingspage.cpp \
     datalayer.cpp \
     icondata.cpp \
-    lightingroutines.cpp \
     connectionpage.cpp \
     floatinglayout.cpp \
     groupsparser.cpp \
@@ -179,7 +177,8 @@ SOURCES += main.cpp \
     globalsettingswidget.cpp \
     editablefieldwidget.cpp \
     searchwidget.cpp \
-    listeditwidget.cpp
+    listeditwidget.cpp \
+    comm/protocolsettings.cpp
 
 HEADERS  +=  comm/commtype.h \
     comm/commserial.h \
@@ -187,7 +186,6 @@ HEADERS  +=  comm/commtype.h \
     comm/commudp.h \
     comm/commhue.h \
     comm/commnanoleaf.h \
-    comm/commtypesettings.h \
     comm/commpacketparser.h \
     comm/commlayer.h \
     comm/crccalculator.h \
@@ -237,7 +235,6 @@ HEADERS  +=  comm/commtype.h \
     icondata.h \
     lightingpage.h \
     lightingprotocols.h \
-    lightingroutines.h \
     connectionpage.h \
     floatinglayout.h \
     groupsparser.h \
@@ -259,7 +256,8 @@ HEADERS  +=  comm/commtype.h \
     globalsettingswidget.h \
     editablefieldwidget.h \
     searchwidget.h \
-    listeditwidget.h
+    listeditwidget.h \
+    comm/protocolsettings.h
 
 FORMS    += discoverypage.ui \
     editcollectionpage.ui

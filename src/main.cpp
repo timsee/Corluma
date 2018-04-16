@@ -5,6 +5,7 @@
  */
 
 #include "mainwindow.h"
+#include "comm/protocolsettings.h"
 #include "groupsparser.h"
 #include "cor/utils.h"
 
@@ -103,6 +104,8 @@ int main(int argc, char *argv[]) {
     qDebug() << "product version: "     << QSysInfo::productVersion();
     qDebug() << "windows version: "     << QSysInfo::windowsVersion();
     qDebug() << "";
+    qDebug() << "Default Save Path: "   << GroupsParser::defaultSavePath();
+    qDebug() << "";
     qDebug() << "Supports SSL:"         << QSslSocket::supportsSsl();
     qDebug() << "SSL Library Build Version: " << QSslSocket::sslLibraryBuildVersionString();
     qDebug() << "SSL Library Version: "  << QSslSocket::sslLibraryVersionString();
@@ -133,15 +136,17 @@ int main(int argc, char *argv[]) {
      */
     if (settings.value(kFirstTimeOpenKey, QVariant(127)) == QVariant(127)) {
         //add default settings
-        settings.setValue(kAdvanceModeKey,  QString::number((int)false));
         settings.setValue(kUseTimeoutKey,   QString::number((int)true));
         settings.setValue(kTimeoutValue,    QString::number(120));
-        settings.setValue(kSpeedValue,      QString::number(425));
 
-        // comm settings
-        settings.setValue(kUseArduCorKey,   QString::number((int)false));
-        settings.setValue(kUseHueKey,       QString::number((int)true));
-        settings.setValue(kUseNanoLeafKey,  QString::number((int)false));
+
+        std::vector<QString> protocolInUseKeys = ProtocolSettings::protocolKeys();
+        for (auto key : protocolInUseKeys) {
+            settings.setValue(key,   QString::number((int)true));
+        }
+        // set arducor to off
+        settings.setValue(protocolInUseKeys[(size_t)EProtocolType::eArduCor],   QString::number((int)false));
+
 
         // set the value so it no longer gives a default back.
         settings.setValue(kFirstTimeOpenKey, QString::number(10));

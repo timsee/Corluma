@@ -212,8 +212,10 @@ void CommSerial::handleReadyRead() {
             packet.append(serial.first->readAll());
             QString payload = QString::fromUtf8(packet.trimmed());
             serial.second += payload;
-            if (serial.second.at(serial.second.length() - 1) == ';') {
-                validPacket = true;
+            if (serial.second.size() > 0) {
+                if (serial.second.at(serial.second.length() - 1) == ';') {
+                    validPacket = true;
+                }
             }
         }
         if (validPacket) {

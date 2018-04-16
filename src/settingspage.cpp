@@ -226,11 +226,10 @@ void SettingsPage::resetButtonClicked() {
 }
 
 void SettingsPage::resetToDefaults() {
-    mGlobalWidget->checkBoxClicked(ECommTypeSettings::eHue, true);
-    mGlobalWidget->checkBoxClicked(ECommTypeSettings::eArduCor, false);
-    mGlobalWidget->checkBoxClicked(ECommTypeSettings::eNanoLeaf, false);
+    mGlobalWidget->checkBoxClicked(EProtocolType::eHue, true);
+    mGlobalWidget->checkBoxClicked(EProtocolType::eArduCor, false);
+    mGlobalWidget->checkBoxClicked(EProtocolType::eNanoleaf, false);
 
-    mGlobalWidget->advanceModeButtonPressed(false);
     mGlobalWidget->timeoutButtonPressed(true);
 
     // load no data, deleting everything.

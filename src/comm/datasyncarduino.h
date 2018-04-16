@@ -48,10 +48,10 @@ public slots:
     void resetSync() override;
 
     /*!
-     * \brief commPacketReceived a packet was received from a given CommType. In some cases, receiving a packet
-     *        will reset the sync for that commtype.
+     * \brief commPacketReceived a packet was received from a given EProtocolType. In some cases, receiving a packet
+     *        will reset the sync for that protocol type.
      */
-    void commPacketReceived(ECommType) override;
+    void commPacketReceived(EProtocolType) override;
 
 private slots:
     /*!

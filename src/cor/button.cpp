@@ -13,8 +13,6 @@ namespace cor
 {
 
 Button::Button(QWidget *parent) : QPushButton(parent) {
-    mLightingRoutine = ELightingRoutine::eLightingRoutine_MAX;
-    mColorGroup = EColorGroup::eColorGroup_MAX;
     mSetupHasBeenCalled = false;
     mIsMenuButton = false;
 
@@ -30,9 +28,9 @@ void Button::setupAsMenuButton(int pageNumber, const std::vector<QColor>& group)
     if (pageNumber == 0) {
         mIconData.setSolidColor(QColor(0,255,0));
     } else if (pageNumber == 1) {
-        mIconData.setMultiFade(EColorGroup::eCustom, group, true);
+        mIconData.setMultiFade(EPalette::eCustom, group, true);
     } else {
-        mIconData.setMultiFade(EColorGroup::eSevenColor, group);
+        mIconData.setMultiFade(EPalette::eSevenColor, group);
     }
     button->setIcon(mIconData.renderAsQPixmap());
     mSetupHasBeenCalled = true;
@@ -46,17 +44,22 @@ void Button::setupAsMenuButton(int pageNumber, const std::vector<QColor>& group)
     resizeIcon();
 }
 
-void Button::setupAsStandardButton(ELightingRoutine routine, EColorGroup colorGroup, QString label, const std::vector<QColor>& group) {
+void Button::setupAsStandardButton(QJsonObject routineObject, QString label, const std::vector<QColor>& group) {
+    ERoutine routine = stringToRoutine(routineObject["routine"].toString());
+    EPalette palette = EPalette::ePalette_MAX;
+    if (routineObject["palette"].isString()) {
+        palette = stringToPalette(routineObject["palette"].toString());
+    }
+    mKey = label;
     mIconData = IconData(256, 256);
     mSetupHasBeenCalled = true;
     bool renderIcon = false;
     switch(routine) {
-        case ELightingRoutine::eMultiGlimmer:
-        case ELightingRoutine::eMultiFade:
-        case ELightingRoutine::eMultiRandomSolid:
-        case ELightingRoutine::eMultiRandomIndividual:
-        case ELightingRoutine::eMultiBarsSolid:
-        case ELightingRoutine::eMultiBarsMoving:
+        case ERoutine::eMultiGlimmer:
+        case ERoutine::eMultiFade:
+        case ERoutine::eMultiRandomSolid:
+        case ERoutine::eMultiRandomIndividual:
+        case ERoutine::eMultiBars:
             renderIcon = true;
             break;
         default:
@@ -64,15 +67,19 @@ void Button::setupAsStandardButton(ELightingRoutine routine, EColorGroup colorGr
     }
 
     if (renderIcon) {
-        mIconData.setMultiLightingRoutine(routine, colorGroup, group);
+        cor::Light light;
+        light.routine = routine;
+        light.palette = palette;
+        light.speed = 100;
+        QJsonObject routineObject = cor::lightToJson(light);
+        mIconData.setRoutine(routineObject, group);
         button->setIcon(mIconData.renderAsQPixmap());
     }
 
-    mLightingRoutine = routine;
-    mColorGroup = colorGroup;
+    mRoutineObject = routineObject;
 
     mLayout = new QVBoxLayout;
-    mLayout->setSpacing(2);
+    mLayout->setSpacing(0);
     mLayout->setContentsMargins(0,0,0,0);
     mLayout->addWidget(button);
     mLabel = label;
@@ -86,21 +93,14 @@ void Button::setupAsStandardButton(ELightingRoutine routine, EColorGroup colorGr
         buttonLabel->setStyleSheet("font: 8pt;");
         buttonLabel->setAlignment(Qt::AlignCenter);
         mLayout->addWidget(buttonLabel);
-        button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+        button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     }
+
     button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mLayout->setStretch(0, 5);
     mLayout->setStretch(1, 1);
     setLayout(mLayout);
     resizeIcon();
-}
-
-ELightingRoutine Button::lightingRoutine() {
-    return mLightingRoutine;
-}
-
-EColorGroup Button::colorGroup() {
-    return mColorGroup;
 }
 
 void Button::enable(bool shouldEnable) {
@@ -142,14 +142,9 @@ void Button::resizeIcon() {
     button->setIconSize(newSize);
 }
 
-void Button::updateIconSingleColorRoutine(ELightingRoutine lightingRoutine, QColor color) {
-    mIconData.setSingleLightingRoutine(lightingRoutine, color);
-    button->setIcon(mIconData.renderAsQPixmap());
-    resizeIcon();
-}
 
-void Button::updateIconPresetColorRoutine(ELightingRoutine lightingRoutine, EColorGroup colorGroup, const std::vector<QColor>& colors, int colorMax) {
-    mIconData.setMultiLightingRoutine(lightingRoutine, colorGroup, colors, colorMax);
+void Button::updateRoutine(const QJsonObject& routineObject, const std::vector<QColor>& colors) {
+    mIconData.setRoutine(routineObject, colors);
     button->setIcon(mIconData.renderAsQPixmap());
     resizeIcon();
 }
@@ -160,13 +155,17 @@ void Button::handleButton() {
         if (mIsMenuButton) {
             emit menuButtonClicked(mPageNumber);
         } else {
-            emit buttonClicked(mLightingRoutine, mColorGroup);
+            emit buttonClicked(mRoutineObject);
         }
     }
 }
 
 void Button::hideContent() {
     button->setVisible(false);
+}
+
+QString Button::label() {
+    return mKey;
 }
 
 }

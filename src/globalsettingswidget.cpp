@@ -47,29 +47,12 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
     mTimeoutCheckBox = new cor::CheckBox(this, "Use Timeout");
     connect(mTimeoutCheckBox, SIGNAL(boxChecked(bool)), this, SLOT(timeoutButtonPressed(bool)));
 
-    mAdvanceModeCheckBox = new cor::CheckBox(this, "Advance Mode");
-    connect(mAdvanceModeCheckBox, SIGNAL(boxChecked(bool)), this, SLOT(advanceModeButtonPressed(bool)));
-    mAdvanceModeCheckBox->setGeometry(mTimeoutCheckBox->geometry().width() + mSpacerPixels,
-                                      mTimeoutCheckBox->geometry().y(),
-                                      mTimeoutCheckBox->geometry().width(),
-                                      mTimeoutCheckBox->geometry().height());
-
     mMinHeight = mTimeoutCheckBox->height();
 
     mSettings = new QSettings();
     //-----------
     // Sliders
     //-----------
-
-    mSpeedSlider = new cor::Slider(this);
-    mSpeedSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mSpeedSlider->slider()->setRange(1, 1000);
-    mSpeedSlider->slider()->setValue(mSettings->value(kSpeedValue).toInt());
-    mSpeedSlider->setSliderHeight(0.5f);
-    mSpeedSlider->slider()->setTickPosition(QSlider::TicksBelow);
-    mSpeedSlider->slider()->setTickInterval(250);
-    mSpeedSlider->setShouldDrawTickLabels(true);
-
     mTimeoutSlider = new cor::Slider(this);
     mTimeoutSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mTimeoutSlider->slider()->setRange(0, 300);
@@ -82,11 +65,6 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
     //-----------
     // Slider Labels
     //-----------
-
-    mSpeedLabel = new QLabel("Speed", this);
-    mSpeedLabel->setStyleSheet(transparentStyleSheet);
-    mSpeedLabel->setMinimumHeight(mSpeedLabel->height() * 2);
-    mSpeedLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     mTimeoutLabel = new QLabel("Timeout", this);
     mTimeoutLabel->setStyleSheet(transparentStyleSheet);
@@ -113,7 +91,6 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
                          mHueButton,
                          mNanoLeafButton};
 
-    connect(mSpeedSlider, SIGNAL(valueChanged(int)), this, SLOT(speedChanged(int)));
     connect(mTimeoutSlider, SIGNAL(valueChanged(int)), this, SLOT(timeoutChanged(int)));
 
     connect(mHueButton, SIGNAL(clicked(bool)), this, SLOT(hueCheckboxClicked(bool)));
@@ -129,11 +106,6 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
     // Access Persistent Memory
     //-----------
 
-    // check check boxes if they were checked previously
-    bool useAdvanceMode = mSettings->value(kAdvanceModeKey).toBool();
-    mAdvanceModeCheckBox->setChecked(useAdvanceMode);
-    showAdvanceMode(useAdvanceMode);
-
     bool useTimeout = mSettings->value(kUseTimeoutKey).toBool();
     mTimeoutCheckBox->setChecked(useTimeout);
     showTimeout(useTimeout);
@@ -141,54 +113,37 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
 
 
 void GlobalSettingsWidget::hueCheckboxClicked(bool checked) {
-    checkBoxClicked(ECommTypeSettings::eHue, checked);
+    checkBoxClicked(EProtocolType::eHue, checked);
 }
 
 void GlobalSettingsWidget::arduCorButtonClicked(bool checked) {
-    checkBoxClicked(ECommTypeSettings::eArduCor, checked);
+    checkBoxClicked(EProtocolType::eArduCor, checked);
 }
 
 void GlobalSettingsWidget::nanoLeafButtonClicked(bool checked) {
-    checkBoxClicked(ECommTypeSettings::eNanoLeaf, checked);
+    checkBoxClicked(EProtocolType::eNanoleaf, checked);
 }
 
 void GlobalSettingsWidget::checkCheckBoxes() {
-    if (mData->commTypeSettings()->commTypeSettingsEnabled(ECommTypeSettings::eHue)) {
+    if (mData->protocolSettings()->enabled(EProtocolType::eHue)) {
         mHueButton->setChecked(true);
     } else {
         mHueButton->setChecked(false);
     }
 
-    if (mData->commTypeSettings()->commTypeSettingsEnabled(ECommTypeSettings::eArduCor)) {
+    if (mData->protocolSettings()->enabled(EProtocolType::eArduCor)) {
         mArduCorButton->setChecked(true);
     } else {
         mArduCorButton->setChecked(false);
     }
 
-    if (mData->commTypeSettings()->commTypeSettingsEnabled(ECommTypeSettings::eNanoLeaf)) {
+    if (mData->protocolSettings()->enabled(EProtocolType::eNanoleaf)) {
         mNanoLeafButton->setChecked(true);
     } else {
         mNanoLeafButton->setChecked(false);
     }
 }
 
-void GlobalSettingsWidget::speedChanged(int newSpeed) {
-    int finalSpeed;
-    // first half of slider is going linearly between 20 FPS down to 1 FPS
-    if (newSpeed < 500) {
-        float percent = newSpeed / 500.0f;
-        finalSpeed = (int)((1.0f - percent) * 2000.0f);
-    } else {
-        // second half maps 1FPS to 0.01FPS
-        float percent = newSpeed - 500.0f;
-        finalSpeed = (500 - percent) / 5.0f;
-        if (finalSpeed < 2.0f) {
-            finalSpeed = 2.0f;
-        }
-    }
-    mData->updateSpeed(finalSpeed);
-    mSettings->setValue(kSpeedValue, QString::number(finalSpeed));
-}
 
 void GlobalSettingsWidget::timeoutChanged(int newTimeout) {
    mData->updateTimeout(newTimeout);
@@ -197,71 +152,54 @@ void GlobalSettingsWidget::timeoutChanged(int newTimeout) {
 
 
 
-void GlobalSettingsWidget::checkBoxClicked(ECommTypeSettings type, bool checked) {
-    bool successful = mData->commTypeSettings()->enableCommType(type, checked);
-    if (type == ECommTypeSettings::eArduCor) {
-        mData->commTypeSettings()->enableCommType(ECommTypeSettings::eArduCor, checked);
-    }
+void GlobalSettingsWidget::checkBoxClicked(EProtocolType type, bool checked) {
+    bool successful = mData->protocolSettings()->enable(type, checked);
     if (!successful) {
         mConnectionButtons[(uint32_t)type]->setChecked(true);
-       // mConnectionButtons[mData->commTypeSettings()->indexOfCommTypeSettings(type)]->setStyleSheet("background-color:#4A4949;");
+       // mConnectionButtons[mData->ProtocolSettings()->indexOfProtocolSettings(type)]->setStyleSheet("background-color:#4A4949;");
     }
 
     if (checked) {
         mComm->startup(type);
     } else {
-        if (type == ECommTypeSettings::eArduCor) {
+        if (type == EProtocolType::eArduCor) {
             mComm->shutdown(type);
             mData->removeDevicesOfType(ECommType::eUDP);
             mData->removeDevicesOfType(ECommType::eHTTP);
 #ifndef MOBILE_BUILD
             mData->removeDevicesOfType(ECommType::eSerial);
 #endif
-        } else if (type == ECommTypeSettings::eHue) {
+        } else if (type == EProtocolType::eHue) {
             mComm->shutdown(type);
             mData->removeDevicesOfType(ECommType::eHue);
 
-        } else if (type == ECommTypeSettings::eNanoLeaf) {
+        } else if (type == EProtocolType::eNanoleaf) {
             mComm->shutdown(type);
-            mData->removeDevicesOfType(ECommType::eNanoLeaf);
+            mData->removeDevicesOfType(ECommType::eNanoleaf);
         }
 
 
         // update the UI accordingly
-        if (type == ECommTypeSettings::eHue) {
+        if (type == EProtocolType::eHue) {
             mHueButton->setChecked(false);
-        } else if (type == ECommTypeSettings::eArduCor) {
+        } else if (type == EProtocolType::eArduCor) {
             mArduCorButton->setChecked(false);
-        } else if (type == ECommTypeSettings::eNanoLeaf) {
+        } else if (type == EProtocolType::eNanoleaf) {
             mNanoLeafButton->setChecked(false);
         }
     }
 }
 
 void GlobalSettingsWidget::updateUI() {
-    if (mData->currentRoutine() <= ELightingRoutine::eSingleSawtoothFadeOut) {
-        mSpeedSlider->setSliderColorBackground(mData->mainColor());
-        mTimeoutSlider->setSliderColorBackground(mData->mainColor());
-    } else {
-        mSpeedSlider->setSliderColorBackground(mData->colorsAverage(mData->currentColorGroup()));
-        mTimeoutSlider->setSliderColorBackground(mData->colorsAverage(mData->currentColorGroup()));
-    }
+    mTimeoutSlider->setSliderColorBackground(mData->mainColor());
 }
 
 void GlobalSettingsWidget::show() {
     checkCheckBoxes();
 
-    mSpeedSlider->enable(true);
     mTimeoutSlider->enable(true);
 
-    if (mData->currentDevices().size() > 0) {
-        mSpeedSlider->setSliderColorBackground(mData->mainColor());
-        mTimeoutSlider->setSliderColorBackground(mData->mainColor());
-    } else {
-        QColor color = QColor(61, 142, 201, 255);
-        mSpeedSlider->setSliderColorBackground(color);
-        mTimeoutSlider->setSliderColorBackground(color);
-    }
+    mTimeoutSlider->setSliderColorBackground(mData->mainColor());
 
     resize();
 }
@@ -284,11 +222,6 @@ void GlobalSettingsWidget::paintEvent(QPaintEvent *) {
     painter.drawPath(path);
 }
 
-void GlobalSettingsWidget::advanceModeButtonPressed(bool isChecked) {
-    showAdvanceMode(isChecked);
-    mSettings->setValue(kAdvanceModeKey, QString::number((int)isChecked));
-}
-
 void GlobalSettingsWidget::timeoutButtonPressed(bool isChecked) {
     mSettings->setValue(kUseTimeoutKey, QString::number((int)isChecked));
     mData->enableTimeout(isChecked);
@@ -299,9 +232,6 @@ int GlobalSettingsWidget::timeoutValue() {
     return mTimeoutSlider->slider()->value();
 }
 
-int GlobalSettingsWidget::speedValue() {
-    return mSpeedSlider->slider()->value();
-}
 
 void GlobalSettingsWidget::showTimeout(bool showTimeout) {
     mTimeoutLabel->setVisible(showTimeout);
@@ -309,22 +239,10 @@ void GlobalSettingsWidget::showTimeout(bool showTimeout) {
     resize();
 }
 
-void GlobalSettingsWidget::showAdvanceMode(bool showAdvanceMode) {
-    mSpeedSlider->setVisible(showAdvanceMode);
-    mSpeedLabel->setVisible(showAdvanceMode);
-
-    mEnabledConnectionsLabel->setVisible(showAdvanceMode);
-
-    mHueButton->setVisible(showAdvanceMode);
-    mArduCorButton->setVisible(showAdvanceMode);
-    resize();
-}
-
 void GlobalSettingsWidget::resize() {
     
     // resize the checkboxes widths, if needed
     mTimeoutCheckBox->downsizeTextWidthToFit(this->width() * 0.45f);
-    mAdvanceModeCheckBox->downsizeTextWidthToFit(this->width() * 0.45f);
 
     uint32_t currentY = 0;
     mSliderMinWidth = this->width() * 0.66f;
@@ -334,11 +252,6 @@ void GlobalSettingsWidget::resize() {
                                   mSpacerPixels,
                                   mTimeoutCheckBox->geometry().width(),
                                   mTimeoutCheckBox->geometry().height());
-
-    mAdvanceModeCheckBox->setGeometry(mTimeoutCheckBox->geometry().width() + mSpacerPixels * 2,
-                                      mTimeoutCheckBox->geometry().y(),
-                                      mAdvanceModeCheckBox->geometry().width(),
-                                      mTimeoutCheckBox->geometry().height());
 
     currentY += mTimeoutCheckBox->height() + mSpacerPixels;
 
@@ -352,22 +265,6 @@ void GlobalSettingsWidget::resize() {
                                   mSliderMinWidth,
                                   sliderHeight);
         currentY += mTimeoutSlider->height() + mSpacerPixels;
-    }
-
-    if (mSpeedSlider->isVisible()) {
-        int width = mSpeedLabel->width();
-        if (mTimeoutLabel->isVisible()) {
-            width = mTimeoutLabel->width();
-        }
-        mSpeedLabel->setGeometry(mSpacerPixels,
-                                 currentY,
-                                 width,
-                                 sliderHeight);
-        mSpeedSlider->setGeometry(mSpeedLabel->geometry().width() + 2 * mSpacerPixels,
-                                  currentY,
-                                  mSliderMinWidth,
-                                  sliderHeight);
-        currentY += mSpeedSlider->height() + mSpacerPixels;
     }
 
     if (mEnabledConnectionsLabel->isVisible()) {
@@ -398,7 +295,7 @@ void GlobalSettingsWidget::resize() {
         currentY += mHueButton->height() + 2 * mSpacerPixels;
     }
 
-    if (!mTimeoutSlider->isVisible() && !mSpeedSlider->isVisible())
+    if (!mTimeoutSlider->isVisible())
     {
         currentY += mSpacerPixels;
     }

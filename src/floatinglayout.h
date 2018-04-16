@@ -51,19 +51,11 @@ public:
     void move(QPoint topRightPoint);
 
     /*!
-     * \brief updateRoutineSingleColor update routine icon when a single color routine is changed.
-     * \param routine new routine for icon.
-     * \param color new color for icon.
+     * \brief updateRoutine show a routine on the button
+     * \param routineObject the json representatino of the routine
+     * \param colors the colors used for multi color routines
      */
-    void updateRoutineSingleColor(ELightingRoutine routine, QColor color);
-
-    /*!
-     * \brief updateRoutineMultiColor update routine icon with multi color routine.
-     * \param routine new routine for icon.
-     * \param colors the full array of colors
-     * \param colorCount the number of colors to use from the array.
-     */
-    void updateRoutineMultiColor(ELightingRoutine routine, std::vector<QColor> colors, int colorCount);
+    void updateRoutine(const QJsonObject& routineObject, std::vector<QColor> colors);
 
     /*!
      * \brief updateMultiPageButton update the multi page button to display a prettier icon
@@ -82,7 +74,7 @@ public:
      * \param type comm type of discovery button
      * \param pixmap new pixmap for discovery button
      */
-    void updateDiscoveryButton(ECommTypeSettings type, QPixmap pixmap);
+    void updateDiscoveryButton(EProtocolType type, QPixmap pixmap);
 
     /*!
      * \brief addMultiRoutineIcon add a multi routine icon

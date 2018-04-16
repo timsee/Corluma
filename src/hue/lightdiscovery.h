@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QPushButton>
 
+#include "lightingpage.h"
 #include "cor/topwidget.h"
 #include "searchwidget.h"
 #include "comm/commlayer.h"
@@ -26,7 +27,7 @@ namespace hue
  *        to use for manual discovery. All new lights found from this discovery state are added
  *        to the widget in a list.
  */
-class LightDiscovery : public QWidget
+class LightDiscovery : public QWidget, public LightingPage
 {
     Q_OBJECT
 

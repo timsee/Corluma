@@ -57,14 +57,6 @@ public:
                        bool turnOn);
 
     /*!
-     * \brief sendMainColorChange change the main color of the lighting settings
-     *        in the GUI, this is the color displayed in the leftmost menu.
-     * \param color a QColor representation of the color being used for single LED Routines.
-     */
-    QString sendMainColorChange(const std::list<cor::Light>& deviceList,
-                                QColor color);
-
-    /*!
      * \brief sendColorChange change an array color in the lighting system
      * \param index index of array color
      * \param color the color being sent for the given index
@@ -72,23 +64,13 @@ public:
     QString sendArrayColorChange(const std::list<cor::Light>& deviceList,
                                  int index,
                                  QColor color);
-
     /*!
-     * \brief sendSingleRoutineChange change the mode of the lights. The mode changes
-     *        how the lights look. This function should be used for single color routines.
-     * \param routine the mode being sent to the LED system
+     * \brief sendRoutineChange change the mode of the lights. The mode changes
+     *        how the lights look.
+     * \param routineObject the mode being sent to the LED system
      */
-    QString sendSingleRoutineChange(const std::list<cor::Light>& deviceList,
-                                    ELightingRoutine routine);
-    /*!
-     * \brief sendMultiRoutineChange change the mode of the lights. The mode changes
-     *        how the lights look. This function should be used for multi color routines,
-     *        since it uses a color group.
-     * \param routine the mode being sent to the LED system
-     */
-    QString sendMultiRoutineChange(const std::list<cor::Light>& deviceList,
-                                   ELightingRoutine routine,
-                                   EColorGroup colorGroup);
+    QString sendRoutineChange(const std::list<cor::Light>& deviceList,
+                              const QJsonObject& routineObject);
 
     /*!
      * \brief sendColorTemperatureChange Hue only. Controls Ambient Lights and
@@ -116,14 +98,6 @@ public:
                            int brightness);
 
     /*!
-     * \brief sendSpeed sends a desired FPS for light updates. This value is the FPS * 100,
-     *        for example if you want a FPS of 5, send the value 500.
-     * \param speed the FPS multiplied by 100.
-     */
-    QString sendSpeed(const std::list<cor::Light>& deviceList,
-                      int speed);
-
-    /*!
      * \brief sendTimeOut the amount of minutes that it takes for the LEDs to turn themselves off from
      *        inactivity. Perfect for bedtime!
      * \param timeOut a number greater than 0
@@ -138,20 +112,15 @@ public:
     void requestCustomArrayUpdate(const std::list<cor::Light>& deviceList);
 
     /*!
-     * \brief sendReset resets the board to its default settings.
-     */
-    void sendReset(const std::list<cor::Light>& deviceList);
-
-    /*!
      * \brief resetStateUpdates reset the state updates timeouts for specified commtypes. If it isn't on already,
      *        it gets turned on.
      */
-    void resetStateUpdates(ECommTypeSettings type);
+    void resetStateUpdates(EProtocolType type);
 
     /*!
      * \brief stopStateUpdates turn off the state update threads for specified commtypes.
      */
-    void stopStateUpdates(ECommTypeSettings type);
+    void stopStateUpdates(EProtocolType type);
 
     // --------------------------
     // Controller and Device Management
@@ -162,21 +131,21 @@ public:
      *        and discovery threads
      * \param type the type of communication stream to start.
      */
-    void startup(ECommTypeSettings type);
+    void startup(EProtocolType type);
 
     /*!
      * \brief shutdown shuts down the stream of the given type. This stops all of its maintence threads
      *        and discovery threads.
      * \param type the type of communication stream to shutdown.
      */
-    void shutdown(ECommTypeSettings type);
+    void shutdown(EProtocolType type);
 
     /*!
      * \brief hasStarted checks if a stream has been started and can currently be used.
      * \param type the communication type to check for the stream
      * \return true if its been started, false otherwise.
      */
-    bool hasStarted(ECommTypeSettings type);
+    bool hasStarted(EProtocolType type);
 
     /*!
      * \brief startDiscoveringController attempt to add a controller to the hash table
@@ -217,12 +186,12 @@ public:
     /*!
      * \brief startDiscovery put given comm type into discovery mode.
      */
-    void startDiscovery(ECommTypeSettings type);
+    void startDiscovery(EProtocolType type);
 
     /*!
      * \brief stopDiscovery stop the given comm type's discovery mode.
      */
-    void stopDiscovery(ECommTypeSettings type);
+    void stopDiscovery(EProtocolType type);
 
     /*!
      * \brief runningDiscovery checks if discovery is being run actively. This means taht its expecting more
@@ -335,7 +304,7 @@ signals:
     /*!
     * \brief packetReceived anotification that a packet was receieved by one of the commtypes.
     */
-    void packetReceived(ECommType);
+    void packetReceived(EProtocolType);
 
     /*!
     * \brief updateReceived a notification that a packet was received by one of the commtypes.
@@ -366,7 +335,7 @@ private slots:
     /*!
     * \brief hueStateChanged sent by hue whenever a packet is received that changes it state.
     */
-    void hueStateChanged() { emit packetReceived(ECommType::eHue); }
+    void hueStateChanged() { emit packetReceived(EProtocolType::eHue); }
 
 private:
 

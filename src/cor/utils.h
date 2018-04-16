@@ -6,6 +6,8 @@
 #include <QLabel>
 #include <QDebug>
 #include <QHostAddress>
+#include <QJsonObject>
+#include <QJsonDocument>
 
 #include "lightingprotocols.h"
 #include "cor/protocols.h"
@@ -179,6 +181,11 @@ T clamp(const T& n, const T& lower, const T& upper) {
   return std::max(lower, std::min(n, upper));
 }
 
+/// helper for converting a qjsonobject to a string
+inline QString QJsonObjectToString(const QJsonObject object) {
+    QJsonDocument doc(object);
+    return doc.toJson(QJsonDocument::Compact);
+}
 
 /// hacky check as to whether or not an IP address is valid
 inline bool checkIfValidIP(QString ip) {
@@ -211,20 +218,20 @@ inline ELightHardwareType convertArduinoTypeToLightType(EArduinoHardwareType typ
 }
 
 
-inline ECommTypeSettings convertCommTypeToCommTypeSettings(ECommType type) {
+inline EProtocolType convertCommTypeToProtocolType(ECommType type) {
     switch (type) {
         case ECommType::eHTTP:
         case ECommType::eUDP:
 #ifndef MOBILE_BUILD
         case ECommType::eSerial:
 #endif
-            return ECommTypeSettings::eArduCor;
-        case ECommType::eNanoLeaf:
-            return ECommTypeSettings::eNanoLeaf;
+            return EProtocolType::eArduCor;
+        case ECommType::eNanoleaf:
+            return EProtocolType::eNanoleaf;
         case ECommType::eHue:
-            return ECommTypeSettings::eHue;
+            return EProtocolType::eHue;
         default:
-            return ECommTypeSettings::eCommTypeSettings_MAX;
+            return EProtocolType::eProtocolType_MAX;
     }
 }
 
@@ -235,13 +242,7 @@ inline ECommTypeSettings convertCommTypeToCommTypeSettings(ECommType type) {
 // Keys
 //------------------------
 
-const static QString kAdvanceModeKey = QString("Settings_AdvanceMode");
 const static QString kUseTimeoutKey  = QString("Settings_UseTimeout");
 const static QString kTimeoutValue = QString("Settings_TimeoutValue");
-const static QString kSpeedValue = QString("Settings_SpeedValue");
-
-const static QString kUseArduCorKey  = QString("ArduCorInUse");
-const static QString kUseHueKey  = QString("HueInUse");
-const static QString kUseNanoLeafKey  = QString("NanoLeafInUse");
 
 #endif // CORLUMAUTILS_H

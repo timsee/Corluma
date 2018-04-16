@@ -18,25 +18,63 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector
     mLayout->setHorizontalSpacing(0);
     mLayout->setVerticalSpacing(0);
 
-
     if (widgetGroup == EWidgetGroup::eSingleRoutines) {
-        std::vector<std::string> labels = {"Solid",
-                                           "Blink",
-                                           "Wave",
-                                           "Glimmer",
-                                           "Linear Fade",
-                                           "Sine Fade",
-                                           "Sawtooth In",
-                                           "Sawtooth Out"};
+        mRoutines = std::vector<std::pair<QString, QJsonObject> >(8);
+        cor::Light light;
+        QJsonObject routineObject;
+        light.speed = 100;
+        light.color = QColor(0, 0, 0);
 
-        mRoutineButtons = std::vector<cor::Button*>(labels.size(), nullptr);
+        mRoutines[0].first = "Solid";
+        light.routine = ERoutine::eSingleSolid;
+        mRoutines[0].second = lightToJson(light);
+
+        mRoutines[1].first = "Blink";
+        light.routine = ERoutine::eSingleBlink;
+        mRoutines[1].second = lightToJson(light);
+
+        mRoutines[2].first = "Wave";
+        light.routine = ERoutine::eSingleWave;
+        mRoutines[2].second = lightToJson(light);
+
+        mRoutines[3].first = "Glimmer";
+        light.routine = ERoutine::eSingleGlimmer;
+        routineObject["param"] = 15;
+        mRoutines[3].second = lightToJson(light);
+
+        mRoutines[4].first = "Linear Fade";
+        light.routine = ERoutine::eSingleFade;
+        routineObject = lightToJson(light);
+        routineObject["param"] = 0;
+        mRoutines[4].second = routineObject;
+
+        mRoutines[5].first = "Sine Fade";
+        light.routine = ERoutine::eSingleFade;
+        routineObject = lightToJson(light);
+        routineObject["param"] = 1;
+        mRoutines[5].second = routineObject;
+
+        mRoutines[6].first = "Sawtooth Fade In";
+        light.routine = ERoutine::eSingleSawtoothFade;
+        routineObject = lightToJson(light);
+        routineObject["param"] = 0;
+        mRoutines[6].second = routineObject;
+
+        mRoutines[7].first = "Sawtooth Fade Out";
+        light.routine = ERoutine::eSingleSawtoothFade;
+        routineObject = lightToJson(light);
+        routineObject["param"] = 1;
+        mRoutines[7].second = routineObject;
+
+        mRoutineButtons = std::vector<cor::Button*>(mRoutines.size(), nullptr);
         int rowCount = 0;
         int maxColumn = 4;
-        for (int i = 0; i < (int)mRoutineButtons.size(); ++i) {
+        for (int i = 0; i < (int)mRoutines.size(); ++i) {
             mRoutineButtons[i] = new cor::Button(this);
             mRoutineButtons[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-            mRoutineButtons[i]->setupAsStandardButton((ELightingRoutine)(i), EColorGroup::eAll, QString::fromStdString(labels[i]));
-            connect(mRoutineButtons[i], SIGNAL(buttonClicked(ELightingRoutine, EColorGroup)), this, SLOT(routineChanged(ELightingRoutine, EColorGroup)));
+            mRoutineButtons[i]->setupAsStandardButton(mRoutines[i].second, mRoutines[i].first);
+
+            connect(mRoutineButtons[i], SIGNAL(buttonClicked(QJsonObject)), this, SLOT(routineChanged(QJsonObject)));
             if ((i % maxColumn) == 0 && i != 0) {
                 rowCount++;
             }
@@ -44,26 +82,45 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector
        }
 
     } else if (widgetGroup == EWidgetGroup::eMultiRoutines) {
-        std::vector<std::string> labels = {"Glimmer",
-                                           "Fade",
-                                           "Random Solid",
-                                           "Random Individual",
-                                           "Bars Solid",
-                                           "Bars Moving"};
+        mRoutines = std::vector<std::pair<QString, QJsonObject> >(5);
+        cor::Light light;
+        QJsonObject routineObject;
+        light.speed = 100;
+        light.palette = EPalette::eCustom;
 
-        mRoutineButtons = std::vector<cor::Button*>(labels.size(), nullptr);
+        mRoutines[0].first = "Glimmer";
+        light.routine = ERoutine::eMultiGlimmer;
+        routineObject["param"] = 15;
+        mRoutines[0].second = lightToJson(light);
+
+        mRoutines[1].first = "Fade";
+        light.routine = ERoutine::eMultiFade;
+        mRoutines[1].second = lightToJson(light);
+
+        mRoutines[2].first = "Random Solid";
+        light.routine = ERoutine::eMultiRandomSolid;
+        mRoutines[2].second = lightToJson(light);
+
+        mRoutines[3].first = "Random Individual";
+        light.routine = ERoutine::eMultiRandomIndividual;
+        mRoutines[3].second = lightToJson(light);
+
+        mRoutines[3].first = "Bars";
+        light.routine = ERoutine::eMultiBars;
+        routineObject["param"] = 4;
+        mRoutines[3].second = lightToJson(light);
+
+        mRoutineButtons = std::vector<cor::Button*>(mRoutines.size(), nullptr);
         int rowCount = 0;
         int maxColumn = 3;
-        int routineIndex = (int)cor::ELightingRoutineSingleColorEnd + 1;
-        for (int i = 0; i < (int)mRoutineButtons.size(); ++i) {
+        for (int i = 0; i < (int)mRoutines.size(); ++i) {
             mRoutineButtons[i] = new cor::Button(this);
             mRoutineButtons[i]->setStyleSheet("background-color: rgb(52, 52, 52); ");
             mRoutineButtons[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-            mRoutineButtons[i]->setupAsStandardButton((ELightingRoutine)(routineIndex + i),
-                                                               EColorGroup::eCustom,
-                                                               QString::fromStdString(labels[i]),
-                                                               colors);
-            connect(mRoutineButtons[i], SIGNAL(buttonClicked(ELightingRoutine, EColorGroup)), this, SLOT(routineChanged(ELightingRoutine, EColorGroup)));
+            mRoutineButtons[i]->setupAsStandardButton(mRoutines[i].second,
+                                                      mRoutines[i].first,
+                                                      colors);
+            connect(mRoutineButtons[i], SIGNAL(buttonClicked(QJsonObject)), this, SLOT(routineChanged(QJsonObject)));
             if ((i % maxColumn) == 0 && i != 0) {
                 rowCount++;
             }
@@ -78,9 +135,9 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector
 
 
 
-void RoutineButtonsWidget::highlightRoutineButton(ELightingRoutine routine) {
+void RoutineButtonsWidget::highlightRoutineButton(const QString& label) {
     for (uint i = 0; i < mRoutineButtons.size(); i++) {
-        if (mRoutineButtons[i]->lightingRoutine() == routine) {
+        if (mRoutineButtons[i]->label().compare(label) == 0) {
             mRoutineButtons[i]->button->setChecked(true);
         } else {
             mRoutineButtons[i]->button->setChecked(false);
@@ -88,25 +145,45 @@ void RoutineButtonsWidget::highlightRoutineButton(ELightingRoutine routine) {
     }
 }
 
-void RoutineButtonsWidget::multiRoutineColorsChanged(const std::vector<QColor>& colors, int colorCount) {
-    for (int i = (int)cor::ELightingRoutineSingleColorEnd + 1; i < (int)ELightingRoutine::eLightingRoutine_MAX; ++i) {
-        int vectorIndex = i - (int)cor::ELightingRoutineSingleColorEnd - 1;
-        mRoutineButtons[vectorIndex]->updateIconPresetColorRoutine((ELightingRoutine)i,
-                                                                    EColorGroup::eCustom,
-                                                                    colors,
-                                                                    colorCount);
+void RoutineButtonsWidget::multiRoutineColorsChanged(const std::vector<QColor>& colors) {
+    for (uint32_t i = 0; i < mRoutineButtons.size(); i++) {
+        mRoutineButtons[i]->updateRoutine(mRoutines[i].second, colors);
     }
 }
 
-void RoutineButtonsWidget::routineChanged(ELightingRoutine newRoutine, EColorGroup newGroup) {
-    Q_UNUSED(newGroup); // newGroup is ignored for single color routines
-    highlightRoutineButton(newRoutine);
-    emit newRoutineSelected(newRoutine);
+void RoutineButtonsWidget::routineChanged(QJsonObject routineObject) {
+    QString routineName = jsonToButtonName(routineObject);
+    highlightRoutineButton(routineName);
+    emit newRoutineSelected(routineObject);
+}
+
+QString RoutineButtonsWidget::jsonToButtonName(const QJsonObject& routineObject) {
+    ERoutine routine = stringToRoutine(routineObject["routine"].toString());
+    int param = INT_MIN;
+    if (routineObject["param"].isDouble()) {
+        param = routineObject["param"].toDouble();
+    }
+    for (uint32_t i = 0; i < mRoutineButtons.size(); i++) {
+        ERoutine buttonRoutine = stringToRoutine(mRoutineButtons[i]->routine()["routine"].toString());
+        int buttonParam = INT_MIN;
+
+        if (mRoutineButtons[i]->routine()["param"].isDouble()) {
+            buttonParam = mRoutineButtons[i]->routine()["param"].toDouble();
+        }
+        if (routine == buttonRoutine && param == buttonParam) {
+            return mRoutineButtons[i]->label();
+        }
+    }
+    return QString();
 }
 
 void RoutineButtonsWidget::singleRoutineColorChanged(QColor color) {
     for (int i = 0; i < (int)mRoutineButtons.size(); ++i) {
-        mRoutineButtons[i]->updateIconSingleColorRoutine((ELightingRoutine)(i), color);
+        QJsonObject routineObject = mRoutines[i].second;
+        routineObject["red"]   = color.red();
+        routineObject["green"] = color.green();
+        routineObject["blue"]  = color.blue();
+        mRoutineButtons[i]->updateRoutine(routineObject, std::vector<QColor>());
     }
 }
 

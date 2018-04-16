@@ -18,14 +18,16 @@ ColorPage::ColorPage(QWidget *parent) :
     QWidget(parent) {
     mBottomMenuState = EBottomMenuShow::eShowStandard;
     mBottomMenuIsOpen = false;
-    mCurrentSingleRoutine = ELightingRoutine::eSingleGlimmer;
 
     mSingleRoutineWidget = new RoutineButtonsWidget(EWidgetGroup::eSingleRoutines, std::vector<QColor>(), this);
     mSingleRoutineWidget->setMaximumWidth(this->width());
     mSingleRoutineWidget->setMaximumHeight(this->height() / 3);
     mSingleRoutineWidget->setGeometry(0, this->height(), mSingleRoutineWidget->width(), mSingleRoutineWidget->height());
     mSingleRoutineWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(mSingleRoutineWidget, SIGNAL(newRoutineSelected(ELightingRoutine)), this, SLOT(newRoutineSelected(ELightingRoutine)));
+    connect(mSingleRoutineWidget, SIGNAL(newRoutineSelected(QJsonObject)), this, SLOT(newRoutineSelected(QJsonObject)));
+
+    mCurrentSingleRoutine = mSingleRoutineWidget->routines()[3].second;
+    mLastColor = QColor(0, 255, 0);
 
     mSpacer = new QWidget(this);
 
@@ -49,18 +51,14 @@ ColorPage::~ColorPage() {
 
 
 void ColorPage::setupButtons() {
-    mMultiRoutineWidget = new RoutineButtonsWidget(EWidgetGroup::eMultiRoutines, mData->colorGroup(EColorGroup::eCustom), this);
+    mMultiRoutineWidget = new RoutineButtonsWidget(EWidgetGroup::eMultiRoutines, mData->palette(EPalette::eCustom), this);
     mMultiRoutineWidget->setMaximumWidth(this->width());
     mMultiRoutineWidget->setMaximumHeight(this->height() / 3);
     mMultiRoutineWidget->setGeometry(0, this->height(), mMultiRoutineWidget->width(), mMultiRoutineWidget->height());
     mMultiRoutineWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(mMultiRoutineWidget, SIGNAL(newRoutineSelected(ELightingRoutine)), this, SLOT(newRoutineSelected(ELightingRoutine)));
+    connect(mMultiRoutineWidget, SIGNAL(newRoutineSelected(QJsonObject)), this, SLOT(newRoutineSelected(QJsonObject)));
     // raise single since its default
     mSingleRoutineWidget->raise();
-}
-
-void ColorPage::highlightRoutineButton(ELightingRoutine routine) {
-    mSingleRoutineWidget->highlightRoutineButton(routine);
 }
 
 
@@ -69,7 +67,7 @@ void ColorPage::changePageType(EColorPageType page, bool skipAnimation) {
 
     mColorPicker->updateColorStates(mData->mainColor(),
                                        mData->brightness(),
-                                       mData->colorGroup(EColorGroup::eCustom),
+                                       mData->palette(EPalette::eCustom),
                                        createColorScheme(mData->currentDevices()),
                                        mData->customColorsUsed());
     if (mPageType == EColorPageType::eRGB) {
@@ -147,8 +145,7 @@ void ColorPage::showMultiRoutineWidget(bool shouldShow) {
         animation->setStartValue(mMultiRoutineWidget->pos());
         animation->setEndValue(QPoint(0, this->height() - mMultiRoutineWidget->height()));
         animation->start();
-        mMultiRoutineWidget->multiRoutineColorsChanged(mData->colorGroup(EColorGroup::eCustom),
-                                                       mData->customColorsUsed());
+        mMultiRoutineWidget->multiRoutineColorsChanged(mData->palette(EPalette::eCustom));
         mBottomMenuState = EBottomMenuShow::eShowMultiRoutines;
     }
 }
@@ -172,32 +169,33 @@ std::vector<QColor> ColorPage::createColorScheme(std::list<cor::Light> devices) 
 // Slots
 // ----------------------------
 
-void ColorPage::newRoutineSelected(ELightingRoutine newRoutine) {
-    mData->updateRoutine(newRoutine);
-    if (newRoutine <= cor::ELightingRoutineSingleColorEnd) {
-        mCurrentSingleRoutine = newRoutine;
+void ColorPage::newRoutineSelected(QJsonObject routineObject) {
+    ERoutine routine = stringToRoutine(routineObject["routine"].toString());
+    routineObject["red"]   = mLastColor.red();
+    routineObject["green"] = mLastColor.green();
+    routineObject["blue"]  = mLastColor.blue();
+
+    // get Color
+    mData->updateRoutine(routineObject);
+    if (routine <= cor::ERoutineSingleColorEnd) {
+        mCurrentSingleRoutine = routineObject;
     }
 }
 
 void ColorPage::colorChanged(QColor color) {
-    mData->updateColor(color);
+    mLastColor = color;
+    mCurrentSingleRoutine["red"]   = mLastColor.red();
+    mCurrentSingleRoutine["green"] = mLastColor.green();
+    mCurrentSingleRoutine["blue"]  = mLastColor.blue();
 
-    for (auto device : mData->currentDevices()) {
-        if (device.lightingRoutine != mCurrentSingleRoutine) {
-            mData->updateRoutine(mCurrentSingleRoutine);
-        }
-    }
-
-    /// this is not always needed but sometimes it is and its a cheap operation if it isn't.
-    /// Some comm streams such as hue combine color and brightness with HSV.
-    /// By updating both, the system is forced to check both.
+    mData->updateRoutine(mCurrentSingleRoutine);
+    // set all the lights to the given brightness
     mData->updateBrightness(mData->brightness());
 
     if (mBottomMenuState == EBottomMenuShow::eShowSingleRoutines) {
         mSingleRoutineWidget->singleRoutineColorChanged(color);
     }
 
-    mLastColor = color;
     emit singleColorChanged(color);
     emit updateMainIcons();
 }
@@ -206,13 +204,12 @@ void ColorPage::customColorCountChanged(int count) {
     mData->updateCustomColorCount(count);
     mColorPicker->updateColorStates(mData->mainColor(),
                                     mData->brightness(),
-                                    mData->colorGroup(EColorGroup::eCustom),
+                                    mData->palette(EPalette::eCustom),
                                     createColorScheme(mData->currentDevices()),
                                     mData->customColorsUsed());
 
     if (mBottomMenuState == EBottomMenuShow::eShowMultiRoutines) {
-        mMultiRoutineWidget->multiRoutineColorsChanged(mData->colorGroup(EColorGroup::eCustom),
-                                                       mData->customColorsUsed());
+        mMultiRoutineWidget->multiRoutineColorsChanged(mData->palette(EPalette::eCustom));
     }
 
     emit updateMainIcons();
@@ -221,17 +218,18 @@ void ColorPage::customColorCountChanged(int count) {
 void ColorPage::multiColorChanged(QColor color, int index) {
     mData->updateCustomColorArray(index, color);
     if (mBottomMenuState == EBottomMenuShow::eShowMultiRoutines) {
-        mMultiRoutineWidget->multiRoutineColorsChanged(mData->colorGroup(EColorGroup::eCustom),
-                                                       mData->customColorsUsed());
+        mMultiRoutineWidget->multiRoutineColorsChanged(mData->palette(EPalette::eCustom));
     }
 
     emit updateMainIcons();
 }
 
 void ColorPage::ambientUpdateReceived(int newAmbientValue, int newBrightness) {
+    QJsonObject routineObject = mData->currentRoutineObject();
+    routineObject["routine"] = routineToString(ERoutine::eSingleSolid);
     for (auto device : mData->currentDevices()) {
-        if (device.lightingRoutine != ELightingRoutine::eSingleSolid) {
-            mData->updateRoutine(ELightingRoutine::eSingleSolid);
+        if (device.routine != ERoutine::eSingleSolid) {
+            mData->updateRoutine(routineObject);
         }
     }
     mData->updateCt(newAmbientValue);
@@ -241,10 +239,6 @@ void ColorPage::ambientUpdateReceived(int newAmbientValue, int newBrightness) {
 
 void ColorPage::colorsChanged(std::vector<QColor> colors) {
     mData->updateColorScheme(colors);
-    /// this is not always needed but sometimes it is and its a cheap operation if it isn't.
-    /// Some comm streams such as hue combine color and brightness with HSV.
-    /// By updating both, the system is forced to che
-    /// ck both.
     mData->updateBrightness(mData->brightness());
     emit updateMainIcons();
 }
@@ -258,7 +252,7 @@ void ColorPage::show() {
     mLastColor = mData->mainColor();
     mColorPicker->updateColorStates(mData->mainColor(),
                                     mData->brightness(),
-                                    mData->colorGroup(EColorGroup::eCustom),
+                                    mData->palette(EPalette::eCustom),
                                     createColorScheme(mData->currentDevices()),
                                     mData->customColorsUsed());
 }

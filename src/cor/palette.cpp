@@ -83,8 +83,13 @@ void Palette::updateSelected(QColor color) {
             // update data
             mColors[i] = color;
             // update UI
-            mArrayColorsButtons[i]->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid,
-                                                                 color);
+            QJsonObject routineObject;
+            routineObject["routine"] = routineToString(ERoutine::eSingleSolid);
+            routineObject["red"]     = color.red();
+            routineObject["green"]   = color.green();
+            routineObject["blue"]    = color.blue();
+
+            mArrayColorsButtons[i]->updateRoutine(routineObject, std::vector<QColor>());
         }
     }
     updateMultiColorSlider();
@@ -97,15 +102,21 @@ void Palette::updateMultiColor(const std::vector<QColor>& colors, int count) {
     }
 
     mColors = colors;
+    QJsonObject routineObject;
+    routineObject["routine"] = routineToString(ERoutine::eSingleSolid);
     for (uint32_t i = 0; i < mColorsUsed; ++i) {
         mArrayColorsButtons[i]->setEnabled(true);
-        mArrayColorsButtons[i]->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid,
-                                                             colors[i]);
+        routineObject["red"]     = colors[i].red();
+        routineObject["green"]   = colors[i].green();
+        routineObject["blue"]    = colors[i].blue();
+        mArrayColorsButtons[i]->updateRoutine(routineObject, std::vector<QColor>());
     }
 
     for (uint32_t i = mColorsUsed; i < mMaximumSize; ++i) {
-        mArrayColorsButtons[i]->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid,
-                                                             QColor(140,140,140));
+        routineObject["red"]     = 140;
+        routineObject["green"]   = 140;
+        routineObject["blue"]    = 140;
+        mArrayColorsButtons[i]->updateRoutine(routineObject, std::vector<QColor>());
         mArrayColorsButtons[i]->setEnabled(false);
     }
 
@@ -121,8 +132,8 @@ void Palette::setupButtons(const std::list<cor::Light>& devices) {
     uint32_t i = 0;
     for (auto&& device : devices) {
         if (i < mMaximumSize) {
-            mArrayColorsButtons[i]->setupAsStandardButton(device.lightingRoutine,
-                                                          device.colorGroup,
+            QJsonObject routineObject = lightToJson(device);
+            mArrayColorsButtons[i]->setupAsStandardButton(routineObject,
                                                           device.name,
                                                           mColorGroups[1]);
             ++i;
@@ -141,14 +152,8 @@ void Palette::updateDevices(const std::list<cor::Light>& devices) {
     uint32_t i = 0;
     for (auto&& device : devices) {
         if (i < mMaximumSize) {
-            if (device.lightingRoutine <= cor::ELightingRoutineSingleColorEnd ) {
-                mArrayColorsButtons[i]->updateIconSingleColorRoutine(device.lightingRoutine,
-                                                                     device.color);
-             } else {
-                mArrayColorsButtons[i]->updateIconPresetColorRoutine(device.lightingRoutine,
-                                                                     device.colorGroup,
-                                                                     mColorGroups[(int)device.colorGroup]);
-             }
+            QJsonObject routineObject = lightToJson(device);
+            mArrayColorsButtons[i]->updateRoutine(routineObject, mColorGroups[(int)device.palette]);
         }
         ++i;
     }

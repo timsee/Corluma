@@ -73,7 +73,7 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
         size = QSize(screen->size().width() * 0.035f, screen->size().height() * 0.035f);
     } else if (eButtonSize == EButtonSize::eRectangle) {
 #ifdef MOBILE_BUILD
-        size = QSize(screen->size().width() * 0.07f, screen->size().height() * 0.02f);
+        size = QSize(screen->size().width() * 0.06f, screen->size().height() * 0.02f);
 #else
         size = QSize(screen->size().width() * 0.07f, screen->size().height() * 0.05f);
 #endif
@@ -118,6 +118,10 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
     mNames = buttons;
 
 
+    cor::Light light;
+    light.routine = ERoutine::eSingleSolid;
+    light.color = QColor(255, 0, 0);
+
     QSignalMapper *buttonsMapper = new QSignalMapper(this);
     for (uint32_t i = 0; i < mNames.size(); ++i) {
         bool foundMatch = false;
@@ -130,8 +134,9 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             foundMatch = true;
             cor::Button *lightsButton = new cor::Button(this);
             lightsButton->button->setCheckable(true);
-            lightsButton->setupAsStandardButton(ELightingRoutine::eSingleSolid, EColorGroup::eAll);
-            lightsButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, QColor(255,0,0));
+            QJsonObject routineObject = lightToJson(light);
+            lightsButton->setupAsStandardButton(routineObject);
+            lightsButton->updateRoutine(routineObject, std::vector<QColor>());
             mButtons[i] = static_cast<QPushButton*>(lightsButton);
             Q_ASSERT(mButtons[i]);
         } else if (mNames[i].compare("ColorScheme") == 0) {
@@ -148,8 +153,11 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             foundMatch = true;
             cor::Button *lightsButton = new cor::Button(this);
             lightsButton->button->setCheckable(true);
-            lightsButton->setupAsStandardButton(ELightingRoutine::eSingleGlimmer, EColorGroup::eAll);
-            lightsButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleGlimmer, QColor(0,255,0));
+            light.routine = ERoutine::eSingleGlimmer;
+            light.color   = QColor(0, 255, 0);
+            QJsonObject routineObject = lightToJson(light);
+            lightsButton->setupAsStandardButton(routineObject);
+            lightsButton->updateRoutine(routineObject, std::vector<QColor>());
             mButtons[i] = static_cast<QPushButton*>(lightsButton);
             Q_ASSERT(mButtons[i]);
         } else if (mNames[i].compare("Settings") == 0) {
@@ -170,8 +178,9 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             foundMatch = true;
             cor::Button *lightsButton = new cor::Button(this);
             lightsButton->button->setCheckable(true);
-            lightsButton->setupAsStandardButton(ELightingRoutine::eSingleSolid, EColorGroup::eAll);
-            lightsButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, QColor(255,0,0));
+            QJsonObject routineObject = lightToJson(light);
+            lightsButton->setupAsStandardButton(routineObject);
+            lightsButton->updateRoutine(routineObject, std::vector<QColor>());
             mButtons[i] = static_cast<QPushButton*>(lightsButton);
             Q_ASSERT(mButtons[i]);
         } else if (mNames[i].compare("Discovery_ArduCor") == 0) {
@@ -227,8 +236,10 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             foundMatch = true;
             cor::Button *lightsButton = new cor::Button(this);
             lightsButton->button->setCheckable(true);
-            lightsButton->setupAsStandardButton(ELightingRoutine::eSingleSolid, EColorGroup::eAll);
-            lightsButton->updateIconSingleColorRoutine(ELightingRoutine::eSingleSolid, QColor(255,255,0));
+            light.color   = QColor(255, 255, 0);
+            QJsonObject routineObject = lightToJson(light);
+            lightsButton->setupAsStandardButton(routineObject);
+            lightsButton->updateRoutine(routineObject, std::vector<QColor>());
             mButtons[i] = static_cast<QPushButton*>(lightsButton);
             Q_ASSERT(mButtons[i]);
         } else if (mNames[i].compare("New_Group") == 0) {
@@ -293,52 +304,12 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
 // Update Icons
 //--------------------------------
 
-void FloatingLayout::updateRoutineSingleColor(ELightingRoutine routine, QColor color) {
+void FloatingLayout::updateRoutine(const QJsonObject& routineObject, std::vector<QColor> colors) {
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
         if (mNames[i].compare("Routine") == 0) {
             cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
             Q_ASSERT(lightsButton);
-            if ((int)routine <= (int)cor::ELightingRoutineSingleColorEnd) {
-                lightsButton->updateIconSingleColorRoutine(routine, color);
-                if (mRoutineIsTranslucent) {
-                    mRoutineIsTranslucent = false;
-                    QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(lightsButton);
-                    effect->setOpacity(1.0f);
-                    lightsButton->setGraphicsEffect(effect);
-                }
-            } else {
-                if (!mRoutineIsTranslucent) {
-                    mRoutineIsTranslucent = true;
-                    QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(lightsButton);
-                    effect->setOpacity(0.333f);
-                    lightsButton->setGraphicsEffect(effect);
-                }
-            }
-        }
-    }
-}
-
-void FloatingLayout::updateRoutineMultiColor(ELightingRoutine routine, std::vector<QColor> colors, int colorCount) {
-    for (uint32_t i = 0; i < mButtons.size(); ++i) {
-        if (mNames[i].compare("Routine") == 0) {
-            cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
-            Q_ASSERT(lightsButton);
-            if ((int)routine > (int)cor::ELightingRoutineSingleColorEnd) {
-                lightsButton->updateIconPresetColorRoutine(routine, EColorGroup::eCustom, colors, colorCount);
-                if (mRoutineIsTranslucent) {
-                    mRoutineIsTranslucent = false;
-                    QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(lightsButton);
-                    effect->setOpacity(1.0f);
-                    lightsButton->setGraphicsEffect(effect);
-                }
-            } else {
-                if (!mRoutineIsTranslucent) {
-                    mRoutineIsTranslucent = true;
-                    QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(lightsButton);
-                    effect->setOpacity(0.333f);
-                    lightsButton->setGraphicsEffect(effect);
-                }
-            }
+            lightsButton->updateRoutine(routineObject, colors);
         }
     }
 }
@@ -348,9 +319,12 @@ void FloatingLayout::updateGroupPageButtons(const std::vector<std::vector<QColor
         if (mNames[i].compare("Select_Moods") == 0) {
             cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
             Q_ASSERT(lightsButton);
-            lightsButton->updateIconPresetColorRoutine(ELightingRoutine::eMultiFade,
-                                                       EColorGroup::eSevenColor,
-                                                       colors[(int)EColorGroup::eSevenColor]);
+            cor::Light light;
+            light.routine = ERoutine::eMultiFade;
+            light.palette = EPalette::eSevenColor;
+            light.speed   = 100;
+            QJsonObject routineObject = lightToJson(light);
+            lightsButton->updateRoutine(routineObject, colors[(int)EPalette::eSevenColor]);
         }
     }
 }
@@ -361,9 +335,12 @@ void FloatingLayout::updateMultiPageButton(const std::vector<std::vector<QColor>
         if (mNames[i].compare("Multi") == 0) {
             cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
             Q_ASSERT(lightsButton);
-            lightsButton->updateIconPresetColorRoutine(ELightingRoutine::eMultiFade,
-                                                       EColorGroup::eCool,
-                                                       colors[(int)EColorGroup::eCool]);
+            cor::Light light;
+            light.routine = ERoutine::eMultiFade;
+            light.palette = EPalette::eCool;
+            light.speed   = 100;
+            QJsonObject routineObject = lightToJson(light);
+            lightsButton->updateRoutine(routineObject, colors[(int)EPalette::eCool]);
         }
     }
 }
@@ -390,22 +367,27 @@ void FloatingLayout::addMultiRoutineIcon(std::vector<QColor> colors) {
         if (mNames[i].compare("Multi_Colors_Page") == 0) {
             cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
             Q_ASSERT(lightsButton);
-            lightsButton->updateIconPresetColorRoutine(ELightingRoutine::eMultiBarsMoving, EColorGroup::eWater, colors);
+            cor::Light light;
+            light.routine = ERoutine::eMultiBars;
+            light.palette = EPalette::eWater;
+            light.speed   = 100;
+            QJsonObject routineObject = lightToJson(light);
+            lightsButton->updateRoutine(routineObject, colors);
         }
     }
 }
 
-void FloatingLayout::updateDiscoveryButton(ECommTypeSettings type, QPixmap pixmap) {
+void FloatingLayout::updateDiscoveryButton(EProtocolType type, QPixmap pixmap) {
     QString label;
     switch (type)
     {
-        case ECommTypeSettings::eHue:
+        case EProtocolType::eHue:
             label = "Discovery_Hue";
             break;
-        case ECommTypeSettings::eArduCor:
+        case EProtocolType::eArduCor:
             label = "Discovery_ArduCor";
             break;
-        case ECommTypeSettings::eNanoLeaf:
+        case EProtocolType::eNanoleaf:
             label = "Discovery_NanoLeaf";
             break;
         default:

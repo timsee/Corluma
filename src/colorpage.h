@@ -68,15 +68,6 @@ public:
     void changePageType(EColorPageType page, bool skipAnimation = false);
 
     /*!
-     * \brief highlightRoutineButton highlights the button that implements
-     *        the routine parameter. If it can't find a button that
-     *        implements the lighting routine, then all buttons are unhighlighted
-     * \param routine the mode that the highlighted button implements.
-     */
-    void highlightRoutineButton(ELightingRoutine routine);
-
-
-    /*!
      * \brief setupButtons sets up the routine buttons. Requires the DataLayer
      *        of the application to be set up first.
      */
@@ -144,7 +135,7 @@ private slots:
      * \brief newRoutineSelected called whenever a routine button is clicked. Sends
      *        the routine to the datalayer so that it can get sent to the connected devices.
      */
-    void newRoutineSelected(ELightingRoutine);
+    void newRoutineSelected(QJsonObject routineObject);
 
     /*!
      * \brief ambientUpdateReceived called whenever the colorpicker gives back an ambient update.
@@ -209,7 +200,7 @@ private:
     EBottomMenuShow mBottomMenuState;
 
     /// current single color lighting routine, stored in buffer for when going from multi color to single color routines.
-    ELightingRoutine mCurrentSingleRoutine;
+    QJsonObject mCurrentSingleRoutine;
 
     /*!
      * \brief mLastColor last color chosen by the RGB color picker.

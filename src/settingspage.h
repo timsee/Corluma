@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QScrollArea>
 
+#include "lightingpage.h"
 #include "cor/slider.h"
 #include "comm/commlayer.h"
 #include "settingsbutton.h"
@@ -39,7 +40,7 @@ enum class ECorlumaWebView {
  * add and remove connections for UDP and HTTP.
  *
  */
-class SettingsPage : public QWidget
+class SettingsPage : public QWidget, public LightingPage
 {
     Q_OBJECT
 

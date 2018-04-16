@@ -53,9 +53,9 @@ public:
      *        the routine parameter. If it can't find a button that
      *        implements this lighting routine, then all buttons are unhighlighted
      * \param routine the lighting routine the highlighted button implements.
-     * \param colorGroup the color group that the highlighted button implements.
+     * \param palette the color group that the highlighted button implements.
      */
-    void highlightRoutineButton(ELightingRoutine routine, EColorGroup colorGroup);
+    void highlightRoutineButton(ERoutine routine, EPalette palette);
 
     /*!
      * \brief setupButtons sets up the routine buttons. Requires the DataLayer
@@ -102,10 +102,10 @@ signals:
     void updateMainIcons();
 
     /*!
-     * \brief presetColorGroupChanged emits data to the MainWindow about the changes
-     *        to the preset color page. The int should be cast to an EColorGroup.
+     * \brief presetPaletteChanged emits data to the MainWindow about the changes
+     *        to the preset color page.
      */
-    void presetColorGroupChanged(int);
+    void presetPaletteChanged(EPalette);
 
     /*!
      * \brief clickedEditButton sent whenever an edit button is clicked so that the main page can load
@@ -118,10 +118,8 @@ public slots:
     /*!
      * \brief multiButtonClicked every button setup as a presetButton will signal
      *        this slot whenever they are clicked.
-     * \param routine the stored ELightingRoutine of the button
-     * \param colorGroup the stored EColorGroup of the button
      */
-    void multiButtonClicked(ELightingRoutine routine, EColorGroup colorGroup);
+    void multiButtonClicked(QJsonObject);
 
 private slots:
     /*!
@@ -130,6 +128,11 @@ private slots:
      */
     void renderUI();
 
+    /*!
+     * \brief speedChanged signaled whenever the slider that controls
+     *        the LEDs speed changes its value.
+     */
+    void speedChanged(int);
 
 protected:
     /*!
@@ -149,6 +152,7 @@ protected:
     void resizeEvent(QResizeEvent *);
 
 private:
+
     /*!
      * \brief mPresetWidgets vector of all preset widgets getting displayed in the
      *        scroll area.
@@ -162,6 +166,11 @@ private:
 
     /// main layout of grouppage
     QVBoxLayout *mLayout;
+
+    /*!
+     * \brief mSpeedSlider slider for determing how fast routines will be
+     */
+    cor::Slider *mSpeedSlider;
 
     /// scroll area for preset groups
     QScrollArea *mScrollAreaArduino;
@@ -187,6 +196,9 @@ private:
 
     /// mode
     EGroupMode mMode;
+
+    /// stored state for current speed
+    int mSpeed;
 
 };
 

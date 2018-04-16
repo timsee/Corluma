@@ -5,6 +5,7 @@
  */
 
 #include "groupsparser.h"
+#include "lightingprotocols.h"
 #include "cor/utils.h"
 
 #include <QFileInfo>
@@ -77,12 +78,12 @@ void GroupsParser::saveNewMood(const QString& groupName, const std::list<cor::Li
 
         object["brightness"] = device.brightness;
 
-        object["lightingRoutine"] = (double)device.lightingRoutine;
-        object["colorGroup"] = (double)device.colorGroup;
+        object["routine"] = routineToString(device.routine);
+        object["palette"] = paletteToString(device.palette);
 
-        object["type"] = cor::ECommTypeToString(device.type());
+        object["type"] = commTypeToString(device.commType());
 
-        object["colorMode"] = cor::colorModeToString(device.colorMode);
+        object["colorMode"] = colorModeToString(device.colorMode);
 
         object["red"] = device.color.red();
         object["green"] = device.color.green();
@@ -91,6 +92,7 @@ void GroupsParser::saveNewMood(const QString& groupName, const std::list<cor::Li
         object["majorAPI"]   = device.majorAPI;
         object["minorAPI"]   = device.minorAPI;
 
+        object["speed"] = device.speed;
         object["controller"] = device.controller();
         object["index"] = device.index();
         deviceArray.append(object);
@@ -128,11 +130,11 @@ void GroupsParser::saveNewCollection(const QString& groupName, const std::list<c
     // create string of jsondata to add to file
     QJsonArray deviceArray;
     for (auto&& device : devices) {
-        if (device.type() != ECommType::eHue) {
+        if (device.commType() != ECommType::eHue) {
             QJsonObject object;
             object["id"] = QString("device");
 
-            object["type"] = cor::ECommTypeToString(device.type());
+            object["type"] = commTypeToString(device.commType());
 
             object["controller"] = device.controller();
             object["index"] = device.index();
@@ -232,7 +234,7 @@ void GroupsParser::parseCollection(const QJsonObject& object) {
                 int index = device.value("index").toDouble();
 
                 // convert to Corluma types from certain Qt types
-                ECommType type = cor::stringToECommType(typeString);
+                ECommType type = stringToCommType(typeString);
 
                 cor::Light light(index, type, controller);
                 list.push_back(light);
@@ -269,8 +271,8 @@ void GroupsParser::parseMood(const QJsonObject& object) {
                     && device.value("green").isDouble()
                     && device.value("blue").isDouble()
                     && device.value("brightness").isDouble()
-                    && device.value("lightingRoutine").isDouble()
-                    && device.value("colorGroup").isDouble())
+                    && device.value("routine").isString()
+                    && device.value("palette").isString())
             {
                 QString id = device.value("id").toString();
 
@@ -281,8 +283,8 @@ void GroupsParser::parseMood(const QJsonObject& object) {
                 int index = device.value("index").toDouble();
 
                 // convert to Corluma types from certain Qt types
-                ECommType type = cor::stringToECommType(typeString);
-                EColorMode colorMode = cor::stringtoColorMode(modeString);
+                ECommType type = stringToCommType(typeString);
+                EColorMode colorMode = stringtoColorMode(modeString);
 
                 bool isOn = device.value("isOn").toBool();
 
@@ -292,15 +294,21 @@ void GroupsParser::parseMood(const QJsonObject& object) {
 
                 int brightness = device.value("brightness").toDouble();
 
-                ELightingRoutine lightingRoutine = (ELightingRoutine)((int)device.value("lightingRoutine").toDouble());
-                EColorGroup colorGroup = (EColorGroup)((int)device.value("colorGroup").toDouble());
+                ERoutine routine = stringToRoutine(device.value("routine").toString());
+                EPalette palette = stringToPalette(device.value("palette").toString());
+
+                int speed = 100;
+                if (device.value("speed").isDouble()) {
+                    speed = device.value("speed").toDouble();
+                }
 
                 cor::Light light(index, type, controller);
                 light.isReachable = true;
                 light.isOn = isOn;
                 light.color = QColor(red, green, blue);
-                light.lightingRoutine = lightingRoutine;
-                light.colorGroup = colorGroup;
+                light.routine = routine;
+                light.palette = palette;
+                light.speed = speed;
                 light.brightness = brightness;
                 light.colorMode = colorMode;
                 list.push_back(light);
@@ -329,8 +337,8 @@ void GroupsParser::findNewControllers(QJsonObject object) {
         // check if connection exists in app memory already
         if (device.value("type").isString()
                 && device.value("controller").isString()) {
-            if( device.value("type").toString().compare(cor::ECommTypeToString(ECommType::eHTTP)) == 0
-                || device.value("type").toString().compare(cor::ECommTypeToString(ECommType::eUDP)) == 0) {
+            if( device.value("type").toString().compare(commTypeToString(ECommType::eHTTP)) == 0
+                || device.value("type").toString().compare(commTypeToString(ECommType::eUDP)) == 0) {
                 bool foundConnectionInList = false;
                 QString controllerName = device.value("controller").toString();
                 for (auto&& connection : mNewConnections) {
@@ -425,8 +433,8 @@ std::list<cor::Light> GroupsParser::loadDebugData() {
             int index = device.value("index").toDouble();
 
             // convert to Corluma types from certain Qt types
-            ECommType type = cor::stringToECommType(typeString);
-            EColorMode colorMode = cor::stringtoColorMode(modeString);
+            ECommType type = stringToCommType(typeString);
+            EColorMode colorMode = stringtoColorMode(modeString);
 
             bool isOn = device.value("isOn").toBool();
             int red, green, blue;
@@ -437,15 +445,16 @@ std::list<cor::Light> GroupsParser::loadDebugData() {
 
             int brightness = device.value("brightness").toDouble();
 
-            ELightingRoutine lightingRoutine = (ELightingRoutine)((int)device.value("lightingRoutine").toDouble());
-            EColorGroup colorGroup = (EColorGroup)((int)device.value("colorGroup").toDouble());
+            ERoutine routine = stringToRoutine(device.value("routine").toString());
+            EPalette palette = stringToPalette(device.value("palette").toString());
 
             cor::Light light(index, type, controller);
             light.isReachable = true;
             light.isOn = isOn;
             light.color = QColor(red, green, blue);
-            light.lightingRoutine = lightingRoutine;
-            light.colorGroup = colorGroup;
+            light.routine = routine;
+            light.palette = palette;
+            light.speed = 100;
             light.brightness = brightness;
             light.colorMode = colorMode;
             list.push_back(light);
@@ -465,14 +474,15 @@ bool GroupsParser::checkForSavedData() {
         }
     }
 
-   // qDebug() << defaultSavePath();
+    //qDebug() << defaultSavePath();
     QFile saveFile(defaultSavePath());
-   // QFile saveFile(":resources/Corluma.json");
 
-    if (saveFile.open(QIODevice::ReadOnly)) {
+    if (saveFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QString data = saveFile.readAll();
         saveFile.close();
-        mJsonData = QJsonDocument::fromJson(data.toUtf8());
+        QJsonParseError error;
+        mJsonData = QJsonDocument::fromJson(data.toUtf8(), &error);
+        //qDebug() << "error: " << error.errorString();
         if (!mJsonData.isNull()) {
             return true;
         } else {
@@ -518,8 +528,8 @@ bool GroupsParser::checkIfGroupIsValid(const QJsonObject& object) {
                    && device.value("green").isDouble()
                    && device.value("blue").isDouble()
                    && device.value("brightness").isDouble()
-                   && device.value("lightingRoutine").isDouble()
-                   && device.value("colorGroup").isDouble())) {
+                   && device.value("routine").isString()
+                   && device.value("palette").isString())) {
                 qDebug() << "one of the mood specific values is invalid! for"
                          <<  object.value("name").toString()
                          << device.value("type").toString()

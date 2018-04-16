@@ -94,7 +94,7 @@ private slots:
     /*!
      * \brief commTypeSelected called when the comm type updates and changes
      */
-    void commTypeSelected(ECommTypeSettings);
+    void commTypeSelected(EProtocolType);
 
     /*!
      * \brief renderUI renders expensive assets if and only if the assets have had any
@@ -108,7 +108,7 @@ private slots:
      * \param connectionState int representation of a EConnectionState that gives the current connection
      *        status.
      */
-    void widgetConnectionStateChanged(ECommTypeSettings type, EConnectionState connectionState);
+    void widgetConnectionStateChanged(EProtocolType type, EConnectionState connectionState);
 
     /*!
      * \brief floatingLayoutButtonPressed handles whenever a floating layout button is presed
@@ -134,7 +134,8 @@ private:
     /// moves floating layouts to top right position of screen.
     void moveFloatingLayouts();
 
-    bool checkIfDiscovered(ECommTypeSettings type);
+    /// true if protocol has been discovered, false if its still waiting on its first device.
+    bool checkIfDiscovered(EProtocolType type);
 
     /// floating layout for commtype button
     FloatingLayout *mHorizontalFloatingLayout;
@@ -167,7 +168,7 @@ private:
      * \param type the commtype to change the connection state on
      * \param newState the new state for the commtype.
      */
-    void changeCommTypeConnectionState(ECommTypeSettings type, EConnectionState newState);
+    void changeCommTypeConnectionState(EProtocolType type, EConnectionState newState);
 
     /*!
      * \brief mComm pointer to CommLayer.
@@ -175,9 +176,9 @@ private:
     CommLayer *mComm;
 
     /*!
-     * \brief mType current CommTypeSettings displaying its discovery page.
+     * \brief mType current ProtocolSettings displaying its discovery page.
      */
-    ECommTypeSettings mType;
+    EProtocolType mType;
 
     /*!
      * \brief mButtonIcons reference to a QPixmap for each of the comm buttons.

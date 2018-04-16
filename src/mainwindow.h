@@ -10,7 +10,7 @@
 #include "icondata.h"
 #include "cor/button.h"
 #include "floatinglayout.h"
-#include "comm/commtypesettings.h"
+#include "comm/protocolsettings.h"
 #include "comm/commlayer.h"
 #include "comm/datasyncsettings.h"
 #include "comm/datasyncarduino.h"
@@ -164,42 +164,12 @@ protected:
 private:
 
     /*!
-     * \brief mMainViewport widget that fills the main view port of the application.
-     *        This is used for animations.
-     */
-    QWidget *mMainViewport;
-
-    /// page for choosing colors of the LEDs
-    ColorPage *mColorPage;
-
-    /// page for choosing group of colors for the LEDs
-    GroupPage *mGroupPage;
-
-    /// page for choosing which LEDs to control
-    ConnectionPage *mConnectionPage;
-
-    /// adds space to top of window
-    QWidget *mSpacer;
-
-    /// central widget for window
-    QWidget *mMainWidget;
-
-    /// layout for main window, applied to mMainWidget.
-    QVBoxLayout *mLayout;
-
-    /// top menu, contains buttons to different widget pages and global controls.
-    TopMenu *mTopMenu;
-
-    /*!
      * \brief pageChanged change the QStackedWidget to the page specified
      */
     void pageChanged(EPage page);
 
-    /// fades in the greyout
-    void fadeInGreyOut();
-
-    /// fades out the greyout
-    void fadeOutGreyOut();
+    /// fades in and out the greyout
+    void greyOut(bool show);
 
     /*!
      * \brief showMainPage transitions either the color page, group page, or connection page onto the
@@ -238,6 +208,42 @@ private:
     QWidget *mainPageWidget(EPage page);
 
     /*!
+     * \brief mGreyOut overlay that greys out the entire main window. Used in conjunction with the
+     *        mEditPage
+     */
+    GreyOutOverlay *mGreyOut;
+
+    /*!
+     * \brief mBottomRightFloatingLayout floating layout in bottom right for special cases where
+     *        the top right just isn't good enough.
+     */
+    FloatingLayout *mBottomRightFloatingLayout;
+
+    /*!
+     * \brief mPageIndex index of current page.
+     */
+    EPage mPageIndex;
+
+    //------------------
+    // Pages
+    //------------------
+
+    /*!
+     * \brief mDiscoveryPage page devoted to discovering new connections. Previous connections
+     *        are saved so this page should only be used for configuring.
+     */
+    DiscoveryPage *mDiscoveryPage;
+
+    /// page for choosing colors of the LEDs
+    ColorPage *mColorPage;
+
+    /// page for choosing group of colors for the LEDs
+    GroupPage *mGroupPage;
+
+    /// page for choosing which LEDs to control
+    ConnectionPage *mConnectionPage;
+
+    /*!
      * \brief mEditPage overlay that allows editing and creating collections and moods.
      */
     EditGroupPage *mEditPage;
@@ -255,27 +261,35 @@ private:
     SettingsPage *mSettingsPage;
 
     /*!
-     * \brief mGreyOut overlay that greys out the entire main window. Used in conjunction with the
-     *        mEditPage
-     */
-    GreyOutOverlay *mGreyOut;
-
-    /*!
      * \brief mHueLightDiscovery widget for
      */
     hue::LightDiscovery *mHueLightDiscovery;
 
-    /*!
-     * \brief mDiscoveryPage page devoted to discovering new connections. Previous connections
-     *        are saved so this page should only be used for configuring.
-     */
-    DiscoveryPage *mDiscoveryPage;
+    //------------------
+    // Helper Widgets
+    //------------------
 
     /*!
-     * \brief mBottomRightFloatingLayout floating layout in bottom right for special cases where
-     *        the top right just isn't good enough.
+     * \brief mMainViewport widget that fills the main view port of the application.
+     *        This is used for animations.
      */
-    FloatingLayout *mBottomRightFloatingLayout;
+    QWidget *mMainViewport;
+
+    /// adds space to top of window
+    QWidget *mSpacer;
+
+    /// central widget for window
+    QWidget *mMainWidget;
+
+    /// layout for main window, applied to mMainWidget.
+    QVBoxLayout *mLayout;
+
+    /// top menu, contains buttons to different widget pages and global controls.
+    TopMenu *mTopMenu;
+
+    //------------------
+    // Backend Data
+    //------------------
 
     /*!
      * \brief communication pointer to communication object
@@ -288,6 +302,10 @@ private:
      *        and the saved data of the GUI
      */
     DataLayer *mData;
+
+    //------------------
+    // Data Sync Threads
+    //------------------
 
     /*!
      * \brief mDataSyncArduino sync thread for data coming from arduinos
@@ -308,38 +326,6 @@ private:
      * \brief mDataSyncSettings sync thread for data coming from settings
      */
     DataSyncSettings *mDataSyncSettings;
-
-    /*!
-     * \brief mPageIndex index of current page.
-     */
-    EPage mPageIndex;
-
-    /*!
-     * \brief mShouldGreyOutIcons cahced satte of whether any device is selected. If none
-     *        are selected, icons that require a device are all greyed out.
-     */
-    bool mShouldGreyOutIcons;
-
-    /// true if discovery page is open, false otherwise.
-    bool mDiscoveryPageIsOpen;
-
-    /// true if settings page is open, false otherwise.
-    bool mSettingsPageIsOpen;
-
-    /// true if edit page is open, false otherwise.
-    bool mEditPageIsOpen;
-
-    /// true if hue widget is open, false otherwise.
-    bool mHueInfoWidgetIsOpen;
-
-    /// true if hue light discovery widget is open, false otherwise.
-    bool mHueLightDiscoveryIsOpen;
-
-    /*!
-     * handles edge case
-     * \TODO remove this edgecase
-     */
-    bool mLastHuesWereOnlyWhite;
 };
 
 #endif // MAINWINDOW_H

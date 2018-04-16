@@ -35,6 +35,12 @@ public:
         mData = dataLayer;
     }
 
+    /// setter for open flag
+    void isOpen(bool open) { mIsOpen = open; }
+
+    /// true if open, false otherwise
+    bool isOpen() { return mIsOpen; }
+
 protected:
 
     /*!
@@ -49,6 +55,9 @@ protected:
      *        and the saved data of the GUI
      */
     DataLayer *mData;
+
+    /// true if page is open, false if hidden.
+    bool mIsOpen;
 
     /*!
      * \brief mRenderInterval number of msec between each of the UI events.

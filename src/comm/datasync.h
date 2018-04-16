@@ -64,10 +64,10 @@ public slots:
     virtual void resetSync() = 0;
 
     /*!
-     * \brief commPacketReceived a packet was received from a given CommType. In some cases, receiving a packet
+     * \brief commPacketReceived a packet was received from a given protocol type. In some cases, receiving a packet
      *        will reset the sync for that commtype.
      */
-    virtual void commPacketReceived(ECommType) = 0;
+    virtual void commPacketReceived(EProtocolType) = 0;
 
 protected slots:
 

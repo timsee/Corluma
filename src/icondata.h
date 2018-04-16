@@ -38,19 +38,12 @@ public:
     IconData(int width, int height);
 
     /*!
-     * \brief setLightingRoutine use a lighting routine and color group to set up the IconData.
-     * \param routine the routine that you want to use for the icon
-     * \param colorGroup the group that you want to use for the icon.
+     * \brief setRoutine sets the icon as a lighting routine. This takes a routine object and
+     *        the associated palette for a routine, if one exists.
+     * \param routineObject the json object that represents the routine
+     * \param colors the palette for the routine, if its a multi color routine.
      */
-    void setMultiLightingRoutine(ELightingRoutine routine, EColorGroup group, const std::vector<QColor>& colors, int colorMax = -1);
-
-    /*!
-     * \brief setSingleLightingRoutine use a lighting routine and a color to set up the IconData
-     *        for a single color routine.
-     * \param routine lighting routine to use for the icon.
-     * \param color color to use for the icon.
-     */
-    void setSingleLightingRoutine(ELightingRoutine routine, QColor color);
+    void setRoutine(const QJsonObject& routineObject, const std::vector<QColor>& colors);
 
     /*!
      * \brief setSolidColor sets the icon as a solid color
@@ -58,15 +51,10 @@ public:
     void setSolidColor(QColor color);
 
     /*!
-     * \brief setMultiColors shows all array colors, repeating if necessary
-     */
-    void setMultiColors(EColorGroup group, const std::vector<QColor>& colors, int colorMax = -1);
-
-    /*!
      * \brief setMultiGlimmer sets as mostly mainColor, but adds random colors
      *        as a glimmer effect
      */
-    void setMultiGlimmer(EColorGroup group, const std::vector<QColor>& colors, int colorMax = -1);
+    void setMultiGlimmer(EPalette palette, const std::vector<QColor>& colors);
 
     /*!
      * \brief setMultiFade regions slowly fade from one array color to another
@@ -74,28 +62,23 @@ public:
      * \param set to false in nearly all cases, this only gets set to true for the menu bar
      *        so the custom array shows a few more colors than 2 when defaulted to 2.
      */
-    void setMultiFade(EColorGroup group, const std::vector<QColor>& colors, bool showMore = false, int colorMax = -1);
+    void setMultiFade(EPalette palette, const std::vector<QColor>& colors, bool showMore = false);
 
     /*!
      * \brief setMultiRandomSolid sets icon as 4 colors from array
      */
-    void setMultiRandomSolid(EColorGroup group, const std::vector<QColor>& colors, int colorMax = -1);
+    void setMultiRandomSolid(EPalette palette, const std::vector<QColor>& colors);
 
     /*!
      * \brief setMultiRandomIndividual sets each region a random color from the array
      */
-    void setMultiRandomIndividual(EColorGroup group, const std::vector<QColor>& colors, int colorMax = -1);
+    void setMultiRandomIndividual(EPalette palette, const std::vector<QColor>& colors);
 
     /*!
-     * \brief setMultiBarsSolid draws the bars with region sizes of 2
-     */
-    void setMultiBarsSolid(EColorGroup group, const std::vector<QColor>& colors, int colorMax = -1);
-
-    /*!
-     * \brief setMultiBarsSolid draws the bars with region sizes of 2 but slightly offset
+     * \brief setMultiBars draws the bars with region sizes of 2 but slightly offset
      *        'cause its hard to show motion in a static icon.
      */
-    void setMultiBarsMoving(EColorGroup group, const std::vector<QColor>& colors, int colorMax = -1);
+    void setMultiBars(EPalette palette, const std::vector<QColor>& colors);
 
     /*!
      * \brief addWave similar to a linear fade, but offset a bit since otherwise

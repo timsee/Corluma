@@ -34,7 +34,7 @@ public:
      * \param parent parent widget
      */
     explicit PresetGroupWidget(QString name,
-                               EColorGroup group,
+                               EPalette palette,
                                const std::vector<QColor>& colors,
                                EPresetWidgetMode mode,
                                QWidget *parent = 0);
@@ -46,7 +46,7 @@ public:
      * \param routine lighting routine button to check or uncheck.
      * \param isChecked true to check button, false otherwise.
      */
-    void setChecked(ELightingRoutine routine, bool isChecked);
+    void setChecked(ERoutine routine, bool isChecked);
 
     /// resize this widget and all subwidgets
     void resize();
@@ -57,7 +57,7 @@ signals:
      * \brief presetButtonClicked signal that any of the lightsbuttons were pressed and emitting
      *        their own signal.
      */
-    void presetButtonClicked(ELightingRoutine, EColorGroup);
+    void presetButtonClicked(QJsonObject);
 
 private slots:
 
@@ -67,7 +67,7 @@ private slots:
      * \param routine widget's lighting routine
      * \param group widget's color palette
      */
-    void multiButtonClicked(ELightingRoutine routine, EColorGroup group) { emit presetButtonClicked(routine, group); }
+    void multiButtonClicked(QJsonObject object) { emit presetButtonClicked(object); }
 
 private:
 

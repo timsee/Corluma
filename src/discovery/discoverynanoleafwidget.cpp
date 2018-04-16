@@ -41,8 +41,8 @@ DiscoveryNanoLeafWidget::~DiscoveryNanoLeafWidget() {
 
 
 void DiscoveryNanoLeafWidget::handleDiscovery(bool isCurrentCommType) {
-    std::list<cor::Controller> deviceTable = mComm->discoveredList(ECommType::eNanoLeaf);
-    std::list<QString> discoveringList = mComm->undiscoveredList(ECommType::eNanoLeaf);
+    std::list<cor::Controller> deviceTable = mComm->discoveredList(ECommType::eNanoleaf);
+    std::list<QString> discoveringList = mComm->undiscoveredList(ECommType::eNanoleaf);
 
     if (isCurrentCommType) {
         for (auto device : deviceTable) {
@@ -54,30 +54,34 @@ void DiscoveryNanoLeafWidget::handleDiscovery(bool isCurrentCommType) {
         }
     }
 
-    ENanoLeafDiscoveryState discoveryState = mComm->nanoLeaf()->discoveryState();
+    ENanoleafDiscoveryState discoveryState = mComm->nanoLeaf()->discoveryState();
     switch (discoveryState) {
-    case ENanoLeafDiscoveryState::eConnectionError:
+    case ENanoleafDiscoveryState::eConnectionError:
         mLabel->setText("Connection Error");
         break;
-    case ENanoLeafDiscoveryState::eTestingIP:
-    case ENanoLeafDiscoveryState::eRunningUPnP:
+    case ENanoleafDiscoveryState::eTestingPreviousData:
+    case ENanoleafDiscoveryState::eTestingAuth:
+        mLabel->setText("Testing previous connection data..");
+        break;
+    case ENanoleafDiscoveryState::eTestingIP:
+    case ENanoleafDiscoveryState::eRunningUPnP:
         mLabel->setText("Looking for a NanoLeaf Aurora. This may take up to a minute...");
         break;
-    case ENanoLeafDiscoveryState::eAwaitingAuthToken:
+    case ENanoleafDiscoveryState::eAwaitingAuthToken:
         mLabel->setText("NanoLeaf Aurora found! Please hold the power button for around 5 seconds, until the LED to the left of it starts blinking. ");
         break;
-    case ENanoLeafDiscoveryState::eFullyConnected:
+    case ENanoleafDiscoveryState::eFullyConnected:
         mLabel->setText("NanoLeaf discovered and fully connected!");
         break;
     }
 
     // handle button updates
-    if (mComm->discoveryErrorsExist(ECommType::eNanoLeaf)) {
-        emit connectionStatusChanged(ECommTypeSettings::eNanoLeaf, EConnectionState::eConnectionError);
+    if (mComm->discoveryErrorsExist(ECommType::eNanoleaf)) {
+        emit connectionStatusChanged(EProtocolType::eNanoleaf, EConnectionState::eConnectionError);
     }  else if (deviceTable.size() > 0) {
-        emit connectionStatusChanged(ECommTypeSettings::eNanoLeaf, EConnectionState::eDiscoveredAndNotInUse);
+        emit connectionStatusChanged(EProtocolType::eNanoleaf, EConnectionState::eDiscoveredAndNotInUse);
     } else {
-        emit connectionStatusChanged(ECommTypeSettings::eNanoLeaf, EConnectionState::eOff);
+        emit connectionStatusChanged(EProtocolType::eNanoleaf, EConnectionState::eOff);
     }
 
 }
@@ -103,13 +107,13 @@ void DiscoveryNanoLeafWidget::minusButtonClicked() {
 
 bool DiscoveryNanoLeafWidget::doesNanoLeafExist(QString controller) {
     bool deviceFound = false;
-    for (auto&& discoveredController : mComm->discoveredList(ECommType::eNanoLeaf)) {
+    for (auto&& discoveredController : mComm->discoveredList(ECommType::eNanoleaf)) {
         if (discoveredController.name.compare(controller) == 0) {
             deviceFound = true;
         }
     }
 
-    for (auto&& unDiscoveredController : mComm->undiscoveredList(ECommType::eNanoLeaf)) {
+    for (auto&& unDiscoveredController : mComm->undiscoveredList(ECommType::eNanoleaf)) {
         if (unDiscoveredController.compare(controller) == 0) {
             deviceFound = true;
         }

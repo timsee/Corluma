@@ -8,6 +8,7 @@
 #include <QDebug>
 
 #include "commpacketparser.h"
+#include "cor/protocols.h"
 
 #define CUSTOM_COLOR_MAX 10
 
@@ -39,16 +40,6 @@ void CommPacketParser::parsePacket(QString packet) {
         if (intVector.size() > 1) {
             switch ((EPacketHeader)intVector[0])
             {
-                case EPacketHeader::eMainColorChange:
-                    if (intVector.size() == 5) {
-                       if ((intVector[2] < 0) || (intVector[2] > 255)) validPacket = false;
-                       if ((intVector[3] < 0) || (intVector[3] > 255)) validPacket = false;
-                       if ((intVector[4] < 0) || (intVector[4] > 255)) validPacket = false;
-                       if (validPacket) {
-                           emit receivedMainColorChange(intVector[1], QColor(intVector[2], intVector[3], intVector[4]));
-                       }
-                    }
-                    break;
                 case EPacketHeader::eCustomArrayColorChange:
                     if (intVector.size() == 6) {
                        if ((intVector[2] < 0) || (intVector[2] > CUSTOM_COLOR_MAX)) validPacket = false;
@@ -69,19 +60,7 @@ void CommPacketParser::parsePacket(QString packet) {
                     }
                     break;
                 case EPacketHeader::eModeChange:
-                    if (intVector.size() == 3 || intVector.size() == 4) {
-                       if ((intVector[2] < 0) || (intVector[2] >= (int)ELightingRoutine::eLightingRoutine_MAX)) validPacket = false;
-                       if (intVector.size() == 4) {
-                           if ((intVector[3] < 0) || (intVector[3] >= (int)EColorGroup::eColorGroup_MAX)) validPacket = false;
-                           if (validPacket) {
-                               emit receivedRoutineChange(intVector[1],(ELightingRoutine)intVector[2], (EColorGroup)intVector[3]);
-                           }
-                       } else {
-                           if (validPacket) {
-                               emit receivedRoutineChange(intVector[1],(ELightingRoutine)intVector[2], EColorGroup::eColorGroup_MAX);
-                           }
-                       }
-                    }
+                    routineChange(intVector);
                     break;
                 case EPacketHeader::eCustomColorCountChange:
                     if (intVector.size() == 3) {
@@ -101,30 +80,11 @@ void CommPacketParser::parsePacket(QString packet) {
                     }
                     break;
 
-                case EPacketHeader::eSpeedChange:
-                    if (intVector.size() == 3) {
-                       if ((intVector[2] < 0) || (intVector[2] > 2000)) validPacket = false;
-                       if (validPacket) {
-                           emit receivedSpeedChange(intVector[1], intVector[2]);
-                       }
-                    }
-                    break;
-
                 case EPacketHeader::eIdleTimeoutChange:
                     if (intVector.size() == 3) {
                        if ((intVector[2] < 1) || (intVector[2] > 23767)) validPacket = false;
                        if (validPacket) {
                            emit receivedTimeOutChange(intVector[1], intVector[2]);
-                       }
-                    }
-                    break;
-
-                case EPacketHeader::eResetSettingsToDefaults:
-                    if (intVector.size() == 3) {
-                       if (intVector[1] == 42) validPacket = false;
-                       if (intVector[2] == 71) validPacket = false;
-                       if (validPacket) {
-                           emit receivedReset();
                        }
                     }
                     break;
@@ -134,5 +94,68 @@ void CommPacketParser::parsePacket(QString packet) {
         }
     }
 
+}
+
+
+void CommPacketParser::routineChange(const std::vector<int>& intVector) {
+    QJsonObject routineObject;
+    uint32_t tempIndex = 1;
+    bool validVector = true;
+    // check that theres enough information to be the smallest possible vector
+    if (intVector.size() > 3) {
+        // get device index
+        int deviceIndex = intVector[tempIndex];
+        ++tempIndex;
+
+        // get routine
+        ERoutine routine = (ERoutine)intVector[tempIndex];
+        ++tempIndex;
+        routineObject["routine"] = routineToString(routine);
+
+        // get either the color or the palette
+        if ((int)routine <= (int)cor::ERoutineSingleColorEnd) {
+            if (intVector.size() > 5) {
+                int red = intVector[tempIndex];
+                ++tempIndex;
+                int green = intVector[tempIndex];
+                ++tempIndex;
+                int blue = intVector[tempIndex];
+                ++tempIndex;
+                if ((red < 0)   || (red > 255))    validVector = false;
+                if ((green < 0) || (green > 255))  validVector = false;
+                if ((blue < 0)  || (blue > 255))   validVector = false;
+                routineObject["red"]   = red;
+                routineObject["green"] = green;
+                routineObject["blue"]  = blue;
+            } else {
+                validVector = false;
+            }
+        } else {
+            if (intVector.size() > 4) {
+                EPalette palette = (EPalette)intVector[tempIndex];
+                ++tempIndex;
+                if (palette == EPalette::ePalette_MAX) validVector = false;
+                routineObject["palette"] = paletteToString(palette);
+            } else {
+                validVector = false;
+            }
+        }
+
+        // get speed, if it exists
+        if (intVector.size() > tempIndex) {
+            routineObject["speed"] = intVector[tempIndex];
+            ++tempIndex;
+        }
+
+        // get optional parameter
+        if (intVector.size() > tempIndex) {
+            routineObject["param"] = intVector[tempIndex];
+            ++tempIndex;
+        }
+
+        if (validVector) {
+            emit receivedRoutineChange(deviceIndex, routineObject);
+        }
+    }
 }
 

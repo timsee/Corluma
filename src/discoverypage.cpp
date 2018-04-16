@@ -32,7 +32,7 @@ DiscoveryPage::DiscoveryPage(QWidget *parent) :
 
     //setup button icons
     mButtonIcons = std::vector<QPixmap>((size_t)EConnectionButtonIcons::EConnectionButtonIcons_MAX);
-    mConnectionStates = std::vector<EConnectionState>((size_t)ECommTypeSettings::eCommTypeSettings_MAX, EConnectionState::eOff);
+    mConnectionStates = std::vector<EConnectionState>((size_t)EProtocolType::eProtocolType_MAX, EConnectionState::eOff);
 
     connect(ui->startButton, SIGNAL(clicked(bool)), this, SLOT(startClicked()));
 
@@ -70,7 +70,7 @@ DiscoveryPage::DiscoveryPage(QWidget *parent) :
     mButtonIcons[(int)EConnectionButtonIcons::eGreenButton]  = QPixmap("://images/greenButton.png").scaled(buttonSize, buttonSize,
                                                                                                            Qt::IgnoreAspectRatio,
                                                                                                            Qt::SmoothTransformation);
-    mType = ECommTypeSettings::eHue;
+    mType = EProtocolType::eHue;
 }
 
 
@@ -78,15 +78,15 @@ void DiscoveryPage::connectCommLayer(CommLayer *layer) {
     mComm = layer;
 
     mYunWidget = new DiscoveryYunWidget(mComm, this);
-    connect(mYunWidget, SIGNAL(connectionStatusChanged(ECommTypeSettings, EConnectionState)), this, SLOT(widgetConnectionStateChanged(ECommTypeSettings, EConnectionState)));
+    connect(mYunWidget, SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)), this, SLOT(widgetConnectionStateChanged(EProtocolType, EConnectionState)));
     mYunWidget->setVisible(false);
 
     mHueWidget = new DiscoveryHueWidget(mComm, this);
-    connect(mHueWidget, SIGNAL(connectionStatusChanged(ECommTypeSettings, EConnectionState)), this, SLOT(widgetConnectionStateChanged(ECommTypeSettings, EConnectionState)));
+    connect(mHueWidget, SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)), this, SLOT(widgetConnectionStateChanged(EProtocolType, EConnectionState)));
     mHueWidget->setVisible(false);
 
     mNanoLeafWidget = new DiscoveryNanoLeafWidget(mComm, this);
-    connect(mNanoLeafWidget, SIGNAL(connectionStatusChanged(ECommTypeSettings, EConnectionState)), this, SLOT(widgetConnectionStateChanged(ECommTypeSettings, EConnectionState)));
+    connect(mNanoLeafWidget, SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)), this, SLOT(widgetConnectionStateChanged(EProtocolType, EConnectionState)));
     mNanoLeafWidget->setVisible(false);
 }
 
@@ -97,9 +97,9 @@ DiscoveryPage::~DiscoveryPage() {
 
 void DiscoveryPage::renderUI() {
     bool isAnyConnected = false;
-    for (int commInt = 0; commInt != (int)ECommTypeSettings::eCommTypeSettings_MAX; ++commInt) {
-        ECommTypeSettings type = static_cast<ECommTypeSettings>(commInt);
-        if (mData->commTypeSettings()->commTypeSettingsEnabled(type)) {
+    for (int commInt = 0; commInt != (int)EProtocolType::eProtocolType_MAX; ++commInt) {
+        EProtocolType type = static_cast<EProtocolType>(commInt);
+        if (mData->protocolSettings()->enabled(type)) {
             mComm->resetStateUpdates(type);
         }
         if (checkIfDiscovered(type)) {
@@ -139,24 +139,24 @@ void DiscoveryPage::renderUI() {
 
     resizeTopMenu();
 
-    mNanoLeafWidget->handleDiscovery(mType == ECommTypeSettings::eNanoLeaf);
-    mYunWidget->handleDiscovery(mType == ECommTypeSettings::eArduCor);
+    mNanoLeafWidget->handleDiscovery(mType == EProtocolType::eNanoleaf);
+    mYunWidget->handleDiscovery(mType == EProtocolType::eArduCor);
 }
 
-bool DiscoveryPage::checkIfDiscovered(ECommTypeSettings type) {
+bool DiscoveryPage::checkIfDiscovered(EProtocolType type) {
     bool isAnyConnected = false;
 
     bool runningDiscovery = false;
-    if (type == ECommTypeSettings::eArduCor
+    if (type == EProtocolType::eArduCor
             && ( mComm->discoveredList(ECommType::eUDP).size() > 0
 #ifndef MOBILE_BUILD
             || mComm->discoveredList(ECommType::eSerial).size() > 0
 #endif
             || mComm->discoveredList(ECommType::eHTTP).size() > 0)) {
         runningDiscovery = true;
-    } else if (type == ECommTypeSettings::eHue && mComm->discoveredList(ECommType::eHue).size() > 0) {
+    } else if (type == EProtocolType::eHue && mComm->discoveredList(ECommType::eHue).size() > 0) {
         runningDiscovery = true;
-    } else if (type == ECommTypeSettings::eNanoLeaf && mComm->discoveredList(ECommType::eNanoLeaf).size() > 0) {
+    } else if (type == EProtocolType::eNanoleaf && mComm->discoveredList(ECommType::eNanoleaf).size() > 0) {
         runningDiscovery = true;
     }
 
@@ -166,7 +166,7 @@ bool DiscoveryPage::checkIfDiscovered(ECommTypeSettings type) {
     return isAnyConnected;
 }
 
-void DiscoveryPage::widgetConnectionStateChanged(ECommTypeSettings type, EConnectionState connectionState) {
+void DiscoveryPage::widgetConnectionStateChanged(EProtocolType type, EConnectionState connectionState) {
     changeCommTypeConnectionState(type, connectionState);
 }
 
@@ -176,32 +176,29 @@ void DiscoveryPage::widgetConnectionStateChanged(ECommTypeSettings type, EConnec
 // ----------------------------
 
 
-void DiscoveryPage::commTypeSelected(ECommTypeSettings type) {
-    if (type == ECommTypeSettings::eArduCor) {
+void DiscoveryPage::commTypeSelected(EProtocolType type) {
+    if (type == EProtocolType::eArduCor) {
         mYunWidget->setVisible(true);
         mHueWidget->setVisible(false);
         mNanoLeafWidget->setVisible(false);
         mYunWidget->setGeometry(ui->placeholder->geometry());
         mYunWidget->handleDiscovery(true);
-       // mHorizontalFloatingLayout->highlightButton("Discovery_ArduCor");
-    }  else if (type == ECommTypeSettings::eHue) {
+    }  else if (type == EProtocolType::eHue) {
         mYunWidget->setVisible(false);
         mHueWidget->setVisible(true);
         mNanoLeafWidget->setVisible(false);
         mHueWidget->setGeometry(ui->placeholder->geometry());
-       // mHorizontalFloatingLayout->highlightButton("Discovery_Hue");
-    } else if (type == ECommTypeSettings::eNanoLeaf) {
+    } else if (type == EProtocolType::eNanoleaf) {
         mYunWidget->setVisible(false);
         mHueWidget->setVisible(false);
         mNanoLeafWidget->setVisible(true);
         mNanoLeafWidget->setGeometry(ui->placeholder->geometry());
-      //  mHorizontalFloatingLayout->highlightButton("Discovery_NanoLeaf");
     }
     mType = type;
 }
 
 
-void DiscoveryPage::changeCommTypeConnectionState(ECommTypeSettings type, EConnectionState newState) {
+void DiscoveryPage::changeCommTypeConnectionState(EProtocolType type, EConnectionState newState) {
     if (mConnectionStates[(size_t)type] != newState) {
         QPixmap pixmap;
         switch (mConnectionStates[(int)type])
@@ -253,11 +250,11 @@ void DiscoveryPage::hide() {
 
 
 void DiscoveryPage::resizeEvent(QResizeEvent *) {
-    if (mType == ECommTypeSettings::eArduCor) {
+    if (mType == EProtocolType::eArduCor) {
         mYunWidget->setGeometry(ui->placeholder->geometry());
-    }  else if (mType == ECommTypeSettings::eHue) {
+    }  else if (mType == EProtocolType::eHue) {
         mHueWidget->setGeometry(ui->placeholder->geometry());
-    } else if (mType == ECommTypeSettings::eNanoLeaf) {
+    } else if (mType == EProtocolType::eNanoleaf) {
         mNanoLeafWidget->setGeometry(ui->placeholder->geometry());
     }
     resizeTopMenu();
@@ -274,8 +271,8 @@ void DiscoveryPage::paintEvent(QPaintEvent *) {
 }
 
 void DiscoveryPage::resizeTopMenu() {
-    for (int commInt = 0; commInt != (int)ECommTypeSettings::eCommTypeSettings_MAX; ++commInt) {
-        ECommTypeSettings type = static_cast<ECommTypeSettings>(commInt);
+    for (int commInt = 0; commInt != (int)EProtocolType::eProtocolType_MAX; ++commInt) {
+        EProtocolType type = static_cast<EProtocolType>(commInt);
         QPixmap pixmap;
         switch (mConnectionStates[(int)type])
         {
@@ -312,26 +309,26 @@ void DiscoveryPage::updateTopMenu() {
     std::vector<QString> buttons;
 
     // hide and show buttons based on their usage
-    if (mData->commTypeSettings()->commTypeSettingsEnabled(ECommTypeSettings::eHue)) {
+    if (mData->protocolSettings()->enabled(EProtocolType::eHue)) {
         buttons.push_back("Discovery_Hue");
     }
 
-    if (mData->commTypeSettings()->commTypeSettingsEnabled(ECommTypeSettings::eNanoLeaf)) {
+    if (mData->protocolSettings()->enabled(EProtocolType::eNanoleaf)) {
         buttons.push_back("Discovery_NanoLeaf");
     }
 
-    if (mData->commTypeSettings()->commTypeSettingsEnabled(ECommTypeSettings::eArduCor)) {
+    if (mData->protocolSettings()->enabled(EProtocolType::eArduCor)) {
         buttons.push_back("Discovery_ArduCor");
     }
 
     // check that commtype being shown is available, if not, adjust
-    if (!mData->commTypeSettings()->commTypeSettingsEnabled(mType)) {
-        if (mData->commTypeSettings()->commTypeSettingsEnabled(ECommTypeSettings::eHue)) {
-            mType = ECommTypeSettings::eHue;
-        } else if (mData->commTypeSettings()->commTypeSettingsEnabled(ECommTypeSettings::eNanoLeaf)) {
-            mType = ECommTypeSettings::eNanoLeaf;
-        } else if (mData->commTypeSettings()->commTypeSettingsEnabled(ECommTypeSettings::eArduCor)) {
-            mType = ECommTypeSettings::eArduCor;
+    if (!mData->protocolSettings()->enabled(mType)) {
+        if (mData->protocolSettings()->enabled(EProtocolType::eHue)) {
+            mType = EProtocolType::eHue;
+        } else if (mData->protocolSettings()->enabled(EProtocolType::eNanoleaf)) {
+            mType = EProtocolType::eNanoleaf;
+        } else if (mData->protocolSettings()->enabled(EProtocolType::eArduCor)) {
+            mType = EProtocolType::eArduCor;
         }
     }
 
@@ -352,11 +349,11 @@ void DiscoveryPage::floatingLayoutButtonPressed(QString button) {
     if (button.compare("Settings") == 0) {
         emit settingsButtonClicked();
     } else if (button.compare("Discovery_ArduCor") == 0) {
-        commTypeSelected(ECommTypeSettings::eArduCor);
+        commTypeSelected(EProtocolType::eArduCor);
     } else if (button.compare("Discovery_Hue") == 0) {
-        commTypeSelected(ECommTypeSettings::eHue);
+        commTypeSelected(EProtocolType::eHue);
     } else if (button.compare("Discovery_NanoLeaf") == 0) {
-        commTypeSelected(ECommTypeSettings::eNanoLeaf);
+        commTypeSelected(EProtocolType::eNanoleaf);
     }
 }
 
