@@ -140,8 +140,6 @@ SettingsPage::SettingsPage(QWidget *parent) :
     this->setLayout(mMainLayout);
 
     mScrollArea->setWidget(mScrollAreaWidget);
-    mScrollAreaWidget->setFixedWidth(mScrollArea->width() * 0.9f);
-
 }
 
 SettingsPage::~SettingsPage() {
@@ -161,7 +159,7 @@ void SettingsPage::show() {
 void SettingsPage::resizeEvent(QResizeEvent *event) {
     Q_UNUSED(event);
 
-    mScrollAreaWidget->setFixedWidth(this->width() * 0.9f);
+    mScrollAreaWidget->setFixedWidth(this->width() * 0.85f);
 
     QRect shownWidget = this->geometry();
     QRect hiddenWidget = QRect(0, this->geometry().height(), this->width(), this->height());

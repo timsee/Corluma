@@ -124,7 +124,8 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
             //-------------------
             QColor hsvColor = dataDevice.color.toHsv();
             // add brightness into lights
-            if (cor::colorDifference(hsvColor, commDevice.color) > 0.02f) {
+            if (cor::colorDifference(hsvColor, commDevice.color) > 0.02f
+                    || cor::brightnessDifference(commDevice.brightness, dataDevice.brightness) > 0.05f) {
                 QJsonObject routineObject;
                 routineObject["routine"] = routineToString(ERoutine::eSingleSolid);
                 routineObject["red"]     = hsvColor.red();
@@ -133,7 +134,7 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
 
                 QString message = mComm->sendRoutineChange(list, routineObject);
                 appendToPacket(packet, message, controller.maxPacketSize);
-    //            qDebug() << "hue color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << cor::colorDifference(dataDevice.color, commDevice.color);
+//        qDebug() << "hue color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << cor::colorDifference(dataDevice.color, commDevice.color);
     //            qDebug() << " packet " << message;
                 countOutOfSync++;
             }

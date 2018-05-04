@@ -10,7 +10,7 @@
 #include "floatinglayout.h"
 
 
-class DiscoveryYunWidget;
+class DiscoveryArduCorWidget;
 class DiscoveryHueWidget;
 class DiscoveryNanoLeafWidget;
 
@@ -92,9 +92,9 @@ private slots:
     void startClicked() { emit startButtonClicked(); }
 
     /*!
-     * \brief commTypeSelected called when the comm type updates and changes
+     * \brief protocolTypeSelected called when the comm type updates and changes
      */
-    void commTypeSelected(EProtocolType);
+    void protocolTypeSelected(EProtocolType);
 
     /*!
      * \brief renderUI renders expensive assets if and only if the assets have had any
@@ -143,8 +143,8 @@ private:
     /// floating layout for settings button
     FloatingLayout *mVerticalFloatingLayout;
 
-    /// discovery widget for Arduino Yuns
-    DiscoveryYunWidget *mYunWidget;
+    /// discovery widget for ArduCor
+    DiscoveryArduCorWidget *mArduCorWidget;
 
     /// discovery widget for hue products
     DiscoveryHueWidget *mHueWidget;

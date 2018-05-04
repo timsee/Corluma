@@ -162,6 +162,24 @@ void CommNanoLeaf::putJSON(const QNetworkRequest& request, const QJsonObject& js
 }
 
 
+void CommNanoLeaf::changeColorCT(const cor::Controller& controller, int ct) {
+    Q_UNUSED(controller);
+    //qDebug() << " CT is " << ct;
+    // https://en.wikipedia.org/wiki/Mired
+    // nanoleaf  can techincally do 1200 - 6500, the UI was designed for Hues which are only capable of 2000 - 6500
+    ct = cor::map(ct, 153, 500, 0, 4500); // move to range between 0 and 4500
+    ct = 4500 - ct;                       // invert it since low mired is
+    ct += 2000;                           // add the minimum value for desired range
+
+    QNetworkRequest request = networkRequest("state");
+
+    QJsonObject json;
+    QJsonObject object;
+    object["value"] = ct;
+    json["ct"] = object;
+    putJSON(request, json);
+}
+
 void CommNanoLeaf::attemptIP(QString ipAddress) {
     if (mDiscoveryState == ENanoleafDiscoveryState::eRunningUPnP) {
         mDiscoveryState = ENanoleafDiscoveryState::eTestingIP;
@@ -396,28 +414,28 @@ void CommNanoLeaf::parseCommandRequestPacket(const QJsonObject& requestPacket) {
         }
 
         // convert jsonarray array to std::vector<QColor>
-//        std::vector<QColor> colorVector;
-//        for (auto&& jsonColor : receivedPalette) {
-//            QColor color;
-//            QJsonObject jColor = jsonColor.toObject();
-//            color.setHsvF(jColor.value("hue").toDouble() / 360.0f,
-//                          jColor.value("saturation").toDouble() / 100.0f,
-//                          jColor.value("brightness").toDouble() / 100.0f);
-//            colorVector.push_back(color);
-//        }
-//        float hueSum = 0.0f;
-//        float satSum = 0.0f;
-//        float brightSum = 0.0f;
-//        for (auto&& color : colorVector) {
-//            hueSum += color.hueF();
-//            satSum += color.saturationF();
-//            brightSum += color.valueF();
-//        }
-//        QColor color;
-//        color.setHsvF(hueSum / colorVector.size(),
-//                      satSum / colorVector.size(),
-//                      brightSum / colorVector.size());
-//        light.color = color;
+        std::vector<QColor> colorVector;
+        for (auto&& jsonColor : receivedPalette) {
+            QColor color;
+            QJsonObject jColor = jsonColor.toObject();
+            color.setHsvF(jColor.value("hue").toDouble() / 360.0f,
+                          jColor.value("saturation").toDouble() / 100.0f,
+                          jColor.value("brightness").toDouble() / 100.0f);
+            colorVector.push_back(color);
+        }
+        float hueSum = 0.0f;
+        float satSum = 0.0f;
+        float brightSum = 0.0f;
+        for (auto&& color : colorVector) {
+            hueSum += color.hueF();
+            satSum += color.saturationF();
+            brightSum += color.valueF();
+        }
+        QColor color;
+        color.setHsvF(hueSum / colorVector.size(),
+                      satSum / colorVector.size(),
+                      brightSum / colorVector.size());
+        light.color = color;
         updateDevice(light);
     }
 }

@@ -138,6 +138,9 @@ void GroupsParser::saveNewCollection(const QString& groupName, const std::list<c
 
             object["controller"] = device.controller();
             object["index"] = device.index();
+            object["name"] = device.name;
+            object["hardwareType"] = hardwareTypeToString(device.hardwareType);
+
             deviceArray.append(object);
         }
     }
@@ -228,15 +231,18 @@ void GroupsParser::parseCollection(const QJsonObject& object) {
                     && device.value("controller").isString()
                     && device.value("index").isDouble()) {
                 // convert to Qt types from json data
-                QString id = device.value("id").toString();
                 QString typeString = device.value("type").toString();
                 QString controller = device.value("controller").toString();
+                QString name = device.value("name").toString();
+                ELightHardwareType hardwareType = stringToHardwareType(device.value("hardwareType").toString());
                 int index = device.value("index").toDouble();
 
                 // convert to Corluma types from certain Qt types
                 ECommType type = stringToCommType(typeString);
 
                 cor::Light light(index, type, controller);
+                light.name = name;
+                light.hardwareType = hardwareType;
                 list.push_back(light);
             } else {
                 qDebug() << __func__ << " device broken";
@@ -474,7 +480,6 @@ bool GroupsParser::checkForSavedData() {
         }
     }
 
-    //qDebug() << defaultSavePath();
     QFile saveFile(defaultSavePath());
 
     if (saveFile.open(QIODevice::ReadOnly | QIODevice::Text)) {

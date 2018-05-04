@@ -443,6 +443,7 @@ void DataLayer::updateRoutine(const QJsonObject& routineObject) {
     if (routine != ERoutine::eSingleSolid) {
         speed = routineObject["speed"].toDouble();
     }
+    int hueCount = 0;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
         iterator->routine = routine;
         if (routine != ERoutine::eSingleSolid) {
@@ -460,6 +461,20 @@ void DataLayer::updateRoutine(const QJsonObject& routineObject) {
         } else {
             EPalette palette = stringToPalette(routineObject["palette"].toString());
             iterator->palette = palette;
+
+            /*!
+             * hues are not individually addressable, mock a color group by setting
+             * each individual light as a color
+             */
+            std::vector<QColor> colors = this->palette(palette);
+            if (iterator->commType() == ECommType::eHue) {
+                int colorIndex = hueCount % colors.size();
+                iterator->color = colors[colorIndex];
+                // update the brightness to match the brightness of the color
+                int brightness = iterator->color.toHsv().valueF() * 100;
+                iterator->brightness = brightness;
+                hueCount++;
+            }
         }
 
         if (routineObject["param"].isDouble()) {
@@ -509,15 +524,7 @@ void DataLayer::updatePalette(EPalette palette) {
 void DataLayer::updateCt(int ct) {
     std::list<cor::Light>::iterator iterator;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
-        if (iterator->commType() == ECommType::eHue) {
-            iterator->color = cor::colorTemperatureToRGB(ct);
-        } else if (iterator->commType() == ECommType::eHTTP
-           #ifndef MOBILE_BUILD
-                   || iterator->commType() == ECommType::eSerial
-           #endif
-                   || iterator->commType() == ECommType::eUDP) {
-            iterator->color = cor::colorTemperatureToRGB(ct);
-        }
+        iterator->color = cor::colorTemperatureToRGB(ct);
     }
     emit dataUpdate();
 }
@@ -709,7 +716,7 @@ bool DataLayer::addDevice(cor::Light device) {
         }
     }
     // device doesn't exist, add it to the device
-    mCurrentDevices.push_front(device);
+    mCurrentDevices.push_back(device);
     emit dataUpdate();
     return false;
 }
@@ -747,7 +754,7 @@ int DataLayer::removeDevicesOfType(ECommType type) {
     std::list<cor::Light> removeList;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
         if (type == iterator->commType()) {
-            removeList.push_front((*iterator));
+            removeList.push_back((*iterator));
         }
     }
     for (auto&& device : removeList) {
@@ -767,7 +774,7 @@ int DataLayer::countDevicesOfType(ECommType type) {
     return count;
 }
 
-QString DataLayer::findCurrentCollection(const std::list<cor::LightGroup>& collections) {
+QString DataLayer::findCurrentCollection(const std::list<cor::LightGroup>& collections, bool allowLights) {
     // count number of lights in each collection currently selected
     std::vector<uint32_t> lightCount(collections.size(), 0);
     uint32_t index = 0;
@@ -787,7 +794,14 @@ QString DataLayer::findCurrentCollection(const std::list<cor::LightGroup>& colle
     index = 0;
     uint32_t completeGroupCount = 0;
     for (auto&& collection : collections) {
-        if (lightCount[index] == collection.devices.size()) {
+        // only count reachable devices
+        std::list<cor::Light> reachableDevices;
+        for (auto&& device : collection.devices) {
+            if (device.isReachable) {
+                reachableDevices.push_back(device);
+            }
+        }
+        if (lightCount[index] == reachableDevices.size() && reachableDevices.size() > 0) {
             allLightsFound[index] = true;
             ++completeGroupCount;
         }
@@ -796,16 +810,22 @@ QString DataLayer::findCurrentCollection(const std::list<cor::LightGroup>& colle
 
     // if count is higher than 1, check if any have too many
     if (completeGroupCount > 1) {
+        QString name;
+        uint32_t biggestSize = 0;
+        bool foundNonZeroGroup = false;
         index = 0;
         for (auto&& collection : collections) {
             if (allLightsFound[index]) {
-                // check if there exists more devices than counted correct
-                if (collection.devices.size() != mCurrentDevices.size()) {
-                    allLightsFound[index] = false;
-                    --completeGroupCount;
+                if (collection.devices.size() > biggestSize) {
+                    name = collection.name;
+                    foundNonZeroGroup = true;
+                    biggestSize = collection.devices.size();
                 }
             }
             ++index;
+        }
+        if (foundNonZeroGroup) {
+            return name;
         }
     }
 
@@ -819,6 +839,16 @@ QString DataLayer::findCurrentCollection(const std::list<cor::LightGroup>& colle
                 return collection.name;
             }
             ++currentIndex;
+        }
+    }
+
+
+    if (allowLights) {
+        if (mCurrentDevices.size() == 1) {
+            return mCurrentDevices.front().name;
+        }
+        if (mCurrentDevices.size() == 2) {
+            return QString(mCurrentDevices.front().name + ", " + mCurrentDevices.back().name);
         }
     }
 

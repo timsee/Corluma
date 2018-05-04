@@ -129,23 +129,25 @@ QString ListDeviceWidget::structToIdentifierString(const cor::Light& device) {
 }
 
 bool ListDeviceWidget::setHighlightChecked(bool checked) {
-    mIsChecked = checked;
-    if (mIsChecked) {
-        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mOnOffSwitch);
-        effect->setOpacity(1.0);
-        mOnOffSwitch->setGraphicsEffect(effect);
-        mOnOffSwitch->setEnabled(true);
-        mOnOffSwitch->setAttribute(Qt::WA_TransparentForMouseEvents, false);
-        this->setStyleSheet("background-color:rgb(61,142,201);");
-    } else {
-        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mOnOffSwitch);
-        effect->setOpacity(0.15);
-        mOnOffSwitch->setGraphicsEffect(effect);
-        mOnOffSwitch->setEnabled(false);
-        mOnOffSwitch->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-        this->setStyleSheet("background-color:rgb(32,31,31);");
+    if (mDevice.isReachable) {
+        mIsChecked = checked;
+        if (mIsChecked) {
+            QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mOnOffSwitch);
+            effect->setOpacity(1.0);
+            mOnOffSwitch->setGraphicsEffect(effect);
+            mOnOffSwitch->setEnabled(true);
+            mOnOffSwitch->setAttribute(Qt::WA_TransparentForMouseEvents, false);
+            this->setStyleSheet("background-color:rgb(61,142,201);");
+        } else {
+            QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mOnOffSwitch);
+            effect->setOpacity(0.15);
+            mOnOffSwitch->setGraphicsEffect(effect);
+            mOnOffSwitch->setEnabled(false);
+            mOnOffSwitch->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+            this->setStyleSheet("background-color:rgb(32,31,31);");
+        }
+        repaint();
     }
-    repaint();
     return mIsChecked;
 }
 
@@ -188,23 +190,23 @@ void ListDeviceWidget::paintEvent(QPaintEvent *event) {
     painter.setBrush(brush);
     painter.drawRect(rect);
 
-    if (mDevice.isReachable) {
-        // set brightness width
-        rect.setWidth((float)rect.width() * mDevice.brightness / 100.0f);
-        painter.setBrush(brush2);
+    // set brightness width
+    rect.setWidth((float)rect.width() * mDevice.brightness / 100.0f);
+    painter.setBrush(brush2);
+    painter.drawRect(rect);
+    if (!mDevice.isOn) {
+        QBrush brush3(QColor(0,0,0,200));
+        painter.setBrush(brush3);
         painter.drawRect(rect);
-        if (!mDevice.isOn) {
-            QBrush brush3(QColor(0,0,0,200));
-            painter.setBrush(brush3);
-            painter.drawRect(rect);
-        }
     }
 }
 
 void ListDeviceWidget::mouseReleaseEvent(QMouseEvent *event) {
     Q_UNUSED(event);
-    setHighlightChecked(!mIsChecked);
-    emit clicked(mKey);
+    if (mDevice.isReachable) {
+        setHighlightChecked(!mIsChecked);
+        emit clicked(mKey);
+    }
 }
 
 

@@ -70,7 +70,7 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
     if (eButtonSize == EButtonSize::eSmall) {
         size = QSize(screen->size().width() * 0.025f, screen->size().height() * 0.025f);
     } else if (eButtonSize == EButtonSize::eMedium) {
-        size = QSize(screen->size().width() * 0.035f, screen->size().height() * 0.035f);
+        size = QSize(screen->size().width() * 0.03f, screen->size().height() * 0.03f);
     } else if (eButtonSize == EButtonSize::eRectangle) {
 #ifdef MOBILE_BUILD
         size = QSize(screen->size().width() * 0.06f, screen->size().height() * 0.02f);
@@ -132,11 +132,8 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             mButtons[i]->setMinimumSize(buttonSize());
         } else if (mNames[i].compare("Multi") == 0) {
             foundMatch = true;
-            cor::Button *lightsButton = new cor::Button(this);
-            lightsButton->button->setCheckable(true);
             QJsonObject routineObject = lightToJson(light);
-            lightsButton->setupAsStandardButton(routineObject);
-            lightsButton->updateRoutine(routineObject, std::vector<QColor>());
+            cor::Button *lightsButton = new cor::Button(routineObject, std::vector<QColor>(), this);
             mButtons[i] = static_cast<QPushButton*>(lightsButton);
             Q_ASSERT(mButtons[i]);
         } else if (mNames[i].compare("ColorScheme") == 0) {
@@ -151,13 +148,10 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             mButtons[i]->setMinimumSize(buttonSize());
         } else if (mNames[i].compare("Routine") == 0) {
             foundMatch = true;
-            cor::Button *lightsButton = new cor::Button(this);
-            lightsButton->button->setCheckable(true);
             light.routine = ERoutine::eSingleGlimmer;
             light.color   = QColor(0, 255, 0);
             QJsonObject routineObject = lightToJson(light);
-            lightsButton->setupAsStandardButton(routineObject);
-            lightsButton->updateRoutine(routineObject, std::vector<QColor>());
+            cor::Button *lightsButton = new cor::Button(routineObject, std::vector<QColor>(), this);
             mButtons[i] = static_cast<QPushButton*>(lightsButton);
             Q_ASSERT(mButtons[i]);
         } else if (mNames[i].compare("Settings") == 0) {
@@ -176,11 +170,9 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             mButtons[i]->setMinimumSize(buttonSize());
         } else if (mNames[i].compare("Multi_Colors_Page") == 0) {
             foundMatch = true;
-            cor::Button *lightsButton = new cor::Button(this);
-            lightsButton->button->setCheckable(true);
             QJsonObject routineObject = lightToJson(light);
-            lightsButton->setupAsStandardButton(routineObject);
-            lightsButton->updateRoutine(routineObject, std::vector<QColor>());
+            cor::Button *lightsButton = new cor::Button(routineObject, std::vector<QColor>(), this);
+            lightsButton->setCheckable(true);
             mButtons[i] = static_cast<QPushButton*>(lightsButton);
             Q_ASSERT(mButtons[i]);
         } else if (mNames[i].compare("Discovery_ArduCor") == 0) {
@@ -234,12 +226,9 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             mButtons[i]->setMinimumSize(buttonSize());
         } else if (mNames[i].compare("Select_Moods") == 0) {
             foundMatch = true;
-            cor::Button *lightsButton = new cor::Button(this);
-            lightsButton->button->setCheckable(true);
             light.color   = QColor(255, 255, 0);
             QJsonObject routineObject = lightToJson(light);
-            lightsButton->setupAsStandardButton(routineObject);
-            lightsButton->updateRoutine(routineObject, std::vector<QColor>());
+            cor::Button *lightsButton = new cor::Button(routineObject, std::vector<QColor>(), this);
             mButtons[i] = static_cast<QPushButton*>(lightsButton);
             Q_ASSERT(mButtons[i]);
         } else if (mNames[i].compare("New_Group") == 0) {
@@ -259,8 +248,11 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             } else {
                 mHorizontalLayout->addWidget(mButtons[i]);
             }
-            bool isLightsButton = isALightsButton(i);
-            if (!isLightsButton) {
+            if (isALightsButton(i)) {
+                cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
+                connect(lightsButton, SIGNAL(clicked(bool)), buttonsMapper, SLOT(map()));
+                buttonsMapper->setMapping(lightsButton, i);
+            } else {
                 connect(mButtons[i], SIGNAL(clicked(bool)), buttonsMapper, SLOT(map()));
                 buttonsMapper->setMapping(mButtons[i], i);
                 // resize icon
@@ -275,7 +267,7 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
                 } else if (mNames[i].compare("Select_Devices") == 0) {
                     cor::resizeIcon(mButtons[i], ":/images/colorWheel_icon.png");
                 } else if (mNames[i].compare("New_Group") == 0) {
-                    cor::resizeIcon(mButtons[i], ":/images/editIcon.png");
+                    cor::resizeIcon(mButtons[i], ":/images/plusIcon.png");
                 } else if (mNames[i].compare("ColorScheme") == 0) {
                     cor::resizeIcon(mButtons[i], ":/images/ColorSchemePicker_icon.png");
                 } else if (mNames[i].compare("HueLightSearch") == 0) {
@@ -289,10 +281,6 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
                 } else if (mNames[i].compare("Colors_Page") == 0) {
                     cor::resizeIcon(mButtons[i], ":/images/colorWheel_icon.png");
                 }
-            } else {
-                cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
-                connect(lightsButton->button, SIGNAL(clicked(bool)), buttonsMapper, SLOT(map()));
-                buttonsMapper->setMapping(lightsButton->button, i);
             }
         }
     }
@@ -410,13 +398,7 @@ void FloatingLayout::updateDiscoveryButton(EProtocolType type, QPixmap pixmap) {
 void FloatingLayout::enableButton(QString key, bool enable) {
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
         if (mNames[i].compare(key) == 0) {
-            if (isALightsButton(i)) {
-                cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
-                Q_ASSERT(lightsButton);
-                lightsButton->enable(enable);
-            } else {
-                mButtons[i]->setEnabled(enable);
-            }
+            mButtons[i]->setEnabled(enable);
         }
     }
 }
@@ -443,7 +425,7 @@ void FloatingLayout::buttonPressed(int buttonIndex) {
         if (isALightsButton(i)) {
             cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
             Q_ASSERT(lightsButton);
-            lightsButton->button->setChecked(false);
+            lightsButton->setChecked(false);
         }
     }
 
@@ -456,7 +438,7 @@ void FloatingLayout::buttonPressed(int buttonIndex) {
         if (mNames[buttonIndex].compare("Routine") == 0) {
             highlightRoutineButton(!mRoutineIsHighlighted);
         } else {
-            lightsButton->button->setChecked(true);
+            lightsButton->setChecked(true);
         }
     } else {
         mButtons[buttonIndex]->setChecked(true);
@@ -477,9 +459,9 @@ void FloatingLayout::highlightRoutineButton(bool shouldHighlight) {
             cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
             Q_ASSERT(lightsButton);
             if (shouldHighlight) {
-                lightsButton->button->setChecked(true);
+                lightsButton->setChecked(true);
             } else {
-                lightsButton->button->setChecked(false);
+                lightsButton->setChecked(false);
             }
             mRoutineIsHighlighted = shouldHighlight;
         }

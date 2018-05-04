@@ -41,11 +41,6 @@ public:
     Light(int index, ECommType commType, QString controller);
 
     /*!
-     * \brief PRINT_DEBUG prints values of struct. used for debugging.
-     */
-    void PRINT_DEBUG() const;
-
-    /*!
      * \brief isReachable true if we can communicate with it, false otherwise
      */
     bool isReachable;
@@ -185,6 +180,23 @@ public:
 
         return result;
     }
+
+    operator QString() const {
+        std::stringstream tempString;
+        tempString << "cor::Light Device: "
+                   << " isReachable: " << isReachable
+                   << " isOn: " << isOn
+                   << " color: R:" << color.red() << " G:" << color.green() << " B:" << color.blue()
+                   << " routine: " << routineToString(routine).toUtf8().toStdString()
+                   << " palette: " << paletteToString(palette).toUtf8().toStdString()
+                   << " brightness: " << brightness
+                   << " index: " << index()
+                   << " CommType: " << commTypeToString(commType()).toUtf8().toStdString()
+                   << " Protocol: " << protocolToString(protocol()).toUtf8().toStdString()
+                   << " controller: " << controller().toUtf8().toStdString();
+        return QString::fromStdString(tempString.str());
+    }
+
 
 private:
 

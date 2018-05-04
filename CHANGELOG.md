@@ -284,6 +284,15 @@ ___
 * Split EProtocolType and ECommType. A protocol type refers to the type of commands it receives, a comm type refers to the hardware it uses to communicate. 
 * Moved speed bar from SettingsPage to GroupPage.
 
+### **v0.12.10**
+#### The TopMenu Update
+* Added a color palette to the top menu that displays the currently selected devices.
+* Added a string to the top menu that represents the currently selected devices.
+* Combined the Groups and Rooms pages. Split Moods to its own main page. 
+* Simplified the cor::Button widget.
+* Fixed miscellaneous bugs. 
+
+
 ### Coming Soon
 * Add support for connecting to multiple NanoLeaf Aurora Controllers.
 * Finish manual discovery of Hues and Bridges

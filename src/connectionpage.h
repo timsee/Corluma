@@ -11,16 +11,8 @@
 #include "lightingpage.h"
 #include "listdevicewidget.h"
 #include "comm/commlayer.h"
-#include "listmoodgroupwidget.h"
 #include "listdevicesgroupwidget.h"
 #include "cor/listwidget.h"
-
-/// current connection widget displayed in this page
-enum class ECurrentConnectionWidget {
-    eGroups,
-    eRooms,
-    eMoods
-};
 
 /*!
  * \copyright
@@ -63,9 +55,6 @@ public:
      */
     void connectCommLayer(CommLayer *layer) { mComm = layer; }
 
-    /// programmatically change the currently displayed widget
-    void displayListWidget(ECurrentConnectionWidget widget);
-
     /*!
      * \brief updateConnectionList updates the GUI elements that display the
      *        CommLayer's connection list.
@@ -77,9 +66,6 @@ public:
 
     /// called when the widget is hidden
     void hide();
-
-    /// getter for current connection widget
-    ECurrentConnectionWidget currentList() { return mCurrentConnectionWidget; }
 
 signals:
     /*!
@@ -93,11 +79,6 @@ signals:
      *        the number of devices connected.
      */
     void changedDeviceCount();
-
-    /*!
-     * \brief discoveryClicked emited whenever the discovery button is clicked.
-     */
-    void discoveryClicked();
 
     /*!
      * \brief clickedEditButton sent whenever an edit button is clicked so that the main page can load
@@ -183,28 +164,6 @@ private slots:
      */
     void newConnectionFound(QString);
 
-    //--------------------
-    // Moods
-    //--------------------
-
-    /*!
-     * \brief editMoodClicked the edit button has been pressed for a specific mood. This
-     *        gets sent to the main window and tells it to open the edit page.
-     */
-    void editMoodClicked(QString collectionKey, QString moodKey);
-
-    /*!
-     * \brief moodClicked called whenever an individual mood is clicked
-     * \param collectionKey key for the collection of lights that the mood fits into
-     * \param moodKey name of the specific mood
-     */
-    void moodClicked(QString collectionKey, QString moodKey);
-
-    /*!
-     * \brief newMoodAdded handles whenever a new mood was created on the edit page.
-     */
-    void newMoodAdded(QString);
-
 protected:
     /*!
      * \brief showEvent called before the this page is shown. Used to sync up
@@ -225,21 +184,8 @@ protected:
 
 private:
 
-    /// widget for displaying the groups in the app data
-    cor::ListWidget *mGroupsWidget;
-
     /// widget for displaying the rooms in the app data.
     cor::ListWidget *mRoomsWidget;
-
-    /*!
-     * \brief mMoodsListWidget List widget for devices. Either the moods widget or this device widget
-     *        is shown at any given time but the other is kept around in memory since they are expensive to render.
-     */
-    cor::ListWidget *mMoodsListWidget;
-
-    /// getter for the current widget.
-    cor::ListWidget *currentWidget();
-
 
     /*!
      * \brief cleanupList resync the list of collections and devices, deleting old ones that no longer exist and
@@ -309,29 +255,6 @@ private:
      */
     cor::Light identifierStringToLight(QString string);
 
-    //---------------
-    // Moods
-    //---------------
-
-    /*!
-     * \brief initMoodsCollectionWidget constructor helper for making a ListGroupGroupWidget
-     * \param name name of mood
-     * \param devices devices in mood
-     * \param key key for mood
-     * \param hideEdit true for special case groups (Available and Not Reachable), false otherwise
-     * \return pointer to the newly created ListGroupGroupWidget
-     */
-    ListMoodGroupWidget* initMoodsCollectionWidget(const QString& name,
-                                                    std::list<cor::LightGroup> moods,
-                                                    const QString& key,
-                                                    bool hideEdit = false);
-
-    /*!
-     * \brief makeMoodsCollections make all the mood-based UI widgets based on the saved JSON data in the application
-     * \param moods list of all saved moods
-     */
-    void makeMoodsCollections(const std::list<cor::LightGroup>& moods);
-
     //-------------
     // Cached States and Assets
     //-------------
@@ -340,11 +263,6 @@ private:
      * \brief mCurrentState The overall state of the app.
      */
     EConnectionState mCurrentState;
-
-    /*!
-     * \brief mCurrentConnectionWidget The current connection widget. Can be either Groups or Rooms.
-     */
-    ECurrentConnectionWidget mCurrentConnectionWidget;
 
     //-------------
     // Helpers for Checking Model Data

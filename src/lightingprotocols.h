@@ -442,6 +442,54 @@ enum class ELightHardwareType {
     ELightHardwareType_MAX
 };
 
+/// converts a ELightHardwareType to a string
+inline QString hardwareTypeToString(ELightHardwareType hardwareType) {
+    switch (hardwareType) {
+        case ELightHardwareType::eSingleLED:
+            return "Single LED";
+        case ELightHardwareType::eLightbulb:
+            return "Light Bulb";
+        case ELightHardwareType::eCube:
+            return "Cube";
+        case ELightHardwareType::e2DArray:
+            return "2D Array";
+        case ELightHardwareType::eLightStrip:
+            return "Light Strip";
+        case ELightHardwareType::eRing:
+            return "Ring";
+        case ELightHardwareType::eBloom:
+            return "Bloom";
+        case ELightHardwareType::eNanoleaf:
+            return "Nanoleaf";
+        default:
+            return "Not Recognized";
+    }
+}
+
+/// converts a string to a ELightHardwareType
+inline ELightHardwareType stringToHardwareType(QString hardwareType) {
+    if (hardwareType.compare("Single LED") == 0) {
+        return ELightHardwareType::eSingleLED;
+    } else if (hardwareType.compare("Light Bulb") == 0) {
+        return ELightHardwareType::eLightbulb;
+    } else if (hardwareType.compare("Cube") == 0) {
+        return ELightHardwareType::eCube;
+    } else if (hardwareType.compare("2D Array") == 0) {
+        return ELightHardwareType::e2DArray;
+    } else if (hardwareType.compare("Light Strip") == 0) {
+        return ELightHardwareType::eLightStrip;
+    } else if (hardwareType.compare("Ring") == 0) {
+        return ELightHardwareType::eRing;
+    } else if (hardwareType.compare("Bloom") == 0) {
+        return ELightHardwareType::eBloom;
+    } else if (hardwareType.compare("Nanoleaf") == 0) {
+        return ELightHardwareType::eNanoleaf;
+    } else {
+        return ELightHardwareType::ELightHardwareType_MAX;
+    }
+}
+
+
 /*!
  * \brief The EProductType enum The enum for the product type for a specific
  *        light. This tracks the menaufacturer and the features of a light.

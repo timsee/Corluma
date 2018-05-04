@@ -61,6 +61,14 @@ public:
     void sendPacket(const cor::Controller& controller, QString& packet);
 
     /*!
+     * \brief changeAmbientLight changes the color of the bulb to match the color temperature given. This is the only way to interact with
+     *        white ambiance bulbs and it can also be used with the RGB bulbs.
+     * \param controller controller to send CT packet to.
+     * \param ct a new value for the color temperature, given in meriks. Must be between 153 and 500.
+     */
+    void changeColorCT(const cor::Controller& controller, int ct);
+
+    /*!
      * \brief attemptIP attempts an IP address entered manually into the NanoLeaf's discovery page. This will be ignored
      *        if the lights are already connected.
      * \param ipAddress ip address to attempt for connection.

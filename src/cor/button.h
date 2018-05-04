@@ -34,26 +34,9 @@ public:
     /*!
      * \brief Constructor
      */
-    explicit Button(QWidget *parent = 0);
-
-    /*!
-     * \brief setupAsMultiButton sets up the button for use with the PresetArrayPage. Assigns
-     *        it a mode, a preset, and an icon. Whenever the button is clicked it will emit
-     *        presetClicked and will send its mode and preset in that signal.
-     * \param routine the json object representation of the routine.
-     */
-    void setupAsStandardButton(QJsonObject routine,
-                               QString label = QString(""),
-                               const std::vector<QColor>& group = std::vector<QColor>());
-
-    /*!
-     * \brief setupAsMenuButton Used by the mainWindow for the top menu. Buttons send out
-     *        their page number whenever they are clicked.
-     * \param pageNumber the number that this menu button is getting set up to signal whenever
-     *        its clicked.
-
-     */
-    void setupAsMenuButton(int pageNumber, const std::vector<QColor>& group = std::vector<QColor>());
+    explicit Button(QJsonObject routine,
+                    const std::vector<QColor>& group = std::vector<QColor>(),
+                    QWidget *parent = 0);
 
     /*!
      * \brief updateRoutine show a routine on the button
@@ -62,49 +45,22 @@ public:
      */
     void updateRoutine(const QJsonObject& routineObject, const std::vector<QColor>& colors);
 
-    /*!
-     * \brief enable enables/disables the lightsbutton.
-     * \param shouldEnable true if button should be enabled, false otherwise
-     */
-    void enable(bool shouldEnable);
-
     /// getter for routine object
     const QJsonObject& routine() { return mRoutineObject; }
 
     /*!
-     * \brief button The QPushButton that this QWidget wraps.
+     * \brief resizeIcon resize icon used for QPushButton.
      */
-    QPushButton *button;
+    void resizeIcon();
 
-    /*!
-     * \brief buttonLabel label used when setup as a label button
-     */
-    QLabel *buttonLabel;
-
-    /*!
-     * \brief setChecked checks the button inside of the LightsButton
-     * \param checked true to set to checked, false to uncheck.
-     */
-    void setChecked(bool checked) { return button->setChecked(checked); }
-
-    /// hides all the content in the widget without resizing the widget
-    void hideContent();
-
-    /// getter for label
-    QString label();
+    /// set to true to resize automatically, set to false to not resize automatically
+    void resizeIconAutomatically(bool shouldResize) { mShouldResizeIcon = shouldResize; }
 
 signals:
     /*!
      * \brief buttonClicked sent only when setupAsStandardButton has been called.
      */
     void buttonClicked(QJsonObject);
-
-    /*!
-     * \brief menuButtonClicked sent out if and only if the button is set up
-     *        as a menu button
-     */
-    void menuButtonClicked(int);
-
 private slots:
     /*!
      * \brief handleButton listens for a click on the button.
@@ -118,16 +74,11 @@ protected:
    virtual void resizeEvent(QResizeEvent *);
 
 private:
+    /// size for icon
+    QSize mIconSize;
 
-    /*!
-     * \brief resizeIcon resize icon used for QPushButton.
-     */
-    void resizeIcon();
-
-    /*!
-     * \brief mLayout layout of a lights button
-     */
-    QVBoxLayout *mLayout;
+    /// true if should automatically resize, false otherwise.
+    bool mShouldResizeIcon;
 
     /*!
      * \brief mIconData icon data used by the button's
@@ -135,34 +86,8 @@ private:
      */
     IconData mIconData;
 
-    /*!
-     * the string representation of the text of the QLabel of the button
-     * If the button doesn't have any label, this is set as a blank string.
-     */
-    QString mLabel;
-
-    /*!
-     * \brief mSetupHasBeenCalled prevents illegal calls before its been set up
-     *        as a specific button
-     */
-    bool mSetupHasBeenCalled;
-
-    /*!
-     * \brief mIsMenuButton true if setupAsMenuButton is called, false otherwise.
-     */
-    bool mIsMenuButton;
-
-    /*!
-     * \brief mPageNumber set as the page number that gets sent out if the button is
-     *        setup as a menuButton.
-     */
-    int mPageNumber;
-
     /// the json representation of the routine
     QJsonObject mRoutineObject;
-
-    /// full name of the label
-    QString mKey;
 };
 
 }

@@ -107,12 +107,6 @@ signals:
      */
     void presetPaletteChanged(EPalette);
 
-    /*!
-     * \brief clickedEditButton sent whenever an edit button is clicked so that the main page can load
-     *        the edit page.
-     */
-    void clickedEditButton(QString key, bool isMood);
-
 public slots:
 
     /*!

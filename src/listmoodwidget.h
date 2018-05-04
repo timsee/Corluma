@@ -11,7 +11,7 @@
 #include "icondata.h"
 #include "comm/commtype.h"
 #include "cor/lightgroup.h"
-#include "cor/palette.h"
+#include "cor/palettewidget.h"
 #include "listcollectionsubwidget.h"
 
 /*!
@@ -122,7 +122,7 @@ private:
     QLabel *mName;
 
     /// palette showing the colors
-    cor::Palette *mPalette;
+    cor::PaletteWidget *mPalette;
 
     /// stored local copy of the group data.
     cor::LightGroup mGroup;

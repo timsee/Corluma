@@ -146,6 +146,9 @@ public slots:
     /// close the hue light discovery widget
     void hueDiscoveryClosePressed();
 
+    /// getter for page
+    EPage currentPage() { return mPageIndex; }
+
 protected:
 
     /*!
@@ -239,6 +242,9 @@ private:
 
     /// page for choosing group of colors for the LEDs
     GroupPage *mGroupPage;
+
+    /// page for choosing moods
+    MoodsPage *mMoodsPage;
 
     /// page for choosing which LEDs to control
     ConnectionPage *mConnectionPage;

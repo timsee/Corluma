@@ -16,8 +16,8 @@ TEMPLATE = app
 # Define these paths to include libcrypto and libssl from your machine. This is
 # required for android 7.0 and later but is optional for other builds.
 # For more info on how to build and install: http://doc.qt.io/qt-5/opensslsupport.html
-LIB_CRYPTO_ANDROID = $$PWD/../../../Dev/Libraries/openssl/libcrypto.so
-LIB_SSL_ANDROID = $$PWD/../../../Dev/Libraries/openssl/libssl.so
+LIB_CRYPTO_ANDROID = $$PWD/../../../Libraries/openssl/libcrypto.so
+LIB_SSL_ANDROID = $$PWD/../../../Libraries/openssl/libssl.so
 
 #----------
 # Minimum Requirements Check
@@ -129,7 +129,6 @@ SOURCES += main.cpp \
     colorpicker/brightnessslider.cpp \
     colorpicker/colorschemecircles.cpp \
     discovery/discoverywidget.cpp \
-    discovery/discoveryyunwidget.cpp \
     discovery/discoveryhuewidget.cpp \
     discovery/discoverynanoleafwidget.cpp \
     discovery/hardwareconnectionwidget.cpp \
@@ -144,7 +143,6 @@ SOURCES += main.cpp \
     cor/webview.cpp \
     cor/switch.cpp \
     cor/lightgroup.cpp \
-    cor/palette.cpp \
     hue/lightdiscovery.cpp \
     hue/lightinfolistwidget.cpp \
     hue/lightinfowidget.cpp \
@@ -178,7 +176,11 @@ SOURCES += main.cpp \
     editablefieldwidget.cpp \
     searchwidget.cpp \
     listeditwidget.cpp \
-    comm/protocolsettings.cpp
+    comm/protocolsettings.cpp \
+    cor/palettewidget.cpp \
+    colorpicker/customcolorpicker.cpp \
+    moodspage.cpp \
+    discovery/discoveryarducorwidget.cpp
 
 HEADERS  +=  comm/commtype.h \
     comm/commserial.h \
@@ -201,7 +203,6 @@ HEADERS  +=  comm/commtype.h \
     colorpicker/brightnessslider.h \
     colorpicker/colorschemecircles.h \
     discovery/discoverywidget.h \
-    discovery/discoveryyunwidget.h \
     discovery/discoveryhuewidget.h \
     discovery/discoverynanoleafwidget.h \
     discovery/hardwareconnectionwidget.h \
@@ -217,7 +218,6 @@ HEADERS  +=  comm/commtype.h \
     cor/topwidget.h \
     cor/webview.h \
     cor/switch.h \
-    cor/palette.h \
     cor/lightgroup.h \
     cor/range.h \
     hue/lightdiscovery.h \
@@ -257,7 +257,11 @@ HEADERS  +=  comm/commtype.h \
     editablefieldwidget.h \
     searchwidget.h \
     listeditwidget.h \
-    comm/protocolsettings.h
+    comm/protocolsettings.h \
+    cor/palettewidget.h \
+    colorpicker/customcolorpicker.h \
+    moodspage.h \
+    discovery/discoveryarducorwidget.h
 
 FORMS    += discoverypage.ui \
     editcollectionpage.ui

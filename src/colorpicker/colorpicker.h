@@ -18,7 +18,8 @@
 #include "rgbsliders.h"
 #include "brightnessslider.h"
 #include "tempbrightsliders.h"
-#include "cor/palette.h"
+#include "cor/palettewidget.h"
+#include "customcolorpicker.h"
 #include "colorschemecircles.h"
 
 /*!
@@ -290,7 +291,7 @@ private:
     /*!
      * \brief mColorSchemeGrid bottom layout, gives a few color swatches
      */
-     cor::Palette *mColorSchemeGrid;
+     cor::PaletteWidget *mColorSchemeGrid;
 
     /// bottom layout, gives 3 sliders for RGB.
     RGBSliders *mRGBSliders;
@@ -302,7 +303,7 @@ private:
     BrightnessSlider *mBrightnessSlider;
 
     /// bottom layoutm, gives a slider and a grid of buttons
-    cor::Palette *mColorGrid;
+    CustomColorPicker *mColorGrid;
 
     /// cached rendered version of the color wheel
     QImage mRenderedColorWheel;

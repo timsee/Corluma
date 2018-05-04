@@ -4,9 +4,9 @@
  * Released under the GNU General Public License.
  */
 
-#include "discoveryyunwidget.h"
+#include "discoveryarducorwidget.h"
 
-DiscoveryYunWidget::DiscoveryYunWidget(CommLayer *comm, QWidget *parent) :
+DiscoveryArduCorWidget::DiscoveryArduCorWidget(CommLayer *comm, QWidget *parent) :
     DiscoveryWidget(parent) {
 
     mComm = comm;
@@ -30,13 +30,16 @@ DiscoveryYunWidget::DiscoveryYunWidget(CommLayer *comm, QWidget *parent) :
     setLayout(mLayout);
 }
 
-DiscoveryYunWidget::~DiscoveryYunWidget() {
+DiscoveryArduCorWidget::~DiscoveryArduCorWidget() {
 
 }
 
-void DiscoveryYunWidget::handleDiscovery(bool isCurrentCommType) {
+void DiscoveryArduCorWidget::handleDiscovery(bool isCurrentCommType) {
     std::list<cor::Controller> deviceTableUDP = mComm->discoveredList(ECommType::eUDP);
     std::list<cor::Controller> deviceTableHTTP = mComm->discoveredList(ECommType::eHTTP);
+#ifndef MOBILE_BUILD
+    std::list<cor::Controller> deviceTableSerial = mComm->discoveredList(ECommType::eSerial);
+#endif
 
     std::list<QString> discoveringUDP = mComm->undiscoveredList(ECommType::eUDP);
     std::list<QString> discoveringHTTP = mComm->undiscoveredList(ECommType::eHTTP);
@@ -58,6 +61,11 @@ void DiscoveryYunWidget::handleDiscovery(bool isCurrentCommType) {
             mSearchWidget->addToSearchList(name);
         }
 
+#ifndef MOBILE_BUILD
+        for (auto device : deviceTableSerial) {
+            mSearchWidget->addToConnectedList(device.name);
+        }
+#endif
         // compare discovered list of UDP against HTTP, removing those that are discovering in HTTP
         for (auto&& discovered : deviceTableUDP) {
             for (auto&& undiscovered : discoveringHTTP) {
@@ -99,7 +107,7 @@ void DiscoveryYunWidget::handleDiscovery(bool isCurrentCommType) {
 // ----------------------------
 
 
-void DiscoveryYunWidget::plusButtonClicked() {
+void DiscoveryArduCorWidget::plusButtonClicked() {
     if (!doesYunControllerExistAlready(mSearchWidget->lineEditText())) {
         QString controller = mSearchWidget->lineEditText();
         bool isSuccessful = mComm->startDiscoveringController(ECommType::eUDP, controller);
@@ -111,7 +119,7 @@ void DiscoveryYunWidget::plusButtonClicked() {
     }
 }
 
-void DiscoveryYunWidget::minusButtonClicked() {
+void DiscoveryArduCorWidget::minusButtonClicked() {
     if (doesYunControllerExistAlready(mSearchWidget->lineEditText())) {
         cor::Controller controller;
         controller.name =  mSearchWidget->lineEditText();
@@ -130,7 +138,7 @@ void DiscoveryYunWidget::minusButtonClicked() {
 // ----------------------------
 
 
-bool DiscoveryYunWidget::doesYunControllerExistAlready(QString controller) {
+bool DiscoveryArduCorWidget::doesYunControllerExistAlready(QString controller) {
     bool deviceFound = false;
     for (auto&& discoveredController : mComm->discoveredList(ECommType::eHTTP)) {
         if (discoveredController.name.compare(controller) == 0) {

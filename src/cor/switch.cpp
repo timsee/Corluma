@@ -13,7 +13,7 @@ namespace cor
 Switch::Switch(QWidget *parent) : QWidget(parent)
 {
     mSwitch = new QPushButton(this);
-    mSwitch->setCheckable(true);
+    mSwitch->setCheckable(false);
     connect(mSwitch, SIGNAL(clicked(bool)), this, SLOT(buttonPressed(bool)));
     mSwitch->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
@@ -67,7 +67,7 @@ void Switch::resizeIcon() {
                           this->height() * 0.8f);
     mSwitchIcon = mSwitchIcon.scaled(newSize.width(),
                                      newSize.height(),
-                                     Qt::IgnoreAspectRatio,
+                                     Qt::KeepAspectRatio,
                                      Qt::SmoothTransformation);
 
     mSwitch->setIcon(QIcon(mSwitchIcon));

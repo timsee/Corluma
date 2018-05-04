@@ -54,31 +54,38 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector
         routineObject["param"] = 1;
         mRoutines[5].second = routineObject;
 
-        mRoutines[6].first = "Sawtooth Fade In";
+        mRoutines[6].first = "Saw Fade In";
         light.routine = ERoutine::eSingleSawtoothFade;
         routineObject = lightToJson(light);
         routineObject["param"] = 0;
         mRoutines[6].second = routineObject;
 
-        mRoutines[7].first = "Sawtooth Fade Out";
+        mRoutines[7].first = "Saw Fade Out";
         light.routine = ERoutine::eSingleSawtoothFade;
         routineObject = lightToJson(light);
         routineObject["param"] = 1;
         mRoutines[7].second = routineObject;
 
         mRoutineButtons = std::vector<cor::Button*>(mRoutines.size(), nullptr);
+        mLabels = std::vector<QLabel*>(mRoutines.size(), nullptr);
+
         int rowCount = 0;
         int maxColumn = 4;
         for (int i = 0; i < (int)mRoutines.size(); ++i) {
-            mRoutineButtons[i] = new cor::Button(this);
+            mRoutineButtons[i] = new cor::Button(mRoutines[i].second, std::vector<QColor>(), this);
             mRoutineButtons[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-            mRoutineButtons[i]->setupAsStandardButton(mRoutines[i].second, mRoutines[i].first);
+
+            mLabels[i] = new QLabel(this);
+            mLabels[i]->setText(mRoutines[i].first);
+            mLabels[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+            mLabels[i]->setAlignment(Qt::AlignCenter);
 
             connect(mRoutineButtons[i], SIGNAL(buttonClicked(QJsonObject)), this, SLOT(routineChanged(QJsonObject)));
             if ((i % maxColumn) == 0 && i != 0) {
-                rowCount++;
+                rowCount = rowCount + 2;
             }
             mLayout->addWidget(mRoutineButtons[i], rowCount, i % maxColumn);
+            mLayout->addWidget(mLabels[i], rowCount + 1, i % maxColumn);
        }
 
     } else if (widgetGroup == EWidgetGroup::eMultiRoutines) {
@@ -111,15 +118,14 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector
         mRoutines[3].second = lightToJson(light);
 
         mRoutineButtons = std::vector<cor::Button*>(mRoutines.size(), nullptr);
+        mLabels = std::vector<QLabel*>(mRoutines.size(), nullptr);
+
         int rowCount = 0;
         int maxColumn = 3;
         for (int i = 0; i < (int)mRoutines.size(); ++i) {
-            mRoutineButtons[i] = new cor::Button(this);
+            mRoutineButtons[i] = new cor::Button(mRoutines[i].second, colors, this);
             mRoutineButtons[i]->setStyleSheet("background-color: rgb(52, 52, 52); ");
             mRoutineButtons[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-            mRoutineButtons[i]->setupAsStandardButton(mRoutines[i].second,
-                                                      mRoutines[i].first,
-                                                      colors);
             connect(mRoutineButtons[i], SIGNAL(buttonClicked(QJsonObject)), this, SLOT(routineChanged(QJsonObject)));
             if ((i % maxColumn) == 0 && i != 0) {
                 rowCount++;
@@ -137,10 +143,10 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector
 
 void RoutineButtonsWidget::highlightRoutineButton(const QString& label) {
     for (uint i = 0; i < mRoutineButtons.size(); i++) {
-        if (mRoutineButtons[i]->label().compare(label) == 0) {
-            mRoutineButtons[i]->button->setChecked(true);
+        if (mLabels[i]->text().compare(label) == 0) {
+            mRoutineButtons[i]->setChecked(true);
         } else {
-            mRoutineButtons[i]->button->setChecked(false);
+            mRoutineButtons[i]->setChecked(false);
         }
     }
 }
@@ -171,7 +177,7 @@ QString RoutineButtonsWidget::jsonToButtonName(const QJsonObject& routineObject)
             buttonParam = mRoutineButtons[i]->routine()["param"].toDouble();
         }
         if (routine == buttonRoutine && param == buttonParam) {
-            return mRoutineButtons[i]->label();
+            return mLabels[i]->text();
         }
     }
     return QString();

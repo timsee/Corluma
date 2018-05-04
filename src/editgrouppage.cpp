@@ -279,7 +279,7 @@ void EditGroupPage::saveChanges() {
         qDebug() << "Not saving this group: " << mNewName;
         qDebug() << "---------------------";
         for (auto& device : newDevices) {
-            device.PRINT_DEBUG();
+             qDebug() << device;
         }
         qDebug() << "---------------------";
 

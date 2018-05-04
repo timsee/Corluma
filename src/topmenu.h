@@ -12,6 +12,7 @@
 #include "datalayer.h"
 #include "floatinglayout.h"
 #include "connectionpage.h"
+#include "moodspage.h"
 #include "grouppage.h"
 #include "colorpage.h"
 #include "comm/commlayer.h"
@@ -31,6 +32,7 @@ enum class EPage {
     eColorPage,
     eGroupPage,
     eConnectionPage,
+    eMoodsPage,
     eSettingsPage
 };
 
@@ -78,11 +80,13 @@ public:
      * \param mainWindow main window for the application
      * \param groupPage group page, shows moods and groups
      * \param colorPage color page, allows you to set all devices to one color.
+     * \param moodsPage shows moods
      * \param connectionPage connection page, allows you to choose groups and rooms of lights
      */
     void setup(MainWindow *mainWindow,
                GroupPage *groupPage,
                ColorPage *colorPage,
+               MoodsPage *moodsPage,
                ConnectionPage *connectionPage);
 
 signals:
@@ -101,10 +105,10 @@ public slots:
     void deviceCountChanged();
 
     /*!
-     * \brief toggleOnOff Connected to the button in the top left of the GUI at all times.
+     * \brief changedSwitchState Connected to the button in the top left of the GUI at all times.
      *        Toggles between running the current routine at current settings, and off.
      */
-    void toggleOnOff();
+    void changedSwitchState(bool);
 
     /*!
      * \brief brightnessSliderChanged Connected to the the slider at the top, this takeas a value between 0-100
@@ -136,24 +140,17 @@ public slots:
      */
     void deviceCountReachedZero();
 
-    /*!
-     * \brief resizeMenuIcon resizes the icon for either the settings button or the connections button
-     * \param button pointer to button to resize
-     * \param iconPath path to icon, if it needs to be loaded again.
-     * \param scale defaulted to 1.0, amount of additional scaling that should be done to button.
-     */
-    void resizeMenuIcon(QPushButton *button, QString iconPath, float scale = 1.0f);
 protected:
     /// resizes assets in the widget
     void resizeEvent(QResizeEvent *event);
 
 private slots:
 
-    /// called when the settings button is pressed.
-    void settingsButtonPressed();
-
     /// called when any button in a floating layout is pressed.
     void floatingLayoutButtonPressed(QString);
+
+    /// slot that updates when a packet is received.
+    void receivedPacket(EProtocolType);
 private:
 
     /*!
@@ -161,27 +158,20 @@ private:
      */
     cor::Slider *mBrightnessSlider;
 
-    /*!
-     * \brief mOnOffButton button for turning all lights on and off.
-     */
-    QPushButton *mOnOffButton;
+    /// palette that shows the currently selected devices
+    cor::PaletteWidget *mMainPalette;
 
-    /*!
-     * \brief mSettingsButton button for settings page
-     */
-    QPushButton *mSettingsButton;
+    /// label for displaying string representation of selected devices.
+    QLabel *mSelectedDevicesLabel;
 
     /// spacer for row of buttons
     QWidget *mSpacer;
 
     /// layout for entire widget
-    QVBoxLayout *mLayout;
+    QGridLayout *mLayout;
 
-    /// layout for top part of widget
-    QHBoxLayout *mTopLayout;
-
-    /// layout for bottom of widget, contains buttons for pages.
-    QHBoxLayout *mBottomLayout;
+    /// y position where a floating menu can start.
+    uint32_t mFloatingMenuStart;
 
     /// data layer, contains intended state for all devices.
     DataLayer *mData;
@@ -198,11 +188,11 @@ private:
     /// floating layout for the connection page.
     FloatingLayout *mConnectionFloatingLayout;
 
-    /// vertical floating layout for the connection page.
-    FloatingLayout *mConnectionSecondFloatingLayout;
-
     /// floating layout for group page.
     FloatingLayout *mGroupFloatingLayout;
+
+    /// floating layout for moods page.
+    FloatingLayout *mMoodsFloatingLayout;
 
     /// floating layout for color page.
     FloatingLayout *mColorFloatingLayout;
@@ -231,11 +221,6 @@ private:
      */
     bool mShouldGreyOutIcons;
 
-    /*!
-     * \brief mIconData used to generate the icons in the menu bar.
-     */
-    IconData mIconData;
-
     /// pointer to main window, used for public function calls.
     MainWindow *mMainWindow;
 
@@ -245,11 +230,23 @@ private:
     /// pointer to color page, used during floating layouts clicks
     ColorPage *mColorPage;
 
+    /// pointer to moods page, used during floating layout clicks
+    MoodsPage *mMoodsPage;
+
     /// pointer to connection page, used during floating layout clicks.
     ConnectionPage *mConnectionPage;
 
     /// current page being displayed
     EPage mCurrentPage;
+
+    /// stored values for last devices to prevent unnecessary renders
+    std::list<cor::Light> mLastDevices;
+
+    /// switch for turning all selected lights on and off.
+    cor::Switch *mOnOffSwitch;
+
+    /// desired size for a button.
+    QSize mSize;
 
     /// move the floating layout to a new position due to a resize
     void moveFloatingLayout();

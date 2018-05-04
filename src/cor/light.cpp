@@ -54,20 +54,6 @@ Light::Light(int index, ECommType commType, QString controller) {
     }
 }
 
-void Light::PRINT_DEBUG() const {
-    qDebug() << "SLight Device: "
-             << "isReachable: " << isReachable << "\n"
-             << "isOn: " << isOn << "\n"
-             << "color: " << color  << "\n"
-             << "routine: " << routineToString(routine) << "\n"
-             << "palette: " << paletteToString(palette) << "\n"
-             << "brightness: " << brightness << "\n"
-             << "index: " << index() << "\n"
-             << "CommType: " << commTypeToString(commType()) << "\n"
-             << "Protocol: " << protocolToString(protocol()) << "\n"
-             << "controller: " << controller() << "\n";
-}
-
 cor::Light jsonToLight(const QJsonObject& object) {
     cor::Light light;
     if (object["routine"].isString()) {

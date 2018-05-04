@@ -23,23 +23,28 @@ CheckBox::CheckBox(QWidget *parent, QString title) : QWidget(parent) {
     mTitle->setAlignment(Qt::AlignBottom);
     QRect r = mTitle->fontMetrics().boundingRect(mTitle->text());
     mTitle->setFixedWidth(r.width());
-    mTitle->setFixedHeight(r.height());
+    mTitle->setMinimumHeight(r.height() * 1.75f);
 
     mCheckBox = new QPushButton(this);
     mCheckBox->setCheckable(true);
     connect(mCheckBox, SIGNAL(clicked(bool)), this, SLOT(buttonPressed(bool)));
-    mCheckBox->setStyleSheet("QPushButton:checked{ background-color:rgb(61, 142, 201); }");
+    mCheckBox->setStyleSheet("QPushButton:checked{ background-color:rgb(61, 142, 201); } QPushButton{ border:5px solid #AAAAAA; }");
     mCheckBox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    this->setMinimumHeight(mTitle->height() * 1.5f);
+    this->setMinimumHeight(mTitle->height());
+    mCheckBox->setMinimumHeight(mTitle->height());
+    mCheckBox->setMinimumWidth(mTitle->height());
 }
 
 void CheckBox::setTitle(QString title) {
     mTitle->setText(title);
     QRect r = mTitle->fontMetrics().boundingRect(mTitle->text());
     mTitle->setFixedWidth(r.width());
-    mTitle->setFixedHeight(r.height());
-    this->setMinimumHeight(mTitle->height() * 1.5f);
+    mTitle->setMinimumHeight(r.height() * 1.75f);
+
+    this->setMinimumHeight(mTitle->height());
+    mCheckBox->setMinimumHeight(mTitle->height());
+    mCheckBox->setMinimumWidth(mTitle->height());
 }
 
 void CheckBox::downsizeTextWidthToFit(int maxWidth) {

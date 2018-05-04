@@ -647,17 +647,20 @@ std::list<cor::Light> CommLayer::hueLightsToDevices(std::list<HueLight> hues) {
 
 
 std::list<cor::LightGroup> CommLayer::collectionList() {
-    return cor::LightGroup::mergeLightGroups(mGroups->collectionList(),
+    auto collectionList = mGroups->collectionList();
+    for (auto& groups : collectionList) {
+        for (auto& device : groups.devices) {
+            fillDevice(device);
+        }
+    }
+    return cor::LightGroup::mergeLightGroups(collectionList,
                                              mHue->groups());
 }
 
 std::list<cor::LightGroup> CommLayer::roomList() {
-    std::list<cor::LightGroup> collectionList;
-    collectionList = cor::LightGroup::mergeLightGroups(mGroups->collectionList(),
-                                                       mHue->groups());
-
+    std::list<cor::LightGroup> collections = collectionList();
     std::list<cor::LightGroup> retList;
-    for (auto&& collection : collectionList) {
+    for (auto&& collection : collections) {
         if (collection.isRoom) {
             retList.push_back(collection);
         }
@@ -666,12 +669,9 @@ std::list<cor::LightGroup> CommLayer::roomList() {
 }
 
 std::list<cor::LightGroup> CommLayer::groupList() {
-    std::list<cor::LightGroup> collectionList;
-    collectionList = cor::LightGroup::mergeLightGroups(mGroups->collectionList(),
-                                                       mHue->groups());
-
+    std::list<cor::LightGroup> collections = collectionList();
     std::list<cor::LightGroup> retList;
-    for (auto&& collection : collectionList) {
+    for (auto&& collection : collections) {
         if (!collection.isRoom) {
             retList.push_back(collection);
         }

@@ -32,7 +32,7 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
     //-----------
     // Labels
     //-----------
-    mEnabledConnectionsLabel = new QLabel("Enabled Connections", this);
+    mEnabledConnectionsLabel = new QLabel("Enabled Hardware", this);
 
     const QString labelStyleSheet = "font:bold; font-size:20pt; background-color: rgba(0,0,0,0);";
     const QString transparentStyleSheet = "background-color: rgba(0,0,0,0)";

@@ -77,7 +77,7 @@ inline ECommType stringToCommType(const QString& type) {
 }
 
 
-
+/// type of protocol used for sending and receiving packets.
 enum class EProtocolType {
     eHue,
     eNanoleaf,
@@ -86,6 +86,7 @@ enum class EProtocolType {
 };
 Q_DECLARE_METATYPE(EProtocolType)
 
+/// converts a EProtocolType to a string.
 inline QString protocolToString(EProtocolType protocol) {
     switch (protocol) {
         case EProtocolType::eArduCor:
@@ -99,6 +100,7 @@ inline QString protocolToString(EProtocolType protocol) {
     }
 }
 
+/// converts a string to a EProtocolType.
 inline EProtocolType stringToProtocol(const QString& protocol) {
     if (protocol.compare("ArduCor") == 0) {
         return EProtocolType::eArduCor;

@@ -218,6 +218,7 @@ inline ELightHardwareType convertArduinoTypeToLightType(EArduinoHardwareType typ
 }
 
 
+/// converts a commtype to a protocol type.
 inline EProtocolType convertCommTypeToProtocolType(ECommType type) {
     switch (type) {
         case ECommType::eHTTP:

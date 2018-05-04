@@ -13,26 +13,26 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief The DiscoveryYunWidget class is a discovery widget for helping with
+ * \brief The DiscoveryArduCorWidget class is a discovery widget for helping with
  *        both Yun UDP and HTTP communication streams. It allows the user to enter
  *        IP addresses manually, and then shows which IP addresses are currently running
  *        discovery and which have passed a discovery check.
  */
-class DiscoveryYunWidget: public DiscoveryWidget
+class DiscoveryArduCorWidget: public DiscoveryWidget
 {
     Q_OBJECT
 
 public:
     /*!
-     * \brief DiscoverySerialWidget constructor
+     * \brief DiscoveryArduCorWidget constructor
      * \param parent
      */
-    explicit DiscoveryYunWidget(CommLayer *comm, QWidget *parent = 0);
+    explicit DiscoveryArduCorWidget(CommLayer *comm, QWidget *parent = 0);
 
     /*!
      * \brief Destructor
      */
-    ~DiscoveryYunWidget();
+    ~DiscoveryArduCorWidget();
 
     /// See DiscoveryWidget.h
     void handleDiscovery(bool isActive);

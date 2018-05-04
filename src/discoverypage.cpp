@@ -7,7 +7,7 @@
 #include "discoverypage.h"
 #include "ui_discoverypage.h"
 
-#include "discovery/discoveryyunwidget.h"
+#include "discovery/discoveryarducorwidget.h"
 #include "discovery/discoveryhuewidget.h"
 #include "discovery/discoverynanoleafwidget.h"
 
@@ -77,9 +77,9 @@ DiscoveryPage::DiscoveryPage(QWidget *parent) :
 void DiscoveryPage::connectCommLayer(CommLayer *layer) {
     mComm = layer;
 
-    mYunWidget = new DiscoveryYunWidget(mComm, this);
-    connect(mYunWidget, SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)), this, SLOT(widgetConnectionStateChanged(EProtocolType, EConnectionState)));
-    mYunWidget->setVisible(false);
+    mArduCorWidget = new DiscoveryArduCorWidget(mComm, this);
+    connect(mArduCorWidget, SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)), this, SLOT(widgetConnectionStateChanged(EProtocolType, EConnectionState)));
+    mArduCorWidget->setVisible(false);
 
     mHueWidget = new DiscoveryHueWidget(mComm, this);
     connect(mHueWidget, SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)), this, SLOT(widgetConnectionStateChanged(EProtocolType, EConnectionState)));
@@ -140,7 +140,7 @@ void DiscoveryPage::renderUI() {
     resizeTopMenu();
 
     mNanoLeafWidget->handleDiscovery(mType == EProtocolType::eNanoleaf);
-    mYunWidget->handleDiscovery(mType == EProtocolType::eArduCor);
+    mArduCorWidget->handleDiscovery(mType == EProtocolType::eArduCor);
 }
 
 bool DiscoveryPage::checkIfDiscovered(EProtocolType type) {
@@ -176,20 +176,20 @@ void DiscoveryPage::widgetConnectionStateChanged(EProtocolType type, EConnection
 // ----------------------------
 
 
-void DiscoveryPage::commTypeSelected(EProtocolType type) {
+void DiscoveryPage::protocolTypeSelected(EProtocolType type) {
     if (type == EProtocolType::eArduCor) {
-        mYunWidget->setVisible(true);
+        mArduCorWidget->setVisible(true);
         mHueWidget->setVisible(false);
         mNanoLeafWidget->setVisible(false);
-        mYunWidget->setGeometry(ui->placeholder->geometry());
-        mYunWidget->handleDiscovery(true);
+        mArduCorWidget->setGeometry(ui->placeholder->geometry());
+        mArduCorWidget->handleDiscovery(true);
     }  else if (type == EProtocolType::eHue) {
-        mYunWidget->setVisible(false);
+        mArduCorWidget->setVisible(false);
         mHueWidget->setVisible(true);
         mNanoLeafWidget->setVisible(false);
         mHueWidget->setGeometry(ui->placeholder->geometry());
     } else if (type == EProtocolType::eNanoleaf) {
-        mYunWidget->setVisible(false);
+        mArduCorWidget->setVisible(false);
         mHueWidget->setVisible(false);
         mNanoLeafWidget->setVisible(true);
         mNanoLeafWidget->setGeometry(ui->placeholder->geometry());
@@ -251,7 +251,7 @@ void DiscoveryPage::hide() {
 
 void DiscoveryPage::resizeEvent(QResizeEvent *) {
     if (mType == EProtocolType::eArduCor) {
-        mYunWidget->setGeometry(ui->placeholder->geometry());
+        mArduCorWidget->setGeometry(ui->placeholder->geometry());
     }  else if (mType == EProtocolType::eHue) {
         mHueWidget->setGeometry(ui->placeholder->geometry());
     } else if (mType == EProtocolType::eNanoleaf) {
@@ -340,7 +340,7 @@ void DiscoveryPage::updateTopMenu() {
         mHorizontalFloatingLayout->setupButtons(buttons, EButtonSize::eRectangle);
         mVerticalFloatingLayout->highlightButton("");
     }
-    commTypeSelected(mType);
+    protocolTypeSelected(mType);
     moveFloatingLayouts();
 }
 
@@ -349,11 +349,11 @@ void DiscoveryPage::floatingLayoutButtonPressed(QString button) {
     if (button.compare("Settings") == 0) {
         emit settingsButtonClicked();
     } else if (button.compare("Discovery_ArduCor") == 0) {
-        commTypeSelected(EProtocolType::eArduCor);
+        protocolTypeSelected(EProtocolType::eArduCor);
     } else if (button.compare("Discovery_Hue") == 0) {
-        commTypeSelected(EProtocolType::eHue);
+        protocolTypeSelected(EProtocolType::eHue);
     } else if (button.compare("Discovery_NanoLeaf") == 0) {
-        commTypeSelected(EProtocolType::eNanoleaf);
+        protocolTypeSelected(EProtocolType::eNanoleaf);
     }
 }
 

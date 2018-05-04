@@ -72,13 +72,13 @@ ColorPicker::ColorPicker(QWidget *parent) :
     connect(mTempBrightSliders, SIGNAL(temperatureAndBrightnessChanged(int, int)), this, SLOT(tempBrightSlidersChanged(int, int)));
     mTempBrightSliders->setVisible(false);
 
-    mColorGrid = new  cor::Palette(5, 2, true, this);
+    mColorGrid = new  CustomColorPicker(this);
     mColorGrid->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mColorGrid, SIGNAL(multiColorCountChanged(int)), this, SLOT(multiColorCountChanged(int)));
     connect(mColorGrid, SIGNAL(selectedCountChanged(int)), this, SLOT(selectedCountChanged(int)));
     mColorGrid->setVisible(false);
 
-    mColorSchemeGrid = new  cor::Palette(5, 1, false, this);
+    mColorSchemeGrid = new  cor::PaletteWidget(5, 1, std::vector<std::vector<QColor> >(), cor::EPaletteWidgetType::eStandard, this);
     mColorSchemeGrid->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mColorSchemeGrid->setVisible(false);
 
@@ -178,9 +178,9 @@ void ColorPicker::updateColorStates(QColor mainColor,
     mColorGrid->updateMultiColor(colorArray, colorArrayCount);
 
     mColorSchemeCircles->updateColorScheme(colorSchemes);
-    mColorSchemeCircles->updateColorCount(colorSchemes.size()),
+    mColorSchemeCircles->updateColorCount(colorSchemes.size());
 
-    mColorSchemeGrid->updateMultiColor(colorSchemes, colorSchemes.size());
+   // mColorSchemeGrid->updateMultiColor(colorSchemes, colorSchemes.size());
 }
 
 void ColorPicker::enableWheel(bool shouldEnable) {
@@ -313,7 +313,7 @@ void ColorPicker::handleMouseEvent(QMouseEvent *event) {
             if (mCurrentLayoutColorPicker == ELayoutColorPicker::eMultiColorLayout) {
                 if (mWheelIsEnabled) {
                     mColorGrid->updateSelected(color);
-                    for (auto&& index : mColorGrid->selected()) {
+                    for (auto&& index : mColorGrid->palette()->selected()) {
                         emit multiColorChanged(color, index);
                     }
                     //updateMultiColor(mMultiColors, mMultiUsed);
@@ -353,7 +353,7 @@ void ColorPicker::handleMouseEvent(QMouseEvent *event) {
                 for (auto&& circle : circles) {
                     colors.push_back(circle.color);
                 }
-                mColorSchemeGrid->updateMultiColor(colors, colors.size());
+                //mColorSchemeGrid->updateMultiColor(colors, colors.size());
                 emit colorsUpdate(colors);
                // mColorSchemeGrid->setColor(2, color);
             }
@@ -450,7 +450,7 @@ void ColorPicker::changeColorWheel(ELayoutColorPicker oldLayout, ELayoutColorPic
             mWheelOpacity = 1.0f;
             // catch edge case wehre multi color picker is sometimes disabled by default
             if (newLayout == ELayoutColorPicker::eMultiColorLayout
-                    && (mColorGrid->selectedCount() == 0)) {
+                    && (mColorGrid->palette()->selectedCount() == 0)) {
                 mWheelOpacity = 0.333f;
             }
             fadeInAnimation->setEndValue(mWheelOpacity);
@@ -459,7 +459,7 @@ void ColorPicker::changeColorWheel(ELayoutColorPicker oldLayout, ELayoutColorPic
             group->addAnimation(fadeInAnimation);
             group->addAnimation(fadeOutAnimation);
             group->start(QAbstractAnimation::DeleteWhenStopped);
-        } else if (mColorGrid->selectedCount() == 0
+        } else if (mColorGrid->palette()->selectedCount() == 0
                        && (newLayout == ELayoutColorPicker::eMultiColorLayout
                            || oldLayout == ELayoutColorPicker::eMultiColorLayout)
                        && (newLayout != oldLayout)) {
@@ -501,7 +501,7 @@ void ColorPicker::changeColorWheel(ELayoutColorPicker oldLayout, ELayoutColorPic
         }
     } else {
         bool shouldEnable = true;
-        if (mColorGrid->selectedCount() == 0
+        if (mColorGrid->palette()->selectedCount() == 0
                 && (newLayout == ELayoutColorPicker::eMultiColorLayout)) {
             shouldEnable = false;
         }

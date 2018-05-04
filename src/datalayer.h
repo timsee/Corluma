@@ -334,7 +334,7 @@ public:
     ProtocolSettings *protocolSettings() { return mProtocolSettings; }
 
     /// compute the best candidate for a collection based on the current devices.
-    QString findCurrentCollection(const std::list<cor::LightGroup>& collections);
+    QString findCurrentCollection(const std::list<cor::LightGroup>& collections, bool allowLights);
 
 signals:
     /*!

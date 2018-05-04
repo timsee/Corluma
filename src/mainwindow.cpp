@@ -104,18 +104,25 @@ MainWindow::MainWindow(QWidget *parent) :
     mConnectionPage = new ConnectionPage(this);
     mConnectionPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
+    mMoodsPage = new MoodsPage(this);
+    mMoodsPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
     mConnectionPage->setup(mData);
+    mMoodsPage->setup(mData);
     mColorPage->setup(mData);
     mGroupPage->setup(mData);
 
     mConnectionPage->connectCommLayer(mComm);
+    mMoodsPage->connectCommLayer(mComm);
 
     mConnectionPage->setupUI();
+    mMoodsPage->setupUI();
+
     mGroupPage->setupButtons();
     mColorPage->setupButtons();
 
     connect(mConnectionPage, SIGNAL(clickedEditButton(QString, bool)),  this, SLOT(editButtonClicked(QString, bool)));
-    connect(mGroupPage, SIGNAL(clickedEditButton(QString, bool)),  this, SLOT(editButtonClicked(QString, bool)));
+    connect(mMoodsPage, SIGNAL(clickedEditButton(QString, bool)),  this, SLOT(editButtonClicked(QString, bool)));
 
     // --------------
     // Top Menu
@@ -212,7 +219,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mBottomRightFloatingLayout->setupButtons(buttons);
     mBottomRightFloatingLayout->setVisible(false);
 
-    mTopMenu->setup(this, mGroupPage, mColorPage, mConnectionPage);
+    mTopMenu->setup(this, mGroupPage, mColorPage, mMoodsPage, mConnectionPage);
 
 
     // --------------
@@ -247,11 +254,6 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     // --------------
-    // Final setup
-    // --------------
-    connect(mConnectionPage, SIGNAL(discoveryClicked()), this, SLOT(switchToDiscovery()));
-
-    // --------------
     // Start Discovery
     // --------------
     for (int i = 0; i < (int)EProtocolType::eProtocolType_MAX; ++i) {
@@ -279,6 +281,8 @@ void MainWindow::topMenuButtonPressed(QString key) {
         pageChanged(EPage::eColorPage);
     }  else if (key.compare("Group") == 0) {
         pageChanged(EPage::eGroupPage);
+    }  else if (key.compare("Moods") == 0) {
+        pageChanged(EPage::eMoodsPage);
     }  else if (key.compare("Connection") == 0) {
         pageChanged(EPage::eConnectionPage);
     }  else if (key.compare("Settings") == 0) {
@@ -352,6 +356,9 @@ QWidget* MainWindow::mainPageWidget(EPage page) {
         case EPage::eConnectionPage:
             widget = qobject_cast<QWidget*>(mConnectionPage);
             break;
+        case EPage::eMoodsPage:
+            widget = qobject_cast<QWidget*>(mMoodsPage);
+            break;
         case EPage::eGroupPage:
             widget = qobject_cast<QWidget*>(mGroupPage);
             break;
@@ -369,15 +376,22 @@ QWidget* MainWindow::mainPageWidget(EPage page) {
 
 bool MainWindow::shouldTransitionOutLeft(EPage page, EPage newPage) {
     if (page == EPage::eColorPage) {
-        if (newPage == EPage::eGroupPage) {
+        if (newPage == EPage::eGroupPage
+                || newPage == EPage::eMoodsPage) {
             return true;
         } else {
             return false;
         }
     } else if (page == EPage::eConnectionPage) {
         return true;
-    } else if (page == EPage::eGroupPage) {
+    } else if (page == EPage::eMoodsPage) {
         return false;
+    } else if (page == EPage::eGroupPage) {
+        if (newPage == EPage::eMoodsPage) {
+            return true;
+        } else {
+            return false;
+        }
     } else {
         throw "incorrect page";
     }
@@ -386,15 +400,22 @@ bool MainWindow::shouldTransitionOutLeft(EPage page, EPage newPage) {
 
 bool MainWindow::shouldTranitionInFromLeft(EPage page) {
     if (page == EPage::eColorPage) {
-        if (mPageIndex == EPage::eGroupPage) {
+        if (mPageIndex == EPage::eGroupPage
+                || mPageIndex == EPage::eMoodsPage) {
             return true;
         } else {
             return false;
         }
     } else if (page == EPage::eConnectionPage) {
         return true;
-    } else if (page == EPage::eGroupPage) {
+    } else if (page == EPage::eMoodsPage) {
         return false;
+    } else if (page == EPage::eGroupPage) {
+        if (mPageIndex == EPage::eMoodsPage) {
+            return true;
+        } else {
+            return false;
+        }
     } else {
         throw "incorrect page";
     }
@@ -419,6 +440,8 @@ void MainWindow::showMainPage(EPage page) {
         mConnectionPage->show();
     } else if (page == EPage::eColorPage) {
         mColorPage->show();
+    } else if (page == EPage::eMoodsPage) {
+        mMoodsPage->show();
     } else if (page == EPage::eGroupPage) {
         mGroupPage->resize();
         mGroupPage->show();
@@ -465,7 +488,7 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
     moveFloatingLayout();
     mMainWidget->setGeometry(this->geometry());
 
-    mTopMenu->setGeometry(0,0,this->width(), this->height() * 0.2f);
+    mTopMenu->setGeometry(0,0,this->width(), this->height() * 0.22f);
 
     QSize size = this->size();
 
@@ -516,6 +539,9 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
     if (mPageIndex != EPage::eGroupPage) {
         mGroupPage->setGeometry(geometry);
     }
+    if (mPageIndex != EPage::eMoodsPage) {
+        mMoodsPage->setGeometry(geometry);
+    }
     if (mPageIndex != EPage::eConnectionPage) {
         mConnectionPage->setGeometry(geometry);
     }
@@ -565,12 +591,6 @@ void MainWindow::switchToConnection() {
     animation->start();
     mDiscoveryPage->hide();
     mDiscoveryPage->isOpen(false);
-
-    if (mConnectionPage->currentList() == ECurrentConnectionWidget::eGroups) {
-        mTopMenu->highlightButton("Groups");
-    } else {
-        mTopMenu->highlightButton("Rooms");
-    }
 }
 
 void MainWindow::settingsClosePressed() {
@@ -620,7 +640,7 @@ void MainWindow::editButtonClicked(QString key, bool isMood) {
     std::list<cor::Light> groupDevices;
     bool isRoom = false;
     if (key.compare("") == 0) {
-        key = mData->findCurrentCollection(mComm->collectionList());
+        key = mData->findCurrentCollection(mComm->collectionList(), false);
         groupDevices = mData->currentDevices();
     } else {
         bool foundGroup = false;
@@ -700,11 +720,6 @@ void MainWindow::editClosePressed() {
     animation->setEndValue(finishPoint);
     animation->start();
 
-    if (mConnectionPage->currentList() == ECurrentConnectionWidget::eGroups) {
-        mTopMenu->highlightButton("Groups");
-    } else {
-        mTopMenu->highlightButton("Rooms");
-    }
     mConnectionPage->updateConnectionList();
 }
 
@@ -731,7 +746,6 @@ void MainWindow::hueInfoClosePressed() {
 
 
 void MainWindow::hueNameChanged(QString key, QString name) {
-
     // get hue light from key
     std::list<HueLight> hueLights = mComm->hue()->connectedHues();
     int keyNumber = key.toInt();

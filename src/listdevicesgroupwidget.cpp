@@ -43,10 +43,10 @@ ListDevicesGroupWidget::ListDevicesGroupWidget(const cor::LightGroup& group,
     mTopLayout->setStretch(4, 2);
 
     mGroup = group;
-    updateDevices(mGroup.devices);
-
     mLayout->addLayout(mTopLayout);
     mLayout->addWidget(mWidget);
+
+    updateDevices(mGroup.devices);
 }
 
 void ListDevicesGroupWidget::updateDevices(std::list<cor::Light> devices, bool removeIfNotFound) {
@@ -75,20 +75,14 @@ void ListDevicesGroupWidget::updateDevices(std::list<cor::Light> devices, bool r
         //----------------
 
         if (!foundDevice) {
-            // TODO: remove edge case...
-            if ((inputDevice.commType() != ECommType::eHue && inputDevice.isReachable)
-                    || inputDevice.commType() == ECommType::eHue) {
-                if (inputDevice.color.isValid()) {
-                    ListDeviceWidget *widget = new ListDeviceWidget(inputDevice,
-                                                                    mData->palette(inputDevice.palette),
-                                                                    false,
-                                                                    mWidgetSize,
-                                                                    this);
-                    connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
-                    connect(widget, SIGNAL(switchToggled(QString,bool)), this, SLOT(handleToggledSwitch(QString, bool)));
-                    insertWidget(widget);
-                }
-            }
+            ListDeviceWidget *widget = new ListDeviceWidget(inputDevice,
+                                                            mData->palette(inputDevice.palette),
+                                                            false,
+                                                            mWidgetSize,
+                                                            this);
+            connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
+            connect(widget, SIGNAL(switchToggled(QString,bool)), this, SLOT(handleToggledSwitch(QString, bool)));
+            insertWidget(widget);
         }
     }
 
@@ -152,6 +146,16 @@ void ListDevicesGroupWidget::setShowButtons(bool show) {
     }
 
     emit buttonsShown(mKey, mShowButtons);
+}
+
+std::list<cor::Light> ListDevicesGroupWidget::reachableDevices() {
+    std::list<cor::Light> reachableDevices;
+    for (auto device : mGroup.devices) {
+        if (device.isReachable) {
+            reachableDevices.push_back(device);
+        }
+    }
+    return reachableDevices;
 }
 
 void ListDevicesGroupWidget::setCheckedDevices(std::list<cor::Light> devices) {
@@ -223,7 +227,7 @@ QColor ListDevicesGroupWidget::computeHighlightColor() {
                       pureBlue.green() - pureBlack.green(),
                       pureBlue.blue() - pureBlack.blue());
 
-    float amountOfBlue = (float)checkedDevices().size() / (float)mWidgets.size();
+    float amountOfBlue = (float)checkedDevices().size() / (float)reachableDevices().size();
     return QColor(amountOfBlue * difference.red() + pureBlack.red(),
                   amountOfBlue * difference.green() + pureBlack.green(),
                   amountOfBlue * difference.blue() + pureBlack.blue());

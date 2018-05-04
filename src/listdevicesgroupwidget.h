@@ -65,6 +65,9 @@ public:
      */
     const std::list<cor::Light>& devices() { return mGroup.devices; }
 
+    /// getter for just the reachable devices in the group.
+    std::list<cor::Light> reachableDevices();
+
     /// getter for checked devices
     const std::list<cor::Light> checkedDevices();
 

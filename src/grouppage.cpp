@@ -34,6 +34,7 @@ GroupPage::GroupPage(QWidget *parent) :
     mScrollAreaArduino = new QScrollArea(this);
     mScrollAreaArduino->setWidget(mScrollWidgetArduino);
     mScrollAreaArduino->setStyleSheet("background-color:transparent;");
+    mScrollAreaArduino->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     QScroller::grabGesture(mScrollAreaArduino->viewport(), QScroller::LeftMouseButtonGesture);
 
     mScrollWidgetHue = new QWidget(this);

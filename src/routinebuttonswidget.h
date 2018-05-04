@@ -110,6 +110,9 @@ private:
      *        to iterate through them quickly.
      */
     std::vector<cor::Button*> mRoutineButtons;
+
+    /// vector of labels
+    std::vector<QLabel*> mLabels;
 };
 
 #endif // SINGLECOLORROUTINEWIDGET_H
