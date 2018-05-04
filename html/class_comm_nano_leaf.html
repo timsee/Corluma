@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.12.9</span>
+   &#160;<span id="projectnumber">v0.12.10</span>
    </div>
   </td>
  </tr>
@@ -75,6 +75,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a59f3719ecdc0395e8484e1c834602fa2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nano_leaf.html#a59f3719ecdc0395e8484e1c834602fa2">sendPacket</a> (const cor::Controller &amp;<a class="el" href="class_comm_nano_leaf.html#ac1f1d0324913d9f9b662838f7ef4a102">controller</a>, QString &amp;packet)</td></tr>
 <tr class="memdesc:a59f3719ecdc0395e8484e1c834602fa2"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendPacket Takes a packet in the format of a Corluma lights command (a comma delimited QString) and converts it into a NanoLeaf command  <a href="#a59f3719ecdc0395e8484e1c834602fa2">More...</a><br /></td></tr>
 <tr class="separator:a59f3719ecdc0395e8484e1c834602fa2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a970cc60a79ff77e4927ddc8c7afa176f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nano_leaf.html#a970cc60a79ff77e4927ddc8c7afa176f">changeColorCT</a> (const cor::Controller &amp;<a class="el" href="class_comm_nano_leaf.html#ac1f1d0324913d9f9b662838f7ef4a102">controller</a>, int ct)</td></tr>
+<tr class="memdesc:a970cc60a79ff77e4927ddc8c7afa176f"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeAmbientLight changes the color of the bulb to match the color temperature given. This is the only way to interact with white ambiance bulbs and it can also be used with the RGB bulbs.  <a href="#a970cc60a79ff77e4927ddc8c7afa176f">More...</a><br /></td></tr>
+<tr class="separator:a970cc60a79ff77e4927ddc8c7afa176f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aba6f93d4397193a65ee3f288a9890a87"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nano_leaf.html#aba6f93d4397193a65ee3f288a9890a87">attemptIP</a> (QString ipAddress)</td></tr>
 <tr class="memdesc:aba6f93d4397193a65ee3f288a9890a87"><td class="mdescLeft">&#160;</td><td class="mdescRight">attemptIP attempts an IP address entered manually into the NanoLeaf's discovery page. This will be ignored if the lights are already connected.  <a href="#aba6f93d4397193a65ee3f288a9890a87">More...</a><br /></td></tr>
 <tr class="separator:aba6f93d4397193a65ee3f288a9890a87"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -289,6 +292,41 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">ipAddress</td><td>ip address to attempt for connection. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a970cc60a79ff77e4927ddc8c7afa176f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a970cc60a79ff77e4927ddc8c7afa176f">&#9670;&nbsp;</a></span>changeColorCT()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CommNanoLeaf::changeColorCT </td>
+          <td>(</td>
+          <td class="paramtype">const cor::Controller &amp;&#160;</td>
+          <td class="paramname"><em>controller</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>ct</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">controller</td><td>controller to send CT packet to. </td></tr>
+    <tr><td class="paramname">ct</td><td>a new value for the color temperature, given in meriks. Must be between 153 and 500. </td></tr>
   </table>
   </dd>
 </dl>

@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.12.9</span>
+   &#160;<span id="projectnumber">v0.12.10</span>
    </div>
   </td>
  </tr>
@@ -64,10 +64,10 @@ Public Slots</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a5f478fd868c297f2368873fea0a68397">deviceCountChanged</a> ()</td></tr>
 <tr class="memdesc:a5f478fd868c297f2368873fea0a68397"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceCountChanged handles the case when the device count changes. <br /></td></tr>
 <tr class="separator:a5f478fd868c297f2368873fea0a68397"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa623143258f102120273eb7f54a35f71"><td class="memItemLeft" align="right" valign="top"><a id="aa623143258f102120273eb7f54a35f71"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#aa623143258f102120273eb7f54a35f71">toggleOnOff</a> ()</td></tr>
-<tr class="memdesc:aa623143258f102120273eb7f54a35f71"><td class="mdescLeft">&#160;</td><td class="mdescRight">toggleOnOff Connected to the button in the top left of the GUI at all times. Toggles between running the current routine at current settings, and off. <br /></td></tr>
-<tr class="separator:aa623143258f102120273eb7f54a35f71"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a316162267cb64aad38d27ec8e2496120"><td class="memItemLeft" align="right" valign="top"><a id="a316162267cb64aad38d27ec8e2496120"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a316162267cb64aad38d27ec8e2496120">changedSwitchState</a> (bool)</td></tr>
+<tr class="memdesc:a316162267cb64aad38d27ec8e2496120"><td class="mdescLeft">&#160;</td><td class="mdescRight">changedSwitchState Connected to the button in the top left of the GUI at all times. Toggles between running the current routine at current settings, and off. <br /></td></tr>
+<tr class="separator:a316162267cb64aad38d27ec8e2496120"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af6819bf88b3044f26fc5523359037f1f"><td class="memItemLeft" align="right" valign="top"><a id="af6819bf88b3044f26fc5523359037f1f"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#af6819bf88b3044f26fc5523359037f1f">brightnessSliderChanged</a> (int)</td></tr>
 <tr class="memdesc:af6819bf88b3044f26fc5523359037f1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">brightnessSliderChanged Connected to the the slider at the top, this takeas a value between 0-100 and sends that value to the lights to control how bright they are. <br /></td></tr>
@@ -88,9 +88,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#afacc54557f26c5e5afc492a5dea99fc9">deviceCountReachedZero</a> ()</td></tr>
 <tr class="memdesc:afacc54557f26c5e5afc492a5dea99fc9"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceCountChangedOnConnectionPage handles the case when the device count reaches zero. This gets signaled from the data layer whereas deviceCOuntChangedOnConnectionPage gets signaled from the connection page. <br /></td></tr>
 <tr class="separator:afacc54557f26c5e5afc492a5dea99fc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae89dc587b8df0dd7b5fda5fd88f13c41"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#ae89dc587b8df0dd7b5fda5fd88f13c41">resizeMenuIcon</a> (QPushButton *button, QString iconPath, float scale=1.0f)</td></tr>
-<tr class="memdesc:ae89dc587b8df0dd7b5fda5fd88f13c41"><td class="mdescLeft">&#160;</td><td class="mdescRight">resizeMenuIcon resizes the icon for either the settings button or the connections button  <a href="#ae89dc587b8df0dd7b5fda5fd88f13c41">More...</a><br /></td></tr>
-<tr class="separator:ae89dc587b8df0dd7b5fda5fd88f13c41"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
@@ -126,9 +123,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a3eb3451aabd87281a9628b07d9140d94">showFloatingLayout</a> (EPage newPage)</td></tr>
 <tr class="memdesc:a3eb3451aabd87281a9628b07d9140d94"><td class="mdescLeft">&#160;</td><td class="mdescRight">switch the floating layout to show the menu for the given page <br /></td></tr>
 <tr class="separator:a3eb3451aabd87281a9628b07d9140d94"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea26a6a18aed85c38f412e2863634f15"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#aea26a6a18aed85c38f412e2863634f15">setup</a> (<a class="el" href="class_main_window.html">MainWindow</a> *mainWindow, <a class="el" href="class_group_page.html">GroupPage</a> *groupPage, <a class="el" href="class_color_page.html">ColorPage</a> *colorPage, <a class="el" href="class_connection_page.html">ConnectionPage</a> *connectionPage)</td></tr>
-<tr class="memdesc:aea26a6a18aed85c38f412e2863634f15"><td class="mdescLeft">&#160;</td><td class="mdescRight">setup connect the top menu to pages it can open and close  <a href="#aea26a6a18aed85c38f412e2863634f15">More...</a><br /></td></tr>
-<tr class="separator:aea26a6a18aed85c38f412e2863634f15"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95ff8fed708c57cc11cf0b54d3a6d932"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a95ff8fed708c57cc11cf0b54d3a6d932">setup</a> (<a class="el" href="class_main_window.html">MainWindow</a> *mainWindow, <a class="el" href="class_group_page.html">GroupPage</a> *groupPage, <a class="el" href="class_color_page.html">ColorPage</a> *colorPage, <a class="el" href="class_moods_page.html">MoodsPage</a> *moodsPage, <a class="el" href="class_connection_page.html">ConnectionPage</a> *connectionPage)</td></tr>
+<tr class="memdesc:a95ff8fed708c57cc11cf0b54d3a6d932"><td class="mdescLeft">&#160;</td><td class="mdescRight">setup connect the top menu to pages it can open and close  <a href="#a95ff8fed708c57cc11cf0b54d3a6d932">More...</a><br /></td></tr>
+<tr class="separator:a95ff8fed708c57cc11cf0b54d3a6d932"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -230,58 +227,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a id="ae89dc587b8df0dd7b5fda5fd88f13c41"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae89dc587b8df0dd7b5fda5fd88f13c41">&#9670;&nbsp;</a></span>resizeMenuIcon</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void TopMenu::resizeMenuIcon </td>
-          <td>(</td>
-          <td class="paramtype">QPushButton *&#160;</td>
-          <td class="paramname"><em>button</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">QString&#160;</td>
-          <td class="paramname"><em>iconPath</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>scale</em> = <code>1.0f</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">slot</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">button</td><td>pointer to button to resize </td></tr>
-    <tr><td class="paramname">iconPath</td><td>path to icon, if it needs to be loaded again. </td></tr>
-    <tr><td class="paramname">scale</td><td>defaulted to 1.0, amount of additional scaling that should be done to button. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="aea26a6a18aed85c38f412e2863634f15"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aea26a6a18aed85c38f412e2863634f15">&#9670;&nbsp;</a></span>setup()</h2>
+<a id="a95ff8fed708c57cc11cf0b54d3a6d932"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a95ff8fed708c57cc11cf0b54d3a6d932">&#9670;&nbsp;</a></span>setup()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -307,6 +254,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="class_moods_page.html">MoodsPage</a> *&#160;</td>
+          <td class="paramname"><em>moodsPage</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype"><a class="el" href="class_connection_page.html">ConnectionPage</a> *&#160;</td>
           <td class="paramname"><em>connectionPage</em>&#160;</td>
         </tr>
@@ -322,6 +275,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
     <tr><td class="paramname">mainWindow</td><td>main window for the application </td></tr>
     <tr><td class="paramname">groupPage</td><td>group page, shows moods and groups </td></tr>
     <tr><td class="paramname">colorPage</td><td>color page, allows you to set all devices to one color. </td></tr>
+    <tr><td class="paramname">moodsPage</td><td>shows moods </td></tr>
     <tr><td class="paramname">connectionPage</td><td>connection page, allows you to choose groups and rooms of lights </td></tr>
   </table>
   </dd>
