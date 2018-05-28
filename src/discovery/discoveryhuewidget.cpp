@@ -11,7 +11,7 @@
 DiscoveryHueWidget::DiscoveryHueWidget(CommLayer *comm, QWidget *parent) :
     DiscoveryWidget(parent) {
 
-    mScale = 0.5f;
+    mScale = 0.4f;
 
     mComm = comm;
     connect(mComm, SIGNAL(hueDiscoveryStateChange(EHueDiscoveryState)), this, SLOT(hueDiscoveryUpdate(EHueDiscoveryState)));
@@ -61,7 +61,8 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer *comm, QWidget *parent) :
     mLayout->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     setLayout(mLayout);
 
-    int size = this->width() * mScale;
+    int min = std::min(this->width(), this->height());
+    int size = min * mScale;
     mImage->setMaximumSize(QSize(size, size));
     mBridgePixmap = QPixmap(":images/Hue-Bridge.png");
     mImage->setPixmap(mBridgePixmap.scaled(size,
@@ -151,7 +152,8 @@ void DiscoveryHueWidget::IPFieldChanged(QString ipAddress) {
 }
 
 void DiscoveryHueWidget::resizeEvent(QResizeEvent *) {
-    int height = this->width() * mScale;
+    int min = std::min(this->width(), this->height());
+    int height = min * mScale;
     mImage->setMaximumSize(QSize(this->width(), height));
     mImage->setPixmap(mBridgePixmap.scaled(height,
                                            height,

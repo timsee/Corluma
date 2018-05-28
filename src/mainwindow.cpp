@@ -19,22 +19,23 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent) {
 
+    mAnyDiscovered = false;
     this->setWindowTitle("Corluma");
 
-        // mobile devices take up the full screen
+    // mobile devices take up the full screen
 #ifdef MOBILE_BUILD
-        QRect rect = QApplication::desktop()->screenGeometry();
-        this->setGeometry(0,
-                          0,
-                          rect.width(),
-                          rect.height());
-        this->setMinimumSize(QSize(rect.width(),
-                                   rect.height()));
-
+    QScreen *screen = QApplication::screens().at(0);
+    QSize size = screen->size();
+    this->setGeometry(0,
+                      0,
+                      size.width(),
+                      size.height());
+    this->setMinimumSize(QSize(size.width(),
+                               size.height()));
 #else
-        // desktop builds have a minimum size of 400 x 600
-        this->setGeometry(0,0,400,600);
-        this->setMinimumSize(QSize(400,600));
+    // desktop builds have a minimum size of 400 x 600
+    this->setGeometry(0,0,400,600);
+    this->setMinimumSize(QSize(400,600));
 #endif
 
 
@@ -63,33 +64,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mMainViewport = new QWidget(this);
     mMainViewport->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-    // --------------
-    // Setup Layout
-    // --------------
-
-    mSpacer = new QWidget(this);
-    mSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-    mMainWidget = new QWidget(this);
-    mMainWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-    mLayout = new QVBoxLayout(mMainWidget);
-    mLayout->setSpacing(0);
-    mLayout->addWidget(mSpacer, 3);
-    mLayout->addWidget(mMainViewport, 12);
-    mMainWidget->setLayout(mLayout);
-#ifdef MOBILE_BUILD
-    QRect mobileRect = this->geometry();
-    mLayout->setGeometry(QRect(0,
-                               0,
-                               mobileRect.width(),
-                               (int)(mobileRect.height() * 0.95f)));
-#else
-    mLayout->setGeometry(this->geometry());
-#endif
-
-    setCentralWidget(mMainWidget);
 
     // --------------
     // Setup Pages
@@ -144,6 +118,26 @@ MainWindow::MainWindow(QWidget *parent) :
     mTopMenu->setGeometry(0, 0, this->width(), this->height() * 0.1667);
     mTopMenu->highlightButton("Rooms");
 
+
+    // --------------
+    // Setup Layout
+    // --------------
+
+    mSpacer = new QWidget(this);
+    mSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    mSpacer->setFixedHeight(this->height() * 0.22f);
+
+    mMainWidget = new QWidget(this);
+    mMainWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mMainWidget->setVisible(false);
+
+    setCentralWidget(mMainWidget);
+
+    mLayout = new QVBoxLayout(mMainWidget);
+    mLayout->setSpacing(0);
+    mLayout->addWidget(mSpacer);
+    mLayout->addWidget(mMainViewport);
+    mMainWidget->setLayout(mLayout);
 
     // --------------
     // Settings Page
@@ -321,8 +315,10 @@ void MainWindow::brightnessChanged(int newBrightness) {
 
 
 void MainWindow::settingsButtonFromDiscoveryPressed() {
-    // hide discovery
-    switchToConnection();
+    if (mAnyDiscovered) {
+        // hide discovery
+        switchToConnection();
+    }
     // open settings if needed
     if (!mSettingsPage->isOpen()) {
         mSettingsPage->setGeometry(this->width(), 0, this->width(), mSettingsPage->height());
@@ -333,6 +329,7 @@ void MainWindow::settingsButtonFromDiscoveryPressed() {
         animation->setEndValue(QPoint(0,0));
         animation->start();
         mSettingsPage->show();
+        mSettingsPage->raise();
         mSettingsPage->isOpen(true);
     }
 }
@@ -487,26 +484,39 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
 
     moveFloatingLayout();
     mMainWidget->setGeometry(this->geometry());
+    mTopMenu->setGeometry(0,0,
+                          this->width(),
+                          mTopMenu->geometry().height());
+    mSpacer->setGeometry(mTopMenu->geometry());
+    mMainViewport->setGeometry(mLayout->contentsMargins().left(),
+                               mSpacer->height(),
+                               this->width() - (mLayout->contentsMargins().right() + mLayout->contentsMargins().left() + mLayout->spacing()),
+                               (this->height() - mTopMenu->geometry().height()) * 0.92f);
 
-    mTopMenu->setGeometry(0,0,this->width(), this->height() * 0.22f);
-
-    QSize size = this->size();
-
+    QSize fullScreenSize = this->size();
     if (mDiscoveryPage->isOpen()) {
         mDiscoveryPage->setGeometry(mDiscoveryPage->geometry().x(),
                                     mDiscoveryPage->geometry().y(),
-                                    size.width(), size.height());
+                                    fullScreenSize.width(),
+                                    fullScreenSize.height());
     } else {
         mDiscoveryPage->setGeometry(this->geometry().width() * -1,
                                     mDiscoveryPage->geometry().y(),
-                                    size.width(), size.height());
+                                    fullScreenSize.width(),
+                                    fullScreenSize.height());
     }
 
     if (mSettingsPage->isOpen()) {
-        mSettingsPage->setGeometry(mSettingsPage->geometry().x(), mSettingsPage->geometry().y(), size.width(), size.height());
+        mSettingsPage->setGeometry(mSettingsPage->geometry().x(),
+                                   mSettingsPage->geometry().y(),
+                                   fullScreenSize.width(),
+                                   fullScreenSize.height());
     } else {
-        int diff = mSettingsPage->geometry().width() - size.width(); // adjust x coordinate of discovery page as it scales since its sitting next to main page.
-        mSettingsPage->setGeometry(mSettingsPage->geometry().x() - diff, mSettingsPage->geometry().y(), size.width(), size.height());
+        int diff = mSettingsPage->geometry().width() - fullScreenSize.width(); // adjust x coordinate of discovery page as it scales since its sitting next to main page.
+        mSettingsPage->setGeometry(mSettingsPage->geometry().x() - diff,
+                                   mSettingsPage->geometry().y(),
+                                   fullScreenSize.width(),
+                                   fullScreenSize.height());
     }
 
     if (mGreyOut->isVisible()) {
@@ -528,6 +538,7 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
     QWidget *widget = mainPageWidget(mPageIndex);
     widget->setGeometry(mMainViewport->geometry());
 
+
     QRect geometry(this->width() + mMainViewport->width(),
                    mMainViewport->geometry().y(),
                    mMainViewport->geometry().width(),
@@ -545,7 +556,6 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
     if (mPageIndex != EPage::eConnectionPage) {
         mConnectionPage->setGeometry(geometry);
     }
-
 }
 
 void MainWindow::changeEvent(QEvent *event) {

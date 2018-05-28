@@ -58,6 +58,9 @@ public:
     /// pointer to settings page
     SettingsPage *settings() { return mSettingsPage; }
 
+    /// true if any discovered, false if nothing discoverd.
+    void anyDiscovered(bool discovered) { mAnyDiscovered = discovered; }
+
 public slots:
 
     /*!
@@ -226,6 +229,9 @@ private:
      * \brief mPageIndex index of current page.
      */
     EPage mPageIndex;
+
+    /// true if any discovered, false if none discovered
+    bool mAnyDiscovered;
 
     //------------------
     // Pages

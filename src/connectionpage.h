@@ -67,6 +67,9 @@ public:
     /// called when the widget is hidden
     void hide();
 
+    /// getter for string for current group
+    const QString& currentGroup() { return mCurrentGroup; }
+
 signals:
     /*!
      * \brief Used to signal back to the main page that it should update its top-left icon
@@ -149,11 +152,6 @@ private slots:
      */
     void groupSelected(QString key, bool shouldSelect);
 
-    /*!
-     * \brief editGroupClicked the edit button has been pressed for a specific collection
-     */
-    void editGroupClicked(QString key);
-
     //--------------------
     // Groups Parser Slots
     //--------------------
@@ -186,6 +184,9 @@ private:
 
     /// widget for displaying the rooms in the app data.
     cor::ListWidget *mRoomsWidget;
+
+    /// the current group selected
+    QString mCurrentGroup;
 
     /*!
      * \brief cleanupList resync the list of collections and devices, deleting old ones that no longer exist and

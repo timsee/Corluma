@@ -46,11 +46,6 @@ signals:
      */
     void multiColorCountChanged(int);
 
-    /*!
-     * \brief selectedCountChanged a button was pressed so the selected count has changed. emits new count.
-     */
-    void selectedCountChanged(int);
-
 private slots:
 
     /*!

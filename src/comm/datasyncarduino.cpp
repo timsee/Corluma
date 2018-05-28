@@ -173,7 +173,7 @@ void DataSyncArduino::simplifyPackets(const cor::Controller& controller, std::li
 const QString DataSyncArduino::createPacket(const cor::Controller& controller, const std::list<QString>& allMessages) {
     QString finalPacket;
     for (auto&& message : allMessages) {
-        if ((int)(finalPacket.size() + message.size()) < (int)(controller.maxPacketSize - 12)) {
+        if ((int)(finalPacket.size() + message.size()) < (int)(controller.maxPacketSize - 16)) {
             finalPacket.append(message + "&");
         }
     }
@@ -261,11 +261,11 @@ bool DataSyncArduino::sync(const cor::Light& dataDevice, const cor::Light& commD
 
             if (dataDevice.routine != ERoutine::eSingleSolid) {
                 routineObject["speed"]   = dataDevice.speed;
+                if (dataDevice.param != INT_MIN) {
+                    routineObject["param"] = dataDevice.param;
+                }
             }
 
-            if (dataDevice.param != INT_MIN) {
-                routineObject["param"] = dataDevice.param;
-            }
             QString message = mComm->sendRoutineChange(list, routineObject);
             appendToPacket(packet, message, controller.maxPacketSize);
             countOutOfSync++;

@@ -17,7 +17,7 @@
  *        packet will emit a `receivedMainColorChange(int, QColor)`  signal. This class is used to emulate the
  *        functionality of the parser that is embedded on the arduino platforms on devices like the Philips Hue.
  */
-class CommPacketParser: public QWidget
+class CommPacketParser: public QObject
 {
     Q_OBJECT
 

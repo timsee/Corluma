@@ -378,7 +378,16 @@ private:
      * \param x starting index in the vector, if it contains multiple lights.
      * \return true if all values in the vector are in the proper range, false othewrise.
      */
-    bool verifyStateUpdatePacketValidity(std::vector<int> packetIntVector, int x = 0);
+    bool verifyStateUpdatePacketValidity(const std::vector<int>& packetIntVector, int x = 0);
+
+    /*!
+     * \brief verifyCustomColorUpdatePacket takes a vector and checks that all vlaues
+     *        are wirthing the proper range for a custom color update. Returns true if the packet
+     *        can be used.
+     * \param packetIntVector The packet for testing
+     * \return true if its a valid packet, false othwerise.
+     */
+    bool verifyCustomColorUpdatePacket(const std::vector<int>& packetIntVector);
 
     /*!
      * \brief commByType returns the raw CommPtr based off the given commType
@@ -389,6 +398,13 @@ private:
 
     /// used to check CRC on incoming packets.
     CRCCalculator mCRC;
+
+    /*!
+     * \brief updateMultiCastPacket if a light index is 0, this is meant to update multiple devices since
+     *        it is a multi cast packet
+     * \param light light device with an index equalling zero.
+     */
+    void updateMultiCastPacket(const cor::Light& light);
 };
 
 #endif // COMMLAYER_H

@@ -12,7 +12,7 @@ void CommType::setupConnectionList(ECommType type) {
     mType = type;
     mUpdateTimeoutInterval = 15000;
     mStateUpdateCounter = 0;
-    mSecondaryUpdatesInterval = 5;
+    mSecondaryUpdatesInterval = 20;
 
     mDiscoveryTimer = new QTimer;
     mStateUpdateTimer = new QTimer;

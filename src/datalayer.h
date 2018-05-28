@@ -25,7 +25,7 @@
  *
  * \todo Make this class save its data between sessions.
  */
-class DataLayer : public QWidget
+class DataLayer : public QObject
 {
     Q_OBJECT
 
@@ -335,6 +335,9 @@ public:
 
     /// compute the best candidate for a collection based on the current devices.
     QString findCurrentCollection(const std::list<cor::LightGroup>& collections, bool allowLights);
+
+    /// compute the best candidate for a mood based on the current devices
+    QString findCurrentMood(const std::list<cor::LightGroup>& moods);
 
 signals:
     /*!

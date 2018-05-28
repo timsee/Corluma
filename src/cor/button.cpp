@@ -56,7 +56,6 @@ void Button::updateRoutine(const QJsonObject& routineObject, const std::vector<Q
                            Qt::KeepAspectRatio,
                            Qt::FastTransformation);
     this->setIcon(QIcon(pixmap));
-    this->setIconSize(mIconSize);
 }
 
 void Button::handleButton() {

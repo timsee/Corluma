@@ -129,6 +129,7 @@ void DiscoveryPage::renderUI() {
         MainWindow *mainWindow = qobject_cast<MainWindow*>(this->parentWidget());
         Q_ASSERT(mainWindow);
         mainWindow->settings()->removeDebug();
+        mainWindow->anyDiscovered(true);
 
         if (mStartTime.elapsed() < 2750) {
             emit closeWithoutTransition();
@@ -336,9 +337,17 @@ void DiscoveryPage::updateTopMenu() {
     if (buttons.size() == 1) {
         std::vector<QString> emptyVector;
         mHorizontalFloatingLayout->setupButtons(emptyVector);
+        mVerticalFloatingLayout->highlightButton("");
     } else {
         mHorizontalFloatingLayout->setupButtons(buttons, EButtonSize::eRectangle);
         mVerticalFloatingLayout->highlightButton("");
+        if (mType == EProtocolType::eNanoleaf) {
+            mHorizontalFloatingLayout->highlightButton("Discovery_NanoLeaf");
+        } else if (mType == EProtocolType::eArduCor) {
+            mHorizontalFloatingLayout->highlightButton("Discovery_ArduCor");
+        } else if (mType == EProtocolType::eHue) {
+            mHorizontalFloatingLayout->highlightButton("Discovery_Hue");
+        }
     }
     protocolTypeSelected(mType);
     moveFloatingLayouts();

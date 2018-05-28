@@ -5,8 +5,6 @@
  */
 
 #include <QGraphicsEffect>
-#include <QApplication>
-#include <QScreen>
 #include "mainwindow.h"
 #include "topmenu.h"
 #include "cor/utils.h"
@@ -17,11 +15,8 @@ TopMenu::TopMenu(DataLayer* data, CommLayer* comm, QWidget *parent) : QWidget(pa
     mData = data;
     mComm = comm;
 
-    QScreen *screen = QApplication::screens().at(0);
-    mSize = QSize(screen->size().height() * 0.05f, screen->size().height() * 0.05f);
-#ifdef MOBILE_BUILD
-    mSize = QSize(mSize.width() * 2.5, mSize.height() * 2.5);
-#endif
+    QSize size = cor::applicationSize();
+    mSize = QSize(size.height() * 0.1f, size.height() * 0.1f);
 
     //---------------
     // Create Spacer
@@ -35,8 +30,9 @@ TopMenu::TopMenu(DataLayer* data, CommLayer* comm, QWidget *parent) : QWidget(pa
     // --------------
     // setup the slider that controls the LED's brightness
     mBrightnessSlider = new cor::Slider(this);
-    mBrightnessSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    mBrightnessSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mBrightnessSlider->setFixedHeight(mSize.height() / 2);
+    mBrightnessSlider->setFixedWidth(this->width() * 0.95f - mSize.width());
     mBrightnessSlider->slider()->setRange(0,100);
     mBrightnessSlider->slider()->setValue(0);
     mBrightnessSlider->setSliderHeight(0.8f);
@@ -58,7 +54,7 @@ TopMenu::TopMenu(DataLayer* data, CommLayer* comm, QWidget *parent) : QWidget(pa
     mSelectedDevicesLabel->setFixedHeight(mSize.height() / 2);
     mSelectedDevicesLabel->setAlignment(Qt::AlignRight);
     mSelectedDevicesLabel->setWordWrap(true);
-    //mSelectedDevicesLabel->setStyleSheet("font-size:10pt;");
+    downsizeTextHeightToFit(mMainPalette->size().height());
 
     // --------------
     // Setup on/off switch
@@ -71,8 +67,10 @@ TopMenu::TopMenu(DataLayer* data, CommLayer* comm, QWidget *parent) : QWidget(pa
 
     mLayout = new QGridLayout(this);
     mLayout->setSpacing(5);
-    mLayout->setContentsMargins(0, mLayout->contentsMargins().top(),
-                                0, mLayout->contentsMargins().bottom());
+    mLayout->setContentsMargins(0,
+                                mLayout->contentsMargins().top(),
+                                mLayout->contentsMargins().right(),
+                                mLayout->contentsMargins().bottom());
 
     mLayout->addWidget(mOnOffSwitch,      0, 0,  1, 1);
     mLayout->addWidget(mBrightnessSlider, 0, 1,  1, 9);
@@ -93,6 +91,7 @@ TopMenu::TopMenu(DataLayer* data, CommLayer* comm, QWidget *parent) : QWidget(pa
     mMainLayout->setupButtons(buttons, EButtonSize::eMedium);
     mMainLayout->addMultiRoutineIcon(mData->palette(EPalette::eFire));
     mMainLayout->updateGroupPageButtons(mData->colors());
+    mFloatingMenuEnd = mFloatingMenuStart + mMainLayout->size().height();
 
     // --------------
     // Connection Floating Layout
@@ -121,11 +120,11 @@ TopMenu::TopMenu(DataLayer* data, CommLayer* comm, QWidget *parent) : QWidget(pa
     // --------------
     // Color Page Floating Layouts
     // --------------
-    mColorFloatingLayout = new FloatingLayout(false, this);
+    mColorFloatingLayout = new FloatingLayout(false, parent);
     connect(mColorFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
 
     //NOTE: by making the parent the parent of the floating widgets, they don't get cut off if they overextend over top menu
-    mColorVerticalFloatingLayout = new FloatingLayout(true, parent);
+    mColorVerticalFloatingLayout = new FloatingLayout(false, parent);
     connect(mColorVerticalFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
     mColorVerticalFloatingLayout->setVisible(false);
 
@@ -276,8 +275,10 @@ void TopMenu::pageButtonPressed(EPage pageButtonType) {
 
 void TopMenu::resizeEvent(QResizeEvent *event) {
     Q_UNUSED(event);
+    downsizeTextHeightToFit(mMainPalette->size().height());
     updatePaletteButton();
     moveFloatingLayout();
+    mBrightnessSlider->setFixedWidth(this->width() * 0.95f - mSize.width());
 }
 
 void TopMenu::updatePaletteButton() {
@@ -331,9 +332,9 @@ void TopMenu::floatingLayoutButtonPressed(QString button) {
         mMainWindow->switchToDiscovery();
     } else if (button.compare("New_Group") == 0) {
         if (mMainWindow->currentPage() == EPage::eConnectionPage) {
-            mMainWindow->editButtonClicked("", false);
+            mMainWindow->editButtonClicked(mConnectionPage->currentGroup(), false);
         } else {
-            mMainWindow->editButtonClicked("", true);
+            mMainWindow->editButtonClicked(mMoodsPage->currentMood(), true);
         }
     } else if (button.compare("Preset_Groups") == 0) {
         if (mData->hasArduinoDevices()) {
@@ -470,7 +471,7 @@ void TopMenu::setupColorFloatingLayout() {
     std::vector<QString> verticalButtons;
     if (hasArduino || hasNanoLeaf){
         horizontalButtons = {QString("Temperature"), QString("RGB"), QString("Settings")};
-        verticalButtons = {QString("Routine")};
+        verticalButtons = {QString("Multi"), QString("Routine")};
 
         mColorFloatingLayout->highlightButton(mLastColorButtonKey);
         updateColorVerticalRoutineButton();
@@ -506,7 +507,7 @@ void TopMenu::setupColorFloatingLayout() {
     mColorFloatingLayout->highlightButton("RGB");
     updatePaletteButton();
 
-    mColorFloatingLayout->updateMultiPageButton(mData->colors());
+    mColorVerticalFloatingLayout->updateMultiPageButton(mData->colors());
 
     updateColorVerticalRoutineButton();
 }
@@ -625,5 +626,17 @@ void TopMenu::receivedPacket(EProtocolType) {
         }
         mLastDevices = currentDevices;
         mMainPalette->updateDevices(currentDevices);
+    }
+}
+
+void TopMenu::downsizeTextHeightToFit(int maxHeight) {
+    int computedHeight  = mSelectedDevicesLabel->fontMetrics().height() * 2;
+    int fontPtSize = mSelectedDevicesLabel->font().pointSize();
+    while (maxHeight < computedHeight && fontPtSize > 3) {
+        fontPtSize--;
+        QFont font = mSelectedDevicesLabel->font();
+        font.setPointSize(fontPtSize);
+        mSelectedDevicesLabel->setFont(font);
+        computedHeight = mSelectedDevicesLabel->fontMetrics().height() * 2;
     }
 }

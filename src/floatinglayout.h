@@ -178,6 +178,9 @@ private:
 
     /// true if routine button is currently highlighted, false otherwise
     bool mRoutineIsHighlighted;
+
+    /// original size of the application during initial load.
+    QSize mOriginalSize;
 };
 
 #endif // FLOATINGLAYOUT_H

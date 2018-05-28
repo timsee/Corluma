@@ -75,7 +75,7 @@ ColorPicker::ColorPicker(QWidget *parent) :
     mColorGrid = new  CustomColorPicker(this);
     mColorGrid->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mColorGrid, SIGNAL(multiColorCountChanged(int)), this, SLOT(multiColorCountChanged(int)));
-    connect(mColorGrid, SIGNAL(selectedCountChanged(int)), this, SLOT(selectedCountChanged(int)));
+    connect(mColorGrid->palette(), SIGNAL(selectedCountChanged(int)), this, SLOT(selectedCountChanged(int)));
     mColorGrid->setVisible(false);
 
     mColorSchemeGrid = new  cor::PaletteWidget(5, 1, std::vector<std::vector<QColor> >(), cor::EPaletteWidgetType::eStandard, this);
@@ -179,8 +179,6 @@ void ColorPicker::updateColorStates(QColor mainColor,
 
     mColorSchemeCircles->updateColorScheme(colorSchemes);
     mColorSchemeCircles->updateColorCount(colorSchemes.size());
-
-   // mColorSchemeGrid->updateMultiColor(colorSchemes, colorSchemes.size());
 }
 
 void ColorPicker::enableWheel(bool shouldEnable) {
@@ -316,7 +314,7 @@ void ColorPicker::handleMouseEvent(QMouseEvent *event) {
                     for (auto&& index : mColorGrid->palette()->selected()) {
                         emit multiColorChanged(color, index);
                     }
-                    //updateMultiColor(mMultiColors, mMultiUsed);
+                   // mColorGrid->updateMultiColor(mMultiColors, mMultiUsed);
                 }
             } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::eAmbientLayout) {
                 // use the poorly named "value" of the HSV range to calculate the brightness
@@ -353,8 +351,9 @@ void ColorPicker::handleMouseEvent(QMouseEvent *event) {
                 for (auto&& circle : circles) {
                     colors.push_back(circle.color);
                 }
-                //mColorSchemeGrid->updateMultiColor(colors, colors.size());
+                //mColorGrid->updateMultiColor(colors, colors.size());
                 emit colorsUpdate(colors);
+
                // mColorSchemeGrid->setColor(2, color);
             }
         }

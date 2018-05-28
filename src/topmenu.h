@@ -89,6 +89,9 @@ public:
                MoodsPage *moodsPage,
                ConnectionPage *connectionPage);
 
+    /// getter for end of floating layout
+    uint32_t floatingLayoutEnd() { return mFloatingMenuEnd; }
+
 signals:
 
     /// sent out whenever a button is pressed. Keys are the names of the buttons, such as "settings"
@@ -152,6 +155,8 @@ private slots:
     /// slot that updates when a packet is received.
     void receivedPacket(EProtocolType);
 private:
+    /// hacky way to downsize text so that it fits within a widget.
+    void downsizeTextHeightToFit(int maxHeight);
 
     /*!
      * \brief mBrightnessSlider slider for adjusting the brightness of all selected devices.
@@ -172,6 +177,9 @@ private:
 
     /// y position where a floating menu can start.
     uint32_t mFloatingMenuStart;
+
+    /// y position where the floating menus end.
+    uint32_t mFloatingMenuEnd;
 
     /// data layer, contains intended state for all devices.
     DataLayer *mData;

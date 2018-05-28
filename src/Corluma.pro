@@ -123,15 +123,18 @@ SOURCES += main.cpp \
     comm/datasyncnanoleaf.cpp \
     comm/datasyncsettings.cpp \
     comm/upnpdiscovery.cpp \
+    comm/protocolsettings.cpp \
     colorpicker/colorpicker.cpp \
     colorpicker/rgbsliders.cpp \
     colorpicker/tempbrightsliders.cpp \
     colorpicker/brightnessslider.cpp \
     colorpicker/colorschemecircles.cpp \
+    colorpicker/customcolorpicker.cpp \
     discovery/discoverywidget.cpp \
     discovery/discoveryhuewidget.cpp \
     discovery/discoverynanoleafwidget.cpp \
     discovery/hardwareconnectionwidget.cpp \
+    discovery/discoveryarducorwidget.cpp \
     cor/light.cpp \
     cor/controller.cpp \
     cor/button.cpp \
@@ -142,6 +145,7 @@ SOURCES += main.cpp \
     cor/topwidget.cpp \
     cor/webview.cpp \
     cor/switch.cpp \
+    cor/palettewidget.cpp \
     cor/lightgroup.cpp \
     hue/lightdiscovery.cpp \
     hue/lightinfolistwidget.cpp \
@@ -176,11 +180,8 @@ SOURCES += main.cpp \
     editablefieldwidget.cpp \
     searchwidget.cpp \
     listeditwidget.cpp \
-    comm/protocolsettings.cpp \
-    cor/palettewidget.cpp \
-    colorpicker/customcolorpicker.cpp \
     moodspage.cpp \
-    discovery/discoveryarducorwidget.cpp
+    editpagetopmenu.cpp
 
 HEADERS  +=  comm/commtype.h \
     comm/commserial.h \
@@ -197,15 +198,18 @@ HEADERS  +=  comm/commtype.h \
     comm/datasyncsettings.h \
     comm/datasyncnanoleaf.h \
     comm/upnpdiscovery.h \
+    comm/protocolsettings.h \
     colorpicker/colorpicker.h \
     colorpicker/rgbsliders.h \
     colorpicker/tempbrightsliders.h \
     colorpicker/brightnessslider.h \
     colorpicker/colorschemecircles.h \
+    colorpicker/customcolorpicker.h \
     discovery/discoverywidget.h \
     discovery/discoveryhuewidget.h \
     discovery/discoverynanoleafwidget.h \
     discovery/hardwareconnectionwidget.h \
+    discovery/discoveryarducorwidget.h \
     cor/light.h \
     cor/protocols.h \
     cor/controller.h \
@@ -220,6 +224,7 @@ HEADERS  +=  comm/commtype.h \
     cor/switch.h \
     cor/lightgroup.h \
     cor/range.h \
+    cor/palettewidget.h \
     hue/lightdiscovery.h \
     hue/lightinfolistwidget.h \
     hue/lightinfowidget.h \
@@ -257,14 +262,10 @@ HEADERS  +=  comm/commtype.h \
     editablefieldwidget.h \
     searchwidget.h \
     listeditwidget.h \
-    comm/protocolsettings.h \
-    cor/palettewidget.h \
-    colorpicker/customcolorpicker.h \
     moodspage.h \
-    discovery/discoveryarducorwidget.h
+    editpagetopmenu.h
 
-FORMS    += discoverypage.ui \
-    editcollectionpage.ui
+FORMS    += discoverypage.ui
 
 #----------
 # Resources

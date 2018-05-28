@@ -55,6 +55,9 @@ public:
      */
     void setupUI();
 
+    /// getter for current mood
+    const QString& currentMood() { return mCurrentMood; }
+
 signals:
     /*!
      * \brief Used to signal back to the main page that it should update its top-left icon
@@ -145,6 +148,9 @@ private:
      *        was last rendered. Used to throttle unnecessary rendering.
      */
     QTime mLastUpdateConnectionList;
+
+    /// current mood based on the
+    QString mCurrentMood;
 };
 
 #endif // MOODSPAGE_H

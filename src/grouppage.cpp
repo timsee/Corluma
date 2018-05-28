@@ -28,7 +28,7 @@ GroupPage::GroupPage(QWidget *parent) :
     mSpeedSlider->slider()->setTickInterval(50);
     mSpeedSlider->setContentsMargins(20, 0, 0, 0);
     connect(mSpeedSlider, SIGNAL(valueChanged(int)), this, SLOT(speedChanged(int)));
-    mSpeed = 15;
+    mSpeed = 150;
 
     mScrollWidgetArduino = new QWidget(this);
     mScrollAreaArduino = new QScrollArea(this);

@@ -9,8 +9,6 @@
 #include "cor/utils.h"
 
 #include <QDebug>
-#include <QApplication>
-#include <QScreen>
 #include <QSignalMapper>
 #include <QStyleOption>
 #include <QGraphicsOpacityEffect>
@@ -36,6 +34,8 @@ FloatingLayout::FloatingLayout(bool makeVertical, QWidget *parent) : QWidget(par
 
         setLayout(mHorizontalLayout);
     }
+
+    mOriginalSize = cor::applicationSize();
 }
 
 void FloatingLayout::highlightButton(QString key) {
@@ -64,23 +64,14 @@ void FloatingLayout::highlightButton(QString key) {
 
 void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eButtonSize) {
     // set up the geometry
-    QScreen *screen = QApplication::screens().at(0);
-
-    QSize size;
+    QSize size = mOriginalSize;
     if (eButtonSize == EButtonSize::eSmall) {
-        size = QSize(screen->size().width() * 0.025f, screen->size().height() * 0.025f);
+        size = QSize(size.width() * 0.12f, size.height() * 0.12f);
     } else if (eButtonSize == EButtonSize::eMedium) {
-        size = QSize(screen->size().width() * 0.03f, screen->size().height() * 0.03f);
+        size = QSize(size.width() * 0.15f, size.height() * 0.15f);
     } else if (eButtonSize == EButtonSize::eRectangle) {
-#ifdef MOBILE_BUILD
-        size = QSize(screen->size().width() * 0.06f, screen->size().height() * 0.02f);
-#else
-        size = QSize(screen->size().width() * 0.07f, screen->size().height() * 0.05f);
-#endif
+        size = QSize(size.width() * 0.3f, size.height() * 0.09f);
     }
-#ifdef MOBILE_BUILD
-    size = QSize(size.width() * 5, size.height() * 5);
-#endif
 
     int fixedWidth;
     int fixedHeight;

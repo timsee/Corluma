@@ -292,9 +292,15 @@ ___
 * Simplified the cor::Button widget.
 * Fixed miscellaneous bugs. 
 
+### **v0.12.12**
+#### Another Bug Fixes Update
+* Fixed platform-specific layout issues (certain buttons too small on Mac OS X, etc.).
+* Fixed bugs in the `EditGroupPage`. 
+* Fixed edge cases in `CommLayer`.
+* Fixed miscellaneous bugs.
 
 ### Coming Soon
 * Add support for connecting to multiple NanoLeaf Aurora Controllers.
 * Finish manual discovery of Hues and Bridges
-* Fix platform-specific layout and resizing issues (buttons that are too small on Mac OS X, images that are cutoff on iOS, etc.)
+
 

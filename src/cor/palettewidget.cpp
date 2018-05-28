@@ -4,8 +4,10 @@
  * Released under the GNU General Public License.
  */
 
-#include "palettewidget.h"
 #include <QSignalMapper>
+
+#include "palettewidget.h"
+#include "cor/utils.h"
 
 namespace cor
 {
@@ -45,6 +47,7 @@ PaletteWidget::PaletteWidget(uint32_t width, uint32_t height,
             mArrayColorsButtons[i] = new cor::Button(routineObject,
                                                      std::vector<QColor>(),
                                                      this);
+            mArrayColorsButtons[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
             arrayButtonsMapper->setMapping(mArrayColorsButtons[i], i);
             connect(mArrayColorsButtons[i], SIGNAL(clicked(bool)), arrayButtonsMapper, SLOT(map()));
 
@@ -54,6 +57,7 @@ PaletteWidget::PaletteWidget(uint32_t width, uint32_t height,
 
             if (mType == EPaletteWidgetType::eInfo) {
                 mArrayLabels[i]  = new QLabel(this);
+                mArrayLabels[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
                 mLayout->addWidget(mArrayLabels[i],        h, w * 2);
                 mLayout->addWidget(mArrayColorsButtons[i], h, w * 2 + 1);
             } else {
@@ -73,12 +77,15 @@ void PaletteWidget::updateDevices(const std::list<cor::Light>& devices) {
     for (auto&& device : devices) {
         if (i < mMaximumSize) {
             QJsonObject routineObject = lightToJson(device);
-            mArrayColorsButtons[i]->setMinimumHeight(this->height() / mHeight);
-            mArrayColorsButtons[i]->setMinimumWidth(this->height() / mHeight);
             mArrayColorsButtons[i]->updateRoutine(routineObject, mColorGroups[(int)device.palette]);
             mArrayColorsButtons[i]->setVisible(true);
             if (mType == EPaletteWidgetType::eInfo) {
-                mArrayLabels[i]->setText(device.name);
+                if (device.name.length() > 11) {
+                    QString shortenedName = device.name.mid(0, 8) + "...";
+                    mArrayLabels[i]->setText(shortenedName);
+                } else {
+                    mArrayLabels[i]->setText(device.name);
+                }
             }
         }
         ++i;
@@ -86,11 +93,6 @@ void PaletteWidget::updateDevices(const std::list<cor::Light>& devices) {
     for (; i < mMaximumSize; ++i) {
         mArrayColorsButtons[i]->setVisible(false);
     }
-#ifdef MOBILE_BUILD
-    if (mArrayColorsButtons.size()) {
-        this->setMinimumWidth(mArrayColorsButtons[0]->width() * mWidth);
-    }
-#endif
 }
 
 void PaletteWidget::selectArrayColor(int index) {

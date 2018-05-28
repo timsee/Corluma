@@ -106,7 +106,7 @@ void CommUDP::stateUpdate() {
         for (auto&& controller : mDiscoveredList) {
             QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
             sendPacket(controller, packet);
-            if ((mStateUpdateCounter % mSecondaryUpdatesInterval) == 0) {
+            if ((mStateUpdateCounter % mSecondaryUpdatesInterval) == mSecondaryUpdatesInterval - 1) {
                 QString customArrayUpdateRequest = QString("%1&").arg(QString::number((int)EPacketHeader::eCustomArrayUpdateRequest));
                 sendPacket(controller, customArrayUpdateRequest);
             }
@@ -154,7 +154,7 @@ void CommUDP::readPendingDatagrams() {
         quint16 senderPort;
         mSocket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
         QString payload = QString::fromUtf8(datagram);
-       // qDebug() << "UDP payload" << payload << payload.size() << "from" << sender.toString();
+        //qDebug() << "UDP payload" << payload << payload.size() << "from" << sender.toString();
         if (payload.contains(";")) {
             // this may contain multiple packets in a single packet, split and handle as separate messages.
             QRegExp rx("(\\;)");

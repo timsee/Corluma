@@ -5,10 +5,14 @@
  */
 
 #include "customcolorpicker.h"
+#include "cor/utils.h"
 
 CustomColorPicker::CustomColorPicker(QWidget *parent) : QWidget(parent) {
     mColorsUsed = 2;
     mMaximumSize = 10;
+
+    QSize size = QSize(cor::applicationSize().height() * 0.075f,
+                       cor::applicationSize().height() * 0.075f);
 
     mCountSlider = new cor::Slider(this);
     mCountSlider->setSliderColorBackground(QColor(0, 0, 0));
@@ -20,7 +24,8 @@ CustomColorPicker::CustomColorPicker(QWidget *parent) : QWidget(parent) {
     mCountSlider->setSnapToNearestTick(true);
     mCountSlider->slider()->setTickPosition(QSlider::TicksBelow);
     mCountSlider->setMinimumPossible(true, 20);
-    mCountSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mCountSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    mCountSlider->setFixedHeight(size.height());
     mCountSlider->setSliderHeight(0.6f);
     connect(mCountSlider, SIGNAL(valueChanged(int)), this, SLOT(countSliderChanged(int)));
     connect(mCountSlider->slider(), SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
@@ -34,7 +39,9 @@ CustomColorPicker::CustomColorPicker(QWidget *parent) : QWidget(parent) {
 
     mColorGrid = new cor::PaletteWidget(5, 2, std::vector<std::vector<QColor> >(), cor::EPaletteWidgetType::eStandard, this);
     mColorGrid->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mLayout->addWidget(mColorGrid, 3);
+    mColorGrid->setMinimumWidth(this->width() * 0.9f);
+    mColorGrid->setMinimumHeight(size.height() * 1.6f);
+    mLayout->addWidget(mColorGrid, 4);
 
     this->setLayout(mLayout);
 }
@@ -47,23 +54,22 @@ void CustomColorPicker::updateMultiColor(const std::vector<QColor>& colors, int 
     }
 
     mColors = colors;
-    QJsonObject routineObject;
-    routineObject["routine"] = routineToString(ERoutine::eSingleSolid);
+    std::list<cor::Light> devices;
+    cor::Light light;
+    light.routine = ERoutine::eSingleSolid;
     for (uint32_t i = 0; i < mColorsUsed; ++i) {
+        light.color = colors[i];
+        devices.push_back(light);
         mColorGrid->buttons()[i]->setEnabled(true);
-        routineObject["red"]     = colors[i].red();
-        routineObject["green"]   = colors[i].green();
-        routineObject["blue"]    = colors[i].blue();
-        mColorGrid->buttons()[i]->updateRoutine(routineObject, std::vector<QColor>());
     }
 
     for (uint32_t i = mColorsUsed; i < mMaximumSize; ++i) {
-        routineObject["red"]     = 140;
-        routineObject["green"]   = 140;
-        routineObject["blue"]    = 140;
-        mColorGrid->buttons()[i]->updateRoutine(routineObject, std::vector<QColor>());
+        light.color = QColor(140, 140, 140);
+        devices.push_back(light);
         mColorGrid->buttons()[i]->setEnabled(false);
     }
+
+    mColorGrid->updateDevices(devices);
 
     updateMultiColorSlider();
     mColorGrid->manageMultiSelected();

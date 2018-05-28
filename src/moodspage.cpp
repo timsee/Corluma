@@ -195,6 +195,7 @@ void MoodsPage::moodClicked(QString collectionKey, QString moodKey) {
     qDebug() << "collection key:" << collectionKey
              << "mood key:" << moodKey;
 
+    mCurrentMood = moodKey;
     for (auto&& group :  mComm->groups()->moodList()) {
         if (group.name.compare(moodKey) == 0) {
             mData->clearDevices();
@@ -217,6 +218,7 @@ void MoodsPage::show() {
     mMoodsListWidget->resizeWidgets();
     mMoodsListWidget->setVisible(true);
     std::list<cor::LightGroup> moodList = mComm->groups()->moodList();
+    mCurrentMood = mData->findCurrentMood(moodList);
     makeMoodsCollections(moodList);
 }
 

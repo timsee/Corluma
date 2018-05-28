@@ -95,6 +95,8 @@ void GroupsParser::saveNewMood(const QString& groupName, const std::list<cor::Li
         object["speed"] = device.speed;
         object["controller"] = device.controller();
         object["index"] = device.index();
+        object["name"] = device.name;
+        object["hardwareType"] = hardwareTypeToString(device.hardwareType);
         deviceArray.append(object);
     }
 
@@ -106,6 +108,9 @@ void GroupsParser::saveNewMood(const QString& groupName, const std::list<cor::Li
             array.push_front(groupObject);
             mJsonData.setArray(array);
 
+            for (auto device : devices ) {
+                qDebug() << device;
+            }
             // save file
             saveFile(defaultSavePath());
 
@@ -153,6 +158,9 @@ void GroupsParser::saveNewCollection(const QString& groupName, const std::list<c
             array.push_front(groupObject);
             mJsonData.setArray(array);
 
+            for (auto device : devices ) {
+                qDebug() << device;
+            }
             // save file
             saveFile(defaultSavePath());
 

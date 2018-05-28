@@ -30,7 +30,7 @@ public:
 
     /// set the title for the corluma checkbox
     void setTitle(QString title);
-    
+
     /*!
      * \brief downsizeTextWidthToFit downsize the font's point size until this entire widget
      *        fits into the width provided. If downsizing is not needed, the system's font

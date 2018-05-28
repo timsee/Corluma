@@ -7,21 +7,13 @@
 #include <QtCore>
 #include <QtGui>
 #include <QStyleOption>
-#include <QDesktopWidget>
 
 #include "cor/utils.h"
 #include "globalsettingswidget.h"
 
 GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
 
-#ifdef MOBILE_BUILD
-    // get screen size, use it to figure out spacers
-    QRect rect = QApplication::desktop()->screenGeometry();
-    int min = std::min(rect.width(), rect.height());
-    mSpacerPixels = min * 0.04f;
-#else
     mSpacerPixels = 5;
-#endif //MOBILE_BUILD
 
     // set margins as spacer * 2
     this->setContentsMargins(mSpacerPixels * 2,

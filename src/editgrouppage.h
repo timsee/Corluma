@@ -11,10 +11,7 @@
 #include "comm/commlayer.h"
 #include "cor/checkbox.h"
 #include "cor/listwidget.h"
-
-namespace Ui {
-class EditCollectionPage;
-}
+#include "editpagetopmenu.h"
 
 /*!
  * \copyright
@@ -204,31 +201,10 @@ private:
     ListEditWidget *mScrollAreaWidget;
 
     /// vertical layout for widget
-    QGridLayout *mLayout;
+    QVBoxLayout *mLayout;
 
-    /// label for top of box
-    QLabel *mHelpLabel;
-
-    /// close button
-    QPushButton *mCloseButton;
-
-    /// button to save group
-    QPushButton *mSaveButton;
-
-    /// button to delete group
-    QPushButton *mDeleteButton;
-
-    /// button to reset to original settings
-    QPushButton *mResetButton;
-
-    /// line edit for changing the name of a group
-    QLineEdit *mNameEdit;
-
-    /// help button to explain the edit page
-    QPushButton *mHelpRoomButton;
-
-    /// checkbox denoting whether its a room or a group
-    cor::CheckBox *mRoomCheckBox;
+    /// subwidget holding all the buttons and such in the top of this widget.
+    EditPageTopMenu *mTopMenu;
 };
 
 #endif // EDITCOLLECTIONPAGE_H

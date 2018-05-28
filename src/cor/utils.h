@@ -8,6 +8,8 @@
 #include <QHostAddress>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QApplication>
+#include <QScreen>
 
 #include "lightingprotocols.h"
 #include "cor/protocols.h"
@@ -26,7 +28,6 @@
 
 namespace cor
 {
-
 
 /*!
  * \brief changeLabelToTitleLabel Takes a label, and increases its font size and makes the font bold.
@@ -53,6 +54,22 @@ inline void debugWhyWidgetIsNotShowing(QWidget *widget) {
     qDebug() << "Max Size" << widget->maximumSize();
     qDebug() << "----------";
 }
+
+/*!
+ * \brief applicationSize this returns the size of the MainWindow, in a pretty ugly but effective
+ *        way.
+ * \return the size of the main window.
+ */
+inline QSize applicationSize() {
+    QSize mainWindowSize(0,0);
+    for (auto widget : QApplication::topLevelWidgets()) {
+        if (QString(widget->metaObject()->className()).compare("MainWindow") == 0) {
+            mainWindowSize = widget->size();
+        }
+    }
+    return mainWindowSize;
+}
+
 
 /*!
  * \brief colorTemperatureToRGB converts a color temperature value to a RGB representation.

@@ -179,7 +179,6 @@ ListDevicesGroupWidget* ConnectionPage::initDevicesCollectionWidget(const cor::L
     connect(widget, SIGNAL(deviceSwitchToggled(QString,bool)), this, SLOT(deviceSwitchClicked(QString, bool)));
 
     connect(widget, SIGNAL(allButtonPressed(QString, bool)), this, SLOT(groupSelected(QString, bool)));
-    connect(widget, SIGNAL(editClicked(QString)), this, SLOT(editGroupClicked(QString)));
 
     ListCollectionWidget *collectionWidget = qobject_cast<ListCollectionWidget*>(widget);
 
@@ -255,7 +254,6 @@ void ConnectionPage::deviceClicked(QString collectionKey, QString deviceKey) {
 
     cor::Light device = identifierStringToLight(deviceKey);
     mComm->fillDevice(device);
-    qDebug() << device;
     if (device.isReachable) {
         if (mData->doesDeviceExist(device)) {
             mData->removeDevice(device);
@@ -267,6 +265,18 @@ void ConnectionPage::deviceClicked(QString collectionKey, QString deviceKey) {
         emit updateMainIcons();
         emit changedDeviceCount();
         highlightList();
+    }
+
+    // search for current group string
+    QString currentGroup = mData->findCurrentCollection(mComm->collectionList(), false);
+    for (auto&& group : mComm->collectionList()) {
+        if (group.name == currentGroup) {
+            if (group.devices.size() == mData->currentDevices().size()) {
+                mCurrentGroup = group.name;
+            } else {
+                mCurrentGroup = "";
+            }
+        }
     }
 }
 
@@ -290,8 +300,10 @@ void ConnectionPage::groupSelected(QString key, bool shouldSelect) {
             ListDevicesGroupWidget *widget = qobject_cast<ListDevicesGroupWidget*>(item);
             Q_ASSERT(widget);
             if (shouldSelect) {
+                mCurrentGroup = widget->group().name;
                 mData->addDeviceList(widget->reachableDevices());
             } else {
+                mCurrentGroup = "";
                 mData->removeDeviceList(widget->devices());
             }
 
@@ -300,12 +312,6 @@ void ConnectionPage::groupSelected(QString key, bool shouldSelect) {
             highlightList();
         }
     }
-}
-
-
-void ConnectionPage::editGroupClicked(QString key) {
-    qDebug()  << " edit group " << key;
-    emit clickedEditButton(key, false);
 }
 
 

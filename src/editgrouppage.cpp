@@ -6,7 +6,6 @@
 
 #include "editgrouppage.h"
 #include "comm/commhue.h"
-#include "ui_editcollectionpage.h"
 
 #include <QtCore>
 #include <QtGui>
@@ -18,31 +17,15 @@
 EditGroupPage::EditGroupPage(QWidget *parent) :
     QWidget(parent) {
 
-    mCloseButton = new QPushButton(this);
-    mCloseButton->setText("X");
-    connect(mCloseButton, SIGNAL(clicked(bool)), this, SLOT(closePressed(bool)));
+    mTopMenu = new EditPageTopMenu(this);
+    mTopMenu->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    mResetButton = new QPushButton(this);
-    connect(mResetButton, SIGNAL(clicked(bool)), this, SLOT(resetPressed(bool)));
-    mResetButton->setText("Reset");
-
-    mDeleteButton = new QPushButton(this);
-    connect(mDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deletePressed(bool)));
-    mDeleteButton->setText("Delete");
-
-    mSaveButton = new QPushButton(this);
-    connect(mSaveButton, SIGNAL(clicked(bool)), this, SLOT(savePressed(bool)));
-    mSaveButton->setText("Save");
-
-    mNameEdit = new QLineEdit(this);
-    connect(mNameEdit, SIGNAL(textEdited(QString)), this, SLOT(lineEditChanged(QString)));
-
-    mRoomCheckBox = new cor::CheckBox(this);
-    mRoomCheckBox->setTitle("Room:");
-    connect(mRoomCheckBox, SIGNAL(boxChecked(bool)), this, SLOT(isRoomChecked(bool)));
-
-    mHelpRoomButton = new QPushButton(this);
-    mHelpRoomButton->setText("?");
+    connect(mTopMenu->closeButton(),  SIGNAL(clicked(bool)),       this, SLOT(closePressed(bool)));
+    connect(mTopMenu->resetButton(),  SIGNAL(clicked(bool)),       this, SLOT(resetPressed(bool)));
+    connect(mTopMenu->deleteButton(), SIGNAL(clicked(bool)),       this, SLOT(deletePressed(bool)));
+    connect(mTopMenu->saveButton(),   SIGNAL(clicked(bool)),       this, SLOT(savePressed(bool)));
+    connect(mTopMenu->nameEdit(),     SIGNAL(textChanged(QString)), this, SLOT(lineEditChanged(QString)));
+    connect(mTopMenu->roomCheckBox(), SIGNAL(boxChecked(bool)),    this, SLOT(isRoomChecked(bool)));
 
     mIsRoomOriginal = false;
 
@@ -60,23 +43,12 @@ EditGroupPage::EditGroupPage(QWidget *parent) :
     connect(mRenderThread, SIGNAL(timeout()), this, SLOT(renderUI()));
     mScrollAreaWidget->setStyleSheet("background-color:rgba(33,32,32,255);");
 
+    mLayout = new QVBoxLayout(this);
+    mLayout->setContentsMargins(4,4,4,4);
+    mLayout->setSpacing(2);
 
-    mHelpLabel = new QLabel(this);
-    //  setup layouts
-
-    mLayout = new QGridLayout(this);
-    mLayout->addWidget(mHelpLabel,    0, 0,  1, 22);
-    mLayout->addWidget(mCloseButton,  0, 23, 1, 2);
-
-    mLayout->addWidget(mNameEdit,     1, 0,  1, 20);
-    mLayout->addWidget(mResetButton,  1, 21, 1, 1);
-    mLayout->addWidget(mDeleteButton, 1, 22, 1, 1);
-    mLayout->addWidget(mSaveButton,   1, 23, 1, 2);
-
-    mLayout->addWidget(mRoomCheckBox,   2, 0, 1, 15);
-    mLayout->addWidget(mHelpRoomButton, 2, 16, 1, 4);
-
-    mLayout->addWidget(mDevicesList,  3,  0, 10, 0);
+    mLayout->addWidget(mTopMenu, 3);
+    mLayout->addWidget(mDevicesList, 8);
 }
 
 EditGroupPage::~EditGroupPage() {
@@ -87,20 +59,18 @@ void EditGroupPage::showGroup(QString key, std::list<cor::Light> groupDevices, s
     mNewName = key;
 
     mOriginalDevices = groupDevices;
-    mNameEdit->setText(key);
-    mSaveButton->setEnabled(false);
+    mTopMenu->nameEdit()->setText(key);
+    mTopMenu->saveButton()->setEnabled(false);
     mIsMood = isMood;
     mIsRoomOriginal = isRoom;
     mIsRoomCurrent = mIsRoomOriginal;
     if (mIsMood) {
-        mHelpLabel->setText("Edit the Mood...");
-        mHelpRoomButton->setVisible(false);
-        mRoomCheckBox->setVisible(false);
+        mTopMenu->helpLabel()->setText("Edit the Mood...");
+        mTopMenu->roomCheckBox()->setVisible(false);
     } else {
-        mHelpLabel->setText("Edit the Collection...");
-        mHelpRoomButton->setVisible(true);
-        mRoomCheckBox->setVisible(true);
-        mRoomCheckBox->setChecked(mIsRoomOriginal);
+        mTopMenu->helpLabel()->setText("Edit the Collection...");
+        mTopMenu->roomCheckBox()->setVisible(true);
+        mTopMenu->roomCheckBox()->setChecked(mIsRoomOriginal);
     }
     updateDevices(groupDevices, devices);
     repaint();
@@ -158,7 +128,7 @@ void EditGroupPage::closePressed(bool) {
                                       QMessageBox::Yes|QMessageBox::No);
         if (reply == QMessageBox::Yes) {
           saveChanges();
-          mSaveButton->setEnabled(true);
+          mTopMenu->saveButton()->setEnabled(true);
         }
     }
     emit pressedClose();
@@ -179,7 +149,7 @@ void EditGroupPage::savePressed(bool) {
           mOriginalDevices = mScrollAreaWidget->checkedDevices();
           // make new original name
           mOriginalName = mNewName;
-          mSaveButton->setEnabled(false);
+          mTopMenu->saveButton()->setEnabled(false);
         }
     }
 }
@@ -188,9 +158,9 @@ void EditGroupPage::isRoomChecked(bool checked) {
       mIsRoomCurrent = checked;
 
       if (checkForChanges()) {
-          mSaveButton->setEnabled(true);
+          mTopMenu->saveButton()->setEnabled(true);
       } else {
-          mSaveButton->setEnabled(false);
+          mTopMenu->saveButton()->setEnabled(false);
       }
 }
 
@@ -223,19 +193,19 @@ void EditGroupPage::paintEvent(QPaintEvent *) {
 
 
 void EditGroupPage::resizeEvent(QResizeEvent *) {
-    mDevicesList->setMaximumSize(this->size());
+    mDevicesList->setMaximumWidth(this->size().width());
+    mDevicesList->setMaximumHeight(this->size().height());
 }
 
 void EditGroupPage::lineEditChanged(const QString& newText) {
     mNewName = newText;
 
     if (checkForChanges()) {
-        mSaveButton->setEnabled(true);
+        mTopMenu->saveButton()->setEnabled(true);
     } else {
-        mSaveButton->setEnabled(false);
+        mTopMenu->saveButton()->setEnabled(false);
     }
 }
-
 
 void EditGroupPage::renderUI() {
 
@@ -381,8 +351,8 @@ void EditGroupPage::clickedDevice(QString key, QString deviceName) {
 
     // call the highlight button
     if (checkForChanges()) {
-        mSaveButton->setEnabled(true);
+        mTopMenu->saveButton()->setEnabled(true);
     } else {
-        mSaveButton->setEnabled(false);
+        mTopMenu->saveButton()->setEnabled(false);
     }
 }

@@ -12,7 +12,7 @@
 
 #define CUSTOM_COLOR_MAX 10
 
-CommPacketParser::CommPacketParser(QWidget *parent) : QWidget(parent) {
+CommPacketParser::CommPacketParser(QWidget *parent) : QObject(parent) {
 
 }
 

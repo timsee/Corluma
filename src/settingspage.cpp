@@ -7,6 +7,7 @@
 #include "settingspage.h"
 #include "comm/commhue.h"
 #include "listdevicewidget.h"
+#include "mainwindow.h"
 #include "cor/utils.h"
 
 #include <QFileDialog>
@@ -23,9 +24,7 @@
 
 #include <algorithm>
 
-
 #include <QDesktopWidget>
-#include <QScreen>
 
 SettingsPage::SettingsPage(QWidget *parent) :
     QWidget(parent) {
@@ -293,6 +292,10 @@ void SettingsPage::settingsButtonPressed(QString title) {
         showWebView(ECorlumaWebView::eCopyright);
     } else if (title.compare("FAQ") == 0) {
         showWebView(ECorlumaWebView::eFAQ);
+    } else if (title.compare("Mock Connection") == 0) {
+        MainWindow *mainWindow = qobject_cast<MainWindow*>(this->parentWidget());
+        Q_ASSERT(mainWindow);
+        mainWindow->anyDiscovered(true);
     }
 }
 

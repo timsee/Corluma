@@ -112,10 +112,10 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector
         light.routine = ERoutine::eMultiRandomIndividual;
         mRoutines[3].second = lightToJson(light);
 
-        mRoutines[3].first = "Bars";
+        mRoutines[4].first = "Bars";
         light.routine = ERoutine::eMultiBars;
         routineObject["param"] = 4;
-        mRoutines[3].second = lightToJson(light);
+        mRoutines[4].second = lightToJson(light);
 
         mRoutineButtons = std::vector<cor::Button*>(mRoutines.size(), nullptr);
         mLabels = std::vector<QLabel*>(mRoutines.size(), nullptr);
@@ -126,11 +126,18 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector
             mRoutineButtons[i] = new cor::Button(mRoutines[i].second, colors, this);
             mRoutineButtons[i]->setStyleSheet("background-color: rgb(52, 52, 52); ");
             mRoutineButtons[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+            mLabels[i] = new QLabel(this);
+            mLabels[i]->setText(mRoutines[i].first);
+            mLabels[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+            mLabels[i]->setAlignment(Qt::AlignCenter);
+
             connect(mRoutineButtons[i], SIGNAL(buttonClicked(QJsonObject)), this, SLOT(routineChanged(QJsonObject)));
             if ((i % maxColumn) == 0 && i != 0) {
-                rowCount++;
+                rowCount = rowCount + 2;
             }
             mLayout->addWidget(mRoutineButtons[i], rowCount, i % maxColumn);
+            mLayout->addWidget(mLabels[i], rowCount + 1, i % maxColumn);
        }
     } else {
         throw "RoutinesButtonWidget is not set up to handle that widget group";

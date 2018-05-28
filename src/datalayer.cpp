@@ -854,3 +854,12 @@ QString DataLayer::findCurrentCollection(const std::list<cor::LightGroup>& colle
 
     return "";
 }
+
+QString DataLayer::findCurrentMood(const std::list<cor::LightGroup>& moods) {
+    for (auto mood : moods) {
+        if (mCurrentDevices == mood.devices) {
+            return mood.name;
+        }
+    }
+    return "";
+}
