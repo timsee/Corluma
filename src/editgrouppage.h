@@ -7,7 +7,7 @@
 #include "cor/light.h"
 #include "listdevicewidget.h"
 #include "listeditwidget.h"
-#include "lightingpage.h"
+#include "cor/page.h"
 #include "comm/commlayer.h"
 #include "cor/checkbox.h"
 #include "cor/listwidget.h"
@@ -27,13 +27,13 @@
  *        devices from this page, you cannot change the settings of individual devices. A special case
  *        of this page can also create new collections and moods.
  */
-class EditGroupPage : public QWidget, public LightingPage
+class EditGroupPage : public QWidget, public cor::Page
 {
     Q_OBJECT
 
 public:
     /// constructor
-    explicit EditGroupPage(QWidget *parent = 0);
+    explicit EditGroupPage(QWidget* parent, CommLayer *layer, DataLayer *data, GroupsParser *parser);
 
     /// deconstructor
     ~EditGroupPage();
@@ -62,9 +62,6 @@ public:
      *        resized, just the contents.
      */
     void resize(bool resizeFullWidget = true);
-
-    /// setup the connections to the backend
-    void setup(CommLayer *layer, DataLayer* data);
 
 signals:
 
@@ -148,6 +145,15 @@ private slots:
 private:
 
     /*!
+     * \brief communication pointer to communication object
+     *        for sending comannds to the lights
+     */
+    CommLayer *mComm;
+
+    /// groups parser
+    GroupsParser *mGroups;
+
+    /*!
      * \brief shouldSetChecked true if should be set checked, false otherwise.
      * \param device the device that is used in the widget that is being analyzed to see if it should be checked.
      * \param groupDevices all known devices in the group
@@ -187,12 +193,6 @@ private:
 
     /// new name for group, saved by QLineEdit
     QString mNewName;
-
-    /*!
-     * \brief communication pointer to communication object
-     *        for sending comannds to the lights
-     */
-    CommLayer *mComm;
 
     /// list widget displaying devices
     cor::ListWidget *mDevicesList;

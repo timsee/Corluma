@@ -16,6 +16,8 @@
 #include "comm/commhue.h"
 #include "comm/commnanoleaf.h"
 
+#include "cor/presetpalettes.h"
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent) {
 
@@ -38,25 +40,24 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setMinimumSize(QSize(400,600));
 #endif
 
-
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
-    mPageIndex = EPage::eConnectionPage;
+    mPageIndex = EPage::lightPage;
 
     // --------------
     // Setup Backend
     // --------------
 
-    mComm = new CommLayer(this);
-    mData = new DataLayer();
+    mGroups = new GroupsParser(this);
+
+    mData = new DataLayer(this);
+
+    mComm = new CommLayer(this, mGroups);
 
     mDataSyncArduino  = new DataSyncArduino(mData, mComm);
     mDataSyncHue      = new DataSyncHue(mData, mComm);
     mDataSyncNanoLeaf = new DataSyncNanoLeaf(mData, mComm);
     mDataSyncSettings = new DataSyncSettings(mData, mComm);
-
-    mDataSyncHue->connectGroupsParser(mComm->groups());
-    mComm->nanoLeaf()->addColorPalettes(mData->colors());
 
     // --------------
     // Setup main widget space
@@ -69,55 +70,37 @@ MainWindow::MainWindow(QWidget *parent) :
     // Setup Pages
     // --------------
 
-    mColorPage = new ColorPage(this);
+    mLightPage = new LightPage(this, mData, mComm, mGroups);
+    mLightPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    connect(mLightPage, SIGNAL(clickedEditButton(QString, bool)),  this, SLOT(editButtonClicked(QString, bool)));
+
+    mColorPage = new ColorPage(this, mData);
     mColorPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    mGroupPage = new GroupPage(this);
-    mGroupPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mPalettePage = new PalettePage(this);
+    mPalettePage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    connect(mPalettePage, SIGNAL(speedUpdate(int)),  this, SLOT(speedChanged(int)));
+    connect(mPalettePage, SIGNAL(routineUpdate(QJsonObject)),  this, SLOT(routineChanged(QJsonObject)));
 
-    mConnectionPage = new ConnectionPage(this);
-    mConnectionPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-    mMoodsPage = new MoodsPage(this);
-    mMoodsPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-    mConnectionPage->setup(mData);
-    mMoodsPage->setup(mData);
-    mColorPage->setup(mData);
-    mGroupPage->setup(mData);
-
-    mConnectionPage->connectCommLayer(mComm);
-    mMoodsPage->connectCommLayer(mComm);
-
-    mConnectionPage->setupUI();
-    mMoodsPage->setupUI();
-
-    mGroupPage->setupButtons();
-    mColorPage->setupButtons();
-
-    connect(mConnectionPage, SIGNAL(clickedEditButton(QString, bool)),  this, SLOT(editButtonClicked(QString, bool)));
-    connect(mMoodsPage, SIGNAL(clickedEditButton(QString, bool)),  this, SLOT(editButtonClicked(QString, bool)));
+    mMoodPage = new MoodPage(this, mData, mComm, mGroups);
+    mMoodPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    connect(mMoodPage, SIGNAL(clickedEditButton(QString, bool)),  this, SLOT(editButtonClicked(QString, bool)));
 
     // --------------
     // Top Menu
     // --------------
 
-    mTopMenu = new TopMenu(mData, mComm, this);
+    mTopMenu = new TopMenu(this, mData, mComm, this, mPalettePage, mColorPage, mMoodPage, mLightPage);
     connect(mTopMenu, SIGNAL(buttonPressed(QString)), this, SLOT(topMenuButtonPressed(QString)));
-    connect(mTopMenu, SIGNAL(brightnessChanged(int)), this, SLOT(brightnessChanged(int)));
-    connect(mColorPage, SIGNAL(singleColorChanged(QColor)),  mTopMenu, SLOT(updateSingleColor(QColor)));
-    connect(mGroupPage, SIGNAL(presetPaletteChanged(EPalette)),  mTopMenu, SLOT(updatePresetPalette(EPalette)));
-    connect(mConnectionPage, SIGNAL(updateMainIcons()),  mTopMenu, SLOT(updateMenuBar()));
+    connect(mLightPage, SIGNAL(updateMainIcons()),  mTopMenu, SLOT(updateMenuBar()));
     connect(mColorPage, SIGNAL(updateMainIcons()),  mTopMenu, SLOT(updateMenuBar()));
-    connect(mGroupPage, SIGNAL(updateMainIcons()), mTopMenu, SLOT(updateMenuBar()));
-    connect(mConnectionPage, SIGNAL(changedDeviceCount()), mTopMenu, SLOT(deviceCountChanged()));
-    connect(mGroupPage, SIGNAL(changedDeviceCount()), mTopMenu, SLOT(deviceCountChanged()));
-    connect(mColorPage, SIGNAL(brightnessChanged(int)), mTopMenu, SLOT(brightnessSliderChanged(int)));
+    connect(mPalettePage, SIGNAL(updateMainIcons()), mTopMenu, SLOT(updateMenuBar()));
+    connect(mLightPage, SIGNAL(changedDeviceCount()), mTopMenu, SLOT(deviceCountChanged()));
+    connect(mColorPage, SIGNAL(brightnessChanged(int)), mTopMenu, SLOT(brightnessUpdate(int)));
     connect(mData, SIGNAL(devicesEmpty()), mTopMenu, SLOT(deviceCountReachedZero()));
 
     mTopMenu->setGeometry(0, 0, this->width(), this->height() * 0.1667);
-    mTopMenu->highlightButton("Rooms");
-
+    mTopMenu->highlightButton("Lights_Page");
 
     // --------------
     // Setup Layout
@@ -131,23 +114,21 @@ MainWindow::MainWindow(QWidget *parent) :
     mMainWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mMainWidget->setVisible(false);
 
-    setCentralWidget(mMainWidget);
-
     mLayout = new QVBoxLayout(mMainWidget);
     mLayout->setSpacing(0);
     mLayout->addWidget(mSpacer);
     mLayout->addWidget(mMainViewport);
     mMainWidget->setLayout(mLayout);
 
+    resizeLayout();
+
     // --------------
     // Settings Page
     // --------------
 
-    mSettingsPage = new SettingsPage(this);
+    mSettingsPage = new SettingsPage(this, mComm, mData, mGroups);
     mSettingsPage->setVisible(false);
     mSettingsPage->isOpen(false);
-    mSettingsPage->connectCommLayer(mComm);
-    mSettingsPage->globalWidget()->connectBackendLayers(mComm, mData);
     connect(mSettingsPage, SIGNAL(updateMainIcons()), mTopMenu, SLOT(updateMenuBar()));
     connect(mSettingsPage, SIGNAL(debugPressed()), this, SLOT(settingsDebugPressed()));
     connect(mSettingsPage, SIGNAL(closePressed()), this, SLOT(settingsClosePressed()));
@@ -160,9 +141,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Setup Discovery Page
     // --------------
 
-    mDiscoveryPage = new DiscoveryPage(this);
-    mDiscoveryPage->setup(mData);
-    mDiscoveryPage->connectCommLayer(mComm);
+    mDiscoveryPage = new DiscoveryPage(this, mData, mComm);
     mDiscoveryPage->show();
     mDiscoveryPage->isOpen(true);
     connect(mDiscoveryPage, SIGNAL(startButtonClicked()), this, SLOT(switchToConnection()));
@@ -180,8 +159,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Setup Editing Page
     // --------------
 
-    mEditPage = new EditGroupPage(this);
-    mEditPage->setup(mComm, mData);
+    mEditPage = new EditGroupPage(this, mComm, mData, mGroups);
     mEditPage->isOpen(false);
     connect(mEditPage, SIGNAL(pressedClose()), this, SLOT(editClosePressed()));
     mEditPage->setGeometry(0,
@@ -210,33 +188,17 @@ MainWindow::MainWindow(QWidget *parent) :
     mBottomRightFloatingLayout = new FloatingLayout(false, this);
     connect(mBottomRightFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
     std::vector<QString> buttons = { QString("HueLightSearch") };
-    mBottomRightFloatingLayout->setupButtons(buttons);
+    mBottomRightFloatingLayout->setupButtons(buttons, EButtonSize::small);
     mBottomRightFloatingLayout->setVisible(false);
-
-    mTopMenu->setup(this, mGroupPage, mColorPage, mMoodsPage, mConnectionPage);
-
 
     // --------------
     // Set up HueLightInfoDiscovery
     // --------------
 
-    mHueLightDiscovery = new hue::LightDiscovery(this);
+    mHueLightDiscovery = new hue::LightDiscovery(this, mComm);
     mHueLightDiscovery->setVisible(false);
     mHueLightDiscovery->isOpen(false);
-    mHueLightDiscovery->connectCommLayer(mComm);
     connect(mHueLightDiscovery, SIGNAL(closePressed()), this, SLOT(hueDiscoveryClosePressed()));
-
-    // --------------
-    // Resize pages to proper sizes
-    // --------------
-    mConnectionPage->setGeometry(mMainViewport->geometry());
-    // create rect for other widgets
-    QRect geometry(-1 * mMainViewport->width(),
-                   mMainViewport->pos().y(),
-                   mMainViewport->width(),
-                   mMainViewport->height());
-    mGroupPage->setGeometry(geometry);
-    mColorPage->setGeometry(geometry);
 
     // --------------
     // Setup app data with saved and global settings
@@ -250,7 +212,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // --------------
     // Start Discovery
     // --------------
-    for (int i = 0; i < (int)EProtocolType::eProtocolType_MAX; ++i) {
+    for (int i = 0; i < (int)EProtocolType::MAX; ++i) {
         EProtocolType type = (EProtocolType)i;
         if (mData->protocolSettings()->enabled(type)) {
             mComm->startup(type);
@@ -269,16 +231,14 @@ MainWindow::~MainWindow() {
 // ----------------------------
 
 void MainWindow::topMenuButtonPressed(QString key) {
-    if (key.compare("OnOff") == 0) {
-
-    } else if (key.compare("Color") == 0) {
-        pageChanged(EPage::eColorPage);
+    if (key.compare("Color") == 0) {
+        pageChanged(EPage::colorPage);
     }  else if (key.compare("Group") == 0) {
-        pageChanged(EPage::eGroupPage);
+        pageChanged(EPage::palettePage);
     }  else if (key.compare("Moods") == 0) {
-        pageChanged(EPage::eMoodsPage);
-    }  else if (key.compare("Connection") == 0) {
-        pageChanged(EPage::eConnectionPage);
+        pageChanged(EPage::moodPage);
+    }  else if (key.compare("Lights") == 0) {
+        pageChanged(EPage::lightPage);
     }  else if (key.compare("Settings") == 0) {
         mSettingsPage->setGeometry(this->width(), 0, this->width(), mSettingsPage->height());
         mSettingsPage->setVisible(true);
@@ -293,26 +253,6 @@ void MainWindow::topMenuButtonPressed(QString key) {
         qDebug() << "Do not recognize key" << key;
     }
 }
-
-
-void MainWindow::brightnessChanged(int newBrightness) {
-    // get list of all devices that just use brightness for hue
-    std::list<cor::Light> specialCaseDevices;
-    for (auto&& device : mData->currentDevices()) {
-        if (device.commType() == ECommType::eHue) {
-            HueLight hueDevice = mComm->hue()->hueLightFromLight(device);
-            if (hueDevice.hueType == EHueType::eAmbient
-                    || hueDevice.hueType == EHueType::eWhite) {
-                specialCaseDevices.push_back(device);
-            }
-        }
-    }
-    mData->updateBrightness(newBrightness, specialCaseDevices);
-    mData->turnOn(true);
-    // update the top menu bar
-    mTopMenu->updateBrightnessSlider();
-}
-
 
 void MainWindow::settingsButtonFromDiscoveryPressed() {
     if (mAnyDiscovered) {
@@ -347,19 +287,19 @@ QWidget* MainWindow::mainPageWidget(EPage page) {
     QWidget *widget;
 
     switch (page) {
-        case EPage::eColorPage:
+        case EPage::colorPage:
             widget = qobject_cast<QWidget*>(mColorPage);
             break;
-        case EPage::eConnectionPage:
-            widget = qobject_cast<QWidget*>(mConnectionPage);
+        case EPage::lightPage:
+            widget = qobject_cast<QWidget*>(mLightPage);
             break;
-        case EPage::eMoodsPage:
-            widget = qobject_cast<QWidget*>(mMoodsPage);
+        case EPage::moodPage:
+            widget = qobject_cast<QWidget*>(mMoodPage);
             break;
-        case EPage::eGroupPage:
-            widget = qobject_cast<QWidget*>(mGroupPage);
+        case EPage::palettePage:
+            widget = qobject_cast<QWidget*>(mPalettePage);
             break;
-        case EPage::eSettingsPage:
+        case EPage::settingsPage:
             widget = qobject_cast<QWidget*>(mSettingsPage);
             break;
         default:
@@ -372,19 +312,19 @@ QWidget* MainWindow::mainPageWidget(EPage page) {
 
 
 bool MainWindow::shouldTransitionOutLeft(EPage page, EPage newPage) {
-    if (page == EPage::eColorPage) {
-        if (newPage == EPage::eGroupPage
-                || newPage == EPage::eMoodsPage) {
+    if (page == EPage::colorPage) {
+        if (newPage == EPage::palettePage
+                || newPage == EPage::moodPage) {
             return true;
         } else {
             return false;
         }
-    } else if (page == EPage::eConnectionPage) {
+    } else if (page == EPage::lightPage) {
         return true;
-    } else if (page == EPage::eMoodsPage) {
+    } else if (page == EPage::moodPage) {
         return false;
-    } else if (page == EPage::eGroupPage) {
-        if (newPage == EPage::eMoodsPage) {
+    } else if (page == EPage::palettePage) {
+        if (newPage == EPage::moodPage) {
             return true;
         } else {
             return false;
@@ -396,19 +336,19 @@ bool MainWindow::shouldTransitionOutLeft(EPage page, EPage newPage) {
 }
 
 bool MainWindow::shouldTranitionInFromLeft(EPage page) {
-    if (page == EPage::eColorPage) {
-        if (mPageIndex == EPage::eGroupPage
-                || mPageIndex == EPage::eMoodsPage) {
+    if (page == EPage::colorPage) {
+        if (mPageIndex == EPage::palettePage
+                || mPageIndex == EPage::moodPage) {
             return true;
         } else {
             return false;
         }
-    } else if (page == EPage::eConnectionPage) {
+    } else if (page == EPage::lightPage) {
         return true;
-    } else if (page == EPage::eMoodsPage) {
+    } else if (page == EPage::moodPage) {
         return false;
-    } else if (page == EPage::eGroupPage) {
-        if (mPageIndex == EPage::eMoodsPage) {
+    } else if (page == EPage::palettePage) {
+        if (mPageIndex == EPage::moodPage) {
             return true;
         } else {
             return false;
@@ -433,17 +373,17 @@ void MainWindow::showMainPage(EPage page) {
     animation->setStartValue(startPoint);
     animation->setEndValue(mMainViewport->pos());
     animation->start();
-    if (page == EPage::eConnectionPage) {
-        mConnectionPage->show();
-    } else if (page == EPage::eColorPage) {
+    if (page == EPage::lightPage) {
+        mLightPage->show();
+    } else if (page == EPage::colorPage) {
         mColorPage->show();
-    } else if (page == EPage::eMoodsPage) {
-        mMoodsPage->show();
-    } else if (page == EPage::eGroupPage) {
-        mGroupPage->resize();
-        mGroupPage->show();
-        if (mGroupPage->mode() == EGroupMode::eArduinoPresets
-                || mGroupPage->mode() == EGroupMode::eHuePresets) {
+    } else if (page == EPage::moodPage) {
+        mMoodPage->show();
+    } else if (page == EPage::palettePage) {
+        mPalettePage->resize();
+        mPalettePage->show(mData->mainColor(), mData->hasArduinoDevices(), mData->hasNanoLeafDevices());
+        if (mPalettePage->mode() == EGroupMode::arduinoPresets
+                || mPalettePage->mode() == EGroupMode::huePresets) {
             mTopMenu->highlightButton("Preset_Groups");
         }
     }
@@ -464,13 +404,15 @@ void MainWindow::hideMainPage(EPage page, EPage newPage) {
     animation->setStartValue(mMainViewport->pos());
     animation->setEndValue(endPoint);
     animation->start();
-    if (page == EPage::eConnectionPage) {
-        mConnectionPage->hide();
+    if (page == EPage::lightPage) {
+        mLightPage->hide();
     }
 }
 
 
 void MainWindow::settingsDebugPressed() {
+    std::list<cor::Light> debugDevices = mGroups->loadDebugData();
+    mComm->loadDebugData(debugDevices);
     mDiscoveryPage->openStartForDebug();
 }
 
@@ -483,15 +425,7 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
     Q_UNUSED(event);
 
     moveFloatingLayout();
-    mMainWidget->setGeometry(this->geometry());
-    mTopMenu->setGeometry(0,0,
-                          this->width(),
-                          mTopMenu->geometry().height());
-    mSpacer->setGeometry(mTopMenu->geometry());
-    mMainViewport->setGeometry(mLayout->contentsMargins().left(),
-                               mSpacer->height(),
-                               this->width() - (mLayout->contentsMargins().right() + mLayout->contentsMargins().left() + mLayout->spacing()),
-                               (this->height() - mTopMenu->geometry().height()) * 0.92f);
+    resizeLayout();
 
     QSize fullScreenSize = this->size();
     if (mDiscoveryPage->isOpen()) {
@@ -535,39 +469,35 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
         mHueLightDiscovery->resize();
     }
 
-    QWidget *widget = mainPageWidget(mPageIndex);
-    widget->setGeometry(mMainViewport->geometry());
-
-
     QRect geometry(this->width() + mMainViewport->width(),
                    mMainViewport->geometry().y(),
                    mMainViewport->geometry().width(),
                    mMainViewport->geometry().height());
 
-    if (mPageIndex != EPage::eColorPage) {
+    if (mPageIndex != EPage::colorPage) {
         mColorPage->setGeometry(geometry);
     }
-    if (mPageIndex != EPage::eGroupPage) {
-        mGroupPage->setGeometry(geometry);
+    if (mPageIndex != EPage::palettePage) {
+        mPalettePage->setGeometry(geometry);
     }
-    if (mPageIndex != EPage::eMoodsPage) {
-        mMoodsPage->setGeometry(geometry);
+    if (mPageIndex != EPage::moodPage) {
+        mMoodPage->setGeometry(geometry);
     }
-    if (mPageIndex != EPage::eConnectionPage) {
-        mConnectionPage->setGeometry(geometry);
+    if (mPageIndex != EPage::lightPage) {
+        mLightPage->setGeometry(geometry);
     }
 }
 
 void MainWindow::changeEvent(QEvent *event) {
     if(event->type() == QEvent::ActivationChange && this->isActiveWindow()) {
-        for (int commInt = 0; commInt != (int)EProtocolType::eProtocolType_MAX; ++commInt) {
+        for (int commInt = 0; commInt != (int)EProtocolType::MAX; ++commInt) {
             EProtocolType type = static_cast<EProtocolType>(commInt);
             if (mData->protocolSettings()->enabled(type)) {
                 mComm->resetStateUpdates(type);
             }
         }
     } else if (event->type() == QEvent::ActivationChange && !this->isActiveWindow()) {
-        for (int commInt = 0; commInt != (int)EProtocolType::eProtocolType_MAX; ++commInt) {
+        for (int commInt = 0; commInt != (int)EProtocolType::MAX; ++commInt) {
             EProtocolType type = static_cast<EProtocolType>(commInt);
             if (mData->protocolSettings()->enabled(type)) {
                 mComm->stopStateUpdates(type);
@@ -613,8 +543,8 @@ void MainWindow::settingsClosePressed() {
     animation->setEndValue(QPoint(mSettingsPage->width(), 0));
     animation->start();
     pageChanged((EPage)mPageIndex);
-    if (mPageIndex == EPage::eConnectionPage) {
-        mConnectionPage->show();
+    if (mPageIndex == EPage::lightPage) {
+        mLightPage->show();
     }
     mTopMenu->showFloatingLayout(mPageIndex);
     mSettingsPage->isOpen(false);
@@ -655,7 +585,7 @@ void MainWindow::editButtonClicked(QString key, bool isMood) {
     } else {
         bool foundGroup = false;
         if (isMood) {
-            for (auto&& group :  mComm->groups()->moodList()) {
+            for (auto&& group :  mGroups->moodList()) {
                 if (group.name.compare(key) == 0) {
                     groupDevices = group.devices;
                     foundGroup = true;
@@ -730,7 +660,7 @@ void MainWindow::editClosePressed() {
     animation->setEndValue(finishPoint);
     animation->start();
 
-    mConnectionPage->updateConnectionList();
+    mLightPage->updateConnectionList();
 }
 
 
@@ -848,4 +778,29 @@ void MainWindow::moveFloatingLayout() {
                        this->height() - mBottomRightFloatingLayout->height());
     mBottomRightFloatingLayout->move(bottomRight);
     mBottomRightFloatingLayout->raise();
+}
+
+void MainWindow::resizeLayout() {
+    mMainWidget->setGeometry(this->geometry());
+    mTopMenu->setGeometry(0,0,
+                          this->width(),
+                          mTopMenu->geometry().height());
+    mSpacer->setGeometry(mTopMenu->geometry());
+    QRect rect(mLayout->contentsMargins().left() + mLayout->spacing(),
+               mTopMenu->floatingLayoutEnd(),
+               this->width() - (mLayout->contentsMargins().right() + mLayout->contentsMargins().left() + mLayout->spacing()),
+               (this->height() - mTopMenu->geometry().height()) * 0.92f);
+    mMainViewport->setGeometry(rect);
+    QWidget *widget = mainPageWidget(mPageIndex);
+    widget->setGeometry(rect);
+}
+
+
+
+void MainWindow::routineChanged(QJsonObject routine) {
+    mData->updateRoutine(routine);
+}
+
+void MainWindow::speedChanged(int speed) {
+    mData->updateSpeed(speed);
 }

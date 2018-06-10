@@ -27,7 +27,7 @@ public:
      * \brief DiscoveryArduCorWidget constructor
      * \param parent
      */
-    explicit DiscoveryArduCorWidget(CommLayer *comm, QWidget *parent = 0);
+    explicit DiscoveryArduCorWidget(CommLayer *comm, QWidget *parent);
 
     /*!
      * \brief Destructor

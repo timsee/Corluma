@@ -1,5 +1,3 @@
-#ifndef MOBILE_BUILD
-
 /*!
  * \copyright
  * Copyright (C) 2015 - 2018.
@@ -14,7 +12,7 @@ CommSerial::CommSerial() {
     mStateUpdateInterval = 750;
     mDiscoveryUpdateInterval = 500;
     mLookingForActivePorts = false;
-    setupConnectionList(ECommType::eSerial);
+    setupConnectionList(ECommType::serial);
 
     connect(mDiscoveryTimer, SIGNAL(timeout()), this, SLOT(discoveryRoutine()));
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(stateUpdate()));
@@ -73,10 +71,10 @@ void CommSerial::sendPacket(const cor::Controller& controller, QString& packet) 
 void CommSerial::stateUpdate() {
     if (shouldContinueStateUpdate()) {
         for (auto&& controller : mDiscoveredList) {
-            QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
+            QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::stateUpdateRequest));
             sendPacket(controller, packet);
             if ((mStateUpdateCounter % mSecondaryUpdatesInterval) == 0) {
-                QString customArrayUpdateRequest = QString("%1&").arg(QString::number((int)EPacketHeader::eCustomArrayUpdateRequest));
+                QString customArrayUpdateRequest = QString("%1&").arg(QString::number((int)EPacketHeader::customArrayUpdateRequest));
                 sendPacket(controller, customArrayUpdateRequest);
             }
         }
@@ -236,5 +234,3 @@ void CommSerial::handleError(QSerialPort::SerialPortError error) {
     qDebug() << "Serial Port Error!" << error;
 }
 
-
-#endif //MOBILE_BUILD

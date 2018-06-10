@@ -23,7 +23,7 @@ class CheckBox : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit CheckBox(QWidget *parent = 0, QString title = QString());
+    explicit CheckBox(QWidget *parent, QString title);
 
     /// checks and unchecks the checkbox
     void setChecked(bool shouldCheck);

@@ -9,11 +9,15 @@
 
 #include "listeditwidget.h"
 
-ListEditWidget::ListEditWidget(QWidget* parent) : ListCollectionWidget(parent) {
+ListEditWidget::ListEditWidget(QWidget* parent,
+                               CommLayer* comm,
+                               DataLayer* data) : ListCollectionWidget(parent),
+                                                  mComm(comm),
+                                                  mData(data) {
     this->setParent(parent);
     this->setMaximumSize(parent->size());
 
-    setup("", "", EListType::eLinear, true);
+    setup("", "", EListType::linear, true);
     mLayout->addWidget(mWidget);
 
 
@@ -47,7 +51,7 @@ void ListEditWidget::updateDevices(std::list<cor::Light> devices, bool removeIfN
             cor::Light existingDevice = existingWidget->device();
             if (compareLight(inputDevice, existingDevice)) {
                 foundDevice = true;
-                existingWidget->updateWidget(inputDevice, mData->palette(inputDevice.palette));
+                existingWidget->updateWidget(inputDevice);
             }
             ++x;
         }
@@ -58,12 +62,11 @@ void ListEditWidget::updateDevices(std::list<cor::Light> devices, bool removeIfN
 
         if (!foundDevice) {
             // TODO: remove edge case...
-            if ((inputDevice.commType() != ECommType::eHue && inputDevice.isReachable)
-                    || inputDevice.commType() == ECommType::eHue) {
+            if ((inputDevice.commType() != ECommType::hue && inputDevice.isReachable)
+                    || inputDevice.commType() == ECommType::hue) {
                 if (inputDevice.color.isValid()) {
 
                     ListDeviceWidget *widget = new ListDeviceWidget(inputDevice,
-                                                                    mData->palette(inputDevice.palette),
                                                                     false,
                                                                     mWidgetSize,
                                                                     this);
@@ -133,10 +136,6 @@ const std::list<cor::Light> ListEditWidget::checkedDevices() {
     return devices;
 }
 
-void ListEditWidget::connectLayers(CommLayer* comm, DataLayer* data) {
-    mComm = comm;
-    mData = data;
-}
 
 QSize ListEditWidget::preferredSize() {
     int height = mMinimumHeight;

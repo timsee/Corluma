@@ -9,23 +9,22 @@
 #include <vector>
 #include <QScrollArea>
 
-#include "datalayer.h"
 #include "comm/commlayer.h"
 #include "listcollectionsubwidget.h"
 
 /// type of list
 enum class EListType {
-    eGrid,
-    eLinear,
-    eLinear2X
+    grid,
+    linear,
+    linear2X
 };
 
 
 /// contents of the widget
 enum class EWidgetContents {
-    eMoods,
-    eGroups,
-    eDevices
+    moods,
+    groups,
+    devices
 };
 
 /*!
@@ -34,7 +33,7 @@ enum class EWidgetContents {
  * Released under the GNU General Public License.
  *
  *
- * \brief The ListCollectionWidget class is parent class for widgets shown on the connection page. When displaying either
+ * \brief The ListCollectionWidget class is parent class for widgets shown on the lights page. When displaying either
  *        devices or moods, they are grouped by collections. Collections are a series of devices that can be controlled together.
  *        In the case of the devices page, each collection shows all its devices. On the moods page, each collection shows all the
  *        moods that use the devices in the collection.

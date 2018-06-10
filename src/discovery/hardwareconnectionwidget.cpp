@@ -37,8 +37,8 @@ HardwareConnectionWidget::HardwareConnectionWidget(QString hardwareIconPath, QWi
     mLayout->addWidget(mIncomingArrow, 1, 2, 1, 6);
     mLayout->addWidget(mHardwareLabel, 0, 8, 2, 2);
 
-    mState = EHardwareConnectionStates::eNoOutgoingFound;
-    changeState(EHardwareConnectionStates::eConnected);
+    mState = EHardwareConnectionStates::noOutgoingFound;
+    changeState(EHardwareConnectionStates::connected);
 }
 
 void HardwareConnectionWidget::resizeEvent(QResizeEvent *) {
@@ -75,19 +75,19 @@ void HardwareConnectionWidget::changeState(EHardwareConnectionStates newState) {
     {
         switch (newState)
         {
-        case EHardwareConnectionStates::eAttemptingIncoming:
+        case EHardwareConnectionStates::attemptingIncoming:
             mOutgoingArrowPixmap = QPixmap(":images/outgoingCompleteArrow.png");
             mIncomingArrowPixmap = QPixmap(":images/incomingBrokenArrow.png");
             break;
-        case EHardwareConnectionStates::eAttemptingOutgoing:
+        case EHardwareConnectionStates::attemptingOutgoing:
             mOutgoingArrowPixmap = QPixmap(":images/outgoingBrokenArrow.png");
             mIncomingArrowPixmap = QPixmap(":images/incomingBrokenArrow.png");
             break;
-        case EHardwareConnectionStates::eConnected:
+        case EHardwareConnectionStates::connected:
             mOutgoingArrowPixmap = QPixmap(":images/outgoingCompleteArrow.png");
             mIncomingArrowPixmap = QPixmap(":images/incomingCompleteArrow.png");
             break;
-        case EHardwareConnectionStates::eNoOutgoingFound:
+        case EHardwareConnectionStates::noOutgoingFound:
             mOutgoingArrowPixmap = QPixmap(":images/outgoingBrokenArrow.png");
             mIncomingArrowPixmap = QPixmap(":images/incomingBrokenArrow.png");
             break;

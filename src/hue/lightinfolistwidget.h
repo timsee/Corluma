@@ -7,7 +7,7 @@
 #include <QLayout>
 #include <QLabel>
 
-#include "lightingpage.h"
+#include "cor/page.h"
 #include "hue/lightinfowidget.h"
 #include "comm/commhue.h"
 #include "cor/topwidget.h"
@@ -28,12 +28,12 @@ namespace hue
  *        from the Bridge. If the light is deleted from the Bridge, then it cannot be controlled again until
  *        it is rediscovered.
  */
-class LightInfoListWidget : public QWidget, public LightingPage
+class LightInfoListWidget : public QWidget, public cor::Page
 {
     Q_OBJECT
 public:
     /// constructor
-    explicit LightInfoListWidget(QWidget *parent = 0);
+    explicit LightInfoListWidget(QWidget *parent);
 
     /*!
      * \brief updateLights update the lights displayed in the widget, normally called

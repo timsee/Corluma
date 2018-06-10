@@ -24,7 +24,7 @@ WebView::WebView(QString title, QString htmlPath, QWidget *parent) : QWidget(par
     mTextBrowser->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mTextBrowser->setTextInteractionFlags(Qt::LinksAccessibleByMouse);
 
-    mTopWidget = new cor::TopWidget(title, ":images/closeX.png");
+    mTopWidget = new cor::TopWidget(title, ":images/closeX.png", this);
     connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(closeButtonPressed(bool)));
 
     QFile file(htmlPath);

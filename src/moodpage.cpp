@@ -4,7 +4,7 @@
  * Released under the GNU General Public License.
  */
 
-#include "moodspage.h"
+#include "moodpage.h"
 
 #include "listmoodwidget.h"
 #include "listmoodgroupwidget.h"
@@ -15,7 +15,9 @@
 #include <QMessageBox>
 #include <QScroller>
 
-MoodsPage::MoodsPage(QWidget *parent) : QWidget(parent) {
+MoodPage::MoodPage(QWidget *parent, DataLayer *data, CommLayer *comm, GroupsParser *groups) : QWidget(parent), mComm(comm), mGroups(groups) {
+    mData = data;
+
     mMoodsListWidget = new cor::ListWidget(this);
     mMoodsListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QScroller::grabGesture(mMoodsListWidget->viewport(), QScroller::LeftMouseButtonGesture);
@@ -25,18 +27,20 @@ MoodsPage::MoodsPage(QWidget *parent) : QWidget(parent) {
 
     setLayout(mLayout);
 
+    connect(mGroups, SIGNAL(newMoodAdded(QString)), this, SLOT(newMoodAdded(QString)));
+
     mRenderInterval = 1000;
 }
 
 
 
-void MoodsPage::newMoodAdded(QString mood) {
+void MoodPage::newMoodAdded(QString mood) {
     Q_UNUSED(mood);
     qDebug() << "mood added" << mood;
   //  updateConnectionList();
 }
 
-void MoodsPage::makeMoodsCollections(const std::list<cor::LightGroup>& moods) {
+void MoodPage::makeMoodsCollections(const std::list<cor::LightGroup>& moods) {
     std::list<cor::LightGroup> roomList = mComm->roomList();
 
     // pair every mood to an existing collection
@@ -152,7 +156,7 @@ void MoodsPage::makeMoodsCollections(const std::list<cor::LightGroup>& moods) {
 
 
 
-ListMoodGroupWidget* MoodsPage::initMoodsCollectionWidget(const QString& name,
+ListMoodGroupWidget* MoodPage::initMoodsCollectionWidget(const QString& name,
                                                                 std::list<cor::LightGroup> moods,
                                                                 const QString& key,
                                                                 bool hideEdit) {
@@ -162,12 +166,14 @@ ListMoodGroupWidget* MoodsPage::initMoodsCollectionWidget(const QString& name,
             cor::Light deviceCopy = device;
             mComm->fillDevice(deviceCopy);
             device.name = deviceCopy.name;
+//            if (device.routine > cor::ERoutineSingleColorEnd) {
+//                device.palette = mPalettes.palette(device.paletteEnum);
+//            }
         }
     }
 
     ListMoodGroupWidget *widget = new ListMoodGroupWidget(name,
                                                           moods,
-                                                          mData->colors(),
                                                           key,
                                                           hideEdit,
                                                           mMoodsListWidget);
@@ -180,26 +186,34 @@ ListMoodGroupWidget* MoodsPage::initMoodsCollectionWidget(const QString& name,
     return widget;
 }
 
-void MoodsPage::editGroupClicked(QString key) {
+void MoodPage::editGroupClicked(QString key) {
     qDebug()  << " edit group " << key;
     emit clickedEditButton(key, true);
 }
 
-void MoodsPage::editMoodClicked(QString collectionKey, QString moodKey) {
+void MoodPage::editMoodClicked(QString collectionKey, QString moodKey) {
     Q_UNUSED(collectionKey);
     emit clickedEditButton(moodKey, true);
 }
 
-void MoodsPage::moodClicked(QString collectionKey, QString moodKey) {
+void MoodPage::moodClicked(QString collectionKey, QString moodKey) {
     Q_UNUSED(collectionKey);
     qDebug() << "collection key:" << collectionKey
              << "mood key:" << moodKey;
 
     mCurrentMood = moodKey;
-    for (auto&& group :  mComm->groups()->moodList()) {
+    for (auto&& group :  mGroups->moodList()) {
         if (group.name.compare(moodKey) == 0) {
             mData->clearDevices();
-            mData->addDeviceList(group.devices);
+            auto devices = group.devices;
+            // checks for reachability of devices and appends that to the list.
+            for (auto& device : devices) {
+                // find up to date version of device
+                auto deviceCopy = device;
+                mComm->fillDevice(deviceCopy);
+                device.isReachable = deviceCopy.isReachable;
+            }
+            mData->addDeviceList(devices);
         }
     }
 
@@ -208,25 +222,20 @@ void MoodsPage::moodClicked(QString collectionKey, QString moodKey) {
     emit changedDeviceCount();
 }
 
-void MoodsPage::resizeEvent(QResizeEvent *) {
+void MoodPage::resizeEvent(QResizeEvent *) {
     mMoodsListWidget->setMaximumSize(this->size());
     mMoodsListWidget->resizeWidgets();
 }
 
-void MoodsPage::show() {
+void MoodPage::show() {
     mMoodsListWidget->setMaximumSize(this->size());
     mMoodsListWidget->resizeWidgets();
     mMoodsListWidget->setVisible(true);
-    std::list<cor::LightGroup> moodList = mComm->groups()->moodList();
+    std::list<cor::LightGroup> moodList = mGroups->moodList();
     mCurrentMood = mData->findCurrentMood(moodList);
     makeMoodsCollections(moodList);
 }
 
-void MoodsPage::hide() {
+void MoodPage::hide() {
     mMoodsListWidget->setVisible(false);
-}
-
-
-void MoodsPage::setupUI() {
-    connect(mComm->groups(), SIGNAL(newMoodAdded(QString)), this, SLOT(newMoodAdded(QString)));
 }

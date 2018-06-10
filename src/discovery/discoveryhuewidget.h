@@ -25,7 +25,7 @@ public:
      * \brief DiscoverySerialWidget constructor
      * \param parent
      */
-    explicit DiscoveryHueWidget(CommLayer *comm, QWidget *parent = 0);
+    explicit DiscoveryHueWidget(CommLayer *comm, QWidget *parent);
 
     /*!
      * \brief Destructor

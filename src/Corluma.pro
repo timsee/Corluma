@@ -108,7 +108,6 @@ ios {
 #----------
 
 SOURCES += main.cpp \
-    comm/commserial.cpp \
     comm/commhttp.cpp \
     comm/commudp.cpp \
     comm/commtype.cpp \
@@ -145,7 +144,6 @@ SOURCES += main.cpp \
     cor/topwidget.cpp \
     cor/webview.cpp \
     cor/switch.cpp \
-    cor/palettewidget.cpp \
     cor/lightgroup.cpp \
     hue/lightdiscovery.cpp \
     hue/lightinfolistwidget.cpp \
@@ -159,7 +157,6 @@ SOURCES += main.cpp \
     settingspage.cpp \
     datalayer.cpp \
     icondata.cpp \
-    connectionpage.cpp \
     floatinglayout.cpp \
     groupsparser.cpp \
     discoverypage.cpp \
@@ -174,17 +171,20 @@ SOURCES += main.cpp \
     routinebuttonswidget.cpp \
     colorpage.cpp \
     topmenu.cpp \
-    grouppage.cpp \
     settingsbutton.cpp \
     globalsettingswidget.cpp \
     editablefieldwidget.cpp \
     searchwidget.cpp \
     listeditwidget.cpp \
-    moodspage.cpp \
-    editpagetopmenu.cpp
+    editpagetopmenu.cpp \
+    lightpage.cpp \
+    palettepage.cpp \
+    moodpage.cpp \
+    cor/presetpalettes.cpp \
+    cor/palette.cpp \
+    cor/lightvectorwidget.cpp
 
 HEADERS  +=  comm/commtype.h \
-    comm/commserial.h \
     comm/commhttp.h \
     comm/commudp.h \
     comm/commhue.h \
@@ -224,7 +224,7 @@ HEADERS  +=  comm/commtype.h \
     cor/switch.h \
     cor/lightgroup.h \
     cor/range.h \
-    cor/palettewidget.h \
+    cor/page.h \
     hue/lightdiscovery.h \
     hue/lightinfolistwidget.h \
     hue/lightinfowidget.h \
@@ -238,9 +238,6 @@ HEADERS  +=  comm/commtype.h \
     settingspage.h \
     datalayer.h \
     icondata.h \
-    lightingpage.h \
-    lightingprotocols.h \
-    connectionpage.h \
     floatinglayout.h \
     groupsparser.h \
     discoverypage.h \
@@ -255,17 +252,28 @@ HEADERS  +=  comm/commtype.h \
     listcollectionsubwidget.h \
     routinebuttonswidget.h \
     colorpage.h \
-    grouppage.h \
     topmenu.h \
     settingsbutton.h \
     globalsettingswidget.h \
     editablefieldwidget.h \
     searchwidget.h \
     listeditwidget.h \
-    moodspage.h \
-    editpagetopmenu.h
+    editpagetopmenu.h \
+    lightpage.h \
+    palettepage.h \
+    moodpage.h \
+    cor/presetpalettes.h \
+    cor/palette.h \
+    cor/lightvectorwidget.h
 
-FORMS    += discoverypage.ui
+#----------
+# Desktop builds only
+#----------
+
+!android:!ios {
+HEADERS  +=  comm/commserial.h
+SOURCES += comm/commserial.cpp
+}
 
 #----------
 # Resources

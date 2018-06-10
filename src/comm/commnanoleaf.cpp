@@ -12,14 +12,14 @@
 #include <QVariantMap>
 #include <QJsonObject>
 
-CommNanoLeaf::CommNanoLeaf() {
+CommNanoleaf::CommNanoleaf() {
     mStateUpdateInterval     = 1000;
     mDiscoveryUpdateInterval = 2000;
 
     mTestingTimer = new QTimer(this);
     connect(mTestingTimer, SIGNAL(timeout()), this, SLOT(failedTestingData()));
 
-    setupConnectionList(ECommType::eNanoleaf);
+    setupConnectionList(ECommType::nanoleaf);
     checkForSavedData();
 
     mNetworkManager = new QNetworkAccessManager(this);
@@ -37,14 +37,16 @@ CommNanoLeaf::CommNanoLeaf() {
     connect(mParser, SIGNAL(receivedCustomArrayCount(int, int)), this, SLOT(customArrayCount(int, int)));
     connect(mParser, SIGNAL(receivedBrightnessChange(int, int)), this, SLOT(brightnessChange(int, int)));
     connect(mParser, SIGNAL(receivedTimeOutChange(int, int)), this, SLOT(timeOutChange(int, int)));
+
+    createColorPalettes();
 }
 
-CommNanoLeaf::~CommNanoLeaf() {
+CommNanoleaf::~CommNanoleaf() {
     saveConnectionList();
     delete mNetworkManager;
 }
 
-void CommNanoLeaf::checkForSavedData() {
+void CommNanoleaf::checkForSavedData() {
     mSettings = new QSettings;
 
 //    mSettings->setValue(kNanoLeafIPAddress, "");
@@ -66,17 +68,17 @@ void CommNanoLeaf::checkForSavedData() {
     }
 
     if (isControllerConnected(mController)) {
-        mDiscoveryState = ENanoleafDiscoveryState::eTestingPreviousData;
+        mDiscoveryState = ENanoleafDiscoveryState::testingPreviousData;
         startupStateUpdates();
         mTestingTimer->start(10000);
     } else if (mController.IP.compare("") && (mController.port != -1)){
-        mDiscoveryState = ENanoleafDiscoveryState::eAwaitingAuthToken;
+        mDiscoveryState = ENanoleafDiscoveryState::awaitingAuthToken;
     }  else {
-        mDiscoveryState = ENanoleafDiscoveryState::eRunningUPnP;
+        mDiscoveryState = ENanoleafDiscoveryState::runningUPnP;
     }
 }
 
-void CommNanoLeaf::startupStateUpdates() {
+void CommNanoleaf::startupStateUpdates() {
     mStateUpdateTimer->start(mStateUpdateInterval);
     cor::Controller controller;
     controller.name = "NanoLeaf";
@@ -88,13 +90,13 @@ void CommNanoLeaf::startupStateUpdates() {
     handleDiscoveryPacket(controller);
 }
 
-void CommNanoLeaf::addColorPalettes(const std::vector<std::vector<QColor> >& palettes) {
+void CommNanoleaf::createColorPalettes() {
     // create JSONArrays for standard palettes
-    mPalettes = std::vector<QJsonArray>((size_t)EPalette::ePalette_MAX);
+    mPalettes = std::vector<QJsonArray>((size_t)EPalette::unknown);
     // create JSONArrays for the highlight palettes, which require a probability (undocumented in current API docs)
-    mHighlightPalettes = std::vector<QJsonArray>((size_t)EPalette::ePalette_MAX);
-    for (uint32_t i = 0; i < palettes.size(); ++ i) {
-        std::vector<QColor> colorGroup = palettes[i];
+    mHighlightPalettes = std::vector<QJsonArray>((size_t)EPalette::unknown);
+    for (uint32_t i = 0; i < (uint32_t)EPalette::unknown; ++ i) {
+        std::vector<QColor> colorGroup = mPresetPalettes.paletteVector((EPalette)i);
         bool isFirst = true;
         QJsonArray paletteArray;
         QJsonArray paletteHighlightArray;
@@ -120,7 +122,7 @@ void CommNanoLeaf::addColorPalettes(const std::vector<std::vector<QColor> >& pal
     }
 }
 
-void CommNanoLeaf::connectUPnPDiscovery(UPnPDiscovery* UPnP) {
+void CommNanoleaf::connectUPnPDiscovery(UPnPDiscovery* UPnP) {
     mUPnP = UPnP;
     connect(UPnP, SIGNAL(UPnPPacketReceived(QHostAddress,QString)), this, SLOT(receivedUPnP(QHostAddress,QString)));
     if (!isControllerConnected(mController)) {
@@ -128,22 +130,22 @@ void CommNanoLeaf::connectUPnPDiscovery(UPnPDiscovery* UPnP) {
     }
 }
 
-void CommNanoLeaf::startup() {
+void CommNanoleaf::startup() {
 
 }
 
-void CommNanoLeaf::shutdown() {
+void CommNanoleaf::shutdown() {
     if (mStateUpdateTimer->isActive()) {
         mStateUpdateTimer->stop();
     }
 }
 
-const QString CommNanoLeaf::packetHeader() {
+const QString CommNanoleaf::packetHeader() {
     return QString(mController.IP + "/api/v1/" + mController.authToken + "/");
 }
 
 
-QNetworkRequest CommNanoLeaf::networkRequest(QString endpoint) {
+QNetworkRequest CommNanoleaf::networkRequest(QString endpoint) {
     QString urlString = packetHeader() + endpoint;
     QUrl url(urlString);
     url.setPort(mController.port);
@@ -154,7 +156,7 @@ QNetworkRequest CommNanoLeaf::networkRequest(QString endpoint) {
     return request;
 }
 
-void CommNanoLeaf::putJSON(const QNetworkRequest& request, const QJsonObject& json) {
+void CommNanoleaf::putJSON(const QNetworkRequest& request, const QJsonObject& json) {
     QJsonDocument doc(json);
     QString strJson(doc.toJson(QJsonDocument::Compact));
     //qDebug() << "sending" << request.url() << " JSON: " << strJson;
@@ -162,7 +164,7 @@ void CommNanoLeaf::putJSON(const QNetworkRequest& request, const QJsonObject& js
 }
 
 
-void CommNanoLeaf::changeColorCT(const cor::Controller& controller, int ct) {
+void CommNanoleaf::changeColorCT(const cor::Controller& controller, int ct) {
     Q_UNUSED(controller);
     //qDebug() << " CT is " << ct;
     // https://en.wikipedia.org/wiki/Mired
@@ -180,9 +182,9 @@ void CommNanoLeaf::changeColorCT(const cor::Controller& controller, int ct) {
     putJSON(request, json);
 }
 
-void CommNanoLeaf::attemptIP(QString ipAddress) {
-    if (mDiscoveryState == ENanoleafDiscoveryState::eRunningUPnP) {
-        mDiscoveryState = ENanoleafDiscoveryState::eTestingIP;
+void CommNanoleaf::attemptIP(QString ipAddress) {
+    if (mDiscoveryState == ENanoleafDiscoveryState::runningUPnP) {
+        mDiscoveryState = ENanoleafDiscoveryState::testingIP;
         if (!ipAddress.contains("http://")) {
             ipAddress = "http://" + ipAddress;
         }
@@ -197,7 +199,7 @@ void CommNanoLeaf::attemptIP(QString ipAddress) {
 
 
 
-void CommNanoLeaf::discoveryRoutine() {
+void CommNanoleaf::discoveryRoutine() {
    if ((mController.port != -1) && !mController.authToken.compare("") && mController.IP.compare("")) {
         QString urlString = mController.IP + "/api/v1/new";
         QUrl url(urlString);
@@ -215,7 +217,7 @@ void CommNanoLeaf::discoveryRoutine() {
     }
 }
 
-void CommNanoLeaf::stateUpdate() {
+void CommNanoleaf::stateUpdate() {
     if (shouldContinueStateUpdate() && isControllerConnected(mController)) {
         QNetworkRequest request = networkRequest("");
         mNetworkManager->get(request);
@@ -245,20 +247,20 @@ void CommNanoLeaf::stateUpdate() {
     }
 }
 
-void CommNanoLeaf::sendPacket(const cor::Controller& controller, QString& packet) {
+void CommNanoleaf::sendPacket(const cor::Controller& controller, QString& packet) {
     preparePacketForTransmission(controller, packet);
     mParser->parsePacket(packet);
 }
 
-void CommNanoLeaf::replyFinished(QNetworkReply* reply) {
-    if (mDiscoveryState == ENanoleafDiscoveryState::eTestingIP) {
-        mDiscoveryState = ENanoleafDiscoveryState::eAwaitingAuthToken;
+void CommNanoleaf::replyFinished(QNetworkReply* reply) {
+    if (mDiscoveryState == ENanoleafDiscoveryState::testingIP) {
+        mDiscoveryState = ENanoleafDiscoveryState::awaitingAuthToken;
         mSettings->setValue(kNanoLeafIPAddress, mController.IP);
         mSettings->setValue(kNanoLeafPort, mController.port);
         mSettings->sync();
         mUPnP->removeListener();
-    } else if (mDiscoveryState == ENanoleafDiscoveryState::eTestingPreviousData) {
-        mDiscoveryState = ENanoleafDiscoveryState::eTestingAuth;
+    } else if (mDiscoveryState == ENanoleafDiscoveryState::testingPreviousData) {
+        mDiscoveryState = ENanoleafDiscoveryState::testingAuth;
     }
 
     //qDebug() << reply->error();
@@ -275,21 +277,21 @@ void CommNanoLeaf::replyFinished(QNetworkReply* reply) {
                     mSettings->setValue(kNanoLeafAuthToken, authToken);
                     mSettings->sync();
 
-                    mDiscoveryState = ENanoleafDiscoveryState::eFullyConnected;
+                    mDiscoveryState = ENanoleafDiscoveryState::fullyConnected;
                     mDiscoveryTimer->stop();
                     startupStateUpdates();
                 } else if (object.value("serialNo").isString()
                            && object.value("name").isString()) {
-                    if (mDiscoveryState == ENanoleafDiscoveryState::eTestingAuth) {
-                        mDiscoveryState = ENanoleafDiscoveryState::eFullyConnected;
+                    if (mDiscoveryState == ENanoleafDiscoveryState::testingAuth) {
+                        mDiscoveryState = ENanoleafDiscoveryState::fullyConnected;
                         mTestingTimer->stop();
                     }
                     parseStateUpdatePacket(object);
                 } else if (object.value("animType").isString()
                            && object.value("colorType").isString()
                            && object.value("palette").isArray()) {
-                    if (mDiscoveryState == ENanoleafDiscoveryState::eTestingAuth) {
-                        mDiscoveryState = ENanoleafDiscoveryState::eFullyConnected;
+                    if (mDiscoveryState == ENanoleafDiscoveryState::testingAuth) {
+                        mDiscoveryState = ENanoleafDiscoveryState::fullyConnected;
                         mTestingTimer->stop();
                     }
                     parseCommandRequestPacket(object);
@@ -299,7 +301,7 @@ void CommNanoLeaf::replyFinished(QNetworkReply* reply) {
     }
 }
 
-void CommNanoLeaf::receivedUPnP(QHostAddress sender, QString payload) {
+void CommNanoleaf::receivedUPnP(QHostAddress sender, QString payload) {
     Q_UNUSED(sender);
     if (!isControllerConnected(mController)) {
         if (payload.contains("Aurora")) {
@@ -319,7 +321,7 @@ void CommNanoLeaf::receivedUPnP(QHostAddress sender, QString payload) {
                         mSettings->setValue(kNanoLeafPort, mController.port);
                         mSettings->sync();
 
-                        mDiscoveryState = ENanoleafDiscoveryState::eAwaitingAuthToken;
+                        mDiscoveryState = ENanoleafDiscoveryState::awaitingAuthToken;
 
                         if (!mDiscoveryTimer->isActive()) {
                             mDiscoveryTimer->start(mDiscoveryUpdateInterval);
@@ -331,7 +333,7 @@ void CommNanoLeaf::receivedUPnP(QHostAddress sender, QString payload) {
     }
 }
 
-void CommNanoLeaf::parseCommandRequestPacket(const QJsonObject& requestPacket) {
+void CommNanoleaf::parseCommandRequestPacket(const QJsonObject& requestPacket) {
     if (requestPacket.value("animType").isString()
             && requestPacket.value("colorType").isString()
             && requestPacket.value("palette").isArray()) {
@@ -340,33 +342,33 @@ void CommNanoLeaf::parseCommandRequestPacket(const QJsonObject& requestPacket) {
         //----------------
         QString animationType = requestPacket.value("animType").toString();
         QJsonArray receivedPalette = requestPacket.value("palette").toArray();
-        ERoutine routine = ERoutine::eRoutine_MAX;
+        ERoutine routine = ERoutine::MAX;
         if (animationType.compare("highlight") == 0) {
             QJsonObject brightPacket = requestPacket.value("brightnessRange").toObject();
             int brightMin = brightPacket.value("minValue").toDouble();
             if (brightMin == 2) {
-                routine = ERoutine::eSingleGlimmer;
+                routine = ERoutine::singleGlimmer;
             } else {
-                routine = ERoutine::eMultiGlimmer;
+                routine = ERoutine::multiGlimmer;
             }
         } else if (animationType.compare("fade") == 0) {
-            routine = ERoutine::eMultiFade;
+            routine = ERoutine::multiFade;
         } else if (animationType.compare("wheel") == 0) {
             QString direction = requestPacket.value("direction").toString();
             if (direction.compare("right") == 0) {
-                routine = ERoutine::eSingleWave;
+                routine = ERoutine::singleWave;
             } else {
-                routine = ERoutine::eMultiBars;
+                routine = ERoutine::multiBars;
             }
         } else if (animationType.compare("random") == 0) {
-            routine = ERoutine::eMultiRandomIndividual;
+            routine = ERoutine::multiRandomIndividual;
         } else if (animationType.compare("flow") == 0) {
             if (requestPacket.value("flowFactor").isDouble()) {
                 double flowFactor = requestPacket.value("flowFactor").toDouble();
                 if (flowFactor < 2) {
-                    routine = ERoutine::eMultiRandomSolid;
+                    routine = ERoutine::multiRandomSolid;
                 } else  {
-                    routine = ERoutine::eSingleBlink;
+                    routine = ERoutine::singleBlink;
                 }
             }
         }
@@ -374,11 +376,11 @@ void CommNanoLeaf::parseCommandRequestPacket(const QJsonObject& requestPacket) {
         //----------------
         // Parse for EPalette
         //----------------
-        EPalette colorGroup = EPalette::ePalette_MAX;
+        EPalette colorGroup = EPalette::unknown;
         if (routine > cor::ERoutineSingleColorEnd) {
             uint32_t i = 0;
             std::vector<QJsonArray> paletteArray;
-            if (routine == ERoutine::eMultiGlimmer) {
+            if (routine == ERoutine::multiGlimmer) {
                 paletteArray = mHighlightPalettes;
             } else {
                 paletteArray = mPalettes;
@@ -393,14 +395,14 @@ void CommNanoLeaf::parseCommandRequestPacket(const QJsonObject& requestPacket) {
             }
         }
 
-        cor::Light light(1, ECommType::eNanoleaf, "NanoLeaf");
+        cor::Light light(1, ECommType::nanoleaf, "NanoLeaf");
         fillDevice(light);
 
-        if (routine != ERoutine::eRoutine_MAX) {
+        if (routine != ERoutine::MAX) {
             light.routine = routine;
         }
-        if (colorGroup != EPalette::ePalette_MAX) {
-            light.palette = colorGroup;
+        if (colorGroup != EPalette::unknown) {
+            light.palette = mPresetPalettes.palette(colorGroup);
         }
 
         // get speed
@@ -441,7 +443,7 @@ void CommNanoLeaf::parseCommandRequestPacket(const QJsonObject& requestPacket) {
 }
 
 
-void CommNanoLeaf::parseStateUpdatePacket(const QJsonObject& stateUpdate) {
+void CommNanoleaf::parseStateUpdatePacket(const QJsonObject& stateUpdate) {
     if (stateUpdate.value("name").isString()
             && stateUpdate.value("serialNo").isString()
             && stateUpdate.value("manufacturer").isString()
@@ -464,11 +466,11 @@ void CommNanoLeaf::parseStateUpdatePacket(const QJsonObject& stateUpdate) {
                 && stateObject.value("sat").isObject()
                 && stateObject.value("ct").isObject()
                 && stateObject.value("colorMode").isString()) {
-            cor::Light light(1, ECommType::eNanoleaf, "NanoLeaf");
+            cor::Light light(1, ECommType::nanoleaf, "NanoLeaf");
             fillDevice(light);
 
             light.isReachable = true;
-            light.hardwareType = ELightHardwareType::eNanoleaf;
+            light.hardwareType = ELightHardwareType::nanoleaf;
             light.name = "NanoLeaf";
 
             int hue = 0;
@@ -610,7 +612,7 @@ void CommNanoLeaf::parseStateUpdatePacket(const QJsonObject& stateUpdate) {
 // Corluma Command Parsed Handlers
 //------------------------------------
 
-void CommNanoLeaf::onOffChange(int lightIndex, bool shouldTurnOn) {
+void CommNanoleaf::onOffChange(int lightIndex, bool shouldTurnOn) {
     Q_UNUSED(lightIndex);
     QNetworkRequest request = networkRequest("state");
 
@@ -623,7 +625,7 @@ void CommNanoLeaf::onOffChange(int lightIndex, bool shouldTurnOn) {
 }
 
 
-void CommNanoLeaf::singleSolidColorChange(int deviceIndex, QColor color) {
+void CommNanoleaf::singleSolidColorChange(int deviceIndex, QColor color) {
     Q_UNUSED(deviceIndex);
     QNetworkRequest request = networkRequest("state");
 
@@ -642,21 +644,21 @@ void CommNanoLeaf::singleSolidColorChange(int deviceIndex, QColor color) {
     putJSON(request, json);
 }
 
-void CommNanoLeaf::arrayColorChange(int deviceIndex, int colorIndex, QColor color) {
+void CommNanoleaf::arrayColorChange(int deviceIndex, int colorIndex, QColor color) {
     Q_UNUSED(color);
     Q_UNUSED(deviceIndex);
     Q_UNUSED(colorIndex);
     //TODO: implement
 }
 
-QJsonObject CommNanoLeaf::createRoutinePacket(ERoutine routine, int speed) {
+QJsonObject CommNanoleaf::createRoutinePacket(ERoutine routine, int speed) {
     QJsonObject effectObject;
     effectObject["loop"] = true;
     effectObject["command"] = QString("display");
     effectObject["colorType"] = QString("HSB");
 
     QJsonObject brightnessObject;
-    if (routine == ERoutine::eSingleGlimmer) {
+    if (routine == ERoutine::singleGlimmer) {
         brightnessObject["minValue"] = 2;
     } else {
         brightnessObject["minValue"] = 25;
@@ -669,21 +671,21 @@ QJsonObject CommNanoLeaf::createRoutinePacket(ERoutine routine, int speed) {
     // handle delay time
     //------------
     switch (routine) {
-        case ERoutine::eSingleBlink:
-        case ERoutine::eMultiBars:
-        case ERoutine::eSingleWave:
-        case ERoutine::eMultiRandomSolid:
+        case ERoutine::singleBlink:
+        case ERoutine::multiBars:
+        case ERoutine::singleWave:
+        case ERoutine::multiRandomSolid:
         {
             effectObject["delayTime"] = speed;
             break;
         }
-        case ERoutine::eSingleFade:
-        case ERoutine::eSingleSawtoothFade:
-        case ERoutine::eMultiFade:
-        case ERoutine::eSingleGlimmer:
-        case ERoutine::eMultiRandomIndividual:
-        case ERoutine::eMultiGlimmer:
-        case ERoutine::eSingleSolid:
+        case ERoutine::singleFade:
+        case ERoutine::singleSawtoothFade:
+        case ERoutine::multiFade:
+        case ERoutine::singleGlimmer:
+        case ERoutine::multiRandomIndividual:
+        case ERoutine::multiGlimmer:
+        case ERoutine::singleSolid:
         {
             QJsonObject delayTimeObject;
             delayTimeObject["minValue"] = speed / 2;
@@ -699,9 +701,13 @@ QJsonObject CommNanoLeaf::createRoutinePacket(ERoutine routine, int speed) {
     //------------
 
     switch (routine) {
-        case ERoutine::eSingleBlink:
-        case ERoutine::eSingleGlimmer:
-        case ERoutine::eSingleWave:
+        case ERoutine::singleBlink:
+        case ERoutine::singleGlimmer:
+        case ERoutine::singleWave:
+        case ERoutine::singleSolid:
+        case ERoutine::multiRandomIndividual:
+        case ERoutine::multiGlimmer:
+        case ERoutine::singleSawtoothFade:
         {
             QJsonObject transTimeObject;
             transTimeObject["minValue"] = 2;
@@ -709,18 +715,14 @@ QJsonObject CommNanoLeaf::createRoutinePacket(ERoutine routine, int speed) {
             effectObject["transTime"] = transTimeObject;
             break;
         }
-        case ERoutine::eMultiBars:
-        case ERoutine::eMultiRandomSolid:
+        case ERoutine::multiBars:
+        case ERoutine::multiRandomSolid:
 //        {
 //            effectObject["transTime"] = speed;
 //            break;
 //        }
-        case ERoutine::eSingleFade:
-        case ERoutine::eSingleSawtoothFade:
-        case ERoutine::eMultiFade:
-        case ERoutine::eMultiRandomIndividual:
-        case ERoutine::eMultiGlimmer:
-        case ERoutine::eSingleSolid:
+        case ERoutine::singleFade:
+        case ERoutine::multiFade:
         {
             QJsonObject transTimeObject;
             transTimeObject["minValue"] = speed / 2;
@@ -736,71 +738,71 @@ QJsonObject CommNanoLeaf::createRoutinePacket(ERoutine routine, int speed) {
     // create routine
     //------------
     switch (routine) {
-        case ERoutine::eSingleBlink:
+        case ERoutine::singleBlink:
         {
             effectObject["animType"]   = QString("flow");
             effectObject["flowFactor"] = 3.5;
             effectObject["direction"]  = "left";
             break;
         }
-        case ERoutine::eSingleFade:
-        case ERoutine::eSingleSawtoothFade:
-        case ERoutine::eMultiFade:
+        case ERoutine::singleFade:
+        case ERoutine::singleSawtoothFade:
+        case ERoutine::multiFade:
         {
             effectObject["animType"] = QString("fade");
             break;
         }
-        case ERoutine::eSingleGlimmer:
+        case ERoutine::singleGlimmer:
         {
             effectObject["animType"] = QString("highlight");
             break;
         }
-        case ERoutine::eSingleWave:
+        case ERoutine::singleWave:
         {
             effectObject["animType"]   = QString("wheel");
             effectObject["windowSize"] = 1;
             effectObject["direction"]  = "left";
             break;
         }
-        case ERoutine::eMultiBars:
+        case ERoutine::multiBars:
         {
             effectObject["animType"]   = QString("wheel");
             effectObject["windowSize"] = 1;
             effectObject["direction"]  = QString("right");
             break;
         }
-        case ERoutine::eMultiRandomIndividual:
+        case ERoutine::multiRandomIndividual:
         {
             effectObject["animType"] = QString("random");
             break;
         }
-        case ERoutine::eMultiRandomSolid:
+        case ERoutine::multiRandomSolid:
         {
             effectObject["animType"]   = QString("flow");
             effectObject["flowFactor"] = 1.5;
             effectObject["direction"]  = "left";
             break;
         }
-        case ERoutine::eMultiGlimmer:
+        case ERoutine::multiGlimmer:
         {
             effectObject["animType"] = QString("highlight");
             break;
         }
-        case ERoutine::eSingleSolid:
+        case ERoutine::singleSolid:
         default:
         break;
     }
     return effectObject;
 }
 
-QJsonArray CommNanoLeaf::createPalette(ERoutine routine, EPalette colorGroup) {
+QJsonArray CommNanoleaf::createPalette(ERoutine routine, EPalette colorGroup) {
     // Build Color Palette
     QJsonArray paletteArray;
     if ((int)routine <= (int)cor::ERoutineSingleColorEnd) {
-        cor::Light light(1, ECommType::eNanoleaf, "NanoLeaf");
+        cor::Light light(1, ECommType::nanoleaf, "NanoLeaf");
         fillDevice(light);
         switch (routine) {
-            case ERoutine::eSingleSolid:
+            case ERoutine::singleSolid:
             {
                 float valueCount = 1;
                 for (uint32_t i = 0; i < valueCount; ++i) {
@@ -814,7 +816,7 @@ QJsonArray CommNanoLeaf::createPalette(ERoutine routine, EPalette colorGroup) {
                 }
                 break;
             }
-            case ERoutine::eSingleGlimmer:
+            case ERoutine::singleGlimmer:
             {
                 float valueCount = 4;
                 for (uint32_t i = 0; i <= valueCount; ++i) {
@@ -833,7 +835,7 @@ QJsonArray CommNanoLeaf::createPalette(ERoutine routine, EPalette colorGroup) {
                 }
                 break;
             }
-            case ERoutine::eSingleBlink:
+            case ERoutine::singleBlink:
             {
                 QJsonObject colorObject;
                 int hue = (int)(light.color.hueF() * 360.0f);
@@ -852,9 +854,9 @@ QJsonArray CommNanoLeaf::createPalette(ERoutine routine, EPalette colorGroup) {
                 paletteArray.push_back(offObject);
                 break;
             }
-            case ERoutine::eSingleFade:
-            case ERoutine::eSingleSawtoothFade:
-            case ERoutine::eSingleWave:
+            case ERoutine::singleFade:
+            case ERoutine::singleSawtoothFade:
+            case ERoutine::singleWave:
             {
                 float valueCount = 5;
                 for (uint32_t i = 0; i < valueCount; ++i) {
@@ -872,7 +874,7 @@ QJsonArray CommNanoLeaf::createPalette(ERoutine routine, EPalette colorGroup) {
             break;
         }
     } else {
-        if (routine == ERoutine::eMultiGlimmer) {
+        if (routine == ERoutine::multiGlimmer) {
             paletteArray = mHighlightPalettes[(size_t)colorGroup];
         } else {
             paletteArray = mPalettes[(size_t)colorGroup];
@@ -881,12 +883,13 @@ QJsonArray CommNanoLeaf::createPalette(ERoutine routine, EPalette colorGroup) {
     return paletteArray;
 }
 
-void CommNanoLeaf::routineChange(int deviceIndex, QJsonObject routineObject) {
+void CommNanoleaf::routineChange(int deviceIndex, QJsonObject routineObject) {
     Q_UNUSED(deviceIndex);
 
     // get values from JSON
     ERoutine routine = stringToRoutine(routineObject["routine"].toString());
-    EPalette palette = stringToPalette(routineObject["palette"].toString());
+    Palette palette = Palette(routineObject["palette"].toObject());
+
     int speed        = routineObject["speed"].toDouble();
     QColor color;
     if (routineObject["red"].isDouble()
@@ -896,20 +899,20 @@ void CommNanoLeaf::routineChange(int deviceIndex, QJsonObject routineObject) {
                 routineObject["green"].toDouble(),
                 routineObject["blue"].toDouble());
     }
-    if (routine == ERoutine::eSingleSolid) {
+    if (routine == ERoutine::singleSolid) {
         singleSolidColorChange(deviceIndex, color);
     } else {
-        cor::Light light(1, ECommType::eNanoleaf, "NanoLeaf");
+        cor::Light light(1, ECommType::nanoleaf, "NanoLeaf");
         fillDevice(light);
         light.routine = routine;
         if (light.routine > cor::ERoutineSingleColorEnd) {
-            light.palette = palette;
+            light.palette = Palette(routineObject["palette"].toObject());
         }
         light.color = color;
         updateDevice(light);
 
         QJsonObject effectObject = createRoutinePacket(routine, speed);
-        effectObject["palette"] = createPalette(routine, palette);
+        effectObject["palette"] = createPalette(routine, palette.paletteEnum());
 
         QNetworkRequest request = networkRequest("effects");
         QJsonObject writeObject;
@@ -918,13 +921,13 @@ void CommNanoLeaf::routineChange(int deviceIndex, QJsonObject routineObject) {
     }
 }
 
-void CommNanoLeaf::customArrayCount(int deviceIndex, int customArrayCount) {
+void CommNanoleaf::customArrayCount(int deviceIndex, int customArrayCount) {
     Q_UNUSED(deviceIndex);
     Q_UNUSED(customArrayCount);
     //TODO: implement
 }
 
-void CommNanoLeaf::brightnessChange(int deviceIndex, int brightness) {
+void CommNanoleaf::brightnessChange(int deviceIndex, int brightness) {
     Q_UNUSED(deviceIndex);
     QNetworkRequest request = networkRequest("state");
 
@@ -935,34 +938,34 @@ void CommNanoLeaf::brightnessChange(int deviceIndex, int brightness) {
     putJSON(request, json);
 }
 
-void CommNanoLeaf::timeOutChange(int deviceIndex, int timeout) {
+void CommNanoleaf::timeOutChange(int deviceIndex, int timeout) {
     Q_UNUSED(deviceIndex);
     Q_UNUSED(timeout);
     //TODO: implement
 }
 
-void CommNanoLeaf::failedTestingData() {
+void CommNanoleaf::failedTestingData() {
     qDebug() << " failed testing data ";
-    if (mDiscoveryState == ENanoleafDiscoveryState::eTestingPreviousData) {
+    if (mDiscoveryState == ENanoleafDiscoveryState::testingPreviousData) {
         mSettings->setValue(kNanoLeafIPAddress, "");
         mSettings->sync();
         qDebug() << "failed IP test, looking for UPnP again";
 
-        mDiscoveryState = ENanoleafDiscoveryState::eRunningUPnP;
-    } else if (mDiscoveryState == ENanoleafDiscoveryState::eTestingAuth) {
+        mDiscoveryState = ENanoleafDiscoveryState::runningUPnP;
+    } else if (mDiscoveryState == ENanoleafDiscoveryState::testingAuth) {
         mSettings->setValue(kNanoLeafAuthToken, "");
         mSettings->sync();
 
-        mDiscoveryState = ENanoleafDiscoveryState::eAwaitingAuthToken;
+        mDiscoveryState = ENanoleafDiscoveryState::awaitingAuthToken;
     }
 }
 
-bool CommNanoLeaf::isControllerConnected(const nano::LeafController& controller) {
+bool CommNanoleaf::isControllerConnected(const nano::LeafController& controller) {
     return (controller.IP.compare("")
              && (controller.port != -1)
              && controller.authToken.compare(""));
 }
 
-const QString CommNanoLeaf::kNanoLeafIPAddress = QString("NanoLeafIPAddress");
-const QString CommNanoLeaf::kNanoLeafAuthToken = QString("NanoLeafAuthToken");
-const QString CommNanoLeaf::kNanoLeafPort = QString("NanoLeafPort");
+const QString CommNanoleaf::kNanoLeafIPAddress = QString("NanoLeafIPAddress");
+const QString CommNanoleaf::kNanoLeafAuthToken = QString("NanoLeafAuthToken");
+const QString CommNanoleaf::kNanoLeafPort = QString("NanoLeafPort");

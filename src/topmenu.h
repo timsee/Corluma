@@ -5,17 +5,18 @@
 #include <QPushButton>
 #include <QGridLayout>
 
-#include "lightingpage.h"
+#include "cor/page.h"
 #include "cor/slider.h"
 #include "cor/button.h"
 #include "icondata.h"
 #include "datalayer.h"
 #include "floatinglayout.h"
-#include "connectionpage.h"
-#include "moodspage.h"
-#include "grouppage.h"
+#include "lightpage.h"
+#include "moodpage.h"
+#include "palettepage.h"
 #include "colorpage.h"
 #include "comm/commlayer.h"
+#include "cor/presetpalettes.h"
 
 /*!
  * \copyright
@@ -29,11 +30,11 @@ class MainWindow;
  *        in their QStackedWidget.
  */
 enum class EPage {
-    eColorPage,
-    eGroupPage,
-    eConnectionPage,
-    eMoodsPage,
-    eSettingsPage
+    colorPage,
+    palettePage,
+    lightPage,
+    moodPage,
+    settingsPage
 };
 
 
@@ -47,7 +48,14 @@ class TopMenu : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit TopMenu(DataLayer* data, CommLayer *comm, QWidget *parent = 0);
+    explicit TopMenu(QWidget *parent,
+                     DataLayer* data,
+                     CommLayer *comm,
+                     MainWindow *mainWindow,
+                     PalettePage *palettePage,
+                     ColorPage *colorPage,
+                     MoodPage *MoodPage,
+                     LightPage *LightPage);
 
     /*!
      * \brief Destructor
@@ -67,27 +75,13 @@ public:
     void highlightButton(QString key);
 
     /*!
-     * \brief pageButtonPressed main page button pressed, such as the color page or connection page
+     * \brief pageButtonPressed main page button pressed, such as the color page or lights page
      * \param pageButtonType page type of button pressed.
      */
     void pageButtonPressed(EPage pageButtonType);
 
     /// switch the floating layout to show the menu for the given page
     void showFloatingLayout(EPage newPage);
-
-    /*!
-     * \brief setup connect the top menu to pages it can open and close
-     * \param mainWindow main window for the application
-     * \param groupPage group page, shows moods and groups
-     * \param colorPage color page, allows you to set all devices to one color.
-     * \param moodsPage shows moods
-     * \param connectionPage connection page, allows you to choose groups and rooms of lights
-     */
-    void setup(MainWindow *mainWindow,
-               GroupPage *groupPage,
-               ColorPage *colorPage,
-               MoodsPage *moodsPage,
-               ConnectionPage *connectionPage);
 
     /// getter for end of floating layout
     uint32_t floatingLayoutEnd() { return mFloatingMenuEnd; }
@@ -126,22 +120,13 @@ public slots:
     void updateMenuBar();
 
     /*!
-     * \brief updateSingleColor updates the icon for the single color page and the menu bar and on/off button
-     *         based off of the color emitted.
-     */
-    void updateSingleColor(QColor);
-
-    /*!
-     * \brief updatePresetPalette updates the icon for the preset color page and the menu bar and on/off button
-     *        based off of the enum provided.
-     */
-    void updatePresetPalette(EPalette);
-
-    /*!
-     * \brief deviceCountChangedOnConnectionPage handles the case when the device count reaches zero. This gets signaled
-     *        from the data layer whereas deviceCOuntChangedOnConnectionPage gets signaled from the connection page.
+     * \brief deviceCountChangedOnLightPage handles the case when the device count reaches zero. This gets signaled
+     *        from the data layer whereas deviceCOuntChangedOnLightPage gets signaled from the lights page.
      */
     void deviceCountReachedZero();
+
+    /// brightness udpated somewhere else
+    void brightnessUpdate(int newValue);
 
 protected:
     /// resizes assets in the widget
@@ -155,6 +140,10 @@ private slots:
     /// slot that updates when a packet is received.
     void receivedPacket(EProtocolType);
 private:
+
+    /// preset data for palettes from ArduCor
+    PresetPalettes mPalettes;
+
     /// hacky way to downsize text so that it fits within a widget.
     void downsizeTextHeightToFit(int maxHeight);
 
@@ -164,7 +153,7 @@ private:
     cor::Slider *mBrightnessSlider;
 
     /// palette that shows the currently selected devices
-    cor::PaletteWidget *mMainPalette;
+    cor::LightVectorWidget *mMainPalette;
 
     /// label for displaying string representation of selected devices.
     QLabel *mSelectedDevicesLabel;
@@ -193,11 +182,11 @@ private:
     /// returns a pointer to the current floating layout.
     FloatingLayout *currentFloatingLayout();
 
-    /// floating layout for the connection page.
-    FloatingLayout *mConnectionFloatingLayout;
+    /// floating layout for the lights page.
+    FloatingLayout *mLightsFloatingLayout;
 
-    /// floating layout for group page.
-    FloatingLayout *mGroupFloatingLayout;
+    /// floating layout for palette page.
+    FloatingLayout *mPaletteFloatinglayout;
 
     /// floating layout for moods page.
     FloatingLayout *mMoodsFloatingLayout;
@@ -233,16 +222,16 @@ private:
     MainWindow *mMainWindow;
 
     /// pointer to group page, used during floating layout clicks
-    GroupPage *mGroupPage;
+    PalettePage *mPalettePage;
 
     /// pointer to color page, used during floating layouts clicks
     ColorPage *mColorPage;
 
     /// pointer to moods page, used during floating layout clicks
-    MoodsPage *mMoodsPage;
+    MoodPage *mMoodPage;
 
-    /// pointer to connection page, used during floating layout clicks.
-    ConnectionPage *mConnectionPage;
+    /// pointer to lights page, used during floating layout clicks.
+    LightPage *mLightPage;
 
     /// current page being displayed
     EPage mCurrentPage;

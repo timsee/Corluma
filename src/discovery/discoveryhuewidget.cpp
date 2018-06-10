@@ -79,62 +79,62 @@ void DiscoveryHueWidget::hueDiscoveryUpdate(EHueDiscoveryState newState) {
     mHueDiscoveryState = newState;
     switch(mHueDiscoveryState)
     {
-        case EHueDiscoveryState::eNoBridgeFound:
+        case EHueDiscoveryState::noBridgeFound:
             //qDebug() << "Hue Update: no bridge found";
             mLabel->setText(QString("Looking for a Bridge..."));
-            emit connectionStatusChanged(EProtocolType::eHue, EConnectionState::eDiscovering);
-            mHardwareConnectionWidget->changeState(EHardwareConnectionStates::eNoOutgoingFound);
+            emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
+            mHardwareConnectionWidget->changeState(EHardwareConnectionStates::noOutgoingFound);
             break;
-        case EHueDiscoveryState::eFindingIpAddress:
+        case EHueDiscoveryState::findingIpAddress:
             mLabel->setText(QString("Looking for Bridge..."));
-            mHardwareConnectionWidget->changeState(EHardwareConnectionStates::eAttemptingOutgoing);
+            mHardwareConnectionWidget->changeState(EHardwareConnectionStates::attemptingOutgoing);
             //qDebug() << "Hue Update: Finding IP Address";
-            emit connectionStatusChanged(EProtocolType::eHue, EConnectionState::eDiscovering);
+            emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
             break;
-        case EHueDiscoveryState::eTestingIPAddress:
+        case EHueDiscoveryState::testingIPAddress:
             mLabel->setText(QString("Looking for Bridge..."));
             mIPAddress->setText(mComm->hue()->bridge().IP);
             mIPAddressDebug->setVisible(true);
             //qDebug() << "Hue Update: Found IP, waiting for response";
-            mHardwareConnectionWidget->changeState(EHardwareConnectionStates::eAttemptingIncoming);
-            emit connectionStatusChanged(EProtocolType::eHue, EConnectionState::eDiscovering);
+            mHardwareConnectionWidget->changeState(EHardwareConnectionStates::attemptingIncoming);
+            emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
             break;
-        case EHueDiscoveryState::eFindingDeviceUsername:
+        case EHueDiscoveryState::findingDeviceUsername:
             mLabel->setText(QString("Bridge Found! Please press Link button..."));
             mIPAddress->setText(mComm->hue()->bridge().IP);
             mIPAddressDebug->setVisible(true);
             //qDebug() << "Hue Update: Bridge is waiting for link button to be pressed.";
-            mHardwareConnectionWidget->changeState(EHardwareConnectionStates::eAttemptingIncoming);
-            emit connectionStatusChanged(EProtocolType::eHue, EConnectionState::eDiscovering);
+            mHardwareConnectionWidget->changeState(EHardwareConnectionStates::attemptingIncoming);
+            emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
             break;
-        case EHueDiscoveryState::eTestingFullConnection:
+        case EHueDiscoveryState::testingFullConnection:
             mLabel->setText(QString("Bridge button pressed! Testing connection..."));
             mIPAddress->setText(mComm->hue()->bridge().IP);
             mIPAddressDebug->setVisible(true);
             //qDebug() << "Hue Update: IP and Username received, testing combination. ";
-            mHardwareConnectionWidget->changeState(EHardwareConnectionStates::eAttemptingIncoming);
-            emit connectionStatusChanged(EProtocolType::eHue, EConnectionState::eDiscovering);
+            mHardwareConnectionWidget->changeState(EHardwareConnectionStates::attemptingIncoming);
+            emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
             break;
-        case EHueDiscoveryState::eBridgeConnected:
+        case EHueDiscoveryState::bridgeConnected:
             mLabel->setText(QString("Bridge Discovered!"));
             mIPAddress->setText(mComm->hue()->bridge().IP);
             mIPAddress->enableEditing(false);
             //qDebug() << "Hue Update: Bridge Connected" << mComm->hueBridge().IP;
             mIPAddressDebug->setVisible(false);
-            mComm->resetStateUpdates(EProtocolType::eHue);
-            mComm->stopDiscovery(EProtocolType::eHue);
+            mComm->resetStateUpdates(EProtocolType::hue);
+            mComm->stopDiscovery(EProtocolType::hue);
             //TODO: start syncing hue data.
             break;
-        case EHueDiscoveryState::eFindingLightInfo:
+        case EHueDiscoveryState::findingLightInfo:
             mLabel->setText(QString("Finding Hue Light Info!"));
             break;
-        case EHueDiscoveryState::eFindingGroupAndScheduleInfo:
+        case EHueDiscoveryState::findingGroupAndScheduleInfo:
             mLabel->setText(QString("Finding Group and Schedule Info!"));
             break;
-        case EHueDiscoveryState::eFullyConnected:
+        case EHueDiscoveryState::fullyConnected:
             mLabel->setText(QString("Fully Connected!"));
-            mHardwareConnectionWidget->changeState(EHardwareConnectionStates::eConnected);
-            emit connectionStatusChanged(EProtocolType::eHue, EConnectionState::eDiscoveredAndNotInUse);
+            mHardwareConnectionWidget->changeState(EHardwareConnectionStates::connected);
+            emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discoveredAndNotInUse);
             break;
         default:
             qDebug() << "Not a recognized state...";

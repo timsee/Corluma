@@ -35,8 +35,6 @@ public:
      * \brief ListMoodGroupWidget constructor
      * \param name name of collection
      * \param moods moods to display for collection
-     * \param colors all color groups from the data layer. used for displaying icons
-     *        for collections.
      * \param key key for collection
      * \param hideEdit true if edit button should be hidden, such as in special case collections.
      *        An example of a special case is "Not Reachable" moods, which contains moods you can't
@@ -44,21 +42,18 @@ public:
      */
     explicit ListMoodGroupWidget(const QString& name,
                                   std::list<cor::LightGroup> moods,
-                                  const std::vector<std::vector<QColor> >& colors,
                                   QString key,
-                                  bool hideEdit = false,
-                                  QWidget *parent = 0);
+                                  bool hideEdit,
+                                  QWidget *parent);
 
     /*!
      * \brief updateMoods update moods based off of the mood list and the vector of preset colors.
      * \param moods list of moods
-     * \param colors vector of preset colors.
      * \param bool removeIfNotFound if a widget already exists but this flag is set to true and it doesn't exist
      *        in the mood list provided, the widget gets removed from the list.
      */
     void updateMoods(std::list<cor::LightGroup> moods,
-                     const std::vector<std::vector<QColor> >& colors,
-                     bool removeIfNotFound = false);
+                     bool removeIfNotFound);
 
     /*!
      * \brief setCheckedMoods takes a list of moods as input and compares it against the
@@ -95,7 +90,7 @@ public:
     void setShowButtons(bool show);
 
     /// getter for type of widget contents
-    EWidgetContents widgetContents() { return EWidgetContents::eMoods; }
+    EWidgetContents widgetContents() { return EWidgetContents::moods; }
 
     /// resize the widgets displayed in the group
     void resizeInteralWidgets();

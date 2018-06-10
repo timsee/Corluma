@@ -5,7 +5,7 @@
  */
 
 
-#include "connectionpage.h"
+#include "lightpage.h"
 
 #include "listmoodwidget.h"
 #include "listdevicesgroupwidget.h"
@@ -17,8 +17,10 @@
 #include <QMessageBox>
 #include <QScroller>
 
-ConnectionPage::ConnectionPage(QWidget *parent) :
-    QWidget(parent) {
+LightPage::LightPage(QWidget *parent, DataLayer *data, CommLayer *comm, GroupsParser *groups) :
+    QWidget(parent), mComm(comm) {
+
+    mData = data;
 
     mRoomsWidget = new cor::ListWidget(this);
     mRoomsWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -34,27 +36,26 @@ ConnectionPage::ConnectionPage(QWidget *parent) :
     mLayout = new QVBoxLayout(this);
     mLayout->addWidget(mRoomsWidget);
 
+    connect(mComm, SIGNAL(updateReceived(ECommType)), this, SLOT(receivedCommUpdate(ECommType)));
+    connect(groups, SIGNAL(newConnectionFound(QString)), this, SLOT(newConnectionFound(QString)));
+    connect(groups, SIGNAL(groupDeleted(QString)), this, SLOT(groupDeleted(QString)));
+    connect(groups, SIGNAL(newCollectionAdded(QString)), this, SLOT(newCollectionAdded(QString)));
+
+
     mRenderInterval = 1000;
 }
 
-ConnectionPage::~ConnectionPage() {
+LightPage::~LightPage() {
 
 }
 
-
-void ConnectionPage::setupUI() {
-    connect(mComm, SIGNAL(updateReceived(ECommType)), this, SLOT(receivedCommUpdate(ECommType)));
-    connect(mComm->groups(), SIGNAL(newConnectionFound(QString)), this, SLOT(newConnectionFound(QString)));
-    connect(mComm->groups(), SIGNAL(groupDeleted(QString)), this, SLOT(groupDeleted(QString)));
-    connect(mComm->groups(), SIGNAL(newCollectionAdded(QString)), this, SLOT(newCollectionAdded(QString)));
-}
 
 // ----------------------------
 // Update Connection List
 // ----------------------------
 
 
-void ConnectionPage::updateConnectionList() {
+void LightPage::updateConnectionList() {
     //--------------
     // 1. Get group data
     //-------------
@@ -112,7 +113,7 @@ void ConnectionPage::updateConnectionList() {
 //    }
 }
 
-std::list<cor::LightGroup> ConnectionPage::gatherAllUIGroups() {
+std::list<cor::LightGroup> LightPage::gatherAllUIGroups() {
     std::list<cor::LightGroup> uiGroups;
     for (auto widget : mRoomsWidget->widgets()) {
         // cast to ListDeviceGroupWidget
@@ -122,7 +123,7 @@ std::list<cor::LightGroup> ConnectionPage::gatherAllUIGroups() {
     return uiGroups;
 }
 
-void ConnectionPage::updateDataGroupInUI(const cor::LightGroup dataGroup, const std::list<cor::LightGroup>& uiGroups, const std::list<cor::Light>& allDevices) {
+void LightPage::updateDataGroupInUI(const cor::LightGroup dataGroup, const std::list<cor::LightGroup>& uiGroups, const std::list<cor::Light>& allDevices) {
     bool existsInUIGroups = false;
     for (auto uiGroup : uiGroups) {
         if (uiGroup.name.compare(dataGroup.name) == 0) {
@@ -131,6 +132,11 @@ void ConnectionPage::updateDataGroupInUI(const cor::LightGroup dataGroup, const 
                  ListDevicesGroupWidget *groupWidget = qobject_cast<ListDevicesGroupWidget*>(widget);
                  if (groupWidget->key().compare(dataGroup.name) == 0) {
                      std::list<cor::Light> devices = updateDeviceList(dataGroup.devices, allDevices);
+                     for (auto&& device : devices) {
+                         cor::Light deviceCopy = device;
+                         mComm->fillDevice(deviceCopy);
+                         device.name = deviceCopy.name;
+                     }
                      groupWidget->updateDevices(devices);
                  }
              }
@@ -143,7 +149,7 @@ void ConnectionPage::updateDataGroupInUI(const cor::LightGroup dataGroup, const 
 }
 
 
-std::list<cor::Light> ConnectionPage::updateDeviceList(const std::list<cor::Light>& oldDevices,  const std::list<cor::Light>& allDeviceData) {
+std::list<cor::Light> LightPage::updateDeviceList(const std::list<cor::Light>& oldDevices,  const std::list<cor::Light>& allDeviceData) {
     std::list<cor::Light> filledList;
     for (auto&& device : oldDevices) {
         bool foundDevice = false;
@@ -166,8 +172,19 @@ std::list<cor::Light> ConnectionPage::updateDeviceList(const std::list<cor::Ligh
 // ------------------------------------
 
 
-ListDevicesGroupWidget* ConnectionPage::initDevicesCollectionWidget(const cor::LightGroup& group,
-                                                                    const QString& key) {
+ListDevicesGroupWidget* LightPage::initDevicesCollectionWidget(cor::LightGroup group,
+                                                               const QString& key) {
+
+    for (auto&& device : group.devices) {
+        cor::Light deviceCopy = device;
+        mComm->fillDevice(deviceCopy);
+        device.name = deviceCopy.name;
+//        if (device.routine > cor::ERoutineSingleColorEnd) {
+//            device.palette = mPalettes.palette(device.paletteEnum);
+//        }
+    }
+
+
     ListDevicesGroupWidget *widget = new ListDevicesGroupWidget(group,
                                                                 key,
                                                                 mComm,
@@ -190,7 +207,7 @@ ListDevicesGroupWidget* ConnectionPage::initDevicesCollectionWidget(const cor::L
     return widget;
 }
 
-void ConnectionPage::gatherAvailandAndNotReachableDevices(const std::list<cor::Light>& allDevices) {
+void LightPage::gatherAvailandAndNotReachableDevices(std::list<cor::Light> allDevices) {
     // ------------------------------------
     // make a list of all devices
     // ------------------------------------
@@ -201,6 +218,10 @@ void ConnectionPage::gatherAvailandAndNotReachableDevices(const std::list<cor::L
     QString kUnavailableDevicesKey = "zzzUNAVAILABLE_DEVICES";
 
     for (auto&& device : allDevices) {
+//        if (device.routine > cor::ERoutineSingleColorEnd) {
+//            device.palette = mPalettes.palette(device.paletteEnum);
+//        }
+
         if (device.isReachable) {
             availableDevices.push_front(device);
         } else {
@@ -246,7 +267,7 @@ void ConnectionPage::gatherAvailandAndNotReachableDevices(const std::list<cor::L
     }
 }
 
-void ConnectionPage::deviceClicked(QString collectionKey, QString deviceKey) {
+void LightPage::deviceClicked(QString collectionKey, QString deviceKey) {
     Q_UNUSED(collectionKey);
 
 //    qDebug() << "collection key:" << collectionKey
@@ -280,7 +301,7 @@ void ConnectionPage::deviceClicked(QString collectionKey, QString deviceKey) {
     }
 }
 
-void ConnectionPage::deviceSwitchClicked(QString deviceKey, bool isOn) {
+void LightPage::deviceSwitchClicked(QString deviceKey, bool isOn) {
     cor::Light device = identifierStringToLight(deviceKey);
     mComm->fillDevice(device);
     device.isOn = isOn;
@@ -293,7 +314,7 @@ void ConnectionPage::deviceSwitchClicked(QString deviceKey, bool isOn) {
 }
 
 
-void ConnectionPage::groupSelected(QString key, bool shouldSelect) {
+void LightPage::groupSelected(QString key, bool shouldSelect) {
     for (uint32_t row = 0; row < mRoomsWidget->count(); row++) {
         ListCollectionWidget *item = mRoomsWidget->widget(row);
         if (item->key().compare(key) == 0) {
@@ -319,10 +340,10 @@ void ConnectionPage::groupSelected(QString key, bool shouldSelect) {
 // GroupsParser Slots
 // ------------------------------------
 
-void ConnectionPage::newConnectionFound(QString newController) {
+void LightPage::newConnectionFound(QString newController) {
     // get list of all HTTP and UDP devices.
-    const std::list<cor::Controller> udpDevices  = mComm->discoveredList(ECommType::eUDP);
-    const std::list<cor::Controller> httpDevices = mComm->discoveredList(ECommType::eHTTP);
+    const std::list<cor::Controller> udpDevices  = mComm->discoveredList(ECommType::UDP);
+    const std::list<cor::Controller> httpDevices = mComm->discoveredList(ECommType::HTTP);
     bool foundController = false;
     // check combined list if new controller exists.
     for (auto&& udpController : udpDevices) {
@@ -338,12 +359,12 @@ void ConnectionPage::newConnectionFound(QString newController) {
     }
     // if not, add it to discovery.
     if (!foundController) {
-        if (mData->protocolSettings()->enabled(EProtocolType::eArduCor)) {
-            bool isSuccessful = mComm->startDiscoveringController(ECommType::eUDP, newController);
+        if (mData->protocolSettings()->enabled(EProtocolType::arduCor)) {
+            bool isSuccessful = mComm->startDiscoveringController(ECommType::UDP, newController);
             if (!isSuccessful) qDebug() << "WARNING: failure adding" << newController << "to UDP discovery list";
-            isSuccessful = mComm->startDiscoveringController(ECommType::eHTTP, newController);
+            isSuccessful = mComm->startDiscoveringController(ECommType::HTTP, newController);
             if (!isSuccessful) qDebug() << "WARNING: failure adding" << newController << "to HTTP discovery list";
-            mComm->startDiscovery(EProtocolType::eArduCor);
+            mComm->startDiscovery(EProtocolType::arduCor);
         } else {
             qDebug() << "WARNING: UDP and HTTP not enabled but they are found in the json data being loaded...";
         }
@@ -352,7 +373,7 @@ void ConnectionPage::newConnectionFound(QString newController) {
 
 
 
-void ConnectionPage::groupDeleted(QString group) {
+void LightPage::groupDeleted(QString group) {
     qDebug() << "group deleted" << group;
     for (uint32_t i = 0; i < mRoomsWidget->count(); ++i) {
         ListCollectionWidget *widget = mRoomsWidget->widget(i);
@@ -364,29 +385,29 @@ void ConnectionPage::groupDeleted(QString group) {
     }
 }
 
-void ConnectionPage::newCollectionAdded(QString collection) {
+void LightPage::newCollectionAdded(QString collection) {
     qDebug() << "collection added" << collection;
 }
 
 
 // ------------------------------------
-// ConnectionPage Slots
+// LightPage Slots
 // ------------------------------------
 
 
-void ConnectionPage::lightStateChanged(ECommType type, QString name) {
+void LightPage::lightStateChanged(ECommType type, QString name) {
     Q_UNUSED(name);
     Q_UNUSED(type);
     updateConnectionList();
 }
 
-void ConnectionPage::clearButtonPressed() {
+void LightPage::clearButtonPressed() {
     mData->clearDevices();
     emit changedDeviceCount();
     emit updateMainIcons();
 }
 
-void ConnectionPage::receivedCommUpdate(ECommType) {
+void LightPage::receivedCommUpdate(ECommType) {
     if (mLastUpdateConnectionList.elapsed() > 250) {
         mLastUpdateConnectionList = QTime::currentTime();
         updateConnectionList();
@@ -397,7 +418,7 @@ void ConnectionPage::receivedCommUpdate(ECommType) {
 // ConnectionList Helpers
 // ------------------------------------
 
-void ConnectionPage::highlightList() {
+void LightPage::highlightList() {
     for (uint32_t row = 0; row < mRoomsWidget->count(); row++) {
         ListDevicesGroupWidget *widget = qobject_cast<ListDevicesGroupWidget*>(mRoomsWidget->widget(row));
         Q_ASSERT(widget);
@@ -411,14 +432,14 @@ void ConnectionPage::highlightList() {
 // ------------------------------------
 
 
-void ConnectionPage::renderUI() {
+void LightPage::renderUI() {
    // updateConnectionList();
    // openDefaultCollections();
     //highlightList();
 }
 
 
-cor::Light ConnectionPage::identifierStringToLight(QString string) {
+cor::Light LightPage::identifierStringToLight(QString string) {
     // first split the values from comma delimited to a vector of strings
     std::vector<std::string> valueVector;
     std::stringstream input(string.toStdString());
@@ -451,26 +472,26 @@ cor::Light ConnectionPage::identifierStringToLight(QString string) {
 // ----------------------------
 
 
-void ConnectionPage::showEvent(QShowEvent *event) {
+void LightPage::showEvent(QShowEvent *event) {
     Q_UNUSED(event);
     show();
 }
 
-void ConnectionPage::show() {
+void LightPage::show() {
     cleanupList();
     highlightList();
     mRenderThread->start(mRenderInterval);
 }
 
 
-void ConnectionPage::hideEvent(QHideEvent *event) {
+void LightPage::hideEvent(QHideEvent *event) {
     Q_UNUSED(event);
     hide();
 }
 
 
-void ConnectionPage::hide() {
-    for (int i = 0; i < (int)EProtocolType::eProtocolType_MAX; ++i) {
+void LightPage::hide() {
+    for (int i = 0; i < (int)EProtocolType::MAX; ++i) {
         EProtocolType protocol = (EProtocolType)i;
         if (mData->protocolSettings()->enabled(protocol)) {
             mComm->stopDiscovery(protocol);
@@ -479,14 +500,14 @@ void ConnectionPage::hide() {
     mRenderThread->stop();
 }
 
-void ConnectionPage::resizeEvent(QResizeEvent *) {
+void LightPage::resizeEvent(QResizeEvent *) {
     updateConnectionList();
     mRoomsWidget->setMaximumSize(this->size());
     mRoomsWidget->resizeWidgets();
 }
 
 
-void ConnectionPage::cleanupList() {
+void LightPage::cleanupList() {
     // first remove all devices that are no longer available
     emit changedDeviceCount();
 

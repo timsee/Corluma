@@ -2,7 +2,7 @@
 #ifndef PresetColorsPage_H
 #define PresetColorsPage_H
 
-#include "lightingpage.h"
+#include "cor/page.h"
 #include "cor/button.h"
 #include "presetgroupwidget.h"
 #include "cor/listwidget.h"
@@ -17,8 +17,8 @@
 
 /// mode of the page
 enum class EGroupMode {
-    eArduinoPresets,
-    eHuePresets
+    arduinoPresets,
+    huePresets
 };
 
 /*!
@@ -26,14 +26,14 @@ enum class EGroupMode {
  * Copyright (C) 2015 - 2016.
  * Released under the GNU General Public License.
  *
- * \brief The GroupPage provides a way to use the Color Presets
- *        from themed groups of colors to do Multi Color Routines.
+ * \brief The Palete provides a way to use the palettes from ArduCor
+ *        to do Multi Color Routines.
  *
  * It contains a grid of buttons that map color presets to lighting
  * modes. The list expands vertically into a QScrollArea.
  *
  */
-class GroupPage : public QWidget, public LightingPage
+class PalettePage : public QWidget, public cor::Page
 {
     Q_OBJECT
 
@@ -41,12 +41,12 @@ public:
     /*!
      * \brief Constructor
      */
-    explicit GroupPage(QWidget *parent = 0);
+    explicit PalettePage(QWidget *parent);
 
     /*!
-     * \brief Deconstructor
+     * \brief Destructor
      */
-    ~GroupPage();
+    ~PalettePage();
 
     /*!
      * \brief highlightRoutineButton highlights the button that implements
@@ -57,14 +57,9 @@ public:
      */
     void highlightRoutineButton(ERoutine routine, EPalette palette);
 
-    /*!
-     * \brief setupButtons sets up the routine buttons. Requires the DataLayer
-     *        of the application to be set up first.
-     */
-    void setupButtons();
 
     /// called whenever the group page is shown
-    void show();
+    void show(QColor color, bool hasArduinoDevices, bool hasNanoleafDevices);
 
     /// getter for current mode of page
     EGroupMode mode() { return mMode; }
@@ -78,22 +73,10 @@ public:
      */
     void showPresetHueGroups();
 
-    /*!
-     * \brief connectCommLayer connec the commlayer to this page.
-     * \param layer a pointer to the commlayer object.
-     */
-    void connectCommLayer(CommLayer *layer);
-
     /// called to programmatically resize the widget
     void resize();
 
 signals:
-
-    /*!
-     * \brief changedDeviceCount signaled to UI assets whenever a click on the page results in changing
-     *        the number of devices connected.
-     */
-    void changedDeviceCount();
 
     /*!
      * \brief used to signal back to the main page that it should update its
@@ -101,11 +84,11 @@ signals:
      */
     void updateMainIcons();
 
-    /*!
-     * \brief presetPaletteChanged emits data to the MainWindow about the changes
-     *        to the preset color page.
-     */
-    void presetPaletteChanged(EPalette);
+    /// the speed bar has an update.
+    void speedUpdate(int);
+
+    /// a button was pressed, signaling a routine change.
+    void routineUpdate(QJsonObject object);
 
 public slots:
 
@@ -147,16 +130,25 @@ protected:
 
 private:
 
+    /// preset data for palettes from ArduCor
+    PresetPalettes mPresetPalettes;
+
+    /*!
+     * \brief setupButtons sets up the routine buttons. Requires the DataLayer
+     *        of the application to be set up first.
+     */
+    void setupButtons();
+
     /*!
      * \brief mPresetWidgets vector of all preset widgets getting displayed in the
      *        scroll area.
      */
-    std::vector<PresetGroupWidget *> mPresetArduinoWidgets;
+    std::vector<PresetGroupWidget*> mPresetArduinoWidgets;
 
     /*!
      * \brief mPresetHueWidgets vector of all preset hue widgets.
      */
-    std::vector<PresetGroupWidget *> mPresetHueWidgets;
+    std::vector<PresetGroupWidget*> mPresetHueWidgets;
 
     /// main layout of grouppage
     QVBoxLayout *mLayout;

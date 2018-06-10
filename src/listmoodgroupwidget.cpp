@@ -8,13 +8,12 @@
 
 ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
                                          std::list<cor::LightGroup> moods,
-                                         const std::vector<std::vector<QColor> >& colors,
                                          QString key,
                                          bool hideEdit,
                                          QWidget *parent) {
     this->setParent(parent);
     this->setMaximumSize(parent->size());
-    setup(name, key, EListType::eLinear2X, hideEdit);
+    setup(name, key, EListType::linear2X, hideEdit);
 
     mTopLayout = new QHBoxLayout();
     mTopLayout->addWidget(mName);
@@ -27,7 +26,7 @@ ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
 
     mMoods = moods;
 
-    updateMoods(moods, colors);
+    updateMoods(moods, false);
 
     mLayout->addLayout(mTopLayout);
     mLayout->addWidget(mWidget);
@@ -35,7 +34,6 @@ ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
 
 
 void ListMoodGroupWidget::updateMoods(std::list<cor::LightGroup> moods,
-                                      const std::vector<std::vector<QColor> >& colors,
                                       bool removeIfNotFound) {
     std::vector<bool> foundWidgets(mWidgets.size(), false);
     for (auto&& mood : moods) {
@@ -51,7 +49,7 @@ void ListMoodGroupWidget::updateMoods(std::list<cor::LightGroup> moods,
         }
 
         if (!foundMood) {
-            ListMoodWidget *widget = new ListMoodWidget(mood, colors);
+            ListMoodWidget *widget = new ListMoodWidget(mood, this);
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
             connect(widget, SIGNAL(editClicked(QString)), this, SLOT(clickedEdit(QString)));
             insertWidget(widget);

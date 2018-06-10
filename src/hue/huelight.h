@@ -74,12 +74,12 @@ inline EHueType checkForHueWithMostFeatures(std::list<HueLight> lights) {
     // check for all devices
     for (auto&& hue : lights) {
         // check if its a hue
-        if (hue.hueType == EHueType::eExtended
-                || hue.hueType == EHueType::eColor) {
+        if (hue.hueType == EHueType::extended
+                || hue.hueType == EHueType::color) {
             rgbCount++;
-        } else if (hue.hueType == EHueType::eAmbient) {
+        } else if (hue.hueType == EHueType::ambient) {
             ambientCount++;
-        } else if (hue.hueType == EHueType::eWhite) {
+        } else if (hue.hueType == EHueType::white) {
             whiteCount++;
         }
     }
@@ -87,18 +87,18 @@ inline EHueType checkForHueWithMostFeatures(std::list<HueLight> lights) {
     if (whiteCount > 0
             && (ambientCount == 0)
             && (rgbCount == 0)) {
-        return EHueType::eWhite;
+        return EHueType::white;
     }
     if (ambientCount > 0
             && (rgbCount == 0)) {
-        return EHueType::eAmbient;
+        return EHueType::ambient;
     }
 
     if (rgbCount > 0) {
-        return EHueType::eExtended;
+        return EHueType::extended;
     }
 
-    return EHueType::EHueType_MAX;
+    return EHueType::MAX;
 }
 
 

@@ -40,7 +40,7 @@ void CommPacketParser::parsePacket(QString packet) {
         if (intVector.size() > 1) {
             switch ((EPacketHeader)intVector[0])
             {
-                case EPacketHeader::eCustomArrayColorChange:
+                case EPacketHeader::customArrayColorChange:
                     if (intVector.size() == 6) {
                        if ((intVector[2] < 0) || (intVector[2] > CUSTOM_COLOR_MAX)) validPacket = false;
                        if ((intVector[3] < 0) || (intVector[3] > 255)) validPacket = false;
@@ -51,7 +51,7 @@ void CommPacketParser::parsePacket(QString packet) {
                        }
                     }
                     break;
-                case EPacketHeader::eOnOffChange:
+                case EPacketHeader::onOffChange:
                     if (intVector.size() == 3) {
                         if (intVector[2] < 0 || intVector[2] > 1) validPacket = false;
                         if (validPacket) {
@@ -59,10 +59,10 @@ void CommPacketParser::parsePacket(QString packet) {
                         }
                     }
                     break;
-                case EPacketHeader::eModeChange:
+                case EPacketHeader::modeChange:
                     routineChange(intVector);
                     break;
-                case EPacketHeader::eCustomColorCountChange:
+                case EPacketHeader::customColorCountChange:
                     if (intVector.size() == 3) {
                        if ((intVector[2] < 0) || (intVector[2] > CUSTOM_COLOR_MAX)) validPacket = false;
                        if (validPacket) {
@@ -71,7 +71,7 @@ void CommPacketParser::parsePacket(QString packet) {
                     }
                     break;
 
-                case EPacketHeader::eBrightnessChange:
+                case EPacketHeader::brightnessChange:
                     if (intVector.size() == 3) {
                        if ((intVector[2] < 0) || (intVector[2] > 100)) validPacket = false;
                        if (validPacket) {
@@ -80,7 +80,7 @@ void CommPacketParser::parsePacket(QString packet) {
                     }
                     break;
 
-                case EPacketHeader::eIdleTimeoutChange:
+                case EPacketHeader::idleTimeoutChange:
                     if (intVector.size() == 3) {
                        if ((intVector[2] < 1) || (intVector[2] > 23767)) validPacket = false;
                        if (validPacket) {
@@ -134,8 +134,11 @@ void CommPacketParser::routineChange(const std::vector<int>& intVector) {
             if (intVector.size() > 4) {
                 EPalette palette = (EPalette)intVector[tempIndex];
                 ++tempIndex;
-                if (palette == EPalette::ePalette_MAX) validVector = false;
-                routineObject["palette"] = paletteToString(palette);
+                if (palette == EPalette::unknown) {
+                    validVector = false;
+                } else {
+                    routineObject["palette"] = mPresetPalettes.palette(palette).JSON();
+                }
             } else {
                 validVector = false;
             }

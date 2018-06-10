@@ -11,7 +11,7 @@
 #include <QApplication>
 #include <QScreen>
 
-#include "lightingprotocols.h"
+#include "cor/protocols.h"
 #include "cor/protocols.h"
 
 #include <sstream>
@@ -28,6 +28,30 @@
 
 namespace cor
 {
+
+/// default color for Corluma
+const static QColor kDefaultColor = QColor(255, 127, 0);
+
+/// the default custom colors of ArduCor colors
+inline std::vector<QColor> defaultCustomColors() {
+    std::vector<QColor> customColors = std::vector<QColor>(10, QColor(0,0,0));
+    uint32_t uniqueColors = 5;
+    for (uint32_t i = 0; i < customColors.size(); i++) {
+        if ((i % uniqueColors) == 0) {
+            customColors[i] = QColor(0,    255, 0);
+        } else if ((i % uniqueColors) == 1) {
+            customColors[i] = QColor(125,  0,   255);
+        } else if ((i % uniqueColors) == 2) {
+            customColors[i] = QColor(0,    0,   255);
+        } else if ((i % uniqueColors) == 3) {
+            customColors[i] = QColor(40,   127, 40);
+        } else if ((i % uniqueColors) == 4) {
+            customColors[i] = QColor(60,   0,   160);
+        }
+    }
+    return customColors;
+}
+
 
 /*!
  * \brief changeLabelToTitleLabel Takes a label, and increases its font size and makes the font bold.
@@ -219,18 +243,18 @@ inline bool checkIfValidIP(QString ip) {
 /// converts the enum for an arduio hardware type to a more generalized corluma type
 inline ELightHardwareType convertArduinoTypeToLightType(EArduinoHardwareType type) {
     switch (type) {
-        case EArduinoHardwareType::eSingleLED:
-            return ELightHardwareType::eSingleLED;
-        case EArduinoHardwareType::eCube:
-            return ELightHardwareType::eCube;
-        case EArduinoHardwareType::e2DArray:
-            return ELightHardwareType::e2DArray;
-        case EArduinoHardwareType::eLightStrip:
-            return ELightHardwareType::eLightStrip;
-        case EArduinoHardwareType::eRing:
-            return ELightHardwareType::eRing;
+        case EArduinoHardwareType::singleLED:
+            return ELightHardwareType::singleLED;
+        case EArduinoHardwareType::cube:
+            return ELightHardwareType::cube;
+        case EArduinoHardwareType::rectangle:
+            return ELightHardwareType::rectangle;
+        case EArduinoHardwareType::lightStrip:
+            return ELightHardwareType::lightStrip;
+        case EArduinoHardwareType::ring:
+            return ELightHardwareType::ring;
         default:
-            return ELightHardwareType::ELightHardwareType_MAX;
+            return ELightHardwareType::MAX;
     }
 }
 
@@ -238,18 +262,18 @@ inline ELightHardwareType convertArduinoTypeToLightType(EArduinoHardwareType typ
 /// converts a commtype to a protocol type.
 inline EProtocolType convertCommTypeToProtocolType(ECommType type) {
     switch (type) {
-        case ECommType::eHTTP:
-        case ECommType::eUDP:
+        case ECommType::HTTP:
+        case ECommType::UDP:
 #ifndef MOBILE_BUILD
-        case ECommType::eSerial:
+        case ECommType::serial:
 #endif
-            return EProtocolType::eArduCor;
-        case ECommType::eNanoleaf:
-            return EProtocolType::eNanoleaf;
-        case ECommType::eHue:
-            return EProtocolType::eHue;
+            return EProtocolType::arduCor;
+        case ECommType::nanoleaf:
+            return EProtocolType::nanoleaf;
+        case ECommType::hue:
+            return EProtocolType::hue;
         default:
-            return EProtocolType::eProtocolType_MAX;
+            return EProtocolType::MAX;
     }
 }
 

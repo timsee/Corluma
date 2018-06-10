@@ -7,7 +7,8 @@
 #include <QSize>
 #include <QJsonObject>
 
-#include "lightingprotocols.h"
+#include "cor/protocols.h"
+#include "cor/palette.h"
 #include "protocols.h"
 
 #include <sstream>
@@ -78,10 +79,14 @@ public:
      */
     QColor color;
 
-    /*!
-     * \brief palette for this device.
-     */
-    EPalette palette;
+    /// palette currently in use (sometimes equal to custom palette, sometimes not)
+    Palette palette;
+
+    /// slight hack for app memory, custom colors used by ArduCor are stored here.
+    std::vector<QColor> customColors;
+
+    /// slight hack for app memory, custom count of colors used by ArduCor are stored here.
+    uint32_t customCount;
 
     /*!
      * \brief speed speed of updates to lighting routines.
@@ -108,22 +113,6 @@ public:
      * \brief timeout total number of minutes it will take a device to time out.
      */
     int timeout;
-
-    //-----------------------
-    // Custom Colors
-    //-----------------------
-
-    /*!
-     * \brief customColorArray an array of 10 colors that is used to set the custom color group
-     *        that can be used in multi color routines.
-     */
-    std::vector<QColor> customColorArray;
-
-    /*!
-     * \brief customColorCount the number of colors used when working with the custom color group.
-     *        This allows the user to make a color group that has less than 10 colors in it.
-     */
-    uint32_t customColorCount;
 
     //-----------------------
     // types and metadata
@@ -168,7 +157,7 @@ public:
         if (isOn            !=  rhs.isOn) result = false;
         if (color           !=  rhs.color) result = false;
         if (routine         !=  rhs.routine) result = false;
-        if (palette         !=  rhs.palette) result = false;
+        if (palette.JSON()  !=  rhs.palette.JSON()) result = false;
         if (brightness      !=  rhs.brightness) result = false;
         if (index()         !=  rhs.index()) result = false;
         if (commType()      !=  rhs.commType()) result = false;
@@ -188,7 +177,7 @@ public:
                    << " isOn: " << isOn
                    << " color: R:" << color.red() << " G:" << color.green() << " B:" << color.blue()
                    << " routine: " << routineToString(routine).toUtf8().toStdString()
-                   << " palette: " << paletteToString(palette).toUtf8().toStdString()
+                   << " palette: " << palette
                    << " brightness: " << brightness
                    << " index: " << index()
                    << " CommType: " << commTypeToString(commType()).toUtf8().toStdString()
@@ -211,15 +200,15 @@ private:
      */
     ECommType mCommType;
 
-    /// type of protocol for packets
-    EProtocolType mProtocol;
-
     /*!
      * \brief mController the name of the connection. This varies by connection type. For example,
      *        a UDP connection will use its IP address as a name, or a serial connection
      *        will use its serial port.
      */
     QString mController;
+
+    /// type of protocol for packets
+    EProtocolType mProtocol;
 };
 
 /// converts json representation of routine to cor::Light

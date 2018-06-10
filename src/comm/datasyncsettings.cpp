@@ -65,7 +65,7 @@ void DataSyncSettings::syncData() {
 
         for (auto&& device : allAvailableDevices) {
             cor::Light commLayerDevice = device;
-            if (device.commType() != ECommType::eHue && device.commType() != ECommType::eNanoleaf) {
+            if (device.commType() != ECommType::hue && device.commType() != ECommType::nanoleaf) {
                 bool successful = mComm->fillDevice(commLayerDevice);
                 if (!successful) {
                     //qDebug() << "INFO: device not found!";
@@ -119,7 +119,7 @@ bool DataSyncSettings::sync(const cor::Light& availableDevice) {
     list.push_back(availableDevice);
     QString packet;
 
-    if (availableDevice.commType() == ECommType::eHue) {
+    if (availableDevice.commType() == ECommType::hue) {
 
 //        //-------------------
 //        // Timeout Sync

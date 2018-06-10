@@ -7,8 +7,8 @@
 
 /// different types of routinebuttonswidgets
 enum class EWidgetGroup {
-    eSingleRoutines,
-    eMultiRoutines
+    singleRoutines,
+    multiRoutines
 };
 
 /*!
@@ -31,7 +31,7 @@ public:
      * \param colors the colors to use for multi color routines. Not necessary for single color routines.
      * \param parent parent of this widget
      */
-    explicit RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector<QColor> colors = std::vector<QColor>(), QWidget *parent = 0);
+    explicit RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector<QColor> colors, QWidget *parent);
 
     /*!
      * \brief highlightRoutineButton highlights the button that implements
@@ -57,7 +57,7 @@ public:
     void singleRoutineColorChanged(QColor newColor);
 
     /*!
-     * \brief multiRoutineColorsChanged can only be used by eMultiRotuiens version of this widget, this updates all the colors
+     * \brief multiRoutineColorsChanged can only be used by eMultiRotuines version of this widget, this updates all the colors
      *        of all the icons to reflect the new group of custom colors.
      * \param colors full group of custom colors
      */

@@ -1,5 +1,5 @@
-#ifndef MOODSPAGE_H
-#define MOODSPAGE_H
+#ifndef MOODPAGE_H
+#define MOODPAGE_H
 
 #include <QWidget>
 #include <QListWidget>
@@ -8,10 +8,11 @@
 #include <QLayout>
 
 #include "cor/light.h"
-#include "lightingpage.h"
+#include "cor/page.h"
 #include "comm/commlayer.h"
 #include "listmoodgroupwidget.h"
 #include "cor/listwidget.h"
+#include "cor/presetpalettes.h"
 
 /*!
  * \copyright
@@ -19,23 +20,15 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief The MoodsPage class is a page that shows "moods" which are predefined
+ * \brief The MoodPage class is a page that shows "moods" which are predefined
  *        collections of lights with predefined states.
  */
-class MoodsPage : public QWidget, public LightingPage
+class MoodPage : public QWidget, public cor::Page
 {
     Q_OBJECT
 public:
     /// constructor
-    explicit MoodsPage(QWidget *parent = nullptr);
-
-    /*!
-     * \brief connectCommLayer connect to commlayer. In a future update the commLayer pointer on
-     *        every page will be totally removed in favor of DataSync, but for now theres some
-     *        edge cases that require certain pages to have a commlayer pointer.
-     * \param layer commlayer
-     */
-    void connectCommLayer(CommLayer *layer) { mComm = layer; }
+    explicit MoodPage(QWidget *parent, DataLayer *data, CommLayer *comm, GroupsParser *groups);
 
     /*!
      * \brief updateConnectionList updates the GUI elements that display the
@@ -48,12 +41,6 @@ public:
 
     /// called when the widget is hidden
     void hide();
-
-    /*!
-     * \brief setupUI called after mComm is constructed so that it can be used
-     *        to set up the UI of the Settings Page.
-     */
-    void setupUI();
 
     /// getter for current mood
     const QString& currentMood() { return mCurrentMood; }
@@ -110,6 +97,24 @@ protected:
 private:
 
     /*!
+     * \brief communication pointer to communication object
+     *        for sending comannds to the lights
+     */
+    CommLayer *mComm;
+
+    /// groups parser
+    GroupsParser *mGroups;
+
+    /*!
+     * \brief data layer that maintains and tracks the states of the lights
+     *        and the saved data of the GUI
+     */
+    DataLayer *mData;
+
+    /// preset data for palettes from ArduCor
+    PresetPalettes mPalettes;
+
+    /*!
      * \brief mMoodsListWidget List widget for devices. Either the moods widget or this device widget
      *        is shown at any given time but the other is kept around in memory since they are expensive to render.
      */
@@ -134,12 +139,6 @@ private:
      */
     void makeMoodsCollections(const std::list<cor::LightGroup>& moods);
 
-    /*!
-     * \brief communication pointer to communication object
-     *        for sending comannds to the lights
-     */
-    CommLayer *mComm;
-
     /// layout of widget
     QVBoxLayout *mLayout;
 
@@ -153,4 +152,4 @@ private:
     QString mCurrentMood;
 };
 
-#endif // MOODSPAGE_H
+#endif // MOODPAGE_H

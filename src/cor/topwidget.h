@@ -23,7 +23,7 @@ class TopWidget : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit TopWidget(QString title, QString resource = QString(), QWidget *parent = 0);
+    explicit TopWidget(QString title, QString resource, QWidget *parent);
 
     /// set the font point size.
     void setFontPoint(int pt);

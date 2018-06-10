@@ -1,8 +1,6 @@
 #ifndef SERIALCOMM_H
 #define SERIALCOMM_H
 
-#ifndef MOBILE_BUILD
-
 #include "commtype.h"
 
 #include <QSerialPort>
@@ -123,5 +121,4 @@ private:
     bool mSerialPortFailed;
 };
 
-#endif // MOBILE_BUILD
 #endif // SERIALCOMM_H

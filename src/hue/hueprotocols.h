@@ -15,11 +15,11 @@
  *        that can be controlled from a bridge.
  */
 enum class EHueType {
-    eExtended,
-    eAmbient,
-    eColor,
-    eWhite,
-    EHueType_MAX
+    extended,
+    ambient,
+    color,
+    white,
+    MAX
 };
 
 /*!
@@ -27,12 +27,12 @@ enum class EHueType {
  *        received from a bridge.
  */
 enum class EHueUpdates {
-    eDeviceUpdate,
-    eScheduleUpdate,
-    eGroupUpdate,
-    eScanStateUpdate,
-    eNewLightNameUpdate,
-    eHueUpdates_MAX
+    deviceUpdate,
+    scheduleUpdate,
+    groupUpdate,
+    scanStateUpdate,
+    newLightNameUpdate,
+    MAX
 };
 
 
@@ -96,55 +96,55 @@ struct SHueBridge {
  */
 enum class EHueDiscoveryState {
     /*!
-     * \brief eNoBridgeFound default state, no discovery has started.
+     * \brief  default state, no discovery has started.
      */
-    eNoBridgeFound,
+    noBridgeFound,
     /*!
-     * \brief eFindingIPAddress no valid IP address, looking for one over
+     * \brief no valid IP address, looking for one over
      *        UPnP and NUPnP.
      */
-    eFindingIpAddress,
+    findingIpAddress,
     /*!
-     * \brief eTestingIPAddress an IP address has been received, sending
+     * \brief an IP address has been received, sending
      *        a test packet to this IP and awaiting a response before
      *        accepting the IP address as a valid IP address.
      */
-    eTestingIPAddress,
+    testingIPAddress,
     /*!
-     * \brief eFindingDeviceUsername There exists a valid IP address, but now
+     * \brief There exists a valid IP address, but now
      *        we are waiting for the Bridge to send back a new username so that
      *        we can control lights and access their states.
      */
-    eFindingDeviceUsername,
+    findingDeviceUsername,
     /*!
-     * \brief eTestingFullConnection We have a IP adderss and a username, but
+     * \brief We have a IP adderss and a username, but
      *        we haven't confirmed they work together. Waiting for a response
      *        that gives us access to their light states before stating that
      *        we are connected.
      */
-    eTestingFullConnection,
+    testingFullConnection,
     /*!
-     * \brief eBridgeConnected all necessary discovery methods have been ran
+     * \brief all necessary discovery methods have been ran
      *        and have returned successfully, the application is connected
      *        to a bridge.
      */
-    eBridgeConnected,
+    bridgeConnected,
     /*!
      * \brief Once a bridge is discovered, the application next requests a list of
      *        all available lights.
      */
-    eFindingLightInfo,
+    findingLightInfo,
     /*!
      * \brief Once all available lights have been received, the application requests
      *        all schedules and groups so that there is a local copy of all Hue related
      *        data.
      */
-    eFindingGroupAndScheduleInfo,
+    findingGroupAndScheduleInfo,
     /*!
      * \brief The bridge is connected, and there is a local copy of all the lights, groups,
      *        and schedules on the Hue Bridge.
      */
-    eFullyConnected,
+    fullyConnected,
 };
 Q_DECLARE_METATYPE(EHueDiscoveryState)
 
@@ -156,16 +156,16 @@ namespace cor
  */
 inline EHueType stringToHueType(const QString& string) {
     if (string.compare("Extended color light") == 0) {
-        return EHueType::eExtended;
+        return EHueType::extended;
     } else if (string.compare("Color temperature light") == 0) {
-        return EHueType::eAmbient;
+        return EHueType::ambient;
     } else if (string.compare("Color light") == 0) {
-        return EHueType::eColor;
+        return EHueType::color;
     } else if (string.compare("Dimmable light") == 0) {
-        return EHueType::eWhite;
+        return EHueType::white;
     } else {
         qDebug() << "WARNING: Hue type not recognized" << string;
-        return EHueType::EHueType_MAX;
+        return EHueType::MAX;
     }
 }
 
@@ -175,13 +175,13 @@ inline EHueType stringToHueType(const QString& string) {
  * \return string representation of type.
  */
 inline QString hueTypeToString(EHueType type) {
-    if (type == EHueType::eExtended) {
+    if (type == EHueType::extended) {
         return "Extended color light";
-    } else if (type == EHueType::eAmbient) {
+    } else if (type == EHueType::ambient) {
         return "Color temperature light";
-    } else if (type == EHueType::eColor) {
+    } else if (type == EHueType::color) {
         return "Color light";
-    } else if (type == EHueType::eWhite) {
+    } else if (type == EHueType::white) {
         return "Dimmable light";
     } else {
         return "Not recognized";

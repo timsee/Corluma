@@ -7,7 +7,7 @@
 #include <QPushButton>
 #include <QScrollArea>
 
-#include "lightingpage.h"
+#include "cor/page.h"
 #include "cor/slider.h"
 #include "comm/commlayer.h"
 #include "settingsbutton.h"
@@ -17,9 +17,9 @@
 
 /// enum for state of corluma web views, tracks which is shown
 enum class ECorlumaWebView {
-    eFAQ,
-    eCopyright,
-    eNone
+    FAQ,
+    copyright,
+    none
 };
 
 /*!
@@ -40,7 +40,7 @@ enum class ECorlumaWebView {
  * add and remove connections for UDP and HTTP.
  *
  */
-class SettingsPage : public QWidget, public LightingPage
+class SettingsPage : public QWidget, public cor::Page
 {
     Q_OBJECT
 
@@ -48,18 +48,12 @@ public:
     /*!
      * \brief Constructor
      */
-    explicit SettingsPage(QWidget *parent = 0);
+    explicit SettingsPage(QWidget *parent, CommLayer *comm, DataLayer *data, GroupsParser *parser);
 
     /*!
      * \brief Destructor
      */
     ~SettingsPage();
-
-    /*!
-     * \brief connectCommLayer connec the commlayer to this page.
-     * \param layer a pointer to the commlayer object.
-     */
-    void connectCommLayer(CommLayer *layer) { mComm = layer; }
 
     /// called when the widget is shown
     void show();
@@ -139,6 +133,9 @@ protected:
 
 private:
 
+    /// groups parser
+    GroupsParser *mGroups;
+
     /// top widget with settings title and close button
     cor::TopWidget *mTopWidget;
 
@@ -185,12 +182,6 @@ private:
      *        remove all saved memory
      */
     void resetToDefaults();
-
-    /*!
-     * \brief communication pointer to communication object
-     *        for sending comannds to the lights
-     */
-    CommLayer *mComm;
 
     /// titles of the sections, such as About, Debug, Data
     std::vector<std::string> mSectionTitles;

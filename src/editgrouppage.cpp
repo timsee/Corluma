@@ -14,8 +14,7 @@
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
 
-EditGroupPage::EditGroupPage(QWidget *parent) :
-    QWidget(parent) {
+EditGroupPage::EditGroupPage(QWidget *parent, CommLayer* comm, DataLayer* data, GroupsParser *parser) : QWidget(parent), mComm(comm), mGroups(parser) {
 
     mTopMenu = new EditPageTopMenu(this);
     mTopMenu->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -34,7 +33,7 @@ EditGroupPage::EditGroupPage(QWidget *parent) :
     mDevicesList->setContentsMargins(0,0,0,0);
     QScroller::grabGesture(mDevicesList->viewport(), QScroller::LeftMouseButtonGesture);
 
-    mScrollAreaWidget = new ListEditWidget(this);
+    mScrollAreaWidget = new ListEditWidget(this, mComm, data);
     connect(mScrollAreaWidget, SIGNAL(deviceClicked(QString, QString)), this, SLOT(clickedDevice(QString, QString)));
     mScrollAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mDevicesList->addWidget(mScrollAreaWidget);
@@ -94,12 +93,6 @@ void EditGroupPage::resize(bool resizeFullWidget) {
 }
 
 
-void EditGroupPage::setup(CommLayer *layer, DataLayer* data) {
-    mComm = layer;
-    mScrollAreaWidget->connectLayers(mComm, data);
-}
-
-
 // ----------------------------
 // Slots
 // ----------------------------
@@ -114,7 +107,7 @@ void EditGroupPage::deletePressed(bool) {
     reply = QMessageBox::question(this, "Delete?", text,
                                   QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes) {
-      mComm->groups()->removeGroup(mOriginalName);
+      mGroups->removeGroup(mOriginalName);
       // delete from hue bridge, if applicable.
       mComm->deleteHueGroup(mOriginalName);
       emit pressedClose();
@@ -266,16 +259,16 @@ void EditGroupPage::saveChanges() {
     // Save if passing checks
     //---------------------------------
     if (mIsMood) {
-        mComm->groups()->removeGroup(mOriginalName);
-        mComm->groups()->saveNewMood(mNewName, newDevices);
+        mGroups->removeGroup(mOriginalName);
+        mGroups->saveNewMood(mNewName, newDevices);
     } else {
-        mComm->groups()->removeGroup(mOriginalName);
-        mComm->groups()->saveNewCollection(mNewName, newDevices, mIsRoomCurrent);
+        mGroups->removeGroup(mOriginalName);
+        mGroups->saveNewCollection(mNewName, newDevices, mIsRoomCurrent);
 
         // convert any group devices to Hue Lights, if applicable.
         std::list<HueLight> hueLights;
         for (auto device : newDevices) {
-            if (device.commType() == ECommType::eHue) {
+            if (device.commType() == ECommType::hue) {
                 HueLight hue = mComm->hue()->hueLightFromLight(device);
                 hueLights.push_back(hue);
             }

@@ -5,7 +5,7 @@
 #include <QMainWindow>
 #include <QPushButton>
 
-#include "lightingpage.h"
+#include "cor/page.h"
 #include "discoverypage.h"
 #include "icondata.h"
 #include "cor/button.h"
@@ -21,8 +21,8 @@
 #include "settingspage.h"
 #include "topmenu.h"
 #include "colorpage.h"
-#include "grouppage.h"
-#include "connectionpage.h"
+#include "palettepage.h"
+#include "lightpage.h"
 #include "hue/lightinfolistwidget.h"
 #include "hue/lightdiscovery.h"
 #include <QStackedWidget>
@@ -62,12 +62,6 @@ public:
     void anyDiscovered(bool discovered) { mAnyDiscovered = discovered; }
 
 public slots:
-
-    /*!
-     * \brief brightnessChanged Connected to the the slider at the top, this takeas a value between 0-100
-     *        and sends that value to the lights to control how bright they are.
-     */
-    void brightnessChanged(int);
 
     /*!
      * \brief switchToDiscovery discovery button pressed so the discovery page should be displayed.
@@ -152,6 +146,12 @@ public slots:
     /// getter for page
     EPage currentPage() { return mPageIndex; }
 
+    /// routine changed from any page
+    void routineChanged(QJsonObject routine);
+
+    /// speed changed from any page
+    void speedChanged(int);
+
 protected:
 
     /*!
@@ -178,7 +178,7 @@ private:
     void greyOut(bool show);
 
     /*!
-     * \brief showMainPage transitions either the color page, group page, or connection page onto the
+     * \brief showMainPage transitions either the color page, group page, or lights page onto the
      *        the main screen. The widgets come in from the left or the right, depending on the particular
      *        widget
      * \param page the widget to put on the screen.
@@ -186,7 +186,7 @@ private:
     void showMainPage(EPage page);
 
     /*!
-     * \brief hideMainPage transitions either the color page, group page, or connection page off of the
+     * \brief hideMainPage transitions either the color page, group page, or lights page off of the
      *        main screen. The widgets go to the left or the right depending the particular widget
      * \param page the page to push off of the screen
      * \param newPage the new page being displayed. This sometimes affects whether the widget goes to the left
@@ -210,7 +210,10 @@ private:
     /// programmatically trigger moving the floating layout
     void moveFloatingLayout();
 
-    /// Gives a QWidget representation of any of the main widgets (ConnectionPage, GroupPage, ColorPage)
+    /// resize the layout
+    void resizeLayout();
+
+    /// Gives a QWidget representation of any of the main widgets (LightPage, GroupPage, ColorPage)
     QWidget *mainPageWidget(EPage page);
 
     /*!
@@ -247,13 +250,13 @@ private:
     ColorPage *mColorPage;
 
     /// page for choosing group of colors for the LEDs
-    GroupPage *mGroupPage;
+    PalettePage *mPalettePage;
 
     /// page for choosing moods
-    MoodsPage *mMoodsPage;
+    MoodPage *mMoodPage;
 
     /// page for choosing which LEDs to control
-    ConnectionPage *mConnectionPage;
+    LightPage *mLightPage;
 
     /*!
      * \brief mEditPage overlay that allows editing and creating collections and moods.
@@ -302,6 +305,9 @@ private:
     //------------------
     // Backend Data
     //------------------
+
+    /// groups parser
+    GroupsParser *mGroups;
 
     /*!
      * \brief communication pointer to communication object

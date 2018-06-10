@@ -78,7 +78,7 @@ ColorPicker::ColorPicker(QWidget *parent) :
     connect(mColorGrid->palette(), SIGNAL(selectedCountChanged(int)), this, SLOT(selectedCountChanged(int)));
     mColorGrid->setVisible(false);
 
-    mColorSchemeGrid = new  cor::PaletteWidget(5, 1, std::vector<std::vector<QColor> >(), cor::EPaletteWidgetType::eStandard, this);
+    mColorSchemeGrid = new  cor::LightVectorWidget(5, 1, cor::EPaletteWidgetType::standard, this);
     mColorSchemeGrid->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mColorSchemeGrid->setVisible(false);
 
@@ -98,7 +98,7 @@ ColorPicker::ColorPicker(QWidget *parent) :
     setLayout(mFullLayout);
 
     // default to standard layout
-    changeLayout(ELayoutColorPicker::eStandardLayout);
+    changeLayout(ELayoutColorPicker::standardLayout);
 }
 
 ColorPicker::~ColorPicker() {
@@ -114,7 +114,7 @@ void ColorPicker::brightnessSliderChanged(int brightness) {
 }
 
 void ColorPicker::tempBrightSlidersChanged(int temperature, int brightness) {
-    chooseAmbient(temperature, brightness);
+    chooseAmbient(temperature, brightness, true);
 }
 
 void ColorPicker::multiColorChanged(QColor color, int index) {
@@ -145,19 +145,19 @@ void ColorPicker::changeLayout(ELayoutColorPicker layout,  bool skipAnimation) {
     mColorGrid->setVisible(false);
     mColorSchemeGrid->setVisible(false);
     mColorSchemeCircles->setVisible(false);
-    if (mCurrentLayoutColorPicker == ELayoutColorPicker::eStandardLayout) {
+    if (mCurrentLayoutColorPicker == ELayoutColorPicker::standardLayout) {
         mRGBSliders->setVisible(true);
         mRGBSliders->setGeometry(mPlaceholder->geometry());
-    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::eAmbientLayout) {
+    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::ambientLayout) {
         mTempBrightSliders->setVisible(true);
         mTempBrightSliders->setGeometry(mPlaceholder->geometry());
-    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::eBrightnessLayout) {
+    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::brightnessLayout) {
         mBrightnessSlider->setVisible(true);
         mBrightnessSlider->setGeometry(mPlaceholder->geometry());
-    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::eMultiColorLayout) {
+    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::multiColorLayout) {
         mColorGrid->setVisible(true);
         mColorGrid->setGeometry(mPlaceholder->geometry());
-    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::eColorSchemeLayout) {
+    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::colorSchemeLayout) {
         mColorSchemeGrid->setVisible(true);
         mColorSchemeCircles->setVisible(true);
         mColorSchemeCircles->setGeometry(0, 0, this->geometry().width(), this->geometry().height() - mPlaceholder->geometry().height());
@@ -170,15 +170,16 @@ void ColorPicker::changeLayout(ELayoutColorPicker layout,  bool skipAnimation) {
 
 void ColorPicker::updateColorStates(QColor mainColor,
                                     int brightness,
-                                    const std::vector<QColor> colorArray,
-                                    const std::vector<QColor> colorSchemes,
-                                    int colorArrayCount) {
+                                    const std::vector<QColor> colorSchemes) {
     mRGBSliders->changeColor(mainColor);
     mBrightnessSlider->changeBrightness(brightness);
-    mColorGrid->updateMultiColor(colorArray, colorArrayCount);
 
     mColorSchemeCircles->updateColorScheme(colorSchemes);
     mColorSchemeCircles->updateColorCount(colorSchemes.size());
+}
+
+void ColorPicker::setMultiColorDefaults(const std::vector<QColor>& colors) {
+    mColorGrid->updateMultiColor(colors);
 }
 
 void ColorPicker::enableWheel(bool shouldEnable) {
@@ -308,15 +309,19 @@ void ColorPicker::handleMouseEvent(QMouseEvent *event) {
         QColor color = pixmap.toImage().pixel(event->pos().x() - geometry.x(),
                                               event->pos().y() - geometry.y());
         if (checkIfColorIsValid(color)){
-            if (mCurrentLayoutColorPicker == ELayoutColorPicker::eMultiColorLayout) {
+            if (mCurrentLayoutColorPicker == ELayoutColorPicker::multiColorLayout) {
                 if (mWheelIsEnabled) {
                     mColorGrid->updateSelected(color);
-                    for (auto&& index : mColorGrid->palette()->selected()) {
-                        emit multiColorChanged(color, index);
+                    uint32_t index = 0;
+                    for (auto&& button : mColorGrid->palette()->buttons()) {
+                        if (button->isChecked()) {
+                            emit multiColorChanged(color, index);
+                        }
+                        ++index;
                     }
                    // mColorGrid->updateMultiColor(mMultiColors, mMultiUsed);
                 }
-            } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::eAmbientLayout) {
+            } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::ambientLayout) {
                 // use the poorly named "value" of the HSV range to calculate the brightness
                 int brightness = color.valueF() * 100.0f;
                 // adjust the color so that it has a maxed out value in the HSV colorspace
@@ -325,17 +330,17 @@ void ColorPicker::handleMouseEvent(QMouseEvent *event) {
                              255);
                 // then calculate then use the resulting QColor to convert to color temperature.
                 int ct = cor::rgbToColorTemperature(color);
-                chooseAmbient(ct, brightness);
+                chooseAmbient(ct, brightness, true);
                 mTempBrightSliders->changeTemperatureAndBrightness(ct, brightness);
-            } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::eBrightnessLayout) {
+            } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::brightnessLayout) {
                 // use the poorly named "value" of the HSV range to calculate the brightness
                 int brightness = color.valueF() * 100.0f;
                 chooseBrightness(brightness);
                 mBrightnessSlider->changeBrightness(brightness);
-            } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::eStandardLayout) {
+            } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::standardLayout) {
                 chooseColor(color);
                 mRGBSliders->changeColor(color);
-            } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::eColorSchemeLayout) {
+            } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::colorSchemeLayout) {
                 if (mCircleIndex == -1) {
                     mColorSchemeCircles->moveCenterCircle(event->pos(), true);
                     mCircleIndex = 10;
@@ -448,7 +453,7 @@ void ColorPicker::changeColorWheel(ELayoutColorPicker oldLayout, ELayoutColorPic
             fadeInAnimation->setStartValue(0.0f);
             mWheelOpacity = 1.0f;
             // catch edge case wehre multi color picker is sometimes disabled by default
-            if (newLayout == ELayoutColorPicker::eMultiColorLayout
+            if (newLayout == ELayoutColorPicker::multiColorLayout
                     && (mColorGrid->palette()->selectedCount() == 0)) {
                 mWheelOpacity = 0.333f;
             }
@@ -459,8 +464,8 @@ void ColorPicker::changeColorWheel(ELayoutColorPicker oldLayout, ELayoutColorPic
             group->addAnimation(fadeOutAnimation);
             group->start(QAbstractAnimation::DeleteWhenStopped);
         } else if (mColorGrid->palette()->selectedCount() == 0
-                       && (newLayout == ELayoutColorPicker::eMultiColorLayout
-                           || oldLayout == ELayoutColorPicker::eMultiColorLayout)
+                       && (newLayout == ELayoutColorPicker::multiColorLayout
+                           || oldLayout == ELayoutColorPicker::multiColorLayout)
                        && (newLayout != oldLayout)) {
             mTempWheel->setVisible(false);
 
@@ -468,10 +473,10 @@ void ColorPicker::changeColorWheel(ELayoutColorPicker oldLayout, ELayoutColorPic
             // and no indices are selected so the multi layout should be opaque.
             float startOpacity;
             // don't need two animations, just do one.
-            if (newLayout == ELayoutColorPicker::eMultiColorLayout) {
+            if (newLayout == ELayoutColorPicker::multiColorLayout) {
                 startOpacity = 1.0f;
                 mWheelOpacity = 0.333f;
-            } else if (oldLayout == ELayoutColorPicker::eMultiColorLayout) {
+            } else if (oldLayout == ELayoutColorPicker::multiColorLayout) {
                 startOpacity = 0.333f;
                 mWheelOpacity = 1.0f;
             } else {
@@ -480,7 +485,7 @@ void ColorPicker::changeColorWheel(ELayoutColorPicker oldLayout, ELayoutColorPic
                 qDebug() << "WARNING: shouldn't get here...";
             }
 
-            if (oldLayout == ELayoutColorPicker::eMultiColorLayout) {
+            if (oldLayout == ELayoutColorPicker::multiColorLayout) {
                 // just set opacity here immediately cause of weird bug...
                 mWheelOpacity = 1.0f;
                 // un-fade out the wheel
@@ -501,10 +506,10 @@ void ColorPicker::changeColorWheel(ELayoutColorPicker oldLayout, ELayoutColorPic
     } else {
         bool shouldEnable = true;
         if (mColorGrid->palette()->selectedCount() == 0
-                && (newLayout == ELayoutColorPicker::eMultiColorLayout)) {
+                && (newLayout == ELayoutColorPicker::multiColorLayout)) {
             shouldEnable = false;
         }
-        if (newLayout == ELayoutColorPicker::eMultiColorLayout) {
+        if (newLayout == ELayoutColorPicker::multiColorLayout) {
             shouldEnable = false;
         }
         enableWheel(shouldEnable);
@@ -540,15 +545,15 @@ QString ColorPicker::getWheelPixmapPath(ELayoutColorPicker layout) {
     QString name;
     switch (layout)
     {
-        case ELayoutColorPicker::eStandardLayout:
-        case ELayoutColorPicker::eMultiColorLayout:
-        case ELayoutColorPicker::eColorSchemeLayout:
+        case ELayoutColorPicker::standardLayout:
+        case ELayoutColorPicker::multiColorLayout:
+        case ELayoutColorPicker::colorSchemeLayout:
             name = QString(":/images/color_wheel.png");
             break;
-        case ELayoutColorPicker::eAmbientLayout:
+        case ELayoutColorPicker::ambientLayout:
             name = QString(":/images/ambient_wheel.png");
             break;
-        case ELayoutColorPicker::eBrightnessLayout:
+        case ELayoutColorPicker::brightnessLayout:
             name = QString(":/images/white_wheel.png");
             break;
         default:
@@ -569,15 +574,15 @@ void ColorPicker::resize() {
                                         Qt::KeepAspectRatio,
                                         Qt::SmoothTransformation));
 
-    if (mCurrentLayoutColorPicker == ELayoutColorPicker::eStandardLayout) {
+    if (mCurrentLayoutColorPicker == ELayoutColorPicker::standardLayout) {
         mRGBSliders->setGeometry(mPlaceholder->geometry());
-    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::eBrightnessLayout) {
+    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::brightnessLayout) {
         mBrightnessSlider->setGeometry(mPlaceholder->geometry());
-    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::eAmbientLayout) {
+    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::ambientLayout) {
         mTempBrightSliders->setGeometry(mPlaceholder->geometry());
-    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::eMultiColorLayout) {
+    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::multiColorLayout) {
         mColorGrid->setGeometry(mPlaceholder->geometry());
-    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::eColorSchemeLayout) {
+    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::colorSchemeLayout) {
         mColorSchemeGrid->setGeometry(mPlaceholder->geometry());
         mColorSchemeCircles->setGeometry(0, 0, this->geometry().width(), this->geometry().height() - mPlaceholder->geometry().height());
     }

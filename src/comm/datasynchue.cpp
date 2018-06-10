@@ -36,7 +36,7 @@ void DataSyncHue::cancelSync() {
 }
 
 void DataSyncHue::commPacketReceived(EProtocolType type) {
-    if (type == EProtocolType::eHue) {
+    if (type == EProtocolType::hue) {
         if (!mDataIsInSync) {
             resetSync();
         }
@@ -63,7 +63,7 @@ void DataSyncHue::syncData() {
         for (auto&& device : mData->currentDevices()) {
             cor::Light commLayerDevice = device;
             if (mComm->fillDevice(commLayerDevice)) {
-                if (device.commType() == ECommType::eHue) {
+                if (device.commType() == ECommType::hue) {
                     if (checkThrottle(device.controller(), device.commType())) {
                         if (!sync(device, commLayerDevice)) {
                             countOutOfSync++;
@@ -118,7 +118,7 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
     QString packet;
 
     if (dataDevice.isOn) {
-        if (dataDevice.colorMode == EColorMode::eHSV) {
+        if (dataDevice.colorMode == EColorMode::HSV) {
             //-------------------
             // Hue HSV Color Sync
             //-------------------
@@ -127,7 +127,7 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
             if (cor::colorDifference(hsvColor, commDevice.color) > 0.02f
                     || cor::brightnessDifference(commDevice.brightness, dataDevice.brightness) > 0.05f) {
                 QJsonObject routineObject;
-                routineObject["routine"] = routineToString(ERoutine::eSingleSolid);
+                routineObject["routine"] = routineToString(ERoutine::singleSolid);
                 routineObject["red"]     = hsvColor.red();
                 routineObject["green"]   = hsvColor.green();
                 routineObject["blue"]    = hsvColor.blue();
@@ -138,7 +138,7 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
     //            qDebug() << " packet " << message;
                 countOutOfSync++;
             }
-        } else if (dataDevice.colorMode == EColorMode::eCT) {
+        } else if (dataDevice.colorMode == EColorMode::CT) {
             //-------------------
             // Hue Color Temperature Sync
             //-------------------
@@ -203,7 +203,7 @@ void DataSyncHue::cleanupSync() {
     if (mData->timeoutEnabled()) {
         std::list<SHueSchedule> commSchedules = mComm->hue()->schedules();
         for (auto&& device : mData->currentDevices()) {
-            if (device.commType() == ECommType::eHue) {
+            if (device.commType() == ECommType::hue) {
                 cor::Light commLayerDevice = device;
                 bool successful = mComm->fillDevice(commLayerDevice);
                 if (!successful) qDebug() << "something is wronggg";

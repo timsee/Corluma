@@ -139,7 +139,7 @@ void CommType::saveConnectionList() {
 
 bool CommType::checkIfControllerIsValid(QString controller) {
     //TODO: write a stronger check...
-    if (mType == ECommType::eHTTP || mType == ECommType::eUDP) {
+    if (mType == ECommType::HTTP || mType == ECommType::UDP) {
         if (controller.count(QLatin1Char('.')) != 3) return false;
     }
     return true;
@@ -258,11 +258,11 @@ bool CommType::deviceControllerFromDiscoveryString(QString discovery, QString co
                 return false;
             }
             ELightHardwareType hardwareType;
-            if (mType == ECommType::eHTTP
+            if (mType == ECommType::HTTP
 #ifndef MOBILE_BUILD
-                    || mType  == ECommType::eSerial
+                    || mType  == ECommType::serial
 #endif
-                    || mType == ECommType::eUDP) {
+                    || mType == ECommType::UDP) {
                 // convert to
                 hardwareType = cor::convertArduinoTypeToLightType((EArduinoHardwareType)hardwareTypeIndex);
             } else {
@@ -387,17 +387,17 @@ void CommType::preparePacketForTransmission(const cor::Controller& controller, Q
 
 QString CommType::settingsIndexKey(int index) {
     QString typeID;
-    if (mType == ECommType::eHTTP) {
+    if (mType == ECommType::HTTP) {
         typeID = QString("HTTP");
-    } else if (mType == ECommType::eUDP) {
+    } else if (mType == ECommType::UDP) {
         typeID = QString("UDP");
-    } else if (mType == ECommType::eHue) {
+    } else if (mType == ECommType::hue) {
         typeID = QString("HUE");
-    } else if (mType == ECommType::eNanoleaf) {
+    } else if (mType == ECommType::nanoleaf) {
         typeID = QString("NANOLEAF");
     }
 #ifndef MOBILE_BUILD
-    else if (mType == ECommType::eSerial) {
+    else if (mType == ECommType::serial) {
         typeID = QString("SERIAL");
     }
 #endif //MOBILE_BUILD
@@ -407,17 +407,17 @@ QString CommType::settingsIndexKey(int index) {
 
 QString CommType::settingsListSizeKey() {
     QString typeID;
-    if (mType == ECommType::eHTTP) {
+    if (mType == ECommType::HTTP) {
         typeID = QString("HTTP");
-    } else if (mType == ECommType::eUDP) {
+    } else if (mType == ECommType::UDP) {
         typeID = QString("UDP");
-    } else if (mType == ECommType::eHue) {
+    } else if (mType == ECommType::hue) {
         typeID = QString("HUE");
-    } else if (mType == ECommType::eNanoleaf) {
+    } else if (mType == ECommType::nanoleaf) {
         typeID = QString("NANOLEAF");
     }
 #ifndef MOBILE_BUILD
-    else if (mType == ECommType::eSerial) {
+    else if (mType == ECommType::serial) {
         typeID = QString("SERIAL");
     }
 #endif //MOBILE_BUILD

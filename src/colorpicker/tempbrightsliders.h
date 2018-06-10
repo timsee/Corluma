@@ -86,12 +86,6 @@ private:
      */
     QLabel *mPlaceholder;
 
-    /// stored buffer of current brightness
-    int mBrightness;
-
-    /// stored buffer of current temperature
-    int mTemperature;
-
     /*!
      * \brief mLayout layout used to arrange the sliders.
      */

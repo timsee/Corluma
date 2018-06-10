@@ -29,8 +29,7 @@ EditPageTopMenu::EditPageTopMenu(QWidget *parent) :
     mNameEdit = new QLineEdit(this);
     mNameEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    mRoomCheckBox = new cor::CheckBox(this);
-    mRoomCheckBox->setTitle("Room:");
+    mRoomCheckBox = new cor::CheckBox(this, "Room:");
     mRoomCheckBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     mHelpLabel = new QLabel(this);

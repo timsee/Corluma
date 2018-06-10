@@ -14,7 +14,6 @@
 #include <algorithm>
 
 ListDeviceWidget::ListDeviceWidget(const cor::Light& device,
-                                   const std::vector<QColor>& colors,
                                    bool setHighlightable,
                                    QSize size,
                                    QWidget *parent)    {
@@ -31,7 +30,7 @@ ListDeviceWidget::ListDeviceWidget(const cor::Light& device,
     mCooldownTimer->setSingleShot(true);
     connect(mCooldownTimer, SIGNAL(timeout()), this, SLOT(coolDownClick()));
 
-    updateWidget(device, colors);
+    updateWidget(device);
 }
 
 
@@ -70,15 +69,14 @@ void ListDeviceWidget::init(const cor::Light& device) {
 
     mKey = structToIdentifierString(device);
 
-    mOnOffSwitch->setSwitchState(ESwitchState::eDisabled);
+    mOnOffSwitch->setSwitchState(ESwitchState::disabled);
 }
 
 
-void ListDeviceWidget::updateWidget(const cor::Light& device,
-                                     const std::vector<QColor>& colors) {
+void ListDeviceWidget::updateWidget(const cor::Light& device) {
     mDevice = device;
     QJsonObject object = cor::lightToJson(device);
-    mIconData.setRoutine(object, colors);
+    mIconData.setRoutine(object);
 
     QString nameText = createName(device);
     if (nameText.compare(mController->text()) != 0) {
@@ -87,11 +85,11 @@ void ListDeviceWidget::updateWidget(const cor::Light& device,
 
     mKey = structToIdentifierString(device);
     if (!device.isReachable) {
-        mOnOffSwitch->setSwitchState(ESwitchState::eDisabled);
+        mOnOffSwitch->setSwitchState(ESwitchState::disabled);
     } else if (device.isOn && !mBlockStateUpdates) {
-        mOnOffSwitch->setSwitchState(ESwitchState::eOn);
+        mOnOffSwitch->setSwitchState(ESwitchState::on);
     } else if (!mBlockStateUpdates) {
-        mOnOffSwitch->setSwitchState(ESwitchState::eOff);
+        mOnOffSwitch->setSwitchState(ESwitchState::off);
     }
 
     mIconPixmap = mIconData.renderAsQPixmap();
@@ -222,9 +220,9 @@ void ListDeviceWidget::coolDownClick() {
 
 QString ListDeviceWidget::createName(const cor::Light& device) {
     QString nameText;
-    if (device.protocol() == EProtocolType::eArduCor) {
+    if (device.protocol() == EProtocolType::arduCor) {
         nameText = device.name;
-    } else if (device.protocol() == EProtocolType::eHue) {
+    } else if (device.protocol() == EProtocolType::hue) {
         nameText = convertUglyHueNameToPrettyName(device.name);
     } else {
         nameText = device.controller();
@@ -242,31 +240,58 @@ void ListDeviceWidget::hideOnOffSwitch(bool shouldHide) {
 void ListDeviceWidget::updateTypeIcon(ELightHardwareType type) {
     QString typeResource;
     switch (type) {
-        case ELightHardwareType::eSingleLED:
+        case ELightHardwareType::singleLED:
             typeResource = QString(":/images/led_icon.png");
             break;
-        case ELightHardwareType::eLightbulb:
+        case ELightHardwareType::hueBulb:
             typeResource = QString(":/images/hue_bulb.png");
             break;
-        case ELightHardwareType::eCube:
+        case ELightHardwareType::cube:
             typeResource = QString(":/images/cube_icon.png");
             break;
-        case ELightHardwareType::e2DArray:
+        case ELightHardwareType::hueGo:
+            typeResource = QString(":/images/hue_go.png");
+            break;
+        case ELightHardwareType::hueBulbRound:
+            typeResource = QString(":/images/hue_bulb_round.png");
+            break;
+        case ELightHardwareType::hueIris:
+            typeResource = QString(":/images/hue_iris.png");
+            break;
+        case ELightHardwareType::hueSpot:
+            typeResource = QString(":/images/hue_spot.png");
+            break;
+        case ELightHardwareType::hueAura:
+            typeResource = QString(":/images/hue_aura.png");
+            break;
+        case ELightHardwareType::hueCandle:
+            typeResource = QString(":/images/hue_candle.png");
+            break;
+        case ELightHardwareType::hueDownlight:
+            typeResource = QString(":/images/hue_downlight.png");
+            break;
+        case ELightHardwareType::hueLamp:
+            typeResource = QString(":/images/hue_lamp.png");
+            break;
+        case ELightHardwareType::hueStorylight:
+            typeResource = QString(":/images/hue_storylight.png");
+            break;
+        case ELightHardwareType::rectangle:
             typeResource = QString(":/images/array_icon.jpg");
             break;
-        case ELightHardwareType::eLightStrip:
+        case ELightHardwareType::lightStrip:
             typeResource = QString(":/images/light_strip.png");
             break;
-        case ELightHardwareType::eRing:
+        case ELightHardwareType::ring:
             typeResource = QString(":/images/ring_icon.png");
             break;
-        case ELightHardwareType::eBloom:
+        case ELightHardwareType::bloom:
             typeResource = QString(":/images/hue_bloom.png");
             break;
-        case ELightHardwareType::eNanoleaf:
+        case ELightHardwareType::nanoleaf:
             typeResource = QString(":/images/nanoleaf_icon.png");
             break;
-        case ELightHardwareType::ELightHardwareType_MAX:
+        case ELightHardwareType::MAX:
         default:
             typeResource = QString(":/images/led_icon.png");
             break;

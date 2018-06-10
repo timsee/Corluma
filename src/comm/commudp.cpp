@@ -18,7 +18,7 @@
 CommUDP::CommUDP() {
     mStateUpdateInterval = 500;
     mDiscoveryUpdateInterval = 1000;
-    setupConnectionList(ECommType::eUDP);
+    setupConnectionList(ECommType::UDP);
 
     mSocket = new QUdpSocket(this);
 
@@ -104,10 +104,10 @@ bool CommUDP::portBound() {
 void CommUDP::stateUpdate() {
     if (shouldContinueStateUpdate()) {
         for (auto&& controller : mDiscoveredList) {
-            QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
+            QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::stateUpdateRequest));
             sendPacket(controller, packet);
             if ((mStateUpdateCounter % mSecondaryUpdatesInterval) == mSecondaryUpdatesInterval - 1) {
-                QString customArrayUpdateRequest = QString("%1&").arg(QString::number((int)EPacketHeader::eCustomArrayUpdateRequest));
+                QString customArrayUpdateRequest = QString("%1&").arg(QString::number((int)EPacketHeader::customArrayUpdateRequest));
                 sendPacket(controller, customArrayUpdateRequest);
             }
         }

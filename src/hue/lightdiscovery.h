@@ -6,7 +6,7 @@
 #include <QLabel>
 #include <QPushButton>
 
-#include "lightingpage.h"
+#include "cor/page.h"
 #include "cor/topwidget.h"
 #include "searchwidget.h"
 #include "comm/commlayer.h"
@@ -27,17 +27,14 @@ namespace hue
  *        to use for manual discovery. All new lights found from this discovery state are added
  *        to the widget in a list.
  */
-class LightDiscovery : public QWidget, public LightingPage
+class LightDiscovery : public QWidget, public cor::Page
 {
     Q_OBJECT
 
 public:
 
     /// constructor
-    explicit LightDiscovery(QWidget *parent = 0);
-
-    /// connect the comm layer
-    void connectCommLayer(CommLayer *layer) { mComm = layer; }
+    explicit LightDiscovery(QWidget *parent, CommLayer *comm);
 
     /*!
      * \brief resize size the widget programmatically

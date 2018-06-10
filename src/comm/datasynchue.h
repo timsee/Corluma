@@ -36,12 +36,6 @@ public:
     ~DataSyncHue() {}
 
     /*!
-     * \brief connectGroupsParser connect groups parser to DataSyncHue
-     * \param groups pointer to the GroupsParser
-     */
-    void connectGroupsParser(GroupsParser *groups) { mGroups = groups; }
-
-    /*!
      * \brief cancelSync cancel the data sync, regardless of it successfully completed.
      */
     void cancelSync() override;
@@ -89,9 +83,6 @@ private:
      * \brief endOfSync end the sync thread and start the cleanup thread.
      */
     void endOfSync() override;
-
-    /// pointer to the groups parser system
-    GroupsParser *mGroups;
 };
 
 #endif // DATASYNCHUE_H

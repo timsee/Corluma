@@ -4,8 +4,9 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QListWidget>
+#include <QLayout>
 
-#include "lightingpage.h"
+#include "cor/page.h"
 #include "comm/commlayer.h"
 #include "floatinglayout.h"
 
@@ -13,10 +14,6 @@
 class DiscoveryArduCorWidget;
 class DiscoveryHueWidget;
 class DiscoveryNanoLeafWidget;
-
-namespace Ui {
-class DiscoveryPage;
-}
 
 /*!
  * \copyright
@@ -29,7 +26,7 @@ class DiscoveryPage;
  *        they are required to connect to a light before they are able to leave this page.
  *
  */
-class DiscoveryPage : public QWidget, public LightingPage
+class DiscoveryPage : public QWidget, public cor::Page
 {
     Q_OBJECT
 
@@ -37,20 +34,13 @@ public:
     /*!
      * Constructor
      */
-    explicit DiscoveryPage(QWidget *parent = 0);
+    explicit DiscoveryPage(QWidget *parent, DataLayer *data, CommLayer *layer);
 
     /*!
      * Destructor
      */
     ~DiscoveryPage();
 
-    /*!
-     * \brief connectCommLayer connect to commlayer. In a future update the commLayer pointer on
-     *        every page will be totally removed in favor of DataSync, but for now theres some
-     *        edge cases that require certain pages to have a commlayer pointer.
-     * \param layer commlayer
-     */
-    void connectCommLayer(CommLayer *layer);
 
     /// debug function
     void openStartForDebug() { mForceStartOpen = true; }
@@ -131,6 +121,12 @@ protected:
 
 private:
 
+    /*!
+     * \brief data layer that maintains and tracks the states of the lights
+     *        and the saved data of the GUI
+     */
+    DataLayer *mData;
+
     /// moves floating layouts to top right position of screen.
     void moveFloatingLayouts();
 
@@ -152,15 +148,22 @@ private:
     /// discovery widget for nanoleaf products
     DiscoveryNanoLeafWidget *mNanoLeafWidget;
 
+    /// spacer for floating layouts
+    QWidget *mSpacer;
+
+    /// placeholder for main widget
+    QWidget *mPlaceholder;
+
+    /// start button of widget
+    QPushButton *mStartButton;
+
+    /// layout of widget
+    QVBoxLayout *mLayout;
+
     /*!
      * \brief resizeTopMenu resize buttons at top that switch between Hue, Serial, etc.
      */
     void resizeTopMenu();
-
-    /*!
-     * \brief ui pointer to Qt UI form.
-     */
-    Ui::DiscoveryPage *ui;
 
     /*!
      * \brief changeCommTypeConnectionState change the connection state and the associated UI

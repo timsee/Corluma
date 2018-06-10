@@ -9,17 +9,18 @@
 #include "commpacketparser.h"
 #include "nanoleaf/leafcontroller.h"
 #include "comm/upnpdiscovery.h"
+#include "cor/presetpalettes.h"
 
 
 /// states for discovering and connecting to a NanoLeaf.
 enum class ENanoleafDiscoveryState {
-    eConnectionError,
-    eTestingIP,
-    eTestingAuth,
-    eRunningUPnP,
-    eAwaitingAuthToken,
-    eTestingPreviousData,
-    eFullyConnected
+    connectionError,
+    testingIP,
+    testingAuth,
+    runningUPnP,
+    awaitingAuthToken,
+    testingPreviousData,
+    fullyConnected
 };
 
 /*!
@@ -33,15 +34,15 @@ enum class ENanoleafDiscoveryState {
  *        HTTP requests and JSON for communication. This class takes Corluma-formatted
  *        message packets and converts them into NanoLeaf packets.
  */
-class CommNanoLeaf : public CommType
+class CommNanoleaf : public CommType
 {
     Q_OBJECT
 public:
     /// constructor
-    CommNanoLeaf();
+    CommNanoleaf();
 
     /// destructor
-    ~CommNanoLeaf();
+    ~CommNanoleaf();
 
     /*!
      * \brief startup defined in CommType
@@ -74,9 +75,6 @@ public:
      * \param ipAddress ip address to attempt for connection.
      */
     void attemptIP(QString ipAddress);
-
-    /// takes the color palette data from thne datalayer and converts it into JSON data for nanoleaf packets
-    void addColorPalettes(const std::vector<std::vector<QColor> >& palettes);
 
     /// connects UPnP object to the discovery object.
     void connectUPnPDiscovery(UPnPDiscovery* UPnP);
@@ -158,12 +156,20 @@ private slots:
 
 private:
 
+    /// takes the color palette data from thne datalayer and converts it into JSON data for nanoleaf packets
+    void createColorPalettes();
+
     /// called on startup, checks saved app data.
     void checkForSavedData();
 
     /// helper which creates the packet header for all URLs
     const QString packetHeader();
 
+    /*!
+     * \brief putJSON send a JSON packet over wireless packets using the PUT command
+     * \param request the network request to add the JSON to
+     * \param json the json to send with a PUT request
+     */
     void putJSON(const QNetworkRequest& request, const QJsonObject& json);
 
     /// creates a network request based on a QString providing the endpoint.
@@ -230,6 +236,9 @@ private:
 
     /// timer that tests whether the app data about the nanoleafs path (IP address, port, etc.) is valid
     QTimer *mTestingTimer;
+
+    /// preset data for palettes from ArduCor
+    PresetPalettes mPresetPalettes;
 
     /// stored json palettes for each color group
     std::vector<QJsonArray> mPalettes;

@@ -31,9 +31,9 @@ void ListCollectionWidget::setup(const QString& name,
     mName->setText(name);
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     mName->setStyleSheet("margin-left: 5px; font: bold;");
-    if (mType == EListType::eGrid) {
+    if (mType == EListType::grid) {
         mMinimumHeight = mName->height();
-    } else if (mType == EListType::eLinear || mType == EListType::eLinear2X) {
+    } else if (mType == EListType::linear || mType == EListType::linear2X) {
         mMinimumHeight = mName->height();
     }
 
@@ -62,9 +62,9 @@ void ListCollectionWidget::setup(const QString& name,
     mHiddenStateIcon->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     mHiddenStateIcon->setAlignment(Qt::AlignCenter);
 
-    if (mType == EListType::eGrid) {
+    if (mType == EListType::grid) {
         mWidgetSize = QSize(this->width() / 2, mMinimumHeight);
-    } else if (mType == EListType::eLinear || mType == EListType::eLinear2X) {
+    } else if (mType == EListType::linear || mType == EListType::linear2X) {
         mWidgetSize = QSize(this->width(), mMinimumHeight);
     }
 
@@ -83,9 +83,9 @@ void ListCollectionWidget::setup(const QString& name,
 }
 
 void ListCollectionWidget::setListHeight(int newHeight) {
-    if (mType == EListType::eGrid) {
+    if (mType == EListType::grid) {
         mMinimumHeight = newHeight / 8;
-    } else if (mType == EListType::eLinear || mType == EListType::eLinear2X) {
+    } else if (mType == EListType::linear || mType == EListType::linear2X) {
         mMinimumHeight = newHeight / 8;
     }
 
@@ -145,11 +145,11 @@ QPoint ListCollectionWidget::widgetPosition(QWidget *widget) {
     }
     // store index of inserted element
     int index = std::distance(mWidgets.begin(), findResult);
-    if (mType == EListType::eGrid) {
+    if (mType == EListType::grid) {
         int x = index % 2;     // 2 rows per column
         int y = index / 2;     // new column every other index
         return QPoint(x, y);
-    } else if (mType == EListType::eLinear || mType == EListType::eLinear2X) {
+    } else if (mType == EListType::linear || mType == EListType::linear2X) {
         int x = 0;     // 1 row per column
         int y = index; // new column every index
         return QPoint(x, y);
@@ -184,11 +184,11 @@ void ListCollectionWidget::resize() {
    // qDebug() << "parent size" << this->parentWidget()->size();
     this->setFixedSize(preferredSize());
     // pad the width a bit in case its an odd sized width so it takes up the whole region.
-    if (mType == EListType::eGrid) {
+    if (mType == EListType::grid) {
         mWidgetSize = QSize(this->width() / 2, mMinimumHeight);
-    } else if (mType == EListType::eLinear) {
+    } else if (mType == EListType::linear) {
         mWidgetSize = QSize(this->width(), mMinimumHeight);
-    } else if (mType == EListType::eLinear2X) {
+    } else if (mType == EListType::linear2X) {
         mWidgetSize = QSize(this->width(), mMinimumHeight * 2);
     }
    // qDebug() << "widget size" << mWidgetSize << "total size" << this->size();

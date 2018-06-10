@@ -1,5 +1,5 @@
-#ifndef CONNECTIONPAGE_H
-#define CONNECTIONPAGE_H
+#ifndef LightPage_H
+#define LightPage_H
 
 #include <QWidget>
 #include <QListWidget>
@@ -8,11 +8,12 @@
 #include <QLayout>
 
 #include "cor/light.h"
-#include "lightingpage.h"
+#include "cor/page.h"
 #include "listdevicewidget.h"
 #include "comm/commlayer.h"
 #include "listdevicesgroupwidget.h"
 #include "cor/listwidget.h"
+#include "cor/presetpalettes.h"
 
 /*!
  * \copyright
@@ -20,40 +21,23 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief The ConnectionPage class is the page that manages which devices are currently
- *        in use. The ConnectionPage can choose either individual devices, or select/deselect
+ * \brief The LightPage class is the page that manages which devices are currently
+ *        in use. The LightPage can choose either individual devices, or select/deselect
  *        collections of devices. This page also provides users with a button that allows them
  *        to create new collections of devices.
  */
-class ConnectionPage : public QWidget, public LightingPage
+class LightPage : public QWidget, public cor::Page
 {
     Q_OBJECT
 
 public:
-    /*!
-     * \brief ConnectionPage constructor
-     * \param parent pointer to parent.
-     */
-    explicit ConnectionPage(QWidget *parent = 0);
+    /// constructor
+    explicit LightPage(QWidget *parent, DataLayer *data, CommLayer *comm, GroupsParser *groups);
 
     /*!
      * \brief Deconstructor
      */
-    ~ConnectionPage();
-
-    /*!
-     * \brief setupUI called after mComm is constructed so that it can be used
-     *        to set up the UI of the Settings Page.
-     */
-    void setupUI();
-
-    /*!
-     * \brief connectCommLayer connect to commlayer. In a future update the commLayer pointer on
-     *        every page will be totally removed in favor of DataSync, but for now theres some
-     *        edge cases that require certain pages to have a commlayer pointer.
-     * \param layer commlayer
-     */
-    void connectCommLayer(CommLayer *layer) { mComm = layer; }
+    ~LightPage();
 
     /*!
      * \brief updateConnectionList updates the GUI elements that display the
@@ -182,6 +166,15 @@ protected:
 
 private:
 
+    /*!
+     * \brief data layer that maintains and tracks the states of the lights
+     *        and the saved data of the GUI
+     */
+    DataLayer *mData;
+
+    /// preset data for palettes from ArduCor
+    PresetPalettes mPalettes;
+
     /// widget for displaying the rooms in the app data.
     cor::ListWidget *mRoomsWidget;
 
@@ -201,7 +194,7 @@ private:
      * \param hideEdit true for special case groups (Available and Not Reachable), false otherwise
      * \return pointer to the newly created ListDevicesGroupWidget
      */
-    ListDevicesGroupWidget* initDevicesCollectionWidget(const cor::LightGroup& group,
+    ListDevicesGroupWidget* initDevicesCollectionWidget(cor::LightGroup group,
                                                         const QString& key);
 
 
@@ -212,7 +205,7 @@ private:
      *        are available in memory somehow but have not sent an update packet recently.
      * \param allDevices list of all devices that have sent communication packets of some sort.
      */
-    void gatherAvailandAndNotReachableDevices(const std::list<cor::Light>& allDevices);
+    void gatherAvailandAndNotReachableDevices(std::list<cor::Light> allDevices);
 
     /// gathers all light groups, as displayed in the UI
     std::list<cor::LightGroup> gatherAllUIGroups();
@@ -289,4 +282,4 @@ private:
     void highlightList();
 };
 
-#endif // CONNECTIONPAGE_H
+#endif // LightPage_H

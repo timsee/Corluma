@@ -18,8 +18,8 @@ Switch::Switch(QWidget *parent) : QWidget(parent)
     mSwitch->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     // initialize switch state
-    mState = ESwitchState::eOn;
-    setSwitchState(ESwitchState::eOff);
+    mState = ESwitchState::on;
+    setSwitchState(ESwitchState::off);
 }
 
 void Switch::setSwitchState(ESwitchState state) {
@@ -33,31 +33,31 @@ void Switch::buttonPressed(bool pressed) {
     Q_UNUSED(pressed);
 
     switch (mState) {
-        case ESwitchState::eOn:
-            setSwitchState(ESwitchState::eOff);
+        case ESwitchState::on:
+            setSwitchState(ESwitchState::off);
             emit switchChanged(false);
             break;
-        case ESwitchState::eOff:
-            setSwitchState(ESwitchState::eOn);
+        case ESwitchState::off:
+            setSwitchState(ESwitchState::on);
             emit switchChanged(true);
             break;
-        case ESwitchState::eDisabled:
-            setSwitchState(ESwitchState::eDisabled);
+        case ESwitchState::disabled:
+            setSwitchState(ESwitchState::disabled);
             break;
     }
 }
 
 void Switch::resizeIcon() {
     switch (mState) {
-        case ESwitchState::eOn:
+        case ESwitchState::on:
             mSwitchIcon = QPixmap(":/images/onSwitch.png");
             mSwitch->setChecked(true);
             break;
-        case ESwitchState::eOff:
+        case ESwitchState::off:
             mSwitchIcon = QPixmap(":/images/offSwitch.png");
             mSwitch->setChecked(false);
             break;
-        case ESwitchState::eDisabled:
+        case ESwitchState::disabled:
             mSwitchIcon = QPixmap(":/images/closeX.png");
             mSwitch->setChecked(false);
             break;

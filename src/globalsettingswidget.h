@@ -26,21 +26,12 @@ class GlobalSettingsWidget : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit GlobalSettingsWidget(QWidget *parent = 0);
+    explicit GlobalSettingsWidget(QWidget *parent, CommLayer *comm, DataLayer *data);
 
     /*!
      * \brief updateUI updates the colors of various settings in the UI.
      */
     void updateUI();
-
-    /*!
-     * \brief connectBackendLayers connec the commlayer to this page.
-     * \param layer a pointer to the commlayer object.
-     */
-    void connectBackendLayers(CommLayer *commLayer, DataLayer *dataLayer) {
-        mComm = commLayer;
-        mData = dataLayer;
-    }
 
     /*!
      * \brief checkBoxClicked helper for checking if a checkbox is checked. checkmate!

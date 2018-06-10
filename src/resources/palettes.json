@@ -1,0 +1,638 @@
+[
+{
+    "colors": [
+                {
+                    "index": 0,
+                    "red":   0,
+                    "green": 0,
+                    "blue":  255
+                },
+                {
+                    "index": 1,
+                    "red":   0,
+                    "green": 25,
+                    "blue":  255
+                },
+                {
+                    "index": 2,
+                    "red":   0,
+                    "green": 0,
+                    "blue":  127
+                },
+                {
+                    "index": 3,
+                    "red":   0,
+                    "green": 127,
+                    "blue":  127
+                },
+                {
+                    "index": 4,
+                    "red":   120,
+                    "green": 120,
+                    "blue":  255
+                }
+            ],
+            "name": "Water",
+            "count": 5
+},
+{
+    "colors": [
+                {
+                    "index": 0,
+                    "red":   0,
+                    "green": 127,
+                    "blue":  255
+                },
+                {
+                    "index": 1,
+                    "red":   169,
+                    "green": 228,
+                    "blue":  247
+                },
+                {
+                    "index": 2,
+                    "red":   200,
+                    "green": 0,
+                    "blue":  255
+                },
+                {
+                    "index": 3,
+                    "red":   200,
+                    "green": 200,
+                    "blue":  200
+                },
+                {
+                    "index": 4,
+                    "red":   127,
+                    "green": 127,
+                    "blue":  127
+                },
+                {
+                    "index": 5,
+                    "red":   127,
+                    "green": 127,
+                    "blue":  255
+                }
+            ],
+            "name": "Frozen",
+            "count": 6
+},
+{
+    "colors": [
+                {
+                    "index": 0,
+                    "red":   255,
+                    "green": 255,
+                    "blue":  255
+                },
+                {
+                    "index": 1,
+                    "red":   127,
+                    "green": 127,
+                    "blue":  127
+                },
+                {
+                    "index": 2,
+                    "red":   200,
+                    "green": 200,
+                    "blue":  200
+                },
+                {
+                    "index": 3,
+                    "red":   0,
+                    "green": 0,
+                    "blue":  255
+                },
+                {
+                    "index": 4,
+                    "red":   0,
+                    "green": 255,
+                    "blue":  255
+                },
+                {
+                    "index": 5,
+                    "red":   0,
+                    "green": 180,
+                    "blue":  180
+                }
+            ],
+            "name": "Snow",
+            "count": 6
+},
+{
+    "colors": [
+                {
+                    "index": 0,
+                    "red":   0,
+                    "green": 255,
+                    "blue":  0
+                },
+                {
+                    "index": 1,
+                    "red":   125,
+                    "green": 0,
+                    "blue":  255
+                },
+                {
+                    "index": 2,
+                    "red":   0,
+                    "green": 0,
+                    "blue":  255
+                },
+                {
+                    "index": 3,
+                    "red":   40,
+                    "green": 127,
+                    "blue":  40
+                },
+                {
+                    "index": 4,
+                    "red":   60,
+                    "green": 0,
+                    "blue":  160
+                }
+            ],
+            "name": "Cool",
+            "count": 5
+},
+{
+    "colors": [
+                {
+                    "index": 0,
+                    "red":   255,
+                    "green": 255,
+                    "blue":  0
+                },
+                {
+                    "index": 1,
+                    "red":   255,
+                    "green": 0,
+                    "blue":  0
+                },
+                {
+                    "index": 2,
+                    "red":   255,
+                    "green": 45,
+                    "blue":  0
+                },
+                {
+                    "index": 3,
+                    "red":   255,
+                    "green": 200,
+                    "blue":  0
+                },
+                {
+                    "index": 4,
+                    "red":   255,
+                    "green": 127,
+                    "blue":  0
+                }
+            ],
+            "name": "Warm",
+            "count": 5
+},
+{
+    "colors": [
+                {
+                    "index": 0,
+                    "red":   255,
+                    "green": 75,
+                    "blue":  0
+                },
+                {
+                    "index": 1,
+                    "red":   255,
+                    "green": 20,
+                    "blue":  0
+                },
+                {
+                    "index": 2,
+                    "red":   255,
+                    "green": 80,
+                    "blue":  0
+                },
+                {
+                    "index": 3,
+                    "red":   255,
+                    "green": 5,
+                    "blue":  0
+                },
+                {
+                    "index": 4,
+                    "red":   64,
+                    "green": 6,
+                    "blue":  0
+                },
+                {
+                    "index": 5,
+                    "red":   127,
+                    "green": 127,
+                    "blue":  0
+                },
+                {
+                    "index": 6,
+                    "red":   255,
+                    "green": 60,
+                    "blue":  0
+                },
+                {
+                    "index": 7,
+                    "red":   255,
+                    "green": 45,
+                    "blue":  0
+                },
+                {
+                    "index": 8,
+                    "red":   127,
+                    "green": 127,
+                    "blue":  0
+                }
+            ],
+            "name": "Fire",
+            "count": 9
+},
+{
+    "colors": [
+                {
+                    "index": 0,
+                    "red":   255,
+                    "green": 0,
+                    "blue":  0
+                },
+                {
+                    "index": 1,
+                    "red":   200,
+                    "green": 0,
+                    "blue":  0
+                },
+                {
+                    "index": 2,
+                    "red":   127,
+                    "green": 0,
+                    "blue":  0
+                },
+                {
+                    "index": 3,
+                    "red":   20,
+                    "green": 0,
+                    "blue":  0
+                },
+                {
+                    "index": 4,
+                    "red":   30,
+                    "green": 0,
+                    "blue":  40
+                },
+                {
+                    "index": 5,
+                    "red":   10,
+                    "green": 0,
+                    "blue":  0
+                },
+                {
+                    "index": 6,
+                    "red":   0,
+                    "green": 0,
+                    "blue":  80
+                }
+            ],
+            "name": "Evil",
+            "count": 7
+},
+{
+    "colors": [
+                {
+                    "index": 0,
+                    "red":   0,
+                    "green": 255,
+                    "blue":  0
+                },
+                {
+                    "index": 1,
+                    "red":   0,
+                    "green": 200,
+                    "blue":  0
+                },
+                {
+                    "index": 2,
+                    "red":   60,
+                    "green": 180,
+                    "blue":  60
+                },
+                {
+                    "index": 3,
+                    "red":   127,
+                    "green": 135,
+                    "blue":  127
+                },
+                {
+                    "index": 4,
+                    "red":   10,
+                    "green": 255,
+                    "blue":  10
+                }
+            ],
+            "name": "Corrosive",
+            "count": 5
+},
+{
+    "colors": [
+                {
+                    "index": 0,
+                    "red":   80,
+                    "green": 0,
+                    "blue":  180
+                },
+                {
+                    "index": 1,
+                    "red":   120,
+                    "green": 0,
+                    "blue":  255
+                },
+                {
+                    "index": 2,
+                    "red":   0,
+                    "green": 0,
+                    "blue":  0
+                },
+                {
+                    "index": 3,
+                    "red":   25,
+                    "green": 0,
+                    "blue":  25
+                },
+                {
+                    "index": 4,
+                    "red":   60,
+                    "green": 60,
+                    "blue":  60
+                },
+                {
+                    "index": 5,
+                    "red":   120,
+                    "green": 0,
+                    "blue":  255
+                },
+                {
+                    "index": 6,
+                    "red":   80,
+                    "green": 0,
+                    "blue":  180
+                },
+                {
+                    "index": 7,
+                    "red":   40,
+                    "green": 0,
+                    "blue":  90
+                },
+                {
+                    "index": 8,
+                    "red":   80,
+                    "green": 0,
+                    "blue":  180
+                }
+            ],
+            "name": "Poison",
+            "count": 9
+},
+{
+    "colors": [
+                {
+                    "index": 0,
+                    "red":   216,
+                    "green": 30,
+                    "blue":  100
+                },
+                {
+                    "index": 1,
+                    "red":   255,
+                    "green": 245,
+                    "blue":  251
+                },
+                {
+                    "index": 2,
+                    "red":   156,
+                    "green": 62,
+                    "blue":  72
+                },
+                {
+                    "index": 3,
+                    "red":   127,
+                    "green": 127,
+                    "blue":  127
+                },
+                {
+                    "index": 4,
+                    "red":   194,
+                    "green": 30,
+                    "blue":  86
+                },
+                {
+                    "index": 5,
+                    "red":   194,
+                    "green": 30,
+                    "blue":  30
+                }
+            ],
+            "name": "Rose",
+            "count": 6
+},
+{
+    "colors": [
+                {
+                    "index": 0,
+                    "red":   255,
+                    "green": 20,
+                    "blue":  147
+                },
+                {
+                    "index": 1,
+                    "red":   0,
+                    "green": 255,
+                    "blue":  0
+                },
+                {
+                    "index": 2,
+                    "red":   0,
+                    "green": 200,
+                    "blue":  0
+                },
+                {
+                    "index": 3,
+                    "red":   255,
+                    "green": 105,
+                    "blue":  180
+                }
+            ],
+            "name": "PinkGreen",
+            "count": 4
+},
+{
+    "colors": [
+                {
+                    "index": 0,
+                    "red":   255,
+                    "green": 255,
+                    "blue":  255
+                },
+                {
+                    "index": 1,
+                    "red":   255,
+                    "green": 0,
+                    "blue":  0
+                },
+                {
+                    "index": 2,
+                    "red":   0,
+                    "green": 0,
+                    "blue":  255
+                },
+                {
+                    "index": 3,
+                    "red":   255,
+                    "green": 255,
+                    "blue":  255
+                }
+            ],
+            "name": "RedWhiteBlue",
+            "count": 4
+},
+{
+    "colors": [
+                {
+                    "index": 0,
+                    "red":   255,
+                    "green": 0,
+                    "blue":  0
+                },
+                {
+                    "index": 1,
+                    "red":   0,
+                    "green": 255,
+                    "blue":  0
+                },
+                {
+                    "index": 2,
+                    "red":   0,
+                    "green": 0,
+                    "blue":  255
+                }
+            ],
+            "name": "RGB",
+            "count": 3
+},
+{
+    "colors": [
+                {
+                    "index": 0,
+                    "red":   255,
+                    "green": 255,
+                    "blue":  0
+                },
+                {
+                    "index": 1,
+                    "red":   0,
+                    "green": 255,
+                    "blue":  255
+                },
+                {
+                    "index": 2,
+                    "red":   255,
+                    "green": 0,
+                    "blue":  255
+                }
+            ],
+            "name": "CMY",
+            "count": 3
+},
+{
+    "colors": [
+                {
+                    "index": 0,
+                    "red":   255,
+                    "green": 0,
+                    "blue":  0
+                },
+                {
+                    "index": 1,
+                    "red":   255,
+                    "green": 255,
+                    "blue":  0
+                },
+                {
+                    "index": 2,
+                    "red":   0,
+                    "green": 255,
+                    "blue":  0
+                },
+                {
+                    "index": 3,
+                    "red":   0,
+                    "green": 255,
+                    "blue":  255
+                },
+                {
+                    "index": 4,
+                    "red":   0,
+                    "green": 0,
+                    "blue":  255
+                },
+                {
+                    "index": 5,
+                    "red":   255,
+                    "green": 0,
+                    "blue":  255
+                }
+            ],
+            "name": "Six",
+            "count":6
+},
+{
+    "colors": [
+                {
+                    "index": 0,
+                    "red":   255,
+                    "green": 0,
+                    "blue":  0
+                },
+                {
+                    "index": 1,
+                    "red":   255,
+                    "green": 255,
+                    "blue":  0
+                },
+                {
+                    "index": 2,
+                    "red":   0,
+                    "green": 255,
+                    "blue":  0
+                },
+                {
+                    "index": 3,
+                    "red":   0,
+                    "green": 255,
+                    "blue":  255
+                },
+                {
+                    "index": 4,
+                    "red":   0,
+                    "green": 0,
+                    "blue":  255
+                },
+                {
+                    "index": 5,
+                    "red":   255,
+                    "green": 0,
+                    "blue":  255
+                },
+                {
+                    "index": 5,
+                    "red":   255,
+                    "green": 255,
+                    "blue":  255
+                }
+            ],
+            "name": "Seven",
+            "count": 7
+}
+]

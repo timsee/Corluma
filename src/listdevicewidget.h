@@ -37,10 +37,9 @@ public:
      * \param parent parent widget
      */
     explicit ListDeviceWidget(const cor::Light& device,
-                              const std::vector<QColor>& colors,
                               bool setHighlightable,
                               QSize size,
-                              QWidget *parent = 0);
+                              QWidget *parent);
 
     /*!
      * \brief updateWidget update the widget with a new state for the device.
@@ -48,8 +47,7 @@ public:
      * \param colors all the color groups in the data layer, in case the device uses
      *        the color groups
      */
-    void updateWidget(const cor::Light& device,
-                      const std::vector<QColor>& colors);
+    void updateWidget(const cor::Light& device);
 
     /*!
      * \brief setHighlightChecked set the widget as checked or unchecked. When it is checked it

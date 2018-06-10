@@ -6,9 +6,9 @@
 
 /// state of the switch
 enum class ESwitchState {
-    eOn,
-    eOff,
-    eDisabled
+    on,
+    off,
+    disabled
 };
 
 namespace cor
@@ -30,7 +30,7 @@ class Switch : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit Switch(QWidget *parent = 0);
+    explicit Switch(QWidget *parent);
 
     /*!
      * \brief setSwitchState programmatically set the state of the switch. If disabled,
@@ -41,10 +41,10 @@ public:
     void setSwitchState(ESwitchState state);
 
     /// programmtically turn the switch on
-    void switchOn()  { setSwitchState(ESwitchState::eOn); }
+    void switchOn()  { setSwitchState(ESwitchState::on); }
 
     /// programmatically turn the switch off
-    void switchOff() { setSwitchState(ESwitchState::eOff); }
+    void switchOff() { setSwitchState(ESwitchState::off); }
 
 signals:
 

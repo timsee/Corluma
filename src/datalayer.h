@@ -7,9 +7,11 @@
 
 #include <list>
 
-#include "lightingprotocols.h"
+#include "cor/protocols.h"
+#include "cor/palette.h"
 #include "comm/commhue.h"
 #include "comm/protocolsettings.h"
+#include "cor/presetpalettes.h"
 
 /*!
  * \copyright
@@ -33,7 +35,7 @@ public:
     /*!
      * \brief Constructor
      */
-    DataLayer();
+    DataLayer(QObject *parent);
     /*!
      * \brief Deconstructor
      */
@@ -46,45 +48,10 @@ public:
     QColor mainColor();
 
     /*!
-     * \brief palette the palette at the given index. Can be used
-     *        to access the custom color array or any of the presets.
-     * \return the color array at the given index.
-     */
-    const std::vector<QColor>& palette(EPalette palette);
-
-    /*!
-     * \brief colors getter for the vector of color group vectors.
-     * \return vector of vectors where each vector is a preset group of colors.
-     */
-    const std::vector<std::vector<QColor> >& colors() { return mColors; }
-
-    /*!
-     * \brief maxColorGroupSize the largest possible size for a color group. Can also
-     *        be used as the size of the custom color group.
-     * \return the size of the largest EPalette.
-     */
-    uint8_t maxColorGroupSize();
-
-    /*!
-     * \brief creates a color based off of the average of all colors in the color group
-     * \param group a color group
-     * \return a QColor that represents the average of all colors used by color group.
-     */
-    QColor colorsAverage(EPalette palette);
-
-    /*!
      * \brief routine getter for the current ERoutine.
      * \return the current lighting routine getting displayed on the LED array.
      */
     ERoutine currentRoutine();
-
-    /*!
-     * \brief currentRoutineObject a QJsonObject representation of the current data layer.
-     *        This uses an average of all the lights, so it may not represent any individual light
-     *        perfect
-     * \return a json representation of the current routine.
-     */
-    QJsonObject currentRoutineObject();
 
     /*!
      * \brief brightness getter for the current brightness.
@@ -101,24 +68,11 @@ public:
     int timeout() { return mTimeout;}
 
     /*!
-     * \brief customColorsUsed number of custom colors used from the custom color group in multi color
-     *        routines. Will be between 2 and 10 inclusively.
-     * \return the number of custom colors used in custom color routines.
-     */
-    uint32_t customColorsUsed();
-
-    /*!
      * \brief palette getter for the current palette.
      * \return the EPalette that represents the colors being displayed on
      *         the LED array.
      */
     EPalette palette();
-
-    /*!
-     * \brief paletteColors returns all the colors of the current color group.
-     * \return returns all the colors of the current color group.
-     */
-    const std::vector<QColor>& paletteColors();
 
     /*!
      * \brief speed getter for the speed the LED's update.
@@ -127,13 +81,11 @@ public:
     int speed();
 
     /*!
-     * \brief customColor set an individual color in the custom color group
-     * \param index the index of the custom color. must be less than the size of custom
-     *        color group.
-     * \param color the new color that you want to set for that index.
-     * \return true if successful, false otherwise.
+     * \brief updateCustomColorCount update the number of custom colors used in the custom color array for multi color routines.
+     *        Must be between 2 and 10 inclusively.
+     * \param count new count of custom colors.
      */
-    bool customColor(uint32_t index, QColor color);
+    void updateCustomColorCount(uint32_t count);
 
     /*!
      * \brief turnOn turn all devices on or off based off of the boolean. Stores the previous state
@@ -173,14 +125,6 @@ public:
     bool anyDevicesReachable();
 
     /*!
-     * \brief closestColorGroupToColor takes a color as input and checks the averages of the color groups
-     *        and determines the closest color group to your color.
-     * \param color input color
-     * \return the color group that, when averaged, is closest to the provided color.
-     */
-    EPalette closestColorGroupToColor(QColor color);
-
-    /*!
      * \brief updateRoutine update the lighting routine for all current devices.
      * \param routine new lighting routine.
      */
@@ -193,23 +137,10 @@ public:
     void updateSpeed(int speed);
 
     /*!
-     * \brief updatePalette update the color group for all current devices.
-     * \param colorGroup new color group
-     */
-    void updatePalette(EPalette palette);
-
-    /*!
      * \brief updateColorScheme update the colors of all the current devices based off of a color scheme.
      * \param colors a vector of colors.
      */
     void updateColorScheme(std::vector<QColor> colors);
-
-    /*!
-     * \brief updateCustomColorCount update the number of custom colors used in the custom color array for multi color routines.
-     *        Must be between 2 and 10 inclusively.
-     * \param count new count of custom colors.
-     */
-    void updateCustomColorCount(uint32_t count);
 
     /*!
      * \brief updateCustomColorArray update the color in the custom color array at the given index. If the index is 10 or larger,
@@ -222,16 +153,8 @@ public:
     /*!
      * \brief updateBrightness update the brightness level of all current devices.
      * \param brightness new brightness
-     * \param specialCaseDevices certain hue devices handle brightness differently. This list contains all ambient and white hue lights.
      */
-    void updateBrightness(int brightness, std::list<cor::Light> specialCaseDevices = std::list<cor::Light>());
-
-    /*!
-     * \brief updateCt update the color temperature. Only supported by Hue lights.
-     * \param ct new color temperature.
-     */
-    void updateCt(int ct);
-
+    void updateBrightness(int brightness);
 
     /*!
      * \brief addDevice add new device to connected list. if device already exists,
@@ -359,24 +282,7 @@ signals:
 
 private:
 
-    /*!
-     * \brief averageGroup averages all the colors from a group into a single color.
-     * \param group group to average
-     * \return colors to average.
-     */
-    QColor averageGroup(EPalette palette);
-
-    /*!
-     * \brief mColors the color arrays used for routines. This contains
-     *        the custom color array and all of the presets.
-     */
-    std::vector<std::vector<QColor> > mColors;
-
-    /*!
-     * \brief mColorAverages ector of all the avaerage colors of each group so that only the
-     *        custom group needs to be computed each time the averaging function is called.
-     */
-    std::vector<QColor> mColorAverages;
+    PresetPalettes mPalettes;
 
     /*!
      * \brief mCurrentDevices list of current devices in data layer

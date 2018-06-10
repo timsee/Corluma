@@ -19,7 +19,7 @@ ListDevicesGroupWidget::ListDevicesGroupWidget(const cor::LightGroup& group,
     mComm = comm;
     mSelectAllIsClear = false;
 
-    setup(group.name, key, EListType::eGrid, true);
+    setup(group.name, key, EListType::grid, true);
 
     mSelectAllButton = new QPushButton(this);
     mSelectAllButton->setStyleSheet("border: none;");
@@ -65,7 +65,7 @@ void ListDevicesGroupWidget::updateDevices(std::list<cor::Light> devices, bool r
             cor::Light existingDevice = existingWidget->device();
             if (compareLight(inputDevice, existingDevice)) {
                 foundDevice = true;
-                existingWidget->updateWidget(inputDevice, mData->palette(inputDevice.palette));
+                existingWidget->updateWidget(inputDevice);
             }
             ++x;
         }
@@ -76,7 +76,6 @@ void ListDevicesGroupWidget::updateDevices(std::list<cor::Light> devices, bool r
 
         if (!foundDevice) {
             ListDeviceWidget *widget = new ListDeviceWidget(inputDevice,
-                                                            mData->palette(inputDevice.palette),
                                                             false,
                                                             mWidgetSize,
                                                             this);

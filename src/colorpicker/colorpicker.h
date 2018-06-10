@@ -17,7 +17,7 @@
 #include "rgbsliders.h"
 #include "brightnessslider.h"
 #include "tempbrightsliders.h"
-#include "cor/palettewidget.h"
+#include "cor/lightvectorwidget.h"
 #include "customcolorpicker.h"
 #include "colorschemecircles.h"
 
@@ -39,7 +39,7 @@ enum class ELayoutColorPicker {
      * the sliders will resize horizontally but the
      * wheel grows vertically.
      */
-    eStandardLayout,
+    standardLayout,
     /*!
      * The color wheel is changed to shades of white.
      * Can choose between the a blue-ish white or an
@@ -48,7 +48,7 @@ enum class ELayoutColorPicker {
      * color via slider, second slider allows you
      * to adjust brightness.
      */
-    eAmbientLayout,
+    ambientLayout,
     /*!
      * A dumb layout, but one that adds a bit more
      * "uniformity" or some word like that to the design.
@@ -58,12 +58,12 @@ enum class ELayoutColorPicker {
      * white. White bulbs can only control brightness so theres a
      * wheel and a single slider that both do that.
      */
-    eBrightnessLayout,
+    brightnessLayout,
     /*!
      * This layout allows the user to choose multiple colors at once and
      * computes a good color scheme based on the user's selections.
      */
-    eColorSchemeLayout,
+    colorSchemeLayout,
     /*!
      * The full color wheel is shown, but instead of
      * three sliders underneath theres one and 2 rows
@@ -71,7 +71,7 @@ enum class ELayoutColorPicker {
      * allows the user to change colors in an array for
      * things that use multiple colors simultaneously.
      */
-    eMultiColorLayout
+    multiColorLayout
 };
 
 
@@ -132,17 +132,27 @@ public:
      * \param brightness brightness of the color
      * \param shouldSignal true to signal, false to skip this signal
      */
-    void chooseAmbient(int temperature, int brightness, bool shouldSignal = true);
+    void chooseAmbient(int temperature, int brightness, bool shouldSignal);
 
     /*!
      * \brief updateColorStates update the layouts at the bottom of the ColorPicker with new values from the RGB devices
      * \param mainColor main color from datalayer
      * \param brightness brightness from data layer
-     * \param colorArray the custom color array from datalayer
      * \param colorSchemes the colors of the selected devices
-     * \param colorArrayCount the count of LEDs used in array from datalayer
      */
-    void updateColorStates(QColor mainColor, int brightness, const std::vector<QColor> colorArray, const std::vector<QColor> colorSchemes, int colorArrayCount);
+    void updateColorStates(QColor mainColor, int brightness, const std::vector<QColor> colorSchemes);
+
+    /*!
+     * \brief setMultiColorDefaults set the default colors of the custom color picker
+     * \param colors the colors to use for the cusotm color picker
+     */
+    void setMultiColorDefaults(const std::vector<QColor>& colors);
+
+    /*!
+     * \brief colors getter for the current state of the default colors of the custom color pickers
+     * \return the current state of the default colors of the custom color picker
+     */
+    const std::vector<QColor>& colors() { return mColorGrid->colors(); }
 
 
 signals:
@@ -290,7 +300,7 @@ private:
     /*!
      * \brief mColorSchemeGrid bottom layout, gives a few color swatches
      */
-     cor::PaletteWidget *mColorSchemeGrid;
+     cor::LightVectorWidget *mColorSchemeGrid;
 
     /// bottom layout, gives 3 sliders for RGB.
     RGBSliders *mRGBSliders;

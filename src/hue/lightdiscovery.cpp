@@ -14,11 +14,11 @@
 namespace hue
 {
 
-LightDiscovery::LightDiscovery(QWidget *parent) : QWidget(parent) {
+LightDiscovery::LightDiscovery(QWidget *parent, CommLayer *comm) : QWidget(parent), mComm(comm) {
     //------------
     // Top Layout
     //------------
-    mTopWidget = new cor::TopWidget("Discover Hues", ":images/closeX.png");
+    mTopWidget = new cor::TopWidget("Discover Hues", ":images/closeX.png", this);
     connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(closeButtonPressed(bool)));
     mTopWidget->setFontPoint(20);
 

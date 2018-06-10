@@ -34,10 +34,7 @@ public:
      * \param comm pointer to commlayer
      * \param data pointer to datalayer
      */
-    ListEditWidget(QWidget *parent = 0);
-
-    /// connects to backend data
-    void connectLayers(CommLayer* comm, DataLayer* data);
+    ListEditWidget(QWidget *parent, CommLayer* comm, DataLayer* data);
 
     /// preferred size for widget
     QSize preferredSize();
@@ -65,7 +62,7 @@ public:
     void updateDevices(std::list<cor::Light> devices, bool removeIfNotFound = false);
 
     /// getter for widget contents
-    EWidgetContents widgetContents() { return EWidgetContents::eDevices; }
+    EWidgetContents widgetContents() { return EWidgetContents::devices; }
 
     /*!
      * \brief devices getter for all devices being displayed by the widget.
@@ -107,17 +104,16 @@ private:
     std::list<cor::Light> mDevices;
 
     /*!
-     * \brief data layer that maintains and tracks the states of the lights
-     *        and the saved data of the GUI
-     */
-    DataLayer *mData;
-
-    /*!
      * \brief communication pointer to communication object
      *        for sending comannds to the lights
      */
     CommLayer *mComm;
 
+    /*!
+     * \brief data layer that maintains and tracks the states of the lights
+     *        and the saved data of the GUI
+     */
+    DataLayer *mData;
 };
 
 #endif // LISTEDITWIDGET_H

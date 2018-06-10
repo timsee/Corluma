@@ -1,7 +1,8 @@
 #ifndef CUSTOMCOLORPICKER_H
 #define CUSTOMCOLORPICKER_H
 
-#include "cor/palettewidget.h"
+#include "cor/palette.h"
+#include "cor/lightvectorwidget.h"
 #include "cor/slider.h"
 
 #include <QWidget>
@@ -22,23 +23,20 @@ public:
     explicit CustomColorPicker(QWidget *parent = nullptr);
 
     /*!
-     * \brief updateMultiColor programmatically set the colors in the multi color picker. This will update
-     *        the UI elements to reflect the values provided. By default it will also signal its
-     *        changes, but a flag can be used to override the signal.
-     * \param colors the colors for the array in the multi color picker
-     * \param count the number of colors to use from the vector
-     */
-    void updateMultiColor(const std::vector<QColor>& colors, int count);
-
-    /*!
      * \brief updateSelected progrmatically update the selected buttons with a new color. Does not emit
      *        a signal when complete
      * \param new color for selected indices
      */
     void updateSelected(QColor color);
 
+    /// update the colors used by the buttons
+    void updateMultiColor(const std::vector<QColor>& colors);
+
     /// getter for pointer of color palette
-    cor::PaletteWidget *palette() { return mColorGrid; }
+    cor::LightVectorWidget *palette() { return mColorGrid; }
+
+    /// getter for the colors used by the buttons
+    const std::vector<QColor>& colors() { return mColors; }
 
 signals:
     /*!
@@ -64,11 +62,17 @@ private slots:
 
 private:
 
+    /// change the selected max count
+    void selectedMaxChanged(uint32_t maxCount);
+
+    /// update how the buttons display
+    void updateDisplay();
+
     /// layout
     QVBoxLayout *mLayout;
 
     /// color palette widget
-    cor::PaletteWidget *mColorGrid;
+    cor::LightVectorWidget *mColorGrid;
 
     /*!
      * \brief mCountSlider slider that determines how many colors are used.

@@ -11,7 +11,7 @@
 #include "icondata.h"
 #include "comm/commtype.h"
 #include "cor/lightgroup.h"
-#include "cor/palettewidget.h"
+#include "cor/lightvectorwidget.h"
 #include "listcollectionsubwidget.h"
 
 /*!
@@ -33,11 +33,9 @@ public:
     /*!
      * \brief ListMoodWidget constructor
      * \param group group of lights in mood
-     * \param colors Color groups for devices using multi color routines.
      */
     explicit ListMoodWidget(const cor::LightGroup& group,
-                             const std::vector<std::vector<QColor> >& colors,
-                             QWidget *parent = 0);
+                             QWidget *parent);
 
     /*!
     * \brief setChecked set the widget as checked or unchecked. When it is checked it
@@ -122,7 +120,7 @@ private:
     QLabel *mName;
 
     /// palette showing the colors
-    cor::PaletteWidget *mPalette;
+    cor::LightVectorWidget *mPalette;
 
     /// stored local copy of the group data.
     cor::LightGroup mGroup;

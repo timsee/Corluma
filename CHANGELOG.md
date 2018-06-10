@@ -299,8 +299,28 @@ ___
 * Fixed edge cases in `CommLayer`.
 * Fixed miscellaneous bugs.
 
+
+### **v0.13.0**
+#### The Great Refactor Part 3: The Why-Do-I-Name-These? Update
+* Renamed enums from `EClass::eName` to `EClass::name`
+* Removed the last `.ui` file, enforcing that all widgets follow the same design pattern. 
+* Large naming refactor:
+	* `ConnectionPage`-> `LightPage`
+	* `GroupsPage`-> `PalettePage`
+	* `MoodsPage`-> `MoodPage`
+	* `lightingpage`-> `cor::Page`
+	* `PaletteWidget`-> `LightVectorWidget`
+* Removed `lightingprotocols.h` and moved its contents into `cor/protocols.h`.
+* Refactored the constructors of widgets to be cleaner. 
+* Added a `Palette` object for storing info on groups of colors.
+* Refactored how preset palettes from `ArduCor` are handled. Instead of being stored in `DataLayer` they are now defined in a JSON file which is read and accessed by `PresetPalette`. 
+* Classes no longer use preprocessors to be ignored, instead this is handled by the build files. 
+* Started a push towards removeing `DataLayer` in favor of a design that doesn't require a god object for internal states. 
+* Added icons and support for connecting to more types of Philips Hue lights. 
+* Fixed miscellaneous bugs.
+
 ### Coming Soon
 * Add support for connecting to multiple NanoLeaf Aurora Controllers.
-* Finish manual discovery of Hues and Bridges
+* Add support and better edge case handling for multiple Hue Bridges on the same network
 
 

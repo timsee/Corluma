@@ -24,7 +24,7 @@ public:
      * \brief DiscoveryNanoLeafWidget constructor
      * \param parent
      */
-    explicit DiscoveryNanoLeafWidget(CommLayer *comm, QWidget *parent = 0);
+    explicit DiscoveryNanoLeafWidget(CommLayer *comm, QWidget *parent);
 
     /*!
      * \brief Destructor

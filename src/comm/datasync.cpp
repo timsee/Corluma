@@ -28,20 +28,20 @@ bool DataSync::checkThrottle(QString controller, ECommType type) {
             switch (type)
             {
 #ifndef MOBILE_BUILD
-            case ECommType::eSerial:
+            case ECommType::serial:
                 throttleInterval = 100;
                 break;
 #endif //MOBILE_BUILD
-            case ECommType::eHTTP:
+            case ECommType::HTTP:
                 throttleInterval = 2000;
                 break;
-            case ECommType::eHue:
+            case ECommType::hue:
                 throttleInterval = 200;
                 break;
-            case ECommType::eNanoleaf:
+            case ECommType::nanoleaf:
                 throttleInterval = 200;
                 break;
-            case ECommType::eUDP:
+            case ECommType::UDP:
                 throttleInterval = 100;
                 break;
             default:

@@ -160,6 +160,12 @@ private:
      */
     bool checkForSavedData();
 
+    /*!
+     * \brief checkIfMoodIsValid reads a json object and determines if it contains all valid values
+     * \param object the object for the mood
+     * \return true if valid, false othewrise
+     */
+    bool checkIfMoodIsValid(const QJsonObject& object);
 
     /*!
      * \brief checkIfGroupIsValid checks that the values of the JSON data actually map to

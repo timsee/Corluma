@@ -41,7 +41,7 @@ public:
     /*!
      * \brief Constructor
      */
-    explicit Slider(QWidget *parent = 0);
+    explicit Slider(QWidget *parent);
 
     /*!
      * \brief setSliderColorBackground Does a dark to light gradient on the color provided on the background

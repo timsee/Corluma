@@ -12,10 +12,10 @@
 
 /// states for the HardwareConnectionWidget
 enum class EHardwareConnectionStates {
-    eNoOutgoingFound,
-    eAttemptingOutgoing,
-    eAttemptingIncoming,
-    eConnected
+    noOutgoingFound,
+    attemptingOutgoing,
+    attemptingIncoming,
+    connected
 };
 
 /*!
@@ -28,7 +28,7 @@ class HardwareConnectionWidget : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit HardwareConnectionWidget(QString hardwareIconPath, QWidget *parent = 0);
+    explicit HardwareConnectionWidget(QString hardwareIconPath, QWidget *parent);
 
     /*!
      * \brief changeState change the state of the widget to display a new state. If its given the state that its

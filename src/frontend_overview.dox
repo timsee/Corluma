@@ -28,11 +28,11 @@
   </tr>
   <tr>
     <td> 
-        <h2>Connection Page</h2>
-        \copydoc ConnectionPage 
+        <h2>Light Page</h2>
+        \copydoc LightPage 
     </td>
     <td>         
-        \image html connectionPagePreview.png
+        \image html lightPagePreview.png
     </td>
   </tr>
   <tr>
@@ -55,11 +55,11 @@
   </tr>
   <tr>
     <td>  
-       <h2>Group Page</h2>
-       \copydoc GroupPage
+       <h2>Palette Page</h2>
+       \copydoc PalettePage
     </td>
     <td>     
-       \image html groupPagePreview.png
+       \image html palettePagePreview.png
     </td>
   </tr>
   <tr>

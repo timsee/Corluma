@@ -111,12 +111,12 @@ void ListWidget::resizeWidgets() {
 
         yPos += preferredSize.height();
 
-        if (widget->widgetContents() == EWidgetContents::eGroups) {
+        if (widget->widgetContents() == EWidgetContents::groups) {
             ListDevicesGroupWidget *devicesWidget = qobject_cast<ListDevicesGroupWidget*>(widget);
             devicesWidget->resize();
 
             devicesWidget->resizeInteralWidgets();
-        } else if (widget->widgetContents() == EWidgetContents::eMoods) {
+        } else if (widget->widgetContents() == EWidgetContents::moods) {
             ListMoodGroupWidget *moodsWidget = qobject_cast<ListMoodGroupWidget*>(widget);
             moodsWidget->resize();
             moodsWidget->resizeInteralWidgets();

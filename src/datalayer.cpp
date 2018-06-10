@@ -10,212 +10,12 @@
 #include <algorithm>
 #include <vector>
 #include "cor/utils.h"
-
+#include "cor/presetpalettes.h"
 #define MAX_SPEED 200
 
-DataLayer::DataLayer() {
-    int i = 0;
+DataLayer::DataLayer(QObject *parent) : QObject(parent) {
 
     mProtocolSettings = new ProtocolSettings();
-    mColors = std::vector<std::vector<QColor> >((size_t)EPalette::ePalette_MAX);
-
-    //==========
-    // Custom Colors
-    //==========
-    mColors[i] =  std::vector<QColor>(10);
-    i++;
-
-    //==========
-    // Water Colors
-    //==========
-
-    mColors[i] =  std::vector<QColor>(5);
-    mColors[i][0] = QColor(0,   0, 255);
-    mColors[i][1] = QColor(0,   25,  225);
-    mColors[i][2] = QColor(0,   0,   127);
-    mColors[i][3] = QColor(0,   127, 127);
-    mColors[i][4] = QColor(120, 120, 255);
-    i++;
-
-    //==========
-    // Frozen Colors
-    //==========
-    mColors[i] =  std::vector<QColor>(6);
-    mColors[i][0] = QColor(0,   127, 255);
-    mColors[i][1] = QColor(169, 228, 247);
-    mColors[i][2] = QColor(200, 0,   255);
-    mColors[i][3] = QColor(200, 200, 200);
-    mColors[i][4] = QColor(127, 127, 127);
-    mColors[i][5] = QColor(127, 127, 255);
-    i++;
-
-    //==========
-    // Snow Colors
-    //==========
-    mColors[i] =  std::vector<QColor>(6);
-    mColors[i][0] = QColor(255, 255, 255);
-    mColors[i][1] = QColor(127, 127, 127);
-    mColors[i][2] = QColor(200, 200, 200);
-    mColors[i][3] = QColor(0,   0,   255);
-    mColors[i][4] = QColor(0,  255,  255);
-    mColors[i][5] = QColor(0,  180,   180);
-    i++;
-
-    //==========
-    // Cool Colors
-    //==========
-    mColors[i] =  std::vector<QColor>(5);
-    mColors[i][0] = QColor(0,   255, 0);
-    mColors[i][1] = QColor(125, 0,   255);
-    mColors[i][2] = QColor(0,   0,   255);
-    mColors[i][3] = QColor(40,  127, 40);
-    mColors[i][4] = QColor(60,  0,   160);
-    i++;
-
-    //==========
-    // Warm Colors
-    //==========
-    mColors[i] =  std::vector<QColor>(5);
-    mColors[i][0] = QColor(255, 255, 0);
-    mColors[i][1] = QColor(255, 0,   0);
-    mColors[i][2] = QColor(255, 45,  0);
-    mColors[i][3] = QColor(255, 200,  0);
-    mColors[i][4] = QColor(255, 127, 0);
-    i++;
-
-    //==========
-    // Fire Colors
-    //==========
-    mColors[i] =  std::vector<QColor>(9);
-    mColors[i][0] = QColor(255, 75,  0);
-    mColors[i][1] = QColor(255, 20,  0);
-    mColors[i][2] = QColor(255, 80,  0);
-    mColors[i][3] = QColor(255, 5,   0);
-    mColors[i][4] = QColor(64,  6,   0);
-    mColors[i][5] = QColor(127, 127, 0);
-    mColors[i][6] = QColor(255, 60,  0);
-    mColors[i][7] = QColor(255, 45,  0);
-    mColors[i][8] = QColor(127, 127, 0);
-    i++;
-
-    //==========
-    // Evil Colors
-    //==========
-    mColors[i] =  std::vector<QColor>(7);
-    mColors[i][0] = QColor(255, 0, 0);
-    mColors[i][1] = QColor(200, 0, 0);
-    mColors[i][2] = QColor(127, 0, 0);
-    mColors[i][3] = QColor(20,  0, 0);
-    mColors[i][4] = QColor(30,  0, 40);
-    mColors[i][5] = QColor(10,  0, 0);
-    mColors[i][6] = QColor(80,  0, 0);
-    i++;
-
-    //==========
-    // Corrosive Colors
-    //==========
-    mColors[i] =  std::vector<QColor>(5);
-    mColors[i][0] = QColor(0,   255, 0);
-    mColors[i][1] = QColor(0,   200, 0);
-    mColors[i][2] = QColor(60,  180,  60);
-    mColors[i][3] = QColor(127, 135, 127);
-    mColors[i][4] = QColor(10,  255,   10);
-    i++;
-
-    //==========
-    // Poison Colors
-    //==========
-    mColors[i] =  std::vector<QColor>(9);
-    mColors[i][0] = QColor(80, 0, 180);
-    mColors[i][1] = QColor(120, 0, 255);
-    mColors[i][2] = QColor(0, 0,   0);
-    mColors[i][3] = QColor(25, 0,  25);
-    mColors[i][4] = QColor(60, 60,  60);
-    mColors[i][5] = QColor(120, 0, 255);
-    mColors[i][6] = QColor(80,  0, 180);
-    mColors[i][7] = QColor(40,  0, 90);
-    mColors[i][8] = QColor(80,  0, 180);
-    i++;
-
-    //==========
-    // Rose
-    //==========
-    mColors[i] =  std::vector<QColor>(6);
-    mColors[i][0] = QColor(216, 30,  100);
-    mColors[i][1] = QColor(255, 245, 251);
-    mColors[i][2] = QColor(156, 62,  72);
-    mColors[i][3] = QColor(127, 127, 127);
-    mColors[i][4] = QColor(194, 30,  86);
-    mColors[i][5] = QColor(194, 30,  30);
-    i++;
-
-    //==========
-    // Pink Green
-    //==========
-    mColors[i] =  std::vector<QColor>(4);
-    mColors[i][0]  = QColor(255, 20,  147);
-    mColors[i][1]  = QColor(0,   255, 0);
-    mColors[i][2]  = QColor(0,   200, 0);
-    mColors[i][3]  = QColor(255, 105, 180);
-    i++;
-
-    //==========
-    // Red White Blue
-    //==========
-    mColors[i] =  std::vector<QColor>(4);
-    mColors[i][0]  = QColor(255, 255, 255);
-    mColors[i][1]  = QColor(255, 0,   0);
-    mColors[i][2]  = QColor(0,   0,   255);
-    mColors[i][3]  = QColor(255, 255, 255);
-    i++;
-
-    //==========
-    // RGB
-    //==========
-    mColors[i] =  std::vector<QColor>(3);
-    mColors[i][0] = QColor(255, 0,   0);
-    mColors[i][1] = QColor(0,   255, 0);
-    mColors[i][2] = QColor(0,   0,   255);
-    i++;
-
-    //==========
-    // CMY
-    //==========
-    mColors[i] =  std::vector<QColor>(3);
-    mColors[i][0] = QColor(255, 255, 0);
-    mColors[i][1] = QColor(0,   255, 255);
-    mColors[i][2] = QColor(255,   0, 255);
-    i++;
-
-    //==========
-    // Six Color
-    //==========
-    mColors[i] =  std::vector<QColor>(6);
-    mColors[i][0] = QColor(255, 0,   0);
-    mColors[i][1] = QColor(255, 255, 0);
-    mColors[i][2] = QColor(0,   255, 0);
-    mColors[i][3] = QColor(0,   255, 255);
-    mColors[i][4] = QColor(0,   0,   255);
-    mColors[i][5] = QColor(255, 0,   255);
-    i++;
-
-    //==========
-    // Seven Color
-    //==========
-    mColors[i] =  std::vector<QColor>(7);
-    mColors[i][0] = QColor(255, 0,   0);
-    mColors[i][1] = QColor(255, 255, 0);
-    mColors[i][2] = QColor(0,   255, 0);
-    mColors[i][3] = QColor(0,   255, 255);
-    mColors[i][4] = QColor(0,   0,   255);
-    mColors[i][5] = QColor(255, 0,   255);
-    mColors[i][6] = QColor(255, 255, 255);
-    i++;
-
-    mColorAverages = std::vector<QColor>((int)EPalette::ePalette_MAX);
-    for (uint32_t i = 0; i < mColors.size(); ++i) {
-        mColorAverages[i] = averageGroup((EPalette)i);
-    }
 }
 
 DataLayer::~DataLayer() {
@@ -265,7 +65,7 @@ bool DataLayer::isOn() {
 QColor DataLayer::mainColor() {
     if (!anyDevicesReachable()) {
         return QColor(0,0,0);
-    } else if ((int)currentRoutine() <= (int)cor::ERoutineSingleColorEnd) {
+    } else {
         int r = 0;
         int g = 0;
         int b = 0;
@@ -277,103 +77,33 @@ QColor DataLayer::mainColor() {
                         r = r + device->color.red();
                         g = g + device->color.green();
                         b = b + device->color.blue();
+                        deviceCount++;
                     } else {
-                        QColor color = colorsAverage(device->palette);
-                        r = r + color.red();
-                        g = g + color.green();
-                        b = b + color.blue();
+                        for (auto&& color : device->palette.colors()) {
+                            r = r + color.red();
+                            g = g + color.green();
+                            b = b + color.blue();
+                            deviceCount++;
+                        }
                     }
-                    deviceCount++;
                 }
             }
             if (deviceCount > 0) {
                 r = r / deviceCount;
                 g = g / deviceCount;
                 b = b / deviceCount;
+            } else {
+                return QColor(0,0,0);
             }
         }
         return QColor(r,g,b);
-    } else {
-        return colorsAverage(palette());
     }
 }
-
-EPalette DataLayer::closestColorGroupToColor(QColor color) {
-    EPalette closestMatch = EPalette::eWater;
-    int currentDifference = INT_MAX;
-    //TODO: do a much less naive check for this
-    for (uint32_t i = 1; i < mColorAverages.size() - 1; ++i) {
-        int difference = 0;
-        difference += std::abs(mColorAverages[i].red() - color.red());
-        difference += std::abs(mColorAverages[i].green() - color.green());
-        difference += std::abs(mColorAverages[i].blue() - color.blue());
-        if (difference < currentDifference) {
-            currentDifference = difference;
-            closestMatch = (EPalette)i;
-        }
-    }
-    return closestMatch;
-}
-
-uint8_t DataLayer::maxColorGroupSize() {
-    return 10;
-}
-
-const std::vector<QColor>& DataLayer::palette(EPalette palette) {
-    if (palette == EPalette::eCustom && mCurrentDevices.size() > 0) {
-        return mCurrentDevices.begin()->customColorArray;
-    } else if ((int)palette < (int)EPalette::ePalette_MAX) {
-        return mColors[(int)palette];
-    } else {
-        throw "Color Group not valid!";
-        return mColors[0];
-    }
-}
-
-QColor DataLayer::averageGroup(EPalette palette) {
-    int r = 0;
-    int g = 0;
-    int b = 0;
-
-    std::vector<QColor> colorGroup;
-    uint8_t count;
-    if (palette == EPalette::eCustom && mCurrentDevices.size() > 0) {
-        colorGroup = mCurrentDevices.begin()->customColorArray;
-        count = mCurrentDevices.begin()->customColorCount;
-    } else {
-        colorGroup = mColors[(uint32_t)palette];
-        count = colorGroup.size();
-    }
-    for (int i = 0; i < count; ++i) {
-       r = r + colorGroup[i].red();
-       g = g + colorGroup[i].green();
-       b = b + colorGroup[i].blue();
-    }
-    if (count > 0) {
-        return QColor(r / count,
-                      g / count,
-                      b / count);
-        return QColor();
-    } else {
-        return QColor();
-    }
-}
-
-
-QColor DataLayer::colorsAverage(EPalette palette) {
-    if (palette == EPalette::eCustom) {
-        return averageGroup(palette);
-    } else {
-        return mColorAverages[(uint32_t)palette];
-    }
-}
-
-
 
 bool DataLayer::hasHueDevices() {
     int hueCount = 0;
     for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
-        if (device->commType() == ECommType::eHue) hueCount++;
+        if (device->commType() == ECommType::hue) hueCount++;
     }
     return (hueCount > 0);
 }
@@ -381,7 +111,7 @@ bool DataLayer::hasHueDevices() {
 bool DataLayer::hasNanoLeafDevices() {
     int nanoLeafCount = 0;
     for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
-        if (device->commType() == ECommType::eNanoleaf) nanoLeafCount++;
+        if (device->commType() == ECommType::nanoleaf) nanoLeafCount++;
     }
     return (nanoLeafCount > 0);
 }
@@ -389,13 +119,13 @@ bool DataLayer::hasNanoLeafDevices() {
 bool DataLayer::hasArduinoDevices() {
     int arduinoCount = 0;
     for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
-        if (device->protocol() == EProtocolType::eArduCor) arduinoCount++;
+        if (device->protocol() == EProtocolType::arduCor) arduinoCount++;
     }
     return (arduinoCount > 0);
 }
 
 ERoutine DataLayer::currentRoutine() {
-    std::vector<int> routineCount((int)ERoutine::eRoutine_MAX, 0);
+    std::vector<int> routineCount((int)ERoutine::MAX, 0);
     for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
         if (device->isReachable) {
             routineCount[(int)device->routine] = routineCount[(int)device->routine] + 1;
@@ -406,21 +136,12 @@ ERoutine DataLayer::currentRoutine() {
     return modeRoutine;
 }
 
-QJsonObject DataLayer::currentRoutineObject() {
-    cor::Light light;
-    light.routine = currentRoutine();
-    light.color = mainColor();
-    light.palette = palette();
-    light.speed = speed();
-    return lightToJson(light);
-}
-
 EPalette DataLayer::palette() {
     // count number of times each color group occurs
-    std::vector<int> paletteCount((int)EPalette::ePalette_MAX, 0);
+    std::vector<int> paletteCount((int)EPalette::unknown, 0);
     for (auto&& device = mCurrentDevices.begin(); device != mCurrentDevices.end(); ++device) {
         if (device->isReachable) {
-            paletteCount[(int)device->palette] = paletteCount[(int)device->palette] + 1;
+            paletteCount[(int)device->palette.paletteEnum()] = paletteCount[(int)device->palette.paletteEnum()] + 1;
         }
     }
     // find the most frequent color group occurence, return its index.
@@ -428,46 +149,49 @@ EPalette DataLayer::palette() {
     return (EPalette)std::distance(paletteCount.begin(), result);
 }
 
-const std::vector<QColor>& DataLayer::paletteColors() {
-    if (palette() == EPalette::eCustom) {
-        return mCurrentDevices.begin()->customColorArray;
-    } else {
-        return mColors[(int)palette()];
-    }
-}
-
 void DataLayer::updateRoutine(const QJsonObject& routineObject) {
     std::list<cor::Light>::iterator iterator;
     ERoutine routine = stringToRoutine(routineObject["routine"].toString());
+    bool isOn = routineObject["isOn"].toBool();
+
     int speed = INT_MIN;
-    if (routine != ERoutine::eSingleSolid) {
+    if (routine != ERoutine::singleSolid) {
         speed = routineObject["speed"].toDouble();
     }
     int hueCount = 0;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
         iterator->routine = routine;
-        if (routine != ERoutine::eSingleSolid) {
+        iterator->isOn = isOn;
+
+        if (routine != ERoutine::singleSolid) {
             iterator->speed = speed;
-            if (iterator->protocol() == EProtocolType::eNanoleaf) {
+            if (iterator->protocol() == EProtocolType::nanoleaf) {
                 iterator->speed = MAX_SPEED - speed;
             }
         }
 
         if (routine <= cor::ERoutineSingleColorEnd) {
-            QColor color(routineObject["red"].toDouble(),
-                         routineObject["green"].toDouble(),
-                         routineObject["blue"].toDouble());
-            iterator->color = color;
+            // check for edge case where ambient color values are used
+            if (routineObject["temperature"].isDouble()) {
+                iterator->color = cor::colorTemperatureToRGB(routineObject["temperature"].toDouble());
+                if (iterator->commType() == ECommType::hue) {
+
+                }
+            } else {
+                iterator->color = QColor(routineObject["red"].toDouble(),
+                                         routineObject["green"].toDouble(),
+                                         routineObject["blue"].toDouble());
+            }
         } else {
-            EPalette palette = stringToPalette(routineObject["palette"].toString());
+            Palette palette = Palette(routineObject["palette"].toObject());
             iterator->palette = palette;
 
             /*!
              * hues are not individually addressable, mock a color group by setting
              * each individual light as a color
              */
-            std::vector<QColor> colors = this->palette(palette);
-            if (iterator->commType() == ECommType::eHue) {
+            std::vector<QColor> colors = palette.colors();
+            if (iterator->commType() == ECommType::hue) {
                 int colorIndex = hueCount % colors.size();
                 iterator->color = colors[colorIndex];
                 // update the brightness to match the brightness of the color
@@ -489,46 +213,15 @@ void DataLayer::updateSpeed(int speed) {
     std::list<cor::Light>::iterator iterator;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
         int finalSpeed = 0;
-        if (iterator->protocol() == EProtocolType::eArduCor) {
+        if (iterator->protocol() == EProtocolType::arduCor) {
             finalSpeed = speed;
-        } else if (iterator->commType() == ECommType::eNanoleaf) {
+        } else if (iterator->commType() == ECommType::nanoleaf) {
             finalSpeed = MAX_SPEED - speed;
         }
         iterator->speed = finalSpeed;
     }
     emit dataUpdate();
 }
-
-void DataLayer::updatePalette(EPalette palette) {
-    std::list<cor::Light>::iterator iterator;
-    int hueCount = 0;
-    for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
-        /*!
-         * hues are not individually addressable, mock a color group by setting
-         * each individual light as a color
-         */
-        std::vector<QColor> colors = this->palette(palette);
-        if (iterator->commType() == ECommType::eHue) {
-            int colorIndex = hueCount % colors.size();
-            iterator->color = colors[colorIndex];
-            // update the brightness to match the brightness of the color
-            int brightness = iterator->color.toHsv().valueF() * 100;
-            iterator->brightness = brightness;
-            hueCount++;
-        }
-        iterator->palette = palette;
-    }
-    emit dataUpdate();
-}
-
-void DataLayer::updateCt(int ct) {
-    std::list<cor::Light>::iterator iterator;
-    for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
-        iterator->color = cor::colorTemperatureToRGB(ct);
-    }
-    emit dataUpdate();
-}
-
 
 void DataLayer::turnOn(bool on) {
     std::list<cor::Light>::iterator iterator;
@@ -546,10 +239,10 @@ void DataLayer::updateColorScheme(std::vector<QColor> colors) {
         iterator->isOn = true;
 
         // handle Hue special case
-        if (iterator->commType() == ECommType::eHue) {
-            iterator->colorMode = EColorMode::eHSV;
+        if (iterator->commType() == ECommType::hue) {
+            iterator->colorMode = EColorMode::HSV;
         } else {
-            iterator->colorMode = EColorMode::eRGB;
+            iterator->colorMode = EColorMode::RGB;
         }
 
         i++;
@@ -558,24 +251,16 @@ void DataLayer::updateColorScheme(std::vector<QColor> colors) {
     emit dataUpdate();
 }
 
-void DataLayer::updateBrightness(int brightness, std::list<cor::Light> specialCaseDevices) {
+void DataLayer::updateBrightness(int brightness) {
     std::list<cor::Light>::iterator iterator;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
         iterator->brightness = brightness;
-        if (iterator->commType() == ECommType::eHue
-                || iterator->commType() == ECommType::eNanoleaf) {
-            bool isSpecialCase = false;
-            for (auto&& specialDevice : specialCaseDevices) {
-                if (compareLight(specialDevice, *iterator)) {
-                    isSpecialCase = true;
-                }
-            }
-            if (!isSpecialCase) {
-                // get the color as a HSV
-                QColor hsv = iterator->color.toHsv();
-                // update to new version of color
-                iterator->color.setHsv(hsv.hue(), hsv.saturation(), (int)(255.0f * (brightness / 100.0f)));
-            }
+        if (iterator->commType() == ECommType::hue
+                || iterator->commType() == ECommType::nanoleaf) {
+            // get the color as a HSV
+            QColor hsv = iterator->color.toHsv();
+            // update to new version of color
+            iterator->color.setHsv(hsv.hue(), hsv.saturation(), (int)(255.0f * (brightness / 100.0f)));
         }
         iterator->isOn = true;
     }
@@ -586,27 +271,6 @@ void DataLayer::updateTimeout(int timeout) {
     mTimeout = timeout;
     emit settingsUpdate();
 }
-
-void DataLayer::updateCustomColorCount(uint32_t count) {
-    std::list<cor::Light>::iterator iterator;
-    for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
-        iterator->customColorCount = count;
-    }
-    emit dataUpdate();
-}
-
-void DataLayer::updateCustomColorArray(int index, QColor color) {
-    if (index <= 10) {
-        std::list<cor::Light>::iterator iterator;
-        for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
-            if (iterator->commType() != ECommType::eHue) { // hues dont use this custom color array
-                iterator->customColorArray[index] = color;
-            }
-        }
-        emit dataUpdate();
-    }
-}
-
 
 bool DataLayer::devicesContainCommType(ECommType type) {
     std::list<cor::Light>::iterator iterator;
@@ -619,30 +283,9 @@ bool DataLayer::devicesContainCommType(ECommType type) {
     return foundCommType;
 }
 
-
-bool DataLayer::customColor(uint32_t index, QColor color) {
-    if (index < mColors[0].size()) {
-        mColors[0][index] = color;
-        return true;
-    }
-    return false;
-}
-
-
 void DataLayer::enableTimeout(bool timeout) {
     mTimeoutEnabled = timeout;
     emit settingsUpdate();
-}
-
-uint32_t DataLayer::customColorsUsed() {
-    uint32_t customColorCount = 0;
-    for (auto&& device : mCurrentDevices) {
-        customColorCount = customColorCount + device.customColorCount;
-    }
-    if (mCurrentDevices.size() > 1) {
-        customColorCount = customColorCount / mCurrentDevices.size();
-    }
-    return customColorCount;
 }
 
 
@@ -680,7 +323,9 @@ bool DataLayer::removeDevice(cor::Light device){
 bool DataLayer::addDeviceList(const std::list<cor::Light>& list) {
     bool hasFailed = false;
     for (auto&& device : list) {
-        if (!addDevice(device)) hasFailed = true;
+        if (device.isReachable) {
+            if (!addDevice(device)) hasFailed = true;
+        }
     }
 
     //TODO: remove this edge case that always autofills the timeout and speed to default values

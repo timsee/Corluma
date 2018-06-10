@@ -24,7 +24,7 @@ class StatusIcon : public QWidget
 public:
 
     /// constructor
-    explicit StatusIcon(QWidget *parent = 0);
+    explicit StatusIcon(QWidget *parent);
 
     /*!
      * \brief update update the icon's state.
@@ -41,7 +41,6 @@ private:
 
     /// main icon
     QLabel *mIcon;
-
 };
 
 }

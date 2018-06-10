@@ -10,7 +10,6 @@
 #include "cor/utils.h"
 
 ListMoodWidget::ListMoodWidget(const cor::LightGroup& group,
-                                 const std::vector<std::vector<QColor> >& colors,
                                  QWidget *parent) {
     this->setParent(parent);
     mIsChecked = false;
@@ -55,9 +54,10 @@ ListMoodWidget::ListMoodWidget(const cor::LightGroup& group,
         mName->setStyleSheet(backgroundStyleSheet);
     }
 
-    mPalette = new  cor::PaletteWidget(3, 2, colors, cor::EPaletteWidgetType::eInfo, this);
+    mPalette = new  cor::LightVectorWidget(3, 2, cor::EPaletteWidgetType::info, this);
     mPalette->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mPalette->enableButtonInteraction(false);
+    //mPalette->hideOffDevices(true);
     mPalette->updateDevices(mGroup.devices);
 
     // setup layout

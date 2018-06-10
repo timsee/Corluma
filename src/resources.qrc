@@ -55,5 +55,15 @@
         <file>images/hue_bulb.png</file>
         <file>images/led_icon.png</file>
         <file>images/nanoleaf_icon.png</file>
+        <file>images/hue_bulb_round.png</file>
+        <file>images/hue_iris.png</file>
+        <file>images/hue_spot.png</file>
+        <file>images/hue_aura.png</file>
+        <file>images/hue_candle.png</file>
+        <file>images/hue_downlight.png</file>
+        <file>images/hue_lamp.png</file>
+        <file>images/hue_storylight.png</file>
+        <file>images/hue_go.png</file>
+        <file>resources/palettes.json</file>
     </qresource>
 </RCC>

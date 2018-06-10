@@ -44,7 +44,7 @@ public:
     /*!
      * \brief BridgeDiscovery Constructor
      */
-    explicit BridgeDiscovery(QObject *parent = 0);
+    explicit BridgeDiscovery(QObject *parent);
 
     /*!
      * \brief Deconstructor
@@ -78,7 +78,7 @@ public:
      *        false otherwise.
      * \return true if a bridge is connected and discovery was successful, false otherwise.
      */
-    bool isConnected() { return (mDiscoveryState == EHueDiscoveryState::eBridgeConnected); }
+    bool isConnected() { return (mDiscoveryState == EHueDiscoveryState::bridgeConnected); }
 
     /*!
      * \brief bridge All currently known data about the hue bridge. This is only guarenteed to
@@ -234,8 +234,6 @@ private:
      * \brief kAppName application name, required by Philips in devicetype.
      */
     const static QString kAppName;
-
-
 };
 
 }

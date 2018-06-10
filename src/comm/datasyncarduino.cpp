@@ -35,7 +35,7 @@ void DataSyncArduino::cancelSync() {
 }
 
 void DataSyncArduino::commPacketReceived(EProtocolType type) {
-    if (type == EProtocolType::eArduCor) {
+    if (type == EProtocolType::arduCor) {
         if (!mDataIsInSync) {
             resetSync();
         }
@@ -62,7 +62,7 @@ void DataSyncArduino::syncData() {
         int countOutOfSync = 0;
         for (auto&& device : mData->currentDevices()) {
             cor::Light commLayerDevice = device;
-            if (device.protocol() == EProtocolType::eArduCor) {
+            if (device.protocol() == EProtocolType::arduCor) {
                 if (mComm->fillDevice(commLayerDevice)) {
                     if (checkThrottle(device.controller(), device.commType())) {
                         if (!sync(device, commLayerDevice)) {
@@ -128,9 +128,9 @@ void DataSyncArduino::syncData() {
 void DataSyncArduino::simplifyPackets(const cor::Controller& controller, std::list<QString>& allMessages) {
     // count number of packets for each of the headers
     if (controller.maxHardwareIndex != 1) {
-        std::vector<int> packetCount((int)EPacketHeader::ePacketHeader_MAX, 0);
+        std::vector<int> packetCount((int)EPacketHeader::MAX, 0);
         // rest of packet
-        std::vector<QString> restOfPacket((int)EPacketHeader::ePacketHeader_MAX);
+        std::vector<QString> restOfPacket((int)EPacketHeader::MAX);
         for (auto&& message : allMessages) {
            // qDebug() << "\t" << message;
             QStringList packetArray = message.split(",");
@@ -216,7 +216,7 @@ bool DataSyncArduino::sync(const cor::Light& dataDevice, const cor::Light& commD
         bool routineInSync = (commDevice.routine == dataDevice.routine);
         bool speedInSync   = (commDevice.speed == dataDevice.speed);
         // speed is not used only in single solid routines
-        if (dataDevice.routine == ERoutine::eSingleSolid) {
+        if (dataDevice.routine == ERoutine::singleSolid) {
             speedInSync = true;
         }
 
@@ -227,9 +227,10 @@ bool DataSyncArduino::sync(const cor::Light& dataDevice, const cor::Light& commD
         // these are optional parameters depending on the routine
         bool paramsInSync       = true;
         bool colorInSync        = (cor::colorDifference(dataDevice.color, commDevice.color) <= 0.01f);
-        bool paletteInSync      = (commDevice.palette == dataDevice.palette);
+        bool paletteInSync      = (commDevice.palette.paletteEnum() == dataDevice.palette.paletteEnum());
 //        bool routineParamInSync = (commDevice.param == dataDevice.param);
         if (!colorInSync && dataDevice.routine <= cor::ERoutineSingleColorEnd) {
+
             paramsInSync = false;
         }
         if (!paletteInSync && dataDevice.routine > cor::ERoutineSingleColorEnd) {
@@ -255,11 +256,11 @@ bool DataSyncArduino::sync(const cor::Light& dataDevice, const cor::Light& commD
             }
 
             if (dataDevice.routine > cor::ERoutineSingleColorEnd) {
-                //qDebug() << "ArduCor palette not in sync" << paletteToString(commDevice.palette) << "vs" << paletteToString(dataDevice.palette);
-                routineObject["palette"]   = paletteToString(dataDevice.palette);
+               // qDebug() << "ArduCor palette not in sync" << commDevice.palette.name() << "vs" << dataDevice.palette.name();
+                routineObject["palette"]   = dataDevice.palette.JSON();
             }
 
-            if (dataDevice.routine != ERoutine::eSingleSolid) {
+            if (dataDevice.routine != ERoutine::singleSolid) {
                 routineObject["speed"]   = dataDevice.speed;
                 if (dataDevice.param != INT_MIN) {
                     routineObject["param"] = dataDevice.param;
@@ -285,22 +286,24 @@ bool DataSyncArduino::sync(const cor::Light& dataDevice, const cor::Light& commD
         //-------------------
         // Custom Color Count Sync
         //-------------------
-        if (commDevice.customColorCount != dataDevice.customColorCount) {
-           // qDebug() << "Custom color count not in sync";
-            QString message = mComm->sendCustomArrayCount(list, dataDevice.customColorCount);
-            appendToPacket(packet, message, controller.maxPacketSize);
-            countOutOfSync++;
-        }
-
-        //-------------------
-        // Custom Color Sync
-        //-------------------
-        for (uint32_t i = 0; i < dataDevice.customColorCount; ++i) {
-            if (cor::colorDifference(dataDevice.customColorArray[i], commDevice.customColorArray[i]) > 0.02f) {
-             //   qDebug() << "Custom color" << i << "not in sync";
-                QString message = mComm->sendArrayColorChange(list, i, dataDevice.customColorArray[i]);
+        if (dataDevice.palette.paletteEnum() == EPalette::custom) {
+            if (commDevice.customCount != dataDevice.palette.colors().size()) {
+               // qDebug() << "Custom color count not in sync";
+                QString message = mComm->sendCustomArrayCount(list, commDevice.palette.colors().size());
                 appendToPacket(packet, message, controller.maxPacketSize);
                 countOutOfSync++;
+            }
+
+            //-------------------
+            // Custom Color Sync
+            //-------------------
+            for (uint32_t i = 0; i < dataDevice.palette.colors().size(); ++i) {
+                if (cor::colorDifference(dataDevice.palette.colors()[i], commDevice.customColors[i]) > 0.02f) {
+                   // qDebug() << "Custom color" << i << "not in sync" << " comm: " << commDevice.customColors[i] << "data: " << dataDevice.palette.colors()[i];
+                    QString message = mComm->sendArrayColorChange(list, i, dataDevice.palette.colors()[i]);
+                    appendToPacket(packet, message, controller.maxPacketSize);
+                    countOutOfSync++;
+                }
             }
         }
     }

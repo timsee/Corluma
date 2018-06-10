@@ -25,7 +25,7 @@ class DiscoveryWidget: public QWidget
 
 public:
     /// constructor
-    explicit DiscoveryWidget(QWidget *parent = 0);
+    explicit DiscoveryWidget(QWidget *parent);
 
     /*!
      * \brief ~DiscoveryWidget Deconstructor

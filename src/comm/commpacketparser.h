@@ -4,7 +4,8 @@
 #include <QWidget>
 #include <QColor>
 #include <QJsonObject>
-#include "lightingprotocols.h"
+#include "cor/protocols.h"
+#include "cor/presetpalettes.h"
 
 /*!
  * \copyright
@@ -90,6 +91,9 @@ signals:
     void receivedTimeOutChange(int deviceIndex, int timeOut);
 
 private:
+
+    /// preset data for palettes from ArduCor
+    PresetPalettes mPresetPalettes;
 
     /// parses an int vector representation of a routine object.
     void routineChange(const std::vector<int>& intVector);

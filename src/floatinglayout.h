@@ -5,12 +5,13 @@
 #include <QPushButton>
 #include <QHBoxLayout>
 #include "cor/button.h"
+#include "cor/presetpalettes.h"
 
 /// size of buttons in widget
 enum class EButtonSize {
-    eSmall,
-    eMedium,
-    eRectangle
+    small,
+    medium,
+    rectangle
 };
 
 /*!
@@ -33,7 +34,7 @@ public:
      * \param makeVertical makes a vertical layout if true, makes a horizontal layout if false.
      * \param parent parent
      */
-    explicit FloatingLayout(bool makeVertical = false, QWidget *parent = 0);
+    explicit FloatingLayout(bool makeVertical, QWidget *parent);
 
     /*!
      * \brief setupButtons takees the vector of names and the size given and updates the buttons
@@ -42,7 +43,7 @@ public:
      *        is clicked.
      * \param buttonSize preferred size for buttons
      */
-    void setupButtons(std::vector<QString> buttons, EButtonSize buttonSize = EButtonSize::eSmall);
+    void setupButtons(std::vector<QString> buttons, EButtonSize buttonSize);
 
     /*!
      * \brief move move layout to a new location based off of the top right point provided.
@@ -53,21 +54,8 @@ public:
     /*!
      * \brief updateRoutine show a routine on the button
      * \param routineObject the json representatino of the routine
-     * \param colors the colors used for multi color routines
      */
-    void updateRoutine(const QJsonObject& routineObject, std::vector<QColor> colors);
-
-    /*!
-     * \brief updateMultiPageButton update the multi page button to display a prettier icon
-     * \param colors all the colorgroups.
-     */
-    void updateMultiPageButton(const std::vector<std::vector<QColor> >& colors);
-
-    /*!
-     * \brief updateGroupPageButtons update group page buttons using colors only found in the datalayer
-     * \param colors mData->colors()
-     */
-    void updateGroupPageButtons(const std::vector<std::vector<QColor> >& colors);
+    void updateRoutine(const QJsonObject& routineObject);
 
     /*!
      * \brief updateDiscoveryButton update the icon of a discovery button. Shows the discovery state of the connection.
@@ -136,6 +124,9 @@ private slots:
     void buttonPressed(int);
 
 private:
+
+    /// preset data for palettes from ArduCor
+    PresetPalettes mPalettes;
 
     /*!
      * \brief isALightsButton true if button at index is a lights button, false if its not or if the index is out of range

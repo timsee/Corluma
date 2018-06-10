@@ -40,7 +40,7 @@ public:
                            QString key,
                            CommLayer *comm,
                            DataLayer *data,
-                           QWidget *parent = 0);
+                           QWidget *parent);
 
 
     /*!
@@ -89,7 +89,7 @@ public:
     void setShowButtons(bool show);
 
     /// getter for the type of widget
-    EWidgetContents widgetContents() { return EWidgetContents::eGroups; }
+    EWidgetContents widgetContents() { return EWidgetContents::groups; }
 
     /// getter for the group data.
     const cor::LightGroup& group() { return mGroup; }

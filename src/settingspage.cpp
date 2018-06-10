@@ -26,17 +26,17 @@
 
 #include <QDesktopWidget>
 
-SettingsPage::SettingsPage(QWidget *parent) :
-    QWidget(parent) {
+SettingsPage::SettingsPage(QWidget *parent, CommLayer *comm, DataLayer *data, GroupsParser *parser) :
+    QWidget(parent), mGroups(parser) {
     mShowingDebug = true;
 
-    mCurrentWebView = ECorlumaWebView::eNone;
+    mCurrentWebView = ECorlumaWebView::none;
 
     //------------
     // Top Layout
     //------------
 
-    mTopWidget = new cor::TopWidget("", ":images/closeX.png");
+    mTopWidget = new cor::TopWidget("", ":images/closeX.png", this);
     connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(closeButtonPressed(bool)));
 
     //------------
@@ -129,7 +129,7 @@ SettingsPage::SettingsPage(QWidget *parent) :
     //------------
     // Global Widget
     //------------
-    mGlobalWidget = new GlobalSettingsWidget(mScrollAreaWidget);
+    mGlobalWidget = new GlobalSettingsWidget(mScrollAreaWidget, comm, data);
     mGlobalWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mScrollLayout->addWidget(mGlobalWidget);
 
@@ -164,11 +164,11 @@ void SettingsPage::resizeEvent(QResizeEvent *event) {
     QRect hiddenWidget = QRect(0, this->geometry().height(), this->width(), this->height());
 
     switch (mCurrentWebView) {
-        case ECorlumaWebView::eCopyright:
+        case ECorlumaWebView::copyright:
             mCopyrightWidget->setGeometry(shownWidget);
             mFAQWidget->setGeometry(hiddenWidget);
             break;
-        case ECorlumaWebView::eFAQ:
+        case ECorlumaWebView::FAQ:
             mCopyrightWidget->setGeometry(hiddenWidget);
             mFAQWidget->setGeometry(shownWidget);
             break;
@@ -192,7 +192,7 @@ void SettingsPage::loadButtonClicked() {
     if (dialog.exec()) {
         fileNames = dialog.selectedFiles();
         for (auto& name : fileNames){
-            if (!mComm->groups()->loadExternalData(name)) {
+            if (!mGroups->loadExternalData(name)) {
                 qDebug() << "WARNING: loading external data failed at " << name;
             }
         }
@@ -207,7 +207,7 @@ void SettingsPage::saveButtonClicked() {
         qDebug() << "WARNING: save file name empty";
         return;
     }
-    if (!mComm->groups()->saveFile(fileName)) {
+    if (!mGroups->saveFile(fileName)) {
         qDebug() << "WARNING: Save failed!";
     }
 }
@@ -223,14 +223,14 @@ void SettingsPage::resetButtonClicked() {
 }
 
 void SettingsPage::resetToDefaults() {
-    mGlobalWidget->checkBoxClicked(EProtocolType::eHue, true);
-    mGlobalWidget->checkBoxClicked(EProtocolType::eArduCor, false);
-    mGlobalWidget->checkBoxClicked(EProtocolType::eNanoleaf, false);
+    mGlobalWidget->checkBoxClicked(EProtocolType::hue, true);
+    mGlobalWidget->checkBoxClicked(EProtocolType::arduCor, false);
+    mGlobalWidget->checkBoxClicked(EProtocolType::nanoleaf, false);
 
     mGlobalWidget->timeoutButtonPressed(true);
 
     // load no data, deleting everything.
-    mComm->groups()->loadExternalData("");
+    mGroups->loadExternalData("");
 }
 
 void SettingsPage::removeDebug() {
@@ -269,13 +269,7 @@ void SettingsPage::paintEvent(QPaintEvent *) {
 void SettingsPage::settingsButtonPressed(QString title) {
    // qDebug() << "settings button pressed: " << title;
     if (title.compare("Debug") == 0) {
-        std::list<cor::Light> debugDevices = mComm->groups()->loadDebugData();
-        if (debugDevices.size() > 0) {
-            mComm->loadDebugData(debugDevices);
-            emit debugPressed();
-        } else {
-            qDebug() << "WARNING: Debug devices not found!";
-        }
+        emit debugPressed();
     } else if (title.compare("Reset") == 0) {
         resetButtonClicked();
     } else if (title.compare("Load") == 0) {
@@ -289,9 +283,9 @@ void SettingsPage::settingsButtonPressed(QString title) {
     } else if (title.compare("Hue Info") == 0) {
         emit clickedHueInfoWidget();
     } else if (title.compare("Copyright") == 0) {
-        showWebView(ECorlumaWebView::eCopyright);
+        showWebView(ECorlumaWebView::copyright);
     } else if (title.compare("FAQ") == 0) {
-        showWebView(ECorlumaWebView::eFAQ);
+        showWebView(ECorlumaWebView::FAQ);
     } else if (title.compare("Mock Connection") == 0) {
         MainWindow *mainWindow = qobject_cast<MainWindow*>(this->parentWidget());
         Q_ASSERT(mainWindow);
@@ -306,10 +300,10 @@ void SettingsPage::showWebView(ECorlumaWebView newWebView) {
 
         cor::WebView *widget;
         switch (newWebView) {
-            case ECorlumaWebView::eCopyright:
+            case ECorlumaWebView::copyright:
                 widget = mCopyrightWidget;
                 break;
-            case ECorlumaWebView::eFAQ:
+            case ECorlumaWebView::FAQ:
                 widget = mFAQWidget;
                 break;
             default:
@@ -331,10 +325,10 @@ void SettingsPage::hideCurrentWebView() {
 
     cor::WebView *widget;
     switch (mCurrentWebView) {
-        case ECorlumaWebView::eCopyright:
+        case ECorlumaWebView::copyright:
             widget = mCopyrightWidget;
             break;
-        case ECorlumaWebView::eFAQ:
+        case ECorlumaWebView::FAQ:
             widget = mFAQWidget;
             break;
         default:
@@ -349,5 +343,5 @@ void SettingsPage::hideCurrentWebView() {
     animation->start();
     widget->raise();
 
-    mCurrentWebView = ECorlumaWebView::eNone;
+    mCurrentWebView = ECorlumaWebView::none;
 }

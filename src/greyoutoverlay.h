@@ -19,7 +19,7 @@ class GreyOutOverlay : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit GreyOutOverlay(QWidget *parent = 0);
+    explicit GreyOutOverlay(QWidget *parent);
 
     /*!
      * \brief resize resize the grey out overlay. should be called on the resizeEvent of whatever the

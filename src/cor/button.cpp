@@ -12,11 +12,7 @@
 namespace cor
 {
 
-Button::Button(QJsonObject routineObject,
-               const std::vector<QColor>& group,
-               QWidget *parent) : QPushButton(parent) {
-    mRoutineObject = routineObject;
-
+Button::Button(QWidget *parent, const QJsonObject& routineObject) : QPushButton(parent), mRoutineObject(routineObject) {
     mShouldResizeIcon = true;
 
     this->setCheckable(true);
@@ -24,7 +20,7 @@ Button::Button(QJsonObject routineObject,
 
     mIconData = IconData(4, 4);
 
-    mIconData.setRoutine(routineObject, group);
+    mIconData.setRoutine(routineObject);
     resizeIcon();
 }
 
@@ -48,8 +44,8 @@ void Button::resizeIcon() {
 }
 
 
-void Button::updateRoutine(const QJsonObject& routineObject, const std::vector<QColor>& colors) {
-    mIconData.setRoutine(routineObject, colors);
+void Button::updateRoutine(const QJsonObject& routineObject) {
+    mIconData.setRoutine(routineObject);
     QPixmap pixmap = mIconData.renderAsQPixmap();
     pixmap = pixmap.scaled(mIconSize.width(),
                            mIconSize.height(),

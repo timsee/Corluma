@@ -9,7 +9,7 @@
 CommHTTP::CommHTTP() {
     mStateUpdateInterval = 4850;
     mDiscoveryUpdateInterval = 2000;
-    setupConnectionList(ECommType::eHTTP);
+    setupConnectionList(ECommType::HTTP);
 
     mNetworkManager = new QNetworkAccessManager(this);
 
@@ -53,10 +53,10 @@ void CommHTTP::sendPacket(const cor::Controller& controller, QString& packet) {
 void CommHTTP::stateUpdate() {
     if (shouldContinueStateUpdate()) {
         for (auto&& controller : mDiscoveredList) {
-            QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::eStateUpdateRequest));
+            QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::stateUpdateRequest));
             sendPacket(controller, packet);
             if ((mStateUpdateCounter % mSecondaryUpdatesInterval) == 0) {
-                QString customArrayUpdateRequest = QString("%1&").arg(QString::number((int)EPacketHeader::eCustomArrayUpdateRequest));
+                QString customArrayUpdateRequest = QString("%1&").arg(QString::number((int)EPacketHeader::customArrayUpdateRequest));
                 sendPacket(controller, customArrayUpdateRequest);
             }
         }

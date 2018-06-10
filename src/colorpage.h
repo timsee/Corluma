@@ -4,7 +4,7 @@
 
 #include "icondata.h"
 #include "cor/slider.h"
-#include "lightingpage.h"
+#include "cor/page.h"
 #include "colorpicker/colorpicker.h"
 #include "cor/button.h"
 #include "routinebuttonswidget.h"
@@ -15,18 +15,18 @@
 
 /// different states of the color page.
 enum class EColorPageType {
-    eRGB,
-    eAmbient,
-    eMulti,
-    eColorScheme,
-    eBrightness
+    RGB,
+    ambient,
+    multi,
+    colorScheme,
+    brightness
 };
 
 /// different states of whats showing on bottom menu
 enum class EBottomMenuShow {
-    eShowStandard,
-    eShowSingleRoutines,
-    eShowMultiRoutines
+    showStandard,
+    showSingleRoutines,
+    showMultiRoutines
 };
 
 /*!
@@ -45,7 +45,7 @@ enum class EBottomMenuShow {
  * routines for the arduino. To get the single color routines, the user should be on the standard color picker.
  * To get the multi color routines, the user should be on the multi color picker.
  */
-class ColorPage : public QWidget, public LightingPage
+class ColorPage : public QWidget, public cor::Page
 {
     Q_OBJECT
 
@@ -53,7 +53,7 @@ public:
     /*!
      * \brief Constructor
      */
-    explicit ColorPage(QWidget *parent = 0);
+    explicit ColorPage(QWidget *parent, DataLayer* data);
 
     /*!
      * \brief Deconstructor
@@ -66,12 +66,6 @@ public:
      * \param skipAnimation if true, skips animation
      */
     void changePageType(EColorPageType page, bool skipAnimation = false);
-
-    /*!
-     * \brief setupButtons sets up the routine buttons. Requires the DataLayer
-     *        of the application to be set up first.
-     */
-    void setupButtons();
 
     /*!
      * \brief updateRoutineButton helper to update the Routine button in the floating layout.
@@ -95,12 +89,6 @@ signals:
      *        with new RGB values
      */
     void updateMainIcons();
-
-    /*!
-     * \brief singleColorChanged Used to signal back to the MainWindow that the main color of the
-     *        single color page has changed.
-     */
-    void singleColorChanged(QColor);
 
     /*!
      * \brief brightnessChanged signaled whenever the brightness is changed from any color wheel type that supports it.
@@ -164,6 +152,18 @@ private slots:
 private:
 
     /*!
+     * \brief data layer that maintains and tracks the states of the lights
+     *        and the saved data of the GUI
+     */
+    DataLayer *mData;
+
+    /*!
+     * \brief setupButtons sets up the routine buttons. Requires the DataLayer
+     *        of the application to be set up first.
+     */
+    void setupButtons();
+
+    /*!
      * \brief createColorScheme create a color scheme based off of the colorsed used by a list of devices
      * \param devices the devices to use as a basis for a color scheme
      * \return a vector of colors reqpresenting a color scheme
@@ -201,6 +201,8 @@ private:
 
     /// current single color lighting routine, stored in buffer for when going from multi color to single color routines.
     QJsonObject mCurrentSingleRoutine;
+
+    ERoutine mCurrentMultiRoutine;
 
     /*!
      * \brief mLastColor last color chosen by the RGB color picker.

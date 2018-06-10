@@ -7,7 +7,7 @@
 #include <QLabel>
 #include "datalayer.h"
 #include "icondata.h"
-#include "lightingprotocols.h"
+#include "cor/protocols.h"
 
 namespace cor
 {
@@ -34,16 +34,13 @@ public:
     /*!
      * \brief Constructor
      */
-    explicit Button(QJsonObject routine,
-                    const std::vector<QColor>& group = std::vector<QColor>(),
-                    QWidget *parent = 0);
+    explicit Button(QWidget *parent, const QJsonObject& routine);
 
     /*!
      * \brief updateRoutine show a routine on the button
      * \param routineObject the json representatino of the routine
-     * \param colors the colors used for multi color routines
      */
-    void updateRoutine(const QJsonObject& routineObject, const std::vector<QColor>& colors);
+    void updateRoutine(const QJsonObject& routineObject);
 
     /// getter for routine object
     const QJsonObject& routine() { return mRoutineObject; }
@@ -61,6 +58,7 @@ signals:
      * \brief buttonClicked sent only when setupAsStandardButton has been called.
      */
     void buttonClicked(QJsonObject);
+
 private slots:
     /*!
      * \brief handleButton listens for a click on the button.

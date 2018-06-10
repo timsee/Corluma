@@ -2,7 +2,7 @@
 #ifndef ICONDATA_H
 #define ICONDATA_H
 
-#include "lightingprotocols.h"
+#include "cor/protocols.h"
 
 #include <QPixmap>
 #include <QImage>
@@ -41,9 +41,8 @@ public:
      * \brief setRoutine sets the icon as a lighting routine. This takes a routine object and
      *        the associated palette for a routine, if one exists.
      * \param routineObject the json object that represents the routine
-     * \param colors the palette for the routine, if its a multi color routine.
      */
-    void setRoutine(const QJsonObject& routineObject, const std::vector<QColor>& colors);
+    void setRoutine(const QJsonObject& routineObject);
 
     /*!
      * \brief setSolidColor sets the icon as a solid color
@@ -54,7 +53,7 @@ public:
      * \brief setMultiGlimmer sets as mostly mainColor, but adds random colors
      *        as a glimmer effect
      */
-    void setMultiGlimmer(EPalette palette, const std::vector<QColor>& colors);
+    void setMultiGlimmer(const std::vector<QColor>& colors);
 
     /*!
      * \brief setMultiFade regions slowly fade from one array color to another
@@ -62,23 +61,23 @@ public:
      * \param set to false in nearly all cases, this only gets set to true for the menu bar
      *        so the custom array shows a few more colors than 2 when defaulted to 2.
      */
-    void setMultiFade(EPalette palette, const std::vector<QColor>& colors, bool showMore = false);
+    void setMultiFade(const std::vector<QColor>& colors, bool showMore = false);
 
     /*!
      * \brief setMultiRandomSolid sets icon as 4 colors from array
      */
-    void setMultiRandomSolid(EPalette palette, const std::vector<QColor>& colors);
+    void setMultiRandomSolid(const std::vector<QColor>& colors);
 
     /*!
      * \brief setMultiRandomIndividual sets each region a random color from the array
      */
-    void setMultiRandomIndividual(EPalette palette, const std::vector<QColor>& colors);
+    void setMultiRandomIndividual(const std::vector<QColor>& colors);
 
     /*!
-     * \brief setMultiBars draws the bars with region sizes of 2 but slightly offset
+     * \brief setBars draws the bars with region sizes of 2 but slightly offset
      *        'cause its hard to show motion in a static icon.
      */
-    void setMultiBars(EPalette palette, const std::vector<QColor>& colors);
+    void setBars(const std::vector<QColor>& colors);
 
     /*!
      * \brief addWave similar to a linear fade, but offset a bit since otherwise
@@ -147,7 +146,6 @@ public:
     const QPixmap renderAsQPixmap();
 
 private:
-
 
     /*!
      * \brief setup used by the constructors to set up the data buffers.

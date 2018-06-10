@@ -31,7 +31,7 @@ class LightInfoWidget : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit LightInfoWidget(HueLight light, QWidget *parent = 0);
+    explicit LightInfoWidget(HueLight light, QWidget *parent);
 
     /*!
      * \brief updateLight update the light used internally to fill the widget

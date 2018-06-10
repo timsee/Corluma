@@ -10,8 +10,8 @@ namespace cor
 
 /// type of widget
 enum class EPaletteWidgetType {
-    eStandard,
-    eInfo
+    standard,
+    info
 };
 
 /*!
@@ -21,24 +21,26 @@ enum class EPaletteWidgetType {
  *
  *
  *
- * \brief The ColorGrid class is a bottom layout for the color picker that allows the user to choose up to
+ * \brief The LightVectorWidget class is a bottom layout for the color picker that allows the user to choose up to
  *        10 colors at once and change them all to a new color. It is used for multi color routines. A slider
  *        is also on top to determine how many colors are used for this routine.
  */
-class PaletteWidget: public QWidget
+class LightVectorWidget: public QWidget
 {
     Q_OBJECT
 public:
     /// Constructor
-    explicit PaletteWidget(uint32_t width, uint32_t height,
-                           std::vector<std::vector<QColor> > colorGroups,
+    explicit LightVectorWidget(uint32_t width, uint32_t height,
                            EPaletteWidgetType type,
-                           QWidget *parent = 0);
+                           QWidget *parent);
     /*!
      * \brief updateDevices update the devices in the cor::Button to show the exact routine.
      * \param devices list of devices to display
      */
     void updateDevices(const std::list<cor::Light>& devices);
+
+    /// set whether or not to hide off devices
+    void hideOffDevices(bool shouldHide) { mHideOffDevices = shouldHide; }
 
     /*!
      * \brief enableButtonInteraction true to allow button interaction, false to
@@ -52,24 +54,10 @@ public:
      * \brief selectedCount number of selected devices by the ColorGrid
      * \return  number of selected devices.
      */
-    uint32_t selectedCount() { return mSelectedIndices.size(); }
-
-    /*!
-     * \brief selected list of all selected indices
-     * \return list of indices
-     */
-    std::list<uint32_t> selected() { return mSelectedIndices; }
+    uint32_t selectedCount();
 
     /// getter for vector of buttons in widget.
     std::vector<cor::Button *> buttons() { return mArrayColorsButtons; }
-
-    /*!
-     * \brief manageMultiSelected handles the selected buttons in the Multi color layout. This
-     *        includes deselecting indices that are larger than the mMultiUsed value, highlighting
-     *        selected indices, and enabling/disabling the color wheel based on the count of selected
-     *        indices.
-     */
-    void manageMultiSelected();
 
 signals:
     /*!
@@ -84,15 +72,18 @@ signals:
 
 private slots:
     /*!
-     * \brief selectArrayColor when called, the multi color array color at the given index is seletected
+     * \brief toggleArrayColor when called, the multi color array color at the given index is seletected
      *        or deselected, depending on its current state.
      */
-    void selectArrayColor(int);
+    void toggleArrayColor(int);
 
 private:
 
     /// currently unused, but in place so that slider sizes match other layouts
     QLabel *mLabel;
+
+    /// hide devices if they are off
+    bool mHideOffDevices = false;
 
     /*!
      * \brief mMaximumSize size of the multi color array, used to initialize
@@ -110,7 +101,7 @@ private:
     uint32_t mHeight;
 
     /// vector pushbuttons used for the multi layout
-    std::vector<cor::Button *> mArrayColorsButtons;
+    std::vector<cor::Button*> mArrayColorsButtons;
 
     /// vector for storing labels for the palette
     std::vector<QLabel*> mArrayLabels;

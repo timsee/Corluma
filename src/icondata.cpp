@@ -25,18 +25,11 @@ void IconData::setup(int width, int height) {
     srand(time(NULL));
 
     // first, check that both are a multiple of four
-    bool printError = false;
     while ((width % 4)) {
         width = width - 1;
-        printError = true;
     }
     while((height % 4)) {
         height = height - 1;
-        printError = true;
-    }
-
-    if (printError) {
-        qDebug() << "Warning: a value was given to icon data that wasn't a multiple of four. The value has been adjusted!";
     }
 
     // always uses RGB_888 so multiply width and height by 3
@@ -118,67 +111,69 @@ void IconData::bufferToOutput() {
 }
 
 
-void IconData::setRoutine(const QJsonObject& routineObject, const std::vector<QColor>& colors) {
+void IconData::setRoutine(const QJsonObject& routineObject) {
     cor::Light routineInfo = cor::jsonToLight(routineObject);
+    ERoutine routine           = routineInfo.routine;
+    std::vector<QColor> colors = routineInfo.palette.colors();
+    QColor color               = routineInfo.color;
 
-    ERoutine routine = routineInfo.routine;
-    EPalette palette = routineInfo.palette;
-    QColor color = routineInfo.color;
     int param = INT_MIN;
     if (routineObject["param"].isDouble()) {
         param = routineObject["param"].toDouble();
     }
+
     switch (routine)
     {
-        case ERoutine::eSingleSolid:
-            setSolidColor(color);
-            break;
-        case ERoutine::eSingleBlink:
-            setSolidColor(color);
-            addBlink();
-            break;
-        case ERoutine::eSingleWave:
-            setSolidColor(color);
-            addWave();
-            break;
-        case ERoutine::eSingleGlimmer:
-            setSolidColor(color);
-            addGlimmer();
-            break;
-        case ERoutine::eSingleFade:
-            setSolidColor(color);
-            if (param == 1) {
-                addSineFade();
-            } else {
-                addLinearFade();
-            }
-            break;
-        case ERoutine::eSingleSawtoothFade:
-            setSolidColor(color);
-            if (param == 1) {
-                addSawtoothIn();
-            } else {
-                addSawtoothOut();
-            }
-            break;
-        case ERoutine::eMultiGlimmer:
-            setMultiGlimmer(palette, colors);
-            break;
-        case ERoutine::eMultiFade:
-            setMultiFade(palette, colors, false);
-            break;
-        case ERoutine::eMultiRandomSolid:
-            setMultiRandomSolid(palette, colors);
-            break;
-        case ERoutine::eMultiRandomIndividual:
-            setMultiRandomIndividual(palette, colors);
-            break;
-        case ERoutine::eMultiBars:
-            setMultiBars(palette, colors);
-            break;
-        default:
-            throw "ERROR: Do not recognize routine.";
-            break;
+    case ERoutine::singleSolid:
+        setSolidColor(color);
+        break;
+    case ERoutine::singleBlink:
+        setSolidColor(color);
+        addBlink();
+        break;
+    case ERoutine::singleWave:
+        setSolidColor(color);
+        addWave();
+        break;
+    case ERoutine::singleGlimmer:
+        setSolidColor(color);
+        addGlimmer();
+        break;
+    case ERoutine::singleFade:
+        setSolidColor(color);
+        if (param == 1) {
+            addSineFade();
+        } else {
+            addLinearFade();
+        }
+        break;
+    case ERoutine::singleSawtoothFade:
+        setSolidColor(color);
+        if (param == 1) {
+            addSawtoothIn();
+        } else {
+            addSawtoothOut();
+        }
+        break;
+    case ERoutine::multiGlimmer:
+        setMultiGlimmer(colors);
+        break;
+    case ERoutine::multiFade:
+        setMultiFade(colors, false);
+        break;
+    case ERoutine::multiRandomSolid:
+        setMultiRandomSolid(colors);
+        break;
+    case ERoutine::multiRandomIndividual:
+        setMultiRandomIndividual(colors);
+        break;
+    case ERoutine::multiBars:
+        setBars(colors);
+        break;
+    default:
+        // if a routine doesn't exist, just draw things black.
+        setSolidColor(QColor(0,0,0));
+        break;
     }
 }
 
@@ -192,9 +187,7 @@ void IconData::setSolidColor(QColor color) {
 }
 
 
-void IconData::setMultiGlimmer(EPalette palette, const std::vector<QColor>& colors) {
-    Q_UNUSED(palette);
-
+void IconData::setMultiGlimmer(const std::vector<QColor>& colors) {
     int colorCount = colors.size();
 
     int j = 0;
@@ -228,9 +221,7 @@ void IconData::setMultiGlimmer(EPalette palette, const std::vector<QColor>& colo
     addGlimmer(); // this already draws to output.
 }
 
-void IconData::setMultiFade(EPalette palette, const std::vector<QColor>& colors, bool showMore) {
-    Q_UNUSED(palette);
-
+void IconData::setMultiFade(const std::vector<QColor>& colors, bool showMore) {
     int colorCount = colors.size();
     if (showMore) {
         colorCount = 10;
@@ -268,9 +259,7 @@ void IconData::setMultiFade(EPalette palette, const std::vector<QColor>& colors,
     bufferToOutput();
 }
 
-void IconData::setMultiRandomSolid(EPalette palette, const std::vector<QColor>& colors) {
-    Q_UNUSED(palette);
-
+void IconData::setMultiRandomSolid(const std::vector<QColor>& colors) {
     int colorCount = colors.size();
 
     int k = 0;
@@ -305,9 +294,7 @@ void IconData::setMultiRandomSolid(EPalette palette, const std::vector<QColor>& 
     bufferToOutput();
 }
 
-void IconData::setMultiRandomIndividual(EPalette palette, const std::vector<QColor>& colors) {
-    Q_UNUSED(palette);
-
+void IconData::setMultiRandomIndividual(const std::vector<QColor>& colors) {
     int colorCount = colors.size();
 
     int j = 0;
@@ -326,9 +313,7 @@ void IconData::setMultiRandomIndividual(EPalette palette, const std::vector<QCol
     bufferToOutput();
 }
 
-void IconData::setMultiBars(EPalette palette, const std::vector<QColor>& colors) {
-    Q_UNUSED(palette);
-
+void IconData::setBars(const std::vector<QColor>& colors) {
     int colorCount = colors.size();
 
     int colorIndex = 0;

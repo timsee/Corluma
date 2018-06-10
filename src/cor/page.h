@@ -1,11 +1,12 @@
-#ifndef LIGHTINGPAGE_H
-#define LIGHTINGPAGE_H
+#ifndef COR_PAGE_H
+#define COR_PAGE_H
 
 #include <QTimer>
 
 #include <memory>
 
-#include "datalayer.h"
+namespace cor
+{
 
 /*!
  * \copyright
@@ -13,27 +14,16 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief Inherited by Lighting Pages, provides a link to the backend.
+ * \brief Inherited by many of the largest Pages, provides a link to the backend.
  */
-class LightingPage {
+class Page {
 
 public:
 
     /*!
-     * \brief ~LightingPage Deconstructor
+     * \brief ~Page Destructor
      */
-    virtual ~LightingPage(){}
-
-    /*!
-     * \brief setup called by the MainWindow after the commLayer and dataLayer
-     *        of the application are set up. This connects these layers to
-     *        all the other pages.
-     * \param dataLayer the object that handles storing data about the application
-     *                  and the LED array's state.
-     */
-    void setup(DataLayer *dataLayer) {
-        mData = dataLayer;
-    }
+    virtual ~Page(){}
 
     /// setter for open flag
     void isOpen(bool open) { mIsOpen = open; }
@@ -50,12 +40,6 @@ protected:
      */
     QTimer *mRenderThread;
 
-    /*!
-     * \brief data layer that maintains and tracks the states of the lights
-     *        and the saved data of the GUI
-     */
-    DataLayer *mData;
-
     /// true if page is open, false if hidden.
     bool mIsOpen;
 
@@ -65,5 +49,5 @@ protected:
     int mRenderInterval = 100;
 };
 
-
-#endif // LIGHTINGPAGE_H
+}
+#endif // COR_PAGE_H

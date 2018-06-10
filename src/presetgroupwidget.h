@@ -8,8 +8,8 @@
 
 /// mode of this widget
 enum class EPresetWidgetMode {
-    eArduino,
-    eHue
+    arduino,
+    hue
 };
 
 /*!
@@ -35,9 +35,8 @@ public:
      */
     explicit PresetGroupWidget(QString name,
                                EPalette palette,
-                               const std::vector<QColor>& colors,
                                EPresetWidgetMode mode,
-                               QWidget *parent = 0);
+                               QWidget *parent);
 
     /*!
      * \brief setChecked acts similarly to the setChecked of a standard QPushButton, but

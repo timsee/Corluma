@@ -145,7 +145,7 @@ int main(int argc, char *argv[]) {
             settings.setValue(key,   QString::number((int)true));
         }
         // set arducor to off
-        settings.setValue(protocolInUseKeys[(size_t)EProtocolType::eArduCor],   QString::number((int)false));
+        settings.setValue(protocolInUseKeys[(size_t)EProtocolType::arduCor],   QString::number((int)false));
 
 
         // set the value so it no longer gives a default back.

@@ -7,7 +7,8 @@
 
 #include <memory>
 
-#include "lightingprotocols.h"
+#include "cor/protocols.h"
+#include "cor/presetpalettes.h"
 #include "cor/light.h"
 #include "comm/commtype.h"
 #include "comm/upnpdiscovery.h"
@@ -19,7 +20,7 @@ class CommUDP;
 class CommHTTP;
 class CommSerial;
 class CommHue;
-class CommNanoLeaf;
+class CommNanoleaf;
 
 /*!
  * \copyright
@@ -39,8 +40,7 @@ public:
     /*!
      * \brief Constructor
      */
-    CommLayer(QObject *parent = 0);
-
+    CommLayer(QObject *parent, GroupsParser *parser);
 
     /*!
      * \brief sendPacket helper for sending packets
@@ -238,7 +238,8 @@ public:
         return commByType(type)->undiscoveredList();
     }
 
-    std::shared_ptr<CommNanoLeaf> nanoLeaf() { return mNanoLeaf; }
+    /// getter for nanoleaf
+    std::shared_ptr<CommNanoleaf> nanoleaf() { return mNanoleaf; }
 
     // --------------------------
     // Hardware specific functions
@@ -263,9 +264,6 @@ public:
 
     /// deletes a hue group by name
     void deleteHueGroup(QString name);
-
-    /// pointer to the groups parser
-    GroupsParser* groups() { return mGroups; }
 
     /// list of all collections from all comm types
     std::list<cor::LightGroup> collectionList();
@@ -335,7 +333,7 @@ private slots:
     /*!
     * \brief hueStateChanged sent by hue whenever a packet is received that changes it state.
     */
-    void hueStateChanged() { emit packetReceived(EProtocolType::eHue); }
+    void hueStateChanged() { emit packetReceived(EProtocolType::hue); }
 
 private:
 
@@ -360,9 +358,9 @@ private:
     std::shared_ptr<CommHue> mHue;
 
     /*!
-     * \brief mNanoLeaf NanoLeaf Aurora connection object
+     * \brief mNanoleaf Nanoleaf Aurora connection object
      */
-    std::shared_ptr<CommNanoLeaf> mNanoLeaf;
+    std::shared_ptr<CommNanoleaf> mNanoleaf;
 
     /// Handles discovery of devices over UPnP
     UPnPDiscovery* mUpnP;
@@ -398,6 +396,9 @@ private:
 
     /// used to check CRC on incoming packets.
     CRCCalculator mCRC;
+
+    /// preset data for palettes from ArduCor
+    PresetPalettes mPresetPalettes;
 
     /*!
      * \brief updateMultiCastPacket if a light index is 0, this is meant to update multiple devices since

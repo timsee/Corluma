@@ -9,7 +9,7 @@
 
 ProtocolSettings::ProtocolSettings() {
     mSettings = new QSettings();
-    mProtocolsInUse = std::vector<bool>((size_t)EProtocolType::eProtocolType_MAX, false);
+    mProtocolsInUse = std::vector<bool>((size_t)EProtocolType::MAX, false);
 
     std::vector<QString> keys = protocolKeys();
 
@@ -26,8 +26,8 @@ ProtocolSettings::ProtocolSettings() {
 
     //error handling, must always have at least one stream!
     if (numberEnabled() == 0) {
-        mProtocolsInUse[(size_t)EProtocolType::eArduCor] = true;
-        mSettings->setValue(keys[(uint32_t)EProtocolType::eHue], QString::number((int)true));
+        mProtocolsInUse[(size_t)EProtocolType::arduCor] = true;
+        mSettings->setValue(keys[(uint32_t)EProtocolType::hue], QString::number((int)true));
         mSettings->sync();
     }
 }
@@ -51,7 +51,7 @@ bool ProtocolSettings::enable(EProtocolType type, bool shouldEnable) {
 }
 
 std::vector<QString> ProtocolSettings::protocolKeys() {
-    std::vector<QString> keys((size_t)EProtocolType::eProtocolType_MAX);
+    std::vector<QString> keys((size_t)EProtocolType::MAX);
     for (uint32_t i = 0; i < keys.size(); ++i) {
         QString key = protocolToString((EProtocolType)i);
         key += "InUse";

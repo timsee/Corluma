@@ -26,7 +26,7 @@ class ListWidget : public QScrollArea
     Q_OBJECT
 public:
     /// constructor
-    ListWidget(QWidget *parent = 0);
+    ListWidget(QWidget *parent);
 
     /*!
      * \brief addWidget add a ListCollectionWidget to the scroll area of this widget.

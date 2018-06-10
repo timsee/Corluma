@@ -11,7 +11,12 @@
 #include "cor/utils.h"
 #include "globalsettingswidget.h"
 
-GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
+GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent,
+                                           CommLayer *comm,
+                                           DataLayer *data) :
+                                           QWidget(parent),
+                                           mComm(comm),
+                                           mData(data) {
 
     mSpacerPixels = 5;
 
@@ -52,6 +57,8 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
     mTimeoutSlider->setSliderHeight(0.5f);
     mTimeoutSlider->slider()->setTickPosition(QSlider::TicksBelow);
     mTimeoutSlider->slider()->setTickInterval(60);
+    mTimeoutSlider->slider()->setValue(120);
+    mTimeoutSlider->setSliderColorBackground(cor::kDefaultColor);
     mTimeoutSlider->setShouldDrawTickLabels(true);
 
     //-----------
@@ -105,31 +112,31 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent) : QWidget(parent) {
 
 
 void GlobalSettingsWidget::hueCheckboxClicked(bool checked) {
-    checkBoxClicked(EProtocolType::eHue, checked);
+    checkBoxClicked(EProtocolType::hue, checked);
 }
 
 void GlobalSettingsWidget::arduCorButtonClicked(bool checked) {
-    checkBoxClicked(EProtocolType::eArduCor, checked);
+    checkBoxClicked(EProtocolType::arduCor, checked);
 }
 
 void GlobalSettingsWidget::nanoLeafButtonClicked(bool checked) {
-    checkBoxClicked(EProtocolType::eNanoleaf, checked);
+    checkBoxClicked(EProtocolType::nanoleaf, checked);
 }
 
 void GlobalSettingsWidget::checkCheckBoxes() {
-    if (mData->protocolSettings()->enabled(EProtocolType::eHue)) {
+    if (mData->protocolSettings()->enabled(EProtocolType::hue)) {
         mHueButton->setChecked(true);
     } else {
         mHueButton->setChecked(false);
     }
 
-    if (mData->protocolSettings()->enabled(EProtocolType::eArduCor)) {
+    if (mData->protocolSettings()->enabled(EProtocolType::arduCor)) {
         mArduCorButton->setChecked(true);
     } else {
         mArduCorButton->setChecked(false);
     }
 
-    if (mData->protocolSettings()->enabled(EProtocolType::eNanoleaf)) {
+    if (mData->protocolSettings()->enabled(EProtocolType::nanoleaf)) {
         mNanoLeafButton->setChecked(true);
     } else {
         mNanoLeafButton->setChecked(false);
@@ -154,44 +161,34 @@ void GlobalSettingsWidget::checkBoxClicked(EProtocolType type, bool checked) {
     if (checked) {
         mComm->startup(type);
     } else {
-        if (type == EProtocolType::eArduCor) {
+        if (type == EProtocolType::arduCor) {
             mComm->shutdown(type);
-            mData->removeDevicesOfType(ECommType::eUDP);
-            mData->removeDevicesOfType(ECommType::eHTTP);
+            mData->removeDevicesOfType(ECommType::UDP);
+            mData->removeDevicesOfType(ECommType::HTTP);
 #ifndef MOBILE_BUILD
-            mData->removeDevicesOfType(ECommType::eSerial);
+            mData->removeDevicesOfType(ECommType::serial);
 #endif
-        } else if (type == EProtocolType::eHue) {
-            mComm->shutdown(type);
-            mData->removeDevicesOfType(ECommType::eHue);
-
-        } else if (type == EProtocolType::eNanoleaf) {
-            mComm->shutdown(type);
-            mData->removeDevicesOfType(ECommType::eNanoleaf);
-        }
-
-
-        // update the UI accordingly
-        if (type == EProtocolType::eHue) {
-            mHueButton->setChecked(false);
-        } else if (type == EProtocolType::eArduCor) {
             mArduCorButton->setChecked(false);
-        } else if (type == EProtocolType::eNanoleaf) {
+        } else if (type == EProtocolType::hue) {
+            mComm->shutdown(type);
+            mData->removeDevicesOfType(ECommType::hue);
+            mHueButton->setChecked(false);
+        } else if (type == EProtocolType::nanoleaf) {
+            mComm->shutdown(type);
+            mData->removeDevicesOfType(ECommType::nanoleaf);
             mNanoLeafButton->setChecked(false);
         }
     }
 }
 
 void GlobalSettingsWidget::updateUI() {
-    mTimeoutSlider->setSliderColorBackground(mData->mainColor());
+ //   mTimeoutSlider->setSliderColorBackground(cor::kDefaultColor);
 }
 
 void GlobalSettingsWidget::show() {
     checkCheckBoxes();
 
     mTimeoutSlider->enable(true);
-
-    mTimeoutSlider->setSliderColorBackground(mData->mainColor());
 
     resize();
 }
