@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.12.12</span>
+   &#160;<span id="projectnumber">v0.13.0</span>
    </div>
   </td>
  </tr>
@@ -73,10 +73,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a7e3fb24a879cc915e437d41e94a4d959"><td class="memItemLeft" align="right" valign="top"><a id="a7e3fb24a879cc915e437d41e94a4d959"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a7e3fb24a879cc915e437d41e94a4d959">DataLayer</a> ()</td></tr>
-<tr class="memdesc:a7e3fb24a879cc915e437d41e94a4d959"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
-<tr class="separator:a7e3fb24a879cc915e437d41e94a4d959"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac0290d7d30b1eb566339b67a03dedab0"><td class="memItemLeft" align="right" valign="top"><a id="ac0290d7d30b1eb566339b67a03dedab0"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#ac0290d7d30b1eb566339b67a03dedab0">DataLayer</a> (QObject *parent)</td></tr>
+<tr class="memdesc:ac0290d7d30b1eb566339b67a03dedab0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
+<tr class="separator:ac0290d7d30b1eb566339b67a03dedab0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa879ff7dc8dbb52fbaee5479e7a620a6"><td class="memItemLeft" align="right" valign="top"><a id="aa879ff7dc8dbb52fbaee5479e7a620a6"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#aa879ff7dc8dbb52fbaee5479e7a620a6">~DataLayer</a> ()</td></tr>
 <tr class="memdesc:aa879ff7dc8dbb52fbaee5479e7a620a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deconstructor. <br /></td></tr>
@@ -84,45 +84,24 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a442919b8782e7bd35ba20eddf1b913dd"><td class="memItemLeft" align="right" valign="top">QColor&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a442919b8782e7bd35ba20eddf1b913dd">mainColor</a> ()</td></tr>
 <tr class="memdesc:a442919b8782e7bd35ba20eddf1b913dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">mainColor getter for mainColor, used for single color routines.  <a href="#a442919b8782e7bd35ba20eddf1b913dd">More...</a><br /></td></tr>
 <tr class="separator:a442919b8782e7bd35ba20eddf1b913dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a64bb42b8d629be2dab44c7484aefe5d0"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; QColor &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a64bb42b8d629be2dab44c7484aefe5d0">palette</a> (EPalette palette)</td></tr>
-<tr class="memdesc:a64bb42b8d629be2dab44c7484aefe5d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">palette the palette at the given index. Can be used to access the custom color array or any of the presets.  <a href="#a64bb42b8d629be2dab44c7484aefe5d0">More...</a><br /></td></tr>
-<tr class="separator:a64bb42b8d629be2dab44c7484aefe5d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0b17d6a4e9ea9b2dad62a0ace11436cd"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::vector&lt; QColor &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a0b17d6a4e9ea9b2dad62a0ace11436cd">colors</a> ()</td></tr>
-<tr class="memdesc:a0b17d6a4e9ea9b2dad62a0ace11436cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">colors getter for the vector of color group vectors.  <a href="#a0b17d6a4e9ea9b2dad62a0ace11436cd">More...</a><br /></td></tr>
-<tr class="separator:a0b17d6a4e9ea9b2dad62a0ace11436cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4954f12785fd80574b6d4ee0496ded7c"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a4954f12785fd80574b6d4ee0496ded7c">maxColorGroupSize</a> ()</td></tr>
-<tr class="memdesc:a4954f12785fd80574b6d4ee0496ded7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">maxColorGroupSize the largest possible size for a color group. Can also be used as the size of the custom color group.  <a href="#a4954f12785fd80574b6d4ee0496ded7c">More...</a><br /></td></tr>
-<tr class="separator:a4954f12785fd80574b6d4ee0496ded7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0577b72c24fbae642d7178db09badb9d"><td class="memItemLeft" align="right" valign="top">QColor&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a0577b72c24fbae642d7178db09badb9d">colorsAverage</a> (EPalette <a class="el" href="class_data_layer.html#a64bb42b8d629be2dab44c7484aefe5d0">palette</a>)</td></tr>
-<tr class="memdesc:a0577b72c24fbae642d7178db09badb9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">creates a color based off of the average of all colors in the color group  <a href="#a0577b72c24fbae642d7178db09badb9d">More...</a><br /></td></tr>
-<tr class="separator:a0577b72c24fbae642d7178db09badb9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac11e66817ac714abdfd8c3b55556cf80"><td class="memItemLeft" align="right" valign="top">ERoutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#ac11e66817ac714abdfd8c3b55556cf80">currentRoutine</a> ()</td></tr>
 <tr class="memdesc:ac11e66817ac714abdfd8c3b55556cf80"><td class="mdescLeft">&#160;</td><td class="mdescRight">routine getter for the current ERoutine.  <a href="#ac11e66817ac714abdfd8c3b55556cf80">More...</a><br /></td></tr>
 <tr class="separator:ac11e66817ac714abdfd8c3b55556cf80"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6d5a14e845f852855d28d5deef31cd54"><td class="memItemLeft" align="right" valign="top">QJsonObject&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a6d5a14e845f852855d28d5deef31cd54">currentRoutineObject</a> ()</td></tr>
-<tr class="memdesc:a6d5a14e845f852855d28d5deef31cd54"><td class="mdescLeft">&#160;</td><td class="mdescRight">currentRoutineObject a QJsonObject representation of the current data layer. This uses an average of all the lights, so it may not represent any individual light perfect  <a href="#a6d5a14e845f852855d28d5deef31cd54">More...</a><br /></td></tr>
-<tr class="separator:a6d5a14e845f852855d28d5deef31cd54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af2b5821cbab5dd98b644c3f7577cf27e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#af2b5821cbab5dd98b644c3f7577cf27e">brightness</a> ()</td></tr>
 <tr class="memdesc:af2b5821cbab5dd98b644c3f7577cf27e"><td class="mdescLeft">&#160;</td><td class="mdescRight">brightness getter for the current brightness.  <a href="#af2b5821cbab5dd98b644c3f7577cf27e">More...</a><br /></td></tr>
 <tr class="separator:af2b5821cbab5dd98b644c3f7577cf27e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2786c72909dc049bb595310041ad6a3e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a2786c72909dc049bb595310041ad6a3e">timeout</a> ()</td></tr>
 <tr class="memdesc:a2786c72909dc049bb595310041ad6a3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">timeOut getter for the amount of minutes it takes for the LEDs to "time out." When this happens, they turn off, saving you electricity!  <a href="#a2786c72909dc049bb595310041ad6a3e">More...</a><br /></td></tr>
 <tr class="separator:a2786c72909dc049bb595310041ad6a3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad52a07c6e351fbb029142323bb1481d0"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#ad52a07c6e351fbb029142323bb1481d0">customColorsUsed</a> ()</td></tr>
-<tr class="memdesc:ad52a07c6e351fbb029142323bb1481d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">customColorsUsed number of custom colors used from the custom color group in multi color routines. Will be between 2 and 10 inclusively.  <a href="#ad52a07c6e351fbb029142323bb1481d0">More...</a><br /></td></tr>
-<tr class="separator:ad52a07c6e351fbb029142323bb1481d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8a06c02503607c8b20258b5cf5ed515f"><td class="memItemLeft" align="right" valign="top">EPalette&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a8a06c02503607c8b20258b5cf5ed515f">palette</a> ()</td></tr>
 <tr class="memdesc:a8a06c02503607c8b20258b5cf5ed515f"><td class="mdescLeft">&#160;</td><td class="mdescRight">palette getter for the current palette.  <a href="#a8a06c02503607c8b20258b5cf5ed515f">More...</a><br /></td></tr>
 <tr class="separator:a8a06c02503607c8b20258b5cf5ed515f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a13f3cd593ad28f51f8371ac7030f24ff"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; QColor &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a13f3cd593ad28f51f8371ac7030f24ff">paletteColors</a> ()</td></tr>
-<tr class="memdesc:a13f3cd593ad28f51f8371ac7030f24ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">paletteColors returns all the colors of the current color group.  <a href="#a13f3cd593ad28f51f8371ac7030f24ff">More...</a><br /></td></tr>
-<tr class="separator:a13f3cd593ad28f51f8371ac7030f24ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a878df79749e4c8e9b2d3872d271da680"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a878df79749e4c8e9b2d3872d271da680">speed</a> ()</td></tr>
 <tr class="memdesc:a878df79749e4c8e9b2d3872d271da680"><td class="mdescLeft">&#160;</td><td class="mdescRight">speed getter for the speed the LED's update.  <a href="#a878df79749e4c8e9b2d3872d271da680">More...</a><br /></td></tr>
 <tr class="separator:a878df79749e4c8e9b2d3872d271da680"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f8010b92bbe5f139ef2f509fa891682"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a8f8010b92bbe5f139ef2f509fa891682">customColor</a> (uint32_t index, QColor color)</td></tr>
-<tr class="memdesc:a8f8010b92bbe5f139ef2f509fa891682"><td class="mdescLeft">&#160;</td><td class="mdescRight">customColor set an individual color in the custom color group  <a href="#a8f8010b92bbe5f139ef2f509fa891682">More...</a><br /></td></tr>
-<tr class="separator:a8f8010b92bbe5f139ef2f509fa891682"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d3b27cd3731e3a0114962961eb7b630"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a6d3b27cd3731e3a0114962961eb7b630">updateCustomColorCount</a> (uint32_t count)</td></tr>
+<tr class="memdesc:a6d3b27cd3731e3a0114962961eb7b630"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateCustomColorCount update the number of custom colors used in the custom color array for multi color routines. Must be between 2 and 10 inclusively.  <a href="#a6d3b27cd3731e3a0114962961eb7b630">More...</a><br /></td></tr>
+<tr class="separator:a6d3b27cd3731e3a0114962961eb7b630"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a74d0a1ecc37a876f4cf407b01e2f5892"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a74d0a1ecc37a876f4cf407b01e2f5892">turnOn</a> (bool on)</td></tr>
 <tr class="memdesc:a74d0a1ecc37a876f4cf407b01e2f5892"><td class="mdescLeft">&#160;</td><td class="mdescRight">turnOn turn all devices on or off based off of the boolean. Stores the previous state when turned off so that turning on again can reset it back to its previous state.  <a href="#a74d0a1ecc37a876f4cf407b01e2f5892">More...</a><br /></td></tr>
 <tr class="separator:a74d0a1ecc37a876f4cf407b01e2f5892"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -142,33 +121,21 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:abb68873885347721dd32a3893191c12e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#abb68873885347721dd32a3893191c12e">anyDevicesReachable</a> ()</td></tr>
 <tr class="memdesc:abb68873885347721dd32a3893191c12e"><td class="mdescLeft">&#160;</td><td class="mdescRight">anyDevicesReachable true if any device is reachable, false if all are not reachable.  <a href="#abb68873885347721dd32a3893191c12e">More...</a><br /></td></tr>
 <tr class="separator:abb68873885347721dd32a3893191c12e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea236e8fbacecf6e23b4662bc2e866cd"><td class="memItemLeft" align="right" valign="top">EPalette&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#aea236e8fbacecf6e23b4662bc2e866cd">closestColorGroupToColor</a> (QColor color)</td></tr>
-<tr class="memdesc:aea236e8fbacecf6e23b4662bc2e866cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">closestColorGroupToColor takes a color as input and checks the averages of the color groups and determines the closest color group to your color.  <a href="#aea236e8fbacecf6e23b4662bc2e866cd">More...</a><br /></td></tr>
-<tr class="separator:aea236e8fbacecf6e23b4662bc2e866cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4683935cee92028850ffa8603b0a36c0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a4683935cee92028850ffa8603b0a36c0">updateRoutine</a> (const QJsonObject &amp;routine)</td></tr>
 <tr class="memdesc:a4683935cee92028850ffa8603b0a36c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateRoutine update the lighting routine for all current devices.  <a href="#a4683935cee92028850ffa8603b0a36c0">More...</a><br /></td></tr>
 <tr class="separator:a4683935cee92028850ffa8603b0a36c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a55af919678bee831eb3c5ea75742c462"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a55af919678bee831eb3c5ea75742c462">updateSpeed</a> (int <a class="el" href="class_data_layer.html#a878df79749e4c8e9b2d3872d271da680">speed</a>)</td></tr>
 <tr class="memdesc:a55af919678bee831eb3c5ea75742c462"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateSpeed update the speed of the lighting routines.  <a href="#a55af919678bee831eb3c5ea75742c462">More...</a><br /></td></tr>
 <tr class="separator:a55af919678bee831eb3c5ea75742c462"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa905a7c685b2bbde43617e9931bfb882"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#aa905a7c685b2bbde43617e9931bfb882">updatePalette</a> (EPalette <a class="el" href="class_data_layer.html#a64bb42b8d629be2dab44c7484aefe5d0">palette</a>)</td></tr>
-<tr class="memdesc:aa905a7c685b2bbde43617e9931bfb882"><td class="mdescLeft">&#160;</td><td class="mdescRight">updatePalette update the color group for all current devices.  <a href="#aa905a7c685b2bbde43617e9931bfb882">More...</a><br /></td></tr>
-<tr class="separator:aa905a7c685b2bbde43617e9931bfb882"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae1ccc0737d91c2fb181c456422efb08c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#ae1ccc0737d91c2fb181c456422efb08c">updateColorScheme</a> (std::vector&lt; QColor &gt; <a class="el" href="class_data_layer.html#a0b17d6a4e9ea9b2dad62a0ace11436cd">colors</a>)</td></tr>
+<tr class="memitem:ae1ccc0737d91c2fb181c456422efb08c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#ae1ccc0737d91c2fb181c456422efb08c">updateColorScheme</a> (std::vector&lt; QColor &gt; colors)</td></tr>
 <tr class="memdesc:ae1ccc0737d91c2fb181c456422efb08c"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateColorScheme update the colors of all the current devices based off of a color scheme.  <a href="#ae1ccc0737d91c2fb181c456422efb08c">More...</a><br /></td></tr>
 <tr class="separator:ae1ccc0737d91c2fb181c456422efb08c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6d3b27cd3731e3a0114962961eb7b630"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a6d3b27cd3731e3a0114962961eb7b630">updateCustomColorCount</a> (uint32_t count)</td></tr>
-<tr class="memdesc:a6d3b27cd3731e3a0114962961eb7b630"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateCustomColorCount update the number of custom colors used in the custom color array for multi color routines. Must be between 2 and 10 inclusively.  <a href="#a6d3b27cd3731e3a0114962961eb7b630">More...</a><br /></td></tr>
-<tr class="separator:a6d3b27cd3731e3a0114962961eb7b630"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab7f3c934e0e353d851077ed436102dea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#ab7f3c934e0e353d851077ed436102dea">updateCustomColorArray</a> (int index, QColor color)</td></tr>
 <tr class="memdesc:ab7f3c934e0e353d851077ed436102dea"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateCustomColorArray update the color in the custom color array at the given index. If the index is 10 or larger, it is ignored.  <a href="#ab7f3c934e0e353d851077ed436102dea">More...</a><br /></td></tr>
 <tr class="separator:ab7f3c934e0e353d851077ed436102dea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a818f63ea7f0163335cb52e050fa0c463"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a818f63ea7f0163335cb52e050fa0c463">updateBrightness</a> (int <a class="el" href="class_data_layer.html#af2b5821cbab5dd98b644c3f7577cf27e">brightness</a>, std::list&lt; cor::Light &gt; specialCaseDevices=std::list&lt; cor::Light &gt;())</td></tr>
-<tr class="memdesc:a818f63ea7f0163335cb52e050fa0c463"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateBrightness update the brightness level of all current devices.  <a href="#a818f63ea7f0163335cb52e050fa0c463">More...</a><br /></td></tr>
-<tr class="separator:a818f63ea7f0163335cb52e050fa0c463"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acdf292093067fe9d8ed9c2e4a0fd55b3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#acdf292093067fe9d8ed9c2e4a0fd55b3">updateCt</a> (int ct)</td></tr>
-<tr class="memdesc:acdf292093067fe9d8ed9c2e4a0fd55b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateCt update the color temperature. Only supported by Hue lights.  <a href="#acdf292093067fe9d8ed9c2e4a0fd55b3">More...</a><br /></td></tr>
-<tr class="separator:acdf292093067fe9d8ed9c2e4a0fd55b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a7fec7492a5b364b2bddf14e834eaef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#a0a7fec7492a5b364b2bddf14e834eaef">updateBrightness</a> (int <a class="el" href="class_data_layer.html#af2b5821cbab5dd98b644c3f7577cf27e">brightness</a>)</td></tr>
+<tr class="memdesc:a0a7fec7492a5b364b2bddf14e834eaef"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateBrightness update the brightness level of all current devices.  <a href="#a0a7fec7492a5b364b2bddf14e834eaef">More...</a><br /></td></tr>
+<tr class="separator:a0a7fec7492a5b364b2bddf14e834eaef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acda15029b595845bac36ef71ff59b291"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_layer.html#acda15029b595845bac36ef71ff59b291">addDevice</a> (cor::Light device)</td></tr>
 <tr class="memdesc:acda15029b595845bac36ef71ff59b291"><td class="mdescLeft">&#160;</td><td class="mdescRight">addDevice add new device to connected list. if device already exists, update the device with new values.  <a href="#acda15029b595845bac36ef71ff59b291">More...</a><br /></td></tr>
 <tr class="separator:acda15029b595845bac36ef71ff59b291"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -328,82 +295,6 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 
 </div>
 </div>
-<a id="aea236e8fbacecf6e23b4662bc2e866cd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aea236e8fbacecf6e23b4662bc2e866cd">&#9670;&nbsp;</a></span>closestColorGroupToColor()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">EPalette DataLayer::closestColorGroupToColor </td>
-          <td>(</td>
-          <td class="paramtype">QColor&#160;</td>
-          <td class="paramname"><em>color</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">color</td><td>input color </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>the color group that, when averaged, is closest to the provided color. </dd></dl>
-
-</div>
-</div>
-<a id="a0b17d6a4e9ea9b2dad62a0ace11436cd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0b17d6a4e9ea9b2dad62a0ace11436cd">&#9670;&nbsp;</a></span>colors()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const std::vector&lt;std::vector&lt;QColor&gt; &gt;&amp; DataLayer::colors </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>vector of vectors where each vector is a preset group of colors. </dd></dl>
-
-</div>
-</div>
-<a id="a0577b72c24fbae642d7178db09badb9d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0577b72c24fbae642d7178db09badb9d">&#9670;&nbsp;</a></span>colorsAverage()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">QColor DataLayer::colorsAverage </td>
-          <td>(</td>
-          <td class="paramtype">EPalette&#160;</td>
-          <td class="paramname"><em>palette</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">group</td><td>a color group </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>a QColor that represents the average of all colors used by color group. </dd></dl>
-
-</div>
-</div>
 <a id="af89e4a6dd32842b5076f8770836e5620"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af89e4a6dd32842b5076f8770836e5620">&#9670;&nbsp;</a></span>countDevicesOfType()</h2>
 
@@ -470,78 +361,6 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
       </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>the current lighting routine getting displayed on the LED array. </dd></dl>
-
-</div>
-</div>
-<a id="a6d5a14e845f852855d28d5deef31cd54"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6d5a14e845f852855d28d5deef31cd54">&#9670;&nbsp;</a></span>currentRoutineObject()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">QJsonObject DataLayer::currentRoutineObject </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>a json representation of the current routine. </dd></dl>
-
-</div>
-</div>
-<a id="a8f8010b92bbe5f139ef2f509fa891682"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8f8010b92bbe5f139ef2f509fa891682">&#9670;&nbsp;</a></span>customColor()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool DataLayer::customColor </td>
-          <td>(</td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>index</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">QColor&#160;</td>
-          <td class="paramname"><em>color</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">index</td><td>the index of the custom color. must be less than the size of custom color group. </td></tr>
-    <tr><td class="paramname">color</td><td>the new color that you want to set for that index. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>true if successful, false otherwise. </dd></dl>
-
-</div>
-</div>
-<a id="ad52a07c6e351fbb029142323bb1481d0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad52a07c6e351fbb029142323bb1481d0">&#9670;&nbsp;</a></span>customColorsUsed()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint32_t DataLayer::customColorsUsed </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>the number of custom colors used in custom color routines. </dd></dl>
 
 </div>
 </div>
@@ -709,45 +528,8 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 
 </div>
 </div>
-<a id="a4954f12785fd80574b6d4ee0496ded7c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4954f12785fd80574b6d4ee0496ded7c">&#9670;&nbsp;</a></span>maxColorGroupSize()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint8_t DataLayer::maxColorGroupSize </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>the size of the largest EPalette. </dd></dl>
-
-</div>
-</div>
-<a id="a64bb42b8d629be2dab44c7484aefe5d0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a64bb42b8d629be2dab44c7484aefe5d0">&#9670;&nbsp;</a></span>palette() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const std::vector&lt; QColor &gt; &amp; DataLayer::palette </td>
-          <td>(</td>
-          <td class="paramtype">EPalette&#160;</td>
-          <td class="paramname"><em>palette</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>the color array at the given index. </dd></dl>
-
-</div>
-</div>
 <a id="a8a06c02503607c8b20258b5cf5ed515f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8a06c02503607c8b20258b5cf5ed515f">&#9670;&nbsp;</a></span>palette() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a06c02503607c8b20258b5cf5ed515f">&#9670;&nbsp;</a></span>palette()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -761,24 +543,6 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
       </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>the EPalette that represents the colors being displayed on the LED array. </dd></dl>
-
-</div>
-</div>
-<a id="a13f3cd593ad28f51f8371ac7030f24ff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a13f3cd593ad28f51f8371ac7030f24ff">&#9670;&nbsp;</a></span>paletteColors()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const std::vector&lt; QColor &gt; &amp; DataLayer::paletteColors </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>returns all the colors of the current color group. </dd></dl>
 
 </div>
 </div>
@@ -951,8 +715,8 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 
 </div>
 </div>
-<a id="a818f63ea7f0163335cb52e050fa0c463"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a818f63ea7f0163335cb52e050fa0c463">&#9670;&nbsp;</a></span>updateBrightness()</h2>
+<a id="a0a7fec7492a5b364b2bddf14e834eaef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a7fec7492a5b364b2bddf14e834eaef">&#9670;&nbsp;</a></span>updateBrightness()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -961,25 +725,14 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
           <td class="memname">void DataLayer::updateBrightness </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>brightness</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>brightness</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">std::list&lt; cor::Light &gt;&#160;</td>
-          <td class="paramname"><em>specialCaseDevices</em> = <code>std::list&lt;cor::Light&gt;()</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">brightness</td><td>new brightness </td></tr>
-    <tr><td class="paramname">specialCaseDevices</td><td>certain hue devices handle brightness differently. This list contains all ambient and white hue lights. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1004,30 +757,6 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">colors</td><td>a vector of colors. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="acdf292093067fe9d8ed9c2e4a0fd55b3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acdf292093067fe9d8ed9c2e4a0fd55b3">&#9670;&nbsp;</a></span>updateCt()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void DataLayer::updateCt </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>ct</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">ct</td><td>new color temperature. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1087,30 +816,6 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">count</td><td>new count of custom colors. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="aa905a7c685b2bbde43617e9931bfb882"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa905a7c685b2bbde43617e9931bfb882">&#9670;&nbsp;</a></span>updatePalette()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void DataLayer::updatePalette </td>
-          <td>(</td>
-          <td class="paramtype">EPalette&#160;</td>
-          <td class="paramname"><em>palette</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">colorGroup</td><td>new color group </td></tr>
   </table>
   </dd>
 </dl>

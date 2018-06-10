@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.12.12</span>
+   &#160;<span id="projectnumber">v0.13.0</span>
    </div>
   </td>
  </tr>
@@ -50,7 +50,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="class_list_edit_widget.html" title="The ListEditWidget class is a ListCollectionWidget that is used on the edit page to list devices...">ListEditWidget</a> class is a <a class="el" href="class_list_collection_widget.html" title="The ListCollectionWidget class is parent class for widgets shown on the connection page...">ListCollectionWidget</a> that is used on the edit page to list devices.  
+<p>The <a class="el" href="class_list_edit_widget.html" title="The ListEditWidget class is a ListCollectionWidget that is used on the edit page to list devices...">ListEditWidget</a> class is a <a class="el" href="class_list_collection_widget.html" title="The ListCollectionWidget class is parent class for widgets shown on the lights page. When displaying either devices or moods, they are grouped by collections. Collections are a series of devices that can be controlled together. In the case of the devices page, each collection shows all its devices. On the moods page, each collection shows all the moods that use the devices in the collection. ">ListCollectionWidget</a> that is used on the edit page to list devices.  
  <a href="class_list_edit_widget.html#details">More...</a></p>
 
 <p><code>#include &quot;<a class="el" href="listeditwidget_8h_source.html">listeditwidget.h</a>&quot;</code></p>
@@ -83,13 +83,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aceb27eab909ac5701188f08eb2dcec2f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_edit_widget.html#aceb27eab909ac5701188f08eb2dcec2f">ListEditWidget</a> (QWidget *parent=0)</td></tr>
-<tr class="memdesc:aceb27eab909ac5701188f08eb2dcec2f"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_list_edit_widget.html" title="The ListEditWidget class is a ListCollectionWidget that is used on the edit page to list devices...">ListEditWidget</a> constructor.  <a href="#aceb27eab909ac5701188f08eb2dcec2f">More...</a><br /></td></tr>
-<tr class="separator:aceb27eab909ac5701188f08eb2dcec2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a354cb340d3883d9f2b95097140cebbe0"><td class="memItemLeft" align="right" valign="top"><a id="a354cb340d3883d9f2b95097140cebbe0"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_edit_widget.html#a354cb340d3883d9f2b95097140cebbe0">connectLayers</a> (<a class="el" href="class_comm_layer.html">CommLayer</a> *comm, <a class="el" href="class_data_layer.html">DataLayer</a> *data)</td></tr>
-<tr class="memdesc:a354cb340d3883d9f2b95097140cebbe0"><td class="mdescLeft">&#160;</td><td class="mdescRight">connects to backend data <br /></td></tr>
-<tr class="separator:a354cb340d3883d9f2b95097140cebbe0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aee1fbe20bca040864c77fec66e697934"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_edit_widget.html#aee1fbe20bca040864c77fec66e697934">ListEditWidget</a> (QWidget *parent, <a class="el" href="class_comm_layer.html">CommLayer</a> *comm, <a class="el" href="class_data_layer.html">DataLayer</a> *data)</td></tr>
+<tr class="memdesc:aee1fbe20bca040864c77fec66e697934"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_list_edit_widget.html" title="The ListEditWidget class is a ListCollectionWidget that is used on the edit page to list devices...">ListEditWidget</a> constructor.  <a href="#aee1fbe20bca040864c77fec66e697934">More...</a><br /></td></tr>
+<tr class="separator:aee1fbe20bca040864c77fec66e697934"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae2f18194c48fa16cb2f1bdff8645a2d5"><td class="memItemLeft" align="right" valign="top"><a id="ae2f18194c48fa16cb2f1bdff8645a2d5"></a>
 QSize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_edit_widget.html#ae2f18194c48fa16cb2f1bdff8645a2d5">preferredSize</a> ()</td></tr>
 <tr class="memdesc:ae2f18194c48fa16cb2f1bdff8645a2d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">preferred size for widget <br /></td></tr>
@@ -243,8 +239,8 @@ EListType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="aceb27eab909ac5701188f08eb2dcec2f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aceb27eab909ac5701188f08eb2dcec2f">&#9670;&nbsp;</a></span>ListEditWidget()</h2>
+<a id="aee1fbe20bca040864c77fec66e697934"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee1fbe20bca040864c77fec66e697934">&#9670;&nbsp;</a></span>ListEditWidget()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -253,8 +249,24 @@ EListType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
           <td class="memname">ListEditWidget::ListEditWidget </td>
           <td>(</td>
           <td class="paramtype">QWidget *&#160;</td>
-          <td class="paramname"><em>parent</em> = <code>0</code></td><td>)</td>
+          <td class="paramname"><em>parent</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="class_comm_layer.html">CommLayer</a> *&#160;</td>
+          <td class="paramname"><em>comm</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_data_layer.html">DataLayer</a> *&#160;</td>
+          <td class="paramname"><em>data</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">

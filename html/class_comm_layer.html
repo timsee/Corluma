@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.12.12</span>
+   &#160;<span id="projectnumber">v0.13.0</span>
    </div>
   </td>
  </tr>
@@ -72,9 +72,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a02acfdc713064cdfd2c5a01fc88e8e5b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a02acfdc713064cdfd2c5a01fc88e8e5b">CommLayer</a> (QObject *parent=0)</td></tr>
-<tr class="memdesc:a02acfdc713064cdfd2c5a01fc88e8e5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a02acfdc713064cdfd2c5a01fc88e8e5b">More...</a><br /></td></tr>
-<tr class="separator:a02acfdc713064cdfd2c5a01fc88e8e5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd3fd20840d784bbf6f2723f1182fb79"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#afd3fd20840d784bbf6f2723f1182fb79">CommLayer</a> (QObject *parent, <a class="el" href="class_groups_parser.html">GroupsParser</a> *parser)</td></tr>
+<tr class="memdesc:afd3fd20840d784bbf6f2723f1182fb79"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#afd3fd20840d784bbf6f2723f1182fb79">More...</a><br /></td></tr>
+<tr class="separator:afd3fd20840d784bbf6f2723f1182fb79"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa068ecdc82f7043223e86223fd6c8eb6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#aa068ecdc82f7043223e86223fd6c8eb6">sendPacket</a> (const cor::Light &amp;device, QString &amp;payload)</td></tr>
 <tr class="memdesc:aa068ecdc82f7043223e86223fd6c8eb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendPacket helper for sending packets  <a href="#aa068ecdc82f7043223e86223fd6c8eb6">More...</a><br /></td></tr>
 <tr class="separator:aa068ecdc82f7043223e86223fd6c8eb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -163,6 +163,10 @@ const std::list&lt; cor::Controller &gt;&#160;</td><td class="memItemRight" vali
 <tr class="memitem:a30b763aa8616977ff0699a95c76e6ed1"><td class="memItemLeft" align="right" valign="top">const std::list&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a30b763aa8616977ff0699a95c76e6ed1">undiscoveredList</a> (ECommType type)</td></tr>
 <tr class="memdesc:a30b763aa8616977ff0699a95c76e6ed1"><td class="mdescLeft">&#160;</td><td class="mdescRight">undiscoveredList getter for the list of all undiscovered devices from a specific commtype  <a href="#a30b763aa8616977ff0699a95c76e6ed1">More...</a><br /></td></tr>
 <tr class="separator:a30b763aa8616977ff0699a95c76e6ed1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a365b426dfb64084d7d2a2cf420b8df"><td class="memItemLeft" align="right" valign="top"><a id="a9a365b426dfb64084d7d2a2cf420b8df"></a>
+std::shared_ptr&lt; <a class="el" href="class_comm_nanoleaf.html">CommNanoleaf</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a9a365b426dfb64084d7d2a2cf420b8df">nanoleaf</a> ()</td></tr>
+<tr class="memdesc:a9a365b426dfb64084d7d2a2cf420b8df"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for nanoleaf <br /></td></tr>
+<tr class="separator:a9a365b426dfb64084d7d2a2cf420b8df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a032252a5334b0dc568e78424e9ecee93"><td class="memItemLeft" align="right" valign="top"><a id="a032252a5334b0dc568e78424e9ecee93"></a>
 std::shared_ptr&lt; <a class="el" href="class_comm_hue.html">CommHue</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a032252a5334b0dc568e78424e9ecee93">hue</a> ()</td></tr>
 <tr class="memdesc:a032252a5334b0dc568e78424e9ecee93"><td class="mdescLeft">&#160;</td><td class="mdescRight">pointer to the hue comm type <br /></td></tr>
@@ -177,10 +181,6 @@ std::shared_ptr&lt; <a class="el" href="class_comm_hue.html">CommHue</a> &gt;&#1
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a7b164add41930c4a890739a7e6bfcaec">deleteHueGroup</a> (QString name)</td></tr>
 <tr class="memdesc:a7b164add41930c4a890739a7e6bfcaec"><td class="mdescLeft">&#160;</td><td class="mdescRight">deletes a hue group by name <br /></td></tr>
 <tr class="separator:a7b164add41930c4a890739a7e6bfcaec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad6157bf3d0492ce66b962a1bc8f790b2"><td class="memItemLeft" align="right" valign="top"><a id="ad6157bf3d0492ce66b962a1bc8f790b2"></a>
-<a class="el" href="class_groups_parser.html">GroupsParser</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ad6157bf3d0492ce66b962a1bc8f790b2">groups</a> ()</td></tr>
-<tr class="memdesc:ad6157bf3d0492ce66b962a1bc8f790b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">pointer to the groups parser <br /></td></tr>
-<tr class="separator:ad6157bf3d0492ce66b962a1bc8f790b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaedd632ad6bf8c316976d3095164bd1b"><td class="memItemLeft" align="right" valign="top"><a id="aaedd632ad6bf8c316976d3095164bd1b"></a>
 std::list&lt; cor::LightGroup &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#aaedd632ad6bf8c316976d3095164bd1b">collectionList</a> ()</td></tr>
 <tr class="memdesc:aaedd632ad6bf8c316976d3095164bd1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">list of all collections from all comm types <br /></td></tr>
@@ -203,8 +203,8 @@ std::list&lt; cor::LightGroup &gt;&#160;</td><td class="memItemRight" valign="bo
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a02acfdc713064cdfd2c5a01fc88e8e5b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a02acfdc713064cdfd2c5a01fc88e8e5b">&#9670;&nbsp;</a></span>CommLayer()</h2>
+<a id="afd3fd20840d784bbf6f2723f1182fb79"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afd3fd20840d784bbf6f2723f1182fb79">&#9670;&nbsp;</a></span>CommLayer()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -213,8 +213,18 @@ std::list&lt; cor::LightGroup &gt;&#160;</td><td class="memItemRight" valign="bo
           <td class="memname">CommLayer::CommLayer </td>
           <td>(</td>
           <td class="paramtype">QObject *&#160;</td>
-          <td class="paramname"><em>parent</em> = <code>0</code></td><td>)</td>
+          <td class="paramname"><em>parent</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="class_groups_parser.html">GroupsParser</a> *&#160;</td>
+          <td class="paramname"><em>parser</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">

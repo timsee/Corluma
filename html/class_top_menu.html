@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.12.12</span>
+   &#160;<span id="projectnumber">v0.13.0</span>
    </div>
   </td>
  </tr>
@@ -76,18 +76,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a2fed6970fc886a7979ac6f1fe133053b">updateMenuBar</a> ()</td></tr>
 <tr class="memdesc:a2fed6970fc886a7979ac6f1fe133053b"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateMenuBar used to update the menu bar to app state changes. <br /></td></tr>
 <tr class="separator:a2fed6970fc886a7979ac6f1fe133053b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9189d33952f2421b72f28a8b50e0f308"><td class="memItemLeft" align="right" valign="top"><a id="a9189d33952f2421b72f28a8b50e0f308"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a9189d33952f2421b72f28a8b50e0f308">updateSingleColor</a> (QColor)</td></tr>
-<tr class="memdesc:a9189d33952f2421b72f28a8b50e0f308"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateSingleColor updates the icon for the single color page and the menu bar and on/off button based off of the color emitted. <br /></td></tr>
-<tr class="separator:a9189d33952f2421b72f28a8b50e0f308"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab7725418b55c0ea72ad0801c18ae1121"><td class="memItemLeft" align="right" valign="top"><a id="ab7725418b55c0ea72ad0801c18ae1121"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#ab7725418b55c0ea72ad0801c18ae1121">updatePresetPalette</a> (EPalette)</td></tr>
-<tr class="memdesc:ab7725418b55c0ea72ad0801c18ae1121"><td class="mdescLeft">&#160;</td><td class="mdescRight">updatePresetPalette updates the icon for the preset color page and the menu bar and on/off button based off of the enum provided. <br /></td></tr>
-<tr class="separator:ab7725418b55c0ea72ad0801c18ae1121"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afacc54557f26c5e5afc492a5dea99fc9"><td class="memItemLeft" align="right" valign="top"><a id="afacc54557f26c5e5afc492a5dea99fc9"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#afacc54557f26c5e5afc492a5dea99fc9">deviceCountReachedZero</a> ()</td></tr>
-<tr class="memdesc:afacc54557f26c5e5afc492a5dea99fc9"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceCountChangedOnConnectionPage handles the case when the device count reaches zero. This gets signaled from the data layer whereas deviceCOuntChangedOnConnectionPage gets signaled from the connection page. <br /></td></tr>
+<tr class="memdesc:afacc54557f26c5e5afc492a5dea99fc9"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceCountChangedOnLightPage handles the case when the device count reaches zero. This gets signaled from the data layer whereas deviceCOuntChangedOnLightPage gets signaled from the lights page. <br /></td></tr>
 <tr class="separator:afacc54557f26c5e5afc492a5dea99fc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b255bf24248834a804d9b8f42c45353"><td class="memItemLeft" align="right" valign="top"><a id="a6b255bf24248834a804d9b8f42c45353"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a6b255bf24248834a804d9b8f42c45353">brightnessUpdate</a> (int newValue)</td></tr>
+<tr class="memdesc:a6b255bf24248834a804d9b8f42c45353"><td class="mdescLeft">&#160;</td><td class="mdescRight">brightness udpated somewhere else <br /></td></tr>
+<tr class="separator:a6b255bf24248834a804d9b8f42c45353"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
@@ -102,9 +98,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:acfaf2f963597267dfb8298ed9ebfddd4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#acfaf2f963597267dfb8298ed9ebfddd4">TopMenu</a> (<a class="el" href="class_data_layer.html">DataLayer</a> *data, <a class="el" href="class_comm_layer.html">CommLayer</a> *comm, QWidget *parent=0)</td></tr>
-<tr class="memdesc:acfaf2f963597267dfb8298ed9ebfddd4"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#acfaf2f963597267dfb8298ed9ebfddd4">More...</a><br /></td></tr>
-<tr class="separator:acfaf2f963597267dfb8298ed9ebfddd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca9bde5ba2ddc31037d75ac7d944aec6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#aca9bde5ba2ddc31037d75ac7d944aec6">TopMenu</a> (QWidget *parent, <a class="el" href="class_data_layer.html">DataLayer</a> *data, <a class="el" href="class_comm_layer.html">CommLayer</a> *comm, <a class="el" href="class_main_window.html">MainWindow</a> *mainWindow, <a class="el" href="class_palette_page.html">PalettePage</a> *palettePage, <a class="el" href="class_color_page.html">ColorPage</a> *colorPage, <a class="el" href="class_mood_page.html">MoodPage</a> *<a class="el" href="class_mood_page.html">MoodPage</a>, <a class="el" href="class_light_page.html">LightPage</a> *<a class="el" href="class_light_page.html">LightPage</a>)</td></tr>
+<tr class="memdesc:aca9bde5ba2ddc31037d75ac7d944aec6"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#aca9bde5ba2ddc31037d75ac7d944aec6">More...</a><br /></td></tr>
+<tr class="separator:aca9bde5ba2ddc31037d75ac7d944aec6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6abfa40bb5b4988b91001d8d80ef711e"><td class="memItemLeft" align="right" valign="top"><a id="a6abfa40bb5b4988b91001d8d80ef711e"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a6abfa40bb5b4988b91001d8d80ef711e">~TopMenu</a> ()</td></tr>
 <tr class="memdesc:a6abfa40bb5b4988b91001d8d80ef711e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
@@ -117,15 +113,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:aa04531ef540961b2ed4a1d6ccabefc56"><td class="mdescLeft">&#160;</td><td class="mdescRight">highlightButton highlight the button of any of the floating layouts, based on the key  <a href="#aa04531ef540961b2ed4a1d6ccabefc56">More...</a><br /></td></tr>
 <tr class="separator:aa04531ef540961b2ed4a1d6ccabefc56"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f03a7d5ecf6c20de416a2b48dfa2c33"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a8f03a7d5ecf6c20de416a2b48dfa2c33">pageButtonPressed</a> (EPage pageButtonType)</td></tr>
-<tr class="memdesc:a8f03a7d5ecf6c20de416a2b48dfa2c33"><td class="mdescLeft">&#160;</td><td class="mdescRight">pageButtonPressed main page button pressed, such as the color page or connection page  <a href="#a8f03a7d5ecf6c20de416a2b48dfa2c33">More...</a><br /></td></tr>
+<tr class="memdesc:a8f03a7d5ecf6c20de416a2b48dfa2c33"><td class="mdescLeft">&#160;</td><td class="mdescRight">pageButtonPressed main page button pressed, such as the color page or lights page  <a href="#a8f03a7d5ecf6c20de416a2b48dfa2c33">More...</a><br /></td></tr>
 <tr class="separator:a8f03a7d5ecf6c20de416a2b48dfa2c33"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3eb3451aabd87281a9628b07d9140d94"><td class="memItemLeft" align="right" valign="top"><a id="a3eb3451aabd87281a9628b07d9140d94"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a3eb3451aabd87281a9628b07d9140d94">showFloatingLayout</a> (EPage newPage)</td></tr>
 <tr class="memdesc:a3eb3451aabd87281a9628b07d9140d94"><td class="mdescLeft">&#160;</td><td class="mdescRight">switch the floating layout to show the menu for the given page <br /></td></tr>
 <tr class="separator:a3eb3451aabd87281a9628b07d9140d94"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95ff8fed708c57cc11cf0b54d3a6d932"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a95ff8fed708c57cc11cf0b54d3a6d932">setup</a> (<a class="el" href="class_main_window.html">MainWindow</a> *mainWindow, <a class="el" href="class_group_page.html">GroupPage</a> *groupPage, <a class="el" href="class_color_page.html">ColorPage</a> *colorPage, <a class="el" href="class_moods_page.html">MoodsPage</a> *moodsPage, <a class="el" href="class_connection_page.html">ConnectionPage</a> *connectionPage)</td></tr>
-<tr class="memdesc:a95ff8fed708c57cc11cf0b54d3a6d932"><td class="mdescLeft">&#160;</td><td class="mdescRight">setup connect the top menu to pages it can open and close  <a href="#a95ff8fed708c57cc11cf0b54d3a6d932">More...</a><br /></td></tr>
-<tr class="separator:a95ff8fed708c57cc11cf0b54d3a6d932"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7c5aea32e8d38e0cf265156c50e7bc6"><td class="memItemLeft" align="right" valign="top"><a id="ad7c5aea32e8d38e0cf265156c50e7bc6"></a>
 uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#ad7c5aea32e8d38e0cf265156c50e7bc6">floatingLayoutEnd</a> ()</td></tr>
 <tr class="memdesc:ad7c5aea32e8d38e0cf265156c50e7bc6"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for end of floating layout <br /></td></tr>
@@ -139,8 +132,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:af5e3203eae35489ae1507ce9a61feb4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="acfaf2f963597267dfb8298ed9ebfddd4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acfaf2f963597267dfb8298ed9ebfddd4">&#9670;&nbsp;</a></span>TopMenu()</h2>
+<a id="aca9bde5ba2ddc31037d75ac7d944aec6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aca9bde5ba2ddc31037d75ac7d944aec6">&#9670;&nbsp;</a></span>TopMenu()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -151,6 +144,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="memname">TopMenu::TopMenu </td>
           <td>(</td>
+          <td class="paramtype">QWidget *&#160;</td>
+          <td class="paramname"><em>parent</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype"><a class="el" href="class_data_layer.html">DataLayer</a> *&#160;</td>
           <td class="paramname"><em>data</em>, </td>
         </tr>
@@ -163,8 +162,32 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">QWidget *&#160;</td>
-          <td class="paramname"><em>parent</em> = <code>0</code>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_main_window.html">MainWindow</a> *&#160;</td>
+          <td class="paramname"><em>mainWindow</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_palette_page.html">PalettePage</a> *&#160;</td>
+          <td class="paramname"><em>palettePage</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_color_page.html">ColorPage</a> *&#160;</td>
+          <td class="paramname"><em>colorPage</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_mood_page.html">MoodPage</a> *&#160;</td>
+          <td class="paramname"><em>moodPage</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_light_page.html">LightPage</a> *&#160;</td>
+          <td class="paramname"><em>lightPage</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -225,62 +248,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pageButtonType</td><td>page type of button pressed. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a95ff8fed708c57cc11cf0b54d3a6d932"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a95ff8fed708c57cc11cf0b54d3a6d932">&#9670;&nbsp;</a></span>setup()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void TopMenu::setup </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="class_main_window.html">MainWindow</a> *&#160;</td>
-          <td class="paramname"><em>mainWindow</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_group_page.html">GroupPage</a> *&#160;</td>
-          <td class="paramname"><em>groupPage</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_color_page.html">ColorPage</a> *&#160;</td>
-          <td class="paramname"><em>colorPage</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_moods_page.html">MoodsPage</a> *&#160;</td>
-          <td class="paramname"><em>moodsPage</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_connection_page.html">ConnectionPage</a> *&#160;</td>
-          <td class="paramname"><em>connectionPage</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">mainWindow</td><td>main window for the application </td></tr>
-    <tr><td class="paramname">groupPage</td><td>group page, shows moods and groups </td></tr>
-    <tr><td class="paramname">colorPage</td><td>color page, allows you to set all devices to one color. </td></tr>
-    <tr><td class="paramname">moodsPage</td><td>shows moods </td></tr>
-    <tr><td class="paramname">connectionPage</td><td>connection page, allows you to choose groups and rooms of lights </td></tr>
   </table>
   </dd>
 </dl>

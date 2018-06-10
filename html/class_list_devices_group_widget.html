@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.12.12</span>
+   &#160;<span id="projectnumber">v0.13.0</span>
    </div>
   </td>
  </tr>
@@ -50,7 +50,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="class_list_devices_group_widget.html" title="The ListDevicesGroupWidget class is a subclassed ListCollectionWidget that displays all the devices i...">ListDevicesGroupWidget</a> class is a subclassed <a class="el" href="class_list_collection_widget.html" title="The ListCollectionWidget class is parent class for widgets shown on the connection page...">ListCollectionWidget</a> that displays all the devices in a collection. It contains a widget at the top that gives info on the collection and the ability to edit it. It also contains an array of ListDeviceWidgets, which can be shown or hidden by clicking the top widget.  
+<p>The <a class="el" href="class_list_devices_group_widget.html" title="The ListDevicesGroupWidget class is a subclassed ListCollectionWidget that displays all the devices i...">ListDevicesGroupWidget</a> class is a subclassed <a class="el" href="class_list_collection_widget.html" title="The ListCollectionWidget class is parent class for widgets shown on the lights page. When displaying either devices or moods, they are grouped by collections. Collections are a series of devices that can be controlled together. In the case of the devices page, each collection shows all its devices. On the moods page, each collection shows all the moods that use the devices in the collection. ">ListCollectionWidget</a> that displays all the devices in a collection. It contains a widget at the top that gives info on the collection and the ability to edit it. It also contains an array of ListDeviceWidgets, which can be shown or hidden by clicking the top widget.  
  <a href="class_list_devices_group_widget.html#details">More...</a></p>
 
 <p><code>#include &quot;<a class="el" href="listdevicesgroupwidget_8h_source.html">listdevicesgroupwidget.h</a>&quot;</code></p>
@@ -87,9 +87,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3442c3859fa0eb4a3eeff21edb2bedf0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_devices_group_widget.html#a3442c3859fa0eb4a3eeff21edb2bedf0">ListDevicesGroupWidget</a> (const cor::LightGroup &amp;<a class="el" href="class_list_devices_group_widget.html#a29f7bd0e490d4984712553867104468c">group</a>, QString <a class="el" href="class_list_collection_widget.html#a8e51936bec113cd68b5089680040de98">key</a>, <a class="el" href="class_comm_layer.html">CommLayer</a> *comm, <a class="el" href="class_data_layer.html">DataLayer</a> *data, QWidget *parent=0)</td></tr>
-<tr class="memdesc:a3442c3859fa0eb4a3eeff21edb2bedf0"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_list_devices_group_widget.html" title="The ListDevicesGroupWidget class is a subclassed ListCollectionWidget that displays all the devices i...">ListDevicesGroupWidget</a> constructor.  <a href="#a3442c3859fa0eb4a3eeff21edb2bedf0">More...</a><br /></td></tr>
-<tr class="separator:a3442c3859fa0eb4a3eeff21edb2bedf0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8e2315a2199b62af0b6b46b42eaa1d1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_devices_group_widget.html#af8e2315a2199b62af0b6b46b42eaa1d1">ListDevicesGroupWidget</a> (const cor::LightGroup &amp;<a class="el" href="class_list_devices_group_widget.html#a29f7bd0e490d4984712553867104468c">group</a>, QString <a class="el" href="class_list_collection_widget.html#a8e51936bec113cd68b5089680040de98">key</a>, <a class="el" href="class_comm_layer.html">CommLayer</a> *comm, <a class="el" href="class_data_layer.html">DataLayer</a> *data, QWidget *parent)</td></tr>
+<tr class="memdesc:af8e2315a2199b62af0b6b46b42eaa1d1"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_list_devices_group_widget.html" title="The ListDevicesGroupWidget class is a subclassed ListCollectionWidget that displays all the devices i...">ListDevicesGroupWidget</a> constructor.  <a href="#af8e2315a2199b62af0b6b46b42eaa1d1">More...</a><br /></td></tr>
+<tr class="separator:af8e2315a2199b62af0b6b46b42eaa1d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6971c2c752711519be91a4f81391f3a7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_devices_group_widget.html#a6971c2c752711519be91a4f81391f3a7">setCheckedDevices</a> (std::list&lt; cor::Light &gt; <a class="el" href="class_list_devices_group_widget.html#a6c3a593498a4fa6f7345560d9d4433f5">devices</a>)</td></tr>
 <tr class="memdesc:a6971c2c752711519be91a4f81391f3a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">setCheckedDevices takes a list of devices and compares it against all devices in the widget. If the device exists in both the widgets and the devices, it is set as checked. Otherwise, the widget is set to unchecked.  <a href="#a6971c2c752711519be91a4f81391f3a7">More...</a><br /></td></tr>
 <tr class="separator:a6971c2c752711519be91a4f81391f3a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -258,8 +258,8 @@ EListType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a3442c3859fa0eb4a3eeff21edb2bedf0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3442c3859fa0eb4a3eeff21edb2bedf0">&#9670;&nbsp;</a></span>ListDevicesGroupWidget()</h2>
+<a id="af8e2315a2199b62af0b6b46b42eaa1d1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af8e2315a2199b62af0b6b46b42eaa1d1">&#9670;&nbsp;</a></span>ListDevicesGroupWidget()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -292,7 +292,7 @@ EListType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">QWidget *&#160;</td>
-          <td class="paramname"><em>parent</em> = <code>0</code>&#160;</td>
+          <td class="paramname"><em>parent</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.12.12</span>
+   &#160;<span id="projectnumber">v0.13.0</span>
    </div>
   </td>
  </tr>
@@ -68,16 +68,21 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:acb7bd1c70c7cdc6382e9846c236e0034"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_custom_color_picker.html#acb7bd1c70c7cdc6382e9846c236e0034">CustomColorPicker</a> (QWidget *parent=nullptr)</td></tr>
 <tr class="memdesc:acb7bd1c70c7cdc6382e9846c236e0034"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#acb7bd1c70c7cdc6382e9846c236e0034">More...</a><br /></td></tr>
 <tr class="separator:acb7bd1c70c7cdc6382e9846c236e0034"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a240386be14ce2e8f0ea492ff57f110d6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_custom_color_picker.html#a240386be14ce2e8f0ea492ff57f110d6">updateMultiColor</a> (const std::vector&lt; QColor &gt; &amp;colors, int count)</td></tr>
-<tr class="memdesc:a240386be14ce2e8f0ea492ff57f110d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateMultiColor programmatically set the colors in the multi color picker. This will update the UI elements to reflect the values provided. By default it will also signal its changes, but a flag can be used to override the signal.  <a href="#a240386be14ce2e8f0ea492ff57f110d6">More...</a><br /></td></tr>
-<tr class="separator:a240386be14ce2e8f0ea492ff57f110d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8915f7e2e1e86e534a33899b5fe30eeb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_custom_color_picker.html#a8915f7e2e1e86e534a33899b5fe30eeb">updateSelected</a> (QColor color)</td></tr>
 <tr class="memdesc:a8915f7e2e1e86e534a33899b5fe30eeb"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateSelected progrmatically update the selected buttons with a new color. Does not emit a signal when complete  <a href="#a8915f7e2e1e86e534a33899b5fe30eeb">More...</a><br /></td></tr>
 <tr class="separator:a8915f7e2e1e86e534a33899b5fe30eeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61d003316a2aa741ef231c997e36e8ca"><td class="memItemLeft" align="right" valign="top"><a id="a61d003316a2aa741ef231c997e36e8ca"></a>
-cor::PaletteWidget *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_custom_color_picker.html#a61d003316a2aa741ef231c997e36e8ca">palette</a> ()</td></tr>
-<tr class="memdesc:a61d003316a2aa741ef231c997e36e8ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for pointer of color palette <br /></td></tr>
-<tr class="separator:a61d003316a2aa741ef231c997e36e8ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a754bcbedab0dbd07dd423d7eeb5ab856"><td class="memItemLeft" align="right" valign="top"><a id="a754bcbedab0dbd07dd423d7eeb5ab856"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_custom_color_picker.html#a754bcbedab0dbd07dd423d7eeb5ab856">updateMultiColor</a> (const std::vector&lt; QColor &gt; &amp;<a class="el" href="class_custom_color_picker.html#a6caa55aaf200b8b421fdc62c183216f8">colors</a>)</td></tr>
+<tr class="memdesc:a754bcbedab0dbd07dd423d7eeb5ab856"><td class="mdescLeft">&#160;</td><td class="mdescRight">update the colors used by the buttons <br /></td></tr>
+<tr class="separator:a754bcbedab0dbd07dd423d7eeb5ab856"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71b490f8f2e5ebb74cf4d9aefe4fd42e"><td class="memItemLeft" align="right" valign="top"><a id="a71b490f8f2e5ebb74cf4d9aefe4fd42e"></a>
+cor::LightVectorWidget *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_custom_color_picker.html#a71b490f8f2e5ebb74cf4d9aefe4fd42e">palette</a> ()</td></tr>
+<tr class="memdesc:a71b490f8f2e5ebb74cf4d9aefe4fd42e"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for pointer of color palette <br /></td></tr>
+<tr class="separator:a71b490f8f2e5ebb74cf4d9aefe4fd42e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6caa55aaf200b8b421fdc62c183216f8"><td class="memItemLeft" align="right" valign="top"><a id="a6caa55aaf200b8b421fdc62c183216f8"></a>
+const std::vector&lt; QColor &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_custom_color_picker.html#a6caa55aaf200b8b421fdc62c183216f8">colors</a> ()</td></tr>
+<tr class="memdesc:a6caa55aaf200b8b421fdc62c183216f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the colors used by the buttons <br /></td></tr>
+<tr class="separator:a6caa55aaf200b8b421fdc62c183216f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
@@ -110,41 +115,6 @@ cor::PaletteWidget *&#160;</td><td class="memItemRight" valign="bottom"><a class
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a240386be14ce2e8f0ea492ff57f110d6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a240386be14ce2e8f0ea492ff57f110d6">&#9670;&nbsp;</a></span>updateMultiColor()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CustomColorPicker::updateMultiColor </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; QColor &gt; &amp;&#160;</td>
-          <td class="paramname"><em>colors</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>count</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">colors</td><td>the colors for the array in the multi color picker </td></tr>
-    <tr><td class="paramname">count</td><td>the number of colors to use from the vector </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a id="a8915f7e2e1e86e534a33899b5fe30eeb"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8915f7e2e1e86e534a33899b5fe30eeb">&#9670;&nbsp;</a></span>updateSelected()</h2>
 

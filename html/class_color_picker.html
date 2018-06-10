@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.12.12</span>
+   &#160;<span id="projectnumber">v0.13.0</span>
    </div>
   </td>
  </tr>
@@ -99,12 +99,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a0cf3f52806325b1fedffdce7a570bd59"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a0cf3f52806325b1fedffdce7a570bd59">enableWheel</a> (bool shouldEnable)</td></tr>
 <tr class="memdesc:a0cf3f52806325b1fedffdce7a570bd59"><td class="mdescLeft">&#160;</td><td class="mdescRight">enableWheel enables/disables the color wheel. If the color wheel is disabled, its faded out and mouse events don't work. If its enabled, its not faded out and um, mouse events do work.  <a href="#a0cf3f52806325b1fedffdce7a570bd59">More...</a><br /></td></tr>
 <tr class="separator:a0cf3f52806325b1fedffdce7a570bd59"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a24d9195c59e1f623fcc4afe73bbaae65"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a24d9195c59e1f623fcc4afe73bbaae65">chooseAmbient</a> (int temperature, int brightness, bool shouldSignal=true)</td></tr>
-<tr class="memdesc:a24d9195c59e1f623fcc4afe73bbaae65"><td class="mdescLeft">&#160;</td><td class="mdescRight">chooseAmbient programmatically set the ambient color picker. This will update the UI elements to reflect the values provided. By default it will also signal its changes, but a flag can be used to override the signal.  <a href="#a24d9195c59e1f623fcc4afe73bbaae65">More...</a><br /></td></tr>
-<tr class="separator:a24d9195c59e1f623fcc4afe73bbaae65"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf1b209b5552935880712e1b54f49463"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#acf1b209b5552935880712e1b54f49463">updateColorStates</a> (QColor mainColor, int brightness, const std::vector&lt; QColor &gt; colorArray, const std::vector&lt; QColor &gt; colorSchemes, int colorArrayCount)</td></tr>
-<tr class="memdesc:acf1b209b5552935880712e1b54f49463"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateColorStates update the layouts at the bottom of the <a class="el" href="class_color_picker.html" title="The ColorPicker class is a GUI object designed to give the user ability to choose RGB values in a var...">ColorPicker</a> with new values from the RGB devices  <a href="#acf1b209b5552935880712e1b54f49463">More...</a><br /></td></tr>
-<tr class="separator:acf1b209b5552935880712e1b54f49463"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a20d4d976e91d9e9ecdf1e34e9ff86a4f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a20d4d976e91d9e9ecdf1e34e9ff86a4f">chooseAmbient</a> (int temperature, int brightness, bool shouldSignal)</td></tr>
+<tr class="memdesc:a20d4d976e91d9e9ecdf1e34e9ff86a4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">chooseAmbient programmatically set the ambient color picker. This will update the UI elements to reflect the values provided. By default it will also signal its changes, but a flag can be used to override the signal.  <a href="#a20d4d976e91d9e9ecdf1e34e9ff86a4f">More...</a><br /></td></tr>
+<tr class="separator:a20d4d976e91d9e9ecdf1e34e9ff86a4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94a7ff3eeb1904635ad38ae673e57a2c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a94a7ff3eeb1904635ad38ae673e57a2c">updateColorStates</a> (QColor mainColor, int brightness, const std::vector&lt; QColor &gt; colorSchemes)</td></tr>
+<tr class="memdesc:a94a7ff3eeb1904635ad38ae673e57a2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateColorStates update the layouts at the bottom of the <a class="el" href="class_color_picker.html" title="The ColorPicker class is a GUI object designed to give the user ability to choose RGB values in a var...">ColorPicker</a> with new values from the RGB devices  <a href="#a94a7ff3eeb1904635ad38ae673e57a2c">More...</a><br /></td></tr>
+<tr class="separator:a94a7ff3eeb1904635ad38ae673e57a2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae237a8fa9b003e1ec38a689181c4b16e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#ae237a8fa9b003e1ec38a689181c4b16e">setMultiColorDefaults</a> (const std::vector&lt; QColor &gt; &amp;<a class="el" href="class_color_picker.html#abb49a49f26df197f82d4131cfb1ec1da">colors</a>)</td></tr>
+<tr class="memdesc:ae237a8fa9b003e1ec38a689181c4b16e"><td class="mdescLeft">&#160;</td><td class="mdescRight">setMultiColorDefaults set the default colors of the custom color picker  <a href="#ae237a8fa9b003e1ec38a689181c4b16e">More...</a><br /></td></tr>
+<tr class="separator:ae237a8fa9b003e1ec38a689181c4b16e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb49a49f26df197f82d4131cfb1ec1da"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; QColor &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#abb49a49f26df197f82d4131cfb1ec1da">colors</a> ()</td></tr>
+<tr class="memdesc:abb49a49f26df197f82d4131cfb1ec1da"><td class="mdescLeft">&#160;</td><td class="mdescRight">colors getter for the current state of the default colors of the custom color pickers  <a href="#abb49a49f26df197f82d4131cfb1ec1da">More...</a><br /></td></tr>
+<tr class="separator:abb49a49f26df197f82d4131cfb1ec1da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -205,8 +211,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a id="a24d9195c59e1f623fcc4afe73bbaae65"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a24d9195c59e1f623fcc4afe73bbaae65">&#9670;&nbsp;</a></span>chooseAmbient()</h2>
+<a id="a20d4d976e91d9e9ecdf1e34e9ff86a4f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a20d4d976e91d9e9ecdf1e34e9ff86a4f">&#9670;&nbsp;</a></span>chooseAmbient()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -227,7 +233,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>shouldSignal</em> = <code>true</code>&#160;</td>
+          <td class="paramname"><em>shouldSignal</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -244,6 +250,32 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="abb49a49f26df197f82d4131cfb1ec1da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abb49a49f26df197f82d4131cfb1ec1da">&#9670;&nbsp;</a></span>colors()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::vector&lt;QColor&gt;&amp; ColorPicker::colors </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>the current state of the default colors of the custom color picker </dd></dl>
 
 </div>
 </div>
@@ -271,8 +303,32 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a id="acf1b209b5552935880712e1b54f49463"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acf1b209b5552935880712e1b54f49463">&#9670;&nbsp;</a></span>updateColorStates()</h2>
+<a id="ae237a8fa9b003e1ec38a689181c4b16e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae237a8fa9b003e1ec38a689181c4b16e">&#9670;&nbsp;</a></span>setMultiColorDefaults()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ColorPicker::setMultiColorDefaults </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; QColor &gt; &amp;&#160;</td>
+          <td class="paramname"><em>colors</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">colors</td><td>the colors to use for the cusotm color picker </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a94a7ff3eeb1904635ad38ae673e57a2c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a94a7ff3eeb1904635ad38ae673e57a2c">&#9670;&nbsp;</a></span>updateColorStates()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -293,19 +349,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const std::vector&lt; QColor &gt;&#160;</td>
-          <td class="paramname"><em>colorArray</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; QColor &gt;&#160;</td>
-          <td class="paramname"><em>colorSchemes</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>colorArrayCount</em>&#160;</td>
+          <td class="paramname"><em>colorSchemes</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -318,9 +362,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   <table class="params">
     <tr><td class="paramname">mainColor</td><td>main color from datalayer </td></tr>
     <tr><td class="paramname">brightness</td><td>brightness from data layer </td></tr>
-    <tr><td class="paramname">colorArray</td><td>the custom color array from datalayer </td></tr>
     <tr><td class="paramname">colorSchemes</td><td>the colors of the selected devices </td></tr>
-    <tr><td class="paramname">colorArrayCount</td><td>the count of LEDs used in array from datalayer </td></tr>
   </table>
   </dd>
 </dl>
