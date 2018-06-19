@@ -68,6 +68,10 @@ void CommSerial::sendPacket(const cor::Controller& controller, QString& packet) 
 }
 
 
+void CommSerial::sendPacket(const QJsonObject& object) {
+
+}
+
 void CommSerial::stateUpdate() {
     if (shouldContinueStateUpdate()) {
         for (auto&& controller : mDiscoveredList) {

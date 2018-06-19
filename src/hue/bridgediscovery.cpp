@@ -144,25 +144,25 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
             }
             else if(jsonResponse.isArray()) {
                 QJsonObject outsideObject = jsonResponse.array().at(0).toObject();
-                if (outsideObject.value("error").isObject()) {
+                if (outsideObject["error"].isObject()) {
                     if (!mIPValid) {
                         attemptSearchForUsername();
                         mIPValid = true;
                     }
                     // error packets are sent when a message cannot be parsed
-                    QJsonObject innerObject = outsideObject.value("error").toObject();
-                    if (innerObject.value("description").isString()) {
-                        QString description = innerObject.value("description").toString();
+                    QJsonObject innerObject = outsideObject["error"].toObject();
+                    if (innerObject["description"].isString()) {
+                        QString description = innerObject["description"].toString();
                        // qDebug() << "Description" << description;
                     }
-                } else if (outsideObject.value("success").isObject()) {
+                } else if (outsideObject["success"].isObject()) {
                     // success packets are sent when a message is parsed and the Hue react in some  way.
-                    QJsonObject innerObject = outsideObject.value("success").toObject();
-                    if (innerObject.value("username").isString()) {
+                    QJsonObject innerObject = outsideObject["success"].toObject();
+                    if (innerObject["username"].isString()) {
                         if (!mIPValid) {
                             mIPValid = true;
                         }
-                        mBridge.username = innerObject.value("username").toString();
+                        mBridge.username = innerObject["username"].toString();
                         mHasKey = true;
                         qDebug() << "Discovered username:" << mBridge.username;
 
@@ -175,11 +175,11 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
                         // the username.
                         attemptFinalCheck();
                     }
-                } else if (outsideObject.value("internalipaddress").isString()) {
+                } else if (outsideObject["internalipaddress"].isString()) {
                     if (!mHasIP) {
                         // Used by N-UPnP, this gives the IP address of the Hue bridge
                         // if a GET is sent to https://www.meethue.com/api/nupnp
-                        mBridge.IP = outsideObject.value("internalipaddress").toString();
+                        mBridge.IP = outsideObject["internalipaddress"].toString();
                         // spawn a discovery timer
                         mHasIP = true;
                         qDebug() << "discovered IP via NUPnP: " << mBridge.IP;

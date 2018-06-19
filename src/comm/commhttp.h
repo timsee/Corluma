@@ -50,6 +50,13 @@ public:
      */
     void sendPacket(const cor::Controller& controller, QString& packet);
 
+    /*!
+     * \brief sendPacket send a packet based off of a JSON object containing all
+     *        relevant information about the packet
+     * \param object json representation of the packet to send
+     */
+    void sendPacket(const QJsonObject& object);
+
 private slots:
     /*!
      * \brief replyFinished called by the mNetworkManager, receives HTTP replies to packets

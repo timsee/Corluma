@@ -49,15 +49,20 @@ MainWindow::MainWindow(QWidget *parent) :
     // --------------
 
     mGroups = new GroupsParser(this);
-
-    mData = new DataLayer(this);
-
-    mComm = new CommLayer(this, mGroups);
+    mProtocolSettings = new ProtocolSettings();
+    mData   = new DataLayer(this);
+    mComm   = new CommLayer(this, mGroups);
 
     mDataSyncArduino  = new DataSyncArduino(mData, mComm);
     mDataSyncHue      = new DataSyncHue(mData, mComm);
     mDataSyncNanoLeaf = new DataSyncNanoLeaf(mData, mComm);
-    mDataSyncSettings = new DataSyncSettings(mData, mComm);
+    mDataSyncSettings = new DataSyncSettings(mData, mComm, mProtocolSettings);
+
+    if (mProtocolSettings->enabled(EProtocolType::nanoleaf)) {
+        mComm->nanoleaf()->discovery()->startDiscovery();
+    }
+    connect(mComm->nanoleaf().get(), SIGNAL(lightRenamed(cor::Light, QString)), this, SLOT(renamedLight(cor::Light, QString)));
+
 
     // --------------
     // Setup main widget space
@@ -70,7 +75,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Setup Pages
     // --------------
 
-    mLightPage = new LightPage(this, mData, mComm, mGroups);
+    mLightPage = new LightPage(this, mData, mComm, mGroups, mProtocolSettings);
     mLightPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mLightPage, SIGNAL(clickedEditButton(QString, bool)),  this, SLOT(editButtonClicked(QString, bool)));
 
@@ -126,7 +131,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Settings Page
     // --------------
 
-    mSettingsPage = new SettingsPage(this, mComm, mData, mGroups);
+    mSettingsPage = new SettingsPage(this, mComm, mData, mGroups, mProtocolSettings);
     mSettingsPage->setVisible(false);
     mSettingsPage->isOpen(false);
     connect(mSettingsPage, SIGNAL(updateMainIcons()), mTopMenu, SLOT(updateMenuBar()));
@@ -141,7 +146,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Setup Discovery Page
     // --------------
 
-    mDiscoveryPage = new DiscoveryPage(this, mData, mComm);
+    mDiscoveryPage = new DiscoveryPage(this, mData, mComm, mProtocolSettings);
     mDiscoveryPage->show();
     mDiscoveryPage->isOpen(true);
     connect(mDiscoveryPage, SIGNAL(startButtonClicked()), this, SLOT(switchToConnection()));
@@ -162,24 +167,19 @@ MainWindow::MainWindow(QWidget *parent) :
     mEditPage = new EditGroupPage(this, mComm, mData, mGroups);
     mEditPage->isOpen(false);
     connect(mEditPage, SIGNAL(pressedClose()), this, SLOT(editClosePressed()));
-    mEditPage->setGeometry(0,
-                        -1 * this->height(),
-                        this->width(), this->height());
+    mEditPage->setGeometry(0, -1 * this->height(), this->width(), this->height());
 
 
     // --------------
     // Setup Hue Info Widget
     // --------------
 
-    mHueInfoWidget = new hue::LightInfoListWidget(this);
-    mHueInfoWidget->isOpen(false);
-    connect(mHueInfoWidget, SIGNAL(hueChangedName(QString, QString)), this, SLOT(hueNameChanged(QString, QString)));
-    connect(mHueInfoWidget, SIGNAL(hueDeleted(QString)), this, SLOT(deleteHue(QString)));
-    connect(mHueInfoWidget, SIGNAL(pressedClose()), this, SLOT(hueInfoClosePressed()));
-
-    mHueInfoWidget->setGeometry(0,
-                                -1 * this->height(),
-                                this->width(), this->height());
+    mLightInfoWidget = new LightInfoListWidget(this);
+    mLightInfoWidget->isOpen(false);
+    connect(mLightInfoWidget, SIGNAL(lightNameChanged(EProtocolType, QString, QString)), this, SLOT(lightNameChange(EProtocolType, QString, QString)));
+    connect(mLightInfoWidget, SIGNAL(hueDeleted(QString)), this, SLOT(deleteHue(QString)));
+    connect(mLightInfoWidget, SIGNAL(pressedClose()), this, SLOT(lightInfoClosePressed()));
+    mLightInfoWidget->setGeometry(0, -1 * this->height(), this->width(), this->height());
 
     // --------------
     // Set up the floating layouts
@@ -214,7 +214,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // --------------
     for (int i = 0; i < (int)EProtocolType::MAX; ++i) {
         EProtocolType type = (EProtocolType)i;
-        if (mData->protocolSettings()->enabled(type)) {
+        if (mProtocolSettings->enabled(type)) {
             mComm->startup(type);
             mComm->startDiscovery(type);
         }
@@ -256,6 +256,7 @@ void MainWindow::topMenuButtonPressed(QString key) {
 
 void MainWindow::settingsButtonFromDiscoveryPressed() {
     if (mAnyDiscovered) {
+
         // hide discovery
         switchToConnection();
     }
@@ -461,8 +462,8 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
         mEditPage->resize();
     }
 
-    if (mHueInfoWidget->isOpen()) {
-        mHueInfoWidget->resize();
+    if (mLightInfoWidget->isOpen()) {
+        mLightInfoWidget->resize();
     }
 
     if (mHueLightDiscovery->isOpen()) {
@@ -492,14 +493,14 @@ void MainWindow::changeEvent(QEvent *event) {
     if(event->type() == QEvent::ActivationChange && this->isActiveWindow()) {
         for (int commInt = 0; commInt != (int)EProtocolType::MAX; ++commInt) {
             EProtocolType type = static_cast<EProtocolType>(commInt);
-            if (mData->protocolSettings()->enabled(type)) {
+            if (mProtocolSettings->enabled(type)) {
                 mComm->resetStateUpdates(type);
             }
         }
     } else if (event->type() == QEvent::ActivationChange && !this->isActiveWindow()) {
         for (int commInt = 0; commInt != (int)EProtocolType::MAX; ++commInt) {
             EProtocolType type = static_cast<EProtocolType>(commInt);
-            if (mData->protocolSettings()->enabled(type)) {
+            if (mProtocolSettings->enabled(type)) {
                 mComm->stopStateUpdates(type);
             }
         }
@@ -618,22 +619,23 @@ void MainWindow::editButtonClicked(QString key, bool isMood) {
 
 void MainWindow::hueInfoWidgetClicked() {
     greyOut(true);
-    mHueInfoWidget->isOpen(true);
+    mLightInfoWidget->isOpen(true);
 
-    mHueInfoWidget->updateLights(mComm->hue()->connectedHues());
+    mLightInfoWidget->updateLights(mComm->hue()->connectedHues());
+    mLightInfoWidget->updateControllers(mComm->nanoleaf()->controllers());
     mBottomRightFloatingLayout->setVisible(true);
 
     QSize size = this->size();
-    mHueInfoWidget->setGeometry(size.width() * 0.125f,
+    mLightInfoWidget->setGeometry(size.width() * 0.125f,
                                 -1 * this->height(),
                                 size.width() * 0.75f,
                                 size.height() * 0.75f);
 
     QPoint finishPoint(size.width() * 0.125f,
                        size.height() * 0.125f);
-    QPropertyAnimation *animation = new QPropertyAnimation(mHueInfoWidget, "pos");
+    QPropertyAnimation *animation = new QPropertyAnimation(mLightInfoWidget, "pos");
     animation->setDuration(TRANSITION_TIME_MSEC);
-    animation->setStartValue(mHueInfoWidget->pos());
+    animation->setStartValue(mLightInfoWidget->pos());
     animation->setEndValue(finishPoint);
     animation->start();
 
@@ -664,12 +666,12 @@ void MainWindow::editClosePressed() {
 }
 
 
-void MainWindow::hueInfoClosePressed() {
+void MainWindow::lightInfoClosePressed() {
     greyOut(false);
-    mHueInfoWidget->isOpen(false);
+    mLightInfoWidget->isOpen(false);
 
     QSize size = this->size();
-    mHueInfoWidget->setGeometry(size.width() * 0.125f,
+    mLightInfoWidget->setGeometry(size.width() * 0.125f,
                            size.height() * 0.125f,
                            size.width() * 0.75f,
                            size.height() * 0.75f);
@@ -677,31 +679,54 @@ void MainWindow::hueInfoClosePressed() {
     QPoint finishPoint(size.width() * 0.125f, -1 * this->height());
     mBottomRightFloatingLayout->setVisible(false);
 
-    QPropertyAnimation *animation = new QPropertyAnimation(mHueInfoWidget, "pos");
+    QPropertyAnimation *animation = new QPropertyAnimation(mLightInfoWidget, "pos");
     animation->setDuration(TRANSITION_TIME_MSEC);
-    animation->setStartValue(mHueInfoWidget->pos());
+    animation->setStartValue(mLightInfoWidget->pos());
     animation->setEndValue(finishPoint);
     animation->start();
 }
 
 
-void MainWindow::hueNameChanged(QString key, QString name) {
-    // get hue light from key
-    std::list<HueLight> hueLights = mComm->hue()->connectedHues();
-    int keyNumber = key.toInt();
-    HueLight light;
-    bool lightFound = false;
-    for (auto hue : hueLights) {
-        if (hue.index() == keyNumber) {
-            lightFound = true;
-            light = hue;
-        }
-    }
+void MainWindow::renamedLight(cor::Light light, QString newName) {
+    mGroups->updateLightName(light, newName);
+}
 
-    if (lightFound) {
-        mComm->hue()->renameLight(light, name);
-    } else {
-        qDebug() << " could NOT change this key: " << key << " to this name " << name;
+void MainWindow::lightNameChange(EProtocolType type, QString key, QString name) {
+    if (type == EProtocolType::hue) {
+        // get hue light from key
+        std::list<HueLight> hueLights = mComm->hue()->connectedHues();
+        int keyNumber = key.toInt();
+        HueLight light;
+        bool lightFound = false;
+        for (auto hue : hueLights) {
+            if (hue.index() == keyNumber) {
+                lightFound = true;
+                light = hue;
+            }
+        }
+
+        if (lightFound) {
+            mComm->hue()->renameLight(light, name);
+        } else {
+            qDebug() << " could NOT change this key: " << key << " to this name " << name;
+        }
+    } else if (type == EProtocolType::nanoleaf) {
+        // get nanoleaf controller from key
+        bool lightFound = false;
+        auto controllers = mComm->nanoleaf()->controllers();
+        nano::LeafController lightToRename;
+        for (auto controller : controllers) {
+            if (controller.serialNumber == key) {
+                lightFound = true;
+                lightToRename = controller;
+            }
+        }
+
+        if (lightFound) {
+            mComm->nanoleaf()->renameController(lightToRename, name);
+        } else {
+            qDebug() << " could NOT change this key: " << key << " to this name " << name;
+        }
     }
 }
 

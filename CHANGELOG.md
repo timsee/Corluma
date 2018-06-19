@@ -319,8 +319,16 @@ ___
 * Added icons and support for connecting to more types of Philips Hue lights. 
 * Fixed miscellaneous bugs.
 
+### **v0.13.1**
+#### The Nanoleaf Update Part 2: Simultaneous Connections
+* Added support for multiple simultaneous nanoleaf connections.
+* Added Nanoleaf support for custom color palettes.
+* Added the ability to rename Nanoleafs.
+* Removed unnecessary conversion to ArduCor packets for Hue and Nanoleaf.
+* Moved ProtocolSettings out of DataLayer.
+* Switched HueInfoListWidget to be more generic and instead show information on all Lights.
+
 ### Coming Soon
-* Add support for connecting to multiple NanoLeaf Aurora Controllers.
 * Add support and better edge case handling for multiple Hue Bridges on the same network
 
 

@@ -14,8 +14,6 @@
 #define MAX_SPEED 200
 
 DataLayer::DataLayer(QObject *parent) : QObject(parent) {
-
-    mProtocolSettings = new ProtocolSettings();
 }
 
 DataLayer::~DataLayer() {

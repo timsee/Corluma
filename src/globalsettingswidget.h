@@ -26,7 +26,7 @@ class GlobalSettingsWidget : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit GlobalSettingsWidget(QWidget *parent, CommLayer *comm, DataLayer *data);
+    explicit GlobalSettingsWidget(QWidget *parent, CommLayer *comm, DataLayer *data, ProtocolSettings *protocols);
 
     /*!
      * \brief updateUI updates the colors of various settings in the UI.
@@ -190,6 +190,9 @@ private:
      * \brief mSettings pointer to QSettings, used to store and access data in persistent app memory.
      */
     QSettings *mSettings;
+
+    /// pointer to the app states that determine if a protocol (such as arducor or nanoleaf) is currently enabled
+    ProtocolSettings *mProtocolSettings;
 };
 
 #endif // GLOBALSETTINGSWIDGET_H

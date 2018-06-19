@@ -23,7 +23,7 @@
 #include "colorpage.h"
 #include "palettepage.h"
 #include "lightpage.h"
-#include "hue/lightinfolistwidget.h"
+#include "lightinfolistwidget.h"
 #include "hue/lightdiscovery.h"
 #include <QStackedWidget>
 
@@ -82,8 +82,8 @@ public slots:
     /// show the hue info widget.
     void hueInfoWidgetClicked();
 
-    /// hue info widget close button pressed.
-    void hueInfoClosePressed();
+    /// light info widget close button pressed.
+    void lightInfoClosePressed();
 
     /*!
      * \brief editClosePressed close the edit page
@@ -122,11 +122,12 @@ public slots:
     void greyOutFadeComplete();
 
     /*!
-     * \brief hueNameChanged change the name of a hue widget given the key and the new name.
-     * \param key the key for the hue, which is the device index for the hue.
-     * \param name the new name for the hue.
+     * \brief lightNameChange change the name of a widget given the key and the new name.
+     * \param type the protocol type of light being changed
+     * \param key the key for the light
+     * \param name the new name for the light.
      */
-    void hueNameChanged(QString key, QString name);
+    void lightNameChange(EProtocolType type, QString key, QString name);
 
     /*!
      * \brief deleteHue Delete the hue with the given key as a device index
@@ -151,6 +152,9 @@ public slots:
 
     /// speed changed from any page
     void speedChanged(int);
+
+    /// rename a light to a new name. This updates all UI and app data accordingly.
+    void renamedLight(cor::Light, QString);
 
 protected:
 
@@ -267,7 +271,7 @@ private:
      * \brief mHueInfoWidget displays information about hue lights, including their serial numbers and their
      *        software versions. Can edit light names and delete lights from the Bridge.
      */
-    hue::LightInfoListWidget *mHueInfoWidget;
+    LightInfoListWidget *mLightInfoWidget;
 
     /*!
      * \brief mSettingsPage overlay widget that allows access to various app settings such as loading from
@@ -320,6 +324,11 @@ private:
      *        and the saved data of the GUI
      */
     DataLayer *mData;
+
+    /*!
+     * \brief mProtocolSettings maintains which comnmtypes are currently enabled.
+     */
+    ProtocolSettings *mProtocolSettings;
 
     //------------------
     // Data Sync Threads

@@ -27,8 +27,8 @@ bool GroupsParser::loadJsonDataIntoAppData() {
             foreach (const QJsonValue &value, array) {
                 QJsonObject object = value.toObject();
                 if (checkIfGroupIsValid(object)) {
-                    QString groupName = object.value("name").toString();
-                    if (object.value("isMood").toBool()) {
+                    QString groupName = object["name"].toString();
+                    if (object["isMood"].toBool()) {
                         parseMood(object);
                     } else {
                         parseCollection(object);
@@ -109,7 +109,7 @@ void GroupsParser::saveNewMood(const QString& groupName, const std::list<cor::Li
     if(!mJsonData.isNull()) {
         if(mJsonData.isArray()) {
             QJsonArray array = mJsonData.array();
-            mJsonData.array().push_front(groupObject);
+            //mJsonData.array().push_front(groupObject);
             array.push_front(groupObject);
             mJsonData.setArray(array);
 
@@ -181,6 +181,49 @@ void GroupsParser::saveNewCollection(const QString& groupName, const std::list<c
     }
 }
 
+bool GroupsParser::updateLightName(const cor::Light& light, const QString& newName) {
+    if(!mJsonData.isNull()) {
+        if(mJsonData.isArray()) {
+            QJsonArray array = mJsonData.array();
+            int groupIndex = 0;
+            for (auto value : array) {
+                QJsonObject object = value.toObject();
+                if (object["devices"].isArray()) {
+                    QJsonArray deviceArray = object["devices"].toArray();
+                    uint32_t i = 0;
+                    bool foundADifference = false;
+                    for (auto deviceValue : deviceArray) {
+                        QJsonObject deviceObject = deviceValue.toObject();
+                        if (deviceObject["type"].isString() && deviceObject["name"].isString()) {
+                            ECommType type = stringToCommType(deviceObject["type"].toString());
+                            QString oldName = deviceObject["name"].toString();
+                            if (type == light.commType() && oldName == light.controller()) {
+                                deviceArray.removeAt(i);
+                                foundADifference = true;
+                                if (type == ECommType::nanoleaf) {
+                                    deviceObject["controller"] = newName;
+                                    deviceObject["name"]       = newName;
+                                }
+                                deviceArray.push_back(deviceObject);
+                            }
+                        }
+                        ++i;
+                    }
+                    if (foundADifference) {
+                        object["devices"] = deviceArray;
+                        array.removeAt(groupIndex);
+                        array.push_back(object);
+                    }
+                }
+                ++groupIndex;
+            }
+            mJsonData.setArray(array);
+            saveFile(defaultSavePath());
+        }
+    }
+    return true;
+}
+
 QString GroupsParser::defaultSavePath() {
     return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/save.json";
 }
@@ -193,7 +236,7 @@ bool GroupsParser::removeGroup(const QString& groupName) {
             for (auto value : array) {
                 QJsonObject object = value.toObject();
                 if (checkIfGroupIsValid(object)) {
-                    QString group = object.value("name").toString();
+                    QString group = object["name"].toString();
                     if (group.compare(groupName) == 0) {
                         array.removeAt(i);
                         mJsonData.setArray(array);
@@ -227,28 +270,28 @@ bool GroupsParser::removeGroup(const QString& groupName) {
 //-------------------
 
 void GroupsParser::parseCollection(const QJsonObject& object) {
-    if (object.value("name").isString()
-            && object.value("devices").isArray()) {
-        QString name = object.value("name").toString();
+    if (object["name"].isString()
+            && object["devices"].isArray()) {
+        QString name = object["name"].toString();
         bool isRoom;
-        if (object.value("isRoom").isBool()) {
-            isRoom = object.value("isRoom").toBool();
+        if (object["isRoom"].isBool()) {
+            isRoom = object["isRoom"].toBool();
         } else {
             isRoom = false;
         }
-        QJsonArray deviceArray = object.value("devices").toArray();
+        QJsonArray deviceArray = object["devices"].toArray();
         std::list<cor::Light> list;
         foreach (const QJsonValue &value, deviceArray) {
             QJsonObject device = value.toObject();
-            if ( device.value("type").isString()
-                    && device.value("controller").isString()
-                    && device.value("index").isDouble()) {
+            if ( device["type"].isString()
+                    && device["controller"].isString()
+                    && device["index"].isDouble()) {
                 // convert to Qt types from json data
-                QString typeString = device.value("type").toString();
-                QString controller = device.value("controller").toString();
-                QString name = device.value("name").toString();
-                ELightHardwareType hardwareType = stringToHardwareType(device.value("hardwareType").toString());
-                int index = device.value("index").toDouble();
+                QString typeString = device["type"].toString();
+                QString controller = device["controller"].toString();
+                QString name = device["name"].toString();
+                ELightHardwareType hardwareType = stringToHardwareType(device["hardwareType"].toString());
+                int index = device["index"].toDouble();
 
                 // convert to Corluma types from certain Qt types
                 ECommType type = stringToCommType(typeString);
@@ -274,10 +317,10 @@ void GroupsParser::parseCollection(const QJsonObject& object) {
 }
 
 bool GroupsParser::checkIfMoodIsValid(const QJsonObject& device) {
-    bool hasMetaData = (device.value("type").isString()
-                        && device.value("controller").isString()
-                        && device.value("index").isDouble()
-                        && device.value("isOn").isBool());
+    bool hasMetaData = (device["type"].isString()
+                        && device["controller"].isString()
+                        && device["index"].isDouble()
+                        && device["isOn"].isBool());
 
     // cancel early if it doesn't have the data to parse.
     if (!hasMetaData) {
@@ -287,17 +330,17 @@ bool GroupsParser::checkIfMoodIsValid(const QJsonObject& device) {
     bool isOn = device["isOn"].toBool();
 
     // these values always exist if the light is on
-    bool defaultChecks = (device.value("routine").isString() && device.value("brightness").isDouble());
+    bool defaultChecks = (device["routine"].isString() && device["brightness"].isDouble());
     bool colorsValid = false;
     if (isOn) {
-        ERoutine routine = stringToRoutine(device.value("routine").toString());
+        ERoutine routine = stringToRoutine(device["routine"].toString());
         if (routine <= cor::ERoutineSingleColorEnd) {
-            colorsValid = (device.value("red").isDouble()
-                           && device.value("green").isDouble()
-                           && device.value("blue").isDouble()
-                           && device.value("colorMode").isString());
+            colorsValid = (device["red"].isDouble()
+                           && device["green"].isDouble()
+                           && device["blue"].isDouble()
+                           && device["colorMode"].isString());
         } else {
-            colorsValid = (device.value("palette").isObject());
+            colorsValid = (device["palette"].isObject());
         }
     }
 
@@ -312,40 +355,40 @@ bool GroupsParser::checkIfMoodIsValid(const QJsonObject& device) {
 
 
 void GroupsParser::parseMood(const QJsonObject& object) {
-    if (object.value("name").isString()
-            && object.value("devices").isArray()) {
-        QString name = object.value("name").toString();
-        QJsonArray deviceArray = object.value("devices").toArray();
+    if (object["name"].isString()
+            && object["devices"].isArray()) {
+        QString name = object["name"].toString();
+        QJsonArray deviceArray = object["devices"].toArray();
         std::list<cor::Light> list;
         foreach (const QJsonValue &value, deviceArray) {
             QJsonObject device = value.toObject();
             if (checkIfMoodIsValid(device))
             {
-                QString id = device.value("id").toString();
+                QString id = device["id"].toString();
 
                 // convert to Qt types from json data
-                QString modeString = device.value("colorMode").toString();
-                QString typeString = device.value("type").toString();
-                QString controller = device.value("controller").toString();
-                int index = device.value("index").toDouble();
+                QString modeString = device["colorMode"].toString();
+                QString typeString = device["type"].toString();
+                QString controller = device["controller"].toString();
+                int index = device["index"].toDouble();
 
                 // convert to Corluma types from certain Qt types
                 ECommType type = stringToCommType(typeString);
                 EColorMode colorMode = stringtoColorMode(modeString);
 
-                bool isOn = device.value("isOn").toBool();
+                bool isOn = device["isOn"].toBool();
 
-                int red = device.value("red").toDouble();
-                int green = device.value("green").toDouble();
-                int blue = device.value("blue").toDouble();
+                int red = device["red"].toDouble();
+                int green = device["green"].toDouble();
+                int blue = device["blue"].toDouble();
 
-                int brightness = device.value("brightness").toDouble();
+                int brightness = device["brightness"].toDouble();
 
-                ERoutine routine = stringToRoutine(device.value("routine").toString());
+                ERoutine routine = stringToRoutine(device["routine"].toString());
 
                 int speed = 100;
-                if (device.value("speed").isDouble()) {
-                    speed = device.value("speed").toDouble();
+                if (device["speed"].isDouble()) {
+                    speed = device["speed"].toDouble();
                 }
 
                 cor::Light light(index, type, controller);
@@ -353,7 +396,7 @@ void GroupsParser::parseMood(const QJsonObject& object) {
                 light.isOn = isOn;
                 light.color = QColor(red, green, blue);
                 light.routine = routine;
-                light.palette = Palette(device.value("palette").toObject());
+                light.palette = Palette(device["palette"].toObject());
                 light.speed = speed;
                 light.brightness = brightness;
                 light.colorMode = colorMode;
@@ -377,16 +420,16 @@ void GroupsParser::parseMood(const QJsonObject& object) {
 }
 
 void GroupsParser::findNewControllers(QJsonObject object) {
-    QJsonArray deviceArray = object.value("devices").toArray();
+    QJsonArray deviceArray = object["devices"].toArray();
     foreach (const QJsonValue &value, deviceArray) {
         QJsonObject device = value.toObject();
         // check if connection exists in app memory already
-        if (device.value("type").isString()
-                && device.value("controller").isString()) {
-            if( device.value("type").toString().compare(commTypeToString(ECommType::HTTP)) == 0
-                || device.value("type").toString().compare(commTypeToString(ECommType::UDP)) == 0) {
+        if (device["type"].isString()
+                && device["controller"].isString()) {
+            if( device["type"].toString().compare(commTypeToString(ECommType::HTTP)) == 0
+                || device["type"].toString().compare(commTypeToString(ECommType::UDP)) == 0) {
                 bool foundConnectionInList = false;
-                QString controllerName = device.value("controller").toString();
+                QString controllerName = device["controller"].toString();
                 for (auto&& connection : mNewConnections) {
                     if (connection.compare(controllerName) == 0) {
                         foundConnectionInList = true;
@@ -473,26 +516,26 @@ std::list<cor::Light> GroupsParser::loadDebugData() {
             QJsonObject device = value.toObject();
 
             // convert to Qt types from json data
-            QString modeString = device.value("colorMode").toString();
-            QString typeString = device.value("type").toString();
-            QString controller = device.value("controller").toString();
-            int index = device.value("index").toDouble();
+            QString modeString = device["colorMode"].toString();
+            QString typeString = device["type"].toString();
+            QString controller = device["controller"].toString();
+            int index = device["index"].toDouble();
 
             // convert to Corluma types from certain Qt types
             ECommType type = stringToCommType(typeString);
             EColorMode colorMode = stringtoColorMode(modeString);
 
-            bool isOn = device.value("isOn").toBool();
+            bool isOn = device["isOn"].toBool();
             int red, green, blue;
 
-            red = device.value("red").toDouble();
-            green = device.value("green").toDouble();
-            blue = device.value("blue").toDouble();
+            red = device["red"].toDouble();
+            green = device["green"].toDouble();
+            blue = device["blue"].toDouble();
 
-            int brightness = device.value("brightness").toDouble();
+            int brightness = device["brightness"].toDouble();
 
-            ERoutine routine = stringToRoutine(device.value("routine").toString());
-            Palette palette = Palette(device.value("palette").toObject());
+            ERoutine routine = stringToRoutine(device["routine"].toString());
+            Palette palette = Palette(device["palette"].toObject());
 
             cor::Light light(index, type, controller);
             light.isReachable = true;
@@ -520,6 +563,7 @@ bool GroupsParser::checkForSavedData() {
         }
     }
 
+    qDebug() << defaultSavePath();
     QFile saveFile(defaultSavePath());
 
     if (saveFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -552,27 +596,27 @@ bool GroupsParser::checkForSavedData() {
 
 bool GroupsParser::checkIfGroupIsValid(const QJsonObject& object) {
     // check top leve
-    if (!(object.value("isMood").isBool()
-            && object.value("name").isString()
-            && object.value("devices").isArray())) {
+    if (!(object["isMood"].isBool()
+            && object["name"].isString()
+            && object["devices"].isArray())) {
         return false;
     }
-    QJsonArray deviceArray = object.value("devices").toArray();
+    QJsonArray deviceArray = object["devices"].toArray();
     foreach (const QJsonValue &value, deviceArray) {
         QJsonObject device = value.toObject();
-        if (!(device.value("id").isString()
-                && device.value("type").isString()
-                && device.value("controller").isString()
-                && device.value("index").isDouble())) {
+        if (!(device["id"].isString()
+                && device["type"].isString()
+                && device["controller"].isString()
+                && device["index"].isDouble())) {
             qDebug() << "one of the objects is invalid!";
             return false;
         }
-        if (object.value("isMood").toBool()) {
+        if (object["isMood"].toBool()) {
              if (!checkIfMoodIsValid(device)) {
                 qDebug() << "one of the mood specific values is invalid! for"
-                         <<  object.value("name").toString()
-                         << device.value("type").toString()
-                         << device.value("index").toDouble();
+                         <<  object["name"].toString()
+                         << device["type"].toString()
+                         << device["index"].toDouble();
                 return false;
             }
         }

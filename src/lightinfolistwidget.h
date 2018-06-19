@@ -1,5 +1,5 @@
-#ifndef HUELIGHTINFOLISTWIDGET_H
-#define HUELIGHTINFOLISTWIDGET_H
+#ifndef LIGHTINFOLISTWIDGET_H
+#define LIGHTINFOLISTWIDGET_H
 
 #include <QWidget>
 #include <QScrollArea>
@@ -11,9 +11,7 @@
 #include "hue/lightinfowidget.h"
 #include "comm/commhue.h"
 #include "cor/topwidget.h"
-
-namespace hue
-{
+#include "nanoleaf/leafcontrollerinfowidget.h"
 
 /*!
  * \copyright
@@ -43,6 +41,13 @@ public:
     void updateLights(std::list<HueLight> lights);
 
     /*!
+     * \brief updateControllers update the controllers for nanoleafs to any
+     *        hardware changes detected
+     * \param controllers nanoleaf controllers to use as the recent set.
+     */
+    void updateControllers(std::list<nano::LeafController> controllers);
+
+    /*!
      * \brief resize size the widget programmatically
      * \param resizeFullWidget true to resize the widget itself, false to just
      *        resize its contents.
@@ -55,20 +60,21 @@ signals:
      */
     void pressedClose();
 
-    /// emits the device index of Hue Light as a key and a new name for the light.
-    void hueChangedName(QString, QString);
+    /// emits when a light name should change
+    void lightNameChanged(EProtocolType, QString, QString);
 
     /// emits the device index of a Hue Light as a key.
     void hueDeleted(QString);
 
 private slots:
     /*!
-     * \brief nameChanged HueLightInfoWidget is signaling that its name should change. This signal
-     *        is forwarded to a HueLightInfoWidget signal.
-     * \param key device index of Hue Light represented as a string
-     * \param name new name of the Hue Light.
+     * \brief lightNameChagned a LightInfoWidget is signaling that its name should change. This signal
+     *        is forwarded to a LightInfoWidget signal.
+     * \param type protocol type of light
+     * \param key device index represented as a string
+     * \param name new name of the light
      */
-    void nameChanged(QString key, QString name) { emit hueChangedName(key, name); }
+    void nameChanged(EProtocolType type, QString key, QString name) { emit lightNameChanged(type, key, name); }
 
     /*!
      * \brief closePressed close button pressed from top widget.
@@ -118,11 +124,14 @@ private:
     /// scroll area for displaying list.
     QScrollArea *mScrollArea;
 
-    /// widgets displayed in scroll area
-    std::vector<LightInfoWidget *> mWidgets;
+    /// widgets for hue displayed in scroll area
+    std::vector<hue::LightInfoWidget *> mHueWidgets;
+
+    /// widgets for nanoleaf displayed in scroll area
+    std::vector<nano::LeafControllerInfoWidget *> mNanoleafWidgets;
+
 
 };
 
-}
 
-#endif // HUELIGHTINFOLISTWIDGET_H
+#endif // LIGHTINFOLISTWIDGET_H

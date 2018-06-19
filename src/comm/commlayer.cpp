@@ -43,7 +43,7 @@ CommLayer::CommLayer(QObject *parent, GroupsParser *parser) : QObject(parent),  
     mNanoleaf = std::shared_ptr<CommNanoleaf>(new CommNanoleaf());
     connect(mNanoleaf.get(), SIGNAL(packetReceived(QString, QString, ECommType)), this, SLOT(parsePacket(QString, QString, ECommType)));
     connect(mNanoleaf.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
-    mNanoleaf->connectUPnPDiscovery(mUpnP);
+    mNanoleaf->discovery()->connectUPnP(mUpnP);
 
     mHue = std::shared_ptr<CommHue>(new CommHue());
     connect(mHue.get(), SIGNAL(packetReceived(QString, QString, ECommType)), this, SLOT(parsePacket(QString, QString, ECommType)));
@@ -59,198 +59,9 @@ bool CommLayer::runningDiscovery(ECommType type) {
     return commByType(type)->runningDiscovery();
 }
 
-
-QString CommLayer::sendTurnOn(const std::list<cor::Light>& deviceList,
-                              bool turnOn) {
-    QString packet;
-    for (auto&& device : deviceList) {
-        packet += QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::onOffChange),
-                                           QString::number(device.index()),
-                                           QString::number(turnOn));
-    }
-    return packet;
-}
-
-QString CommLayer::sendArrayColorChange(const std::list<cor::Light>& deviceList,
-                                        int index,
-                                        QColor color) {
-
-    QString packet;
-    for (auto&& device : deviceList) {
-        packet += QString("%1,%2,%3,%4,%5,%6&").arg(QString::number((int)EPacketHeader::customArrayColorChange),
-                                                    QString::number(device.index()),
-                                                    QString::number(index),
-                                                    QString::number(color.red()),
-                                                    QString::number(color.green()),
-                                                    QString::number(color.blue()));
-    }
-    return packet;
-}
-
-
-QString CommLayer::sendRoutineChange(const std::list<cor::Light>& deviceList,
-                                     const QJsonObject& routineObject) {
-    QString packet;
-    for (auto&& device : deviceList) {
-        if (routineObject.value("routine").isString()) {
-            //------------
-            // get routine
-            //------------
-            ERoutine routine = stringToRoutine(routineObject.value("routine").toString());
-
-            //------------
-            // get either speed or palette, depending on routine type
-            //------------
-            QColor color;
-            EPalette paletteEnum = EPalette::unknown;
-            bool isValidJSON = true;
-            if (routine <= cor::ERoutineSingleColorEnd) {
-                if (routineObject["red"].isDouble()
-                        && routineObject["green"].isDouble()
-                        && routineObject["blue"].isDouble()) {
-                    color.setRgb(routineObject["red"].toDouble(),
-                            routineObject["green"].toDouble(),
-                            routineObject["blue"].toDouble());
-                } else {
-                    isValidJSON = false;
-                }
-            } else if (routineObject["palette"].isObject()) {
-                QJsonObject object = routineObject["palette"].toObject();
-                Palette palette(object);
-                paletteEnum = palette.paletteEnum();
-                if (paletteEnum == EPalette::unknown) {
-                    isValidJSON = false;
-                }
-            }
-
-            //------------
-            // get speed if theres a speed value
-            //------------
-            int speed = INT_MIN;
-            if (routine != ERoutine::singleSolid) {
-                if (routineObject.value("speed").isDouble()) {
-                    speed = routineObject.value("speed").toDouble();
-                }
-            }
-
-            //------------
-            // get optional parameter
-            //------------
-            int optionalParameter = INT_MIN;
-            if (routineObject.value("param").isDouble()) {
-                optionalParameter = routineObject.value("param").toDouble();
-            }
-            switch (routine) {
-                case ERoutine::multiBars:
-                    optionalParameter = 4;
-                    break;
-                case ERoutine::singleGlimmer:
-                case ERoutine::multiGlimmer:
-                    optionalParameter = 15;
-                    break;
-                case ERoutine::singleFade:
-                case ERoutine::singleSawtoothFade:
-                case ERoutine::multiRandomSolid:
-                case ERoutine::singleWave:
-                case ERoutine::multiFade:
-                case ERoutine::multiRandomIndividual:
-                case ERoutine::singleSolid:
-                case ERoutine::singleBlink:
-                default:
-                break;
-            }
-
-
-            if (isValidJSON) {
-                packet += QString::number((int)EPacketHeader::modeChange);
-                packet += ",";
-                packet += QString::number(device.index());
-                packet += ",";
-                packet += QString::number((int)routine);
-
-                if (color.isValid()) {
-                    packet += ",";
-                    packet += QString::number(color.red());
-                    packet += ",";
-                    packet += QString::number(color.green());
-                    packet += ",";
-                    packet += QString::number(color.blue());
-                } else if (paletteEnum != EPalette::unknown) {
-                    packet += ",";
-                    packet += QString::number((int)paletteEnum);
-                }
-
-                if (routine != ERoutine::singleSolid) {
-                    // TODO: fix edge case
-                    if (speed == INT_MIN) {
-                        speed = 100;
-                    }
-                    packet += ",";
-                    packet += QString::number(speed);
-                }
-
-                if (optionalParameter != INT_MIN) {
-                    packet += ",";
-                    packet += QString::number(optionalParameter);
-                }
-                packet += "&";
-            }
-        }
-    }
-    return packet;
-}
-
-
-QString CommLayer::sendColorTemperatureChange(const std::list<cor::Light>& deviceList,
-                                              int temperature) {
-    QString packet;
-    for (auto&& device : deviceList) {
-        if (device.commType() == ECommType::hue) {
-            mHue->changeColorCT(device.index(), device.brightness, temperature);
-        }
-    }
-    return packet;
-}
-
-QString CommLayer::sendBrightness(const std::list<cor::Light>& deviceList,
-                                  int brightness) {
-    QString packet;
-    for (auto&& device : deviceList) {
-        packet += QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::brightnessChange),
-                                           QString::number(device.index()),
-                                           QString::number(brightness));
-    }
-    return packet;
-}
-
-QString CommLayer::sendCustomArrayCount(const std::list<cor::Light>& deviceList,
-                                        int count) {
-    QString packet;
-    for (auto&& device : deviceList) {
-        packet += QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::customColorCountChange),
-                                           QString::number(device.index()),
-                                           QString::number(count));
-    }
-    return packet;
-}
-
-QString CommLayer::sendTimeOut(const std::list<cor::Light>& deviceList,
-                               int timeOut) {
-    QString packet;
-    for (auto&& device : deviceList) {
-        packet += QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::idleTimeoutChange),
-                                           QString::number(device.index()),
-                                           QString::number(timeOut));
-    }
-    return packet;
-}
-
-
-void CommLayer::requestCustomArrayUpdate(const std::list<cor::Light>& deviceList) {
-    for (auto&& device : deviceList) {
-        QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::customArrayUpdateRequest));
-        sendPacket(device, packet);
-    }
+void CommLayer::requestCustomArrayUpdate(const cor::Light& device) {
+    QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::customArrayUpdateRequest));
+    sendPacket(device, packet);
 }
 
 void CommLayer::sendPacket(const cor::Light& device, QString& payload) {
@@ -261,6 +72,12 @@ void CommLayer::sendPacket(const cor::Light& device, QString& payload) {
         commPtr->sendPacket(controller, payload);
     }
 }
+
+void CommLayer::sendPacket(const QJsonObject& object) {
+    ECommType commType = stringToCommType(object["commtype"].toString());
+    commByType(commType)->sendPacket(object);
+}
+
 bool CommLayer::discoveryErrorsExist(ECommType type) {
     if (type == ECommType::hue) {
         return false; // can only error out if no bridge is found...

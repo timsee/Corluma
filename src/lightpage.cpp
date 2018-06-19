@@ -17,8 +17,8 @@
 #include <QMessageBox>
 #include <QScroller>
 
-LightPage::LightPage(QWidget *parent, DataLayer *data, CommLayer *comm, GroupsParser *groups) :
-    QWidget(parent), mComm(comm) {
+LightPage::LightPage(QWidget *parent, DataLayer *data, CommLayer *comm, GroupsParser *groups, ProtocolSettings *protocols) :
+    QWidget(parent), mComm(comm), mProtocolSettings(protocols) {
 
     mData = data;
 
@@ -91,7 +91,7 @@ void LightPage::updateConnectionList() {
     std::list<cor::Light> allAvailableDevices;
     // remove non available devices
     for (auto&& device : allDevices) {
-        if (mData->protocolSettings()->enabled(device.protocol())) {
+        if (mProtocolSettings->enabled(device.protocol())) {
             allAvailableDevices.push_back(device);
         }
     }
@@ -359,7 +359,7 @@ void LightPage::newConnectionFound(QString newController) {
     }
     // if not, add it to discovery.
     if (!foundController) {
-        if (mData->protocolSettings()->enabled(EProtocolType::arduCor)) {
+        if (mProtocolSettings->enabled(EProtocolType::arduCor)) {
             bool isSuccessful = mComm->startDiscoveringController(ECommType::UDP, newController);
             if (!isSuccessful) qDebug() << "WARNING: failure adding" << newController << "to UDP discovery list";
             isSuccessful = mComm->startDiscoveringController(ECommType::HTTP, newController);
@@ -493,7 +493,7 @@ void LightPage::hideEvent(QHideEvent *event) {
 void LightPage::hide() {
     for (int i = 0; i < (int)EProtocolType::MAX; ++i) {
         EProtocolType protocol = (EProtocolType)i;
-        if (mData->protocolSettings()->enabled(protocol)) {
+        if (mProtocolSettings->enabled(protocol)) {
             mComm->stopDiscovery(protocol);
         }
     }
@@ -519,7 +519,7 @@ void LightPage::cleanupList() {
         std::list<cor::Light> newDeviceList;
         std::list<cor::Light> currentDeviceList = devicesWidget->devices();
         for (auto&& device : currentDeviceList) {
-            if (mData->protocolSettings()->enabled(device.protocol())) {
+            if (mProtocolSettings->enabled(device.protocol())) {
                 newDeviceList.push_back(device);
             }
         }

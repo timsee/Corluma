@@ -50,66 +50,17 @@ public:
     void sendPacket(const cor::Light& device, QString& payload);
 
     /*!
-     * \brief sendTurnOn turn all devices in the provided list either on or off.
-     * \param turnOn true to turn devices on, false to turn them off.
+     * \brief sendPacket send a packet based off of a JSON object containing all
+     *        relevant information about the packet
+     * \param object json representation of the packet to send
      */
-    QString sendTurnOn(const std::list<cor::Light>& deviceList,
-                       bool turnOn);
-
-    /*!
-     * \brief sendColorChange change an array color in the lighting system
-     * \param index index of array color
-     * \param color the color being sent for the given index
-     */
-    QString sendArrayColorChange(const std::list<cor::Light>& deviceList,
-                                 int index,
-                                 QColor color);
-    /*!
-     * \brief sendRoutineChange change the mode of the lights. The mode changes
-     *        how the lights look.
-     * \param routineObject the mode being sent to the LED system
-     */
-    QString sendRoutineChange(const std::list<cor::Light>& deviceList,
-                              const QJsonObject& routineObject);
-
-    /*!
-     * \brief sendColorTemperatureChange Hue only. Controls Ambient Lights and
-     *        Extended Color lights by sending them a color temperature instead
-     *        of color in HSV
-     * \param temperature desired temperature in mirek, must be bewteen 153 and 500
-     */
-    QString sendColorTemperatureChange(const std::list<cor::Light>& deviceList,
-                                       int temperature);
-    /*!
-     * \brief sendCustomArrayCount sends a new custom array count to the LED array. This count
-     *        determines how many colors from the custom array should be used. It is different
-     *        from the size of the custom array, which provides a maximum possible amount
-     *        of colors.
-     * \param count a value less than the size of the custom color array.
-     */
-    QString sendCustomArrayCount(const std::list<cor::Light>& deviceList,
-                                 int count);
-
-    /*!
-     * \brief sendBrightness sends a brightness value between 0 and 100, with 100 being full brightness.
-     * \param brightness a value between 0 and 100
-     */
-    QString sendBrightness(const std::list<cor::Light>& deviceList,
-                           int brightness);
-
-    /*!
-     * \brief sendTimeOut the amount of minutes that it takes for the LEDs to turn themselves off from
-     *        inactivity. Perfect for bedtime!
-     * \param timeOut a number greater than 0
-     */
-    QString sendTimeOut(const std::list<cor::Light>& deviceList,
-                        int timeOut);
+    void sendPacket(const QJsonObject& object);
 
     /*!
      * \brief requestCustomArrayUpdate request an update for for custom arrays. Arduino projects only.
-     * \param deviceList list of devices to request an update from.
+     * \param device list a device to request an update from.
      */
-    void requestCustomArrayUpdate(const std::list<cor::Light>& deviceList);
+    void requestCustomArrayUpdate(const cor::Light& device);
 
     /*!
      * \brief resetStateUpdates reset the state updates timeouts for specified commtypes. If it isn't on already,

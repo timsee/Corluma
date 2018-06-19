@@ -45,7 +45,7 @@ ColorPage::ColorPage(QWidget *parent, DataLayer *data) :
     connect(mColorPicker, SIGNAL(colorUpdate(QColor)), this, SLOT(colorChanged(QColor)));
     connect(mColorPicker, SIGNAL(ambientUpdate(int, int)), this, SLOT(ambientUpdateReceived(int, int)));
     connect(mColorPicker, SIGNAL(multiColorCountUpdate(int)), this, SLOT(customColorCountChanged(int)));
-    connect(mColorPicker, SIGNAL(multiColorUpdate(QColor, int)), this, SLOT(multiColorChanged(QColor, int)));
+    connect(mColorPicker, SIGNAL(multiColorUpdate()), this, SLOT(multiColorChanged()));
     connect(mColorPicker, SIGNAL(brightnessUpdate(int)), this, SLOT(brightnessUpdate(int)));
     connect(mColorPicker, SIGNAL(colorsUpdate(std::vector<QColor>)), this, SLOT(colorsChanged(std::vector<QColor>)));
 
@@ -172,12 +172,19 @@ std::vector<QColor> ColorPage::createColorScheme(std::list<cor::Light> devices) 
 
 void ColorPage::newRoutineSelected(QJsonObject routineObject) {
     ERoutine routine = stringToRoutine(routineObject["routine"].toString());
-    routineObject["red"]   = mLastColor.red();
-    routineObject["green"] = mLastColor.green();
-    routineObject["blue"]  = mLastColor.blue();
+    if (routine <= cor::ERoutineSingleColorEnd) {
+        routineObject["red"]   = mLastColor.red();
+        routineObject["green"] = mLastColor.green();
+        routineObject["blue"]  = mLastColor.blue();
+    } else {
+        Palette palette(paletteToString(EPalette::custom), mColorPicker->colors());
+        routineObject["palette"] = palette.JSON();
+    }
     routineObject["isOn"]  = true;
-    // no speed settings for single color routines currently...
-    routineObject["speed"] = 125;
+    if (routine != ERoutine::singleSolid) {
+        // no speed settings for single color routines currently...
+        routineObject["speed"] = 125;
+    }
 
     // get color
     mData->updateRoutine(routineObject);
@@ -217,9 +224,7 @@ void ColorPage::customColorCountChanged(int count) {
     emit updateMainIcons();
 }
 
-void ColorPage::multiColorChanged(QColor color, int index) {
-    Q_UNUSED(color);
-    Q_UNUSED(index);
+void ColorPage::multiColorChanged() {
     QJsonObject routineObject;
     routineObject["routine"] = routineToString(mCurrentMultiRoutine);
     Palette palette(paletteToString(EPalette::custom), mColorPicker->colors());

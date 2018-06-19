@@ -22,6 +22,7 @@ void UPnPDiscovery::readPendingUPnPDatagrams() {
         mSocket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
 
         QString payload = QString::fromUtf8(datagram);
+
         emit UPnPPacketReceived(sender, payload);
     }
 }

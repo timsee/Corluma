@@ -141,7 +141,7 @@ private slots:
      * \brief multiColorChanged called whenever an individual color changes in the multi color picker.
      *        Sends this new color's index and new color to the data layer.
      */
-    void multiColorChanged(QColor, int);
+    void multiColorChanged();
 
     /*!
      * \brief brightnessUpdate handles whenever a color picker updates brightness, forwards the signal.
@@ -202,6 +202,7 @@ private:
     /// current single color lighting routine, stored in buffer for when going from multi color to single color routines.
     QJsonObject mCurrentSingleRoutine;
 
+    /// tracks the routine type of the current multi color routine from the color page.
     ERoutine mCurrentMultiRoutine;
 
     /*!

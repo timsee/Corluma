@@ -59,7 +59,7 @@ cor::Light jsonToLight(const QJsonObject& object) {
                     object["green"].toDouble(),
                     object["blue"].toDouble());
         }
-    } else if (object.value("palette").isObject()) {
+    } else if (object["palette"].isObject()) {
         light.palette = Palette(object["palette"].toObject());
     }
 
@@ -75,8 +75,8 @@ cor::Light jsonToLight(const QJsonObject& object) {
     // get speed if theres a speed value
     //------------
     if (light.routine != ERoutine::singleSolid) {
-        if (object.value("speed").isDouble()) {
-            light.speed = object.value("speed").toDouble();
+        if (object["speed"].isDouble()) {
+            light.speed = object["speed"].toDouble();
         }
     }
 

@@ -48,7 +48,7 @@ public:
     /*!
      * \brief Constructor
      */
-    explicit SettingsPage(QWidget *parent, CommLayer *comm, DataLayer *data, GroupsParser *parser);
+    explicit SettingsPage(QWidget *parent, CommLayer *comm, DataLayer *data, GroupsParser *parser, ProtocolSettings *protocols);
 
     /*!
      * \brief Destructor

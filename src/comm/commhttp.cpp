@@ -49,6 +49,9 @@ void CommHTTP::sendPacket(const cor::Controller& controller, QString& packet) {
     mNetworkManager->get(request);
 }
 
+void CommHTTP::sendPacket(const QJsonObject& object) {
+
+}
 
 void CommHTTP::stateUpdate() {
     if (shouldContinueStateUpdate()) {

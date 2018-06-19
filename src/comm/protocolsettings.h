@@ -47,6 +47,7 @@ public:
     // Miscellaneous
     //------------------
 
+    /// getter for keys used by protocol settings
     static std::vector<QString> protocolKeys();
 
     /// getter for count of ProtocolSettings enabled

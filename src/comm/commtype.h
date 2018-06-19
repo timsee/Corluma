@@ -68,6 +68,12 @@ public:
      */
     virtual void sendPacket(const cor::Controller& controller, QString& packet) = 0;
 
+    /*!
+     * \brief sendPacket send a packet based off of a JSON object containing all
+     *        relevant information about the packet
+     * \param object json representation of the packet to send
+     */
+    virtual void sendPacket(const QJsonObject& object) = 0;
 
     // ----------------------------
     // Mode Management

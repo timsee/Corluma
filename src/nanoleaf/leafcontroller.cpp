@@ -20,4 +20,33 @@ LeafController::LeafController() :
     authToken = "";
 }
 
+LeafController jsonToLeafController(const QJsonObject& object) {
+    QString IP           = object["IP"].toString();
+    QString name         = object["name"].toString();
+    QString serial       = object["serial"].toString();
+    QString auth         = object["auth"].toString();
+    QString hardwareName = object["hardwareName"].toString();
+    uint32_t port        = object["port"].toDouble();
+
+    nano::LeafController controller;
+    controller.IP           = IP;
+    controller.name         = name;
+    controller.serialNumber = serial;
+    controller.hardwareName = hardwareName;
+    controller.authToken    = auth;
+    controller.port         = port;
+    return controller;
+}
+
+QJsonObject leafControllerToJson(const LeafController& controller) {
+    QJsonObject object;
+    object["IP"]           = controller.IP;
+    object["name"]         = controller.name;
+    object["serial"]       = controller.serialNumber;
+    object["hardwareName"] = controller.hardwareName;
+    object["auth"]         = controller.authToken;
+    object["port"]         = controller.port;
+    return object;
+}
+
 }

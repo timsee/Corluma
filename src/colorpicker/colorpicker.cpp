@@ -118,7 +118,7 @@ void ColorPicker::tempBrightSlidersChanged(int temperature, int brightness) {
 }
 
 void ColorPicker::multiColorChanged(QColor color, int index) {
-    emit multiColorUpdate(color, index);
+    emit multiColorUpdate();
 }
 
 void ColorPicker::multiColorCountChanged(int count) {
@@ -312,14 +312,7 @@ void ColorPicker::handleMouseEvent(QMouseEvent *event) {
             if (mCurrentLayoutColorPicker == ELayoutColorPicker::multiColorLayout) {
                 if (mWheelIsEnabled) {
                     mColorGrid->updateSelected(color);
-                    uint32_t index = 0;
-                    for (auto&& button : mColorGrid->palette()->buttons()) {
-                        if (button->isChecked()) {
-                            emit multiColorChanged(color, index);
-                        }
-                        ++index;
-                    }
-                   // mColorGrid->updateMultiColor(mMultiColors, mMultiUsed);
+                    emit multiColorUpdate();
                 }
             } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::ambientLayout) {
                 // use the poorly named "value" of the HSV range to calculate the brightness

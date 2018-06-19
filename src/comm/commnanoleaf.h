@@ -6,22 +6,10 @@
 #include <QNetworkReply>
 #include <QJsonArray>
 #include "commtype.h"
-#include "commpacketparser.h"
 #include "nanoleaf/leafcontroller.h"
 #include "comm/upnpdiscovery.h"
 #include "cor/presetpalettes.h"
-
-
-/// states for discovering and connecting to a NanoLeaf.
-enum class ENanoleafDiscoveryState {
-    connectionError,
-    testingIP,
-    testingAuth,
-    runningUPnP,
-    awaitingAuthToken,
-    testingPreviousData,
-    fullyConnected
-};
+#include "nanoleaf/leafdiscovery.h"
 
 /*!
  * \copyright
@@ -62,6 +50,13 @@ public:
     void sendPacket(const cor::Controller& controller, QString& packet);
 
     /*!
+     * \brief sendPacket send a packet based off of a JSON object containing all
+     *        relevant information about the packet
+     * \param object json representation of the packet to send
+     */
+    void sendPacket(const QJsonObject& object);
+
+    /*!
      * \brief changeAmbientLight changes the color of the bulb to match the color temperature given. This is the only way to interact with
      *        white ambiance bulbs and it can also be used with the RGB bulbs.
      * \param controller controller to send CT packet to.
@@ -70,20 +65,38 @@ public:
     void changeColorCT(const cor::Controller& controller, int ct);
 
     /*!
-     * \brief attemptIP attempts an IP address entered manually into the NanoLeaf's discovery page. This will be ignored
-     *        if the lights are already connected.
-     * \param ipAddress ip address to attempt for connection.
+     * \brief findNanoLeafController finds a nanoleaf controller based off of a cor::controller
+     * \param controller cor::Controller to use to find the nanoleaf controller
+     * \param leafController the nanoleaf controller to fil as the return
      */
-    void attemptIP(QString ipAddress);
+    bool findNanoLeafController(const cor::Controller& controller, nano::LeafController& leafController);
+
+    /// tests if an IP address is valid by sending a network request to it.
+    void testIP(const nano::LeafController& controller);
+
+    /// tests if an auth totken is valid by using it to send a packet.
+    void testAuth(const nano::LeafController& controller);
 
     /// connects UPnP object to the discovery object.
     void connectUPnPDiscovery(UPnPDiscovery* UPnP);
 
-    /// getter for controller
-    const nano::LeafController& controller() { return mController; }
-
     /// getter for the discovery state of the nanoleaf
     ENanoleafDiscoveryState discoveryState() { return mDiscoveryState; }
+
+    /// renames a nanoleaf controller. This data is stored in appdata.
+    void renameController(nano::LeafController controller, const QString& name);
+
+    /// sets the custom colors used for custom color routines
+    void setCustomColors(std::vector<QColor> colors) { mCustomColors = colors; }
+
+    /// getter for custom colors
+    const std::vector<QColor> customColors() { return mCustomColors; }
+
+    /// getter for list of nanoleaf controllers
+    const std::list<nano::LeafController> controllers() { return mDiscovery->foundControllers(); }
+
+    /// getter for discovery object
+    nano::LeafDiscovery *discovery() { return mDiscovery; }
 
 private slots:
     /*!
@@ -97,7 +110,7 @@ private slots:
      * \param lightIndex index of the light
      * \param turnOn true to turn on, false to turn off
      */
-    void onOffChange(int lightIndex, bool turnOn);
+    void onOffChange(const nano::LeafController& controller, bool turnOn);
 
     /*!
      * \brief brightnessChange connected to CommPacketParser, this changes the brightness of a device.
@@ -105,31 +118,13 @@ private slots:
      *        Will do nothing if index doesn't exist.
      * \param brightness a value between 0 and 100, 0 is off, 100 is full brightness
      */
-    void brightnessChange(int deviceIndex, int brightness);
-
-    /*!
-     * \brief arrayColorChange connected to CommPacketParser, this changes custom color array at a given index
-     * \param deviceIndex 0 for all indices, a specific index for a specific light.
-     *        Will do nothing if index doesn't exist.
-     * \param index the custom array color index. must be less than 10.
-     * \param color the new color for the device's custom color index.
-     */
-    void arrayColorChange(int deviceIndex, int arrayIndex, QColor color);
+    void brightnessChange(const nano::LeafController& controller, int brightness);
 
     /*!
      * \brief routineChange change the light state of the hue. This JSON object will contain a color and other
      *        information about the light.
      */
-    void routineChange(int deviceIndex, QJsonObject);
-
-    /*!
-     * \brief customArrayCount connected to CommPacketParser, this changes the number of colors used
-     *        in custom color array routines
-     * \param deviceIndex 0 for all indices, a specific index for a specific light.
-     *        Will do nothing if index doesn't exist.
-     * \param count the new count for the custom color array.
-     */
-    void customArrayCount(int deviceIndex, int customArrayCount);
+    void routineChange(const nano::LeafController& controller, QJsonObject);
 
     /*!
      * \brief timeOutChange connected to CommPacketParser, this changes the idle timeout.
@@ -140,21 +135,20 @@ private slots:
      * \param timeOut value between 0 and 1000. number represents number of minutes before
      *        lights automatically turn off. 0 disables this feature.
      */
-    void timeOutChange(int deviceIndex, int timeout);
-
-    /// called when a UPnP packet is received
-    void receivedUPnP(QHostAddress, QString);
-
-    /// block for requesting the authorization token for a nanoleaf
-    void discoveryRoutine();
+    void timeOutChange(const nano::LeafController& controller, int timeout);
 
     /// requests the state of the lights
     void stateUpdate();
 
-    /// failed testing the saved data about the nanoleaf.
-    void failedTestingData();
+signals:
+
+    /// a controller was renamed, which is represented by a cor::Light for compatibility with the GUI.
+    void lightRenamed(cor::Light, QString);
 
 private:
+
+    /// vector that holds the custom colors used in custom color routines
+    std::vector<QColor> mCustomColors;
 
     /// takes the color palette data from thne datalayer and converts it into JSON data for nanoleaf packets
     void createColorPalettes();
@@ -163,7 +157,7 @@ private:
     void checkForSavedData();
 
     /// helper which creates the packet header for all URLs
-    const QString packetHeader();
+    const QString packetHeader(const nano::LeafController& controller);
 
     /*!
      * \brief putJSON send a JSON packet over wireless packets using the PUT command
@@ -173,21 +167,21 @@ private:
     void putJSON(const QNetworkRequest& request, const QJsonObject& json);
 
     /// creates a network request based on a QString providing the endpoint.
-    QNetworkRequest networkRequest(QString endpoint);
+    QNetworkRequest networkRequest(const nano::LeafController& controller, QString endpoint);
 
     /*!
      * \brief parseStateUpdatePacket parses a state update packet. These packets contain everything such
      *        as the nanoleaf's brightness, color, current effect, and even metadata like the serial number
      * \param stateUpdate the packet with the state update data.
      */
-    void parseStateUpdatePacket(const QJsonObject& stateUpdate);
+    void parseStateUpdatePacket(nano::LeafController& controller, const QJsonObject& stateUpdate);
 
     /*!
      * \brief parseCommandRequestPacket parses a command request packet. These packets are received
      *        when you request the details on a command.
      * \param requestPacket the packet with the command request data
      */
-    void parseCommandRequestPacket(const QJsonObject& requestPacket);
+    void parseCommandRequestPacket(const nano::LeafController& controller, const QJsonObject& requestPacket);
 
     /*!
      * \brief createRoutinePacket helper that takes a lighting routine and creates
@@ -204,16 +198,19 @@ private:
      * \param group the palette to use for the jsonarray
      * \return a jsonarray that matches the lighting routine and palette
      */
-    QJsonArray createPalette(ERoutine routine, EPalette palette);
-
-    /// true if controller has all connection information, false otherwise.
-    bool isControllerConnected(const nano::LeafController& controller);
-
-    /// start the state update timer
-    void startupStateUpdates();
+    QJsonArray createPalette(const cor::Light& light);
 
     /// changes the main color of a nanoleaf
-    void singleSolidColorChange(int deviceIndex, QColor color);
+    void singleSolidColorChange(const nano::LeafController& controller, QColor color);
+
+    /*!
+     * \brief converts a vector of QColor to two nanoleaf-compatible jsonarrays. the first of the pair is a
+     *        standard palette. The second array is used for highlight routines
+     */
+    std::pair<QJsonArray, QJsonArray> vectorToNanoleafPalettes(const std::vector<QColor>& colorVector);
+
+    /// converts a nanoleaf palette JSON array to a vector of QColors
+    std::vector<QColor> nanoleafPaletteToVector(const QJsonArray& palette);
 
     /*!
      * \brief mNetworkManager Qt's HTTP connection object
@@ -228,12 +225,6 @@ private:
     /// pointer to the UPnPDiscovery object.
     UPnPDiscovery *mUPnP;
 
-    /*!
-     * \brief mParser used to parse the commands sent through the system format, which is a
-     *        comma delimited QString
-     */
-    CommPacketParser *mParser;
-
     /// timer that tests whether the app data about the nanoleafs path (IP address, port, etc.) is valid
     QTimer *mTestingTimer;
 
@@ -246,28 +237,11 @@ private:
     /// stored json palettes for each color group with highlight info
     std::vector<QJsonArray> mHighlightPalettes;
 
-    /*!
-     * \brief mController all known information about the nanoleaf lights.
-     * TODO: the app currently expects only one of these. Generalize routines
-     *       to support N nanoleafs
-     */
-    nano::LeafController mController;
-
     /// discovery state for the nanoleaf
     ENanoleafDiscoveryState mDiscoveryState;
 
-    //-----------
-    // Keys
-    //-----------
-
-    /// key for saving and accessing the IP address of the nanoleaf
-    const static QString kNanoLeafIPAddress;
-
-    /// key for saving and accessing the authorization token of the nanoleaf
-    const static QString kNanoLeafAuthToken;
-
-    /// key for saving and accessing the port of the nanoleaf
-    const static QString kNanoLeafPort;
+    /// object that holds and manages nanoleaf controller connections.
+    nano::LeafDiscovery *mDiscovery;
 };
 
 #endif // COMMNANOLEAF_H

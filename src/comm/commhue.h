@@ -10,7 +10,6 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
-#include "commpacketparser.h"
 #include "cor/lightgroup.h"
 #include "hue/bridgediscovery.h"
 #include "hue/huelight.h"
@@ -75,17 +74,8 @@ public:
      */
     void changeColorCT(int lightIndex, int brightness, int ct);
 
-    /*!
-     * \brief turnOn turns on the Hue light at a given index
-     * \param light light to modify
-     */
-    void turnOn(const cor::Light& light);
-
-    /*!
-     * \brief turnOff turns off the Hue light at a given index
-     * \param light light to modify
-     */
-    void turnOff(const cor::Light& light);
+    /// true to turn on, false to turn off
+    void turnOnOff(int index, bool shouldTurnOn);
 
     /*!
      * \brief connectedHues returns vector of the currently connected Hue lights. Used by the settings page
@@ -110,6 +100,13 @@ public:
      * \param packet the comma delimited Corlum Light command.
      */
     void sendPacket(const cor::Controller& controller, QString& packet);
+
+    /*!
+     * \brief sendPacket send a packet based off of a JSON object containing all
+     *        relevant information about the packet
+     * \param object json representation of the packet to send
+     */
+    void sendPacket(const QJsonObject& object);
 
     /*!
      * \brief hueLightFromLight For every cor::Light with type hue, there is a SHueLight that represents the same device.
@@ -316,35 +313,10 @@ private slots:
     void connectionStatusHasChanged(bool);
 
     /*!
-     * \brief onOffChange turn a light on or off
-     * \param lightIndex index of the light
-     * \param turnOn true to turn on, false to turn off
-     */
-    void onOffChange(int lightIndex, bool turnOn);
-
-    /*!
-     * \brief arrayColorChange connected to CommPacketParser, this changes custom color array at a given index
-     * \param deviceIndex 0 for all indices, a specific index for a specific light.
-     *        Will do nothing if index doesn't exist.
-     * \param index the custom array color index. must be less than 10.
-     * \param color the new color for the device's custom color index.
-     */
-    void arrayColorChange(int deviceIndex, int arrayIndex, QColor color);
-
-    /*!
      * \brief routineChange change the light state of the hue. This JSON object will contain a color and other
      *        information about the light.
      */
     void routineChange(int deviceIndex, QJsonObject);
-
-    /*!
-     * \brief customArrayCount connected to CommPacketParser, this changes the number of colors used
-     *        in custom color array routines
-     * \param deviceIndex 0 for all indices, a specific index for a specific light.
-     *        Will do nothing if index doesn't exist.
-     * \param count the new count for the custom color array.
-     */
-    void customArrayCount(int deviceIndex, int customArrayCount);
 
     /*!
      * \brief timeOutChange connected to CommPacketParser, this changes the idle timeout.
@@ -397,12 +369,6 @@ private:
      *        this string, which is formatted as http://$BRIDGEIP/api/$USERNAME
      */
     QString mUrlStart;
-
-    /*!
-     * \brief mParser used to parse the commands sent through the system format, which is a comma delimited
-     *        QString
-     */
-    CommPacketParser *mParser;
 
     /*!
      * \brief mScheduleTimer the timer that is used to periodically request updates for the schedules of hues.

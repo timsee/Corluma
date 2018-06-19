@@ -166,7 +166,7 @@ signals:
     /*!
      * \brief multiColorUpdate emitted whenever the multi color picker has an update for any individual color.
      */
-    void multiColorUpdate(QColor, int);
+    void multiColorUpdate();
 
     /*!
      * \brief ambientUpdate emitted whenever the ambient picker has an update. First value is

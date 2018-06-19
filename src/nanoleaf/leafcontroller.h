@@ -3,6 +3,8 @@
 
 #include <QString>
 #include <QColor>
+#include <QJsonObject>
+#include <sstream>
 #include <vector>
 #include "rhythmcontroller.h"
 #include "panels.h"
@@ -33,6 +35,9 @@ public:
 
     /// name of controller (defined in app data)
     QString name;
+
+    /// name of controller, defined by hardware
+    QString hardwareName;
 
     /// serial number of controller
     QString serialNumber;
@@ -95,7 +100,33 @@ public:
     /// possible range for color temperature values
     cor::Range<uint32_t> ctRange;
 
+    operator QString() const {
+        std::stringstream tempString;
+        tempString << "nano::LeafController: "
+                   << " name: " << name.toStdString()
+                   << " hardwareName: " << hardwareName.toStdString()
+                   << " IP:" <<  IP.toStdString()
+                   << " port: " << port
+                   << " authToken: " << authToken.toStdString()
+                   << " serial: " << serialNumber.toStdString()
+                   << " effect: " << authToken.toStdString();
+        return QString::fromStdString(tempString.str());
+    }
+
+    /// equal operator
+    bool operator==(const nano::LeafController& rhs) const {
+        bool result = true;
+        if (serialNumber  !=  rhs.serialNumber) result = false;
+        return result;
+    }
+
 };
+
+/// converts json representation of routine to cor::Light
+LeafController jsonToLeafController(const QJsonObject& object);
+
+/// converts a cor::Light to a json representation of its routine.
+QJsonObject leafControllerToJson(const LeafController& controller);
 
 }
 #endif // NANOLEAFCONTROLLER_H

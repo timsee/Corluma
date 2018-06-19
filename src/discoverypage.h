@@ -34,7 +34,7 @@ public:
     /*!
      * Constructor
      */
-    explicit DiscoveryPage(QWidget *parent, DataLayer *data, CommLayer *layer);
+    explicit DiscoveryPage(QWidget *parent, DataLayer *data, CommLayer *layer, ProtocolSettings *protocols);
 
     /*!
      * Destructor
@@ -79,7 +79,7 @@ private slots:
     /*!
      * \brief startClicked handle when the start button is clicked.
      */
-    void startClicked() { emit startButtonClicked(); }
+    void startClicked();
 
     /*!
      * \brief protocolTypeSelected called when the comm type updates and changes
@@ -205,6 +205,9 @@ private:
      *        the app automatically hides this page. This timer tracks that.
      */
     QTime mStartTime;
+
+    /// pointer to the app states that determine if a protocol (such as arducor or nanoleaf) is currently enabled
+    ProtocolSettings *mProtocolSettings;
 };
 
 #endif // DISCOVERYPAGE_H

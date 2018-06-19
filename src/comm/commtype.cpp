@@ -27,11 +27,12 @@ void CommType::setupConnectionList(ECommType type) {
     }
 
     // load preexisting settings, if they exist
-    for (int i = 0; i < controllerListCurrentSize; ++i) {
-       QString value = mSettings->value(settingsIndexKey(i)).toString();
-       if (value.compare(QString("")) != 0) startDiscoveringController(value);
+    if (mType != ECommType::nanoleaf) {
+        for (int i = 0; i < controllerListCurrentSize; ++i) {
+           QString value = mSettings->value(settingsIndexKey(i)).toString();
+           if (value.compare(QString("")) != 0) startDiscoveringController(value);
+        }
     }
-
 
     mDiscoveryMode = false;
     mFullyDiscovered = false;
@@ -59,7 +60,9 @@ bool CommType::startDiscoveringController(QString controller) {
         mUndiscoveredList.push_front(controller);
         emit updateReceived(mType);
         mFullyDiscovered = false;
-        startDiscovery();
+        if (mType != ECommType::nanoleaf) {
+            startDiscovery();
+        }
         return true;
     }
     return false;

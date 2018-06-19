@@ -82,7 +82,7 @@ signals:
      * \param key key for the widget
      * \param name new name for the widget.
      */
-    void changedName(QString key, QString name);
+    void changedName(EProtocolType, QString key, QString name);
 
 private slots:
 
@@ -91,7 +91,7 @@ private slots:
      *        and the new name requested for the light
      * \param newName new name for the light created by the EditableFieldWidget
      */
-    void nameChanged(QString newName) { emit changedName(mKey, newName); }
+    void nameChanged(QString newName) { emit changedName(EProtocolType::hue, mKey, newName); }
 
 protected:
     /*!

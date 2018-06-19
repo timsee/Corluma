@@ -115,7 +115,10 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
     }
     std::list<cor::Light> list;
     list.push_back(dataDevice);
-    QString packet;
+    QJsonObject object;
+    object["controller"] = commDevice.controller();
+    object["commtype"]   = commTypeToString(commDevice.commType());
+    object["index"]      = commDevice.index();
 
     if (dataDevice.isOn) {
         if (dataDevice.colorMode == EColorMode::HSV) {
@@ -132,8 +135,7 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
                 routineObject["green"]   = hsvColor.green();
                 routineObject["blue"]    = hsvColor.blue();
 
-                QString message = mComm->sendRoutineChange(list, routineObject);
-                appendToPacket(packet, message, controller.maxPacketSize);
+                object["routine"] = routineObject;
 //        qDebug() << "hue color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << cor::colorDifference(dataDevice.color, commDevice.color);
     //            qDebug() << " packet " << message;
                 countOutOfSync++;
@@ -143,8 +145,8 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
             // Hue Color Temperature Sync
             //-------------------
             if (cor::colorDifference(commDevice.color, dataDevice.color) > 0.15f) {
-                QString message = mComm->sendColorTemperatureChange(list, cor::rgbToColorTemperature(dataDevice.color));
-                appendToPacket(packet, message, controller.maxPacketSize);
+                object["temperature"] = cor::rgbToColorTemperature(dataDevice.color);
+                object["brightness"] = dataDevice.brightness;
                 countOutOfSync++;
                // qDebug() << "hue color temperature not in sync" << commDevice.color << "vs" << dataDevice.color << utils::colorDifference(commDevice.color, dataDevice.color)  << "on device" << dataDevice.index;
             }
@@ -152,8 +154,7 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
 
         if (cor::brightnessDifference(commDevice.brightness, dataDevice.brightness) > 0.05f) {
             //qDebug() << "hue brightness not in sync" << commDevice.brightness << "vs" << dataDevice.brightness;
-            QString message = mComm->sendBrightness(list, dataDevice.brightness);
-            appendToPacket(packet, message, controller.maxPacketSize);
+            object["brightness"] = dataDevice.brightness;
             countOutOfSync++;
         }
     }
@@ -163,8 +164,7 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
     //-------------------
     if (dataDevice.isOn != commDevice.isOn) {
         //qDebug() << "hue ON/OFF not in sync" << dataDevice.isOn;
-        QString message = mComm->sendTurnOn(list, dataDevice.isOn);
-        appendToPacket(packet, message, controller.maxPacketSize);
+        object["isOn"] = dataDevice.isOn;
         countOutOfSync++;
     }
 
@@ -189,8 +189,8 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
         }
     }
 
-    if (countOutOfSync && packet.size()) {
-        mComm->sendPacket(dataDevice, packet);
+    if (countOutOfSync) {
+        mComm->sendPacket(object);
         resetThrottle(dataDevice.controller(), dataDevice.commType());
     }
 

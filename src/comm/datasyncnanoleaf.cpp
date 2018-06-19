@@ -109,9 +109,17 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
     if (!mComm->findDiscoveredController(dataDevice.commType(), dataDevice.controller(), controller)) {
         return false;
     }
-    std::list<cor::Light> list;
-    list.push_back(dataDevice);
-    QString packet;
+
+    // find nanoleaf controller
+    nano::LeafController leafController;
+    if (!mComm->nanoleaf()->findNanoLeafController(controller, leafController)) {
+        return false;
+    }
+
+    QJsonObject object;
+    object["controller"] = commDevice.controller();
+    object["commtype"]   = commTypeToString(commDevice.commType());
+    object["index"]      = commDevice.index();
 
     if (dataDevice.isOn) {
         //-------------------
@@ -129,6 +137,19 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
         bool paramsInSync       = true;
         bool colorInSync        = (cor::colorDifference(dataDevice.color, commDevice.color) <= 0.02f);
         bool paletteInSync      = (commDevice.palette.paletteEnum() == dataDevice.palette.paletteEnum());
+        if (dataDevice.palette.paletteEnum() == EPalette::custom) {
+            bool palettesAreClose = true;
+            if (dataDevice.palette.colors().size() == commDevice.palette.colors().size()) {
+                uint32_t i = 0;
+                for (auto&& color : dataDevice.palette.colors()) {
+                   if (cor::colorDifference(color, commDevice.palette.colors()[i]) > 0.05) {
+                        palettesAreClose = false;
+                   }
+                   ++i;
+                }
+                paletteInSync = palettesAreClose;
+            }
+        }
         if (!colorInSync && dataDevice.routine <= cor::ERoutineSingleColorEnd) {
             paramsInSync = false;
         }
@@ -137,11 +158,11 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
         }
 
         if (dataDevice.routine == ERoutine::singleSolid) {
-            if (mComm->nanoleaf()->controller().effect.compare("*Static*") == 0) {
+            if (leafController.effect.compare("*Static*") == 0) {
                 routineInSync = false;
             }
         } else {
-            if (mComm->nanoleaf()->controller().effect.compare("*Dynamic*") != 0) {
+            if (leafController.effect.compare("*Dynamic*") != 0) {
                 routineInSync = false;
             }
         }
@@ -157,6 +178,9 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
                 routineObject["blue"]    = color.blue();
             } else {
                 routineObject["palette"]   = dataDevice.palette.JSON();
+                if (dataDevice.palette.paletteEnum() == EPalette::custom) {
+                    mComm->nanoleaf()->setCustomColors(dataDevice.palette.colors());
+                }
             }
 
             if (dataDevice.routine != ERoutine::singleSolid) {
@@ -164,9 +188,9 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
                 routineObject["speed"]   = dataDevice.speed;
             }
 
-            //qDebug() << " Nanoleaf single routine not in sync";
-            QString message = mComm->sendRoutineChange(list, routineObject);
-            appendToPacket(packet, message, controller.maxPacketSize);
+            //qDebug() << " routine in sync: " << routineInSync << " speed in sync" << speedInSync << " params in sycn" << paramsInSync;
+            object["routine"] = routineObject;
+            //qDebug() << " Nanoleaf routine not in sync" << routineToString(dataDevice.routine);
             countOutOfSync++;
         }
 
@@ -174,9 +198,8 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
         // Brightness Sync
         //-------------------
         if (cor::brightnessDifference(commDevice.brightness, dataDevice.brightness) > 0.02f && dataDevice.routine != ERoutine::singleSolid) {
+            object["brightness"] = dataDevice.brightness;
             //qDebug() << "nanoleaf brightness not in sync" << commDevice.brightness << "vs" << dataDevice.brightness;
-            QString message = mComm->sendBrightness(list, dataDevice.brightness);
-            appendToPacket(packet, message, controller.maxPacketSize);
             countOutOfSync++;
         }
     }
@@ -186,14 +209,13 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
     //-------------------
 
     if (dataDevice.isOn != commDevice.isOn) {
+        object["isOn"] = dataDevice.isOn;
         //qDebug() << "nanoleaf ON/OFF not in sync" << dataDevice.isOn;
-        QString message = mComm->sendTurnOn(list, dataDevice.isOn);
-        appendToPacket(packet, message, controller.maxPacketSize);
         countOutOfSync++;
     }
 
-    if (countOutOfSync && packet.size()) {
-        mComm->sendPacket(dataDevice, packet);
+    if (countOutOfSync) {
+        mComm->sendPacket(object);
         resetThrottle(dataDevice.controller(), dataDevice.commType());
     }
 

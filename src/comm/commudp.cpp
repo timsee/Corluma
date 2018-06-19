@@ -96,6 +96,10 @@ void CommUDP::sendPacket(const cor::Controller& controller, QString& packet) {
     }
 }
 
+void CommUDP::sendPacket(const QJsonObject& object) {
+
+}
+
 
 bool CommUDP::portBound() {
     return mBound;

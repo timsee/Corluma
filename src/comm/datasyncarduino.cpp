@@ -24,6 +24,8 @@ DataSyncArduino::DataSyncArduino(DataLayer *data, CommLayer *comm) {
     mCleanupTimer = new QTimer(this);
     connect(mCleanupTimer, SIGNAL(timeout()), this, SLOT(cleanupSync()));
 
+    mParser = new CommPacketParser(this);
+
     mDataIsInSync = false;
 }
 
@@ -75,7 +77,6 @@ void DataSyncArduino::syncData() {
             }
         }
 
-        //qDebug() << "----------------------";
         std::list<cor::Controller> allControllers = mComm->allArduinoControllers();
         for (auto&& map : mMessages) {
             //TODO: this isnt the safest way, it relies on unique names for each controller, but ignores
@@ -97,14 +98,9 @@ void DataSyncArduino::syncData() {
             // create the message to send based off of the simplified packets
             QString finalPacket = createPacket(controller, allMessages);
 
-//            qDebug() << controller.name;
-//            qDebug() << "\t" << finalPacket;
-
             cor::Light device(0, controller.type, controller.name);
             mComm->sendPacket(device, finalPacket);
             resetThrottle(controller.name, device.commType());
-
-            //qDebug() << "----------------------";
         }
 
         mDataIsInSync = (countOutOfSync == 0);
@@ -199,8 +195,7 @@ bool DataSyncArduino::sync(const cor::Light& dataDevice, const cor::Light& commD
         return false;
     }
 
-    std::list<cor::Light> list;
-    list.push_back(dataDevice);
+
     QString packet;
 
     // if a lights off, no need to sync the rest of the states
@@ -267,7 +262,7 @@ bool DataSyncArduino::sync(const cor::Light& dataDevice, const cor::Light& commD
                 }
             }
 
-            QString message = mComm->sendRoutineChange(list, routineObject);
+            QString message = mParser->routinePacket(dataDevice, routineObject);
             appendToPacket(packet, message, controller.maxPacketSize);
             countOutOfSync++;
         }
@@ -278,7 +273,7 @@ bool DataSyncArduino::sync(const cor::Light& dataDevice, const cor::Light& commD
         //-------------------
         if (commDevice.brightness != dataDevice.brightness) {
           //  qDebug() << "brightness not in sync";
-            QString message = mComm->sendBrightness(list, dataDevice.brightness);
+            QString message = mParser->brightnessPacket(dataDevice, dataDevice.brightness);
             appendToPacket(packet, message, controller.maxPacketSize);
             countOutOfSync++;
         }
@@ -289,7 +284,7 @@ bool DataSyncArduino::sync(const cor::Light& dataDevice, const cor::Light& commD
         if (dataDevice.palette.paletteEnum() == EPalette::custom) {
             if (commDevice.customCount != dataDevice.palette.colors().size()) {
                // qDebug() << "Custom color count not in sync";
-                QString message = mComm->sendCustomArrayCount(list, commDevice.palette.colors().size());
+                QString message = mParser->changeCustomArraySizePacket(dataDevice, commDevice.palette.colors().size());
                 appendToPacket(packet, message, controller.maxPacketSize);
                 countOutOfSync++;
             }
@@ -300,7 +295,7 @@ bool DataSyncArduino::sync(const cor::Light& dataDevice, const cor::Light& commD
             for (uint32_t i = 0; i < dataDevice.palette.colors().size(); ++i) {
                 if (cor::colorDifference(dataDevice.palette.colors()[i], commDevice.customColors[i]) > 0.02f) {
                    // qDebug() << "Custom color" << i << "not in sync" << " comm: " << commDevice.customColors[i] << "data: " << dataDevice.palette.colors()[i];
-                    QString message = mComm->sendArrayColorChange(list, i, dataDevice.palette.colors()[i]);
+                    QString message = mParser->arrayColorChangePacket(dataDevice, i, dataDevice.palette.colors()[i]);
                     appendToPacket(packet, message, controller.maxPacketSize);
                     countOutOfSync++;
                 }
@@ -314,7 +309,7 @@ bool DataSyncArduino::sync(const cor::Light& dataDevice, const cor::Light& commD
 
     if (dataDevice.isOn != commDevice.isOn) {
         //qDebug() << "ON/OFF not in sync" << dataDevice.isOn << " for " << dataDevice.index();
-        QString message = mComm->sendTurnOn(list, dataDevice.isOn);
+        QString message = mParser->turnOnPacket(dataDevice, dataDevice.isOn);
         appendToPacket(packet, message, controller.maxPacketSize);
         countOutOfSync++;
     }

@@ -13,10 +13,12 @@
 
 GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent,
                                            CommLayer *comm,
-                                           DataLayer *data) :
+                                           DataLayer *data,
+                                           ProtocolSettings *protocols) :
                                            QWidget(parent),
                                            mComm(comm),
-                                           mData(data) {
+                                           mData(data),
+                                           mProtocolSettings(protocols) {
 
     mSpacerPixels = 5;
 
@@ -86,9 +88,7 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent,
     mNanoLeafButton->setCheckable(true);
     mNanoLeafButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    mConnectionButtons = { mArduCorButton,
-                         mHueButton,
-                         mNanoLeafButton};
+    mConnectionButtons = {mArduCorButton, mHueButton, mNanoLeafButton};
 
     connect(mTimeoutSlider, SIGNAL(valueChanged(int)), this, SLOT(timeoutChanged(int)));
 
@@ -124,19 +124,19 @@ void GlobalSettingsWidget::nanoLeafButtonClicked(bool checked) {
 }
 
 void GlobalSettingsWidget::checkCheckBoxes() {
-    if (mData->protocolSettings()->enabled(EProtocolType::hue)) {
+    if (mProtocolSettings->enabled(EProtocolType::hue)) {
         mHueButton->setChecked(true);
     } else {
         mHueButton->setChecked(false);
     }
 
-    if (mData->protocolSettings()->enabled(EProtocolType::arduCor)) {
+    if (mProtocolSettings->enabled(EProtocolType::arduCor)) {
         mArduCorButton->setChecked(true);
     } else {
         mArduCorButton->setChecked(false);
     }
 
-    if (mData->protocolSettings()->enabled(EProtocolType::nanoleaf)) {
+    if (mProtocolSettings->enabled(EProtocolType::nanoleaf)) {
         mNanoLeafButton->setChecked(true);
     } else {
         mNanoLeafButton->setChecked(false);
@@ -152,10 +152,10 @@ void GlobalSettingsWidget::timeoutChanged(int newTimeout) {
 
 
 void GlobalSettingsWidget::checkBoxClicked(EProtocolType type, bool checked) {
-    bool successful = mData->protocolSettings()->enable(type, checked);
+    bool successful = mProtocolSettings->enable(type, checked);
     if (!successful) {
         mConnectionButtons[(uint32_t)type]->setChecked(true);
-       // mConnectionButtons[mData->ProtocolSettings()->indexOfProtocolSettings(type)]->setStyleSheet("background-color:#4A4949;");
+       // mConnectionButtons[mProtocolSettings->indexOfProtocolSettings(type)]->setStyleSheet("background-color:#4A4949;");
     }
 
     if (checked) {

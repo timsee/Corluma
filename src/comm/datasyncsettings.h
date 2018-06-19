@@ -7,6 +7,7 @@
 
 #include "datalayer.h"
 #include "datasync.h"
+#include "comm/commpacketparser.h"
 
 /*!
  * \copyright
@@ -25,7 +26,7 @@ public:
      * \param data pointer to the app's data layer.
      * \param comm pointer to the app's comm layer.
      */
-    DataSyncSettings(DataLayer *data, CommLayer *comm);
+    DataSyncSettings(DataLayer *data, CommLayer *comm, ProtocolSettings *protocol);
 
     /// destructor
     ~DataSyncSettings() {}
@@ -76,6 +77,12 @@ private:
 
     /// standard sync, not implemented for settings
     bool sync(const cor::Light& dataDevice, const cor::Light& commDevice) override;
+
+    /// parses variables for a packet and turns it into ArduCor compatible packets
+    CommPacketParser *mParser;
+
+    /// pointer to the app states that determine if a protocol (such as arducor or nanoleaf) is currently enabled
+    ProtocolSettings *mProtocolSettings;
 
     /*!
      * \brief endOfSync end the sync thread and start the cleanup thread.

@@ -87,6 +87,16 @@ public:
     bool mergeExternalData(QString file, bool keepFileChanges);
 
     /*!
+     * \brief updateLightName update the group and mood data to a change in hardware
+     *        names. This updates all save data so it can continue to be compatible with the
+     *        group data.
+     * \param light the old cor::Light with the old name, controller, index, and commtype
+     * \param newName the new name to use for the light
+     * \return true if successful
+     */
+    bool updateLightName(const cor::Light& light, const QString& newName);
+
+    /*!
      * \brief loadDebugData creates a list of devices that are given to the UI as if they sent packets. Used for debugging
      *        while off of a network that would have lights to control.
      * \return a list of devices based on JSON data.

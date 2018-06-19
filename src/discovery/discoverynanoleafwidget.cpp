@@ -40,7 +40,11 @@ DiscoveryNanoLeafWidget::~DiscoveryNanoLeafWidget() {
 
 
 
+
 void DiscoveryNanoLeafWidget::handleDiscovery(bool isCurrentCommType) {
+    // starts discovery if its not already started
+    mComm->nanoleaf()->discovery()->startDiscovery();
+
     std::list<cor::Controller> deviceTable = mComm->discoveredList(ECommType::nanoleaf);
     std::list<QString> discoveringList = mComm->undiscoveredList(ECommType::nanoleaf);
 
@@ -54,24 +58,24 @@ void DiscoveryNanoLeafWidget::handleDiscovery(bool isCurrentCommType) {
         }
     }
 
-    ENanoleafDiscoveryState discoveryState = mComm->nanoleaf()->discoveryState();
+
+    ENanoleafDiscoveryState discoveryState = mComm->nanoleaf()->discovery()->state();
     switch (discoveryState) {
     case ENanoleafDiscoveryState::connectionError:
+    case ENanoleafDiscoveryState::discoveryOff:
         mLabel->setText("Connection Error");
         break;
-    case ENanoleafDiscoveryState::testingPreviousData:
-    case ENanoleafDiscoveryState::testingAuth:
+    case ENanoleafDiscoveryState::lookingForPreviousNanoleafs:
         mLabel->setText("Testing previous connection data..");
         break;
-    case ENanoleafDiscoveryState::testingIP:
-    case ENanoleafDiscoveryState::runningUPnP:
+    case ENanoleafDiscoveryState::nothingFound:
         mLabel->setText("Looking for a NanoLeaf Aurora. This may take up to a minute...");
         break;
-    case ENanoleafDiscoveryState::awaitingAuthToken:
+    case ENanoleafDiscoveryState::unknownNanoleafsFound:
         mLabel->setText("NanoLeaf Aurora found! Please hold the power button for around 5 seconds, until the LED to the left of it starts blinking. ");
         break;
-    case ENanoleafDiscoveryState::fullyConnected:
-        mLabel->setText("NanoLeaf discovered and fully connected!");
+    case ENanoleafDiscoveryState::allNanoleafsConnected:
+        mLabel->setText("All NanoLeaf discovered and fully connected!");
         break;
     }
 
@@ -92,7 +96,7 @@ void DiscoveryNanoLeafWidget::handleDiscovery(bool isCurrentCommType) {
 
 
 void DiscoveryNanoLeafWidget::plusButtonClicked() {
-    mComm->nanoleaf()->attemptIP(mSearchWidget->lineEditText());
+    mComm->nanoleaf()->discovery()->addIP(mSearchWidget->lineEditText());
 }
 
 void DiscoveryNanoLeafWidget::minusButtonClicked() {

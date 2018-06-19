@@ -26,7 +26,7 @@
 
 #include <QDesktopWidget>
 
-SettingsPage::SettingsPage(QWidget *parent, CommLayer *comm, DataLayer *data, GroupsParser *parser) :
+SettingsPage::SettingsPage(QWidget *parent, CommLayer *comm, DataLayer *data, GroupsParser *parser, ProtocolSettings *protocols) :
     QWidget(parent), mGroups(parser) {
     mShowingDebug = true;
 
@@ -78,7 +78,7 @@ SettingsPage::SettingsPage(QWidget *parent, CommLayer *comm, DataLayer *data, Gr
                        "Debug"};
 
     mTitles = { "Discover Controllers",
-                "Hue Info",
+                "Light Info",
                 "Discover New Hues",
                 "Save",
                 "Load",
@@ -88,7 +88,7 @@ SettingsPage::SettingsPage(QWidget *parent, CommLayer *comm, DataLayer *data, Gr
                 "Mock Connection"};
 
     mDescriptions = { "Discover a Philips Bridge or Arduino controllers.",
-                      "Read and manage the hardware information stored on the Hue Bridge.",
+                      "Read and manage the hardware information.",
                       "Discover new Hue lights.",
                       "Save light moods and collections to JSON.",
                       "Erase old moods and collections, load new data from JSON.",
@@ -129,7 +129,7 @@ SettingsPage::SettingsPage(QWidget *parent, CommLayer *comm, DataLayer *data, Gr
     //------------
     // Global Widget
     //------------
-    mGlobalWidget = new GlobalSettingsWidget(mScrollAreaWidget, comm, data);
+    mGlobalWidget = new GlobalSettingsWidget(mScrollAreaWidget, comm, data, protocols);
     mGlobalWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mScrollLayout->addWidget(mGlobalWidget);
 
@@ -280,7 +280,7 @@ void SettingsPage::settingsButtonPressed(QString title) {
         emit clickedHueDiscovery();
     } else if (title.compare("Discover Controllers") == 0) {
         emit clickedDiscovery();
-    } else if (title.compare("Hue Info") == 0) {
+    } else if (title.compare("Light Info") == 0) {
         emit clickedHueInfoWidget();
     } else if (title.compare("Copyright") == 0) {
         showWebView(ECorlumaWebView::copyright);

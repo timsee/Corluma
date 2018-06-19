@@ -11,14 +11,12 @@
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
 
-#include "hue/lightinfolistwidget.h"
+#include "lightinfolistwidget.h"
 #include "cor/utils.h"
 
-namespace hue
-{
 
 LightInfoListWidget::LightInfoListWidget(QWidget *parent) : QWidget(parent) {
-    mTopWidget = new cor::TopWidget("Hue Lights", ":images/closeX.png", this);
+    mTopWidget = new cor::TopWidget("Light Info", ":images/closeX.png", this);
     connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(closePressed(bool)));
     mTopWidget->setFontPoint(20);
 
@@ -57,7 +55,7 @@ void LightInfoListWidget::updateLights(std::list<HueLight> lights) {
         // check if light already exists in list
         int widgetIndex = -1;
         int i = 0;
-        for (auto widget : mWidgets) {
+        for (auto widget : mHueWidgets) {
             if (widget->light().index() == light.index()) {
                 widgetIndex = i;
                 widget->updateLight(light);
@@ -69,8 +67,34 @@ void LightInfoListWidget::updateLights(std::list<HueLight> lights) {
             hue::LightInfoWidget *widget = new hue::LightInfoWidget(light, mScrollAreaWidget);
             widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(lightInfoWidgetClicked(QString)));
-            connect(widget, SIGNAL(changedName(QString, QString)), this, SLOT(nameChanged(QString, QString)));
-            mWidgets.push_back(widget);
+            connect(widget, SIGNAL(changedName(EProtocolType, QString, QString)), this, SLOT(nameChanged(EProtocolType, QString, QString)));
+            mHueWidgets.push_back(widget);
+            mScrollLayout->addWidget(widget);
+        }
+    }
+
+    resize(true);
+}
+
+void LightInfoListWidget::updateControllers(std::list<nano::LeafController> controllers) {
+    for (auto controller : controllers) {
+        // check if light already exists in list
+        int widgetIndex = -1;
+        int i = 0;
+        for (auto widget : mNanoleafWidgets) {
+            if (widget->controller().serialNumber == controller.serialNumber) {
+                widgetIndex = i;
+                widget->updateController(controller);
+            }
+            ++i;
+        }
+        // if it doesnt exist, add it
+        if (widgetIndex == -1) {
+            nano::LeafControllerInfoWidget *widget = new nano::LeafControllerInfoWidget(controller, mScrollAreaWidget);
+            widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+            connect(widget, SIGNAL(clicked(QString)), this, SLOT(lightInfoWidgetClicked(QString)));
+            connect(widget, SIGNAL(changedName(EProtocolType, QString, QString)), this, SLOT(nameChanged(EProtocolType, QString, QString)));
+            mNanoleafWidgets.push_back(widget);
             mScrollLayout->addWidget(widget);
         }
     }
@@ -92,7 +116,15 @@ void LightInfoListWidget::resize(bool resizeFullWidget) {
     uint32_t yPos = 0;
     //TODO: make a better system for resizing
     // draw widgets in content region
-    for (auto widget : mWidgets) {
+    for (auto widget : mHueWidgets) {
+        widget->setHeight(widgetSize.height());
+        widget->setGeometry(0,
+                            yPos,
+                            widgetSize.width(),
+                            widget->height());
+        yPos += widget->height();
+    }
+    for (auto widget : mNanoleafWidgets) {
         widget->setHeight(widgetSize.height());
         widget->setGeometry(0,
                             yPos,
@@ -108,12 +140,17 @@ void LightInfoListWidget::resize(bool resizeFullWidget) {
 void LightInfoListWidget::deleteButtonPressed(bool) {
     QMessageBox::StandardButton reply;
     HueLight light;
-    for (auto widget : mWidgets) {
+    for (auto widget : mHueWidgets) {
         if (widget->key().compare(mLastKey) == 0) {
             light = widget->light();
         }
     }
-    QString text = "Delete " + light.name + "? This will remove it from the Hue Bridge.";
+    QString text;
+    if (light.commType() == ECommType::hue) {
+       text = "Delete " + light.name + "? This will remove it from the Hue Bridge.";
+    } else if (light.commType() == ECommType::nanoleaf) {
+       text = "Delete " + light.name + "? This will remove it from the app memory.";
+    }
     reply = QMessageBox::question(this, "Delete?", text,
                                   QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes) {
@@ -144,13 +181,34 @@ void LightInfoListWidget::closePressed(bool) {
 
 void LightInfoListWidget::lightInfoWidgetClicked(QString key) {
    // qDebug() << " clicked " << key;
-    for (auto widget : mWidgets) {
+    for (auto widget : mHueWidgets) {
         if (widget->checked()) {
             widget->setChecked(false);
             widget->hideDetails(true);
         }
     }
-    for (auto widget : mWidgets) {
+    for (auto widget : mNanoleafWidgets) {
+        if (widget->checked()) {
+            widget->setChecked(false);
+            widget->hideDetails(true);
+        }
+    }
+    for (auto widget : mHueWidgets) {
+        if (widget->key().compare(key) == 0) {
+            if (mLastKey.compare(key) == 0) {
+                widget->hideDetails(true);
+                widget->setChecked(false);
+                mDeleteButton->setStyleSheet("background-color:rgb(45,30,30);");
+                mLastKey = "";
+            } else {
+                widget->hideDetails(false);
+                widget->setChecked(true);
+                mDeleteButton->setStyleSheet("background-color:rgb(110,30,30);");
+                mLastKey = key;
+            }
+        }
+    }
+    for (auto widget : mNanoleafWidgets) {
         if (widget->key().compare(key) == 0) {
             if (mLastKey.compare(key) == 0) {
                 widget->hideDetails(true);
@@ -173,6 +231,4 @@ void LightInfoListWidget::lightInfoWidgetClicked(QString key) {
     }
 
     resize(false);
-}
-
 }

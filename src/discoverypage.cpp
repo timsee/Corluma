@@ -12,6 +12,8 @@
 
 #include "mainwindow.h"
 
+#include "comm/commnanoleaf.h"
+
 #include <QSignalMapper>
 #include <QInputDialog>
 #include <QMessageBox>
@@ -21,9 +23,10 @@
 #include <QStyleOption>
 #include <QGraphicsOpacityEffect>
 
-DiscoveryPage::DiscoveryPage(QWidget *parent, DataLayer *data, CommLayer *comm) :
+DiscoveryPage::DiscoveryPage(QWidget *parent, DataLayer *data, CommLayer *comm, ProtocolSettings *protocols) :
     QWidget(parent),
-    mComm(comm) {
+    mComm(comm),
+    mProtocolSettings(protocols) {
     mData = data;
 
     mStartButton = new QPushButton(this);
@@ -110,7 +113,7 @@ void DiscoveryPage::renderUI() {
     bool isAnyConnected = false;
     for (int commInt = 0; commInt != (int)EProtocolType::MAX; ++commInt) {
         EProtocolType type = static_cast<EProtocolType>(commInt);
-        if (mData->protocolSettings()->enabled(type)) {
+        if (mProtocolSettings->enabled(type)) {
             mComm->resetStateUpdates(type);
         }
         if (checkIfDiscovered(type)) {
@@ -321,25 +324,25 @@ void DiscoveryPage::updateTopMenu() {
     std::vector<QString> buttons;
 
     // hide and show buttons based on their usage
-    if (mData->protocolSettings()->enabled(EProtocolType::hue)) {
+    if (mProtocolSettings->enabled(EProtocolType::hue)) {
         buttons.push_back("Discovery_Hue");
     }
 
-    if (mData->protocolSettings()->enabled(EProtocolType::nanoleaf)) {
+    if (mProtocolSettings->enabled(EProtocolType::nanoleaf)) {
         buttons.push_back("Discovery_NanoLeaf");
     }
 
-    if (mData->protocolSettings()->enabled(EProtocolType::arduCor)) {
+    if (mProtocolSettings->enabled(EProtocolType::arduCor)) {
         buttons.push_back("Discovery_ArduCor");
     }
 
     // check that commtype being shown is available, if not, adjust
-    if (!mData->protocolSettings()->enabled(mType)) {
-        if (mData->protocolSettings()->enabled(EProtocolType::hue)) {
+    if (!mProtocolSettings->enabled(mType)) {
+        if (mProtocolSettings->enabled(EProtocolType::hue)) {
             mType = EProtocolType::hue;
-        } else if (mData->protocolSettings()->enabled(EProtocolType::nanoleaf)) {
+        } else if (mProtocolSettings->enabled(EProtocolType::nanoleaf)) {
             mType = EProtocolType::nanoleaf;
-        } else if (mData->protocolSettings()->enabled(EProtocolType::arduCor)) {
+        } else if (mProtocolSettings->enabled(EProtocolType::arduCor)) {
             mType = EProtocolType::arduCor;
         }
     }
@@ -394,4 +397,11 @@ void DiscoveryPage::moveFloatingLayouts() {
 
     mVerticalFloatingLayout->move(verticalStart);
     mVerticalFloatingLayout->raise();
+}
+
+void DiscoveryPage::startClicked() {
+    if (mProtocolSettings->enabled(EProtocolType::nanoleaf)) {
+        mComm->nanoleaf()->discovery()->stopDiscovery();
+    }
+    emit startButtonClicked();
 }

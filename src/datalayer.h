@@ -11,7 +11,6 @@
 #include "cor/palette.h"
 #include "comm/commhue.h"
 #include "comm/protocolsettings.h"
-#include "cor/presetpalettes.h"
 
 /*!
  * \copyright
@@ -249,13 +248,6 @@ public:
      */
     bool hasNanoLeafDevices();
 
-    /*!
-     * \brief ProtocolSettings pointer to the current comm types settings, which maintains which commtypes
-     *        are currently enabled or disabled
-     * \return pointer to the current stream settings
-     */
-    ProtocolSettings *protocolSettings() { return mProtocolSettings; }
-
     /// compute the best candidate for a collection based on the current devices.
     QString findCurrentCollection(const std::list<cor::LightGroup>& collections, bool allowLights);
 
@@ -282,19 +274,12 @@ signals:
 
 private:
 
-    PresetPalettes mPalettes;
-
     /*!
      * \brief mCurrentDevices list of current devices in data layer
      * \todo complete support of multiple devices in datalayer. currently this is a vector of
      *       size 1 in preparation.
      */
     std::list<cor::Light> mCurrentDevices;
-
-    /*!
-     * \brief mProtocolSettings maintains which comnmtypes are currently enabled.
-     */
-    ProtocolSettings *mProtocolSettings;
 
     /// true if lights should turn off after X hours of no use, false othwerise.
     bool mTimeoutEnabled;

@@ -12,9 +12,161 @@
 
 #define CUSTOM_COLOR_MAX 10
 
-CommPacketParser::CommPacketParser(QWidget *parent) : QObject(parent) {
+CommPacketParser::CommPacketParser(QObject *parent) : QObject(parent) {
 
 }
+
+
+QString CommPacketParser::turnOnPacket(const cor::Light& device, bool turnOn) {
+    QString packet= QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::onOffChange),
+                                             QString::number(device.index()),
+                                             QString::number(turnOn));
+    return packet;
+}
+
+QString CommPacketParser::arrayColorChangePacket(const cor::Light& device,
+                                                 int index,
+                                                 QColor color) {
+    QString packet = QString("%1,%2,%3,%4,%5,%6&").arg(QString::number((int)EPacketHeader::customArrayColorChange),
+                                                       QString::number(device.index()),
+                                                       QString::number(index),
+                                                       QString::number(color.red()),
+                                                       QString::number(color.green()),
+                                                       QString::number(color.blue()));
+    return packet;
+}
+
+
+QString CommPacketParser::routinePacket(const cor::Light& device, const QJsonObject& routineObject) {
+    QString packet;
+    if (routineObject["routine"].isString()) {
+        //------------
+        // get routine
+        //------------
+        ERoutine routine = stringToRoutine(routineObject["routine"].toString());
+
+        //------------
+        // get either speed or palette, depending on routine type
+        //------------
+        QColor color;
+        EPalette paletteEnum = EPalette::unknown;
+        bool isValidJSON = true;
+        if (routine <= cor::ERoutineSingleColorEnd) {
+            if (routineObject["red"].isDouble()
+                    && routineObject["green"].isDouble()
+                    && routineObject["blue"].isDouble()) {
+                color.setRgb(routineObject["red"].toDouble(),
+                        routineObject["green"].toDouble(),
+                        routineObject["blue"].toDouble());
+            } else {
+                isValidJSON = false;
+            }
+        } else if (routineObject["palette"].isObject()) {
+            QJsonObject object = routineObject["palette"].toObject();
+            Palette palette(object);
+            paletteEnum = palette.paletteEnum();
+            if (paletteEnum == EPalette::unknown) {
+                isValidJSON = false;
+            }
+        }
+
+        //------------
+        // get speed if theres a speed value
+        //------------
+        int speed = INT_MIN;
+        if (routine != ERoutine::singleSolid) {
+            if (routineObject["speed"].isDouble()) {
+                speed = routineObject["speed"].toDouble();
+            }
+        }
+
+        //------------
+        // get optional parameter
+        //------------
+        int optionalParameter = INT_MIN;
+        if (routineObject["param"].isDouble()) {
+            optionalParameter = routineObject["param"].toDouble();
+        }
+        switch (routine) {
+        case ERoutine::multiBars:
+            optionalParameter = 4;
+            break;
+        case ERoutine::singleGlimmer:
+        case ERoutine::multiGlimmer:
+            optionalParameter = 15;
+            break;
+        case ERoutine::singleFade:
+        case ERoutine::singleSawtoothFade:
+        case ERoutine::multiRandomSolid:
+        case ERoutine::singleWave:
+        case ERoutine::multiFade:
+        case ERoutine::multiRandomIndividual:
+        case ERoutine::singleSolid:
+        case ERoutine::singleBlink:
+        default:
+            break;
+        }
+
+
+        if (isValidJSON) {
+            packet += QString::number((int)EPacketHeader::modeChange);
+            packet += ",";
+            packet += QString::number(device.index());
+            packet += ",";
+            packet += QString::number((int)routine);
+
+            if (color.isValid()) {
+                packet += ",";
+                packet += QString::number(color.red());
+                packet += ",";
+                packet += QString::number(color.green());
+                packet += ",";
+                packet += QString::number(color.blue());
+            } else if (paletteEnum != EPalette::unknown) {
+                packet += ",";
+                packet += QString::number((int)paletteEnum);
+            }
+
+            if (routine != ERoutine::singleSolid) {
+                // TODO: fix edge case
+                if (speed == INT_MIN) {
+                    speed = 100;
+                }
+                packet += ",";
+                packet += QString::number(speed);
+            }
+
+            if (optionalParameter != INT_MIN) {
+                packet += ",";
+                packet += QString::number(optionalParameter);
+            }
+            packet += "&";
+        }
+    }
+    return packet;
+}
+
+QString CommPacketParser::brightnessPacket(const cor::Light& device, int brightness) {
+    QString packet = QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::brightnessChange),
+                                              QString::number(device.index()),
+                                              QString::number(brightness));
+    return packet;
+}
+
+QString CommPacketParser::changeCustomArraySizePacket(const cor::Light& device, int count) {
+    QString packet = QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::customColorCountChange),
+                                              QString::number(device.index()),
+                                              QString::number(count));
+    return packet;
+}
+
+QString CommPacketParser::timeoutPacket(const cor::Light& device, int timeOut) {
+    QString packet = QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::idleTimeoutChange),
+                                              QString::number(device.index()),
+                                              QString::number(timeOut));
+    return packet;
+}
+
 
 void CommPacketParser::parsePacket(QString packet) {
     std::list<std::vector<int> > messageList;
@@ -40,56 +192,56 @@ void CommPacketParser::parsePacket(QString packet) {
         if (intVector.size() > 1) {
             switch ((EPacketHeader)intVector[0])
             {
-                case EPacketHeader::customArrayColorChange:
-                    if (intVector.size() == 6) {
-                       if ((intVector[2] < 0) || (intVector[2] > CUSTOM_COLOR_MAX)) validPacket = false;
-                       if ((intVector[3] < 0) || (intVector[3] > 255)) validPacket = false;
-                       if ((intVector[4] < 0) || (intVector[4] > 255)) validPacket = false;
-                       if ((intVector[5] < 0) || (intVector[5] > 255)) validPacket = false;
-                       if (validPacket) {
-                           emit receivedArrayColorChange(intVector[1], intVector[2], QColor(intVector[3], intVector[4], intVector[5]));
-                       }
+            case EPacketHeader::customArrayColorChange:
+                if (intVector.size() == 6) {
+                    if ((intVector[2] < 0) || (intVector[2] > CUSTOM_COLOR_MAX)) validPacket = false;
+                    if ((intVector[3] < 0) || (intVector[3] > 255)) validPacket = false;
+                    if ((intVector[4] < 0) || (intVector[4] > 255)) validPacket = false;
+                    if ((intVector[5] < 0) || (intVector[5] > 255)) validPacket = false;
+                    if (validPacket) {
+                        emit receivedArrayColorChange(intVector[1], intVector[2], QColor(intVector[3], intVector[4], intVector[5]));
                     }
-                    break;
-                case EPacketHeader::onOffChange:
-                    if (intVector.size() == 3) {
-                        if (intVector[2] < 0 || intVector[2] > 1) validPacket = false;
-                        if (validPacket) {
-                            emit receivedOnOffChange(intVector[1], (bool)intVector[2]);
-                        }
+                }
+                break;
+            case EPacketHeader::onOffChange:
+                if (intVector.size() == 3) {
+                    if (intVector[2] < 0 || intVector[2] > 1) validPacket = false;
+                    if (validPacket) {
+                        emit receivedOnOffChange(intVector[1], (bool)intVector[2]);
                     }
-                    break;
-                case EPacketHeader::modeChange:
-                    routineChange(intVector);
-                    break;
-                case EPacketHeader::customColorCountChange:
-                    if (intVector.size() == 3) {
-                       if ((intVector[2] < 0) || (intVector[2] > CUSTOM_COLOR_MAX)) validPacket = false;
-                       if (validPacket) {
-                           emit receivedCustomArrayCount(intVector[1], intVector[2]);
-                       }
+                }
+                break;
+            case EPacketHeader::modeChange:
+                routineChange(intVector);
+                break;
+            case EPacketHeader::customColorCountChange:
+                if (intVector.size() == 3) {
+                    if ((intVector[2] < 0) || (intVector[2] > CUSTOM_COLOR_MAX)) validPacket = false;
+                    if (validPacket) {
+                        emit receivedCustomArrayCount(intVector[1], intVector[2]);
                     }
-                    break;
+                }
+                break;
 
-                case EPacketHeader::brightnessChange:
-                    if (intVector.size() == 3) {
-                       if ((intVector[2] < 0) || (intVector[2] > 100)) validPacket = false;
-                       if (validPacket) {
-                           emit receivedBrightnessChange(intVector[1], intVector[2]);
-                       }
+            case EPacketHeader::brightnessChange:
+                if (intVector.size() == 3) {
+                    if ((intVector[2] < 0) || (intVector[2] > 100)) validPacket = false;
+                    if (validPacket) {
+                        emit receivedBrightnessChange(intVector[1], intVector[2]);
                     }
-                    break;
+                }
+                break;
 
-                case EPacketHeader::idleTimeoutChange:
-                    if (intVector.size() == 3) {
-                       if ((intVector[2] < 1) || (intVector[2] > 23767)) validPacket = false;
-                       if (validPacket) {
-                           emit receivedTimeOutChange(intVector[1], intVector[2]);
-                       }
+            case EPacketHeader::idleTimeoutChange:
+                if (intVector.size() == 3) {
+                    if ((intVector[2] < 1) || (intVector[2] > 23767)) validPacket = false;
+                    if (validPacket) {
+                        emit receivedTimeOutChange(intVector[1], intVector[2]);
                     }
-                    break;
-                default:
-                    break;
+                }
+                break;
+            default:
+                break;
             }
         }
     }
@@ -137,7 +289,12 @@ void CommPacketParser::routineChange(const std::vector<int>& intVector) {
                 if (palette == EPalette::unknown) {
                     validVector = false;
                 } else {
-                    routineObject["palette"] = mPresetPalettes.palette(palette).JSON();
+                    // TODO: find more elegant solution to this
+                    if (palette == EPalette::custom) {
+                        routineObject["palette"] = Palette(paletteToString(EPalette::custom), std::vector<QColor>(1, QColor(255, 0, 0))).JSON();
+                    } else {
+                        routineObject["palette"] = mPresetPalettes.palette(palette).JSON();
+                    }
                 }
             } else {
                 validVector = false;

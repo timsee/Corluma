@@ -38,7 +38,7 @@ inline QString commTypeToString(ECommType type) {
     } else if (type ==  ECommType::UDP) {
         return "UDP";
     } else if (type ==  ECommType::nanoleaf) {
-        return "NanoLeaf";
+        return "Nanoleaf";
     } else if (type ==  ECommType::hue) {
         return "Hue";
 #ifndef MOBILE_BUILD
@@ -62,7 +62,7 @@ inline ECommType stringToCommType(const QString& type) {
         return ECommType::HTTP;
     } else if (type.compare("UDP") == 0) {
         return ECommType::UDP;
-    } else if (type.compare("NanoLeaf") == 0) {
+    } else if (type.compare("Nanoleaf") == 0) {
         return ECommType::nanoleaf;
     } else if (type.compare("Hue") == 0) {
         return ECommType::hue;

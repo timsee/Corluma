@@ -32,7 +32,7 @@ class LightPage : public QWidget, public cor::Page
 
 public:
     /// constructor
-    explicit LightPage(QWidget *parent, DataLayer *data, CommLayer *comm, GroupsParser *groups);
+    explicit LightPage(QWidget *parent, DataLayer *data, CommLayer *comm, GroupsParser *groups, ProtocolSettings *protocols);
 
     /*!
      * \brief Deconstructor
@@ -274,6 +274,9 @@ private:
      *        for sending comannds to the lights
      */
     CommLayer *mComm;
+
+    /// pointer to the app states that determine if a protocol (such as arducor or nanoleaf) is currently enable
+    ProtocolSettings *mProtocolSettings;
 
     /*!
      * \brief highlightList helper that syncs the selected devices and groups in the backend data with the connectionList

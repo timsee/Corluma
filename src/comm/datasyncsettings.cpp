@@ -9,10 +9,11 @@
 #include "comm/commlayer.h"
 #include "cor/utils.h"
 
-DataSyncSettings::DataSyncSettings(DataLayer *data, CommLayer *comm)
+DataSyncSettings::DataSyncSettings(DataLayer *data, CommLayer *comm, ProtocolSettings *protocols)
 {
     mData = data;
     mComm = comm;
+    mProtocolSettings = protocols;
     mUpdateInterval = 200;
     connect(mComm, SIGNAL(packetReceived(EProtocolType)), this, SLOT(commPacketReceived(EProtocolType)));
     connect(mData, SIGNAL(settingsUpdate()), this, SLOT(resetSync()));
@@ -23,6 +24,8 @@ DataSyncSettings::DataSyncSettings(DataLayer *data, CommLayer *comm)
 
 //    mCleanupTimer = new QTimer(this);
 //    connect(mCleanupTimer, SIGNAL(timeout()), this, SLOT(cleanupSync()));
+
+    mParser = new CommPacketParser(this);
 
     mDataIsInSync = false;
 }
@@ -58,7 +61,7 @@ void DataSyncSettings::syncData() {
         std::list<cor::Light> allAvailableDevices;
         // remove non available devices
         for (auto&& device : allDevices) {
-            if (mData->protocolSettings()->enabled(device.protocol())) {
+            if (mProtocolSettings->enabled(device.protocol())) {
                 allAvailableDevices.push_back(device);
             }
         }
@@ -93,8 +96,7 @@ void DataSyncSettings::syncData() {
         mDataIsInSync = true;
     }
 
-    if (mDataIsInSync
-            || mData->currentDevices().size() == 0) {
+    if (mDataIsInSync || mData->currentDevices().size() == 0) {
         endOfSync();
     }
 }
@@ -115,8 +117,6 @@ bool DataSyncSettings::sync(const cor::Light& availableDevice) {
         return false;
     }
 
-    std::list<cor::Light> list;
-    list.push_back(availableDevice);
     QString packet;
 
     if (availableDevice.commType() == ECommType::hue) {
@@ -139,7 +139,7 @@ bool DataSyncSettings::sync(const cor::Light& availableDevice) {
             // timeout is enabled
             if (availableDevice.timeout != mData->timeout()) {
                // qDebug() << "time out not in sync";
-                QString message = mComm->sendTimeOut(list, mData->timeout());
+                QString message = mParser->timeoutPacket(availableDevice, mData->timeout());
                 appendToPacket(packet, message, controller.maxPacketSize);
                 countOutOfSync++;
             }
@@ -147,7 +147,7 @@ bool DataSyncSettings::sync(const cor::Light& availableDevice) {
             // disable the timeout
             if (availableDevice.timeout != 0) {
               //  qDebug() << "time out not in sync";
-                QString message = mComm->sendTimeOut(list, 0);
+                QString message = mParser->timeoutPacket(availableDevice, 0);
                 appendToPacket(packet, message, controller.maxPacketSize);
                 countOutOfSync++;
             }

@@ -150,7 +150,6 @@ void PalettePage::multiButtonClicked(QJsonObject routineObject) {
     routineObject["speed"] = mSpeed;
     emit routineUpdate(routineObject);
     highlightRoutineButton(routine, palette);
-    qDebug() << "palette" << paletteToString(palette) << " " << mPresetPalettes.averageColor(palette);
     mSpeedSlider->setSliderColorBackground(mPresetPalettes.averageColor(palette));
 }
 
