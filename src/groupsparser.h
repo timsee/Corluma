@@ -3,11 +3,6 @@
 
 #include <QObject>
 
-#include <QJsonDocument>
-#include <QJsonValue>
-#include <QJsonObject>
-#include <QJsonArray>
-
 #include "cor/lightgroup.h"
 #include "comm/commhue.h"
 
@@ -23,7 +18,7 @@
  *        but does not contain any reference to the lights overall state. The second is a mood, which contains both
  *        the path to the light device and data such as its brightness, color, etc.
  */
-class GroupsParser : public QObject
+class GroupsParser : public QObject, public cor::JSONSaveData
 {
     Q_OBJECT
 public:
@@ -68,7 +63,7 @@ public:
      * \param groupName name of group
      * \return true if a group is removed, false if nothing happens.
      */
-    bool removeGroup(const QString& groupName);
+    bool removeGroup(const QString& groupName, bool isMood);
 
     /*!
      * \brief loadExternalData
@@ -97,17 +92,11 @@ public:
     bool updateLightName(const cor::Light& light, const QString& newName);
 
     /*!
-     * \brief loadDebugData creates a list of devices that are given to the UI as if they sent packets. Used for debugging
-     *        while off of a network that would have lights to control.
-     * \return a list of devices based on JSON data.
+     * \brief lightDeleted removes a light from all moods and collections based off of its unique ID. This is called when
+     *        a light is detected as deleted elsewhere in the application
+     * \param uniqueID the unique ID of a light
      */
-    std::list<cor::Light> loadDebugData();
-
-    /*!
-     * \brief saveFile save the JSON representation of groups to file.
-     * \return true if successful, false otherwise
-     */
-    bool saveFile(QString savePath);
+    void lightDeleted(const QString& uniqueID);
 
     /*!
      * \brief removeAppData delete .json file from local data. Will delete all saved json data permanently.
@@ -115,11 +104,8 @@ public:
      */
     bool removeAppData();
 
-    /*!
-     * \brief defaultSavePath default save path on any machine. Uses QStandardPath's App Data Location
-     * \return a writable path for saving JSON data.
-     */
-    static QString defaultSavePath();
+    /// WARNING: This is not an intended feature, but is useful for API refactors.
+    void clearAndResaveAppDataDEBUG();
 
 signals:
     /*!
@@ -158,17 +144,8 @@ private:
      */
     QJsonDocument loadJsonFile(QString file);
 
-    /*!
-     * \brief loadJsonDataIntoAppData takes JSON data and injects it into app data, saving it for future use
-     * \return true if successful, false otherwise.
-     */
-    bool loadJsonDataIntoAppData();
-
-    /*!
-     * \brief checkForSavedData. Check for saved data. If it exists, open it and load it into mJsonData
-     * \return true if successful and loads saved data, false otherwise
-     */
-    bool checkForSavedData();
+    /// loads json data into app data
+    bool loadJSON();
 
     /*!
      * \brief checkIfMoodIsValid reads a json object and determines if it contains all valid values
@@ -210,12 +187,6 @@ private:
      *        easy to pull all possible collections without having to re-parse the JSON data each time.
      */
     std::list<cor::LightGroup> mCollectionList;
-
-    /*!
-     * \brief mJsonData a JSON representation of all moods and collections. Gets saved
-     *        to file whenever it is changed.
-     */
-    QJsonDocument mJsonData;
 
     /*!
      * \brief mNewConnections used during parsing, contains a list of all new connections from a json file.

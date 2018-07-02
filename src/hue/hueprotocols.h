@@ -3,6 +3,7 @@
 
 #include <list>
 #include "cor/light.h"
+#include "hue/bridge.h"
 
 /*!
  * \copyright
@@ -72,22 +73,6 @@ inline bool operator==(const SHueSchedule& lhs, const SHueSchedule& rhs) {
     return result;
 }
 
-/*!
- * \brief The SHueBridge struct stores all known data
- *        about the current hue bridge.
- */
-struct SHueBridge {
-    /*!
-     * \brief IP The IP address of the current bridge
-     */
-    QString IP;
-    /*!
-     * \brief username the username assigned by the bridge. Received
-     *        by sending a request packet ot the bridge.
-     */
-    QString username;
-};
-
 
 /*!
  * \brief The EHueDiscoveryState enum is used for keeping
@@ -96,20 +81,10 @@ struct SHueBridge {
  */
 enum class EHueDiscoveryState {
     /*!
-     * \brief  default state, no discovery has started.
-     */
-    noBridgeFound,
-    /*!
      * \brief no valid IP address, looking for one over
      *        UPnP and NUPnP.
      */
     findingIpAddress,
-    /*!
-     * \brief an IP address has been received, sending
-     *        a test packet to this IP and awaiting a response before
-     *        accepting the IP address as a valid IP address.
-     */
-    testingIPAddress,
     /*!
      * \brief There exists a valid IP address, but now
      *        we are waiting for the Bridge to send back a new username so that
@@ -129,22 +104,7 @@ enum class EHueDiscoveryState {
      *        to a bridge.
      */
     bridgeConnected,
-    /*!
-     * \brief Once a bridge is discovered, the application next requests a list of
-     *        all available lights.
-     */
-    findingLightInfo,
-    /*!
-     * \brief Once all available lights have been received, the application requests
-     *        all schedules and groups so that there is a local copy of all Hue related
-     *        data.
-     */
-    findingGroupAndScheduleInfo,
-    /*!
-     * \brief The bridge is connected, and there is a local copy of all the lights, groups,
-     *        and schedules on the Hue Bridge.
-     */
-    fullyConnected,
+    allBridgesConnected
 };
 Q_DECLARE_METATYPE(EHueDiscoveryState)
 
@@ -186,6 +146,20 @@ inline QString hueTypeToString(EHueType type) {
     } else {
         return "Not recognized";
     }
+}
+
+}
+
+namespace hue
+{
+
+/// helper to get the IP from a reply IP, which may have a bunch of unnecessary information attached.
+inline QString IPfromReplyIP(const QString& IP) {
+    QStringList list = IP.split("/");
+    if (list.size() > 3) {
+        return list[2];
+    }
+    return QString();
 }
 
 }

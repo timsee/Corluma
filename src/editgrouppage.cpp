@@ -46,7 +46,7 @@ EditGroupPage::EditGroupPage(QWidget *parent, CommLayer* comm, DataLayer* data, 
     mLayout->setContentsMargins(4,4,4,4);
     mLayout->setSpacing(2);
 
-    mLayout->addWidget(mTopMenu, 3);
+    mLayout->addWidget(mTopMenu,     3);
     mLayout->addWidget(mDevicesList, 8);
 }
 
@@ -103,13 +103,13 @@ void EditGroupPage::listDeviceWidgetClicked(QString key) {
 
 void EditGroupPage::deletePressed(bool) {
     QMessageBox::StandardButton reply;
-    QString text = "Delete the " + mOriginalName + " group?";
+    QString text = "Delete the " + mNewName + " group?";
     reply = QMessageBox::question(this, "Delete?", text,
                                   QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes) {
-      mGroups->removeGroup(mOriginalName);
+      mGroups->removeGroup(mNewName, mIsMood);
       // delete from hue bridge, if applicable.
-      mComm->deleteHueGroup(mOriginalName);
+      mComm->deleteHueGroup(mNewName);
       emit pressedClose();
     }
 }
@@ -214,8 +214,7 @@ void EditGroupPage::saveChanges() {
     // check if group has a name, at least one device, and all valid devices.
     //---------------------------------
     bool nameIsValid = false;
-    if (mNewName.size() > 0
-            && !(mNewName.compare("zzzAVAIALBLE_DEVICES") == 0)) {
+    if (mNewName.size() > 0 && !(mNewName.compare("zzzAVAIALBLE_DEVICES") == 0)) {
             nameIsValid = true;
     } else {
         qDebug() << "WARNING: attempting to save a group without a valid name";
@@ -258,13 +257,13 @@ void EditGroupPage::saveChanges() {
     //---------------------------------
     // Save if passing checks
     //---------------------------------
+    // remove group
+    mGroups->removeGroup(mOriginalName, mIsMood);
+
     if (mIsMood) {
-        mGroups->removeGroup(mOriginalName);
         mGroups->saveNewMood(mNewName, newDevices);
     } else {
-        mGroups->removeGroup(mOriginalName);
         mGroups->saveNewCollection(mNewName, newDevices, mIsRoomCurrent);
-
         // convert any group devices to Hue Lights, if applicable.
         std::list<HueLight> hueLights;
         for (auto device : newDevices) {

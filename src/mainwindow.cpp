@@ -62,7 +62,7 @@ MainWindow::MainWindow(QWidget *parent) :
         mComm->nanoleaf()->discovery()->startDiscovery();
     }
     connect(mComm->nanoleaf().get(), SIGNAL(lightRenamed(cor::Light, QString)), this, SLOT(renamedLight(cor::Light, QString)));
-
+    connect(mComm->hue()->discovery(), SIGNAL(lightDeleted(QString)), this, SLOT(deletedLight(QString)));
 
     // --------------
     // Setup main widget space
@@ -412,11 +412,14 @@ void MainWindow::hideMainPage(EPage page, EPage newPage) {
 
 
 void MainWindow::settingsDebugPressed() {
-    std::list<cor::Light> debugDevices = mGroups->loadDebugData();
-    mComm->loadDebugData(debugDevices);
+//    std::list<cor::Light> debugDevices = mGroups->loadDebugData();
+//    mComm->loadDebugData(debugDevices);
     mDiscoveryPage->openStartForDebug();
 }
 
+void MainWindow::renamedLight(cor::Light light, QString newName) {
+    mGroups->updateLightName(light, newName);
+}
 
 // ----------------------------
 // Protected
@@ -687,8 +690,8 @@ void MainWindow::lightInfoClosePressed() {
 }
 
 
-void MainWindow::renamedLight(cor::Light light, QString newName) {
-    mGroups->updateLightName(light, newName);
+void MainWindow::deletedLight(QString uniqueID) {
+    mGroups->lightDeleted(uniqueID);
 }
 
 void MainWindow::lightNameChange(EProtocolType type, QString key, QString name) {
@@ -752,6 +755,7 @@ void MainWindow::deleteHue(QString key) {
 }
 
 void MainWindow::greyOut(bool show) {
+    mGreyOut->resize();
     if (show) {
         mGreyOut->setVisible(true);
         QGraphicsOpacityEffect *fadeOutEffect = new QGraphicsOpacityEffect(mGreyOut);
@@ -785,6 +789,7 @@ void MainWindow::floatingLayoutButtonPressed(QString button) {
 }
 
 void MainWindow::showHueLightDiscovery() {
+    greyOut(true);
     mHueLightDiscovery->isOpen(true);
     mHueLightDiscovery->resize();
     mHueLightDiscovery->setVisible(true);
@@ -793,6 +798,7 @@ void MainWindow::showHueLightDiscovery() {
 
 
 void MainWindow::hueDiscoveryClosePressed() {
+    greyOut(false);
     mHueLightDiscovery->isOpen(false);
     mHueLightDiscovery->setVisible(false);
     mHueLightDiscovery->hide();

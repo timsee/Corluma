@@ -12,46 +12,20 @@
 #include <QStandardPaths>
 #include <QDir>
 
-GroupsParser::GroupsParser(QObject *parent) : QObject(parent) {
-    checkForSavedData();
-    loadJsonDataIntoAppData();
-}
+//#define REWRITE_SAVE_DATA
 
-bool GroupsParser::loadJsonDataIntoAppData() {
-    if(!mJsonData.isNull()) {
-        if(mJsonData.isArray()) {
-            mNewConnections.clear();
-            QJsonArray array = mJsonData.array();
-            std::list<QString> newConnections;
-
-            foreach (const QJsonValue &value, array) {
-                QJsonObject object = value.toObject();
-                if (checkIfGroupIsValid(object)) {
-                    QString groupName = object["name"].toString();
-                    if (object["isMood"].toBool()) {
-                        parseMood(object);
-                    } else {
-                        parseCollection(object);
-                    }
-                    findNewControllers(object);
-                }
-            }
-            return true;
-        }
-    } else {
-        qDebug() << "json object is null!";
-    }
-    return false;
+GroupsParser::GroupsParser(QObject *parent) : QObject(parent), cor::JSONSaveData("save") {
+    loadJSON();
 }
 
 bool GroupsParser::removeAppData() {
-    QFile file(defaultSavePath());
+    QFile file(mSavePath);
     if (file.exists()) {
         if (file.remove()) {
             qDebug() << "INFO: removed json save data";
             return true;
         } else {
-           qDebug() << "WARNING: could not remove json save data!";
+            qDebug() << "WARNING: could not remove json save data!";
         }
     } else {
         qDebug() << "WARNING: previous save data does not exist!";
@@ -73,7 +47,6 @@ void GroupsParser::saveNewMood(const QString& groupName, const std::list<cor::Li
     QJsonArray deviceArray;
     for (auto&& device : devices) {
         QJsonObject object;
-        object["id"] = QString("device");
         object["isOn"] = device.isOn;
         if (device.isOn) {
             object["brightness"] = device.brightness;
@@ -95,13 +68,18 @@ void GroupsParser::saveNewMood(const QString& groupName, const std::list<cor::Li
 
         object["type"] = commTypeToString(device.commType());
 
-        object["majorAPI"]   = device.majorAPI;
-        object["minorAPI"]   = device.minorAPI;
+        if (device.protocol() == EProtocolType::arduCor) {
+            object["majorAPI"]   = device.majorAPI;
+            object["minorAPI"]   = device.minorAPI;
+        }
 
         object["controller"] = device.controller();
         object["index"] = device.index();
-        object["name"] = device.name;
-        object["hardwareType"] = hardwareTypeToString(device.hardwareType);
+        object["uniqueID"] = device.uniqueID;
+
+        if (device.protocol() != EProtocolType::nanoleaf && device.protocol() != EProtocolType::hue) {
+            object["hardwareType"] = hardwareTypeToString(device.hardwareType);
+        }
         deviceArray.append(object);
     }
 
@@ -113,11 +91,12 @@ void GroupsParser::saveNewMood(const QString& groupName, const std::list<cor::Li
             array.push_front(groupObject);
             mJsonData.setArray(array);
 
+#ifndef REWRITE_SAVE_DATA
             for (auto device : devices ) {
                 qDebug() << device;
             }
             // save file
-            saveFile(defaultSavePath());
+            saveJSON();
 
             cor::LightGroup group;
             group.devices = devices;
@@ -126,6 +105,7 @@ void GroupsParser::saveNewMood(const QString& groupName, const std::list<cor::Li
             // add to current mood list
             mMoodList.push_back(group);
             emit newMoodAdded(groupName);
+#endif
         }
     }
 }
@@ -142,14 +122,14 @@ void GroupsParser::saveNewCollection(const QString& groupName, const std::list<c
     for (auto&& device : devices) {
         if (device.commType() != ECommType::hue) {
             QJsonObject object;
-            object["id"] = QString("device");
 
             object["type"] = commTypeToString(device.commType());
-
             object["controller"] = device.controller();
             object["index"] = device.index();
-            object["name"] = device.name;
-            object["hardwareType"] = hardwareTypeToString(device.hardwareType);
+            object["uniqueID"] = device.uniqueID;
+            if (device.protocol() != EProtocolType::nanoleaf && device.protocol() != EProtocolType::hue) {
+                object["hardwareType"] = hardwareTypeToString(device.hardwareType);
+            }
 
             deviceArray.append(object);
         }
@@ -163,11 +143,12 @@ void GroupsParser::saveNewCollection(const QString& groupName, const std::list<c
             array.push_front(groupObject);
             mJsonData.setArray(array);
 
+#ifndef REWRITE_SAVE_DATA
             for (auto device : devices ) {
                 qDebug() << device;
             }
             // save file
-            saveFile(defaultSavePath());
+            saveJSON();
 
             cor::LightGroup group;
             group.devices = devices;
@@ -177,9 +158,77 @@ void GroupsParser::saveNewCollection(const QString& groupName, const std::list<c
             // add to current collection list
             mCollectionList.push_back(group);
             emit newCollectionAdded(groupName);
+#endif
         }
     }
 }
+
+void GroupsParser::clearAndResaveAppDataDEBUG() {
+    qDebug() << "calling a dangerous clear and resave function!";
+    QJsonDocument newDocument;
+    newDocument.setArray(QJsonArray());
+    mJsonData = newDocument;
+    for (auto mood : mMoodList) {
+        qDebug() << "save: " << mood.name;
+        saveNewMood(mood.name, mood.devices);
+    }
+
+    for (auto collection : mCollectionList) {
+        qDebug() << "collection: " << collection.name;
+        saveNewCollection(collection.name, collection.devices, collection.isRoom);
+    }
+    qDebug() << "done calling it!";
+    saveJSON();
+}
+
+
+void GroupsParser::lightDeleted(const QString& uniqueID) {
+    if(!mJsonData.isNull()) {
+        if(mJsonData.isArray()) {
+            QJsonArray array = mJsonData.array();
+            int groupIndex = 0;
+            // loop through array of all group data
+            for (auto value : array) {
+                // convert to a json object
+                QJsonObject object = value.toObject();
+                // search for the unique ID in its devices array
+                QJsonArray devicesArray = object["devices"].toArray();
+                bool detectChanges = false;
+                uint32_t deviceIndex = 0;
+                for (auto device : devicesArray) {
+                    QJsonObject deviceObject = device.toObject();
+                    if (deviceObject["uniqueID"].toString() == uniqueID) {
+                        detectChanges = true;
+                        devicesArray.removeAt(deviceIndex);
+                    }
+                    deviceIndex++;
+                }
+                if (detectChanges) {
+                    // add back devices array, modified
+                    object["devices"] = devicesArray;
+                    // remove old object at position
+                    array.removeAt(groupIndex);
+                    // push new object in
+                    array.push_back(object);
+                }
+
+            }
+            groupIndex++;
+            mJsonData.setArray(array);
+            saveJSON();
+        }
+    }
+    // parse the moods, remove from list if needed
+    for (auto&& mood : mMoodList) {
+        for (auto&& device : mood.devices) {
+            if (device.uniqueID == uniqueID) {
+                mood.devices.remove(device);
+                break;
+            }
+        }
+    }
+}
+
 
 bool GroupsParser::updateLightName(const cor::Light& light, const QString& newName) {
     if(!mJsonData.isNull()) {
@@ -197,14 +246,13 @@ bool GroupsParser::updateLightName(const cor::Light& light, const QString& newNa
                         if (deviceObject["type"].isString() && deviceObject["name"].isString()) {
                             ECommType type = stringToCommType(deviceObject["type"].toString());
                             QString oldName = deviceObject["name"].toString();
-                            if (type == light.commType() && oldName == light.controller()) {
-                                deviceArray.removeAt(i);
-                                foundADifference = true;
-                                if (type == ECommType::nanoleaf) {
+                            if (oldName != newName) {
+                                if (oldName == light.controller() && type == ECommType::nanoleaf) {
+                                    deviceArray.removeAt(i);
+                                    foundADifference = true;
                                     deviceObject["controller"] = newName;
-                                    deviceObject["name"]       = newName;
+                                    deviceArray.push_back(deviceObject);
                                 }
-                                deviceArray.push_back(deviceObject);
                             }
                         }
                         ++i;
@@ -218,17 +266,13 @@ bool GroupsParser::updateLightName(const cor::Light& light, const QString& newNa
                 ++groupIndex;
             }
             mJsonData.setArray(array);
-            saveFile(defaultSavePath());
+            saveJSON();
         }
     }
     return true;
 }
 
-QString GroupsParser::defaultSavePath() {
-    return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/save.json";
-}
-
-bool GroupsParser::removeGroup(const QString& groupName) {
+bool GroupsParser::removeGroup(const QString& groupName, bool isMood) {
     if(!mJsonData.isNull()) {
         if(mJsonData.isArray()) {
             QJsonArray array = mJsonData.array();
@@ -237,10 +281,12 @@ bool GroupsParser::removeGroup(const QString& groupName) {
                 QJsonObject object = value.toObject();
                 if (checkIfGroupIsValid(object)) {
                     QString group = object["name"].toString();
-                    if (group.compare(groupName) == 0) {
+                    // check if its a mood or not
+                    bool groupIsMood = object["isMood"].toBool();
+                    if ((groupIsMood == isMood) && (group == groupName)) {
                         array.removeAt(i);
                         mJsonData.setArray(array);
-                        saveFile(defaultSavePath());
+                        saveJSON();
                         for (auto mood : mMoodList) {
                             if (mood.name.compare(groupName) == 0) {
                                 mMoodList.remove(mood);
@@ -284,12 +330,14 @@ void GroupsParser::parseCollection(const QJsonObject& object) {
         foreach (const QJsonValue &value, deviceArray) {
             QJsonObject device = value.toObject();
             if ( device["type"].isString()
-                    && device["controller"].isString()
-                    && device["index"].isDouble()) {
+                 && device["controller"].isString()
+                 && device["uniqueID"].isString()
+                 && device["index"].isDouble()) {
                 // convert to Qt types from json data
                 QString typeString = device["type"].toString();
                 QString controller = device["controller"].toString();
-                QString name = device["name"].toString();
+                QString uniqueID = device["uniqueID"].toString();
+
                 ELightHardwareType hardwareType = stringToHardwareType(device["hardwareType"].toString());
                 int index = device["index"].toDouble();
 
@@ -297,8 +345,10 @@ void GroupsParser::parseCollection(const QJsonObject& object) {
                 ECommType type = stringToCommType(typeString);
 
                 cor::Light light(index, type, controller);
-                light.name = name;
-                light.hardwareType = hardwareType;
+                light.uniqueID = uniqueID;
+                if (light.protocol() != EProtocolType::nanoleaf && light.protocol() != EProtocolType::hue) {
+                    light.hardwareType = hardwareType;
+                }
                 list.push_back(light);
             } else {
                 qDebug() << __func__ << " device broken";
@@ -318,9 +368,10 @@ void GroupsParser::parseCollection(const QJsonObject& object) {
 
 bool GroupsParser::checkIfMoodIsValid(const QJsonObject& device) {
     bool hasMetaData = (device["type"].isString()
-                        && device["controller"].isString()
-                        && device["index"].isDouble()
-                        && device["isOn"].isBool());
+            && device["controller"].isString()
+            && device["index"].isDouble()
+            && device["uniqueID"].isString()
+            && device["isOn"].isBool());
 
     // cancel early if it doesn't have the data to parse.
     if (!hasMetaData) {
@@ -336,9 +387,9 @@ bool GroupsParser::checkIfMoodIsValid(const QJsonObject& device) {
         ERoutine routine = stringToRoutine(device["routine"].toString());
         if (routine <= cor::ERoutineSingleColorEnd) {
             colorsValid = (device["red"].isDouble()
-                           && device["green"].isDouble()
-                           && device["blue"].isDouble()
-                           && device["colorMode"].isString());
+                    && device["green"].isDouble()
+                    && device["blue"].isDouble()
+                    && device["colorMode"].isString());
         } else {
             colorsValid = (device["palette"].isObject());
         }
@@ -370,6 +421,7 @@ void GroupsParser::parseMood(const QJsonObject& object) {
                 QString modeString = device["colorMode"].toString();
                 QString typeString = device["type"].toString();
                 QString controller = device["controller"].toString();
+                QString uniqueID   = device["uniqueID"].toString();
                 int index = device["index"].toDouble();
 
                 // convert to Corluma types from certain Qt types
@@ -392,6 +444,7 @@ void GroupsParser::parseMood(const QJsonObject& object) {
                 }
 
                 cor::Light light(index, type, controller);
+                light.uniqueID = uniqueID;
                 light.isReachable = true;
                 light.isOn = isOn;
                 light.color = QColor(red, green, blue);
@@ -427,7 +480,7 @@ void GroupsParser::findNewControllers(QJsonObject object) {
         if (device["type"].isString()
                 && device["controller"].isString()) {
             if( device["type"].toString().compare(commTypeToString(ECommType::HTTP)) == 0
-                || device["type"].toString().compare(commTypeToString(ECommType::UDP)) == 0) {
+                    || device["type"].toString().compare(commTypeToString(ECommType::UDP)) == 0) {
                 bool foundConnectionInList = false;
                 QString controllerName = device["controller"].toString();
                 for (auto&& connection : mNewConnections) {
@@ -451,28 +504,6 @@ void GroupsParser::findNewControllers(QJsonObject object) {
 // File Manipulation
 //-------------------
 
-bool GroupsParser::saveFile(QString savePath) {
-    QFileInfo saveInfo(savePath);
-    if (saveInfo.exists()) {
-        QFile saveFile(savePath);
-        saveFile.remove();
-    }
-    QFile saveFile(savePath);
-
-    if (!saveFile.open(QIODevice::ReadWrite | QIODevice::Text)) {
-        qDebug() << "WARNING: Couldn't open save file.";
-        return false;
-    }
-
-    if (mJsonData.isNull()) {
-        qDebug() << "WARNING: json data is null!";
-        return false;
-    }
-    saveFile.write(mJsonData.toJson());
-    saveFile.close();
-    return true;
-}
-
 QJsonDocument GroupsParser::loadJsonFile(QString file) {
     QFile jsonFile(file);
     jsonFile.open(QFile::ReadOnly);
@@ -494,10 +525,10 @@ bool GroupsParser::loadExternalData(QString file) {
     if(!document.isNull()) {
         if(document.isArray()) {
             mJsonData = document;
-            if (!loadJsonDataIntoAppData()) {
-                qDebug() << "WARNING: Load external data is not valid Corluma Data";
-            }
-            if (!saveFile(defaultSavePath())) {
+            //            if (!loadJSON()) {
+            //                qDebug() << "WARNING: Load external data is not valid Corluma Data";
+            //            }
+            if (!saveJSON()) {
                 qDebug() << "WARNING: Load External Data couldn't save file";
             }
             return true;
@@ -507,89 +538,6 @@ bool GroupsParser::loadExternalData(QString file) {
 }
 
 
-std::list<cor::Light> GroupsParser::loadDebugData() {
-    QJsonDocument document = loadJsonFile(":/resources/debugData.json");
-    std::list<cor::Light> list;
-    if (!document.isNull() && document.isArray()) {
-        QJsonArray deviceArray = document.array();
-        foreach (const QJsonValue &value, deviceArray) {
-            QJsonObject device = value.toObject();
-
-            // convert to Qt types from json data
-            QString modeString = device["colorMode"].toString();
-            QString typeString = device["type"].toString();
-            QString controller = device["controller"].toString();
-            int index = device["index"].toDouble();
-
-            // convert to Corluma types from certain Qt types
-            ECommType type = stringToCommType(typeString);
-            EColorMode colorMode = stringtoColorMode(modeString);
-
-            bool isOn = device["isOn"].toBool();
-            int red, green, blue;
-
-            red = device["red"].toDouble();
-            green = device["green"].toDouble();
-            blue = device["blue"].toDouble();
-
-            int brightness = device["brightness"].toDouble();
-
-            ERoutine routine = stringToRoutine(device["routine"].toString());
-            Palette palette = Palette(device["palette"].toObject());
-
-            cor::Light light(index, type, controller);
-            light.isReachable = true;
-            light.isOn = isOn;
-            light.color = QColor(red, green, blue);
-            light.routine = routine;
-            light.palette = palette;
-            light.speed = 100;
-            light.brightness = brightness;
-            light.colorMode = colorMode;
-            list.push_back(light);
-        }
-    }
-    return list;
-}
-
-bool GroupsParser::checkForSavedData() {
-    QString appDataLocation = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    if (!QDir(appDataLocation).exists()) {
-        QDir appDataDir(appDataLocation);
-        if (appDataDir.mkpath(appDataLocation)) {
-            qDebug() << "INFO: made app data location";
-        } else {
-            qDebug() << "ERROR: could not make app data location!";
-        }
-    }
-
-    qDebug() << defaultSavePath();
-    QFile saveFile(defaultSavePath());
-
-    if (saveFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QString data = saveFile.readAll();
-        saveFile.close();
-        QJsonParseError error;
-        mJsonData = QJsonDocument::fromJson(data.toUtf8(), &error);
-        //qDebug() << "error: " << error.errorString();
-        if (!mJsonData.isNull()) {
-            return true;
-        } else {
-            qDebug() << "WARNING: json was null";
-        }
-    } else {
-        qDebug() << "WARNING: couldn't open JSON";
-    }
-
-    qDebug() << "WARNING: using default json data";
-    QJsonArray defaultArray;
-    mJsonData = QJsonDocument(defaultArray);
-    if (mJsonData.isNull()) {
-        qDebug() << "WARNING: JSON is null!";
-    }
-    return true;
-}
-
 //-------------------
 // Helpers
 //-------------------
@@ -597,31 +545,61 @@ bool GroupsParser::checkForSavedData() {
 bool GroupsParser::checkIfGroupIsValid(const QJsonObject& object) {
     // check top leve
     if (!(object["isMood"].isBool()
-            && object["name"].isString()
-            && object["devices"].isArray())) {
+          && object["name"].isString()
+          && object["devices"].isArray())) {
         return false;
     }
     QJsonArray deviceArray = object["devices"].toArray();
     foreach (const QJsonValue &value, deviceArray) {
         QJsonObject device = value.toObject();
-        if (!(device["id"].isString()
-                && device["type"].isString()
-                && device["controller"].isString()
-                && device["index"].isDouble())) {
-            qDebug() << "one of the objects is invalid!";
+        if (!(device["uniqueID"].isString()
+              && device["type"].isString()
+              && device["controller"].isString()
+              && device["index"].isDouble())) {
+            qDebug() << "one of the objects is invalid!" << device;
             return false;
         }
         if (object["isMood"].toBool()) {
-             if (!checkIfMoodIsValid(device)) {
+            if (!checkIfMoodIsValid(device)) {
                 qDebug() << "one of the mood specific values is invalid! for"
                          <<  object["name"].toString()
-                         << device["type"].toString()
-                         << device["index"].toDouble();
+                          << device["type"].toString()
+                          << device["uniqueID"].toString()
+                          << device["index"].toDouble();
                 return false;
             }
         }
     }
     return true;
+}
+
+
+//-------------------
+// Load JSON
+//-------------------
+
+bool GroupsParser::loadJSON() {
+    if(!mJsonData.isNull()) {
+        if(mJsonData.isArray()) {
+            mNewConnections.clear();
+            QJsonArray array = mJsonData.array();
+            foreach (const QJsonValue &value, array) {
+                QJsonObject object = value.toObject();
+                if (checkIfGroupIsValid(object)) {
+                    if (object["isMood"].toBool()) {
+                        parseMood(object);
+                    } else {
+                        parseCollection(object);
+                    }
+                    findNewControllers(object);
+                }
+            }
+            return true;
+        }
+    } else {
+        qDebug() << "json object is null!";
+    }
+    return false;
 }
 
 

@@ -14,7 +14,7 @@
 namespace nano
 {
 
-LeafDiscovery::LeafDiscovery(QObject *parent, uint32_t interval) : QObject(parent), mDiscoveryInterval(interval) {
+LeafDiscovery::LeafDiscovery(QObject *parent, uint32_t interval) : QObject(parent), cor::JSONSaveData("Nanoleaf"), mDiscoveryInterval(interval) {
     mNanoleaf = (CommNanoleaf*)parent;
 
     mDiscoveryTimer = new QTimer(this);
@@ -25,7 +25,6 @@ LeafDiscovery::LeafDiscovery(QObject *parent, uint32_t interval) : QObject(paren
     connect(mStartupTimer, SIGNAL(timeout()), this, SLOT(startupTimerTimeout()));
     mStartupTimer->start(120000); // first two minutes listen to all packets
 
-    checkForJSON();
     loadJSON();
 }
 
@@ -72,34 +71,6 @@ void LeafDiscovery::foundNewController(nano::LeafController newController) {
     }
 }
 
-void LeafDiscovery::updateJSON(const nano::LeafController& controller) {
-    // check for changes by looping through json looking for a match.
-    QJsonArray array = mJsonData.array();
-    bool shouldAdd = true;
-    QJsonObject newJsonObject = leafControllerToJson(controller);
-    uint32_t i = 0;
-    for (auto value : array) {
-        QJsonObject object = value.toObject();
-        nano::LeafController jsonController = jsonToLeafController(object);
-        if ((jsonController.authToken == controller.authToken)
-                && (newJsonObject != object)) {
-            value = newJsonObject;
-            array.removeAt(i);
-        } else if (newJsonObject == object) {
-            // found an exact replica of the data, skip adding it
-            shouldAdd = false;
-        }
-        ++i;
-    }
-
-    if (shouldAdd) {
-        array.push_front(newJsonObject);
-        mJsonData.setArray(array);
-        saveFile(defaultSavePath());
-    }
-}
-
-
 void LeafDiscovery::receivedUPnP(QHostAddress sender, QString payload) {
     Q_UNUSED(sender);
     if (payload.contains("nanoleaf_aurora")) {
@@ -122,7 +93,8 @@ void LeafDiscovery::receivedUPnP(QHostAddress sender, QString payload) {
                 QString deviceName = param.remove("nl-devicename: ");
                 controller.hardwareName = deviceName;
             }
-        }        // search if its found already
+        }
+        // search if its found already
         bool isFound = false;
         for (auto unknownController : mUnknownControllers) {
             // test by IP to handle manual discovery picked up by UPnP
@@ -158,7 +130,7 @@ void LeafDiscovery::stopDiscovery() {
 
 void LeafDiscovery::startupTimerTimeout() {
      mStartupTimerFinished = true;
-     // assume that you can shutoff discovery
+     // this automatically stops. the discovery page will immediately turn it back on, if its open.
      stopDiscovery();
 }
 
@@ -280,29 +252,6 @@ nano::LeafController LeafDiscovery::findControllerByName(const QString& name) {
     return nano::LeafController();
 }
 
-
-bool LeafDiscovery::saveFile(QString savePath) {
-    QFileInfo saveInfo(savePath);
-    if (saveInfo.exists()) {
-        QFile saveFile(savePath);
-        saveFile.remove();
-    }
-    QFile saveFile(savePath);
-
-    if (!saveFile.open(QIODevice::ReadWrite | QIODevice::Text)) {
-        qDebug() << "WARNING: Couldn't open save file.";
-        return false;
-    }
-
-    if (mJsonData.isNull()) {
-        qDebug() << "WARNING: json data is null!";
-        return false;
-    }
-    saveFile.write(mJsonData.toJson());
-    saveFile.close();
-    return true;
-}
-
 void LeafDiscovery::updateFoundDevice(const nano::LeafController& controller) {
     for (auto&& foundController : mFoundControllers) {
         if (foundController.serialNumber.compare(controller.serialNumber) == 0) {
@@ -342,41 +291,45 @@ void LeafDiscovery::connectUPnP(UPnPDiscovery* upnp) {
     connect(mUPnP, SIGNAL(UPnPPacketReceived(QHostAddress,QString)), this, SLOT(receivedUPnP(QHostAddress,QString)));
 }
 
-bool LeafDiscovery::checkForJSON() {
-    QString appDataLocation = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    if (!QDir(appDataLocation).exists()) {
-        QDir appDataDir(appDataLocation);
-        if (appDataDir.mkpath(appDataLocation)) {
-            qDebug() << "INFO: made app data location";
-        } else {
-            qDebug() << "ERROR: could not make app data location!";
-        }
-    }
-
-    QFile saveFile(defaultSavePath());
-
-    if (saveFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QString data = saveFile.readAll();
-        saveFile.close();
-        QJsonParseError error;
-        mJsonData = QJsonDocument::fromJson(data.toUtf8(), &error);
-        //qDebug() << "error: " << error.errorString();
-        if (!mJsonData.isNull()) {
+bool LeafDiscovery::isControllerConnected(const nano::LeafController& controller) {
+    for (auto&& foundController : mFoundControllers) {
+        if (foundController.IP == controller.IP
+                && foundController.authToken == controller.authToken
+                && foundController.port == controller.port) {
             return true;
-        } else {
-            qDebug() << "WARNING: json was null";
         }
-    } else {
-        qDebug() << "WARNING: couldn't open JSON";
+    }
+    return false;
+}
+
+
+
+
+void LeafDiscovery::updateJSON(const nano::LeafController& controller) {
+    // check for changes by looping through json looking for a match.
+    QJsonArray array = mJsonData.array();
+    bool shouldAdd = true;
+    QJsonObject newJsonObject = leafControllerToJson(controller);
+    uint32_t i = 0;
+    for (auto value : array) {
+        QJsonObject object = value.toObject();
+        nano::LeafController jsonController = jsonToLeafController(object);
+        if ((jsonController.authToken == controller.authToken)
+                && (newJsonObject != object)) {
+            value = newJsonObject;
+            array.removeAt(i);
+        } else if (newJsonObject == object) {
+            // found an exact replica of the data, skip adding it
+            shouldAdd = false;
+        }
+        ++i;
     }
 
-    qDebug() << "WARNING: using default json data";
-    QJsonArray defaultArray;
-    mJsonData = QJsonDocument(defaultArray);
-    if (mJsonData.isNull()) {
-        qDebug() << "WARNING: JSON is null!";
+    if (shouldAdd) {
+        array.push_front(newJsonObject);
+        mJsonData.setArray(array);
+        saveJSON();
     }
-    return true;
 }
 
 bool LeafDiscovery::loadJSON() {
@@ -401,21 +354,5 @@ bool LeafDiscovery::loadJSON() {
     }
     return false;
 }
-
-QString LeafDiscovery::defaultSavePath() {
-    return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/Nanoleaf.json";
-}
-
-bool LeafDiscovery::isControllerConnected(const nano::LeafController& controller) {
-    for (auto&& foundController : mFoundControllers) {
-        if (foundController.IP == controller.IP
-                && foundController.authToken == controller.authToken
-                && foundController.port == controller.port) {
-            return true;
-        }
-    }
-    return false;
-}
-
 
 }

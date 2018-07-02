@@ -27,7 +27,7 @@ void CommType::setupConnectionList(ECommType type) {
     }
 
     // load preexisting settings, if they exist
-    if (mType != ECommType::nanoleaf) {
+    if (mType != ECommType::nanoleaf && mType != ECommType::hue) {
         for (int i = 0; i < controllerListCurrentSize; ++i) {
            QString value = mSettings->value(settingsIndexKey(i)).toString();
            if (value.compare(QString("")) != 0) startDiscoveringController(value);
@@ -60,7 +60,7 @@ bool CommType::startDiscoveringController(QString controller) {
         mUndiscoveredList.push_front(controller);
         emit updateReceived(mType);
         mFullyDiscovered = false;
-        if (mType != ECommType::nanoleaf) {
+        if (mType != ECommType::nanoleaf && mType != ECommType::hue) {
             startDiscovery();
         }
         return true;
@@ -90,7 +90,7 @@ void CommType::updateDevice(cor::Light device) {
     }
 
     // device not found
-    //qDebug() << "INFO: tried to update device that didnt exist, adding it instead" << device.name;
+    //qDebug() << "INFO: tried to update device that didnt exist, adding it instead" << device;
     deviceList->second.push_back(device);
     emit updateReceived(mType);
 }

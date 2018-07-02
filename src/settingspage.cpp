@@ -200,6 +200,7 @@ void SettingsPage::loadButtonClicked() {
 }
 
 void SettingsPage::saveButtonClicked() {
+//    mGroups->clearAndResaveAppDataDEBUG();
     QString fileName = QFileDialog::getSaveFileName(this,
           tr("Save Group Data"), "CorlumaGroups.json",
           tr("JSON (*.json)"));
@@ -207,9 +208,9 @@ void SettingsPage::saveButtonClicked() {
         qDebug() << "WARNING: save file name empty";
         return;
     }
-    if (!mGroups->saveFile(fileName)) {
-        qDebug() << "WARNING: Save failed!";
-    }
+//    if (!mGroups->saveFile(fileName)) {
+//        qDebug() << "WARNING: Save failed!";
+//    }
 }
 
 void SettingsPage::resetButtonClicked() {

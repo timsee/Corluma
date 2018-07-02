@@ -36,12 +36,6 @@ public:
     void handleDiscovery(bool isActive);
 
 public slots:
-    /*!
-     * \brief hueDiscoveryUpdate provides an int representation of the EHueDiscoveryState
-     *        of Hue's discovery object. Used by the connectionList to display the current
-     *        state.
-     */
-    void hueDiscoveryUpdate(EHueDiscoveryState);
 
     /*!
      * \brief IPFieldChanged IP Address field has changed, try to discover the IP
@@ -56,6 +50,12 @@ protected:
     void resizeEvent(QResizeEvent *);
 
 private:
+    /*!
+     * \brief hueDiscoveryUpdate provides an int representation of the EHueDiscoveryState
+     *        of Hue's discovery object. Used by the connectionList to display the current
+     *        state.
+     */
+    void hueDiscoveryUpdate(EHueDiscoveryState);
 
     /// true if bridge is discovered, false if not.
     bool mBridgeDiscovered;

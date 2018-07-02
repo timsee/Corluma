@@ -24,7 +24,7 @@
 #include <sstream>
 
 CommLayer::CommLayer(QObject *parent, GroupsParser *parser) : QObject(parent),  mGroups(parser) {
-    mUpnP = new UPnPDiscovery(this);
+    mUPnP = new UPnPDiscovery(this);
 
     mUDP  = std::shared_ptr<CommUDP>(new CommUDP());
     connect(mUDP.get(), SIGNAL(packetReceived(QString, QString, ECommType)), this, SLOT(parsePacket(QString, QString, ECommType)));
@@ -43,16 +43,12 @@ CommLayer::CommLayer(QObject *parent, GroupsParser *parser) : QObject(parent),  
     mNanoleaf = std::shared_ptr<CommNanoleaf>(new CommNanoleaf());
     connect(mNanoleaf.get(), SIGNAL(packetReceived(QString, QString, ECommType)), this, SLOT(parsePacket(QString, QString, ECommType)));
     connect(mNanoleaf.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
-    mNanoleaf->discovery()->connectUPnP(mUpnP);
+    mNanoleaf->discovery()->connectUPnP(mUPnP);
 
-    mHue = std::shared_ptr<CommHue>(new CommHue());
+    mHue = std::shared_ptr<CommHue>(new CommHue(mUPnP));
     connect(mHue.get(), SIGNAL(packetReceived(QString, QString, ECommType)), this, SLOT(parsePacket(QString, QString, ECommType)));
     connect(mHue.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
     connect(mHue.get(), SIGNAL(stateChanged()), this, SLOT(hueStateChanged()));
-    mHue->discovery()->connectUPnPDiscovery(mUpnP);
-
-    connect(mHue->discovery(), SIGNAL(bridgeDiscoveryStateChanged(EHueDiscoveryState)), this, SLOT(hueDiscoveryUpdate(EHueDiscoveryState)));
-    connect(mHue.get(), SIGNAL(discoveryStateChanged(EHueDiscoveryState)), this, SLOT(hueDiscoveryUpdate(EHueDiscoveryState)));
 }
 
 bool CommLayer::runningDiscovery(ECommType type) {
@@ -193,6 +189,9 @@ void CommLayer::parsePacket(QString sender, QString packet, ECommType type) {
                                 device.minutesUntilTimeout   = intVector[x + 11];
 
                                 device.name                  = controller.names[device.index() - 1];
+                                // for ArduCor protocol, the name is used as the uniqueID
+                                device.uniqueID              = device.name;
+
                                 device.hardwareType          = controller.hardwareTypes[device.index() - 1];
                                 device.productType           = controller.productTypes[device.index() -1];
 
@@ -380,10 +379,6 @@ bool CommLayer::verifyCustomColorUpdatePacket(const std::vector<int>& packetIntV
     return true;
 }
 
-void CommLayer::hueDiscoveryUpdate(EHueDiscoveryState newDiscoveryState) {
-    emit hueDiscoveryStateChange(newDiscoveryState);
-}
-
 CommType *CommLayer::commByType(ECommType type) {
     CommType *ptr;
     switch (type)
@@ -452,13 +447,6 @@ const std::list<cor::Light> CommLayer::allDevices() {
     return list;
 }
 
-bool CommLayer::loadDebugData(const std::list<cor::Light> debugDevices) {
-    for (auto& device : debugDevices) {
-        commByType(device.commType())->updateDevice(device);
-    }
-    return true;
-}
-
 //------------------
 // Serial Specific
 //------------------
@@ -484,7 +472,11 @@ void CommLayer::updateHueGroup(QString name, std::list<HueLight> lights) {
         }
     }
     if (hueGroupExists) {
-        mHue->updateGroup(groupToUpdate, lights);
+        for (auto bridge : mHue->discovery()->bridges()) {
+            if (mHue->bridgeHasGroup(bridge, name)) {
+                mHue->updateGroup(bridge, groupToUpdate, lights);
+            }
+        }
     }
 }
 
@@ -499,7 +491,11 @@ void CommLayer::deleteHueGroup(QString name) {
         }
     }
     if (hueGroupExists) {
-        mHue->deleteGroup(groupToDelete);
+        for (auto bridge : mHue->discovery()->bridges()) {
+            if (mHue->bridgeHasGroup(bridge, name)) {
+                mHue->deleteGroup(bridge, groupToDelete);
+            }
+        }
     }
 }
 

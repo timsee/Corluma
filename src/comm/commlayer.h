@@ -225,16 +225,6 @@ public:
     /// list of all groups from all comm types
     std::list<cor::LightGroup> groupList();
 
-    /*!
-     * \brief loadDebugData take a list of devices and load it into memory. Simulates receiving
-     *        packets from these devices and fills the GUI with example data. Useful for debugging
-     *        without an internet connection.
-     * \param debugDevices list of devices to load into the commtype
-     * \return true if successful, false otherwise
-     */
-    bool loadDebugData(const std::list<cor::Light> debugDevices);
-
-
 #ifndef MOBILE_BUILD
     /*!
      * \brief lookingForActivePorts true if currently looking for ports, false if not looking
@@ -244,11 +234,6 @@ public:
 #endif //MOBILE_BUILD
 
 signals:
-    /*!
-    * \brief hueDiscoveryStateChange the state of the Hue discovery methods,
-    *        forwarded from a private HueBridgeDiscovery object.
-    */
-    void hueDiscoveryStateChange(EHueDiscoveryState);
 
     /*!
     * \brief packetReceived anotification that a packet was receieved by one of the commtypes.
@@ -262,11 +247,6 @@ signals:
     void updateReceived(ECommType);
 
 private slots:
-    /*!
-    * \brief hueStateUpdate forwards the hue discovery state changes
-    *        from a private HueBridgeDiscovery object.
-    */
-    void hueDiscoveryUpdate(EHueDiscoveryState newDiscoveryState);
 
     /*!
     * \brief parsePacket parses any packets sent from any of the commtypes. The
@@ -314,7 +294,7 @@ private:
     std::shared_ptr<CommNanoleaf> mNanoleaf;
 
     /// Handles discovery of devices over UPnP
-    UPnPDiscovery* mUpnP;
+    UPnPDiscovery* mUPnP;
 
     /// groups parser
     GroupsParser *mGroups;

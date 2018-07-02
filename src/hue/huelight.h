@@ -29,11 +29,6 @@ public:
     EHueType hueType;
 
     /*!
-     * \brief uniqueID a unique identifier of that particular light.
-     */
-    QString uniqueID;
-
-    /*!
      * \brief modelID ID of specific model. changes between versions of the same light.
      */
     QString modelID;

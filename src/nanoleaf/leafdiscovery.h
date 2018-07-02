@@ -4,12 +4,9 @@
 #include <QObject>
 #include "nanoleaf/leafcontroller.h"
 #include "comm/upnpdiscovery.h"
+#include "cor/jsonsavedata.h"
 
 #include <QTimer>
-#include <QJsonDocument>
-#include <QJsonValue>
-#include <QJsonObject>
-#include <QJsonArray>
 
 /// discovery state for a nanoleaf
 enum class ENanoleafDiscoveryState {
@@ -27,7 +24,6 @@ class CommNanoleaf;
 namespace nano
 {
 
-
 /*!
  * \copyright
  * Copyright (C) 2015 - 2018.
@@ -39,7 +35,7 @@ namespace nano
  * as manual input. It can handle multiple nanoleaf connections and can pick up IP address changes.
  *
  */
-class LeafDiscovery : public QObject
+class LeafDiscovery : public QObject, public cor::JSONSaveData
 {
     Q_OBJECT
 public:
@@ -114,9 +110,6 @@ private:
     /// list of all controllers that have been verified and can be communicated with
     std::list<nano::LeafController> mFoundControllers;
 
-    /// stores the JSON data that keeps track of all found controllers
-    QJsonDocument mJsonData;
-
     /// timer for running the discovery routine
     QTimer *mDiscoveryTimer;
 
@@ -138,23 +131,9 @@ private:
     /// used to listen to the UPnP packets for packets from a nanoleaf
     UPnPDiscovery *mUPnP;
 
-    /*!
-     * \brief saveFile save the JSON representation of groups to file.
-     * \return true if successful, false otherwise
-     */
-    bool saveFile(QString savePath);
-
-    /// check if JSON data exists.
-    bool checkForJSON();
-
     /// load the json data.
     bool loadJSON();
 
-    /*!
-     * \brief defaultSavePath default save path on any machine. Uses QStandardPath's App Data Location
-     * \return a writable path for saving JSON data.
-     */
-    static QString defaultSavePath();
 };
 
 }

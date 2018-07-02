@@ -19,19 +19,15 @@ DiscoveryNanoLeafWidget::DiscoveryNanoLeafWidget(CommLayer *comm, QWidget *paren
     mLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mLabel->setAlignment(Qt::AlignLeft | Qt::AlignBottom);
 
-
-
     mSearchWidget = new SearchWidget("192.168.0.114", this);
     connect(mSearchWidget, SIGNAL(plusClicked()), this, SLOT(plusButtonClicked()));
     connect(mSearchWidget, SIGNAL(minusClicked()), this, SLOT(minusButtonClicked()));
-
 
     mLayout = new QVBoxLayout;
     mLayout->addWidget(mLabel, 4);
     mLayout->addWidget(mSearchWidget, 28);
     mLayout->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     setLayout(mLayout);
-
 }
 
 DiscoveryNanoLeafWidget::~DiscoveryNanoLeafWidget() {
@@ -42,22 +38,20 @@ DiscoveryNanoLeafWidget::~DiscoveryNanoLeafWidget() {
 
 
 void DiscoveryNanoLeafWidget::handleDiscovery(bool isCurrentCommType) {
+    Q_UNUSED(isCurrentCommType);
     // starts discovery if its not already started
     mComm->nanoleaf()->discovery()->startDiscovery();
 
     std::list<cor::Controller> deviceTable = mComm->discoveredList(ECommType::nanoleaf);
     std::list<QString> discoveringList = mComm->undiscoveredList(ECommType::nanoleaf);
 
-    if (isCurrentCommType) {
-        for (auto device : deviceTable) {
-            mSearchWidget->addToConnectedList(device.name);
-        }
-
-        for (auto name : discoveringList) {
-            mSearchWidget->addToSearchList(name);
-        }
+    for (auto device : deviceTable) {
+        mSearchWidget->addToConnectedList(device.name);
     }
 
+    for (auto name : discoveringList) {
+        mSearchWidget->addToSearchList(name);
+    }
 
     ENanoleafDiscoveryState discoveryState = mComm->nanoleaf()->discovery()->state();
     switch (discoveryState) {
@@ -87,7 +81,6 @@ void DiscoveryNanoLeafWidget::handleDiscovery(bool isCurrentCommType) {
     } else {
         emit connectionStatusChanged(EProtocolType::nanoleaf, EConnectionState::off);
     }
-
 }
 
 // ----------------------------

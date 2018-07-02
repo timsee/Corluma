@@ -156,6 +156,7 @@ void DiscoveryPage::renderUI() {
 
     mNanoLeafWidget->handleDiscovery(mType == EProtocolType::nanoleaf);
     mArduCorWidget->handleDiscovery(mType == EProtocolType::arduCor);
+    mHueWidget->handleDiscovery(mType == EProtocolType::hue);
 }
 
 bool DiscoveryPage::checkIfDiscovered(EProtocolType type) {
@@ -402,6 +403,9 @@ void DiscoveryPage::moveFloatingLayouts() {
 void DiscoveryPage::startClicked() {
     if (mProtocolSettings->enabled(EProtocolType::nanoleaf)) {
         mComm->nanoleaf()->discovery()->stopDiscovery();
+    }
+    if (mProtocolSettings->enabled(EProtocolType::hue)) {
+        mComm->hue()->discovery()->stopDiscovery();
     }
     emit startButtonClicked();
 }

@@ -265,9 +265,6 @@ void CommNanoleaf::replyFinished(QNetworkReply* reply) {
             if (addToDeviceTable) {
                 cor::Controller corController;
                 corController.name = name;
-                corController.isUsingCRC = false; // not used by hue bridges
-                corController.maxHardwareIndex = 10; // not used by hue bridges
-                corController.maxPacketSize = 1000; // not used by hue bridges
                 std::list<cor::Light> newDeviceList;
                 cor::Light light(1, ECommType::nanoleaf, name);
                 newDeviceList.push_back(light);
@@ -285,9 +282,6 @@ void CommNanoleaf::replyFinished(QNetworkReply* reply) {
                         mDiscovery->foundNewAuthToken(controller, authToken);
                         cor::Controller corController;
                         corController.name = controller.hardwareName;
-                        corController.isUsingCRC = false; // not used by hue bridges
-                        corController.maxHardwareIndex = 10; // not used by hue bridges
-                        corController.maxPacketSize = 1000; // not used by hue bridges
                         std::list<cor::Light> newDeviceList;
                         cor::Light light(1, ECommType::nanoleaf, controller.hardwareName);
                         newDeviceList.push_back(light);
@@ -315,9 +309,6 @@ void CommNanoleaf::renameController(nano::LeafController controller, const QStri
     // remove from Corluma data
     cor::Controller corController;
     corController.name = oldName;
-    corController.isUsingCRC = false; // not used by hue bridges
-    corController.maxHardwareIndex = 10; // not used by hue bridges
-    corController.maxPacketSize = 1000; // not used by hue bridges
     removeController(corController);
 
     // update discovery data
@@ -574,6 +565,7 @@ void CommNanoleaf::parseStateUpdatePacket(nano::LeafController& controller, cons
             light.isReachable = true;
             light.hardwareType = ELightHardwareType::nanoleaf;
             light.name = controller.name;
+            light.uniqueID = controller.serialNumber;
 
             int hue = 0;
             int sat = 0;

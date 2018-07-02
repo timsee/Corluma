@@ -3,19 +3,19 @@
 
 #include <QObject>
 #include <QTimer>
+#include <QElapsedTimer>
 #include <QUdpSocket>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
-#include <QSettings>
 
-#include <QJsonDocument>
-#include <QJsonValue>
-#include <QJsonObject>
-#include <QJsonArray>
+#include "cor/jsonsavedata.h"
 
 #include "hue/hueprotocols.h"
 #include "comm/upnpdiscovery.h"
+#include "huelight.h"
+
+class CommHue;
 
 namespace hue
 {
@@ -36,7 +36,7 @@ namespace hue
  *        to call startBridgeDiscovery() and stopBridgeDiscovery() in order to control it, it will
  *        automatically handle switching states as it receives and sends discovery packets.
  */
-class BridgeDiscovery : public QObject
+class BridgeDiscovery : public QObject, public cor::JSONSaveData
 {
     Q_OBJECT
 public:
@@ -44,80 +44,47 @@ public:
     /*!
      * \brief BridgeDiscovery Constructor
      */
-    explicit BridgeDiscovery(QObject *parent);
+    explicit BridgeDiscovery(QObject *parent, UPnPDiscovery *UPnP);
 
     /*!
      * \brief Deconstructor
      */
     ~BridgeDiscovery();
 
-    /*!
-     * \brief startBridgeDiscovery checks if a bridge is currently discovered.
-     *        If a bridge is connected, it emits a signal saying its connected.
-     *        If a bridge is not connected, it checks its current data and starts
-     *        the discovery process.
-     */
-    void startBridgeDiscovery();
+    /// starts the discovery object
+    void startDiscovery();
 
-    /*!
-     * \brief stopBridgeDiscovery turns off discovery methods if they are currently
-     *        active.
-     */
-    void stopBridgeDiscovery();
-
-    /*!
-     * \brief stopTimers turns off all discovery timers.
-     */
-    void stopTimers();
+    /// turns the discovery object off
+    void stopDiscovery();
 
     /// getter for discovery state
-    EHueDiscoveryState discoveryState() { return mDiscoveryState; }
-
-    /*!
-     * \brief isConnected returns true if a bridge is connected and discovery was successful,
-     *        false otherwise.
-     * \return true if a bridge is connected and discovery was successful, false otherwise.
-     */
-    bool isConnected() { return (mDiscoveryState == EHueDiscoveryState::bridgeConnected); }
+    EHueDiscoveryState state();
 
     /*!
      * \brief bridge All currently known data about the hue bridge. This is only guarenteed to
      *        return valid data if isConnected() is returning true.
      * \return the struct that represents the current hue bridge.
      */
-    SHueBridge bridge() { return mBridge; }
+    std::list<hue::Bridge> bridges() const { return mFoundBridges; }
 
     /*!
-     * \brief attemptIPAddress attempts to connect to an IP address entered manually
+     * \brief addManualIP attempts to connect to an IP address entered manually
      * \param ip new ip address to attempt.
      */
-    void attemptIPAddress(QString ip);
+    void addManualIP(QString ip);
 
-    /// connects UPnP object to the discovery object.
-    void connectUPnPDiscovery(UPnPDiscovery* UPnP);
+    /// gets the bridge that controls a light.
+    hue::Bridge bridgeFromLight(HueLight light);
+
+    /// gets a bridge from a IP address
+    hue::Bridge bridgeFromIP(const QString& IP);
 
 signals:
 
-    /*!
-     * \brief bridgeDiscoveryStateChanged int representation of the EHueDiscoveryState that
-     *        the discovery object is currently in.
-     */
-    void bridgeDiscoveryStateChanged(EHueDiscoveryState);
-
-    /*!
-     * \brief connectionStatusChanged If returning true, it has a valid Bridge that has had
-     *        its connection tested. If returning false, the bridge it was using is no
-     *        longer connected.
-     */
-    void connectionStatusChanged(bool);
+    /// signals when a light is detected as deleted.
+    void lightDeleted(QString);
 
 private slots:
-
-    /*!
-     * \brief testBridgeIP called by a timer, sends a packet to the currently stored IP address
-     *        to test for its validity and to request a username.
-     */
-    void testBridgeIP();
 
     /*!
      * \brief replyFinished called by the mNetworkManager, receives HTTP replies to packets
@@ -126,76 +93,55 @@ private slots:
     void replyFinished(QNetworkReply*);
 
     /*!
-     * \brief handleDiscoveryTimeout Some discovery states have timeouts associated with them.
-     *        This method handles when a timeout is called.
+     * \brief handleDiscovery runs all the discovery routine functions such as testing IP,
+     *        checking for username, etc.
      */
-    void handleDiscoveryTimeout();
+    void handleDiscovery();
 
     /// called when a UPnP packet is received
     void receivedUPnP(QHostAddress, QString);
 
+    /// slot for when the startup timer times out
+    void startupTimerTimeout();
+
 private:
-    /*!
-     * \brief mBridge the current data for the bridge that is being discovered/has been discovered.
-     */
-    SHueBridge mBridge;
+
+    /// checks if an IP address is already known to the bridge discovery object
+    bool doesIPExistInSearchingLists(const QString& ip);
 
     /*!
-     * \brief mDiscoveryState current state of discovery object.
+     * \brief requestUsername sends a packet to the bridge's IP address
+     *        to test for its validity and to request a username.
      */
-    EHueDiscoveryState mDiscoveryState;
+    void requestUsername(const hue::Bridge& bridge);
 
     /*!
      * \brief mNetworkManager Qt's HTTP connection object
      */
     QNetworkAccessManager *mNetworkManager;
 
-    /*!
-     * \brief mSettings Device independent persistent application memory access
-     */
-    QSettings *mSettings;
-
     /// pointer to the UPnP object
     UPnPDiscovery *mUPnP;
 
     /*!
-     * \brief mDiscoveryTimer timer used for repeating discovery events
+     * \brief mRoutineTimer single shot timer that determines when a discovery method is timing out.
      */
-    QTimer *mDiscoveryTimer;
-    /*!
-     * \brief mTimeoutTimer single shot timer that determines when a discovery method is timing out.
-     */
-    QTimer *mTimeoutTimer;
+    QTimer *mRoutineTimer;
+
+    /// elapse timer checks how long its been since certain updates
+    QElapsedTimer *mElapsedTimer;
+
+    /// tracks last time
+    uint32_t mLastTime;
+
+    /// flag that checks if more than 2 minutes have passed
+    bool mStartupTimerFinished = false;
 
     /*!
-     * \brief mHasKey true if a key has been found in the QSettings or discovered via
-     *        discovery methods, false otherwise
+     * \brief mStartupTimer in the first two minutes of the app's lifecycle, if nanoleaf is enabled
+     *        it will scan for nanoleafs. This allows hardware changes to be picked up more easily
      */
-    bool mHasKey;
-
-    /*!
-     * \brief mHasKey true if an IP has been found in the QSettings or discovered via
-     *        discovery methods, false otherwise
-     */
-    bool mHasIP;
-
-    /*!
-     * \brief mIPValid defaults to false, only gets set to true when a mesasge is
-     *        received from a tested IP Address
-     */
-    bool mIPValid;
-
-    /*!
-     * \brief mUsernameValid defaults to false, only gets set to true when a mesasge is
-     *        received that shows that the username gives access to state variables.
-     */
-    bool mUsernameValid;
-
-    /*!
-     * \brief mUseManualIP default false, if true the discovery methods only use IP addresses
-     *        entered manually.
-     */
-    bool mUseManualIP;
+    QTimer *mStartupTimer;
 
     /*!
      * \brief attemptUPnPDiscovery attempts a UPnP connection by binding to the proper port
@@ -212,28 +158,40 @@ private:
      * \brief attemptFinalCheck attempts a HTTP request to a given IP Address and Username and waits
      *        for an expected response to validate both the IP Address and Username.
      */
-    void attemptFinalCheck();
+    void attemptFinalCheck(const hue::Bridge& bridge);
 
-    /*!
-     * \brief attemptSearchForUsername sends an HTTP request to a discovered IP address and waits for
-     *        it to respond with a new username.
-     */
-    void attemptSearchForUsername();
+    /// tests if a newly discovered bridge can give back packets.
+    void testNewlyDiscoveredBridge(const hue::Bridge& bridge);
 
-    /*!
-     * \brief KPhilipsUsername Settings Key for a valid username.
-     */
-    const static QString kPhilipsUsername;
+    /// list of all controllers that have previously been used, but currently are not found
+    std::list<hue::Bridge> mNotFoundBridges;
 
-    /*!
-     * \brief kPhilipsIPAddress Settings Key for the current Hue Bridge's IP Address.
-     */
-    const static QString kPhilipsIPAddress;
+    /// list of all controllers that have been verified and can be communicated with
+    std::list<hue::Bridge> mFoundBridges;
+
+    /// parses the initial full packet from a Bridge, which contains all its lights, schedules, and groups info.
+    void parseInitialUpdate(const hue::Bridge& bridge, QJsonDocument json);
+
+    /// update the existing JSON data to include lights data, in order to check for hardware changes on bootup.
+    void updateJSONLights(const hue::Bridge& bridge, const QJsonArray& array);
+
+    /// update the existin JSON data to include more bridge data such as a username or an id.
+    void updateJSON(const hue::Bridge& bridge);
+
+    /// load the json data.
+    bool loadJSON();
+
+    /// pointer to the parent CommHue object.
+    CommHue *mHue;
 
     /*!
      * \brief kAppName application name, required by Philips in devicetype.
      */
     const static QString kAppName;
+
+    /// address for the NUPnP packets
+    const static QString kNUPnPAddress;
+
 };
 
 }

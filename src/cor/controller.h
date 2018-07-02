@@ -27,19 +27,19 @@ public:
     QString name;
 
     /// maximum number of devices controller can control
-    int maxHardwareIndex;
+    int maxHardwareIndex = 1;
 
     /// true if using CRC and appending to packets, false otherwise
-    bool isUsingCRC;
+    bool isUsingCRC = false;
 
     /// max number of bytes for a packet.
-    uint32_t maxPacketSize;
+    uint32_t maxPacketSize = 1000;
 
     /// major API level of controller
-    uint32_t majorAPI;
+    uint32_t majorAPI = 0;
 
     /// minor API level of controller
-    uint32_t minorAPI;
+    uint32_t minorAPI = 0;
 
     /// capabilities of hardware (0 is arduino-level with no added capabilities)
     uint32_t hardwareCapabilities;

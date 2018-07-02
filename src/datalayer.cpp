@@ -172,13 +172,12 @@ void DataLayer::updateRoutine(const QJsonObject& routineObject) {
             // check for edge case where ambient color values are used
             if (routineObject["temperature"].isDouble()) {
                 iterator->color = cor::colorTemperatureToRGB(routineObject["temperature"].toDouble());
-                if (iterator->commType() == ECommType::hue) {
-
-                }
+                iterator->temperature = routineObject["temperature"].toDouble();
             } else {
                 iterator->color = QColor(routineObject["red"].toDouble(),
                                          routineObject["green"].toDouble(),
                                          routineObject["blue"].toDouble());
+                iterator->temperature = -1;
             }
         } else {
             Palette palette = Palette(routineObject["palette"].toObject());

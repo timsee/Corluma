@@ -42,6 +42,11 @@ public:
     Light(int index, ECommType commType, QString controller);
 
     /*!
+     * \brief uniqueID a unique identifier of that particular light.
+     */
+    QString uniqueID;
+
+    /*!
      * \brief isReachable true if we can communicate with it, false otherwise
      */
     bool isReachable;
@@ -98,6 +103,9 @@ public:
      *        between different routines.
      */
     int param;
+
+    /// color temperature, optional parameter sometimes used for for ambient bulbs.
+    int temperature;
 
     //-----------------------
     // Timeout
@@ -173,6 +181,7 @@ public:
     operator QString() const {
         std::stringstream tempString;
         tempString << "cor::Light Device: "
+                   << " name: " << name.toStdString()
                    << " isReachable: " << isReachable
                    << " isOn: " << isOn
                    << " color: R:" << color.red() << " G:" << color.green() << " B:" << color.blue()
@@ -221,10 +230,7 @@ QJsonObject lightToJson(const cor::Light& light);
 
 /// compares light devices, ignoring state data and paying attention only to values that don't change.
 inline bool compareLight(const cor::Light& lhs, const cor::Light& rhs) {
-    return ((lhs.index() == rhs.index())
-            && (lhs.commType() == rhs.commType())
-            && (lhs.protocol() == rhs.protocol())
-            && (lhs.controller().compare(rhs.controller()) == 0));
+    return (lhs.uniqueID == rhs.uniqueID);
 }
 
 #endif // COR_LIGHT_H

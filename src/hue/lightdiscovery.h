@@ -5,6 +5,7 @@
 #include <QLayout>
 #include <QLabel>
 #include <QPushButton>
+#include <QComboBox>
 
 #include "cor/page.h"
 #include "cor/topwidget.h"
@@ -68,6 +69,12 @@ private slots:
     /// close button pressed to hide the widget.
     void closeButtonPressed(bool);
 
+    /// search button pressed
+    void searchButtonPressed(bool);
+
+    /// called whenever the drop down list changes to a new value.
+    void dropdownListChanged(QString);
+
     /*!
      * \brief plusButtonClicked called whenever the plus button is clicked
      */
@@ -89,6 +96,15 @@ private:
     /// comm layer
     CommLayer *mComm;
 
+    /// the currently selected bridge
+    hue::Bridge mCurrentBridge;
+
+    /// dropdown list to show multiple bridges
+    QComboBox *mDropdownList;
+
+    /// button to trigger searching on a bridge
+    QPushButton *mSearchButton;
+
     /// timer for rendering and updating state of discovery routine
     QTimer *mDiscoveryTimer;
 
@@ -97,6 +113,9 @@ private:
 
     /// widget for entering serial numbers and displaying names of discovered lights
     SearchWidget *mSearchWidget;
+
+    /// layout for bridge dropdown list and search button
+    QHBoxLayout *mTopLayout;
 
     /// layout
     QVBoxLayout *mLayout;

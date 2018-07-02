@@ -328,7 +328,13 @@ ___
 * Moved ProtocolSettings out of DataLayer.
 * Switched HueInfoListWidget to be more generic and instead show information on all Lights.
 
-### Coming Soon
-* Add support and better edge case handling for multiple Hue Bridges on the same network
+### **v0.13.2**
+#### The Multiple Bridges Update
+* Rewrote BridgeDiscovery to handle connecting to multiple Phillips Bridges simultaneously.
+* Fixed bugs in communicating with Hue products.
+* Sped up discovery and handshake of Bridges. 
+* Created JSONSaveData for handling saving and loading JSON from disk. 
+* Fixed bugs in the GroupsParser.
+* Fixed miscellaneous bugs.
 
 

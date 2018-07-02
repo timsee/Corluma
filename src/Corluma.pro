@@ -147,14 +147,18 @@ SOURCES += main.cpp \
     cor/lightgroup.cpp \
     cor/presetpalettes.cpp \
     cor/palette.cpp \
+    cor/jsonsavedata.cpp \
     cor/lightvectorwidget.cpp \
     hue/lightdiscovery.cpp \
     hue/lightinfowidget.cpp \
     hue/bridgediscovery.cpp \
+    hue/bridge.cpp \
     hue/huelight.cpp \
     nanoleaf/panels.cpp \
     nanoleaf/rhythmcontroller.cpp \
     nanoleaf/leafcontroller.cpp \
+    nanoleaf/leafdiscovery.cpp \
+    nanoleaf/leafcontrollerinfowidget.cpp \
     mainwindow.cpp \
     settingspage.cpp \
     datalayer.cpp \
@@ -182,9 +186,7 @@ SOURCES += main.cpp \
     lightpage.cpp \
     palettepage.cpp \
     moodpage.cpp \
-    lightinfolistwidget.cpp \
-    nanoleaf/leafdiscovery.cpp \
-    nanoleaf/leafcontrollerinfowidget.cpp
+    lightinfolistwidget.cpp
 
 HEADERS  +=  comm/commtype.h \
     comm/commhttp.h \
@@ -229,15 +231,19 @@ HEADERS  +=  comm/commtype.h \
     cor/page.h \
     cor/presetpalettes.h \
     cor/palette.h \
+    cor/jsonsavedata.h \
     cor/lightvectorwidget.h \
     hue/lightdiscovery.h \
     hue/lightinfowidget.h \
     hue/bridgediscovery.h \
     hue/hueprotocols.h \
     hue/huelight.h \
+    hue/bridge.h \
     nanoleaf/panels.h \
     nanoleaf/rhythmcontroller.h \
     nanoleaf/leafcontroller.h \
+    nanoleaf/leafdiscovery.h \
+    nanoleaf/leafcontrollerinfowidget.h \
     mainwindow.h \
     settingspage.h \
     datalayer.h \
@@ -266,9 +272,7 @@ HEADERS  +=  comm/commtype.h \
     lightpage.h \
     palettepage.h \
     moodpage.h \
-    lightinfolistwidget.h \
-    nanoleaf/leafdiscovery.h \
-    nanoleaf/leafcontrollerinfowidget.h
+    lightinfolistwidget.h
 
 #----------
 # Desktop builds only

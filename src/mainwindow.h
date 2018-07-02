@@ -153,6 +153,9 @@ public slots:
     /// speed changed from any page
     void speedChanged(int);
 
+    /// light detected as deleted
+    void deletedLight(QString uniqueID);
+
     /// rename a light to a new name. This updates all UI and app data accordingly.
     void renamedLight(cor::Light, QString);
 
