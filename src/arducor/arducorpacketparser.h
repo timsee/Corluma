@@ -14,20 +14,20 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief The CommPacketParser class takes the packets used for communication with other devices as input,
+ * \brief The ArduCorPacketParser class takes the packets used for communication with other devices as input,
  *        parses them, and emits signals based on the contents of a packet. For example, a main color change
  *        packet will emit a `receivedMainColorChange(int, QColor)`  signal. This class is used to emulate the
  *        functionality of the parser that is embedded on the arduino platforms on devices like the Philips Hue.
  */
-class CommPacketParser: public QObject
+class ArduCorPacketParser: public QObject
 {
     Q_OBJECT
 
 public:
     /*!
-     * \brief CommPacketParser constructor
+     * \brief ArduCorPacketParser constructor
      */
-    CommPacketParser(QObject *parent = 0);
+    ArduCorPacketParser(QObject *parent = 0);
 
     /*!
      * \brief parsePacket take a packet that is assumed to be a properly formatted command packet

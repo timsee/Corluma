@@ -53,7 +53,7 @@ public:
     /*!
      * \brief Constructor
      */
-    explicit ColorPage(QWidget *parent, DataLayer* data);
+    explicit ColorPage(QWidget *parent);
 
     /*!
      * \brief Deconstructor
@@ -81,7 +81,7 @@ public:
     EColorPageType pageType();
 
     /// called when the widget is shown
-    void show();
+    void show(QColor color, uint32_t brightness, std::vector<QColor> colorScheme);
 
 signals:
     /*!
@@ -95,6 +95,11 @@ signals:
      */
     void brightnessChanged(int);
 
+    /// sent out whenever a routine update is triggered
+    void routineUpdate(QJsonObject);
+
+    /// ssent out whenever the color scheme is changed
+    void schemeUpdate(std::vector<QColor>);
 
 public slots:
 
@@ -121,7 +126,7 @@ private slots:
 
     /*!
      * \brief newRoutineSelected called whenever a routine button is clicked. Sends
-     *        the routine to the datalayer so that it can get sent to the connected devices.
+     *        the routine to the backend data so that it can get sent to the connected devices.
      */
     void newRoutineSelected(QJsonObject routineObject);
 
@@ -152,23 +157,9 @@ private slots:
 private:
 
     /*!
-     * \brief data layer that maintains and tracks the states of the lights
-     *        and the saved data of the GUI
-     */
-    DataLayer *mData;
-
-    /*!
-     * \brief setupButtons sets up the routine buttons. Requires the DataLayer
-     *        of the application to be set up first.
+     * \brief setupButtons sets up the routine buttons.
      */
     void setupButtons();
-
-    /*!
-     * \brief createColorScheme create a color scheme based off of the colorsed used by a list of devices
-     * \param devices the devices to use as a basis for a color scheme
-     * \return a vector of colors reqpresenting a color scheme
-     */
-    std::vector<QColor> createColorScheme(std::list<cor::Light> devices);
 
     /*!
      * \brief mSingleRoutineWidget widget that pops up from the bottom and contains buttons for all of the
@@ -205,10 +196,17 @@ private:
     /// tracks the routine type of the current multi color routine from the color page.
     ERoutine mCurrentMultiRoutine;
 
-    /*!
-     * \brief mLastColor last color chosen by the RGB color picker.
-     */
-    QColor mLastColor;
+    /// updates the colorpage's main color value
+    void updateColor(QColor color);
+
+    /// stores last value for the color
+    QColor mColor;
+
+    /// stores the last value for the brightness
+    uint32_t mBrightness;
+
+    /// stores teh last values given by the color scheme.
+    std::vector<QColor> mColorScheme;
 
     /*!
      * \brief mPageType the type of hue page being displayed. Currently it can be either

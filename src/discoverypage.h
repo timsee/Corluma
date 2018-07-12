@@ -8,6 +8,7 @@
 
 #include "cor/page.h"
 #include "comm/commlayer.h"
+#include "datalayer.h"
 #include "floatinglayout.h"
 
 

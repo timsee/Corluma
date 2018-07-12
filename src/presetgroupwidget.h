@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QLabel>
 #include "cor/button.h"
+#include "cor/light.h"
 
 /// mode of this widget
 enum class EPresetWidgetMode {

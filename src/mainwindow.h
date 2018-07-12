@@ -150,6 +150,21 @@ public slots:
     /// routine changed from any page
     void routineChanged(QJsonObject routine);
 
+    /// scheme changed from colorpage
+    void schemeChanged(std::vector<QColor>);
+
+    /// mood changed from moodpage
+    void moodChanged(QString mood);
+
+    /// protocolsettings page changed from GlobalSettingsWidget
+    void protocolSettingsChanged(EProtocolType, bool);
+
+    /// timeout changed from timeout change
+    void timeoutChanged(int);
+
+    /// timeout enabled or disabled
+    void timeoutEnabledChanged(bool);
+
     /// speed changed from any page
     void speedChanged(int);
 

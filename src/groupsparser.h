@@ -82,16 +82,6 @@ public:
     bool mergeExternalData(QString file, bool keepFileChanges);
 
     /*!
-     * \brief updateLightName update the group and mood data to a change in hardware
-     *        names. This updates all save data so it can continue to be compatible with the
-     *        group data.
-     * \param light the old cor::Light with the old name, controller, index, and commtype
-     * \param newName the new name to use for the light
-     * \return true if successful
-     */
-    bool updateLightName(const cor::Light& light, const QString& newName);
-
-    /*!
      * \brief lightDeleted removes a light from all moods and collections based off of its unique ID. This is called when
      *        a light is detected as deleted elsewhere in the application
      * \param uniqueID the unique ID of a light
@@ -130,12 +120,6 @@ signals:
     void newMoodAdded(QString);
 
 private:
-
-    /*!
-     * \brief findNewControllers look to see if there are any new controllers in a mood or collection
-     * \param object JSON object that represents a mood or collection.
-     */
-    void findNewControllers(QJsonObject object);
 
     /*!
      * \brief loadJsonFile loads json data at given path and turns it into a JsonDocument

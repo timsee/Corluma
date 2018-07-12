@@ -11,6 +11,7 @@
 #include "listdevicesgroupwidget.h"
 #include "listmoodgroupwidget.h"
 #include "cor/utils.h"
+#include "comm/commarducor.h"
 
 #include <QDebug>
 #include <QInputDialog>
@@ -26,8 +27,6 @@ LightPage::LightPage(QWidget *parent, DataLayer *data, CommLayer *comm, GroupsPa
     mRoomsWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QScroller::grabGesture(mRoomsWidget->viewport(), QScroller::LeftMouseButtonGesture);
 
-    mSettings = new QSettings();
-
     mRenderThread = new QTimer(this);
     connect(mRenderThread, SIGNAL(timeout()), this, SLOT(renderUI()));
 
@@ -40,7 +39,6 @@ LightPage::LightPage(QWidget *parent, DataLayer *data, CommLayer *comm, GroupsPa
     connect(groups, SIGNAL(newConnectionFound(QString)), this, SLOT(newConnectionFound(QString)));
     connect(groups, SIGNAL(groupDeleted(QString)), this, SLOT(groupDeleted(QString)));
     connect(groups, SIGNAL(newCollectionAdded(QString)), this, SLOT(newCollectionAdded(QString)));
-
 
     mRenderInterval = 1000;
 }
@@ -97,7 +95,7 @@ void LightPage::updateConnectionList() {
     }
 
 
-    gatherAvailandAndNotReachableDevices(allAvailableDevices);
+    gatherAvailandAndNotReachableDevices(allAvailableDevices, mComm->deviceNames());
 
 //    gatherAvailandAndNotReachableDevices(allAvailableDevices);
 //    if (mCurrentConnectionWidget == ECurrentConnectionWidget::eGroups) {
@@ -144,7 +142,7 @@ void LightPage::updateDataGroupInUI(const cor::LightGroup dataGroup, const std::
     }
     if (!existsInUIGroups) {
        // qDebug() << "this group does not exist" << dataGroup.name;
-       initDevicesCollectionWidget(dataGroup, dataGroup.name);
+       initDevicesCollectionWidget(dataGroup, mComm->deviceNames(), dataGroup.name);
     }
 }
 
@@ -173,22 +171,19 @@ std::list<cor::Light> LightPage::updateDeviceList(const std::list<cor::Light>& o
 
 
 ListDevicesGroupWidget* LightPage::initDevicesCollectionWidget(cor::LightGroup group,
+                                                               const std::vector<std::pair<QString, QString>>& deviceNames,
                                                                const QString& key) {
 
     for (auto&& device : group.devices) {
-        cor::Light deviceCopy = device;
-        mComm->fillDevice(deviceCopy);
-        device.name = deviceCopy.name;
-//        if (device.routine > cor::ERoutineSingleColorEnd) {
-//            device.palette = mPalettes.palette(device.paletteEnum);
-//        }
+        for (auto&& deviceName : deviceNames) {
+            if (device.uniqueID() == deviceName.first) {
+                device.name = deviceName.second;
+            }
+        }
     }
-
 
     ListDevicesGroupWidget *widget = new ListDevicesGroupWidget(group,
                                                                 key,
-                                                                mComm,
-                                                                mData,
                                                                 mRoomsWidget);
 
     QScroller::grabGesture(widget, QScroller::LeftMouseButtonGesture);
@@ -207,7 +202,8 @@ ListDevicesGroupWidget* LightPage::initDevicesCollectionWidget(cor::LightGroup g
     return widget;
 }
 
-void LightPage::gatherAvailandAndNotReachableDevices(std::list<cor::Light> allDevices) {
+void LightPage::gatherAvailandAndNotReachableDevices(const std::list<cor::Light>& allDevices,
+                                                     const std::vector<std::pair<QString, QString>>& deviceNames) {
     // ------------------------------------
     // make a list of all devices
     // ------------------------------------
@@ -218,10 +214,6 @@ void LightPage::gatherAvailandAndNotReachableDevices(std::list<cor::Light> allDe
     QString kUnavailableDevicesKey = "zzzUNAVAILABLE_DEVICES";
 
     for (auto&& device : allDevices) {
-//        if (device.routine > cor::ERoutineSingleColorEnd) {
-//            device.palette = mPalettes.palette(device.paletteEnum);
-//        }
-
         if (device.isReachable) {
             availableDevices.push_front(device);
         } else {
@@ -255,7 +247,7 @@ void LightPage::gatherAvailandAndNotReachableDevices(std::list<cor::Light> allDe
         group.name = "Available";
         group.devices = availableDevices;
         group.isRoom = false;
-        initDevicesCollectionWidget(group, kAvailableDevicesKey);
+        initDevicesCollectionWidget(group, deviceNames, kAvailableDevicesKey);
     }
 
     if (!foundUnavailable) {
@@ -263,7 +255,7 @@ void LightPage::gatherAvailandAndNotReachableDevices(std::list<cor::Light> allDe
         group.name = "Not Reachable";
         group.devices = unavailableDevices;
         group.isRoom = false;
-        initDevicesCollectionWidget(group, kUnavailableDevicesKey);
+        initDevicesCollectionWidget(group, deviceNames, kUnavailableDevicesKey);
     }
 }
 
@@ -272,6 +264,7 @@ void LightPage::deviceClicked(QString collectionKey, QString deviceKey) {
 
 //    qDebug() << "collection key:" << collectionKey
 //             << "device key:" << deviceKey;
+
 
     cor::Light device = identifierStringToLight(deviceKey);
     mComm->fillDevice(device);
@@ -305,7 +298,6 @@ void LightPage::deviceSwitchClicked(QString deviceKey, bool isOn) {
     cor::Light device = identifierStringToLight(deviceKey);
     mComm->fillDevice(device);
     device.isOn = isOn;
-
     mData->addDevice(device);
 
     emit updateMainIcons();
@@ -342,28 +334,23 @@ void LightPage::groupSelected(QString key, bool shouldSelect) {
 
 void LightPage::newConnectionFound(QString newController) {
     // get list of all HTTP and UDP devices.
-    const std::list<cor::Controller> udpDevices  = mComm->discoveredList(ECommType::UDP);
-    const std::list<cor::Controller> httpDevices = mComm->discoveredList(ECommType::HTTP);
+    const auto controllers = mComm->arducor()->discovery()->controllers();
     bool foundController = false;
     // check combined list if new controller exists.
-    for (auto&& udpController : udpDevices) {
-        if (udpController.name.compare(newController) == 0) {
+    for (const auto& controller : controllers) {
+        if (controller.name.compare(newController) == 0) {
             foundController = true;
         }
     }
 
-    for (auto httpController : httpDevices) {
-        if (httpController.name.compare(newController) == 0) {
-            foundController = true;
-        }
-    }
     // if not, add it to discovery.
     if (!foundController) {
         if (mProtocolSettings->enabled(EProtocolType::arduCor)) {
-            bool isSuccessful = mComm->startDiscoveringController(ECommType::UDP, newController);
-            if (!isSuccessful) qDebug() << "WARNING: failure adding" << newController << "to UDP discovery list";
-            isSuccessful = mComm->startDiscoveringController(ECommType::HTTP, newController);
-            if (!isSuccessful) qDebug() << "WARNING: failure adding" << newController << "to HTTP discovery list";
+            mComm->arducor()->discovery()->addManualIP(newController);
+//            bool isSuccessful = mComm->startDiscoveringController(ECommType::UDP, newController);
+//            if (!isSuccessful) qDebug() << "WARNING: failure adding" << newController << "to UDP discovery list";
+//            isSuccessful = mComm->startDiscoveringController(ECommType::HTTP, newController);
+//            if (!isSuccessful) qDebug() << "WARNING: failure adding" << newController << "to HTTP discovery list";
             mComm->startDiscovery(EProtocolType::arduCor);
         } else {
             qDebug() << "WARNING: UDP and HTTP not enabled but they are found in the json data being loaded...";
@@ -440,30 +427,13 @@ void LightPage::renderUI() {
 
 
 cor::Light LightPage::identifierStringToLight(QString string) {
-    // first split the values from comma delimited to a vector of strings
-    std::vector<std::string> valueVector;
-    std::stringstream input(string.toStdString());
-    while (input.good()) {
-        std::string value;
-        std::getline(input, value, ',');
-        valueVector.push_back(value);
+    QStringList list = string.split("_");
+    if (list.size() > 1) {
+        cor::Light light(list[1], stringToCommType(list[0]));
+        mComm->fillDevice(light);
+        return light;
     }
-    // check validity
-    cor::Light outputStruct;
-    if (valueVector.size() == 4) {
-        QString secondValue = QString::fromStdString(valueVector[1]);
-        if (secondValue.contains("Yun")) {
-            secondValue = secondValue.mid(3);
-        }
-        cor::Light temp(QString::fromStdString(valueVector[3]).toInt(),
-                        stringToCommType(secondValue),
-                        QString::fromStdString(valueVector[2]));
-        mComm->fillDevice(temp);
-        outputStruct = temp;
-    } else {
-        qDebug() << "something went wrong with the key in" << __func__;
-    }
-    return outputStruct;
+    return cor::Light("NOT_VALID", ECommType::MAX);
 }
 
 

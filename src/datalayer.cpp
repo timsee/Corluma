@@ -36,6 +36,21 @@ int DataLayer::brightness() {
     return brightness;
 }
 
+std::vector<QColor> DataLayer::colorScheme() {
+    std::vector<QColor> colorScheme;
+    int count = 0;
+    int max = 5;
+    for (auto&& device : mCurrentDevices) {
+        if (count >= max) {
+            break;
+        } else {
+           colorScheme.push_back(device.color);
+        }
+        count++;
+    }
+    return colorScheme;
+}
+
 int DataLayer::speed() {
     int speed = 0;
     size_t deviceCount = 0;
@@ -294,25 +309,18 @@ bool DataLayer::clearDevices() {
 }
 
 bool DataLayer::removeDevice(cor::Light device){
-    bool foundDevice = false;
-    cor::Light deviceFound;
     std::list<cor::Light>::const_iterator iterator;
     for (iterator = mCurrentDevices.begin(); iterator != mCurrentDevices.end(); ++iterator) {
         bool deviceExists = compareLight(device, *iterator);
         if (deviceExists) {
-            deviceFound = (*iterator);
-            foundDevice = true;
+            mCurrentDevices.remove(*iterator);
+            if (mCurrentDevices.size() == 0) {
+                emit devicesEmpty();
+            }
+            return true;
         }
     }
-    if (foundDevice) {
-        mCurrentDevices.remove(deviceFound);
-        if (mCurrentDevices.size() == 0) {
-            emit devicesEmpty();
-        }
-        return true;
-    } else {
-        return false;
-    }
+    return false;
 }
 
 

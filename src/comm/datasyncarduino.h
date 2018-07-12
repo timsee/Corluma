@@ -6,7 +6,8 @@
 #include <QTimer>
 #include <unordered_map>
 #include "datasync.h"
-#include "comm/commpacketparser.h"
+#include "arducor/arducorpacketparser.h"
+#include "comm/commarducor.h"
 
 /*!
  * \copyright
@@ -106,7 +107,7 @@ private:
     void endOfSync() override;
 
     /// parses variables for a packet and turns it into ArduCor compatible packets
-    CommPacketParser *mParser;
+    ArduCorPacketParser *mParser;
 
     /// a sorted list of messages sorted by the name of the controller to receive them.
     std::unordered_map<std::string, std::list<QString> > mMessages;

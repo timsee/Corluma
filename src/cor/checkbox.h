@@ -41,6 +41,9 @@ public:
      */
     void downsizeTextWidthToFit(int maxWidth);
 
+    /// getter for whether a box is checked or not.
+    bool checked() { return mIsChecked; }
+
 signals:
 
     /// sent out whenever the checkbox is checked or unchecked

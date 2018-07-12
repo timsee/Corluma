@@ -5,36 +5,29 @@
  */
 
 #include "commserial.h"
+#include "arducor/arducordiscovery.h"
 
 #include <QDebug>
 
-CommSerial::CommSerial() {
-    mStateUpdateInterval = 750;
-    mDiscoveryUpdateInterval = 500;
+CommSerial::CommSerial() : CommType(ECommType::serial) {
+    mStateUpdateInterval = 500;
     mLookingForActivePorts = false;
-    setupConnectionList(ECommType::serial);
 
-    connect(mDiscoveryTimer, SIGNAL(timeout()), this, SLOT(discoveryRoutine()));
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(stateUpdate()));
 }
 
 
 CommSerial::~CommSerial() {
-    saveConnectionList();
     shutdown();
 }
 
 void CommSerial::startup() {
-    discoveryRoutine();
-    mHasStarted = true;
 }
+
 
 void CommSerial::shutdown() {
     if (mStateUpdateTimer->isActive()) {
         mStateUpdateTimer->stop();
-    }
-    if (mDiscoveryTimer->isActive()) {
-        mDiscoveryTimer->stop();
     }
     for (auto&& serial : mSerialPorts) {
         if (serial.first->isOpen()) {
@@ -44,8 +37,6 @@ void CommSerial::shutdown() {
     }
     mSerialPorts.clear();
     mSerialInfoList.clear();
-    resetDiscovery();
-    mHasStarted = false;
 }
 
 void CommSerial::sendPacket(const cor::Controller& controller, QString& packet) {
@@ -62,19 +53,12 @@ void CommSerial::sendPacket(const cor::Controller& controller, QString& packet) 
             //qDebug() << "sending" << packet << "to" <<  serial->portName();
             serial->write(packet.toStdString().c_str());
         }
-    } else {
-        qDebug() << "Serial Device not open";
     }
-}
-
-
-void CommSerial::sendPacket(const QJsonObject& object) {
-
 }
 
 void CommSerial::stateUpdate() {
     if (shouldContinueStateUpdate()) {
-        for (auto&& controller : mDiscoveredList) {
+        for (auto&& controller : mDiscovery->controllers()) {
             QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::stateUpdateRequest));
             sendPacket(controller, packet);
             if ((mStateUpdateCounter % mSecondaryUpdatesInterval) == 0) {
@@ -83,14 +67,7 @@ void CommSerial::stateUpdate() {
             }
         }
 
-        // maintence
-        if (mDiscoveryMode
-                && mDiscoveredList.size() < deviceTable().size()
-                && !mDiscoveryTimer->isActive()) {
-            mDiscoveryTimer->start(mDiscoveryUpdateInterval);
-        } else if (!mDiscoveryMode && mDiscoveryTimer->isActive()) {
-            mDiscoveryTimer->stop();
-        }
+
         mStateUpdateCounter++;
     }
 }
@@ -110,22 +87,16 @@ QSerialPort* CommSerial::serialPortByName(QString name) {
 // Discovery and Connecting
 //--------------------
 
-void CommSerial::discoveryRoutine() {
-    discoverSerialPorts();
-    QString discoveryPacket = kDiscoveryPacketIdentifier + ";";
+void CommSerial::testForController(const cor::Controller& controller) {
+    QString discoveryPacket = ArduCorDiscovery::kDiscoveryPacketIdentifier + ";";
     bool runningDiscoveryOnSomething = false;
-    for (auto&& it : mDeviceTable) {
-          QString controllerName = QString::fromUtf8(it.first.c_str());
-          QSerialPort *serial = serialPortByName(controllerName);
-          cor::Controller output;
-          bool found = findDiscoveredController(controllerName, output);
-          if (!found && serial != NULL) {
-              runningDiscoveryOnSomething = true;
-              // write to device
-              //qDebug() << "discovery packet to " << controllerName << "payload" << discoveryPacket;
-              serial->write(discoveryPacket.toStdString().c_str());
-          }
-     }
+    QSerialPort *serial = serialPortByName(controller.name);
+    if (serial != NULL) {
+        runningDiscoveryOnSomething = true;
+        // write to device
+        //qDebug() << "discovery packet to " << controller.name << "payload" << discoveryPacket;
+        serial->write(discoveryPacket.toStdString().c_str());
+    }
     if (!runningDiscoveryOnSomething) mLookingForActivePorts = false;
 }
 
@@ -163,7 +134,7 @@ void CommSerial::discoverSerialPorts() {
 //                 qDebug() << "Description : " << info.description();
 //                 qDebug() << "Manufacturer: " << info.manufacturer();
                 connectSerialPort(info);
-                startDiscoveringController(info.portName());
+                mDiscovery->addSerialPort(info.portName());
                 mSerialInfoList.push_back(info);
                 mLookingForActivePorts = true;
             }
@@ -224,7 +195,8 @@ void CommSerial::handleReadyRead() {
             // remove the ; from the end of the packet
             QString payload = serial.second.mid(0, serial.second.length() - 1);
             //qDebug() << "serial" << serial.first->portName() << "received payload" << serial.second << "size" << serial.second.size();
-            handleIncomingPacket(serial.first->portName(), payload);
+            mDiscovery->handleIncomingPacket(mType, serial.first->portName(), payload);
+            emit packetReceived(serial.first->portName(), payload, mType);
 
             // empty buffer
             serial.second = "";

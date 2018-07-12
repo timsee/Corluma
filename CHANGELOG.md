@@ -337,4 +337,16 @@ ___
 * Fixed bugs in the GroupsParser.
 * Fixed miscellaneous bugs.
 
+### **v0.13.3**
+#### The CommArduCor Update
+* Created CommArduCor and ArduCorDiscovery objects to match the design of CommHue and CommNanoleaf.
+* Removed CommArduCor specific functions and variables from CommLayer and CommType. 
+* Removed CommLayer and DataLayer as dependencies of `ColorPage`, `MoodPage`, `ListDevicesGroupWidget`, `cor::Button`, and `GlobalSettingsWidget`.
+* Created a system to detect when a light is not reachable.
+* Fixed miscellaneous bugs in Hue's and Nanoleaf's new discovery objects.
+* Rewrote the `cor::Light` and `GroupsParser` to use uniqueIDs for lights and controllers.
+* Moved all hardware data that can potentially change (such as a Hue's name) out of save.json.
+* Fixed miscellaneous bugs. 
+
+
 

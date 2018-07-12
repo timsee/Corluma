@@ -43,7 +43,7 @@ enum class EHueUpdates {
 struct SHueCommand {
     QString address;
     QString method;
-    cor::Light body;
+    QJsonObject routineObject;
 };
 
 /*!

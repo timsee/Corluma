@@ -11,6 +11,7 @@
 #include "cor/page.h"
 #include "listdevicewidget.h"
 #include "comm/commlayer.h"
+#include "datalayer.h"
 #include "listdevicesgroupwidget.h"
 #include "cor/listwidget.h"
 #include "cor/presetpalettes.h"
@@ -195,6 +196,7 @@ private:
      * \return pointer to the newly created ListDevicesGroupWidget
      */
     ListDevicesGroupWidget* initDevicesCollectionWidget(cor::LightGroup group,
+                                                        const std::vector<std::pair<QString, QString>>& deviceNames,
                                                         const QString& key);
 
 
@@ -205,7 +207,8 @@ private:
      *        are available in memory somehow but have not sent an update packet recently.
      * \param allDevices list of all devices that have sent communication packets of some sort.
      */
-    void gatherAvailandAndNotReachableDevices(std::list<cor::Light> allDevices);
+    void gatherAvailandAndNotReachableDevices(const std::list<cor::Light>& allDevices,
+                                              const std::vector<std::pair<QString, QString>>& deviceNames);
 
     /// gathers all light groups, as displayed in the UI
     std::list<cor::LightGroup> gatherAllUIGroups();
@@ -227,9 +230,6 @@ private:
      * \return a new list that matches the oldDevices list, only it has up-to-date information.
      */
     std::list<cor::Light> updateDeviceList(const std::list<cor::Light>& oldDevices, const std::list<cor::Light>& allDeviceData);
-
-    /// pointer to QSettings instance
-    QSettings *mSettings;
 
     /// layout of widget
     QVBoxLayout *mLayout;

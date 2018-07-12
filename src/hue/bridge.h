@@ -4,6 +4,10 @@
 #include <QString>
 #include <QJsonObject>
 #include <sstream>
+#include <vector>
+
+
+class HueLight;
 
 namespace hue
 {
@@ -39,6 +43,9 @@ public:
 
     /// mac address for the bridge
     QString macaddress = "";
+
+    /// vector of lights for a bridge
+    std::vector<HueLight> lights;
 
     operator QString() const {
         std::stringstream tempString;

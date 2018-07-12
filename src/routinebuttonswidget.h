@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "cor/button.h"
+#include "cor/light.h"
 
 
 /// different types of routinebuttonswidgets

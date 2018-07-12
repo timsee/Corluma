@@ -35,66 +35,25 @@ DiscoveryArduCorWidget::~DiscoveryArduCorWidget() {
 }
 
 void DiscoveryArduCorWidget::handleDiscovery(bool isCurrentCommType) {
-    std::list<cor::Controller> deviceTableUDP = mComm->discoveredList(ECommType::UDP);
-    std::list<cor::Controller> deviceTableHTTP = mComm->discoveredList(ECommType::HTTP);
-#ifndef MOBILE_BUILD
-    std::list<cor::Controller> deviceTableSerial = mComm->discoveredList(ECommType::serial);
-#endif
-
-    std::list<QString> discoveringUDP = mComm->undiscoveredList(ECommType::UDP);
-    std::list<QString> discoveringHTTP = mComm->undiscoveredList(ECommType::HTTP);
+    const auto controllers = mComm->arducor()->discovery()->controllers();
+    const auto undiscoveredControllers = mComm->arducor()->discovery()->undiscoveredControllers();
 
     if (isCurrentCommType) {
-        for (auto device : deviceTableUDP) {
-            mSearchWidget->addToConnectedList(device.name);
+        for (auto controller : controllers) {
+            mSearchWidget->addToConnectedList(controller.name);
         }
 
-        for (auto device : deviceTableHTTP) {
-            mSearchWidget->addToConnectedList(device.name);
-        }
-
-        for (auto name : discoveringUDP) {
-            mSearchWidget->addToSearchList(name);
-        }
-
-        for (auto name : discoveringHTTP) {
-            mSearchWidget->addToSearchList(name);
-        }
-
-#ifndef MOBILE_BUILD
-        for (auto device : deviceTableSerial) {
-            mSearchWidget->addToConnectedList(device.name);
-        }
-#endif
-        // compare discovered list of UDP against HTTP, removing those that are discovering in HTTP
-        for (auto&& discovered : deviceTableUDP) {
-            for (auto&& undiscovered : discoveringHTTP) {
-                if (discovered.name.compare(undiscovered) == 0) {
-                    mComm->removeController(ECommType::HTTP, discovered);
-                }
-            }
-        }
-
-        // compare discovered list of HTTP against UDP, removing those that are discovering in UDP
-        for (auto&& discovered : deviceTableHTTP) {
-            for (auto&& undiscovered : discoveringUDP) {
-                if (discovered.name.compare(undiscovered) == 0) {
-                    mComm->removeController(ECommType::UDP, discovered);
-                }
-            }
+        for (auto undiscoveredController : undiscoveredControllers) {
+            mSearchWidget->addToSearchList(undiscoveredController.name);
         }
     }
 
     // handle button updates
     if (mComm->discoveryErrorsExist(ECommType::UDP)) {
         emit connectionStatusChanged(EProtocolType::arduCor, EConnectionState::connectionError);
-    } else if (discoveringHTTP.size() == 0
-            && discoveringUDP.size() == 0
-            && (deviceTableHTTP.size() > 0
-                || deviceTableUDP.size() > 0)) {
+    } else if (!undiscoveredControllers.empty() && !controllers.empty()) {
        emit connectionStatusChanged(EProtocolType::arduCor, EConnectionState::discoveredAndNotInUse);
-    } else if (discoveringHTTP.size() > 0
-               || discoveringUDP.size() > 0) {
+    } else if (!controllers.empty()) {
         emit connectionStatusChanged(EProtocolType::arduCor, EConnectionState::discovering);
     } else {
         emit connectionStatusChanged(EProtocolType::arduCor, EConnectionState::off);
@@ -110,10 +69,8 @@ void DiscoveryArduCorWidget::handleDiscovery(bool isCurrentCommType) {
 void DiscoveryArduCorWidget::plusButtonClicked() {
     if (!doesYunControllerExistAlready(mSearchWidget->lineEditText())) {
         QString controller = mSearchWidget->lineEditText();
-        bool isSuccessful = mComm->startDiscoveringController(ECommType::UDP, controller);
-        if (!isSuccessful) qDebug() << "WARNING: failure adding" << controller << "to UDP discovery list";
-        isSuccessful = mComm->startDiscoveringController(ECommType::HTTP, controller);
-        if (!isSuccessful) qDebug() << "WARNING: failure adding" << controller << "to HTTP discovery list";
+        mComm->arducor()->discovery()->addManualIP(controller);
+//        if (!isSuccessful) qDebug() << "WARNING: failure adding" << controller << "to HTTP discovery list";
     } else {
         qDebug() << "WARNING: trying to add controller that already exists: " << mSearchWidget->lineEditText();
     }
@@ -138,30 +95,19 @@ void DiscoveryArduCorWidget::minusButtonClicked() {
 // ----------------------------
 
 
-bool DiscoveryArduCorWidget::doesYunControllerExistAlready(QString controller) {
+bool DiscoveryArduCorWidget::doesYunControllerExistAlready(QString name) {
     bool deviceFound = false;
-    for (auto&& discoveredController : mComm->discoveredList(ECommType::HTTP)) {
-        if (discoveredController.name.compare(controller) == 0) {
+    for (auto&& controller : mComm->arducor()->discovery()->controllers()) {
+        if (controller.name.compare(name) == 0) {
             deviceFound = true;
         }
     }
 
-    for (auto&& discoveredController : mComm->discoveredList(ECommType::UDP)) {
-        if (discoveredController.name.compare(controller) == 0) {
+    for (auto&& undiscoveredController : mComm->arducor()->discovery()->undiscoveredControllers()) {
+        if (undiscoveredController.name.compare(name) == 0) {
             deviceFound = true;
         }
     }
 
-    for (auto&& unDiscoveredController : mComm->undiscoveredList(ECommType::HTTP)) {
-        if (unDiscoveredController.compare(controller) == 0) {
-            deviceFound = true;
-        }
-    }
-
-    for (auto&& unDiscoveredController : mComm->undiscoveredList(ECommType::UDP)) {
-        if (unDiscoveredController.compare(controller) == 0) {
-            deviceFound = true;
-        }
-    }
     return deviceFound;
 }

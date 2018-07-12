@@ -4,7 +4,8 @@
 
 #include <QString>
 #include <vector>
-#include "protocols.h"
+#include <sstream>
+#include "cor/protocols.h"
 
 namespace cor
 {
@@ -56,8 +57,21 @@ public:
     /// product types for the controller's lights
     std::vector<EProductType> productTypes;
 
-    /// converts the controller's identifier information to a string
-    QString toString();
+    operator QString() const {
+        std::stringstream tempString;
+        tempString << name.toStdString();
+        tempString << " API Level: " << majorAPI << "." << minorAPI;
+        tempString << " maxHardwareIndex: " << maxHardwareIndex;
+        tempString << " CRC: " << isUsingCRC;
+        tempString << " maxPacketSize: " << maxPacketSize;
+        uint32_t i = 0;
+        tempString << " names size: " << names.size();
+        for (auto name : names) {
+            tempString << " " << i << ". " << name.toStdString();
+            ++i;
+        }
+        return QString::fromStdString(tempString.str());
+    }
 
     bool operator==(const Controller& rhs) const
     {
@@ -69,6 +83,13 @@ public:
         return result;
     }
 };
+
+/// converts a json object to a controller
+cor::Controller jsonToController(const QJsonObject& object);
+
+/// converts a controller to a json object
+QJsonObject controllerToJson(const cor::Controller& controller);
+
 }
 
 #endif // CONTROLLER_H

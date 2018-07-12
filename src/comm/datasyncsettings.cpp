@@ -6,6 +6,7 @@
 
 #include "datasyncsettings.h"
 
+#include "comm/commarducor.h"
 #include "comm/commlayer.h"
 #include "cor/utils.h"
 
@@ -25,7 +26,7 @@ DataSyncSettings::DataSyncSettings(DataLayer *data, CommLayer *comm, ProtocolSet
 //    mCleanupTimer = new QTimer(this);
 //    connect(mCleanupTimer, SIGNAL(timeout()), this, SLOT(cleanupSync()));
 
-    mParser = new CommPacketParser(this);
+    mParser = new ArduCorPacketParser(this);
 
     mDataIsInSync = false;
 }
@@ -75,7 +76,7 @@ void DataSyncSettings::syncData() {
                     return;
                 }
 
-                if (checkThrottle(device.controller(), device.commType())) {
+                if (checkThrottle(device.controller, device.commType())) {
                     bool result = sync(device);
                     if (!result) {
                         countOutOfSync++;
@@ -113,7 +114,7 @@ void DataSyncSettings::endOfSync() {
 bool DataSyncSettings::sync(const cor::Light& availableDevice) {
     int countOutOfSync = 0;
     cor::Controller controller;
-    if (!mComm->findDiscoveredController(availableDevice.commType(), availableDevice.controller(), controller)) {
+    if (!mComm->arducor()->discovery()->findControllerByDeviceName(availableDevice.name, controller)) {
         return false;
     }
 
@@ -155,8 +156,8 @@ bool DataSyncSettings::sync(const cor::Light& availableDevice) {
     }
     if (countOutOfSync) {
         //qDebug() << "packet size" << packet.size() <<"count out of sync" << countOutOfSync;
-        mComm->sendPacket(availableDevice, packet);
-        resetThrottle(availableDevice.controller(), availableDevice.commType());
+        mComm->arducor()->sendPacket(controller, packet);
+        resetThrottle(availableDevice.controller, availableDevice.commType());
     }
 
     return (countOutOfSync == 0);

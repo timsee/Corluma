@@ -5,6 +5,7 @@
 
 #include <QWidget>
 #include <QTimer>
+#include <QTime>
 #include <QLabel>
 #include <QMouseEvent>
 #include <QLayout>

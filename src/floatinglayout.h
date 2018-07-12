@@ -96,13 +96,6 @@ public:
     void enableButton(QString key, bool enable);
 
     /*!
-     * \brief highlightRoutineButton highlights the routine button. Allows the page that owns the floating layout
-     *        to override its behavior, if it changes state.
-     * \param shouldHighlight true to highlight the button, false to leave the button unhighlighted.
-     */
-    void highlightRoutineButton(bool shouldHighlight);
-
-    /*!
      * \brief buttonCount returns the number of buttons in the floating layout
      * \return the number of buttons in the floating layout
      */

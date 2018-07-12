@@ -2,6 +2,7 @@
 #define SERIALCOMM_H
 
 #include "commtype.h"
+#include "arducor/arducordiscovery.h"
 
 #include <QSerialPort>
 #include <QSerialPortInfo>
@@ -49,19 +50,15 @@ public:
      */
     void shutdown();
 
+    /// connects discovery object
+    void connectDiscovery(ArduCorDiscovery *discovery) { mDiscovery = discovery; }
+
     /*!
      * \brief sendPacket sends a string over serial
      * \param packet the string that is going to be sent over
      *        serial.
      */
     void sendPacket(const cor::Controller& controller, QString& packet);
-
-    /*!
-     * \brief sendPacket send a packet based off of a JSON object containing all
-     *        relevant information about the packet
-     * \param object json representation of the packet to send
-     */
-    void sendPacket(const QJsonObject& object);
 
     /*!
      * \brief lookingForActivePorts true if looking for active ports, false otherwise.
@@ -71,7 +68,22 @@ public:
 
     /// returns true if a serial port has failed.
     bool serialPortErrorsExist() { return mSerialPortFailed; }
+
+    /*!
+     * \brief testForController sends a discovery packet to the currently
+     *        connected serial port to test its connection.
+     */
+    void testForController(const cor::Controller& controller);
+
+signals:
+    /*!
+     * \brief packetReceived emitted whenever a packet that is not a discovery packet is received. Contains
+     *        the full packet's contents as a QString.
+     */
+    void packetReceived(QString, QString, ECommType);
+
 private slots:
+
     /*!
      * \brief handleReadyRead parses incoming packets
      */
@@ -80,11 +92,6 @@ private slots:
      * \brief handleError handles errors from the QSerialPort.
      */
     void handleError(QSerialPort::SerialPortError);
-    /*!
-     * \brief discoveryRoutine sends a discovery packet to the currently
-     *        connected serial port to test its connection.
-     */
-    void discoveryRoutine();
 
     /*!
      * \brief stateUpdate used by the mStateUpdateTimer to request new
@@ -93,6 +100,10 @@ private slots:
     void stateUpdate();
 
 private:
+
+    /// discovery object for storing previous connections, saving new connections, parsing discovery packets
+    ArduCorDiscovery *mDiscovery;
+
     /*!
      * \brief connectSerialPort connect to a specific serial port, if possible.
      * \param serialPortName The name of the serial port that you want

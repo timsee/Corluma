@@ -79,6 +79,14 @@ public:
     /// gets a bridge from a IP address
     hue::Bridge bridgeFromIP(const QString& IP);
 
+    /*!
+     * \brief lightFromBridgeIDAndIndex uses a bridge and an index to get a specific light
+     * \param bridgeID bridge's unqiue ID
+     * \param index light's index
+     * \return the HueLight representation of the light
+     */
+    HueLight lightFromBridgeIDAndIndex(const QString& bridgeID, uint32_t index);
+
 signals:
 
     /// signals when a light is detected as deleted.

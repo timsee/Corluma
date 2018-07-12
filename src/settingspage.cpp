@@ -26,7 +26,7 @@
 
 #include <QDesktopWidget>
 
-SettingsPage::SettingsPage(QWidget *parent, CommLayer *comm, DataLayer *data, GroupsParser *parser, ProtocolSettings *protocols) :
+SettingsPage::SettingsPage(QWidget *parent, GroupsParser *parser, ProtocolSettings *protocols) :
     QWidget(parent), mGroups(parser) {
     mShowingDebug = true;
 
@@ -129,7 +129,7 @@ SettingsPage::SettingsPage(QWidget *parent, CommLayer *comm, DataLayer *data, Gr
     //------------
     // Global Widget
     //------------
-    mGlobalWidget = new GlobalSettingsWidget(mScrollAreaWidget, comm, data, protocols);
+    mGlobalWidget = new GlobalSettingsWidget(mScrollAreaWidget, protocols);
     mGlobalWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mScrollLayout->addWidget(mGlobalWidget);
 
@@ -200,7 +200,7 @@ void SettingsPage::loadButtonClicked() {
 }
 
 void SettingsPage::saveButtonClicked() {
-//    mGroups->clearAndResaveAppDataDEBUG();
+    //mGroups->clearAndResaveAppDataDEBUG();
     QString fileName = QFileDialog::getSaveFileName(this,
           tr("Save Group Data"), "CorlumaGroups.json",
           tr("JSON (*.json)"));

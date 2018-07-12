@@ -43,13 +43,6 @@ public:
     void shutdown();
 
     /*!
-     * \brief sendPacket Takes a packet in the format of a Corluma lights command (a comma delimited QString) and
-     *        converts it into a NanoLeaf command
-     * \param packet the comma delimited Corlum Light command.
-     */
-    void sendPacket(const cor::Controller& controller, QString& packet);
-
-    /*!
      * \brief sendPacket send a packet based off of a JSON object containing all
      *        relevant information about the packet
      * \param object json representation of the packet to send
@@ -216,11 +209,6 @@ private:
      * \brief mNetworkManager Qt's HTTP connection object
      */
     QNetworkAccessManager *mNetworkManager;
-
-    /*!
-     * \brief mSettings Device independent persistent application memory access
-     */
-    QSettings *mSettings;
 
     /// pointer to the UPnPDiscovery object.
     UPnPDiscovery *mUPnP;

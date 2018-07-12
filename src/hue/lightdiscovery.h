@@ -63,7 +63,6 @@ protected:
      */
     void paintEvent(QPaintEvent *);
 
-
 private slots:
 
     /// close button pressed to hide the widget.

@@ -11,14 +11,14 @@
 #include "cor/presetpalettes.h"
 #include "cor/light.h"
 #include "comm/commtype.h"
+
 #include "comm/upnpdiscovery.h"
+#include "arducor/arducordiscovery.h"
 #include "hue/hueprotocols.h"
 #include "hue/huelight.h"
 #include "groupsparser.h"
 
-class CommUDP;
-class CommHTTP;
-class CommSerial;
+class CommArduCor;
 class CommHue;
 class CommNanoleaf;
 
@@ -41,26 +41,6 @@ public:
      * \brief Constructor
      */
     CommLayer(QObject *parent, GroupsParser *parser);
-
-    /*!
-     * \brief sendPacket helper for sending packets
-     * \param device device to send a packet to
-     * \param payload packet to send to device
-     */
-    void sendPacket(const cor::Light& device, QString& payload);
-
-    /*!
-     * \brief sendPacket send a packet based off of a JSON object containing all
-     *        relevant information about the packet
-     * \param object json representation of the packet to send
-     */
-    void sendPacket(const QJsonObject& object);
-
-    /*!
-     * \brief requestCustomArrayUpdate request an update for for custom arrays. Arduino projects only.
-     * \param device list a device to request an update from.
-     */
-    void requestCustomArrayUpdate(const cor::Light& device);
 
     /*!
      * \brief resetStateUpdates reset the state updates timeouts for specified commtypes. If it isn't on already,
@@ -92,39 +72,12 @@ public:
     void shutdown(EProtocolType type);
 
     /*!
-     * \brief hasStarted checks if a stream has been started and can currently be used.
-     * \param type the communication type to check for the stream
-     * \return true if its been started, false otherwise.
-     */
-    bool hasStarted(EProtocolType type);
-
-    /*!
-     * \brief startDiscoveringController attempt to add a controller to the hash table
-     * \param type the type of connection it is
-     * \param connection the name of the controller
-     * \return true if controller is added, false othewrise.
-     */
-    bool startDiscoveringController(ECommType type, QString controller);
-
-    /*!
      * \brief removeConnection attempt to remove a controller to the hash table
      * \param type the type of connection it is
      * \param connection the name of the controller
      * \return true if controller is removed, false othewrise.
      */
     bool removeController(ECommType type, cor::Controller controller);
-
-    /*!
-     * \brief findDiscoveredController find a cor::Controller based off the ECommType and name provided. Returns true if one is found
-     *        and fills the controller added as input, returns false if none is found
-     * \param type comm type
-     * \param name name of controller
-     * \param controller controller to fill if and only if something is found
-     * \return true if a controller is found, false othwerise.
-     */
-    bool findDiscoveredController(ECommType type, QString name, cor::Controller& controller) {
-        return commByType(type)->findDiscoveredController(name, controller);
-    }
 
     /*!
      * \brief fillDevice use the controller name, type, and index to fill in the rest
@@ -144,14 +97,6 @@ public:
      */
     void stopDiscovery(EProtocolType type);
 
-    /*!
-     * \brief runningDiscovery checks if discovery is being run actively. This means taht its expecting more
-     *        devices to be connected than there are currently connected.
-     * \param type the communication type to check the discovery status on
-     * \return true if still running discovery, false otherwise.
-     */
-    bool runningDiscovery(ECommType type);
-
     /// returns true if theres any known errors for the commtype.
     bool discoveryErrorsExist(ECommType type);
 
@@ -168,29 +113,15 @@ public:
     /// list of all devices from all comm types
     const std::list<cor::Light> allDevices();
 
-    /*!
-     * \brief discoveredList getter for the list of all discovered devices from a specific commtype
-     * \param type commtype that you want the discovered devices from
-     * \return list of all discovered devices.
-     */
-    const std::list<cor::Controller>& discoveredList(ECommType type) {
-        return commByType(type)->discoveredList();
-    }
 
     /// list containing all arduino based cor::Controllers
-    const std::list<cor::Controller> allArduinoControllers();
-
-    /*!
-     * \brief undiscoveredList getter for the list of all undiscovered devices from a specific commtype
-     * \param type commtype that you want the undiscovered devices from
-     * \return list of all undiscovered devices.
-     */
-    const std::list<QString> undiscoveredList(ECommType type) {
-        return commByType(type)->undiscoveredList();
-    }
+    const std::vector<cor::Controller> allArduinoControllers();
 
     /// getter for nanoleaf
     std::shared_ptr<CommNanoleaf> nanoleaf() { return mNanoleaf; }
+
+    /// getter for arducor
+    std::shared_ptr<CommArduCor> arducor() { return mArduCor; }
 
     // --------------------------
     // Hardware specific functions
@@ -225,13 +156,8 @@ public:
     /// list of all groups from all comm types
     std::list<cor::LightGroup> groupList();
 
-#ifndef MOBILE_BUILD
-    /*!
-     * \brief lookingForActivePorts true if currently looking for ports, false if not looking
-     * \return true if currently looking for ports, false if not looking
-     */
-    bool lookingForActivePorts();
-#endif //MOBILE_BUILD
+    /// getter for device names
+    std::vector<std::pair<QString, QString>> deviceNames();
 
 signals:
 
@@ -248,11 +174,8 @@ signals:
 
 private slots:
 
-    /*!
-    * \brief parsePacket parses any packets sent from any of the commtypes. The
-    *        comm type that received the packet is given as an int
-    */
-    void parsePacket(QString, QString, ECommType);
+    /// forwards slots from internal connection objects to anything listening to CommLayer
+    void receivedPacket(EProtocolType type) { emit packetReceived(type); }
 
     /*!
     * \brief receivedUpdate Each CommType signals out where it receives an update. This slot combines and forwards
@@ -268,20 +191,10 @@ private slots:
 
 private:
 
-#ifndef MOBILE_BUILD
     /*!
-     * \brief mSerial Serial connection object
+     * \brief mArduCor ArudCor connection object
      */
-    std::shared_ptr<CommSerial> mSerial;
-#endif //MOBILE_BUILD
-    /*!
-     * \brief mHTTP HTTP connection object
-     */
-    std::shared_ptr<CommHTTP> mHTTP;
-    /*!
-     * \brief mUDP UDP connection object
-     */
-    std::shared_ptr<CommUDP>  mUDP;
+    std::shared_ptr<CommArduCor> mArduCor;
 
     /*!
      * \brief mHue Philips Hue connection object
@@ -300,43 +213,11 @@ private:
     GroupsParser *mGroups;
 
     /*!
-     * \brief verifyStateUpdatePacketValidity takes a vector and checks that all
-     *        values are within the proper range. Returns true if the packet can
-     *        be used.
-     * \param packetIntVector The packet that is going to receive testing.
-     * \param x starting index in the vector, if it contains multiple lights.
-     * \return true if all values in the vector are in the proper range, false othewrise.
-     */
-    bool verifyStateUpdatePacketValidity(const std::vector<int>& packetIntVector, int x = 0);
-
-    /*!
-     * \brief verifyCustomColorUpdatePacket takes a vector and checks that all vlaues
-     *        are wirthing the proper range for a custom color update. Returns true if the packet
-     *        can be used.
-     * \param packetIntVector The packet for testing
-     * \return true if its a valid packet, false othwerise.
-     */
-    bool verifyCustomColorUpdatePacket(const std::vector<int>& packetIntVector);
-
-    /*!
      * \brief commByType returns the raw CommPtr based off the given commType
      * \param type the comm type to get a point two
      * \return the raw CommType ptr based off the given commType
      */
     CommType *commByType(ECommType type);
-
-    /// used to check CRC on incoming packets.
-    CRCCalculator mCRC;
-
-    /// preset data for palettes from ArduCor
-    PresetPalettes mPresetPalettes;
-
-    /*!
-     * \brief updateMultiCastPacket if a light index is 0, this is meant to update multiple devices since
-     *        it is a multi cast packet
-     * \param light light device with an index equalling zero.
-     */
-    void updateMultiCastPacket(const cor::Light& light);
 };
 
 #endif // COMMLAYER_H

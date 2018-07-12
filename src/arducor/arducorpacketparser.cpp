@@ -7,28 +7,28 @@
 #include <sstream>
 #include <QDebug>
 
-#include "commpacketparser.h"
+#include "arducorpacketparser.h"
 #include "cor/protocols.h"
 
 #define CUSTOM_COLOR_MAX 10
 
-CommPacketParser::CommPacketParser(QObject *parent) : QObject(parent) {
+ArduCorPacketParser::ArduCorPacketParser(QObject *parent) : QObject(parent) {
 
 }
 
 
-QString CommPacketParser::turnOnPacket(const cor::Light& device, bool turnOn) {
+QString ArduCorPacketParser::turnOnPacket(const cor::Light& device, bool turnOn) {
     QString packet= QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::onOffChange),
-                                             QString::number(device.index()),
+                                             QString::number(device.index),
                                              QString::number(turnOn));
     return packet;
 }
 
-QString CommPacketParser::arrayColorChangePacket(const cor::Light& device,
+QString ArduCorPacketParser::arrayColorChangePacket(const cor::Light& device,
                                                  int index,
                                                  QColor color) {
     QString packet = QString("%1,%2,%3,%4,%5,%6&").arg(QString::number((int)EPacketHeader::customArrayColorChange),
-                                                       QString::number(device.index()),
+                                                       QString::number(device.index),
                                                        QString::number(index),
                                                        QString::number(color.red()),
                                                        QString::number(color.green()),
@@ -37,7 +37,7 @@ QString CommPacketParser::arrayColorChangePacket(const cor::Light& device,
 }
 
 
-QString CommPacketParser::routinePacket(const cor::Light& device, const QJsonObject& routineObject) {
+QString ArduCorPacketParser::routinePacket(const cor::Light& device, const QJsonObject& routineObject) {
     QString packet;
     if (routineObject["routine"].isString()) {
         //------------
@@ -111,7 +111,7 @@ QString CommPacketParser::routinePacket(const cor::Light& device, const QJsonObj
         if (isValidJSON) {
             packet += QString::number((int)EPacketHeader::modeChange);
             packet += ",";
-            packet += QString::number(device.index());
+            packet += QString::number(device.index);
             packet += ",";
             packet += QString::number((int)routine);
 
@@ -146,29 +146,29 @@ QString CommPacketParser::routinePacket(const cor::Light& device, const QJsonObj
     return packet;
 }
 
-QString CommPacketParser::brightnessPacket(const cor::Light& device, int brightness) {
+QString ArduCorPacketParser::brightnessPacket(const cor::Light& device, int brightness) {
     QString packet = QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::brightnessChange),
-                                              QString::number(device.index()),
+                                              QString::number(device.index),
                                               QString::number(brightness));
     return packet;
 }
 
-QString CommPacketParser::changeCustomArraySizePacket(const cor::Light& device, int count) {
+QString ArduCorPacketParser::changeCustomArraySizePacket(const cor::Light& device, int count) {
     QString packet = QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::customColorCountChange),
-                                              QString::number(device.index()),
+                                              QString::number(device.index),
                                               QString::number(count));
     return packet;
 }
 
-QString CommPacketParser::timeoutPacket(const cor::Light& device, int timeOut) {
+QString ArduCorPacketParser::timeoutPacket(const cor::Light& device, int timeOut) {
     QString packet = QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::idleTimeoutChange),
-                                              QString::number(device.index()),
+                                              QString::number(device.index),
                                               QString::number(timeOut));
     return packet;
 }
 
 
-void CommPacketParser::parsePacket(QString packet) {
+void ArduCorPacketParser::parsePacket(QString packet) {
     std::list<std::vector<int> > messageList;
     std::istringstream input(packet.toStdString());
     std::string number;
@@ -249,7 +249,7 @@ void CommPacketParser::parsePacket(QString packet) {
 }
 
 
-void CommPacketParser::routineChange(const std::vector<int>& intVector) {
+void ArduCorPacketParser::routineChange(const std::vector<int>& intVector) {
     QJsonObject routineObject;
     uint32_t tempIndex = 1;
     bool validVector = true;

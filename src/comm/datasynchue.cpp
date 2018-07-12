@@ -64,7 +64,7 @@ void DataSyncHue::syncData() {
             cor::Light commLayerDevice = device;
             if (mComm->fillDevice(commLayerDevice)) {
                 if (device.commType() == ECommType::hue) {
-                    if (checkThrottle(device.controller(), device.commType())) {
+                    if (checkThrottle(device.controller, device.commType())) {
                         if (!sync(device, commLayerDevice)) {
                             countOutOfSync++;
                         }
@@ -109,21 +109,18 @@ void DataSyncHue::endOfSync() {
 
 bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevice) {
     int countOutOfSync = 0;
-    cor::Controller controller;
 
-    if (!mComm->findDiscoveredController(dataDevice.commType(), dataDevice.controller(), controller)) {
-        return false;
-    }
     QJsonObject object;
-    object["controller"] = commDevice.controller();
+    object["controller"] = commDevice.controller;
     object["commtype"]   = commTypeToString(commDevice.commType());
-    object["index"]      = commDevice.index();
+    object["index"]      = commDevice.index;
+    object["uniqueID"]   = commDevice.controller;
 
     // get a bridge
     hue::Bridge bridge;
     bool bridgeFound = false;
     for (auto foundBridge : mComm->hue()->discovery()->bridges()) {
-        if (foundBridge.id == dataDevice.controller()) {
+        if (foundBridge.id == dataDevice.controller) {
             bridge = foundBridge;
             bridgeFound = true;
         }
@@ -144,7 +141,7 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
                 routineObject["blue"]    = hsvColor.blue();
 
                 object["routine"] = routineObject;
-    //            qDebug() << " packet " << message;
+               // qDebug() << " packet " << object;
                 countOutOfSync++;
             }
         } else if (commDevice.colorMode == EColorMode::CT) {
@@ -160,7 +157,7 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
         }
 
         if (cor::brightnessDifference(commDevice.brightness, dataDevice.brightness) > 0.05f) {
-            //qDebug() << "hue brightness not in sync" << commDevice.brightness << "vs" << dataDevice.brightness;
+           // qDebug() << "hue brightness not in sync" << commDevice.brightness << "vs" << dataDevice.brightness;
             object["brightness"] = dataDevice.brightness;
             countOutOfSync++;
         }
@@ -186,7 +183,7 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
             if (iterator->name.contains("Corluma_timeout")) {
                 QString indexString = iterator->name.split("_").last();
                 int givenIndex = indexString.toInt();
-                if (givenIndex == dataDevice.index()
+                if (givenIndex == dataDevice.index
                         && iterator->status
                         && (mData->timeout() != 0)
                         && countOutOfSync) {
@@ -197,8 +194,8 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
     }
 
     if (countOutOfSync) {
-        mComm->sendPacket(object);
-        resetThrottle(dataDevice.controller(), dataDevice.commType());
+        mComm->hue()->sendPacket(object);
+        resetThrottle(dataDevice.controller, dataDevice.commType());
     }
 
     return (countOutOfSync == 0);
@@ -215,7 +212,7 @@ void DataSyncHue::cleanupSync() {
                 hue::Bridge bridge;
                 bool bridgeFound = false;
                 for (auto foundBridge : mComm->hue()->discovery()->bridges()) {
-                    if (foundBridge.id == device.controller()) {
+                    if (foundBridge.id == device.controller) {
                         bridge = foundBridge;
                         bridgeFound = true;
                     }
@@ -233,7 +230,7 @@ void DataSyncHue::cleanupSync() {
                         if (iterator->name.contains("Corluma_timeout")) {
                             QString indexString = iterator->name.split("_").last();
                             int givenIndex = indexString.toInt();
-                            if (givenIndex == device.index()) {
+                            if (givenIndex == device.index) {
                                 totallySynced = false;
                                 if (mData->timeout() != 0) {
                                     foundTimeout = true;
@@ -244,8 +241,8 @@ void DataSyncHue::cleanupSync() {
                         }
                     }
                     if (!foundTimeout) {
-                        qDebug() << " adding timeout for " << device.index();
-                        mComm->hue()->createIdleTimeout(bridge, device.index(), mData->timeout());
+                        qDebug() << " adding timeout for " << device.index;
+                        mComm->hue()->createIdleTimeout(bridge, device.index, mData->timeout());
                     }
                 }
             }

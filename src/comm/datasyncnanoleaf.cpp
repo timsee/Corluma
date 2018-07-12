@@ -62,7 +62,7 @@ void DataSyncNanoLeaf::syncData() {
             cor::Light commLayerDevice = device;
             if (mComm->fillDevice(commLayerDevice)) {
                 if (device.protocol() == EProtocolType::nanoleaf) {
-                    if (checkThrottle(device.controller(), device.commType())) {
+                    if (checkThrottle(device.controller, device.commType())) {
                         if (!sync(device, commLayerDevice)) {
                             countOutOfSync++;
                         }
@@ -106,10 +106,6 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
     int countOutOfSync = 0;
     cor::Controller controller;
 
-    if (!mComm->findDiscoveredController(dataDevice.commType(), dataDevice.controller(), controller)) {
-        return false;
-    }
-
     // find nanoleaf controller
     nano::LeafController leafController;
     if (!mComm->nanoleaf()->findNanoLeafController(controller, leafController)) {
@@ -117,9 +113,9 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
     }
 
     QJsonObject object;
-    object["controller"] = commDevice.controller();
+    object["controller"] = commDevice.controller;
     object["commtype"]   = commTypeToString(commDevice.commType());
-    object["index"]      = commDevice.index();
+    object["uniqueID"]   = commDevice.uniqueID();
 
     if (dataDevice.isOn) {
         //-------------------
@@ -215,8 +211,8 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
     }
 
     if (countOutOfSync) {
-        mComm->sendPacket(object);
-        resetThrottle(dataDevice.controller(), dataDevice.commType());
+        mComm->nanoleaf()->sendPacket(object);
+        resetThrottle(dataDevice.controller, dataDevice.commType());
     }
 
     return (countOutOfSync == 0);

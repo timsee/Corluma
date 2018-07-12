@@ -46,9 +46,9 @@ CustomColorPicker::CustomColorPicker(QWidget *parent) : QWidget(parent) {
     mLayout->addWidget(mColorGrid, 4);
 
     std::list<cor::Light> devices;
-    cor::Light light;
-    light.routine = ERoutine::singleSolid;
     for (uint32_t i = 0; i < mMaximumSize; ++i) {
+        cor::Light light(QString(i), ECommType::MAX);
+        light.routine = ERoutine::singleSolid;
         light.color = QColor(140, 140, 140);
         devices.push_back(light);
     }
@@ -66,14 +66,15 @@ void CustomColorPicker::updateMultiColor(const std::vector<QColor>& colors) {
 
 void CustomColorPicker::updateDisplay() {
     std::list<cor::Light> devices;
-    cor::Light light;
-    light.routine = ERoutine::singleSolid;
     for (uint32_t i = 0; i < mColorsUsed; ++i) {
+        cor::Light light(QString(i), ECommType::MAX);
+        light.routine = ERoutine::singleSolid;
         light.color = mColors[i];
         devices.push_back(light);
     }
 
     for (uint32_t i = mColorsUsed; i < mMaximumSize; ++i) {
+        cor::Light light(QString(i), ECommType::MAX);
         light.color = QColor(140, 140, 140);
         devices.push_back(light);
     }

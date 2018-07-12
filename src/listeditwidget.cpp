@@ -61,19 +61,15 @@ void ListEditWidget::updateDevices(std::list<cor::Light> devices, bool removeIfN
         //----------------
 
         if (!foundDevice) {
-            // TODO: remove edge case...
-            if ((inputDevice.commType() != ECommType::hue && inputDevice.isReachable)
-                    || inputDevice.commType() == ECommType::hue) {
-                if (inputDevice.color.isValid()) {
+            if (inputDevice.color.isValid()) {
 
-                    ListDeviceWidget *widget = new ListDeviceWidget(inputDevice,
-                                                                    false,
-                                                                    mWidgetSize,
-                                                                    this);
-                    widget->hideOnOffSwitch(true);
-                    connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
-                    insertWidget(widget);
-                }
+                ListDeviceWidget *widget = new ListDeviceWidget(inputDevice,
+                                                                false,
+                                                                mWidgetSize,
+                                                                this);
+                widget->hideOnOffSwitch(true);
+                connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
+                insertWidget(widget);
             }
         }
     }

@@ -228,8 +228,8 @@ void EditGroupPage::saveChanges() {
     bool devicesAreValid = true;
     if (newDevices.size() > 0) {
         for (auto& device : newDevices) {
-            if (device.controller().compare("") == 0
-                    || device.index() == 0) {
+            if (device.controller.compare("") == 0
+                    || device.index == 0) {
                 devicesAreValid = false;
             }
         }

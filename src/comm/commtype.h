@@ -3,18 +3,16 @@
 #define COMMTYPE_H
 
 #include <QString>
-#include <QList>
-#include <QSettings>
-#include <QDebug>
-#include <QWidget>
-#include <memory>
-#include <unordered_map>
-#include <sstream>
 #include <QTime>
+#include <QElapsedTimer>
 #include <QTimer>
 
+
+#include <memory>
+#include <unordered_map>
+
+#include "arducor/controller.h"
 #include "cor/light.h"
-#include "cor/controller.h"
 #include "crccalculator.h"
 
 /*!
@@ -33,6 +31,10 @@
 class CommType : public QObject {
     Q_OBJECT
 public:
+
+    /// constructor
+    CommType(ECommType type);
+
     /*!
      * \brief ~CommType Destructor
      */
@@ -55,49 +57,9 @@ public:
      */
     virtual void shutdown() = 0;
 
-    /*!
-     * \brief hasStarted true if startup has been called and a shutdown has not be called after it, false otherwise.
-     * \return true if startup has been called and a shutdown has not be called after it, false otherwise.
-     */
-    bool hasStarted() { return mHasStarted; }
-
-    /*!
-     * \brief sendPacket Sends the provided string over the
-     *        connection stream.
-     * \param packet the packet that is going to be sent
-     */
-    virtual void sendPacket(const cor::Controller& controller, QString& packet) = 0;
-
-    /*!
-     * \brief sendPacket send a packet based off of a JSON object containing all
-     *        relevant information about the packet
-     * \param object json representation of the packet to send
-     */
-    virtual void sendPacket(const QJsonObject& object) = 0;
-
     // ----------------------------
     // Mode Management
     // ----------------------------
-
-    /*!
-     * \brief startDiscovery start sending discovery packets if needed, and continually request
-     *        state update packets.
-     */
-    void startDiscovery();
-
-    /*!
-     * \brief stopDiscovery stop sending discovery packets and go back to requesting state update
-     *        packets only when in use.
-     */
-    void stopDiscovery();
-
-    /*!
-     * \brief runningDiscovery true if theres any controller that is going through the discovery
-     *        routines and hasn't been discovered, false otherwise.
-     * \return true if theres any controller that is going through the discovery
-     *        routines and hasn't been discovered, false otherwise.
-     */
-    bool runningDiscovery() { return mDiscoveryMode; }
 
     /*!
      * \brief resetStateUpdateTimeout reset the timer tracking when to shutdown the state update thread.
@@ -114,18 +76,18 @@ public:
     // ----------------------------
 
     /*!
-     * \brief startDiscoveringController attempts to add a new controller to the device table.
-     * \param controller the name of the new controller
-     * \return true if the controller is added, false otherwise
-     */
-    bool startDiscoveringController(QString controller);
-
-    /*!
      * \brief removeController attempts to remove the controller from the device table.
      * \param connection the connection you want to remove
      * \return true if the connection exists and was removed, false if it wasn't there in the first place
      */
-    bool removeController(cor::Controller controller);
+    bool removeController(const QString& name);
+
+    /*!
+     * \brief controllerDiscovered attemps to add a controller based off its name and list of lights
+     * \param name name of new controller
+     * \param lights list of lights associated with the controller
+     */
+    void controllerDiscovered(const QString& name, const std::list<cor::Light>& lights);
 
     /*!
      * \brief updateDevice update all the data in the light device that matches the same controller and index.
@@ -146,79 +108,9 @@ public:
      * \brief deviceList list of the light devices
      * \return list of the light devices
      */
-    const std::unordered_map<std::string, std::list<cor::Light> >& deviceTable() { return mDeviceTable; }
-
-    /*!
-     * \brief discoveredList getter for list of discovered devices
-     * \return list of discovered devices.
-     */
-    const std::list<cor::Controller>& discoveredList() { return mDiscoveredList; }
-
-    /*!
-     * \brief undiscoveredList getter for list of undiscovered devices.
-     * \return list of undiscovered devices.
-     */
-    std::list<QString> undiscoveredList() { return mUndiscoveredList; }
-
-    // ----------------------------
-    // Persistent Connection list Handling
-    // ----------------------------
-    // Each CommType stores its own list of up to 5 possible connections
-    // in its mList object. This is saved into persistent data and will
-    // reload every time the program is started up.
-
-    /*!
-     * \brief setupConnectionList initializes the connection list and reloads
-     *        it from system memory, if needed
-     * \param type the ECommType of this specific connection.
-     */
-    void setupConnectionList(ECommType type);
-
-    /*!
-     * \brief saveConnectionList must be called by deconstructors, saves the connection list to the app's
-     *        persistent memory.
-     */
-    void saveConnectionList();
-
-
-    // ----------------------------
-    // cor::Controller helpers
-    // ----------------------------
-
-    /*!
-     * \brief deviceControllerFromDiscoveryString takes a discovery string, a controller name, and an empty cor::Controller as input.
-     *       If parsing the string  is successful, it fills the cor::Controller with the info from the discovery string. If its
-     *       unsucessful, it returns false.
-     * \param discovery string received as discovery string
-     * \param controllerName name of controller
-     * \param controller filled if discovery string is valid.
-     * \return true if discovery string is valid, false otherwise.
-     */
-    bool deviceControllerFromDiscoveryString(QString discovery, QString controllerName, cor::Controller& controller);
-
-    /*!
-     * \brief findDiscoveredController checks for a discovered controller with the given name. Returns true and fills the cor::Controller
-     *        given as input if one is found, returns false if one isnt found
-     * \param controllerName name of controller to look for
-     * \param output filled a controller is found
-     * \return true if one is found, false otherwise.
-     */
-    bool findDiscoveredController(QString controllerName, cor::Controller& output);
-
-    /*!
-     * \brief handleIncomingPacket All packets that are sent to any commtype get sent through this function to be sorted
-     *        and sent to the proper subsystems.
-     * \param controllerName name of controller sending payload
-     * \param payload payload received from controller
-     */
-    void handleIncomingPacket(const QString& controllerName, const QString& payload);
+    const std::unordered_map<std::string, std::list<cor::Light> >& deviceTable() const noexcept { return mDeviceTable; }
 
 signals:
-    /*!
-     * \brief packetReceived emitted whenever a packet that is not a discovery packet is received. Contains
-     *        the full packet's contents as a QString.
-     */
-    void packetReceived(QString, QString, ECommType);
 
     /*!
      * \brief updateReceived an update packet was received from any controller.
@@ -236,12 +128,6 @@ protected:
     void preparePacketForTransmission(const cor::Controller& controller, QString& packet);
 
     /*!
-     * \brief resetDiscovery clears the throttle list and discovery list and treats the commtype as if
-     *        nothing has been discovered.
-     */
-    void resetDiscovery();
-
-    /*!
      * \brief shouldContinueStateUpdate checks internal states and determines if it should still keep requesting
      *        state updates from the devices.
      * \return true if it should request state updates, false otherwise.
@@ -254,6 +140,12 @@ protected:
      */
     QTime mLastSendTime;
 
+    /// checks how long the app has been alive for reachability tests
+    QElapsedTimer mElapsedTimer;
+
+    /// periodically check if all lights have sent packets recently.
+    QTimer *mReachabilityTest;
+
     /*!
      * \brief handleDiscoveryPacket called whenever a discovery packet is received by a commtype.
      *        Although all commtypes may received a packet in different ways or in differnt formats,
@@ -264,7 +156,7 @@ protected:
      *        the discovery timer.
      * \param sender the controller that is sending the discovery packet.
      */
-    void handleDiscoveryPacket(cor::Controller sender);
+    void handleDiscoveryPacket(cor::Controller sender, bool found);
 
     /// used to add CRC to outgoing packets.
     CRCCalculator mCRC;
@@ -279,23 +171,6 @@ protected:
     uint32_t mSecondaryUpdatesInterval;
 
     /*!
-     * \brief mDeviceTable hash table of all available devices. the hash key is the controller name
-     *        and the list associated with it is all known devices connected to that controller.
-     */
-    std::unordered_map<std::string, std::list<cor::Light> > mDeviceTable;
-
-    /*!
-     * \brief mUndiscoveredList list of controllers that are not currently discovered but are running
-     *        discovery routines.
-     */
-    std::list<QString> mUndiscoveredList;
-
-    /*!
-     * \brief mDiscoveredList list of devices that have been discovered properly.
-     */
-    std::list<cor::Controller> mDiscoveredList;
-
-    /*!
      * \brief mStateUpdateTimer Polls the controller every few seconds requesting
      *        updates on all of its devices.
      */
@@ -307,84 +182,29 @@ protected:
     int mStateUpdateInterval;
 
     /*!
-     * \brief mDiscoveryUpdateInterval number of msec between sending out each discovery packet.
-     */
-    int mDiscoveryUpdateInterval;
-
-    /*!
-     * \brief mDiscoveryTimer used during discovery to poll the device every few seconds.
-     */
-    QTimer *mDiscoveryTimer;
-
-    /*!
      * \brief mUpdateTimeoutInterval number of msec that it takes the state update timer to
      *        time out and stop sending state update requests.
      */
     int mUpdateTimeoutInterval;
 
     /*!
-     * \brief mDiscoveryMode true if all discovery and state update threads for the commtype
-     *        should be active, false if using the standard lifecyclef for all the threads.
-     */
-    bool mDiscoveryMode;
-
-    /*!
-     * \brief mFullyDiscovered bool that tracks whether or not all the controllers the commtype
-     *        is looking for have been discovered. This gets set to false if a discovery routine
-     *        starts looking for a new controller.
-     */
-    bool mFullyDiscovered;
-
-    /*!
-     * \brief mHasStarted bool that tracks whether or not the startup() routine has been called.
-     *        Gets set to false after the shutdown() routine is callsed.
-     */
-    bool mHasStarted;
-
-    /// string at the beginning of each discovery packet.
-    static const QString kDiscoveryPacketIdentifier;
-
-private:
-
-    // ----------------------------
-    // Connection List Helpers
-    // ----------------------------
-
-    /*!
-     * \brief settingsIndexKey returns a settings key based on the index
-     * \param index the index for the key
-     * \return a QString of a key that represents the comm type and index
-     */
-    QString settingsIndexKey(int index);
-
-    /*!
-     * \brief settingsListSizeKey a key for saving and accessing the size of the array
-     *        the array of saved values in the saved data that persists between sessions.
-     * \return a Qstring of a key that contains the comm type.
-     */
-    QString settingsListSizeKey();
-
-    /*!
-     * \brief checkIfConnectionIsValid based on the comm type, it checks if the
-     *        new connection name is a valid connection name for that platform.
-     * \param connection the name of the connection that you want to check for validity
-     * \return  true if the connection has a valid name, false otherwise.
-     */
-    bool checkIfControllerIsValid(QString controller);
-
-    // ----------------------------
-    // Connection List Variables
-    // ----------------------------
-
-    /*!
-     * \brief mSettings Device independent persistent application memory access
-     */
-    QSettings *mSettings;
-
-    /*!
      * \brief mType the type CommType this is, meaning UDP, Serial, HTTP, etc.
      */
     ECommType mType;
+
+private slots:
+
+    /// slot for timer that periodically checks if any lights not reachable
+    void checkReachability();
+
+private:
+
+    /*!
+     * \brief mDeviceTable hash table of all available devices. the hash key is the controller name
+     *        and the list associated with it is all known devices connected to that controller.
+     */
+    std::unordered_map<std::string, std::list<cor::Light> > mDeviceTable;
+
 };
 
 #endif // COMMTYPE_H

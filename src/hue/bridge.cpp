@@ -1,4 +1,5 @@
 #include "bridge.h"
+#include "huelight.h"
 
 namespace hue
 {

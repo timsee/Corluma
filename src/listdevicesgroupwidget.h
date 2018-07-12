@@ -10,8 +10,6 @@
 
 #include "listcollectionwidget.h"
 #include "listdevicewidget.h"
-#include "datalayer.h"
-#include "comm/commlayer.h"
 
 
 /*!
@@ -33,13 +31,9 @@ public:
      * \brief ListDevicesGroupWidget constructor
      * \param group group of lights
      * \param key unique key for collection
-     * \param comm pointer to commlayer
-     * \param data pointer to datalayer
      */
     ListDevicesGroupWidget(const cor::LightGroup& group,
                            QString key,
-                           CommLayer *comm,
-                           DataLayer *data,
                            QWidget *parent);
 
 
@@ -142,18 +136,6 @@ private:
 
     /// handle the state of the select all button
     void handleSelectAllButton();
-
-    /*!
-     * \brief data layer that maintains and tracks the states of the lights
-     *        and the saved data of the GUI
-     */
-    DataLayer *mData;
-
-    /*!
-     * \brief communication pointer to communication object
-     *        for sending comannds to the lights
-     */
-    CommLayer *mComm;
 
     /*!
      * \brief computeHighlightColor computes the top of the widgets highlight color

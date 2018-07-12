@@ -6,21 +6,17 @@
 
 #include "comm/commnanoleaf.h"
 #include "cor/utils.h"
+#include "cor/light.h"
 
 #include <QJsonValue>
 #include <QJsonDocument>
 #include <QVariantMap>
 #include <QJsonObject>
 
-CommNanoleaf::CommNanoleaf() {
+CommNanoleaf::CommNanoleaf() : CommType(ECommType::nanoleaf) {
     mStateUpdateInterval     = 1000;
-    mDiscoveryUpdateInterval = 2500;
 
-    setupConnectionList(ECommType::nanoleaf);
-    mDiscovery = new nano::LeafDiscovery(this, mDiscoveryUpdateInterval);
-    for (auto controller : mDiscovery->notFoundControllers()) {
-        startDiscoveringController(controller.name);
-    }
+    mDiscovery = new nano::LeafDiscovery(this, 2500);
 
     mNetworkManager = new QNetworkAccessManager(this);
     connect(mNetworkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
@@ -31,7 +27,6 @@ CommNanoleaf::CommNanoleaf() {
 }
 
 CommNanoleaf::~CommNanoleaf() {
-    saveConnectionList();
     delete mNetworkManager;
 }
 
@@ -187,7 +182,7 @@ void CommNanoleaf::stateUpdate() {
                 putJSON(request, writeObject);
             }
 
-            if (mDiscoveryMode && mDiscoveredList.size() < mDeviceTable.size()) {
+            if (mDiscovery->foundControllers().size() < deviceTable().size()) {
                 mDiscovery->startDiscovery();
             } else {
                // mDiscovery->stopDiscovery();
@@ -197,15 +192,8 @@ void CommNanoleaf::stateUpdate() {
     }
 }
 
-void CommNanoleaf::sendPacket(const cor::Controller& controller, QString& packet) {
-    preparePacketForTransmission(controller, packet);
-}
-
 void CommNanoleaf::sendPacket(const QJsonObject& object) {
-    if (object["index"].isDouble()
-            && object["controller"].isString()
-            && object["commtype"].isString()
-            && mDeviceTable.size()) {
+    if (object["uniqueID"].isString() && deviceTable().size()) {
 
         // get the controller
         nano::LeafController controller = mDiscovery->findControllerByName(object["controller"].toString());
@@ -263,13 +251,11 @@ void CommNanoleaf::replyFinished(QNetworkReply* reply) {
             }
 
             if (addToDeviceTable) {
-                cor::Controller corController;
-                corController.name = name;
                 std::list<cor::Light> newDeviceList;
-                cor::Light light(1, ECommType::nanoleaf, name);
+                cor::Light light(controller.serialNumber, ECommType::nanoleaf);
+                light.controller = name;
                 newDeviceList.push_back(light);
-                mDeviceTable.insert(std::make_pair(name.toStdString(), newDeviceList));
-                handleDiscoveryPacket(corController);
+                controllerDiscovered(name, newDeviceList);
             }
         } else {
             //qDebug() << "payload" << payload;
@@ -280,13 +266,11 @@ void CommNanoleaf::replyFinished(QNetworkReply* reply) {
                     if (object["auth_token"].isString()) {
                         QString authToken = object["auth_token"].toString();
                         mDiscovery->foundNewAuthToken(controller, authToken);
-                        cor::Controller corController;
-                        corController.name = controller.hardwareName;
                         std::list<cor::Light> newDeviceList;
-                        cor::Light light(1, ECommType::nanoleaf, controller.hardwareName);
+                        cor::Light light(controller.serialNumber, ECommType::nanoleaf);
+                        light.controller = controller.hardwareName;
                         newDeviceList.push_back(light);
-                        mDeviceTable.insert(std::make_pair(corController.name.toStdString(), newDeviceList));
-                        handleDiscoveryPacket(corController);
+                        controllerDiscovered(controller.hardwareName, newDeviceList);
                     } else if (object["serialNo"].isString()
                                && object["name"].isString()) {
                         parseStateUpdatePacket(controller, object);
@@ -307,9 +291,7 @@ void CommNanoleaf::renameController(nano::LeafController controller, const QStri
     QString oldName = controller.name;
 
     // remove from Corluma data
-    cor::Controller corController;
-    corController.name = oldName;
-    removeController(corController);
+    removeController(controller);
 
     // update discovery data
     controller.name = name;
@@ -317,14 +299,14 @@ void CommNanoleaf::renameController(nano::LeafController controller, const QStri
 
     // add light to new controller
     std::list<cor::Light> newDeviceList;
-    corController.name = name;
-    cor::Light light(1, ECommType::nanoleaf, name);
+    cor::Light light(controller.serialNumber,ECommType::nanoleaf);
+    light.controller = name;
     newDeviceList.push_back(light);
-    mDeviceTable.insert(std::make_pair(name.toStdString(), newDeviceList));
-    handleDiscoveryPacket(corController);
+    controllerDiscovered(name, newDeviceList);
 
     // signal to update group data
-    cor::Light oldLight(1, ECommType::nanoleaf, oldName);
+    cor::Light oldLight(controller.serialNumber, ECommType::nanoleaf);
+    oldLight.name = oldName;
     emit lightRenamed(oldLight, name);
 
 }
@@ -412,7 +394,8 @@ void CommNanoleaf::parseCommandRequestPacket(const nano::LeafController& control
 
         }
 
-        cor::Light light(1, ECommType::nanoleaf, controller.name);
+        cor::Light light(controller.serialNumber, ECommType::nanoleaf);
+        light.controller = controller.name;
         fillDevice(light);
         // the display is always treated as custom colors, its only ever used by custom routines though
         light.customColors = colors;
@@ -559,13 +542,13 @@ void CommNanoleaf::parseStateUpdatePacket(nano::LeafController& controller, cons
                 && stateObject["sat"].isObject()
                 && stateObject["ct"].isObject()
                 && stateObject["colorMode"].isString()) {
-            cor::Light light(1, ECommType::nanoleaf, controller.name);
+            cor::Light light(controller.serialNumber, ECommType::nanoleaf);
+            light.controller = controller.name;
             fillDevice(light);
 
             light.isReachable = true;
             light.hardwareType = ELightHardwareType::nanoleaf;
             light.name = controller.name;
-            light.uniqueID = controller.serialNumber;
 
             int hue = 0;
             int sat = 0;
@@ -920,7 +903,8 @@ void CommNanoleaf::routineChange(const nano::LeafController& controller, QJsonOb
     if (routine == ERoutine::singleSolid) {
         singleSolidColorChange(controller, color);
     } else {
-        cor::Light light(1, ECommType::nanoleaf, controller.name);
+        cor::Light light(controller.serialNumber, ECommType::nanoleaf);
+        light.controller = controller.name;
         fillDevice(light);
         light.routine = routine;
 

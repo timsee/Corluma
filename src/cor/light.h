@@ -33,18 +33,10 @@ class Light {
 
 public:
 
-    /// constructor
-    Light();
-
     /*!
      * \brief Light Constructor
      */
-    Light(int index, ECommType commType, QString controller);
-
-    /*!
-     * \brief uniqueID a unique identifier of that particular light.
-     */
-    QString uniqueID;
+    Light(const QString& uniqueID, ECommType commType);
 
     /*!
      * \brief isReachable true if we can communicate with it, false otherwise
@@ -75,6 +67,13 @@ public:
     //-----------------------
 
     /*!
+     * \brief controller the name of the connection. This varies by connection type. For example,
+     *        a UDP connection will use its IP address as a name, or a serial connection
+     *        will use its serial port.
+     */
+    QString controller = "UNINITIALIZED";
+
+    /*!
      * \brief routine current lighting routine for this device.
      */
     ERoutine routine;
@@ -92,6 +91,9 @@ public:
 
     /// slight hack for app memory, custom count of colors used by ArduCor are stored here.
     uint32_t customCount;
+
+    /// used by not reachable checks to determine if a light is reachable
+    qint64 lastUpdateTime;
 
     /*!
      * \brief speed speed of updates to lighting routines.
@@ -122,6 +124,12 @@ public:
      */
     int timeout;
 
+    /*!
+     * \brief index the index of the hue, each bridge gives an index for all of the
+     *        connected hues.
+     */
+    int index;
+
     //-----------------------
     // types and metadata
     //-----------------------
@@ -147,33 +155,30 @@ public:
      */
     QString name;
 
-    /// getter for index
-    int index() const { return mIndex; }
+    /// getter for unique ID
+    const QString& uniqueID() const { return mUniqueID; }
 
     /// getter for type
     ECommType commType() const { return mCommType; }
 
     EProtocolType protocol() const { return mProtocol; }
-
-    /// getter for controller
-    QString controller() const { return mController; }
-
     /// equal operator
     bool operator==(const cor::Light& rhs) const {
         bool result = true;
+        if (uniqueID()      !=  rhs.uniqueID()) result = false;
         if (isReachable     !=  rhs.isReachable) result = false;
         if (isOn            !=  rhs.isOn) result = false;
         if (color           !=  rhs.color) result = false;
         if (routine         !=  rhs.routine) result = false;
         if (palette.JSON()  !=  rhs.palette.JSON()) result = false;
         if (brightness      !=  rhs.brightness) result = false;
-        if (index()         !=  rhs.index()) result = false;
+        if (index           !=  rhs.index) result = false;
         if (commType()      !=  rhs.commType()) result = false;
         if (protocol()      !=  rhs.protocol()) result = false;
         if (colorMode       !=  rhs.colorMode) result = false;
         if (timeout         !=  rhs.timeout) result = false;
         if (speed           !=  rhs.speed) result = false;
-        if (controller().compare(rhs.controller())) result = false;
+        if (controller.compare(rhs.controller)) result = false;
 
         return result;
     }
@@ -181,6 +186,7 @@ public:
     operator QString() const {
         std::stringstream tempString;
         tempString << "cor::Light Device: "
+                   << " uniqueID: " << uniqueID().toStdString()
                    << " name: " << name.toStdString()
                    << " isReachable: " << isReachable
                    << " isOn: " << isOn
@@ -188,10 +194,11 @@ public:
                    << " routine: " << routineToString(routine).toUtf8().toStdString()
                    << " palette: " << palette
                    << " brightness: " << brightness
-                   << " index: " << index()
+                   << " API: " << majorAPI << "." << minorAPI
+                   << " index: " << index
                    << " CommType: " << commTypeToString(commType()).toUtf8().toStdString()
                    << " Protocol: " << protocolToString(protocol()).toUtf8().toStdString()
-                   << " controller: " << controller().toUtf8().toStdString();
+                   << " controller: " << controller.toUtf8().toStdString();
         return QString::fromStdString(tempString.str());
     }
 
@@ -199,22 +206,14 @@ public:
 private:
 
     /*!
-     * \brief mIndex the index of the hue, each bridge gives an index for all of the
-     *        connected hues.
+     * \brief mUniqueID a unique identifier of that particular light.
      */
-    int mIndex;
+    QString mUniqueID;
 
     /*!
      * \brief mCommType determines whether the connection is based off of a hue, UDP, HTTP, etc.
      */
     ECommType mCommType;
-
-    /*!
-     * \brief mController the name of the connection. This varies by connection type. For example,
-     *        a UDP connection will use its IP address as a name, or a serial connection
-     *        will use its serial port.
-     */
-    QString mController;
 
     /// type of protocol for packets
     EProtocolType mProtocol;
@@ -230,7 +229,7 @@ QJsonObject lightToJson(const cor::Light& light);
 
 /// compares light devices, ignoring state data and paying attention only to values that don't change.
 inline bool compareLight(const cor::Light& lhs, const cor::Light& rhs) {
-    return (lhs.uniqueID == rhs.uniqueID);
+    return (lhs.uniqueID() == rhs.uniqueID());
 }
 
 #endif // COR_LIGHT_H

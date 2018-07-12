@@ -15,9 +15,9 @@
 #include <QSignalMapper>
 #include <QPropertyAnimation>
 
-ColorPage::ColorPage(QWidget *parent, DataLayer *data) :
-    QWidget(parent) {
-    mData = data;
+ColorPage::ColorPage(QWidget *parent) :
+    QWidget(parent),
+    mColorScheme(5, QColor(0, 255, 0)) {
 
     mBottomMenuState = EBottomMenuShow::showStandard;
     mBottomMenuIsOpen = false;
@@ -30,7 +30,7 @@ ColorPage::ColorPage(QWidget *parent, DataLayer *data) :
     connect(mSingleRoutineWidget, SIGNAL(newRoutineSelected(QJsonObject)), this, SLOT(newRoutineSelected(QJsonObject)));
 
     mCurrentSingleRoutine = mSingleRoutineWidget->routines()[3].second;
-    mLastColor = QColor(0, 255, 0);
+    updateColor(QColor(0, 255, 0));
 
     mSpacer = new QWidget(this);
 
@@ -69,9 +69,9 @@ ColorPage::~ColorPage() {
 void ColorPage::changePageType(EColorPageType page, bool skipAnimation) {
     mPageType = page;
 
-    mColorPicker->updateColorStates(mData->mainColor(),
-                                       mData->brightness(),
-                                       createColorScheme(mData->currentDevices()));
+    mColorPicker->updateColorStates(mColor,
+                                    mBrightness,
+                                    mColorScheme);
     if (mPageType == EColorPageType::RGB) {
         mColorPicker->changeLayout(ELayoutColorPicker::standardLayout, skipAnimation);
     } else if (mPageType == EColorPageType::ambient) {
@@ -122,7 +122,7 @@ void ColorPage::showSingleRoutineWidget(bool shouldShow) {
         mBottomMenuState = EBottomMenuShow::showStandard;
     } else if (mBottomMenuState != EBottomMenuShow::showSingleRoutines && shouldShow) {
         mSingleRoutineWidget->raise();
-        mSingleRoutineWidget->singleRoutineColorChanged(mData->mainColor());  // update colors of single color routine
+        mSingleRoutineWidget->singleRoutineColorChanged(mColor);  // update colors of single color routine
         QPropertyAnimation *animation = new QPropertyAnimation(mSingleRoutineWidget, "pos");
         animation->setDuration(TRANSITION_TIME_MSEC);
         animation->setStartValue(mSingleRoutineWidget->pos());
@@ -151,21 +151,6 @@ void ColorPage::showMultiRoutineWidget(bool shouldShow) {
     }
 }
 
-std::vector<QColor> ColorPage::createColorScheme(std::list<cor::Light> devices) {
-    std::vector<QColor> colorScheme;
-    int count = 0;
-    int max = 5;
-    for (auto&& device : devices) {
-        if (count >= max) {
-            break;
-        } else {
-           colorScheme.push_back(device.color);
-        }
-        count++;
-    }
-    return colorScheme;
-}
-
 // ----------------------------
 // Slots
 // ----------------------------
@@ -173,9 +158,9 @@ std::vector<QColor> ColorPage::createColorScheme(std::list<cor::Light> devices) 
 void ColorPage::newRoutineSelected(QJsonObject routineObject) {
     ERoutine routine = stringToRoutine(routineObject["routine"].toString());
     if (routine <= cor::ERoutineSingleColorEnd) {
-        routineObject["red"]   = mLastColor.red();
-        routineObject["green"] = mLastColor.green();
-        routineObject["blue"]  = mLastColor.blue();
+        routineObject["red"]   = mColor.red();
+        routineObject["green"] = mColor.green();
+        routineObject["blue"]  = mColor.blue();
     } else {
         Palette palette(paletteToString(EPalette::custom), mColorPicker->colors());
         routineObject["palette"] = palette.JSON();
@@ -187,7 +172,7 @@ void ColorPage::newRoutineSelected(QJsonObject routineObject) {
     }
 
     // get color
-    mData->updateRoutine(routineObject);
+    emit routineUpdate(routineObject);
     if (routine <= cor::ERoutineSingleColorEnd) {
         mCurrentSingleRoutine = routineObject;
     } else {
@@ -196,15 +181,14 @@ void ColorPage::newRoutineSelected(QJsonObject routineObject) {
 }
 
 void ColorPage::colorChanged(QColor color) {
-    mLastColor = color;
-    mCurrentSingleRoutine["red"]   = mLastColor.red();
-    mCurrentSingleRoutine["green"] = mLastColor.green();
-    mCurrentSingleRoutine["blue"]  = mLastColor.blue();
+    updateColor(color);
+    mCurrentSingleRoutine["red"]   = mColor.red();
+    mCurrentSingleRoutine["green"] = mColor.green();
+    mCurrentSingleRoutine["blue"]  = mColor.blue();
     mCurrentSingleRoutine["isOn"]  = true;
 
-    mData->updateRoutine(mCurrentSingleRoutine);
-    // set all the lights to the given brightness
-    mData->updateBrightness(mData->brightness());
+    emit routineUpdate(mCurrentSingleRoutine);
+    emit brightnessChanged(mBrightness);
 
     if (mBottomMenuState == EBottomMenuShow::showSingleRoutines) {
         mSingleRoutineWidget->singleRoutineColorChanged(color);
@@ -215,9 +199,9 @@ void ColorPage::colorChanged(QColor color) {
 
 void ColorPage::customColorCountChanged(int count) {
     Q_UNUSED(count);
-    mColorPicker->updateColorStates(mData->mainColor(),
-                                    mData->brightness(),
-                                    createColorScheme(mData->currentDevices()));
+    mColorPicker->updateColorStates(mColor,
+                                    mBrightness,
+                                    mColorScheme);
 
     mMultiRoutineWidget->multiRoutineColorsChanged(mColorPicker->colors());
 
@@ -233,7 +217,7 @@ void ColorPage::multiColorChanged() {
     // no speed settings for single color routines currently...
     routineObject["speed"] = 125;
 
-    mData->updateRoutine(routineObject);
+    emit routineUpdate(routineObject);
     mMultiRoutineWidget->multiRoutineColorsChanged(mColorPicker->colors());
 
     emit updateMainIcons();
@@ -243,12 +227,12 @@ void ColorPage::ambientUpdateReceived(int newAmbientValue, int newBrightness) {
     QJsonObject routineObject;
     routineObject["routine"] = routineToString(ERoutine::singleSolid);
     QColor color = cor::colorTemperatureToRGB(newAmbientValue);
-    mLastColor = color;
+    updateColor(color);
     routineObject["temperature"]   = newAmbientValue;
     routineObject["isOn"] = true;
 
-    mData->updateRoutine(routineObject);
-    mData->updateBrightness(newBrightness);
+    emit routineUpdate(routineObject);
+    mBrightness = newBrightness;
 
     if (mBottomMenuState == EBottomMenuShow::showSingleRoutines) {
         mSingleRoutineWidget->singleRoutineColorChanged(color);
@@ -258,9 +242,16 @@ void ColorPage::ambientUpdateReceived(int newAmbientValue, int newBrightness) {
 }
 
 void ColorPage::colorsChanged(std::vector<QColor> colors) {
-    mData->updateColorScheme(colors);
-    mData->updateBrightness(mData->brightness());
+    emit schemeUpdate(colors);
+    emit brightnessChanged(mBrightness);
     emit updateMainIcons();
+}
+
+void ColorPage::updateColor(QColor color) {
+    mColor = color;
+    for (auto&& schemeColor : mColorScheme) {
+        schemeColor = color;
+    }
 }
 
 // ----------------------------
@@ -268,11 +259,13 @@ void ColorPage::colorsChanged(std::vector<QColor> colors) {
 // ----------------------------
 
 
-void ColorPage::show() {
-    mLastColor = mData->mainColor();
-    mColorPicker->updateColorStates(mData->mainColor(),
-                                    mData->brightness(),
-                                    createColorScheme(mData->currentDevices()));
+void ColorPage::show(QColor color, uint32_t brightness, std::vector<QColor> colorScheme) {
+    mColor = color;
+    mBrightness = brightness;
+    mColorScheme = colorScheme;
+    mColorPicker->updateColorStates(mColor,
+                                    mBrightness,
+                                    mColorScheme);
 }
 
 void ColorPage::resizeEvent(QResizeEvent *) {

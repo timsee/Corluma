@@ -18,10 +18,9 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector
     mLayout->setContentsMargins(0, 0, 0, 0);
     mLayout->setHorizontalSpacing(0);
     mLayout->setVerticalSpacing(0);
-
+    cor::Light light("Routines", ECommType::MAX);
     if (widgetGroup == EWidgetGroup::singleRoutines) {
         mRoutines = std::vector<std::pair<QString, QJsonObject> >(8);
-        cor::Light light;
         QJsonObject routineObject;
         light.speed = 100;
         light.isOn = true;
@@ -92,7 +91,6 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector
 
     } else if (widgetGroup == EWidgetGroup::multiRoutines) {
         mRoutines = std::vector<std::pair<QString, QJsonObject> >(5);
-        cor::Light light;
         QJsonObject routineObject;
         light.speed = 100;
         light.isOn = true;

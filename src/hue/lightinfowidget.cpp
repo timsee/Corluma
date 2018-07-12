@@ -17,11 +17,9 @@
 namespace hue
 {
 
-LightInfoWidget::LightInfoWidget(HueLight light, QWidget *parent) : QWidget(parent) {
+LightInfoWidget::LightInfoWidget(HueLight light, QWidget *parent) : QWidget(parent), mLight(light) {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     this->setStyleSheet(styleSheet);
-
-    mLight = light;
 
     mName = new EditableFieldWidget(light.name, this, 32, "A hue's name must be at most 32 characters long.");
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -36,7 +34,7 @@ LightInfoWidget::LightInfoWidget(HueLight light, QWidget *parent) : QWidget(pare
     mSoftwareVersion->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mSoftwareVersion->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mUniqueID = new QLabel("<b>ID:</b>  " + light.uniqueID, this);
+    mUniqueID = new QLabel("<b>ID:</b>  " + light.uniqueID(), this);
     mUniqueID->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mUniqueID->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
@@ -52,7 +50,7 @@ LightInfoWidget::LightInfoWidget(HueLight light, QWidget *parent) : QWidget(pare
     mLayout->addWidget(mSoftwareVersion, 3, 0);
     mLayout->addWidget(mUniqueID, 4, 0);
 
-    mKey = QString::number(light.index());
+    mKey = QString::number(light.index);
 
     mIsChecked = false;
     hideDetails(true);

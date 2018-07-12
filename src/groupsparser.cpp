@@ -73,13 +73,7 @@ void GroupsParser::saveNewMood(const QString& groupName, const std::list<cor::Li
             object["minorAPI"]   = device.minorAPI;
         }
 
-        object["controller"] = device.controller();
-        object["index"] = device.index();
-        object["uniqueID"] = device.uniqueID;
-
-        if (device.protocol() != EProtocolType::nanoleaf && device.protocol() != EProtocolType::hue) {
-            object["hardwareType"] = hardwareTypeToString(device.hardwareType);
-        }
+        object["uniqueID"] = device.uniqueID();
         deviceArray.append(object);
     }
 
@@ -124,12 +118,7 @@ void GroupsParser::saveNewCollection(const QString& groupName, const std::list<c
             QJsonObject object;
 
             object["type"] = commTypeToString(device.commType());
-            object["controller"] = device.controller();
-            object["index"] = device.index();
-            object["uniqueID"] = device.uniqueID;
-            if (device.protocol() != EProtocolType::nanoleaf && device.protocol() != EProtocolType::hue) {
-                object["hardwareType"] = hardwareTypeToString(device.hardwareType);
-            }
+            object["uniqueID"] = device.uniqueID();
 
             deviceArray.append(object);
         }
@@ -221,55 +210,12 @@ void GroupsParser::lightDeleted(const QString& uniqueID) {
     // parse the moods, remove from list if needed
     for (auto&& mood : mMoodList) {
         for (auto&& device : mood.devices) {
-            if (device.uniqueID == uniqueID) {
+            if (device.uniqueID() == uniqueID) {
                 mood.devices.remove(device);
                 break;
             }
         }
     }
-}
-
-
-bool GroupsParser::updateLightName(const cor::Light& light, const QString& newName) {
-    if(!mJsonData.isNull()) {
-        if(mJsonData.isArray()) {
-            QJsonArray array = mJsonData.array();
-            int groupIndex = 0;
-            for (auto value : array) {
-                QJsonObject object = value.toObject();
-                if (object["devices"].isArray()) {
-                    QJsonArray deviceArray = object["devices"].toArray();
-                    uint32_t i = 0;
-                    bool foundADifference = false;
-                    for (auto deviceValue : deviceArray) {
-                        QJsonObject deviceObject = deviceValue.toObject();
-                        if (deviceObject["type"].isString() && deviceObject["name"].isString()) {
-                            ECommType type = stringToCommType(deviceObject["type"].toString());
-                            QString oldName = deviceObject["name"].toString();
-                            if (oldName != newName) {
-                                if (oldName == light.controller() && type == ECommType::nanoleaf) {
-                                    deviceArray.removeAt(i);
-                                    foundADifference = true;
-                                    deviceObject["controller"] = newName;
-                                    deviceArray.push_back(deviceObject);
-                                }
-                            }
-                        }
-                        ++i;
-                    }
-                    if (foundADifference) {
-                        object["devices"] = deviceArray;
-                        array.removeAt(groupIndex);
-                        array.push_back(object);
-                    }
-                }
-                ++groupIndex;
-            }
-            mJsonData.setArray(array);
-            saveJSON();
-        }
-    }
-    return true;
 }
 
 bool GroupsParser::removeGroup(const QString& groupName, bool isMood) {
@@ -330,25 +276,19 @@ void GroupsParser::parseCollection(const QJsonObject& object) {
         foreach (const QJsonValue &value, deviceArray) {
             QJsonObject device = value.toObject();
             if ( device["type"].isString()
-                 && device["controller"].isString()
-                 && device["uniqueID"].isString()
-                 && device["index"].isDouble()) {
+                 && device["uniqueID"].isString()) {
                 // convert to Qt types from json data
                 QString typeString = device["type"].toString();
-                QString controller = device["controller"].toString();
                 QString uniqueID = device["uniqueID"].toString();
-
-                ELightHardwareType hardwareType = stringToHardwareType(device["hardwareType"].toString());
-                int index = device["index"].toDouble();
 
                 // convert to Corluma types from certain Qt types
                 ECommType type = stringToCommType(typeString);
 
-                cor::Light light(index, type, controller);
-                light.uniqueID = uniqueID;
-                if (light.protocol() != EProtocolType::nanoleaf && light.protocol() != EProtocolType::hue) {
-                    light.hardwareType = hardwareType;
+                cor::Light light(uniqueID, type);
+                if (light.protocol() == EProtocolType::arduCor) {
+                    light.name = uniqueID;
                 }
+
                 list.push_back(light);
             } else {
                 qDebug() << __func__ << " device broken";
@@ -368,8 +308,6 @@ void GroupsParser::parseCollection(const QJsonObject& object) {
 
 bool GroupsParser::checkIfMoodIsValid(const QJsonObject& device) {
     bool hasMetaData = (device["type"].isString()
-            && device["controller"].isString()
-            && device["index"].isDouble()
             && device["uniqueID"].isString()
             && device["isOn"].isBool());
 
@@ -415,14 +353,10 @@ void GroupsParser::parseMood(const QJsonObject& object) {
             QJsonObject device = value.toObject();
             if (checkIfMoodIsValid(device))
             {
-                QString id = device["id"].toString();
-
                 // convert to Qt types from json data
                 QString modeString = device["colorMode"].toString();
                 QString typeString = device["type"].toString();
-                QString controller = device["controller"].toString();
                 QString uniqueID   = device["uniqueID"].toString();
-                int index = device["index"].toDouble();
 
                 // convert to Corluma types from certain Qt types
                 ECommType type = stringToCommType(typeString);
@@ -434,6 +368,9 @@ void GroupsParser::parseMood(const QJsonObject& object) {
                 int green = device["green"].toDouble();
                 int blue = device["blue"].toDouble();
 
+                int majorAPI = device["majorAPI"].toDouble();
+                int minorAPI = device["minorAPI"].toDouble();
+
                 int brightness = device["brightness"].toDouble();
 
                 ERoutine routine = stringToRoutine(device["routine"].toString());
@@ -443,10 +380,11 @@ void GroupsParser::parseMood(const QJsonObject& object) {
                     speed = device["speed"].toDouble();
                 }
 
-                cor::Light light(index, type, controller);
-                light.uniqueID = uniqueID;
+                cor::Light light(uniqueID, type);
                 light.isReachable = true;
                 light.isOn = isOn;
+                light.majorAPI = majorAPI;
+                light.minorAPI = minorAPI;
                 light.color = QColor(red, green, blue);
                 light.routine = routine;
                 light.palette = Palette(device["palette"].toObject());
@@ -472,33 +410,6 @@ void GroupsParser::parseMood(const QJsonObject& object) {
     }
 }
 
-void GroupsParser::findNewControllers(QJsonObject object) {
-    QJsonArray deviceArray = object["devices"].toArray();
-    foreach (const QJsonValue &value, deviceArray) {
-        QJsonObject device = value.toObject();
-        // check if connection exists in app memory already
-        if (device["type"].isString()
-                && device["controller"].isString()) {
-            if( device["type"].toString().compare(commTypeToString(ECommType::HTTP)) == 0
-                    || device["type"].toString().compare(commTypeToString(ECommType::UDP)) == 0) {
-                bool foundConnectionInList = false;
-                QString controllerName = device["controller"].toString();
-                for (auto&& connection : mNewConnections) {
-                    if (connection.compare(controllerName) == 0) {
-                        foundConnectionInList = true;
-                    }
-                }
-                if (!foundConnectionInList) {
-                    // if it doesn't exist, signal to the discovery page to add it.
-                    mNewConnections.push_front(controllerName);
-                    emit newConnectionFound(controllerName);
-                }
-            }
-        } else {
-            qDebug() << "WARNING: groups parser didn't contain the proper data...";
-        }
-    }
-}
 
 //-------------------
 // File Manipulation
@@ -553,9 +464,7 @@ bool GroupsParser::checkIfGroupIsValid(const QJsonObject& object) {
     foreach (const QJsonValue &value, deviceArray) {
         QJsonObject device = value.toObject();
         if (!(device["uniqueID"].isString()
-              && device["type"].isString()
-              && device["controller"].isString()
-              && device["index"].isDouble())) {
+              && device["type"].isString())) {
             qDebug() << "one of the objects is invalid!" << device;
             return false;
         }
@@ -564,8 +473,7 @@ bool GroupsParser::checkIfGroupIsValid(const QJsonObject& object) {
                 qDebug() << "one of the mood specific values is invalid! for"
                          <<  object["name"].toString()
                           << device["type"].toString()
-                          << device["uniqueID"].toString()
-                          << device["index"].toDouble();
+                          << device["uniqueID"].toString();
                 return false;
             }
         }
@@ -591,7 +499,6 @@ bool GroupsParser::loadJSON() {
                     } else {
                         parseCollection(object);
                     }
-                    findNewControllers(object);
                 }
             }
             return true;

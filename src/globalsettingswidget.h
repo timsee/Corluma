@@ -8,8 +8,9 @@
 
 #include "cor/slider.h"
 #include "cor/checkbox.h"
-#include "comm/commlayer.h"
-#include "datalayer.h"
+#include "comm/protocolsettings.h"
+#include "groupsparser.h"
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2018.
@@ -26,12 +27,15 @@ class GlobalSettingsWidget : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit GlobalSettingsWidget(QWidget *parent, CommLayer *comm, DataLayer *data, ProtocolSettings *protocols);
+    explicit GlobalSettingsWidget(QWidget *parent, ProtocolSettings *protocols);
 
     /*!
      * \brief updateUI updates the colors of various settings in the UI.
      */
     void updateUI();
+
+    /// true if timeout is enabled, false if not
+    bool useTimeout() { return mTimeoutCheckBox->checked(); }
 
     /*!
      * \brief checkBoxClicked helper for checking if a checkbox is checked. checkmate!
@@ -45,6 +49,17 @@ public:
 
     /// resizes the contents in the widget
     void resize();
+
+signals:
+
+    /// emitted when a protocol is turned off and on.
+    void protocolSettingsUpdate(EProtocolType, bool);
+
+    /// emitted when the timeout value is updateded
+    void timeoutUpdate(int);
+
+    /// emitted when timeout is enabled/disabled
+    void timeoutEnabled(bool);
 
 public slots:
 
@@ -176,15 +191,6 @@ private:
      *        through.
      */
     std::vector<QPushButton*> mConnectionButtons;
-
-    /*!
-     * \brief communication pointer to communication object
-     *        for sending comannds to the lights
-     */
-    CommLayer *mComm;
-
-    /// pointer to data layer
-    DataLayer *mData;
 
     /*!
      * \brief mSettings pointer to QSettings, used to store and access data in persistent app memory.

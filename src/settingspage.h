@@ -9,7 +9,6 @@
 
 #include "cor/page.h"
 #include "cor/slider.h"
-#include "comm/commlayer.h"
 #include "settingsbutton.h"
 #include "cor/webview.h"
 #include "globalsettingswidget.h"
@@ -48,7 +47,7 @@ public:
     /*!
      * \brief Constructor
      */
-    explicit SettingsPage(QWidget *parent, CommLayer *comm, DataLayer *data, GroupsParser *parser, ProtocolSettings *protocols);
+    explicit SettingsPage(QWidget *parent, GroupsParser *parser, ProtocolSettings *protocols);
 
     /*!
      * \brief Destructor

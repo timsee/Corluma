@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "cor/button.h"
 #include "cor/slider.h"
+#include "cor/light.h"
 
 namespace cor
 {

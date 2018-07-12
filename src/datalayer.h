@@ -229,6 +229,9 @@ public:
      */
     const std::list<cor::Light>& currentDevices() { return mCurrentDevices; }
 
+    /// getter for the color scheme colors
+    std::vector<QColor> colorScheme();
+
     /*!
      * \brief hasHueDevices helper that determines if you should be using hue-related assets
      *        on a GUI page or non hue related assets.

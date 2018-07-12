@@ -134,8 +134,7 @@ private:
     PresetPalettes mPresetPalettes;
 
     /*!
-     * \brief setupButtons sets up the routine buttons. Requires the DataLayer
-     *        of the application to be set up first.
+     * \brief setupButtons sets up the routine buttons.
      */
     void setupButtons();
 

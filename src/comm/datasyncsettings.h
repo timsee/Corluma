@@ -7,7 +7,7 @@
 
 #include "datalayer.h"
 #include "datasync.h"
-#include "comm/commpacketparser.h"
+#include "arducor/arducorpacketparser.h"
 
 /*!
  * \copyright
@@ -79,7 +79,7 @@ private:
     bool sync(const cor::Light& dataDevice, const cor::Light& commDevice) override;
 
     /// parses variables for a packet and turns it into ArduCor compatible packets
-    CommPacketParser *mParser;
+    ArduCorPacketParser *mParser;
 
     /// pointer to the app states that determine if a protocol (such as arducor or nanoleaf) is currently enabled
     ProtocolSettings *mProtocolSettings;

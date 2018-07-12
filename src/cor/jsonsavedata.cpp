@@ -51,9 +51,6 @@ bool JSONSaveData::checkForJSON() {
     qDebug() << "WARNING: using default json data";
     QJsonArray defaultArray;
     mJsonData = QJsonDocument(defaultArray);
-    if (mJsonData.isNull()) {
-        qDebug() << "WARNING: JSON is null!";
-    }
     return true;
 }
 
@@ -65,12 +62,12 @@ bool JSONSaveData::saveJSON() {
     }
     QFile saveFile(mSavePath);
     if (!saveFile.open(QIODevice::ReadWrite | QIODevice::Text)) {
-        qDebug() << "WARNING: Couldn't open save file.";
+        qDebug() << "WARNING: save file exists and couldn't be opened.";
         return false;
     }
 
     if (mJsonData.isNull()) {
-        qDebug() << "WARNING: json data is null!";
+        //qDebug() << "WARNING: json data is null!";
         return false;
     }
     saveFile.write(mJsonData.toJson());

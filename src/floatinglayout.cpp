@@ -39,22 +39,12 @@ FloatingLayout::FloatingLayout(bool makeVertical, QWidget *parent) : QWidget(par
 }
 
 void FloatingLayout::highlightButton(QString key) {
-   this->blockSignals(true);
-    bool found = false;
-    for (uint32_t i = 0; i < mButtons.size(); ++i) {
-        if (mNames[i].compare(key) == 0) {
-            found = true;
-            buttonPressed(i);
-        }
-    }
-    // in the case of no found, default to given values.
-    if (!found) {
-        for (uint32_t i = 0; i < mButtons.size(); ++i) {
-            if (mNames[i].compare("RGB") == 0) {
-                buttonPressed(i);
-            }
-        }
-    }
+    this->blockSignals(true);
+
+    auto result = std::find(mNames.begin(), mNames.end(), key);
+    auto index = std::distance(mNames.begin(), result);
+    buttonPressed(index);
+
     this->blockSignals(false);
 }
 
@@ -108,13 +98,12 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
     mButtons = std::vector<QPushButton*>(buttons.size(), nullptr);
     mNames = buttons;
 
-
-    cor::Light light;
-    light.routine = ERoutine::singleSolid;
-    light.color = QColor(255, 0, 0);
-
     QSignalMapper *buttonsMapper = new QSignalMapper(this);
     for (uint32_t i = 0; i < mNames.size(); ++i) {
+        cor::Light light(mNames[i], ECommType::MAX);
+        light.routine = ERoutine::singleSolid;
+        light.color = QColor(255, 0, 0);
+
         bool foundMatch = false;
         if (mNames[i].compare("RGB") == 0) {
             foundMatch = true;
@@ -367,43 +356,26 @@ void FloatingLayout::buttonPressed(int buttonIndex) {
     }
 
     // check the proper button
-    QString label = mNames[buttonIndex];
-    if (isALightsButton(buttonIndex)) {
-        cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[buttonIndex]);
-        Q_ASSERT(lightsButton);
-        // handle edge case of routine button, its the only button that toggles independently...
-        if (mNames[buttonIndex].compare("Routine") == 0) {
-            highlightRoutineButton(!mRoutineIsHighlighted);
-        } else {
+    if (buttonIndex < (int)mButtons.size()) {
+        QString label = mNames[buttonIndex];
+        if (isALightsButton(buttonIndex)) {
+            cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[buttonIndex]);
+            Q_ASSERT(lightsButton);
             lightsButton->setChecked(true);
+        } else {
+            mButtons[buttonIndex]->setChecked(true);
         }
-    } else {
-        mButtons[buttonIndex]->setChecked(true);
+
+
+        // emit label of checked box
+        emit buttonPressed(label);
     }
-
-
-    // emit label of checked box
-    emit buttonPressed(label);
 }
 
 //--------------------------------
 // Helpers
 //--------------------------------
 
-void FloatingLayout::highlightRoutineButton(bool shouldHighlight) {
-    for (uint32_t i = 0; i < mButtons.size(); ++i) {
-        if (mNames[i].compare("Routine") == 0) {
-            cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
-            Q_ASSERT(lightsButton);
-            if (shouldHighlight) {
-                lightsButton->setChecked(true);
-            } else {
-                lightsButton->setChecked(false);
-            }
-            mRoutineIsHighlighted = shouldHighlight;
-        }
-    }
-}
 
 bool FloatingLayout::isALightsButton(int index) {
     if (mNames[index].compare("Multi") == 0

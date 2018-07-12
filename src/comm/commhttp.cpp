@@ -5,37 +5,28 @@
  */
 
 #include "commhttp.h"
+#include "arducor/arducordiscovery.h"
 
-CommHTTP::CommHTTP() {
+CommHTTP::CommHTTP() : CommType(ECommType::HTTP) {
     mStateUpdateInterval = 4850;
-    mDiscoveryUpdateInterval = 2000;
-    setupConnectionList(ECommType::HTTP);
 
     mNetworkManager = new QNetworkAccessManager(this);
 
     connect(mNetworkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
-    connect(mDiscoveryTimer, SIGNAL(timeout()), this, SLOT(discoveryRoutine()));
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(stateUpdate()));
 }
 
 CommHTTP::~CommHTTP() {
-    saveConnectionList();
     delete mNetworkManager;
 }
 
 void CommHTTP::startup() {
-    mHasStarted = true;
 }
 
 void CommHTTP::shutdown() {
     if (mStateUpdateTimer->isActive()) {
         mStateUpdateTimer->stop();
     }
-    if (mDiscoveryTimer->isActive()) {
-        mDiscoveryTimer->stop();
-    }
-    resetDiscovery();
-    mHasStarted = false;
 }
 
 void CommHTTP::sendPacket(const cor::Controller& controller, QString& packet) {
@@ -49,13 +40,9 @@ void CommHTTP::sendPacket(const cor::Controller& controller, QString& packet) {
     mNetworkManager->get(request);
 }
 
-void CommHTTP::sendPacket(const QJsonObject& object) {
-
-}
-
 void CommHTTP::stateUpdate() {
     if (shouldContinueStateUpdate()) {
-        for (auto&& controller : mDiscoveredList) {
+        for (auto&& controller : mDiscovery->controllers()) {
             QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::stateUpdateRequest));
             sendPacket(controller, packet);
             if ((mStateUpdateCounter % mSecondaryUpdatesInterval) == 0) {
@@ -64,30 +51,16 @@ void CommHTTP::stateUpdate() {
             }
         }
 
-        if (mDiscoveryMode
-                && mDiscoveredList.size() < mDeviceTable.size()
-                && !mDiscoveryTimer->isActive()) {
-            mDiscoveryTimer->start(mDiscoveryUpdateInterval);
-        } else if (!mDiscoveryMode && mDiscoveryTimer->isActive()) {
-            mDiscoveryTimer->stop();
-        }
         mStateUpdateCounter++;
     }
 }
 
 
-void CommHTTP::discoveryRoutine() {
-   for (auto&& it : mDeviceTable) {
-       QString controllerName = QString::fromUtf8(it.first.c_str());
-       cor::Controller output;
-       bool found = findDiscoveredController(controllerName, output);
-         if (!found) {
-             QString urlString = "http://" + controllerName + "/arduino/" + kDiscoveryPacketIdentifier;
-             QNetworkRequest request = QNetworkRequest(QUrl(urlString));
-             //qDebug() << "sending" << urlString;
-             mNetworkManager->get(request);
-         }
-    }
+void CommHTTP::testForController(const cor::Controller& controller) {
+    QString urlString = "http://" + controller.name + "/arduino/" + ArduCorDiscovery::kDiscoveryPacketIdentifier;
+    QNetworkRequest request = QNetworkRequest(QUrl(urlString));
+    //qDebug() << "sending" << urlString;
+    mNetworkManager->get(request);
 }
 
 
@@ -96,15 +69,22 @@ void CommHTTP::discoveryRoutine() {
 //--------------------
 
 void CommHTTP::replyFinished(QNetworkReply* reply) {
-    for (auto&& it : mDeviceTable) {
-        QString controllerName = QString::fromUtf8(it.first.c_str());
-        QString fullURL = reply->url().toEncoded();
-        if (fullURL.contains(controllerName)) {
-            if (reply->error() == QNetworkReply::NoError) {
-                QString payload = ((QString)reply->readAll()).trimmed();
-                //qDebug() << "payload from HTTP" << payload;
-                handleIncomingPacket(controllerName, payload);
-            }
+    QString fullURL = reply->url().toEncoded();
+    if (fullURL.contains("http://")) {
+        fullURL.remove("http://");
+    }
+    QStringList list = fullURL.split("/");
+    QString IP = list[0];
+    if (reply->error() == QNetworkReply::NoError) {
+        QString payload = ((QString)reply->readAll()).trimmed();
+        // check if controller is already connected
+        cor::Controller controller;
+        bool success = mDiscovery->findControllerByControllerName(IP, controller);
+        bool isDiscovery = payload.contains(ArduCorDiscovery::kDiscoveryPacketIdentifier);
+        if (success && !isDiscovery) {
+            emit packetReceived(IP, payload, mType);
+        } else if (isDiscovery) {
+            mDiscovery->handleIncomingPacket(mType, IP, payload);
         }
     }
 }

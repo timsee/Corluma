@@ -6,6 +6,7 @@
 
 #include "discovery/discoverywidget.h"
 #include "searchwidget.h"
+#include "comm/commarducor.h"
 
 /*!
  * \copyright

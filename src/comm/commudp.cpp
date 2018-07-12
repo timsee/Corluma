@@ -6,6 +6,7 @@
 
 
 #include "commudp.h"
+#include "arducor/arducordiscovery.h"
 
 #include <QDebug>
 #include <QNetworkInterface>
@@ -15,15 +16,12 @@
 // preffered port used by the server
 #define PORT 10008
 
-CommUDP::CommUDP() {
+CommUDP::CommUDP() : CommType(ECommType::UDP) {
     mStateUpdateInterval = 500;
-    mDiscoveryUpdateInterval = 1000;
-    setupConnectionList(ECommType::UDP);
 
     mSocket = new QUdpSocket(this);
 
     connect(mSocket, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()));
-    connect(mDiscoveryTimer, SIGNAL(timeout()), this, SLOT(discoveryRoutine()));
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(stateUpdate()));
 
     mBound = false;
@@ -31,7 +29,6 @@ CommUDP::CommUDP() {
 
 
 CommUDP::~CommUDP() {
-    saveConnectionList();
     if (mSocket->isOpen()) {
         mSocket->close();
     }
@@ -57,28 +54,19 @@ void CommUDP::startup() {
         qDebug() << "WARNING: UDP already bound!";
     } else {
         mBound = mSocket->bind(QHostAddress(localIP), PORT);
-        if (mBound) {
-            mDiscoveryTimer->start(1000);
-            discoveryRoutine();
-        } else {
+        if (!mBound) {
             qDebug() << "binding to UDP discovery server failed";
         }
     }
-
-    mHasStarted = true;
 }
+
 
 void CommUDP::shutdown() {
     if (mStateUpdateTimer->isActive()) {
         mStateUpdateTimer->stop();
     }
-    if (mDiscoveryTimer->isActive()) {
-        mDiscoveryTimer->stop();
-    }
     mSocket->close();
     mBound = false;
-    resetDiscovery();
-    mHasStarted = false;
 }
 
 void CommUDP::sendPacket(const cor::Controller& controller, QString& packet) {
@@ -96,18 +84,13 @@ void CommUDP::sendPacket(const cor::Controller& controller, QString& packet) {
     }
 }
 
-void CommUDP::sendPacket(const QJsonObject& object) {
-
-}
-
-
 bool CommUDP::portBound() {
     return mBound;
 }
 
 void CommUDP::stateUpdate() {
     if (shouldContinueStateUpdate()) {
-        for (auto&& controller : mDiscoveredList) {
+        for (auto&& controller : mDiscovery->controllers()) {
             QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::stateUpdateRequest));
             sendPacket(controller, packet);
             if ((mStateUpdateCounter % mSecondaryUpdatesInterval) == mSecondaryUpdatesInterval - 1) {
@@ -116,35 +99,23 @@ void CommUDP::stateUpdate() {
             }
         }
 
-        if (mDiscoveryMode
-                && mDiscoveredList.size() < deviceTable().size()
-                && !mDiscoveryTimer->isActive()) {
-            mDiscoveryTimer->start(mDiscoveryUpdateInterval);
-        } else if (!mDiscoveryMode && mDiscoveryTimer->isActive()) {
-            mDiscoveryTimer->stop();
-        }
         mStateUpdateCounter++;
     }
 }
 
 
 
-void CommUDP::discoveryRoutine() {
+void CommUDP::testForController(const cor::Controller& controller) {
     if (mBound) {
-        for (auto&& it : mDeviceTable) {
-            cor::Controller output;
-            bool found = findDiscoveredController(QString::fromUtf8(it.first.c_str()), output);
-              if (!found) {
-                  //qDebug() << "discovery packet to " << QString(it.first.c_str());
-                  mSocket->writeDatagram(kDiscoveryPacketIdentifier.toUtf8().data(),
-                                         QHostAddress(QString::fromUtf8(it.first.c_str())),
-                                         PORT);
-              }
-         }
+        //qDebug() << "discovery packet to " << controller.name << " " << ArduCorDiscovery::kDiscoveryPacketIdentifier;
+        mSocket->writeDatagram(ArduCorDiscovery::kDiscoveryPacketIdentifier.toUtf8().data(),
+                               QHostAddress(controller.name),
+                               PORT);
     } else {
-       // qDebug() << "INFO: discovery when not bound";
+        // qDebug() << "INFO: discovery when not bound";
     }
 }
+
 
 //--------------------
 // Receiving
@@ -164,10 +135,12 @@ void CommUDP::readPendingDatagrams() {
             QRegExp rx("(\\;)");
             QStringList payloads = payload.split(rx);
             for (auto payload : payloads) {
-                handleIncomingPacket(sender.toString(), payload);
+                mDiscovery->handleIncomingPacket(mType, sender.toString(), payload);
+                emit packetReceived(sender.toString(), payload, mType);
             }
         } else {
-            handleIncomingPacket(sender.toString(), payload);
+            mDiscovery->handleIncomingPacket(mType, sender.toString(), payload);
+            emit packetReceived(sender.toString(), payload, mType);
         }
     }
 }

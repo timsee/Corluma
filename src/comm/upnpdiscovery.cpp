@@ -6,6 +6,8 @@
 
 #include "upnpdiscovery.h"
 
+//#define DEBUG_UPNP
+
 UPnPDiscovery::UPnPDiscovery(QObject *parent) : QObject(parent) {
     mListenerCount = 0;
     mSocket = new QUdpSocket(this);
@@ -20,8 +22,10 @@ void UPnPDiscovery::readPendingUPnPDatagrams() {
         QHostAddress sender;
         quint16 senderPort;
         mSocket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
-
         QString payload = QString::fromUtf8(datagram);
+#ifdef DEBUG_UPNP
+        qDebug() << __func__ << sender << ":" << payload;
+#endif
 
         emit UPnPPacketReceived(sender, payload);
     }
@@ -32,6 +36,9 @@ void UPnPDiscovery::startup() {
         QHostAddress standardUPnPAddress(QString("239.255.255.250"));
         // used for discovery
         if (mSocket->state() == QAbstractSocket::UnconnectedState) {
+#ifdef DEBUG_UPNP
+            qDebug() << " starting UPNP";
+#endif
             mSocket->bind(standardUPnPAddress, 1900, QUdpSocket::ShareAddress);
             mSocket->joinMulticastGroup(standardUPnPAddress);
         } else {
@@ -55,11 +62,17 @@ void UPnPDiscovery::addListener() {
         startup();
     }
     mListenerCount++;
+#ifdef DEBUG_UPNP
+    qDebug() << "listener added, count now " << mListenerCount;
+#endif
 }
 
 void UPnPDiscovery::removeListener() {
     if (mListenerCount > 0) {
         mListenerCount--;
+#ifdef DEBUG_UPNP
+    qDebug() << "listener removed, count now " << mListenerCount;
+#endif
         if (mListenerCount == 0) {
             shutdown();
         }

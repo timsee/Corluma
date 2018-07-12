@@ -5,7 +5,7 @@
 #include <QLayout>
 #include <QPushButton>
 #include <QLabel>
-#include "datalayer.h"
+#include <QJsonObject>
 #include "icondata.h"
 #include "cor/protocols.h"
 

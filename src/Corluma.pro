@@ -108,12 +108,15 @@ ios {
 #----------
 
 SOURCES += main.cpp \
+    arducor/arducordiscovery.cpp \
+    arducor/arducorpacketparser.cpp \
+    arducor/controller.cpp \
+    comm/commarducor.cpp \
     comm/commhttp.cpp \
     comm/commudp.cpp \
     comm/commtype.cpp \
     comm/commhue.cpp \
     comm/commnanoleaf.cpp \
-    comm/commpacketparser.cpp \
     comm/commlayer.cpp \
     comm/crccalculator.cpp \
     comm/datasync.cpp \
@@ -135,7 +138,6 @@ SOURCES += main.cpp \
     discovery/hardwareconnectionwidget.cpp \
     discovery/discoveryarducorwidget.cpp \
     cor/light.cpp \
-    cor/controller.cpp \
     cor/button.cpp \
     cor/checkbox.cpp \
     cor/slider.cpp \
@@ -188,12 +190,15 @@ SOURCES += main.cpp \
     moodpage.cpp \
     lightinfolistwidget.cpp
 
-HEADERS  +=  comm/commtype.h \
+HEADERS  +=  arducor/arducordiscovery.h \
+    arducor/arducorpacketparser.h \
+    arducor/controller.h \
+    comm/commtype.h \
+    comm/commarducor.h \
     comm/commhttp.h \
     comm/commudp.h \
     comm/commhue.h \
     comm/commnanoleaf.h \
-    comm/commpacketparser.h \
     comm/commlayer.h \
     comm/crccalculator.h \
     comm/datasync.h \
@@ -216,7 +221,6 @@ HEADERS  +=  comm/commtype.h \
     discovery/discoveryarducorwidget.h \
     cor/light.h \
     cor/protocols.h \
-    cor/controller.h \
     cor/utils.h \
     cor/button.h \
     cor/checkbox.h \

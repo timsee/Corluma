@@ -12,12 +12,8 @@
 #include "globalsettingswidget.h"
 
 GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent,
-                                           CommLayer *comm,
-                                           DataLayer *data,
                                            ProtocolSettings *protocols) :
                                            QWidget(parent),
-                                           mComm(comm),
-                                           mData(data),
                                            mProtocolSettings(protocols) {
 
     mSpacerPixels = 5;
@@ -145,7 +141,7 @@ void GlobalSettingsWidget::checkCheckBoxes() {
 
 
 void GlobalSettingsWidget::timeoutChanged(int newTimeout) {
-   mData->updateTimeout(newTimeout);
+   emit timeoutUpdate(newTimeout);
    mSettings->setValue(kTimeoutValue, QString::number(newTimeout));
 }
 
@@ -158,27 +154,17 @@ void GlobalSettingsWidget::checkBoxClicked(EProtocolType type, bool checked) {
        // mConnectionButtons[mProtocolSettings->indexOfProtocolSettings(type)]->setStyleSheet("background-color:#4A4949;");
     }
 
-    if (checked) {
-        mComm->startup(type);
-    } else {
+    if (!checked) {
         if (type == EProtocolType::arduCor) {
-            mComm->shutdown(type);
-            mData->removeDevicesOfType(ECommType::UDP);
-            mData->removeDevicesOfType(ECommType::HTTP);
-#ifndef MOBILE_BUILD
-            mData->removeDevicesOfType(ECommType::serial);
-#endif
             mArduCorButton->setChecked(false);
         } else if (type == EProtocolType::hue) {
-            mComm->shutdown(type);
-            mData->removeDevicesOfType(ECommType::hue);
             mHueButton->setChecked(false);
         } else if (type == EProtocolType::nanoleaf) {
-            mComm->shutdown(type);
-            mData->removeDevicesOfType(ECommType::nanoleaf);
             mNanoLeafButton->setChecked(false);
         }
     }
+
+    emit protocolSettingsUpdate(type, checked);
 }
 
 void GlobalSettingsWidget::updateUI() {
@@ -213,7 +199,7 @@ void GlobalSettingsWidget::paintEvent(QPaintEvent *) {
 
 void GlobalSettingsWidget::timeoutButtonPressed(bool isChecked) {
     mSettings->setValue(kUseTimeoutKey, QString::number((int)isChecked));
-    mData->enableTimeout(isChecked);
+    emit timeoutEnabled(isChecked);
     showTimeout(isChecked);
 }
 

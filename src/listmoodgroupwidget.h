@@ -12,8 +12,6 @@
 
 #include "listcollectionwidget.h"
 #include "listmoodwidget.h"
-#include "datalayer.h"
-#include "comm/commlayer.h"
 
 
 /*!

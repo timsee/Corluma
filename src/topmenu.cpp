@@ -255,7 +255,7 @@ void TopMenu::highlightButton(QString key) {
     mMoodsFloatingLayout->highlightButton(key);
     mLightsFloatingLayout->highlightButton(key);
     mColorFloatingLayout->highlightButton(key);
-
+   // mColorVerticalFloatingLayout->highlightButton(key);
 }
 
 void TopMenu::pageButtonPressed(EPage pageButtonType) {
@@ -343,13 +343,12 @@ void TopMenu::floatingLayoutButtonPressed(QString button) {
     } else if (button.compare("Multi") == 0) {
         mLastColorButtonKey = button;
         mColorPage->changePageType(EColorPageType::multi);
-        mColorVerticalFloatingLayout->highlightRoutineButton(false);
         updateColorVerticalRoutineButton();
     } else if (button.compare("RGB") == 0) {
         mLastColorButtonKey = button;
         mColorPage->changePageType(EColorPageType::RGB);
-        mColorVerticalFloatingLayout->highlightRoutineButton(false);
         updateColorVerticalRoutineButton();
+        mColorVerticalFloatingLayout->highlightButton("");
     } else if (button.compare("Temperature") == 0) {
         mLastColorButtonKey = button;
         mColorPage->changePageType(EColorPageType::ambient);

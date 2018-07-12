@@ -79,17 +79,20 @@ MainWindow::MainWindow(QWidget *parent) :
     mLightPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mLightPage, SIGNAL(clickedEditButton(QString, bool)),  this, SLOT(editButtonClicked(QString, bool)));
 
-    mColorPage = new ColorPage(this, mData);
+    mColorPage = new ColorPage(this);
     mColorPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    connect(mColorPage, SIGNAL(routineUpdate(QJsonObject)),  this, SLOT(routineChanged(QJsonObject)));
+    connect(mColorPage, SIGNAL(schemeUpdate(std::vector<QColor>)),  this, SLOT(schemeChanged(std::vector<QColor>)));
 
     mPalettePage = new PalettePage(this);
     mPalettePage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mPalettePage, SIGNAL(speedUpdate(int)),  this, SLOT(speedChanged(int)));
     connect(mPalettePage, SIGNAL(routineUpdate(QJsonObject)),  this, SLOT(routineChanged(QJsonObject)));
 
-    mMoodPage = new MoodPage(this, mData, mComm, mGroups);
+    mMoodPage = new MoodPage(this, mGroups);
     mMoodPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mMoodPage, SIGNAL(clickedEditButton(QString, bool)),  this, SLOT(editButtonClicked(QString, bool)));
+    connect(mMoodPage, SIGNAL(moodUpdate(QString)),  this, SLOT(moodChanged(QString)));
 
     // --------------
     // Top Menu
@@ -131,7 +134,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Settings Page
     // --------------
 
-    mSettingsPage = new SettingsPage(this, mComm, mData, mGroups, mProtocolSettings);
+    mSettingsPage = new SettingsPage(this, mGroups, mProtocolSettings);
     mSettingsPage->setVisible(false);
     mSettingsPage->isOpen(false);
     connect(mSettingsPage, SIGNAL(updateMainIcons()), mTopMenu, SLOT(updateMenuBar()));
@@ -140,6 +143,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(mSettingsPage, SIGNAL(clickedHueInfoWidget()), this, SLOT(hueInfoWidgetClicked()));
     connect(mSettingsPage, SIGNAL(clickedHueDiscovery()), this, SLOT(showHueLightDiscovery()));
     connect(mSettingsPage, SIGNAL(clickedDiscovery()), this, SLOT(switchToDiscovery()));
+
+    connect(mSettingsPage->globalWidget(), SIGNAL(protocolSettingsUpdate(EProtocolType, bool)), this, SLOT(protocolSettingsChanged(EProtocolType, bool)));
+    connect(mSettingsPage->globalWidget(), SIGNAL(timeoutUpdate(int)), this, SLOT(timeoutChanged(int)));
+    connect(mSettingsPage->globalWidget(), SIGNAL(timeoutEnabled(bool)), this, SLOT(timeoutEnabledChanged(bool)));
 
 
     // --------------
@@ -203,8 +210,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // --------------
     // Setup app data with saved and global settings
     // --------------
-    QSettings* settings = new QSettings();
-    mData->enableTimeout(settings->value(kUseTimeoutKey).toBool());
+    mData->enableTimeout(mSettingsPage->globalWidget()->useTimeout());
     if (mData->timeoutEnabled()) {
         mData->updateTimeout(mSettingsPage->globalWidget()->timeoutValue());
     }
@@ -377,9 +383,9 @@ void MainWindow::showMainPage(EPage page) {
     if (page == EPage::lightPage) {
         mLightPage->show();
     } else if (page == EPage::colorPage) {
-        mColorPage->show();
+        mColorPage->show(mData->mainColor(), mData->brightness(), mData->colorScheme());
     } else if (page == EPage::moodPage) {
-        mMoodPage->show();
+        mMoodPage->show(mData->findCurrentMood(mGroups->moodList()), mGroups->moodList(), mComm->roomList(), mComm->deviceNames());
     } else if (page == EPage::palettePage) {
         mPalettePage->resize();
         mPalettePage->show(mData->mainColor(), mData->hasArduinoDevices(), mData->hasNanoLeafDevices());
@@ -418,7 +424,7 @@ void MainWindow::settingsDebugPressed() {
 }
 
 void MainWindow::renamedLight(cor::Light light, QString newName) {
-    mGroups->updateLightName(light, newName);
+
 }
 
 // ----------------------------
@@ -699,10 +705,10 @@ void MainWindow::lightNameChange(EProtocolType type, QString key, QString name) 
         // get hue light from key
         std::list<HueLight> hueLights = mComm->hue()->connectedHues();
         int keyNumber = key.toInt();
-        HueLight light;
+        HueLight light("NOT_VALID", ECommType::MAX);
         bool lightFound = false;
         for (auto hue : hueLights) {
-            if (hue.index() == keyNumber) {
+            if (hue.index == keyNumber) {
                 lightFound = true;
                 light = hue;
             }
@@ -737,10 +743,10 @@ void MainWindow::deleteHue(QString key) {
     // get hue light from key
     std::list<HueLight> hueLights = mComm->hue()->connectedHues();
     int keyNumber = key.toInt();
-    HueLight light;
+    HueLight light("NOT_VALID", ECommType::MAX);
     bool lightFound = false;
     for (auto hue : hueLights) {
-        if (hue.index() == keyNumber) {
+        if (hue.index == keyNumber) {
             lightFound = true;
             light = hue;
         }
@@ -830,6 +836,55 @@ void MainWindow::resizeLayout() {
 
 void MainWindow::routineChanged(QJsonObject routine) {
     mData->updateRoutine(routine);
+}
+
+void MainWindow::schemeChanged(std::vector<QColor> colors) {
+    mData->updateColorScheme(colors);
+}
+
+void MainWindow::timeoutChanged(int timeout) {
+    mData->updateTimeout(timeout);
+}
+
+void MainWindow::timeoutEnabledChanged(bool enabled) {
+    mData->enableTimeout(enabled);
+}
+
+void MainWindow::moodChanged(QString mood) {
+    for (auto&& group :  mGroups->moodList()) {
+        if (group.name == mood) {
+            mData->clearDevices();
+            auto devices = group.devices;
+            // checks for reachability of devices and appends that to the list.
+            for (auto& device : devices) {
+                // find up to date version of device
+                auto deviceCopy = device;
+                mComm->fillDevice(deviceCopy);
+                device.controller  = deviceCopy.controller;
+                device.isReachable = deviceCopy.isReachable;
+            }
+            mData->addDeviceList(devices);
+        }
+    }
+}
+
+void MainWindow::protocolSettingsChanged(EProtocolType type, bool enabled) {
+    if (enabled) {
+        mComm->startup(type);
+    } else {
+        mComm->shutdown(type);
+        if (type == EProtocolType::arduCor) {
+            mData->removeDevicesOfType(ECommType::UDP);
+            mData->removeDevicesOfType(ECommType::HTTP);
+#ifndef MOBILE_BUILD
+            mData->removeDevicesOfType(ECommType::serial);
+#endif
+        } else if (type == EProtocolType::hue) {
+            mData->removeDevicesOfType(ECommType::hue);
+        } else if (type == EProtocolType::nanoleaf) {
+            mData->removeDevicesOfType(ECommType::nanoleaf);
+        }
+    }
 }
 
 void MainWindow::speedChanged(int speed) {

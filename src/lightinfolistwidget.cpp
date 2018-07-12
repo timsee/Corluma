@@ -56,7 +56,7 @@ void LightInfoListWidget::updateLights(std::list<HueLight> lights) {
         int widgetIndex = -1;
         int i = 0;
         for (auto widget : mHueWidgets) {
-            if (widget->light().index() == light.index()) {
+            if (widget->light().index == light.index) {
                 widgetIndex = i;
                 widget->updateLight(light);
             }
@@ -139,7 +139,7 @@ void LightInfoListWidget::resize(bool resizeFullWidget) {
 
 void LightInfoListWidget::deleteButtonPressed(bool) {
     QMessageBox::StandardButton reply;
-    HueLight light;
+    HueLight light("NOT_VALID", ECommType::MAX);
     for (auto widget : mHueWidgets) {
         if (widget->key().compare(mLastKey) == 0) {
             light = widget->light();

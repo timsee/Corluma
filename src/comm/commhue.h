@@ -92,13 +92,6 @@ public:
     hue::BridgeDiscovery *discovery() { return mDiscovery; }
 
     /*!
-     * \brief sendPacket Takes a packet in the format of a Corluma lights command (a comma delimited QString) and
-     *        converts it into a Philips Hue command
-     * \param packet the comma delimited Corlum Light command.
-     */
-    void sendPacket(const cor::Controller& controller, QString& packet);
-
-    /*!
      * \brief sendPacket send a packet based off of a JSON object containing all
      *        relevant information about the packet
      * \param object json representation of the packet to send
@@ -298,9 +291,14 @@ public:
      * \brief connectionStatusHasChanged called by the HueBridgeDiscovery object whenever its connection
      *        changes.
      */
-    void bridgeDiscovered(hue::Bridge, QJsonObject lightsObject, QJsonObject groupObject, QJsonObject schedulesObject);
+    void bridgeDiscovered(const hue::Bridge&, QJsonObject lightsObject, QJsonObject groupObject, QJsonObject schedulesObject);
 
 signals:
+    /*!
+     * \brief packetReceived emitted whenever a packet that is not a discovery packet is received. Contains
+     *        the full packet's contents as a QString.
+     */
+    void packetReceived(QString, QString, ECommType);
 
     /*!
      * \brief stateChanged emitted when any of the lights change in any way.

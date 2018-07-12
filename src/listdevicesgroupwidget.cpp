@@ -10,13 +10,9 @@
 
 ListDevicesGroupWidget::ListDevicesGroupWidget(const cor::LightGroup& group,
                                                QString key,
-                                               CommLayer *comm,
-                                               DataLayer *data,
                                                QWidget *parent) {
     this->setParent(parent);
     this->setMaximumSize(parent->size());
-    mData = data;
-    mComm = comm;
     mSelectAllIsClear = false;
 
     setup(group.name, key, EListType::grid, true);
@@ -150,9 +146,7 @@ void ListDevicesGroupWidget::setShowButtons(bool show) {
 std::list<cor::Light> ListDevicesGroupWidget::reachableDevices() {
     std::list<cor::Light> reachableDevices;
     for (auto device : mGroup.devices) {
-        if (device.isReachable) {
-            reachableDevices.push_back(device);
-        }
+        reachableDevices.push_back(device);
     }
     return reachableDevices;
 }

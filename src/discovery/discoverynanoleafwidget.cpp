@@ -42,8 +42,8 @@ void DiscoveryNanoLeafWidget::handleDiscovery(bool isCurrentCommType) {
     // starts discovery if its not already started
     mComm->nanoleaf()->discovery()->startDiscovery();
 
-    std::list<cor::Controller> deviceTable = mComm->discoveredList(ECommType::nanoleaf);
-    std::list<QString> discoveringList = mComm->undiscoveredList(ECommType::nanoleaf);
+    auto deviceTable     = mComm->nanoleaf()->discovery()->foundControllers();
+    auto discoveringList = mComm->nanoleaf()->discovery()->notFoundControllers();
 
     for (auto device : deviceTable) {
         mSearchWidget->addToConnectedList(device.name);
@@ -104,14 +104,14 @@ void DiscoveryNanoLeafWidget::minusButtonClicked() {
 
 bool DiscoveryNanoLeafWidget::doesNanoLeafExist(QString controller) {
     bool deviceFound = false;
-    for (auto&& discoveredController : mComm->discoveredList(ECommType::nanoleaf)) {
+    for (auto&& discoveredController : mComm->nanoleaf()->discovery()->foundControllers()) {
         if (discoveredController.name.compare(controller) == 0) {
             deviceFound = true;
         }
     }
 
-    for (auto&& unDiscoveredController : mComm->undiscoveredList(ECommType::nanoleaf)) {
-        if (unDiscoveredController.compare(controller) == 0) {
+    for (auto&& unDiscoveredController : mComm->nanoleaf()->discovery()->notFoundControllers()) {
+        if (unDiscoveredController.name.compare(controller) == 0) {
             deviceFound = true;
         }
     }

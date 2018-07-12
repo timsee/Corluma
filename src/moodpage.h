@@ -9,7 +9,6 @@
 
 #include "cor/light.h"
 #include "cor/page.h"
-#include "comm/commlayer.h"
 #include "listmoodgroupwidget.h"
 #include "cor/listwidget.h"
 #include "cor/presetpalettes.h"
@@ -28,7 +27,7 @@ class MoodPage : public QWidget, public cor::Page
     Q_OBJECT
 public:
     /// constructor
-    explicit MoodPage(QWidget *parent, DataLayer *data, CommLayer *comm, GroupsParser *groups);
+    explicit MoodPage(QWidget *parent, GroupsParser *groups);
 
     /*!
      * \brief updateConnectionList updates the GUI elements that display the
@@ -37,7 +36,10 @@ public:
     void updateConnectionList();
 
     /// called when the widget is shown
-    void show();
+    void show(const QString& currentMood,
+              const std::list<cor::LightGroup>& moods,
+              const std::list<cor::LightGroup>& roomList,
+              const std::vector<std::pair<QString, QString>> deviceNames);
 
     /// called when the widget is hidden
     void hide();
@@ -63,6 +65,9 @@ signals:
      *        the edit page.
      */
     void clickedEditButton(QString key, bool isMood);
+
+    /// sent when a mood receives an update
+    void moodUpdate(QString moodName);
 
 private slots:
     /*!
@@ -105,12 +110,6 @@ private:
     /// groups parser
     GroupsParser *mGroups;
 
-    /*!
-     * \brief data layer that maintains and tracks the states of the lights
-     *        and the saved data of the GUI
-     */
-    DataLayer *mData;
-
     /// preset data for palettes from ArduCor
     PresetPalettes mPalettes;
 
@@ -129,15 +128,18 @@ private:
      * \return pointer to the newly created ListGroupGroupWidget
      */
     ListMoodGroupWidget* initMoodsCollectionWidget(const QString& name,
-                                                    std::list<cor::LightGroup> moods,
-                                                    const QString& key,
-                                                    bool hideEdit = false);
+                                                   std::list<cor::LightGroup> moods,
+                                                   const std::vector<std::pair<QString, QString>>& deviceNames,
+                                                   const QString& key,
+                                                   bool hideEdit = false);
 
     /*!
      * \brief makeMoodsCollections make all the mood-based UI widgets based on the saved JSON data in the application
      * \param moods list of all saved moods
      */
-    void makeMoodsCollections(const std::list<cor::LightGroup>& moods);
+    void makeMoodsCollections(const std::list<cor::LightGroup>& moods,
+                              const std::list<cor::LightGroup>& roomList,
+                              const std::vector<std::pair<QString, QString>> deviceNames);
 
     /// layout of widget
     QVBoxLayout *mLayout;

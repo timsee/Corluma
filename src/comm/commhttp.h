@@ -2,6 +2,7 @@
 #define COMMHTTP_H
 
 #include "commtype.h"
+#include "arducor/arducordiscovery.h"
 
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
@@ -42,6 +43,9 @@ public:
      */
     void shutdown();
 
+    /// connects discovery object
+    void connectDiscovery(ArduCorDiscovery *discovery) { mDiscovery = discovery; }
+
     /*!
      * \brief sendPacket sends a packet in a way similar to am
      *        IP Camera: The packet is added to the end of the
@@ -51,11 +55,17 @@ public:
     void sendPacket(const cor::Controller& controller, QString& packet);
 
     /*!
-     * \brief sendPacket send a packet based off of a JSON object containing all
-     *        relevant information about the packet
-     * \param object json representation of the packet to send
+     * \brief testForController sends a discovery packet to the currently
+     *        connected serial port to test its connection.
      */
-    void sendPacket(const QJsonObject& object);
+    void testForController(const cor::Controller& controller);
+
+signals:
+    /*!
+     * \brief packetReceived emitted whenever a packet that is not a discovery packet is received. Contains
+     *        the full packet's contents as a QString.
+     */
+    void packetReceived(QString, QString, ECommType);
 
 private slots:
     /*!
@@ -70,17 +80,14 @@ private slots:
      */
     void stateUpdate();
 
-    /*!
-     * \brief discoveryRoutine sends a discovery packet to the currently
-     *        connected serial port to test its connection.
-     */
-    void discoveryRoutine();
-
 private:
     /*!
      * \brief mNetworkManager Qt's HTTP connection object
      */
     QNetworkAccessManager *mNetworkManager;
+
+    /// discovery object for storing previous connections, saving new connections, parsing discovery packets
+    ArduCorDiscovery *mDiscovery;
 
 };
 

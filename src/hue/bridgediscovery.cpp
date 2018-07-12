@@ -258,6 +258,7 @@ void BridgeDiscovery::parseInitialUpdate(const hue::Bridge& bridge, QJsonDocumen
             lightsObject = object["lights"].toObject();
             QStringList keys = lightsObject.keys();
             QJsonArray lightsArray;
+            std::vector<HueLight> lights;
             for (auto& key : keys) {
                 if (lightsObject.value(key).isObject()) {
                     QJsonObject innerObject = lightsObject.value(key).toObject();
@@ -265,21 +266,36 @@ void BridgeDiscovery::parseInitialUpdate(const hue::Bridge& bridge, QJsonDocumen
                             && innerObject["name"].isString()) {
                         QString id = innerObject["uniqueid"].toString();
                         QString name = innerObject["name"].toString();
+                        double index = key.toDouble();
 
                         QJsonObject lightObject;
                         lightObject["uniqueid"] = id;
+                        lightObject["index"]    = index;
                         lightObject["name"]     = name;
+
+                        HueLight hueLight(id, ECommType::hue);
+                        hueLight.name = name;
+                        hueLight.index = index;
+                        lights.push_back(hueLight);
 
                         lightsArray.push_back(lightObject);
                     }
                 }
             }
+            for (auto&& foundBridge : mFoundBridges) {
+                if (foundBridge.id == bridge.id) {
+                    foundBridge.lights = lights;
+                }
+            }
             updateJSONLights(bridge, lightsArray);
-        }
-        if (object["schedules"].isObject() && object["groups"].isObject()) {
-            QJsonObject schedulesObject = object["schedules"].toObject();
-            QJsonObject groupsObject    = object["groups"].toObject();
-            mHue->bridgeDiscovered(bridge, lightsObject, groupsObject, schedulesObject);
+
+            if (object["schedules"].isObject() && object["groups"].isObject()) {
+                QJsonObject schedulesObject = object["schedules"].toObject();
+                QJsonObject groupsObject    = object["groups"].toObject();
+                auto bridgeCopy = bridge;
+                bridgeCopy.lights = lights;
+                mHue->bridgeDiscovered(bridgeCopy, lightsObject, groupsObject, schedulesObject);
+            }
         }
     }
 }
@@ -358,9 +374,23 @@ bool BridgeDiscovery::doesIPExistInSearchingLists(const QString& IP) {
     return foundIP;
 }
 
+
+HueLight BridgeDiscovery::lightFromBridgeIDAndIndex(const QString& bridgeID, uint32_t index) {
+    for (auto foundBridge : mFoundBridges) {
+        if (foundBridge.id == bridgeID) {
+            for (auto&& light : foundBridge.lights) {
+                if (light.index == index && index != 0) {
+                    return light;
+                }
+            }
+        }
+    }
+    return HueLight("NOT_VALID", ECommType::hue);
+}
+
 hue::Bridge BridgeDiscovery::bridgeFromLight(HueLight light) {
     for (auto foundBridge : mFoundBridges) {
-        if (light.controller() == foundBridge.name) {
+        if (light.controller == foundBridge.name) {
             return foundBridge;
         }
     }
@@ -423,12 +453,14 @@ void BridgeDiscovery::updateJSONLights(const hue::Bridge& bridge, const QJsonArr
     std::list<QString> deletedLights;
     uint32_t x = 0;
     // loop through existing controllers
+    bool foundBridge = false;
     for (auto value : array) {
         bool detectChanges = false;
         QJsonObject object = value.toObject();
         hue::Bridge jsonBridge = jsonToBridge(object);
         // check if the controller is the same but the JSON isn't
         if ((jsonBridge.id == bridge.id) && (newJsonObject != object)) {
+            foundBridge = true;
             // check if the lights arrays are different
             if (lightsArray != object["lights"].toArray()) {
                 for (auto innerRef : object["lights"].toArray()) {
@@ -445,6 +477,10 @@ void BridgeDiscovery::updateJSONLights(const hue::Bridge& bridge, const QJsonArr
 //                                mHue->lightRenamedExternally(light, newLight["name"].toString());
                                 //qDebug() << " new name" << newLight["name"].toString() << " old name" << oldLight["name"].toString();
                             }
+                            //qDebug() << " new light" << newLight;
+                            if (newLight["index"].toDouble() != oldLight["index"].toDouble()) {
+                                detectChanges = true;
+                            }
                         }
                     }
                     if (!foundMatch) {
@@ -459,14 +495,20 @@ void BridgeDiscovery::updateJSONLights(const hue::Bridge& bridge, const QJsonArr
                 }
             }
         }
+
         if (detectChanges) {
             array.removeAt(x);
-            // add new modified values
             array.push_front(newJsonObject);
             mJsonData.setArray(array);
             saveJSON();
         }
         ++x;
+    }
+    if (!foundBridge) {
+        // add new modified values
+        array.push_front(newJsonObject);
+        mJsonData.setArray(array);
+        saveJSON();
     }
 }
 

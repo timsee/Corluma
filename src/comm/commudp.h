@@ -5,6 +5,7 @@
 #include <QTimer>
 
 #include "commtype.h"
+#include "arducor/arducordiscovery.h"
 
 /*!
  * \copyright
@@ -39,6 +40,9 @@ public:
      */
     void shutdown();
 
+    /// connects discovery object
+    void connectDiscovery(ArduCorDiscovery *discovery) { mDiscovery = discovery; }
+
     /*!
      * \brief sendPacket sends the packet over UDP to a specified
      *        IP addres and port. Returns immediately and buffers
@@ -47,15 +51,22 @@ public:
      */
     void sendPacket(const cor::Controller& controller, QString& packet);
 
-    /*!
-     * \brief sendPacket send a packet based off of a JSON object containing all
-     *        relevant information about the packet
-     * \param object json representation of the packet to send
-     */
-    void sendPacket(const QJsonObject& object);
-
     /// true is port is successfully bound, false if errors occur.
     bool portBound();
+
+    /*!
+     * \brief testForController sends a discovery packet to the currently
+     *        connected serial port to test its connection.
+     */
+    void testForController(const cor::Controller& controller);
+
+signals:
+    /*!
+     * \brief packetReceived emitted whenever a packet that is not a discovery packet is received. Contains
+     *        the full packet's contents as a QString.
+     */
+    void packetReceived(QString, QString, ECommType);
+
 
 private slots:
     /*!
@@ -64,17 +75,16 @@ private slots:
     void readPendingDatagrams();
 
     /*!
-     * \brief discoveryRoutine sends a discovery packet in order to test a connection.
-     */
-    void discoveryRoutine();
-
-    /*!
      * \brief stateUpdate used by the mStateUpdateTimer to request new
      *        state updates from the currently connected lights.
      */
     void stateUpdate();
 
 private:
+
+    /// discovery object for storing previous connections, saving new connections, parsing discovery packets
+    ArduCorDiscovery *mDiscovery;
+
     /*!
      * \brief mSocket Qt's UDP object
      */

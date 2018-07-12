@@ -9,6 +9,7 @@
 #include "datasyncarduino.h"
 #include "comm/commlayer.h"
 #include "cor/utils.h"
+#include "cor/protocols.h"
 
 DataSyncArduino::DataSyncArduino(DataLayer *data, CommLayer *comm) {
     mData = data;
@@ -24,7 +25,7 @@ DataSyncArduino::DataSyncArduino(DataLayer *data, CommLayer *comm) {
     mCleanupTimer = new QTimer(this);
     connect(mCleanupTimer, SIGNAL(timeout()), this, SLOT(cleanupSync()));
 
-    mParser = new CommPacketParser(this);
+    mParser = new ArduCorPacketParser(this);
 
     mDataIsInSync = false;
 }
@@ -66,7 +67,7 @@ void DataSyncArduino::syncData() {
             cor::Light commLayerDevice = device;
             if (device.protocol() == EProtocolType::arduCor) {
                 if (mComm->fillDevice(commLayerDevice)) {
-                    if (checkThrottle(device.controller(), device.commType())) {
+                    if (checkThrottle(device.controller, device.commType())) {
                         if (!sync(device, commLayerDevice)) {
                             countOutOfSync++;
                         }
@@ -77,7 +78,7 @@ void DataSyncArduino::syncData() {
             }
         }
 
-        std::list<cor::Controller> allControllers = mComm->allArduinoControllers();
+        const auto& allControllers = mComm->arducor()->discovery()->controllers();
         for (auto&& map : mMessages) {
             //TODO: this isnt the safest way, it relies on unique names for each controller, but ignores
             //      the ECommType.
@@ -98,9 +99,8 @@ void DataSyncArduino::syncData() {
             // create the message to send based off of the simplified packets
             QString finalPacket = createPacket(controller, allMessages);
 
-            cor::Light device(0, controller.type, controller.name);
-            mComm->sendPacket(device, finalPacket);
-            resetThrottle(controller.name, device.commType());
+            mComm->arducor()->sendPacket(controller, finalPacket);
+            resetThrottle(controller.name, controller.type);
         }
 
         mDataIsInSync = (countOutOfSync == 0);
@@ -188,13 +188,14 @@ void DataSyncArduino::endOfSync() {
     }
 }
 
-bool DataSyncArduino::sync(const cor::Light& dataDevice, const cor::Light& commDevice) {
+bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& commDevice) {
     int countOutOfSync = 0;
     cor::Controller controller;
-    if (!mComm->findDiscoveredController(dataDevice.commType(), dataDevice.controller(), controller)) {
+    if (!mComm->arducor()->discovery()->findControllerByDeviceName(commDevice.name, controller)) {
         return false;
     }
-
+    auto dataDevice = inputDevice;
+    dataDevice.index = commDevice.index;
 
     QString packet;
 
@@ -223,7 +224,6 @@ bool DataSyncArduino::sync(const cor::Light& dataDevice, const cor::Light& commD
         bool paramsInSync       = true;
         bool colorInSync        = (cor::colorDifference(dataDevice.color, commDevice.color) <= 0.01f);
         bool paletteInSync      = (commDevice.palette.paletteEnum() == dataDevice.palette.paletteEnum());
-//        bool routineParamInSync = (commDevice.param == dataDevice.param);
         if (!colorInSync && dataDevice.routine <= cor::ERoutineSingleColorEnd) {
 
             paramsInSync = false;
@@ -231,9 +231,6 @@ bool DataSyncArduino::sync(const cor::Light& dataDevice, const cor::Light& commD
         if (!paletteInSync && dataDevice.routine > cor::ERoutineSingleColorEnd) {
             paramsInSync = false;
         }
-//        if (!routineParamInSync) {
-//            paramsInSync = false;
-//        }
 
         //-------------------
         // Check if should sync routines
@@ -244,14 +241,14 @@ bool DataSyncArduino::sync(const cor::Light& dataDevice, const cor::Light& commD
             QJsonObject routineObject;
             routineObject["routine"] = routineToString(dataDevice.routine);
             if (dataDevice.routine <= cor::ERoutineSingleColorEnd) {
-              // qDebug() << "ArduCor single color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << cor::colorDifference(dataDevice.color, commDevice.color);
+                //qDebug() << "ArduCor single color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << cor::colorDifference(dataDevice.color, commDevice.color);
                 routineObject["red"]     = dataDevice.color.red();
                 routineObject["green"]   = dataDevice.color.green();
                 routineObject["blue"]    = dataDevice.color.blue();
             }
 
             if (dataDevice.routine > cor::ERoutineSingleColorEnd) {
-               // qDebug() << "ArduCor palette not in sync" << commDevice.palette.name() << "vs" << dataDevice.palette.name();
+                 //qDebug() << "ArduCor palette not in sync" << commDevice.palette.name() << "vs" << dataDevice.palette.name();
                 routineObject["palette"]   = dataDevice.palette.JSON();
             }
 
@@ -319,10 +316,10 @@ bool DataSyncArduino::sync(const cor::Light& dataDevice, const cor::Light& commD
         for (auto message : messageArray) {
             // look if the key already exists.
             if (!message.isEmpty()) {
-                auto messageGroup = mMessages.find(dataDevice.controller().toStdString());
+                auto messageGroup = mMessages.find(dataDevice.controller.toStdString());
                 if (messageGroup == mMessages.end()) {
                     std::list<QString> list = {message};
-                    mMessages.insert(std::make_pair(dataDevice.controller().toStdString(), list));
+                    mMessages.insert(std::make_pair(dataDevice.controller.toStdString(), list));
                 } else {
                     messageGroup->second.push_back(message);
                 }

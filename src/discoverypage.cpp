@@ -121,15 +121,8 @@ void DiscoveryPage::renderUI() {
         }
     }
 
-#ifndef MOBILE_BUILD
-    if (mComm->discoveredList(ECommType::serial).size() > 0) {
-        isAnyConnected = true;
-    }
-#endif
-    if (mComm->discoveredList(ECommType::UDP).size() > 0) {
-        isAnyConnected = true;
-    }
-    if (mComm->discoveredList(ECommType::HTTP).size() > 0) {
+
+    if (mComm->arducor()->discovery()->controllers().size() > 0) {
         isAnyConnected = true;
     }
 
@@ -164,15 +157,11 @@ bool DiscoveryPage::checkIfDiscovered(EProtocolType type) {
 
     bool runningDiscovery = false;
     if (type == EProtocolType::arduCor
-            && ( mComm->discoveredList(ECommType::UDP).size() > 0
-#ifndef MOBILE_BUILD
-            || mComm->discoveredList(ECommType::serial).size() > 0
-#endif
-            || mComm->discoveredList(ECommType::HTTP).size() > 0)) {
+            && (mComm->arducor()->discovery()->controllers().size() > 0)) {
         runningDiscovery = true;
-    } else if (type == EProtocolType::hue && mComm->discoveredList(ECommType::hue).size() > 0) {
+    } else if (type == EProtocolType::hue && mComm->hue()->bridges().size() > 0) {
         runningDiscovery = true;
-    } else if (type == EProtocolType::nanoleaf && mComm->discoveredList(ECommType::nanoleaf).size() > 0) {
+    } else if (type == EProtocolType::nanoleaf && mComm->nanoleaf()->controllers().size() > 0) {
         runningDiscovery = true;
     }
 

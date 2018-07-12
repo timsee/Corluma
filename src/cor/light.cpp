@@ -12,15 +12,14 @@
 namespace cor
 {
 
-Light::Light() : Light(0, ECommType::MAX, "") { }
-
-Light::Light(int index, ECommType commType, QString controller) : palette("", std::vector<QColor>(1, QColor(0,0,0))),
-                                                                  mIndex(index),
-                                                                  mCommType(commType),
-                                                                  mController(controller) {
+Light::Light(const QString& uniqueID, ECommType commType) :
+    palette("", std::vector<QColor>(1, QColor(0,0,0))),
+    mUniqueID(uniqueID),
+    mCommType(commType) {
 
     mProtocol = cor::convertCommTypeToProtocolType(commType);
 
+    index = 1;
     isReachable = false;
     isOn = false;
     colorMode = EColorMode::RGB;
@@ -39,7 +38,11 @@ Light::Light(int index, ECommType commType, QString controller) : palette("", st
 }
 
 cor::Light jsonToLight(const QJsonObject& object) {
-    cor::Light light;
+    QString uniqueID = object["uniqueID"].toString();
+    ECommType type = stringToCommType(object["type"].toString());
+
+    cor::Light light(uniqueID, type);
+
     if (object["routine"].isString()) {
         light.routine = stringToRoutine(object["routine"].toString());
     }
@@ -71,6 +74,9 @@ cor::Light jsonToLight(const QJsonObject& object) {
         light.param = object["param"].toDouble();
     }
 
+    light.majorAPI = object["majorAPI"].toDouble();
+    light.minorAPI = object["minorAPI"].toDouble();
+
     //------------
     // get speed if theres a speed value
     //------------
@@ -85,6 +91,9 @@ cor::Light jsonToLight(const QJsonObject& object) {
 
 QJsonObject lightToJson(const cor::Light& light) {
     QJsonObject object;
+    object["uniqueID"] = light.uniqueID();
+    object["type"]     = commTypeToString(light.commType());
+
     object["routine"] = routineToString(light.routine);
     object["isOn"]    = light.isOn;
 
@@ -93,6 +102,9 @@ QJsonObject lightToJson(const cor::Light& light) {
         object["green"] = light.color.green();
         object["blue"]  = light.color.blue();
     }
+
+    object["majorAPI"] = light.majorAPI;
+    object["minorAPI"] = light.minorAPI;
 
     if (light.routine != ERoutine::singleSolid) {
         object["speed"] = light.speed;

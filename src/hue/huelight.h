@@ -17,11 +17,9 @@
 class HueLight : public cor::Light
 {
 public:
-    /// default constructor
-    HueLight();
 
     /// constructor
-    HueLight(int index, ECommType type, QString controller);
+    HueLight(const QString& uniqueID, ECommType type);
 
     /*!
      * \brief type the type of Hue product connected.
@@ -49,7 +47,7 @@ public:
 inline bool operator==(const HueLight& lhs, const HueLight& rhs)
 {
     bool result = true;
-    if (lhs.index()     !=  rhs.index()) result = false;
+    if (lhs.uniqueID()     !=  rhs.uniqueID()) result = false;
     return result;
 }
 
