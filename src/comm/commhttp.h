@@ -3,6 +3,7 @@
 
 #include "commtype.h"
 #include "arducor/arducordiscovery.h"
+#include "arducor/crccalculator.h"
 
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
@@ -85,6 +86,9 @@ private:
      * \brief mNetworkManager Qt's HTTP connection object
      */
     QNetworkAccessManager *mNetworkManager;
+
+    /// used to check CRC on incoming packets.
+    CRCCalculator mCRC;
 
     /// discovery object for storing previous connections, saving new connections, parsing discovery packets
     ArduCorDiscovery *mDiscovery;

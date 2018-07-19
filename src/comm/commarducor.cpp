@@ -40,8 +40,7 @@ CommArduCor::CommArduCor(QObject *parent) : QObject(parent) {
 bool CommArduCor::preparePacketForTransmission(const cor::Controller& controller, QString& packet) {
     bool shouldReset = false;
     // check if state update
-    if (!(packet.at(0) ==  QChar('7')
-            || packet.at(0) ==  QChar('8'))) {
+    if (!(packet.at(0) ==  QChar('7') || packet.at(0) ==  QChar('8'))) {
         // if not state update, reset the state update timer.
         shouldReset = true;
     }

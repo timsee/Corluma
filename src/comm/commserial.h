@@ -3,6 +3,7 @@
 
 #include "commtype.h"
 #include "arducor/arducordiscovery.h"
+#include "arducor/crccalculator.h"
 
 #include <QSerialPort>
 #include <QSerialPortInfo>
@@ -103,6 +104,9 @@ private:
 
     /// discovery object for storing previous connections, saving new connections, parsing discovery packets
     ArduCorDiscovery *mDiscovery;
+
+    /// used to check CRC on incoming packets.
+    CRCCalculator mCRC;
 
     /*!
      * \brief connectSerialPort connect to a specific serial port, if possible.

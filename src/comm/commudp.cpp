@@ -89,6 +89,10 @@ void CommUDP::stateUpdate() {
     if (shouldContinueStateUpdate()) {
         for (auto&& controller : mDiscovery->controllers()) {
             QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::stateUpdateRequest));
+            // add CRC, if in use
+            if (controller.isUsingCRC) {
+                packet = packet + "#" + QString::number(mCRC.calculate(packet)) + "&";
+            }
             sendPacket(controller, packet);
             if ((mStateUpdateCounter % mSecondaryUpdatesInterval) == mSecondaryUpdatesInterval - 1) {
                 QString customArrayUpdateRequest = QString("%1&").arg(QString::number((int)EPacketHeader::customArrayUpdateRequest));
