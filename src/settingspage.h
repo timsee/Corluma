@@ -88,14 +88,9 @@ signals:
     void closePressed();
 
     /*!
-     * \brief clickedHueDiscovery emits when hue discovery button is clicked
+     * \brief clickedInfoWidget emits when hue info widget is clicked
      */
-    void clickedHueDiscovery();
-
-    /*!
-     * \brief clickedHueInfoWidget emits when hue info widget is clicked
-     */
-    void clickedHueInfoWidget();
+    void clickedInfoWidget();
 
     /*!
      * \brief clickedDiscovery emits when discovery button is clicked

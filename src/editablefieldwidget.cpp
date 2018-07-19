@@ -52,12 +52,13 @@ EditableFieldWidget::EditableFieldWidget(const QString& text, QWidget *parent, i
 
     mMaxFieldSize = maxFieldSize;
     mMaxFieldError = maxFieldError;
-    mIsEditing = false;
+    mIsEditing     = false;
     mEnableEditing = true;
-    mRequireIP  = false;
+    mRequireIP     = false;
 }
 
 void EditableFieldWidget::setFontPointSize(int pt) {
+    if (pt <= 0) pt = 1;
     QString stylesheet = "font-size:" + QString::number(pt)+ "pt;";
     this->setStyleSheet(stylesheet);
 

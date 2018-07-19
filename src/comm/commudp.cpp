@@ -71,9 +71,6 @@ void CommUDP::shutdown() {
 
 void CommUDP::sendPacket(const cor::Controller& controller, QString& packet) {
     if (mBound) {
-        // commtype function for adding CRC (if needed) and resetting flags (if needed)
-        preparePacketForTransmission(controller, packet);
-
         // send packet over UDP
         //qDebug() << "sending udp" << packet << "to " << controller.name;
         mSocket->writeDatagram(packet.toUtf8().data(),

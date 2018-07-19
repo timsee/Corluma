@@ -120,7 +120,6 @@ void BridgeDiscovery::addManualIP(QString ip) {
     if (!IPAlreadyFound) {
         hue::Bridge bridge;
         bridge.IP = ip;
-        bridge.name = "Bridge!";
         mNotFoundBridges.push_back(bridge);
     }
 }
@@ -233,14 +232,6 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
                         bridge.id = object["id"].toString();
                         bridge.id = bridge.id.toLower();
 
-                        if (object["macaddress"].isString()) {
-                            bridge.macaddress = object["macaddress"].toString();
-                        }
-
-                        if (object["name"].isString()) {
-                            bridge.name = object["name"].toString();
-                        }
-
                         testNewlyDiscoveredBridge(bridge);
                     }
                 }
@@ -253,6 +244,35 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
 void BridgeDiscovery::parseInitialUpdate(const hue::Bridge& bridge, QJsonDocument json) {
     if (json.isObject()) {
         QJsonObject object = json.object();
+
+        if (object["config"].isObject()) {
+            QJsonObject configObject = object["config"].toObject();
+            QString name = configObject["name"].toString();
+            QString api  = configObject["apiversion"].toString();
+            QString macaddress  = configObject["mac"].toString();
+
+            bool shouldUpdateJSON = false;
+            auto bridgeCopy = bridge;
+            if (name != bridge.name) {
+                shouldUpdateJSON = true;
+                bridgeCopy.name = name;
+            }
+
+            if (api != bridge.api) {
+                shouldUpdateJSON = true;
+                bridgeCopy.api = api;
+            }
+
+            if (macaddress != bridge.macaddress) {
+                shouldUpdateJSON = true;
+                bridgeCopy.macaddress = macaddress;
+            }
+
+            if (shouldUpdateJSON) {
+                updateJSON(bridgeCopy);
+            }
+        }
+
         QJsonObject lightsObject;
         if (object["lights"].isObject()) {
             lightsObject = object["lights"].toObject();
@@ -264,18 +284,28 @@ void BridgeDiscovery::parseInitialUpdate(const hue::Bridge& bridge, QJsonDocumen
                     QJsonObject innerObject = lightsObject.value(key).toObject();
                     if (innerObject["uniqueid"].isString()
                             && innerObject["name"].isString()) {
-                        QString id = innerObject["uniqueid"].toString();
+                        QString id   = innerObject["uniqueid"].toString();
                         QString name = innerObject["name"].toString();
+                        QString type = innerObject["type"].toString();
+                        QString swversion = innerObject["swversion"].toString();
                         double index = key.toDouble();
 
                         QJsonObject lightObject;
-                        lightObject["uniqueid"] = id;
-                        lightObject["index"]    = index;
-                        lightObject["name"]     = name;
+                        lightObject["uniqueid"]  = id;
+                        lightObject["index"]     = index;
+                        lightObject["name"]      = name;
+                        lightObject["swversion"] = swversion;
 
                         HueLight hueLight(id, ECommType::hue);
                         hueLight.name = name;
                         hueLight.index = index;
+                        hueLight.softwareVersion = swversion;
+
+                        if (innerObject["modelid"].isString()) {
+                            hueLight.modelID = innerObject["modelid"].toString();
+                        }
+
+                        hueLight.hueType = cor::stringToHueType(type);
                         lights.push_back(hueLight);
 
                         lightsArray.push_back(lightObject);
@@ -375,7 +405,7 @@ bool BridgeDiscovery::doesIPExistInSearchingLists(const QString& IP) {
 }
 
 
-HueLight BridgeDiscovery::lightFromBridgeIDAndIndex(const QString& bridgeID, uint32_t index) {
+HueLight BridgeDiscovery::lightFromBridgeIDAndIndex(const QString& bridgeID, int index) {
     for (auto foundBridge : mFoundBridges) {
         if (foundBridge.id == bridgeID) {
             for (auto&& light : foundBridge.lights) {
@@ -390,7 +420,7 @@ HueLight BridgeDiscovery::lightFromBridgeIDAndIndex(const QString& bridgeID, uin
 
 hue::Bridge BridgeDiscovery::bridgeFromLight(HueLight light) {
     for (auto foundBridge : mFoundBridges) {
-        if (light.controller == foundBridge.name) {
+        if (light.controller == foundBridge.id) {
             return foundBridge;
         }
     }
@@ -405,6 +435,17 @@ hue::Bridge BridgeDiscovery::bridgeFromIP(const QString& IP) {
     }
     return hue::Bridge();
 }
+
+std::list<HueLight> BridgeDiscovery::lights() {
+    std::list<HueLight> lights;
+    for (const auto& bridge : mFoundBridges) {
+        for (const auto& light : bridge.lights) {
+            lights.push_back(light);
+        }
+    }
+    return lights;
+}
+
 
 // ----------------------------
 // JSON info
@@ -422,14 +463,30 @@ void BridgeDiscovery::updateJSON(const hue::Bridge& bridge) {
         jsonBridge.IP = jsonBridge.IP;
         if ((jsonBridge.id == bridge.id) && (newJsonObject != object)) {
             // check IP, add to copy if different
-            if(jsonBridge.IP != bridge.IP) {
+            if (jsonBridge.IP != bridge.IP) {
                 detectChanges = true;
                 object["IP"] = bridge.IP;
             }
             // check username, add to copy if different
-            if(jsonBridge.username != bridge.username) {
+            if (jsonBridge.username != bridge.username) {
                 detectChanges = true;
                 object["username"] = bridge.username;
+            }
+
+            if (jsonBridge.name != bridge.name) {
+                detectChanges = true;
+                object["name"] = bridge.name;
+            }
+
+            if (jsonBridge.api != bridge.api) {
+                detectChanges = true;
+                object["api"] = bridge.api;
+            }
+
+            if (jsonBridge.macaddress != bridge.macaddress
+                    && jsonBridge.macaddress != "") {
+                detectChanges = true;
+                object["macaddress"] = bridge.macaddress;
             }
         }
         if (detectChanges) {
@@ -459,33 +516,38 @@ void BridgeDiscovery::updateJSONLights(const hue::Bridge& bridge, const QJsonArr
         QJsonObject object = value.toObject();
         hue::Bridge jsonBridge = jsonToBridge(object);
         // check if the controller is the same but the JSON isn't
-        if ((jsonBridge.id == bridge.id) && (newJsonObject != object)) {
+        if (jsonBridge.id == bridge.id) {
             foundBridge = true;
-            // check if the lights arrays are different
-            if (lightsArray != object["lights"].toArray()) {
-                for (auto innerRef : object["lights"].toArray()) {
-                    // save old light data
-                    QJsonObject oldLight = innerRef.toObject();
-                    bool foundMatch = false;
-                    for (auto ref : lightsArray) {
-                        QJsonObject newLight = ref.toObject();
-                        if (newLight["uniqueid"].toString() == oldLight["uniqueid"].toString()) {
-                            foundMatch = true;
-                            // check name, add to copy if different
-                            if (newLight["name"].toString() != oldLight["name"].toString()) {
-                                detectChanges = true;
-//                                mHue->lightRenamedExternally(light, newLight["name"].toString());
-                                //qDebug() << " new name" << newLight["name"].toString() << " old name" << oldLight["name"].toString();
-                            }
-                            //qDebug() << " new light" << newLight;
-                            if (newLight["index"].toDouble() != oldLight["index"].toDouble()) {
-                                detectChanges = true;
+            if (newJsonObject != object) {
+                // check if the lights arrays are different
+                if (lightsArray != object["lights"].toArray()) {
+                    for (auto innerRef : object["lights"].toArray()) {
+                        // save old light data
+                        QJsonObject oldLight = innerRef.toObject();
+                        bool foundMatch = false;
+                        for (auto ref : lightsArray) {
+                            QJsonObject newLight = ref.toObject();
+                            if (newLight["uniqueid"].toString() == oldLight["uniqueid"].toString()) {
+                                foundMatch = true;
+                                // check name, add to copy if different
+                                if (newLight["name"].toString() != oldLight["name"].toString()) {
+                                    detectChanges = true;
+                                   // mHue->lightRenamedExternally(light, newLight["name"].toString());
+                                    //qDebug() << " new name" << newLight["name"].toString() << " old name" << oldLight["name"].toString();
+                                }
+                                if (newLight["index"].toDouble() != oldLight["index"].toDouble()) {
+                                    detectChanges = true;
+                                }
+
+                                if (newLight["swversion"].toString() != oldLight["swversion"].toString()) {
+                                    detectChanges = true;
+                                }
                             }
                         }
-                    }
-                    if (!foundMatch) {
-                        detectChanges = true;
-                        deletedLights.push_back(oldLight["uniqueid"].toString());
+                        if (!foundMatch) {
+                            detectChanges = true;
+                            deletedLights.push_back(oldLight["uniqueid"].toString());
+                        }
                     }
                 }
             }

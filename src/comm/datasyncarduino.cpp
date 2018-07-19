@@ -11,7 +11,7 @@
 #include "cor/utils.h"
 #include "cor/protocols.h"
 
-DataSyncArduino::DataSyncArduino(DataLayer *data, CommLayer *comm) {
+DataSyncArduino::DataSyncArduino(DeviceList *data, CommLayer *comm) {
     mData = data;
     mComm = comm;
     mUpdateInterval = 100;
@@ -49,7 +49,7 @@ void DataSyncArduino::resetSync() {
     if (mCleanupTimer->isActive()) {
         mCleanupTimer->stop();
     }
-    if (mData->currentDevices().size() > 0) {
+    if (mData->devices().size() > 0) {
         mDataIsInSync = false;
         mStartTime = QTime::currentTime();
         if (!mSyncTimer->isActive()) {
@@ -63,7 +63,7 @@ void DataSyncArduino::syncData() {
     if (!mDataIsInSync) {
         mMessages.clear();
         int countOutOfSync = 0;
-        for (auto&& device : mData->currentDevices()) {
+        for (auto&& device : mData->devices()) {
             cor::Light commLayerDevice = device;
             if (device.protocol() == EProtocolType::arduCor) {
                 if (mComm->fillDevice(commLayerDevice)) {
@@ -115,7 +115,7 @@ void DataSyncArduino::syncData() {
         mDataIsInSync = true;
     }
 
-    if (mDataIsInSync || mData->currentDevices().size() == 0) {
+    if (mDataIsInSync || mData->devices().size() == 0) {
         endOfSync();
     }
 
@@ -242,9 +242,10 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
             routineObject["routine"] = routineToString(dataDevice.routine);
             if (dataDevice.routine <= cor::ERoutineSingleColorEnd) {
                 //qDebug() << "ArduCor single color not in sync" << commDevice.color.toRgb() << "vs" << dataDevice.color.toRgb() << cor::colorDifference(dataDevice.color, commDevice.color);
-                routineObject["red"]     = dataDevice.color.red();
-                routineObject["green"]   = dataDevice.color.green();
-                routineObject["blue"]    = dataDevice.color.blue();
+                routineObject["red"]           = dataDevice.color.red();
+                routineObject["green"]         = dataDevice.color.green();
+                routineObject["blue"]          = dataDevice.color.blue();
+                routineObject["brightness"]    = dataDevice.brightness;
             }
 
             if (dataDevice.routine > cor::ERoutineSingleColorEnd) {

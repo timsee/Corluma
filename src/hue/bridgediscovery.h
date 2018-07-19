@@ -67,6 +67,13 @@ public:
      */
     std::list<hue::Bridge> bridges() const { return mFoundBridges; }
 
+    /// list of bridges that haven't been fully discovered
+    std::list<hue::Bridge> notFoundBridges() const { return mNotFoundBridges; }
+
+
+    /// getter for all known hue lights
+    std::list<HueLight> lights();
+
     /*!
      * \brief addManualIP attempts to connect to an IP address entered manually
      * \param ip new ip address to attempt.
@@ -85,7 +92,7 @@ public:
      * \param index light's index
      * \return the HueLight representation of the light
      */
-    HueLight lightFromBridgeIDAndIndex(const QString& bridgeID, uint32_t index);
+    HueLight lightFromBridgeIDAndIndex(const QString& bridgeID, int index);
 
 signals:
 

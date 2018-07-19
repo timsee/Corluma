@@ -135,15 +135,6 @@ public slots:
      */
     void deleteHue(QString key);
 
-    /// called when any button in a floating layout is pressed.
-    void floatingLayoutButtonPressed(QString);
-
-    /// show the hue light discovery widget
-    void showHueLightDiscovery();
-
-    /// close the hue light discovery widget
-    void hueDiscoveryClosePressed();
-
     /// getter for page
     EPage currentPage() { return mPageIndex; }
 
@@ -245,12 +236,6 @@ private:
     GreyOutOverlay *mGreyOut;
 
     /*!
-     * \brief mBottomRightFloatingLayout floating layout in bottom right for special cases where
-     *        the top right just isn't good enough.
-     */
-    FloatingLayout *mBottomRightFloatingLayout;
-
-    /*!
      * \brief mPageIndex index of current page.
      */
     EPage mPageIndex;
@@ -297,11 +282,6 @@ private:
      */
     SettingsPage *mSettingsPage;
 
-    /*!
-     * \brief mHueLightDiscovery widget for
-     */
-    hue::LightDiscovery *mHueLightDiscovery;
-
     //------------------
     // Helper Widgets
     //------------------
@@ -341,7 +321,7 @@ private:
      * \brief data layer that maintains and tracks the states of the lights
      *        and the saved data of the GUI
      */
-    DataLayer *mData;
+    DeviceList *mData;
 
     /*!
      * \brief mProtocolSettings maintains which comnmtypes are currently enabled.

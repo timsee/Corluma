@@ -34,24 +34,19 @@ CommLayer::CommLayer(QObject *parent, GroupsParser *parser) : QObject(parent),  
 
     mHue = std::shared_ptr<CommHue>(new CommHue(mUPnP));
     connect(mHue.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
-    connect(mHue.get(), SIGNAL(stateChanged()), this, SLOT(hueStateChanged()));
 }
 
-bool CommLayer::discoveryErrorsExist(ECommType type) {
-    if (type == ECommType::hue) {
+bool CommLayer::discoveryErrorsExist(EProtocolType type) {
+    if (type == EProtocolType::arduCor) {
         return false; // can only error out if no bridge is found...
-    } else if (type == ECommType::HTTP) {
+    } else if (type == EProtocolType::nanoleaf) {
         return false; // cant error out...
-    } else if (type == ECommType::nanoleaf) {
-        return false; // cant error out...
-    }
-#ifndef MOBILE_BUILD
-    else if (type == ECommType::serial) {
-        return mArduCor->serial()->serialPortErrorsExist();
-    }
-#endif // MOBILE_BUILD
-    else if (type == ECommType::UDP) {
-        return !mArduCor->UDP()->portBound();
+    } else if (type == EProtocolType::arduCor) {
+        return (!mArduCor->UDP()->portBound()
+        #ifndef MOBILE_BUILD
+               || !mArduCor->serial()->serialPortErrorsExist()
+        #endif // MOBILE_BUILD
+                );
     }
     return true;
 }

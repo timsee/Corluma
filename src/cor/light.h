@@ -161,7 +161,9 @@ public:
     /// getter for type
     ECommType commType() const { return mCommType; }
 
+    /// getter for protocol
     EProtocolType protocol() const { return mProtocol; }
+
     /// equal operator
     bool operator==(const cor::Light& rhs) const {
         bool result = true;

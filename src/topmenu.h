@@ -9,7 +9,7 @@
 #include "cor/slider.h"
 #include "cor/button.h"
 #include "icondata.h"
-#include "datalayer.h"
+#include "devicelist.h"
 #include "floatinglayout.h"
 #include "lightpage.h"
 #include "moodpage.h"
@@ -49,7 +49,7 @@ class TopMenu : public QWidget
 public:
     /// constructor
     explicit TopMenu(QWidget *parent,
-                     DataLayer* data,
+                     DeviceList* data,
                      CommLayer *comm,
                      MainWindow *mainWindow,
                      PalettePage *palettePage,
@@ -134,12 +134,16 @@ protected:
 
 private slots:
 
+    /// updates the UI
+    void updateUI();
+
     /// called when any button in a floating layout is pressed.
     void floatingLayoutButtonPressed(QString);
 
-    /// slot that updates when a packet is received.
-    void receivedPacket(EProtocolType);
 private:
+
+    /// renders an update for the UI periodically
+    QTimer *mRenderTimer;
 
     /// preset data for palettes from ArduCor
     PresetPalettes mPalettes;
@@ -171,7 +175,7 @@ private:
     uint32_t mFloatingMenuEnd;
 
     /// data layer, contains intended state for all devices.
-    DataLayer *mData;
+    DeviceList *mData;
 
     /// pointer to commlayer
     CommLayer *mComm;

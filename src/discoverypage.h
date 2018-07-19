@@ -8,9 +8,8 @@
 
 #include "cor/page.h"
 #include "comm/commlayer.h"
-#include "datalayer.h"
+#include "devicelist.h"
 #include "floatinglayout.h"
-
 
 class DiscoveryArduCorWidget;
 class DiscoveryHueWidget;
@@ -35,13 +34,7 @@ public:
     /*!
      * Constructor
      */
-    explicit DiscoveryPage(QWidget *parent, DataLayer *data, CommLayer *layer, ProtocolSettings *protocols);
-
-    /*!
-     * Destructor
-     */
-    ~DiscoveryPage();
-
+    explicit DiscoveryPage(QWidget *parent, DeviceList *data, CommLayer *layer, ProtocolSettings *protocols);
 
     /// debug function
     void openStartForDebug() { mForceStartOpen = true; }
@@ -126,7 +119,7 @@ private:
      * \brief data layer that maintains and tracks the states of the lights
      *        and the saved data of the GUI
      */
-    DataLayer *mData;
+    DeviceList *mData;
 
     /// moves floating layouts to top right position of screen.
     void moveFloatingLayouts();

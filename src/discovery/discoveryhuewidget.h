@@ -1,9 +1,14 @@
 #ifndef DISCOVERYHUEWIDGET_H
 #define DISCOVERYHUEWIDGET_H
 
+#include <QScrollArea>
+
 #include "discovery/discoverywidget.h"
-#include "discovery/hardwareconnectionwidget.h"
 #include "editablefieldwidget.h"
+#include "hue/bridgeinfowidget.h"
+#include "hue/lightdiscovery.h"
+#include "greyoutoverlay.h"
+
 
 /*!
  * \copyright
@@ -27,13 +32,15 @@ public:
      */
     explicit DiscoveryHueWidget(CommLayer *comm, QWidget *parent);
 
-    /*!
-     * \brief Destructor
-     */
-    ~DiscoveryHueWidget();
-
     /// See DiscoveryWidget.h
     void handleDiscovery(bool isActive);
+
+    /*!
+     * \brief resize size the widget programmatically
+     * \param resizeFullWidget true to resize the widget itself, false to just
+     *        resize its contents.
+     */
+    void resize();
 
 public slots:
 
@@ -49,6 +56,20 @@ protected:
      */
     void resizeEvent(QResizeEvent *);
 
+private slots:
+
+    /// handles when a discover hue buttons is pressed
+    void discoverHuesPressed(QString);
+
+    /// handles when a bridge is pressed on the bridge list
+    void bridgePressed(QString);
+
+    /// handles when the close button is pressed
+    void hueDiscoveryClosePressed();
+
+    /// handles when greyout is finished
+    void greyOutFadeComplete();
+
 private:
     /*!
      * \brief hueDiscoveryUpdate provides an int representation of the EHueDiscoveryState
@@ -57,17 +78,26 @@ private:
      */
     void hueDiscoveryUpdate(EHueDiscoveryState);
 
+    /// updates the GUI of the bridge
+    void updateBridgeGUI();
+
     /// true if bridge is discovered, false if not.
     bool mBridgeDiscovered;
+
+    /// true to grey out, false to hide the greyout
+    void greyOut(bool show);
+
+    /// overlay that greys out everythign under it
+    GreyOutOverlay *mGreyOut;
+
+    /// widget for discovering hue lights
+    hue::LightDiscovery *mHueLightDiscovery;
 
     /// label to prompt the user through the application.
     QLabel *mLabel;
 
     /// image for displaying a graphic to help with current step of widget.
     QLabel *mImage;
-
-    /// placeholder to add blank space to the hue widget
-    QLabel *mPlaceholder;
 
     /// label for displaying before the IP Address editable field.
     QLabel *mIPAddressInfo;
@@ -81,8 +111,17 @@ private:
     /// instructions on what to do with IP address
     QLabel *mIPAddressDebug;
 
-    /// widget for displaying the hadware connection state
-    HardwareConnectionWidget *mHardwareConnectionWidget;
+    /// widget used for scroll area.
+    QWidget *mScrollAreaWidget;
+
+    /// layout for scroll area
+    QVBoxLayout *mScrollLayout;
+
+    /// scroll area for displaying list.
+    QScrollArea *mScrollArea;
+
+    /// widgets for hue displayed in scroll area
+    std::vector<hue::BridgeInfoWidget *> mBridgeWidgets;
 
     /// scaling value for size of pngs
     float mScale;
@@ -102,6 +141,9 @@ private:
 
     /// layout for widget
     QVBoxLayout *mLayout;
+
+    /// layout for bridge picture and info
+    QHBoxLayout *mBridgeLayout;
 
     /// layout for IP information
     QHBoxLayout *mIPLayout;

@@ -18,7 +18,7 @@
 #include <QMessageBox>
 #include <QScroller>
 
-LightPage::LightPage(QWidget *parent, DataLayer *data, CommLayer *comm, GroupsParser *groups, ProtocolSettings *protocols) :
+LightPage::LightPage(QWidget *parent, DeviceList *data, CommLayer *comm, GroupsParser *groups, ProtocolSettings *protocols) :
     QWidget(parent), mComm(comm), mProtocolSettings(protocols) {
 
     mData = data;
@@ -285,7 +285,7 @@ void LightPage::deviceClicked(QString collectionKey, QString deviceKey) {
     QString currentGroup = mData->findCurrentCollection(mComm->collectionList(), false);
     for (auto&& group : mComm->collectionList()) {
         if (group.name == currentGroup) {
-            if (group.devices.size() == mData->currentDevices().size()) {
+            if (group.devices.size() == mData->devices().size()) {
                 mCurrentGroup = group.name;
             } else {
                 mCurrentGroup = "";
@@ -409,7 +409,7 @@ void LightPage::highlightList() {
     for (uint32_t row = 0; row < mRoomsWidget->count(); row++) {
         ListDevicesGroupWidget *widget = qobject_cast<ListDevicesGroupWidget*>(mRoomsWidget->widget(row));
         Q_ASSERT(widget);
-        widget->setCheckedDevices(mData->currentDevices());
+        widget->setCheckedDevices(mData->devices());
     }
 }
 

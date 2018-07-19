@@ -348,5 +348,16 @@ ___
 * Moved all hardware data that can potentially change (such as a Hue's name) out of save.json.
 * Fixed miscellaneous bugs. 
 
+### **v0.13.4**
+#### The DeviceList Update
+* Converted the `DataLayer` class to the `DeviceList` class.
+* Added ArduCor lights to the LightInfo widget. 
+* Simplified the handling of brightness when using Hues and Nanoleafs.
+* Fixed bugs in displaying connection states on the discovery page.
+* Fixed a bug with the first time loading of app default data. 
+* Fixed a bug where the settings page was getting resized incorrectly.
+* Fixed bugs with data not showing up in the LightInfo widget.
+* Fixed miscellaneous bugs.
+
 
 

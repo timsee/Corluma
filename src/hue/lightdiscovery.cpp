@@ -22,18 +22,10 @@ LightDiscovery::LightDiscovery(QWidget *parent, CommLayer *comm) : QWidget(paren
     connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(closeButtonPressed(bool)));
     mTopWidget->setFontPoint(20);
 
-    mDropdownList = new QComboBox(this);
-    mDropdownList->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(mDropdownList, SIGNAL(currentTextChanged(QString)), this, SLOT(dropdownListChanged(QString)));
-
     mSearchButton = new QPushButton(this);
     mSearchButton->setText("Search");
     mSearchButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(mSearchButton, SIGNAL(clicked(bool)), this, SLOT(searchButtonPressed(bool)));
-
-    mTopLayout = new QHBoxLayout;
-    mTopLayout->addWidget(mDropdownList, 8);
-    mTopLayout->addWidget(mSearchButton, 3);
 
     mSearchWidget = new SearchWidget("", this, 10, QString("You may only search for 10 Hues manually at a time."));
     mSearchWidget->enableSizeChecks(6, 6, "Hue serial numbers must be 6 characters long.");
@@ -43,7 +35,7 @@ LightDiscovery::LightDiscovery(QWidget *parent, CommLayer *comm) : QWidget(paren
 
     mLayout = new QVBoxLayout(this);
     mLayout->addWidget(mTopWidget, 1);
-    mLayout->addLayout(mTopLayout, 1);
+    mLayout->addWidget(mSearchButton, 1);
     mLayout->addWidget(mSearchWidget, 8);
 
     //------------
@@ -78,28 +70,21 @@ void LightDiscovery::closeButtonPressed(bool) {
     emit closePressed();
 }
 
-void LightDiscovery::show() {
+void LightDiscovery::show(const hue::Bridge& bridge) {
+    mBridge = bridge;
     mDiscoveryTimer->start(2500);
     discoveryRoutine();
-
-    for (auto bridge : mComm->hue()->discovery()->bridges()) {
-        mDropdownList->addItem(bridge.IP + " (" + bridge.id + ")");
-        mCurrentBridge = bridge;
-    }
 }
 
 void LightDiscovery::hide() {
     if (mDiscoveryTimer->isActive()) {
         mDiscoveryTimer->stop();
     }
-
-    mCurrentBridge = hue::Bridge();
-    mDropdownList->clear();
 }
 
 void LightDiscovery::discoveryRoutine() {
     // get new lights, which also checks if a scan is active
-    mComm->hue()->requestNewLights(mCurrentBridge);
+    mComm->hue()->requestNewLights(mBridge);
     // see if any new lights have been added to UI
     bool newLightsAdded = false;
     for (auto serial : mSearchWidget->searchingFor()) {
@@ -117,7 +102,7 @@ void LightDiscovery::discoveryRoutine() {
     // if scan is not active or if new lights have been added, restart scan
     if (!mComm->hue()->scanIsActive() || newLightsAdded) {
         qDebug() << " search for new lights! active: " << mComm->hue()->scanIsActive()  << " new lgihts added" << newLightsAdded;
-        mComm->hue()->searchForNewLights(mCurrentBridge, mSearchWidget->searchingFor());
+        mComm->hue()->searchForNewLights(mBridge, mSearchWidget->searchingFor());
     }
 
     // if any changes happen, update UI
@@ -129,20 +114,8 @@ void LightDiscovery::discoveryRoutine() {
     }
 }
 
-void LightDiscovery::dropdownListChanged(QString text) {
-    QStringList list = text.split(" ");
-    if (list.size()) {
-        for (auto foundBridge : mComm->hue()->discovery()->bridges()) {
-            if (foundBridge.IP == list[0]) {
-                mCurrentBridge = foundBridge;
-            }
-        }
-    }
-
-}
-
 void LightDiscovery::searchButtonPressed(bool) {
-    mComm->hue()->searchForNewLights(mCurrentBridge, mSearchWidget->searchingFor());
+    mComm->hue()->searchForNewLights(mBridge, mSearchWidget->searchingFor());
 }
 
 // ----------------------------

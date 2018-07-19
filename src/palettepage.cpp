@@ -49,11 +49,6 @@ PalettePage::PalettePage(QWidget *parent) : QWidget(parent) {
     setupButtons();
 }
 
-PalettePage::~PalettePage() {
-
-}
-
-
 void PalettePage::setupButtons() {
     std::vector<QString> labels((size_t)EPalette::unknown - 1);
     for (uint32_t i = 0; i < labels.size(); ++i) {

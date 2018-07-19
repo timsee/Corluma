@@ -6,7 +6,7 @@
 #include <memory>
 
 #include "arducor/arducordiscovery.h"
-#include "crccalculator.h"
+#include "arducor/crccalculator.h"
 #include "cor/presetpalettes.h"
 #include "comm/commtype.h"
 
@@ -69,6 +69,9 @@ public:
     /// getter for discovery
     ArduCorDiscovery *discovery() { return mDiscovery; }
 
+    /// getter for all connected lights
+    std::list<cor::Light> lights();
+
 signals:
 
     /*!
@@ -111,6 +114,15 @@ private:
 
     /// arducor discovery ovbject
     ArduCorDiscovery *mDiscovery;
+
+    /*!
+     * \brief preparePacketForTransmission prepare internal states and variables for sending a new packet and adjust packet
+     *        to fix issues with sending it, if needed
+     * \param controller the controller to send the packet the to
+     * \param packet the packet that is about to be sent
+     * \return true to reset state timeout, false to do nothing
+     */
+    bool preparePacketForTransmission(const cor::Controller& controller, QString& packet);
 
     /*!
      * \brief verifyStateUpdatePacketValidity takes a vector and checks that all

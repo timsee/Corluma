@@ -15,7 +15,6 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent,
                                            ProtocolSettings *protocols) :
                                            QWidget(parent),
                                            mProtocolSettings(protocols) {
-
     mSpacerPixels = 5;
 
     // set margins as spacer * 2

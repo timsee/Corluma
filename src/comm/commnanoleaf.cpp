@@ -803,7 +803,7 @@ QJsonArray CommNanoleaf::createPalette(const cor::Light& light) {
                     if (hue < 0) hue = hue * -1;
                     colorObject["hue"] = hue;
                     colorObject["saturation"] = (int)(light.color.saturationF() * 100.0f);
-                    colorObject["brightness"] = (int)(light.color.valueF() * 100.0f);
+                    colorObject["brightness"] = (int)light.brightness;
                     paletteArray.push_back(colorObject);
                 }
                 break;
@@ -817,7 +817,7 @@ QJsonArray CommNanoleaf::createPalette(const cor::Light& light) {
                     if (hue < 0) hue = hue * -1;
                     colorObject["hue"] = hue;
                     colorObject["saturation"] = (int)(light.color.saturationF() * 100.0f);
-                    colorObject["brightness"] = (int)(light.color.valueF() * 100.0f * ((valueCount - i) / valueCount));
+                    colorObject["brightness"] = (int)(light.brightness * ((valueCount - i) / valueCount));
                     if (i == 0) {
                         colorObject["probability"] = 80;
                     } else {
@@ -834,7 +834,7 @@ QJsonArray CommNanoleaf::createPalette(const cor::Light& light) {
                 if (hue < 0) hue = hue * -1;
                 colorObject["hue"] = hue;
                 colorObject["saturation"] = (int)(light.color.saturationF() * 100.0f);
-                colorObject["brightness"] = (int)(light.color.valueF() * 100.0f);
+                colorObject["brightness"] = light.brightness;
                 paletteArray.push_back(colorObject);
 
                 QJsonObject offObject;
@@ -857,7 +857,7 @@ QJsonArray CommNanoleaf::createPalette(const cor::Light& light) {
                     if (hue < 0) hue = hue * -1;
                     colorObject["hue"] = hue;
                     colorObject["saturation"] = (int)(light.color.saturationF() * 100.0f);
-                    colorObject["brightness"] = (int)(light.color.valueF() * 100.0f * ((valueCount - i) / valueCount));
+                    colorObject["brightness"] = (int)(light.brightness * ((valueCount - i) / valueCount));
                     paletteArray.push_back(colorObject);
                 }
                 break;
@@ -895,11 +895,16 @@ void CommNanoleaf::routineChange(const nano::LeafController& controller, QJsonOb
     QColor color;
     if (routineObject["red"].isDouble()
             && routineObject["green"].isDouble()
-            && routineObject["blue"].isDouble()) {
+            && routineObject["blue"].isDouble()
+            && routineObject["brightness"].isDouble()) {
         color.setRgb(routineObject["red"].toDouble(),
                 routineObject["green"].toDouble(),
                 routineObject["blue"].toDouble());
-    }
+        color.toHsv();
+        color.setHsvF(color.hueF(),
+                      color.saturationF(),
+                      routineObject["brightness"].toDouble() / 100.0f);
+     }
     if (routine == ERoutine::singleSolid) {
         singleSolidColorChange(controller, color);
     } else {

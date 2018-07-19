@@ -98,7 +98,7 @@ public:
     void stopDiscovery(EProtocolType type);
 
     /// returns true if theres any known errors for the commtype.
-    bool discoveryErrorsExist(ECommType type);
+    bool discoveryErrorsExist(EProtocolType type);
 
     /*!
      * \brief deviceTable a hash table of all connected devices of a certain connection type. The controller names

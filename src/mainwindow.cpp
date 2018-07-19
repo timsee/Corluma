@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mGroups = new GroupsParser(this);
     mProtocolSettings = new ProtocolSettings();
-    mData   = new DataLayer(this);
+    mData   = new DeviceList(this);
     mComm   = new CommLayer(this, mGroups);
 
     mDataSyncArduino  = new DataSyncArduino(mData, mComm);
@@ -140,14 +140,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(mSettingsPage, SIGNAL(updateMainIcons()), mTopMenu, SLOT(updateMenuBar()));
     connect(mSettingsPage, SIGNAL(debugPressed()), this, SLOT(settingsDebugPressed()));
     connect(mSettingsPage, SIGNAL(closePressed()), this, SLOT(settingsClosePressed()));
-    connect(mSettingsPage, SIGNAL(clickedHueInfoWidget()), this, SLOT(hueInfoWidgetClicked()));
-    connect(mSettingsPage, SIGNAL(clickedHueDiscovery()), this, SLOT(showHueLightDiscovery()));
+    connect(mSettingsPage, SIGNAL(clickedInfoWidget()), this, SLOT(hueInfoWidgetClicked()));
     connect(mSettingsPage, SIGNAL(clickedDiscovery()), this, SLOT(switchToDiscovery()));
 
     connect(mSettingsPage->globalWidget(), SIGNAL(protocolSettingsUpdate(EProtocolType, bool)), this, SLOT(protocolSettingsChanged(EProtocolType, bool)));
     connect(mSettingsPage->globalWidget(), SIGNAL(timeoutUpdate(int)), this, SLOT(timeoutChanged(int)));
     connect(mSettingsPage->globalWidget(), SIGNAL(timeoutEnabled(bool)), this, SLOT(timeoutEnabledChanged(bool)));
-
 
     // --------------
     // Setup Discovery Page
@@ -189,25 +187,6 @@ MainWindow::MainWindow(QWidget *parent) :
     mLightInfoWidget->setGeometry(0, -1 * this->height(), this->width(), this->height());
 
     // --------------
-    // Set up the floating layouts
-    // --------------
-
-    mBottomRightFloatingLayout = new FloatingLayout(false, this);
-    connect(mBottomRightFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
-    std::vector<QString> buttons = { QString("HueLightSearch") };
-    mBottomRightFloatingLayout->setupButtons(buttons, EButtonSize::small);
-    mBottomRightFloatingLayout->setVisible(false);
-
-    // --------------
-    // Set up HueLightInfoDiscovery
-    // --------------
-
-    mHueLightDiscovery = new hue::LightDiscovery(this, mComm);
-    mHueLightDiscovery->setVisible(false);
-    mHueLightDiscovery->isOpen(false);
-    connect(mHueLightDiscovery, SIGNAL(closePressed()), this, SLOT(hueDiscoveryClosePressed()));
-
-    // --------------
     // Setup app data with saved and global settings
     // --------------
     mData->enableTimeout(mSettingsPage->globalWidget()->useTimeout());
@@ -246,7 +225,7 @@ void MainWindow::topMenuButtonPressed(QString key) {
     }  else if (key.compare("Lights") == 0) {
         pageChanged(EPage::lightPage);
     }  else if (key.compare("Settings") == 0) {
-        mSettingsPage->setGeometry(this->width(), 0, this->width(), mSettingsPage->height());
+        mSettingsPage->setGeometry(this->width(), 0, this->width(), this->height());
         mSettingsPage->setVisible(true);
         QPropertyAnimation *animation = new QPropertyAnimation(mSettingsPage, "pos");
         animation->setDuration(TRANSITION_TIME_MSEC);
@@ -388,7 +367,9 @@ void MainWindow::showMainPage(EPage page) {
         mMoodPage->show(mData->findCurrentMood(mGroups->moodList()), mGroups->moodList(), mComm->roomList(), mComm->deviceNames());
     } else if (page == EPage::palettePage) {
         mPalettePage->resize();
-        mPalettePage->show(mData->mainColor(), mData->hasArduinoDevices(), mData->hasNanoLeafDevices());
+        mPalettePage->show(mData->mainColor(),
+                           mData->hasLightWithProtocol(EProtocolType::arduCor),
+                           mData->hasLightWithProtocol(EProtocolType::nanoleaf));
         if (mPalettePage->mode() == EGroupMode::arduinoPresets
                 || mPalettePage->mode() == EGroupMode::huePresets) {
             mTopMenu->highlightButton("Preset_Groups");
@@ -424,6 +405,8 @@ void MainWindow::settingsDebugPressed() {
 }
 
 void MainWindow::renamedLight(cor::Light light, QString newName) {
+    Q_UNUSED(light);
+    Q_UNUSED(newName);
 
 }
 
@@ -434,7 +417,6 @@ void MainWindow::renamedLight(cor::Light light, QString newName) {
 void MainWindow::resizeEvent(QResizeEvent *event) {
     Q_UNUSED(event);
 
-    moveFloatingLayout();
     resizeLayout();
 
     QSize fullScreenSize = this->size();
@@ -473,10 +455,6 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
 
     if (mLightInfoWidget->isOpen()) {
         mLightInfoWidget->resize();
-    }
-
-    if (mHueLightDiscovery->isOpen()) {
-        mHueLightDiscovery->resize();
     }
 
     QRect geometry(this->width() + mMainViewport->width(),
@@ -591,7 +569,7 @@ void MainWindow::editButtonClicked(QString key, bool isMood) {
     bool isRoom = false;
     if (key.compare("") == 0) {
         key = mData->findCurrentCollection(mComm->collectionList(), false);
-        groupDevices = mData->currentDevices();
+        groupDevices = mData->devices();
     } else {
         bool foundGroup = false;
         if (isMood) {
@@ -612,7 +590,7 @@ void MainWindow::editButtonClicked(QString key, bool isMood) {
             }
         }
         if (!foundGroup) {
-            groupDevices = mData->currentDevices();
+            groupDevices = mData->devices();
         }
     }
     mEditPage->showGroup(key,
@@ -630,9 +608,9 @@ void MainWindow::hueInfoWidgetClicked() {
     greyOut(true);
     mLightInfoWidget->isOpen(true);
 
-    mLightInfoWidget->updateLights(mComm->hue()->connectedHues());
+    mLightInfoWidget->updateHues(mComm->hue()->discovery()->lights());
     mLightInfoWidget->updateControllers(mComm->nanoleaf()->controllers());
-    mBottomRightFloatingLayout->setVisible(true);
+    mLightInfoWidget->updateLights(mComm->arducor()->lights());
 
     QSize size = this->size();
     mLightInfoWidget->setGeometry(size.width() * 0.125f,
@@ -686,7 +664,6 @@ void MainWindow::lightInfoClosePressed() {
                            size.height() * 0.75f);
 
     QPoint finishPoint(size.width() * 0.125f, -1 * this->height());
-    mBottomRightFloatingLayout->setVisible(false);
 
     QPropertyAnimation *animation = new QPropertyAnimation(mLightInfoWidget, "pos");
     animation->setDuration(TRANSITION_TIME_MSEC);
@@ -703,7 +680,7 @@ void MainWindow::deletedLight(QString uniqueID) {
 void MainWindow::lightNameChange(EProtocolType type, QString key, QString name) {
     if (type == EProtocolType::hue) {
         // get hue light from key
-        std::list<HueLight> hueLights = mComm->hue()->connectedHues();
+        std::list<HueLight> hueLights = mComm->hue()->discovery()->lights();
         int keyNumber = key.toInt();
         HueLight light("NOT_VALID", ECommType::MAX);
         bool lightFound = false;
@@ -741,7 +718,7 @@ void MainWindow::lightNameChange(EProtocolType type, QString key, QString name) 
 
 void MainWindow::deleteHue(QString key) {
     // get hue light from key
-    std::list<HueLight> hueLights = mComm->hue()->connectedHues();
+    std::list<HueLight> hueLights = mComm->hue()->discovery()->lights();
     int keyNumber = key.toInt();
     HueLight light("NOT_VALID", ECommType::MAX);
     bool lightFound = false;
@@ -788,34 +765,6 @@ void MainWindow::greyOutFadeComplete() {
     mGreyOut->setVisible(false);
 }
 
-void MainWindow::floatingLayoutButtonPressed(QString button) {
-    if (button.compare("HueLightSearch") == 0) {
-        showHueLightDiscovery();
-    }
-}
-
-void MainWindow::showHueLightDiscovery() {
-    greyOut(true);
-    mHueLightDiscovery->isOpen(true);
-    mHueLightDiscovery->resize();
-    mHueLightDiscovery->setVisible(true);
-    mHueLightDiscovery->show();
-}
-
-
-void MainWindow::hueDiscoveryClosePressed() {
-    greyOut(false);
-    mHueLightDiscovery->isOpen(false);
-    mHueLightDiscovery->setVisible(false);
-    mHueLightDiscovery->hide();
-}
-
-void MainWindow::moveFloatingLayout() {
-    QPoint bottomRight(this->width(),
-                       this->height() - mBottomRightFloatingLayout->height());
-    mBottomRightFloatingLayout->move(bottomRight);
-    mBottomRightFloatingLayout->raise();
-}
 
 void MainWindow::resizeLayout() {
     mMainWidget->setGeometry(this->geometry());
@@ -873,17 +822,7 @@ void MainWindow::protocolSettingsChanged(EProtocolType type, bool enabled) {
         mComm->startup(type);
     } else {
         mComm->shutdown(type);
-        if (type == EProtocolType::arduCor) {
-            mData->removeDevicesOfType(ECommType::UDP);
-            mData->removeDevicesOfType(ECommType::HTTP);
-#ifndef MOBILE_BUILD
-            mData->removeDevicesOfType(ECommType::serial);
-#endif
-        } else if (type == EProtocolType::hue) {
-            mData->removeDevicesOfType(ECommType::hue);
-        } else if (type == EProtocolType::nanoleaf) {
-            mData->removeDevicesOfType(ECommType::nanoleaf);
-        }
+        mData->removeDevicesOfType(type);
     }
 }
 

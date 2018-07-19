@@ -26,12 +26,12 @@ namespace hue
  *        light from this widget. If an edit is made, this widget signals out the new name
  *        for it to be sent to the bridge.
  */
-class LightInfoWidget : public QWidget
+class HueInfoWidget : public QWidget
 {
     Q_OBJECT
 public:
     /// constructor
-    explicit LightInfoWidget(HueLight light, QWidget *parent);
+    explicit HueInfoWidget(HueLight light, QWidget *parent);
 
     /*!
      * \brief updateLight update the light used internally to fill the widget

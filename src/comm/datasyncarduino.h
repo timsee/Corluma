@@ -32,7 +32,7 @@ public:
      * \param data pointer to the app's data layer.
      * \param comm pointer to the app's comm layer.
      */
-    DataSyncArduino(DataLayer *data, CommLayer *comm);
+    DataSyncArduino(DeviceList *data, CommLayer *comm);
 
     /// destructor
     ~DataSyncArduino() {}

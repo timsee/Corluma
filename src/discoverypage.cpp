@@ -23,7 +23,7 @@
 #include <QStyleOption>
 #include <QGraphicsOpacityEffect>
 
-DiscoveryPage::DiscoveryPage(QWidget *parent, DataLayer *data, CommLayer *comm, ProtocolSettings *protocols) :
+DiscoveryPage::DiscoveryPage(QWidget *parent, DeviceList *data, CommLayer *comm, ProtocolSettings *protocols) :
     QWidget(parent),
     mComm(comm),
     mProtocolSettings(protocols) {
@@ -85,10 +85,6 @@ DiscoveryPage::DiscoveryPage(QWidget *parent, DataLayer *data, CommLayer *comm, 
     mButtonIcons[(int)EConnectionButtonIcons::blue]   = QPixmap("://images/blueButton.png").scaled(buttonSize, buttonSize,
                                                                                                           Qt::KeepAspectRatio,
                                                                                                           Qt::SmoothTransformation);
-    mButtonIcons[(int)EConnectionButtonIcons::green]  = QPixmap("://images/greenButton.png").scaled(buttonSize, buttonSize,
-                                                                                                           Qt::KeepAspectRatio,
-                                                                                                           Qt::SmoothTransformation);
-
     mArduCorWidget = new DiscoveryArduCorWidget(mComm, this);
     connect(mArduCorWidget, SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)), this, SLOT(widgetConnectionStateChanged(EProtocolType, EConnectionState)));
     mArduCorWidget->setVisible(false);
@@ -104,10 +100,6 @@ DiscoveryPage::DiscoveryPage(QWidget *parent, DataLayer *data, CommLayer *comm, 
 
     mType = EProtocolType::hue;
 }
-
-DiscoveryPage::~DiscoveryPage() {
-}
-
 
 void DiscoveryPage::renderUI() {
     bool isAnyConnected = false;
@@ -217,14 +209,8 @@ void DiscoveryPage::changeCommTypeConnectionState(EProtocolType type, EConnectio
             case EConnectionState::discovering:
                 pixmap = mButtonIcons[(int)EConnectionButtonIcons::yellow];
                 break;
-            case EConnectionState::discoveredAndNotInUse:
+            case EConnectionState::discovered:
                 pixmap = mButtonIcons[(int)EConnectionButtonIcons::blue];
-                break;
-            case EConnectionState::singleDeviceSelected:
-                pixmap = mButtonIcons[(int)EConnectionButtonIcons::green];
-                break;
-            case EConnectionState::multipleDevicesSelected:
-                pixmap = mButtonIcons[(int)EConnectionButtonIcons::green];
                 break;
             default:
                 qDebug() << "WARNING: change resize assets sees type is does not recognize.." << (int)mConnectionStates[(int)type];
@@ -285,19 +271,13 @@ void DiscoveryPage::resizeTopMenu() {
                 pixmap = mButtonIcons[(int)EConnectionButtonIcons::black];
                 break;
             case EConnectionState::connectionError:
-                pixmap = mButtonIcons[(int)EConnectionButtonIcons::yellow];
+                pixmap = mButtonIcons[(int)EConnectionButtonIcons::red];
                 break;
             case EConnectionState::discovering:
                 pixmap = mButtonIcons[(int)EConnectionButtonIcons::yellow];
                 break;
-            case EConnectionState::discoveredAndNotInUse:
+            case EConnectionState::discovered:
                 pixmap = mButtonIcons[(int)EConnectionButtonIcons::blue];
-                break;
-            case EConnectionState::singleDeviceSelected:
-                pixmap = mButtonIcons[(int)EConnectionButtonIcons::green];
-                break;
-            case EConnectionState::multipleDevicesSelected:
-                pixmap = mButtonIcons[(int)EConnectionButtonIcons::green];
                 break;
             default:
                 qDebug() << "WARNING: change resize assets sees type is does not recognize.." << (int)mConnectionStates[(int)type];

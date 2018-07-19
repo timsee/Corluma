@@ -14,17 +14,17 @@
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
 
-EditGroupPage::EditGroupPage(QWidget *parent, CommLayer* comm, DataLayer* data, GroupsParser *parser) : QWidget(parent), mComm(comm), mGroups(parser) {
+EditGroupPage::EditGroupPage(QWidget *parent, CommLayer* comm, DeviceList* data, GroupsParser *parser) : QWidget(parent), mComm(comm), mGroups(parser) {
 
     mTopMenu = new EditPageTopMenu(this);
     mTopMenu->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    connect(mTopMenu->closeButton(),  SIGNAL(clicked(bool)),       this, SLOT(closePressed(bool)));
-    connect(mTopMenu->resetButton(),  SIGNAL(clicked(bool)),       this, SLOT(resetPressed(bool)));
-    connect(mTopMenu->deleteButton(), SIGNAL(clicked(bool)),       this, SLOT(deletePressed(bool)));
-    connect(mTopMenu->saveButton(),   SIGNAL(clicked(bool)),       this, SLOT(savePressed(bool)));
+    connect(mTopMenu->closeButton(),  SIGNAL(clicked(bool)),        this, SLOT(closePressed(bool)));
+    connect(mTopMenu->resetButton(),  SIGNAL(clicked(bool)),        this, SLOT(resetPressed(bool)));
+    connect(mTopMenu->deleteButton(), SIGNAL(clicked(bool)),        this, SLOT(deletePressed(bool)));
+    connect(mTopMenu->saveButton(),   SIGNAL(clicked(bool)),        this, SLOT(savePressed(bool)));
     connect(mTopMenu->nameEdit(),     SIGNAL(textChanged(QString)), this, SLOT(lineEditChanged(QString)));
-    connect(mTopMenu->roomCheckBox(), SIGNAL(boxChecked(bool)),    this, SLOT(isRoomChecked(bool)));
+    connect(mTopMenu->roomCheckBox(), SIGNAL(boxChecked(bool)),     this, SLOT(isRoomChecked(bool)));
 
     mIsRoomOriginal = false;
 
@@ -84,9 +84,9 @@ void EditGroupPage::updateDevices(std::list<cor::Light> groupDevices, std::list<
 void EditGroupPage::resize(bool resizeFullWidget) {
     QSize size = qobject_cast<QWidget*>(this->parent())->size();
     if (resizeFullWidget) {
-        this->setGeometry(size.width() * 0.125f,
+        this->setGeometry(size.width()  * 0.125f,
                           size.height() * 0.125f,
-                          size.width() * 0.75f,
+                          size.width()  * 0.75f,
                           size.height() * 0.75f);
     }
     mScrollAreaWidget->resize();
@@ -251,6 +251,37 @@ void EditGroupPage::saveChanges() {
         msgBox.exec();
         // close edit page anyway.
         emit pressedClose();
+        return;
+    }
+
+    //---------------------------------
+    // Edge case checks
+    //---------------------------------
+    bool passesChecks = true;
+
+    // if its a room, check that all lights are unassigned or part of the current room
+    if (mIsRoomCurrent) {
+        for (const auto& device : newDevices) {
+            // loop through all collections
+            for (const auto& collection : mComm->collectionList()) {
+                // ignore the existing room and non-rooms
+                if (collection.isRoom && (collection.name != mNewName)) {
+                    for (const auto& collectionDevice : collection.devices) {
+                        if (collectionDevice.uniqueID() == device.uniqueID()) {
+                            passesChecks = false;
+                            // pop up warning that it isn't saving
+                            QMessageBox msgBox;
+                            msgBox.setText("Trying to save the light " + device.name + " to multiple rooms.");
+                            msgBox.exec();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    if (!passesChecks) {
         return;
     }
 

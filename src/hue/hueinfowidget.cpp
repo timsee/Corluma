@@ -11,13 +11,13 @@
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
 
-#include "hue/lightinfowidget.h"
+#include "hue/hueinfowidget.h"
 #include "cor/utils.h"
 
 namespace hue
 {
 
-LightInfoWidget::LightInfoWidget(HueLight light, QWidget *parent) : QWidget(parent), mLight(light) {
+HueInfoWidget::HueInfoWidget(HueLight light, QWidget *parent) : QWidget(parent), mLight(light) {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     this->setStyleSheet(styleSheet);
 
@@ -50,13 +50,13 @@ LightInfoWidget::LightInfoWidget(HueLight light, QWidget *parent) : QWidget(pare
     mLayout->addWidget(mSoftwareVersion, 3, 0);
     mLayout->addWidget(mUniqueID, 4, 0);
 
-    mKey = QString::number(light.index);
+    mKey = light.uniqueID();
 
     mIsChecked = false;
     hideDetails(true);
 }
 
-void LightInfoWidget::updateLight(HueLight light) {
+void HueInfoWidget::updateLight(HueLight light) {
 
     // many fields such as the mac address and the type of light won't update, only check the fields that do
     if (light.name.compare(mLight.name) != 0) {
@@ -70,17 +70,17 @@ void LightInfoWidget::updateLight(HueLight light) {
     mLight = light;
 }
 
-void LightInfoWidget::mouseReleaseEvent(QMouseEvent *event) {
+void HueInfoWidget::mouseReleaseEvent(QMouseEvent *event) {
     Q_UNUSED(event);
     emit clicked(mKey);
 }
 
-void LightInfoWidget::setChecked(bool checked) {
+void HueInfoWidget::setChecked(bool checked) {
     mIsChecked = checked;
     repaint();
 }
 
-void LightInfoWidget::setHeight(int height) {
+void HueInfoWidget::setHeight(int height) {
     if (mHideDetails) {
         height = height / 2;
     }
@@ -89,14 +89,14 @@ void LightInfoWidget::setHeight(int height) {
     this->setFixedHeight(height);
 }
 
-void LightInfoWidget::hideDetails(bool shouldHide) {
+void HueInfoWidget::hideDetails(bool shouldHide) {
     mModelID->setHidden(shouldHide);
     mSoftwareVersion->setHidden(shouldHide);
     mUniqueID->setHidden(shouldHide);
     mHideDetails = shouldHide;
 }
 
-void LightInfoWidget::paintEvent(QPaintEvent *event) {
+void HueInfoWidget::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event);
     QStyleOption opt;
     opt.init(this);

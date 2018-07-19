@@ -42,15 +42,15 @@ void DiscoveryNanoLeafWidget::handleDiscovery(bool isCurrentCommType) {
     // starts discovery if its not already started
     mComm->nanoleaf()->discovery()->startDiscovery();
 
-    auto deviceTable     = mComm->nanoleaf()->discovery()->foundControllers();
-    auto discoveringList = mComm->nanoleaf()->discovery()->notFoundControllers();
+    auto foundNanoleafs  = mComm->nanoleaf()->discovery()->foundControllers();
+    auto notFoundNanoleafs = mComm->nanoleaf()->discovery()->notFoundControllers();
 
-    for (auto device : deviceTable) {
-        mSearchWidget->addToConnectedList(device.name);
+    for (const auto& nanoleaf : foundNanoleafs) {
+        mSearchWidget->addToConnectedList(nanoleaf.name);
     }
 
-    for (auto name : discoveringList) {
-        mSearchWidget->addToSearchList(name);
+    for (const auto& nanoleaf : notFoundNanoleafs) {
+        mSearchWidget->addToSearchList(nanoleaf.name);
     }
 
     ENanoleafDiscoveryState discoveryState = mComm->nanoleaf()->discovery()->state();
@@ -74,10 +74,10 @@ void DiscoveryNanoLeafWidget::handleDiscovery(bool isCurrentCommType) {
     }
 
     // handle button updates
-    if (mComm->discoveryErrorsExist(ECommType::nanoleaf)) {
+    if (mComm->discoveryErrorsExist(EProtocolType::nanoleaf)) {
         emit connectionStatusChanged(EProtocolType::nanoleaf, EConnectionState::connectionError);
-    }  else if (deviceTable.size() > 0) {
-        emit connectionStatusChanged(EProtocolType::nanoleaf, EConnectionState::discoveredAndNotInUse);
+    }  else if (foundNanoleafs.size() > 0) {
+        emit connectionStatusChanged(EProtocolType::nanoleaf, EConnectionState::discovered);
     } else {
         emit connectionStatusChanged(EProtocolType::nanoleaf, EConnectionState::off);
     }

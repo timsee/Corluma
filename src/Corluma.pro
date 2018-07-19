@@ -111,6 +111,8 @@ SOURCES += main.cpp \
     arducor/arducordiscovery.cpp \
     arducor/arducorpacketparser.cpp \
     arducor/controller.cpp \
+    arducor/arducorinfowidget.cpp \
+    arducor/crccalculator.cpp \
     comm/commarducor.cpp \
     comm/commhttp.cpp \
     comm/commudp.cpp \
@@ -118,7 +120,6 @@ SOURCES += main.cpp \
     comm/commhue.cpp \
     comm/commnanoleaf.cpp \
     comm/commlayer.cpp \
-    comm/crccalculator.cpp \
     comm/datasync.cpp \
     comm/datasynchue.cpp \
     comm/datasyncarduino.cpp \
@@ -151,11 +152,12 @@ SOURCES += main.cpp \
     cor/palette.cpp \
     cor/jsonsavedata.cpp \
     cor/lightvectorwidget.cpp \
+    hue/bridgeinfowidget.cpp \
     hue/lightdiscovery.cpp \
-    hue/lightinfowidget.cpp \
     hue/bridgediscovery.cpp \
     hue/bridge.cpp \
     hue/huelight.cpp \
+    hue/hueinfowidget.cpp \
     nanoleaf/panels.cpp \
     nanoleaf/rhythmcontroller.cpp \
     nanoleaf/leafcontroller.cpp \
@@ -163,7 +165,6 @@ SOURCES += main.cpp \
     nanoleaf/leafcontrollerinfowidget.cpp \
     mainwindow.cpp \
     settingspage.cpp \
-    datalayer.cpp \
     icondata.cpp \
     floatinglayout.cpp \
     groupsparser.cpp \
@@ -188,11 +189,14 @@ SOURCES += main.cpp \
     lightpage.cpp \
     palettepage.cpp \
     moodpage.cpp \
-    lightinfolistwidget.cpp
+    lightinfolistwidget.cpp \
+    devicelist.cpp
 
 HEADERS  +=  arducor/arducordiscovery.h \
     arducor/arducorpacketparser.h \
     arducor/controller.h \
+    arducor/arducorinfowidget.h \
+    arducor/crccalculator.h \
     comm/commtype.h \
     comm/commarducor.h \
     comm/commhttp.h \
@@ -200,7 +204,6 @@ HEADERS  +=  arducor/arducordiscovery.h \
     comm/commhue.h \
     comm/commnanoleaf.h \
     comm/commlayer.h \
-    comm/crccalculator.h \
     comm/datasync.h \
     comm/datasynchue.h \
     comm/datasyncarduino.h \
@@ -238,11 +241,12 @@ HEADERS  +=  arducor/arducordiscovery.h \
     cor/jsonsavedata.h \
     cor/lightvectorwidget.h \
     hue/lightdiscovery.h \
-    hue/lightinfowidget.h \
     hue/bridgediscovery.h \
     hue/hueprotocols.h \
     hue/huelight.h \
     hue/bridge.h \
+    hue/hueinfowidget.h \
+    hue/bridgeinfowidget.h \
     nanoleaf/panels.h \
     nanoleaf/rhythmcontroller.h \
     nanoleaf/leafcontroller.h \
@@ -250,7 +254,6 @@ HEADERS  +=  arducor/arducordiscovery.h \
     nanoleaf/leafcontrollerinfowidget.h \
     mainwindow.h \
     settingspage.h \
-    datalayer.h \
     icondata.h \
     floatinglayout.h \
     groupsparser.h \
@@ -276,7 +279,8 @@ HEADERS  +=  arducor/arducordiscovery.h \
     lightpage.h \
     palettepage.h \
     moodpage.h \
-    lightinfolistwidget.h
+    lightinfolistwidget.h \
+    devicelist.h
 
 #----------
 # Desktop builds only

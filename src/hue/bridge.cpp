@@ -19,12 +19,16 @@ Bridge jsonToBridge(const QJsonObject& object) {
         bridge.id       = object["id"].toString();
     }
 
+    if (object["macaddress"].isString()) {
+        bridge.macaddress = object["macadress"].toString();
+    }
+
     if (object["name"].isString()) {
         bridge.name = object["name"].toString();
     }
 
-    if (object["macaddress"].isString()) {
-        bridge.macaddress = object["macadress"].toString();
+    if (object["api"].isString()) {
+        bridge.api = object["api"].toString();
     }
 
     return bridge;
@@ -33,17 +37,11 @@ Bridge jsonToBridge(const QJsonObject& object) {
 QJsonObject bridgeToJson(const Bridge& bridge) {
     QJsonObject object;
     object["username"] = bridge.username;
-    object["IP"] = bridge.IP;
-    object["id"] = bridge.id;
-
-    if (bridge.macaddress != "") {
-        object["name"] = bridge.name;
-    }
-
-    if (bridge.macaddress != "") {
-        object["macaddress"] = bridge.macaddress;
-    }
-
+    object["IP"]   = bridge.IP;
+    object["id"]   = bridge.id;
+    object["name"] = bridge.name;
+    object["api"]  = bridge.api;
+    object["macaddress"] = bridge.macaddress;
     return object;
 }
 

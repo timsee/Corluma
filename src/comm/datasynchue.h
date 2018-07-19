@@ -5,7 +5,7 @@
 #include <QObject>
 #include <QTimer>
 
-#include "datalayer.h"
+#include "devicelist.h"
 #include "datasync.h"
 #include "groupsparser.h"
 
@@ -30,7 +30,7 @@ public:
      * \param data pointer to the app's data layer.
      * \param comm pointer to the app's comm layer.
      */
-    DataSyncHue(DataLayer *data, CommLayer *comm);
+    DataSyncHue(DeviceList *data, CommLayer *comm);
 
     /// destructor
     ~DataSyncHue() {}

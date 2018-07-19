@@ -10,7 +10,7 @@
 #include "cor/utils.h"
 
 
-DataSyncHue::DataSyncHue(DataLayer *data, CommLayer *comm) {
+DataSyncHue::DataSyncHue(DeviceList *data, CommLayer *comm) {
     mData = data;
     mComm = comm;
     mUpdateInterval = 250;
@@ -47,7 +47,7 @@ void DataSyncHue::resetSync() {
     if (mCleanupTimer->isActive()) {
         mCleanupTimer->stop();
     }
-    if (mData->currentDevices().size() > 0) {
+    if (mData->devices().size() > 0) {
         mDataIsInSync = false;
         if (!mSyncTimer->isActive()) {
             mStartTime = QTime::currentTime();
@@ -60,7 +60,7 @@ void DataSyncHue::resetSync() {
 void DataSyncHue::syncData() {
     if (!mDataIsInSync) {
         int countOutOfSync = 0;
-        for (auto&& device : mData->currentDevices()) {
+        for (auto&& device : mData->devices()) {
             cor::Light commLayerDevice = device;
             if (mComm->fillDevice(commLayerDevice)) {
                 if (device.commType() == ECommType::hue) {
@@ -87,7 +87,7 @@ void DataSyncHue::syncData() {
     }
 
     if (mDataIsInSync
-            || mData->currentDevices().size() == 0) {
+            || mData->devices().size() == 0) {
         endOfSync();
     }
 
@@ -131,14 +131,15 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
             //-------------------
             // Hue HSV Color Sync
             //-------------------
-            QColor hsvColor = dataDevice.color.toHsv();
+            const auto& color = dataDevice.color;
             // add brightness into lights
-            if (cor::colorDifference(hsvColor, commDevice.color) > 0.02f) {
+            if (cor::colorDifference(color, commDevice.color) > 0.02f) {
                 QJsonObject routineObject;
-                routineObject["routine"] = routineToString(ERoutine::singleSolid);
-                routineObject["red"]     = hsvColor.red();
-                routineObject["green"]   = hsvColor.green();
-                routineObject["blue"]    = hsvColor.blue();
+                routineObject["routine"]       = routineToString(ERoutine::singleSolid);
+                routineObject["red"]           = color.red();
+                routineObject["green"]         = color.green();
+                routineObject["blue"]          = color.blue();
+                routineObject["brightness"]    = dataDevice.brightness;
 
                 object["routine"] = routineObject;
                // qDebug() << " packet " << object;
@@ -206,7 +207,7 @@ void DataSyncHue::cleanupSync() {
     bool totallySynced = true;
     if (mData->timeoutEnabled()) {
         std::list<SHueSchedule> commSchedules = mComm->hue()->schedules();
-        for (auto&& device : mData->currentDevices()) {
+        for (auto&& device : mData->devices()) {
             if (device.commType() == ECommType::hue) {
 
                 hue::Bridge bridge;

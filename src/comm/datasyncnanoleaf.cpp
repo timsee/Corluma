@@ -9,7 +9,7 @@
 #include "cor/utils.h"
 #include "comm/commnanoleaf.h"
 
-DataSyncNanoLeaf::DataSyncNanoLeaf(DataLayer *data, CommLayer *comm) {
+DataSyncNanoLeaf::DataSyncNanoLeaf(DeviceList *data, CommLayer *comm) {
     mData = data;
     mComm = comm;
     mUpdateInterval = 250;
@@ -38,7 +38,7 @@ void DataSyncNanoLeaf::resetSync() {
     if (mCleanupTimer->isActive()) {
         mCleanupTimer->stop();
     }
-    if (mData->currentDevices().size() > 0) {
+    if (mData->devices().size() > 0) {
         mDataIsInSync = false;
         if (!mSyncTimer->isActive()) {
             mStartTime = QTime::currentTime();
@@ -58,7 +58,7 @@ void DataSyncNanoLeaf::commPacketReceived(EProtocolType type) {
 void DataSyncNanoLeaf::syncData() {
     if (!mDataIsInSync) {
         int countOutOfSync = 0;
-        for (auto&& device : mData->currentDevices()) {
+        for (auto&& device : mData->devices()) {
             cor::Light commLayerDevice = device;
             if (mComm->fillDevice(commLayerDevice)) {
                 if (device.protocol() == EProtocolType::nanoleaf) {
@@ -85,7 +85,7 @@ void DataSyncNanoLeaf::syncData() {
     }
 
     if (mDataIsInSync
-            || mData->currentDevices().size() == 0) {
+            || mData->devices().size() == 0) {
         endOfSync();
     }
 }
@@ -132,6 +132,7 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
         // these are optional parameters depending on the routine
         bool paramsInSync       = true;
         bool colorInSync        = (cor::colorDifference(dataDevice.color, commDevice.color) <= 0.02f);
+        bool brightnessInSync   = (cor::brightnessDifference(commDevice.brightness, dataDevice.brightness)<= 0.02f);
         bool paletteInSync      = (commDevice.palette.paletteEnum() == dataDevice.palette.paletteEnum());
         if (dataDevice.palette.paletteEnum() == EPalette::custom) {
             bool palettesAreClose = true;
@@ -169,9 +170,10 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
 
             if (dataDevice.routine <= cor::ERoutineSingleColorEnd) {
                 QColor color = dataDevice.color;
-                routineObject["red"]     = color.red();
-                routineObject["green"]   = color.green();
-                routineObject["blue"]    = color.blue();
+                routineObject["red"]        = color.red();
+                routineObject["green"]      = color.green();
+                routineObject["blue"]       = color.blue();
+                routineObject["brightness"] = dataDevice.brightness;
             } else {
                 routineObject["palette"]   = dataDevice.palette.JSON();
                 if (dataDevice.palette.paletteEnum() == EPalette::custom) {
@@ -193,11 +195,12 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
         //-------------------
         // Brightness Sync
         //-------------------
-        if (cor::brightnessDifference(commDevice.brightness, dataDevice.brightness) > 0.02f && dataDevice.routine != ERoutine::singleSolid) {
+        if (!brightnessInSync && dataDevice.routine != ERoutine::singleSolid) {
             object["brightness"] = dataDevice.brightness;
             //qDebug() << "nanoleaf brightness not in sync" << commDevice.brightness << "vs" << dataDevice.brightness;
             countOutOfSync++;
         }
+
     }
 
     //-------------------

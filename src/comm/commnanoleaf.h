@@ -10,6 +10,8 @@
 #include "comm/upnpdiscovery.h"
 #include "cor/presetpalettes.h"
 #include "nanoleaf/leafdiscovery.h"
+#include "arducor/controller.h"
+
 
 /*!
  * \copyright

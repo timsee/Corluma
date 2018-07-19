@@ -71,6 +71,8 @@ private:
     /// layout for widget
     QVBoxLayout *mLayout;
 
+    /// widget used for scroll area.
+    QWidget *mScrollAreaWidget;
 };
 
 #endif // DISCOVERYYUNWIDGET_H

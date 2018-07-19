@@ -45,7 +45,7 @@ public:
     void resize(bool resizeFullWidget = true);
 
     /// called when the widget is shown
-    void show();
+    void show(const hue::Bridge& bridge);
 
     /// called when the widget is hidden
     void hide();
@@ -71,9 +71,6 @@ private slots:
     /// search button pressed
     void searchButtonPressed(bool);
 
-    /// called whenever the drop down list changes to a new value.
-    void dropdownListChanged(QString);
-
     /*!
      * \brief plusButtonClicked called whenever the plus button is clicked
      */
@@ -96,10 +93,7 @@ private:
     CommLayer *mComm;
 
     /// the currently selected bridge
-    hue::Bridge mCurrentBridge;
-
-    /// dropdown list to show multiple bridges
-    QComboBox *mDropdownList;
+    hue::Bridge mBridge;
 
     /// button to trigger searching on a bridge
     QPushButton *mSearchButton;

@@ -50,13 +50,13 @@ LightInfoListWidget::LightInfoListWidget(QWidget *parent) : QWidget(parent) {
     mLastKey = "";
 }
 
-void LightInfoListWidget::updateLights(std::list<HueLight> lights) {
+void LightInfoListWidget::updateHues(std::list<HueLight> lights) {
     for (auto light : lights) {
         // check if light already exists in list
         int widgetIndex = -1;
         int i = 0;
         for (auto widget : mHueWidgets) {
-            if (widget->light().index == light.index) {
+            if (widget->light().uniqueID() == light.uniqueID()) {
                 widgetIndex = i;
                 widget->updateLight(light);
             }
@@ -64,7 +64,7 @@ void LightInfoListWidget::updateLights(std::list<HueLight> lights) {
         }
         // if it doesnt exist, add it
         if (widgetIndex == -1) {
-            hue::LightInfoWidget *widget = new hue::LightInfoWidget(light, mScrollAreaWidget);
+            hue::HueInfoWidget *widget = new hue::HueInfoWidget(light, mScrollAreaWidget);
             widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(lightInfoWidgetClicked(QString)));
             connect(widget, SIGNAL(changedName(EProtocolType, QString, QString)), this, SLOT(nameChanged(EProtocolType, QString, QString)));
@@ -102,6 +102,32 @@ void LightInfoListWidget::updateControllers(std::list<nano::LeafController> cont
     resize(true);
 }
 
+
+void LightInfoListWidget::updateLights(std::list<cor::Light> lights) {
+    for (auto light : lights) {
+        // check if light already exists in list
+        int widgetIndex = -1;
+        int i = 0;
+        for (auto widget : mArduCorWidgets) {
+            if (widget->light().uniqueID() == light.uniqueID()) {
+                widgetIndex = i;
+                widget->updateLight(light);
+            }
+            ++i;
+        }
+        // if it doesnt exist, add it
+        if (widgetIndex == -1) {
+            ArduCorInfoWidget *widget = new ArduCorInfoWidget(light, mScrollAreaWidget);
+            widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+            connect(widget, SIGNAL(clicked(QString)), this, SLOT(lightInfoWidgetClicked(QString)));
+            mArduCorWidgets.push_back(widget);
+            mScrollLayout->addWidget(widget);
+        }
+    }
+
+    resize(true);
+}
+
 void LightInfoListWidget::resize(bool resizeFullWidget) {
     QSize size = qobject_cast<QWidget*>(this->parent())->size();
     if (resizeFullWidget) {
@@ -125,6 +151,14 @@ void LightInfoListWidget::resize(bool resizeFullWidget) {
         yPos += widget->height();
     }
     for (auto widget : mNanoleafWidgets) {
+        widget->setHeight(widgetSize.height());
+        widget->setGeometry(0,
+                            yPos,
+                            widgetSize.width(),
+                            widget->height());
+        yPos += widget->height();
+    }
+    for (auto widget : mArduCorWidgets) {
         widget->setHeight(widgetSize.height());
         widget->setGeometry(0,
                             yPos,
@@ -180,6 +214,8 @@ void LightInfoListWidget::closePressed(bool) {
 }
 
 void LightInfoListWidget::lightInfoWidgetClicked(QString key) {
+    bool shouldEnableDelete = true;
+
    // qDebug() << " clicked " << key;
     for (auto widget : mHueWidgets) {
         if (widget->checked()) {
@@ -193,17 +229,21 @@ void LightInfoListWidget::lightInfoWidgetClicked(QString key) {
             widget->hideDetails(true);
         }
     }
+    for (auto widget : mArduCorWidgets) {
+        if (widget->checked()) {
+            widget->setChecked(false);
+            widget->hideDetails(true);
+        }
+    }
     for (auto widget : mHueWidgets) {
         if (widget->key().compare(key) == 0) {
             if (mLastKey.compare(key) == 0) {
                 widget->hideDetails(true);
                 widget->setChecked(false);
-                mDeleteButton->setStyleSheet("background-color:rgb(45,30,30);");
                 mLastKey = "";
             } else {
                 widget->hideDetails(false);
                 widget->setChecked(true);
-                mDeleteButton->setStyleSheet("background-color:rgb(110,30,30);");
                 mLastKey = key;
             }
         }
@@ -213,12 +253,25 @@ void LightInfoListWidget::lightInfoWidgetClicked(QString key) {
             if (mLastKey.compare(key) == 0) {
                 widget->hideDetails(true);
                 widget->setChecked(false);
-                mDeleteButton->setStyleSheet("background-color:rgb(45,30,30);");
                 mLastKey = "";
             } else {
                 widget->hideDetails(false);
                 widget->setChecked(true);
-                mDeleteButton->setStyleSheet("background-color:rgb(110,30,30);");
+                mLastKey = key;
+            }
+        }
+    }
+
+    for (auto widget : mArduCorWidgets) {
+        if (widget->key().compare(key) == 0) {
+            if (mLastKey.compare(key) == 0) {
+                widget->hideDetails(true);
+                widget->setChecked(false);
+                mLastKey = "";
+            } else {
+                shouldEnableDelete = false;
+                widget->hideDetails(false);
+                widget->setChecked(true);
                 mLastKey = key;
             }
         }
@@ -226,8 +279,10 @@ void LightInfoListWidget::lightInfoWidgetClicked(QString key) {
 
     if (mLastKey.compare("") == 0) {
         mDeleteButton->setEnabled(false);
-    } else {
+        mDeleteButton->setStyleSheet("background-color:rgb(45,30,30);");
+    } else if (shouldEnableDelete){
         mDeleteButton->setEnabled(true);
+        mDeleteButton->setStyleSheet("background-color:rgb(110,30,30);");
     }
 
     resize(false);

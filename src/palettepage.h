@@ -44,11 +44,6 @@ public:
     explicit PalettePage(QWidget *parent);
 
     /*!
-     * \brief Destructor
-     */
-    ~PalettePage();
-
-    /*!
      * \brief highlightRoutineButton highlights the button that implements
      *        the routine parameter. If it can't find a button that
      *        implements this lighting routine, then all buttons are unhighlighted

@@ -91,7 +91,6 @@ private:
      */
     uint32_t mMaximumSize;
 
-
     /*!
      * \brief updateMultiColorSlider averages all colors with indices less than mMultiUsed
      *        and sets the top slider to be that averaged color.

@@ -26,7 +26,7 @@ ProtocolSettings::ProtocolSettings() {
 
     //error handling, must always have at least one stream!
     if (numberEnabled() == 0) {
-        mProtocolsInUse[(size_t)EProtocolType::arduCor] = true;
+        mProtocolsInUse[(size_t)EProtocolType::hue] = true;
         mSettings->setValue(keys[(uint32_t)EProtocolType::hue], QString::number((int)true));
         mSettings->sync();
     }

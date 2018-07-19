@@ -49,10 +49,10 @@ void DiscoveryArduCorWidget::handleDiscovery(bool isCurrentCommType) {
     }
 
     // handle button updates
-    if (mComm->discoveryErrorsExist(ECommType::UDP)) {
+    if (mComm->discoveryErrorsExist(EProtocolType::arduCor)) {
         emit connectionStatusChanged(EProtocolType::arduCor, EConnectionState::connectionError);
-    } else if (!undiscoveredControllers.empty() && !controllers.empty()) {
-       emit connectionStatusChanged(EProtocolType::arduCor, EConnectionState::discoveredAndNotInUse);
+    } else if (undiscoveredControllers.empty() && !controllers.empty()) {
+       emit connectionStatusChanged(EProtocolType::arduCor, EConnectionState::discovered);
     } else if (!controllers.empty()) {
         emit connectionStatusChanged(EProtocolType::arduCor, EConnectionState::discovering);
     } else {

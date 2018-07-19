@@ -8,9 +8,10 @@
 #include <QLabel>
 
 #include "cor/page.h"
-#include "hue/lightinfowidget.h"
+#include "hue/hueinfowidget.h"
 #include "comm/commhue.h"
 #include "cor/topwidget.h"
+#include "arducor/arducorinfowidget.h"
 #include "nanoleaf/leafcontrollerinfowidget.h"
 
 /*!
@@ -34,11 +35,11 @@ public:
     explicit LightInfoListWidget(QWidget *parent);
 
     /*!
-     * \brief updateLights update the lights displayed in the widget, normally called
+     * \brief updateHues update the lights displayed in the widget, normally called
      *        right before displaying the widget.
      * \param lights list of lights to load into the HusLightInfoListWidget
      */
-    void updateLights(std::list<HueLight> lights);
+    void updateHues(std::list<HueLight> lights);
 
     /*!
      * \brief updateControllers update the controllers for nanoleafs to any
@@ -46,6 +47,9 @@ public:
      * \param controllers nanoleaf controllers to use as the recent set.
      */
     void updateControllers(std::list<nano::LeafController> controllers);
+
+    /// updates the arducor lights in the light info list widget
+    void updateLights(std::list<cor::Light> lights);
 
     /*!
      * \brief resize size the widget programmatically
@@ -125,11 +129,13 @@ private:
     QScrollArea *mScrollArea;
 
     /// widgets for hue displayed in scroll area
-    std::vector<hue::LightInfoWidget *> mHueWidgets;
+    std::vector<hue::HueInfoWidget *> mHueWidgets;
 
     /// widgets for nanoleaf displayed in scroll area
     std::vector<nano::LeafControllerInfoWidget *> mNanoleafWidgets;
 
+    /// widgets for ArduCor displayed in scroll area
+    std::vector<ArduCorInfoWidget *> mArduCorWidgets;
 
 };
 

@@ -118,6 +118,8 @@ void ColorPicker::tempBrightSlidersChanged(int temperature, int brightness) {
 }
 
 void ColorPicker::multiColorChanged(QColor color, int index) {
+    Q_UNUSED(color);
+    Q_UNUSED(index);
     emit multiColorUpdate();
 }
 

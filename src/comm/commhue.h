@@ -78,13 +78,6 @@ public:
     void turnOnOff(const hue::Bridge& bridge, int index, bool shouldTurnOn);
 
     /*!
-     * \brief connectedHues returns vector of the currently connected Hue lights. Used by the settings page
-     *        to display the list.
-     * \return  a vector of the currently connected hue lights.
-     */
-    const std::list<HueLight>& connectedHues() { return mConnectedHues; }
-
-    /*!
      * \brief discovery returns a pointer to the object used to discover the Hue Bridge. This can be used
      *        to connect to its signals or to check its current state.
      * \return the discovery object for finding the Hue Bridge.
@@ -300,11 +293,6 @@ signals:
      */
     void packetReceived(QString, QString, ECommType);
 
-    /*!
-     * \brief stateChanged emitted when any of the lights change in any way.
-     */
-    void stateChanged();
-
     /// signals during discovery things like when the bridge is discovered and when light data is received
     void discoveryStateChanged(EHueDiscoveryState);
 
@@ -360,13 +348,6 @@ private:
     hue::BridgeDiscovery *mDiscovery;
 
     /*!
-     * \brief a list of the struct that contains the states of the connected Hue
-     *        lights. This is maintained by a timer which updates this vector every
-     *        few seconds.
-     */
-    std::list<HueLight> mConnectedHues;
-
-    /*!
      * \brief Every packet sent to the hue bridge starts with
      *        this string, which is formatted as http://$BRIDGEIP/api/$USERNAME
      */
@@ -398,13 +379,6 @@ private:
      * \brief mGroups a list that stores all known data about the current groups.
      */
     std::list<cor::LightGroup> mGroups;
-
-    /*!
-     * \brief updateHueLight update the internal SHueLight based on the provided SHueLight
-     * \param hue the SHueLight to use for updating
-     * \return true if light is found and updated, false if it isn't found and its added to the list.
-     */
-    bool updateHueLight(HueLight& hue);
 
     /// list of new lights found from light scan
     std::list<HueLight> mNewLights;

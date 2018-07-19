@@ -26,7 +26,7 @@
  *
  * \todo Make this class save its data between sessions.
  */
-class DataLayer : public QObject
+class DeviceList : public QObject
 {
     Q_OBJECT
 
@@ -34,11 +34,7 @@ public:
     /*!
      * \brief Constructor
      */
-    DataLayer(QObject *parent);
-    /*!
-     * \brief Deconstructor
-     */
-    ~DataLayer();
+    DeviceList(QObject *parent);
 
     /*!
      * \brief mainColor getter for mainColor, used for single color routines.
@@ -116,12 +112,6 @@ public:
      * \return true if any device is on, false if all are off.
      */
     bool isOn();
-
-    /*!
-     * \brief anyDevicesReachable true if any device is reachable, false if all are not reachable.
-     * \return true if any device is reachable, false if all are not reachable.
-     */
-    bool anyDevicesReachable();
 
     /*!
      * \brief updateRoutine update the lighting routine for all current devices.
@@ -208,36 +198,32 @@ public:
 
     /*!
      * \brief removeDevicesOfType if they exist, removes devices from currentDevices list that match
-     *        the commtype provided.
+     *        the protocol provided.
      * \param type tpye of devices to remove
      * \return number of devices left in currentDevices list.
      */
-    int removeDevicesOfType(ECommType type);
+    int removeDevicesOfType(EProtocolType type);
 
     /*!
      * \brief countDevicesOfType iterates through the currentDevices and determines how many exist
-     *        of a certain commtype
+     *        of a certain [rptpcp;
      * \param type the commtype to look for
-     * \return the number of devices that match that commtype.
+     * \return the number of devices that match that protocol.
      */
-    int countDevicesOfType(ECommType type);
+    int countDevicesOfType(EProtocolType type);
 
     /*!
      * \brief currentDevices returns the current Device pair, which contains both controller
      *        connection info and device settings
      * \return the current device pair.
      */
-    const std::list<cor::Light>& currentDevices() { return mCurrentDevices; }
+    const std::list<cor::Light>& devices() { return mDevices; }
 
     /// getter for the color scheme colors
     std::vector<QColor> colorScheme();
 
-    /*!
-     * \brief hasHueDevices helper that determines if you should be using hue-related assets
-     *        on a GUI page or non hue related assets.
-     * \return true if any device is a hue
-     */
-    bool hasHueDevices();
+    /// true if any of the lights have the given protocol type.
+    bool hasLightWithProtocol(EProtocolType) const noexcept;
 
     /*!
      * \brief hasArduinoDevices helper that determines if there are any arduino based devices in the current data.
@@ -282,7 +268,7 @@ private:
      * \todo complete support of multiple devices in datalayer. currently this is a vector of
      *       size 1 in preparation.
      */
-    std::list<cor::Light> mCurrentDevices;
+    std::list<cor::Light> mDevices;
 
     /// true if lights should turn off after X hours of no use, false othwerise.
     bool mTimeoutEnabled;

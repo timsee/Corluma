@@ -30,9 +30,6 @@ void CommHTTP::shutdown() {
 }
 
 void CommHTTP::sendPacket(const cor::Controller& controller, QString& packet) {
-    // commtype function for adding CRC (if needed) and resetting flags (if needed)
-    preparePacketForTransmission(controller, packet);
-
     // send packet over HTTP
     QString urlString = "http://" + controller.name + "/arduino/" + packet;
     QNetworkRequest request = QNetworkRequest(QUrl(urlString));

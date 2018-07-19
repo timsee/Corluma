@@ -102,21 +102,6 @@ bool CommType::shouldContinueStateUpdate() {
     return true;
 }
 
-
-void CommType::preparePacketForTransmission(const cor::Controller& controller, QString& packet) {
-    // check if state update
-    if (!(packet.at(0) ==  QChar('7')
-            || packet.at(0) ==  QChar('8'))) {
-        // if not state update, reset the state update timer.
-        resetStateUpdateTimeout();
-    }
-
-    // add CRC, if in use
-    if (controller.isUsingCRC) {
-        packet = packet + "#" + QString::number(mCRC.calculate(packet)) + "&";
-    }
-}
-
 void CommType::checkReachability() {
     auto elapsedTime = mElapsedTimer.elapsed();
     const int kThreshold = 15000;

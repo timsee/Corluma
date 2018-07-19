@@ -38,7 +38,10 @@ public:
     /// unique key
     QString id = "";
 
-    /// name of bridge
+    /// api version of the software
+    QString api = "";
+
+    /// name of bridge. this is often a default name and uninteresting
     QString name = "";
 
     /// mac address for the bridge
@@ -52,8 +55,9 @@ public:
         tempString << "hue::Bridge: "
                    << " IP: " << IP.toStdString()
                    << " username: " << username.toStdString()
+                   << " name: " << name.toStdString()
+                   << " api: " << api.toStdString()
                    << " id:" <<  id.toStdString()
-                   << " name:" <<  name.toStdString()
                    << " macaddress:" <<  macaddress.toStdString();
         return QString::fromStdString(tempString.str());
     }

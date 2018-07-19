@@ -33,6 +33,7 @@ TopWidget::TopWidget(QString title, QString resource, QWidget *parent) : QWidget
 }
 
 void TopWidget::setFontPoint(int pt) {
+    if (pt <= 0) pt = 1;
     QString stylesheet = "font-size:" + QString::number(pt)+ "pt;";
     mTitle->setStyleSheet(stylesheet);
 }

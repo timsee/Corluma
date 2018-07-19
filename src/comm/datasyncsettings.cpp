@@ -10,7 +10,7 @@
 #include "comm/commlayer.h"
 #include "cor/utils.h"
 
-DataSyncSettings::DataSyncSettings(DataLayer *data, CommLayer *comm, ProtocolSettings *protocols)
+DataSyncSettings::DataSyncSettings(DeviceList *data, CommLayer *comm, ProtocolSettings *protocols)
 {
     mData = data;
     mComm = comm;
@@ -97,7 +97,7 @@ void DataSyncSettings::syncData() {
         mDataIsInSync = true;
     }
 
-    if (mDataIsInSync || mData->currentDevices().size() == 0) {
+    if (mDataIsInSync || mData->devices().size() == 0) {
         endOfSync();
     }
 }

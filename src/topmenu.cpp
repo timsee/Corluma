@@ -11,7 +11,7 @@
 #include "hue/huelight.h"
 
 TopMenu::TopMenu(QWidget* parent,
-                 DataLayer* data,
+                 DeviceList* data,
                  CommLayer *comm,
                  MainWindow *mainWindow,
                  PalettePage *palettePage,
@@ -30,6 +30,10 @@ TopMenu::TopMenu(QWidget* parent,
     QSize size = cor::applicationSize();
     mSize = QSize(size.height() * 0.1f, size.height() * 0.1f);
 
+    mRenderTimer = new QTimer(this);
+    connect(mRenderTimer, SIGNAL(timeout()), this, SLOT(updateUI()));
+    mRenderTimer->start(100);
+
     //---------------
     // Create Spacer
     //---------------
@@ -43,10 +47,9 @@ TopMenu::TopMenu(QWidget* parent,
     // setup the slider that controls the LED's brightness
     mBrightnessSlider = new cor::Slider(this);
     mBrightnessSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mBrightnessSlider->setFixedHeight(mSize.height() / 2);
-    mBrightnessSlider->setFixedWidth(this->width() * 0.95f - mSize.width());
     mBrightnessSlider->slider()->setRange(0,100);
     mBrightnessSlider->slider()->setValue(0);
+    mBrightnessSlider->setFixedHeight(mSize.height() / 2);
     mBrightnessSlider->setSliderHeight(0.8f);
     mBrightnessSlider->setSliderColorBackground(QColor(255,255,255));
     connect(mBrightnessSlider, SIGNAL(valueChanged(int)), this, SLOT(brightnessSliderChanged(int)));
@@ -130,10 +133,10 @@ TopMenu::TopMenu(QWidget* parent,
     // --------------
     // Color Page Floating Layouts
     // --------------
+    //NOTE: by making the parent the parent of the floating widgets, they don't get cut off if they overextend over top menu
     mColorFloatingLayout = new FloatingLayout(false, mMainWindow);
     connect(mColorFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
 
-    //NOTE: by making the parent the parent of the floating widgets, they don't get cut off if they overextend over top menu
     mColorVerticalFloatingLayout = new FloatingLayout(false, mMainWindow);
     connect(mColorVerticalFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
     mColorVerticalFloatingLayout->setVisible(false);
@@ -141,8 +144,6 @@ TopMenu::TopMenu(QWidget* parent,
     mLastColorButtonKey = "RGB";
 
     deviceCountReachedZero();
-
-    connect(mComm, SIGNAL(packetReceived(EProtocolType)), this, SLOT(receivedPacket(EProtocolType)));
 
     mCurrentPage = EPage::palettePage;
     pageButtonPressed(EPage::lightPage);
@@ -176,7 +177,7 @@ void TopMenu::updateMenuBar() {
     //-----------------
     // On/Off Data
     //-----------------
-    if (mData->currentDevices().size() == 0) {
+    if (mData->devices().size() == 0) {
         mOnOffSwitch->setSwitchState(ESwitchState::disabled);
     } else if (mData->isOn()) {
         mOnOffSwitch->setSwitchState(ESwitchState::on);
@@ -214,7 +215,7 @@ void TopMenu::deviceCountReachedZero() {
 
 void TopMenu::deviceCountChanged() {
     if (mShouldGreyOutIcons
-            && (mData->currentDevices().size() > 0)) {
+            && (mData->devices().size() > 0)) {
         mBrightnessSlider->enable(true);
         mMainLayout->enableButton("Colors_Page", true);
         mMainLayout->enableButton("Palette_Page", true);
@@ -228,7 +229,7 @@ void TopMenu::deviceCountChanged() {
         mShouldGreyOutIcons = false;
     }
 
-    if (mData->currentDevices().size() > 0) {
+    if (mData->devices().size() > 0) {
         QString devicesText = mData->findCurrentCollection(mComm->collectionList(), true);
         mSelectedDevicesLabel->setText(devicesText);
     } else {
@@ -244,7 +245,7 @@ void TopMenu::deviceCountChanged() {
     }
 
     if ((!mShouldGreyOutIcons
-         && (mData->currentDevices().size() == 0))) {
+         && (mData->devices().size() == 0))) {
         deviceCountReachedZero();
     }
     updatePaletteButton();
@@ -285,17 +286,19 @@ void TopMenu::resizeEvent(QResizeEvent *event) {
     downsizeTextHeightToFit(mMainPalette->size().height());
     updatePaletteButton();
     moveFloatingLayout();
-    mBrightnessSlider->setFixedWidth(this->width() * 0.95f - mSize.width());
+    int widthSize = this->width() * 0.95f - mSize.width();
+    mBrightnessSlider->setFixedWidth(widthSize);
 }
 
 void TopMenu::updatePaletteButton() {
-    bool hasHue = mData->hasHueDevices();
-    bool hasArduino = mData->hasArduinoDevices();
+    bool hasHue = mData->hasLightWithProtocol(EProtocolType::hue);
+    bool hasArduino = mData->hasLightWithProtocol(EProtocolType::arduCor);
     if (hasHue && !hasArduino) {
-        std::list<cor::Light> devices = mData->currentDevices();
+        std::list<cor::Light> devices = mData->devices();
         std::list<HueLight> hues;
         for (auto& device : devices) {
             hues.push_back(mComm->hue()->hueLightFromLight(device));
+            qDebug() << " hue" << mComm->hue()->hueLightFromLight(device);
         }
 
         EHueType bestHueType = checkForHueWithMostFeatures(hues);
@@ -310,7 +313,7 @@ void TopMenu::updatePaletteButton() {
             throw "did not find any hue lights when expecting hue lights";
         }
     } else {
-        if (mData->currentDevices().size() == 0) {
+        if (mData->devices().size() == 0) {
             mMainLayout->updateColorPageButton(":images/white_wheel.png");
         } else {
             mMainLayout->updateColorPageButton(":images/colorWheel_icon.png");
@@ -333,7 +336,7 @@ void TopMenu::floatingLayoutButtonPressed(QString button) {
             mMainWindow->editButtonClicked(mMoodPage->currentMood(), true);
         }
     } else if (button.compare("Preset_Groups") == 0) {
-        if (mData->hasArduinoDevices()) {
+        if (mData->hasLightWithProtocol(EProtocolType::arduCor)) {
             mPalettePage->setMode(EGroupMode::arduinoPresets);
         } else {
             mPalettePage->setMode(EGroupMode::huePresets);
@@ -457,9 +460,9 @@ void TopMenu::moveFloatingLayout() {
 
 void TopMenu::setupColorFloatingLayout() {
 
-    bool hasHue = mData->hasHueDevices();
-    bool hasArduino = mData->hasArduinoDevices();
-    bool hasNanoLeaf = mData->hasNanoLeafDevices();
+    bool hasHue      = mData->hasLightWithProtocol(EProtocolType::hue);
+    bool hasArduino  = mData->hasLightWithProtocol(EProtocolType::arduCor);
+    bool hasNanoLeaf = mData->hasLightWithProtocol(EProtocolType::nanoleaf);
     std::vector<QString> horizontalButtons;
     std::vector<QString> verticalButtons;
     if (hasArduino || hasNanoLeaf){
@@ -471,7 +474,7 @@ void TopMenu::setupColorFloatingLayout() {
         mColorPage->changePageType(EColorPageType::RGB, true);
     } else if (hasHue) {
         // get list of all current devices
-        std::list<cor::Light> devices = mData->currentDevices();
+        std::list<cor::Light> devices = mData->devices();
         std::list<HueLight> hues;
         for (auto& device : devices) {
             hues.push_back(mComm->hue()->hueLightFromLight(device));
@@ -609,18 +612,6 @@ void TopMenu::moveHiddenLayouts() {
     }
 }
 
-void TopMenu::receivedPacket(EProtocolType) {
-    if (mData->currentDevices() != mLastDevices) {
-        std::list<cor::Light> currentDevices = mData->currentDevices();
-        for (auto&& device : currentDevices) {
-            mComm->fillDevice(device);
-        }
-        mLastDevices = currentDevices;
-        mMainPalette->updateDevices(currentDevices);
-        updateBrightnessSlider();
-    }
-}
-
 void TopMenu::downsizeTextHeightToFit(int maxHeight) {
     int computedHeight  = mSelectedDevicesLabel->fontMetrics().height() * 2;
     int fontPtSize = mSelectedDevicesLabel->font().pointSize();
@@ -630,5 +621,17 @@ void TopMenu::downsizeTextHeightToFit(int maxHeight) {
         font.setPointSize(fontPtSize);
         mSelectedDevicesLabel->setFont(font);
         computedHeight = mSelectedDevicesLabel->fontMetrics().height() * 2;
+    }
+}
+
+void TopMenu::updateUI() {
+    if (mData->devices() != mLastDevices) {
+        std::list<cor::Light> currentDevices = mData->devices();
+        for (auto&& device : currentDevices) {
+            mComm->fillDevice(device);
+        }
+        mLastDevices = currentDevices;
+        mMainPalette->updateDevices(currentDevices);
+        updateBrightnessSlider();
     }
 }

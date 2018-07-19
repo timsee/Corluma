@@ -185,7 +185,6 @@ enum class EConnectionButtonIcons {
     red,
     yellow,
     blue,
-    green,
     MAX
 };
 
@@ -198,9 +197,7 @@ enum class EConnectionState {
     off,
     connectionError,
     discovering,
-    discoveredAndNotInUse,
-    singleDeviceSelected,
-    multipleDevicesSelected,
+    discovered,
     MAX
 };
 Q_DECLARE_METATYPE(EConnectionState)

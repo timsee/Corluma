@@ -11,7 +11,7 @@
 #include "cor/page.h"
 #include "listdevicewidget.h"
 #include "comm/commlayer.h"
-#include "datalayer.h"
+#include "devicelist.h"
 #include "listdevicesgroupwidget.h"
 #include "cor/listwidget.h"
 #include "cor/presetpalettes.h"
@@ -33,7 +33,7 @@ class LightPage : public QWidget, public cor::Page
 
 public:
     /// constructor
-    explicit LightPage(QWidget *parent, DataLayer *data, CommLayer *comm, GroupsParser *groups, ProtocolSettings *protocols);
+    explicit LightPage(QWidget *parent, DeviceList *data, CommLayer *comm, GroupsParser *groups, ProtocolSettings *protocols);
 
     /*!
      * \brief Deconstructor
@@ -171,7 +171,7 @@ private:
      * \brief data layer that maintains and tracks the states of the lights
      *        and the saved data of the GUI
      */
-    DataLayer *mData;
+    DeviceList *mData;
 
     /// preset data for palettes from ArduCor
     PresetPalettes mPalettes;

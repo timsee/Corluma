@@ -172,11 +172,6 @@ void Slider::setMinimumPossible(bool useMinimumPossible, int minimumPossible) {
 void Slider::resizeEvent(QResizeEvent *event) {
     Q_UNUSED (event);
     mSlider->setFixedSize(this->rect().width(), this->rect().height() * mHeightScaleFactor);
-    float newY = this->rect().height() * (1.0 - mHeightScaleFactor) / 2.0f;
-    mSlider->setGeometry(mSlider->rect().x(),
-                        newY,
-                        this->rect().width(),
-                        this->rect().height() * mHeightScaleFactor);
     if (mSliderColorSet) {
         setSliderColorBackground(mSliderColor);
     } else if (mSliderImageSet) {
@@ -274,6 +269,7 @@ void Slider::paintEvent(QPaintEvent *event) {
 void Slider::setSliderHeight(float percent) {
     mHeightScaleFactor = percent;
     float newY = this->rect().height() * (1.0 - mHeightScaleFactor) / 2.0f;
+
     mSlider->setGeometry(mSlider->rect().x(),
                         newY,
                         this->rect().width(),

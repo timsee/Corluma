@@ -2,7 +2,7 @@
 #define DATASYNC_H
 
 
-#include "datalayer.h"
+#include "devicelist.h"
 
 /*!
  * \copyright
@@ -99,7 +99,7 @@ protected:
      * \brief mData pointer to data layer. Used for checking what state the data layer
      *        desires the devices to be.
      */
-    DataLayer *mData;
+    DeviceList *mData;
 
     /*!
      * \brief mComm pointer to comm layer. Used for checking what state the comm layer

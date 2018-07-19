@@ -12,8 +12,6 @@
 #include <QStandardPaths>
 #include <QDir>
 
-//#define REWRITE_SAVE_DATA
-
 GroupsParser::GroupsParser(QObject *parent) : QObject(parent), cor::JSONSaveData("save") {
     loadJSON();
 }
@@ -85,21 +83,31 @@ void GroupsParser::saveNewMood(const QString& groupName, const std::list<cor::Li
             array.push_front(groupObject);
             mJsonData.setArray(array);
 
-#ifndef REWRITE_SAVE_DATA
-            for (auto device : devices ) {
-                qDebug() << device;
-            }
-            // save file
-            saveJSON();
-
             cor::LightGroup group;
             group.devices = devices;
             group.name = groupName;
             group.isRoom = false;
-            // add to current mood list
-            mMoodList.push_back(group);
+
+
+            // check that it doesn't already exist, if it does, replace the old version
+            bool found = false;
+            for (auto&& mood : mMoodList) {
+                if (mood.isRoom == group.isRoom && mood.name == group.name) {
+                    mood = group;
+                    found = true;
+                    break;
+                }
+            }
+            // if it doesn't exist, add it to the moods
+            if (!found) {
+                // add to current collection list
+                mMoodList.push_back(group);
+            }
+
+            // save file
+            saveJSON();
+
             emit newMoodAdded(groupName);
-#endif
         }
     }
 }
@@ -132,28 +140,35 @@ void GroupsParser::saveNewCollection(const QString& groupName, const std::list<c
             array.push_front(groupObject);
             mJsonData.setArray(array);
 
-#ifndef REWRITE_SAVE_DATA
-            for (auto device : devices ) {
-                qDebug() << device;
-            }
-            // save file
-            saveJSON();
-
             cor::LightGroup group;
             group.devices = devices;
             group.name = groupName;
             group.isRoom = isRoom;
 
-            // add to current collection list
-            mCollectionList.push_back(group);
+            // check that it doesn't already exist, if it does, replace the old version
+            bool found = false;
+            for (auto&& collection : mCollectionList) {
+                if (collection.isRoom == group.isRoom && collection.name == group.name) {
+                    collection = group;
+                    found = true;
+                    break;
+                }
+            }
+            // if it doesn't exist, add it to the collections
+            if (!found) {
+                // add to current collection list
+                mCollectionList.push_back(group);
+            }
+
+
+            // save file
+            saveJSON();
             emit newCollectionAdded(groupName);
-#endif
         }
     }
 }
 
 void GroupsParser::clearAndResaveAppDataDEBUG() {
-    qDebug() << "calling a dangerous clear and resave function!";
     QJsonDocument newDocument;
     newDocument.setArray(QJsonArray());
     mJsonData = newDocument;
@@ -166,8 +181,6 @@ void GroupsParser::clearAndResaveAppDataDEBUG() {
         qDebug() << "collection: " << collection.name;
         saveNewCollection(collection.name, collection.devices, collection.isRoom);
     }
-    qDebug() << "done calling it!";
-    saveJSON();
 }
 
 

@@ -79,7 +79,6 @@ SettingsPage::SettingsPage(QWidget *parent, GroupsParser *parser, ProtocolSettin
 
     mTitles = { "Discover Controllers",
                 "Light Info",
-                "Discover New Hues",
                 "Save",
                 "Load",
                 "Reset",
@@ -89,7 +88,6 @@ SettingsPage::SettingsPage(QWidget *parent, GroupsParser *parser, ProtocolSettin
 
     mDescriptions = { "Discover a Philips Bridge or Arduino controllers.",
                       "Read and manage the hardware information.",
-                      "Discover new Hue lights.",
                       "Save light moods and collections to JSON.",
                       "Erase old moods and collections, load new data from JSON.",
                       "Resets all app data and all app settings.",
@@ -200,7 +198,7 @@ void SettingsPage::loadButtonClicked() {
 }
 
 void SettingsPage::saveButtonClicked() {
-    //mGroups->clearAndResaveAppDataDEBUG();
+   // mGroups->clearAndResaveAppDataDEBUG();
     QString fileName = QFileDialog::getSaveFileName(this,
           tr("Save Group Data"), "CorlumaGroups.json",
           tr("JSON (*.json)"));
@@ -277,12 +275,10 @@ void SettingsPage::settingsButtonPressed(QString title) {
         loadButtonClicked();
     } else if (title.compare("Save") == 0) {
         saveButtonClicked();
-    } else if (title.compare("Discover New Hues") == 0) {
-        emit clickedHueDiscovery();
     } else if (title.compare("Discover Controllers") == 0) {
         emit clickedDiscovery();
     } else if (title.compare("Light Info") == 0) {
-        emit clickedHueInfoWidget();
+        emit clickedInfoWidget();
     } else if (title.compare("Copyright") == 0) {
         showWebView(ECorlumaWebView::copyright);
     } else if (title.compare("FAQ") == 0) {

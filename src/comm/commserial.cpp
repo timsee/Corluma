@@ -43,9 +43,6 @@ void CommSerial::sendPacket(const cor::Controller& controller, QString& packet) 
     QSerialPort *serial = serialPortByName(controller.name);
     if (serial != NULL) {
         if (serial->isOpen()) {
-            // commtype function for adding CRC (if needed) and resetting flags (if needed)
-            preparePacketForTransmission(controller, packet);
-
             // add ; to end of serial packet as delimiter
             packet += ";";
 

@@ -84,18 +84,13 @@ void CommHue::changeColorRGB(const hue::Bridge& bridge, int lightIndex, int satu
 
     // grab the matching hue
     HueLight light = mDiscovery->lightFromBridgeIDAndIndex(bridge.id, lightIndex);
-    for (auto&& hue : mConnectedHues) {
-        if (lightIndex == hue.index) {
-            light = hue;
-        }
-    }
 
     // catch edge case with hue being -1 for grey in Qt colors
     if (hue == -182) hue = 0;
 
     // handle multicasting with light index 0
     if (lightIndex == 0) {
-        for (uint32_t i = 1; i <= mConnectedHues.size(); ++i) {
+        for (uint32_t i = 1; i <= bridge.lights.size(); ++i) {
             changeColorRGB(bridge, i, saturation, brightness, hue);
         }
     }
@@ -124,14 +119,9 @@ void CommHue::changeColorRGB(const hue::Bridge& bridge, int lightIndex, int satu
 
 void CommHue::changeColorCT(const hue::Bridge& bridge, int lightIndex, int brightness, int ct) {
     HueLight light = mDiscovery->lightFromBridgeIDAndIndex(bridge.id, lightIndex);
-    for (auto&& hue : mConnectedHues) {
-        if (lightIndex == hue.index) {
-            light = hue;
-        }
-    }
 
     if (lightIndex == 0) {
-        for (uint32_t i = 1; i <= mConnectedHues.size(); ++i) {
+        for (uint32_t i = 1; i <= bridge.lights.size(); ++i) {
             changeColorCT(bridge, i, brightness, ct);
         }
     }
@@ -226,17 +216,17 @@ QString CommHue::urlStart(const hue::Bridge& bridge) {
 
 void CommHue::routineChange(const hue::Bridge& bridge, int deviceIndex, QJsonObject routineObject) {
     Q_UNUSED(deviceIndex);
-    QColor color;
     if (routineObject["red"].isDouble()
             && routineObject["green"].isDouble()
-            && routineObject["blue"].isDouble()) {
-        color.setRgb(routineObject["red"].toDouble(),
-                routineObject["green"].toDouble(),
-                routineObject["blue"].toDouble());
+            && routineObject["blue"].isDouble()
+            && routineObject["brightness"].isDouble()) {
+        QColor color(routineObject["red"].toDouble(),
+                     routineObject["green"].toDouble(),
+                     routineObject["blue"].toDouble());
         changeColorRGB(bridge,
                        deviceIndex,
                        color.saturation(),
-                       color.value(),
+                       routineObject["brightness"].toDouble() * 2.5f,
                        color.hue() * 182);
     }
 }
@@ -381,19 +371,12 @@ void CommHue::handleSuccessPacket(const hue::Bridge& bridge, QString key, QJsonV
 
                         if (valueChanged) {
                             updateDevice(device);
-                            emit stateChanged();
                         }
                     } else if (list[3].compare("name") == 0) {
                         // fill device
                         if (fillDevice(device)) {
                             device.name = value.toString();
                             updateDevice(device);
-
-                            HueLight light = hueLightFromLight(device);
-                            light.name = device.name;
-                            updateHueLight(light);
-
-                            emit stateChanged();
                         }
                         qDebug() << "found the nanme update!";
                     }
@@ -640,18 +623,6 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge, QJsonObject object,
             hue.brightness = stateObject["bri"].toDouble() / 254.0f * 100;
 
             updateDevice(hue);
-
-            bool hueFound = false;
-            for (auto oldHue : mConnectedHues) {
-                if (hue.uniqueID() == oldHue.uniqueID()) {
-                    // TODO: handle when name is different
-                    hueFound = true;
-                    oldHue = hue;
-                }
-            }
-            if (!hueFound) {
-                mConnectedHues.push_back(hue);
-            }
             return true;
         } else {
             qDebug() << "Invalid parameters...";
@@ -749,9 +720,11 @@ bool CommHue::updateHueGroups(QJsonObject object, int i) {
         std::list<cor::Light> lightsInGroup;
         foreach (const QJsonValue &value, lights) {
             int index = value.toString().toInt();
-            for (auto light : mConnectedHues) {
-                if (light.index == index) {
-                    lightsInGroup.push_back(light);
+            for (const auto& bridge : mDiscovery->bridges()) {
+                for (const auto& light : bridge.lights) {
+                    if (light.index == index) {
+                        lightsInGroup.push_back(light);
+                    }
                 }
             }
         }
@@ -785,7 +758,13 @@ bool CommHue::updateNewHueLight(const hue::Bridge& bridge, QJsonObject object, i
         light.controller = bridge.id;
         light.name = name;
 
-        if (!updateHueLight(light)) {
+        bool searchForLight = false;
+        for (const auto& connectedLight : bridge.lights) {
+            if (connectedLight.uniqueID() == light.uniqueID()) {
+                searchForLight = true;
+            }
+        }
+        if (!searchForLight) {
             mNewLights.push_front(light);
         }
 
@@ -845,33 +824,18 @@ EHueUpdates CommHue::checkTypeOfUpdate(QJsonObject object) {
 }
 
 HueLight CommHue::hueLightFromLight(const cor::Light& device) {
-    for (auto&& hue : mConnectedHues) {
-        if (device.index == hue.index) {
-            return hue;
+    for (const auto& bridge : mDiscovery->bridges()) {
+        if (bridge.id == device.controller) {
+            for (const auto& hue : bridge.lights) {
+                if (device.uniqueID() == hue.uniqueID()) {
+                    return hue;
+                }
+            }
         }
     }
     qDebug() << "Warning: no hue device found, this shouldnt be!";
     return HueLight("NOT_VALID", ECommType::MAX);
 }
-
-bool CommHue::updateHueLight(HueLight& hue) {
-    bool foundLight = false;
-    std::list<HueLight>::iterator iterator;
-    for (iterator = mNewLights.begin(); iterator != mNewLights.end(); ++iterator) {
-        if ((*iterator).index == hue.index)  {
-            mConnectedHues.remove((*iterator));
-            mConnectedHues.push_back(hue);
-        }
-    }
-    // if it doesn't add it.
-    if (!foundLight) {
-        mConnectedHues.push_front(hue);
-        return false;
-    } else {
-        return true;
-    }
-}
-
 
 void CommHue::createIdleTimeout(const hue::Bridge& bridge, int i, int minutes) {
 
@@ -1178,9 +1142,13 @@ void CommHue::deleteLight(HueLight light) {
 }
 
 bool CommHue::bridgeHasGroup(const hue::Bridge& bridge, const QString& groupName) {
+    Q_UNUSED(bridge);
+    Q_UNUSED(groupName);
     return true;
 }
 
 bool CommHue::bridgeHasSchedule(const hue::Bridge& bridge, const SHueSchedule& schedule) {
+    Q_UNUSED(bridge);
+    Q_UNUSED(schedule);
     return true;
 }

@@ -28,7 +28,7 @@ public:
      * \param data pointer to the app's data layer.
      * \param comm pointer to the app's comm layer.
      */
-    DataSyncNanoLeaf(DataLayer *data, CommLayer *comm);
+    DataSyncNanoLeaf(DeviceList *data, CommLayer *comm);
 
     /// destructor
     ~DataSyncNanoLeaf() {}

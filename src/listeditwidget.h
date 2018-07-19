@@ -10,7 +10,7 @@
 
 #include "listcollectionwidget.h"
 #include "listdevicewidget.h"
-#include "datalayer.h"
+#include "devicelist.h"
 #include "comm/commlayer.h"
 
 
@@ -34,7 +34,7 @@ public:
      * \param comm pointer to commlayer
      * \param data pointer to datalayer
      */
-    ListEditWidget(QWidget *parent, CommLayer* comm, DataLayer* data);
+    ListEditWidget(QWidget *parent, CommLayer* comm, DeviceList* data);
 
     /// preferred size for widget
     QSize preferredSize();
@@ -113,7 +113,7 @@ private:
      * \brief data layer that maintains and tracks the states of the lights
      *        and the saved data of the GUI
      */
-    DataLayer *mData;
+    DeviceList *mData;
 };
 
 #endif // LISTEDITWIDGET_H

@@ -37,17 +37,45 @@ CommArduCor::CommArduCor(QObject *parent) : QObject(parent) {
 
 }
 
+bool CommArduCor::preparePacketForTransmission(const cor::Controller& controller, QString& packet) {
+    bool shouldReset = false;
+    // check if state update
+    if (!(packet.at(0) ==  QChar('7')
+            || packet.at(0) ==  QChar('8'))) {
+        // if not state update, reset the state update timer.
+        shouldReset = true;
+    }
+
+    // add CRC, if in use
+    if (controller.isUsingCRC) {
+        packet = packet + "#" + QString::number(mCRC.calculate(packet)) + "&";
+    }
+    return shouldReset;
+}
+
 void CommArduCor::sendPacket(const cor::Controller& controller, QString& payload) {
+    // add CRC, check if should reset state updates.
+    bool shouldResetStateTimeout = preparePacketForTransmission(controller, payload);
+
     if (controller.type == ECommType::HTTP) {
         mHTTP->sendPacket(controller, payload);
+        if (shouldResetStateTimeout) {
+            mHTTP->resetStateUpdateTimeout();
+        }
     }
 #ifndef MOBILE_BUILD
     else if (controller.type == ECommType::serial) {
         mSerial->sendPacket(controller, payload);
+        if (shouldResetStateTimeout) {
+            mSerial->resetStateUpdateTimeout();
+        }
     }
 #endif
     else if (controller.type == ECommType::UDP) {
         mUDP->sendPacket(controller, payload);
+        if (shouldResetStateTimeout) {
+            mUDP->resetStateUpdateTimeout();
+        }
     }
 }
 
@@ -83,6 +111,23 @@ void CommArduCor::resetStateUpdates() {
 #endif
 }
 
+
+std::list<cor::Light> CommArduCor::lights() {
+    std::list<cor::Light> lights;
+    std::vector<ECommType> commTypes = { ECommType::HTTP,
+                                       #ifndef MOBILE_BUILD
+                                         ECommType::serial,
+                                       #endif
+                                         ECommType::UDP};
+    for (auto type : commTypes) {
+        for (const auto& controllers : commByType(type)->deviceTable()) {
+            for (const auto& storedLight : controllers.second) {
+                lights.push_back(storedLight);
+            }
+        }
+    }
+    return lights;
+}
 
 void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
     // split into vector of strings

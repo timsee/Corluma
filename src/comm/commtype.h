@@ -11,9 +11,7 @@
 #include <memory>
 #include <unordered_map>
 
-#include "arducor/controller.h"
 #include "cor/light.h"
-#include "crccalculator.h"
 
 /*!
  * \copyright
@@ -120,14 +118,6 @@ signals:
 protected:
 
     /*!
-     * \brief preparePacketForTransmission prepare internal states and variables for sending a new packet and adjust packet
-     *        to fix issues with sending it, if needed
-     * \param controller the controller to send the packet the to
-     * \param packet the packet that is about to be sent
-     */
-    void preparePacketForTransmission(const cor::Controller& controller, QString& packet);
-
-    /*!
      * \brief shouldContinueStateUpdate checks internal states and determines if it should still keep requesting
      *        state updates from the devices.
      * \return true if it should request state updates, false otherwise.
@@ -145,21 +135,6 @@ protected:
 
     /// periodically check if all lights have sent packets recently.
     QTimer *mReachabilityTest;
-
-    /*!
-     * \brief handleDiscoveryPacket called whenever a discovery packet is received by a commtype.
-     *        Although all commtypes may received a packet in different ways or in differnt formats,
-     *        all ways get converted so that they work with this function. The function determines
-     *        if the device sending the discovery packet has been discovered already, and if it hasn't,
-     *        it adds it to its list. It also initiates a throttle timer for this particular controller.
-     *        Finally, it determines if its looking for any other controllers, and if its not, it shuts off
-     *        the discovery timer.
-     * \param sender the controller that is sending the discovery packet.
-     */
-    void handleDiscoveryPacket(cor::Controller sender, bool found);
-
-    /// used to add CRC to outgoing packets.
-    CRCCalculator mCRC;
 
     /// number of state updates sent out
     uint32_t mStateUpdateCounter;

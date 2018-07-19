@@ -188,7 +188,6 @@ void ColorPage::colorChanged(QColor color) {
     mCurrentSingleRoutine["isOn"]  = true;
 
     emit routineUpdate(mCurrentSingleRoutine);
-    emit brightnessChanged(mBrightness);
 
     if (mBottomMenuState == EBottomMenuShow::showSingleRoutines) {
         mSingleRoutineWidget->singleRoutineColorChanged(color);
@@ -243,7 +242,6 @@ void ColorPage::ambientUpdateReceived(int newAmbientValue, int newBrightness) {
 
 void ColorPage::colorsChanged(std::vector<QColor> colors) {
     emit schemeUpdate(colors);
-    emit brightnessChanged(mBrightness);
     emit updateMainIcons();
 }
 
