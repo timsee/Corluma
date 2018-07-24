@@ -30,7 +30,7 @@ public:
      * \param data pointer to the app's data layer.
      * \param comm pointer to the app's comm layer.
      */
-    DataSyncHue(DeviceList *data, CommLayer *comm);
+    DataSyncHue(DeviceList *data, CommLayer *comm, AppSettings *appSettings);
 
     /// destructor
     ~DataSyncHue() {}
@@ -83,6 +83,16 @@ private:
      * \brief endOfSync end the sync thread and start the cleanup thread.
      */
     void endOfSync() override;
+
+    /*!
+     * \brief handleIdleTimeout creates or updates an idle timeout, depending on if it already exists
+     * \param bridge the bridge that the light is attached to
+     * \param light the light that is getting its idle timeout changed
+     */
+    void handleIdleTimeout(const hue::Bridge& bridge, const cor::Light& light);
+
+    /// poiner to app settings
+    AppSettings *mAppSettings;
 };
 
 #endif // DATASYNCHUE_H

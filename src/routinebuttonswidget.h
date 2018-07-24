@@ -70,7 +70,7 @@ public:
      */
     void resize(QSize size);
 
-    // getter for routines
+    /// getter for routines
     const std::vector<std::pair<QString, QJsonObject> > routines() { return mRoutines; }
 
 signals:

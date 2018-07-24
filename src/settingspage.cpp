@@ -26,7 +26,7 @@
 
 #include <QDesktopWidget>
 
-SettingsPage::SettingsPage(QWidget *parent, GroupsParser *parser, ProtocolSettings *protocols) :
+SettingsPage::SettingsPage(QWidget *parent, GroupsParser *parser, AppSettings *appSettings) :
     QWidget(parent), mGroups(parser) {
     mShowingDebug = true;
 
@@ -127,7 +127,7 @@ SettingsPage::SettingsPage(QWidget *parent, GroupsParser *parser, ProtocolSettin
     //------------
     // Global Widget
     //------------
-    mGlobalWidget = new GlobalSettingsWidget(mScrollAreaWidget, protocols);
+    mGlobalWidget = new GlobalSettingsWidget(mScrollAreaWidget, appSettings);
     mGlobalWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mScrollLayout->addWidget(mGlobalWidget);
 

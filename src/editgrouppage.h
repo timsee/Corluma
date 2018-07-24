@@ -63,6 +63,9 @@ public:
      */
     void resize(bool resizeFullWidget = true);
 
+    /// getter for all lights checked on the page.
+    const std::list<cor::Light>& lights() const { return mScrollAreaWidget->checkedDevices(); }
+
 signals:
 
     /*!

@@ -166,7 +166,7 @@ public:
      * \param name the new name for the bridge
      * \param lights the lights to include in the new group
      */
-    void createGroup(QString name, std::list<HueLight> lights, bool isRoom);
+    void createGroup(const hue::Bridge& bridge, QString name, std::list<HueLight> lights, bool isRoom);
 
     /*!
      * \brief updateGroup change the lights in an already-existing hue group
@@ -182,7 +182,7 @@ public:
     void deleteGroup(const hue::Bridge& bridge, cor::LightGroup group);
 
     /// getter for list of groups
-    const std::list<cor::LightGroup>& groups() { return mGroups; }
+    const std::list<cor::LightGroup> groups();
 
     /// list of lights recently discovered by a scan
     const std::list<HueLight>& newLights() { return mNewLights; }
@@ -225,7 +225,17 @@ public:
      * \brief schedules getter for a list of all known schedules
      * \return list of all known schedules.
      */
-    const std::list<SHueSchedule> schedules() { return mSchedules; }
+    const std::list<SHueSchedule> schedules(const hue::Bridge& bridge);
+
+    /*!
+     * \brief groups getter for a list of all know groups
+     * \param bridge bridge to get all groups from
+     * \return list of all known groups
+     */
+    const std::list<cor::LightGroup> groups(const hue::Bridge& bridge);
+
+    /// get the hue bridge that controls a cor::Light
+    hue::Bridge bridgeFromLight(const cor::Light& light);
 
     /*!
      * \brief bridgeHasGroup true if the provided bridge contains the provided group, false otherwise
@@ -370,16 +380,6 @@ private:
      */
     QTime mLastBackgroundTime;
 
-    /*!
-     * \brief mSchedules a list that stores all known data about the current schedules.
-     */
-    std::list<SHueSchedule> mSchedules;
-
-    /*!
-     * \brief mGroups a list that stores all known data about the current groups.
-     */
-    std::list<cor::LightGroup> mGroups;
-
     /// list of new lights found from light scan
     std::list<HueLight> mNewLights;
 
@@ -443,21 +443,20 @@ private:
     bool updateScanState(QJsonObject object);
 
     /*!
-     * \brief updateHueGroups read an incoming packet from the hue bridge and update the internal representation of
+     * \brief jsonToGroup read an incoming packet from the hue bridge and update the internal representation of
      *        the hue's known groups.
      * \param object json representationof a group
      * \param i the index of the group given by the bridge
      * \return true if successful, false if failed.
      */
-    bool updateHueGroups(QJsonObject object, int i);
+    cor::LightGroup jsonToGroup(QJsonObject object, int i);
 
     /*!
-     * \brief updateHueSchedule read an incoming packet from the Hue Brige and update the Hue Schedule based on the contents
+     * \brief jsonToSchedule read an incoming packet from the Hue Brige and update the Hue Schedule based on the contents
      * \param object thue QJsonObject that contains the data on the hue schedule.
      * \param i the index of the hue schedule given by the bridge.
-     * \return true if successful, false if failed.
      */
-    bool updateHueSchedule(QJsonObject object, int i);
+    SHueSchedule jsonToSchedule(QJsonObject object, int i);
 
     /*!
      * \brief checkTypeOfUpdate checks the JSON object received from the hue bridge and figures out whether its a

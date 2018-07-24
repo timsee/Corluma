@@ -5,7 +5,7 @@
  */
 
 #include "mainwindow.h"
-#include "comm/protocolsettings.h"
+#include "appsettings.h"
 #include "groupsparser.h"
 #include "cor/utils.h"
 
@@ -140,7 +140,7 @@ int main(int argc, char *argv[]) {
         settings.setValue(kTimeoutValue,    QString::number(120));
 
 
-        std::vector<QString> protocolInUseKeys = ProtocolSettings::protocolKeys();
+        std::vector<QString> protocolInUseKeys = AppSettings::protocolKeys();
         for (auto key : protocolInUseKeys) {
             settings.setValue(key,   QString::number((int)true));
         }

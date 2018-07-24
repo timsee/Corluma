@@ -240,19 +240,6 @@ int DeviceList::brightness() {
 
 
 
-
-
-void DeviceList::updateTimeout(int timeout) {
-    mTimeout = timeout;
-    emit settingsUpdate();
-}
-
-void DeviceList::enableTimeout(bool timeout) {
-    mTimeoutEnabled = timeout;
-    emit settingsUpdate();
-}
-
-
 bool DeviceList::clearDevices() {
     if (mDevices.size()) {
         mDevices.clear();

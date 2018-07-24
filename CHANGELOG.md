@@ -359,5 +359,12 @@ ___
 * Fixed bugs with data not showing up in the LightInfo widget.
 * Fixed miscellaneous bugs.
 
+### **v0.13.45**
+#### The AppSettings Update
+* Refactored the `ProtocolSettings` object into a more general, `AppSettings` object.
+* Fixed bugs in the arducor timeouts.
+* Bound Hue groups and schedules to individual Hue bridges instead of storing them all in one large list. 
+* Fixed bugs in Hue timeouts. 
+* Fixed miscellaneous bugs. 
 
 

@@ -126,7 +126,6 @@ SOURCES += main.cpp \
     comm/datasyncnanoleaf.cpp \
     comm/datasyncsettings.cpp \
     comm/upnpdiscovery.cpp \
-    comm/protocolsettings.cpp \
     colorpicker/colorpicker.cpp \
     colorpicker/rgbsliders.cpp \
     colorpicker/tempbrightsliders.cpp \
@@ -190,7 +189,8 @@ SOURCES += main.cpp \
     palettepage.cpp \
     moodpage.cpp \
     lightinfolistwidget.cpp \
-    devicelist.cpp
+    devicelist.cpp \
+    appsettings.cpp
 
 HEADERS  +=  arducor/arducordiscovery.h \
     arducor/arducorpacketparser.h \
@@ -210,7 +210,6 @@ HEADERS  +=  arducor/arducordiscovery.h \
     comm/datasyncsettings.h \
     comm/datasyncnanoleaf.h \
     comm/upnpdiscovery.h \
-    comm/protocolsettings.h \
     colorpicker/colorpicker.h \
     colorpicker/rgbsliders.h \
     colorpicker/tempbrightsliders.h \
@@ -280,7 +279,8 @@ HEADERS  +=  arducor/arducordiscovery.h \
     palettepage.h \
     moodpage.h \
     lightinfolistwidget.h \
-    devicelist.h
+    devicelist.h \
+    appsettings.h
 
 #----------
 # Desktop builds only

@@ -23,12 +23,13 @@
 #include <QStyleOption>
 #include <QGraphicsOpacityEffect>
 
-DiscoveryPage::DiscoveryPage(QWidget *parent, DeviceList *data, CommLayer *comm, ProtocolSettings *protocols) :
+DiscoveryPage::DiscoveryPage(QWidget *parent, DeviceList *data, CommLayer *comm, AppSettings *appSettings) :
     QWidget(parent),
     mComm(comm),
-    mProtocolSettings(protocols) {
+    mAppSettings(appSettings) {
     mData = data;
 
+    mLastFloatingHeight = -1;
     mStartButton = new QPushButton(this);
     mStartButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mStartButton->setText("Start");
@@ -70,21 +71,9 @@ DiscoveryPage::DiscoveryPage(QWidget *parent, DeviceList *data, CommLayer *comm,
 
     mStartTime = QTime::currentTime();
 
-    int buttonSize = (int)((float)mHorizontalFloatingLayout->height() * 0.5f);
+    mLastFloatingHeight = mHorizontalFloatingLayout->height();
+    resizeButtonIcons();
 
-    mButtonIcons = std::vector<QPixmap>((size_t)EConnectionButtonIcons::MAX);
-    mButtonIcons[(int)EConnectionButtonIcons::black]  = QPixmap("://images/blackButton.png").scaled(buttonSize, buttonSize,
-                                                                                                           Qt::KeepAspectRatio,
-                                                                                                           Qt::SmoothTransformation);
-    mButtonIcons[(int)EConnectionButtonIcons::red]    = QPixmap("://images/redButton.png").scaled(buttonSize, buttonSize,
-                                                                                                         Qt::KeepAspectRatio,
-                                                                                                         Qt::SmoothTransformation);
-    mButtonIcons[(int)EConnectionButtonIcons::yellow] = QPixmap("://images/yellowButton.png").scaled(buttonSize, buttonSize,
-                                                                                                            Qt::KeepAspectRatio,
-                                                                                                            Qt::SmoothTransformation);
-    mButtonIcons[(int)EConnectionButtonIcons::blue]   = QPixmap("://images/blueButton.png").scaled(buttonSize, buttonSize,
-                                                                                                          Qt::KeepAspectRatio,
-                                                                                                          Qt::SmoothTransformation);
     mArduCorWidget = new DiscoveryArduCorWidget(mComm, this);
     connect(mArduCorWidget, SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)), this, SLOT(widgetConnectionStateChanged(EProtocolType, EConnectionState)));
     mArduCorWidget->setVisible(false);
@@ -105,7 +94,7 @@ void DiscoveryPage::renderUI() {
     bool isAnyConnected = false;
     for (int commInt = 0; commInt != (int)EProtocolType::MAX; ++commInt) {
         EProtocolType type = static_cast<EProtocolType>(commInt);
-        if (mProtocolSettings->enabled(type)) {
+        if (mAppSettings->enabled(type)) {
             mComm->resetStateUpdates(type);
         }
         if (checkIfDiscovered(type)) {
@@ -117,6 +106,8 @@ void DiscoveryPage::renderUI() {
     if (mComm->arducor()->discovery()->controllers().size() > 0) {
         isAnyConnected = true;
     }
+
+    resizeButtonIcons();
 
     // Only allow moving to next page if something is connected
     if (isAnyConnected || mForceStartOpen) {
@@ -142,6 +133,27 @@ void DiscoveryPage::renderUI() {
     mNanoLeafWidget->handleDiscovery(mType == EProtocolType::nanoleaf);
     mArduCorWidget->handleDiscovery(mType == EProtocolType::arduCor);
     mHueWidget->handleDiscovery(mType == EProtocolType::hue);
+}
+
+
+void DiscoveryPage::resizeButtonIcons() {
+    if (mLastFloatingHeight != mHorizontalFloatingLayout->height()) {
+        mLastFloatingHeight = mHorizontalFloatingLayout->height();
+        int buttonSize = (int)((float)mHorizontalFloatingLayout->height() * 0.5f);
+        mButtonIcons = std::vector<QPixmap>((size_t)EConnectionButtonIcons::MAX);
+        mButtonIcons[(int)EConnectionButtonIcons::black]  = QPixmap("://images/blackButton.png").scaled(buttonSize, buttonSize,
+                                                                                                        Qt::KeepAspectRatio,
+                                                                                                        Qt::SmoothTransformation);
+        mButtonIcons[(int)EConnectionButtonIcons::red]    = QPixmap("://images/redButton.png").scaled(buttonSize, buttonSize,
+                                                                                                      Qt::KeepAspectRatio,
+                                                                                                      Qt::SmoothTransformation);
+        mButtonIcons[(int)EConnectionButtonIcons::yellow] = QPixmap("://images/yellowButton.png").scaled(buttonSize, buttonSize,
+                                                                                                         Qt::KeepAspectRatio,
+                                                                                                         Qt::SmoothTransformation);
+        mButtonIcons[(int)EConnectionButtonIcons::blue]   = QPixmap("://images/blueButton.png").scaled(buttonSize, buttonSize,
+                                                                                                       Qt::KeepAspectRatio,
+                                                                                                       Qt::SmoothTransformation);
+    }
 }
 
 bool DiscoveryPage::checkIfDiscovered(EProtocolType type) {
@@ -294,25 +306,25 @@ void DiscoveryPage::updateTopMenu() {
     std::vector<QString> buttons;
 
     // hide and show buttons based on their usage
-    if (mProtocolSettings->enabled(EProtocolType::hue)) {
+    if (mAppSettings->enabled(EProtocolType::hue)) {
         buttons.push_back("Discovery_Hue");
     }
 
-    if (mProtocolSettings->enabled(EProtocolType::nanoleaf)) {
+    if (mAppSettings->enabled(EProtocolType::nanoleaf)) {
         buttons.push_back("Discovery_NanoLeaf");
     }
 
-    if (mProtocolSettings->enabled(EProtocolType::arduCor)) {
+    if (mAppSettings->enabled(EProtocolType::arduCor)) {
         buttons.push_back("Discovery_ArduCor");
     }
 
     // check that commtype being shown is available, if not, adjust
-    if (!mProtocolSettings->enabled(mType)) {
-        if (mProtocolSettings->enabled(EProtocolType::hue)) {
+    if (!mAppSettings->enabled(mType)) {
+        if (mAppSettings->enabled(EProtocolType::hue)) {
             mType = EProtocolType::hue;
-        } else if (mProtocolSettings->enabled(EProtocolType::nanoleaf)) {
+        } else if (mAppSettings->enabled(EProtocolType::nanoleaf)) {
             mType = EProtocolType::nanoleaf;
-        } else if (mProtocolSettings->enabled(EProtocolType::arduCor)) {
+        } else if (mAppSettings->enabled(EProtocolType::arduCor)) {
             mType = EProtocolType::arduCor;
         }
     }
@@ -370,10 +382,10 @@ void DiscoveryPage::moveFloatingLayouts() {
 }
 
 void DiscoveryPage::startClicked() {
-    if (mProtocolSettings->enabled(EProtocolType::nanoleaf)) {
+    if (mAppSettings->enabled(EProtocolType::nanoleaf)) {
         mComm->nanoleaf()->discovery()->stopDiscovery();
     }
-    if (mProtocolSettings->enabled(EProtocolType::hue)) {
+    if (mAppSettings->enabled(EProtocolType::hue)) {
         mComm->hue()->discovery()->stopDiscovery();
     }
     emit startButtonClicked();

@@ -18,8 +18,8 @@
 #include <QMessageBox>
 #include <QScroller>
 
-LightPage::LightPage(QWidget *parent, DeviceList *data, CommLayer *comm, GroupsParser *groups, ProtocolSettings *protocols) :
-    QWidget(parent), mComm(comm), mProtocolSettings(protocols) {
+LightPage::LightPage(QWidget *parent, DeviceList *data, CommLayer *comm, GroupsParser *groups, AppSettings *appSettings) :
+    QWidget(parent), mComm(comm), mAppSettings(appSettings) {
 
     mData = data;
 
@@ -89,7 +89,7 @@ void LightPage::updateConnectionList() {
     std::list<cor::Light> allAvailableDevices;
     // remove non available devices
     for (auto&& device : allDevices) {
-        if (mProtocolSettings->enabled(device.protocol())) {
+        if (mAppSettings->enabled(device.protocol())) {
             allAvailableDevices.push_back(device);
         }
     }
@@ -345,7 +345,7 @@ void LightPage::newConnectionFound(QString newController) {
 
     // if not, add it to discovery.
     if (!foundController) {
-        if (mProtocolSettings->enabled(EProtocolType::arduCor)) {
+        if (mAppSettings->enabled(EProtocolType::arduCor)) {
             mComm->arducor()->discovery()->addManualIP(newController);
 //            bool isSuccessful = mComm->startDiscoveringController(ECommType::UDP, newController);
 //            if (!isSuccessful) qDebug() << "WARNING: failure adding" << newController << "to UDP discovery list";
@@ -361,7 +361,12 @@ void LightPage::newConnectionFound(QString newController) {
 
 
 void LightPage::groupDeleted(QString group) {
-    qDebug() << "group deleted" << group;
+   // qDebug() << "group deleted" << group;
+    // if any lights are hue protocol, remove them here:
+    if (mAppSettings->enabled(EProtocolType::hue)) {
+        mComm->deleteHueGroup(group);
+    }
+
     for (uint32_t i = 0; i < mRoomsWidget->count(); ++i) {
         ListCollectionWidget *widget = mRoomsWidget->widget(i);
         Q_ASSERT(widget);
@@ -463,7 +468,7 @@ void LightPage::hideEvent(QHideEvent *event) {
 void LightPage::hide() {
     for (int i = 0; i < (int)EProtocolType::MAX; ++i) {
         EProtocolType protocol = (EProtocolType)i;
-        if (mProtocolSettings->enabled(protocol)) {
+        if (mAppSettings->enabled(protocol)) {
             mComm->stopDiscovery(protocol);
         }
     }
@@ -489,7 +494,7 @@ void LightPage::cleanupList() {
         std::list<cor::Light> newDeviceList;
         std::list<cor::Light> currentDeviceList = devicesWidget->devices();
         for (auto&& device : currentDeviceList) {
-            if (mProtocolSettings->enabled(device.protocol())) {
+            if (mAppSettings->enabled(device.protocol())) {
                 newDeviceList.push_back(device);
             }
         }

@@ -304,18 +304,22 @@ void EditGroupPage::saveChanges() {
             }
         }
         if (hueLights.size() > 0) {
-            // check if group already exists
-            auto hueGroups = mComm->hue()->groups();
-            bool groupExists = false;
-            for (auto group : hueGroups) {
-                if (group.name.compare(mNewName) == 0) {
-                    groupExists = true;
+            for (const auto& bridge : mComm->hue()->bridges()) {
+                // check if group already exists
+                auto hueGroups = mComm->hue()->groups(bridge);
+                bool groupExists = false;
+                cor::LightGroup lightGroup;
+                for (auto group : hueGroups) {
+                    if (group.name.compare(mNewName) == 0) {
+                        groupExists = true;
+                        lightGroup = group;
+                    }
                 }
-            }
-            if (groupExists) {
-                mComm->updateHueGroup(mNewName, hueLights);
-            } else {
-                mComm->hue()->createGroup(mNewName, hueLights, mIsRoomCurrent);
+                if (groupExists) {
+                    mComm->hue()->updateGroup(bridge, lightGroup, hueLights);
+                } else {
+                    mComm->hue()->createGroup(bridge, mNewName, hueLights, mIsRoomCurrent);
+                }
             }
         }
     }

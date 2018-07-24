@@ -10,7 +10,7 @@
 #include "cor/utils.h"
 
 
-DataSyncHue::DataSyncHue(DeviceList *data, CommLayer *comm) {
+DataSyncHue::DataSyncHue(DeviceList *data, CommLayer *comm, AppSettings *appSettings) : mAppSettings(appSettings) {
     mData = data;
     mComm = comm;
     mUpdateInterval = 250;
@@ -60,7 +60,7 @@ void DataSyncHue::resetSync() {
 void DataSyncHue::syncData() {
     if (!mDataIsInSync) {
         int countOutOfSync = 0;
-        for (auto&& device : mData->devices()) {
+        for (const auto& device : mData->devices()) {
             cor::Light commLayerDevice = device;
             if (mComm->fillDevice(commLayerDevice)) {
                 if (device.commType() == ECommType::hue) {
@@ -116,22 +116,18 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
     object["index"]      = commDevice.index;
     object["uniqueID"]   = commDevice.controller;
 
-    // get a bridge
-    hue::Bridge bridge;
-    bool bridgeFound = false;
-    for (auto foundBridge : mComm->hue()->discovery()->bridges()) {
-        if (foundBridge.id == dataDevice.controller) {
-            bridge = foundBridge;
-            bridgeFound = true;
-        }
-    }
+    // get bridge
+    const auto bridge = mComm->hue()->bridgeFromLight(commDevice);
 
-    if (bridgeFound && dataDevice.isOn) {
+    if (dataDevice.isOn) {
         if (commDevice.colorMode == EColorMode::HSV) {
             //-------------------
             // Hue HSV Color Sync
             //-------------------
-            const auto& color = dataDevice.color;
+            auto color = dataDevice.color;
+            color.setHsvF(color.hueF(), color.saturationF(), float(dataDevice.brightness) / 100.0f);
+            color.setRgb(color.red(), color.green(), color.blue());
+
             // add brightness into lights
             if (cor::colorDifference(color, commDevice.color) > 0.02f) {
                 QJsonObject routineObject;
@@ -142,7 +138,7 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
                 routineObject["brightness"]    = dataDevice.brightness;
 
                 object["routine"] = routineObject;
-               // qDebug() << " packet " << object;
+                //qDebug() << " packet " << object << " cor::colorDifference(color, commDevice.color)" << cor::colorDifference(color, commDevice.color);
                 countOutOfSync++;
             }
         } else if (commDevice.colorMode == EColorMode::CT) {
@@ -153,12 +149,12 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
                 object["temperature"] = dataDevice.temperature;
                 object["brightness"]  = dataDevice.brightness;
                 countOutOfSync++;
-               // qDebug() << " hue color temperautre not in sync" << dataDevice.color << " temp " << object["temperature"].toDouble();
+                //qDebug() << " hue color temperautre not in sync" << dataDevice.color << " temp " << object["temperature"].toDouble();
             }
         }
 
         if (cor::brightnessDifference(commDevice.brightness, dataDevice.brightness) > 0.05f) {
-           // qDebug() << "hue brightness not in sync" << commDevice.brightness << "vs" << dataDevice.brightness;
+            //qDebug() << "hue brightness not in sync" << commDevice.brightness << "vs" << dataDevice.brightness;
             object["brightness"] = dataDevice.brightness;
             countOutOfSync++;
         }
@@ -176,22 +172,8 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
     //-------------------
     // Turn off Hue timers
     //-------------------
-    if (mData->timeoutEnabled()) {
-        std::list<SHueSchedule> commSchedules = mComm->hue()->schedules();
-        std::list<SHueSchedule>::iterator iterator;
-        for (iterator = commSchedules.begin(); iterator != commSchedules.end(); ++iterator) {
-            // if a device doesnt have a schedule, add it.
-            if (iterator->name.contains("Corluma_timeout")) {
-                QString indexString = iterator->name.split("_").last();
-                int givenIndex = indexString.toInt();
-                if (givenIndex == dataDevice.index
-                        && iterator->status
-                        && (mData->timeout() != 0)
-                        && countOutOfSync) {
-                    mComm->hue()->updateIdleTimeout(bridge, false, iterator->index, mData->timeout());
-                }
-            }
-        }
+    if (mAppSettings->timeoutEnabled() && countOutOfSync == 0) {
+        handleIdleTimeout(bridge, commDevice);
     }
 
     if (countOutOfSync) {
@@ -204,55 +186,42 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
 
 void DataSyncHue::cleanupSync() {
     // repeats until things are synced up.
-    bool totallySynced = true;
-    if (mData->timeoutEnabled()) {
-        std::list<SHueSchedule> commSchedules = mComm->hue()->schedules();
+    if (mAppSettings->timeoutEnabled()) {
+        //qDebug() << " timeout enabled!";
         for (auto&& device : mData->devices()) {
             if (device.commType() == ECommType::hue) {
+                // get bridge
+                const auto bridge = mComm->hue()->bridgeFromLight(device);
+                handleIdleTimeout(bridge, device);
+            }
+        }
+    }
 
-                hue::Bridge bridge;
-                bool bridgeFound = false;
-                for (auto foundBridge : mComm->hue()->discovery()->bridges()) {
-                    if (foundBridge.id == device.controller) {
-                        bridge = foundBridge;
-                        bridgeFound = true;
-                    }
-                }
+    if (mCleanupStartTime.elapsed() > 15000) {
+        mCleanupTimer->stop();
+    }
+}
 
-                if (bridgeFound) {
-                    cor::Light commLayerDevice = device;
-                    bool successful = mComm->fillDevice(commLayerDevice);
-                    if (!successful) qDebug() << "something is wronggg";
-                    std::list<SHueSchedule>::iterator iterator;
-                    bool foundTimeout = false;
-                    for (iterator = commSchedules.begin(); iterator != commSchedules.end(); ++iterator) {
-                        // qDebug() << " schedule " << iterator->name;
-                        // if a device doesnt have a schedule, add it.
-                        if (iterator->name.contains("Corluma_timeout")) {
-                            QString indexString = iterator->name.split("_").last();
-                            int givenIndex = indexString.toInt();
-                            if (givenIndex == device.index) {
-                                totallySynced = false;
-                                if (mData->timeout() != 0) {
-                                    foundTimeout = true;
-                                    //qDebug() << "update hue timeout" << iterator->index;
-                                    mComm->hue()->updateIdleTimeout(bridge, true, iterator->index, mData->timeout());
-                                }
-                            }
-                        }
-                    }
-                    if (!foundTimeout) {
-                        qDebug() << " adding timeout for " << device.index;
-                        mComm->hue()->createIdleTimeout(bridge, device.index, mData->timeout());
-                    }
+
+
+void DataSyncHue::handleIdleTimeout(const hue::Bridge& bridge, const cor::Light& light) {
+    bool foundTimeout = false;
+    for (const auto& schedule : mComm->hue()->schedules(bridge)) {
+       // qDebug() << "  scheudel name" << schedule.name;
+        // if a device doesnt have a schedule, add it.
+        if (schedule.name.contains("Corluma_timeout")) {
+            QString indexString = schedule.name.split("_").last();
+            int givenIndex = indexString.toInt();
+            if (givenIndex == light.index) {
+                if (mAppSettings->timeout() != 0) {
+                    foundTimeout = true;
+                    mComm->hue()->updateIdleTimeout(bridge, true, schedule.index, mAppSettings->timeout());
                 }
             }
         }
     }
 
-    if (totallySynced
-            || mCleanupStartTime.elapsed() > 30000) {
-        mCleanupTimer->stop();
+    if (!foundTimeout) {
+        mComm->hue()->createIdleTimeout(bridge, light.index, mAppSettings->timeout());
     }
 }
-
