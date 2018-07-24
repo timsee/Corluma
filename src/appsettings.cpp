@@ -4,11 +4,13 @@
  * Released under the GNU General Public License.
  */
 
-#include "protocolsettings.h"
+#include "appsettings.h"
 #include "cor/utils.h"
 
-ProtocolSettings::ProtocolSettings() {
+AppSettings::AppSettings() {
     mSettings = new QSettings();
+    mTimeout = mSettings->value(kTimeoutValue).toInt();
+    mTimeoutEnabled = mSettings->value(kUseTimeoutKey).toBool();
     mProtocolsInUse = std::vector<bool>((size_t)EProtocolType::MAX, false);
 
     std::vector<QString> keys = protocolKeys();
@@ -32,11 +34,11 @@ ProtocolSettings::ProtocolSettings() {
     }
 }
 
-bool ProtocolSettings::enabled(EProtocolType type) {
+bool AppSettings::enabled(EProtocolType type) {
     return mProtocolsInUse[(uint32_t)type];
 }
 
-bool ProtocolSettings::enable(EProtocolType type, bool shouldEnable) {
+bool AppSettings::enable(EProtocolType type, bool shouldEnable) {
     // now that the edge case is out of the way, handle enabling or disabling the communication
     bool previouslyEnabled = enabled(type);
     if (!shouldEnable && previouslyEnabled && numberEnabled() == 1) {
@@ -50,7 +52,7 @@ bool ProtocolSettings::enable(EProtocolType type, bool shouldEnable) {
     return true;
 }
 
-std::vector<QString> ProtocolSettings::protocolKeys() {
+std::vector<QString> AppSettings::protocolKeys() {
     std::vector<QString> keys((size_t)EProtocolType::MAX);
     for (uint32_t i = 0; i < keys.size(); ++i) {
         QString key = protocolToString((EProtocolType)i);
@@ -60,6 +62,19 @@ std::vector<QString> ProtocolSettings::protocolKeys() {
     return keys;
 }
 
-uint32_t ProtocolSettings::numberEnabled() {
+uint32_t AppSettings::numberEnabled() {
    return std::count(mProtocolsInUse.begin(), mProtocolsInUse.end(), true);
+}
+
+
+void AppSettings::updateTimeout(int timeout) {
+    mTimeout = timeout;
+    mSettings->setValue(kTimeoutValue, QString::number(timeout));
+    emit settingsUpdate();
+}
+
+void AppSettings::enableTimeout(bool timeout) {
+    mTimeoutEnabled = timeout;
+    mSettings->setValue(kUseTimeoutKey, QString::number((int)timeout));
+    emit settingsUpdate();
 }

@@ -10,7 +10,7 @@
 #include "icondata.h"
 #include "cor/button.h"
 #include "floatinglayout.h"
-#include "comm/protocolsettings.h"
+#include "appsettings.h"
 #include "comm/commlayer.h"
 #include "comm/datasyncsettings.h"
 #include "comm/datasyncarduino.h"
@@ -324,9 +324,9 @@ private:
     DeviceList *mData;
 
     /*!
-     * \brief mProtocolSettings maintains which comnmtypes are currently enabled.
+     * \brief mAppSettings maintains which comnmtypes are currently enabled.
      */
-    ProtocolSettings *mProtocolSettings;
+    AppSettings *mAppSettings;
 
     //------------------
     // Data Sync Threads

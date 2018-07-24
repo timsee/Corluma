@@ -69,6 +69,27 @@ void BridgeDiscovery::startupTimerTimeout() {
 // Main Routine
 //-----------------
 
+void BridgeDiscovery::updateSchedules(const hue::Bridge& bridge, const std::list<SHueSchedule>& schedules) {
+    for (auto&& foundBridge : mFoundBridges) {
+        if (foundBridge.id == bridge.id) {
+//            for (const auto& schedule : schedules) {
+//                qDebug() << schedule.name;
+//            }
+            // update the schedules
+            foundBridge.schedules = schedules;
+        }
+    }
+}
+
+void BridgeDiscovery::updateGroups(const hue::Bridge& bridge, const std::list<cor::LightGroup>& groups) {
+    for (auto&& foundBridge : mFoundBridges) {
+        if (foundBridge.id == bridge.id) {
+            // update the groups
+            foundBridge.groups = groups;
+        }
+    }
+}
+
 void BridgeDiscovery::handleDiscovery() {
     for (auto notFoundBridge : mNotFoundBridges) {
         if (notFoundBridge.IP != "") {
@@ -419,11 +440,14 @@ HueLight BridgeDiscovery::lightFromBridgeIDAndIndex(const QString& bridgeID, int
 }
 
 hue::Bridge BridgeDiscovery::bridgeFromLight(HueLight light) {
-    for (auto foundBridge : mFoundBridges) {
-        if (light.controller == foundBridge.id) {
-            return foundBridge;
+    for (const auto& foundBridge : mFoundBridges) {
+        for (const auto& foundLight : foundBridge.lights) {
+            if (foundLight.uniqueID() == light.uniqueID()) {
+                return foundBridge;
+            }
         }
     }
+    qDebug() << " did not find the bridge: " << light.uniqueID();
     return hue::Bridge();
 }
 
@@ -484,7 +508,7 @@ void BridgeDiscovery::updateJSON(const hue::Bridge& bridge) {
             }
 
             if (jsonBridge.macaddress != bridge.macaddress
-                    && jsonBridge.macaddress != "") {
+                    && bridge.macaddress != "") {
                 detectChanges = true;
                 object["macaddress"] = bridge.macaddress;
             }

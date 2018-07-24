@@ -34,7 +34,7 @@ public:
     /*!
      * Constructor
      */
-    explicit DiscoveryPage(QWidget *parent, DeviceList *data, CommLayer *layer, ProtocolSettings *protocols);
+    explicit DiscoveryPage(QWidget *parent, DeviceList *data, CommLayer *layer, AppSettings *appSettings);
 
     /// debug function
     void openStartForDebug() { mForceStartOpen = true; }
@@ -200,8 +200,14 @@ private:
      */
     QTime mStartTime;
 
+    /// resizes the icons on the discovery page if the floating layout size changes (this typically happens only once)
+    void resizeButtonIcons();
+
+    /// the last floating layout height, used to test if resize is needed.
+    uint32_t mLastFloatingHeight;
+
     /// pointer to the app states that determine if a protocol (such as arducor or nanoleaf) is currently enabled
-    ProtocolSettings *mProtocolSettings;
+    AppSettings *mAppSettings;
 };
 
 #endif // DISCOVERYPAGE_H

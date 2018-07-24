@@ -3,11 +3,78 @@
 
 #include <QString>
 #include <QJsonObject>
+#include <QJsonDocument>
 #include <sstream>
 #include <vector>
+#include <list>
 
+#include "cor/lightgroup.h"
 
 class HueLight;
+
+
+/*!
+ * \brief The SHueCommand struct command sent to a hue bridge.
+ */
+struct SHueCommand {
+    QString address;
+    QString method;
+    QJsonObject routineObject;
+
+    operator QString() const {
+        QString result = "SHueCommand ";
+        result += " address: " + address;
+        result += " method: " + method;
+        QJsonDocument doc(routineObject);
+        result += " routineObject: " + doc.toJson(QJsonDocument::Compact);
+        return result;
+    }
+};
+
+
+
+/*!
+ * \brief The SHueSchedule struct a schedule for hues. Schedules are stored
+ *        in the bridge and will execute even when no application is connected.
+ *        Schedules also stay around if autodelete is set to false, and must be
+ *        deleted explicitly.
+ */
+struct SHueSchedule {
+    QString name;
+    QString description;
+    SHueCommand command;
+    QString time;
+    QString localtime;
+    QString created;
+    bool status;
+    int index;
+    bool autodelete;
+
+    operator QString() const {
+        QString result = "SHueCommand ";
+        result += " name: " + name;
+        result += " description: " + description;
+        result += " command: " + command;
+        result += " time: " + time;
+        result += " localtime: " + localtime;
+        result += " created: " + created;
+        result += " status: " + status;
+        result += " index: " + index;
+        result += " autodelete: " + autodelete;
+        return result;
+    }
+
+};
+
+/// SHueSchedule equal operator
+inline bool operator==(const SHueSchedule& lhs, const SHueSchedule& rhs) {
+    bool result = true;
+    if (lhs.name.compare(rhs.name)) result = false;
+    if (lhs.description.compare(rhs.description)) result = false;
+    if (lhs.index     !=  rhs.index) result = false;
+
+    return result;
+}
 
 namespace hue
 {
@@ -49,6 +116,12 @@ public:
 
     /// vector of lights for a bridge
     std::vector<HueLight> lights;
+
+    /// list of the schedules stored on the bridge
+    std::list<SHueSchedule> schedules;
+
+    /// list of the groups stored on the bridge
+    std::list<cor::LightGroup> groups;
 
     operator QString() const {
         std::stringstream tempString;

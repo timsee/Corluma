@@ -137,13 +137,6 @@ public:
      */
     std::list<cor::Light> hueLightsToDevices(std::list<HueLight> hues);
 
-    /*!
-     * \brief updateHueGroup update the hue group data on the bridge to use new lights.
-     * \param name name of group to update
-     * \param lights the new set of lights to define this group.
-     */
-    void updateHueGroup(QString name, std::list<HueLight> lights);
-
     /// deletes a hue group by name
     void deleteHueGroup(QString name);
 

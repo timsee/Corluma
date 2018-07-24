@@ -60,6 +60,12 @@ public:
     /// getter for discovery state
     EHueDiscoveryState state();
 
+    /// updates the schedules stored in a bridge
+    void updateSchedules(const hue::Bridge& bridge, const std::list<SHueSchedule>& schedules);
+
+    /// updates the groups stored in a bridge
+    void updateGroups(const hue::Bridge& bridge, const std::list<cor::LightGroup>& groups);
+
     /*!
      * \brief bridge All currently known data about the hue bridge. This is only guarenteed to
      *        return valid data if isConnected() is returning true.

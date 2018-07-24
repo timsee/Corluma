@@ -36,44 +36,6 @@ enum class EHueUpdates {
     MAX
 };
 
-
-/*!
- * \brief The SHueCommand struct command sent to a hue bridge.
- */
-struct SHueCommand {
-    QString address;
-    QString method;
-    QJsonObject routineObject;
-};
-
-/*!
- * \brief The SHueSchedule struct a schedule for hues. Schedules are stored
- *        in the bridge and will execute even when no application is connected.
- *        Schedules also stay around if autodelete is set to false, and must be
- *        deleted explicitly.
- */
-struct SHueSchedule {
-    QString name;
-    QString description;
-    SHueCommand command;
-    QString time;
-    QString created;
-    bool status;
-    int index;
-    bool autodelete;
-};
-
-/// SHueSchedule equal operator
-inline bool operator==(const SHueSchedule& lhs, const SHueSchedule& rhs) {
-    bool result = true;
-    if (lhs.name.compare(rhs.name)) result = false;
-    if (lhs.description.compare(rhs.description)) result = false;
-    if (lhs.index     !=  rhs.index) result = false;
-
-    return result;
-}
-
-
 /*!
  * \brief The EHueDiscoveryState enum is used for keeping
  *        track of what step HueBridgeDiscovery object is in

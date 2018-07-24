@@ -132,7 +132,7 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
         // these are optional parameters depending on the routine
         bool paramsInSync       = true;
         bool colorInSync        = (cor::colorDifference(dataDevice.color, commDevice.color) <= 0.02f);
-        bool brightnessInSync   = (cor::brightnessDifference(commDevice.brightness, dataDevice.brightness)<= 0.02f);
+        bool brightnessInSync   = (cor::brightnessDifference(commDevice.brightness, dataDevice.brightness) <= 0.02f);
         bool paletteInSync      = (commDevice.palette.paletteEnum() == dataDevice.palette.paletteEnum());
         if (dataDevice.palette.paletteEnum() == EPalette::custom) {
             bool palettesAreClose = true;

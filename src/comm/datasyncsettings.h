@@ -8,6 +8,7 @@
 #include "devicelist.h"
 #include "datasync.h"
 #include "arducor/arducorpacketparser.h"
+#include "appsettings.h"
 
 /*!
  * \copyright
@@ -26,7 +27,7 @@ public:
      * \param data pointer to the app's data layer.
      * \param comm pointer to the app's comm layer.
      */
-    DataSyncSettings(DeviceList *data, CommLayer *comm, ProtocolSettings *protocol);
+    DataSyncSettings(DeviceList *data, CommLayer *comm, AppSettings *settings);
 
     /*!
      * \brief cancelSync cancel the data sync, regardless of it successfully completed.
@@ -79,7 +80,7 @@ private:
     ArduCorPacketParser *mParser;
 
     /// pointer to the app states that determine if a protocol (such as arducor or nanoleaf) is currently enabled
-    ProtocolSettings *mProtocolSettings;
+    AppSettings *mAppSettings;
 
     /*!
      * \brief endOfSync end the sync thread and start the cleanup thread.

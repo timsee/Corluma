@@ -122,7 +122,7 @@ void GroupsParser::saveNewCollection(const QString& groupName, const std::list<c
     // create string of jsondata to add to file
     QJsonArray deviceArray;
     for (auto&& device : devices) {
-        if (device.commType() != ECommType::hue) {
+        if (device.protocol() != EProtocolType::hue) {
             QJsonObject object;
 
             object["type"] = commTypeToString(device.commType());
@@ -163,6 +163,7 @@ void GroupsParser::saveNewCollection(const QString& groupName, const std::list<c
 
             // save file
             saveJSON();
+            // hues use their bridge to store their data for collections instead of the JSON
             emit newCollectionAdded(groupName);
         }
     }
@@ -246,6 +247,7 @@ bool GroupsParser::removeGroup(const QString& groupName, bool isMood) {
                         array.removeAt(i);
                         mJsonData.setArray(array);
                         saveJSON();
+
                         for (auto mood : mMoodList) {
                             if (mood.name.compare(groupName) == 0) {
                                 mMoodList.remove(mood);

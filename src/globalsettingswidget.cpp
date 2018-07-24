@@ -12,9 +12,9 @@
 #include "globalsettingswidget.h"
 
 GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent,
-                                           ProtocolSettings *protocols) :
+                                           AppSettings *appSettings) :
                                            QWidget(parent),
-                                           mProtocolSettings(protocols) {
+                                           mAppSettings(appSettings) {
     mSpacerPixels = 5;
 
     // set margins as spacer * 2
@@ -43,18 +43,17 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent,
 
     mMinHeight = mTimeoutCheckBox->height();
 
-    mSettings = new QSettings();
     //-----------
     // Sliders
     //-----------
     mTimeoutSlider = new cor::Slider(this);
     mTimeoutSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mTimeoutSlider->slider()->setRange(0, 300);
-    mTimeoutSlider->slider()->setValue(mSettings->value(kTimeoutValue).toInt());
+    mTimeoutSlider->slider()->setValue(mAppSettings->timeout());
     mTimeoutSlider->setSliderHeight(0.5f);
     mTimeoutSlider->slider()->setTickPosition(QSlider::TicksBelow);
     mTimeoutSlider->slider()->setTickInterval(60);
-    mTimeoutSlider->slider()->setValue(120);
+    mTimeoutSlider->slider()->setValue(mAppSettings->timeout());
     mTimeoutSlider->setSliderColorBackground(cor::kDefaultColor);
     mTimeoutSlider->setShouldDrawTickLabels(true);
 
@@ -100,9 +99,8 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent,
     // Access Persistent Memory
     //-----------
 
-    bool useTimeout = mSettings->value(kUseTimeoutKey).toBool();
-    mTimeoutCheckBox->setChecked(useTimeout);
-    showTimeout(useTimeout);
+    mTimeoutCheckBox->setChecked(mAppSettings->timeoutEnabled());
+    showTimeout(mAppSettings->timeoutEnabled());
 }
 
 
@@ -119,19 +117,19 @@ void GlobalSettingsWidget::nanoLeafButtonClicked(bool checked) {
 }
 
 void GlobalSettingsWidget::checkCheckBoxes() {
-    if (mProtocolSettings->enabled(EProtocolType::hue)) {
+    if (mAppSettings->enabled(EProtocolType::hue)) {
         mHueButton->setChecked(true);
     } else {
         mHueButton->setChecked(false);
     }
 
-    if (mProtocolSettings->enabled(EProtocolType::arduCor)) {
+    if (mAppSettings->enabled(EProtocolType::arduCor)) {
         mArduCorButton->setChecked(true);
     } else {
         mArduCorButton->setChecked(false);
     }
 
-    if (mProtocolSettings->enabled(EProtocolType::nanoleaf)) {
+    if (mAppSettings->enabled(EProtocolType::nanoleaf)) {
         mNanoLeafButton->setChecked(true);
     } else {
         mNanoLeafButton->setChecked(false);
@@ -141,16 +139,15 @@ void GlobalSettingsWidget::checkCheckBoxes() {
 
 void GlobalSettingsWidget::timeoutChanged(int newTimeout) {
    emit timeoutUpdate(newTimeout);
-   mSettings->setValue(kTimeoutValue, QString::number(newTimeout));
 }
 
 
 
 void GlobalSettingsWidget::checkBoxClicked(EProtocolType type, bool checked) {
-    bool successful = mProtocolSettings->enable(type, checked);
+    bool successful = mAppSettings->enable(type, checked);
     if (!successful) {
         mConnectionButtons[(uint32_t)type]->setChecked(true);
-       // mConnectionButtons[mProtocolSettings->indexOfProtocolSettings(type)]->setStyleSheet("background-color:#4A4949;");
+       // mConnectionButtons[mAppSettings->indexOfProtocolSettings(type)]->setStyleSheet("background-color:#4A4949;");
     }
 
     if (!checked) {
@@ -197,7 +194,6 @@ void GlobalSettingsWidget::paintEvent(QPaintEvent *) {
 }
 
 void GlobalSettingsWidget::timeoutButtonPressed(bool isChecked) {
-    mSettings->setValue(kUseTimeoutKey, QString::number((int)isChecked));
     emit timeoutEnabled(isChecked);
     showTimeout(isChecked);
 }

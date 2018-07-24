@@ -49,16 +49,16 @@ MainWindow::MainWindow(QWidget *parent) :
     // --------------
 
     mGroups = new GroupsParser(this);
-    mProtocolSettings = new ProtocolSettings();
+    mAppSettings = new AppSettings();
     mData   = new DeviceList(this);
     mComm   = new CommLayer(this, mGroups);
 
     mDataSyncArduino  = new DataSyncArduino(mData, mComm);
-    mDataSyncHue      = new DataSyncHue(mData, mComm);
+    mDataSyncHue      = new DataSyncHue(mData, mComm, mAppSettings);
     mDataSyncNanoLeaf = new DataSyncNanoLeaf(mData, mComm);
-    mDataSyncSettings = new DataSyncSettings(mData, mComm, mProtocolSettings);
+    mDataSyncSettings = new DataSyncSettings(mData, mComm, mAppSettings);
 
-    if (mProtocolSettings->enabled(EProtocolType::nanoleaf)) {
+    if (mAppSettings->enabled(EProtocolType::nanoleaf)) {
         mComm->nanoleaf()->discovery()->startDiscovery();
     }
     connect(mComm->nanoleaf().get(), SIGNAL(lightRenamed(cor::Light, QString)), this, SLOT(renamedLight(cor::Light, QString)));
@@ -75,7 +75,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Setup Pages
     // --------------
 
-    mLightPage = new LightPage(this, mData, mComm, mGroups, mProtocolSettings);
+    mLightPage = new LightPage(this, mData, mComm, mGroups, mAppSettings);
     mLightPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mLightPage, SIGNAL(clickedEditButton(QString, bool)),  this, SLOT(editButtonClicked(QString, bool)));
 
@@ -134,7 +134,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Settings Page
     // --------------
 
-    mSettingsPage = new SettingsPage(this, mGroups, mProtocolSettings);
+    mSettingsPage = new SettingsPage(this, mGroups, mAppSettings);
     mSettingsPage->setVisible(false);
     mSettingsPage->isOpen(false);
     connect(mSettingsPage, SIGNAL(updateMainIcons()), mTopMenu, SLOT(updateMenuBar()));
@@ -151,7 +151,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Setup Discovery Page
     // --------------
 
-    mDiscoveryPage = new DiscoveryPage(this, mData, mComm, mProtocolSettings);
+    mDiscoveryPage = new DiscoveryPage(this, mData, mComm, mAppSettings);
     mDiscoveryPage->show();
     mDiscoveryPage->isOpen(true);
     connect(mDiscoveryPage, SIGNAL(startButtonClicked()), this, SLOT(switchToConnection()));
@@ -187,19 +187,11 @@ MainWindow::MainWindow(QWidget *parent) :
     mLightInfoWidget->setGeometry(0, -1 * this->height(), this->width(), this->height());
 
     // --------------
-    // Setup app data with saved and global settings
-    // --------------
-    mData->enableTimeout(mSettingsPage->globalWidget()->useTimeout());
-    if (mData->timeoutEnabled()) {
-        mData->updateTimeout(mSettingsPage->globalWidget()->timeoutValue());
-    }
-
-    // --------------
     // Start Discovery
     // --------------
     for (int i = 0; i < (int)EProtocolType::MAX; ++i) {
         EProtocolType type = (EProtocolType)i;
-        if (mProtocolSettings->enabled(type)) {
+        if (mAppSettings->enabled(type)) {
             mComm->startup(type);
             mComm->startDiscovery(type);
         }
@@ -480,14 +472,14 @@ void MainWindow::changeEvent(QEvent *event) {
     if(event->type() == QEvent::ActivationChange && this->isActiveWindow()) {
         for (int commInt = 0; commInt != (int)EProtocolType::MAX; ++commInt) {
             EProtocolType type = static_cast<EProtocolType>(commInt);
-            if (mProtocolSettings->enabled(type)) {
+            if (mAppSettings->enabled(type)) {
                 mComm->resetStateUpdates(type);
             }
         }
     } else if (event->type() == QEvent::ActivationChange && !this->isActiveWindow()) {
         for (int commInt = 0; commInt != (int)EProtocolType::MAX; ++commInt) {
             EProtocolType type = static_cast<EProtocolType>(commInt);
-            if (mProtocolSettings->enabled(type)) {
+            if (mAppSettings->enabled(type)) {
                 mComm->stopStateUpdates(type);
             }
         }
@@ -792,11 +784,11 @@ void MainWindow::schemeChanged(std::vector<QColor> colors) {
 }
 
 void MainWindow::timeoutChanged(int timeout) {
-    mData->updateTimeout(timeout);
+    mAppSettings->updateTimeout(timeout);
 }
 
 void MainWindow::timeoutEnabledChanged(bool enabled) {
-    mData->enableTimeout(enabled);
+    mAppSettings->enableTimeout(enabled);
 }
 
 void MainWindow::moodChanged(QString mood) {

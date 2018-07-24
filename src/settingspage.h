@@ -47,7 +47,7 @@ public:
     /*!
      * \brief Constructor
      */
-    explicit SettingsPage(QWidget *parent, GroupsParser *parser, ProtocolSettings *protocols);
+    explicit SettingsPage(QWidget *parent, GroupsParser *parser, AppSettings *appSettings);
 
     /*!
      * \brief Destructor

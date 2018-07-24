@@ -10,21 +10,17 @@
 #include "comm/commlayer.h"
 #include "cor/utils.h"
 
-DataSyncSettings::DataSyncSettings(DeviceList *data, CommLayer *comm, ProtocolSettings *protocols)
+DataSyncSettings::DataSyncSettings(DeviceList *data, CommLayer *comm, AppSettings *appSettings) : mAppSettings(appSettings)
 {
-    mData = data;
     mComm = comm;
-    mProtocolSettings = protocols;
-    mUpdateInterval = 200;
+    mData = data;
+    mUpdateInterval = 2000;
     connect(mComm, SIGNAL(packetReceived(EProtocolType)), this, SLOT(commPacketReceived(EProtocolType)));
-    connect(mData, SIGNAL(settingsUpdate()), this, SLOT(resetSync()));
+    connect(mData, SIGNAL(dataUpdate()), this, SLOT(resetSync()));
 
     mSyncTimer = new QTimer(this);
     connect(mSyncTimer, SIGNAL(timeout()), this, SLOT(syncData()));
     mSyncTimer->start(mUpdateInterval);
-
-//    mCleanupTimer = new QTimer(this);
-//    connect(mCleanupTimer, SIGNAL(timeout()), this, SLOT(cleanupSync()));
 
     mParser = new ArduCorPacketParser(this);
 
@@ -57,32 +53,19 @@ void DataSyncSettings::syncData() {
     if (!mDataIsInSync) {
 
         int countOutOfSync = 0;
-        // grab all available devices, instead of all current devices like most syncs
-        std::list<cor::Light> allDevices = mComm->allDevices();
-        std::list<cor::Light> allAvailableDevices;
-        // remove non available devices
-        for (auto&& device : allDevices) {
-            if (mProtocolSettings->enabled(device.protocol())) {
-                allAvailableDevices.push_back(device);
-            }
-        }
-
-        for (auto&& device : allAvailableDevices) {
-            cor::Light commLayerDevice = device;
-            if (device.commType() != ECommType::hue && device.commType() != ECommType::nanoleaf) {
-                bool successful = mComm->fillDevice(commLayerDevice);
-                if (!successful) {
-                    //qDebug() << "INFO: device not found!";
-                    return;
-                }
-
-                if (checkThrottle(device.controller, device.commType())) {
-                    bool result = sync(device);
-                    if (!result) {
+        if (mAppSettings->enabled(EProtocolType::arduCor)) {
+            for (const auto& device : mData->devices()) {
+                cor::Light commLayerDevice = device;
+                if (device.protocol() == EProtocolType::arduCor && device.isReachable) {
+                    mComm->fillDevice(commLayerDevice);
+                    if (checkThrottle(device.controller, device.commType())) {
+                        bool result = sync(device);
+                        if (!result) {
+                            countOutOfSync++;
+                        }
+                    } else {
                         countOutOfSync++;
                     }
-                } else {
-                    countOutOfSync++;
                 }
             }
         }
@@ -120,40 +103,27 @@ bool DataSyncSettings::sync(const cor::Light& availableDevice) {
 
     QString packet;
 
-    if (availableDevice.commType() == ECommType::hue) {
-
-//        //-------------------
-//        // Timeout Sync
-//        //-------------------
-//        if (commDevice.timeout != dataDevice.timeout) {
-//            qDebug() << "time out not in sync";
-//            QString message = mComm->sendTimeOut(list, dataDevice.timeout);
-//            appendToPacket(packet, message, controller.maxPacketSize);
-//            countOutOfSync++;
-//        }
+    //-------------------
+    // Timeout Sync
+    //-------------------
+    if (mAppSettings->timeoutEnabled()) {
+        // timeout is enabled
+        if (availableDevice.timeout != mAppSettings->timeout()) {
+            qDebug() << "time out not in sync" << availableDevice.timeout << " vs " << mAppSettings->timeout();
+            QString message = mParser->timeoutPacket(availableDevice, mAppSettings->timeout());
+            appendToPacket(packet, message, controller.maxPacketSize);
+            countOutOfSync++;
+        }
     } else {
-
-        //-------------------
-        // Timeout Sync
-        //-------------------
-        if (mData->timeoutEnabled()) {
-            // timeout is enabled
-            if (availableDevice.timeout != mData->timeout()) {
-               // qDebug() << "time out not in sync";
-                QString message = mParser->timeoutPacket(availableDevice, mData->timeout());
-                appendToPacket(packet, message, controller.maxPacketSize);
-                countOutOfSync++;
-            }
-        } else {
-            // disable the timeout
-            if (availableDevice.timeout != 0) {
-              //  qDebug() << "time out not in sync";
-                QString message = mParser->timeoutPacket(availableDevice, 0);
-                appendToPacket(packet, message, controller.maxPacketSize);
-                countOutOfSync++;
-            }
+        // disable the timeout
+        if (availableDevice.timeout != 0) {
+            qDebug() << "time out not disabled!" << availableDevice.timeout;
+            QString message = mParser->timeoutPacket(availableDevice, 0);
+            appendToPacket(packet, message, controller.maxPacketSize);
+            countOutOfSync++;
         }
     }
+
     if (countOutOfSync) {
         //qDebug() << "packet size" << packet.size() <<"count out of sync" << countOutOfSync;
         mComm->arducor()->sendPacket(controller, packet);

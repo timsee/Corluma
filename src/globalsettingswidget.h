@@ -8,7 +8,7 @@
 
 #include "cor/slider.h"
 #include "cor/checkbox.h"
-#include "comm/protocolsettings.h"
+#include "appsettings.h"
 #include "groupsparser.h"
 
 /*!
@@ -27,7 +27,7 @@ class GlobalSettingsWidget : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit GlobalSettingsWidget(QWidget *parent, ProtocolSettings *protocols);
+    explicit GlobalSettingsWidget(QWidget *parent, AppSettings *appSettings);
 
     /*!
      * \brief updateUI updates the colors of various settings in the UI.
@@ -192,13 +192,8 @@ private:
      */
     std::vector<QPushButton*> mConnectionButtons;
 
-    /*!
-     * \brief mSettings pointer to QSettings, used to store and access data in persistent app memory.
-     */
-    QSettings *mSettings;
-
     /// pointer to the app states that determine if a protocol (such as arducor or nanoleaf) is currently enabled
-    ProtocolSettings *mProtocolSettings;
+    AppSettings *mAppSettings;
 };
 
 #endif // GLOBALSETTINGSWIDGET_H
