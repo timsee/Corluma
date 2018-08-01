@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.13.0</span>
+   &#160;<span id="projectnumber">v0.13.47</span>
    </div>
   </td>
  </tr>
@@ -42,7 +42,6 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="class_comm_hue-members.html">List of all members</a> &#124;
-<a href="#pub-slots">Public Slots</a> &#124;
 <a href="#signals">Signals</a> &#124;
 <a href="#pub-methods">Public Member Functions</a>  </div>
   <div class="headertitle">
@@ -57,27 +56,17 @@ $(function() {
 
 <p>Inherits <a class="el" href="class_comm_type.html">CommType</a>.</p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-slots"></a>
-Public Slots</h2></td></tr>
-<tr class="memitem:acbdf6a9d59c217d618301b2a0ba40327"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#acbdf6a9d59c217d618301b2a0ba40327">brightnessChange</a> (int deviceIndex, int brightness)</td></tr>
-<tr class="memdesc:acbdf6a9d59c217d618301b2a0ba40327"><td class="mdescLeft">&#160;</td><td class="mdescRight">brightnessChange connected to <a class="el" href="class_comm_packet_parser.html" title="The CommPacketParser class takes the packets used for communication with other devices as input...">CommPacketParser</a>, this changes the brightness of a device.  <a href="#acbdf6a9d59c217d618301b2a0ba40327">More...</a><br /></td></tr>
-<tr class="separator:acbdf6a9d59c217d618301b2a0ba40327"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
-<tr class="memitem:a75205a9dd6e81b970b1313402b656736"><td class="memItemLeft" align="right" valign="top"><a id="a75205a9dd6e81b970b1313402b656736"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a75205a9dd6e81b970b1313402b656736">stateChanged</a> ()</td></tr>
-<tr class="memdesc:a75205a9dd6e81b970b1313402b656736"><td class="mdescLeft">&#160;</td><td class="mdescRight">stateChanged emitted when any of the lights change in any way. <br /></td></tr>
-<tr class="separator:a75205a9dd6e81b970b1313402b656736"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aecb64b62bfc4a7383d2d1c6ca0e96fc4"><td class="memItemLeft" align="right" valign="top"><a id="aecb64b62bfc4a7383d2d1c6ca0e96fc4"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#aecb64b62bfc4a7383d2d1c6ca0e96fc4">packetReceived</a> (QString, QString, ECommType)</td></tr>
+<tr class="memdesc:aecb64b62bfc4a7383d2d1c6ca0e96fc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">packetReceived emitted whenever a packet that is not a discovery packet is received. Contains the full packet's contents as a QString. <br /></td></tr>
+<tr class="separator:aecb64b62bfc4a7383d2d1c6ca0e96fc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a081202319f5ec20fa553ff0ff6f5f503"><td class="memItemLeft" align="right" valign="top"><a id="a081202319f5ec20fa553ff0ff6f5f503"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a081202319f5ec20fa553ff0ff6f5f503">discoveryStateChanged</a> (EHueDiscoveryState)</td></tr>
 <tr class="memdesc:a081202319f5ec20fa553ff0ff6f5f503"><td class="mdescLeft">&#160;</td><td class="mdescRight">signals during discovery things like when the bridge is discovered and when light data is received <br /></td></tr>
 <tr class="separator:a081202319f5ec20fa553ff0ff6f5f503"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header signals_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('signals_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Signals inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
-<tr class="memitem:abd0309d4508fbb127aeedfdacc212995 inherit signals_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="abd0309d4508fbb127aeedfdacc212995"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#abd0309d4508fbb127aeedfdacc212995">packetReceived</a> (QString, QString, ECommType)</td></tr>
-<tr class="memdesc:abd0309d4508fbb127aeedfdacc212995 inherit signals_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">packetReceived emitted whenever a packet that is not a discovery packet is received. Contains the full packet's contents as a QString. <br /></td></tr>
-<tr class="separator:abd0309d4508fbb127aeedfdacc212995 inherit signals_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a99e8e95b8ce5ac36a605634b6a460f inherit signals_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a6a99e8e95b8ce5ac36a605634b6a460f"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a6a99e8e95b8ce5ac36a605634b6a460f">updateReceived</a> (ECommType)</td></tr>
 <tr class="memdesc:a6a99e8e95b8ce5ac36a605634b6a460f inherit signals_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateReceived an update packet was received from any controller. <br /></td></tr>
@@ -85,9 +74,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a6437a21abfd54172305bd1eda8c52845"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a6437a21abfd54172305bd1eda8c52845">CommHue</a> ()</td></tr>
-<tr class="memdesc:a6437a21abfd54172305bd1eda8c52845"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_comm_hue.html" title="The CommHue class communicates with a Philips Hue Bridge to control all of the currently connected Hu...">CommHue</a> Constructor.  <a href="#a6437a21abfd54172305bd1eda8c52845">More...</a><br /></td></tr>
-<tr class="separator:a6437a21abfd54172305bd1eda8c52845"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69393ea83e15ee7c340f898306ca61a0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a69393ea83e15ee7c340f898306ca61a0">CommHue</a> (<a class="el" href="class_u_pn_p_discovery.html">UPnPDiscovery</a> *UPnP)</td></tr>
+<tr class="memdesc:a69393ea83e15ee7c340f898306ca61a0"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_comm_hue.html" title="The CommHue class communicates with a Philips Hue Bridge to control all of the currently connected Hu...">CommHue</a> Constructor.  <a href="#a69393ea83e15ee7c340f898306ca61a0">More...</a><br /></td></tr>
+<tr class="separator:a69393ea83e15ee7c340f898306ca61a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a29d74852b7183e5fb0ffb77816969bee"><td class="memItemLeft" align="right" valign="top"><a id="a29d74852b7183e5fb0ffb77816969bee"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a29d74852b7183e5fb0ffb77816969bee">~CommHue</a> ()</td></tr>
 <tr class="memdesc:a29d74852b7183e5fb0ffb77816969bee"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_comm_hue.html" title="The CommHue class communicates with a Philips Hue Bridge to control all of the currently connected Hu...">CommHue</a> Destructor. <br /></td></tr>
@@ -100,31 +89,22 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#acdcd223b12613b92a682a2c8b50f17a6">shutdown</a> ()</td></tr>
 <tr class="memdesc:acdcd223b12613b92a682a2c8b50f17a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">shutdown defined in <a class="el" href="class_comm_type.html" title="inherited by comm types, provides a general interface that can be used to do connections and sending ...">CommType</a> <br /></td></tr>
 <tr class="separator:acdcd223b12613b92a682a2c8b50f17a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a39706ac1161e2b4787f9e29848953fa1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a39706ac1161e2b4787f9e29848953fa1">changeColorRGB</a> (int lightIndex, int saturation, int brightness, int hue)</td></tr>
-<tr class="memdesc:a39706ac1161e2b4787f9e29848953fa1"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeColorRGB send a packet to a hue bridge to change the color of a given hue light.  <a href="#a39706ac1161e2b4787f9e29848953fa1">More...</a><br /></td></tr>
-<tr class="separator:a39706ac1161e2b4787f9e29848953fa1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3bd2ad9af191059d11ab1a7dc36efd9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#aa3bd2ad9af191059d11ab1a7dc36efd9">changeColorCT</a> (int lightIndex, int brightness, int ct)</td></tr>
-<tr class="memdesc:aa3bd2ad9af191059d11ab1a7dc36efd9"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeAmbientLight changes the color of the bulb to match the color temperature given. This is the only way to interact with white ambiance bulbs and it can also be used with the RGB bulbs.  <a href="#aa3bd2ad9af191059d11ab1a7dc36efd9">More...</a><br /></td></tr>
-<tr class="separator:aa3bd2ad9af191059d11ab1a7dc36efd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a391f9a3c8dd243189bcbcc25671830fe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a391f9a3c8dd243189bcbcc25671830fe">turnOn</a> (const cor::Light &amp;light)</td></tr>
-<tr class="memdesc:a391f9a3c8dd243189bcbcc25671830fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">turnOn turns on the Hue light at a given index  <a href="#a391f9a3c8dd243189bcbcc25671830fe">More...</a><br /></td></tr>
-<tr class="separator:a391f9a3c8dd243189bcbcc25671830fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a07a9f4b92a8012123da61199a8239191"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a07a9f4b92a8012123da61199a8239191">turnOff</a> (const cor::Light &amp;light)</td></tr>
-<tr class="memdesc:a07a9f4b92a8012123da61199a8239191"><td class="mdescLeft">&#160;</td><td class="mdescRight">turnOff turns off the Hue light at a given index  <a href="#a07a9f4b92a8012123da61199a8239191">More...</a><br /></td></tr>
-<tr class="separator:a07a9f4b92a8012123da61199a8239191"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f8dc965a76d29371339205f75645326"><td class="memItemLeft" align="right" valign="top">const std::list&lt; HueLight &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a7f8dc965a76d29371339205f75645326">connectedHues</a> ()</td></tr>
-<tr class="memdesc:a7f8dc965a76d29371339205f75645326"><td class="mdescLeft">&#160;</td><td class="mdescRight">connectedHues returns vector of the currently connected Hue lights. Used by the settings page to display the list.  <a href="#a7f8dc965a76d29371339205f75645326">More...</a><br /></td></tr>
-<tr class="separator:a7f8dc965a76d29371339205f75645326"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a873dfef4d5a3cd6737e46353a553ab30"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a873dfef4d5a3cd6737e46353a553ab30">changeColor</a> (const hue::Bridge &amp;bridge, int lightIndex, const QColor &amp;color)</td></tr>
+<tr class="memdesc:a873dfef4d5a3cd6737e46353a553ab30"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeColor send a packet to a hue bridge to change the color of a given hue light.  <a href="#a873dfef4d5a3cd6737e46353a553ab30">More...</a><br /></td></tr>
+<tr class="separator:a873dfef4d5a3cd6737e46353a553ab30"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc1c7ce9c7f297b0cff81f26284982ce"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#acc1c7ce9c7f297b0cff81f26284982ce">changeColorCT</a> (const hue::Bridge &amp;bridge, int lightIndex, int brightness, int ct)</td></tr>
+<tr class="memdesc:acc1c7ce9c7f297b0cff81f26284982ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeAmbientLight changes the color of the bulb to match the color temperature given. This is the only way to interact with white ambiance bulbs and it can also be used with the RGB bulbs.  <a href="#acc1c7ce9c7f297b0cff81f26284982ce">More...</a><br /></td></tr>
+<tr class="separator:acc1c7ce9c7f297b0cff81f26284982ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c6c9540bbae7c61f31ad26ee75d8012"><td class="memItemLeft" align="right" valign="top"><a id="a8c6c9540bbae7c61f31ad26ee75d8012"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a8c6c9540bbae7c61f31ad26ee75d8012">turnOnOff</a> (const hue::Bridge &amp;bridge, int index, bool shouldTurnOn)</td></tr>
+<tr class="memdesc:a8c6c9540bbae7c61f31ad26ee75d8012"><td class="mdescLeft">&#160;</td><td class="mdescRight">true to turn on, false to turn off <br /></td></tr>
+<tr class="separator:a8c6c9540bbae7c61f31ad26ee75d8012"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5b3814c455232c84e2215d16aadddab1"><td class="memItemLeft" align="right" valign="top">hue::BridgeDiscovery *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a5b3814c455232c84e2215d16aadddab1">discovery</a> ()</td></tr>
 <tr class="memdesc:a5b3814c455232c84e2215d16aadddab1"><td class="mdescLeft">&#160;</td><td class="mdescRight">discovery returns a pointer to the object used to discover the Hue Bridge. This can be used to connect to its signals or to check its current state.  <a href="#a5b3814c455232c84e2215d16aadddab1">More...</a><br /></td></tr>
 <tr class="separator:a5b3814c455232c84e2215d16aadddab1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a521b1b000afd1ae34b11d60dc74578"><td class="memItemLeft" align="right" valign="top"><a id="a9a521b1b000afd1ae34b11d60dc74578"></a>
-EHueDiscoveryState&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a9a521b1b000afd1ae34b11d60dc74578">discoveryState</a> ()</td></tr>
-<tr class="memdesc:a9a521b1b000afd1ae34b11d60dc74578"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for current discovery state of hue lights <br /></td></tr>
-<tr class="separator:a9a521b1b000afd1ae34b11d60dc74578"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a734c0cd741157978d4f1c6dcd262a23d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a734c0cd741157978d4f1c6dcd262a23d">sendPacket</a> (const cor::Controller &amp;controller, QString &amp;packet)</td></tr>
-<tr class="memdesc:a734c0cd741157978d4f1c6dcd262a23d"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendPacket Takes a packet in the format of a Corluma lights command (a comma delimited QString) and converts it into a Philips Hue command  <a href="#a734c0cd741157978d4f1c6dcd262a23d">More...</a><br /></td></tr>
-<tr class="separator:a734c0cd741157978d4f1c6dcd262a23d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd122a4acfa23f9581b31fe88301759d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#abd122a4acfa23f9581b31fe88301759d">sendPacket</a> (const QJsonObject &amp;object)</td></tr>
+<tr class="memdesc:abd122a4acfa23f9581b31fe88301759d"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendPacket send a packet based off of a JSON object containing all relevant information about the packet  <a href="#abd122a4acfa23f9581b31fe88301759d">More...</a><br /></td></tr>
+<tr class="separator:abd122a4acfa23f9581b31fe88301759d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add36510b1124afbc25e262dd1785d8ad"><td class="memItemLeft" align="right" valign="top">HueLight&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#add36510b1124afbc25e262dd1785d8ad">hueLightFromLight</a> (const cor::Light &amp;device)</td></tr>
 <tr class="memdesc:add36510b1124afbc25e262dd1785d8ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">hueLightFromLight For every cor::Light with type hue, there is a SHueLight that represents the same device. The SHueLight contains hue-specific information such as the bulb's software version and model ID. This information This function takes the cor::Light and returns the mapped SHueLight  <a href="#add36510b1124afbc25e262dd1785d8ad">More...</a><br /></td></tr>
 <tr class="separator:add36510b1124afbc25e262dd1785d8ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -135,41 +115,37 @@ EHueDiscoveryState&#160;</td><td class="memItemRight" valign="bottom"><a class="
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#ac12170f5466d258751a228029ac7aedd">stopBackgroundTimers</a> ()</td></tr>
 <tr class="memdesc:ac12170f5466d258751a228029ac7aedd"><td class="mdescLeft">&#160;</td><td class="mdescRight">stop the timers that sync things like schedules and groups in the background. <br /></td></tr>
 <tr class="separator:ac12170f5466d258751a228029ac7aedd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b0fbc05c68eae8656ccf9ae2a2d1753"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a2b0fbc05c68eae8656ccf9ae2a2d1753">createIdleTimeout</a> (int i, int minutes)</td></tr>
-<tr class="memdesc:a2b0fbc05c68eae8656ccf9ae2a2d1753"><td class="mdescLeft">&#160;</td><td class="mdescRight">createIdleTimeout create an idle timeout schedule for a specific light.  <a href="#a2b0fbc05c68eae8656ccf9ae2a2d1753">More...</a><br /></td></tr>
-<tr class="separator:a2b0fbc05c68eae8656ccf9ae2a2d1753"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3b6073064325473abf0459a3cdea3bde"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a3b6073064325473abf0459a3cdea3bde">postJson</a> (QString resource, QJsonObject object)</td></tr>
-<tr class="memdesc:a3b6073064325473abf0459a3cdea3bde"><td class="mdescLeft">&#160;</td><td class="mdescRight">postJson helper function that takes a JSON object and posts it to the hue bridge.  <a href="#a3b6073064325473abf0459a3cdea3bde">More...</a><br /></td></tr>
-<tr class="separator:a3b6073064325473abf0459a3cdea3bde"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5401aeb2a77f24454d55d4a2914ad488"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a5401aeb2a77f24454d55d4a2914ad488">putJson</a> (QString resource, QJsonObject object)</td></tr>
-<tr class="memdesc:a5401aeb2a77f24454d55d4a2914ad488"><td class="mdescLeft">&#160;</td><td class="mdescRight">putJson helper function that takes a JSON object and puts it on the hue bridge.  <a href="#a5401aeb2a77f24454d55d4a2914ad488">More...</a><br /></td></tr>
-<tr class="separator:a5401aeb2a77f24454d55d4a2914ad488"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae7fed02de7e4c501b076860a18ac0eba"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#ae7fed02de7e4c501b076860a18ac0eba">updateIdleTimeout</a> (bool enable, int scheduleID, int minutes)</td></tr>
-<tr class="memdesc:ae7fed02de7e4c501b076860a18ac0eba"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateIdleTimeout upate the idle tieout for a specific schedule. This is called during data sync to turn off the idle timeout and after datasync it gets called again to turn the idle timeout back on.  <a href="#ae7fed02de7e4c501b076860a18ac0eba">More...</a><br /></td></tr>
-<tr class="separator:ae7fed02de7e4c501b076860a18ac0eba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e1b2d69fc4a3e4b4a56e8a712cf794f"><td class="memItemLeft" align="right" valign="top">SHueBridge&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a3e1b2d69fc4a3e4b4a56e8a712cf794f">bridge</a> ()</td></tr>
-<tr class="memdesc:a3e1b2d69fc4a3e4b4a56e8a712cf794f"><td class="mdescLeft">&#160;</td><td class="mdescRight">bridge getter for the bridge and its associated info  <a href="#a3e1b2d69fc4a3e4b4a56e8a712cf794f">More...</a><br /></td></tr>
-<tr class="separator:a3e1b2d69fc4a3e4b4a56e8a712cf794f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a487731bad72fa0ee01f1409c29bc39da"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a487731bad72fa0ee01f1409c29bc39da">createIdleTimeout</a> (const hue::Bridge &amp;bridge, int i, int minutes)</td></tr>
+<tr class="memdesc:a487731bad72fa0ee01f1409c29bc39da"><td class="mdescLeft">&#160;</td><td class="mdescRight">createIdleTimeout create an idle timeout schedule for a specific light.  <a href="#a487731bad72fa0ee01f1409c29bc39da">More...</a><br /></td></tr>
+<tr class="separator:a487731bad72fa0ee01f1409c29bc39da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4126bedec0b891b9210f736490dfeaa7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a4126bedec0b891b9210f736490dfeaa7">postJson</a> (const hue::Bridge &amp;bridge, QString resource, QJsonObject object)</td></tr>
+<tr class="memdesc:a4126bedec0b891b9210f736490dfeaa7"><td class="mdescLeft">&#160;</td><td class="mdescRight">postJson helper function that takes a JSON object and posts it to the hue bridge.  <a href="#a4126bedec0b891b9210f736490dfeaa7">More...</a><br /></td></tr>
+<tr class="separator:a4126bedec0b891b9210f736490dfeaa7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a597d9f8e5085770c3623a390e70547b2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a597d9f8e5085770c3623a390e70547b2">putJson</a> (const hue::Bridge &amp;bridge, QString resource, QJsonObject object)</td></tr>
+<tr class="memdesc:a597d9f8e5085770c3623a390e70547b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">putJson helper function that takes a JSON object and puts it on the hue bridge.  <a href="#a597d9f8e5085770c3623a390e70547b2">More...</a><br /></td></tr>
+<tr class="separator:a597d9f8e5085770c3623a390e70547b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61f2880c794e8871423b600fe07cd2c1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a61f2880c794e8871423b600fe07cd2c1">updateIdleTimeout</a> (const hue::Bridge &amp;bridge, bool enable, int scheduleID, int minutes)</td></tr>
+<tr class="memdesc:a61f2880c794e8871423b600fe07cd2c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateIdleTimeout upate the idle tieout for a specific schedule. This is called during data sync to turn off the idle timeout and after datasync it gets called again to turn the idle timeout back on.  <a href="#a61f2880c794e8871423b600fe07cd2c1">More...</a><br /></td></tr>
+<tr class="separator:a61f2880c794e8871423b600fe07cd2c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6dcddff86c58f62fd3deff5f0e2bf805"><td class="memItemLeft" align="right" valign="top">std::list&lt; hue::Bridge &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a6dcddff86c58f62fd3deff5f0e2bf805">bridges</a> ()</td></tr>
+<tr class="memdesc:a6dcddff86c58f62fd3deff5f0e2bf805"><td class="mdescLeft">&#160;</td><td class="mdescRight">bridges getter for the found bridges and their associated info  <a href="#a6dcddff86c58f62fd3deff5f0e2bf805">More...</a><br /></td></tr>
+<tr class="separator:a6dcddff86c58f62fd3deff5f0e2bf805"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acc2197131a6b7dabef3b406bee54ab64"><td class="memItemLeft" align="right" valign="top">QJsonObject&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#acc2197131a6b7dabef3b406bee54ab64">SHueCommandToJsonObject</a> (SHueCommand command)</td></tr>
 <tr class="memdesc:acc2197131a6b7dabef3b406bee54ab64"><td class="mdescLeft">&#160;</td><td class="mdescRight">SHueCommandToJsonObject converts a SHueCommand into a Json object that can be sent to a hue as a command. Neat!  <a href="#acc2197131a6b7dabef3b406bee54ab64">More...</a><br /></td></tr>
 <tr class="separator:acc2197131a6b7dabef3b406bee54ab64"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af28bde55a1bbc9aad0088f0a9ca379cb"><td class="memItemLeft" align="right" valign="top"><a id="af28bde55a1bbc9aad0088f0a9ca379cb"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#af28bde55a1bbc9aad0088f0a9ca379cb">haveGroups</a> ()</td></tr>
-<tr class="memdesc:af28bde55a1bbc9aad0088f0a9ca379cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if its received any data about groups from the hue bridge, false otherwise. <br /></td></tr>
-<tr class="separator:af28bde55a1bbc9aad0088f0a9ca379cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a78d7772252e786d50204224eb6a5795b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a78d7772252e786d50204224eb6a5795b">createGroup</a> (QString name, std::list&lt; HueLight &gt; lights, bool isRoom)</td></tr>
-<tr class="memdesc:a78d7772252e786d50204224eb6a5795b"><td class="mdescLeft">&#160;</td><td class="mdescRight">createGroup create a new group of lights on the hue bridge  <a href="#a78d7772252e786d50204224eb6a5795b">More...</a><br /></td></tr>
-<tr class="separator:a78d7772252e786d50204224eb6a5795b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afd6c35797f9e03d2c7a1ed9a864f58ab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#afd6c35797f9e03d2c7a1ed9a864f58ab">updateGroup</a> (cor::LightGroup group, std::list&lt; HueLight &gt; lights)</td></tr>
-<tr class="memdesc:afd6c35797f9e03d2c7a1ed9a864f58ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateGroup change the lights in an already-existing hue group  <a href="#afd6c35797f9e03d2c7a1ed9a864f58ab">More...</a><br /></td></tr>
-<tr class="separator:afd6c35797f9e03d2c7a1ed9a864f58ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a02e2a6cefd7c310634ad6834abb11ef4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a02e2a6cefd7c310634ad6834abb11ef4">deleteGroup</a> (cor::LightGroup group)</td></tr>
-<tr class="memdesc:a02e2a6cefd7c310634ad6834abb11ef4"><td class="mdescLeft">&#160;</td><td class="mdescRight">deleteGroup delete a group from the hue bridge  <a href="#a02e2a6cefd7c310634ad6834abb11ef4">More...</a><br /></td></tr>
-<tr class="separator:a02e2a6cefd7c310634ad6834abb11ef4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a116fcdf464d9eea003346b379099e5dc"><td class="memItemLeft" align="right" valign="top"><a id="a116fcdf464d9eea003346b379099e5dc"></a>
-const std::list&lt; cor::LightGroup &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a116fcdf464d9eea003346b379099e5dc">groups</a> ()</td></tr>
-<tr class="memdesc:a116fcdf464d9eea003346b379099e5dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for list of groups <br /></td></tr>
-<tr class="separator:a116fcdf464d9eea003346b379099e5dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a05ade60f86f6099fb38a3c13f5e73a88"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a05ade60f86f6099fb38a3c13f5e73a88">createGroup</a> (const hue::Bridge &amp;bridge, QString name, std::list&lt; HueLight &gt; lights, bool isRoom)</td></tr>
+<tr class="memdesc:a05ade60f86f6099fb38a3c13f5e73a88"><td class="mdescLeft">&#160;</td><td class="mdescRight">createGroup create a new group of lights on the hue bridge  <a href="#a05ade60f86f6099fb38a3c13f5e73a88">More...</a><br /></td></tr>
+<tr class="separator:a05ade60f86f6099fb38a3c13f5e73a88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a490c55bf1b0a34d13923db2c61fcda1d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a490c55bf1b0a34d13923db2c61fcda1d">updateGroup</a> (const hue::Bridge &amp;bridge, cor::LightGroup group, std::list&lt; HueLight &gt; lights)</td></tr>
+<tr class="memdesc:a490c55bf1b0a34d13923db2c61fcda1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateGroup change the lights in an already-existing hue group  <a href="#a490c55bf1b0a34d13923db2c61fcda1d">More...</a><br /></td></tr>
+<tr class="separator:a490c55bf1b0a34d13923db2c61fcda1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8564e3d707ebdab4ceaa2015ef7ce4cf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a8564e3d707ebdab4ceaa2015ef7ce4cf">deleteGroup</a> (const hue::Bridge &amp;bridge, cor::LightGroup group)</td></tr>
+<tr class="memdesc:a8564e3d707ebdab4ceaa2015ef7ce4cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">deleteGroup delete a group from the hue bridge  <a href="#a8564e3d707ebdab4ceaa2015ef7ce4cf">More...</a><br /></td></tr>
+<tr class="separator:a8564e3d707ebdab4ceaa2015ef7ce4cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab05dc2fc1e73e28e25409623de997a80"><td class="memItemLeft" align="right" valign="top"><a id="ab05dc2fc1e73e28e25409623de997a80"></a>
+const std::list&lt; cor::LightGroup &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#ab05dc2fc1e73e28e25409623de997a80">groups</a> ()</td></tr>
+<tr class="memdesc:ab05dc2fc1e73e28e25409623de997a80"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for list of groups <br /></td></tr>
+<tr class="separator:ab05dc2fc1e73e28e25409623de997a80"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2899ae97ab10813d804a7bb3bfa414cd"><td class="memItemLeft" align="right" valign="top"><a id="a2899ae97ab10813d804a7bb3bfa414cd"></a>
 const std::list&lt; HueLight &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a2899ae97ab10813d804a7bb3bfa414cd">newLights</a> ()</td></tr>
 <tr class="memdesc:a2899ae97ab10813d804a7bb3bfa414cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">list of lights recently discovered by a scan <br /></td></tr>
@@ -178,18 +154,14 @@ const std::list&lt; HueLight &gt; &amp;&#160;</td><td class="memItemRight" valig
 const std::list&lt; QString &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a11ad6b84d9ba28e08bededeaad25833d">searchingLights</a> ()</td></tr>
 <tr class="memdesc:a11ad6b84d9ba28e08bededeaad25833d"><td class="mdescLeft">&#160;</td><td class="mdescRight">serial numbers for lights that we are searching for. <br /></td></tr>
 <tr class="separator:a11ad6b84d9ba28e08bededeaad25833d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a93bcf4cb26ea9e70c78bfefce4a9a7fa"><td class="memItemLeft" align="right" valign="top"><a id="a93bcf4cb26ea9e70c78bfefce4a9a7fa"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a93bcf4cb26ea9e70c78bfefce4a9a7fa">requestNewLights</a> ()</td></tr>
-<tr class="memdesc:a93bcf4cb26ea9e70c78bfefce4a9a7fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">request a list of all recently discovered lights <br /></td></tr>
-<tr class="separator:a93bcf4cb26ea9e70c78bfefce4a9a7fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a918aeeb3fe0b8c5c74dc179166f7c780"><td class="memItemLeft" align="right" valign="top"><a id="a918aeeb3fe0b8c5c74dc179166f7c780"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a918aeeb3fe0b8c5c74dc179166f7c780">requestNewLights</a> (const hue::Bridge &amp;bridge)</td></tr>
+<tr class="memdesc:a918aeeb3fe0b8c5c74dc179166f7c780"><td class="mdescLeft">&#160;</td><td class="mdescRight">request a list of all recently discovered lights <br /></td></tr>
+<tr class="separator:a918aeeb3fe0b8c5c74dc179166f7c780"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8aa1b9e25bd1ba8c00113e1f7db07f80"><td class="memItemLeft" align="right" valign="top"><a id="a8aa1b9e25bd1ba8c00113e1f7db07f80"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a8aa1b9e25bd1ba8c00113e1f7db07f80">scanIsActive</a> ()</td></tr>
 <tr class="memdesc:a8aa1b9e25bd1ba8c00113e1f7db07f80"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if scan is active, false otherwise <br /></td></tr>
 <tr class="separator:a8aa1b9e25bd1ba8c00113e1f7db07f80"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6768c5f60f4f675e6999b0e923fc1886"><td class="memItemLeft" align="right" valign="top"><a id="a6768c5f60f4f675e6999b0e923fc1886"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a6768c5f60f4f675e6999b0e923fc1886">haveSchedules</a> ()</td></tr>
-<tr class="memdesc:a6768c5f60f4f675e6999b0e923fc1886"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if its received any data about schedules from the hue bridge, false otherwise. <br /></td></tr>
-<tr class="separator:a6768c5f60f4f675e6999b0e923fc1886"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a099b9b4c0fa13a28de49858c4043afbc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a099b9b4c0fa13a28de49858c4043afbc">createSchedule</a> (QString name, QString description, SHueCommand command, QString localtime)</td></tr>
 <tr class="memdesc:a099b9b4c0fa13a28de49858c4043afbc"><td class="mdescLeft">&#160;</td><td class="mdescRight">createSchedule create a hue schedule to be stored on the bridge  <a href="#a099b9b4c0fa13a28de49858c4043afbc">More...</a><br /></td></tr>
 <tr class="separator:a099b9b4c0fa13a28de49858c4043afbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -199,37 +171,51 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a3de7a0ee906a9ecf1f4dd32208ecdea7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a3de7a0ee906a9ecf1f4dd32208ecdea7">deleteSchedule</a> (SHueSchedule schedule)</td></tr>
 <tr class="memdesc:a3de7a0ee906a9ecf1f4dd32208ecdea7"><td class="mdescLeft">&#160;</td><td class="mdescRight">deleteSchedule delete a hue schedule from the bridge  <a href="#a3de7a0ee906a9ecf1f4dd32208ecdea7">More...</a><br /></td></tr>
 <tr class="separator:a3de7a0ee906a9ecf1f4dd32208ecdea7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af40c82f0bb8176183030d84ba930dc56"><td class="memItemLeft" align="right" valign="top">const std::list&lt; SHueSchedule &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#af40c82f0bb8176183030d84ba930dc56">schedules</a> ()</td></tr>
-<tr class="memdesc:af40c82f0bb8176183030d84ba930dc56"><td class="mdescLeft">&#160;</td><td class="mdescRight">schedules getter for a list of all known schedules  <a href="#af40c82f0bb8176183030d84ba930dc56">More...</a><br /></td></tr>
-<tr class="separator:af40c82f0bb8176183030d84ba930dc56"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95720c743b01d411710d7a500c2042b2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a95720c743b01d411710d7a500c2042b2">searchForNewLights</a> (std::list&lt; QString &gt; serialNumbers=std::list&lt; QString &gt;())</td></tr>
-<tr class="memdesc:a95720c743b01d411710d7a500c2042b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">searchForNewLights search for new lights that havent been paired with the bridge yet  <a href="#a95720c743b01d411710d7a500c2042b2">More...</a><br /></td></tr>
-<tr class="separator:a95720c743b01d411710d7a500c2042b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab1beb1fecde8b455a124c3b26b66ce6e"><td class="memItemLeft" align="right" valign="top">const std::list&lt; SHueSchedule &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#ab1beb1fecde8b455a124c3b26b66ce6e">schedules</a> (const hue::Bridge &amp;bridge)</td></tr>
+<tr class="memdesc:ab1beb1fecde8b455a124c3b26b66ce6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">schedules getter for a list of all known schedules  <a href="#ab1beb1fecde8b455a124c3b26b66ce6e">More...</a><br /></td></tr>
+<tr class="separator:ab1beb1fecde8b455a124c3b26b66ce6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc68e13bec32a2c1299b6171007237bf"><td class="memItemLeft" align="right" valign="top">const std::list&lt; cor::LightGroup &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#afc68e13bec32a2c1299b6171007237bf">groups</a> (const hue::Bridge &amp;bridge)</td></tr>
+<tr class="memdesc:afc68e13bec32a2c1299b6171007237bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">groups getter for a list of all know groups  <a href="#afc68e13bec32a2c1299b6171007237bf">More...</a><br /></td></tr>
+<tr class="separator:afc68e13bec32a2c1299b6171007237bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9213e52d99b520cd204efe3132d6d43a"><td class="memItemLeft" align="right" valign="top"><a id="a9213e52d99b520cd204efe3132d6d43a"></a>
+hue::Bridge&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a9213e52d99b520cd204efe3132d6d43a">bridgeFromLight</a> (const cor::Light &amp;light)</td></tr>
+<tr class="memdesc:a9213e52d99b520cd204efe3132d6d43a"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the hue bridge that controls a cor::Light <br /></td></tr>
+<tr class="separator:a9213e52d99b520cd204efe3132d6d43a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb695a261c9b79fcbd1e4ae85384c699"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#afb695a261c9b79fcbd1e4ae85384c699">bridgeHasGroup</a> (const hue::Bridge &amp;bridge, const QString &amp;groupName)</td></tr>
+<tr class="memdesc:afb695a261c9b79fcbd1e4ae85384c699"><td class="mdescLeft">&#160;</td><td class="mdescRight">bridgeHasGroup true if the provided bridge contains the provided group, false otherwise  <a href="#afb695a261c9b79fcbd1e4ae85384c699">More...</a><br /></td></tr>
+<tr class="separator:afb695a261c9b79fcbd1e4ae85384c699"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb0f0e5c92153af7ea8fa97be0266152"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#acb0f0e5c92153af7ea8fa97be0266152">bridgeHasSchedule</a> (const hue::Bridge &amp;bridge, const SHueSchedule &amp;schedule)</td></tr>
+<tr class="memdesc:acb0f0e5c92153af7ea8fa97be0266152"><td class="mdescLeft">&#160;</td><td class="mdescRight">bridgeHasSchedule true if the provided bridge contains the provided scheudle  <a href="#acb0f0e5c92153af7ea8fa97be0266152">More...</a><br /></td></tr>
+<tr class="separator:acb0f0e5c92153af7ea8fa97be0266152"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30d2f0b3f35290425b32b2d325a2fae9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a30d2f0b3f35290425b32b2d325a2fae9">searchForNewLights</a> (const hue::Bridge &amp;bridge, std::list&lt; QString &gt; serialNumbers)</td></tr>
+<tr class="memdesc:a30d2f0b3f35290425b32b2d325a2fae9"><td class="mdescLeft">&#160;</td><td class="mdescRight">searchForNewLights search for new lights that havent been paired with the bridge yet  <a href="#a30d2f0b3f35290425b32b2d325a2fae9">More...</a><br /></td></tr>
+<tr class="separator:a30d2f0b3f35290425b32b2d325a2fae9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af8f232ae6df3435fa9299913e60f25bc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#af8f232ae6df3435fa9299913e60f25bc">renameLight</a> (HueLight light, QString newName)</td></tr>
 <tr class="memdesc:af8f232ae6df3435fa9299913e60f25bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">renameLight rename the light's name stored on the hue bridge.  <a href="#af8f232ae6df3435fa9299913e60f25bc">More...</a><br /></td></tr>
 <tr class="separator:af8f232ae6df3435fa9299913e60f25bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:affb95968ea11deb0f0bb7e98409a0e9f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#affb95968ea11deb0f0bb7e98409a0e9f">deleteLight</a> (HueLight light)</td></tr>
 <tr class="memdesc:affb95968ea11deb0f0bb7e98409a0e9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">deleteLight delete the light and its stored data from the bridge  <a href="#affb95968ea11deb0f0bb7e98409a0e9f">More...</a><br /></td></tr>
 <tr class="separator:affb95968ea11deb0f0bb7e98409a0e9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32a3b8dfe50b750f568454d82500760c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a32a3b8dfe50b750f568454d82500760c">brightnessChange</a> (const hue::Bridge &amp;bridge, int deviceIndex, int brightness)</td></tr>
+<tr class="memdesc:a32a3b8dfe50b750f568454d82500760c"><td class="mdescLeft">&#160;</td><td class="mdescRight">brightnessChange connected to CommPacketParser, this changes the brightness of a device.  <a href="#a32a3b8dfe50b750f568454d82500760c">More...</a><br /></td></tr>
+<tr class="separator:a32a3b8dfe50b750f568454d82500760c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6cb19c0801154b8239be923804a36159"><td class="memItemLeft" align="right" valign="top"><a id="a6cb19c0801154b8239be923804a36159"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a6cb19c0801154b8239be923804a36159">routineChange</a> (const hue::Bridge &amp;bridge, int deviceIndex, QJsonObject)</td></tr>
+<tr class="memdesc:a6cb19c0801154b8239be923804a36159"><td class="mdescLeft">&#160;</td><td class="mdescRight">routineChange change the light state of the hue. This JSON object will contain a color and other information about the light. <br /></td></tr>
+<tr class="separator:a6cb19c0801154b8239be923804a36159"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e71622666ec130ea051d955b18e36d7"><td class="memItemLeft" align="right" valign="top"><a id="a9e71622666ec130ea051d955b18e36d7"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a9e71622666ec130ea051d955b18e36d7">bridgeDiscovered</a> (const hue::Bridge &amp;, QJsonObject lightsObject, QJsonObject groupObject, QJsonObject schedulesObject)</td></tr>
+<tr class="memdesc:a9e71622666ec130ea051d955b18e36d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">connectionStatusHasChanged called by the HueBridgeDiscovery object whenever its connection changes. <br /></td></tr>
+<tr class="separator:a9e71622666ec130ea051d955b18e36d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
+<tr class="memitem:a6fe7f245ed2a19c250b9cea7598e2bad inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a6fe7f245ed2a19c250b9cea7598e2bad"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a6fe7f245ed2a19c250b9cea7598e2bad">CommType</a> (ECommType type)</td></tr>
+<tr class="memdesc:a6fe7f245ed2a19c250b9cea7598e2bad inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor <br /></td></tr>
+<tr class="separator:a6fe7f245ed2a19c250b9cea7598e2bad inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aea9af432f13faf2a28b6a9fd5d5000e9 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="aea9af432f13faf2a28b6a9fd5d5000e9"></a>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aea9af432f13faf2a28b6a9fd5d5000e9">~CommType</a> ()</td></tr>
 <tr class="memdesc:aea9af432f13faf2a28b6a9fd5d5000e9 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">~CommType Destructor <br /></td></tr>
 <tr class="separator:aea9af432f13faf2a28b6a9fd5d5000e9 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ace6d7465b678fc3daf1e9580d331c8dc inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ace6d7465b678fc3daf1e9580d331c8dc">hasStarted</a> ()</td></tr>
-<tr class="memdesc:ace6d7465b678fc3daf1e9580d331c8dc inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">hasStarted true if startup has been called and a shutdown has not be called after it, false otherwise.  <a href="class_comm_type.html#ace6d7465b678fc3daf1e9580d331c8dc">More...</a><br /></td></tr>
-<tr class="separator:ace6d7465b678fc3daf1e9580d331c8dc inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ee085c089155c088acd4ebb4ed41b4f inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a3ee085c089155c088acd4ebb4ed41b4f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a3ee085c089155c088acd4ebb4ed41b4f">startDiscovery</a> ()</td></tr>
-<tr class="memdesc:a3ee085c089155c088acd4ebb4ed41b4f inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">startDiscovery start sending discovery packets if needed, and continually request state update packets. <br /></td></tr>
-<tr class="separator:a3ee085c089155c088acd4ebb4ed41b4f inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab0e83c722a3afb0c1ceda26c55c76e85 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="ab0e83c722a3afb0c1ceda26c55c76e85"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ab0e83c722a3afb0c1ceda26c55c76e85">stopDiscovery</a> ()</td></tr>
-<tr class="memdesc:ab0e83c722a3afb0c1ceda26c55c76e85 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">stopDiscovery stop sending discovery packets and go back to requesting state update packets only when in use. <br /></td></tr>
-<tr class="separator:ab0e83c722a3afb0c1ceda26c55c76e85 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5b5c67a3a87429a342fb9e82cdcaf6d inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ab5b5c67a3a87429a342fb9e82cdcaf6d">runningDiscovery</a> ()</td></tr>
-<tr class="memdesc:ab5b5c67a3a87429a342fb9e82cdcaf6d inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">runningDiscovery true if theres any controller that is going through the discovery routines and hasn't been discovered, false otherwise.  <a href="class_comm_type.html#ab5b5c67a3a87429a342fb9e82cdcaf6d">More...</a><br /></td></tr>
-<tr class="separator:ab5b5c67a3a87429a342fb9e82cdcaf6d inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae92c228926c3214a78e12d3519102555 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="ae92c228926c3214a78e12d3519102555"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ae92c228926c3214a78e12d3519102555">resetStateUpdateTimeout</a> ()</td></tr>
 <tr class="memdesc:ae92c228926c3214a78e12d3519102555 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetStateUpdateTimeout reset the timer tracking when to shutdown the state update thread. <br /></td></tr>
@@ -238,87 +224,47 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a684c569bb57248ae4b0b2e4563339f74">stopStateUpdates</a> ()</td></tr>
 <tr class="memdesc:a684c569bb57248ae4b0b2e4563339f74 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">stopStateUpdates turn off the state update timers. <br /></td></tr>
 <tr class="separator:a684c569bb57248ae4b0b2e4563339f74 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a92bed4ee74af1ae3a9b5d007fe878524 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a92bed4ee74af1ae3a9b5d007fe878524">startDiscoveringController</a> (QString controller)</td></tr>
-<tr class="memdesc:a92bed4ee74af1ae3a9b5d007fe878524 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">startDiscoveringController attempts to add a new controller to the device table.  <a href="class_comm_type.html#a92bed4ee74af1ae3a9b5d007fe878524">More...</a><br /></td></tr>
-<tr class="separator:a92bed4ee74af1ae3a9b5d007fe878524 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aafeecb6de1f5e389953dd7204e13060a inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aafeecb6de1f5e389953dd7204e13060a">removeController</a> (cor::Controller controller)</td></tr>
-<tr class="memdesc:aafeecb6de1f5e389953dd7204e13060a inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeController attempts to remove the controller from the device table.  <a href="class_comm_type.html#aafeecb6de1f5e389953dd7204e13060a">More...</a><br /></td></tr>
-<tr class="separator:aafeecb6de1f5e389953dd7204e13060a inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98532b0747253db67e4b5f3d978ff0a2 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a98532b0747253db67e4b5f3d978ff0a2">removeController</a> (const QString &amp;name)</td></tr>
+<tr class="memdesc:a98532b0747253db67e4b5f3d978ff0a2 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeController attempts to remove the controller from the device table.  <a href="class_comm_type.html#a98532b0747253db67e4b5f3d978ff0a2">More...</a><br /></td></tr>
+<tr class="separator:a98532b0747253db67e4b5f3d978ff0a2 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa328d30534f7b74b993fae47e0bd520c inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aa328d30534f7b74b993fae47e0bd520c">controllerDiscovered</a> (const QString &amp;name, const std::list&lt; cor::Light &gt; &amp;lights)</td></tr>
+<tr class="memdesc:aa328d30534f7b74b993fae47e0bd520c inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">controllerDiscovered attemps to add a controller based off its name and list of lights  <a href="class_comm_type.html#aa328d30534f7b74b993fae47e0bd520c">More...</a><br /></td></tr>
+<tr class="separator:aa328d30534f7b74b993fae47e0bd520c inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41a7c990b8c8490414ae89a0b7f43f64 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a41a7c990b8c8490414ae89a0b7f43f64">updateDevice</a> (cor::Light device)</td></tr>
 <tr class="memdesc:a41a7c990b8c8490414ae89a0b7f43f64 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDevice update all the data in the light device that matches the same controller and index. if a light device doesn't exist with these properties, then it creates a new one.  <a href="class_comm_type.html#a41a7c990b8c8490414ae89a0b7f43f64">More...</a><br /></td></tr>
 <tr class="separator:a41a7c990b8c8490414ae89a0b7f43f64 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab9d8ebeecae39e95cd2d2647379cadec inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ab9d8ebeecae39e95cd2d2647379cadec">fillDevice</a> (cor::Light &amp;device)</td></tr>
 <tr class="memdesc:ab9d8ebeecae39e95cd2d2647379cadec inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">fillDevice takes the controller and index of the referenced cor::Light and overwrites all other values with the values stored in the device table.  <a href="class_comm_type.html#ab9d8ebeecae39e95cd2d2647379cadec">More...</a><br /></td></tr>
 <tr class="separator:ab9d8ebeecae39e95cd2d2647379cadec inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae8590d7e52f0825afc22269dc73f70cd inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">const std::unordered_map&lt; std::string, std::list&lt; cor::Light &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ae8590d7e52f0825afc22269dc73f70cd">deviceTable</a> ()</td></tr>
-<tr class="memdesc:ae8590d7e52f0825afc22269dc73f70cd inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceList list of the light devices  <a href="class_comm_type.html#ae8590d7e52f0825afc22269dc73f70cd">More...</a><br /></td></tr>
-<tr class="separator:ae8590d7e52f0825afc22269dc73f70cd inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a58d90b94f70298c3cdbeac1f81f0e6ad inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">const std::list&lt; cor::Controller &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a58d90b94f70298c3cdbeac1f81f0e6ad">discoveredList</a> ()</td></tr>
-<tr class="memdesc:a58d90b94f70298c3cdbeac1f81f0e6ad inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">discoveredList getter for list of discovered devices  <a href="class_comm_type.html#a58d90b94f70298c3cdbeac1f81f0e6ad">More...</a><br /></td></tr>
-<tr class="separator:a58d90b94f70298c3cdbeac1f81f0e6ad inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a23c71147fb8b134d56969281486f2f inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">std::list&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a2a23c71147fb8b134d56969281486f2f">undiscoveredList</a> ()</td></tr>
-<tr class="memdesc:a2a23c71147fb8b134d56969281486f2f inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">undiscoveredList getter for list of undiscovered devices.  <a href="class_comm_type.html#a2a23c71147fb8b134d56969281486f2f">More...</a><br /></td></tr>
-<tr class="separator:a2a23c71147fb8b134d56969281486f2f inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa25ac27d5bdb85a13b8d461ca1a960c inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aaa25ac27d5bdb85a13b8d461ca1a960c">setupConnectionList</a> (ECommType type)</td></tr>
-<tr class="memdesc:aaa25ac27d5bdb85a13b8d461ca1a960c inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">setupConnectionList initializes the connection list and reloads it from system memory, if needed  <a href="class_comm_type.html#aaa25ac27d5bdb85a13b8d461ca1a960c">More...</a><br /></td></tr>
-<tr class="separator:aaa25ac27d5bdb85a13b8d461ca1a960c inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf39ac1fbdab41338549ea9010ed0f91 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="acf39ac1fbdab41338549ea9010ed0f91"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#acf39ac1fbdab41338549ea9010ed0f91">saveConnectionList</a> ()</td></tr>
-<tr class="memdesc:acf39ac1fbdab41338549ea9010ed0f91 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">saveConnectionList must be called by deconstructors, saves the connection list to the app's persistent memory. <br /></td></tr>
-<tr class="separator:acf39ac1fbdab41338549ea9010ed0f91 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8a3ecf22ab83dd97abb4493f3a515ee2 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a8a3ecf22ab83dd97abb4493f3a515ee2">deviceControllerFromDiscoveryString</a> (QString discovery, QString controllerName, cor::Controller &amp;controller)</td></tr>
-<tr class="memdesc:a8a3ecf22ab83dd97abb4493f3a515ee2 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceControllerFromDiscoveryString takes a discovery string, a controller name, and an empty cor::Controller as input. If parsing the string is successful, it fills the cor::Controller with the info from the discovery string. If its unsucessful, it returns false.  <a href="class_comm_type.html#a8a3ecf22ab83dd97abb4493f3a515ee2">More...</a><br /></td></tr>
-<tr class="separator:a8a3ecf22ab83dd97abb4493f3a515ee2 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af104cca344ce5489ce58e21ba930498b inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#af104cca344ce5489ce58e21ba930498b">findDiscoveredController</a> (QString controllerName, cor::Controller &amp;output)</td></tr>
-<tr class="memdesc:af104cca344ce5489ce58e21ba930498b inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">findDiscoveredController checks for a discovered controller with the given name. Returns true and fills the cor::Controller given as input if one is found, returns false if one isnt found  <a href="class_comm_type.html#af104cca344ce5489ce58e21ba930498b">More...</a><br /></td></tr>
-<tr class="separator:af104cca344ce5489ce58e21ba930498b inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1bec29627ea4517a904d2bc17d1508dc inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a1bec29627ea4517a904d2bc17d1508dc">handleIncomingPacket</a> (const QString &amp;controllerName, const QString &amp;payload)</td></tr>
-<tr class="memdesc:a1bec29627ea4517a904d2bc17d1508dc inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">handleIncomingPacket All packets that are sent to any commtype get sent through this function to be sorted and sent to the proper subsystems.  <a href="class_comm_type.html#a1bec29627ea4517a904d2bc17d1508dc">More...</a><br /></td></tr>
-<tr class="separator:a1bec29627ea4517a904d2bc17d1508dc inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abcce98d58bc2a920cc7759be138a5aa2 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">const std::unordered_map&lt; std::string, std::list&lt; cor::Light &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#abcce98d58bc2a920cc7759be138a5aa2">deviceTable</a> () const noexcept</td></tr>
+<tr class="memdesc:abcce98d58bc2a920cc7759be138a5aa2 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceList list of the light devices  <a href="class_comm_type.html#abcce98d58bc2a920cc7759be138a5aa2">More...</a><br /></td></tr>
+<tr class="separator:abcce98d58bc2a920cc7759be138a5aa2 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_methods_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
-<tr class="memitem:a5588068f90b425623fba2fdd2836f3cb inherit pro_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a5588068f90b425623fba2fdd2836f3cb">preparePacketForTransmission</a> (const cor::Controller &amp;controller, QString &amp;packet)</td></tr>
-<tr class="memdesc:a5588068f90b425623fba2fdd2836f3cb inherit pro_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">preparePacketForTransmission prepare internal states and variables for sending a new packet and adjust packet to fix issues with sending it, if needed  <a href="class_comm_type.html#a5588068f90b425623fba2fdd2836f3cb">More...</a><br /></td></tr>
-<tr class="separator:a5588068f90b425623fba2fdd2836f3cb inherit pro_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb4143fad9f0cad9b4e0efff68614bf1 inherit pro_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="adb4143fad9f0cad9b4e0efff68614bf1"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#adb4143fad9f0cad9b4e0efff68614bf1">resetDiscovery</a> ()</td></tr>
-<tr class="memdesc:adb4143fad9f0cad9b4e0efff68614bf1 inherit pro_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetDiscovery clears the throttle list and discovery list and treats the commtype as if nothing has been discovered. <br /></td></tr>
-<tr class="separator:adb4143fad9f0cad9b4e0efff68614bf1 inherit pro_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a140fb846eeb4d24976e2a4f514f95f0f inherit pro_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a140fb846eeb4d24976e2a4f514f95f0f">shouldContinueStateUpdate</a> ()</td></tr>
 <tr class="memdesc:a140fb846eeb4d24976e2a4f514f95f0f inherit pro_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">shouldContinueStateUpdate checks internal states and determines if it should still keep requesting state updates from the devices.  <a href="class_comm_type.html#a140fb846eeb4d24976e2a4f514f95f0f">More...</a><br /></td></tr>
 <tr class="separator:a140fb846eeb4d24976e2a4f514f95f0f inherit pro_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4467ae6c75527903dbaca863f98d4f2d inherit pro_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a4467ae6c75527903dbaca863f98d4f2d">handleDiscoveryPacket</a> (cor::Controller sender)</td></tr>
-<tr class="memdesc:a4467ae6c75527903dbaca863f98d4f2d inherit pro_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">handleDiscoveryPacket called whenever a discovery packet is received by a commtype. Although all commtypes may received a packet in different ways or in differnt formats, all ways get converted so that they work with this function. The function determines if the device sending the discovery packet has been discovered already, and if it hasn't, it adds it to its list. It also initiates a throttle timer for this particular controller. Finally, it determines if its looking for any other controllers, and if its not, it shuts off the discovery timer.  <a href="class_comm_type.html#a4467ae6c75527903dbaca863f98d4f2d">More...</a><br /></td></tr>
-<tr class="separator:a4467ae6c75527903dbaca863f98d4f2d inherit pro_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
 <tr class="memitem:a93d86e18ed75c62c422d727cc4e25b8c inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a93d86e18ed75c62c422d727cc4e25b8c"></a>
 QTime&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a93d86e18ed75c62c422d727cc4e25b8c">mLastSendTime</a></td></tr>
 <tr class="memdesc:a93d86e18ed75c62c422d727cc4e25b8c inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mLastSendTime the last time a message was sent to the commtype. This is tracked to detect when the device is no longer being actively used, so it can slow down or shut off state update packets. <br /></td></tr>
 <tr class="separator:a93d86e18ed75c62c422d727cc4e25b8c inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c1a32e29697d8b08401a04b91921d85 inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a6c1a32e29697d8b08401a04b91921d85"></a>
-<a class="el" href="class_c_r_c_calculator.html">CRCCalculator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a6c1a32e29697d8b08401a04b91921d85">mCRC</a></td></tr>
-<tr class="memdesc:a6c1a32e29697d8b08401a04b91921d85 inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">used to add CRC to outgoing packets. <br /></td></tr>
-<tr class="separator:a6c1a32e29697d8b08401a04b91921d85 inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6dde2dd0b11c73245cd1f2e0f63627bb inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a6dde2dd0b11c73245cd1f2e0f63627bb"></a>
+QElapsedTimer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a6dde2dd0b11c73245cd1f2e0f63627bb">mElapsedTimer</a></td></tr>
+<tr class="memdesc:a6dde2dd0b11c73245cd1f2e0f63627bb inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">checks how long the app has been alive for reachability tests <br /></td></tr>
+<tr class="separator:a6dde2dd0b11c73245cd1f2e0f63627bb inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b9dc29353a78edaa33dca51a48d00ad inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a3b9dc29353a78edaa33dca51a48d00ad"></a>
+QTimer *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a3b9dc29353a78edaa33dca51a48d00ad">mReachabilityTest</a></td></tr>
+<tr class="memdesc:a3b9dc29353a78edaa33dca51a48d00ad inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">periodically check if all lights have sent packets recently. <br /></td></tr>
+<tr class="separator:a3b9dc29353a78edaa33dca51a48d00ad inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a079be5b6039a73ab74f242f834702d99 inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a079be5b6039a73ab74f242f834702d99"></a>
 uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a079be5b6039a73ab74f242f834702d99">mStateUpdateCounter</a></td></tr>
 <tr class="memdesc:a079be5b6039a73ab74f242f834702d99 inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">number of state updates sent out <br /></td></tr>
 <tr class="separator:a079be5b6039a73ab74f242f834702d99 inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8c1f60fe67e3e018ee772d8d8e7a3f8 inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ad8c1f60fe67e3e018ee772d8d8e7a3f8">mSecondaryUpdatesInterval</a></td></tr>
 <tr class="separator:ad8c1f60fe67e3e018ee772d8d8e7a3f8 inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a10deed636eba4f960d47c3776cd31c inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a9a10deed636eba4f960d47c3776cd31c"></a>
-std::unordered_map&lt; std::string, std::list&lt; cor::Light &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a9a10deed636eba4f960d47c3776cd31c">mDeviceTable</a></td></tr>
-<tr class="memdesc:a9a10deed636eba4f960d47c3776cd31c inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mDeviceTable hash table of all available devices. the hash key is the controller name and the list associated with it is all known devices connected to that controller. <br /></td></tr>
-<tr class="separator:a9a10deed636eba4f960d47c3776cd31c inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a02ec483a63cf7b4946653ca8dea9ae46 inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a02ec483a63cf7b4946653ca8dea9ae46"></a>
-std::list&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a02ec483a63cf7b4946653ca8dea9ae46">mUndiscoveredList</a></td></tr>
-<tr class="memdesc:a02ec483a63cf7b4946653ca8dea9ae46 inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mUndiscoveredList list of controllers that are not currently discovered but are running discovery routines. <br /></td></tr>
-<tr class="separator:a02ec483a63cf7b4946653ca8dea9ae46 inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65f6482f8920afd6ff6e99118801eccf inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a65f6482f8920afd6ff6e99118801eccf"></a>
-std::list&lt; cor::Controller &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a65f6482f8920afd6ff6e99118801eccf">mDiscoveredList</a></td></tr>
-<tr class="memdesc:a65f6482f8920afd6ff6e99118801eccf inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mDiscoveredList list of devices that have been discovered properly. <br /></td></tr>
-<tr class="separator:a65f6482f8920afd6ff6e99118801eccf inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5fad0675d5baa960558751025bc5ec3a inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a5fad0675d5baa960558751025bc5ec3a"></a>
 QTimer *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a5fad0675d5baa960558751025bc5ec3a">mStateUpdateTimer</a></td></tr>
 <tr class="memdesc:a5fad0675d5baa960558751025bc5ec3a inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mStateUpdateTimer Polls the controller every few seconds requesting updates on all of its devices. <br /></td></tr>
@@ -327,35 +273,14 @@ QTimer *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#afe98ed3a9a537c126fcebdb6ac109a09">mStateUpdateInterval</a></td></tr>
 <tr class="memdesc:afe98ed3a9a537c126fcebdb6ac109a09 inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mStateUpdateInterval number of msec between each state update request. <br /></td></tr>
 <tr class="separator:afe98ed3a9a537c126fcebdb6ac109a09 inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab283071f18b76741c90a25a06e61c763 inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="ab283071f18b76741c90a25a06e61c763"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ab283071f18b76741c90a25a06e61c763">mDiscoveryUpdateInterval</a></td></tr>
-<tr class="memdesc:ab283071f18b76741c90a25a06e61c763 inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mDiscoveryUpdateInterval number of msec between sending out each discovery packet. <br /></td></tr>
-<tr class="separator:ab283071f18b76741c90a25a06e61c763 inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a53ba509a1aa972b772c1c6f8f074a1cb inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a53ba509a1aa972b772c1c6f8f074a1cb"></a>
-QTimer *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a53ba509a1aa972b772c1c6f8f074a1cb">mDiscoveryTimer</a></td></tr>
-<tr class="memdesc:a53ba509a1aa972b772c1c6f8f074a1cb inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mDiscoveryTimer used during discovery to poll the device every few seconds. <br /></td></tr>
-<tr class="separator:a53ba509a1aa972b772c1c6f8f074a1cb inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aed07e124f1bb8819e0452cb2621e5629 inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="aed07e124f1bb8819e0452cb2621e5629"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aed07e124f1bb8819e0452cb2621e5629">mUpdateTimeoutInterval</a></td></tr>
 <tr class="memdesc:aed07e124f1bb8819e0452cb2621e5629 inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mUpdateTimeoutInterval number of msec that it takes the state update timer to time out and stop sending state update requests. <br /></td></tr>
 <tr class="separator:aed07e124f1bb8819e0452cb2621e5629 inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afcc75099b138addb3dc35692e819eabe inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="afcc75099b138addb3dc35692e819eabe"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#afcc75099b138addb3dc35692e819eabe">mDiscoveryMode</a></td></tr>
-<tr class="memdesc:afcc75099b138addb3dc35692e819eabe inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mDiscoveryMode true if all discovery and state update threads for the commtype should be active, false if using the standard lifecyclef for all the threads. <br /></td></tr>
-<tr class="separator:afcc75099b138addb3dc35692e819eabe inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2e8ea9e88347922939c9823e0f1488ea inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a2e8ea9e88347922939c9823e0f1488ea"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a2e8ea9e88347922939c9823e0f1488ea">mFullyDiscovered</a></td></tr>
-<tr class="memdesc:a2e8ea9e88347922939c9823e0f1488ea inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mFullyDiscovered bool that tracks whether or not all the controllers the commtype is looking for have been discovered. This gets set to false if a discovery routine starts looking for a new controller. <br /></td></tr>
-<tr class="separator:a2e8ea9e88347922939c9823e0f1488ea inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a47a3020ab06d49b995e22c7b4567017e inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a47a3020ab06d49b995e22c7b4567017e"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a47a3020ab06d49b995e22c7b4567017e">mHasStarted</a></td></tr>
-<tr class="memdesc:a47a3020ab06d49b995e22c7b4567017e inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mHasStarted bool that tracks whether or not the <a class="el" href="class_comm_type.html#a78d309086195c52051f007e693ff2b7a" title="startup Each comm type has a series of threads that maintain the connection and check for changes...">startup()</a> routine has been called. Gets set to false after the <a class="el" href="class_comm_type.html#ad2a24398eeaafa49cd376cb09be961ef" title="shutdown turns off all threads that maintain the connection and check for changes. Also shuts down any discovery threads, if they are currently running. ">shutdown()</a> routine is callsed. <br /></td></tr>
-<tr class="separator:a47a3020ab06d49b995e22c7b4567017e inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pro_static_attribs_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('pro_static_attribs_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Static Protected Attributes inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
-<tr class="memitem:a932133199df9b51ff3a368009e1b6d53 inherit pro_static_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a932133199df9b51ff3a368009e1b6d53"></a>
-static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a932133199df9b51ff3a368009e1b6d53">kDiscoveryPacketIdentifier</a> = &quot;DISCOVERY_PACKET&quot;</td></tr>
-<tr class="memdesc:a932133199df9b51ff3a368009e1b6d53 inherit pro_static_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">string at the beginning of each discovery packet. <br /></td></tr>
-<tr class="separator:a932133199df9b51ff3a368009e1b6d53 inherit pro_static_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb4f46ee7ad397a16b5af72172954837 inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="adb4f46ee7ad397a16b5af72172954837"></a>
+ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#adb4f46ee7ad397a16b5af72172954837">mType</a></td></tr>
+<tr class="memdesc:adb4f46ee7ad397a16b5af72172954837 inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mType the type <a class="el" href="class_comm_type.html" title="inherited by comm types, provides a general interface that can be used to do connections and sending ...">CommType</a> this is, meaning UDP, Serial, HTTP, etc. <br /></td></tr>
+<tr class="separator:adb4f46ee7ad397a16b5af72172954837 inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License.</dd></dl>
@@ -364,8 +289,8 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
    is established, it uses its mStateUpdateTimer to poll for updates from the Bridge
    about the current lights. This object also acts as a layer that takes the protocols from
    the rest of the application, and converts it to packets that the Bridge can understand.</pre> </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a6437a21abfd54172305bd1eda8c52845"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6437a21abfd54172305bd1eda8c52845">&#9670;&nbsp;</a></span>CommHue()</h2>
+<a id="a69393ea83e15ee7c340f898306ca61a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a69393ea83e15ee7c340f898306ca61a0">&#9670;&nbsp;</a></span>CommHue()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -373,7 +298,8 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
         <tr>
           <td class="memname">CommHue::CommHue </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype"><a class="el" href="class_u_pn_p_discovery.html">UPnPDiscovery</a> *&#160;</td>
+          <td class="paramname"><em>UPnP</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -383,8 +309,80 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a3e1b2d69fc4a3e4b4a56e8a712cf794f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3e1b2d69fc4a3e4b4a56e8a712cf794f">&#9670;&nbsp;</a></span>bridge()</h2>
+<a id="afb695a261c9b79fcbd1e4ae85384c699"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb695a261c9b79fcbd1e4ae85384c699">&#9670;&nbsp;</a></span>bridgeHasGroup()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool CommHue::bridgeHasGroup </td>
+          <td>(</td>
+          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramname"><em>bridge</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const QString &amp;&#160;</td>
+          <td class="paramname"><em>groupName</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bridge</td><td>bridge to check for the group </td></tr>
+    <tr><td class="paramname">groupName</td><td>the name of the group to check for </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if group exists in bridge, false otherwise </dd></dl>
+
+</div>
+</div>
+<a id="acb0f0e5c92153af7ea8fa97be0266152"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb0f0e5c92153af7ea8fa97be0266152">&#9670;&nbsp;</a></span>bridgeHasSchedule()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool CommHue::bridgeHasSchedule </td>
+          <td>(</td>
+          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramname"><em>bridge</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const SHueSchedule &amp;&#160;</td>
+          <td class="paramname"><em>schedule</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bridge</td><td>bridge to check for the schedule </td></tr>
+    <tr><td class="paramname">schedule</td><td>the schedule to check for </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the schedule exists in the bridge, false otherwise </dd></dl>
+
+</div>
+</div>
+<a id="a6dcddff86c58f62fd3deff5f0e2bf805"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6dcddff86c58f62fd3deff5f0e2bf805">&#9670;&nbsp;</a></span>bridges()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -393,7 +391,7 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">SHueBridge CommHue::bridge </td>
+          <td class="memname">std::list&lt;hue::Bridge&gt; CommHue::bridges </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -405,22 +403,25 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>struct that represents the bridge. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>list of hue::Bridges </dd></dl>
 
 </div>
 </div>
-<a id="acbdf6a9d59c217d618301b2a0ba40327"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acbdf6a9d59c217d618301b2a0ba40327">&#9670;&nbsp;</a></span>brightnessChange</h2>
+<a id="a32a3b8dfe50b750f568454d82500760c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a32a3b8dfe50b750f568454d82500760c">&#9670;&nbsp;</a></span>brightnessChange()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void CommHue::brightnessChange </td>
           <td>(</td>
+          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramname"><em>bridge</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>deviceIndex</em>, </td>
         </tr>
@@ -436,11 +437,6 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">slot</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -452,8 +448,49 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 
 </div>
 </div>
-<a id="aa3bd2ad9af191059d11ab1a7dc36efd9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa3bd2ad9af191059d11ab1a7dc36efd9">&#9670;&nbsp;</a></span>changeColorCT()</h2>
+<a id="a873dfef4d5a3cd6737e46353a553ab30"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a873dfef4d5a3cd6737e46353a553ab30">&#9670;&nbsp;</a></span>changeColor()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CommHue::changeColor </td>
+          <td>(</td>
+          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramname"><em>bridge</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>lightIndex</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const QColor &amp;&#160;</td>
+          <td class="paramname"><em>color</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lightIndex</td><td>the index of the hue being changed. </td></tr>
+    <tr><td class="paramname">color</td><td>color to change light into </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="acc1c7ce9c7f297b0cff81f26284982ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acc1c7ce9c7f297b0cff81f26284982ce">&#9670;&nbsp;</a></span>changeColorCT()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -461,6 +498,12 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
         <tr>
           <td class="memname">void CommHue::changeColorCT </td>
           <td>(</td>
+          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramname"><em>bridge</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>lightIndex</em>, </td>
         </tr>
@@ -494,83 +537,8 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 
 </div>
 </div>
-<a id="a39706ac1161e2b4787f9e29848953fa1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a39706ac1161e2b4787f9e29848953fa1">&#9670;&nbsp;</a></span>changeColorRGB()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CommHue::changeColorRGB </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>lightIndex</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>saturation</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>brightness</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>hue</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">lightIndex</td><td>the index of the hue being changed. </td></tr>
-    <tr><td class="paramname">saturation</td><td>how saturated the color is. A higher number leads to more saturation. Must be in the range of 0 and 254, inclusive. </td></tr>
-    <tr><td class="paramname">brightness</td><td>how bright the light will be. A higher number leads to more brightness. Must be in the range of 0 and 254, inclusive. </td></tr>
-    <tr><td class="paramname">hue</td><td>the hue of the hue light's color. Must be in the range of 0 and 65535, with 0 representing pure red. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a7f8dc965a76d29371339205f75645326"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7f8dc965a76d29371339205f75645326">&#9670;&nbsp;</a></span>connectedHues()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const std::list&lt;HueLight&gt;&amp; CommHue::connectedHues </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>a vector of the currently connected hue lights. </dd></dl>
-
-</div>
-</div>
-<a id="a78d7772252e786d50204224eb6a5795b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a78d7772252e786d50204224eb6a5795b">&#9670;&nbsp;</a></span>createGroup()</h2>
+<a id="a05ade60f86f6099fb38a3c13f5e73a88"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a05ade60f86f6099fb38a3c13f5e73a88">&#9670;&nbsp;</a></span>createGroup()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -578,6 +546,12 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
         <tr>
           <td class="memname">void CommHue::createGroup </td>
           <td>(</td>
+          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramname"><em>bridge</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">QString&#160;</td>
           <td class="paramname"><em>name</em>, </td>
         </tr>
@@ -610,8 +584,8 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 
 </div>
 </div>
-<a id="a2b0fbc05c68eae8656ccf9ae2a2d1753"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2b0fbc05c68eae8656ccf9ae2a2d1753">&#9670;&nbsp;</a></span>createIdleTimeout()</h2>
+<a id="a487731bad72fa0ee01f1409c29bc39da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a487731bad72fa0ee01f1409c29bc39da">&#9670;&nbsp;</a></span>createIdleTimeout()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -619,6 +593,12 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
         <tr>
           <td class="memname">void CommHue::createIdleTimeout </td>
           <td>(</td>
+          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramname"><em>bridge</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>i</em>, </td>
         </tr>
@@ -694,8 +674,8 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 
 </div>
 </div>
-<a id="a02e2a6cefd7c310634ad6834abb11ef4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a02e2a6cefd7c310634ad6834abb11ef4">&#9670;&nbsp;</a></span>deleteGroup()</h2>
+<a id="a8564e3d707ebdab4ceaa2015ef7ce4cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8564e3d707ebdab4ceaa2015ef7ce4cf">&#9670;&nbsp;</a></span>deleteGroup()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -703,9 +683,19 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
         <tr>
           <td class="memname">void CommHue::deleteGroup </td>
           <td>(</td>
-          <td class="paramtype">cor::LightGroup&#160;</td>
-          <td class="paramname"><em>group</em></td><td>)</td>
+          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramname"><em>bridge</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">cor::LightGroup&#160;</td>
+          <td class="paramname"><em>group</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -792,6 +782,31 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 
 </div>
 </div>
+<a id="afc68e13bec32a2c1299b6171007237bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc68e13bec32a2c1299b6171007237bf">&#9670;&nbsp;</a></span>groups()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::list&lt; cor::LightGroup &gt; CommHue::groups </td>
+          <td>(</td>
+          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramname"><em>bridge</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bridge</td><td>bridge to get all groups from </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>list of all known groups </dd></dl>
+
+</div>
+</div>
 <a id="add36510b1124afbc25e262dd1785d8ad"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#add36510b1124afbc25e262dd1785d8ad">&#9670;&nbsp;</a></span>hueLightFromLight()</h2>
 
@@ -817,8 +832,8 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 
 </div>
 </div>
-<a id="a3b6073064325473abf0459a3cdea3bde"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3b6073064325473abf0459a3cdea3bde">&#9670;&nbsp;</a></span>postJson()</h2>
+<a id="a4126bedec0b891b9210f736490dfeaa7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4126bedec0b891b9210f736490dfeaa7">&#9670;&nbsp;</a></span>postJson()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -826,6 +841,12 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
         <tr>
           <td class="memname">void CommHue::postJson </td>
           <td>(</td>
+          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramname"><em>bridge</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">QString&#160;</td>
           <td class="paramname"><em>resource</em>, </td>
         </tr>
@@ -852,8 +873,8 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 
 </div>
 </div>
-<a id="a5401aeb2a77f24454d55d4a2914ad488"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5401aeb2a77f24454d55d4a2914ad488">&#9670;&nbsp;</a></span>putJson()</h2>
+<a id="a597d9f8e5085770c3623a390e70547b2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a597d9f8e5085770c3623a390e70547b2">&#9670;&nbsp;</a></span>putJson()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -861,6 +882,12 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
         <tr>
           <td class="memname">void CommHue::putJson </td>
           <td>(</td>
+          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramname"><em>bridge</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">QString&#160;</td>
           <td class="paramname"><em>resource</em>, </td>
         </tr>
@@ -922,34 +949,27 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 
 </div>
 </div>
-<a id="af40c82f0bb8176183030d84ba930dc56"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af40c82f0bb8176183030d84ba930dc56">&#9670;&nbsp;</a></span>schedules()</h2>
+<a id="ab1beb1fecde8b455a124c3b26b66ce6e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab1beb1fecde8b455a124c3b26b66ce6e">&#9670;&nbsp;</a></span>schedules()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const std::list&lt;SHueSchedule&gt; CommHue::schedules </td>
+          <td class="memname">const std::list&lt; SHueSchedule &gt; CommHue::schedules </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramname"><em>bridge</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>list of all known schedules. </dd></dl>
 
 </div>
 </div>
-<a id="a95720c743b01d411710d7a500c2042b2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a95720c743b01d411710d7a500c2042b2">&#9670;&nbsp;</a></span>searchForNewLights()</h2>
+<a id="a30d2f0b3f35290425b32b2d325a2fae9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a30d2f0b3f35290425b32b2d325a2fae9">&#9670;&nbsp;</a></span>searchForNewLights()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -957,9 +977,19 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
         <tr>
           <td class="memname">void CommHue::searchForNewLights </td>
           <td>(</td>
-          <td class="paramtype">std::list&lt; QString &gt;&#160;</td>
-          <td class="paramname"><em>serialNumbers</em> = <code>std::list&lt;QString&gt;()</code></td><td>)</td>
+          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramname"><em>bridge</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">std::list&lt; QString &gt;&#160;</td>
+          <td class="paramname"><em>serialNumbers</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -972,47 +1002,27 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 
 </div>
 </div>
-<a id="a734c0cd741157978d4f1c6dcd262a23d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a734c0cd741157978d4f1c6dcd262a23d">&#9670;&nbsp;</a></span>sendPacket()</h2>
+<a id="abd122a4acfa23f9581b31fe88301759d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abd122a4acfa23f9581b31fe88301759d">&#9670;&nbsp;</a></span>sendPacket()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void CommHue::sendPacket </td>
           <td>(</td>
-          <td class="paramtype">const cor::Controller &amp;&#160;</td>
-          <td class="paramname"><em>controller</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">const QJsonObject &amp;&#160;</td>
+          <td class="paramname"><em>object</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">QString &amp;&#160;</td>
-          <td class="paramname"><em>packet</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">packet</td><td>the comma delimited Corlum Light command. </td></tr>
+    <tr><td class="paramname">object</td><td>json representation of the packet to send </td></tr>
   </table>
   </dd>
 </dl>
-
-<p>Implements <a class="el" href="class_comm_type.html#a1f7c925caf447b57eec75187133ba460">CommType</a>.</p>
 
 </div>
 </div>
@@ -1065,56 +1075,8 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 
 </div>
 </div>
-<a id="a07a9f4b92a8012123da61199a8239191"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a07a9f4b92a8012123da61199a8239191">&#9670;&nbsp;</a></span>turnOff()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CommHue::turnOff </td>
-          <td>(</td>
-          <td class="paramtype">const cor::Light &amp;&#160;</td>
-          <td class="paramname"><em>light</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">light</td><td>light to modify </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a391f9a3c8dd243189bcbcc25671830fe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a391f9a3c8dd243189bcbcc25671830fe">&#9670;&nbsp;</a></span>turnOn()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CommHue::turnOn </td>
-          <td>(</td>
-          <td class="paramtype">const cor::Light &amp;&#160;</td>
-          <td class="paramname"><em>light</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">light</td><td>light to modify </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="afd6c35797f9e03d2c7a1ed9a864f58ab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afd6c35797f9e03d2c7a1ed9a864f58ab">&#9670;&nbsp;</a></span>updateGroup()</h2>
+<a id="a490c55bf1b0a34d13923db2c61fcda1d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a490c55bf1b0a34d13923db2c61fcda1d">&#9670;&nbsp;</a></span>updateGroup()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1122,6 +1084,12 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
         <tr>
           <td class="memname">void CommHue::updateGroup </td>
           <td>(</td>
+          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramname"><em>bridge</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">cor::LightGroup&#160;</td>
           <td class="paramname"><em>group</em>, </td>
         </tr>
@@ -1148,8 +1116,8 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
 
 </div>
 </div>
-<a id="ae7fed02de7e4c501b076860a18ac0eba"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae7fed02de7e4c501b076860a18ac0eba">&#9670;&nbsp;</a></span>updateIdleTimeout()</h2>
+<a id="a61f2880c794e8871423b600fe07cd2c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a61f2880c794e8871423b600fe07cd2c1">&#9670;&nbsp;</a></span>updateIdleTimeout()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1157,6 +1125,12 @@ static const QString&#160;</td><td class="memItemRight" valign="bottom"><a class
         <tr>
           <td class="memname">void CommHue::updateIdleTimeout </td>
           <td>(</td>
+          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramname"><em>bridge</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">bool&#160;</td>
           <td class="paramname"><em>enable</em>, </td>
         </tr>

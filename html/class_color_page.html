@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.13.0</span>
+   &#160;<span id="projectnumber">v0.13.47</span>
    </div>
   </td>
  </tr>
@@ -79,12 +79,20 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a694950d93ff3bccc63a2c9112c799979">brightnessChanged</a> (int)</td></tr>
 <tr class="memdesc:a694950d93ff3bccc63a2c9112c799979"><td class="mdescLeft">&#160;</td><td class="mdescRight">brightnessChanged signaled whenever the brightness is changed from any color wheel type that supports it. <br /></td></tr>
 <tr class="separator:a694950d93ff3bccc63a2c9112c799979"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29b167b178e26e8e8707899138d576ac"><td class="memItemLeft" align="right" valign="top"><a id="a29b167b178e26e8e8707899138d576ac"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a29b167b178e26e8e8707899138d576ac">routineUpdate</a> (QJsonObject)</td></tr>
+<tr class="memdesc:a29b167b178e26e8e8707899138d576ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">sent out whenever a routine update is triggered <br /></td></tr>
+<tr class="separator:a29b167b178e26e8e8707899138d576ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd897bb3a10ce83df0ce4cd37d5a730f"><td class="memItemLeft" align="right" valign="top"><a id="afd897bb3a10ce83df0ce4cd37d5a730f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#afd897bb3a10ce83df0ce4cd37d5a730f">schemeUpdate</a> (std::vector&lt; QColor &gt;)</td></tr>
+<tr class="memdesc:afd897bb3a10ce83df0ce4cd37d5a730f"><td class="mdescLeft">&#160;</td><td class="mdescRight">ssent out whenever the color scheme is changed <br /></td></tr>
+<tr class="separator:afd897bb3a10ce83df0ce4cd37d5a730f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a6f290331c0b74b955f6afb477d2e4108"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a6f290331c0b74b955f6afb477d2e4108">ColorPage</a> (QWidget *parent, <a class="el" href="class_data_layer.html">DataLayer</a> *data)</td></tr>
-<tr class="memdesc:a6f290331c0b74b955f6afb477d2e4108"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a6f290331c0b74b955f6afb477d2e4108">More...</a><br /></td></tr>
-<tr class="separator:a6f290331c0b74b955f6afb477d2e4108"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ad91de867db615a79d74bbfbd8f8cb3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a4ad91de867db615a79d74bbfbd8f8cb3">ColorPage</a> (QWidget *parent)</td></tr>
+<tr class="memdesc:a4ad91de867db615a79d74bbfbd8f8cb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a4ad91de867db615a79d74bbfbd8f8cb3">More...</a><br /></td></tr>
+<tr class="separator:a4ad91de867db615a79d74bbfbd8f8cb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9047c5a19cdd650c3c0336c59ab21081"><td class="memItemLeft" align="right" valign="top"><a id="a9047c5a19cdd650c3c0336c59ab21081"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a9047c5a19cdd650c3c0336c59ab21081">~ColorPage</a> ()</td></tr>
 <tr class="memdesc:a9047c5a19cdd650c3c0336c59ab21081"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deconstructor. <br /></td></tr>
@@ -104,10 +112,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 EColorPageType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#ad8bff6c216f9500eb71fb29266c35c76">pageType</a> ()</td></tr>
 <tr class="memdesc:ad8bff6c216f9500eb71fb29266c35c76"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for current type of color page (ambiance, RGB, etc.) <br /></td></tr>
 <tr class="separator:ad8bff6c216f9500eb71fb29266c35c76"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5315e942f3ec8dad34ab14f35652466f"><td class="memItemLeft" align="right" valign="top"><a id="a5315e942f3ec8dad34ab14f35652466f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a5315e942f3ec8dad34ab14f35652466f">show</a> ()</td></tr>
-<tr class="memdesc:a5315e942f3ec8dad34ab14f35652466f"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when the widget is shown <br /></td></tr>
-<tr class="separator:a5315e942f3ec8dad34ab14f35652466f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abce6e6cb47f0c93bb735b0d8667a19f1"><td class="memItemLeft" align="right" valign="top"><a id="abce6e6cb47f0c93bb735b0d8667a19f1"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#abce6e6cb47f0c93bb735b0d8667a19f1">show</a> (QColor color, uint32_t brightness, std::vector&lt; QColor &gt; colorScheme)</td></tr>
+<tr class="memdesc:abce6e6cb47f0c93bb735b0d8667a19f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when the widget is shown <br /></td></tr>
+<tr class="separator:abce6e6cb47f0c93bb735b0d8667a19f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -121,8 +129,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>The page contains a <a class="el" href="class_color_picker.html" title="The ColorPicker class is a GUI object designed to give the user ability to choose RGB values in a var...">ColorPicker</a> that allows the user to choose colors. The color picker has various modes such as standard, which gives full range of RGB, and ambient, which allows the user to choose different shades of white.</p>
 <p>For arduino-based projects, there is also a pop up menu on the bottom that allows the user to choose routines for the arduino. To get the single color routines, the user should be on the standard color picker. To get the multi color routines, the user should be on the multi color picker. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a6f290331c0b74b955f6afb477d2e4108"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6f290331c0b74b955f6afb477d2e4108">&#9670;&nbsp;</a></span>ColorPage()</h2>
+<a id="a4ad91de867db615a79d74bbfbd8f8cb3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ad91de867db615a79d74bbfbd8f8cb3">&#9670;&nbsp;</a></span>ColorPage()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -134,18 +142,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
           <td class="memname">ColorPage::ColorPage </td>
           <td>(</td>
           <td class="paramtype">QWidget *&#160;</td>
-          <td class="paramname"><em>parent</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>parent</em></td><td>)</td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_data_layer.html">DataLayer</a> *&#160;</td>
-          <td class="paramname"><em>data</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>

@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.13.0</span>
+   &#160;<span id="projectnumber">v0.13.47</span>
    </div>
   </td>
  </tr>
@@ -43,6 +43,7 @@ $(function() {
   <div class="summary">
 <a href="class_global_settings_widget-members.html">List of all members</a> &#124;
 <a href="#pub-slots">Public Slots</a> &#124;
+<a href="#signals">Signals</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a>  </div>
   <div class="headertitle">
@@ -83,15 +84,34 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <tr class="memdesc:a23e293969376f814d322fb0e84e8ba05"><td class="mdescLeft">&#160;</td><td class="mdescRight">value set for how long it takes the lights to timeout. <br /></td></tr>
 <tr class="separator:a23e293969376f814d322fb0e84e8ba05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
+Signals</h2></td></tr>
+<tr class="memitem:a15dac5fa83aa80ff7971c9a539dad21b"><td class="memItemLeft" align="right" valign="top"><a id="a15dac5fa83aa80ff7971c9a539dad21b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_global_settings_widget.html#a15dac5fa83aa80ff7971c9a539dad21b">protocolSettingsUpdate</a> (EProtocolType, bool)</td></tr>
+<tr class="memdesc:a15dac5fa83aa80ff7971c9a539dad21b"><td class="mdescLeft">&#160;</td><td class="mdescRight">emitted when a protocol is turned off and on. <br /></td></tr>
+<tr class="separator:a15dac5fa83aa80ff7971c9a539dad21b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afeea392b299aaa88c38b87074ab127d5"><td class="memItemLeft" align="right" valign="top"><a id="afeea392b299aaa88c38b87074ab127d5"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_global_settings_widget.html#afeea392b299aaa88c38b87074ab127d5">timeoutUpdate</a> (int)</td></tr>
+<tr class="memdesc:afeea392b299aaa88c38b87074ab127d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">emitted when the timeout value is updateded <br /></td></tr>
+<tr class="separator:afeea392b299aaa88c38b87074ab127d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a7e9a69426e08581eac28cad345c94f"><td class="memItemLeft" align="right" valign="top"><a id="a3a7e9a69426e08581eac28cad345c94f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_global_settings_widget.html#a3a7e9a69426e08581eac28cad345c94f">timeoutEnabled</a> (bool)</td></tr>
+<tr class="memdesc:a3a7e9a69426e08581eac28cad345c94f"><td class="mdescLeft">&#160;</td><td class="mdescRight">emitted when timeout is enabled/disabled <br /></td></tr>
+<tr class="separator:a3a7e9a69426e08581eac28cad345c94f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a00ef97979293392f57762156b3b35e44"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_global_settings_widget.html#a00ef97979293392f57762156b3b35e44">GlobalSettingsWidget</a> (QWidget *parent, <a class="el" href="class_comm_layer.html">CommLayer</a> *comm, <a class="el" href="class_data_layer.html">DataLayer</a> *data)</td></tr>
-<tr class="memdesc:a00ef97979293392f57762156b3b35e44"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#a00ef97979293392f57762156b3b35e44">More...</a><br /></td></tr>
-<tr class="separator:a00ef97979293392f57762156b3b35e44"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a40bdd93daf0ac9f2cf511a4b4ee62190"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_global_settings_widget.html#a40bdd93daf0ac9f2cf511a4b4ee62190">GlobalSettingsWidget</a> (QWidget *parent, <a class="el" href="class_app_settings.html">AppSettings</a> *appSettings)</td></tr>
+<tr class="memdesc:a40bdd93daf0ac9f2cf511a4b4ee62190"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#a40bdd93daf0ac9f2cf511a4b4ee62190">More...</a><br /></td></tr>
+<tr class="separator:a40bdd93daf0ac9f2cf511a4b4ee62190"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2b6d2954b8b2b2c390e4bf607f32c61d"><td class="memItemLeft" align="right" valign="top"><a id="a2b6d2954b8b2b2c390e4bf607f32c61d"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_global_settings_widget.html#a2b6d2954b8b2b2c390e4bf607f32c61d">updateUI</a> ()</td></tr>
 <tr class="memdesc:a2b6d2954b8b2b2c390e4bf607f32c61d"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateUI updates the colors of various settings in the UI. <br /></td></tr>
 <tr class="separator:a2b6d2954b8b2b2c390e4bf607f32c61d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ef59043cc36359ee35ae6d56bea7faa"><td class="memItemLeft" align="right" valign="top"><a id="a0ef59043cc36359ee35ae6d56bea7faa"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_global_settings_widget.html#a0ef59043cc36359ee35ae6d56bea7faa">useTimeout</a> ()</td></tr>
+<tr class="memdesc:a0ef59043cc36359ee35ae6d56bea7faa"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if timeout is enabled, false if not <br /></td></tr>
+<tr class="separator:a0ef59043cc36359ee35ae6d56bea7faa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aebaeb1d5d2ff24998aa97163e0f35e75"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_global_settings_widget.html#aebaeb1d5d2ff24998aa97163e0f35e75">checkBoxClicked</a> (EProtocolType type, bool checked)</td></tr>
 <tr class="memdesc:aebaeb1d5d2ff24998aa97163e0f35e75"><td class="mdescLeft">&#160;</td><td class="mdescRight">checkBoxClicked helper for checking if a checkbox is checked. checkmate!  <a href="#aebaeb1d5d2ff24998aa97163e0f35e75">More...</a><br /></td></tr>
 <tr class="separator:aebaeb1d5d2ff24998aa97163e0f35e75"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -118,8 +138,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a00ef97979293392f57762156b3b35e44"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a00ef97979293392f57762156b3b35e44">&#9670;&nbsp;</a></span>GlobalSettingsWidget()</h2>
+<a id="a40bdd93daf0ac9f2cf511a4b4ee62190"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a40bdd93daf0ac9f2cf511a4b4ee62190">&#9670;&nbsp;</a></span>GlobalSettingsWidget()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -136,14 +156,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_comm_layer.html">CommLayer</a> *&#160;</td>
-          <td class="paramname"><em>comm</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_data_layer.html">DataLayer</a> *&#160;</td>
-          <td class="paramname"><em>data</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_app_settings.html">AppSettings</a> *&#160;</td>
+          <td class="paramname"><em>appSettings</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.13.0</span>
+   &#160;<span id="projectnumber">v0.13.47</span>
    </div>
   </td>
  </tr>
@@ -49,7 +49,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="class_data_sync_arduino.html" title="The DataSyncArduino class compares the data layer&#39;s representation of devices with the commlayer&#39;s un...">DataSyncArduino</a> class compares the data layer's representation of devices with the commlayer's understanding of devices and tries to sync them up. The <a class="el" href="class_data_layer.html" title="The DataLayer class stores and maintains the data about the state and settings of the application...">DataLayer</a>'s representation is used as the "desired" state of lights. The <a class="el" href="class_comm_layer.html" title="The CommLayer class provides communication protocols that allow the user to connect and send packets ...">CommLayer</a>'s understanding is used as the current state. If the desired state and current state do not match, the commlayer is requested to send packets to try to update the devices.  
+<p>The <a class="el" href="class_data_sync_arduino.html" title="The DataSyncArduino class compares the data layer&#39;s representation of devices with the commlayer&#39;s un...">DataSyncArduino</a> class compares the data layer's representation of devices with the commlayer's understanding of devices and tries to sync them up. The DataLayer's representation is used as the "desired" state of lights. The <a class="el" href="class_comm_layer.html" title="The CommLayer class provides communication protocols that allow the user to connect and send packets ...">CommLayer</a>'s understanding is used as the current state. If the desired state and current state do not match, the commlayer is requested to send packets to try to update the devices.  
  <a href="class_data_sync_arduino.html#details">More...</a></p>
 
 <p><code>#include &quot;<a class="el" href="datasyncarduino_8h_source.html">datasyncarduino.h</a>&quot;</code></p>
@@ -69,9 +69,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a086056734378dd64bc3e084a753d670a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync_arduino.html#a086056734378dd64bc3e084a753d670a">DataSyncArduino</a> (<a class="el" href="class_data_layer.html">DataLayer</a> *data, <a class="el" href="class_comm_layer.html">CommLayer</a> *comm)</td></tr>
-<tr class="memdesc:a086056734378dd64bc3e084a753d670a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_data_sync_arduino.html" title="The DataSyncArduino class compares the data layer&#39;s representation of devices with the commlayer&#39;s un...">DataSyncArduino</a> Constructor for <a class="el" href="class_data_sync_arduino.html" title="The DataSyncArduino class compares the data layer&#39;s representation of devices with the commlayer&#39;s un...">DataSyncArduino</a>.  <a href="#a086056734378dd64bc3e084a753d670a">More...</a><br /></td></tr>
-<tr class="separator:a086056734378dd64bc3e084a753d670a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7e6d1a98e64e82b971175936352e9c3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync_arduino.html#ab7e6d1a98e64e82b971175936352e9c3">DataSyncArduino</a> (<a class="el" href="class_device_list.html">DeviceList</a> *data, <a class="el" href="class_comm_layer.html">CommLayer</a> *comm)</td></tr>
+<tr class="memdesc:ab7e6d1a98e64e82b971175936352e9c3"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_data_sync_arduino.html" title="The DataSyncArduino class compares the data layer&#39;s representation of devices with the commlayer&#39;s un...">DataSyncArduino</a> Constructor for <a class="el" href="class_data_sync_arduino.html" title="The DataSyncArduino class compares the data layer&#39;s representation of devices with the commlayer&#39;s un...">DataSyncArduino</a>.  <a href="#ab7e6d1a98e64e82b971175936352e9c3">More...</a><br /></td></tr>
+<tr class="separator:ab7e6d1a98e64e82b971175936352e9c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a624ffd4c3c27d819718a7cba359e206b"><td class="memItemLeft" align="right" valign="top"><a id="a624ffd4c3c27d819718a7cba359e206b"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync_arduino.html#a624ffd4c3c27d819718a7cba359e206b">~DataSyncArduino</a> ()</td></tr>
 <tr class="memdesc:a624ffd4c3c27d819718a7cba359e206b"><td class="mdescLeft">&#160;</td><td class="mdescRight">destructor <br /></td></tr>
@@ -84,8 +84,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a086056734378dd64bc3e084a753d670a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a086056734378dd64bc3e084a753d670a">&#9670;&nbsp;</a></span>DataSyncArduino()</h2>
+<a id="ab7e6d1a98e64e82b971175936352e9c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab7e6d1a98e64e82b971175936352e9c3">&#9670;&nbsp;</a></span>DataSyncArduino()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -93,7 +93,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="memname">DataSyncArduino::DataSyncArduino </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_data_layer.html">DataLayer</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="class_device_list.html">DeviceList</a> *&#160;</td>
           <td class="paramname"><em>data</em>, </td>
         </tr>
         <tr>

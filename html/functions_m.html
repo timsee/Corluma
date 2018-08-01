@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.13.0</span>
+   &#160;<span id="projectnumber">v0.13.47</span>
    </div>
   </td>
  </tr>
@@ -44,7 +44,7 @@ $(function() {
 
 <h3><a id="index_m"></a>- m -</h3><ul>
 <li>mainColor()
-: <a class="el" href="class_data_layer.html#a442919b8782e7bd35ba20eddf1b913dd">DataLayer</a>
+: <a class="el" href="class_device_list.html#a3fc78e8e5390d2bb7a3b3f12b280aba8">DeviceList</a>
 </li>
 <li>MainWindow()
 : <a class="el" href="class_main_window.html#a8b244be8b7b7db1b08de2a2acb9409db">MainWindow</a>
@@ -62,29 +62,11 @@ $(function() {
 : <a class="el" href="class_data_sync.html#a369794bb01f1bd5a2bd2b1c50d27c140">DataSync</a>
 , <a class="el" href="class_discovery_widget.html#af2fdbb1c32c871195678d960780b2403">DiscoveryWidget</a>
 </li>
-<li>mCRC
-: <a class="el" href="class_comm_type.html#a6c1a32e29697d8b08401a04b91921d85">CommType</a>
-</li>
 <li>mData
-: <a class="el" href="class_data_sync.html#a27fbec78a64c15e730288dac08d9096b">DataSync</a>
+: <a class="el" href="class_data_sync.html#a75dc1c5c55c7008bf33cce6706fc8f4a">DataSync</a>
 </li>
 <li>mDataIsInSync
 : <a class="el" href="class_data_sync.html#a67e7799828fe162f85145bd216695626">DataSync</a>
-</li>
-<li>mDeviceTable
-: <a class="el" href="class_comm_type.html#a9a10deed636eba4f960d47c3776cd31c">CommType</a>
-</li>
-<li>mDiscoveredList
-: <a class="el" href="class_comm_type.html#a65f6482f8920afd6ff6e99118801eccf">CommType</a>
-</li>
-<li>mDiscoveryMode
-: <a class="el" href="class_comm_type.html#afcc75099b138addb3dc35692e819eabe">CommType</a>
-</li>
-<li>mDiscoveryTimer
-: <a class="el" href="class_comm_type.html#a53ba509a1aa972b772c1c6f8f074a1cb">CommType</a>
-</li>
-<li>mDiscoveryUpdateInterval
-: <a class="el" href="class_comm_type.html#ab283071f18b76741c90a25a06e61c763">CommType</a>
 </li>
 <li>mEditButton
 : <a class="el" href="class_list_collection_widget.html#a84ece6b5a73426814d6c451f36e429ae">ListCollectionWidget</a>
@@ -92,14 +74,11 @@ $(function() {
 <li>mEditIcon
 : <a class="el" href="class_list_collection_widget.html#af30dcee7c61ec8db1c61ad08109e545c">ListCollectionWidget</a>
 </li>
+<li>mElapsedTimer
+: <a class="el" href="class_comm_type.html#a6dde2dd0b11c73245cd1f2e0f63627bb">CommType</a>
+</li>
 <li>mergeExternalData()
 : <a class="el" href="class_groups_parser.html#abf81e04a9f89633da30b9c312531b5cc">GroupsParser</a>
-</li>
-<li>mFullyDiscovered
-: <a class="el" href="class_comm_type.html#a2e8ea9e88347922939c9823e0f1488ea">CommType</a>
-</li>
-<li>mHasStarted
-: <a class="el" href="class_comm_type.html#a47a3020ab06d49b995e22c7b4567017e">CommType</a>
 </li>
 <li>mHiddenStateIcon
 : <a class="el" href="class_list_collection_widget.html#a95a828ee8f4135ef1759063357f00ee6">ListCollectionWidget</a>
@@ -132,6 +111,9 @@ $(function() {
 <li>mode()
 : <a class="el" href="class_palette_page.html#a637c5ec6ecdbd557fb891c414450b4e9">PalettePage</a>
 </li>
+<li>moodChanged()
+: <a class="el" href="class_main_window.html#aba6e6ceb7edd225a9222aeeda29bae3f">MainWindow</a>
+</li>
 <li>moodClicked()
 : <a class="el" href="class_list_mood_group_widget.html#a5b56b87a4474e691b66f4d533a268980">ListMoodGroupWidget</a>
 </li>
@@ -142,10 +124,13 @@ $(function() {
 : <a class="el" href="class_list_mood_widget.html#a320693ba6f2a03a82dc1a3b75aab4fa3">ListMoodWidget</a>
 </li>
 <li>MoodPage()
-: <a class="el" href="class_mood_page.html#af99afab77b2b583b9332cf57eac52c5d">MoodPage</a>
+: <a class="el" href="class_mood_page.html#a03589b19159a9c16eda702766a03a427">MoodPage</a>
 </li>
 <li>moods()
 : <a class="el" href="class_list_mood_group_widget.html#a72704cae327a7c4b8acd936283b183a7">ListMoodGroupWidget</a>
+</li>
+<li>moodUpdate()
+: <a class="el" href="class_mood_page.html#ad4681a1ee4f4dd84990deecb9dd911d0">MoodPage</a>
 </li>
 <li>mOpenedPixmap
 : <a class="el" href="class_list_collection_widget.html#ae2598f46125fe0661e6c33f28c2155e2">ListCollectionWidget</a>
@@ -173,6 +158,9 @@ $(function() {
 </li>
 <li>moveStandardCircle()
 : <a class="el" href="class_color_scheme_circles.html#ad7dd38c72ba2bd10be94ac7f3e5ce147">ColorSchemeCircles</a>
+</li>
+<li>mReachabilityTest
+: <a class="el" href="class_comm_type.html#a3b9dc29353a78edaa33dca51a48d00ad">CommType</a>
 </li>
 <li>mSecondaryUpdatesInterval
 : <a class="el" href="class_comm_type.html#ad8c1f60fe67e3e018ee772d8d8e7a3f8">CommType</a>
@@ -202,7 +190,8 @@ $(function() {
 : <a class="el" href="class_list_collection_widget.html#a38411cfa3c9169896e45189411241554">ListCollectionWidget</a>
 </li>
 <li>mType
-: <a class="el" href="class_list_collection_widget.html#a95d80ec1cb341da978f288537c9d2336">ListCollectionWidget</a>
+: <a class="el" href="class_comm_type.html#adb4f46ee7ad397a16b5af72172954837">CommType</a>
+, <a class="el" href="class_list_collection_widget.html#a95d80ec1cb341da978f288537c9d2336">ListCollectionWidget</a>
 </li>
 <li>multiButtonClicked()
 : <a class="el" href="class_palette_page.html#a2c74981ac85b053dba71413fcb146b32">PalettePage</a>
@@ -214,13 +203,10 @@ $(function() {
 : <a class="el" href="class_color_picker.html#a235c36f0218f62f77f2caa3f5aadf2e3">ColorPicker</a>
 </li>
 <li>multiColorUpdate()
-: <a class="el" href="class_color_picker.html#a114e402fe4a7f7246d82da3e7d8804f2">ColorPicker</a>
+: <a class="el" href="class_color_picker.html#aec3aad7557dcec5e326855f3e6260447">ColorPicker</a>
 </li>
 <li>multiRoutineColorsChanged()
 : <a class="el" href="class_routine_buttons_widget.html#a26e21e83d43742935e0af8bbe8dd4b70">RoutineButtonsWidget</a>
-</li>
-<li>mUndiscoveredList
-: <a class="el" href="class_comm_type.html#a02ec483a63cf7b4946653ca8dea9ae46">CommType</a>
 </li>
 <li>mUpdateInterval
 : <a class="el" href="class_data_sync.html#ae262394c2ea78e041b895b4a9f633553">DataSync</a>

@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.13.0</span>
+   &#160;<span id="projectnumber">v0.13.47</span>
    </div>
   </td>
  </tr>
@@ -75,10 +75,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a297a6233f8361ed98856fe2ed28bafca">hueInfoWidgetClicked</a> ()</td></tr>
 <tr class="memdesc:a297a6233f8361ed98856fe2ed28bafca"><td class="mdescLeft">&#160;</td><td class="mdescRight">show the hue info widget. <br /></td></tr>
 <tr class="separator:a297a6233f8361ed98856fe2ed28bafca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad8100516791b0838bdcfb0368fd6066f"><td class="memItemLeft" align="right" valign="top"><a id="ad8100516791b0838bdcfb0368fd6066f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#ad8100516791b0838bdcfb0368fd6066f">hueInfoClosePressed</a> ()</td></tr>
-<tr class="memdesc:ad8100516791b0838bdcfb0368fd6066f"><td class="mdescLeft">&#160;</td><td class="mdescRight">hue info widget close button pressed. <br /></td></tr>
-<tr class="separator:ad8100516791b0838bdcfb0368fd6066f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e70127dbfb56d34e77a456be8491e4b"><td class="memItemLeft" align="right" valign="top"><a id="a4e70127dbfb56d34e77a456be8491e4b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a4e70127dbfb56d34e77a456be8491e4b">lightInfoClosePressed</a> ()</td></tr>
+<tr class="memdesc:a4e70127dbfb56d34e77a456be8491e4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">light info widget close button pressed. <br /></td></tr>
+<tr class="separator:a4e70127dbfb56d34e77a456be8491e4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9b88572d10d46ab20efc369215b71f6c"><td class="memItemLeft" align="right" valign="top"><a id="a9b88572d10d46ab20efc369215b71f6c"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a9b88572d10d46ab20efc369215b71f6c">editClosePressed</a> ()</td></tr>
 <tr class="memdesc:a9b88572d10d46ab20efc369215b71f6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">editClosePressed close the edit page <br /></td></tr>
@@ -107,24 +107,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#ad332cdca3c6e9f4a464f9b04072d7431">greyOutFadeComplete</a> ()</td></tr>
 <tr class="memdesc:ad332cdca3c6e9f4a464f9b04072d7431"><td class="mdescLeft">&#160;</td><td class="mdescRight">slot called when greyout fade is complete. <br /></td></tr>
 <tr class="separator:ad332cdca3c6e9f4a464f9b04072d7431"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a79a58d414be73684f6c3ae65decca1b5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a79a58d414be73684f6c3ae65decca1b5">hueNameChanged</a> (QString key, QString name)</td></tr>
-<tr class="memdesc:a79a58d414be73684f6c3ae65decca1b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">hueNameChanged change the name of a hue widget given the key and the new name.  <a href="#a79a58d414be73684f6c3ae65decca1b5">More...</a><br /></td></tr>
-<tr class="separator:a79a58d414be73684f6c3ae65decca1b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe2c0e59a52db712c8e4f4b4041e0ef1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#abe2c0e59a52db712c8e4f4b4041e0ef1">lightNameChange</a> (EProtocolType type, QString key, QString name)</td></tr>
+<tr class="memdesc:abe2c0e59a52db712c8e4f4b4041e0ef1"><td class="mdescLeft">&#160;</td><td class="mdescRight">lightNameChange change the name of a widget given the key and the new name.  <a href="#abe2c0e59a52db712c8e4f4b4041e0ef1">More...</a><br /></td></tr>
+<tr class="separator:abe2c0e59a52db712c8e4f4b4041e0ef1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87295a7a8106c3fe810e07775e0463ac"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a87295a7a8106c3fe810e07775e0463ac">deleteHue</a> (QString key)</td></tr>
 <tr class="memdesc:a87295a7a8106c3fe810e07775e0463ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">deleteHue Delete the hue with the given key as a device index  <a href="#a87295a7a8106c3fe810e07775e0463ac">More...</a><br /></td></tr>
 <tr class="separator:a87295a7a8106c3fe810e07775e0463ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad64aef0b7c05e9ebfe7caaaa49a85f64"><td class="memItemLeft" align="right" valign="top"><a id="ad64aef0b7c05e9ebfe7caaaa49a85f64"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#ad64aef0b7c05e9ebfe7caaaa49a85f64">floatingLayoutButtonPressed</a> (QString)</td></tr>
-<tr class="memdesc:ad64aef0b7c05e9ebfe7caaaa49a85f64"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when any button in a floating layout is pressed. <br /></td></tr>
-<tr class="separator:ad64aef0b7c05e9ebfe7caaaa49a85f64"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae7131f3afe5173926803efd4f523ffd5"><td class="memItemLeft" align="right" valign="top"><a id="ae7131f3afe5173926803efd4f523ffd5"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#ae7131f3afe5173926803efd4f523ffd5">showHueLightDiscovery</a> ()</td></tr>
-<tr class="memdesc:ae7131f3afe5173926803efd4f523ffd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">show the hue light discovery widget <br /></td></tr>
-<tr class="separator:ae7131f3afe5173926803efd4f523ffd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95aa39e31bff6edc6b953db9a94e2ecb"><td class="memItemLeft" align="right" valign="top"><a id="a95aa39e31bff6edc6b953db9a94e2ecb"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a95aa39e31bff6edc6b953db9a94e2ecb">hueDiscoveryClosePressed</a> ()</td></tr>
-<tr class="memdesc:a95aa39e31bff6edc6b953db9a94e2ecb"><td class="mdescLeft">&#160;</td><td class="mdescRight">close the hue light discovery widget <br /></td></tr>
-<tr class="separator:a95aa39e31bff6edc6b953db9a94e2ecb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a94daad6d32d17010b76f227e38cd3be2"><td class="memItemLeft" align="right" valign="top"><a id="a94daad6d32d17010b76f227e38cd3be2"></a>
 EPage&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a94daad6d32d17010b76f227e38cd3be2">currentPage</a> ()</td></tr>
 <tr class="memdesc:a94daad6d32d17010b76f227e38cd3be2"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for page <br /></td></tr>
@@ -133,10 +121,38 @@ EPage&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a51950447c704da64d4c5ff69f7f28b35">routineChanged</a> (QJsonObject routine)</td></tr>
 <tr class="memdesc:a51950447c704da64d4c5ff69f7f28b35"><td class="mdescLeft">&#160;</td><td class="mdescRight">routine changed from any page <br /></td></tr>
 <tr class="separator:a51950447c704da64d4c5ff69f7f28b35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ffcd8854de98347c4877f8e652cef53"><td class="memItemLeft" align="right" valign="top"><a id="a0ffcd8854de98347c4877f8e652cef53"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a0ffcd8854de98347c4877f8e652cef53">schemeChanged</a> (std::vector&lt; QColor &gt;)</td></tr>
+<tr class="memdesc:a0ffcd8854de98347c4877f8e652cef53"><td class="mdescLeft">&#160;</td><td class="mdescRight">scheme changed from colorpage <br /></td></tr>
+<tr class="separator:a0ffcd8854de98347c4877f8e652cef53"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba6e6ceb7edd225a9222aeeda29bae3f"><td class="memItemLeft" align="right" valign="top"><a id="aba6e6ceb7edd225a9222aeeda29bae3f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#aba6e6ceb7edd225a9222aeeda29bae3f">moodChanged</a> (QString mood)</td></tr>
+<tr class="memdesc:aba6e6ceb7edd225a9222aeeda29bae3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">mood changed from moodpage <br /></td></tr>
+<tr class="separator:aba6e6ceb7edd225a9222aeeda29bae3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a460f979c3b845ff87b465b0d466d5bf2"><td class="memItemLeft" align="right" valign="top"><a id="a460f979c3b845ff87b465b0d466d5bf2"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a460f979c3b845ff87b465b0d466d5bf2">protocolSettingsChanged</a> (EProtocolType, bool)</td></tr>
+<tr class="memdesc:a460f979c3b845ff87b465b0d466d5bf2"><td class="mdescLeft">&#160;</td><td class="mdescRight">protocolsettings page changed from <a class="el" href="class_global_settings_widget.html" title="The GlobalSettingsWidget class is a widget for the settings page that contains all the advanced setti...">GlobalSettingsWidget</a> <br /></td></tr>
+<tr class="separator:a460f979c3b845ff87b465b0d466d5bf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0586cab92d9791e3945b26f628a632ba"><td class="memItemLeft" align="right" valign="top"><a id="a0586cab92d9791e3945b26f628a632ba"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a0586cab92d9791e3945b26f628a632ba">timeoutChanged</a> (int)</td></tr>
+<tr class="memdesc:a0586cab92d9791e3945b26f628a632ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">timeout changed from timeout change <br /></td></tr>
+<tr class="separator:a0586cab92d9791e3945b26f628a632ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af629ae51d08443d56779f1209d083b8e"><td class="memItemLeft" align="right" valign="top"><a id="af629ae51d08443d56779f1209d083b8e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#af629ae51d08443d56779f1209d083b8e">timeoutEnabledChanged</a> (bool)</td></tr>
+<tr class="memdesc:af629ae51d08443d56779f1209d083b8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">timeout enabled or disabled <br /></td></tr>
+<tr class="separator:af629ae51d08443d56779f1209d083b8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e48e3ea8eb5dc10c1bb1e157f9c2dd5"><td class="memItemLeft" align="right" valign="top"><a id="a2e48e3ea8eb5dc10c1bb1e157f9c2dd5"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a2e48e3ea8eb5dc10c1bb1e157f9c2dd5">speedChanged</a> (int)</td></tr>
 <tr class="memdesc:a2e48e3ea8eb5dc10c1bb1e157f9c2dd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">speed changed from any page <br /></td></tr>
 <tr class="separator:a2e48e3ea8eb5dc10c1bb1e157f9c2dd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8871213bc97a53ede1c0e2ff9fd01e9c"><td class="memItemLeft" align="right" valign="top"><a id="a8871213bc97a53ede1c0e2ff9fd01e9c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#a8871213bc97a53ede1c0e2ff9fd01e9c">deletedLight</a> (QString uniqueID)</td></tr>
+<tr class="memdesc:a8871213bc97a53ede1c0e2ff9fd01e9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">light detected as deleted <br /></td></tr>
+<tr class="separator:a8871213bc97a53ede1c0e2ff9fd01e9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada11085f7c5c1442fd8943c096a369a7"><td class="memItemLeft" align="right" valign="top"><a id="ada11085f7c5c1442fd8943c096a369a7"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#ada11085f7c5c1442fd8943c096a369a7">renamedLight</a> (cor::Light, QString)</td></tr>
+<tr class="memdesc:ada11085f7c5c1442fd8943c096a369a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">rename a light to a new name. This updates all UI and app data accordingly. <br /></td></tr>
+<tr class="separator:ada11085f7c5c1442fd8943c096a369a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -262,8 +278,8 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 </div>
 </div>
-<a id="a79a58d414be73684f6c3ae65decca1b5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a79a58d414be73684f6c3ae65decca1b5">&#9670;&nbsp;</a></span>hueNameChanged</h2>
+<a id="abe2c0e59a52db712c8e4f4b4041e0ef1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe2c0e59a52db712c8e4f4b4041e0ef1">&#9670;&nbsp;</a></span>lightNameChange</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -272,8 +288,14 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void MainWindow::hueNameChanged </td>
+          <td class="memname">void MainWindow::lightNameChange </td>
           <td>(</td>
+          <td class="paramtype">EProtocolType&#160;</td>
+          <td class="paramname"><em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">QString&#160;</td>
           <td class="paramname"><em>key</em>, </td>
         </tr>
@@ -297,8 +319,9 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">key</td><td>the key for the hue, which is the device index for the hue. </td></tr>
-    <tr><td class="paramname">name</td><td>the new name for the hue. </td></tr>
+    <tr><td class="paramname">type</td><td>the protocol type of light being changed </td></tr>
+    <tr><td class="paramname">key</td><td>the key for the light </td></tr>
+    <tr><td class="paramname">name</td><td>the new name for the light. </td></tr>
   </table>
   </dd>
 </dl>

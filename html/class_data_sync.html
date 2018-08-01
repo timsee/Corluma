@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.13.0</span>
+   &#160;<span id="projectnumber">v0.13.47</span>
    </div>
   </td>
  </tr>
@@ -52,7 +52,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="class_data_sync.html" title="The DataSync base class is used for datasync threads. These threads compares the data layer&#39;s represe...">DataSync</a> base class is used for datasync threads. These threads compares the data layer's representation of devices with the commlayer's understanding of devices and tries to sync them up. The <a class="el" href="class_data_layer.html" title="The DataLayer class stores and maintains the data about the state and settings of the application...">DataLayer</a>'s representation is used as the "desired" state of lights. The <a class="el" href="class_comm_layer.html" title="The CommLayer class provides communication protocols that allow the user to connect and send packets ...">CommLayer</a>'s understanding is used as the current state. If the desired state and current state do not match, the commlayer is requested to send packets to try to update the devices. Different datasync threads run at different speeds and have different criteria for how to handle syncing. Philips hue lights, for instance, require syncing of schedules and groups on top of standard information. Because of this, derived classes impelement the different rules for handling syncing data.  
+<p>The <a class="el" href="class_data_sync.html" title="The DataSync base class is used for datasync threads. These threads compares the data layer&#39;s represe...">DataSync</a> base class is used for datasync threads. These threads compares the data layer's representation of devices with the commlayer's understanding of devices and tries to sync them up. The DataLayer's representation is used as the "desired" state of lights. The <a class="el" href="class_comm_layer.html" title="The CommLayer class provides communication protocols that allow the user to connect and send packets ...">CommLayer</a>'s understanding is used as the current state. If the desired state and current state do not match, the commlayer is requested to send packets to try to update the devices. Different datasync threads run at different speeds and have different criteria for how to handle syncing. Philips hue lights, for instance, require syncing of schedules and groups on top of standard information. Because of this, derived classes impelement the different rules for handling syncing data.  
 </p>
 
 <p><code>#include &quot;<a class="el" href="datasync_8h_source.html">datasync.h</a>&quot;</code></p>
@@ -116,10 +116,10 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a27fbec78a64c15e730288dac08d9096b"><td class="memItemLeft" align="right" valign="top"><a id="a27fbec78a64c15e730288dac08d9096b"></a>
-<a class="el" href="class_data_layer.html">DataLayer</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a27fbec78a64c15e730288dac08d9096b">mData</a></td></tr>
-<tr class="memdesc:a27fbec78a64c15e730288dac08d9096b"><td class="mdescLeft">&#160;</td><td class="mdescRight">mData pointer to data layer. Used for checking what state the data layer desires the devices to be. <br /></td></tr>
-<tr class="separator:a27fbec78a64c15e730288dac08d9096b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75dc1c5c55c7008bf33cce6706fc8f4a"><td class="memItemLeft" align="right" valign="top"><a id="a75dc1c5c55c7008bf33cce6706fc8f4a"></a>
+<a class="el" href="class_device_list.html">DeviceList</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a75dc1c5c55c7008bf33cce6706fc8f4a">mData</a></td></tr>
+<tr class="memdesc:a75dc1c5c55c7008bf33cce6706fc8f4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">mData pointer to data layer. Used for checking what state the data layer desires the devices to be. <br /></td></tr>
+<tr class="separator:a75dc1c5c55c7008bf33cce6706fc8f4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a369794bb01f1bd5a2bd2b1c50d27c140"><td class="memItemLeft" align="right" valign="top"><a id="a369794bb01f1bd5a2bd2b1c50d27c140"></a>
 <a class="el" href="class_comm_layer.html">CommLayer</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a369794bb01f1bd5a2bd2b1c50d27c140">mComm</a></td></tr>
 <tr class="memdesc:a369794bb01f1bd5a2bd2b1c50d27c140"><td class="mdescLeft">&#160;</td><td class="mdescRight">mComm pointer to comm layer. Used for checking what state the comm layer thinks the devices are in and for sending packets to the devices. <br /></td></tr>

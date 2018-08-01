@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.13.0</span>
+   &#160;<span id="projectnumber">v0.13.47</span>
    </div>
   </td>
  </tr>
@@ -49,7 +49,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="class_data_sync_hue.html" title="The DataSyncHue class is a datasync thread that syncs the commlayer&#39;s representation of how the Hue B...">DataSyncHue</a> class is a datasync thread that syncs the commlayer's representation of how the Hue Bridge sees the states of the lights with the <a class="el" href="class_data_layer.html" title="The DataLayer class stores and maintains the data about the state and settings of the application...">DataLayer</a>'s representation of how the application wants the lights to be.  
+<p>The <a class="el" href="class_data_sync_hue.html" title="The DataSyncHue class is a datasync thread that syncs the commlayer&#39;s representation of how the Hue B...">DataSyncHue</a> class is a datasync thread that syncs the commlayer's representation of how the Hue Bridge sees the states of the lights with the DataLayer's representation of how the application wants the lights to be.  
 </p>
 
 <p><code>#include &quot;<a class="el" href="datasynchue_8h_source.html">datasynchue.h</a>&quot;</code></p>
@@ -69,9 +69,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a83e93fff9eb2441748cb7792e10ec1d9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync_hue.html#a83e93fff9eb2441748cb7792e10ec1d9">DataSyncHue</a> (<a class="el" href="class_data_layer.html">DataLayer</a> *data, <a class="el" href="class_comm_layer.html">CommLayer</a> *comm)</td></tr>
-<tr class="memdesc:a83e93fff9eb2441748cb7792e10ec1d9"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_data_sync_hue.html" title="The DataSyncHue class is a datasync thread that syncs the commlayer&#39;s representation of how the Hue B...">DataSyncHue</a> Constructor for <a class="el" href="class_data_sync_hue.html" title="The DataSyncHue class is a datasync thread that syncs the commlayer&#39;s representation of how the Hue B...">DataSyncHue</a>.  <a href="#a83e93fff9eb2441748cb7792e10ec1d9">More...</a><br /></td></tr>
-<tr class="separator:a83e93fff9eb2441748cb7792e10ec1d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf87832fc16c68b6539749db6b61440e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync_hue.html#adf87832fc16c68b6539749db6b61440e">DataSyncHue</a> (<a class="el" href="class_device_list.html">DeviceList</a> *data, <a class="el" href="class_comm_layer.html">CommLayer</a> *comm, <a class="el" href="class_app_settings.html">AppSettings</a> *appSettings)</td></tr>
+<tr class="memdesc:adf87832fc16c68b6539749db6b61440e"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_data_sync_hue.html" title="The DataSyncHue class is a datasync thread that syncs the commlayer&#39;s representation of how the Hue B...">DataSyncHue</a> Constructor for <a class="el" href="class_data_sync_hue.html" title="The DataSyncHue class is a datasync thread that syncs the commlayer&#39;s representation of how the Hue B...">DataSyncHue</a>.  <a href="#adf87832fc16c68b6539749db6b61440e">More...</a><br /></td></tr>
+<tr class="separator:adf87832fc16c68b6539749db6b61440e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f4fd47aaf46209e731be0da89e5f94e"><td class="memItemLeft" align="right" valign="top"><a id="a0f4fd47aaf46209e731be0da89e5f94e"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync_hue.html#a0f4fd47aaf46209e731be0da89e5f94e">~DataSyncHue</a> ()</td></tr>
 <tr class="memdesc:a0f4fd47aaf46209e731be0da89e5f94e"><td class="mdescLeft">&#160;</td><td class="mdescRight">destructor <br /></td></tr>
@@ -82,8 +82,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:a52f1ede82efa738bba558829a856575c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a83e93fff9eb2441748cb7792e10ec1d9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a83e93fff9eb2441748cb7792e10ec1d9">&#9670;&nbsp;</a></span>DataSyncHue()</h2>
+<a id="adf87832fc16c68b6539749db6b61440e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adf87832fc16c68b6539749db6b61440e">&#9670;&nbsp;</a></span>DataSyncHue()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -91,14 +91,20 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="memname">DataSyncHue::DataSyncHue </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_data_layer.html">DataLayer</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="class_device_list.html">DeviceList</a> *&#160;</td>
           <td class="paramname"><em>data</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="class_comm_layer.html">CommLayer</a> *&#160;</td>
-          <td class="paramname"><em>comm</em>&#160;</td>
+          <td class="paramname"><em>comm</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_app_settings.html">AppSettings</a> *&#160;</td>
+          <td class="paramname"><em>appSettings</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
