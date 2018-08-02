@@ -367,4 +367,14 @@ ___
 * Fixed bugs in Hue timeouts. 
 * Fixed miscellaneous bugs. 
 
+### **v0.13.47**
+#### The HSV Update
+*This update breaks the save data of moods by converting all RGB values to HSV.*
+* Standardized all UI code to work off of HSV colorspace.
+* Changed all backend code to convert immediately into HSV when light states are received, instead of maintaining different colorspaces for different hardware.
+* Changed all abckend code to convert from HSV in its last steps before sending packets to lighting hardware.
+* Started a new UI for the Hue Discovery page.
+* Added widgets to see more information on what data is stored on a Philip's Bridge. 
+* Added the ability to set a custom name for Bridges.
+ 
 

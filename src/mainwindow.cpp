@@ -104,6 +104,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(mColorPage, SIGNAL(updateMainIcons()),  mTopMenu, SLOT(updateMenuBar()));
     connect(mPalettePage, SIGNAL(updateMainIcons()), mTopMenu, SLOT(updateMenuBar()));
     connect(mLightPage, SIGNAL(changedDeviceCount()), mTopMenu, SLOT(deviceCountChanged()));
+    connect(mMoodPage, SIGNAL(changedDeviceCount()), mTopMenu, SLOT(deviceCountChanged()));
     connect(mColorPage, SIGNAL(brightnessChanged(int)), mTopMenu, SLOT(brightnessUpdate(int)));
     connect(mData, SIGNAL(devicesEmpty()), mTopMenu, SLOT(deviceCountReachedZero()));
 
@@ -776,6 +777,8 @@ void MainWindow::resizeLayout() {
 
 
 void MainWindow::routineChanged(QJsonObject routine) {
+    // add brightness to routine
+    routine["bri"] = mTopMenu->brightness() / 100.0f;
     mData->updateRoutine(routine);
 }
 

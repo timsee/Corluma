@@ -131,9 +131,7 @@ void LightPage::updateDataGroupInUI(const cor::LightGroup dataGroup, const std::
                  if (groupWidget->key().compare(dataGroup.name) == 0) {
                      std::list<cor::Light> devices = updateDeviceList(dataGroup.devices, allDevices);
                      for (auto&& device : devices) {
-                         cor::Light deviceCopy = device;
-                         mComm->fillDevice(deviceCopy);
-                         device.name = deviceCopy.name;
+                         mComm->fillDevice(device);
                      }
                      groupWidget->updateDevices(devices);
                  }
@@ -390,7 +388,7 @@ void LightPage::newCollectionAdded(QString collection) {
 void LightPage::lightStateChanged(ECommType type, QString name) {
     Q_UNUSED(name);
     Q_UNUSED(type);
-    updateConnectionList();
+   // updateConnectionList();
 }
 
 void LightPage::clearButtonPressed() {
@@ -425,9 +423,8 @@ void LightPage::highlightList() {
 
 
 void LightPage::renderUI() {
-   // updateConnectionList();
-   // openDefaultCollections();
-    //highlightList();
+    updateConnectionList();
+    highlightList();
 }
 
 
@@ -476,7 +473,7 @@ void LightPage::hide() {
 }
 
 void LightPage::resizeEvent(QResizeEvent *) {
-    updateConnectionList();
+  //  updateConnectionList();
     mRoomsWidget->setMaximumSize(this->size());
     mRoomsWidget->resizeWidgets();
 }

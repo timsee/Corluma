@@ -8,6 +8,7 @@
 
 #include "bridge.h"
 #include "huelight.h"
+#include "editablefieldwidget.h"
 
 namespace hue
 {
@@ -50,12 +51,26 @@ signals:
     /// signals the bridge's key when the discover hues button is pressed
     void discoverHuesPressed(QString);
 
+    /// groups button is pressed. signals the bridge ID
+    void groupsPressed(QString);
+
+    /// schedules button is pressed. signals the bridge ID
+    void schedulesPressed(QString);
+
+    /// name changed is pressed. signals the bridge ID and the new name
+    void nameChanged(QString, QString);
+
     /*!
      * \brief clicked emits the key of the widget whenever it is clicked.
      */
     void clicked(QString);
 
 protected:
+    /*!
+     * \brief resizeEvent called every time the main window is resized.
+     */
+    void resizeEvent(QResizeEvent *);
+
     /*!
      * \brief paintEvent used to draw the background of the widget.
      */
@@ -71,6 +86,15 @@ private slots:
     /// handles when the discover hues button is pressed
     void pressedDiscoverHues();
 
+    /// handles when the schedules button is pressed
+    void schedulesListPressed();
+
+    /// handles when the groups button is pressed
+    void groupsListPressed();
+
+    /// handles when the name is changed from the EditableFieldWidget
+    void changedName(QString);
+
 private:
 
     /// sets the title's font size
@@ -78,6 +102,12 @@ private:
 
     /// bridge used to display info
     hue::Bridge mBridge;
+
+    /// label for the name widget
+    QLabel *mNameLabel;
+
+    /// editable field that lets you change the custom name of a bridge.
+    EditableFieldWidget *mNameWidget;
 
     /// shows the IP address
     QLabel *mIPAddress;
@@ -88,8 +118,35 @@ private:
     /// shows the API version of the bridge
     QLabel *mAPI;
 
+    /// spacer used for laying out widgets
+    QLabel *mSpacer;
+
+    /// layout of top of widget
+    QHBoxLayout *mTopLayout;
+
+    /// image for displaying a graphic to help with current step of widget.
+    QLabel *mImage;
+
+    /// cachced pixmap of hue bridge
+    QPixmap mBridgePixmap;
+
+    /// layout for the top right of the widget
+    QVBoxLayout *mTopRightLayout;
+
+    /// layout for the name widgets
+    QHBoxLayout *mNameLayout;
+
+    /// layout for the buttons
+    QHBoxLayout *mButtonsLayout;
+
     /// button that allows the user to discover new hue lights.
-    QPushButton *mDiscoverHueButtons;
+    QPushButton *mDiscoverHueButton;
+
+    /// button used for viewing the schedules of a bridge
+    QPushButton *mSchedulesButton;
+
+    /// button used for viewing the groups of a bridge.
+    QPushButton *mGroupsButton;
 
     /// main layout
     QVBoxLayout *mLayout;

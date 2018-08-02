@@ -63,6 +63,14 @@ public:
     /// find a nano::LeafController based off of its name
     nano::LeafController findControllerByName(const QString& name);
 
+    /*!
+     * \brief findControllerBySerial finds a controller by its serial number
+     * \param serialNumber serial number of the controller
+     * \param leafController controller to fill with relevant info
+     * \return true if found, false if not
+     */
+    bool findControllerBySerial(const QString& serialNumber, nano::LeafController& leafController);
+
     /// update stored data about a found device
     void updateFoundDevice(const nano::LeafController& controller);
 

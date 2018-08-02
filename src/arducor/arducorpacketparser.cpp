@@ -52,12 +52,12 @@ QString ArduCorPacketParser::routinePacket(const cor::Light& device, const QJson
         EPalette paletteEnum = EPalette::unknown;
         bool isValidJSON = true;
         if (routine <= cor::ERoutineSingleColorEnd) {
-            if (routineObject["red"].isDouble()
-                    && routineObject["green"].isDouble()
-                    && routineObject["blue"].isDouble()) {
-                color.setRgb(routineObject["red"].toDouble(),
-                        routineObject["green"].toDouble(),
-                        routineObject["blue"].toDouble());
+            if (routineObject["hue"].isDouble()
+                    && routineObject["sat"].isDouble()
+                    && routineObject["bri"].isDouble()) {
+                color.setHsvF(routineObject["hue"].toDouble(),
+                        routineObject["sat"].toDouble(),
+                        routineObject["bri"].toDouble());
             } else {
                 isValidJSON = false;
             }
@@ -289,9 +289,9 @@ void ArduCorPacketParser::routineChange(const std::vector<int>& intVector) {
                 if (palette == EPalette::unknown) {
                     validVector = false;
                 } else {
-                    // TODO: find more elegant solution to this
                     if (palette == EPalette::custom) {
-                        routineObject["palette"] = Palette(paletteToString(EPalette::custom), std::vector<QColor>(1, QColor(255, 0, 0))).JSON();
+                        //TODO: this looks broken
+                        routineObject["palette"] = Palette(paletteToString(EPalette::custom), std::vector<QColor>(1, QColor(255, 0, 0)), 50).JSON();
                     } else {
                         routineObject["palette"] = mPresetPalettes.palette(palette).JSON();
                     }
@@ -314,6 +314,7 @@ void ArduCorPacketParser::routineChange(const std::vector<int>& intVector) {
         }
 
         if (validVector) {
+
             emit receivedRoutineChange(deviceIndex, routineObject);
         }
     }

@@ -13,7 +13,8 @@ namespace cor
 {
 
 Light::Light(const QString& uniqueID, ECommType commType) :
-    palette("", std::vector<QColor>(1, QColor(0,0,0))),
+    palette("", std::vector<QColor>(1, QColor(0,0,0)), 50),
+    customPalette(paletteToString(EPalette::custom), cor::defaultCustomColors(), 50),
     mUniqueID(uniqueID),
     mCommType(commType) {
 
@@ -22,16 +23,14 @@ Light::Light(const QString& uniqueID, ECommType commType) :
     index = 1;
     isReachable = false;
     isOn = false;
-    colorMode = EColorMode::RGB;
-    color = QColor(0, 0, 0);
+    colorMode = EColorMode::HSV;
+    color.setHsvF(0.0f, 0.0f, 0.5f);
     routine = ERoutine::singleSolid;
-    brightness = 0;
     minutesUntilTimeout = 0;
     param = INT_MIN;
     timeout = 0;
     speed = 100;
 
-    customColors = cor::defaultCustomColors();
     customCount = 5;
 
     hardwareType = ELightHardwareType::singleLED;
@@ -55,17 +54,16 @@ cor::Light jsonToLight(const QJsonObject& object) {
     // get either speed or palette, depending on routine type
     //------------
     if (light.routine <= cor::ERoutineSingleColorEnd) {
-        if (object["red"].isDouble()
-                && object["green"].isDouble()
-                && object["blue"].isDouble()) {
-            light.color.setRgb(object["red"].toDouble(),
-                    object["green"].toDouble(),
-                    object["blue"].toDouble());
+        if (object["hue"].isDouble()
+                && object["sat"].isDouble()
+                && object["bri"].isDouble()) {
+            light.color.setHsvF(object["hue"].toDouble(),
+                    object["sat"].toDouble(),
+                    object["bri"].toDouble());
         }
     } else if (object["palette"].isObject()) {
         light.palette = Palette(object["palette"].toObject());
     }
-
 
     //------------
     // get param if it exists
@@ -98,9 +96,9 @@ QJsonObject lightToJson(const cor::Light& light) {
     object["isOn"]    = light.isOn;
 
     if (light.routine <= cor::ERoutineSingleColorEnd) {
-        object["red"]   = light.color.red();
-        object["green"] = light.color.green();
-        object["blue"]  = light.color.blue();
+        object["hue"] = light.color.hueF();
+        object["sat"] = light.color.saturationF();
+        object["bri"] = light.color.valueF();
     }
 
     object["majorAPI"] = light.majorAPI;

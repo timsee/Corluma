@@ -104,11 +104,10 @@ void DataSyncNanoLeaf::cleanupSync() {
 
 bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& commDevice) {
     int countOutOfSync = 0;
-    cor::Controller controller;
 
     // find nanoleaf controller
     nano::LeafController leafController;
-    if (!mComm->nanoleaf()->findNanoLeafController(controller, leafController)) {
+    if (!mComm->nanoleaf()->findNanoLeafController(dataDevice.uniqueID(), leafController)) {
         return false;
     }
 
@@ -132,8 +131,8 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
         // these are optional parameters depending on the routine
         bool paramsInSync       = true;
         bool colorInSync        = (cor::colorDifference(dataDevice.color, commDevice.color) <= 0.02f);
-        bool brightnessInSync   = (cor::brightnessDifference(commDevice.brightness, dataDevice.brightness) <= 0.02f);
-        bool paletteInSync      = (commDevice.palette.paletteEnum() == dataDevice.palette.paletteEnum());
+        bool paletteInSync      = (commDevice.palette == dataDevice.palette);
+        bool paletteBrightnessInSync = (commDevice.palette.brightness() == dataDevice.palette.brightness());
         if (dataDevice.palette.paletteEnum() == EPalette::custom) {
             bool palettesAreClose = true;
             if (dataDevice.palette.colors().size() == commDevice.palette.colors().size()) {
@@ -145,6 +144,9 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
                    ++i;
                 }
                 paletteInSync = palettesAreClose;
+                if (!paletteBrightnessInSync) {
+                    paletteInSync = false;
+                }
             }
         }
         if (!colorInSync && dataDevice.routine <= cor::ERoutineSingleColorEnd) {
@@ -169,11 +171,9 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
             routineObject["routine"] = routineToString(dataDevice.routine);
 
             if (dataDevice.routine <= cor::ERoutineSingleColorEnd) {
-                QColor color = dataDevice.color;
-                routineObject["red"]        = color.red();
-                routineObject["green"]      = color.green();
-                routineObject["blue"]       = color.blue();
-                routineObject["brightness"] = dataDevice.brightness;
+                routineObject["hue"] = dataDevice.color.hueF();
+                routineObject["sat"] = dataDevice.color.saturationF();
+                routineObject["bri"] = dataDevice.color.valueF();
             } else {
                 routineObject["palette"]   = dataDevice.palette.JSON();
                 if (dataDevice.palette.paletteEnum() == EPalette::custom) {
@@ -191,16 +191,6 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
             //qDebug() << " Nanoleaf routine not in sync" << routineToString(dataDevice.routine);
             countOutOfSync++;
         }
-
-        //-------------------
-        // Brightness Sync
-        //-------------------
-        if (!brightnessInSync && dataDevice.routine != ERoutine::singleSolid) {
-            object["brightness"] = dataDevice.brightness;
-            //qDebug() << "nanoleaf brightness not in sync" << commDevice.brightness << "vs" << dataDevice.brightness;
-            countOutOfSync++;
-        }
-
     }
 
     //-------------------

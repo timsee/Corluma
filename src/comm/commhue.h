@@ -57,13 +57,11 @@ public:
     void shutdown();
 
     /*!
-     * \brief changeColorRGB send a packet to a hue bridge to change the color of a given hue light.
+     * \brief changeColor send a packet to a hue bridge to change the color of a given hue light.
      * \param lightIndex the index of the hue being changed.
-     * \param saturation how saturated the color is. A higher number leads to more saturation. Must be in the range of 0 and 254, inclusive.
-     * \param brightness how bright the light will be. A higher number leads to more brightness. Must be in the range of 0 and 254, inclusive.
-     * \param hue the hue of the hue light's color. Must be in the range of 0 and 65535, with 0 representing pure red.
+     * \param color color to change light into
      */
-    void changeColorRGB(const hue::Bridge& bridge, int lightIndex, int saturation, int brightness, int hue);
+    void changeColor(const hue::Bridge& bridge, int lightIndex, const QColor& color);
 
     /*!
      * \brief changeAmbientLight changes the color of the bulb to match the color temperature given. This is the only way to interact with

@@ -94,7 +94,7 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector
         QJsonObject routineObject;
         light.speed = 100;
         light.isOn = true;
-        light.palette = Palette(paletteToString(EPalette::custom), colors);
+        light.palette = Palette(paletteToString(EPalette::custom), colors, 51);
 
         mRoutines[0].first = "Glimmer";
         light.routine = ERoutine::multiGlimmer;
@@ -163,7 +163,7 @@ void RoutineButtonsWidget::highlightRoutineButton(const QString& label) {
 void RoutineButtonsWidget::multiRoutineColorsChanged(const std::vector<QColor>& colors) {
     for (uint32_t i = 0; i < mRoutineButtons.size(); i++) {
         cor::Light light = cor::jsonToLight(mRoutines[i].second);
-        light.palette = Palette(paletteToString(EPalette::custom), colors);
+        light.palette = Palette(paletteToString(EPalette::custom), colors, 51);
         mRoutines[i].second = cor::lightToJson(light);
         mRoutineButtons[i]->updateRoutine(mRoutines[i].second);
     }
@@ -198,9 +198,9 @@ QString RoutineButtonsWidget::jsonToButtonName(const QJsonObject& routineObject)
 void RoutineButtonsWidget::singleRoutineColorChanged(QColor color) {
     for (int i = 0; i < (int)mRoutineButtons.size(); ++i) {
         QJsonObject routineObject = mRoutines[i].second;
-        routineObject["red"]   = color.red();
-        routineObject["green"] = color.green();
-        routineObject["blue"]  = color.blue();
+        routineObject["hue"] = color.hueF();
+        routineObject["sat"] = color.saturationF();
+        routineObject["bri"] = color.valueF();
         mRoutineButtons[i]->updateRoutine(routineObject);
     }
 }

@@ -30,9 +30,6 @@ DiscoveryArduCorWidget::DiscoveryArduCorWidget(CommLayer *comm, QWidget *parent)
     setLayout(mLayout);
 }
 
-DiscoveryArduCorWidget::~DiscoveryArduCorWidget() {
-
-}
 
 void DiscoveryArduCorWidget::handleDiscovery(bool isCurrentCommType) {
     const auto controllers = mComm->arducor()->discovery()->controllers();

@@ -22,8 +22,6 @@ DataSyncSettings::DataSyncSettings(DeviceList *data, CommLayer *comm, AppSetting
     connect(mSyncTimer, SIGNAL(timeout()), this, SLOT(syncData()));
     mSyncTimer->start(mUpdateInterval);
 
-    mParser = new ArduCorPacketParser(this);
-
     mDataIsInSync = false;
 }
 
@@ -109,7 +107,7 @@ bool DataSyncSettings::sync(const cor::Light& availableDevice) {
     if (mAppSettings->timeoutEnabled()) {
         // timeout is enabled
         if (availableDevice.timeout != mAppSettings->timeout()) {
-            qDebug() << "time out not in sync" << availableDevice.timeout << " vs " << mAppSettings->timeout();
+           // qDebug() << "time out not in sync" << availableDevice.timeout << " vs " << mAppSettings->timeout();
             QString message = mParser->timeoutPacket(availableDevice, mAppSettings->timeout());
             appendToPacket(packet, message, controller.maxPacketSize);
             countOutOfSync++;
@@ -117,7 +115,7 @@ bool DataSyncSettings::sync(const cor::Light& availableDevice) {
     } else {
         // disable the timeout
         if (availableDevice.timeout != 0) {
-            qDebug() << "time out not disabled!" << availableDevice.timeout;
+          //  qDebug() << "time out not disabled!" << availableDevice.timeout;
             QString message = mParser->timeoutPacket(availableDevice, 0);
             appendToPacket(packet, message, controller.maxPacketSize);
             countOutOfSync++;

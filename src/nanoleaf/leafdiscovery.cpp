@@ -252,6 +252,16 @@ nano::LeafController LeafDiscovery::findControllerByName(const QString& name) {
     return nano::LeafController();
 }
 
+bool LeafDiscovery::findControllerBySerial(const QString& serialNumber, nano::LeafController& leafController) {
+    for (const auto& foundController : mFoundControllers) {
+        if (foundController.serialNumber == serialNumber) {
+            leafController = foundController;
+            return true;
+        }
+    }
+    return false;
+}
+
 void LeafDiscovery::updateFoundDevice(const nano::LeafController& controller) {
     for (auto&& foundController : mFoundControllers) {
         if (foundController.serialNumber.compare(controller.serialNumber) == 0) {

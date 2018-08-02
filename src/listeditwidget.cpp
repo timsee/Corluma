@@ -120,7 +120,7 @@ void ListEditWidget::setCheckedDevices(std::list<cor::Light> devices) {
 }
 
 
-const std::list<cor::Light> ListEditWidget::checkedDevices() {
+std::list<cor::Light> ListEditWidget::checkedDevices() {
     std::list<cor::Light> devices;
     for (auto&& widget : mWidgets) {
         ListDeviceWidget *existingWidget = qobject_cast<ListDeviceWidget*>(widget);

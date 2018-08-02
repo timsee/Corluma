@@ -122,7 +122,6 @@ inline EProtocolType stringToProtocol(const QString& protocol) {
  *        of their color.
  */
 enum class EColorMode {
-    RGB,
     HSV,
     dimmable,
     CT,
@@ -137,9 +136,7 @@ enum class EColorMode {
  * \return string representation of color mode
  */
 inline QString colorModeToString(EColorMode mode) {
-    if (mode ==  EColorMode::RGB) {
-        return "RGB";
-    } else if (mode ==  EColorMode::HSV) {
+    if (mode ==  EColorMode::HSV) {
         return "HSV";
     } else if (mode ==  EColorMode::CT) {
         return "CT";
@@ -156,9 +153,7 @@ inline QString colorModeToString(EColorMode mode) {
  * \return EColorMode based off of string.
  */
 inline EColorMode stringtoColorMode(const QString& mode) {
-    if (mode.compare("RGB") == 0) {
-        return EColorMode::RGB;
-    } else if (mode.compare("HSV") == 0
+     if (mode.compare("HSV") == 0
               || mode.compare("hs") == 0) {
         return EColorMode::HSV;
     } else if (mode.compare("CT") == 0

@@ -79,6 +79,14 @@ inline void debugWhyWidgetIsNotShowing(QWidget *widget) {
     qDebug() << "----------";
 }
 
+
+/// rounds doubles to N significant digits, for readability.
+inline double roundToNDigits(double x, int n) {
+    if (x == 0.0)  return 0.0;
+    double factor = pow(10.0, n - ceil(log10(fabs(x))));
+    return round(x * factor) / factor;
+}
+
 /*!
  * \brief applicationSize this returns the size of the MainWindow, in a pretty ugly but effective
  *        way.

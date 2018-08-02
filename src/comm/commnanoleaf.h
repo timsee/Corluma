@@ -61,10 +61,10 @@ public:
 
     /*!
      * \brief findNanoLeafController finds a nanoleaf controller based off of a cor::controller
-     * \param controller cor::Controller to use to find the nanoleaf controller
+     * \param serialNumber serialNumber to use to find the nanoleaf controller
      * \param leafController the nanoleaf controller to fil as the return
      */
-    bool findNanoLeafController(const cor::Controller& controller, nano::LeafController& leafController);
+    bool findNanoLeafController(const QString& serialNumber, nano::LeafController& leafController);
 
     /// tests if an IP address is valid by sending a network request to it.
     void testIP(const nano::LeafController& controller);

@@ -26,7 +26,13 @@ public:
     Palette(const QJsonObject& object);
 
     /// app data constructor
-    Palette(const QString& name, const std::vector<QColor>& colors);
+    Palette(const QString& name, const std::vector<QColor>& colors, int brightness);
+
+    /// setter for the brightness of the palette
+    void brightness(uint32_t brightness);
+
+    /// getter for the palette's brightness
+    int brightness() const { return mBrightness; }
 
     /// getter for name of the palette
     const QString& name() const noexcept { return mName; }
@@ -44,6 +50,7 @@ public:
     bool operator==(const Palette& rhs) const {
         bool result = true;
         if (name()        != rhs.name()) result = false;
+        if (brightness()  != rhs.brightness()) result = false;
         if (paletteEnum() != rhs.paletteEnum()) result = false;
         if (colors()      != rhs.colors()) result = false;
         return result;
@@ -53,6 +60,7 @@ public:
     operator QString() const {
         std::stringstream tempString;
         tempString << "{ Palette Name: ";
+        tempString << " brightness: " << brightness();
         tempString << " Enum String: " << paletteToString(paletteEnum()).toStdString();
         uint32_t index = 0;
         for (auto color : colors()) {
@@ -81,6 +89,9 @@ private:
 
     /// vector for the colors
     std::vector<QColor> mColors;
+
+    /// brightness of the palette, between 0 - 100
+    int mBrightness;
 };
 
 std::ostream& operator<<(std::ostream&, const Palette& palette);

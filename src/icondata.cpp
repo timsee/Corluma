@@ -116,6 +116,7 @@ void IconData::setRoutine(const QJsonObject& routineObject) {
     ERoutine routine           = routineInfo.routine;
     std::vector<QColor> colors = routineInfo.palette.colors();
     QColor color               = routineInfo.color;
+    color.setHsvF(color.hueF(), color.saturationF(), 1.0f);
 
     int param = INT_MIN;
     if (routineObject["param"].isDouble()) {

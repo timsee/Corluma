@@ -7,8 +7,8 @@
 #include <QtCore>
 #include <QtGui>
 #include <QStyleOption>
-#include <QScroller>
 #include <QGraphicsOpacityEffect>
+#include <QScroller>
 #include <QMessageBox>
 
 #include "lightinfolistwidget.h"

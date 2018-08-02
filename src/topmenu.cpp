@@ -298,7 +298,6 @@ void TopMenu::updatePaletteButton() {
         std::list<HueLight> hues;
         for (auto& device : devices) {
             hues.push_back(mComm->hue()->hueLightFromLight(device));
-            qDebug() << " hue" << mComm->hue()->hueLightFromLight(device);
         }
 
         EHueType bestHueType = checkForHueWithMostFeatures(hues);
@@ -631,6 +630,7 @@ void TopMenu::updateUI() {
             mComm->fillDevice(device);
         }
         mLastDevices = currentDevices;
+
         mMainPalette->updateDevices(currentDevices);
         updateBrightnessSlider();
     }

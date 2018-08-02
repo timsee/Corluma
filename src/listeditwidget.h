@@ -71,7 +71,7 @@ public:
     const std::list<cor::Light>& devices() { return mDevices; }
 
     /// getter for checked devices
-    const std::list<cor::Light> checkedDevices();
+    std::list<cor::Light> checkedDevices();
 
 signals:
 

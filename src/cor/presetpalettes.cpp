@@ -11,7 +11,7 @@
 #include <QJsonObject>
 #include <QFile>
 
-PresetPalettes::PresetPalettes() : mPalettes(std::vector<Palette>(1, Palette("", std::vector<QColor>(1)))){
+PresetPalettes::PresetPalettes() : mPalettes(std::vector<Palette>((uint32_t)EPalette::unknown, Palette("", std::vector<QColor>(1), 50))){
     // open the palette file
     QFile paletteFile(":/resources/palettes.json");
     if (paletteFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -22,9 +22,6 @@ PresetPalettes::PresetPalettes() : mPalettes(std::vector<Palette>(1, Palette("",
         QJsonParseError error;
         QJsonDocument doc = QJsonDocument::fromJson(data.toUtf8(), &error);
         QJsonArray array = doc.array();
-
-        // create the vector
-        mPalettes = std::vector<Palette>((uint32_t)EPalette::unknown, Palette("", std::vector<QColor>(1)));
 
         // fill the palettes into the vector
         for (auto jsonRef : array) {

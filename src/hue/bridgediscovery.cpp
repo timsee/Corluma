@@ -470,6 +470,23 @@ std::list<HueLight> BridgeDiscovery::lights() {
     return lights;
 }
 
+bool BridgeDiscovery::changeName(const hue::Bridge& bridge, const QString& newName) {
+    for (auto&& foundBridge : mFoundBridges) {
+        if (bridge.id == foundBridge.id) {
+            foundBridge.customName = newName;
+            updateJSON(foundBridge);
+            return true;
+        }
+    }
+    for (auto&& notFoundBridge : mNotFoundBridges) {
+        if (bridge.id == notFoundBridge.id) {
+            notFoundBridge.customName = newName;
+            updateJSON(notFoundBridge);
+            return true;
+        }
+    }
+    return false;
+}
 
 // ----------------------------
 // JSON info
@@ -505,6 +522,11 @@ void BridgeDiscovery::updateJSON(const hue::Bridge& bridge) {
             if (jsonBridge.api != bridge.api) {
                 detectChanges = true;
                 object["api"] = bridge.api;
+            }
+
+            if (jsonBridge.customName != bridge.customName) {
+                detectChanges = true;
+                object["customName"] = bridge.customName;
             }
 
             if (jsonBridge.macaddress != bridge.macaddress

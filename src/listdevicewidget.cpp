@@ -180,7 +180,11 @@ void ListDeviceWidget::paintEvent(QPaintEvent *event) {
     painter.drawRect(rect);
 
     // set brightness width
-    rect.setWidth((float)rect.width() * mDevice.brightness / 100.0f);
+    float brightness = mDevice.color.valueF();
+    if (mDevice.routine > cor::ERoutineSingleColorEnd) {
+        brightness = mDevice.palette.brightness() / 100.0f;
+    }
+    rect.setWidth((float)rect.width() * brightness);
     painter.setBrush(brush2);
     painter.drawRect(rect);
     if (!mDevice.isOn) {

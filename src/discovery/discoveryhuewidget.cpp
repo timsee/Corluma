@@ -8,6 +8,7 @@
 #include "comm/commhue.h"
 #include "cor/utils.h"
 
+#include <QMovie>
 #include <QScroller>
 #include <QGraphicsOpacityEffect>
 #include <QPropertyAnimation>
@@ -19,31 +20,15 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer *comm, QWidget *parent) :
 
     mComm = comm;
 
+    QMovie *movie = new QMovie(":/images/loading_icon.gif");
+    mLoadingIcon = new QLabel(this);
+    mLoadingIcon->setMovie(movie);
+    movie->start();
+
     mLabel = new QLabel(this);
     mLabel->setWordWrap(true);
     mLabel->setText("Looking for a Bridge...");
     mLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-    mIPAddress = new EditableFieldWidget("192.168.0.100", this);
-    mIPAddress->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(mIPAddress, SIGNAL(updatedField(QString)), this, SLOT(IPFieldChanged(QString)));
-    mIPAddress->requireIPAddress(true);
-
-    mIPAddressInfo = new QLabel("IP Address:", this);
-    mIPAddressInfo->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-    mIPAddressDebug = new QLabel("Incorrect IP? Press edit to change.", this);
-    mIPAddressDebug->setWordWrap(true);
-    mIPAddressDebug->setVisible(false);
-    mIPAddressDebug->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-    mIPLayout = new QHBoxLayout;
-    mIPLayout->addWidget(mIPAddressInfo, 1);
-    mIPLayout->addWidget(mIPAddress,     10);
-
-    mImage = new QLabel(this);
-    mImage->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    mImage->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     mScrollArea = new QScrollArea(this);
     mScrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -59,10 +44,6 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer *comm, QWidget *parent) :
     mScrollLayout->setContentsMargins(0, 0, 0, 0);
     mScrollAreaWidget->setLayout(mScrollLayout);
 
-    mBridgeLayout = new QHBoxLayout;
-    mBridgeLayout->addWidget(mImage,      2);
-    mBridgeLayout->addWidget(mScrollArea, 4);
-
     mGreyOut = new GreyOutOverlay(this);
     mGreyOut->setVisible(false);
 
@@ -75,20 +56,29 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer *comm, QWidget *parent) :
     mHueLightDiscovery->isOpen(false);
     connect(mHueLightDiscovery, SIGNAL(closePressed()), this, SLOT(hueDiscoveryClosePressed()));
 
-    mLayout = new QVBoxLayout;
-    mLayout->addWidget(mLabel,          2);
-    mLayout->addLayout(mIPLayout,       1);
-    mLayout->addWidget(mIPAddressDebug, 1);
-    mLayout->addLayout(mBridgeLayout,   8);
-    setLayout(mLayout);
+    // --------------
+    // Set up hue group widget
+    // --------------
 
-    int min = std::min(int(this->width() * 2.0f / 3.0f), this->height());
-    int size = min * mScale;
-    mBridgePixmap = QPixmap(":images/Hue-Bridge.png");
-    mImage->setPixmap(mBridgePixmap.scaled(size * 0.9f,
-                                           size * 0.9f,
-                                           Qt::KeepAspectRatio,
-                                           Qt::SmoothTransformation));
+    mBridgeGroupsWidget = new hue::BridgeGroupsWidget(this);
+    mBridgeGroupsWidget->setVisible(false);
+    mBridgeGroupsWidget->isOpen(false);
+    connect(mBridgeGroupsWidget, SIGNAL(closePressed()), this, SLOT(groupsClosePressed()));
+
+    // --------------
+    // Set up hue schedules widget
+    // --------------
+
+    mBridgeSchedulesWidget = new hue::BridgeSchedulesWidget(this);
+    mBridgeSchedulesWidget->setVisible(false);
+    mBridgeSchedulesWidget->isOpen(false);
+    connect(mBridgeSchedulesWidget, SIGNAL(closePressed()), this, SLOT(schedulesClosePressed()));
+
+    mLayout = new QVBoxLayout;
+    mLayout->addWidget(mLoadingIcon,  2);
+    mLayout->addWidget(mLabel,        2);
+    mLayout->addWidget(mScrollArea,   8);
+    setLayout(mLayout);
 }
 
 void DiscoveryHueWidget::hueDiscoveryUpdate(EHueDiscoveryState newState) {
@@ -113,32 +103,22 @@ void DiscoveryHueWidget::hueDiscoveryUpdate(EHueDiscoveryState newState) {
             break;
         case EHueDiscoveryState::findingDeviceUsername:
             mLabel->setText(QString("Bridge Found! Please press Link button..."));
-            mIPAddress->setText(notFoundBridge.IP);
-            mIPAddressDebug->setVisible(true);
             //qDebug() << "Hue Update: Bridge is waiting for link button to be pressed.";
             emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
             break;
         case EHueDiscoveryState::testingFullConnection:
             mLabel->setText(QString("Bridge button pressed! Testing connection..."));
-            mIPAddress->setText(notFoundBridge.IP);
-            mIPAddressDebug->setVisible(true);
             //qDebug() << "Hue Update: IP and Username received, testing combination. ";
             emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
             break;
         case EHueDiscoveryState::bridgeConnected:
             mLabel->setText(QString("Bridge discovered, but more bridges are known. Searching for additional bridges..."));
-            mIPAddress->setText(notFoundBridge.IP);
-            mIPAddress->enableEditing(true);
             //qDebug() << "Hue Update: Bridge Connected" << mComm->hueBridge().IP;
-            mIPAddressDebug->setVisible(true);
             emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovered);
             break;
         case EHueDiscoveryState::allBridgesConnected:
             mLabel->setText(QString("All bridges discovered!"));
-            mIPAddress->setText(foundBridge.IP);
-            mIPAddress->enableEditing(false);
             //qDebug() << "Hue Update: All Bridges Connected" << mComm->hueBridge().IP;
-            mIPAddressDebug->setVisible(false);
             emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovered);
             break;
         default:
@@ -156,7 +136,17 @@ void DiscoveryHueWidget::handleDiscovery(bool isCurrentCommType) {
 }
 
 void DiscoveryHueWidget::updateBridgeGUI() {
+    std::list<hue::Bridge> bridgeList;
+    // get all found bridges
     for (const auto& bridge : mComm->hue()->bridges()) {
+        bridgeList.push_back(bridge);
+    }
+    for (const auto& bridge : mComm->hue()->discovery()->notFoundBridges()) {
+        bridgeList.push_back(bridge);
+    }
+
+    // loop through all bridges
+    for (const auto& bridge : bridgeList) {
         // check if light already exists in list
         int widgetIndex = -1;
         int i = 0;
@@ -172,8 +162,11 @@ void DiscoveryHueWidget::updateBridgeGUI() {
         if (widgetIndex == -1) {
             hue::BridgeInfoWidget *widget = new hue::BridgeInfoWidget(bridge, mScrollAreaWidget);
             widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+            connect(widget, SIGNAL(nameChanged(QString, QString)), this, SLOT(changedName(QString, QString)));
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(bridgePressed(QString)));
             connect(widget, SIGNAL(discoverHuesPressed(QString)), this, SLOT(discoverHuesPressed(QString)));
+            connect(widget, SIGNAL(groupsPressed(QString)), this, SLOT(groupsPressed(QString)));
+            connect(widget, SIGNAL(schedulesPressed(QString)), this, SLOT(schedulesPressed(QString)));
             mBridgeWidgets.push_back(widget);
             mScrollLayout->addWidget(widget);
         }
@@ -188,6 +181,66 @@ void DiscoveryHueWidget::hueDiscoveryClosePressed() {
     mHueLightDiscovery->hide();
     greyOut(false);
 }
+
+void DiscoveryHueWidget::groupsClosePressed() {
+    mBridgeGroupsWidget->isOpen(false);
+    mBridgeGroupsWidget->setVisible(false);
+    mBridgeGroupsWidget->resize();
+    mBridgeGroupsWidget->hide();
+    greyOut(false);
+}
+
+void DiscoveryHueWidget::schedulesClosePressed() {
+    mBridgeSchedulesWidget->isOpen(false);
+    mBridgeSchedulesWidget->setVisible(false);
+    mBridgeSchedulesWidget->resize();
+    mBridgeSchedulesWidget->hide();
+    greyOut(false);
+}
+
+void DiscoveryHueWidget::changedName(QString key, QString newName) {
+    for (const auto& bridge : mComm->hue()->bridges()) {
+        if (bridge.id == key) {
+            mComm->hue()->discovery()->changeName(bridge, newName);
+            return;
+        }
+    }
+
+    for (const auto& bridge : mComm->hue()->discovery()->notFoundBridges()) {
+        if (bridge.id == key) {
+            mComm->hue()->discovery()->changeName(bridge, newName);
+            return;
+        }
+    }
+}
+
+void DiscoveryHueWidget::groupsPressed(QString key) {
+    for (const auto& bridge : mComm->hue()->bridges()) {
+        if (bridge.id == key) {
+            qDebug() << " group this bridge!" << bridge;
+            mBridgeGroupsWidget->updateGroups(bridge.groups);
+            mBridgeGroupsWidget->isOpen(true);
+            mBridgeGroupsWidget->setVisible(true);
+            mBridgeGroupsWidget->show();
+            mBridgeGroupsWidget->resize();
+            greyOut(true);
+        }
+    }
+}
+
+void DiscoveryHueWidget::schedulesPressed(QString key) {
+    for (const auto& bridge : mComm->hue()->bridges()) {
+        if (bridge.id == key) {
+            mBridgeSchedulesWidget->updateSchedules(bridge.schedules);
+            mBridgeSchedulesWidget->isOpen(true);
+            mBridgeSchedulesWidget->setVisible(true);
+            mBridgeSchedulesWidget->show();
+            mBridgeSchedulesWidget->resize();
+            greyOut(true);
+        }
+    }
+}
+
 
 void DiscoveryHueWidget::discoverHuesPressed(QString key) {
     for (const auto& bridge : mComm->hue()->bridges()) {
@@ -212,16 +265,12 @@ void DiscoveryHueWidget::bridgePressed(QString key) {
 
 void DiscoveryHueWidget::resize() {
     // resize scroll area
-    mScrollAreaWidget->setFixedWidth(mScrollArea->width() * 0.9f);
-    QSize widgetSize(this->width()  * 0.65f, this->height() / 1.5f);
+    mScrollAreaWidget->setFixedWidth(this->width() * 0.9f);
+    QSize widgetSize(mScrollAreaWidget->width(), this->height() / 1.5f);
     uint32_t yPos = 0;
     // draw widgets in content region
     for (auto widget : mBridgeWidgets) {
         widget->setHeight(widgetSize.height() * 0.9f);
-        widget->setGeometry(0,
-                            yPos,
-                            widgetSize.width() * 0.9f,
-                            widget->height());
         yPos += widget->height();
 
         widget->setVisible(true);
@@ -262,17 +311,18 @@ void DiscoveryHueWidget::greyOutFadeComplete() {
     mGreyOut->setVisible(false);
 }
 
-
 void DiscoveryHueWidget::IPFieldChanged(QString ipAddress) {
     //qDebug() << " this is the ip address" << ipAddress;
     mComm->hue()->discovery()->addManualIP(ipAddress);
 }
 
 void DiscoveryHueWidget::resizeEvent(QResizeEvent *) {
-    int min = std::min(int(this->width() * 2.0f / 3.0f), this->height());
-    int height = min * mScale;
-    mImage->setPixmap(mBridgePixmap.scaled(height,
-                                           height,
-                                           Qt::KeepAspectRatio,
-                                           Qt::SmoothTransformation));
+    if (mBridgeSchedulesWidget->isOpen()) {
+        mBridgeSchedulesWidget->resize();
+    }
+
+    if (mBridgeGroupsWidget->isOpen()) {
+        mBridgeGroupsWidget->resize();
+    }
+
 }

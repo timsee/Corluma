@@ -1,3 +1,9 @@
+/*!
+ * \copyright
+ * Copyright (C) 2015 - 2018.
+ * Released under the GNU General Public License.
+ */
+
 #include "bridge.h"
 #include "huelight.h"
 
@@ -27,6 +33,10 @@ Bridge jsonToBridge(const QJsonObject& object) {
         bridge.name = object["name"].toString();
     }
 
+    if (object["customName"].isString()) {
+        bridge.customName = object["customName"].toString();
+    }
+
     if (object["api"].isString()) {
         bridge.api = object["api"].toString();
     }
@@ -36,11 +46,12 @@ Bridge jsonToBridge(const QJsonObject& object) {
 
 QJsonObject bridgeToJson(const Bridge& bridge) {
     QJsonObject object;
-    object["username"] = bridge.username;
-    object["IP"]   = bridge.IP;
-    object["id"]   = bridge.id;
-    object["name"] = bridge.name;
-    object["api"]  = bridge.api;
+    object["username"]   = bridge.username;
+    object["IP"]         = bridge.IP;
+    object["id"]         = bridge.id;
+    object["name"]       = bridge.name;
+    object["customName"] = bridge.customName;
+    object["api"]        = bridge.api;
     object["macaddress"] = bridge.macaddress;
     return object;
 }

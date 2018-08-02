@@ -93,6 +93,15 @@ public:
     hue::Bridge bridgeFromIP(const QString& IP);
 
     /*!
+     * \brief changeName change the custom name for a hue::Bridge. This is a custom name that is not
+     *        stored on the bridge, so this will not be synced across multiple instances of the application
+     * \param bridge bridge to update the custom name on
+     * \param newName new name for the bridge
+     * \return true if updated, false if bridge isn't found and can't be updated
+     */
+    bool changeName(const hue::Bridge& bridge, const QString& newName);
+
+    /*!
      * \brief lightFromBridgeIDAndIndex uses a bridge and an index to get a specific light
      * \param bridgeID bridge's unqiue ID
      * \param index light's index

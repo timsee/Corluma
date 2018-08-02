@@ -77,26 +77,6 @@
 
 <div class="overviewSection">
   <div class="overviewTitle">
-    <h2>Lights Button</h2>      
-  </div>
-  <div class="overviewImage">
-    \image html lightsButtonPreview.png 
-  </div>
-  \copydoc CorlumaButton
-</div>
-
-<div class="overviewSection">
-  <div class="overviewTitle">
-    <h2>Lights Slider</h2>      
-  </div>
-  <div class="overviewImage">
-    \image html lightsSliderPreview.png 
-  </div>
-  \copydoc CorlumaSlider
-</div>
-
-<div class="overviewSection">
-  <div class="overviewTitle">
     <h2>Color Picker</h2>      
   </div>
   <div class="overviewImage">

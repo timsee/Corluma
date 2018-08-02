@@ -47,7 +47,6 @@ void GroupsParser::saveNewMood(const QString& groupName, const std::list<cor::Li
         QJsonObject object;
         object["isOn"] = device.isOn;
         if (device.isOn) {
-            object["brightness"] = device.brightness;
             object["routine"] = routineToString(device.routine);
 
             if (device.routine != ERoutine::singleSolid) {
@@ -55,9 +54,9 @@ void GroupsParser::saveNewMood(const QString& groupName, const std::list<cor::Li
             }
 
             if (device.routine <= cor::ERoutineSingleColorEnd) {
-                object["red"] = device.color.red();
-                object["green"] = device.color.green();
-                object["blue"] = device.color.blue();
+                object["hue"] = cor::roundToNDigits(device.color.hueF(), 4);
+                object["sat"] = cor::roundToNDigits(device.color.saturationF(), 4);
+                object["bri"] = cor::roundToNDigits(device.color.valueF(), 4);
                 object["colorMode"] = colorModeToString(device.colorMode);
             } else {
                 object["palette"] = device.palette.JSON();
@@ -334,14 +333,14 @@ bool GroupsParser::checkIfMoodIsValid(const QJsonObject& device) {
     bool isOn = device["isOn"].toBool();
 
     // these values always exist if the light is on
-    bool defaultChecks = (device["routine"].isString() && device["brightness"].isDouble());
+    bool defaultChecks = (device["routine"].isString());
     bool colorsValid = false;
     if (isOn) {
         ERoutine routine = stringToRoutine(device["routine"].toString());
         if (routine <= cor::ERoutineSingleColorEnd) {
-            colorsValid = (device["red"].isDouble()
-                    && device["green"].isDouble()
-                    && device["blue"].isDouble()
+            colorsValid = (device["hue"].isDouble()
+                    && device["sat"].isDouble()
+                    && device["bri"].isDouble()
                     && device["colorMode"].isString());
         } else {
             colorsValid = (device["palette"].isObject());
@@ -379,14 +378,15 @@ void GroupsParser::parseMood(const QJsonObject& object) {
 
                 bool isOn = device["isOn"].toBool();
 
-                int red = device["red"].toDouble();
-                int green = device["green"].toDouble();
-                int blue = device["blue"].toDouble();
+                float hue = device["hue"].toDouble();
+                float sat = device["sat"].toDouble();
 
                 int majorAPI = device["majorAPI"].toDouble();
                 int minorAPI = device["minorAPI"].toDouble();
 
-                int brightness = device["brightness"].toDouble();
+                float brightness = device["bri"].toDouble();
+                QColor color;
+                color.setHsvF(hue, sat, brightness);
 
                 ERoutine routine = stringToRoutine(device["routine"].toString());
 
@@ -400,11 +400,10 @@ void GroupsParser::parseMood(const QJsonObject& object) {
                 light.isOn = isOn;
                 light.majorAPI = majorAPI;
                 light.minorAPI = minorAPI;
-                light.color = QColor(red, green, blue);
+                light.color = color;
                 light.routine = routine;
                 light.palette = Palette(device["palette"].toObject());
                 light.speed = speed;
-                light.brightness = brightness;
                 light.colorMode = colorMode;
                 list.push_back(light);
             } else {

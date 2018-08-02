@@ -116,9 +116,6 @@ private:
     /// button for deleting the currently selected widget
     QPushButton *mDeleteButton;
 
-    /// layout for top area of widget.
-    QHBoxLayout *mTopLayout;
-
     /// layout for widget
     QVBoxLayout *mMainLayout;
 

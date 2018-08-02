@@ -29,7 +29,6 @@ void DeviceList::updateRoutine(const QJsonObject& routineObject) {
     for (auto&& light : mDevices) {
         light.routine = routine;
         light.isOn = isOn;
-
         if (routine != ERoutine::singleSolid) {
             light.speed = speed;
             if (light.protocol() == EProtocolType::nanoleaf) {
@@ -43,9 +42,9 @@ void DeviceList::updateRoutine(const QJsonObject& routineObject) {
                 light.color = cor::colorTemperatureToRGB(routineObject["temperature"].toDouble());
                 light.temperature = routineObject["temperature"].toDouble();
             } else {
-                light.color = QColor(routineObject["red"].toDouble(),
-                                         routineObject["green"].toDouble(),
-                                         routineObject["blue"].toDouble());
+                light.color.setHsvF(routineObject["hue"].toDouble(),
+                        routineObject["sat"].toDouble(),
+                        routineObject["bri"].toDouble());
                 light.temperature = -1;
             }
         } else {
@@ -62,10 +61,6 @@ void DeviceList::updateRoutine(const QJsonObject& routineObject) {
                 light.color = colors[colorIndex];
                 hueCount++;
             }
-        }
-
-        if (routineObject["brightness"].isDouble()) {
-            light.brightness = routineObject["brightness"].toDouble();
         }
 
         if (routineObject["param"].isDouble()) {
@@ -126,7 +121,9 @@ QColor DeviceList::mainColor() {
         g = g / deviceCount;
         b = b / deviceCount;
     }
-    return QColor(r,g,b);
+    QColor color(r, g, b);
+    color.setHsvF(color.hueF(), color.saturationF(), 1.0f);
+    return color;
 }
 
 
@@ -215,7 +212,11 @@ std::vector<QColor> DeviceList::colorScheme() {
 
 void DeviceList::updateBrightness(int brightness) {
     for (auto&& light : mDevices) {
-        light.brightness = brightness;
+        if (light.routine <= cor::ERoutineSingleColorEnd) {
+            light.color.setHsvF(light.color.hueF(), light.color.saturationF(), float(brightness) / 100.0f);
+        } else {
+            light.palette.brightness(brightness);
+        }
         light.isOn = true;
     }
     emit dataUpdate();
@@ -227,7 +228,11 @@ int DeviceList::brightness() {
     size_t deviceCount = 0;
     for (const auto& device : mDevices) {
         if (device.isReachable) {
-            brightness = brightness + device.brightness;
+            if (device.routine <= cor::ERoutineSingleColorEnd) {
+                brightness = brightness + device.color.valueF() * 100.0f;
+            } else {
+                brightness = brightness + device.palette.brightness();
+            }
             deviceCount++;
         }
     }

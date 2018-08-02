@@ -57,11 +57,6 @@ public:
      */
     EColorMode colorMode;
 
-    /*!
-     * \brief brightness brightness for this device, between 0 and 100.
-     */
-    int brightness;
-
     //-----------------------
     // Routines
     //-----------------------
@@ -86,8 +81,7 @@ public:
     /// palette currently in use (sometimes equal to custom palette, sometimes not)
     Palette palette;
 
-    /// slight hack for app memory, custom colors used by ArduCor are stored here.
-    std::vector<QColor> customColors;
+    Palette customPalette;
 
     /// slight hack for app memory, custom count of colors used by ArduCor are stored here.
     uint32_t customCount;
@@ -173,7 +167,6 @@ public:
         if (color           !=  rhs.color) result = false;
         if (routine         !=  rhs.routine) result = false;
         if (palette.JSON()  !=  rhs.palette.JSON()) result = false;
-        if (brightness      !=  rhs.brightness) result = false;
         if (index           !=  rhs.index) result = false;
         if (commType()      !=  rhs.commType()) result = false;
         if (protocol()      !=  rhs.protocol()) result = false;
@@ -195,7 +188,6 @@ public:
                    << " color: R:" << color.red() << " G:" << color.green() << " B:" << color.blue()
                    << " routine: " << routineToString(routine).toUtf8().toStdString()
                    << " palette: " << palette
-                   << " brightness: " << brightness
                    << " API: " << majorAPI << "." << minorAPI
                    << " index: " << index
                    << " CommType: " << commTypeToString(commType()).toUtf8().toStdString()

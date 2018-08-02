@@ -157,6 +157,10 @@ SOURCES += main.cpp \
     hue/bridge.cpp \
     hue/huelight.cpp \
     hue/hueinfowidget.cpp \
+    hue/bridgegroupswidget.cpp \
+    hue/bridgescheduleswidget.cpp \
+    hue/huegroupwidget.cpp \
+    hue/hueschedulewidget.cpp \
     nanoleaf/panels.cpp \
     nanoleaf/rhythmcontroller.cpp \
     nanoleaf/leafcontroller.cpp \
@@ -246,6 +250,10 @@ HEADERS  +=  arducor/arducordiscovery.h \
     hue/bridge.h \
     hue/hueinfowidget.h \
     hue/bridgeinfowidget.h \
+    hue/bridgegroupswidget.h \
+    hue/bridgescheduleswidget.h \
+    hue/huegroupwidget.h \
+    hue/hueschedulewidget.h \
     nanoleaf/panels.h \
     nanoleaf/rhythmcontroller.h \
     nanoleaf/leafcontroller.h \

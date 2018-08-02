@@ -68,6 +68,9 @@ public:
      */
     void updateBrightnessSlider();
 
+    /// getter for brightness
+    int brightness() { return mBrightnessSlider->slider()->value(); }
+
     /*!
      * \brief highlightButton highlight the button of any of the floating layouts, based on the key
      * \param key the key to use to highlight the buttons.

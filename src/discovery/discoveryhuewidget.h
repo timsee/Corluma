@@ -7,6 +7,8 @@
 #include "editablefieldwidget.h"
 #include "hue/bridgeinfowidget.h"
 #include "hue/lightdiscovery.h"
+#include "hue/bridgegroupswidget.h"
+#include "hue/bridgescheduleswidget.h"
 #include "greyoutoverlay.h"
 
 
@@ -50,11 +52,6 @@ public slots:
      */
     void IPFieldChanged(QString);
 
-protected:
-    /*!
-     * \brief resizeEvent called every time the main window is resized.
-     */
-    void resizeEvent(QResizeEvent *);
 
 private slots:
 
@@ -67,8 +64,28 @@ private slots:
     /// handles when the close button is pressed
     void hueDiscoveryClosePressed();
 
+    /// closes the group widget
+    void groupsClosePressed();
+
+    /// closes the schedule widget
+    void schedulesClosePressed();
+
+    /// handles when the schedules button is pressed for a hue::BridgeInfoWidget
+    void schedulesPressed(QString);
+
+    /// handles when the groups button is pressed for a hue::BridgeInfoWidget
+    void groupsPressed(QString);
+
+    /// handles when a name change is trigged from a hue::BridgeInfoWidget
+    void changedName(QString, QString);
+
     /// handles when greyout is finished
     void greyOutFadeComplete();
+
+protected:
+
+    /// called when the widget resizes
+    virtual void resizeEvent(QResizeEvent *);
 
 private:
     /*!
@@ -90,26 +107,20 @@ private:
     /// overlay that greys out everythign under it
     GreyOutOverlay *mGreyOut;
 
+    /// icon for when running discovery
+    QLabel *mLoadingIcon;
+
     /// widget for discovering hue lights
     hue::LightDiscovery *mHueLightDiscovery;
 
+    /// widget for displaying the groups of a bridge
+    hue::BridgeGroupsWidget *mBridgeGroupsWidget;
+
+    /// widget for displaying the schedules of a widget
+    hue::BridgeSchedulesWidget *mBridgeSchedulesWidget;
+
     /// label to prompt the user through the application.
     QLabel *mLabel;
-
-    /// image for displaying a graphic to help with current step of widget.
-    QLabel *mImage;
-
-    /// label for displaying before the IP Address editable field.
-    QLabel *mIPAddressInfo;
-
-    /// cachced pixmap of hue bridge
-    QPixmap mBridgePixmap;
-
-    /// IP address of bridge
-    EditableFieldWidget *mIPAddress;
-
-    /// instructions on what to do with IP address
-    QLabel *mIPAddressDebug;
 
     /// widget used for scroll area.
     QWidget *mScrollAreaWidget;
@@ -141,12 +152,6 @@ private:
 
     /// layout for widget
     QVBoxLayout *mLayout;
-
-    /// layout for bridge picture and info
-    QHBoxLayout *mBridgeLayout;
-
-    /// layout for IP information
-    QHBoxLayout *mIPLayout;
 };
 
 #endif // DISCOVERYHUEWIDGET_H

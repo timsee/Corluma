@@ -64,5 +64,6 @@
         <file>images/hue_storylight.png</file>
         <file>images/hue_go.png</file>
         <file>resources/palettes.json</file>
+        <file>images/loading_icon.gif</file>
     </qresource>
 </RCC>

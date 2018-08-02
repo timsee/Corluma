@@ -10,9 +10,9 @@ The backend handles communicating with the lights, storing data about the sessio
 
 \copydoc CommLayer
 
-\section sec_2 DataLayer
+\section sec_2 DeviceList
 
-\copydoc DataLayer
+\copydoc DeviceList
 
 \section sec_3 DataSync
 

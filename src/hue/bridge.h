@@ -111,6 +111,9 @@ public:
     /// name of bridge. this is often a default name and uninteresting
     QString name = "";
 
+    /// name defined by the apps saved data
+    QString customName = "";
+
     /// mac address for the bridge
     QString macaddress = "";
 
@@ -129,6 +132,7 @@ public:
                    << " IP: " << IP.toStdString()
                    << " username: " << username.toStdString()
                    << " name: " << name.toStdString()
+                   << " customName: " << customName.toStdString()
                    << " api: " << api.toStdString()
                    << " id:" <<  id.toStdString()
                    << " macaddress:" <<  macaddress.toStdString();
@@ -138,9 +142,10 @@ public:
     /// equal operator
     bool operator==(const hue::Bridge& rhs) const {
         bool result = true;
-        if (IP        !=  rhs.IP)       result = false;
-        if (username  !=  rhs.username) result = false;
-        if (id        !=  rhs.id)       result = false;
+        if (IP         !=  rhs.IP)       result = false;
+        if (customName !=  rhs.customName) result = false;
+        if (username   !=  rhs.username) result = false;
+        if (id         !=  rhs.id)       result = false;
         return result;
     }
 };

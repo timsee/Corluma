@@ -158,11 +158,13 @@ void ColorPage::showMultiRoutineWidget(bool shouldShow) {
 void ColorPage::newRoutineSelected(QJsonObject routineObject) {
     ERoutine routine = stringToRoutine(routineObject["routine"].toString());
     if (routine <= cor::ERoutineSingleColorEnd) {
-        routineObject["red"]   = mColor.red();
-        routineObject["green"] = mColor.green();
-        routineObject["blue"]  = mColor.blue();
+        routineObject["hue"] = mColor.hueF();
+        routineObject["sat"] = mColor.saturationF();
+        routineObject["bri"] = mColor.valueF();
     } else {
-        Palette palette(paletteToString(EPalette::custom), mColorPicker->colors());
+        Palette palette(paletteToString(EPalette::custom),
+                        mColorPicker->colors(),
+                        mBrightness);
         routineObject["palette"] = palette.JSON();
     }
     routineObject["isOn"]  = true;
@@ -182,9 +184,9 @@ void ColorPage::newRoutineSelected(QJsonObject routineObject) {
 
 void ColorPage::colorChanged(QColor color) {
     updateColor(color);
-    mCurrentSingleRoutine["red"]   = mColor.red();
-    mCurrentSingleRoutine["green"] = mColor.green();
-    mCurrentSingleRoutine["blue"]  = mColor.blue();
+    mCurrentSingleRoutine["hue"] = mColor.hueF();
+    mCurrentSingleRoutine["sat"] = mColor.saturationF();
+    mCurrentSingleRoutine["bri"] = mColor.valueF();
     mCurrentSingleRoutine["isOn"]  = true;
 
     emit routineUpdate(mCurrentSingleRoutine);
@@ -210,7 +212,9 @@ void ColorPage::customColorCountChanged(int count) {
 void ColorPage::multiColorChanged() {
     QJsonObject routineObject;
     routineObject["routine"] = routineToString(mCurrentMultiRoutine);
-    Palette palette(paletteToString(EPalette::custom), mColorPicker->colors());
+
+    Palette palette(paletteToString(EPalette::custom), mColorPicker->colors(), mBrightness);
+
     routineObject["palette"] = palette.JSON();
     routineObject["isOn"]  = true;
     // no speed settings for single color routines currently...

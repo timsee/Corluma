@@ -30,11 +30,6 @@ public:
      */
     explicit DiscoveryArduCorWidget(CommLayer *comm, QWidget *parent);
 
-    /*!
-     * \brief Destructor
-     */
-    ~DiscoveryArduCorWidget();
-
     /// See DiscoveryWidget.h
     void handleDiscovery(bool isActive);
 
