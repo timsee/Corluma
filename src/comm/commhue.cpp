@@ -508,8 +508,7 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge, QJsonObject object,
 
             if (hue.colorMode == EColorMode::XY) {
                 bool isValid = false;
-                if (stateObject["xy"].isArray()
-                        && stateObject["bri"].isDouble()) {
+                if (stateObject["xy"].isArray() && stateObject["bri"].isDouble()) {
                     QJsonArray array = stateObject["xy"].toArray();
                     if (array.size() == 2) {
                         if (array.at(0).isDouble()

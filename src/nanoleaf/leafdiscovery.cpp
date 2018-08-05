@@ -168,9 +168,10 @@ void LeafDiscovery::addIP(const QString& ip) {
     }
     controller.IP = ipAddr;
     controller.port = 16021;
-    // this assigns a name to the light to fix edge cases in mDeviceTable. TODO: fix edge case
-    controller.name = "Nanoleaf";
-    controller.hardwareName = "Nanoleaf";
+    // get device count + 1 for unique naming
+    int deviceCount = mFoundControllers.size() + mNotFoundControllers.size() + 1;
+    controller.name = "Nanoleaf" + deviceCount;
+    controller.hardwareName = "Nanoleaf" + deviceCount;
     mUnknownControllers.push_back(controller);
 }
 

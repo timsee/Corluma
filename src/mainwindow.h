@@ -321,7 +321,7 @@ private:
      * \brief data layer that maintains and tracks the states of the lights
      *        and the saved data of the GUI
      */
-    DeviceList *mData;
+    cor::DeviceList *mData;
 
     /*!
      * \brief mAppSettings maintains which comnmtypes are currently enabled.

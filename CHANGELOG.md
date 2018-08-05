@@ -377,4 +377,13 @@ ___
 * Added widgets to see more information on what data is stored on a Philip's Bridge. 
 * Added the ability to set a custom name for Bridges.
  
+### **v0.13.5**
+#### Yet Another Bug Fixes Update
+*This update addresses bugs that have been sitting in the backlog for a while.*
+* Removed `cor::Light` dependencies from the `ColorPicker`.
+* Added a `SwatchVectorWidget` for picking and displaying color schemes.
+* Fixed bugs with updating the custom color array for arducor devices.
+* moved `DeviceList` into the namespace `cor::DeviceList`.
+* Fixed bug with connecting to multiple Nanoleafs with manual IP addresses.
+* Fixed miscellaneous bugs.
 

@@ -10,8 +10,7 @@
 #include "comm/commlayer.h"
 #include "cor/utils.h"
 
-DataSyncSettings::DataSyncSettings(DeviceList *data, CommLayer *comm, AppSettings *appSettings) : mAppSettings(appSettings)
-{
+DataSyncSettings::DataSyncSettings(cor::DeviceList *data, CommLayer *comm, AppSettings *appSettings) : mAppSettings(appSettings) {
     mComm = comm;
     mData = data;
     mUpdateInterval = 2000;

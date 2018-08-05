@@ -8,7 +8,15 @@
 #include <QStyleOption>
 #include <QDebug>
 #include "colorschemecircles.h"
-#include "cor/utils.h"
+
+float colorDifference(QColor first, QColor second) {
+    float r = std::abs(first.red() - second.red()) / 255.0f;
+    float g = std::abs(first.green() - second.green()) / 255.0f;
+    float b = std::abs(first.blue() - second.blue()) / 255.0f;
+    float difference = (r + g + b) / 3.0f;
+    return difference;
+}
+
 
 ColorSchemeCircles::ColorSchemeCircles(QImage renderedColorWheel, QWidget *parent) : QWidget(parent) {
     mCircles = std::vector<SPickerSelection>(4);
@@ -262,15 +270,14 @@ std::vector<SPickerSelection> ColorSchemeCircles::circles() {
 QPointF ColorSchemeCircles::findColorInWheel(QColor color) {
     for (int x = 0; x < mRenderedColorWheel.width(); ++x) {
         for (int y = 0; y < mRenderedColorWheel.height(); ++y) {
-            float colorDifference = cor::colorDifference(QColor(mRenderedColorWheel.pixel(x, y)), color);
+            float difference = colorDifference(QColor(mRenderedColorWheel.pixel(x, y)), color);
             // try specific values first, then try more general ones if none are found
-            if (colorDifference < 0.01f) {
+            if (difference < 0.01f) {
                 return QPointF(x / (float)mRenderedColorWheel.width(), y / (float)mRenderedColorWheel.height());
-            } else if (colorDifference < 0.05f) {
+            } else if (difference < 0.05f) {
                 return QPointF(x / (float)mRenderedColorWheel.width(), y / (float)mRenderedColorWheel.height());
-            } else if (colorDifference < 0.1f) {
+            } else if (difference < 0.1f) {
                 return QPointF(x / (float)mRenderedColorWheel.width(), y / (float)mRenderedColorWheel.height());
-
             }
         }
     }

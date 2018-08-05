@@ -14,7 +14,7 @@
 CommType::CommType(ECommType type) : mType(type) {
     mUpdateTimeoutInterval = 15000;
     mStateUpdateCounter = 0;
-    mSecondaryUpdatesInterval = 20;
+    mSecondaryUpdatesInterval = 10;
 
     mElapsedTimer.start();
 

@@ -11,6 +11,7 @@
 #include <QStyleOption>
 #include <QGraphicsOpacityEffect>
 #include <QFontMetrics>
+#include <QApplication>
 
 namespace cor
 {

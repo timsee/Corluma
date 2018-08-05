@@ -1,10 +1,5 @@
 #ifndef COLORSCHEMECIRCLES_H
 #define COLORSCHEMECIRCLES_H
-/*!
- * \copyright
- * Copyright (C) 2015 - 2018.
- * Released under the GNU General Public License.
- */
 
 #include <QWidget>
 
@@ -16,6 +11,12 @@ struct SPickerSelection {
     float angle;
     float distance;
 };
+
+/*!
+ * \copyright
+ * Copyright (C) 2015 - 2018.
+ * Released under the GNU General Public License.
+ */
 
 /*!
  * \brief The ColorSchemeCircles class provides a series of selecction circles to overlay on the color picker.

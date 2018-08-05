@@ -5,7 +5,7 @@
 #include <QObject>
 #include <QTimer>
 
-#include "devicelist.h"
+#include "cor/devicelist.h"
 #include "datasync.h"
 #include "arducor/arducorpacketparser.h"
 #include "appsettings.h"
@@ -27,7 +27,7 @@ public:
      * \param data pointer to the app's data layer.
      * \param comm pointer to the app's comm layer.
      */
-    DataSyncSettings(DeviceList *data, CommLayer *comm, AppSettings *settings);
+    DataSyncSettings(cor::DeviceList *data, CommLayer *comm, AppSettings *settings);
 
     /*!
      * \brief cancelSync cancel the data sync, regardless of it successfully completed.

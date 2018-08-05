@@ -118,7 +118,7 @@ void CommNanoleaf::putJSON(const QNetworkRequest& request, const QJsonObject& js
 }
 
 
-void CommNanoleaf::changeColorCT(const cor::Controller& controller, int ct) {
+void CommNanoleaf::changeColorCT(const cor::Controller&, int) {
 //    Q_UNUSED(controller);
 //    //qDebug() << " CT is " << ct;
 //    // https://en.wikipedia.org/wiki/Mired
@@ -942,8 +942,7 @@ void CommNanoleaf::brightnessChange(const nano::LeafController& controller, int 
     putJSON(request, json);
 }
 
-void CommNanoleaf::timeOutChange(const nano::LeafController& controller, int timeout) {
-    Q_UNUSED(timeout);
+void CommNanoleaf::timeOutChange(const nano::LeafController&, int) {
     //TODO: implement
 }
 

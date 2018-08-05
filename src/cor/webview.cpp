@@ -59,8 +59,7 @@ void WebView::paintEvent(QPaintEvent *) {
     painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
 }
 
-void WebView::closeButtonPressed(bool clicked) {
-    Q_UNUSED(clicked);
+void WebView::closeButtonPressed(bool ) {
     emit closePressed();
 }
 

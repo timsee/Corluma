@@ -92,9 +92,6 @@ private:
      */
     uint32_t mMaximumSize;
 
-    /// true show count slider, false to hide
-    bool mShowSlider;
-
     /// number of columns of palettes
     uint32_t mWidth;
 
@@ -109,9 +106,6 @@ private:
 
     /// color groups used to display color palette state
     std::vector<std::vector<QColor> > mColorGroups;
-
-    /// indices of selected colors in multi color layout.
-    std::list<uint32_t> mSelectedIndices;
 
     /*!
      * \brief mLayout layout used to arrange the slider and the buttons.

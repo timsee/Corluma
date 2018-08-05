@@ -17,7 +17,8 @@
 
 ColorPage::ColorPage(QWidget *parent) :
     QWidget(parent),
-    mColorScheme(5, QColor(0, 255, 0)) {
+    mColorScheme(5, QColor(0, 255, 0)),
+    mPalette(QJsonObject()) {
 
     mBottomMenuState = EBottomMenuShow::showStandard;
     mBottomMenuIsOpen = false;
@@ -69,9 +70,6 @@ ColorPage::~ColorPage() {
 void ColorPage::changePageType(EColorPageType page, bool skipAnimation) {
     mPageType = page;
 
-    mColorPicker->updateColorStates(mColor,
-                                    mBrightness,
-                                    mColorScheme);
     if (mPageType == EColorPageType::RGB) {
         mColorPicker->changeLayout(ELayoutColorPicker::standardLayout, skipAnimation);
     } else if (mPageType == EColorPageType::ambient) {
@@ -202,7 +200,8 @@ void ColorPage::customColorCountChanged(int count) {
     Q_UNUSED(count);
     mColorPicker->updateColorStates(mColor,
                                     mBrightness,
-                                    mColorScheme);
+                                    mColorScheme,
+                                    mPalette.colors());
 
     mMultiRoutineWidget->multiRoutineColorsChanged(mColorPicker->colors());
 
@@ -261,13 +260,15 @@ void ColorPage::updateColor(QColor color) {
 // ----------------------------
 
 
-void ColorPage::show(QColor color, uint32_t brightness, std::vector<QColor> colorScheme) {
+void ColorPage::show(QColor color, uint32_t brightness, std::vector<QColor> colorScheme, Palette palette) {
     mColor = color;
     mBrightness = brightness;
     mColorScheme = colorScheme;
+    mPalette = palette;
     mColorPicker->updateColorStates(mColor,
                                     mBrightness,
-                                    mColorScheme);
+                                    mColorScheme,
+                                    mPalette.colors());
 }
 
 void ColorPage::resizeEvent(QResizeEvent *) {

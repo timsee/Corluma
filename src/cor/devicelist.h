@@ -12,6 +12,9 @@
 #include "comm/commhue.h"
 #include "appsettings.h"
 
+namespace cor
+{
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2018.
@@ -56,10 +59,10 @@ public:
 
     /*!
      * \brief palette getter for the current palette.
-     * \return the EPalette that represents the colors being displayed on
+     * \return the Palette that represents the colors being displayed on
      *         the LED array.
      */
-    EPalette palette();
+    Palette palette();
 
     /*!
      * \brief speed getter for the speed the LED's update.
@@ -239,5 +242,7 @@ private:
     std::list<cor::Light> mDevices;
 
 };
+
+}
 
 #endif // DATALAYER_H

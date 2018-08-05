@@ -10,7 +10,7 @@
 #include "cor/utils.h"
 
 
-DataSyncHue::DataSyncHue(DeviceList *data, CommLayer *comm, AppSettings *appSettings) : mAppSettings(appSettings) {
+DataSyncHue::DataSyncHue(cor::DeviceList *data, CommLayer *comm, AppSettings *appSettings) : mAppSettings(appSettings) {
     mData = data;
     mComm = comm;
     mUpdateInterval = 250;
@@ -86,8 +86,7 @@ void DataSyncHue::syncData() {
         mDataIsInSync = true;
     }
 
-    if (mDataIsInSync
-            || mData->devices().size() == 0) {
+    if (mDataIsInSync || mData->devices().size() == 0) {
         endOfSync();
     }
 

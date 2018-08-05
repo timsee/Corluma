@@ -117,7 +117,7 @@ void DiscoveryHueWidget::hueDiscoveryUpdate(EHueDiscoveryState newState) {
             emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovered);
             break;
         case EHueDiscoveryState::allBridgesConnected:
-            mLabel->setText(QString("All bridges discovered!"));
+            mLabel->setText(QString(""));
             //qDebug() << "Hue Update: All Bridges Connected" << mComm->hueBridge().IP;
             emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovered);
             break;

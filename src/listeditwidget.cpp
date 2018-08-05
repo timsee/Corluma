@@ -11,7 +11,7 @@
 
 ListEditWidget::ListEditWidget(QWidget* parent,
                                CommLayer* comm,
-                               DeviceList* data) : ListCollectionWidget(parent),
+                               cor::DeviceList* data) : ListCollectionWidget(parent),
                                                   mComm(comm),
                                                   mData(data) {
     this->setParent(parent);

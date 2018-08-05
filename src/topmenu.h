@@ -9,7 +9,7 @@
 #include "cor/slider.h"
 #include "cor/button.h"
 #include "icondata.h"
-#include "devicelist.h"
+#include "cor/devicelist.h"
 #include "floatinglayout.h"
 #include "lightpage.h"
 #include "moodpage.h"
@@ -49,7 +49,7 @@ class TopMenu : public QWidget
 public:
     /// constructor
     explicit TopMenu(QWidget *parent,
-                     DeviceList* data,
+                     cor::DeviceList* data,
                      CommLayer *comm,
                      MainWindow *mainWindow,
                      PalettePage *palettePage,
@@ -178,7 +178,7 @@ private:
     uint32_t mFloatingMenuEnd;
 
     /// data layer, contains intended state for all devices.
-    DeviceList *mData;
+    cor::DeviceList *mData;
 
     /// pointer to commlayer
     CommLayer *mComm;

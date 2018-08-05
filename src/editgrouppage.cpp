@@ -14,7 +14,7 @@
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
 
-EditGroupPage::EditGroupPage(QWidget *parent, CommLayer* comm, DeviceList* data, GroupsParser *parser) : QWidget(parent), mComm(comm), mGroups(parser) {
+EditGroupPage::EditGroupPage(QWidget *parent, CommLayer* comm, cor::DeviceList* data, GroupsParser *parser) : QWidget(parent), mComm(comm), mGroups(parser) {
 
     mTopMenu = new EditPageTopMenu(this);
     mTopMenu->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);

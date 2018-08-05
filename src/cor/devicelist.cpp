@@ -13,6 +13,9 @@
 #include "cor/presetpalettes.h"
 #define MAX_SPEED 200
 
+namespace cor
+{
+
 DeviceList::DeviceList(QObject *parent) : QObject(parent) {
 }
 
@@ -81,7 +84,7 @@ ERoutine DeviceList::currentRoutine() {
     return (ERoutine)std::distance(routineCount.begin(), result);
 }
 
-EPalette DeviceList::palette() {
+Palette DeviceList::palette() {
     // count number of times each color group occurs
     std::vector<int> paletteCount((int)EPalette::unknown, 0);
     for (const auto& device : mDevices) {
@@ -91,7 +94,26 @@ EPalette DeviceList::palette() {
     }
     // find the most frequent color group occurence, return its index.
     auto result = std::max_element(paletteCount.begin(), paletteCount.end());
-    return (EPalette)std::distance(paletteCount.begin(), result);
+    EPalette palette = EPalette(std::distance(paletteCount.begin(), result));
+    if (palette == EPalette::custom) {
+        //TODO: fill thsi out
+        std::vector<QColor> paletteVector(10);
+        for (const auto& device : mDevices) {
+            if (device.palette.paletteEnum() == palette) {
+                return device.palette;
+            }
+        }
+    } else {
+        // we can assume that palettes that have the same enum that aren't custom are identical. I'm sure we'll regret this assumption one day...
+        if (!mDevices.empty()) {
+            for (const auto& device : mDevices) {
+                if (device.palette.paletteEnum() == palette) {
+                    return device.palette;
+                }
+            }
+        }
+    }
+    return Palette(QJsonObject());
 }
 
 QColor DeviceList::mainColor() {
@@ -433,4 +455,6 @@ QString DeviceList::findCurrentMood(const std::list<cor::LightGroup>& moods) {
         }
     }
     return "";
+}
+
 }

@@ -18,7 +18,7 @@
 #include <QMessageBox>
 #include <QScroller>
 
-LightPage::LightPage(QWidget *parent, DeviceList *data, CommLayer *comm, GroupsParser *groups, AppSettings *appSettings) :
+LightPage::LightPage(QWidget *parent, cor::DeviceList *data, CommLayer *comm, GroupsParser *groups, AppSettings *appSettings) :
     QWidget(parent), mComm(comm), mAppSettings(appSettings) {
 
     mData = data;

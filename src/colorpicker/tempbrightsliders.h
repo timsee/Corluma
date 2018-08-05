@@ -1,9 +1,9 @@
 #ifndef TEMPBRIGHTSLIDERS_H
 #define TEMPBRIGHTSLIDERS_H
 
+#include "cor/slider.h"
 
 #include <QWidget>
-#include "cor/slider.h"
 
 /*!
  * \copyright

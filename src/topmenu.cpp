@@ -11,7 +11,7 @@
 #include "hue/huelight.h"
 
 TopMenu::TopMenu(QWidget* parent,
-                 DeviceList* data,
+                 cor::DeviceList *data,
                  CommLayer *comm,
                  MainWindow *mainWindow,
                  PalettePage *palettePage,
@@ -326,7 +326,7 @@ void TopMenu::updatePaletteButton() {
 //--------------------
 
 void TopMenu::floatingLayoutButtonPressed(QString button) {
-    if (button.compare("Discovery") == 0) {
+   if (button.compare("Discovery") == 0) {
         mMainWindow->switchToDiscovery();
     } else if (button.compare("New_Group") == 0) {
         if (mMainWindow->currentPage() == EPage::lightPage) {
@@ -469,7 +469,6 @@ void TopMenu::setupColorFloatingLayout() {
         verticalButtons = {QString("Multi"), QString("Routine")};
 
         mColorFloatingLayout->highlightButton(mLastColorButtonKey);
-        updateColorVerticalRoutineButton();
         mColorPage->changePageType(EColorPageType::RGB, true);
     } else if (hasHue) {
         // get list of all current devices

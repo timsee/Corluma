@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mGroups = new GroupsParser(this);
     mAppSettings = new AppSettings();
-    mData   = new DeviceList(this);
+    mData   = new cor::DeviceList(this);
     mComm   = new CommLayer(this, mGroups);
 
     mDataSyncArduino  = new DataSyncArduino(mData, mComm);
@@ -174,7 +174,6 @@ MainWindow::MainWindow(QWidget *parent) :
     mEditPage->isOpen(false);
     connect(mEditPage, SIGNAL(pressedClose()), this, SLOT(editClosePressed()));
     mEditPage->setGeometry(0, -1 * this->height(), this->width(), this->height());
-
 
     // --------------
     // Setup Hue Info Widget
@@ -340,6 +339,7 @@ bool MainWindow::shouldTranitionInFromLeft(EPage page) {
 void MainWindow::showMainPage(EPage page) {
     QWidget *widget = mainPageWidget(page);
     int x;
+
     bool transitionLeft = shouldTranitionInFromLeft(page);
     if (transitionLeft) {
         x = widget->width() * -1;
@@ -355,9 +355,15 @@ void MainWindow::showMainPage(EPage page) {
     if (page == EPage::lightPage) {
         mLightPage->show();
     } else if (page == EPage::colorPage) {
-        mColorPage->show(mData->mainColor(), mData->brightness(), mData->colorScheme());
+        mColorPage->show(mData->mainColor(),
+                         mData->brightness(),
+                         mData->colorScheme(),
+                         mData->palette());
     } else if (page == EPage::moodPage) {
-        mMoodPage->show(mData->findCurrentMood(mGroups->moodList()), mGroups->moodList(), mComm->roomList(), mComm->deviceNames());
+        mMoodPage->show(mData->findCurrentMood(mGroups->moodList()),
+                        mGroups->moodList(),
+                        mComm->roomList(),
+                        mComm->deviceNames());
     } else if (page == EPage::palettePage) {
         mPalettePage->resize();
         mPalettePage->show(mData->mainColor(),
@@ -407,9 +413,7 @@ void MainWindow::renamedLight(cor::Light light, QString newName) {
 // Protected
 // ----------------------------
 
-void MainWindow::resizeEvent(QResizeEvent *event) {
-    Q_UNUSED(event);
-
+void MainWindow::resizeEvent(QResizeEvent *) {
     resizeLayout();
 
     QSize fullScreenSize = this->size();
@@ -450,22 +454,25 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
         mLightInfoWidget->resize();
     }
 
-    QRect geometry(this->width() + mMainViewport->width(),
-                   mMainViewport->geometry().y(),
-                   mMainViewport->geometry().width(),
-                   mMainViewport->geometry().height());
+    QRect offsetGeometry(this->width() + mMainViewport->width(),
+                         mMainViewport->geometry().y(),
+                         mMainViewport->geometry().width(),
+                         mMainViewport->geometry().height());
 
     if (mPageIndex != EPage::colorPage) {
-        mColorPage->setGeometry(geometry);
+        mColorPage->setGeometry(offsetGeometry);
     }
+
     if (mPageIndex != EPage::palettePage) {
-        mPalettePage->setGeometry(geometry);
+        mPalettePage->setGeometry(offsetGeometry);
     }
+
     if (mPageIndex != EPage::moodPage) {
-        mMoodPage->setGeometry(geometry);
+        mMoodPage->setGeometry(offsetGeometry);
     }
+
     if (mPageIndex != EPage::lightPage) {
-        mLightPage->setGeometry(geometry);
+        mLightPage->setGeometry(offsetGeometry);
     }
 }
 
@@ -766,7 +773,7 @@ void MainWindow::resizeLayout() {
                           mTopMenu->geometry().height());
     mSpacer->setGeometry(mTopMenu->geometry());
     QRect rect(mLayout->contentsMargins().left() + mLayout->spacing(),
-               mTopMenu->floatingLayoutEnd(),
+               mTopMenu->floatingLayoutEnd() + 2,
                this->width() - (mLayout->contentsMargins().right() + mLayout->contentsMargins().left() + mLayout->spacing()),
                (this->height() - mTopMenu->geometry().height()) * 0.92f);
     mMainViewport->setGeometry(rect);
@@ -779,6 +786,11 @@ void MainWindow::resizeLayout() {
 void MainWindow::routineChanged(QJsonObject routine) {
     // add brightness to routine
     routine["bri"] = mTopMenu->brightness() / 100.0f;
+    if (routine["palette"].isObject()) {
+        QJsonObject paletteObject = routine["palette"].toObject();
+        paletteObject["bri"] = mTopMenu->brightness() / 100.0f;
+        routine["palette"] = paletteObject;
+    }
     mData->updateRoutine(routine);
 }
 
@@ -795,12 +807,13 @@ void MainWindow::timeoutEnabledChanged(bool enabled) {
 }
 
 void MainWindow::moodChanged(QString mood) {
-    for (auto&& group :  mGroups->moodList()) {
+    for (const auto& group :  mGroups->moodList()) {
         if (group.name == mood) {
             mData->clearDevices();
+            // creates a copy of the groups devices
             auto devices = group.devices;
             // checks for reachability of devices and appends that to the list.
-            for (auto& device : devices) {
+            for (auto&& device : devices) {
                 // find up to date version of device
                 auto deviceCopy = device;
                 mComm->fillDevice(deviceCopy);

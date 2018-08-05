@@ -33,7 +33,7 @@ class EditGroupPage : public QWidget, public cor::Page
 
 public:
     /// constructor
-    explicit EditGroupPage(QWidget* parent, CommLayer *layer, DeviceList *data, GroupsParser *parser);
+    explicit EditGroupPage(QWidget* parent, CommLayer *layer, cor::DeviceList *data, GroupsParser *parser);
 
     /// deconstructor
     ~EditGroupPage();

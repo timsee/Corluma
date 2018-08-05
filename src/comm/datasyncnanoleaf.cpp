@@ -9,7 +9,7 @@
 #include "cor/utils.h"
 #include "comm/commnanoleaf.h"
 
-DataSyncNanoLeaf::DataSyncNanoLeaf(DeviceList *data, CommLayer *comm) {
+DataSyncNanoLeaf::DataSyncNanoLeaf(cor::DeviceList *data, CommLayer *comm) {
     mData = data;
     mComm = comm;
     mUpdateInterval = 250;

@@ -289,12 +289,7 @@ void ArduCorPacketParser::routineChange(const std::vector<int>& intVector) {
                 if (palette == EPalette::unknown) {
                     validVector = false;
                 } else {
-                    if (palette == EPalette::custom) {
-                        //TODO: this looks broken
-                        routineObject["palette"] = Palette(paletteToString(EPalette::custom), std::vector<QColor>(1, QColor(255, 0, 0)), 50).JSON();
-                    } else {
-                        routineObject["palette"] = mPresetPalettes.palette(palette).JSON();
-                    }
+                    routineObject["paletteEnum"] = paletteToString(palette);
                 }
             } else {
                 validVector = false;

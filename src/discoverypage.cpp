@@ -23,7 +23,7 @@
 #include <QStyleOption>
 #include <QGraphicsOpacityEffect>
 
-DiscoveryPage::DiscoveryPage(QWidget *parent, DeviceList *data, CommLayer *comm, AppSettings *appSettings) :
+DiscoveryPage::DiscoveryPage(QWidget *parent, cor::DeviceList *data, CommLayer *comm, AppSettings *appSettings) :
     QWidget(parent),
     mComm(comm),
     mAppSettings(appSettings) {
@@ -137,7 +137,7 @@ void DiscoveryPage::renderUI() {
 
 
 void DiscoveryPage::resizeButtonIcons() {
-    if (mLastFloatingHeight != mHorizontalFloatingLayout->height()) {
+    if (uint32_t(mLastFloatingHeight) != mHorizontalFloatingLayout->height()) {
         mLastFloatingHeight = mHorizontalFloatingLayout->height();
         int buttonSize = (int)((float)mHorizontalFloatingLayout->height() * 0.5f);
         mButtonIcons = std::vector<QPixmap>((size_t)EConnectionButtonIcons::MAX);

@@ -169,7 +169,7 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
     if (reply->error() == QNetworkReply::NoError) {
         QString string = (QString)reply->readAll();
         QString IP = reply->url().toString();
-      //  qDebug() << "Response:" << string;
+        //qDebug() << "Response:" << string;
         QJsonDocument jsonResponse = QJsonDocument::fromJson(string.toUtf8());
         if (IP != kNUPnPAddress) {
             // check validity of the document
@@ -646,6 +646,6 @@ bool BridgeDiscovery::loadJSON() {
 // ----------------------------
 
 const QString BridgeDiscovery::kAppName = QString("Corluma");
-const QString BridgeDiscovery::kNUPnPAddress = QString("http://www.meethue.com/api/nupnp");
+const QString BridgeDiscovery::kNUPnPAddress = QString("https://www.meethue.com/api/nupnp");
 
 }

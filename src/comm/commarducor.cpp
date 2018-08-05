@@ -211,9 +211,9 @@ void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
                                     device.isReachable     = (bool)intVector[x + 2];
 
                                     float brightness = float(intVector[x + 8]) / 100.0f;
-                                    uint32_t red   = float(intVector[x + 3]) * brightness;
-                                    uint32_t green = float(intVector[x + 4]) * brightness;
-                                    uint32_t blue  = float(intVector[x + 5]) * brightness;
+                                    uint32_t red     = float(intVector[x + 3]) * brightness;
+                                    uint32_t green   = float(intVector[x + 4]) * brightness;
+                                    uint32_t blue    = float(intVector[x + 5]) * brightness;
                                     QColor color(red, green, blue);
                                     color.setHsvF(color.hueF(), color.saturationF(), 1.0f);
                                     color.setHsvF(color.hueF(), color.saturationF(), brightness);
@@ -259,6 +259,9 @@ void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
                                         j = j + 3;
                                     }
                                     device.customPalette = Palette(paletteToString(EPalette::custom), colors, brightness);
+                                    if (device.palette.paletteEnum() == EPalette::custom) {
+                                        device.palette = device.customPalette;
+                                    }
                                     commByType(type)->updateDevice(device);
                                 }
                             }

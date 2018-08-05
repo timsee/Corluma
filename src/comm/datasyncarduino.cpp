@@ -11,7 +11,7 @@
 #include "cor/utils.h"
 #include "cor/protocols.h"
 
-DataSyncArduino::DataSyncArduino(DeviceList *data, CommLayer *comm) {
+DataSyncArduino::DataSyncArduino(cor::DeviceList *data, CommLayer *comm) {
     mData = data;
     mComm = comm;
     mUpdateInterval = 100;

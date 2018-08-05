@@ -2,7 +2,6 @@
 #define COR_SLIDER_H
 
 
-#include <QApplication>
 #include <QWidget>
 #include <QSlider>
 #include <QLabel>

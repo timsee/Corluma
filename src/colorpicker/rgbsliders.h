@@ -1,8 +1,10 @@
 #ifndef RGBSLIDERS_H
 #define RGBSLIDERS_H
 
-#include <QWidget>
 #include "cor/slider.h"
+
+#include <QWidget>
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2018.

@@ -81,7 +81,10 @@ public:
     EColorPageType pageType();
 
     /// called when the widget is shown
-    void show(QColor color, uint32_t brightness, std::vector<QColor> colorScheme);
+    void show(QColor color,
+              uint32_t brightness,
+              std::vector<QColor> colorScheme,
+              Palette palette);
 
 signals:
     /*!
@@ -205,8 +208,11 @@ private:
     /// stores the last value for the brightness
     uint32_t mBrightness;
 
-    /// stores teh last values given by the color scheme.
+    /// stores the last values given by the color scheme.
     std::vector<QColor> mColorScheme;
+
+    /// stores the last values for the palette
+    Palette mPalette;
 
     /*!
      * \brief mPageType the type of hue page being displayed. Currently it can be either

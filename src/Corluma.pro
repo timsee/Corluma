@@ -132,6 +132,7 @@ SOURCES += main.cpp \
     colorpicker/brightnessslider.cpp \
     colorpicker/colorschemecircles.cpp \
     colorpicker/customcolorpicker.cpp \
+    colorpicker/swatchvectorwidget.cpp \
     discovery/discoverywidget.cpp \
     discovery/discoveryhuewidget.cpp \
     discovery/discoverynanoleafwidget.cpp \
@@ -151,6 +152,7 @@ SOURCES += main.cpp \
     cor/palette.cpp \
     cor/jsonsavedata.cpp \
     cor/lightvectorwidget.cpp \
+    cor/devicelist.cpp \
     hue/bridgeinfowidget.cpp \
     hue/lightdiscovery.cpp \
     hue/bridgediscovery.cpp \
@@ -193,7 +195,6 @@ SOURCES += main.cpp \
     palettepage.cpp \
     moodpage.cpp \
     lightinfolistwidget.cpp \
-    devicelist.cpp \
     appsettings.cpp
 
 HEADERS  +=  arducor/arducordiscovery.h \
@@ -220,6 +221,7 @@ HEADERS  +=  arducor/arducordiscovery.h \
     colorpicker/brightnessslider.h \
     colorpicker/colorschemecircles.h \
     colorpicker/customcolorpicker.h \
+    colorpicker/swatchvectorwidget.h \
     discovery/discoverywidget.h \
     discovery/discoveryhuewidget.h \
     discovery/discoverynanoleafwidget.h \
@@ -243,6 +245,7 @@ HEADERS  +=  arducor/arducordiscovery.h \
     cor/palette.h \
     cor/jsonsavedata.h \
     cor/lightvectorwidget.h \
+    cor/devicelist.h \
     hue/lightdiscovery.h \
     hue/bridgediscovery.h \
     hue/hueprotocols.h \
@@ -287,7 +290,6 @@ HEADERS  +=  arducor/arducordiscovery.h \
     palettepage.h \
     moodpage.h \
     lightinfolistwidget.h \
-    devicelist.h \
     appsettings.h
 
 #----------

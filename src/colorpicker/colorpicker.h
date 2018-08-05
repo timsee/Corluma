@@ -18,7 +18,7 @@
 #include "rgbsliders.h"
 #include "brightnessslider.h"
 #include "tempbrightsliders.h"
-#include "cor/lightvectorwidget.h"
+#include "swatchvectorwidget.h"
 #include "customcolorpicker.h"
 #include "colorschemecircles.h"
 
@@ -140,8 +140,9 @@ public:
      * \param mainColor main color from datalayer
      * \param brightness brightness from data layer
      * \param colorSchemes the colors of the selected devices
+     * \param customColors colors for the custom color picker
      */
-    void updateColorStates(QColor mainColor, int brightness, const std::vector<QColor> colorSchemes);
+    void updateColorStates(QColor mainColor, int brightness, const std::vector<QColor> colorSchemes, const std::vector<QColor> customColors);
 
     /*!
      * \brief setMultiColorDefaults set the default colors of the custom color picker
@@ -153,7 +154,7 @@ public:
      * \brief colors getter for the current state of the default colors of the custom color pickers
      * \return the current state of the default colors of the custom color picker
      */
-    const std::vector<QColor>& colors() { return mColorGrid->colors(); }
+    const std::vector<QColor>& colors() { return mCustomColorPicker->colors(); }
 
 
 signals:
@@ -301,7 +302,7 @@ private:
     /*!
      * \brief mColorSchemeGrid bottom layout, gives a few color swatches
      */
-     cor::LightVectorWidget *mColorSchemeGrid;
+     SwatchVectorWidget *mColorSchemeGrid;
 
     /// bottom layout, gives 3 sliders for RGB.
     RGBSliders *mRGBSliders;
@@ -313,7 +314,7 @@ private:
     BrightnessSlider *mBrightnessSlider;
 
     /// bottom layoutm, gives a slider and a grid of buttons
-    CustomColorPicker *mColorGrid;
+    CustomColorPicker *mCustomColorPicker;
 
     /// cached rendered version of the color wheel
     QImage mRenderedColorWheel;
