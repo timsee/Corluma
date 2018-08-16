@@ -27,7 +27,7 @@ class ColorSchemeCircles : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit ColorSchemeCircles(QImage renderedColorWheel, QWidget *parent = 0);
+    explicit ColorSchemeCircles(QImage renderedColorWheel, QWidget *parent);
 
     /*!
      * \brief positionIsUnderCircle gives index of picker selection that is over the given point, if one exists.
@@ -60,7 +60,7 @@ public:
      * \param i index of circle to move
      * \param newPos new position to move the circle to.
      */
-    void moveStandardCircle(int i, QPointF newPos);
+    void moveStandardCircle(uint32_t i, QPointF newPos);
 
     /// getter for the varioujs circles used by this class
     std::vector<SPickerSelection> circles();

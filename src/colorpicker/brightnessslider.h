@@ -19,14 +19,14 @@ class BrightnessSlider : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit BrightnessSlider(QWidget *parent = 0);
+    explicit BrightnessSlider(QWidget *parent);
 
     /*!
      * \brief changeBrightness programmatically change the slider's position to a new brightness. Does not emit
      *        a signal of the new brightness when completed.
      * \param brightness new brightness to set the slider to.
      */
-    void changeBrightness(int brightness);
+    void changeBrightness(uint32_t brightness);
 
 signals:
 
@@ -34,7 +34,7 @@ signals:
      * \brief brightnessChanged emitted whenever the brightness slider is used, emits the new brightness
      *        value.
      */
-    void brightnessChanged(int);
+    void brightnessChanged(uint32_t);
 
 private slots:
 
@@ -63,7 +63,7 @@ private:
     QLabel *mLabel;
 
     /// stored buffer of current brightness.
-    int mBrightness;
+    uint32_t mBrightness;
 
     /*!
      * \brief mLayout layout used to arrange the slider.

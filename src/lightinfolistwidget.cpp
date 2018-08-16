@@ -37,7 +37,7 @@ LightInfoListWidget::LightInfoListWidget(QWidget *parent) : QWidget(parent) {
     mDeleteButton = new QPushButton("Delete", this);
     mDeleteButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     connect(mDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteButtonPressed(bool)));
-    mDeleteButton->setFixedWidth(this->width() * 0.5f);
+    mDeleteButton->setFixedWidth(int(this->width() * 0.5f));
     mDeleteButton->setEnabled(false);
     mDeleteButton->setStyleSheet("background-color:rgb(45,30,30);");
 
@@ -131,15 +131,16 @@ void LightInfoListWidget::updateLights(std::list<cor::Light> lights) {
 void LightInfoListWidget::resize(bool resizeFullWidget) {
     QSize size = qobject_cast<QWidget*>(this->parent())->size();
     if (resizeFullWidget) {
-        this->setGeometry(size.width() * 0.125f,
-                          size.height() * 0.125f,
-                          size.width() * 0.75f,
-                          size.height() * 0.75f);
+        this->setGeometry(int(size.width() * 0.125f),
+                          int(size.height() * 0.125f),
+                          int(size.width() * 0.75f),
+                          int(size.height() * 0.75f));
     }
     // resize scroll area
-    mScrollAreaWidget->setFixedWidth(mScrollArea->width() * 0.9f);
-    QSize widgetSize(this->width()  * 0.9f, this->height() / 3.66);
-    uint32_t yPos = 0;
+    mScrollAreaWidget->setFixedWidth(int(mScrollArea->width() * 0.9f));
+    QSize widgetSize(int(this->width()  * 0.9f),
+                     int(this->height() / 3.66f));
+    int yPos = 0;
     //TODO: make a better system for resizing
     // draw widgets in content region
     for (auto widget : mHueWidgets) {
@@ -166,7 +167,7 @@ void LightInfoListWidget::resize(bool resizeFullWidget) {
                             widget->height());
         yPos += widget->height();
     }
-    mDeleteButton->setFixedWidth(this->width() * 0.5f);
+    mDeleteButton->setFixedWidth(int(this->width() * 0.5f));
     mScrollAreaWidget->setFixedHeight(yPos);
 }
 

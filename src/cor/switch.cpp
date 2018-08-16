@@ -63,8 +63,8 @@ void Switch::resizeIcon() {
             break;
     }
     mSwitch->setFixedSize(this->width(), this->height());
-    QSize newSize = QSize(this->width() * 0.8f,
-                          this->height() * 0.8f);
+    QSize newSize = QSize(int(this->width() * 0.8f),
+                          int(this->height() * 0.8f));
     mSwitchIcon = mSwitchIcon.scaled(newSize.width(),
                                      newSize.height(),
                                      Qt::KeepAspectRatio,

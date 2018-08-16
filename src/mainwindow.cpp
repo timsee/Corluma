@@ -105,10 +105,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(mPalettePage, SIGNAL(updateMainIcons()), mTopMenu, SLOT(updateMenuBar()));
     connect(mLightPage, SIGNAL(changedDeviceCount()), mTopMenu, SLOT(deviceCountChanged()));
     connect(mMoodPage, SIGNAL(changedDeviceCount()), mTopMenu, SLOT(deviceCountChanged()));
-    connect(mColorPage, SIGNAL(brightnessChanged(int)), mTopMenu, SLOT(brightnessUpdate(int)));
+    connect(mColorPage, SIGNAL(brightnessChanged(uint32_t)), mTopMenu, SLOT(brightnessUpdate(uint32_t)));
     connect(mData, SIGNAL(devicesEmpty()), mTopMenu, SLOT(deviceCountReachedZero()));
 
-    mTopMenu->setGeometry(0, 0, this->width(), this->height() * 0.1667);
+    mTopMenu->setGeometry(0, 0, this->width(), int(this->height() * 0.1667f));
     mTopMenu->highlightButton("Lights_Page");
 
     // --------------
@@ -117,7 +117,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mSpacer = new QWidget(this);
     mSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    mSpacer->setFixedHeight(this->height() * 0.22f);
+    mSpacer->setFixedHeight(int(this->height() * 0.22f));
 
     mMainWidget = new QWidget(this);
     mMainWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -189,8 +189,8 @@ MainWindow::MainWindow(QWidget *parent) :
     // --------------
     // Start Discovery
     // --------------
-    for (int i = 0; i < (int)EProtocolType::MAX; ++i) {
-        EProtocolType type = (EProtocolType)i;
+    for (int i = 0; i < int(EProtocolType::MAX); ++i) {
+        EProtocolType type = EProtocolType(i);
         if (mAppSettings->enabled(type)) {
             mComm->startup(type);
             mComm->startDiscovery(type);
@@ -280,9 +280,6 @@ QWidget* MainWindow::mainPageWidget(EPage page) {
         case EPage::settingsPage:
             widget = qobject_cast<QWidget*>(mSettingsPage);
             break;
-        default:
-            widget = qobject_cast<QWidget*>(mColorPage);
-            break;
     }
     Q_ASSERT(widget);
     return widget;
@@ -356,7 +353,7 @@ void MainWindow::showMainPage(EPage page) {
         mLightPage->show();
     } else if (page == EPage::colorPage) {
         mColorPage->show(mData->mainColor(),
-                         mData->brightness(),
+                         uint32_t(mData->brightness()),
                          mData->colorScheme(),
                          mData->palette());
     } else if (page == EPage::moodPage) {
@@ -478,14 +475,14 @@ void MainWindow::resizeEvent(QResizeEvent *) {
 
 void MainWindow::changeEvent(QEvent *event) {
     if(event->type() == QEvent::ActivationChange && this->isActiveWindow()) {
-        for (int commInt = 0; commInt != (int)EProtocolType::MAX; ++commInt) {
+        for (int commInt = 0; commInt != int(EProtocolType::MAX); ++commInt) {
             EProtocolType type = static_cast<EProtocolType>(commInt);
             if (mAppSettings->enabled(type)) {
                 mComm->resetStateUpdates(type);
             }
         }
     } else if (event->type() == QEvent::ActivationChange && !this->isActiveWindow()) {
-        for (int commInt = 0; commInt != (int)EProtocolType::MAX; ++commInt) {
+        for (int commInt = 0; commInt != int(EProtocolType::MAX); ++commInt) {
             EProtocolType type = static_cast<EProtocolType>(commInt);
             if (mAppSettings->enabled(type)) {
                 mComm->stopStateUpdates(type);
@@ -530,7 +527,7 @@ void MainWindow::settingsClosePressed() {
     animation->setStartValue(mSettingsPage->pos());
     animation->setEndValue(QPoint(mSettingsPage->width(), 0));
     animation->start();
-    pageChanged((EPage)mPageIndex);
+    pageChanged(EPage(mPageIndex));
     if (mPageIndex == EPage::lightPage) {
         mLightPage->show();
     }
@@ -552,13 +549,13 @@ void MainWindow::editButtonClicked(QString key, bool isMood) {
     mEditPage->isOpen(true);
 
     QSize size = this->size();
-    mEditPage->setGeometry(size.width() * 0.125f,
-                      -1 * this->height(),
-                      size.width() * 0.75f,
-                      size.height() * 0.75f);
+    mEditPage->setGeometry(int(size.width() * 0.125f),
+                           int(-1 * this->height()),
+                           int(size.width() * 0.75f),
+                           int(size.height() * 0.75f));
 
-    QPoint finishPoint(size.width() * 0.125f,
-                       size.height() * 0.125f);
+    QPoint finishPoint(int(size.width() * 0.125f),
+                       int(size.height() * 0.125f));
     QPropertyAnimation *animation = new QPropertyAnimation(mEditPage, "pos");
     animation->setDuration(TRANSITION_TIME_MSEC);
     animation->setStartValue(mEditPage->pos());
@@ -613,13 +610,13 @@ void MainWindow::hueInfoWidgetClicked() {
     mLightInfoWidget->updateLights(mComm->arducor()->lights());
 
     QSize size = this->size();
-    mLightInfoWidget->setGeometry(size.width() * 0.125f,
-                                -1 * this->height(),
-                                size.width() * 0.75f,
-                                size.height() * 0.75f);
+    mLightInfoWidget->setGeometry(int(size.width() * 0.125f),
+                                  int(-1 * this->height()),
+                                  int(size.width() * 0.75f),
+                                  int(size.height() * 0.75f));
 
-    QPoint finishPoint(size.width() * 0.125f,
-                       size.height() * 0.125f);
+    QPoint finishPoint(int(size.width() * 0.125f),
+                       int(size.height() * 0.125f));
     QPropertyAnimation *animation = new QPropertyAnimation(mLightInfoWidget, "pos");
     animation->setDuration(TRANSITION_TIME_MSEC);
     animation->setStartValue(mLightInfoWidget->pos());
@@ -636,12 +633,13 @@ void MainWindow::editClosePressed() {
     mEditPage->isOpen(false);
 
     QSize size = this->size();
-    mEditPage->setGeometry(size.width() * 0.125f,
-                           size.height() * 0.125f,
-                           size.width() * 0.75f,
-                           size.height() * 0.75f);
+    mEditPage->setGeometry(int(size.width() * 0.125f),
+                           int(size.height() * 0.125f),
+                           int(size.width() * 0.75f),
+                           int(size.height() * 0.75f));
 
-    QPoint finishPoint(size.width() * 0.125f, -1 * this->height());
+    QPoint finishPoint(int(size.width() * 0.125f),
+                       -1 * this->height());
 
     QPropertyAnimation *animation = new QPropertyAnimation(mEditPage, "pos");
     animation->setDuration(TRANSITION_TIME_MSEC);
@@ -658,12 +656,12 @@ void MainWindow::lightInfoClosePressed() {
     mLightInfoWidget->isOpen(false);
 
     QSize size = this->size();
-    mLightInfoWidget->setGeometry(size.width() * 0.125f,
-                           size.height() * 0.125f,
-                           size.width() * 0.75f,
-                           size.height() * 0.75f);
+    mLightInfoWidget->setGeometry(int(size.width() * 0.125f),
+                                  int(size.height() * 0.125f),
+                                  int(size.width() * 0.75f),
+                                  int(size.height() * 0.75f));
 
-    QPoint finishPoint(size.width() * 0.125f, -1 * this->height());
+    QPoint finishPoint(int(size.width() * 0.125f), -1 * this->height());
 
     QPropertyAnimation *animation = new QPropertyAnimation(mLightInfoWidget, "pos");
     animation->setDuration(TRANSITION_TIME_MSEC);
@@ -773,9 +771,9 @@ void MainWindow::resizeLayout() {
                           mTopMenu->geometry().height());
     mSpacer->setGeometry(mTopMenu->geometry());
     QRect rect(mLayout->contentsMargins().left() + mLayout->spacing(),
-               mTopMenu->floatingLayoutEnd() + 2,
+               int(mTopMenu->floatingLayoutEnd() + 2),
                this->width() - (mLayout->contentsMargins().right() + mLayout->contentsMargins().left() + mLayout->spacing()),
-               (this->height() - mTopMenu->geometry().height()) * 0.92f);
+               int((this->height() - mTopMenu->geometry().height()) * 0.92f));
     mMainViewport->setGeometry(rect);
     QWidget *widget = mainPageWidget(mPageIndex);
     widget->setGeometry(rect);
@@ -785,10 +783,10 @@ void MainWindow::resizeLayout() {
 
 void MainWindow::routineChanged(QJsonObject routine) {
     // add brightness to routine
-    routine["bri"] = mTopMenu->brightness() / 100.0f;
+    routine["bri"] = mTopMenu->brightness() / 100.0;
     if (routine["palette"].isObject()) {
         QJsonObject paletteObject = routine["palette"].toObject();
-        paletteObject["bri"] = mTopMenu->brightness() / 100.0f;
+        paletteObject["bri"] = mTopMenu->brightness() / 100.0;
         routine["palette"] = paletteObject;
     }
     mData->updateRoutine(routine);

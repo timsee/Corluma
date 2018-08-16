@@ -61,15 +61,15 @@ void CommHue::sendPacket(const QJsonObject& object) {
 
         if (bridgeFound) {
             resetStateUpdateTimeout();
-            int index = object["index"].toDouble();
+            int index = int(object["index"].toDouble());
             if (object["isOn"].isBool()) {
                 turnOnOff(bridge, index, object["isOn"].toBool());
             }
             if (object["bri"].isDouble()) {
                 if (object["temperature"].isDouble()) {
-                    changeColorCT(bridge, index, object["bri"].toDouble(), object["temperature"].toDouble());
+                    changeColorCT(bridge, index, int(object["bri"].toDouble()), int(object["temperature"].toDouble()));
                 } else {
-                    brightnessChange(bridge, index, object["bri"].toDouble() * 100);
+                    brightnessChange(bridge, index, int(object["bri"].toDouble() * 100.0));
                 }
             }
             // send routine change
@@ -85,15 +85,15 @@ void CommHue::changeColor(const hue::Bridge& bridge, int lightIndex, const QColo
     // grab the matching hue
     HueLight light = mDiscovery->lightFromBridgeIDAndIndex(bridge.id, lightIndex);
 
-    int hue = color.hueF() * 65535;
+    int hue = int(color.hueF() * 65535);
     // catch edge case with hue being -1 for grey in Qt colors
     if (hue < 0) hue = 0;
-    int saturation = color.saturationF() * 254;
-    int brightness = color.valueF() * 254;
+    int saturation = int(color.saturationF() * 254);
+    int brightness = int(color.valueF() * 254);
 
     // handle multicasting with light index 0
     if (lightIndex == 0) {
-        for (uint32_t i = 1; i <= bridge.lights.size(); ++i) {
+        for (int i = 1; i <= int(bridge.lights.size()); ++i) {
             changeColor(bridge, i, color);
         }
     }
@@ -117,7 +117,7 @@ void CommHue::changeColorCT(const hue::Bridge& bridge, int lightIndex, int brigh
     HueLight light = mDiscovery->lightFromBridgeIDAndIndex(bridge.id, lightIndex);
 
     if (lightIndex == 0) {
-        for (uint32_t i = 1; i <= bridge.lights.size(); ++i) {
+        for (int i = 1; i <= int(bridge.lights.size()); ++i) {
             changeColorCT(bridge, i, brightness, ct);
         }
     }
@@ -164,7 +164,7 @@ void CommHue::bridgeDiscovered(const hue::Bridge& bridge, QJsonObject lightsObje
             if (lightsObject.value(key).isObject()) {
                 updateHueLightState(bridge,
                                     lightsObject.value(key).toObject(),
-                                    key.toDouble());
+                                    int(key.toDouble()));
             }
         }
 
@@ -173,7 +173,7 @@ void CommHue::bridgeDiscovered(const hue::Bridge& bridge, QJsonObject lightsObje
         for (auto& key : keys) {
             if (groupObject.value(key).isObject()) {
                 groups.push_back(jsonToGroup(groupObject.value(key).toObject(),
-                                                key.toDouble()));
+                                                int(key.toDouble())));
             }
         }
         mDiscovery->updateGroups(bridge, groups);
@@ -184,7 +184,7 @@ void CommHue::bridgeDiscovered(const hue::Bridge& bridge, QJsonObject lightsObje
         for (auto& key : keys) {
             if (schedulesObject.value(key).isObject()) {
                 schedules.push_back(jsonToSchedule(schedulesObject.value(key).toObject(),
-                                                      key.toDouble()));
+                                                      int(key.toDouble())));
             }
         }
         mDiscovery->updateSchedules(bridge, schedules);
@@ -214,7 +214,7 @@ void CommHue::routineChange(const hue::Bridge& bridge, int deviceIndex, QJsonObj
 }
 
 void CommHue::brightnessChange(const hue::Bridge& bridge, int deviceIndex, int brightness) {
-    brightness = (int)(brightness * 2.5f);
+    brightness = int(brightness * 2.5f);
     if (brightness > 254) {
         brightness = 254;
     }
@@ -236,7 +236,7 @@ void CommHue::timeOutChange(int deviceIndex, int timeout) {
 //--------------------
 void CommHue::replyFinished(QNetworkReply* reply) {
     if (reply->error() == QNetworkReply::NoError) {
-        QString string = (QString)reply->readAll();
+        QString string = reply->readAll();
         QString IP = hue::IPfromReplyIP(reply->url().toString());
         auto bridge = mDiscovery->bridgeFromIP(IP);
         //qDebug() << "Response:" << string;
@@ -264,13 +264,13 @@ void CommHue::parseJSONObject(const hue::Bridge& bridge, const QJsonObject& obje
             QJsonObject innerObject = object.value(key).toObject();
             EHueUpdates updateType = checkTypeOfUpdate(innerObject);
             if (updateType == EHueUpdates::deviceUpdate) {
-                updateHueLightState(bridge, innerObject, key.toDouble());
+                updateHueLightState(bridge, innerObject, int(key.toDouble()));
             } else if (updateType == EHueUpdates::scheduleUpdate) {
-                scheduleList.push_back(jsonToSchedule(innerObject, key.toDouble()));
+                scheduleList.push_back(jsonToSchedule(innerObject, int(key.toDouble())));
             } else if (updateType == EHueUpdates::groupUpdate) {
-                groupList.push_back(jsonToGroup(innerObject, key.toDouble()));
+                groupList.push_back(jsonToGroup(innerObject, int(key.toDouble())));
             } else if (updateType == EHueUpdates::newLightNameUpdate) {
-                updateNewHueLight(bridge, innerObject, key.toDouble());
+                updateNewHueLight(bridge, innerObject, int(key.toDouble()));
             } else {
                 qDebug() << "json not recognized....";
               //  qDebug() << "Response:" << document;
@@ -330,16 +330,16 @@ void CommHue::handleSuccessPacket(const hue::Bridge& bridge, QString key, QJsonV
                             device.isOn = value.toBool();
                             valueChanged = true;
                         } else if (key.compare("sat") == 0) {
-                            int saturation = value.toDouble();
+                            int saturation = int(value.toDouble());
                             device.color.setHsv(device.color.hue(), saturation, device.color.value());
                             valueChanged = true;
                         } else if (key.compare("hue") == 0) {
-                            int hue = value.toDouble();
+                            int hue = int(value.toDouble());
                             device.color.setHsv(hue / 182, device.color.saturation(), device.color.value());
                             device.colorMode = EColorMode::HSV;
                             valueChanged = true;
                         } else if (key.compare("bri") == 0) {
-                            int brightness = value.toDouble();
+                            int brightness = int(value.toDouble());
                             device.color.setHsv(device.color.hue(), device.color.saturation(), brightness);
                             valueChanged = true;
                         } else if (key.compare("colormode") == 0) {
@@ -348,7 +348,7 @@ void CommHue::handleSuccessPacket(const hue::Bridge& bridge, QString key, QJsonV
                             device.colorMode = colorMode;
                             valueChanged = true;
                         } else if (key.compare("ct") == 0) {
-                            int ct = value.toDouble();
+                            int ct = int(value.toDouble());
                             device.color = cor::colorTemperatureToRGB(ct);
                             device.colorMode = EColorMode::CT;
                             valueChanged = true;
@@ -515,29 +515,29 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge, QJsonObject object,
                                 && array.at(1).isDouble()) {
                             isValid = true;
                             // take from objC code from here: https://developers.meethue.com/documentation/color-conversions-rgb-xy
-                            float x = array.at(0).toDouble();
-                            float y = array.at(1).toDouble();
+                            double x = array.at(0).toDouble();
+                            double y = array.at(1).toDouble();
 
-                            float z = 1.0f - x - y;
-                            float Y = stateObject["bri"].toDouble() / 254.0f; // The given brightness value
-                            float X = (Y / y) * x;
-                            float Z = (Y / y) * z;
+                            double z = 1.0 - x - y;
+                            double Y = stateObject["bri"].toDouble() / 254.0; // The given brightness value
+                            double X = (Y / y) * x;
+                            double Z = (Y / y) * z;
 
                             // Convert to RGB using Wide RGB D65 conversion
-                            float r =  X * 1.656492f - Y * 0.354851f - Z * 0.255038f;
-                            float g = -X * 0.707196f + Y * 1.655397f + Z * 0.036152f;
-                            float b =  X * 0.051713f - Y * 0.121364f + Z * 1.011530f;
+                            double r =  X * 1.656492 - Y * 0.354851 - Z * 0.255038;
+                            double g = -X * 0.707196 + Y * 1.655397 + Z * 0.036152;
+                            double b =  X * 0.051713 - Y * 0.121364 + Z * 1.011530;
 
                             // Apply reverse gamma correction
-                            r = r <= 0.0031308f ? 12.92f * r : (1.0f + 0.055f) * pow(r, (1.0f / 2.4f)) - 0.055f;
-                            g = g <= 0.0031308f ? 12.92f * g : (1.0f + 0.055f) * pow(g, (1.0f / 2.4f)) - 0.055f;
-                            b = b <= 0.0031308f ? 12.92f * b : (1.0f + 0.055f) * pow(b, (1.0f / 2.4f)) - 0.055f;
+                            r = r <= 0.0031308 ? 12.92 * r : (1.0 + 0.055) * std::pow(r, (1.0 / 2.4)) - 0.055;
+                            g = g <= 0.0031308 ? 12.92 * g : (1.0 + 0.055) * std::pow(g, (1.0 / 2.4)) - 0.055;
+                            b = b <= 0.0031308 ? 12.92 * b : (1.0 + 0.055) * std::pow(b, (1.0 / 2.4)) - 0.055;
 
-                            r = cor::clamp(r, 0.0f, 1.0f);
-                            g = cor::clamp(g, 0.0f, 1.0f);
-                            b = cor::clamp(b, 0.0f, 1.0f);
+                            r = cor::clamp(r, 0.0, 1.0);
+                            g = cor::clamp(g, 0.0, 1.0);
+                            b = cor::clamp(b, 0.0, 1.0);
 
-                            hue.color.setRgbF(r,g,b);
+                            hue.color.setRgbF(r, g, b);
                             hue.colorMode = EColorMode::HSV;
                         }
                     }
@@ -548,16 +548,16 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge, QJsonObject object,
                     return false;
                 }
             } else if (hue.hueType == EHueType::ambient) {
-                int ct = stateObject["ct"].toDouble();
+                int ct = int(stateObject["ct"].toDouble());
                 hue.color = cor::colorTemperatureToRGB(ct);
                 hue.colorMode = EColorMode::CT;
             } else if (hue.hueType == EHueType::extended
                        || hue.hueType == EHueType::color) {
                 if (stateObject["hue"].isDouble()
                         && stateObject["sat"].isDouble()) {
-                    float hueF = stateObject["hue"].toDouble() / 65535.0f;
-                    float satF = stateObject["sat"].toDouble() / 254.0f;
-                    float briF = stateObject["bri"].toDouble() / 254.0f;
+                    double hueF = stateObject["hue"].toDouble() / 65535.0;
+                    double satF = stateObject["sat"].toDouble() / 254.0;
+                    double briF = stateObject["bri"].toDouble() / 254.0;
                     hue.color.setHsvF(hueF, satF, briF);
                     hue.colorMode = EColorMode::HSV;
                 } else {
@@ -565,7 +565,7 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge, QJsonObject object,
                     return false;
                 }
             } else if (hue.hueType == EHueType::white) {
-                int brightness = stateObject["bri"].toDouble();
+                int brightness = int(stateObject["bri"].toDouble());
                 QColor white(255,255,255);
                 white = white.toHsv();
                 white.setHsv(white.hue(), white.saturation(), brightness);

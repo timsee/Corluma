@@ -146,7 +146,7 @@ void GlobalSettingsWidget::timeoutChanged(int newTimeout) {
 void GlobalSettingsWidget::checkBoxClicked(EProtocolType type, bool checked) {
     bool successful = mAppSettings->enable(type, checked);
     if (!successful) {
-        mConnectionButtons[(uint32_t)type]->setChecked(true);
+        mConnectionButtons[uint32_t(type)]->setChecked(true);
        // mConnectionButtons[mAppSettings->indexOfProtocolSettings(type)]->setStyleSheet("background-color:#4A4949;");
     }
 
@@ -212,11 +212,11 @@ void GlobalSettingsWidget::showTimeout(bool showTimeout) {
 void GlobalSettingsWidget::resize() {
     
     // resize the checkboxes widths, if needed
-    mTimeoutCheckBox->downsizeTextWidthToFit(this->width() * 0.45f);
+    mTimeoutCheckBox->downsizeTextWidthToFit(int(this->width() * 0.45f));
 
-    uint32_t currentY = 0;
-    mSliderMinWidth = this->width() * 0.66f;
-    int sliderHeight =  mEnabledConnectionsLabel->height() * 2.75f;
+    int currentY = 0;
+    mSliderMinWidth = int(this->width() * 0.66f);
+    int sliderHeight =  int(mEnabledConnectionsLabel->height() * 2.75f);
 
     mTimeoutCheckBox->setGeometry(mSpacerPixels,
                                   mSpacerPixels,
@@ -245,7 +245,7 @@ void GlobalSettingsWidget::resize() {
         currentY += mEnabledConnectionsLabel->height() + mSpacerPixels;
     }
 
-    int buttonSize = this->width() * 0.2f;
+    int buttonSize = int(this->width() * 0.2f);
     if (mHueButton->isVisible()) {
         mHueButton->setGeometry(mSpacerPixels,
                                 currentY,

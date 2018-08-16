@@ -30,9 +30,6 @@ public:
      */
     DataSyncNanoLeaf(cor::DeviceList *data, CommLayer *comm);
 
-    /// destructor
-    ~DataSyncNanoLeaf() {}
-
     /*!
      * \brief cancelSync cancel the data sync, regardless of it successfully completed.
      */

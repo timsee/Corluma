@@ -44,15 +44,6 @@ public:
      */
     void resize();
 
-public slots:
-
-    /*!
-     * \brief IPFieldChanged IP Address field has changed, try to discover the IP
-     *        address provided.
-     */
-    void IPFieldChanged(QString);
-
-
 private slots:
 
     /// handles when a discover hue buttons is pressed
@@ -82,6 +73,9 @@ private slots:
     /// handles when greyout is finished
     void greyOutFadeComplete();
 
+    /// handles when a bridge is deleted from a BridgeInfoWidget
+    void deleteBridgeFromAppData(hue::Bridge);
+
 protected:
 
     /// called when the widget resizes
@@ -106,9 +100,6 @@ private:
 
     /// overlay that greys out everythign under it
     GreyOutOverlay *mGreyOut;
-
-    /// icon for when running discovery
-    QLabel *mLoadingIcon;
 
     /// widget for discovering hue lights
     hue::LightDiscovery *mHueLightDiscovery;

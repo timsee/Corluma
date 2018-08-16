@@ -48,8 +48,9 @@ class CommLayer;
 class DataSync
 {
 public:
+
     /// destructor
-    virtual ~DataSync(){}
+    virtual ~DataSync();
 
     /*!
      * \brief cancelSync cancel the data sync, regardless of it successfully completed.
@@ -160,7 +161,7 @@ protected:
      * \param maxPacketSize max size of packet that the controller can handle.
      * \return true if packet is added, false otherwise.
      */
-    bool appendToPacket(QString& currentPacket, QString newAddition, int maxPacketSize);
+    bool appendToPacket(QString& currentPacket, QString newAddition, uint32_t maxPacketSize);
 
     /*!
      * \brief ctDifference gives a percent difference between two color temperatures. This

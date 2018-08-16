@@ -108,7 +108,7 @@ bool DataSyncSettings::sync(const cor::Light& availableDevice) {
         if (availableDevice.timeout != mAppSettings->timeout()) {
            // qDebug() << "time out not in sync" << availableDevice.timeout << " vs " << mAppSettings->timeout();
             QString message = mParser->timeoutPacket(availableDevice, mAppSettings->timeout());
-            appendToPacket(packet, message, controller.maxPacketSize);
+            appendToPacket(packet, message, uint32_t(controller.maxPacketSize));
             countOutOfSync++;
         }
     } else {
@@ -116,7 +116,7 @@ bool DataSyncSettings::sync(const cor::Light& availableDevice) {
         if (availableDevice.timeout != 0) {
           //  qDebug() << "time out not disabled!" << availableDevice.timeout;
             QString message = mParser->timeoutPacket(availableDevice, 0);
-            appendToPacket(packet, message, controller.maxPacketSize);
+            appendToPacket(packet, message, uint32_t(controller.maxPacketSize));
             countOutOfSync++;
         }
     }

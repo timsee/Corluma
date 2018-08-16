@@ -10,8 +10,7 @@
 
 ListDevicesGroupWidget::ListDevicesGroupWidget(const cor::LightGroup& group,
                                                QString key,
-                                               QWidget *parent) {
-    this->setParent(parent);
+                                               QWidget *parent) : ListCollectionWidget(this) {
     this->setMaximumSize(parent->size());
     mSelectAllIsClear = false;
 
@@ -23,7 +22,8 @@ ListDevicesGroupWidget::ListDevicesGroupWidget(const cor::LightGroup& group,
     mSelectAllButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     mSelectAllPixmap = QPixmap(":/images/selectAllIcon.png");
     mClearAllPixmap = QPixmap(":/images/clearAllIcon.png");
-    mSelectAllButton->setIconSize(QSize(mMinimumHeight * mIconRatio, mMinimumHeight * mIconRatio));
+    mSelectAllButton->setIconSize(QSize(int(mMinimumHeight * mIconRatio),
+                                        int(mMinimumHeight * mIconRatio)));
     mSelectAllButton->setIcon(QIcon((mSelectAllPixmap)));
     mSelectAllButton->setHidden(true);
 
@@ -116,7 +116,8 @@ QSize ListDevicesGroupWidget::preferredSize() {
     int height = mMinimumHeight;
     if (mShowButtons && mWidgets.size() > 0) {
         int widgetHeight = std::max(mName->height(), mMinimumHeight);
-        height = (mWidgets.size() / 2 * widgetHeight) + (mWidgets.size() % 2 * widgetHeight) + mMinimumHeight;
+        int widgetsCount = int(mWidgets.size());
+        height = (widgetsCount / 2 * widgetHeight) + (widgetsCount % 2 * widgetHeight) + mMinimumHeight;
     }
     return QSize(this->parentWidget()->width(), height);
 }
@@ -220,10 +221,10 @@ QColor ListDevicesGroupWidget::computeHighlightColor() {
                       pureBlue.green() - pureBlack.green(),
                       pureBlue.blue() - pureBlack.blue());
 
-    float amountOfBlue = (float)checkedDevices().size() / (float)reachableDevices().size();
-    return QColor(amountOfBlue * difference.red() + pureBlack.red(),
-                  amountOfBlue * difference.green() + pureBlack.green(),
-                  amountOfBlue * difference.blue() + pureBlack.blue());
+    double amountOfBlue = double(checkedDevices().size()) / double(reachableDevices().size());
+    return QColor(int(amountOfBlue * difference.red() + pureBlack.red()),
+                  int(amountOfBlue * difference.green() + pureBlack.green()),
+                  int(amountOfBlue * difference.blue() + pureBlack.blue()));
 }
 
 void ListDevicesGroupWidget::mouseReleaseEvent(QMouseEvent *) {

@@ -26,13 +26,13 @@ public:
     Palette(const QJsonObject& object);
 
     /// app data constructor
-    Palette(const QString& name, const std::vector<QColor>& colors, int brightness);
+    Palette(const QString& name, const std::vector<QColor>& colors, uint32_t brightness);
 
     /// setter for the brightness of the palette
     void brightness(uint32_t brightness);
 
     /// getter for the palette's brightness
-    int brightness() const { return mBrightness; }
+    uint32_t brightness() const { return mBrightness; }
 
     /// getter for name of the palette
     const QString& name() const noexcept { return mName; }
@@ -91,7 +91,7 @@ private:
     std::vector<QColor> mColors;
 
     /// brightness of the palette, between 0 - 100
-    int mBrightness;
+    uint32_t mBrightness;
 };
 
 std::ostream& operator<<(std::ostream&, const Palette& palette);

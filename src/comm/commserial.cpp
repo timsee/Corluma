@@ -41,7 +41,7 @@ void CommSerial::shutdown() {
 
 void CommSerial::sendPacket(const cor::Controller& controller, QString& packet) {
     QSerialPort *serial = serialPortByName(controller.name);
-    if (serial != NULL) {
+    if (serial != nullptr) {
         if (serial->isOpen()) {
             // add ; to end of serial packet as delimiter
             packet += ";";
@@ -56,14 +56,14 @@ void CommSerial::sendPacket(const cor::Controller& controller, QString& packet) 
 void CommSerial::stateUpdate() {
     if (shouldContinueStateUpdate()) {
         for (auto&& controller : mDiscovery->controllers()) {
-            QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::stateUpdateRequest));
+            QString packet = QString("%1&").arg(QString::number(int(EPacketHeader::stateUpdateRequest)));
             // add CRC, if in use
             if (controller.isUsingCRC) {
                 packet = packet + "#" + QString::number(mCRC.calculate(packet)) + "&";
             }
             sendPacket(controller, packet);
             if ((mStateUpdateCounter % mSecondaryUpdatesInterval) == 0) {
-                QString customArrayUpdateRequest = QString("%1&").arg(QString::number((int)EPacketHeader::customArrayUpdateRequest));
+                QString customArrayUpdateRequest = QString("%1&").arg(QString::number(int(EPacketHeader::customArrayUpdateRequest)));
                 if (controller.isUsingCRC) {
                     customArrayUpdateRequest = customArrayUpdateRequest + "#" + QString::number(mCRC.calculate(customArrayUpdateRequest)) + "&";
                 }
@@ -77,7 +77,7 @@ void CommSerial::stateUpdate() {
 }
 
 QSerialPort* CommSerial::serialPortByName(QString name) {
-    QSerialPort *serial = NULL;
+    QSerialPort *serial = nullptr;
     for (auto&& serialPorts : mSerialPorts) {
         if (!QString::compare(serialPorts.first->portName(), name)) {
            serial = serialPorts.first;
@@ -95,7 +95,7 @@ void CommSerial::testForController(const cor::Controller& controller) {
     QString discoveryPacket = ArduCorDiscovery::kDiscoveryPacketIdentifier + ";";
     bool runningDiscoveryOnSomething = false;
     QSerialPort *serial = serialPortByName(controller.name);
-    if (serial != NULL) {
+    if (serial != nullptr) {
         runningDiscoveryOnSomething = true;
         // write to device
         //qDebug() << "discovery packet to " << controller.name << "payload" << discoveryPacket;

@@ -96,7 +96,7 @@ signals:
     /*!
      * \brief brightnessChanged signaled whenever the brightness is changed from any color wheel type that supports it.
      */
-    void brightnessChanged(int);
+    void brightnessChanged(uint32_t);
 
     /// sent out whenever a routine update is triggered
     void routineUpdate(QJsonObject);
@@ -137,7 +137,7 @@ private slots:
      * \brief ambientUpdateReceived called whenever the colorpicker gives back an ambient update.
      *        Gives the color temperature value first, followed by the brightness.
      */
-    void ambientUpdateReceived(int, int);
+    void ambientUpdateReceived(int, uint32_t);
 
     /*!
      * \brief customColorCountChanged called whenever the multi color picker slider moves and
@@ -155,7 +155,7 @@ private slots:
      * \brief brightnessUpdate handles whenever a color picker updates brightness, forwards the signal.
      * \param brightness new brightness for the selected lights.
      */
-    void brightnessUpdate(int brightness) { emit brightnessChanged(brightness); }
+    void brightnessUpdate(uint32_t brightness) { emit brightnessChanged(brightness); }
 
 private:
 

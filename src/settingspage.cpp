@@ -108,7 +108,7 @@ SettingsPage::SettingsPage(QWidget *parent, GroupsParser *parser, AppSettings *a
             mScrollLayout->addWidget(mSectionLabels[sectionIndex]);
             sectionIndex++;
         }
-        mButtons[x] = new SettingsButton(QString(mTitles[x].c_str()), QString(mDescriptions[x].c_str()));
+        mButtons[x] = new SettingsButton(QString(mTitles[x].c_str()), QString(mDescriptions[x].c_str()), this);
         connect(mButtons[x], SIGNAL(buttonPressed(QString)), this, SLOT(settingsButtonPressed(QString)));
         mScrollLayout->addWidget(mButtons[x]);
     }
@@ -156,7 +156,7 @@ void SettingsPage::show() {
 void SettingsPage::resizeEvent(QResizeEvent *event) {
     Q_UNUSED(event);
 
-    mScrollAreaWidget->setFixedWidth(this->width() * 0.85f);
+    mScrollAreaWidget->setFixedWidth(int(this->width() * 0.85f));
 
     QRect shownWidget = this->geometry();
     QRect hiddenWidget = QRect(0, this->geometry().height(), this->width(), this->height());

@@ -132,7 +132,7 @@ private:
      * \param x starting index in the vector, if it contains multiple lights.
      * \return true if all values in the vector are in the proper range, false othewrise.
      */
-    bool verifyStateUpdatePacketValidity(const std::vector<int>& packetIntVector, int x = 0);
+    bool verifyStateUpdatePacketValidity(const std::vector<int>& packetIntVector, uint32_t x);
 
     /*!
      * \brief verifyCustomColorUpdatePacket takes a vector and checks that all vlaues

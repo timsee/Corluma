@@ -39,7 +39,7 @@ ListMoodWidget::ListMoodWidget(const cor::LightGroup& group,
     mEditButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(mEditButton, SIGNAL(clicked(bool)), this, SLOT(editButtonClicked(bool)));
     mEditIcon = QPixmap(":/images/editIcon.png");
-    float editSize = mName->height() * 0.5f;
+    int editSize = int(mName->height() * 0.5);
     mEditButton->setMaximumHeight(editSize);
     mEditButton->setIcon(QIcon(mEditIcon.scaled(editSize,
                                                 editSize)));
@@ -79,10 +79,11 @@ ListMoodWidget::ListMoodWidget(const cor::LightGroup& group,
 void ListMoodWidget::enterEvent(QEvent *) {
     mEditButton->setHidden(false);
 
-    float editSize = mName->height() * 0.95f;
-    mEditIcon = mEditIcon.scaled(editSize, editSize,
-                                         Qt::KeepAspectRatio,
-                                         Qt::SmoothTransformation);
+    int editSize = int(mName->height() * 0.95);
+    mEditIcon = mEditIcon.scaled(editSize,
+                                 editSize,
+                                 Qt::KeepAspectRatio,
+                                 Qt::SmoothTransformation);
     mEditButton->setIcon(QIcon(mEditIcon));
     mEditButton->setIconSize(QSize(editSize,
                                    editSize));

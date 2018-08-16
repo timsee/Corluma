@@ -122,17 +122,17 @@ public:
     /*!
      * \brief getters for private values
      */
-    uint dataLength();
+    int dataLength();
     /*!
      * \brief width getter for the data buffer's width.
      * \return the width of the IconData.
      */
-    uint width();
+    int width();
     /*!
      * \brief height getter for the data buffer's height.
      * \return the height of the IconData.
      */
-    uint height();
+    int height();
 
     /*!
      * \brief renderAsQImage takes the data and outputs it as a QImage
@@ -162,16 +162,16 @@ private:
     /*!
      * \brief mWidth the width of the resulting icon
      */
-    uint mWidth;
+    int mWidth;
     /*!
      * \brief mHeight the height of the resulting icon.
      */
-    uint mHeight;
+    int mHeight;
     /*!
      * \brief mDataLength the number of bytes needed to
      *        to fill mWidth * mHeight * 3.
      */
-    uint mDataLength;
+    int mDataLength;
 
     /*!
      * a buffer that is used when doing processing.

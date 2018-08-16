@@ -33,7 +33,7 @@ public:
     EPalette findPalette(const QJsonObject& object);
 
     /// getter for the average color of a palette
-    const QColor& averageColor(EPalette palette) const noexcept { return mAverageColors[(uint32_t)palette]; }
+    const QColor& averageColor(EPalette palette) const noexcept { return mAverageColors[uint32_t(palette)]; }
 
 private:
     /// vector for palettes

@@ -44,10 +44,10 @@ ColorPage::ColorPage(QWidget *parent) :
     mLayout->addWidget(mColorPicker, 10);
 
     connect(mColorPicker, SIGNAL(colorUpdate(QColor)), this, SLOT(colorChanged(QColor)));
-    connect(mColorPicker, SIGNAL(ambientUpdate(int, int)), this, SLOT(ambientUpdateReceived(int, int)));
+    connect(mColorPicker, SIGNAL(ambientUpdate(int, uint32_t)), this, SLOT(ambientUpdateReceived(int, uint32_t)));
     connect(mColorPicker, SIGNAL(multiColorCountUpdate(int)), this, SLOT(customColorCountChanged(int)));
     connect(mColorPicker, SIGNAL(multiColorUpdate()), this, SLOT(multiColorChanged()));
-    connect(mColorPicker, SIGNAL(brightnessUpdate(int)), this, SLOT(brightnessUpdate(int)));
+    connect(mColorPicker, SIGNAL(brightnessUpdate(uint32_t)), this, SLOT(brightnessUpdate(uint32_t)));
     connect(mColorPicker, SIGNAL(colorsUpdate(std::vector<QColor>)), this, SLOT(colorsChanged(std::vector<QColor>)));
 
     /// fill with junk data for this case
@@ -81,7 +81,7 @@ void ColorPage::changePageType(EColorPageType page, bool skipAnimation) {
     } else if (mPageType == EColorPageType::colorScheme) {
         mColorPicker->changeLayout(ELayoutColorPicker::colorSchemeLayout, skipAnimation);
     } else {
-        qDebug() << "INFO: don't recognize this page type.. " << (int)page;
+        qDebug() << "INFO: don't recognize this page type.. " << int(page);
     }
 
     showSingleRoutineWidget(false);
@@ -225,7 +225,7 @@ void ColorPage::multiColorChanged() {
     emit updateMainIcons();
 }
 
-void ColorPage::ambientUpdateReceived(int newAmbientValue, int newBrightness) {
+void ColorPage::ambientUpdateReceived(int newAmbientValue, uint32_t newBrightness) {
     QJsonObject routineObject;
     routineObject["routine"] = routineToString(ERoutine::singleSolid);
     QColor color = cor::colorTemperatureToRGB(newAmbientValue);

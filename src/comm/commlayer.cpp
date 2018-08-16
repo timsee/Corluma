@@ -63,14 +63,13 @@ CommType *CommLayer::commByType(ECommType type) {
         ptr = mArduCor->commByType(type);
         break;
     case ECommType::hue:
-        ptr = (CommType*)mHue.get();
+        ptr =  static_cast<CommType*>(mHue.get());
         break;
     case ECommType::nanoleaf:
-        ptr = (CommType*)mNanoleaf.get();
+        ptr = static_cast<CommType*>(mNanoleaf.get());
         break;
     default:
         throw "no type for this commtype";
-        break;
     }
     return ptr;
 }
@@ -95,8 +94,8 @@ std::vector<std::pair<QString, QString>> CommLayer::deviceNames() {
 
 const std::list<cor::Light> CommLayer::allDevices() {
     std::list<cor::Light> list;
-    for (int i = 0; i < (int)ECommType::MAX; ++i) {
-        std::unordered_map<std::string, std::list<cor::Light> > table = deviceTable((ECommType)i);
+    for (int i = 0; i < int(ECommType::MAX); ++i) {
+        std::unordered_map<std::string, std::list<cor::Light> > table = deviceTable(ECommType(i));
         for (auto&& controllers : table) {
             for (auto&& device : controllers.second) {
                 list.push_back(device);

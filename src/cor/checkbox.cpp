@@ -23,7 +23,7 @@ CheckBox::CheckBox(QWidget *parent, QString title) : QWidget(parent) {
     mTitle->setAlignment(Qt::AlignBottom);
     QRect r = mTitle->fontMetrics().boundingRect(mTitle->text());
     mTitle->setFixedWidth(r.width());
-    mTitle->setMinimumHeight(r.height() * 1.75f);
+    mTitle->setMinimumHeight(int(r.height() * 1.75f));
 
     mCheckBox = new QPushButton(this);
     mCheckBox->setCheckable(true);
@@ -40,7 +40,7 @@ void CheckBox::setTitle(QString title) {
     mTitle->setText(title);
     QRect r = mTitle->fontMetrics().boundingRect(mTitle->text());
     mTitle->setFixedWidth(r.width());
-    mTitle->setMinimumHeight(r.height() * 1.75f);
+    mTitle->setMinimumHeight(int(r.height() * 1.75f));
 
     this->setMinimumHeight(mTitle->height());
     mCheckBox->setMinimumHeight(mTitle->height());

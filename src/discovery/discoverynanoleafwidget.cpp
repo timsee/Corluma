@@ -9,7 +9,6 @@
 
 DiscoveryNanoLeafWidget::DiscoveryNanoLeafWidget(CommLayer *comm, QWidget *parent) :
     DiscoveryWidget(parent) {
-   // mScale = 0.5f;
 
     mComm = comm;
 

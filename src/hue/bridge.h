@@ -12,6 +12,13 @@
 
 class HueLight;
 
+enum class EBridgeDiscoveryState {
+   lookingForResponse,
+   lookingForUsername,
+   connected
+};
+Q_DECLARE_METATYPE(EBridgeDiscoveryState)
+
 
 /*!
  * \brief The SHueCommand struct command sent to a hue bridge.
@@ -58,9 +65,9 @@ struct SHueSchedule {
         result += " time: " + time;
         result += " localtime: " + localtime;
         result += " created: " + created;
-        result += " status: " + status;
-        result += " index: " + index;
-        result += " autodelete: " + autodelete;
+        result += " status: " + QString(status);
+        result += " index: " + QString(index);
+        result += " autodelete: " + QString(autodelete);
         return result;
     }
 
@@ -126,6 +133,8 @@ public:
     /// list of the groups stored on the bridge
     std::list<cor::LightGroup> groups;
 
+    EBridgeDiscoveryState state = EBridgeDiscoveryState::lookingForResponse;
+
     operator QString() const {
         std::stringstream tempString;
         tempString << "hue::Bridge: "
@@ -142,10 +151,11 @@ public:
     /// equal operator
     bool operator==(const hue::Bridge& rhs) const {
         bool result = true;
-        if (IP         !=  rhs.IP)       result = false;
+        if (IP         !=  rhs.IP)         result = false;
         if (customName !=  rhs.customName) result = false;
-        if (username   !=  rhs.username) result = false;
-        if (id         !=  rhs.id)       result = false;
+        if (username   !=  rhs.username)   result = false;
+        if (id         !=  rhs.id)         result = false;
+        if (state      !=  rhs.state)      result = false;
         return result;
     }
 };

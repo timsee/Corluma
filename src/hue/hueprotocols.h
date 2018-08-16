@@ -70,6 +70,7 @@ enum class EHueDiscoveryState {
 };
 Q_DECLARE_METATYPE(EHueDiscoveryState)
 
+
 namespace cor
 {
 

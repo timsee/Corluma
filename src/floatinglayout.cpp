@@ -42,7 +42,7 @@ void FloatingLayout::highlightButton(QString key) {
     this->blockSignals(true);
 
     auto result = std::find(mNames.begin(), mNames.end(), key);
-    auto index = std::distance(mNames.begin(), result);
+    int index = int(std::distance(mNames.begin(), result));
     buttonPressed(index);
 
     this->blockSignals(false);
@@ -56,11 +56,14 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
     // set up the geometry
     QSize size = mOriginalSize;
     if (eButtonSize == EButtonSize::small) {
-        size = QSize(size.width() * 0.12f, size.height() * 0.12f);
+        size = QSize(int(size.width() * 0.12f),
+                     int(size.height() * 0.12f));
     } else if (eButtonSize == EButtonSize::medium) {
-        size = QSize(size.width() * 0.15f, size.height() * 0.15f);
+        size = QSize(int(size.width() * 0.15f),
+                     int(size.height() * 0.15f));
     } else if (eButtonSize == EButtonSize::rectangle) {
-        size = QSize(size.width() * 0.3f, size.height() * 0.09f);
+        size = QSize(int(size.width() * 0.3f),
+                     int(size.height() * 0.09f));
     }
 
     int fixedWidth;
@@ -68,17 +71,17 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
     if (eButtonSize == EButtonSize::rectangle) {
         if (mIsVertical) {
             fixedWidth = size.width();
-            fixedHeight = size.height() * buttons.size();
+            fixedHeight = size.height() * int(buttons.size());
         } else {
-            fixedWidth = size.width() * buttons.size();
+            fixedWidth = size.width() * int(buttons.size());
             fixedHeight = size.height();
         }
     } else {
         if (mIsVertical) {
             fixedWidth = size.width();
-            fixedHeight = size.width() * buttons.size();
+            fixedHeight = size.width() * int(buttons.size());
         } else {
-            fixedWidth = size.width() * buttons.size();
+            fixedWidth = size.width() * int(buttons.size());
             fixedHeight = size.width();
         }
     }
@@ -166,24 +169,24 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(true);
             mButtons[i]->setStyleSheet("text-align:left");
-            mButtons[i]->setIconSize(QSize(mButtons[i]->size().height() * 0.9f,
-                                           mButtons[i]->size().height() * 0.9f));
+            mButtons[i]->setIconSize(QSize(int(mButtons[i]->size().height() * 0.9f),
+                                           int(mButtons[i]->size().height() * 0.9f)));
             mButtons[i]->setText("ArduCor");
         } else if (mNames[i].compare("Discovery_Hue") == 0) {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(true);
             mButtons[i]->setStyleSheet("text-align:left");
-            mButtons[i]->setIconSize(QSize(mButtons[i]->size().height() * 0.9f,
-                                           mButtons[i]->size().height() * 0.9f));
+            mButtons[i]->setIconSize(QSize(int(mButtons[i]->size().height() * 0.9f),
+                                           int(mButtons[i]->size().height() * 0.9f)));
             mButtons[i]->setText("Hue");
         } else if (mNames[i].compare("Discovery_NanoLeaf") == 0) {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(true);
             mButtons[i]->setStyleSheet("text-align:left");
-            mButtons[i]->setIconSize(QSize(mButtons[i]->size().height() * 0.9f,
-                                           mButtons[i]->size().height() * 0.9f));
+            mButtons[i]->setIconSize(QSize(int(mButtons[i]->size().height() * 0.9f),
+                                           int(mButtons[i]->size().height() * 0.9f)));
             mButtons[i]->setText("NanoLeaf");
         } else if (mNames[i].compare("Discovery") == 0) {
             foundMatch = true;
@@ -214,6 +217,11 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(false);
             mButtons[i]->setMinimumSize(buttonSize());
+        } else if (mNames[i].compare("Plus") == 0) {
+            foundMatch = true;
+            mButtons[i] = new QPushButton(this);
+            mButtons[i]->setCheckable(false);
+            mButtons[i]->setMinimumSize(buttonSize());
         }
 
         if (foundMatch) {
@@ -228,7 +236,7 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             }
 
             connect(mButtons[i], SIGNAL(clicked(bool)), buttonsMapper, SLOT(map()));
-            buttonsMapper->setMapping(mButtons[i], i);
+            buttonsMapper->setMapping(mButtons[i], int(i));
 
             if (!isALightsButton(i)) {
                 // resize icon
@@ -243,6 +251,8 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
                 } else if (mNames[i].compare("Select_Devices") == 0) {
                     cor::resizeIcon(mButtons[i], ":/images/colorWheel_icon.png");
                 } else if (mNames[i].compare("New_Group") == 0) {
+                    cor::resizeIcon(mButtons[i], ":/images/plusIcon.png");
+                } else if (mNames[i].compare("Plus") == 0) {
                     cor::resizeIcon(mButtons[i], ":/images/plusIcon.png");
                 } else if (mNames[i].compare("ColorScheme") == 0) {
                     cor::resizeIcon(mButtons[i], ":/images/ColorSchemePicker_icon.png");
@@ -309,7 +319,7 @@ void FloatingLayout::updateDiscoveryButton(EProtocolType type, QPixmap pixmap) {
     }
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
         if (mNames[i].compare(label) == 0) {
-            int size = mButtons[i]->size().height() * 0.5f;
+            int size = int(mButtons[i]->size().height() * 0.5f);
             mButtons[i]->setIcon(QIcon(pixmap.scaled(size,
                                                 size,
                                                 Qt::IgnoreAspectRatio,
@@ -356,14 +366,15 @@ void FloatingLayout::buttonPressed(int buttonIndex) {
     }
 
     // check the proper button
-    if (buttonIndex < (int)mButtons.size()) {
-        QString label = mNames[buttonIndex];
-        if (isALightsButton(buttonIndex)) {
-            cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[buttonIndex]);
+    uint32_t index = uint32_t(buttonIndex);
+    if (index < mButtons.size()) {
+        QString label = mNames[index];
+        if (isALightsButton(index)) {
+            cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[index]);
             Q_ASSERT(lightsButton);
             lightsButton->setChecked(true);
         } else {
-            mButtons[buttonIndex]->setChecked(true);
+            mButtons[index]->setChecked(true);
         }
 
 
@@ -377,7 +388,7 @@ void FloatingLayout::buttonPressed(int buttonIndex) {
 //--------------------------------
 
 
-bool FloatingLayout::isALightsButton(int index) {
+bool FloatingLayout::isALightsButton(uint32_t index) {
     if (mNames[index].compare("Multi") == 0
             || mNames[index].compare("Routine") == 0
             || mNames[index].compare("Mood_Page") == 0
@@ -388,5 +399,6 @@ bool FloatingLayout::isALightsButton(int index) {
 }
 
 QSize FloatingLayout::buttonSize() {
-    return QSize(this->width() / mButtons.size(), this->width() / mButtons.size());
+    return QSize(this->width() / int(mButtons.size()),
+                 this->width() / int(mButtons.size()));
 }

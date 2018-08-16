@@ -15,7 +15,7 @@ namespace nano
 {
 
 LeafDiscovery::LeafDiscovery(QObject *parent, uint32_t interval) : QObject(parent), cor::JSONSaveData("Nanoleaf"), mDiscoveryInterval(interval) {
-    mNanoleaf = (CommNanoleaf*)parent;
+    mNanoleaf =  static_cast<CommNanoleaf*>(parent);
 
     mDiscoveryTimer = new QTimer(this);
     connect(mDiscoveryTimer, SIGNAL(timeout()), this, SLOT(discoveryRoutine()));
@@ -84,7 +84,7 @@ void LeafDiscovery::receivedUPnP(QHostAddress sender, QString payload) {
                 if (locationArray.size() == 3) {
                     QString ip = locationArray[0] + ":" + locationArray[1];
                     bool ok;
-                    uint32_t port = locationArray[2].toUInt(&ok, 10);
+                    int port = locationArray[2].toInt(&ok, 10);
                     controller.IP = ip;
                     controller.port = port;
                 }
@@ -117,7 +117,7 @@ void LeafDiscovery::receivedUPnP(QHostAddress sender, QString payload) {
 void LeafDiscovery::startDiscovery() {
     if (!mDiscoveryTimer->isActive()) {
         mUPnP->addListener();
-        mDiscoveryTimer->start(mDiscoveryInterval);
+        mDiscoveryTimer->start(int(mDiscoveryInterval));
     }
 }
 
@@ -169,9 +169,9 @@ void LeafDiscovery::addIP(const QString& ip) {
     controller.IP = ipAddr;
     controller.port = 16021;
     // get device count + 1 for unique naming
-    int deviceCount = mFoundControllers.size() + mNotFoundControllers.size() + 1;
-    controller.name = "Nanoleaf" + deviceCount;
-    controller.hardwareName = "Nanoleaf" + deviceCount;
+    int deviceCount = int(mFoundControllers.size() + mNotFoundControllers.size() + 1);
+    controller.name = "Nanoleaf" + QString::number(deviceCount);
+    controller.hardwareName = "Nanoleaf" + QString::number(deviceCount);
     mUnknownControllers.push_back(controller);
 }
 
@@ -182,7 +182,7 @@ nano::LeafController LeafDiscovery::findControllerByIP(const QString& IP) {
         nano::LeafController controller;
         QStringList mainIP = pieces[2].split(":");
         QString IP    = "http://" + mainIP[0];
-        uint32_t port = mainIP[1].toInt();
+        int port = mainIP[1].toInt();
         QString auth  = pieces[5];
 
         bool found = false;
@@ -321,7 +321,7 @@ void LeafDiscovery::updateJSON(const nano::LeafController& controller) {
     QJsonArray array = mJsonData.array();
     bool shouldAdd = true;
     QJsonObject newJsonObject = leafControllerToJson(controller);
-    uint32_t i = 0;
+    int i = 0;
     for (auto value : array) {
         QJsonObject object = value.toObject();
         nano::LeafController jsonController = jsonToLeafController(object);

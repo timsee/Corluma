@@ -133,6 +133,9 @@ private:
     /// floating layout for settings button
     FloatingLayout *mVerticalFloatingLayout;
 
+    /// used for certain discovery pages as an additional button
+    FloatingLayout *mOptionalFloatingLayout;
+
     /// discovery widget for ArduCor
     DiscoveryArduCorWidget *mArduCorWidget;
 
@@ -204,7 +207,7 @@ private:
     void resizeButtonIcons();
 
     /// the last floating layout height, used to test if resize is needed.
-    uint32_t mLastFloatingHeight;
+    int mLastFloatingHeight;
 
     /// pointer to the app states that determine if a protocol (such as arducor or nanoleaf) is currently enabled
     AppSettings *mAppSettings;

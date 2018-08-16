@@ -8,22 +8,17 @@
 #include "comm/commhue.h"
 #include "cor/utils.h"
 
-#include <QMovie>
 #include <QScroller>
 #include <QGraphicsOpacityEffect>
 #include <QPropertyAnimation>
 #include <QDesktopWidget>
+#include <QMessageBox>
 
 DiscoveryHueWidget::DiscoveryHueWidget(CommLayer *comm, QWidget *parent) :
     DiscoveryWidget(parent) {
     mScale = 0.4f;
 
     mComm = comm;
-
-    QMovie *movie = new QMovie(":/images/loading_icon.gif");
-    mLoadingIcon = new QLabel(this);
-    mLoadingIcon->setMovie(movie);
-    movie->start();
 
     mLabel = new QLabel(this);
     mLabel->setWordWrap(true);
@@ -75,8 +70,7 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer *comm, QWidget *parent) :
     connect(mBridgeSchedulesWidget, SIGNAL(closePressed()), this, SLOT(schedulesClosePressed()));
 
     mLayout = new QVBoxLayout;
-    mLayout->addWidget(mLoadingIcon,  2);
-    mLayout->addWidget(mLabel,        2);
+    mLayout->addWidget(mLabel,        4);
     mLayout->addWidget(mScrollArea,   8);
     setLayout(mLayout);
 }
@@ -121,9 +115,6 @@ void DiscoveryHueWidget::hueDiscoveryUpdate(EHueDiscoveryState newState) {
             //qDebug() << "Hue Update: All Bridges Connected" << mComm->hueBridge().IP;
             emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovered);
             break;
-        default:
-            qDebug() << "Not a recognized state..." << (uint32_t)newState;
-            break;
     }
 }
 
@@ -151,9 +142,9 @@ void DiscoveryHueWidget::updateBridgeGUI() {
         int widgetIndex = -1;
         int i = 0;
         for (auto&& widget : mBridgeWidgets) {
-            if (widget->key() == bridge.id) {
+            if (widget->key() == bridge.IP) {
                 widgetIndex = i;
-               // widget->updateLight(light);
+                widget->updateBridge(bridge);
             }
             ++i;
         }
@@ -167,6 +158,7 @@ void DiscoveryHueWidget::updateBridgeGUI() {
             connect(widget, SIGNAL(discoverHuesPressed(QString)), this, SLOT(discoverHuesPressed(QString)));
             connect(widget, SIGNAL(groupsPressed(QString)), this, SLOT(groupsPressed(QString)));
             connect(widget, SIGNAL(schedulesPressed(QString)), this, SLOT(schedulesPressed(QString)));
+            connect(widget, SIGNAL(deleteBridge(hue::Bridge)), this, SLOT(deleteBridgeFromAppData(hue::Bridge)));
             mBridgeWidgets.push_back(widget);
             mScrollLayout->addWidget(widget);
         }
@@ -265,12 +257,12 @@ void DiscoveryHueWidget::bridgePressed(QString key) {
 
 void DiscoveryHueWidget::resize() {
     // resize scroll area
-    mScrollAreaWidget->setFixedWidth(this->width() * 0.9f);
-    QSize widgetSize(mScrollAreaWidget->width(), this->height() / 1.5f);
-    uint32_t yPos = 0;
+    mScrollAreaWidget->setFixedWidth(int(this->width() * 0.9f));
+    QSize widgetSize(mScrollAreaWidget->width(), int(this->height() / 1.5f));
+    int yPos = 0;
     // draw widgets in content region
     for (auto widget : mBridgeWidgets) {
-        widget->setHeight(widgetSize.height() * 0.9f);
+        widget->setHeight(int(widgetSize.height() * 0.9f));
         yPos += widget->height();
 
         widget->setVisible(true);
@@ -311,11 +303,6 @@ void DiscoveryHueWidget::greyOutFadeComplete() {
     mGreyOut->setVisible(false);
 }
 
-void DiscoveryHueWidget::IPFieldChanged(QString ipAddress) {
-    //qDebug() << " this is the ip address" << ipAddress;
-    mComm->hue()->discovery()->addManualIP(ipAddress);
-}
-
 void DiscoveryHueWidget::resizeEvent(QResizeEvent *) {
     if (mBridgeSchedulesWidget->isOpen()) {
         mBridgeSchedulesWidget->resize();
@@ -325,4 +312,14 @@ void DiscoveryHueWidget::resizeEvent(QResizeEvent *) {
         mBridgeGroupsWidget->resize();
     }
 
+}
+
+void DiscoveryHueWidget::deleteBridgeFromAppData(hue::Bridge bridge) {
+    QMessageBox::StandardButton reply;
+    QString text = "Delete this Bridge from App Memory? This will delete all " + QString::number(bridge.lights.size()) + " lights from rooms and moods. This cannot be undone.";
+    reply = QMessageBox::question(this, "Delete Bridge?", text,
+                                  QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::Yes) {
+        mComm->hue()->discovery()->deleteBridge(bridge);
+    }
 }

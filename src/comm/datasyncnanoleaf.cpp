@@ -138,7 +138,7 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
             if (dataDevice.palette.colors().size() == commDevice.palette.colors().size()) {
                 uint32_t i = 0;
                 for (auto&& color : dataDevice.palette.colors()) {
-                   if (cor::colorDifference(color, commDevice.palette.colors()[i]) > 0.05) {
+                   if (cor::colorDifference(color, commDevice.palette.colors()[i]) > 0.05f) {
                         palettesAreClose = false;
                    }
                    ++i;

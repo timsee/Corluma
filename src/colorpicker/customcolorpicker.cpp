@@ -15,9 +15,9 @@ CustomColorPicker::CustomColorPicker(QWidget *parent) : QWidget(parent) {
 
     mCountSlider = new cor::Slider(this);
     mCountSlider->setSliderColorBackground(QColor(0, 0, 0));
-    mCountSlider->slider()->setRange(0, mMaximumSize * 10);
+    mCountSlider->slider()->setRange(0, int(mMaximumSize) * 10);
     mCountSlider->slider()->blockSignals(true);
-    mCountSlider->slider()->setValue(mColorsUsed * 10);
+    mCountSlider->slider()->setValue(int(mColorsUsed) * 10);
     mCountSlider->slider()->blockSignals(false);
     mCountSlider->slider()->setTickInterval(10);
     mCountSlider->setSnapToNearestTick(true);
@@ -45,8 +45,8 @@ CustomColorPicker::CustomColorPicker(QWidget *parent) : QWidget(parent) {
 
 void CustomColorPicker::updateMultiColor(const std::vector<QColor>& colorVector) {
     mColorGrid->updateColors(colorVector);
-    uint32_t maxCount = mCountSlider->slider()->value() / mMaximumSize;
-    selectedMaxChanged(maxCount);
+    int maxCount = mCountSlider->slider()->value() / int(mMaximumSize);
+    selectedMaxChanged(uint32_t(maxCount));
     updateMultiColorSlider();
 }
 
@@ -64,25 +64,25 @@ void CustomColorPicker::updateMultiColorSlider() {
         g = g + colors()[i].green();
         b = b + colors()[i].blue();
     }
-    QColor average = QColor(r / colors().size(),
-                            g / colors().size(),
-                            b / colors().size());
+    QColor average = QColor(r / int(colors().size()),
+                            g / int(colors().size()),
+                            b / int(colors().size()));
 
     mCountSlider->setSliderColorBackground(average);
 }
 
 
 void CustomColorPicker::releasedSlider() {
-    uint32_t maxCount = mCountSlider->slider()->value() / mMaximumSize;
-    selectedMaxChanged(maxCount);
+    int maxCount = mCountSlider->slider()->value() / int(mMaximumSize);
+    selectedMaxChanged(uint32_t(maxCount));
     emit multiColorCountChanged(maxCount);
 }
 
 
 void CustomColorPicker::countSliderChanged(int newValue) {
-    uint32_t maxCount = newValue / mMaximumSize;
+    uint32_t maxCount = uint32_t(newValue) / mMaximumSize;
     selectedMaxChanged(maxCount);
-    emit multiColorCountChanged(maxCount);
+    emit multiColorCountChanged(int(maxCount));
 }
 
 void CustomColorPicker::selectedMaxChanged(uint32_t maxCount) {

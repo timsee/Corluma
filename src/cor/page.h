@@ -23,13 +23,13 @@ public:
     /*!
      * \brief ~Page Destructor
      */
-    virtual ~Page(){}
+    virtual ~Page();
 
     /// setter for open flag
-    void isOpen(bool open) { mIsOpen = open; }
+    void isOpen(bool open);
 
     /// true if open, false otherwise
-    bool isOpen() { return mIsOpen; }
+    bool isOpen();
 
 protected:
 

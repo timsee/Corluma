@@ -26,7 +26,7 @@ public:
     /*!
      * \brief ArduCorPacketParser constructor
      */
-    ArduCorPacketParser(QObject *parent = 0);
+    ArduCorPacketParser(QObject *parent);
 
     /*!
      * \brief parsePacket take a packet that is assumed to be a properly formatted command packet

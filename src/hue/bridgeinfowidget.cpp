@@ -15,24 +15,16 @@
 namespace hue
 {
 
-BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget *parent) : QWidget(parent), mBridge(bridge) {
+BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget *parent) : QWidget(parent) {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     this->setStyleSheet(styleSheet);
 
-    //-----------
-    // Top Left Image
-    //-----------
+    mDeleteButton = new QPushButton("X", this);
+    mDeleteButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    connect(mDeleteButton, SIGNAL(clicked()), this, SLOT(deleteButtonPressed()));
 
-    mImage = new QLabel(this);
-    mImage->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    mImage->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mBridgePixmap = QPixmap(":images/Hue-Bridge.png");
-
-    //-----------
-    // Top Right info
-    //-----------
-
-    mNameLayout = new QHBoxLayout;
+    mTopSpacer = new QLabel(this);
+    mTopSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     mNameLabel = new QLabel("<b>Name:</b> ", this);
     mNameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -42,19 +34,35 @@ BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget *parent) :
     mNameWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(mNameWidget, SIGNAL(updatedField(QString)), this, SLOT(changedName(QString)));
 
-    mNameLayout->addWidget(mNameLabel);
-    mNameLayout->addWidget(mNameWidget);
+    mTopLayout = new QHBoxLayout;
+    mTopLayout->addWidget(mDeleteButton, 1);
+    mTopLayout->addWidget(mTopSpacer, 3);
+    mTopLayout->addWidget(mNameLabel, 2);
+    mTopLayout->addWidget(mNameWidget, 3);
 
-    mIPAddress  = new QLabel("<b>IP:</b>  " + bridge.IP, this);
+    //-----------
+    // mid Left Image
+    //-----------
+
+    mImage = new QLabel(this);
+    mImage->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    mImage->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+    mMovie = new QMovie(":/images/loading_icon.gif");
+
+    //-----------
+    // mid Right info
+    //-----------
+
+    mIPAddress  = new QLabel(this);
     mIPAddress->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mIPAddress->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     setTitleFontPointSize(14);
 
-    mAPI = new QLabel("<b>API:</b>  " + bridge.api, this);
+    mAPI = new QLabel(this);
     mAPI->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mAPI->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mID = new QLabel("<b>ID:</b>  " + bridge.id, this);
+    mID = new QLabel(this);
     mID->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mID->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
@@ -67,19 +75,18 @@ BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget *parent) :
     //----
 
     mTopRightLayout = new QVBoxLayout;
-    mTopRightLayout->addLayout(mNameLayout, 1);
     mTopRightLayout->addWidget(mIPAddress,  1);
     mTopRightLayout->addWidget(mAPI,        1);
     mTopRightLayout->addWidget(mID,         1);
     mTopRightLayout->addWidget(mSpacer,     1);
 
     //-----
-    // Top widget
+    // mid widget
     //----
 
-    mTopLayout = new QHBoxLayout;
-    mTopLayout->addWidget(mImage, 2);
-    mTopLayout->addLayout(mTopRightLayout, 8);
+    mMidLayout = new QHBoxLayout;
+    mMidLayout->addWidget(mImage, 2);
+    mMidLayout->addLayout(mTopRightLayout, 8);
 
     //-----------
     // Bottom
@@ -103,12 +110,46 @@ BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget *parent) :
     mButtonsLayout->addWidget(mSchedulesButton);
 
     mLayout = new QVBoxLayout(this);
-    mLayout->addLayout(mTopLayout, 4);
-    mLayout->addLayout(mButtonsLayout, 1);
+    mLayout->addLayout(mTopLayout, 1);
+    mLayout->addLayout(mMidLayout, 8);
+    mLayout->addLayout(mButtonsLayout, 2);
 
     mIsChecked = false;
+
+    updateBridge(bridge);
 }
 
+void BridgeInfoWidget::updateBridge(const hue::Bridge& bridge) {
+    if (!(bridge == mBridge)) {
+        mNameWidget->setText(bridge.customName);
+        mIPAddress->setText("<b>IP:</b>  " + bridge.IP);
+        mAPI->setText("<b>API:</b>  " + bridge.api);
+        mID->setText("<b>ID:</b>  " + bridge.id);
+        handleBridgeState(bridge.state);
+        mBridge = bridge;
+    }
+}
+
+void BridgeInfoWidget::handleBridgeState(EBridgeDiscoveryState state) {
+    if (state == EBridgeDiscoveryState::connected) {
+        mBridgePixmap = QPixmap(":images/Hue-Bridge.png");
+        int width = int(this->width() * 0.333f);
+        mImage->setPixmap(mBridgePixmap.scaled(width,
+                                               width,
+                                               Qt::KeepAspectRatio,
+                                               Qt::SmoothTransformation));
+    } else if (state == EBridgeDiscoveryState::lookingForUsername) {
+        mBridgePixmap = QPixmap(":images/pressHueBridgeImage.png");
+        int width = int(this->width() * 0.333f);
+        mImage->setPixmap(mBridgePixmap.scaled(width,
+                                               width,
+                                               Qt::KeepAspectRatio,
+                                               Qt::SmoothTransformation));
+    } else if (state == EBridgeDiscoveryState::lookingForResponse) {
+        mImage->setMovie(mMovie);
+        mMovie->start();
+    }
+}
 
 void BridgeInfoWidget::setChecked(bool checked) {
     mIsChecked = checked;
@@ -150,11 +191,16 @@ void BridgeInfoWidget::mouseReleaseEvent(QMouseEvent *event) {
 }
 
 void BridgeInfoWidget::resizeEvent(QResizeEvent *) {
-    int width = this->width() * 0.333f;
-    mImage->setPixmap(mBridgePixmap.scaled(width,
-                                           width,
-                                           Qt::KeepAspectRatio,
-                                           Qt::SmoothTransformation));
+    if (mBridge.state != EBridgeDiscoveryState::lookingForResponse) {
+        int width = int(this->width() * 0.333f);
+        mImage->setFixedWidth(width);
+        mImage->setPixmap(mBridgePixmap.scaled(width,
+                                               width,
+                                               Qt::KeepAspectRatio,
+                                               Qt::SmoothTransformation));
+    } else {
+        mImage->setFixedWidth(int(this->width() * 0.333f));
+    }
 }
 
 
@@ -182,6 +228,10 @@ void BridgeInfoWidget::setTitleFontPointSize(int pt) {
     QFont font(mIPAddress->font().toString(), pt);
     QFontMetrics fm(font);
     mIPAddress->setMinimumHeight(fm.height());
+}
+
+void BridgeInfoWidget::deleteButtonPressed() {
+    emit deleteBridge(mBridge);
 }
 
 }

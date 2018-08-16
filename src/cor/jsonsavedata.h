@@ -27,7 +27,35 @@ public:
     /// constructor
     JSONSaveData(const QString& saveName);
 
+    /// destructor
+    virtual ~JSONSaveData();
+
 protected:
+
+    /*!
+     * \brief removeJSONObject remove the json object from the array with the given key and value
+     * \param key the key to check
+     * \param value the expected value for this key.
+     * \return true if an object is deleted, false otherwise
+     */
+    bool removeJSONObject(const QString& key, const QString& value);
+
+    /*!
+     * \brief removeJSONObject remove the json object from the array with the given key and value
+     * \param key the key to check
+     * \param value the expected value for this key.
+     * \return true if an object is deleted, false otherwise
+     */
+    bool removeJSONObject(const QString& key, double value);
+
+    /*!
+     * \brief removeJSONObject remove the json object from the array with the given key and value
+     * \param key the key to check
+     * \param value the expected value for this key.
+     * \return true if an object is deleted, false otherwise
+     */
+    bool removeJSONObject(const QString& key, bool value);
+
     /// stores the JSON data that keeps track of all found controllers
     QJsonDocument mJsonData;
 

@@ -26,7 +26,7 @@ void DeviceList::updateRoutine(const QJsonObject& routineObject) {
 
     int speed = INT_MIN;
     if (routine != ERoutine::singleSolid) {
-        speed = routineObject["speed"].toDouble();
+        speed = int(routineObject["speed"].toDouble());
     }
     int hueCount = 0;
     for (auto&& light : mDevices) {
@@ -42,8 +42,8 @@ void DeviceList::updateRoutine(const QJsonObject& routineObject) {
         if (routine <= cor::ERoutineSingleColorEnd) {
             // check for edge case where ambient color values are used
             if (routineObject["temperature"].isDouble()) {
-                light.color = cor::colorTemperatureToRGB(routineObject["temperature"].toDouble());
-                light.temperature = routineObject["temperature"].toDouble();
+                light.color = cor::colorTemperatureToRGB(int(routineObject["temperature"].toDouble()));
+                light.temperature = int(routineObject["temperature"].toDouble());
             } else {
                 light.color.setHsvF(routineObject["hue"].toDouble(),
                         routineObject["sat"].toDouble(),
@@ -60,44 +60,42 @@ void DeviceList::updateRoutine(const QJsonObject& routineObject) {
              */
             std::vector<QColor> colors = palette.colors();
             if (light.protocol() == EProtocolType::hue) {
-                int colorIndex = hueCount % colors.size();
+                uint32_t colorIndex = uint32_t(hueCount) % colors.size();
                 light.color = colors[colorIndex];
                 hueCount++;
             }
         }
 
         if (routineObject["param"].isDouble()) {
-            light.param = routineObject["param"].toDouble();
+            light.param = int(routineObject["param"].toDouble());
         }
     }
     emit dataUpdate();
 }
 
 ERoutine DeviceList::currentRoutine() {
-    std::vector<int> routineCount((int)ERoutine::MAX, 0);
+    std::vector<int> routineCount(int(ERoutine::MAX), 0);
     for (const auto& device : mDevices) {
         if (device.isReachable) {
-            routineCount[(int)device.routine] = routineCount[(int)device.routine] + 1;
+            routineCount[std::size_t(device.routine)] = routineCount[std::size_t(device.routine)] + 1;
         }
     }
     auto result = std::max_element(routineCount.begin(), routineCount.end());
-    return (ERoutine)std::distance(routineCount.begin(), result);
+    return ERoutine(std::distance(routineCount.begin(), result));
 }
 
 Palette DeviceList::palette() {
     // count number of times each color group occurs
-    std::vector<int> paletteCount((int)EPalette::unknown, 0);
+    std::vector<int> paletteCount(int(EPalette::unknown), 0);
     for (const auto& device : mDevices) {
         if (device.isReachable) {
-            paletteCount[(int)device.palette.paletteEnum()] = paletteCount[(int)device.palette.paletteEnum()] + 1;
+            paletteCount[uint32_t(device.palette.paletteEnum())] = paletteCount[uint32_t(device.palette.paletteEnum())] + 1;
         }
     }
     // find the most frequent color group occurence, return its index.
     auto result = std::max_element(paletteCount.begin(), paletteCount.end());
     EPalette palette = EPalette(std::distance(paletteCount.begin(), result));
     if (palette == EPalette::custom) {
-        //TODO: fill thsi out
-        std::vector<QColor> paletteVector(10);
         for (const auto& device : mDevices) {
             if (device.palette.paletteEnum() == palette) {
                 return device.palette;
@@ -120,10 +118,10 @@ QColor DeviceList::mainColor() {
     int r = 0;
     int g = 0;
     int b = 0;
-    size_t deviceCount = 0;
+    int deviceCount = 0;
     for (const auto& device : mDevices) {
         if (device.isReachable) {
-            if ((int)device.routine <= (int)cor::ERoutineSingleColorEnd) {
+            if (int(device.routine) <= int(cor::ERoutineSingleColorEnd)) {
                 r = r + device.color.red();
                 g = g + device.color.green();
                 b = b + device.color.blue();
@@ -144,7 +142,7 @@ QColor DeviceList::mainColor() {
         b = b / deviceCount;
     }
     QColor color(r, g, b);
-    color.setHsvF(color.hueF(), color.saturationF(), 1.0f);
+    color.setHsvF(color.hueF(), color.saturationF(), 1.0);
     return color;
 }
 
@@ -166,7 +164,7 @@ void DeviceList::updateSpeed(int speed) {
 
 int DeviceList::speed() {
     int speed = 0;
-    size_t deviceCount = 0;
+    int deviceCount = 0;
     for (const auto& device : mDevices) {
         if (device.isReachable) {
             speed = speed + device.speed;
@@ -202,7 +200,7 @@ bool DeviceList::isOn() {
 
 
 void DeviceList::updateColorScheme(std::vector<QColor> colors) {
-    int i = 0;
+    uint32_t i = 0;
     for (auto&& light : mDevices) {
         light.color = colors[i];
         light.isOn = true;
@@ -232,10 +230,10 @@ std::vector<QColor> DeviceList::colorScheme() {
 
 
 
-void DeviceList::updateBrightness(int brightness) {
+void DeviceList::updateBrightness(uint32_t brightness) {
     for (auto&& light : mDevices) {
         if (light.routine <= cor::ERoutineSingleColorEnd) {
-            light.color.setHsvF(light.color.hueF(), light.color.saturationF(), float(brightness) / 100.0f);
+            light.color.setHsvF(light.color.hueF(), light.color.saturationF(), brightness / 100.0);
         } else {
             light.palette.brightness(brightness);
         }
@@ -246,14 +244,14 @@ void DeviceList::updateBrightness(int brightness) {
 
 
 int DeviceList::brightness() {
-    uint32_t brightness = 0;
-    size_t deviceCount = 0;
+    int brightness = 0;
+    int deviceCount = 0;
     for (const auto& device : mDevices) {
         if (device.isReachable) {
             if (device.routine <= cor::ERoutineSingleColorEnd) {
-                brightness = brightness + device.color.valueF() * 100.0f;
+                brightness += int(device.color.valueF() * 100.0);
             } else {
-                brightness = brightness + device.palette.brightness();
+                brightness += device.palette.brightness();
             }
             deviceCount++;
         }
@@ -338,7 +336,7 @@ int DeviceList::removeDevicesOfType(EProtocolType type) {
     for (auto&& device : removeList) {
         removeDevice(device);
     }
-    return mDevices.size();
+    return int(mDevices.size());
 }
 
 int DeviceList::countDevicesOfType(EProtocolType type) {
@@ -412,7 +410,7 @@ QString DeviceList::findCurrentCollection(const std::list<cor::LightGroup>& coll
                 if (collection.devices.size() > biggestSize) {
                     name = collection.name;
                     foundNonZeroGroup = true;
-                    biggestSize = collection.devices.size();
+                    biggestSize = uint32_t(collection.devices.size());
                 }
             }
             ++index;
@@ -425,7 +423,7 @@ QString DeviceList::findCurrentCollection(const std::list<cor::LightGroup>& coll
     // if only one group is connected, this is easy, return that group.
     if (completeGroupCount == 1) {
         auto result = std::find(allLightsFound.begin(), allLightsFound.end(), true);
-        int allLightsIndex = std::distance(allLightsFound.begin(), result);
+        auto allLightsIndex = std::distance(allLightsFound.begin(), result);
         int currentIndex = 0;
         for (auto collection : collections) {
             if (allLightsIndex == currentIndex) {

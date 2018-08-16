@@ -109,6 +109,12 @@ public:
      */
     HueLight lightFromBridgeIDAndIndex(const QString& bridgeID, int index);
 
+    /*!
+     * \brief deleteBridge delete the bridge from app memory
+     * \param bridge bridge to delete
+     */
+    void deleteBridge(const hue::Bridge& bridge);
+
 signals:
 
     /// signals when a light is detected as deleted.
@@ -162,7 +168,7 @@ private:
     QElapsedTimer *mElapsedTimer;
 
     /// tracks last time
-    uint32_t mLastTime;
+    qint64 mLastTime;
 
     /// flag that checks if more than 2 minutes have passed
     bool mStartupTimerFinished = false;

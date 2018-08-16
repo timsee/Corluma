@@ -22,7 +22,7 @@ class EditPageTopMenu : public QWidget
     Q_OBJECT
 public:
     /// conustructor
-    explicit EditPageTopMenu(QWidget *parent = 0);
+    explicit EditPageTopMenu(QWidget *parent);
 
     /// getter for close button
     QPushButton *closeButton() { return mCloseButton; }

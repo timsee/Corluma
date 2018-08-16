@@ -21,8 +21,7 @@ class SwatchVectorWidget: public QWidget
     Q_OBJECT
 public:
     /// Constructor
-    explicit SwatchVectorWidget(uint32_t width, uint32_t height,
-                           QWidget *parent);
+    explicit SwatchVectorWidget(uint32_t width, uint32_t height, QWidget *parent);
     /*!
      * \brief updateDevices update the devices in the cor::Button to show the exact routine.
      * \param devices list of devices to display

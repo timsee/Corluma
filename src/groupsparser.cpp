@@ -66,8 +66,8 @@ void GroupsParser::saveNewMood(const QString& groupName, const std::list<cor::Li
         object["type"] = commTypeToString(device.commType());
 
         if (device.protocol() == EProtocolType::arduCor) {
-            object["majorAPI"]   = device.majorAPI;
-            object["minorAPI"]   = device.minorAPI;
+            object["majorAPI"]   = double(device.majorAPI);
+            object["minorAPI"]   = double(device.minorAPI);
         }
 
         object["uniqueID"] = device.uniqueID();
@@ -196,7 +196,7 @@ void GroupsParser::lightDeleted(const QString& uniqueID) {
                 // search for the unique ID in its devices array
                 QJsonArray devicesArray = object["devices"].toArray();
                 bool detectChanges = false;
-                uint32_t deviceIndex = 0;
+                int deviceIndex = 0;
                 for (auto device : devicesArray) {
                     QJsonObject deviceObject = device.toObject();
                     if (deviceObject["uniqueID"].toString() == uniqueID) {
@@ -378,13 +378,13 @@ void GroupsParser::parseMood(const QJsonObject& object) {
 
                 bool isOn = device["isOn"].toBool();
 
-                float hue = device["hue"].toDouble();
-                float sat = device["sat"].toDouble();
+                double hue = device["hue"].toDouble();
+                double sat = device["sat"].toDouble();
 
-                int majorAPI = device["majorAPI"].toDouble();
-                int minorAPI = device["minorAPI"].toDouble();
+                uint32_t majorAPI = uint32_t(device["majorAPI"].toDouble());
+                uint32_t minorAPI = uint32_t(device["minorAPI"].toDouble());
 
-                float brightness = device["bri"].toDouble();
+                double brightness = int(device["bri"].toDouble());
                 QColor color;
                 color.setHsvF(hue, sat, brightness);
 
@@ -392,7 +392,7 @@ void GroupsParser::parseMood(const QJsonObject& object) {
 
                 int speed = 100;
                 if (device["speed"].isDouble()) {
-                    speed = device["speed"].toDouble();
+                    speed = int(device["speed"].toDouble());
                 }
 
                 cor::Light light(uniqueID, type);

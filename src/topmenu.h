@@ -87,7 +87,7 @@ public:
     void showFloatingLayout(EPage newPage);
 
     /// getter for end of floating layout
-    uint32_t floatingLayoutEnd() { return mFloatingMenuEnd; }
+    uint32_t floatingLayoutEnd() { return uint32_t(mFloatingMenuEnd); }
 
 signals:
 
@@ -95,7 +95,7 @@ signals:
     void buttonPressed(QString key);
 
     /// the new value of the brightness slider
-    void brightnessChanged(int newValue);
+    void brightnessChanged(uint32_t newValue);
 
 public slots:
 
@@ -129,7 +129,7 @@ public slots:
     void deviceCountReachedZero();
 
     /// brightness udpated somewhere else
-    void brightnessUpdate(int newValue);
+    void brightnessUpdate(uint32_t newValue);
 
 protected:
     /// resizes assets in the widget
@@ -172,10 +172,10 @@ private:
     QGridLayout *mLayout;
 
     /// y position where a floating menu can start.
-    uint32_t mFloatingMenuStart;
+    int mFloatingMenuStart;
 
     /// y position where the floating menus end.
-    uint32_t mFloatingMenuEnd;
+    int mFloatingMenuEnd;
 
     /// data layer, contains intended state for all devices.
     cor::DeviceList *mData;

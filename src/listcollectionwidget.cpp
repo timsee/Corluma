@@ -11,7 +11,7 @@
 #include "listcollectionsubwidget.h"
 #include <algorithm>
 
-ListCollectionWidget::ListCollectionWidget(QWidget *parent) : QWidget(parent) {}
+ListCollectionWidget::ListCollectionWidget(QWidget *parent)  {}
 
 void ListCollectionWidget::setup(const QString& name,
                                  const QString& key,
@@ -43,7 +43,8 @@ void ListCollectionWidget::setup(const QString& name,
     connect(mEditButton, SIGNAL(clicked(bool)), this, SLOT(editButtonClicked(bool)));
     mEditIcon = QPixmap(":/images/editIcon.png");
     mEditButton->setIcon(QIcon(mEditIcon));
-    mEditButton->setFixedSize(mMinimumHeight * mIconRatio, mMinimumHeight * mIconRatio);
+    mEditButton->setFixedSize(int(mMinimumHeight * mIconRatio),
+                              int(mMinimumHeight * mIconRatio));
     mEditButton->setHidden(true);
 
     mClosedPixmap = QPixmap(":/images/closedArrow.png");
@@ -105,10 +106,12 @@ void ListCollectionWidget::setListHeight(int newHeight) {
 }
 
 void ListCollectionWidget::resizeRightHandIcon(QPixmap pixmap, QPushButton *button) {
-    button->setIconSize(QSize(mMinimumHeight * mIconRatio, mMinimumHeight * mIconRatio));
-    pixmap = pixmap.scaled(mMinimumHeight * mIconRatio, mMinimumHeight * mIconRatio,
-                                         Qt::KeepAspectRatio,
-                                         Qt::SmoothTransformation);
+    button->setIconSize(QSize(int(mMinimumHeight * mIconRatio),
+                              int(mMinimumHeight * mIconRatio)));
+    pixmap = pixmap.scaled(int(mMinimumHeight * mIconRatio),
+                           int(mMinimumHeight * mIconRatio),
+                           Qt::KeepAspectRatio,
+                           Qt::SmoothTransformation);
     button->setIcon(QIcon(pixmap));
     button->setFixedSize(mMinimumHeight, mMinimumHeight);
 }
@@ -144,7 +147,7 @@ QPoint ListCollectionWidget::widgetPosition(QWidget *widget) {
         return QPoint(-1, -1);
     }
     // store index of inserted element
-    int index = std::distance(mWidgets.begin(), findResult);
+    int index = int(std::distance(mWidgets.begin(), findResult));
     if (mType == EListType::grid) {
         int x = index % 2;     // 2 rows per column
         int y = index / 2;     // new column every other index
@@ -168,14 +171,14 @@ void ListCollectionWidget::moveWidgets() {
                                  mWidgetSize.height());
         mWidgets[i]->setVisible(mShowButtons);
        // qDebug() << "this is the widget position of " << i << position << "and geometry"  << mWidgets[i]->geometry();
-        if (((uint32_t)position.y() + 1) > tempRowCount) {
-            tempRowCount = (position.y() + 1);
+        if (uint32_t(position.y() + 1) > tempRowCount) {
+            tempRowCount = uint32_t(position.y() + 1);
         }
     }
     if (mRowCount != tempRowCount) {
       //  mWidget->setMinimumHeight(tempRowCount * mWidgetSize.height());
         mRowCount = tempRowCount;
-        emit rowCountChanged((int)mRowCount);
+        emit rowCountChanged(int(mRowCount));
     }
 }
 

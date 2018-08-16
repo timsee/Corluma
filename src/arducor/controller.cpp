@@ -19,17 +19,17 @@ cor::Controller jsonToController(const QJsonObject& object)
     cor::Controller controller;
     controller.name             = object["path"].toString();
     controller.type             = stringToCommType(object["commType"].toString());
-    controller.majorAPI         = object["majorAPI"].toDouble();
-    controller.minorAPI         = object["minorAPI"].toDouble();
-    controller.isUsingCRC       = object["CRC"].toBool();
-    controller.maxPacketSize    = object["maxPacketSize"].toDouble();
-    controller.maxHardwareIndex = object["maxIndex"].toDouble();
+    controller.majorAPI         = uint32_t(object["majorAPI"].toDouble());
+    controller.minorAPI         = uint32_t(object["minorAPI"].toDouble());
+    controller.isUsingCRC       = bool(object["CRC"].toBool());
+    controller.maxPacketSize    = uint32_t(object["maxPacketSize"].toDouble());
+    controller.maxHardwareIndex = int(object["maxIndex"].toDouble());
 
-    std::vector<QString> names(controller.maxHardwareIndex);
-    std::vector<ELightHardwareType> hardwareTypes(controller.maxHardwareIndex);
+    std::vector<QString> names(std::size_t(controller.maxHardwareIndex));
+    std::vector<ELightHardwareType> hardwareTypes(std::size_t(controller.maxHardwareIndex));
     for (auto ref : object["devices"].toArray()) {
        QJsonObject object = ref.toObject();
-       uint32_t i         = object["index"].toDouble() - 1;
+       uint32_t i         = uint32_t(object["index"].toDouble()) - 1;
        names[i]           = object["name"].toString();
        hardwareTypes[i]   = stringToHardwareType(object["hardwareType"].toString());
     }

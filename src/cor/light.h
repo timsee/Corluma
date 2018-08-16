@@ -135,10 +135,10 @@ public:
     EProductType productType;
 
     /// major API level
-    int majorAPI;
+    uint32_t majorAPI;
 
     /// minor API level
-    int minorAPI;
+    uint32_t minorAPI;
 
     //-----------------------
     // Connection Info

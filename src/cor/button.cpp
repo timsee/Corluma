@@ -33,7 +33,7 @@ void Button::resizeEvent(QResizeEvent *event) {
 
 void Button::resizeIcon() {
     int size = std::min(this->size().height(), this->size().width());
-    mIconSize = QSize(size * 0.6f, size * 0.6f);
+    mIconSize = QSize(int(size * 0.6f), int(size * 0.6f));
     QPixmap pixmap = mIconData.renderAsQPixmap();
     pixmap = pixmap.scaled(mIconSize.width(),
                            mIconSize.height(),

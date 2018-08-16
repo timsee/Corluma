@@ -27,13 +27,13 @@ PresetGroupWidget::PresetGroupWidget(QString name,
     light.palette = palettes.palette(palette);
     light.speed = 100;
     if (mode == EPresetWidgetMode::arduino) {
-        int buttonCount = (int)ERoutine::MAX - (int)cor::ERoutineSingleColorEnd - 1;
-        mButtons = std::vector<cor::Button *>(buttonCount, nullptr);
+        int buttonCount = int(ERoutine::MAX) - int(cor::ERoutineSingleColorEnd) - 1;
+        mButtons = std::vector<cor::Button *>(std::size_t(buttonCount), nullptr);
         mLayout->addWidget(mLabel, 0, 0, 1, buttonCount + 1);
 
-        int index = 0;
-        for (int routine = (int)cor::ERoutineSingleColorEnd + 1; routine < (int)ERoutine::MAX; routine++) {
-            light.routine = (ERoutine)routine;
+        uint32_t index = 0;
+        for (int routine = int(cor::ERoutineSingleColorEnd) + 1; routine < int(ERoutine::MAX); routine++) {
+            light.routine = ERoutine(routine);
             QJsonObject routineObject = lightToJson(light);
             mButtons[index] = new cor::Button(this, routineObject);
             mButtons[index]->resizeIconAutomatically(true);
@@ -41,14 +41,14 @@ PresetGroupWidget::PresetGroupWidget(QString name,
             mButtons[index]->setStyleSheet(kUncheckedStyleSheet);
             connect(mButtons[index], SIGNAL(buttonClicked(QJsonObject)), this, SLOT(multiButtonClicked(QJsonObject)));
             // add to layout
-            mLayout->addWidget(mButtons[index], 1, index + 1, 6, 1);
-            mButtons[index]->setFixedHeight(mButtons[index]->size().width() * 0.9f);
+            mLayout->addWidget(mButtons[index], 1, int(index + 1), 6, 1);
+            mButtons[index]->setFixedHeight(int(mButtons[index]->size().width() * 0.9f));
             index++;
         }
     } else {
         mButtons = std::vector<cor::Button *>(1, nullptr);
         mLayout->addWidget(mLabel, 0, 0, 1, 2);
-        int index = 0;
+        uint32_t index = 0;
         light.routine = ERoutine::multiFade;
         QJsonObject routineObject = lightToJson(light);
         mButtons[index] = new cor::Button(this, routineObject);
@@ -63,7 +63,7 @@ PresetGroupWidget::PresetGroupWidget(QString name,
 
 void PresetGroupWidget::setChecked(ERoutine routine, bool isChecked) {
     if (mMode == EPresetWidgetMode::arduino) {
-        int index = (int)routine - (int)cor::ERoutineSingleColorEnd - 1;
+        uint32_t index = uint32_t(routine) - uint32_t(cor::ERoutineSingleColorEnd) - 1;
         mButtons[index]->setChecked(isChecked);
         if (isChecked) {
             mButtons[index]->setStyleSheet(kCheckedStyleSheet);

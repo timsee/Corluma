@@ -122,14 +122,14 @@ void DataSyncArduino::syncData() {
 void DataSyncArduino::simplifyPackets(const cor::Controller& controller, std::list<QString>& allMessages) {
     // count number of packets for each of the headers
     if (controller.maxHardwareIndex != 1) {
-        std::vector<int> packetCount((int)EPacketHeader::MAX, 0);
+        std::vector<int> packetCount(int(EPacketHeader::MAX), 0);
         // rest of packet
-        std::vector<QString> restOfPacket((int)EPacketHeader::MAX);
+        std::vector<QString> restOfPacket(int(EPacketHeader::MAX), QString(""));
         for (auto&& message : allMessages) {
            // qDebug() << "\t" << message;
             QStringList packetArray = message.split(",");
             if (packetArray.size() > 1) {
-                int packetHeader = packetArray.at(0).toInt();
+                std::size_t packetHeader = std::size_t(packetArray.at(0).toInt());
                 QString packetRemainder = message.section(",", 2);
                 if (restOfPacket[packetHeader].isEmpty()) {
                     // inesrt in, first occurence
@@ -142,13 +142,13 @@ void DataSyncArduino::simplifyPackets(const cor::Controller& controller, std::li
             }
         }
 
-        int i = 0;
+        std::size_t i = 0;
         for (auto count : packetCount) {
             if (count == controller.maxHardwareIndex) {
                 std::list<QString>::iterator iterator = allMessages.begin();
                 while (iterator != allMessages.end()) {
                     QStringList packetArray = iterator->split(",");
-                    int packetHeader = packetArray.at(0).toInt();
+                    std::size_t packetHeader = std::size_t(packetArray.at(0).toInt());
                     if (packetHeader == i) {
                         iterator = allMessages.erase(iterator);
                     } else {
@@ -167,7 +167,7 @@ void DataSyncArduino::simplifyPackets(const cor::Controller& controller, std::li
 const QString DataSyncArduino::createPacket(const cor::Controller& controller, const std::list<QString>& allMessages) {
     QString finalPacket;
     for (auto&& message : allMessages) {
-        if ((int)(finalPacket.size() + message.size()) < (int)(controller.maxPacketSize - 16)) {
+        if (int(finalPacket.size() + message.size()) < int(controller.maxPacketSize - 16)) {
             finalPacket.append(message + "&");
         }
     }
@@ -239,8 +239,8 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
                 routineObject["hue"] = dataDevice.color.hueF();
                 routineObject["sat"] = dataDevice.color.saturationF();
                 routineObject["bri"] = dataDevice.color.valueF();
-                if (cor::brightnessDifference(commDevice.color.valueF(), dataDevice.color.valueF()) > 0.01f) {
-                    QString message = mParser->brightnessPacket(dataDevice, int(dataDevice.color.valueF() * 100.0f));
+                if (cor::brightnessDifference(float(commDevice.color.valueF()), float(dataDevice.color.valueF())) > 0.01f) {
+                    QString message = mParser->brightnessPacket(dataDevice, int(dataDevice.color.valueF() * 100.0));
                     appendToPacket(packet, message, controller.maxPacketSize);
                 }
             } else {
@@ -276,7 +276,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
         if (dataDevice.palette.paletteEnum() == EPalette::custom) {
             if (commDevice.customCount != dataDevice.palette.colors().size()) {
                // qDebug() << "Custom color count not in sync";
-                QString message = mParser->changeCustomArraySizePacket(dataDevice, commDevice.palette.colors().size());
+                QString message = mParser->changeCustomArraySizePacket(dataDevice, int(commDevice.palette.colors().size()));
                 appendToPacket(packet, message, controller.maxPacketSize);
                 countOutOfSync++;
             }
@@ -287,7 +287,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
             for (uint32_t i = 0; i < dataDevice.palette.colors().size(); ++i) {
                 if (cor::colorDifference(dataDevice.palette.colors()[i], commDevice.customPalette.colors()[i]) > 0.02f) {
                    // qDebug() << "Custom color" << i << "not in sync" << " comm: " << commDevice.customColors[i] << "data: " << dataDevice.palette.colors()[i];
-                    QString message = mParser->arrayColorChangePacket(dataDevice, i, dataDevice.palette.colors()[i]);
+                    QString message = mParser->arrayColorChangePacket(dataDevice, int(i), dataDevice.palette.colors()[i]);
                     appendToPacket(packet, message, controller.maxPacketSize);
                     countOutOfSync++;
                 }

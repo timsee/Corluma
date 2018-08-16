@@ -24,7 +24,7 @@ Light::Light(const QString& uniqueID, ECommType commType) :
     isReachable = false;
     isOn = false;
     colorMode = EColorMode::HSV;
-    color.setHsvF(0.0f, 0.0f, 0.5f);
+    color.setHsvF(0.0, 0.0, 0.5);
     routine = ERoutine::singleSolid;
     minutesUntilTimeout = 0;
     param = INT_MIN;
@@ -69,18 +69,18 @@ cor::Light jsonToLight(const QJsonObject& object) {
     // get param if it exists
     //------------
     if (object["param"].isDouble()) {
-        light.param = object["param"].toDouble();
+        light.param = int(object["param"].toDouble());
     }
 
-    light.majorAPI = object["majorAPI"].toDouble();
-    light.minorAPI = object["minorAPI"].toDouble();
+    light.majorAPI = uint32_t(object["majorAPI"].toDouble());
+    light.minorAPI = uint32_t(object["minorAPI"].toDouble());
 
     //------------
     // get speed if theres a speed value
     //------------
     if (light.routine != ERoutine::singleSolid) {
         if (object["speed"].isDouble()) {
-            light.speed = object["speed"].toDouble();
+            light.speed = int(object["speed"].toDouble());
         }
     }
 
@@ -101,8 +101,8 @@ QJsonObject lightToJson(const cor::Light& light) {
         object["bri"] = light.color.valueF();
     }
 
-    object["majorAPI"] = light.majorAPI;
-    object["minorAPI"] = light.minorAPI;
+    object["majorAPI"] = double(light.majorAPI);
+    object["minorAPI"] = double(light.minorAPI);
 
     if (light.routine != ERoutine::singleSolid) {
         object["speed"] = light.speed;

@@ -36,7 +36,7 @@ DiscoveryPage::DiscoveryPage(QWidget *parent, cor::DeviceList *data, CommLayer *
 
     mSpacer = new QWidget(this);
     mSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    mSpacer->setFixedHeight(parent->height() * 0.1f);
+    mSpacer->setFixedHeight(int(parent->height() * 0.1f));
 
     mPlaceholder = new QWidget(this);
     mPlaceholder->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -50,8 +50,8 @@ DiscoveryPage::DiscoveryPage(QWidget *parent, cor::DeviceList *data, CommLayer *
     mStartButton->setEnabled(false);
 
     //setup button icons
-    mButtonIcons = std::vector<QPixmap>((size_t)EConnectionButtonIcons::MAX);
-    mConnectionStates = std::vector<EConnectionState>((size_t)EProtocolType::MAX, EConnectionState::off);
+    mButtonIcons = std::vector<QPixmap>(size_t(EConnectionButtonIcons::MAX));
+    mConnectionStates = std::vector<EConnectionState>(size_t(EProtocolType::MAX), EConnectionState::off);
 
     connect(mStartButton, SIGNAL(clicked(bool)), this, SLOT(startClicked()));
 
@@ -61,9 +61,14 @@ DiscoveryPage::DiscoveryPage(QWidget *parent, cor::DeviceList *data, CommLayer *
 
     mStartButton->setStyleSheet("background-color: #222222;");
 
+    mOptionalFloatingLayout = new FloatingLayout(true, this);
+    connect(mOptionalFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
+    std::vector<QString> verticalButtons = { QString("Plus") };
+    mOptionalFloatingLayout->setupButtons(verticalButtons, EButtonSize::medium);
+
     mVerticalFloatingLayout = new FloatingLayout(true, this);
     connect(mVerticalFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
-    std::vector<QString> verticalButtons = { QString("Settings") };
+    verticalButtons = { QString("Settings") };
     mVerticalFloatingLayout->setupButtons(verticalButtons, EButtonSize::medium);
 
     mHorizontalFloatingLayout = new FloatingLayout(false, this);
@@ -92,7 +97,7 @@ DiscoveryPage::DiscoveryPage(QWidget *parent, cor::DeviceList *data, CommLayer *
 
 void DiscoveryPage::renderUI() {
     bool isAnyConnected = false;
-    for (int commInt = 0; commInt != (int)EProtocolType::MAX; ++commInt) {
+    for (int commInt = 0; commInt != int(EProtocolType::MAX); ++commInt) {
         EProtocolType type = static_cast<EProtocolType>(commInt);
         if (mAppSettings->enabled(type)) {
             mComm->resetStateUpdates(type);
@@ -137,20 +142,20 @@ void DiscoveryPage::renderUI() {
 
 
 void DiscoveryPage::resizeButtonIcons() {
-    if (uint32_t(mLastFloatingHeight) != mHorizontalFloatingLayout->height()) {
+    if (mLastFloatingHeight != mHorizontalFloatingLayout->height()) {
         mLastFloatingHeight = mHorizontalFloatingLayout->height();
-        int buttonSize = (int)((float)mHorizontalFloatingLayout->height() * 0.5f);
-        mButtonIcons = std::vector<QPixmap>((size_t)EConnectionButtonIcons::MAX);
-        mButtonIcons[(int)EConnectionButtonIcons::black]  = QPixmap("://images/blackButton.png").scaled(buttonSize, buttonSize,
+        int buttonSize = int(mHorizontalFloatingLayout->height() * 0.5f);
+        mButtonIcons = std::vector<QPixmap>(size_t(EConnectionButtonIcons::MAX));
+        mButtonIcons[int(EConnectionButtonIcons::black)]  = QPixmap("://images/blackButton.png").scaled(buttonSize, buttonSize,
                                                                                                         Qt::KeepAspectRatio,
                                                                                                         Qt::SmoothTransformation);
-        mButtonIcons[(int)EConnectionButtonIcons::red]    = QPixmap("://images/redButton.png").scaled(buttonSize, buttonSize,
+        mButtonIcons[int(EConnectionButtonIcons::red)]    = QPixmap("://images/redButton.png").scaled(buttonSize, buttonSize,
                                                                                                       Qt::KeepAspectRatio,
                                                                                                       Qt::SmoothTransformation);
-        mButtonIcons[(int)EConnectionButtonIcons::yellow] = QPixmap("://images/yellowButton.png").scaled(buttonSize, buttonSize,
+        mButtonIcons[int(EConnectionButtonIcons::yellow)] = QPixmap("://images/yellowButton.png").scaled(buttonSize, buttonSize,
                                                                                                          Qt::KeepAspectRatio,
                                                                                                          Qt::SmoothTransformation);
-        mButtonIcons[(int)EConnectionButtonIcons::blue]   = QPixmap("://images/blueButton.png").scaled(buttonSize, buttonSize,
+        mButtonIcons[int(EConnectionButtonIcons::blue)]   = QPixmap("://images/blueButton.png").scaled(buttonSize, buttonSize,
                                                                                                        Qt::KeepAspectRatio,
                                                                                                        Qt::SmoothTransformation);
     }
@@ -208,28 +213,28 @@ void DiscoveryPage::protocolTypeSelected(EProtocolType type) {
 
 
 void DiscoveryPage::changeCommTypeConnectionState(EProtocolType type, EConnectionState newState) {
-    if (mConnectionStates[(size_t)type] != newState) {
+    if (mConnectionStates[size_t(type)] != newState) {
         QPixmap pixmap;
-        switch (mConnectionStates[(int)type])
+        switch (mConnectionStates[std::size_t(type)])
         {
             case EConnectionState::off:
-                pixmap = mButtonIcons[(int)EConnectionButtonIcons::black];
+                pixmap = mButtonIcons[int(EConnectionButtonIcons::black)];
                 break;
             case EConnectionState::connectionError:
-                pixmap = mButtonIcons[(int)EConnectionButtonIcons::yellow];
+                pixmap = mButtonIcons[int(EConnectionButtonIcons::yellow)];
                 break;
             case EConnectionState::discovering:
-                pixmap = mButtonIcons[(int)EConnectionButtonIcons::yellow];
+                pixmap = mButtonIcons[int(EConnectionButtonIcons::yellow)];
                 break;
             case EConnectionState::discovered:
-                pixmap = mButtonIcons[(int)EConnectionButtonIcons::blue];
+                pixmap = mButtonIcons[int(EConnectionButtonIcons::blue)];
                 break;
             default:
-                qDebug() << "WARNING: change resize assets sees type is does not recognize.." << (int)mConnectionStates[(int)type];
+                qDebug() << "WARNING: change resize assets sees type is does not recognize.." << int(mConnectionStates[std::size_t(type)]);
                 break;
         }
         mHorizontalFloatingLayout->updateDiscoveryButton(type, pixmap);
-        mConnectionStates[(size_t)type] = newState;
+        mConnectionStates[std::size_t(type)] = newState;
     }
 }
 
@@ -274,25 +279,25 @@ void DiscoveryPage::paintEvent(QPaintEvent *) {
 }
 
 void DiscoveryPage::resizeTopMenu() {
-    for (int commInt = 0; commInt != (int)EProtocolType::MAX; ++commInt) {
+    for (int commInt = 0; commInt != int(EProtocolType::MAX); ++commInt) {
         EProtocolType type = static_cast<EProtocolType>(commInt);
         QPixmap pixmap;
-        switch (mConnectionStates[(int)type])
+        switch (mConnectionStates[std::size_t(type)])
         {
             case EConnectionState::off:
-                pixmap = mButtonIcons[(int)EConnectionButtonIcons::black];
+                pixmap = mButtonIcons[std::size_t(EConnectionButtonIcons::black)];
                 break;
             case EConnectionState::connectionError:
-                pixmap = mButtonIcons[(int)EConnectionButtonIcons::red];
+                pixmap = mButtonIcons[std::size_t(EConnectionButtonIcons::red)];
                 break;
             case EConnectionState::discovering:
-                pixmap = mButtonIcons[(int)EConnectionButtonIcons::yellow];
+                pixmap = mButtonIcons[std::size_t(EConnectionButtonIcons::yellow)];
                 break;
             case EConnectionState::discovered:
-                pixmap = mButtonIcons[(int)EConnectionButtonIcons::blue];
+                pixmap = mButtonIcons[std::size_t(EConnectionButtonIcons::blue)];
                 break;
             default:
-                qDebug() << "WARNING: change resize assets sees type is does not recognize.." << (int)mConnectionStates[(int)type];
+                qDebug() << "WARNING: change resize assets sees type is does not recognize.." << int(mConnectionStates[std::size_t(type)]);
                 break;
         }
 
@@ -334,9 +339,11 @@ void DiscoveryPage::updateTopMenu() {
         std::vector<QString> emptyVector;
         mHorizontalFloatingLayout->setupButtons(emptyVector, EButtonSize::small);
         mVerticalFloatingLayout->highlightButton("");
+        mOptionalFloatingLayout->highlightButton("");
     } else {
         mHorizontalFloatingLayout->setupButtons(buttons, EButtonSize::rectangle);
         mVerticalFloatingLayout->highlightButton("");
+        mOptionalFloatingLayout->highlightButton("");
         if (mType == EProtocolType::nanoleaf) {
             mHorizontalFloatingLayout->highlightButton("Discovery_NanoLeaf");
         } else if (mType == EProtocolType::arduCor) {
@@ -359,6 +366,20 @@ void DiscoveryPage::floatingLayoutButtonPressed(QString button) {
         protocolTypeSelected(EProtocolType::hue);
     } else if (button.compare("Discovery_NanoLeaf") == 0) {
         protocolTypeSelected(EProtocolType::nanoleaf);
+    } else if (button.compare("Plus") == 0) {
+        bool ok = true;
+        bool noValidIP = true;
+        while (ok && noValidIP) {
+            QString IP = QInputDialog::getText(this, tr("Manual Discovery"),
+                                                 tr("Add an IP Address for a Bridge:"), QLineEdit::Normal,
+                                                 "192.168.0.100", &ok);
+            QHostAddress address(IP);
+            if (address.protocol() == QAbstractSocket::IPv4Protocol
+                    || address.protocol() == QAbstractSocket::IPv6Protocol) {
+                noValidIP = false;
+                mComm->hue()->discovery()->addManualIP(IP);
+            }
+        }
     }
 }
 
@@ -379,7 +400,11 @@ void DiscoveryPage::moveFloatingLayouts() {
 
     mVerticalFloatingLayout->move(verticalStart);
     mVerticalFloatingLayout->raise();
+
+    mOptionalFloatingLayout->move(mVerticalFloatingLayout->geometry().topLeft());
+    mOptionalFloatingLayout->raise();
 }
+
 
 void DiscoveryPage::startClicked() {
     if (mAppSettings->enabled(EProtocolType::nanoleaf)) {

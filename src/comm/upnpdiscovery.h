@@ -22,7 +22,7 @@ public:
     /*!
      * \brief Constructor
      */
-    UPnPDiscovery(QObject *parent = 0);
+    UPnPDiscovery(QObject *parent);
 
     /*!
      * \brief addListener increments the listener count. If the count was at zero, it

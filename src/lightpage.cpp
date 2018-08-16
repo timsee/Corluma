@@ -463,8 +463,8 @@ void LightPage::hideEvent(QHideEvent *event) {
 
 
 void LightPage::hide() {
-    for (int i = 0; i < (int)EProtocolType::MAX; ++i) {
-        EProtocolType protocol = (EProtocolType)i;
+    for (int i = 0; i < int(EProtocolType::MAX); ++i) {
+        EProtocolType protocol = EProtocolType(i);
         if (mAppSettings->enabled(protocol)) {
             mComm->stopDiscovery(protocol);
         }

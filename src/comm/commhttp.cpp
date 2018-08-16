@@ -40,14 +40,14 @@ void CommHTTP::sendPacket(const cor::Controller& controller, QString& packet) {
 void CommHTTP::stateUpdate() {
     if (shouldContinueStateUpdate()) {
         for (auto&& controller : mDiscovery->controllers()) {
-            QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::stateUpdateRequest));
+            QString packet = QString("%1&").arg(QString::number(int(EPacketHeader::stateUpdateRequest)));
             // add CRC, if in use
             if (controller.isUsingCRC) {
                 packet = packet + "#" + QString::number(mCRC.calculate(packet)) + "&";
             }
             sendPacket(controller, packet);
             if ((mStateUpdateCounter % mSecondaryUpdatesInterval) == 0) {
-                QString customArrayUpdateRequest = QString("%1&").arg(QString::number((int)EPacketHeader::customArrayUpdateRequest));
+                QString customArrayUpdateRequest = QString("%1&").arg(QString::number(int(EPacketHeader::customArrayUpdateRequest)));
                 if (controller.isUsingCRC) {
                     customArrayUpdateRequest = customArrayUpdateRequest + "#" + QString::number(mCRC.calculate(customArrayUpdateRequest)) + "&";
                 }
@@ -80,7 +80,7 @@ void CommHTTP::replyFinished(QNetworkReply* reply) {
     QStringList list = fullURL.split("/");
     QString IP = list[0];
     if (reply->error() == QNetworkReply::NoError) {
-        QString payload = ((QString)reply->readAll()).trimmed();
+        QString payload = reply->readAll().trimmed();
         // check if controller is already connected
         cor::Controller controller;
         bool success = mDiscovery->findControllerByControllerName(IP, controller);

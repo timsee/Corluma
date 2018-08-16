@@ -12,7 +12,6 @@
 
 #include <QDebug>
 #include <QInputDialog>
-#include <QMessageBox>
 #include <QScroller>
 
 MoodPage::MoodPage(QWidget *parent, GroupsParser *groups) : QWidget(parent), mGroups(groups) {

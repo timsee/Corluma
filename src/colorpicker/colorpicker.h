@@ -96,7 +96,7 @@ public:
      * \brief ColorPicker constructor
      * \param parent parent widget
      */
-    explicit ColorPicker(QWidget *parent = 0);
+    explicit ColorPicker(QWidget *parent);
 
     /*!
      * \brief Destructor
@@ -133,7 +133,7 @@ public:
      * \param brightness brightness of the color
      * \param shouldSignal true to signal, false to skip this signal
      */
-    void chooseAmbient(int temperature, int brightness, bool shouldSignal);
+    void chooseAmbient(int temperature, uint32_t brightness, bool shouldSignal);
 
     /*!
      * \brief updateColorStates update the layouts at the bottom of the ColorPicker with new values from the RGB devices
@@ -142,7 +142,7 @@ public:
      * \param colorSchemes the colors of the selected devices
      * \param customColors colors for the custom color picker
      */
-    void updateColorStates(QColor mainColor, int brightness, const std::vector<QColor> colorSchemes, const std::vector<QColor> customColors);
+    void updateColorStates(QColor mainColor, uint32_t brightness, const std::vector<QColor> colorSchemes, const std::vector<QColor> customColors);
 
     /*!
      * \brief setMultiColorDefaults set the default colors of the custom color picker
@@ -175,12 +175,12 @@ signals:
      *        the color temperature (ranged between 153 and 500) and the second is the brightness
      *        (ranged between 0 and 100)
      */
-    void ambientUpdate(int, int);
+    void ambientUpdate(int, uint32_t);
 
     /*!
      * \brief brightnessUpdate emitted whenever brightness changes from any layout that has a brightness slider
      */
-    void brightnessUpdate(int);
+    void brightnessUpdate(uint32_t);
 
     /*!
      * \brief multiColorCountChanged number of colors to use during multi color routines changed.
@@ -252,12 +252,12 @@ private slots:
     /*!
      * \brief tempBrightSlidersChanged the temperature and brightness changed from the TempBrightSliders
      */
-    void tempBrightSlidersChanged(int, int);
+    void tempBrightSlidersChanged(int, uint32_t);
 
     /*!
      * \brief brightnessSliderChanged brightness slider changed values from BrightnessSlider
      */
-    void brightnessSliderChanged(int);
+    void brightnessSliderChanged(uint32_t);
 
     /*!
      * \brief multiColorChanged the color at the index provided has changed.
@@ -302,7 +302,7 @@ private:
     /*!
      * \brief mColorSchemeGrid bottom layout, gives a few color swatches
      */
-     SwatchVectorWidget *mColorSchemeGrid;
+    SwatchVectorWidget *mColorSchemeGrid;
 
     /// bottom layout, gives 3 sliders for RGB.
     RGBSliders *mRGBSliders;
@@ -336,7 +336,7 @@ private:
      * \param brightness brightness of the color
      * \param shouldSignal true to signal, false to skip this signal
      */
-    void chooseBrightness(int brightness, bool shouldSignal = true);
+    void chooseBrightness(uint32_t brightness, bool shouldSignal = true);
 
     /*!
      * \brief updateMultiColor programmatically set the colors in the multi color picker. This will update
@@ -426,7 +426,7 @@ private:
     QLabel *mTempWheel;
 
     /// opacity of mColorWheel
-    float mWheelOpacity;
+    qreal mWheelOpacity;
 
     /*!
      * \brief mThrottleFlag flag used to enforced the throttle timer's throttle.

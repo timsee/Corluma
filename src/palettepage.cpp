@@ -50,9 +50,9 @@ PalettePage::PalettePage(QWidget *parent) : QWidget(parent) {
 }
 
 void PalettePage::setupButtons() {
-    std::vector<QString> labels((size_t)EPalette::unknown - 1);
+    std::vector<QString> labels(size_t(EPalette::unknown) - 1);
     for (uint32_t i = 0; i < labels.size(); ++i) {
-        labels[i] = paletteToString((EPalette)(i + 1));
+        labels[i] = paletteToString(EPalette(i + 1));
     }
 
     //---------------
@@ -64,10 +64,10 @@ void PalettePage::setupButtons() {
     mPresetArduinoLayout->setSpacing(0);
     mPresetArduinoLayout->setContentsMargins(9, 0, 0, 0);
 
-    int groupIndex = 0;
-    for (int preset = (int)EPalette::water; preset < (int)EPalette::unknown; preset++) {
+    uint32_t groupIndex = 0;
+    for (int preset = int(EPalette::water); preset < int(EPalette::unknown); preset++) {
         mPresetArduinoWidgets[groupIndex] = new PresetGroupWidget(labels[groupIndex],
-                                                                  (EPalette)preset,
+                                                                  EPalette(preset),
                                                                   EPresetWidgetMode::arduino,
                                                                   this);
         mPresetArduinoLayout->addWidget(mPresetArduinoWidgets[groupIndex], 1);
@@ -91,9 +91,9 @@ void PalettePage::setupButtons() {
     groupIndex = 0;
     int rowIndex = 0;
     int columnIndex = 0;
-    for (int preset = (int)EPalette::water; preset < (int)EPalette::unknown; preset++) {
+    for (int preset = int(EPalette::water); preset < int(EPalette::unknown); preset++) {
         mPresetHueWidgets[groupIndex] = new PresetGroupWidget(labels[groupIndex],
-                                                              (EPalette)preset,
+                                                              EPalette(preset),
                                                               EPresetWidgetMode::hue,
                                                               this);
         mPresetHueLayout->addWidget(mPresetHueWidgets[groupIndex], rowIndex, columnIndex);
@@ -113,20 +113,20 @@ void PalettePage::setupButtons() {
 }
 
 void PalettePage::highlightRoutineButton(ERoutine routine, EPalette colorGroup) {
-    int index = 0;
-    for (int iteratorGroup = (int)EPalette::water; iteratorGroup < (int)EPalette::unknown; iteratorGroup++) {
-        for (int iteratorRoutine = (int)cor::ERoutineSingleColorEnd + 1; iteratorRoutine < (int)ERoutine::MAX; iteratorRoutine++) {
+    uint32_t index = 0;
+    for (uint32_t iteratorGroup = uint32_t(EPalette::water); iteratorGroup < uint32_t(EPalette::unknown); iteratorGroup++) {
+        for (uint32_t iteratorRoutine = uint32_t(cor::ERoutineSingleColorEnd) + 1; iteratorRoutine < uint32_t(ERoutine::MAX); iteratorRoutine++) {
             if (mMode == EGroupMode::arduinoPresets) {
-                if (iteratorRoutine == (int)routine && iteratorGroup == (int)colorGroup) {
-                    mPresetArduinoWidgets[index]->setChecked((ERoutine)iteratorRoutine, true);
+                if (iteratorRoutine == uint32_t(routine) && iteratorGroup == uint32_t(colorGroup)) {
+                    mPresetArduinoWidgets[index]->setChecked(ERoutine(iteratorRoutine), true);
                 } else {
-                    mPresetArduinoWidgets[index]->setChecked((ERoutine)iteratorRoutine, false);
+                    mPresetArduinoWidgets[index]->setChecked(ERoutine(iteratorRoutine), false);
                 }
             } else if (mMode == EGroupMode::huePresets) {
-                if (iteratorRoutine == (int)routine && iteratorGroup == (int)colorGroup) {
-                    mPresetHueWidgets[index]->setChecked((ERoutine)iteratorRoutine, true);
+                if (iteratorRoutine == uint32_t(routine) && iteratorGroup == uint32_t(colorGroup)) {
+                    mPresetHueWidgets[index]->setChecked(ERoutine(iteratorRoutine), true);
                 } else {
-                    mPresetHueWidgets[index]->setChecked((ERoutine)iteratorRoutine, false);
+                    mPresetHueWidgets[index]->setChecked(ERoutine(iteratorRoutine), false);
                 }
             }
         }
@@ -150,9 +150,9 @@ void PalettePage::multiButtonClicked(QJsonObject routineObject) {
 
 
 void PalettePage::speedChanged(int newSpeed) {
-    float radians = (newSpeed / 200.0f) * M_PI / 2;
-    float smoothed = std::sin(radians) * 200.0f;
-    mSpeed = smoothed;
+    double radians = (newSpeed / 200.0) * M_PI / 2;
+    double smoothed = std::sin(radians) * 200.0;
+    mSpeed = int(smoothed);
     emit speedUpdate(mSpeed);
 }
 
@@ -188,7 +188,8 @@ void PalettePage::show(QColor color, bool hasArduinoDevices, bool hasNanoleafDev
 }
 
 void PalettePage::resize() {
-    QSize arduinoSize(this->size().width(), this->size().height() * 0.85f);
+    QSize arduinoSize(int(this->size().width()),
+                      int(this->size().height() * 0.85f));
     mScrollAreaArduino->setFixedSize(arduinoSize);
     for (uint32_t i = 0; i < mPresetArduinoWidgets.size(); ++i) {
         mPresetArduinoWidgets[i]->resize();
@@ -199,7 +200,8 @@ void PalettePage::resize() {
         mPresetHueWidgets[i]->resize();
     }
 
-    QSize sliderSize(this->size().width() * 0.9f, this->size().height() * 0.09f);
+    QSize sliderSize(int(this->size().width() * 0.9f),
+                     int(this->size().height() * 0.09f));
     mSpeedSlider->setFixedSize(sliderSize);
 }
 

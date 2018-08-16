@@ -136,16 +136,16 @@ int main(int argc, char *argv[]) {
      */
     if (settings.value(kFirstTimeOpenKey, QVariant(127)) == QVariant(127)) {
         //add default settings
-        settings.setValue(kUseTimeoutKey,   QString::number((int)true));
+        settings.setValue(kUseTimeoutKey,   QString::number(int(true)));
         settings.setValue(kTimeoutValue,    QString::number(120));
 
 
         std::vector<QString> protocolInUseKeys = AppSettings::protocolKeys();
         for (auto key : protocolInUseKeys) {
-            settings.setValue(key,   QString::number((int)true));
+            settings.setValue(key,   QString::number(int(true)));
         }
         // set arducor to off
-        settings.setValue(protocolInUseKeys[(size_t)EProtocolType::arduCor],   QString::number((int)false));
+        settings.setValue(protocolInUseKeys[std::size_t(EProtocolType::arduCor)],   QString::number(int(false)));
 
 
         // set the value so it no longer gives a default back.
@@ -156,7 +156,7 @@ int main(int argc, char *argv[]) {
     // Create app window
     //--------------------
 
-    MainWindow window;
+    MainWindow window(nullptr);
     // set the icon
     window.setWindowIcon(icon);
 
@@ -167,7 +167,7 @@ int main(int argc, char *argv[]) {
     window.move(x, y);
 
 #ifndef DISABLE_SPLASH_SCREEN
-    uint32_t splashScreenDelay = 3000; // in milliseconds
+    int splashScreenDelay = 3000; // in milliseconds
     QTimer::singleShot(splashScreenDelay, &splash, SLOT(close()));
     QTimer::singleShot(splashScreenDelay, &window,SLOT(show()));
     splash.show();

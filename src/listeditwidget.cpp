@@ -137,7 +137,7 @@ QSize ListEditWidget::preferredSize() {
     int height = mMinimumHeight;
     if (mShowButtons && mWidgets.size() > 0) {
         int widgetHeight = std::max(mName->height(), mMinimumHeight);
-        height = (mWidgets.size() * widgetHeight) + mMinimumHeight;
+        height = (int(mWidgets.size()) * widgetHeight) + mMinimumHeight;
     }
     return QSize(this->parentWidget()->width(), height);
 }

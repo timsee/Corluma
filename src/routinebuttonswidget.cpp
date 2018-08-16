@@ -71,8 +71,8 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector
         mLabels = std::vector<QLabel*>(mRoutines.size(), nullptr);
 
         int rowCount = 0;
-        int maxColumn = 4;
-        for (int i = 0; i < (int)mRoutines.size(); ++i) {
+        uint32_t maxColumn = 4;
+        for (uint32_t i = 0; i < mRoutines.size(); ++i) {
             mRoutineButtons[i] = new cor::Button(this, mRoutines[i].second);
             mRoutineButtons[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -85,8 +85,8 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector
             if ((i % maxColumn) == 0 && i != 0) {
                 rowCount = rowCount + 2;
             }
-            mLayout->addWidget(mRoutineButtons[i], rowCount, i % maxColumn);
-            mLayout->addWidget(mLabels[i], rowCount + 1, i % maxColumn);
+            mLayout->addWidget(mRoutineButtons[i], rowCount, int(i % maxColumn));
+            mLayout->addWidget(mLabels[i], rowCount + 1, int(i % maxColumn));
        }
 
     } else if (widgetGroup == EWidgetGroup::multiRoutines) {
@@ -122,8 +122,8 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector
         mLabels = std::vector<QLabel*>(mRoutines.size(), nullptr);
 
         int rowCount = 0;
-        int maxColumn = 3;
-        for (int i = 0; i < (int)mRoutines.size(); ++i) {
+        uint32_t maxColumn = 3;
+        for (uint32_t i = 0; i < mRoutines.size(); ++i) {
             mRoutineButtons[i] = new cor::Button(this, mRoutines[i].second);
 
             mRoutineButtons[i]->setStyleSheet("background-color: rgb(52, 52, 52); ");
@@ -138,8 +138,8 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector
             if ((i % maxColumn) == 0 && i != 0) {
                 rowCount = rowCount + 2;
             }
-            mLayout->addWidget(mRoutineButtons[i], rowCount, i % maxColumn);
-            mLayout->addWidget(mLabels[i], rowCount + 1, i % maxColumn);
+            mLayout->addWidget(mRoutineButtons[i], rowCount, int(i % maxColumn));
+            mLayout->addWidget(mLabels[i], rowCount + 1, int(i % maxColumn));
        }
     } else {
         throw "RoutinesButtonWidget is not set up to handle that widget group";
@@ -179,14 +179,14 @@ QString RoutineButtonsWidget::jsonToButtonName(const QJsonObject& routineObject)
     ERoutine routine = stringToRoutine(routineObject["routine"].toString());
     int param = INT_MIN;
     if (routineObject["param"].isDouble()) {
-        param = routineObject["param"].toDouble();
+        param = int(routineObject["param"].toDouble());
     }
     for (uint32_t i = 0; i < mRoutineButtons.size(); i++) {
         ERoutine buttonRoutine = stringToRoutine(mRoutineButtons[i]->routine()["routine"].toString());
         int buttonParam = INT_MIN;
 
         if (mRoutineButtons[i]->routine()["param"].isDouble()) {
-            buttonParam = mRoutineButtons[i]->routine()["param"].toDouble();
+            buttonParam = int(mRoutineButtons[i]->routine()["param"].toDouble());
         }
         if (routine == buttonRoutine && param == buttonParam) {
             return mLabels[i]->text();
@@ -196,7 +196,7 @@ QString RoutineButtonsWidget::jsonToButtonName(const QJsonObject& routineObject)
 }
 
 void RoutineButtonsWidget::singleRoutineColorChanged(QColor color) {
-    for (int i = 0; i < (int)mRoutineButtons.size(); ++i) {
+    for (uint32_t i = 0; i < mRoutineButtons.size(); ++i) {
         QJsonObject routineObject = mRoutines[i].second;
         routineObject["hue"] = color.hueF();
         routineObject["sat"] = color.saturationF();

@@ -11,8 +11,7 @@
 namespace cor
 {
 
-ListWidget::ListWidget(QWidget *parent) {
-    this->setParent(parent);
+ListWidget::ListWidget(QWidget *parent) : QScrollArea(parent) {
     this->setMaximumSize(parent->size());
 
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
@@ -55,7 +54,7 @@ void ListWidget::addWidget(ListCollectionWidget *widget) {
 void ListWidget::removeWidget(QString key) {
     int widgetIndex = searchForWidget(key);
     if (widgetIndex != -1) {
-        mWidgets.remove(widget(widgetIndex));
+        mWidgets.remove(widget(uint32_t(widgetIndex)));
         // move all widgets below it up.
         resizeWidgets();
     }
@@ -102,7 +101,7 @@ int ListWidget::searchForWidget(QString key) {
 }
 
 void ListWidget::resizeWidgets() {
-    uint32_t yPos = 0;
+    int yPos = 0;
     for (auto widget : mWidgets) {
         widget->setListHeight(this->height());
         QSize preferredSize = widget->preferredSize();
@@ -123,7 +122,7 @@ void ListWidget::resizeWidgets() {
         }
 
     }
-    uint32_t newHeight = std::max(yPos, (uint32_t)this->viewport()->height());
+    int newHeight = std::max(yPos, this->viewport()->height());
     mWidget->setFixedHeight(newHeight);
 }
 

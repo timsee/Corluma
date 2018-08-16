@@ -152,6 +152,7 @@ SOURCES += main.cpp \
     cor/palette.cpp \
     cor/jsonsavedata.cpp \
     cor/lightvectorwidget.cpp \
+    cor/page.cpp \
     cor/devicelist.cpp \
     hue/bridgeinfowidget.cpp \
     hue/lightdiscovery.cpp \

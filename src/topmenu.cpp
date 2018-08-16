@@ -28,7 +28,7 @@ TopMenu::TopMenu(QWidget* parent,
 
 
     QSize size = cor::applicationSize();
-    mSize = QSize(size.height() * 0.1f, size.height() * 0.1f);
+    mSize = QSize(int(size.height() * 0.1f), int(size.height() * 0.1f));
 
     mRenderTimer = new QTimer(this);
     connect(mRenderTimer, SIGNAL(timeout()), this, SLOT(updateUI()));
@@ -161,10 +161,10 @@ void TopMenu::changedSwitchState(bool switchState) {
 
 
 void TopMenu::brightnessSliderChanged(int newBrightness) {
-    brightnessUpdate(newBrightness);
+    brightnessUpdate(uint32_t(newBrightness));
 }
 
-void TopMenu::brightnessUpdate(int newValue) {
+void TopMenu::brightnessUpdate(uint32_t newValue) {
     mData->updateBrightness(newValue);
     mData->turnOn(true);
     // update the top menu bar
@@ -286,7 +286,7 @@ void TopMenu::resizeEvent(QResizeEvent *event) {
     downsizeTextHeightToFit(mMainPalette->size().height());
     updatePaletteButton();
     moveFloatingLayout();
-    int widthSize = this->width() * 0.95f - mSize.width();
+    int widthSize = int(this->width() * 0.95f) - mSize.width();
     mBrightnessSlider->setFixedWidth(widthSize);
 }
 
@@ -430,6 +430,7 @@ FloatingLayout *TopMenu::currentFloatingLayout() {
         break;
     case EPage::moodPage:
         layout = mMoodsFloatingLayout;
+        break;
     case EPage::palettePage:
         layout = mPaletteFloatinglayout;
         break;

@@ -25,7 +25,7 @@ public:
     /*!
      * Constructor
      */
-    explicit GroupsParser(QObject *parent = 0);
+    explicit GroupsParser(QObject *parent);
 
     /*!
      * \brief moodList getter for all known moods.

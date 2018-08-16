@@ -387,3 +387,9 @@ ___
 * Fixed bug with connecting to multiple Nanoleafs with manual IP addresses.
 * Fixed miscellaneous bugs.
 
+### **v0.13.55**
+#### The Clang Code Model Update
+* Fixed tons of clang warnings.
+* Continued updating the Hue Bridge Discovery Page.
+* Fixed miscellaneous bugs.
+

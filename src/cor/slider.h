@@ -218,7 +218,7 @@ private:
      * \brief mOpacity opacity of the lights slider, which gets changed when its
      *        enabled or disabled.
      */
-    float mOpacity;
+    qreal mOpacity;
 
     /*!
      * \brief mShouldDrawTickLabels if true, instead of ticks labels of the values at that

@@ -9,26 +9,26 @@
 
 Palette::Palette(const QJsonObject& object) : mJSON(object) {
     mName = object["name"].toString();
-    mBrightness = object["bri"].toDouble() * 100.0f;
+    mBrightness = uint32_t(object["bri"].toDouble() * 100.0);
     mEnum = stringToPalette(mName);
 
-    int count = object["count"].toDouble();
+    std::size_t count = std::size_t(object["count"].toDouble());
     bool containsRGB = false;
     mColors = std::vector<QColor>(count, QColor(0,0,0));
-    for (const auto& color : object["colors"].toArray()) {
+    for (auto color : object["colors"].toArray()) {
         QJsonObject object = color.toObject();
-        int index = object["index"].toDouble();
+        uint32_t index = uint32_t(object["index"].toDouble());
 
         if (object["red"].isDouble()) {
-            int red = object["red"].toDouble();
-            int green = object["green"].toDouble();
-            int blue = object["blue"].toDouble();
+            int red   = int(object["red"].toDouble());
+            int green = int(object["green"].toDouble());
+            int blue  = int(object["blue"].toDouble());
             mColors[index] = QColor(red, green, blue);
             containsRGB = true;
         } else if (object["hue"].isDouble()) {
-            float hue = object["hue"].toDouble();
-            float sat = object["sat"].toDouble();
-            float bri = object["bri"].toDouble();
+            double hue = object["hue"].toDouble();
+            double sat = object["sat"].toDouble();
+            double bri = object["bri"].toDouble();
             QColor color;
             color.setHsvF(hue, sat, bri);
             mColors[index] = color;
@@ -51,9 +51,9 @@ Palette::Palette(const QJsonObject& object) : mJSON(object) {
     }
 }
 
-Palette::Palette(const QString& name, const std::vector<QColor>& colors, int brightness) : mName(name), mColors(colors), mBrightness(brightness) {
+Palette::Palette(const QString& name, const std::vector<QColor>& colors, uint32_t brightness) : mName(name), mColors(colors), mBrightness(brightness) {
     mJSON["name"] = mName;
-    mJSON["bri"]  = mBrightness / 100.0f;
+    mJSON["bri"]  = mBrightness / 100.0;
     mEnum = stringToPalette(name);
 
     QJsonArray array;
@@ -67,13 +67,13 @@ Palette::Palette(const QString& name, const std::vector<QColor>& colors, int bri
         array.append(colorObject);
         ++index;
     }
-    mJSON["count"] = (int)mColors.size();
+    mJSON["count"] = double(mColors.size());
     mJSON["colors"] = array;
 }
 
 void Palette::brightness(uint32_t brightness) {
     mBrightness = brightness;
-    mJSON["bri"]  = mBrightness / 100.0f;
+    mJSON["bri"]  = mBrightness / 100.0;
 }
 
 

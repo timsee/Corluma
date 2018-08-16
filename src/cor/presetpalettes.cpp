@@ -11,7 +11,7 @@
 #include <QJsonObject>
 #include <QFile>
 
-PresetPalettes::PresetPalettes() : mPalettes(std::vector<Palette>((uint32_t)EPalette::unknown, Palette("", std::vector<QColor>(1), 50))){
+PresetPalettes::PresetPalettes() : mPalettes(std::vector<Palette>(uint32_t(EPalette::unknown), Palette("", std::vector<QColor>(1), 50))){
     // open the palette file
     QFile paletteFile(":/resources/palettes.json");
     if (paletteFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -28,7 +28,7 @@ PresetPalettes::PresetPalettes() : mPalettes(std::vector<Palette>((uint32_t)EPal
             if (jsonRef.isObject()) {
                 QJsonObject object = jsonRef.toObject();
                 Palette palette(object);
-                mPalettes[(uint32_t)palette.paletteEnum()] = palette;
+                mPalettes[uint32_t(palette.paletteEnum())] = palette;
             }
         }
     } else {
@@ -36,7 +36,7 @@ PresetPalettes::PresetPalettes() : mPalettes(std::vector<Palette>((uint32_t)EPal
     }
 
 
-    mAverageColors = std::vector<QColor>((uint32_t)EPalette::unknown, QColor(0,0,0));
+    mAverageColors = std::vector<QColor>(uint32_t(EPalette::unknown), QColor(0,0,0));
     uint32_t i = 0;
     for (auto&& palette : mPalettes) {
         int r = 0;
@@ -49,26 +49,26 @@ PresetPalettes::PresetPalettes() : mPalettes(std::vector<Palette>((uint32_t)EPal
            b = b + color.blue();
         }
 
-        mAverageColors[i] = QColor(r / palette.colors().size(),
-                                   g / palette.colors().size(),
-                                   b / palette.colors().size());
+        mAverageColors[i] = QColor(r / int(palette.colors().size()),
+                                   g / int(palette.colors().size()),
+                                   b / int(palette.colors().size()));
         ++i;
     }
 }
 
 const std::vector<QColor>& PresetPalettes::paletteVector(EPalette palette) {
-    return mPalettes[(uint32_t)palette].colors();
+    return mPalettes[uint32_t(palette)].colors();
 }
 
 const Palette& PresetPalettes::palette(EPalette palette) {
-    return mPalettes[(uint32_t)palette];
+    return mPalettes[uint32_t(palette)];
 }
 
 EPalette PresetPalettes::findPalette(const QJsonObject& object) {
     uint32_t index = 0;
     for (auto palette : mPalettes) {
         if (object == palette.JSON()) {
-            return (EPalette)index;
+            return EPalette(index);
         }
         ++index;
     }

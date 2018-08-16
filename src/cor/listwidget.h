@@ -41,7 +41,7 @@ public:
     void removeWidget(QString key);
 
     /// number of widgets in the scroll area.
-    uint32_t count() { return mWidgets.size(); }
+    uint32_t count() { return uint32_t(mWidgets.size()); }
 
     /// getter for all collection widgets.
     const std::list<ListCollectionWidget*>& widgets() { return mWidgets; }

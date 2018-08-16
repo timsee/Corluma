@@ -88,7 +88,7 @@ bool CommUDP::portBound() {
 void CommUDP::stateUpdate() {
     if (shouldContinueStateUpdate()) {
         for (auto&& controller : mDiscovery->controllers()) {
-            QString packet = QString("%1&").arg(QString::number((int)EPacketHeader::stateUpdateRequest));
+            QString packet = QString("%1&").arg(QString::number(int(EPacketHeader::stateUpdateRequest)));
             // add CRC, if in use
             if (controller.isUsingCRC) {
                 packet = packet + "#" + QString::number(mCRC.calculate(packet)) + "&";
@@ -96,7 +96,7 @@ void CommUDP::stateUpdate() {
             sendPacket(controller, packet);
 
             if ((mStateUpdateCounter % mSecondaryUpdatesInterval) == 0) {
-                QString customArrayUpdateRequest = QString("%1&").arg(QString::number((int)EPacketHeader::customArrayUpdateRequest));
+                QString customArrayUpdateRequest = QString("%1&").arg(QString::number(int(EPacketHeader::customArrayUpdateRequest)));
                 if (controller.isUsingCRC) {
                     customArrayUpdateRequest = customArrayUpdateRequest + "#" + QString::number(mCRC.calculate(customArrayUpdateRequest)) + "&";
                 }
@@ -129,7 +129,7 @@ void CommUDP::testForController(const cor::Controller& controller) {
 void CommUDP::readPendingDatagrams() {
     while (mSocket->hasPendingDatagrams()) {
         QByteArray datagram;
-        datagram.resize(mSocket->pendingDatagramSize());
+        datagram.resize(int(mSocket->pendingDatagramSize()));
         QHostAddress sender;
         quint16 senderPort;
         mSocket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);

@@ -35,14 +35,14 @@ SwatchVectorWidget::SwatchVectorWidget(uint32_t width, uint32_t height,
             mSwatches[i] = new QPushButton(this);
             mSwatches[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
             mSwatches[i]->setCheckable(true);
-            arrayButtonsMapper->setMapping(mSwatches[i], i);
+            arrayButtonsMapper->setMapping(mSwatches[i], int(i));
             connect(mSwatches[i], SIGNAL(clicked(bool)), arrayButtonsMapper, SLOT(map()));
 
             QSizePolicy sizePolicy = mSwatches[i]->sizePolicy();
             sizePolicy.setRetainSizeWhenHidden(true);
             mSwatches[i]->setSizePolicy(sizePolicy);
 
-            mLayout->addWidget(mSwatches[i], h, w);
+            mLayout->addWidget(mSwatches[i], int(h), int(w));
             ++i;
         }
     }
@@ -60,8 +60,8 @@ void SwatchVectorWidget::updateColors(const std::vector<QColor>& colors) {
     uint32_t i = 0;
     for (const auto& color : colors) {
         if (i < mMaximumSize) {
-            int size = std::min(mSwatches[i]->width() * 0.8f,
-                                mSwatches[i]->height() * 0.8f);
+            int size = std::min(int(mSwatches[i]->width() * 0.8f),
+                                int(mSwatches[i]->height() * 0.8f));
             QImage image(size, size, QImage::Format_RGB32);
             image.fill(color);
             mSwatches[i]->setIcon(QIcon(QPixmap::fromImage(image)));
@@ -71,8 +71,8 @@ void SwatchVectorWidget::updateColors(const std::vector<QColor>& colors) {
     }
 
     for (; i < mMaximumSize; ++i) {
-        int size = std::min(mSwatches[i]->width() * 0.8f,
-                            mSwatches[i]->height() * 0.8f);
+        int size = std::min(int(mSwatches[i]->width() * 0.8f),
+                            int(mSwatches[i]->height() * 0.8f));
         QImage image(size, size, QImage::Format_RGB32);
         image.fill(mColors[i]);
         mSwatches[i]->setIcon(QIcon(QPixmap::fromImage(image)));
@@ -91,14 +91,14 @@ uint32_t SwatchVectorWidget::selectedCount() {
 }
 
 void SwatchVectorWidget::toggleArrayColor(int) {
-    emit selectedCountChanged(selectedCount());
+    emit selectedCountChanged(int(selectedCount()));
 }
 
 void SwatchVectorWidget::updateSelected(QColor color) {
     for (uint32_t i = 0; i < mSwatches.size(); ++i) {
         if (mSwatches[i]->isChecked()) {
-            int size = std::min(mSwatches[i]->width() * 0.8f,
-                                mSwatches[i]->height() * 0.8f);
+            int size = std::min(int(mSwatches[i]->width() * 0.8f),
+                                int(mSwatches[i]->height() * 0.8f));
             QImage image(size, size, QImage::Format_RGB32);
             image.fill(color);
             mSwatches[i]->setIcon(QIcon(QPixmap::fromImage(image)));

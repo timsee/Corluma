@@ -75,15 +75,15 @@ void BridgeSchedulesWidget::pressedClose(bool) {
 
 void BridgeSchedulesWidget::resize() {
     QSize size = qobject_cast<QWidget*>(this->parent())->size();
-    this->setGeometry(size.width() * 0.125f,
-                      size.height() * 0.125f,
-                      size.width() * 0.75f,
-                      size.height() * 0.75f);
+    this->setGeometry(int(size.width() * 0.125f),
+                      int(size.height() * 0.125f),
+                      int(size.width() * 0.75f),
+                      int(size.height() * 0.75f));
 
     // resize scroll area
-    mScrollAreaWidget->setFixedWidth(mScrollArea->width() * 0.9f);
-    QSize widgetSize(this->width()  * 0.9f, this->height() / 2.5f);
-    uint32_t yPos = 0;
+    mScrollAreaWidget->setFixedWidth(int(mScrollArea->width() * 0.9f));
+    QSize widgetSize(int(this->width()  * 0.9f), int(this->height() / 2.5f));
+    int yPos = 0;
     // draw widgets in content region
     for (auto widget : mWidgets) {
         widget->setFixedHeight(widgetSize.height());

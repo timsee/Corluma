@@ -25,7 +25,7 @@ class SearchWidget : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit SearchWidget(QString defaultLineEditValue, QWidget *parent = 0, int maxSearchingCount = -1, const QString errorMaxSearchString = QString());
+    explicit SearchWidget(QString defaultLineEditValue, QWidget *parent, int maxSearchingCount = -1, const QString errorMaxSearchString = QString());
 
     /*!
      * \brief lineEditText text in line edit

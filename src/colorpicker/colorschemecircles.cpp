@@ -23,8 +23,8 @@ ColorSchemeCircles::ColorSchemeCircles(QImage renderedColorWheel, QWidget *paren
 
     mRenderedColorWheel = renderedColorWheel;
 
-    mRadius = this->height() * 0.05f;
-    mShadowSize = this->height() * 0.025f;
+    mRadius = int(this->height() * 0.05f);
+    mShadowSize = int(this->height() * 0.025f);
 
     this->setStyleSheet("background-color:rgba(0,0,0,0);");
 }
@@ -33,32 +33,33 @@ void ColorSchemeCircles::updateColorScheme(const std::vector<QColor> colorScheme
     mMainSelection.shouldShow = true;
     mMainSelection.center = findColorInWheel(colorScheme[0]);
 
-    QPoint point(mMainSelection.center.x() * mRenderedColorWheel.height(),
-                 mMainSelection.center.y() * mRenderedColorWheel.height());
+    QPoint point(int(mMainSelection.center.x() * mRenderedColorWheel.height()),
+                 int(mMainSelection.center.y() * mRenderedColorWheel.height()));
 
     mMainSelection.color    = mRenderedColorWheel.pixel(point.x(), point.y());
     mMainSelection.distance = computeDistance(mMainSelection.center);
     mMainSelection.angle    = computeAngle(mMainSelection.center);
 
-    int numberOfSelectedDevices;
+    uint32_t numberOfSelectedDevices;
     if (colorScheme.size() >= mCircles.size()) {
         numberOfSelectedDevices = 5;
     } else {
-        numberOfSelectedDevices = colorScheme.size();
+        numberOfSelectedDevices = uint32_t(colorScheme.size());
     }
 
-    numberOfSelectedDevices = std::min((int)mColorCount, numberOfSelectedDevices);
+    numberOfSelectedDevices = std::min(mColorCount, numberOfSelectedDevices);
 
-    for (int i = 0; i < (int)mCircles.size(); ++i) {
+    for (uint32_t i = 0; i < mCircles.size(); ++i) {
         if (i < numberOfSelectedDevices - 1) {
             mCircles[i].shouldShow = true;
 
             mCircles[i].center = findColorInWheel(colorScheme[i + 1]);
-            QPoint point(mCircles[i].center.x() * mRenderedColorWheel.height(),
-                         mCircles[i].center.y() * mRenderedColorWheel.height());
+            QPoint point(int(mCircles[i].center.x() * mRenderedColorWheel.height()),
+                         int(mCircles[i].center.y() * mRenderedColorWheel.height()));
 
             mCircles[i].color    = mRenderedColorWheel.pixel(point.x(), point.y());
-            mCircles[i].distance = QLineF(mMainSelection.center, QPointF(0.5, 0.5f)).length();
+            mCircles[i].distance = float(QLineF(mMainSelection.center,
+                                         QPointF(0.5, 0.5)).length());
             mCircles[i].angle    = computeAngle(mCircles[i].center);
         } else {
             mCircles[i].shouldShow = false;
@@ -70,23 +71,23 @@ void ColorSchemeCircles::updateColorScheme(const std::vector<QColor> colorScheme
 
 int ColorSchemeCircles::positionIsUnderCircle(QPointF newPos) {
     int spacer = (this->width() - this->height()) / 2;
-    int lowX  = mMainSelection.center.x() * this->height() + spacer - mRadius;
-    int highX = mMainSelection.center.x() * this->height() + spacer + mRadius;
+    int lowX  = int(mMainSelection.center.x() * this->height() + spacer - mRadius);
+    int highX = int(mMainSelection.center.x() * this->height() + spacer + mRadius);
 
-    int lowY  = mMainSelection.center.y() * this->height() - mRadius;
-    int highY = mMainSelection.center.y() * this->height() + mRadius;
+    int lowY  = int(mMainSelection.center.y() * this->height() - mRadius);
+    int highY = int(mMainSelection.center.y() * this->height() + mRadius);
     if (newPos.x() >= lowX
             && newPos.x() <= highX
             && newPos.y() >= lowY
             && newPos.y() <= highY) {
         return 10;
     }
-    for (uint32_t x = 0; x < mCircles.size(); ++x) {
-        int lowX  = mCircles[x].center.x() * this->height() + spacer - mRadius;
-        int highX = mCircles[x].center.x() * this->height() + spacer + mRadius;
+    for (int x = 0; x < int(mCircles.size()); ++x) {
+        int lowX  = int(mCircles[uint32_t(x)].center.x() * this->height() + spacer - mRadius);
+        int highX = int(mCircles[uint32_t(x)].center.x() * this->height() + spacer + mRadius);
 
-        int lowY  = mCircles[x].center.y() * this->height() - mRadius;
-        int highY = mCircles[x].center.y() * this->height() + mRadius;
+        int lowY  = int(mCircles[uint32_t(x)].center.y() * this->height() - mRadius);
+        int highY = int(mCircles[uint32_t(x)].center.y() * this->height() + mRadius);
         if (newPos.x() >= lowX
                 && newPos.x() <= highX
                 && newPos.y() >= lowY
@@ -118,17 +119,17 @@ void ColorSchemeCircles::moveCenterCircle(QPointF newPos, bool isOnOpenSpace) {
 
     if (isOnOpenSpace) {
        moveCircles(-1);
-   } else if (mDeltaAngle){
+   } else if (mDeltaAngle > 0.0f){
        moveCircles(10);
    }
 
-   QPoint point(mMainSelection.center.x() * mRenderedColorWheel.height(),
-                mMainSelection.center.y() * mRenderedColorWheel.height());
+   QPoint point(int(mMainSelection.center.x() * mRenderedColorWheel.height()),
+                int(mMainSelection.center.y() * mRenderedColorWheel.height()));
    mMainSelection.color = mRenderedColorWheel.pixel(point.x(), point.y());
 
    for (uint32_t x = 0; x < mCircles.size(); ++x) {
-       QPoint point(mCircles[x].center.x() * mRenderedColorWheel.height(),
-                    mCircles[x].center.y() * mRenderedColorWheel.height());
+       QPoint point(int(mCircles[x].center.x() * mRenderedColorWheel.height()),
+                    int(mCircles[x].center.y() * mRenderedColorWheel.height()));
        mCircles[x].color = mRenderedColorWheel.pixel(point.x(), point.y());
    }
    repaint();
@@ -172,31 +173,32 @@ void ColorSchemeCircles::moveCircles(int i) {
     }
 
     for (uint32_t x = 0; x < mCircles.size(); ++x) {
-        QLineF line(QPointF(0.5f, 0.5f),  QPointF(0.5f, 0.0f));
-        line.setLength(mCircles[x].distance);
+        QLineF line(QPointF(0.5, 0.5),  QPointF(0.5, 0.0));
+        line.setLength(qreal(mCircles[x].distance));
         // zero is at 3 oclock for angle, switch zero to the angle of main selection instead
-        line.setAngle(mCircles[x].angle);
+        line.setAngle(qreal(mCircles[x].angle));
         mCircles[x].center = line.p2();
     }
 }
 
 float ColorSchemeCircles::computeDistance(QPointF pos) {
-    return QLineF(pos, QPointF(0.5, 0.5f)).length();
+    return float(QLineF(pos, QPointF(0.5, 0.5)).length());
 }
 
 float ColorSchemeCircles::computeAngle(QPointF pos) {
-    QLineF line(QPointF(0.5f, 0.5f), pos);
-    return line.angle();
+    QLineF line(QPointF(0.5, 0.5), pos);
+    return float(line.angle());
 }
 
-void ColorSchemeCircles::moveStandardCircle(int i, QPointF newPos) {
+void ColorSchemeCircles::moveStandardCircle(uint32_t i, QPointF newPos) {
     int spacer = (this->width() - this->height()) / 2;
 
     //---------------
     // calculate distance
     //---------------
-    mCircles[i].center = QPointF((newPos.x() - spacer) / this->height(), (newPos.y()) / this->height());
-    mCircles[i].distance = computeDistance(mCircles[i].center);
+    mCircles[uint32_t(i)].center = QPointF(qreal(newPos.x() - spacer) / this->height(),
+                                 qreal(newPos.y()) / this->height());
+    mCircles[uint32_t(i)].distance = computeDistance(mCircles[uint32_t(i)].center);
 
     //---------------
     // calculate angle
@@ -210,7 +212,7 @@ void ColorSchemeCircles::moveStandardCircle(int i, QPointF newPos) {
     //---------------
     // adjust angles
     //---------------
-    for (int x = 0; x < (int)mCircles.size(); ++x) {
+    for (uint32_t x = 0; x < mCircles.size(); ++x) {
         if (i != x) {
             if (x == 0) {
                 mCircles[x].angle = mCircles[x].angle + mDeltaAngle * 2;
@@ -235,19 +237,19 @@ void ColorSchemeCircles::moveStandardCircle(int i, QPointF newPos) {
     // move circles
     //---------------
 
-    moveCircles(i);
+    moveCircles(int(i));
 
     //---------------
     // recalculate color
     //---------------
 
-    QPoint point(mMainSelection.center.x() * mRenderedColorWheel.height(),
-                 mMainSelection.center.y() * mRenderedColorWheel.height());
+    QPoint point(int(mMainSelection.center.x() * mRenderedColorWheel.height()),
+                 int(mMainSelection.center.y() * mRenderedColorWheel.height()));
     mMainSelection.color = mRenderedColorWheel.pixel(point.x(), point.y());
 
     for (uint32_t x = 0; x < mCircles.size(); ++x) {
-        QPoint point(mCircles[x].center.x() * mRenderedColorWheel.height(),
-                     mCircles[x].center.y() * mRenderedColorWheel.height());
+        QPoint point(int(mCircles[x].center.x() * mRenderedColorWheel.height()),
+                     int(mCircles[x].center.y() * mRenderedColorWheel.height()));
         mCircles[x].color = mRenderedColorWheel.pixel(point.x(), point.y());
     }
 
@@ -273,15 +275,18 @@ QPointF ColorSchemeCircles::findColorInWheel(QColor color) {
             float difference = colorDifference(QColor(mRenderedColorWheel.pixel(x, y)), color);
             // try specific values first, then try more general ones if none are found
             if (difference < 0.01f) {
-                return QPointF(x / (float)mRenderedColorWheel.width(), y / (float)mRenderedColorWheel.height());
+                return QPointF(qreal(x / float(mRenderedColorWheel.width())),
+                               qreal(y / float(mRenderedColorWheel.height())));
             } else if (difference < 0.05f) {
-                return QPointF(x / (float)mRenderedColorWheel.width(), y / (float)mRenderedColorWheel.height());
+                return QPointF(qreal(x / float(mRenderedColorWheel.width())),
+                               qreal(y / float(mRenderedColorWheel.height())));
             } else if (difference < 0.1f) {
-                return QPointF(x / (float)mRenderedColorWheel.width(), y / (float)mRenderedColorWheel.height());
+                return QPointF(qreal(x / float(mRenderedColorWheel.width())),
+                               qreal(y / float(mRenderedColorWheel.height())));
             }
         }
     }
-    return QPointF(0.0f, 0.0f);
+    return QPointF(0.0, 0.0);
 }
 
 void ColorSchemeCircles::paintEvent(QPaintEvent *event) {
@@ -289,8 +294,8 @@ void ColorSchemeCircles::paintEvent(QPaintEvent *event) {
     QStyleOption opt;
     opt.init(this);
 
-    mRadius     = this->height() * 0.05f;
-    mShadowSize = this->height() * 0.01f;
+    mRadius     = int(this->height() * 0.05f);
+    mShadowSize = int(this->height() * 0.01f);
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
@@ -322,7 +327,8 @@ void ColorSchemeCircles::paintEvent(QPaintEvent *event) {
 //   linePainter.drawLine(spacerLine);
 //   linePainter.drawLine(spacerLine2);
 
-    QPoint point(spacer + mMainSelection.center.x() * area.height() - mRadius, mMainSelection.center.y() * area.height() - mRadius);
+    QPoint point(int(spacer + mMainSelection.center.x() * area.height() - mRadius),
+                 int(mMainSelection.center.y() * area.height() - mRadius));
     QRect rect(point.x(), point.y(), mRadius * 2, mRadius * 2);
     QRect shadowRect(rect.x() - mShadowSize, rect.y() - mShadowSize, rect.width() + mShadowSize * 2, rect.height() + mShadowSize * 2);;
 
@@ -338,7 +344,8 @@ void ColorSchemeCircles::paintEvent(QPaintEvent *event) {
     for (uint32_t x = 0; x < mCircles.size(); ++x) {
         if (mCircles[x].shouldShow) {
            // QPoint point(spacer + mCircleCenters[x].x() * area.height() - mRadius, mCircleCenters[x].y() * area.height() - mRadius);
-            QPoint point(spacer + mCircles[x].center.x() * area.height() - mRadius, mCircles[x].center.y() * area.height() - mRadius);
+            QPoint point(int(spacer + mCircles[x].center.x() * area.height() - mRadius),
+                         int(mCircles[x].center.y() * area.height() - mRadius));
             QRect rect(point.x(), point.y(), mRadius * 2, mRadius * 2);
             QRect shadowRect(rect.x() - mShadowSize, rect.y() - mShadowSize, rect.width() + mShadowSize * 2, rect.height() + mShadowSize * 2);;
 

@@ -23,7 +23,7 @@ class TempBrightSliders: public QWidget
 
 public:
     /// Constructor
-    explicit TempBrightSliders(QWidget *parent = 0);
+    explicit TempBrightSliders(QWidget *parent);
 
     /*!
      * \brief changeTemperatureAndBrightness programmatically change the positions of the sliders. Does not emit
@@ -31,14 +31,14 @@ public:
      * \param temperature new temperature position, must be between 153 and 500
      * \param brightness new brightness position, must be between 0 and 100.
      */
-    void changeTemperatureAndBrightness(int temperature, int brightness);
+    void changeTemperatureAndBrightness(int temperature, uint32_t brightness);
 
 signals:
     /*!
      * \brief temperatureAndBrightnessChanged emitted whenever a slider changes values. Emits both
      *        the temperature and the brightness
      */
-    void temperatureAndBrightnessChanged(int temperature, int brightness);
+    void temperatureAndBrightnessChanged(int temperature, uint32_t brightness);
 
 private slots:
 

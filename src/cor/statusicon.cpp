@@ -26,7 +26,7 @@ StatusIcon::StatusIcon(QWidget *parent) : QWidget(parent) {
 }
 
 
-void StatusIcon::update(bool isReachable, bool isOn, float brightness) {
+void StatusIcon::update(bool isReachable, bool isOn, double brightness) {
     mIcon->setFixedSize(this->width(), this->height());
     QPixmap buttonIcon;
     if (!isReachable) {
@@ -37,8 +37,8 @@ void StatusIcon::update(bool isReachable, bool isOn, float brightness) {
         buttonIcon = QPixmap(":/images/whiteButton.png");
 
         QPixmap blackPixmap(":/images/blackButton.png");
-        blackPixmap = blackPixmap.scaled(mIcon->height() * 0.5f,
-                                       mIcon->height() * 0.5f,
+        blackPixmap = blackPixmap.scaled(int(mIcon->height() * 0.5f),
+                                       int(mIcon->height() * 0.5f),
                                        Qt::KeepAspectRatio,
                                        Qt::SmoothTransformation);
         mBlackIcon->setPixmap(blackPixmap);
@@ -46,13 +46,13 @@ void StatusIcon::update(bool isReachable, bool isOn, float brightness) {
         mBlackIcon->setGeometry(mIcon->geometry());
 
         // make black icon inverse of brightness
-        float blackBrightness = 1.0f - (brightness / 100.0f);
+        double blackBrightness = 1.0 - (brightness / 100.0);
         QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mBlackIcon);
         effect->setOpacity(blackBrightness);
         mBlackIcon->setGraphicsEffect(effect);
     }
-    buttonIcon = buttonIcon.scaled(mIcon->height() * 0.5f,
-                                   mIcon->height() * 0.5f,
+    buttonIcon = buttonIcon.scaled(int(mIcon->height() * 0.5f),
+                                   int(mIcon->height() * 0.5f),
                                    Qt::KeepAspectRatio,
                                    Qt::SmoothTransformation);
     mIcon->setPixmap(buttonIcon);

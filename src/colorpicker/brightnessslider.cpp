@@ -39,25 +39,24 @@ BrightnessSlider::BrightnessSlider(QWidget *parent) : QWidget(parent)
 }
 
 
-void BrightnessSlider::changeBrightness(int brightness) {
-    if (brightness >= 0
-            && brightness <= 100) {
+void BrightnessSlider::changeBrightness(uint32_t brightness) {
+    if (brightness <= 100) {
         mBrightness = brightness;
 
-        QColor brightColor(2.5f * brightness,
-                           2.5f * brightness,
-                           2.5f * brightness);
+        QColor brightColor(int(2.5f * brightness),
+                           int(2.5f * brightness),
+                           int(2.5f * brightness));
 
         mBrightnessSlider->setSliderColorBackground(brightColor);
 
         mBrightnessSlider->blockSignals(true);
-        mBrightnessSlider->slider()->setValue(brightness);
+        mBrightnessSlider->slider()->setValue(int(brightness));
         mBrightnessSlider->blockSignals(false);
     }
 }
 
 void BrightnessSlider::brightnessSliderChanged(int newValue) {
-    emit brightnessChanged(newValue);
+    emit brightnessChanged(uint32_t(newValue));
 }
 
 void BrightnessSlider::releasedSlider() {

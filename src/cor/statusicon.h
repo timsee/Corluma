@@ -32,7 +32,7 @@ public:
      * \param isOn true if on, false otherwise.
      * \param brightness brightness between 0 and 100.
      */
-    void update(bool isReachable, bool isOn, float brightness);
+    void update(bool isReachable, bool isOn, double brightness);
 
 private:
 

@@ -64,7 +64,7 @@ inline void changeLabelToTitleLabel(QLabel *label) {
     // get the system preferred font size
     QLabel tempLabel("font");
     // make the size larger
-    int newSize = tempLabel.font().pointSize() * 1.33;
+    int newSize = int(tempLabel.font().pointSize() * 1.33);
     QString styleSheet = "background-color:rgba(0,0,0,0); font:bold; font-size:" + QString::number(newSize) + "pt;";
     label->setStyleSheet(styleSheet);
 }
@@ -111,10 +111,10 @@ inline QSize applicationSize() {
  */
 inline QColor colorTemperatureToRGB(int ct) {
     // convert to kelvin
-    float kelvin = (int)(1.0f / ct * 1000000.0f);
-    float temp = kelvin / 100;
+    double kelvin = int(1.0f / ct * 1000000.0f);
+    double temp = kelvin / 100;
 
-    float red, green, blue;
+    double red, green, blue;
     if (temp <= 66) {
         red = 255;
         green = temp;
@@ -135,10 +135,10 @@ inline QColor colorTemperatureToRGB(int ct) {
         blue = 255;
     }
 
-    red   = std::max(0.0f, std::min(red, 255.0f));
-    green = std::max(0.0f, std::min(green, 255.0f));
-    blue  = std::max(0.0f, std::min(blue, 255.0f));
-    return QColor(red, green, blue);
+    red   = std::max(0.0, std::min(red, 255.0));
+    green = std::max(0.0, std::min(green, 255.0));
+    blue  = std::max(0.0, std::min(blue, 255.0));
+    return QColor(int(red), int(green), int(blue));
 }
 
 
@@ -148,10 +148,10 @@ inline QColor colorTemperatureToRGB(int ct) {
  * \TODO rewrite
  */
 inline int rgbToColorTemperature(QColor color) {
-    float minTemperature = 153;
-    float maxTemperature = 500;
+    int minTemperature = 153;
+    int maxTemperature = 500;
     for (int i = minTemperature; i <= maxTemperature; ++i) {
-        QColor testColor = colorTemperatureToRGB(i);
+        QColor testColor = colorTemperatureToRGB(int(i));
         float r = std::abs(testColor.red() - color.red()) / 255.0f;
         float g = std::abs(testColor.green() - color.green()) / 255.0f;
         float b = std::abs(testColor.blue() - color.blue()) / 255.0f;
@@ -173,7 +173,7 @@ inline int rgbToColorTemperature(QColor color) {
 inline void resizeIcon(QPushButton *button, QString iconPath, float sizeRatio = 0.66f) {
     QPixmap pixmap(iconPath);
     int min = std::min(button->width(), button->height());
-    int finalSize = min * sizeRatio;
+    int finalSize = int(min * sizeRatio);
     button->setIconSize(QSize(finalSize, finalSize));
     button->setIcon(QIcon(pixmap.scaled(finalSize,
                                         finalSize,

@@ -45,7 +45,7 @@ public:
     /*!
      * \brief Constructor
      */
-    explicit ListCollectionWidget(QWidget *parent = 0);
+    explicit ListCollectionWidget(QWidget *parent);
 
     /// destructor
     virtual ~ListCollectionWidget(){}

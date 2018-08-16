@@ -120,7 +120,7 @@ public:
      * \brief updateBrightness update the brightness level of all current devices.
      * \param brightness new brightness
      */
-    void updateBrightness(int brightness);
+    void updateBrightness(uint32_t brightness);
 
     /*!
      * \brief addDevice add new device to connected list. if device already exists,

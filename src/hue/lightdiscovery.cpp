@@ -50,10 +50,10 @@ LightDiscovery::LightDiscovery(QWidget *parent, CommLayer *comm) : QWidget(paren
 void LightDiscovery::resize(bool resizeFullWidget) {
     QSize size = qobject_cast<QWidget*>(this->parent())->size();
     if (resizeFullWidget) {
-        this->setGeometry(size.width() * 0.125f,
-                          size.height() * 0.125f,
-                          size.width() * 0.75f,
-                          size.height() * 0.75f);
+        this->setGeometry(int(size.width() * 0.125f),
+                          int(size.height() * 0.125f),
+                          int(size.width() * 0.75f),
+                          int(size.height() * 0.75f));
     }
 }
 

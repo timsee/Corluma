@@ -135,7 +135,7 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type, QStri
                 qDebug() << "Received an incorrect value when expecting a hardware type";
                 return false;
             }
-            ELightHardwareType hardwareType = cor::convertArduinoTypeToLightType((EArduinoHardwareType)hardwareTypeIndex);
+            ELightHardwareType hardwareType = cor::convertArduinoTypeToLightType(EArduinoHardwareType(hardwareTypeIndex));
             hardwareTypeVector.push_back(hardwareType);
             nameIndex = 2;
         } else if (nameIndex == 2) {
@@ -145,7 +145,7 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type, QStri
                 qDebug() << "Received an incorrect value when expecting a product type";
                 return false;
             }
-            productTypeVector.push_back((EProductType)productTypeIndex);
+            productTypeVector.push_back(EProductType(productTypeIndex));
             nameIndex = 0;
         }
     }
@@ -156,10 +156,10 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type, QStri
             qDebug() << " name: " << name;
         }
         for (auto type : hardwareTypeVector) {
-            qDebug() << " type: " << (int)type;
+            qDebug() << " type: " << int(type);
         }
         for (auto product : productTypeVector) {
-            qDebug() << " product: " << (int)product;
+            qDebug() << " product: " << int(product);
         }
         return false;
     }
@@ -173,8 +173,8 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type, QStri
             return false;
         }
         // get the API level
-        controller.majorAPI = intVector[0];
-        controller.minorAPI = intVector[1];
+        controller.majorAPI = uint32_t(intVector[0]);
+        controller.minorAPI = uint32_t(intVector[1]);
 
         // get the USE_CRC
         int crc = intVector[2];
@@ -182,10 +182,10 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type, QStri
             return false;
         }
         controller.isUsingCRC = crc;
-        controller.hardwareCapabilities = intVector[3];
+        controller.hardwareCapabilities = uint32_t(intVector[3]);
 
         // grab the max packet size
-        controller.maxPacketSize = intVector[4];
+        controller.maxPacketSize = uint32_t(intVector[4]);
         controller.type = type;
         if (controller.maxPacketSize > 500) {
             return false;
@@ -286,12 +286,12 @@ void ArduCorDiscovery::handleDiscoveredController(const cor::Controller& discove
             updateJSON(discoveredController);
 
             std::list<cor::Light> lights;
-            uint32_t i = 1;
+            int i = 1;
             for (const auto& name : discoveredController.names) {
                 cor::Light light(name, discoveredController.type);
                 light.index        = i;
                 light.controller   = discoveredController.name;
-                light.hardwareType = discoveredController.hardwareTypes[i - 1];
+                light.hardwareType = discoveredController.hardwareTypes[std::size_t(i - 1)];
                 lights.push_back(light);
                 ++i;
             }
@@ -322,7 +322,7 @@ void ArduCorDiscovery::updateJSON(const cor::Controller& controller) {
         mJsonData.setArray(array);
         saveJSON();
     } else {
-        uint32_t i = 0;
+        int i = 0;
         bool foundLight = false;
         for (auto value : array) {
             bool detectChanges = false;

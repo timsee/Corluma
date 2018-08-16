@@ -10,7 +10,7 @@ ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
                                          std::list<cor::LightGroup> moods,
                                          QString key,
                                          bool hideEdit,
-                                         QWidget *parent) {
+                                         QWidget *parent) : ListCollectionWidget(this) {
     this->setParent(parent);
     this->setMaximumSize(parent->size());
     setup(name, key, EListType::linear2X, hideEdit);
@@ -117,7 +117,7 @@ QSize ListMoodGroupWidget::preferredSize() {
     int height = mMinimumHeight;
     if (mShowButtons && mWidgets.size() > 0) {
         int widgetHeight = std::max(mName->height(), mMinimumHeight * 2);
-        height = mWidgets.size() * widgetHeight + mMinimumHeight;
+        height = int(mWidgets.size()) * widgetHeight + mMinimumHeight;
     }
     return QSize(this->parentWidget()->width(), height);
 }
@@ -131,7 +131,7 @@ void ListMoodGroupWidget::mouseReleaseEvent(QMouseEvent *) {
 void ListMoodGroupWidget::removeMood(QString mood) {
     // check if mood exists
     bool foundMood = false;
-    ListMoodWidget *moodWidget;
+    ListMoodWidget *moodWidget = nullptr;
     for (auto&& widget : mWidgets) {
         ListMoodWidget *existingWidget = qobject_cast<ListMoodWidget*>(widget);
         Q_ASSERT(existingWidget);
@@ -142,7 +142,7 @@ void ListMoodGroupWidget::removeMood(QString mood) {
         }
     }
 
-    if (foundMood) {
+    if (foundMood && moodWidget != nullptr) {
         removeWidget(moodWidget);
     }
 }

@@ -18,7 +18,7 @@ ArduCorPacketParser::ArduCorPacketParser(QObject *parent) : QObject(parent) {
 
 
 QString ArduCorPacketParser::turnOnPacket(const cor::Light& device, bool turnOn) {
-    QString packet= QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::onOffChange),
+    QString packet= QString("%1,%2,%3&").arg(QString::number(int(EPacketHeader::onOffChange)),
                                              QString::number(device.index),
                                              QString::number(turnOn));
     return packet;
@@ -27,7 +27,7 @@ QString ArduCorPacketParser::turnOnPacket(const cor::Light& device, bool turnOn)
 QString ArduCorPacketParser::arrayColorChangePacket(const cor::Light& device,
                                                  int index,
                                                  QColor color) {
-    QString packet = QString("%1,%2,%3,%4,%5,%6&").arg(QString::number((int)EPacketHeader::customArrayColorChange),
+    QString packet = QString("%1,%2,%3,%4,%5,%6&").arg(QString::number(int(EPacketHeader::customArrayColorChange)),
                                                        QString::number(device.index),
                                                        QString::number(index),
                                                        QString::number(color.red()),
@@ -76,7 +76,7 @@ QString ArduCorPacketParser::routinePacket(const cor::Light& device, const QJson
         int speed = INT_MIN;
         if (routine != ERoutine::singleSolid) {
             if (routineObject["speed"].isDouble()) {
-                speed = routineObject["speed"].toDouble();
+                speed = int(routineObject["speed"].toDouble());
             }
         }
 
@@ -85,7 +85,7 @@ QString ArduCorPacketParser::routinePacket(const cor::Light& device, const QJson
         //------------
         int optionalParameter = INT_MIN;
         if (routineObject["param"].isDouble()) {
-            optionalParameter = routineObject["param"].toDouble();
+            optionalParameter = int(routineObject["param"].toDouble());
         }
         switch (routine) {
         case ERoutine::multiBars:
@@ -109,11 +109,11 @@ QString ArduCorPacketParser::routinePacket(const cor::Light& device, const QJson
 
 
         if (isValidJSON) {
-            packet += QString::number((int)EPacketHeader::modeChange);
+            packet += QString::number(int(EPacketHeader::modeChange));
             packet += ",";
             packet += QString::number(device.index);
             packet += ",";
-            packet += QString::number((int)routine);
+            packet += QString::number(int(routine));
 
             if (color.isValid()) {
                 packet += ",";
@@ -124,7 +124,7 @@ QString ArduCorPacketParser::routinePacket(const cor::Light& device, const QJson
                 packet += QString::number(color.blue());
             } else if (paletteEnum != EPalette::unknown) {
                 packet += ",";
-                packet += QString::number((int)paletteEnum);
+                packet += QString::number(int(paletteEnum));
             }
 
             if (routine != ERoutine::singleSolid) {
@@ -147,21 +147,21 @@ QString ArduCorPacketParser::routinePacket(const cor::Light& device, const QJson
 }
 
 QString ArduCorPacketParser::brightnessPacket(const cor::Light& device, int brightness) {
-    QString packet = QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::brightnessChange),
+    QString packet = QString("%1,%2,%3&").arg(QString::number(int(EPacketHeader::brightnessChange)),
                                               QString::number(device.index),
                                               QString::number(brightness));
     return packet;
 }
 
 QString ArduCorPacketParser::changeCustomArraySizePacket(const cor::Light& device, int count) {
-    QString packet = QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::customColorCountChange),
+    QString packet = QString("%1,%2,%3&").arg(QString::number(int(EPacketHeader::customColorCountChange)),
                                               QString::number(device.index),
                                               QString::number(count));
     return packet;
 }
 
 QString ArduCorPacketParser::timeoutPacket(const cor::Light& device, int timeOut) {
-    QString packet = QString("%1,%2,%3&").arg(QString::number((int)EPacketHeader::idleTimeoutChange),
+    QString packet = QString("%1,%2,%3&").arg(QString::number(int(EPacketHeader::idleTimeoutChange)),
                                               QString::number(device.index),
                                               QString::number(timeOut));
     return packet;
@@ -190,7 +190,7 @@ void ArduCorPacketParser::parsePacket(QString packet) {
     for (auto&& intVector : messageList) {
         bool validPacket = true;
         if (intVector.size() > 1) {
-            switch ((EPacketHeader)intVector[0])
+            switch (EPacketHeader(intVector[0]))
             {
             case EPacketHeader::customArrayColorChange:
                 if (intVector.size() == 6) {
@@ -207,7 +207,7 @@ void ArduCorPacketParser::parsePacket(QString packet) {
                 if (intVector.size() == 3) {
                     if (intVector[2] < 0 || intVector[2] > 1) validPacket = false;
                     if (validPacket) {
-                        emit receivedOnOffChange(intVector[1], (bool)intVector[2]);
+                        emit receivedOnOffChange(intVector[1], bool(intVector[2]));
                     }
                 }
                 break;
@@ -260,12 +260,12 @@ void ArduCorPacketParser::routineChange(const std::vector<int>& intVector) {
         ++tempIndex;
 
         // get routine
-        ERoutine routine = (ERoutine)intVector[tempIndex];
+        ERoutine routine = ERoutine(intVector[tempIndex]);
         ++tempIndex;
         routineObject["routine"] = routineToString(routine);
 
         // get either the color or the palette
-        if ((int)routine <= (int)cor::ERoutineSingleColorEnd) {
+        if (int(routine) <= int(cor::ERoutineSingleColorEnd)) {
             if (intVector.size() > 5) {
                 int red = intVector[tempIndex];
                 ++tempIndex;
@@ -284,7 +284,7 @@ void ArduCorPacketParser::routineChange(const std::vector<int>& intVector) {
             }
         } else {
             if (intVector.size() > 4) {
-                EPalette palette = (EPalette)intVector[tempIndex];
+                EPalette palette = EPalette(intVector[tempIndex]);
                 ++tempIndex;
                 if (palette == EPalette::unknown) {
                     validVector = false;

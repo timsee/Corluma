@@ -99,7 +99,7 @@ public:
      * \brief buttonCount returns the number of buttons in the floating layout
      * \return the number of buttons in the floating layout
      */
-    uint32_t buttonCount() { return mButtons.size(); }
+    uint32_t buttonCount() { return uint32_t(mButtons.size()); }
 
 signals:
     /*!
@@ -126,7 +126,7 @@ private:
      * \param index index of button that you want to check if its a lightsbutton
      * \return true if button at index is a lights button, false if its not or if the index is out of range
      */
-    bool isALightsButton(int index);
+    bool isALightsButton(uint32_t index);
 
     /*!
      * \brief buttonSize size of any individual button. All buttons are always the same size

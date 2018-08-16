@@ -12,7 +12,7 @@
 namespace cor
 {
 
-LightVectorWidget::LightVectorWidget(uint32_t width, uint32_t height,
+LightVectorWidget::LightVectorWidget(int width, int height,
                              EPaletteWidgetType type,
                              QWidget *parent) : QWidget(parent) {
     mWidth = width;
@@ -32,32 +32,32 @@ LightVectorWidget::LightVectorWidget(uint32_t width, uint32_t height,
     // Setup Array Color Buttons
     // --------------
 
-    mArrayColorsButtons = std::vector<cor::Button*>(mMaximumSize, nullptr);
-    mArrayLabels = std::vector<QLabel*>(mMaximumSize, nullptr);
+    mArrayColorsButtons = std::vector<cor::Button*>(uint32_t(mMaximumSize), nullptr);
+    mArrayLabels = std::vector<QLabel*>(uint32_t(mMaximumSize), nullptr);
     QSignalMapper *arrayButtonsMapper = new QSignalMapper(this);
-    uint32_t i = 0;
-    for (uint32_t h = 0; h < mHeight; ++h) {
-        for (uint32_t w = 0; w < mWidth; ++w) {
+    int i = 0;
+    for (int h = 0; h < mHeight; ++h) {
+        for (int w = 0; w < mWidth; ++w) {
             cor::Light light(QString(i), ECommType::MAX);
             light.routine = ERoutine::singleSolid;
             light.color = QColor(0,0,0);
             QJsonObject routineObject = lightToJson(light);
-            mArrayColorsButtons[i] = new cor::Button(this, routineObject);
-            mArrayColorsButtons[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-            arrayButtonsMapper->setMapping(mArrayColorsButtons[i], i);
-            connect(mArrayColorsButtons[i], SIGNAL(clicked(bool)), arrayButtonsMapper, SLOT(map()));
+            mArrayColorsButtons[uint32_t(i)] = new cor::Button(this, routineObject);
+            mArrayColorsButtons[uint32_t(i)]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+            arrayButtonsMapper->setMapping(mArrayColorsButtons[uint32_t(i)], i);
+            connect(mArrayColorsButtons[uint32_t(i)], SIGNAL(clicked(bool)), arrayButtonsMapper, SLOT(map()));
 
-            QSizePolicy sizePolicy = mArrayColorsButtons[i]->sizePolicy();
+            QSizePolicy sizePolicy = mArrayColorsButtons[uint32_t(i)]->sizePolicy();
             sizePolicy.setRetainSizeWhenHidden(true);
-            mArrayColorsButtons[i]->setSizePolicy(sizePolicy);
+            mArrayColorsButtons[uint32_t(i)]->setSizePolicy(sizePolicy);
 
             if (mType == EPaletteWidgetType::info) {
-                mArrayLabels[i]  = new QLabel(this);
-                mArrayLabels[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-                mLayout->addWidget(mArrayLabels[i],        h, w * 2);
-                mLayout->addWidget(mArrayColorsButtons[i], h, w * 2 + 1);
+                mArrayLabels[uint32_t(i)]  = new QLabel(this);
+                mArrayLabels[uint32_t(i)]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+                mLayout->addWidget(mArrayLabels[uint32_t(i)],        h, w * 2);
+                mLayout->addWidget(mArrayColorsButtons[uint32_t(i)], h, w * 2 + 1);
             } else {
-                mLayout->addWidget(mArrayColorsButtons[i], h, w);
+                mLayout->addWidget(mArrayColorsButtons[uint32_t(i)], h, w);
             }
             ++i;
         }
@@ -69,26 +69,26 @@ LightVectorWidget::LightVectorWidget(uint32_t width, uint32_t height,
 }
 
 void LightVectorWidget::updateDevices(const std::list<cor::Light>& devices) {
-    uint32_t i = 0;
+    int i = 0;
     for (auto&& device : devices) {
         bool skip = mHideOffDevices && !device.isOn;
         if (i < mMaximumSize && !skip) {
             QJsonObject routineObject = lightToJson(device);
-            mArrayColorsButtons[i]->updateRoutine(routineObject);
-            mArrayColorsButtons[i]->setVisible(true);
+            mArrayColorsButtons[uint32_t(i)]->updateRoutine(routineObject);
+            mArrayColorsButtons[uint32_t(i)]->setVisible(true);
             if (mType == EPaletteWidgetType::info) {
                 if (device.name.length() > 11) {
                     QString shortenedName = device.name.mid(0, 8) + "...";
-                    mArrayLabels[i]->setText(shortenedName);
+                    mArrayLabels[uint32_t(i)]->setText(shortenedName);
                 } else {
-                    mArrayLabels[i]->setText(device.name);
+                    mArrayLabels[uint32_t(i)]->setText(device.name);
                 }
             }
         }
         ++i;
     }
     for (; i < mMaximumSize; ++i) {
-        mArrayColorsButtons[i]->setVisible(false);
+        mArrayColorsButtons[uint32_t(i)]->setVisible(false);
     }
 }
 
@@ -104,7 +104,7 @@ uint32_t LightVectorWidget::selectedCount() {
 
 void LightVectorWidget::toggleArrayColor(int index) {
     Q_UNUSED(index);
-    emit selectedCountChanged(selectedCount());
+    emit selectedCountChanged(int(selectedCount()));
 }
 
 void LightVectorWidget::enableButtonInteraction(bool enable) {

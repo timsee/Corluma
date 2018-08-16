@@ -18,7 +18,7 @@ UPnPDiscovery::UPnPDiscovery(QObject *parent) : QObject(parent) {
 void UPnPDiscovery::readPendingUPnPDatagrams() {
     while (mSocket->hasPendingDatagrams()) {
         QByteArray datagram;
-        datagram.resize(mSocket->pendingDatagramSize());
+        datagram.resize(int(mSocket->pendingDatagramSize()));
         QHostAddress sender;
         quint16 senderPort;
         mSocket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);

@@ -5,6 +5,7 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QPushButton>
+#include <QMovie>
 
 #include "bridge.h"
 #include "huelight.h"
@@ -29,6 +30,9 @@ public:
     /// constructor
     explicit BridgeInfoWidget(const hue::Bridge& bridge, QWidget *parent);
 
+    /// update the bridge being shown
+    void updateBridge(const hue::Bridge& bridge);
+
     /// set height of info widget
     void setHeight(int);
 
@@ -44,7 +48,7 @@ public:
     bool checked() { return mIsChecked; }
 
     /// getter for the key of the widget.
-    const QString& key() { return mBridge.id; }
+    const QString& key() { return mBridge.IP; }
 
 signals:
 
@@ -64,6 +68,9 @@ signals:
      * \brief clicked emits the key of the widget whenever it is clicked.
      */
     void clicked(QString);
+
+    /// delete the bridge signaled from the delete button
+    void deleteBridge(hue::Bridge bridge);
 
 protected:
     /*!
@@ -95,7 +102,11 @@ private slots:
     /// handles when the name is changed from the EditableFieldWidget
     void changedName(QString);
 
+    /// delete the info associated with the bridge
+    void deleteButtonPressed();
+
 private:
+    void handleBridgeState(EBridgeDiscoveryState state);
 
     /// sets the title's font size
     void setTitleFontPointSize(int pt);
@@ -109,6 +120,9 @@ private:
     /// editable field that lets you change the custom name of a bridge.
     EditableFieldWidget *mNameWidget;
 
+    /// button for deleting all memory associated with a bridge.
+    QPushButton *mDeleteButton;
+
     /// shows the IP address
     QLabel *mIPAddress;
 
@@ -121,20 +135,26 @@ private:
     /// spacer used for laying out widgets
     QLabel *mSpacer;
 
-    /// layout of top of widget
+    /// layout for top of the widget
     QHBoxLayout *mTopLayout;
+
+    /// layout of middle of widget
+    QHBoxLayout *mMidLayout;
 
     /// image for displaying a graphic to help with current step of widget.
     QLabel *mImage;
+
+    /// spacer for top widget
+    QLabel *mTopSpacer;
+
+    /// Used for showing when a device is still being discovery.
+    QMovie *mMovie;
 
     /// cachced pixmap of hue bridge
     QPixmap mBridgePixmap;
 
     /// layout for the top right of the widget
     QVBoxLayout *mTopRightLayout;
-
-    /// layout for the name widgets
-    QHBoxLayout *mNameLayout;
 
     /// layout for the buttons
     QHBoxLayout *mButtonsLayout;

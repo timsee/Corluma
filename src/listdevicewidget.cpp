@@ -164,7 +164,7 @@ void ListDeviceWidget::paintEvent(QPaintEvent *event) {
     QRect rect(x,
                10,
                this->width() / 3,
-               this->height() * 0.6f / 2);
+               int(this->height() * 0.6f / 2));
 
 
     // make brush with icon data in it
@@ -180,11 +180,11 @@ void ListDeviceWidget::paintEvent(QPaintEvent *event) {
     painter.drawRect(rect);
 
     // set brightness width
-    float brightness = mDevice.color.valueF();
+    double brightness = mDevice.color.valueF();
     if (mDevice.routine > cor::ERoutineSingleColorEnd) {
-        brightness = mDevice.palette.brightness() / 100.0f;
+        brightness = mDevice.palette.brightness() / 100.0;
     }
-    rect.setWidth((float)rect.width() * brightness);
+    rect.setWidth(int(rect.width() * brightness));
     painter.setBrush(brush2);
     painter.drawRect(rect);
     if (!mDevice.isOn) {
@@ -285,12 +285,11 @@ void ListDeviceWidget::updateTypeIcon(ELightHardwareType type) {
             typeResource = QString(":/images/nanoleaf_icon.png");
             break;
         case ELightHardwareType::MAX:
-        default:
             typeResource = QString(":/images/led_icon.png");
             break;
     }
-    QSize size(this->height() * 0.5f,
-               this->height() * 0.5f);
+    QSize size(int(this->height() * 0.5f),
+               int(this->height() * 0.5f));
     mTypePixmap = QPixmap(typeResource);
     mTypePixmap = mTypePixmap.scaled(size.width(),
                                      size.height(),

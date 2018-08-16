@@ -19,7 +19,7 @@ namespace cor
 Slider::Slider(QWidget *parent) : QWidget(parent) {
 
     mHeightScaleFactor = 1.0f;
-    mOpacity = 1.0f;
+    mOpacity = 1.0;
     mThrottleFlag = false;
     mShouldDrawTickLabels = false;
 
@@ -51,14 +51,14 @@ void Slider::setSliderColorBackground(QColor color) {
     mSliderColorSet = true;
     mSliderImageSet = false;
     // compute a darker version for our gradient
-    QColor darkColor = QColor((uint8_t)(color.red()   / 4),
-                              (uint8_t)(color.green() / 4),
-                              (uint8_t)(color.blue()  / 4));
+    QColor darkColor = QColor(int(color.red()   / 4),
+                              int(color.green() / 4),
+                              int(color.blue()  / 4));
 
     // slider handle is only controllable via stylesheets but the values needed for style sheets
     // breaks in some environments (such as high pixel density android screens). to get around this,
     // we always set the handle size programmatically whenever we udpate the stylesheet.
-    int sliderHandleSize = (int)std::min(this->size().width() / 12.0f, (float)mSlider->size().height());
+    int sliderHandleSize = std::min(int(this->size().width() / 12.0), mSlider->size().height());
 
     // generate a stylesheet based off of the color with a gradient
     QString styleSheetString = QString("QSlider::sub-page:horizontal{ "
@@ -82,7 +82,7 @@ void Slider::setSliderImageBackground(QString path) {
     mSliderImageSet = true;
     mSliderColorSet = false;
     mPath = path;
-    int sliderHandleSize = (int)std::min(this->size().width() / 12.0f, (float)mSlider->size().height());
+    int sliderHandleSize = std::min(int(this->size().width() / 12.0), mSlider->size().height());
 
     QString styleSheetString = QString("QSlider::sub-page:horizontal{ "
                                        " background-image: url(%1);"
@@ -114,7 +114,6 @@ void Slider::receivedValue(int value) {
  * http://stackoverflow.com/a/15321654
  */
 int Slider::jumpSliderToPosition(QSlider *slider, int newPos) {
-
     Qt::MouseButtons btns = QApplication::mouseButtons();
     QPoint localMousePos = slider->mapFromGlobal(QCursor::pos());
     // check if a click happens directly on the slider
@@ -127,17 +126,18 @@ int Slider::jumpSliderToPosition(QSlider *slider, int newPos) {
     // if its a click on the slider, use our custom logic.
     if (clickOnSlider) {
         // calculate how far from the left the click on the slider is.
-        float posRatio = localMousePos.x() / (float)slider->size().width();
-        int sliderRange = slider->maximum() - slider->minimum();
+        double posRatio = localMousePos.x() / double(slider->size().width());
+        double sliderRange = slider->maximum() - slider->minimum();
 
         // update newPos to our new value
-        newPos = slider->minimum() + sliderRange * posRatio;
+        newPos = int(slider->minimum() + sliderRange * posRatio);
     }
 
     // check if snapping is enabled, and snap if necessary
     if (mShouldSnap) {
         newPos = snapSliderToNearestTick(slider, newPos);
     }
+
     // check if minimum possible is enabled, and update if necessary
     if (mUseMinimumPossible && (newPos < mMinimumPossible)) {
         newPos = mMinimumPossible;
@@ -172,7 +172,7 @@ void Slider::setMinimumPossible(bool useMinimumPossible, int minimumPossible) {
 
 void Slider::resizeEvent(QResizeEvent *event) {
     Q_UNUSED (event);
-    mSlider->setFixedSize(this->rect().width(), this->rect().height() * mHeightScaleFactor);
+    mSlider->setFixedSize(this->rect().width(), int(this->rect().height() * mHeightScaleFactor));
     if (mSliderColorSet) {
         setSliderColorBackground(mSliderColor);
     } else if (mSliderImageSet) {
@@ -226,7 +226,7 @@ void Slider::paintEvent(QPaintEvent *event) {
             maximum += 1;
         }
         for (int i = mSlider->minimum(); i <= maximum; i += interval) {
-            int x = round((double)(((double)(i - mSlider->minimum()) / (mSlider->maximum() - mSlider->minimum())) * (mSlider->width()))) - 1;
+            int x = i - mSlider->minimum() / (mSlider->maximum() - mSlider->minimum()) * mSlider->width() - 1;
             x = x + this->contentsMargins().left();
             if (mShouldDrawTickLabels)
             {
@@ -269,12 +269,12 @@ void Slider::paintEvent(QPaintEvent *event) {
 
 void Slider::setSliderHeight(float percent) {
     mHeightScaleFactor = percent;
-    float newY = this->rect().height() * (1.0 - mHeightScaleFactor) / 2.0f;
+    int newY = int(this->rect().height() * (1.0f - mHeightScaleFactor) / 2.0f);
 
     mSlider->setGeometry(mSlider->rect().x(),
                         newY,
                         this->rect().width(),
-                        this->rect().height() * mHeightScaleFactor);
+                        int(this->rect().height() * mHeightScaleFactor));
     resizeEvent(nullptr);
 }
 
@@ -302,13 +302,13 @@ void Slider::setShouldDrawTickLabels(bool shouldDraw) {
 void Slider::enable(bool shouldEnable) {
     if(shouldEnable) {
         QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mSlider);
-        mOpacity = 1.0f;
+        mOpacity = 1.0;
         effect->setOpacity(mOpacity);
         mSlider->setGraphicsEffect(effect);
         this->setEnabled(true);
     } else {
         QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mSlider);
-        mOpacity = 0.5f;
+        mOpacity = 0.5;
         effect->setOpacity(mOpacity);
         mSlider->setGraphicsEffect(effect);
         this->setEnabled(false);

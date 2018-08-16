@@ -27,7 +27,7 @@ class WebView : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit WebView(QString title, QString htmlPath, QWidget *parent = 0);
+    explicit WebView(QString title, QString htmlPath, QWidget *parent);
 
 signals:
     /// emits whenever wthe close button is pressed

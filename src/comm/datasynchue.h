@@ -32,9 +32,6 @@ public:
      */
     DataSyncHue(cor::DeviceList *data, CommLayer *comm, AppSettings *appSettings);
 
-    /// destructor
-    ~DataSyncHue() {}
-
     /*!
      * \brief cancelSync cancel the data sync, regardless of it successfully completed.
      */

@@ -20,7 +20,7 @@ class RGBSliders : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit RGBSliders(QWidget *parent = 0);
+    explicit RGBSliders(QWidget *parent);
 
     /*!
      * \brief changeColor programmatically change the values of the sliders. Does not emit a signal with its new value

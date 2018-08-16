@@ -26,7 +26,7 @@ LeafController jsonToLeafController(const QJsonObject& object) {
     QString serial       = object["serial"].toString();
     QString auth         = object["auth"].toString();
     QString hardwareName = object["hardwareName"].toString();
-    uint32_t port        = object["port"].toDouble();
+    int port             = int(object["port"].toDouble());
 
     nano::LeafController controller;
     controller.IP           = IP;

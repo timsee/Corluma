@@ -34,9 +34,6 @@ public:
      */
     DataSyncArduino(cor::DeviceList *data, CommLayer *comm);
 
-    /// destructor
-    ~DataSyncArduino() {}
-
     /*!
      * \brief cancelSync cancel the data sync, regardless of it successfully completed.
      */

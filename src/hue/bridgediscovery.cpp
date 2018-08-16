@@ -140,10 +140,12 @@ void BridgeDiscovery::addManualIP(QString ip) {
     }
     if (!IPAlreadyFound) {
         hue::Bridge bridge;
+        bridge.state = EBridgeDiscoveryState::lookingForResponse;
         bridge.IP = ip;
         mNotFoundBridges.push_back(bridge);
     }
 }
+
 
 void BridgeDiscovery::requestUsername(const hue::Bridge& bridge) {
      QString urlString = "http://" + bridge.IP + "/api";
@@ -167,7 +169,7 @@ void BridgeDiscovery::requestUsername(const hue::Bridge& bridge) {
 
 void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
     if (reply->error() == QNetworkReply::NoError) {
-        QString string = (QString)reply->readAll();
+        QString string = reply->readAll();
         QString IP = reply->url().toString();
         //qDebug() << "Response:" << string;
         QJsonDocument jsonResponse = QJsonDocument::fromJson(string.toUtf8());
@@ -195,6 +197,7 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
                             }
                         }
                         if (bridgeFound) {
+                            bridgeToMove.state = EBridgeDiscoveryState::connected;
                             mFoundBridges.push_back(bridgeToMove);
                             updateJSON(bridgeToMove);
                             parseInitialUpdate(bridgeToMove, jsonResponse);
@@ -207,6 +210,11 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
                     } else {
                         QJsonObject outsideObject = jsonResponse.array().at(0).toObject();
                         if (outsideObject["error"].isObject()) {
+                            for (auto&& notFoundBridge : mNotFoundBridges) {
+                                if (IP == notFoundBridge.IP) {
+                                    notFoundBridge.state = EBridgeDiscoveryState::lookingForUsername;
+                                }
+                            }
                             // error packets are sent when a message cannot be parsed
                             QJsonObject innerObject = outsideObject["error"].toObject();
                             if (innerObject["description"].isString()) {
@@ -252,6 +260,7 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
                         bridge.IP = object["internalipaddress"].toString();
                         bridge.id = object["id"].toString();
                         bridge.id = bridge.id.toLower();
+                        bridge.state = EBridgeDiscoveryState::lookingForResponse;
 
                         testNewlyDiscoveredBridge(bridge);
                     }
@@ -319,7 +328,7 @@ void BridgeDiscovery::parseInitialUpdate(const hue::Bridge& bridge, QJsonDocumen
 
                         HueLight hueLight(id, ECommType::hue);
                         hueLight.name = name;
-                        hueLight.index = index;
+                        hueLight.index = int(index);
                         hueLight.softwareVersion = swversion;
 
                         if (innerObject["modelid"].isString()) {
@@ -353,10 +362,10 @@ void BridgeDiscovery::parseInitialUpdate(const hue::Bridge& bridge, QJsonDocumen
 
 
 void BridgeDiscovery::receivedUPnP(QHostAddress sender, QString payload) {
-    // TODO: get more info
     if(payload.contains(QString("IpBridge"))) {
         //qDebug() << payload;
         hue::Bridge bridge;
+        bridge.state = EBridgeDiscoveryState::lookingForResponse;
         bridge.IP = sender.toString();
         // get ID from UPnP
         QStringList paramArray = payload.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
@@ -403,9 +412,9 @@ EHueDiscoveryState BridgeDiscovery::state() {
         return EHueDiscoveryState::allBridgesConnected;
     } else if (mNotFoundBridges.size()) {
         for (auto bridge : mNotFoundBridges) {
-            if (bridge.IP != "" && bridge.username == "") {
+            if (bridge.IP != "" && bridge.username == "" && bridge.state == EBridgeDiscoveryState::lookingForUsername) {
                 return EHueDiscoveryState::findingDeviceUsername;
-            } else if (mFoundBridges.size() && bridge.IP != "" && bridge.username != "") {
+            } else if (mFoundBridges.size()) {
                 return EHueDiscoveryState::bridgeConnected;
              } else if (bridge.IP != "" && bridge.username != "") {
                 return EHueDiscoveryState::testingFullConnection;
@@ -496,7 +505,7 @@ void BridgeDiscovery::updateJSON(const hue::Bridge& bridge) {
     // check for changes by looping through json looking for a match.
     QJsonArray array = mJsonData.array();
     QJsonObject newJsonObject = hue::bridgeToJson(bridge);
-    uint32_t i = 0;
+    int i = 0;
     for (auto value : array) {
         bool detectChanges = false;
         QJsonObject object = value.toObject();
@@ -554,7 +563,7 @@ void BridgeDiscovery::updateJSONLights(const hue::Bridge& bridge, const QJsonArr
     QJsonObject newJsonObject = bridgeToJson(bridge);
     newJsonObject["lights"] = lightsArray;
     std::list<QString> deletedLights;
-    uint32_t x = 0;
+    int x = 0;
     // loop through existing controllers
     bool foundBridge = false;
     for (auto value : array) {
@@ -581,7 +590,7 @@ void BridgeDiscovery::updateJSONLights(const hue::Bridge& bridge, const QJsonArr
                                    // mHue->lightRenamedExternally(light, newLight["name"].toString());
                                     //qDebug() << " new name" << newLight["name"].toString() << " old name" << oldLight["name"].toString();
                                 }
-                                if (newLight["index"].toDouble() != oldLight["index"].toDouble()) {
+                                if (int(newLight["index"].toDouble()) != int(oldLight["index"].toDouble())) {
                                     detectChanges = true;
                                 }
 
@@ -640,6 +649,27 @@ bool BridgeDiscovery::loadJSON() {
     return false;
 }
 
+void BridgeDiscovery::deleteBridge(const hue::Bridge& bridge) {
+    qDebug() << " off top of head";
+    // remove from found
+    for (auto&& notFoundBridge : mNotFoundBridges) {
+        if (bridge.id == notFoundBridge.id) {
+            mNotFoundBridges.remove(notFoundBridge);
+            break;
+        }
+    }
+
+    // remove from not found
+    for (auto&& foundBridge : mFoundBridges) {
+        if (bridge.id == foundBridge.id) {
+            mFoundBridges.remove(foundBridge);
+            break;
+        }
+    }
+
+    // remove from JSON
+    removeJSONObject("id", bridge.id);
+}
 
 // ----------------------------
 // Settings Keys

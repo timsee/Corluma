@@ -31,7 +31,7 @@ class LightVectorWidget: public QWidget
     Q_OBJECT
 public:
     /// Constructor
-    explicit LightVectorWidget(uint32_t width, uint32_t height,
+    explicit LightVectorWidget(int width, int height,
                            EPaletteWidgetType type,
                            QWidget *parent);
     /*!
@@ -90,13 +90,13 @@ private:
      * \brief mMaximumSize size of the multi color array, used to initialize
      *        and access vectors throughout this page.
      */
-    uint32_t mMaximumSize;
+    int mMaximumSize;
 
     /// number of columns of palettes
-    uint32_t mWidth;
+    int mWidth;
 
     /// number of rows of palettes
-    uint32_t mHeight;
+    int mHeight;
 
     /// vector pushbuttons used for the multi layout
     std::vector<cor::Button*> mArrayColorsButtons;

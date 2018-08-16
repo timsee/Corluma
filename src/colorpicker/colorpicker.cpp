@@ -16,8 +16,8 @@ ColorPicker::ColorPicker(QWidget *parent) :
     QWidget(parent) {
 
     mWheelIsEnabled = true;
-
-    mWheelOpacity = 1.0f;
+    mCurrentLayoutColorPicker = ELayoutColorPicker::standardLayout;
+    mWheelOpacity = 1.0;
 
     mPlaceholder = new QWidget(this);
     mPlaceholder->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -64,12 +64,12 @@ ColorPicker::ColorPicker(QWidget *parent) :
 
     mBrightnessSlider = new BrightnessSlider(this);
     mBrightnessSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(mBrightnessSlider, SIGNAL(brightnessChanged(int)), this, SLOT(brightnessSliderChanged(int)));
+    connect(mBrightnessSlider, SIGNAL(brightnessChanged(uint32_t)), this, SLOT(brightnessSliderChanged(uint32_t)));
     mBrightnessSlider->setVisible(false);
 
     mTempBrightSliders = new TempBrightSliders(this);
     mTempBrightSliders->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(mTempBrightSliders, SIGNAL(temperatureAndBrightnessChanged(int, int)), this, SLOT(tempBrightSlidersChanged(int, int)));
+    connect(mTempBrightSliders, SIGNAL(temperatureAndBrightnessChanged(int, uint32_t)), this, SLOT(tempBrightSlidersChanged(int, uint32_t)));
     mTempBrightSliders->setVisible(false);
 
     mCustomColorPicker = new  CustomColorPicker(this);
@@ -109,11 +109,11 @@ void ColorPicker::RGBSlidersColorChanged(QColor color) {
     chooseColor(color);
 }
 
-void ColorPicker::brightnessSliderChanged(int brightness) {
+void ColorPicker::brightnessSliderChanged(uint32_t brightness) {
     chooseBrightness(brightness);
 }
 
-void ColorPicker::tempBrightSlidersChanged(int temperature, int brightness) {
+void ColorPicker::tempBrightSlidersChanged(int temperature, uint32_t brightness) {
     chooseAmbient(temperature, brightness, true);
 }
 
@@ -128,7 +128,7 @@ void ColorPicker::multiColorCountChanged(int count) {
 }
 
 void ColorPicker::selectedCountChanged(int count) {
-    enableWheel((bool)count);
+    enableWheel(bool(count));
 }
 
 void ColorPicker::changeLayout(ELayoutColorPicker layout,  bool skipAnimation) {
@@ -165,14 +165,14 @@ void ColorPicker::changeLayout(ELayoutColorPicker layout,  bool skipAnimation) {
 }
 
 void ColorPicker::updateColorStates(QColor mainColor,
-                                    int brightness,
+                                    uint32_t brightness,
                                     const std::vector<QColor> colorSchemes,
                                     const std::vector<QColor> customColors) {
     mRGBSliders->changeColor(mainColor);
     mBrightnessSlider->changeBrightness(brightness);
 
     mColorSchemeCircles->updateColorScheme(colorSchemes);
-    mColorSchemeCircles->updateColorCount(colorSchemes.size());
+    mColorSchemeCircles->updateColorCount(uint32_t(colorSchemes.size()));
 
     mCustomColorPicker->updateMultiColor(customColors);
 }
@@ -183,13 +183,13 @@ void ColorPicker::setMultiColorDefaults(const std::vector<QColor>& colors) {
 
 void ColorPicker::enableWheel(bool shouldEnable) {
     if (shouldEnable) {
-        mWheelOpacity = 1.0f;
+        mWheelOpacity = 1.0;
         // un-fade out the wheel
         QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mColorWheel);
         effect->setOpacity(mWheelOpacity);
         mColorWheel->setGraphicsEffect(effect);
     } else if (!shouldEnable) {
-        mWheelOpacity = 0.333f;
+        mWheelOpacity = 0.333;
         // fade out the wheel
         QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mColorWheel);
         effect->setOpacity(mWheelOpacity);
@@ -209,9 +209,8 @@ void ColorPicker::chooseColor(QColor color, bool shouldSignal) {
 }
 
 
-void ColorPicker::chooseAmbient(int temperature, int brightness, bool shouldSignal) {
-    if (brightness >= 0
-            && brightness <= 100
+void ColorPicker::chooseAmbient(int temperature, uint32_t brightness, bool shouldSignal) {
+    if (brightness <= 100
             && temperature >= 153
             && temperature <= 500) {
         if (shouldSignal) {
@@ -221,9 +220,8 @@ void ColorPicker::chooseAmbient(int temperature, int brightness, bool shouldSign
 }
 
 
-void ColorPicker::chooseBrightness(int brightness, bool shouldSignal) {
-    if (brightness >= 0
-            && brightness <= 100) {
+void ColorPicker::chooseBrightness(uint32_t brightness, bool shouldSignal) {
+    if (brightness <= 100) {
         if (shouldSignal) {
             emit brightnessUpdate(brightness);
         }
@@ -314,7 +312,7 @@ void ColorPicker::handleMouseEvent(QMouseEvent *event) {
                 }
             } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::ambientLayout) {
                 // use the poorly named "value" of the HSV range to calculate the brightness
-                int brightness = color.valueF() * 100.0f;
+                uint32_t brightness = uint32_t(color.valueF() * 100.0);
                 // adjust the color so that it has a maxed out value in the HSV colorspace
                 color.setHsv(color.hue(),
                              color.saturation(),
@@ -325,7 +323,7 @@ void ColorPicker::handleMouseEvent(QMouseEvent *event) {
                 mTempBrightSliders->changeTemperatureAndBrightness(ct, brightness);
             } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::brightnessLayout) {
                 // use the poorly named "value" of the HSV range to calculate the brightness
-                int brightness = color.valueF() * 100.0f;
+                uint32_t brightness = uint32_t(color.valueF() * 100.0);
                 chooseBrightness(brightness);
                 mBrightnessSlider->changeBrightness(brightness);
             } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::standardLayout) {
@@ -338,7 +336,7 @@ void ColorPicker::handleMouseEvent(QMouseEvent *event) {
                 } else if (mCircleIndex == 10) {
                     mColorSchemeCircles->moveCenterCircle(event->pos(), false);
                 } else {
-                    mColorSchemeCircles->moveStandardCircle(mCircleIndex, event->pos());
+                    mColorSchemeCircles->moveStandardCircle(uint32_t(mCircleIndex), event->pos());
                 }
 
                 std::vector<SPickerSelection> circles = mColorSchemeCircles->circles();
@@ -370,9 +368,11 @@ bool ColorPicker::eventIsOverWheel(QMouseEvent *event) {
             && event->pos().y() > deadZoneTop
             && event->pos().y() < deadZoneBottom)) {
         // check that the normalized distance is correct for the circle
-        float distance = QLineF(event->pos(), QPoint(geometry.x() + geometry.height() / 2, geometry.y() + geometry.height() / 2)).length();
+        double distance = QLineF(event->pos(),
+                                QPoint(geometry.x() + geometry.height() / 2,
+                                       geometry.y() + geometry.height() / 2)).length();
         distance = distance / this->height();
-        if (distance <= 0.29f) {
+        if (distance <= 0.29) {
             return true;
         }
     }
@@ -400,9 +400,9 @@ void ColorPicker::changeColorWheel(ELayoutColorPicker oldLayout, ELayoutColorPic
     //------------------
     // resize and set pixmaps
     //------------------
-    int wheelSize = this->size().height() * 0.55f;
+    int wheelSize = int(this->size().height() * 0.55f);
     if (wheelSize > this->size().width() * 0.85f) {
-        wheelSize = this->size().width() * 0.85f;
+        wheelSize = int(this->size().width() * 0.85f);
     }
     mTempWheel->setPixmap(oldPixmap.scaled(wheelSize,
                                            wheelSize,
@@ -441,11 +441,11 @@ void ColorPicker::changeColorWheel(ELayoutColorPicker oldLayout, ELayoutColorPic
             QPropertyAnimation *fadeInAnimation = new QPropertyAnimation(fadeInEffect, "opacity");
             fadeInAnimation->setDuration(animationMsec);
             fadeInAnimation->setStartValue(0.0f);
-            mWheelOpacity = 1.0f;
+            mWheelOpacity = 1.0;
             // catch edge case wehre multi color picker is sometimes disabled by default
             if (newLayout == ELayoutColorPicker::multiColorLayout
                     && (mCustomColorPicker->palette()->selectedCount() == 0)) {
-                mWheelOpacity = 0.333f;
+                mWheelOpacity = 0.333;
             }
             fadeInAnimation->setEndValue(mWheelOpacity);
 
@@ -465,19 +465,19 @@ void ColorPicker::changeColorWheel(ELayoutColorPicker oldLayout, ELayoutColorPic
             // don't need two animations, just do one.
             if (newLayout == ELayoutColorPicker::multiColorLayout) {
                 startOpacity = 1.0f;
-                mWheelOpacity = 0.333f;
+                mWheelOpacity = 0.333;
             } else if (oldLayout == ELayoutColorPicker::multiColorLayout) {
                 startOpacity = 0.333f;
-                mWheelOpacity = 1.0f;
+                mWheelOpacity = 1.0;
             } else {
                 startOpacity = 0.0f;
-                mWheelOpacity = 0.0f;
+                mWheelOpacity = 0.0;
                 qDebug() << "WARNING: shouldn't get here...";
             }
 
             if (oldLayout == ELayoutColorPicker::multiColorLayout) {
                 // just set opacity here immediately cause of weird bug...
-                mWheelOpacity = 1.0f;
+                mWheelOpacity = 1.0;
                 // un-fade out the wheel
                 QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mColorWheel);
                 effect->setOpacity(mWheelOpacity);
@@ -546,8 +546,6 @@ QString ColorPicker::getWheelPixmapPath(ELayoutColorPicker layout) {
         case ELayoutColorPicker::brightnessLayout:
             name = QString(":/images/white_wheel.png");
             break;
-        default:
-            name = QString(":/images/color_wheel.png");
     }
     return name;
 }
@@ -555,9 +553,9 @@ QString ColorPicker::getWheelPixmapPath(ELayoutColorPicker layout) {
 void ColorPicker::resize() {
     QPixmap pixmap(getWheelPixmapPath(mCurrentLayoutColorPicker));
 
-    int wheelSize = this->size().height() * 0.55f;
+    int wheelSize = int(this->size().height() * 0.55f);
     if (wheelSize > this->size().width() * 0.85f) {
-        wheelSize = this->size().width() * 0.85f;
+        wheelSize = int(this->size().width() * 0.85f);
     }
     mColorWheel->setPixmap(pixmap.scaled(wheelSize,
                                         wheelSize,

@@ -181,16 +181,16 @@ void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
         //qDebug() << "the sender: " << sender << "packet:" << packet << "type:" << commTypeToString(type);
         for (auto&& intVector : intVectors) {
             if (intVector.size() > 2) {
-                if (intVector[0] < (int)EPacketHeader::MAX) {
-                    EPacketHeader packetHeader = (EPacketHeader)intVector[0];
-                    int index = intVector[1];
+                if (intVector[0] < int(EPacketHeader::MAX)) {
+                    EPacketHeader packetHeader = EPacketHeader(intVector[0]);
+                    std::size_t index = std::size_t(intVector[1]);
                     bool isValid = true;
-                    if (index < 20 && index  >= 0) {
+                    if (index < 20) {
                         // figure out devices that are getting updates
                         std::list<cor::Light> deviceList;
                         if (index != 0) {
                             cor::Light device = cor::Light(controller.names[index - 1], type);
-                            device.index = index;
+                            device.index = int(index);
                             device.controller = controller.name;
                             commByType(type)->fillDevice(device);
                             deviceList.push_back(device);
@@ -203,31 +203,31 @@ void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
 
                         // check if its a valid size with the proper header for a state update packet
                         if (packetHeader == EPacketHeader::stateUpdateRequest) {
-                            int x = 1;
+                            uint32_t x = 1;
                             // check all values fall in their proper ranges
                             if (verifyStateUpdatePacketValidity(intVector, x)) {
                                 for (auto&& device : deviceList) {
-                                    device.isOn            = (bool)intVector[x + 1];
-                                    device.isReachable     = (bool)intVector[x + 2];
+                                    device.isOn            = bool(intVector[x + 1]);
+                                    device.isReachable     = bool(intVector[x + 2]);
 
-                                    float brightness = float(intVector[x + 8]) / 100.0f;
-                                    uint32_t red     = float(intVector[x + 3]) * brightness;
-                                    uint32_t green   = float(intVector[x + 4]) * brightness;
-                                    uint32_t blue    = float(intVector[x + 5]) * brightness;
+                                    double brightness = double(intVector[x + 8]) / 100.0;
+                                    int red     = int(intVector[x + 3] * brightness);
+                                    int green   = int(intVector[x + 4] * brightness);
+                                    int blue    = int(intVector[x + 5] * brightness);
                                     QColor color(red, green, blue);
-                                    color.setHsvF(color.hueF(), color.saturationF(), 1.0f);
+                                    color.setHsvF(color.hueF(), color.saturationF(), 1.0);
                                     color.setHsvF(color.hueF(), color.saturationF(), brightness);
                                     device.color = color;
 
                                     device.colorMode       = EColorMode::HSV;
-                                    device.routine         = (ERoutine)intVector[x + 6];
-                                    EPalette palette = (EPalette)intVector[x + 7];
+                                    device.routine         = ERoutine(intVector[x + 6]);
+                                    EPalette palette = EPalette(intVector[x + 7]);
                                     if (palette == EPalette::custom) {
                                         device.palette     = device.customPalette;
                                     } else {
                                         device.palette     = mPresetPalettes.palette(palette);
                                     }
-                                    device.palette.brightness(brightness * 100.0f);
+                                    device.palette.brightness(uint32_t(brightness * 100.0));
 
 
                                     device.speed                 = intVector[x + 9];
@@ -236,8 +236,8 @@ void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
 
                                     device.name                  = device.uniqueID();
 
-                                    device.hardwareType          = controller.hardwareTypes[device.index - 1];
-                                    device.productType           = controller.productTypes[device.index - 1];
+                                    device.hardwareType          = controller.hardwareTypes[uint32_t(device.index - 1)];
+                                    device.productType           = controller.productTypes[uint32_t(device.index - 1)];
 
                                     device.majorAPI              = controller.majorAPI;
                                     device.minorAPI              = controller.minorAPI;
@@ -250,8 +250,8 @@ void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
                         } else if (packetHeader == EPacketHeader::customArrayUpdateRequest) {
                             if (verifyCustomColorUpdatePacket(intVector)) {
                                 for (auto device : deviceList) {
-                                    uint32_t customColorCount = intVector[2];
-                                    int j = 3;
+                                    uint32_t customColorCount = uint32_t(intVector[2]);
+                                    uint32_t j = 3;
                                     std::vector<QColor> colors = device.customPalette.colors();
                                     uint32_t brightness = device.customPalette.brightness();
                                     for (uint32_t i = 0; i < customColorCount; ++i) {
@@ -268,8 +268,8 @@ void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
                         } else if (packetHeader == EPacketHeader::brightnessChange
                                    && (intVector.size() % 3 == 0)) {
                             for (auto&& device : deviceList) {
-                                device.color.setHsvF(device.color.hueF(), device.color.saturationF(), float(intVector[2]) / 100.0f);
-                                device.palette.brightness(intVector[2]);
+                                device.color.setHsvF(device.color.hueF(), device.color.saturationF(), double(intVector[2]) / 100.0);
+                                device.palette.brightness(uint32_t(intVector[2]));
                                 commByType(type)->updateDevice(device);
                             }
                         } else if (packetHeader == EPacketHeader::onOffChange
@@ -287,10 +287,10 @@ void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
                                    && intVector.size() > 3) {
                             for (auto device : deviceList) {
                                 uint32_t tempIndex = 2;
-                                device.routine = (ERoutine)intVector[tempIndex];
+                                device.routine = ERoutine(intVector[tempIndex]);
                                 ++tempIndex;
                                 // get either the color or the palette
-                                if ((int)device.routine <= (int)cor::ERoutineSingleColorEnd) {
+                                if (int(device.routine) <= int(cor::ERoutineSingleColorEnd)) {
                                     if (intVector.size() > 5) {
                                         int red = intVector[tempIndex];
                                         ++tempIndex;
@@ -308,8 +308,8 @@ void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
                                 } else {
                                     if (intVector.size() > 4) {
                                         // store brightness from previous data
-                                        int brightness = device.palette.brightness();
-                                        EPalette palette = (EPalette)intVector[tempIndex];
+                                        uint32_t brightness = uint32_t(device.palette.brightness());
+                                        EPalette palette = EPalette(intVector[tempIndex]);
                                         if (palette == EPalette::custom) {
                                             device.palette = device.customPalette;
                                         } else {
@@ -350,7 +350,7 @@ void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
                                    && (intVector.size() % 6 == 0)) {
                             for (auto device : deviceList) {
                                 if (index <= 10) {
-                                    int index = intVector[2];
+                                    uint32_t index = uint32_t(intVector[2]);
                                     if (intVector.size() > 5) {
                                         int red = intVector[3];
                                         int green = intVector[4];
@@ -375,7 +375,7 @@ void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
                                    && (intVector.size() % 3 == 0)) {
                             for (auto device : deviceList) {
                                 if (intVector[2] <= 10) {
-                                    device.customCount = intVector[2];
+                                    device.customCount = uint32_t(intVector[2]);
                                    // qDebug() << "UPDATE TO custom color count" << device.customColors;
                                     commByType(type)->updateDevice(device);
                                 } else {
@@ -388,7 +388,7 @@ void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
                             } else if (intVector[0] == 7) {
                                 qDebug() << "WARNING: Invalid state update packet: " << packet;
                             } else {
-                                qDebug() << "WARNING: Invalid packet size: " << intVector.size() << "for packet header" << packetHeaderToString((EPacketHeader)intVector[0]);
+                                qDebug() << "WARNING: Invalid packet size: " << intVector.size() << "for packet header" << packetHeaderToString(EPacketHeader(intVector[0]));
                             }
                             isValid = false;
                         }
@@ -404,16 +404,16 @@ void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
     }
 }
 
-bool CommArduCor::verifyStateUpdatePacketValidity(const std::vector<int>& packetIntVector, int x) {
-    while (x < int(packetIntVector.size())) {
+bool CommArduCor::verifyStateUpdatePacketValidity(const std::vector<int>& packetIntVector, uint32_t x) {
+    while (x < packetIntVector.size()) {
         if (!(packetIntVector[x] > 0        && packetIntVector[x] < 15))        return false;
         if (!(packetIntVector[x + 1] == 1   || packetIntVector[x + 1] == 0))    return false;
         if (!(packetIntVector[x + 2] == 1   || packetIntVector[x + 2] == 0))    return false;
         if (!(packetIntVector[x + 3] >= 0   && packetIntVector[x + 3] <= 255))  return false;
         if (!(packetIntVector[x + 4] >= 0   && packetIntVector[x + 4] <= 255))  return false;
         if (!(packetIntVector[x + 5] >= 0   && packetIntVector[x + 5] <= 255))  return false;
-        if (!(packetIntVector[x + 6] >= 0   && packetIntVector[x + 6] < (int)ERoutine::MAX)) return false;
-        if (!(packetIntVector[x + 7] >= 0   && packetIntVector[x + 7] < (int)EPalette::unknown)) return false;
+        if (!(packetIntVector[x + 6] >= 0   && packetIntVector[x + 6] < int(ERoutine::MAX))) return false;
+        if (!(packetIntVector[x + 7] >= 0   && packetIntVector[x + 7] < int(EPalette::unknown))) return false;
         if (!(packetIntVector[x + 8] >= 0   && packetIntVector[x + 8] <= 100))   return false;
         if (!(packetIntVector[x + 9] >= 0   && packetIntVector[x + 9] <= 2000))  return false;
         if (!(packetIntVector[x + 10] >= 0  && packetIntVector[x + 10] <= 1000)) return false;
@@ -427,7 +427,7 @@ bool CommArduCor::verifyStateUpdatePacketValidity(const std::vector<int>& packet
 bool CommArduCor::verifyCustomColorUpdatePacket(const std::vector<int>& packetIntVector) {
     uint32_t x = 2;
     if (packetIntVector.size() < 3) return false;
-    uint32_t customColorCount = packetIntVector[x];
+    uint32_t customColorCount = uint32_t(packetIntVector[x]);
     if (!(customColorCount > 0  && customColorCount < 11))     return false;
     if (!(packetIntVector.size() >= customColorCount * 3 + 3)) return false;
     for (; x < packetIntVector.size(); x = x + 3) {
@@ -444,18 +444,17 @@ CommType *CommArduCor::commByType(ECommType type) {
     {
 #ifndef MOBILE_BUILD
     case ECommType::serial:
-        ptr = (CommType*)mSerial.get();
+        ptr = static_cast<CommType*>(mSerial.get());
         break;
 #endif //MOBILE_BUILD
     case ECommType::HTTP:
-        ptr = (CommType*)mHTTP.get();
+        ptr = static_cast<CommType*>(mHTTP.get());
         break;
     case ECommType::UDP:
-        ptr = (CommType*)mUDP.get();
+        ptr = static_cast<CommType*>(mUDP.get());
         break;
     default:
         throw "no type for this commtype";
-        break;
     }
     return ptr;
 }
