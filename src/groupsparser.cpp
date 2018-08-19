@@ -384,7 +384,7 @@ void GroupsParser::parseMood(const QJsonObject& object) {
                 uint32_t majorAPI = uint32_t(device["majorAPI"].toDouble());
                 uint32_t minorAPI = uint32_t(device["minorAPI"].toDouble());
 
-                double brightness = int(device["bri"].toDouble());
+                double brightness = device["bri"].toDouble();
                 QColor color;
                 color.setHsvF(hue, sat, brightness);
 
