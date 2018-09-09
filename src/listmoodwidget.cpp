@@ -10,8 +10,7 @@
 #include "cor/utils.h"
 
 ListMoodWidget::ListMoodWidget(const cor::LightGroup& group,
-                                 QWidget *parent) {
-    this->setParent(parent);
+                                 QWidget *parent) : cor::ListItemWidget(group.name, parent) {
     mIsChecked = false;
 
     mGroup = group;
@@ -21,7 +20,7 @@ ListMoodWidget::ListMoodWidget(const cor::LightGroup& group,
     QString reachableStlyeSheet = "background:rgba(0, 0, 0, 0%); color: #333;";
     QString backgroundStyleSheet = "background:rgba(0, 0, 0, 0%);";
 
-    this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     // setup main label
     mName = new QLabel(this);
@@ -32,11 +31,11 @@ ListMoodWidget::ListMoodWidget(const cor::LightGroup& group,
         modifiedName = mGroup.name;
     }
     mName->setText("<b>" + modifiedName + "</b>");
-    mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     mEditButton = new QPushButton(this);
     mEditButton->setStyleSheet("border: none;");
-    mEditButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mEditButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mEditButton, SIGNAL(clicked(bool)), this, SLOT(editButtonClicked(bool)));
     mEditIcon = QPixmap(":/images/editIcon.png");
     int editSize = int(mName->height() * 0.5);
@@ -47,15 +46,10 @@ ListMoodWidget::ListMoodWidget(const cor::LightGroup& group,
                                    editSize));
     mEditButton->setHidden(true);
 
-    cor::Light device = *mGroup.devices.begin();
-    if(!device.isReachable) {
-        mName->setStyleSheet(reachableStlyeSheet);
-    } else {
-        mName->setStyleSheet(backgroundStyleSheet);
-    }
+    mName->setStyleSheet(backgroundStyleSheet);
 
     mPalette = new  cor::LightVectorWidget(3, 2, cor::EPaletteWidgetType::info, this);
-    mPalette->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mPalette->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     mPalette->enableButtonInteraction(false);
     //mPalette->hideOffDevices(true);
     mPalette->updateDevices(mGroup.devices);
@@ -78,8 +72,7 @@ ListMoodWidget::ListMoodWidget(const cor::LightGroup& group,
 
 void ListMoodWidget::enterEvent(QEvent *) {
     mEditButton->setHidden(false);
-
-    int editSize = int(mName->height() * 0.95);
+    int editSize = int(mName->height() * 0.9);
     mEditIcon = mEditIcon.scaled(editSize,
                                  editSize,
                                  Qt::KeepAspectRatio,
@@ -101,8 +94,7 @@ bool ListMoodWidget::setChecked(bool checked) {
 }
 
 
-void ListMoodWidget::paintEvent(QPaintEvent *event) {
-    Q_UNUSED(event);
+void ListMoodWidget::paintEvent(QPaintEvent *) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
@@ -115,8 +107,7 @@ void ListMoodWidget::paintEvent(QPaintEvent *event) {
 }
 
 
-void ListMoodWidget::mouseReleaseEvent(QMouseEvent *event) {
-    Q_UNUSED(event);
+void ListMoodWidget::mouseReleaseEvent(QMouseEvent *) {
     emit clicked(mKey);
 }
 

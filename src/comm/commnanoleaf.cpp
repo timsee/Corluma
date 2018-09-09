@@ -681,8 +681,8 @@ QJsonObject CommNanoleaf::createRoutinePacket(ERoutine routine, int speed) {
             effectObject["delayTime"] = delayTimeObject;
             break;
         }
-        case ERoutine::MAX:
-           throw "unrecognized routine";
+        default:
+            break;
     }
 
     //------------

@@ -10,6 +10,7 @@
 #include "bridge.h"
 #include "huelight.h"
 #include "editablefieldwidget.h"
+#include "cor/listitemwidget.h"
 
 namespace hue
 {
@@ -22,7 +23,7 @@ namespace hue
  * \brief The BridgeInfoWidget class is a simple widget that shows the metadata of a bridge and
  *        provides a button to discover new hues for the bridge.
  */
-class BridgeInfoWidget : public QWidget
+class BridgeInfoWidget : public cor::ListItemWidget
 {
     Q_OBJECT
 public:
@@ -46,9 +47,6 @@ public:
 
     /// true if checked, false otherwise.
     bool checked() { return mIsChecked; }
-
-    /// getter for the key of the widget.
-    const QString& key() { return mBridge.IP; }
 
 signals:
 

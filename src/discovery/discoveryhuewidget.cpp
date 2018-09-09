@@ -25,19 +25,9 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer *comm, QWidget *parent) :
     mLabel->setText("Looking for a Bridge...");
     mLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    mScrollArea = new QScrollArea(this);
-    mScrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    QScroller::grabGesture(mScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
-
-    mScrollAreaWidget = new QWidget(this);
-    mScrollAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mScrollAreaWidget->setContentsMargins(0,0,0,0);
-    mScrollArea->setWidget(mScrollAreaWidget);
-
-    mScrollLayout = new QVBoxLayout(mScrollAreaWidget);
-    mScrollLayout->setSpacing(0);
-    mScrollLayout->setContentsMargins(0, 0, 0, 0);
-    mScrollAreaWidget->setLayout(mScrollLayout);
+    mListWidget = new cor::ListWidget(this, cor::EListType::linear);
+    mListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    QScroller::grabGesture(mListWidget->viewport(), QScroller::LeftMouseButtonGesture);
 
     mGreyOut = new GreyOutOverlay(this);
     mGreyOut->setVisible(false);
@@ -71,7 +61,7 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer *comm, QWidget *parent) :
 
     mLayout = new QVBoxLayout;
     mLayout->addWidget(mLabel,        4);
-    mLayout->addWidget(mScrollArea,   8);
+    mLayout->addWidget(mListWidget,   8);
     setLayout(mLayout);
 }
 
@@ -141,17 +131,18 @@ void DiscoveryHueWidget::updateBridgeGUI() {
         // check if light already exists in list
         int widgetIndex = -1;
         int i = 0;
-        for (auto&& widget : mBridgeWidgets) {
+        for (const auto& widget : mListWidget->widgets()) {
             if (widget->key() == bridge.IP) {
+                hue::BridgeInfoWidget *bridgeInfoWidget = static_cast<hue::BridgeInfoWidget*>(widget);
                 widgetIndex = i;
-                widget->updateBridge(bridge);
+                bridgeInfoWidget->updateBridge(bridge);
             }
             ++i;
         }
 
         // if it doesnt exist, add it
         if (widgetIndex == -1) {
-            hue::BridgeInfoWidget *widget = new hue::BridgeInfoWidget(bridge, mScrollAreaWidget);
+            hue::BridgeInfoWidget *widget = new hue::BridgeInfoWidget(bridge, mListWidget);
             widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
             connect(widget, SIGNAL(nameChanged(QString, QString)), this, SLOT(changedName(QString, QString)));
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(bridgePressed(QString)));
@@ -159,8 +150,7 @@ void DiscoveryHueWidget::updateBridgeGUI() {
             connect(widget, SIGNAL(groupsPressed(QString)), this, SLOT(groupsPressed(QString)));
             connect(widget, SIGNAL(schedulesPressed(QString)), this, SLOT(schedulesPressed(QString)));
             connect(widget, SIGNAL(deleteBridge(hue::Bridge)), this, SLOT(deleteBridgeFromAppData(hue::Bridge)));
-            mBridgeWidgets.push_back(widget);
-            mScrollLayout->addWidget(widget);
+            mListWidget->insertWidget(widget);
         }
     }
     resize();
@@ -256,22 +246,18 @@ void DiscoveryHueWidget::bridgePressed(QString key) {
 }
 
 void DiscoveryHueWidget::resize() {
-    // resize scroll area
-    mScrollAreaWidget->setFixedWidth(int(this->width() * 0.9f));
-    QSize widgetSize(mScrollAreaWidget->width(), int(this->height() / 1.5f));
-    int yPos = 0;
-    // draw widgets in content region
-    for (auto widget : mBridgeWidgets) {
-        widget->setHeight(int(widgetSize.height() * 0.9f));
-        yPos += widget->height();
-
-        widget->setVisible(true);
-    }
-    mScrollAreaWidget->setFixedHeight(yPos);
-
     mHueLightDiscovery->resize();
     if (mGreyOut->isVisible()) {
         mGreyOut->resize();
+    }
+
+    // resize scroll area
+    mListWidget->resizeWidgets();
+
+    QSize widgetSize(mListWidget->width(), int(this->height() / 1.5f));
+    for (auto widget : mListWidget->widgets()) {
+        widget->setFixedSize(widgetSize);
+        widget->setVisible(true);
     }
 }
 
@@ -321,5 +307,6 @@ void DiscoveryHueWidget::deleteBridgeFromAppData(hue::Bridge bridge) {
                                   QMessageBox::Yes | QMessageBox::No);
     if (reply == QMessageBox::Yes) {
         mComm->hue()->discovery()->deleteBridge(bridge);
+        mListWidget->removeWidget(bridge.IP);
     }
 }

@@ -80,25 +80,24 @@ void CheckBox::setChecked(bool shouldCheck) {
     mIsChecked = shouldCheck;
 }
 
-void CheckBox::buttonPressed(bool pressed) {
-    Q_UNUSED(pressed);
+void CheckBox::buttonPressed(bool) {
 
     mIsChecked = !mIsChecked;
     emit boxChecked(mIsChecked);
 }
 
-void CheckBox::resizeEvent(QResizeEvent *event) {
-    Q_UNUSED(event);
+void CheckBox::resizeEvent(QResizeEvent *) {
 
     mTitle->setGeometry(mSpacer,
                         mSpacer,
                         mTitle->width(),
                         mTitle->height());
 
+    int height = int(mTitle->height() * 0.8);
     mCheckBox->setGeometry(mTitle->width() + 2 * mSpacer,
                            mTitle->geometry().y(),
-                           mTitle->height() + mSpacer,
-                           mTitle->height() + mSpacer);
+                           height + mSpacer,
+                           height + mSpacer);
 
     adjustSize();
 }

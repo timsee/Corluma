@@ -7,7 +7,6 @@
 #include "mainwindow.h"
 #include <QDebug>
 #include <QPainter>
-#include <QSignalMapper>
 #include <QGraphicsOpacityEffect>
 #include <QPropertyAnimation>
 #include <QDesktopWidget>
@@ -546,6 +545,7 @@ void MainWindow::closeDiscoveryWithoutTransition() {
 
 void MainWindow::editButtonClicked(QString key, bool isMood) {
     greyOut(true);
+    mEditPage->show();
     mEditPage->isOpen(true);
 
     QSize size = this->size();
@@ -630,6 +630,7 @@ void MainWindow::hueInfoWidgetClicked() {
 
 void MainWindow::editClosePressed() {
     greyOut(false);
+    mEditPage->hide();
     mEditPage->isOpen(false);
 
     QSize size = this->size();

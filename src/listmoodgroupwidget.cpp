@@ -5,41 +5,40 @@
  */
 
 #include "listmoodgroupwidget.h"
-
+#include "cor/utils.h"
 ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
                                          std::list<cor::LightGroup> moods,
                                          QString key,
                                          bool hideEdit,
-                                         QWidget *parent) : ListCollectionWidget(this) {
-    this->setParent(parent);
-    this->setMaximumSize(parent->size());
-    setup(name, key, EListType::linear2X, hideEdit);
+                                         QWidget *parent) : cor::ListItemWidget(key, parent), mListLayout(cor::EListType::linear2X) {
 
-    mTopLayout = new QHBoxLayout();
-    mTopLayout->addWidget(mName);
-    mTopLayout->addWidget(mHiddenStateIcon);
+    mWidget = new QWidget(this);
 
-    mEditButton->setVisible(false);
+    mLayout = new QVBoxLayout(this);
+    mLayout->setContentsMargins(0, 0, this->size().width() / 40, 0);
+    mLayout->setSpacing(0);
 
-    mTopLayout->setStretch(0, 16);
-    mTopLayout->setStretch(1, 2);
+    setLayout(mLayout);
 
     mMoods = moods;
 
+    mDropdownTopWidget = new DropdownTopWidget(name, hideEdit, true, this);
+    mDropdownTopWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+
     updateMoods(moods, false);
 
-    mLayout->addLayout(mTopLayout);
+    mLayout->addWidget(mDropdownTopWidget);
     mLayout->addWidget(mWidget);
 }
 
 
 void ListMoodGroupWidget::updateMoods(std::list<cor::LightGroup> moods,
                                       bool removeIfNotFound) {
-    std::vector<bool> foundWidgets(mWidgets.size(), false);
+    std::vector<bool> foundWidgets(mListLayout.count(), false);
     for (auto&& mood : moods) {
         bool foundMood = false;
         uint32_t x = 0;
-        for (auto&& existingWidget : mWidgets) {
+        for (auto&& existingWidget : mListLayout.widgets()) {
             if (mood.name.compare(existingWidget->key()) == 0) {
                 foundMood = true;
                 //TODO update
@@ -49,10 +48,10 @@ void ListMoodGroupWidget::updateMoods(std::list<cor::LightGroup> moods,
         }
 
         if (!foundMood) {
-            ListMoodWidget *widget = new ListMoodWidget(mood, this);
+            ListMoodWidget *widget = new ListMoodWidget(mood, mWidget);
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
             connect(widget, SIGNAL(editClicked(QString)), this, SLOT(clickedEdit(QString)));
-            insertWidget(widget);
+            mListLayout.insertWidget(widget);
         }
     }
 
@@ -64,17 +63,19 @@ void ListMoodGroupWidget::updateMoods(std::list<cor::LightGroup> moods,
         for (auto widgetFound : foundWidgets) {
             if (!widgetFound) {
                 // remove this widget
-                removeWidget(mWidgets[x]);
+                mListLayout.removeWidget(mListLayout.widgets()[x]);
             }
             ++x;
         }
     }
+    resizeInteralWidgets();
 }
 
 void ListMoodGroupWidget::setShowButtons(bool show) {
-    mShowButtons = show;
-    for (auto&& device : mWidgets) {
-        if (mShowButtons) {
+
+    mDropdownTopWidget->showButtons(show);
+    for (auto&& device : mListLayout.widgets()) {
+        if (mDropdownTopWidget->showButtons()) {
             device->setVisible(true);
         } else {
             device->setVisible(false);
@@ -82,22 +83,19 @@ void ListMoodGroupWidget::setShowButtons(bool show) {
     }
 
     resizeInteralWidgets();
-    emit buttonsShown(mKey, mShowButtons);
+    emit buttonsShown(mKey, mDropdownTopWidget->showButtons());
 }
 
 void ListMoodGroupWidget::resizeInteralWidgets() {
-    if (mShowButtons) {
-        mHiddenStateIcon->setPixmap(mOpenedPixmap);
-        this->setFixedHeight(preferredSize().height());
+    if (mDropdownTopWidget->showButtons()) {
+        this->setFixedHeight(mListLayout.overallSize().height() + mDropdownTopWidget->height());
     } else {
-        mHiddenStateIcon->setPixmap(mClosedPixmap);
-        mName->setFixedHeight(mMinimumHeight);
-        this->setFixedHeight(mMinimumHeight);
+        this->setFixedHeight(mDropdownTopWidget->height());
     }
 }
 
 void ListMoodGroupWidget::setCheckedMoods(std::list<QString> checkedMoods) {
-    for (auto&& existingWidget : mWidgets) {
+    for (auto&& existingWidget : mListLayout.widgets()) {
         ListMoodWidget *widget = qobject_cast<ListMoodWidget*>(existingWidget);
         Q_ASSERT(widget);
 
@@ -113,26 +111,20 @@ void ListMoodGroupWidget::setCheckedMoods(std::list<QString> checkedMoods) {
     }
 }
 
-QSize ListMoodGroupWidget::preferredSize() {
-    int height = mMinimumHeight;
-    if (mShowButtons && mWidgets.size() > 0) {
-        int widgetHeight = std::max(mName->height(), mMinimumHeight * 2);
-        height = int(mWidgets.size()) * widgetHeight + mMinimumHeight;
-    }
-    return QSize(this->parentWidget()->width(), height);
+void ListMoodGroupWidget::resizeEvent(QResizeEvent *) {
+    mWidget->setFixedWidth(this->width());
+    mListLayout.moveWidgets(QSize(this->width(), mDropdownTopWidget->height()));
 }
 
-
-
 void ListMoodGroupWidget::mouseReleaseEvent(QMouseEvent *) {
-    setShowButtons(!mShowButtons);
+    setShowButtons(!mDropdownTopWidget->showButtons());
 }
 
 void ListMoodGroupWidget::removeMood(QString mood) {
     // check if mood exists
     bool foundMood = false;
     ListMoodWidget *moodWidget = nullptr;
-    for (auto&& widget : mWidgets) {
+    for (auto&& widget : mListLayout.widgets()) {
         ListMoodWidget *existingWidget = qobject_cast<ListMoodWidget*>(widget);
         Q_ASSERT(existingWidget);
 
@@ -143,6 +135,14 @@ void ListMoodGroupWidget::removeMood(QString mood) {
     }
 
     if (foundMood && moodWidget != nullptr) {
-        removeWidget(moodWidget);
+        mListLayout.removeWidget(moodWidget);
     }
+}
+
+void ListMoodGroupWidget::closeLights() {
+    mDropdownTopWidget->showButtons(false);
+    for (const auto& device : mListLayout.widgets()) {
+        device->setVisible(false);
+    }
+    resizeInteralWidgets();
 }

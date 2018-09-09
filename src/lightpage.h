@@ -3,7 +3,6 @@
 
 #include <QWidget>
 #include <QListWidget>
-#include <QSignalMapper>
 #include <QPushButton>
 #include <QLayout>
 
@@ -12,7 +11,7 @@
 #include "listdevicewidget.h"
 #include "comm/commlayer.h"
 #include "cor/devicelist.h"
-#include "listdevicesgroupwidget.h"
+#include "listgroupwidget.h"
 #include "cor/listwidget.h"
 #include "cor/presetpalettes.h"
 
@@ -33,12 +32,11 @@ class LightPage : public QWidget, public cor::Page
 
 public:
     /// constructor
-    explicit LightPage(QWidget *parent, cor::DeviceList *data, CommLayer *comm, GroupsParser *groups, AppSettings *appSettings);
-
-    /*!
-     * \brief Deconstructor
-     */
-    ~LightPage();
+    explicit LightPage(QWidget *parent,
+                       cor::DeviceList *data,
+                       CommLayer *comm,
+                       GroupsParser *groups,
+                       AppSettings *appSettings);
 
     /*!
      * \brief updateConnectionList updates the GUI elements that display the
@@ -88,6 +86,13 @@ public slots:
     void clearButtonPressed();
 
 private slots:
+
+    /*!
+     * \brief shouldShowButtons show buttons was clicked by a ListCollectionWidget.
+     * \param key the key fo the ListCollectionWidget
+     * \param isShowing true if showing, false if not
+     */
+    void shouldShowButtons(QString key, bool isShowing);
 
     /*!
      * \brief deviceSwitchClicked the on/off switch for a specific device is clicked on the
@@ -195,7 +200,7 @@ private:
      * \param hideEdit true for special case groups (Available and Not Reachable), false otherwise
      * \return pointer to the newly created ListDevicesGroupWidget
      */
-    ListDevicesGroupWidget* initDevicesCollectionWidget(cor::LightGroup group,
+    ListGroupWidget* initDevicesCollectionWidget(cor::LightGroup group,
                                                         const std::vector<std::pair<QString, QString>>& deviceNames,
                                                         const QString& key);
 

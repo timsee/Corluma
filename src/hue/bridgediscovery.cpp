@@ -11,6 +11,7 @@
 #include <QStandardPaths>
 #include <QDir>
 
+//#define DEBUG_BRIDGE_DISCOVERY
 
 namespace hue
 {
@@ -19,13 +20,13 @@ BridgeDiscovery::BridgeDiscovery(QObject *parent, UPnPDiscovery *UPnP) : QObject
     mHue = qobject_cast<CommHue*>(parent);
     connect(UPnP, SIGNAL(UPnPPacketReceived(QHostAddress,QString)), this, SLOT(receivedUPnP(QHostAddress,QString)));
 
+    mNetworkManager = new QNetworkAccessManager(this);
+    connect(mNetworkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
+
     mRoutineTimer = new QTimer;
     connect(mRoutineTimer, SIGNAL(timeout()), this, SLOT(handleDiscovery()));
 
     mElapsedTimer = new QElapsedTimer;
-
-    mNetworkManager = new QNetworkAccessManager(this);
-    connect(mNetworkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 
     mStartupTimer = new QTimer(this);
     mStartupTimer->setSingleShot(true);
@@ -171,7 +172,9 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
     if (reply->error() == QNetworkReply::NoError) {
         QString string = reply->readAll();
         QString IP = reply->url().toString();
-        //qDebug() << "Response:" << string;
+#ifdef DEBUG_BRIDGE_DISCOVERY
+        qDebug() << __func__ << "Response:" << string;
+#endif
         QJsonDocument jsonResponse = QJsonDocument::fromJson(string.toUtf8());
         if (IP != kNUPnPAddress) {
             // check validity of the document
@@ -249,6 +252,9 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
                 qDebug() << "Invalid JSON...";
             }
         } else {
+#ifdef DEBUG_BRIDGE_DISCOVERY
+            qDebug() << __func__ << "NUPnP packet:" << string;
+#endif
             //qDebug() << "got a NUPnP packet:" << string;
             for (auto ref : jsonResponse.array()) {
                 if (ref.isObject()) {
@@ -363,7 +369,9 @@ void BridgeDiscovery::parseInitialUpdate(const hue::Bridge& bridge, QJsonDocumen
 
 void BridgeDiscovery::receivedUPnP(QHostAddress sender, QString payload) {
     if(payload.contains(QString("IpBridge"))) {
-        //qDebug() << payload;
+#ifdef DEBUG_BRIDGE_DISCOVERY
+        qDebug() << __func__ << "UPnP payload:" << payload;
+#endif
         hue::Bridge bridge;
         bridge.state = EBridgeDiscoveryState::lookingForResponse;
         bridge.IP = sender.toString();
@@ -650,7 +658,6 @@ bool BridgeDiscovery::loadJSON() {
 }
 
 void BridgeDiscovery::deleteBridge(const hue::Bridge& bridge) {
-    qDebug() << " off top of head";
     // remove from found
     for (auto&& notFoundBridge : mNotFoundBridges) {
         if (bridge.id == notFoundBridge.id) {

@@ -28,29 +28,21 @@ EditGroupPage::EditGroupPage(QWidget *parent, CommLayer* comm, cor::DeviceList* 
 
     mIsRoomOriginal = false;
 
-    mDevicesList = new cor::ListWidget(this);
-    mDevicesList->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mDevicesList->setContentsMargins(0,0,0,0);
-    QScroller::grabGesture(mDevicesList->viewport(), QScroller::LeftMouseButtonGesture);
-
-    mScrollAreaWidget = new ListEditWidget(this, mComm, data);
-    connect(mScrollAreaWidget, SIGNAL(deviceClicked(QString, QString)), this, SLOT(clickedDevice(QString, QString)));
-    mScrollAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mDevicesList->addWidget(mScrollAreaWidget);
+    mSimpleGroupWidget = new ListSimpleGroupWidget(mComm, data, this);
+    mSimpleGroupWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    connect(mSimpleGroupWidget, SIGNAL(deviceClicked(QString)), this, SLOT(clickedDevice(QString)));
+    QScroller::grabGesture(mSimpleGroupWidget->viewport(), QScroller::LeftMouseButtonGesture);
+    mSimpleGroupWidget->setStyleSheet("background-color:rgba(33,32,32,255);");
 
     mRenderThread = new QTimer(this);
     connect(mRenderThread, SIGNAL(timeout()), this, SLOT(renderUI()));
-    mScrollAreaWidget->setStyleSheet("background-color:rgba(33,32,32,255);");
 
     mLayout = new QVBoxLayout(this);
     mLayout->setContentsMargins(4,4,4,4);
     mLayout->setSpacing(2);
 
-    mLayout->addWidget(mTopMenu,     3);
-    mLayout->addWidget(mDevicesList, 8);
-}
-
-EditGroupPage::~EditGroupPage() {
+    mLayout->addWidget(mTopMenu,     2);
+    mLayout->addWidget(mSimpleGroupWidget, 8);
 }
 
 void EditGroupPage::showGroup(QString key, std::list<cor::Light> groupDevices, std::list<cor::Light> devices, bool isMood, bool isRoom) {
@@ -76,20 +68,18 @@ void EditGroupPage::showGroup(QString key, std::list<cor::Light> groupDevices, s
 }
 
 void EditGroupPage::updateDevices(std::list<cor::Light> groupDevices, std::list<cor::Light> devices) {
-    mScrollAreaWidget->updateDevices(devices, true);
-    mScrollAreaWidget->setCheckedDevices(groupDevices);
-    resize(false);
+    mSimpleGroupWidget->updateDevices(devices);
+    mSimpleGroupWidget->setCheckedDevices(groupDevices);
+
+    resize();
 }
 
-void EditGroupPage::resize(bool resizeFullWidget) {
+void EditGroupPage::resize() {
     QSize size = qobject_cast<QWidget*>(this->parent())->size();
-    if (resizeFullWidget) {
-        this->setGeometry(int(size.width()  * 0.125f),
-                          int(size.height() * 0.125f),
-                          int(size.width()  * 0.75f),
-                          int(size.height() * 0.75f));
-    }
-    mScrollAreaWidget->resize();
+    this->setGeometry(int(size.width()  * 0.125f),
+                      int(size.height() * 0.125f),
+                      int(size.width()  * 0.75f),
+                      int(size.height() * 0.75f));
 }
 
 
@@ -97,9 +87,7 @@ void EditGroupPage::resize(bool resizeFullWidget) {
 // Slots
 // ----------------------------
 
-void EditGroupPage::listDeviceWidgetClicked(QString key) {
-    Q_UNUSED(key);
-}
+void EditGroupPage::listDeviceWidgetClicked(QString) {}
 
 void EditGroupPage::deletePressed(bool) {
     QMessageBox::StandardButton reply;
@@ -128,7 +116,7 @@ void EditGroupPage::closePressed(bool) {
 }
 
 void EditGroupPage::resetPressed(bool) {
-    mScrollAreaWidget->setCheckedDevices(mOriginalDevices);
+    mSimpleGroupWidget->setCheckedDevices(mOriginalDevices);
 }
 
 void EditGroupPage::savePressed(bool) {
@@ -139,7 +127,7 @@ void EditGroupPage::savePressed(bool) {
         if (reply == QMessageBox::Yes) {
           saveChanges();
           // make new original devices
-          mOriginalDevices = mScrollAreaWidget->checkedDevices();
+          mOriginalDevices = mSimpleGroupWidget->checkedDevices();
           // make new original name
           mOriginalName = mNewName;
           mTopMenu->saveButton()->setEnabled(false);
@@ -162,16 +150,12 @@ void EditGroupPage::isRoomChecked(bool checked) {
 // ----------------------------
 
 
-void EditGroupPage::showEvent(QShowEvent *event) {
-    Q_UNUSED(event);
-
+void EditGroupPage::show() {
     mRenderThread->start(mRenderInterval);
 }
 
 
-void EditGroupPage::hideEvent(QHideEvent *event) {
-    Q_UNUSED(event);
-
+void EditGroupPage::hide() {
     mRenderThread->stop();
 }
 
@@ -186,8 +170,7 @@ void EditGroupPage::paintEvent(QPaintEvent *) {
 
 
 void EditGroupPage::resizeEvent(QResizeEvent *) {
-    mDevicesList->setMaximumWidth(this->size().width());
-    mDevicesList->setMaximumHeight(this->size().height());
+    mSimpleGroupWidget->resizeWidgets();
 }
 
 void EditGroupPage::lineEditChanged(const QString& newText) {
@@ -223,7 +206,7 @@ void EditGroupPage::saveChanges() {
     //--------------------------------
     // Create a list of devices
     //--------------------------------
-    std::list<cor::Light> newDevices = mScrollAreaWidget->checkedDevices();
+    std::list<cor::Light> newDevices = mSimpleGroupWidget->checkedDevices();
 
     bool devicesAreValid = true;
     if (newDevices.size() > 0) {
@@ -326,6 +309,12 @@ void EditGroupPage::saveChanges() {
 }
 
 bool EditGroupPage::checkForChanges() {
+    // the data is not valid, so theres nothing to change, end early
+    if (mNewName.isEmpty()) {
+        return false;
+    }
+
+
     if (!(mNewName.compare(mOriginalName) == 0)) {
         return true;
     }
@@ -335,7 +324,7 @@ bool EditGroupPage::checkForChanges() {
     }
 
     // check all checked devices are part of original group
-    for (auto&& checkedDevice : mScrollAreaWidget->checkedDevices()) {
+    for (const auto& checkedDevice : mSimpleGroupWidget->checkedDevices()) {
         bool foundDevice = false;
         for (auto&& device : mOriginalDevices) {
             if (compareLight(checkedDevice, device)) {
@@ -348,14 +337,15 @@ bool EditGroupPage::checkForChanges() {
     }
 
     // check all given devices are checked
-    for (auto&& device : mOriginalDevices) {
-        for (uint32_t i = 0; i < mScrollAreaWidget->widgets().size(); ++i) {
-            ListDeviceWidget *existingWidget = qobject_cast<ListDeviceWidget*>(mScrollAreaWidget->widgets()[i]);
-            if (compareLight(existingWidget->device(), device)) {
-                if (!existingWidget->checked())  {
-                    return true;
-                }
+    for (const auto& device : mOriginalDevices) {
+        bool foundDevice = false;
+        for (const auto& uiLight : mSimpleGroupWidget->checkedDevices()) {
+            if (compareLight(uiLight, device)) {
+                foundDevice = true;
             }
+        }
+        if (!foundDevice) {
+            return true;
         }
     }
 
@@ -371,9 +361,7 @@ bool EditGroupPage::shouldSetChecked(const cor::Light& device, const std::list<c
     return false;
 }
 
-void EditGroupPage::clickedDevice(QString key, QString deviceName) {
-    Q_UNUSED(key);
-    Q_UNUSED(deviceName);
+void EditGroupPage::clickedDevice(QString) {
    // qDebug() << " device clicked " << key << " vs" << deviceName;
 
     // call the highlight button

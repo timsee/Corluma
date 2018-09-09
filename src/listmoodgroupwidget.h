@@ -10,8 +10,10 @@
 
 #include <set>
 
-#include "listcollectionwidget.h"
+#include "cor/listitemwidget.h"
+#include "cor/listlayout.h"
 #include "listmoodwidget.h"
+#include "dropdowntopwidget.h"
 
 
 /*!
@@ -24,7 +26,7 @@
  *        to edit it. The rest of the collection is a series of buttons where each one represents a mood that contains the
  *        same devices as the collection.
  */
-class ListMoodGroupWidget : public ListCollectionWidget
+class ListMoodGroupWidget : public cor::ListItemWidget
 {
     Q_OBJECT
 public:
@@ -74,24 +76,13 @@ public:
     const std::list<cor::LightGroup>& moods() { return mMoods; }
 
     /*!
-     * \brief preferredSize all collection widgets must implement a preferred size. this is the size
-     *        the widget wants to be. It may not end up this size but its a baseline if theres no other
-     *        widgets pushing against it.
-     * \return a QSize representing its ideal size.
-     */
-    QSize preferredSize();
-
-    /*!
      * \brief setShowButtons shows and hides all buttons on the widget
      * \param show true to show, false otherwise.
      */
     void setShowButtons(bool show);
 
-    /// getter for type of widget contents
-    EWidgetContents widgetContents() { return EWidgetContents::moods; }
-
-    /// resize the widgets displayed in the group
-    void resizeInteralWidgets();
+    /// closes all the displayed lights for this widget
+    void closeLights();
 
 signals:
 
@@ -108,7 +99,17 @@ signals:
      */
     void editClicked(QString, QString);
 
+
+    /*!
+     * \brief buttonsShown emitted when the buttons are shown or hidden. emits the key and a boolean
+     *        representing whether the buttons are shown.
+     */
+    void buttonsShown(QString, bool);
+
 protected:
+
+    /// resizes the widgets
+    void resizeEvent(QResizeEvent *);
 
     /*!
      * \brief mouseReleaseEvent picks up when a click (or a tap on mobile) is released.
@@ -132,6 +133,25 @@ private slots:
     void clickedEdit(QString key) { emit editClicked(mKey, key); }
 
 private:
+
+    cor::ListLayout mListLayout;
+
+    /// widget used for background of grid
+    QWidget *mWidget;
+
+    /*!
+     * \brief mLayout layout that displays all of the sub widgets.
+     */
+    QVBoxLayout *mLayout;
+
+    /// type of list
+    cor::EListType mType;
+
+    /// widget for showing/hiding and selecting/deselecting
+    DropdownTopWidget *mDropdownTopWidget;
+
+    /// resize the widgets displayed in the group
+    void resizeInteralWidgets();
 
     /*!
      * \brief mMoods the data that represents the mood widgets that are displayed

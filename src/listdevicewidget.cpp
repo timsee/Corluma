@@ -16,11 +16,13 @@
 ListDeviceWidget::ListDeviceWidget(const cor::Light& device,
                                    bool setHighlightable,
                                    QSize size,
-                                   QWidget *parent) : mDevice(device)   {
+                                   QWidget *parent) : cor::ListItemWidget(device.uniqueID(), parent), mDevice(device)   {
+    Q_ASSERT(!(device.controller == "UNINITIALIZED"));
+
+    this->setFixedSize(size);
+
     mShouldHighlight = setHighlightable;
-    this->setParent(parent);
     init(device);
-    this->setMaximumSize(size);
 
     mBlockStateUpdates = false;
     mHideSwitch = false;
@@ -37,19 +39,19 @@ ListDeviceWidget::ListDeviceWidget(const cor::Light& device,
 void ListDeviceWidget::init(const cor::Light& device) {
 
     // setup icon
-    mIconData = IconData(32, 32);
+    mIconData = IconData(4, 4);
 
     // setup controller label
     mController = new QLabel(this);
 
     mTypeIcon = new QLabel(this);
-    mTypeIcon->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-    updateTypeIcon(device.hardwareType);
+    mTypeIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 
     mOnOffSwitch = new cor::Switch(this);
-    mOnOffSwitch->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+    mOnOffSwitch->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     connect(mOnOffSwitch, SIGNAL(switchChanged(bool)), this, SLOT(changedSwitchState(bool)));
+
+    updateTypeIcon(device.hardwareType);
 
     QString nameText = createName(device);
     mController->setText(nameText);
@@ -163,7 +165,7 @@ void ListDeviceWidget::paintEvent(QPaintEvent *event) {
 
     QRect rect(x,
                10,
-               this->width() / 3,
+               this->width() / 2,
                int(this->height() * 0.6f / 2));
 
 
@@ -219,6 +221,9 @@ QString ListDeviceWidget::createName(const cor::Light& device) {
         nameText = convertUglyHueNameToPrettyName(device.name);
     } else {
         nameText = device.controller;
+    }
+    if (nameText.size() > 20) {
+        nameText = nameText.mid(0, 17) + "...";
     }
     return nameText;
 }
@@ -290,11 +295,16 @@ void ListDeviceWidget::updateTypeIcon(ELightHardwareType type) {
     }
     QSize size(int(this->height() * 0.5f),
                int(this->height() * 0.5f));
+
     mTypePixmap = QPixmap(typeResource);
+    mTypeIcon->setFixedSize(size);
     mTypePixmap = mTypePixmap.scaled(size.width(),
                                      size.height(),
                                      Qt::IgnoreAspectRatio,
                                      Qt::SmoothTransformation);
-    mTypeIcon->setMaximumSize(size.width(), size.height());
+    mTypeIcon->setMaximumSize(size);
+
+    QSize onOffSize(size.width() *  2, size.height() * 2);
+    mOnOffSwitch->setFixedSize(size);
     mTypeIcon->setPixmap(mTypePixmap);
 }

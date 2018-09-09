@@ -12,6 +12,7 @@
 #include "listmoodgroupwidget.h"
 #include "cor/listwidget.h"
 #include "cor/presetpalettes.h"
+#include "comm/commlayer.h"
 
 /*!
  * \copyright
@@ -92,6 +93,13 @@ private slots:
      * \brief newMoodAdded handles whenever a new mood was created on the edit page.
      */
     void newMoodAdded(QString);
+
+    /*!
+     * \brief shouldShowButtons show buttons was clicked by a ListCollectionWidget.
+     * \param key the key fo the ListCollectionWidget
+     * \param isShowing true if showing, false if not
+     */
+    void shouldShowButtons(QString key, bool isShowing);
 
 protected:
     /*!

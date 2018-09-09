@@ -206,10 +206,8 @@ void RoutineButtonsWidget::singleRoutineColorChanged(QColor color) {
 }
 
 void RoutineButtonsWidget::resize(QSize size) {
-    this->setMinimumWidth(size.width());
-    this->setMinimumHeight(size.height() / 3);
-    this->setMaximumWidth(size.width());
-    this->setMaximumHeight(size.height() / 3);
+    this->setFixedWidth(size.width());
+    this->setFixedHeight(size.height() / 3);
 }
 
 void RoutineButtonsWidget::paintEvent(QPaintEvent *) {

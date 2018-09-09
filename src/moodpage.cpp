@@ -16,7 +16,7 @@
 
 MoodPage::MoodPage(QWidget *parent, GroupsParser *groups) : QWidget(parent), mGroups(groups) {
 
-    mMoodsListWidget = new cor::ListWidget(this);
+    mMoodsListWidget = new cor::ListWidget(this, cor::EListType::linear);
     mMoodsListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QScroller::grabGesture(mMoodsListWidget->viewport(), QScroller::LeftMouseButtonGesture);
 
@@ -97,8 +97,7 @@ void MoodPage::makeMoodsCollections(const std::list<cor::LightGroup>& moods,
         if (roomName.compare("Miscellaneous") != 0 ) {
             // qDebug() << " room name " << roomName;
              bool roomFound = false;
-             for (uint32_t i = 0; i < mMoodsListWidget->count(); ++i) {
-                 ListCollectionWidget *item = mMoodsListWidget->widget(i);
+             for (auto item : mMoodsListWidget->widgets()) {
                  if (item->key().compare(roomName) == 0) {
                      roomFound = true;
                      ListMoodGroupWidget *moodWidget = qobject_cast<ListMoodGroupWidget*>(item);
@@ -119,8 +118,7 @@ void MoodPage::makeMoodsCollections(const std::list<cor::LightGroup>& moods,
         if (roomName.compare("Miscellaneous") == 0 ) {
             // qDebug() << " room name " << roomName;
              bool roomFound = false;
-             for (uint32_t i = 0; i < mMoodsListWidget->count(); ++i) {
-                 ListCollectionWidget *item = mMoodsListWidget->widget(i);
+             for (auto item : mMoodsListWidget->widgets()) {
                  if (item->key().compare(roomName) == 0) {
                      roomFound = true;
                      ListMoodGroupWidget *moodWidget = qobject_cast<ListMoodGroupWidget*>(item);
@@ -177,18 +175,18 @@ ListMoodGroupWidget* MoodPage::initMoodsCollectionWidget(const QString& name,
                                                           moods,
                                                           key,
                                                           hideEdit,
-                                                          mMoodsListWidget);
+                                                          mMoodsListWidget->mainWidget());
     connect(widget, SIGNAL(moodClicked(QString,QString)), this, SLOT(moodClicked(QString, QString)));
-    connect(widget, SIGNAL(editClicked(QString)), this, SLOT(editGroupClicked(QString)));
     connect(widget, SIGNAL(editClicked(QString, QString)), this, SLOT(editMoodClicked(QString, QString)));
 
-    ListCollectionWidget *collectionWidget = qobject_cast<ListCollectionWidget*>(widget);
-    mMoodsListWidget->addWidget(collectionWidget);
+    mMoodsListWidget->insertWidget(widget);
+    mMoodsListWidget->resizeWidgets();
+
+    connect(widget, SIGNAL(buttonsShown(QString, bool)), this, SLOT(shouldShowButtons(QString, bool)));
     return widget;
 }
 
 void MoodPage::editGroupClicked(QString key) {
-    qDebug()  << " edit group " << key;
     emit clickedEditButton(key, true);
 }
 
@@ -210,7 +208,6 @@ void MoodPage::moodClicked(QString collectionKey, QString moodKey) {
 }
 
 void MoodPage::resizeEvent(QResizeEvent *) {
-    mMoodsListWidget->setMaximumSize(this->size());
     mMoodsListWidget->resizeWidgets();
 }
 
@@ -218,13 +215,24 @@ void MoodPage::show(const QString& currentMood,
                     const std::list<cor::LightGroup>& moods,
                     const std::list<cor::LightGroup>& roomList,
                     const std::vector<std::pair<QString, QString>> deviceNames) {
-    mMoodsListWidget->setMaximumSize(this->size());
-    mMoodsListWidget->resizeWidgets();
     mMoodsListWidget->setVisible(true);
     mCurrentMood = currentMood;
     makeMoodsCollections(moods, roomList, deviceNames);
+    mMoodsListWidget->show();
 }
 
 void MoodPage::hide() {
     mMoodsListWidget->setVisible(false);
+}
+
+
+void MoodPage::shouldShowButtons(QString key, bool) {
+    for (const auto& widget : mMoodsListWidget->widgets()) {
+        if (widget->key() != key) {
+            ListMoodGroupWidget *groupWidget = qobject_cast<ListMoodGroupWidget*>(widget);
+            Q_ASSERT(groupWidget);
+            groupWidget->closeLights();
+        }
+    }
+    mMoodsListWidget->resizeWidgets();
 }

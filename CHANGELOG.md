@@ -393,3 +393,10 @@ ___
 * Continued updating the Hue Bridge Discovery Page.
 * Fixed miscellaneous bugs.
 
+### **v0.13.6**
+#### The ListWidget Refactor
+* Removed the `ListCollectionWidget` and `ListCollectionSubWidget`.
+* Split the functionality of `ListCollectionWidget` into two classes: a `DropDownTopWidget` and a `ListLayout`. 
+* Made more scrollable sets of widgets use the same system.
+* Fixed bugs on the edit page.
+

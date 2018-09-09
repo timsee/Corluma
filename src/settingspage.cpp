@@ -12,7 +12,6 @@
 
 #include <QFileDialog>
 #include <QDebug>
-#include <QSignalMapper>
 #include <QScroller>
 #include <QMessageBox>
 #include <QStandardPaths>

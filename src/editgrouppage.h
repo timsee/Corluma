@@ -5,8 +5,7 @@
 #include <QListWidget>
 
 #include "cor/light.h"
-#include "listdevicewidget.h"
-#include "listeditwidget.h"
+#include "listsimplegroupwidget.h"
 #include "cor/page.h"
 #include "comm/commlayer.h"
 #include "cor/checkbox.h"
@@ -35,9 +34,6 @@ public:
     /// constructor
     explicit EditGroupPage(QWidget* parent, CommLayer *layer, cor::DeviceList *data, GroupsParser *parser);
 
-    /// deconstructor
-    ~EditGroupPage();
-
     /*!
      * \brief showGroup open the edit page with the given data
      * \param key key for the group that you are displaying
@@ -55,16 +51,23 @@ public:
      */
     void updateDevices(std::list<cor::Light> groupDevices, std::list<cor::Light> devices);
 
-    /*!
-     * \brief resize the widget. Call this to explicitly resize this widget based off of the size of the
-     *        parent. If the parent has not resized since this was last called, this does nothing.
-     * \brief resizeFullWidget if true, resizes full widget including its geometry. If false, the geometry is not
-     *        resized, just the contents.
-     */
-    void resize(bool resizeFullWidget = true);
+    /// resizes widget programmatically
+    void resize();
 
     /// getter for all lights checked on the page.
-    std::list<cor::Light> lights() const { return mScrollAreaWidget->checkedDevices(); }
+    std::list<cor::Light> lights() const { return mSimpleGroupWidget->checkedDevices(); }
+
+    /*!
+     * \brief called before the this page is shown. Used to sync up
+     *        any changes that may have happened on other pages.
+     */
+    void show();
+
+    /*!
+     * \brief called as the page is hidden. This happens when a new page
+     *        is displayed.
+     */
+    void hide();
 
 signals:
 
@@ -74,18 +77,6 @@ signals:
     void pressedClose();
 
 protected:
-
-    /*!
-     * \brief showEvent called before the this page is shown. Used to sync up
-     *        any changes that may have happened on other pages.
-     */
-    void showEvent(QShowEvent *);
-
-    /*!
-     * \brief hideEvent called as the page is hidden. This happens when a new page
-     *        is displayed.
-     */
-    void hideEvent(QHideEvent *);
 
     /*!
      * \brief paintEvent used to draw the background of the widget.
@@ -143,7 +134,7 @@ private slots:
     void lineEditChanged(const QString&);
 
     /// called whenever a device is clicked in the edit widget
-    void clickedDevice(QString, QString);
+    void clickedDevice(QString);
 
 private:
 
@@ -197,11 +188,8 @@ private:
     /// new name for group, saved by QLineEdit
     QString mNewName;
 
-    /// list widget displaying devices
-    cor::ListWidget *mDevicesList;
-
     /// widget used for scroll area.
-    ListEditWidget *mScrollAreaWidget;
+    ListSimpleGroupWidget *mSimpleGroupWidget;
 
     /// vertical layout for widget
     QVBoxLayout *mLayout;

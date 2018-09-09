@@ -81,6 +81,7 @@ public:
     /// palette currently in use (sometimes equal to custom palette, sometimes not)
     Palette palette;
 
+    /// palette for storing custom colors.
     Palette customPalette;
 
     /// slight hack for app memory, custom count of colors used by ArduCor are stored here.

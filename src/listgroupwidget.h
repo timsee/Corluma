@@ -8,9 +8,11 @@
 #include <QLabel>
 #include <QPushButton>
 
-#include "listcollectionwidget.h"
+#include "cor/listitemwidget.h"
+#include "cor/lightgroup.h"
+#include "cor/listlayout.h"
 #include "listdevicewidget.h"
-
+#include "dropdowntopwidget.h"
 
 /*!
  * \copyright
@@ -22,7 +24,7 @@
  *        gives info on the collection and the ability to edit it. It also contains an array
  *        of ListDeviceWidgets, which can be shown or hidden by clicking the top widget.
  */
-class ListDevicesGroupWidget :  public ListCollectionWidget
+class ListGroupWidget :  public cor::ListItemWidget
 {
     Q_OBJECT
 public:
@@ -32,7 +34,7 @@ public:
      * \param group group of lights
      * \param key unique key for collection
      */
-    ListDevicesGroupWidget(const cor::LightGroup& group,
+    ListGroupWidget(const cor::LightGroup& group,
                            QString key,
                            QWidget *parent);
 
@@ -66,27 +68,19 @@ public:
     const std::list<cor::Light> checkedDevices();
 
     /*!
-     * \brief preferredSize all collection widgets must implement a preferred size. this is the size
-     *        the widget wants to be. It may not end up this size but its a baseline if theres no other
-     *        widgets pushing against it.
-     * \return a QSize representing its ideal size.
-     */
-    QSize preferredSize();
-
-    /// resize all the children widgets
-    void resizeInteralWidgets();
-
-    /*!
      * \brief setShowButtons shows and hides all buttons on the widget
      * \param show true to show, false otherwise.
      */
     void setShowButtons(bool show);
 
-    /// getter for the type of widget
-    EWidgetContents widgetContents() { return EWidgetContents::groups; }
+    /// closes all the displayed lights for this widget
+    void closeLights();
 
     /// getter for the group data.
     const cor::LightGroup& group() { return mGroup; }
+
+    /// resize the widgets in the in this widget
+    void resizeInteralWidgets();
 
 signals:
 
@@ -104,7 +98,16 @@ signals:
      */
     void allButtonPressed(QString, bool);
 
+    /*!
+     * \brief buttonsShown emitted when the buttons are shown or hidden. emits the key and a boolean
+     *        representing whether the buttons are shown.
+     */
+    void buttonsShown(QString, bool);
+
 protected:
+
+    /// resizes interal widgets when a resize event is triggered
+    void resizeEvent(QResizeEvent *);
 
     /*!
      * \brief mouseReleaseEvent picks up when a click (or a tap on mobile) is released.
@@ -134,8 +137,19 @@ private slots:
 
 private:
 
-    /// handle the state of the select all button
-    void handleSelectAllButton();
+    /// layout of all widgets except the dropdownwidget
+    cor::ListLayout mListLayout;
+
+    /// widget used for background of grid
+    QWidget *mWidget;
+
+    /*!
+     * \brief mLayout layout that displays all of the sub widgets.
+     */
+    QVBoxLayout *mLayout;
+
+    /// widget for showing/hiding and selecting/deselecting
+    DropdownTopWidget *mDropdownTopWidget;
 
     /*!
      * \brief computeHighlightColor computes the top of the widgets highlight color
@@ -146,22 +160,9 @@ private:
      */
     QColor computeHighlightColor();
 
-    /// pixmap for the select all button
-    QPixmap mSelectAllPixmap;
-
-    /// pixmap for the clear all button
-    QPixmap mClearAllPixmap;
-
     /// stored data for the group.
     cor::LightGroup mGroup;
 
-    /// true if select all is in clear state, false if its in select state
-    bool mSelectAllIsClear;
-
-    /*!
-     * \brief mSelectAllButton button that selects all devices when pushed and adds them to the data layer.
-     */
-    QPushButton *mSelectAllButton;
 };
 
 #endif // LISTDEVICESGROUPWIDGET_H

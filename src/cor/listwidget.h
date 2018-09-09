@@ -4,7 +4,8 @@
 #include <QWidget>
 #include <QScrollArea>
 
-#include "listcollectionwidget.h"
+#include "cor/listitemwidget.h"
+#include "cor/listlayout.h"
 
 namespace cor
 {
@@ -17,8 +18,8 @@ namespace cor
 
 /*!
  * \brief The ListWidget class is an instance of a QScrollArea designed
- *        to hold multiple ListCollectionWidgets in a scroll area that extends vertically.
- *        This widget also handles cases where the ListCollectionWidgets grow and shrink
+ *        to hold multiple cor::ListItemWidgets in a scroll area that extends vertically.
+ *        This widget also handles cases where the cor::ListItemWidgets grow and shrink
  *        dynamically.
  */
 class ListWidget : public QScrollArea
@@ -26,45 +27,43 @@ class ListWidget : public QScrollArea
     Q_OBJECT
 public:
     /// constructor
-    ListWidget(QWidget *parent);
+    ListWidget(QWidget *parent, EListType type);
 
-    /*!
-     * \brief addWidget add a ListCollectionWidget to the scroll area of this widget.
-     * \param widget new widget to add.
-     */
-    void addWidget(ListCollectionWidget *widget);
-
-    /*!
-     * \brief removeWidget removes the widget with the given key.
-     * \param key key of widget to remove.
-     */
-    void removeWidget(QString key);
-
-    /// number of widgets in the scroll area.
-    uint32_t count() { return uint32_t(mWidgets.size()); }
-
-    /// getter for all collection widgets.
-    const std::list<ListCollectionWidget*>& widgets() { return mWidgets; }
-
-    /*!
-     * \brief widget get a ListCollectionWidget by its index.
-     * \param index index of widget to return
-     * \return pointer to ListCollectionWidget
-     */
-    ListCollectionWidget *widget(uint32_t index);
-
-    /*!
-     * \brief widget get a ListCollectionWidget by its key.
-     * \param key key of widget to return
-     * \return pointer to ListCollectionWidget with matching key, if one exists
-     *         otherwise, it returns a nullptr.
-     */
-    ListCollectionWidget *widget(QString key);
+    /// getter for main widget
+    QWidget *mainWidget() { return mWidget; }
 
     /*!
      * \brief resizeWidgets resizes all the widgets and moves them accordingly.
      */
     void resizeWidgets();
+
+    /// moves widgets into their proper location on a grid.
+    void moveWidgets();
+
+    /*!
+     * \brief insertWidget insert cor::ListItemWIdget into the layout.
+     * \param widget widget to be inserted, if it doesn't already exist. Will reorganize widgets if needed.
+     */
+    void insertWidget(cor::ListItemWidget* widget);
+
+    /*!
+     * \brief removeWidget remove cor::ListItemWIdget from the layout
+     *        all widgets to the right of the removed widget get moved back one cell.
+     * \param widget widget to be removed, if it exists.
+     */
+    void removeWidget(cor::ListItemWidget* widget);
+
+    /*!
+     * \brief removeWidget removes the widget with the given key.
+     * \param key key of widget to remove.
+     */
+    void removeWidget(QString key) { mListLayout.removeWidget(key); }
+
+    /// getter for all widgets
+    const std::vector<cor::ListItemWidget*>& widgets() { return mListLayout.widgets(); }
+
+    /// call to set up the listwidget when showing it.
+    void show();
 
 protected:
 
@@ -73,29 +72,18 @@ protected:
 
 private:
 
-    /// list of all widgets displayed in this widget.
-    std::list<ListCollectionWidget*> mWidgets;
+    /// resizes the widgets
+    void resize();
+
+    /// acts as layout for the multiple widgets displayed in the list
+    ListLayout mListLayout;
 
     /// widget used for scroll area.
     QWidget *mWidget;
 
-    /// search function. returns the index of the widget with the key, and -1 if none is found
-    int searchForWidget(QString key);
+    /// size of overall background of grid.
+    QSize mWidgetSize;
 
-private slots:
-
-    /*!
-     * \brief widgetHeightChanged catches whenever a widget's height changes so that it knows
-     *        to move all the other widgets accordingly.
-     */
-    void widgetHeightChanged(int);
-
-    /*!
-     * \brief shouldShowButtons show buttons was clicked by a ListCollectionWidget.
-     * \param key the key fo the ListCollectionWidget
-     * \param isShowing true if showing, false if not
-     */
-    void shouldShowButtons(QString key, bool isShowing);
 };
 
 }

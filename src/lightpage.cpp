@@ -8,7 +8,7 @@
 #include "lightpage.h"
 
 #include "listmoodwidget.h"
-#include "listdevicesgroupwidget.h"
+#include "listgroupwidget.h"
 #include "listmoodgroupwidget.h"
 #include "cor/utils.h"
 #include "comm/commarducor.h"
@@ -18,12 +18,17 @@
 #include <QMessageBox>
 #include <QScroller>
 
-LightPage::LightPage(QWidget *parent, cor::DeviceList *data, CommLayer *comm, GroupsParser *groups, AppSettings *appSettings) :
-    QWidget(parent), mComm(comm), mAppSettings(appSettings) {
+LightPage::LightPage(QWidget *parent,
+                     cor::DeviceList *data,
+                     CommLayer *comm,
+                     GroupsParser *groups,
+                     AppSettings *appSettings) : QWidget(parent),
+                                                 mComm(comm),
+                                                 mAppSettings(appSettings) {
 
     mData = data;
 
-    mRoomsWidget = new cor::ListWidget(this);
+    mRoomsWidget = new cor::ListWidget(this, cor::EListType::linear);
     mRoomsWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QScroller::grabGesture(mRoomsWidget->viewport(), QScroller::LeftMouseButtonGesture);
 
@@ -41,10 +46,6 @@ LightPage::LightPage(QWidget *parent, cor::DeviceList *data, CommLayer *comm, Gr
     connect(groups, SIGNAL(newCollectionAdded(QString)), this, SLOT(newCollectionAdded(QString)));
 
     mRenderInterval = 1000;
-}
-
-LightPage::~LightPage() {
-
 }
 
 
@@ -109,13 +110,14 @@ void LightPage::updateConnectionList() {
 //        }
 //        gatherAvailandAndNotReachableDevices(allAvailableDevices);
 //    }
+    mRoomsWidget->resizeWidgets();
 }
 
 std::list<cor::LightGroup> LightPage::gatherAllUIGroups() {
     std::list<cor::LightGroup> uiGroups;
     for (auto widget : mRoomsWidget->widgets()) {
         // cast to ListDeviceGroupWidget
-        ListDevicesGroupWidget *groupWidget = qobject_cast<ListDevicesGroupWidget*>(widget);
+        ListGroupWidget *groupWidget = qobject_cast<ListGroupWidget*>(widget);
         uiGroups.push_back(groupWidget->group());
     }
     return uiGroups;
@@ -127,7 +129,7 @@ void LightPage::updateDataGroupInUI(const cor::LightGroup dataGroup, const std::
         if (uiGroup.name.compare(dataGroup.name) == 0) {
              existsInUIGroups = true;
              for (auto widget : mRoomsWidget->widgets()) {
-                 ListDevicesGroupWidget *groupWidget = qobject_cast<ListDevicesGroupWidget*>(widget);
+                 ListGroupWidget *groupWidget = qobject_cast<ListGroupWidget*>(widget);
                  if (groupWidget->key().compare(dataGroup.name) == 0) {
                      std::list<cor::Light> devices = updateDeviceList(dataGroup.devices, allDevices);
                      for (auto&& device : devices) {
@@ -168,7 +170,7 @@ std::list<cor::Light> LightPage::updateDeviceList(const std::list<cor::Light>& o
 // ------------------------------------
 
 
-ListDevicesGroupWidget* LightPage::initDevicesCollectionWidget(cor::LightGroup group,
+ListGroupWidget* LightPage::initDevicesCollectionWidget(cor::LightGroup group,
                                                                const std::vector<std::pair<QString, QString>>& deviceNames,
                                                                const QString& key) {
 
@@ -180,23 +182,23 @@ ListDevicesGroupWidget* LightPage::initDevicesCollectionWidget(cor::LightGroup g
         }
     }
 
-    ListDevicesGroupWidget *widget = new ListDevicesGroupWidget(group,
-                                                                key,
-                                                                mRoomsWidget);
+    ListGroupWidget *widget = new ListGroupWidget(group,
+                                                  key,
+                                                  mRoomsWidget->mainWidget());
 
     QScroller::grabGesture(widget, QScroller::LeftMouseButtonGesture);
     connect(widget, SIGNAL(deviceClicked(QString,QString)), this, SLOT(deviceClicked(QString, QString)));
     connect(widget, SIGNAL(deviceSwitchToggled(QString,bool)), this, SLOT(deviceSwitchClicked(QString, bool)));
-
     connect(widget, SIGNAL(allButtonPressed(QString, bool)), this, SLOT(groupSelected(QString, bool)));
 
-    ListCollectionWidget *collectionWidget = qobject_cast<ListCollectionWidget*>(widget);
-
     if (group.isRoom) {
-        mRoomsWidget->addWidget(collectionWidget);
+        mRoomsWidget->insertWidget(widget);
     } else {
-        mRoomsWidget->addWidget(collectionWidget);
+        mRoomsWidget->insertWidget(widget);
     }
+    mRoomsWidget->resizeWidgets();
+
+    connect(widget, SIGNAL(buttonsShown(QString, bool)), this, SLOT(shouldShowButtons(QString, bool)));
     return widget;
 }
 
@@ -224,17 +226,16 @@ void LightPage::gatherAvailandAndNotReachableDevices(const std::list<cor::Light>
     // ------------------------------------
     bool foundAvailable = false;
     bool foundUnavailable = false;
-    for (uint32_t i = 0; i < mRoomsWidget->count(); ++i) {
-        ListCollectionWidget *item = mRoomsWidget->widget(i);
+    for (auto item : mRoomsWidget->widgets()) {
         if (item->key().compare(kAvailableDevicesKey) == 0) {
             foundAvailable = true;
-            ListDevicesGroupWidget *widget = qobject_cast<ListDevicesGroupWidget*>(item);
+            ListGroupWidget *widget = qobject_cast<ListGroupWidget*>(item);
             Q_ASSERT(widget);
             widget->updateDevices(availableDevices, true);
         }
         if (item->key().compare(kUnavailableDevicesKey) == 0) {
             foundUnavailable = true;
-            ListDevicesGroupWidget *widget = qobject_cast<ListDevicesGroupWidget*>(item);
+            ListGroupWidget *widget = qobject_cast<ListGroupWidget*>(item);
             Q_ASSERT(widget);
             widget->updateDevices(unavailableDevices, true);
         }
@@ -305,17 +306,16 @@ void LightPage::deviceSwitchClicked(QString deviceKey, bool isOn) {
 
 
 void LightPage::groupSelected(QString key, bool shouldSelect) {
-    for (uint32_t row = 0; row < mRoomsWidget->count(); row++) {
-        ListCollectionWidget *item = mRoomsWidget->widget(row);
-        if (item->key().compare(key) == 0) {
-            ListDevicesGroupWidget *widget = qobject_cast<ListDevicesGroupWidget*>(item);
-            Q_ASSERT(widget);
+    for (auto widget : mRoomsWidget->widgets()) {
+        if (widget->key().compare(key) == 0) {
+            ListGroupWidget *groupWidget = qobject_cast<ListGroupWidget*>(widget);
+            Q_ASSERT(groupWidget);
             if (shouldSelect) {
-                mCurrentGroup = widget->group().name;
-                mData->addDeviceList(widget->reachableDevices());
+                mCurrentGroup = groupWidget->group().name;
+                mData->addDeviceList(groupWidget->reachableDevices());
             } else {
                 mCurrentGroup = "";
-                mData->removeDeviceList(widget->devices());
+                mData->removeDeviceList(groupWidget->devices());
             }
 
             emit changedDeviceCount();
@@ -365,10 +365,8 @@ void LightPage::groupDeleted(QString group) {
         mComm->deleteHueGroup(group);
     }
 
-    for (uint32_t i = 0; i < mRoomsWidget->count(); ++i) {
-        ListCollectionWidget *widget = mRoomsWidget->widget(i);
-        Q_ASSERT(widget);
-        ListDevicesGroupWidget *devicesWidget = qobject_cast<ListDevicesGroupWidget*>(widget);
+    for (auto roomWidget : mRoomsWidget->widgets()) {
+        ListGroupWidget *devicesWidget = qobject_cast<ListGroupWidget*>(roomWidget);
         if (devicesWidget->key().compare(group) == 0) {
             mRoomsWidget->removeWidget(group);
         }
@@ -409,8 +407,8 @@ void LightPage::receivedCommUpdate(ECommType) {
 // ------------------------------------
 
 void LightPage::highlightList() {
-    for (uint32_t row = 0; row < mRoomsWidget->count(); row++) {
-        ListDevicesGroupWidget *widget = qobject_cast<ListDevicesGroupWidget*>(mRoomsWidget->widget(row));
+    for (auto roomWidget : mRoomsWidget->widgets()) {
+        ListGroupWidget *widget = qobject_cast<ListGroupWidget*>(roomWidget);
         Q_ASSERT(widget);
         widget->setCheckedDevices(mData->devices());
     }
@@ -474,8 +472,7 @@ void LightPage::hide() {
 
 void LightPage::resizeEvent(QResizeEvent *) {
   //  updateConnectionList();
-    mRoomsWidget->setMaximumSize(this->size());
-    mRoomsWidget->resizeWidgets();
+  mRoomsWidget->resizeWidgets();
 }
 
 
@@ -483,9 +480,8 @@ void LightPage::cleanupList() {
     // first remove all devices that are no longer available
     emit changedDeviceCount();
 
-    for (uint32_t i = 0; i < mRoomsWidget->count(); ++i) {
-        ListCollectionWidget *widget = mRoomsWidget->widget(i);
-        ListDevicesGroupWidget *devicesWidget = qobject_cast<ListDevicesGroupWidget*>(widget);
+    for (auto roomWidget : mRoomsWidget->widgets()) {
+        ListGroupWidget *devicesWidget = qobject_cast<ListGroupWidget*>(roomWidget);
         Q_ASSERT(devicesWidget);
 
         std::list<cor::Light> newDeviceList;
@@ -500,3 +496,14 @@ void LightPage::cleanupList() {
     }
 }
 
+
+void LightPage::shouldShowButtons(QString key, bool) {
+    for (const auto& widget : mRoomsWidget->widgets()) {
+        if (widget->key() != key) {
+            ListGroupWidget *groupWidget = qobject_cast<ListGroupWidget*>(widget);
+            Q_ASSERT(groupWidget);
+            groupWidget->closeLights();
+        }
+    }
+    mRoomsWidget->resizeWidgets();
+}

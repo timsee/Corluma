@@ -7,6 +7,7 @@
 #include "presetgroupwidget.h"
 #include "cor/listwidget.h"
 #include "listmoodgroupwidget.h"
+#include "cor/presetpalettes.h"
 
 #include <QWidget>
 #include <QToolButton>

@@ -8,9 +8,9 @@
 
 #include "icondata.h"
 #include "comm/commtype.h"
-#include "listcollectionsubwidget.h"
 #include "cor/statusicon.h"
 #include "cor/switch.h"
+#include "cor/listitemwidget.h"
 
 /*!
  * \copyright
@@ -23,7 +23,7 @@
  *        QListWidget, by giving an icon that represents the lights states, the name of of the
  *        controller, and the index of the light.
  */
-class ListDeviceWidget : public ListCollectionSubWidget
+class ListDeviceWidget : public cor::ListItemWidget
 {
     Q_OBJECT
 public:
@@ -33,7 +33,6 @@ public:
      * \param device device for the widget
      * \param setHighlightable if true, the widget highlights itself, if false,
      *        it does not highlight.
-     * \param size desired size of widget
      * \param parent parent widget
      */
     explicit ListDeviceWidget(const cor::Light& device,

@@ -1,0 +1,149 @@
+#ifndef DROPDOWNTOPWIDGET_H
+#define DROPDOWNTOPWIDGET_H
+
+#include <QWidget>
+#include <QLabel>
+#include <QPushButton>
+#include <QLayout>
+
+/*!
+ * \copyright
+ * Copyright (C) 2015 - 2018.
+ * Released under the GNU General Public License.
+ *
+ *
+ * \brief The DropdownTopWidget class provides a widget that can be used at the top of a dropdown list. It is frequently
+ *        used in the LightPage and the MoodPage to hide the details of overally lights/moods but still display some meta information.
+ *        It also provides the user with buttons to edit the contents of the widget, or to select all/none of the contents in some cases.
+ */
+class DropdownTopWidget : public QWidget
+{
+    Q_OBJECT
+public:
+
+    /// constuctor
+    explicit DropdownTopWidget(const QString& key, bool hideEdit, bool useSelectAll, QWidget *parent);
+
+    /// getter for select all button
+    QPushButton *selectAllButton() { return mSelectAllButton; }
+
+    /// getter for status of select all button
+    bool selectAllStatus() { return mSelectAllIsClear; }
+
+    /*!
+     * \brief showButtons getter that checks if buttons are showing
+     * \return  true if buttons are showing, false otherwise.
+     */
+    bool showButtons() { return mShowButtons; }
+
+    /// set to true to show all widgets, false to just show the dropdown widget.
+    void showButtons(bool showButtons);
+
+    /// handle the state of the select all button
+    void handleSelectAllButton(bool anyDevicesChecked, bool showButtons);
+
+signals:
+
+    /*!
+     * \brief editClicked emitted when edit button is clicked. Emits its key.
+     */
+    void editClicked(QString);
+
+    /*!
+     * \brief buttonsShown emitted when the buttons are shown or hidden. emits the key and a boolean
+     *        representing whether the buttons are shown.
+     */
+    void buttonsShown(QString, bool);
+
+private slots:
+
+    /*!
+    * \brief editButtonClicked called when edit button is pressed, sends out an edit signal
+    */
+   void editButtonClicked(bool) { emit editClicked(mKey);  }
+
+private:
+
+    /*!
+     * \brief mLayout layout for the widget
+     */
+    QHBoxLayout *mLayout;
+
+    /*!
+     * \brief mName label for name of collection
+     */
+    QLabel *mName;
+
+    /*!
+     * \brief mSelectAllButton button that selects all devices when pushed and adds them to the data layer.
+     */
+    QPushButton *mSelectAllButton;
+
+    /*!
+     * \brief mEditButton button used to edit the collection. Editing can change
+     *        the name or the lights contained in the collection.
+     */
+    QPushButton *mEditButton;
+
+    /*!
+     * \brief mHiddenStateIcon an arrow in the top right of the widget. If its pointing right, no
+     *        buttons are shown. If its pointing down, all buttons are shown.
+     */
+    QLabel *mHiddenStateIcon;
+
+    /// pixmap for the select all button
+    QPixmap mSelectAllPixmap;
+
+    /// pixmap for the clear all button
+    QPixmap mClearAllPixmap;
+
+    /// pixmap for icon that conveys no buttons being shown
+    QPixmap mClosedPixmap;
+
+    /// pixmap for icon that conveys all buttons being shown
+    QPixmap mOpenedPixmap;
+
+    /// pixmap for icon for the edit button
+    QPixmap mEditIcon;
+
+    /// key for dropdown widget
+    QString mKey;
+
+    /*!
+     * \brief mShowButtons true if buttons are showing, false otherwise.
+     */
+    bool mShowButtons;
+
+    /// true if select all is in clear state, false if its in select state
+    bool mSelectAllIsClear;
+
+    /// true if widget has a select all, false if its hidden.
+    bool mUseSelectAll;
+
+    /*!
+     * \brief mHideEdit true if the edit button should be hidden, false otherwise.
+     */
+    bool mHideEdit;
+
+    /// helper for computing icon size
+    QSize iconSize() { return QSize(int(mMinimumHeight * mIconRatio), int(mMinimumHeight * mIconRatio)); }
+
+    /*!
+     * \brief resizeRightHandIcon resize the right hand icon to match the widgets size
+     * \param pixmap the pixmap to resize
+     * \param button the button to apply the resized pixmap to
+     */
+    void resizeRightHandIcon(QPixmap pixmap, QPushButton *button);
+
+    /*!
+     * \brief mMinimumHeight minimum size allowed for collection.
+     */
+    uint32_t mMinimumHeight;
+
+    /*!
+     * \brief mIconRatio
+     */
+    float mIconRatio;
+};
+
+#endif // DROPDOWNTOPWIDGET_H

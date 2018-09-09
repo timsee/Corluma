@@ -4,44 +4,26 @@
  * Released under the GNU General Public License.
  */
 
+#include "listsimplegroupwidget.h"
 #include <QPainter>
 #include <QStyleOption>
 
-#include "listeditwidget.h"
+#include "cor/utils.h"
 
-ListEditWidget::ListEditWidget(QWidget* parent,
-                               CommLayer* comm,
-                               cor::DeviceList* data) : ListCollectionWidget(parent),
-                                                  mComm(comm),
-                                                  mData(data) {
-    this->setParent(parent);
-    this->setMaximumSize(parent->size());
+ListSimpleGroupWidget::ListSimpleGroupWidget(CommLayer* comm,
+                                             cor::DeviceList* data,
+                                             QWidget *parent) : cor::ListWidget(parent, cor::EListType::linear),
+                                                                mComm(comm),
+                                                                mData(data) { }
 
-    setup("", "", EListType::linear, true);
-    mLayout->addWidget(mWidget);
-
-
-    mShowButtons = true;
-    for (auto&& device : mWidgets) {
-        if (mShowButtons) {
-            device->setVisible(true);
-        } else {
-            device->setVisible(false);
-        }
-    }
-
-    mHiddenStateIcon->setPixmap(mOpenedPixmap);
-    this->setFixedHeight(preferredSize().height());
-}
-
-
-void ListEditWidget::updateDevices(std::list<cor::Light> devices, bool removeIfNotFound) {
+void ListSimpleGroupWidget::updateDevices(std::list<cor::Light> devices, bool removeIfNotFound) {
     mDevices = devices;
-    for (auto&& inputDevice : devices) {
+    int overallHeight = 0;
+    for (auto&& inputDevice : mDevices) {
         bool foundDevice = false;
         // check if device widget exists
         uint32_t x = 0;
-        for (auto&& widget : mWidgets) {
+        for (const auto& widget : widgets()) {
             ListDeviceWidget *existingWidget = qobject_cast<ListDeviceWidget*>(widget);
             Q_ASSERT(existingWidget);
 
@@ -52,6 +34,7 @@ void ListEditWidget::updateDevices(std::list<cor::Light> devices, bool removeIfN
             if (compareLight(inputDevice, existingDevice)) {
                 foundDevice = true;
                 existingWidget->updateWidget(inputDevice);
+                overallHeight += existingWidget->height();
             }
             ++x;
         }
@@ -59,18 +42,15 @@ void ListEditWidget::updateDevices(std::list<cor::Light> devices, bool removeIfN
         //----------------
         // Create Widget, if not found
         //----------------
-
         if (!foundDevice) {
-            if (inputDevice.color.isValid()) {
-
-                ListDeviceWidget *widget = new ListDeviceWidget(inputDevice,
-                                                                false,
-                                                                mWidgetSize,
-                                                                this);
-                widget->hideOnOffSwitch(true);
-                connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
-                insertWidget(widget);
-            }
+            ListDeviceWidget *widget = new ListDeviceWidget(inputDevice,
+                                                            false,
+                                                            QSize(this->width(), this->height() / 6),
+                                                            mainWidget());
+            connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
+            connect(widget, SIGNAL(switchToggled(QString,bool)), this, SLOT(handleToggledSwitch(QString, bool)));
+            insertWidget(widget);
+            overallHeight += widget->height();
         }
     }
 
@@ -78,7 +58,7 @@ void ListEditWidget::updateDevices(std::list<cor::Light> devices, bool removeIfN
     // Remove widgets that are not found
     //----------------
     if (removeIfNotFound) {
-        for (auto&& widget : mWidgets) {
+        for (auto&& widget : widgets()) {
             ListDeviceWidget *existingWidget = qobject_cast<ListDeviceWidget*>(widget);
             Q_ASSERT(existingWidget);
 
@@ -94,12 +74,22 @@ void ListEditWidget::updateDevices(std::list<cor::Light> devices, bool removeIfN
             }
         }
     }
+    resizeWidgets();
+
+    //this->setFixedHeight(overallHeight);
 }
 
+std::list<cor::Light> ListSimpleGroupWidget::reachableDevices() {
+    std::list<cor::Light> reachableDevices;
+    for (auto device : mDevices) {
+        reachableDevices.push_back(device);
+    }
+    return reachableDevices;
+}
 
-void ListEditWidget::setCheckedDevices(std::list<cor::Light> devices) {
+void ListSimpleGroupWidget::setCheckedDevices(std::list<cor::Light> devices) {
     int numOfDevices = 0;
-    for (auto&& existingWidget : mWidgets) {
+    for (auto&& existingWidget : widgets()) {
         ListDeviceWidget *widget = qobject_cast<ListDeviceWidget*>(existingWidget);
         Q_ASSERT(widget);
 
@@ -116,13 +106,14 @@ void ListEditWidget::setCheckedDevices(std::list<cor::Light> devices) {
             widget->setHighlightChecked(false);
         }
     }
+
     repaint();
 }
 
 
-std::list<cor::Light> ListEditWidget::checkedDevices() {
+const std::list<cor::Light> ListSimpleGroupWidget::checkedDevices() {
     std::list<cor::Light> devices;
-    for (auto&& widget : mWidgets) {
+    for (auto&& widget : widgets()) {
         ListDeviceWidget *existingWidget = qobject_cast<ListDeviceWidget*>(widget);
         Q_ASSERT(existingWidget);
         if (existingWidget->checked()) {
@@ -132,22 +123,3 @@ std::list<cor::Light> ListEditWidget::checkedDevices() {
     return devices;
 }
 
-
-QSize ListEditWidget::preferredSize() {
-    int height = mMinimumHeight;
-    if (mShowButtons && mWidgets.size() > 0) {
-        int widgetHeight = std::max(mName->height(), mMinimumHeight);
-        height = (int(mWidgets.size()) * widgetHeight) + mMinimumHeight;
-    }
-    return QSize(this->parentWidget()->width(), height);
-}
-
-void ListEditWidget::handleClicked(QString key) {
-    emit deviceClicked(mKey, key);
-}
-
-void ListEditWidget::mouseReleaseEvent(QMouseEvent* event) { Q_UNUSED(event); }
-
-
-
-void ListEditWidget::setShowButtons(bool) { }

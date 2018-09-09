@@ -153,7 +153,9 @@ SOURCES += main.cpp \
     cor/jsonsavedata.cpp \
     cor/lightvectorwidget.cpp \
     cor/page.cpp \
+    cor/listlayout.cpp \
     cor/devicelist.cpp \
+    cor/listitemwidget.cpp \
     hue/bridgeinfowidget.cpp \
     hue/lightdiscovery.cpp \
     hue/bridgediscovery.cpp \
@@ -177,8 +179,6 @@ SOURCES += main.cpp \
     discoverypage.cpp \
     listdevicewidget.cpp \
     presetgroupwidget.cpp \
-    listdevicesgroupwidget.cpp \
-    listcollectionwidget.cpp \
     greyoutoverlay.cpp \
     listmoodwidget.cpp \
     listmoodgroupwidget.cpp \
@@ -190,13 +190,15 @@ SOURCES += main.cpp \
     globalsettingswidget.cpp \
     editablefieldwidget.cpp \
     searchwidget.cpp \
-    listeditwidget.cpp \
     editpagetopmenu.cpp \
     lightpage.cpp \
     palettepage.cpp \
     moodpage.cpp \
     lightinfolistwidget.cpp \
-    appsettings.cpp
+    appsettings.cpp \
+    listgroupwidget.cpp \
+    listsimplegroupwidget.cpp \
+    dropdowntopwidget.cpp
 
 HEADERS  +=  arducor/arducordiscovery.h \
     arducor/arducorpacketparser.h \
@@ -247,6 +249,8 @@ HEADERS  +=  arducor/arducordiscovery.h \
     cor/jsonsavedata.h \
     cor/lightvectorwidget.h \
     cor/devicelist.h \
+    cor/listlayout.h \
+    cor/listitemwidget.h \
     hue/lightdiscovery.h \
     hue/bridgediscovery.h \
     hue/hueprotocols.h \
@@ -271,13 +275,10 @@ HEADERS  +=  arducor/arducordiscovery.h \
     discoverypage.h \
     listdevicewidget.h \
     presetgroupwidget.h \
-    listdevicesgroupwidget.h \
-    listcollectionwidget.h \
     greyoutoverlay.h \
     listmoodwidget.h \
     listmoodgroupwidget.h \
     editgrouppage.h \
-    listcollectionsubwidget.h \
     routinebuttonswidget.h \
     colorpage.h \
     topmenu.h \
@@ -285,13 +286,15 @@ HEADERS  +=  arducor/arducordiscovery.h \
     globalsettingswidget.h \
     editablefieldwidget.h \
     searchwidget.h \
-    listeditwidget.h \
     editpagetopmenu.h \
     lightpage.h \
     palettepage.h \
     moodpage.h \
     lightinfolistwidget.h \
-    appsettings.h
+    appsettings.h \
+    listgroupwidget.h \
+    listsimplegroupwidget.h \
+    dropdowntopwidget.h
 
 #----------
 # Desktop builds only

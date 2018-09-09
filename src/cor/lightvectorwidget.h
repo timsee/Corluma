@@ -32,8 +32,8 @@ class LightVectorWidget: public QWidget
 public:
     /// Constructor
     explicit LightVectorWidget(int width, int height,
-                           EPaletteWidgetType type,
-                           QWidget *parent);
+                               EPaletteWidgetType type,
+                               QWidget *parent);
     /*!
      * \brief updateDevices update the devices in the cor::Button to show the exact routine.
      * \param devices list of devices to display

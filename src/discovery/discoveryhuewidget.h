@@ -10,7 +10,7 @@
 #include "hue/bridgegroupswidget.h"
 #include "hue/bridgescheduleswidget.h"
 #include "greyoutoverlay.h"
-
+#include "cor/listwidget.h"
 
 /*!
  * \copyright
@@ -113,17 +113,8 @@ private:
     /// label to prompt the user through the application.
     QLabel *mLabel;
 
-    /// widget used for scroll area.
-    QWidget *mScrollAreaWidget;
-
-    /// layout for scroll area
-    QVBoxLayout *mScrollLayout;
-
-    /// scroll area for displaying list.
-    QScrollArea *mScrollArea;
-
-    /// widgets for hue displayed in scroll area
-    std::vector<hue::BridgeInfoWidget *> mBridgeWidgets;
+    /// widget for displaying a scrollable list of other widgets
+    cor::ListWidget *mListWidget;
 
     /// scaling value for size of pngs
     float mScale;

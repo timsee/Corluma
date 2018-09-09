@@ -15,7 +15,7 @@
 namespace hue
 {
 
-BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget *parent) : QWidget(parent) {
+BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget *parent) : cor::ListItemWidget(bridge.IP, parent) {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     this->setStyleSheet(styleSheet);
 
@@ -233,5 +233,6 @@ void BridgeInfoWidget::setTitleFontPointSize(int pt) {
 void BridgeInfoWidget::deleteButtonPressed() {
     emit deleteBridge(mBridge);
 }
+
 
 }

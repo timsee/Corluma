@@ -12,7 +12,7 @@
 #include "comm/commtype.h"
 #include "cor/lightgroup.h"
 #include "cor/lightvectorwidget.h"
-#include "listcollectionsubwidget.h"
+#include "cor/listitemwidget.h"
 
 /*!
  * \copyright
@@ -25,7 +25,7 @@
  *        of the group, up to 5 device previews as IconData, and the connection state
  *        of the associated devices.
  */
-class ListMoodWidget : public ListCollectionSubWidget
+class ListMoodWidget : public cor::ListItemWidget
 {
     Q_OBJECT
 

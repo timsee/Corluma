@@ -5,14 +5,19 @@
  */
 
 #include "cor/listwidget.h"
-#include "listdevicesgroupwidget.h"
+#include "listgroupwidget.h"
 #include "listmoodgroupwidget.h"
 
 namespace cor
 {
 
-ListWidget::ListWidget(QWidget *parent) : QScrollArea(parent) {
-    this->setMaximumSize(parent->size());
+struct subWidgetCompare {
+  bool operator() (cor::ListItemWidget* lhs, cor::ListItemWidget* rhs) const
+  { return (lhs->key().compare(rhs->key()) < 0); }
+};
+
+
+ListWidget::ListWidget(QWidget *parent, EListType type) : QScrollArea(parent), mListLayout(type) {
 
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
@@ -29,120 +34,59 @@ ListWidget::ListWidget(QWidget *parent) : QScrollArea(parent) {
 
 
 void ListWidget::resizeEvent(QResizeEvent *) {
-    // disable horizontal scorlling by always forcing scroll area to be width
-    // of viewport.
-    mWidget->setFixedWidth(this->viewport()->width());
+    resize();
+}
 
+
+void ListWidget::insertWidget(cor::ListItemWidget* widget) {
+    mListLayout.insertWidget(widget);
     resizeWidgets();
-    for (auto widget : mWidgets) {
-       widget->setFixedWidth(this->viewport()->width());
-       widget->resize();
-    }
 }
 
-void ListWidget::addWidget(ListCollectionWidget *widget) {
-    int widgetIndex = searchForWidget(widget->key());
-    if (widgetIndex == -1) {
-        widget->setParent(mWidget);
-        connect(widget, SIGNAL(rowCountChanged(int)), this, SLOT(widgetHeightChanged(int)));
-        connect(widget, SIGNAL(buttonsShown(QString, bool)), this, SLOT(shouldShowButtons(QString, bool)));
-        mWidgets.push_back(widget);
-        resizeWidgets();
-    }
-}
-
-void ListWidget::removeWidget(QString key) {
-    int widgetIndex = searchForWidget(key);
-    if (widgetIndex != -1) {
-        mWidgets.remove(widget(uint32_t(widgetIndex)));
-        // move all widgets below it up.
-        resizeWidgets();
-    }
-}
-
-ListCollectionWidget *ListWidget::widget(uint32_t index) {
-    if (index >= mWidgets.size()) {
-        throw "ERROR: requested a widget that is out of bounds";
-    }
-    uint32_t i = 0;
-    for (auto widget : mWidgets) {
-        if (i == index) {
-            return widget;
-        }
-        ++i;
-    }
-    return nullptr;
-}
-
-ListCollectionWidget *ListWidget::widget(QString key) {
-    int widgetIndex = searchForWidget(key);
-    if (widgetIndex != -1) {
-        int i = 0;
-        for (auto widget : mWidgets) {
-            if (i == widgetIndex) {
-                return widget;
-            }
-            ++i;
-        }
-    }
-    return nullptr;
-}
-
-int ListWidget::searchForWidget(QString key) {
-    int widgetIndex = -1;
-    int i = 0;
-    for (auto widget : mWidgets) {
-        if (widget->key().compare(key) == 0) {
-            widgetIndex = i;
-        }
-        ++i;
-    }
-    return widgetIndex;
+void ListWidget::removeWidget(cor::ListItemWidget* widget) {
+    mListLayout.removeWidget(widget);
+    resizeWidgets();
 }
 
 void ListWidget::resizeWidgets() {
     int yPos = 0;
-    for (auto widget : mWidgets) {
-        widget->setListHeight(this->height());
-        QSize preferredSize = widget->preferredSize();
-        widget->setGeometry(0, yPos, preferredSize.width(), preferredSize.height());
+    for (auto widget : mListLayout.widgets()) {
+        QSize size = widget->geometry().size();
+        widget->setGeometry(0, yPos, size.width(), size.height());
         widget->setHidden(false);
-
-        yPos += preferredSize.height();
-
-        if (widget->widgetContents() == EWidgetContents::groups) {
-            ListDevicesGroupWidget *devicesWidget = qobject_cast<ListDevicesGroupWidget*>(widget);
-            devicesWidget->resize();
-
-            devicesWidget->resizeInteralWidgets();
-        } else if (widget->widgetContents() == EWidgetContents::moods) {
-            ListMoodGroupWidget *moodsWidget = qobject_cast<ListMoodGroupWidget*>(widget);
-            moodsWidget->resize();
-            moodsWidget->resizeInteralWidgets();
-        }
-
+        yPos += size.height();
     }
     int newHeight = std::max(yPos, this->viewport()->height());
+
+   // qDebug() << " new height is " << newHeight << " yPos " << yPos   << " vs " << this->viewport()->height();
     mWidget->setFixedHeight(newHeight);
 }
 
 
-void ListWidget::widgetHeightChanged(int rowCount) {
-    Q_UNUSED(rowCount);
-    resizeWidgets();
+void ListWidget::moveWidgets() {
+    for (uint32_t i = 0; i < mListLayout.widgets().size(); ++i) {
+        QPoint position = mListLayout.widgetPosition(mListLayout.widgets()[i]);
+        mListLayout.widgets()[i]->setGeometry(position.x() * mWidgetSize.width(),
+                                 position.y() * mWidgetSize.height(),
+                                 mWidgetSize.width(),
+                                 mWidgetSize.height());
+
+       // qDebug() << "this is the widget position of " << i << position << "and geometry"  << mWidgets[i]->geometry();
+    }
 }
 
-void ListWidget::shouldShowButtons(QString key, bool isShowing) {
-    Q_UNUSED(isShowing);
-    for (auto widget : mWidgets) {
-        if (widget->key().compare(key) != 0) {
-            bool blocked = widget->blockSignals(true);
-            widget->setShowButtons(false);
-            widget->blockSignals(blocked);
-        }
-    }
+
+void ListWidget::show() {
+    resize();
+}
+
+void ListWidget::resize() {
+    mWidget->setFixedWidth(this->viewport()->width());
 
     resizeWidgets();
+    for (auto widget : mListLayout.widgets()) {
+       widget->setFixedWidth(this->viewport()->width());
+    }
 }
 
 }
