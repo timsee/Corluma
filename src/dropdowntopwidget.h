@@ -22,13 +22,7 @@ class DropdownTopWidget : public QWidget
 public:
 
     /// constuctor
-    explicit DropdownTopWidget(const QString& key, bool hideEdit, bool useSelectAll, QWidget *parent);
-
-    /// getter for select all button
-    QPushButton *selectAllButton() { return mSelectAllButton; }
-
-    /// getter for status of select all button
-    bool selectAllStatus() { return mSelectAllIsClear; }
+    explicit DropdownTopWidget(const QString& key, bool hideEdit, QWidget *parent);
 
     /*!
      * \brief showButtons getter that checks if buttons are showing
@@ -38,9 +32,6 @@ public:
 
     /// set to true to show all widgets, false to just show the dropdown widget.
     void showButtons(bool showButtons);
-
-    /// handle the state of the select all button
-    void handleSelectAllButton(bool anyDevicesChecked, bool showButtons);
 
 signals:
 
@@ -75,11 +66,6 @@ private:
     QLabel *mName;
 
     /*!
-     * \brief mSelectAllButton button that selects all devices when pushed and adds them to the data layer.
-     */
-    QPushButton *mSelectAllButton;
-
-    /*!
      * \brief mEditButton button used to edit the collection. Editing can change
      *        the name or the lights contained in the collection.
      */
@@ -90,12 +76,6 @@ private:
      *        buttons are shown. If its pointing down, all buttons are shown.
      */
     QLabel *mHiddenStateIcon;
-
-    /// pixmap for the select all button
-    QPixmap mSelectAllPixmap;
-
-    /// pixmap for the clear all button
-    QPixmap mClearAllPixmap;
 
     /// pixmap for icon that conveys no buttons being shown
     QPixmap mClosedPixmap;
@@ -113,12 +93,6 @@ private:
      * \brief mShowButtons true if buttons are showing, false otherwise.
      */
     bool mShowButtons;
-
-    /// true if select all is in clear state, false if its in select state
-    bool mSelectAllIsClear;
-
-    /// true if widget has a select all, false if its hidden.
-    bool mUseSelectAll;
 
     /*!
      * \brief mHideEdit true if the edit button should be hidden, false otherwise.
@@ -138,7 +112,7 @@ private:
     /*!
      * \brief mMinimumHeight minimum size allowed for collection.
      */
-    uint32_t mMinimumHeight;
+    int mMinimumHeight;
 
     /*!
      * \brief mIconRatio

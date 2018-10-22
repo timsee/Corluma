@@ -78,7 +78,12 @@ public:
     /// getter for widget position based on index in vector.
     QPoint widgetPosition(int index);
 
+    /// getter for widget size
     QSize widgetSize(QSize parentSize);
+
+    /// sort widgets IFF they are device widgets
+    /// TODO: this is totally an antipattern...
+    void sortDeviceWidgets();
 
     /// number of widgets in the scroll area.
     uint32_t count() { return uint32_t(mWidgets.size()); }
@@ -88,9 +93,6 @@ public:
 
     /// getter for type of list
     EListType type() { return mType; }
-
-    /// moves widgets into their proper location on a grid.
-    void moveWidgets(QSize size);
 
     /// gives the overall size needed to display the widget
     QSize overallSize();

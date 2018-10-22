@@ -2,6 +2,8 @@
 #include "listlayout.h"
 #include <QDebug>
 
+#include "listdevicewidget.h"
+
 namespace cor
 {
 
@@ -24,7 +26,7 @@ void ListLayout::removeWidget(cor::ListItemWidget* widget) {
     }
     // store index of inserted element
     mWidgets.erase(findResult);
-    mWidgets.shrink_to_fit();
+    delete widget;
 }
 
 QPoint ListLayout::widgetPosition(QWidget *widget) {
@@ -33,8 +35,21 @@ QPoint ListLayout::widgetPosition(QWidget *widget) {
         qDebug() << "WARNING: Could not find widget in set" << __func__;
         return QPoint(-1, -1);
     }
+
     // store index of inserted element
     int index = int(std::distance(mWidgets.begin(), findResult));
+
+    // count number of hidden widgets before this one
+    int tempIndex = index;
+    for (int i = 0; i < tempIndex; ++i) {
+        if (!mWidgets[i]->isVisible()) {
+            index--;
+        }
+    }
+    if (index < 0) {
+        return QPoint(-1, -1);
+    }
+
     if (mType == EListType::grid) {
         int x = index % 2;     // 2 rows per column
         int y = index / 2;     // new column every other index
@@ -118,19 +133,39 @@ QSize ListLayout::widgetSize(QSize parentSize) {
 
 
 
+
+void ListLayout::sortDeviceWidgets() {
+    std::sort(mWidgets.begin(), mWidgets.end(), [](cor::ListItemWidget* a, cor::ListItemWidget* b) {
+        ListDeviceWidget *aDeviceWidget = qobject_cast<ListDeviceWidget*>(a);
+        Q_ASSERT(aDeviceWidget);
+        ListDeviceWidget *bDeviceWidget = qobject_cast<ListDeviceWidget*>(b);
+        Q_ASSERT(bDeviceWidget);
+        if (!aDeviceWidget->device().isReachable && bDeviceWidget->device().isReachable) {
+            return false;
+        } else if (aDeviceWidget->device().isReachable && !bDeviceWidget->device().isReachable) {
+            return true;
+        } else {
+            return (aDeviceWidget->device().name.compare(bDeviceWidget->device().name) < 0);
+        }
+    });
+}
+
+
 QSize ListLayout::overallSize() {
     int height = 0;
     bool useHeight = true;
     for (uint32_t i = 0; i < mWidgets.size(); ++i) {
-        if (mType == cor::EListType::grid) {
-            if (useHeight) {
-                height += mWidgets[i]->height();
-                useHeight = false;
+        if (mWidgets[i]->isVisible()) {
+            if (mType == cor::EListType::grid) {
+                if (useHeight) {
+                    height += mWidgets[i]->height();
+                    useHeight = false;
+                } else {
+                    useHeight = true;
+                }
             } else {
-                useHeight = true;
+                height += mWidgets[i]->height();
             }
-        } else {
-            height += mWidgets[i]->height();
         }
     }
 
@@ -144,20 +179,5 @@ QSize ListLayout::overallSize() {
     }
     return QSize(width, height);
 }
-
-void ListLayout::moveWidgets(QSize size) {
-    size = widgetSize(size);
-    for (uint32_t i = 0; i < mWidgets.size(); ++i) {
-        QPoint position = widgetPosition(mWidgets[i]);
-        mWidgets[i]->setFixedSize(size);
-        mWidgets[i]->setGeometry(position.x() * size.width(),
-                                 position.y() * size.height(),
-                                 size.width(),
-                                 size.height());
-      //qDebug() << "this is the widget position of " << i << position << "and geometry"  << mWidgets[i]->geometry();
-    }
-}
-
-
 
 }

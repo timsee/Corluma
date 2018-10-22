@@ -400,3 +400,10 @@ ___
 * Made more scrollable sets of widgets use the same system.
 * Fixed bugs on the edit page.
 
+### **v0.13.7**
+#### The ListWidget Refactor Part 2
+* Refactored `ListGroupWidget` into `ListRoomWidget`.
+* Added `GroupButtonsWidget`.
+* Fixed miscellaneous bugs.
+
+

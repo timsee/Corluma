@@ -29,6 +29,9 @@ public:
     /// name of group
     QString name;
 
+    /// if a group has subgroups. this contains a list of all groups that are subgroups.
+    std::list<cor::LightGroup> groups;
+
     /// list of lights
     std::list<cor::Light> devices;
 

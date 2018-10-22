@@ -197,8 +197,8 @@ void MoodPage::editMoodClicked(QString collectionKey, QString moodKey) {
 
 void MoodPage::moodClicked(QString collectionKey, QString moodKey) {
     Q_UNUSED(collectionKey);
-    qDebug() << "collection key:" << collectionKey
-             << "mood key:" << moodKey;
+//    qDebug() << "collection key:" << collectionKey
+//             << "mood key:" << moodKey;
 
     mCurrentMood = moodKey;
 

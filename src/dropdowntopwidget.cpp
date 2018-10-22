@@ -8,9 +8,8 @@
 #include "cor/utils.h"
 #include <QDebug>
 
-DropdownTopWidget::DropdownTopWidget(const QString& key, bool hideEdit, bool useSelectAll, QWidget *parent) : QWidget(parent), mKey(key)
+DropdownTopWidget::DropdownTopWidget(const QString& key, bool hideEdit, QWidget *parent) : QWidget(parent), mKey(key)
 {
-    mUseSelectAll = useSelectAll;
     mShowButtons = false;
     mHideEdit = hideEdit;
 
@@ -20,7 +19,7 @@ DropdownTopWidget::DropdownTopWidget(const QString& key, bool hideEdit, bool use
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     mName->setStyleSheet("margin-left: 5px; font: bold;");
 
-    mMinimumHeight = std::max(uint32_t(mName->height() * 2), uint32_t(cor::applicationSize().height() / 10));
+    mMinimumHeight = std::max(mName->height() * 2, cor::applicationSize().height() / 10);
     this->setFixedHeight(mMinimumHeight);
     mIconRatio = 0.5f;
 
@@ -47,29 +46,13 @@ DropdownTopWidget::DropdownTopWidget(const QString& key, bool hideEdit, bool use
 
     mHiddenStateIcon = new QLabel(this);
     mHiddenStateIcon->setPixmap(mClosedPixmap);
-    mHiddenStateIcon->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    mHiddenStateIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mHiddenStateIcon->setAlignment(Qt::AlignCenter);
 
     mName->setFixedHeight(mMinimumHeight);
 
-    if (mUseSelectAll) {
-        mSelectAllIsClear = false;
-
-        mSelectAllButton = new QPushButton(this);
-        mSelectAllButton->setStyleSheet("border: none;");
-        mSelectAllButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-        mSelectAllPixmap = QPixmap(":/images/selectAllIcon.png");
-        mClearAllPixmap = QPixmap(":/images/clearAllIcon.png");
-        mSelectAllButton->setIconSize(iconSize());
-        mSelectAllButton->setIcon(QIcon((mSelectAllPixmap)));
-        mSelectAllButton->setVisible(false);
-    }
-
     mLayout = new QHBoxLayout;
     mLayout->addWidget(mName);
-    if (mUseSelectAll) {
-        mLayout->addWidget(mSelectAllButton);
-    }
     mLayout->addWidget(mEditButton);
     mLayout->addWidget(mHiddenStateIcon);
     setLayout(mLayout);
@@ -77,26 +60,6 @@ DropdownTopWidget::DropdownTopWidget(const QString& key, bool hideEdit, bool use
     mLayout->setStretch(0, 12);
     mLayout->setStretch(2, 2);
     mLayout->setStretch(3, 2);
-    if (mUseSelectAll) {
-        mLayout->setStretch(4, 2);
-    }
-}
-
-void DropdownTopWidget::handleSelectAllButton(bool anyDevicesChecked, bool showButtons) {
-    if (anyDevicesChecked) {
-        resizeRightHandIcon(mClearAllPixmap, mSelectAllButton);
-        mSelectAllIsClear = true;
-        mSelectAllButton->setVisible(true);
-    } else if (showButtons) {
-        resizeRightHandIcon(mSelectAllPixmap, mSelectAllButton);
-        mHiddenStateIcon->setPixmap(mOpenedPixmap);
-        mSelectAllIsClear = false;
-        mSelectAllButton->setVisible(true);
-    } else {
-        mHiddenStateIcon->setPixmap(mClosedPixmap);
-        mName->setFixedHeight(mMinimumHeight);
-        mSelectAllButton->setVisible(false);
-    }
 }
 
 

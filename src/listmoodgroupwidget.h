@@ -52,7 +52,7 @@ public:
      * \param bool removeIfNotFound if a widget already exists but this flag is set to true and it doesn't exist
      *        in the mood list provided, the widget gets removed from the list.
      */
-    void updateMoods(std::list<cor::LightGroup> moods,
+    void updateMoods(const std::list<cor::LightGroup>& moods,
                      bool removeIfNotFound);
 
     /*!

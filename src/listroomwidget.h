@@ -1,16 +1,15 @@
-#ifndef LISTDEVICESGROUPWIDGET_H
-#define LISTDEVICESGROUPWIDGET_H
+#ifndef LISTROOMWIDGET_H
+#define LISTROOMWIDGET_H
 
 #include <QObject>
 #include <QWidget>
-#include <QGridLayout>
-#include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
 
 #include "cor/listitemwidget.h"
 #include "cor/lightgroup.h"
 #include "cor/listlayout.h"
+#include "groupbuttonswidget.h"
 #include "listdevicewidget.h"
 #include "dropdowntopwidget.h"
 
@@ -24,7 +23,7 @@
  *        gives info on the collection and the ability to edit it. It also contains an array
  *        of ListDeviceWidgets, which can be shown or hidden by clicking the top widget.
  */
-class ListGroupWidget :  public cor::ListItemWidget
+class ListRoomWidget :  public cor::ListItemWidget
 {
     Q_OBJECT
 public:
@@ -34,7 +33,7 @@ public:
      * \param group group of lights
      * \param key unique key for collection
      */
-    ListGroupWidget(const cor::LightGroup& group,
+    ListRoomWidget(const cor::LightGroup& group,
                            QString key,
                            QWidget *parent);
 
@@ -53,7 +52,10 @@ public:
      * \param removeIfNotFound if a widget exists already in the listwidget but doesn't exist in the list provided,
      *        this widget gets removed and all other widgets get shifted.
      */
-    void updateDevices(std::list<cor::Light> devices, bool removeIfNotFound = false);
+    void updateGroup(const cor::LightGroup& group, bool removeIfNotFound);
+
+    /// the top widget of the group widget
+    DropdownTopWidget* dropDownTopWidget() { return mDropdownTopWidget; }
 
     /*!
      * \brief devices getter for all devices being displayed by the widget.
@@ -65,7 +67,7 @@ public:
     std::list<cor::Light> reachableDevices();
 
     /// getter for checked devices
-    const std::list<cor::Light> checkedDevices();
+    std::list<cor::Light> checkedDevices();
 
     /*!
      * \brief setShowButtons shows and hides all buttons on the widget
@@ -73,14 +75,23 @@ public:
      */
     void setShowButtons(bool show);
 
-    /// closes all the displayed lights for this widget
-    void closeLights();
+    /// hides the group buttons widget (if it has one) and all the listdevicewidgets
+    void closeWidget();
 
     /// getter for the group data.
     const cor::LightGroup& group() { return mGroup; }
 
     /// resize the widgets in the in this widget
     void resizeInteralWidgets();
+
+    /// getter for the desired height of the widget
+    int widgetHeightSum();
+
+    /// moves widgets into their proper location on a grid.
+    void moveWidgets(QSize size, QPoint offset);
+
+    /// show the devices provided
+    void showDevices(const std::list<cor::Light>& devices);
 
 signals:
 
@@ -104,6 +115,9 @@ signals:
      */
     void buttonsShown(QString, bool);
 
+    /// signals that the group has changed and the size of the widget has potentially changed.
+    void groupChanged(QString);
+
 protected:
 
     /// resizes interal widgets when a resize event is triggered
@@ -121,21 +135,31 @@ protected:
 
 private slots:
 
+    /// a group button was pressed. This switches the shown devices to be just the devices in that group
+    void groupPressed(QString key);
+
+    /// select all toggled for a given group. true if selecting all of that group, false if deselecting all for that group
+    void selectAllToggled(QString key, bool selectAll);
+
     /*!
      * \brief handleClicked hangles a ListDeviceWidget getting clicked, emits a the collection's key and the device's key.
      * \param key the key of the ListDeviceWidget
      */
-    void handleClicked(QString key) { emit deviceClicked(mKey, key); }
-
-    /*!
-     * \brief selectAllButtonClicked select all button is clicked.
-     */
-    void selectAllButtonClicked(bool);
+    void handleClicked(QString key);
 
     /// handles when an on/off switch switch for any given device is toggled
     void handleToggledSwitch(QString key, bool isOn) { emit deviceSwitchToggled(key, isOn); }
 
 private:
+
+    /// update the top widget
+    void updateTopWidget();
+
+    /// resize the widget
+    void resize();
+
+    /// top widget that holds the groups, if any are available.
+    GroupButtonsWidget *mGroupsButtonWidget;
 
     /// layout of all widgets except the dropdownwidget
     cor::ListLayout mListLayout;
@@ -165,4 +189,4 @@ private:
 
 };
 
-#endif // LISTDEVICESGROUPWIDGET_H
+#endif // LISTROOMWIDGET_H

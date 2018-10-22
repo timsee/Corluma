@@ -6,6 +6,7 @@
 
 #include "listmoodgroupwidget.h"
 #include "cor/utils.h"
+
 ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
                                          std::list<cor::LightGroup> moods,
                                          QString key,
@@ -21,8 +22,7 @@ ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
     setLayout(mLayout);
 
     mMoods = moods;
-
-    mDropdownTopWidget = new DropdownTopWidget(name, hideEdit, true, this);
+    mDropdownTopWidget = new DropdownTopWidget(name, hideEdit, this);
     mDropdownTopWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 
     updateMoods(moods, false);
@@ -32,19 +32,20 @@ ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
 }
 
 
-void ListMoodGroupWidget::updateMoods(std::list<cor::LightGroup> moods,
+void ListMoodGroupWidget::updateMoods(const std::list<cor::LightGroup>& moods,
                                       bool removeIfNotFound) {
-    std::vector<bool> foundWidgets(mListLayout.count(), false);
-    for (auto&& mood : moods) {
+    std::vector<bool> foundWidgets(mListLayout.widgets().size(), false);
+    for (const auto& mood : moods) {
         bool foundMood = false;
         uint32_t x = 0;
-        for (auto&& existingWidget : mListLayout.widgets()) {
+        for (const auto& existingWidget : mListLayout.widgets()) {
             if (mood.name.compare(existingWidget->key()) == 0) {
                 foundMood = true;
-                //TODO update
+//                qDebug() << x << "  vs " << mListLayout.widgets().size();
+//                qDebug() << mood.name << " vs " << existingWidget->key();
                 foundWidgets[x] = true;
-                ++x;
             }
+            ++x;
         }
 
         if (!foundMood) {
@@ -72,7 +73,6 @@ void ListMoodGroupWidget::updateMoods(std::list<cor::LightGroup> moods,
 }
 
 void ListMoodGroupWidget::setShowButtons(bool show) {
-
     mDropdownTopWidget->showButtons(show);
     for (auto&& device : mListLayout.widgets()) {
         if (mDropdownTopWidget->showButtons()) {
@@ -113,7 +113,17 @@ void ListMoodGroupWidget::setCheckedMoods(std::list<QString> checkedMoods) {
 
 void ListMoodGroupWidget::resizeEvent(QResizeEvent *) {
     mWidget->setFixedWidth(this->width());
-    mListLayout.moveWidgets(QSize(this->width(), mDropdownTopWidget->height()));
+    QPoint offset(0, 0);
+    QSize size = mListLayout.widgetSize(QSize(this->width(), mDropdownTopWidget->height()));
+    for (uint32_t i = 0; i < mListLayout.widgets().size(); ++i) {
+        QPoint position = mListLayout.widgetPosition(mListLayout.widgets()[i]);
+        mListLayout.widgets()[i]->setFixedSize(size);
+        mListLayout.widgets()[i]->setGeometry(offset.x() + position.x() * size.width(),
+                                 offset.y() + position.y() * size.height(),
+                                 size.width(),
+                                 size.height());
+      //qDebug() << "this is the widget position of " << i << position << "and geometry"  << mWidgets[i]->geometry();
+    }
 }
 
 void ListMoodGroupWidget::mouseReleaseEvent(QMouseEvent *) {

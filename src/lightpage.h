@@ -11,7 +11,7 @@
 #include "listdevicewidget.h"
 #include "comm/commlayer.h"
 #include "cor/devicelist.h"
-#include "listgroupwidget.h"
+#include "listroomwidget.h"
 #include "cor/listwidget.h"
 #include "cor/presetpalettes.h"
 
@@ -86,6 +86,9 @@ public slots:
     void clearButtonPressed();
 
 private slots:
+
+    /// changed selected group
+    void changedGroup(QString);
 
     /*!
      * \brief shouldShowButtons show buttons was clicked by a ListCollectionWidget.
@@ -188,32 +191,15 @@ private:
     QString mCurrentGroup;
 
     /*!
-     * \brief cleanupList resync the list of collections and devices, deleting old ones that no longer exist and
-     *        updating existing ones.
-     */
-    void cleanupList();
-
-    /*!
      * \brief initDevicesCollectionWidget constructor helper for making a DeviceCollectionsWidget
      * \param group group of lights for collection
      * \param key key for collection
      * \param hideEdit true for special case groups (Available and Not Reachable), false otherwise
      * \return pointer to the newly created ListDevicesGroupWidget
      */
-    ListGroupWidget* initDevicesCollectionWidget(cor::LightGroup group,
+    ListRoomWidget* initDevicesCollectionWidget(cor::LightGroup group,
                                                         const std::vector<std::pair<QString, QString>>& deviceNames,
                                                         const QString& key);
-
-
-    /*!
-     * \brief gatherAvailandAndNotReachableDevices creates the special case groups of devices: Avaiable
-     *        and Not Reachable. These groups always exist as long as at least one device falls into them.
-     *        Avaialble devices are devices you can reach and have recently sent an update packet, Not Reachable
-     *        are available in memory somehow but have not sent an update packet recently.
-     * \param allDevices list of all devices that have sent communication packets of some sort.
-     */
-    void gatherAvailandAndNotReachableDevices(const std::list<cor::Light>& allDevices,
-                                              const std::vector<std::pair<QString, QString>>& deviceNames);
 
     /// gathers all light groups, as displayed in the UI
     std::list<cor::LightGroup> gatherAllUIGroups();
@@ -225,7 +211,7 @@ private:
      * \param uiGroups all UI groups
      * \param allDevices all up-to-date information about all devices.
      */
-    void updateDataGroupInUI(const cor::LightGroup dataGroup, const std::list<cor::LightGroup>& uiGroups, const std::list<cor::Light>& allDevices);
+    void updateDataGroupInUI(cor::LightGroup dataGroup, const std::list<cor::LightGroup>& uiGroups, const std::list<cor::Light>& allDevices);
 
     /*!
      * \brief updateDeviceList create an up-to-date version of a list of cor::Lights. The cor::Lights may be obtained from the UI or from

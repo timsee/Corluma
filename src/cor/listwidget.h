@@ -37,9 +37,6 @@ public:
      */
     void resizeWidgets();
 
-    /// moves widgets into their proper location on a grid.
-    void moveWidgets();
-
     /*!
      * \brief insertWidget insert cor::ListItemWIdget into the layout.
      * \param widget widget to be inserted, if it doesn't already exist. Will reorganize widgets if needed.

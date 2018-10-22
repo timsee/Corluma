@@ -16,9 +16,8 @@
 ListDeviceWidget::ListDeviceWidget(const cor::Light& device,
                                    bool setHighlightable,
                                    QSize size,
-                                   QWidget *parent) : cor::ListItemWidget(device.uniqueID(), parent), mDevice(device)   {
-    Q_ASSERT(!(device.controller == "UNINITIALIZED"));
-
+                                   QWidget *parent) : cor::ListItemWidget(device.uniqueID(),
+                                                                          parent), mDevice(device)   {
     this->setFixedSize(size);
 
     mShouldHighlight = setHighlightable;
@@ -196,8 +195,7 @@ void ListDeviceWidget::paintEvent(QPaintEvent *event) {
     }
 }
 
-void ListDeviceWidget::mouseReleaseEvent(QMouseEvent *event) {
-    Q_UNUSED(event);
+void ListDeviceWidget::mouseReleaseEvent(QMouseEvent *) {
     setHighlightChecked(!mIsChecked);
     emit clicked(mKey);
 }
@@ -302,7 +300,6 @@ void ListDeviceWidget::updateTypeIcon(ELightHardwareType type) {
                                      size.height(),
                                      Qt::IgnoreAspectRatio,
                                      Qt::SmoothTransformation);
-    mTypeIcon->setMaximumSize(size);
 
     QSize onOffSize(size.width() *  2, size.height() * 2);
     mOnOffSwitch->setFixedSize(size);

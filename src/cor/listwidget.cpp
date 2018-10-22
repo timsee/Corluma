@@ -5,7 +5,7 @@
  */
 
 #include "cor/listwidget.h"
-#include "listgroupwidget.h"
+#include "listroomwidget.h"
 #include "listmoodgroupwidget.h"
 
 namespace cor
@@ -50,9 +50,13 @@ void ListWidget::removeWidget(cor::ListItemWidget* widget) {
 
 void ListWidget::resizeWidgets() {
     int yPos = 0;
+    int maxWidth = 0;
     for (auto widget : mListLayout.widgets()) {
         QSize size = widget->geometry().size();
-        widget->setGeometry(0, yPos, size.width(), size.height());
+        if (size.width() > maxWidth) {
+            maxWidth = size.width();
+        }
+        widget->setGeometry(0, yPos, maxWidth, size.height());
         widget->setHidden(false);
         yPos += size.height();
     }
@@ -62,20 +66,6 @@ void ListWidget::resizeWidgets() {
     mWidget->setFixedHeight(newHeight);
 }
 
-
-void ListWidget::moveWidgets() {
-    for (uint32_t i = 0; i < mListLayout.widgets().size(); ++i) {
-        QPoint position = mListLayout.widgetPosition(mListLayout.widgets()[i]);
-        mListLayout.widgets()[i]->setGeometry(position.x() * mWidgetSize.width(),
-                                 position.y() * mWidgetSize.height(),
-                                 mWidgetSize.width(),
-                                 mWidgetSize.height());
-
-       // qDebug() << "this is the widget position of " << i << position << "and geometry"  << mWidgets[i]->geometry();
-    }
-}
-
-
 void ListWidget::show() {
     resize();
 }
@@ -83,7 +73,6 @@ void ListWidget::show() {
 void ListWidget::resize() {
     mWidget->setFixedWidth(this->viewport()->width());
 
-    resizeWidgets();
     for (auto widget : mListLayout.widgets()) {
        widget->setFixedWidth(this->viewport()->width());
     }

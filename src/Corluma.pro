@@ -155,6 +155,7 @@ SOURCES += main.cpp \
     cor/page.cpp \
     cor/listlayout.cpp \
     cor/devicelist.cpp \
+    cor/groupbutton.cpp \
     cor/listitemwidget.cpp \
     hue/bridgeinfowidget.cpp \
     hue/lightdiscovery.cpp \
@@ -196,9 +197,10 @@ SOURCES += main.cpp \
     moodpage.cpp \
     lightinfolistwidget.cpp \
     appsettings.cpp \
-    listgroupwidget.cpp \
     listsimplegroupwidget.cpp \
-    dropdowntopwidget.cpp
+    dropdowntopwidget.cpp \
+    listroomwidget.cpp \
+    groupbuttonswidget.cpp
 
 HEADERS  +=  arducor/arducordiscovery.h \
     arducor/arducorpacketparser.h \
@@ -251,6 +253,7 @@ HEADERS  +=  arducor/arducordiscovery.h \
     cor/devicelist.h \
     cor/listlayout.h \
     cor/listitemwidget.h \
+    cor/groupbutton.h \
     hue/lightdiscovery.h \
     hue/bridgediscovery.h \
     hue/hueprotocols.h \
@@ -292,9 +295,10 @@ HEADERS  +=  arducor/arducordiscovery.h \
     moodpage.h \
     lightinfolistwidget.h \
     appsettings.h \
-    listgroupwidget.h \
     listsimplegroupwidget.h \
-    dropdowntopwidget.h
+    dropdowntopwidget.h \
+    listroomwidget.h \
+    groupbuttonswidget.h
 
 #----------
 # Desktop builds only
