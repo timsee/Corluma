@@ -67,6 +67,8 @@ void LightPage::updateConnectionList() {
 
 
     std::list<cor::LightGroup> groupList   = mComm->groupList();
+
+    // fill in groups in rooms
     for (auto&& room : roomList) {
         for (const auto& group : groupList) {
             bool allGroupLightsInRoom = true;
@@ -87,6 +89,52 @@ void LightPage::updateConnectionList() {
         }
     }
 
+    // fill in miscellaneous Room default data
+    cor::LightGroup miscellaneousGroup;
+    miscellaneousGroup.index = -1;
+    miscellaneousGroup.name = "Miscellaneous";
+    miscellaneousGroup.isRoom = true;
+    // loop through every group, see if it maps to a room, if not, add it to this room
+    for (const auto& group : groupList) {
+        bool groupInRoom = false;
+        for (const auto& room : roomList) {
+            for (const auto& roomGroup : room.groups) {
+                if (roomGroup.name == group.name) {
+                    groupInRoom = true;
+                }
+            }
+            if (!groupInRoom) {
+                miscellaneousGroup.groups.push_back(group);
+            }
+        }
+    }
+    // loop through every light, see if it maps to a room, if not, add it to this group and its subgroups
+    for (const auto& device : allDevices) {
+        bool deviceInGroup = false;
+        for (const auto& room : roomList) {
+            // check room devices
+            for (const auto& roomDevice : room.devices) {
+                if (roomDevice.uniqueID() == device.uniqueID()) {
+                    deviceInGroup = true;
+                }
+            }
+            // check group deviecs
+            for (const auto& group : room.groups) {
+                for (const auto& groupDevice : group.devices) {
+                    if (groupDevice.uniqueID() == device.uniqueID()) {
+                        deviceInGroup = true;
+                    }
+                }
+            }
+        }
+        if (!deviceInGroup) {
+            miscellaneousGroup.devices.push_back(device);
+        }
+    }
+    // only add miscellaneous lights if they exist
+    if (!miscellaneousGroup.devices.empty() || !miscellaneousGroup.groups.empty()) {
+        roomList.push_back(miscellaneousGroup);
+    }
 
     //--------------
     // 2. Update Existing Groups and Add New Groups
@@ -212,9 +260,7 @@ void LightPage::deviceClicked(QString collectionKey, QString deviceKey) {
 //    qDebug() << "collection key:" << collectionKey
 //             << "device key:" << deviceKey;
 
-
     cor::Light device = identifierStringToLight(deviceKey);
-    mComm->fillDevice(device);
     if (device.isReachable) {
         if (mData->doesDeviceExist(device)) {
             mData->removeDevice(device);
@@ -226,16 +272,16 @@ void LightPage::deviceClicked(QString collectionKey, QString deviceKey) {
         emit updateMainIcons();
         emit changedDeviceCount();
         highlightList();
-    }
 
-    // search for current group string
-    QString currentGroup = mData->findCurrentCollection(mComm->collectionList(), false);
-    for (auto&& group : mComm->collectionList()) {
-        if (group.name == currentGroup) {
-            if (group.devices.size() == mData->devices().size()) {
-                mCurrentGroup = group.name;
-            } else {
-                mCurrentGroup = "";
+        // search for current group string
+        QString currentGroup = mData->findCurrentCollection(mComm->collectionList(), false);
+        for (auto&& group : mComm->collectionList()) {
+            if (group.name == currentGroup) {
+                if (group.devices.size() == mData->devices().size()) {
+                    mCurrentGroup = group.name;
+                } else {
+                    mCurrentGroup = "";
+                }
             }
         }
     }
@@ -303,14 +349,9 @@ void LightPage::groupSelected(QString key, bool shouldSelect) {
 
 void LightPage::newConnectionFound(QString newController) {
     // get list of all HTTP and UDP devices.
-    const auto controllers = mComm->arducor()->discovery()->controllers();
-    bool foundController = false;
-    // check combined list if new controller exists.
-    for (const auto& controller : controllers) {
-        if (controller.name.compare(newController) == 0) {
-            foundController = true;
-        }
-    }
+    const auto& controllers = mComm->arducor()->discovery()->controllers();
+    auto itemResult = controllers.item(newController.toStdString());
+    bool foundController = itemResult.second;
 
     // if not, add it to discovery.
     if (!foundController) {
@@ -396,11 +437,11 @@ void LightPage::renderUI() {
 cor::Light LightPage::identifierStringToLight(QString string) {
     QStringList list = string.split("_");
     if (list.size() > 1) {
-        cor::Light light(list[1], stringToCommType(list[0]));
+        cor::Light light(list[1], list[2], stringToCommType(list[0]));
         mComm->fillDevice(light);
         return light;
     }
-    return cor::Light("NOT_VALID", ECommType::MAX);
+    return {};
 }
 
 

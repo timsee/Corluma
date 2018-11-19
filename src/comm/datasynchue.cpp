@@ -64,7 +64,7 @@ void DataSyncHue::syncData() {
             cor::Light commLayerDevice = device;
             if (mComm->fillDevice(commLayerDevice)) {
                 if (device.commType() == ECommType::hue) {
-                    if (checkThrottle(device.controller, device.commType())) {
+                    if (checkThrottle(device.controller(), device.commType())) {
                         if (!sync(device, commLayerDevice)) {
                             countOutOfSync++;
                         }
@@ -110,13 +110,13 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
     int countOutOfSync = 0;
 
     QJsonObject object;
-    object["controller"] = commDevice.controller;
+    object["controller"] = commDevice.controller();
     object["commtype"]   = commTypeToString(commDevice.commType());
     object["index"]      = commDevice.index;
-    object["uniqueID"]   = commDevice.controller;
+    object["uniqueID"]   = commDevice.controller();
 
     // get bridge
-    const auto bridge = mComm->hue()->bridgeFromLight(commDevice);
+    auto bridge = mComm->hue()->bridgeFromLight(commDevice);
 
     if (dataDevice.isOn) {
         if (commDevice.colorMode == EColorMode::HSV) {
@@ -167,7 +167,7 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
 
     if (countOutOfSync) {
         mComm->hue()->sendPacket(object);
-        resetThrottle(dataDevice.controller, dataDevice.commType());
+        resetThrottle(dataDevice.controller(), dataDevice.commType());
     }
 
     return (countOutOfSync == 0);

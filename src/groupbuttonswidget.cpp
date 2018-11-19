@@ -4,33 +4,24 @@
 
 GroupButtonsWidget::GroupButtonsWidget(QWidget *parent,
                                        const QString& roomName,
-                                       const std::vector<QString>& groups) : QWidget(parent)
+                                       const std::vector<QString>& groups) : QWidget(parent), mRoomName(roomName)
 {
 
     mLayout = new QGridLayout(this);
+    mGroupCount = 3;
 
     cor::GroupButton *groupButton = new cor::GroupButton(this, "All");
     groupButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    groupButton->setFixedWidth(this->width() / 3);
+    groupButton->setFixedWidth(this->width() / mGroupCount);
     groupButton->setSelectAll(true);
     connect(groupButton, SIGNAL(groupButtonPressed(QString)), this, SLOT(buttonPressed(QString)));
     connect(groupButton, SIGNAL(groupSelectAllToggled(QString, bool)), this, SLOT(buttonToggled(QString, bool)));
     mButtons.push_back(groupButton);
-    mRelabeledNames.push_back(std::make_pair("All", "All"));
+    mRelabeledNames.insert("All", "All");
     mLayout->addWidget(groupButton, 0, 0);
 
     for (uint32_t i = 0; i < groups.size(); ++i) {
-        QString adjustedName = convertGroupName(roomName, groups[i]);
-        cor::GroupButton *groupButton = new cor::GroupButton(this, adjustedName);
-        connect(groupButton, SIGNAL(groupButtonPressed(QString)), this, SLOT(buttonPressed(QString)));
-        connect(groupButton, SIGNAL(groupSelectAllToggled(QString, bool)), this, SLOT(buttonToggled(QString, bool)));
-        mButtons.push_back(groupButton);
-        mRelabeledNames.push_back(std::make_pair(groups[i], adjustedName));
-        groupButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        groupButton->setFixedWidth(this->width() / 3);
-        int column = (i + 1) % 3;
-        int row = (i + 1) / 3;
-        mLayout->addWidget(groupButton, row, column);
+        addGroup(groups[i]);
     }
 
     mLayout->setContentsMargins(0, 0, 0, 0);
@@ -38,11 +29,28 @@ GroupButtonsWidget::GroupButtonsWidget(QWidget *parent,
     this->setLayout(mLayout);
 }
 
+void GroupButtonsWidget::addGroup(const QString& group) {
+    QString adjustedName = convertGroupName(mRoomName, group);
+    cor::GroupButton *groupButton = new cor::GroupButton(this, adjustedName);
+    connect(groupButton, SIGNAL(groupButtonPressed(QString)), this, SLOT(buttonPressed(QString)));
+    connect(groupButton, SIGNAL(groupSelectAllToggled(QString, bool)), this, SLOT(buttonToggled(QString, bool)));
+    mButtons.push_back(groupButton);
+    bool sucessful = mRelabeledNames.insert(group.toStdString(), adjustedName.toStdString());
+    GUARD_EXCEPTION(sucessful, "insert into cor::Dictionary failed");
+
+    groupButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    groupButton->setFixedWidth(this->width() / mGroupCount);
+    int i = int(mButtons.size() - 2);
+    int column = (i + 1) % mGroupCount;
+    int row = (i + 1) / mGroupCount;
+    mLayout->addWidget(groupButton, row, column);
+}
+
 void GroupButtonsWidget::updateCheckedDevices(const QString& key,
                                               uint32_t checkedDeviceCount,
                                               uint32_t reachableDeviceCount) {
     for (const auto& widget : mButtons) {
-        if (widget->key() == originalGroup(key)) {
+        if (widget->key() == renamedGroup(key)) {
             widget->handleSelectAllButton(checkedDeviceCount, reachableDeviceCount);
         }
     }
@@ -54,35 +62,33 @@ void GroupButtonsWidget::buttonPressed(QString key) {
     for (const auto& widget : mButtons) {
         widget->setSelectAll(widget->key() == key);
     }
-    emit groupButtonPressed(renamedGroup(key));
+    emit groupButtonPressed(originalGroup(key));
 }
 
 void GroupButtonsWidget::buttonToggled(QString key, bool selectAll) {
-    emit groupSelectAllToggled(renamedGroup(key), selectAll);
+    emit groupSelectAllToggled(originalGroup(key), selectAll);
+}
+
+std::list<QString> GroupButtonsWidget::groupNames() {
+    std::list<QString> groupList;
+    for (const auto& key : mRelabeledNames.keys()) {
+        groupList.push_back(QString(key.c_str()));
+    }
+    return groupList;
 }
 
 void GroupButtonsWidget::resizeEvent(QResizeEvent *) {
     for (const auto& widget : mButtons) {
-        widget->setFixedWidth(this->width() / 3);
+        widget->setFixedWidth(this->width() / mGroupCount);
     }
 }
 
 QString GroupButtonsWidget::renamedGroup(QString group) {
-    for (const auto& groupNamePair : mRelabeledNames) {
-        if (groupNamePair.second == group) {
-            return groupNamePair.first;
-        }
-    }
-    return {};
+    return QString(mRelabeledNames.item(group.toStdString()).first.c_str());
 }
 
-QString GroupButtonsWidget::originalGroup(QString group) {
-    for (const auto& groupNamePair : mRelabeledNames) {
-        if (groupNamePair.first == group) {
-            return groupNamePair.second;
-        }
-    }
-    return {};
+QString GroupButtonsWidget::originalGroup(QString renamedGroup) {
+    return QString(mRelabeledNames.key(renamedGroup.toStdString()).first.c_str());
 }
 
 

@@ -254,6 +254,9 @@ HEADERS  +=  arducor/arducordiscovery.h \
     cor/listlayout.h \
     cor/listitemwidget.h \
     cor/groupbutton.h \
+    cor/dictionary.h \
+    cor/exception.h \
+    cor/strictdictionary.h \
     hue/lightdiscovery.h \
     hue/bridgediscovery.h \
     hue/hueprotocols.h \

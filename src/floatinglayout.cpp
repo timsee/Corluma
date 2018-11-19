@@ -103,7 +103,7 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
 
     QSignalMapper *buttonsMapper = new QSignalMapper(this);
     for (uint32_t i = 0; i < mNames.size(); ++i) {
-        cor::Light light(mNames[i], ECommType::MAX);
+        cor::Light light(mNames[i], "NO_CONTROLLER", ECommType::MAX);
         light.routine = ERoutine::singleSolid;
         light.color = QColor(255, 0, 0);
 

@@ -5,6 +5,7 @@
 #include "nanoleaf/leafcontroller.h"
 #include "comm/upnpdiscovery.h"
 #include "cor/jsonsavedata.h"
+#include "cor/dictionary.h"
 
 #include <QTimer>
 
@@ -86,7 +87,7 @@ public:
     void foundNewAuthToken(const nano::LeafController& newController, const QString& authToken);
 
     /// getter for list of found controllers
-    const std::list<nano::LeafController>& foundControllers() { return mFoundControllers; }
+    const cor::Dictionary<nano::LeafController>& foundControllers() { return mFoundControllers; }
 
     /// getter for list of not found controllers
     const std::list<nano::LeafController>& notFoundControllers() { return mNotFoundControllers; }
@@ -116,7 +117,7 @@ private:
     std::list<nano::LeafController> mNotFoundControllers;
 
     /// list of all controllers that have been verified and can be communicated with
-    std::list<nano::LeafController> mFoundControllers;
+    cor::Dictionary<nano::LeafController> mFoundControllers;
 
     /// timer for running the discovery routine
     QTimer *mDiscoveryTimer;

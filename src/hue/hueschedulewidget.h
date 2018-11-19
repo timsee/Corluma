@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QLayout>
 #include "hue/hueprotocols.h"
+#include "hue/bridge.h"
 
 namespace hue
 {

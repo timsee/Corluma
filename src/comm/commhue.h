@@ -145,7 +145,7 @@ public:
      * \brief bridges getter for the found bridges and their associated info
      * \return list of hue::Bridges
      */
-    std::list<hue::Bridge> bridges() { return mDiscovery->bridges(); }
+    const cor::Dictionary<hue::Bridge>& bridges() { return mDiscovery->bridges(); }
 
     /*!
      * \brief SHueCommandToJsonObject converts a SHueCommand into a Json object that
@@ -223,14 +223,14 @@ public:
      * \brief schedules getter for a list of all known schedules
      * \return list of all known schedules.
      */
-    const std::list<SHueSchedule> schedules(const hue::Bridge& bridge);
+    std::list<SHueSchedule> schedules(const hue::Bridge& bridge);
 
     /*!
      * \brief groups getter for a list of all know groups
      * \param bridge bridge to get all groups from
      * \return list of all known groups
      */
-    const std::list<cor::LightGroup> groups(const hue::Bridge& bridge);
+    std::list<cor::LightGroup> groups(const hue::Bridge& bridge);
 
     /// get the hue bridge that controls a cor::Light
     hue::Bridge bridgeFromLight(const cor::Light& light);

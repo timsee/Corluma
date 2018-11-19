@@ -134,6 +134,7 @@ private slots:
 
 private:
 
+    /// layout for widget
     cor::ListLayout mListLayout;
 
     /// widget used for background of grid

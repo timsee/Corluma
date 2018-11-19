@@ -38,7 +38,8 @@ LightVectorWidget::LightVectorWidget(int width, int height,
     int i = 0;
     for (int h = 0; h < mHeight; ++h) {
         for (int w = 0; w < mWidth; ++w) {
-            cor::Light light(QString(i), ECommType::MAX);
+            QString iString(i);
+            cor::Light light(iString, iString, ECommType::MAX);
             light.routine = ERoutine::singleSolid;
             light.color = QColor(0,0,0);
             QJsonObject routineObject = lightToJson(light);

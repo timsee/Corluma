@@ -6,6 +6,7 @@
 
 #include "commlayer.h"
 #include "cor/utils.h"
+#include "cor/exception.h"
 
 #include "comm/commarducor.h"
 #ifndef MOBILE_BUILD
@@ -69,7 +70,7 @@ CommType *CommLayer::commByType(ECommType type) {
         ptr = static_cast<CommType*>(mNanoleaf.get());
         break;
     default:
-        throw "no type for this commtype";
+        THROW_EXCEPTION("no type for this commtype");
     }
     return ptr;
 }
@@ -92,12 +93,12 @@ std::vector<std::pair<QString, QString>> CommLayer::deviceNames() {
     return deviceNameVector;
 }
 
-const std::list<cor::Light> CommLayer::allDevices() {
+std::list<cor::Light> CommLayer::allDevices() {
     std::list<cor::Light> list;
     for (int i = 0; i < int(ECommType::MAX); ++i) {
-        std::unordered_map<std::string, std::list<cor::Light> > table = deviceTable(ECommType(i));
-        for (auto&& controllers : table) {
-            for (auto&& device : controllers.second) {
+        const auto& table = deviceTable(ECommType(i));
+        for (const auto& controllers : table) {
+            for (const auto& device : controllers.second.itemList()) {
                 list.push_back(device);
             }
         }
@@ -113,7 +114,7 @@ void CommLayer::deleteHueGroup(QString name) {
     // check if group exists
     qDebug() << " delete hue group! " << name;
     cor::LightGroup groupToDelete;
-    for (const auto& bridge : mHue->bridges()) {
+    for (const auto& bridge : mHue->bridges().itemVector()) {
         bool hueGroupExists = false;
         for (const auto& group : mHue->groups(bridge)) {
             if (group.name == name) {
@@ -147,23 +148,12 @@ std::list<cor::LightGroup> CommLayer::collectionList() {
         }
     }
     // merge all hue groups up
-    const auto& bridges = mHue->discovery()->bridges();
-    if (bridges.size() == 0) {
-        return collectionList;
-    } else if (bridges.size() == 1) {
-        return cor::LightGroup::mergeLightGroups(collectionList,
-                                                 mHue->groups(bridges.front()));
-    } else {
-        std::list<cor::LightGroup> hueLights = mHue->groups(bridges.front());
-        for (const auto& bridge : bridges) {
-            if (bridge.id != bridges.front().id) {
-                hueLights = cor::LightGroup::mergeLightGroups(hueLights,
-                                                              mHue->groups(bridge));
-            }
-        }
-        return cor::LightGroup::mergeLightGroups(collectionList,
-                                                 hueLights);
+    const auto& bridges = mHue->discovery()->bridges().itemVector();
+    std::list<cor::LightGroup> hueLightGroups;
+    for (const auto& bridge : bridges) {
+        hueLightGroups.insert(hueLightGroups.begin(), bridge.groups.begin(), bridge.groups.end());
     }
+    return cor::LightGroup::mergeLightGroups(collectionList, hueLightGroups);
 }
 
 std::list<cor::LightGroup> CommLayer::roomList() {

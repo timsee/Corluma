@@ -8,6 +8,7 @@
 #include "appsettings.h"
 #include "groupsparser.h"
 #include "cor/utils.h"
+#include "cor/exception.h"
 
 #include <QApplication>
 #include <QFile>
@@ -63,7 +64,7 @@ int main(int argc, char *argv[]) {
 #ifndef DISABLE_STYLE_SHEET
     QFile f(":stylesheet/corluma.qss");
     if (!f.exists()) {
-        throw "Unable to set stylesheet, file not found\n";
+        THROW_EXCEPTION("Unable to set stylesheet, file not found");
     } else {
         f.open(QFile::ReadOnly | QFile::Text);
         QTextStream ts(&f);

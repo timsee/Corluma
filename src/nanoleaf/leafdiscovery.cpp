@@ -66,7 +66,7 @@ void LeafDiscovery::foundNewController(nano::LeafController newController) {
 
     // found controllers added to found list
     if (found) {
-        mFoundControllers.push_back(newController);
+        mFoundControllers.insert(newController.serialNumber.toStdString(), newController);
         updateJSON(newController);
     }
 }
@@ -102,7 +102,8 @@ void LeafDiscovery::receivedUPnP(QHostAddress sender, QString payload) {
                 isFound = true;
             }
         }
-        for (auto foundController : mFoundControllers) {
+        //TODO: why is this hardware name and not serial number?
+        for (const auto& foundController : mFoundControllers.itemVector()) {
             if (foundController.hardwareName == controller.hardwareName) {
                 isFound = true;
             }
@@ -186,9 +187,9 @@ nano::LeafController LeafDiscovery::findControllerByIP(const QString& IP) {
         QString auth  = pieces[5];
 
         bool found = false;
-        for (auto foundController : mFoundControllers) {
+        for (const auto& foundController : mFoundControllers.itemVector()) {
             if (auth.compare(foundController.authToken) == 0) {
-                found = true;
+               found = true;
                controller = foundController;
             }
         }
@@ -233,7 +234,7 @@ nano::LeafController LeafDiscovery::findControllerByIP(const QString& IP) {
 
 
 nano::LeafController LeafDiscovery::findControllerByName(const QString& name) {
-    for (auto foundController : mFoundControllers) {
+    for (const auto& foundController : mFoundControllers.itemVector()) {
         if (foundController.name.compare(name) == 0) {
             return foundController;
         }
@@ -254,27 +255,18 @@ nano::LeafController LeafDiscovery::findControllerByName(const QString& name) {
 }
 
 bool LeafDiscovery::findControllerBySerial(const QString& serialNumber, nano::LeafController& leafController) {
-    for (const auto& foundController : mFoundControllers) {
-        if (foundController.serialNumber == serialNumber) {
-            leafController = foundController;
-            return true;
-        }
+    auto result = mFoundControllers.item(serialNumber.toStdString());
+    if (result.second) {
+        leafController = result.first;
     }
-    return false;
+    return result.second;
 }
 
 void LeafDiscovery::updateFoundDevice(const nano::LeafController& controller) {
-    for (auto&& foundController : mFoundControllers) {
-        if (foundController.serialNumber.compare(controller.serialNumber) == 0) {
-            foundController = controller;
-            updateJSON(foundController);
-        } else if (foundController.serialNumber == ""
-                   && foundController.IP == controller.IP
-                   && foundController.authToken == controller.authToken
-                   && foundController.port == controller.port) {
-            foundController = controller;
-            updateJSON(foundController);
-        }
+    auto result = mFoundControllers.item(controller.serialNumber.toStdString());
+    if (result.second) {
+        mFoundControllers.update(controller.serialNumber.toStdString(), controller);
+        updateJSON(controller);
     }
 }
 
@@ -303,7 +295,7 @@ void LeafDiscovery::connectUPnP(UPnPDiscovery* upnp) {
 }
 
 bool LeafDiscovery::isControllerConnected(const nano::LeafController& controller) {
-    for (auto&& foundController : mFoundControllers) {
+    for (const auto& foundController : mFoundControllers.itemVector()) {
         if (foundController.IP == controller.IP
                 && foundController.authToken == controller.authToken
                 && foundController.port == controller.port) {

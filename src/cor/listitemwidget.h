@@ -33,4 +33,17 @@ protected:
 
 }
 
+namespace std
+{
+    template <>
+    struct hash<cor::ListItemWidget>
+    {
+        size_t operator()(const cor::ListItemWidget& k) const
+        {
+            return std::hash<std::string>{}(k.key().toStdString());
+        }
+    };
+}
+
+
 #endif // LISTITEMWIDGET_H

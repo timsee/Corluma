@@ -406,4 +406,13 @@ ___
 * Added `GroupButtonsWidget`.
 * Fixed miscellaneous bugs.
 
+### **v0.13.8**
+#### The LightPage And Dictionary Update
+* Added a Miscellaneous section to the `LightPage` to show additional light groups.
+* Fixed miscellaneous bugs with displaying groups on `LightPage`.
+* Refactored exception handling.
+* Added a templated dictionary class with a constant runtime for lookups.
+* Refactored expensive lookups throughout the application to use the dictionary class. 
+* Added [Catch2](https://github.com/catchorg/Catch2) for unit tests.
+
 

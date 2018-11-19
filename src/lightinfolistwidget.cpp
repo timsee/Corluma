@@ -174,7 +174,7 @@ void LightInfoListWidget::resize(bool resizeFullWidget) {
 
 void LightInfoListWidget::deleteButtonPressed(bool) {
     QMessageBox::StandardButton reply;
-    HueLight light("NOT_VALID", ECommType::MAX);
+    HueLight light;
     for (auto widget : mHueWidgets) {
         if (widget->key().compare(mLastKey) == 0) {
             light = widget->light();

@@ -12,11 +12,14 @@
 namespace cor
 {
 
-Light::Light(const QString& uniqueID, ECommType commType) :
+Light::Light() : Light(QString("NOT_VALID"), QString("UNINITIALIZED"), ECommType::MAX) {}
+
+Light::Light(const QString& uniqueID, const QString& controller, ECommType commType) :
     palette("", std::vector<QColor>(1, QColor(0,0,0)), 50),
     customPalette(paletteToString(EPalette::custom), cor::defaultCustomColors(), 50),
     mUniqueID(uniqueID),
-    mCommType(commType) {
+    mCommType(commType),
+    mController(controller) {
 
     mProtocol = cor::convertCommTypeToProtocolType(commType);
 
@@ -39,8 +42,9 @@ Light::Light(const QString& uniqueID, ECommType commType) :
 cor::Light jsonToLight(const QJsonObject& object) {
     QString uniqueID = object["uniqueID"].toString();
     ECommType type = stringToCommType(object["type"].toString());
+    QString controller = object["controller"].toString();
 
-    cor::Light light(uniqueID, type);
+    cor::Light light(uniqueID, controller, type);
 
     if (object["routine"].isString()) {
         light.routine = stringToRoutine(object["routine"].toString());

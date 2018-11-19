@@ -12,6 +12,7 @@
 
 #include "cor/devicelist.h"
 #include "cor/listwidget.h"
+#include "cor/dictionary.h"
 #include "comm/commlayer.h"
 
 
@@ -40,7 +41,7 @@ public:
      *        is set to unchecked.
      * \param devices list of devices to compare to the widget.
      */
-    void setCheckedDevices(std::list<cor::Light> devices);
+    void setCheckedDevices(const std::list<cor::Light>& devices);
 
     /*!
      * \brief updateDevices update the state and number of devices displayed in the widget.
@@ -48,16 +49,7 @@ public:
      * \param removeIfNotFound if a widget exists already in the listwidget but doesn't exist in the list provided,
      *        this widget gets removed and all other widgets get shifted.
      */
-    void updateDevices(std::list<cor::Light> devices, bool removeIfNotFound = false);
-
-    /*!
-     * \brief devices getter for all devices being displayed by the widget.
-     * \return all devices being displayed by the widget.
-     */
-    const std::list<cor::Light>& devices() { return mDevices; }
-
-    /// getter for just the reachable devices in the group.
-    std::list<cor::Light> reachableDevices();
+    void updateDevices(const std::list<cor::Light>& devices, bool removeIfNotFound);
 
     /// getter for checked devices
     const std::list<cor::Light> checkedDevices();
@@ -91,10 +83,6 @@ private slots:
     void handleToggledSwitch(QString key, bool isOn) { emit deviceSwitchToggled(key, isOn); }
 
 private:
-
-    /// list of devices
-    std::list<cor::Light> mDevices;
-
 
     /*!
      * \brief communication pointer to communication object

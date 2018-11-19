@@ -3,7 +3,6 @@
 
 #include <list>
 #include "cor/light.h"
-#include "hue/bridge.h"
 
 /*!
  * \copyright

@@ -16,7 +16,7 @@ ArduCorInfoWidget::ArduCorInfoWidget(cor::Light light, QWidget *parent) : QWidge
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setTitleFontPointSize(14);
 
-    QString pathString = commTypeToString(light.commType()) +  " " + light.controller + " " + QString::number(light.index);
+    QString pathString = commTypeToString(light.commType()) +  " " + light.controller() + " " + QString::number(light.index);
     mPathLabel = new QLabel(pathString, this);
     mPathLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mPathLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);

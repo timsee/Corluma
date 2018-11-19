@@ -116,7 +116,7 @@ QString ListDeviceWidget::convertUglyHueNameToPrettyName(QString name) {
 }
 
 QString ListDeviceWidget::structToIdentifierString(const cor::Light& device) {
-    return commTypeToString(device.commType()) + "_" + device.uniqueID();
+    return commTypeToString(device.commType()) + "_" + device.uniqueID() + "_" + device.controller();
 }
 
 bool ListDeviceWidget::setHighlightChecked(bool checked) {
@@ -218,7 +218,7 @@ QString ListDeviceWidget::createName(const cor::Light& device) {
     } else if (device.protocol() == EProtocolType::hue) {
         nameText = convertUglyHueNameToPrettyName(device.name);
     } else {
-        nameText = device.controller;
+        nameText = device.controller();
     }
     if (nameText.size() > 20) {
         nameText = nameText.mid(0, 17) + "...";

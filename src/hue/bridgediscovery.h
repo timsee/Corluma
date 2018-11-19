@@ -10,10 +10,12 @@
 #include <QNetworkReply>
 
 #include "cor/jsonsavedata.h"
+#include "cor/dictionary.h"
 
 #include "hue/hueprotocols.h"
 #include "comm/upnpdiscovery.h"
 #include "huelight.h"
+#include "hue/bridge.h"
 
 class CommHue;
 
@@ -71,7 +73,7 @@ public:
      *        return valid data if isConnected() is returning true.
      * \return the struct that represents the current hue bridge.
      */
-    std::list<hue::Bridge> bridges() const { return mFoundBridges; }
+    const cor::Dictionary<hue::Bridge>& bridges() const { return mFoundBridges; }
 
     /// list of bridges that haven't been fully discovered
     std::list<hue::Bridge> notFoundBridges() const { return mNotFoundBridges; }
@@ -203,7 +205,7 @@ private:
     std::list<hue::Bridge> mNotFoundBridges;
 
     /// list of all controllers that have been verified and can be communicated with
-    std::list<hue::Bridge> mFoundBridges;
+    cor::Dictionary<hue::Bridge> mFoundBridges;
 
     /// parses the initial full packet from a Bridge, which contains all its lights, schedules, and groups info.
     void parseInitialUpdate(const hue::Bridge& bridge, QJsonDocument json);
@@ -231,5 +233,4 @@ private:
 };
 
 }
-
 #endif // HUE_BRIDGE_DISCOVERY_H

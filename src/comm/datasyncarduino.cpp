@@ -65,7 +65,7 @@ void DataSyncArduino::syncData() {
             cor::Light commLayerDevice = device;
             if (device.protocol() == EProtocolType::arduCor) {
                 if (mComm->fillDevice(commLayerDevice)) {
-                    if (checkThrottle(device.controller, device.commType())) {
+                    if (checkThrottle(device.controller(), device.commType())) {
                         if (!sync(device, commLayerDevice)) {
                             countOutOfSync++;
                         }
@@ -77,15 +77,10 @@ void DataSyncArduino::syncData() {
         }
 
         const auto& allControllers = mComm->arducor()->discovery()->controllers();
-        for (auto&& map : mMessages) {
+        for (const auto& map : mMessages) {
             //TODO: this isnt the safest way, it relies on unique names for each controller, but ignores
             //      the ECommType.
-            cor::Controller controller;
-            for (auto discoveredController : allControllers) {
-                if (discoveredController.name.compare(QString(map.first.c_str())) == 0) {
-                    controller = discoveredController;
-                }
-            }
+            cor::Controller controller = allControllers.item(map.first).first;
 
             // make a copy of the list of mesasges
             std::list<QString> allMessages = map.second;
@@ -311,10 +306,10 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
         for (auto message : messageArray) {
             // look if the key already exists.
             if (!message.isEmpty()) {
-                auto messageGroup = mMessages.find(dataDevice.controller.toStdString());
+                auto messageGroup = mMessages.find(dataDevice.controller().toStdString());
                 if (messageGroup == mMessages.end()) {
                     std::list<QString> list = {message};
-                    mMessages.insert(std::make_pair(dataDevice.controller.toStdString(), list));
+                    mMessages.insert(std::make_pair(dataDevice.controller().toStdString(), list));
                 } else {
                     messageGroup->second.push_back(message);
                 }

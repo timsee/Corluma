@@ -33,10 +33,15 @@ class Light {
 
 public:
 
+    Light();
+
     /*!
      * \brief Light Constructor
      */
-    Light(const QString& uniqueID, ECommType commType);
+    Light(const QString& uniqueID, const QString& controller, ECommType commType);
+
+    /// setter for controller name. Should be used sparingly, since some lookup operatins use the controller's name.
+    void controller(const QString& controller) { mController = controller; }
 
     /*!
      * \brief isReachable true if we can communicate with it, false otherwise
@@ -60,13 +65,6 @@ public:
     //-----------------------
     // Routines
     //-----------------------
-
-    /*!
-     * \brief controller the name of the connection. This varies by connection type. For example,
-     *        a UDP connection will use its IP address as a name, or a serial connection
-     *        will use its serial port.
-     */
-    QString controller = "UNINITIALIZED";
 
     /*!
      * \brief routine current lighting routine for this device.
@@ -153,6 +151,9 @@ public:
     /// getter for unique ID
     const QString& uniqueID() const { return mUniqueID; }
 
+    /// getter for controller
+    const QString& controller() const { return mController; }
+
     /// getter for type
     ECommType commType() const { return mCommType; }
 
@@ -174,7 +175,7 @@ public:
         if (colorMode       !=  rhs.colorMode) result = false;
         if (timeout         !=  rhs.timeout) result = false;
         if (speed           !=  rhs.speed) result = false;
-        if (controller.compare(rhs.controller)) result = false;
+        if (controller().compare(rhs.controller())) result = false;
 
         return result;
     }
@@ -193,7 +194,7 @@ public:
                    << " index: " << index
                    << " CommType: " << commTypeToString(commType()).toUtf8().toStdString()
                    << " Protocol: " << protocolToString(protocol()).toUtf8().toStdString()
-                   << " controller: " << controller.toUtf8().toStdString();
+                   << " controller: " << controller().toUtf8().toStdString();
         return QString::fromStdString(tempString.str());
     }
 
@@ -212,6 +213,13 @@ private:
 
     /// type of protocol for packets
     EProtocolType mProtocol;
+
+    /*!
+     * \brief mController the name of the connection. This varies by connection type. For example,
+     *        a UDP connection will use its IP address as a name, or a serial connection
+     *        will use its serial port.
+     */
+    QString mController;
 };
 
 /// converts json representation of routine to cor::Light
@@ -225,6 +233,18 @@ QJsonObject lightToJson(const cor::Light& light);
 /// compares light devices, ignoring state data and paying attention only to values that don't change.
 inline bool compareLight(const cor::Light& lhs, const cor::Light& rhs) {
     return (lhs.uniqueID() == rhs.uniqueID());
+}
+
+namespace std
+{
+    template <>
+    struct hash<cor::Light>
+    {
+        size_t operator()(const cor::Light& k) const
+        {
+            return std::hash<std::string>{}(k.uniqueID().toStdString());
+        }
+    };
 }
 
 #endif // COR_LIGHT_H

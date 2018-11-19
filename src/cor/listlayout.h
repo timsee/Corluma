@@ -6,6 +6,7 @@
 #include <QWidget>
 
 #include "listitemwidget.h"
+#include "cor/dictionary.h"
 
 namespace cor
 {
@@ -86,10 +87,10 @@ public:
     void sortDeviceWidgets();
 
     /// number of widgets in the scroll area.
-    uint32_t count() { return uint32_t(mWidgets.size()); }
+    uint32_t count() { return uint32_t(mWidgetDictionary.size()); }
 
     /// getter for all collection widgets.
-    const std::vector<cor::ListItemWidget*>& widgets() const { return mWidgets; }
+    const std::vector<cor::ListItemWidget*>& widgets() { return mWidgets; }
 
     /// getter for type of list
     EListType type() { return mType; }
@@ -99,8 +100,8 @@ public:
 
 private:
 
-    /// search function. returns the index of the widget with the key, and -1 if none is found
-    int searchForWidget(QString key);
+    /// maps keys to widgets while allowing quicker lookups
+    cor::Dictionary<cor::ListItemWidget*> mWidgetDictionary;
 
     /// list of all widgets displayed in this widget.
     std::vector<cor::ListItemWidget*> mWidgets;

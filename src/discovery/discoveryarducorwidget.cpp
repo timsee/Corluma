@@ -32,11 +32,11 @@ DiscoveryArduCorWidget::DiscoveryArduCorWidget(CommLayer *comm, QWidget *parent)
 
 
 void DiscoveryArduCorWidget::handleDiscovery(bool isCurrentCommType) {
-    const auto controllers = mComm->arducor()->discovery()->controllers();
-    const auto undiscoveredControllers = mComm->arducor()->discovery()->undiscoveredControllers();
+    const auto& controllers = mComm->arducor()->discovery()->controllers().itemVector();
+    const auto& undiscoveredControllers = mComm->arducor()->discovery()->undiscoveredControllers();
 
     if (isCurrentCommType) {
-        for (auto controller : controllers) {
+        for (const auto& controller : controllers) {
             mSearchWidget->addToConnectedList(controller.name);
         }
 
@@ -93,18 +93,15 @@ void DiscoveryArduCorWidget::minusButtonClicked() {
 
 
 bool DiscoveryArduCorWidget::doesYunControllerExistAlready(QString name) {
-    bool deviceFound = false;
-    for (auto&& controller : mComm->arducor()->discovery()->controllers()) {
-        if (controller.name.compare(name) == 0) {
-            deviceFound = true;
-        }
+    bool deviceFound = mComm->arducor()->discovery()->controllers().item(name.toStdString()).second;
+    if (deviceFound) {
+        return true;
     }
 
-    for (auto&& undiscoveredController : mComm->arducor()->discovery()->undiscoveredControllers()) {
+    for (const auto& undiscoveredController : mComm->arducor()->discovery()->undiscoveredControllers()) {
         if (undiscoveredController.name.compare(name) == 0) {
             deviceFound = true;
         }
     }
-
     return deviceFound;
 }

@@ -3,6 +3,7 @@
 #include <QDebug>
 
 #include "listdevicewidget.h"
+#include "cor/exception.h"
 
 namespace cor
 {
@@ -11,22 +12,21 @@ ListLayout::ListLayout(EListType type) : mType(type) {}
 
 
 void ListLayout::insertWidget(cor::ListItemWidget* widget) {
-    // insert into sorted set
-    int widgetIndex = searchForWidget(widget->key());
-    if (widgetIndex == -1) {
-        mWidgets.push_back(widget);
-    }
+    auto result = mWidgetDictionary.insert(widget->key().toStdString(), widget);
+    GUARD_EXCEPTION(result, "Widget insertion failed");
+    mWidgets.push_back(widget);
 }
 
 void ListLayout::removeWidget(cor::ListItemWidget* widget) {
-    auto findResult = std::find(mWidgets.begin(), mWidgets.end(), widget);
-    if (findResult == mWidgets.end()) {
-        qDebug() << "WARNING: Could not find widget in set" << __func__;
-        return;
-    }
-    // store index of inserted element
-    mWidgets.erase(findResult);
+    mWidgetDictionary.remove(widget);
+    auto iterator = std::find(mWidgets.begin(), mWidgets.end(), widget);
+    mWidgets.erase(iterator);
     delete widget;
+}
+
+void ListLayout::removeWidget(QString key) {
+    cor::ListItemWidget *tempWidget = mWidgetDictionary.item(key.toStdString()).first;
+    removeWidget(tempWidget);
 }
 
 QPoint ListLayout::widgetPosition(QWidget *widget) {
@@ -63,34 +63,9 @@ QPoint ListLayout::widgetPosition(QWidget *widget) {
 }
 
 
-
-void ListLayout::removeWidget(QString key) {
-    int widgetIndex = searchForWidget(key);
-    if (widgetIndex != -1) {
-        cor::ListItemWidget *tempWidget = widget(uint32_t(widgetIndex));
-        mWidgets.erase(mWidgets.begin() + widgetIndex);
-        delete tempWidget;
-    }
-}
-
-
-
-int ListLayout::searchForWidget(QString key) {
-    int widgetIndex = -1;
-    int i = 0;
-    for (auto widget : mWidgets) {
-        if (widget->key().compare(key) == 0) {
-            widgetIndex = i;
-        }
-        ++i;
-    }
-    return widgetIndex;
-}
-
-
 cor::ListItemWidget *ListLayout::widget(uint32_t index) {
     if (index >= mWidgets.size()) {
-        throw "ERROR: requested a widget that is out of bounds";
+        THROW_EXCEPTION("requested a widget that is out of bounds");
     }
     uint32_t i = 0;
     for (auto widget : mWidgets) {
@@ -103,17 +78,7 @@ cor::ListItemWidget *ListLayout::widget(uint32_t index) {
 }
 
 cor::ListItemWidget *ListLayout::widget(QString key) {
-    int widgetIndex = searchForWidget(key);
-    if (widgetIndex != -1) {
-        int i = 0;
-        for (auto widget : mWidgets) {
-            if (i == widgetIndex) {
-                return widget;
-            }
-            ++i;
-        }
-    }
-    return nullptr;
+    return mWidgetDictionary.item(key.toStdString()).first;
 }
 
 

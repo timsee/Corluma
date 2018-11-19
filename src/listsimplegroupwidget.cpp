@@ -16,10 +16,9 @@ ListSimpleGroupWidget::ListSimpleGroupWidget(CommLayer* comm,
                                                                 mComm(comm),
                                                                 mData(data) { }
 
-void ListSimpleGroupWidget::updateDevices(std::list<cor::Light> devices, bool removeIfNotFound) {
-    mDevices = devices;
+void ListSimpleGroupWidget::updateDevices(const std::list<cor::Light>& devices, bool removeIfNotFound) {
     int overallHeight = 0;
-    for (auto&& inputDevice : mDevices) {
+    for (const auto& inputDevice : devices) {
         bool foundDevice = false;
         // check if device widget exists
         uint32_t x = 0;
@@ -75,27 +74,17 @@ void ListSimpleGroupWidget::updateDevices(std::list<cor::Light> devices, bool re
         }
     }
     resizeWidgets();
-
-    //this->setFixedHeight(overallHeight);
 }
 
-std::list<cor::Light> ListSimpleGroupWidget::reachableDevices() {
-    std::list<cor::Light> reachableDevices;
-    for (auto device : mDevices) {
-        reachableDevices.push_back(device);
-    }
-    return reachableDevices;
-}
-
-void ListSimpleGroupWidget::setCheckedDevices(std::list<cor::Light> devices) {
+void ListSimpleGroupWidget::setCheckedDevices(const std::list<cor::Light>& devices) {
     int numOfDevices = 0;
-    for (auto&& existingWidget : widgets()) {
+    for (const auto& existingWidget : widgets()) {
         ListDeviceWidget *widget = qobject_cast<ListDeviceWidget*>(existingWidget);
         Q_ASSERT(widget);
 
-        cor::Light widgetDevice = widget->device();
+        const auto& widgetDevice = widget->device();
         bool found = false;
-        for (auto&& device : devices) {
+        for (const auto& device : devices) {
             if (compareLight(device, widgetDevice)) {
                 numOfDevices++;
                 found = true;

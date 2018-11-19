@@ -74,7 +74,7 @@ void DiscoveryHueWidget::hueDiscoveryUpdate(EHueDiscoveryState newState) {
     }
 
     hue::Bridge foundBridge;
-    for (auto foundBridges : mComm->hue()->discovery()->bridges()) {
+    for (auto foundBridges : mComm->hue()->discovery()->bridges().itemVector()) {
         foundBridge = foundBridges;
     }
 
@@ -117,11 +117,8 @@ void DiscoveryHueWidget::handleDiscovery(bool isCurrentCommType) {
 }
 
 void DiscoveryHueWidget::updateBridgeGUI() {
-    std::list<hue::Bridge> bridgeList;
+    std::list<hue::Bridge> bridgeList = mComm->hue()->bridges().itemList();
     // get all found bridges
-    for (const auto& bridge : mComm->hue()->bridges()) {
-        bridgeList.push_back(bridge);
-    }
     for (const auto& bridge : mComm->hue()->discovery()->notFoundBridges()) {
         bridgeList.push_back(bridge);
     }
@@ -181,11 +178,10 @@ void DiscoveryHueWidget::schedulesClosePressed() {
 }
 
 void DiscoveryHueWidget::changedName(QString key, QString newName) {
-    for (const auto& bridge : mComm->hue()->bridges()) {
-        if (bridge.id == key) {
-            mComm->hue()->discovery()->changeName(bridge, newName);
-            return;
-        }
+    const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
+    if (bridgeResult.second) {
+        mComm->hue()->discovery()->changeName(bridgeResult.first, newName);
+        return;
     }
 
     for (const auto& bridge : mComm->hue()->discovery()->notFoundBridges()) {
@@ -197,51 +193,47 @@ void DiscoveryHueWidget::changedName(QString key, QString newName) {
 }
 
 void DiscoveryHueWidget::groupsPressed(QString key) {
-    for (const auto& bridge : mComm->hue()->bridges()) {
-        if (bridge.id == key) {
-            qDebug() << " group this bridge!" << bridge;
-            mBridgeGroupsWidget->updateGroups(bridge.groups);
-            mBridgeGroupsWidget->isOpen(true);
-            mBridgeGroupsWidget->setVisible(true);
-            mBridgeGroupsWidget->show();
-            mBridgeGroupsWidget->resize();
-            greyOut(true);
-        }
+    const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
+    if (bridgeResult.second) {
+        mBridgeGroupsWidget->updateGroups(bridgeResult.first.groups);
+        mBridgeGroupsWidget->isOpen(true);
+        mBridgeGroupsWidget->setVisible(true);
+        mBridgeGroupsWidget->show();
+        mBridgeGroupsWidget->resize();
+        greyOut(true);
     }
 }
 
 void DiscoveryHueWidget::schedulesPressed(QString key) {
-    for (const auto& bridge : mComm->hue()->bridges()) {
-        if (bridge.id == key) {
-            mBridgeSchedulesWidget->updateSchedules(bridge.schedules);
-            mBridgeSchedulesWidget->isOpen(true);
-            mBridgeSchedulesWidget->setVisible(true);
-            mBridgeSchedulesWidget->show();
-            mBridgeSchedulesWidget->resize();
-            greyOut(true);
-        }
+    const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
+    if (bridgeResult.second) {
+        mBridgeSchedulesWidget->updateSchedules(bridgeResult.first.schedules.itemList());
+        mBridgeSchedulesWidget->isOpen(true);
+        mBridgeSchedulesWidget->setVisible(true);
+        mBridgeSchedulesWidget->show();
+        mBridgeSchedulesWidget->resize();
+        greyOut(true);
+
     }
 }
 
 
 void DiscoveryHueWidget::discoverHuesPressed(QString key) {
-    for (const auto& bridge : mComm->hue()->bridges()) {
-        if (bridge.id == key) {
-            qDebug() << " dsicvoered this bridge!" << bridge;
-            mHueLightDiscovery->isOpen(true);
-            mHueLightDiscovery->resize();
-            mHueLightDiscovery->setVisible(true);
-            mHueLightDiscovery->show(bridge);
-            greyOut(true);
-        }
+    const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
+    if (bridgeResult.second) {
+        qDebug() << " dsicvoered this bridge!" << bridgeResult.first;
+        mHueLightDiscovery->isOpen(true);
+        mHueLightDiscovery->resize();
+        mHueLightDiscovery->setVisible(true);
+        mHueLightDiscovery->show(bridgeResult.first);
+        greyOut(true);
     }
 }
 
 void DiscoveryHueWidget::bridgePressed(QString key) {
-    for (const auto& bridge : mComm->hue()->bridges()) {
-        if (bridge.id == key) {
-            qDebug() << "bridge pressed" << bridge;
-        }
+    const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
+    if (bridgeResult.second) {
+        qDebug() << "bridge pressed" << bridgeResult.first;
     }
 }
 

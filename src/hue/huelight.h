@@ -5,6 +5,8 @@
 #include "hueprotocols.h"
 #include "cor/light.h"
 
+
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2018.
@@ -18,8 +20,10 @@ class HueLight : public cor::Light
 {
 public:
 
+    HueLight();
+
     /// constructor
-    HueLight(const QString& uniqueID, ECommType type);
+    HueLight(const QString& uniqueID, const QString& controller, ECommType type);
 
     /*!
      * \brief type the type of Hue product connected.
@@ -40,16 +44,14 @@ public:
      * \brief softwareVersion exact software version of light.
      */
     QString softwareVersion;
+
+    /// SHueLight equal operator
+    bool operator==(const HueLight& rhs) const {
+        bool result = true;
+        if (uniqueID() !=  rhs.uniqueID()) result = false;
+        return result;
+    }
 };
-
-
-/// SHueLight equal operator
-inline bool operator==(const HueLight& lhs, const HueLight& rhs)
-{
-    bool result = true;
-    if (lhs.uniqueID()     !=  rhs.uniqueID()) result = false;
-    return result;
-}
 
 /*!
  * \brief checkForHueWithMostFeatures takes a list of hue light structs, and returns
@@ -95,5 +97,16 @@ inline EHueType checkForHueWithMostFeatures(std::list<HueLight> lights) {
 }
 
 
+namespace std
+{
+    template <>
+    struct hash<HueLight>
+    {
+        size_t operator()(const HueLight& k) const
+        {
+            return std::hash<std::string>{}(k.uniqueID().toStdString());
+        }
+    };
+}
 
 #endif // HUE_HUELIGHT_H

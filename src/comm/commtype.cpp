@@ -25,7 +25,13 @@ CommType::CommType(ECommType type) : mType(type) {
 }
 
 void CommType::controllerDiscovered(const QString& name, const std::list<cor::Light>& lights) {
-    mDeviceTable.insert(std::make_pair(name.toStdString(), lights));
+    std::vector<std::pair<std::string, cor::Light>> intializer;
+    for (const auto& light : lights) {
+        intializer.emplace_back(light.uniqueID().toStdString(), light);
+    }
+    cor::Dictionary<cor::Light> lightDict(intializer);
+
+    mDeviceTable.insert(std::make_pair(name.toStdString(), lightDict));
     resetStateUpdateTimeout();
     emit updateReceived(mType);
 }
@@ -36,46 +42,53 @@ bool CommType::removeController(const QString& controller) {
 }
 
 void CommType::updateDevice(cor::Light device) {
-    auto deviceList = mDeviceTable.find(device.controller.toStdString());
-    if (deviceList != mDeviceTable.end()) {
-        for (auto it = deviceList->second.begin(); it != deviceList->second.end(); ++it) {
-            if (compareLight(device, *it)) {
-                deviceList->second.remove((*it));
-                device.lastUpdateTime = mElapsedTimer.elapsed();
-                deviceList->second.push_back(device);
-                emit updateReceived(mType);
-                return;
-            }
+    auto controllerResult = mDeviceTable.find(device.controller().toStdString());
+    if (controllerResult != mDeviceTable.end()) {
+        auto dictResult = controllerResult->second.item(device.uniqueID().toStdString());
+        if (dictResult.second) {
+            device.lastUpdateTime = mElapsedTimer.elapsed();
+            controllerResult->second.update(device.uniqueID().toStdString(), device);
+            emit updateReceived(mType);
         }
     }
-
-    // device not found
-    qDebug() << "WARNING: tried to update device that didnt exist" << device;
-//    deviceList->second.push_back(device);
-//    emit updateReceived(mType);
 }
 
 
 bool CommType::fillDevice(cor::Light& device) {
-    for (const auto& controllers : mDeviceTable) {
-        for (const auto& storedDevice : controllers.second) {
-            if (device.uniqueID() == storedDevice.uniqueID()) {
-                device = storedDevice;
-                return true;
-            }
+    auto controllerIterator = mDeviceTable.find(device.controller().toStdString());
+    if (controllerIterator != mDeviceTable.end()) {
+        auto deviceResult = controllerIterator->second.item(device.uniqueID().toStdString());
+        if (deviceResult.second) {
+            device = deviceResult.first;
+            return true;
         }
     }
     return false;
 }
 
 
+QString CommType::controllerName(const QString& uniqueID) {
+    for (const auto& keyPair : mDeviceTable) {
+        const auto& result = keyPair.second.item(uniqueID.toStdString());
+        if (result.second) {
+            return QString(keyPair.first.c_str());
+        }
+    }
+    return "NOT_FOUND";
+}
+
 void CommType::resetStateUpdateTimeout() {
     if (!mStateUpdateTimer->isActive()) {
         mStateUpdateTimer->start(mStateUpdateInterval);
         mReachabilityTest->start(REACHABILITY_TIMEOUT);
         for (auto&& it : mDeviceTable) {
-            for (auto&& device : it.second) {
-                device.lastUpdateTime = 0;
+            for (const auto& device : it.second.itemVector()) {
+                auto dictResult = it.second.item(device.uniqueID().toStdString());
+                if (dictResult.second) {
+                    auto device = dictResult.first;
+                    device.lastUpdateTime = 0;
+                    it.second.update(device.uniqueID().toStdString(), device);
+                }
             }
         }
         mElapsedTimer.restart();
@@ -106,12 +119,15 @@ void CommType::checkReachability() {
     auto elapsedTime = mElapsedTimer.elapsed();
     const int kThreshold = 15000;
     for (auto&& it : mDeviceTable) {
-        for (auto&& device : it.second) {
-            if  (elapsedTime < kThreshold) {
-
-            } else if (device.isReachable && (device.lastUpdateTime < (elapsedTime - kThreshold))) {
-                qDebug() << " no update for this device! " << device;
-                device.isReachable = false;
+        for (const auto& device : it.second.itemVector()) {
+            auto dictResult = it.second.item(device.uniqueID().toStdString());
+            if (dictResult.second) {
+                auto device = dictResult.first;
+                if (device.isReachable && (device.lastUpdateTime < (elapsedTime - kThreshold))) {
+                    qDebug() << " no update for this device! " << device;
+                    device.isReachable = false;
+                    it.second.update(device.uniqueID().toStdString(), device);
+                }
             }
         }
     }

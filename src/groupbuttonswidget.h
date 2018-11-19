@@ -5,6 +5,7 @@
 #include <QGridLayout>
 
 #include "cor/groupbutton.h"
+#include "cor/dictionary.h"
 
 #include <vector>
 
@@ -27,6 +28,12 @@ class GroupButtonsWidget : public QWidget
 public:
     /// constructor
     explicit GroupButtonsWidget(QWidget *parent, const QString& roomName, const std::vector<QString>& groups);
+
+    /// add a group to a the list of supported groups
+    void addGroup(const QString& group);
+
+    /// get list of groups shown by the widget
+    std::list<QString> groupNames();
 
     /// key of the currently selected group
     const QString& currentKey() const { return mCurrentKey; }
@@ -69,14 +76,20 @@ private:
     /// stores the key of the currently selected group
     QString mCurrentKey;
 
+    /// stores the name of the room it is representing
+    QString mRoomName;
+
     /// stores the group button widgets
     std::vector<cor::GroupButton*> mButtons;
 
     /// stores the map of the relabeled named
-    std::vector<std::pair<QString, QString>> mRelabeledNames;
+    cor::Dictionary<std::string> mRelabeledNames;
 
     /// main layout
     QGridLayout *mLayout;
+
+    /// number of buttons displayed in row
+    int mGroupCount;
 };
 
 #endif // LISTGROUPTOPWIDGET_H

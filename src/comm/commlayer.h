@@ -106,13 +106,23 @@ public:
      * \param type the communication type to request.
      * \return a hash table of all connected devices of the given type.
      */
-    const std::unordered_map<std::string, std::list<cor::Light> >& deviceTable(ECommType type) {
+    const std::unordered_map<std::string, cor::Dictionary<cor::Light>>& deviceTable(ECommType type) {
         return commByType(type)->deviceTable();
     }
 
-    /// list of all devices from all comm types
-    const std::list<cor::Light> allDevices();
+    /*!
+     * \brief controllerName returns the controller name based on the commtype and unique ID. Will return an error
+     *        string if controller is not found
+     * \param type commtype to look for a controller in
+     * \param uniqueID unique ID of light
+     * \return name of lights controller, if it exists.
+     */
+    QString controllerName(ECommType type, const QString& uniqueID) {
+        return commByType(type)->controllerName(uniqueID);
+    }
 
+    /// list of all devices from all comm types
+    std::list<cor::Light> allDevices();
 
     /// list containing all arduino based cor::Controllers
     const std::vector<cor::Controller> allArduinoControllers();

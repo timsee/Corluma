@@ -39,7 +39,7 @@ void CommHTTP::sendPacket(const cor::Controller& controller, QString& packet) {
 
 void CommHTTP::stateUpdate() {
     if (shouldContinueStateUpdate()) {
-        for (auto&& controller : mDiscovery->controllers()) {
+        for (const auto& controller : mDiscovery->controllers().itemVector()) {
             QString packet = QString("%1&").arg(QString::number(int(EPacketHeader::stateUpdateRequest)));
             // add CRC, if in use
             if (controller.isUsingCRC) {

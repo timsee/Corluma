@@ -81,9 +81,6 @@ public:
     /// getter for the group data.
     const cor::LightGroup& group() { return mGroup; }
 
-    /// resize the widgets in the in this widget
-    void resizeInteralWidgets();
-
     /// getter for the desired height of the widget
     int widgetHeightSum();
 

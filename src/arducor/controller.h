@@ -92,4 +92,17 @@ QJsonObject controllerToJson(const cor::Controller& controller);
 
 }
 
+
+namespace std
+{
+    template <>
+    struct hash<cor::Controller>
+    {
+        size_t operator()(const cor::Controller& k) const
+        {
+            return std::hash<std::string>{}(k.name.toStdString());
+        }
+    };
+}
+
 #endif // CONTROLLER_H

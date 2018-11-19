@@ -67,9 +67,9 @@ void EditGroupPage::showGroup(QString key, std::list<cor::Light> groupDevices, s
     repaint();
 }
 
-void EditGroupPage::updateDevices(std::list<cor::Light> groupDevices, std::list<cor::Light> devices) {
-    mSimpleGroupWidget->updateDevices(devices);
-    mSimpleGroupWidget->setCheckedDevices(groupDevices);
+void EditGroupPage::updateDevices(const std::list<cor::Light>& checkedDevices, const std::list<cor::Light>& devices) {
+    mSimpleGroupWidget->updateDevices(devices, false);
+    mSimpleGroupWidget->setCheckedDevices(checkedDevices);
 
     resize();
 }
@@ -211,7 +211,7 @@ void EditGroupPage::saveChanges() {
     bool devicesAreValid = true;
     if (newDevices.size() > 0) {
         for (auto& device : newDevices) {
-            if (device.controller.compare("") == 0
+            if (device.controller().compare("") == 0
                     || device.index == 0) {
                 devicesAreValid = false;
             }
@@ -287,7 +287,7 @@ void EditGroupPage::saveChanges() {
             }
         }
         if (hueLights.size() > 0) {
-            for (const auto& bridge : mComm->hue()->bridges()) {
+            for (const auto& bridge : mComm->hue()->bridges().itemVector()) {
                 // check if group already exists
                 auto hueGroups = mComm->hue()->groups(bridge);
                 bool groupExists = false;

@@ -30,8 +30,8 @@ ListRoomWidget::ListRoomWidget(const cor::LightGroup& group,
     if (!group.groups.empty()) {
         std::vector<QString> widgetNames;
         widgetNames.reserve(group.groups.size());
-        for (const auto& group : group.groups) {
-            widgetNames.emplace_back(group.name);
+        for (const auto& subGroup : group.groups) {
+            widgetNames.emplace_back(subGroup.name);
         }
         mGroupsButtonWidget = new GroupButtonsWidget(this, mGroup.name, widgetNames);
         connect(mGroupsButtonWidget, SIGNAL(groupButtonPressed(QString)), this, SLOT(groupPressed(QString)));
@@ -51,7 +51,6 @@ ListRoomWidget::ListRoomWidget(const cor::LightGroup& group,
 
 void ListRoomWidget::updateTopWidget() {
     if (!mGroup.groups.empty()) {
-
         uint32_t reachableCount = 0;
         uint32_t checkedCount = 0;
         for (const auto& device : mGroup.devices) {
@@ -85,7 +84,6 @@ void ListRoomWidget::updateTopWidget() {
                         checkedCount++;
                     }
                 }
-
             }
             mGroupsButtonWidget->updateCheckedDevices(group.name,
                                                       checkedCount,
@@ -95,6 +93,18 @@ void ListRoomWidget::updateTopWidget() {
 }
 
 void ListRoomWidget::updateGroup(const cor::LightGroup& group, bool removeIfNotFound) {
+    // for every group, loop through the groups and make sure they are represented in the top widet
+    for (const auto& subGroup : group.groups) {
+        bool subGroupFound = false;
+        for (const auto& groupButtonsName : mGroupsButtonWidget->groupNames()) {
+            if (groupButtonsName == subGroup.name) {
+                subGroupFound = true;
+            }
+        }
+        if (!subGroupFound) {
+            mGroupsButtonWidget->addGroup(subGroup.name);
+        }
+    }
     mGroup = group;
     updateTopWidget();
 
@@ -108,7 +118,7 @@ void ListRoomWidget::updateGroup(const cor::LightGroup& group, bool removeIfNotF
             //----------------
             // Update Widget, if it already exists
             //----------------
-            if ((inputDevice.uniqueID() == existingWidget->device().uniqueID()) && (inputDevice.controller != "UNINITIALIZED")) {
+            if ((inputDevice.uniqueID() == existingWidget->device().uniqueID()) && (inputDevice.controller() != "UNINITIALIZED")) {
                 foundDevice = true;
                 existingWidget->updateWidget(inputDevice);
             }
@@ -119,7 +129,7 @@ void ListRoomWidget::updateGroup(const cor::LightGroup& group, bool removeIfNotF
         // Create Widget, if not found
         //----------------
 
-        if (!foundDevice && (inputDevice.controller != "UNINITIALIZED")) {
+        if (!foundDevice && (inputDevice.controller() != "UNINITIALIZED")) {
             ListDeviceWidget *widget = new ListDeviceWidget(inputDevice,
                                                             false,
                                                             QSize(this->width(), this->height() / 6),
@@ -152,7 +162,7 @@ void ListRoomWidget::updateGroup(const cor::LightGroup& group, bool removeIfNotF
     }
 
     mListLayout.sortDeviceWidgets();
-    resizeInteralWidgets();
+    this->setFixedHeight(widgetHeightSum());
 }
 
 
@@ -168,12 +178,6 @@ int ListRoomWidget::widgetHeightSum() {
         height += mListLayout.overallSize().height();
     }
     return height;
-}
-
-
-void ListRoomWidget::resizeInteralWidgets() {
-    int height = widgetHeightSum();
-    this->setFixedHeight(height);
 }
 
 void ListRoomWidget::setShowButtons(bool show) {
@@ -193,7 +197,8 @@ void ListRoomWidget::setShowButtons(bool show) {
             mGroupsButtonWidget->setVisible(false);
         }
     }
-    resizeInteralWidgets();
+
+    this->setFixedHeight(widgetHeightSum());
     emit buttonsShown(mKey, mDropdownTopWidget->showButtons());
 }
 
@@ -210,7 +215,7 @@ void ListRoomWidget::closeWidget() {
     for (const auto& device : mListLayout.widgets()) {
         device->setVisible(false);
     }
-    resizeInteralWidgets();
+    this->setFixedHeight(widgetHeightSum());
 }
 
 std::list<cor::Light> ListRoomWidget::reachableDevices() {
@@ -346,6 +351,7 @@ void ListRoomWidget::showDevices(const std::list<cor::Light>& devices) {
             widget->setVisible(false);
         }
     }
-    resizeInteralWidgets();
+
+    this->setFixedHeight(widgetHeightSum());
     resize();
 }

@@ -9,8 +9,8 @@
 #include <list>
 
 #include "cor/lightgroup.h"
-
-class HueLight;
+#include "cor/dictionary.h"
+#include "hue/huelight.h"
 
 enum class EBridgeDiscoveryState {
    lookingForResponse,
@@ -71,16 +71,26 @@ struct SHueSchedule {
         return result;
     }
 
+    /// SHueSchedule equal operator
+    bool operator==(const SHueSchedule& rhs) const {
+        bool result = true;
+        if (name.compare(rhs.name)) result = false;
+        if (description.compare(rhs.description)) result = false;
+        if (index     !=  rhs.index) result = false;
+        return result;
+    }
 };
 
-/// SHueSchedule equal operator
-inline bool operator==(const SHueSchedule& lhs, const SHueSchedule& rhs) {
-    bool result = true;
-    if (lhs.name.compare(rhs.name)) result = false;
-    if (lhs.description.compare(rhs.description)) result = false;
-    if (lhs.index     !=  rhs.index) result = false;
-
-    return result;
+namespace std
+{
+    template <>
+    struct hash<SHueSchedule>
+    {
+        size_t operator()(const SHueSchedule& k) const
+        {
+            return std::hash<std::string>{}(k.name.toStdString());
+        }
+    };
 }
 
 namespace hue
@@ -125,10 +135,10 @@ public:
     QString macaddress = "";
 
     /// vector of lights for a bridge
-    std::vector<HueLight> lights;
+    cor::Dictionary<HueLight> lights;
 
     /// list of the schedules stored on the bridge
-    std::list<SHueSchedule> schedules;
+    cor::Dictionary<SHueSchedule> schedules;
 
     /// list of the groups stored on the bridge
     std::list<cor::LightGroup> groups;
@@ -166,6 +176,18 @@ Bridge jsonToBridge(const QJsonObject& object);
 /// converts a bridge to a json object
 QJsonObject bridgeToJson(const Bridge& controller);
 
+}
+
+namespace std
+{
+    template <>
+    struct hash<hue::Bridge>
+    {
+        size_t operator()(const hue::Bridge& k) const
+        {
+            return std::hash<std::string>{}(k.id.toStdString());
+        }
+    };
 }
 
 

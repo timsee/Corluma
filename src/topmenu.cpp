@@ -8,6 +8,7 @@
 #include "mainwindow.h"
 #include "topmenu.h"
 #include "cor/utils.h"
+#include "cor/exception.h"
 #include "hue/huelight.h"
 
 TopMenu::TopMenu(QWidget* parent,
@@ -297,7 +298,9 @@ void TopMenu::updatePaletteButton() {
         std::list<cor::Light> devices = mData->devices();
         std::list<HueLight> hues;
         for (auto& device : devices) {
-            hues.push_back(mComm->hue()->hueLightFromLight(device));
+            if (device.protocol() == EProtocolType::hue) {
+                hues.push_back(mComm->hue()->hueLightFromLight(device));
+            }
         }
 
         EHueType bestHueType = checkForHueWithMostFeatures(hues);
@@ -309,7 +312,7 @@ void TopMenu::updatePaletteButton() {
         } else if (bestHueType == EHueType::extended){
             mMainLayout->updateColorPageButton(":images/colorWheel_icon.png");
         } else {
-            throw "did not find any hue lights when expecting hue lights";
+            THROW_EXCEPTION("did not find any hue lights when expecting hue lights");
         }
     } else {
         if (mData->devices().size() == 0) {
@@ -490,11 +493,11 @@ void TopMenu::setupColorFloatingLayout() {
             horizontalButtons = {QString("Temperature"), QString("RGB"), QString("Settings")};
             mColorPage->changePageType(EColorPageType::RGB, true);
         } else {
-            throw "did not find any hue lights when expecting hue lights";
+            THROW_EXCEPTION("did not find any hue lights when expecting hue lights");
         }
     } else {
         // shouldn't get here...
-        throw "trying to open single color page when no recognized devices are selected";
+        THROW_EXCEPTION("trying to open single color page when no recognized devices are selected");
     }
 
     mColorVerticalFloatingLayout->setupButtons(verticalButtons, EButtonSize::small);

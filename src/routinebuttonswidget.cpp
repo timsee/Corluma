@@ -6,6 +6,7 @@
 
 #include "routinebuttonswidget.h"
 #include "cor/presetpalettes.h"
+#include "cor/exception.h"
 
 #include <QStyleOption>
 #include <QGraphicsOpacityEffect>
@@ -18,7 +19,7 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector
     mLayout->setContentsMargins(0, 0, 0, 0);
     mLayout->setHorizontalSpacing(0);
     mLayout->setVerticalSpacing(0);
-    cor::Light light("Routines", ECommType::MAX);
+    cor::Light light("Routines", "Routines", ECommType::MAX);
     if (widgetGroup == EWidgetGroup::singleRoutines) {
         mRoutines = std::vector<std::pair<QString, QJsonObject> >(8);
         QJsonObject routineObject;
@@ -142,7 +143,7 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector
             mLayout->addWidget(mLabels[i], rowCount + 1, int(i % maxColumn));
        }
     } else {
-        throw "RoutinesButtonWidget is not set up to handle that widget group";
+        THROW_EXCEPTION("RoutinesButtonWidget is not set up to handle that widget group");
     }
 
    setLayout(mLayout);

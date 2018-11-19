@@ -5,6 +5,7 @@
  */
 #include "presetpalettes.h"
 #include "cor/palette.h"
+#include "cor/exception.h"
 
 #include <QJsonParseError>
 #include <QJsonArray>
@@ -21,10 +22,9 @@ PresetPalettes::PresetPalettes() : mPalettes(std::vector<Palette>(uint32_t(EPale
         // convert to json
         QJsonParseError error;
         QJsonDocument doc = QJsonDocument::fromJson(data.toUtf8(), &error);
-        QJsonArray array = doc.array();
 
         // fill the palettes into the vector
-        for (auto jsonRef : array) {
+        for (auto jsonRef : doc.array()) {
             if (jsonRef.isObject()) {
                 QJsonObject object = jsonRef.toObject();
                 Palette palette(object);
@@ -32,7 +32,7 @@ PresetPalettes::PresetPalettes() : mPalettes(std::vector<Palette>(uint32_t(EPale
             }
         }
     } else {
-        throw "can't find resource for palettes";
+        THROW_EXCEPTION("can't find resource for palettes");
     }
 
 

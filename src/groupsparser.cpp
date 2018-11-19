@@ -120,7 +120,7 @@ void GroupsParser::saveNewCollection(const QString& groupName, const std::list<c
 
     // create string of jsondata to add to file
     QJsonArray deviceArray;
-    for (auto&& device : devices) {
+    for (const auto& device : devices) {
         if (device.protocol() != EProtocolType::hue) {
             QJsonObject object;
 
@@ -134,7 +134,7 @@ void GroupsParser::saveNewCollection(const QString& groupName, const std::list<c
     groupObject["devices"] = deviceArray;
     if(!mJsonData.isNull() && deviceArray.size() > 0) {
         if(mJsonData.isArray()) {
-            QJsonArray array = mJsonData.array();
+            auto array = mJsonData.array();
             mJsonData.array().push_front(groupObject);
             array.push_front(groupObject);
             mJsonData.setArray(array);
@@ -146,9 +146,8 @@ void GroupsParser::saveNewCollection(const QString& groupName, const std::list<c
 
             // check that it doesn't already exist, if it does, replace the old version
             bool found = false;
-            for (auto&& collection : mCollectionList) {
+            for (const auto& collection : mCollectionList) {
                 if (collection.isRoom == group.isRoom && collection.name == group.name) {
-                    collection = group;
                     found = true;
                     break;
                 }
@@ -172,12 +171,12 @@ void GroupsParser::clearAndResaveAppDataDEBUG() {
     QJsonDocument newDocument;
     newDocument.setArray(QJsonArray());
     mJsonData = newDocument;
-    for (auto mood : mMoodList) {
+    for (const auto& mood : mMoodList) {
         qDebug() << "save: " << mood.name;
         saveNewMood(mood.name, mood.devices);
     }
 
-    for (auto collection : mCollectionList) {
+    for (const auto& collection : mCollectionList) {
         qDebug() << "collection: " << collection.name;
         saveNewCollection(collection.name, collection.devices, collection.isRoom);
     }
@@ -190,9 +189,9 @@ void GroupsParser::lightDeleted(const QString& uniqueID) {
             QJsonArray array = mJsonData.array();
             int groupIndex = 0;
             // loop through array of all group data
-            for (auto value : array) {
+            for (const auto value : array) {
                 // convert to a json object
-                QJsonObject object = value.toObject();
+                const auto& object = value.toObject();
                 // search for the unique ID in its devices array
                 QJsonArray devicesArray = object["devices"].toArray();
                 bool detectChanges = false;
@@ -298,7 +297,7 @@ void GroupsParser::parseCollection(const QJsonObject& object) {
                 // convert to Corluma types from certain Qt types
                 ECommType type = stringToCommType(typeString);
 
-                cor::Light light(uniqueID, type);
+                cor::Light light(uniqueID, "NO_CONTROLLER", type);
                 if (light.protocol() == EProtocolType::arduCor) {
                     light.name = uniqueID;
                 }
@@ -395,7 +394,7 @@ void GroupsParser::parseMood(const QJsonObject& object) {
                     speed = int(device["speed"].toDouble());
                 }
 
-                cor::Light light(uniqueID, type);
+                cor::Light light(uniqueID, "NO_CONTROLLER", type);
                 light.isReachable = true;
                 light.isOn = isOn;
                 light.majorAPI = majorAPI;

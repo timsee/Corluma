@@ -55,7 +55,7 @@ void DataSyncSettings::syncData() {
                 cor::Light commLayerDevice = device;
                 if (device.protocol() == EProtocolType::arduCor && device.isReachable) {
                     mComm->fillDevice(commLayerDevice);
-                    if (checkThrottle(device.controller, device.commType())) {
+                    if (checkThrottle(device.controller(), device.commType())) {
                         bool result = sync(device);
                         if (!result) {
                             countOutOfSync++;
@@ -124,7 +124,7 @@ bool DataSyncSettings::sync(const cor::Light& availableDevice) {
     if (countOutOfSync) {
         //qDebug() << "packet size" << packet.size() <<"count out of sync" << countOutOfSync;
         mComm->arducor()->sendPacket(controller, packet);
-        resetThrottle(availableDevice.controller, availableDevice.commType());
+        resetThrottle(availableDevice.controller(), availableDevice.commType());
     }
 
     return (countOutOfSync == 0);

@@ -12,6 +12,7 @@
 #include <unordered_map>
 
 #include "cor/light.h"
+#include "cor/dictionary.h"
 
 /*!
  * \copyright
@@ -103,10 +104,19 @@ public:
     bool fillDevice(cor::Light& device);
 
     /*!
+     * \brief controllerName look up a controller's name by providing the unique ID of a light. If no controller
+     *        matches the ID, it will return an error string. The complexity of the lookup scales by number of controllers
+     *        instead of the number of devices.
+     * \param uniqueID unique ID to request a light from
+     * \return the name of the controller, if the uniqueID is found.
+     */
+    QString controllerName(const QString& uniqueID);
+
+    /*!
      * \brief deviceList list of the light devices
      * \return list of the light devices
      */
-    const std::unordered_map<std::string, std::list<cor::Light> >& deviceTable() const noexcept { return mDeviceTable; }
+    const std::unordered_map<std::string, cor::Dictionary<cor::Light>>& deviceTable() const noexcept { return mDeviceTable; }
 
 signals:
 
@@ -178,7 +188,7 @@ private:
      * \brief mDeviceTable hash table of all available devices. the hash key is the controller name
      *        and the list associated with it is all known devices connected to that controller.
      */
-    std::unordered_map<std::string, std::list<cor::Light> > mDeviceTable;
+    std::unordered_map<std::string, cor::Dictionary<cor::Light>> mDeviceTable;
 
 };
 

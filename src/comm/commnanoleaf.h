@@ -88,7 +88,7 @@ public:
     const std::vector<QColor> customColors() { return mCustomColors; }
 
     /// getter for list of nanoleaf controllers
-    const std::list<nano::LeafController> controllers() { return mDiscovery->foundControllers(); }
+    const cor::Dictionary<nano::LeafController>& controllers() { return mDiscovery->foundControllers(); }
 
     /// getter for discovery object
     nano::LeafDiscovery *discovery() { return mDiscovery; }

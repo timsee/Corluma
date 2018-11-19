@@ -164,7 +164,7 @@ void CommNanoleaf::testAuth(const nano::LeafController& controller) {
 }
 
 void CommNanoleaf::stateUpdate() {
-    for (auto&& controller : mDiscovery->foundControllers()) {
+    for (const auto& controller : mDiscovery->foundControllers().itemVector()) {
         if (shouldContinueStateUpdate()) {
             QNetworkRequest request = networkRequest(controller, "");
             mNetworkManager->get(request);
@@ -248,8 +248,7 @@ void CommNanoleaf::replyFinished(QNetworkReply* reply) {
 
             if (addToDeviceTable) {
                 std::list<cor::Light> newDeviceList;
-                cor::Light light(controller.serialNumber, ECommType::nanoleaf);
-                light.controller = name;
+                cor::Light light(controller.serialNumber, name, ECommType::nanoleaf);
                 newDeviceList.push_back(light);
                 controllerDiscovered(name, newDeviceList);
             }
@@ -262,8 +261,7 @@ void CommNanoleaf::replyFinished(QNetworkReply* reply) {
                         QString authToken = object["auth_token"].toString();
                         mDiscovery->foundNewAuthToken(controller, authToken);
                         std::list<cor::Light> newDeviceList;
-                        cor::Light light(controller.serialNumber, ECommType::nanoleaf);
-                        light.controller = controller.hardwareName;
+                        cor::Light light(controller.serialNumber, controller.hardwareName, ECommType::nanoleaf);
                         newDeviceList.push_back(light);
                         controllerDiscovered(controller.hardwareName, newDeviceList);
                     } else if (object["serialNo"].isString()
@@ -294,14 +292,12 @@ void CommNanoleaf::renameController(nano::LeafController controller, const QStri
 
     // add light to new controller
     std::list<cor::Light> newDeviceList;
-    cor::Light light(controller.serialNumber,ECommType::nanoleaf);
-    light.controller = name;
+    cor::Light light(controller.serialNumber, name, ECommType::nanoleaf);
     newDeviceList.push_back(light);
     controllerDiscovered(name, newDeviceList);
 
     // signal to update group data
-    cor::Light oldLight(controller.serialNumber, ECommType::nanoleaf);
-    oldLight.name = oldName;
+    cor::Light oldLight(controller.serialNumber, oldName, ECommType::nanoleaf);
     emit lightRenamed(oldLight, name);
 
 }
@@ -389,8 +385,7 @@ void CommNanoleaf::parseCommandRequestPacket(const nano::LeafController& control
 
         }
 
-        cor::Light light(controller.serialNumber, ECommType::nanoleaf);
-        light.controller = controller.name;
+        cor::Light light(controller.serialNumber, controller.name, ECommType::nanoleaf);
         fillDevice(light);
         // the display is always treated as custom colors, its only ever used by custom routines though
         light.customPalette = Palette(paletteToString(EPalette::custom), colors, 51);
@@ -537,8 +532,7 @@ void CommNanoleaf::parseStateUpdatePacket(nano::LeafController& controller, cons
                 && stateObject["sat"].isObject()
                 && stateObject["ct"].isObject()
                 && stateObject["colorMode"].isString()) {
-            cor::Light light(controller.serialNumber, ECommType::nanoleaf);
-            light.controller = controller.name;
+            cor::Light light(controller.serialNumber, controller.name, ECommType::nanoleaf);
             fillDevice(light);
 
             light.isReachable = true;
@@ -897,15 +891,13 @@ void CommNanoleaf::routineChange(const nano::LeafController& controller, QJsonOb
     }
     if (routine == ERoutine::singleSolid) {
         singleSolidColorChange(controller, color);
-        cor::Light light(controller.serialNumber, ECommType::nanoleaf);
-        light.controller = controller.name;
+        cor::Light light(controller.serialNumber, controller.name, ECommType::nanoleaf);
         fillDevice(light);
         light.color = color;
         light.routine = ERoutine::singleSolid;
         updateDevice(light);
     } else {
-        cor::Light light(controller.serialNumber, ECommType::nanoleaf);
-        light.controller = controller.name;
+        cor::Light light(controller.serialNumber, controller.name, ECommType::nanoleaf);
         fillDevice(light);
         light.routine = routine;
 

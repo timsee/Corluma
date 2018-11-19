@@ -1,5 +1,5 @@
-#ifndef NANOLEAFCONTROLLER_H
-#define NANOLEAFCONTROLLER_H
+#ifndef NANO_LEAFCONTROLLER_H
+#define NANO_LEAFCONTROLLER_H
 
 #include <QString>
 #include <QColor>
@@ -10,8 +10,7 @@
 #include "panels.h"
 #include "cor/range.h"
 
-namespace nano
-{
+namespace nano {
 
 /*!
  * \copyright
@@ -119,7 +118,6 @@ public:
         if (serialNumber  !=  rhs.serialNumber) result = false;
         return result;
     }
-
 };
 
 /// converts json representation of routine to cor::Light
@@ -129,4 +127,17 @@ LeafController jsonToLeafController(const QJsonObject& object);
 QJsonObject leafControllerToJson(const LeafController& controller);
 
 }
-#endif // NANOLEAFCONTROLLER_H
+
+namespace std
+{
+    template <>
+    struct hash<::nano::LeafController>
+    {
+        size_t operator()(const ::nano::LeafController& k) const
+        {
+            return std::hash<std::string>{}(k.serialNumber.toStdString());
+        }
+    };
+}
+
+#endif // NANO_LEAFCONTROLLER_H

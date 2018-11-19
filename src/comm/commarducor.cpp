@@ -7,6 +7,7 @@
 #include "commarducor.h"
 
 #include "cor/utils.h"
+#include "cor/exception.h"
 
 #include "comm/commudp.h"
 #include "comm/commhttp.h"
@@ -120,7 +121,7 @@ std::list<cor::Light> CommArduCor::lights() {
                                          ECommType::UDP};
     for (auto type : commTypes) {
         for (const auto& controllers : commByType(type)->deviceTable()) {
-            for (const auto& storedLight : controllers.second) {
+            for (const auto& storedLight : controllers.second.itemList()) {
                 lights.push_back(storedLight);
             }
         }
@@ -189,15 +190,14 @@ void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
                         // figure out devices that are getting updates
                         std::list<cor::Light> deviceList;
                         if (index != 0) {
-                            cor::Light device = cor::Light(controller.names[index - 1], type);
+                            cor::Light device = cor::Light(controller.names[index - 1], controller.name, type);
                             device.index = int(index);
-                            device.controller = controller.name;
                             commByType(type)->fillDevice(device);
                             deviceList.push_back(device);
                         } else {
                             // get a list of devices for this controller
                             auto deviceTable = commByType(type)->deviceTable();
-                            std::list<cor::Light> lights = deviceTable.at(sender.toStdString());
+                            std::list<cor::Light> lights = deviceTable.at(sender.toStdString()).itemList();
                             deviceList = lights;
                         }
 
@@ -454,7 +454,7 @@ CommType *CommArduCor::commByType(ECommType type) {
         ptr = static_cast<CommType*>(mUDP.get());
         break;
     default:
-        throw "no type for this commtype";
+        THROW_EXCEPTION("no type for this commtype");
     }
     return ptr;
 }

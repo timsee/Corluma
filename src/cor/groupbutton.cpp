@@ -5,6 +5,8 @@
  */
 
 #include "groupbutton.h"
+#include "cor/utils.h"
+
 #include <QDebug>
 #include <QGraphicsEffect>
 #include <QPainter>
@@ -31,10 +33,12 @@ GroupButton::GroupButton(QWidget *parent, const QString& text) : QWidget(parent)
     mButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mSelectAllPixmap = QPixmap(":/images/selectAllIcon.png");
     mClearAllPixmap = QPixmap(":/images/clearAllIcon.png");
-    mButton->setIconSize(QSize(int(mButton->size().width() * 0.9f),
-                               int(mButton->size().height() * 0.9f)));
-    mButton->setFixedSize(QSize(mButton->size().height(),
-                                mButton->size().height()));
+
+    // make a minimum size for the button
+    auto applicationSize = cor::applicationSize();
+    int prefferedWidth = std::max(int(applicationSize.height() / 20.0f), int(mButton->size().height() * 0.9f));
+    mButton->setIconSize(QSize(prefferedWidth, prefferedWidth));
+    mButton->setFixedSize(QSize(prefferedWidth, prefferedWidth));
     mButton->setIcon(QIcon(mSelectAllPixmap));
     connect(mButton, SIGNAL(clicked(bool)), this, SLOT(buttonPressed(bool)));
 
@@ -88,7 +92,7 @@ QColor GroupButton::computeHighlightColor(uint32_t checkedDeviceCount, uint32_t 
                       pureBlue.blue() - pureBlack.blue());
 
 
-    if (checkedDeviceCount == 0 && reachableDeviceCount == 0) {
+    if (checkedDeviceCount == 0 || reachableDeviceCount == 0) {
         return QColor(32, 31, 31, 255);
     } else {
         auto amountOfBlue = checkedDeviceCount / float(reachableDeviceCount);

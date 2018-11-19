@@ -49,7 +49,8 @@ public:
      * \param groupDevices all devices in the original group
      * \param devices all devices known by the application.
      */
-    void updateDevices(std::list<cor::Light> groupDevices, std::list<cor::Light> devices);
+    void updateDevices(const std::list<cor::Light>& checkedDevices,
+                       const std::list<cor::Light>& devices);
 
     /// resizes widget programmatically
     void resize();

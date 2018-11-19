@@ -7,6 +7,7 @@
 
 #include "cor/jsonsavedata.h"
 #include "arducor/controller.h"
+#include "cor/dictionary.h"
 
 class CommUDP;
 class CommHTTP;
@@ -58,7 +59,7 @@ public:
     void handleIncomingPacket(ECommType type, const QString& controllerName, const QString& payload);
 
     /// getter for list of controllers
-    const std::list<cor::Controller>& controllers() const { return mFoundControllers; }
+    const cor::Dictionary<cor::Controller>& controllers() const { return mFoundControllers; }
 
     /// getter for list of undiscovered controllers
     const std::list<cor::Controller>& undiscoveredControllers() const { return mNotFoundControllers; }
@@ -99,7 +100,7 @@ private:
     std::list<cor::Controller> mNotFoundControllers;
 
     /// list of found controllers
-    std::list<cor::Controller> mFoundControllers;
+    cor::Dictionary<cor::Controller> mFoundControllers;
 
     /// helper that moves a controller from not found to found and saves changes to JSON.
     void handleDiscoveredController(const cor::Controller& discoveredController);

@@ -16,6 +16,7 @@
 #include "comm/commnanoleaf.h"
 
 #include "cor/presetpalettes.h"
+#include "cor/exception.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent) {
@@ -304,7 +305,7 @@ bool MainWindow::shouldTransitionOutLeft(EPage page, EPage newPage) {
             return false;
         }
     } else {
-        throw "incorrect page";
+        THROW_EXCEPTION("incorrect page");
     }
 
 }
@@ -328,7 +329,7 @@ bool MainWindow::shouldTranitionInFromLeft(EPage page) {
             return false;
         }
     } else {
-        throw "incorrect page";
+        THROW_EXCEPTION("incorrect page");
     }
 }
 
@@ -606,7 +607,7 @@ void MainWindow::hueInfoWidgetClicked() {
     mLightInfoWidget->isOpen(true);
 
     mLightInfoWidget->updateHues(mComm->hue()->discovery()->lights());
-    mLightInfoWidget->updateControllers(mComm->nanoleaf()->controllers());
+    mLightInfoWidget->updateControllers(mComm->nanoleaf()->controllers().itemList());
     mLightInfoWidget->updateLights(mComm->arducor()->lights());
 
     QSize size = this->size();
@@ -681,7 +682,7 @@ void MainWindow::lightNameChange(EProtocolType type, QString key, QString name) 
         // get hue light from key
         std::list<HueLight> hueLights = mComm->hue()->discovery()->lights();
         int keyNumber = key.toInt();
-        HueLight light("NOT_VALID", ECommType::MAX);
+        HueLight light;
         bool lightFound = false;
         for (auto hue : hueLights) {
             if (hue.index == keyNumber) {
@@ -697,15 +698,10 @@ void MainWindow::lightNameChange(EProtocolType type, QString key, QString name) 
         }
     } else if (type == EProtocolType::nanoleaf) {
         // get nanoleaf controller from key
-        bool lightFound = false;
-        auto controllers = mComm->nanoleaf()->controllers();
-        nano::LeafController lightToRename;
-        for (auto controller : controllers) {
-            if (controller.serialNumber == key) {
-                lightFound = true;
-                lightToRename = controller;
-            }
-        }
+        const auto& controllers = mComm->nanoleaf()->controllers();
+        auto result = controllers.item(key.toStdString());
+        bool lightFound = result.second;
+        nano::LeafController lightToRename = result.first;
 
         if (lightFound) {
             mComm->nanoleaf()->renameController(lightToRename, name);
@@ -719,7 +715,7 @@ void MainWindow::deleteHue(QString key) {
     // get hue light from key
     std::list<HueLight> hueLights = mComm->hue()->discovery()->lights();
     int keyNumber = key.toInt();
-    HueLight light("NOT_VALID", ECommType::MAX);
+    HueLight light;
     bool lightFound = false;
     for (auto hue : hueLights) {
         if (hue.index == keyNumber) {
@@ -810,13 +806,19 @@ void MainWindow::moodChanged(QString mood) {
         if (group.name == mood) {
             mData->clearDevices();
             // creates a copy of the groups devices
-            auto devices = group.devices;
+            std::list<cor::Light> devices = group.devices;
+
+            // a group doesn't have any knowledge of controllers, so add in controller names
+            for (auto&& device : devices) {
+                QString controllerName = mComm->controllerName(device.commType(), device.uniqueID());
+                device.controller(controllerName);
+            }
+
             // checks for reachability of devices and appends that to the list.
             for (auto&& device : devices) {
                 // find up to date version of device
                 auto deviceCopy = device;
                 mComm->fillDevice(deviceCopy);
-                device.controller  = deviceCopy.controller;
                 device.isReachable = deviceCopy.isReachable;
             }
             mData->addDeviceList(devices);

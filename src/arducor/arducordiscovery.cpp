@@ -280,7 +280,7 @@ void ArduCorDiscovery::handleDiscoveredController(const cor::Controller& discove
             }
 
             // add to the found controllers
-            mFoundControllers.push_back(discoveredController);
+            mFoundControllers.insert(discoveredController.name.toStdString(), discoveredController);
 
             // update json data, if needed
             updateJSON(discoveredController);
@@ -288,9 +288,8 @@ void ArduCorDiscovery::handleDiscoveredController(const cor::Controller& discove
             std::list<cor::Light> lights;
             int i = 1;
             for (const auto& name : discoveredController.names) {
-                cor::Light light(name, discoveredController.type);
+                cor::Light light(name, discoveredController.name, discoveredController.type);
                 light.index        = i;
-                light.controller   = discoveredController.name;
                 light.hardwareType = discoveredController.hardwareTypes[std::size_t(i - 1)];
                 lights.push_back(light);
                 ++i;
@@ -353,16 +352,15 @@ void ArduCorDiscovery::updateJSON(const cor::Controller& controller) {
 
 
 QString ArduCorDiscovery::findDeviceNameByIndexAndControllerName(const QString& controllerName, uint32_t index) {
-    for (const auto& controller : mFoundControllers) {
-        if (controller.name == controllerName) {
-            return controller.names[index - 1];
-        }
+    auto result = mFoundControllers.item(controllerName.toStdString());
+    if (result.second) {
+        return result.first.names[index - 1];
     }
     return QString("NOTFOUND");
 }
 
 bool ArduCorDiscovery::findControllerByDeviceName(const QString& deviceName, cor::Controller& output) {
-    for (const auto& controller : mFoundControllers) {
+    for (const auto& controller : mFoundControllers.itemVector()) {
         for (const auto& name : controller.names) {
             if (name == deviceName) {
                 output = controller;
@@ -374,13 +372,11 @@ bool ArduCorDiscovery::findControllerByDeviceName(const QString& deviceName, cor
 }
 
 bool ArduCorDiscovery::findControllerByControllerName(const QString& controllerName, cor::Controller& output) {
-    for (const auto& controller : mFoundControllers) {
-        if (controller.name == controllerName) {
-            output = controller;
-            return true;
-        }
+    auto result = mFoundControllers.item(controllerName.toStdString());
+    if (result.second) {
+        output = result.first;
     }
-    return false;
+    return result.second;
 }
 
 //---------------------
