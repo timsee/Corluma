@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.13.5</span>
+   &#160;<span id="projectnumber">v0.13.9</span>
    </div>
   </td>
  </tr>
@@ -42,7 +42,6 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="class_discovery_hue_widget-members.html">List of all members</a> &#124;
-<a href="#pub-slots">Public Slots</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a>  </div>
   <div class="headertitle">
@@ -57,18 +56,11 @@ $(function() {
 
 <p>Inherits <a class="el" href="class_discovery_widget.html">DiscoveryWidget</a>.</p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-slots"></a>
-Public Slots</h2></td></tr>
-<tr class="memitem:ad14c66f42f8f14b274b892a853d5fd28"><td class="memItemLeft" align="right" valign="top"><a id="ad14c66f42f8f14b274b892a853d5fd28"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_discovery_hue_widget.html#ad14c66f42f8f14b274b892a853d5fd28">IPFieldChanged</a> (QString)</td></tr>
-<tr class="memdesc:ad14c66f42f8f14b274b892a853d5fd28"><td class="mdescLeft">&#160;</td><td class="mdescRight">IPFieldChanged IP Address field has changed, try to discover the IP address provided. <br /></td></tr>
-<tr class="separator:ad14c66f42f8f14b274b892a853d5fd28"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae32b23583b64719851777095b654dd3c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_discovery_hue_widget.html#ae32b23583b64719851777095b654dd3c">DiscoveryHueWidget</a> (<a class="el" href="class_comm_layer.html">CommLayer</a> *comm, QWidget *parent)</td></tr>
-<tr class="memdesc:ae32b23583b64719851777095b654dd3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">DiscoverySerialWidget constructor.  <a href="#ae32b23583b64719851777095b654dd3c">More...</a><br /></td></tr>
-<tr class="separator:ae32b23583b64719851777095b654dd3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a20c5c9fff712bc9fa5ab4fd0018f39b8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_discovery_hue_widget.html#a20c5c9fff712bc9fa5ab4fd0018f39b8">DiscoveryHueWidget</a> (<a class="el" href="class_comm_layer.html">CommLayer</a> *comm, <a class="el" href="class_main_window.html">MainWindow</a> *mainWindow, QWidget *parent)</td></tr>
+<tr class="memdesc:a20c5c9fff712bc9fa5ab4fd0018f39b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">DiscoverySerialWidget constructor.  <a href="#a20c5c9fff712bc9fa5ab4fd0018f39b8">More...</a><br /></td></tr>
+<tr class="separator:a20c5c9fff712bc9fa5ab4fd0018f39b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae263f861f05fc02cded45cd7eec9cb41"><td class="memItemLeft" align="right" valign="top"><a id="ae263f861f05fc02cded45cd7eec9cb41"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_discovery_hue_widget.html#ae263f861f05fc02cded45cd7eec9cb41">handleDiscovery</a> (bool isActive)</td></tr>
 <tr class="memdesc:ae263f861f05fc02cded45cd7eec9cb41"><td class="mdescLeft">&#160;</td><td class="mdescRight">See <a class="el" href="discoverywidget_8h_source.html">DiscoveryWidget.h</a>. <br /></td></tr>
@@ -114,8 +106,8 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ae32b23583b64719851777095b654dd3c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae32b23583b64719851777095b654dd3c">&#9670;&nbsp;</a></span>DiscoveryHueWidget()</h2>
+<a id="a20c5c9fff712bc9fa5ab4fd0018f39b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a20c5c9fff712bc9fa5ab4fd0018f39b8">&#9670;&nbsp;</a></span>DiscoveryHueWidget()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -128,6 +120,12 @@ Additional Inherited Members</h2></td></tr>
           <td>(</td>
           <td class="paramtype"><a class="el" href="class_comm_layer.html">CommLayer</a> *&#160;</td>
           <td class="paramname"><em>comm</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_main_window.html">MainWindow</a> *&#160;</td>
+          <td class="paramname"><em>mainWindow</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -193,7 +191,7 @@ Additional Inherited Members</h2></td></tr>
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; Corluma Copyright 2015 - 2018  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; Corluma Copyright 2015 - 2019  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights GPL v3.0 Licensed.  &nbsp; &nbsp;
        </small>
        </p>

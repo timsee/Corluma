@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.13.5</span>
+   &#160;<span id="projectnumber">v0.13.9</span>
    </div>
   </td>
  </tr>
@@ -136,9 +136,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:ab9d8ebeecae39e95cd2d2647379cadec inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ab9d8ebeecae39e95cd2d2647379cadec">fillDevice</a> (cor::Light &amp;device)</td></tr>
 <tr class="memdesc:ab9d8ebeecae39e95cd2d2647379cadec inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">fillDevice takes the controller and index of the referenced cor::Light and overwrites all other values with the values stored in the device table.  <a href="class_comm_type.html#ab9d8ebeecae39e95cd2d2647379cadec">More...</a><br /></td></tr>
 <tr class="separator:ab9d8ebeecae39e95cd2d2647379cadec inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abcce98d58bc2a920cc7759be138a5aa2 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">const std::unordered_map&lt; std::string, std::list&lt; cor::Light &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#abcce98d58bc2a920cc7759be138a5aa2">deviceTable</a> () const noexcept</td></tr>
-<tr class="memdesc:abcce98d58bc2a920cc7759be138a5aa2 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceList list of the light devices  <a href="class_comm_type.html#abcce98d58bc2a920cc7759be138a5aa2">More...</a><br /></td></tr>
-<tr class="separator:abcce98d58bc2a920cc7759be138a5aa2 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9b97cb61b399f2e17acaee7a88b65e7 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ae9b97cb61b399f2e17acaee7a88b65e7">controllerName</a> (const QString &amp;uniqueID)</td></tr>
+<tr class="memdesc:ae9b97cb61b399f2e17acaee7a88b65e7 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">controllerName look up a controller's name by providing the unique ID of a light. If no controller matches the ID, it will return an error string. The complexity of the lookup scales by number of controllers instead of the number of devices.  <a href="class_comm_type.html#ae9b97cb61b399f2e17acaee7a88b65e7">More...</a><br /></td></tr>
+<tr class="separator:ae9b97cb61b399f2e17acaee7a88b65e7 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae888416239b3573717c92b9c255ab241 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">const std::unordered_map&lt; std::string, cor::Dictionary&lt; cor::Light &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ae888416239b3573717c92b9c255ab241">deviceTable</a> () const noexcept</td></tr>
+<tr class="memdesc:ae888416239b3573717c92b9c255ab241 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceList list of the light devices  <a href="class_comm_type.html#ae888416239b3573717c92b9c255ab241">More...</a><br /></td></tr>
+<tr class="separator:ae888416239b3573717c92b9c255ab241 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -276,7 +279,7 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; Corluma Copyright 2015 - 2018  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; Corluma Copyright 2015 - 2019  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights GPL v3.0 Licensed.  &nbsp; &nbsp;
        </small>
        </p>

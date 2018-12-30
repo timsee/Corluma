@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.13.5</span>
+   &#160;<span id="projectnumber">v0.13.9</span>
    </div>
   </td>
  </tr>
@@ -103,13 +103,16 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a14d204c12ecc658add4e4e32b570d8e4">discoveryErrorsExist</a> (EProtocolType type)</td></tr>
 <tr class="memdesc:a14d204c12ecc658add4e4e32b570d8e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns true if theres any known errors for the commtype. <br /></td></tr>
 <tr class="separator:a14d204c12ecc658add4e4e32b570d8e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc12cd7962a027f12ef3836f53142910"><td class="memItemLeft" align="right" valign="top">const std::unordered_map&lt; std::string, std::list&lt; cor::Light &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#acc12cd7962a027f12ef3836f53142910">deviceTable</a> (ECommType type)</td></tr>
-<tr class="memdesc:acc12cd7962a027f12ef3836f53142910"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceTable a hash table of all connected devices of a certain connection type. The controller names are used as keys.  <a href="#acc12cd7962a027f12ef3836f53142910">More...</a><br /></td></tr>
-<tr class="separator:acc12cd7962a027f12ef3836f53142910"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a70a9d4813bc0f08174329146244d1001"><td class="memItemLeft" align="right" valign="top"><a id="a70a9d4813bc0f08174329146244d1001"></a>
-const std::list&lt; cor::Light &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a70a9d4813bc0f08174329146244d1001">allDevices</a> ()</td></tr>
-<tr class="memdesc:a70a9d4813bc0f08174329146244d1001"><td class="mdescLeft">&#160;</td><td class="mdescRight">list of all devices from all comm types <br /></td></tr>
-<tr class="separator:a70a9d4813bc0f08174329146244d1001"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a676cd05a649ccd598b5bc30eb2fe829d"><td class="memItemLeft" align="right" valign="top">const std::unordered_map&lt; std::string, cor::Dictionary&lt; cor::Light &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a676cd05a649ccd598b5bc30eb2fe829d">deviceTable</a> (ECommType type)</td></tr>
+<tr class="memdesc:a676cd05a649ccd598b5bc30eb2fe829d"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceTable a hash table of all connected devices of a certain connection type. The controller names are used as keys.  <a href="#a676cd05a649ccd598b5bc30eb2fe829d">More...</a><br /></td></tr>
+<tr class="separator:a676cd05a649ccd598b5bc30eb2fe829d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a70b4e0d40cbaceb18f75901a9b64af"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a0a70b4e0d40cbaceb18f75901a9b64af">controllerName</a> (ECommType type, const QString &amp;uniqueID)</td></tr>
+<tr class="memdesc:a0a70b4e0d40cbaceb18f75901a9b64af"><td class="mdescLeft">&#160;</td><td class="mdescRight">controllerName returns the controller name based on the commtype and unique ID. Will return an error string if controller is not found  <a href="#a0a70b4e0d40cbaceb18f75901a9b64af">More...</a><br /></td></tr>
+<tr class="separator:a0a70b4e0d40cbaceb18f75901a9b64af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb2a391acbb5bbed0f28a37f345e1c9e"><td class="memItemLeft" align="right" valign="top"><a id="afb2a391acbb5bbed0f28a37f345e1c9e"></a>
+std::list&lt; cor::Light &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#afb2a391acbb5bbed0f28a37f345e1c9e">allDevices</a> ()</td></tr>
+<tr class="memdesc:afb2a391acbb5bbed0f28a37f345e1c9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">list of all devices from all comm types <br /></td></tr>
+<tr class="separator:afb2a391acbb5bbed0f28a37f345e1c9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9a5679fea2aaf91ab1291c20963ca4c1"><td class="memItemLeft" align="right" valign="top"><a id="a9a5679fea2aaf91ab1291c20963ca4c1"></a>
 const std::vector&lt; cor::Controller &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a9a5679fea2aaf91ab1291c20963ca4c1">allArduinoControllers</a> ()</td></tr>
 <tr class="memdesc:a9a5679fea2aaf91ab1291c20963ca4c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">list containing all arduino based cor::Controllers <br /></td></tr>
@@ -183,8 +186,8 @@ std::vector&lt; std::pair&lt; QString, QString &gt; &gt;&#160;</td><td class="me
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="acc12cd7962a027f12ef3836f53142910"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acc12cd7962a027f12ef3836f53142910">&#9670;&nbsp;</a></span>deviceTable()</h2>
+<a id="a0a70b4e0d40cbaceb18f75901a9b64af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a70b4e0d40cbaceb18f75901a9b64af">&#9670;&nbsp;</a></span>controllerName()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -193,7 +196,51 @@ std::vector&lt; std::pair&lt; QString, QString &gt; &gt;&#160;</td><td class="me
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const std::unordered_map&lt;std::string, std::list&lt;cor::Light&gt; &gt;&amp; CommLayer::deviceTable </td>
+          <td class="memname">QString CommLayer::controllerName </td>
+          <td>(</td>
+          <td class="paramtype">ECommType&#160;</td>
+          <td class="paramname"><em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const QString &amp;&#160;</td>
+          <td class="paramname"><em>uniqueID</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">type</td><td>commtype to look for a controller in </td></tr>
+    <tr><td class="paramname">uniqueID</td><td>unique ID of light </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>name of lights controller, if it exists. </dd></dl>
+
+</div>
+</div>
+<a id="a676cd05a649ccd598b5bc30eb2fe829d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a676cd05a649ccd598b5bc30eb2fe829d">&#9670;&nbsp;</a></span>deviceTable()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::unordered_map&lt;std::string, cor::Dictionary&lt;cor::Light&gt; &gt;&amp; CommLayer::deviceTable </td>
           <td>(</td>
           <td class="paramtype">ECommType&#160;</td>
           <td class="paramname"><em>type</em></td><td>)</td>
@@ -394,7 +441,7 @@ std::vector&lt; std::pair&lt; QString, QString &gt; &gt;&#160;</td><td class="me
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; Corluma Copyright 2015 - 2018  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; Corluma Copyright 2015 - 2019  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights GPL v3.0 Licensed.  &nbsp; &nbsp;
        </small>
        </p>

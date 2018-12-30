@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.13.5</span>
+   &#160;<span id="projectnumber">v0.13.9</span>
    </div>
   </td>
  </tr>
@@ -69,34 +69,31 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6346f0011681a58e4633bed88c919860"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_edit_group_page.html#a6346f0011681a58e4633bed88c919860">EditGroupPage</a> (QWidget *parent, <a class="el" href="class_comm_layer.html">CommLayer</a> *layer, cor::DeviceList *data, <a class="el" href="class_groups_parser.html">GroupsParser</a> *parser)</td></tr>
 <tr class="memdesc:a6346f0011681a58e4633bed88c919860"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#a6346f0011681a58e4633bed88c919860">More...</a><br /></td></tr>
 <tr class="separator:a6346f0011681a58e4633bed88c919860"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a175fb0af4a2b4563cb7be54240a731ac"><td class="memItemLeft" align="right" valign="top"><a id="a175fb0af4a2b4563cb7be54240a731ac"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_edit_group_page.html#a175fb0af4a2b4563cb7be54240a731ac">~EditGroupPage</a> ()</td></tr>
-<tr class="memdesc:a175fb0af4a2b4563cb7be54240a731ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">deconstructor <br /></td></tr>
-<tr class="separator:a175fb0af4a2b4563cb7be54240a731ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7cfa626d90478ddbe28f1bcfe0075f47"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_edit_group_page.html#a7cfa626d90478ddbe28f1bcfe0075f47">showGroup</a> (QString key, std::list&lt; cor::Light &gt; groupDevices, std::list&lt; cor::Light &gt; devices, bool isMood, bool isRoom)</td></tr>
 <tr class="memdesc:a7cfa626d90478ddbe28f1bcfe0075f47"><td class="mdescLeft">&#160;</td><td class="mdescRight">showGroup open the edit page with the given data  <a href="#a7cfa626d90478ddbe28f1bcfe0075f47">More...</a><br /></td></tr>
 <tr class="separator:a7cfa626d90478ddbe28f1bcfe0075f47"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b7a8f82a9faf42d50d9222d2871fd4a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_edit_group_page.html#a4b7a8f82a9faf42d50d9222d2871fd4a">updateDevices</a> (std::list&lt; cor::Light &gt; groupDevices, std::list&lt; cor::Light &gt; devices)</td></tr>
-<tr class="memdesc:a4b7a8f82a9faf42d50d9222d2871fd4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDevices update the device widgets in the edit page with new values  <a href="#a4b7a8f82a9faf42d50d9222d2871fd4a">More...</a><br /></td></tr>
-<tr class="separator:a4b7a8f82a9faf42d50d9222d2871fd4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae1c1ed182a787fc919869c47245931ff"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_edit_group_page.html#ae1c1ed182a787fc919869c47245931ff">resize</a> (bool resizeFullWidget=true)</td></tr>
-<tr class="memdesc:ae1c1ed182a787fc919869c47245931ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">resize the widget. Call this to explicitly resize this widget based off of the size of the parent. If the parent has not resized since this was last called, this does nothing.  <a href="#ae1c1ed182a787fc919869c47245931ff">More...</a><br /></td></tr>
-<tr class="separator:ae1c1ed182a787fc919869c47245931ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a850ebe542c53ee043c7e08e4a47b98b3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_edit_group_page.html#a850ebe542c53ee043c7e08e4a47b98b3">updateDevices</a> (const std::list&lt; cor::Light &gt; &amp;checkedDevices, const std::list&lt; cor::Light &gt; &amp;devices)</td></tr>
+<tr class="memdesc:a850ebe542c53ee043c7e08e4a47b98b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDevices update the device widgets in the edit page with new values  <a href="#a850ebe542c53ee043c7e08e4a47b98b3">More...</a><br /></td></tr>
+<tr class="separator:a850ebe542c53ee043c7e08e4a47b98b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a702bfbe73db2e4ef8544db3fc3f9c83d"><td class="memItemLeft" align="right" valign="top"><a id="a702bfbe73db2e4ef8544db3fc3f9c83d"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_edit_group_page.html#a702bfbe73db2e4ef8544db3fc3f9c83d">resize</a> ()</td></tr>
+<tr class="memdesc:a702bfbe73db2e4ef8544db3fc3f9c83d"><td class="mdescLeft">&#160;</td><td class="mdescRight">resizes widget programmatically <br /></td></tr>
+<tr class="separator:a702bfbe73db2e4ef8544db3fc3f9c83d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2ef141b0ef1f55d48591ed3beb4e9623"><td class="memItemLeft" align="right" valign="top"><a id="a2ef141b0ef1f55d48591ed3beb4e9623"></a>
 std::list&lt; cor::Light &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_edit_group_page.html#a2ef141b0ef1f55d48591ed3beb4e9623">lights</a> () const</td></tr>
 <tr class="memdesc:a2ef141b0ef1f55d48591ed3beb4e9623"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for all lights checked on the page. <br /></td></tr>
 <tr class="separator:a2ef141b0ef1f55d48591ed3beb4e9623"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add56d8bd940d6c545808803489c838e6"><td class="memItemLeft" align="right" valign="top"><a id="add56d8bd940d6c545808803489c838e6"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_edit_group_page.html#add56d8bd940d6c545808803489c838e6">show</a> ()</td></tr>
+<tr class="memdesc:add56d8bd940d6c545808803489c838e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">called before the this page is shown. Used to sync up any changes that may have happened on other pages. <br /></td></tr>
+<tr class="separator:add56d8bd940d6c545808803489c838e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae343524c4cd2883837a668addc766885"><td class="memItemLeft" align="right" valign="top"><a id="ae343524c4cd2883837a668addc766885"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_edit_group_page.html#ae343524c4cd2883837a668addc766885">hide</a> ()</td></tr>
+<tr class="memdesc:ae343524c4cd2883837a668addc766885"><td class="mdescLeft">&#160;</td><td class="mdescRight">called as the page is hidden. This happens when a new page is displayed. <br /></td></tr>
+<tr class="separator:ae343524c4cd2883837a668addc766885"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:aa46025116f42761767cc23f1fca54942"><td class="memItemLeft" align="right" valign="top"><a id="aa46025116f42761767cc23f1fca54942"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_edit_group_page.html#aa46025116f42761767cc23f1fca54942">showEvent</a> (QShowEvent *)</td></tr>
-<tr class="memdesc:aa46025116f42761767cc23f1fca54942"><td class="mdescLeft">&#160;</td><td class="mdescRight">showEvent called before the this page is shown. Used to sync up any changes that may have happened on other pages. <br /></td></tr>
-<tr class="separator:aa46025116f42761767cc23f1fca54942"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaec0ad0dfe75dbdd41cff086933fd7f5"><td class="memItemLeft" align="right" valign="top"><a id="aaec0ad0dfe75dbdd41cff086933fd7f5"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_edit_group_page.html#aaec0ad0dfe75dbdd41cff086933fd7f5">hideEvent</a> (QHideEvent *)</td></tr>
-<tr class="memdesc:aaec0ad0dfe75dbdd41cff086933fd7f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">hideEvent called as the page is hidden. This happens when a new page is displayed. <br /></td></tr>
-<tr class="separator:aaec0ad0dfe75dbdd41cff086933fd7f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a6e0d76fd0f510615d0ed0e1e9f38c9"><td class="memItemLeft" align="right" valign="top"><a id="a2a6e0d76fd0f510615d0ed0e1e9f38c9"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_edit_group_page.html#a2a6e0d76fd0f510615d0ed0e1e9f38c9">paintEvent</a> (QPaintEvent *)</td></tr>
 <tr class="memdesc:a2a6e0d76fd0f510615d0ed0e1e9f38c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">paintEvent used to draw the background of the widget. <br /></td></tr>
@@ -159,25 +156,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae1c1ed182a787fc919869c47245931ff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae1c1ed182a787fc919869c47245931ff">&#9670;&nbsp;</a></span>resize()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void EditGroupPage::resize </td>
-          <td>(</td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>resizeFullWidget</em> = <code>true</code></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>resizeFullWidget if true, resizes full widget including its geometry. If false, the geometry is not resized, just the contents. </p>
-
-</div>
-</div>
 <a id="a7cfa626d90478ddbe28f1bcfe0075f47"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7cfa626d90478ddbe28f1bcfe0075f47">&#9670;&nbsp;</a></span>showGroup()</h2>
 
@@ -234,8 +212,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a id="a4b7a8f82a9faf42d50d9222d2871fd4a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4b7a8f82a9faf42d50d9222d2871fd4a">&#9670;&nbsp;</a></span>updateDevices()</h2>
+<a id="a850ebe542c53ee043c7e08e4a47b98b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a850ebe542c53ee043c7e08e4a47b98b3">&#9670;&nbsp;</a></span>updateDevices()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -243,13 +221,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="memname">void EditGroupPage::updateDevices </td>
           <td>(</td>
-          <td class="paramtype">std::list&lt; cor::Light &gt;&#160;</td>
-          <td class="paramname"><em>groupDevices</em>, </td>
+          <td class="paramtype">const std::list&lt; cor::Light &gt; &amp;&#160;</td>
+          <td class="paramname"><em>checkedDevices</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::list&lt; cor::Light &gt;&#160;</td>
+          <td class="paramtype">const std::list&lt; cor::Light &gt; &amp;&#160;</td>
           <td class="paramname"><em>devices</em>&#160;</td>
         </tr>
         <tr>
@@ -281,7 +259,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; Corluma Copyright 2015 - 2018  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; Corluma Copyright 2015 - 2019  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights GPL v3.0 Licensed.  &nbsp; &nbsp;
        </small>
        </p>
