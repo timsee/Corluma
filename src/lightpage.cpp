@@ -275,7 +275,7 @@ void LightPage::deviceClicked(QString collectionKey, QString deviceKey) {
 
         // search for current group string
         QString currentGroup = mData->findCurrentCollection(mComm->collectionList(), false);
-        for (auto&& group : mComm->collectionList()) {
+        for (const auto& group : mComm->collectionList()) {
             if (group.name == currentGroup) {
                 if (group.devices.size() == mData->devices().size()) {
                     mCurrentGroup = group.name;
@@ -295,51 +295,51 @@ void LightPage::deviceSwitchClicked(QString deviceKey, bool isOn) {
 
     emit updateMainIcons();
     emit changedDeviceCount();
-    highlightList();
 }
 
 
 void LightPage::groupSelected(QString key, bool shouldSelect) {
-    for (auto widget : mRoomsWidget->widgets()) {
+    bool isValid = false;
+    std::list<cor::Light> lights;
+    // loop through all groups and subgroups, adding or removing lists only if a group is found
+    for (const auto& widget : mRoomsWidget->widgets()) {
         ListRoomWidget *groupWidget = qobject_cast<ListRoomWidget*>(widget);
         Q_ASSERT(groupWidget);
-        if (widget->key().compare(key) == 0) {
-            if (shouldSelect) {
-                mCurrentGroup = groupWidget->group().name;
-                mData->addDeviceList(groupWidget->reachableDevices());
-            } else {
-                mCurrentGroup = "";
-                mData->removeDeviceList(groupWidget->devices());
-            }
-
-            emit changedDeviceCount();
-            emit updateMainIcons();
-            highlightList();
+        // check if group is the room itself
+        if (widget->key() == key) {
+            isValid = true;
+            lights = groupWidget->reachableDevices();
         }
 
-
-        for (auto group : groupWidget->group().groups) {
-            if (group.name.compare(key) == 0) {
-                if (shouldSelect) {
-                    mCurrentGroup = group.name;
-                    std::list<cor::Light> reachableDevices;
-                    for (const auto& device : group.devices) {
-                        if (device.isReachable) {
-                            reachableDevices.push_back(device);
-                        }
-                    }
-                    mData->addDeviceList(reachableDevices);
-                } else {
-                    mCurrentGroup = "";
-                    mData->removeDeviceList(group.devices);
-                }
-                emit changedDeviceCount();
-                emit updateMainIcons();
-                highlightList();
+        // check if group is a subgroup of a room
+        for (const auto& group : groupWidget->group().groups) {
+            if (group.name == key) {
+                isValid = true;
+                lights = group.devices;
             }
         }
     }
-    mRoomsWidget->resizeWidgets();
+
+    // if the group selected is found, either select or deselect it
+    if (isValid) {
+        if (shouldSelect) {
+            mCurrentGroup = key;
+            mData->addDeviceList(lights);
+        } else {
+            mCurrentGroup = "";
+            mData->removeDeviceList(lights);
+        }
+        // now update the GUI
+        emit changedDeviceCount();
+        emit updateMainIcons();
+        highlightList();
+        mRoomsWidget->resizeWidgets();
+        for (const auto& widget : mRoomsWidget->widgets()) {
+            ListRoomWidget *groupWidget = qobject_cast<ListRoomWidget*>(widget);
+            Q_ASSERT(groupWidget);
+            groupWidget->updateTopWidget();
+        }
+    }
 }
 
 
@@ -404,7 +404,7 @@ void LightPage::clearButtonPressed() {
 }
 
 void LightPage::receivedCommUpdate(ECommType) {
-    if (mLastUpdateConnectionList.elapsed() > 250) {
+    if (mLastUpdateConnectionList.elapsed() > 200) {
         mLastUpdateConnectionList = QTime::currentTime();
         updateConnectionList();
     }
@@ -430,7 +430,6 @@ void LightPage::highlightList() {
 
 void LightPage::renderUI() {
     updateConnectionList();
-    highlightList();
 }
 
 
@@ -457,6 +456,11 @@ void LightPage::showEvent(QShowEvent *event) {
 
 void LightPage::show() {
     highlightList();
+    for (const auto& widget : mRoomsWidget->widgets()) {
+        ListRoomWidget *groupWidget = qobject_cast<ListRoomWidget*>(widget);
+        Q_ASSERT(groupWidget);
+        groupWidget->updateTopWidget();
+    }
     mRenderThread->start(mRenderInterval);
     mRoomsWidget->resizeWidgets();
 }
@@ -487,8 +491,6 @@ void LightPage::shouldShowButtons(QString key, bool) {
     for (const auto& widget : mRoomsWidget->widgets()) {
         ListRoomWidget *groupWidget = qobject_cast<ListRoomWidget*>(widget);
         Q_ASSERT(groupWidget);
-
-
         if (widget->key() != key) {
             groupWidget->closeWidget();
         }

@@ -24,6 +24,7 @@
 #include "palettepage.h"
 #include "lightpage.h"
 #include "lightinfolistwidget.h"
+#include "nowifiwidget.h"
 #include "hue/lightdiscovery.h"
 #include <QStackedWidget>
 
@@ -60,6 +61,9 @@ public:
 
     /// true if any discovered, false if nothing discoverd.
     void anyDiscovered(bool discovered) { mAnyDiscovered = discovered; }
+
+    /// fades in and out the greyout
+    void greyOut(bool show);
 
 public slots:
 
@@ -165,6 +169,16 @@ public slots:
     /// rename a light to a new name. This updates all UI and app data accordingly.
     void renamedLight(cor::Light, QString);
 
+private slots:
+
+    /// loads most of the pages. These are not loaded automatically since they require wifi to be enabled.
+    void loadPages();
+
+    /*!
+     * \brief wifiChecker checks whether wifi is enabled.
+     */
+    void wifiChecker();
+
 protected:
 
     /*!
@@ -186,9 +200,6 @@ private:
      * \brief pageChanged change the QStackedWidget to the page specified
      */
     void pageChanged(EPage page);
-
-    /// fades in and out the greyout
-    void greyOut(bool show);
 
     /*!
      * \brief showMainPage transitions either the color page, group page, or lights page onto the
@@ -223,8 +234,8 @@ private:
     /// programmatically trigger moving the floating layout
     void moveFloatingLayout();
 
-    /// resize the layout
-    void resizeLayout();
+    /// resize
+    void resize();
 
     /// Gives a QWidget representation of any of the main widgets (LightPage, GroupPage, ColorPage)
     QWidget *mainPageWidget(EPage page);
@@ -234,6 +245,9 @@ private:
      *        mEditPage
      */
     GreyOutOverlay *mGreyOut;
+
+    /// true if pages are loaded, false if they haven't been loaded yet
+    bool mPagesLoaded;
 
     /*!
      * \brief mPageIndex index of current page.
@@ -281,6 +295,15 @@ private:
      *        JSON or reseting things to defaults.
      */
     SettingsPage *mSettingsPage;
+
+    /// true if wifi found, false otherwise
+    bool mWifiFound;
+
+    /// timer for checking whether or not wifi is enabled.
+    QTimer *mWifiChecker;
+
+    /// widget for displaying whether or not wifi is enabled.
+    NoWifiWidget* mNoWifiWidget;
 
     //------------------
     // Helper Widgets

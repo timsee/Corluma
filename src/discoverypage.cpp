@@ -83,14 +83,14 @@ DiscoveryPage::DiscoveryPage(QWidget *parent, cor::DeviceList *data, CommLayer *
     connect(mArduCorWidget, SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)), this, SLOT(widgetConnectionStateChanged(EProtocolType, EConnectionState)));
     mArduCorWidget->setVisible(false);
 
-    mHueWidget = new DiscoveryHueWidget(mComm, this);
+    ///TODO: this way of including mainwindow is kinda messy...
+    mHueWidget = new DiscoveryHueWidget(mComm, static_cast<MainWindow*>(parent), this);
     connect(mHueWidget, SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)), this, SLOT(widgetConnectionStateChanged(EProtocolType, EConnectionState)));
     mHueWidget->setVisible(false);
 
     mNanoLeafWidget = new DiscoveryNanoLeafWidget(mComm, this);
     connect(mNanoLeafWidget, SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)), this, SLOT(widgetConnectionStateChanged(EProtocolType, EConnectionState)));
     mNanoLeafWidget->setVisible(false);
-
 
     mType = EProtocolType::hue;
 }
@@ -265,6 +265,7 @@ void DiscoveryPage::resizeEvent(QResizeEvent *) {
     } else if (mType == EProtocolType::nanoleaf) {
         mNanoLeafWidget->setGeometry(mPlaceholder->geometry());
     }
+
     resizeTopMenu();
     moveFloatingLayouts();
 }

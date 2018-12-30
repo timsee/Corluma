@@ -90,6 +90,9 @@ public:
     /// show the devices provided
     void showDevices(const std::list<cor::Light>& devices);
 
+    /// update the top widget
+    void updateTopWidget();
+
 signals:
 
     /*!
@@ -148,9 +151,6 @@ private slots:
     void handleToggledSwitch(QString key, bool isOn) { emit deviceSwitchToggled(key, isOn); }
 
 private:
-
-    /// update the top widget
-    void updateTopWidget();
 
     /// resize the widget
     void resize();

@@ -10,7 +10,7 @@
 
 TEST_CASE( "Dictionary Standard API", "[dictionary]" ) {
     cor::Dictionary<int> dict;
-    dict.insert("four twenty", 420);
+    dict.insert("four thirty three", 433);
 
     SECTION("insert") {
         REQUIRE(dict.size() == 1);
@@ -20,7 +20,7 @@ TEST_CASE( "Dictionary Standard API", "[dictionary]" ) {
 
     SECTION("remove by item") {
         REQUIRE(dict.size() == 1);
-        bool result = dict.remove(420);
+        bool result = dict.remove(433);
         REQUIRE(result == true);
         REQUIRE(dict.size() == 0);
     }
@@ -33,7 +33,7 @@ TEST_CASE( "Dictionary Standard API", "[dictionary]" ) {
 
     SECTION("remove by key") {
         REQUIRE(dict.size() == 1);
-        bool result = dict.removeKey("four twenty");
+        bool result = dict.removeKey("four thirty three");
         REQUIRE(result == true);
         REQUIRE(dict.size() == 0);
     }
@@ -45,15 +45,15 @@ TEST_CASE( "Dictionary Standard API", "[dictionary]" ) {
     }
 
     SECTION("key from item") {
-        auto result = dict.key(420);
+        auto result = dict.key(433);
         REQUIRE(result.second == true);
-        REQUIRE(result.first == "four twenty");
+        REQUIRE(result.first == "four thirty three");
     }
 
     SECTION("item from key") {
-        auto result = dict.item("four twenty");
+        auto result = dict.item("four thirty three");
         REQUIRE(result.second == true);
-        REQUIRE(result.first == 420);
+        REQUIRE(result.first == 433);
     }
 
     SECTION("update") {

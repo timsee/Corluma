@@ -17,7 +17,8 @@ ListDeviceWidget::ListDeviceWidget(const cor::Light& device,
                                    bool setHighlightable,
                                    QSize size,
                                    QWidget *parent) : cor::ListItemWidget(device.uniqueID(),
-                                                                          parent), mDevice(device)   {
+                                                                          parent)   {
+
     this->setFixedSize(size);
 
     mShouldHighlight = setHighlightable;
@@ -75,16 +76,21 @@ void ListDeviceWidget::init(const cor::Light& device) {
 
 
 void ListDeviceWidget::updateWidget(const cor::Light& device) {
+    bool shouldRender = false;
+    if (!(mDevice == device)) {
+        shouldRender = true;
+    }
+
+    updateTypeIcon(device.hardwareType);
+
     mDevice = device;
-    QJsonObject object = cor::lightToJson(device);
-    mIconData.setRoutine(object);
+    mKey = structToIdentifierString(device);
 
     QString nameText = createName(device);
     if (nameText.compare(mController->text()) != 0) {
         mController->setText(nameText);
     }
 
-    mKey = structToIdentifierString(device);
     if (!device.isReachable) {
         mOnOffSwitch->setSwitchState(ESwitchState::disabled);
     } else if (device.isOn && !mBlockStateUpdates) {
@@ -93,8 +99,12 @@ void ListDeviceWidget::updateWidget(const cor::Light& device) {
         mOnOffSwitch->setSwitchState(ESwitchState::off);
     }
 
-    mIconPixmap = mIconData.renderAsQPixmap();
-    updateTypeIcon(device.hardwareType);
+    if (shouldRender) {
+        QJsonObject object = cor::lightToJson(device);
+        mIconData.setRoutine(object);
+        mIconPixmap = mIconData.renderAsQPixmap();
+        repaint();
+    }
 }
 
 QString ListDeviceWidget::convertUglyHueNameToPrettyName(QString name) {

@@ -57,9 +57,6 @@ ColorPage::ColorPage(QWidget *parent) :
     mMultiRoutineWidget->setGeometry(0, this->height(), mMultiRoutineWidget->width(), mMultiRoutineWidget->height());
     mMultiRoutineWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(mMultiRoutineWidget, SIGNAL(newRoutineSelected(QJsonObject)), this, SLOT(newRoutineSelected(QJsonObject)));
-    // raise single since its default
-    mSingleRoutineWidget->raise();
-
 }
 
 
@@ -119,7 +116,6 @@ void ColorPage::showSingleRoutineWidget(bool shouldShow) {
         animation->start();
         mBottomMenuState = EBottomMenuShow::showStandard;
     } else if (mBottomMenuState != EBottomMenuShow::showSingleRoutines && shouldShow) {
-        mSingleRoutineWidget->raise();
         mSingleRoutineWidget->singleRoutineColorChanged(mColor);  // update colors of single color routine
         QPropertyAnimation *animation = new QPropertyAnimation(mSingleRoutineWidget, "pos");
         animation->setDuration(TRANSITION_TIME_MSEC);
@@ -139,7 +135,6 @@ void ColorPage::showMultiRoutineWidget(bool shouldShow) {
         animation->start();
         mBottomMenuState = EBottomMenuShow::showStandard;
     } else if (mBottomMenuState != EBottomMenuShow::showMultiRoutines && shouldShow) {
-        mMultiRoutineWidget->raise();
         QPropertyAnimation *animation = new QPropertyAnimation(mMultiRoutineWidget, "pos");
         animation->setDuration(TRANSITION_TIME_MSEC);
         animation->setStartValue(mMultiRoutineWidget->pos());

@@ -27,12 +27,13 @@ GroupButton::GroupButton(QWidget *parent, const QString& text) : QWidget(parent)
     mTitle->setStyleSheet(transparentStyleSheet);
     mTitle->setAlignment(Qt::AlignBottom);
 
-    mIsClear = false;
+    mButtonState = EGroupButtonState::clearAll;
 
     mButton = new QPushButton(this);
     mButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mSelectAllPixmap = QPixmap(":/images/selectAllIcon.png");
     mClearAllPixmap = QPixmap(":/images/clearAllIcon.png");
+    mDisabledPixmap = QPixmap(":/images/disabledX.png");
 
     // make a minimum size for the button
     auto applicationSize = cor::applicationSize();
@@ -54,11 +55,15 @@ GroupButton::GroupButton(QWidget *parent, const QString& text) : QWidget(parent)
 void GroupButton::handleSelectAllButton(uint32_t checkedDevicesCount, uint32_t reachableDevicesCount) {
     mCheckedCount = checkedDevicesCount;
     mReachableCount = reachableDevicesCount;
-    if (mCheckedCount > 0) {
-        mIsClear = true;
+
+    if (reachableDevicesCount == 0) {
+        mButtonState = EGroupButtonState::disabled;
+        mButton->setIcon(QIcon(mDisabledPixmap));
+    } else if (mCheckedCount > 0) {
+        mButtonState = EGroupButtonState::clearAll;
         mButton->setIcon(QIcon(mClearAllPixmap));
     } else {
-        mIsClear = false;
+        mButtonState = EGroupButtonState::selectAll;
         mButton->setIcon(QIcon(mSelectAllPixmap));
     }
     repaint();
@@ -70,19 +75,20 @@ void GroupButton::setSelectAll(bool shouldSelect) {
 }
 
 void GroupButton::buttonPressed(bool) {
-  if (mCheckedCount > 0) {
-      mIsClear = false;
-      mCheckedCount = 0;
-      mButton->setIcon(QIcon(mSelectAllPixmap));
-  } else {
-      mCheckedCount = mReachableCount;
-      mIsClear = true;
-      mButton->setIcon(QIcon(mClearAllPixmap));
-  }
-  emit groupSelectAllToggled(mTitle->text(), mIsClear);
-  repaint();
+    if (mButtonState != EGroupButtonState::disabled) {
+        if (mCheckedCount > 0) {
+            mButtonState = EGroupButtonState::selectAll;
+            mCheckedCount = 0;
+            mButton->setIcon(QIcon(mSelectAllPixmap));
+        } else {
+            mCheckedCount = mReachableCount;
+            mButtonState = EGroupButtonState::clearAll;
+            mButton->setIcon(QIcon(mClearAllPixmap));
+        }
+        emit groupSelectAllToggled(mTitle->text(), EGroupButtonState::clearAll == mButtonState);
+        repaint();
+    }
 }
-
 
 QColor GroupButton::computeHighlightColor(uint32_t checkedDeviceCount, uint32_t reachableDeviceCount) {
     QColor pureBlue(61, 142, 201);
@@ -117,7 +123,7 @@ void GroupButton::paintEvent(QPaintEvent *event) {
     QPainterPath path;
     path.addRect(this->rect());
 
-    if (mIsClear) {
+    if (mButtonState == EGroupButtonState::clearAll) {
         painter.fillPath(path, QBrush(computeHighlightColor(mCheckedCount, mReachableCount)));
     } else {
         painter.fillPath(path, QBrush(QColor(32, 31, 31, 255)));

@@ -415,4 +415,13 @@ ___
 * Refactored expensive lookups throughout the application to use the dictionary class. 
 * Added [Catch2](https://github.com/catchorg/Catch2) for unit tests.
 
+### **v0.13.9**
+#### The Edge Cases Update
+* Fixed bugs in Nanoleaf packet parsers.
+* Added checks for wifi to the application.
+* Added a `NoWifiWidget` for displaying when no wifi is detected.
+* Added a disabled stated to `GroupButton`.
+* Fixed miscellaneous edge cases with the app's layout. 
+* Fixed miscellaneous bugs. 
+
 

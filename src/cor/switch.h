@@ -40,6 +40,9 @@ public:
      */
     void setSwitchState(ESwitchState state);
 
+    /// getter for switch state
+    const ESwitchState& switchState() const noexcept { return mState; }
+
     /// programmtically turn the switch on
     void switchOn()  { setSwitchState(ESwitchState::on); }
 

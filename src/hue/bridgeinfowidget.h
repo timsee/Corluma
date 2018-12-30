@@ -104,6 +104,7 @@ private slots:
     void deleteButtonPressed();
 
 private:
+    /// handles when the bridge state changes
     void handleBridgeState(EBridgeDiscoveryState state);
 
     /// sets the title's font size

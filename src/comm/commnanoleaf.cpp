@@ -14,6 +14,19 @@
 #include <QVariantMap>
 #include <QJsonObject>
 
+
+std::pair<int, cor::Range<uint32_t>> valueAndRangeFromJSON(const QJsonObject& object) {
+    if (object["value"].isDouble()
+            && object["min"].isDouble()
+            && object["max"].isDouble()) {
+        int value = int(object["value"].toDouble());
+        return std::make_pair(value,cor::Range<uint32_t>(uint32_t(object["min"].toDouble()),
+                                                         uint32_t(object["max"].toDouble())));
+    }
+    return std::make_pair(-1, cor::Range<uint32_t>(45,47));
+}
+
+
 CommNanoleaf::CommNanoleaf() : CommType(ECommType::nanoleaf) {
     mStateUpdateInterval     = 1000;
 
@@ -27,9 +40,7 @@ CommNanoleaf::CommNanoleaf() : CommType(ECommType::nanoleaf) {
     createColorPalettes();
 }
 
-CommNanoleaf::~CommNanoleaf() {
-    delete mNetworkManager;
-}
+CommNanoleaf::~CommNanoleaf() {}
 
 void CommNanoleaf::createColorPalettes() {
     // create JSONArrays for standard palettes
@@ -64,7 +75,7 @@ std::pair<QJsonArray, QJsonArray> CommNanoleaf::vectorToNanoleafPalettes(const s
     bool isFirst = true;
     QJsonArray paletteArray;
     QJsonArray paletteHighlightArray;
-    for (auto&& color : colorVector) {
+    for (const auto& color : colorVector) {
         QJsonObject colorObject;
         int hue = int(color.hueF() * 360.0);
         if (hue < 0) hue = hue * -1;
@@ -113,7 +124,7 @@ QNetworkRequest CommNanoleaf::networkRequest(const nano::LeafController& control
 void CommNanoleaf::putJSON(const QNetworkRequest& request, const QJsonObject& json) {
     QJsonDocument doc(json);
     QString strJson(doc.toJson(QJsonDocument::Compact));
-    //qDebug() << "sending" << request.url() << " JSON: " << strJson;
+   // qDebug() << "sending" << request.url() << " JSON: " << strJson;
     mNetworkManager->put(request, strJson.toUtf8());
 }
 
@@ -186,7 +197,7 @@ void CommNanoleaf::stateUpdate() {
             if (mDiscovery->foundControllers().size() < deviceTable().size()) {
                 mDiscovery->startDiscovery();
             } else {
-               // mDiscovery->stopDiscovery();
+                 mDiscovery->stopDiscovery();
             }
             mStateUpdateCounter++;
         }
@@ -209,6 +220,12 @@ void CommNanoleaf::sendPacket(const QJsonObject& object) {
         } else if (object["routine"].isObject()) {
             routineChange(controller, object["routine"].toObject());
         }
+
+        if (object["brightness"].isDouble()) {
+            brightnessChange(controller, int(object["brightness"].toDouble()));
+        }
+
+        resetStateUpdateTimeout();
     }
 }
 
@@ -266,12 +283,14 @@ void CommNanoleaf::replyFinished(QNetworkReply* reply) {
                         controllerDiscovered(controller.hardwareName, newDeviceList);
                     } else if (object["serialNo"].isString()
                                && object["name"].isString()) {
-                        parseStateUpdatePacket(controller, object);
+                        parseStateUpdatePacket(controller, object);                        
                     } else if (object["animType"].isString()
                                && object["colorType"].isString()
                                && object["palette"].isArray()) {
-                        parseCommandRequestPacket(controller, object);
+                        parseCommandRequestUpdatePacket(controller, object);
                         mDiscovery->updateFoundDevice(controller);
+                    } else {
+                        qDebug() << "Do not recognize packet: " << object;
                     }
                 }
             }
@@ -303,10 +322,11 @@ void CommNanoleaf::renameController(nano::LeafController controller, const QStri
 }
 
 
-void CommNanoleaf::parseCommandRequestPacket(const nano::LeafController& controller, const QJsonObject& requestPacket) {
+void CommNanoleaf::parseCommandRequestUpdatePacket(const nano::LeafController& controller, const QJsonObject& requestPacket) {
     if (requestPacket["animType"].isString()
             && requestPacket["colorType"].isString()
             && requestPacket["palette"].isArray()) {
+
         //----------------
         // Parse for ERoutine
         //----------------
@@ -357,7 +377,7 @@ void CommNanoleaf::parseCommandRequestPacket(const nano::LeafController& control
             bool palettesAreClose = true;
             if (colors.size() == mCustomColors.size()) {
                 uint32_t i = 0;
-                for (auto&& color : colors) {
+                for (const auto& color : colors) {
                    if (cor::colorDifference(color, mCustomColors[i]) > 0.05f) {
                         palettesAreClose = false;
                    }
@@ -388,13 +408,13 @@ void CommNanoleaf::parseCommandRequestPacket(const nano::LeafController& control
         cor::Light light(controller.serialNumber, controller.name, ECommType::nanoleaf);
         fillDevice(light);
         // the display is always treated as custom colors, its only ever used by custom routines though
-        light.customPalette = Palette(paletteToString(EPalette::custom), colors, 51);
+        light.customPalette = Palette(paletteToString(EPalette::custom), colors, light.palette.brightness());
 
         if (routine != ERoutine::MAX) {
             light.routine = routine;
         }
 
-        light.palette = Palette(paletteToString(paletteEnum), colors, 51);
+        light.palette = Palette(paletteToString(paletteEnum), colors, light.palette.brightness());
 
         // get speed
         if (requestPacket["delayTime"].isObject()) {
@@ -416,22 +436,48 @@ void CommNanoleaf::parseCommandRequestPacket(const nano::LeafController& control
                           jColor["brightness"].toDouble() / 100.0);
             colorVector.push_back(color);
         }
-        qreal hueSum(0.0);
-        qreal satSum(0.0);
-        qreal brightSum(0.0);
-        for (auto&& color : colorVector) {
-            hueSum += color.hueF();
-            satSum += color.saturationF();
-            brightSum += color.valueF();
+
+        if (light.routine < cor::ERoutineSingleColorEnd) {
+            auto result = computeBrightnessAndColorFromSingleColorPacket(routine, colorVector);
+            light.color = result.first;
+            light.palette.brightness(result.second);
+        } else {
+            // do nothing for multi color routines
         }
-        QColor color;
-        color.setHsvF(hueSum / colorVector.size(),
-                      satSum / colorVector.size(),
-                      brightSum / colorVector.size());
-        light.color = color;
+
         updateDevice(light);
     }
 }
+
+std::pair<QColor, uint32_t>
+CommNanoleaf::computeBrightnessAndColorFromSingleColorPacket(ERoutine routine, const std::vector<QColor>& colorVector) {
+    GUARD_EXCEPTION(routine < cor::ERoutineSingleColorEnd, "using multi color routine where we expect a single color routine");
+    QColor maxColor(0,0,0);
+    for (const auto& color : colorVector) {
+        if (color.red() >= maxColor.red()
+                && color.green() >= maxColor.green()
+                && color.blue() >= maxColor.blue()) {
+            maxColor = color;
+        }
+    }
+    return std::make_pair(maxColor, uint32_t(maxColor.valueF() * 100.0));
+}
+
+
+uint32_t
+CommNanoleaf::computeBrightnessFromMultiColorPacket(ERoutine routine, const std::vector<QColor>& colorVector) {
+    GUARD_EXCEPTION(routine >= cor::ERoutineSingleColorEnd, "using single color routine where we expect a multi color routine");
+    QColor maxColor(0,0,0);
+    for (const auto& color : colorVector) {
+        if (color.red() >= maxColor.red()
+                && color.green() >= maxColor.green()
+                && color.blue() >= maxColor.blue()) {
+            maxColor = color;
+        }
+    }
+    return uint32_t(maxColor.valueF() * 100.0);
+}
+
 
 void CommNanoleaf::parseStateUpdatePacket(nano::LeafController& controller, const QJsonObject& stateUpdate) {
     if (stateUpdate["name"].isString()
@@ -445,6 +491,7 @@ void CommNanoleaf::parseStateUpdatePacket(nano::LeafController& controller, cons
             && stateUpdate["rhythm"].isObject()) {
         controller.hardwareName = stateUpdate["name"].toString();
         if (controller.name == "") {
+            qDebug() << " Warning, null controller name error happened: " << controller.hardwareName;
             controller.name = controller.hardwareName;
         }
         controller.serialNumber = stateUpdate["serialNo"].toString();
@@ -452,7 +499,7 @@ void CommNanoleaf::parseStateUpdatePacket(nano::LeafController& controller, cons
         controller.firmware     = stateUpdate["firmwareVersion"].toString();
         controller.model        = stateUpdate["model"].toString();
 
-        QJsonObject effectsObject = stateUpdate["effects"].toObject();
+        const auto& effectsObject = stateUpdate["effects"].toObject();
         if (effectsObject["select"].isString()) {
             controller.effect = effectsObject["select"].toString();
         }
@@ -539,62 +586,49 @@ void CommNanoleaf::parseStateUpdatePacket(nano::LeafController& controller, cons
             light.hardwareType = ELightHardwareType::nanoleaf;
             light.name = controller.name;
 
-            int hue = 0;
-            int sat = 0;
-            int brightness = 0;
-            int colorTemp = 0;
-
             QJsonObject onObject = stateObject["on"].toObject();
             if (onObject["value"].isBool()) {
                 light.isOn = onObject["value"].toBool();
             }
 
-            QJsonObject brightnessObject = stateObject["brightness"].toObject();
-            if (brightnessObject["value"].isDouble()
-                    && brightnessObject["min"].isDouble()
-                    && brightnessObject["max"].isDouble()) {
-                brightness = int(brightnessObject["value"].toDouble());
-                controller.brightRange = cor::Range<uint32_t>(uint32_t(brightnessObject["min"].toDouble()),
-                                                              uint32_t(brightnessObject["max"].toDouble()));
-            }
+            const auto& brightnessResult = valueAndRangeFromJSON(stateObject["brightness"].toObject());
+            int brightness = brightnessResult.first;
+            controller.brightRange = brightnessResult.second;
 
-            QJsonObject hueObject = stateObject["hue"].toObject();
-            if (hueObject["value"].isDouble()
-                    && hueObject["min"].isDouble()
-                    && hueObject["max"].isDouble()) {
-                hue = int(hueObject["value"].toDouble());
-                controller.hueRange = cor::Range<uint32_t>(uint32_t(hueObject["min"].toDouble()),
-                                                           uint32_t(hueObject["max"].toDouble()));
-            }
+            const auto& hueResult = valueAndRangeFromJSON(stateObject["hue"].toObject());
+            int hue = hueResult.first;
+            controller.hueRange = hueResult.second;
 
-            QJsonObject satObject = stateObject["sat"].toObject();
-            if (satObject["value"].isDouble()
-                    && satObject["min"].isDouble()
-                    && satObject["max"].isDouble()) {
-                sat = int(satObject["value"].toDouble());
-                controller.satRange = cor::Range<uint32_t>(uint32_t(satObject["min"].toDouble()),
-                                                           uint32_t(satObject["max"].toDouble()));
-            }
+            const auto& satResult = valueAndRangeFromJSON(stateObject["sat"].toObject());
+            int sat = satResult.first;
+            controller.satRange = satResult.second;
 
-            QJsonObject ctObject = stateObject["ct"].toObject();
-            if (ctObject["value"].isDouble()
-                    && ctObject["min"].isDouble()
-                    && ctObject["max"].isDouble()) {
-                colorTemp = int(ctObject["value"].toDouble());
-                controller.ctRange = cor::Range<uint32_t>(uint32_t(ctObject["min"].toDouble()),
-                                                          uint32_t(ctObject["max"].toDouble()));
-            }
+            const auto& ctResult = valueAndRangeFromJSON(stateObject["ct"].toObject());
+            int colorTemp = ctResult.first;
+            controller.ctRange = ctResult.second;
 
             QString colorMode = stateObject["colorMode"].toString();
 
-            if (colorMode == "hsv" || colorMode == "effects") {
+            if (colorMode == "hsv" || colorMode == "hs") {
                 light.color.setHsvF(hue / 360.0, sat / 100.0, brightness / 100.0);
+                light.routine = ERoutine::singleSolid;
                 light.palette.brightness(uint32_t(brightness));
+            } else if (colorMode == "effects") {
+                // parse if brightness packet;
+                if (stateObject["brightness"].isObject()) {
+                    const auto& brightObject = stateObject["brightness"].toObject();
+                    if (brightObject["value"].isDouble()) {
+                        light.palette.brightness(uint32_t(brightObject["value"].toDouble()));
+                    }
+                }
             } else if (colorMode.compare("ct") == 0) {
                 light.color = cor::colorTemperatureToRGB(colorTemp);
             }
+
             updateDevice(light);
         }
+    } else {
+        qDebug() << "Did not recognize state update:" << stateUpdate;
     }
 }
 
@@ -891,11 +925,6 @@ void CommNanoleaf::routineChange(const nano::LeafController& controller, QJsonOb
     }
     if (routine == ERoutine::singleSolid) {
         singleSolidColorChange(controller, color);
-        cor::Light light(controller.serialNumber, controller.name, ECommType::nanoleaf);
-        fillDevice(light);
-        light.color = color;
-        light.routine = ERoutine::singleSolid;
-        updateDevice(light);
     } else {
         cor::Light light(controller.serialNumber, controller.name, ECommType::nanoleaf);
         fillDevice(light);
@@ -907,8 +936,6 @@ void CommNanoleaf::routineChange(const nano::LeafController& controller, QJsonOb
             light.palette = palette;
         }
 
-        updateDevice(light);
-
         QJsonObject effectObject = createRoutinePacket(routine, speed);
         effectObject["palette"] = createPalette(light);
 
@@ -916,18 +943,11 @@ void CommNanoleaf::routineChange(const nano::LeafController& controller, QJsonOb
         QJsonObject writeObject;
         writeObject["write"] = effectObject;
         putJSON(request, writeObject);
-
-        if (light.routine > cor::ERoutineSingleColorEnd) {
-            // TODO: this syncs brightness, but commnanoleaf comm is pretty janky, remove the need for this...
-            QJsonObject paletteObject = routineObject["palette"].toObject();
-            brightnessChange(controller, int(paletteObject["bri"].toDouble() * 100.0));
-        }
     }
 }
 
 void CommNanoleaf::brightnessChange(const nano::LeafController& controller, int brightness) {
     QNetworkRequest request = networkRequest(controller, "state");
-
     QJsonObject json;
     QJsonObject brightObject;
     brightObject["value"] = brightness;

@@ -65,5 +65,7 @@
         <file>images/hue_go.png</file>
         <file>resources/palettes.json</file>
         <file>images/loading_icon.gif</file>
+        <file>images/no_wifi.png</file>
+        <file>images/disabledX.png</file>
     </qresource>
 </RCC>

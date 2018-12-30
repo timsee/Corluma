@@ -12,6 +12,8 @@
 #include "greyoutoverlay.h"
 #include "cor/listwidget.h"
 
+class MainWindow;
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2018.
@@ -32,7 +34,7 @@ public:
      * \brief DiscoverySerialWidget constructor
      * \param parent
      */
-    explicit DiscoveryHueWidget(CommLayer *comm, QWidget *parent);
+    explicit DiscoveryHueWidget(CommLayer *comm, MainWindow* mainWindow, QWidget *parent);
 
     /// See DiscoveryWidget.h
     void handleDiscovery(bool isActive);
@@ -70,9 +72,6 @@ private slots:
     /// handles when a name change is trigged from a hue::BridgeInfoWidget
     void changedName(QString, QString);
 
-    /// handles when greyout is finished
-    void greyOutFadeComplete();
-
     /// handles when a bridge is deleted from a BridgeInfoWidget
     void deleteBridgeFromAppData(hue::Bridge);
 
@@ -95,12 +94,6 @@ private:
     /// true if bridge is discovered, false if not.
     bool mBridgeDiscovered;
 
-    /// true to grey out, false to hide the greyout
-    void greyOut(bool show);
-
-    /// overlay that greys out everythign under it
-    GreyOutOverlay *mGreyOut;
-
     /// widget for discovering hue lights
     hue::LightDiscovery *mHueLightDiscovery;
 
@@ -118,6 +111,9 @@ private:
 
     /// scaling value for size of pngs
     float mScale;
+
+    /// pointer to the main window
+    MainWindow *mMainWindow;
 
     /*!
      * \brief updateHueStatusIcon update the main image for the hue discovery page which

@@ -19,7 +19,7 @@
 class HueLight : public cor::Light
 {
 public:
-
+    /// default constructor
     HueLight();
 
     /// constructor

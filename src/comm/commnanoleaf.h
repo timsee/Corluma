@@ -172,11 +172,11 @@ private:
     void parseStateUpdatePacket(nano::LeafController& controller, const QJsonObject& stateUpdate);
 
     /*!
-     * \brief parseCommandRequestPacket parses a command request packet. These packets are received
+     * \brief parseCommandRequestUpdatePacket parses a command request packet. These packets are received
      *        when you request the details on a command.
      * \param requestPacket the packet with the command request data
      */
-    void parseCommandRequestPacket(const nano::LeafController& controller, const QJsonObject& requestPacket);
+    void parseCommandRequestUpdatePacket(const nano::LeafController& controller, const QJsonObject& requestPacket);
 
     /*!
      * \brief createRoutinePacket helper that takes a lighting routine and creates
@@ -206,6 +206,24 @@ private:
 
     /// converts a nanoleaf palette JSON array to a vector of QColors
     std::vector<QColor> nanoleafPaletteToVector(const QJsonArray& palette);
+
+    /*!
+     * \brief computeBrightnessAndColorFromSingleColorPacket helper function that takes the output from a single color packet and converts it into
+     *        a color value and a brightness value
+     * \param routine the routine for the single color packer
+     * \param colorVector the vector for the single color routine
+     * \return a pair where the first value is a color and the second is a brightness
+     */
+    std::pair<QColor, uint32_t> computeBrightnessAndColorFromSingleColorPacket(ERoutine routine, const std::vector<QColor>& colorVector);
+
+    /*!
+     * \brief computeBrightnessFromMultiColorPacket helper funciton that takes the output from a multi color packet and converts it into
+     *        a brightness value
+     * \param routine the routine for the multi color packet
+     * \param colorVector the vector for the multi color routine
+     * \return a brightness value in the range of 0-100
+     */
+    uint32_t computeBrightnessFromMultiColorPacket(ERoutine routine, const std::vector<QColor>& colorVector);
 
     /*!
      * \brief mNetworkManager Qt's HTTP connection object

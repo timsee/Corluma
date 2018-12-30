@@ -234,6 +234,9 @@ void DeviceList::updateBrightness(uint32_t brightness) {
     for (auto&& light : mDevices) {
         if (light.routine <= cor::ERoutineSingleColorEnd) {
             light.color.setHsvF(light.color.hueF(), light.color.saturationF(), brightness / 100.0);
+            if (light.protocol() == EProtocolType::nanoleaf) {
+                light.palette.brightness(brightness);
+            }
         } else {
             light.palette.brightness(brightness);
         }

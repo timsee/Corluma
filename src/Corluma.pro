@@ -200,7 +200,8 @@ SOURCES += main.cpp \
     listsimplegroupwidget.cpp \
     dropdowntopwidget.cpp \
     listroomwidget.cpp \
-    groupbuttonswidget.cpp
+    groupbuttonswidget.cpp \
+    nowifiwidget.cpp
 
 HEADERS  +=  arducor/arducordiscovery.h \
     arducor/arducorpacketparser.h \
@@ -301,7 +302,9 @@ HEADERS  +=  arducor/arducordiscovery.h \
     listsimplegroupwidget.h \
     dropdowntopwidget.h \
     listroomwidget.h \
-    groupbuttonswidget.h
+    groupbuttonswidget.h \
+    nowifiwidget.h \
+    cor/reachabilityutils.h
 
 #----------
 # Desktop builds only

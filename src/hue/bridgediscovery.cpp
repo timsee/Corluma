@@ -493,7 +493,10 @@ hue::Bridge BridgeDiscovery::bridgeFromIP(const QString& IP) {
 std::list<HueLight> BridgeDiscovery::lights() {
     std::list<HueLight> lights;
     for (const auto& bridge : mFoundBridges.itemList()) {
-        lights.insert(lights.end(), bridge.lights.itemList().begin(), bridge.lights.itemList().end());
+        auto itemCopy = bridge.lights.itemList();
+        lights.insert(lights.end(),
+                      itemCopy.begin(),
+                      itemCopy.end());
     }
     return lights;
 }

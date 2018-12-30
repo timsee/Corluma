@@ -12,6 +12,7 @@
 #include "cor/dictionary.h"
 #include "hue/huelight.h"
 
+/// bridge discovery state
 enum class EBridgeDiscoveryState {
    lookingForResponse,
    lookingForUsername,
@@ -143,6 +144,7 @@ public:
     /// list of the groups stored on the bridge
     std::list<cor::LightGroup> groups;
 
+    /// current state of the bridge during discovery
     EBridgeDiscoveryState state = EBridgeDiscoveryState::lookingForResponse;
 
     operator QString() const {

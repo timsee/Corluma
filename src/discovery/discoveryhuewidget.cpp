@@ -7,6 +7,7 @@
 #include "discoveryhuewidget.h"
 #include "comm/commhue.h"
 #include "cor/utils.h"
+#include "mainwindow.h"
 
 #include <QScroller>
 #include <QGraphicsOpacityEffect>
@@ -14,8 +15,9 @@
 #include <QDesktopWidget>
 #include <QMessageBox>
 
-DiscoveryHueWidget::DiscoveryHueWidget(CommLayer *comm, QWidget *parent) :
-    DiscoveryWidget(parent) {
+DiscoveryHueWidget::DiscoveryHueWidget(CommLayer *comm, MainWindow *mainWindow, QWidget *parent) :
+    DiscoveryWidget(parent),
+    mMainWindow(mainWindow) {
     mScale = 0.4f;
 
     mComm = comm;
@@ -28,9 +30,6 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer *comm, QWidget *parent) :
     mListWidget = new cor::ListWidget(this, cor::EListType::linear);
     mListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QScroller::grabGesture(mListWidget->viewport(), QScroller::LeftMouseButtonGesture);
-
-    mGreyOut = new GreyOutOverlay(this);
-    mGreyOut->setVisible(false);
 
     // --------------
     // Set up HueLightInfoDiscovery
@@ -155,26 +154,26 @@ void DiscoveryHueWidget::updateBridgeGUI() {
 
 
 void DiscoveryHueWidget::hueDiscoveryClosePressed() {
+    mMainWindow->greyOut(false);
     mHueLightDiscovery->isOpen(false);
     mHueLightDiscovery->setVisible(false);
     mHueLightDiscovery->hide();
-    greyOut(false);
 }
 
 void DiscoveryHueWidget::groupsClosePressed() {
+    mMainWindow->greyOut(false);
     mBridgeGroupsWidget->isOpen(false);
     mBridgeGroupsWidget->setVisible(false);
     mBridgeGroupsWidget->resize();
     mBridgeGroupsWidget->hide();
-    greyOut(false);
 }
 
 void DiscoveryHueWidget::schedulesClosePressed() {
+    mMainWindow->greyOut(false);
     mBridgeSchedulesWidget->isOpen(false);
     mBridgeSchedulesWidget->setVisible(false);
     mBridgeSchedulesWidget->resize();
     mBridgeSchedulesWidget->hide();
-    greyOut(false);
 }
 
 void DiscoveryHueWidget::changedName(QString key, QString newName) {
@@ -195,25 +194,30 @@ void DiscoveryHueWidget::changedName(QString key, QString newName) {
 void DiscoveryHueWidget::groupsPressed(QString key) {
     const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
     if (bridgeResult.second) {
+#ifndef MOBILE_BUILD
+        mMainWindow->greyOut(true);
+#endif
         mBridgeGroupsWidget->updateGroups(bridgeResult.first.groups);
         mBridgeGroupsWidget->isOpen(true);
         mBridgeGroupsWidget->setVisible(true);
         mBridgeGroupsWidget->show();
         mBridgeGroupsWidget->resize();
-        greyOut(true);
+        mBridgeGroupsWidget->raise();
     }
 }
 
 void DiscoveryHueWidget::schedulesPressed(QString key) {
     const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
     if (bridgeResult.second) {
+#ifndef MOBILE_BUILD
+        mMainWindow->greyOut(true);
+#endif
         mBridgeSchedulesWidget->updateSchedules(bridgeResult.first.schedules.itemList());
         mBridgeSchedulesWidget->isOpen(true);
         mBridgeSchedulesWidget->setVisible(true);
         mBridgeSchedulesWidget->show();
         mBridgeSchedulesWidget->resize();
-        greyOut(true);
-
+        mBridgeSchedulesWidget->raise();
     }
 }
 
@@ -222,11 +226,14 @@ void DiscoveryHueWidget::discoverHuesPressed(QString key) {
     const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
     if (bridgeResult.second) {
         qDebug() << " dsicvoered this bridge!" << bridgeResult.first;
+#ifndef MOBILE_BUILD
+        mMainWindow->greyOut(true);
+#endif
         mHueLightDiscovery->isOpen(true);
         mHueLightDiscovery->resize();
         mHueLightDiscovery->setVisible(true);
         mHueLightDiscovery->show(bridgeResult.first);
-        greyOut(true);
+        mHueLightDiscovery->raise();
     }
 }
 
@@ -239,9 +246,6 @@ void DiscoveryHueWidget::bridgePressed(QString key) {
 
 void DiscoveryHueWidget::resize() {
     mHueLightDiscovery->resize();
-    if (mGreyOut->isVisible()) {
-        mGreyOut->resize();
-    }
 
     // resize scroll area
     mListWidget->resizeWidgets();
@@ -251,34 +255,6 @@ void DiscoveryHueWidget::resize() {
         widget->setFixedSize(widgetSize);
         widget->setVisible(true);
     }
-}
-
-void DiscoveryHueWidget::greyOut(bool show) {
-    mGreyOut->resize();
-    if (show) {
-        mGreyOut->setVisible(true);
-        QGraphicsOpacityEffect *fadeOutEffect = new QGraphicsOpacityEffect(mGreyOut);
-        mGreyOut->setGraphicsEffect(fadeOutEffect);
-        QPropertyAnimation *fadeOutAnimation = new QPropertyAnimation(fadeOutEffect, "opacity");
-        fadeOutAnimation->setDuration(TRANSITION_TIME_MSEC);
-        fadeOutAnimation->setStartValue(0.0f);
-        fadeOutAnimation->setEndValue(1.0f);
-        fadeOutAnimation->start();
-    } else {
-        QGraphicsOpacityEffect *fadeInEffect = new QGraphicsOpacityEffect(mGreyOut);
-        mGreyOut->setGraphicsEffect(fadeInEffect);
-        QPropertyAnimation *fadeInAnimation = new QPropertyAnimation(fadeInEffect, "opacity");
-        fadeInAnimation->setDuration(TRANSITION_TIME_MSEC);
-        fadeInAnimation->setStartValue(1.0f);
-        fadeInAnimation->setEndValue(0.0f);
-        fadeInAnimation->start();
-        connect(fadeInAnimation, SIGNAL(finished()), this, SLOT(greyOutFadeComplete()));
-    }
-}
-
-
-void DiscoveryHueWidget::greyOutFadeComplete() {
-    mGreyOut->setVisible(false);
 }
 
 void DiscoveryHueWidget::resizeEvent(QResizeEvent *) {

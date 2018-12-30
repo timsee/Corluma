@@ -9,10 +9,19 @@
 #include "cor/utils.h"
 #include "comm/commnanoleaf.h"
 
+bool checkIfOffByOne(int goal, int value) {
+    if (goal == value
+            || (goal == (value - 1))
+            || (goal == (value + 1))) {
+        return true;
+    }
+    return false;
+}
+
 DataSyncNanoLeaf::DataSyncNanoLeaf(cor::DeviceList *data, CommLayer *comm) {
     mData = data;
     mComm = comm;
-    mUpdateInterval = 250;
+    mUpdateInterval = 333;
 
     connect(mComm, SIGNAL(packetReceived(EProtocolType)), this, SLOT(commPacketReceived(EProtocolType)));
     connect(mData, SIGNAL(dataUpdate()), this, SLOT(resetSync()));
@@ -132,7 +141,8 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
         bool paramsInSync       = true;
         bool colorInSync        = (cor::colorDifference(dataDevice.color, commDevice.color) <= 0.02f);
         bool paletteInSync      = (commDevice.palette == dataDevice.palette);
-        bool paletteBrightnessInSync = (commDevice.palette.brightness() == dataDevice.palette.brightness());
+        bool paletteBrightnessInSync = checkIfOffByOne(commDevice.palette.brightness(), dataDevice.palette.brightness());
+
         if (dataDevice.palette.paletteEnum() == EPalette::custom) {
             bool palettesAreClose = true;
             if (dataDevice.palette.colors().size() == commDevice.palette.colors().size()) {
@@ -147,6 +157,11 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
                 if (!paletteBrightnessInSync) {
                     paletteInSync = false;
                 }
+            }
+        } else {
+            if (!paletteBrightnessInSync) {
+                object["brightness"] = double(dataDevice.palette.brightness());
+                paletteInSync = false;
             }
         }
         if (!colorInSync && dataDevice.routine <= cor::ERoutineSingleColorEnd) {

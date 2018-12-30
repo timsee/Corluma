@@ -62,6 +62,12 @@ public:
      */
     ~TopMenu();
 
+    /// resizes the menus programmatically
+    void resize();
+
+    /// call when you want to show the top menus, this handles raising it and making all necessary parts visible
+    void showMenu();
+
     /*!
      * \brief updateBrightnessSlider update the brightness slider at the top of the mnu based on the current
      *        light data.

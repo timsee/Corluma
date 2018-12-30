@@ -50,7 +50,8 @@ void ListWidget::removeWidget(cor::ListItemWidget* widget) {
 
 void ListWidget::resizeWidgets() {
     int yPos = 0;
-    int maxWidth = 0;
+    QWidget *parentWidget = static_cast<QWidget*>(parent());
+    int maxWidth = parentWidget->width();
     for (auto widget : mListLayout.widgets()) {
         QSize size = widget->geometry().size();
         if (size.width() > maxWidth) {
@@ -72,7 +73,6 @@ void ListWidget::show() {
 
 void ListWidget::resize() {
     mWidget->setFixedWidth(this->viewport()->width());
-
     for (auto widget : mListLayout.widgets()) {
        widget->setFixedWidth(this->viewport()->width());
     }

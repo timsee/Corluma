@@ -6,6 +6,7 @@
 #include "swatchvectorwidget.h"
 
 #include <QWidget>
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2018.

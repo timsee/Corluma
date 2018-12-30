@@ -62,6 +62,7 @@ void LightInfoListWidget::updateHues(std::list<HueLight> lights) {
             }
             ++i;
         }
+
         // if it doesnt exist, add it
         if (widgetIndex == -1) {
             hue::HueInfoWidget *widget = new hue::HueInfoWidget(light, mScrollAreaWidget);

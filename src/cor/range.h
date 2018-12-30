@@ -27,6 +27,11 @@ public:
        return ((value > mMin) && (value < mMax));
     }
 
+    /// max value in the range
+    T max() const noexcept { return mMax; }
+
+    /// min value in the range
+    T min() const noexcept { return mMin; }
 
 private:
     /// min value

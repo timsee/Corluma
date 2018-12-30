@@ -106,7 +106,6 @@ void ListRoomWidget::updateGroup(const cor::LightGroup& group, bool removeIfNotF
         }
     }
     mGroup = group;
-    updateTopWidget();
 
     for (const auto& inputDevice : group.devices) {
         bool foundDevice = false;
@@ -286,9 +285,13 @@ void ListRoomWidget::resizeEvent(QResizeEvent *) {
 
 
 void ListRoomWidget::resize() {
-    mWidget->setFixedWidth(this->width());
-    mDropdownTopWidget->setFixedWidth(this->width());
-    moveWidgets(QSize(this->width(), mDropdownTopWidget->height()), QPoint(0, 0));
+    QWidget *parentWidget = static_cast<QWidget*>(parent());
+    mWidget->setFixedWidth(parentWidget->width());
+    mDropdownTopWidget->setFixedWidth(parentWidget->width());
+    if (!mGroup.groups.empty()) {
+        mGroupsButtonWidget->setFixedWidth(parentWidget->width());
+    }
+    moveWidgets(QSize(parentWidget->width(), mDropdownTopWidget->height()), QPoint(0, 0));
 }
 
 void ListRoomWidget::groupPressed(QString key) {

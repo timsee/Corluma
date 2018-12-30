@@ -156,7 +156,7 @@ private:
     /*!
      * \brief mDevice stores the cor::Light used by the widget.
      */
-    cor::Light mDevice;
+    cor::Light mDevice = {};
 
     /// switch for turning on and off a device
     cor::Switch *mOnOffSwitch;

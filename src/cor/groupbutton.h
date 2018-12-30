@@ -6,6 +6,13 @@
 #include <QLabel>
 #include <QLayout>
 
+/// group button state
+enum class EGroupButtonState  {
+    selectAll,
+    clearAll,
+    disabled
+};
+
 namespace cor
 {
 /*!
@@ -79,8 +86,8 @@ private:
      */
     void resizeRightHandIcon(QPixmap pixmap, QPushButton *button);
 
-    /// true if select all shows clear option, false if it shows select all
-    bool mIsClear;
+    /// state of the button
+    EGroupButtonState mButtonState;
 
     /// true if widget is selected, false otherwise
     bool mIsSelected;
@@ -104,6 +111,9 @@ private:
 
     /// pixmap for the clear all button
     QPixmap mClearAllPixmap;
+
+    /// pixmap for disabled button
+    QPixmap mDisabledPixmap;
 
     /// layout for widget
     QHBoxLayout *mLayout;

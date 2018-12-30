@@ -106,6 +106,7 @@ TopMenu::TopMenu(QWidget* parent,
     std::vector<QString> buttons = { QString("Lights_Page"), QString("Colors_Page"), QString("Palette_Page"), QString("Mood_Page")};
     mMainLayout->setupButtons(buttons, EButtonSize::medium);
     mFloatingMenuEnd = mFloatingMenuStart + mMainLayout->size().height();
+    mMainLayout->setVisible(false);
 
     // --------------
     // Connection Floating Layout
@@ -114,6 +115,7 @@ TopMenu::TopMenu(QWidget* parent,
     connect(mLightsFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
     buttons = { QString("New_Group"), QString("Settings")};
     mLightsFloatingLayout->setupButtons(buttons, EButtonSize::small);
+    mLightsFloatingLayout->setVisible(false);
 
     // --------------
     // Group Floating Layout
@@ -122,6 +124,7 @@ TopMenu::TopMenu(QWidget* parent,
     connect(mPaletteFloatinglayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
     buttons = {QString("Settings")};
     mPaletteFloatinglayout->setupButtons(buttons, EButtonSize::small);
+    mPaletteFloatinglayout->setVisible(false);
 
     // --------------
     // Moods Floating Layout
@@ -130,6 +133,7 @@ TopMenu::TopMenu(QWidget* parent,
     connect(mMoodsFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
     buttons = {QString("New_Group"), QString("Settings")};
     mMoodsFloatingLayout->setupButtons(buttons, EButtonSize::small);
+    mMoodsFloatingLayout->setVisible(false);
 
     // --------------
     // Color Page Floating Layouts
@@ -137,16 +141,18 @@ TopMenu::TopMenu(QWidget* parent,
     //NOTE: by making the parent the parent of the floating widgets, they don't get cut off if they overextend over top menu
     mColorFloatingLayout = new FloatingLayout(false, mMainWindow);
     connect(mColorFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
+    mColorFloatingLayout->setVisible(false);
 
     mColorVerticalFloatingLayout = new FloatingLayout(false, mMainWindow);
     connect(mColorVerticalFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
     mColorVerticalFloatingLayout->setVisible(false);
+    mColorFloatingLayout->setVisible(false);
 
     mLastColorButtonKey = "RGB";
 
     deviceCountReachedZero();
 
-    mCurrentPage = EPage::palettePage;
+    mCurrentPage = EPage::lightPage;
     pageButtonPressed(EPage::lightPage);
     mMainLayout->highlightButton("Lights_Page");
 }
@@ -171,6 +177,10 @@ void TopMenu::brightnessUpdate(uint32_t newValue) {
     // update the top menu bar
     updateBrightnessSlider();
 
+    if (newValue != 0
+            && mOnOffSwitch->switchState() != ESwitchState::on) {
+        mOnOffSwitch->setSwitchState(ESwitchState::on);
+    }
     emit brightnessChanged(newValue);
 }
 
@@ -282,13 +292,35 @@ void TopMenu::pageButtonPressed(EPage pageButtonType) {
 
 }
 
-void TopMenu::resizeEvent(QResizeEvent *event) {
-    Q_UNUSED(event);
+void TopMenu::showMenu() {
+    this->setVisible(true);
+    mMainLayout->setVisible(true);
+    mColorFloatingLayout->setVisible(true);
+    mLightsFloatingLayout->setVisible(true);
+    mPaletteFloatinglayout->setVisible(true);
+    mMoodsFloatingLayout->setVisible(true);    
+
+    this->raise();
+    mLightsFloatingLayout->raise();
+    mColorFloatingLayout->raise();
+    mPaletteFloatinglayout->raise();
+    mMoodsFloatingLayout->raise();
+    mMainLayout->raise();
+    mColorVerticalFloatingLayout->raise();
+}
+
+void TopMenu::resize() {
     downsizeTextHeightToFit(mMainPalette->size().height());
     updatePaletteButton();
     moveFloatingLayout();
     int widthSize = int(this->width() * 0.95f) - mSize.width();
     mBrightnessSlider->setFixedWidth(widthSize);
+}
+
+
+void TopMenu::resizeEvent(QResizeEvent *event) {
+    Q_UNUSED(event);
+    resize();
 }
 
 void TopMenu::updatePaletteButton() {

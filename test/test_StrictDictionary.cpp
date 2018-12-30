@@ -10,17 +10,17 @@
 
 TEST_CASE( "StrictDictionary Standard API", "[strict-dictionary]" ) {
     cor::StrictDictionary<int> dict;
-    dict.insert("four twenty", 420);
+    dict.insert("two hundred two", 202);
 
     SECTION("insert") {
         REQUIRE(dict.size() == 1);
-        dict.insert("four twenty one", 421);
+        dict.insert("two hundred four", 204);
         REQUIRE(dict.size() == 2);
     }
 
     SECTION("remove by item") {
         REQUIRE(dict.size() == 1);
-        dict.remove(420);
+        dict.remove(202);
         REQUIRE(dict.size() == 0);
     }
 
@@ -31,7 +31,7 @@ TEST_CASE( "StrictDictionary Standard API", "[strict-dictionary]" ) {
 
     SECTION("remove by key") {
         REQUIRE(dict.size() == 1);
-        dict.removeKey("four twenty");
+        dict.removeKey("two hundred two");
         REQUIRE(dict.size() == 0);
     }
 
@@ -41,13 +41,13 @@ TEST_CASE( "StrictDictionary Standard API", "[strict-dictionary]" ) {
     }
 
     SECTION("key from item") {
-        std::string key = dict.key(420);
-        REQUIRE(key == "four twenty");
+        std::string key = dict.key(202);
+        REQUIRE(key == "two hundred two");
     }
 
     SECTION("item from key") {
-        int item = dict.item("four twenty");
-        REQUIRE(item == 420);
+        int item = dict.item("two hundred two");
+        REQUIRE(item == 202);
     }
 
     SECTION("update") {
