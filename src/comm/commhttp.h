@@ -12,7 +12,7 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2018.
+ * Copyright (C) 2015 - 2019.
  * Released under the GNU General Public License.
  *
  * \brief provides a HTTP communication stream, which is

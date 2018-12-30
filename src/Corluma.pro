@@ -1,7 +1,7 @@
 #-------------------------------------------------
 #
 # Corluma
-# Copyright (C) 2015 - 2018.
+# Copyright (C) 2015 - 2019.
 # Released under the GNU General Public License.
 # Full license in root of git repo.
 #

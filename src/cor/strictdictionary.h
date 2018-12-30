@@ -15,7 +15,7 @@ namespace cor
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2018.
+ * Copyright (C) 2015 - 2019.
  * Released under the GNU General Public License.
  *
  * \brief Simple dictionary optimized for lookup times. The strict aspect of this dictionary comes from the fact
