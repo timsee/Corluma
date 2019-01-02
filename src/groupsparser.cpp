@@ -449,9 +449,6 @@ bool GroupsParser::loadExternalData(QString file) {
     if(!document.isNull()) {
         if(document.isArray()) {
             mJsonData = document;
-            //            if (!loadJSON()) {
-            //                qDebug() << "WARNING: Load external data is not valid Corluma Data";
-            //            }
             if (!saveJSON()) {
                 qDebug() << "WARNING: Load External Data couldn't save file";
             }

@@ -20,14 +20,7 @@ Slider::Slider(QWidget *parent) : QWidget(parent) {
 
     mHeightScaleFactor = 1.0f;
     mOpacity = 1.0;
-    mThrottleFlag = false;
     mShouldDrawTickLabels = false;
-
-    // --------------
-    // Setup Thrrole Timer
-    // --------------
-    mThrottleTimer = new QTimer(this);
-    connect(mThrottleTimer, SIGNAL(timeout()), this, SLOT(resetThrottleFlag()));
 
     this->setAutoFillBackground(true);
     mSlider = new QSlider(Qt::Horizontal, this);
@@ -38,7 +31,6 @@ Slider::Slider(QWidget *parent) : QWidget(parent) {
     connect(mSlider, SIGNAL(sliderReleased()),  this, SLOT(releasedSlider()));
 
     mLayout = new QVBoxLayout;
-    mLayout->setSpacing(0);
     mLayout->setContentsMargins(0,0,0,0);
     mLayout->addWidget(mSlider);
     setLayout(mLayout);
@@ -101,10 +93,7 @@ void Slider::receivedValue(int value) {
 
     mSlider->blockSignals(true);
     mSlider->setValue(value);
-    if (!mThrottleFlag) {
-        emit valueChanged(value);
-        mThrottleFlag = true;
-    }
+    emit valueChanged(value);
 
     mSlider->blockSignals(false);
 }
@@ -182,13 +171,10 @@ void Slider::resizeEvent(QResizeEvent *event) {
 
 void Slider::showEvent(QShowEvent *event) {
     Q_UNUSED(event);
-    mThrottleTimer->start(200);
 }
 
 void Slider::hideEvent(QHideEvent *event) {
     Q_UNUSED(event);
-    mThrottleTimer->stop();
-    mThrottleFlag = false;
 }
 
 
@@ -218,6 +204,7 @@ void Slider::paintEvent(QPaintEvent *event) {
         // get tick count
         QFontMetrics fontMetrics(painter.font());
         int currentStep = mSlider->minimum();
+        int pixelsPerStep = mSlider->width() / interval;
         bool shouldSubtractOne = (mSlider->minimum() == 1);
         bool isFirstLabel = true;
 
@@ -226,10 +213,10 @@ void Slider::paintEvent(QPaintEvent *event) {
             maximum += 1;
         }
         for (int i = mSlider->minimum(); i <= maximum; i += interval) {
-            int x = i - mSlider->minimum() / (mSlider->maximum() - mSlider->minimum()) * mSlider->width() - 1;
+            int x = i * interval / mSlider->maximum() * pixelsPerStep;
             x = x + this->contentsMargins().left();
-            if (mShouldDrawTickLabels)
-            {
+
+            if (mShouldDrawTickLabels) {
                 int y = this->rect().bottom();
                 // handle edge case that makes ugly labels...
                 int labelValue = currentStep;
@@ -247,9 +234,7 @@ void Slider::paintEvent(QPaintEvent *event) {
                 } else {
                     painter.drawText(x - labelOffset / 2, y, label);
                 }
-            }
-            else
-            {
+            } else {
                 if (mSlider->tickPosition() == QSlider::TicksBothSides
                         || mSlider->tickPosition() == QSlider::TicksAbove) {
                     int y = mSlider->rect().top();
@@ -281,10 +266,6 @@ void Slider::setSliderHeight(float percent) {
 
 void Slider::setSnapToNearestTick(bool shouldSnap) {
     mShouldSnap = shouldSnap;
-}
-
-void Slider::resetThrottleFlag() {
-    mThrottleFlag = false;
 }
 
 

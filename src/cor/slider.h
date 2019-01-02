@@ -106,13 +106,6 @@ private slots:
     void receivedValue(int);
 
     /*!
-     * \brief resetThrottleFlag called by the throttle timer to allow commands to
-     *        be sent again. This gets called on a loop whenever color picker is being
-     *        used in order to prevent clogging the communication stream.
-     */
-    void resetThrottleFlag();
-
-    /*!
      * \brief releasedSlider uses the QSlider inside of the LightsSlider to pick up
      *        when the slider is released. This always sets the color of the color picker.
      *        This system is used to prevent an edge case with throttling with a timer.
@@ -208,13 +201,6 @@ private:
     int snapSliderToNearestTick(QSlider *slider, int pos);
 
     /*!
-     * \brief mThrottleTimer throttles the speed that the lights sliders update,
-     *        since without this it updates on each redraw which can really clog
-     *        nearly all communication streams.
-     */
-    QTimer *mThrottleTimer;
-
-    /*!
      * \brief mOpacity opacity of the lights slider, which gets changed when its
      *        enabled or disabled.
      */
@@ -225,11 +211,6 @@ private:
      *        region are drawn instead
      */
     bool mShouldDrawTickLabels;
-
-    /*!
-     * \brief mThrottleFlag flag used to enforced the throttle timer's throttle.
-     */
-    bool mThrottleFlag;
 
     /*!
      * \brief mSliderColorSet true if the slider color has been changed, false otherwise

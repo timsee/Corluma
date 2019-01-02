@@ -424,4 +424,10 @@ ___
 * Fixed miscellaneous edge cases with the app's layout. 
 * Fixed miscellaneous bugs. 
 
+### **v0.13.91**
+#### Minor Bug Fixes
+* Fixed bug with displaying connection state errors.
+* Fixed bugs with the `cor::Slider` widget.
+* Fixed miscellaneous bugs.
+
 

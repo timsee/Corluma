@@ -9,7 +9,7 @@
 
 #include <QDebug>
 
-CommSerial::CommSerial() : CommType(ECommType::serial) {
+CommSerial::CommSerial() : CommType(ECommType::serial), mSerialPortFailed{false} {
     mStateUpdateInterval = 500;
     mLookingForActivePorts = false;
 

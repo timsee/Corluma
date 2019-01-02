@@ -29,6 +29,7 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer *comm, MainWindow *mainWindow, 
 
     mListWidget = new cor::ListWidget(this, cor::EListType::linear);
     mListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mListWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     QScroller::grabGesture(mListWidget->viewport(), QScroller::LeftMouseButtonGesture);
 
     // --------------
@@ -250,7 +251,7 @@ void DiscoveryHueWidget::resize() {
     // resize scroll area
     mListWidget->resizeWidgets();
 
-    QSize widgetSize(mListWidget->width(), int(this->height() / 1.5f));
+    QSize widgetSize(mListWidget->width(), int(this->height() / 1.6f));
     for (auto widget : mListWidget->widgets()) {
         widget->setFixedSize(widgetSize);
         widget->setVisible(true);

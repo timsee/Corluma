@@ -11,12 +11,7 @@
 
 #include "greyoutoverlay.h"
 
-GreyOutOverlay::GreyOutOverlay(QWidget *parent) : QWidget(parent) {
-
-
-}
-
-
+GreyOutOverlay::GreyOutOverlay(QWidget *parent) : QWidget(parent) {}
 
 void GreyOutOverlay::resize() {
     QSize size = qobject_cast<QWidget*>(this->parent())->size();

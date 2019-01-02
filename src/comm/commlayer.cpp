@@ -38,14 +38,13 @@ CommLayer::CommLayer(QObject *parent, GroupsParser *parser) : QObject(parent),  
 }
 
 bool CommLayer::discoveryErrorsExist(EProtocolType type) {
-    if (type == EProtocolType::arduCor) {
-        return false; // can only error out if no bridge is found...
-    } else if (type == EProtocolType::nanoleaf) {
+    if (type == EProtocolType::nanoleaf
+            || type == EProtocolType::hue) {
         return false; // cant error out...
     } else if (type == EProtocolType::arduCor) {
         return (!mArduCor->UDP()->portBound()
         #ifndef MOBILE_BUILD
-               || !mArduCor->serial()->serialPortErrorsExist()
+               || mArduCor->serial()->serialPortErrorsExist()
         #endif // MOBILE_BUILD
                 );
     }
@@ -123,7 +122,6 @@ void CommLayer::deleteHueGroup(QString name) {
             }
         }
         if (hueGroupExists) {
-            qDebug() << " birds move";
             mHue->deleteGroup(bridge, groupToDelete);
         }
     }
