@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.13.9</span>
+   &#160;<span id="projectnumber">v0.14.0</span>
    </div>
   </td>
  </tr>
@@ -67,36 +67,40 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mood_page.html#aee87abf05cabcb62876777f9b199f402">changedDeviceCount</a> ()</td></tr>
 <tr class="memdesc:aee87abf05cabcb62876777f9b199f402"><td class="mdescLeft">&#160;</td><td class="mdescRight">changedDeviceCount signaled to UI assets whenever a click on the page results in changing the number of devices connected. <br /></td></tr>
 <tr class="separator:aee87abf05cabcb62876777f9b199f402"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a578d429f0787249aaa5f69f35caf7045"><td class="memItemLeft" align="right" valign="top"><a id="a578d429f0787249aaa5f69f35caf7045"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mood_page.html#a578d429f0787249aaa5f69f35caf7045">clickedEditButton</a> (QString key, bool isMood)</td></tr>
-<tr class="memdesc:a578d429f0787249aaa5f69f35caf7045"><td class="mdescLeft">&#160;</td><td class="mdescRight">clickedEditButton sent whenever an edit button is clicked so that the main page can load the edit page. <br /></td></tr>
-<tr class="separator:a578d429f0787249aaa5f69f35caf7045"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad4681a1ee4f4dd84990deecb9dd911d0"><td class="memItemLeft" align="right" valign="top"><a id="ad4681a1ee4f4dd84990deecb9dd911d0"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mood_page.html#ad4681a1ee4f4dd84990deecb9dd911d0">moodUpdate</a> (QString moodName)</td></tr>
-<tr class="memdesc:ad4681a1ee4f4dd84990deecb9dd911d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">sent when a mood receives an update <br /></td></tr>
-<tr class="separator:ad4681a1ee4f4dd84990deecb9dd911d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa74df7f7d8c33a31154190e70005e53c"><td class="memItemLeft" align="right" valign="top"><a id="aa74df7f7d8c33a31154190e70005e53c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mood_page.html#aa74df7f7d8c33a31154190e70005e53c">clickedEditButton</a> (std::uint64_t key, bool isMood)</td></tr>
+<tr class="memdesc:aa74df7f7d8c33a31154190e70005e53c"><td class="mdescLeft">&#160;</td><td class="mdescRight">clickedEditButton sent whenever an edit button is clicked so that the main page can load the edit page. <br /></td></tr>
+<tr class="separator:aa74df7f7d8c33a31154190e70005e53c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae62b6b99079ffb0b8e8b9ebee4ccf259"><td class="memItemLeft" align="right" valign="top"><a id="ae62b6b99079ffb0b8e8b9ebee4ccf259"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mood_page.html#ae62b6b99079ffb0b8e8b9ebee4ccf259">moodUpdate</a> (std::uint64_t moodID)</td></tr>
+<tr class="memdesc:ae62b6b99079ffb0b8e8b9ebee4ccf259"><td class="mdescLeft">&#160;</td><td class="mdescRight">sent when a mood receives an update <br /></td></tr>
+<tr class="separator:ae62b6b99079ffb0b8e8b9ebee4ccf259"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab4b9f5bcedcc7f065ea17a4efbd12695"><td class="memItemLeft" align="right" valign="top"><a id="ab4b9f5bcedcc7f065ea17a4efbd12695"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mood_page.html#ab4b9f5bcedcc7f065ea17a4efbd12695">clickedSelectedMood</a> (std::uint64_t moodID)</td></tr>
+<tr class="memdesc:ab4b9f5bcedcc7f065ea17a4efbd12695"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when mood is selected <br /></td></tr>
+<tr class="separator:ab4b9f5bcedcc7f065ea17a4efbd12695"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a03589b19159a9c16eda702766a03a427"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mood_page.html#a03589b19159a9c16eda702766a03a427">MoodPage</a> (QWidget *parent, <a class="el" href="class_groups_parser.html">GroupsParser</a> *groups)</td></tr>
-<tr class="memdesc:a03589b19159a9c16eda702766a03a427"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#a03589b19159a9c16eda702766a03a427">More...</a><br /></td></tr>
-<tr class="separator:a03589b19159a9c16eda702766a03a427"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa41cf9d4f57998993308d08cab81f3cc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mood_page.html#aa41cf9d4f57998993308d08cab81f3cc">MoodPage</a> (QWidget *parent, <a class="el" href="class_group_data.html">GroupData</a> *groups)</td></tr>
+<tr class="memdesc:aa41cf9d4f57998993308d08cab81f3cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#aa41cf9d4f57998993308d08cab81f3cc">More...</a><br /></td></tr>
+<tr class="separator:aa41cf9d4f57998993308d08cab81f3cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a92af7588cc9e57cd676142029322866d"><td class="memItemLeft" align="right" valign="top"><a id="a92af7588cc9e57cd676142029322866d"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mood_page.html#a92af7588cc9e57cd676142029322866d">updateConnectionList</a> ()</td></tr>
 <tr class="memdesc:a92af7588cc9e57cd676142029322866d"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateConnectionList updates the GUI elements that display the <a class="el" href="class_comm_layer.html" title="The CommLayer class provides communication protocols that allow the user to connect and send packets ...">CommLayer</a>'s connection list. <br /></td></tr>
 <tr class="separator:a92af7588cc9e57cd676142029322866d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a141cd854f5b695ae3e02fd3e18a21b1d"><td class="memItemLeft" align="right" valign="top"><a id="a141cd854f5b695ae3e02fd3e18a21b1d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mood_page.html#a141cd854f5b695ae3e02fd3e18a21b1d">show</a> (const QString &amp;<a class="el" href="class_mood_page.html#ae1032522625b9500786d70dac320d55c">currentMood</a>, const std::list&lt; cor::LightGroup &gt; &amp;moods, const std::list&lt; cor::LightGroup &gt; &amp;roomList, const std::vector&lt; std::pair&lt; QString, QString &gt;&gt; deviceNames)</td></tr>
-<tr class="memdesc:a141cd854f5b695ae3e02fd3e18a21b1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when the widget is shown <br /></td></tr>
-<tr class="separator:a141cd854f5b695ae3e02fd3e18a21b1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c7cf4658626d2cbc7694f5d6c4045ff"><td class="memItemLeft" align="right" valign="top"><a id="a7c7cf4658626d2cbc7694f5d6c4045ff"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mood_page.html#a7c7cf4658626d2cbc7694f5d6c4045ff">show</a> (std::uint64_t <a class="el" href="class_mood_page.html#a1096cfd70faa20785dca681ff05cd8c2">currentMood</a>, const cor::Dictionary&lt; cor::Mood &gt; &amp;moods, const std::list&lt; cor::Group &gt; &amp;roomList)</td></tr>
+<tr class="memdesc:a7c7cf4658626d2cbc7694f5d6c4045ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when the widget is shown <br /></td></tr>
+<tr class="separator:a7c7cf4658626d2cbc7694f5d6c4045ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af3808d0246ccd1752ca37402f745fa79"><td class="memItemLeft" align="right" valign="top"><a id="af3808d0246ccd1752ca37402f745fa79"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mood_page.html#af3808d0246ccd1752ca37402f745fa79">hide</a> ()</td></tr>
 <tr class="memdesc:af3808d0246ccd1752ca37402f745fa79"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when the widget is hidden <br /></td></tr>
 <tr class="separator:af3808d0246ccd1752ca37402f745fa79"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae1032522625b9500786d70dac320d55c"><td class="memItemLeft" align="right" valign="top"><a id="ae1032522625b9500786d70dac320d55c"></a>
-const QString &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mood_page.html#ae1032522625b9500786d70dac320d55c">currentMood</a> ()</td></tr>
-<tr class="memdesc:ae1032522625b9500786d70dac320d55c"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for current mood <br /></td></tr>
-<tr class="separator:ae1032522625b9500786d70dac320d55c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1096cfd70faa20785dca681ff05cd8c2"><td class="memItemLeft" align="right" valign="top"><a id="a1096cfd70faa20785dca681ff05cd8c2"></a>
+const std::uint64_t &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mood_page.html#a1096cfd70faa20785dca681ff05cd8c2">currentMood</a> ()</td></tr>
+<tr class="memdesc:a1096cfd70faa20785dca681ff05cd8c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for current mood <br /></td></tr>
+<tr class="separator:a1096cfd70faa20785dca681ff05cd8c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -106,10 +110,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:a27dcfaebedeb096adc5bdc2778a08b50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
+<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a03589b19159a9c16eda702766a03a427"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a03589b19159a9c16eda702766a03a427">&#9670;&nbsp;</a></span>MoodPage()</h2>
+<a id="aa41cf9d4f57998993308d08cab81f3cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa41cf9d4f57998993308d08cab81f3cc">&#9670;&nbsp;</a></span>MoodPage()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -126,7 +130,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_groups_parser.html">GroupsParser</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="class_group_data.html">GroupData</a> *&#160;</td>
           <td class="paramname"><em>groups</em>&#160;</td>
         </tr>
         <tr>
@@ -141,7 +145,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>

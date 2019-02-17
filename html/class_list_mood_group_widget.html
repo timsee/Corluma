@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.13.9</span>
+   &#160;<span id="projectnumber">v0.14.0</span>
    </div>
   </td>
  </tr>
@@ -59,14 +59,18 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
-<tr class="memitem:a5b56b87a4474e691b66f4d533a268980"><td class="memItemLeft" align="right" valign="top"><a id="a5b56b87a4474e691b66f4d533a268980"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_group_widget.html#a5b56b87a4474e691b66f4d533a268980">moodClicked</a> (QString, QString)</td></tr>
-<tr class="memdesc:a5b56b87a4474e691b66f4d533a268980"><td class="mdescLeft">&#160;</td><td class="mdescRight">moodClicked emitted when a mood is clicked in a collection. Gives the key of the collection and the key of the mood. <br /></td></tr>
-<tr class="separator:a5b56b87a4474e691b66f4d533a268980"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab421440d24791226c9a552ba191927b6"><td class="memItemLeft" align="right" valign="top"><a id="ab421440d24791226c9a552ba191927b6"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_group_widget.html#ab421440d24791226c9a552ba191927b6">editClicked</a> (QString, QString)</td></tr>
-<tr class="memdesc:ab421440d24791226c9a552ba191927b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">editClicked the edit button of a mood is clicked. Emits both the collection key and the mood's key. <br /></td></tr>
-<tr class="separator:ab421440d24791226c9a552ba191927b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc1f3ce4419f14f80a8893c7209bf2c4"><td class="memItemLeft" align="right" valign="top"><a id="acc1f3ce4419f14f80a8893c7209bf2c4"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_group_widget.html#acc1f3ce4419f14f80a8893c7209bf2c4">moodClicked</a> (QString, std::uint64_t)</td></tr>
+<tr class="memdesc:acc1f3ce4419f14f80a8893c7209bf2c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">moodClicked emitted when a mood is clicked in a collection. Gives the key of the collection and the key of the mood. <br /></td></tr>
+<tr class="separator:acc1f3ce4419f14f80a8893c7209bf2c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa5124be5b750b971ecc528e777d57b15"><td class="memItemLeft" align="right" valign="top"><a id="aa5124be5b750b971ecc528e777d57b15"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_group_widget.html#aa5124be5b750b971ecc528e777d57b15">editClicked</a> (QString, std::uint64_t)</td></tr>
+<tr class="memdesc:aa5124be5b750b971ecc528e777d57b15"><td class="mdescLeft">&#160;</td><td class="mdescRight">editClicked the edit button of a mood is clicked. Emits both the collection key and the mood's key. <br /></td></tr>
+<tr class="separator:aa5124be5b750b971ecc528e777d57b15"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1560da38084340d09f7463026ca07e87"><td class="memItemLeft" align="right" valign="top"><a id="a1560da38084340d09f7463026ca07e87"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_group_widget.html#a1560da38084340d09f7463026ca07e87">moodSelected</a> (QString, std::uint64_t)</td></tr>
+<tr class="memdesc:a1560da38084340d09f7463026ca07e87"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when a mood is selected <br /></td></tr>
+<tr class="separator:a1560da38084340d09f7463026ca07e87"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1000190370afd405e04e7d92953e2481"><td class="memItemLeft" align="right" valign="top"><a id="a1000190370afd405e04e7d92953e2481"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_group_widget.html#a1000190370afd405e04e7d92953e2481">buttonsShown</a> (QString, bool)</td></tr>
 <tr class="memdesc:a1000190370afd405e04e7d92953e2481"><td class="mdescLeft">&#160;</td><td class="mdescRight">buttonsShown emitted when the buttons are shown or hidden. emits the key and a boolean representing whether the buttons are shown. <br /></td></tr>
@@ -74,21 +78,21 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a2832d139993227a13edd876a564e558c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_group_widget.html#a2832d139993227a13edd876a564e558c">ListMoodGroupWidget</a> (const QString &amp;name, std::list&lt; cor::LightGroup &gt; <a class="el" href="class_list_mood_group_widget.html#a72704cae327a7c4b8acd936283b183a7">moods</a>, QString key, bool hideEdit, QWidget *parent)</td></tr>
-<tr class="memdesc:a2832d139993227a13edd876a564e558c"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_list_mood_group_widget.html" title="The ListMoodGroupWidget class is a subclass of a ListCollectionWidget. It displays a collection of mo...">ListMoodGroupWidget</a> constructor.  <a href="#a2832d139993227a13edd876a564e558c">More...</a><br /></td></tr>
-<tr class="separator:a2832d139993227a13edd876a564e558c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a98d8f1f5bc2ce3fdb7479c17405b0e1c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_group_widget.html#a98d8f1f5bc2ce3fdb7479c17405b0e1c">updateMoods</a> (const std::list&lt; cor::LightGroup &gt; &amp;<a class="el" href="class_list_mood_group_widget.html#a72704cae327a7c4b8acd936283b183a7">moods</a>, bool removeIfNotFound)</td></tr>
-<tr class="memdesc:a98d8f1f5bc2ce3fdb7479c17405b0e1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateMoods update moods based off of the mood list and the vector of preset colors.  <a href="#a98d8f1f5bc2ce3fdb7479c17405b0e1c">More...</a><br /></td></tr>
-<tr class="separator:a98d8f1f5bc2ce3fdb7479c17405b0e1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefe14e528f57ef825d09c09f2bc77e6a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_group_widget.html#aefe14e528f57ef825d09c09f2bc77e6a">ListMoodGroupWidget</a> (const QString &amp;name, std::list&lt; cor::Mood &gt; <a class="el" href="class_list_mood_group_widget.html#a70fb2f7ac74371a484341eca51f46b6d">moods</a>, QString key, bool hideEdit, QWidget *parent)</td></tr>
+<tr class="memdesc:aefe14e528f57ef825d09c09f2bc77e6a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_list_mood_group_widget.html" title="The ListMoodGroupWidget class is a subclass of a ListCollectionWidget. It displays a collection of mo...">ListMoodGroupWidget</a> constructor.  <a href="#aefe14e528f57ef825d09c09f2bc77e6a">More...</a><br /></td></tr>
+<tr class="separator:aefe14e528f57ef825d09c09f2bc77e6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e4973f6add186c005bccf4b5dc2961e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_group_widget.html#a9e4973f6add186c005bccf4b5dc2961e">updateMoods</a> (const std::list&lt; cor::Mood &gt; &amp;<a class="el" href="class_list_mood_group_widget.html#a70fb2f7ac74371a484341eca51f46b6d">moods</a>, bool removeIfNotFound)</td></tr>
+<tr class="memdesc:a9e4973f6add186c005bccf4b5dc2961e"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateMoods update moods based off of the mood list and the vector of preset colors.  <a href="#a9e4973f6add186c005bccf4b5dc2961e">More...</a><br /></td></tr>
+<tr class="separator:a9e4973f6add186c005bccf4b5dc2961e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8f2b5958ab52f3d0618084226b97ad0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_group_widget.html#aa8f2b5958ab52f3d0618084226b97ad0">setCheckedMoods</a> (std::list&lt; QString &gt; checkedMoods)</td></tr>
 <tr class="memdesc:aa8f2b5958ab52f3d0618084226b97ad0"><td class="mdescLeft">&#160;</td><td class="mdescRight">setCheckedMoods takes a list of moods as input and compares it against the widgets displayed. If a mood is in both, it is set as checked. If it is only in the widgets, it is set as unchecked.  <a href="#aa8f2b5958ab52f3d0618084226b97ad0">More...</a><br /></td></tr>
 <tr class="separator:aa8f2b5958ab52f3d0618084226b97ad0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af6a014fb5c9c51217774998d2825b89a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_group_widget.html#af6a014fb5c9c51217774998d2825b89a">removeMood</a> (QString mood)</td></tr>
 <tr class="memdesc:af6a014fb5c9c51217774998d2825b89a"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeMood remove a mood from the ListCollectionWidget  <a href="#af6a014fb5c9c51217774998d2825b89a">More...</a><br /></td></tr>
 <tr class="separator:af6a014fb5c9c51217774998d2825b89a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a72704cae327a7c4b8acd936283b183a7"><td class="memItemLeft" align="right" valign="top">const std::list&lt; cor::LightGroup &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_group_widget.html#a72704cae327a7c4b8acd936283b183a7">moods</a> ()</td></tr>
-<tr class="memdesc:a72704cae327a7c4b8acd936283b183a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">moods getter for the mood data of this collection group  <a href="#a72704cae327a7c4b8acd936283b183a7">More...</a><br /></td></tr>
-<tr class="separator:a72704cae327a7c4b8acd936283b183a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70fb2f7ac74371a484341eca51f46b6d"><td class="memItemLeft" align="right" valign="top">const std::list&lt; cor::Mood &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_group_widget.html#a70fb2f7ac74371a484341eca51f46b6d">moods</a> ()</td></tr>
+<tr class="memdesc:a70fb2f7ac74371a484341eca51f46b6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">moods getter for the mood data of this collection group  <a href="#a70fb2f7ac74371a484341eca51f46b6d">More...</a><br /></td></tr>
+<tr class="separator:a70fb2f7ac74371a484341eca51f46b6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc90fc1ef21bb233e1747ad9069c0904"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_group_widget.html#abc90fc1ef21bb233e1747ad9069c0904">setShowButtons</a> (bool show)</td></tr>
 <tr class="memdesc:abc90fc1ef21bb233e1747ad9069c0904"><td class="mdescLeft">&#160;</td><td class="mdescRight">setShowButtons shows and hides all buttons on the widget  <a href="#abc90fc1ef21bb233e1747ad9069c0904">More...</a><br /></td></tr>
 <tr class="separator:abc90fc1ef21bb233e1747ad9069c0904"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -109,10 +113,10 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr class="separator:a454efa53c3a23726c3f6f79032cacf0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
+<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a2832d139993227a13edd876a564e558c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2832d139993227a13edd876a564e558c">&#9670;&nbsp;</a></span>ListMoodGroupWidget()</h2>
+<a id="aefe14e528f57ef825d09c09f2bc77e6a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aefe14e528f57ef825d09c09f2bc77e6a">&#9670;&nbsp;</a></span>ListMoodGroupWidget()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -129,7 +133,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::list&lt; cor::LightGroup &gt;&#160;</td>
+          <td class="paramtype">std::list&lt; cor::Mood &gt;&#160;</td>
           <td class="paramname"><em>moods</em>, </td>
         </tr>
         <tr>
@@ -171,13 +175,13 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
   </table>
   </dd>
 </dl>
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a72704cae327a7c4b8acd936283b183a7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a72704cae327a7c4b8acd936283b183a7">&#9670;&nbsp;</a></span>moods()</h2>
+<a id="a70fb2f7ac74371a484341eca51f46b6d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a70fb2f7ac74371a484341eca51f46b6d">&#9670;&nbsp;</a></span>moods()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -186,7 +190,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const std::list&lt;cor::LightGroup&gt;&amp; ListMoodGroupWidget::moods </td>
+          <td class="memname">const std::list&lt;cor::Mood&gt;&amp; ListMoodGroupWidget::moods </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -274,8 +278,8 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 </div>
 </div>
-<a id="a98d8f1f5bc2ce3fdb7479c17405b0e1c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a98d8f1f5bc2ce3fdb7479c17405b0e1c">&#9670;&nbsp;</a></span>updateMoods()</h2>
+<a id="a9e4973f6add186c005bccf4b5dc2961e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9e4973f6add186c005bccf4b5dc2961e">&#9670;&nbsp;</a></span>updateMoods()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -283,7 +287,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
         <tr>
           <td class="memname">void ListMoodGroupWidget::updateMoods </td>
           <td>(</td>
-          <td class="paramtype">const std::list&lt; cor::LightGroup &gt; &amp;&#160;</td>
+          <td class="paramtype">const std::list&lt; cor::Mood &gt; &amp;&#160;</td>
           <td class="paramname"><em>moods</em>, </td>
         </tr>
         <tr>

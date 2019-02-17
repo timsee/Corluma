@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.13.9</span>
+   &#160;<span id="projectnumber">v0.14.0</span>
    </div>
   </td>
  </tr>
@@ -42,7 +42,6 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="class_light_page-members.html">List of all members</a> &#124;
-<a href="#pub-slots">Public Slots</a> &#124;
 <a href="#signals">Signals</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a>  </div>
@@ -58,17 +57,6 @@ $(function() {
 
 <p>Inherits QWidget, and Page.</p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-slots"></a>
-Public Slots</h2></td></tr>
-<tr class="memitem:a01fddcb0becd7b73075e9bb8fa677716"><td class="memItemLeft" align="right" valign="top"><a id="a01fddcb0becd7b73075e9bb8fa677716"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light_page.html#a01fddcb0becd7b73075e9bb8fa677716">lightStateChanged</a> (ECommType, QString)</td></tr>
-<tr class="memdesc:a01fddcb0becd7b73075e9bb8fa677716"><td class="mdescLeft">&#160;</td><td class="mdescRight">lightStateChanged called whenever theres any change in the state of any of the lights. <br /></td></tr>
-<tr class="separator:a01fddcb0becd7b73075e9bb8fa677716"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65b8f51fccc1758ee04c18bbe4966795"><td class="memItemLeft" align="right" valign="top"><a id="a65b8f51fccc1758ee04c18bbe4966795"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light_page.html#a65b8f51fccc1758ee04c18bbe4966795">clearButtonPressed</a> ()</td></tr>
-<tr class="memdesc:a65b8f51fccc1758ee04c18bbe4966795"><td class="mdescLeft">&#160;</td><td class="mdescRight">clearButtonPressed clear button is pressed and all selected devices are deselected. <br /></td></tr>
-<tr class="separator:a65b8f51fccc1758ee04c18bbe4966795"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
 <tr class="memitem:a93743cc1237832160af301ec7c7f2d30"><td class="memItemLeft" align="right" valign="top"><a id="a93743cc1237832160af301ec7c7f2d30"></a>
@@ -86,13 +74,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aeacdd723b1dacf42b2ebc02eb7d95e8e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light_page.html#aeacdd723b1dacf42b2ebc02eb7d95e8e">LightPage</a> (QWidget *parent, cor::DeviceList *data, <a class="el" href="class_comm_layer.html">CommLayer</a> *comm, <a class="el" href="class_groups_parser.html">GroupsParser</a> *groups, <a class="el" href="class_app_settings.html">AppSettings</a> *appSettings)</td></tr>
-<tr class="memdesc:aeacdd723b1dacf42b2ebc02eb7d95e8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#aeacdd723b1dacf42b2ebc02eb7d95e8e">More...</a><br /></td></tr>
-<tr class="separator:aeacdd723b1dacf42b2ebc02eb7d95e8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5c91f2bdb5c26ad04fb499ee6089d6fe"><td class="memItemLeft" align="right" valign="top"><a id="a5c91f2bdb5c26ad04fb499ee6089d6fe"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light_page.html#a5c91f2bdb5c26ad04fb499ee6089d6fe">updateConnectionList</a> ()</td></tr>
-<tr class="memdesc:a5c91f2bdb5c26ad04fb499ee6089d6fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateConnectionList updates the GUI elements that display the <a class="el" href="class_comm_layer.html" title="The CommLayer class provides communication protocols that allow the user to connect and send packets ...">CommLayer</a>'s connection list. <br /></td></tr>
-<tr class="separator:a5c91f2bdb5c26ad04fb499ee6089d6fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a582c9b36e7ddf26ea34f8ee4934207b6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light_page.html#a582c9b36e7ddf26ea34f8ee4934207b6">LightPage</a> (QWidget *parent, cor::DeviceList *data, <a class="el" href="class_comm_layer.html">CommLayer</a> *comm, <a class="el" href="class_group_data.html">GroupData</a> *groups, <a class="el" href="class_app_settings.html">AppSettings</a> *appSettings)</td></tr>
+<tr class="memdesc:a582c9b36e7ddf26ea34f8ee4934207b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#a582c9b36e7ddf26ea34f8ee4934207b6">More...</a><br /></td></tr>
+<tr class="separator:a582c9b36e7ddf26ea34f8ee4934207b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f52a9b602cabe488070c8ef96870371"><td class="memItemLeft" align="right" valign="top"><a id="a2f52a9b602cabe488070c8ef96870371"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light_page.html#a2f52a9b602cabe488070c8ef96870371">updateRoomWidgets</a> ()</td></tr>
+<tr class="memdesc:a2f52a9b602cabe488070c8ef96870371"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateRoomWidgets updates the GUI elements that display the <a class="el" href="class_comm_layer.html" title="The CommLayer class provides communication protocols that allow the user to connect and send packets ...">CommLayer</a>'s connection list. <br /></td></tr>
+<tr class="separator:a2f52a9b602cabe488070c8ef96870371"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe577ab5fb6a3dbe054de05cdc7edc74"><td class="memItemLeft" align="right" valign="top"><a id="abe577ab5fb6a3dbe054de05cdc7edc74"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light_page.html#abe577ab5fb6a3dbe054de05cdc7edc74">show</a> ()</td></tr>
 <tr class="memdesc:abe577ab5fb6a3dbe054de05cdc7edc74"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when the widget is shown <br /></td></tr>
@@ -101,10 +89,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light_page.html#ae85bc7dd1755acb2f70f817eb027e1ba">hide</a> ()</td></tr>
 <tr class="memdesc:ae85bc7dd1755acb2f70f817eb027e1ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when the widget is hidden <br /></td></tr>
 <tr class="separator:ae85bc7dd1755acb2f70f817eb027e1ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4ae63775afb7a79fc62ee97c2954de58"><td class="memItemLeft" align="right" valign="top"><a id="a4ae63775afb7a79fc62ee97c2954de58"></a>
-const QString &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light_page.html#a4ae63775afb7a79fc62ee97c2954de58">currentGroup</a> ()</td></tr>
-<tr class="memdesc:a4ae63775afb7a79fc62ee97c2954de58"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for string for current group <br /></td></tr>
-<tr class="separator:a4ae63775afb7a79fc62ee97c2954de58"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -122,10 +106,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:aa5ed91b108a16c153456a3e71347ba8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
+<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="aeacdd723b1dacf42b2ebc02eb7d95e8e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeacdd723b1dacf42b2ebc02eb7d95e8e">&#9670;&nbsp;</a></span>LightPage()</h2>
+<a id="a582c9b36e7ddf26ea34f8ee4934207b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a582c9b36e7ddf26ea34f8ee4934207b6">&#9670;&nbsp;</a></span>LightPage()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -154,7 +138,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_groups_parser.html">GroupsParser</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="class_group_data.html">GroupData</a> *&#160;</td>
           <td class="paramname"><em>groups</em>, </td>
         </tr>
         <tr>
@@ -175,7 +159,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>

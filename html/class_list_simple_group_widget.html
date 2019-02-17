@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.13.9</span>
+   &#160;<span id="projectnumber">v0.14.0</span>
    </div>
   </td>
  </tr>
@@ -73,25 +73,33 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a8273a5cec4e1663aa2a2335a5dfa45e9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_simple_group_widget.html#a8273a5cec4e1663aa2a2335a5dfa45e9">ListSimpleGroupWidget</a> (<a class="el" href="class_comm_layer.html">CommLayer</a> *comm, cor::DeviceList *data, QWidget *parent)</td></tr>
-<tr class="memdesc:a8273a5cec4e1663aa2a2335a5dfa45e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#a8273a5cec4e1663aa2a2335a5dfa45e9">More...</a><br /></td></tr>
-<tr class="separator:a8273a5cec4e1663aa2a2335a5dfa45e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff5add7be59fd7625024ba6e32a5a8a0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_simple_group_widget.html#aff5add7be59fd7625024ba6e32a5a8a0">ListSimpleGroupWidget</a> (QWidget *parent, cor::EListType type)</td></tr>
+<tr class="memdesc:aff5add7be59fd7625024ba6e32a5a8a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#aff5add7be59fd7625024ba6e32a5a8a0">More...</a><br /></td></tr>
+<tr class="separator:aff5add7be59fd7625024ba6e32a5a8a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7622254739163f50cc781b61bf0a9e6b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_simple_group_widget.html#a7622254739163f50cc781b61bf0a9e6b">setCheckedDevices</a> (const std::list&lt; cor::Light &gt; &amp;devices)</td></tr>
 <tr class="memdesc:a7622254739163f50cc781b61bf0a9e6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">setCheckedDevices takes a list of devices and compares it against all devices in the widget. If the device exists in both the widgets and the devices, it is set as checked. Otherwise, the widget is set to unchecked.  <a href="#a7622254739163f50cc781b61bf0a9e6b">More...</a><br /></td></tr>
 <tr class="separator:a7622254739163f50cc781b61bf0a9e6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1cb9405981b92164d94159a5b1adae85"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_simple_group_widget.html#a1cb9405981b92164d94159a5b1adae85">updateDevices</a> (const std::list&lt; cor::Light &gt; &amp;devices, bool removeIfNotFound)</td></tr>
-<tr class="memdesc:a1cb9405981b92164d94159a5b1adae85"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDevices update the state and number of devices displayed in the widget.  <a href="#a1cb9405981b92164d94159a5b1adae85">More...</a><br /></td></tr>
-<tr class="separator:a1cb9405981b92164d94159a5b1adae85"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a782811ea07379ea8eef6c747f6ae68e4"><td class="memItemLeft" align="right" valign="top"><a id="a782811ea07379ea8eef6c747f6ae68e4"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_simple_group_widget.html#a782811ea07379ea8eef6c747f6ae68e4">removeWidgets</a> ()</td></tr>
+<tr class="memdesc:a782811ea07379ea8eef6c747f6ae68e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">removes all widget from group. <br /></td></tr>
+<tr class="separator:a782811ea07379ea8eef6c747f6ae68e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a996f64d1808fa87dcba5deeb994ec388"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_simple_group_widget.html#a996f64d1808fa87dcba5deeb994ec388">updateDevices</a> (const std::list&lt; cor::Light &gt; &amp;devices, EOnOffSwitchState switchState, bool removeIfNotFound, bool canHighlight, bool skipOff)</td></tr>
+<tr class="memdesc:a996f64d1808fa87dcba5deeb994ec388"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDevices update the state and number of devices displayed in the widget.  <a href="#a996f64d1808fa87dcba5deeb994ec388">More...</a><br /></td></tr>
+<tr class="separator:a996f64d1808fa87dcba5deeb994ec388"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d5e54fc2c5ed0644d702551ecdb18f7"><td class="memItemLeft" align="right" valign="top"><a id="a4d5e54fc2c5ed0644d702551ecdb18f7"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_simple_group_widget.html#a4d5e54fc2c5ed0644d702551ecdb18f7">displayOnlyDevices</a> (const std::list&lt; cor::Light &gt; &amp;devices)</td></tr>
+<tr class="memdesc:a4d5e54fc2c5ed0644d702551ecdb18f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">display only the devices in this list, hiding all others. <br /></td></tr>
+<tr class="separator:a4d5e54fc2c5ed0644d702551ecdb18f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3b20c3feb7f04c05bc26e54e8bf893d0"><td class="memItemLeft" align="right" valign="top"><a id="a3b20c3feb7f04c05bc26e54e8bf893d0"></a>
 const std::list&lt; cor::Light &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_simple_group_widget.html#a3b20c3feb7f04c05bc26e54e8bf893d0">checkedDevices</a> ()</td></tr>
 <tr class="memdesc:a3b20c3feb7f04c05bc26e54e8bf893d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for checked devices <br /></td></tr>
 <tr class="separator:a3b20c3feb7f04c05bc26e54e8bf893d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
+<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a8273a5cec4e1663aa2a2335a5dfa45e9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8273a5cec4e1663aa2a2335a5dfa45e9">&#9670;&nbsp;</a></span>ListSimpleGroupWidget()</h2>
+<a id="aff5add7be59fd7625024ba6e32a5a8a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff5add7be59fd7625024ba6e32a5a8a0">&#9670;&nbsp;</a></span>ListSimpleGroupWidget()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -99,20 +107,14 @@ const std::list&lt; cor::Light &gt;&#160;</td><td class="memItemRight" valign="b
         <tr>
           <td class="memname">ListSimpleGroupWidget::ListSimpleGroupWidget </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_comm_layer.html">CommLayer</a> *&#160;</td>
-          <td class="paramname"><em>comm</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">cor::DeviceList *&#160;</td>
-          <td class="paramname"><em>data</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype">QWidget *&#160;</td>
-          <td class="paramname"><em>parent</em>&#160;</td>
+          <td class="paramname"><em>parent</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">cor::EListType&#160;</td>
+          <td class="paramname"><em>type</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -121,7 +123,7 @@ const std::list&lt; cor::Light &gt;&#160;</td><td class="memItemRight" valign="b
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2018. Released under the GNU General Public License. </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>
@@ -150,8 +152,8 @@ const std::list&lt; cor::Light &gt;&#160;</td><td class="memItemRight" valign="b
 
 </div>
 </div>
-<a id="a1cb9405981b92164d94159a5b1adae85"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1cb9405981b92164d94159a5b1adae85">&#9670;&nbsp;</a></span>updateDevices()</h2>
+<a id="a996f64d1808fa87dcba5deeb994ec388"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a996f64d1808fa87dcba5deeb994ec388">&#9670;&nbsp;</a></span>updateDevices()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -165,8 +167,26 @@ const std::list&lt; cor::Light &gt;&#160;</td><td class="memItemRight" valign="b
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">EOnOffSwitchState&#160;</td>
+          <td class="paramname"><em>switchState</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>removeIfNotFound</em>&#160;</td>
+          <td class="paramname"><em>removeIfNotFound</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>canHighlight</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>skipOff</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
