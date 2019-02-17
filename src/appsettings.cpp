@@ -14,9 +14,8 @@ AppSettings::AppSettings() {
     mProtocolsInUse = std::vector<bool>(std::size_t(EProtocolType::MAX), false);
 
     std::vector<QString> keys = protocolKeys();
-
     for (uint32_t x = 0; x < mProtocolsInUse.size(); ++x) {
-        if (mSettings->value(keys[x]).toString().compare("") != 0) {
+        if (mSettings->value(keys[x]).isValid()) {
             bool shouldEnable = mSettings->value(keys[x]).toBool();
             mProtocolsInUse[x] = shouldEnable;
         } else {

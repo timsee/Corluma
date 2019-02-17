@@ -10,7 +10,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
-#include "cor/lightgroup.h"
+#include "cor/group.h"
 #include "hue/bridgediscovery.h"
 #include "hue/huelight.h"
 #include "hue/hueprotocols.h"
@@ -39,7 +39,7 @@ public:
     /*!
      * \brief CommHue Constructor
      */
-    CommHue(UPnPDiscovery *UPnP);
+    CommHue(UPnPDiscovery *UPnP, GroupData* groups);
 
     /*!
      * \brief CommHue Destructor
@@ -171,16 +171,16 @@ public:
      * \param group the group to change the lights in
      * \param lights the new lights to provide to the group.
      */
-    void updateGroup(const hue::Bridge& bridge, cor::LightGroup group, std::list<HueLight> lights);
+    void updateGroup(const hue::Bridge& bridge, cor::Group group, std::list<HueLight> lights);
 
     /*!
      * \brief deleteGroup delete a group from the hue bridge
      * \param group the group to delete from the bridge
      */
-    void deleteGroup(const hue::Bridge& bridge, cor::LightGroup group);
+    void deleteGroup(const hue::Bridge& bridge, cor::Group group);
 
     /// getter for list of groups
-    const std::list<cor::LightGroup> groups();
+    const std::list<cor::Group> groups();
 
     /// list of lights recently discovered by a scan
     const std::list<HueLight>& newLights() { return mNewLights; }
@@ -230,7 +230,7 @@ public:
      * \param bridge bridge to get all groups from
      * \return list of all known groups
      */
-    std::list<cor::LightGroup> groups(const hue::Bridge& bridge);
+    std::list<cor::Group> groups(const hue::Bridge& bridge);
 
     /// get the hue bridge that controls a cor::Light
     hue::Bridge bridgeFromLight(const cor::Light& light);
@@ -339,6 +339,19 @@ private slots:
     void getGroups();
 
 private:
+
+    /*!
+     * \brief generateUniqueID generate a Unique ID for a new group This uses the prexisting groups from a gorup update and
+     *        the information from the app about existing groups to determine whether or not the group you are creating already sxists,
+     *        or if it needs a new ID. If it already exists, the unique ID of the pre-existing group is returned. If it doesn't exist,
+     *        a new unique ID is generated that is guaraneteed to not overlap with any other unique ID
+     *           .
+     * \param groupList list of currently existing groups
+     * \param name name of new group
+     * \return  a unique ID for the group with the given name
+     */
+    std::uint64_t generateUniqueID(const std::list<cor::Group>& groupList, const QString& name);
+
     /*!
      * \brief resetBackgroundTimers reset the background timers that sync things such as groups
      *        and schedules.
@@ -447,7 +460,7 @@ private:
      * \param i the index of the group given by the bridge
      * \return true if successful, false if failed.
      */
-    cor::LightGroup jsonToGroup(QJsonObject object, int i);
+    std::pair<cor::Group, bool> jsonToGroup(QJsonObject object, int i, const std::list<cor::Group>& groupList);
 
     /*!
      * \brief jsonToSchedule read an incoming packet from the Hue Brige and update the Hue Schedule based on the contents

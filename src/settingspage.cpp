@@ -25,7 +25,7 @@
 
 #include <QDesktopWidget>
 
-SettingsPage::SettingsPage(QWidget *parent, GroupsParser *parser, AppSettings *appSettings) :
+SettingsPage::SettingsPage(QWidget *parent, GroupData *parser, AppSettings *appSettings) :
     QWidget(parent), mGroups(parser) {
     mShowingDebug = true;
 

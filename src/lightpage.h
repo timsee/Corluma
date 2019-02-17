@@ -35,23 +35,20 @@ public:
     explicit LightPage(QWidget *parent,
                        cor::DeviceList *data,
                        CommLayer *comm,
-                       GroupsParser *groups,
+                       GroupData *groups,
                        AppSettings *appSettings);
 
     /*!
-     * \brief updateConnectionList updates the GUI elements that display the
+     * \brief updateRoomWidgets updates the GUI elements that display the
      *        CommLayer's connection list.
      */
-    void updateConnectionList();
+    void updateRoomWidgets();
 
     /// called when the widget is shown
     void show();
 
     /// called when the widget is hidden
     void hide();
-
-    /// getter for string for current group
-    const QString& currentGroup() { return mCurrentGroup; }
 
 signals:
     /*!
@@ -71,19 +68,6 @@ signals:
      *        the edit page.
      */
     void clickedEditButton(QString key, bool isMood);
-
-public slots:
-
-    /*!
-     * \brief lightStateChanged called whenever theres any change in the state of
-     *        any of the lights.
-     */
-    void lightStateChanged(ECommType, QString);
-
-    /*!
-     * \brief clearButtonPressed clear button is pressed and all selected devices are deselected.
-     */
-    void clearButtonPressed();
 
 private slots:
 
@@ -109,11 +93,6 @@ private slots:
      * \brief groupDeleted handles whenever a group is deleted on the edit page.
      */
     void groupDeleted(QString);
-
-    /*!
-     * \brief newCollectionAdded handles whenever a new collection was created on the edit page.
-     */
-    void newCollectionAdded(QString);
 
     /*!
      * \brief renderUI renders expensive assets if and only if the assets have had any
@@ -145,15 +124,6 @@ private slots:
      */
     void groupSelected(QString key, bool shouldSelect);
 
-    //--------------------
-    // Groups Parser Slots
-    //--------------------
-
-    /*!
-     * \brief newConnectionFound Groups parser found a connection that wasn't in app data,
-     *        this handles that case so that discovery can start.
-     */
-    void newConnectionFound(QString);
 
 protected:
     /*!
@@ -187,9 +157,6 @@ private:
     /// widget for displaying the rooms in the app data.
     cor::ListWidget *mRoomsWidget;
 
-    /// the current group selected
-    QString mCurrentGroup;
-
     /*!
      * \brief initDevicesCollectionWidget constructor helper for making a DeviceCollectionsWidget
      * \param group group of lights for collection
@@ -197,48 +164,30 @@ private:
      * \param hideEdit true for special case groups (Available and Not Reachable), false otherwise
      * \return pointer to the newly created ListDevicesGroupWidget
      */
-    ListRoomWidget* initDevicesCollectionWidget(cor::LightGroup group,
-                                                        const std::vector<std::pair<QString, QString>>& deviceNames,
-                                                        const QString& key);
+    ListRoomWidget* initDevicesCollectionWidget(cor::Group group, const QString& key);
 
     /// gathers all light groups, as displayed in the UI
-    std::list<cor::LightGroup> gatherAllUIGroups();
+    std::list<cor::Group> gatherAllUIGroups();
+
+    /// creates a miscellaneous group for all lights that don't belong in a specific group.
+    cor::Group makeMiscellaneousGroup(const std::list<cor::Group>& roomList);
 
     /*!
      * \brief updateDataGroupInUI using the new cor::LightGroup, update the UI assets with up-to-date light info. This function matches the dataGroup group
      *        to all UI groups that match it, then takes the up to date version from the allDevices list to display that info
      * \param dataGroup the group to update in the UI
      * \param uiGroups all UI groups
-     * \param allDevices all up-to-date information about all devices.
      */
-    void updateDataGroupInUI(cor::LightGroup dataGroup, const std::list<cor::LightGroup>& uiGroups, const std::list<cor::Light>& allDevices);
-
-    /*!
-     * \brief updateDeviceList create an up-to-date version of a list of cor::Lights. The cor::Lights may be obtained from the UI or from
-     *        out of date buffers, so the oldDevices are turne dinto a new list based off of the data given by the up-to-date allDeviceData
-     * \param oldDevices the list of devices that you want to update
-     * \param allDeviceData all the up-to-date information about all the devices
-     * \return a new list that matches the oldDevices list, only it has up-to-date information.
-     */
-    std::list<cor::Light> updateDeviceList(const std::list<cor::Light>& oldDevices, const std::list<cor::Light>& allDeviceData);
+    void updateDataGroupInUI(cor::Group dataGroup, const std::list<cor::Group>& uiGroups);
 
     /// layout of widget
     QVBoxLayout *mLayout;
 
     /*!
-     * \brief mLastUpdateConnectionList the time that the connection list
+     * \brief mLastUpdateRoomWidgets the time that the connection list
      *        was last rendered. Used to throttle unnecessary rendering.
      */
-    QTime mLastUpdateConnectionList;
-
-    /*!
-     * \brief identifierStringToLight converts a string represention of a SControllerCommData
-     *        back to a struct.
-     * \param string the string to convert
-     * \return a cor::Light struct based on the string given. an empty struct is returned if
-     *         the string is invalid.
-     */
-    cor::Light identifierStringToLight(QString string);
+    QTime mLastUpdateRoomWidgets;
 
     //-------------
     // Cached States and Assets
@@ -265,6 +214,9 @@ private:
      *        for sending comannds to the lights
      */
     CommLayer *mComm;
+
+    /// pointer to group data
+    GroupData *mGroups;
 
     /// pointer to the app states that determine if a protocol (such as arducor or nanoleaf) is currently enable
     AppSettings *mAppSettings;

@@ -297,15 +297,15 @@ void ArduCorDiscovery::handleDiscoveredController(const cor::Controller& discove
 
             // start state updates, etc.
             if (notFoundController.type == ECommType::HTTP) {
-                mHTTP->controllerDiscovered(discoveredController.name, lights);
+                mHTTP->controllerDiscovered(lights);
             }
 #ifndef MOBILE_BUILD
             else if (notFoundController.type == ECommType::serial) {
-                mSerial->controllerDiscovered(discoveredController.name, lights);
+                mSerial->controllerDiscovered(lights);
             }
 #endif
             else if (notFoundController.type == ECommType::UDP) {
-                mUDP->controllerDiscovered(discoveredController.name, lights);
+                mUDP->controllerDiscovered(lights);
             }
             break;
         }

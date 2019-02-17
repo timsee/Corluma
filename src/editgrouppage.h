@@ -32,7 +32,7 @@ class EditGroupPage : public QWidget, public cor::Page
 
 public:
     /// constructor
-    explicit EditGroupPage(QWidget* parent, CommLayer *layer, cor::DeviceList *data, GroupsParser *parser);
+    explicit EditGroupPage(QWidget* parent, CommLayer *layer, cor::DeviceList *data, GroupData *parser);
 
     /*!
      * \brief showGroup open the edit page with the given data
@@ -146,7 +146,7 @@ private:
     CommLayer *mComm;
 
     /// groups parser
-    GroupsParser *mGroups;
+    GroupData *mGroups;
 
     /*!
      * \brief shouldSetChecked true if should be set checked, false otherwise.

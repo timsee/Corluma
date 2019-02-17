@@ -147,7 +147,6 @@ SOURCES += main.cpp \
     cor/topwidget.cpp \
     cor/webview.cpp \
     cor/switch.cpp \
-    cor/lightgroup.cpp \
     cor/presetpalettes.cpp \
     cor/palette.cpp \
     cor/jsonsavedata.cpp \
@@ -157,6 +156,7 @@ SOURCES += main.cpp \
     cor/devicelist.cpp \
     cor/groupbutton.cpp \
     cor/listitemwidget.cpp \
+    cor/group.cpp \
     hue/bridgeinfowidget.cpp \
     hue/lightdiscovery.cpp \
     hue/bridgediscovery.cpp \
@@ -176,12 +176,10 @@ SOURCES += main.cpp \
     settingspage.cpp \
     icondata.cpp \
     floatinglayout.cpp \
-    groupsparser.cpp \
     discoverypage.cpp \
     listdevicewidget.cpp \
     presetgroupwidget.cpp \
     greyoutoverlay.cpp \
-    listmoodwidget.cpp \
     listmoodgroupwidget.cpp \
     editgrouppage.cpp \
     routinebuttonswidget.cpp \
@@ -201,7 +199,10 @@ SOURCES += main.cpp \
     dropdowntopwidget.cpp \
     listroomwidget.cpp \
     groupbuttonswidget.cpp \
-    nowifiwidget.cpp
+    nowifiwidget.cpp \
+    listmooddetailedwidget.cpp \
+    listmoodpreviewwidget.cpp \
+    groupdata.cpp
 
 HEADERS  +=  arducor/arducordiscovery.h \
     arducor/arducorpacketparser.h \
@@ -244,7 +245,6 @@ HEADERS  +=  arducor/arducordiscovery.h \
     cor/topwidget.h \
     cor/webview.h \
     cor/switch.h \
-    cor/lightgroup.h \
     cor/range.h \
     cor/page.h \
     cor/presetpalettes.h \
@@ -258,6 +258,9 @@ HEADERS  +=  arducor/arducordiscovery.h \
     cor/dictionary.h \
     cor/exception.h \
     cor/strictdictionary.h \
+    cor/mood.h \
+    cor/group.h \
+    cor/reachabilityutils.h \
     hue/lightdiscovery.h \
     hue/bridgediscovery.h \
     hue/hueprotocols.h \
@@ -278,12 +281,10 @@ HEADERS  +=  arducor/arducordiscovery.h \
     settingspage.h \
     icondata.h \
     floatinglayout.h \
-    groupsparser.h \
     discoverypage.h \
     listdevicewidget.h \
     presetgroupwidget.h \
     greyoutoverlay.h \
-    listmoodwidget.h \
     listmoodgroupwidget.h \
     editgrouppage.h \
     routinebuttonswidget.h \
@@ -304,7 +305,9 @@ HEADERS  +=  arducor/arducordiscovery.h \
     listroomwidget.h \
     groupbuttonswidget.h \
     nowifiwidget.h \
-    cor/reachabilityutils.h
+    listmooddetailedwidget.h \
+    listmoodpreviewwidget.h \
+    groupdata.h
 
 #----------
 # Desktop builds only

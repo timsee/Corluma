@@ -26,3 +26,7 @@ void GreyOutOverlay::paintEvent(QPaintEvent *) {
     painter.setRenderHint(QPainter::Antialiasing);
     painter.fillRect(this->rect(), QBrush(QColor(0, 0, 0, 200)));
 }
+
+void GreyOutOverlay::mouseReleaseEvent(QMouseEvent *) {
+    emit clicked();
+}

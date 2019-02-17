@@ -7,7 +7,7 @@
 
 #include "lightpage.h"
 
-#include "listmoodwidget.h"
+#include "listmoodpreviewwidget.h"
 #include "listroomwidget.h"
 #include "listmoodgroupwidget.h"
 #include "cor/utils.h"
@@ -21,12 +21,13 @@
 LightPage::LightPage(QWidget *parent,
                      cor::DeviceList *data,
                      CommLayer *comm,
-                     GroupsParser *groups,
+                     GroupData *groups,
                      AppSettings *appSettings) : QWidget(parent),
                                                  mComm(comm),
                                                  mAppSettings(appSettings) {
 
     mData = data;
+    mGroups = groups;
 
     mRoomsWidget = new cor::ListWidget(this, cor::EListType::linear);
     mRoomsWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -35,15 +36,13 @@ LightPage::LightPage(QWidget *parent,
     mRenderThread = new QTimer(this);
     connect(mRenderThread, SIGNAL(timeout()), this, SLOT(renderUI()));
 
-    mLastUpdateConnectionList = QTime::currentTime();
+    mLastUpdateRoomWidgets = QTime::currentTime();
 
     mLayout = new QVBoxLayout(this);
     mLayout->addWidget(mRoomsWidget);
 
     connect(mComm, SIGNAL(updateReceived(ECommType)), this, SLOT(receivedCommUpdate(ECommType)));
-    connect(groups, SIGNAL(newConnectionFound(QString)), this, SLOT(newConnectionFound(QString)));
     connect(groups, SIGNAL(groupDeleted(QString)), this, SLOT(groupDeleted(QString)));
-    connect(groups, SIGNAL(newCollectionAdded(QString)), this, SLOT(newCollectionAdded(QString)));
 
     mRenderInterval = 1000;
 }
@@ -54,123 +53,81 @@ LightPage::LightPage(QWidget *parent,
 // ----------------------------
 
 
-void LightPage::updateConnectionList() {
-    //--------------
-    // 1. Get group data
-    //-------------
-    // get all data groups
-    std::list<cor::LightGroup> roomList    = mComm->roomList();
-    // get all UI groups
-    std::list<cor::LightGroup> uiGroups    = gatherAllUIGroups();
-    // get all devices
-    std::list<cor::Light> allDevices       = mComm->allDevices();
+void LightPage::updateRoomWidgets() {
+    // get all rooms
+    auto roomList = mGroups->roomList();
 
-
-    std::list<cor::LightGroup> groupList   = mComm->groupList();
-
-    // fill in groups in rooms
-    for (auto&& room : roomList) {
-        for (const auto& group : groupList) {
-            bool allGroupLightsInRoom = true;
-            for (const auto& groupLight : group.devices) {
-                bool lightInRoom = false;
-                for (const auto& roomLight : room.devices) {
-                    if (compareLight(roomLight, groupLight)) {
-                        lightInRoom = true;
-                    }
-                }
-                if (!lightInRoom) {
-                    allGroupLightsInRoom = false;
-                }
-            }
-            if (allGroupLightsInRoom) {
-                room.groups.push_back(group);
-            }
-        }
-    }
-
-    // fill in miscellaneous Room default data
-    cor::LightGroup miscellaneousGroup;
-    miscellaneousGroup.index = -1;
-    miscellaneousGroup.name = "Miscellaneous";
-    miscellaneousGroup.isRoom = true;
-    // loop through every group, see if it maps to a room, if not, add it to this room
-    for (const auto& group : groupList) {
-        bool groupInRoom = false;
-        for (const auto& room : roomList) {
-            for (const auto& roomGroup : room.groups) {
-                if (roomGroup.name == group.name) {
-                    groupInRoom = true;
-                }
-            }
-            if (!groupInRoom) {
-                miscellaneousGroup.groups.push_back(group);
-            }
-        }
-    }
-    // loop through every light, see if it maps to a room, if not, add it to this group and its subgroups
-    for (const auto& device : allDevices) {
-        bool deviceInGroup = false;
-        for (const auto& room : roomList) {
-            // check room devices
-            for (const auto& roomDevice : room.devices) {
-                if (roomDevice.uniqueID() == device.uniqueID()) {
-                    deviceInGroup = true;
-                }
-            }
-            // check group deviecs
-            for (const auto& group : room.groups) {
-                for (const auto& groupDevice : group.devices) {
-                    if (groupDevice.uniqueID() == device.uniqueID()) {
-                        deviceInGroup = true;
-                    }
-                }
-            }
-        }
-        if (!deviceInGroup) {
-            miscellaneousGroup.devices.push_back(device);
-        }
-    }
-    // only add miscellaneous lights if they exist
-    if (!miscellaneousGroup.devices.empty() || !miscellaneousGroup.groups.empty()) {
+    // attempt to make a miscellaneous group
+    const auto& miscellaneousGroup = makeMiscellaneousGroup(roomList);
+    // only add miscellaneous group if it has any data
+    if (!miscellaneousGroup.lights.empty() || !miscellaneousGroup.subgroups.empty()) {
         roomList.push_back(miscellaneousGroup);
     }
 
-    //--------------
-    // 2. Update Existing Groups and Add New Groups
-    //-------------
-    for (auto room : roomList) {
-        updateDataGroupInUI(room, uiGroups, allDevices);
-    }
-
-    //TODO: Compare all UI groups with app data groups
-    for (auto uiGroup : uiGroups) {
-        //TODO: remove widget if group does not exist
-        bool existsInDataGroup = false;
-        for (auto room : roomList) {
-           if (uiGroup.name.compare(room.name) == 0) {
-                existsInDataGroup = true;
-           }
-        }
-        if (!existsInDataGroup) {
-
-        }
-    }
-
-    // Make Available and Not Reachable Devices
-    std::list<cor::Light> allAvailableDevices;
-    // remove non available devices
-    for (auto&& device : allDevices) {
-        if (mAppSettings->enabled(device.protocol())) {
-            allAvailableDevices.push_back(device);
-        }
+    // update ui groups
+    const auto& uiGroups = gatherAllUIGroups();
+    for (const auto& room : roomList) {
+        updateDataGroupInUI(room, uiGroups);
     }
 
     mRoomsWidget->resizeWidgets();
 }
 
-std::list<cor::LightGroup> LightPage::gatherAllUIGroups() {
-    std::list<cor::LightGroup> uiGroups;
+
+cor::Group LightPage::makeMiscellaneousGroup(const std::list<cor::Group>& roomList) {
+
+    // fill in miscellaneous Room default data
+    cor::Group miscellaneousGroup(0u, "Miscellaneous");
+    miscellaneousGroup.index = -1;
+    miscellaneousGroup.isRoom = true;
+    // loop through every group, see if it maps to a room, if not, add it to this room
+    for (const auto& group : mGroups->groupList()) {
+        bool groupInRoom = false;
+        for (const auto& room : roomList) {
+            for (const auto& roomGroup : room.subgroups) {
+                if (roomGroup == group.uniqueID()) {
+                    groupInRoom = true;
+                }
+            }
+        }
+        if (!groupInRoom) {
+            miscellaneousGroup.subgroups.push_back(group.uniqueID());
+        }
+    }
+    // loop through every light, see if it maps to a room, if not, add it to this group and its subgroups
+    for (const auto& device : mComm->allDevices()) {
+        bool deviceInGroup = false;
+        if (device.controller() != "NO_CONTROLLER") {
+            // looop through all known rooms
+            for (const auto& room : mGroups->groups().itemList()) {
+                // check room devices for this specific light
+                for (const auto& lightID : room.lights) {
+                    if (lightID == device.uniqueID()) {
+                        deviceInGroup = true;
+                    }
+                }
+                // check their subgroups for thsi specific light
+                for (const auto& groupID : room.subgroups) {
+                    const auto& group = mGroups->groups().item(QString::number(groupID).toStdString());
+                    if (group.second) {
+                        for (const auto& lightID : group.first.lights) {
+                            if (lightID == device.uniqueID()) {
+                                deviceInGroup = true;
+                            }
+                        }
+                    }
+                }
+            }
+            if (!deviceInGroup) {
+                miscellaneousGroup.lights.push_back(device.uniqueID());
+            }
+        }
+    }
+    return miscellaneousGroup;
+}
+
+std::list<cor::Group> LightPage::gatherAllUIGroups() {
+    std::list<cor::Group> uiGroups;
     for (auto widget : mRoomsWidget->widgets()) {
         // cast to ListDeviceGroupWidget
         ListRoomWidget *groupWidget = qobject_cast<ListRoomWidget*>(widget);
@@ -179,18 +136,14 @@ std::list<cor::LightGroup> LightPage::gatherAllUIGroups() {
     return uiGroups;
 }
 
-void LightPage::updateDataGroupInUI(cor::LightGroup dataGroup, const std::list<cor::LightGroup>& uiGroups, const std::list<cor::Light>& allDevices) {
+void LightPage::updateDataGroupInUI(cor::Group dataGroup, const std::list<cor::Group>& uiGroups) {
     bool existsInUIGroups = false;
     for (auto uiGroup : uiGroups) {
-        if (uiGroup.name.compare(dataGroup.name) == 0) {
+        if (uiGroup.name() == dataGroup.name()) {
              existsInUIGroups = true;
               for (auto widget : mRoomsWidget->widgets()) {
                  ListRoomWidget *groupWidget = qobject_cast<ListRoomWidget*>(widget);
-                 if (groupWidget->key().compare(dataGroup.name) == 0) {
-                     dataGroup.devices = updateDeviceList(dataGroup.devices, allDevices);
-                     for (auto&& group : dataGroup.groups) {
-                         group.devices = updateDeviceList(group.devices, allDevices);
-                     }
+                 if (groupWidget->key() == dataGroup.name()) {
                      groupWidget->updateGroup(dataGroup, false);
                  }
              }
@@ -198,26 +151,8 @@ void LightPage::updateDataGroupInUI(cor::LightGroup dataGroup, const std::list<c
     }
     if (!existsInUIGroups) {
        // qDebug() << "this group does not exist" << dataGroup.name;
-       initDevicesCollectionWidget(dataGroup, mComm->deviceNames(), dataGroup.name);
+       initDevicesCollectionWidget(dataGroup, dataGroup.name());
     }
-}
-
-
-std::list<cor::Light> LightPage::updateDeviceList(const std::list<cor::Light>& oldDevices,  const std::list<cor::Light>& allDeviceData) {
-    std::list<cor::Light> filledList;
-    for (const auto& device : oldDevices) {
-        bool foundDevice = false;
-        for (const auto& dataDevice : allDeviceData) {
-            if(dataDevice.uniqueID() == device.uniqueID()) {
-                filledList.push_back(dataDevice);
-                foundDevice = true;
-            }
-        }
-        if (!foundDevice) {
-            filledList.push_back(device);
-        }
-    }
-    return filledList;
 }
 
 
@@ -226,21 +161,12 @@ std::list<cor::Light> LightPage::updateDeviceList(const std::list<cor::Light>& o
 // ------------------------------------
 
 
-ListRoomWidget* LightPage::initDevicesCollectionWidget(cor::LightGroup group,
-                                                               const std::vector<std::pair<QString, QString>>& deviceNames,
-                                                               const QString& key) {
-
-    for (auto&& device : group.devices) {
-        for (auto&& deviceName : deviceNames) {
-            if (device.uniqueID() == deviceName.first) {
-                device.name = deviceName.second;
-            }
-        }
-    }
-
+ListRoomWidget* LightPage::initDevicesCollectionWidget(cor::Group group, const QString& key) {
     ListRoomWidget *widget = new ListRoomWidget(group,
-                                                  key,
-                                                  mRoomsWidget->mainWidget());
+                                                mComm,
+                                                mGroups,
+                                                key,
+                                                mRoomsWidget->mainWidget());
 
     QScroller::grabGesture(widget, QScroller::LeftMouseButtonGesture);
     connect(widget, SIGNAL(deviceClicked(QString,QString)), this, SLOT(deviceClicked(QString, QString)));
@@ -254,13 +180,11 @@ ListRoomWidget* LightPage::initDevicesCollectionWidget(cor::LightGroup group,
     return widget;
 }
 
-void LightPage::deviceClicked(QString collectionKey, QString deviceKey) {
-    Q_UNUSED(collectionKey);
-
+void LightPage::deviceClicked(QString, QString deviceKey) {
 //    qDebug() << "collection key:" << collectionKey
 //             << "device key:" << deviceKey;
 
-    cor::Light device = identifierStringToLight(deviceKey);
+    auto device = mComm->lightByID(deviceKey);
     if (device.isReachable) {
         if (mData->doesDeviceExist(device)) {
             mData->removeDevice(device);
@@ -271,25 +195,11 @@ void LightPage::deviceClicked(QString collectionKey, QString deviceKey) {
         // update UI
         emit updateMainIcons();
         emit changedDeviceCount();
-        highlightList();
-
-        // search for current group string
-        QString currentGroup = mData->findCurrentCollection(mComm->collectionList(), false);
-        for (const auto& group : mComm->collectionList()) {
-            if (group.name == currentGroup) {
-                if (group.devices.size() == mData->devices().size()) {
-                    mCurrentGroup = group.name;
-                } else {
-                    mCurrentGroup = "";
-                }
-            }
-        }
     }
 }
 
 void LightPage::deviceSwitchClicked(QString deviceKey, bool isOn) {
-    cor::Light device = identifierStringToLight(deviceKey);
-    mComm->fillDevice(device);
+    auto device = mComm->lightByID(deviceKey);
     device.isOn = isOn;
     mData->addDevice(device);
 
@@ -312,10 +222,13 @@ void LightPage::groupSelected(QString key, bool shouldSelect) {
         }
 
         // check if group is a subgroup of a room
-        for (const auto& group : groupWidget->group().groups) {
-            if (group.name == key) {
-                isValid = true;
-                lights = group.devices;
+        for (const auto& groupID : groupWidget->group().subgroups) {
+            const auto& group = mGroups->groups().item(QString::number(groupID).toStdString());
+            if (group.second) {
+                if (group.first.name() == key) {
+                    isValid = true;
+                    lights = mComm->lightListFromGroup(group.first);
+                }
             }
         }
     }
@@ -323,10 +236,8 @@ void LightPage::groupSelected(QString key, bool shouldSelect) {
     // if the group selected is found, either select or deselect it
     if (isValid) {
         if (shouldSelect) {
-            mCurrentGroup = key;
             mData->addDeviceList(lights);
         } else {
-            mCurrentGroup = "";
             mData->removeDeviceList(lights);
         }
         // now update the GUI
@@ -347,24 +258,6 @@ void LightPage::groupSelected(QString key, bool shouldSelect) {
 // GroupsParser Slots
 // ------------------------------------
 
-void LightPage::newConnectionFound(QString newController) {
-    // get list of all HTTP and UDP devices.
-    const auto& controllers = mComm->arducor()->discovery()->controllers();
-    auto itemResult = controllers.item(newController.toStdString());
-    bool foundController = itemResult.second;
-
-    // if not, add it to discovery.
-    if (!foundController) {
-        if (mAppSettings->enabled(EProtocolType::arduCor)) {
-            mComm->arducor()->discovery()->addManualIP(newController);
-            mComm->startDiscovery(EProtocolType::arduCor);
-        } else {
-            qDebug() << "WARNING: UDP and HTTP not enabled but they are found in the json data being loaded...";
-        }
-    }
-}
-
-
 
 void LightPage::groupDeleted(QString group) {
    // qDebug() << "group deleted" << group;
@@ -381,32 +274,14 @@ void LightPage::groupDeleted(QString group) {
     }
 }
 
-void LightPage::newCollectionAdded(QString collection) {
-    qDebug() << "collection added" << collection;
-}
-
-
 // ------------------------------------
 // LightPage Slots
 // ------------------------------------
 
-
-void LightPage::lightStateChanged(ECommType type, QString name) {
-    Q_UNUSED(name);
-    Q_UNUSED(type);
-   // updateConnectionList();
-}
-
-void LightPage::clearButtonPressed() {
-    mData->clearDevices();
-    emit changedDeviceCount();
-    emit updateMainIcons();
-}
-
 void LightPage::receivedCommUpdate(ECommType) {
-    if (mLastUpdateConnectionList.elapsed() > 200) {
-        mLastUpdateConnectionList = QTime::currentTime();
-        updateConnectionList();
+    if (mLastUpdateRoomWidgets.elapsed() > 250) {
+        mLastUpdateRoomWidgets = QTime::currentTime();
+        updateRoomWidgets();
     }
 }
 
@@ -429,18 +304,10 @@ void LightPage::highlightList() {
 
 
 void LightPage::renderUI() {
-    updateConnectionList();
-}
-
-
-cor::Light LightPage::identifierStringToLight(QString string) {
-    QStringList list = string.split("_");
-    if (list.size() > 1) {
-        cor::Light light(list[1], list[2], stringToCommType(list[0]));
-        mComm->fillDevice(light);
-        return light;
+    if (mLastUpdateRoomWidgets.elapsed() > 250) {
+        mLastUpdateRoomWidgets = QTime::currentTime();
+        updateRoomWidgets();
     }
-    return {};
 }
 
 
@@ -489,9 +356,9 @@ void LightPage::resizeEvent(QResizeEvent *) {
 
 void LightPage::shouldShowButtons(QString key, bool) {
     for (const auto& widget : mRoomsWidget->widgets()) {
-        ListRoomWidget *groupWidget = qobject_cast<ListRoomWidget*>(widget);
-        Q_ASSERT(groupWidget);
         if (widget->key() != key) {
+            ListRoomWidget *groupWidget = qobject_cast<ListRoomWidget*>(widget);
+            Q_ASSERT(groupWidget);
             groupWidget->closeWidget();
         }
     }

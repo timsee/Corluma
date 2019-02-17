@@ -24,55 +24,54 @@ CommType::CommType(ECommType type) : mType(type) {
     connect(mReachabilityTest, SIGNAL(timeout()), this, SLOT(checkReachability()));
 }
 
-void CommType::controllerDiscovered(const QString& name, const std::list<cor::Light>& lights) {
+void CommType::controllerDiscovered(const std::list<cor::Light>& lights) {
     std::vector<std::pair<std::string, cor::Light>> intializer;
     for (const auto& light : lights) {
-        intializer.emplace_back(light.uniqueID().toStdString(), light);
+        mDeviceTable.insert(light.uniqueID().toStdString(), light);
     }
-    cor::Dictionary<cor::Light> lightDict(intializer);
 
-    mDeviceTable.insert(std::make_pair(name.toStdString(), lightDict));
     resetStateUpdateTimeout();
     emit updateReceived(mType);
 }
 
 bool CommType::removeController(const QString& controller) {
-    mDeviceTable.erase(controller.toStdString());
+    // make list of all lights to remove
+    std::list<QString> lightIDs;
+    for (const auto& light : mDeviceTable.itemVector()) {
+        if (light.controller() == controller) {
+            lightIDs.push_back(light.uniqueID());
+        }
+    }
+    for (const auto& light : lightIDs) {
+        mDeviceTable.removeKey(light.toStdString());
+    }
     return true;
 }
 
 void CommType::updateDevice(cor::Light device) {
-    auto controllerResult = mDeviceTable.find(device.controller().toStdString());
-    if (controllerResult != mDeviceTable.end()) {
-        auto dictResult = controllerResult->second.item(device.uniqueID().toStdString());
-        if (dictResult.second) {
-            device.lastUpdateTime = mElapsedTimer.elapsed();
-            controllerResult->second.update(device.uniqueID().toStdString(), device);
-            emit updateReceived(mType);
-        }
+    auto dictResult = mDeviceTable.item(device.uniqueID().toStdString());
+    if (dictResult.second) {
+        device.lastUpdateTime = mElapsedTimer.elapsed();
+        mDeviceTable.update(device.uniqueID().toStdString(), device);
+        emit updateReceived(mType);
     }
 }
 
 
 bool CommType::fillDevice(cor::Light& device) {
-    auto controllerIterator = mDeviceTable.find(device.controller().toStdString());
-    if (controllerIterator != mDeviceTable.end()) {
-        auto deviceResult = controllerIterator->second.item(device.uniqueID().toStdString());
-        if (deviceResult.second) {
-            device = deviceResult.first;
-            return true;
-        }
+    auto deviceResult = mDeviceTable.item(device.uniqueID().toStdString());
+    if (deviceResult.second) {
+        device = deviceResult.first;
+        return true;
     }
     return false;
 }
 
 
 QString CommType::controllerName(const QString& uniqueID) {
-    for (const auto& keyPair : mDeviceTable) {
-        const auto& result = keyPair.second.item(uniqueID.toStdString());
-        if (result.second) {
-            return QString(keyPair.first.c_str());
-        }
+    auto deviceResult = mDeviceTable.item(uniqueID.toStdString());
+    if (deviceResult.second) {
+        return deviceResult.first.controller();
     }
     return "NOT_FOUND";
 }
@@ -81,14 +80,12 @@ void CommType::resetStateUpdateTimeout() {
     if (!mStateUpdateTimer->isActive()) {
         mStateUpdateTimer->start(mStateUpdateInterval);
         mReachabilityTest->start(REACHABILITY_TIMEOUT);
-        for (auto&& it : mDeviceTable) {
-            for (const auto& device : it.second.itemVector()) {
-                auto dictResult = it.second.item(device.uniqueID().toStdString());
-                if (dictResult.second) {
-                    auto device = dictResult.first;
-                    device.lastUpdateTime = 0;
-                    it.second.update(device.uniqueID().toStdString(), device);
-                }
+        for (const auto& device : mDeviceTable.itemVector()) {
+            auto dictResult = mDeviceTable.item(device.uniqueID().toStdString());
+            if (dictResult.second) {
+                auto device = dictResult.first;
+                device.lastUpdateTime = 0;
+                mDeviceTable.update(device.uniqueID().toStdString(), device);
             }
         }
         mElapsedTimer.restart();
@@ -118,16 +115,14 @@ bool CommType::shouldContinueStateUpdate() {
 void CommType::checkReachability() {
     auto elapsedTime = mElapsedTimer.elapsed();
     const int kThreshold = 15000;
-    for (auto&& it : mDeviceTable) {
-        for (const auto& device : it.second.itemVector()) {
-            auto dictResult = it.second.item(device.uniqueID().toStdString());
-            if (dictResult.second) {
-                auto device = dictResult.first;
-                if (device.isReachable && (device.lastUpdateTime < (elapsedTime - kThreshold))) {
-                    qDebug() << " no update for this device! " << device;
-                    device.isReachable = false;
-                    it.second.update(device.uniqueID().toStdString(), device);
-                }
+    for (const auto& device : mDeviceTable.itemVector()) {
+        auto dictResult = mDeviceTable.item(device.uniqueID().toStdString());
+        if (dictResult.second) {
+            auto device = dictResult.first;
+            if (device.isReachable && (device.lastUpdateTime < (elapsedTime - kThreshold))) {
+                qDebug() << " no update for this device! " << device;
+                device.isReachable = false;
+                mDeviceTable.update(device.uniqueID().toStdString(), device);
             }
         }
     }

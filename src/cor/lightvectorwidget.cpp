@@ -13,12 +13,10 @@ namespace cor
 {
 
 LightVectorWidget::LightVectorWidget(int width, int height,
-                             EPaletteWidgetType type,
                              QWidget *parent) : QWidget(parent) {
     mWidth = width;
     mHeight = height;
     mMaximumSize = width * height;
-    mType = type;
 
     // --------------
     // Setup Layout
@@ -51,22 +49,13 @@ LightVectorWidget::LightVectorWidget(int width, int height,
             QSizePolicy sizePolicy = mArrayColorsButtons[uint32_t(i)]->sizePolicy();
             sizePolicy.setRetainSizeWhenHidden(true);
             mArrayColorsButtons[uint32_t(i)]->setSizePolicy(sizePolicy);
-
-            if (mType == EPaletteWidgetType::info) {
-                mArrayLabels[uint32_t(i)]  = new QLabel(this);
-                mArrayLabels[uint32_t(i)]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-                mLayout->addWidget(mArrayLabels[uint32_t(i)],        h, w * 2);
-                mLayout->addWidget(mArrayColorsButtons[uint32_t(i)], h, w * 2 + 1);
-            } else {
-                mLayout->addWidget(mArrayColorsButtons[uint32_t(i)], h, w);
-            }
+            mArrayColorsButtons[uint32_t(i)]->setVisible(false);
+            mLayout->addWidget(mArrayColorsButtons[uint32_t(i)], h, w);
             ++i;
         }
     }
     connect(arrayButtonsMapper, SIGNAL(mapped(int)), this, SLOT(toggleArrayColor(int)));
     setLayout(mLayout);
-
-    updateDevices(std::list<cor::Light>());
 }
 
 void LightVectorWidget::updateDevices(const std::list<cor::Light>& devices) {
@@ -77,14 +66,6 @@ void LightVectorWidget::updateDevices(const std::list<cor::Light>& devices) {
             QJsonObject routineObject = lightToJson(device);
             mArrayColorsButtons[uint32_t(i)]->updateRoutine(routineObject);
             mArrayColorsButtons[uint32_t(i)]->setVisible(true);
-            if (mType == EPaletteWidgetType::info) {
-                if (device.name.length() > 11) {
-                    QString shortenedName = device.name.mid(0, 8) + "...";
-                    mArrayLabels[uint32_t(i)]->setText(shortenedName);
-                } else {
-                    mArrayLabels[uint32_t(i)]->setText(device.name);
-                }
-            }
         }
         ++i;
     }

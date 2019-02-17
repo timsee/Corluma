@@ -8,10 +8,10 @@
 #include "cor/utils.h"
 
 ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
-                                         std::list<cor::LightGroup> moods,
+                                         std::list<cor::Mood> moods,
                                          QString key,
                                          bool hideEdit,
-                                         QWidget *parent) : cor::ListItemWidget(key, parent), mListLayout(cor::EListType::linear2X) {
+                                         QWidget *parent) : cor::ListItemWidget(key, parent), mListLayout(cor::EListType::grid) {
 
     mWidget = new QWidget(this);
 
@@ -23,7 +23,7 @@ ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
 
     mMoods = moods;
     mDropdownTopWidget = new DropdownTopWidget(name, hideEdit, this);
-    mDropdownTopWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+    mDropdownTopWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     updateMoods(moods, false);
 
@@ -32,26 +32,24 @@ ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
 }
 
 
-void ListMoodGroupWidget::updateMoods(const std::list<cor::LightGroup>& moods,
+void ListMoodGroupWidget::updateMoods(const std::list<cor::Mood>& moods,
                                       bool removeIfNotFound) {
-    std::vector<bool> foundWidgets(mListLayout.widgets().size(), false);
+    std::vector<bool> foundWidgets(moods.size(), false);
     for (const auto& mood : moods) {
         bool foundMood = false;
         uint32_t x = 0;
         for (const auto& existingWidget : mListLayout.widgets()) {
-            if (mood.name.compare(existingWidget->key()) == 0) {
+            if (mood.name() == existingWidget->key()) {
                 foundMood = true;
-//                qDebug() << x << "  vs " << mListLayout.widgets().size();
-//                qDebug() << mood.name << " vs " << existingWidget->key();
                 foundWidgets[x] = true;
             }
             ++x;
         }
 
         if (!foundMood) {
-            ListMoodWidget *widget = new ListMoodWidget(mood, mWidget);
-            connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
-            connect(widget, SIGNAL(editClicked(QString)), this, SLOT(clickedEdit(QString)));
+            ListMoodPreviewWidget *widget = new ListMoodPreviewWidget(mood, mWidget);
+            connect(widget, SIGNAL(editClicked(std::uint64_t)), this, SLOT(clickedEdit(std::uint64_t)));
+            connect(widget, SIGNAL(moodSelected(std::uint64_t)), this, SLOT(selectMood(std::uint64_t)));
             mListLayout.insertWidget(widget);
         }
     }
@@ -92,11 +90,26 @@ void ListMoodGroupWidget::resizeInteralWidgets() {
     } else {
         this->setFixedHeight(mDropdownTopWidget->height());
     }
+    mWidget->setFixedWidth(this->width());
+
+    QPoint offset(0, 0);
+
+    QSize size = mListLayout.widgetSize(QSize(this->width(), int(mDropdownTopWidget->height() * 2)));
+    for (uint32_t i = 0; i < mListLayout.widgets().size(); ++i) {
+        ListMoodPreviewWidget *widget = qobject_cast<ListMoodPreviewWidget*>(mListLayout.widgets()[i]);
+        Q_ASSERT(widget);
+        QPoint position = mListLayout.widgetPosition(mListLayout.widgets()[i]);
+        mListLayout.widgets()[i]->setGeometry(offset.x() + position.x() * size.width(),
+                                              offset.y() + position.y() * size.height(),
+                                              size.width(),
+                                              size.height());
+      //qDebug() << "this is the widget position of " << i << position << "and geometry"  << mListLayout.widgets()[i]->geometry();
+    }
 }
 
 void ListMoodGroupWidget::setCheckedMoods(std::list<QString> checkedMoods) {
     for (auto&& existingWidget : mListLayout.widgets()) {
-        ListMoodWidget *widget = qobject_cast<ListMoodWidget*>(existingWidget);
+        ListMoodPreviewWidget *widget = qobject_cast<ListMoodPreviewWidget*>(existingWidget);
         Q_ASSERT(widget);
 
 
@@ -112,30 +125,34 @@ void ListMoodGroupWidget::setCheckedMoods(std::list<QString> checkedMoods) {
 }
 
 void ListMoodGroupWidget::resizeEvent(QResizeEvent *) {
-    mWidget->setFixedWidth(this->width());
-    QPoint offset(0, 0);
-    QSize size = mListLayout.widgetSize(QSize(this->width(), mDropdownTopWidget->height()));
-    for (uint32_t i = 0; i < mListLayout.widgets().size(); ++i) {
-        QPoint position = mListLayout.widgetPosition(mListLayout.widgets()[i]);
-        mListLayout.widgets()[i]->setFixedSize(size);
-        mListLayout.widgets()[i]->setGeometry(offset.x() + position.x() * size.width(),
-                                 offset.y() + position.y() * size.height(),
-                                 size.width(),
-                                 size.height());
-      //qDebug() << "this is the widget position of " << i << position << "and geometry"  << mWidgets[i]->geometry();
-    }
+    resizeInteralWidgets();
 }
 
 void ListMoodGroupWidget::mouseReleaseEvent(QMouseEvent *) {
     setShowButtons(!mDropdownTopWidget->showButtons());
 }
 
+
+void ListMoodGroupWidget::selectMood(std::uint64_t key) {
+    for (const auto& existingWidget : mListLayout.widgets()) {
+        ListMoodPreviewWidget *widget = qobject_cast<ListMoodPreviewWidget*>(existingWidget);
+        Q_ASSERT(widget);
+        if (widget->key().toInt() == key) {
+            widget->setSelected(true);
+        } else {
+            widget->setSelected(false);
+        }
+    }
+    resizeInteralWidgets();
+    emit moodSelected(mKey, key);
+}
+
 void ListMoodGroupWidget::removeMood(QString mood) {
     // check if mood exists
     bool foundMood = false;
-    ListMoodWidget *moodWidget = nullptr;
+    ListMoodPreviewWidget *moodWidget = nullptr;
     for (auto&& widget : mListLayout.widgets()) {
-        ListMoodWidget *existingWidget = qobject_cast<ListMoodWidget*>(widget);
+        ListMoodPreviewWidget *existingWidget = qobject_cast<ListMoodPreviewWidget*>(widget);
         Q_ASSERT(existingWidget);
 
         if (mood.compare(existingWidget->key()) == 0) {

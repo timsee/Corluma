@@ -71,6 +71,7 @@ protected:
 
 private:
 
+    //// set the title's font size
     void setTitleFontPointSize(int pt);
 
     /// Unique key based on device index of Hue Light.

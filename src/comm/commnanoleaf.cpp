@@ -57,8 +57,8 @@ void CommNanoleaf::createColorPalettes() {
 
 std::vector<QColor> CommNanoleaf::nanoleafPaletteToVector(const QJsonArray& palette) {
     std::vector<QColor> colorVector;
-    for (auto&& object : palette) {
-       QJsonObject colorObject = object.toObject();
+    for (const auto& object : palette) {
+       const auto& colorObject = object.toObject();
         double hue        = colorObject["hue"].toDouble() / 360.0;
         if (hue < 0) hue = hue * -1.0;
 
@@ -96,7 +96,7 @@ std::pair<QJsonArray, QJsonArray> CommNanoleaf::vectorToNanoleafPalettes(const s
 }
 
 void CommNanoleaf::startup() {
-
+    //TODO: should this do anything?
 }
 
 void CommNanoleaf::shutdown() {
@@ -208,24 +208,26 @@ void CommNanoleaf::sendPacket(const QJsonObject& object) {
     if (object["uniqueID"].isString() && deviceTable().size()) {
 
         // get the controller
-        nano::LeafController controller = mDiscovery->findControllerByName(object["controller"].toString());
+        nano::LeafController controller;
+        bool result = mDiscovery->findControllerBySerial(object["uniqueID"].toString(), controller);
+        if (result) {
+            if (object["isOn"].isBool()) {
+                onOffChange(controller, object["isOn"].toBool());
+            }
 
-        if (object["isOn"].isBool()) {
-            onOffChange(controller, object["isOn"].toBool());
+            // send routine change
+            if (object["temperature"].isDouble()) {
+                //TODO: fill out if needed
+            } else if (object["routine"].isObject()) {
+                routineChange(controller, object["routine"].toObject());
+            }
+
+            if (object["brightness"].isDouble()) {
+                brightnessChange(controller, int(object["brightness"].toDouble()));
+            }
+
+            resetStateUpdateTimeout();
         }
-
-        // send routine change
-        if (object["temperature"].isDouble()) {
-
-        } else if (object["routine"].isObject()) {
-            routineChange(controller, object["routine"].toObject());
-        }
-
-        if (object["brightness"].isDouble()) {
-            brightnessChange(controller, int(object["brightness"].toDouble()));
-        }
-
-        resetStateUpdateTimeout();
     }
 }
 
@@ -240,7 +242,6 @@ void CommNanoleaf::replyFinished(QNetworkReply* reply) {
         QString IP = reply->url().toString();
         auto controller  = mDiscovery->findControllerByIP(IP);
         bool isConnected = mDiscovery->isControllerConnected(controller);
-        //qDebug() << controller << payload << isConnected;
         if (!isConnected) {
             QString name;
             bool addToDeviceTable = false;
@@ -258,16 +259,20 @@ void CommNanoleaf::replyFinished(QNetworkReply* reply) {
                     }
                 }
             } else {
-                mDiscovery->foundNewController(controller);
+              //  mDiscovery->foundNewController(controller);
                 name = controller.name;
                 addToDeviceTable = true;
             }
 
-            if (addToDeviceTable) {
-                std::list<cor::Light> newDeviceList;
-                cor::Light light(controller.serialNumber, name, ECommType::nanoleaf);
-                newDeviceList.push_back(light);
-                controllerDiscovered(name, newDeviceList);
+            QJsonDocument jsonResponse = QJsonDocument::fromJson(payload.toUtf8());
+            if(!jsonResponse.isNull()) {
+                if(jsonResponse.isObject()) {
+                    QJsonObject object = jsonResponse.object();
+                    if (object["serialNo"].isString()
+                            && object["name"].isString()) {
+                        parseStateUpdatePacket(controller, object);
+                    }
+                }
             }
         } else {
             QJsonDocument jsonResponse = QJsonDocument::fromJson(payload.toUtf8());
@@ -277,10 +282,6 @@ void CommNanoleaf::replyFinished(QNetworkReply* reply) {
                     if (object["auth_token"].isString()) {
                         QString authToken = object["auth_token"].toString();
                         mDiscovery->foundNewAuthToken(controller, authToken);
-                        std::list<cor::Light> newDeviceList;
-                        cor::Light light(controller.serialNumber, controller.hardwareName, ECommType::nanoleaf);
-                        newDeviceList.push_back(light);
-                        controllerDiscovered(controller.hardwareName, newDeviceList);
                     } else if (object["serialNo"].isString()
                                && object["name"].isString()) {
                         parseStateUpdatePacket(controller, object);                        
@@ -294,6 +295,12 @@ void CommNanoleaf::replyFinished(QNetworkReply* reply) {
                     }
                 }
             }
+        }
+    } else {
+        if (reply->error() == QNetworkReply::ConnectionRefusedError) {
+            qDebug() << "Nanoleaf connection refused from " << reply->url().toString();
+        } else {
+            qDebug() << " unknown error from " << reply->url().toString() << reply->errorString();
         }
     }
 }
@@ -313,12 +320,11 @@ void CommNanoleaf::renameController(nano::LeafController controller, const QStri
     std::list<cor::Light> newDeviceList;
     cor::Light light(controller.serialNumber, name, ECommType::nanoleaf);
     newDeviceList.push_back(light);
-    controllerDiscovered(name, newDeviceList);
+    controllerDiscovered(newDeviceList);
 
     // signal to update group data
     cor::Light oldLight(controller.serialNumber, oldName, ECommType::nanoleaf);
     emit lightRenamed(oldLight, name);
-
 }
 
 
@@ -569,9 +575,15 @@ void CommNanoleaf::parseStateUpdatePacket(nano::LeafController& controller, cons
             }
         }
 
-
-
-        mDiscovery->updateFoundDevice(controller);
+        if (mDiscovery->isControllerConnected(controller)) {
+            mDiscovery->updateFoundDevice(controller);
+        } else {
+            std::list<cor::Light> newDeviceList;
+            mDiscovery->foundNewController(controller);
+            cor::Light light(controller.serialNumber, controller.hardwareName, ECommType::nanoleaf);
+            newDeviceList.push_back(light);
+            controllerDiscovered(newDeviceList);
+        }
         QJsonObject stateObject = stateUpdate["state"].toObject();
         if (stateObject["on"].isObject()
                 && stateObject["brightness"].isObject()

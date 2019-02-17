@@ -9,12 +9,6 @@
 namespace cor
 {
 
-/// type of widget
-enum class EPaletteWidgetType {
-    standard,
-    info
-};
-
 /*!
  * \copyright
  * Copyright (C) 2015 - 2019.
@@ -32,7 +26,6 @@ class LightVectorWidget: public QWidget
 public:
     /// Constructor
     explicit LightVectorWidget(int width, int height,
-                               EPaletteWidgetType type,
                                QWidget *parent);
     /*!
      * \brief updateDevices update the devices in the cor::Button to show the exact routine.
@@ -111,9 +104,6 @@ private:
      * \brief mLayout layout used to arrange the slider and the buttons.
      */
     QGridLayout *mLayout;
-
-    /// type of widget
-    EPaletteWidgetType mType;
 };
 
 }

@@ -11,6 +11,7 @@
 #include "cor/palette.h"
 #include "comm/commhue.h"
 #include "appsettings.h"
+#include "cor/mood.h"
 
 namespace cor
 {
@@ -215,10 +216,10 @@ public:
     bool hasNanoLeafDevices();
 
     /// compute the best candidate for a collection based on the current devices.
-    QString findCurrentCollection(const std::list<cor::LightGroup>& collections, bool allowLights);
+    QString findCurrentCollection(const std::list<cor::Group>& collections, bool allowLights);
 
     /// compute the best candidate for a mood based on the current devices
-    QString findCurrentMood(const std::list<cor::LightGroup>& moods);
+    std::uint64_t findCurrentMood(const cor::Dictionary<cor::Mood>& moods);
 
 signals:
     /*!

@@ -33,6 +33,7 @@ class Light {
 
 public:
 
+    /// default constructor
     Light();
 
     /*!
@@ -228,11 +229,6 @@ cor::Light jsonToLight(const QJsonObject& object);
 /// converts a cor::Light to a json representation of its routine.
 QJsonObject lightToJson(const cor::Light& light);
 
-}
-
-/// compares light devices, ignoring state data and paying attention only to values that don't change.
-inline bool compareLight(const cor::Light& lhs, const cor::Light& rhs) {
-    return (lhs.uniqueID() == rhs.uniqueID());
 }
 
 namespace std

@@ -83,10 +83,9 @@ public:
 
     /*!
      * \brief controllerDiscovered attemps to add a controller based off its name and list of lights
-     * \param name name of new controller
      * \param lights list of lights associated with the controller
      */
-    void controllerDiscovered(const QString& name, const std::list<cor::Light>& lights);
+    void controllerDiscovered(const std::list<cor::Light>& lights);
 
     /*!
      * \brief updateDevice update all the data in the light device that matches the same controller and index.
@@ -116,7 +115,7 @@ public:
      * \brief deviceList list of the light devices
      * \return list of the light devices
      */
-    const std::unordered_map<std::string, cor::Dictionary<cor::Light>>& deviceTable() const noexcept { return mDeviceTable; }
+    const cor::Dictionary<cor::Light>& deviceTable() const noexcept { return mDeviceTable; }
 
 signals:
 
@@ -188,8 +187,7 @@ private:
      * \brief mDeviceTable hash table of all available devices. the hash key is the controller name
      *        and the list associated with it is all known devices connected to that controller.
      */
-    std::unordered_map<std::string, cor::Dictionary<cor::Light>> mDeviceTable;
-
+    cor::Dictionary<cor::Light> mDeviceTable;
 };
 
 #endif // COMMTYPE_H

@@ -28,7 +28,7 @@ class MoodPage : public QWidget, public cor::Page
     Q_OBJECT
 public:
     /// constructor
-    explicit MoodPage(QWidget *parent, GroupsParser *groups);
+    explicit MoodPage(QWidget *parent, GroupData *groups);
 
     /*!
      * \brief updateConnectionList updates the GUI elements that display the
@@ -37,16 +37,15 @@ public:
     void updateConnectionList();
 
     /// called when the widget is shown
-    void show(const QString& currentMood,
-              const std::list<cor::LightGroup>& moods,
-              const std::list<cor::LightGroup>& roomList,
-              const std::vector<std::pair<QString, QString>> deviceNames);
+    void show(std::uint64_t currentMood,
+              const cor::Dictionary<cor::Mood>& moods,
+              const std::list<cor::Group>& roomList);
 
     /// called when the widget is hidden
     void hide();
 
     /// getter for current mood
-    const QString& currentMood() { return mCurrentMood; }
+    const std::uint64_t& currentMood() { return mCurrentMood; }
 
 signals:
     /*!
@@ -65,29 +64,39 @@ signals:
      * \brief clickedEditButton sent whenever an edit button is clicked so that the main page can load
      *        the edit page.
      */
-    void clickedEditButton(QString key, bool isMood);
+    void clickedEditButton(std::uint64_t key, bool isMood);
 
     /// sent when a mood receives an update
-    void moodUpdate(QString moodName);
+    void moodUpdate(std::uint64_t moodID);
+
+    /// called when mood is selected
+    void clickedSelectedMood(std::uint64_t moodID);
 
 private slots:
     /*!
      * \brief editGroupClicked the edit button has been pressed for a specific collection
      */
-    void editGroupClicked(QString key);
+    void editGroupClicked(std::uint64_t key);
 
     /*!
      * \brief editMoodClicked the edit button has been pressed for a specific mood. This
      *        gets sent to the main window and tells it to open the edit page.
      */
-    void editMoodClicked(QString collectionKey, QString moodKey);
+    void editMoodClicked(QString collectionKey, std::uint64_t moodKey);
 
     /*!
      * \brief moodClicked called whenever an individual mood is clicked
      * \param collectionKey key for the collection of lights that the mood fits into
      * \param moodKey name of the specific mood
      */
-    void moodClicked(QString collectionKey, QString moodKey);
+    void moodClicked(QString collectionKey, std::uint64_t moodKey);
+
+    /*!
+     * \brief selectedMood called whenever an individual mood is selceted
+     * \param collectionkey key for cllection of lights that the mood fits into
+     * \param moodKey key for the mood
+     */
+    void selectedMood(QString collectionkey, std::uint64_t moodKey);
 
     /*!
      * \brief newMoodAdded handles whenever a new mood was created on the edit page.
@@ -116,7 +125,7 @@ private:
     CommLayer *mComm;
 
     /// groups parser
-    GroupsParser *mGroups;
+    GroupData *mGroups;
 
     /// preset data for palettes from ArduCor
     PresetPalettes mPalettes;
@@ -136,8 +145,7 @@ private:
      * \return pointer to the newly created ListGroupGroupWidget
      */
     ListMoodGroupWidget* initMoodsCollectionWidget(const QString& name,
-                                                   std::list<cor::LightGroup> moods,
-                                                   const std::vector<std::pair<QString, QString>>& deviceNames,
+                                                   const std::list<cor::Mood>& moods,
                                                    const QString& key,
                                                    bool hideEdit = false);
 
@@ -145,9 +153,8 @@ private:
      * \brief makeMoodsCollections make all the mood-based UI widgets based on the saved JSON data in the application
      * \param moods list of all saved moods
      */
-    void makeMoodsCollections(const std::list<cor::LightGroup>& moods,
-                              const std::list<cor::LightGroup>& roomList,
-                              const std::vector<std::pair<QString, QString>> deviceNames);
+    void makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
+                              const std::list<cor::Group>& roomList);
 
     /// layout of widget
     QVBoxLayout *mLayout;
@@ -158,8 +165,11 @@ private:
      */
     QTime mLastUpdateConnectionList;
 
-    /// current mood based on the
-    QString mCurrentMood;
+    /// current mood based on the state of lights
+    std::uint64_t mCurrentMood;
+
+    /// current mood selected by the UI
+    QString mSelectedMood;
 };
 
 #endif // MOODPAGE_H

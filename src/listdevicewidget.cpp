@@ -16,8 +16,9 @@
 ListDeviceWidget::ListDeviceWidget(const cor::Light& device,
                                    bool setHighlightable,
                                    QSize size,
+                                   EOnOffSwitchState switchState,
                                    QWidget *parent) : cor::ListItemWidget(device.uniqueID(),
-                                                                          parent)   {
+                                                                          parent), mSwitchState{switchState} {
 
     this->setFixedSize(size);
 
@@ -69,7 +70,7 @@ void ListDeviceWidget::init(const cor::Light& device) {
 
     setLayout(mLayout);
 
-    mKey = structToIdentifierString(device);
+    mKey = device.uniqueID();
 
     mOnOffSwitch->setSwitchState(ESwitchState::disabled);
 }
@@ -84,19 +85,25 @@ void ListDeviceWidget::updateWidget(const cor::Light& device) {
     updateTypeIcon(device.hardwareType);
 
     mDevice = device;
-    mKey = structToIdentifierString(device);
+    mKey = device.uniqueID();
 
     QString nameText = createName(device);
     if (nameText.compare(mController->text()) != 0) {
         mController->setText(nameText);
     }
 
-    if (!device.isReachable) {
+    if (mSwitchState == EOnOffSwitchState::locked) {
         mOnOffSwitch->setSwitchState(ESwitchState::disabled);
-    } else if (device.isOn && !mBlockStateUpdates) {
-        mOnOffSwitch->setSwitchState(ESwitchState::on);
-    } else if (!mBlockStateUpdates) {
-        mOnOffSwitch->setSwitchState(ESwitchState::off);
+    } else if (mSwitchState == EOnOffSwitchState::hidden) {
+        mOnOffSwitch->setVisible(false);
+    } else {
+        if (!device.isReachable) {
+            mOnOffSwitch->setSwitchState(ESwitchState::disabled);
+        } else if (device.isOn && !mBlockStateUpdates) {
+            mOnOffSwitch->setSwitchState(ESwitchState::on);
+        } else if (!mBlockStateUpdates) {
+            mOnOffSwitch->setSwitchState(ESwitchState::off);
+        }
     }
 
     if (shouldRender) {
@@ -119,35 +126,32 @@ QString ListDeviceWidget::convertUglyHueNameToPrettyName(QString name) {
     } else if (name.contains("white lamp")) {
         name.replace("white lamp", "White Lamp");
     }
-    QString hueString = QString("Hue");
+    QString hueString = QString("Hue ");
     name.replace(name.indexOf(hueString),
                  hueString.size(), QString(""));
     return name;
 }
 
-QString ListDeviceWidget::structToIdentifierString(const cor::Light& device) {
-    return commTypeToString(device.commType()) + "_" + device.uniqueID() + "_" + device.controller();
-}
-
 bool ListDeviceWidget::setHighlightChecked(bool checked) {
     mIsChecked = checked;
-    if (mIsChecked) {
-        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mOnOffSwitch);
-        effect->setOpacity(1.0);
-        mOnOffSwitch->setGraphicsEffect(effect);
-        mOnOffSwitch->setEnabled(true);
-        mOnOffSwitch->setAttribute(Qt::WA_TransparentForMouseEvents, false);
-        this->setStyleSheet("background-color:rgb(61,142,201);");
-    } else {
-        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mOnOffSwitch);
-        effect->setOpacity(0.15);
-        mOnOffSwitch->setGraphicsEffect(effect);
-        mOnOffSwitch->setEnabled(false);
-        mOnOffSwitch->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-        this->setStyleSheet("background-color:rgb(32,31,31);");
+    if (mShouldHighlight) {
+        if (mIsChecked) {
+            QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mOnOffSwitch);
+            effect->setOpacity(1.0);
+            mOnOffSwitch->setGraphicsEffect(effect);
+            mOnOffSwitch->setEnabled(true);
+            mOnOffSwitch->setAttribute(Qt::WA_TransparentForMouseEvents, false);
+            this->setStyleSheet("background-color:rgb(61,142,201);");
+        } else {
+            QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mOnOffSwitch);
+            effect->setOpacity(0.15);
+            mOnOffSwitch->setGraphicsEffect(effect);
+            mOnOffSwitch->setEnabled(false);
+            mOnOffSwitch->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+            this->setStyleSheet("background-color:rgb(32,31,31);");
+        }
+        repaint();
     }
-    repaint();
-
     return mIsChecked;
 }
 
@@ -158,7 +162,7 @@ void ListDeviceWidget::paintEvent(QPaintEvent *event) {
     opt.init(this);
     QPainter painter(this);
 
-    if (mIsChecked) {
+    if (mIsChecked && mShouldHighlight) {
         painter.fillRect(this->rect(), QBrush(QColor(61, 142, 201, 255)));
     } else {
         //TODO: could I make this transparent in all cases?
@@ -176,7 +180,6 @@ void ListDeviceWidget::paintEvent(QPaintEvent *event) {
                10,
                this->width() / 2,
                int(this->height() * 0.6f / 2));
-
 
     // make brush with icon data in it
     QBrush brush(QColor(0,0,0));
@@ -223,7 +226,8 @@ void ListDeviceWidget::coolDownClick() {
 
 QString ListDeviceWidget::createName(const cor::Light& device) {
     QString nameText;
-    if (device.protocol() == EProtocolType::arduCor) {
+    if (device.protocol() == EProtocolType::arduCor
+            || device.protocol() == EProtocolType::nanoleaf) {
         nameText = device.name;
     } else if (device.protocol() == EProtocolType::hue) {
         nameText = convertUglyHueNameToPrettyName(device.name);

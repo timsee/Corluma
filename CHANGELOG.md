@@ -430,4 +430,16 @@ ___
 * Fixed bugs with the `cor::Slider` widget.
 * Fixed miscellaneous bugs.
 
+### **v0.14.0**
+#### The Group and Mood Update
+* Split `LightGroup.h` into `Group.h` and `Mood.h`
+* Changed groups to use unique IDs for lights instead of full copies of the `Light` object
+* Refactored all group and mood handling to use unique IDs as much as possible. 
+* Renamed `GroupsParser` to `GroupData` and refactored its internal data structures to use dictionaries.
+* Changed moods to allow more complicated options such as default states for lights in a room that are not explicitly defined.
+* Changed layout of `MoodPage`.
+* Optimized light and group lookups. 
+* Added `ListMoodDetailedWidget`.
+* Fixed miscellaneous bugs.
+
 

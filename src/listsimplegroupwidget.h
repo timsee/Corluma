@@ -31,9 +31,7 @@ class ListSimpleGroupWidget :  public cor::ListWidget
 public:
 
     /// constructor
-    ListSimpleGroupWidget(CommLayer* comm,
-                          cor::DeviceList* data,
-                          QWidget *parent);
+    ListSimpleGroupWidget(QWidget *parent, cor::EListType type);
 
     /*!
      * \brief setCheckedDevices takes a list of devices and compares it against all devices in the widget.
@@ -43,13 +41,20 @@ public:
      */
     void setCheckedDevices(const std::list<cor::Light>& devices);
 
+    /// removes all widget from group.
+    void removeWidgets();
+
     /*!
      * \brief updateDevices update the state and number of devices displayed in the widget.
      * \param devices the current state of all desired devices for the widget.
      * \param removeIfNotFound if a widget exists already in the listwidget but doesn't exist in the list provided,
      *        this widget gets removed and all other widgets get shifted.
      */
-    void updateDevices(const std::list<cor::Light>& devices, bool removeIfNotFound);
+    void updateDevices(const std::list<cor::Light>& devices, EOnOffSwitchState switchState, bool removeIfNotFound, bool canHighlight, bool skipOff);
+
+    /// display only the devices in this list, hiding all others.
+    void displayOnlyDevices(const std::list<cor::Light>& devices);
+
 
     /// getter for checked devices
     const std::list<cor::Light> checkedDevices();
@@ -81,20 +86,6 @@ private slots:
 
     /// handles when an on/off switch switch for any given device is toggled
     void handleToggledSwitch(QString key, bool isOn) { emit deviceSwitchToggled(key, isOn); }
-
-private:
-
-    /*!
-     * \brief communication pointer to communication object
-     *        for sending comannds to the lights
-     */
-    CommLayer *mComm;
-
-    /*!
-     * \brief data layer that maintains and tracks the states of the lights
-     *        and the saved data of the GUI
-     */
-    cor::DeviceList *mData;
 };
 
 #endif // LIST_SIMPLE_GROUP_WIDGET_H

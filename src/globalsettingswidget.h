@@ -9,7 +9,7 @@
 #include "cor/slider.h"
 #include "cor/checkbox.h"
 #include "appsettings.h"
-#include "groupsparser.h"
+#include "groupdata.h"
 
 /*!
  * \copyright

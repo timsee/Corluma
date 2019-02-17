@@ -23,13 +23,6 @@ ColorPicker::ColorPicker(QWidget *parent) :
     mPlaceholder->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     // --------------
-    // Setup Thrrole Timer
-    // --------------
-
-    mThrottleTimer = new QTimer(this);
-    connect(mThrottleTimer, SIGNAL(timeout()), this, SLOT(resetThrottleFlag()));
-
-    // --------------
     // Setup ColorWheel
     // --------------
     QPixmap pixmap(":/images/color_wheel.png");
@@ -234,13 +227,10 @@ void ColorPicker::chooseBrightness(uint32_t brightness, bool shouldSignal) {
 
 void ColorPicker::showEvent(QShowEvent *event) {
     Q_UNUSED(event);
-    mThrottleTimer->start(25);
 }
 
 void ColorPicker::hideEvent(QHideEvent *event) {
     Q_UNUSED(event);
-    mThrottleTimer->stop();
-    mThrottleFlag = false;
 }
 
 void ColorPicker::hideTempWheel() {
@@ -253,17 +243,13 @@ void ColorPicker::hideTempWheel() {
 
 
 void ColorPicker::mousePressEvent(QMouseEvent *event) {
-    mThrottleFlag = true;
     mCircleIndex = mColorSchemeCircles->positionIsUnderCircle(event->pos());
     mPressTime.restart();
     handleMouseEvent(event);
 }
 
 void ColorPicker::mouseMoveEvent(QMouseEvent *event) {
-    if (!mThrottleFlag) {
-        mThrottleFlag = true;
-        handleMouseEvent(event);
-    }
+    handleMouseEvent(event);
 }
 
 void ColorPicker::mouseReleaseEvent(QMouseEvent *event) {
@@ -525,10 +511,6 @@ bool ColorPicker::checkIfColorIsValid(QColor color) {
         colorIsValid = false;
     }
     return colorIsValid;
-}
-
-void ColorPicker::resetThrottleFlag() {
-    mThrottleFlag = false;
 }
 
 QString ColorPicker::getWheelPixmapPath(ELayoutColorPicker layout) {

@@ -7,11 +7,12 @@
 #include <QPushButton>
 
 #include "cor/listitemwidget.h"
-#include "cor/lightgroup.h"
+#include "cor/group.h"
 #include "cor/listlayout.h"
 #include "groupbuttonswidget.h"
 #include "listdevicewidget.h"
 #include "dropdowntopwidget.h"
+#include "comm/commlayer.h"
 
 /*!
  * \copyright
@@ -33,9 +34,11 @@ public:
      * \param group group of lights
      * \param key unique key for collection
      */
-    ListRoomWidget(const cor::LightGroup& group,
-                           QString key,
-                           QWidget *parent);
+    ListRoomWidget(const cor::Group& group,
+                   CommLayer* comm,
+                   GroupData *groups,
+                   QString key,
+                   QWidget *parent);
 
 
     /*!
@@ -52,7 +55,7 @@ public:
      * \param removeIfNotFound if a widget exists already in the listwidget but doesn't exist in the list provided,
      *        this widget gets removed and all other widgets get shifted.
      */
-    void updateGroup(const cor::LightGroup& group, bool removeIfNotFound);
+    void updateGroup(const cor::Group& group, bool removeIfNotFound);
 
     /// the top widget of the group widget
     DropdownTopWidget* dropDownTopWidget() { return mDropdownTopWidget; }
@@ -61,7 +64,7 @@ public:
      * \brief devices getter for all devices being displayed by the widget.
      * \return all devices being displayed by the widget.
      */
-    const std::list<cor::Light>& devices() { return mGroup.devices; }
+    const std::list<QString>& devices() { return mGroup.lights; }
 
     /// getter for just the reachable devices in the group.
     std::list<cor::Light> reachableDevices();
@@ -79,7 +82,7 @@ public:
     void closeWidget();
 
     /// getter for the group data.
-    const cor::LightGroup& group() { return mGroup; }
+    const cor::Group& group() { return mGroup; }
 
     /// getter for the desired height of the widget
     int widgetHeightSum();
@@ -152,6 +155,12 @@ private slots:
 
 private:
 
+    /// comm data
+    CommLayer *mComm;
+
+    //// group data
+    GroupData *mGroupData;
+
     /// resize the widget
     void resize();
 
@@ -182,7 +191,7 @@ private:
     QColor computeHighlightColor();
 
     /// stored data for the group.
-    cor::LightGroup mGroup;
+    cor::Group mGroup;
 
 };
 

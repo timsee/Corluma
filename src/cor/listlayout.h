@@ -14,8 +14,7 @@ namespace cor
 /// type of list
 enum class EListType {
     grid,
-    linear,
-    linear2X
+    linear
 };
 
 /*!

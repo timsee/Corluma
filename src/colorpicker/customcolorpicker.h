@@ -47,6 +47,7 @@ signals:
 
 protected:
 
+    /// called when widget is resized
     void resizeEvent(QResizeEvent *);
 
 private slots:

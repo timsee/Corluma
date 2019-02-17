@@ -10,7 +10,7 @@
 
 #include "icondata.h"
 #include "comm/commtype.h"
-#include "cor/lightgroup.h"
+#include "cor/mood.h"
 #include "cor/lightvectorwidget.h"
 #include "cor/listitemwidget.h"
 
@@ -20,12 +20,11 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief The ListMoodWidget class is used to display a pre-saved group of
+ * \brief The ListMoodPreviewWidget class is used to display a pre-saved group of
  *        devices and their settings in a single list widget. It displays the name
- *        of the group, up to 5 device previews as IconData, and the connection state
- *        of the associated devices.
+ *        of the group and the states of some of its lights.
  */
-class ListMoodWidget : public cor::ListItemWidget
+class ListMoodPreviewWidget : public cor::ListItemWidget
 {
     Q_OBJECT
 
@@ -34,8 +33,8 @@ public:
      * \brief ListMoodWidget constructor
      * \param group group of lights in mood
      */
-    explicit ListMoodWidget(const cor::LightGroup& group,
-                             QWidget *parent);
+    explicit ListMoodPreviewWidget(const cor::Mood& group,
+                                   QWidget *parent);
 
     /*!
     * \brief setChecked set the widget as checked or unchecked. When it is checked it
@@ -45,29 +44,33 @@ public:
     */
     bool setChecked(bool checked);
 
+    /// setter for selected state
+    bool setSelected(bool selected);
+
+    /// getter for selected state
+    bool selected() const noexcept { return mIsSelected; }
+
     /*!
      * \brief checked getter for checked state
      * \return true if checked, false otherwise
      */
-    bool checked() { return mIsChecked; }
+    bool checked() const noexcept { return mIsChecked; }
 
     /*!
      * \brief moodName getter for name
      * \return name of mood
      */
-    const QString& moodName() { return mGroup.name; }
+    const QString& moodName() { return mMood.name(); }
 
 signals:
 
     /*!
-     * \brief clicked emited whenever a mouse press is released anywhere on the widget
-     */
-    void clicked(QString);
-
-    /*!
      * \brief editClicked emitted when edit button is clicked. Emits its key.
      */
-    void editClicked(QString);
+    void editClicked(std::uint64_t);
+
+    /// called when mood is selected
+    void moodSelected(std::uint64_t);
 
 protected:
 
@@ -91,12 +94,17 @@ protected:
      */
     void paintEvent(QPaintEvent *event);
 
+    /*!
+     * \brief resizeEvent called whenever the widget resizes
+     */
+    void resizeEvent(QResizeEvent *);
+
 private slots:
 
     /*!
      * \brief editClicked emitted when edit button is clicked. Emits its key.
      */
-    void editButtonClicked(bool) { emit editClicked(mKey);  }
+    void editButtonClicked(bool) { emit editClicked(mMood.uniqueID());  }
 
 private:
 
@@ -104,6 +112,9 @@ private:
      * \brief mIsChecked true if checked, false otherwise
      */
     bool mIsChecked;
+
+    /// true if selected, false otherwise
+    bool mIsSelected;
 
     /*!
      * \brief mEditButton button used to edit the collection. Editing can change
@@ -114,6 +125,9 @@ private:
     /// pixmap for icon for the edit button
     QPixmap mEditIcon;
 
+    /// icon for whether all lights are connected or not
+    QLabel *mAllLightsConnectedIcon;
+
     /*!
      * \brief mName namme of group
      */
@@ -123,7 +137,7 @@ private:
     cor::LightVectorWidget *mPalette;
 
     /// stored local copy of the group data.
-    cor::LightGroup mGroup;
+    cor::Mood mMood;
 
     /*!
      * \brief mLayout layout for widget

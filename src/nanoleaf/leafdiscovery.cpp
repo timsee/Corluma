@@ -29,14 +29,11 @@ LeafDiscovery::LeafDiscovery(QObject *parent, uint32_t interval) : QObject(paren
 }
 
 void LeafDiscovery::foundNewAuthToken(const nano::LeafController& newController, const QString& authToken) {
-    qDebug() << " found new auth token!" << newController << " auth token" <<  authToken;
     // check if the controller exists in the unknown group, delete if found
     for (auto&& unknownController : mUnknownControllers) {
         if (unknownController.IP == newController.IP) {
             unknownController.authToken = authToken;
             unknownController.name = newController.hardwareName;
-            // we now have everything for a found controller, count it as found
-            foundNewController(unknownController);
             break;
         }
     }
@@ -64,11 +61,8 @@ void LeafDiscovery::foundNewController(nano::LeafController newController) {
         }
     }
 
-    // found controllers added to found list
-    if (found) {
-        mFoundControllers.insert(newController.serialNumber.toStdString(), newController);
-        updateJSON(newController);
-    }
+    mFoundControllers.insert(newController.serialNumber.toStdString(), newController);
+    updateJSON(newController);
 }
 
 void LeafDiscovery::receivedUPnP(QHostAddress sender, QString payload) {
@@ -140,7 +134,6 @@ void LeafDiscovery::discoveryRoutine() {
     if (!mNotFoundControllers.empty()) {
         for (auto controller : mNotFoundControllers) {
             mNanoleaf->testAuth(controller);
-            // test on the previous data
         }
     }
 
@@ -227,28 +220,6 @@ nano::LeafController LeafDiscovery::findControllerByIP(const QString& IP) {
                     return unknownController;
                 }
             }
-        }
-    }
-    return nano::LeafController();
-}
-
-
-nano::LeafController LeafDiscovery::findControllerByName(const QString& name) {
-    for (const auto& foundController : mFoundControllers.itemVector()) {
-        if (foundController.name.compare(name) == 0) {
-            return foundController;
-        }
-    }
-
-    for (auto notFoundController : mNotFoundControllers) {
-        if (notFoundController.name.compare(name) == 0) {
-            return notFoundController;
-        }
-    }
-
-    for (auto controller : mUnknownControllers) {
-        if (controller.name.compare(name) == 0) {
-            return controller;
         }
     }
     return nano::LeafController();

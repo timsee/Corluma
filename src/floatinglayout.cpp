@@ -149,6 +149,21 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(true);
             mButtons[i]->setMinimumSize(buttonSize());
+        } else if (mNames[i].compare("Group_Lights") == 0) {
+            foundMatch = true;
+            mButtons[i] = new QPushButton(this);
+            mButtons[i]->setCheckable(true);
+            mButtons[i]->setMinimumSize(buttonSize());
+        } else if (mNames[i].compare("Group_Details") == 0) {
+            foundMatch = true;
+            mButtons[i] = new QPushButton(this);
+            mButtons[i]->setCheckable(true);
+            mButtons[i]->setMinimumSize(buttonSize());
+        } else if (mNames[i].compare("Group_Edit") == 0) {
+            foundMatch = true;
+            mButtons[i] = new QPushButton(this);
+            mButtons[i]->setCheckable(true);
+            mButtons[i]->setMinimumSize(buttonSize());
         } else if (mNames[i].compare("Colors_Page") == 0) {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
@@ -262,6 +277,12 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
                     cor::resizeIcon(mButtons[i], ":/images/connectionIcon.png");
                 } else if (mNames[i].compare("Colors_Page") == 0) {
                     cor::resizeIcon(mButtons[i], ":/images/colorWheel_icon.png");
+                } else if (mNames[i].compare("Group_Lights") == 0) {
+                    cor::resizeIcon(mButtons[i], ":/images/connectionIcon.png");
+                } else if (mNames[i].compare("Group_Details") == 0) {
+                    cor::resizeIcon(mButtons[i], ":/images/colorWheel_icon.png");
+                } else if (mNames[i].compare("Group_Edit") == 0) {
+                    cor::resizeIcon(mButtons[i], ":/images/editIcon.png");
                 }
             }
         }

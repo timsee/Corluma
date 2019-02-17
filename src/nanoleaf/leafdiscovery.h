@@ -61,9 +61,6 @@ public:
     /// find a nano::LeafController based off of its IP
     nano::LeafController findControllerByIP(const QString& IP);
 
-    /// find a nano::LeafController based off of its name
-    nano::LeafController findControllerByName(const QString& name);
-
     /*!
      * \brief findControllerBySerial finds a controller by its serial number
      * \param serialNumber serial number of the controller

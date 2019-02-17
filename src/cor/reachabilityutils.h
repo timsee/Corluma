@@ -32,6 +32,11 @@ inline bool wifiEnabled() {
             hasWifiEnabled = true;
         }
     }
+// Windows doesn't really work at all... this is a bad check if its not a mobile phone.
+#ifdef Q_OS_WIN
+    hasWifiEnabled = true;
+#endif
+
     return hasWifiEnabled;
 }
 

@@ -1,11 +1,13 @@
-#ifndef GROUPSPARSER_H
-#define GROUPSPARSER_H
+#ifndef GROUPS_DATA_H
+#define GROUPS_DATA_H
 
 #include <QObject>
 
-#include "cor/lightgroup.h"
+#include "cor/group.h"
+#include "cor/mood.h"
 #include "comm/commhue.h"
 
+#include "cor/dictionary.h"
 
 /*!
  * \copyright
@@ -18,43 +20,58 @@
  *        but does not contain any reference to the lights overall state. The second is a mood, which contains both
  *        the path to the light device and data such as its brightness, color, etc.
  */
-class GroupsParser : public QObject, public cor::JSONSaveData
+class GroupData : public QObject, public cor::JSONSaveData
 {
     Q_OBJECT
 public:
     /*!
      * Constructor
      */
-    explicit GroupsParser(QObject *parent);
+    explicit GroupData(QObject *parent);
 
     /*!
      * \brief moodList getter for all known moods.
      * \return a list of all the moods. Each mood is represented as a pair with its name
      *         and a list of the devices with their associated state.
      */
-    const std::list<cor::LightGroup>& moodList() { return mMoodList; }
+    const cor::Dictionary<cor::Mood>& moods() { return mMoodDict; }
 
     /*!
      * \brief collectionList getter for all known collections.
      * \return a list of all the collections. Each collection is represented as a pair with its name and a list
      *         of the devices.
      */
-    const std::list<cor::LightGroup>& collectionList() { return mCollectionList; }
+    const cor::Dictionary<cor::Group>& groups() { return mGroupDict; }
+
+    /// list of groups, ignoring rooms
+    std::list<cor::Group> groupList();
+
+    /// list of rooms, with filled in subgroups
+    std::list<cor::Group> roomList();
+
+    void addSubGroupsToRooms();
+
+    /*!
+     * \brief updateExternallyStoredGroups update the information stored from external sources, such as Philips Bridges. This data gets added to the group
+     *        info but does not get saved locally.
+     * \param externalGroups groups that are stored in an external location
+     */
+    void updateExternallyStoredGroups(const std::list<cor::Group>& externalGroups);
 
     /*!
      * \brief saveNewMood save a new group of devices to JSON data, which then gets saved to file in AppData.
      * \param groupName the name of the new group.
      * \param devices the devices to save into the group.
      */
-    void saveNewMood(const QString& groupName, const std::list<cor::Light>& devices);
+    void saveNewMood(const QString& groupName, const std::list<cor::Light>& devices, const std::list<std::pair<std::uint64_t, cor::Light>>& defaultStates);
 
     /*!
-     * \brief saveNewCollection save a new collection of devices to JSON data, which then gets saved to file in AppData.
+     * \brief saveNewGroup save a new group of devices to JSON data, which then gets saved to file in AppData.
      * \param groupName name of colelction to save.
      * \param devices devices in new collection.
      * \param isRoom true if it is a room, false otherwise
      */
-    void saveNewCollection(const QString& groupName, const std::list<cor::Light>& devices, bool isRoom);
+    void saveNewGroup(const QString& groupName, const std::list<cor::Light>& devices, bool isRoom);
 
     /*!
      * \brief removeGroup remove the group of devices associated with the name provided. If no group has this name,
@@ -97,12 +114,10 @@ public:
     /// WARNING: This is not an intended feature, but is useful for API refactors.
     void clearAndResaveAppDataDEBUG();
 
+    /// generates unique key for a group or mood
+    std::uint64_t generateNewUniqueKey();
+
 signals:
-    /*!
-     * \brief newConnectionFound emitted whenever a new connection is found in JSON data. Only useful for
-     *        Yun connections, currently.
-     */
-    void newConnectionFound(QString);
 
     /*!
      * \brief groupDeleted signaled whenever a group is deleted, sending out its name to anyone, listening in the dark.
@@ -132,11 +147,14 @@ private:
     bool loadJSON();
 
     /*!
-     * \brief checkIfMoodIsValid reads a json object and determines if it contains all valid values
+     * \brief checkIfMoodLightIsValid reads a json object and determines if it contains all valid values
      * \param object the object for the mood
      * \return true if valid, false othewrise
      */
-    bool checkIfMoodIsValid(const QJsonObject& object);
+    bool checkIfMoodLightIsValid(const QJsonObject& object);
+
+    /// check if a mood group has the minimum elements required to be valid.
+    bool checkIfMoodGroupIsValid(const QJsonObject& object);
 
     /*!
      * \brief checkIfGroupIsValid checks that the values of the JSON data actually map to
@@ -154,23 +172,23 @@ private:
     void parseMood(const QJsonObject& object);
 
     /*!
-     * \brief parseCollection Takes a JSON representation of a collection and converts it
+     * \brief parseGroup Takes a JSON representation of a collection and converts it
      *        to a std::list of devices and then adds it to the mCollectionList.
      * \param object a JSON representation of a group.
      */
-    void parseCollection(const QJsonObject& object);
+    void parseGroup(const QJsonObject& object);
 
     /*!
-     * \brief mMoodList non-JSON representation of moods. This list is kept so that it is
+     * \brief mMoodDict non-JSON representation of moods. This dictionary is kept so that it is
      *        easy to pull all possible moods without having to re-parse the JSON data each time.
      */
-    std::list<cor::LightGroup> mMoodList;
+    cor::Dictionary<cor::Mood> mMoodDict;
 
     /*!
-     * \brief mMoodList non-JSON representation of collections. This list is kept so that it is
+     * \brief mGroupDict non-JSON representation of collections. This dictionary is kept so that it is
      *        easy to pull all possible collections without having to re-parse the JSON data each time.
      */
-    std::list<cor::LightGroup> mCollectionList;
+    cor::Dictionary<cor::Group> mGroupDict;
 
     /*!
      * \brief mNewConnections used during parsing, contains a list of all new connections from a json file.
@@ -179,4 +197,4 @@ private:
 
 };
 
-#endif // GROUPSPARSER_H
+#endif // GROUPS_DATA_H

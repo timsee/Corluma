@@ -6,7 +6,7 @@
 
 #include "mainwindow.h"
 #include "appsettings.h"
-#include "groupsparser.h"
+#include "groupdata.h"
 #include "cor/utils.h"
 #include "cor/exception.h"
 

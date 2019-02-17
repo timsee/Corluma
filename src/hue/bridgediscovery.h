@@ -18,6 +18,7 @@
 #include "hue/bridge.h"
 
 class CommHue;
+class GroupData;
 
 namespace hue
 {
@@ -46,7 +47,7 @@ public:
     /*!
      * \brief BridgeDiscovery Constructor
      */
-    explicit BridgeDiscovery(QObject *parent, UPnPDiscovery *UPnP);
+    explicit BridgeDiscovery(QObject *parent, UPnPDiscovery *UPnP, GroupData* groups);
 
     /*!
      * \brief Deconstructor
@@ -66,7 +67,7 @@ public:
     void updateSchedules(const hue::Bridge& bridge, const std::list<SHueSchedule>& schedules);
 
     /// updates the groups stored in a bridge
-    void updateGroups(const hue::Bridge& bridge, const std::list<cor::LightGroup>& groups);
+    void updateGroups(const hue::Bridge& bridge, const std::list<cor::Group>& groups);
 
     /*!
      * \brief bridge All currently known data about the hue bridge. This is only guarenteed to
@@ -116,6 +117,12 @@ public:
      * \param bridge bridge to delete
      */
     void deleteBridge(const hue::Bridge& bridge);
+
+    /// returns the key of a group based off of the given name
+    std::uint64_t keyFromGroupName(const QString& name);
+
+    /// generates a new unique key.
+    std::uint64_t generateNewUniqueKey();
 
 signals:
 
@@ -221,6 +228,9 @@ private:
 
     /// pointer to the parent CommHue object.
     CommHue *mHue;
+
+    /// group data, used for generating keys
+    GroupData* mGroups;
 
     /*!
      * \brief kAppName application name, required by Philips in devicetype.

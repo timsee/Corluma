@@ -40,7 +40,7 @@ BridgeGroupsWidget::BridgeGroupsWidget(QWidget *parent) : QWidget(parent) {
     mMainLayout->addWidget(mScrollArea, 15);
 }
 
-void BridgeGroupsWidget::updateGroups(std::list<cor::LightGroup> groups) {
+void BridgeGroupsWidget::updateGroups(std::list<cor::Group> groups) {
     // remove old widgets
     for (uint32_t i = 0; i < mWidgets.size(); ++i) {
         mScrollLayout->removeWidget(mWidgets[i]);

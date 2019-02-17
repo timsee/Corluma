@@ -5,7 +5,7 @@
 #include <QScrollArea>
 
 #include "cor/topwidget.h"
-#include "cor/lightgroup.h"
+#include "cor/group.h"
 #include "cor/page.h"
 
 #include "hue/huegroupwidget.h"
@@ -30,7 +30,7 @@ public:
     explicit BridgeGroupsWidget(QWidget *parent);
 
     /// update the groups in the widget
-    void updateGroups(std::list<cor::LightGroup> groups);
+    void updateGroups(std::list<cor::Group> groups);
 
     /*!
      * \brief resize size the widget programmatically

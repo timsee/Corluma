@@ -27,10 +27,19 @@ public:
      */
     void resize();
 
+signals:
+    /// emitted when clicked
+    void clicked();
+
 protected:
 
     /// paints the greyout overlay
     void paintEvent(QPaintEvent *);
+
+    /*!
+     * \brief mouseReleaseEvent picks up when a click (or a tap on mobile) is released.
+     */
+    virtual void mouseReleaseEvent(QMouseEvent *);
 
 };
 

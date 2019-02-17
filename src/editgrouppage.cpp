@@ -14,7 +14,7 @@
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
 
-EditGroupPage::EditGroupPage(QWidget *parent, CommLayer* comm, cor::DeviceList* data, GroupsParser *parser) : QWidget(parent), mComm(comm), mGroups(parser) {
+EditGroupPage::EditGroupPage(QWidget *parent, CommLayer* comm, cor::DeviceList* data, GroupData *parser) : QWidget(parent), mComm(comm), mGroups(parser) {
 
     mTopMenu = new EditPageTopMenu(this);
     mTopMenu->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -28,7 +28,7 @@ EditGroupPage::EditGroupPage(QWidget *parent, CommLayer* comm, cor::DeviceList* 
 
     mIsRoomOriginal = false;
 
-    mSimpleGroupWidget = new ListSimpleGroupWidget(mComm, data, this);
+    mSimpleGroupWidget = new ListSimpleGroupWidget(this, cor::EListType::linear);
     mSimpleGroupWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(mSimpleGroupWidget, SIGNAL(deviceClicked(QString)), this, SLOT(clickedDevice(QString)));
     QScroller::grabGesture(mSimpleGroupWidget->viewport(), QScroller::LeftMouseButtonGesture);
@@ -68,7 +68,7 @@ void EditGroupPage::showGroup(QString key, std::list<cor::Light> groupDevices, s
 }
 
 void EditGroupPage::updateDevices(const std::list<cor::Light>& checkedDevices, const std::list<cor::Light>& devices) {
-    mSimpleGroupWidget->updateDevices(devices, false);
+    mSimpleGroupWidget->updateDevices(devices, EOnOffSwitchState::hidden, false, true, false);
     mSimpleGroupWidget->setCheckedDevices(checkedDevices);
 }
 
@@ -244,11 +244,11 @@ void EditGroupPage::saveChanges() {
     if (mIsRoomCurrent) {
         for (const auto& device : newDevices) {
             // loop through all collections
-            for (const auto& collection : mComm->collectionList()) {
+            for (const auto& collection : mGroups->groups().itemList()) {
                 // ignore the existing room and non-rooms
-                if (collection.isRoom && (collection.name != mNewName)) {
-                    for (const auto& collectionDevice : collection.devices) {
-                        if (collectionDevice.uniqueID() == device.uniqueID()) {
+                if (collection.isRoom && (collection.name() != mNewName)) {
+                    for (const auto& lightID : collection.lights) {
+                        if (lightID == device.uniqueID()) {
                             passesChecks = false;
                             // pop up warning that it isn't saving
                             QMessageBox msgBox;
@@ -273,9 +273,9 @@ void EditGroupPage::saveChanges() {
     mGroups->removeGroup(mOriginalName, mIsMood);
 
     if (mIsMood) {
-        mGroups->saveNewMood(mNewName, newDevices);
+        mGroups->saveNewMood(mNewName, newDevices, {});
     } else {
-        mGroups->saveNewCollection(mNewName, newDevices, mIsRoomCurrent);
+        mGroups->saveNewGroup(mNewName, newDevices, mIsRoomCurrent);
         // convert any group devices to Hue Lights, if applicable.
         std::list<HueLight> hueLights;
         for (auto device : newDevices) {
@@ -289,16 +289,13 @@ void EditGroupPage::saveChanges() {
                 // check if group already exists
                 auto hueGroups = mComm->hue()->groups(bridge);
                 bool groupExists = false;
-                cor::LightGroup lightGroup;
                 for (auto group : hueGroups) {
-                    if (group.name.compare(mNewName) == 0) {
+                    if (group.name().compare(mNewName) == 0) {
                         groupExists = true;
-                        lightGroup = group;
+                        mComm->hue()->updateGroup(bridge, group, hueLights);
                     }
                 }
-                if (groupExists) {
-                    mComm->hue()->updateGroup(bridge, lightGroup, hueLights);
-                } else {
+                if (!groupExists) {
                     mComm->hue()->createGroup(bridge, mNewName, hueLights, mIsRoomCurrent);
                 }
             }
@@ -324,8 +321,8 @@ bool EditGroupPage::checkForChanges() {
     // check all checked devices are part of original group
     for (const auto& checkedDevice : mSimpleGroupWidget->checkedDevices()) {
         bool foundDevice = false;
-        for (auto&& device : mOriginalDevices) {
-            if (compareLight(checkedDevice, device)) {
+        for (const auto& device : mOriginalDevices) {
+            if (checkedDevice.uniqueID() == device.uniqueID()) {
                 foundDevice = true;
             }
         }
@@ -338,7 +335,7 @@ bool EditGroupPage::checkForChanges() {
     for (const auto& device : mOriginalDevices) {
         bool foundDevice = false;
         for (const auto& uiLight : mSimpleGroupWidget->checkedDevices()) {
-            if (compareLight(uiLight, device)) {
+            if (uiLight.uniqueID() == device.uniqueID()) {
                 foundDevice = true;
             }
         }
@@ -351,8 +348,8 @@ bool EditGroupPage::checkForChanges() {
 }
 
 bool EditGroupPage::shouldSetChecked(const cor::Light& device, const std::list<cor::Light>& groupDevices) {
-    for (auto&& collectionDevice : groupDevices) {
-        if (compareLight(device, collectionDevice)) {
+    for (const auto& collectionDevice : groupDevices) {
+        if (device.uniqueID() == collectionDevice.uniqueID()) {
             return true;
         }
     }

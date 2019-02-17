@@ -47,7 +47,7 @@ public:
     /*!
      * \brief Constructor
      */
-    explicit SettingsPage(QWidget *parent, GroupsParser *parser, AppSettings *appSettings);
+    explicit SettingsPage(QWidget *parent, GroupData *parser, AppSettings *appSettings);
 
     /*!
      * \brief Destructor
@@ -128,7 +128,7 @@ protected:
 private:
 
     /// groups parser
-    GroupsParser *mGroups;
+    GroupData *mGroups;
 
     /// top widget with settings title and close button
     cor::TopWidget *mTopWidget;

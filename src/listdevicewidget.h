@@ -12,6 +12,14 @@
 #include "cor/switch.h"
 #include "cor/listitemwidget.h"
 
+
+enum class EOnOffSwitchState {
+    standard,
+    locked,
+    hidden
+};
+
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2019.
@@ -38,6 +46,7 @@ public:
     explicit ListDeviceWidget(const cor::Light& device,
                               bool setHighlightable,
                               QSize size,
+                              EOnOffSwitchState switchState,
                               QWidget *parent);
 
     /*!
@@ -71,6 +80,9 @@ public:
      */
     const cor::Light&  device()  { return mDevice; }
 
+    /// adds capitalization and stuff like that to a hue name.
+    QString convertUglyHueNameToPrettyName(QString name);
+
 signals:
     /*!
      * \brief clicked emited whenever a mouse press is released anywhere on the widget
@@ -101,19 +113,9 @@ private slots:
     void coolDownClick();
 
 private:
-    /*!
-     * \brief structToIdentifierString converts a cor::Light struct to a string in the format
-     *        of comma delimited values with only the values needed to identiy if as unique.
-     * \param dataStruct the struct to convert to a string
-     * \return a comma delimited string that represents all values in the cor::Light.
-     */
-    QString structToIdentifierString(const cor::Light& device);
 
     /// Called by constructors
     void init(const cor::Light& device);
-
-    /// adds capitalization and stuff like that to a hue name.
-    QString convertUglyHueNameToPrettyName(QString name);
 
     /*!
      * \brief createName create the name to display in the Qlabel
@@ -133,6 +135,9 @@ private:
 
     /// pixmap used by main icon
     QPixmap mIconPixmap;
+
+    /// state of on off switch
+    EOnOffSwitchState mSwitchState;
 
     /// true if should highlight, false otherwise
     bool mShouldHighlight;

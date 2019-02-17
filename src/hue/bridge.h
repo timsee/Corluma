@@ -8,7 +8,7 @@
 #include <vector>
 #include <list>
 
-#include "cor/lightgroup.h"
+#include "cor/group.h"
 #include "cor/dictionary.h"
 #include "hue/huelight.h"
 
@@ -142,7 +142,7 @@ public:
     cor::Dictionary<SHueSchedule> schedules;
 
     /// list of the groups stored on the bridge
-    std::list<cor::LightGroup> groups;
+    std::list<cor::Group> groups;
 
     /// current state of the bridge during discovery
     EBridgeDiscoveryState state = EBridgeDiscoveryState::lookingForResponse;

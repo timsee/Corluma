@@ -7,7 +7,7 @@
 
 #include "cor/devicelist.h"
 #include "datasync.h"
-#include "groupsparser.h"
+#include "groupdata.h"
 
 /*!
  * \copyright

@@ -23,7 +23,7 @@
 #include <iostream>
 #include <sstream>
 
-CommLayer::CommLayer(QObject *parent, GroupsParser *parser) : QObject(parent),  mGroups(parser) {
+CommLayer::CommLayer(QObject *parent, GroupData *parser) : QObject(parent),  mGroups(parser) {
     mUPnP = new UPnPDiscovery(this);
 
     mArduCor = std::shared_ptr<CommArduCor>(new CommArduCor(this));
@@ -33,7 +33,7 @@ CommLayer::CommLayer(QObject *parent, GroupsParser *parser) : QObject(parent),  
     connect(mNanoleaf.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
     mNanoleaf->discovery()->connectUPnP(mUPnP);
 
-    mHue = std::shared_ptr<CommHue>(new CommHue(mUPnP));
+    mHue = std::shared_ptr<CommHue>(new CommHue(mUPnP, parser));
     connect(mHue.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
 }
 
@@ -82,24 +82,12 @@ bool CommLayer::fillDevice(cor::Light& device) {
     return commByType(device.commType())->fillDevice(device);
 }
 
-std::vector<std::pair<QString, QString>> CommLayer::deviceNames() {
-    std::vector<std::pair<QString, QString>> deviceNameVector;
-    auto deviceList = allDevices();
-    deviceNameVector.reserve(deviceList.size());
-    for (auto device : deviceList) {
-        deviceNameVector.emplace_back(device.uniqueID(), device.name);
-    }
-    return deviceNameVector;
-}
-
 std::list<cor::Light> CommLayer::allDevices() {
     std::list<cor::Light> list;
     for (int i = 0; i < int(ECommType::MAX); ++i) {
         const auto& table = deviceTable(ECommType(i));
-        for (const auto& controllers : table) {
-            for (const auto& device : controllers.second.itemList()) {
-                list.push_back(device);
-            }
+        for (const auto& device : table.itemList()) {
+            list.push_back(device);
         }
     }
     return list;
@@ -112,68 +100,154 @@ std::list<cor::Light> CommLayer::allDevices() {
 void CommLayer::deleteHueGroup(QString name) {
     // check if group exists
     qDebug() << " delete hue group! " << name;
-    cor::LightGroup groupToDelete;
     for (const auto& bridge : mHue->bridges().itemVector()) {
-        bool hueGroupExists = false;
         for (const auto& group : mHue->groups(bridge)) {
-            if (group.name == name) {
-                groupToDelete = group;
-                hueGroupExists = true;
+            if (group.name() == name) {
+                mHue->deleteGroup(bridge, group);
             }
-        }
-        if (hueGroupExists) {
-            mHue->deleteGroup(bridge, groupToDelete);
         }
     }
 }
 
 
+bool sortListByGroupName(const std::pair<cor::Group, cor::Light>& lhs, const std::pair<cor::Group, cor::Light>& rhs)
+{
+  return ( lhs.first.name() < rhs.first.name());
+}
+
+cor::Light applyStateToLight(const cor::Light& light, const cor::Light& state) {
+    cor::Light lightCopy = light;
+    lightCopy.color = state.color;
+    lightCopy.isOn = state.isOn;
+    lightCopy.routine = state.routine;
+    lightCopy.palette = state.palette;
+    lightCopy.colorMode = state.colorMode;
+    lightCopy.speed = state.speed;
+    return lightCopy;
+}
+
+
+cor::Light CommLayer::addLightMetaData(cor::Light light) {
+    const auto& controller = controllerName(light.commType(), light.uniqueID());
+    light.controller(controller);
+    auto deviceCopy = light;
+    fillDevice(deviceCopy);
+    light.isReachable = deviceCopy.isReachable;
+    return light;
+}
+
+std::list<cor::Light> CommLayer::lightListFromGroup(const cor::Group& group) {
+    std::list<cor::Light> lightList;
+    const auto& allLights = allDevices();
+    for (const auto& lightID : group.lights) {
+        for (const auto& light : allLights) {
+            if (lightID == light.uniqueID()) {
+                lightList.push_back(light);
+            }
+        }
+    }
+    return lightList;
+}
+
+
+cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
+    cor::Dictionary<cor::Light> moodDict;
+
+    // split defaults into rooms and groups
+    std::list<std::pair<cor::Group, cor::Light>> rooms;
+    std::list<std::pair<cor::Group, cor::Light>> groups;
+    for (const auto& defaultState : mood.defaults) {
+        for (const auto& collection : mGroups->groups().itemList()) {
+            if (defaultState.first == collection.uniqueID()) {
+                if (collection.isRoom) {
+                    rooms.push_back(std::make_pair(collection, defaultState.second));
+                } else {
+                    groups.push_back(std::make_pair(collection, defaultState.second));
+                }
+            }
+        }
+    }
+
+    // sort both alphabettically
+    rooms.sort(sortListByGroupName);
+    groups.sort(sortListByGroupName);
+
+    // first apply the room(s) ...
+    for (const auto& room : rooms)  {
+        for (const auto& lightID : room.first.lights) {
+            auto light = lightByID(lightID);
+            light = addLightMetaData(light);
+            light = applyStateToLight(light, room.second);
+            const auto& key = light.uniqueID().toStdString();
+            // check if light exists in list already
+            const auto& result = moodDict.item(key);
+            if (result.second) {
+                // update if it exists
+                moodDict.update(key, light);
+            } else {
+                // add if it doesnt
+                moodDict.insert(key, light);
+            }
+        }
+    }
+
+    // ... then apply the group(s) ...
+    for (const auto& group : groups)  {
+        for (const auto& light : group.first.lights) {
+            auto lightCopy = lightByID(light);
+            lightCopy = addLightMetaData(lightCopy);
+            lightCopy = applyStateToLight(lightCopy, group.second);
+            const auto& key = lightCopy.uniqueID().toStdString();
+            // check if light exists in list already
+            const auto& result = moodDict.item(key);
+            if (result.second) {
+                // update if it exists
+                moodDict.update(key, lightCopy);
+            } else {
+                // add if it doesnt
+                moodDict.insert(key, lightCopy);
+            }
+        }
+    }
+
+    // ... now apply the specific lights
+    for (const auto& light : mood.lights) {
+        // this is messy and I don't like it... why did I need this isReachable hack again?
+        auto lightCopy = addLightMetaData(light);
+        const auto& key = light.uniqueID().toStdString();
+        // check if light exists in list already
+        const auto& result = moodDict.item(key);
+        if (result.second) {
+            // update if it exists
+            moodDict.update(key, lightCopy);
+        } else {
+            // add if it doesnt
+            moodDict.insert(key, lightCopy);
+        }
+    }
+
+    return moodDict;
+}
+
+
 std::list<cor::Light> CommLayer::hueLightsToDevices(std::list<HueLight> hues) {
     std::list<cor::Light> list;
-    for (auto&& hue : hues) {
+    for (const auto& hue : hues) {
         cor::Light device = static_cast<cor::Light>(hue);
         list.push_back(device);
     }
     return list;
 }
 
-
-std::list<cor::LightGroup> CommLayer::collectionList() {
-    auto collectionList = mGroups->collectionList();
-    for (auto& groups : collectionList) {
-        for (auto& device : groups.devices) {
-            fillDevice(device);
+cor::Light CommLayer::lightByID(const QString& ID) {
+    const auto& stringID = ID.toStdString();
+    for (int i = 0; i < int(ECommType::MAX); ++i) {
+        const auto& result = deviceTable(ECommType(i)).item(stringID);
+        if (result.second) {
+            return result.first;
         }
     }
-    // merge all hue groups up
-    const auto& bridges = mHue->discovery()->bridges().itemVector();
-    std::list<cor::LightGroup> hueLightGroups;
-    for (const auto& bridge : bridges) {
-        hueLightGroups.insert(hueLightGroups.begin(), bridge.groups.begin(), bridge.groups.end());
-    }
-    return cor::LightGroup::mergeLightGroups(collectionList, hueLightGroups);
-}
-
-std::list<cor::LightGroup> CommLayer::roomList() {
-    std::list<cor::LightGroup> collections = collectionList();
-    std::list<cor::LightGroup> retList;
-    for (auto&& collection : collections) {
-        if (collection.isRoom) {
-            retList.push_back(collection);
-        }
-    }
-    return retList;
-}
-
-std::list<cor::LightGroup> CommLayer::groupList() {
-    std::list<cor::LightGroup> collections = collectionList();
-    std::list<cor::LightGroup> retList;
-    for (auto&& collection : collections) {
-        if (!collection.isRoom) {
-            retList.push_back(collection);
-        }
-    }
-    return retList;
+    THROW_EXCEPTION("Light not found: " + ID.toStdString());
 }
 
 void CommLayer::resetStateUpdates(EProtocolType type) {

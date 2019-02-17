@@ -6,6 +6,7 @@
 
 #include "hue/bridgediscovery.h"
 #include "comm/commhue.h"
+#include "groupdata.h"
 
 #include <QFileInfo>
 #include <QStandardPaths>
@@ -16,7 +17,7 @@
 namespace hue
 {
 
-BridgeDiscovery::BridgeDiscovery(QObject *parent, UPnPDiscovery *UPnP) : QObject(parent), cor::JSONSaveData("hue"), mUPnP(UPnP) {
+BridgeDiscovery::BridgeDiscovery(QObject *parent, UPnPDiscovery *UPnP, GroupData* groups) : QObject(parent), cor::JSONSaveData("hue"), mUPnP{UPnP}, mGroups{groups} {
     mHue = qobject_cast<CommHue*>(parent);
     connect(UPnP, SIGNAL(UPnPPacketReceived(QHostAddress,QString)), this, SLOT(receivedUPnP(QHostAddress,QString)));
 
@@ -84,12 +85,13 @@ void BridgeDiscovery::updateSchedules(const hue::Bridge& bridge, const std::list
     }
 }
 
-void BridgeDiscovery::updateGroups(const hue::Bridge& bridge, const std::list<cor::LightGroup>& groups) {
+void BridgeDiscovery::updateGroups(const hue::Bridge& bridge, const std::list<cor::Group>& groups) {
     const auto& bridgeResult = mFoundBridges.item(bridge.id.toStdString());
     if (bridgeResult.second) {
         auto foundBridge = bridgeResult.first;
         foundBridge.groups = groups;
         mFoundBridges.update(foundBridge.id.toStdString(), foundBridge);
+        mGroups->updateExternallyStoredGroups(groups);
     }
 }
 
@@ -143,7 +145,7 @@ void BridgeDiscovery::addManualIP(QString ip) {
     }
     if (!alreadyFoundIP) {
         hue::Bridge bridge;
-        bridge.state = EBridgeDiscoveryState::lookingForResponse;
+        bridge.state = EBridgeDiscoveryState::lookingForUsername;
         bridge.IP = ip;
         mNotFoundBridges.push_back(bridge);
     }
@@ -269,7 +271,7 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
                             bridge.IP = object["internalipaddress"].toString();
                             bridge.id = object["id"].toString();
                             bridge.id = bridge.id.toLower();
-                            bridge.state = EBridgeDiscoveryState::lookingForResponse;
+                            bridge.state = EBridgeDiscoveryState::lookingForUsername;
 
                             testNewlyDiscoveredBridge(bridge);
                         }
@@ -686,6 +688,39 @@ void BridgeDiscovery::deleteBridge(const hue::Bridge& bridge) {
 
     // remove from JSON
     removeJSONObject("id", bridge.id);
+}
+
+
+std::uint64_t BridgeDiscovery::keyFromGroupName(const QString& name) {
+    // check for ID in GroupsParser in case they get merged
+    for (const auto& group : mGroups->groups().itemList()) {
+        if (group.name() == name) {
+            return group.uniqueID();
+        }
+    }
+
+    // if it doesn't exist, but does exist in bridge memory, add that ID
+    for (const auto& bridge : mFoundBridges.itemVector()) {
+        for (const auto& group : bridge.groups) {
+            if (group.name() == name) {
+                return group.uniqueID();
+            }
+        }
+    }
+    return 0u;
+}
+
+
+std::uint64_t BridgeDiscovery::generateNewUniqueKey() {
+    auto minID = std::numeric_limits<std::uint64_t>::max();
+    for (const auto& bridge : mFoundBridges.itemVector()) {
+        for (const auto& group : bridge.groups) {
+            if (group.uniqueID() < minID) {
+                minID = group.uniqueID();
+            }
+        }
+    }
+    return minID - 1;
 }
 
 // ----------------------------

@@ -14,11 +14,11 @@
 namespace hue
 {
 
-HueGroupWidget::HueGroupWidget(QWidget *parent, cor::LightGroup group) : QWidget(parent) {
+HueGroupWidget::HueGroupWidget(QWidget *parent, cor::Group group) : QWidget(parent) {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     this->setStyleSheet(styleSheet);
 
-    mName = new QLabel("<b>Name:</b> " + group.name, this);
+    mName = new QLabel("<b>Name:</b> " + group.name(), this);
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mName->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
@@ -26,7 +26,7 @@ HueGroupWidget::HueGroupWidget(QWidget *parent, cor::LightGroup group) : QWidget
     mIndex->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mIndex->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mDeviceCount = new QLabel("<b>Hue Count:</b> " + QString::number(group.devices.size()), this);
+    mDeviceCount = new QLabel("<b>Hue Count:</b> " + QString::number(group.lights.size()), this);
     mDeviceCount->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mDeviceCount->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 

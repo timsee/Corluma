@@ -17,18 +17,18 @@
  * Released under the GNU General Public License.
  */
 
-CommHue::CommHue(UPnPDiscovery *UPnP) : CommType(ECommType::hue) {
+CommHue::CommHue(UPnPDiscovery *UPnP, GroupData *groups) : CommType(ECommType::hue) {
     mStateUpdateInterval = 1000;
 
     mNetworkManager = new QNetworkAccessManager(this);
     connect(mNetworkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 
-    mDiscovery = new hue::BridgeDiscovery(this, UPnP);
+    mDiscovery = new hue::BridgeDiscovery(this, UPnP, groups);
 
-    mScheduleTimer = new QTimer;
+    mScheduleTimer = new QTimer(this);
     connect(mScheduleTimer, SIGNAL(timeout()), this, SLOT(getSchedules()));
 
-    mGroupTimer = new QTimer;
+    mGroupTimer = new QTimer(this);
     connect(mGroupTimer, SIGNAL(timeout()), this, SLOT(getGroups()));
 
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(updateLightStates()));
@@ -144,7 +144,13 @@ void CommHue::turnOnOff(const hue::Bridge& bridge, int index, bool shouldTurnOn)
 }
 
 void CommHue::bridgeDiscovered(const hue::Bridge& bridge, QJsonObject lightsObject, QJsonObject groupObject, QJsonObject schedulesObject) {
-    if (deviceTable().find(bridge.id.toStdString()) == deviceTable().end()) {
+    bool controllerFound = false;
+    for (const auto& device : deviceTable().itemVector()) {
+        if (device.controller() == bridge.id) {
+            controllerFound = true;
+        }
+    }
+    if (!controllerFound) {
         if (!mStateUpdateTimer->isActive()) {
             mStateUpdateTimer->start(mStateUpdateInterval);
         }
@@ -153,7 +159,7 @@ void CommHue::bridgeDiscovered(const hue::Bridge& bridge, QJsonObject lightsObje
         for (const auto& light : bridge.lights.itemVector()) {
             newDeviceList.push_back(light);
         }
-        controllerDiscovered(bridge.id, newDeviceList);
+        controllerDiscovered(newDeviceList);
         QStringList keys = lightsObject.keys();
         for (const auto& key : keys) {
             if (lightsObject.value(key).isObject()) {
@@ -163,12 +169,16 @@ void CommHue::bridgeDiscovered(const hue::Bridge& bridge, QJsonObject lightsObje
             }
         }
 
-        std::list<cor::LightGroup> groups;
+        std::list<cor::Group> groups;
         keys = groupObject.keys();
-        for (auto& key : keys) {
+        for (const auto& key : keys) {
             if (groupObject.value(key).isObject()) {
-                groups.push_back(jsonToGroup(groupObject.value(key).toObject(),
-                                                int(key.toDouble())));
+                const auto& jsonResult = jsonToGroup(groupObject.value(key).toObject(),
+                                                     int(key.toDouble()),
+                                                     groups);
+                if (jsonResult.second) {
+                    groups.push_back(jsonResult.first);
+                }
             }
         }
         mDiscovery->updateGroups(bridge, groups);
@@ -250,10 +260,31 @@ void CommHue::replyFinished(QNetworkReply* reply) {
     }
 }
 
+std::uint64_t CommHue::generateUniqueID(const std::list<cor::Group>& groupList, const QString& name) {
+    auto key = mDiscovery->keyFromGroupName(name);
+    // look up group ID, if it exists. will return 0 if it doesn't
+    if (key != 0) {
+        return key;
+    } else {
+        key = mDiscovery->generateNewUniqueKey();
+    }
+
+    // loop through existing group IDs, get value of max ID
+    auto minID = std::numeric_limits<std::uint64_t>::max();
+    for (const auto& group : groupList) {
+        if (group.uniqueID() < minID && group.uniqueID() > (std::numeric_limits<std::uint64_t>::max() / 2)) minID = group.uniqueID();
+    }
+    if (key >= minID) {
+        key = minID - 1;
+    }
+
+    return key;
+}
+
 void CommHue::parseJSONObject(const hue::Bridge& bridge, const QJsonObject& object) {
     QStringList keys = object.keys();
     std::list<SHueSchedule> scheduleList;
-    std::list<cor::LightGroup> groupList;
+    std::list<cor::Group> groupList;
     for (const auto& key : keys) {
         if (object.value(key).isObject()) {
             QJsonObject innerObject = object.value(key).toObject();
@@ -263,7 +294,11 @@ void CommHue::parseJSONObject(const hue::Bridge& bridge, const QJsonObject& obje
             } else if (updateType == EHueUpdates::scheduleUpdate) {
                 scheduleList.push_back(jsonToSchedule(innerObject, int(key.toDouble())));
             } else if (updateType == EHueUpdates::groupUpdate) {
-                groupList.push_back(jsonToGroup(innerObject, int(key.toDouble())));
+                const auto& jsonResult = jsonToGroup(innerObject.value(key).toObject(),
+                                                     int(key.toDouble()), {});
+                if (jsonResult.second) {
+                    groupList.push_back(jsonResult.first);
+                }
             } else if (updateType == EHueUpdates::newLightNameUpdate) {
                 updateNewHueLight(bridge, innerObject, int(key.toDouble()));
             } else {
@@ -624,14 +659,15 @@ SHueSchedule CommHue::jsonToSchedule(QJsonObject object, int i) {
     return schedule;
 }
 
-cor::LightGroup CommHue::jsonToGroup(QJsonObject object, int i) {
-    cor::LightGroup group;
+std::pair<cor::Group, bool> CommHue::jsonToGroup(QJsonObject object, int i, const std::list<cor::Group>& groupList) {
     if (object["name"].isString()
             && object["lights"].isArray()
             && object["type"].isString()
             && object["state"].isObject()) {
 
-        group.name = object["name"].toString();
+        const auto& name = object["name"].toString();
+
+        cor::Group group(generateUniqueID(groupList, name), name);
         group.index = i;
 
         if (object["type"].toString() == "Room") {
@@ -641,20 +677,21 @@ cor::LightGroup CommHue::jsonToGroup(QJsonObject object, int i) {
         }
 
         QJsonArray lights = object["lights"].toArray();
-        std::list<cor::Light> lightsInGroup;
+        std::list<QString> lightsInGroup;
         foreach (const QJsonValue &value, lights) {
             int index = value.toString().toInt();
             for (const auto& bridge : mDiscovery->bridges().itemVector()) {
                 for (const auto& light : bridge.lights.itemVector()) {
                     if (light.index == index) {
-                        lightsInGroup.push_back(light);
+                        lightsInGroup.push_back(light.uniqueID());
                     }
                 }
             }
         }
-        group.devices = lightsInGroup;
+        group.lights = lightsInGroup;
+        return std::make_pair(group, true);
     }
-    return group;
+    return std::make_pair(cor::Group(0u, "ERROR"), false);
 }
 
 
@@ -901,11 +938,11 @@ void CommHue::createGroup(const hue::Bridge& bridge, QString name, std::list<Hue
     }
 }
 
-void CommHue::updateGroup(const hue::Bridge& bridge, cor::LightGroup group, std::list<HueLight> lights) {
+void CommHue::updateGroup(const hue::Bridge& bridge, cor::Group group, std::list<HueLight> lights) {
     QString urlString = urlStart(bridge) + "/groups/"  + QString::number(group.index);
 
     QJsonObject object;
-    object["name"] = group.name;
+    object["name"] = group.name();
 
     QJsonArray array;
     for (auto light : lights) {
@@ -925,7 +962,7 @@ void CommHue::updateGroup(const hue::Bridge& bridge, cor::LightGroup group, std:
 }
 
 
-void CommHue::deleteGroup(const hue::Bridge& bridge, cor::LightGroup group) {
+void CommHue::deleteGroup(const hue::Bridge& bridge, cor::Group group) {
     QString urlString = urlStart(bridge) + "/groups/"  + QString::number(group.index);
     mNetworkManager->deleteResource(QNetworkRequest(QUrl(urlString)));
 }
@@ -1077,7 +1114,7 @@ std::list<SHueSchedule> CommHue::schedules(const hue::Bridge& bridge) {
     return mDiscovery->bridgeFromIP(bridge.IP).schedules.itemList();
 }
 
-std::list<cor::LightGroup> CommHue::groups(const hue::Bridge& bridge) {
+std::list<cor::Group> CommHue::groups(const hue::Bridge& bridge) {
     return mDiscovery->bridgeFromIP(bridge.IP).groups;
 }
 

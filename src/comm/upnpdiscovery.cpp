@@ -52,6 +52,9 @@ void UPnPDiscovery::startup() {
 
 void UPnPDiscovery::shutdown() {
     if (mSocket->isOpen()) {
+#ifdef DEBUG_UPNP
+            qDebug() << " Shutting Down UPnP";
+#endif
         mSocket->close();
     }
 }

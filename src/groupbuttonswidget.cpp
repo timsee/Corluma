@@ -36,7 +36,7 @@ void GroupButtonsWidget::addGroup(const QString& group) {
     connect(groupButton, SIGNAL(groupSelectAllToggled(QString, bool)), this, SLOT(buttonToggled(QString, bool)));
     mButtons.push_back(groupButton);
     bool sucessful = mRelabeledNames.insert(group.toStdString(), adjustedName.toStdString());
-    GUARD_EXCEPTION(sucessful, "insert into cor::Dictionary failed");
+    GUARD_EXCEPTION(sucessful, "insert into cor::Dictionary failed: " + group.toStdString() + " adjusted: " + adjustedName.toStdString());
 
     groupButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     groupButton->setFixedWidth(this->width() / mGroupCount);

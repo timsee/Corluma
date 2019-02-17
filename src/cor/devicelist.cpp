@@ -277,8 +277,7 @@ bool DeviceList::clearDevices() {
 
 bool DeviceList::removeDevice(cor::Light device){
     for (const auto& light : mDevices) {
-        bool deviceExists = compareLight(device, light);
-        if (deviceExists) {
+        if (device.uniqueID() == light.uniqueID()) {
             mDevices.remove(light);
             if (mDevices.size() == 0) {
                 emit devicesEmpty();
@@ -293,17 +292,19 @@ bool DeviceList::removeDevice(cor::Light device){
 
 
 bool DeviceList::addDevice(cor::Light device) {
-    for (auto&& light : mDevices) {
-        bool deviceExists = compareLight(device, light);
-        if (deviceExists) {
-            light = device;
-            emit dataUpdate();
-            return true;
+    if (device.isReachable) {
+        for (auto&& light : mDevices) {
+            // light already exists, update it
+            if (light.uniqueID() == device.uniqueID()) {
+                light = device;
+                emit dataUpdate();
+                return true;
+            }
         }
+        // device doesn't exist, add it to the device
+        mDevices.push_back(device);
+        emit dataUpdate();
     }
-    // device doesn't exist, add it to the device
-    mDevices.push_back(device);
-    emit dataUpdate();
     return false;
 }
 
@@ -355,7 +356,7 @@ int DeviceList::countDevicesOfType(EProtocolType type) {
 
 bool DeviceList::doesDeviceExist(cor::Light device) {
     for (const auto& storedDevice : mDevices) {
-        if (compareLight(device, storedDevice)) return true;
+        if (device.uniqueID() == storedDevice.uniqueID()) return true;
     }
     return false;
 }
@@ -368,14 +369,14 @@ bool DeviceList::hasLightWithProtocol(EProtocolType protocol) const noexcept {
     return false;
 }
 
-QString DeviceList::findCurrentCollection(const std::list<cor::LightGroup>& collections, bool allowLights) {
+QString DeviceList::findCurrentCollection(const std::list<cor::Group>& collections, bool allowLights) {
     // count number of lights in each collection currently selected
     std::vector<uint32_t> lightCount(collections.size(), 0);
     uint32_t index = 0;
     for (const auto& collection : collections) {
         for (const auto& device : mDevices) {
-            for (const auto& collectionDevice : collection.devices) {
-                if (compareLight(device, collectionDevice)) {
+            for (const auto& collectionID : collection.lights) {
+                if (collectionID == device.uniqueID()) {
                     ++lightCount[index];
                 }
             }
@@ -388,14 +389,7 @@ QString DeviceList::findCurrentCollection(const std::list<cor::LightGroup>& coll
     index = 0;
     uint32_t completeGroupCount = 0;
     for (const auto& collection : collections) {
-        // only count reachable devices
-        std::list<cor::Light> reachableDevices;
-        for (const auto& device : collection.devices) {
-            if (device.isReachable) {
-                reachableDevices.push_back(device);
-            }
-        }
-        if (lightCount[index] == reachableDevices.size() && reachableDevices.size() > 0) {
+        if (lightCount[index] == collection.lights.size()) {
             allLightsFound[index] = true;
             ++completeGroupCount;
         }
@@ -410,10 +404,10 @@ QString DeviceList::findCurrentCollection(const std::list<cor::LightGroup>& coll
         index = 0;
         for (const auto& collection : collections) {
             if (allLightsFound[index]) {
-                if (collection.devices.size() > biggestSize) {
-                    name = collection.name;
+                if (collection.lights.size() > biggestSize) {
+                    name = collection.name();
                     foundNonZeroGroup = true;
-                    biggestSize = uint32_t(collection.devices.size());
+                    biggestSize = uint32_t(collection.lights.size());
                 }
             }
             ++index;
@@ -430,7 +424,7 @@ QString DeviceList::findCurrentCollection(const std::list<cor::LightGroup>& coll
         int currentIndex = 0;
         for (auto collection : collections) {
             if (allLightsIndex == currentIndex) {
-                return collection.name;
+                return collection.name();
             }
             ++currentIndex;
         }
@@ -449,13 +443,13 @@ QString DeviceList::findCurrentCollection(const std::list<cor::LightGroup>& coll
     return "";
 }
 
-QString DeviceList::findCurrentMood(const std::list<cor::LightGroup>& moods) {
-    for (const auto& mood : moods) {
-        if (mDevices == mood.devices) {
-            return mood.name;
+std::uint64_t DeviceList::findCurrentMood(const cor::Dictionary<cor::Mood>& moods) {
+    for (const auto& mood : moods.itemVector()) {
+        if (mDevices == mood.lights) {
+            return mood.uniqueID();
         }
     }
-    return "";
+    return 0u;
 }
 
 }

@@ -120,10 +120,8 @@ std::list<cor::Light> CommArduCor::lights() {
                                        #endif
                                          ECommType::UDP};
     for (auto type : commTypes) {
-        for (const auto& controllers : commByType(type)->deviceTable()) {
-            for (const auto& storedLight : controllers.second.itemList()) {
-                lights.push_back(storedLight);
-            }
+        for (const auto& storedLight : commByType(type)->deviceTable().itemList()) {
+            lights.push_back(storedLight);
         }
     }
     return lights;
@@ -196,8 +194,13 @@ void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
                             deviceList.push_back(device);
                         } else {
                             // get a list of devices for this controller
-                            auto deviceTable = commByType(type)->deviceTable();
-                            std::list<cor::Light> lights = deviceTable.at(sender.toStdString()).itemList();
+                            std::list<cor::Light> lights;
+                            const auto& deviceTable = commByType(type)->deviceTable();
+                            for (const auto& light : deviceTable.itemVector()) {
+                                if (light.controller() == sender) {
+                                    lights.push_back(light);
+                                }
+                            }
                             deviceList = lights;
                         }
 

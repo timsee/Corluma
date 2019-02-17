@@ -10,46 +10,44 @@
 
 #include "cor/utils.h"
 
-ListSimpleGroupWidget::ListSimpleGroupWidget(CommLayer* comm,
-                                             cor::DeviceList* data,
-                                             QWidget *parent) : cor::ListWidget(parent, cor::EListType::linear),
-                                                                mComm(comm),
-                                                                mData(data) { }
+ListSimpleGroupWidget::ListSimpleGroupWidget(QWidget *parent, cor::EListType type) : cor::ListWidget(parent, type) { }
 
-void ListSimpleGroupWidget::updateDevices(const std::list<cor::Light>& devices, bool removeIfNotFound) {
+void ListSimpleGroupWidget::updateDevices(const std::list<cor::Light>& devices, EOnOffSwitchState switchState, bool removeIfNotFound, bool canHighlight, bool skipOff) {
     int overallHeight = 0;
     for (const auto& inputDevice : devices) {
-        bool foundDevice = false;
-        // check if device widget exists
-        uint32_t x = 0;
-        for (const auto& widget : widgets()) {
-            ListDeviceWidget *existingWidget = qobject_cast<ListDeviceWidget*>(widget);
-            Q_ASSERT(existingWidget);
+        if (!skipOff || inputDevice.isOn) {
+            bool foundDevice = false;
+            // check if device widget exists
+            uint32_t x = 0;
+            for (const auto& widget : widgets()) {
+                ListDeviceWidget *existingWidget = qobject_cast<ListDeviceWidget*>(widget);
+                Q_ASSERT(existingWidget);
 
-            //----------------
-            // Update Widget, if it already exists
-            //----------------
-            cor::Light existingDevice = existingWidget->device();
-            if (compareLight(inputDevice, existingDevice)) {
-                foundDevice = true;
-                existingWidget->updateWidget(inputDevice);
-                overallHeight += existingWidget->height();
+                //----------------
+                // Update Widget, if it already exists
+                //----------------
+                if (inputDevice.uniqueID() == existingWidget->device().uniqueID()) {
+                    foundDevice = true;
+                    existingWidget->updateWidget(inputDevice);
+                    overallHeight += existingWidget->height();
+                }
+                ++x;
             }
-            ++x;
-        }
 
-        //----------------
-        // Create Widget, if not found
-        //----------------
-        if (!foundDevice) {
-            ListDeviceWidget *widget = new ListDeviceWidget(inputDevice,
-                                                            false,
-                                                            QSize(this->width(), this->height() / 6),
-                                                            mainWidget());
-            connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
-            connect(widget, SIGNAL(switchToggled(QString,bool)), this, SLOT(handleToggledSwitch(QString, bool)));
-            insertWidget(widget);
-            overallHeight += widget->height();
+            //----------------
+            // Create Widget, if not found
+            //----------------
+            if (!foundDevice) {
+                ListDeviceWidget *widget = new ListDeviceWidget(inputDevice,
+                                                                canHighlight,
+                                                                QSize(this->width(), this->height() / 6),
+                                                                switchState,
+                                                                mainWidget());
+                connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
+                connect(widget, SIGNAL(switchToggled(QString,bool)), this, SLOT(handleToggledSwitch(QString, bool)));
+                insertWidget(widget);
+                overallHeight += widget->height();
+            }
         }
     }
 
@@ -63,7 +61,7 @@ void ListSimpleGroupWidget::updateDevices(const std::list<cor::Light>& devices, 
 
             bool found = false;
             for (auto device : devices) {
-                if (compareLight(device, existingWidget->device())) {
+                if (device.uniqueID() == existingWidget->device().uniqueID()) {
                     found = true;
                 }
             }
@@ -76,16 +74,29 @@ void ListSimpleGroupWidget::updateDevices(const std::list<cor::Light>& devices, 
     resizeWidgets();
 }
 
+void ListSimpleGroupWidget::removeWidgets() {
+    // get all widget keys
+    std::vector<QString> keyVector;
+    for (const auto& widget : widgets()) {
+        ListDeviceWidget *existingWidget = qobject_cast<ListDeviceWidget*>(widget);
+        Q_ASSERT(existingWidget);
+        keyVector.push_back(existingWidget->key());
+    }
+    // remove widgets by key
+    for (const auto& key : keyVector) {
+        removeWidget(key);
+    }
+}
+
 void ListSimpleGroupWidget::setCheckedDevices(const std::list<cor::Light>& devices) {
     int numOfDevices = 0;
     for (const auto& existingWidget : widgets()) {
         ListDeviceWidget *widget = qobject_cast<ListDeviceWidget*>(existingWidget);
         Q_ASSERT(widget);
 
-        const auto& widgetDevice = widget->device();
         bool found = false;
         for (const auto& device : devices) {
-            if (compareLight(device, widgetDevice)) {
+            if (device.uniqueID() == widget->device().uniqueID()) {
                 numOfDevices++;
                 found = true;
                 widget->setHighlightChecked(true);

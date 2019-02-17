@@ -25,6 +25,7 @@
 #include "lightpage.h"
 #include "lightinfolistwidget.h"
 #include "nowifiwidget.h"
+#include "listmooddetailedwidget.h"
 #include "hue/lightdiscovery.h"
 #include <QStackedWidget>
 
@@ -82,6 +83,10 @@ public slots:
      * \brief editButtonClicked an edit button has been clicked for either a collection or mood.
      */
     void editButtonClicked(QString key, bool isMood);
+    void editButtonClicked(std::uint64_t key, bool isMood);
+
+    /// called when a request for a detailed mood is sent
+    void detailedMoodDisplay(std::uint64_t key);
 
     /// show the hue info widget.
     void hueInfoWidgetClicked();
@@ -93,6 +98,9 @@ public slots:
      * \brief editClosePressed close the edit page
      */
     void editClosePressed();
+
+    /// called when the detail mood widget is closed
+    void detailedClosePressed();
 
     /*!
      * \brief settingsButtonFromDiscoveryPressed settings button pressed on discovery page. Handled
@@ -149,7 +157,7 @@ public slots:
     void schemeChanged(std::vector<QColor>);
 
     /// mood changed from moodpage
-    void moodChanged(QString mood);
+    void moodChanged(std::uint64_t mood);
 
     /// protocolsettings page changed from GlobalSettingsWidget
     void protocolSettingsChanged(EProtocolType, bool);
@@ -169,6 +177,9 @@ public slots:
     /// rename a light to a new name. This updates all UI and app data accordingly.
     void renamedLight(cor::Light, QString);
 
+    /// called when a mood is selected
+    void moodSelected(std::uint64_t);
+
 private slots:
 
     /// loads most of the pages. These are not loaded automatically since they require wifi to be enabled.
@@ -178,6 +189,9 @@ private slots:
      * \brief wifiChecker checks whether wifi is enabled.
      */
     void wifiChecker();
+
+    /// called when the greyout is clicked
+    void greyoutClicked();
 
 protected:
 
@@ -285,6 +299,11 @@ private:
     EditGroupPage *mEditPage;
 
     /*!
+     * \brief mMoodDetailedWidget widget for displaying detailed information about a mood.
+     */
+    ListMoodDetailedWidget *mMoodDetailedWidget;
+
+    /*!
      * \brief mHueInfoWidget displays information about hue lights, including their serial numbers and their
      *        software versions. Can edit light names and delete lights from the Bridge.
      */
@@ -332,7 +351,7 @@ private:
     //------------------
 
     /// groups parser
-    GroupsParser *mGroups;
+    GroupData *mGroups;
 
     /*!
      * \brief communication pointer to communication object

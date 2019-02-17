@@ -22,7 +22,6 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent) {
 
-    mWifiFound = cor::wifiEnabled();
     mPagesLoaded = false;
     mAnyDiscovered = false;
     this->setWindowTitle("Corluma");
@@ -45,7 +44,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
-    mPageIndex = EPage::lightPage;
+
+    //NOTE: this is mood page so that it doesn't default to light page on so when light page
+    //      is turned on, we can use standard functions
+    mPageIndex = EPage::moodPage;
 
     // --------------
     // Setup Wifi Checker
@@ -62,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Setup Backend
     // --------------
 
-    mGroups = new GroupsParser(this);
+    mGroups = new GroupData(this);
     mAppSettings = new AppSettings();
     mData   = new cor::DeviceList(this);
     mComm   = new CommLayer(this, mGroups);
@@ -128,14 +130,13 @@ MainWindow::MainWindow(QWidget *parent) :
     // --------------
 
     mGreyOut = new GreyOutOverlay(this);
+    connect(mGreyOut, SIGNAL(clicked()), this, SLOT(greyoutClicked()));
     mGreyOut->setVisible(false);
 
     // --------------
     // Finish up wifi check
     // --------------
-    if (!mWifiFound) {
-        mNoWifiWidget->raise();
-    }
+    mWifiFound = cor::wifiEnabled();
     mWifiChecker->start(2500);
 }
 
@@ -165,14 +166,15 @@ void MainWindow::loadPages() {
 
         mMoodPage = new MoodPage(this, mGroups);
         mMoodPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        connect(mMoodPage, SIGNAL(clickedEditButton(QString, bool)),  this, SLOT(editButtonClicked(QString, bool)));
-        connect(mMoodPage, SIGNAL(moodUpdate(QString)),  this, SLOT(moodChanged(QString)));
+        connect(mMoodPage, SIGNAL(clickedSelectedMood(std::uint64_t)), this, SLOT(moodSelected(std::uint64_t)));
+        connect(mMoodPage, SIGNAL(clickedEditButton(std::uint64_t, bool)),  this, SLOT(editButtonClicked(std::uint64_t, bool)));
+        connect(mMoodPage, SIGNAL(moodUpdate(std::uint64_t)),  this, SLOT(moodChanged(std::uint64_t)));
 
         // --------------
         // Top Menu
         // --------------
 
-        mTopMenu = new TopMenu(this, mData, mComm, this, mPalettePage, mColorPage, mMoodPage, mLightPage);
+        mTopMenu = new TopMenu(this, mData, mComm, mGroups, this, mPalettePage, mColorPage, mMoodPage, mLightPage);
         connect(mTopMenu, SIGNAL(buttonPressed(QString)), this, SLOT(topMenuButtonPressed(QString)));
         connect(mLightPage, SIGNAL(updateMainIcons()),  mTopMenu, SLOT(updateMenuBar()));
         connect(mColorPage, SIGNAL(updateMainIcons()),  mTopMenu, SLOT(updateMenuBar()));
@@ -213,6 +215,16 @@ void MainWindow::loadPages() {
         mEditPage->isOpen(false);
         connect(mEditPage, SIGNAL(pressedClose()), this, SLOT(editClosePressed()));
         mEditPage->setGeometry(0, -1 * this->height(), this->width(), this->height());
+
+        // --------------
+        // Setup Mood Detailed Widget
+        // --------------
+
+        mMoodDetailedWidget = new ListMoodDetailedWidget(this, mComm);
+        connect(mMoodDetailedWidget, SIGNAL(pressedClose()), this, SLOT(detailedClosePressed()));
+        connect(mMoodDetailedWidget, SIGNAL(enableGroup(std::uint64_t)), this, SLOT(moodChanged(std::uint64_t)));
+        mMoodDetailedWidget->setGeometry(0, -1 * this->height(), this->width(), this->height());
+        mMoodDetailedWidget->setVisible(false);
 
         // --------------
         // Setup Light Info Widget
@@ -389,10 +401,9 @@ void MainWindow::showMainPage(EPage page) {
                          mData->palette());
         mColorPage->setVisible(true);
     } else if (page == EPage::moodPage) {
-        mMoodPage->show(mData->findCurrentMood(mGroups->moodList()),
-                        mGroups->moodList(),
-                        mComm->roomList(),
-                        mComm->deviceNames());
+        mMoodPage->show(mData->findCurrentMood(mGroups->moods()),
+                        mGroups->moods(),
+                        mGroups->roomList());
         mMoodPage->setVisible(true);
     } else if (page == EPage::palettePage) {
         mPalettePage->resize();
@@ -499,6 +510,7 @@ void MainWindow::switchToConnection() {
         mLightPage->setVisible(true);
         resize();
     }
+    pageChanged(EPage::lightPage);
 }
 
 void MainWindow::settingsClosePressed() {
@@ -529,7 +541,70 @@ void MainWindow::closeDiscoveryWithoutTransition() {
                                       mDiscoveryPage->geometry().height()));
     mDiscoveryPage->hide();
     mDiscoveryPage->isOpen(false);
+    pageChanged(EPage::lightPage);
 }
+
+void MainWindow::editButtonClicked(std::uint64_t key, bool isMood) {
+    greyOut(true);
+    mEditPage->show();
+    mEditPage->raise();
+    mEditPage->setVisible(true);
+    mEditPage->isOpen(true);
+
+    QSize size = this->size();
+    mEditPage->setGeometry(int(size.width() * 0.125f),
+                           int(-1 * this->height()),
+                           int(size.width() * 0.75f),
+                           int(size.height() * 0.75f));
+
+    QPoint finishPoint(int(size.width() * 0.125f),
+                       int(size.height() * 0.125f));
+    QPropertyAnimation *animation = new QPropertyAnimation(mEditPage, "pos");
+    animation->setDuration(TRANSITION_TIME_MSEC);
+    animation->setStartValue(mEditPage->pos());
+    animation->setEndValue(finishPoint);
+    animation->start();
+
+    std::list<cor::Light> groupDevices;
+    std::list<QString> groupDeviceIDs;
+
+    QString name("");
+    bool isRoom = false;
+    if (key == 0u) {
+        for (const auto& device : mData->devices()) {
+            groupDeviceIDs.push_back(device.uniqueID());
+        }
+    } else {
+        bool foundGroup = false;
+        if (isMood) {
+            auto result = mGroups->moods().item(QString::number(key).toStdString());
+            foundGroup = result.second;
+            groupDevices = result.first.lights;
+            name = result.first.name();
+        } else {
+            // look for group in arduino data
+            for (const auto& group : mGroups->groups().itemList()) {
+                if (group.uniqueID() == key) {
+                    isRoom = group.isRoom;
+                    foundGroup = true;
+                }
+            }
+        }
+        if (!foundGroup) {
+            groupDevices = mData->devices();
+        }
+    }
+    mEditPage->showGroup(name,
+                         groupDevices,
+                         mComm->allDevices(),
+                         isMood,
+                         isRoom);
+
+    if (mGreyOut->isVisible()) {
+        mGreyOut->resize();
+    }
+}
+
 
 void MainWindow::editButtonClicked(QString key, bool isMood) {
     greyOut(true);
@@ -553,24 +628,27 @@ void MainWindow::editButtonClicked(QString key, bool isMood) {
     animation->start();
 
     std::list<cor::Light> groupDevices;
+    std::list<QString> groupDeviceIDs;
+
     bool isRoom = false;
     if (key.compare("") == 0) {
-        key = mData->findCurrentCollection(mComm->collectionList(), false);
-        groupDevices = mData->devices();
+        key = mData->findCurrentCollection(mGroups->groups().itemList(), false);
+        for (const auto& device : mData->devices()) {
+            groupDeviceIDs.push_back(device.uniqueID());
+        }
     } else {
         bool foundGroup = false;
         if (isMood) {
-            for (auto&& group :  mGroups->moodList()) {
-                if (group.name.compare(key) == 0) {
-                    groupDevices = group.devices;
+            for (const auto& mood :  mGroups->moods().itemVector()) {
+                if (mood.name().compare(key) == 0) {
+                    groupDevices = mood.lights;
                     foundGroup = true;
                 }
             }
         } else {
             // look for group in arduino data
-            for (auto&& group : mComm->collectionList()) {
-                if (group.name.compare(key) == 0) {
-                    groupDevices = group.devices;
+            for (const auto& group : mGroups->groups().itemList()) {
+                if (group.name().compare(key) == 0) {
                     isRoom = group.isRoom;
                     foundGroup = true;
                 }
@@ -585,6 +663,69 @@ void MainWindow::editButtonClicked(QString key, bool isMood) {
                          mComm->allDevices(),
                          isMood,
                          isRoom);
+
+    if (mGreyOut->isVisible()) {
+        mGreyOut->resize();
+    }
+}
+
+
+void MainWindow::moodSelected(std::uint64_t key) {
+    detailedMoodDisplay(key);
+}
+
+void MainWindow::detailedMoodDisplay(std::uint64_t key) {
+    greyOut(true);
+    mMoodDetailedWidget->raise();
+    mMoodDetailedWidget->show();
+    mMoodDetailedWidget->setVisible(true);
+    mMoodDetailedWidget->isOpen(true);
+
+    QSize size = this->size();
+    mMoodDetailedWidget->setGeometry(int(size.width() * 0.125f),
+                                     int(-1 * this->height()),
+                                     int(size.width() * 0.75f),
+                                     int(size.height() * 0.75f));
+
+    QPoint finishPoint(int(size.width() * 0.125f),
+                       int(size.height() * 0.125f));
+    QPropertyAnimation *animation = new QPropertyAnimation(mMoodDetailedWidget, "pos");
+    animation->setDuration(TRANSITION_TIME_MSEC);
+    animation->setStartValue(mMoodDetailedWidget->pos());
+    animation->setEndValue(finishPoint);
+    animation->start();
+
+
+    QSize size2 = mMoodDetailedWidget->topMenu()->size();
+    auto widthPoint = int(size.width() * 0.875f - size2.width());
+
+    mMoodDetailedWidget->topMenu()->setGeometry(widthPoint,
+                                                int(-1 * this->height()),
+                                                int(size2.width()),
+                                                int(size2.height()));
+
+    QPoint finishPoint2(widthPoint,
+                        int(size.height() * 0.125f));
+    QPropertyAnimation *animation2 = new QPropertyAnimation(mMoodDetailedWidget->topMenu(), "pos");
+    animation2->setDuration(TRANSITION_TIME_MSEC);
+    animation2->setStartValue(mMoodDetailedWidget->topMenu()->pos());
+    animation2->setEndValue(finishPoint2);
+    animation2->start();
+
+
+    const auto& moodResult = mGroups->moods().item(QString::number(key).toStdString());
+    cor::Mood detailedMood = moodResult.first;
+    if (moodResult.second) {
+        // fill in info about light
+        for (auto&& device : detailedMood.lights) {
+            auto lightData = mComm->lightByID(device.uniqueID());
+            device.hardwareType = lightData.hardwareType;
+            device.name = lightData.name;
+        }
+        mMoodDetailedWidget->update(detailedMood);
+    } else {
+        qDebug() << " did not recognize this groupppp " << key;
+    }
 
     if (mGreyOut->isVisible()) {
         mGreyOut->resize();
@@ -638,7 +779,46 @@ void MainWindow::editClosePressed() {
     animation->setEndValue(finishPoint);
     animation->start();
 
-    mLightPage->updateConnectionList();
+    mLightPage->updateRoomWidgets();
+}
+
+
+void MainWindow::detailedClosePressed() {
+    greyOut(false);
+    mMoodDetailedWidget->hide();
+    mMoodDetailedWidget->isOpen(false);
+
+    QSize size = this->size();
+    mMoodDetailedWidget->setGeometry(int(size.width() * 0.125f),
+                                     int(size.height() * 0.125f),
+                                     int(size.width() * 0.75f),
+                                     int(size.height() * 0.75f));
+
+    QPoint finishPoint(int(size.width() * 0.125f),
+                       -1 * this->height());
+
+    QPropertyAnimation *animation = new QPropertyAnimation(mMoodDetailedWidget, "pos");
+    animation->setDuration(TRANSITION_TIME_MSEC);
+    animation->setStartValue(mMoodDetailedWidget->pos());
+    animation->setEndValue(finishPoint);
+    animation->start();
+
+
+
+    QSize size2 = mMoodDetailedWidget->topMenu()->size();
+    auto widthPoint = int(size.width() * 0.875f - size2.width());
+    mMoodDetailedWidget->topMenu()->setGeometry(widthPoint,
+                                                int(-1 * this->height()),
+                                                int(size2.width()),
+                                                int(size2.height()));
+
+    QPoint finishPoint2(widthPoint,
+                        -1 * this->height());
+    QPropertyAnimation *animation2 = new QPropertyAnimation(mMoodDetailedWidget->topMenu(), "pos");
+    animation2->setDuration(TRANSITION_TIME_MSEC);
+    animation2->setStartValue(mMoodDetailedWidget->topMenu()->pos());
+    animation2->setEndValue(finishPoint2);
+    animation2->start();
 }
 
 
@@ -777,6 +957,9 @@ void MainWindow::resize() {
                                     mDiscoveryPage->geometry().y(),
                                     fullScreenSize.width(),
                                     fullScreenSize.height());
+        if (mWifiFound) {
+            mDiscoveryPage->raise();
+        }
     } else {
         mDiscoveryPage->setGeometry(this->geometry().width() * -1,
                                     mDiscoveryPage->geometry().y(),
@@ -804,6 +987,10 @@ void MainWindow::resize() {
     if (mPagesLoaded) {
         if (mEditPage->isOpen()) {
             mEditPage->resize();
+        }
+
+        if (mMoodDetailedWidget->isOpen()) {
+            mMoodDetailedWidget->resize();
         }
 
         if (mLightInfoWidget->isOpen()) {
@@ -860,28 +1047,21 @@ void MainWindow::timeoutEnabledChanged(bool enabled) {
     mAppSettings->enableTimeout(enabled);
 }
 
-void MainWindow::moodChanged(QString mood) {
-    for (const auto& group :  mGroups->moodList()) {
-        if (group.name == mood) {
-            mData->clearDevices();
-            // creates a copy of the groups devices
-            std::list<cor::Light> devices = group.devices;
-
-            // a group doesn't have any knowledge of controllers, so add in controller names
-            for (auto&& device : devices) {
-                QString controllerName = mComm->controllerName(device.commType(), device.uniqueID());
-                device.controller(controllerName);
-            }
-
-            // checks for reachability of devices and appends that to the list.
-            for (auto&& device : devices) {
-                // find up to date version of device
-                auto deviceCopy = device;
-                mComm->fillDevice(deviceCopy);
-                device.isReachable = deviceCopy.isReachable;
-            }
-            mData->addDeviceList(devices);
+void MainWindow::moodChanged(std::uint64_t moodID) {
+    const auto& result = mGroups->moods().item(QString::number(moodID).toStdString());
+    if (result.second) {
+        mData->clearDevices();
+        const auto& moodDict = mComm->makeMood(result.first);
+        mData->addDeviceList(moodDict.itemList());
+        if (!moodDict.itemList().empty()) {
+            mTopMenu->deviceCountChanged();
         }
+    }
+}
+
+void MainWindow::greyoutClicked() {
+    if (mMoodDetailedWidget->isOpen()) {
+        detailedClosePressed();
     }
 }
 
@@ -913,7 +1093,6 @@ void MainWindow::wifiChecker() {
 #endif
 
     mNoWifiWidget->setVisible(!mWifiFound);
-
     if (mWifiFound) {
         mNoWifiWidget->setVisible(false);
         loadPages();

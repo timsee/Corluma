@@ -5,7 +5,7 @@
 #include <QLabel>
 #include <QLayout>
 
-#include "cor/lightgroup.h"
+#include "cor/group.h"
 
 namespace hue
 {
@@ -24,7 +24,7 @@ class HueGroupWidget : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit HueGroupWidget(QWidget *parent, cor::LightGroup lightGroup);
+    explicit HueGroupWidget(QWidget *parent, cor::Group lightGroup);
 
 protected:
     /// paints the background on the widget

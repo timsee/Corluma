@@ -12,7 +12,8 @@
 
 #include "cor/listitemwidget.h"
 #include "cor/listlayout.h"
-#include "listmoodwidget.h"
+#include "cor/mood.h"
+#include "listmoodpreviewwidget.h"
 #include "dropdowntopwidget.h"
 
 
@@ -41,7 +42,7 @@ public:
      *        connect to.
      */
     explicit ListMoodGroupWidget(const QString& name,
-                                  std::list<cor::LightGroup> moods,
+                                  std::list<cor::Mood> moods,
                                   QString key,
                                   bool hideEdit,
                                   QWidget *parent);
@@ -52,7 +53,7 @@ public:
      * \param bool removeIfNotFound if a widget already exists but this flag is set to true and it doesn't exist
      *        in the mood list provided, the widget gets removed from the list.
      */
-    void updateMoods(const std::list<cor::LightGroup>& moods,
+    void updateMoods(const std::list<cor::Mood>& moods,
                      bool removeIfNotFound);
 
     /*!
@@ -73,7 +74,7 @@ public:
      * \brief moods getter for the mood data of this collection group
      * \return all the mood data for this collection group
      */
-    const std::list<cor::LightGroup>& moods() { return mMoods; }
+    const std::list<cor::Mood>& moods() { return mMoods; }
 
     /*!
      * \brief setShowButtons shows and hides all buttons on the widget
@@ -90,15 +91,17 @@ signals:
      * \brief moodClicked emitted when a mood is clicked in a collection. Gives the key of the collection
      *        and the key of the mood.
      */
-    void moodClicked(QString, QString);
+    void moodClicked(QString, std::uint64_t);
 
     /*!
      * \brief editClicked the edit button of a mood is clicked. Emits both the collection
      *        key and the mood's key.
      *
      */
-    void editClicked(QString, QString);
+    void editClicked(QString, std::uint64_t);
 
+    /// called when a mood is selected
+    void moodSelected(QString, std::uint64_t);
 
     /*!
      * \brief buttonsShown emitted when the buttons are shown or hidden. emits the key and a boolean
@@ -123,14 +126,17 @@ private slots:
      *        and the mood key as a mood click event
      * \param key the mood's key.
      */
-    void handleClicked(QString key) { emit moodClicked(mKey, key); }
+    void handleClicked(std::uint64_t key) { emit moodClicked(mKey, key); }
 
     /*!
      * \brief clickedEdit the edit button was clicked on one of the moods, so emit both the collection key
      *        and the mood key as an edit clicked event.
      * \param key the mood's key.
      */
-    void clickedEdit(QString key) { emit editClicked(mKey, key); }
+    void clickedEdit(std::uint64_t key) { emit editClicked(mKey, key); }
+
+    /// called when a mood is clicked
+    void selectMood(std::uint64_t key);
 
 private:
 
@@ -158,7 +164,7 @@ private:
      * \brief mMoods the data that represents the mood widgets that are displayed
      *        by this widget.
      */
-    std::list<cor::LightGroup> mMoods;
+    std::list<cor::Mood> mMoods;
 
 };
 

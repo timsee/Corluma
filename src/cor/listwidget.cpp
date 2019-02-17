@@ -51,18 +51,37 @@ void ListWidget::removeWidget(cor::ListItemWidget* widget) {
 void ListWidget::resizeWidgets() {
     int yPos = 0;
     QWidget *parentWidget = static_cast<QWidget*>(parent());
-    int maxWidth = parentWidget->width();
-    for (auto widget : mListLayout.widgets()) {
-        QSize size = widget->geometry().size();
-        if (size.width() > maxWidth) {
-            maxWidth = size.width();
+    int newHeight = 0;
+    if (mListLayout.type() == cor::EListType::linear) {
+        int maxWidth = parentWidget->width();
+        for (auto widget : mListLayout.widgets()) {
+            QSize size = widget->geometry().size();
+            if (size.width() > maxWidth) {
+                maxWidth = size.width();
+            }
+            widget->setGeometry(0, yPos, maxWidth, size.height());
+            widget->setHidden(false);
+            yPos += size.height();
         }
-        widget->setGeometry(0, yPos, maxWidth, size.height());
-        widget->setHidden(false);
-        yPos += size.height();
+        newHeight = std::max(yPos, this->viewport()->height());
+    } else if (mListLayout.type() == cor::EListType::grid) {
+        for (auto widget : mListLayout.widgets()) {
+            int maxWidth = parentWidget->width() / 2;
+            QSize size = widget->size();
+            QPoint position = mListLayout.widgetPosition(widget);
+            widget->setFixedSize(size);
+            widget->setGeometry(position.x() * maxWidth,
+                                position.y() * size.height(),
+                                maxWidth,
+                                size.height());
+            widget->setFixedWidth(maxWidth);
+            widget->setHidden(false);
+            if (position.x() == 0) {
+                newHeight += size.height();
+            }
+         //   qDebug() << "this is the widget position of " << i << position << "and geometry"  << mListLayout.widgets()[i]->geometry();
+        }
     }
-    int newHeight = std::max(yPos, this->viewport()->height());
-
    // qDebug() << " new height is " << newHeight << " yPos " << yPos   << " vs " << this->viewport()->height();
     mWidget->setFixedHeight(newHeight);
 }
@@ -74,7 +93,11 @@ void ListWidget::show() {
 void ListWidget::resize() {
     mWidget->setFixedWidth(this->viewport()->width());
     for (auto widget : mListLayout.widgets()) {
-       widget->setFixedWidth(this->viewport()->width());
+        if (mListLayout.type() == cor::EListType::linear) {
+            widget->setFixedWidth(this->viewport()->width());
+        } else if (mListLayout.type() == cor::EListType::grid) {
+            widget->setFixedWidth(this->viewport()->width() / 2);
+        }
     }
 }
 

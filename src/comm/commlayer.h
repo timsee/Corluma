@@ -16,7 +16,7 @@
 #include "arducor/arducordiscovery.h"
 #include "hue/hueprotocols.h"
 #include "hue/huelight.h"
-#include "groupsparser.h"
+#include "groupdata.h"
 
 class CommArduCor;
 class CommHue;
@@ -40,7 +40,7 @@ public:
     /*!
      * \brief Constructor
      */
-    CommLayer(QObject *parent, GroupsParser *parser);
+    CommLayer(QObject *parent, GroupData *parser);
 
     /*!
      * \brief resetStateUpdates reset the state updates timeouts for specified commtypes. If it isn't on already,
@@ -106,7 +106,7 @@ public:
      * \param type the communication type to request.
      * \return a hash table of all connected devices of the given type.
      */
-    const std::unordered_map<std::string, cor::Dictionary<cor::Light>>& deviceTable(ECommType type) {
+    const cor::Dictionary<cor::Light>& deviceTable(ECommType type) {
         return commByType(type)->deviceTable();
     }
 
@@ -120,6 +120,15 @@ public:
     QString controllerName(ECommType type, const QString& uniqueID) {
         return commByType(type)->controllerName(uniqueID);
     }
+
+    /// looks up a light by its unique ID and returns its metadata and current state
+    cor::Light lightByID(const QString& ID);
+
+    /// creates a list of lights and their current state based off of a group.
+    std::list<cor::Light> lightListFromGroup(const cor::Group& group);
+
+    /// makes a dictionary of lights based off of the formula provided by a mood object.
+    cor::Dictionary<cor::Light> makeMood(const cor::Mood& mood);
 
     /// list of all devices from all comm types
     std::list<cor::Light> allDevices();
@@ -149,18 +158,6 @@ public:
 
     /// deletes a hue group by name
     void deleteHueGroup(QString name);
-
-    /// list of all collections from all comm types
-    std::list<cor::LightGroup> collectionList();
-
-    /// list of all rooms from all comm types
-    std::list<cor::LightGroup> roomList();
-
-    /// list of all groups from all comm types
-    std::list<cor::LightGroup> groupList();
-
-    /// getter for device names
-    std::vector<std::pair<QString, QString>> deviceNames();
 
 signals:
 
@@ -194,6 +191,9 @@ private slots:
 
 private:
 
+    /// adds meta data to a light, used when creating moods.
+    cor::Light addLightMetaData(cor::Light light);
+
     /*!
      * \brief mArduCor ArudCor connection object
      */
@@ -213,7 +213,7 @@ private:
     UPnPDiscovery* mUPnP;
 
     /// groups parser
-    GroupsParser *mGroups;
+    GroupData *mGroups;
 
     /*!
      * \brief commByType returns the raw CommPtr based off the given commType

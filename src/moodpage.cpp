@@ -6,7 +6,7 @@
 
 #include "moodpage.h"
 
-#include "listmoodwidget.h"
+#include "listmoodpreviewwidget.h"
 #include "listmoodgroupwidget.h"
 #include "cor/utils.h"
 
@@ -14,7 +14,7 @@
 #include <QInputDialog>
 #include <QScroller>
 
-MoodPage::MoodPage(QWidget *parent, GroupsParser *groups) : QWidget(parent), mGroups(groups) {
+MoodPage::MoodPage(QWidget *parent, GroupData *groups) : QWidget(parent), mGroups(groups) {
 
     mMoodsListWidget = new cor::ListWidget(this, cor::EListType::linear);
     mMoodsListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -38,25 +38,28 @@ void MoodPage::newMoodAdded(QString mood) {
   //  updateConnectionList();
 }
 
-void MoodPage::makeMoodsCollections(const std::list<cor::LightGroup>& moods,
-                                    const std::list<cor::LightGroup>& roomList,
-                                    const std::vector<std::pair<QString, QString>> deviceNames) {
+void MoodPage::makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
+                                    const std::list<cor::Group>& roomList) {
 
     // pair every mood to an existing collection
-    std::unordered_map<std::string, std::list<cor::LightGroup> > roomsWithMoods;
-    for (auto&& mood : moods) { // for every mood
+    std::unordered_map<std::string, std::list<cor::Mood>> roomsWithMoods;
+    for (const auto& mood : moods.itemVector()) { // for every mood
         // look at every device, mark its room
         std::list<QString> roomNames;
-        for (auto&& moodDevice : mood.devices) {
+        for (const auto& moodDevice : mood.lights) {
             bool foundRoom = false;
-            for (auto&& room : roomList) {
-                for (auto&& roomDevice : room.devices) {
-                    if (compareLight(roomDevice, moodDevice)) {
-                        foundRoom = true;
-                        auto roomIt = std::find(roomNames.begin(), roomNames.end(), room.name);
-                        if (roomIt == roomNames.end()) {
-                            roomNames.push_back(room.name);
+            for (const auto& room : roomList) {
+                for (const auto& lightID : room.lights) {
+                    try {
+                        if (lightID == moodDevice.uniqueID()) {
+                            foundRoom = true;
+                            auto roomIt = std::find(roomNames.begin(), roomNames.end(), room.name());
+                            if (roomIt == roomNames.end()) {
+                                roomNames.push_back(room.name());
+                            }
                         }
+
+                    } catch (...) {
                     }
                 }
             }
@@ -75,7 +78,7 @@ void MoodPage::makeMoodsCollections(const std::list<cor::LightGroup>& moods,
                 groupList->second.push_back(mood);
             } else {
                 // if not found, create entry in table
-                std::list<cor::LightGroup> newLightGroup = {mood};
+                std::list<cor::Mood> newLightGroup = {mood};
                 roomsWithMoods.insert(std::make_pair(roomNames.front().toStdString(), newLightGroup));
             }
         } else {
@@ -86,13 +89,13 @@ void MoodPage::makeMoodsCollections(const std::list<cor::LightGroup>& moods,
                 groupList->second.push_back(mood);
             } else {
                 // if not found, create entry in table
-                std::list<cor::LightGroup> newLightGroup = { mood };
+                std::list<cor::Mood> newLightGroup = { mood };
                 roomsWithMoods.insert(std::make_pair("Miscellaneous", newLightGroup));
             }
         }
     }
 
-    for (auto&& room : roomsWithMoods) {
+    for (const auto& room : roomsWithMoods) {
         QString roomName = QString::fromStdString(room.first);
         if (roomName.compare("Miscellaneous") != 0 ) {
             // qDebug() << " room name " << roomName;
@@ -107,13 +110,13 @@ void MoodPage::makeMoodsCollections(const std::list<cor::LightGroup>& moods,
              }
 
              if (!roomFound) {
-                 initMoodsCollectionWidget(roomName, room.second, deviceNames, roomName);
+                 initMoodsCollectionWidget(roomName, room.second, roomName);
              }
         }
     }
 
     //TODO: remove the miscellaneous edge case by actually sorting
-    for (auto&& room : roomsWithMoods) {
+    for (const auto& room : roomsWithMoods) {
         QString roomName = QString::fromStdString(room.first);
         if (roomName.compare("Miscellaneous") == 0 ) {
             // qDebug() << " room name " << roomName;
@@ -128,56 +131,27 @@ void MoodPage::makeMoodsCollections(const std::list<cor::LightGroup>& moods,
              }
 
              if (!roomFound) {
-                 initMoodsCollectionWidget(roomName, room.second, deviceNames, roomName);
+                 initMoodsCollectionWidget(roomName, room.second, roomName);
              }
         }
     }
-
-    // now check for missing ones. Reiterate through widgets and remove any that can't be found in collection list
-//    for (uint32_t i = 0; i < mMoodsListWidget->count(); ++i) {
-//        ListCollectionWidget *item = mMoodsListWidget->widget(i);
-//        if (!(item->key().compare("zzzAVAILABLE_MOODS") == 0
-//                || item->key().compare("zzzUNAVAILABLE_MOODS") == 0)) {
-//            bool collectionFound = false;
-//            for (auto&& collection : collectionList) {
-//                if (item->key().compare(collection.name) == 0) {
-//                    collectionFound = true;
-//                }
-//            }
-//            if (!collectionFound) {
-//                mMoodsListWidget->removeWidget(item->key());
-//            }
-//        }
-//    }
 }
 
 
 
 ListMoodGroupWidget* MoodPage::initMoodsCollectionWidget(const QString& name,
-                                                         std::list<cor::LightGroup> moods,
-                                                         const std::vector<std::pair<QString, QString>>& deviceNames,
+                                                         const std::list<cor::Mood>& moods,
                                                          const QString& key,
                                                          bool hideEdit) {
-    for (auto&& mood : moods) {
-        for (auto&& device : mood.devices) {
-            for (auto&& deviceName : deviceNames) {
-                if (device.uniqueID() == deviceName.first) {
-                    device.name = deviceName.second;
-                }
-            }
-//            if (device.routine > cor::ERoutineSingleColorEnd) {
-//                device.palette = mPalettes.palette(device.paletteEnum);
-//            }
-        }
-    }
 
     ListMoodGroupWidget *widget = new ListMoodGroupWidget(name,
                                                           moods,
                                                           key,
                                                           hideEdit,
                                                           mMoodsListWidget->mainWidget());
-    connect(widget, SIGNAL(moodClicked(QString,QString)), this, SLOT(moodClicked(QString, QString)));
-    connect(widget, SIGNAL(editClicked(QString, QString)), this, SLOT(editMoodClicked(QString, QString)));
+    connect(widget, SIGNAL(moodClicked(QString, std::uint64_t)), this, SLOT(moodClicked(QString, std::uint64_t)));
+    connect(widget, SIGNAL(editClicked(QString, std::uint64_t)), this, SLOT(editMoodClicked(QString, std::uint64_t)));
+    connect(widget, SIGNAL(moodSelected(QString, std::uint64_t)), this, SLOT(selectedMood(QString, std::uint64_t)));
 
     mMoodsListWidget->insertWidget(widget);
     mMoodsListWidget->resizeWidgets();
@@ -186,16 +160,23 @@ ListMoodGroupWidget* MoodPage::initMoodsCollectionWidget(const QString& name,
     return widget;
 }
 
-void MoodPage::editGroupClicked(QString key) {
+void MoodPage::editGroupClicked(std::uint64_t key) {
     emit clickedEditButton(key, true);
 }
 
-void MoodPage::editMoodClicked(QString collectionKey, QString moodKey) {
+
+void MoodPage::selectedMood(QString, std::uint64_t moodKey) {
+    mSelectedMood = moodKey;
+    emit clickedSelectedMood(moodKey);
+}
+
+
+void MoodPage::editMoodClicked(QString collectionKey, std::uint64_t moodKey) {
     Q_UNUSED(collectionKey);
     emit clickedEditButton(moodKey, true);
 }
 
-void MoodPage::moodClicked(QString collectionKey, QString moodKey) {
+void MoodPage::moodClicked(QString collectionKey, std::uint64_t moodKey) {
     Q_UNUSED(collectionKey);
 //    qDebug() << "collection key:" << collectionKey
 //             << "mood key:" << moodKey;
@@ -211,13 +192,12 @@ void MoodPage::resizeEvent(QResizeEvent *) {
     mMoodsListWidget->resizeWidgets();
 }
 
-void MoodPage::show(const QString& currentMood,
-                    const std::list<cor::LightGroup>& moods,
-                    const std::list<cor::LightGroup>& roomList,
-                    const std::vector<std::pair<QString, QString>> deviceNames) {
+void MoodPage::show(std::uint64_t currentMood,
+                    const cor::Dictionary<cor::Mood>& moods,
+                    const std::list<cor::Group>& roomList) {
     mMoodsListWidget->setVisible(true);
     mCurrentMood = currentMood;
-    makeMoodsCollections(moods, roomList, deviceNames);
+    makeMoodsCollections(moods, roomList);
     mMoodsListWidget->show();
 }
 

@@ -14,6 +14,7 @@
 TopMenu::TopMenu(QWidget* parent,
                  cor::DeviceList *data,
                  CommLayer *comm,
+                 GroupData *groups,
                  MainWindow *mainWindow,
                  PalettePage *palettePage,
                  ColorPage *colorPage,
@@ -21,6 +22,7 @@ TopMenu::TopMenu(QWidget* parent,
                  LightPage *lightPage) : QWidget(parent),
                                     mData(data),
                                     mComm(comm),
+                                    mGroups(groups),
                                     mMainWindow(mainWindow),
                                     mPalettePage(palettePage),
                                     mColorPage(colorPage),
@@ -58,7 +60,7 @@ TopMenu::TopMenu(QWidget* parent,
     // --------------
     // Setup Main Palette
     // -------------
-    mMainPalette = new cor::LightVectorWidget(10, 1, cor::EPaletteWidgetType::standard, this);
+    mMainPalette = new cor::LightVectorWidget(10, 1, this);
     mMainPalette->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mMainPalette->setFixedHeight(mSize.height() / 2);
 
@@ -241,18 +243,10 @@ void TopMenu::deviceCountChanged() {
     }
 
     if (mData->devices().size() > 0) {
-        QString devicesText = mData->findCurrentCollection(mComm->collectionList(), true);
+        QString devicesText = mData->findCurrentCollection(mGroups->groups().itemList(), true);
         mSelectedDevicesLabel->setText(devicesText);
     } else {
         mSelectedDevicesLabel->setText("");
-    }
-
-    // Find the current collection and update according
-    QString currentCollection = mData->findCurrentCollection(mComm->collectionList(), false);
-    if (currentCollection.compare("") == 0) {
-        mLightsFloatingLayout->updateCollectionButton(":/images/plusIcon.png");
-    } else {
-        mLightsFloatingLayout->updateCollectionButton(":/images/editIcon.png");
     }
 
     if ((!mShouldGreyOutIcons
@@ -365,7 +359,7 @@ void TopMenu::floatingLayoutButtonPressed(QString button) {
         mMainWindow->switchToDiscovery();
     } else if (button.compare("New_Group") == 0) {
         if (mMainWindow->currentPage() == EPage::lightPage) {
-            mMainWindow->editButtonClicked(mLightPage->currentGroup(), false);
+            mMainWindow->editButtonClicked(mData->findCurrentCollection(mGroups->groups().itemList(), false), false);
         } else {
             mMainWindow->editButtonClicked(mMoodPage->currentMood(), true);
         }
@@ -660,9 +654,11 @@ void TopMenu::downsizeTextHeightToFit(int maxHeight) {
 
 void TopMenu::updateUI() {
     if (mData->devices() != mLastDevices) {
-        std::list<cor::Light> currentDevices = mData->devices();
+        // get copy of data representation of lights
+        auto currentDevices = mData->devices();
+        // update devices to be comm representation instead of data representaiton
         for (auto&& device : currentDevices) {
-            mComm->fillDevice(device);
+            device = mComm->lightByID(device.uniqueID());
         }
         mLastDevices = currentDevices;
 

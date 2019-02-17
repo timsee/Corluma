@@ -15,6 +15,7 @@
 #include "moodpage.h"
 #include "palettepage.h"
 #include "colorpage.h"
+#include "groupdata.h"
 #include "comm/commlayer.h"
 #include "cor/presetpalettes.h"
 
@@ -51,6 +52,7 @@ public:
     explicit TopMenu(QWidget *parent,
                      cor::DeviceList* data,
                      CommLayer *comm,
+                     GroupData *groups,
                      MainWindow *mainWindow,
                      PalettePage *palettePage,
                      ColorPage *colorPage,
@@ -188,6 +190,9 @@ private:
 
     /// pointer to commlayer
     CommLayer *mComm;
+
+    /// pointer to group data
+    GroupData *mGroups;
 
     /// layout for the left buttons that control the main pages of the application.
     FloatingLayout *mMainLayout;

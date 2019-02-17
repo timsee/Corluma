@@ -54,7 +54,7 @@ QPoint ListLayout::widgetPosition(QWidget *widget) {
         int x = index % 2;     // 2 rows per column
         int y = index / 2;     // new column every other index
         return QPoint(x, y);
-    } else if (mType == EListType::linear || mType == EListType::linear2X) {
+    } else if (mType == EListType::linear) {
         int x = 0;     // 1 row per column
         int y = index; // new column every index
         return QPoint(x, y);
@@ -90,8 +90,6 @@ QSize ListLayout::widgetSize(QSize parentSize) {
             return QSize(parentSize.width() / 2, parentSize.height());
         case EListType::linear:
             return QSize(parentSize.width(), parentSize.height());
-        case EListType::linear2X:
-            return QSize(parentSize.width(), parentSize.height() * 2);
     }
     return QSize(parentSize.height(), parentSize.height());
 }
@@ -110,7 +108,10 @@ void ListLayout::sortDeviceWidgets() {
         } else if (aDeviceWidget->device().isReachable && !bDeviceWidget->device().isReachable) {
             return true;
         } else {
-            return (aDeviceWidget->device().name.compare(bDeviceWidget->device().name) < 0);
+            // Hue is hidden from display, hide it in comparison here too.
+            auto nameA = aDeviceWidget->convertUglyHueNameToPrettyName(aDeviceWidget->device().name);
+            auto nameB = bDeviceWidget->convertUglyHueNameToPrettyName(bDeviceWidget->device().name);
+            return (nameA < nameB);
         }
     });
 }

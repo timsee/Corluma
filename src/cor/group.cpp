@@ -4,19 +4,13 @@
  * Released under the GNU General Public License.
  */
 
-#include "lightgroup.h"
+#include "group.h"
 
 namespace cor
 {
 
-LightGroup::LightGroup()
-{
-
-}
-
-std::list<LightGroup> LightGroup::mergeLightGroups(const std::list<LightGroup>& first, const std::list<LightGroup> second)
-{
-    std::list<LightGroup> retList = first;
+std::list<Group> Group::mergeLightGroups(const std::list<Group>& first, const std::list<Group> second) {
+    std::list<Group> retList = first;
     for (auto group : second) {
         // look for groups with same name and type
         auto result = std::find(retList.begin(), retList.end(), group);
@@ -25,8 +19,8 @@ std::list<LightGroup> LightGroup::mergeLightGroups(const std::list<LightGroup>& 
             retList.push_back(group);
         } else {
             // if one does exist, merge the devices instead
-            LightGroup combinedGroup = *result;
-            combinedGroup.devices.splice(combinedGroup.devices.end(), group.devices);
+            Group combinedGroup = *result;
+            combinedGroup.lights.splice(combinedGroup.lights.end(), group.lights);
             retList.remove(*result);
             retList.push_back(combinedGroup);
         }

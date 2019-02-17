@@ -10,10 +10,15 @@
 
 
 
-ListRoomWidget::ListRoomWidget(const cor::LightGroup& group,
-                                               QString key,
-                                               QWidget *parent) : cor::ListItemWidget(key, parent),
-                                                                  mListLayout(cor::EListType::grid) {
+ListRoomWidget::ListRoomWidget(const cor::Group& group,
+                               CommLayer *comm,
+                               GroupData *groups,
+                               QString key,
+                               QWidget *parent) : cor::ListItemWidget(key, parent),
+                                                    mComm{comm},
+                                                    mGroupData{groups},
+                                                    mListLayout(cor::EListType::grid),
+                                                    mGroup{group} {
 
     mWidget = new QWidget(this);
 
@@ -22,18 +27,20 @@ ListRoomWidget::ListRoomWidget(const cor::LightGroup& group,
     mLayout->setSpacing(0);
 
     setLayout(mLayout);
-    mDropdownTopWidget = new DropdownTopWidget(group.name, true, this);
+    mDropdownTopWidget = new DropdownTopWidget(group.name(), true, this);
     mDropdownTopWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    mGroup = group;
     mLayout->addWidget(mDropdownTopWidget);
-    if (!group.groups.empty()) {
+    if (!group.subgroups.empty()) {
         std::vector<QString> widgetNames;
-        widgetNames.reserve(group.groups.size());
-        for (const auto& subGroup : group.groups) {
-            widgetNames.emplace_back(subGroup.name);
+        widgetNames.reserve(group.subgroups.size());
+        for (const auto& subGroupID : group.subgroups) {
+            auto groupResult = mGroupData->groups().item(QString::number(subGroupID).toStdString());
+            if (groupResult.second) {
+                widgetNames.emplace_back(groupResult.first.name());
+            }
         }
-        mGroupsButtonWidget = new GroupButtonsWidget(this, mGroup.name, widgetNames);
+        mGroupsButtonWidget = new GroupButtonsWidget(this, mGroup.name(), widgetNames);
         connect(mGroupsButtonWidget, SIGNAL(groupButtonPressed(QString)), this, SLOT(groupPressed(QString)));
         connect(mGroupsButtonWidget, SIGNAL(groupSelectAllToggled(QString, bool)), this, SLOT(selectAllToggled(QString, bool)));
 
@@ -50,30 +57,13 @@ ListRoomWidget::ListRoomWidget(const cor::LightGroup& group,
 }
 
 void ListRoomWidget::updateTopWidget() {
-    if (!mGroup.groups.empty()) {
+    if (!mGroup.subgroups.empty()) {
         uint32_t reachableCount = 0;
         uint32_t checkedCount = 0;
-        for (const auto& device : mGroup.devices) {
-            if (device.isReachable) {
-                reachableCount++;
-            }
-            for (const auto& existingWidget : mListLayout.widgets()) {
-                ListDeviceWidget *widget = qobject_cast<ListDeviceWidget*>(existingWidget);
-                Q_ASSERT(widget);
-                if (widget->checked() && (widget->device() == device)) {
-                    checkedCount++;
-                }
-            }
-
-        }
-        mGroupsButtonWidget->updateCheckedDevices("All",
-                                                  checkedCount,
-                                                  reachableCount);
-
-        for (const auto& group : mGroup.groups) {
-            uint32_t reachableCount = 0;
-            uint32_t checkedCount = 0;
-            for (const auto& device : group.devices) {
+        for (const auto& lightID : mGroup.lights) {
+            // skip lights that aren't in group data
+            try {
+                const auto& device = mComm->lightByID(lightID);
                 if (device.isReachable) {
                     reachableCount++;
                 }
@@ -84,58 +74,103 @@ void ListRoomWidget::updateTopWidget() {
                         checkedCount++;
                     }
                 }
+            } catch (cor::Exception) {
+
             }
-            mGroupsButtonWidget->updateCheckedDevices(group.name,
-                                                      checkedCount,
-                                                      reachableCount);
+        }
+        mGroupsButtonWidget->updateCheckedDevices("All",
+                                                  checkedCount,
+                                                  reachableCount);
+
+        for (const auto& groupID : mGroup.subgroups) {
+            auto groupResult = mGroupData->groups().item(QString::number(groupID).toStdString());
+            if (groupResult.second) {
+                const auto& group = groupResult.first;
+                uint32_t reachableCount = 0;
+                uint32_t checkedCount = 0;
+                for (const auto& lightID : group.lights) {
+                    // skip lights that aren't in group data
+                    try {
+                        const auto& device = mComm->lightByID(lightID);
+                         if (device.isReachable) {
+                            reachableCount++;
+                        }
+                        for (const auto& existingWidget : mListLayout.widgets()) {
+                            ListDeviceWidget *widget = qobject_cast<ListDeviceWidget*>(existingWidget);
+                            Q_ASSERT(widget);
+                            if (widget->checked() && (widget->device() == device)) {
+                                checkedCount++;
+                            }
+                        }
+                    } catch (cor::Exception)  {
+
+                    }
+                }
+                mGroupsButtonWidget->updateCheckedDevices(group.name(),
+                                                          checkedCount,
+                                                          reachableCount);
+            }
         }
     }
 }
 
-void ListRoomWidget::updateGroup(const cor::LightGroup& group, bool removeIfNotFound) {
+void ListRoomWidget::updateGroup(const cor::Group& group, bool removeIfNotFound) {
     // for every group, loop through the groups and make sure they are represented in the top widet
-    for (const auto& subGroup : group.groups) {
-        bool subGroupFound = false;
-        for (const auto& groupButtonsName : mGroupsButtonWidget->groupNames()) {
-            if (groupButtonsName == subGroup.name) {
-                subGroupFound = true;
+    for (const auto& subGroupID : group.subgroups) {
+        auto groupResult = mGroupData->groups().item(QString::number(subGroupID).toStdString());
+        if (groupResult.second) {
+            const auto& group = groupResult.first;
+            bool subGroupFound = false;
+            if (!mGroupsButtonWidget->groupNames().empty()) {
+                for (const auto& groupButtonsName : mGroupsButtonWidget->groupNames()) {
+                    if (groupButtonsName == group.name()) {
+                        subGroupFound = true;
+                    }
+                }
             }
-        }
-        if (!subGroupFound) {
-            mGroupsButtonWidget->addGroup(subGroup.name);
+            if (!subGroupFound) {
+                mGroupsButtonWidget->addGroup(group.name());
+            }
         }
     }
     mGroup = group;
 
-    for (const auto& inputDevice : group.devices) {
-        bool foundDevice = false;
-        // check if device widget exists
-        uint32_t x = 0;
-        for (const auto& widget : mListLayout.widgets()) {
-            ListDeviceWidget *existingWidget = qobject_cast<ListDeviceWidget*>(widget);
-            Q_ASSERT(existingWidget);
-            //----------------
-            // Update Widget, if it already exists
-            //----------------
-            if ((inputDevice.uniqueID() == existingWidget->device().uniqueID()) && (inputDevice.controller() != "UNINITIALIZED")) {
-                foundDevice = true;
-                existingWidget->updateWidget(inputDevice);
+    for (const auto& lightID : group.lights) {
+        try {
+            const auto& inputDevice = mComm->lightByID(lightID);
+
+            bool foundDevice = false;
+            // check if device widget exists
+            uint32_t x = 0;
+            for (const auto& widget : mListLayout.widgets()) {
+                ListDeviceWidget *existingWidget = qobject_cast<ListDeviceWidget*>(widget);
+                Q_ASSERT(existingWidget);
+                //----------------
+                // Update Widget, if it already exists
+                //----------------
+                if ((inputDevice.uniqueID() == existingWidget->device().uniqueID()) && (inputDevice.controller() != "UNINITIALIZED")) {
+                    foundDevice = true;
+                    existingWidget->updateWidget(inputDevice);
+                }
+                ++x;
             }
-            ++x;
-        }
 
-        //----------------
-        // Create Widget, if not found
-        //----------------
+            //----------------
+            // Create Widget, if not found
+            //----------------
 
-        if (!foundDevice && (inputDevice.controller() != "UNINITIALIZED")) {
-            ListDeviceWidget *widget = new ListDeviceWidget(inputDevice,
-                                                            false,
-                                                            QSize(this->width(), this->height() / 6),
-                                                            mWidget);
-            connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
-            connect(widget, SIGNAL(switchToggled(QString,bool)), this, SLOT(handleToggledSwitch(QString, bool)));
-            mListLayout.insertWidget(widget);
+            if (!foundDevice && (inputDevice.controller() != "UNINITIALIZED")) {
+                ListDeviceWidget *widget = new ListDeviceWidget(inputDevice,
+                                                                true,
+                                                                QSize(this->width(), this->height() / 6),
+                                                                EOnOffSwitchState::standard,
+                                                                mWidget);
+                connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
+                connect(widget, SIGNAL(switchToggled(QString,bool)), this, SLOT(handleToggledSwitch(QString, bool)));
+                mListLayout.insertWidget(widget);
+            }
+        } catch (cor::Exception e) {
+
         }
     }
 
@@ -148,8 +183,8 @@ void ListRoomWidget::updateGroup(const cor::LightGroup& group, bool removeIfNotF
             Q_ASSERT(existingWidget);
 
             bool found = false;
-            for (auto device : group.devices) {
-                if (compareLight(device, existingWidget->device())) {
+            for (auto lightID : group.lights) {
+                if (lightID == existingWidget->device().uniqueID()) {
                     found = true;
                 }
             }
@@ -168,7 +203,7 @@ void ListRoomWidget::updateGroup(const cor::LightGroup& group, bool removeIfNotF
 int ListRoomWidget::widgetHeightSum() {
     int height = 0;
     height += mDropdownTopWidget->height();
-    if (!mGroup.groups.empty()) {
+    if (!mGroup.subgroups.empty()) {
         if (mGroupsButtonWidget->isVisible()) {
             height += mGroupsButtonWidget->height();
         }
@@ -189,7 +224,7 @@ void ListRoomWidget::setShowButtons(bool show) {
         }
     }
 
-    if (!mGroup.groups.empty()) {
+    if (!mGroup.subgroups.empty()) {
         if (mDropdownTopWidget->showButtons()) {
             mGroupsButtonWidget->setVisible(true);
         } else {
@@ -208,7 +243,7 @@ void ListRoomWidget::handleClicked(QString key) {
 
 void ListRoomWidget::closeWidget() {
     mDropdownTopWidget->showButtons(false);
-    if (!mGroup.groups.empty()) {
+    if (!mGroup.subgroups.empty()) {
         mGroupsButtonWidget->setVisible(false);
     }
     for (const auto& device : mListLayout.widgets()) {
@@ -219,8 +254,13 @@ void ListRoomWidget::closeWidget() {
 
 std::list<cor::Light> ListRoomWidget::reachableDevices() {
     std::list<cor::Light> reachableDevices;
-    for (auto device : mGroup.devices) {
-        reachableDevices.push_back(device);
+    for (auto device : mGroup.lights) {
+        try {
+            const auto& light = mComm->lightByID(device);
+            reachableDevices.push_back(light);
+        } catch (cor::Exception) {
+
+        }
     }
     return reachableDevices;
 }
@@ -231,10 +271,9 @@ void ListRoomWidget::setCheckedDevices(std::list<cor::Light> devices) {
         ListDeviceWidget *widget = qobject_cast<ListDeviceWidget*>(existingWidget);
         Q_ASSERT(widget);
 
-        cor::Light widgetDevice = widget->device();
         bool found = false;
         for (const auto& device : devices) {
-            if (compareLight(device, widgetDevice)) {
+            if (device.uniqueID() == widget->device().uniqueID()) {
                 numOfDevices++;
                 found = true;
                 widget->setHighlightChecked(true);
@@ -288,28 +327,28 @@ void ListRoomWidget::resize() {
     QWidget *parentWidget = static_cast<QWidget*>(parent());
     mWidget->setFixedWidth(parentWidget->width());
     mDropdownTopWidget->setFixedWidth(parentWidget->width());
-    if (!mGroup.groups.empty()) {
+    if (!mGroup.subgroups.empty()) {
         mGroupsButtonWidget->setFixedWidth(parentWidget->width());
     }
     moveWidgets(QSize(parentWidget->width(), mDropdownTopWidget->height()), QPoint(0, 0));
 }
 
-void ListRoomWidget::groupPressed(QString key) {
-    if (key == "All") {
-        showDevices(mGroup.devices);
+void ListRoomWidget::groupPressed(QString name) {
+    if (name == "All") {
+        showDevices(mComm->lightListFromGroup(mGroup));
     } else {
-        for (const auto& group : mGroup.groups) {
-            if (group.name == key) {
-                showDevices(group.devices);
+        for (const auto& group : mGroupData->groups().itemVector()) {
+            if (group.name() == name) {
+                showDevices(mComm->lightListFromGroup(group));
             }
         }
     }
-    emit groupChanged(key);
+    emit groupChanged(name);
 }
 
 void  ListRoomWidget::selectAllToggled(QString key, bool selectAll) {
     if (key == "All") {
-        emit allButtonPressed(mGroup.name, selectAll);
+        emit allButtonPressed(mGroup.name(), selectAll);
     } else {
         emit allButtonPressed(key, selectAll);
     }

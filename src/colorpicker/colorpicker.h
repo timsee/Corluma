@@ -231,13 +231,6 @@ protected:
 private slots:
 
     /*!
-     * \brief resetThrottleFlag called by the throttle timer to allow commands to
-     *        be sent again. This gets called on a loop whenever color picker is being
-     *        used in order to prevent clogging the communication stream.
-     */
-    void resetThrottleFlag();
-
-    /*!
      * \brief hideTempWheel hides the mTempWheel. Called by animations when its done fading the temp wheel out.
      */
     void hideTempWheel();
@@ -413,25 +406,12 @@ private:
     //------------------------------
 
     /*!
-     * \brief mThrottleTimer This timer is only active while the user is actively using
-     *        the color wheel or moving the sliders. It prevents the picker from sending
-     *        too many signals and clogging sending streams by throttling them to a max
-     *        speed of 20 signals per second
-     */
-    QTimer *mThrottleTimer;
-
-    /*!
      * \brief mTempWheel temp label, used for animations where wheels fade in and out.
      */
     QLabel *mTempWheel;
 
     /// opacity of mColorWheel
     qreal mWheelOpacity;
-
-    /*!
-     * \brief mThrottleFlag flag used to enforced the throttle timer's throttle.
-     */
-    bool mThrottleFlag;
 
     /// true if wheel is enabled, false othwerise.
     bool mWheelIsEnabled;
