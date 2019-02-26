@@ -12,7 +12,7 @@
 #include <QMessageBox>
 
 #include "hue/hueinfowidget.h"
-#include "cor/utils.h"
+#include "utils/qt.h"
 
 namespace hue
 {

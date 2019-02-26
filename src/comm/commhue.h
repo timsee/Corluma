@@ -272,7 +272,7 @@ public:
      * \brief deleteLight delete the light and its stored data from the bridge
      * \param light the light to delete.
      */
-    void deleteLight(HueLight light);
+    void deleteLight(const HueLight& light);
 
     /*!
      * \brief brightnessChange connected to CommPacketParser, this changes the brightness of a device.
@@ -435,7 +435,7 @@ private:
      * \param i index of Hue Light.
      * \return true if successful, false if failed.
      */
-    bool updateHueLightState(const hue::Bridge& bridge, QJsonObject object, int i);
+    bool updateHueLightState(const hue::Bridge& bridge, QJsonObject object, int i, bool wasDiscovered);
 
     /*!
      * \brief updateNewHueLight a new hue light was discovered from scanning, add the meta data to the list of newly discovered lights

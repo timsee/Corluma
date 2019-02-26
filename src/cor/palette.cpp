@@ -4,7 +4,7 @@
  * Released under the GNU General Public License.
  */
 #include "palette.h"
-#include "cor/utils.h"
+#include "utils/math.h"
 #include <QJsonArray>
 
 Palette::Palette(const QJsonObject& object) : mJSON(object) {

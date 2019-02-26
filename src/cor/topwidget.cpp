@@ -5,7 +5,7 @@
  */
 
 #include "topwidget.h"
-#include "cor/utils.h"
+#include "utils/qt.h"
 
 namespace cor
 {

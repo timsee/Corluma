@@ -6,7 +6,7 @@
 
 #include "datasyncnanoleaf.h"
 #include "comm/commlayer.h"
-#include "cor/utils.h"
+#include "utils/color.h"
 #include "comm/commnanoleaf.h"
 
 bool checkIfOffByOne(int goal, int value) {

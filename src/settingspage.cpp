@@ -8,7 +8,7 @@
 #include "comm/commhue.h"
 #include "listdevicewidget.h"
 #include "mainwindow.h"
-#include "cor/utils.h"
+#include "utils/qt.h"
 
 #include <QFileDialog>
 #include <QDebug>
@@ -19,7 +19,6 @@
 #include <QGraphicsOpacityEffect>
 #include <QPainter>
 #include <QScrollBar>
-#include <QPropertyAnimation>
 
 #include <algorithm>
 
@@ -308,13 +307,12 @@ void SettingsPage::showWebView(ECorlumaWebView newWebView) {
                 // none, return
                 return;
         }
-        QSize size = this->size();
-        widget->setGeometry(0, widget->height(), size.width(), size.height());
-        QPropertyAnimation *animation = new QPropertyAnimation(widget, "pos");
-        animation->setDuration(TRANSITION_TIME_MSEC);
-        animation->setStartValue(widget->pos());
-        animation->setEndValue(QPoint(0, 0));
-        animation->start();
+
+        cor::moveWidget(widget,
+                        this->size(),
+                        QPoint(0, widget->height()),
+                        QPoint(0,0));
+
         widget->raise();
     }
 }
@@ -334,12 +332,10 @@ void SettingsPage::hideCurrentWebView() {
             return;
     }
 
-    QPropertyAnimation *animation = new QPropertyAnimation(widget, "pos");
-    animation->setDuration(TRANSITION_TIME_MSEC);
-    animation->setStartValue(widget->pos());
-    animation->setEndValue(QPoint(0, widget->height()));
-    animation->start();
-    widget->raise();
+    cor::moveWidget(widget,
+                    this->size(),
+                    QPoint(0, widget->height()),
+                    QPoint(0,0));
 
     mCurrentWebView = ECorlumaWebView::none;
 }

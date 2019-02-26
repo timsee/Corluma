@@ -1,17 +1,18 @@
-#ifndef REACHABILITYUTILS_H
-#define REACHABILITYUTILS_H
+#ifndef COR_UTILS_REACHABILITY_H
+#define COR_UTILS_REACHABILITY_H
 
-#include <QNetworkConfigurationManager>
-
-namespace cor
-{
 /*!
  * \copyright
  * Copyright (C) 2015 - 2019.
  * Released under the GNU General Public License.
- *
  */
 
+
+#include <QNetworkConfigurationManager>
+#include <QHostAddress>
+
+namespace cor
+{
 
 /*!
  * \brief wifiEnabled uses the QNetworkConfiguratyionManager to scan whether or not there is a wifi connection
@@ -40,5 +41,17 @@ inline bool wifiEnabled() {
     return hasWifiEnabled;
 }
 
+/// hacky check as to whether or not an IP address is valid
+inline bool checkIfValidIP(const QString& ip) {
+    QHostAddress address(ip);
+    if (QAbstractSocket::IPv4Protocol == address.protocol()) {
+        return true;
+    } else if (QAbstractSocket::IPv6Protocol == address.protocol()) {
+        return true;
+    } else {
+        return false;
+    }
 }
-#endif // REACHABILITYUTILS_H
+
+}
+#endif // COR_UTILS_REACHABILITY_H

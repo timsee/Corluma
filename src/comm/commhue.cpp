@@ -1,5 +1,6 @@
 #include "commhue.h"
-#include "cor/utils.h"
+#include "utils/color.h"
+#include "utils/qt.h"
 #include "cor/light.h"
 #include "cor/exception.h"
 
@@ -17,6 +18,21 @@
  * Released under the GNU General Public License.
  */
 
+
+namespace cor
+{
+
+/*!
+ * \brief clamps a value between the lower and upper values given. So it can never be lower than
+ * the lower value or higher than the higher value.
+ */
+template <typename T>
+T clamp(const T& n, const T& lower, const T& upper) {
+  return std::max(lower, std::min(n, upper));
+}
+
+}
+
 CommHue::CommHue(UPnPDiscovery *UPnP, GroupData *groups) : CommType(ECommType::hue) {
     mStateUpdateInterval = 1000;
 
@@ -24,6 +40,12 @@ CommHue::CommHue(UPnPDiscovery *UPnP, GroupData *groups) : CommType(ECommType::h
     connect(mNetworkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 
     mDiscovery = new hue::BridgeDiscovery(this, UPnP, groups);
+
+    for (const auto& bridge : mDiscovery->notFoundBridges()) {
+        for (const auto& light : bridge.lights.itemVector()) {
+            addLight(light);
+        }
+    }
 
     mScheduleTimer = new QTimer(this);
     connect(mScheduleTimer, SIGNAL(timeout()), this, SLOT(getSchedules()));
@@ -155,17 +177,13 @@ void CommHue::bridgeDiscovered(const hue::Bridge& bridge, QJsonObject lightsObje
             mStateUpdateTimer->start(mStateUpdateInterval);
         }
 
-        std::list<cor::Light> newDeviceList;
-        for (const auto& light : bridge.lights.itemVector()) {
-            newDeviceList.push_back(light);
-        }
-        controllerDiscovered(newDeviceList);
         QStringList keys = lightsObject.keys();
         for (const auto& key : keys) {
             if (lightsObject.value(key).isObject()) {
                 updateHueLightState(bridge,
                                     lightsObject.value(key).toObject(),
-                                    int(key.toDouble()));
+                                    int(key.toDouble()),
+                                    false);
             }
         }
 
@@ -290,7 +308,7 @@ void CommHue::parseJSONObject(const hue::Bridge& bridge, const QJsonObject& obje
             QJsonObject innerObject = object.value(key).toObject();
             EHueUpdates updateType = checkTypeOfUpdate(innerObject);
             if (updateType == EHueUpdates::deviceUpdate) {
-                updateHueLightState(bridge, innerObject, int(key.toDouble()));
+                updateHueLightState(bridge, innerObject, int(key.toDouble()), true);
             } else if (updateType == EHueUpdates::scheduleUpdate) {
                 scheduleList.push_back(jsonToSchedule(innerObject, int(key.toDouble())));
             } else if (updateType == EHueUpdates::groupUpdate) {
@@ -384,13 +402,13 @@ void CommHue::handleSuccessPacket(const hue::Bridge& bridge, QString key, QJsonV
                         }
 
                         if (valueChanged) {
-                            updateDevice(device);
+                            updateLight(device);
                         }
                     } else if (list[3].compare("name") == 0) {
                         // fill device
                         if (fillDevice(device)) {
                             device.name = value.toString();
-                            updateDevice(device);
+                            updateLight(device);
                         }
                         qDebug() << "found the nanme update!";
                     }
@@ -419,7 +437,7 @@ void CommHue::handleErrorPacket(QJsonObject object) {
     }
 }
 
-bool CommHue::updateHueLightState(const hue::Bridge& bridge, QJsonObject object, int i) {
+bool CommHue::updateHueLightState(const hue::Bridge& bridge, QJsonObject object, int i, bool wasDiscovered) {
     // check if valid packet
     if (object["type"].isString()
             && object["name"].isString()
@@ -441,88 +459,7 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge, QJsonObject object,
 
             hue.index = i;
             hue.modelID = object["modelid"].toString();
-
-            if (hue.modelID.compare("LCT001") == 0
-                    || hue.modelID.compare("LCT007") == 0
-                    || hue.modelID.compare("LCT010") == 0
-                    || hue.modelID.compare("LCT014") == 0
-                    || hue.modelID.compare("LCT015") == 0
-                    || hue.modelID.compare("LTW010") == 0
-                    || hue.modelID.compare("LTW001") == 0
-                    || hue.modelID.compare("LTW004") == 0
-                    || hue.modelID.compare("LTW015") == 0
-                    || hue.modelID.compare("LWB004") == 0
-                    || hue.modelID.compare("LWB006") == 0
-                    || hue.modelID.compare("LCT016") == 0) {
-                hue.hardwareType = ELightHardwareType::hueBulb;
-            } else if (hue.modelID.compare("LLC011") == 0
-                       || hue.modelID.compare("LLC012") == 0
-                       || hue.modelID.compare("LLC005") == 0
-                       || hue.modelID.compare("LLC007") == 0) {
-                hue.hardwareType = ELightHardwareType::bloom;
-            } else if (hue.modelID.compare("LWB010") == 0
-                       || hue.modelID.compare("LWB014") == 0) {
-                hue.hardwareType = ELightHardwareType::hueBulbRound;
-            } else if (hue.modelID.compare("LCT012") == 0
-                       || hue.modelID.compare("LTW012") == 0) {
-                hue.hardwareType = ELightHardwareType::hueCandle;
-            } else if (hue.modelID.compare("LCT011") == 0
-                       || hue.modelID.compare("LTW011") == 0) {
-                hue.hardwareType = ELightHardwareType::hueDownlight;
-            } else if (hue.modelID.compare("LCT003") == 0
-                       || hue.modelID.compare("LTW013") == 0) {
-                hue.hardwareType = ELightHardwareType::hueSpot;
-            } else if (hue.modelID.compare("LLC006") == 0
-                       || hue.modelID.compare("LLC010") == 0) {
-                hue.hardwareType = ELightHardwareType::hueIris;
-            } else if (hue.modelID.compare("LLC013") == 0) {
-                hue.hardwareType = ELightHardwareType::hueStorylight;
-            } else if (hue.modelID.compare("LLC014") == 0) {
-                 hue.hardwareType = ELightHardwareType::hueAura;
-            } else if (hue.modelID.compare("HBL001") == 0
-                       || hue.modelID.compare("HBL002") == 0
-                       || hue.modelID.compare("HBL003") == 0
-                       || hue.modelID.compare("HIL001") == 0
-                       || hue.modelID.compare("HIL002") == 0
-                       || hue.modelID.compare("HEL001") == 0
-                       || hue.modelID.compare("HEL002") == 0
-                       || hue.modelID.compare("HML001") == 0
-                       || hue.modelID.compare("HML002") == 0
-                       || hue.modelID.compare("HML003") == 0
-                       || hue.modelID.compare("HML004") == 0
-                       || hue.modelID.compare("HML005") == 0
-                       || hue.modelID.compare("HML006") == 0
-                       || hue.modelID.compare("LTP001") == 0
-                       || hue.modelID.compare("LTP002") == 0
-                       || hue.modelID.compare("LTP003") == 0
-                       || hue.modelID.compare("LTP004") == 0
-                       || hue.modelID.compare("LTP005") == 0
-                       || hue.modelID.compare("LTD003") == 0
-                       || hue.modelID.compare("LDF002") == 0
-                       || hue.modelID.compare("LTF001") == 0
-                       || hue.modelID.compare("LTF002") == 0
-                       || hue.modelID.compare("LTC001") == 0
-                       || hue.modelID.compare("LTC002") == 0
-                       || hue.modelID.compare("LTC003") == 0
-                       || hue.modelID.compare("LTC004") == 0
-                       || hue.modelID.compare("LTD001") == 0
-                       || hue.modelID.compare("LTD002") == 0
-                       || hue.modelID.compare("LDF001") == 0
-                       || hue.modelID.compare("LDD001") == 0
-                       || hue.modelID.compare("LFF001") == 0
-                       || hue.modelID.compare("LDD001") == 0
-                       || hue.modelID.compare("LTT001") == 0
-                       || hue.modelID.compare("LDT001") == 0
-                       || hue.modelID.compare("MWM001") == 0) {
-                hue.hardwareType = ELightHardwareType::hueLamp;
-           } else if (hue.modelID.compare("LST001") == 0
-                       || hue.modelID.compare("LST002") == 0) {
-                hue.hardwareType = ELightHardwareType::lightStrip;
-            } else if (hue.modelID.compare("LLC020") == 0) {
-                hue.hardwareType = ELightHardwareType::hueGo;
-            } else {
-                hue.hardwareType = ELightHardwareType::hueBulb;
-            }
+            hue.hardwareType = hue::modelToHardwareType(object["modelid"].toString());
 
             hue.manufacturer = object["manufacturername"].toString();
             hue.softwareVersion = object["swversion"].toString();
@@ -599,7 +536,11 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge, QJsonObject object,
                 white.setHsv(white.hue(), white.saturation(), brightness);
                 hue.color = white;
             }
-            updateDevice(hue);
+            if (wasDiscovered) {
+                updateLight(hue);
+            } else {
+                addLight(hue);
+            }
             return true;
         } else {
             qDebug() << "Invalid parameters...";
@@ -717,7 +658,7 @@ bool CommHue::updateNewHueLight(const hue::Bridge& bridge, QJsonObject object, i
         device.index = i;
         if (fillDevice(device)) {
             device.name = bridge.id;
-            updateDevice(device);
+            updateLight(device);
         } else {
             qDebug() << "Could not find device " << __func__;
             return false;
@@ -1092,7 +1033,7 @@ void CommHue::renameLight(HueLight light, QString newName) {
     mNetworkManager->put(QNetworkRequest(QUrl(urlString)), payload.toUtf8());
 }
 
-void CommHue::deleteLight(HueLight light) {
+void CommHue::deleteLight(const HueLight& light) {
     auto bridge = mDiscovery->bridgeFromLight(light);
     QString urlString = urlStart(bridge) + "/lights/"  + QString::number(light.index);
     mNetworkManager->deleteResource(QNetworkRequest(QUrl(urlString)));

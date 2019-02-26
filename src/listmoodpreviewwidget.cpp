@@ -7,7 +7,7 @@
 #include <QPainter>
 #include <QStyleOption>
 #include "listmoodpreviewwidget.h"
-#include "cor/utils.h"
+#include "utils/qt.h"
 
 ListMoodPreviewWidget::ListMoodPreviewWidget(const cor::Mood& mood,
                                              QWidget *parent) : cor::ListItemWidget(mood.name(), parent), mMood{mood} {
@@ -31,18 +31,6 @@ ListMoodPreviewWidget::ListMoodPreviewWidget(const cor::Mood& mood,
     mName->setEnabled(false);
     mName->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    mEditButton = new QPushButton(this);
-    mEditButton->setStyleSheet("border: none;");
-    mEditButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(mEditButton, SIGNAL(clicked(bool)), this, SLOT(editButtonClicked(bool)));
-    mEditIcon = QPixmap(":/images/editIcon.png");
-    int editSize = int(mName->height() * 0.5);
-    mEditButton->setMaximumHeight(editSize);
-    mEditButton->setIcon(QIcon(mEditIcon.scaled(editSize,
-                                                editSize)));
-    mEditButton->setIconSize(QSize(editSize,
-                                   editSize));
-
     mName->setStyleSheet(backgroundStyleSheet);
 
     mPalette = new  cor::LightVectorWidget(4, 2, this);
@@ -53,7 +41,6 @@ ListMoodPreviewWidget::ListMoodPreviewWidget(const cor::Mood& mood,
     // setup layout
     mTopLayout = new QHBoxLayout;
     mTopLayout->addWidget(mName, 6);
-    mTopLayout->addWidget(mEditButton, 1);
     mTopLayout->setContentsMargins(0,0,0,0);
     mFullLayout = new QVBoxLayout(this);
     mFullLayout->addLayout(mTopLayout, 1);
@@ -111,16 +98,6 @@ void ListMoodPreviewWidget::paintEvent(QPaintEvent *) {
     if (mIsSelected) {
         painter.drawPath(path);
     }
-
-    int editSize = int(mName->height() * 0.9);
-    mEditIcon = mEditIcon.scaled(editSize,
-                                 editSize,
-                                 Qt::KeepAspectRatio,
-                                 Qt::SmoothTransformation);
-    mEditButton->setIcon(QIcon(mEditIcon));
-    mEditButton->setIconSize(QSize(editSize,
-                                   editSize));
-    mEditButton->setFixedSize(editSize, editSize);
 }
 
 

@@ -5,7 +5,7 @@
  */
 
 #include "arducordiscovery.h"
-#include "cor/utils.h"
+#include "cor/protocols.h"
 #include <sstream>
 
 #include "comm/commhttp.h"
@@ -285,29 +285,76 @@ void ArduCorDiscovery::handleDiscoveredController(const cor::Controller& discove
             // update json data, if needed
             updateJSON(discoveredController);
 
-            std::list<cor::Light> lights;
             int i = 1;
             for (const auto& name : discoveredController.names) {
                 cor::Light light(name, discoveredController.name, discoveredController.type);
                 light.index        = i;
                 light.hardwareType = discoveredController.hardwareTypes[std::size_t(i - 1)];
-                lights.push_back(light);
                 ++i;
-            }
 
-            // start state updates, etc.
-            if (notFoundController.type == ECommType::HTTP) {
-                mHTTP->controllerDiscovered(lights);
-            }
+                // start state updates, etc.
+                if (notFoundController.type == ECommType::HTTP) {
+                    mHTTP->addLight(light);
+                }
 #ifndef MOBILE_BUILD
-            else if (notFoundController.type == ECommType::serial) {
-                mSerial->controllerDiscovered(lights);
-            }
+                else if (notFoundController.type == ECommType::serial) {
+                    mSerial->addLight(light);
+                }
 #endif
-            else if (notFoundController.type == ECommType::UDP) {
-                mUDP->controllerDiscovered(lights);
+                else if (notFoundController.type == ECommType::UDP) {
+                    mUDP->addLight(light);
+                }
             }
             break;
+        }
+    }
+}
+
+void ArduCorDiscovery::removeController(const QString& controllerName) {
+    cor::Controller controller;
+    QString name;
+    bool shouldDeleteNotFound = false;
+    for (const auto& notFoundController : mNotFoundControllers) {
+        if (notFoundController.name == controllerName) {
+            // store con
+            controller = notFoundController;
+            name = controller.name;
+            shouldDeleteNotFound = true;
+        }
+    }
+    if (shouldDeleteNotFound) {
+        mNotFoundControllers.remove(controller);
+    }
+
+    bool shouldDeleteFound = false;
+    for (const auto& foundController : mFoundControllers.itemVector()) {
+        if (foundController.name == controllerName) {
+            // foundController con
+            controller = foundController;
+            name = controller.name;
+            shouldDeleteFound = true;
+        }
+    }
+    if (shouldDeleteFound) {
+        mFoundControllers.remove(controller);
+    }
+
+    if (shouldDeleteFound || shouldDeleteNotFound) {
+        QJsonArray array = mJsonData.array();
+        bool shouldSave = false;
+        std::uint32_t i = 0u;
+        for (auto value : array) {
+            QJsonObject object = value.toObject();
+            cor::Controller jsonController = cor::jsonToController(object);
+            if (jsonController.name == name) {
+                array.removeAt(i);
+                mJsonData.setArray(array);
+                shouldSave = true;
+            }
+            ++i;
+        }
+        if (shouldSave) {
+            saveJSON();
         }
     }
 }

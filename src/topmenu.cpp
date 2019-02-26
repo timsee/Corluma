@@ -7,7 +7,7 @@
 #include <QGraphicsEffect>
 #include "mainwindow.h"
 #include "topmenu.h"
-#include "cor/utils.h"
+#include "utils/qt.h"
 #include "cor/exception.h"
 #include "hue/huelight.h"
 
@@ -549,53 +549,38 @@ void TopMenu::updateColorVerticalRoutineButton() {
 }
 
 void TopMenu::pushRightFloatingLayout(FloatingLayout *layout) {
-    QPoint topRight(this->width() - layout->width(),
-                    mFloatingMenuStart);
-    layout->setGeometry(topRight.x(),
-                        topRight.y(),
-                        layout->width(), layout->height());
-    QPropertyAnimation *animation = new QPropertyAnimation(layout, "pos");
-    animation->setDuration(TRANSITION_TIME_MSEC);
-    animation->setStartValue(layout->pos());
-    animation->setEndValue(QPoint(this->width() + layout->width(),
-                                  mFloatingMenuStart));
-    animation->start();
+
+     cor::moveWidget(layout,
+                     layout->size(),
+                     QPoint(this->width() - layout->width(), mFloatingMenuStart),
+                     QPoint(this->width() + layout->width(), mFloatingMenuStart));
 
     if (layout == mColorFloatingLayout) {
         QPoint startPoint(this->width(),
                           mFloatingMenuStart + currentFloatingLayout()->geometry().height());
         QPoint endPoint(startPoint.x() - mColorVerticalFloatingLayout->width(),
                         startPoint.y());
-        QPropertyAnimation *animation2 = new QPropertyAnimation(mColorVerticalFloatingLayout, "pos");
-        animation2->setDuration(TRANSITION_TIME_MSEC);
-        animation2->setStartValue(endPoint);
-        animation2->setEndValue(startPoint);
-        animation2->start();
+        cor::moveWidget(mColorVerticalFloatingLayout,
+                        layout->size(),
+                        startPoint,
+                        endPoint);
     }
 }
 
 void TopMenu::pullLeftFloatingLayout(FloatingLayout *layout) {
-    QPoint topRight(this->width() - layout->width(),
-                    mFloatingMenuStart);
-    layout->setGeometry(this->width() + layout->width(),
-                        mFloatingMenuStart,
-                        layout->width(), layout->height());
-    QPropertyAnimation *animation = new QPropertyAnimation(layout, "pos");
-    animation->setDuration(TRANSITION_TIME_MSEC);
-    animation->setStartValue(layout->pos());
-    animation->setEndValue(topRight);
-    animation->start();
+    cor::moveWidget(layout,
+                    layout->size(),
+                    QPoint(this->width() + layout->width(), mFloatingMenuStart),
+                    QPoint(this->width() - layout->width(), mFloatingMenuStart));
 
     if (layout == mColorFloatingLayout) {
         QPoint startPoint(this->width(),
                           mFloatingMenuStart + currentFloatingLayout()->geometry().height());
         QPoint endPoint(startPoint.x() - mColorVerticalFloatingLayout->width(),
                         startPoint.y());
-        QPropertyAnimation *animation2 = new QPropertyAnimation(mColorVerticalFloatingLayout, "pos");
-        animation2->setDuration(TRANSITION_TIME_MSEC);
-        animation2->setStartValue(startPoint);
-        animation2->setEndValue(endPoint);
-        animation2->start();
+        cor::moveWidget(mColorVerticalFloatingLayout,
+                        layout->size(),
+                        startPoint, endPoint);
     }
 }
 

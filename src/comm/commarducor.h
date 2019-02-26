@@ -51,6 +51,9 @@ public:
     /// restart state updates
     void resetStateUpdates();
 
+    /// deletes light from device table and triggers deleting it from discovery data
+    void deleteLight(const cor::Light& light);
+
     /*!
      * \brief commByType returns the raw CommPtr based off the given commType
      * \param type the comm type to get a point two

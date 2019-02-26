@@ -14,7 +14,8 @@
 namespace nano
 {
 
-LeafDiscovery::LeafDiscovery(QObject *parent, uint32_t interval) : QObject(parent), cor::JSONSaveData("Nanoleaf"), mDiscoveryInterval(interval) {
+LeafDiscovery::LeafDiscovery(QObject *parent, uint32_t interval)
+    : QObject(parent), cor::JSONSaveData("Nanoleaf"), mDiscoveryInterval(interval) {
     mNanoleaf =  static_cast<CommNanoleaf*>(parent);
 
     mDiscoveryTimer = new QTimer(this);
@@ -41,11 +42,9 @@ void LeafDiscovery::foundNewAuthToken(const nano::LeafController& newController,
 }
 
 void LeafDiscovery::foundNewController(nano::LeafController newController) {
-    bool found = false;
     // check if the controller exists in the unknown group, delete if found
     for (auto unknownController : mUnknownControllers) {
         if (unknownController.hardwareName == newController.hardwareName) {
-            found = true;
             mUnknownControllers.remove(unknownController);
             break;
         }
@@ -55,7 +54,6 @@ void LeafDiscovery::foundNewController(nano::LeafController newController) {
     for (auto notFoundController : mNotFoundControllers) {
         if (notFoundController.authToken == newController.authToken) {
             newController.name = notFoundController.name;
-            found = true;
             mNotFoundControllers.remove(notFoundController);
             break;
         }
@@ -63,6 +61,58 @@ void LeafDiscovery::foundNewController(nano::LeafController newController) {
 
     mFoundControllers.insert(newController.serialNumber.toStdString(), newController);
     updateJSON(newController);
+}
+
+void LeafDiscovery::removeNanoleaf(const nano::LeafController& controllerToRemove) {
+    bool updateJson = false;
+    // check if the controller exists in the unknown group, delete if found
+    for (auto unknownController : mUnknownControllers) {
+        if (unknownController.hardwareName == controllerToRemove.hardwareName) {
+            mUnknownControllers.remove(unknownController);
+            updateJson = true;
+            break;
+        }
+    }
+
+    // check if the controlle exists in the not found group, delete if found
+    for (auto notFoundController : mNotFoundControllers) {
+        if (notFoundController.authToken == controllerToRemove.authToken) {
+            mNotFoundControllers.remove(notFoundController);
+            updateJson = true;
+            break;
+        }
+    }
+
+    bool deleteFromDict = false;
+    for (const auto& foundController : mFoundControllers.itemVector()) {
+        if (foundController.serialNumber == controllerToRemove.serialNumber) {
+            updateJson = true;
+            deleteFromDict = true;
+        }
+    }
+    if (deleteFromDict) {
+        mFoundControllers.removeKey(controllerToRemove.serialNumber.toStdString());
+    }
+
+    if (updateJson) {
+        QJsonArray array = mJsonData.array();
+        bool shouldSave = false;
+        std::uint32_t i = 0u;
+        for (auto value : array) {
+            QJsonObject object = value.toObject();
+            nano::LeafController jsonController = jsonToLeafController(object);
+            if (jsonController.serialNumber == controllerToRemove.serialNumber
+                    || jsonController.name == controllerToRemove.name) {
+                array.removeAt(i);
+                mJsonData.setArray(array);
+                shouldSave = true;
+            }
+            ++i;
+        }
+        if (shouldSave) {
+            saveJSON();
+        }
+    }
 }
 
 void LeafDiscovery::receivedUPnP(QHostAddress sender, QString payload) {

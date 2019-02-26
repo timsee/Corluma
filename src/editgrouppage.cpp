@@ -14,7 +14,7 @@
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
 
-EditGroupPage::EditGroupPage(QWidget *parent, CommLayer* comm, cor::DeviceList* data, GroupData *parser) : QWidget(parent), mComm(comm), mGroups(parser) {
+EditGroupPage::EditGroupPage(QWidget *parent, CommLayer* comm, GroupData *parser) : QWidget(parent), mComm(comm), mGroups(parser) {
 
     mTopMenu = new EditPageTopMenu(this);
     mTopMenu->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -68,18 +68,9 @@ void EditGroupPage::showGroup(QString key, std::list<cor::Light> groupDevices, s
 }
 
 void EditGroupPage::updateDevices(const std::list<cor::Light>& checkedDevices, const std::list<cor::Light>& devices) {
-    mSimpleGroupWidget->updateDevices(devices, EOnOffSwitchState::hidden, false, true, false);
+    mSimpleGroupWidget->updateDevices(devices, mSimpleGroupWidget->height() / 6, EOnOffSwitchState::hidden, true, false);
     mSimpleGroupWidget->setCheckedDevices(checkedDevices);
 }
-
-void EditGroupPage::resize() {
-    QSize size = qobject_cast<QWidget*>(this->parent())->size();
-    this->setGeometry(int(size.width()  * 0.125f),
-                      int(size.height() * 0.125f),
-                      int(size.width()  * 0.75f),
-                      int(size.height() * 0.75f));
-}
-
 
 // ----------------------------
 // Slots
@@ -157,6 +148,10 @@ void EditGroupPage::hide() {
     mRenderThread->stop();
 }
 
+void EditGroupPage::resize() {
+    mSimpleGroupWidget->resizeWidgets();
+}
+
 void EditGroupPage::paintEvent(QPaintEvent *) {
     QStyleOption opt;
     opt.init(this);
@@ -168,7 +163,7 @@ void EditGroupPage::paintEvent(QPaintEvent *) {
 
 
 void EditGroupPage::resizeEvent(QResizeEvent *) {
-    mSimpleGroupWidget->resizeWidgets();
+    resize();
 }
 
 void EditGroupPage::lineEditChanged(const QString& newText) {

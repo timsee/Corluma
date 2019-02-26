@@ -5,7 +5,7 @@
  */
 
 #include "colorpicker.h"
-#include "cor/utils.h"
+#include "utils/color.h"
 
 #include <QDebug>
 #include <QSignalMapper>

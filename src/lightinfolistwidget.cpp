@@ -12,7 +12,7 @@
 #include <QMessageBox>
 
 #include "lightinfolistwidget.h"
-#include "cor/utils.h"
+#include "utils/qt.h"
 
 
 LightInfoListWidget::LightInfoListWidget(QWidget *parent) : QWidget(parent) {
@@ -175,30 +175,50 @@ void LightInfoListWidget::resize(bool resizeFullWidget) {
 
 void LightInfoListWidget::deleteButtonPressed(bool) {
     QMessageBox::StandardButton reply;
-    HueLight light;
+    QString lightName;
+    EProtocolType type = EProtocolType::MAX;
     for (auto widget : mHueWidgets) {
-        if (widget->key().compare(mLastKey) == 0) {
-            light = widget->light();
+        if (widget->key() == mLastKey) {
+            lightName = widget->light().name;
+            type = EProtocolType::hue;
         }
     }
-    QString text;
-    if (light.commType() == ECommType::hue) {
-       text = "Delete " + light.name + "? This will remove it from the Hue Bridge.";
-    } else if (light.commType() == ECommType::nanoleaf) {
-       text = "Delete " + light.name + "? This will remove it from the app memory.";
+
+    for (auto widget : mArduCorWidgets) {
+        if (widget->key() == mLastKey) {
+            lightName = widget->light().name;
+            type = EProtocolType::arduCor;
+        }
     }
-    reply = QMessageBox::question(this, "Delete?", text,
-                                  QMessageBox::Yes|QMessageBox::No);
-    if (reply == QMessageBox::Yes) {
-        // remove from widget TODO
-//        for (auto widget : mWidgets) {
-//            if (widget->key().compare(mLastKey) == 0) {
-//                light = widget->light();
-//                break;
-//            }
-//        }
-        // signal to remove from app
-        emit hueDeleted(mLastKey);
+
+    for (auto widget : mNanoleafWidgets) {
+        if (widget->key() == mLastKey) {
+            lightName = widget->controller().name;
+            type = EProtocolType::nanoleaf;
+        }
+    }
+    if (type != EProtocolType::MAX) {
+        QString text;
+        switch (type) {
+            case EProtocolType::arduCor:
+                text = "Delete " + lightName + "? This will remove this light and all others using the same arduino or raspberry pi from the app memory.";
+                break;
+            case EProtocolType::hue:
+                text = "Delete " + lightName + "? This will remove it from the Hue Bridge.";
+                break;
+            case EProtocolType::nanoleaf:
+                text = "Delete " + lightName + "? This will remove it from the app memory.";
+                break;
+            case EProtocolType::MAX:
+                text = "LIGHT NOT FOUND";
+                break;
+        }
+        reply = QMessageBox::question(this, "Delete?", text,
+                                      QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+            // signal to remove from app
+            emit deleteLight(mLastKey);
+        }
     }
 }
 
@@ -271,7 +291,7 @@ void LightInfoListWidget::lightInfoWidgetClicked(QString key) {
                 widget->setChecked(false);
                 mLastKey = "";
             } else {
-                shouldEnableDelete = false;
+                shouldEnableDelete = true;
                 widget->hideDetails(false);
                 widget->setChecked(true);
                 mLastKey = key;

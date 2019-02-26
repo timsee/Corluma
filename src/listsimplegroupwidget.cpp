@@ -8,11 +8,15 @@
 #include <QPainter>
 #include <QStyleOption>
 
-#include "cor/utils.h"
+#include "utils/qt.h"
 
-ListSimpleGroupWidget::ListSimpleGroupWidget(QWidget *parent, cor::EListType type) : cor::ListWidget(parent, type) { }
+ListSimpleGroupWidget::ListSimpleGroupWidget(QWidget *parent, cor::EListType type) : cor::ListWidget(parent, type) {}
 
-void ListSimpleGroupWidget::updateDevices(const std::list<cor::Light>& devices, EOnOffSwitchState switchState, bool removeIfNotFound, bool canHighlight, bool skipOff) {
+void ListSimpleGroupWidget::updateDevices(const std::list<cor::Light>& devices,
+                                          uint32_t widgetHeight,
+                                          EOnOffSwitchState switchState,
+                                          bool canHighlight,
+                                          bool skipOff) {
     int overallHeight = 0;
     for (const auto& inputDevice : devices) {
         if (!skipOff || inputDevice.isOn) {
@@ -40,34 +44,13 @@ void ListSimpleGroupWidget::updateDevices(const std::list<cor::Light>& devices, 
             if (!foundDevice) {
                 ListDeviceWidget *widget = new ListDeviceWidget(inputDevice,
                                                                 canHighlight,
-                                                                QSize(this->width(), this->height() / 6),
+                                                                QSize(this->width(), widgetHeight),
                                                                 switchState,
                                                                 mainWidget());
                 connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
                 connect(widget, SIGNAL(switchToggled(QString,bool)), this, SLOT(handleToggledSwitch(QString, bool)));
                 insertWidget(widget);
                 overallHeight += widget->height();
-            }
-        }
-    }
-
-    //----------------
-    // Remove widgets that are not found
-    //----------------
-    if (removeIfNotFound) {
-        for (auto&& widget : widgets()) {
-            ListDeviceWidget *existingWidget = qobject_cast<ListDeviceWidget*>(widget);
-            Q_ASSERT(existingWidget);
-
-            bool found = false;
-            for (auto device : devices) {
-                if (device.uniqueID() == existingWidget->device().uniqueID()) {
-                    found = true;
-                }
-            }
-            if (!found) {
-                removeWidget(existingWidget);
-                break;
             }
         }
     }

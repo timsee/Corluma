@@ -443,3 +443,15 @@ ___
 * Fixed miscellaneous bugs.
 
 
+### **v0.14.20**
+#### Another Edge Cases Update
+* Added back button functionality for android. 
+* Split `utils.h` into multiple files: `utils/color.h`, `utils/math.h`, and `utils/qt.h`.
+* Added utility for moving widgets programmatically.
+* Changed light save data so that if a light was ever discovered but cannot currently be reached, it now shows up as "Not Reachable" on the `LightPage` until it is explicitly deleted.
+* Fixed bugs related to deleting nanoleafs and arducor lights. 
+* Fixed miscellaneous bugs.
+
+
+
+

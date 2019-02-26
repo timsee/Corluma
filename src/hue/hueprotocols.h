@@ -3,6 +3,7 @@
 
 #include <list>
 #include "cor/light.h"
+#include "cor/protocols.h"
 
 /*!
  * \copyright
@@ -114,6 +115,91 @@ inline QString hueTypeToString(EHueType type) {
 
 namespace hue
 {
+
+/// converts model from phillips bridge to corluma hardware type
+inline ELightHardwareType modelToHardwareType(const QString& modelID) {
+    if (modelID == "LCT001"
+            || modelID == "LCT007"
+            || modelID == "LCT010"
+            || modelID == "LCT014"
+            || modelID == "LCT015"
+            || modelID == "LTW010"
+            || modelID == "LTW001"
+            || modelID == "LTW004"
+            || modelID == "LTW015"
+            || modelID == "LWB004"
+            || modelID == "LWB006"
+            || modelID == "LCT016") {
+        return ELightHardwareType::hueBulb;
+    } else if (modelID == "LLC011"
+               || modelID == "LLC012"
+               || modelID ==  "LLC005"
+               || modelID == "LLC007") {
+        return ELightHardwareType::bloom;
+    } else if (modelID == "LWB010"
+               || modelID == "LWB014") {
+        return ELightHardwareType::hueBulbRound;
+    } else if (modelID == "LCT012"
+               || modelID == "LTW012") {
+        return ELightHardwareType::hueCandle;
+    } else if (modelID == "LCT011"
+               || modelID == "LTW011") {
+        return ELightHardwareType::hueDownlight;
+    } else if (modelID == "LCT003"
+               || modelID == "LTW013") {
+        return ELightHardwareType::hueSpot;
+    } else if (modelID == "LLC006"
+               || modelID == "LLC010") {
+       return ELightHardwareType::hueIris;
+    } else if (modelID == "LLC013") {
+        return ELightHardwareType::hueStorylight;
+    } else if (modelID == "LLC014") {
+         return ELightHardwareType::hueAura;
+    } else if (modelID == "HBL001"
+               || modelID == "HBL002"
+               || modelID == "HBL003"
+               || modelID == "HIL001"
+               || modelID == "HIL002"
+               || modelID == "HEL001"
+               || modelID == "HEL002"
+               || modelID == "HML001"
+               || modelID == "HML002"
+               || modelID == "HML003"
+               || modelID == "HML004"
+               || modelID == "HML005"
+               || modelID == "HML006"
+               || modelID == "LTP001"
+               || modelID == "LTP002"
+               || modelID == "LTP003"
+               || modelID == "LTP004"
+               || modelID == "LTP005"
+               || modelID == "LTD003"
+               || modelID == "LDF002"
+               || modelID == "LTF001"
+               || modelID == "LTF002"
+               || modelID == "LTC001"
+               || modelID == "LTC002"
+               || modelID == "LTC003"
+               || modelID == "LTC004"
+               || modelID == "LTD001"
+               || modelID == "LTD002"
+               || modelID == "LDF001"
+               || modelID == "LDD001"
+               || modelID == "LFF001"
+               || modelID == "LDD001"
+               || modelID == "LTT001"
+               || modelID == "LDT001"
+               || modelID =="MWM001") {
+        return ELightHardwareType::hueLamp;
+    } else if (modelID == "LST001"
+               || modelID == "LST002") {
+        return ELightHardwareType::lightStrip;
+    } else if (modelID == "LLC020") {
+        return ELightHardwareType::hueGo;
+    } else {
+        return ELightHardwareType::hueBulb;
+    }
+}
 
 /// helper to get the IP from a reply IP, which may have a bunch of unnecessary information attached.
 inline QString IPfromReplyIP(const QString& IP) {

@@ -5,7 +5,7 @@
  */
 
 #include "tempbrightsliders.h"
-#include "cor/utils.h"
+#include "utils/color.h"
 
 TempBrightSliders::TempBrightSliders(QWidget *parent) : QWidget(parent) {
 

@@ -49,6 +49,7 @@ public:
     /// list of rooms, with filled in subgroups
     std::list<cor::Group> roomList();
 
+    /// adds subgroups to rooms
     void addSubGroupsToRooms();
 
     /*!

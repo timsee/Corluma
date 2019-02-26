@@ -7,7 +7,7 @@
 #include <QMessageBox>
 
 #include "editablefieldwidget.h"
-#include "cor/utils.h"
+#include "utils/reachability.h"
 
 EditableFieldWidget::EditableFieldWidget(const QString& text, QWidget *parent, int maxFieldSize, const QString maxFieldError) : QWidget(parent) {
     mStoredText = text;

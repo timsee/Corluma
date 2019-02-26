@@ -7,7 +7,7 @@
 #include <QSignalMapper>
 
 #include "lightvectorwidget.h"
-#include "cor/utils.h"
+#include "utils/qt.h"
 
 namespace cor
 {

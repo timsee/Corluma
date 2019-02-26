@@ -80,6 +80,9 @@ public:
      */
     void setupConnectionList(ECommType type);
 
+    /// removes controller from data and saved data
+    void removeController(const QString& controller);
+
     /// string at the beginning of each discovery packet.
     const static QString kDiscoveryPacketIdentifier;
 

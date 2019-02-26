@@ -5,7 +5,7 @@
  */
 
 #include "cor/webview.h"
-#include "cor/utils.h"
+#include "utils/qt.h"
 
 #include <QFile>
 #include <QTextStream>

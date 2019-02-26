@@ -88,7 +88,7 @@ void ListDeviceWidget::updateWidget(const cor::Light& device) {
     mKey = device.uniqueID();
 
     QString nameText = createName(device);
-    if (nameText.compare(mController->text()) != 0) {
+    if (nameText != mController->text()) {
         mController->setText(nameText);
     }
 
@@ -176,34 +176,38 @@ void ListDeviceWidget::paintEvent(QPaintEvent *event) {
         x = mOnOffSwitch->x() + mOnOffSwitch->width() + 5;
     }
 
-    QRect rect(x,
-               10,
-               this->width() / 2,
-               int(this->height() * 0.6f / 2));
+    if (mDevice.isReachable) {
+        QRect rect(x,
+                   10,
+                   this->width() / 2,
+                   int(this->height() * 0.6f / 2));
 
-    // make brush with icon data in it
-    QBrush brush(QColor(0,0,0));
+        // make brush with icon data in it
+        QBrush brush;
+        if (mDevice.isOn) {
+           brush = QColor(0,0,0);
+        } else {
+            brush = QColor(0,0,0,5);
+        }
+        mIconPixmap = mIconPixmap.scaled(rect.width(),
+                                         rect.height(),
+                                         Qt::IgnoreAspectRatio,
+                                         Qt::SmoothTransformation);
+        QBrush brush2(mIconPixmap);
 
-    mIconPixmap = mIconPixmap.scaled(rect.width(),
-                                     rect.height(),
-                                     Qt::IgnoreAspectRatio,
-                                     Qt::SmoothTransformation);
-    QBrush brush2(mIconPixmap);
+        if (!mDevice.isOn) {
+            painter.setOpacity(0.25f);
+        }
+        painter.setBrush(brush);
+        painter.drawRect(rect);
 
-    painter.setBrush(brush);
-    painter.drawRect(rect);
-
-    // set brightness width
-    double brightness = mDevice.color.valueF();
-    if (mDevice.routine > cor::ERoutineSingleColorEnd) {
-        brightness = mDevice.palette.brightness() / 100.0;
-    }
-    rect.setWidth(int(rect.width() * brightness));
-    painter.setBrush(brush2);
-    painter.drawRect(rect);
-    if (!mDevice.isOn) {
-        QBrush brush3(QColor(0,0,0,200));
-        painter.setBrush(brush3);
+        // set brightness width
+        double brightness = mDevice.color.valueF();
+        if (mDevice.routine > cor::ERoutineSingleColorEnd) {
+            brightness = mDevice.palette.brightness() / 100.0;
+        }
+        rect.setWidth(int(rect.width() * brightness));
+        painter.setBrush(brush2);
         painter.drawRect(rect);
     }
 }
@@ -232,7 +236,7 @@ QString ListDeviceWidget::createName(const cor::Light& device) {
     } else if (device.protocol() == EProtocolType::hue) {
         nameText = convertUglyHueNameToPrettyName(device.name);
     } else {
-        nameText = device.controller();
+        nameText = device.name;
     }
     if (nameText.size() > 20) {
         nameText = nameText.mid(0, 17) + "...";
@@ -300,6 +304,9 @@ void ListDeviceWidget::updateTypeIcon(ELightHardwareType type) {
             break;
         case ELightHardwareType::nanoleaf:
             typeResource = QString(":/images/nanoleaf_icon.png");
+            break;
+        case ELightHardwareType::connectedGroup:
+            typeResource = QString(":/images/groupsIcon.png");
             break;
         case ELightHardwareType::MAX:
             typeResource = QString(":/images/led_icon.png");

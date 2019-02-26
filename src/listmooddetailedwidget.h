@@ -7,6 +7,8 @@
 #include "cor/page.h"
 #include "cor/switch.h"
 #include "floatinglayout.h"
+#include "mooddetailswidget.h"
+#include "editgrouppage.h"
 
 /*!
  * \copyright
@@ -24,7 +26,7 @@ class ListMoodDetailedWidget : public QWidget, public cor::Page
     Q_OBJECT
 public:
     /// constructor
-    explicit ListMoodDetailedWidget(QWidget *parent, CommLayer *comm);
+    explicit ListMoodDetailedWidget(QWidget *parent, GroupData *groups, CommLayer *comm);
 
     /// update the mood in the widget
     void update(const cor::Mood& group);
@@ -50,11 +52,6 @@ signals:
 
     /// signals when the mood is going to be selected
     void enableGroup(std::uint64_t);
-
-    /*!
-     * \brief editClicked emitted when edit button is clicked. Emits its key.
-     */
-    void editClicked(QString);
 
 protected:
 
@@ -88,14 +85,11 @@ private:
     /// scroll area that contains all the information in the widget
     QScrollArea *mScrollArea;
 
-    /// widget used for scroll area.
-    QWidget *mScrollAreaWidget;
+    /// widget used to display additional info
+    MoodDetailsWidget *mAdditionalDetailsWidget;
 
     /// used for positioning widgets
     QWidget *mPlaceholder;
-
-    /// layout for scoll area
-    QVBoxLayout *mScrollLayout;
 
     /// switch for turning on the mood
     cor::Switch *mOnOffSwitch;
@@ -127,6 +121,8 @@ private:
     /// widget used for scroll area.
     ListSimpleGroupWidget *mSimpleGroupWidget;
 
+    /// edit page for changign the mood
+    EditGroupPage *mEditPage;
 };
 
 #endif // LISTMOODDETAILEDWIDGET_H

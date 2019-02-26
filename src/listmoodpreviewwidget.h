@@ -64,11 +64,6 @@ public:
 
 signals:
 
-    /*!
-     * \brief editClicked emitted when edit button is clicked. Emits its key.
-     */
-    void editClicked(std::uint64_t);
-
     /// called when mood is selected
     void moodSelected(std::uint64_t);
 
@@ -99,13 +94,6 @@ protected:
      */
     void resizeEvent(QResizeEvent *);
 
-private slots:
-
-    /*!
-     * \brief editClicked emitted when edit button is clicked. Emits its key.
-     */
-    void editButtonClicked(bool) { emit editClicked(mMood.uniqueID());  }
-
 private:
 
     /*!
@@ -115,15 +103,6 @@ private:
 
     /// true if selected, false otherwise
     bool mIsSelected;
-
-    /*!
-     * \brief mEditButton button used to edit the collection. Editing can change
-     *        the name or the lights contained in the collection.
-     */
-    QPushButton *mEditButton;
-
-    /// pixmap for icon for the edit button
-    QPixmap mEditIcon;
 
     /// icon for whether all lights are connected or not
     QLabel *mAllLightsConnectedIcon;

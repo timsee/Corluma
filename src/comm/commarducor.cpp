@@ -6,7 +6,7 @@
 
 #include "commarducor.h"
 
-#include "cor/utils.h"
+#include "utils/qt.h"
 #include "cor/exception.h"
 
 #include "comm/commudp.h"
@@ -25,6 +25,19 @@ CommArduCor::CommArduCor(QObject *parent) : QObject(parent) {
     connect(mHTTP.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
 
     mDiscovery = new ArduCorDiscovery(this, mHTTP.get(), mUDP.get());
+    // make list of not found devices
+    for (const auto& controller: mDiscovery->undiscoveredControllers()) {
+        int i = 1;
+        for (const auto& name : controller.names) {
+            cor::Light light(name, controller.name, controller.type);
+            light.index = i;
+            light.name = name;
+            light.hardwareType = controller.hardwareTypes[std::size_t(i - 1)];
+            ++i;
+            commByType(controller.type)->addLight(light);
+        }
+    }
+
     mUDP->connectDiscovery(mDiscovery);
     mHTTP->connectDiscovery(mDiscovery);
 
@@ -127,6 +140,14 @@ std::list<cor::Light> CommArduCor::lights() {
     return lights;
 }
 
+void CommArduCor::deleteLight(const cor::Light& light) {
+   // remove from comm data
+   commByType(light.commType())->removeController(light.name);
+
+   // remove from JSON data
+   mDiscovery->removeController(light.controller());
+}
+
 void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
     // split into vector of strings
     std::vector<std::string> packetVector;
@@ -168,12 +189,11 @@ void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
                     //qDebug() << "INFO: failed CRC check for" << controller.name << "string:" << crcPacketList[0] << "computed:" << QString::number(computedCRC) << "given:" << QString::number(givenCRC);
                     return;
                 } else {
-                    //qDebug() << "INFO: CRC check passed!!!!";
+                    //qDebug() << "INFO: CRC check passed!";
                     // pass the CRC check
                     intVectors.pop_back();
                 }
             } else {
-                //qDebug() << "received too many # in a single packet";
                 return;
             }
         }
@@ -239,13 +259,13 @@ void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
 
                                     device.name                  = device.uniqueID();
 
-                                    device.hardwareType          = controller.hardwareTypes[uint32_t(device.index - 1)];
-                                    device.productType           = controller.productTypes[uint32_t(device.index - 1)];
+                                    device.hardwareType          = controller.hardwareTypes[std::uint32_t(device.index - 1)];
+                                    device.productType           = controller.productTypes[std::uint32_t(device.index - 1)];
 
                                     device.majorAPI              = controller.majorAPI;
                                     device.minorAPI              = controller.minorAPI;
 
-                                    commByType(type)->updateDevice(device);
+                                    commByType(type)->updateLight(device);
                                 }
                             } else {
                                 //qDebug() << "WARNING: Invalid packet for light index" << intVector[x];
@@ -265,7 +285,7 @@ void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
                                     if (device.palette.paletteEnum() == EPalette::custom) {
                                         device.palette = device.customPalette;
                                     }
-                                    commByType(type)->updateDevice(device);
+                                    commByType(type)->updateLight(device);
                                 }
                             }
                         } else if (packetHeader == EPacketHeader::brightnessChange
@@ -273,7 +293,7 @@ void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
                             for (auto&& device : deviceList) {
                                 device.color.setHsvF(device.color.hueF(), device.color.saturationF(), double(intVector[2]) / 100.0);
                                 device.palette.brightness(uint32_t(intVector[2]));
-                                commByType(type)->updateDevice(device);
+                                commByType(type)->updateLight(device);
                             }
                         } else if (packetHeader == EPacketHeader::onOffChange
                                    && (intVector.size() % 3 == 0)) {
@@ -284,7 +304,7 @@ void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
                                 } else if (onOff == 1) {
                                     device.isOn = true;
                                 }
-                                commByType(type)->updateDevice(device);
+                                commByType(type)->updateLight(device);
                             }
                         } else if (packetHeader == EPacketHeader::modeChange
                                    && intVector.size() > 3) {
@@ -339,7 +359,7 @@ void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
                                 }
 
                                 if (isValid) {
-                                    commByType(type)->updateDevice(device);
+                                    commByType(type)->updateLight(device);
                                 }
                             }
                         } else if (packetHeader == EPacketHeader::idleTimeoutChange
@@ -347,7 +367,7 @@ void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
                             for (auto device : deviceList) {
                                 device.timeout = intVector[2];
                                 device.minutesUntilTimeout = intVector[2];
-                                commByType(type)->updateDevice(device);
+                                commByType(type)->updateLight(device);
                             }
                         } else if (packetHeader == EPacketHeader::customArrayColorChange
                                    && (intVector.size() % 6 == 0)) {
@@ -366,7 +386,7 @@ void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
                                         device.customPalette = Palette(paletteToString(EPalette::custom),
                                                                        colors,
                                                                        device.customPalette.brightness());
-                                        commByType(type)->updateDevice(device);
+                                        commByType(type)->updateLight(device);
                                     } else {
                                         isValid = false;
                                     }
@@ -380,7 +400,7 @@ void CommArduCor::parsePacket(QString sender, QString packet, ECommType type) {
                                 if (intVector[2] <= 10) {
                                     device.customCount = uint32_t(intVector[2]);
                                    // qDebug() << "UPDATE TO custom color count" << device.customColors;
-                                    commByType(type)->updateDevice(device);
+                                    commByType(type)->updateLight(device);
                                 } else {
                                     isValid = false;
                                 }

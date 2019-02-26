@@ -8,7 +8,7 @@
 
 #include "datasyncarduino.h"
 #include "comm/commlayer.h"
-#include "cor/utils.h"
+#include "utils/color.h"
 #include "cor/protocols.h"
 
 DataSyncArduino::DataSyncArduino(cor::DeviceList *data, CommLayer *comm) {

@@ -5,7 +5,7 @@
  */
 
 #include "groupbutton.h"
-#include "cor/utils.h"
+#include "utils/qt.h"
 
 #include <QDebug>
 #include <QGraphicsEffect>
@@ -32,7 +32,7 @@ GroupButton::GroupButton(QWidget *parent, const QString& text) : QWidget(parent)
     mButton = new QPushButton(this);
     mButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mSelectAllPixmap = QPixmap(":/images/selectAllIcon.png");
-    mClearAllPixmap = QPixmap(":/images/clearAllIcon.png");
+    mClearAllPixmap = QPixmap(":/images/uncheckedBox.png");
     mDisabledPixmap = QPixmap(":/images/disabledX.png");
 
     // make a minimum size for the button
@@ -61,10 +61,10 @@ void GroupButton::handleSelectAllButton(uint32_t checkedDevicesCount, uint32_t r
         mButton->setIcon(QIcon(mDisabledPixmap));
     } else if (mCheckedCount > 0) {
         mButtonState = EGroupButtonState::clearAll;
-        mButton->setIcon(QIcon(mClearAllPixmap));
+        mButton->setIcon(QIcon(mSelectAllPixmap));
     } else {
         mButtonState = EGroupButtonState::selectAll;
-        mButton->setIcon(QIcon(mSelectAllPixmap));
+        mButton->setIcon(QIcon(mClearAllPixmap));
     }
     repaint();
 }
@@ -79,11 +79,11 @@ void GroupButton::buttonPressed(bool) {
         if (mCheckedCount > 0) {
             mButtonState = EGroupButtonState::selectAll;
             mCheckedCount = 0;
-            mButton->setIcon(QIcon(mSelectAllPixmap));
+            mButton->setIcon(QIcon(mClearAllPixmap));
         } else {
             mCheckedCount = mReachableCount;
             mButtonState = EGroupButtonState::clearAll;
-            mButton->setIcon(QIcon(mClearAllPixmap));
+            mButton->setIcon(QIcon(mSelectAllPixmap));
         }
         emit groupSelectAllToggled(mTitle->text(), EGroupButtonState::clearAll == mButtonState);
         repaint();

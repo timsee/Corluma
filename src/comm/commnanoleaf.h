@@ -75,6 +75,9 @@ public:
     /// connects UPnP object to the discovery object.
     void connectUPnPDiscovery(UPnPDiscovery* UPnP);
 
+    /// deletes the light from the save data and device table
+    void deleteLight(const cor::Light& light);
+
     /// getter for the discovery state of the nanoleaf
     ENanoleafDiscoveryState discoveryState() { return mDiscoveryState; }
 
@@ -134,11 +137,6 @@ private slots:
 
     /// requests the state of the lights
     void stateUpdate();
-
-signals:
-
-    /// a controller was renamed, which is represented by a cor::Light for compatibility with the GUI.
-    void lightRenamed(cor::Light, QString);
 
 private:
 

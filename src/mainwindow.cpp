@@ -11,13 +11,13 @@
 #include <QPropertyAnimation>
 #include <QDesktopWidget>
 
-#include "cor/utils.h"
+#include "utils/qt.h"
 #include "comm/commhue.h"
 #include "comm/commnanoleaf.h"
 
 #include "cor/presetpalettes.h"
 #include "cor/exception.h"
-#include "cor/reachabilityutils.h"
+#include "utils/reachability.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent) {
@@ -77,7 +77,6 @@ MainWindow::MainWindow(QWidget *parent) :
     if (mAppSettings->enabled(EProtocolType::nanoleaf)) {
         mComm->nanoleaf()->discovery()->startDiscovery();
     }
-    connect(mComm->nanoleaf().get(), SIGNAL(lightRenamed(cor::Light, QString)), this, SLOT(renamedLight(cor::Light, QString)));
     connect(mComm->hue()->discovery(), SIGNAL(lightDeleted(QString)), this, SLOT(deletedLight(QString)));
 
     // --------------
@@ -211,7 +210,7 @@ void MainWindow::loadPages() {
         // Setup Editing Page
         // --------------
 
-        mEditPage = new EditGroupPage(this, mComm, mData, mGroups);
+        mEditPage = new EditGroupPage(this, mComm, mGroups);
         mEditPage->isOpen(false);
         connect(mEditPage, SIGNAL(pressedClose()), this, SLOT(editClosePressed()));
         mEditPage->setGeometry(0, -1 * this->height(), this->width(), this->height());
@@ -220,9 +219,10 @@ void MainWindow::loadPages() {
         // Setup Mood Detailed Widget
         // --------------
 
-        mMoodDetailedWidget = new ListMoodDetailedWidget(this, mComm);
+        mMoodDetailedWidget = new ListMoodDetailedWidget(this, mGroups, mComm);
         connect(mMoodDetailedWidget, SIGNAL(pressedClose()), this, SLOT(detailedClosePressed()));
         connect(mMoodDetailedWidget, SIGNAL(enableGroup(std::uint64_t)), this, SLOT(moodChanged(std::uint64_t)));
+
         mMoodDetailedWidget->setGeometry(0, -1 * this->height(), this->width(), this->height());
         mMoodDetailedWidget->setVisible(false);
 
@@ -233,7 +233,7 @@ void MainWindow::loadPages() {
         mLightInfoWidget = new LightInfoListWidget(this);
         mLightInfoWidget->isOpen(false);
         connect(mLightInfoWidget, SIGNAL(lightNameChanged(EProtocolType, QString, QString)), this, SLOT(lightNameChange(EProtocolType, QString, QString)));
-        connect(mLightInfoWidget, SIGNAL(hueDeleted(QString)), this, SLOT(deleteHue(QString)));
+        connect(mLightInfoWidget, SIGNAL(deleteLight(QString)), this, SLOT(deleteLight(QString)));
         connect(mLightInfoWidget, SIGNAL(pressedClose()), this, SLOT(lightInfoClosePressed()));
         mLightInfoWidget->setGeometry(0, -1 * this->height(), this->width(), this->height());
 
@@ -261,13 +261,13 @@ void MainWindow::topMenuButtonPressed(QString key) {
     }  else if (key.compare("Lights") == 0) {
         pageChanged(EPage::lightPage);
     }  else if (key.compare("Settings") == 0) {
-        mSettingsPage->setGeometry(this->width(), 0, this->width(), this->height());
         mSettingsPage->setVisible(true);
-        QPropertyAnimation *animation = new QPropertyAnimation(mSettingsPage, "pos");
-        animation->setDuration(TRANSITION_TIME_MSEC);
-        animation->setStartValue(mSettingsPage->pos());
-        animation->setEndValue(QPoint(0,0));
-        animation->start();
+
+        moveWidget(mSettingsPage,
+                   QSize(this->width(), this->height()),
+                   QPoint(this->width(), 0),
+                   QPoint(0u, 0u));
+
         mSettingsPage->raise();
         mSettingsPage->show();
         mSettingsPage->isOpen(true);
@@ -280,13 +280,11 @@ void MainWindow::settingsButtonFromDiscoveryPressed() {
     mSettingsPage->raise();
     // open settings if needed
     if (!mSettingsPage->isOpen()) {
-        mSettingsPage->setGeometry(this->width(), 0, this->width(), mSettingsPage->height());
         mSettingsPage->setVisible(true);
-        QPropertyAnimation *animation = new QPropertyAnimation(mSettingsPage, "pos");
-        animation->setDuration(TRANSITION_TIME_MSEC);
-        animation->setStartValue(mSettingsPage->pos());
-        animation->setEndValue(QPoint(0,0));
-        animation->start();
+        moveWidget(mSettingsPage,
+                   QSize(this->width(), this->height()),
+                   QPoint(this->width(), 0),
+                   QPoint(0u, 0u));
         mSettingsPage->show();
         mSettingsPage->raise();
         mSettingsPage->isOpen(true);
@@ -385,12 +383,12 @@ void MainWindow::showMainPage(EPage page) {
         x = this->width() + widget->width();
     }
     widget->raise();
-    QPoint startPoint(x, widget->pos().y());
-    QPropertyAnimation *animation = new QPropertyAnimation(widget, "pos");
-    animation->setDuration(TRANSITION_TIME_MSEC);
-    animation->setStartValue(startPoint);
-    animation->setEndValue(mMainViewport->pos());
-    animation->start();
+
+    cor::moveWidget(widget,
+                    widget->size(),
+                    QPoint(x, widget->pos().y()),
+                    mMainViewport->pos());
+
     if (page == EPage::lightPage) {
         mLightPage->show();
         mLightPage->setVisible(true);
@@ -427,12 +425,12 @@ void MainWindow::hideMainPage(EPage page, EPage newPage) {
     } else {
         x = this->width() + widget->width();
     }
-    QPoint endPoint(x, widget->pos().y());
-    QPropertyAnimation *animation = new QPropertyAnimation(widget, "pos");
-    animation->setDuration(TRANSITION_TIME_MSEC);
-    animation->setStartValue(mMainViewport->pos());
-    animation->setEndValue(endPoint);
-    animation->start();
+
+    cor::moveWidget(widget,
+                    widget->size(),
+                    mMainViewport->pos(),
+                    QPoint(x, widget->pos().y()));
+
     if (page == EPage::lightPage) {
         mLightPage->hide();
     }
@@ -445,11 +443,6 @@ void MainWindow::settingsDebugPressed() {
     mDiscoveryPage->openStartForDebug();
 }
 
-void MainWindow::renamedLight(cor::Light light, QString newName) {
-    Q_UNUSED(light);
-    Q_UNUSED(newName);
-
-}
 
 // ----------------------------
 // Protected
@@ -483,24 +476,23 @@ void MainWindow::changeEvent(QEvent *event) {
 
 void MainWindow::switchToDiscovery() {
     mDiscoveryPage->raise();
-    QSize size = this->size();
 
-    mDiscoveryPage->setGeometry(-mDiscoveryPage->width(), 0, size.width(), size.height());
-    QPropertyAnimation *animation = new QPropertyAnimation(mDiscoveryPage, "pos");
-    animation->setDuration(TRANSITION_TIME_MSEC);
-    animation->setStartValue(mDiscoveryPage->pos());
-    animation->setEndValue(QPoint(0, 0));
-    animation->start();
+    cor::moveWidget(mDiscoveryPage,
+                    this->size(),
+                    QPoint(-mDiscoveryPage->width(), 0),
+                    QPoint(0, 0));
+
     mDiscoveryPage->show();
     mDiscoveryPage->isOpen(true);
 }
 
 void MainWindow::switchToConnection() {
-    QPropertyAnimation *animation = new QPropertyAnimation(mDiscoveryPage, "pos");
-    animation->setDuration(TRANSITION_TIME_MSEC);
-    animation->setStartValue(mDiscoveryPage->pos());
-    animation->setEndValue(QPoint(-mDiscoveryPage->width(), 0));
-    animation->start();
+
+    cor::moveWidget(mDiscoveryPage,
+                    this->size(),
+                    QPoint(0, 0),
+                    QPoint(-mDiscoveryPage->width(), 0));
+
     mDiscoveryPage->hide();
     mDiscoveryPage->isOpen(false);
 
@@ -509,19 +501,19 @@ void MainWindow::switchToConnection() {
         mDiscoveryPage->raise();
         mLightPage->setVisible(true);
         resize();
+        pageChanged(EPage::lightPage);
     }
-    pageChanged(EPage::lightPage);
 }
 
 void MainWindow::settingsClosePressed() {
-    QPropertyAnimation *animation = new QPropertyAnimation(mSettingsPage, "pos");
+    moveWidget(mSettingsPage,
+               mSettingsPage->size(),
+               mSettingsPage->pos(),
+               QPoint(mSettingsPage->width(), 0));
+
     if (mDiscoveryPage->isOpen()) {
         mDiscoveryPage->updateTopMenu();
     }
-    animation->setDuration(TRANSITION_TIME_MSEC);
-    animation->setStartValue(mSettingsPage->pos());
-    animation->setEndValue(QPoint(mSettingsPage->width(), 0));
-    animation->start();
     pageChanged(EPage(mPageIndex));
     if (mPageIndex == EPage::lightPage) {
         mLightPage->show();
@@ -551,19 +543,10 @@ void MainWindow::editButtonClicked(std::uint64_t key, bool isMood) {
     mEditPage->setVisible(true);
     mEditPage->isOpen(true);
 
-    QSize size = this->size();
-    mEditPage->setGeometry(int(size.width() * 0.125f),
-                           int(-1 * this->height()),
-                           int(size.width() * 0.75f),
-                           int(size.height() * 0.75f));
-
-    QPoint finishPoint(int(size.width() * 0.125f),
-                       int(size.height() * 0.125f));
-    QPropertyAnimation *animation = new QPropertyAnimation(mEditPage, "pos");
-    animation->setDuration(TRANSITION_TIME_MSEC);
-    animation->setStartValue(mEditPage->pos());
-    animation->setEndValue(finishPoint);
-    animation->start();
+    moveWidget(mEditPage,
+               QSize(int(this->width() * 0.75f), int(this->height() * 0.75f)),
+               QPoint(int(this->width() * 0.125f), int(-1 * this->height())),
+               QPoint(int(this->width() * 0.125f), int(this->height() * 0.125f)));
 
     std::list<cor::Light> groupDevices;
     std::list<QString> groupDeviceIDs;
@@ -613,19 +596,10 @@ void MainWindow::editButtonClicked(QString key, bool isMood) {
     mEditPage->setVisible(true);
     mEditPage->isOpen(true);
 
-    QSize size = this->size();
-    mEditPage->setGeometry(int(size.width() * 0.125f),
-                           int(-1 * this->height()),
-                           int(size.width() * 0.75f),
-                           int(size.height() * 0.75f));
-
-    QPoint finishPoint(int(size.width() * 0.125f),
-                       int(size.height() * 0.125f));
-    QPropertyAnimation *animation = new QPropertyAnimation(mEditPage, "pos");
-    animation->setDuration(TRANSITION_TIME_MSEC);
-    animation->setStartValue(mEditPage->pos());
-    animation->setEndValue(finishPoint);
-    animation->start();
+    moveWidget(mEditPage,
+               QSize(int(this->width() * 0.75f), int(this->height() * 0.75f)),
+               QPoint(int(this->width() * 0.125f), int(-1 * this->height())),
+               QPoint(int(this->width() * 0.125f), int(this->height() * 0.125f)));
 
     std::list<cor::Light> groupDevices;
     std::list<QString> groupDeviceIDs;
@@ -681,37 +655,18 @@ void MainWindow::detailedMoodDisplay(std::uint64_t key) {
     mMoodDetailedWidget->setVisible(true);
     mMoodDetailedWidget->isOpen(true);
 
-    QSize size = this->size();
-    mMoodDetailedWidget->setGeometry(int(size.width() * 0.125f),
-                                     int(-1 * this->height()),
-                                     int(size.width() * 0.75f),
-                                     int(size.height() * 0.75f));
+    moveWidget(mMoodDetailedWidget,
+               QSize(int(this->width() * 0.75f), int(this->height() * 0.75f)),
+               QPoint(int(this->width() * 0.125f), int(-1 * this->height())),
+               QPoint(int(this->width() * 0.125f), int(this->height() * 0.125f)));
 
-    QPoint finishPoint(int(size.width() * 0.125f),
-                       int(size.height() * 0.125f));
-    QPropertyAnimation *animation = new QPropertyAnimation(mMoodDetailedWidget, "pos");
-    animation->setDuration(TRANSITION_TIME_MSEC);
-    animation->setStartValue(mMoodDetailedWidget->pos());
-    animation->setEndValue(finishPoint);
-    animation->start();
-
-
-    QSize size2 = mMoodDetailedWidget->topMenu()->size();
-    auto widthPoint = int(size.width() * 0.875f - size2.width());
-
-    mMoodDetailedWidget->topMenu()->setGeometry(widthPoint,
-                                                int(-1 * this->height()),
-                                                int(size2.width()),
-                                                int(size2.height()));
-
-    QPoint finishPoint2(widthPoint,
-                        int(size.height() * 0.125f));
-    QPropertyAnimation *animation2 = new QPropertyAnimation(mMoodDetailedWidget->topMenu(), "pos");
-    animation2->setDuration(TRANSITION_TIME_MSEC);
-    animation2->setStartValue(mMoodDetailedWidget->topMenu()->pos());
-    animation2->setEndValue(finishPoint2);
-    animation2->start();
-
+    auto widthPoint = int(this->width() * 0.875f - mMoodDetailedWidget->topMenu()->size().width());
+    QPoint finishPoint(widthPoint,
+                       int(this->height() * 0.125f));
+    cor::moveWidget(mMoodDetailedWidget->topMenu(),
+                    mMoodDetailedWidget->topMenu()->size(),
+                    QPoint(widthPoint, int(-1 * this->height())),
+                    finishPoint);
 
     const auto& moodResult = mGroups->moods().item(QString::number(key).toStdString());
     cor::Mood detailedMood = moodResult.first;
@@ -734,23 +689,17 @@ void MainWindow::detailedMoodDisplay(std::uint64_t key) {
 
 void MainWindow::hueInfoWidgetClicked() {
     greyOut(true);
-    QSize size = this->size();
-    mLightInfoWidget->setGeometry(int(size.width() * 0.125f),
-                                  int(-1 * this->height()),
-                                  int(size.width() * 0.75f),
-                                  int(size.height() * 0.75f));
+
+    moveWidget(mLightInfoWidget,
+               QSize(int(this->width() * 0.75f), int(this->height() * 0.75f)),
+               QPoint(int(this->width() * 0.125f), int(-1 * this->height())),
+               QPoint(int(this->width() * 0.125f), int(this->height() * 0.125f)));
+
     mLightInfoWidget->isOpen(true);
 
     mLightInfoWidget->updateHues(mComm->hue()->discovery()->lights());
     mLightInfoWidget->updateControllers(mComm->nanoleaf()->controllers().itemList());
     mLightInfoWidget->updateLights(mComm->arducor()->lights());
-    QPoint finishPoint(int(size.width() * 0.125f),
-                       int(size.height() * 0.125f));
-    QPropertyAnimation *animation = new QPropertyAnimation(mLightInfoWidget, "pos");
-    animation->setDuration(TRANSITION_TIME_MSEC);
-    animation->setStartValue(mLightInfoWidget->pos());
-    animation->setEndValue(finishPoint);
-    animation->start();
 
     if (mGreyOut->isVisible()) {
         mGreyOut->resize();
@@ -764,20 +713,10 @@ void MainWindow::editClosePressed() {
     mEditPage->hide();
     mEditPage->isOpen(false);
 
-    QSize size = this->size();
-    mEditPage->setGeometry(int(size.width() * 0.125f),
-                           int(size.height() * 0.125f),
-                           int(size.width() * 0.75f),
-                           int(size.height() * 0.75f));
-
-    QPoint finishPoint(int(size.width() * 0.125f),
-                       -1 * this->height());
-
-    QPropertyAnimation *animation = new QPropertyAnimation(mEditPage, "pos");
-    animation->setDuration(TRANSITION_TIME_MSEC);
-    animation->setStartValue(mEditPage->pos());
-    animation->setEndValue(finishPoint);
-    animation->start();
+    moveWidget(mEditPage,
+               QSize(int(this->width() * 0.75f), int(this->height() * 0.75f)),
+               QPoint(int(this->width() * 0.125f), int(this->height() * 0.125f)),
+               QPoint(int(this->width() * 0.125f), int(-1 * this->height())));
 
     mLightPage->updateRoomWidgets();
 }
@@ -788,37 +727,18 @@ void MainWindow::detailedClosePressed() {
     mMoodDetailedWidget->hide();
     mMoodDetailedWidget->isOpen(false);
 
-    QSize size = this->size();
-    mMoodDetailedWidget->setGeometry(int(size.width() * 0.125f),
-                                     int(size.height() * 0.125f),
-                                     int(size.width() * 0.75f),
-                                     int(size.height() * 0.75f));
+    moveWidget(mMoodDetailedWidget,
+               QSize(int(this->width() * 0.75f), int(this->height() * 0.75f)),
+               QPoint(int(this->width() * 0.125f), int(this->height() * 0.125f)),
+               QPoint(int(this->width() * 0.125f), int(-1 * this->height())));
 
-    QPoint finishPoint(int(size.width() * 0.125f),
-                       -1 * this->height());
-
-    QPropertyAnimation *animation = new QPropertyAnimation(mMoodDetailedWidget, "pos");
-    animation->setDuration(TRANSITION_TIME_MSEC);
-    animation->setStartValue(mMoodDetailedWidget->pos());
-    animation->setEndValue(finishPoint);
-    animation->start();
-
-
-
-    QSize size2 = mMoodDetailedWidget->topMenu()->size();
-    auto widthPoint = int(size.width() * 0.875f - size2.width());
-    mMoodDetailedWidget->topMenu()->setGeometry(widthPoint,
-                                                int(-1 * this->height()),
-                                                int(size2.width()),
-                                                int(size2.height()));
-
-    QPoint finishPoint2(widthPoint,
-                        -1 * this->height());
-    QPropertyAnimation *animation2 = new QPropertyAnimation(mMoodDetailedWidget->topMenu(), "pos");
-    animation2->setDuration(TRANSITION_TIME_MSEC);
-    animation2->setStartValue(mMoodDetailedWidget->topMenu()->pos());
-    animation2->setEndValue(finishPoint2);
-    animation2->start();
+    auto widthPoint = int(this->width() * 0.875f - mMoodDetailedWidget->topMenu()->size().width());
+    QPoint startPoint(widthPoint,
+                       int(this->height() * 0.125f));
+    cor::moveWidget(mMoodDetailedWidget->topMenu(),
+                    mMoodDetailedWidget->topMenu()->size(),
+                    startPoint,
+                    QPoint(widthPoint, int(-1 * this->height())));
 }
 
 
@@ -826,19 +746,10 @@ void MainWindow::lightInfoClosePressed() {
     greyOut(false);
     mLightInfoWidget->isOpen(false);
 
-    QSize size = this->size();
-    mLightInfoWidget->setGeometry(int(size.width() * 0.125f),
-                                  int(size.height() * 0.125f),
-                                  int(size.width() * 0.75f),
-                                  int(size.height() * 0.75f));
-
-    QPoint finishPoint(int(size.width() * 0.125f), -1 * this->height());
-
-    QPropertyAnimation *animation = new QPropertyAnimation(mLightInfoWidget, "pos");
-    animation->setDuration(TRANSITION_TIME_MSEC);
-    animation->setStartValue(mLightInfoWidget->pos());
-    animation->setEndValue(finishPoint);
-    animation->start();
+    moveWidget(mLightInfoWidget,
+               QSize(int(this->width() * 0.75f), int(this->height() * 0.75f)),
+               QPoint(int(this->width() * 0.125f), int(this->height() * 0.125f)),
+               QPoint(int(this->width() * 0.125f), int(-1 * this->height())));
 }
 
 
@@ -880,24 +791,33 @@ void MainWindow::lightNameChange(EProtocolType type, QString key, QString name) 
     }
 }
 
-void MainWindow::deleteHue(QString key) {
-    // get hue light from key
-    std::list<HueLight> hueLights = mComm->hue()->discovery()->lights();
-    int keyNumber = key.toInt();
-    HueLight light;
-    bool lightFound = false;
-    for (auto hue : hueLights) {
-        if (hue.index == keyNumber) {
-            lightFound = true;
-            light = hue;
+void MainWindow::deleteLight(QString key) {
+    try {
+        auto light = mComm->lightByID(key);
+        switch (light.protocol()) {
+        case EProtocolType::arduCor:
+            mComm->arducor()->deleteLight(light);
+            break;
+        case EProtocolType::hue:
+        {
+            bool foundLight = false;
+            for (auto hue : mComm->hue()->discovery()->lights()) {
+                if (hue.index == light.index) {
+                    foundLight = true;
+                    mComm->hue()->deleteLight(hue);
+                    light = hue;
+                }
+            }
+            break;
         }
-    }
-
-    if (lightFound) {
-        qDebug() << " deleting hue" << light.name;
-        mComm->hue()->deleteLight(light);
-    } else {
-        qDebug() << " could NOT Delete" << key;
+        case EProtocolType::nanoleaf:
+            mComm->nanoleaf()->deleteLight(light);
+            break;
+        case EProtocolType::MAX:
+            break;
+        }
+    } catch (cor::Exception) {
+        qDebug() << "light not found";
     }
 }
 
@@ -986,7 +906,11 @@ void MainWindow::resize() {
 
     if (mPagesLoaded) {
         if (mEditPage->isOpen()) {
-            mEditPage->resize();
+            auto size = this->size();
+            mEditPage->setGeometry(int(size.width()  * 0.125f),
+                              int(size.height() * 0.125f),
+                              int(size.width()  * 0.75f),
+                              int(size.height() * 0.75f));
         }
 
         if (mMoodDetailedWidget->isOpen()) {
@@ -1101,3 +1025,25 @@ void MainWindow::wifiChecker() {
         mNoWifiWidget->raise();
     }
 }
+
+void MainWindow::backButtonPressed() {
+    if (mMoodDetailedWidget->isOpen()) {
+        detailedClosePressed();
+    }
+
+    if (mSettingsPage->isOpen()) {
+        settingsClosePressed();
+    }
+
+    if (mEditPage->isOpen()) {
+        editClosePressed();
+    }
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event) {
+    if (event->key() == Qt::Key_Back) {
+        backButtonPressed();
+    }
+    event->accept();
+}
+

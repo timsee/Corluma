@@ -7,13 +7,12 @@
 #include "colorpage.h"
 #include "mainwindow.h"
 #include "hue/hueprotocols.h"
-#include "cor/utils.h"
-
+#include "utils/color.h"
+#include "utils/qt.h"
 
 #include <QColorDialog>
 #include <QDebug>
 #include <QSignalMapper>
-#include <QPropertyAnimation>
 
 ColorPage::ColorPage(QWidget *parent) :
     QWidget(parent),
@@ -109,37 +108,37 @@ EColorPageType ColorPage::pageType() {
 
 void ColorPage::showSingleRoutineWidget(bool shouldShow) {
     if (mBottomMenuState == EBottomMenuShow::showSingleRoutines && !shouldShow) {
-        QPropertyAnimation *animation = new QPropertyAnimation(mSingleRoutineWidget, "pos");
-        animation->setDuration(TRANSITION_TIME_MSEC);
-        animation->setStartValue(mSingleRoutineWidget->pos());
-        animation->setEndValue(QPoint(0, this->height()));
-        animation->start();
+        cor::moveWidget(mSingleRoutineWidget,
+                        mSingleRoutineWidget->size(),
+                        mSingleRoutineWidget->pos(),
+                        QPoint(0, this->height()));
+
         mBottomMenuState = EBottomMenuShow::showStandard;
     } else if (mBottomMenuState != EBottomMenuShow::showSingleRoutines && shouldShow) {
         mSingleRoutineWidget->singleRoutineColorChanged(mColor);  // update colors of single color routine
-        QPropertyAnimation *animation = new QPropertyAnimation(mSingleRoutineWidget, "pos");
-        animation->setDuration(TRANSITION_TIME_MSEC);
-        animation->setStartValue(mSingleRoutineWidget->pos());
-        animation->setEndValue(QPoint(0, this->height() - mSingleRoutineWidget->height()));
-        animation->start();
+        cor::moveWidget(mSingleRoutineWidget,
+                        mSingleRoutineWidget->size(),
+                        mSingleRoutineWidget->pos(),
+                        QPoint(0, this->height() - mSingleRoutineWidget->height()));
+
         mBottomMenuState = EBottomMenuShow::showSingleRoutines;
     }
 }
 
 void ColorPage::showMultiRoutineWidget(bool shouldShow) {
     if (mBottomMenuState == EBottomMenuShow::showMultiRoutines && !shouldShow) {
-        QPropertyAnimation *animation = new QPropertyAnimation(mMultiRoutineWidget, "pos");
-        animation->setDuration(TRANSITION_TIME_MSEC);
-        animation->setStartValue(mMultiRoutineWidget->pos());
-        animation->setEndValue(QPoint(0, this->height()));
-        animation->start();
+        cor::moveWidget(mMultiRoutineWidget,
+                        mMultiRoutineWidget->size(),
+                        mMultiRoutineWidget->pos(),
+                        QPoint(0, this->height()));
+
         mBottomMenuState = EBottomMenuShow::showStandard;
     } else if (mBottomMenuState != EBottomMenuShow::showMultiRoutines && shouldShow) {
-        QPropertyAnimation *animation = new QPropertyAnimation(mMultiRoutineWidget, "pos");
-        animation->setDuration(TRANSITION_TIME_MSEC);
-        animation->setStartValue(mMultiRoutineWidget->pos());
-        animation->setEndValue(QPoint(0, this->height() - mMultiRoutineWidget->height()));
-        animation->start();
+        cor::moveWidget(mMultiRoutineWidget,
+                        mMultiRoutineWidget->size(),
+                        mMultiRoutineWidget->pos(),
+                        QPoint(0, this->height() - mMultiRoutineWidget->height()));
+
         mBottomMenuState = EBottomMenuShow::showMultiRoutines;
     }
 }

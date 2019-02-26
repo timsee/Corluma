@@ -5,7 +5,7 @@
  */
 
 #include "light.h"
-#include "cor/utils.h"
+#include "utils/color.h"
 #include "cor/palette.h"
 #include <QJsonArray>
 

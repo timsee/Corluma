@@ -202,7 +202,8 @@ SOURCES += main.cpp \
     nowifiwidget.cpp \
     listmooddetailedwidget.cpp \
     listmoodpreviewwidget.cpp \
-    groupdata.cpp
+    groupdata.cpp \
+    mooddetailswidget.cpp
 
 HEADERS  +=  arducor/arducordiscovery.h \
     arducor/arducorpacketparser.h \
@@ -236,7 +237,6 @@ HEADERS  +=  arducor/arducordiscovery.h \
     discovery/discoveryarducorwidget.h \
     cor/light.h \
     cor/protocols.h \
-    cor/utils.h \
     cor/button.h \
     cor/checkbox.h \
     cor/slider.h \
@@ -260,7 +260,6 @@ HEADERS  +=  arducor/arducordiscovery.h \
     cor/strictdictionary.h \
     cor/mood.h \
     cor/group.h \
-    cor/reachabilityutils.h \
     hue/lightdiscovery.h \
     hue/bridgediscovery.h \
     hue/hueprotocols.h \
@@ -307,7 +306,12 @@ HEADERS  +=  arducor/arducordiscovery.h \
     nowifiwidget.h \
     listmooddetailedwidget.h \
     listmoodpreviewwidget.h \
-    groupdata.h
+    groupdata.h \
+    mooddetailswidget.h \
+    utils/reachability.h \
+    utils/color.h \
+    utils/math.h \
+    utils/qt.h
 
 #----------
 # Desktop builds only

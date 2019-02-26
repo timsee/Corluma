@@ -32,7 +32,7 @@ class EditGroupPage : public QWidget, public cor::Page
 
 public:
     /// constructor
-    explicit EditGroupPage(QWidget* parent, CommLayer *layer, cor::DeviceList *data, GroupData *parser);
+    explicit EditGroupPage(QWidget* parent, CommLayer *layer, GroupData *parser);
 
     /*!
      * \brief showGroup open the edit page with the given data
@@ -52,11 +52,11 @@ public:
     void updateDevices(const std::list<cor::Light>& checkedDevices,
                        const std::list<cor::Light>& devices);
 
-    /// resizes widget programmatically
-    void resize();
-
     /// getter for all lights checked on the page.
     std::list<cor::Light> lights() const { return mSimpleGroupWidget->checkedDevices(); }
+
+    /// resizes widget programmatically
+    void resize();
 
     /*!
      * \brief called before the this page is shown. Used to sync up

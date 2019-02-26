@@ -82,17 +82,18 @@ public:
     bool removeController(const QString& name);
 
     /*!
-     * \brief controllerDiscovered attemps to add a controller based off its name and list of lights
-     * \param lights list of lights associated with the controller
+     * \brief addLight adds lights with specific unique IDs that have been previously discovered. This allows us to show
+     *        previously learned lights as "Not Reachable" when they cannot be erached.
+     * \param lights lights to add to the device table
      */
-    void controllerDiscovered(const std::list<cor::Light>& lights);
+    void addLight(const cor::Light& light);
 
     /*!
      * \brief updateDevice update all the data in the light device that matches the same controller and index.
      *        if a light device doesn't exist with these properties, then it creates a new one.
      * \param device the new data for the light device.
      */
-    void updateDevice(cor::Light device);
+    void updateLight(cor::Light device);
 
     /*!
      * \brief fillDevice takes the controller and index of the referenced cor::Light and overwrites all other

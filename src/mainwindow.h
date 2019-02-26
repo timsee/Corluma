@@ -83,6 +83,10 @@ public slots:
      * \brief editButtonClicked an edit button has been clicked for either a collection or mood.
      */
     void editButtonClicked(QString key, bool isMood);
+
+    /*!
+     * \brief editButtonClicked an edit button has been clicked for either a collection or mood.
+     */
     void editButtonClicked(std::uint64_t key, bool isMood);
 
     /// called when a request for a detailed mood is sent
@@ -142,10 +146,10 @@ public slots:
     void lightNameChange(EProtocolType type, QString key, QString name);
 
     /*!
-     * \brief deleteHue Delete the hue with the given key as a device index
-     * \param key device index for a hue provided as a key.
+     * \brief deleteLight Delete the light with the given key
+     * \param key unique ID for light to delete
      */
-    void deleteHue(QString key);
+    void deleteLight(QString key);
 
     /// getter for page
     EPage currentPage() { return mPageIndex; }
@@ -173,9 +177,6 @@ public slots:
 
     /// light detected as deleted
     void deletedLight(QString uniqueID);
-
-    /// rename a light to a new name. This updates all UI and app data accordingly.
-    void renamedLight(cor::Light, QString);
 
     /// called when a mood is selected
     void moodSelected(std::uint64_t);
@@ -208,7 +209,13 @@ protected:
      */
     void changeEvent(QEvent *event);
 
+    /// picks up key praesses, works for picking up things like android back buttons
+    void keyPressEvent(QKeyEvent *event);
+
 private:
+
+    /// handles when the android back button is pressed
+    void backButtonPressed();
 
     /*!
      * \brief pageChanged change the QStackedWidget to the page specified

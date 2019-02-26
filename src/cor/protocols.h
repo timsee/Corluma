@@ -631,6 +631,7 @@ enum class ELightHardwareType {
     ring,
     bloom,
     nanoleaf,
+    connectedGroup,
     MAX
 };
 
@@ -671,6 +672,8 @@ inline QString hardwareTypeToString(ELightHardwareType hardwareType) {
             return "Bloom";
         case ELightHardwareType::nanoleaf:
             return "Nanoleaf";
+        case ELightHardwareType::connectedGroup:
+            return "Connected Group";
         default:
             return "Not Recognized";
     }
@@ -715,6 +718,8 @@ inline ELightHardwareType stringToHardwareType(QString hardwareType) {
         return ELightHardwareType::bloom;
     } else if (hardwareType.compare("Nanoleaf") == 0) {
         return ELightHardwareType::nanoleaf;
+    } else if (hardwareType.compare("Connected Group") == 0) {
+        return ELightHardwareType::connectedGroup;
     } else {
         return ELightHardwareType::MAX;
     }
@@ -735,8 +740,51 @@ enum class EProductType {
 
 namespace cor
 {
+
+
+/// converts the enum for an arduio hardware type to a more generalized corluma type
+inline ELightHardwareType convertArduinoTypeToLightType(EArduinoHardwareType type) {
+    switch (type) {
+        case EArduinoHardwareType::singleLED:
+            return ELightHardwareType::singleLED;
+        case EArduinoHardwareType::cube:
+            return ELightHardwareType::cube;
+        case EArduinoHardwareType::rectangle:
+            return ELightHardwareType::rectangle;
+        case EArduinoHardwareType::lightStrip:
+            return ELightHardwareType::lightStrip;
+        case EArduinoHardwareType::ring:
+            return ELightHardwareType::ring;
+        default:
+            return ELightHardwareType::MAX;
+    }
+}
+
+
+/// converts a commtype to a protocol type.
+inline EProtocolType convertCommTypeToProtocolType(ECommType type) {
+    switch (type) {
+        case ECommType::HTTP:
+        case ECommType::UDP:
+#ifndef MOBILE_BUILD
+        case ECommType::serial:
+#endif
+            return EProtocolType::arduCor;
+        case ECommType::nanoleaf:
+            return EProtocolType::nanoleaf;
+        case ECommType::hue:
+            return EProtocolType::hue;
+        default:
+            return EProtocolType::MAX;
+    }
+}
+
 /// helper for getting the value of the last single color routine.
 const ERoutine ERoutineSingleColorEnd = ERoutine::singleSawtoothFade;
+
+const static QString kUseTimeoutKey  = QString("Settings_UseTimeout");
+const static QString kTimeoutValue = QString("Settings_TimeoutValue");
+
 }
 
 #endif // PROTOCOLS_H

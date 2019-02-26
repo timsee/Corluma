@@ -7,7 +7,7 @@
 #include "mainwindow.h"
 #include "appsettings.h"
 #include "groupdata.h"
-#include "cor/utils.h"
+#include "utils/qt.h"
 #include "cor/exception.h"
 
 #include <QApplication>
@@ -137,8 +137,8 @@ int main(int argc, char *argv[]) {
      */
     if (settings.value(kFirstTimeOpenKey, QVariant(127)) == QVariant(127)) {
         //add default settings
-        settings.setValue(kUseTimeoutKey,   QString::number(int(true)));
-        settings.setValue(kTimeoutValue,    QString::number(120));
+        settings.setValue(cor::kUseTimeoutKey,   QString::number(int(true)));
+        settings.setValue(cor::kTimeoutValue,    QString::number(120));
 
 
         std::vector<QString> protocolInUseKeys = AppSettings::protocolKeys();

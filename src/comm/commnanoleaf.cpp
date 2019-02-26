@@ -6,7 +6,7 @@
 
 #include "comm/commnanoleaf.h"
 #include "cor/palette.h"
-#include "cor/utils.h"
+#include "utils/color.h"
 #include "cor/light.h"
 
 #include <QJsonValue>
@@ -31,6 +31,11 @@ CommNanoleaf::CommNanoleaf() : CommType(ECommType::nanoleaf) {
     mStateUpdateInterval     = 1000;
 
     mDiscovery = new nano::LeafDiscovery(this, 2500);
+    // make list of not found devices
+    std::list<cor::Light> lightList;
+    for (const auto& nanoleaf: mDiscovery->notFoundControllers()) {
+        addLight(cor::Light(nanoleaf.serialNumber, nanoleaf.hardwareName, ECommType::nanoleaf));
+    }
 
     mNetworkManager = new QNetworkAccessManager(this);
     connect(mNetworkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
@@ -243,8 +248,6 @@ void CommNanoleaf::replyFinished(QNetworkReply* reply) {
         auto controller  = mDiscovery->findControllerByIP(IP);
         bool isConnected = mDiscovery->isControllerConnected(controller);
         if (!isConnected) {
-            QString name;
-            bool addToDeviceTable = false;
             if (controller.authToken == "") {
                 QJsonDocument jsonResponse = QJsonDocument::fromJson(payload.toUtf8());
                 if(!jsonResponse.isNull()) {
@@ -253,17 +256,16 @@ void CommNanoleaf::replyFinished(QNetworkReply* reply) {
                         if (object["auth_token"].isString()) {
                             QString authToken = object["auth_token"].toString();
                             mDiscovery->foundNewAuthToken(controller, authToken);
-                            name = controller.hardwareName;
-                            addToDeviceTable = true;
                         }
                     }
                 }
             } else {
-              //  mDiscovery->foundNewController(controller);
-                name = controller.name;
-                addToDeviceTable = true;
+                // full discovery has happened, we've received a packet with an auth token
+                cor::Light light(controller.serialNumber, controller.hardwareName, ECommType::nanoleaf);
+                addLight(light);
             }
 
+            //TODO: what? why?
             QJsonDocument jsonResponse = QJsonDocument::fromJson(payload.toUtf8());
             if(!jsonResponse.isNull()) {
                 if(jsonResponse.isObject()) {
@@ -307,24 +309,18 @@ void CommNanoleaf::replyFinished(QNetworkReply* reply) {
 
 
 void CommNanoleaf::renameController(nano::LeafController controller, const QString& name) {
-    QString oldName = controller.name;
+    // get light from device table
+    auto lightResult = deviceTable().item(controller.serialNumber.toStdString());
+    if (lightResult.second) {
+        // update discovery data
+        controller.name = name;
+        mDiscovery->updateFoundDevice(controller);
 
-    // remove from Corluma data
-    removeController(controller);
-
-    // update discovery data
-    controller.name = name;
-    mDiscovery->updateFoundDevice(controller);
-
-    // add light to new controller
-    std::list<cor::Light> newDeviceList;
-    cor::Light light(controller.serialNumber, name, ECommType::nanoleaf);
-    newDeviceList.push_back(light);
-    controllerDiscovered(newDeviceList);
-
-    // signal to update group data
-    cor::Light oldLight(controller.serialNumber, oldName, ECommType::nanoleaf);
-    emit lightRenamed(oldLight, name);
+        // update device data
+        auto light = lightResult.first;
+        light.name = name;
+        updateLight(light);
+    }
 }
 
 
@@ -451,7 +447,7 @@ void CommNanoleaf::parseCommandRequestUpdatePacket(const nano::LeafController& c
             // do nothing for multi color routines
         }
 
-        updateDevice(light);
+        updateLight(light);
     }
 }
 
@@ -575,14 +571,12 @@ void CommNanoleaf::parseStateUpdatePacket(nano::LeafController& controller, cons
             }
         }
 
-        if (mDiscovery->isControllerConnected(controller)) {
+        bool wasControllerConnected = mDiscovery->isControllerConnected(controller);
+        if (wasControllerConnected) {
             mDiscovery->updateFoundDevice(controller);
         } else {
             std::list<cor::Light> newDeviceList;
             mDiscovery->foundNewController(controller);
-            cor::Light light(controller.serialNumber, controller.hardwareName, ECommType::nanoleaf);
-            newDeviceList.push_back(light);
-            controllerDiscovered(newDeviceList);
         }
         QJsonObject stateObject = stateUpdate["state"].toObject();
         if (stateObject["on"].isObject()
@@ -637,7 +631,11 @@ void CommNanoleaf::parseStateUpdatePacket(nano::LeafController& controller, cons
                 light.color = cor::colorTemperatureToRGB(colorTemp);
             }
 
-            updateDevice(light);
+            if (wasControllerConnected) {
+                updateLight(light);
+            } else {
+                addLight(light);
+            }
         }
     } else {
         qDebug() << "Did not recognize state update:" << stateUpdate;
@@ -971,3 +969,14 @@ void CommNanoleaf::timeOutChange(const nano::LeafController&, int) {
     //TODO: implement
 }
 
+void CommNanoleaf::deleteLight(const cor::Light& light) {
+    nano::LeafController controller;
+    bool result = mDiscovery->findControllerBySerial(light.uniqueID(), controller);
+    if (result) {
+        // remove from comm data
+        removeController(light.controller());
+
+        // remove from saved data
+        mDiscovery->removeNanoleaf(controller);
+    }
+}

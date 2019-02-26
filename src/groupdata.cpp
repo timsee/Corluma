@@ -6,7 +6,7 @@
 
 #include "groupdata.h"
 #include "cor/protocols.h"
-#include "cor/utils.h"
+#include "utils/math.h"
 
 #include <QFileInfo>
 #include <QStandardPaths>
@@ -517,7 +517,7 @@ cor::Light parseLightObject(const QJsonObject& object) {
 
 cor::Light parseDefaultStateObject(const QJsonObject& object) {
     // convert to Qt types from json data
-    const auto& groupString = object["group"].toString();
+    const auto& groupID = object["group"].toDouble();
     const auto& modeString = object["colorMode"].toString();
 
     // convert to Corluma types from certain Qt types
@@ -542,7 +542,7 @@ cor::Light parseDefaultStateObject(const QJsonObject& object) {
         speed = int(object["speed"].toDouble());
     }
 
-    cor::Light light(groupString, "NO_CONTROLLER", ECommType::MAX);
+    cor::Light light(QString::number(groupID), "NO_CONTROLLER", ECommType::MAX);
     light.isReachable = true;
     light.isOn = isOn;
     light.majorAPI = majorAPI;

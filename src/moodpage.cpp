@@ -8,7 +8,7 @@
 
 #include "listmoodpreviewwidget.h"
 #include "listmoodgroupwidget.h"
-#include "cor/utils.h"
+#include "utils/qt.h"
 
 #include <QDebug>
 #include <QInputDialog>

@@ -8,7 +8,7 @@
 
 #include "comm/commarducor.h"
 #include "comm/commlayer.h"
-#include "cor/utils.h"
+#include "utils/qt.h"
 
 DataSyncSettings::DataSyncSettings(cor::DeviceList *data, CommLayer *comm, AppSettings *appSettings) : mAppSettings(appSettings) {
     mComm = comm;

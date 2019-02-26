@@ -50,7 +50,11 @@ public:
      * \param removeIfNotFound if a widget exists already in the listwidget but doesn't exist in the list provided,
      *        this widget gets removed and all other widgets get shifted.
      */
-    void updateDevices(const std::list<cor::Light>& devices, EOnOffSwitchState switchState, bool removeIfNotFound, bool canHighlight, bool skipOff);
+    void updateDevices(const std::list<cor::Light>& devices,
+                       uint32_t widgetHeight,
+                       EOnOffSwitchState switchState,
+                       bool canHighlight,
+                       bool skipOff);
 
     /// display only the devices in this list, hiding all others.
     void displayOnlyDevices(const std::list<cor::Light>& devices);

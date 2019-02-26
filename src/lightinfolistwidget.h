@@ -67,8 +67,8 @@ signals:
     /// emits when a light name should change
     void lightNameChanged(EProtocolType, QString, QString);
 
-    /// emits the device index of a Hue Light as a key.
-    void hueDeleted(QString);
+    /// emits the unique ID of the light that will be deleted.
+    void deleteLight(QString);
 
 private slots:
     /*!

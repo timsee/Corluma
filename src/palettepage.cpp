@@ -6,7 +6,7 @@
 
 #include "palettepage.h"
 #include "icondata.h"
-#include "cor/utils.h"
+#include "utils/qt.h"
 
 #include <QDebug>
 #include <QSignalMapper>

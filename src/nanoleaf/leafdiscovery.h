@@ -61,6 +61,9 @@ public:
     /// find a nano::LeafController based off of its IP
     nano::LeafController findControllerByIP(const QString& IP);
 
+    /// removes the nanoleaf from the save data and discovered data
+    void removeNanoleaf(const nano::LeafController& light);
+
     /*!
      * \brief findControllerBySerial finds a controller by its serial number
      * \param serialNumber serial number of the controller

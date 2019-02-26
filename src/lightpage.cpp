@@ -10,7 +10,7 @@
 #include "listmoodpreviewwidget.h"
 #include "listroomwidget.h"
 #include "listmoodgroupwidget.h"
-#include "cor/utils.h"
+#include "utils/qt.h"
 #include "comm/commarducor.h"
 
 #include <QDebug>
@@ -268,7 +268,7 @@ void LightPage::groupDeleted(QString group) {
 
     for (auto roomWidget : mRoomsWidget->widgets()) {
         ListRoomWidget *devicesWidget = qobject_cast<ListRoomWidget*>(roomWidget);
-        if (devicesWidget->key().compare(group) == 0) {
+        if (devicesWidget->key() == group) {
             mRoomsWidget->removeWidget(group);
         }
     }

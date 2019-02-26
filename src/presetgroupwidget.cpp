@@ -5,7 +5,7 @@
  */
 
 #include "presetgroupwidget.h"
-#include "cor/utils.h"
+#include "utils/qt.h"
 #include "cor/presetpalettes.h"
 
 PresetGroupWidget::PresetGroupWidget(QString name,

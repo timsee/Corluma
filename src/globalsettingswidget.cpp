@@ -8,7 +8,7 @@
 #include <QtGui>
 #include <QStyleOption>
 
-#include "cor/utils.h"
+#include "utils/qt.h"
 #include "globalsettingswidget.h"
 
 GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent,
@@ -54,7 +54,7 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent,
     mTimeoutSlider->slider()->setTickPosition(QSlider::TicksBelow);
     mTimeoutSlider->slider()->setTickInterval(60);
     mTimeoutSlider->slider()->setValue(mAppSettings->timeout());
-    mTimeoutSlider->setSliderColorBackground(cor::kDefaultColor);
+    mTimeoutSlider->setSliderColorBackground(QColor(255, 127, 0));
     mTimeoutSlider->setShouldDrawTickLabels(true);
 
     //-----------
@@ -164,7 +164,7 @@ void GlobalSettingsWidget::checkBoxClicked(EProtocolType type, bool checked) {
 }
 
 void GlobalSettingsWidget::updateUI() {
- //   mTimeoutSlider->setSliderColorBackground(cor::kDefaultColor);
+ //   mTimeoutSlider->setSliderColorBackground(QColor(255, 127, 0));
 }
 
 void GlobalSettingsWidget::show() {

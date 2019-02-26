@@ -12,7 +12,7 @@
 #include <QMessageBox>
 
 #include "nanoleaf/leafcontrollerinfowidget.h"
-#include "cor/utils.h"
+#include "utils/qt.h"
 
 namespace nano
 {

@@ -5,7 +5,7 @@
  */
 
 #include "dropdowntopwidget.h"
-#include "cor/utils.h"
+#include "utils/qt.h"
 #include <QDebug>
 
 DropdownTopWidget::DropdownTopWidget(const QString& key, bool hideEdit, QWidget *parent) : QWidget(parent), mKey(key)

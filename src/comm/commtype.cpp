@@ -7,7 +7,7 @@
 #include "commtype.h"
 #include "cor/light.h"
 
-#include "cor/utils.h"
+#include "utils/qt.h"
 
 #define REACHABILITY_TIMEOUT 5000
 
@@ -24,11 +24,8 @@ CommType::CommType(ECommType type) : mType(type) {
     connect(mReachabilityTest, SIGNAL(timeout()), this, SLOT(checkReachability()));
 }
 
-void CommType::controllerDiscovered(const std::list<cor::Light>& lights) {
-    std::vector<std::pair<std::string, cor::Light>> intializer;
-    for (const auto& light : lights) {
-        mDeviceTable.insert(light.uniqueID().toStdString(), light);
-    }
+void CommType::addLight(const cor::Light& light) {
+    mDeviceTable.insert(light.uniqueID().toStdString(), light);
 
     resetStateUpdateTimeout();
     emit updateReceived(mType);
@@ -48,7 +45,7 @@ bool CommType::removeController(const QString& controller) {
     return true;
 }
 
-void CommType::updateDevice(cor::Light device) {
+void CommType::updateLight(cor::Light device) {
     auto dictResult = mDeviceTable.item(device.uniqueID().toStdString());
     if (dictResult.second) {
         device.lastUpdateTime = mElapsedTimer.elapsed();

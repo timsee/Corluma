@@ -9,7 +9,7 @@
 #include <QDebug>
 #include <algorithm>
 #include <vector>
-#include "cor/utils.h"
+#include "utils/color.h"
 #include "cor/presetpalettes.h"
 #define MAX_SPEED 200
 

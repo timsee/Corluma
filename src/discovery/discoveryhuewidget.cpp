@@ -6,12 +6,11 @@
 
 #include "discoveryhuewidget.h"
 #include "comm/commhue.h"
-#include "cor/utils.h"
+#include "utils/qt.h"
 #include "mainwindow.h"
 
 #include <QScroller>
 #include <QGraphicsOpacityEffect>
-#include <QPropertyAnimation>
 #include <QDesktopWidget>
 #include <QMessageBox>
 

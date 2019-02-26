@@ -7,7 +7,7 @@
 #include "datasynchue.h"
 
 #include "comm/commlayer.h"
-#include "cor/utils.h"
+#include "utils/color.h"
 
 
 DataSyncHue::DataSyncHue(cor::DeviceList *data, CommLayer *comm, AppSettings *appSettings) : mAppSettings(appSettings) {

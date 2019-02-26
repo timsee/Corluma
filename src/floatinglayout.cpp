@@ -6,7 +6,7 @@
 
 #include "floatinglayout.h"
 #include "mainwindow.h"
-#include "cor/utils.h"
+#include "utils/qt.h"
 
 #include <QDebug>
 #include <QSignalMapper>

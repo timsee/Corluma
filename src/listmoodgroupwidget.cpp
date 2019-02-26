@@ -5,7 +5,7 @@
  */
 
 #include "listmoodgroupwidget.h"
-#include "cor/utils.h"
+#include "utils/qt.h"
 
 ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
                                          std::list<cor::Mood> moods,
@@ -48,7 +48,6 @@ void ListMoodGroupWidget::updateMoods(const std::list<cor::Mood>& moods,
 
         if (!foundMood) {
             ListMoodPreviewWidget *widget = new ListMoodPreviewWidget(mood, mWidget);
-            connect(widget, SIGNAL(editClicked(std::uint64_t)), this, SLOT(clickedEdit(std::uint64_t)));
             connect(widget, SIGNAL(moodSelected(std::uint64_t)), this, SLOT(selectMood(std::uint64_t)));
             mListLayout.insertWidget(widget);
         }
@@ -137,7 +136,7 @@ void ListMoodGroupWidget::selectMood(std::uint64_t key) {
     for (const auto& existingWidget : mListLayout.widgets()) {
         ListMoodPreviewWidget *widget = qobject_cast<ListMoodPreviewWidget*>(existingWidget);
         Q_ASSERT(widget);
-        if (widget->key().toInt() == key) {
+        if (std::uint64_t(widget->key().toInt()) == key) {
             widget->setSelected(true);
         } else {
             widget->setSelected(false);

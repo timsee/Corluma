@@ -330,26 +330,24 @@ void BridgeDiscovery::parseInitialUpdate(const hue::Bridge& bridge, QJsonDocumen
                         QString name = innerObject["name"].toString();
                         QString type = innerObject["type"].toString();
                         QString swversion = innerObject["swversion"].toString();
+                        QString hardwareTypeString = innerObject["modelid"].toString();
                         double index = key.toDouble();
+
+                        HueLight hueLight(id, bridge.id, ECommType::hue);
+                        hueLight.name = name;
+                        hueLight.index = int(index);
+                        hueLight.softwareVersion = swversion;
+                        hueLight.modelID = hardwareTypeString;
+                        hueLight.hardwareType = hue::modelToHardwareType(hardwareTypeString);
+                        hueLight.hueType = cor::stringToHueType(type);
+                        lights.push_back(hueLight);
 
                         QJsonObject lightObject;
                         lightObject["uniqueid"]  = id;
                         lightObject["index"]     = index;
                         lightObject["name"]      = name;
                         lightObject["swversion"] = swversion;
-
-                        HueLight hueLight(id, bridge.id, ECommType::hue);
-                        hueLight.name = name;
-                        hueLight.index = int(index);
-                        hueLight.softwareVersion = swversion;
-
-                        if (innerObject["modelid"].isString()) {
-                            hueLight.modelID = innerObject["modelid"].toString();
-                        }
-
-                        hueLight.hueType = cor::stringToHueType(type);
-                        lights.push_back(hueLight);
-
+                        lightObject["hardwareType"] = hardwareTypeToString(hueLight.hardwareType);
                         lightsArray.push_back(lightObject);
                     }
                 }
@@ -612,7 +610,6 @@ void BridgeDiscovery::updateJSONLights(const hue::Bridge& bridge, const QJsonArr
                                 // check name, add to copy if different
                                 if (newLight["name"].toString() != oldLight["name"].toString()) {
                                     detectChanges = true;
-                                   // mHue->lightRenamedExternally(light, newLight["name"].toString());
                                     //qDebug() << " new name" << newLight["name"].toString() << " old name" << oldLight["name"].toString();
                                 }
                                 if (int(newLight["index"].toDouble()) != int(oldLight["index"].toDouble())) {
@@ -620,6 +617,10 @@ void BridgeDiscovery::updateJSONLights(const hue::Bridge& bridge, const QJsonArr
                                 }
 
                                 if (newLight["swversion"].toString() != oldLight["swversion"].toString()) {
+                                    detectChanges = true;
+                                }
+
+                                if (newLight["hardwareType"].toString() != oldLight["hardwareType"].toString()) {
                                     detectChanges = true;
                                 }
                             }

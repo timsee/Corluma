@@ -5,7 +5,7 @@
  */
 
 #include "commlayer.h"
-#include "cor/utils.h"
+#include "utils/qt.h"
 #include "cor/exception.h"
 
 #include "comm/commarducor.h"

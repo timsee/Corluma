@@ -5,12 +5,12 @@
  */
 
 #include "appsettings.h"
-#include "cor/utils.h"
+#include "utils/qt.h"
 
 AppSettings::AppSettings() {
     mSettings = new QSettings();
-    mTimeout = mSettings->value(kTimeoutValue).toInt();
-    mTimeoutEnabled = mSettings->value(kUseTimeoutKey).toBool();
+    mTimeout = mSettings->value(cor::kTimeoutValue).toInt();
+    mTimeoutEnabled = mSettings->value(cor::kUseTimeoutKey).toBool();
     mProtocolsInUse = std::vector<bool>(std::size_t(EProtocolType::MAX), false);
 
     std::vector<QString> keys = protocolKeys();
@@ -68,12 +68,12 @@ uint32_t AppSettings::numberEnabled() {
 
 void AppSettings::updateTimeout(int timeout) {
     mTimeout = timeout;
-    mSettings->setValue(kTimeoutValue, QString::number(timeout));
+    mSettings->setValue(cor::kTimeoutValue, QString::number(timeout));
     emit settingsUpdate();
 }
 
 void AppSettings::enableTimeout(bool timeout) {
     mTimeoutEnabled = timeout;
-    mSettings->setValue(kUseTimeoutKey, QString::number(int(timeout)));
+    mSettings->setValue(cor::kUseTimeoutKey, QString::number(int(timeout)));
     emit settingsUpdate();
 }

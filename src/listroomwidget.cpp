@@ -36,8 +36,13 @@ ListRoomWidget::ListRoomWidget(const cor::Group& group,
         widgetNames.reserve(group.subgroups.size());
         for (const auto& subGroupID : group.subgroups) {
             auto groupResult = mGroupData->groups().item(QString::number(subGroupID).toStdString());
+            // check if group is already in this list
             if (groupResult.second) {
-                widgetNames.emplace_back(groupResult.first.name());
+                // check if its already in the sub group names
+                auto widgetResult = std::find(widgetNames.begin(), widgetNames.end(), groupResult.first.name());
+                if (widgetResult != widgetNames.end()) {
+                    widgetNames.emplace_back(groupResult.first.name());
+                }
             }
         }
         mGroupsButtonWidget = new GroupButtonsWidget(this, mGroup.name(), widgetNames);
