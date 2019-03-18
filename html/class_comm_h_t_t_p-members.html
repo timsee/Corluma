@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.14.0</span>
+   &#160;<span id="projectnumber">v0.15.0</span>
    </div>
   </td>
  </tr>
@@ -47,10 +47,10 @@ $(function() {
 
 <p>This is the complete list of members for <a class="el" href="class_comm_h_t_t_p.html">CommHTTP</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="class_comm_h_t_t_p.html#a9a11fe556853ebf18b796344dcc469f7">CommHTTP</a>()</td><td class="entry"><a class="el" href="class_comm_h_t_t_p.html">CommHTTP</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="class_comm_type.html#a6fe7f245ed2a19c250b9cea7598e2bad">CommType</a>(ECommType type)</td><td class="entry"><a class="el" href="class_comm_type.html">CommType</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_comm_h_t_t_p.html#a6a51988133fa5c51e3224d761e5eb1ca">connectDiscovery</a>(ArduCorDiscovery *discovery)</td><td class="entry"><a class="el" href="class_comm_h_t_t_p.html">CommHTTP</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="class_comm_type.html#a176d259ed5a483c41d9839fe191b34e1">controllerDiscovered</a>(const std::list&lt; cor::Light &gt; &amp;lights)</td><td class="entry"><a class="el" href="class_comm_type.html">CommType</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_comm_type.html#a7238ee9df8464546e7afd4c21b203303">addLight</a>(const cor::Light &amp;light)</td><td class="entry"><a class="el" href="class_comm_type.html">CommType</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_comm_h_t_t_p.html#a9a11fe556853ebf18b796344dcc469f7">CommHTTP</a>()</td><td class="entry"><a class="el" href="class_comm_h_t_t_p.html">CommHTTP</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_comm_type.html#a6fe7f245ed2a19c250b9cea7598e2bad">CommType</a>(ECommType type)</td><td class="entry"><a class="el" href="class_comm_type.html">CommType</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_comm_h_t_t_p.html#a6a51988133fa5c51e3224d761e5eb1ca">connectDiscovery</a>(ArduCorDiscovery *discovery)</td><td class="entry"><a class="el" href="class_comm_h_t_t_p.html">CommHTTP</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_comm_type.html#ae9b97cb61b399f2e17acaee7a88b65e7">controllerName</a>(const QString &amp;uniqueID)</td><td class="entry"><a class="el" href="class_comm_type.html">CommType</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="class_comm_type.html#a883f9fb7dad78707958f29ee05dc6cc7">deviceTable</a>() const noexcept</td><td class="entry"><a class="el" href="class_comm_type.html">CommType</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_comm_type.html#ab9d8ebeecae39e95cd2d2647379cadec">fillDevice</a>(cor::Light &amp;device)</td><td class="entry"><a class="el" href="class_comm_type.html">CommType</a></td><td class="entry"></td></tr>
@@ -72,7 +72,7 @@ $(function() {
   <tr class="even"><td class="entry"><a class="el" href="class_comm_h_t_t_p.html#a8edda42218bdc83af4748635f1cb48f4">startup</a>()</td><td class="entry"><a class="el" href="class_comm_h_t_t_p.html">CommHTTP</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_comm_type.html#a684c569bb57248ae4b0b2e4563339f74">stopStateUpdates</a>()</td><td class="entry"><a class="el" href="class_comm_type.html">CommType</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_comm_h_t_t_p.html#af3b6da657ed60c1964b77efd1ace5036">testForController</a>(const cor::Controller &amp;controller)</td><td class="entry"><a class="el" href="class_comm_h_t_t_p.html">CommHTTP</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="class_comm_type.html#a41a7c990b8c8490414ae89a0b7f43f64">updateDevice</a>(cor::Light device)</td><td class="entry"><a class="el" href="class_comm_type.html">CommType</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_comm_type.html#a8ec4272af4b32957d0b3e2bea9d2133f">updateLight</a>(cor::Light device)</td><td class="entry"><a class="el" href="class_comm_type.html">CommType</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_comm_type.html#a6a99e8e95b8ce5ac36a605634b6a460f">updateReceived</a>(ECommType)</td><td class="entry"><a class="el" href="class_comm_type.html">CommType</a></td><td class="entry"><span class="mlabel">signal</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_comm_h_t_t_p.html#a621242b3ab5301ddf6afdd9cbdda9dbe">~CommHTTP</a>()</td><td class="entry"><a class="el" href="class_comm_h_t_t_p.html">CommHTTP</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_comm_type.html#aea9af432f13faf2a28b6a9fd5d5000e9">~CommType</a>()</td><td class="entry"><a class="el" href="class_comm_type.html">CommType</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>

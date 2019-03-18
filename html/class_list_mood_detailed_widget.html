@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.14.0</span>
+   &#160;<span id="projectnumber">v0.15.0</span>
    </div>
   </td>
  </tr>
@@ -67,16 +67,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_detailed_widget.html#a28351ae6179812b0ae596e64e8f03fe1">enableGroup</a> (std::uint64_t)</td></tr>
 <tr class="memdesc:a28351ae6179812b0ae596e64e8f03fe1"><td class="mdescLeft">&#160;</td><td class="mdescRight">signals when the mood is going to be selected <br /></td></tr>
 <tr class="separator:a28351ae6179812b0ae596e64e8f03fe1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a830484bcd94496258a981f0e9ebf1b69"><td class="memItemLeft" align="right" valign="top"><a id="a830484bcd94496258a981f0e9ebf1b69"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_detailed_widget.html#a830484bcd94496258a981f0e9ebf1b69">editClicked</a> (QString)</td></tr>
-<tr class="memdesc:a830484bcd94496258a981f0e9ebf1b69"><td class="mdescLeft">&#160;</td><td class="mdescRight">editClicked emitted when edit button is clicked. Emits its key. <br /></td></tr>
-<tr class="separator:a830484bcd94496258a981f0e9ebf1b69"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4efc5d686d70c87e5859a2e879140ebb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_detailed_widget.html#a4efc5d686d70c87e5859a2e879140ebb">ListMoodDetailedWidget</a> (QWidget *parent, <a class="el" href="class_comm_layer.html">CommLayer</a> *comm)</td></tr>
-<tr class="memdesc:a4efc5d686d70c87e5859a2e879140ebb"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#a4efc5d686d70c87e5859a2e879140ebb">More...</a><br /></td></tr>
-<tr class="separator:a4efc5d686d70c87e5859a2e879140ebb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac62893e5e95e1ea7536a5c6732cd4581"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_detailed_widget.html#ac62893e5e95e1ea7536a5c6732cd4581">ListMoodDetailedWidget</a> (QWidget *parent, <a class="el" href="class_group_data.html">GroupData</a> *groups, <a class="el" href="class_comm_layer.html">CommLayer</a> *comm)</td></tr>
+<tr class="memdesc:ac62893e5e95e1ea7536a5c6732cd4581"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#ac62893e5e95e1ea7536a5c6732cd4581">More...</a><br /></td></tr>
+<tr class="separator:ac62893e5e95e1ea7536a5c6732cd4581"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a23d43c019a254228cc6d65d1dd8a5657"><td class="memItemLeft" align="right" valign="top"><a id="a23d43c019a254228cc6d65d1dd8a5657"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_mood_detailed_widget.html#a23d43c019a254228cc6d65d1dd8a5657">update</a> (const cor::Mood &amp;group)</td></tr>
 <tr class="memdesc:a23d43c019a254228cc6d65d1dd8a5657"><td class="mdescLeft">&#160;</td><td class="mdescRight">update the mood in the widget <br /></td></tr>
@@ -112,8 +108,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a4efc5d686d70c87e5859a2e879140ebb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4efc5d686d70c87e5859a2e879140ebb">&#9670;&nbsp;</a></span>ListMoodDetailedWidget()</h2>
+<a id="ac62893e5e95e1ea7536a5c6732cd4581"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac62893e5e95e1ea7536a5c6732cd4581">&#9670;&nbsp;</a></span>ListMoodDetailedWidget()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -126,6 +122,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
           <td>(</td>
           <td class="paramtype">QWidget *&#160;</td>
           <td class="paramname"><em>parent</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_group_data.html">GroupData</a> *&#160;</td>
+          <td class="paramname"><em>groups</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>

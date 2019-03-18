@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.14.0</span>
+   &#160;<span id="projectnumber">v0.15.0</span>
    </div>
   </td>
  </tr>
@@ -85,6 +85,9 @@ $(function() {
 <li>selectedCountChanged()
 : <a class="el" href="class_swatch_vector_widget.html#a655dcf300e630c0cd7a554a5e8e09ce1">SwatchVectorWidget</a>
 </li>
+<li>SelectLightsButton()
+: <a class="el" href="class_select_lights_button.html#a3d2d9c37e20c47e58c160994af1258b6">SelectLightsButton</a>
+</li>
 <li>sendPacket()
 : <a class="el" href="class_comm_ardu_cor.html#a65ae9c9638036d53a14aaa4e9d8be47f">CommArduCor</a>
 , <a class="el" href="class_comm_h_t_t_p.html#a96a2da15cbc18e6dead5de5929419948">CommHTTP</a>
@@ -123,7 +126,7 @@ $(function() {
 : <a class="el" href="class_editable_field_widget.html#af0afa46fb6cd1ca530994d0f90a309cc">EditableFieldWidget</a>
 </li>
 <li>setHighlightChecked()
-: <a class="el" href="class_list_device_widget.html#ab848b67108c7f1f9413b59ac44141343">ListDeviceWidget</a>
+: <a class="el" href="class_list_light_widget.html#a5add6c986e843db69aafd67e2ed980b5">ListLightWidget</a>
 </li>
 <li>setMode()
 : <a class="el" href="class_palette_page.html#ae78627cd3f0b4a3be68c9de17e142040">PalettePage</a>
@@ -159,9 +162,6 @@ $(function() {
 <li>setText()
 : <a class="el" href="class_editable_field_widget.html#a48360338aa0d39149871aec81a23e7bc">EditableFieldWidget</a>
 </li>
-<li>settings()
-: <a class="el" href="class_main_window.html#a34b203fb5065bc42bf45e9bfcc82efa0">MainWindow</a>
-</li>
 <li>SettingsButton()
 : <a class="el" href="class_settings_button.html#a0c73d13f41ad7aa4c9dbb90f27d38839">SettingsButton</a>
 </li>
@@ -173,9 +173,6 @@ $(function() {
 </li>
 <li>settingsClosePressed()
 : <a class="el" href="class_main_window.html#a8ca7b7373bec37a993ad85c925c539ad">MainWindow</a>
-</li>
-<li>settingsDebugPressed()
-: <a class="el" href="class_main_window.html#a7e3600f30beb68e79de54c57dc576b5d">MainWindow</a>
 </li>
 <li>SettingsPage()
 : <a class="el" href="class_settings_page.html#a3000f4eded4b4248bc66522af7e1cf51">SettingsPage</a>
@@ -189,21 +186,25 @@ $(function() {
 <li>setupButtons()
 : <a class="el" href="class_floating_layout.html#ae8ccca6825272bc2ec2c6c98f5896f5c">FloatingLayout</a>
 </li>
+<li>setupColorFloatingLayout()
+: <a class="el" href="class_top_menu.html#a97478f79ea25d7402ae7b251da227def">TopMenu</a>
+</li>
 <li>shouldContinueStateUpdate()
 : <a class="el" href="class_comm_type.html#a140fb846eeb4d24976e2a4f514f95f0f">CommType</a>
 </li>
 <li>shouldHightlght()
-: <a class="el" href="class_settings_button.html#a9bba7e3fc5ae4b8d2bdcb9496be05a38">SettingsButton</a>
+: <a class="el" href="class_left_hand_button.html#ae735c30d8b21ff6e2d2266dd76b32444">LeftHandButton</a>
+, <a class="el" href="class_settings_button.html#a9bba7e3fc5ae4b8d2bdcb9496be05a38">SettingsButton</a>
 </li>
 <li>show()
-: <a class="el" href="class_color_page.html#a00b5d617c2f7fd8364e3f6fa1dd17300">ColorPage</a>
+: <a class="el" href="class_color_page.html#a81a36b28a1a6a696b88bb5d97c61f1a9">ColorPage</a>
 , <a class="el" href="class_discovery_page.html#aa7dff054f5ac40f2541f4582f91077aa">DiscoveryPage</a>
 , <a class="el" href="class_edit_group_page.html#add56d8bd940d6c545808803489c838e6">EditGroupPage</a>
 , <a class="el" href="class_global_settings_widget.html#ababb0ce4a0f741daeadd5a8d262e07e9">GlobalSettingsWidget</a>
 , <a class="el" href="class_light_page.html#abe577ab5fb6a3dbe054de05cdc7edc74">LightPage</a>
 , <a class="el" href="class_list_mood_detailed_widget.html#aab3ec3285a9e68ffac124f4c7029c06e">ListMoodDetailedWidget</a>
 , <a class="el" href="class_mood_page.html#a7c7cf4658626d2cbc7694f5d6c4045ff">MoodPage</a>
-, <a class="el" href="class_palette_page.html#a33961a9f83d82a0fdd5f166dfaccfd7c">PalettePage</a>
+, <a class="el" href="class_palette_page.html#a27589c2f79ead824a454791c0f90b8b3">PalettePage</a>
 , <a class="el" href="class_settings_page.html#aeff9510f916fa4b3913ee78c5e64c5cb">SettingsPage</a>
 </li>
 <li>showButtons()
@@ -213,8 +214,7 @@ $(function() {
 : <a class="el" href="class_list_room_widget.html#a76da04a7fb0fea84fabbda5770672e3e">ListRoomWidget</a>
 </li>
 <li>showEvent()
-: <a class="el" href="class_color_picker.html#a18f2c09e940d5a22b68179516cb40422">ColorPicker</a>
-, <a class="el" href="class_light_page.html#a62cb42d1ffcbb20e89909d0038a8e1ba">LightPage</a>
+: <a class="el" href="class_light_page.html#a62cb42d1ffcbb20e89909d0038a8e1ba">LightPage</a>
 , <a class="el" href="class_palette_page.html#a64f0e96d1e4fd74b65dc1dea840d7d7e">PalettePage</a>
 </li>
 <li>showFloatingLayout()
@@ -281,14 +281,11 @@ $(function() {
 <li>SwatchVectorWidget()
 : <a class="el" href="class_swatch_vector_widget.html#a3feb3ad26c35ef8f12293f8c869865c2">SwatchVectorWidget</a>
 </li>
-<li>switchToConnection()
-: <a class="el" href="class_main_window.html#a227da0db736107db8673d9a259b33153">MainWindow</a>
-</li>
-<li>switchToDiscovery()
-: <a class="el" href="class_main_window.html#a4ad9c67b64c68e706fc77eee79fe7c7f">MainWindow</a>
+<li>switchToColorPage()
+: <a class="el" href="class_main_window.html#af76adbced09a0bebee6bbd97f6b92db6">MainWindow</a>
 </li>
 <li>switchToggled()
-: <a class="el" href="class_list_device_widget.html#a69ff2a860508ddb9ce2770dad48acd2f">ListDeviceWidget</a>
+: <a class="el" href="class_list_light_widget.html#af5b46b3bdca771c4f52e64479caa212b">ListLightWidget</a>
 </li>
 <li>sync()
 : <a class="el" href="class_data_sync.html#a45c054e275f1621ff3d0071b5ae4ae74">DataSync</a>

@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.14.0</span>
+   &#160;<span id="projectnumber">v0.15.0</span>
    </div>
   </td>
  </tr>
@@ -83,9 +83,9 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_simple_group_widget.html#a782811ea07379ea8eef6c747f6ae68e4">removeWidgets</a> ()</td></tr>
 <tr class="memdesc:a782811ea07379ea8eef6c747f6ae68e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">removes all widget from group. <br /></td></tr>
 <tr class="separator:a782811ea07379ea8eef6c747f6ae68e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a996f64d1808fa87dcba5deeb994ec388"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_simple_group_widget.html#a996f64d1808fa87dcba5deeb994ec388">updateDevices</a> (const std::list&lt; cor::Light &gt; &amp;devices, EOnOffSwitchState switchState, bool removeIfNotFound, bool canHighlight, bool skipOff)</td></tr>
-<tr class="memdesc:a996f64d1808fa87dcba5deeb994ec388"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDevices update the state and number of devices displayed in the widget.  <a href="#a996f64d1808fa87dcba5deeb994ec388">More...</a><br /></td></tr>
-<tr class="separator:a996f64d1808fa87dcba5deeb994ec388"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5762acc4baf7eb2b71eb3aefeaf82ffd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_simple_group_widget.html#a5762acc4baf7eb2b71eb3aefeaf82ffd">updateDevices</a> (const std::list&lt; cor::Light &gt; &amp;devices, uint32_t widgetHeight, cor::EWidgetType listWidgetType, EOnOffSwitchState switchState, bool canHighlight, bool skipOff)</td></tr>
+<tr class="memdesc:a5762acc4baf7eb2b71eb3aefeaf82ffd"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDevices update the state and number of devices displayed in the widget.  <a href="#a5762acc4baf7eb2b71eb3aefeaf82ffd">More...</a><br /></td></tr>
+<tr class="separator:a5762acc4baf7eb2b71eb3aefeaf82ffd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d5e54fc2c5ed0644d702551ecdb18f7"><td class="memItemLeft" align="right" valign="top"><a id="a4d5e54fc2c5ed0644d702551ecdb18f7"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_simple_group_widget.html#a4d5e54fc2c5ed0644d702551ecdb18f7">displayOnlyDevices</a> (const std::list&lt; cor::Light &gt; &amp;devices)</td></tr>
 <tr class="memdesc:a4d5e54fc2c5ed0644d702551ecdb18f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">display only the devices in this list, hiding all others. <br /></td></tr>
@@ -152,8 +152,8 @@ const std::list&lt; cor::Light &gt;&#160;</td><td class="memItemRight" valign="b
 
 </div>
 </div>
-<a id="a996f64d1808fa87dcba5deeb994ec388"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a996f64d1808fa87dcba5deeb994ec388">&#9670;&nbsp;</a></span>updateDevices()</h2>
+<a id="a5762acc4baf7eb2b71eb3aefeaf82ffd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5762acc4baf7eb2b71eb3aefeaf82ffd">&#9670;&nbsp;</a></span>updateDevices()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -167,14 +167,20 @@ const std::list&lt; cor::Light &gt;&#160;</td><td class="memItemRight" valign="b
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">EOnOffSwitchState&#160;</td>
-          <td class="paramname"><em>switchState</em>, </td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>widgetHeight</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>removeIfNotFound</em>, </td>
+          <td class="paramtype">cor::EWidgetType&#160;</td>
+          <td class="paramname"><em>listWidgetType</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">EOnOffSwitchState&#160;</td>
+          <td class="paramname"><em>switchState</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>

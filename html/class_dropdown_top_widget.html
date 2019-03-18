@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.14.0</span>
+   &#160;<span id="projectnumber">v0.15.0</span>
    </div>
   </td>
  </tr>
@@ -43,7 +43,8 @@ $(function() {
   <div class="summary">
 <a href="class_dropdown_top_widget-members.html">List of all members</a> &#124;
 <a href="#signals">Signals</a> &#124;
-<a href="#pub-methods">Public Member Functions</a>  </div>
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a>  </div>
   <div class="headertitle">
 <div class="title">DropdownTopWidget Class Reference</div>  </div>
 </div><!--header-->
@@ -66,12 +67,16 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dropdown_top_widget.html#a2ff16e05548860e1967dd833ddea3825">buttonsShown</a> (QString, bool)</td></tr>
 <tr class="memdesc:a2ff16e05548860e1967dd833ddea3825"><td class="mdescLeft">&#160;</td><td class="mdescRight">buttonsShown emitted when the buttons are shown or hidden. emits the key and a boolean representing whether the buttons are shown. <br /></td></tr>
 <tr class="separator:a2ff16e05548860e1967dd833ddea3825"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7bee430bb5f2b0493da3081c3665adba"><td class="memItemLeft" align="right" valign="top"><a id="a7bee430bb5f2b0493da3081c3665adba"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dropdown_top_widget.html#a7bee430bb5f2b0493da3081c3665adba">pressed</a> ()</td></tr>
+<tr class="memdesc:a7bee430bb5f2b0493da3081c3665adba"><td class="mdescLeft">&#160;</td><td class="mdescRight">emits when the widget is pressed <br /></td></tr>
+<tr class="separator:a7bee430bb5f2b0493da3081c3665adba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a522ad976a6898398a2a0ef95946806d1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dropdown_top_widget.html#a522ad976a6898398a2a0ef95946806d1">DropdownTopWidget</a> (const QString &amp;key, bool hideEdit, QWidget *parent)</td></tr>
-<tr class="memdesc:a522ad976a6898398a2a0ef95946806d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">constuctor  <a href="#a522ad976a6898398a2a0ef95946806d1">More...</a><br /></td></tr>
-<tr class="separator:a522ad976a6898398a2a0ef95946806d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa49f0e26b8bfede53a07cc4b08e83715"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dropdown_top_widget.html#aa49f0e26b8bfede53a07cc4b08e83715">DropdownTopWidget</a> (const QString &amp;key, cor::EWidgetType type, bool hideEdit, QWidget *parent)</td></tr>
+<tr class="memdesc:aa49f0e26b8bfede53a07cc4b08e83715"><td class="mdescLeft">&#160;</td><td class="mdescRight">constuctor  <a href="#aa49f0e26b8bfede53a07cc4b08e83715">More...</a><br /></td></tr>
+<tr class="separator:aa49f0e26b8bfede53a07cc4b08e83715"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d7d82e938a0376c73baed8ff82d5af8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dropdown_top_widget.html#a4d7d82e938a0376c73baed8ff82d5af8">showButtons</a> ()</td></tr>
 <tr class="memdesc:a4d7d82e938a0376c73baed8ff82d5af8"><td class="mdescLeft">&#160;</td><td class="mdescRight">showButtons getter that checks if buttons are showing  <a href="#a4d7d82e938a0376c73baed8ff82d5af8">More...</a><br /></td></tr>
 <tr class="separator:a4d7d82e938a0376c73baed8ff82d5af8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -79,12 +84,19 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dropdown_top_widget.html#a5821b1a76f3c44bf2eb20785ba4540a5">showButtons</a> (bool showButtons)</td></tr>
 <tr class="memdesc:a5821b1a76f3c44bf2eb20785ba4540a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">set to true to show all widgets, false to just show the dropdown widget. <br /></td></tr>
 <tr class="separator:a5821b1a76f3c44bf2eb20785ba4540a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:a1c377e2d4458d900c9d178d8f2d51e13"><td class="memItemLeft" align="right" valign="top"><a id="a1c377e2d4458d900c9d178d8f2d51e13"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dropdown_top_widget.html#a1c377e2d4458d900c9d178d8f2d51e13">mouseReleaseEvent</a> (QMouseEvent *)</td></tr>
+<tr class="memdesc:a1c377e2d4458d900c9d178d8f2d51e13"><td class="mdescLeft">&#160;</td><td class="mdescRight">mouseReleaseEvent picks up when a click (or a tap on mobile) is released. <br /></td></tr>
+<tr class="separator:a1c377e2d4458d900c9d178d8f2d51e13"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a522ad976a6898398a2a0ef95946806d1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a522ad976a6898398a2a0ef95946806d1">&#9670;&nbsp;</a></span>DropdownTopWidget()</h2>
+<a id="aa49f0e26b8bfede53a07cc4b08e83715"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa49f0e26b8bfede53a07cc4b08e83715">&#9670;&nbsp;</a></span>DropdownTopWidget()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -97,6 +109,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
           <td>(</td>
           <td class="paramtype">const QString &amp;&#160;</td>
           <td class="paramname"><em>key</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">cor::EWidgetType&#160;</td>
+          <td class="paramname"><em>type</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>

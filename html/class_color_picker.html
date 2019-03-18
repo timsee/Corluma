@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.14.0</span>
+   &#160;<span id="projectnumber">v0.15.0</span>
    </div>
   </td>
  </tr>
@@ -96,9 +96,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac13e418c985c8623908a155f212d0f2e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#ac13e418c985c8623908a155f212d0f2e">changeLayout</a> (ELayoutColorPicker layout, bool skipAnimation=false)</td></tr>
 <tr class="memdesc:ac13e418c985c8623908a155f212d0f2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeLayout sets the layout using the available layout modes. This allows you to hide the sliders or color wheel, and change how things are ordered so they can fit more window sizes. This should be called only once as Qt doesn't seem to like it when you change between horizontal and vertical layouts.  <a href="#ac13e418c985c8623908a155f212d0f2e">More...</a><br /></td></tr>
 <tr class="separator:ac13e418c985c8623908a155f212d0f2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0cf3f52806325b1fedffdce7a570bd59"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a0cf3f52806325b1fedffdce7a570bd59">enableWheel</a> (bool shouldEnable)</td></tr>
-<tr class="memdesc:a0cf3f52806325b1fedffdce7a570bd59"><td class="mdescLeft">&#160;</td><td class="mdescRight">enableWheel enables/disables the color wheel. If the color wheel is disabled, its faded out and mouse events don't work. If its enabled, its not faded out and um, mouse events do work.  <a href="#a0cf3f52806325b1fedffdce7a570bd59">More...</a><br /></td></tr>
-<tr class="separator:a0cf3f52806325b1fedffdce7a570bd59"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b6572e6e85da663048aaf36f5033dc6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a0b6572e6e85da663048aaf36f5033dc6">enable</a> (bool shouldEnable)</td></tr>
+<tr class="memdesc:a0b6572e6e85da663048aaf36f5033dc6"><td class="mdescLeft">&#160;</td><td class="mdescRight">enable enables/disables the color picker. If the picker wheel is disabled, its faded out and mouse events don't work. If its enabled, its not faded out and um, mouse events do work.  <a href="#a0b6572e6e85da663048aaf36f5033dc6">More...</a><br /></td></tr>
+<tr class="separator:a0b6572e6e85da663048aaf36f5033dc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a09f0d0c397e1edb64fa5577d0727c15d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a09f0d0c397e1edb64fa5577d0727c15d">chooseAmbient</a> (int temperature, uint32_t brightness, bool shouldSignal)</td></tr>
 <tr class="memdesc:a09f0d0c397e1edb64fa5577d0727c15d"><td class="mdescLeft">&#160;</td><td class="mdescRight">chooseAmbient programmatically set the ambient color picker. This will update the UI elements to reflect the values provided. By default it will also signal its changes, but a flag can be used to override the signal.  <a href="#a09f0d0c397e1edb64fa5577d0727c15d">More...</a><br /></td></tr>
 <tr class="separator:a09f0d0c397e1edb64fa5577d0727c15d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -130,14 +130,6 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#ac3242cf9c9777976823bdb334bb8c10b">mouseReleaseEvent</a> (QMouseEvent *)</td></tr>
 <tr class="memdesc:ac3242cf9c9777976823bdb334bb8c10b"><td class="mdescLeft">&#160;</td><td class="mdescRight">mouseReleaseEvent called when a mouse press is released Events not directly on top of the color wheel are ignored. <br /></td></tr>
 <tr class="separator:ac3242cf9c9777976823bdb334bb8c10b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a18f2c09e940d5a22b68179516cb40422"><td class="memItemLeft" align="right" valign="top"><a id="a18f2c09e940d5a22b68179516cb40422"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a18f2c09e940d5a22b68179516cb40422">showEvent</a> (QShowEvent *)</td></tr>
-<tr class="memdesc:a18f2c09e940d5a22b68179516cb40422"><td class="mdescLeft">&#160;</td><td class="mdescRight">showEvent used to turn on the throttle timer <br /></td></tr>
-<tr class="separator:a18f2c09e940d5a22b68179516cb40422"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4070d7983c06235a31537d556acc188"><td class="memItemLeft" align="right" valign="top"><a id="aa4070d7983c06235a31537d556acc188"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#aa4070d7983c06235a31537d556acc188">hideEvent</a> (QHideEvent *)</td></tr>
-<tr class="memdesc:aa4070d7983c06235a31537d556acc188"><td class="mdescLeft">&#160;</td><td class="mdescRight">hideEvent used to turn off the throttle timer <br /></td></tr>
-<tr class="separator:aa4070d7983c06235a31537d556acc188"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>There also exists a multi color picker, which allows removes the sliders in favor of one slider and two rows of buttons. This layout is good for modifying multiple colors at once. </p>
@@ -279,14 +271,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a id="a0cf3f52806325b1fedffdce7a570bd59"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0cf3f52806325b1fedffdce7a570bd59">&#9670;&nbsp;</a></span>enableWheel()</h2>
+<a id="a0b6572e6e85da663048aaf36f5033dc6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b6572e6e85da663048aaf36f5033dc6">&#9670;&nbsp;</a></span>enable()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void ColorPicker::enableWheel </td>
+          <td class="memname">void ColorPicker::enable </td>
           <td>(</td>
           <td class="paramtype">bool&#160;</td>
           <td class="paramname"><em>shouldEnable</em></td><td>)</td>

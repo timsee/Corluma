@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.14.0</span>
+   &#160;<span id="projectnumber">v0.15.0</span>
    </div>
   </td>
  </tr>
@@ -42,7 +42,6 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="class_comm_nanoleaf-members.html">List of all members</a> &#124;
-<a href="#signals">Signals</a> &#124;
 <a href="#pub-methods">Public Member Functions</a>  </div>
   <div class="headertitle">
 <div class="title">CommNanoleaf Class Reference</div>  </div>
@@ -56,18 +55,6 @@ $(function() {
 
 <p>Inherits <a class="el" href="class_comm_type.html">CommType</a>.</p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
-Signals</h2></td></tr>
-<tr class="memitem:a8d50594fcd12fe92914dbcc24efd1817"><td class="memItemLeft" align="right" valign="top"><a id="a8d50594fcd12fe92914dbcc24efd1817"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#a8d50594fcd12fe92914dbcc24efd1817">lightRenamed</a> (cor::Light, QString)</td></tr>
-<tr class="memdesc:a8d50594fcd12fe92914dbcc24efd1817"><td class="mdescLeft">&#160;</td><td class="mdescRight">a controller was renamed, which is represented by a cor::Light for compatibility with the GUI. <br /></td></tr>
-<tr class="separator:a8d50594fcd12fe92914dbcc24efd1817"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header signals_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('signals_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Signals inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
-<tr class="memitem:a6a99e8e95b8ce5ac36a605634b6a460f inherit signals_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a6a99e8e95b8ce5ac36a605634b6a460f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a6a99e8e95b8ce5ac36a605634b6a460f">updateReceived</a> (ECommType)</td></tr>
-<tr class="memdesc:a6a99e8e95b8ce5ac36a605634b6a460f inherit signals_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateReceived an update packet was received from any controller. <br /></td></tr>
-<tr class="separator:a6a99e8e95b8ce5ac36a605634b6a460f inherit signals_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a0fb073892ec615d6f7b553444f42064f"><td class="memItemLeft" align="right" valign="top"><a id="a0fb073892ec615d6f7b553444f42064f"></a>
@@ -107,6 +94,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#aa9dd319cd38f316e0262819996c9d498">connectUPnPDiscovery</a> (<a class="el" href="class_u_pn_p_discovery.html">UPnPDiscovery</a> *UPnP)</td></tr>
 <tr class="memdesc:aa9dd319cd38f316e0262819996c9d498"><td class="mdescLeft">&#160;</td><td class="mdescRight">connects UPnP object to the discovery object. <br /></td></tr>
 <tr class="separator:aa9dd319cd38f316e0262819996c9d498"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf4465c7628d2ccc9a65c6decb05900b"><td class="memItemLeft" align="right" valign="top"><a id="abf4465c7628d2ccc9a65c6decb05900b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#abf4465c7628d2ccc9a65c6decb05900b">deleteLight</a> (const cor::Light &amp;light)</td></tr>
+<tr class="memdesc:abf4465c7628d2ccc9a65c6decb05900b"><td class="mdescLeft">&#160;</td><td class="mdescRight">deletes the light from the save data and device table <br /></td></tr>
+<tr class="separator:abf4465c7628d2ccc9a65c6decb05900b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5161dbc4d693e77456a192cab60b9f92"><td class="memItemLeft" align="right" valign="top"><a id="a5161dbc4d693e77456a192cab60b9f92"></a>
 ENanoleafDiscoveryState&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#a5161dbc4d693e77456a192cab60b9f92">discoveryState</a> ()</td></tr>
 <tr class="memdesc:a5161dbc4d693e77456a192cab60b9f92"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the discovery state of the nanoleaf <br /></td></tr>
@@ -151,12 +142,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a98532b0747253db67e4b5f3d978ff0a2 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a98532b0747253db67e4b5f3d978ff0a2">removeController</a> (const QString &amp;name)</td></tr>
 <tr class="memdesc:a98532b0747253db67e4b5f3d978ff0a2 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeController attempts to remove the controller from the device table.  <a href="class_comm_type.html#a98532b0747253db67e4b5f3d978ff0a2">More...</a><br /></td></tr>
 <tr class="separator:a98532b0747253db67e4b5f3d978ff0a2 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a176d259ed5a483c41d9839fe191b34e1 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a176d259ed5a483c41d9839fe191b34e1">controllerDiscovered</a> (const std::list&lt; cor::Light &gt; &amp;lights)</td></tr>
-<tr class="memdesc:a176d259ed5a483c41d9839fe191b34e1 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">controllerDiscovered attemps to add a controller based off its name and list of lights  <a href="class_comm_type.html#a176d259ed5a483c41d9839fe191b34e1">More...</a><br /></td></tr>
-<tr class="separator:a176d259ed5a483c41d9839fe191b34e1 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41a7c990b8c8490414ae89a0b7f43f64 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a41a7c990b8c8490414ae89a0b7f43f64">updateDevice</a> (cor::Light device)</td></tr>
-<tr class="memdesc:a41a7c990b8c8490414ae89a0b7f43f64 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDevice update all the data in the light device that matches the same controller and index. if a light device doesn't exist with these properties, then it creates a new one.  <a href="class_comm_type.html#a41a7c990b8c8490414ae89a0b7f43f64">More...</a><br /></td></tr>
-<tr class="separator:a41a7c990b8c8490414ae89a0b7f43f64 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7238ee9df8464546e7afd4c21b203303 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a7238ee9df8464546e7afd4c21b203303">addLight</a> (const cor::Light &amp;light)</td></tr>
+<tr class="memdesc:a7238ee9df8464546e7afd4c21b203303 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">addLight adds lights with specific unique IDs that have been previously discovered. This allows us to show previously learned lights as "Not Reachable" when they cannot be erached.  <a href="class_comm_type.html#a7238ee9df8464546e7afd4c21b203303">More...</a><br /></td></tr>
+<tr class="separator:a7238ee9df8464546e7afd4c21b203303 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ec4272af4b32957d0b3e2bea9d2133f inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a8ec4272af4b32957d0b3e2bea9d2133f">updateLight</a> (cor::Light device)</td></tr>
+<tr class="memdesc:a8ec4272af4b32957d0b3e2bea9d2133f inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDevice update all the data in the light device that matches the same controller and index. if a light device doesn't exist with these properties, then it creates a new one.  <a href="class_comm_type.html#a8ec4272af4b32957d0b3e2bea9d2133f">More...</a><br /></td></tr>
+<tr class="separator:a8ec4272af4b32957d0b3e2bea9d2133f inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab9d8ebeecae39e95cd2d2647379cadec inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ab9d8ebeecae39e95cd2d2647379cadec">fillDevice</a> (cor::Light &amp;device)</td></tr>
 <tr class="memdesc:ab9d8ebeecae39e95cd2d2647379cadec inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">fillDevice takes the controller and index of the referenced cor::Light and overwrites all other values with the values stored in the device table.  <a href="class_comm_type.html#ab9d8ebeecae39e95cd2d2647379cadec">More...</a><br /></td></tr>
 <tr class="separator:ab9d8ebeecae39e95cd2d2647379cadec inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -169,6 +160,11 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header signals_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('signals_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Signals inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
+<tr class="memitem:a6a99e8e95b8ce5ac36a605634b6a460f inherit signals_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a6a99e8e95b8ce5ac36a605634b6a460f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a6a99e8e95b8ce5ac36a605634b6a460f">updateReceived</a> (ECommType)</td></tr>
+<tr class="memdesc:a6a99e8e95b8ce5ac36a605634b6a460f inherit signals_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateReceived an update packet was received from any controller. <br /></td></tr>
+<tr class="separator:a6a99e8e95b8ce5ac36a605634b6a460f inherit signals_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
 <tr class="memitem:a140fb846eeb4d24976e2a4f514f95f0f inherit pro_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a140fb846eeb4d24976e2a4f514f95f0f">shouldContinueStateUpdate</a> ()</td></tr>
 <tr class="memdesc:a140fb846eeb4d24976e2a4f514f95f0f inherit pro_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">shouldContinueStateUpdate checks internal states and determines if it should still keep requesting state updates from the devices.  <a href="class_comm_type.html#a140fb846eeb4d24976e2a4f514f95f0f">More...</a><br /></td></tr>
