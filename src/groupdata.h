@@ -64,7 +64,9 @@ public:
      * \param groupName the name of the new group.
      * \param devices the devices to save into the group.
      */
-    void saveNewMood(const QString& groupName, const std::list<cor::Light>& devices, const std::list<std::pair<std::uint64_t, cor::Light>>& defaultStates);
+    void saveNewMood(const QString& groupName,
+                     const std::list<cor::Light>& devices,
+                     const std::list<std::pair<std::uint64_t, cor::Light>>& defaultStates);
 
     /*!
      * \brief saveNewGroup save a new group of devices to JSON data, which then gets saved to file in AppData.
@@ -111,9 +113,6 @@ public:
      * \return true if successful, false otherwise.
      */
     bool removeAppData();
-
-    /// WARNING: This is not an intended feature, but is useful for API refactors.
-    void clearAndResaveAppDataDEBUG();
 
     /// generates unique key for a group or mood
     std::uint64_t generateNewUniqueKey();

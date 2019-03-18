@@ -64,7 +64,7 @@ signals:
      * \brief clickedEditButton sent whenever an edit button is clicked so that the main page can load
      *        the edit page.
      */
-    void clickedEditButton(std::uint64_t key, bool isMood);
+    void clickedEditButton(bool isMood);
 
     /// sent when a mood receives an update
     void moodUpdate(std::uint64_t moodID);

@@ -14,6 +14,7 @@ ListSimpleGroupWidget::ListSimpleGroupWidget(QWidget *parent, cor::EListType typ
 
 void ListSimpleGroupWidget::updateDevices(const std::list<cor::Light>& devices,
                                           uint32_t widgetHeight,
+                                          cor::EWidgetType listWidgetType,
                                           EOnOffSwitchState switchState,
                                           bool canHighlight,
                                           bool skipOff) {
@@ -24,7 +25,7 @@ void ListSimpleGroupWidget::updateDevices(const std::list<cor::Light>& devices,
             // check if device widget exists
             uint32_t x = 0;
             for (const auto& widget : widgets()) {
-                ListDeviceWidget *existingWidget = qobject_cast<ListDeviceWidget*>(widget);
+                ListLightWidget *existingWidget = qobject_cast<ListLightWidget*>(widget);
                 Q_ASSERT(existingWidget);
 
                 //----------------
@@ -42,9 +43,10 @@ void ListSimpleGroupWidget::updateDevices(const std::list<cor::Light>& devices,
             // Create Widget, if not found
             //----------------
             if (!foundDevice) {
-                ListDeviceWidget *widget = new ListDeviceWidget(inputDevice,
+                ListLightWidget *widget = new ListLightWidget(inputDevice,
                                                                 canHighlight,
                                                                 QSize(this->width(), widgetHeight),
+                                                                listWidgetType,
                                                                 switchState,
                                                                 mainWidget());
                 connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
@@ -61,7 +63,7 @@ void ListSimpleGroupWidget::removeWidgets() {
     // get all widget keys
     std::vector<QString> keyVector;
     for (const auto& widget : widgets()) {
-        ListDeviceWidget *existingWidget = qobject_cast<ListDeviceWidget*>(widget);
+        ListLightWidget *existingWidget = qobject_cast<ListLightWidget*>(widget);
         Q_ASSERT(existingWidget);
         keyVector.push_back(existingWidget->key());
     }
@@ -74,7 +76,7 @@ void ListSimpleGroupWidget::removeWidgets() {
 void ListSimpleGroupWidget::setCheckedDevices(const std::list<cor::Light>& devices) {
     int numOfDevices = 0;
     for (const auto& existingWidget : widgets()) {
-        ListDeviceWidget *widget = qobject_cast<ListDeviceWidget*>(existingWidget);
+        ListLightWidget *widget = qobject_cast<ListLightWidget*>(existingWidget);
         Q_ASSERT(widget);
 
         bool found = false;
@@ -97,7 +99,7 @@ void ListSimpleGroupWidget::setCheckedDevices(const std::list<cor::Light>& devic
 const std::list<cor::Light> ListSimpleGroupWidget::checkedDevices() {
     std::list<cor::Light> devices;
     for (auto&& widget : widgets()) {
-        ListDeviceWidget *existingWidget = qobject_cast<ListDeviceWidget*>(widget);
+        ListLightWidget *existingWidget = qobject_cast<ListLightWidget*>(widget);
         Q_ASSERT(existingWidget);
         if (existingWidget->checked()) {
             devices.push_back(existingWidget->device());

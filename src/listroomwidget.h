@@ -10,7 +10,7 @@
 #include "cor/group.h"
 #include "cor/listlayout.h"
 #include "groupbuttonswidget.h"
-#include "listdevicewidget.h"
+#include "listlightwidget.h"
 #include "dropdowntopwidget.h"
 #include "comm/commlayer.h"
 
@@ -38,8 +38,10 @@ public:
                    CommLayer* comm,
                    GroupData *groups,
                    QString key,
+                   EOnOffSwitchState switchState,
+                   cor::EListType listType,
+                   cor::EWidgetType type,
                    QWidget *parent);
-
 
     /*!
      * \brief setCheckedDevices takes a list of devices and compares it against all devices in the widget.
@@ -56,9 +58,6 @@ public:
      *        this widget gets removed and all other widgets get shifted.
      */
     void updateGroup(const cor::Group& group, bool removeIfNotFound);
-
-    /// the top widget of the group widget
-    DropdownTopWidget* dropDownTopWidget() { return mDropdownTopWidget; }
 
     /*!
      * \brief devices getter for all devices being displayed by the widget.
@@ -127,16 +126,14 @@ protected:
     void resizeEvent(QResizeEvent *);
 
     /*!
-     * \brief mouseReleaseEvent picks up when a click (or a tap on mobile) is released.
-     */
-    virtual void mouseReleaseEvent(QMouseEvent *);
-
-    /*!
      * \brief paintEvent paints the background of the widget
      */
     void paintEvent(QPaintEvent *event);
 
 private slots:
+
+    /// called when the dropdown top widget is pressed
+    void dropdownTopWidgetPressed();
 
     /// a group button was pressed. This switches the shown devices to be just the devices in that group
     void groupPressed(QString key);
@@ -155,11 +152,20 @@ private slots:
 
 private:
 
+    /// state of the switch
+    EOnOffSwitchState mSwitchState;
+
+    /// type of widget
+    cor::EWidgetType mType;
+
     /// comm data
     CommLayer *mComm;
 
     //// group data
     GroupData *mGroupData;
+
+    /// if theres subgroups, this stores the last subgroup name
+    QString mLastSubGroupName;
 
     /// resize the widget
     void resize();

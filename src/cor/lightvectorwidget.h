@@ -26,6 +26,7 @@ class LightVectorWidget: public QWidget
 public:
     /// Constructor
     explicit LightVectorWidget(int width, int height,
+                               bool fillFromLeft,
                                QWidget *parent);
     /*!
      * \brief updateDevices update the devices in the cor::Button to show the exact routine.
@@ -72,6 +73,9 @@ private slots:
     void toggleArrayColor(int);
 
 private:
+
+    /// true if widget should fill new entries from left, false if it should fill from right
+    bool mFillFromLeft;
 
     /// currently unused, but in place so that slider sizes match other layouts
     QLabel *mLabel;

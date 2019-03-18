@@ -95,6 +95,17 @@ DiscoveryPage::DiscoveryPage(QWidget *parent, cor::DeviceList *data, CommLayer *
     mType = EProtocolType::hue;
 }
 
+
+bool DiscoveryPage::isAnyDiscovered() {
+    for (int commInt = 0; commInt != int(EProtocolType::MAX); ++commInt) {
+        EProtocolType type = static_cast<EProtocolType>(commInt);
+        if (checkIfDiscovered(type)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void DiscoveryPage::renderUI() {
     bool isAnyConnected = false;
     for (int commInt = 0; commInt != int(EProtocolType::MAX); ++commInt) {
@@ -123,7 +134,6 @@ void DiscoveryPage::renderUI() {
         // remove the debug options from settings menu
         MainWindow *mainWindow = qobject_cast<MainWindow*>(this->parentWidget());
         Q_ASSERT(mainWindow);
-        mainWindow->settings()->removeDebug();
         mainWindow->anyDiscovered(true);
 
         if (mStartTime.elapsed() < 2750) {

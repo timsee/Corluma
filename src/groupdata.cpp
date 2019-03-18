@@ -110,10 +110,14 @@ QJsonObject lightToJsonObject(const cor::Light& light) {
 }
 
 
-void GroupData::saveNewMood(const QString& groupName, const std::list<cor::Light>& devices, const std::list<std::pair<std::uint64_t, cor::Light>>& defaultStates) {
+void GroupData::saveNewMood(const QString& groupName,
+                            const std::list<cor::Light>& devices,
+                            const std::list<std::pair<std::uint64_t, cor::Light>>& defaultStates) {
+    auto key = generateNewUniqueKey();
     QJsonObject groupObject;
     groupObject["name"] = groupName;
     groupObject["isMood"] = true;
+    groupObject["uniqueID"] = double(key);
 
     // create string of jsondata to add to file
     QJsonArray deviceArray;
@@ -130,7 +134,7 @@ void GroupData::saveNewMood(const QString& groupName, const std::list<cor::Light
         object["group"] = double(defaultState.first);
         defaultStateArray.append(object);
     }
-    groupObject["defaultStates"] = deviceArray;
+    groupObject["defaultStates"] = defaultStateArray;
 
     if(!mJsonData.isNull()) {
         if(mJsonData.isArray()) {
@@ -161,11 +165,13 @@ void GroupData::saveNewMood(const QString& groupName, const std::list<cor::Light
 
 
 void GroupData::saveNewGroup(const QString& groupName, const std::list<cor::Light>& devices, bool isRoom) {
+    auto key = generateNewUniqueKey();
     QJsonObject groupObject;
     groupObject["name"] = groupName;
     groupObject["isMood"] = false;
     groupObject["isRoom"] = isRoom;
 
+    groupObject["uniqueID"] = double(key);
     // create string of jsondata to add to file
     QJsonArray deviceArray;
     for (const auto& device : devices) {
@@ -188,7 +194,7 @@ void GroupData::saveNewGroup(const QString& groupName, const std::list<cor::Ligh
             array.push_front(groupObject);
             mJsonData.setArray(array);
 
-            cor::Group group(generateNewUniqueKey(), groupName);
+            cor::Group group(key, groupName);
             const auto& key = QString::number(group.uniqueID()).toStdString();
 
             std::list<QString> lightListID;
@@ -213,23 +219,6 @@ void GroupData::saveNewGroup(const QString& groupName, const std::list<cor::Ligh
         }
     }
 }
-
-void GroupData::clearAndResaveAppDataDEBUG() {
-    QJsonDocument newDocument;
-    newDocument.setArray(QJsonArray());
-    mJsonData = newDocument;
-    for (const auto& mood : mMoodDict.itemVector()) {
-        qDebug() << "Mood: " << mood.name();
-        saveNewMood(mood.name(), mood.lights, mood.defaults);
-    }
-
-    for (const auto& group : mGroupDict.itemVector()) {
-        qDebug() << "Group: " << group.name();
-          //TODO: no longer works without commlayer, move out of here if still needed
-//        saveNewGroup(group.name(), group.lights, group.isRoom);
-    }
-}
-
 
 void GroupData::updateExternallyStoredGroups(const std::list<cor::Group>& externalGroups) {
     // fill in subgroups for each room
@@ -711,6 +700,12 @@ std::uint64_t GroupData::generateNewUniqueKey() {
     for (const auto& mood : mMoodDict.itemVector()) {
         if (mood.uniqueID() > maxKey) {
             maxKey = mood.uniqueID();
+        }
+    }
+    for (const auto& group : mGroupDict.itemVector()) {
+        if (group.uniqueID() > maxKey
+                && (group.uniqueID() < std::numeric_limits<unsigned long>::max() / 2)) {
+            maxKey = group.uniqueID();
         }
     }
     return maxKey + 1;

@@ -121,7 +121,7 @@ void ColorPicker::multiColorCountChanged(int count) {
 }
 
 void ColorPicker::selectedCountChanged(int count) {
-    enableWheel(bool(count));
+    enable(bool(count));
 }
 
 void ColorPicker::changeLayout(ELayoutColorPicker layout,  bool skipAnimation) {
@@ -174,19 +174,56 @@ void ColorPicker::setMultiColorDefaults(const std::vector<QColor>& colors) {
     mCustomColorPicker->updateMultiColor(colors);
 }
 
-void ColorPicker::enableWheel(bool shouldEnable) {
+void ColorPicker::updateBottomMenuState(bool enable) {
+    if (mCurrentLayoutColorPicker == ELayoutColorPicker::standardLayout) {
+        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mRGBSliders);
+        effect->setOpacity(mWheelOpacity);
+        mRGBSliders->setGraphicsEffect(effect);
+        mRGBSliders->setEnabled(enable);
+    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::ambientLayout) {
+        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mTempBrightSliders);
+        effect->setOpacity(mWheelOpacity);
+        mTempBrightSliders->setGraphicsEffect(effect);
+        mTempBrightSliders->setEnabled(enable);
+    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::brightnessLayout) {
+        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mBrightnessSlider);
+        effect->setOpacity(mWheelOpacity);
+        mBrightnessSlider->setGraphicsEffect(effect);
+        mBrightnessSlider->setEnabled(enable);
+    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::multiColorLayout) {
+        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mCustomColorPicker);
+        effect->setOpacity(mWheelOpacity);
+        mCustomColorPicker->setGraphicsEffect(effect);
+        mCustomColorPicker->setEnabled(enable);
+    } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::colorSchemeLayout) {
+        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mColorSchemeGrid);
+        effect->setOpacity(mWheelOpacity);
+        mColorSchemeGrid->setGraphicsEffect(effect);
+        QGraphicsOpacityEffect *effect2 = new QGraphicsOpacityEffect(mColorSchemeCircles);
+        effect2->setOpacity(mWheelOpacity);
+        mColorSchemeGrid->setGraphicsEffect(effect2);
+        mColorSchemeGrid->setEnabled(enable);
+        mColorSchemeCircles->setEnabled(enable);
+    }
+}
+
+void ColorPicker::enable(bool shouldEnable) {
     if (shouldEnable) {
         mWheelOpacity = 1.0;
         // un-fade out the wheel
         QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mColorWheel);
         effect->setOpacity(mWheelOpacity);
         mColorWheel->setGraphicsEffect(effect);
+        this->setEnabled(true);
+        updateBottomMenuState(true);
     } else if (!shouldEnable) {
         mWheelOpacity = 0.333;
         // fade out the wheel
         QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mColorWheel);
         effect->setOpacity(mWheelOpacity);
         mColorWheel->setGraphicsEffect(effect);
+        this->setEnabled(false);
+        updateBottomMenuState(false);
     }
     mWheelIsEnabled = shouldEnable;
 }
@@ -225,13 +262,6 @@ void ColorPicker::chooseBrightness(uint32_t brightness, bool shouldSignal) {
 // Slots
 // ----------------------------
 
-void ColorPicker::showEvent(QShowEvent *event) {
-    Q_UNUSED(event);
-}
-
-void ColorPicker::hideEvent(QHideEvent *event) {
-    Q_UNUSED(event);
-}
 
 void ColorPicker::hideTempWheel() {
     mTempWheel->setVisible(false);
@@ -480,15 +510,6 @@ void ColorPicker::changeColorWheel(ELayoutColorPicker oldLayout, ELayoutColorPic
 
         }
     } else {
-        bool shouldEnable = true;
-        if (mCustomColorPicker->palette()->selectedCount() == 0
-                && (newLayout == ELayoutColorPicker::multiColorLayout)) {
-            shouldEnable = false;
-        }
-        if (newLayout == ELayoutColorPicker::multiColorLayout) {
-            shouldEnable = false;
-        }
-        enableWheel(shouldEnable);
         mTempWheel->setVisible(false);
     }
 

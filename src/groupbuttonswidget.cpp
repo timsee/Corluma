@@ -3,12 +3,18 @@
 #include <QDebug>
 
 GroupButtonsWidget::GroupButtonsWidget(QWidget *parent,
+                                       cor::EWidgetType type,
                                        const QString& roomName,
-                                       const std::vector<QString>& groups) : QWidget(parent), mRoomName(roomName)
+                                       const std::vector<QString>& groups) : QWidget(parent), mType{type}, mRoomName(roomName)
 {
 
     mLayout = new QGridLayout(this);
-    mGroupCount = 3;
+
+    if (mType == cor::EWidgetType::condensed) {
+        mGroupCount = 1;
+    } else {
+        mGroupCount = 3;
+    }
 
     cor::GroupButton *groupButton = new cor::GroupButton(this, "All");
     groupButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);

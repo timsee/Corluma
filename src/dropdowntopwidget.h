@@ -6,6 +6,8 @@
 #include <QPushButton>
 #include <QLayout>
 
+#include "cor/protocols.h"
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2019.
@@ -22,7 +24,7 @@ class DropdownTopWidget : public QWidget
 public:
 
     /// constuctor
-    explicit DropdownTopWidget(const QString& key, bool hideEdit, QWidget *parent);
+    explicit DropdownTopWidget(const QString& key, cor::EWidgetType type, bool hideEdit, QWidget *parent);
 
     /*!
      * \brief showButtons getter that checks if buttons are showing
@@ -46,6 +48,9 @@ signals:
      */
     void buttonsShown(QString, bool);
 
+    /// emits when the widget is pressed
+    void pressed();
+
 private slots:
 
     /*!
@@ -53,7 +58,17 @@ private slots:
     */
    void editButtonClicked(bool) { emit editClicked(mKey);  }
 
+protected:
+
+   /*!
+    * \brief mouseReleaseEvent picks up when a click (or a tap on mobile) is released.
+    */
+   virtual void mouseReleaseEvent(QMouseEvent *);
+
 private:
+
+    /// the type of dropdowntopwidget
+    cor::EWidgetType mType;
 
     /*!
      * \brief mLayout layout for the widget

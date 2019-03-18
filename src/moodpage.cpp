@@ -161,7 +161,8 @@ ListMoodGroupWidget* MoodPage::initMoodsCollectionWidget(const QString& name,
 }
 
 void MoodPage::editGroupClicked(std::uint64_t key) {
-    emit clickedEditButton(key, true);
+    //TODO
+    emit clickedEditButton(true);
 }
 
 
@@ -173,7 +174,8 @@ void MoodPage::selectedMood(QString, std::uint64_t moodKey) {
 
 void MoodPage::editMoodClicked(QString collectionKey, std::uint64_t moodKey) {
     Q_UNUSED(collectionKey);
-    emit clickedEditButton(moodKey, true);
+    ///TODO
+    emit clickedEditButton(true);
 }
 
 void MoodPage::moodClicked(QString collectionKey, std::uint64_t moodKey) {

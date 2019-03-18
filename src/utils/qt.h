@@ -15,6 +15,7 @@
 #include <QApplication>
 #include <QScreen>
 #include <QPropertyAnimation>
+#include <QMouseEvent>
 
 #define TRANSITION_TIME_MSEC 150
 
@@ -70,13 +71,31 @@ inline void moveWidget(QWidget* widget,
     animation->start();
 }
 
+/*!
+ * \brief isMouseEventTouchUpInside stealing terminology from iOS, a "touch up inside" is when a touch
+ *        is released while still within the bounds of the widget. this is meant to be ran from mouseRelaseEvent
+ *        functions to check if we can qualify this touch as a touch up inside
+ * \param mouseEvent the mouse event from a mouseRelaseEvent
+ * \param widget the widget that created the mouseReleaseEvent
+ * \return true if the touch is within the bounds of the widget, false otherwise
+ */
+inline bool isMouseEventTouchUpInside(QMouseEvent *mouseEvent, QWidget *widget) {
+    const auto& mousePos = mouseEvent->pos();
+    const auto& widgetSize = widget->size();
+    if (mousePos.x() < widgetSize.width() && mousePos.x() > 0
+            && mousePos.y() < widgetSize.height() && mousePos.y() > 0) {
+        return true;
+    }  else {
+        return false;
+    }
+}
 
 /*!
  * \brief resizeIcon resize an icon in a QPushButton based off of the size of the icon.
  * \param button button whose icon is going to get resized
  * \param iconPath path to the icon resource.
  * \param sizeRatio determines the ratio between icon size and button size. If none is provided,
- *        the icon takes up 80% of the button.
+ *        the icon takes up 66% of the button.
  */
 inline void resizeIcon(QPushButton *button, QString iconPath, float sizeRatio = 0.66f) {
     QPixmap pixmap(iconPath);
@@ -88,6 +107,40 @@ inline void resizeIcon(QPushButton *button, QString iconPath, float sizeRatio = 
                                         Qt::IgnoreAspectRatio,
                                         Qt::SmoothTransformation)));
 }
+
+/*!
+ * \brief resizeIcon resize an icon in a QWidget based off of the size of the icon.
+ * \param widget widget whose icon is going to get resized
+ * \param iconPath path to the icon resource.
+ * \param sizeRatio determines the ratio between icon size and button size. If none is provided,
+ *        the icon takes up 100% of the widget.
+ */
+inline void resizeIcon(QLabel *widget, QString iconPath, float sizeRatio = 1.0f) {
+    QPixmap pixmap(iconPath);
+    int min = std::min(widget->width(), widget->height());
+    int finalSize = int(min * sizeRatio);
+    widget->setPixmap(pixmap.scaled(finalSize,
+                                    finalSize,
+                                    Qt::KeepAspectRatio,
+                                    Qt::SmoothTransformation));
+}
+
+/*!
+ * \brief resizeIcon resize an icon in a QLabe; based off of the size of the icon.
+ * \param label widget whose icon is going to get resized
+ * \param iconPath path to the icon resource.
+ * \param sizeRatio determines the ratio between icon size and button size. If none is provided,
+ *        the icon takes up 100% of the widget.
+ */
+inline void resizeIcon(QLabel *label, QPixmap pixmap, float sizeRatio = 1.0f) {
+    int min = std::min(label->width(), label->height());
+    int finalSize = int(min * sizeRatio);
+    label->setPixmap(pixmap.scaled(finalSize,
+                                   finalSize,
+                                   Qt::KeepAspectRatio,
+                                   Qt::FastTransformation));
+}
+
 
 /*!
  * \brief applicationSize this returns the size of the MainWindow, in a pretty ugly but effective

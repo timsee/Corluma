@@ -7,9 +7,11 @@
 #include "dropdowntopwidget.h"
 #include "utils/qt.h"
 #include <QDebug>
+#include <QMouseEvent>
 
-DropdownTopWidget::DropdownTopWidget(const QString& key, bool hideEdit, QWidget *parent) : QWidget(parent), mKey(key)
+DropdownTopWidget::DropdownTopWidget(const QString& key, cor::EWidgetType type, bool hideEdit, QWidget *parent) : QWidget(parent), mKey(key)
 {
+    mType = type;
     mShowButtons = false;
     mHideEdit = hideEdit;
 
@@ -19,9 +21,14 @@ DropdownTopWidget::DropdownTopWidget(const QString& key, bool hideEdit, QWidget 
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     mName->setStyleSheet("margin-left: 5px; font: bold;");
 
-    mMinimumHeight = std::max(mName->height() * 2, cor::applicationSize().height() / 10);
+    if (mType == cor::EWidgetType::condensed) {
+        mMinimumHeight = std::max(int(mName->height() * 1.25), cor::applicationSize().height() / 20);
+        mIconRatio = 0.25f;
+    } else {
+        mMinimumHeight = std::max(mName->height() * 2, cor::applicationSize().height() / 10);
+        mIconRatio = 0.5f;
+    }
     this->setFixedHeight(mMinimumHeight);
-    mIconRatio = 0.5f;
 
     mEditButton = new QPushButton(this);
     mEditButton->setStyleSheet("border: none;");
@@ -60,6 +67,13 @@ DropdownTopWidget::DropdownTopWidget(const QString& key, bool hideEdit, QWidget 
     mLayout->setStretch(0, 12);
     mLayout->setStretch(2, 2);
     mLayout->setStretch(3, 2);
+}
+
+void DropdownTopWidget::mouseReleaseEvent(QMouseEvent *event) {
+    if (cor::isMouseEventTouchUpInside(event, this)) {
+        emit pressed();
+    }
+    event->ignore();
 }
 
 

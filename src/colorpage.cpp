@@ -59,10 +59,6 @@ ColorPage::ColorPage(QWidget *parent) :
 }
 
 
-ColorPage::~ColorPage() {
-}
-
-
 void ColorPage::changePageType(EColorPageType page, bool skipAnimation) {
     mPageType = page;
 
@@ -186,8 +182,6 @@ void ColorPage::colorChanged(QColor color) {
     if (mBottomMenuState == EBottomMenuShow::showSingleRoutines) {
         mSingleRoutineWidget->singleRoutineColorChanged(color);
     }
-
-    emit updateMainIcons();
 }
 
 void ColorPage::customColorCountChanged(int count) {
@@ -198,8 +192,6 @@ void ColorPage::customColorCountChanged(int count) {
                                     mPalette.colors());
 
     mMultiRoutineWidget->multiRoutineColorsChanged(mColorPicker->colors());
-
-    emit updateMainIcons();
 }
 
 void ColorPage::multiColorChanged() {
@@ -215,8 +207,6 @@ void ColorPage::multiColorChanged() {
 
     emit routineUpdate(routineObject);
     mMultiRoutineWidget->multiRoutineColorsChanged(mColorPicker->colors());
-
-    emit updateMainIcons();
 }
 
 void ColorPage::ambientUpdateReceived(int newAmbientValue, uint32_t newBrightness) {
@@ -234,12 +224,10 @@ void ColorPage::ambientUpdateReceived(int newAmbientValue, uint32_t newBrightnes
         mSingleRoutineWidget->singleRoutineColorChanged(color);
     }
     emit brightnessChanged(newBrightness);
-    emit updateMainIcons();
 }
 
 void ColorPage::colorsChanged(std::vector<QColor> colors) {
     emit schemeUpdate(colors);
-    emit updateMainIcons();
 }
 
 void ColorPage::updateColor(QColor color) {
@@ -248,21 +236,25 @@ void ColorPage::updateColor(QColor color) {
         schemeColor = color;
     }
 }
-
 // ----------------------------
 // Protected
 // ----------------------------
 
 
-void ColorPage::show(QColor color, uint32_t brightness, std::vector<QColor> colorScheme, Palette palette) {
-    mColor = color;
-    mBrightness = brightness;
-    mColorScheme = colorScheme;
-    mPalette = palette;
-    mColorPicker->updateColorStates(mColor,
-                                    mBrightness,
-                                    mColorScheme,
-                                    mPalette.colors());
+void ColorPage::show(QColor color, uint32_t brightness, std::vector<QColor> colorScheme, Palette palette, uint32_t lightCount) {
+    if (lightCount == 0) {
+        mColorPicker->enable(false);
+    } else {
+        mColor = color;
+        mBrightness = brightness;
+        mColorScheme = colorScheme;
+        mPalette = palette;
+        mColorPicker->updateColorStates(mColor,
+                                        mBrightness,
+                                        mColorScheme,
+                                        mPalette.colors());
+        mColorPicker->enable(true);
+    }
 }
 
 void ColorPage::resizeEvent(QResizeEvent *) {

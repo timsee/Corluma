@@ -779,6 +779,13 @@ inline EProtocolType convertCommTypeToProtocolType(ECommType type) {
     }
 }
 
+
+/// type of widget in cases where there are both condensed and full widgets
+enum class EWidgetType {
+    condensed,
+    full
+};
+
 /// helper for getting the value of the last single color routine.
 const ERoutine ERoutineSingleColorEnd = ERoutine::singleSawtoothFade;
 

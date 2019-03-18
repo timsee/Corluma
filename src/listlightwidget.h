@@ -13,12 +13,12 @@
 #include "cor/listitemwidget.h"
 
 
+/// state of the on off switch
 enum class EOnOffSwitchState {
     standard,
     locked,
     hidden
 };
-
 
 /*!
  * \copyright
@@ -26,26 +26,27 @@ enum class EOnOffSwitchState {
  * Released under the GNU General Public License.
  *
  *
- * \brief The ListDeviceWidget class This widget is used on the SettingsPage as a replacement
+ * \brief The ListLightWidget class This widget is used on the SettingsPage as a replacement
  *        for a QListWidget on the connectionList. It shows more information than a standard
  *        QListWidget, by giving an icon that represents the lights states, the name of of the
  *        controller, and the index of the light.
  */
-class ListDeviceWidget : public cor::ListItemWidget
+class ListLightWidget : public cor::ListItemWidget
 {
     Q_OBJECT
 public:
 
     /*!
-     * \brief ListDeviceWidget Constructor for multi color routines.
+     * \brief ListLightWidget Constructo
      * \param device device for the widget
      * \param setHighlightable if true, the widget highlights itself, if false,
      *        it does not highlight.
      * \param parent parent widget
      */
-    explicit ListDeviceWidget(const cor::Light& device,
+    explicit ListLightWidget(const cor::Light& device,
                               bool setHighlightable,
                               QSize size,
+                              cor::EWidgetType type,
                               EOnOffSwitchState switchState,
                               QWidget *parent);
 
@@ -135,6 +136,9 @@ private:
 
     /// pixmap used by main icon
     QPixmap mIconPixmap;
+
+    /// type of ListLightWidget
+    cor::EWidgetType mType;
 
     /// state of on off switch
     EOnOffSwitchState mSwitchState;

@@ -68,5 +68,6 @@
         <file>images/no_wifi.png</file>
         <file>images/disabledX.png</file>
         <file>images/uncheckedBox.png</file>
+        <file>images/hamburger_icon.png</file>
     </qresource>
 </RCC>

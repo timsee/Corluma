@@ -452,6 +452,12 @@ ___
 * Fixed bugs related to deleting nanoleafs and arducor lights. 
 * Fixed miscellaneous bugs.
 
-
+### **v0.15.0**
+#### The Landscape Update
+* Added a `LeftHandMenu`.
+* Refactored support for landscape.
+* Reorganized the `TopMenu` and `SettingsPage` to better support a `LeftHandMenu`.
+* Fixed a crash when wifi is off. 
+* Fixed miscellaneous bugs.
 
 

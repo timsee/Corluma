@@ -56,11 +56,6 @@ public:
     explicit ColorPage(QWidget *parent);
 
     /*!
-     * \brief Deconstructor
-     */
-    ~ColorPage();
-
-    /*!
      * \brief changePageType change the hue page type to display a different color picker.
      * \param page the new page type for the hue page.
      * \param skipAnimation if true, skips animation
@@ -84,14 +79,10 @@ public:
     void show(QColor color,
               uint32_t brightness,
               std::vector<QColor> colorScheme,
-              Palette palette);
+              Palette palette,
+              uint32_t lightCount);
 
 signals:
-    /*!
-     * \brief Used to signal back to the main page that it should update its top-left icon
-     *        with new RGB values
-     */
-    void updateMainIcons();
 
     /*!
      * \brief brightnessChanged signaled whenever the brightness is changed from any color wheel type that supports it.
@@ -123,7 +114,6 @@ protected:
      * \brief resizeEvent called every time the main window is resized.
      */
     void resizeEvent(QResizeEvent *);
-
 
 private slots:
 

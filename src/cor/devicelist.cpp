@@ -279,9 +279,6 @@ bool DeviceList::removeDevice(cor::Light device){
     for (const auto& light : mDevices) {
         if (device.uniqueID() == light.uniqueID()) {
             mDevices.remove(light);
-            if (mDevices.size() == 0) {
-                emit devicesEmpty();
-            }
             return true;
         }
     }

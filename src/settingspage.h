@@ -60,27 +60,13 @@ public:
     /// returns pointer to global widget
     GlobalSettingsWidget *globalWidget() { return mGlobalWidget; }
 
-    /// remove debug options from settings page
-    void removeDebug();
-
 signals:
-    /*!
-     * \brief Used to signal back to the main page that it should update its top-left icon
-     *        with new RGB values
-     */
-    void updateMainIcons();
 
     /*!
      * \brief settingsPageIsStandard signaled when top menu is pressed. True if settings page should
      *        show standard settings, false if showing hue-specific settings.
      */
     void settingsPageIsStandard(bool);
-
-    /*!
-     * \brief debugPressed emited when debug button is pressed. Feeds fake communication data into the app
-     *        to act as if some devices are connected.
-     */
-    void debugPressed();
 
     /*!
      * \brief closePressed emitted when close button in top left is pressed.
@@ -91,11 +77,6 @@ signals:
      * \brief clickedInfoWidget emits when hue info widget is clicked
      */
     void clickedInfoWidget();
-
-    /*!
-     * \brief clickedDiscovery emits when discovery button is clicked
-     */
-    void clickedDiscovery();
 
 private slots:
     /*!

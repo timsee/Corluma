@@ -12,6 +12,7 @@
 #include <QPainter>
 #include <QStyleOption>
 #include <QGraphicsScene>
+#include <QMouseEvent>
 
 namespace cor
 {
@@ -40,7 +41,7 @@ GroupButton::GroupButton(QWidget *parent, const QString& text) : QWidget(parent)
     int prefferedWidth = std::max(int(applicationSize.height() / 20.0f), int(mButton->size().height() * 0.9f));
     mButton->setIconSize(QSize(prefferedWidth, prefferedWidth));
     mButton->setFixedSize(QSize(prefferedWidth, prefferedWidth));
-    mButton->setIcon(QIcon(mSelectAllPixmap));
+    mButton->setIcon(QIcon(mClearAllPixmap));
     connect(mButton, SIGNAL(clicked(bool)), this, SLOT(buttonPressed(bool)));
 
     mLayout = new QHBoxLayout;
@@ -135,8 +136,11 @@ void GroupButton::paintEvent(QPaintEvent *event) {
 }
 
 
-void GroupButton::mouseReleaseEvent(QMouseEvent *) {
-    emit groupButtonPressed(mTitle->text());
+void GroupButton::mouseReleaseEvent(QMouseEvent *event) {
+    if (cor::isMouseEventTouchUpInside(event, this)) {
+        emit groupButtonPressed(mTitle->text());
+    }
+    event->ignore();
 }
 
 }

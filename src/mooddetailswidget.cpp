@@ -80,6 +80,7 @@ void MoodDetailsWidget::display(const cor::Mood& mood, const QSize& size) {
         yPos += boxSize;
         mRoomDefaults->updateDevices(roomStates,
                                      mRoomDefaults->height(),
+                                     cor::EWidgetType::full,
                                      EOnOffSwitchState::hidden,
                                      false,
                                      false);
@@ -102,6 +103,7 @@ void MoodDetailsWidget::display(const cor::Mood& mood, const QSize& size) {
         yPos += boxSize;
         mGroupDefaults->updateDevices(groupStates,
                                       mGroupDefaults->height(),
+                                      cor::EWidgetType::full,
                                       EOnOffSwitchState::hidden,
                                       false,
                                       false);

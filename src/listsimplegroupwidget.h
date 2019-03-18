@@ -8,13 +8,12 @@
 #include <QLabel>
 #include <QPushButton>
 
-#include "listdevicewidget.h"
+#include "listlightwidget.h"
 
 #include "cor/devicelist.h"
 #include "cor/listwidget.h"
 #include "cor/dictionary.h"
 #include "comm/commlayer.h"
-
 
 
 /*!
@@ -52,6 +51,7 @@ public:
      */
     void updateDevices(const std::list<cor::Light>& devices,
                        uint32_t widgetHeight,
+                       cor::EWidgetType listWidgetType,
                        EOnOffSwitchState switchState,
                        bool canHighlight,
                        bool skipOff);

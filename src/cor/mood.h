@@ -21,7 +21,7 @@ class Mood
 
 public:
 
-    // Default Constructor
+    /// Default Constructor
     Mood() : mName{"Error"}, mUniqueID(0u) {}
 
     /// constructor

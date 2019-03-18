@@ -33,7 +33,7 @@ ListMoodPreviewWidget::ListMoodPreviewWidget(const cor::Mood& mood,
 
     mName->setStyleSheet(backgroundStyleSheet);
 
-    mPalette = new  cor::LightVectorWidget(4, 2, this);
+    mPalette = new  cor::LightVectorWidget(4, 2, true, this);
     mPalette->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mPalette->enableButtonInteraction(false);
     mPalette->updateDevices(mMood.lights);

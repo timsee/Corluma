@@ -8,7 +8,7 @@
 
 #include "cor/light.h"
 #include "cor/page.h"
-#include "listdevicewidget.h"
+#include "listlightwidget.h"
 #include "comm/commlayer.h"
 #include "cor/devicelist.h"
 #include "listroomwidget.h"
@@ -52,12 +52,6 @@ public:
 
 signals:
     /*!
-     * \brief Used to signal back to the main page that it should update its top-left icon
-     *        with new RGB values
-     */
-    void updateMainIcons();
-
-    /*!
      * \brief changedDeviceCount signaled to UI assets whenever a click on the page results in changing
      *        the number of devices connected.
      */
@@ -67,7 +61,7 @@ signals:
      * \brief clickedEditButton sent whenever an edit button is clicked so that the main page can load
      *        the edit page.
      */
-    void clickedEditButton(QString key, bool isMood);
+    void clickedEditButton(bool isMood);
 
 private slots:
 
@@ -158,13 +152,12 @@ private:
     cor::ListWidget *mRoomsWidget;
 
     /*!
-     * \brief initDevicesCollectionWidget constructor helper for making a DeviceCollectionsWidget
+     * \brief initRoomsWidget constructor helper for making a ListRoomWidget
      * \param group group of lights for collection
      * \param key key for collection
-     * \param hideEdit true for special case groups (Available and Not Reachable), false otherwise
      * \return pointer to the newly created ListDevicesGroupWidget
      */
-    ListRoomWidget* initDevicesCollectionWidget(cor::Group group, const QString& key);
+    ListRoomWidget* initRoomsWidget(cor::Group group, const QString& key);
 
     /// gathers all light groups, as displayed in the UI
     std::list<cor::Group> gatherAllUIGroups();

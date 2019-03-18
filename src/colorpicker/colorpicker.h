@@ -114,11 +114,11 @@ public:
     void changeLayout(ELayoutColorPicker layout, bool skipAnimation = false);
 
     /*!
-     * \brief enableWheel enables/disables the color wheel. If the color wheel is disabled, its faded out and mouse events
+     * \brief enable enables/disables the color picker. If the picker wheel is disabled, its faded out and mouse events
      *        don't work. If its enabled, its not faded out and um, mouse events do work.
      * \param shouldEnable true to enable wheel, false otherwise.
      */
-    void enableWheel(bool shouldEnable);
+    void enable(bool shouldEnable);
 
     //------------------------------
     // Layout-Specific API
@@ -217,17 +217,6 @@ protected:
      */
     virtual void mouseReleaseEvent(QMouseEvent *);
 
-    /*!
-     * \brief showEvent used to turn on the throttle timer
-     */
-    void showEvent(QShowEvent *);
-
-    /*!
-     * \brief hideEvent used to turn off the throttle timer
-     */
-    void hideEvent(QHideEvent *);
-
-
 private slots:
 
     /*!
@@ -235,6 +224,8 @@ private slots:
      */
     void hideTempWheel();
 
+    /// updates whether or not the bottom menu should be enabled
+    void updateBottomMenuState(bool enable);
 
     /*!
      * \brief RGBSlidersColorChanged the color changed from the RGBSliders

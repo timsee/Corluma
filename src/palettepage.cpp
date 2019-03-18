@@ -178,13 +178,20 @@ void PalettePage::resizeEvent(QResizeEvent *) {
 }
 
 
-void PalettePage::show(QColor color, bool hasArduinoDevices, bool hasNanoleafDevices) {
-    if (mMode == EGroupMode::huePresets && (hasArduinoDevices || hasNanoleafDevices)) {
-        setMode(EGroupMode::arduinoPresets);
-    } else if (mMode == EGroupMode::arduinoPresets && !(hasArduinoDevices|| hasNanoleafDevices)) {
+void PalettePage::show(QColor color, std::uint32_t lightCount, bool hasArduinoDevices, bool hasNanoleafDevices) {
+    if (lightCount == 0) {
         setMode(EGroupMode::huePresets);
+        mScrollAreaHue->setEnabled(false);
+        mSpeedSlider->enable(false);
+    } else {
+        if (mMode == EGroupMode::huePresets && (hasArduinoDevices || hasNanoleafDevices)) {
+            setMode(EGroupMode::arduinoPresets);
+        } else if (mMode == EGroupMode::arduinoPresets && !(hasArduinoDevices|| hasNanoleafDevices)) {
+            setMode(EGroupMode::huePresets);
+        }
+        mSpeedSlider->setSliderColorBackground(color);
+        mSpeedSlider->enable(true);
     }
-    mSpeedSlider->setSliderColorBackground(color);
 }
 
 void PalettePage::resize() {

@@ -6,7 +6,7 @@
 
 #include "settingspage.h"
 #include "comm/commhue.h"
-#include "listdevicewidget.h"
+#include "listlightwidget.h"
 #include "mainwindow.h"
 #include "utils/qt.h"
 
@@ -72,26 +72,21 @@ SettingsPage::SettingsPage(QWidget *parent, GroupData *parser, AppSettings *appS
     //------------
 
     mSectionTitles = { "Data",
-                       "About",
-                       "Debug"};
+                       "About"};
 
-    mTitles = { "Discover Controllers",
-                "Light Info",
+    mTitles = { "Light Info",
                 "Save",
                 "Load",
                 "Reset",
                 "Copyright",
-                "FAQ",
-                "Mock Connection"};
+                "FAQ"};
 
-    mDescriptions = { "Discover a Philips Bridge or Arduino controllers.",
-                      "Read and manage the hardware information.",
+    mDescriptions = { "Read and manage the hardware information.",
                       "Save light moods and collections to JSON.",
                       "Erase old moods and collections, load new data from JSON.",
                       "Resets all app data and all app settings.",
                       "",
-                      "",
-                      "Mock a device state update packet to get past the start screen."};
+                      ""};
 
     mButtons = std::vector<SettingsButton*>(mTitles.size());
     mSectionLabels = std::vector<QLabel*>(mSectionTitles.size());
@@ -196,7 +191,6 @@ void SettingsPage::loadButtonClicked() {
 }
 
 void SettingsPage::saveButtonClicked() {
-   // mGroups->clearAndResaveAppDataDEBUG();
     QString fileName = QFileDialog::getSaveFileName(this,
           tr("Save Group Data"), "CorlumaGroups.json",
           tr("JSON (*.json)"));
@@ -232,30 +226,6 @@ void SettingsPage::resetToDefaults() {
     mGroups->loadExternalData("");
 }
 
-void SettingsPage::removeDebug() {
-    if (mShowingDebug) {
-        mShowingDebug = false;
-        // parse section labels for debug and remove it from layout
-        for (uint32_t x = 0; x < mSectionLabels.size(); ++x) {
-            if (mSectionLabels[x]->text().compare("Debug") == 0) {
-                mScrollLayout->removeWidget(mSectionLabels[x]);
-                mSectionLabels[x]->setVisible(false);
-            }
-        }
-
-        // parse section labels for debug and remove it from layout
-        for (uint32_t x = 0; x < mButtons.size(); ++x) {
-            if (mButtons[x]->text().compare("Mock Connection") == 0) {
-                mScrollLayout->removeWidget(mButtons[x]);
-                mButtons[x]->setVisible(false);
-            }
-        }
-
-        // adjust the size to new missing content
-        adjustSize();
-    }
-}
-
 void SettingsPage::paintEvent(QPaintEvent *) {
     QStyleOption opt;
     opt.init(this);
@@ -267,16 +237,12 @@ void SettingsPage::paintEvent(QPaintEvent *) {
 
 void SettingsPage::settingsButtonPressed(QString title) {
    // qDebug() << "settings button pressed: " << title;
-    if (title.compare("Debug") == 0) {
-        emit debugPressed();
-    } else if (title.compare("Reset") == 0) {
+    if (title.compare("Reset") == 0) {
         resetButtonClicked();
     } else if (title.compare("Load") == 0) {
         loadButtonClicked();
     } else if (title.compare("Save") == 0) {
         saveButtonClicked();
-    } else if (title.compare("Discover Controllers") == 0) {
-        emit clickedDiscovery();
     } else if (title.compare("Light Info") == 0) {
         emit clickedInfoWidget();
     } else if (title.compare("Copyright") == 0) {

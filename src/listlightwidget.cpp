@@ -9,16 +9,19 @@
 #include <QStyleOption>
 #include <QGraphicsScene>
 
-#include "listdevicewidget.h"
+#include "listlightwidget.h"
+#include "utils/qt.h"
 
 #include <algorithm>
+#include <QMouseEvent>
 
-ListDeviceWidget::ListDeviceWidget(const cor::Light& device,
+ListLightWidget::ListLightWidget(const cor::Light& device,
                                    bool setHighlightable,
                                    QSize size,
+                                   cor::EWidgetType type,
                                    EOnOffSwitchState switchState,
                                    QWidget *parent) : cor::ListItemWidget(device.uniqueID(),
-                                                                          parent), mSwitchState{switchState} {
+                                                                          parent), mType{type}, mSwitchState{switchState} {
 
     this->setFixedSize(size);
 
@@ -37,8 +40,7 @@ ListDeviceWidget::ListDeviceWidget(const cor::Light& device,
 }
 
 
-void ListDeviceWidget::init(const cor::Light& device) {
-
+void ListLightWidget::init(const cor::Light& device) {
     // setup icon
     mIconData = IconData(4, 4);
 
@@ -60,12 +62,17 @@ void ListDeviceWidget::init(const cor::Light& device) {
 
     // setup layout
     mLayout = new QGridLayout(this);
-    mLayout->addWidget(mTypeIcon,    0, 0, 2, 2);
-    mLayout->addWidget(mOnOffSwitch, 0, 2, 2, 4);
-
-    mLayout->addWidget(mController,  2, 0, 1, 18);
-
-    mLayout->setContentsMargins(0,0,0,0);
+    if (mType == cor::EWidgetType::full) {
+        mLayout->addWidget(mTypeIcon,    0, 0, 2, 2);
+        mLayout->addWidget(mOnOffSwitch, 0, 2, 2, 4);
+        mLayout->addWidget(mController,  2, 0, 1, 18);
+        mLayout->setContentsMargins(0,0,0,0);
+    } else {
+        mLayout->addWidget(mTypeIcon,    0, 0, 2, 2);
+        mLayout->addWidget(mOnOffSwitch, 0, 2, 2, 3);
+        mLayout->addWidget(mController,  0, 5, 1, 14);
+        mLayout->setContentsMargins(10,0,0,0);
+    }
     mLayout->setSpacing(2);
 
     setLayout(mLayout);
@@ -76,7 +83,7 @@ void ListDeviceWidget::init(const cor::Light& device) {
 }
 
 
-void ListDeviceWidget::updateWidget(const cor::Light& device) {
+void ListLightWidget::updateWidget(const cor::Light& device) {
     bool shouldRender = false;
     if (!(mDevice == device)) {
         shouldRender = true;
@@ -114,7 +121,7 @@ void ListDeviceWidget::updateWidget(const cor::Light& device) {
     }
 }
 
-QString ListDeviceWidget::convertUglyHueNameToPrettyName(QString name) {
+QString ListLightWidget::convertUglyHueNameToPrettyName(QString name) {
     if (name.contains("color lamp")) {
         name.replace("color lamp", "Color Lamp");
     } else if (name.contains("lightstrip plus")) {
@@ -132,7 +139,7 @@ QString ListDeviceWidget::convertUglyHueNameToPrettyName(QString name) {
     return name;
 }
 
-bool ListDeviceWidget::setHighlightChecked(bool checked) {
+bool ListLightWidget::setHighlightChecked(bool checked) {
     mIsChecked = checked;
     if (mShouldHighlight) {
         if (mIsChecked) {
@@ -156,7 +163,7 @@ bool ListDeviceWidget::setHighlightChecked(bool checked) {
 }
 
 
-void ListDeviceWidget::paintEvent(QPaintEvent *event) {
+void ListLightWidget::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event);
     QStyleOption opt;
     opt.init(this);
@@ -177,10 +184,18 @@ void ListDeviceWidget::paintEvent(QPaintEvent *event) {
     }
 
     if (mDevice.isReachable) {
-        QRect rect(x,
-                   10,
-                   this->width() / 2,
-                   int(this->height() * 0.6f / 2));
+        QRect rect;
+        if (mType == cor::EWidgetType::full) {
+            rect = QRect(x,
+                         10,
+                         this->width() / 2,
+                         int(this->height() * 0.6f / 2));
+        } else {
+            rect = QRect(int(x + this->height() * 0.35f),
+                         int(this->height() * 0.25f),
+                         int(this->height() * 0.5f),
+                         int(this->height() * 0.5f));
+        }
 
         // make brush with icon data in it
         QBrush brush;
@@ -201,34 +216,41 @@ void ListDeviceWidget::paintEvent(QPaintEvent *event) {
         painter.setBrush(brush);
         painter.drawRect(rect);
 
-        // set brightness width
-        double brightness = mDevice.color.valueF();
-        if (mDevice.routine > cor::ERoutineSingleColorEnd) {
-            brightness = mDevice.palette.brightness() / 100.0;
+        if (mType == cor::EWidgetType::full) {
+            // set brightness width
+            double brightness = mDevice.color.valueF();
+            if (mDevice.routine > cor::ERoutineSingleColorEnd) {
+                brightness = mDevice.palette.brightness() / 100.0;
+            }
+            rect.setWidth(int(rect.width() * brightness));
+        } else {
+            rect.setWidth(int(rect.width()));
         }
-        rect.setWidth(int(rect.width() * brightness));
         painter.setBrush(brush2);
         painter.drawRect(rect);
     }
 }
 
-void ListDeviceWidget::mouseReleaseEvent(QMouseEvent *) {
-    setHighlightChecked(!mIsChecked);
-    emit clicked(mKey);
+void ListLightWidget::mouseReleaseEvent(QMouseEvent *event) {
+    if (cor::isMouseEventTouchUpInside(event, this)) {
+        setHighlightChecked(!mIsChecked);
+        emit clicked(mKey);
+    }
+    event->ignore();
 }
 
 
-void ListDeviceWidget::changedSwitchState(bool newState) {
+void ListLightWidget::changedSwitchState(bool newState) {
     mBlockStateUpdates = true;
     mCooldownTimer->start(4000);
     emit switchToggled(mKey, newState);
 }
 
-void ListDeviceWidget::coolDownClick() {
+void ListLightWidget::coolDownClick() {
     mBlockStateUpdates = false;
 }
 
-QString ListDeviceWidget::createName(const cor::Light& device) {
+QString ListLightWidget::createName(const cor::Light& device) {
     QString nameText;
     if (device.protocol() == EProtocolType::arduCor
             || device.protocol() == EProtocolType::nanoleaf) {
@@ -238,20 +260,27 @@ QString ListDeviceWidget::createName(const cor::Light& device) {
     } else {
         nameText = device.name;
     }
-    if (nameText.size() > 20) {
-        nameText = nameText.mid(0, 17) + "...";
+
+    if (mType == cor::EWidgetType::full) {
+        if (nameText.size() > 20) {
+            nameText = nameText.mid(0, 17) + "...";
+        }
+    } else {
+        if (nameText.size() > 17) {
+            nameText = nameText.mid(0, 14) + "...";
+        }
     }
     return nameText;
 }
 
-void ListDeviceWidget::hideOnOffSwitch(bool shouldHide) {
+void ListLightWidget::hideOnOffSwitch(bool shouldHide) {
     mHideSwitch = shouldHide;
     if (shouldHide) {
         mOnOffSwitch->setHidden(mHideSwitch);
     }
 }
 
-void ListDeviceWidget::updateTypeIcon(ELightHardwareType type) {
+void ListLightWidget::updateTypeIcon(ELightHardwareType type) {
     QString typeResource;
     switch (type) {
         case ELightHardwareType::singleLED:

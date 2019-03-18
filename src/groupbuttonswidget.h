@@ -6,7 +6,7 @@
 
 #include "cor/groupbutton.h"
 #include "cor/dictionary.h"
-
+#include "cor/protocols.h"
 #include <vector>
 
 /*!
@@ -27,7 +27,7 @@ class GroupButtonsWidget : public QWidget
 
 public:
     /// constructor
-    explicit GroupButtonsWidget(QWidget *parent, const QString& roomName, const std::vector<QString>& groups);
+    explicit GroupButtonsWidget(QWidget *parent, cor::EWidgetType type, const QString& roomName, const std::vector<QString>& groups);
 
     /// add a group to a the list of supported groups
     void addGroup(const QString& group);
@@ -63,6 +63,8 @@ protected:
     void resizeEvent(QResizeEvent *);
 
 private:
+    /// ttype of widget
+    cor::EWidgetType mType;
 
     /// returns the renamed version of a group when given an actual group name
     QString renamedGroup(QString group);

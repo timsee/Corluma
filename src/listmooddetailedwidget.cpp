@@ -80,6 +80,7 @@ void ListMoodDetailedWidget::update(const cor::Mood& mood) {
     mTopLabel->setText(mood.name());
     mSimpleGroupWidget->updateDevices(mood.lights,
                                       mSimpleGroupWidget->height() / 6,
+                                      cor::EWidgetType::full,
                                       EOnOffSwitchState::hidden,
                                       false, true);
 

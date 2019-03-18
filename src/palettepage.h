@@ -55,7 +55,7 @@ public:
 
 
     /// called whenever the group page is shown
-    void show(QColor color, bool hasArduinoDevices, bool hasNanoleafDevices);
+    void show(QColor color, std::uint32_t lightCount, bool hasArduinoDevices, bool hasNanoleafDevices);
 
     /// getter for current mode of page
     EGroupMode mode() { return mMode; }
@@ -73,12 +73,6 @@ public:
     void resize();
 
 signals:
-
-    /*!
-     * \brief used to signal back to the main page that it should update its
-     *        top-left icon with a new color mode
-     */
-    void updateMainIcons();
 
     /// the speed bar has an update.
     void speedUpdate(int);

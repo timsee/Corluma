@@ -13,10 +13,12 @@ namespace cor
 {
 
 LightVectorWidget::LightVectorWidget(int width, int height,
+                                     bool fillFromLeft,
                              QWidget *parent) : QWidget(parent) {
     mWidth = width;
     mHeight = height;
     mMaximumSize = width * height;
+    mFillFromLeft = fillFromLeft;
 
     // --------------
     // Setup Layout
@@ -59,19 +61,35 @@ LightVectorWidget::LightVectorWidget(int width, int height,
 }
 
 void LightVectorWidget::updateDevices(const std::list<cor::Light>& devices) {
-    int i = 0;
-    for (auto&& device : devices) {
-        bool skip = mHideOffDevices && !device.isOn;
-        if (i < mMaximumSize && !skip) {
-            QJsonObject routineObject = lightToJson(device);
-            mArrayColorsButtons[uint32_t(i)]->updateRoutine(routineObject);
-            mArrayColorsButtons[uint32_t(i)]->setVisible(true);
-        }
-        ++i;
-    }
-    for (; i < mMaximumSize; ++i) {
-        mArrayColorsButtons[uint32_t(i)]->setVisible(false);
-    }
+   if (mFillFromLeft) {
+       int i = 0;
+       for (const auto& device : devices) {
+           bool skip = mHideOffDevices && !device.isOn;
+           if (i < mMaximumSize && !skip) {
+               QJsonObject routineObject = lightToJson(device);
+               mArrayColorsButtons[uint32_t(i)]->updateRoutine(routineObject);
+               mArrayColorsButtons[uint32_t(i)]->setVisible(true);
+           }
+           ++i;
+       }
+       for (; i < mMaximumSize; ++i) {
+           mArrayColorsButtons[uint32_t(i)]->setVisible(false);
+       }
+   } else {
+       int i = mMaximumSize - 1;
+       for (const auto& device : devices) {
+           bool skip = mHideOffDevices && !device.isOn;
+           if (i > 0 && !skip) {
+               QJsonObject routineObject = lightToJson(device);
+               mArrayColorsButtons[uint32_t(i)]->updateRoutine(routineObject);
+               mArrayColorsButtons[uint32_t(i)]->setVisible(true);
+           }
+           --i;
+       }
+       for (; i > 0; --i) {
+           mArrayColorsButtons[uint32_t(i)]->setVisible(false);
+       }
+   }
 }
 
 uint32_t LightVectorWidget::selectedCount() {

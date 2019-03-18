@@ -20,14 +20,12 @@
 #include "greyoutoverlay.h"
 #include "settingspage.h"
 #include "topmenu.h"
-#include "colorpage.h"
-#include "palettepage.h"
-#include "lightpage.h"
 #include "lightinfolistwidget.h"
 #include "nowifiwidget.h"
 #include "listmooddetailedwidget.h"
+#include "lefthandmenu.h"
 #include "hue/lightdiscovery.h"
-#include <QStackedWidget>
+#include "mainviewport.h"
 
 /*!
  * \copyright
@@ -52,14 +50,6 @@ public:
      */
     explicit MainWindow(QWidget *parent);
 
-    /*!
-     * \brief Deconstructor
-     */
-    ~MainWindow();
-
-    /// pointer to settings page
-    SettingsPage *settings() { return mSettingsPage; }
-
     /// true if any discovered, false if nothing discoverd.
     void anyDiscovered(bool discovered) { mAnyDiscovered = discovered; }
 
@@ -68,26 +58,25 @@ public:
 
 public slots:
 
-    /*!
-     * \brief switchToDiscovery discovery button pressed so the discovery page should be displayed.
-     */
-    void switchToDiscovery();
+    /// displays the discovery page
+    void pushInDiscovery();
 
-    /*!
-     * \brief switchToConnection start button was pressed on discovery page so it should switch to the connection
-     *        page.
-     */
-    void switchToConnection();
+    /// hides the discovery page
+    void pushOutDiscovery();
+
+    /// displays the color page
+    void switchToColorPage();
+
+    /// displays the settings page
+    void pushInSettingsPage();
+
+    /// hides teh settings page
+    void pushOutSettingsPage();
 
     /*!
      * \brief editButtonClicked an edit button has been clicked for either a collection or mood.
      */
-    void editButtonClicked(QString key, bool isMood);
-
-    /*!
-     * \brief editButtonClicked an edit button has been clicked for either a collection or mood.
-     */
-    void editButtonClicked(std::uint64_t key, bool isMood);
+    void editButtonClicked(bool isMood);
 
     /// called when a request for a detailed mood is sent
     void detailedMoodDisplay(std::uint64_t key);
@@ -111,12 +100,6 @@ public slots:
      *        as a bit of a special case.
      */
     void settingsButtonFromDiscoveryPressed();
-
-    /*!
-     * \brief settingsDebugPressed debug button pressed. Mocks incoming communication packets to make the
-     *        UI react as if some devices just connected.
-     */
-    void settingsDebugPressed();
 
     /*!
      * \brief settingsClosePressed slot that handles when the settings page is closed.
@@ -152,7 +135,7 @@ public slots:
     void deleteLight(QString key);
 
     /// getter for page
-    EPage currentPage() { return mPageIndex; }
+    EPage currentPage() { return mMainViewport->currentPage(); }
 
     /// routine changed from any page
     void routineChanged(QJsonObject routine);
@@ -194,6 +177,9 @@ private slots:
     /// called when the greyout is clicked
     void greyoutClicked();
 
+    /// caleld when the left hand drawer is clicked
+    void leftHandMenuButtonPressed(EPage);
+
 protected:
 
     /*!
@@ -212,54 +198,37 @@ protected:
     /// picks up key praesses, works for picking up things like android back buttons
     void keyPressEvent(QKeyEvent *event);
 
+    /// picks up mouse presses
+    virtual void mousePressEvent(QMouseEvent *);
+
+    /// picks up mouse moves
+    virtual void mouseMoveEvent(QMouseEvent *);
+
+    /// picks up mouse releases
+    virtual void mouseReleaseEvent(QMouseEvent *);
+
 private:
+
+    /// handles whether the app is landscape or potrait
+    void handleLandscapeOrPortrait();
+
+    /// left hand menu.
+    LeftHandMenu *mLeftHandMenu;
+
+    /// start point for a mouse move event
+    QPoint mStartPoint;
+
+    /// true if left hand menu is being moved, false otherwise
+    bool mMovingMenu;
 
     /// handles when the android back button is pressed
     void backButtonPressed();
-
-    /*!
-     * \brief pageChanged change the QStackedWidget to the page specified
-     */
-    void pageChanged(EPage page);
-
-    /*!
-     * \brief showMainPage transitions either the color page, group page, or lights page onto the
-     *        the main screen. The widgets come in from the left or the right, depending on the particular
-     *        widget
-     * \param page the widget to put on the screen.
-     */
-    void showMainPage(EPage page);
-
-    /*!
-     * \brief hideMainPage transitions either the color page, group page, or lights page off of the
-     *        main screen. The widgets go to the left or the right depending the particular widget
-     * \param page the page to push off of the screen
-     * \param newPage the new page being displayed. This sometimes affects whether the widget goes to the left
-     *        or right.
-     */
-    void hideMainPage(EPage page, EPage newPage);
-
-    /*!
-     * \brief shouldTransitionOutLeft returns true if the page provided should leave the screen to the left,
-     *        false if it should go to the right
-     * \param page the page that you want to remove from the main screen
-     * \param newPage the new page getting added. This soemtiems affects whether the widget goes to the left
-     *         or right
-     * \return  true if teh page provided should leave to the left, false if it should leave to the right.
-     */
-    bool shouldTransitionOutLeft(EPage page, EPage newPage);
-
-    /// returns true if the page should come from the left, false if it should come from the right.
-    bool shouldTranitionInFromLeft(EPage page);
 
     /// programmatically trigger moving the floating layout
     void moveFloatingLayout();
 
     /// resize
     void resize();
-
-    /// Gives a QWidget representation of any of the main widgets (LightPage, GroupPage, ColorPage)
-    QWidget *mainPageWidget(EPage page);
 
     /*!
      * \brief mGreyOut overlay that greys out the entire main window. Used in conjunction with the
@@ -269,11 +238,6 @@ private:
 
     /// true if pages are loaded, false if they haven't been loaded yet
     bool mPagesLoaded;
-
-    /*!
-     * \brief mPageIndex index of current page.
-     */
-    EPage mPageIndex;
 
     /// true if any discovered, false if none discovered
     bool mAnyDiscovered;
@@ -287,18 +251,6 @@ private:
      *        are saved so this page should only be used for configuring.
      */
     DiscoveryPage *mDiscoveryPage;
-
-    /// page for choosing colors of the LEDs
-    ColorPage *mColorPage;
-
-    /// page for choosing group of colors for the LEDs
-    PalettePage *mPalettePage;
-
-    /// page for choosing moods
-    MoodPage *mMoodPage;
-
-    /// page for choosing which LEDs to control
-    LightPage *mLightPage;
 
     /*!
      * \brief mEditPage overlay that allows editing and creating collections and moods.
@@ -339,16 +291,10 @@ private:
      * \brief mMainViewport widget that fills the main view port of the application.
      *        This is used for animations.
      */
-    QWidget *mMainViewport;
+    MainViewport *mMainViewport;
 
     /// adds space to top of window
     QWidget *mSpacer;
-
-    /// central widget for window
-    QWidget *mMainWidget;
-
-    /// layout for main window, applied to mMainWidget.
-    QVBoxLayout *mLayout;
 
     /// top menu, contains buttons to different widget pages and global controls.
     TopMenu *mTopMenu;

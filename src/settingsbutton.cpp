@@ -38,8 +38,9 @@ void SettingsButton::mousePressEvent(QMouseEvent* event) {
 }
 
 void SettingsButton::mouseReleaseEvent(QMouseEvent* event) {
-    Q_UNUSED(event);
-    emit buttonPressed(mTitle->text());
+    if (cor::isMouseEventTouchUpInside(event, this)) {
+        emit buttonPressed(mTitle->text());
+    }
     // turn back to standard color
     mIsHighlighted = false;
     repaint();

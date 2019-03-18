@@ -2,7 +2,7 @@
 #include "listlayout.h"
 #include <QDebug>
 
-#include "listdevicewidget.h"
+#include "listlightwidget.h"
 #include "cor/exception.h"
 
 namespace cor
@@ -99,9 +99,9 @@ QSize ListLayout::widgetSize(QSize parentSize) {
 
 void ListLayout::sortDeviceWidgets() {
     std::sort(mWidgets.begin(), mWidgets.end(), [](cor::ListItemWidget* a, cor::ListItemWidget* b) {
-        ListDeviceWidget *aDeviceWidget = qobject_cast<ListDeviceWidget*>(a);
+        ListLightWidget *aDeviceWidget = qobject_cast<ListLightWidget*>(a);
         Q_ASSERT(aDeviceWidget);
-        ListDeviceWidget *bDeviceWidget = qobject_cast<ListDeviceWidget*>(b);
+        ListLightWidget *bDeviceWidget = qobject_cast<ListLightWidget*>(b);
         Q_ASSERT(bDeviceWidget);
         if (!aDeviceWidget->device().isReachable && bDeviceWidget->device().isReachable) {
             return false;

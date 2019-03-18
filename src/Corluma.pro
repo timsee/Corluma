@@ -177,7 +177,6 @@ SOURCES += main.cpp \
     icondata.cpp \
     floatinglayout.cpp \
     discoverypage.cpp \
-    listdevicewidget.cpp \
     presetgroupwidget.cpp \
     greyoutoverlay.cpp \
     listmoodgroupwidget.cpp \
@@ -203,7 +202,12 @@ SOURCES += main.cpp \
     listmooddetailedwidget.cpp \
     listmoodpreviewwidget.cpp \
     groupdata.cpp \
-    mooddetailswidget.cpp
+    mooddetailswidget.cpp \
+    lefthandmenu.cpp \
+    selectlightsbutton.cpp \
+    mainviewport.cpp \
+    lefthandbutton.cpp \
+    listlightwidget.cpp
 
 HEADERS  +=  arducor/arducordiscovery.h \
     arducor/arducorpacketparser.h \
@@ -281,7 +285,6 @@ HEADERS  +=  arducor/arducordiscovery.h \
     icondata.h \
     floatinglayout.h \
     discoverypage.h \
-    listdevicewidget.h \
     presetgroupwidget.h \
     greyoutoverlay.h \
     listmoodgroupwidget.h \
@@ -311,7 +314,12 @@ HEADERS  +=  arducor/arducordiscovery.h \
     utils/reachability.h \
     utils/color.h \
     utils/math.h \
-    utils/qt.h
+    utils/qt.h \
+    lefthandmenu.h \
+    selectlightsbutton.h \
+    mainviewport.h \
+    lefthandbutton.h \
+    listlightwidget.h
 
 #----------
 # Desktop builds only

@@ -151,7 +151,7 @@ void LightPage::updateDataGroupInUI(cor::Group dataGroup, const std::list<cor::G
     }
     if (!existsInUIGroups) {
        // qDebug() << "this group does not exist" << dataGroup.name;
-       initDevicesCollectionWidget(dataGroup, dataGroup.name());
+       initRoomsWidget(dataGroup, dataGroup.name());
     }
 }
 
@@ -161,11 +161,14 @@ void LightPage::updateDataGroupInUI(cor::Group dataGroup, const std::list<cor::G
 // ------------------------------------
 
 
-ListRoomWidget* LightPage::initDevicesCollectionWidget(cor::Group group, const QString& key) {
+ListRoomWidget* LightPage::initRoomsWidget(cor::Group group, const QString& key) {
     ListRoomWidget *widget = new ListRoomWidget(group,
                                                 mComm,
                                                 mGroups,
                                                 key,
+                                                EOnOffSwitchState::standard,
+                                                cor::EListType::grid,
+                                                cor::EWidgetType::full,
                                                 mRoomsWidget->mainWidget());
 
     QScroller::grabGesture(widget, QScroller::LeftMouseButtonGesture);
@@ -193,7 +196,6 @@ void LightPage::deviceClicked(QString, QString deviceKey) {
         }
 
         // update UI
-        emit updateMainIcons();
         emit changedDeviceCount();
     }
 }
@@ -203,7 +205,6 @@ void LightPage::deviceSwitchClicked(QString deviceKey, bool isOn) {
     device.isOn = isOn;
     mData->addDevice(device);
 
-    emit updateMainIcons();
     emit changedDeviceCount();
 }
 
@@ -242,7 +243,6 @@ void LightPage::groupSelected(QString key, bool shouldSelect) {
         }
         // now update the GUI
         emit changedDeviceCount();
-        emit updateMainIcons();
         highlightList();
         mRoomsWidget->resizeWidgets();
         for (const auto& widget : mRoomsWidget->widgets()) {
@@ -279,7 +279,7 @@ void LightPage::groupDeleted(QString group) {
 // ------------------------------------
 
 void LightPage::receivedCommUpdate(ECommType) {
-    if (mLastUpdateRoomWidgets.elapsed() > 250) {
+    if (mLastUpdateRoomWidgets.elapsed() > 250 && isOpen()) {
         mLastUpdateRoomWidgets = QTime::currentTime();
         updateRoomWidgets();
     }

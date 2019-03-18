@@ -18,6 +18,7 @@
 #include "groupdata.h"
 #include "comm/commlayer.h"
 #include "cor/presetpalettes.h"
+#include "selectlightsbutton.h"
 
 /*!
  * \copyright
@@ -35,9 +36,23 @@ enum class EPage {
     palettePage,
     lightPage,
     moodPage,
+    discoveryPage,
     settingsPage
 };
+Q_DECLARE_METATYPE(EPage)
 
+/// converts page enum to string
+QString pageToString(EPage e);
+
+/// converts string to page enum
+EPage stringToPage(QString);
+
+/// type of color menu
+enum class EColorMenuType {
+    arduinoMenu,
+    hueMenu,
+    none,
+};
 
 /*!
  * \brief The TopMenu class is the top menu on the main window of Corluma. It contains brightness
@@ -55,17 +70,10 @@ public:
                      GroupData *groups,
                      MainWindow *mainWindow,
                      PalettePage *palettePage,
-                     ColorPage *colorPage,
-                     MoodPage *MoodPage,
-                     LightPage *LightPage);
-
-    /*!
-     * \brief Destructor
-     */
-    ~TopMenu();
+                     ColorPage *colorPage);
 
     /// resizes the menus programmatically
-    void resize();
+    void resize(int xOffset);
 
     /// call when you want to show the top menus, this handles raising it and making all necessary parts visible
     void showMenu();
@@ -79,23 +87,23 @@ public:
     /// getter for brightness
     int brightness() { return mBrightnessSlider->slider()->value(); }
 
+    /// height of menu
+    int fixedHeight() { return mFixedHeight; }
+
     /*!
      * \brief highlightButton highlight the button of any of the floating layouts, based on the key
      * \param key the key to use to highlight the buttons.
      */
     void highlightButton(QString key);
 
-    /*!
-     * \brief pageButtonPressed main page button pressed, such as the color page or lights page
-     * \param pageButtonType page type of button pressed.
-     */
-    void pageButtonPressed(EPage pageButtonType);
-
     /// switch the floating layout to show the menu for the given page
     void showFloatingLayout(EPage newPage);
 
-    /// getter for end of floating layout
-    uint32_t floatingLayoutEnd() { return uint32_t(mFloatingMenuEnd); }
+    /// sets up the colorPage's horizontal floating layout.
+    void setupColorFloatingLayout();
+
+    /// true to hide menu button, false to display it
+    void hideMenuButton(bool shouldHide);
 
 signals:
 
@@ -124,18 +132,6 @@ public slots:
      */
     void brightnessSliderChanged(int);
 
-
-    /*!
-     * \brief updateMenuBar used to update the menu bar to app state changes.
-     */
-    void updateMenuBar();
-
-    /*!
-     * \brief deviceCountChangedOnLightPage handles the case when the device count reaches zero. This gets signaled
-     *        from the data layer whereas deviceCOuntChangedOnLightPage gets signaled from the lights page.
-     */
-    void deviceCountReachedZero();
-
     /// brightness udpated somewhere else
     void brightnessUpdate(uint32_t newValue);
 
@@ -151,16 +147,28 @@ private slots:
     /// called when any button in a floating layout is pressed.
     void floatingLayoutButtonPressed(QString);
 
+    /// emits when a menu button is pressed
+    void menuButtonPressed() { emit buttonPressed("Menu"); }
+
 private:
+
+    /// select lights button for portait display ratios when no lights are selected
+    SelectLightsButton *mSelectLightsButton;
+
+    /// height of widget
+    int mFixedHeight;
+
+    /// y position where the select lights button shows up
+    int mStartSelectLightsButton;
+
+    /// the color menu type
+    EColorMenuType mColorMenuType;
 
     /// renders an update for the UI periodically
     QTimer *mRenderTimer;
 
     /// preset data for palettes from ArduCor
     PresetPalettes mPalettes;
-
-    /// hacky way to downsize text so that it fits within a widget.
-    void downsizeTextHeightToFit(int maxHeight);
 
     /*!
      * \brief mBrightnessSlider slider for adjusting the brightness of all selected devices.
@@ -170,20 +178,11 @@ private:
     /// palette that shows the currently selected devices
     cor::LightVectorWidget *mMainPalette;
 
-    /// label for displaying string representation of selected devices.
-    QLabel *mSelectedDevicesLabel;
-
     /// spacer for row of buttons
     QWidget *mSpacer;
 
-    /// layout for entire widget
-    QGridLayout *mLayout;
-
     /// y position where a floating menu can start.
     int mFloatingMenuStart;
-
-    /// y position where the floating menus end.
-    int mFloatingMenuEnd;
 
     /// data layer, contains intended state for all devices.
     cor::DeviceList *mData;
@@ -194,8 +193,8 @@ private:
     /// pointer to group data
     GroupData *mGroups;
 
-    /// layout for the left buttons that control the main pages of the application.
-    FloatingLayout *mMainLayout;
+    /// hamburger icon in top left for opening the main menu
+    QPushButton *mMenuButton;
 
     /// returns a pointer to the current floating layout.
     FloatingLayout *currentFloatingLayout();
@@ -212,9 +211,6 @@ private:
     /// floating layout for color page.
     FloatingLayout *mColorFloatingLayout;
 
-    /// vertical floating menu, used by color page.
-    FloatingLayout *mColorVerticalFloatingLayout;
-
     /// last key for color page.
     QString mLastColorButtonKey;
 
@@ -223,12 +219,6 @@ private:
 
     /// pulls the floating layout specified in from the right to the left and places it in the top right.
     void pullLeftFloatingLayout(FloatingLayout *layout);
-
-    /// sets up the colorPage's horizontal floating layout.
-    void setupColorFloatingLayout();
-
-    /// update the colorpage's vertical floating layout.
-    void updateColorVerticalRoutineButton();
 
     /*!
      * \brief mShouldGreyOutIcons cahced satte of whether any device is selected. If none
@@ -244,12 +234,6 @@ private:
 
     /// pointer to color page, used during floating layouts clicks
     ColorPage *mColorPage;
-
-    /// pointer to moods page, used during floating layout clicks
-    MoodPage *mMoodPage;
-
-    /// pointer to lights page, used during floating layout clicks.
-    LightPage *mLightPage;
 
     /// current page being displayed
     EPage mCurrentPage;

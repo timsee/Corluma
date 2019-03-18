@@ -52,6 +52,9 @@ public:
     /// called when the widget is hidden
     void hide();
 
+    /// true if any lights have been discovered, false otherwise
+    bool isAnyDiscovered();
+
 signals:
     /*!
      * \brief startButtonClicked sent whenver the start button is clicked so that the discovery

@@ -68,7 +68,7 @@ void EditGroupPage::showGroup(QString key, std::list<cor::Light> groupDevices, s
 }
 
 void EditGroupPage::updateDevices(const std::list<cor::Light>& checkedDevices, const std::list<cor::Light>& devices) {
-    mSimpleGroupWidget->updateDevices(devices, mSimpleGroupWidget->height() / 6, EOnOffSwitchState::hidden, true, false);
+    mSimpleGroupWidget->updateDevices(devices, mSimpleGroupWidget->height() / 6, cor::EWidgetType::full, EOnOffSwitchState::hidden, true, false);
     mSimpleGroupWidget->setCheckedDevices(checkedDevices);
 }
 

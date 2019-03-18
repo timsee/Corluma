@@ -222,11 +222,6 @@ public:
     std::uint64_t findCurrentMood(const cor::Dictionary<cor::Mood>& moods);
 
 signals:
-    /*!
-     * \brief devicesEmpty signals when the currentDevices list is reduced to zero so that UI updates
-     *        can react accordingly.
-     */
-    void devicesEmpty();
 
     /*!
      * \brief dataUpdate emits whenever theres a change to any device.
