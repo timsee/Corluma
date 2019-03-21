@@ -74,11 +74,6 @@ signals:
 
 private slots:
     /*!
-     * \brief editGroupClicked the edit button has been pressed for a specific collection
-     */
-    void editGroupClicked(std::uint64_t key);
-
-    /*!
      * \brief editMoodClicked the edit button has been pressed for a specific mood. This
      *        gets sent to the main window and tells it to open the edit page.
      */
@@ -167,9 +162,6 @@ private:
 
     /// current mood based on the state of lights
     std::uint64_t mCurrentMood;
-
-    /// current mood selected by the UI
-    QString mSelectedMood;
 };
 
 #endif // MOODPAGE_H

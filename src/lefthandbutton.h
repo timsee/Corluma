@@ -8,6 +8,8 @@
 
 #include "topmenu.h"
 
+class LeftHandMenu;
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2019.
@@ -22,10 +24,10 @@ class LeftHandButton : public QWidget
     Q_OBJECT
 public:
     /// constructor with icon
-   LeftHandButton(const QString& text, EPage page, const QString& iconResource, QWidget *parent);
+   LeftHandButton(const QString& text, EPage page, const QString& iconResource, LeftHandMenu *menu, QWidget *parent);
 
    /// constructor with json data
-   LeftHandButton(const QString& text, EPage page, const QJsonObject& jsonObject, QWidget *parent);
+   LeftHandButton(const QString& text, EPage page, const QJsonObject& jsonObject, LeftHandMenu *menu, QWidget *parent);
 
     /// returns the title of the button
     QString text() { return mTitle->text(); }
@@ -65,6 +67,9 @@ private:
 
     /// layout for button
     QHBoxLayout *mLayout;
+
+    /// pointer to menu to determine if its moving
+    LeftHandMenu *mMenu;
 
     /// the icon used for displaying on the left of the menu button
     QLabel *mIcon;

@@ -184,6 +184,14 @@ private:
      */
     bool mIsChecked;
 
+    /// forces initial update to render
+    bool mHasRendered = false;
+
+    /// resizes the icons for the widget
+    void resizeIcons();
+
+    /// stores the last rendered size to check if it needs to rerender again
+    QSize mLastRenderedSize;
 };
 
 

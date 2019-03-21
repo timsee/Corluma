@@ -62,11 +62,6 @@ public slots:
     /// called when a button is pressed
     void buttonPressed(EPage);
 
-protected:
-
-    /// repaints the widget
-    virtual void paintEvent(QPaintEvent *);
-
 private slots:
 
     /// called when a light is clicked
@@ -167,6 +162,15 @@ private:
 
     /// update the single color button based off of what is selected
     void updateSingleColorButton();
+
+    /// stores number of rooms to check if resize is needed
+    int mNumberOfRooms;
+
+    /// stores the number of shown lights to check if resize is needed
+    int mNumberOfShownLights;
+
+    /// used to skip rendering while scrolling
+    int mLastScrollValue;
 };
 
 #endif // LEFTHANDMENU_H

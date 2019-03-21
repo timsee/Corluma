@@ -48,7 +48,7 @@ void ListLightWidget::init(const cor::Light& device) {
     mController = new QLabel(this);
 
     mTypeIcon = new QLabel(this);
-    mTypeIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    mTypeIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     mOnOffSwitch = new cor::Switch(this);
     mOnOffSwitch->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
@@ -85,31 +85,41 @@ void ListLightWidget::init(const cor::Light& device) {
 
 void ListLightWidget::updateWidget(const cor::Light& device) {
     bool shouldRender = false;
-    if (!(mDevice == device)) {
+    if (!(mDevice == device) && this->isVisible()) {
         shouldRender = true;
     }
+    if (!mHasRendered) {
+        shouldRender = true;
+        mHasRendered = false;
+    }
 
-    updateTypeIcon(device.hardwareType);
+    if (mDevice.hardwareType != device.hardwareType
+            || mLastRenderedSize != this->size()) {
+        mLastRenderedSize = this->size();
+        updateTypeIcon(device.hardwareType);
+        resizeIcons();
+    }
+
+    if (mDevice.name != device.name) {
+        mController->setText(createName(device));
+    }
 
     mDevice = device;
     mKey = device.uniqueID();
 
-    QString nameText = createName(device);
-    if (nameText != mController->text()) {
-        mController->setText(nameText);
-    }
-
-    if (mSwitchState == EOnOffSwitchState::locked) {
-        mOnOffSwitch->setSwitchState(ESwitchState::disabled);
-    } else if (mSwitchState == EOnOffSwitchState::hidden) {
-        mOnOffSwitch->setVisible(false);
-    } else {
-        if (!device.isReachable) {
+    if (mOnOffSwitch->isVisible()) {
+        if (mSwitchState == EOnOffSwitchState::locked) {
             mOnOffSwitch->setSwitchState(ESwitchState::disabled);
-        } else if (device.isOn && !mBlockStateUpdates) {
-            mOnOffSwitch->setSwitchState(ESwitchState::on);
-        } else if (!mBlockStateUpdates) {
-            mOnOffSwitch->setSwitchState(ESwitchState::off);
+        } else if (mSwitchState == EOnOffSwitchState::hidden) {
+            mOnOffSwitch->setVisible(false);
+        } else {
+            if (!device.isReachable) {
+                mOnOffSwitch->setSwitchState(ESwitchState::disabled);
+            } else if (device.isOn && !mBlockStateUpdates) {
+                mOnOffSwitch->setSwitchState(ESwitchState::on);
+            } else if (!mBlockStateUpdates) {
+                mOnOffSwitch->setSwitchState(ESwitchState::off);
+            }
         }
     }
 
@@ -142,20 +152,20 @@ QString ListLightWidget::convertUglyHueNameToPrettyName(QString name) {
 bool ListLightWidget::setHighlightChecked(bool checked) {
     mIsChecked = checked;
     if (mShouldHighlight) {
-        if (mIsChecked) {
-            QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mOnOffSwitch);
-            effect->setOpacity(1.0);
-            mOnOffSwitch->setGraphicsEffect(effect);
-            mOnOffSwitch->setEnabled(true);
-            mOnOffSwitch->setAttribute(Qt::WA_TransparentForMouseEvents, false);
-            this->setStyleSheet("background-color:rgb(61,142,201);");
-        } else {
-            QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mOnOffSwitch);
-            effect->setOpacity(0.15);
-            mOnOffSwitch->setGraphicsEffect(effect);
-            mOnOffSwitch->setEnabled(false);
-            mOnOffSwitch->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-            this->setStyleSheet("background-color:rgb(32,31,31);");
+        if (mOnOffSwitch->isVisible()) {
+            if (mIsChecked) {
+                QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mOnOffSwitch);
+                effect->setOpacity(1.0);
+                mOnOffSwitch->setGraphicsEffect(effect);
+                mOnOffSwitch->setEnabled(true);
+                mOnOffSwitch->setAttribute(Qt::WA_TransparentForMouseEvents, false);
+            } else {
+                QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mOnOffSwitch);
+                effect->setOpacity(0.15);
+                mOnOffSwitch->setGraphicsEffect(effect);
+                mOnOffSwitch->setEnabled(false);
+                mOnOffSwitch->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+            }
         }
         repaint();
     }
@@ -170,28 +180,21 @@ void ListLightWidget::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
 
     if (mIsChecked && mShouldHighlight) {
-        painter.fillRect(this->rect(), QBrush(QColor(61, 142, 201, 255)));
+        painter.fillRect(this->rect(), QBrush(QColor(61, 142, 201)));
     } else {
         //TODO: could I make this transparent in all cases?
-        painter.fillRect(this->rect(), QBrush(QColor(32, 31, 31, 255)));
-    }
-
-    int x;
-    if (mHideSwitch) {
-        x = mTypeIcon->x() + mTypeIcon->width() + 5;
-    } else {
-        x = mOnOffSwitch->x() + mOnOffSwitch->width() + 5;
+        painter.fillRect(this->rect(), QBrush(QColor(32, 31, 31)));
     }
 
     if (mDevice.isReachable) {
         QRect rect;
         if (mType == cor::EWidgetType::full) {
-            rect = QRect(x,
+            rect = QRect(mOnOffSwitch->x() + mOnOffSwitch->width() + 5,
                          10,
                          this->width() / 2,
                          int(this->height() * 0.6f / 2));
         } else {
-            rect = QRect(int(x + this->height() * 0.35f),
+            rect = QRect(mOnOffSwitch->width() / 2 + mTypeIcon->width() + 5,
                          int(this->height() * 0.25f),
                          int(this->height() * 0.5f),
                          int(this->height() * 0.5f));
@@ -204,10 +207,14 @@ void ListLightWidget::paintEvent(QPaintEvent *event) {
         } else {
             brush = QColor(0,0,0,5);
         }
-        mIconPixmap = mIconPixmap.scaled(rect.width(),
-                                         rect.height(),
-                                         Qt::IgnoreAspectRatio,
-                                         Qt::SmoothTransformation);
+
+        if (mIconPixmap.size() != rect.size()) {
+            mIconPixmap = mIconPixmap.scaled(rect.width(),
+                                             rect.height(),
+                                             Qt::IgnoreAspectRatio,
+                                             Qt::FastTransformation);
+       }
+
         QBrush brush2(mIconPixmap);
 
         if (!mDevice.isOn) {
@@ -341,17 +348,21 @@ void ListLightWidget::updateTypeIcon(ELightHardwareType type) {
             typeResource = QString(":/images/led_icon.png");
             break;
     }
+    mTypePixmap = QPixmap(typeResource);
+}
+
+void ListLightWidget::resizeIcons() {
     QSize size(int(this->height() * 0.5f),
                int(this->height() * 0.5f));
-
-    mTypePixmap = QPixmap(typeResource);
     mTypeIcon->setFixedSize(size);
     mTypePixmap = mTypePixmap.scaled(size.width(),
                                      size.height(),
                                      Qt::IgnoreAspectRatio,
                                      Qt::SmoothTransformation);
 
-    QSize onOffSize(size.width() *  2, size.height() * 2);
-    mOnOffSwitch->setFixedSize(size);
+    if (mOnOffSwitch->isVisible()) {
+        QSize onOffSize(size.width() *  2, size.height() * 2);
+        mOnOffSwitch->setFixedSize(size);
+    }
     mTypeIcon->setPixmap(mTypePixmap);
 }

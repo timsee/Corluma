@@ -26,7 +26,6 @@ MainViewport::MainViewport(MainWindow *parent,
     mLightPage->isOpen(false);
     mLightPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mLightPage->setVisible(false);
-    connect(mLightPage, SIGNAL(clickedEditButton(bool)),  parent, SLOT(editButtonClicked(bool)));
 
     mColorPage = new ColorPage(parent);
     mColorPage->isOpen(false);

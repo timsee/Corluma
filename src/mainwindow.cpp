@@ -351,39 +351,23 @@ void MainWindow::editButtonClicked(bool isMood) {
     std::list<cor::Light> groupDevices;
     std::list<QString> groupDeviceIDs;
 
+
     QString name("");
     bool isRoom = false;
-//        for (const auto& device : mData->devices()) {
-//            groupDeviceIDs.push_back(device.uniqueID());
-//        }
-    bool foundGroup = false;
-
-    std::uint64_t key = 0u;
     if (isMood) {
-        auto key = mMainViewport->moodPage()->currentMood();
-        auto result = mGroups->moods().item(QString::number(key).toStdString());
-        foundGroup = result.second;
-        groupDevices = result.first.lights;
-        name = result.first.name();
-    } else {
-        auto collectionName = mData->findCurrentCollection(mGroups->groups().itemList(), false);
-        // look for group in arduino data
-        for (const auto& group : mGroups->groups().itemList()) {
-            if (group.name() == collectionName) {
-                isRoom = group.isRoom;
-                foundGroup = true;
-                name = collectionName;
-            }
+        auto result = mGroups->moods().item(QString::number(mMainViewport->moodPage()->currentMood()).toStdString());
+        if (result.second) {
+            name = result.first.name();
         }
-    }
-    if (!foundGroup) {
-        groupDevices = mData->devices();
+    } else {
+        name = mData->findCurrentCollection(mGroups->groups().itemList(), false);
+        isRoom = true;
     }
 
     mEditPage->showGroup(name,
-                         groupDevices,
+                         mData->devices(),
                          mComm->allDevices(),
-                         true,
+                         isMood,
                          false);
 
     if (mGreyOut->isVisible()) {
@@ -748,6 +732,10 @@ void MainWindow::greyoutClicked() {
     if (mMoodDetailedWidget->isOpen()) {
         detailedClosePressed();
     }
+
+    if (mEditPage->isOpen()) {
+        editClosePressed();
+    }
 }
 
 void MainWindow::protocolSettingsChanged(EProtocolType type, bool enabled) {
@@ -893,7 +881,6 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
         pushInDiscovery();
         return;
     } else if (mDiscoveryPage->isOpen()) {
-        qDebug() << " pushing out from "<< __func__;
         pushOutDiscovery();
     }
 

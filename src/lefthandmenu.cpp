@@ -15,6 +15,7 @@
 #include <QDebug>
 #include <QMouseEvent>
 #include <QScroller>
+#include <QScrollBar>
 
 LeftHandMenu::LeftHandMenu(cor::DeviceList *devices, CommLayer *comm, GroupData *groups, QWidget *parent) : QWidget(parent) {
     mSelectedLights = devices;
@@ -27,6 +28,7 @@ LeftHandMenu::LeftHandMenu(cor::DeviceList *devices, CommLayer *comm, GroupData 
                       width,
                       parent->height());
     mIsIn = false;
+    mNumberOfRooms = 0;
 
     //---------------
     // Create Widgets for scrolling
@@ -40,25 +42,27 @@ LeftHandMenu::LeftHandMenu(cor::DeviceList *devices, CommLayer *comm, GroupData 
     mScrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     QScroller::grabGesture(mScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
     mScrollArea->setWidget(mWidget);
+    mScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    mScrollArea->horizontalScrollBar()->setEnabled(false);
 
     //---------------
     // Setup Buttons
     //---------------
 
-    mLightsButton = new LeftHandButton("Lights", EPage::lightPage, ":/images/connectionIcon.png", mWidget);
+    mLightsButton = new LeftHandButton("Lights", EPage::lightPage, ":/images/connectionIcon.png", this, mWidget);
     mLightsButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mLightsButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
-    mSingleColorButton = new LeftHandButton("Single Color", EPage::colorPage, ":/images/colorWheel_icon.png", mWidget);
+    mSingleColorButton = new LeftHandButton("Single Color", EPage::colorPage, ":/images/colorWheel_icon.png", this, mWidget);
     mSingleColorButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mSingleColorButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
     mSingleColorButton->shouldHightlght(true);
 
-    mDiscoveryButton = new LeftHandButton("Discovery", EPage::discoveryPage, ":/images/wifi.png", mWidget);
+    mDiscoveryButton = new LeftHandButton("Discovery", EPage::discoveryPage, ":/images/wifi.png", this, mWidget);
     mDiscoveryButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mDiscoveryButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
-    mSettingsButton = new LeftHandButton("Settings", EPage::settingsPage, ":/images/settingsgear.png", mWidget);
+    mSettingsButton = new LeftHandButton("Settings", EPage::settingsPage, ":/images/settingsgear.png", this, mWidget);
     mSettingsButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mSettingsButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
@@ -67,7 +71,7 @@ LeftHandMenu::LeftHandMenu(cor::DeviceList *devices, CommLayer *comm, GroupData 
     light.routine = ERoutine::multiBars;
     light.palette = palettes.palette(EPalette::water);
     light.speed   = 100;
-    mMultiColorButton = new LeftHandButton("Multi Color", EPage::palettePage, cor::lightToJson(light), mWidget);
+    mMultiColorButton = new LeftHandButton("Multi Color", EPage::palettePage, cor::lightToJson(light), this, mWidget);
     mMultiColorButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mMultiColorButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
@@ -75,7 +79,7 @@ LeftHandMenu::LeftHandMenu(cor::DeviceList *devices, CommLayer *comm, GroupData 
     moodLight.routine = ERoutine::multiFade;
     moodLight.palette = palettes.palette(EPalette::fire);
     moodLight.speed   = 100;
-    mMoodButton = new LeftHandButton("Moods", EPage::moodPage, cor::lightToJson(moodLight), mWidget);
+    mMoodButton = new LeftHandButton("Moods", EPage::moodPage, cor::lightToJson(moodLight), this, mWidget);
     mMoodButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mMoodButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
@@ -96,10 +100,9 @@ void LeftHandMenu::resize() {
         preferredWidth = mParentSize.width() * 0.66f;
     }
     mScrollArea->setFixedHeight(mParentSize.height());
-    //TODO: this feels like a hack
-    mScrollArea->setFixedWidth(mParentSize.width());
+    mScrollArea->setFixedWidth(int(this->width() * 1.2f));
 
-    auto width = preferredWidth;
+    auto width = int(preferredWidth);
 
     if (mAlwaysOpen) {
        this->setGeometry(0u,
@@ -118,8 +121,8 @@ void LeftHandMenu::resize() {
                           mParentSize.height());
     }
 
-    int yPos = this->height() * 0.1;
-    int buttonHeight = this->height() * 0.07f;
+    auto yPos = int(this->height() * 0.1);
+    auto buttonHeight = int(this->height() * 0.07);
 
     mSingleColorButton->setGeometry(0,
                                     yPos,
@@ -180,14 +183,14 @@ void LeftHandMenu::resize() {
 }
 
 void LeftHandMenu::pushIn() {
+    updateLights();
     this->raise();
     cor::moveWidget(this,
                     this->size(),
                     this->pos(),
                     QPoint(0u, 0u));
-    mRenderThread->start(250);
+    mRenderThread->start(333);
     mIsIn = true;
-    updateLights();
 }
 
 void LeftHandMenu::pushOut() {
@@ -265,25 +268,20 @@ void LeftHandMenu::updateLights() {
         updateDataGroupInUI(room, uiGroups);
     }
 
-
-    for (const auto& widget : mRoomWidgets) {
-        widget->setCheckedDevices(mSelectedLights->devices());
-        widget->updateTopWidget();
+    // get the number of lights shown
+    std::uint32_t numberOfLightsShown = 0;
+    for (const auto& room : mRoomWidgets) {
+       numberOfLightsShown += room->numberOfWidgetsShown();
     }
 
-    resize();
+    if (roomList.size()  != mNumberOfRooms
+            || numberOfLightsShown != mNumberOfShownLights) {
+        mNumberOfShownLights = numberOfLightsShown;
+        mNumberOfRooms = roomList.size();
+        resize();
+    }
 }
 
-
-
-void LeftHandMenu::paintEvent(QPaintEvent *) {
-    QStyleOption opt;
-    opt.init(this);
-    QPainter painter(this);
-
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.fillRect(this->rect(), QBrush(QColor(35, 34, 34)));
-}
 
 void LeftHandMenu::buttonPressed(EPage page) {
     if (page == EPage::colorPage) {
@@ -390,6 +388,7 @@ int LeftHandMenu::resizeRoomsWidgets(int yStartPoint) {
         return a->key() > b->key();
     });
 
+    auto shownLights = 0u;
     for (auto widget : mRoomWidgets) {
         widget->setVisible(true);
         widget->setGeometry(0, yPos + yStartPoint, this->width(), widget->height());
@@ -409,12 +408,12 @@ void LeftHandMenu::lightClicked(QString, QString deviceKey) {
         } else {
             mSelectedLights->addDevice(device);
         }
-
         // update UI
         emit changedDeviceCount();
     }
 
-    resize();
+
+
 }
 
 void LeftHandMenu::groupSelected(QString key, bool shouldSelect) {
@@ -475,7 +474,10 @@ void LeftHandMenu::changedGroup(QString) {
 }
 
 void LeftHandMenu::renderUI() {
-    if (mIsIn || mAlwaysOpen) {
+    auto scrollValue = mScrollArea->verticalScrollBar()->value();
+    if ((mIsIn || mAlwaysOpen) && (scrollValue == mLastScrollValue)) {
         updateLights();
+    } else {
+        mLastScrollValue = scrollValue;
     }
 }

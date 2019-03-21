@@ -164,7 +164,8 @@ void ListRoomWidget::updateGroup(const cor::Group& group, bool removeIfNotFound)
                 //----------------
                 // Update Widget, if it already exists
                 //----------------
-                if ((inputDevice.uniqueID() == existingWidget->device().uniqueID()) && (inputDevice.controller() != "UNINITIALIZED")) {
+                if ((inputDevice.uniqueID() == existingWidget->device().uniqueID())
+                        && (inputDevice.controller() != "UNINITIALIZED")) {
                     foundDevice = true;
                     existingWidget->updateWidget(inputDevice);
                 }
@@ -352,6 +353,10 @@ void ListRoomWidget::resize() {
     mDropdownTopWidget->setFixedWidth(parentWidget->width());
     if (!mGroup.subgroups.empty()) {
         mGroupsButtonWidget->setFixedWidth(parentWidget->width());
+
+        if (mType == cor::EWidgetType::condensed) {
+            mGroupsButtonWidget->setFixedHeight(mDropdownTopWidget->height() * 5);
+        }
     }
     moveWidgets(QSize(parentWidget->width(), mDropdownTopWidget->height()), QPoint(0, 0));
 }
@@ -423,6 +428,13 @@ void ListRoomWidget::showDevices(const std::list<cor::Light>& devices) {
     resize();
 }
 
+std::uint32_t ListRoomWidget::numberOfWidgetsShown() {
+    if (mDropdownTopWidget->showButtons()) {
+         return mListLayout.count();
+    } else {
+        return 0;
+    }
+}
 
 void ListRoomWidget::dropdownTopWidgetPressed() {
     setShowButtons(!mDropdownTopWidget->showButtons());

@@ -37,10 +37,9 @@ GroupButton::GroupButton(QWidget *parent, const QString& text) : QWidget(parent)
     mDisabledPixmap = QPixmap(":/images/disabledX.png");
 
     // make a minimum size for the button
-    auto applicationSize = cor::applicationSize();
-    int prefferedWidth = std::max(int(applicationSize.height() / 20.0f), int(mButton->size().height() * 0.9f));
-    mButton->setIconSize(QSize(prefferedWidth, prefferedWidth));
-    mButton->setFixedSize(QSize(prefferedWidth, prefferedWidth));
+    int preferredSize = mButton->size().height() * 0.75f;
+    mButton->setIconSize(QSize(preferredSize, preferredSize));
+    mButton->setFixedSize(QSize(preferredSize, preferredSize));
     mButton->setIcon(QIcon(mClearAllPixmap));
     connect(mButton, SIGNAL(clicked(bool)), this, SLOT(buttonPressed(bool)));
 

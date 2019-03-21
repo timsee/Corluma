@@ -76,7 +76,7 @@ public slots:
     /*!
      * \brief editButtonClicked an edit button has been clicked for either a collection or mood.
      */
-    void editButtonClicked(bool isMood);
+    void editButtonClicked(bool);
 
     /// called when a request for a detailed mood is sent
     void detailedMoodDisplay(std::uint64_t key);

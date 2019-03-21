@@ -109,23 +109,6 @@ inline void resizeIcon(QPushButton *button, QString iconPath, float sizeRatio = 
 }
 
 /*!
- * \brief resizeIcon resize an icon in a QWidget based off of the size of the icon.
- * \param widget widget whose icon is going to get resized
- * \param iconPath path to the icon resource.
- * \param sizeRatio determines the ratio between icon size and button size. If none is provided,
- *        the icon takes up 100% of the widget.
- */
-inline void resizeIcon(QLabel *widget, QString iconPath, float sizeRatio = 1.0f) {
-    QPixmap pixmap(iconPath);
-    int min = std::min(widget->width(), widget->height());
-    int finalSize = int(min * sizeRatio);
-    widget->setPixmap(pixmap.scaled(finalSize,
-                                    finalSize,
-                                    Qt::KeepAspectRatio,
-                                    Qt::SmoothTransformation));
-}
-
-/*!
  * \brief resizeIcon resize an icon in a QLabe; based off of the size of the icon.
  * \param label widget whose icon is going to get resized
  * \param iconPath path to the icon resource.

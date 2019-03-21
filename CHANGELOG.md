@@ -442,7 +442,6 @@ ___
 * Added `ListMoodDetailedWidget`.
 * Fixed miscellaneous bugs.
 
-
 ### **v0.14.20**
 #### Another Edge Cases Update
 * Added back button functionality for android. 
@@ -459,5 +458,15 @@ ___
 * Reorganized the `TopMenu` and `SettingsPage` to better support a `LeftHandMenu`.
 * Fixed a crash when wifi is off. 
 * Fixed miscellaneous bugs.
+
+### **v0.15.1**
+#### The Optimization Update
+* Optimized how the `ListLightWidget` renders.
+* Fixed some bugs with the `EditGroupPage`.
+* Fixed edge cases with the `LeftHandMenu`.
+* Fixed miscellaneous bugs.
+
+
+
 
 

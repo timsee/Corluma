@@ -5,6 +5,7 @@
  */
 
 #include "lefthandbutton.h"
+#include "lefthandmenu.h"
 
 #include "utils/qt.h"
 
@@ -17,8 +18,9 @@
 #include "cor/light.h"
 
 
-LeftHandButton::LeftHandButton(const QString& text, EPage page, const QString& iconResource, QWidget *parent) : QWidget(parent) {
+LeftHandButton::LeftHandButton(const QString& text, EPage page, const QString& iconResource, LeftHandMenu *menu, QWidget *parent) : QWidget(parent) {
     mPage = page;
+    mMenu = menu;
     mIsHighlighted = false;
     mResourcePath = iconResource;
 
@@ -41,8 +43,9 @@ LeftHandButton::LeftHandButton(const QString& text, EPage page, const QString& i
 }
 
 
-LeftHandButton::LeftHandButton(const QString& text, EPage page, const QJsonObject& jsonObject, QWidget *parent) : QWidget(parent) {
+LeftHandButton::LeftHandButton(const QString& text, EPage page, const QJsonObject& jsonObject, LeftHandMenu *menu, QWidget *parent) : QWidget(parent) {
     mPage = page;
+    mMenu = menu;
     mIsHighlighted = false;
     mJsonObject = jsonObject;
 
@@ -84,7 +87,8 @@ void LeftHandButton::mousePressEvent(QMouseEvent *event) {
 }
 
 void LeftHandButton::mouseReleaseEvent(QMouseEvent *event) {
-    if (cor::isMouseEventTouchUpInside(event, this)) {
+    if (cor::isMouseEventTouchUpInside(event, this)
+            && mMenu->geometry().x() == 0) {
         // turn back to standard color
         if (mIsHighlighted) {
             event->ignore();

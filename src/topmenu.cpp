@@ -44,7 +44,6 @@ EPage stringToPage(QString string) {
         return EPage::discoveryPage;
     }
     THROW_EXCEPTION("String not recognized as a page");
-    return {};
 }
 
 TopMenu::TopMenu(QWidget* parent,
@@ -139,7 +138,7 @@ TopMenu::TopMenu(QWidget* parent,
     mSelectLightsButton = new SelectLightsButton(this);
     mSelectLightsButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mSelectLightsButton, SIGNAL(pressed()), this, SLOT(menuButtonPressed()));
-    mSelectLightsButton->setFixedSize(mSize.width() * 3, mSize.height() * 0.5);
+    mSelectLightsButton->setFixedSize(mSize.width() * 3, int(mSize.height() * 0.5));
 
     // --------------
     // Moods Floating Layout
@@ -319,7 +318,11 @@ void TopMenu::floatingLayoutButtonPressed(QString button) {
    if (button.compare("Discovery") == 0) {
         mMainWindow->pushInDiscovery();
     } else if (button.compare("New_Group") == 0) {
-        mMainWindow->editButtonClicked(mMainWindow->currentPage() == EPage::lightPage);
+       if (mCurrentPage == EPage::moodPage) {
+           mMainWindow->editButtonClicked(true);
+       } else {
+           mMainWindow->editButtonClicked(false);
+       }
     } else if (button.compare("Preset_Groups") == 0) {
         if (mData->hasLightWithProtocol(EProtocolType::arduCor)) {
             mPalettePage->setMode(EGroupMode::arduinoPresets);
@@ -387,7 +390,7 @@ void TopMenu::showFloatingLayout(EPage newPage) {
 }
 
 FloatingLayout *TopMenu::currentFloatingLayout() {
-    FloatingLayout *layout;
+    FloatingLayout *layout = nullptr;
     switch (mCurrentPage) {
     case EPage::lightPage:
         layout = mLightsFloatingLayout;

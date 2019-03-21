@@ -95,6 +95,9 @@ public:
     /// update the top widget
     void updateTopWidget();
 
+    /// returns the number of widgets shown.
+    std::uint32_t numberOfWidgetsShown();
+
 signals:
 
     /*!
