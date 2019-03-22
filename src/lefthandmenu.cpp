@@ -272,7 +272,10 @@ void LeftHandMenu::updateLights() {
     std::uint32_t numberOfLightsShown = 0;
     for (const auto& room : mRoomWidgets) {
        numberOfLightsShown += room->numberOfWidgetsShown();
+       room->setCheckedDevices(mSelectedLights->devices());
+       room->updateTopWidget();
     }
+
 
     if (roomList.size()  != mNumberOfRooms
             || numberOfLightsShown != mNumberOfShownLights) {
