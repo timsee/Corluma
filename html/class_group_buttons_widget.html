@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.15.0</span>
+   &#160;<span id="projectnumber">v0.15.2</span>
    </div>
   </td>
  </tr>
@@ -43,8 +43,7 @@ $(function() {
   <div class="summary">
 <a href="class_group_buttons_widget-members.html">List of all members</a> &#124;
 <a href="#signals">Signals</a> &#124;
-<a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pro-methods">Protected Member Functions</a>  </div>
+<a href="#pub-methods">Public Member Functions</a>  </div>
   <div class="headertitle">
 <div class="title">GroupButtonsWidget Class Reference</div>  </div>
 </div><!--header-->
@@ -63,15 +62,15 @@ Signals</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_buttons_widget.html#a3ba798a3d0b7edb0c7773fe74fc92947">groupButtonPressed</a> (QString key)</td></tr>
 <tr class="memdesc:a3ba798a3d0b7edb0c7773fe74fc92947"><td class="mdescLeft">&#160;</td><td class="mdescRight">emitted when a group button is pressed. This emits its actual group name, instead of its displayed group name. <br /></td></tr>
 <tr class="separator:a3ba798a3d0b7edb0c7773fe74fc92947"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acea888ee7c7ccefc64d6af9d9b0e26f3"><td class="memItemLeft" align="right" valign="top"><a id="acea888ee7c7ccefc64d6af9d9b0e26f3"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_buttons_widget.html#acea888ee7c7ccefc64d6af9d9b0e26f3">groupSelectAllToggled</a> (QString key, bool)</td></tr>
-<tr class="memdesc:acea888ee7c7ccefc64d6af9d9b0e26f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">emitted when a group's toggle button is pressed. This emits its actual group name, instead of its displayed group name. <br /></td></tr>
-<tr class="separator:acea888ee7c7ccefc64d6af9d9b0e26f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f6dd817f2be343d75b8a9632a82f089"><td class="memItemLeft" align="right" valign="top"><a id="a7f6dd817f2be343d75b8a9632a82f089"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_buttons_widget.html#a7f6dd817f2be343d75b8a9632a82f089">groupSelectAllToggled</a> (QString key, bool selectAll)</td></tr>
+<tr class="memdesc:a7f6dd817f2be343d75b8a9632a82f089"><td class="mdescLeft">&#160;</td><td class="mdescRight">emitted when a group's toggle button is pressed. This emits its actual group name, instead of its displayed group name. <br /></td></tr>
+<tr class="separator:a7f6dd817f2be343d75b8a9632a82f089"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:acc508614bd1191318872666c3dbe9dab"><td class="memItemLeft" align="right" valign="top"><a id="acc508614bd1191318872666c3dbe9dab"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_buttons_widget.html#acc508614bd1191318872666c3dbe9dab">GroupButtonsWidget</a> (QWidget *parent, cor::EWidgetType type, const QString &amp;roomName, const std::vector&lt; QString &gt; &amp;groups)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_buttons_widget.html#acc508614bd1191318872666c3dbe9dab">GroupButtonsWidget</a> (QWidget *parent, cor::EWidgetType <a class="el" href="class_group_buttons_widget.html#a0630bb77feeb3407552904840a80b52b">type</a>, const QString &amp;roomName, const std::vector&lt; QString &gt; &amp;groups)</td></tr>
 <tr class="memdesc:acc508614bd1191318872666c3dbe9dab"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor <br /></td></tr>
 <tr class="separator:acc508614bd1191318872666c3dbe9dab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adbc442f481de8fd20c87fd7062a68dce"><td class="memItemLeft" align="right" valign="top"><a id="adbc442f481de8fd20c87fd7062a68dce"></a>
@@ -86,17 +85,26 @@ std::list&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><a
 const QString &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_buttons_widget.html#a8c2fafb125f3fd1635b893814a8f7847">currentKey</a> () const</td></tr>
 <tr class="memdesc:a8c2fafb125f3fd1635b893814a8f7847"><td class="mdescLeft">&#160;</td><td class="mdescRight">key of the currently selected group <br /></td></tr>
 <tr class="separator:a8c2fafb125f3fd1635b893814a8f7847"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e4c49c13d0aba321b62f074f4e4e7ef"><td class="memItemLeft" align="right" valign="top"><a id="a1e4c49c13d0aba321b62f074f4e4e7ef"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_buttons_widget.html#a1e4c49c13d0aba321b62f074f4e4e7ef">resize</a> (const QSize &amp;topWidgetSize, const QRect &amp;spacerGeometry)</td></tr>
+<tr class="memdesc:a1e4c49c13d0aba321b62f074f4e4e7ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">resizes prorgrammatically <br /></td></tr>
+<tr class="separator:a1e4c49c13d0aba321b62f074f4e4e7ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab240b086c2b646b07490eb565329d7d9"><td class="memItemLeft" align="right" valign="top"><a id="ab240b086c2b646b07490eb565329d7d9"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_buttons_widget.html#ab240b086c2b646b07490eb565329d7d9">updateCheckedDevices</a> (const QString &amp;key, uint32_t checkedDeviceCount, uint32_t reachableDeviceCount)</td></tr>
 <tr class="memdesc:ab240b086c2b646b07490eb565329d7d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">update the checked devices of the group that matches the key <br /></td></tr>
 <tr class="separator:ab240b086c2b646b07490eb565329d7d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
-Protected Member Functions</h2></td></tr>
-<tr class="memitem:a4a91e6699cf0ef6bd99f1780130cfea8"><td class="memItemLeft" align="right" valign="top"><a id="a4a91e6699cf0ef6bd99f1780130cfea8"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_buttons_widget.html#a4a91e6699cf0ef6bd99f1780130cfea8">resizeEvent</a> (QResizeEvent *)</td></tr>
-<tr class="memdesc:a4a91e6699cf0ef6bd99f1780130cfea8"><td class="mdescLeft">&#160;</td><td class="mdescRight">resizes interal widgets when a resize event is triggered <br /></td></tr>
-<tr class="separator:a4a91e6699cf0ef6bd99f1780130cfea8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0630bb77feeb3407552904840a80b52b"><td class="memItemLeft" align="right" valign="top"><a id="a0630bb77feeb3407552904840a80b52b"></a>
+cor::EWidgetType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_buttons_widget.html#a0630bb77feeb3407552904840a80b52b">type</a> () const noexcept</td></tr>
+<tr class="memdesc:a0630bb77feeb3407552904840a80b52b"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for type of widget <br /></td></tr>
+<tr class="separator:a0630bb77feeb3407552904840a80b52b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a634bbb09afd2e1ef2ce2dedffb4a0abb"><td class="memItemLeft" align="right" valign="top"><a id="a634bbb09afd2e1ef2ce2dedffb4a0abb"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_buttons_widget.html#a634bbb09afd2e1ef2ce2dedffb4a0abb">expectedHeight</a> (int topWidgetHeight)</td></tr>
+<tr class="memdesc:a634bbb09afd2e1ef2ce2dedffb4a0abb"><td class="mdescLeft">&#160;</td><td class="mdescRight">expected height of the overall widget based on the top widget's height <br /></td></tr>
+<tr class="separator:a634bbb09afd2e1ef2ce2dedffb4a0abb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af621303798e70293f906eb9b3c600e35"><td class="memItemLeft" align="right" valign="top"><a id="af621303798e70293f906eb9b3c600e35"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_buttons_widget.html#af621303798e70293f906eb9b3c600e35">groupEndPointY</a> (int topWidgetHeight, const QString &amp;key)</td></tr>
+<tr class="memdesc:af621303798e70293f906eb9b3c600e35"><td class="mdescLeft">&#160;</td><td class="mdescRight">the end point in the y dimension of a group given a key <br /></td></tr>
+<tr class="separator:af621303798e70293f906eb9b3c600e35"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
