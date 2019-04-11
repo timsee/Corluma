@@ -10,6 +10,7 @@
 #include "groupdata.h"
 #include "comm/commlayer.h"
 #include "listroomwidget.h"
+#include "addnewgroupbutton.h"
 
 /*!
  * \copyright
@@ -54,6 +55,9 @@ signals:
     /// called when the number of lights selected changes
     void changedDeviceCount();
 
+    /// signals to create a new group from the left hand menu
+    void createNewGroup();
+
 public slots:
 
     /// called when the number of lights selected changed
@@ -78,6 +82,9 @@ private slots:
 
     /// used to render UI updates
     void renderUI();
+
+    /// handles when the new group button is pressed
+    void newGroupButtonPressed() { emit createNewGroup(); }
 
 private:
 
@@ -109,6 +116,9 @@ private:
     /// update the lights in the room widgets
     void updateLights();
 
+    /// creates a miscellaneous group for all groups not stated in standard rooms
+    cor::Group makeMiscellaneousGroup(const std::list<cor::Group>& roomList);
+
     /// true if menu is in, false otherwise
     bool mIsIn;
 
@@ -127,11 +137,17 @@ private:
     /// main widget
     QWidget *mWidget;
 
+    /// spacer for top of widget
+    QWidget *mSpacer;
+
     /// thread for rendering updates to the UI
     QTimer *mRenderThread;
 
     /// list of selected lights
     cor::DeviceList *mSelectedLights;
+
+    /// palette that shows the currently selected devices
+    cor::LightVectorWidget *mMainPalette;
 
     /// vector room widgets
     std::vector<ListRoomWidget*> mRoomWidgets;
@@ -142,9 +158,6 @@ private:
     /// pointer to group data
     GroupData *mGroups;
 
-    /// lights button
-    LeftHandButton *mLightsButton;
-
     /// single color button
     LeftHandButton *mSingleColorButton;
 
@@ -154,11 +167,11 @@ private:
     /// mood button
     LeftHandButton *mMoodButton;
 
-    /// discovery button
-    LeftHandButton *mDiscoveryButton;
-
     /// settings button
     LeftHandButton *mSettingsButton;
+
+    /// button to add a new group
+    AddNewGroupButton *mNewGroupButton;
 
     /// update the single color button based off of what is selected
     void updateSingleColorButton();

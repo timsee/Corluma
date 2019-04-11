@@ -79,7 +79,7 @@ void LeafControllerInfoWidget::mouseReleaseEvent(QMouseEvent *event) {
 
 void LeafControllerInfoWidget::setChecked(bool checked) {
     mIsChecked = checked;
-    repaint();
+    update();
 }
 
 void LeafControllerInfoWidget::setHeight(int height) {

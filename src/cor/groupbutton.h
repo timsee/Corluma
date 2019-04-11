@@ -32,7 +32,7 @@ public:
     explicit GroupButton(QWidget *parent, const QString& text);
 
     /// handle the state of the select all button
-    void handleSelectAllButton(uint32_t checkedDevicesCount, uint32_t reachableDevicesCount);
+    bool handleSelectAllButton(uint32_t checkedDevicesCount, uint32_t reachableDevicesCount);
 
     /// key for group
     QString key() const { return mTitle->text(); }
@@ -69,6 +69,9 @@ private slots:
 
 private:
 
+    /// resizes widget programmatically
+    void resize();
+
     /*!
      * \brief computeHighlightColor compute the color of the highlight of the widget. The highlight
      *        is based on the number of devices and the number that are currently selected. If all devices
@@ -85,6 +88,12 @@ private:
      * \param button the button to apply the resized pixmap to
      */
     void resizeRightHandIcon(QPixmap pixmap, QPushButton *button);
+
+    /// preferred size of button
+    QSize preferredButtonSize();
+
+    /// getter for current pixmap
+    const QPixmap& currentPixmap();
 
     /// state of the button
     EGroupButtonState mButtonState;
@@ -104,7 +113,7 @@ private:
     /*!
      * \brief mButton button that selects all devices when pushed and adds them to the data layer.
      */
-    QPushButton *mButton;
+    QLabel *mButton;
 
     /// pixmap for the select all button
     QPixmap mSelectAllPixmap;

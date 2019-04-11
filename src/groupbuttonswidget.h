@@ -2,7 +2,6 @@
 #define LISTGROUPTOPWIDGET_H
 
 #include <QWidget>
-#include <QGridLayout>
 
 #include "cor/groupbutton.h"
 #include "cor/dictionary.h"
@@ -38,8 +37,20 @@ public:
     /// key of the currently selected group
     const QString& currentKey() const { return mCurrentKey; }
 
+    /// resizes prorgrammatically
+    void resize(const QSize& topWidgetSize, const QRect& spacerGeometry);
+
     /// update the checked devices of the group that matches the key
     void updateCheckedDevices(const QString& key, uint32_t checkedDeviceCount, uint32_t reachableDeviceCount);
+
+    /// getter for type of widget
+    cor::EWidgetType type() const noexcept { return mType; }
+
+    /// expected height of the overall widget based on the top widget's height
+    int expectedHeight(int topWidgetHeight);
+
+    /// the end point in the y dimension of a group given a key
+    int groupEndPointY(int topWidgetHeight, const QString& key);
 
 signals:
 
@@ -47,7 +58,7 @@ signals:
     void groupButtonPressed(QString key);
 
     /// emitted when a group's toggle button is pressed. This emits its actual group name, instead of its displayed group name.
-    void groupSelectAllToggled(QString key, bool);
+    void groupSelectAllToggled(QString key, bool selectAll);
 
 private slots:
 
@@ -55,12 +66,9 @@ private slots:
     void buttonPressed(QString key);
 
     /// picks up when a group's select all/deselect all button is pressed.
-    void buttonToggled(QString key, bool);
-
-protected:
-
-    /// resizes interal widgets when a resize event is triggered
-    void resizeEvent(QResizeEvent *);
+    void buttonToggled(QString key, bool selectAll) {
+        emit groupSelectAllToggled(originalGroup(key), selectAll);
+    }
 
 private:
     /// ttype of widget
@@ -87,8 +95,8 @@ private:
     /// stores the map of the relabeled named
     cor::Dictionary<std::string> mRelabeledNames;
 
-    /// main layout
-    QGridLayout *mLayout;
+    /// spacer for the condensed layout
+    QWidget *mSpacer;
 
     /// number of buttons displayed in row
     int mGroupCount;

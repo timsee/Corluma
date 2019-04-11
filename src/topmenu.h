@@ -11,7 +11,6 @@
 #include "icondata.h"
 #include "cor/devicelist.h"
 #include "floatinglayout.h"
-#include "lightpage.h"
 #include "moodpage.h"
 #include "palettepage.h"
 #include "colorpage.h"
@@ -19,6 +18,7 @@
 #include "comm/commlayer.h"
 #include "cor/presetpalettes.h"
 #include "selectlightsbutton.h"
+#include "cor/switch.h"
 
 /*!
  * \copyright
@@ -34,7 +34,6 @@ class MainWindow;
 enum class EPage {
     colorPage,
     palettePage,
-    lightPage,
     moodPage,
     discoveryPage,
     settingsPage
@@ -100,10 +99,16 @@ public:
     void showFloatingLayout(EPage newPage);
 
     /// sets up the colorPage's horizontal floating layout.
-    void setupColorFloatingLayout();
+    void adjustColorLayout();
 
     /// true to hide menu button, false to display it
     void hideMenuButton(bool shouldHide);
+
+    /// pushes in the tap to select lights button
+    void pushInTapToSelectButton();
+
+    /// pushes out the tap to select lights button
+    void pushOutTapToSelectButton();
 
 signals:
 
@@ -148,7 +153,7 @@ private slots:
     void floatingLayoutButtonPressed(QString);
 
     /// emits when a menu button is pressed
-    void menuButtonPressed() { emit buttonPressed("Menu"); }
+    void menuButtonPressed();
 
 private:
 
@@ -160,6 +165,9 @@ private:
 
     /// y position where the select lights button shows up
     int mStartSelectLightsButton;
+
+    /// store the last size of the parent for deciding whether or not to move the color menu
+    QSize mLastParentSizeColorMenu;
 
     /// the color menu type
     EColorMenuType mColorMenuType;
@@ -198,9 +206,6 @@ private:
 
     /// returns a pointer to the current floating layout.
     FloatingLayout *currentFloatingLayout();
-
-    /// floating layout for the lights page.
-    FloatingLayout *mLightsFloatingLayout;
 
     /// floating layout for palette page.
     FloatingLayout *mPaletteFloatinglayout;

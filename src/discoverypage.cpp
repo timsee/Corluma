@@ -13,6 +13,7 @@
 #include "mainwindow.h"
 
 #include "comm/commnanoleaf.h"
+#include "utils/qt.h"
 
 #include <QSignalMapper>
 #include <QInputDialog>
@@ -64,12 +65,12 @@ DiscoveryPage::DiscoveryPage(QWidget *parent, cor::DeviceList *data, CommLayer *
     mOptionalFloatingLayout = new FloatingLayout(true, this);
     connect(mOptionalFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
     std::vector<QString> verticalButtons = { QString("Plus") };
-    mOptionalFloatingLayout->setupButtons(verticalButtons, EButtonSize::medium);
+    mOptionalFloatingLayout->setupButtons(verticalButtons, EButtonSize::small);
 
     mVerticalFloatingLayout = new FloatingLayout(true, this);
     connect(mVerticalFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
     verticalButtons = { QString("Settings") };
-    mVerticalFloatingLayout->setupButtons(verticalButtons, EButtonSize::medium);
+    mVerticalFloatingLayout->setupButtons(verticalButtons, EButtonSize::small);
 
     mHorizontalFloatingLayout = new FloatingLayout(false, this);
     connect(mHorizontalFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
@@ -426,3 +427,23 @@ void DiscoveryPage::startClicked() {
     }
     emit startButtonClicked();
 }
+
+void DiscoveryPage::pushIn(const QSize& size, const QPoint& startPoint, const QPoint& endPoint) {
+    this->setVisible(true);
+    moveWidget(this,
+               size,
+               startPoint,
+               endPoint);
+    this->raise();
+    this->show();
+    this->isOpen(true);
+}
+
+void DiscoveryPage::pushOut(const QSize& size, const QPoint& startPoint, const QPoint& endPoint) {
+    moveWidget(this,
+               size,
+               startPoint,
+               endPoint);
+    this->isOpen(false);
+}
+

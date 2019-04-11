@@ -77,7 +77,7 @@ void HueInfoWidget::mouseReleaseEvent(QMouseEvent *event) {
 
 void HueInfoWidget::setChecked(bool checked) {
     mIsChecked = checked;
-    repaint();
+    update();
 }
 
 void HueInfoWidget::setHeight(int height) {

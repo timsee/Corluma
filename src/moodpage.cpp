@@ -149,7 +149,6 @@ ListMoodGroupWidget* MoodPage::initMoodsCollectionWidget(const QString& name,
                                                           key,
                                                           hideEdit,
                                                           mMoodsListWidget->mainWidget());
-    connect(widget, SIGNAL(moodClicked(QString, std::uint64_t)), this, SLOT(moodClicked(QString, std::uint64_t)));
     connect(widget, SIGNAL(editClicked(QString, std::uint64_t)), this, SLOT(editMoodClicked(QString, std::uint64_t)));
     connect(widget, SIGNAL(moodSelected(QString, std::uint64_t)), this, SLOT(selectedMood(QString, std::uint64_t)));
 
@@ -170,16 +169,6 @@ void MoodPage::editMoodClicked(QString , std::uint64_t) {
     emit clickedEditButton(true);
 }
 
-void MoodPage::moodClicked(QString collectionKey, std::uint64_t moodKey) {
-    Q_UNUSED(collectionKey);
-//    qDebug() << "collection key:" << collectionKey
-//             << "mood key:" << moodKey;
-    mCurrentMood = moodKey;
-
-    emit moodUpdate(mCurrentMood);
-    emit updateMainIcons();
-    emit changedDeviceCount();
-}
 
 void MoodPage::resizeEvent(QResizeEvent *) {
     mMoodsListWidget->resizeWidgets();

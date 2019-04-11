@@ -55,12 +55,6 @@ signals:
     void updateMainIcons();
 
     /*!
-     * \brief changedDeviceCount signaled to UI assets whenever a click on the page results in changing
-     *        the number of devices connected.
-     */
-    void changedDeviceCount();
-
-    /*!
      * \brief clickedEditButton sent whenever an edit button is clicked so that the main page can load
      *        the edit page.
      */
@@ -78,13 +72,6 @@ private slots:
      *        gets sent to the main window and tells it to open the edit page.
      */
     void editMoodClicked(QString collectionKey, std::uint64_t moodKey);
-
-    /*!
-     * \brief moodClicked called whenever an individual mood is clicked
-     * \param collectionKey key for the collection of lights that the mood fits into
-     * \param moodKey name of the specific mood
-     */
-    void moodClicked(QString collectionKey, std::uint64_t moodKey);
 
     /*!
      * \brief selectedMood called whenever an individual mood is selceted

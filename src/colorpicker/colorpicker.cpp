@@ -179,7 +179,7 @@ void ColorPicker::updateBottomMenuState(bool enable) {
         QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mRGBSliders);
         effect->setOpacity(mWheelOpacity);
         mRGBSliders->setGraphicsEffect(effect);
-        mRGBSliders->setEnabled(enable);
+        mRGBSliders->enable(enable);
     } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::ambientLayout) {
         QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mTempBrightSliders);
         effect->setOpacity(mWheelOpacity);

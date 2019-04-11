@@ -64,7 +64,7 @@ void EditGroupPage::showGroup(QString key, std::list<cor::Light> groupDevices, s
         mTopMenu->roomCheckBox()->setChecked(mIsRoomOriginal);
     }
     updateDevices(groupDevices, devices);
-    repaint();
+    update();
 }
 
 void EditGroupPage::updateDevices(const std::list<cor::Light>& checkedDevices, const std::list<cor::Light>& devices) {

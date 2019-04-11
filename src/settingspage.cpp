@@ -74,14 +74,16 @@ SettingsPage::SettingsPage(QWidget *parent, GroupData *parser, AppSettings *appS
     mSectionTitles = { "Data",
                        "About"};
 
-    mTitles = { "Light Info",
+    mTitles = { "Discover Lights",
+                "Light Info",
                 "Save",
                 "Load",
                 "Reset",
                 "Copyright",
                 "FAQ"};
 
-    mDescriptions = { "Read and manage the hardware information.",
+    mDescriptions = { "Discover new lights.",
+                      "Read and manage the hardware information.",
                       "Save light moods and collections to JSON.",
                       "Erase old moods and collections, load new data from JSON.",
                       "Resets all app data and all app settings.",
@@ -245,6 +247,8 @@ void SettingsPage::settingsButtonPressed(QString title) {
         saveButtonClicked();
     } else if (title.compare("Light Info") == 0) {
         emit clickedInfoWidget();
+    } else if (title.compare("Discover Lights") == 0) {
+        emit clickedDiscovery();
     } else if (title.compare("Copyright") == 0) {
         showWebView(ECorlumaWebView::copyright);
     } else if (title.compare("FAQ") == 0) {
@@ -284,7 +288,6 @@ void SettingsPage::showWebView(ECorlumaWebView newWebView) {
 }
 
 void SettingsPage::hideCurrentWebView() {
-
     cor::WebView *widget;
     switch (mCurrentWebView) {
         case ECorlumaWebView::copyright:
@@ -304,4 +307,23 @@ void SettingsPage::hideCurrentWebView() {
                     QPoint(0,0));
 
     mCurrentWebView = ECorlumaWebView::none;
+}
+
+void SettingsPage::pushIn(const QSize& size, const QPoint& startPoint, const QPoint& endPoint) {
+    this->setVisible(true);
+    moveWidget(this,
+               size,
+               startPoint,
+               endPoint);
+    this->raise();
+    this->show();
+    this->isOpen(true);
+}
+
+void SettingsPage::pushOut(const QPoint& endPoint) {
+    moveWidget(this,
+               this->size(),
+               this->pos(),
+               endPoint);
+    this->isOpen(false);
 }

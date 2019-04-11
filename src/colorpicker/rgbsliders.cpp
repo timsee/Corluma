@@ -79,6 +79,24 @@ void RGBSliders::changeColor(QColor color) {
     mBlueSlider->slider()->blockSignals(blocked);
 }
 
+
+void RGBSliders::enable(bool enable) {
+    if (!enable) {
+        bool blocked = mRedSlider->slider()->blockSignals(true);
+        mRedSlider->slider()->setValue(0);
+        mRedSlider->slider()->blockSignals(blocked);
+
+        blocked = mGreenSlider->slider()->blockSignals(true);
+        mGreenSlider->slider()->setValue(0);
+        mGreenSlider->slider()->blockSignals(blocked);
+
+        blocked = mBlueSlider->slider()->blockSignals(true);
+        mBlueSlider->slider()->setValue(0);
+        mBlueSlider->slider()->blockSignals(blocked);
+    }
+    this->setEnabled(enable);
+}
+
 void RGBSliders::redSliderChanged(int newValue) {
    emit colorChanged(QColor(newValue, mColor.green(), mColor.blue()));
 }

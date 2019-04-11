@@ -247,14 +247,14 @@ void DiscoveryHueWidget::bridgePressed(QString key) {
 void DiscoveryHueWidget::resize() {
     mHueLightDiscovery->resize();
 
-    // resize scroll area
-    mListWidget->resizeWidgets();
-
     QSize widgetSize(mListWidget->width(), int(this->height() / 1.6f));
+    int yHeight = 0;
     for (auto widget : mListWidget->widgets()) {
         widget->setFixedSize(widgetSize);
         widget->setVisible(true);
+        yHeight += widgetSize.height();
     }
+    mListWidget->setFixedHeight(yHeight);
 }
 
 void DiscoveryHueWidget::resizeEvent(QResizeEvent *) {

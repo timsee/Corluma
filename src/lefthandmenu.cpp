@@ -10,8 +10,6 @@
 #include "cor/presetpalettes.h"
 
 #include <QStyleOption>
-#include <QGraphicsOpacityEffect>
-#include <QPainter>
 #include <QDebug>
 #include <QMouseEvent>
 #include <QScroller>
@@ -30,9 +28,9 @@ LeftHandMenu::LeftHandMenu(cor::DeviceList *devices, CommLayer *comm, GroupData 
     mIsIn = false;
     mNumberOfRooms = 0;
 
-    //---------------
-    // Create Widgets for scrolling
-    //---------------
+    mSpacer = new QWidget(this);
+    mSpacer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mSpacer->setStyleSheet("border: none; background-color:rgb(33,32,32);");
 
     mWidget = new QWidget(this);
     mWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -45,43 +43,48 @@ LeftHandMenu::LeftHandMenu(cor::DeviceList *devices, CommLayer *comm, GroupData 
     mScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     mScrollArea->horizontalScrollBar()->setEnabled(false);
 
+
+    // --------------
+    // Setup Main Palette
+    // -------------
+    mMainPalette = new cor::LightVectorWidget(6, 2, true, this);
+    mMainPalette->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mMainPalette->setFixedHeight(this->height() * 0.1);
+    mMainPalette->setStyleSheet("background-color:rgb(33,32,32);");
+
     //---------------
     // Setup Buttons
     //---------------
 
-    mLightsButton = new LeftHandButton("Lights", EPage::lightPage, ":/images/connectionIcon.png", this, mWidget);
-    mLightsButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    connect(mLightsButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
-
-    mSingleColorButton = new LeftHandButton("Single Color", EPage::colorPage, ":/images/colorWheel_icon.png", this, mWidget);
+    mSingleColorButton = new LeftHandButton("Single Color", EPage::colorPage, ":/images/colorWheel_icon.png", this, this);
     mSingleColorButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mSingleColorButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
     mSingleColorButton->shouldHightlght(true);
 
-    mDiscoveryButton = new LeftHandButton("Discovery", EPage::discoveryPage, ":/images/wifi.png", this, mWidget);
-    mDiscoveryButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    connect(mDiscoveryButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
-
-    mSettingsButton = new LeftHandButton("Settings", EPage::settingsPage, ":/images/settingsgear.png", this, mWidget);
+    mSettingsButton = new LeftHandButton("Settings", EPage::settingsPage, ":/images/settingsgear.png", this, this);
     mSettingsButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mSettingsButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
     PresetPalettes palettes;
-    cor::Light light("NO_NAME", "NO_CONTROLLER", ECommType::MAX);
+    cor::Light light;
     light.routine = ERoutine::multiBars;
     light.palette = palettes.palette(EPalette::water);
     light.speed   = 100;
-    mMultiColorButton = new LeftHandButton("Multi Color", EPage::palettePage, cor::lightToJson(light), this, mWidget);
+    mMultiColorButton = new LeftHandButton("Multi Color", EPage::palettePage, cor::lightToJson(light), this, this);
     mMultiColorButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mMultiColorButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
-    cor::Light moodLight("NO_NAME", "NO_CONTROLLER", ECommType::MAX);
+    cor::Light moodLight;
     moodLight.routine = ERoutine::multiFade;
     moodLight.palette = palettes.palette(EPalette::fire);
     moodLight.speed   = 100;
-    mMoodButton = new LeftHandButton("Moods", EPage::moodPage, cor::lightToJson(moodLight), this, mWidget);
+    mMoodButton = new LeftHandButton("Moods", EPage::moodPage, cor::lightToJson(moodLight), this, this);
     mMoodButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mMoodButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
+
+    mNewGroupButton = new AddNewGroupButton(mWidget);
+    mNewGroupButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    connect(mNewGroupButton, SIGNAL(pressed()), this, SLOT(newGroupButtonPressed()));
 
     mRenderThread = new QTimer(this);
     connect(mRenderThread, SIGNAL(timeout()), this, SLOT(renderUI()));
@@ -99,7 +102,6 @@ void LeftHandMenu::resize() {
     } else {
         preferredWidth = mParentSize.width() * 0.66f;
     }
-    mScrollArea->setFixedHeight(mParentSize.height());
     mScrollArea->setFixedWidth(int(this->width() * 1.2f));
 
     auto width = int(preferredWidth);
@@ -121,8 +123,10 @@ void LeftHandMenu::resize() {
                           mParentSize.height());
     }
 
-    auto yPos = int(this->height() * 0.1);
     auto buttonHeight = int(this->height() * 0.07);
+    auto yPos = this->height() * 0.02;
+
+    mSpacer->setGeometry(0, 0, this->width(), this->height());
 
     mSingleColorButton->setGeometry(0,
                                     yPos,
@@ -142,44 +146,34 @@ void LeftHandMenu::resize() {
                              buttonHeight);
     yPos += mMoodButton->height();
 
-    mLightsButton->setGeometry(0,
-                               yPos,
-                               this->width(),
-                               buttonHeight);
-    yPos += mLightsButton->height();
-
-    mDiscoveryButton->setGeometry(0,
-                                  yPos,
-                                  this->width(),
-                                  buttonHeight);
-    yPos += mDiscoveryButton->height();
-
     mSettingsButton->setGeometry(0,
                                yPos,
                                this->width(),
                                buttonHeight);
     yPos += mSettingsButton->height();
 
-    mLightsButton->updateIcon(":/images/connectionIcon.png");
-    mSingleColorButton->updateIcon(":/images/colorWheel_icon.png");
-    mSettingsButton->updateIcon(":/images/settingsgear.png");
-    mDiscoveryButton->updateIcon(":/images/wifi.png");
-    PresetPalettes palettes;
-    cor::Light light("NO_NAME", "NO_CONTROLLER", ECommType::MAX);
-    light.routine = ERoutine::multiBars;
-    light.palette = palettes.palette(EPalette::water);
-    light.speed   = 100;
-    mMultiColorButton->updateJSON(cor::lightToJson(light));
-    cor::Light moodLight("NO_NAME", "NO_CONTROLLER", ECommType::MAX);
-    moodLight.routine = ERoutine::multiFade;
-    moodLight.palette = palettes.palette(EPalette::fire);
-    moodLight.speed   = 100;
-    mMoodButton->updateJSON(cor::lightToJson(moodLight));
+    mMainPalette->setGeometry(0,
+                              yPos + this->height() * 0.02,
+                              this->width(),
+                              buttonHeight * 1.2);
+
+    yPos +=  mMainPalette->height() + this->height() * 0.02;
 
     mLightStartHeight = yPos;
-    yPos += resizeRoomsWidgets(mLightStartHeight);
+    auto scrollWidgetHeight = resizeRoomsWidgets(mLightStartHeight);
+    mNewGroupButton->setGeometry(0,
+                                 scrollWidgetHeight,
+                                 this->width(),
+                                 buttonHeight);
+    scrollWidgetHeight += mNewGroupButton->height();
 
-    mWidget->setFixedSize(QSize(this->width(), yPos));
+    this->setFixedHeight(mParentSize.height());
+    mScrollArea->setGeometry(0,
+                             yPos,
+                             this->width(),
+                             this->height() - yPos);
+
+    mWidget->setFixedSize(QSize(this->width(), scrollWidgetHeight));
 }
 
 void LeftHandMenu::pushIn() {
@@ -208,6 +202,9 @@ void LeftHandMenu::pushOut() {
 
 void LeftHandMenu::deviceCountChanged() {
     const auto& lights = mSelectedLights->devices();
+
+    mMainPalette->updateDevices(lights);
+
     //loop for multi color lights
     std::uint32_t multiColorLightCount = 0u;
     for (const auto& light : lights) {
@@ -254,15 +251,14 @@ void LeftHandMenu::updateDataGroupInUI(cor::Group dataGroup, const std::list<cor
 void LeftHandMenu::updateLights() {
     // get all rooms
     auto roomList = mGroups->roomList();
+    // attempt to make a miscellaneous group
+    const auto& miscellaneousGroup = makeMiscellaneousGroup(roomList);
+    // only add miscellaneous group if it has any data
+    if (!miscellaneousGroup.lights.empty() || !miscellaneousGroup.subgroups.empty()) {
+        roomList.push_back(miscellaneousGroup);
+    }
 
-//    // attempt to make a miscellaneous group
-//    const auto& miscellaneousGroup = makeMiscellaneousGroup(roomList);
-//    // only add miscellaneous group if it has any data
-//    if (!miscellaneousGroup.lights.empty() || !miscellaneousGroup.subgroups.empty()) {
-//        roomList.push_back(miscellaneousGroup);
-//    }
-
-//    // update ui groups
+    // update ui groups
     const auto& uiGroups = gatherAllUIGroups();
     for (const auto& room : roomList) {
         updateDataGroupInUI(room, uiGroups);
@@ -287,49 +283,19 @@ void LeftHandMenu::updateLights() {
 
 
 void LeftHandMenu::buttonPressed(EPage page) {
+    mSingleColorButton->shouldHightlght(false);
+    mMultiColorButton->shouldHightlght(false);
+    mMoodButton->shouldHightlght(false);
+    mSettingsButton->shouldHightlght(false);
     if (page == EPage::colorPage) {
-        mLightsButton->shouldHightlght(false);
         mSingleColorButton->shouldHightlght(true);
-        mMultiColorButton->shouldHightlght(false);
-        mMoodButton->shouldHightlght(false);
-        mSettingsButton->shouldHightlght(false);
-        mDiscoveryButton->shouldHightlght(false);
     }  else if (page == EPage::palettePage) {
-        mLightsButton->shouldHightlght(false);
-        mSingleColorButton->shouldHightlght(false);
         mMultiColorButton->shouldHightlght(true);
-        mMoodButton->shouldHightlght(false);
-        mSettingsButton->shouldHightlght(false);
-        mDiscoveryButton->shouldHightlght(false);
     }  else if (page == EPage::moodPage) {
-        mLightsButton->shouldHightlght(false);
-        mSingleColorButton->shouldHightlght(false);
-        mMultiColorButton->shouldHightlght(false);
         mMoodButton->shouldHightlght(true);
-        mSettingsButton->shouldHightlght(false);
-        mDiscoveryButton->shouldHightlght(false);
-    }  else if (page == EPage::lightPage) {
-        mLightsButton->shouldHightlght(true);
-        mSingleColorButton->shouldHightlght(false);
-        mMultiColorButton->shouldHightlght(false);
-        mMoodButton->shouldHightlght(false);
-        mSettingsButton->shouldHightlght(false);
-        mDiscoveryButton->shouldHightlght(false);
-    } else if (page == EPage::settingsPage) {
-        mLightsButton->shouldHightlght(false);
-        mSingleColorButton->shouldHightlght(false);
-        mMultiColorButton->shouldHightlght(false);
-        mMoodButton->shouldHightlght(false);
+    }  else if (page == EPage::settingsPage) {
         mSettingsButton->shouldHightlght(true);
-        mDiscoveryButton->shouldHightlght(false);
-    } else if (page == EPage::discoveryPage) {
-        mLightsButton->shouldHightlght(false);
-        mSingleColorButton->shouldHightlght(false);
-        mMultiColorButton->shouldHightlght(false);
-        mMoodButton->shouldHightlght(false);
-        mSettingsButton->shouldHightlght(false);
-        mDiscoveryButton->shouldHightlght(true);
-    } else {
+    }  else {
         qDebug() << "Do not recognize key " << pageToString(page);
     }
     emit pressedButton(page);
@@ -388,13 +354,12 @@ ListRoomWidget* LeftHandMenu::initRoomsWidget(const cor::Group& group, const QSt
 int LeftHandMenu::resizeRoomsWidgets(int yStartPoint) {
     int yPos = 0u;
     std::sort(mRoomWidgets.begin(), mRoomWidgets.end(), [](ListRoomWidget* a, ListRoomWidget* b) {
-        return a->key() > b->key();
+        return a->key() < b->key();
     });
 
-    auto shownLights = 0u;
     for (auto widget : mRoomWidgets) {
         widget->setVisible(true);
-        widget->setGeometry(0, yPos + yStartPoint, this->width(), widget->height());
+        widget->setGeometry(0, yPos, this->width(), widget->height());
         yPos += widget->height();
     }
     return yPos;
@@ -414,9 +379,6 @@ void LeftHandMenu::lightClicked(QString, QString deviceKey) {
         // update UI
         emit changedDeviceCount();
     }
-
-
-
 }
 
 void LeftHandMenu::groupSelected(QString key, bool shouldSelect) {
@@ -449,14 +411,15 @@ void LeftHandMenu::groupSelected(QString key, bool shouldSelect) {
         } else {
             mSelectedLights->removeDeviceList(lights);
         }
-        // now update the GUI
-        emit changedDeviceCount();
 
-        resize();
+        updateLights();
+
         for (const auto& widget : mRoomWidgets) {
             widget->setCheckedDevices(mSelectedLights->devices());
             widget->updateTopWidget();
         }
+
+        emit changedDeviceCount();
     }
 }
 
@@ -483,4 +446,56 @@ void LeftHandMenu::renderUI() {
     } else {
         mLastScrollValue = scrollValue;
     }
+}
+
+
+cor::Group LeftHandMenu::makeMiscellaneousGroup(const std::list<cor::Group>& roomList) {
+    // fill in miscellaneous Room default data
+    cor::Group miscellaneousGroup(0u, "Miscellaneous");
+    miscellaneousGroup.index = -1;
+    miscellaneousGroup.isRoom = true;
+    // loop through every group, see if it maps to a room, if not, add it to this room
+    for (const auto& group : mGroups->groupList()) {
+        bool groupInRoom = false;
+        for (const auto& room : roomList) {
+            for (const auto& roomGroup : room.subgroups) {
+                if (roomGroup == group.uniqueID()) {
+                    groupInRoom = true;
+                }
+            }
+        }
+        if (!groupInRoom) {
+            miscellaneousGroup.subgroups.push_back(group.uniqueID());
+        }
+    }
+    // loop through every light, see if it maps to a room, if not, add it to this group and its subgroups
+    for (const auto& device : mComm->allDevices()) {
+        bool deviceInGroup = false;
+        if (device.isValid()) {
+            // looop through all known rooms
+            for (const auto& room : mGroups->groups().itemList()) {
+                // check room devices for this specific light
+                for (const auto& lightID : room.lights) {
+                    if (lightID == device.uniqueID()) {
+                        deviceInGroup = true;
+                    }
+                }
+                // check their subgroups for thsi specific light
+                for (const auto& groupID : room.subgroups) {
+                    const auto& group = mGroups->groups().item(QString::number(groupID).toStdString());
+                    if (group.second) {
+                        for (const auto& lightID : group.first.lights) {
+                            if (lightID == device.uniqueID()) {
+                                deviceInGroup = true;
+                            }
+                        }
+                    }
+                }
+            }
+            if (!deviceInGroup) {
+                miscellaneousGroup.lights.push_back(device.uniqueID());
+            }
+        }
+    }
+    return miscellaneousGroup;
 }

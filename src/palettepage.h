@@ -174,7 +174,6 @@ private:
 
     /// stored state for current speed
     int mSpeed;
-
 };
 
 #endif // PresetColorsPage_H

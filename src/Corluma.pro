@@ -189,7 +189,6 @@ SOURCES += main.cpp \
     editablefieldwidget.cpp \
     searchwidget.cpp \
     editpagetopmenu.cpp \
-    lightpage.cpp \
     palettepage.cpp \
     moodpage.cpp \
     lightinfolistwidget.cpp \
@@ -207,7 +206,8 @@ SOURCES += main.cpp \
     selectlightsbutton.cpp \
     mainviewport.cpp \
     lefthandbutton.cpp \
-    listlightwidget.cpp
+    listlightwidget.cpp \
+    addnewgroupbutton.cpp
 
 HEADERS  +=  arducor/arducordiscovery.h \
     arducor/arducorpacketparser.h \
@@ -297,7 +297,6 @@ HEADERS  +=  arducor/arducordiscovery.h \
     editablefieldwidget.h \
     searchwidget.h \
     editpagetopmenu.h \
-    lightpage.h \
     palettepage.h \
     moodpage.h \
     lightinfolistwidget.h \
@@ -319,7 +318,8 @@ HEADERS  +=  arducor/arducordiscovery.h \
     selectlightsbutton.h \
     mainviewport.h \
     lefthandbutton.h \
-    listlightwidget.h
+    listlightwidget.h \
+    addnewgroupbutton.h
 
 #----------
 # Desktop builds only

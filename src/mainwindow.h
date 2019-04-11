@@ -164,6 +164,9 @@ public slots:
     /// called when a mood is selected
     void moodSelected(std::uint64_t);
 
+    /// getter for left hand menu
+    LeftHandMenu *leftHandMenu() { return mLeftHandMenu; }
+
 private slots:
 
     /// loads most of the pages. These are not loaded automatically since they require wifi to be enabled.
@@ -179,6 +182,9 @@ private slots:
 
     /// caleld when the left hand drawer is clicked
     void leftHandMenuButtonPressed(EPage);
+
+    /// opens the new group menu
+    void openNewGroupMenu();
 
 protected:
 

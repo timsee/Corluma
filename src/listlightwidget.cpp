@@ -58,7 +58,7 @@ void ListLightWidget::init(const cor::Light& device) {
 
     QString nameText = createName(device);
     mController->setText(nameText);
-    mController->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mController->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 
     // setup layout
     mLayout = new QGridLayout(this);
@@ -95,9 +95,9 @@ void ListLightWidget::updateWidget(const cor::Light& device) {
 
     if (mDevice.hardwareType != device.hardwareType
             || mLastRenderedSize != this->size()) {
-        mLastRenderedSize = this->size();
         updateTypeIcon(device.hardwareType);
         resizeIcons();
+        mLastRenderedSize = this->size();
     }
 
     if (mDevice.name != device.name) {
@@ -127,7 +127,7 @@ void ListLightWidget::updateWidget(const cor::Light& device) {
         QJsonObject object = cor::lightToJson(device);
         mIconData.setRoutine(object);
         mIconPixmap = mIconData.renderAsQPixmap();
-        repaint();
+        update();
     }
 }
 
@@ -167,7 +167,7 @@ bool ListLightWidget::setHighlightChecked(bool checked) {
                 mOnOffSwitch->setAttribute(Qt::WA_TransparentForMouseEvents, true);
             }
         }
-        repaint();
+        update();
     }
     return mIsChecked;
 }
@@ -189,7 +189,7 @@ void ListLightWidget::paintEvent(QPaintEvent *event) {
     if (mDevice.isReachable) {
         QRect rect;
         if (mType == cor::EWidgetType::full) {
-            rect = QRect(mOnOffSwitch->x() + mOnOffSwitch->width() + 5,
+            rect = QRect(mOnOffSwitch->width() + mTypeIcon->width() + 10,
                          10,
                          this->width() / 2,
                          int(this->height() * 0.6f / 2));
@@ -239,7 +239,11 @@ void ListLightWidget::paintEvent(QPaintEvent *event) {
 }
 
 void ListLightWidget::mouseReleaseEvent(QMouseEvent *event) {
-    if (cor::isMouseEventTouchUpInside(event, this)) {
+    if ((mType == cor::EWidgetType::condensed) && cor::leftHandMenuMoving()) {
+        event->ignore();
+        return;
+    }
+    if (cor::isMouseEventTouchUpInside(event, this, true)) {
         setHighlightChecked(!mIsChecked);
         emit clicked(mKey);
     }
@@ -359,6 +363,16 @@ void ListLightWidget::resizeIcons() {
                                      size.height(),
                                      Qt::IgnoreAspectRatio,
                                      Qt::SmoothTransformation);
+
+    if (mType == cor::EWidgetType::full) {
+        mController->setFixedWidth(this->width());
+    } else {
+        int offset = size.height() * 3;
+        if (mOnOffSwitch->isVisible()) {
+            offset += mOnOffSwitch->width();
+        }
+        mController->setFixedWidth(this->width() - offset);
+    }
 
     if (mOnOffSwitch->isVisible()) {
         QSize onOffSize(size.width() *  2, size.height() * 2);

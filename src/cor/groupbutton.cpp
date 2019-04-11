@@ -24,24 +24,15 @@ GroupButton::GroupButton(QWidget *parent, const QString& text) : QWidget(parent)
     const QString transparentStyleSheet = "background-color: rgba(0,0,0,0);";
 
     mTitle = new QLabel(text, this);
-    mTitle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    mTitle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     mTitle->setStyleSheet(transparentStyleSheet);
-    mTitle->setAlignment(Qt::AlignBottom);
+    mTitle->setAlignment(Qt::AlignVCenter);
 
     mButtonState = EGroupButtonState::clearAll;
 
-    mButton = new QPushButton(this);
-    mButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mSelectAllPixmap = QPixmap(":/images/selectAllIcon.png");
-    mClearAllPixmap = QPixmap(":/images/uncheckedBox.png");
-    mDisabledPixmap = QPixmap(":/images/disabledX.png");
-
-    // make a minimum size for the button
-    int preferredSize = mButton->size().height() * 0.75f;
-    mButton->setIconSize(QSize(preferredSize, preferredSize));
-    mButton->setFixedSize(QSize(preferredSize, preferredSize));
-    mButton->setIcon(QIcon(mClearAllPixmap));
-    connect(mButton, SIGNAL(clicked(bool)), this, SLOT(buttonPressed(bool)));
+    mButton = new QLabel(this);
+    mButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    resize();
 
     mLayout = new QHBoxLayout;
     mLayout->addWidget(mTitle);
@@ -49,29 +40,67 @@ GroupButton::GroupButton(QWidget *parent, const QString& text) : QWidget(parent)
     this->setLayout(mLayout);
 
     this->setMinimumHeight(mTitle->height());
+
+    handleSelectAllButton(0u, 0u);
 }
 
 
-void GroupButton::handleSelectAllButton(uint32_t checkedDevicesCount, uint32_t reachableDevicesCount) {
-    mCheckedCount = checkedDevicesCount;
-    mReachableCount = reachableDevicesCount;
+void GroupButton::resize() {
+    QSize size = preferredButtonSize();
+    mSelectAllPixmap = QPixmap(":/images/selectAllIcon.png");
+    mSelectAllPixmap = mSelectAllPixmap.scaled(size.width(),
+                                               size.height(),
+                                               Qt::IgnoreAspectRatio,
+                                               Qt::SmoothTransformation);
 
-    if (reachableDevicesCount == 0) {
-        mButtonState = EGroupButtonState::disabled;
-        mButton->setIcon(QIcon(mDisabledPixmap));
-    } else if (mCheckedCount > 0) {
-        mButtonState = EGroupButtonState::clearAll;
-        mButton->setIcon(QIcon(mSelectAllPixmap));
-    } else {
-        mButtonState = EGroupButtonState::selectAll;
-        mButton->setIcon(QIcon(mClearAllPixmap));
+    mClearAllPixmap = QPixmap(":/images/uncheckedBox.png");
+    mClearAllPixmap = mClearAllPixmap.scaled(size.width(),
+                                             size.height(),
+                                             Qt::IgnoreAspectRatio,
+                                             Qt::SmoothTransformation);
+
+    mDisabledPixmap = QPixmap(":/images/disabledX.png");
+    mDisabledPixmap = mDisabledPixmap.scaled(size.width(),
+                                             size.height(),
+                                             Qt::IgnoreAspectRatio,
+                                             Qt::SmoothTransformation);
+
+    mTitle->setFixedWidth(this->width() - preferredButtonSize().width());
+    mButton->setFixedWidth(preferredButtonSize().width());
+
+    if (handleSelectAllButton(mCheckedCount, mReachableCount)) {
+        update();
     }
-    repaint();
+}
+
+bool GroupButton::handleSelectAllButton(uint32_t checkedDevicesCount, uint32_t reachableDevicesCount) {
+    bool renderFlag = false;
+    EGroupButtonState state;
+    if (reachableDevicesCount == 0) {
+        state = EGroupButtonState::disabled;
+    } else if (mCheckedCount > 0) {
+        state = EGroupButtonState::clearAll;
+    } else {
+        state = EGroupButtonState::selectAll;
+    }
+
+    if (mButtonState != state) {
+        mButtonState = state;
+        mButton->setPixmap(currentPixmap());
+        renderFlag = true;
+    }
+
+   if (mCheckedCount != checkedDevicesCount
+           || mReachableCount != reachableDevicesCount) {
+        mCheckedCount = checkedDevicesCount;
+        mReachableCount = reachableDevicesCount;
+        renderFlag = true;
+   }
+   return renderFlag;
 }
 
 void GroupButton::setSelectAll(bool shouldSelect) {
     mIsSelected = shouldSelect;
-    repaint();
 }
 
 void GroupButton::buttonPressed(bool) {
@@ -79,14 +108,15 @@ void GroupButton::buttonPressed(bool) {
         if (mCheckedCount > 0) {
             mButtonState = EGroupButtonState::selectAll;
             mCheckedCount = 0;
-            mButton->setIcon(QIcon(mClearAllPixmap));
         } else {
             mCheckedCount = mReachableCount;
             mButtonState = EGroupButtonState::clearAll;
-            mButton->setIcon(QIcon(mSelectAllPixmap));
         }
+
+        mButton->setPixmap(currentPixmap());
+
         emit groupSelectAllToggled(mTitle->text(), EGroupButtonState::clearAll == mButtonState);
-        repaint();
+        update();
     }
 }
 
@@ -109,11 +139,11 @@ QColor GroupButton::computeHighlightColor(uint32_t checkedDeviceCount, uint32_t 
 }
 
 void GroupButton::resizeEvent(QResizeEvent *) {
-
+    resize();
+    mButton->setPixmap(currentPixmap());
 }
 
-void GroupButton::paintEvent(QPaintEvent *event) {
-    Q_UNUSED(event);
+void GroupButton::paintEvent(QPaintEvent *) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
@@ -136,10 +166,36 @@ void GroupButton::paintEvent(QPaintEvent *event) {
 
 
 void GroupButton::mouseReleaseEvent(QMouseEvent *event) {
-    if (cor::isMouseEventTouchUpInside(event, this)) {
-        emit groupButtonPressed(mTitle->text());
+    if (cor::isMouseEventTouchUpInside(event, this, true)) {
+        if (cor::isMouseEventTouchUpInside(event, mButton, false)) {
+            QWidget *parentWidget = this->parentWidget();
+            auto groupButtonsWidget = qobject_cast<GroupButtonsWidget*>(parentWidget);
+            if (groupButtonsWidget->type() == cor::EWidgetType::condensed) {
+                if (cor::leftHandMenuMoving()) {
+                    return;
+                }
+            }
+            buttonPressed(true);
+        } else {
+            emit groupButtonPressed(mTitle->text());
+        }
     }
     event->ignore();
+}
+
+
+const QPixmap& GroupButton::currentPixmap() {
+    if (mButtonState == EGroupButtonState::disabled) {
+        return mDisabledPixmap;
+    } else if (mButtonState == EGroupButtonState::clearAll) {
+        return mSelectAllPixmap;
+    } else {
+        return mClearAllPixmap;
+    }
+}
+
+QSize GroupButton::preferredButtonSize() {
+    return QSize(mTitle->height() * 0.9, mTitle->height() * 0.9);
 }
 
 }

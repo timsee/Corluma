@@ -68,13 +68,13 @@ void ListMoodPreviewWidget::leaveEvent(QEvent *) {
 
 bool ListMoodPreviewWidget::setChecked(bool checked) {
     mIsChecked = checked;
-    repaint();
+    update();
     return mIsChecked;
 }
 
 bool ListMoodPreviewWidget::setSelected(bool selected) {
     mIsSelected = selected;
-    repaint();
+    update();
     return mIsSelected;
 }
 

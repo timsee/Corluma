@@ -34,21 +34,21 @@ void SettingsButton::mousePressEvent(QMouseEvent* event) {
     Q_UNUSED(event);
     // turn to light blue
     mIsHighlighted = true;
-    repaint();
+    update();
 }
 
 void SettingsButton::mouseReleaseEvent(QMouseEvent* event) {
-    if (cor::isMouseEventTouchUpInside(event, this)) {
+    if (cor::isMouseEventTouchUpInside(event, this, true)) {
         emit buttonPressed(mTitle->text());
     }
     // turn back to standard color
     mIsHighlighted = false;
-    repaint();
+    update();
 }
 
 void SettingsButton::shouldHightlght(bool shouldHighlight) {
     mIsHighlighted = shouldHighlight;
-    repaint();
+    update();
 }
 
 void SettingsButton::paintEvent(QPaintEvent *) {

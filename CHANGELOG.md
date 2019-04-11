@@ -466,6 +466,12 @@ ___
 * Fixed edge cases with the `LeftHandMenu`.
 * Fixed miscellaneous bugs.
 
+### **v0.15.2**
+#### Yet Another Edge Cases Update
+* Drastically improved rendering performance on mobile devices.
+* Removed the `LightPage` in favor of lights in the `LeftHandMenu` instead.
+* Changed the layout of the `LeftHandMenu`.
+* Fixed miscellaneous bugs.
 
 
 

@@ -118,13 +118,6 @@ private:
     QSize iconSize() { return QSize(int(mMinimumHeight * mIconRatio), int(mMinimumHeight * mIconRatio)); }
 
     /*!
-     * \brief resizeRightHandIcon resize the right hand icon to match the widgets size
-     * \param pixmap the pixmap to resize
-     * \param button the button to apply the resized pixmap to
-     */
-    void resizeRightHandIcon(QPixmap pixmap, QPushButton *button);
-
-    /*!
      * \brief mMinimumHeight minimum size allowed for collection.
      */
     int mMinimumHeight;

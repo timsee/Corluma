@@ -92,7 +92,7 @@ void ListSimpleGroupWidget::setCheckedDevices(const std::list<cor::Light>& devic
         }
     }
 
-    repaint();
+    update();
 }
 
 

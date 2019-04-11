@@ -60,6 +60,12 @@ public:
     /// returns pointer to global widget
     GlobalSettingsWidget *globalWidget() { return mGlobalWidget; }
 
+    /// displays the settings page menu
+    void pushIn(const QSize& size, const QPoint& startPoint, const QPoint& endPoint);
+
+    /// hides the settings page menu
+    void pushOut(const QPoint& endPoint);
+
 signals:
 
     /*!
@@ -77,6 +83,11 @@ signals:
      * \brief clickedInfoWidget emits when hue info widget is clicked
      */
     void clickedInfoWidget();
+
+    /*!
+     * \brief clickedDiscovery emits when discovery button is clicked
+     */
+    void clickedDiscovery();
 
 private slots:
     /*!

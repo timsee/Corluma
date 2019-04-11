@@ -22,16 +22,6 @@ ColorPage::ColorPage(QWidget *parent) :
     mBottomMenuState = EBottomMenuShow::showStandard;
     mBottomMenuIsOpen = false;
 
-    mSingleRoutineWidget = new RoutineButtonsWidget(EWidgetGroup::singleRoutines, std::vector<QColor>(), this);
-    mSingleRoutineWidget->setMaximumWidth(this->width());
-    mSingleRoutineWidget->setMaximumHeight(this->height() / 3);
-    mSingleRoutineWidget->setGeometry(0, this->height(), mSingleRoutineWidget->width(), mSingleRoutineWidget->height());
-    mSingleRoutineWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(mSingleRoutineWidget, SIGNAL(newRoutineSelected(QJsonObject)), this, SLOT(newRoutineSelected(QJsonObject)));
-
-    mCurrentSingleRoutine = mSingleRoutineWidget->routines()[3].second;
-    updateColor(QColor(0, 255, 0));
-
     mSpacer = new QWidget(this);
 
     mColorPicker = new ColorPicker(this);
@@ -48,6 +38,15 @@ ColorPage::ColorPage(QWidget *parent) :
     connect(mColorPicker, SIGNAL(multiColorUpdate()), this, SLOT(multiColorChanged()));
     connect(mColorPicker, SIGNAL(brightnessUpdate(uint32_t)), this, SLOT(brightnessUpdate(uint32_t)));
     connect(mColorPicker, SIGNAL(colorsUpdate(std::vector<QColor>)), this, SLOT(colorsChanged(std::vector<QColor>)));
+
+    mSingleRoutineWidget = new RoutineButtonsWidget(EWidgetGroup::singleRoutines, std::vector<QColor>(), this);
+    mSingleRoutineWidget->setMaximumWidth(this->width());
+    mSingleRoutineWidget->setMaximumHeight(this->height() / 3);
+    mSingleRoutineWidget->setGeometry(0, this->height(), mSingleRoutineWidget->width(), mSingleRoutineWidget->height());
+    mSingleRoutineWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    connect(mSingleRoutineWidget, SIGNAL(newRoutineSelected(QJsonObject)), this, SLOT(newRoutineSelected(QJsonObject)));
+    mCurrentSingleRoutine = mSingleRoutineWidget->routines()[3].second;
+    updateColor(QColor(0, 255, 0));
 
     /// fill with junk data for this case
     mMultiRoutineWidget = new RoutineButtonsWidget(EWidgetGroup::multiRoutines, cor::defaultCustomColors(), this);

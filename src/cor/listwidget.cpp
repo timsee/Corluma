@@ -86,6 +86,10 @@ void ListWidget::resizeWidgets() {
     mWidget->setFixedHeight(newHeight);
 }
 
+void ListWidget::setFixedWidgetHeight(int height) {
+    mWidget->setFixedHeight(height);
+}
+
 void ListWidget::show() {
     resize();
 }

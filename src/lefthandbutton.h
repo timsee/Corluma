@@ -60,6 +60,9 @@ protected:
     /// handles when the widget is painted
     void paintEvent(QPaintEvent *);
 
+    /// handles when the widget is resized
+    void resizeEvent(QResizeEvent *);
+
 private:
 
     /// page index for the button to emit

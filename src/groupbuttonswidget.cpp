@@ -7,32 +7,20 @@ GroupButtonsWidget::GroupButtonsWidget(QWidget *parent,
                                        const QString& roomName,
                                        const std::vector<QString>& groups) : QWidget(parent), mType{type}, mRoomName(roomName)
 {
-
-    mLayout = new QGridLayout(this);
-
     if (mType == cor::EWidgetType::condensed) {
         mGroupCount = 1;
     } else {
         mGroupCount = 3;
     }
 
-    cor::GroupButton *groupButton = new cor::GroupButton(this, "All");
-    groupButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    groupButton->setFixedWidth(this->width() / mGroupCount);
-    groupButton->setSelectAll(true);
-    connect(groupButton, SIGNAL(groupButtonPressed(QString)), this, SLOT(buttonPressed(QString)));
-    connect(groupButton, SIGNAL(groupSelectAllToggled(QString, bool)), this, SLOT(buttonToggled(QString, bool)));
-    mButtons.push_back(groupButton);
-    mRelabeledNames.insert("All", "All");
-    mLayout->addWidget(groupButton, 0, 0);
+    mSpacer = new QWidget(this);
+    mSpacer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     for (uint32_t i = 0; i < groups.size(); ++i) {
         addGroup(groups[i]);
     }
 
-    mLayout->setContentsMargins(0, 0, 0, 0);
-    mLayout->setSpacing(0);
-    this->setLayout(mLayout);
+    addGroup("All");
 }
 
 void GroupButtonsWidget::addGroup(const QString& group) {
@@ -45,34 +33,44 @@ void GroupButtonsWidget::addGroup(const QString& group) {
     GUARD_EXCEPTION(sucessful, "insert into cor::Dictionary failed: " + group.toStdString() + " adjusted: " + adjustedName.toStdString());
 
     groupButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    groupButton->setFixedWidth(this->width() / mGroupCount);
-    int i = int(mButtons.size() - 2);
-    int column = (i + 1) % mGroupCount;
-    int row = (i + 1) / mGroupCount;
-    mLayout->addWidget(groupButton, row, column);
+
+    std::sort(mButtons.begin(), mButtons.end(), [](cor::GroupButton *a, cor::GroupButton *b) {
+        return (a->key() < b->key());
+    });
 }
 
 void GroupButtonsWidget::updateCheckedDevices(const QString& key,
                                               uint32_t checkedDeviceCount,
                                               uint32_t reachableDeviceCount) {
+    bool renderAny = false;
     for (const auto& widget : mButtons) {
         if (widget->key() == renamedGroup(key)) {
-            widget->handleSelectAllButton(checkedDeviceCount, reachableDeviceCount);
+            if (widget->handleSelectAllButton(checkedDeviceCount, reachableDeviceCount)) {
+                renderAny = true;
+            }
         }
     }
-
+    if (renderAny) {
+        update();
+    }
 }
 
 void GroupButtonsWidget::buttonPressed(QString key) {
-    mCurrentKey = key;
-    for (const auto& widget : mButtons) {
-        widget->setSelectAll(widget->key() == key);
+    if (key == mCurrentKey) {
+        for (const auto& widget : mButtons) {
+            if (widget->key() == key) {
+                widget->setSelectAll(false);
+            }
+        }
+        emit groupButtonPressed("NO_GROUP");
+        mCurrentKey = "";
+    } else {
+        mCurrentKey = key;
+        for (const auto& widget : mButtons) {
+            widget->setSelectAll(widget->key() == key);
+        }
+        emit groupButtonPressed(originalGroup(key));
     }
-    emit groupButtonPressed(originalGroup(key));
-}
-
-void GroupButtonsWidget::buttonToggled(QString key, bool selectAll) {
-    emit groupSelectAllToggled(originalGroup(key), selectAll);
 }
 
 std::list<QString> GroupButtonsWidget::groupNames() {
@@ -83,10 +81,44 @@ std::list<QString> GroupButtonsWidget::groupNames() {
     return groupList;
 }
 
-void GroupButtonsWidget::resizeEvent(QResizeEvent *) {
-    for (const auto& widget : mButtons) {
-        widget->setFixedWidth(this->width() / mGroupCount);
+void GroupButtonsWidget::resize(const QSize& topWidgetSize, const QRect& spacerGeometry) {
+    this->setFixedHeight(expectedHeight(topWidgetSize.height()) + spacerGeometry.height());
+    this->setFixedWidth(topWidgetSize.width());
+
+    // handle the width for the widgets
+    for (int i = 0; i < int(mButtons.size()); ++i) {
+        int column = i % mGroupCount;
+        int row = i / mGroupCount;
+        int yPos = row * topWidgetSize.height();
+        if ((yPos + topWidgetSize.height()) >= spacerGeometry.y()) {
+            yPos += spacerGeometry.height();
+        }
+        mButtons[i]->setGeometry(int(column * (topWidgetSize.width() / mGroupCount)),
+                                 yPos,
+                                 topWidgetSize.width() / mGroupCount,
+                                 topWidgetSize.height());
     }
+    mSpacer->setGeometry(spacerGeometry);
+}
+
+int GroupButtonsWidget::expectedHeight(int topWidgetHeight) {
+    if ((mButtons.size() % mGroupCount) == 0) {
+        return (mButtons.size() / mGroupCount) * topWidgetHeight;
+    } else {
+        return (mButtons.size() / mGroupCount) * topWidgetHeight + topWidgetHeight;
+    }
+}
+
+int GroupButtonsWidget::groupEndPointY(int topWidgetHeight, const QString& key) {
+    int height = topWidgetHeight;
+    int i = 1;
+    for (const auto& widget : mButtons) {
+        if (widget->key() == renamedGroup(key)) {
+            return height * i;
+        }
+        ++i;
+    }
+    return height * i;
 }
 
 QString GroupButtonsWidget::renamedGroup(QString group) {

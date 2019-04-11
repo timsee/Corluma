@@ -4,7 +4,6 @@
 #include <QWidget>
 #include "colorpage.h"
 #include "palettepage.h"
-#include "lightpage.h"
 #include "moodpage.h"
 #include "comm/commlayer.h"
 #include "cor/devicelist.h"
@@ -53,9 +52,6 @@ public:
     /// getter for mood page
     MoodPage *moodPage() { return mMoodPage; }
 
-    /// getter for light page
-    LightPage *lightPage() { return mLightPage; }
-
 private slots:
 
     /// called whenever the light count changes
@@ -92,9 +88,6 @@ private:
 
     /// page for choosing moods
     MoodPage *mMoodPage;
-
-    /// page for choosing which LEDs to control
-    LightPage *mLightPage;
 
     /// groups parser
     GroupData *mGroups;

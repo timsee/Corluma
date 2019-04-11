@@ -83,6 +83,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mSettingsPage->isOpen(false);
     connect(mSettingsPage, SIGNAL(closePressed()), this, SLOT(settingsClosePressed()));
     connect(mSettingsPage, SIGNAL(clickedInfoWidget()), this, SLOT(hueInfoWidgetClicked()));
+    connect(mSettingsPage, SIGNAL(clickedDiscovery()), this, SLOT(pushInDiscovery()));
 
     connect(mSettingsPage->globalWidget(), SIGNAL(protocolSettingsUpdate(EProtocolType, bool)), this, SLOT(protocolSettingsChanged(EProtocolType, bool)));
     connect(mSettingsPage->globalWidget(), SIGNAL(timeoutUpdate(int)), this, SLOT(timeoutChanged(int)));
@@ -125,6 +126,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mLeftHandMenu = new LeftHandMenu(mData, mComm, mGroups, this);
     mLeftHandMenu->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mLeftHandMenu, SIGNAL(pressedButton(EPage)), this, SLOT(leftHandMenuButtonPressed(EPage)));
+    connect(mLeftHandMenu, SIGNAL(createNewGroup()), this, SLOT(openNewGroupMenu()));
 
     // --------------
     // Finish up wifi check
@@ -154,13 +156,8 @@ void MainWindow::loadPages() {
                                mMainViewport->palettePage(),
                                mMainViewport->colorPage());
         connect(mTopMenu, SIGNAL(buttonPressed(QString)), this, SLOT(topMenuButtonPressed(QString)));
-        connect(mMainViewport->lightPage(), SIGNAL(changedDeviceCount()), mTopMenu, SLOT(deviceCountChanged()));
-        connect(mMainViewport->moodPage(), SIGNAL(changedDeviceCount()), mTopMenu, SLOT(deviceCountChanged()));
         connect(mMainViewport->colorPage(), SIGNAL(brightnessChanged(uint32_t)), mTopMenu, SLOT(brightnessUpdate(uint32_t)));
         connect(mLeftHandMenu, SIGNAL(changedDeviceCount()), mTopMenu, SLOT(deviceCountChanged()));
-
-        connect(mMainViewport->lightPage(), SIGNAL(changedDeviceCount()), mLeftHandMenu, SLOT(deviceCountChanged()));
-        connect(mMainViewport->moodPage(), SIGNAL(changedDeviceCount()), mLeftHandMenu, SLOT(deviceCountChanged()));
 
         connect(mLeftHandMenu, SIGNAL(changedDeviceCount()), mMainViewport, SLOT(lightCountChanged()));
 
@@ -267,38 +264,26 @@ void MainWindow::changeEvent(QEvent *event) {
 
 void MainWindow::pushOutDiscovery() {
     if (mLeftHandMenu->alwaysOpen()) {
-        cor::moveWidget(mDiscoveryPage,
-                        QSize(this->size().width() - mLeftHandMenu->width(), this->height()),
-                        QPoint(mLeftHandMenu->width(), 0),
-                        QPoint(this->width() + mDiscoveryPage->width(), 0));
+        mDiscoveryPage->pushOut(QSize(this->size().width() - mLeftHandMenu->width(), this->height()),
+                                QPoint(mLeftHandMenu->width(), 0),
+                                QPoint(this->width() + mDiscoveryPage->width(), 0));
     } else {
-        cor::moveWidget(mDiscoveryPage,
-                        this->size(),
-                        QPoint(0, 0),
-                        QPoint(this->width() + mDiscoveryPage->width(), 0));
+        mDiscoveryPage->pushOut(this->size(),
+                                QPoint(0, 0),
+                                QPoint(this->width() + mDiscoveryPage->width(), 0));
     }
-
-    mDiscoveryPage->hide();
-    mDiscoveryPage->isOpen(false);
 }
 
 void MainWindow::pushInDiscovery() {
-    mDiscoveryPage->raise();
-
     if (mLeftHandMenu->alwaysOpen()) {
-        cor::moveWidget(mDiscoveryPage,
-                        QSize(this->size().width() - mLeftHandMenu->width(), this->height()),
-                        QPoint(this->width() + mDiscoveryPage->width(), 0),
-                        QPoint(mLeftHandMenu->width(), 0));
+        mDiscoveryPage->pushIn(QSize(this->size().width() - mLeftHandMenu->width(), this->height()),
+                               QPoint(this->width() + mDiscoveryPage->width(), 0),
+                               QPoint(mLeftHandMenu->width(), 0));
     } else {
-        cor::moveWidget(mDiscoveryPage,
-                        this->size(),
-                        QPoint(this->width() + mDiscoveryPage->width(), 0),
-                        QPoint(0, 0));
+        mDiscoveryPage->pushIn(this->size(),
+                               QPoint(this->width() + mDiscoveryPage->width(), 0),
+                               QPoint(0, 0));
     }
-
-    mDiscoveryPage->show();
-    mDiscoveryPage->isOpen(true);
 }
 
 void MainWindow::switchToColorPage() {
@@ -306,6 +291,7 @@ void MainWindow::switchToColorPage() {
         mLeftHandMenu->pushOut();
     }
 
+    mLeftHandMenu->buttonPressed(EPage::colorPage);
     pushOutDiscovery();
     if (!mSettingsPage->isOpen()) {
         mTopMenu->showMenu();
@@ -368,7 +354,7 @@ void MainWindow::editButtonClicked(bool isMood) {
                          mData->devices(),
                          mComm->allDevices(),
                          isMood,
-                         false);
+                         isRoom);
 
     if (mGreyOut->isVisible()) {
         mGreyOut->resize();
@@ -405,9 +391,12 @@ void MainWindow::detailedMoodDisplay(std::uint64_t key) {
         // fill in info about light
         for (auto&& device : detailedMood.lights) {
             auto lightData = mComm->lightByID(device.uniqueID());
-            device.hardwareType = lightData.hardwareType;
-            device.name = lightData.name;
+            if (lightData.isValid()) {
+                device.hardwareType = lightData.hardwareType;
+                device.name = lightData.name;
+            }
         }
+
         mMoodDetailedWidget->update(detailedMood);
     } else {
         qDebug() << " did not recognize this groupppp " << key;
@@ -449,7 +438,8 @@ void MainWindow::editClosePressed() {
                QPoint(int(this->width() * 0.125f), int(this->height() * 0.125f)),
                QPoint(int(this->width() * 0.125f), int(-1 * this->height())));
 
-    mMainViewport->lightPage()->updateRoomWidgets();
+    //TODO: update lefthandmenu
+    //mMainViewport->lightPage()->updateRoomWidgets();
 }
 
 
@@ -523,8 +513,8 @@ void MainWindow::lightNameChange(EProtocolType type, QString key, QString name) 
 }
 
 void MainWindow::deleteLight(QString key) {
-    try {
-        auto light = mComm->lightByID(key);
+    auto light = mComm->lightByID(key);
+    if (light.isValid()) {
         switch (light.protocol()) {
         case EProtocolType::arduCor:
             mComm->arducor()->deleteLight(light);
@@ -544,7 +534,7 @@ void MainWindow::deleteLight(QString key) {
         case EProtocolType::MAX:
             break;
         }
-    } catch (cor::Exception) {
+    } else {
         qDebug() << "light not found";
     }
 }
@@ -581,7 +571,6 @@ void MainWindow::greyOutFadeComplete() {
 
 void MainWindow::resize() {
     handleLandscapeOrPortrait();
-
     mLeftHandMenu->resize();
 
    if (mPagesLoaded) {
@@ -593,7 +582,7 @@ void MainWindow::resize() {
 
         mSpacer->setGeometry(mTopMenu->geometry());
         int xPos = 5u;
-        int width = this->width() - 10u;
+        int width = this->width() - 10;
         if (mLeftHandMenu->alwaysOpen()) {
             xPos += mLeftHandMenu->width();
             width -= mLeftHandMenu->width();
@@ -680,12 +669,14 @@ void MainWindow::handleLandscapeOrPortrait() {
         mLeftHandMenu->alwaysOpen(true);
         mLeftHandMenu->pushIn();
         if (mPagesLoaded) {
+            mTopMenu->pushOutTapToSelectButton();
             mTopMenu->hideMenuButton(true);
         }
     } else {
         mLeftHandMenu->alwaysOpen(false);
         mLeftHandMenu->pushOut();
         if (mPagesLoaded) {
+            mTopMenu->pushInTapToSelectButton();
             mTopMenu->hideMenuButton(false);
         }
     }
@@ -724,6 +715,7 @@ void MainWindow::moodChanged(std::uint64_t moodID) {
         mData->addDeviceList(moodDict.itemList());
         if (!moodDict.itemList().empty()) {
             mTopMenu->deviceCountChanged();
+            mLeftHandMenu->deviceCountChanged();
         }
     }
 }
@@ -816,7 +808,8 @@ bool shouldMoveMenu(QMouseEvent *event,
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event) {
-    if (!mLeftHandMenu->alwaysOpen()) {
+    // only care about moves when greyout is not open and lefthand menu isn't forced open
+    if (!mLeftHandMenu->alwaysOpen() && !mGreyOut->isVisible()) {
         if (shouldMoveMenu(event,
                            mLeftHandMenu->isIn(),
                            mStartPoint,
@@ -840,6 +833,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event) {
         } else if (event->pos().x() > mLeftHandMenu->size().width()
                    && mMovingMenu) {
             mLeftHandMenu->pushIn();
+            mTopMenu->pushOutTapToSelectButton();
             if (mSettingsPage->isOpen()) {
                 settingsClosePressed();
             }
@@ -848,13 +842,19 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event) {
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *) {
-    if (!mLeftHandMenu->alwaysOpen()) {
+    if (!mLeftHandMenu->alwaysOpen() && !mGreyOut->isVisible()) {
         mMovingMenu = false;
         auto showingWidth = mLeftHandMenu->width() + mLeftHandMenu->geometry().x();
         if (showingWidth < mLeftHandMenu->width() / 2) {
             mLeftHandMenu->pushOut();
+            if ((mMainViewport->currentPage() == EPage::colorPage
+                    || mMainViewport->currentPage() == EPage::palettePage)
+                    && mData->devices().empty()) {
+                mTopMenu->pushInTapToSelectButton();
+            }
         } else {
             mLeftHandMenu->pushIn();
+            mTopMenu->pushOutTapToSelectButton();
             if (mSettingsPage->isOpen()) {
                 settingsClosePressed();
             }
@@ -887,6 +887,13 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
     if (mMainViewport->currentPage() == page) {
         ignorePushOut = true;
     }
+
+    if ((page == EPage::colorPage
+            || page == EPage::palettePage)
+            && mData->devices().empty()) {
+        mTopMenu->pushInTapToSelectButton();
+    }
+
     mMainViewport->pageChanged(page);
     mTopMenu->showFloatingLayout(page);
     if (!ignorePushOut) {
@@ -895,37 +902,29 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
 }
 
 void MainWindow::pushInSettingsPage() {
-    mSettingsPage->setVisible(true);
     if (mLeftHandMenu->alwaysOpen()) {
-        moveWidget(mSettingsPage,
-                   QSize(this->width() - mLeftHandMenu->width(), this->height()),
-                   QPoint(this->width(), 0),
-                   QPoint(mLeftHandMenu->width(), 0));
+        mSettingsPage->pushIn(QSize(this->width() - mLeftHandMenu->width(), this->height()),
+                              QPoint(this->width(), 0),
+                              QPoint(mLeftHandMenu->width(), 0));
     } else {
-        moveWidget(mSettingsPage,
-                   QSize(this->width(), this->height()),
-                   QPoint(this->width(), 0),
-                   QPoint(0u, 0u));
+        mSettingsPage->pushIn(QSize(this->width(), this->height()),
+                              QPoint(this->width(), 0),
+                              QPoint(0u, 0u));
     }
 
-    mSettingsPage->raise();
-    mSettingsPage->show();
-    mSettingsPage->isOpen(true);
     mLeftHandMenu->pushOut();
 }
 
 void MainWindow::pushOutSettingsPage() {
-    moveWidget(mSettingsPage,
-               mSettingsPage->size(),
-               mSettingsPage->pos(),
-               QPoint(this->width(), 0));
+    mSettingsPage->pushOut(QPoint(this->width(), 0u));
 
     if (mDiscoveryPage->isOpen()) {
         mDiscoveryPage->updateTopMenu();
     }
-    if (mMainViewport->currentPage() == EPage::lightPage) {
-        mMainViewport->lightPage()->show();
-    }
+
     mTopMenu->showFloatingLayout(mMainViewport->currentPage());
-    mSettingsPage->isOpen(false);
+}
+
+void MainWindow::openNewGroupMenu() {
+    editButtonClicked(false);
 }

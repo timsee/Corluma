@@ -65,7 +65,7 @@ void ColorSchemeCircles::updateColorScheme(const std::vector<QColor> colorScheme
             mCircles[i].shouldShow = false;
         }
     }
-    repaint();
+    update();
 }
 
 
@@ -132,7 +132,7 @@ void ColorSchemeCircles::moveCenterCircle(QPointF newPos, bool isOnOpenSpace) {
                     int(mCircles[x].center.y() * mRenderedColorWheel.height()));
        mCircles[x].color = mRenderedColorWheel.pixel(point.x(), point.y());
    }
-   repaint();
+   update();
 }
 
 void ColorSchemeCircles::moveCircles(int i) {
@@ -256,7 +256,7 @@ void ColorSchemeCircles::moveStandardCircle(uint32_t i, QPointF newPos) {
     //---------------
     // repaint
     //---------------
-    repaint();
+    update();
 }
 
 std::vector<SPickerSelection> ColorSchemeCircles::circles() {

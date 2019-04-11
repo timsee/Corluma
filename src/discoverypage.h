@@ -55,6 +55,12 @@ public:
     /// true if any lights have been discovered, false otherwise
     bool isAnyDiscovered();
 
+    /// displays the discovery page
+    void pushIn(const QSize& size, const QPoint& startPoint, const QPoint& endPoint);
+
+    /// hides the discovery page
+    void pushOut(const QSize& size, const QPoint& startPoint, const QPoint& endPoint);
+
 signals:
     /*!
      * \brief startButtonClicked sent whenver the start button is clicked so that the discovery

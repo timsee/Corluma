@@ -22,11 +22,6 @@ MainViewport::MainViewport(MainWindow *parent,
     // Setup Pages
     // --------------
 
-    mLightPage = new LightPage(parent, data, comm, groups, settings);
-    mLightPage->isOpen(false);
-    mLightPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mLightPage->setVisible(false);
-
     mColorPage = new ColorPage(parent);
     mColorPage->isOpen(false);
     mColorPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -45,10 +40,6 @@ MainViewport::MainViewport(MainWindow *parent,
     connect(mMoodPage, SIGNAL(clickedSelectedMood(std::uint64_t)), parent, SLOT(moodSelected(std::uint64_t)));
     connect(mMoodPage, SIGNAL(clickedEditButton(bool)),  parent, SLOT(editButtonClicked(bool)));
     connect(mMoodPage, SIGNAL(moodUpdate(std::uint64_t)),  parent, SLOT(moodChanged(std::uint64_t)));
-
-
-    connect(mLightPage, SIGNAL(changedDeviceCount()), this, SLOT(lightCountChanged()));
-    connect(mMoodPage, SIGNAL(changedDeviceCount()), this, SLOT(lightCountChanged()));
 }
 
 
@@ -74,9 +65,6 @@ void MainViewport::resize(const QRect& geometry) {
         mMoodPage->setGeometry(offsetGeometry);
     }
 
-    if (mPageIndex != EPage::lightPage) {
-        mLightPage->setGeometry(offsetGeometry);
-    }
 }
 
 void MainViewport::pageChanged(EPage pageIndex) {
@@ -92,9 +80,6 @@ QWidget* MainViewport::mainWidget(EPage page) {
     switch (page) {
         case EPage::colorPage:
             widget = qobject_cast<QWidget*>(mColorPage);
-            break;
-        case EPage::lightPage:
-            widget = qobject_cast<QWidget*>(mLightPage);
             break;
         case EPage::moodPage:
             widget = qobject_cast<QWidget*>(mMoodPage);
@@ -112,9 +97,6 @@ cor::Page* MainViewport::mainPage(EPage page) {
     switch (page) {
         case EPage::colorPage:
             widget = mColorPage;
-            break;
-        case EPage::lightPage:
-            widget = mLightPage;
             break;
         case EPage::moodPage:
             widget = mMoodPage;
@@ -139,10 +121,7 @@ void MainViewport::showMainPage(EPage page) {
                     QPoint(x, this->pos().y()),
                     this->pos());
 
-    if (page == EPage::lightPage) {
-        mLightPage->show();
-        mLightPage->setVisible(true);
-    } else if (page == EPage::colorPage) {
+   if (page == EPage::colorPage) {
         mColorPage->show(mData->mainColor(),
                          uint32_t(mData->brightness()),
                          mData->colorScheme(),
@@ -174,10 +153,6 @@ void MainViewport::hideMainPage(EPage page) {
                     this->size(),
                     this->pos(),
                     QPoint(x, widget->pos().y()));
-
-    if (page == EPage::lightPage) {
-        mLightPage->hide();
-    }
 }
 
 void MainViewport::lightCountChanged() {

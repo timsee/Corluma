@@ -13,6 +13,7 @@
 #include "listlightwidget.h"
 #include "dropdowntopwidget.h"
 #include "comm/commlayer.h"
+#include "cor/devicelist.h"
 
 /*!
  * \copyright
@@ -35,7 +36,7 @@ public:
      * \param key unique key for collection
      */
     ListRoomWidget(const cor::Group& group,
-                   CommLayer* comm,
+                   CommLayer *comm,
                    GroupData *groups,
                    QString key,
                    EOnOffSwitchState switchState,
@@ -179,14 +180,6 @@ private:
     /// layout of all widgets except the dropdownwidget
     cor::ListLayout mListLayout;
 
-    /// widget used for background of grid
-    QWidget *mWidget;
-
-    /*!
-     * \brief mLayout layout that displays all of the sub widgets.
-     */
-    QVBoxLayout *mLayout;
-
     /// widget for showing/hiding and selecting/deselecting
     DropdownTopWidget *mDropdownTopWidget;
 
@@ -202,6 +195,11 @@ private:
     /// stored data for the group.
     cor::Group mGroup;
 
+    /// checks if a group with no subgroups should show widgets
+    bool checkIfShowWidgets();
+
+    /// helper to count the checked and reachable devices.
+    std::pair<uint32_t, uint32_t> countCheckedAndReachableDevices(const cor::Group& group);
 };
 
 #endif // LISTROOMWIDGET_H

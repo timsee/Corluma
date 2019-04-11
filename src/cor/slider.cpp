@@ -276,7 +276,7 @@ void Slider::releasedSlider() {
 void Slider::setShouldDrawTickLabels(bool shouldDraw) {
     if (mShouldDrawTickLabels != shouldDraw) {
         mShouldDrawTickLabels = shouldDraw;
-        repaint();
+        update();
     }
 }
 

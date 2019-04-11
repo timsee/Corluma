@@ -28,6 +28,9 @@ public:
      */
     void changeColor(QColor color);
 
+    /// enables and disables the RGB sliders
+    void enable(bool enable);
+
 signals:
 
     /*!

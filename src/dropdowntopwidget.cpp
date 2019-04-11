@@ -9,8 +9,7 @@
 #include <QDebug>
 #include <QMouseEvent>
 
-DropdownTopWidget::DropdownTopWidget(const QString& key, cor::EWidgetType type, bool hideEdit, QWidget *parent) : QWidget(parent), mKey(key)
-{
+DropdownTopWidget::DropdownTopWidget(const QString& key, cor::EWidgetType type, bool hideEdit, QWidget *parent) : QWidget(parent), mKey(key) {
     mType = type;
     mShowButtons = false;
     mHideEdit = hideEdit;
@@ -19,16 +18,17 @@ DropdownTopWidget::DropdownTopWidget(const QString& key, cor::EWidgetType type, 
     mName->setWordWrap(true);
     mName->setText(key);
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    mName->setStyleSheet("margin-left: 5px; font: bold;");
+    mName->setStyleSheet("font: bold;");
+    mName->setAlignment(Qt::AlignVCenter);
 
     if (mType == cor::EWidgetType::condensed) {
-        mMinimumHeight = std::max(int(mName->height() * 1.25), cor::applicationSize().height() / 20);
+        mMinimumHeight = cor::applicationSize().height() / 15;
         mIconRatio = 0.25f;
     } else {
-        mMinimumHeight = std::max(mName->height() * 2, cor::applicationSize().height() / 10);
+        mMinimumHeight = cor::applicationSize().height() / 10;
         mIconRatio = 0.5f;
     }
-    this->setFixedHeight(mMinimumHeight);
+    mName->setFixedHeight(mMinimumHeight);
 
     mEditButton = new QPushButton(this);
     mEditButton->setStyleSheet("border: none;");
@@ -39,6 +39,7 @@ DropdownTopWidget::DropdownTopWidget(const QString& key, cor::EWidgetType type, 
     mEditButton->setFixedSize(int(mMinimumHeight * mIconRatio),
                               int(mMinimumHeight * mIconRatio));
     mEditButton->setHidden(true);
+    mEditButton->setFixedHeight(mMinimumHeight);
 
     mClosedPixmap = QPixmap(":/images/closedArrow.png");
     mClosedPixmap = mClosedPixmap.scaled(mMinimumHeight, mMinimumHeight,
@@ -55,8 +56,7 @@ DropdownTopWidget::DropdownTopWidget(const QString& key, cor::EWidgetType type, 
     mHiddenStateIcon->setPixmap(mClosedPixmap);
     mHiddenStateIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mHiddenStateIcon->setAlignment(Qt::AlignCenter);
-
-    mName->setFixedHeight(mMinimumHeight);
+    mHiddenStateIcon->setFixedHeight(mMinimumHeight);
 
     mLayout = new QHBoxLayout;
     mLayout->addWidget(mName);
@@ -64,28 +64,22 @@ DropdownTopWidget::DropdownTopWidget(const QString& key, cor::EWidgetType type, 
     mLayout->addWidget(mHiddenStateIcon);
     setLayout(mLayout);
 
+    mLayout->setContentsMargins(10,0,0,0);
+    mLayout->setSpacing(0);
     mLayout->setStretch(0, 12);
     mLayout->setStretch(2, 2);
     mLayout->setStretch(3, 2);
+
+    this->setFixedHeight(mMinimumHeight);
 }
 
 void DropdownTopWidget::mouseReleaseEvent(QMouseEvent *event) {
-    if (cor::isMouseEventTouchUpInside(event, this)) {
+    if (cor::isMouseEventTouchUpInside(event, this, true)) {
         emit pressed();
     }
     event->ignore();
 }
 
-
-void DropdownTopWidget::resizeRightHandIcon(QPixmap pixmap, QPushButton *button) {
-    button->setIconSize(iconSize());
-    pixmap = pixmap.scaled(iconSize().width(),
-                           iconSize().height(),
-                           Qt::KeepAspectRatio,
-                           Qt::SmoothTransformation);
-    button->setIcon(QIcon(pixmap));
-    button->setFixedSize(iconSize());
-}
 
 void DropdownTopWidget::showButtons(bool showButtons) {
     mShowButtons = showButtons;

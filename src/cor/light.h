@@ -3,7 +3,6 @@
 
 #include <QString>
 #include <QColor>
-#include <QDebug>
 #include <QSize>
 #include <QJsonObject>
 
@@ -11,7 +10,6 @@
 #include "cor/palette.h"
 #include "protocols.h"
 
-#include <sstream>
 #include <cmath>
 
 namespace cor
@@ -181,6 +179,10 @@ public:
         return result;
     }
 
+    bool operator!=(const cor::Light& rhs) const {
+        return !(*this == rhs);
+    }
+
     operator QString() const {
         std::stringstream tempString;
         tempString << "cor::Light Device: "
@@ -199,6 +201,9 @@ public:
         return QString::fromStdString(tempString.str());
     }
 
+    bool isValid() const {
+        return this->uniqueID() != cor::Light().uniqueID();
+    }
 
 private:
 

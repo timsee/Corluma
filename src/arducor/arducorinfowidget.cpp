@@ -54,7 +54,7 @@ void ArduCorInfoWidget::mouseReleaseEvent(QMouseEvent *event) {
 
 void ArduCorInfoWidget::setChecked(bool checked) {
     mIsChecked = checked;
-    repaint();
+    update();
 }
 
 void ArduCorInfoWidget::setHeight(int height) {

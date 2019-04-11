@@ -153,7 +153,7 @@ void BridgeInfoWidget::handleBridgeState(EBridgeDiscoveryState state) {
 
 void BridgeInfoWidget::setChecked(bool checked) {
     mIsChecked = checked;
-    repaint();
+    update();
 }
 
 void BridgeInfoWidget::setHeight(int height) {

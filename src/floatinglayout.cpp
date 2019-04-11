@@ -103,7 +103,7 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
 
     QSignalMapper *buttonsMapper = new QSignalMapper(this);
     for (uint32_t i = 0; i < mNames.size(); ++i) {
-        cor::Light light(mNames[i], "NO_CONTROLLER", ECommType::MAX);
+        cor::Light light;
         light.routine = ERoutine::singleSolid;
         light.color = QColor(255, 0, 0);
 
@@ -235,7 +235,7 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
                 } else if (mNames[i].compare("Discovery") == 0) {
                     cor::resizeIcon(mButtons[i], ":/images/wifi.png");
                 } else if (mNames[i].compare("Select_Devices") == 0) {
-                    cor::resizeIcon(mButtons[i], ":/images/colorWheel_icon.png");
+                    cor::resizeIcon(mButtons[i], ":/mages/colorWheel_icon.png");
                 } else if (mNames[i].compare("New_Group") == 0) {
                     cor::resizeIcon(mButtons[i], ":/images/plusIcon.png");
                 } else if (mNames[i].compare("Plus") == 0) {
