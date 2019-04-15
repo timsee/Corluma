@@ -23,13 +23,13 @@ class CheckBox : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit CheckBox(QWidget *parent, QString title);
+    explicit CheckBox(QWidget *parent, const QString& title);
 
     /// checks and unchecks the checkbox
     void setChecked(bool shouldCheck);
 
     /// set the title for the corluma checkbox
-    void setTitle(QString title);
+    void setTitle(const QString& title);
 
     /*!
      * \brief downsizeTextWidthToFit downsize the font's point size until this entire widget

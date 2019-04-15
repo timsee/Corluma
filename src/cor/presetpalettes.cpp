@@ -35,7 +35,6 @@ PresetPalettes::PresetPalettes() : mPalettes(std::vector<Palette>(uint32_t(EPale
         THROW_EXCEPTION("can't find resource for palettes");
     }
 
-
     mAverageColors = std::vector<QColor>(uint32_t(EPalette::unknown), QColor(0,0,0));
     uint32_t i = 0;
     for (auto&& palette : mPalettes) {
@@ -66,7 +65,7 @@ const Palette& PresetPalettes::palette(EPalette palette) {
 
 EPalette PresetPalettes::findPalette(const QJsonObject& object) {
     uint32_t index = 0;
-    for (auto palette : mPalettes) {
+    for (const auto& palette : mPalettes) {
         if (object == palette.JSON()) {
             return EPalette(index);
         }

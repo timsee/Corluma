@@ -28,7 +28,7 @@ public:
      *        a signal when complete
      * \param new color for selected indices
      */
-    void updateSelected(QColor color);
+    void updateSelected(const QColor& color);
 
     /// update the colors used by the buttons
     void updateMultiColor(const std::vector<QColor>& colors);

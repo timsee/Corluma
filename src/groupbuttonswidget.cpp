@@ -16,8 +16,8 @@ GroupButtonsWidget::GroupButtonsWidget(QWidget *parent,
     mSpacer = new QWidget(this);
     mSpacer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    for (uint32_t i = 0; i < groups.size(); ++i) {
-        addGroup(groups[i]);
+    for (const auto& group : groups) {
+        addGroup(group);
     }
 
     addGroup("All");
@@ -25,9 +25,9 @@ GroupButtonsWidget::GroupButtonsWidget(QWidget *parent,
 
 void GroupButtonsWidget::addGroup(const QString& group) {
     QString adjustedName = convertGroupName(mRoomName, group);
-    cor::GroupButton *groupButton = new cor::GroupButton(this, adjustedName);
+    auto groupButton = new cor::GroupButton(this, adjustedName);
     connect(groupButton, SIGNAL(groupButtonPressed(QString)), this, SLOT(buttonPressed(QString)));
-    connect(groupButton, SIGNAL(groupSelectAllToggled(QString, bool)), this, SLOT(buttonToggled(QString, bool)));
+    connect(groupButton, SIGNAL(groupSelectAllToggled(QString,bool)), this, SLOT(buttonToggled(QString,bool)));
     mButtons.push_back(groupButton);
     bool sucessful = mRelabeledNames.insert(group.toStdString(), adjustedName.toStdString());
     GUARD_EXCEPTION(sucessful, "insert into cor::Dictionary failed: " + group.toStdString() + " adjusted: " + adjustedName.toStdString());
@@ -55,7 +55,7 @@ void GroupButtonsWidget::updateCheckedDevices(const QString& key,
     }
 }
 
-void GroupButtonsWidget::buttonPressed(QString key) {
+void GroupButtonsWidget::buttonPressed(const QString& key) {
     if (key == mCurrentKey) {
         for (const auto& widget : mButtons) {
             if (widget->key() == key) {
@@ -76,7 +76,7 @@ void GroupButtonsWidget::buttonPressed(QString key) {
 std::list<QString> GroupButtonsWidget::groupNames() {
     std::list<QString> groupList;
     for (const auto& key : mRelabeledNames.keys()) {
-        groupList.push_back(QString(key.c_str()));
+        groupList.emplace_back(QString(key.c_str()));
     }
     return groupList;
 }
@@ -103,10 +103,9 @@ void GroupButtonsWidget::resize(const QSize& topWidgetSize, const QRect& spacerG
 
 int GroupButtonsWidget::expectedHeight(int topWidgetHeight) {
     if ((mButtons.size() % mGroupCount) == 0) {
-        return (mButtons.size() / mGroupCount) * topWidgetHeight;
-    } else {
-        return (mButtons.size() / mGroupCount) * topWidgetHeight + topWidgetHeight;
+        return int(mButtons.size() / mGroupCount) * topWidgetHeight;
     }
+    return int(mButtons.size() / mGroupCount) * topWidgetHeight + topWidgetHeight;
 }
 
 int GroupButtonsWidget::groupEndPointY(int topWidgetHeight, const QString& key) {
@@ -121,20 +120,19 @@ int GroupButtonsWidget::groupEndPointY(int topWidgetHeight, const QString& key) 
     return height * i;
 }
 
-QString GroupButtonsWidget::renamedGroup(QString group) {
+QString GroupButtonsWidget::renamedGroup(const QString& group) {
     return QString(mRelabeledNames.item(group.toStdString()).first.c_str());
 }
 
-QString GroupButtonsWidget::originalGroup(QString renamedGroup) {
+QString GroupButtonsWidget::originalGroup(const QString& renamedGroup) {
     return QString(mRelabeledNames.key(renamedGroup.toStdString()).first.c_str());
 }
 
 
-QString GroupButtonsWidget::convertGroupName(QString room, QString group) {
+QString GroupButtonsWidget::convertGroupName(const QString& room, const QString& group) {
     // split the room name by spaces
     QStringList roomStringList = room.split(QRegExp("\\s+"), QString::SkipEmptyParts);
     QStringList groupStringList = group.split(QRegExp("\\s+"), QString::SkipEmptyParts);
-    QString outputString = group;
     int charactersToSkip = 0;
     int smallestWordCount = std::min(roomStringList.size(), groupStringList.size());
     for (int i = 0; i < smallestWordCount; ++i) {

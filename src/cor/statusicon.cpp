@@ -47,7 +47,7 @@ void StatusIcon::update(bool isReachable, bool isOn, double brightness) {
 
         // make black icon inverse of brightness
         double blackBrightness = 1.0 - (brightness / 100.0);
-        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mBlackIcon);
+        auto effect = new QGraphicsOpacityEffect(mBlackIcon);
         effect->setOpacity(blackBrightness);
         mBlackIcon->setGraphicsEffect(effect);
     }

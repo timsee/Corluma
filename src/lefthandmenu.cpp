@@ -16,6 +16,9 @@
 #include <QScrollBar>
 
 LeftHandMenu::LeftHandMenu(cor::DeviceList *devices, CommLayer *comm, GroupData *groups, QWidget *parent) : QWidget(parent) {
+    mNumberOfShownLights = 0;
+    mLastScrollValue = 0;
+    mAlwaysOpen = false;
     mSelectedLights = devices;
     mComm = comm;
     mGroups = groups;
@@ -102,7 +105,6 @@ void LeftHandMenu::resize() {
     } else {
         preferredWidth = mParentSize.width() * 0.66f;
     }
-    mScrollArea->setFixedWidth(int(this->width() * 1.2f));
 
     auto width = int(preferredWidth);
 
@@ -122,9 +124,10 @@ void LeftHandMenu::resize() {
                           width,
                           mParentSize.height());
     }
+    mScrollArea->setFixedWidth(int(this->width() * 1.2f));
 
     auto buttonHeight = int(this->height() * 0.07);
-    auto yPos = this->height() * 0.02;
+    auto yPos = int(this->height() * 0.02);
 
     mSpacer->setGeometry(0, 0, this->width(), this->height());
 
@@ -153,14 +156,13 @@ void LeftHandMenu::resize() {
     yPos += mSettingsButton->height();
 
     mMainPalette->setGeometry(0,
-                              yPos + this->height() * 0.02,
+                              yPos + int(this->height() * 0.02),
                               this->width(),
-                              buttonHeight * 1.2);
+                              int(buttonHeight * 1.2));
 
     yPos +=  mMainPalette->height() + this->height() * 0.02;
 
-    mLightStartHeight = yPos;
-    auto scrollWidgetHeight = resizeRoomsWidgets(mLightStartHeight);
+    auto scrollWidgetHeight = resizeRoomsWidgets();
     mNewGroupButton->setGeometry(0,
                                  scrollWidgetHeight,
                                  this->width(),
@@ -223,19 +225,19 @@ std::list<cor::Group> LeftHandMenu::gatherAllUIGroups() {
     std::list<cor::Group> uiGroups;
     for (auto widget : mRoomWidgets) {
         // cast to ListDeviceGroupWidget
-        ListRoomWidget *groupWidget = qobject_cast<ListRoomWidget*>(widget);
+        auto groupWidget = qobject_cast<ListRoomWidget*>(widget);
         uiGroups.push_back(groupWidget->group());
     }
     return uiGroups;
 }
 
-void LeftHandMenu::updateDataGroupInUI(cor::Group dataGroup, const std::list<cor::Group>& uiGroups) {
+void LeftHandMenu::updateDataGroupInUI(const cor::Group& dataGroup, const std::list<cor::Group>& uiGroups) {
     bool existsInUIGroups = false;
-    for (auto uiGroup : uiGroups) {
+    for (const auto& uiGroup : uiGroups) {
         if (uiGroup.name() == dataGroup.name()) {
              existsInUIGroups = true;
               for (auto widget : mRoomWidgets) {
-                 ListRoomWidget *groupWidget = qobject_cast<ListRoomWidget*>(widget);
+                 auto groupWidget = qobject_cast<ListRoomWidget*>(widget);
                  if (groupWidget->key() == dataGroup.name()) {
                      groupWidget->updateGroup(dataGroup, false);
                  }
@@ -331,27 +333,27 @@ void LeftHandMenu::updateSingleColorButton() {
 
 
 ListRoomWidget* LeftHandMenu::initRoomsWidget(const cor::Group& group, const QString& key) {
-    ListRoomWidget *widget = new ListRoomWidget(group,
-                                                mComm,
-                                                mGroups,
-                                                key,
-                                                EOnOffSwitchState::hidden,
-                                                cor::EListType::linear,
-                                                cor::EWidgetType::condensed,
-                                                mWidget);
+    auto widget = new ListRoomWidget(group,
+                                     mComm,
+                                     mGroups,
+                                     key,
+                                     EOnOffSwitchState::hidden,
+                                     cor::EListType::linear,
+                                     cor::EWidgetType::condensed,
+                                     mWidget);
 
     QScroller::grabGesture(widget, QScroller::LeftMouseButtonGesture);
-    connect(widget, SIGNAL(deviceClicked(QString,QString)), this, SLOT(lightClicked(QString, QString)));
-    connect(widget, SIGNAL(allButtonPressed(QString, bool)), this, SLOT(groupSelected(QString, bool)));
-    connect(widget, SIGNAL(buttonsShown(QString, bool)), this, SLOT(shouldShowButtons(QString, bool)));
+    connect(widget, SIGNAL(deviceClicked(QString,QString)), this, SLOT(lightClicked(QString,QString)));
+    connect(widget, SIGNAL(allButtonPressed(QString,bool)), this, SLOT(groupSelected(QString,bool)));
+    connect(widget, SIGNAL(buttonsShown(QString,bool)), this, SLOT(shouldShowButtons(QString,bool)));
     connect(widget, SIGNAL(groupChanged(QString)), this, SLOT(changedGroup(QString)));
 
     mRoomWidgets.push_back(widget);
-    resizeRoomsWidgets(mLightStartHeight);
+    resizeRoomsWidgets();
     return widget;
 }
 
-int LeftHandMenu::resizeRoomsWidgets(int yStartPoint) {
+int LeftHandMenu::resizeRoomsWidgets() {
     int yPos = 0u;
     std::sort(mRoomWidgets.begin(), mRoomWidgets.end(), [](ListRoomWidget* a, ListRoomWidget* b) {
         return a->key() < b->key();
@@ -365,7 +367,7 @@ int LeftHandMenu::resizeRoomsWidgets(int yStartPoint) {
     return yPos;
 }
 
-void LeftHandMenu::lightClicked(QString, QString deviceKey) {
+void LeftHandMenu::lightClicked(const QString&, const QString& deviceKey) {
 //    qDebug() << "collection key:" << collectionKey
 //             << "device key:" << deviceKey;
 
@@ -381,7 +383,7 @@ void LeftHandMenu::lightClicked(QString, QString deviceKey) {
     }
 }
 
-void LeftHandMenu::groupSelected(QString key, bool shouldSelect) {
+void LeftHandMenu::groupSelected(const QString& key, bool shouldSelect) {
     bool isValid = false;
     std::list<cor::Light> lights;
     // loop through all groups and subgroups, adding or removing lists only if a group is found
@@ -423,10 +425,10 @@ void LeftHandMenu::groupSelected(QString key, bool shouldSelect) {
     }
 }
 
-void LeftHandMenu::shouldShowButtons(QString key, bool) {
+void LeftHandMenu::shouldShowButtons(const QString& key, bool) {
     for (const auto& widget : mRoomWidgets) {
         if (widget->key() != key) {
-            ListRoomWidget *groupWidget = qobject_cast<ListRoomWidget*>(widget);
+            auto groupWidget = qobject_cast<ListRoomWidget*>(widget);
             Q_ASSERT(groupWidget);
             groupWidget->closeWidget();
         }
@@ -435,7 +437,7 @@ void LeftHandMenu::shouldShowButtons(QString key, bool) {
 }
 
 
-void LeftHandMenu::changedGroup(QString) {
+void LeftHandMenu::changedGroup(const QString&) {
     resize();
 }
 

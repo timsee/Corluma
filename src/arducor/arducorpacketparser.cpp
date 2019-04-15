@@ -26,7 +26,7 @@ QString ArduCorPacketParser::turnOnPacket(const cor::Light& device, bool turnOn)
 
 QString ArduCorPacketParser::arrayColorChangePacket(const cor::Light& device,
                                                  int index,
-                                                 QColor color) {
+                                                 const QColor& color) {
     QString packet = QString("%1,%2,%3,%4,%5,%6&").arg(QString::number(int(EPacketHeader::customArrayColorChange)),
                                                        QString::number(device.index),
                                                        QString::number(index),
@@ -168,7 +168,7 @@ QString ArduCorPacketParser::timeoutPacket(const cor::Light& device, int timeOut
 }
 
 
-void ArduCorPacketParser::parsePacket(QString packet) {
+void ArduCorPacketParser::parsePacket(const QString& packet) {
     std::list<std::vector<int> > messageList;
     std::istringstream input(packet.toStdString());
     std::string number;
@@ -260,7 +260,7 @@ void ArduCorPacketParser::routineChange(const std::vector<int>& intVector) {
         ++tempIndex;
 
         // get routine
-        ERoutine routine = ERoutine(intVector[tempIndex]);
+        auto routine = ERoutine(intVector[tempIndex]);
         ++tempIndex;
         routineObject["routine"] = routineToString(routine);
 
@@ -284,7 +284,7 @@ void ArduCorPacketParser::routineChange(const std::vector<int>& intVector) {
             }
         } else {
             if (intVector.size() > 4) {
-                EPalette palette = EPalette(intVector[tempIndex]);
+                auto palette = EPalette(intVector[tempIndex]);
                 ++tempIndex;
                 if (palette == EPalette::unknown) {
                     validVector = false;

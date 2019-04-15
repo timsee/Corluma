@@ -17,7 +17,7 @@
 namespace nano
 {
 
-LeafControllerInfoWidget::LeafControllerInfoWidget(nano::LeafController controller, QWidget *parent) : QWidget(parent) {
+LeafControllerInfoWidget::LeafControllerInfoWidget(nano::LeafController controller, QWidget *parent) : QWidget(parent), mHideDetails{true} {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     this->setStyleSheet(styleSheet);
 
@@ -80,15 +80,6 @@ void LeafControllerInfoWidget::mouseReleaseEvent(QMouseEvent *event) {
 void LeafControllerInfoWidget::setChecked(bool checked) {
     mIsChecked = checked;
     update();
-}
-
-void LeafControllerInfoWidget::setHeight(int height) {
-    if (mHideDetails) {
-        height = height / 2;
-    }
-    int finalHeight = std::max(height, this->height());
-    mHeight = finalHeight;
-    this->setFixedHeight(height);
 }
 
 void LeafControllerInfoWidget::hideDetails(bool shouldHide) {

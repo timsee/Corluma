@@ -136,7 +136,7 @@ public:
      * \param device device to search for
      * \return true if the device exists, false otherwise.
      */
-    bool doesDeviceExist(cor::Light device);
+    bool doesDeviceExist(const cor::Light& device);
 
     /*!
      * \brief clearDevices remove all devices from the current connected devices list.
@@ -172,7 +172,7 @@ public:
      *        only the device controllerName, index, and type need to match
      * \return true if a device is removed, false otherwise.
      */
-    bool removeDevice(cor::Light device);
+    bool removeDevice(const cor::Light& device);
 
     /*!
      * \brief removeDevicesOfType if they exist, removes devices from currentDevices list that match

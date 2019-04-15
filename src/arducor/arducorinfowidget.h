@@ -49,9 +49,6 @@ public:
     /// true if details are hidden, false otherwise
     bool detailsHidden() { return mHideDetails; }
 
-    /// set height of info widget
-    void setHeight(int);
-
 signals:
     /*!
      * \brief clicked emits the key of the widget whenever it is clicked.
@@ -92,9 +89,6 @@ private:
     /// displays the path to the light
     QLabel *mPathLabel;
 
-    /// displays the commtype of the arducor
-    QLabel *mCommTypeLabel;
-
     /// displays the API of arducor light
     QLabel *mAPILabel;
 
@@ -103,9 +97,6 @@ private:
 
     /// stored data the Light being displayed by this widget.
     cor::Light mLight;
-
-    /// used for setting the height;
-    int mHeight;
 };
 
 #endif // ARDUCORINFOWIDGET_H

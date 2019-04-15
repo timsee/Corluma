@@ -29,12 +29,6 @@ DiscoveryNanoLeafWidget::DiscoveryNanoLeafWidget(CommLayer *comm, QWidget *paren
     setLayout(mLayout);
 }
 
-DiscoveryNanoLeafWidget::~DiscoveryNanoLeafWidget() {
-
-}
-
-
-
 
 void DiscoveryNanoLeafWidget::handleDiscovery(bool isCurrentCommType) {
     Q_UNUSED(isCurrentCommType);
@@ -75,7 +69,7 @@ void DiscoveryNanoLeafWidget::handleDiscovery(bool isCurrentCommType) {
     // handle button updates
     if (mComm->discoveryErrorsExist(EProtocolType::nanoleaf)) {
         emit connectionStatusChanged(EProtocolType::nanoleaf, EConnectionState::connectionError);
-    }  else if (foundNanoleafs.size() > 0) {
+    }  else if (!foundNanoleafs.empty()) {
         emit connectionStatusChanged(EProtocolType::nanoleaf, EConnectionState::discovered);
     } else {
         emit connectionStatusChanged(EProtocolType::nanoleaf, EConnectionState::off);
@@ -101,7 +95,7 @@ void DiscoveryNanoLeafWidget::minusButtonClicked() {
 // ----------------------------
 
 
-bool DiscoveryNanoLeafWidget::doesNanoLeafExist(QString controller) {
+bool DiscoveryNanoLeafWidget::doesNanoLeafExist(const QString& controller) {
     bool deviceFound = false;
     for (const auto& discoveredController : mComm->nanoleaf()->discovery()->foundControllers().itemVector()) {
         if (discoveredController.name.compare(controller) == 0) {

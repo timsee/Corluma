@@ -13,6 +13,7 @@
 #include "cor/listwidget.h"
 #include "cor/presetpalettes.h"
 #include "comm/commlayer.h"
+#include "cor/group.h"
 
 /*!
  * \copyright
@@ -71,26 +72,26 @@ private slots:
      * \brief editMoodClicked the edit button has been pressed for a specific mood. This
      *        gets sent to the main window and tells it to open the edit page.
      */
-    void editMoodClicked(QString collectionKey, std::uint64_t moodKey);
+    void editMoodClicked(const QString& collectionKey, std::uint64_t moodKey);
 
     /*!
      * \brief selectedMood called whenever an individual mood is selceted
      * \param collectionkey key for cllection of lights that the mood fits into
      * \param moodKey key for the mood
      */
-    void selectedMood(QString collectionkey, std::uint64_t moodKey);
+    void selectedMood(const QString& collectionkey, std::uint64_t moodKey);
 
     /*!
      * \brief newMoodAdded handles whenever a new mood was created on the edit page.
      */
-    void newMoodAdded(QString);
+    void newMoodAdded(const QString&);
 
     /*!
      * \brief shouldShowButtons show buttons was clicked by a ListCollectionWidget.
      * \param key the key fo the ListCollectionWidget
      * \param isShowing true if showing, false if not
      */
-    void shouldShowButtons(QString key, bool isShowing);
+    void shouldShowButtons(const QString& key, bool isShowing);
 
 protected:
     /*!
@@ -99,12 +100,6 @@ protected:
     void resizeEvent(QResizeEvent *);
 
 private:
-
-    /*!
-     * \brief communication pointer to communication object
-     *        for sending comannds to the lights
-     */
-    CommLayer *mComm;
 
     /// groups parser
     GroupData *mGroups;

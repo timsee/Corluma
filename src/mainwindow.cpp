@@ -85,7 +85,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(mSettingsPage, SIGNAL(clickedInfoWidget()), this, SLOT(hueInfoWidgetClicked()));
     connect(mSettingsPage, SIGNAL(clickedDiscovery()), this, SLOT(pushInDiscovery()));
 
-    connect(mSettingsPage->globalWidget(), SIGNAL(protocolSettingsUpdate(EProtocolType, bool)), this, SLOT(protocolSettingsChanged(EProtocolType, bool)));
+    connect(mSettingsPage->globalWidget(), SIGNAL(protocolSettingsUpdate(EProtocolType,bool)), this, SLOT(protocolSettingsChanged(EProtocolType,bool)));
     connect(mSettingsPage->globalWidget(), SIGNAL(timeoutUpdate(int)), this, SLOT(timeoutChanged(int)));
     connect(mSettingsPage->globalWidget(), SIGNAL(timeoutEnabled(bool)), this, SLOT(timeoutEnabledChanged(bool)));
 
@@ -104,7 +104,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Start Discovery
     // --------------
     for (int i = 0; i < int(EProtocolType::MAX); ++i) {
-        EProtocolType type = EProtocolType(i);
+        auto type = EProtocolType(i);
         if (mAppSettings->enabled(type)) {
             mComm->startup(type);
             mComm->startDiscovery(type);
@@ -195,7 +195,7 @@ void MainWindow::loadPages() {
 
         mLightInfoWidget = new LightInfoListWidget(this);
         mLightInfoWidget->isOpen(false);
-        connect(mLightInfoWidget, SIGNAL(lightNameChanged(EProtocolType, QString, QString)), this, SLOT(lightNameChange(EProtocolType, QString, QString)));
+        connect(mLightInfoWidget, SIGNAL(lightNameChanged(EProtocolType,QString,QString)), this, SLOT(lightNameChange(EProtocolType,QString,QString)));
         connect(mLightInfoWidget, SIGNAL(deleteLight(QString)), this, SLOT(deleteLight(QString)));
         connect(mLightInfoWidget, SIGNAL(pressedClose()), this, SLOT(lightInfoClosePressed()));
         mLightInfoWidget->setGeometry(0, -1 * this->height(), this->width(), this->height());
@@ -214,7 +214,7 @@ void MainWindow::loadPages() {
 // Slots
 // ----------------------------
 
-void MainWindow::topMenuButtonPressed(QString key) {
+void MainWindow::topMenuButtonPressed(const QString& key) {
     if (key == "Settings") {
         pushInSettingsPage();
     } else if (key == "Menu") {
@@ -226,9 +226,7 @@ void MainWindow::topMenuButtonPressed(QString key) {
 
 void MainWindow::settingsButtonFromDiscoveryPressed() {
     // open settings if needed
-    if (!mSettingsPage->isOpen()) {
-        pushInSettingsPage();
-    }
+    pushInSettingsPage();
 }
 
 // ----------------------------
@@ -242,14 +240,14 @@ void MainWindow::resizeEvent(QResizeEvent *) {
 void MainWindow::changeEvent(QEvent *event) {
     if(event->type() == QEvent::ActivationChange && this->isActiveWindow()) {
         for (int commInt = 0; commInt != int(EProtocolType::MAX); ++commInt) {
-            EProtocolType type = static_cast<EProtocolType>(commInt);
+            auto type = static_cast<EProtocolType>(commInt);
             if (mAppSettings->enabled(type)) {
                 mComm->resetStateUpdates(type);
             }
         }
     } else if (event->type() == QEvent::ActivationChange && !this->isActiveWindow()) {
         for (int commInt = 0; commInt != int(EProtocolType::MAX); ++commInt) {
-            EProtocolType type = static_cast<EProtocolType>(commInt);
+            auto type = static_cast<EProtocolType>(commInt);
             if (mAppSettings->enabled(type)) {
                 mComm->stopStateUpdates(type);
             }
@@ -324,15 +322,7 @@ void MainWindow::closeDiscoveryWithoutTransition() {
 
 void MainWindow::editButtonClicked(bool isMood) {
     greyOut(true);
-    mEditPage->show();
-    mEditPage->raise();
-    mEditPage->setVisible(true);
-    mEditPage->isOpen(true);
-
-    moveWidget(mEditPage,
-               QSize(int(this->width() * 0.75f), int(this->height() * 0.75f)),
-               QPoint(int(this->width() * 0.125f), int(-1 * this->height())),
-               QPoint(int(this->width() * 0.125f), int(this->height() * 0.125f)));
+    mEditPage->pushIn();
 
     std::list<cor::Light> groupDevices;
     std::list<QString> groupDeviceIDs;
@@ -367,23 +357,6 @@ void MainWindow::moodSelected(std::uint64_t key) {
 
 void MainWindow::detailedMoodDisplay(std::uint64_t key) {
     greyOut(true);
-    mMoodDetailedWidget->raise();
-    mMoodDetailedWidget->show();
-    mMoodDetailedWidget->setVisible(true);
-    mMoodDetailedWidget->isOpen(true);
-
-    moveWidget(mMoodDetailedWidget,
-               QSize(int(this->width() * 0.75f), int(this->height() * 0.75f)),
-               QPoint(int(this->width() * 0.125f), int(-1 * this->height())),
-               QPoint(int(this->width() * 0.125f), int(this->height() * 0.125f)));
-
-    auto widthPoint = int(this->width() * 0.875f - mMoodDetailedWidget->topMenu()->width());
-    QPoint finishPoint(widthPoint,
-                       int(this->height() * 0.125f));
-    cor::moveWidget(mMoodDetailedWidget->topMenu(),
-                    mMoodDetailedWidget->topMenu()->size(),
-                    QPoint(widthPoint, int(-1 * this->height())),
-                    finishPoint);
 
     const auto& moodResult = mGroups->moods().item(QString::number(key).toStdString());
     cor::Mood detailedMood = moodResult.first;
@@ -402,6 +375,8 @@ void MainWindow::detailedMoodDisplay(std::uint64_t key) {
         qDebug() << " did not recognize this groupppp " << key;
     }
 
+    mMoodDetailedWidget->pushIn();
+
     if (mGreyOut->isVisible()) {
         mGreyOut->resize();
     }
@@ -410,33 +385,19 @@ void MainWindow::detailedMoodDisplay(std::uint64_t key) {
 void MainWindow::hueInfoWidgetClicked() {
     greyOut(true);
 
-    moveWidget(mLightInfoWidget,
-               QSize(int(this->width() * 0.75f), int(this->height() * 0.75f)),
-               QPoint(int(this->width() * 0.125f), int(-1 * this->height())),
-               QPoint(int(this->width() * 0.125f), int(this->height() * 0.125f)));
-
-    mLightInfoWidget->isOpen(true);
-
     mLightInfoWidget->updateHues(mComm->hue()->discovery()->lights());
     mLightInfoWidget->updateControllers(mComm->nanoleaf()->controllers().itemList());
     mLightInfoWidget->updateLights(mComm->arducor()->lights());
+    mLightInfoWidget->pushIn();
 
     if (mGreyOut->isVisible()) {
         mGreyOut->resize();
     }
-    mLightInfoWidget->setVisible(true);
-    mLightInfoWidget->raise();
 }
 
 void MainWindow::editClosePressed() {
     greyOut(false);
-    mEditPage->hide();
-    mEditPage->isOpen(false);
-
-    moveWidget(mEditPage,
-               QSize(int(this->width() * 0.75f), int(this->height() * 0.75f)),
-               QPoint(int(this->width() * 0.125f), int(this->height() * 0.125f)),
-               QPoint(int(this->width() * 0.125f), int(-1 * this->height())));
+    mEditPage->pushOut();
 
     //TODO: update lefthandmenu
     //mMainViewport->lightPage()->updateRoomWidgets();
@@ -445,40 +406,21 @@ void MainWindow::editClosePressed() {
 
 void MainWindow::detailedClosePressed() {
     greyOut(false);
-    mMoodDetailedWidget->hide();
-    mMoodDetailedWidget->isOpen(false);
-
-    moveWidget(mMoodDetailedWidget,
-               QSize(int(this->width() * 0.75f), int(this->height() * 0.75f)),
-               QPoint(int(this->width() * 0.125f), int(this->height() * 0.125f)),
-               QPoint(int(this->width() * 0.125f), int(-1 * this->height())));
-
-    auto widthPoint = int(this->width() * 0.875f - mMoodDetailedWidget->topMenu()->size().width());
-    QPoint startPoint(widthPoint,
-                       int(this->height() * 0.125f));
-    cor::moveWidget(mMoodDetailedWidget->topMenu(),
-                    mMoodDetailedWidget->topMenu()->size(),
-                    startPoint,
-                    QPoint(widthPoint, int(-1 * this->height())));
+    mMoodDetailedWidget->pushOut();
 }
 
 
 void MainWindow::lightInfoClosePressed() {
     greyOut(false);
-    mLightInfoWidget->isOpen(false);
-
-    moveWidget(mLightInfoWidget,
-               QSize(int(this->width() * 0.75f), int(this->height() * 0.75f)),
-               QPoint(int(this->width() * 0.125f), int(this->height() * 0.125f)),
-               QPoint(int(this->width() * 0.125f), int(-1 * this->height())));
+    mLightInfoWidget->pushOut();
 }
 
 
-void MainWindow::deletedLight(QString uniqueID) {
+void MainWindow::deletedLight(const QString& uniqueID) {
     mGroups->lightDeleted(uniqueID);
 }
 
-void MainWindow::lightNameChange(EProtocolType type, QString key, QString name) {
+void MainWindow::lightNameChange(EProtocolType type, const QString& key, const QString& name) {
     if (type == EProtocolType::hue) {
         // get hue light from key
         std::list<HueLight> hueLights = mComm->hue()->discovery()->lights();
@@ -512,7 +454,7 @@ void MainWindow::lightNameChange(EProtocolType type, QString key, QString name) 
     }
 }
 
-void MainWindow::deleteLight(QString key) {
+void MainWindow::deleteLight(const QString& key) {
     auto light = mComm->lightByID(key);
     if (light.isValid()) {
         switch (light.protocol()) {
@@ -544,17 +486,17 @@ void MainWindow::greyOut(bool show) {
     if (show) {
         mGreyOut->raise();
         mGreyOut->setVisible(true);
-        QGraphicsOpacityEffect *fadeOutEffect = new QGraphicsOpacityEffect(mGreyOut);
+        auto fadeOutEffect = new QGraphicsOpacityEffect(mGreyOut);
         mGreyOut->setGraphicsEffect(fadeOutEffect);
-        QPropertyAnimation *fadeOutAnimation = new QPropertyAnimation(fadeOutEffect, "opacity");
+        auto fadeOutAnimation = new QPropertyAnimation(fadeOutEffect, "opacity");
         fadeOutAnimation->setDuration(TRANSITION_TIME_MSEC);
         fadeOutAnimation->setStartValue(0.0f);
         fadeOutAnimation->setEndValue(1.0f);
         fadeOutAnimation->start();
     } else {
-        QGraphicsOpacityEffect *fadeInEffect = new QGraphicsOpacityEffect(mGreyOut);
+        auto fadeInEffect = new QGraphicsOpacityEffect(mGreyOut);
         mGreyOut->setGraphicsEffect(fadeInEffect);
-        QPropertyAnimation *fadeInAnimation = new QPropertyAnimation(fadeInEffect, "opacity");
+        auto fadeInAnimation = new QPropertyAnimation(fadeInEffect, "opacity");
         fadeInAnimation->setDuration(TRANSITION_TIME_MSEC);
         fadeInAnimation->setStartValue(1.0f);
         fadeInAnimation->setEndValue(0.0f);
@@ -695,7 +637,7 @@ void MainWindow::routineChanged(QJsonObject routine) {
     mData->updateRoutine(routine);
 }
 
-void MainWindow::schemeChanged(std::vector<QColor> colors) {
+void MainWindow::schemeChanged(const std::vector<QColor>& colors) {
     mData->updateColorScheme(colors);
 }
 
@@ -802,9 +744,8 @@ bool shouldMoveMenu(QMouseEvent *event,
     bool startNearLeftHand = (startPoint.x() < (fullSize.width() * 0.15));
     if (leftHandMenuShowing) {
         return inRange;
-    } else {
-        return inRange && startNearLeftHand;
     }
+    return inRange && startNearLeftHand;
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event) {

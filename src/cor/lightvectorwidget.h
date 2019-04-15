@@ -77,9 +77,6 @@ private:
     /// true if widget should fill new entries from left, false if it should fill from right
     bool mFillFromLeft;
 
-    /// currently unused, but in place so that slider sizes match other layouts
-    QLabel *mLabel;
-
     /// hide devices if they are off
     bool mHideOffDevices = false;
 

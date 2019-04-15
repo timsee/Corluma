@@ -9,7 +9,7 @@
 
 #include <QDebug>
 
-CommSerial::CommSerial() : CommType(ECommType::serial), mSerialPortFailed{false} {
+CommSerial::CommSerial() : CommType(ECommType::serial), mDiscovery{nullptr}, mSerialPortFailed{false} {
     mStateUpdateInterval = 500;
     mLookingForActivePorts = false;
 
@@ -76,10 +76,10 @@ void CommSerial::stateUpdate() {
     }
 }
 
-QSerialPort* CommSerial::serialPortByName(QString name) {
+QSerialPort* CommSerial::serialPortByName(const QString& name) {
     QSerialPort *serial = nullptr;
-    for (auto&& serialPorts : mSerialPorts) {
-        if (!QString::compare(serialPorts.first->portName(), name)) {
+    for (const auto& serialPorts : mSerialPorts) {
+        if (serialPorts.first->portName() == name) {
            serial = serialPorts.first;
         }
     }
@@ -108,7 +108,7 @@ void CommSerial::testForController(const cor::Controller& controller) {
 void CommSerial::discoverSerialPorts() {
     for (const QSerialPortInfo &info : QSerialPortInfo::availablePorts()) {
         bool serialPortFound = false;
-        for (QSerialPortInfo savedInfo : mSerialInfoList) {
+        for (const auto& savedInfo : mSerialInfoList) {
             if (!QString::compare(info.portName(), savedInfo.portName())) {
                 serialPortFound = true;
             }
@@ -154,7 +154,7 @@ bool CommSerial::connectSerialPort(const QSerialPortInfo& info) {
         }
     }
 
-    QSerialPort *serial = new QSerialPort(this);
+    auto serial = new QSerialPort(this);
     serial->setPort(info);
     if (serial->open(QIODevice::ReadWrite)) {
         serial->setBaudRate(QSerialPort::Baud9600);
@@ -169,12 +169,10 @@ bool CommSerial::connectSerialPort(const QSerialPortInfo& info) {
         connect(serial, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(handleError(QSerialPort::SerialPortError)));
 
         return true;
-    } else {
-        qDebug() << "WARNING: serial port failed" << info.portName() << serial->errorString();
-
-        delete serial;
-        return false;
     }
+    qDebug() << "WARNING: serial port failed" << info.portName() << serial->errorString();
+    delete serial;
+    return false;
 }
 
 //--------------------

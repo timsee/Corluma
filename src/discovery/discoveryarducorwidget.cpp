@@ -92,7 +92,7 @@ void DiscoveryArduCorWidget::minusButtonClicked() {
 // ----------------------------
 
 
-bool DiscoveryArduCorWidget::doesYunControllerExistAlready(QString name) {
+bool DiscoveryArduCorWidget::doesYunControllerExistAlready(const QString& name) {
     bool deviceFound = mComm->arducor()->discovery()->controllers().item(name.toStdString()).second;
     if (deviceFound) {
         return true;

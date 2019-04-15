@@ -13,6 +13,7 @@
 DataSyncSettings::DataSyncSettings(cor::DeviceList *data, CommLayer *comm, AppSettings *appSettings) : mAppSettings(appSettings) {
     mComm = comm;
     mData = data;
+    mParser = new ArduCorPacketParser(this);
     mUpdateInterval = 2000;
     connect(mComm, SIGNAL(packetReceived(EProtocolType)), this, SLOT(commPacketReceived(EProtocolType)));
     connect(mData, SIGNAL(dataUpdate()), this, SLOT(resetSync()));
@@ -77,7 +78,7 @@ void DataSyncSettings::syncData() {
         mDataIsInSync = true;
     }
 
-    if (mDataIsInSync || mData->devices().size() == 0) {
+    if (mDataIsInSync || mData->devices().empty()) {
         endOfSync();
     }
 }

@@ -43,16 +43,16 @@ BridgeSchedulesWidget::BridgeSchedulesWidget(QWidget *parent) : QWidget(parent) 
 
 void BridgeSchedulesWidget::updateSchedules(std::list<SHueSchedule> schedules) {
     // remove old widgets
-    for (uint32_t i = 0; i < mWidgets.size(); ++i) {
-        mScrollLayout->removeWidget(mWidgets[i]);
-        delete mWidgets[i];
+    for (auto widget : mWidgets) {
+        mScrollLayout->removeWidget(widget);
+        delete widget;
     }
 
     // clear vector
     mWidgets.clear();
 
     // add new widgets
-    for (auto schedule : schedules) {
+    for (const auto& schedule : schedules) {
         hue::HueScheduleWidget *widget = new hue::HueScheduleWidget(mScrollAreaWidget, schedule);
         widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         mWidgets.push_back(widget);

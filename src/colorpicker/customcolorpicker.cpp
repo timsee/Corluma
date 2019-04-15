@@ -51,7 +51,7 @@ void CustomColorPicker::updateMultiColor(const std::vector<QColor>& colorVector)
 }
 
 
-void CustomColorPicker::updateSelected(QColor color) {
+void CustomColorPicker::updateSelected(const QColor& color) {
     mColorGrid->updateSelected(color);
 }
 
@@ -59,10 +59,10 @@ void CustomColorPicker::updateMultiColorSlider() {
     int r = 0;
     int g = 0;
     int b = 0;
-    for (uint32_t i = 0; i < colors().size(); ++i) {
-        r = r + colors()[i].red();
-        g = g + colors()[i].green();
-        b = b + colors()[i].blue();
+    for (const auto& color : colors()) {
+        r = r + color.red();
+        g = g + color.green();
+        b = b + color.blue();
     }
     QColor average = QColor(r / int(colors().size()),
                             g / int(colors().size()),

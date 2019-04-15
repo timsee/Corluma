@@ -8,7 +8,7 @@
 
 #include "arducorinfowidget.h"
 
-ArduCorInfoWidget::ArduCorInfoWidget(cor::Light light, QWidget *parent) : QWidget(parent), mLight(light) {
+ArduCorInfoWidget::ArduCorInfoWidget(cor::Light light, QWidget *parent) : QWidget(parent), mHideDetails{false}, mLight(light) {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     this->setStyleSheet(styleSheet);
 
@@ -44,7 +44,7 @@ ArduCorInfoWidget::ArduCorInfoWidget(cor::Light light, QWidget *parent) : QWidge
 
 
 void ArduCorInfoWidget::updateLight(cor::Light light) {
-    mLight = light;
+    mLight = std::move(light);
 }
 
 void ArduCorInfoWidget::mouseReleaseEvent(QMouseEvent *event) {
@@ -55,15 +55,6 @@ void ArduCorInfoWidget::mouseReleaseEvent(QMouseEvent *event) {
 void ArduCorInfoWidget::setChecked(bool checked) {
     mIsChecked = checked;
     update();
-}
-
-void ArduCorInfoWidget::setHeight(int height) {
-    if (mHideDetails) {
-        height = height / 2;
-    }
-    int finalHeight = std::max(height, this->height());
-    mHeight = finalHeight;
-    this->setFixedHeight(height);
 }
 
 void ArduCorInfoWidget::hideDetails(bool shouldHide) {

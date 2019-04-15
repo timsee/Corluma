@@ -107,7 +107,7 @@ private slots:
      * \brief floatingLayoutButtonPressed handles whenever a floating layout button is presed
      * \param button key for floating layout button
      */
-    void floatingLayoutButtonPressed(QString button);
+    void floatingLayoutButtonPressed(const QString& button);
 
 protected:
 

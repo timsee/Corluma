@@ -9,7 +9,7 @@
 namespace nano
 {
 
-Panels::Panels() : orientationRange(0,0)
+Panels::Panels() : count{1}, sideLength{3}, orientationValue{0}, orientationRange{0,0}
 {
 
 }

@@ -77,7 +77,7 @@ public:
      * \param connection the name of the controller
      * \return true if controller is removed, false othewrise.
      */
-    bool removeController(ECommType type, cor::Controller controller);
+    bool removeController(ECommType type, const cor::Controller& controller);
 
     /*!
      * \brief fillDevice use the controller name, type, and index to fill in the rest
@@ -157,7 +157,7 @@ public:
     std::list<cor::Light> hueLightsToDevices(std::list<HueLight> hues);
 
     /// deletes a hue group by name
-    void deleteHueGroup(QString name);
+    void deleteHueGroup(const QString& name);
 
 signals:
 

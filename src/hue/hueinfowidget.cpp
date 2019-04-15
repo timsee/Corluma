@@ -17,7 +17,7 @@
 namespace hue
 {
 
-HueInfoWidget::HueInfoWidget(HueLight light, QWidget *parent) : QWidget(parent), mLight(light) {
+HueInfoWidget::HueInfoWidget(HueLight light, QWidget *parent) : QWidget(parent), mHideDetails{false}, mLight(light) {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     this->setStyleSheet(styleSheet);
 
@@ -78,15 +78,6 @@ void HueInfoWidget::mouseReleaseEvent(QMouseEvent *event) {
 void HueInfoWidget::setChecked(bool checked) {
     mIsChecked = checked;
     update();
-}
-
-void HueInfoWidget::setHeight(int height) {
-    if (mHideDetails) {
-        height = height / 2;
-    }
-    int finalHeight = std::max(height, this->height());
-    mHeight = finalHeight;
-    this->setFixedHeight(height);
 }
 
 void HueInfoWidget::hideDetails(bool shouldHide) {

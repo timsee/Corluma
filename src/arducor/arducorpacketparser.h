@@ -26,7 +26,7 @@ public:
     /*!
      * \brief ArduCorPacketParser constructor
      */
-    ArduCorPacketParser(QObject *parent);
+    ArduCorPacketParser(QObject *parent = nullptr);
 
     /*!
      * \brief parsePacket take a packet that is assumed to be a properly formatted command packet
@@ -34,7 +34,7 @@ public:
      *        nothing happens.
      * \param packet the command packet being used as input
      */
-    void parsePacket(QString packet);
+    void parsePacket(const QString& packet);
 
     /*!
      * \brief turnOnPacket builds packet to turn all devices in the provided list either on or off.
@@ -49,7 +49,7 @@ public:
      */
     QString arrayColorChangePacket(const cor::Light& device,
                                    int index,
-                                   QColor color);
+                                   const QColor& color);
     /*!
      * \brief routinePacket change the mode of the lights. The mode changes
      *        how the lights look.

@@ -104,9 +104,6 @@ private:
     /// true if selected, false otherwise
     bool mIsSelected;
 
-    /// icon for whether all lights are connected or not
-    QLabel *mAllLightsConnectedIcon;
-
     /*!
      * \brief mName namme of group
      */

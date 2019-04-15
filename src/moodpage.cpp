@@ -14,7 +14,7 @@
 #include <QInputDialog>
 #include <QScroller>
 
-MoodPage::MoodPage(QWidget *parent, GroupData *groups) : QWidget(parent), mGroups(groups) {
+MoodPage::MoodPage(QWidget *parent, GroupData *groups) : QWidget(parent), mGroups(groups), mCurrentMood{0} {
 
     mMoodsListWidget = new cor::ListWidget(this, cor::EListType::linear);
     mMoodsListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -32,7 +32,7 @@ MoodPage::MoodPage(QWidget *parent, GroupData *groups) : QWidget(parent), mGroup
 
 
 
-void MoodPage::newMoodAdded(QString mood) {
+void MoodPage::newMoodAdded(const QString& mood) {
     Q_UNUSED(mood);
     qDebug() << "mood added" << mood;
   //  updateConnectionList();
@@ -66,7 +66,7 @@ void MoodPage::makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
             if (!foundRoom) {
                 auto roomIt = std::find(roomNames.begin(), roomNames.end(), "Miscellaneous");
                 if (roomIt == roomNames.end()) {
-                    roomNames.push_back("Miscellaneous");
+                    roomNames.emplace_back("Miscellaneous");
                 }
             }
         }
@@ -103,7 +103,7 @@ void MoodPage::makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
              for (auto item : mMoodsListWidget->widgets()) {
                  if (item->key().compare(roomName) == 0) {
                      roomFound = true;
-                     ListMoodGroupWidget *moodWidget = qobject_cast<ListMoodGroupWidget*>(item);
+                     auto moodWidget = qobject_cast<ListMoodGroupWidget*>(item);
                      Q_ASSERT(moodWidget);
                      //TODO: update mood widget
                  }
@@ -124,7 +124,7 @@ void MoodPage::makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
              for (auto item : mMoodsListWidget->widgets()) {
                  if (item->key().compare(roomName) == 0) {
                      roomFound = true;
-                     ListMoodGroupWidget *moodWidget = qobject_cast<ListMoodGroupWidget*>(item);
+                     auto moodWidget = qobject_cast<ListMoodGroupWidget*>(item);
                      Q_ASSERT(moodWidget);
                      //TODO: update mood widget
                  }
@@ -144,28 +144,28 @@ ListMoodGroupWidget* MoodPage::initMoodsCollectionWidget(const QString& name,
                                                          const QString& key,
                                                          bool hideEdit) {
 
-    ListMoodGroupWidget *widget = new ListMoodGroupWidget(name,
-                                                          moods,
-                                                          key,
-                                                          hideEdit,
-                                                          mMoodsListWidget->mainWidget());
-    connect(widget, SIGNAL(editClicked(QString, std::uint64_t)), this, SLOT(editMoodClicked(QString, std::uint64_t)));
-    connect(widget, SIGNAL(moodSelected(QString, std::uint64_t)), this, SLOT(selectedMood(QString, std::uint64_t)));
+    auto widget = new ListMoodGroupWidget(name,
+                                          moods,
+                                          key,
+                                          hideEdit,
+                                          mMoodsListWidget->mainWidget());
+    connect(widget, SIGNAL(editClicked(QString,std::uint64_t)), this, SLOT(editMoodClicked(QString,std::uint64_t)));
+    connect(widget, SIGNAL(moodSelected(QString,std::uint64_t)), this, SLOT(selectedMood(QString,std::uint64_t)));
 
     mMoodsListWidget->insertWidget(widget);
     mMoodsListWidget->resizeWidgets();
 
-    connect(widget, SIGNAL(buttonsShown(QString, bool)), this, SLOT(shouldShowButtons(QString, bool)));
+    connect(widget, SIGNAL(buttonsShown(QString,bool)), this, SLOT(shouldShowButtons(QString,bool)));
     return widget;
 }
 
-void MoodPage::selectedMood(QString, std::uint64_t moodKey) {
+void MoodPage::selectedMood(const QString&, std::uint64_t moodKey) {
     mCurrentMood = moodKey;
     emit clickedSelectedMood(moodKey);
 }
 
 
-void MoodPage::editMoodClicked(QString , std::uint64_t) {
+void MoodPage::editMoodClicked(const QString&, std::uint64_t) {
     emit clickedEditButton(true);
 }
 
@@ -188,10 +188,10 @@ void MoodPage::hide() {
 }
 
 
-void MoodPage::shouldShowButtons(QString key, bool) {
+void MoodPage::shouldShowButtons(const QString& key, bool) {
     for (const auto& widget : mMoodsListWidget->widgets()) {
         if (widget->key() != key) {
-            ListMoodGroupWidget *groupWidget = qobject_cast<ListMoodGroupWidget*>(widget);
+            auto groupWidget = qobject_cast<ListMoodGroupWidget*>(widget);
             Q_ASSERT(groupWidget);
             groupWidget->closeLights();
         }

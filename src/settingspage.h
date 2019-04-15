@@ -52,7 +52,7 @@ public:
     /*!
      * \brief Destructor
      */
-    ~SettingsPage();
+    ~SettingsPage() = default;
 
     /// called when the widget is shown
     void show();
@@ -99,7 +99,7 @@ private slots:
      * \brief settingsButtonPressed a settings button has been pressed
      * \param title the title of the button that was pressed
      */
-    void settingsButtonPressed(QString title);
+    void settingsButtonPressed(const QString& title);
 
     /// hides whatever webview is showing. If none is showing, this does nothing.
     void hideCurrentWebView();

@@ -18,7 +18,7 @@
 namespace cor
 {
 
-WebView::WebView(QString title, QString htmlPath, QWidget *parent) : QWidget(parent) {
+WebView::WebView(const QString& title, const QString& htmlPath, QWidget *parent) : QWidget(parent) {
     mTextBrowser = new QTextBrowser(this);
     QScroller::grabGesture(mTextBrowser->viewport(), QScroller::LeftMouseButtonGesture);
     mTextBrowser->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);

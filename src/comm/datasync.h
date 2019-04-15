@@ -50,7 +50,7 @@ class DataSync
 public:
 
     /// destructor
-    virtual ~DataSync();
+    virtual ~DataSync() = default;
 
     /*!
      * \brief cancelSync cancel the data sync, regardless of it successfully completed.
@@ -161,7 +161,7 @@ protected:
      * \param maxPacketSize max size of packet that the controller can handle.
      * \return true if packet is added, false otherwise.
      */
-    bool appendToPacket(QString& currentPacket, QString newAddition, uint32_t maxPacketSize);
+    bool appendToPacket(QString& currentPacket, const QString& newAddition, uint32_t maxPacketSize);
 
     /*!
      * \brief ctDifference gives a percent difference between two color temperatures. This
@@ -190,7 +190,7 @@ protected:
      * \param type communication type of controller
      * \return true if a mesasge can be sent, false if the message shoudl be throttled
      */
-    bool checkThrottle(QString controller, ECommType type);
+    bool checkThrottle(const QString& controller, ECommType type);
 
     /*!
      * \brief resetThrottle should be called immediately after sending a packet, resets the throttle so that no messages can
@@ -198,7 +198,7 @@ protected:
      * \param controller name of controller.
      * \param type communication type of controller
      */
-    void resetThrottle(QString controller, ECommType type);
+    void resetThrottle(const QString& controller, ECommType type);
 };
 
 #endif // DATASYNC_H

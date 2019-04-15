@@ -6,7 +6,7 @@
 
 #include "brightnessslider.h"
 
-BrightnessSlider::BrightnessSlider(QWidget *parent) : QWidget(parent)
+BrightnessSlider::BrightnessSlider(QWidget *parent) : QWidget(parent), mBrightness{25}
 {
     // --------------
     // Setup Slider

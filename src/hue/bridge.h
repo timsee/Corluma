@@ -108,7 +108,7 @@ class Bridge
 {
 public:
     /// constructor
-    Bridge();
+    Bridge() = default;
 
     /*!
      * \brief IP The IP address of the current bridge

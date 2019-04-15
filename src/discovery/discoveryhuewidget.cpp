@@ -16,7 +16,9 @@
 
 DiscoveryHueWidget::DiscoveryHueWidget(CommLayer *comm, MainWindow *mainWindow, QWidget *parent) :
     DiscoveryWidget(parent),
-    mMainWindow(mainWindow) {
+    mBridgeDiscovered{false},
+    mMainWindow(mainWindow),
+    mHueDiscoveryState{EHueDiscoveryState::findingIpAddress} {
     mScale = 0.4f;
 
     mComm = comm;
@@ -68,12 +70,12 @@ void DiscoveryHueWidget::hueDiscoveryUpdate(EHueDiscoveryState newState) {
     mHueDiscoveryState = newState;
 
     hue::Bridge notFoundBridge;
-    for (auto foundBridges : mComm->hue()->discovery()->notFoundBridges()) {
+    for (const auto& foundBridges : mComm->hue()->discovery()->notFoundBridges()) {
         notFoundBridge = foundBridges;
     }
 
     hue::Bridge foundBridge;
-    for (auto foundBridges : mComm->hue()->discovery()->bridges().itemVector()) {
+    for (const auto& foundBridges : mComm->hue()->discovery()->bridges().itemVector()) {
         foundBridge = foundBridges;
     }
 
@@ -129,7 +131,7 @@ void DiscoveryHueWidget::updateBridgeGUI() {
         int i = 0;
         for (const auto& widget : mListWidget->widgets()) {
             if (widget->key() == bridge.IP) {
-                hue::BridgeInfoWidget *bridgeInfoWidget = static_cast<hue::BridgeInfoWidget*>(widget);
+                auto bridgeInfoWidget = dynamic_cast<hue::BridgeInfoWidget*>(widget);
                 widgetIndex = i;
                 bridgeInfoWidget->updateBridge(bridge);
             }
@@ -138,9 +140,9 @@ void DiscoveryHueWidget::updateBridgeGUI() {
 
         // if it doesnt exist, add it
         if (widgetIndex == -1) {
-            hue::BridgeInfoWidget *widget = new hue::BridgeInfoWidget(bridge, mListWidget);
+            auto widget = new hue::BridgeInfoWidget(bridge, mListWidget);
             widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-            connect(widget, SIGNAL(nameChanged(QString, QString)), this, SLOT(changedName(QString, QString)));
+            connect(widget, SIGNAL(nameChanged(QString,QString)), this, SLOT(changedName(QString,QString)));
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(bridgePressed(QString)));
             connect(widget, SIGNAL(discoverHuesPressed(QString)), this, SLOT(discoverHuesPressed(QString)));
             connect(widget, SIGNAL(groupsPressed(QString)), this, SLOT(groupsPressed(QString)));
@@ -176,7 +178,7 @@ void DiscoveryHueWidget::schedulesClosePressed() {
     mBridgeSchedulesWidget->hide();
 }
 
-void DiscoveryHueWidget::changedName(QString key, QString newName) {
+void DiscoveryHueWidget::changedName(const QString& key, const QString& newName) {
     const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
     if (bridgeResult.second) {
         mComm->hue()->discovery()->changeName(bridgeResult.first, newName);
@@ -191,7 +193,7 @@ void DiscoveryHueWidget::changedName(QString key, QString newName) {
     }
 }
 
-void DiscoveryHueWidget::groupsPressed(QString key) {
+void DiscoveryHueWidget::groupsPressed(const QString& key) {
     const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
     if (bridgeResult.second) {
 #ifndef MOBILE_BUILD
@@ -206,7 +208,7 @@ void DiscoveryHueWidget::groupsPressed(QString key) {
     }
 }
 
-void DiscoveryHueWidget::schedulesPressed(QString key) {
+void DiscoveryHueWidget::schedulesPressed(const QString& key) {
     const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
     if (bridgeResult.second) {
 #ifndef MOBILE_BUILD
@@ -222,7 +224,7 @@ void DiscoveryHueWidget::schedulesPressed(QString key) {
 }
 
 
-void DiscoveryHueWidget::discoverHuesPressed(QString key) {
+void DiscoveryHueWidget::discoverHuesPressed(const QString& key) {
     const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
     if (bridgeResult.second) {
         qDebug() << " dsicvoered this bridge!" << bridgeResult.first;
@@ -237,7 +239,7 @@ void DiscoveryHueWidget::discoverHuesPressed(QString key) {
     }
 }
 
-void DiscoveryHueWidget::bridgePressed(QString key) {
+void DiscoveryHueWidget::bridgePressed(const QString& key) {
     const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
     if (bridgeResult.second) {
         qDebug() << "bridge pressed" << bridgeResult.first;

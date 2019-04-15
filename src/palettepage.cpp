@@ -65,7 +65,7 @@ void PalettePage::setupButtons() {
     mPresetArduinoLayout->setContentsMargins(9, 0, 0, 0);
 
     uint32_t groupIndex = 0;
-    for (int preset = int(EPalette::water); preset < int(EPalette::unknown); preset++) {
+    for (auto preset = int(EPalette::water); preset < int(EPalette::unknown); preset++) {
         mPresetArduinoWidgets[groupIndex] = new PresetGroupWidget(labels[groupIndex],
                                                                   EPalette(preset),
                                                                   EPresetWidgetMode::arduino,
@@ -91,7 +91,7 @@ void PalettePage::setupButtons() {
     groupIndex = 0;
     int rowIndex = 0;
     int columnIndex = 0;
-    for (int preset = int(EPalette::water); preset < int(EPalette::unknown); preset++) {
+    for (auto preset = int(EPalette::water); preset < int(EPalette::unknown); preset++) {
         mPresetHueWidgets[groupIndex] = new PresetGroupWidget(labels[groupIndex],
                                                               EPalette(preset),
                                                               EPresetWidgetMode::hue,
@@ -113,9 +113,9 @@ void PalettePage::setupButtons() {
 }
 
 void PalettePage::highlightRoutineButton(ERoutine routine, EPalette colorGroup) {
-    uint32_t index = 0;
-    for (uint32_t iteratorGroup = uint32_t(EPalette::water); iteratorGroup < uint32_t(EPalette::unknown); iteratorGroup++) {
-        for (uint32_t iteratorRoutine = uint32_t(cor::ERoutineSingleColorEnd) + 1; iteratorRoutine < uint32_t(ERoutine::MAX); iteratorRoutine++) {
+    std::uint32_t index = 0;
+    for (auto iteratorGroup = uint32_t(EPalette::water); iteratorGroup < uint32_t(EPalette::unknown); iteratorGroup++) {
+        for (auto  iteratorRoutine = uint32_t(cor::ERoutineSingleColorEnd) + 1; iteratorRoutine < uint32_t(ERoutine::MAX); iteratorRoutine++) {
             if (mMode == EGroupMode::arduinoPresets) {
                 if (iteratorRoutine == uint32_t(routine) && iteratorGroup == uint32_t(colorGroup)) {
                     mPresetArduinoWidgets[index]->setChecked(ERoutine(iteratorRoutine), true);
@@ -178,7 +178,7 @@ void PalettePage::resizeEvent(QResizeEvent *) {
 }
 
 
-void PalettePage::show(QColor color, std::uint32_t lightCount, bool hasArduinoDevices, bool hasNanoleafDevices) {
+void PalettePage::show(const QColor& color, std::uint32_t lightCount, bool hasArduinoDevices, bool hasNanoleafDevices) {
     if (lightCount == 0) {
         setMode(EGroupMode::huePresets);
         mSpeedSlider->enable(false);
@@ -200,13 +200,13 @@ void PalettePage::resize() {
     QSize arduinoSize(int(this->size().width()),
                       int(this->size().height() * 0.85f));
     mScrollAreaArduino->setFixedSize(arduinoSize);
-    for (uint32_t i = 0; i < mPresetArduinoWidgets.size(); ++i) {
-        mPresetArduinoWidgets[i]->resize();
+    for (auto presetArduinoWidget : mPresetArduinoWidgets) {
+        presetArduinoWidget->resize();
     }
 
     mScrollAreaHue->setFixedSize(this->size());
-    for (uint32_t i = 0; i < mPresetHueWidgets.size(); ++i) {
-        mPresetHueWidgets[i]->resize();
+    for (auto presetHueWidget : mPresetHueWidgets) {
+        presetHueWidget->resize();
     }
 
     QSize sliderSize(int(this->size().width() * 0.9f),

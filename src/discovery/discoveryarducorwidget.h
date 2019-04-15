@@ -52,7 +52,7 @@ private:
      * \param controller name of controller
      * \return true if yun controller exists on discovered or undiscovered list, false otherwise
      */
-    bool doesYunControllerExistAlready(QString controller);
+    bool doesYunControllerExistAlready(const QString& controller);
 
     /// widget that is used for searching for IP addresses and listing the connected ones.
     SearchWidget *mSearchWidget;
@@ -65,9 +65,6 @@ private:
 
     /// layout for widget
     QVBoxLayout *mLayout;
-
-    /// widget used for scroll area.
-    QWidget *mScrollAreaWidget;
 };
 
 #endif // DISCOVERYYUNWIDGET_H

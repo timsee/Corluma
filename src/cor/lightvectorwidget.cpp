@@ -34,7 +34,7 @@ LightVectorWidget::LightVectorWidget(int width, int height,
 
     mArrayColorsButtons = std::vector<cor::Button*>(uint32_t(mMaximumSize), nullptr);
     mArrayLabels = std::vector<QLabel*>(uint32_t(mMaximumSize), nullptr);
-    QSignalMapper *arrayButtonsMapper = new QSignalMapper(this);
+    auto arrayButtonsMapper = new QSignalMapper(this);
     int i = 0;
     for (int h = 0; h < mHeight; ++h) {
         for (int w = 0; w < mWidth; ++w) {
@@ -108,8 +108,8 @@ void LightVectorWidget::toggleArrayColor(int index) {
 }
 
 void LightVectorWidget::enableButtonInteraction(bool enable) {
-    for (uint32_t i = 0; i < mArrayColorsButtons.size(); ++i) {
-        mArrayColorsButtons[i]->setAttribute(Qt::WA_TransparentForMouseEvents, !enable);
+    for (auto&& button : mArrayColorsButtons) {
+        button->setAttribute(Qt::WA_TransparentForMouseEvents, !enable);
     }
 }
 

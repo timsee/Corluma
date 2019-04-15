@@ -15,8 +15,8 @@ namespace nano
 {
 
 LeafDiscovery::LeafDiscovery(QObject *parent, uint32_t interval)
-    : QObject(parent), cor::JSONSaveData("Nanoleaf"), mDiscoveryInterval(interval) {
-    mNanoleaf =  static_cast<CommNanoleaf*>(parent);
+    : QObject(parent), cor::JSONSaveData("Nanoleaf"), mDiscoveryInterval(interval), mUPnP{nullptr} {
+    mNanoleaf =  dynamic_cast<CommNanoleaf*>(parent);
 
     mDiscoveryTimer = new QTimer(this);
     connect(mDiscoveryTimer, SIGNAL(timeout()), this, SLOT(discoveryRoutine()));
@@ -115,7 +115,7 @@ void LeafDiscovery::removeNanoleaf(const nano::LeafController& controllerToRemov
     }
 }
 
-void LeafDiscovery::receivedUPnP(QHostAddress sender, QString payload) {
+void LeafDiscovery::receivedUPnP(const QHostAddress& sender, const QString& payload) {
     Q_UNUSED(sender);
     if (payload.contains("nanoleaf_aurora")) {
         //qDebug() << payload;
@@ -182,7 +182,7 @@ void LeafDiscovery::startupTimerTimeout() {
 void LeafDiscovery::discoveryRoutine() {
     // loop through all the of the not found controllers
     if (!mNotFoundControllers.empty()) {
-        for (auto controller : mNotFoundControllers) {
+        for (const auto& controller : mNotFoundControllers) {
             mNanoleaf->testAuth(controller);
         }
     }
@@ -213,7 +213,7 @@ void LeafDiscovery::addIP(const QString& ip) {
     controller.IP = ipAddr;
     controller.port = 16021;
     // get device count + 1 for unique naming
-    int deviceCount = int(mFoundControllers.size() + mNotFoundControllers.size() + 1);
+    auto deviceCount = int(mFoundControllers.size() + mNotFoundControllers.size() + 1);
     controller.name = "Nanoleaf" + QString::number(deviceCount);
     controller.hardwareName = "Nanoleaf" + QString::number(deviceCount);
     mUnknownControllers.push_back(controller);

@@ -34,9 +34,6 @@ public:
     /// update the bridge being shown
     void updateBridge(const hue::Bridge& bridge);
 
-    /// set height of info widget
-    void setHeight(int);
-
     /*!
      * \brief setChecked true to highlight widget and treat as checked, false to keep in regular
      *        state.
@@ -98,7 +95,7 @@ private slots:
     void groupsListPressed();
 
     /// handles when the name is changed from the EditableFieldWidget
-    void changedName(QString);
+    void changedName(const QString&);
 
     /// delete the info associated with the bridge
     void deleteButtonPressed();
@@ -172,9 +169,6 @@ private:
 
     /// true if checked, false otherwise
     bool mIsChecked;
-
-    /// used for setting the height;
-    int mHeight;
 };
 
 }

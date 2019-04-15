@@ -87,6 +87,8 @@ QWidget* MainViewport::mainWidget(EPage page) {
         case EPage::palettePage:
             widget = qobject_cast<QWidget*>(mPalettePage);
             break;
+        default:
+            THROW_EXCEPTION("Widget not supported by main widget");
     }
     Q_ASSERT(widget);
     return widget;
@@ -104,6 +106,8 @@ cor::Page* MainViewport::mainPage(EPage page) {
         case EPage::palettePage:
             widget = mPalettePage;
             break;
+        default:
+            THROW_EXCEPTION("Widget not recognized by mainviewport");
     }
     Q_ASSERT(widget);
     return widget;
@@ -126,7 +130,7 @@ void MainViewport::showMainPage(EPage page) {
                          uint32_t(mData->brightness()),
                          mData->colorScheme(),
                          mData->palette(),
-                         mData->devices().size());
+                         uint32_t(mData->devices().size()));
         mColorPage->setVisible(true);
     } else if (page == EPage::moodPage) {
         mMoodPage->show(mData->findCurrentMood(mGroups->moods()),
@@ -136,7 +140,7 @@ void MainViewport::showMainPage(EPage page) {
     } else if (page == EPage::palettePage) {
         mPalettePage->resize();
         mPalettePage->show(mData->mainColor(),
-                           mData->devices().size(),
+                           uint32_t(mData->devices().size()),
                            mData->hasLightWithProtocol(EProtocolType::arduCor),
                            mData->hasLightWithProtocol(EProtocolType::nanoleaf));
         mPalettePage->setVisible(true);
@@ -161,10 +165,10 @@ void MainViewport::lightCountChanged() {
                          uint32_t(mData->brightness()),
                          mData->colorScheme(),
                          mData->palette(),
-                         mData->devices().size());
+                         uint32_t(mData->devices().size()));
     } else if (mPageIndex == EPage::palettePage) {
         mPalettePage->show(mData->mainColor(),
-                           mData->devices().size(),
+                           uint32_t(mData->devices().size()),
                            mData->hasLightWithProtocol(EProtocolType::arduCor),
                            mData->hasLightWithProtocol(EProtocolType::nanoleaf));
     }

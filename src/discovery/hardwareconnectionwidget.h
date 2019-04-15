@@ -28,7 +28,7 @@ class HardwareConnectionWidget : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit HardwareConnectionWidget(QString hardwareIconPath, QWidget *parent);
+    explicit HardwareConnectionWidget(const QString& hardwareIconPath, QWidget *parent);
 
     /*!
      * \brief changeState change the state of the widget to display a new state. If its given the state that its

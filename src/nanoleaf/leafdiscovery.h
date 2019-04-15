@@ -100,7 +100,7 @@ public:
 
 private slots:
     /// all received UPnP packets are piped here to detect if they nanoleaf related
-    void receivedUPnP(QHostAddress sender, QString payload);
+    void receivedUPnP(const QHostAddress& sender, const QString& payload);
 
     /// runs discovery routines on unknown and not found controller lists
     void discoveryRoutine();

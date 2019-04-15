@@ -8,20 +8,20 @@
 
 #include <QDebug>
 #include "cor/light.h"
-#include <stdlib.h>
+#include <cstdlib>
 #include <ctime>
 #include <algorithm>
-#include <math.h>
+#include <cmath>
 
 IconData::IconData() {
     setup(4, 4);
 }
 
-IconData::IconData(int width, int height) {
+IconData::IconData(std::uint32_t width, std::uint32_t height) {
     setup(width, height);
 }
 
-void IconData::setup(int width, int height) {
+void IconData::setup(std::uint32_t width, std::uint32_t height) {
 
     // first, check that both are a multiple of four
     while ((width % 4)) {
@@ -63,34 +63,34 @@ void IconData::setup(int width, int height) {
 }
 
 void IconData::bufferToOutput() {
-    std::size_t j = 0;
-    std::size_t k = 0;
-    for (int i = 0; i < mDataLength; i = i + 3) {
+    std::uint32_t j = 0;
+    std::uint32_t k = 0;
+    for (std::uint32_t i = 0; i < mDataLength; i = i + 3) {
         if ((i % (mWidth * 3)) < mWidth * 3 / 4) {
-            mData[std::size_t(i)] = mBuffer[j];
-            mData[std::size_t(i + 1)] = mBuffer[j + 1];
-            mData[std::size_t(i + 2)] = mBuffer[j + 2];
+            mData[i] = mBuffer[j];
+            mData[i + 1] = mBuffer[j + 1];
+            mData[i + 2] = mBuffer[j + 2];
         }
         else if ((i % (mWidth * 3)) < mWidth * 6 / 4) {
-             mData[std::size_t(i)] = mBuffer[j + 3];
-             mData[std::size_t(i + 1)] = mBuffer[j + 4];
-             mData[std::size_t(i + 2)] = mBuffer[j + 5];
+             mData[i] = mBuffer[j + 3];
+             mData[i + 1] = mBuffer[j + 4];
+             mData[i + 2] = mBuffer[j + 5];
         }
         else if ((i % (mWidth * 3)) < mWidth * 9 / 4) {
-             mData[std::size_t(i)] = mBuffer[j + 6];
-             mData[std::size_t(i + 1)] = mBuffer[j + 7];
-             mData[std::size_t(i + 2)] = mBuffer[j + 8];
+             mData[i] = mBuffer[j + 6];
+             mData[i + 1] = mBuffer[j + 7];
+             mData[i + 2] = mBuffer[j + 8];
         }
         else if ((i % (mWidth * 3)) < mWidth * 3) {
-             mData[std::size_t(i)] = mBuffer[j + 9];
-             mData[std::size_t(i + 1)] = mBuffer[j + 10];
-             mData[std::size_t(i + 2)] = mBuffer[j + 11];
+             mData[i] = mBuffer[j + 9];
+             mData[i + 1] = mBuffer[j + 10];
+             mData[i + 2] = mBuffer[j + 11];
         }
 
         if (!((i + 3) % (mWidth * 3))) {
             k++;
         }
-        if (int(k) == (mHeight / 4)) {
+        if (k == (mHeight / 4)) {
             j = j + 4 * 3;
             k = 0;
         }
@@ -165,7 +165,7 @@ void IconData::setRoutine(const QJsonObject& routineObject) {
     }
 }
 
-void IconData::setSolidColor(QColor color) {
+void IconData::setSolidColor(const QColor& color) {
     for (uint i = 0; i < mBufferLength; i = i + 3) {
         mBuffer[i]      = uint8_t(color.red());
         mBuffer[i + 1] = uint8_t(color.green());
@@ -176,7 +176,7 @@ void IconData::setSolidColor(QColor color) {
 
 
 void IconData::setMultiGlimmer(const std::vector<QColor>& colors) {
-    uint32_t colorCount = uint32_t(colors.size());
+    auto colorCount = uint32_t(colors.size());
 
     int j = 0;
     for (uint32_t i = 0; i < mBufferLength; i = i + 3) {
@@ -210,7 +210,7 @@ void IconData::setMultiGlimmer(const std::vector<QColor>& colors) {
 }
 
 void IconData::setMultiFade(const std::vector<QColor>& colors, bool showMore) {
-    uint32_t colorCount = uint32_t(colors.size());
+    auto colorCount = uint32_t(colors.size());
     if (showMore) {
         colorCount = 10;
     }
@@ -248,7 +248,7 @@ void IconData::setMultiFade(const std::vector<QColor>& colors, bool showMore) {
 }
 
 void IconData::setMultiRandomSolid(const std::vector<QColor>& colors) {
-    uint32_t colorCount = uint32_t(colors.size());
+    auto colorCount = uint32_t(colors.size());
 
     int k = 0;
     for (uint32_t i = 0; i < mBufferLength; i = i + 12) {
@@ -283,7 +283,7 @@ void IconData::setMultiRandomSolid(const std::vector<QColor>& colors) {
 }
 
 void IconData::setMultiRandomIndividual(const std::vector<QColor>& colors) {
-    int colorCount = int(colors.size());
+    auto colorCount = int(colors.size());
 
     uint32_t j = 0;
     for (uint32_t i = 0; i < mBufferLength; i = i + 3) {
@@ -302,7 +302,7 @@ void IconData::setMultiRandomIndividual(const std::vector<QColor>& colors) {
 }
 
 void IconData::setBars(const std::vector<QColor>& colors) {
-    uint32_t colorCount = uint32_t(colors.size());
+    auto colorCount = uint32_t(colors.size());
 
     uint32_t colorIndex = 0;
     QColor color;
@@ -463,11 +463,11 @@ void IconData::addSawtoothOut() {
 }
 
 void IconData::addSineFade() {
-    float k = 0.0f;
+    double k(0.0);
     int j = 0;
-    float max = (mBufferLength / 3) - 1;
+    double max = (mBufferLength / 3.0) - 1;
     for (uint i = 0; i < mBufferLength; i = i + 3) {
-        k = cbrt((sin(((j / max) * 6.28f) - 1.67f) + 1) / 2.0f);
+        k = cbrt((sin(((j / max) * 6.28) - 1.67) + 1) / 2.0);
         mBuffer[i]     = uint8_t(mBuffer[i] * k);
         mBuffer[i + 1] = uint8_t(mBuffer[i + 1] * k);
         mBuffer[i + 2] = uint8_t(mBuffer[i + 2] * k);
@@ -477,29 +477,29 @@ void IconData::addSineFade() {
 }
 
 
-int IconData::dataLength() {
+std::uint32_t IconData::dataLength() {
     return mDataLength;
 }
 
-int IconData::width() {
+std::uint32_t IconData::width() {
     return mWidth;
 }
 
-int IconData::height() {
+std::uint32_t IconData::height() {
     return mHeight;
 }
 
 const QImage IconData::renderAsQImage() {
-    return QImage(mData.data(), mWidth, mHeight, QImage::Format_RGB888);
+    return QImage(mData.data(), int(mWidth), int(mHeight), QImage::Format_RGB888);
 }
 
 const QPixmap IconData::renderAsQPixmap() {
     return QPixmap::fromImage(renderAsQImage());
 }
 
-QColor IconData::getMiddleColor(QColor first,
-                                QColor second) {
-    return QColor(abs(first.red() - second.red()) / 2 + std::min(first.red(), second.red()),
-                  abs(first.green() - second.green()) / 2 + std::min(first.green(), second.green()),
-                  abs(first.blue() - second.blue()) / 2 + std::min(first.blue(), second.blue()));
+QColor IconData::getMiddleColor(const QColor& first,
+                                const QColor& second) {
+    return {abs(first.red() - second.red()) / 2 + std::min(first.red(), second.red()),
+            abs(first.green() - second.green()) / 2 + std::min(first.green(), second.green()),
+            abs(first.blue() - second.blue()) / 2 + std::min(first.blue(), second.blue())};
 }

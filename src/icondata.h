@@ -35,7 +35,7 @@ public:
      * \param width the width
      * \param height the height
      */
-    IconData(int width, int height);
+    IconData(std::uint32_t width, std::uint32_t height);
 
     /*!
      * \brief setRoutine sets the icon as a lighting routine. This takes a routine object and
@@ -47,7 +47,7 @@ public:
     /*!
      * \brief setSolidColor sets the icon as a solid color
      */
-    void setSolidColor(QColor color);
+    void setSolidColor(const QColor& color);
 
     /*!
      * \brief setMultiGlimmer sets as mostly mainColor, but adds random colors
@@ -122,17 +122,18 @@ public:
     /*!
      * \brief getters for private values
      */
-    int dataLength();
+    std::uint32_t dataLength();
+
     /*!
      * \brief width getter for the data buffer's width.
      * \return the width of the IconData.
      */
-    int width();
+    std::uint32_t width();
     /*!
      * \brief height getter for the data buffer's height.
      * \return the height of the IconData.
      */
-    int height();
+    std::uint32_t height();
 
     /*!
      * \brief renderAsQImage takes the data and outputs it as a QImage
@@ -152,7 +153,7 @@ private:
      * \param width the width of the data buffers.
      * \param height the height of the data buffers.
      */
-    void setup(int width, int height);
+    void setup(std::uint32_t width, std::uint32_t height);
 
     /*!
      * the full data used when rendering an image.
@@ -162,16 +163,16 @@ private:
     /*!
      * \brief mWidth the width of the resulting icon
      */
-    int mWidth;
+    std::uint32_t mWidth;
     /*!
      * \brief mHeight the height of the resulting icon.
      */
-    int mHeight;
+    std::uint32_t mHeight;
     /*!
      * \brief mDataLength the number of bytes needed to
      *        to fill mWidth * mHeight * 3.
      */
-    int mDataLength;
+    std::uint32_t mDataLength;
 
     /*!
      * a buffer that is used when doing processing.
@@ -183,16 +184,16 @@ private:
     /*!
      * \brief mBufferWidth the buffer's width.
      */
-    uint mBufferWidth;
+    std::uint32_t mBufferWidth;
     /*!
      * \brief mBufferHeight the buffer's height.
      */
-    uint mBufferHeight;
+    std::uint32_t mBufferHeight;
     /*!
      * \brief mBufferLength the number of bytes needed to fill
      *        mBufferWidth * mBufferHeight * 3.
      */
-    uint mBufferLength;
+    std::uint32_t mBufferLength;
 
     /*!
      * \brief bufferToOutput required at the end of any set of processing
@@ -209,7 +210,7 @@ private:
      * \return A new QColor based on adding the two colors together and dividing
      *         by two.
      */
-    QColor getMiddleColor(QColor first, QColor second);
+    QColor getMiddleColor(const QColor& first, const QColor& second);
 
     /*!
      * \brief mRandomIndividual used by random

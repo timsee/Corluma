@@ -47,14 +47,14 @@ GroupButton::GroupButton(QWidget *parent, const QString& text) : QWidget(parent)
 
 void GroupButton::resize() {
     QSize size = preferredButtonSize();
-    mSelectAllPixmap = QPixmap(":/images/selectAllIcon.png");
-    mSelectAllPixmap = mSelectAllPixmap.scaled(size.width(),
+    mClearAllPixmap = QPixmap(":/images/selectAllIcon.png");
+    mClearAllPixmap = mClearAllPixmap.scaled(size.width(),
                                                size.height(),
                                                Qt::IgnoreAspectRatio,
                                                Qt::SmoothTransformation);
 
-    mClearAllPixmap = QPixmap(":/images/uncheckedBox.png");
-    mClearAllPixmap = mClearAllPixmap.scaled(size.width(),
+    mSelectAllPixmap = QPixmap(":/images/uncheckedBox.png");
+    mSelectAllPixmap = mSelectAllPixmap.scaled(size.width(),
                                              size.height(),
                                              Qt::IgnoreAspectRatio,
                                              Qt::SmoothTransformation);
@@ -129,13 +129,12 @@ QColor GroupButton::computeHighlightColor(uint32_t checkedDeviceCount, uint32_t 
 
 
     if (checkedDeviceCount == 0 || reachableDeviceCount == 0) {
-        return QColor(32, 31, 31, 255);
-    } else {
-        auto amountOfBlue = checkedDeviceCount / float(reachableDeviceCount);
-        return QColor(int(amountOfBlue * difference.red() + pureBlack.red()),
-                      int(amountOfBlue * difference.green() + pureBlack.green()),
-                      int(amountOfBlue * difference.blue() + pureBlack.blue()));
+        return {32, 31, 31, 255};
     }
+    auto amountOfBlue = checkedDeviceCount / float(reachableDeviceCount);
+    return {int(amountOfBlue * difference.red() + pureBlack.red()),
+            int(amountOfBlue * difference.green() + pureBlack.green()),
+            int(amountOfBlue * difference.blue() + pureBlack.blue())};
 }
 
 void GroupButton::resizeEvent(QResizeEvent *) {
@@ -185,17 +184,19 @@ void GroupButton::mouseReleaseEvent(QMouseEvent *event) {
 
 
 const QPixmap& GroupButton::currentPixmap() {
-    if (mButtonState == EGroupButtonState::disabled) {
+    switch (mButtonState) {
+    case EGroupButtonState::disabled:
         return mDisabledPixmap;
-    } else if (mButtonState == EGroupButtonState::clearAll) {
-        return mSelectAllPixmap;
-    } else {
+    case EGroupButtonState::clearAll:
         return mClearAllPixmap;
+    case EGroupButtonState::selectAll:
+        return mSelectAllPixmap;
     }
+    THROW_EXCEPTION("Do not recognize pixmap");
 }
 
 QSize GroupButton::preferredButtonSize() {
-    return QSize(mTitle->height() * 0.9, mTitle->height() * 0.9);
+    return {int(mTitle->height() * 0.9), int(mTitle->height() * 0.9)};
 }
 
 }

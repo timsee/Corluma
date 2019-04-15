@@ -16,11 +16,19 @@
 
 ArduCorDiscovery::ArduCorDiscovery(QObject *parent,
                                    CommHTTP *http,
-                                   CommUDP *udp) :
+                                   CommUDP *udp
+                                   #ifndef MOBILE_BUILD
+                                   ,CommSerial *serial
+                                   #endif
+                                   ) :
     QObject(parent),
     cor::JSONSaveData("arducor"),
     mHTTP(http),
-    mUDP(udp)
+    mUDP(udp),
+#ifndef MOBILE_BUILD
+    mSerial{serial},
+#endif
+    mLastTime{0}
 {
     mRoutineTimer = new QTimer;
     connect(mRoutineTimer, SIGNAL(timeout()), this, SLOT(handleDiscovery()));
@@ -37,12 +45,6 @@ ArduCorDiscovery::ArduCorDiscovery(QObject *parent,
 
     startDiscovery();
 }
-
-#ifndef MOBILE_BUILD
-void ArduCorDiscovery::connectSerial(CommSerial *serial) {
-    mSerial = serial;
-}
-#endif
 
 //---------------------
 // Discovery API
@@ -83,7 +85,7 @@ void ArduCorDiscovery::handleDiscovery() {
 #endif
 }
 
-bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type, QString discovery, QString controllerName, cor::Controller& controller) {
+bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type, const QString& discovery, const QString& controllerName, cor::Controller& controller) {
     //--------------
     // Split string into an int vector
     //--------------
@@ -102,11 +104,11 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type, QStri
     // remove all data that isn't part of the int vector
     int start = kDiscoveryPacketIdentifier.size() + 1;
     int size = discovery.length() - start - 1;
-    discovery = discovery.mid(start, size);
+    auto discoveryShortened = discovery.mid(start, size);
 
-    std::istringstream discoveryInput(discovery.toStdString());
+    std::istringstream discoveryInput(discoveryShortened.toStdString());
     while (std::getline(discoveryInput, name, '@')) {
-        discoveryAndNameVector.push_back(QString(name.c_str()));
+        discoveryAndNameVector.emplace_back(QString(name.c_str()));
     }
 
     if (discoveryAndNameVector.size() != 2) {
@@ -126,7 +128,7 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type, QStri
     int nameIndex = 0;
     while (std::getline(nameInput, name, ',')) {
         if (nameIndex == 0) {
-            nameVector.push_back(QString(name.c_str()));
+            nameVector.emplace_back(QString(name.c_str()));
             nameIndex = 1;
         } else if (nameIndex == 1) {
             bool conversionSuccessful;
@@ -152,13 +154,13 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type, QStri
 
     if (nameVector.size() != hardwareTypeVector.size() || nameVector.size() != productTypeVector.size()) {
         qDebug() << "hardware type vector size and name vector don't match! " << nameVector.size() << " vs " << hardwareTypeVector.size();
-        for (auto name : nameVector) {
+        for (const auto& name : nameVector) {
             qDebug() << " name: " << name;
         }
-        for (auto type : hardwareTypeVector) {
+        for (const auto& type : hardwareTypeVector) {
             qDebug() << " type: " << int(type);
         }
-        for (auto product : productTypeVector) {
+        for (const auto& product : productTypeVector) {
             qDebug() << " product: " << int(product);
         }
         return false;
@@ -168,10 +170,10 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type, QStri
     // Check validity of int vector
     //--------------
     if (intVector.size() == 6) {
-        controller.name = controllerName;
-        if (controller.name.size() == 0) {
+        if (controllerName.size() == 0) {
             return false;
         }
+        controller.name = controllerName;
         // get the API level
         controller.majorAPI = uint32_t(intVector[0]);
         controller.minorAPI = uint32_t(intVector[1]);
@@ -203,12 +205,11 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type, QStri
         controller.productTypes = productTypeVector;
 
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
-void ArduCorDiscovery::addManualIP(QString ip) {
+void ArduCorDiscovery::addManualIP(const QString& ip) {
     // check if IP address already exists in unknown or not found
     bool IPAlreadyFound = false;
     for (auto notFound : mNotFoundControllers) {

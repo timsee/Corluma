@@ -51,7 +51,7 @@ LightInfoListWidget::LightInfoListWidget(QWidget *parent) : QWidget(parent) {
 }
 
 void LightInfoListWidget::updateHues(std::list<HueLight> lights) {
-    for (auto light : lights) {
+    for (const auto& light : lights) {
         // check if light already exists in list
         int widgetIndex = -1;
         int i = 0;
@@ -68,7 +68,7 @@ void LightInfoListWidget::updateHues(std::list<HueLight> lights) {
             hue::HueInfoWidget *widget = new hue::HueInfoWidget(light, mScrollAreaWidget);
             widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(lightInfoWidgetClicked(QString)));
-            connect(widget, SIGNAL(changedName(EProtocolType, QString, QString)), this, SLOT(nameChanged(EProtocolType, QString, QString)));
+            connect(widget, SIGNAL(changedName(EProtocolType,QString,QString)), this, SLOT(nameChanged(EProtocolType,QString,QString)));
             mHueWidgets.push_back(widget);
             mScrollLayout->addWidget(widget);
         }
@@ -94,7 +94,7 @@ void LightInfoListWidget::updateControllers(std::list<nano::LeafController> cont
             nano::LeafControllerInfoWidget *widget = new nano::LeafControllerInfoWidget(controller, mScrollAreaWidget);
             widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(lightInfoWidgetClicked(QString)));
-            connect(widget, SIGNAL(changedName(EProtocolType, QString, QString)), this, SLOT(nameChanged(EProtocolType, QString, QString)));
+            connect(widget, SIGNAL(changedName(EProtocolType,QString,QString)), this, SLOT(nameChanged(EProtocolType,QString,QString)));
             mNanoleafWidgets.push_back(widget);
             mScrollLayout->addWidget(widget);
         }
@@ -105,7 +105,7 @@ void LightInfoListWidget::updateControllers(std::list<nano::LeafController> cont
 
 
 void LightInfoListWidget::updateLights(std::list<cor::Light> lights) {
-    for (auto light : lights) {
+    for (const auto& light : lights) {
         // check if light already exists in list
         int widgetIndex = -1;
         int i = 0;
@@ -145,7 +145,11 @@ void LightInfoListWidget::resize(bool resizeFullWidget) {
     //TODO: make a better system for resizing
     // draw widgets in content region
     for (auto widget : mHueWidgets) {
-        widget->setHeight(widgetSize.height());
+        if (widget->detailsHidden()) {
+            widget->setFixedHeight(widgetSize.height() / 2);
+        } else {
+            widget->setFixedHeight(widgetSize.height());
+        }
         widget->setGeometry(0,
                             yPos,
                             widgetSize.width(),
@@ -153,7 +157,11 @@ void LightInfoListWidget::resize(bool resizeFullWidget) {
         yPos += widget->height();
     }
     for (auto widget : mNanoleafWidgets) {
-        widget->setHeight(widgetSize.height());
+        if (widget->detailsHidden()) {
+            widget->setFixedHeight(widgetSize.height() / 2);
+        } else {
+            widget->setFixedHeight(widgetSize.height());
+        }
         widget->setGeometry(0,
                             yPos,
                             widgetSize.width(),
@@ -161,7 +169,11 @@ void LightInfoListWidget::resize(bool resizeFullWidget) {
         yPos += widget->height();
     }
     for (auto widget : mArduCorWidgets) {
-        widget->setHeight(widgetSize.height());
+        if (widget->detailsHidden()) {
+            widget->setFixedHeight(widgetSize.height() / 2);
+        } else {
+            widget->setFixedHeight(widgetSize.height());
+        }
         widget->setGeometry(0,
                             yPos,
                             widgetSize.width(),
@@ -235,7 +247,7 @@ void LightInfoListWidget::closePressed(bool) {
     emit pressedClose();
 }
 
-void LightInfoListWidget::lightInfoWidgetClicked(QString key) {
+void LightInfoListWidget::lightInfoWidgetClicked(const QString& key) {
     bool shouldEnableDelete = true;
 
    // qDebug() << " clicked " << key;
@@ -308,4 +320,25 @@ void LightInfoListWidget::lightInfoWidgetClicked(QString key) {
     }
 
     resize(false);
+}
+
+void LightInfoListWidget::pushIn() {
+    moveWidget(this,
+               QSize(int(this->parentWidget()->width() * 0.75f), int(this->parentWidget()->height() * 0.75f)),
+               QPoint(int(this->parentWidget()->width() * 0.125f), int(-1 * this->parentWidget()->height())),
+               QPoint(int(this->parentWidget()->width() * 0.125f), int(this->parentWidget()->height() * 0.125f)));
+
+    this->isOpen(true);
+
+    this->setVisible(true);
+    this->raise();
+}
+
+void LightInfoListWidget::pushOut() {
+    this->isOpen(false);
+
+    moveWidget(this,
+               QSize(int(this->parentWidget()->width() * 0.75f), int(this->parentWidget()->height() * 0.75f)),
+               QPoint(int(this->parentWidget()->width() * 0.125f), int(this->parentWidget()->height() * 0.125f)),
+               QPoint(int(this->parentWidget()->width() * 0.125f), int(-1 * this->parentWidget()->height())));
 }

@@ -58,6 +58,12 @@ public:
      */
     void resize(bool resizeFullWidget = true);
 
+    /// pushes in the widget
+    void pushIn();
+
+    /// pushes out the widget
+    void pushOut();
+
 signals:
     /*!
      * \brief pressedClose emited when the close button is pressed.
@@ -65,7 +71,7 @@ signals:
     void pressedClose();
 
     /// emits when a light name should change
-    void lightNameChanged(EProtocolType, QString, QString);
+    void lightNameChanged(EProtocolType, const QString&, const QString&);
 
     /// emits the unique ID of the light that will be deleted.
     void deleteLight(QString);
@@ -94,7 +100,7 @@ private slots:
      * \brief lightInfoWidgetClicked an individual widget has been clicked and has sent out
      *        its key.
      */
-    void lightInfoWidgetClicked(QString);
+    void lightInfoWidgetClicked(const QString&);
 
     /*!
      * \brief deleteButtonPressed delete button pressed, which triggers deleting a hue

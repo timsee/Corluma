@@ -21,8 +21,8 @@
 QSize preferredSize(LeftHandButton *label) {
     float sizeRatio = 0.6f;
     int min = std::min(label->width(), label->height());
-    int finalSize = int(min * sizeRatio);
-    return QSize(finalSize, finalSize);
+    auto finalSize = int(min * sizeRatio);
+    return {finalSize, finalSize};
 }
 
 

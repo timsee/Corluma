@@ -49,10 +49,10 @@ public:
 private slots:
 
     /// handles when a discover hue buttons is pressed
-    void discoverHuesPressed(QString);
+    void discoverHuesPressed(const QString&);
 
     /// handles when a bridge is pressed on the bridge list
-    void bridgePressed(QString);
+    void bridgePressed(const QString&);
 
     /// handles when the close button is pressed
     void hueDiscoveryClosePressed();
@@ -64,13 +64,13 @@ private slots:
     void schedulesClosePressed();
 
     /// handles when the schedules button is pressed for a hue::BridgeInfoWidget
-    void schedulesPressed(QString);
+    void schedulesPressed(const QString&);
 
     /// handles when the groups button is pressed for a hue::BridgeInfoWidget
-    void groupsPressed(QString);
+    void groupsPressed(const QString&);
 
     /// handles when a name change is trigged from a hue::BridgeInfoWidget
-    void changedName(QString, QString);
+    void changedName(const QString&, const QString&);
 
     /// handles when a bridge is deleted from a BridgeInfoWidget
     void deleteBridgeFromAppData(hue::Bridge);

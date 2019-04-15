@@ -7,7 +7,7 @@
 #include "datasync.h"
 
 
-bool DataSync::appendToPacket(QString& currentPacket, QString newAddition, uint32_t maxPacketSize) {
+bool DataSync::appendToPacket(QString& currentPacket, const QString& newAddition, uint32_t maxPacketSize) {
     if (uint32_t(currentPacket.size() + newAddition.size()) < (maxPacketSize - 15)) {
         currentPacket += newAddition;
         return true;
@@ -15,9 +15,7 @@ bool DataSync::appendToPacket(QString& currentPacket, QString newAddition, uint3
     return false;
 }
 
-DataSync::~DataSync() {}
-
-bool DataSync::checkThrottle(QString controller, ECommType type) {
+bool DataSync::checkThrottle(const QString& controller, ECommType type) {
     bool foundThrottle = false;
     bool throttlePasses = false;
     for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
@@ -67,7 +65,7 @@ bool DataSync::checkThrottle(QString controller, ECommType type) {
     return throttlePasses;
 }
 
-void DataSync::resetThrottle(QString controller, ECommType type) {
+void DataSync::resetThrottle(const QString& controller, ECommType type) {
     for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
         if ((throttle->controller.compare(controller) == 0)
                 && (int(throttle->type) == int(type))) {

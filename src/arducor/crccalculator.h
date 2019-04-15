@@ -26,7 +26,7 @@ public:
      * \param input string to compute a CRC on
      * \return CRC value for given string
      */
-    uint32_t calculate(QString input);
+    uint32_t calculate(const QString& input);
 private:
 
     /// internal helper

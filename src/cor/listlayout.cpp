@@ -24,7 +24,7 @@ void ListLayout::removeWidget(cor::ListItemWidget* widget) {
     delete widget;
 }
 
-void ListLayout::removeWidget(QString key) {
+void ListLayout::removeWidget(const QString& key) {
     cor::ListItemWidget *tempWidget = mWidgetDictionary.item(key.toStdString()).first;
     removeWidget(tempWidget);
 }
@@ -33,7 +33,7 @@ QPoint ListLayout::widgetPosition(QWidget *widget) {
     auto findResult = std::find(mWidgets.begin(), mWidgets.end(), widget);
     if (findResult == mWidgets.end()) {
         qDebug() << "WARNING: Could not find widget in set" << __func__;
-        return QPoint(-1, -1);
+        return {-1, -1};
     }
 
     // store index of inserted element
@@ -47,19 +47,19 @@ QPoint ListLayout::widgetPosition(QWidget *widget) {
         }
     }
     if (index < 0) {
-        return QPoint(-1, -1);
+        return {-1, -1};
     }
 
     if (mType == EListType::grid) {
         int x = index % 2;     // 2 rows per column
         int y = index / 2;     // new column every other index
-        return QPoint(x, y);
+        return {x, y};
     } else if (mType == EListType::linear) {
         int x = 0;     // 1 row per column
         int y = index; // new column every index
-        return QPoint(x, y);
+        return {x, y};
     }
-    return QPoint(-1, -1);
+    return {-1, -1};
 }
 
 
@@ -77,7 +77,7 @@ cor::ListItemWidget *ListLayout::widget(uint32_t index) {
     return nullptr;
 }
 
-cor::ListItemWidget *ListLayout::widget(QString key) {
+cor::ListItemWidget *ListLayout::widget(const QString& key) {
     return mWidgetDictionary.item(key.toStdString()).first;
 }
 
@@ -87,11 +87,11 @@ QSize ListLayout::widgetSize(QSize parentSize) {
     switch (mType)
     {
         case EListType::grid:
-            return QSize(parentSize.width() / 2, parentSize.height());
+            return {parentSize.width() / 2, parentSize.height()};
         case EListType::linear:
-            return QSize(parentSize.width(), parentSize.height());
+            return {parentSize.width(), parentSize.height()};
     }
-    return QSize(parentSize.height(), parentSize.height());
+    return {parentSize.height(), parentSize.height()};
 }
 
 
@@ -99,9 +99,9 @@ QSize ListLayout::widgetSize(QSize parentSize) {
 
 void ListLayout::sortDeviceWidgets() {
     std::sort(mWidgets.begin(), mWidgets.end(), [](cor::ListItemWidget* a, cor::ListItemWidget* b) {
-        ListLightWidget *aDeviceWidget = qobject_cast<ListLightWidget*>(a);
+        auto aDeviceWidget = qobject_cast<ListLightWidget*>(a);
         Q_ASSERT(aDeviceWidget);
-        ListLightWidget *bDeviceWidget = qobject_cast<ListLightWidget*>(b);
+        auto bDeviceWidget = qobject_cast<ListLightWidget*>(b);
         Q_ASSERT(bDeviceWidget);
         if (!aDeviceWidget->device().isReachable && bDeviceWidget->device().isReachable) {
             return false;
@@ -120,17 +120,17 @@ void ListLayout::sortDeviceWidgets() {
 QSize ListLayout::overallSize() {
     int height = 0;
     bool useHeight = true;
-    for (uint32_t i = 0; i < mWidgets.size(); ++i) {
-        if (mWidgets[i]->isVisible()) {
+    for (const auto& widget : mWidgets) {
+        if (widget->isVisible()) {
             if (mType == cor::EListType::grid) {
                 if (useHeight) {
-                    height += mWidgets[i]->height();
+                    height += widget->height();
                     useHeight = false;
                 } else {
                     useHeight = true;
                 }
             } else {
-                height += mWidgets[i]->height();
+                height += widget->height();
             }
         }
     }
@@ -143,7 +143,7 @@ QSize ListLayout::overallSize() {
             width = mWidgets[0]->width();
         }
     }
-    return QSize(width, height);
+    return {width, height};
 }
 
 }

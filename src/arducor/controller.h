@@ -22,7 +22,7 @@ class Controller
 
 public:
     /// constructor
-    Controller();
+    Controller() = default;
 
     /// name of controller
     QString name;

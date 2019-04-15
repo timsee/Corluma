@@ -14,6 +14,7 @@
 DataSyncArduino::DataSyncArduino(cor::DeviceList *data, CommLayer *comm) {
     mData = data;
     mComm = comm;
+    mParser = new ArduCorPacketParser();
     mUpdateInterval = 100;
     connect(mComm, SIGNAL(packetReceived(EProtocolType)), this, SLOT(commPacketReceived(EProtocolType)));
     connect(mData, SIGNAL(dataUpdate()), this, SLOT(resetSync()));
@@ -47,7 +48,7 @@ void DataSyncArduino::resetSync() {
     if (mCleanupTimer->isActive()) {
         mCleanupTimer->stop();
     }
-    if (mData->devices().size() > 0) {
+    if (!mData->devices().empty()) {
         mDataIsInSync = false;
         mStartTime = QTime::currentTime();
         if (!mSyncTimer->isActive()) {
@@ -108,7 +109,7 @@ void DataSyncArduino::syncData() {
         mDataIsInSync = true;
     }
 
-    if (mDataIsInSync || mData->devices().size() == 0) {
+    if (mDataIsInSync || mData->devices().empty()) {
         endOfSync();
     }
 
@@ -124,7 +125,7 @@ void DataSyncArduino::simplifyPackets(const cor::Controller& controller, std::li
            // qDebug() << "\t" << message;
             QStringList packetArray = message.split(",");
             if (packetArray.size() > 1) {
-                std::size_t packetHeader = std::size_t(packetArray.at(0).toInt());
+                auto packetHeader = std::size_t(packetArray.at(0).toInt());
                 QString packetRemainder = message.section(",", 2);
                 if (restOfPacket[packetHeader].isEmpty()) {
                     // inesrt in, first occurence
@@ -140,10 +141,10 @@ void DataSyncArduino::simplifyPackets(const cor::Controller& controller, std::li
         std::size_t i = 0;
         for (auto count : packetCount) {
             if (count == controller.maxHardwareIndex) {
-                std::list<QString>::iterator iterator = allMessages.begin();
+                auto iterator = allMessages.begin();
                 while (iterator != allMessages.end()) {
                     QStringList packetArray = iterator->split(",");
-                    std::size_t packetHeader = std::size_t(packetArray.at(0).toInt());
+                    auto packetHeader = std::size_t(packetArray.at(0).toInt());
                     if (packetHeader == i) {
                         iterator = allMessages.erase(iterator);
                     } else {
@@ -246,7 +247,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
                 // Brightness Sync
                 //-------------------
                 if (commDevice.palette.brightness() != dataDevice.palette.brightness()) {
-                   // qDebug() << "brightness not in sync" << commDevice.palette.brightness() << " vs " << dataDevice.palette.brightness();
+                    //qDebug() << "brightness not in sync" << commDevice.palette.brightness() << " vs " << dataDevice.palette.brightness();
                     QString message = mParser->brightnessPacket(dataDevice, dataDevice.palette.brightness());
                     appendToPacket(packet, message, controller.maxPacketSize);
                     countOutOfSync++;
@@ -303,7 +304,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
 
     if (countOutOfSync) {
         QStringList messageArray = packet.split("&");
-        for (auto message : messageArray) {
+        for (const auto& message : messageArray) {
             // look if the key already exists.
             if (!message.isEmpty()) {
                 auto messageGroup = mMessages.find(dataDevice.controller().toStdString());

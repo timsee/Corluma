@@ -12,11 +12,6 @@
 namespace hue
 {
 
-Bridge::Bridge()
-{
-
-}
-
 Bridge jsonToBridge(const QJsonObject& object) {
     Bridge bridge;
     if (object["username"].isString()

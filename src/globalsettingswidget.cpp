@@ -215,8 +215,8 @@ void GlobalSettingsWidget::resize() {
     mTimeoutCheckBox->downsizeTextWidthToFit(int(this->width() * 0.45f));
 
     int currentY = 0;
-    mSliderMinWidth = int(this->width() * 0.66f);
-    int sliderHeight =  int(mEnabledConnectionsLabel->height() * 2.75f);
+    auto sliderWidth = int(this->width() * 0.66f);
+    auto sliderHeight =  int(mEnabledConnectionsLabel->height() * 2.75f);
 
     mTimeoutCheckBox->setGeometry(mSpacerPixels,
                                   mSpacerPixels,
@@ -232,7 +232,7 @@ void GlobalSettingsWidget::resize() {
                                  sliderHeight);
         mTimeoutSlider->setGeometry(mTimeoutLabel->geometry().width() + 2 * mSpacerPixels,
                                   currentY,
-                                  mSliderMinWidth,
+                                  sliderWidth,
                                   sliderHeight);
         currentY += mTimeoutSlider->height() + mSpacerPixels;
     }
@@ -245,7 +245,7 @@ void GlobalSettingsWidget::resize() {
         currentY += mEnabledConnectionsLabel->height() + mSpacerPixels;
     }
 
-    int buttonSize = int(this->width() * 0.2f);
+    auto buttonSize = int(this->width() * 0.2f);
     if (mHueButton->isVisible()) {
         mHueButton->setGeometry(mSpacerPixels,
                                 currentY,

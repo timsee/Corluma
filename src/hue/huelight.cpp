@@ -8,4 +8,4 @@
 
 HueLight::HueLight() : HueLight("NOT_VALID", "UNINITIALIZED", ECommType::hue) {}
 
-HueLight::HueLight(const QString& uniqueID, const QString& controller, ECommType type) : cor::Light(uniqueID, controller, type) {}
+HueLight::HueLight(const QString& uniqueID, const QString& controller, ECommType type) : cor::Light(uniqueID, controller, type), hueType{EHueType::color} {}

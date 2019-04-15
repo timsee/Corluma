@@ -34,14 +34,14 @@ public:
     /// resizes widget programmatically
     void resize();
 
-    /// called when shown
-    void show();
-
-    /// called when hidden
-    void hide();
-
     /// getter for top menu
     FloatingLayout *topMenu() { return mFloatingMenu; }
+
+    /// pushes in the widget
+    void pushIn();
+
+    /// pushes out the widget
+    void pushOut();
 
 signals:
 
@@ -69,10 +69,10 @@ protected:
 private slots:
 
     /// called device is clicked
-    void clickedDevice(QString);
+    void clickedDevice(const QString&);
 
     /// called when floating layout has been clicked.
-    void floatingLayoutButtonPressed(QString);
+    void floatingLayoutButtonPressed(const QString&);
 
     /// called when switch state is changed
     void changedSwitchState(bool);
@@ -105,9 +105,6 @@ private:
 
     /// pixmap for icon for the edit button
     QPixmap mEditIcon;
-
-    /// icon for displaying if all lights are connected
-    QLabel *mAllLightsConnectedIcon;
 
     /// pointer to commlayer for updates
     CommLayer *mComm;

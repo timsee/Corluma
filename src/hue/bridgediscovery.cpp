@@ -17,7 +17,7 @@
 namespace hue
 {
 
-BridgeDiscovery::BridgeDiscovery(QObject *parent, UPnPDiscovery *UPnP, GroupData* groups) : QObject(parent), cor::JSONSaveData("hue"), mUPnP{UPnP}, mGroups{groups} {
+BridgeDiscovery::BridgeDiscovery(QObject *parent, UPnPDiscovery *UPnP, GroupData* groups) : QObject(parent), cor::JSONSaveData("hue"), mUPnP{UPnP}, mLastTime{0}, mGroups{groups} {
     mHue = qobject_cast<CommHue*>(parent);
     connect(UPnP, SIGNAL(UPnPPacketReceived(QHostAddress,QString)), this, SLOT(receivedUPnP(QHostAddress,QString)));
 
@@ -135,7 +135,7 @@ void BridgeDiscovery::attemptFinalCheck(const hue::Bridge& bridge) {
     mNetworkManager->get(request);
 }
 
-void BridgeDiscovery::addManualIP(QString ip) {
+void BridgeDiscovery::addManualIP(const QString& ip) {
     // check if IP address already exists in unknown or not found
     bool alreadyFoundIP = false;
     for (auto notFound : mNotFoundBridges) {
@@ -212,7 +212,7 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
                     }
                 }
                 else if(jsonResponse.isArray()) {
-                    if (jsonResponse.array().size() == 0) {
+                    if (jsonResponse.array().empty()) {
                         qDebug() << " test packet received from " << IP;
                     } else {
                         QJsonObject outsideObject = jsonResponse.array().at(0).toObject();
@@ -225,8 +225,7 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
                             // error packets are sent when a message cannot be parsed
                             QJsonObject innerObject = outsideObject["error"].toObject();
                             if (innerObject["description"].isString()) {
-                                QString description = innerObject["description"].toString();
-                               // qDebug() << "Description" << description;
+                               // qDebug() << "Description" << innerObject["description"].toString();
                             }
                         } else if (outsideObject["success"].isObject()) {
                             // success packets are sent when a message is parsed and the Hue react in some  way.
@@ -283,7 +282,7 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
     }
 }
 
-void BridgeDiscovery::parseInitialUpdate(const hue::Bridge& bridge, QJsonDocument json) {
+void BridgeDiscovery::parseInitialUpdate(const hue::Bridge& bridge, const QJsonDocument& json) {
     if (json.isObject()) {
         QJsonObject object = json.object();
 
@@ -382,7 +381,7 @@ void BridgeDiscovery::parseInitialUpdate(const hue::Bridge& bridge, QJsonDocumen
 }
 
 
-void BridgeDiscovery::receivedUPnP(QHostAddress sender, QString payload) {
+void BridgeDiscovery::receivedUPnP(const QHostAddress& sender, const QString& payload) {
     if(payload.contains(QString("IpBridge"))) {
 #ifdef DEBUG_BRIDGE_DISCOVERY
         qDebug() << __func__ << "UPnP payload:" << payload;
@@ -431,13 +430,13 @@ void BridgeDiscovery::testNewlyDiscoveredBridge(const hue::Bridge& bridge) {
 
 
 EHueDiscoveryState BridgeDiscovery::state() {
-    if (mFoundBridges.size() && mNotFoundBridges.empty()) {
+    if (!mFoundBridges.empty() && mNotFoundBridges.empty()) {
         return EHueDiscoveryState::allBridgesConnected;
-    } else if (mNotFoundBridges.size()) {
+    } else if (!mNotFoundBridges.empty()) {
         for (auto bridge : mNotFoundBridges) {
             if (bridge.IP != "" && bridge.username == "" && bridge.state == EBridgeDiscoveryState::lookingForUsername) {
                 return EHueDiscoveryState::findingDeviceUsername;
-            } else if (mFoundBridges.size()) {
+            } else if (!mFoundBridges.empty()) {
                 return EHueDiscoveryState::bridgeConnected;
              } else if (bridge.IP != "" && bridge.username != "") {
                 return EHueDiscoveryState::testingFullConnection;
@@ -471,7 +470,7 @@ HueLight BridgeDiscovery::lightFromBridgeIDAndIndex(const QString& bridgeID, int
     return {};
 }
 
-hue::Bridge BridgeDiscovery::bridgeFromLight(HueLight light) {
+hue::Bridge BridgeDiscovery::bridgeFromLight(const HueLight& light) {
     for (auto foundBridge : mFoundBridges.itemVector()) {
         auto lightResult = foundBridge.lights.key(light);
         if (lightResult.second) {
@@ -632,8 +631,8 @@ void BridgeDiscovery::updateJSONLights(const hue::Bridge& bridge, const QJsonArr
                     }
                 }
             }
-            if (deletedLights.size() > 0) {
-                for (auto id : deletedLights) {
+            if (!deletedLights.empty()) {
+                for (const auto& id : deletedLights) {
                     emit lightDeleted(id);
                 }
             }

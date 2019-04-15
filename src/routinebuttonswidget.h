@@ -32,7 +32,7 @@ public:
      * \param colors the colors to use for multi color routines. Not necessary for single color routines.
      * \param parent parent of this widget
      */
-    explicit RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector<QColor> colors, QWidget *parent);
+    explicit RoutineButtonsWidget(EWidgetGroup widgetGroup, const std::vector<QColor>& colors, QWidget *parent);
 
     /*!
      * \brief highlightRoutineButton highlights the button that implements
@@ -55,7 +55,7 @@ public:
      *        of all of the icons to reflect the new color.
      * \param newColor new color for all of the icons.
      */
-    void singleRoutineColorChanged(QColor newColor);
+    void singleRoutineColorChanged(const QColor& newColor);
 
     /*!
      * \brief multiRoutineColorsChanged can only be used by eMultiRotuines version of this widget, this updates all the colors
@@ -94,7 +94,7 @@ private slots:
      * \brief routineChanged signaled whenever a routine button is pressed, used to
      *        to tell the LEDs to update.
      */
-    void routineChanged(QJsonObject);
+    void routineChanged(const QJsonObject&);
 
 private:
 

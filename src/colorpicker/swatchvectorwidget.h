@@ -41,7 +41,7 @@ public:
     const std::vector<QColor>& colors() { return mColors; }
 
     /// update the selected lights with the given color
-    void updateSelected(QColor color);
+    void updateSelected(const QColor& color);
 
 signals:
     /*!
@@ -62,9 +62,6 @@ private slots:
     void toggleArrayColor(int);
 
 private:
-
-    /// currently unused, but in place so that slider sizes match other layouts
-    QLabel *mLabel;
 
     /*!
      * \brief mMaximumSize size of the multi color array, used to initialize

@@ -26,7 +26,7 @@ public:
      * \brief changeColor programmatically change the values of the sliders. Does not emit a signal with its new value
      * \param color new color for the sliders.
      */
-    void changeColor(QColor color);
+    void changeColor(const QColor& color);
 
     /// enables and disables the RGB sliders
     void enable(bool enable);

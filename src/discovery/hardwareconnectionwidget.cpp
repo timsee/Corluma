@@ -6,7 +6,7 @@
 
 #include "hardwareconnectionwidget.h"
 
-HardwareConnectionWidget::HardwareConnectionWidget(QString hardwareIconPath, QWidget *parent) : QWidget(parent)
+HardwareConnectionWidget::HardwareConnectionWidget(const QString& hardwareIconPath, QWidget *parent) : QWidget(parent)
 {
     mIncomingArrow = new QLabel(this);
 
@@ -14,7 +14,7 @@ HardwareConnectionWidget::HardwareConnectionWidget(QString hardwareIconPath, QWi
 
     mScale = 0.15f;
 
-    int size = int(this->width() * mScale);
+    auto size = int(this->width() * mScale);
     mCorlumaLabel = new QLabel(this);
     mCorlumaLabel->setMaximumSize(QSize(size, size));
     mCorlumaPixmap = QPixmap(":images/icon.icns");
@@ -42,7 +42,7 @@ HardwareConnectionWidget::HardwareConnectionWidget(QString hardwareIconPath, QWi
 }
 
 void HardwareConnectionWidget::resizeEvent(QResizeEvent *) {
-    int size = int(this->width() * mScale);
+    auto size = int(this->width() * mScale);
     mCorlumaLabel->setMaximumSize(QSize(size, size));
     mCorlumaLabel->setPixmap(mCorlumaPixmap.scaled(size,
                                                    size,
@@ -95,8 +95,8 @@ void HardwareConnectionWidget::changeState(EHardwareConnectionStates newState) {
         mState = newState;
     }
 
-    int width  = int(this->width() * mScale * 4);
-    int height = int(this->width() * mScale);
+    auto width  = int(this->width() * mScale * 4);
+    auto height = int(this->width() * mScale);
     mOutgoingArrow->setMaximumSize(QSize(width, height));
     mOutgoingArrow->setPixmap(mOutgoingArrowPixmap.scaled(width,
                                                           height,

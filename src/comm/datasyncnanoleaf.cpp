@@ -10,12 +10,9 @@
 #include "comm/commnanoleaf.h"
 
 bool checkIfOffByOne(int goal, int value) {
-    if (goal == value
+    return((goal == value)
             || (goal == (value - 1))
-            || (goal == (value + 1))) {
-        return true;
-    }
-    return false;
+            || (goal == (value + 1)));
 }
 
 DataSyncNanoLeaf::DataSyncNanoLeaf(cor::DeviceList *data, CommLayer *comm) {
@@ -47,7 +44,7 @@ void DataSyncNanoLeaf::resetSync() {
     if (mCleanupTimer->isActive()) {
         mCleanupTimer->stop();
     }
-    if (mData->devices().size() > 0) {
+    if (!mData->devices().empty()) {
         mDataIsInSync = false;
         if (!mSyncTimer->isActive()) {
             mStartTime = QTime::currentTime();
@@ -93,8 +90,7 @@ void DataSyncNanoLeaf::syncData() {
         mDataIsInSync = true;
     }
 
-    if (mDataIsInSync
-            || mData->devices().size() == 0) {
+    if (mDataIsInSync || mData->devices().empty()) {
         endOfSync();
     }
 }

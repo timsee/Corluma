@@ -16,7 +16,7 @@
 // preffered port used by the server
 #define PORT 10008
 
-CommUDP::CommUDP() : CommType(ECommType::UDP) {
+CommUDP::CommUDP() : CommType(ECommType::UDP), mDiscovery{nullptr} {
     mStateUpdateInterval = 500;
 
     mSocket = new QUdpSocket(this);
@@ -139,7 +139,7 @@ void CommUDP::readPendingDatagrams() {
             // this may contain multiple packets in a single packet, split and handle as separate messages.
             QRegExp rx("(\\;)");
             QStringList payloads = payload.split(rx);
-            for (auto payload : payloads) {
+            for (const auto& payload : payloads) {
                 mDiscovery->handleIncomingPacket(mType, sender.toString(), payload);
                 emit packetReceived(sender.toString(), payload, mType);
             }

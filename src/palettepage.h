@@ -55,7 +55,7 @@ public:
 
 
     /// called whenever the group page is shown
-    void show(QColor color, std::uint32_t lightCount, bool hasArduinoDevices, bool hasNanoleafDevices);
+    void show(const QColor& color, std::uint32_t lightCount, bool hasArduinoDevices, bool hasNanoleafDevices);
 
     /// getter for current mode of page
     EGroupMode mode() { return mMode; }

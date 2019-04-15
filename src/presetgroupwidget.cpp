@@ -8,7 +8,7 @@
 #include "utils/qt.h"
 #include "cor/presetpalettes.h"
 
-PresetGroupWidget::PresetGroupWidget(QString name,
+PresetGroupWidget::PresetGroupWidget(const QString& name,
                                      EPalette palette,
                                      EPresetWidgetMode mode,
                                      QWidget *parent) : QWidget(parent) {
@@ -81,9 +81,9 @@ void PresetGroupWidget::setChecked(ERoutine routine, bool isChecked) {
 }
 
 void PresetGroupWidget::resize() {
-    for (uint32_t x = 0; x < mButtons.size(); ++x) {
-        mButtons[x]->setFixedHeight(mButtons[x]->width());
-        mButtons[x]->resizeIcon();
+    for (auto button : mButtons) {
+        button->setFixedHeight(button->width());
+        button->resizeIcon();
     }
 }
 

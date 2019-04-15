@@ -81,16 +81,16 @@ DiscoveryPage::DiscoveryPage(QWidget *parent, cor::DeviceList *data, CommLayer *
     resizeButtonIcons();
 
     mArduCorWidget = new DiscoveryArduCorWidget(mComm, this);
-    connect(mArduCorWidget, SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)), this, SLOT(widgetConnectionStateChanged(EProtocolType, EConnectionState)));
+    connect(mArduCorWidget, SIGNAL(connectionStatusChanged(EProtocolType,EConnectionState)), this, SLOT(widgetConnectionStateChanged(EProtocolType,EConnectionState)));
     mArduCorWidget->setVisible(false);
 
     ///TODO: this way of including mainwindow is kinda messy...
-    mHueWidget = new DiscoveryHueWidget(mComm, static_cast<MainWindow*>(parent), this);
-    connect(mHueWidget, SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)), this, SLOT(widgetConnectionStateChanged(EProtocolType, EConnectionState)));
+    mHueWidget = new DiscoveryHueWidget(mComm, dynamic_cast<MainWindow*>(parent), this);
+    connect(mHueWidget, SIGNAL(connectionStatusChanged(EProtocolType,EConnectionState)), this, SLOT(widgetConnectionStateChanged(EProtocolType,EConnectionState)));
     mHueWidget->setVisible(false);
 
     mNanoLeafWidget = new DiscoveryNanoLeafWidget(mComm, this);
-    connect(mNanoLeafWidget, SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)), this, SLOT(widgetConnectionStateChanged(EProtocolType, EConnectionState)));
+    connect(mNanoLeafWidget, SIGNAL(connectionStatusChanged(EProtocolType,EConnectionState)), this, SLOT(widgetConnectionStateChanged(EProtocolType,EConnectionState)));
     mNanoLeafWidget->setVisible(false);
 
     mType = EProtocolType::hue;
@@ -99,7 +99,7 @@ DiscoveryPage::DiscoveryPage(QWidget *parent, cor::DeviceList *data, CommLayer *
 
 bool DiscoveryPage::isAnyDiscovered() {
     for (int commInt = 0; commInt != int(EProtocolType::MAX); ++commInt) {
-        EProtocolType type = static_cast<EProtocolType>(commInt);
+        auto type = static_cast<EProtocolType>(commInt);
         if (checkIfDiscovered(type)) {
             return true;
         }
@@ -110,7 +110,7 @@ bool DiscoveryPage::isAnyDiscovered() {
 void DiscoveryPage::renderUI() {
     bool isAnyConnected = false;
     for (int commInt = 0; commInt != int(EProtocolType::MAX); ++commInt) {
-        EProtocolType type = static_cast<EProtocolType>(commInt);
+        auto type = static_cast<EProtocolType>(commInt);
         if (mAppSettings->enabled(type)) {
             mComm->resetStateUpdates(type);
         }
@@ -120,7 +120,7 @@ void DiscoveryPage::renderUI() {
     }
 
 
-    if (mComm->arducor()->discovery()->controllers().size() > 0) {
+    if (!mComm->arducor()->discovery()->controllers().empty()) {
         isAnyConnected = true;
     }
 
@@ -133,7 +133,7 @@ void DiscoveryPage::renderUI() {
         //---------------------
         mStartButton->setEnabled(true);
         // remove the debug options from settings menu
-        MainWindow *mainWindow = qobject_cast<MainWindow*>(this->parentWidget());
+        auto mainWindow = qobject_cast<MainWindow*>(this->parentWidget());
         Q_ASSERT(mainWindow);
         mainWindow->anyDiscovered(true);
 
@@ -155,7 +155,7 @@ void DiscoveryPage::renderUI() {
 void DiscoveryPage::resizeButtonIcons() {
     if (mLastFloatingHeight != mHorizontalFloatingLayout->height()) {
         mLastFloatingHeight = mHorizontalFloatingLayout->height();
-        int buttonSize = int(mHorizontalFloatingLayout->height() * 0.5f);
+        auto buttonSize = int(mHorizontalFloatingLayout->height() * 0.5f);
         mButtonIcons = std::vector<QPixmap>(size_t(EConnectionButtonIcons::MAX));
         mButtonIcons[int(EConnectionButtonIcons::black)]  = QPixmap("://images/blackButton.png").scaled(buttonSize, buttonSize,
                                                                                                         Qt::KeepAspectRatio,
@@ -177,11 +177,11 @@ bool DiscoveryPage::checkIfDiscovered(EProtocolType type) {
 
     bool runningDiscovery = false;
     if (type == EProtocolType::arduCor
-            && (mComm->arducor()->discovery()->controllers().size() > 0)) {
+            && (!mComm->arducor()->discovery()->controllers().empty())) {
         runningDiscovery = true;
-    } else if (type == EProtocolType::hue && mComm->hue()->bridges().size() > 0) {
+    } else if (type == EProtocolType::hue && !mComm->hue()->bridges().empty()) {
         runningDiscovery = true;
-    } else if (type == EProtocolType::nanoleaf && mComm->nanoleaf()->controllers().size() > 0) {
+    } else if (type == EProtocolType::nanoleaf && !mComm->nanoleaf()->controllers().empty()) {
         runningDiscovery = true;
     }
 
@@ -292,7 +292,7 @@ void DiscoveryPage::paintEvent(QPaintEvent *) {
 
 void DiscoveryPage::resizeTopMenu() {
     for (int commInt = 0; commInt != int(EProtocolType::MAX); ++commInt) {
-        EProtocolType type = static_cast<EProtocolType>(commInt);
+        auto type = static_cast<EProtocolType>(commInt);
         QPixmap pixmap;
         switch (mConnectionStates[std::size_t(type)])
         {
@@ -324,15 +324,15 @@ void DiscoveryPage::updateTopMenu() {
 
     // hide and show buttons based on their usage
     if (mAppSettings->enabled(EProtocolType::hue)) {
-        buttons.push_back("Discovery_Hue");
+        buttons.emplace_back("Discovery_Hue");
     }
 
     if (mAppSettings->enabled(EProtocolType::nanoleaf)) {
-        buttons.push_back("Discovery_NanoLeaf");
+        buttons.emplace_back("Discovery_NanoLeaf");
     }
 
     if (mAppSettings->enabled(EProtocolType::arduCor)) {
-        buttons.push_back("Discovery_ArduCor");
+        buttons.emplace_back("Discovery_ArduCor");
     }
 
     // check that commtype being shown is available, if not, adjust
@@ -369,7 +369,7 @@ void DiscoveryPage::updateTopMenu() {
 }
 
 
-void DiscoveryPage::floatingLayoutButtonPressed(QString button) {
+void DiscoveryPage::floatingLayoutButtonPressed(const QString& button) {
     if (button.compare("Settings") == 0) {
         emit settingsButtonClicked();
     } else if (button.compare("Discovery_ArduCor") == 0) {

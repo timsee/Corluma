@@ -11,8 +11,6 @@
 namespace cor
 {
 
-Controller::Controller() {}
-
 
 cor::Controller jsonToController(const QJsonObject& object)
 {

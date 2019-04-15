@@ -22,12 +22,10 @@ bool GroupData::removeAppData() {
         if (file.remove()) {
             qDebug() << "INFO: removed json save data";
             return true;
-        } else {
-            qDebug() << "WARNING: could not remove json save data!";
         }
-    } else {
-        qDebug() << "WARNING: previous save data does not exist!";
+        qDebug() << "WARNING: could not remove json save data!";
     }
+    qDebug() << "WARNING: previous save data does not exist!";
     return false;
 }
 
@@ -187,7 +185,7 @@ void GroupData::saveNewGroup(const QString& groupName, const std::list<cor::Ligh
     }
 
     groupObject["devices"] = deviceArray;
-    if(!mJsonData.isNull() && deviceArray.size() > 0) {
+    if(!mJsonData.isNull() && !deviceArray.empty()) {
         if(mJsonData.isArray()) {
             auto array = mJsonData.array();
             mJsonData.array().push_front(groupObject);
@@ -311,8 +309,8 @@ bool GroupData::removeGroup(const QString& groupName, bool isMood) {
                         mJsonData.setArray(array);
                         saveJSON();
 
-                        for (auto mood : mMoodDict.itemVector()) {
-                            if (mood.name().compare(groupName) == 0) {
+                        for (const auto& mood : mMoodDict.itemVector()) {
+                            if (mood.name() == groupName) {
                                 mMoodDict.remove(mood);
                                 emit groupDeleted(groupName);
                                 return true;
@@ -320,8 +318,8 @@ bool GroupData::removeGroup(const QString& groupName, bool isMood) {
                         }
 
 
-                        for (auto group : mGroupDict.itemVector()) {
-                            if (group.name().compare(groupName) == 0) {
+                        for (const auto& group : mGroupDict.itemVector()) {
+                            if (group.name() == groupName) {
                                 mGroupDict.remove(group);
                                 emit groupDeleted(groupName);
                                 return true;
@@ -375,7 +373,7 @@ void GroupData::parseGroup(const QJsonObject& object) {
                 qDebug() << __func__ << " device broken" << value;
             }
         }
-        if (list.size()) {
+        if (!list.empty()) {
             cor::Group group(std::uint64_t(uniqueID), name);
             std::list<QString> lightIDList;
             for (const auto& light : list) {
@@ -574,13 +572,13 @@ void GroupData::parseMood(const QJsonObject& object) {
             if (checkIfMoodGroupIsValid(device)) {
                 const auto& light = parseDefaultStateObject(device);
                 const auto& groupID = device["group"].toDouble();
-                defaultList.push_back(std::make_pair(groupID, light));
+                defaultList.emplace_back(groupID, light);
             } else {
                 qDebug() << __func__ << " default state broken" << device;
             }
         }
 
-        if (list.size() == 0) {
+        if (list.empty()) {
             qDebug() << __func__ << " no valid devices for" << name;
         } else {
             cor::Mood mood(std::uint64_t(uniqueID), name);
@@ -599,7 +597,7 @@ void GroupData::parseMood(const QJsonObject& object) {
 // File Manipulation
 //-------------------
 
-QJsonDocument GroupData::loadJsonFile(QString file) {
+QJsonDocument GroupData::loadJsonFile(const QString& file) {
     QFile jsonFile(file);
     jsonFile.open(QFile::ReadOnly);
     QString data = jsonFile.readAll();
@@ -607,14 +605,14 @@ QJsonDocument GroupData::loadJsonFile(QString file) {
     return QJsonDocument::fromJson(data.toUtf8());
 }
 
-bool GroupData::mergeExternalData(QString file, bool keepFileChanges) {
+bool GroupData::mergeExternalData(const QString& file, bool keepFileChanges) {
     Q_UNUSED(keepFileChanges);
-    QJsonDocument document = loadJsonFile(file);
+    loadJsonFile(file);
     return true;
 }
 
 
-bool GroupData::loadExternalData(QString file) {
+bool GroupData::loadExternalData(const QString& file) {
     QJsonDocument document = loadJsonFile(file);
     // check if contains a jsonarray
     if(!document.isNull()) {

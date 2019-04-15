@@ -65,11 +65,10 @@ int main(int argc, char *argv[]) {
     QFile f(":stylesheet/corluma.qss");
     if (!f.exists()) {
         THROW_EXCEPTION("Unable to set stylesheet, file not found");
-    } else {
-        f.open(QFile::ReadOnly | QFile::Text);
-        QTextStream ts(&f);
-        a.setStyleSheet(ts.readAll());
     }
+    f.open(QFile::ReadOnly | QFile::Text);
+    QTextStream ts(&f);
+    a.setStyleSheet(ts.readAll());
 #endif
 
 
@@ -142,7 +141,7 @@ int main(int argc, char *argv[]) {
 
 
         std::vector<QString> protocolInUseKeys = AppSettings::protocolKeys();
-        for (auto key : protocolInUseKeys) {
+        for (const auto& key : protocolInUseKeys) {
             settings.setValue(key,   QString::number(int(true)));
         }
         // set arducor to off

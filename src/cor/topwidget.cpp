@@ -10,7 +10,7 @@
 namespace cor
 {
 
-TopWidget::TopWidget(QString title, QString resource, QWidget *parent) : QWidget(parent)
+TopWidget::TopWidget(const QString& title, const QString& resource, QWidget *parent) : QWidget(parent)
 {
     mLayout = new QHBoxLayout();
 

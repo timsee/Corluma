@@ -133,14 +133,14 @@ void BridgeInfoWidget::updateBridge(const hue::Bridge& bridge) {
 void BridgeInfoWidget::handleBridgeState(EBridgeDiscoveryState state) {
     if (state == EBridgeDiscoveryState::connected) {
         mBridgePixmap = QPixmap(":images/Hue-Bridge.png");
-        int width = int(this->width() * 0.333f);
+        auto width = int(this->width() * 0.333f);
         mImage->setPixmap(mBridgePixmap.scaled(width,
                                                width,
                                                Qt::KeepAspectRatio,
                                                Qt::SmoothTransformation));
     } else if (state == EBridgeDiscoveryState::lookingForUsername) {
         mBridgePixmap = QPixmap(":images/pressHueBridgeImage.png");
-        int width = int(this->width() * 0.333f);
+        auto width = int(this->width() * 0.333f);
         mImage->setPixmap(mBridgePixmap.scaled(width,
                                                width,
                                                Qt::KeepAspectRatio,
@@ -154,12 +154,6 @@ void BridgeInfoWidget::handleBridgeState(EBridgeDiscoveryState state) {
 void BridgeInfoWidget::setChecked(bool checked) {
     mIsChecked = checked;
     update();
-}
-
-void BridgeInfoWidget::setHeight(int height) {
-    int finalHeight = std::max(height, this->height());
-    mHeight = finalHeight;
-    this->setFixedHeight(height);
 }
 
 void BridgeInfoWidget::paintEvent(QPaintEvent *event) {
@@ -192,7 +186,7 @@ void BridgeInfoWidget::mouseReleaseEvent(QMouseEvent *event) {
 
 void BridgeInfoWidget::resizeEvent(QResizeEvent *) {
     if (mBridge.state != EBridgeDiscoveryState::lookingForResponse) {
-        int width = int(this->width() * 0.333f);
+        auto width = int(this->width() * 0.333f);
         mImage->setFixedWidth(width);
         mImage->setPixmap(mBridgePixmap.scaled(width,
                                                width,
@@ -216,7 +210,7 @@ void BridgeInfoWidget::schedulesListPressed() {
     emit schedulesPressed(mBridge.id);
 }
 
-void BridgeInfoWidget::changedName(QString newName) {
+void BridgeInfoWidget::changedName(const QString& newName) {
     emit nameChanged(mBridge.id, newName);
 }
 

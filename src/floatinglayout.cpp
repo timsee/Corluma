@@ -38,7 +38,7 @@ FloatingLayout::FloatingLayout(bool makeVertical, QWidget *parent) : QWidget(par
     mOriginalSize = cor::applicationSize();
 }
 
-void FloatingLayout::highlightButton(QString key) {
+void FloatingLayout::highlightButton(const QString& key) {
     this->blockSignals(true);
 
     auto result = std::find(mNames.begin(), mNames.end(), key);
@@ -52,7 +52,7 @@ void FloatingLayout::highlightButton(QString key) {
 // Setup Buttons
 //--------------------------------
 
-void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eButtonSize) {
+void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSize eButtonSize) {
     // set up the geometry
     QSize size = mOriginalSize;
     if (eButtonSize == EButtonSize::small) {
@@ -62,7 +62,7 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
         size = QSize(int(size.width() * 0.1f),
                      int(size.height() * 0.1f));
     } else if (eButtonSize == EButtonSize::rectangle) {
-        size = QSize(int(size.width() * 0.2f),
+        size = QSize(int(size.width() * 0.25f),
                      int(size.height() * 0.06f));
     }
 
@@ -88,20 +88,20 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
     this->setFixedSize(QSize(fixedWidth, fixedHeight));
 
     // setup the horizontal buttons
-    if (mButtons.size() > 0) {
-        for (uint32_t i = 0; i < mButtons.size(); ++i) {
+    if (!mButtons.empty()) {
+        for (auto button : mButtons) {
             if (mIsVertical) {
-                mVerticalLayout->removeWidget(mButtons[i]);
+                mVerticalLayout->removeWidget(button);
             } else {
-                mHorizontalLayout->removeWidget(mButtons[i]);
+                mHorizontalLayout->removeWidget(button);
             }
-            delete mButtons[i];
+            delete button;
         }
     }
     mButtons = std::vector<QPushButton*>(buttons.size(), nullptr);
     mNames = buttons;
 
-    QSignalMapper *buttonsMapper = new QSignalMapper(this);
+    auto buttonsMapper = new QSignalMapper(this);
     for (uint32_t i = 0; i < mNames.size(); ++i) {
         cor::Light light;
         light.routine = ERoutine::singleSolid;
@@ -119,7 +119,7 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             light.palette = mPalettes.palette(EPalette::cool);
             light.speed   = 100;
             QJsonObject routineObject = lightToJson(light);
-            cor::Button *lightsButton = new cor::Button(this, routineObject);
+            auto lightsButton = new cor::Button(this, routineObject);
             mButtons[i] = static_cast<QPushButton*>(lightsButton);
             Q_ASSERT(mButtons[i]);
         } else if (mNames[i].compare("ColorScheme") == 0) {
@@ -137,7 +137,7 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
             light.routine = ERoutine::singleGlimmer;
             light.color   = QColor(0, 255, 0);
             QJsonObject routineObject = lightToJson(light);
-            cor::Button *lightsButton = new cor::Button(this, routineObject);
+            auto lightsButton = new cor::Button(this, routineObject);
             mButtons[i] = static_cast<QPushButton*>(lightsButton);
             Q_ASSERT(mButtons[i]);
         } else if (mNames[i].compare("Settings") == 0) {
@@ -265,7 +265,7 @@ void FloatingLayout::setupButtons(std::vector<QString> buttons, EButtonSize eBut
 void FloatingLayout::updateRoutine(const QJsonObject& routineObject) {
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
         if (mNames[i].compare("Routine") == 0) {
-            cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
+            auto lightsButton = dynamic_cast<cor::Button*>(mButtons[i]);
             Q_ASSERT(lightsButton);
             lightsButton->updateRoutine(routineObject);
         }
@@ -273,7 +273,7 @@ void FloatingLayout::updateRoutine(const QJsonObject& routineObject) {
 }
 
 
-void FloatingLayout::updateColorPageButton(QString resource) {
+void FloatingLayout::updateColorPageButton(const QString& resource) {
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
         if (mNames[i].compare("Colors_Page") == 0) {
             cor::resizeIcon(mButtons[i], resource);
@@ -281,7 +281,7 @@ void FloatingLayout::updateColorPageButton(QString resource) {
     }
 }
 
-void FloatingLayout::updateCollectionButton(QString resource) {
+void FloatingLayout::updateCollectionButton(const QString& resource) {
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
         if (mNames[i].compare("New_Group") == 0) {
             cor::resizeIcon(mButtons[i], resource);
@@ -289,7 +289,7 @@ void FloatingLayout::updateCollectionButton(QString resource) {
     }
 }
 
-void FloatingLayout::updateDiscoveryButton(EProtocolType type, QPixmap pixmap) {
+void FloatingLayout::updateDiscoveryButton(EProtocolType type, const QPixmap& pixmap) {
     QString label;
     switch (type)
     {
@@ -319,9 +319,9 @@ void FloatingLayout::updateDiscoveryButton(EProtocolType type, QPixmap pixmap) {
 
 }
 
-void FloatingLayout::enableButton(QString key, bool enable) {
+void FloatingLayout::enableButton(const QString& key, bool enable) {
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
-        if (mNames[i].compare(key) == 0) {
+        if (mNames[i] == key) {
             mButtons[i]->setEnabled(enable);
         }
     }
@@ -347,18 +347,18 @@ void FloatingLayout::buttonPressed(int buttonIndex) {
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
         mButtons[i]->setChecked(false);
         if (isALightsButton(i)) {
-            cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[i]);
+            auto lightsButton = dynamic_cast<cor::Button*>(mButtons[i]);
             Q_ASSERT(lightsButton);
             lightsButton->setChecked(false);
         }
     }
 
     // check the proper button
-    uint32_t index = uint32_t(buttonIndex);
+    auto index = uint32_t(buttonIndex);
     if (index < mButtons.size()) {
         QString label = mNames[index];
         if (isALightsButton(index)) {
-            cor::Button *lightsButton = static_cast<cor::Button*>(mButtons[index]);
+            auto lightsButton = dynamic_cast<cor::Button*>(mButtons[index]);
             Q_ASSERT(lightsButton);
             lightsButton->setChecked(true);
         } else {
@@ -377,14 +377,11 @@ void FloatingLayout::buttonPressed(int buttonIndex) {
 
 
 bool FloatingLayout::isALightsButton(uint32_t index) {
-    if (mNames[index] == "Multi"
-            || mNames[index] == "Routine") {
-        return true;
-    }
-    return false;
+   return (mNames[index] == "Multi"
+            || mNames[index] == "Routine");
 }
 
 QSize FloatingLayout::buttonSize() {
-    return QSize(this->width() / int(mButtons.size()),
-                 this->width() / int(mButtons.size()));
+    return {this->width() / int(mButtons.size()),
+            this->width() / int(mButtons.size())};
 }

@@ -12,7 +12,7 @@
 #include <QGraphicsOpacityEffect>
 #include <QPainter>
 
-RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, std::vector<QColor> colors, QWidget *parent) : QWidget(parent) {
+RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, const std::vector<QColor>& colors, QWidget *parent) : QWidget(parent) {
 
     mLayout = new QGridLayout(this);
     mLayout->setMargin(0);
@@ -170,7 +170,7 @@ void RoutineButtonsWidget::multiRoutineColorsChanged(const std::vector<QColor>& 
     }
 }
 
-void RoutineButtonsWidget::routineChanged(QJsonObject routineObject) {
+void RoutineButtonsWidget::routineChanged(const QJsonObject& routineObject) {
     QString routineName = jsonToButtonName(routineObject);
     highlightRoutineButton(routineName);
     emit newRoutineSelected(routineObject);
@@ -196,7 +196,7 @@ QString RoutineButtonsWidget::jsonToButtonName(const QJsonObject& routineObject)
     return QString();
 }
 
-void RoutineButtonsWidget::singleRoutineColorChanged(QColor color) {
+void RoutineButtonsWidget::singleRoutineColorChanged(const QColor& color) {
     for (uint32_t i = 0; i < mRoutineButtons.size(); ++i) {
         QJsonObject routineObject = mRoutines[i].second;
         routineObject["hue"] = color.hueF();

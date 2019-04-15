@@ -34,7 +34,7 @@ public:
      * \param colors colors in color group
      * \param parent parent widget
      */
-    explicit PresetGroupWidget(QString name,
+    explicit PresetGroupWidget(const QString& name,
                                EPalette palette,
                                EPresetWidgetMode mode,
                                QWidget *parent);

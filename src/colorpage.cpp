@@ -16,8 +16,10 @@
 
 ColorPage::ColorPage(QWidget *parent) :
     QWidget(parent),
+    mBrightness{50},
     mColorScheme(5, QColor(0, 255, 0)),
-    mPalette(QJsonObject()) {
+    mPalette(QJsonObject()),
+    mPageType{EColorPageType::RGB} {
 
     mBottomMenuState = EBottomMenuShow::showStandard;
     mBottomMenuIsOpen = false;
@@ -33,7 +35,7 @@ ColorPage::ColorPage(QWidget *parent) :
     mLayout->addWidget(mColorPicker, 10);
 
     connect(mColorPicker, SIGNAL(colorUpdate(QColor)), this, SLOT(colorChanged(QColor)));
-    connect(mColorPicker, SIGNAL(ambientUpdate(int, uint32_t)), this, SLOT(ambientUpdateReceived(int, uint32_t)));
+    connect(mColorPicker, SIGNAL(ambientUpdate(int,uint32_t)), this, SLOT(ambientUpdateReceived(int,uint32_t)));
     connect(mColorPicker, SIGNAL(multiColorCountUpdate(int)), this, SLOT(customColorCountChanged(int)));
     connect(mColorPicker, SIGNAL(multiColorUpdate()), this, SLOT(multiColorChanged()));
     connect(mColorPicker, SIGNAL(brightnessUpdate(uint32_t)), this, SLOT(brightnessUpdate(uint32_t)));
@@ -169,7 +171,7 @@ void ColorPage::newRoutineSelected(QJsonObject routineObject) {
     }
 }
 
-void ColorPage::colorChanged(QColor color) {
+void ColorPage::colorChanged(const QColor& color) {
     updateColor(color);
     mCurrentSingleRoutine["hue"] = mColor.hueF();
     mCurrentSingleRoutine["sat"] = mColor.saturationF();
@@ -225,11 +227,11 @@ void ColorPage::ambientUpdateReceived(int newAmbientValue, uint32_t newBrightnes
     emit brightnessChanged(newBrightness);
 }
 
-void ColorPage::colorsChanged(std::vector<QColor> colors) {
+void ColorPage::colorsChanged(const std::vector<QColor>& colors) {
     emit schemeUpdate(colors);
 }
 
-void ColorPage::updateColor(QColor color) {
+void ColorPage::updateColor(const QColor& color) {
     mColor = color;
     for (auto&& schemeColor : mColorScheme) {
         schemeColor = color;
@@ -240,7 +242,7 @@ void ColorPage::updateColor(QColor color) {
 // ----------------------------
 
 
-void ColorPage::show(QColor color, uint32_t brightness, std::vector<QColor> colorScheme, Palette palette, uint32_t lightCount) {
+void ColorPage::show(const QColor& color, uint32_t brightness, const std::vector<QColor>& colorScheme, const Palette& palette, uint32_t lightCount) {
     if (lightCount == 0) {
         mColorPicker->enable(false);
     } else {

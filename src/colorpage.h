@@ -76,10 +76,10 @@ public:
     EColorPageType pageType();
 
     /// called when the widget is shown
-    void show(QColor color,
+    void show(const QColor& color,
               uint32_t brightness,
-              std::vector<QColor> colorScheme,
-              Palette palette,
+              const std::vector<QColor>& colorScheme,
+              const Palette& palette,
               uint32_t lightCount);
 
 signals:
@@ -100,13 +100,13 @@ public slots:
     /*!
      * \brief colorChanged signaled whenever the ColorPicker chooses a new color.
      */
-    void colorChanged(QColor);
+    void colorChanged(const QColor&);
 
     /*!
      * \brief colorsChanged multiple colors have changed and should be sent to the ColorPicker as a
      *        color scheme
      */
-    void colorsChanged(std::vector<QColor>);
+    void colorsChanged(const std::vector<QColor>&);
 
 protected:
 
@@ -190,7 +190,7 @@ private:
     ERoutine mCurrentMultiRoutine;
 
     /// updates the colorpage's main color value
-    void updateColor(QColor color);
+    void updateColor(const QColor& color);
 
     /// stores last value for the color
     QColor mColor;

@@ -95,9 +95,9 @@ SettingsPage::SettingsPage(QWidget *parent, GroupData *parser, AppSettings *appS
 
     uint32_t sectionIndex = 0;
     for (uint32_t x = 0; x < mTitles.size(); ++x) {
-        if (mTitles[x].compare("Save") == 0
-                || mTitles[x].compare("Mock Connection") == 0
-                || mTitles[x].compare("Copyright") == 0) {
+        if (mTitles[x] == "Save"
+                || mTitles[x] == "Mock Connection"
+                || mTitles[x] == "Copyright") {
             mSectionLabels[sectionIndex] = new QLabel(mSectionTitles[sectionIndex].c_str());
             mSectionLabels[sectionIndex]->setStyleSheet("font:bold; font-size:20pt; color:rgba(61, 142, 201,255);");
             mScrollLayout->addWidget(mSectionLabels[sectionIndex]);
@@ -132,9 +132,6 @@ SettingsPage::SettingsPage(QWidget *parent, GroupData *parser, AppSettings *appS
     this->setLayout(mMainLayout);
 
     mScrollArea->setWidget(mScrollAreaWidget);
-}
-
-SettingsPage::~SettingsPage() {
 }
 
 // ----------------------------
@@ -237,7 +234,7 @@ void SettingsPage::paintEvent(QPaintEvent *) {
     painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
 }
 
-void SettingsPage::settingsButtonPressed(QString title) {
+void SettingsPage::settingsButtonPressed(const QString& title) {
    // qDebug() << "settings button pressed: " << title;
     if (title.compare("Reset") == 0) {
         resetButtonClicked();
@@ -254,7 +251,7 @@ void SettingsPage::settingsButtonPressed(QString title) {
     } else if (title.compare("FAQ") == 0) {
         showWebView(ECorlumaWebView::FAQ);
     } else if (title.compare("Mock Connection") == 0) {
-        MainWindow *mainWindow = qobject_cast<MainWindow*>(this->parentWidget());
+        auto mainWindow = qobject_cast<MainWindow*>(this->parentWidget());
         Q_ASSERT(mainWindow);
         mainWindow->anyDiscovered(true);
     }

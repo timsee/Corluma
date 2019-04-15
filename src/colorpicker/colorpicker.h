@@ -101,7 +101,7 @@ public:
     /*!
      * \brief Destructor
      */
-    ~ColorPicker();
+    ~ColorPicker() = default;
 
     /*!
      * \brief changeLayout sets the layout using the available layout modes. This allows
@@ -142,7 +142,7 @@ public:
      * \param colorSchemes the colors of the selected devices
      * \param customColors colors for the custom color picker
      */
-    void updateColorStates(QColor mainColor, uint32_t brightness, const std::vector<QColor> colorSchemes, const std::vector<QColor> customColors);
+    void updateColorStates(const QColor& mainColor, uint32_t brightness, const std::vector<QColor>& colorSchemes, const std::vector<QColor>& customColors);
 
     /*!
      * \brief setMultiColorDefaults set the default colors of the custom color picker
@@ -163,7 +163,7 @@ signals:
      *        that utilize this color picker. Any time a color is chosen, it sends
      *        out the color using this signal.
      */
-    void colorUpdate(QColor);
+    void colorUpdate(const QColor&);
 
     /*!
      * \brief multiColorUpdate emitted whenever the multi color picker has an update for any individual color.
@@ -231,7 +231,7 @@ private slots:
      * \brief RGBSlidersColorChanged the color changed from the RGBSliders
      * \param color new color.
      */
-    void RGBSlidersColorChanged(QColor color);
+    void RGBSlidersColorChanged(const QColor& color);
 
     /*!
      * \brief tempBrightSlidersChanged the temperature and brightness changed from the TempBrightSliders
@@ -310,7 +310,7 @@ private:
      * \param color a QColor representation of the color you want to use.
      * \param shouldSignal true to signal, false to skip this signal.
      */
-    void chooseColor(QColor color, bool shouldSignal = true);
+    void chooseColor(const QColor& color, bool shouldSignal = true);
 
 
     /*!
@@ -383,7 +383,7 @@ private:
      * \param color color to check.
      * \return true if color is valid, false otherwise.
      */
-    bool checkIfColorIsValid(QColor color);
+    bool checkIfColorIsValid(const QColor& color);
 
     /*!
      * \brief getWheelPixmapPath retrieves the proper path to the asset required for the current cvolor wheel

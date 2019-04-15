@@ -67,9 +67,6 @@ public:
     /// true if details are hidden, false otherwise
     bool detailsHidden() { return mHideDetails; }
 
-    /// set height of info widget
-    void setHeight(int);
-
 signals:
     /*!
      * \brief clicked emits the key of the widget whenever it is clicked.
@@ -135,9 +132,6 @@ private:
 
     /// stored data the Hue Light being displayed by this widget.
     HueLight mLight;
-
-    /// used for setting the height;
-    int mHeight;
 };
 
 }

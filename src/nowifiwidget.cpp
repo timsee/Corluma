@@ -39,7 +39,7 @@ void NoWifiWidget::paintEvent(QPaintEvent *) {
 
 void NoWifiWidget::resizeEvent(QResizeEvent *) {
     mPixmap = QPixmap(":images/no_wifi.png");
-    int width = int(this->width() * 0.5f);
+    auto width = int(this->width() * 0.5f);
     mImage->setPixmap(mPixmap.scaled(width,
                                      width,
                                      Qt::KeepAspectRatio,

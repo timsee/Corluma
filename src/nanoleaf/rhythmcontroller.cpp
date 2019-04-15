@@ -9,7 +9,7 @@
 namespace nano
 {
 
-RhythmController::RhythmController()
+RhythmController::RhythmController(): isConnected{false}, isActive{false}, auxAvailable{false}
 {
 
 }

@@ -17,6 +17,11 @@ Light::Light() : Light(QString("NOT_VALID"), QString("UNINITIALIZED"), ECommType
 Light::Light(const QString& uniqueID, const QString& controller, ECommType commType) :
     palette("", std::vector<QColor>(1, QColor(0,0,0)), 50),
     customPalette(paletteToString(EPalette::custom), cor::defaultCustomColors(), 50),
+    lastUpdateTime{0},
+    temperature{200},
+    productType{EProductType::LED},
+    majorAPI{4},
+    minorAPI{2},
     mUniqueID(uniqueID),
     mCommType(commType),
     mController(controller) {

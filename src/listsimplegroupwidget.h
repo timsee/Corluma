@@ -50,7 +50,6 @@ public:
      *        this widget gets removed and all other widgets get shifted.
      */
     void updateDevices(const std::list<cor::Light>& devices,
-                       uint32_t widgetHeight,
                        cor::EWidgetType listWidgetType,
                        EOnOffSwitchState switchState,
                        bool canHighlight,

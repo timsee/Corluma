@@ -473,6 +473,9 @@ ___
 * Changed the layout of the `LeftHandMenu`.
 * Fixed miscellaneous bugs.
 
-
+### **v0.15.3**
+#### The Clang-Tidy and Clazy Update
+* Fixed warnings from Clang-Tidy and Clazy.
+* Fixed miscellaneous bugs.
 
 

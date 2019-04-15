@@ -122,7 +122,7 @@ private:
      * \param name name fo QSerialPort
      * \return pointer to QSerialPort
      */
-    QSerialPort *serialPortByName(QString name);
+    QSerialPort *serialPortByName(const QString& name);
 
     /*!
      * \brief mSerialList list of possible serial ports

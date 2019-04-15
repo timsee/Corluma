@@ -44,7 +44,7 @@ public:
     /*!
      * \brief CommHue Destructor
      */
-    ~CommHue();
+    ~CommHue() = default;
 
     /*!
      * \brief startup defined in CommType
@@ -121,7 +121,7 @@ public:
      *        light, or schedule.
      * \param object the JSON object that you want to give to the resource.
      */
-    void postJson(const hue::Bridge& bridge, QString resource, QJsonObject object);
+    void postJson(const hue::Bridge& bridge, const QString& resource, const QJsonObject& object);
 
     /*!
      * \brief putJson helper function that takes a JSON object and puts it on the hue bridge.
@@ -129,7 +129,7 @@ public:
      *        light, or schedule.
      * \param object the JSON object that you want to give to the resource.
      */
-    void putJson(const hue::Bridge& bridge, QString resource, QJsonObject object);
+    void putJson(const hue::Bridge& bridge, const QString& resource, const QJsonObject& object);
 
     /*!
      * \brief updateIdleTimeout upate the idle tieout for a specific schedule. This is called during data sync
@@ -164,7 +164,7 @@ public:
      * \param name the new name for the bridge
      * \param lights the lights to include in the new group
      */
-    void createGroup(const hue::Bridge& bridge, QString name, std::list<HueLight> lights, bool isRoom);
+    void createGroup(const hue::Bridge& bridge, const QString& name, std::list<HueLight> lights, bool isRoom);
 
     /*!
      * \brief updateGroup change the lights in an already-existing hue group
@@ -259,14 +259,14 @@ public:
      * \brief searchForNewLights search for new lights that havent been paired with the bridge yet
      * \param serialNumbers serial numbers to search for manually.
      */
-    void searchForNewLights(const hue::Bridge& bridge, std::list<QString> serialNumbers);
+    void searchForNewLights(const hue::Bridge& bridge, const std::list<QString>& serialNumbers);
 
     /*!
      * \brief renameLight rename the light's name stored on the hue bridge.
      * \param light the light to rename
      * \param newName the new name to assign to it.
      */
-    void renameLight(HueLight light, QString newName);
+    void renameLight(HueLight light, const QString& newName);
 
     /*!
      * \brief deleteLight delete the light and its stored data from the bridge
@@ -292,7 +292,7 @@ public:
      * \brief connectionStatusHasChanged called by the HueBridgeDiscovery object whenever its connection
      *        changes.
      */
-    void bridgeDiscovered(const hue::Bridge&, QJsonObject lightsObject, QJsonObject groupObject, QJsonObject schedulesObject);
+    void bridgeDiscovered(const hue::Bridge&, const QJsonObject& lightsObject, const QJsonObject& groupObject, const QJsonObject& schedulesObject);
 
 signals:
     /*!
@@ -420,7 +420,7 @@ private:
      * \param key key of packet that suceeded
      * \param value JSON data about what changed with the successful packet.
      */
-    void handleSuccessPacket(const hue::Bridge& bridge, QString key, QJsonValue value);
+    void handleSuccessPacket(const hue::Bridge& bridge, const QString& key, const QJsonValue& value);
 
     /*!
      * \brief handleErrorPacket handle errors received from the Hue Bridge. In most cases, we just print them out as debug messages.

@@ -42,10 +42,10 @@ public:
      *        connect to.
      */
     explicit ListMoodGroupWidget(const QString& name,
-                                  std::list<cor::Mood> moods,
-                                  QString key,
-                                  bool hideEdit,
-                                  QWidget *parent);
+                                 const std::list<cor::Mood>& moods,
+                                 const QString& key,
+                                 bool hideEdit,
+                                 QWidget *parent);
 
     /*!
      * \brief updateMoods update moods based off of the mood list and the vector of preset colors.
@@ -68,7 +68,7 @@ public:
      * \brief removeMood remove a mood from the ListCollectionWidget
      * \param mood name of mood to remove.
      */
-    void removeMood(QString mood);
+    void removeMood(const QString& mood);
 
     /*!
      * \brief moods getter for the mood data of this collection group
@@ -150,9 +150,6 @@ private:
      * \brief mLayout layout that displays all of the sub widgets.
      */
     QVBoxLayout *mLayout;
-
-    /// type of list
-    cor::EListType mType;
 
     /// widget for showing/hiding and selecting/deselecting
     DropdownTopWidget *mDropdownTopWidget;

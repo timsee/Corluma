@@ -42,7 +42,10 @@ public:
      * \param isMood true if a mood, false if a collection.
      * \param isRoom true if a room, false if a lightgroup.
      */
-    void showGroup(QString key, std::list<cor::Light> groupDevices, std::list<cor::Light> devices, bool isMood, bool isRoom);
+    void showGroup(const QString& key,
+                   const std::list<cor::Light>& groupDevices,
+                   const std::list<cor::Light>& devices,
+                   bool isMood, bool isRoom);
 
     /*!
      * \brief updateDevices update the device widgets in the edit page with new values
@@ -58,17 +61,11 @@ public:
     /// resizes widget programmatically
     void resize();
 
-    /*!
-     * \brief called before the this page is shown. Used to sync up
-     *        any changes that may have happened on other pages.
-     */
-    void show();
+    /// pushes in the widget
+    void pushIn();
 
-    /*!
-     * \brief called as the page is hidden. This happens when a new page
-     *        is displayed.
-     */
-    void hide();
+    /// pushes out the widget
+    void pushOut();
 
 signals:
 
@@ -124,18 +121,13 @@ private slots:
     void renderUI();
 
     /*!
-     * \brief listDeviceWidgetClicked called when the device widget has any device clicked.
-     */
-    void listDeviceWidgetClicked(QString);
-
-    /*!
      * \brief lineEditChanged called whenever a new character is typed into the QLineEdit. Used to change the
      *        name of a group.
      */
     void lineEditChanged(const QString&);
 
     /// called whenever a device is clicked in the edit widget
-    void clickedDevice(QString);
+    void clickedDevice(const QString&);
 
 private:
 

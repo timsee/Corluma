@@ -42,17 +42,17 @@ BridgeGroupsWidget::BridgeGroupsWidget(QWidget *parent) : QWidget(parent) {
 
 void BridgeGroupsWidget::updateGroups(std::list<cor::Group> groups) {
     // remove old widgets
-    for (uint32_t i = 0; i < mWidgets.size(); ++i) {
-        mScrollLayout->removeWidget(mWidgets[i]);
-        delete mWidgets[i];
+    for (auto widget : mWidgets) {
+        mScrollLayout->removeWidget(widget);
+        delete widget;
     }
 
     // clear vector
     mWidgets.clear();
 
     // add new widgets
-    for (auto group : groups) {
-        hue::HueGroupWidget *widget = new hue::HueGroupWidget(mScrollAreaWidget, group);
+    for (const auto& group : groups) {
+        auto widget = new hue::HueGroupWidget(mScrollAreaWidget, group);
         widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         mWidgets.push_back(widget);
         mScrollLayout->addWidget(widget);

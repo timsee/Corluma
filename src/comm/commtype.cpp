@@ -11,7 +11,7 @@
 
 #define REACHABILITY_TIMEOUT 5000
 
-CommType::CommType(ECommType type) : mType(type) {
+CommType::CommType(ECommType type) : mStateUpdateInterval{1000}, mType(type) {
     mUpdateTimeoutInterval = 15000;
     mStateUpdateCounter = 0;
     mSecondaryUpdatesInterval = 10;
@@ -103,10 +103,8 @@ bool CommType::shouldContinueStateUpdate() {
         stopStateUpdates();
         return false;
     }
-    if (mDeviceTable.empty()) {
-        return false;
-    }
-    return true;
+    // if device table is empty, stop updates, otherwise, continue
+    return !mDeviceTable.empty();
 }
 
 void CommType::checkReachability() {

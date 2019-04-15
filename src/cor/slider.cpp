@@ -17,10 +17,13 @@ namespace cor
 {
 
 Slider::Slider(QWidget *parent) : QWidget(parent) {
-
     mHeightScaleFactor = 1.0f;
     mOpacity = 1.0;
     mShouldDrawTickLabels = false;
+    mShouldSnap = false;
+    mUseMinimumPossible = false;
+    mMinimumPossible = 0;
+    mSliderImageSet = false;
 
     this->setAutoFillBackground(true);
     mSlider = new QSlider(Qt::Horizontal, this);
@@ -38,7 +41,7 @@ Slider::Slider(QWidget *parent) : QWidget(parent) {
 }
 
 
-void Slider::setSliderColorBackground(QColor color) {
+void Slider::setSliderColorBackground(const QColor& color) {
     mSliderColor = color;
     mSliderColorSet = true;
     mSliderImageSet = false;
@@ -70,7 +73,7 @@ void Slider::setSliderColorBackground(QColor color) {
     mSlider->setStyleSheet(styleSheetString);
 }
 
-void Slider::setSliderImageBackground(QString path) {
+void Slider::setSliderImageBackground(const QString& path) {
     mSliderImageSet = true;
     mSliderColorSet = false;
     mPath = path;
@@ -282,13 +285,13 @@ void Slider::setShouldDrawTickLabels(bool shouldDraw) {
 
 void Slider::enable(bool shouldEnable) {
     if(shouldEnable) {
-        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mSlider);
+        auto effect = new QGraphicsOpacityEffect(mSlider);
         mOpacity = 1.0;
         effect->setOpacity(mOpacity);
         mSlider->setGraphicsEffect(effect);
         this->setEnabled(true);
     } else {
-        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mSlider);
+        auto effect = new QGraphicsOpacityEffect(mSlider);
         mOpacity = 0.5;
         effect->setOpacity(mOpacity);
         mSlider->setGraphicsEffect(effect);

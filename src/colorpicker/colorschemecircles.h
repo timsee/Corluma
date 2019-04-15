@@ -42,7 +42,7 @@ public:
      *        color scheme
      * \param colorScheme new values for the color scheme.
      */
-    void updateColorScheme(const std::vector<QColor> colorScheme);
+    void updateColorScheme(const std::vector<QColor>& colorScheme);
 
     /// update the count of colors to display
     void updateColorCount(uint32_t colorCount) { mColorCount = colorCount; }
@@ -92,7 +92,7 @@ private:
      * \brief findColorInWheel find a point that creates a color close to or identical to the colro given
      * \return a point on the widget that has a given color similar to the color provided.
      */
-    QPointF findColorInWheel(QColor);
+    QPointF findColorInWheel(const QColor&);
 
     /*!
      * \brief moveCircles move circles, based off the rules provided by the specific given circle index

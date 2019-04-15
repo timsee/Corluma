@@ -43,7 +43,7 @@ public:
      *        is clicked.
      * \param buttonSize preferred size for buttons
      */
-    void setupButtons(std::vector<QString> buttons, EButtonSize buttonSize);
+    void setupButtons(const std::vector<QString>& buttons, EButtonSize buttonSize);
 
     /*!
      * \brief move move layout to a new location based off of the top right point provided.
@@ -62,7 +62,7 @@ public:
      * \param type comm type of discovery button
      * \param pixmap new pixmap for discovery button
      */
-    void updateDiscoveryButton(EProtocolType type, QPixmap pixmap);
+    void updateDiscoveryButton(EProtocolType type, const QPixmap& pixmap);
 
     /*!
      * \brief addMultiRoutineIcon add a multi routine icon
@@ -74,26 +74,26 @@ public:
      * \brief updateColorPageButton update the color page button with given resource
      * \param resource the resource to draw on the color page button.
      */
-    void updateColorPageButton(QString resource);
+    void updateColorPageButton(const QString& resource);
 
     /*!
      * \brief updateCollectionButton update the collection's edit or new icon.
      * \param resource the resource to draw on the collection button
      */
-    void updateCollectionButton(QString resource);
+    void updateCollectionButton(const QString& resource);
 
     /*!
      * \brief highlightButton highlight the button with the given key. Unhighlights all other buttons.
      * \param key key of button to highlight.
      */
-    void highlightButton(QString key);
+    void highlightButton(const QString& key);
 
     /*!
      * \brief enableButton programmatically enable or disable buttons
      * \param key key of button to enable or disable
      * \param enable true to enable, false to disable.
      */
-    void enableButton(QString key, bool enable);
+    void enableButton(const QString& key, bool enable);
 
     /*!
      * \brief buttonCount returns the number of buttons in the floating layout

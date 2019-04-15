@@ -127,9 +127,6 @@ private:
     /// value for space between widgets
     int mSpacerPixels;
 
-    /// value for minimum possible width of slider
-    int mSliderMinWidth;
-
     //----------------
     // Labels
     //----------------

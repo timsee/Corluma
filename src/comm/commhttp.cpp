@@ -7,7 +7,7 @@
 #include "commhttp.h"
 #include "arducor/arducordiscovery.h"
 
-CommHTTP::CommHTTP() : CommType(ECommType::HTTP) {
+CommHTTP::CommHTTP() : CommType(ECommType::HTTP), mDiscovery{nullptr} {
     mStateUpdateInterval = 4850;
 
     mNetworkManager = new QNetworkAccessManager(this);

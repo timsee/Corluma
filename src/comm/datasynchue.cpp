@@ -47,7 +47,7 @@ void DataSyncHue::resetSync() {
     if (mCleanupTimer->isActive()) {
         mCleanupTimer->stop();
     }
-    if (mData->devices().size() > 0) {
+    if (!mData->devices().empty()) {
         mDataIsInSync = false;
         if (!mSyncTimer->isActive()) {
             mStartTime = QTime::currentTime();
@@ -86,7 +86,7 @@ void DataSyncHue::syncData() {
         mDataIsInSync = true;
     }
 
-    if (mDataIsInSync || mData->devices().size() == 0) {
+    if (mDataIsInSync || mData->devices().empty()) {
         endOfSync();
     }
 

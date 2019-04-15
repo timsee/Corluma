@@ -63,7 +63,7 @@ RGBSliders::RGBSliders(QWidget *parent) : QWidget(parent) {
     setLayout(mLayout);
 }
 
-void RGBSliders::changeColor(QColor color) {
+void RGBSliders::changeColor(const QColor& color) {
     mColor = color;
 
     bool blocked = mRedSlider->slider()->blockSignals(true);

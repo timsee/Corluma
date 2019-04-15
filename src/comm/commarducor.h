@@ -96,7 +96,7 @@ private slots:
     * \brief parsePacket parses any packets sent from any of the commtypes. The
     *        comm type that received the packet is given as an int
     */
-    void parsePacket(QString, QString, ECommType);
+    void parsePacket(const QString&, const QString&, ECommType);
 
 private:
 

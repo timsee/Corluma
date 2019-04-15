@@ -90,7 +90,7 @@ public:
      * \param file path to JSON file
      * \return true if loaded successfully, false otherwise.
      */
-    bool loadExternalData(QString file);
+    bool loadExternalData(const QString& file);
 
     /*!
      * \brief mergeExternalData merges JSON data into existing app data. When the same groups exists in both the JSON data and the
@@ -99,7 +99,7 @@ public:
      * \param keepFileChanges true if you want to keep the groups from the JSON file, false if you want to keep the preexisting group
      * \return true if merged successfully, false otherwise.
      */
-    bool mergeExternalData(QString file, bool keepFileChanges);
+    bool mergeExternalData(const QString& file, bool keepFileChanges);
 
     /*!
      * \brief lightDeleted removes a light from all moods and collections based off of its unique ID. This is called when
@@ -141,7 +141,7 @@ private:
      * \param file path to a json file
      * \return a JsonDocument representing the data in the file given.
      */
-    QJsonDocument loadJsonFile(QString file);
+    QJsonDocument loadJsonFile(const QString& file);
 
     /// loads json data into app data
     bool loadJSON();

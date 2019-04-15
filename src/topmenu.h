@@ -44,7 +44,7 @@ Q_DECLARE_METATYPE(EPage)
 QString pageToString(EPage e);
 
 /// converts string to page enum
-EPage stringToPage(QString);
+EPage stringToPage(const QString&);
 
 /// type of color menu
 enum class EColorMenuType {
@@ -86,14 +86,11 @@ public:
     /// getter for brightness
     int brightness() { return mBrightnessSlider->slider()->value(); }
 
-    /// height of menu
-    int fixedHeight() { return mFixedHeight; }
-
     /*!
      * \brief highlightButton highlight the button of any of the floating layouts, based on the key
      * \param key the key to use to highlight the buttons.
      */
-    void highlightButton(QString key);
+    void highlightButton(const QString& key);
 
     /// switch the floating layout to show the menu for the given page
     void showFloatingLayout(EPage newPage);
@@ -150,7 +147,7 @@ private slots:
     void updateUI();
 
     /// called when any button in a floating layout is pressed.
-    void floatingLayoutButtonPressed(QString);
+    void floatingLayoutButtonPressed(const QString&);
 
     /// emits when a menu button is pressed
     void menuButtonPressed();
@@ -159,9 +156,6 @@ private:
 
     /// select lights button for portait display ratios when no lights are selected
     SelectLightsButton *mSelectLightsButton;
-
-    /// height of widget
-    int mFixedHeight;
 
     /// y position where the select lights button shows up
     int mStartSelectLightsButton;

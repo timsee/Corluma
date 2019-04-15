@@ -107,9 +107,6 @@ private:
     /// widget for entering serial numbers and displaying names of discovered lights
     SearchWidget *mSearchWidget;
 
-    /// layout for bridge dropdown list and search button
-    QHBoxLayout *mTopLayout;
-
     /// layout
     QVBoxLayout *mLayout;
 

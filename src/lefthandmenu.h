@@ -69,16 +69,16 @@ public slots:
 private slots:
 
     /// called when a light is clicked
-    void lightClicked(QString, QString);
+    void lightClicked(const QString&, const QString&);
 
     /// called when a group is selected or deselected
-    void groupSelected(QString key, bool shouldSelect);
+    void groupSelected(const QString& key, bool shouldSelect);
 
     /// called when buttons should be shown or hidden
-    void shouldShowButtons(QString, bool);
+    void shouldShowButtons(const QString&, bool);
 
     /// called when a group is changed
-    void changedGroup(QString);
+    void changedGroup(const QString&);
 
     /// used to render UI updates
     void renderUI();
@@ -100,7 +100,7 @@ private:
      * \param dataGroup the group to update in the UI
      * \param uiGroups all UI groups
      */
-    void updateDataGroupInUI(cor::Group dataGroup, const std::list<cor::Group>& uiGroups);
+    void updateDataGroupInUI(const cor::Group& dataGroup, const std::list<cor::Group>& uiGroups);
 
     /*!
      * \brief initRoomsWidget constructor helper for making a ListRoomWidget
@@ -111,7 +111,7 @@ private:
     ListRoomWidget* initRoomsWidget(const cor::Group& group, const QString& key);
 
     /// resize teh room widgets
-    int resizeRoomsWidgets(int yStartPoint);
+    int resizeRoomsWidgets();
 
     /// update the lights in the room widgets
     void updateLights();
@@ -121,9 +121,6 @@ private:
 
     /// true if menu is in, false otherwise
     bool mIsIn;
-
-    /// height to start the room widgets at
-    int mLightStartHeight;
 
     /// size of the parent
     QSize mParentSize;
@@ -177,10 +174,10 @@ private:
     void updateSingleColorButton();
 
     /// stores number of rooms to check if resize is needed
-    int mNumberOfRooms;
+    std::size_t mNumberOfRooms;
 
     /// stores the number of shown lights to check if resize is needed
-    int mNumberOfShownLights;
+    std::size_t mNumberOfShownLights;
 
     /// used to skip rendering while scrolling
     int mLastScrollValue;

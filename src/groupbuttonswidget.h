@@ -63,7 +63,7 @@ signals:
 private slots:
 
     /// picks up when a group button is pressed.
-    void buttonPressed(QString key);
+    void buttonPressed(const QString& key);
 
     /// picks up when a group's select all/deselect all button is pressed.
     void buttonToggled(QString key, bool selectAll) {
@@ -75,13 +75,13 @@ private:
     cor::EWidgetType mType;
 
     /// returns the renamed version of a group when given an actual group name
-    QString renamedGroup(QString group);
+    QString renamedGroup(const QString& group);
 
     /// returns the original group name when given a renamed group
-    QString originalGroup(QString group);
+    QString originalGroup(const QString& group);
 
     /// creates a converted group name, when given a room and group name.
-    QString convertGroupName(QString room, QString group);
+    QString convertGroupName(const QString& room, const QString& group);
 
     /// stores the key of the currently selected group
     QString mCurrentKey;

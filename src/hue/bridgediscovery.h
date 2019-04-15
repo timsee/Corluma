@@ -87,10 +87,10 @@ public:
      * \brief addManualIP attempts to connect to an IP address entered manually
      * \param ip new ip address to attempt.
      */
-    void addManualIP(QString ip);
+    void addManualIP(const QString& ip);
 
     /// gets the bridge that controls a light.
-    hue::Bridge bridgeFromLight(HueLight light);
+    hue::Bridge bridgeFromLight(const HueLight& light);
 
     /// gets a bridge from a IP address
     hue::Bridge bridgeFromIP(const QString& IP);
@@ -144,7 +144,7 @@ private slots:
     void handleDiscovery();
 
     /// called when a UPnP packet is received
-    void receivedUPnP(QHostAddress, QString);
+    void receivedUPnP(const QHostAddress&, const QString&);
 
     /// slot for when the startup timer times out
     void startupTimerTimeout();
@@ -215,7 +215,7 @@ private:
     cor::Dictionary<hue::Bridge> mFoundBridges;
 
     /// parses the initial full packet from a Bridge, which contains all its lights, schedules, and groups info.
-    void parseInitialUpdate(const hue::Bridge& bridge, QJsonDocument json);
+    void parseInitialUpdate(const hue::Bridge& bridge, const QJsonDocument& json);
 
     /// update the existing JSON data to include lights data, in order to check for hardware changes on bootup.
     void updateJSONLights(const hue::Bridge& bridge, const QJsonArray& array);

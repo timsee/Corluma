@@ -26,14 +26,14 @@
 CommLayer::CommLayer(QObject *parent, GroupData *parser) : QObject(parent),  mGroups(parser) {
     mUPnP = new UPnPDiscovery(this);
 
-    mArduCor = std::shared_ptr<CommArduCor>(new CommArduCor(this));
+    mArduCor = std::make_shared<CommArduCor>(this);
     connect(mArduCor.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
 
-    mNanoleaf = std::shared_ptr<CommNanoleaf>(new CommNanoleaf());
+    mNanoleaf = std::make_shared<CommNanoleaf>();
     connect(mNanoleaf.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
     mNanoleaf->discovery()->connectUPnP(mUPnP);
 
-    mHue = std::shared_ptr<CommHue>(new CommHue(mUPnP, parser));
+    mHue = std::make_shared<CommHue>(mUPnP, parser);
     connect(mHue.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
 }
 
@@ -41,7 +41,9 @@ bool CommLayer::discoveryErrorsExist(EProtocolType type) {
     if (type == EProtocolType::nanoleaf
             || type == EProtocolType::hue) {
         return false; // cant error out...
-    } else if (type == EProtocolType::arduCor) {
+    }
+
+    if (type == EProtocolType::arduCor) {
         return (!mArduCor->UDP()->portBound()
         #ifndef MOBILE_BUILD
                || mArduCor->serial()->serialPortErrorsExist()
@@ -74,7 +76,7 @@ CommType *CommLayer::commByType(ECommType type) {
     return ptr;
 }
 
-bool CommLayer::removeController(ECommType type, cor::Controller controller) {
+bool CommLayer::removeController(ECommType type, const cor::Controller& controller) {
     return commByType(type)->removeController(controller);
 }
 
@@ -97,7 +99,7 @@ std::list<cor::Light> CommLayer::allDevices() {
 // Hue Specific
 //------------------
 
-void CommLayer::deleteHueGroup(QString name) {
+void CommLayer::deleteHueGroup(const QString& name) {
     // check if group exists
     qDebug() << " delete hue group! " << name;
     for (const auto& bridge : mHue->bridges().itemVector()) {
@@ -160,9 +162,9 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
         for (const auto& collection : mGroups->groups().itemList()) {
             if (defaultState.first == collection.uniqueID()) {
                 if (collection.isRoom) {
-                    rooms.push_back(std::make_pair(collection, defaultState.second));
+                    rooms.emplace_back(collection, defaultState.second);
                 } else {
-                    groups.push_back(std::make_pair(collection, defaultState.second));
+                    groups.emplace_back(collection, defaultState.second);
                 }
             }
         }

@@ -79,7 +79,6 @@ void MoodDetailsWidget::display(const cor::Mood& mood, const QSize& size) {
                                    size.width(), boxSize);
         yPos += boxSize;
         mRoomDefaults->updateDevices(roomStates,
-                                     mRoomDefaults->height(),
                                      cor::EWidgetType::full,
                                      EOnOffSwitchState::hidden,
                                      false,
@@ -102,7 +101,6 @@ void MoodDetailsWidget::display(const cor::Mood& mood, const QSize& size) {
                                     size.width(), boxSize);
         yPos += boxSize;
         mGroupDefaults->updateDevices(groupStates,
-                                      mGroupDefaults->height(),
                                       cor::EWidgetType::full,
                                       EOnOffSwitchState::hidden,
                                       false,
@@ -117,7 +115,7 @@ void MoodDetailsWidget::resize(const QSize& size) {
     int yPos = 0u;
     int boxSize = size.height() / 3;
     int titleSize = size.height() / 10;
-    int width = size.width() * 0.95f;
+    int width = size.width() * 0.95;
 
     if (mMoreInfoText->isVisible()) {
         mMoreInfoText->setGeometry(0, yPos,

@@ -23,7 +23,7 @@ public:
     /*!
      * \brief ~Page Destructor
      */
-    virtual ~Page();
+    virtual ~Page() = default;
 
     /// setter for open flag
     void isOpen(bool open);

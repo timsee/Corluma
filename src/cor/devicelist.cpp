@@ -217,9 +217,8 @@ std::vector<QColor> DeviceList::colorScheme() {
     for (const auto& device : mDevices) {
         if (count >= max) {
             break;
-        } else {
-           colorScheme.push_back(device.color);
         }
+        colorScheme.push_back(device.color);
         count++;
     }
     return colorScheme;
@@ -269,13 +268,13 @@ int DeviceList::brightness() {
 
 
 bool DeviceList::clearDevices() {
-    if (mDevices.size()) {
+    if (!mDevices.empty()) {
         mDevices.clear();
     }
     return true;
 }
 
-bool DeviceList::removeDevice(cor::Light device){
+bool DeviceList::removeDevice(const cor::Light& device){
     for (const auto& light : mDevices) {
         if (device.uniqueID() == light.uniqueID()) {
             mDevices.remove(light);
@@ -351,7 +350,7 @@ int DeviceList::countDevicesOfType(EProtocolType type) {
 }
 
 
-bool DeviceList::doesDeviceExist(cor::Light device) {
+bool DeviceList::doesDeviceExist(const cor::Light& device) {
     for (const auto& storedDevice : mDevices) {
         if (device.uniqueID() == storedDevice.uniqueID()) return true;
     }
@@ -419,7 +418,7 @@ QString DeviceList::findCurrentCollection(const std::list<cor::Group>& collectio
         auto result = std::find(allLightsFound.begin(), allLightsFound.end(), true);
         auto allLightsIndex = std::distance(allLightsFound.begin(), result);
         int currentIndex = 0;
-        for (auto collection : collections) {
+        for (const auto& collection : collections) {
             if (allLightsIndex == currentIndex) {
                 return collection.name();
             }

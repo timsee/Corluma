@@ -27,7 +27,7 @@ std::pair<int, cor::Range<uint32_t>> valueAndRangeFromJSON(const QJsonObject& ob
 }
 
 
-CommNanoleaf::CommNanoleaf() : CommType(ECommType::nanoleaf) {
+CommNanoleaf::CommNanoleaf() : CommType(ECommType::nanoleaf), mUPnP{nullptr} {
     mStateUpdateInterval     = 1000;
 
     mDiscovery = new nano::LeafDiscovery(this, 2500);
@@ -44,8 +44,6 @@ CommNanoleaf::CommNanoleaf() : CommType(ECommType::nanoleaf) {
 
     createColorPalettes();
 }
-
-CommNanoleaf::~CommNanoleaf() {}
 
 void CommNanoleaf::createColorPalettes() {
     // create JSONArrays for standard palettes
@@ -82,7 +80,7 @@ std::pair<QJsonArray, QJsonArray> CommNanoleaf::vectorToNanoleafPalettes(const s
     QJsonArray paletteHighlightArray;
     for (const auto& color : colorVector) {
         QJsonObject colorObject;
-        int hue = int(color.hueF() * 360.0);
+        auto hue = int(color.hueF() * 360.0);
         if (hue < 0) hue = hue * -1;
         colorObject["hue"] = hue;
         colorObject["saturation"] = int(color.saturationF() * 100.0);
@@ -115,7 +113,7 @@ const QString CommNanoleaf::packetHeader(const nano::LeafController& controller)
 }
 
 
-QNetworkRequest CommNanoleaf::networkRequest(const nano::LeafController& controller, QString endpoint) {
+QNetworkRequest CommNanoleaf::networkRequest(const nano::LeafController& controller, const QString& endpoint) {
     QString urlString = packetHeader(controller) + endpoint;
     QUrl url(urlString);
     url.setPort(controller.port);
@@ -210,7 +208,7 @@ void CommNanoleaf::stateUpdate() {
 }
 
 void CommNanoleaf::sendPacket(const QJsonObject& object) {
-    if (object["uniqueID"].isString() && deviceTable().size()) {
+    if (object["uniqueID"].isString() && !deviceTable().empty()) {
 
         // get the controller
         nano::LeafController controller;
@@ -658,7 +656,7 @@ void CommNanoleaf::onOffChange(const nano::LeafController& controller, bool shou
 }
 
 
-void CommNanoleaf::singleSolidColorChange(const nano::LeafController& controller, QColor color) {
+void CommNanoleaf::singleSolidColorChange(const nano::LeafController& controller, const QColor& color) {
     QNetworkRequest request = networkRequest(controller, "state");
 
     QJsonObject json;
@@ -832,7 +830,7 @@ QJsonArray CommNanoleaf::createPalette(const cor::Light& light) {
                 double valueCount = 1.0;
                 for (uint32_t i = 0; i < valueCount; ++i) {
                     QJsonObject colorObject;
-                    int hue = int(light.color.hueF() * 360.0 * ((valueCount - i) / valueCount));
+                    auto hue = int(light.color.hueF() * 360.0 * ((valueCount - i) / valueCount));
                     if (hue < 0) hue = hue * -1;
                     colorObject["hue"] = hue;
                     colorObject["saturation"] = int(light.color.saturationF() * 100.0);
@@ -846,7 +844,7 @@ QJsonArray CommNanoleaf::createPalette(const cor::Light& light) {
                 double valueCount = 4.0;
                 for (uint32_t i = 0; i <= valueCount; ++i) {
                     QJsonObject colorObject;
-                    int hue = int(light.color.hueF() * 360.0);
+                    auto hue = int(light.color.hueF() * 360.0);
                     if (hue < 0) hue = hue * -1;
                     colorObject["hue"] = hue;
                     colorObject["saturation"] = int(light.color.saturationF() * 100.0);
@@ -863,7 +861,7 @@ QJsonArray CommNanoleaf::createPalette(const cor::Light& light) {
             case ERoutine::singleBlink:
             {
                 QJsonObject colorObject;
-                int hue = int(light.color.hueF() * 360.0);
+                auto hue = int(light.color.hueF() * 360.0);
                 if (hue < 0) hue = hue * -1;
                 colorObject["hue"] = hue;
                 colorObject["saturation"] = int(light.color.saturationF() * 100.0);
@@ -886,7 +884,7 @@ QJsonArray CommNanoleaf::createPalette(const cor::Light& light) {
                 double valueCount = 5.0;
                 for (uint32_t i = 0; i < valueCount; ++i) {
                     QJsonObject colorObject;
-                    int hue = int(light.color.hueF() * 360.0);
+                    auto hue = int(light.color.hueF() * 360.0);
                     if (hue < 0) hue = hue * -1;
                     colorObject["hue"] = hue;
                     colorObject["saturation"] = int(light.color.saturationF() * 100.0);

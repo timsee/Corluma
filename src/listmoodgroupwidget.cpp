@@ -8,8 +8,8 @@
 #include "utils/qt.h"
 
 ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
-                                         std::list<cor::Mood> moods,
-                                         QString key,
+                                         const std::list<cor::Mood>& moods,
+                                         const QString& key,
                                          bool hideEdit,
                                          QWidget *parent) : cor::ListItemWidget(key, parent), mListLayout(cor::EListType::grid) {
 
@@ -47,7 +47,7 @@ void ListMoodGroupWidget::updateMoods(const std::list<cor::Mood>& moods,
         }
 
         if (!foundMood) {
-            ListMoodPreviewWidget *widget = new ListMoodPreviewWidget(mood, mWidget);
+            auto widget = new ListMoodPreviewWidget(mood, mWidget);
             connect(widget, SIGNAL(moodSelected(std::uint64_t)), this, SLOT(selectMood(std::uint64_t)));
             mListLayout.insertWidget(widget);
         }
@@ -95,7 +95,7 @@ void ListMoodGroupWidget::resizeInteralWidgets() {
 
     QSize size = mListLayout.widgetSize(QSize(this->width(), int(mDropdownTopWidget->height() * 2)));
     for (uint32_t i = 0; i < mListLayout.widgets().size(); ++i) {
-        ListMoodPreviewWidget *widget = qobject_cast<ListMoodPreviewWidget*>(mListLayout.widgets()[i]);
+        auto widget = qobject_cast<ListMoodPreviewWidget*>(mListLayout.widgets()[i]);
         Q_ASSERT(widget);
         QPoint position = mListLayout.widgetPosition(mListLayout.widgets()[i]);
         mListLayout.widgets()[i]->setGeometry(offset.x() + position.x() * size.width(),
@@ -108,7 +108,7 @@ void ListMoodGroupWidget::resizeInteralWidgets() {
 
 void ListMoodGroupWidget::setCheckedMoods(std::list<QString> checkedMoods) {
     for (auto&& existingWidget : mListLayout.widgets()) {
-        ListMoodPreviewWidget *widget = qobject_cast<ListMoodPreviewWidget*>(existingWidget);
+        auto widget = qobject_cast<ListMoodPreviewWidget*>(existingWidget);
         Q_ASSERT(widget);
 
 
@@ -134,7 +134,7 @@ void ListMoodGroupWidget::mouseReleaseEvent(QMouseEvent *) {
 
 void ListMoodGroupWidget::selectMood(std::uint64_t key) {
     for (const auto& existingWidget : mListLayout.widgets()) {
-        ListMoodPreviewWidget *widget = qobject_cast<ListMoodPreviewWidget*>(existingWidget);
+        auto widget = qobject_cast<ListMoodPreviewWidget*>(existingWidget);
         Q_ASSERT(widget);
         if (std::uint64_t(widget->key().toInt()) == key) {
             widget->setSelected(true);
@@ -146,12 +146,12 @@ void ListMoodGroupWidget::selectMood(std::uint64_t key) {
     emit moodSelected(mKey, key);
 }
 
-void ListMoodGroupWidget::removeMood(QString mood) {
+void ListMoodGroupWidget::removeMood(const QString& mood) {
     // check if mood exists
     bool foundMood = false;
     ListMoodPreviewWidget *moodWidget = nullptr;
-    for (auto&& widget : mListLayout.widgets()) {
-        ListMoodPreviewWidget *existingWidget = qobject_cast<ListMoodPreviewWidget*>(widget);
+    for (const auto& widget : mListLayout.widgets()) {
+        auto existingWidget = qobject_cast<ListMoodPreviewWidget*>(widget);
         Q_ASSERT(existingWidget);
 
         if (mood.compare(existingWidget->key()) == 0) {

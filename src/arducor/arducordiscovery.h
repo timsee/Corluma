@@ -31,12 +31,13 @@ class ArduCorDiscovery : public QObject, public cor::JSONSaveData
 public:
 
     /// constructor
-    explicit ArduCorDiscovery(QObject *parent, CommHTTP *http, CommUDP *udp);
-
-#ifndef MOBILE_BUILD
-    /// connect serial port to object
-    void connectSerial(CommSerial *serial);
-#endif
+    explicit ArduCorDiscovery(QObject *parent,
+                              CommHTTP *http,
+                              CommUDP *udp
+                          #ifndef MOBILE_BUILD
+                              ,CommSerial *serial
+                          #endif
+                              );
 
     /// starts dicsovery
     void startDiscovery();
@@ -48,7 +49,7 @@ public:
      * \brief addManualIP attempts to connect to an IP address entered manually
      * \param ip new ip address to attempt.
      */
-    void addManualIP(QString ip);
+    void addManualIP(const QString& ip);
 
 #ifndef MOBILE_BUILD
     /// adds a serial port to notFound list
@@ -117,7 +118,7 @@ private:
      * \param controller filled if discovery string is valid.
      * \return true if discovery string is valid, false otherwise.
      */
-    bool deviceControllerFromDiscoveryString(ECommType type, QString discovery, QString controllerName, cor::Controller& controller);
+    bool deviceControllerFromDiscoveryString(ECommType type, const QString& discovery, const QString& controllerName, cor::Controller& controller);
 
 
     /// load the json data.

@@ -23,7 +23,7 @@ class EditableFieldWidget : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit EditableFieldWidget(const QString& text, QWidget *parent, int maxFieldSize = -1, const QString maxFieldError = QString());
+    explicit EditableFieldWidget(const QString& text, QWidget *parent, int maxFieldSize = -1, const QString& maxFieldError = QString());
 
     /// programmatically set the text
     void setText(const QString& text);

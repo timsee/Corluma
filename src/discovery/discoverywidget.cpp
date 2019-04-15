@@ -8,7 +8,7 @@
 
 
 DiscoveryWidget::DiscoveryWidget(QWidget *parent):
-    QWidget(parent) {
+    QWidget(parent), mComm{nullptr} {
 
 }
 

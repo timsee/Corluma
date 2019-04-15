@@ -32,7 +32,7 @@ public:
     CommNanoleaf();
 
     /// destructor
-    ~CommNanoleaf();
+    ~CommNanoleaf() = default;
 
     /*!
      * \brief startup defined in CommType
@@ -79,7 +79,7 @@ public:
     void deleteLight(const cor::Light& light);
 
     /// getter for the discovery state of the nanoleaf
-    ENanoleafDiscoveryState discoveryState() { return mDiscoveryState; }
+    ENanoleafDiscoveryState discoveryState() { return mDiscovery->state(); }
 
     /// renames a nanoleaf controller. This data is stored in appdata.
     void renameController(nano::LeafController controller, const QString& name);
@@ -160,7 +160,7 @@ private:
     void putJSON(const QNetworkRequest& request, const QJsonObject& json);
 
     /// creates a network request based on a QString providing the endpoint.
-    QNetworkRequest networkRequest(const nano::LeafController& controller, QString endpoint);
+    QNetworkRequest networkRequest(const nano::LeafController& controller, const QString& endpoint);
 
     /*!
      * \brief parseStateUpdatePacket parses a state update packet. These packets contain everything such
@@ -194,7 +194,7 @@ private:
     QJsonArray createPalette(const cor::Light& light);
 
     /// changes the main color of a nanoleaf
-    void singleSolidColorChange(const nano::LeafController& controller, QColor color);
+    void singleSolidColorChange(const nano::LeafController& controller, const QColor& color);
 
     /*!
      * \brief converts a vector of QColor to two nanoleaf-compatible jsonarrays. the first of the pair is a
@@ -231,9 +231,6 @@ private:
     /// pointer to the UPnPDiscovery object.
     UPnPDiscovery *mUPnP;
 
-    /// timer that tests whether the app data about the nanoleafs path (IP address, port, etc.) is valid
-    QTimer *mTestingTimer;
-
     /// preset data for palettes from ArduCor
     PresetPalettes mPresetPalettes;
 
@@ -242,9 +239,6 @@ private:
 
     /// stored json palettes for each color group with highlight info
     std::vector<QJsonArray> mHighlightPalettes;
-
-    /// discovery state for the nanoleaf
-    ENanoleafDiscoveryState mDiscoveryState;
 
     /// object that holds and manages nanoleaf controller connections.
     nano::LeafDiscovery *mDiscovery;

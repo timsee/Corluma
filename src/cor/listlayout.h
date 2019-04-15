@@ -42,7 +42,7 @@ public:
      * \brief removeWidget removes the widget with the given key.
      * \param key key of widget to remove.
      */
-    void removeWidget(QString key);
+    void removeWidget(const QString& key);
 
     /*!
      * \brief removeWidget remove cor::ListItemWIdget from the layout
@@ -64,7 +64,7 @@ public:
      * \return pointer to ListCollectionWidget with matching key, if one exists
      *         otherwise, it returns a nullptr.
      */
-    cor::ListItemWidget *widget(QString key);
+    cor::ListItemWidget *widget(const QString& key);
 
     /*!
      * \brief widgetPosition gives the widget position based off of the given widget. Position is not *actual* position,

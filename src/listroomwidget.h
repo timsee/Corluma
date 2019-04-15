@@ -38,7 +38,7 @@ public:
     ListRoomWidget(const cor::Group& group,
                    CommLayer *comm,
                    GroupData *groups,
-                   QString key,
+                   const QString& key,
                    EOnOffSwitchState switchState,
                    cor::EListType listType,
                    cor::EWidgetType type,
@@ -140,16 +140,16 @@ private slots:
     void dropdownTopWidgetPressed();
 
     /// a group button was pressed. This switches the shown devices to be just the devices in that group
-    void groupPressed(QString key);
+    void groupPressed(const QString& key);
 
     /// select all toggled for a given group. true if selecting all of that group, false if deselecting all for that group
-    void selectAllToggled(QString key, bool selectAll);
+    void selectAllToggled(const QString& key, bool selectAll);
 
     /*!
      * \brief handleClicked hangles a ListDeviceWidget getting clicked, emits a the collection's key and the device's key.
      * \param key the key of the ListDeviceWidget
      */
-    void handleClicked(QString key);
+    void handleClicked(const QString& key);
 
     /// handles when an on/off switch switch for any given device is toggled
     void handleToggledSwitch(QString key, bool isOn) { emit deviceSwitchToggled(key, isOn); }

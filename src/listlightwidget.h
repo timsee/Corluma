@@ -45,7 +45,6 @@ public:
      */
     explicit ListLightWidget(const cor::Light& device,
                               bool setHighlightable,
-                              QSize size,
                               cor::EWidgetType type,
                               EOnOffSwitchState switchState,
                               QWidget *parent);
@@ -105,6 +104,9 @@ protected:
      */
     void paintEvent(QPaintEvent *event);
 
+    /// called when widget is resized
+    void resizeEvent(QResizeEvent *);
+
 private slots:
 
     /// handles when the switch state changes
@@ -127,6 +129,9 @@ private:
 
     /// update the type icon to reflect the hardware type.
     void updateTypeIcon(ELightHardwareType type);
+
+    /// handles the state of the switch
+    void handleSwitch();
 
     /// displays the type of light, such as a lightbulb or a light cube.
     QLabel *mTypeIcon;

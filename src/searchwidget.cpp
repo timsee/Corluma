@@ -9,7 +9,7 @@
 
 #include "searchwidget.h"
 
-SearchWidget::SearchWidget(QString defaultLineEditValue, QWidget *parent, int maxSearchingCount, const QString errorMaxSearchString) : QWidget(parent) {
+SearchWidget::SearchWidget(const QString& defaultLineEditValue, QWidget *parent, int maxSearchingCount, const QString& errorMaxSearchString) : QWidget(parent) {
     //----------
     // Top layout
     //----------
@@ -166,7 +166,7 @@ void SearchWidget::discoveringListClicked(QListWidgetItem *item) {
     item->setSelected(true);
 }
 
-bool SearchWidget::addToSearchList(QString name) {
+bool SearchWidget::addToSearchList(const QString& name) {
     // check if item is already in the table, if not, add it
     bool found = false;
     for (int i = 0; i < mDiscoveringListWidget->count(); ++i) {
@@ -183,7 +183,7 @@ bool SearchWidget::addToSearchList(QString name) {
     return false;
 }
 
-bool SearchWidget::addToConnectedList(QString name) {
+bool SearchWidget::addToConnectedList(const QString& name) {
     // look for it in discovering list
     for (int i = 0; i < mDiscoveringListWidget->count(); ++i) {
         QListWidgetItem *item = mDiscoveringListWidget->item(i);
@@ -208,7 +208,7 @@ bool SearchWidget::addToConnectedList(QString name) {
 }
 
 
-void SearchWidget::removeKey(QString key) {
+void SearchWidget::removeKey(const QString& key) {
     for (int i = 0; i < mDiscoveringListWidget->count(); ++i) {
         QListWidgetItem *item = mDiscoveringListWidget->item(i);
         if (item->text().compare(key) == 0) {
@@ -240,7 +240,7 @@ std::list<QString> SearchWidget::searchingFor() {
 void SearchWidget::enableSizeChecks(int min, int max, QString error) {
     mMinSizeCheck = min;
     mMaxSizeCheck = max;
-    mSizeCheckError = error;
+    mSizeCheckError = std::move(error);
     mCheckSize = true;
 }
 

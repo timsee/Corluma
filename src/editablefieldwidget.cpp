@@ -9,7 +9,7 @@
 #include "editablefieldwidget.h"
 #include "utils/reachability.h"
 
-EditableFieldWidget::EditableFieldWidget(const QString& text, QWidget *parent, int maxFieldSize, const QString maxFieldError) : QWidget(parent) {
+EditableFieldWidget::EditableFieldWidget(const QString& text, QWidget *parent, int maxFieldSize, const QString& maxFieldError) : QWidget(parent) {
     mStoredText = text;
 
     mText = new QLabel(text, this);
@@ -75,8 +75,7 @@ void EditableFieldWidget::setText(const QString& text) {
 
 
 void EditableFieldWidget::lineEditChanged(QString newText) {
-    mStoredText = newText;
-
+    mStoredText = std::move(newText);
 }
 
 void EditableFieldWidget::rightButtonClicked(bool) {
@@ -97,12 +96,12 @@ void EditableFieldWidget::rightButtonClicked(bool) {
                 reply.setText(mMaxFieldError);
                 reply.exec();
                 return;
-            } else {
-                // passed checks
-                setText(mStoredText);
-                emit updatedField(mStoredText);
-                setInEditMode(false);
             }
+            // passed checks
+            setText(mStoredText);
+            emit updatedField(mStoredText);
+            setInEditMode(false);
+
         } else {
             setInEditMode(false);
         }

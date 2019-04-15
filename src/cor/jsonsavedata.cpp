@@ -10,7 +10,7 @@
 #include <QStandardPaths>
 #include <QDir>
 #include <QDebug>
-#include <math.h>
+#include <cmath>
 
 namespace cor
 {
@@ -20,9 +20,6 @@ JSONSaveData::JSONSaveData(const QString& saveName)
     mSavePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/" + saveName + ".json";
     checkForJSON();
 }
-
-
-JSONSaveData::~JSONSaveData() {}
 
 bool JSONSaveData::checkForJSON() {
     QString appDataLocation = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
@@ -39,22 +36,19 @@ bool JSONSaveData::checkForJSON() {
     if (saveFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QString data = saveFile.readAll();
         saveFile.close();
-        QJsonParseError error;
+        QJsonParseError error{};
         mJsonData = QJsonDocument::fromJson(data.toUtf8(), &error);
         //qDebug() << "error: " << error.errorString();
         if (!mJsonData.isNull()) {
             return true;
-        } else {
-            qDebug() << "WARNING: json was null";
         }
-    } else {
-        qDebug() << "WARNING: couldn't open JSON";
     }
 
+    qDebug() << "WARNING: couldn't open JSON";
     qDebug() << "WARNING: using default json data";
     QJsonArray defaultArray;
     mJsonData = QJsonDocument(defaultArray);
-    return true;
+    return false;
 }
 
 bool JSONSaveData::saveJSON() {

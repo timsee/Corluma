@@ -6,6 +6,7 @@
 
 #include "editgrouppage.h"
 #include "comm/commhue.h"
+#include "utils/qt.h"
 
 #include <QtCore>
 #include <QtGui>
@@ -14,7 +15,7 @@
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
 
-EditGroupPage::EditGroupPage(QWidget *parent, CommLayer* comm, GroupData *parser) : QWidget(parent), mComm(comm), mGroups(parser) {
+EditGroupPage::EditGroupPage(QWidget *parent, CommLayer* comm, GroupData *parser) : QWidget(parent), mComm(comm), mGroups(parser), mIsMood{false}, mIsRoomCurrent{false} {
 
     mTopMenu = new EditPageTopMenu(this);
     mTopMenu->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -45,7 +46,7 @@ EditGroupPage::EditGroupPage(QWidget *parent, CommLayer* comm, GroupData *parser
     mLayout->addWidget(mSimpleGroupWidget, 8);
 }
 
-void EditGroupPage::showGroup(QString key, std::list<cor::Light> groupDevices, std::list<cor::Light> devices, bool isMood, bool isRoom) {
+void EditGroupPage::showGroup(const QString& key, const std::list<cor::Light>& groupDevices, const std::list<cor::Light>& devices, bool isMood, bool isRoom) {
     mOriginalName = key;
     mNewName = key;
 
@@ -68,15 +69,13 @@ void EditGroupPage::showGroup(QString key, std::list<cor::Light> groupDevices, s
 }
 
 void EditGroupPage::updateDevices(const std::list<cor::Light>& checkedDevices, const std::list<cor::Light>& devices) {
-    mSimpleGroupWidget->updateDevices(devices, mSimpleGroupWidget->height() / 6, cor::EWidgetType::full, EOnOffSwitchState::hidden, true, false);
+    mSimpleGroupWidget->updateDevices(devices, cor::EWidgetType::full, EOnOffSwitchState::hidden, true, false);
     mSimpleGroupWidget->setCheckedDevices(checkedDevices);
 }
 
 // ----------------------------
 // Slots
 // ----------------------------
-
-void EditGroupPage::listDeviceWidgetClicked(QString) {}
 
 void EditGroupPage::deletePressed(bool) {
     QMessageBox::StandardButton reply;
@@ -139,15 +138,6 @@ void EditGroupPage::isRoomChecked(bool checked) {
 // ----------------------------
 
 
-void EditGroupPage::show() {
-    mRenderThread->start(mRenderInterval);
-}
-
-
-void EditGroupPage::hide() {
-    mRenderThread->stop();
-}
-
 void EditGroupPage::resize() {
     mSimpleGroupWidget->resizeWidgets();
 }
@@ -202,7 +192,7 @@ void EditGroupPage::saveChanges() {
     std::list<cor::Light> newDevices = mSimpleGroupWidget->checkedDevices();
 
     bool devicesAreValid = true;
-    if (newDevices.size() > 0) {
+    if (!newDevices.empty()) {
         for (auto& device : newDevices) {
             if (device.controller().compare("") == 0
                     || device.index == 0) {
@@ -273,19 +263,19 @@ void EditGroupPage::saveChanges() {
         mGroups->saveNewGroup(mNewName, newDevices, mIsRoomCurrent);
         // convert any group devices to Hue Lights, if applicable.
         std::list<HueLight> hueLights;
-        for (auto device : newDevices) {
+        for (const auto& device : newDevices) {
             if (device.commType() == ECommType::hue) {
                 HueLight hue = mComm->hue()->hueLightFromLight(device);
                 hueLights.push_back(hue);
             }
         }
-        if (hueLights.size() > 0) {
+        if (!hueLights.empty()) {
             for (const auto& bridge : mComm->hue()->bridges().itemVector()) {
                 // check if group already exists
                 auto hueGroups = mComm->hue()->groups(bridge);
                 bool groupExists = false;
-                for (auto group : hueGroups) {
-                    if (group.name().compare(mNewName) == 0) {
+                for (const auto& group : hueGroups) {
+                    if (group.name() == mNewName) {
                         groupExists = true;
                         mComm->hue()->updateGroup(bridge, group, hueLights);
                     }
@@ -351,7 +341,7 @@ bool EditGroupPage::shouldSetChecked(const cor::Light& device, const std::list<c
     return false;
 }
 
-void EditGroupPage::clickedDevice(QString) {
+void EditGroupPage::clickedDevice(const QString&) {
    // qDebug() << " device clicked " << key << " vs" << deviceName;
 
     // call the highlight button
@@ -360,4 +350,26 @@ void EditGroupPage::clickedDevice(QString) {
     } else {
         mTopMenu->saveButton()->setEnabled(false);
     }
+}
+
+void EditGroupPage::pushIn() {
+    moveWidget(this,
+               QSize(int(this->parentWidget()->width() * 0.75f), int(this->parentWidget()->height() * 0.75f)),
+               QPoint(int(this->parentWidget()->width() * 0.125f), int(-1 * this->parentWidget()->height())),
+               QPoint(int(this->parentWidget()->width() * 0.125f), int(this->parentWidget()->height() * 0.125f)));
+    this->raise();
+    this->setVisible(true);
+    this->isOpen(true);
+    mRenderThread->start(mRenderInterval);
+}
+
+void EditGroupPage::pushOut() {
+    this->isOpen(false);
+
+    moveWidget(this,
+               QSize(int(this->parentWidget()->width() * 0.75f), int(this->parentWidget()->height() * 0.75f)),
+               QPoint(int(this->parentWidget()->width() * 0.125f), int(this->parentWidget()->height() * 0.125f)),
+               QPoint(int(this->parentWidget()->width() * 0.125f), int(-1 * this->parentWidget()->height())));
+    mRenderThread->stop();
+
 }

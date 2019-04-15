@@ -28,7 +28,7 @@ public:
     JSONSaveData(const QString& saveName);
 
     /// destructor
-    virtual ~JSONSaveData();
+    virtual ~JSONSaveData() = default;
 
 protected:
 

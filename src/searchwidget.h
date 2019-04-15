@@ -25,7 +25,7 @@ class SearchWidget : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit SearchWidget(QString defaultLineEditValue, QWidget *parent, int maxSearchingCount = -1, const QString errorMaxSearchString = QString());
+    explicit SearchWidget(const QString& defaultLineEditValue, QWidget *parent, int maxSearchingCount = -1, const QString& errorMaxSearchString = QString());
 
     /*!
      * \brief lineEditText text in line edit
@@ -40,20 +40,20 @@ public:
      * \param key new string to add to UI and send to backend to search for
      * \return true if added successfully.
      */
-    bool addToSearchList(QString key);
+    bool addToSearchList(const QString& key);
 
     /*!
      * \brief addToConnectedList programmatically add a name to the connected list.
      * \param name name to add to the list
      * \return true if added successfully.
      */
-    bool addToConnectedList(QString name);
+    bool addToConnectedList(const QString& name);
 
     /*!
      * \brief removeKey remove the key from the searching list and connected list.
      * \param key key to remove.
      */
-    void removeKey(QString key);
+    void removeKey(const QString& key);
 
     /*!
      * \brief enableSizeChecks enable size checks, which makes sure that the string

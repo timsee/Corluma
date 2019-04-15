@@ -13,7 +13,7 @@
 
 
 ColorPicker::ColorPicker(QWidget *parent) :
-    QWidget(parent) {
+    QWidget(parent), mCircleIndex{0} {
 
     mWheelIsEnabled = true;
     mCurrentLayoutColorPicker = ELayoutColorPicker::standardLayout;
@@ -62,7 +62,7 @@ ColorPicker::ColorPicker(QWidget *parent) :
 
     mTempBrightSliders = new TempBrightSliders(this);
     mTempBrightSliders->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(mTempBrightSliders, SIGNAL(temperatureAndBrightnessChanged(int, uint32_t)), this, SLOT(tempBrightSlidersChanged(int, uint32_t)));
+    connect(mTempBrightSliders, SIGNAL(temperatureAndBrightnessChanged(int,uint32_t)), this, SLOT(tempBrightSlidersChanged(int,uint32_t)));
     mTempBrightSliders->setVisible(false);
 
     mCustomColorPicker = new  CustomColorPicker(this);
@@ -94,11 +94,7 @@ ColorPicker::ColorPicker(QWidget *parent) :
     changeLayout(ELayoutColorPicker::standardLayout);
 }
 
-ColorPicker::~ColorPicker() {
-}
-
-
-void ColorPicker::RGBSlidersColorChanged(QColor color) {
+void ColorPicker::RGBSlidersColorChanged(const QColor& color) {
     chooseColor(color);
 }
 
@@ -157,10 +153,10 @@ void ColorPicker::changeLayout(ELayoutColorPicker layout,  bool skipAnimation) {
     resize();
 }
 
-void ColorPicker::updateColorStates(QColor mainColor,
+void ColorPicker::updateColorStates(const QColor& mainColor,
                                     uint32_t brightness,
-                                    const std::vector<QColor> colorSchemes,
-                                    const std::vector<QColor> customColors) {
+                                    const std::vector<QColor>& colorSchemes,
+                                    const std::vector<QColor>& customColors) {
     mRGBSliders->changeColor(mainColor);
     mBrightnessSlider->changeBrightness(brightness);
 
@@ -176,30 +172,30 @@ void ColorPicker::setMultiColorDefaults(const std::vector<QColor>& colors) {
 
 void ColorPicker::updateBottomMenuState(bool enable) {
     if (mCurrentLayoutColorPicker == ELayoutColorPicker::standardLayout) {
-        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mRGBSliders);
+        auto effect = new QGraphicsOpacityEffect(mRGBSliders);
         effect->setOpacity(mWheelOpacity);
         mRGBSliders->setGraphicsEffect(effect);
         mRGBSliders->enable(enable);
     } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::ambientLayout) {
-        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mTempBrightSliders);
+        auto effect = new QGraphicsOpacityEffect(mTempBrightSliders);
         effect->setOpacity(mWheelOpacity);
         mTempBrightSliders->setGraphicsEffect(effect);
         mTempBrightSliders->setEnabled(enable);
     } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::brightnessLayout) {
-        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mBrightnessSlider);
+        auto effect = new QGraphicsOpacityEffect(mBrightnessSlider);
         effect->setOpacity(mWheelOpacity);
         mBrightnessSlider->setGraphicsEffect(effect);
         mBrightnessSlider->setEnabled(enable);
     } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::multiColorLayout) {
-        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mCustomColorPicker);
+        auto effect = new QGraphicsOpacityEffect(mCustomColorPicker);
         effect->setOpacity(mWheelOpacity);
         mCustomColorPicker->setGraphicsEffect(effect);
         mCustomColorPicker->setEnabled(enable);
     } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::colorSchemeLayout) {
-        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mColorSchemeGrid);
+        auto effect = new QGraphicsOpacityEffect(mColorSchemeGrid);
         effect->setOpacity(mWheelOpacity);
         mColorSchemeGrid->setGraphicsEffect(effect);
-        QGraphicsOpacityEffect *effect2 = new QGraphicsOpacityEffect(mColorSchemeCircles);
+        auto effect2 = new QGraphicsOpacityEffect(mColorSchemeCircles);
         effect2->setOpacity(mWheelOpacity);
         mColorSchemeGrid->setGraphicsEffect(effect2);
         mColorSchemeGrid->setEnabled(enable);
@@ -211,7 +207,7 @@ void ColorPicker::enable(bool shouldEnable) {
     if (shouldEnable) {
         mWheelOpacity = 1.0;
         // un-fade out the wheel
-        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mColorWheel);
+        auto effect = new QGraphicsOpacityEffect(mColorWheel);
         effect->setOpacity(mWheelOpacity);
         mColorWheel->setGraphicsEffect(effect);
         this->setEnabled(true);
@@ -219,7 +215,7 @@ void ColorPicker::enable(bool shouldEnable) {
     } else if (!shouldEnable) {
         mWheelOpacity = 0.333;
         // fade out the wheel
-        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mColorWheel);
+        auto effect = new QGraphicsOpacityEffect(mColorWheel);
         effect->setOpacity(mWheelOpacity);
         mColorWheel->setGraphicsEffect(effect);
         this->setEnabled(false);
@@ -232,7 +228,7 @@ void ColorPicker::enable(bool shouldEnable) {
 // Layout-Specific API
 //------------------------------
 
-void ColorPicker::chooseColor(QColor color, bool shouldSignal) {
+void ColorPicker::chooseColor(const QColor& color, bool shouldSignal) {
     if (shouldSignal) {
         emit colorUpdate(color);
     }
@@ -328,7 +324,7 @@ void ColorPicker::handleMouseEvent(QMouseEvent *event) {
                 }
             } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::ambientLayout) {
                 // use the poorly named "value" of the HSV range to calculate the brightness
-                uint32_t brightness = uint32_t(color.valueF() * 100.0);
+                auto brightness = uint32_t(color.valueF() * 100.0);
                 // adjust the color so that it has a maxed out value in the HSV colorspace
                 color.setHsv(color.hue(),
                              color.saturation(),
@@ -339,7 +335,7 @@ void ColorPicker::handleMouseEvent(QMouseEvent *event) {
                 mTempBrightSliders->changeTemperatureAndBrightness(ct, brightness);
             } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::brightnessLayout) {
                 // use the poorly named "value" of the HSV range to calculate the brightness
-                uint32_t brightness = uint32_t(color.valueF() * 100.0);
+                auto brightness = uint32_t(color.valueF() * 100.0);
                 chooseBrightness(brightness);
                 mBrightnessSlider->changeBrightness(brightness);
             } else if (mCurrentLayoutColorPicker == ELayoutColorPicker::standardLayout) {
@@ -355,10 +351,9 @@ void ColorPicker::handleMouseEvent(QMouseEvent *event) {
                     mColorSchemeCircles->moveStandardCircle(uint32_t(mCircleIndex), event->pos());
                 }
 
-                std::vector<SPickerSelection> circles = mColorSchemeCircles->circles();
                 // turn into vector of colors
                 std::vector<QColor> colors;
-                for (auto&& circle : circles) {
+                for (const auto& circle : mColorSchemeCircles->circles()) {
                     colors.push_back(circle.color);
                 }
                 emit colorsUpdate(colors);
@@ -444,17 +439,17 @@ void ColorPicker::changeColorWheel(ELayoutColorPicker oldLayout, ELayoutColorPic
             mTempWheel->setVisible(true);
             mTempWheel->setGeometry(mColorWheel->geometry());
 
-            QGraphicsOpacityEffect *fadeOutEffect = new QGraphicsOpacityEffect(mTempWheel);
+            auto fadeOutEffect = new QGraphicsOpacityEffect(mTempWheel);
             mTempWheel->setGraphicsEffect(fadeOutEffect);
-            QPropertyAnimation *fadeOutAnimation = new QPropertyAnimation(fadeOutEffect, "opacity");
+            auto fadeOutAnimation = new QPropertyAnimation(fadeOutEffect, "opacity");
             fadeOutAnimation->setDuration(animationMsec);
             fadeOutAnimation->setStartValue(mWheelOpacity);
             fadeOutAnimation->setEndValue(0.0f);
             connect(fadeOutAnimation, SIGNAL(finished()), this, SLOT(hideTempWheel()));
 
-            QGraphicsOpacityEffect *fadeInEffect = new QGraphicsOpacityEffect(mColorWheel);
+            auto fadeInEffect = new QGraphicsOpacityEffect(mColorWheel);
             mColorWheel->setGraphicsEffect(fadeInEffect);
-            QPropertyAnimation *fadeInAnimation = new QPropertyAnimation(fadeInEffect, "opacity");
+            auto fadeInAnimation = new QPropertyAnimation(fadeInEffect, "opacity");
             fadeInAnimation->setDuration(animationMsec);
             fadeInAnimation->setStartValue(0.0f);
             mWheelOpacity = 1.0;
@@ -465,7 +460,7 @@ void ColorPicker::changeColorWheel(ELayoutColorPicker oldLayout, ELayoutColorPic
             }
             fadeInAnimation->setEndValue(mWheelOpacity);
 
-            QParallelAnimationGroup *group = new QParallelAnimationGroup;
+            auto group = new QParallelAnimationGroup;
             group->addAnimation(fadeInAnimation);
             group->addAnimation(fadeOutAnimation);
             group->start(QAbstractAnimation::DeleteWhenStopped);
@@ -495,13 +490,13 @@ void ColorPicker::changeColorWheel(ELayoutColorPicker oldLayout, ELayoutColorPic
                 // just set opacity here immediately cause of weird bug...
                 mWheelOpacity = 1.0;
                 // un-fade out the wheel
-                QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(mColorWheel);
+                auto effect = new QGraphicsOpacityEffect(mColorWheel);
                 effect->setOpacity(mWheelOpacity);
                 mColorWheel->setGraphicsEffect(effect);
             } else {
-                QGraphicsOpacityEffect *fadeEffect = new QGraphicsOpacityEffect(mColorWheel);
+                auto fadeEffect = new QGraphicsOpacityEffect(mColorWheel);
                 mColorWheel->setGraphicsEffect(fadeEffect);
-                QPropertyAnimation *fadeAnimation = new QPropertyAnimation(fadeEffect, "opacity");
+                auto fadeAnimation = new QPropertyAnimation(fadeEffect, "opacity");
                 fadeAnimation->setDuration(animationMsec);
                 fadeAnimation->setStartValue(startOpacity);
                 fadeAnimation->setEndValue(mWheelOpacity);
@@ -515,7 +510,7 @@ void ColorPicker::changeColorWheel(ELayoutColorPicker oldLayout, ELayoutColorPic
 
 }
 
-bool ColorPicker::checkIfColorIsValid(QColor color) {
+bool ColorPicker::checkIfColorIsValid(const QColor& color) {
     bool colorIsValid = true;
     // check if its a color similar to the background...
     if (color.red() == color.blue() + 1

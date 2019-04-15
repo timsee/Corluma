@@ -115,7 +115,7 @@ public slots:
     /*!
      * \brief topMenuButtonPressed button is pressed from top menu. Gives back the key of the button.
      */
-    void topMenuButtonPressed(QString);
+    void topMenuButtonPressed(const QString&);
 
     /// slot called when greyout fade is complete.
     void greyOutFadeComplete();
@@ -126,13 +126,13 @@ public slots:
      * \param key the key for the light
      * \param name the new name for the light.
      */
-    void lightNameChange(EProtocolType type, QString key, QString name);
+    void lightNameChange(EProtocolType type, const QString& key, const QString& name);
 
     /*!
      * \brief deleteLight Delete the light with the given key
      * \param key unique ID for light to delete
      */
-    void deleteLight(QString key);
+    void deleteLight(const QString& key);
 
     /// getter for page
     EPage currentPage() { return mMainViewport->currentPage(); }
@@ -141,7 +141,7 @@ public slots:
     void routineChanged(QJsonObject routine);
 
     /// scheme changed from colorpage
-    void schemeChanged(std::vector<QColor>);
+    void schemeChanged(const std::vector<QColor>&);
 
     /// mood changed from moodpage
     void moodChanged(std::uint64_t mood);
@@ -159,7 +159,7 @@ public slots:
     void speedChanged(int);
 
     /// light detected as deleted
-    void deletedLight(QString uniqueID);
+    void deletedLight(const QString& uniqueID);
 
     /// called when a mood is selected
     void moodSelected(std::uint64_t);

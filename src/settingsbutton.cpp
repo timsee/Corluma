@@ -12,7 +12,7 @@
 #include <QtGui>
 #include <QStyleOption>
 
-SettingsButton::SettingsButton(QString title, QString description, QWidget *parent) : QWidget(parent) {
+SettingsButton::SettingsButton(const QString& title, const QString& description, QWidget *parent) : QWidget(parent) {
     mIsHighlighted = false;
 
     mTitle = new QLabel(title);

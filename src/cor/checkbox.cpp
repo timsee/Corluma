@@ -11,7 +11,7 @@
 namespace cor
 {
 
-CheckBox::CheckBox(QWidget *parent, QString title) : QWidget(parent) {
+CheckBox::CheckBox(QWidget *parent, const QString& title) : QWidget(parent) {
     mIsChecked = false;
     mSpacer = 5;
 
@@ -36,7 +36,7 @@ CheckBox::CheckBox(QWidget *parent, QString title) : QWidget(parent) {
     mCheckBox->setMinimumWidth(mTitle->height());
 }
 
-void CheckBox::setTitle(QString title) {
+void CheckBox::setTitle(const QString& title) {
     mTitle->setText(title);
     QRect r = mTitle->fontMetrics().boundingRect(mTitle->text());
     mTitle->setFixedWidth(r.width());
@@ -93,7 +93,7 @@ void CheckBox::resizeEvent(QResizeEvent *) {
                         mTitle->width(),
                         mTitle->height());
 
-    int height = int(mTitle->height() * 0.8);
+    auto height = int(mTitle->height() * 0.8);
     mCheckBox->setGeometry(mTitle->width() + 2 * mSpacer,
                            mTitle->geometry().y(),
                            height + mSpacer,

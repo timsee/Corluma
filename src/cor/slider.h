@@ -47,14 +47,14 @@ public:
      *        of the slider to the left of the thumb piece of the slider Uses a custom style sheet to achieve this effect.
      * \param color the color that will be put into a custom style sheet
      */
-    void setSliderColorBackground(QColor color);
+    void setSliderColorBackground(const QColor& color);
 
     /*!
      * \brief setSliderImageBackground Adds a background image to the slider instead of using a color with a gradient.
      * \param path path to the resource of the image
      * \TODO clean this up more
      */
-    void setSliderImageBackground(QString path);
+    void setSliderImageBackground(const QString& path);
 
     /*!
      * \brief setSnapToNearestTick set this if you want the slider to snap to the nearest tick instead

@@ -87,9 +87,9 @@ void LightDiscovery::discoveryRoutine() {
     mComm->hue()->requestNewLights(mBridge);
     // see if any new lights have been added to UI
     bool newLightsAdded = false;
-    for (auto serial : mSearchWidget->searchingFor()) {
+    for (const auto& serial : mSearchWidget->searchingFor()) {
         bool foundSerial = false;
-        for (auto searchingSerial : mComm->hue()->searchingLights()) {
+        for (const auto& searchingSerial : mComm->hue()->searchingLights()) {
             if (serial.compare(searchingSerial) == 0) {
                 foundSerial = true;
             }

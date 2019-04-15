@@ -11,8 +11,6 @@
 namespace cor
 {
 
-Page::~Page() {}
-
 void Page::isOpen(bool open) {
     mIsOpen = open;
 }
