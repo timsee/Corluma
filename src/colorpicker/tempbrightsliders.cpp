@@ -7,6 +7,8 @@
 #include "tempbrightsliders.h"
 #include "utils/color.h"
 
+#include <QDebug>
+
 TempBrightSliders::TempBrightSliders(QWidget *parent) : QWidget(parent) {
 
     int temperature = 300;
@@ -16,29 +18,27 @@ TempBrightSliders::TempBrightSliders(QWidget *parent) : QWidget(parent) {
     // Setup Slider
     // --------------
     mBrightnessSlider = new cor::Slider(this);
-    mBrightnessSlider->setSliderColorBackground(QColor(int(255.0f * brightness / 100.0f),
-                                                       int(255.0f * brightness / 100.0f),
-                                                       int(255.0f * brightness / 100.0f)));
+    mBrightnessSlider->setGradient(QColor(0, 0, 0), QColor(0, 0, 0));
     mBrightnessSlider->slider()->setRange(0, 100);
     mBrightnessSlider->slider()->blockSignals(true);
     mBrightnessSlider->slider()->setValue(brightness);
     mBrightnessSlider->slider()->blockSignals(false);
     mBrightnessSlider->setSnapToNearestTick(true);
     mBrightnessSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mBrightnessSlider->setSliderHeight(0.8f);
+    mBrightnessSlider->setHeightPercentage(0.8f);
     connect(mBrightnessSlider, SIGNAL(valueChanged(int)), this, SLOT(brightnessSliderChanged(int)));
     connect(mBrightnessSlider->slider(), SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
 
 
     mTemperatureSlider = new cor::Slider(this);
-    mTemperatureSlider->setSliderColorBackground(cor::colorTemperatureToRGB(300));
+    mTemperatureSlider->setColor(QColor(0,0,0));
     mTemperatureSlider->slider()->setRange(153, 500);
     mTemperatureSlider->slider()->blockSignals(true);
     mTemperatureSlider->slider()->setValue(temperature);
     mTemperatureSlider->slider()->blockSignals(false);
     mTemperatureSlider->setSnapToNearestTick(true);
     mTemperatureSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mTemperatureSlider->setSliderHeight(0.8f);
+    mTemperatureSlider->setHeightPercentage(0.8f);
     connect(mTemperatureSlider, SIGNAL(valueChanged(int)), this, SLOT(temperatureSliderChanged(int)));
     connect(mTemperatureSlider->slider(), SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
 
@@ -65,27 +65,45 @@ TempBrightSliders::TempBrightSliders(QWidget *parent) : QWidget(parent) {
     setLayout(mLayout);
 }
 
-void TempBrightSliders::changeTemperatureAndBrightness(int temperature, uint32_t brightness) {
-    if (brightness <= 100
-            && temperature >= 153
-            && temperature <= 500) {
-
-        mTemperatureSlider->setSliderColorBackground(cor::colorTemperatureToRGB(temperature));
-
+void TempBrightSliders::changeTemperatureAndBrightness(std::uint32_t temperature, std::uint32_t brightness) {
+    if (temperature >= 153 && temperature <= 500) {
         mTemperatureSlider->blockSignals(true);
         mTemperatureSlider->slider()->setValue(temperature);
         mTemperatureSlider->blockSignals(false);
-
-        QColor brightColor(int(2.5f * brightness),
-                           int(2.5f * brightness),
-                           int(2.5f * brightness));
-        mBrightnessSlider->setSliderColorBackground(brightColor);
-        mBrightnessSlider->blockSignals(true);
-        mBrightnessSlider->slider()->setValue(int(brightness));
-        mBrightnessSlider->blockSignals(false);
     }
+
+    changeBrightness(brightness);
 }
 
+void TempBrightSliders::changeBrightness(uint32_t brightness) {
+    QColor brightColor(int(2.5f * brightness),
+                       int(2.5f * brightness),
+                       int(2.5f * brightness));
+    mBrightnessSlider->blockSignals(true);
+    mBrightnessSlider->slider()->setValue(int(brightness));
+    mBrightnessSlider->setGradient(QColor(0,0,0), cor::colorTemperatureToRGB(mTemperatureSlider->slider()->value()));
+    mBrightnessSlider->blockSignals(false);
+}
+
+
+void TempBrightSliders::enable(bool enable) {
+    if (!enable) {
+        bool blocked = mTemperatureSlider->slider()->blockSignals(true);
+        mTemperatureSlider->slider()->setValue(0);
+        mTemperatureSlider->setColor(cor::kSliderBackgroundColor);
+        mTemperatureSlider->slider()->blockSignals(blocked);
+
+        blocked = mBrightnessSlider->slider()->blockSignals(true);
+        mBrightnessSlider->slider()->setValue(0);
+        mBrightnessSlider->setColor(cor::kSliderBackgroundColor);
+        mBrightnessSlider->slider()->blockSignals(blocked);
+    } else {
+        mTemperatureSlider->setImage(":/images/ct_range.png");
+        auto temp = mTemperatureSlider->slider()->value();
+        mBrightnessSlider->setGradient(QColor(0, 0, 0), cor::colorTemperatureToRGB(temp));
+    }
+    this->setEnabled(enable);
+}
 
 void TempBrightSliders::temperatureSliderChanged(int newValue) {
     emit temperatureAndBrightnessChanged(newValue, uint32_t(mBrightnessSlider->slider()->value()));
@@ -99,3 +117,9 @@ void TempBrightSliders::releasedSlider() {
     emit temperatureAndBrightnessChanged(mTemperatureSlider->slider()->value(),
                                          uint32_t(mBrightnessSlider->slider()->value()));
 }
+
+std::uint32_t TempBrightSliders::brightness() {
+    return std::uint32_t(mBrightnessSlider->slider()->value());
+}
+
+

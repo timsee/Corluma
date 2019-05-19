@@ -96,7 +96,10 @@ public:
     void showFloatingLayout(EPage newPage);
 
     /// sets up the colorPage's horizontal floating layout.
-    void adjustColorLayout();
+    void adjustSingleColorLayout(bool skipTransition);
+
+    /// sets up the PalettePage's horizontal floating layout
+    void adjustMultiColorLayout(bool skipTransition);
 
     /// true to hide menu button, false to display it
     void hideMenuButton(bool shouldHide);
@@ -209,6 +212,12 @@ private:
 
     /// floating layout for color page.
     FloatingLayout *mColorFloatingLayout;
+
+    /// routine widget for ColorPage
+    FloatingLayout *mSingleRoutineFloatingLayout;
+
+    /// routine widget for PalettePage
+    FloatingLayout *mMultiRoutineFloatingLayout;
 
     /// last key for color page.
     QString mLastColorButtonKey;

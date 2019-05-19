@@ -3,13 +3,15 @@
 
 #include <QWidget>
 
+#include "colorschemebutton.h"
+
+class ColorWheel;
+
 /// info on a specific color picker selection
-struct SPickerSelection {
+struct ColorSelection {
     bool shouldShow;
     QPointF center;
     QColor color;
-    float angle;
-    float distance;
 };
 
 /*!
@@ -27,7 +29,7 @@ class ColorSchemeCircles : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    explicit ColorSchemeCircles(QImage renderedColorWheel, QWidget *parent);
+    explicit ColorSchemeCircles(std::size_t count, ColorWheel *wheel, QWidget *parent);
 
     /*!
      * \brief positionIsUnderCircle gives index of picker selection that is over the given point, if one exists.
@@ -37,86 +39,60 @@ public:
      */
     int positionIsUnderCircle(QPointF newPos);
 
+    /// hide all displayed circles
+    void hideCircles();
+
+    /*!
+     * \brief updateSingleColor updates every color to a single color
+     * \param color new color for the single color.
+     */
+    void updateSingleColor(const QColor& color);
+
     /*!
      * \brief updateColorScheme update the color scheme and the indices of the picker selections based off of the provided
      *        color scheme
      * \param colorScheme new values for the color scheme.
+     * \param adjustColorPositions true to adjust the actual color positions
      */
     void updateColorScheme(const std::vector<QColor>& colorScheme);
-
-    /// update the count of colors to display
-    void updateColorCount(uint32_t colorCount) { mColorCount = colorCount; }
-
-    /*!
-     * \brief moveCenterCircle move the center circle to a new position, update other circles if needed
-     * \param newPos new position to move the center circle to
-     * \param isOnOpenSpace true if this position was open space, false if its a minor update to the previous
-     *        position of the center circle
-     */
-    void moveCenterCircle(QPointF newPos, bool isOnOpenSpace);
 
     /*!
      * \brief moveStandardCircle move a standard circle to a new position
      * \param i index of circle to move
      * \param newPos new position to move the circle to.
+     * \return new color at position
      */
-    void moveStandardCircle(uint32_t i, QPointF newPos);
+    std::vector<QColor> moveStandardCircle(uint32_t i, QPointF newPos);
 
     /// getter for the varioujs circles used by this class
-    std::vector<SPickerSelection> circles();
+    const std::vector<ColorSelection>& circles() const noexcept { return mCircles; }
+
+    /// change the color scheme for the circles
+    void changeColorSchemeType(EColorSchemeType type) noexcept { mSchemeType = type; }
 
 protected:
     /// called when rendering
     void paintEvent(QPaintEvent *event);
 
 private:
-    /// count of colors
-    uint32_t mColorCount;
 
-    /*!
-     * \brief computeDistance compute length of line between point and the circle's center point
-     * \param pos the point to calculate the distance for
-     * \return the length of a line drawn from the given point to the center point
-     */
-    float computeDistance(QPointF pos);
-
-    /*!
-     * \brief computeAngle compute angle created by using main selection and the given point and the center as the points
-     *        used to generate the angle
-     * \param pos the input that you want to compute a angle for
-     * \return an angle in degrees.
-     */
-    float computeAngle(QPointF pos);
-
-    /*!
-     * \brief findColorInWheel find a point that creates a color close to or identical to the colro given
-     * \return a point on the widget that has a given color similar to the color provided.
-     */
-    QPointF findColorInWheel(const QColor&);
-
-    /*!
-     * \brief moveCircles move circles, based off the rules provided by the specific given circle index
-     * \param i the circle index that is calling all other circles moving.
-     */
-    void moveCircles(int i);
+    /// update the scheme
+    void updateScheme(std::size_t i);
 
     /// radius of circles
     int mRadius;
 
-    /// change in angle during movement
-    float mDeltaAngle;
-
     /// size of shadow for the circles
     int mShadowSize;
 
-    /// "main" circle that is used to move all the other circles
-    SPickerSelection mMainSelection;
-
-    /// rendered version of color wheel for choosing colors
-    QImage mRenderedColorWheel;
-
     /// the rest of the circles that show if multiple lights are selected.
-    std::vector<SPickerSelection> mCircles;
+    std::vector<ColorSelection> mCircles;
+
+    /// curent scheme type
+    EColorSchemeType mSchemeType;
+
+    /// pointer to the color wheel
+    ColorWheel *mWheel;
 };
 
 #endif // COLORSCHEMECIRCLES_H

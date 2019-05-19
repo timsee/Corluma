@@ -9,6 +9,7 @@
 #include "cor/devicelist.h"
 #include "groupdata.h"
 #include "comm/commlayer.h"
+#include "cor/devicelist.h"
 #include "listroomwidget.h"
 #include "addnewgroupbutton.h"
 
@@ -28,7 +29,7 @@ class LeftHandMenu : public QWidget
     Q_OBJECT
 public:
     /// constructor
-    LeftHandMenu(cor::DeviceList *selectedLights, CommLayer *comm, GroupData *groups, QWidget *parent);
+    LeftHandMenu(cor::DeviceList *selectedLights, CommLayer *comm, cor::DeviceList *lights, GroupData *groups, QWidget *parent);
 
     /// resize programmatically
     void resize();
@@ -84,7 +85,7 @@ private slots:
     void renderUI();
 
     /// handles when the new group button is pressed
-    void newGroupButtonPressed() { emit createNewGroup(); }
+    void newGroupButtonPressed();
 
 private:
 
@@ -152,6 +153,9 @@ private:
     /// pointer to comm layer
     CommLayer *mComm;
 
+    /// list of current lights, used to update UI
+    cor::DeviceList *mData;
+
     /// pointer to group data
     GroupData *mGroups;
 
@@ -172,6 +176,9 @@ private:
 
     /// update the single color button based off of what is selected
     void updateSingleColorButton();
+
+    /// stored values for last devices to prevent unnecessary renders
+    std::list<cor::Light> mLastDevices;
 
     /// stores number of rooms to check if resize is needed
     std::size_t mNumberOfRooms;

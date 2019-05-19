@@ -7,6 +7,13 @@
 
 #include "cor/light.h"
 
+/*!
+ * \copyright
+ * Copyright (C) 2015 - 2019.
+ * Released under the GNU General Public License.
+ *
+ * \brief The ArduCorInfoWidget class provides information about an Arducor controller.
+ */
 class ArduCorInfoWidget : public QWidget
 {
     Q_OBJECT

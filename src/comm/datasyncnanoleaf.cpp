@@ -18,7 +18,7 @@ bool checkIfOffByOne(int goal, int value) {
 DataSyncNanoLeaf::DataSyncNanoLeaf(cor::DeviceList *data, CommLayer *comm) {
     mData = data;
     mComm = comm;
-    mUpdateInterval = 333;
+    mUpdateInterval = 500;
 
     connect(mComm, SIGNAL(packetReceived(EProtocolType)), this, SLOT(commPacketReceived(EProtocolType)));
     connect(mData, SIGNAL(dataUpdate()), this, SLOT(resetSync()));

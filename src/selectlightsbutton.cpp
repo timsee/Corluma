@@ -59,38 +59,38 @@ void SelectLightsButton::paintEvent(QPaintEvent *) {
     painter.drawLine(0, 0, this->width(), 0);
 }
 
-void SelectLightsButton::resize(int yPos, const QSize& size) {
+void SelectLightsButton::resize(int yPos) {
     if (mIsIn) {
-        this->setGeometry(size.width() - this->width(),
+        this->setGeometry(0,
                           yPos,
                           this->width(),
                           this->height());
     } else {
-        this->setGeometry(size.width(),
+        this->setGeometry(0 - this->width(),
                           yPos,
                           this->width(),
                           this->height());
     }
 }
 
-void SelectLightsButton::pushIn(int yPos, const QSize& size) {
-    mIsIn = true;
-    QPoint endPoint(size.width() - this->width(), yPos);
+void SelectLightsButton::pushOut(int yPos) {
+    mIsIn = false;
+    QPoint endPoint(0 - this->width(), yPos);
     if (this->pos().x() != endPoint.x()) {
         cor::moveWidget(this,
                         this->size(),
-                        QPoint(size.width(), yPos),
+                        QPoint(0, yPos),
                         endPoint);
     }
 }
 
-void SelectLightsButton::pushOut(int yPos, const QSize& size) {
-    mIsIn = false;
-    QPoint startPoint(size.width() - this->width(), yPos);
-    if (this->pos().x() != size.width()) {
+void SelectLightsButton::pushIn(int yPos) {
+    mIsIn = true;
+    QPoint startPoint(0 - this->width(), yPos);
+    if (this->pos().x() != 0) {
         cor::moveWidget(this,
                         this->size(),
                         startPoint,
-                        QPoint(size.width(), yPos));
+                        QPoint(0, yPos));
     }
 }

@@ -73,6 +73,12 @@ public:
     /// getter for routines
     const std::vector<std::pair<QString, QJsonObject> > routines() { return mRoutines; }
 
+    /// true to show widget, false to hide it
+    void showWidget(bool shouldShow);
+
+    /// true if open, false if hidden
+    bool isOpen() const noexcept { return mIsOpen; }
+
 signals:
 
     /*!
@@ -105,6 +111,9 @@ private:
 
     /// vector of routines
     std::vector<std::pair<QString, QJsonObject> > mRoutines;
+
+    /// true if showing, false if hidden
+    bool mIsOpen;
 
     /*!
      * \brief mRoutineButtons pointers to all the main buttons, used

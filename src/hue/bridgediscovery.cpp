@@ -432,7 +432,9 @@ void BridgeDiscovery::testNewlyDiscoveredBridge(const hue::Bridge& bridge) {
 EHueDiscoveryState BridgeDiscovery::state() {
     if (!mFoundBridges.empty() && mNotFoundBridges.empty()) {
         return EHueDiscoveryState::allBridgesConnected;
-    } else if (!mNotFoundBridges.empty()) {
+    }
+
+    if (!mNotFoundBridges.empty()) {
         for (auto bridge : mNotFoundBridges) {
             if (bridge.IP != "" && bridge.username == "" && bridge.state == EBridgeDiscoveryState::lookingForUsername) {
                 return EHueDiscoveryState::findingDeviceUsername;

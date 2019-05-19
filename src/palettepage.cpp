@@ -7,131 +7,41 @@
 #include "palettepage.h"
 #include "icondata.h"
 #include "utils/qt.h"
+#include "utils/color.h"
 
 #include <QDebug>
 #include <QSignalMapper>
 #include <QScroller>
 
-PalettePage::PalettePage(QWidget *parent) : QWidget(parent) {
+PalettePage::PalettePage(QWidget *parent) : QWidget(parent),
+    mColorScheme(5, QColor(0, 255, 0)) {
+    mCount = 0;
     this->grabGesture(Qt::SwipeGesture);
 
-    mLayout = new QVBoxLayout(this);
-
-    mSpeedSlider = new cor::Slider(this);
-    mSpeedSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mSpeedSlider->slider()->setRange(0, 200);
-    mSpeedSlider->slider()->setValue(150);
-    mSpeedSlider->setSliderHeight(0.5f);
-    mSpeedSlider->slider()->setTickPosition(QSlider::TicksBelow);
-    mSpeedSlider->slider()->setTickInterval(50);
-    mSpeedSlider->setContentsMargins(20, 0, 0, 0);
-    connect(mSpeedSlider, SIGNAL(valueChanged(int)), this, SLOT(speedChanged(int)));
     mSpeed = 150;
 
-    mScrollWidgetArduino = new QWidget(this);
-    mScrollAreaArduino = new QScrollArea(this);
-    mScrollAreaArduino->setWidget(mScrollWidgetArduino);
-    mScrollAreaArduino->setStyleSheet("background-color:transparent;");
-    mScrollAreaArduino->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    QScroller::grabGesture(mScrollAreaArduino->viewport(), QScroller::LeftMouseButtonGesture);
+    mArduinoPaletteScrollArea = new PaletteScrollArea(this);
+    mArduinoPaletteScrollArea->setupButtons(true);
 
-    mScrollWidgetHue = new QWidget(this);
-    mScrollAreaHue = new QScrollArea(this);
-    mScrollAreaHue->setWidget(mScrollWidgetHue);
-    mScrollAreaHue->setStyleSheet("background-color:transparent;");
-    QScroller::grabGesture(mScrollAreaHue->viewport(), QScroller::LeftMouseButtonGesture);
+    mHuePaletteScrollArea = new PaletteScrollArea(this);
+    mHuePaletteScrollArea->setupButtons(false);
 
-    mLayout->addWidget(mSpeedSlider, 2, Qt::AlignCenter);
-    mLayout->addWidget(mScrollAreaArduino, 20, Qt::AlignBottom);
+    mColorPicker = new MultiColorPicker(this);
+    mCurrentMultiRoutine = ERoutine::multiGlimmer;
+    mColorPicker->setVisible(false);
+
+    connect(mColorPicker, SIGNAL(colorsUpdate(std::vector<QColor>)), this, SLOT(colorsChanged(std::vector<QColor>)));
+
+    /// fill with junk data for this case
+    mMultiRoutineWidget = new RoutineButtonsWidget(EWidgetGroup::multiRoutines, cor::defaultCustomColors(), this);
+    mMultiRoutineWidget->setMaximumWidth(this->width());
+    mMultiRoutineWidget->setMaximumHeight(this->height() / 3);
+    mMultiRoutineWidget->setGeometry(0, this->height(), mMultiRoutineWidget->width(), mMultiRoutineWidget->height());
+    mMultiRoutineWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    connect(mMultiRoutineWidget, SIGNAL(newRoutineSelected(QJsonObject)), this, SLOT(newRoutineSelected(QJsonObject)));
+
     mMode = EGroupMode::arduinoPresets;
-    setMode(EGroupMode::huePresets);
-
-    setupButtons();
-}
-
-void PalettePage::setupButtons() {
-    std::vector<QString> labels(size_t(EPalette::unknown) - 1);
-    for (uint32_t i = 0; i < labels.size(); ++i) {
-        labels[i] = paletteToString(EPalette(i + 1));
-    }
-
-    //---------------
-    // Arduino
-    //---------------
-
-    mPresetArduinoWidgets = std::vector<PresetGroupWidget *>(labels.size(), nullptr);
-    mPresetArduinoLayout = new QVBoxLayout;
-    mPresetArduinoLayout->setSpacing(0);
-    mPresetArduinoLayout->setContentsMargins(9, 0, 0, 0);
-
-    uint32_t groupIndex = 0;
-    for (auto preset = int(EPalette::water); preset < int(EPalette::unknown); preset++) {
-        mPresetArduinoWidgets[groupIndex] = new PresetGroupWidget(labels[groupIndex],
-                                                                  EPalette(preset),
-                                                                  EPresetWidgetMode::arduino,
-                                                                  this);
-        mPresetArduinoLayout->addWidget(mPresetArduinoWidgets[groupIndex], 1);
-        connect(mPresetArduinoWidgets[groupIndex], SIGNAL(presetButtonClicked(QJsonObject)), this, SLOT(multiButtonClicked(QJsonObject)));
-        groupIndex++;
-    }
-
-    mScrollAreaArduino->setWidgetResizable(true);
-    mScrollAreaArduino->widget()->setLayout(mPresetArduinoLayout);
-    mScrollAreaArduino->setStyleSheet("background-color:rgb(33, 32, 32);");
-
-    //---------------
-    // Hue
-    //---------------
-
-    mPresetHueWidgets = std::vector<PresetGroupWidget *>(labels.size(), nullptr);
-    mPresetHueLayout = new QGridLayout;
-    mPresetHueLayout->setSpacing(0);
-    mPresetHueLayout->setContentsMargins(9, 0, 0, 0);
-
-    groupIndex = 0;
-    int rowIndex = 0;
-    int columnIndex = 0;
-    for (auto preset = int(EPalette::water); preset < int(EPalette::unknown); preset++) {
-        mPresetHueWidgets[groupIndex] = new PresetGroupWidget(labels[groupIndex],
-                                                              EPalette(preset),
-                                                              EPresetWidgetMode::hue,
-                                                              this);
-        mPresetHueLayout->addWidget(mPresetHueWidgets[groupIndex], rowIndex, columnIndex);
-        connect(mPresetHueWidgets[groupIndex], SIGNAL(presetButtonClicked(QJsonObject)), this, SLOT(multiButtonClicked(QJsonObject)));
-        if (columnIndex == 0) {
-            columnIndex = 1;
-        } else {
-            columnIndex = 0;
-            rowIndex++;
-        }
-        groupIndex++;
-    }
-
-    mScrollAreaHue->setWidgetResizable(true);
-    mScrollAreaHue->widget()->setLayout(mPresetHueLayout);
-    mScrollAreaHue->setStyleSheet("background-color:rgb(33, 32, 32);");
-}
-
-void PalettePage::highlightRoutineButton(ERoutine routine, EPalette colorGroup) {
-    std::uint32_t index = 0;
-    for (auto iteratorGroup = uint32_t(EPalette::water); iteratorGroup < uint32_t(EPalette::unknown); iteratorGroup++) {
-        for (auto  iteratorRoutine = uint32_t(cor::ERoutineSingleColorEnd) + 1; iteratorRoutine < uint32_t(ERoutine::MAX); iteratorRoutine++) {
-            if (mMode == EGroupMode::arduinoPresets) {
-                if (iteratorRoutine == uint32_t(routine) && iteratorGroup == uint32_t(colorGroup)) {
-                    mPresetArduinoWidgets[index]->setChecked(ERoutine(iteratorRoutine), true);
-                } else {
-                    mPresetArduinoWidgets[index]->setChecked(ERoutine(iteratorRoutine), false);
-                }
-            } else if (mMode == EGroupMode::huePresets) {
-                if (iteratorRoutine == uint32_t(routine) && iteratorGroup == uint32_t(colorGroup)) {
-                    mPresetHueWidgets[index]->setChecked(ERoutine(iteratorRoutine), true);
-                } else {
-                    mPresetHueWidgets[index]->setChecked(ERoutine(iteratorRoutine), false);
-                }
-            }
-        }
-        index++;
-    }
+    setMode(EGroupMode::colorScheme);
 }
 
 
@@ -144,8 +54,11 @@ void PalettePage::multiButtonClicked(QJsonObject routineObject) {
     EPalette palette = Palette(routineObject["palette"].toObject()).paletteEnum();
     routineObject["speed"] = mSpeed;
     emit routineUpdate(routineObject);
-    highlightRoutineButton(routine, palette);
-    mSpeedSlider->setSliderColorBackground(mPresetPalettes.averageColor(palette));
+    if (mMode == EGroupMode::arduinoPresets) {
+        mArduinoPaletteScrollArea->highlightRoutineButton(routine, palette);
+    } else if (mMode == EGroupMode::huePresets) {
+        mHuePaletteScrollArea->highlightRoutineButton(routine, palette);
+    }
 }
 
 
@@ -160,76 +73,124 @@ void PalettePage::speedChanged(int newSpeed) {
 // Protected
 // ----------------------------
 
-void PalettePage::showEvent(QShowEvent *) {
-    resize();
+void PalettePage::colorsChanged(const std::vector<QColor>& colors) {
+    emit schemeUpdate(colors);
 }
 
-void PalettePage::hideEvent(QHideEvent *) {
 
+void PalettePage::show(std::uint32_t count,
+                       std::uint32_t brightness,
+                       const std::vector<QColor>& colorScheme,
+                       bool hasArduinoDevices, bool hasNanoleafDevices) {
+    mColorScheme = colorScheme;
+    mBrightness = brightness;
+    mCount = count;
+    lightCountChanged(mCount);
+    mColorPicker->updateColorStates(mColorScheme, mBrightness);
+    if (mMode == EGroupMode::huePresets
+            && (hasArduinoDevices || hasNanoleafDevices)) {
+        setMode(EGroupMode::arduinoPresets);
+    } else if (mMode == EGroupMode::arduinoPresets
+               && !(hasArduinoDevices || hasNanoleafDevices)) {
+        setMode(EGroupMode::huePresets);
+    }
+}
+
+void PalettePage::newRoutineSelected(QJsonObject routineObject) {
+    ERoutine routine = stringToRoutine(routineObject["routine"].toString());
+    Palette palette(paletteToString(EPalette::custom),
+                    mColorScheme,
+                    mBrightness);
+    routineObject["palette"] = palette.JSON();
+    routineObject["isOn"]  = true;
+    if (routine != ERoutine::singleSolid) {
+        // no speed settings for single color routines currently...
+        routineObject["speed"] = 125;
+    }
+
+    // get color
+    emit routineUpdate(routineObject);
+    mCurrentMultiRoutine = routine;
+}
+
+void PalettePage::setMode(EGroupMode mode) {
+    if (mMode != mode) {
+        mArduinoPaletteScrollArea->setVisible(false);
+        mHuePaletteScrollArea->setVisible(false);
+        mColorPicker->setVisible(false);
+        switch (mode) {
+            case EGroupMode::arduinoPresets:
+                mArduinoPaletteScrollArea->setVisible(true);
+                break;
+            case EGroupMode::huePresets:
+                mHuePaletteScrollArea->setVisible(true);
+                break;
+            case EGroupMode::colorScheme:
+                mColorPicker->setVisible(true);
+                break;
+        }
+        mMode = mode;
+        lightCountChanged(mCount);
+    }
+}
+
+void PalettePage::handleRoutineWidget(bool show) {
+    mMultiRoutineWidget->showWidget(show);
+}
+
+
+void PalettePage::resize() {
+    auto yPos = int(this->height() * 0.05);
+    QSize scrollAreaSize(int(this->width()),
+                         int(this->height() * 0.94f));
+    mArduinoPaletteScrollArea->setGeometry(0,
+                                           yPos,
+                                           scrollAreaSize.width(),
+                                           scrollAreaSize.height());
+    mArduinoPaletteScrollArea->resize();
+
+    mHuePaletteScrollArea->setGeometry(0,
+                                yPos,
+                                scrollAreaSize.width(),
+                                scrollAreaSize.height());
+    mHuePaletteScrollArea->resize();
+
+    mColorPicker->setGeometry(0,
+                              yPos,
+                              this->width(),
+                              int(this->height() * 0.94));
+}
+
+void PalettePage::showEvent(QShowEvent *) {
+    resize();
 }
 
 void PalettePage::renderUI() {
 
 }
 
+void PalettePage::lightCountChanged(std::size_t count) {
+    mCount = count;
+    mColorPicker->updateColorCount(count);
+    if (mMode == EGroupMode::arduinoPresets
+            || mMode == EGroupMode::huePresets) {
+        if (count == 0) {
+            mArduinoPaletteScrollArea->setEnabled(false);
+            mHuePaletteScrollArea->setEnabled(false);
+        } else {
+            mArduinoPaletteScrollArea->setEnabled(true);
+            mHuePaletteScrollArea->setEnabled(true);
+        }
+    } else if (mMode == EGroupMode::colorScheme) {
+        if (count == 0) {
+            mColorPicker->enable(false, EColorPickerType::color);
+        } else {
+            mColorPicker->enable(true, EColorPickerType::color);
+        }
+    }
+}
+
 void PalettePage::resizeEvent(QResizeEvent *) {
-   // mScrollWidget->setFixedWidth(mScrollArea->viewport()->width());
     resize();
-}
-
-
-void PalettePage::show(const QColor& color, std::uint32_t lightCount, bool hasArduinoDevices, bool hasNanoleafDevices) {
-    if (lightCount == 0) {
-        setMode(EGroupMode::huePresets);
-        mSpeedSlider->enable(false);
-        mScrollAreaHue->setEnabled(false);
-    } else {
-        if (hasArduinoDevices || hasNanoleafDevices) {
-            setMode(EGroupMode::arduinoPresets);
-            mScrollAreaArduino->setEnabled(true);
-        } else if (!(hasArduinoDevices|| hasNanoleafDevices)) {
-            setMode(EGroupMode::huePresets);
-            mScrollAreaHue->setEnabled(true);
-        }
-        mSpeedSlider->setSliderColorBackground(color);
-        mSpeedSlider->enable(true);
-    }
-}
-
-void PalettePage::resize() {
-    QSize arduinoSize(int(this->size().width()),
-                      int(this->size().height() * 0.85f));
-    mScrollAreaArduino->setFixedSize(arduinoSize);
-    for (auto presetArduinoWidget : mPresetArduinoWidgets) {
-        presetArduinoWidget->resize();
-    }
-
-    mScrollAreaHue->setFixedSize(this->size());
-    for (auto presetHueWidget : mPresetHueWidgets) {
-        presetHueWidget->resize();
-    }
-
-    QSize sliderSize(int(this->size().width() * 0.9f),
-                     int(this->size().height() * 0.09f));
-    mSpeedSlider->setFixedSize(sliderSize);
-}
-
-void PalettePage::setMode(EGroupMode mode) {
-    if (mMode != mode) {
-        switch (mode) {
-            case EGroupMode::arduinoPresets:
-                mLayout->removeItem(mLayout->itemAt(0));
-                mScrollAreaHue->setVisible(false);
-                mScrollAreaArduino->setVisible(true);
-                mLayout->addWidget(mScrollAreaArduino, 20, Qt::AlignBottom);
-                break;
-            case EGroupMode::huePresets:
-                mLayout->removeItem(mLayout->itemAt(0));
-                mScrollAreaArduino->setVisible(false);
-                mScrollAreaHue->setVisible(true);
-                mLayout->addWidget(mScrollAreaHue, 20, Qt::AlignBottom);
-                break;
-        }
-        mMode = mode;
-    }
+    mMultiRoutineWidget->resize(QSize(this->width(), this->height()));
 }

@@ -53,12 +53,13 @@ void ListWidget::resizeWidgets() {
     int newHeight = 0;
     if (mListLayout.type() == cor::EListType::linear) {
         int maxWidth = this->parentWidget()->width();
+        int height = this->parentWidget()->height() / 8;
         for (auto widget : mListLayout.widgets()) {
             QSize size = widget->geometry().size();
             if (size.width() > maxWidth) {
                 maxWidth = size.width();
             }
-            widget->setGeometry(0, yPos, maxWidth, size.height());
+            widget->setGeometry(0, yPos, maxWidth, height);
             widget->setHidden(false);
             yPos += size.height();
         }

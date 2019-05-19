@@ -18,12 +18,10 @@ namespace cor
 
 Slider::Slider(QWidget *parent) : QWidget(parent) {
     mHeightScaleFactor = 1.0f;
-    mOpacity = 1.0;
     mShouldDrawTickLabels = false;
     mShouldSnap = false;
     mUseMinimumPossible = false;
     mMinimumPossible = 0;
-    mSliderImageSet = false;
 
     this->setAutoFillBackground(true);
     mSlider = new QSlider(Qt::Horizontal, this);
@@ -37,58 +35,110 @@ Slider::Slider(QWidget *parent) : QWidget(parent) {
     mLayout->setContentsMargins(0,0,0,0);
     mLayout->addWidget(mSlider);
     setLayout(mLayout);
-    mSliderColorSet = false;
+
+    mType = ESliderType::vanilla;
+
+    mHandleSize = int(this->width() / 8.0);
+
+    adjustStylesheet();
 }
 
 
-void Slider::setSliderColorBackground(const QColor& color) {
+void Slider::setColor(const QColor& color) {
     mSliderColor = color;
-    mSliderColorSet = true;
-    mSliderImageSet = false;
-    // compute a darker version for our gradient
-    QColor darkColor = QColor(int(color.red()   / 4),
-                              int(color.green() / 4),
-                              int(color.blue()  / 4));
+    mType = ESliderType::color;
 
     // slider handle is only controllable via stylesheets but the values needed for style sheets
     // breaks in some environments (such as high pixel density android screens). to get around this,
     // we always set the handle size programmatically whenever we udpate the stylesheet.
-    int sliderHandleSize = std::min(int(this->size().width() / 12.0), mSlider->size().height());
+    mHandleSize = int(this->width() / 20.0);
 
     // generate a stylesheet based off of the color with a gradient
-    QString styleSheetString = QString("QSlider::sub-page:horizontal{ "
-                                       " background:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 rgb(%1, %2, %3), stop: 1 rgb(%4, %5, %6));"
-                                       " background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1, stop: 0 rgb(%1, %2, %3), stop: 1 rgb(%4, %5, %6));"
-                                       "}"
-                                       "QSlider::handle:horizontal {"
-                                        "width: %7px;"
-                                        "}"
-                                       ).arg(QString::number(darkColor.red()),
-                                                QString::number(darkColor.green()),
-                                                QString::number(darkColor.blue()),
-                                                QString::number(color.red()),
-                                                QString::number(color.green()),
-                                                QString::number(color.blue()),
-                                                QString::number(sliderHandleSize));
-    mSlider->setStyleSheet(styleSheetString);
+    adjustStylesheet();
 }
 
-void Slider::setSliderImageBackground(const QString& path) {
-    mSliderImageSet = true;
-    mSliderColorSet = false;
+void Slider::setImage(const QString& path) {
+    mType = ESliderType::image;
     mPath = path;
-    int sliderHandleSize = std::min(int(this->size().width() / 12.0), mSlider->size().height());
+    mHandleSize = int(this->width() / 20.0);
 
-    QString styleSheetString = QString("QSlider::sub-page:horizontal{ "
-                                       " background-image: url(%1);"
-                                       "}"
-                                       "QSlider::handle:horizontal {"
-                                        "width: %2px;"
-                                        "}"
-                                       ).arg(path,
-                                             QString::number(sliderHandleSize));
+    adjustStylesheet();
+}
 
-    mSlider->setStyleSheet(styleSheetString);
+void Slider::setGradient(const QColor& leftColor, const QColor& rightColor) {
+    mSliderColor = leftColor;
+    mColorGradient = rightColor;
+    mType = ESliderType::gradient;
+
+    // slider handle is only controllable via stylesheets but the values needed for style sheets
+    // breaks in some environments (such as high pixel density android screens). to get around this,
+    // we always set the handle size programmatically whenever we udpate the stylesheet.
+    mHandleSize = int(this->width() / 20.0);
+
+    // generate a stylesheet based off of the color with a gradient
+    adjustStylesheet();
+}
+
+void Slider::adjustStylesheet() {
+    QString stylesheet;
+    switch(mType) {
+    case ESliderType::vanilla:
+        stylesheet = QString("QSlider::handle:horizontal {"
+                             "width: %1px;"
+                             "}"
+                             ).arg(QString::number(mHandleSize));
+        break;
+    case ESliderType::color:
+    {
+        QColor darkColor = QColor(int(mSliderColor.red()   / 4),
+                                  int(mSliderColor.green() / 4),
+                                  int(mSliderColor.blue()  / 4));
+        stylesheet = QString("QSlider::sub-page:horizontal{ "
+                             " background:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 rgb(%1, %2, %3), stop: 1 rgb(%4, %5, %6));"
+                             " background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1, stop: 0 rgb(%1, %2, %3), stop: 1 rgb(%4, %5, %6));"
+                             "}"
+                             "QSlider::handle:horizontal {"
+                             "width: %7px;"
+                             "}"
+                             ).arg(QString::number(darkColor.red()),
+                                   QString::number(darkColor.green()),
+                                   QString::number(darkColor.blue()),
+                                   QString::number(mSliderColor.red()),
+                                   QString::number(mSliderColor.green()),
+                                   QString::number(mSliderColor.blue()),
+                                   QString::number(mHandleSize));
+        break;
+    }
+    case ESliderType::gradient:
+        stylesheet = QString("QSlider::groove:horizontal{ "
+                             " background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 rgb(%1, %2, %3), stop: 1 rgb(%4, %5, %6));"
+                             "}"
+                             "QSlider::handle:horizontal {"
+                             "width: %7px;"
+                             "}"
+                             ).arg(QString::number(mSliderColor.red()),
+                                   QString::number(mSliderColor.green()),
+                                   QString::number(mSliderColor.blue()),
+                                   QString::number(mColorGradient.red()),
+                                   QString::number(mColorGradient.green()),
+                                   QString::number(mColorGradient.blue()),
+                                   QString::number(mHandleSize));
+        break;
+    case ESliderType::image:
+        stylesheet = QString("QSlider::sub-page:horizontal{ "
+                             " background-color:rgba(0,0,0,0);"
+                             "}"
+                             "QSlider::groove:horizontal{ "
+                             " border-image: url(%1) 0 0 0 0 stretch stretch;"
+                             "}"
+                             "QSlider::handle:horizontal {"
+                             "width: %2px;"
+                             "}"
+                             ).arg(mPath,
+                                   QString::number(mHandleSize));
+        break;
+    }
+    mSlider->setStyleSheet(stylesheet);
 }
 
 void Slider::receivedValue(int value) {
@@ -162,27 +212,22 @@ void Slider::setMinimumPossible(bool useMinimumPossible, int minimumPossible) {
 }
 
 
-void Slider::resizeEvent(QResizeEvent *event) {
-    Q_UNUSED (event);
+void Slider::resizeEvent(QResizeEvent *) {
     mSlider->setFixedSize(this->rect().width(), int(this->rect().height() * mHeightScaleFactor));
-    if (mSliderColorSet) {
-        setSliderColorBackground(mSliderColor);
-    } else if (mSliderImageSet) {
-        setSliderImageBackground(mPath);
+    switch (mType) {
+    case ESliderType::color:
+        setColor(mSliderColor);
+        break;
+    case ESliderType::gradient:
+        setGradient(mSliderColor, mColorGradient);
+        break;
+    case ESliderType::image:
+        setImage(mPath);
+        break;
     }
 }
 
-void Slider::showEvent(QShowEvent *event) {
-    Q_UNUSED(event);
-}
-
-void Slider::hideEvent(QHideEvent *event) {
-    Q_UNUSED(event);
-}
-
-
-void Slider::paintEvent(QPaintEvent *event) {
-    Q_UNUSED (event);
+void Slider::paintEvent(QPaintEvent *) {
     if (mSlider->tickPosition() != QSlider::NoTicks) {
         QStyleOption opt;
         opt.init(this);
@@ -255,7 +300,7 @@ void Slider::paintEvent(QPaintEvent *event) {
 }
 
 
-void Slider::setSliderHeight(float percent) {
+void Slider::setHeightPercentage(float percent) {
     mHeightScaleFactor = percent;
     int newY = int(this->rect().height() * (1.0f - mHeightScaleFactor) / 2.0f);
 
@@ -286,14 +331,12 @@ void Slider::setShouldDrawTickLabels(bool shouldDraw) {
 void Slider::enable(bool shouldEnable) {
     if(shouldEnable) {
         auto effect = new QGraphicsOpacityEffect(mSlider);
-        mOpacity = 1.0;
-        effect->setOpacity(mOpacity);
+        effect->setOpacity(1.0);
         mSlider->setGraphicsEffect(effect);
         this->setEnabled(true);
     } else {
         auto effect = new QGraphicsOpacityEffect(mSlider);
-        mOpacity = 0.5;
-        effect->setOpacity(mOpacity);
+        effect->setOpacity(0.5);
         mSlider->setGraphicsEffect(effect);
         this->setEnabled(false);
     }

@@ -6,6 +6,7 @@
 
 #include "leafdiscovery.h"
 #include "comm/commnanoleaf.h"
+#include "utils/reachability.h"
 
 #include <QFileInfo>
 #include <QStandardPaths>
@@ -152,7 +153,8 @@ void LeafDiscovery::receivedUPnP(const QHostAddress& sender, const QString& payl
                 isFound = true;
             }
         }
-        if (!isFound) {
+
+        if (!isFound && (controller.IP != "http://")) { // second check is there for an edge case where the nanoleaf did not properly configure
             mUnknownControllers.push_back(controller);
         }
     }
@@ -260,7 +262,9 @@ nano::LeafController LeafDiscovery::findControllerByIP(const QString& IP) {
             }
         }
         return controller;
-    } else if (pieces.size() == 6) {
+    }
+
+    if (pieces.size() == 6) {
         if (pieces[5] == "new") {
             QStringList mainIP = pieces[2].split(":");
             QString IP         = "http://" + mainIP[0];

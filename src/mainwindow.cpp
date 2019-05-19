@@ -123,7 +123,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Setup Left Hand Menu
     // --------------
 
-    mLeftHandMenu = new LeftHandMenu(mData, mComm, mGroups, this);
+    mLeftHandMenu = new LeftHandMenu(mData, mComm, mData, mGroups, this);
     mLeftHandMenu->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mLeftHandMenu, SIGNAL(pressedButton(EPage)), this, SLOT(leftHandMenuButtonPressed(EPage)));
     connect(mLeftHandMenu, SIGNAL(createNewGroup()), this, SLOT(openNewGroupMenu()));
@@ -371,8 +371,6 @@ void MainWindow::detailedMoodDisplay(std::uint64_t key) {
         }
 
         mMoodDetailedWidget->update(detailedMood);
-    } else {
-        qDebug() << " did not recognize this groupppp " << key;
     }
 
     mMoodDetailedWidget->pushIn();
@@ -829,10 +827,13 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
         ignorePushOut = true;
     }
 
-    if ((page == EPage::colorPage
-            || page == EPage::palettePage)
-            && mData->devices().empty()) {
-        mTopMenu->pushInTapToSelectButton();
+
+    if (!ignorePushOut) {
+        if ((page == EPage::colorPage
+                || page == EPage::palettePage)
+                && mData->devices().empty()) {
+            mTopMenu->pushInTapToSelectButton();
+        }
     }
 
     mMainViewport->pageChanged(page);

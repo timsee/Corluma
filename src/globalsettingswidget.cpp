@@ -50,11 +50,11 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent,
     mTimeoutSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mTimeoutSlider->slider()->setRange(0, 300);
     mTimeoutSlider->slider()->setValue(mAppSettings->timeout());
-    mTimeoutSlider->setSliderHeight(0.5f);
+    mTimeoutSlider->setHeightPercentage(0.5f);
     mTimeoutSlider->slider()->setTickPosition(QSlider::TicksBelow);
     mTimeoutSlider->slider()->setTickInterval(60);
     mTimeoutSlider->slider()->setValue(mAppSettings->timeout());
-    mTimeoutSlider->setSliderColorBackground(QColor(255, 127, 0));
+    mTimeoutSlider->setColor(QColor(255, 127, 0));
     mTimeoutSlider->setShouldDrawTickLabels(true);
 
     //-----------

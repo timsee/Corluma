@@ -7,12 +7,13 @@
 #include "routinebuttonswidget.h"
 #include "cor/presetpalettes.h"
 #include "cor/exception.h"
+#include "utils/qt.h"
 
 #include <QStyleOption>
 #include <QGraphicsOpacityEffect>
 #include <QPainter>
 
-RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, const std::vector<QColor>& colors, QWidget *parent) : QWidget(parent) {
+RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, const std::vector<QColor>& colors, QWidget *parent) : QWidget(parent), mIsOpen{false} {
 
     mLayout = new QGridLayout(this);
     mLayout->setMargin(0);
@@ -209,6 +210,12 @@ void RoutineButtonsWidget::singleRoutineColorChanged(const QColor& color) {
 void RoutineButtonsWidget::resize(QSize size) {
     this->setFixedWidth(size.width());
     this->setFixedHeight(size.height() / 3);
+
+    if (mIsOpen) {
+        this->setGeometry(0, this->parentWidget()->height() - this->height(), this->width(), this->height());
+    } else {
+        this->setGeometry(0, this->parentWidget()->height(), this->width(), this->height());
+    }
 }
 
 void RoutineButtonsWidget::paintEvent(QPaintEvent *) {
@@ -219,3 +226,23 @@ void RoutineButtonsWidget::paintEvent(QPaintEvent *) {
     painter.setRenderHint(QPainter::Antialiasing);
     painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
 }
+
+
+void RoutineButtonsWidget::showWidget(bool shouldShow) {
+    if (mIsOpen && !shouldShow) {
+        cor::moveWidget(this,
+                        this->size(),
+                        this->pos(),
+                        QPoint(0, this->parentWidget()->height()));
+
+        mIsOpen = false;
+    } else if (!mIsOpen && shouldShow) {
+       // mSingleRoutineWidget->singleRoutineColorChanged(mColor);  // update colors of single color routine
+        cor::moveWidget(this,
+                        this->size(),
+                        this->pos(),
+                        QPoint(0, this->parentWidget()->height() - this->height()));
+        mIsOpen = true;
+    }
+}
+

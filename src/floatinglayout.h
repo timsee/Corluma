@@ -101,6 +101,9 @@ public:
      */
     uint32_t buttonCount() { return uint32_t(mButtons.size()); }
 
+    /// true if key is highlighted in layout, false otherwise
+    bool isKeyHighlighted(const QString& key);
+
 signals:
     /*!
      * \brief buttonPressed emitted whenever a button is pressed with a QString representing the

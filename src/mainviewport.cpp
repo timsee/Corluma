@@ -26,13 +26,13 @@ MainViewport::MainViewport(MainWindow *parent,
     mColorPage->isOpen(false);
     mColorPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mColorPage, SIGNAL(routineUpdate(QJsonObject)),  parent, SLOT(routineChanged(QJsonObject)));
-    connect(mColorPage, SIGNAL(schemeUpdate(std::vector<QColor>)),  parent, SLOT(schemeChanged(std::vector<QColor>)));
 
     mPalettePage = new PalettePage(parent);
     mPalettePage->isOpen(false);
     mPalettePage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mPalettePage, SIGNAL(speedUpdate(int)),  parent, SLOT(speedChanged(int)));
     connect(mPalettePage, SIGNAL(routineUpdate(QJsonObject)),  parent, SLOT(routineChanged(QJsonObject)));
+    connect(mPalettePage, SIGNAL(schemeUpdate(std::vector<QColor>)),  parent, SLOT(schemeChanged(std::vector<QColor>)));
 
     mMoodPage = new MoodPage(parent, groups);
     mMoodPage->isOpen(false);
@@ -118,7 +118,6 @@ void MainViewport::showMainPage(EPage page) {
     auto widget = mainWidget(page);
     int x = this->width() + widget->width();
     pageObject->isOpen(true);
-        //widget->raise();
 
     cor::moveWidget(widget,
                     this->size(),
@@ -128,9 +127,8 @@ void MainViewport::showMainPage(EPage page) {
    if (page == EPage::colorPage) {
         mColorPage->show(mData->mainColor(),
                          uint32_t(mData->brightness()),
-                         mData->colorScheme(),
-                         mData->palette(),
-                         uint32_t(mData->devices().size()));
+                         uint32_t(mData->devices().size()),
+                         mData->bestColorPickerType());
         mColorPage->setVisible(true);
     } else if (page == EPage::moodPage) {
         mMoodPage->show(mData->findCurrentMood(mGroups->moods()),
@@ -139,8 +137,9 @@ void MainViewport::showMainPage(EPage page) {
         mMoodPage->setVisible(true);
     } else if (page == EPage::palettePage) {
         mPalettePage->resize();
-        mPalettePage->show(mData->mainColor(),
-                           uint32_t(mData->devices().size()),
+        mPalettePage->show(mData->devices().size(),
+                           mData->brightness(),
+                           mData->colorScheme(),
                            mData->hasLightWithProtocol(EProtocolType::arduCor),
                            mData->hasLightWithProtocol(EProtocolType::nanoleaf));
         mPalettePage->setVisible(true);
@@ -157,18 +156,23 @@ void MainViewport::hideMainPage(EPage page) {
                     this->size(),
                     this->pos(),
                     QPoint(x, widget->pos().y()));
+    if (page == EPage::colorPage) {
+        mColorPage->handleRoutineWidget(false);
+    } else if (page == EPage::palettePage) {
+        mPalettePage->handleRoutineWidget(false);
+    }
 }
 
 void MainViewport::lightCountChanged() {
     if (mPageIndex == EPage::colorPage) {
         mColorPage->show(mData->mainColor(),
                          uint32_t(mData->brightness()),
-                         mData->colorScheme(),
-                         mData->palette(),
-                         uint32_t(mData->devices().size()));
+                         uint32_t(mData->devices().size()),
+                         mData->bestColorPickerType());
     } else if (mPageIndex == EPage::palettePage) {
-        mPalettePage->show(mData->mainColor(),
-                           uint32_t(mData->devices().size()),
+        mPalettePage->show(mData->devices().size(),
+                           mData->brightness(),
+                           mData->colorScheme(),
                            mData->hasLightWithProtocol(EProtocolType::arduCor),
                            mData->hasLightWithProtocol(EProtocolType::nanoleaf));
     }

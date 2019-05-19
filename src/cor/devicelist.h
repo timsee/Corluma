@@ -12,6 +12,7 @@
 #include "comm/commhue.h"
 #include "appsettings.h"
 #include "cor/mood.h"
+#include "colorpicker/colorpicker.h"
 
 namespace cor
 {
@@ -220,6 +221,9 @@ public:
 
     /// compute the best candidate for a mood based on the current devices
     std::uint64_t findCurrentMood(const cor::Dictionary<cor::Mood>& moods);
+
+    /// computes the best possible color picker type that can be supported based off of the currently selected lights
+    EColorPickerType bestColorPickerType();
 
 signals:
 

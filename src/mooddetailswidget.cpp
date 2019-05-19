@@ -37,7 +37,7 @@ void MoodDetailsWidget::display(const cor::Mood& mood, const QSize& size) {
     int yPos = 0u;
     int boxSize = size.height() / 3;
     int titleSize = size.height() / 10;
-    int width = size.width() * 0.95f;
+    auto width = int(size.width() * 0.95);
 
     // display aditional info, if needed
     if (!mood.additionalInfo.isEmpty()) {
@@ -115,7 +115,7 @@ void MoodDetailsWidget::resize(const QSize& size) {
     int yPos = 0u;
     int boxSize = size.height() / 3;
     int titleSize = size.height() / 10;
-    int width = size.width() * 0.95;
+    int width = int(size.width() * 0.95);
 
     if (mMoreInfoText->isVisible()) {
         mMoreInfoText->setGeometry(0, yPos,

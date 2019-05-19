@@ -11,6 +11,17 @@
 namespace cor
 {
 
+/// mode for slider
+enum class ESliderType {
+    vanilla,
+    color,
+    image,
+    gradient
+};
+
+/// standard background color of groove of slider
+static QColor kSliderBackgroundColor(32,31,31);
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2019.
@@ -43,18 +54,24 @@ public:
     explicit Slider(QWidget *parent);
 
     /*!
-     * \brief setSliderColorBackground Does a dark to light gradient on the color provided on the background
+     * \brief setColor Does a dark to light gradient on the color provided on the background
      *        of the slider to the left of the thumb piece of the slider Uses a custom style sheet to achieve this effect.
      * \param color the color that will be put into a custom style sheet
      */
-    void setSliderColorBackground(const QColor& color);
+    void setColor(const QColor& color);
 
     /*!
-     * \brief setSliderImageBackground Adds a background image to the slider instead of using a color with a gradient.
+     * \brief setImage Adds a background image to the slider instead of using a color with a gradient.
      * \param path path to the resource of the image
-     * \TODO clean this up more
      */
-    void setSliderImageBackground(const QString& path);
+    void setImage(const QString& path);
+
+    /*!
+     * \brief setGradient Adds a gradient from one color to another to the slider's background
+     * \param leftColor starting color for lefthand side of the slider
+     * \param rightColor ending color for righthand side of the slider
+     */
+    void setGradient(const QColor& leftColor, const QColor& rightColor);
 
     /*!
      * \brief setSnapToNearestTick set this if you want the slider to snap to the nearest tick instead
@@ -77,7 +94,7 @@ public:
      *        0.0 and 1.0 to  scale the slider down, while keeping it centered in the widget.
      * \param percent a value between 0.0 and 1.0 that scales the slider to take up less of hte widget.
      */
-    void setSliderHeight(float percent);
+    void setHeightPercentage(float percent);
 
     /*!
      * \brief enable sets whether the slider is enabled or disabled. Disabling the slider adds opacity,
@@ -91,6 +108,7 @@ public:
 
     /// pointer to internal QSlider
     QSlider *slider() { return mSlider; }
+
 
 signals:
     /*!
@@ -126,16 +144,6 @@ protected:
      *        and the slider's ticks.
      */
     void paintEvent(QPaintEvent *);
-
-    /*!
-     * \brief showEvent used to turn on the throttle timer
-     */
-    void showEvent(QShowEvent *);
-
-    /*!
-     * \brief hideEvent used to turn off the throttle timer
-     */
-    void hideEvent(QHideEvent *);
 
 private:
 
@@ -173,6 +181,9 @@ private:
      */
     int mMinimumPossible;
 
+    /// adjusts the stylesheet used by the slider
+    void adjustStylesheet();
+
     /*!
      * \brief Makes it so that by default, the slider jumps to the position the user
      *        clicks instead of jumping up by a page value. This gives the slider a more
@@ -201,26 +212,10 @@ private:
     int snapSliderToNearestTick(QSlider *slider, int pos);
 
     /*!
-     * \brief mOpacity opacity of the lights slider, which gets changed when its
-     *        enabled or disabled.
-     */
-    qreal mOpacity;
-
-    /*!
      * \brief mShouldDrawTickLabels if true, instead of ticks labels of the values at that
      *        region are drawn instead
      */
     bool mShouldDrawTickLabels;
-
-    /*!
-     * \brief mSliderColorSet true if the slider color has been changed, false otherwise
-     */
-    bool mSliderColorSet;
-
-    /*!
-     * \brief mSliderImageSet true if slider has a background image, false otherwise
-     */
-    bool mSliderImageSet;
 
     /*!
      * \brief mPath path to resource for background image for the slider.
@@ -231,6 +226,15 @@ private:
      * \brief mSliderColor the current slider color
      */
     QColor mSliderColor;
+
+    /// second color for the grident option
+    QColor mColorGradient;
+
+    /// size of the handle of the slider
+    int mHandleSize;
+
+    /// type of the slider
+    ESliderType mType;
 };
 
 }

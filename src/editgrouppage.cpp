@@ -342,8 +342,6 @@ bool EditGroupPage::shouldSetChecked(const cor::Light& device, const std::list<c
 }
 
 void EditGroupPage::clickedDevice(const QString&) {
-   // qDebug() << " device clicked " << key << " vs" << deviceName;
-
     // call the highlight button
     if (checkForChanges()) {
         mTopMenu->saveButton()->setEnabled(true);

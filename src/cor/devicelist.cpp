@@ -141,9 +141,7 @@ QColor DeviceList::mainColor() {
         g = g / deviceCount;
         b = b / deviceCount;
     }
-    QColor color(r, g, b);
-    color.setHsvF(color.hueF(), color.saturationF(), 1.0);
-    return color;
+    return QColor(r, g, b);
 }
 
 
@@ -204,6 +202,10 @@ void DeviceList::updateColorScheme(std::vector<QColor> colors) {
     for (auto&& light : mDevices) {
         light.color = colors[i];
         light.isOn = true;
+        // if part of a color scheme but not showing a color scheme, switch to glimmer? maybe?
+        if (light.routine > cor::ERoutineSingleColorEnd) {
+            light.routine = ERoutine::singleGlimmer;
+        }
         i++;
         i = i % colors.size();
     }
@@ -446,6 +448,28 @@ std::uint64_t DeviceList::findCurrentMood(const cor::Dictionary<cor::Mood>& mood
         }
     }
     return 0u;
+}
+
+EColorPickerType DeviceList::bestColorPickerType() {
+    EColorPickerType bestHueType = EColorPickerType::dimmable;
+    for (const auto& light : mDevices) {
+        if (light.protocol() == EProtocolType::arduCor
+                || light.protocol() == EProtocolType::nanoleaf) {
+            return EColorPickerType::color;
+        }
+
+        if (light.protocol() == EProtocolType::hue) {
+            if (light.colorMode == EColorMode::CT
+                    && bestHueType == EColorPickerType::dimmable) {
+                bestHueType = EColorPickerType::CT;
+            }
+            if (light.colorMode == EColorMode::HSV
+                    || light.colorMode == EColorMode::XY) {
+                return EColorPickerType::color;
+            }
+        }
+    }
+    return bestHueType;
 }
 
 }

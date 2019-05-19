@@ -31,6 +31,9 @@ public:
     /// enables and disables the RGB sliders
     void enable(bool enable);
 
+    /// getter for current color
+    QColor color();
+
 signals:
 
     /*!

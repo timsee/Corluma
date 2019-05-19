@@ -478,4 +478,14 @@ ___
 * Fixed warnings from Clang-Tidy and Clazy.
 * Fixed miscellaneous bugs.
 
+### **v0.16.0**
+#### The ColorPicker Refactor Update
+* Split `ColorPicker` into two: a `SingleColorPicker` and a `MultiColorPicker`.
+* Added a HSV color wheel and updated the color temperature wheel, 
+* Replaced the pre-rendered `.pngs` used for color wheels with wheels rendered by `QPaint`. 
+* Added the ability to select different color schemes from color wheels on the `MultiColorPage`.
+* Removed `CustomColorPicker` and `BrightnessSlider`.
+* Updated `cor::Slider`.
+* Fixed bugs for controlling ambient and dimmable lights. 
+* Fixed miscellaneous bugs.
 

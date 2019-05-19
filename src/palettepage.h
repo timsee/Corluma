@@ -8,6 +8,9 @@
 #include "cor/listwidget.h"
 #include "listmoodgroupwidget.h"
 #include "cor/presetpalettes.h"
+#include "colorpicker/multicolorpicker.h"
+#include "routinebuttonswidget.h"
+#include "palettescrollarea.h"
 
 #include <QWidget>
 #include <QToolButton>
@@ -19,7 +22,8 @@
 /// mode of the page
 enum class EGroupMode {
     arduinoPresets,
-    huePresets
+    huePresets,
+    colorScheme
 };
 
 /*!
@@ -44,18 +48,11 @@ public:
      */
     explicit PalettePage(QWidget *parent);
 
-    /*!
-     * \brief highlightRoutineButton highlights the button that implements
-     *        the routine parameter. If it can't find a button that
-     *        implements this lighting routine, then all buttons are unhighlighted
-     * \param routine the lighting routine the highlighted button implements.
-     * \param palette the color group that the highlighted button implements.
-     */
-    void highlightRoutineButton(ERoutine routine, EPalette palette);
-
-
     /// called whenever the group page is shown
-    void show(const QColor& color, std::uint32_t lightCount, bool hasArduinoDevices, bool hasNanoleafDevices);
+    void show(std::uint32_t count,
+              uint32_t brightness,
+              const std::vector<QColor>& colorScheme,
+              bool hasArduinoDevices, bool hasNanoleafDevices);
 
     /// getter for current mode of page
     EGroupMode mode() { return mMode; }
@@ -72,6 +69,15 @@ public:
     /// called to programmatically resize the widget
     void resize();
 
+    /// detemines which routine widget to show and shows, if needed.
+    void handleRoutineWidget(bool show);
+
+    /// changes the light count, affecting the menus on the page
+    void lightCountChanged(std::size_t count);
+
+    /// true if the routine widget is open, false otherwise
+    bool routineWidgetIsOpen() { return mMultiRoutineWidget->isOpen(); }
+
 signals:
 
     /// the speed bar has an update.
@@ -80,6 +86,9 @@ signals:
     /// a button was pressed, signaling a routine change.
     void routineUpdate(QJsonObject object);
 
+    /// sent out whenever the color scheme is changed
+    void schemeUpdate(std::vector<QColor>);
+
 public slots:
 
     /*!
@@ -87,6 +96,12 @@ public slots:
      *        this slot whenever they are clicked.
      */
     void multiButtonClicked(QJsonObject);
+
+    /*!
+     * \brief colorsChanged multiple colors have changed and should be sent to the ColorPicker as a
+     *        color scheme
+     */
+    void colorsChanged(const std::vector<QColor>&);
 
 private slots:
     /*!
@@ -101,17 +116,17 @@ private slots:
      */
     void speedChanged(int);
 
+    /*!
+     * \brief newRoutineSelected called whenever a routine button is clicked. Sends
+     *        the routine to the backend data so that it can get sent to the connected devices.
+     */
+    void newRoutineSelected(QJsonObject routineObject);
+
 protected:
     /*!
      * \brief called whenever the page is shown on screen.
      */
     void showEvent(QShowEvent *);
-
-    /*!
-     * \brief hideEvent called whenever the page is changed and this page is hidden
-     *        from the screen.
-     */
-    void hideEvent(QHideEvent *);
 
     /*!
      * \brief resizeEvent called every time the main window is resized.
@@ -120,60 +135,41 @@ protected:
 
 private:
 
+    /*!
+     * \brief mMultiRoutineWidget widget that pops up from the bottom and contains buttons for all of the multi
+     *        color routines.
+     */
+    RoutineButtonsWidget *mMultiRoutineWidget;
+
+    /// stores the last values given by the color scheme.
+    std::vector<QColor> mColorScheme;
+
+    /// stores the last value for the brightness
+    uint32_t mBrightness;
+
     /// preset data for palettes from ArduCor
     PresetPalettes mPresetPalettes;
 
-    /*!
-     * \brief setupButtons sets up the routine buttons.
-     */
-    void setupButtons();
+    /// color picker for color schemes
+    MultiColorPicker *mColorPicker;
 
-    /*!
-     * \brief mPresetWidgets vector of all preset widgets getting displayed in the
-     *        scroll area.
-     */
-    std::vector<PresetGroupWidget*> mPresetArduinoWidgets;
+    /// PaletteScrollArea containing arduino and nanoleaf palette/routine combos
+    PaletteScrollArea *mArduinoPaletteScrollArea;
 
-    /*!
-     * \brief mPresetHueWidgets vector of all preset hue widgets.
-     */
-    std::vector<PresetGroupWidget*> mPresetHueWidgets;
-
-    /// main layout of grouppage
-    QVBoxLayout *mLayout;
-
-    /*!
-     * \brief mSpeedSlider slider for determing how fast routines will be
-     */
-    cor::Slider *mSpeedSlider;
-
-    /// scroll area for preset groups
-    QScrollArea *mScrollAreaArduino;
-
-    /// scroll area for preset hue groups
-    QScrollArea *mScrollAreaHue;
-
-    /// widget used as main widget of QScrollArea when any arduinos are connected.
-    QWidget *mScrollWidgetArduino;
-
-    /// widget used as main widget of QScrollArea when only hues are connected.
-    QWidget *mScrollWidgetHue;
-
-    /*!
-     * \brief mPresetLayout layout of all arduino preset widgets.
-     */
-    QVBoxLayout *mPresetArduinoLayout;
-
-    /*!
-     * \brief mPresetHueLayout layout of all hue preset widgets.
-     */
-    QGridLayout *mPresetHueLayout;
+    /// PaletteScrollArea containing hue palettes.
+    PaletteScrollArea *mHuePaletteScrollArea;
 
     /// mode
     EGroupMode mMode;
 
     /// stored state for current speed
     int mSpeed;
+
+    /// count of lights
+    std::size_t mCount;
+
+    /// tracks the routine type of the current multi color routine from the color page.
+    ERoutine mCurrentMultiRoutine;
 };
 
 #endif // PresetColorsPage_H

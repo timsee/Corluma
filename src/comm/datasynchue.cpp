@@ -140,11 +140,15 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
             //-------------------
             // Hue Color Temperature Sync
             //-------------------
-            if (cor::colorDifference(commDevice.color, dataDevice.color) > 0.05f) {
+            if (cor::colorDifference(commDevice.color, dataDevice.color) > 0.02f) {
                 object["temperature"] = dataDevice.temperature;
                 object["bri"]  = dataDevice.color.valueF();
                 countOutOfSync++;
-                //qDebug() << " hue color temperautre not in sync" << dataDevice.color << " temp " << object["temperature"].toDouble();
+            }
+        } else if (commDevice.colorMode == EColorMode::dimmable) {
+            if (cor::colorDifference(commDevice.color, dataDevice.color) > 0.02f) {
+                object["bri"]  = dataDevice.color.valueF();
+                countOutOfSync++;
             }
         }
     }

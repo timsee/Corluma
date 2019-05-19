@@ -196,9 +196,9 @@ void DiscoveryHueWidget::changedName(const QString& key, const QString& newName)
 void DiscoveryHueWidget::groupsPressed(const QString& key) {
     const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
     if (bridgeResult.second) {
-#ifndef MOBILE_BUILD
-        mMainWindow->greyOut(true);
-#endif
+//#ifndef MOBILE_BUILD
+//        mMainWindow->greyOut(true);
+//#endif
         mBridgeGroupsWidget->updateGroups(bridgeResult.first.groups);
         mBridgeGroupsWidget->isOpen(true);
         mBridgeGroupsWidget->setVisible(true);
@@ -211,9 +211,9 @@ void DiscoveryHueWidget::groupsPressed(const QString& key) {
 void DiscoveryHueWidget::schedulesPressed(const QString& key) {
     const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
     if (bridgeResult.second) {
-#ifndef MOBILE_BUILD
-        mMainWindow->greyOut(true);
-#endif
+//#ifndef MOBILE_BUILD
+//        mMainWindow->greyOut(true);
+//#endif
         mBridgeSchedulesWidget->updateSchedules(bridgeResult.first.schedules.itemList());
         mBridgeSchedulesWidget->isOpen(true);
         mBridgeSchedulesWidget->setVisible(true);

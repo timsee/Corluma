@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>images/settingsgear.png</file>
-        <file>images/color_wheel.png</file>
         <file>images/icon.ico</file>
         <file>images/icon.icns</file>
         <file>images/connectionIcon.png</file>
@@ -10,7 +9,6 @@
         <file>images/blackButton.png</file>
         <file>images/blueButton.png</file>
         <file>images/greenButton.png</file>
-        <file>images/huerange.png</file>
         <file>images/clearAllIcon.png</file>
         <file>images/closedArrow.png</file>
         <file>images/discoveryIcon.png</file>
@@ -22,11 +20,8 @@
         <file>images/pressHueBridgeImage.png</file>
         <file>images/checkmark.png</file>
         <file>images/wifi.png</file>
-        <file>images/colorWheel_icon.png</file>
         <file>images/hueRange_icon.png</file>
         <file>stylesheet/corluma.qss</file>
-        <file>images/ambient_wheel.png</file>
-        <file>images/white_wheel.png</file>
         <file>images/splash_screen.png</file>
         <file>images/loader.gif</file>
         <file>images/arduino-logo.png</file>
@@ -69,5 +64,15 @@
         <file>images/disabledX.png</file>
         <file>images/uncheckedBox.png</file>
         <file>images/hamburger_icon.png</file>
+        <file>images/color_wheel_hs.png</file>
+        <file>images/color_wheel_ct.png</file>
+        <file>images/color_wheel_hsv.png</file>
+        <file>images/schemes/complement.png</file>
+        <file>images/schemes/compound.png</file>
+        <file>images/schemes/custom.png</file>
+        <file>images/schemes/single.png</file>
+        <file>images/schemes/triad.png</file>
+        <file>images/hue_range.png</file>
+        <file>images/ct_range.png</file>
     </qresource>
 </RCC>

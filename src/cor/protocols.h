@@ -394,7 +394,7 @@ enum class EPalette
      * <i>A purple-based theme. Similar to poison vials from
      * a 90s kids cartoon.</i>
      */
-    ePoison,
+    poison,
     /*!
      * <b>10</b><br>
      * <i>Shades of pink, red, and white.</i>
@@ -457,7 +457,7 @@ inline QString paletteToString(EPalette palette) {
             return "Evil";
         case EPalette::corrosive:
             return "Corrosive";
-        case EPalette::ePoison:
+        case EPalette::poison:
             return "Poison";
         case EPalette::rose:
             return "Rose";
@@ -499,7 +499,7 @@ inline EPalette stringToPalette(QString palette) {
     } else if (palette.compare("Corrosive") == 0) {
         return EPalette::corrosive;
     } else if (palette.compare("Poison") == 0) {
-        return EPalette::ePoison;
+        return EPalette::poison;
     } else if (palette.compare("Rose") == 0) {
         return EPalette::rose;
     } else if (palette.compare("PinkGreen") == 0) {
@@ -515,7 +515,6 @@ inline EPalette stringToPalette(QString palette) {
     } else if (palette.compare("Seven") == 0) {
         return EPalette::sevenColor;
     } else {
-        //qDebug() << " don't recognize" << palette;
         return EPalette::unknown;
     }
 }

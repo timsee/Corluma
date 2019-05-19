@@ -31,14 +31,23 @@ public:
      * \param temperature new temperature position, must be between 153 and 500
      * \param brightness new brightness position, must be between 0 and 100.
      */
-    void changeTemperatureAndBrightness(int temperature, uint32_t brightness);
+    void changeTemperatureAndBrightness(std::uint32_t temperature, std::uint32_t brightness);
+
+    /// programmatically change brightness
+    void changeBrightness(uint32_t brightness);
+
+    /// enables and disables the tmperature and brightness
+    void enable(bool enable);
+
+    /// getter for current brightness
+    std::uint32_t brightness();
 
 signals:
     /*!
      * \brief temperatureAndBrightnessChanged emitted whenever a slider changes values. Emits both
      *        the temperature and the brightness
      */
-    void temperatureAndBrightnessChanged(int temperature, uint32_t brightness);
+    void temperatureAndBrightnessChanged(std::uint32_t temperature, std::uint32_t brightness);
 
 private slots:
 

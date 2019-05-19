@@ -11,29 +11,29 @@ RGBSliders::RGBSliders(QWidget *parent) : QWidget(parent) {
     // Setup Sliders
     // --------------
     mRedSlider = new cor::Slider(this);
-    mRedSlider->setSliderColorBackground(QColor(255, 0, 0));
+    mRedSlider->setColor(QColor(255, 0, 0));
     mRedSlider->slider()->setRange(0, 255);
     mRedSlider->setSnapToNearestTick(true);
     mRedSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mRedSlider->setSliderHeight(0.8f);
+    mRedSlider->setHeightPercentage(0.8f);
     connect(mRedSlider, SIGNAL(valueChanged(int)), this, SLOT(redSliderChanged(int)));
     connect(mRedSlider->slider(), SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
 
     mGreenSlider = new cor::Slider(this);
-    mGreenSlider->setSliderColorBackground(QColor(0, 255, 0));
+    mGreenSlider->setColor(QColor(0, 255, 0));
     mGreenSlider->slider()->setRange(0, 255);
-    mRedSlider->setSnapToNearestTick(true);
+    mGreenSlider->setSnapToNearestTick(true);
     mGreenSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mGreenSlider->setSliderHeight(0.8f);
+    mGreenSlider->setHeightPercentage(0.8f);
     connect(mGreenSlider, SIGNAL(valueChanged(int)), this, SLOT(greenSliderChanged(int)));
     connect(mGreenSlider->slider(), SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
 
     mBlueSlider = new cor::Slider(this);
     mBlueSlider->slider()->setRange(0, 255);
-    mBlueSlider->setSliderColorBackground(QColor(0, 0, 255));
-    mRedSlider->setSnapToNearestTick(true);
+    mBlueSlider->setColor(QColor(0, 0, 255));
+    mBlueSlider->setSnapToNearestTick(true);
     mBlueSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mBlueSlider->setSliderHeight(0.8f);
+    mBlueSlider->setHeightPercentage(0.8f);
     connect(mBlueSlider, SIGNAL(valueChanged(int)), this, SLOT(blueSliderChanged(int)));
     connect(mBlueSlider->slider(), SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
 
@@ -113,4 +113,11 @@ void RGBSliders::releasedSlider() {
     emit colorChanged(QColor(mRedSlider->slider()->value(),
                              mGreenSlider->slider()->value(),
                              mBlueSlider->slider()->value()));
+}
+
+QColor RGBSliders::color() {
+    return QColor(mRedSlider->slider()->value(),
+                  mGreenSlider->slider()->value(),
+                  mBlueSlider->slider()->value());
+
 }

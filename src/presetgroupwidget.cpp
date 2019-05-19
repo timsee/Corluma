@@ -22,7 +22,7 @@ PresetGroupWidget::PresetGroupWidget(const QString& name,
 
     PresetPalettes palettes;
     mLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    cor::Light light(name, "NO_CONTROLLER", ECommType::MAX);
+    cor::Light light;
     light.isOn = true;
     light.palette = palettes.palette(palette);
     light.speed = 100;

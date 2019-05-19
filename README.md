@@ -14,4 +14,3 @@ Corluma is a cross-platform GUI designed to control Philips Hue lights, Nanoleaf
 *  [Backend Overview](https://timsee.github.io/Corluma/html/backend_overview.html)
 *  [Mobile Support](docs/markdown/mobile.md)
 *  [Changelog](CHANGELOG.md)
-*  [Credits](docs/markdown/credits.md)

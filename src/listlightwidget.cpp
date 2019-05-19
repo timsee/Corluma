@@ -173,8 +173,7 @@ bool ListLightWidget::setHighlightChecked(bool checked) {
 }
 
 
-void ListLightWidget::paintEvent(QPaintEvent *event) {
-    Q_UNUSED(event);
+void ListLightWidget::paintEvent(QPaintEvent *) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);

@@ -132,6 +132,12 @@ inline QSize applicationSize() {
 }
 
 
+/*!
+ * \brief leftHandMenuMoving returns true if the lefthandmenu is currently in motion, false otherwise.
+ *        Used as a bit of an antipattern to detect the lefthand menu state to avoid edge cases like
+ *        buttons being pressed on the menu canceling the movement.
+ * \return true if left hand menu is moving, false otherwise
+ */
 inline bool leftHandMenuMoving() {
     for (auto widget : QApplication::topLevelWidgets()) {
         if (QString(widget->metaObject()->className()) == "MainWindow") {

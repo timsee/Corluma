@@ -129,9 +129,7 @@ SOURCES += main.cpp \
     colorpicker/colorpicker.cpp \
     colorpicker/rgbsliders.cpp \
     colorpicker/tempbrightsliders.cpp \
-    colorpicker/brightnessslider.cpp \
     colorpicker/colorschemecircles.cpp \
-    colorpicker/customcolorpicker.cpp \
     colorpicker/swatchvectorwidget.cpp \
     discovery/discoverywidget.cpp \
     discovery/discoveryhuewidget.cpp \
@@ -207,7 +205,14 @@ SOURCES += main.cpp \
     mainviewport.cpp \
     lefthandbutton.cpp \
     listlightwidget.cpp \
-    addnewgroupbutton.cpp
+    addnewgroupbutton.cpp \
+    colorpicker/colorschemechooser.cpp \
+    colorpicker/colorschemebutton.cpp \
+    colorpicker/hsvsliders.cpp \
+    colorpicker/colorwheel.cpp \
+    colorpicker/singlecolorpicker.cpp \
+    colorpicker/multicolorpicker.cpp \
+    palettescrollarea.cpp
 
 HEADERS  +=  arducor/arducordiscovery.h \
     arducor/arducorpacketparser.h \
@@ -230,9 +235,7 @@ HEADERS  +=  arducor/arducordiscovery.h \
     colorpicker/colorpicker.h \
     colorpicker/rgbsliders.h \
     colorpicker/tempbrightsliders.h \
-    colorpicker/brightnessslider.h \
     colorpicker/colorschemecircles.h \
-    colorpicker/customcolorpicker.h \
     colorpicker/swatchvectorwidget.h \
     discovery/discoverywidget.h \
     discovery/discoveryhuewidget.h \
@@ -319,7 +322,14 @@ HEADERS  +=  arducor/arducordiscovery.h \
     mainviewport.h \
     lefthandbutton.h \
     listlightwidget.h \
-    addnewgroupbutton.h
+    addnewgroupbutton.h \
+    colorpicker/colorschemechooser.h \
+    colorpicker/colorschemebutton.h \
+    colorpicker/hsvsliders.h \
+    colorpicker/colorwheel.h \
+    colorpicker/singlecolorpicker.h \
+    colorpicker/multicolorpicker.h \
+    palettescrollarea.h
 
 #----------
 # Desktop builds only

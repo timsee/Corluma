@@ -24,13 +24,13 @@ public:
     explicit SelectLightsButton(QWidget *parent);
 
     /// pushes in the widget for display
-    void pushIn(int yPos, const QSize& size);
+    void pushIn(int yPos);
 
     /// pushes out the widget from display
-    void pushOut(int yPos, const QSize& size);
+    void pushOut(int yPos);
 
     /// resize widget programmatically
-    void resize(int yPos, const QSize& size);
+    void resize(int yPos);
 
     /// true if in, false otherwise
     bool isIn() { return mIsIn; }

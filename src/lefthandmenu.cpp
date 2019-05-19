@@ -15,12 +15,13 @@
 #include <QScroller>
 #include <QScrollBar>
 
-LeftHandMenu::LeftHandMenu(cor::DeviceList *devices, CommLayer *comm, GroupData *groups, QWidget *parent) : QWidget(parent) {
+LeftHandMenu::LeftHandMenu(cor::DeviceList *devices, CommLayer *comm, cor::DeviceList *lights, GroupData *groups, QWidget *parent) : QWidget(parent) {
     mNumberOfShownLights = 0;
     mLastScrollValue = 0;
     mAlwaysOpen = false;
     mSelectedLights = devices;
     mComm = comm;
+    mData = lights;
     mGroups = groups;
     mParentSize = parent->size();
     auto width = int(mParentSize.width() * 0.66f);
@@ -59,7 +60,7 @@ LeftHandMenu::LeftHandMenu(cor::DeviceList *devices, CommLayer *comm, GroupData 
     // Setup Buttons
     //---------------
 
-    mSingleColorButton = new LeftHandButton("Single Color", EPage::colorPage, ":/images/colorWheel_icon.png", this, this);
+    mSingleColorButton = new LeftHandButton("Single Color", EPage::colorPage, ":/images/color_wheel_hsv.png", this, this);
     mSingleColorButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mSingleColorButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
     mSingleColorButton->shouldHightlght(true);
@@ -281,6 +282,18 @@ void LeftHandMenu::updateLights() {
         mNumberOfRooms = roomList.size();
         resize();
     }
+
+    if (mData->devices() != mLastDevices) {
+        // get copy of data representation of lights
+        auto currentDevices = mData->devices();
+        // update devices to be comm representation instead of data representaiton
+        for (auto&& device : currentDevices) {
+            device = mComm->lightByID(device.uniqueID());
+        }
+        mLastDevices = currentDevices;
+
+        mMainPalette->updateDevices(currentDevices);
+    }
 }
 
 
@@ -318,16 +331,16 @@ void LeftHandMenu::updateSingleColorButton() {
         EHueType bestHueType = checkForHueWithMostFeatures(hues);
         // get a vector of all the possible hue types for a check.
         if (bestHueType == EHueType::white) {
-            mSingleColorButton->updateIcon(":images/white_wheel.png");
+            mSingleColorButton->updateIcon(":images/color_wheel_bri.png");
         } else if (bestHueType == EHueType::ambient) {
-            mSingleColorButton->updateIcon(":images/ambient_wheel.png");
+            mSingleColorButton->updateIcon(":images/color_wheel_ct.png");
         } else if (bestHueType == EHueType::extended){
-            mSingleColorButton->updateIcon(":images/colorWheel_icon.png");
+            mSingleColorButton->updateIcon(":images/color_wheel_hsv.png");
         } else {
             THROW_EXCEPTION("did not find any hue lights when expecting hue lights");
         }
     } else {
-        mSingleColorButton->updateIcon(":images/colorWheel_icon.png");
+        mSingleColorButton->updateIcon(":images/color_wheel_hsv.png");
     }
 }
 
@@ -450,6 +463,13 @@ void LeftHandMenu::renderUI() {
     }
 }
 
+void LeftHandMenu::newGroupButtonPressed() {
+    if (!cor::leftHandMenuMoving()) {
+        emit createNewGroup();
+    } else {
+        pushIn();
+    }
+}
 
 cor::Group LeftHandMenu::makeMiscellaneousGroup(const std::list<cor::Group>& roomList) {
     // fill in miscellaneous Room default data

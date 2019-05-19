@@ -82,7 +82,7 @@ void CommHue::sendPacket(const QJsonObject& object) {
             }
             if (object["bri"].isDouble()) {
                 if (object["temperature"].isDouble()) {
-                    changeColorCT(bridge, index, int(object["bri"].toDouble()), int(object["temperature"].toDouble()));
+                    changeColorCT(bridge, index, int(object["bri"].toDouble() * 100.0), int(object["temperature"].toDouble()));
                 } else {
                     brightnessChange(bridge, index, int(object["bri"].toDouble() * 100.0));
                 }
