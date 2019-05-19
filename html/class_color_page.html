@@ -60,14 +60,10 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-slots"></a>
 Public Slots</h2></td></tr>
-<tr class="memitem:aeca3e41f88b362a02d9262de3280d179"><td class="memItemLeft" align="right" valign="top"><a id="aeca3e41f88b362a02d9262de3280d179"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#aeca3e41f88b362a02d9262de3280d179">colorChanged</a> (QColor)</td></tr>
-<tr class="memdesc:aeca3e41f88b362a02d9262de3280d179"><td class="mdescLeft">&#160;</td><td class="mdescRight">colorChanged signaled whenever the <a class="el" href="class_color_picker.html" title="The ColorPicker class is a GUI object designed to give the user ability to choose RGB values in a var...">ColorPicker</a> chooses a new color. <br /></td></tr>
-<tr class="separator:aeca3e41f88b362a02d9262de3280d179"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a55a03a64119a9990397bf2f48c57ab6f"><td class="memItemLeft" align="right" valign="top"><a id="a55a03a64119a9990397bf2f48c57ab6f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a55a03a64119a9990397bf2f48c57ab6f">colorsChanged</a> (std::vector&lt; QColor &gt;)</td></tr>
-<tr class="memdesc:a55a03a64119a9990397bf2f48c57ab6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">colorsChanged multiple colors have changed and should be sent to the <a class="el" href="class_color_picker.html" title="The ColorPicker class is a GUI object designed to give the user ability to choose RGB values in a var...">ColorPicker</a> as a color scheme <br /></td></tr>
-<tr class="separator:a55a03a64119a9990397bf2f48c57ab6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51f511d077bec2982820ade56dca5dc8"><td class="memItemLeft" align="right" valign="top"><a id="a51f511d077bec2982820ade56dca5dc8"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a51f511d077bec2982820ade56dca5dc8">colorChanged</a> (const QColor &amp;)</td></tr>
+<tr class="memdesc:a51f511d077bec2982820ade56dca5dc8"><td class="mdescLeft">&#160;</td><td class="mdescRight">colorChanged signaled whenever the <a class="el" href="class_color_picker.html" title="The ColorPicker class is a GUI object designed to give the user ability to choose RGB values in a var...">ColorPicker</a> chooses a new color. <br /></td></tr>
+<tr class="separator:a51f511d077bec2982820ade56dca5dc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
@@ -79,35 +75,39 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a29b167b178e26e8e8707899138d576ac">routineUpdate</a> (QJsonObject)</td></tr>
 <tr class="memdesc:a29b167b178e26e8e8707899138d576ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">sent out whenever a routine update is triggered <br /></td></tr>
 <tr class="separator:a29b167b178e26e8e8707899138d576ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afd897bb3a10ce83df0ce4cd37d5a730f"><td class="memItemLeft" align="right" valign="top"><a id="afd897bb3a10ce83df0ce4cd37d5a730f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#afd897bb3a10ce83df0ce4cd37d5a730f">schemeUpdate</a> (std::vector&lt; QColor &gt;)</td></tr>
-<tr class="memdesc:afd897bb3a10ce83df0ce4cd37d5a730f"><td class="mdescLeft">&#160;</td><td class="mdescRight">ssent out whenever the color scheme is changed <br /></td></tr>
-<tr class="separator:afd897bb3a10ce83df0ce4cd37d5a730f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a4ad91de867db615a79d74bbfbd8f8cb3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a4ad91de867db615a79d74bbfbd8f8cb3">ColorPage</a> (QWidget *parent)</td></tr>
 <tr class="memdesc:a4ad91de867db615a79d74bbfbd8f8cb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a4ad91de867db615a79d74bbfbd8f8cb3">More...</a><br /></td></tr>
 <tr class="separator:a4ad91de867db615a79d74bbfbd8f8cb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae4501b93b8383486c16775e35a7c95e9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#ae4501b93b8383486c16775e35a7c95e9">changePageType</a> (EColorPageType page, bool skipAnimation=false)</td></tr>
-<tr class="memdesc:ae4501b93b8383486c16775e35a7c95e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">changePageType change the hue page type to display a different color picker.  <a href="#ae4501b93b8383486c16775e35a7c95e9">More...</a><br /></td></tr>
-<tr class="separator:ae4501b93b8383486c16775e35a7c95e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ad9b81c1bdccd1784ea644373230905"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a8ad9b81c1bdccd1784ea644373230905">changePageType</a> (EColorPickerMode page)</td></tr>
+<tr class="memdesc:a8ad9b81c1bdccd1784ea644373230905"><td class="mdescLeft">&#160;</td><td class="mdescRight">changePageType change the hue page type to display a different color picker.  <a href="#a8ad9b81c1bdccd1784ea644373230905">More...</a><br /></td></tr>
+<tr class="separator:a8ad9b81c1bdccd1784ea644373230905"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aafe8561aef3a73aa0ee37029f7f1d291"><td class="memItemLeft" align="right" valign="top"><a id="aafe8561aef3a73aa0ee37029f7f1d291"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#aafe8561aef3a73aa0ee37029f7f1d291">updateRoutineButton</a> ()</td></tr>
 <tr class="memdesc:aafe8561aef3a73aa0ee37029f7f1d291"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateRoutineButton helper to update the Routine button in the floating layout. Requires a bit of logic to abstract away the proper function call from the current app state. <br /></td></tr>
 <tr class="separator:aafe8561aef3a73aa0ee37029f7f1d291"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af08c6ecd1a074f4783e537f366ac9ab2"><td class="memItemLeft" align="right" valign="top"><a id="af08c6ecd1a074f4783e537f366ac9ab2"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#af08c6ecd1a074f4783e537f366ac9ab2">handleRoutineWidget</a> ()</td></tr>
-<tr class="memdesc:af08c6ecd1a074f4783e537f366ac9ab2"><td class="mdescLeft">&#160;</td><td class="mdescRight">detemines which routine widget to show and shows, if needed. <br /></td></tr>
-<tr class="separator:af08c6ecd1a074f4783e537f366ac9ab2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad8bff6c216f9500eb71fb29266c35c76"><td class="memItemLeft" align="right" valign="top"><a id="ad8bff6c216f9500eb71fb29266c35c76"></a>
-EColorPageType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#ad8bff6c216f9500eb71fb29266c35c76">pageType</a> ()</td></tr>
-<tr class="memdesc:ad8bff6c216f9500eb71fb29266c35c76"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for current type of color page (ambiance, RGB, etc.) <br /></td></tr>
-<tr class="separator:ad8bff6c216f9500eb71fb29266c35c76"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a81a36b28a1a6a696b88bb5d97c61f1a9"><td class="memItemLeft" align="right" valign="top"><a id="a81a36b28a1a6a696b88bb5d97c61f1a9"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a81a36b28a1a6a696b88bb5d97c61f1a9">show</a> (QColor color, uint32_t brightness, std::vector&lt; QColor &gt; colorScheme, Palette palette, uint32_t lightCount)</td></tr>
-<tr class="memdesc:a81a36b28a1a6a696b88bb5d97c61f1a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when the widget is shown <br /></td></tr>
-<tr class="separator:a81a36b28a1a6a696b88bb5d97c61f1a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc333fa62110e6c504b5f10563809f8d"><td class="memItemLeft" align="right" valign="top"><a id="afc333fa62110e6c504b5f10563809f8d"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#afc333fa62110e6c504b5f10563809f8d">handleRoutineWidget</a> (bool <a class="el" href="class_color_page.html#a22e84ff1283c5bf0747eccb422fbcb22">show</a>)</td></tr>
+<tr class="memdesc:afc333fa62110e6c504b5f10563809f8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">shows or hides the routine widget <br /></td></tr>
+<tr class="separator:afc333fa62110e6c504b5f10563809f8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af093b77dff80435e9c3fa3c1c6e833bd"><td class="memItemLeft" align="right" valign="top"><a id="af093b77dff80435e9c3fa3c1c6e833bd"></a>
+EColorPickerMode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#af093b77dff80435e9c3fa3c1c6e833bd">pageType</a> ()</td></tr>
+<tr class="memdesc:af093b77dff80435e9c3fa3c1c6e833bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for current type of color page (ambiance, RGB, etc.) <br /></td></tr>
+<tr class="separator:af093b77dff80435e9c3fa3c1c6e833bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f9b9936362ab1e742f3bbfd2f5bfc3a"><td class="memItemLeft" align="right" valign="top"><a id="a3f9b9936362ab1e742f3bbfd2f5bfc3a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a3f9b9936362ab1e742f3bbfd2f5bfc3a">updateBrightness</a> (std::uint32_t brightness)</td></tr>
+<tr class="memdesc:a3f9b9936362ab1e742f3bbfd2f5bfc3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">programmatically updates brightness <br /></td></tr>
+<tr class="separator:a3f9b9936362ab1e742f3bbfd2f5bfc3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a22e84ff1283c5bf0747eccb422fbcb22"><td class="memItemLeft" align="right" valign="top"><a id="a22e84ff1283c5bf0747eccb422fbcb22"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a22e84ff1283c5bf0747eccb422fbcb22">show</a> (const QColor &amp;color, uint32_t brightness, uint32_t lightCount, EColorPickerType bestType)</td></tr>
+<tr class="memdesc:a22e84ff1283c5bf0747eccb422fbcb22"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when the widget is shown <br /></td></tr>
+<tr class="separator:a22e84ff1283c5bf0747eccb422fbcb22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7998372d06f606422cb50c5c3b3f5062"><td class="memItemLeft" align="right" valign="top"><a id="a7998372d06f606422cb50c5c3b3f5062"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a7998372d06f606422cb50c5c3b3f5062">routineWidgetIsOpen</a> ()</td></tr>
+<tr class="memdesc:a7998372d06f606422cb50c5c3b3f5062"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if routine widget is open, false otherwise <br /></td></tr>
+<tr class="separator:a7998372d06f606422cb50c5c3b3f5062"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -149,8 +149,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae4501b93b8383486c16775e35a7c95e9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae4501b93b8383486c16775e35a7c95e9">&#9670;&nbsp;</a></span>changePageType()</h2>
+<a id="a8ad9b81c1bdccd1784ea644373230905"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ad9b81c1bdccd1784ea644373230905">&#9670;&nbsp;</a></span>changePageType()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -158,26 +158,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="memname">void ColorPage::changePageType </td>
           <td>(</td>
-          <td class="paramtype">EColorPageType&#160;</td>
-          <td class="paramname"><em>page</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">EColorPickerMode&#160;</td>
+          <td class="paramname"><em>page</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>skipAnimation</em> = <code>false</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">page</td><td>the new page type for the hue page. </td></tr>
-    <tr><td class="paramname">skipAnimation</td><td>if true, skips animation </td></tr>
   </table>
   </dd>
 </dl>

@@ -58,7 +58,7 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
-<tr class="memitem:a443ac1367bfc37d8669c0a35b519bcfa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_g_b_sliders.html#a443ac1367bfc37d8669c0a35b519bcfa">colorChanged</a> (QColor color)</td></tr>
+<tr class="memitem:a443ac1367bfc37d8669c0a35b519bcfa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_g_b_sliders.html#a443ac1367bfc37d8669c0a35b519bcfa">colorChanged</a> (QColor <a class="el" href="class_r_g_b_sliders.html#a3158f16df15249bb19c7cd0bd997d81e">color</a>)</td></tr>
 <tr class="memdesc:a443ac1367bfc37d8669c0a35b519bcfa"><td class="mdescLeft">&#160;</td><td class="mdescRight">colorChanged emitted whenever a slider changes its values. Emits the full color representation of all 3 sliders  <a href="#a443ac1367bfc37d8669c0a35b519bcfa">More...</a><br /></td></tr>
 <tr class="separator:a443ac1367bfc37d8669c0a35b519bcfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -67,13 +67,17 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5f5f38e7999b9e2c207b4988bcb4dcf2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_g_b_sliders.html#a5f5f38e7999b9e2c207b4988bcb4dcf2">RGBSliders</a> (QWidget *parent)</td></tr>
 <tr class="memdesc:a5f5f38e7999b9e2c207b4988bcb4dcf2"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#a5f5f38e7999b9e2c207b4988bcb4dcf2">More...</a><br /></td></tr>
 <tr class="separator:a5f5f38e7999b9e2c207b4988bcb4dcf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa98d652b92ec00dde2b48307ef23f3ab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_g_b_sliders.html#aa98d652b92ec00dde2b48307ef23f3ab">changeColor</a> (QColor color)</td></tr>
-<tr class="memdesc:aa98d652b92ec00dde2b48307ef23f3ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeColor programmatically change the values of the sliders. Does not emit a signal with its new value  <a href="#aa98d652b92ec00dde2b48307ef23f3ab">More...</a><br /></td></tr>
-<tr class="separator:aa98d652b92ec00dde2b48307ef23f3ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3c3699f36100922648a9c3267761392"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_g_b_sliders.html#ae3c3699f36100922648a9c3267761392">changeColor</a> (const QColor &amp;<a class="el" href="class_r_g_b_sliders.html#a3158f16df15249bb19c7cd0bd997d81e">color</a>)</td></tr>
+<tr class="memdesc:ae3c3699f36100922648a9c3267761392"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeColor programmatically change the values of the sliders. Does not emit a signal with its new value  <a href="#ae3c3699f36100922648a9c3267761392">More...</a><br /></td></tr>
+<tr class="separator:ae3c3699f36100922648a9c3267761392"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa0de33954d68d456ae3832e1aab16d3a"><td class="memItemLeft" align="right" valign="top"><a id="aa0de33954d68d456ae3832e1aab16d3a"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_g_b_sliders.html#aa0de33954d68d456ae3832e1aab16d3a">enable</a> (bool enable)</td></tr>
 <tr class="memdesc:aa0de33954d68d456ae3832e1aab16d3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">enables and disables the RGB sliders <br /></td></tr>
 <tr class="separator:aa0de33954d68d456ae3832e1aab16d3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3158f16df15249bb19c7cd0bd997d81e"><td class="memItemLeft" align="right" valign="top"><a id="a3158f16df15249bb19c7cd0bd997d81e"></a>
+QColor&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_g_b_sliders.html#a3158f16df15249bb19c7cd0bd997d81e">color</a> ()</td></tr>
+<tr class="memdesc:a3158f16df15249bb19c7cd0bd997d81e"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for current color <br /></td></tr>
+<tr class="separator:a3158f16df15249bb19c7cd0bd997d81e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
@@ -106,8 +110,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="aa98d652b92ec00dde2b48307ef23f3ab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa98d652b92ec00dde2b48307ef23f3ab">&#9670;&nbsp;</a></span>changeColor()</h2>
+<a id="ae3c3699f36100922648a9c3267761392"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae3c3699f36100922648a9c3267761392">&#9670;&nbsp;</a></span>changeColor()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -115,7 +119,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="memname">void RGBSliders::changeColor </td>
           <td>(</td>
-          <td class="paramtype">QColor&#160;</td>
+          <td class="paramtype">const QColor &amp;&#160;</td>
           <td class="paramname"><em>color</em></td><td>)</td>
           <td></td>
         </tr>

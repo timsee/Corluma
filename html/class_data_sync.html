@@ -72,10 +72,10 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac9c5dee9c6a98f60ceee420e778749e2"><td class="memItemLeft" align="right" valign="top"><a id="ac9c5dee9c6a98f60ceee420e778749e2"></a>
-virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#ac9c5dee9c6a98f60ceee420e778749e2">~DataSync</a> ()</td></tr>
-<tr class="memdesc:ac9c5dee9c6a98f60ceee420e778749e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">destructor <br /></td></tr>
-<tr class="separator:ac9c5dee9c6a98f60ceee420e778749e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a765fbb305bc773d49774138217eab0af"><td class="memItemLeft" align="right" valign="top"><a id="a765fbb305bc773d49774138217eab0af"></a>
+virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a765fbb305bc773d49774138217eab0af">~DataSync</a> ()=default</td></tr>
+<tr class="memdesc:a765fbb305bc773d49774138217eab0af"><td class="mdescLeft">&#160;</td><td class="mdescRight">destructor <br /></td></tr>
+<tr class="separator:a765fbb305bc773d49774138217eab0af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a00cd1b7ab6794537830f55cd2b4737c7"><td class="memItemLeft" align="right" valign="top"><a id="a00cd1b7ab6794537830f55cd2b4737c7"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a00cd1b7ab6794537830f55cd2b4737c7">cancelSync</a> ()=0</td></tr>
 <tr class="memdesc:a00cd1b7ab6794537830f55cd2b4737c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">cancelSync cancel the data sync, regardless of it successfully completed. <br /></td></tr>
@@ -101,18 +101,18 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr class="memitem:a45c054e275f1621ff3d0071b5ae4ae74"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a45c054e275f1621ff3d0071b5ae4ae74">sync</a> (const cor::Light &amp;dataDevice, const cor::Light &amp;commDevice)=0</td></tr>
 <tr class="memdesc:a45c054e275f1621ff3d0071b5ae4ae74"><td class="mdescLeft">&#160;</td><td class="mdescRight">sync checks if the light device of a comm layer and a data layer are in sync.  <a href="#a45c054e275f1621ff3d0071b5ae4ae74">More...</a><br /></td></tr>
 <tr class="separator:a45c054e275f1621ff3d0071b5ae4ae74"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f8b150bb4ba9397e24fe1abfb98c16e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a7f8b150bb4ba9397e24fe1abfb98c16e">appendToPacket</a> (QString &amp;currentPacket, QString newAddition, uint32_t maxPacketSize)</td></tr>
-<tr class="memdesc:a7f8b150bb4ba9397e24fe1abfb98c16e"><td class="mdescLeft">&#160;</td><td class="mdescRight">appendToPacket data sync builds up packets to send to devices. This takes a new addition to the packet, checks if theres room to add it, and adds it if there is.  <a href="#a7f8b150bb4ba9397e24fe1abfb98c16e">More...</a><br /></td></tr>
-<tr class="separator:a7f8b150bb4ba9397e24fe1abfb98c16e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac290609617734e4e0d075687e459072b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#ac290609617734e4e0d075687e459072b">appendToPacket</a> (QString &amp;currentPacket, const QString &amp;newAddition, uint32_t maxPacketSize)</td></tr>
+<tr class="memdesc:ac290609617734e4e0d075687e459072b"><td class="mdescLeft">&#160;</td><td class="mdescRight">appendToPacket data sync builds up packets to send to devices. This takes a new addition to the packet, checks if theres room to add it, and adds it if there is.  <a href="#ac290609617734e4e0d075687e459072b">More...</a><br /></td></tr>
+<tr class="separator:ac290609617734e4e0d075687e459072b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad68c78f9e20223ef90bdde9551bc76d3"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#ad68c78f9e20223ef90bdde9551bc76d3">ctDifference</a> (float first, float second)</td></tr>
 <tr class="memdesc:ad68c78f9e20223ef90bdde9551bc76d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">ctDifference gives a percent difference between two color temperatures. This function currently assumes that only Hue lightss are using it and will need adjustment for other lights that use a different range of color temperatures.  <a href="#ad68c78f9e20223ef90bdde9551bc76d3">More...</a><br /></td></tr>
 <tr class="separator:ad68c78f9e20223ef90bdde9551bc76d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac7d7831f1d499a1dcb5886f0a3ed1def"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#ac7d7831f1d499a1dcb5886f0a3ed1def">checkThrottle</a> (QString controller, ECommType type)</td></tr>
-<tr class="memdesc:ac7d7831f1d499a1dcb5886f0a3ed1def"><td class="mdescLeft">&#160;</td><td class="mdescRight">checkThrottle checks if any messages have been sent to this controller recently and throttles the messages if too many are being sent in a single interval.  <a href="#ac7d7831f1d499a1dcb5886f0a3ed1def">More...</a><br /></td></tr>
-<tr class="separator:ac7d7831f1d499a1dcb5886f0a3ed1def"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a540fcf9523c2c58deb74ee215c07140a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a540fcf9523c2c58deb74ee215c07140a">resetThrottle</a> (QString controller, ECommType type)</td></tr>
-<tr class="memdesc:a540fcf9523c2c58deb74ee215c07140a"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetThrottle should be called immediately after sending a packet, resets the throttle so that no messages can be sent until a certain interval has passed.  <a href="#a540fcf9523c2c58deb74ee215c07140a">More...</a><br /></td></tr>
-<tr class="separator:a540fcf9523c2c58deb74ee215c07140a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a36cf62163772fa07c52d1a9964d34435"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a36cf62163772fa07c52d1a9964d34435">checkThrottle</a> (const QString &amp;controller, ECommType type)</td></tr>
+<tr class="memdesc:a36cf62163772fa07c52d1a9964d34435"><td class="mdescLeft">&#160;</td><td class="mdescRight">checkThrottle checks if any messages have been sent to this controller recently and throttles the messages if too many are being sent in a single interval.  <a href="#a36cf62163772fa07c52d1a9964d34435">More...</a><br /></td></tr>
+<tr class="separator:a36cf62163772fa07c52d1a9964d34435"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56edecc537ca6854dd219fc84ddf0279"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a56edecc537ca6854dd219fc84ddf0279">resetThrottle</a> (const QString &amp;controller, ECommType type)</td></tr>
+<tr class="memdesc:a56edecc537ca6854dd219fc84ddf0279"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetThrottle should be called immediately after sending a packet, resets the throttle so that no messages can be sent until a certain interval has passed.  <a href="#a56edecc537ca6854dd219fc84ddf0279">More...</a><br /></td></tr>
+<tr class="separator:a56edecc537ca6854dd219fc84ddf0279"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -154,8 +154,8 @@ std::list&lt; <a class="el" href="struct_s_throttle.html">SThrottle</a> &gt;&#16
 <tr class="separator:aa7310b1dd1e2eae034d8de961875d1cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a7f8b150bb4ba9397e24fe1abfb98c16e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7f8b150bb4ba9397e24fe1abfb98c16e">&#9670;&nbsp;</a></span>appendToPacket()</h2>
+<a id="ac290609617734e4e0d075687e459072b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac290609617734e4e0d075687e459072b">&#9670;&nbsp;</a></span>appendToPacket()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -172,7 +172,7 @@ std::list&lt; <a class="el" href="struct_s_throttle.html">SThrottle</a> &gt;&#16
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">QString&#160;</td>
+          <td class="paramtype">const QString &amp;&#160;</td>
           <td class="paramname"><em>newAddition</em>, </td>
         </tr>
         <tr>
@@ -206,8 +206,8 @@ std::list&lt; <a class="el" href="struct_s_throttle.html">SThrottle</a> &gt;&#16
 
 </div>
 </div>
-<a id="ac7d7831f1d499a1dcb5886f0a3ed1def"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac7d7831f1d499a1dcb5886f0a3ed1def">&#9670;&nbsp;</a></span>checkThrottle()</h2>
+<a id="a36cf62163772fa07c52d1a9964d34435"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a36cf62163772fa07c52d1a9964d34435">&#9670;&nbsp;</a></span>checkThrottle()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -218,7 +218,7 @@ std::list&lt; <a class="el" href="struct_s_throttle.html">SThrottle</a> &gt;&#16
         <tr>
           <td class="memname">bool DataSync::checkThrottle </td>
           <td>(</td>
-          <td class="paramtype">QString&#160;</td>
+          <td class="paramtype">const QString &amp;&#160;</td>
           <td class="paramname"><em>controller</em>, </td>
         </tr>
         <tr>
@@ -294,8 +294,8 @@ std::list&lt; <a class="el" href="struct_s_throttle.html">SThrottle</a> &gt;&#16
 
 </div>
 </div>
-<a id="a540fcf9523c2c58deb74ee215c07140a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a540fcf9523c2c58deb74ee215c07140a">&#9670;&nbsp;</a></span>resetThrottle()</h2>
+<a id="a56edecc537ca6854dd219fc84ddf0279"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a56edecc537ca6854dd219fc84ddf0279">&#9670;&nbsp;</a></span>resetThrottle()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -306,7 +306,7 @@ std::list&lt; <a class="el" href="struct_s_throttle.html">SThrottle</a> &gt;&#16
         <tr>
           <td class="memname">void DataSync::resetThrottle </td>
           <td>(</td>
-          <td class="paramtype">QString&#160;</td>
+          <td class="paramtype">const QString &amp;&#160;</td>
           <td class="paramname"><em>controller</em>, </td>
         </tr>
         <tr>

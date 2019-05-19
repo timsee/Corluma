@@ -105,12 +105,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a1ff8229621f9a813ef1b98069ff025c8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#a1ff8229621f9a813ef1b98069ff025c8">removeGroup</a> (const QString &amp;groupName, bool isMood)</td></tr>
 <tr class="memdesc:a1ff8229621f9a813ef1b98069ff025c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeGroup remove the group of devices associated with the name provided. If no group has this name, nothing happens and it returns false. If a group does have this name, it is removed and this is saved to JSON which is then saved to AppData  <a href="#a1ff8229621f9a813ef1b98069ff025c8">More...</a><br /></td></tr>
 <tr class="separator:a1ff8229621f9a813ef1b98069ff025c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a216a23bc37a7cd72f54b7fdc21bec8c3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#a216a23bc37a7cd72f54b7fdc21bec8c3">loadExternalData</a> (QString file)</td></tr>
-<tr class="memdesc:a216a23bc37a7cd72f54b7fdc21bec8c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">loadExternalData  <a href="#a216a23bc37a7cd72f54b7fdc21bec8c3">More...</a><br /></td></tr>
-<tr class="separator:a216a23bc37a7cd72f54b7fdc21bec8c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0451290392680362dffd4008c0aa5b97"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#a0451290392680362dffd4008c0aa5b97">mergeExternalData</a> (QString file, bool keepFileChanges)</td></tr>
-<tr class="memdesc:a0451290392680362dffd4008c0aa5b97"><td class="mdescLeft">&#160;</td><td class="mdescRight">mergeExternalData merges JSON data into existing app data. When the same groups exists in both the JSON data and the appdata, the parameter keepFileChanges determines which is kept.  <a href="#a0451290392680362dffd4008c0aa5b97">More...</a><br /></td></tr>
-<tr class="separator:a0451290392680362dffd4008c0aa5b97"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52c3117b30f5374482d29a84c06257f2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#a52c3117b30f5374482d29a84c06257f2">loadExternalData</a> (const QString &amp;file)</td></tr>
+<tr class="memdesc:a52c3117b30f5374482d29a84c06257f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">loadExternalData  <a href="#a52c3117b30f5374482d29a84c06257f2">More...</a><br /></td></tr>
+<tr class="separator:a52c3117b30f5374482d29a84c06257f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac74d5a79ac119c639baf1f9c6fc9c6b9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#ac74d5a79ac119c639baf1f9c6fc9c6b9">mergeExternalData</a> (const QString &amp;file, bool keepFileChanges)</td></tr>
+<tr class="memdesc:ac74d5a79ac119c639baf1f9c6fc9c6b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">mergeExternalData merges JSON data into existing app data. When the same groups exists in both the JSON data and the appdata, the parameter keepFileChanges determines which is kept.  <a href="#ac74d5a79ac119c639baf1f9c6fc9c6b9">More...</a><br /></td></tr>
+<tr class="separator:ac74d5a79ac119c639baf1f9c6fc9c6b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a75055b7a7af26575788fd6524a188d9a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#a75055b7a7af26575788fd6524a188d9a">lightDeleted</a> (const QString &amp;uniqueID)</td></tr>
 <tr class="memdesc:a75055b7a7af26575788fd6524a188d9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">lightDeleted removes a light from all moods and collections based off of its unique ID. This is called when a light is detected as deleted elsewhere in the application  <a href="#a75055b7a7af26575788fd6524a188d9a">More...</a><br /></td></tr>
 <tr class="separator:a75055b7a7af26575788fd6524a188d9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -204,8 +204,8 @@ std::uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 
 </div>
 </div>
-<a id="a216a23bc37a7cd72f54b7fdc21bec8c3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a216a23bc37a7cd72f54b7fdc21bec8c3">&#9670;&nbsp;</a></span>loadExternalData()</h2>
+<a id="a52c3117b30f5374482d29a84c06257f2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52c3117b30f5374482d29a84c06257f2">&#9670;&nbsp;</a></span>loadExternalData()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -213,7 +213,7 @@ std::uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
         <tr>
           <td class="memname">bool GroupData::loadExternalData </td>
           <td>(</td>
-          <td class="paramtype">QString&#160;</td>
+          <td class="paramtype">const QString &amp;&#160;</td>
           <td class="paramname"><em>file</em></td><td>)</td>
           <td></td>
         </tr>
@@ -229,8 +229,8 @@ std::uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 
 </div>
 </div>
-<a id="a0451290392680362dffd4008c0aa5b97"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0451290392680362dffd4008c0aa5b97">&#9670;&nbsp;</a></span>mergeExternalData()</h2>
+<a id="ac74d5a79ac119c639baf1f9c6fc9c6b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac74d5a79ac119c639baf1f9c6fc9c6b9">&#9670;&nbsp;</a></span>mergeExternalData()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -238,7 +238,7 @@ std::uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
         <tr>
           <td class="memname">bool GroupData::mergeExternalData </td>
           <td>(</td>
-          <td class="paramtype">QString&#160;</td>
+          <td class="paramtype">const QString &amp;&#160;</td>
           <td class="paramname"><em>file</em>, </td>
         </tr>
         <tr>

@@ -64,6 +64,10 @@ Public Slots</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#a2c74981ac85b053dba71413fcb146b32">multiButtonClicked</a> (QJsonObject)</td></tr>
 <tr class="memdesc:a2c74981ac85b053dba71413fcb146b32"><td class="mdescLeft">&#160;</td><td class="mdescRight">multiButtonClicked every button setup as a presetButton will signal this slot whenever they are clicked. <br /></td></tr>
 <tr class="separator:a2c74981ac85b053dba71413fcb146b32"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd348cd9925fb8d6afbf009e3e0de600"><td class="memItemLeft" align="right" valign="top"><a id="abd348cd9925fb8d6afbf009e3e0de600"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#abd348cd9925fb8d6afbf009e3e0de600">colorsChanged</a> (const std::vector&lt; QColor &gt; &amp;)</td></tr>
+<tr class="memdesc:abd348cd9925fb8d6afbf009e3e0de600"><td class="mdescLeft">&#160;</td><td class="mdescRight">colorsChanged multiple colors have changed and should be sent to the <a class="el" href="class_color_picker.html" title="The ColorPicker class is a GUI object designed to give the user ability to choose RGB values in a var...">ColorPicker</a> as a color scheme <br /></td></tr>
+<tr class="separator:abd348cd9925fb8d6afbf009e3e0de600"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
@@ -75,19 +79,20 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#a7f0920f091ff7c70442a4548fe7459ac">routineUpdate</a> (QJsonObject object)</td></tr>
 <tr class="memdesc:a7f0920f091ff7c70442a4548fe7459ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">a button was pressed, signaling a routine change. <br /></td></tr>
 <tr class="separator:a7f0920f091ff7c70442a4548fe7459ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad798101540f6e958cb5f2c08d8ce8d55"><td class="memItemLeft" align="right" valign="top"><a id="ad798101540f6e958cb5f2c08d8ce8d55"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#ad798101540f6e958cb5f2c08d8ce8d55">schemeUpdate</a> (std::vector&lt; QColor &gt;)</td></tr>
+<tr class="memdesc:ad798101540f6e958cb5f2c08d8ce8d55"><td class="mdescLeft">&#160;</td><td class="mdescRight">sent out whenever the color scheme is changed <br /></td></tr>
+<tr class="separator:ad798101540f6e958cb5f2c08d8ce8d55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a4367e626cdd8ce5456a836478c527bae"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#a4367e626cdd8ce5456a836478c527bae">PalettePage</a> (QWidget *parent)</td></tr>
 <tr class="memdesc:a4367e626cdd8ce5456a836478c527bae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a4367e626cdd8ce5456a836478c527bae">More...</a><br /></td></tr>
 <tr class="separator:a4367e626cdd8ce5456a836478c527bae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4cf363918752b8c2bc8109a684897794"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#a4cf363918752b8c2bc8109a684897794">highlightRoutineButton</a> (ERoutine routine, EPalette palette)</td></tr>
-<tr class="memdesc:a4cf363918752b8c2bc8109a684897794"><td class="mdescLeft">&#160;</td><td class="mdescRight">highlightRoutineButton highlights the button that implements the routine parameter. If it can't find a button that implements this lighting routine, then all buttons are unhighlighted  <a href="#a4cf363918752b8c2bc8109a684897794">More...</a><br /></td></tr>
-<tr class="separator:a4cf363918752b8c2bc8109a684897794"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a27589c2f79ead824a454791c0f90b8b3"><td class="memItemLeft" align="right" valign="top"><a id="a27589c2f79ead824a454791c0f90b8b3"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#a27589c2f79ead824a454791c0f90b8b3">show</a> (QColor color, std::uint32_t lightCount, bool hasArduinoDevices, bool hasNanoleafDevices)</td></tr>
-<tr class="memdesc:a27589c2f79ead824a454791c0f90b8b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">called whenever the group page is shown <br /></td></tr>
-<tr class="separator:a27589c2f79ead824a454791c0f90b8b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04e5a1d4b252f8f8419b6aea73fd881b"><td class="memItemLeft" align="right" valign="top"><a id="a04e5a1d4b252f8f8419b6aea73fd881b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#a04e5a1d4b252f8f8419b6aea73fd881b">show</a> (std::uint32_t count, uint32_t brightness, const std::vector&lt; QColor &gt; &amp;colorScheme, bool hasArduinoDevices, bool hasNanoleafDevices)</td></tr>
+<tr class="memdesc:a04e5a1d4b252f8f8419b6aea73fd881b"><td class="mdescLeft">&#160;</td><td class="mdescRight">called whenever the group page is shown <br /></td></tr>
+<tr class="separator:a04e5a1d4b252f8f8419b6aea73fd881b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a637c5ec6ecdbd557fb891c414450b4e9"><td class="memItemLeft" align="right" valign="top"><a id="a637c5ec6ecdbd557fb891c414450b4e9"></a>
 EGroupMode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#a637c5ec6ecdbd557fb891c414450b4e9">mode</a> ()</td></tr>
 <tr class="memdesc:a637c5ec6ecdbd557fb891c414450b4e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for current mode of page <br /></td></tr>
@@ -102,6 +107,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#aef88c93d32b7b42daac06afa608c155c">resize</a> ()</td></tr>
 <tr class="memdesc:aef88c93d32b7b42daac06afa608c155c"><td class="mdescLeft">&#160;</td><td class="mdescRight">called to programmatically resize the widget <br /></td></tr>
 <tr class="separator:aef88c93d32b7b42daac06afa608c155c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac6ad7ff31ee6804e2c6ac952f533e426"><td class="memItemLeft" align="right" valign="top"><a id="ac6ad7ff31ee6804e2c6ac952f533e426"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#ac6ad7ff31ee6804e2c6ac952f533e426">handleRoutineWidget</a> (bool <a class="el" href="class_palette_page.html#a04e5a1d4b252f8f8419b6aea73fd881b">show</a>)</td></tr>
+<tr class="memdesc:ac6ad7ff31ee6804e2c6ac952f533e426"><td class="mdescLeft">&#160;</td><td class="mdescRight">detemines which routine widget to show and shows, if needed. <br /></td></tr>
+<tr class="separator:ac6ad7ff31ee6804e2c6ac952f533e426"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7c1dbd9529e07e95a910a2e82ee6c4c"><td class="memItemLeft" align="right" valign="top"><a id="aa7c1dbd9529e07e95a910a2e82ee6c4c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#aa7c1dbd9529e07e95a910a2e82ee6c4c">lightCountChanged</a> (std::size_t count)</td></tr>
+<tr class="memdesc:aa7c1dbd9529e07e95a910a2e82ee6c4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">changes the light count, affecting the menus on the page <br /></td></tr>
+<tr class="separator:aa7c1dbd9529e07e95a910a2e82ee6c4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63544baeff7aab95fa5ee9e42f87f861"><td class="memItemLeft" align="right" valign="top"><a id="a63544baeff7aab95fa5ee9e42f87f861"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#a63544baeff7aab95fa5ee9e42f87f861">routineWidgetIsOpen</a> ()</td></tr>
+<tr class="memdesc:a63544baeff7aab95fa5ee9e42f87f861"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if the routine widget is open, false otherwise <br /></td></tr>
+<tr class="separator:a63544baeff7aab95fa5ee9e42f87f861"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -109,10 +126,6 @@ Protected Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#a64f0e96d1e4fd74b65dc1dea840d7d7e">showEvent</a> (QShowEvent *)</td></tr>
 <tr class="memdesc:a64f0e96d1e4fd74b65dc1dea840d7d7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">called whenever the page is shown on screen. <br /></td></tr>
 <tr class="separator:a64f0e96d1e4fd74b65dc1dea840d7d7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a03f3a8ed3d1e67e00f31ee7606475456"><td class="memItemLeft" align="right" valign="top"><a id="a03f3a8ed3d1e67e00f31ee7606475456"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#a03f3a8ed3d1e67e00f31ee7606475456">hideEvent</a> (QHideEvent *)</td></tr>
-<tr class="memdesc:a03f3a8ed3d1e67e00f31ee7606475456"><td class="mdescLeft">&#160;</td><td class="mdescRight">hideEvent called whenever the page is changed and this page is hidden from the screen. <br /></td></tr>
-<tr class="separator:a03f3a8ed3d1e67e00f31ee7606475456"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4faf7b37f0749aa46ae6e08f6839bb91"><td class="memItemLeft" align="right" valign="top"><a id="a4faf7b37f0749aa46ae6e08f6839bb91"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#a4faf7b37f0749aa46ae6e08f6839bb91">resizeEvent</a> (QResizeEvent *)</td></tr>
 <tr class="memdesc:a4faf7b37f0749aa46ae6e08f6839bb91"><td class="mdescLeft">&#160;</td><td class="mdescRight">resizeEvent called every time the main window is resized. <br /></td></tr>
@@ -150,41 +163,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a4cf363918752b8c2bc8109a684897794"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4cf363918752b8c2bc8109a684897794">&#9670;&nbsp;</a></span>highlightRoutineButton()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void PalettePage::highlightRoutineButton </td>
-          <td>(</td>
-          <td class="paramtype">ERoutine&#160;</td>
-          <td class="paramname"><em>routine</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">EPalette&#160;</td>
-          <td class="paramname"><em>palette</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">routine</td><td>the lighting routine the highlighted button implements. </td></tr>
-    <tr><td class="paramname">palette</td><td>the color group that the highlighted button implements. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a id="a66d93b1774a16ff1ce2515ecefc17b89"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a66d93b1774a16ff1ce2515ecefc17b89">&#9670;&nbsp;</a></span>showPresetHueGroups()</h2>
 

@@ -85,9 +85,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:aeee121cc6b33f7963382d83180661f4f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#aeee121cc6b33f7963382d83180661f4f">shutdown</a> (EProtocolType type)</td></tr>
 <tr class="memdesc:aeee121cc6b33f7963382d83180661f4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">shutdown shuts down the stream of the given type. This stops all of its maintence threads and discovery threads.  <a href="#aeee121cc6b33f7963382d83180661f4f">More...</a><br /></td></tr>
 <tr class="separator:aeee121cc6b33f7963382d83180661f4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5095d246b32ad8f68c6ad4a289388915"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a5095d246b32ad8f68c6ad4a289388915">removeController</a> (ECommType type, cor::Controller controller)</td></tr>
-<tr class="memdesc:a5095d246b32ad8f68c6ad4a289388915"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeConnection attempt to remove a controller to the hash table  <a href="#a5095d246b32ad8f68c6ad4a289388915">More...</a><br /></td></tr>
-<tr class="separator:a5095d246b32ad8f68c6ad4a289388915"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa82be920137c5c5672bf50eebe8bc918"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#aa82be920137c5c5672bf50eebe8bc918">removeController</a> (ECommType type, const cor::Controller &amp;controller)</td></tr>
+<tr class="memdesc:aa82be920137c5c5672bf50eebe8bc918"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeConnection attempt to remove a controller to the hash table  <a href="#aa82be920137c5c5672bf50eebe8bc918">More...</a><br /></td></tr>
+<tr class="separator:aa82be920137c5c5672bf50eebe8bc918"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a62b21d48e62cbcba64b1dd249b26af15"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a62b21d48e62cbcba64b1dd249b26af15">fillDevice</a> (cor::Light &amp;device)</td></tr>
 <tr class="memdesc:a62b21d48e62cbcba64b1dd249b26af15"><td class="mdescLeft">&#160;</td><td class="mdescRight">fillDevice use the controller name, type, and index to fill in the rest of the devices data.  <a href="#a62b21d48e62cbcba64b1dd249b26af15">More...</a><br /></td></tr>
 <tr class="separator:a62b21d48e62cbcba64b1dd249b26af15"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -144,10 +144,10 @@ std::shared_ptr&lt; <a class="el" href="class_comm_hue.html">CommHue</a> &gt;&#1
 <tr class="memitem:a0c0e7d9a8431f70acc468029f35e2a2a"><td class="memItemLeft" align="right" valign="top">std::list&lt; cor::Light &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a0c0e7d9a8431f70acc468029f35e2a2a">hueLightsToDevices</a> (std::list&lt; HueLight &gt; hues)</td></tr>
 <tr class="memdesc:a0c0e7d9a8431f70acc468029f35e2a2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">hueLightsToDevices helper to convert a list of hue lights into a list of cor::Lights  <a href="#a0c0e7d9a8431f70acc468029f35e2a2a">More...</a><br /></td></tr>
 <tr class="separator:a0c0e7d9a8431f70acc468029f35e2a2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b164add41930c4a890739a7e6bfcaec"><td class="memItemLeft" align="right" valign="top"><a id="a7b164add41930c4a890739a7e6bfcaec"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a7b164add41930c4a890739a7e6bfcaec">deleteHueGroup</a> (QString name)</td></tr>
-<tr class="memdesc:a7b164add41930c4a890739a7e6bfcaec"><td class="mdescLeft">&#160;</td><td class="mdescRight">deletes a hue group by name <br /></td></tr>
-<tr class="separator:a7b164add41930c4a890739a7e6bfcaec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33b262114ae8f64630294e8ed69aed1c"><td class="memItemLeft" align="right" valign="top"><a id="a33b262114ae8f64630294e8ed69aed1c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a33b262114ae8f64630294e8ed69aed1c">deleteHueGroup</a> (const QString &amp;name)</td></tr>
+<tr class="memdesc:a33b262114ae8f64630294e8ed69aed1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">deletes a hue group by name <br /></td></tr>
+<tr class="separator:a33b262114ae8f64630294e8ed69aed1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
@@ -309,8 +309,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a id="a5095d246b32ad8f68c6ad4a289388915"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5095d246b32ad8f68c6ad4a289388915">&#9670;&nbsp;</a></span>removeController()</h2>
+<a id="aa82be920137c5c5672bf50eebe8bc918"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa82be920137c5c5672bf50eebe8bc918">&#9670;&nbsp;</a></span>removeController()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -324,7 +324,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">cor::Controller&#160;</td>
+          <td class="paramtype">const cor::Controller &amp;&#160;</td>
           <td class="paramname"><em>controller</em>&#160;</td>
         </tr>
         <tr>
