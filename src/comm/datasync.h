@@ -17,8 +17,7 @@
  *        of the throttled controller but that will be removed when combining
  *        packets gets a bit smarter.
  */
-struct SThrottle
-{
+struct SThrottle {
     /*!
      * \brief time time since last message was sent.
      */
@@ -37,18 +36,18 @@ struct SThrottle
 class CommLayer;
 
 /*!
- * \brief The DataSync base class is used for datasync threads. These threads compares the data layer's representation
- *        of devices with the commlayer's  understanding of devices and tries to sync them up. The DataLayer's representation is used
- *        as the "desired" state of lights. The CommLayer's understanding is used as the current state.
- *        If the desired state and current state do not match, the commlayer is requested to send packets
- *        to try to update the devices. Different datasync threads run at different speeds and have different criteria for how to handle
- *        syncing. Philips hue lights, for instance, require syncing of schedules and groups on top of standard information. Because of this,
- *        derived classes impelement the different rules for handling syncing data.
+ * \brief The DataSync base class is used for datasync threads. These threads compares the data
+ * layer's representation of devices with the commlayer's  understanding of devices and tries to
+ * sync them up. The DataLayer's representation is used as the "desired" state of lights. The
+ * CommLayer's understanding is used as the current state. If the desired state and current state do
+ * not match, the commlayer is requested to send packets to try to update the devices. Different
+ * datasync threads run at different speeds and have different criteria for how to handle syncing.
+ * Philips hue lights, for instance, require syncing of schedules and groups on top of standard
+ * information. Because of this, derived classes impelement the different rules for handling syncing
+ * data.
  */
-class DataSync
-{
+class DataSync {
 public:
-
     /// destructor
     virtual ~DataSync() = default;
 
@@ -59,14 +58,15 @@ public:
 
 public slots:
     /*!
-     * \brief resetSync Tells the DataSync object that the commlayer and the datalayer are potentially
-     *        no longer in sync and the syncData() function needs to get called on the timer again.
+     * \brief resetSync Tells the DataSync object that the commlayer and the datalayer are
+     * potentially no longer in sync and the syncData() function needs to get called on the timer
+     * again.
      */
     virtual void resetSync() = 0;
 
     /*!
-     * \brief commPacketReceived a packet was received from a given protocol type. In some cases, receiving a packet
-     *        will reset the sync for that commtype.
+     * \brief commPacketReceived a packet was received from a given protocol type. In some cases,
+     * receiving a packet will reset the sync for that commtype.
      */
     virtual void commPacketReceived(EProtocolType) = 0;
 
@@ -81,16 +81,14 @@ protected slots:
     virtual void syncData() = 0;
 
     /*!
-     * \brief cleanupSync After the sync is complete, certain actions need to be ran. For example, Hues
-     *        require a schedule to be kept synced to timeout properly. The cleanup thread starts after
-     *        the ArduinoDataSync to run the routines needed to keep data in sync in the long term. This function
-     *        contains all those routines.
+     * \brief cleanupSync After the sync is complete, certain actions need to be ran. For example,
+     * Hues require a schedule to be kept synced to timeout properly. The cleanup thread starts
+     * after the ArduinoDataSync to run the routines needed to keep data in sync in the long term.
+     * This function contains all those routines.
      */
     virtual void cleanupSync() = 0;
 
 protected:
-
-
     /*!
      * \brief endOfSync end the sync thread and start the cleanup thread.
      */
@@ -100,23 +98,23 @@ protected:
      * \brief mData pointer to data layer. Used for checking what state the data layer
      *        desires the devices to be.
      */
-    cor::DeviceList *mData;
+    cor::DeviceList* mData;
 
     /*!
      * \brief mComm pointer to comm layer. Used for checking what state the comm layer
      *        thinks the devices are in and for sending packets to the devices.
      */
-    CommLayer *mComm;
+    CommLayer* mComm;
 
     /*!
      * \brief mSyncTimer Whenever data is not in sync,
      */
-    QTimer *mSyncTimer;
+    QTimer* mSyncTimer;
 
     /*!
      * \brief mCleanupTimer timer for the cleanup thread.
      */
-    QTimer *mCleanupTimer;
+    QTimer* mCleanupTimer;
 
     /*!
      * \brief mCleanupStartTime time that sync the cleanup thread was started so that we know when
@@ -131,8 +129,8 @@ protected:
     QTime mStartTime;
 
     /*!
-     * \brief mDataIsInSync true if all the datalayer and commlayer representations of devices are identical,
-     *        false otherwise.
+     * \brief mDataIsInSync true if all the datalayer and commlayer representations of devices are
+     * identical, false otherwise.
      */
     bool mDataIsInSync;
 
@@ -154,8 +152,8 @@ protected:
     //------------------
 
     /*!
-     * \brief appendToPacket data sync builds up packets to send to devices. This takes a new addition to the packet,
-     *        checks if theres room to add it, and adds it if there is.
+     * \brief appendToPacket data sync builds up packets to send to devices. This takes a new
+     * addition to the packet, checks if theres room to add it, and adds it if there is.
      * \param currentPacket current packet ArduinoDataSync is building
      * \param newAddition new addition
      * \param maxPacketSize max size of packet that the controller can handle.
@@ -179,13 +177,13 @@ protected:
 
     /*!
      * \brief mThrottleList list of all known controllers that packets have been sent to and the
-     *        the last time a packet was sent. Used to throttle messages from sending too frequently.
+     *  the last time a packet was sent. Used to throttle messages from sending too frequently.
      */
     std::list<SThrottle> mThrottleList;
 
     /*!
-     * \brief checkThrottle checks if any messages have been sent to this controller recently and throttles the messages
-     *        if too many are being sent in a single interval.
+     * \brief checkThrottle checks if any messages have been sent to this controller recently and
+     * throttles the messages if too many are being sent in a single interval.
      * \param controller name of controller.
      * \param type communication type of controller
      * \return true if a mesasge can be sent, false if the message shoudl be throttled
@@ -193,8 +191,8 @@ protected:
     bool checkThrottle(const QString& controller, ECommType type);
 
     /*!
-     * \brief resetThrottle should be called immediately after sending a packet, resets the throttle so that no messages can
-     *        be sent until a certain interval has passed.
+     * \brief resetThrottle should be called immediately after sending a packet, resets the throttle
+     * so that no messages can be sent until a certain interval has passed.
      * \param controller name of controller.
      * \param type communication type of controller
      */

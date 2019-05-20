@@ -1,19 +1,18 @@
 #ifndef BRIDGEINFOWIDGET_H
 #define BRIDGEINFOWIDGET_H
 
-#include <QWidget>
 #include <QGridLayout>
 #include <QLabel>
-#include <QPushButton>
 #include <QMovie>
+#include <QPushButton>
+#include <QWidget>
 
 #include "bridge.h"
-#include "huelight.h"
-#include "editablefieldwidget.h"
 #include "cor/listitemwidget.h"
+#include "editablefieldwidget.h"
+#include "huelight.h"
 
-namespace hue
-{
+namespace hue {
 
 /*!
  * \copyright
@@ -23,13 +22,11 @@ namespace hue
  * \brief The BridgeInfoWidget class is a simple widget that shows the metadata of a bridge and
  *        provides a button to discover new hues for the bridge.
  */
-class BridgeInfoWidget : public cor::ListItemWidget
-{
+class BridgeInfoWidget : public cor::ListItemWidget {
     Q_OBJECT
 public:
-
     /// constructor
-    explicit BridgeInfoWidget(const hue::Bridge& bridge, QWidget *parent);
+    explicit BridgeInfoWidget(const hue::Bridge& bridge, QWidget* parent);
 
     /// update the bridge being shown
     void updateBridge(const hue::Bridge& bridge);
@@ -71,17 +68,17 @@ protected:
     /*!
      * \brief resizeEvent called every time the main window is resized.
      */
-    void resizeEvent(QResizeEvent *);
+    void resizeEvent(QResizeEvent*);
 
     /*!
      * \brief paintEvent used to draw the background of the widget.
      */
-    void paintEvent(QPaintEvent *);
+    void paintEvent(QPaintEvent*);
 
     /*!
      * \brief mouseReleaseEvent picks up when a click (or a tap on mobile) is released.
      */
-    virtual void mouseReleaseEvent(QMouseEvent *);
+    virtual void mouseReleaseEvent(QMouseEvent*);
 
 private slots:
 
@@ -111,66 +108,66 @@ private:
     hue::Bridge mBridge;
 
     /// label for the name widget
-    QLabel *mNameLabel;
+    QLabel* mNameLabel;
 
     /// editable field that lets you change the custom name of a bridge.
-    EditableFieldWidget *mNameWidget;
+    EditableFieldWidget* mNameWidget;
 
     /// button for deleting all memory associated with a bridge.
-    QPushButton *mDeleteButton;
+    QPushButton* mDeleteButton;
 
     /// shows the IP address
-    QLabel *mIPAddress;
+    QLabel* mIPAddress;
 
     /// shows the ID of the bridge
-    QLabel *mID;
+    QLabel* mID;
 
     /// shows the API version of the bridge
-    QLabel *mAPI;
+    QLabel* mAPI;
 
     /// spacer used for laying out widgets
-    QLabel *mSpacer;
+    QLabel* mSpacer;
 
     /// layout for top of the widget
-    QHBoxLayout *mTopLayout;
+    QHBoxLayout* mTopLayout;
 
     /// layout of middle of widget
-    QHBoxLayout *mMidLayout;
+    QHBoxLayout* mMidLayout;
 
     /// image for displaying a graphic to help with current step of widget.
-    QLabel *mImage;
+    QLabel* mImage;
 
     /// spacer for top widget
-    QLabel *mTopSpacer;
+    QLabel* mTopSpacer;
 
     /// Used for showing when a device is still being discovery.
-    QMovie *mMovie;
+    QMovie* mMovie;
 
     /// cachced pixmap of hue bridge
     QPixmap mBridgePixmap;
 
     /// layout for the top right of the widget
-    QVBoxLayout *mTopRightLayout;
+    QVBoxLayout* mTopRightLayout;
 
     /// layout for the buttons
-    QHBoxLayout *mButtonsLayout;
+    QHBoxLayout* mButtonsLayout;
 
     /// button that allows the user to discover new hue lights.
-    QPushButton *mDiscoverHueButton;
+    QPushButton* mDiscoverHueButton;
 
     /// button used for viewing the schedules of a bridge
-    QPushButton *mSchedulesButton;
+    QPushButton* mSchedulesButton;
 
     /// button used for viewing the groups of a bridge.
-    QPushButton *mGroupsButton;
+    QPushButton* mGroupsButton;
 
     /// main layout
-    QVBoxLayout *mLayout;
+    QVBoxLayout* mLayout;
 
     /// true if checked, false otherwise
     bool mIsChecked;
 };
 
-}
+} // namespace hue
 
 #endif // BRIDGEINFOWIDGET_H

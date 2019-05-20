@@ -1,9 +1,9 @@
 #ifndef SERIALCOMM_H
 #define SERIALCOMM_H
 
-#include "commtype.h"
 #include "arducor/arducordiscovery.h"
 #include "arducor/crccalculator.h"
+#include "commtype.h"
 
 #include <QSerialPort>
 #include <QSerialPortInfo>
@@ -22,8 +22,7 @@
  * fastest and most stable connection on PCs.
  */
 
-class CommSerial : public CommType
-{
+class CommSerial : public CommType {
     Q_OBJECT
 public:
     /*!
@@ -52,12 +51,11 @@ public:
     void shutdown();
 
     /// connects discovery object
-    void connectDiscovery(ArduCorDiscovery *discovery) { mDiscovery = discovery; }
+    void connectDiscovery(ArduCorDiscovery* discovery) { mDiscovery = discovery; }
 
     /*!
      * \brief sendPacket sends a string over serial
-     * \param packet the string that is going to be sent over
-     *        serial.
+     * \param packet the string that is going to be sent over serial.
      */
     void sendPacket(const cor::Controller& controller, QString& packet);
 
@@ -78,7 +76,8 @@ public:
 
 signals:
     /*!
-     * \brief packetReceived emitted whenever a packet that is not a discovery packet is received. Contains
+     * \brief packetReceived emitted whenever a packet that is not a discovery packet is received.
+     * Contains
      *        the full packet's contents as a QString.
      */
     void packetReceived(QString, QString, ECommType);
@@ -101,9 +100,9 @@ private slots:
     void stateUpdate();
 
 private:
-
-    /// discovery object for storing previous connections, saving new connections, parsing discovery packets
-    ArduCorDiscovery *mDiscovery;
+    /// discovery object for storing previous connections, saving new connections, parsing discovery
+    /// packets
+    ArduCorDiscovery* mDiscovery;
 
     /// used to check CRC on incoming packets.
     CRCCalculator mCRC;
@@ -122,7 +121,7 @@ private:
      * \param name name fo QSerialPort
      * \return pointer to QSerialPort
      */
-    QSerialPort *serialPortByName(const QString& name);
+    QSerialPort* serialPortByName(const QString& name);
 
     /*!
      * \brief mSerialList list of possible serial ports
@@ -131,10 +130,10 @@ private:
     std::list<QSerialPortInfo> mSerialInfoList;
 
     /*!
-     * \brief mSerialPorts list of serial ports in use. The second element in the pair is a buffer that contains the
-     *        most recent characters sent by the serial port.
+     * \brief mSerialPorts list of serial ports in use. The second element in the pair is a buffer
+     * that contains the most recent characters sent by the serial port.
      */
-    std::list<std::pair<QSerialPort*, QString> > mSerialPorts;
+    std::list<std::pair<QSerialPort*, QString>> mSerialPorts;
 
     /// set to true when looking for active ports, used on discovery page.
     bool mLookingForActivePorts;

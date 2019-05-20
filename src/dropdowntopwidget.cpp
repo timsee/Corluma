@@ -5,11 +5,15 @@
  */
 
 #include "dropdowntopwidget.h"
-#include "utils/qt.h"
 #include <QDebug>
 #include <QMouseEvent>
+#include "utils/qt.h"
 
-DropdownTopWidget::DropdownTopWidget(const QString& key, cor::EWidgetType type, bool hideEdit, QWidget *parent) : QWidget(parent), mKey(key) {
+DropdownTopWidget::DropdownTopWidget(const QString& key,
+                                     cor::EWidgetType type,
+                                     bool hideEdit,
+                                     QWidget* parent)
+    : QWidget(parent), mKey(key) {
     mType = type;
     mShowButtons = false;
     mHideEdit = hideEdit;
@@ -36,21 +40,18 @@ DropdownTopWidget::DropdownTopWidget(const QString& key, cor::EWidgetType type, 
     connect(mEditButton, SIGNAL(clicked(bool)), this, SLOT(editButtonClicked(bool)));
     mEditIcon = QPixmap(":/images/editIcon.png");
     mEditButton->setIcon(QIcon(mEditIcon));
-    mEditButton->setFixedSize(int(mMinimumHeight * mIconRatio),
-                              int(mMinimumHeight * mIconRatio));
+    mEditButton->setFixedSize(int(mMinimumHeight * mIconRatio), int(mMinimumHeight * mIconRatio));
     mEditButton->setHidden(true);
     mEditButton->setFixedHeight(mMinimumHeight);
 
     mClosedPixmap = QPixmap(":/images/closedArrow.png");
-    mClosedPixmap = mClosedPixmap.scaled(mMinimumHeight, mMinimumHeight,
-                                         Qt::KeepAspectRatio,
-                                         Qt::SmoothTransformation);
+    mClosedPixmap = mClosedPixmap.scaled(
+        mMinimumHeight, mMinimumHeight, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
 
     mOpenedPixmap = QPixmap(":/images/openedArrow.png");
-    mOpenedPixmap = mOpenedPixmap.scaled(mMinimumHeight, mMinimumHeight,
-                                         Qt::KeepAspectRatio,
-                                         Qt::SmoothTransformation);
+    mOpenedPixmap = mOpenedPixmap.scaled(
+        mMinimumHeight, mMinimumHeight, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
     mHiddenStateIcon = new QLabel(this);
     mHiddenStateIcon->setPixmap(mClosedPixmap);
@@ -64,7 +65,7 @@ DropdownTopWidget::DropdownTopWidget(const QString& key, cor::EWidgetType type, 
     mLayout->addWidget(mHiddenStateIcon);
     setLayout(mLayout);
 
-    mLayout->setContentsMargins(10,0,0,0);
+    mLayout->setContentsMargins(10, 0, 0, 0);
     mLayout->setSpacing(0);
     mLayout->setStretch(0, 12);
     mLayout->setStretch(2, 2);
@@ -73,7 +74,7 @@ DropdownTopWidget::DropdownTopWidget(const QString& key, cor::EWidgetType type, 
     this->setFixedHeight(mMinimumHeight);
 }
 
-void DropdownTopWidget::mouseReleaseEvent(QMouseEvent *event) {
+void DropdownTopWidget::mouseReleaseEvent(QMouseEvent* event) {
     if (cor::isMouseEventTouchUpInside(event, this, true)) {
         emit pressed();
     }
@@ -89,4 +90,3 @@ void DropdownTopWidget::showButtons(bool showButtons) {
         mHiddenStateIcon->setPixmap(mClosedPixmap);
     }
 }
-

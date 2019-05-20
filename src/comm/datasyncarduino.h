@@ -5,9 +5,9 @@
 #include <QObject>
 #include <QTimer>
 #include <unordered_map>
-#include "datasync.h"
 #include "arducor/arducorpacketparser.h"
 #include "comm/commarducor.h"
+#include "datasync.h"
 
 /*!
  * \copyright
@@ -16,23 +16,21 @@
  */
 
 /*!
- * \brief The DataSyncArduino class compares the data layer's representation of devices with the commlayer's
- *        understanding of devices and tries to sync them up. The DataLayer's representation is used
- *        as the "desired" state of lights. The CommLayer's understanding is used as the current state.
- *        If the desired state and current state do not match, the commlayer is requested to send packets
- *        to try to update the devices.
+ * \brief The DataSyncArduino class compares the data layer's representation of devices with the
+ * commlayer's understanding of devices and tries to sync them up. The DataLayer's representation is
+ * used as the "desired" state of lights. The CommLayer's understanding is used as the current
+ * state. If the desired state and current state do not match, the commlayer is requested to send
+ * packets to try to update the devices.
  */
-class DataSyncArduino : public QObject, DataSync
-{
+class DataSyncArduino : public QObject, DataSync {
     Q_OBJECT
 public:
-
     /*!
      * \brief DataSyncArduino Constructor for DataSyncArduino.
      * \param data pointer to the app's data layer.
      * \param comm pointer to the app's comm layer.
      */
-    DataSyncArduino(cor::DeviceList *data, CommLayer *comm);
+    DataSyncArduino(cor::DeviceList* data, CommLayer* comm);
 
     /*!
      * \brief cancelSync cancel the data sync, regardless of it successfully completed.
@@ -41,14 +39,15 @@ public:
 
 public slots:
     /*!
-     * \brief resetSync Tells the DataSyncArduino object that the commlayer and the datalayer are potentially
-     *        no longer in sync and the syncData() function needs to get called on the timer again.
+     * \brief resetSync Tells the DataSyncArduino object that the commlayer and the datalayer are
+     * potentially no longer in sync and the syncData() function needs to get called on the timer
+     * again.
      */
     void resetSync() override;
 
     /*!
-     * \brief commPacketReceived a packet was received from a given EProtocolType. In some cases, receiving a packet
-     *        will reset the sync for that protocol type.
+     * \brief commPacketReceived a packet was received from a given EProtocolType. In some cases,
+     * receiving a packet will reset the sync for that protocol type.
      */
     void commPacketReceived(EProtocolType) override;
 
@@ -62,15 +61,14 @@ private slots:
     void syncData() override;
 
     /*!
-     * \brief cleanupSync After the sync is complete, certain actions need to be ran. For example, Hues
-     *        require a schedule to be kept synced to timeout properly. The cleanup thread starts after
-     *        the DataSyncArduino to run the routines needed to keep data in sync in the long term. This function
-     *        contains all those routines.
+     * \brief cleanupSync After the sync is complete, certain actions need to be ran. For example,
+     * Hues require a schedule to be kept synced to timeout properly. The cleanup thread starts
+     * after the DataSyncArduino to run the routines needed to keep data in sync in the long term.
+     * This function contains all those routines.
      */
     void cleanupSync() override;
 
 private:
-
     /*!
      * \brief sync checks if the light device of a comm layer and a data layer are in sync.
      * \param dataDevice device from the data layer
@@ -90,13 +88,14 @@ private:
 
     /*!
      * \brief createPacket takes a constroller and a list of messages to send to it as input,
-     *        and turns them into a valid packet to send to the controller. This checks that the packet
-     *        is not too large, adds delimiters, and adds a CRC, if necessary.
+     * and turns them into a valid packet to send to the controller. This checks that the packet is
+     * not too large, adds delimiters, and adds a CRC, if necessary.
      * \param controller the controller to send the packet to.
      * \param allMessages All the messages to turn into a packet
      * \return the string representation of the packet.
      */
-    const QString createPacket(const cor::Controller& controller, const std::list<QString>& allMessages);
+    const QString createPacket(const cor::Controller& controller,
+                               const std::list<QString>& allMessages);
 
     /*!
      * \brief endOfSync end the sync thread and start the cleanup thread.
@@ -104,10 +103,10 @@ private:
     void endOfSync() override;
 
     /// parses variables for a packet and turns it into ArduCor compatible packets
-    ArduCorPacketParser *mParser;
+    ArduCorPacketParser* mParser;
 
     /// a sorted list of messages sorted by the name of the controller to receive them.
-    std::unordered_map<std::string, std::list<QString> > mMessages;
+    std::unordered_map<std::string, std::list<QString>> mMessages;
 };
 
 #endif // DATASYNCARDUINO_H

@@ -1,19 +1,18 @@
 #ifndef HUELIGHTDISCOVERY_H
 #define HUELIGHTDISCOVERY_H
 
-#include <QWidget>
-#include <QLayout>
-#include <QLabel>
-#include <QPushButton>
 #include <QComboBox>
+#include <QLabel>
+#include <QLayout>
+#include <QPushButton>
+#include <QWidget>
 
+#include "comm/commlayer.h"
 #include "cor/page.h"
 #include "cor/topwidget.h"
 #include "searchwidget.h"
-#include "comm/commlayer.h"
 
-namespace hue
-{
+namespace hue {
 
 /*!
  * \copyright
@@ -23,22 +22,21 @@ namespace hue
 
 /*!
  * \brief The LightDiscovery class is a widget that provides a UI for
- *        discovering new hue lights. The Bridge gets its scanning state turned
- *        on for automatic discovery. The user can also input serial numbers for the bridge
- *        to use for manual discovery. All new lights found from this discovery state are added
- *        to the widget in a list.
+ * discovering new hue lights. The Bridge gets its scanning state turned
+ * on for automatic discovery. The user can also input serial numbers for the bridge
+ * to use for manual discovery. All new lights found from this discovery state are added
+ * to the widget in a list.
  */
-class LightDiscovery : public QWidget, public cor::Page
-{
+class LightDiscovery : public QWidget, public cor::Page {
     Q_OBJECT
 
 public:
-
     /// constructor
-    explicit LightDiscovery(QWidget *parent, CommLayer *comm);
+    explicit LightDiscovery(QWidget* parent, CommLayer* comm);
 
     /*!
      * \brief resize size the widget programmatically
+     *
      * \param resizeFullWidget true to resize the widget itself, false to just
      *        resize its contents.
      */
@@ -61,7 +59,7 @@ protected:
     /*!
      * \brief paintEvent used to draw the background of the widget.
      */
-    void paintEvent(QPaintEvent *);
+    void paintEvent(QPaintEvent*);
 
 private slots:
 
@@ -88,29 +86,27 @@ private slots:
     void discoveryRoutine();
 
 private:
-
     /// comm layer
-    CommLayer *mComm;
+    CommLayer* mComm;
 
     /// the currently selected bridge
     hue::Bridge mBridge;
 
     /// button to trigger searching on a bridge
-    QPushButton *mSearchButton;
+    QPushButton* mSearchButton;
 
     /// timer for rendering and updating state of discovery routine
-    QTimer *mDiscoveryTimer;
+    QTimer* mDiscoveryTimer;
 
     /// top widget with title and close button
-    cor::TopWidget *mTopWidget;
+    cor::TopWidget* mTopWidget;
 
     /// widget for entering serial numbers and displaying names of discovered lights
-    SearchWidget *mSearchWidget;
+    SearchWidget* mSearchWidget;
 
     /// layout
-    QVBoxLayout *mLayout;
-
+    QVBoxLayout* mLayout;
 };
 
-}
+} // namespace hue
 #endif // HUELIGHTDISCOVERY_H

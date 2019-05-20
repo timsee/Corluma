@@ -3,10 +3,10 @@
 
 #include <QWidget>
 
-#include "cor/groupbutton.h"
-#include "cor/dictionary.h"
-#include "cor/protocols.h"
 #include <vector>
+#include "cor/dictionary.h"
+#include "cor/groupbutton.h"
+#include "cor/protocols.h"
 
 /*!
  * \copyright
@@ -14,19 +14,22 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief The GroupButtonsWidget class is a widget that displays a grid of groups buttons. This is used in
- *        ListRoomWidgets to show subgroups of a room, such as the lights around a desk in a bedroom. This
- *        widget does a bit of magic to shorten names of widgets if the subgroups have matching words at the
- *        start of the widget as the Room. For example, if the room is named "John's Bedroom" and the group is
- *        called "John's Bedroom Desk" the group's name would be shortened to "Desk".
+ * \brief The GroupButtonsWidget class is a widget that displays a grid of groups buttons. This is
+ * used in ListRoomWidgets to show subgroups of a room, such as the lights around a desk in a
+ * bedroom. This widget does a bit of magic to shorten names of widgets if the subgroups have
+ * matching words at the start of the widget as the Room. For example, if the room is named "John's
+ * Bedroom" and the group is called "John's Bedroom Desk" the group's name would be shortened to
+ * "Desk".
  */
-class GroupButtonsWidget : public QWidget
-{
+class GroupButtonsWidget : public QWidget {
     Q_OBJECT
 
 public:
     /// constructor
-    explicit GroupButtonsWidget(QWidget *parent, cor::EWidgetType type, const QString& roomName, const std::vector<QString>& groups);
+    explicit GroupButtonsWidget(QWidget* parent,
+                                cor::EWidgetType type,
+                                const QString& roomName,
+                                const std::vector<QString>& groups);
 
     /// add a group to a the list of supported groups
     void addGroup(const QString& group);
@@ -41,7 +44,9 @@ public:
     void resize(const QSize& topWidgetSize, const QRect& spacerGeometry);
 
     /// update the checked devices of the group that matches the key
-    void updateCheckedDevices(const QString& key, uint32_t checkedDeviceCount, uint32_t reachableDeviceCount);
+    void updateCheckedDevices(const QString& key,
+                              uint32_t checkedDeviceCount,
+                              uint32_t reachableDeviceCount);
 
     /// getter for type of widget
     cor::EWidgetType type() const noexcept { return mType; }
@@ -54,10 +59,12 @@ public:
 
 signals:
 
-    /// emitted when a group button is pressed. This emits its actual group name, instead of its displayed group name.
+    /// emitted when a group button is pressed. This emits its actual group name, instead of its
+    /// displayed group name.
     void groupButtonPressed(QString key);
 
-    /// emitted when a group's toggle button is pressed. This emits its actual group name, instead of its displayed group name.
+    /// emitted when a group's toggle button is pressed. This emits its actual group name, instead
+    /// of its displayed group name.
     void groupSelectAllToggled(QString key, bool selectAll);
 
 private slots:
@@ -96,7 +103,7 @@ private:
     cor::Dictionary<std::string> mRelabeledNames;
 
     /// spacer for the condensed layout
-    QWidget *mSpacer;
+    QWidget* mSpacer;
 
     /// number of buttons displayed in row
     int mGroupCount;

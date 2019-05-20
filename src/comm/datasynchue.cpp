@@ -10,11 +10,15 @@
 #include "utils/color.h"
 
 
-DataSyncHue::DataSyncHue(cor::DeviceList *data, CommLayer *comm, AppSettings *appSettings) : mAppSettings(appSettings) {
+DataSyncHue::DataSyncHue(cor::DeviceList* data, CommLayer* comm, AppSettings* appSettings)
+    : mAppSettings(appSettings) {
     mData = data;
     mComm = comm;
     mUpdateInterval = 250;
-    connect(mComm, SIGNAL(packetReceived(EProtocolType)), this, SLOT(commPacketReceived(EProtocolType)));
+    connect(mComm,
+            SIGNAL(packetReceived(EProtocolType)),
+            this,
+            SLOT(commPacketReceived(EProtocolType)));
     connect(mData, SIGNAL(dataUpdate()), this, SLOT(resetSync()));
 
     mSyncTimer = new QTimer(this);
@@ -54,7 +58,6 @@ void DataSyncHue::resetSync() {
             mSyncTimer->start(mUpdateInterval);
         }
     }
-
 }
 
 void DataSyncHue::syncData() {
@@ -80,7 +83,7 @@ void DataSyncHue::syncData() {
     // TODO: change interval based on how long its been
     if (mStartTime.elapsed() < 15000) {
         // do nothing
-    }  else if (mStartTime.elapsed() < 30000) {
+    } else if (mStartTime.elapsed() < 30000) {
         mSyncTimer->setInterval(2000);
     } else {
         mDataIsInSync = true;
@@ -89,7 +92,6 @@ void DataSyncHue::syncData() {
     if (mDataIsInSync || mData->devices().empty()) {
         endOfSync();
     }
-
 }
 
 
@@ -111,9 +113,9 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
 
     QJsonObject object;
     object["controller"] = commDevice.controller();
-    object["commtype"]   = commTypeToString(commDevice.commType());
-    object["index"]      = commDevice.index;
-    object["uniqueID"]   = commDevice.controller();
+    object["commtype"] = commTypeToString(commDevice.commType());
+    object["index"] = commDevice.index;
+    object["uniqueID"] = commDevice.controller();
 
     // get bridge
     auto bridge = mComm->hue()->bridgeFromLight(commDevice);
@@ -128,7 +130,7 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
             // add brightness into lights
             if (cor::colorDifference(color, commDevice.color) > 0.02f) {
                 QJsonObject routineObject;
-                routineObject["routine"]       = routineToString(ERoutine::singleSolid);
+                routineObject["routine"] = routineToString(ERoutine::singleSolid);
                 routineObject["hue"] = dataDevice.color.hueF();
                 routineObject["sat"] = dataDevice.color.saturationF();
                 routineObject["bri"] = dataDevice.color.valueF();
@@ -142,12 +144,12 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
             //-------------------
             if (cor::colorDifference(commDevice.color, dataDevice.color) > 0.02f) {
                 object["temperature"] = dataDevice.temperature;
-                object["bri"]  = dataDevice.color.valueF();
+                object["bri"] = dataDevice.color.valueF();
                 countOutOfSync++;
             }
         } else if (commDevice.colorMode == EColorMode::dimmable) {
             if (cor::colorDifference(commDevice.color, dataDevice.color) > 0.02f) {
-                object["bri"]  = dataDevice.color.valueF();
+                object["bri"] = dataDevice.color.valueF();
                 countOutOfSync++;
             }
         }
@@ -157,7 +159,7 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
     // On/Off Sync
     //-------------------
     if (dataDevice.isOn != commDevice.isOn) {
-        //qDebug() << "hue ON/OFF not in sync" << dataDevice.isOn;
+        // qDebug() << "hue ON/OFF not in sync" << dataDevice.isOn;
         object["isOn"] = dataDevice.isOn;
         countOutOfSync++;
     }
@@ -199,21 +201,22 @@ void DataSyncHue::cleanupSync() {
 void DataSyncHue::handleIdleTimeout(const hue::Bridge& bridge, const cor::Light& light) {
     bool foundTimeout = false;
     for (const auto& schedule : mComm->hue()->schedules(bridge)) {
-       // qDebug() << "  scheudel name" << schedule.name;
+        // qDebug() << "  scheudel name" << schedule.name;
         // if a device doesnt have a schedule, add it.
         if (schedule.name.contains("Corluma_timeout")) {
             QString indexString = schedule.name.split("_").last();
             int givenIndex = indexString.toInt();
             if (givenIndex == light.index && mAppSettings->timeout() != 0) {
                 foundTimeout = true;
-                //qDebug() << " update idle timeout " << schedule;
-                mComm->hue()->updateIdleTimeout(bridge, true, schedule.index, mAppSettings->timeout());
+                // qDebug() << " update idle timeout " << schedule;
+                mComm->hue()->updateIdleTimeout(
+                    bridge, true, schedule.index, mAppSettings->timeout());
             }
         }
     }
 
     if (!foundTimeout) {
-        //qDebug() << " create idle timeout " << light.index;
+        // qDebug() << " create idle timeout " << light.index;
         mComm->hue()->createIdleTimeout(bridge, light.index, mAppSettings->timeout());
     }
 }

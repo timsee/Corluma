@@ -5,16 +5,18 @@
  */
 
 #include "routinebuttonswidget.h"
-#include "cor/presetpalettes.h"
 #include "cor/exception.h"
+#include "cor/presetpalettes.h"
 #include "utils/qt.h"
 
-#include <QStyleOption>
 #include <QGraphicsOpacityEffect>
 #include <QPainter>
+#include <QStyleOption>
 
-RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, const std::vector<QColor>& colors, QWidget *parent) : QWidget(parent), mIsOpen{false} {
-
+RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup,
+                                           const std::vector<QColor>& colors,
+                                           QWidget* parent)
+    : QWidget(parent), mIsOpen{false} {
     mLayout = new QGridLayout(this);
     mLayout->setMargin(0);
     mLayout->setContentsMargins(0, 0, 0, 0);
@@ -22,7 +24,7 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, const std::
     mLayout->setVerticalSpacing(0);
     cor::Light light("Routines", "Routines", ECommType::MAX);
     if (widgetGroup == EWidgetGroup::singleRoutines) {
-        mRoutines = std::vector<std::pair<QString, QJsonObject> >(8);
+        mRoutines = std::vector<std::pair<QString, QJsonObject>>(8);
         QJsonObject routineObject;
         light.speed = 100;
         light.isOn = true;
@@ -83,16 +85,19 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, const std::
             mLabels[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
             mLabels[i]->setAlignment(Qt::AlignCenter);
 
-            connect(mRoutineButtons[i], SIGNAL(buttonClicked(QJsonObject)), this, SLOT(routineChanged(QJsonObject)));
+            connect(mRoutineButtons[i],
+                    SIGNAL(buttonClicked(QJsonObject)),
+                    this,
+                    SLOT(routineChanged(QJsonObject)));
             if ((i % maxColumn) == 0 && i != 0) {
                 rowCount = rowCount + 2;
             }
             mLayout->addWidget(mRoutineButtons[i], rowCount, int(i % maxColumn));
             mLayout->addWidget(mLabels[i], rowCount + 1, int(i % maxColumn));
-       }
+        }
 
     } else if (widgetGroup == EWidgetGroup::multiRoutines) {
-        mRoutines = std::vector<std::pair<QString, QJsonObject> >(5);
+        mRoutines = std::vector<std::pair<QString, QJsonObject>>(5);
         QJsonObject routineObject;
         light.speed = 100;
         light.isOn = true;
@@ -136,18 +141,21 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup, const std::
             mLabels[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
             mLabels[i]->setAlignment(Qt::AlignCenter);
 
-            connect(mRoutineButtons[i], SIGNAL(buttonClicked(QJsonObject)), this, SLOT(routineChanged(QJsonObject)));
+            connect(mRoutineButtons[i],
+                    SIGNAL(buttonClicked(QJsonObject)),
+                    this,
+                    SLOT(routineChanged(QJsonObject)));
             if ((i % maxColumn) == 0 && i != 0) {
                 rowCount = rowCount + 2;
             }
             mLayout->addWidget(mRoutineButtons[i], rowCount, int(i % maxColumn));
             mLayout->addWidget(mLabels[i], rowCount + 1, int(i % maxColumn));
-       }
+        }
     } else {
         THROW_EXCEPTION("RoutinesButtonWidget is not set up to handle that widget group");
     }
 
-   setLayout(mLayout);
+    setLayout(mLayout);
 }
 
 
@@ -184,7 +192,8 @@ QString RoutineButtonsWidget::jsonToButtonName(const QJsonObject& routineObject)
         param = int(routineObject["param"].toDouble());
     }
     for (uint32_t i = 0; i < mRoutineButtons.size(); i++) {
-        ERoutine buttonRoutine = stringToRoutine(mRoutineButtons[i]->routine()["routine"].toString());
+        ERoutine buttonRoutine
+            = stringToRoutine(mRoutineButtons[i]->routine()["routine"].toString());
         int buttonParam = INT_MIN;
 
         if (mRoutineButtons[i]->routine()["param"].isDouble()) {
@@ -212,13 +221,14 @@ void RoutineButtonsWidget::resize(QSize size) {
     this->setFixedHeight(size.height() / 3);
 
     if (mIsOpen) {
-        this->setGeometry(0, this->parentWidget()->height() - this->height(), this->width(), this->height());
+        this->setGeometry(
+            0, this->parentWidget()->height() - this->height(), this->width(), this->height());
     } else {
         this->setGeometry(0, this->parentWidget()->height(), this->width(), this->height());
     }
 }
 
-void RoutineButtonsWidget::paintEvent(QPaintEvent *) {
+void RoutineButtonsWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
@@ -230,14 +240,12 @@ void RoutineButtonsWidget::paintEvent(QPaintEvent *) {
 
 void RoutineButtonsWidget::showWidget(bool shouldShow) {
     if (mIsOpen && !shouldShow) {
-        cor::moveWidget(this,
-                        this->size(),
-                        this->pos(),
-                        QPoint(0, this->parentWidget()->height()));
+        cor::moveWidget(this, this->size(), this->pos(), QPoint(0, this->parentWidget()->height()));
 
         mIsOpen = false;
     } else if (!mIsOpen && shouldShow) {
-       // mSingleRoutineWidget->singleRoutineColorChanged(mColor);  // update colors of single color routine
+        // mSingleRoutineWidget->singleRoutineColorChanged(mColor);  // update colors of single
+        // color routine
         cor::moveWidget(this,
                         this->size(),
                         this->pos(),
@@ -245,4 +253,3 @@ void RoutineButtonsWidget::showWidget(bool shouldShow) {
         mIsOpen = true;
     }
 }
-

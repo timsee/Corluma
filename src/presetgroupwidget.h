@@ -1,17 +1,14 @@
 #ifndef PRESETGROUPWIDGET_H
 #define PRESETGROUPWIDGET_H
 
+#include <QLabel>
 #include <QObject>
 #include <QWidget>
-#include <QLabel>
 #include "cor/button.h"
 #include "cor/light.h"
 
 /// mode of this widget
-enum class EPresetWidgetMode {
-    arduino,
-    hue
-};
+enum class EPresetWidgetMode { arduino, hue };
 
 /*!
  * \copyright
@@ -20,15 +17,15 @@ enum class EPresetWidgetMode {
  *
  *
  * \brief The PresetGroupWidget is a widget used on the Preset
- *        Color Groups Page to display the name and all the routine
- *        options for a group group.
+ * Color Groups Page to display the name and all the routine
+ * options for a group group.
  */
-class PresetGroupWidget : public QWidget
-{
+class PresetGroupWidget : public QWidget {
     Q_OBJECT
 public:
     /*!
      * \brief PresetGroupWidget constructor for PresetGroupWidget
+     *
      * \param name name of color group
      * \param group enumerated type representation of color group
      * \param colors colors in color group
@@ -37,12 +34,13 @@ public:
     explicit PresetGroupWidget(const QString& name,
                                EPalette palette,
                                EPresetWidgetMode mode,
-                               QWidget *parent);
+                               QWidget* parent);
 
     /*!
      * \brief setChecked acts similarly to the setChecked of a standard QPushButton, but
-     *        allows you to call the specific button of the PresetGroupWidget by its lighting
-     *        routine.
+     * allows you to call the specific button of the PresetGroupWidget by its lighting
+     * routine.
+     *
      * \param routine lighting routine button to check or uncheck.
      * \param isChecked true to check button, false otherwise.
      */
@@ -62,30 +60,30 @@ signals:
 private slots:
 
     /*!
-     * \brief multiButtonClicked takes the multiButtonClicked LightsButton signals emitted from each of its buttons
-     *        and forwards them as a single signal.
+     * \brief multiButtonClicked takes the multiButtonClicked LightsButton signals emitted from each
+     * of its buttons and forwards them as a single signal.
+     *
      * \param routine widget's lighting routine
      * \param group widget's color palette
      */
     void multiButtonClicked(QJsonObject object) { emit presetButtonClicked(object); }
 
 private:
-
     /*!
      * \brief mButtons Buttons used in the grid in the scroll area, each one signals
-     *        a EColorPreset and a ELightingMode.
+     * a EColorPreset and a ELightingMode.
      */
-    std::vector<cor::Button *> mButtons;
+    std::vector<cor::Button*> mButtons;
 
     /*!
      * \brief mLabel label for name of preset group.
      */
-    QLabel *mLabel;
+    QLabel* mLabel;
 
     /*!
      * \brief mLayout layout of widget
      */
-    QGridLayout *mLayout;
+    QGridLayout* mLayout;
 
     /// mode for preset widget
     EPresetWidgetMode mMode;

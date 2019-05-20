@@ -1,9 +1,9 @@
 #ifndef ARDUCORINFOWIDGET_H
 #define ARDUCORINFOWIDGET_H
 
-#include <QWidget>
 #include <QGridLayout>
 #include <QLabel>
+#include <QWidget>
 
 #include "cor/light.h"
 
@@ -14,13 +14,11 @@
  *
  * \brief The ArduCorInfoWidget class provides information about an Arducor controller.
  */
-class ArduCorInfoWidget : public QWidget
-{
+class ArduCorInfoWidget : public QWidget {
     Q_OBJECT
 public:
-
     /// constructor
-    explicit ArduCorInfoWidget(cor::Light light, QWidget *parent);
+    explicit ArduCorInfoWidget(cor::Light light, QWidget* parent);
 
     /*!
      * \brief updateLight update the light used internally to fill the widget
@@ -66,15 +64,14 @@ protected:
     /*!
      * \brief paintEvent used to draw the background of the widget.
      */
-    void paintEvent(QPaintEvent *);
+    void paintEvent(QPaintEvent*);
 
     /*!
      * \brief mouseReleaseEvent picks up when a click (or a tap on mobile) is released.
      */
-    virtual void mouseReleaseEvent(QMouseEvent *);
+    virtual void mouseReleaseEvent(QMouseEvent*);
 
 private:
-
     //// set the title's font size
     void setTitleFontPointSize(int pt);
 
@@ -88,19 +85,19 @@ private:
     bool mHideDetails;
 
     /// main layout
-    QGridLayout *mLayout;
+    QGridLayout* mLayout;
 
     /// displays the name of arducor light
-    QLabel *mName;
+    QLabel* mName;
 
     /// displays the path to the light
-    QLabel *mPathLabel;
+    QLabel* mPathLabel;
 
     /// displays the API of arducor light
-    QLabel *mAPILabel;
+    QLabel* mAPILabel;
 
     /// displays the hardware type of the arducor light
-    QLabel *mHardwareTypeLabel;
+    QLabel* mHardwareTypeLabel;
 
     /// stored data the Light being displayed by this widget.
     cor::Light mLight;

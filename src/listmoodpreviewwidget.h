@@ -1,18 +1,17 @@
 #ifndef LISTGROUPWIDGET_H
 #define LISTGROUPWIDGET_H
 
-#include <QWidget>
-#include <QObject>
-#include <QWidget>
 #include <QLabel>
 #include <QLayout>
+#include <QObject>
 #include <QPushButton>
+#include <QWidget>
 
-#include "icondata.h"
 #include "comm/commtype.h"
-#include "cor/mood.h"
 #include "cor/lightvectorwidget.h"
 #include "cor/listitemwidget.h"
+#include "cor/mood.h"
+#include "icondata.h"
 
 /*!
  * \copyright
@@ -21,27 +20,27 @@
  *
  *
  * \brief The ListMoodPreviewWidget class is used to display a pre-saved group of
- *        devices and their settings in a single list widget. It displays the name
- *        of the group and the states of some of its lights.
+ * devices and their settings in a single list widget. It displays the name
+ * of the group and the states of some of its lights.
  */
-class ListMoodPreviewWidget : public cor::ListItemWidget
-{
+class ListMoodPreviewWidget : public cor::ListItemWidget {
     Q_OBJECT
 
 public:
     /*!
      * \brief ListMoodWidget constructor
+     *
      * \param group group of lights in mood
      */
-    explicit ListMoodPreviewWidget(const cor::Mood& group,
-                                   QWidget *parent);
+    explicit ListMoodPreviewWidget(const cor::Mood& group, QWidget* parent);
 
     /*!
-    * \brief setChecked set the widget as checked or unchecked. When it is checked it
-    *        it will be a light blue color. When it isn't, it will be dark grey.
-    * \param checked true to set to checked, false othwerise
-    * \return true if successful, false otherwise
-    */
+     * \brief setChecked set the widget as checked or unchecked. When it is checked it
+     * it will be a light blue color. When it isn't, it will be dark grey.
+     *
+     * \param checked true to set to checked, false othwerise
+     * \return true if successful, false otherwise
+     */
     bool setChecked(bool checked);
 
     /// setter for selected state
@@ -52,12 +51,14 @@ public:
 
     /*!
      * \brief checked getter for checked state
+     *
      * \return true if checked, false otherwise
      */
     bool checked() const noexcept { return mIsChecked; }
 
     /*!
      * \brief moodName getter for name
+     *
      * \return name of mood
      */
     const QString& moodName() { return mMood.name(); }
@@ -68,34 +69,34 @@ signals:
     void moodSelected(std::uint64_t);
 
 protected:
+    /*!
+     * \brief enterEvent picks up when the mouse pointer (or finger on mobile) enters the area of
+     * the widget.
+     */
+    virtual void enterEvent(QEvent*);
 
     /*!
-     * \brief enterEvent picks up when the mouse pointer (or finger on mobile) enters the area of the widget.
+     * \brief leaveEvent picks up when the mouse pointer (or finger on mobile) leaves the area of
+     * the widget.
      */
-    virtual void enterEvent(QEvent *);
-
-    /*!
-     * \brief leaveEvent picks up when the mouse pointer (or finger on mobile) leaves the area of the widget.
-     */
-    virtual void leaveEvent(QEvent *);
+    virtual void leaveEvent(QEvent*);
 
     /*!
      * \brief mouseReleaseEvent picks up when a click (or a tap on mobile) is released.
      */
-    virtual void mouseReleaseEvent(QMouseEvent *);
+    virtual void mouseReleaseEvent(QMouseEvent*);
 
     /*!
      * \brief paintEvent paints the background of the widget
      */
-    void paintEvent(QPaintEvent *event);
+    void paintEvent(QPaintEvent* event);
 
     /*!
      * \brief resizeEvent called whenever the widget resizes
      */
-    void resizeEvent(QResizeEvent *);
+    void resizeEvent(QResizeEvent*);
 
 private:
-
     /*!
      * \brief mIsChecked true if checked, false otherwise
      */
@@ -107,10 +108,10 @@ private:
     /*!
      * \brief mName namme of group
      */
-    QLabel *mName;
+    QLabel* mName;
 
     /// palette showing the colors
-    cor::LightVectorWidget *mPalette;
+    cor::LightVectorWidget* mPalette;
 
     /// stored local copy of the group data.
     cor::Mood mMood;
@@ -118,12 +119,13 @@ private:
     /*!
      * \brief mLayout layout for widget
      */
-    QHBoxLayout *mTopLayout;
+    QHBoxLayout* mTopLayout;
 
     /*!
-     * \brief mFullLayout combines the various layouts into a single layout that takes up the whole widget.
+     * \brief mFullLayout combines the various layouts into a single layout that takes up the whole
+     * widget.
      */
-    QVBoxLayout *mFullLayout;
+    QVBoxLayout* mFullLayout;
 };
 
 #endif // LISTGROUPWIDGET_H

@@ -9,17 +9,14 @@
 
 #include <QJsonArray>
 
-namespace hue
-{
+namespace hue {
 
 Bridge jsonToBridge(const QJsonObject& object) {
     Bridge bridge;
-    if (object["username"].isString()
-            && object["IP"].isString()
-            && object["id"].isString()) {
+    if (object["username"].isString() && object["IP"].isString() && object["id"].isString()) {
         bridge.username = object["username"].toString();
-        bridge.IP       = object["IP"].toString();
-        bridge.id       = object["id"].toString();
+        bridge.IP = object["IP"].toString();
+        bridge.id = object["id"].toString();
     }
 
     if (object["macaddress"].isString()) {
@@ -46,25 +43,24 @@ Bridge jsonToBridge(const QJsonObject& object) {
             auto name = light["name"].toString();
             auto hardwareType = stringToHardwareType(light["hardwareType"].toString());
 
-            //TODO: investigate why putting the bridge.ID as controller causes this to fail
+            // TODO: investigate why putting the bridge.ID as controller causes this to fail
             HueLight light(uniqueID, "NO_CONTROLLER", ECommType::hue);
             light.name = name;
             light.hardwareType = hardwareType;
             bridge.lights.insert(light.uniqueID().toStdString(), light);
         }
-
     }
     return bridge;
 }
 
 QJsonObject bridgeToJson(const Bridge& bridge) {
     QJsonObject object;
-    object["username"]   = bridge.username;
-    object["IP"]         = bridge.IP;
-    object["id"]         = bridge.id;
-    object["name"]       = bridge.name;
+    object["username"] = bridge.username;
+    object["IP"] = bridge.IP;
+    object["id"] = bridge.id;
+    object["name"] = bridge.name;
     object["customName"] = bridge.customName;
-    object["api"]        = bridge.api;
+    object["api"] = bridge.api;
     object["macaddress"] = bridge.macaddress;
     QJsonArray lightArray;
     for (const auto& light : bridge.lights.itemVector()) {
@@ -80,4 +76,4 @@ QJsonObject bridgeToJson(const Bridge& bridge) {
     return object;
 }
 
-}
+} // namespace hue

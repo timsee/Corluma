@@ -5,9 +5,9 @@
  */
 
 #include <QGraphicsEffect>
+#include <QGraphicsScene>
 #include <QPainter>
 #include <QStyleOption>
-#include <QGraphicsScene>
 
 #include "colorwheel.h"
 
@@ -16,8 +16,7 @@
 #include <QDebug>
 #include <QMouseEvent>
 
-namespace
-{
+namespace {
 
 const qreal kPercent = 0.85;
 
@@ -39,23 +38,26 @@ void applyBrightnessToWheel(QPainter& painter, const QRect& wheelRect, double br
         if (transparency > 230) {
             transparency = 230;
         }
-        QBrush brightness(QColor(0,0,0, transparency));
-        QPen pen(QColor(255,255,255, transparency), double(wheelRect.width()) / 100.0);
+        QBrush brightness(QColor(0, 0, 0, transparency));
+        QPen pen(QColor(255, 255, 255, transparency), double(wheelRect.width()) / 100.0);
         painter.setPen(pen);
         painter.setBrush(brightness);
         painter.drawEllipse(wheelRect);
     }
 }
 
-void renderWheelRGB(QPainter& painter, const QRect& wheelRect, const QPoint& center, double wheelRadius) {
+void renderWheelRGB(QPainter& painter,
+                    const QRect& wheelRect,
+                    const QPoint& center,
+                    double wheelRadius) {
     QConicalGradient wheel(center, 0.66);
-    wheel.setColorAt(0.0, QColor(255,0,0));
-    wheel.setColorAt(0.166666, QColor(255,255,0));
-    wheel.setColorAt(0.333333, QColor(0,255,0));
-    wheel.setColorAt(0.5,      QColor(0,255,255));
-    wheel.setColorAt(0.666666, QColor(0,0,255));
-    wheel.setColorAt(0.833333, QColor(255,0,255));
-    wheel.setColorAt(1.0,      QColor(255,0,0));
+    wheel.setColorAt(0.0, QColor(255, 0, 0));
+    wheel.setColorAt(0.166666, QColor(255, 255, 0));
+    wheel.setColorAt(0.333333, QColor(0, 255, 0));
+    wheel.setColorAt(0.5, QColor(0, 255, 255));
+    wheel.setColorAt(0.666666, QColor(0, 0, 255));
+    wheel.setColorAt(0.833333, QColor(255, 0, 255));
+    wheel.setColorAt(1.0, QColor(255, 0, 0));
 
     QRadialGradient saturation(center, wheelRadius);
     saturation.setColorAt(0, Qt::black);
@@ -73,7 +75,8 @@ void renderWheelRGB(QPainter& painter, const QRect& wheelRect, const QPoint& cen
 }
 
 void renderWheelCT(QPainter& painter, const QRect& wheelRect, double brightness) {
-    QLinearGradient ambientGradiant(QPoint(wheelRect.topLeft().x(), 0), QPoint(wheelRect.width(), 0));
+    QLinearGradient ambientGradiant(QPoint(wheelRect.topLeft().x(), 0),
+                                    QPoint(wheelRect.width(), 0));
     // actual colors
     ambientGradiant.setColorAt(1.0, QColor(255, 137, 14));
     ambientGradiant.setColorAt(0.2, QColor(255, 254, 250));
@@ -86,15 +89,19 @@ void renderWheelCT(QPainter& painter, const QRect& wheelRect, double brightness)
     applyBrightnessToWheel(painter, wheelRect, brightness);
 }
 
-void renderWheelHS(QPainter& painter, const QRect& wheelRect, const QPoint& center, double wheelRadius, double brightness) {
+void renderWheelHS(QPainter& painter,
+                   const QRect& wheelRect,
+                   const QPoint& center,
+                   double wheelRadius,
+                   double brightness) {
     QConicalGradient wheel(center, 0.66);
-    wheel.setColorAt(0.0, QColor(255,0,0));
-    wheel.setColorAt(0.166666, QColor(255,255,0));
-    wheel.setColorAt(0.333333, QColor(0,255,0));
-    wheel.setColorAt(0.5,      QColor(0,255,255));
-    wheel.setColorAt(0.666666, QColor(0,0,255));
-    wheel.setColorAt(0.833333, QColor(255,0,255));
-    wheel.setColorAt(1.0,      QColor(255,0,0));
+    wheel.setColorAt(0.0, QColor(255, 0, 0));
+    wheel.setColorAt(0.166666, QColor(255, 255, 0));
+    wheel.setColorAt(0.333333, QColor(0, 255, 0));
+    wheel.setColorAt(0.5, QColor(0, 255, 255));
+    wheel.setColorAt(0.666666, QColor(0, 0, 255));
+    wheel.setColorAt(0.833333, QColor(255, 0, 255));
+    wheel.setColorAt(1.0, QColor(255, 0, 0));
 
     QRadialGradient saturation(center, wheelRadius);
     saturation.setColorAt(0, Qt::white);
@@ -111,28 +118,28 @@ void renderWheelHS(QPainter& painter, const QRect& wheelRect, const QPoint& cent
     applyBrightnessToWheel(painter, wheelRect, brightness);
 }
 
-void renderWheelDisabled(QPainter& painter, const QRect& wheelRect, const QPoint& center, double wheelRadius) {
-    QBrush brightness(QColor(127,127,127,127));
+void renderWheelDisabled(QPainter& painter,
+                         const QRect& wheelRect,
+                         const QPoint& center,
+                         double wheelRadius) {
+    QBrush brightness(QColor(127, 127, 127, 127));
     painter.setBrush(brightness);
     painter.drawEllipse(wheelRect);
 
     QRadialGradient saturation(center, wheelRadius);
-    saturation.setColorAt(0,   QColor(255,255,255,200));
-    saturation.setColorAt(0.1, QColor(255,255,255,200));
-    saturation.setColorAt(1.0, QColor(255,255,255,0));
+    saturation.setColorAt(0, QColor(255, 255, 255, 200));
+    saturation.setColorAt(0.1, QColor(255, 255, 255, 200));
+    saturation.setColorAt(1.0, QColor(255, 255, 255, 0));
     painter.setBrush(saturation);
     painter.drawEllipse(wheelRect);
 }
 
 
-}
+} // namespace
 
 
-ColorWheel::ColorWheel(QWidget *parent) :
-    QLabel(parent),
-    mWheelType{EWheelType::RGB},
-    mIsEnabled{false},
-    mRepaint{true} {
+ColorWheel::ColorWheel(QWidget* parent)
+    : QLabel(parent), mWheelType{EWheelType::RGB}, mIsEnabled{false}, mRepaint{true} {
     mImage = new QImage(this->size(), QImage::Format_ARGB32_Premultiplied);
     renderCachedWheels();
 }
@@ -165,7 +172,7 @@ void ColorWheel::enable(bool shouldEnable) {
     }
 }
 
-void ColorWheel::paintEvent(QPaintEvent *) {
+void ColorWheel::paintEvent(QPaintEvent*) {
     if (mRepaint) {
         mRepaint = false;
 
@@ -199,13 +206,16 @@ void ColorWheel::paintEvent(QPaintEvent *) {
 void ColorWheel::renderCachedWheels() {
     QRect wheelRect(0, 0, 500, 500);
     QPoint center(250, 250);
-    double radius =  250;
-    QBrush brush(QColor(0,0,0,0));
+    double radius = 250;
+    QBrush brush(QColor(0, 0, 0, 0));
 
 
-    mWheelRGB = new QImage(wheelRect.width(), wheelRect.height(), QImage::Format_ARGB32_Premultiplied);
-    mWheelCT = new QImage(wheelRect.width(), wheelRect.height(), QImage::Format_ARGB32_Premultiplied);
-    mWheelHS = new QImage(wheelRect.width(), wheelRect.height(), QImage::Format_ARGB32_Premultiplied);
+    mWheelRGB
+        = new QImage(wheelRect.width(), wheelRect.height(), QImage::Format_ARGB32_Premultiplied);
+    mWheelCT
+        = new QImage(wheelRect.width(), wheelRect.height(), QImage::Format_ARGB32_Premultiplied);
+    mWheelHS
+        = new QImage(wheelRect.width(), wheelRect.height(), QImage::Format_ARGB32_Premultiplied);
 
     QPainter painter(mWheelRGB);
     painter.setBackground(brush);
@@ -229,32 +239,35 @@ void ColorWheel::renderCachedWheels() {
     renderWheelHS(painter3, wheelRect, center, radius, 100);
 }
 
-void ColorWheel::mousePressEvent(QMouseEvent *event) {
+void ColorWheel::mousePressEvent(QMouseEvent* event) {
     handleMouseEvent(event);
 }
 
-void ColorWheel::mouseMoveEvent(QMouseEvent *event) {
+void ColorWheel::mouseMoveEvent(QMouseEvent* event) {
     handleMouseEvent(event);
 }
 
-void ColorWheel::handleMouseEvent(QMouseEvent *event) {
+void ColorWheel::handleMouseEvent(QMouseEvent* event) {
     if (mWheelType == EWheelType::CT) {
         if (this->wheelRect().contains(event->pos())) {
-                const auto& spacerX = this->wheelRect().x();
-                double xPos = event->pos().x() - spacerX;
-                xPos = xPos / double(this->wheelRect().width());
-                double offset = 0.04;
-                if (xPos < offset) xPos = offset;
-                if (xPos > 1.0 - offset) xPos = 1.0 - offset;
-                auto ctVal = map(xPos, offset, 1.0 - offset, 153.0, 500.0);
-                emit changeCT(std::uint32_t(ctVal), mBrightness);
+            const auto& spacerX = this->wheelRect().x();
+            double xPos = event->pos().x() - spacerX;
+            xPos = xPos / double(this->wheelRect().width());
+            double offset = 0.04;
+            if (xPos < offset) {
+                xPos = offset;
+            }
+            if (xPos > 1.0 - offset) {
+                xPos = 1.0 - offset;
+            }
+            auto ctVal = map(xPos, offset, 1.0 - offset, 153.0, 500.0);
+            emit changeCT(std::uint32_t(ctVal), mBrightness);
         }
     } else {
         if (eventIsOverWheel(event)) {
             QColor color = mImage->pixel(event->pos().x(), event->pos().y());
-            if (checkIfColorIsValid(color)){
-                if (mWheelType == EWheelType::HS
-                           || mWheelType == EWheelType::RGB) {
+            if (checkIfColorIsValid(color)) {
+                if (mWheelType == EWheelType::HS || mWheelType == EWheelType::RGB) {
                     emit changeColor(color);
                 }
             }
@@ -273,31 +286,30 @@ bool ColorWheel::checkIfPointIsOverWheel(const QPointF& point) {
     return false;
 }
 
-bool ColorWheel::eventIsOverWheel(QMouseEvent *event) {
+bool ColorWheel::eventIsOverWheel(QMouseEvent* event) {
     return checkIfPointIsOverWheel(event->pos());
 }
 
 bool ColorWheel::checkIfColorIsValid(const QColor& color) {
     bool colorIsValid = true;
     // check if its a color similar to the background...
-    if (color.red() == color.blue() + 1
-            && color.blue() == color.green()) {
+    if (color.red() == color.blue() + 1 && color.blue() == color.green()) {
         colorIsValid = false;
     }
 
     // miscellaneous edge cases...
     if ((color.red() == 54 && color.green() == 54 && color.blue() == 54)
-            || (color.red() == 146 && color.green() == 146 && color.blue() == 146)
-            || (color.red() == 137 && color.green() == 137 && color.blue() == 137)
-            || (color.red() == 98 && color.green() == 98 && color.blue() == 98)
-            || (color.red() == 67 && color.green() == 67 && color.blue() == 67)) {
+        || (color.red() == 146 && color.green() == 146 && color.blue() == 146)
+        || (color.red() == 137 && color.green() == 137 && color.blue() == 137)
+        || (color.red() == 98 && color.green() == 98 && color.blue() == 98)
+        || (color.red() == 67 && color.green() == 67 && color.blue() == 67)) {
         colorIsValid = false;
     }
     return colorIsValid;
 }
 
 QPointF ColorWheel::findColorPixelLocation(const QColor& color) {
-    QImage *image;
+    QImage* image;
     switch (mWheelType) {
         case EWheelType::RGB:
             image = mWheelRGB;
@@ -311,15 +323,15 @@ QPointF ColorWheel::findColorPixelLocation(const QColor& color) {
     }
 
     float minDiff = std::numeric_limits<float>::max();
-    auto bestMatchPoint = QPoint(0,0);
+    auto bestMatchPoint = QPoint(0, 0);
     for (auto y = 0; y < image->height(); ++y) {
         for (auto x = 0; x < image->width(); ++x) {
             QPoint point(x, y);
             if (checkIfPointIsOverWheel(point)) {
                 auto wheelColor = QColor(image->pixel(x, y));
-                if (mWheelType == EWheelType::HS
-                        || mWheelType == EWheelType::CT) {
-                    wheelColor.setHsvF(wheelColor.hueF(), wheelColor.saturationF(), mBrightness / 100.0);
+                if (mWheelType == EWheelType::HS || mWheelType == EWheelType::CT) {
+                    wheelColor.setHsvF(
+                        wheelColor.hueF(), wheelColor.saturationF(), mBrightness / 100.0);
                 }
                 float difference = colorDifference(wheelColor, color);
                 if (difference < minDiff) {
@@ -339,14 +351,11 @@ QPointF ColorWheel::findColorPixelLocation(const QColor& color) {
 }
 
 QPoint ColorWheel::center() {
-   return QPoint(this->width() / 2, this->height() / 2);
+    return QPoint(this->width() / 2, this->height() / 2);
 }
 
 
 QRect ColorWheel::wheelRect() {
     auto radius = int(this->height() / 2 * kPercent);
-    return {this->center().x() - radius,
-                this->center().y() - radius,
-                radius * 2,
-                radius * 2};
+    return {this->center().x() - radius, this->center().y() - radius, radius * 2, radius * 2};
 }

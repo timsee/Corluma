@@ -10,7 +10,8 @@
 
 #include "utils/qt.h"
 
-MoodDetailsWidget::MoodDetailsWidget(GroupData* groups, QWidget *parent) : QWidget(parent), mGroups{groups} {
+MoodDetailsWidget::MoodDetailsWidget(GroupData* groups, QWidget* parent)
+    : QWidget(parent), mGroups{groups} {
     QString titleStylesheet("font:bold; font-size:16pt; background-color:rgba(33,32,32,255);");
 
     mMoreInfoText = new QLabel(this);
@@ -43,8 +44,7 @@ void MoodDetailsWidget::display(const cor::Mood& mood, const QSize& size) {
     if (!mood.additionalInfo.isEmpty()) {
         mMoreInfoText->setVisible(true);
         mMoreInfoText->setText(mood.additionalInfo);
-        mMoreInfoText->setGeometry(0, yPos,
-                                   width, boxSize / 2);
+        mMoreInfoText->setGeometry(0, yPos, width, boxSize / 2);
         yPos += boxSize / 2;
     } else {
         mMoreInfoText->setVisible(false);
@@ -72,17 +72,12 @@ void MoodDetailsWidget::display(const cor::Mood& mood, const QSize& size) {
         mRoomDefaultsTitle->setVisible(true);
         mRoomDefaults->setVisible(true);
         mRoomDefaults->removeWidgets();
-        mRoomDefaultsTitle->setGeometry(0, yPos,
-                                        size.width(), titleSize);
+        mRoomDefaultsTitle->setGeometry(0, yPos, size.width(), titleSize);
         yPos += titleSize;
-        mRoomDefaults->setGeometry(0, yPos,
-                                   size.width(), boxSize);
+        mRoomDefaults->setGeometry(0, yPos, size.width(), boxSize);
         yPos += boxSize;
-        mRoomDefaults->updateDevices(roomStates,
-                                     cor::EWidgetType::full,
-                                     EOnOffSwitchState::hidden,
-                                     false,
-                                     false);
+        mRoomDefaults->updateDevices(
+            roomStates, cor::EWidgetType::full, EOnOffSwitchState::hidden, false, false);
     } else {
         mRoomDefaultsTitle->setVisible(false);
         mRoomDefaults->setVisible(false);
@@ -94,17 +89,12 @@ void MoodDetailsWidget::display(const cor::Mood& mood, const QSize& size) {
         mGroupDefaultsTitle->setVisible(true);
         mGroupDefaults->setVisible(true);
         mGroupDefaults->removeWidgets();
-        mGroupDefaultsTitle->setGeometry(0, yPos,
-                                         size.width(), titleSize);
+        mGroupDefaultsTitle->setGeometry(0, yPos, size.width(), titleSize);
         yPos += titleSize;
-        mGroupDefaults->setGeometry(0, yPos,
-                                    size.width(), boxSize);
+        mGroupDefaults->setGeometry(0, yPos, size.width(), boxSize);
         yPos += boxSize;
-        mGroupDefaults->updateDevices(groupStates,
-                                      cor::EWidgetType::full,
-                                      EOnOffSwitchState::hidden,
-                                      false,
-                                      false);
+        mGroupDefaults->updateDevices(
+            groupStates, cor::EWidgetType::full, EOnOffSwitchState::hidden, false, false);
     } else {
         mGroupDefaultsTitle->setVisible(false);
         mGroupDefaults->setVisible(false);
@@ -118,32 +108,27 @@ void MoodDetailsWidget::resize(const QSize& size) {
     int width = int(size.width() * 0.95);
 
     if (mMoreInfoText->isVisible()) {
-        mMoreInfoText->setGeometry(0, yPos,
-                                   width, boxSize / 2);
+        mMoreInfoText->setGeometry(0, yPos, width, boxSize / 2);
         yPos += boxSize / 2;
     }
 
     if (mRoomDefaultsTitle->isVisible()) {
-        mRoomDefaultsTitle->setGeometry(0, yPos,
-                                        size.width(), titleSize);
+        mRoomDefaultsTitle->setGeometry(0, yPos, size.width(), titleSize);
         yPos += titleSize;
     }
 
     if (mRoomDefaults->isVisible()) {
-        mRoomDefaults->setGeometry(0, yPos,
-                                   size.width(), boxSize);
+        mRoomDefaults->setGeometry(0, yPos, size.width(), boxSize);
         yPos += boxSize;
     }
 
     if (mGroupDefaultsTitle->isVisible()) {
-        mGroupDefaultsTitle->setGeometry(0, yPos,
-                                         size.width(), titleSize);
+        mGroupDefaultsTitle->setGeometry(0, yPos, size.width(), titleSize);
         yPos += titleSize;
     }
 
     if (mGroupDefaults->isVisible()) {
-        mGroupDefaults->setGeometry(0, yPos,
-                                    size.width(), boxSize);
+        mGroupDefaults->setGeometry(0, yPos, size.width(), boxSize);
         yPos += boxSize;
     }
     this->setFixedSize(size);

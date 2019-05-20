@@ -1,11 +1,11 @@
 #ifndef EDITABLEFIELDWIDGET_H
 #define EDITABLEFIELDWIDGET_H
 
-#include <QWidget>
 #include <QLabel>
+#include <QLayout>
 #include <QLineEdit>
 #include <QPushButton>
-#include <QLayout>
+#include <QWidget>
 
 /*!
  * \copyright
@@ -14,16 +14,18 @@
  *
  *
  *
- * \brief The EditableFieldWidget class provides a QLabel with an edit button. If the edit button is clicked,
- *        the label turns into a QLineEdit, with a an accept and cancel button. This allows the user to edit a label
- *        without leaving to busy of a UI available when they aren't editing it.
+ * \brief The EditableFieldWidget class provides a QLabel with an edit button. If the edit button is
+ * clicked, the label turns into a QLineEdit, with a an accept and cancel button. This allows the
+ * user to edit a label without leaving to busy of a UI available when they aren't editing it.
  */
-class EditableFieldWidget : public QWidget
-{
+class EditableFieldWidget : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit EditableFieldWidget(const QString& text, QWidget *parent, int maxFieldSize = -1, const QString& maxFieldError = QString());
+    explicit EditableFieldWidget(const QString& text,
+                                 QWidget* parent,
+                                 int maxFieldSize = -1,
+                                 const QString& maxFieldError = QString());
 
     /// programmatically set the text
     void setText(const QString& text);
@@ -58,7 +60,6 @@ private slots:
     void lineEditChanged(QString newText);
 
 private:
-
     /// true to turn on edit mode, false to turn off edit mode.
     void setInEditMode(bool);
 
@@ -69,19 +70,19 @@ private:
     QString mStoredText;
 
     /// layout
-    QHBoxLayout *mLayout;
+    QHBoxLayout* mLayout;
 
     /// Label for displaying the editable text.
-    QLabel *mText;
+    QLabel* mText;
 
     /// Editable version of displaying the text.
-    QLineEdit *mEditableField;
+    QLineEdit* mEditableField;
 
     /// displays either an Edit button or an Accept button.
-    QPushButton *mRightButton;
+    QPushButton* mRightButton;
 
     /// hidden sometimes, displays a Cancel button at other times.
-    QPushButton *mLeftButton;
+    QPushButton* mLeftButton;
 
     /// cached version of edit icon.
     QIcon mEditIcon;

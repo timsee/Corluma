@@ -2,24 +2,20 @@
 #ifndef SETTINGSPAGE_H
 #define SETTINGSPAGE_H
 
-#include <QWidget>
 #include <QListWidgetItem>
 #include <QPushButton>
 #include <QScrollArea>
+#include <QWidget>
 
 #include "cor/page.h"
 #include "cor/slider.h"
-#include "settingsbutton.h"
 #include "cor/webview.h"
 #include "globalsettingswidget.h"
+#include "settingsbutton.h"
 
 
 /// enum for state of corluma web views, tracks which is shown
-enum class ECorlumaWebView {
-    FAQ,
-    copyright,
-    none
-};
+enum class ECorlumaWebView { FAQ, copyright, none };
 
 /*!
  * \copyright
@@ -39,15 +35,14 @@ enum class ECorlumaWebView {
  * add and remove connections for UDP and HTTP.
  *
  */
-class SettingsPage : public QWidget, public cor::Page
-{
+class SettingsPage : public QWidget, public cor::Page {
     Q_OBJECT
 
 public:
     /*!
      * \brief Constructor
      */
-    explicit SettingsPage(QWidget *parent, GroupData *parser, AppSettings *appSettings);
+    explicit SettingsPage(QWidget* parent, GroupData* parser, AppSettings* appSettings);
 
     /*!
      * \brief Destructor
@@ -58,7 +53,7 @@ public:
     void show();
 
     /// returns pointer to global widget
-    GlobalSettingsWidget *globalWidget() { return mGlobalWidget; }
+    GlobalSettingsWidget* globalWidget() { return mGlobalWidget; }
 
     /// displays the settings page menu
     void pushIn(const QSize& size, const QPoint& startPoint, const QPoint& endPoint);
@@ -70,7 +65,7 @@ signals:
 
     /*!
      * \brief settingsPageIsStandard signaled when top menu is pressed. True if settings page should
-     *        show standard settings, false if showing hue-specific settings.
+     * show standard settings, false if showing hue-specific settings.
      */
     void settingsPageIsStandard(bool);
 
@@ -97,6 +92,7 @@ private slots:
 
     /*!
      * \brief settingsButtonPressed a settings button has been pressed
+     *
      * \param title the title of the button that was pressed
      */
     void settingsButtonPressed(const QString& title);
@@ -105,53 +101,52 @@ private slots:
     void hideCurrentWebView();
 
 protected:
-
     /*!
      * \brief resizeEvent called whenever the widget resizes so that assets can be updated.
      */
-    void resizeEvent(QResizeEvent *event);
+    void resizeEvent(QResizeEvent* event);
 
     /*!
      * \brief paintEvent paint event for rendering. used to overwrite the background
-     *        color of the settings page so that it hides everything behind it.
+     * color of the settings page so that it hides everything behind it.
      */
-    void paintEvent(QPaintEvent *);
+    void paintEvent(QPaintEvent*);
 
 private:
-
     /// groups parser
-    GroupData *mGroups;
+    GroupData* mGroups;
 
     /// top widget with settings title and close button
-    cor::TopWidget *mTopWidget;
+    cor::TopWidget* mTopWidget;
 
     /// scroll area that contains all the information in the widget
-    QScrollArea *mScrollArea;
+    QScrollArea* mScrollArea;
 
     /// widget used for scroll area.
-    QWidget *mScrollAreaWidget;
+    QWidget* mScrollAreaWidget;
 
     /// layout for scoll area
-    QVBoxLayout *mScrollLayout;
+    QVBoxLayout* mScrollLayout;
 
     /// layout for the widget
-    QVBoxLayout *mMainLayout;
+    QVBoxLayout* mMainLayout;
 
     /// widget that contains all the advanced settings that affect the app globally
-    GlobalSettingsWidget *mGlobalWidget;
+    GlobalSettingsWidget* mGlobalWidget;
 
     /// current webview displayed
     ECorlumaWebView mCurrentWebView;
 
     /*!
      * \brief showWebView show one of the webviews
+     *
      * \param newWebView the new webview to show
      */
     void showWebView(ECorlumaWebView newWebView);
 
     /*!
      * \brief loadButtonClicked loads json data from file and replaces all group
-     *         and collection data previously in the app.
+     * and collection data previously in the app.
      */
     void loadButtonClicked();
 
@@ -165,7 +160,7 @@ private:
 
     /*!
      * \brief resetToDefaults reset the app to all default settings and
-     *        remove all saved memory
+     * remove all saved memory
      */
     void resetToDefaults();
 
@@ -185,10 +180,10 @@ private:
     std::vector<SettingsButton*> mButtons;
 
     /// widget displaying copyright information
-    cor::WebView *mCopyrightWidget;
+    cor::WebView* mCopyrightWidget;
 
     /// widget displaying an FAQ
-    cor::WebView *mFAQWidget;
+    cor::WebView* mFAQWidget;
 
     /// true if showing debug options, false otherwise.
     bool mShowingDebug;

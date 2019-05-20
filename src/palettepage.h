@@ -2,29 +2,25 @@
 #ifndef PresetColorsPage_H
 #define PresetColorsPage_H
 
-#include "cor/page.h"
-#include "cor/button.h"
-#include "presetgroupwidget.h"
-#include "cor/listwidget.h"
-#include "listmoodgroupwidget.h"
-#include "cor/presetpalettes.h"
 #include "colorpicker/multicolorpicker.h"
-#include "routinebuttonswidget.h"
+#include "cor/button.h"
+#include "cor/listwidget.h"
+#include "cor/page.h"
+#include "cor/presetpalettes.h"
+#include "listmoodgroupwidget.h"
 #include "palettescrollarea.h"
+#include "presetgroupwidget.h"
+#include "routinebuttonswidget.h"
 
-#include <QWidget>
-#include <QToolButton>
 #include <QGridLayout>
 #include <QLabel>
 #include <QPushButton>
 #include <QScrollArea>
+#include <QToolButton>
+#include <QWidget>
 
 /// mode of the page
-enum class EGroupMode {
-    arduinoPresets,
-    huePresets,
-    colorScheme
-};
+enum class EGroupMode { arduinoPresets, huePresets, colorScheme };
 
 /*!
  * \copyright
@@ -32,27 +28,27 @@ enum class EGroupMode {
  * Released under the GNU General Public License.
  *
  * \brief The Palete provides a way to use the palettes from ArduCor
- *        to do Multi Color Routines.
+ * to do Multi Color Routines.
  *
  * It contains a grid of buttons that map color presets to lighting
  * modes. The list expands vertically into a QScrollArea.
  *
  */
-class PalettePage : public QWidget, public cor::Page
-{
+class PalettePage : public QWidget, public cor::Page {
     Q_OBJECT
 
 public:
     /*!
      * \brief Constructor
      */
-    explicit PalettePage(QWidget *parent);
+    explicit PalettePage(QWidget* parent);
 
     /// called whenever the group page is shown
     void show(std::uint32_t count,
               uint32_t brightness,
               const std::vector<QColor>& colorScheme,
-              bool hasArduinoDevices, bool hasNanoleafDevices);
+              bool hasArduinoDevices,
+              bool hasNanoleafDevices);
 
     /// getter for current mode of page
     EGroupMode mode() { return mMode; }
@@ -93,32 +89,32 @@ public slots:
 
     /*!
      * \brief multiButtonClicked every button setup as a presetButton will signal
-     *        this slot whenever they are clicked.
+     * this slot whenever they are clicked.
      */
     void multiButtonClicked(QJsonObject);
 
     /*!
      * \brief colorsChanged multiple colors have changed and should be sent to the ColorPicker as a
-     *        color scheme
+     * color scheme
      */
     void colorsChanged(const std::vector<QColor>&);
 
 private slots:
     /*!
      * \brief renderUI renders expensive assets if and only if the assets have had any
-     *        change of state.
+     * change of state.
      */
     void renderUI();
 
     /*!
      * \brief speedChanged signaled whenever the slider that controls
-     *        the LEDs speed changes its value.
+     * the LEDs speed changes its value.
      */
     void speedChanged(int);
 
     /*!
      * \brief newRoutineSelected called whenever a routine button is clicked. Sends
-     *        the routine to the backend data so that it can get sent to the connected devices.
+     * the routine to the backend data so that it can get sent to the connected devices.
      */
     void newRoutineSelected(QJsonObject routineObject);
 
@@ -126,20 +122,19 @@ protected:
     /*!
      * \brief called whenever the page is shown on screen.
      */
-    void showEvent(QShowEvent *);
+    void showEvent(QShowEvent*);
 
     /*!
      * \brief resizeEvent called every time the main window is resized.
      */
-    void resizeEvent(QResizeEvent *);
+    void resizeEvent(QResizeEvent*);
 
 private:
-
     /*!
-     * \brief mMultiRoutineWidget widget that pops up from the bottom and contains buttons for all of the multi
-     *        color routines.
+     * \brief mMultiRoutineWidget widget that pops up from the bottom and contains buttons for all
+     * of the multi color routines.
      */
-    RoutineButtonsWidget *mMultiRoutineWidget;
+    RoutineButtonsWidget* mMultiRoutineWidget;
 
     /// stores the last values given by the color scheme.
     std::vector<QColor> mColorScheme;
@@ -151,13 +146,13 @@ private:
     PresetPalettes mPresetPalettes;
 
     /// color picker for color schemes
-    MultiColorPicker *mColorPicker;
+    MultiColorPicker* mColorPicker;
 
     /// PaletteScrollArea containing arduino and nanoleaf palette/routine combos
-    PaletteScrollArea *mArduinoPaletteScrollArea;
+    PaletteScrollArea* mArduinoPaletteScrollArea;
 
     /// PaletteScrollArea containing hue palettes.
-    PaletteScrollArea *mHuePaletteScrollArea;
+    PaletteScrollArea* mHuePaletteScrollArea;
 
     /// mode
     EGroupMode mMode;

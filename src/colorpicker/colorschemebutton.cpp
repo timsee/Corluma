@@ -8,10 +8,10 @@
 
 #include <QDebug>
 #include <QGraphicsEffect>
-#include <QPainter>
-#include <QStyleOption>
 #include <QGraphicsScene>
 #include <QMouseEvent>
+#include <QPainter>
+#include <QStyleOption>
 
 
 
@@ -50,8 +50,8 @@ EColorSchemeType stringToColorSchemeType(const QString& string) {
 
 ColorSchemeButton::ColorSchemeButton(EColorSchemeType type,
                                      const QString& imagePath,
-                                     QWidget *parent) : QWidget(parent), mResourcePath{imagePath}
-{
+                                     QWidget* parent)
+    : QWidget(parent), mResourcePath{imagePath} {
     mEnabled = true;
     const QString transparentStyleSheet = "font-size:12pt; background-color: rgba(0,0,0,0);";
 
@@ -75,13 +75,12 @@ void ColorSchemeButton::resize() {
     auto parentSize = this->parentWidget()->size();
     QSize pixmapSize = QSize(parentSize.height() * 0.5, parentSize.height() * 0.5);
     mPixmap = QPixmap(mResourcePath);
-    mPixmap = mPixmap.scaled(pixmapSize.width(),
-                             pixmapSize.height(),
-                             Qt::KeepAspectRatio,
-                             Qt::SmoothTransformation);
+    mPixmap = mPixmap.scaled(
+        pixmapSize.width(), pixmapSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
     mButton->setGeometry(0, 0, parentSize.width() / 5, parentSize.height() * 2 / 3);
-    mTitle->setGeometry(0, parentSize.height() * 2 / 3, parentSize.width() / 5, parentSize.height() / 3);
+    mTitle->setGeometry(
+        0, parentSize.height() * 2 / 3, parentSize.width() / 5, parentSize.height() / 3);
     mButton->setPixmap(mPixmap);
 }
 
@@ -104,12 +103,12 @@ void ColorSchemeButton::buttonPressed(bool) {
     update();
 }
 
-void ColorSchemeButton::resizeEvent(QResizeEvent *) {
+void ColorSchemeButton::resizeEvent(QResizeEvent*) {
     resize();
     mButton->setPixmap(mPixmap);
 }
 
-void ColorSchemeButton::paintEvent(QPaintEvent *) {
+void ColorSchemeButton::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
@@ -136,7 +135,7 @@ void ColorSchemeButton::enable(bool enable) {
     update();
 }
 
-void ColorSchemeButton::mouseReleaseEvent(QMouseEvent *event) {
+void ColorSchemeButton::mouseReleaseEvent(QMouseEvent* event) {
     if (cor::isMouseEventTouchUpInside(event, this, true)) {
         buttonPressed(true);
     }

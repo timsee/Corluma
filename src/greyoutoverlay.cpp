@@ -4,21 +4,21 @@
  * Released under the GNU General Public License.
  */
 
+#include <QGraphicsOpacityEffect>
+#include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
-#include <QStyleOption>
-#include <QGraphicsOpacityEffect>
 
 #include "greyoutoverlay.h"
 
-GreyOutOverlay::GreyOutOverlay(QWidget *parent) : QWidget(parent) {}
+GreyOutOverlay::GreyOutOverlay(QWidget* parent) : QWidget(parent) {}
 
 void GreyOutOverlay::resize() {
     QSize size = qobject_cast<QWidget*>(this->parent())->size();
     this->setGeometry(0, 0, size.width(), size.height());
 }
 
-void GreyOutOverlay::paintEvent(QPaintEvent *) {
+void GreyOutOverlay::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
@@ -27,6 +27,6 @@ void GreyOutOverlay::paintEvent(QPaintEvent *) {
     painter.fillRect(this->rect(), QBrush(QColor(0, 0, 0, 200)));
 }
 
-void GreyOutOverlay::mouseReleaseEvent(QMouseEvent *) {
+void GreyOutOverlay::mouseReleaseEvent(QMouseEvent*) {
     emit clicked();
 }

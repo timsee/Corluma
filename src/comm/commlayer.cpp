@@ -5,32 +5,34 @@
  */
 
 #include "commlayer.h"
-#include "utils/qt.h"
 #include "cor/exception.h"
+#include "utils/qt.h"
 
 #include "comm/commarducor.h"
 #ifndef MOBILE_BUILD
 #include "comm/commserial.h"
-#endif //MOBILE_BUILD
+#endif // MOBILE_BUILD
 #include "comm/commhttp.h"
 #include "comm/commhue.h"
-#include "comm/commudp.h"
 #include "comm/commnanoleaf.h"
+#include "comm/commudp.h"
 
 #include <QDebug>
 
-#include <ostream>
 #include <iostream>
+#include <ostream>
 #include <sstream>
 
-CommLayer::CommLayer(QObject *parent, GroupData *parser) : QObject(parent),  mGroups(parser) {
+CommLayer::CommLayer(QObject* parent, GroupData* parser) : QObject(parent), mGroups(parser) {
     mUPnP = new UPnPDiscovery(this);
 
     mArduCor = std::make_shared<CommArduCor>(this);
-    connect(mArduCor.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
+    connect(
+        mArduCor.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
 
     mNanoleaf = std::make_shared<CommNanoleaf>();
-    connect(mNanoleaf.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
+    connect(
+        mNanoleaf.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
     mNanoleaf->discovery()->connectUPnP(mUPnP);
 
     mHue = std::make_shared<CommHue>(mUPnP, parser);
@@ -38,40 +40,38 @@ CommLayer::CommLayer(QObject *parent, GroupData *parser) : QObject(parent),  mGr
 }
 
 bool CommLayer::discoveryErrorsExist(EProtocolType type) {
-    if (type == EProtocolType::nanoleaf
-            || type == EProtocolType::hue) {
+    if (type == EProtocolType::nanoleaf || type == EProtocolType::hue) {
         return false; // cant error out...
     }
 
     if (type == EProtocolType::arduCor) {
         return (!mArduCor->UDP()->portBound()
-        #ifndef MOBILE_BUILD
-               || mArduCor->serial()->serialPortErrorsExist()
-        #endif // MOBILE_BUILD
-                );
+#ifndef MOBILE_BUILD
+                || mArduCor->serial()->serialPortErrorsExist()
+#endif // MOBILE_BUILD
+        );
     }
     return true;
 }
 
-CommType *CommLayer::commByType(ECommType type) {
-    CommType *ptr;
-    switch (type)
-    {
+CommType* CommLayer::commByType(ECommType type) {
+    CommType* ptr;
+    switch (type) {
 #ifndef MOBILE_BUILD
-    case ECommType::serial:
-#endif //MOBILE_BUILD
-    case ECommType::HTTP:
-    case ECommType::UDP:
-        ptr = mArduCor->commByType(type);
-        break;
-    case ECommType::hue:
-        ptr =  static_cast<CommType*>(mHue.get());
-        break;
-    case ECommType::nanoleaf:
-        ptr = static_cast<CommType*>(mNanoleaf.get());
-        break;
-    default:
-        THROW_EXCEPTION("no type for this commtype");
+        case ECommType::serial:
+#endif // MOBILE_BUILD
+        case ECommType::HTTP:
+        case ECommType::UDP:
+            ptr = mArduCor->commByType(type);
+            break;
+        case ECommType::hue:
+            ptr = static_cast<CommType*>(mHue.get());
+            break;
+        case ECommType::nanoleaf:
+            ptr = static_cast<CommType*>(mNanoleaf.get());
+            break;
+        default:
+            THROW_EXCEPTION("no type for this commtype");
     }
     return ptr;
 }
@@ -112,9 +112,9 @@ void CommLayer::deleteHueGroup(const QString& name) {
 }
 
 
-bool sortListByGroupName(const std::pair<cor::Group, cor::Light>& lhs, const std::pair<cor::Group, cor::Light>& rhs)
-{
-  return ( lhs.first.name() < rhs.first.name());
+bool sortListByGroupName(const std::pair<cor::Group, cor::Light>& lhs,
+                         const std::pair<cor::Group, cor::Light>& rhs) {
+    return (lhs.first.name() < rhs.first.name());
 }
 
 cor::Light applyStateToLight(const cor::Light& light, const cor::Light& state) {
@@ -175,7 +175,7 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
     groups.sort(sortListByGroupName);
 
     // first apply the room(s) ...
-    for (const auto& room : rooms)  {
+    for (const auto& room : rooms) {
         for (const auto& lightID : room.first.lights) {
             auto light = lightByID(lightID);
             light = addLightMetaData(light);
@@ -194,7 +194,7 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
     }
 
     // ... then apply the group(s) ...
-    for (const auto& group : groups)  {
+    for (const auto& group : groups) {
         for (const auto& light : group.first.lights) {
             auto lightCopy = lightByID(light);
             lightCopy = addLightMetaData(lightCopy);
@@ -260,7 +260,7 @@ void CommLayer::resetStateUpdates(EProtocolType type) {
     } else if (type == EProtocolType::nanoleaf) {
         commByType(ECommType::nanoleaf)->resetStateUpdateTimeout();
     }
-    //qDebug() << "INFO: reset state updates" << cor::EProtocolTypeToString(type);
+    // qDebug() << "INFO: reset state updates" << cor::EProtocolTypeToString(type);
 }
 
 

@@ -7,9 +7,8 @@
 #include "discoverynanoleafwidget.h"
 #include "comm/commnanoleaf.h"
 
-DiscoveryNanoLeafWidget::DiscoveryNanoLeafWidget(CommLayer *comm, QWidget *parent) :
-    DiscoveryWidget(parent) {
-
+DiscoveryNanoLeafWidget::DiscoveryNanoLeafWidget(CommLayer* comm, QWidget* parent)
+    : DiscoveryWidget(parent) {
     mComm = comm;
 
     mLabel = new QLabel(this);
@@ -35,7 +34,7 @@ void DiscoveryNanoLeafWidget::handleDiscovery(bool isCurrentCommType) {
     // starts discovery if its not already started
     mComm->nanoleaf()->discovery()->startDiscovery();
 
-    const auto& foundNanoleafs  = mComm->nanoleaf()->discovery()->foundControllers().itemVector();
+    const auto& foundNanoleafs = mComm->nanoleaf()->discovery()->foundControllers().itemVector();
     const auto& notFoundNanoleafs = mComm->nanoleaf()->discovery()->notFoundControllers();
 
     for (const auto& nanoleaf : foundNanoleafs) {
@@ -48,28 +47,29 @@ void DiscoveryNanoLeafWidget::handleDiscovery(bool isCurrentCommType) {
 
     ENanoleafDiscoveryState discoveryState = mComm->nanoleaf()->discovery()->state();
     switch (discoveryState) {
-    case ENanoleafDiscoveryState::connectionError:
-    case ENanoleafDiscoveryState::discoveryOff:
-        mLabel->setText("Connection Error");
-        break;
-    case ENanoleafDiscoveryState::lookingForPreviousNanoleafs:
-        mLabel->setText("Testing previous connection data..");
-        break;
-    case ENanoleafDiscoveryState::nothingFound:
-        mLabel->setText("Looking for a NanoLeaf Aurora. This may take up to a minute...");
-        break;
-    case ENanoleafDiscoveryState::unknownNanoleafsFound:
-        mLabel->setText("NanoLeaf Aurora found! Please hold the power button for around 5 seconds, until the LED to the left of it starts blinking. ");
-        break;
-    case ENanoleafDiscoveryState::allNanoleafsConnected:
-        mLabel->setText("All NanoLeaf discovered and fully connected!");
-        break;
+        case ENanoleafDiscoveryState::connectionError:
+        case ENanoleafDiscoveryState::discoveryOff:
+            mLabel->setText("Connection Error");
+            break;
+        case ENanoleafDiscoveryState::lookingForPreviousNanoleafs:
+            mLabel->setText("Testing previous connection data..");
+            break;
+        case ENanoleafDiscoveryState::nothingFound:
+            mLabel->setText("Looking for a NanoLeaf Aurora. This may take up to a minute...");
+            break;
+        case ENanoleafDiscoveryState::unknownNanoleafsFound:
+            mLabel->setText("NanoLeaf Aurora found! Please hold the power button for around 5 "
+                            "seconds, until the LED to the left of it starts blinking. ");
+            break;
+        case ENanoleafDiscoveryState::allNanoleafsConnected:
+            mLabel->setText("All NanoLeaf discovered and fully connected!");
+            break;
     }
 
     // handle button updates
     if (mComm->discoveryErrorsExist(EProtocolType::nanoleaf)) {
         emit connectionStatusChanged(EProtocolType::nanoleaf, EConnectionState::connectionError);
-    }  else if (!foundNanoleafs.empty()) {
+    } else if (!foundNanoleafs.empty()) {
         emit connectionStatusChanged(EProtocolType::nanoleaf, EConnectionState::discovered);
     } else {
         emit connectionStatusChanged(EProtocolType::nanoleaf, EConnectionState::off);
@@ -85,9 +85,7 @@ void DiscoveryNanoLeafWidget::plusButtonClicked() {
     mComm->nanoleaf()->discovery()->addIP(mSearchWidget->lineEditText());
 }
 
-void DiscoveryNanoLeafWidget::minusButtonClicked() {
-
-}
+void DiscoveryNanoLeafWidget::minusButtonClicked() {}
 
 
 // ----------------------------
@@ -97,7 +95,8 @@ void DiscoveryNanoLeafWidget::minusButtonClicked() {
 
 bool DiscoveryNanoLeafWidget::doesNanoLeafExist(const QString& controller) {
     bool deviceFound = false;
-    for (const auto& discoveredController : mComm->nanoleaf()->discovery()->foundControllers().itemVector()) {
+    for (const auto& discoveredController :
+         mComm->nanoleaf()->discovery()->foundControllers().itemVector()) {
         if (discoveredController.name.compare(controller) == 0) {
             deviceFound = true;
         }
@@ -111,4 +110,3 @@ bool DiscoveryNanoLeafWidget::doesNanoLeafExist(const QString& controller) {
 
     return deviceFound;
 }
-

@@ -6,40 +6,34 @@
 
 #include "mainwindow.h"
 #include <QDebug>
-#include <QPainter>
-#include <QGraphicsOpacityEffect>
-#include <QPropertyAnimation>
 #include <QDesktopWidget>
+#include <QGraphicsOpacityEffect>
+#include <QPainter>
+#include <QPropertyAnimation>
 
-#include "utils/qt.h"
 #include "comm/commhue.h"
 #include "comm/commnanoleaf.h"
+#include "utils/qt.h"
 
-#include "cor/presetpalettes.h"
 #include "cor/exception.h"
+#include "cor/presetpalettes.h"
 #include "utils/reachability.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent) {
-
+MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     mPagesLoaded = false;
     mAnyDiscovered = false;
     this->setWindowTitle("Corluma");
 
     // mobile devices take up the full screen
 #ifdef MOBILE_BUILD
-    QScreen *screen = QApplication::screens().at(0);
+    QScreen* screen = QApplication::screens().at(0);
     QSize size = screen->size();
-    this->setGeometry(0,
-                      0,
-                      size.width(),
-                      size.height());
-    this->setMinimumSize(QSize(size.width(),
-                               size.height()));
+    this->setGeometry(0, 0, size.width(), size.height());
+    this->setMinimumSize(QSize(size.width(), size.height()));
 #else
     // desktop builds have a minimum size of 400 x 600
-    this->setGeometry(0,0,700,600);
-    this->setMinimumSize(QSize(400,600));
+    this->setGeometry(0, 0, 700, 600);
+    this->setMinimumSize(QSize(400, 600));
 #endif
 
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
@@ -61,18 +55,21 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mGroups = new GroupData(this);
     mAppSettings = new AppSettings();
-    mData   = new cor::DeviceList(this);
-    mComm   = new CommLayer(this, mGroups);
+    mData = new cor::DeviceList(this);
+    mComm = new CommLayer(this, mGroups);
 
-    mDataSyncArduino  = new DataSyncArduino(mData, mComm);
-    mDataSyncHue      = new DataSyncHue(mData, mComm, mAppSettings);
+    mDataSyncArduino = new DataSyncArduino(mData, mComm);
+    mDataSyncHue = new DataSyncHue(mData, mComm, mAppSettings);
     mDataSyncNanoLeaf = new DataSyncNanoLeaf(mData, mComm);
     mDataSyncSettings = new DataSyncSettings(mData, mComm, mAppSettings);
 
     if (mAppSettings->enabled(EProtocolType::nanoleaf)) {
         mComm->nanoleaf()->discovery()->startDiscovery();
     }
-    connect(mComm->hue()->discovery(), SIGNAL(lightDeleted(QString)), this, SLOT(deletedLight(QString)));
+    connect(mComm->hue()->discovery(),
+            SIGNAL(lightDeleted(QString)),
+            this,
+            SLOT(deletedLight(QString)));
 
     // --------------
     // Settings Page
@@ -85,9 +82,16 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(mSettingsPage, SIGNAL(clickedInfoWidget()), this, SLOT(hueInfoWidgetClicked()));
     connect(mSettingsPage, SIGNAL(clickedDiscovery()), this, SLOT(pushInDiscovery()));
 
-    connect(mSettingsPage->globalWidget(), SIGNAL(protocolSettingsUpdate(EProtocolType,bool)), this, SLOT(protocolSettingsChanged(EProtocolType,bool)));
-    connect(mSettingsPage->globalWidget(), SIGNAL(timeoutUpdate(int)), this, SLOT(timeoutChanged(int)));
-    connect(mSettingsPage->globalWidget(), SIGNAL(timeoutEnabled(bool)), this, SLOT(timeoutEnabledChanged(bool)));
+    connect(mSettingsPage->globalWidget(),
+            SIGNAL(protocolSettingsUpdate(EProtocolType, bool)),
+            this,
+            SLOT(protocolSettingsChanged(EProtocolType, bool)));
+    connect(
+        mSettingsPage->globalWidget(), SIGNAL(timeoutUpdate(int)), this, SLOT(timeoutChanged(int)));
+    connect(mSettingsPage->globalWidget(),
+            SIGNAL(timeoutEnabled(bool)),
+            this,
+            SLOT(timeoutEnabledChanged(bool)));
 
     // --------------
     // Setup Discovery Page
@@ -97,8 +101,14 @@ MainWindow::MainWindow(QWidget *parent) :
     mDiscoveryPage->show();
     mDiscoveryPage->isOpen(true);
     connect(mDiscoveryPage, SIGNAL(startButtonClicked()), this, SLOT(switchToColorPage()));
-    connect(mDiscoveryPage, SIGNAL(settingsButtonClicked()), this, SLOT(settingsButtonFromDiscoveryPressed()));
-    connect(mDiscoveryPage, SIGNAL(closeWithoutTransition()), this, SLOT(closeDiscoveryWithoutTransition()));
+    connect(mDiscoveryPage,
+            SIGNAL(settingsButtonClicked()),
+            this,
+            SLOT(settingsButtonFromDiscoveryPressed()));
+    connect(mDiscoveryPage,
+            SIGNAL(closeWithoutTransition()),
+            this,
+            SLOT(closeDiscoveryWithoutTransition()));
 
     // --------------
     // Start Discovery
@@ -125,7 +135,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mLeftHandMenu = new LeftHandMenu(mData, mComm, mData, mGroups, this);
     mLeftHandMenu->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(mLeftHandMenu, SIGNAL(pressedButton(EPage)), this, SLOT(leftHandMenuButtonPressed(EPage)));
+    connect(
+        mLeftHandMenu, SIGNAL(pressedButton(EPage)), this, SLOT(leftHandMenuButtonPressed(EPage)));
     connect(mLeftHandMenu, SIGNAL(createNewGroup()), this, SLOT(openNewGroupMenu()));
 
     // --------------
@@ -152,14 +163,23 @@ void MainWindow::loadPages() {
         // Top Menu
         // --------------
 
-        mTopMenu = new TopMenu(this, mData, mComm, mGroups, this,
+        mTopMenu = new TopMenu(this,
+                               mData,
+                               mComm,
+                               mGroups,
+                               this,
                                mMainViewport->palettePage(),
                                mMainViewport->colorPage());
-        connect(mTopMenu, SIGNAL(buttonPressed(QString)), this, SLOT(topMenuButtonPressed(QString)));
-        connect(mMainViewport->colorPage(), SIGNAL(brightnessChanged(uint32_t)), mTopMenu, SLOT(brightnessUpdate(uint32_t)));
+        connect(
+            mTopMenu, SIGNAL(buttonPressed(QString)), this, SLOT(topMenuButtonPressed(QString)));
+        connect(mMainViewport->colorPage(),
+                SIGNAL(brightnessChanged(uint32_t)),
+                mTopMenu,
+                SLOT(brightnessUpdate(uint32_t)));
         connect(mLeftHandMenu, SIGNAL(changedDeviceCount()), mTopMenu, SLOT(deviceCountChanged()));
 
-        connect(mLeftHandMenu, SIGNAL(changedDeviceCount()), mMainViewport, SLOT(lightCountChanged()));
+        connect(
+            mLeftHandMenu, SIGNAL(changedDeviceCount()), mMainViewport, SLOT(lightCountChanged()));
 
         // --------------
         // Setup Layout
@@ -184,7 +204,10 @@ void MainWindow::loadPages() {
 
         mMoodDetailedWidget = new ListMoodDetailedWidget(this, mGroups, mComm);
         connect(mMoodDetailedWidget, SIGNAL(pressedClose()), this, SLOT(detailedClosePressed()));
-        connect(mMoodDetailedWidget, SIGNAL(enableGroup(std::uint64_t)), this, SLOT(moodChanged(std::uint64_t)));
+        connect(mMoodDetailedWidget,
+                SIGNAL(enableGroup(std::uint64_t)),
+                this,
+                SLOT(moodChanged(std::uint64_t)));
 
         mMoodDetailedWidget->setGeometry(0, -1 * this->height(), this->width(), this->height());
         mMoodDetailedWidget->setVisible(false);
@@ -195,7 +218,10 @@ void MainWindow::loadPages() {
 
         mLightInfoWidget = new LightInfoListWidget(this);
         mLightInfoWidget->isOpen(false);
-        connect(mLightInfoWidget, SIGNAL(lightNameChanged(EProtocolType,QString,QString)), this, SLOT(lightNameChange(EProtocolType,QString,QString)));
+        connect(mLightInfoWidget,
+                SIGNAL(lightNameChanged(EProtocolType, QString, QString)),
+                this,
+                SLOT(lightNameChange(EProtocolType, QString, QString)));
         connect(mLightInfoWidget, SIGNAL(deleteLight(QString)), this, SLOT(deleteLight(QString)));
         connect(mLightInfoWidget, SIGNAL(pressedClose()), this, SLOT(lightInfoClosePressed()));
         mLightInfoWidget->setGeometry(0, -1 * this->height(), this->width(), this->height());
@@ -219,7 +245,7 @@ void MainWindow::topMenuButtonPressed(const QString& key) {
         pushInSettingsPage();
     } else if (key == "Menu") {
         mLeftHandMenu->pushIn();
-    }  else {
+    } else {
         qDebug() << "Do not recognize key" << key;
     }
 }
@@ -233,12 +259,12 @@ void MainWindow::settingsButtonFromDiscoveryPressed() {
 // Protected
 // ----------------------------
 
-void MainWindow::resizeEvent(QResizeEvent *) {
+void MainWindow::resizeEvent(QResizeEvent*) {
     resize();
 }
 
-void MainWindow::changeEvent(QEvent *event) {
-    if(event->type() == QEvent::ActivationChange && this->isActiveWindow()) {
+void MainWindow::changeEvent(QEvent* event) {
+    if (event->type() == QEvent::ActivationChange && this->isActiveWindow()) {
         for (int commInt = 0; commInt != int(EProtocolType::MAX); ++commInt) {
             auto type = static_cast<EProtocolType>(commInt);
             if (mAppSettings->enabled(type)) {
@@ -262,13 +288,13 @@ void MainWindow::changeEvent(QEvent *event) {
 
 void MainWindow::pushOutDiscovery() {
     if (mLeftHandMenu->alwaysOpen()) {
-        mDiscoveryPage->pushOut(QSize(this->size().width() - mLeftHandMenu->width(), this->height()),
-                                QPoint(mLeftHandMenu->width(), 0),
-                                QPoint(this->width() + mDiscoveryPage->width(), 0));
+        mDiscoveryPage->pushOut(
+            QSize(this->size().width() - mLeftHandMenu->width(), this->height()),
+            QPoint(mLeftHandMenu->width(), 0),
+            QPoint(this->width() + mDiscoveryPage->width(), 0));
     } else {
-        mDiscoveryPage->pushOut(this->size(),
-                                QPoint(0, 0),
-                                QPoint(this->width() + mDiscoveryPage->width(), 0));
+        mDiscoveryPage->pushOut(
+            this->size(), QPoint(0, 0), QPoint(this->width() + mDiscoveryPage->width(), 0));
     }
 }
 
@@ -278,9 +304,8 @@ void MainWindow::pushInDiscovery() {
                                QPoint(this->width() + mDiscoveryPage->width(), 0),
                                QPoint(mLeftHandMenu->width(), 0));
     } else {
-        mDiscoveryPage->pushIn(this->size(),
-                               QPoint(this->width() + mDiscoveryPage->width(), 0),
-                               QPoint(0, 0));
+        mDiscoveryPage->pushIn(
+            this->size(), QPoint(this->width() + mDiscoveryPage->width(), 0), QPoint(0, 0));
     }
 }
 
@@ -331,7 +356,8 @@ void MainWindow::editButtonClicked(bool isMood) {
     QString name("");
     bool isRoom = false;
     if (isMood) {
-        auto result = mGroups->moods().item(QString::number(mMainViewport->moodPage()->currentMood()).toStdString());
+        auto result = mGroups->moods().item(
+            QString::number(mMainViewport->moodPage()->currentMood()).toStdString());
         if (result.second) {
             name = result.first.name();
         }
@@ -340,11 +366,7 @@ void MainWindow::editButtonClicked(bool isMood) {
         isRoom = true;
     }
 
-    mEditPage->showGroup(name,
-                         mData->devices(),
-                         mComm->allDevices(),
-                         isMood,
-                         isRoom);
+    mEditPage->showGroup(name, mData->devices(), mComm->allDevices(), isMood, isRoom);
 
     if (mGreyOut->isVisible()) {
         mGreyOut->resize();
@@ -397,8 +419,8 @@ void MainWindow::editClosePressed() {
     greyOut(false);
     mEditPage->pushOut();
 
-    //TODO: update lefthandmenu
-    //mMainViewport->lightPage()->updateRoomWidgets();
+    // TODO: update lefthandmenu
+    // mMainViewport->lightPage()->updateRoomWidgets();
 }
 
 
@@ -456,23 +478,22 @@ void MainWindow::deleteLight(const QString& key) {
     auto light = mComm->lightByID(key);
     if (light.isValid()) {
         switch (light.protocol()) {
-        case EProtocolType::arduCor:
-            mComm->arducor()->deleteLight(light);
-            break;
-        case EProtocolType::hue:
-        {
-            for (auto hue : mComm->hue()->discovery()->lights()) {
-                if (hue.index == light.index) {
-                    mComm->hue()->deleteLight(hue);
+            case EProtocolType::arduCor:
+                mComm->arducor()->deleteLight(light);
+                break;
+            case EProtocolType::hue: {
+                for (auto hue : mComm->hue()->discovery()->lights()) {
+                    if (hue.index == light.index) {
+                        mComm->hue()->deleteLight(hue);
+                    }
                 }
+                break;
             }
-            break;
-        }
-        case EProtocolType::nanoleaf:
-            mComm->nanoleaf()->deleteLight(light);
-            break;
-        case EProtocolType::MAX:
-            break;
+            case EProtocolType::nanoleaf:
+                mComm->nanoleaf()->deleteLight(light);
+                break;
+            case EProtocolType::MAX:
+                break;
         }
     } else {
         qDebug() << "light not found";
@@ -513,12 +534,12 @@ void MainWindow::resize() {
     handleLandscapeOrPortrait();
     mLeftHandMenu->resize();
 
-   if (mPagesLoaded) {
-       if (mLeftHandMenu->alwaysOpen()) {
-           mTopMenu->resize(mLeftHandMenu->width());
-       } else {
-           mTopMenu->resize(0);
-       }
+    if (mPagesLoaded) {
+        if (mLeftHandMenu->alwaysOpen()) {
+            mTopMenu->resize(mLeftHandMenu->width());
+        } else {
+            mTopMenu->resize(0);
+        }
 
         mSpacer->setGeometry(mTopMenu->geometry());
         int xPos = 5u;
@@ -527,10 +548,7 @@ void MainWindow::resize() {
             xPos += mLeftHandMenu->width();
             width -= mLeftHandMenu->width();
         }
-        QRect rect(xPos,
-                   mTopMenu->height(),
-                   width,
-                   this->height() - mTopMenu->height());
+        QRect rect(xPos, mTopMenu->height(), width, this->height() - mTopMenu->height());
         mMainViewport->resize(rect);
     }
 
@@ -542,10 +560,8 @@ void MainWindow::resize() {
                                         fullScreenSize.width() - mLeftHandMenu->width(),
                                         fullScreenSize.height());
         } else {
-            mDiscoveryPage->setGeometry(0,
-                                        mDiscoveryPage->geometry().y(),
-                                        fullScreenSize.width(),
-                                        fullScreenSize.height());
+            mDiscoveryPage->setGeometry(
+                0, mDiscoveryPage->geometry().y(), fullScreenSize.width(), fullScreenSize.height());
         }
         if (mWifiFound) {
             mDiscoveryPage->raise();
@@ -564,13 +580,13 @@ void MainWindow::resize() {
                                        fullScreenSize.width() - mLeftHandMenu->width(),
                                        fullScreenSize.height());
         } else {
-            mSettingsPage->setGeometry(0,
-                                       mSettingsPage->geometry().y(),
-                                       fullScreenSize.width(),
-                                       fullScreenSize.height());
+            mSettingsPage->setGeometry(
+                0, mSettingsPage->geometry().y(), fullScreenSize.width(), fullScreenSize.height());
         }
     } else {
-        int diff = mSettingsPage->geometry().width() - fullScreenSize.width(); // adjust x coordinate of discovery page as it scales since its sitting next to main page.
+        int diff = mSettingsPage->geometry().width()
+                   - fullScreenSize.width(); // adjust x coordinate of discovery page as it scales
+                                             // since its sitting next to main page.
         mSettingsPage->setGeometry(mSettingsPage->geometry().x() - diff,
                                    mSettingsPage->geometry().y(),
                                    fullScreenSize.width(),
@@ -584,10 +600,10 @@ void MainWindow::resize() {
     if (mPagesLoaded) {
         if (mEditPage->isOpen()) {
             auto size = this->size();
-            mEditPage->setGeometry(int(size.width()  * 0.125f),
-                              int(size.height() * 0.125f),
-                              int(size.width()  * 0.75f),
-                              int(size.height() * 0.75f));
+            mEditPage->setGeometry(int(size.width() * 0.125f),
+                                   int(size.height() * 0.125f),
+                                   int(size.width() * 0.75f),
+                                   int(size.height() * 0.75f));
         }
 
         if (mMoodDetailedWidget->isOpen()) {
@@ -599,7 +615,7 @@ void MainWindow::resize() {
         }
     }
 
-    mNoWifiWidget->setGeometry(QRect(0, 0, this->geometry().width() , this->geometry().height()));
+    mNoWifiWidget->setGeometry(QRect(0, 0, this->geometry().width(), this->geometry().height()));
 }
 
 void MainWindow::handleLandscapeOrPortrait() {
@@ -687,9 +703,11 @@ void MainWindow::speedChanged(int speed) {
 void MainWindow::wifiChecker() {
     mWifiFound = cor::wifiEnabled();
 
-    //NOTE: this is a bit of a UX hack since its a non-documented feature, but it would make a more confusing UX to 99%+ of potential users
-    //      to fully show this edge case at this point. The No wifi detected screen will get hidden if theres a serial connection, since serial
-    //      is the one exception to not needing wifi. This edge case only comes up if the user is using arduino devices on a non-mobile build
+    // NOTE: this is a bit of a UX hack since its a non-documented feature, but it would make a more
+    // confusing UX to 99%+ of potential users
+    //      to fully show this edge case at this point. The No wifi detected screen will get hidden
+    //      if theres a serial connection, since serial is the one exception to not needing wifi.
+    //      This edge case only comes up if the user is using arduino devices on a non-mobile build
     //      in a place where they don't have a wifi connection.
 #ifndef MOBILE_BUILD
     if (!mWifiFound) {
@@ -721,19 +739,19 @@ void MainWindow::backButtonPressed() {
     }
 }
 
-void MainWindow::keyPressEvent(QKeyEvent *event) {
+void MainWindow::keyPressEvent(QKeyEvent* event) {
     if (event->key() == Qt::Key_Back) {
         backButtonPressed();
     }
     event->accept();
 }
 
-void MainWindow::mousePressEvent(QMouseEvent *event) {
+void MainWindow::mousePressEvent(QMouseEvent* event) {
     mStartPoint = event->pos();
     mMovingMenu = false;
 }
 
-bool shouldMoveMenu(QMouseEvent *event,
+bool shouldMoveMenu(QMouseEvent* event,
                     bool leftHandMenuShowing,
                     const QPoint& startPoint,
                     const QSize& fullSize,
@@ -746,14 +764,11 @@ bool shouldMoveMenu(QMouseEvent *event,
     return inRange && startNearLeftHand;
 }
 
-void MainWindow::mouseMoveEvent(QMouseEvent *event) {
+void MainWindow::mouseMoveEvent(QMouseEvent* event) {
     // only care about moves when greyout is not open and lefthand menu isn't forced open
     if (!mLeftHandMenu->alwaysOpen() && !mGreyOut->isVisible()) {
-        if (shouldMoveMenu(event,
-                           mLeftHandMenu->isIn(),
-                           mStartPoint,
-                           this->size(),
-                           mLeftHandMenu->size())) {
+        if (shouldMoveMenu(
+                event, mLeftHandMenu->isIn(), mStartPoint, this->size(), mLeftHandMenu->size())) {
             mMovingMenu = true;
             mLeftHandMenu->raise();
             // get the x value based on current value
@@ -765,12 +780,9 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event) {
             } else {
                 xPos -= mLeftHandMenu->width();
             }
-            mLeftHandMenu->setGeometry(xPos,
-                                       mLeftHandMenu->pos().y(),
-                                       mLeftHandMenu->width(),
-                                       mLeftHandMenu->height());
-        } else if (event->pos().x() > mLeftHandMenu->size().width()
-                   && mMovingMenu) {
+            mLeftHandMenu->setGeometry(
+                xPos, mLeftHandMenu->pos().y(), mLeftHandMenu->width(), mLeftHandMenu->height());
+        } else if (event->pos().x() > mLeftHandMenu->size().width() && mMovingMenu) {
             mLeftHandMenu->pushIn();
             mTopMenu->pushOutTapToSelectButton();
             if (mSettingsPage->isOpen()) {
@@ -780,15 +792,15 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event) {
     }
 }
 
-void MainWindow::mouseReleaseEvent(QMouseEvent *) {
+void MainWindow::mouseReleaseEvent(QMouseEvent*) {
     if (!mLeftHandMenu->alwaysOpen() && !mGreyOut->isVisible()) {
         mMovingMenu = false;
         auto showingWidth = mLeftHandMenu->width() + mLeftHandMenu->geometry().x();
         if (showingWidth < mLeftHandMenu->width() / 2) {
             mLeftHandMenu->pushOut();
             if ((mMainViewport->currentPage() == EPage::colorPage
-                    || mMainViewport->currentPage() == EPage::palettePage)
-                    && mData->devices().empty()) {
+                 || mMainViewport->currentPage() == EPage::palettePage)
+                && mData->devices().empty()) {
                 mTopMenu->pushInTapToSelectButton();
             }
         } else {
@@ -829,9 +841,7 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
 
 
     if (!ignorePushOut) {
-        if ((page == EPage::colorPage
-                || page == EPage::palettePage)
-                && mData->devices().empty()) {
+        if ((page == EPage::colorPage || page == EPage::palettePage) && mData->devices().empty()) {
             mTopMenu->pushInTapToSelectButton();
         }
     }
@@ -849,9 +859,8 @@ void MainWindow::pushInSettingsPage() {
                               QPoint(this->width(), 0),
                               QPoint(mLeftHandMenu->width(), 0));
     } else {
-        mSettingsPage->pushIn(QSize(this->width(), this->height()),
-                              QPoint(this->width(), 0),
-                              QPoint(0u, 0u));
+        mSettingsPage->pushIn(
+            QSize(this->width(), this->height()), QPoint(this->width(), 0), QPoint(0u, 0u));
     }
 
     mLeftHandMenu->pushOut();

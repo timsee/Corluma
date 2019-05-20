@@ -2,16 +2,16 @@
 #ifndef SINGLECOLORPAGE_H
 #define SINGLECOLORPAGE_H
 
-#include "icondata.h"
-#include "cor/slider.h"
-#include "cor/page.h"
 #include "colorpicker/singlecolorpicker.h"
 #include "cor/button.h"
+#include "cor/page.h"
+#include "cor/slider.h"
+#include "icondata.h"
 #include "routinebuttonswidget.h"
 
-#include <QWidget>
 #include <QSlider>
 #include <QToolButton>
+#include <QWidget>
 
 /*!
  * \copyright
@@ -25,22 +25,23 @@
  * various modes such as standard, which gives full range of RGB, and ambient, which allows the
  * user to choose different shades of white.
  *
- * For arduino-based projects, there is also a pop up menu on the bottom that allows the user to choose
- * routines for the arduino. To get the single color routines, the user should be on the standard color picker.
- * To get the multi color routines, the user should be on the multi color picker.
+ * For arduino-based projects, there is also a pop up menu on the bottom that allows the user to
+ * choose routines for the arduino. To get the single color routines, the user should be on the
+ * standard color picker. To get the multi color routines, the user should be on the multi color
+ * picker.
  */
-class ColorPage : public QWidget, public cor::Page
-{
+class ColorPage : public QWidget, public cor::Page {
     Q_OBJECT
 
 public:
     /*!
      * \brief Constructor
      */
-    explicit ColorPage(QWidget *parent);
+    explicit ColorPage(QWidget* parent);
 
     /*!
      * \brief changePageType change the hue page type to display a different color picker.
+     *
      * \param page the new page type for the hue page.
      */
     void changePageType(EColorPickerMode page);
@@ -73,7 +74,8 @@ public:
 signals:
 
     /*!
-     * \brief brightnessChanged signaled whenever the brightness is changed from any color wheel type that supports it.
+     * \brief brightnessChanged signaled whenever the brightness is changed from any color wheel
+     * type that supports it.
      */
     void brightnessChanged(uint32_t);
 
@@ -88,11 +90,10 @@ public slots:
     void colorChanged(const QColor&);
 
 protected:
-
     /*!
      * \brief resizeEvent called every time the main window is resized.
      */
-    void resizeEvent(QResizeEvent *);
+    void resizeEvent(QResizeEvent*);
 
 private slots:
 
@@ -106,28 +107,30 @@ private slots:
      * \brief ambientUpdateReceived called whenever the colorpicker gives back an ambient update.
      *        Gives the color temperature value first, followed by the brightness.
      */
-    void ambientUpdateReceived(std::uint32_t,std::uint32_t);
+    void ambientUpdateReceived(std::uint32_t, std::uint32_t);
 
     /*!
-     * \brief brightnessUpdate handles whenever a color picker updates brightness, forwards the signal.
+     * \brief brightnessUpdate handles whenever a color picker updates brightness, forwards the
+     * signal.
+     *
      * \param brightness new brightness for the selected lights.
      */
     void brightnessUpdate(uint32_t brightness) { emit brightnessChanged(brightness); }
 
 private:
-
     /*!
      * \brief setupButtons sets up the routine buttons.
      */
     void setupButtons();
 
     /*!
-     * \brief mSingleRoutineWidget widget that pops up from the bottom and contains buttons for all of the
-     *        single color routines.
+     * \brief mSingleRoutineWidget widget that pops up from the bottom and contains buttons for all
+     * of the single color routines.
      */
-    RoutineButtonsWidget *mSingleRoutineWidget;
+    RoutineButtonsWidget* mSingleRoutineWidget;
 
-    /// current single color lighting routine, stored in buffer for when going from multi color to single color routines.
+    /// current single color lighting routine, stored in buffer for when going from multi color to
+    /// single color routines.
     QJsonObject mCurrentSingleRoutine;
 
     /// updates the colorpage's main color value
@@ -143,10 +146,10 @@ private:
     EColorPickerType mBestType;
 
     /// main feature of widget, this allows the user to select colors for the LEDs
-    SingleColorPicker *mColorPicker;
+    SingleColorPicker* mColorPicker;
 
     /// layout for widget
-    QVBoxLayout *mLayout;
+    QVBoxLayout* mLayout;
 };
 
 #endif // SINGLECOLORPAGE_H

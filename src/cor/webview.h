@@ -1,16 +1,15 @@
 #ifndef COR_WEB_VIEW_H
 #define COR_WEB_VIEW_H
 
-#include <QWidget>
 #include <QLabel>
+#include <QLayout>
 #include <QPushButton>
 #include <QTextBrowser>
-#include <QLayout>
+#include <QWidget>
 
 #include "cor/topwidget.h"
 
-namespace cor
-{
+namespace cor {
 
 /*!
  * \copyright
@@ -22,12 +21,11 @@ namespace cor
  * \brief The CorlumaWebView class is a widget that displays local .html in a scollable area
  *        The widget also contains a title and a button to close the widget.
  */
-class WebView : public QWidget
-{
+class WebView : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit WebView(const QString& title, const QString& htmlPath, QWidget *parent);
+    explicit WebView(const QString& title, const QString& htmlPath, QWidget* parent);
 
 signals:
     /// emits whenever wthe close button is pressed
@@ -39,19 +37,18 @@ private slots:
 
 protected:
     /// called whenever the widget is repainted
-    void paintEvent(QPaintEvent *);
+    void paintEvent(QPaintEvent*);
 
 private:
-
     /// top widget that displays the title and the close button
-    cor::TopWidget *mTopWidget;
+    cor::TopWidget* mTopWidget;
 
     /// text browser for displaying the html text
-    QTextBrowser *mTextBrowser;
+    QTextBrowser* mTextBrowser;
 
     /// layout for widget
-    QGridLayout *mGridLayout;
+    QGridLayout* mGridLayout;
 };
 
-}
+} // namespace cor
 #endif // COR_WEB_VIEW_H

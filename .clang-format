@@ -1,0 +1,62 @@
+# Clang-format file for Corluma. 
+
+BasedOnStyle: Chromium
+Language: Cpp
+Standard: Cpp11
+TabWidth: '4'
+UseTab: Never
+ColumnLimit: '100'
+
+AccessModifierOffset: '-4'
+AlignConsecutiveAssignments: 'false'
+AlignEscapedNewlinesLeft: 'true'
+AlignTrailingComments: 'true'
+AllowAllParametersOfDeclarationOnNextLine: 'false'
+AllowShortBlocksOnASingleLine: 'true'
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: 'false'
+AllowShortLoopsOnASingleLine: 'false'
+AlwaysBreakBeforeMultilineStrings: 'false'
+AlwaysBreakTemplateDeclarations: 'true'
+BinPackArguments: 'false'
+BinPackParameters: 'false'
+BraceWrapping: {
+  AfterClass: 'true'
+  AfterControlStatement: 'true'
+  AfterEnum: 'true'
+  AfterFunction: 'true'
+  AfterNamespace: 'true'
+  AfterObjCDeclaration: 'true'
+  AfterUnion: 'true'
+  BeforeCatch: 'true'
+  BeforeElse: 'true'
+  IndentBraces: 'false'
+} 
+BreakBeforeBinaryOperators: 'true'
+BreakBeforeBraces: Attach
+BreakConstructorInitializersBeforeComma: 'false'
+ConstructorInitializerAllOnOneLineOrOnePerLine: 'true'
+Cpp11BracedListStyle: 'true'
+DerivePointerAlignment: 'false'
+DisableFormat: 'false'
+FixNamespaceComments: 'true'
+IndentCaseLabels: 'true'
+IndentWidth: '4'
+IndentWrappedFunctionNames: 'false'
+KeepEmptyLinesAtTheStartOfBlocks: 'false'
+MaxEmptyLinesToKeep: '4'
+NamespaceIndentation: None
+ObjCSpaceAfterProperty: 'true'
+ObjCSpaceBeforeProtocolList: 'true'
+PointerAlignment: Left
+#ReflowComments: 'true'
+SpaceBeforeAssignmentOperators: 'true'
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: 'false'
+SpacesBeforeTrailingComments: '1'
+SpacesInAngles: 'false'
+SpacesInCStyleCastParentheses: 'false'
+SpacesInContainerLiterals: 'false'
+SpacesInParentheses: 'false'
+
+SortIncludes: 'true'

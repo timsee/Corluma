@@ -4,15 +4,17 @@
  * Released under the GNU General Public License.
  */
 #include "presetpalettes.h"
-#include "cor/palette.h"
 #include "cor/exception.h"
+#include "cor/palette.h"
 
-#include <QJsonParseError>
+#include <QFile>
 #include <QJsonArray>
 #include <QJsonObject>
-#include <QFile>
+#include <QJsonParseError>
 
-PresetPalettes::PresetPalettes() : mPalettes(std::vector<Palette>(uint32_t(EPalette::unknown), Palette("", std::vector<QColor>(1), 50))){
+PresetPalettes::PresetPalettes()
+    : mPalettes(std::vector<Palette>(uint32_t(EPalette::unknown),
+                                     Palette("", std::vector<QColor>(1), 50))) {
     // open the palette file
     QFile paletteFile(":/resources/palettes.json");
     if (paletteFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -35,7 +37,7 @@ PresetPalettes::PresetPalettes() : mPalettes(std::vector<Palette>(uint32_t(EPale
         THROW_EXCEPTION("can't find resource for palettes");
     }
 
-    mAverageColors = std::vector<QColor>(uint32_t(EPalette::unknown), QColor(0,0,0));
+    mAverageColors = std::vector<QColor>(uint32_t(EPalette::unknown), QColor(0, 0, 0));
     uint32_t i = 0;
     for (auto&& palette : mPalettes) {
         int r = 0;
@@ -43,9 +45,9 @@ PresetPalettes::PresetPalettes() : mPalettes(std::vector<Palette>(uint32_t(EPale
         int b = 0;
 
         for (auto&& color : palette.colors()) {
-           r = r + color.red();
-           g = g + color.green();
-           b = b + color.blue();
+            r = r + color.red();
+            g = g + color.green();
+            b = b + color.blue();
         }
 
         mAverageColors[i] = QColor(r / int(palette.colors().size()),

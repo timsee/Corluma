@@ -1,10 +1,10 @@
 #ifndef DROPDOWNTOPWIDGET_H
 #define DROPDOWNTOPWIDGET_H
 
-#include <QWidget>
 #include <QLabel>
-#include <QPushButton>
 #include <QLayout>
+#include <QPushButton>
+#include <QWidget>
 
 #include "cor/protocols.h"
 
@@ -14,17 +14,19 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief The DropdownTopWidget class provides a widget that can be used at the top of a dropdown list. It is frequently
- *        used in the LightPage and the MoodPage to hide the details of overally lights/moods but still display some meta information.
- *        It also provides the user with buttons to edit the contents of the widget, or to select all/none of the contents in some cases.
+ * \brief The DropdownTopWidget class provides a widget that can be used at the top of a dropdown
+ * list. It is frequently used in the LightPage and the MoodPage to hide the details of overally
+ * lights/moods but still display some meta information. It also provides the user with buttons to
+ * edit the contents of the widget, or to select all/none of the contents in some cases.
  */
-class DropdownTopWidget : public QWidget
-{
+class DropdownTopWidget : public QWidget {
     Q_OBJECT
 public:
-
     /// constuctor
-    explicit DropdownTopWidget(const QString& key, cor::EWidgetType type, bool hideEdit, QWidget *parent);
+    explicit DropdownTopWidget(const QString& key,
+                               cor::EWidgetType type,
+                               bool hideEdit,
+                               QWidget* parent);
 
     /*!
      * \brief showButtons getter that checks if buttons are showing
@@ -54,43 +56,41 @@ signals:
 private slots:
 
     /*!
-    * \brief editButtonClicked called when edit button is pressed, sends out an edit signal
-    */
-   void editButtonClicked(bool) { emit editClicked(mKey);  }
+     * \brief editButtonClicked called when edit button is pressed, sends out an edit signal
+     */
+    void editButtonClicked(bool) { emit editClicked(mKey); }
 
 protected:
-
-   /*!
-    * \brief mouseReleaseEvent picks up when a click (or a tap on mobile) is released.
-    */
-   virtual void mouseReleaseEvent(QMouseEvent *);
+    /*!
+     * \brief mouseReleaseEvent picks up when a click (or a tap on mobile) is released.
+     */
+    virtual void mouseReleaseEvent(QMouseEvent*);
 
 private:
-
     /// the type of dropdowntopwidget
     cor::EWidgetType mType;
 
     /*!
      * \brief mLayout layout for the widget
      */
-    QHBoxLayout *mLayout;
+    QHBoxLayout* mLayout;
 
     /*!
      * \brief mName label for name of collection
      */
-    QLabel *mName;
+    QLabel* mName;
 
     /*!
      * \brief mEditButton button used to edit the collection. Editing can change
      *        the name or the lights contained in the collection.
      */
-    QPushButton *mEditButton;
+    QPushButton* mEditButton;
 
     /*!
      * \brief mHiddenStateIcon an arrow in the top right of the widget. If its pointing right, no
      *        buttons are shown. If its pointing down, all buttons are shown.
      */
-    QLabel *mHiddenStateIcon;
+    QLabel* mHiddenStateIcon;
 
     /// pixmap for icon that conveys no buttons being shown
     QPixmap mClosedPixmap;
@@ -115,7 +115,9 @@ private:
     bool mHideEdit;
 
     /// helper for computing icon size
-    QSize iconSize() { return QSize(int(mMinimumHeight * mIconRatio), int(mMinimumHeight * mIconRatio)); }
+    QSize iconSize() {
+        return QSize(int(mMinimumHeight * mIconRatio), int(mMinimumHeight * mIconRatio));
+    }
 
     /*!
      * \brief mMinimumHeight minimum size allowed for collection.

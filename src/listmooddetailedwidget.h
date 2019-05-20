@@ -3,12 +3,12 @@
 
 #include <QWidget>
 
-#include "listsimplegroupwidget.h"
 #include "cor/page.h"
 #include "cor/switch.h"
-#include "floatinglayout.h"
-#include "mooddetailswidget.h"
 #include "editgrouppage.h"
+#include "floatinglayout.h"
+#include "listsimplegroupwidget.h"
+#include "mooddetailswidget.h"
 
 /*!
  * \copyright
@@ -18,15 +18,15 @@
 
 /*!
  * \brief The ListMoodDetailedWidget class is the widget used to display detailed information
- *        about a mood. The first page of information is the mood's lights. The second page contains
- *        meta information and default states for specific groups. The third page can be used for editing a mood.
+ * about a mood. The first page of information is the mood's lights. The second page contains
+ * meta information and default states for specific groups. The third page can be used for
+ * editing a mood.
  */
-class ListMoodDetailedWidget : public QWidget, public cor::Page
-{
+class ListMoodDetailedWidget : public QWidget, public cor::Page {
     Q_OBJECT
 public:
     /// constructor
-    explicit ListMoodDetailedWidget(QWidget *parent, GroupData *groups, CommLayer *comm);
+    explicit ListMoodDetailedWidget(QWidget* parent, GroupData* groups, CommLayer* comm);
 
     /// update the mood in the widget
     void update(const cor::Mood& group);
@@ -35,7 +35,7 @@ public:
     void resize();
 
     /// getter for top menu
-    FloatingLayout *topMenu() { return mFloatingMenu; }
+    FloatingLayout* topMenu() { return mFloatingMenu; }
 
     /// pushes in the widget
     void pushIn();
@@ -54,16 +54,15 @@ signals:
     void enableGroup(std::uint64_t);
 
 protected:
-
     /*!
      * \brief paintEvent used to draw the background of the widget.
      */
-    void paintEvent(QPaintEvent *);
+    void paintEvent(QPaintEvent*);
 
     /*!
      * \brief resizeEvent called whenever the widget resizes
      */
-    void resizeEvent(QResizeEvent *);
+    void resizeEvent(QResizeEvent*);
 
 
 private slots:
@@ -78,48 +77,47 @@ private slots:
     void changedSwitchState(bool);
 
 private:
-
     /// moves floating layout
     void moveFloatingLayout();
 
     /// scroll area that contains all the information in the widget
-    QScrollArea *mScrollArea;
+    QScrollArea* mScrollArea;
 
     /// widget used to display additional info
-    MoodDetailsWidget *mAdditionalDetailsWidget;
+    MoodDetailsWidget* mAdditionalDetailsWidget;
 
     /// used for positioning widgets
-    QWidget *mPlaceholder;
+    QWidget* mPlaceholder;
 
     /// switch for turning on the mood
-    cor::Switch *mOnOffSwitch;
+    cor::Switch* mOnOffSwitch;
 
     /// key for the mood
     std::uint64_t mKey;
 
     /// label for the name of the mood
-    QLabel *mTopLabel;
+    QLabel* mTopLabel;
 
     /// menu for the widget
-    FloatingLayout *mFloatingMenu;
+    FloatingLayout* mFloatingMenu;
 
     /// pixmap for icon for the edit button
     QPixmap mEditIcon;
 
     /// pointer to commlayer for updates
-    CommLayer *mComm;
+    CommLayer* mComm;
 
     /// layout for top of widget
-    QHBoxLayout *mTopLayout;
+    QHBoxLayout* mTopLayout;
 
     /// vertical layout for widget
-    QVBoxLayout *mLayout;
+    QVBoxLayout* mLayout;
 
     /// widget used for scroll area.
-    ListSimpleGroupWidget *mSimpleGroupWidget;
+    ListSimpleGroupWidget* mSimpleGroupWidget;
 
     /// edit page for changign the mood
-    EditGroupPage *mEditPage;
+    EditGroupPage* mEditPage;
 };
 
 #endif // LISTMOODDETAILEDWIDGET_H

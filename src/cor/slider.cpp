@@ -6,17 +6,16 @@
 
 #include "cor/slider.h"
 
+#include <QApplication>
+#include <QFontMetrics>
+#include <QGraphicsOpacityEffect>
+#include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
-#include <QStyleOption>
-#include <QGraphicsOpacityEffect>
-#include <QFontMetrics>
-#include <QApplication>
 
-namespace cor
-{
+namespace cor {
 
-Slider::Slider(QWidget *parent) : QWidget(parent) {
+Slider::Slider(QWidget* parent) : QWidget(parent) {
     mHeightScaleFactor = 1.0f;
     mShouldDrawTickLabels = false;
     mShouldSnap = false;
@@ -29,10 +28,10 @@ Slider::Slider(QWidget *parent) : QWidget(parent) {
     setMinimumPossible(false, 0);
     setSnapToNearestTick(false);
     connect(mSlider, SIGNAL(valueChanged(int)), this, SLOT(receivedValue(int)));
-    connect(mSlider, SIGNAL(sliderReleased()),  this, SLOT(releasedSlider()));
+    connect(mSlider, SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
 
     mLayout = new QVBoxLayout;
-    mLayout->setContentsMargins(0,0,0,0);
+    mLayout->setContentsMargins(0, 0, 0, 0);
     mLayout->addWidget(mSlider);
     setLayout(mLayout);
 
@@ -81,62 +80,63 @@ void Slider::setGradient(const QColor& leftColor, const QColor& rightColor) {
 
 void Slider::adjustStylesheet() {
     QString stylesheet;
-    switch(mType) {
-    case ESliderType::vanilla:
-        stylesheet = QString("QSlider::handle:horizontal {"
-                             "width: %1px;"
-                             "}"
-                             ).arg(QString::number(mHandleSize));
-        break;
-    case ESliderType::color:
-    {
-        QColor darkColor = QColor(int(mSliderColor.red()   / 4),
-                                  int(mSliderColor.green() / 4),
-                                  int(mSliderColor.blue()  / 4));
-        stylesheet = QString("QSlider::sub-page:horizontal{ "
-                             " background:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 rgb(%1, %2, %3), stop: 1 rgb(%4, %5, %6));"
-                             " background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1, stop: 0 rgb(%1, %2, %3), stop: 1 rgb(%4, %5, %6));"
-                             "}"
-                             "QSlider::handle:horizontal {"
-                             "width: %7px;"
-                             "}"
-                             ).arg(QString::number(darkColor.red()),
-                                   QString::number(darkColor.green()),
-                                   QString::number(darkColor.blue()),
-                                   QString::number(mSliderColor.red()),
-                                   QString::number(mSliderColor.green()),
-                                   QString::number(mSliderColor.blue()),
-                                   QString::number(mHandleSize));
-        break;
-    }
-    case ESliderType::gradient:
-        stylesheet = QString("QSlider::groove:horizontal{ "
-                             " background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 rgb(%1, %2, %3), stop: 1 rgb(%4, %5, %6));"
-                             "}"
-                             "QSlider::handle:horizontal {"
-                             "width: %7px;"
-                             "}"
-                             ).arg(QString::number(mSliderColor.red()),
-                                   QString::number(mSliderColor.green()),
-                                   QString::number(mSliderColor.blue()),
-                                   QString::number(mColorGradient.red()),
-                                   QString::number(mColorGradient.green()),
-                                   QString::number(mColorGradient.blue()),
-                                   QString::number(mHandleSize));
-        break;
-    case ESliderType::image:
-        stylesheet = QString("QSlider::sub-page:horizontal{ "
-                             " background-color:rgba(0,0,0,0);"
-                             "}"
-                             "QSlider::groove:horizontal{ "
-                             " border-image: url(%1) 0 0 0 0 stretch stretch;"
-                             "}"
-                             "QSlider::handle:horizontal {"
-                             "width: %2px;"
-                             "}"
-                             ).arg(mPath,
-                                   QString::number(mHandleSize));
-        break;
+    switch (mType) {
+        case ESliderType::vanilla:
+            stylesheet = QString("QSlider::handle:horizontal {"
+                                 "width: %1px;"
+                                 "}")
+                             .arg(QString::number(mHandleSize));
+            break;
+        case ESliderType::color: {
+            QColor darkColor = QColor(int(mSliderColor.red() / 4),
+                                      int(mSliderColor.green() / 4),
+                                      int(mSliderColor.blue() / 4));
+            stylesheet = QString("QSlider::sub-page:horizontal{ "
+                                 " background:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 "
+                                 "rgb(%1, %2, %3), stop: 1 rgb(%4, %5, %6));"
+                                 " background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1, stop: "
+                                 "0 rgb(%1, %2, %3), stop: 1 rgb(%4, %5, %6));"
+                                 "}"
+                                 "QSlider::handle:horizontal {"
+                                 "width: %7px;"
+                                 "}")
+                             .arg(QString::number(darkColor.red()),
+                                  QString::number(darkColor.green()),
+                                  QString::number(darkColor.blue()),
+                                  QString::number(mSliderColor.red()),
+                                  QString::number(mSliderColor.green()),
+                                  QString::number(mSliderColor.blue()),
+                                  QString::number(mHandleSize));
+            break;
+        }
+        case ESliderType::gradient:
+            stylesheet = QString("QSlider::groove:horizontal{ "
+                                 " background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 "
+                                 "rgb(%1, %2, %3), stop: 1 rgb(%4, %5, %6));"
+                                 "}"
+                                 "QSlider::handle:horizontal {"
+                                 "width: %7px;"
+                                 "}")
+                             .arg(QString::number(mSliderColor.red()),
+                                  QString::number(mSliderColor.green()),
+                                  QString::number(mSliderColor.blue()),
+                                  QString::number(mColorGradient.red()),
+                                  QString::number(mColorGradient.green()),
+                                  QString::number(mColorGradient.blue()),
+                                  QString::number(mHandleSize));
+            break;
+        case ESliderType::image:
+            stylesheet = QString("QSlider::sub-page:horizontal{ "
+                                 " background-color:rgba(0,0,0,0);"
+                                 "}"
+                                 "QSlider::groove:horizontal{ "
+                                 " border-image: url(%1) 0 0 0 0 stretch stretch;"
+                                 "}"
+                                 "QSlider::handle:horizontal {"
+                                 "width: %2px;"
+                                 "}")
+                             .arg(mPath, QString::number(mHandleSize));
+            break;
     }
     mSlider->setStyleSheet(stylesheet);
 }
@@ -155,15 +155,13 @@ void Slider::receivedValue(int value) {
  * solution based on this stack overflow response:
  * http://stackoverflow.com/a/15321654
  */
-int Slider::jumpSliderToPosition(QSlider *slider, int newPos) {
+int Slider::jumpSliderToPosition(QSlider* slider, int newPos) {
     Qt::MouseButtons btns = QApplication::mouseButtons();
     QPoint localMousePos = slider->mapFromGlobal(QCursor::pos());
     // check if a click happens directly on the slider
-    bool clickOnSlider = (btns & Qt::LeftButton)
-                          && (localMousePos.x() >= 0)
-                          && (localMousePos.y() >= 0)
-                          && (localMousePos.x() < slider->size().width())
-                          && (localMousePos.y() < slider->size().height());
+    bool clickOnSlider = (btns & Qt::LeftButton) && (localMousePos.x() >= 0)
+                         && (localMousePos.y() >= 0) && (localMousePos.x() < slider->size().width())
+                         && (localMousePos.y() < slider->size().height());
 
     // if its a click on the slider, use our custom logic.
     if (clickOnSlider) {
@@ -188,11 +186,11 @@ int Slider::jumpSliderToPosition(QSlider *slider, int newPos) {
 }
 
 
-int Slider::snapSliderToNearestTick(QSlider *slider, int pos) {
+int Slider::snapSliderToNearestTick(QSlider* slider, int pos) {
     if (slider->tickPosition() != QSlider::NoTicks) {
         int numberOfFullTicks = pos / slider->tickInterval();
         int leftTick = slider->minimum() + numberOfFullTicks * slider->tickInterval();
-        int rightTick = slider->minimum()  + (numberOfFullTicks + 1) * slider->tickInterval();
+        int rightTick = slider->minimum() + (numberOfFullTicks + 1) * slider->tickInterval();
         if ((leftTick - pos) < (pos - rightTick)) {
             pos = rightTick;
         } else {
@@ -212,22 +210,22 @@ void Slider::setMinimumPossible(bool useMinimumPossible, int minimumPossible) {
 }
 
 
-void Slider::resizeEvent(QResizeEvent *) {
+void Slider::resizeEvent(QResizeEvent*) {
     mSlider->setFixedSize(this->rect().width(), int(this->rect().height() * mHeightScaleFactor));
     switch (mType) {
-    case ESliderType::color:
-        setColor(mSliderColor);
-        break;
-    case ESliderType::gradient:
-        setGradient(mSliderColor, mColorGradient);
-        break;
-    case ESliderType::image:
-        setImage(mPath);
-        break;
+        case ESliderType::color:
+            setColor(mSliderColor);
+            break;
+        case ESliderType::gradient:
+            setGradient(mSliderColor, mColorGradient);
+            break;
+        case ESliderType::image:
+            setImage(mPath);
+            break;
     }
 }
 
-void Slider::paintEvent(QPaintEvent *) {
+void Slider::paintEvent(QPaintEvent*) {
     if (mSlider->tickPosition() != QSlider::NoTicks) {
         QStyleOption opt;
         opt.init(this);
@@ -284,12 +282,12 @@ void Slider::paintEvent(QPaintEvent *) {
                 }
             } else {
                 if (mSlider->tickPosition() == QSlider::TicksBothSides
-                        || mSlider->tickPosition() == QSlider::TicksAbove) {
+                    || mSlider->tickPosition() == QSlider::TicksAbove) {
                     int y = mSlider->rect().top();
                     painter.drawLine(x, y, x, y * 4 / 5);
                 }
                 if (mSlider->tickPosition() == QSlider::TicksBothSides
-                        || mSlider->tickPosition() == QSlider::TicksBelow) {
+                    || mSlider->tickPosition() == QSlider::TicksBelow) {
                     int y = this->rect().bottom();
                     painter.drawLine(x, y, x, y * 4 / 5);
                 }
@@ -305,9 +303,9 @@ void Slider::setHeightPercentage(float percent) {
     int newY = int(this->rect().height() * (1.0f - mHeightScaleFactor) / 2.0f);
 
     mSlider->setGeometry(mSlider->rect().x(),
-                        newY,
-                        this->rect().width(),
-                        int(this->rect().height() * mHeightScaleFactor));
+                         newY,
+                         this->rect().width(),
+                         int(this->rect().height() * mHeightScaleFactor));
     resizeEvent(nullptr);
 }
 
@@ -329,7 +327,7 @@ void Slider::setShouldDrawTickLabels(bool shouldDraw) {
 }
 
 void Slider::enable(bool shouldEnable) {
-    if(shouldEnable) {
+    if (shouldEnable) {
         auto effect = new QGraphicsOpacityEffect(mSlider);
         effect->setOpacity(1.0);
         mSlider->setGraphicsEffect(effect);
@@ -342,4 +340,4 @@ void Slider::enable(bool shouldEnable) {
     }
 }
 
-}
+} // namespace cor

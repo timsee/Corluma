@@ -149,24 +149,19 @@ SOURCES += main.cpp \
     cor/palette.cpp \
     cor/jsonsavedata.cpp \
     cor/lightvectorwidget.cpp \
-    cor/page.cpp \
     cor/listlayout.cpp \
     cor/devicelist.cpp \
     cor/groupbutton.cpp \
-    cor/listitemwidget.cpp \
     cor/group.cpp \
     hue/bridgeinfowidget.cpp \
     hue/lightdiscovery.cpp \
     hue/bridgediscovery.cpp \
     hue/bridge.cpp \
-    hue/huelight.cpp \
     hue/hueinfowidget.cpp \
     hue/bridgegroupswidget.cpp \
     hue/bridgescheduleswidget.cpp \
     hue/huegroupwidget.cpp \
     hue/hueschedulewidget.cpp \
-    nanoleaf/panels.cpp \
-    nanoleaf/rhythmcontroller.cpp \
     nanoleaf/leafcontroller.cpp \
     nanoleaf/leafdiscovery.cpp \
     nanoleaf/leafcontrollerinfowidget.cpp \

@@ -1,8 +1,8 @@
 #ifndef SELECTLIGHTSBUTTON_H
 #define SELECTLIGHTSBUTTON_H
 
-#include <QWidget>
 #include <QLabel>
+#include <QWidget>
 
 /*!
  * \copyright
@@ -11,17 +11,16 @@
  */
 
 /*!
- * \brief The SelectLightsButton class is a simple button that prompts the user to select lights when
- *        none are selected. This scrolls into the screen where selected lights normally are in cases
- *        where the left menu is hidden but the rest of the app is greyed out, so that the user has a
- *        clear place to click to continue using the app
+ * \brief The SelectLightsButton class is a simple button that prompts the user to select lights
+ * when none are selected. This scrolls into the screen where selected lights normally are in cases
+ * where the left menu is hidden but the rest of the app is greyed out, so that the user has
+ * a clear place to click to continue using the app
  */
-class SelectLightsButton : public QWidget
-{
+class SelectLightsButton : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit SelectLightsButton(QWidget *parent);
+    explicit SelectLightsButton(QWidget* parent);
 
     /// pushes in the widget for display
     void pushIn(int yPos);
@@ -48,13 +47,12 @@ protected:
     void mouseReleaseEvent(QMouseEvent* event);
 
     /// handles when the widget is painted
-    void paintEvent(QPaintEvent *);
+    void paintEvent(QPaintEvent*);
 
     /// called when widget is resized
-    void resizeEvent(QResizeEvent *);
+    void resizeEvent(QResizeEvent*);
 
 private:
-
     /// true if in, false otherwsie
     bool mIsIn;
 
@@ -62,7 +60,7 @@ private:
     bool mIsHighlighted;
 
     /// label for the button text
-    QLabel *mLabel;
+    QLabel* mLabel;
 };
 
 #endif // SELECTLIGHTSBUTTON_H

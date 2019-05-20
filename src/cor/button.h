@@ -1,16 +1,15 @@
 #ifndef COR_BUTTON_H
 #define COR_BUTTON_H
 
-#include <QWidget>
+#include <QJsonObject>
+#include <QLabel>
 #include <QLayout>
 #include <QPushButton>
-#include <QLabel>
-#include <QJsonObject>
-#include "icondata.h"
+#include <QWidget>
 #include "cor/protocols.h"
+#include "icondata.h"
 
-namespace cor
-{
+namespace cor {
 
 /*!
  * \copyright
@@ -27,14 +26,13 @@ namespace cor
  * the button. A menu button emits a page number, and is used by the main menu.
  *
  */
-class Button : public QPushButton
-{
+class Button : public QPushButton {
     Q_OBJECT
 public:
     /*!
      * \brief Constructor
      */
-    explicit Button(QWidget *parent, const QJsonObject& routine);
+    explicit Button(QWidget* parent, const QJsonObject& routine);
 
     /*!
      * \brief updateRoutine show a routine on the button
@@ -67,9 +65,9 @@ private slots:
 
 protected:
     /*!
-    * \brief resizeEvent used to resize the icon on the QPushButton.
-    */
-   virtual void resizeEvent(QResizeEvent *);
+     * \brief resizeEvent used to resize the icon on the QPushButton.
+     */
+    virtual void resizeEvent(QResizeEvent*);
 
 private:
     /// size for icon
@@ -88,6 +86,6 @@ private:
     QJsonObject mRoutineObject;
 };
 
-}
+} // namespace cor
 
 #endif // COR_BUTTON_H

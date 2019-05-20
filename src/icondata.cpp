@@ -7,11 +7,11 @@
 #include "icondata.h"
 
 #include <QDebug>
-#include "cor/light.h"
-#include <cstdlib>
-#include <ctime>
 #include <algorithm>
 #include <cmath>
+#include <cstdlib>
+#include <ctime>
+#include "cor/light.h"
 
 IconData::IconData() {
     setup(4, 4);
@@ -22,12 +22,11 @@ IconData::IconData(std::uint32_t width, std::uint32_t height) {
 }
 
 void IconData::setup(std::uint32_t width, std::uint32_t height) {
-
     // first, check that both are a multiple of four
     while ((width % 4)) {
         width = width - 1;
     }
-    while((height % 4)) {
+    while ((height % 4)) {
         height = height - 1;
     }
 
@@ -43,10 +42,10 @@ void IconData::setup(std::uint32_t width, std::uint32_t height) {
     mBuffer = std::vector<uint8_t>(mBufferLength);
 
     // zero out the arrays
-    for (int i = 0; i < int(mBufferLength); i ++) {
+    for (int i = 0; i < int(mBufferLength); i++) {
         mBuffer[uint32_t(i)] = 0;
     }
-    for (int i = 0; i < int(mDataLength); i ++) {
+    for (int i = 0; i < int(mDataLength); i++) {
         mData[uint32_t(i)] = 0;
     }
 
@@ -55,11 +54,7 @@ void IconData::setup(std::uint32_t width, std::uint32_t height) {
     // and if the number is too large for that particular
     // color group's size, then it defaults to either 0
     // or 1, since all color groups are at least 2 in size.
-    mRandomIndividual = {0, 5, 5, 1,
-                         0, 3, 6, 2,
-                         6, 0, 0, 5,
-                         7, 1, 2, 6};
-
+    mRandomIndividual = {0, 5, 5, 1, 0, 3, 6, 2, 6, 0, 0, 5, 7, 1, 2, 6};
 }
 
 void IconData::bufferToOutput() {
@@ -70,21 +65,18 @@ void IconData::bufferToOutput() {
             mData[i] = mBuffer[j];
             mData[i + 1] = mBuffer[j + 1];
             mData[i + 2] = mBuffer[j + 2];
-        }
-        else if ((i % (mWidth * 3)) < mWidth * 6 / 4) {
-             mData[i] = mBuffer[j + 3];
-             mData[i + 1] = mBuffer[j + 4];
-             mData[i + 2] = mBuffer[j + 5];
-        }
-        else if ((i % (mWidth * 3)) < mWidth * 9 / 4) {
-             mData[i] = mBuffer[j + 6];
-             mData[i + 1] = mBuffer[j + 7];
-             mData[i + 2] = mBuffer[j + 8];
-        }
-        else if ((i % (mWidth * 3)) < mWidth * 3) {
-             mData[i] = mBuffer[j + 9];
-             mData[i + 1] = mBuffer[j + 10];
-             mData[i + 2] = mBuffer[j + 11];
+        } else if ((i % (mWidth * 3)) < mWidth * 6 / 4) {
+            mData[i] = mBuffer[j + 3];
+            mData[i + 1] = mBuffer[j + 4];
+            mData[i + 2] = mBuffer[j + 5];
+        } else if ((i % (mWidth * 3)) < mWidth * 9 / 4) {
+            mData[i] = mBuffer[j + 6];
+            mData[i + 1] = mBuffer[j + 7];
+            mData[i + 2] = mBuffer[j + 8];
+        } else if ((i % (mWidth * 3)) < mWidth * 3) {
+            mData[i] = mBuffer[j + 9];
+            mData[i + 1] = mBuffer[j + 10];
+            mData[i + 2] = mBuffer[j + 11];
         }
 
         if (!((i + 3) % (mWidth * 3))) {
@@ -100,9 +92,9 @@ void IconData::bufferToOutput() {
 
 void IconData::setRoutine(const QJsonObject& routineObject) {
     cor::Light routineInfo = cor::jsonToLight(routineObject);
-    ERoutine routine           = routineInfo.routine;
+    ERoutine routine = routineInfo.routine;
     std::vector<QColor> colors = routineInfo.palette.colors();
-    QColor color               = routineInfo.color;
+    QColor color = routineInfo.color;
     color.setHsvF(color.hueF(), color.saturationF(), 1.0);
 
     int param = INT_MIN;
@@ -110,64 +102,63 @@ void IconData::setRoutine(const QJsonObject& routineObject) {
         param = int(routineObject["param"].toDouble());
     }
 
-    switch (routine)
-    {
-    case ERoutine::singleSolid:
-        setSolidColor(color);
-        break;
-    case ERoutine::singleBlink:
-        setSolidColor(color);
-        addBlink();
-        break;
-    case ERoutine::singleWave:
-        setSolidColor(color);
-        addWave();
-        break;
-    case ERoutine::singleGlimmer:
-        setSolidColor(color);
-        addGlimmer();
-        break;
-    case ERoutine::singleFade:
-        setSolidColor(color);
-        if (param == 1) {
-            addSineFade();
-        } else {
-            addLinearFade();
-        }
-        break;
-    case ERoutine::singleSawtoothFade:
-        setSolidColor(color);
-        if (param == 1) {
-            addSawtoothIn();
-        } else {
-            addSawtoothOut();
-        }
-        break;
-    case ERoutine::multiGlimmer:
-        setMultiGlimmer(colors);
-        break;
-    case ERoutine::multiFade:
-        setMultiFade(colors, false);
-        break;
-    case ERoutine::multiRandomSolid:
-        setMultiRandomSolid(colors);
-        break;
-    case ERoutine::multiRandomIndividual:
-        setMultiRandomIndividual(colors);
-        break;
-    case ERoutine::multiBars:
-        setBars(colors);
-        break;
-    default:
-        // if a routine doesn't exist, just draw things black.
-        setSolidColor(QColor(0,0,0));
-        break;
+    switch (routine) {
+        case ERoutine::singleSolid:
+            setSolidColor(color);
+            break;
+        case ERoutine::singleBlink:
+            setSolidColor(color);
+            addBlink();
+            break;
+        case ERoutine::singleWave:
+            setSolidColor(color);
+            addWave();
+            break;
+        case ERoutine::singleGlimmer:
+            setSolidColor(color);
+            addGlimmer();
+            break;
+        case ERoutine::singleFade:
+            setSolidColor(color);
+            if (param == 1) {
+                addSineFade();
+            } else {
+                addLinearFade();
+            }
+            break;
+        case ERoutine::singleSawtoothFade:
+            setSolidColor(color);
+            if (param == 1) {
+                addSawtoothIn();
+            } else {
+                addSawtoothOut();
+            }
+            break;
+        case ERoutine::multiGlimmer:
+            setMultiGlimmer(colors);
+            break;
+        case ERoutine::multiFade:
+            setMultiFade(colors, false);
+            break;
+        case ERoutine::multiRandomSolid:
+            setMultiRandomSolid(colors);
+            break;
+        case ERoutine::multiRandomIndividual:
+            setMultiRandomIndividual(colors);
+            break;
+        case ERoutine::multiBars:
+            setBars(colors);
+            break;
+        default:
+            // if a routine doesn't exist, just draw things black.
+            setSolidColor(QColor(0, 0, 0));
+            break;
     }
 }
 
 void IconData::setSolidColor(const QColor& color) {
     for (uint i = 0; i < mBufferLength; i = i + 3) {
-        mBuffer[i]      = uint8_t(color.red());
+        mBuffer[i] = uint8_t(color.red());
         mBuffer[i + 1] = uint8_t(color.green());
         mBuffer[i + 2] = uint8_t(color.blue());
     }
@@ -187,7 +178,7 @@ void IconData::setMultiGlimmer(const std::vector<QColor>& colors) {
             if (colorCount > 2) {
                 color = colorCount - 1;
             }
-            mBuffer[i]     = uint8_t(colors[color].red());
+            mBuffer[i] = uint8_t(colors[color].red());
             mBuffer[i + 1] = uint8_t(colors[color].green());
             mBuffer[i + 2] = uint8_t(colors[color].blue());
         } else if (j == 8) {
@@ -196,11 +187,11 @@ void IconData::setMultiGlimmer(const std::vector<QColor>& colors) {
             if (colorCount > 2) {
                 color = 2;
             }
-            mBuffer[i]     = uint8_t(colors[color].red());
+            mBuffer[i] = uint8_t(colors[color].red());
             mBuffer[i + 1] = uint8_t(colors[color].green());
             mBuffer[i + 2] = uint8_t(colors[color].blue());
         } else {
-            mBuffer[i]     = uint8_t(colors[0].red());
+            mBuffer[i] = uint8_t(colors[0].red());
             mBuffer[i + 1] = uint8_t(colors[0].green());
             mBuffer[i + 2] = uint8_t(colors[0].blue());
         }
@@ -229,7 +220,8 @@ void IconData::setMultiFade(const std::vector<QColor>& colors, bool showMore) {
     uint32_t colorIndex = 0;
     for (uint8_t i = 0; i < count - 2; i = i + 2) {
         output[i] = colors[arrayIndices[colorIndex]];
-        output[i + 1] = getMiddleColor(colors[arrayIndices[colorIndex]], colors[arrayIndices[colorIndex + 1]]);
+        output[i + 1] = getMiddleColor(colors[arrayIndices[colorIndex]],
+                                       colors[arrayIndices[colorIndex + 1]]);
         colorIndex++;
     }
 
@@ -238,7 +230,7 @@ void IconData::setMultiFade(const std::vector<QColor>& colors, bool showMore) {
     output[count - 1] = getMiddleColor(colors[arrayIndices[colorIndex]], colors[arrayIndices[0]]);
     uint32_t j = 0;
     for (uint32_t i = 0; i < mBufferLength; i = i + 3) {
-        mBuffer[i]     = uint8_t(output[j].red());
+        mBuffer[i] = uint8_t(output[j].red());
         mBuffer[i + 1] = uint8_t(output[j].green());
         mBuffer[i + 2] = uint8_t(output[j].blue());
         j++;
@@ -273,7 +265,7 @@ void IconData::setMultiRandomSolid(const std::vector<QColor>& colors) {
             }
         }
         for (uint32_t j = 0; j < 12; j = j + 3) {
-            mBuffer[i + j]     = uint8_t(randomColor.red());
+            mBuffer[i + j] = uint8_t(randomColor.red());
             mBuffer[i + j + 1] = uint8_t(randomColor.green());
             mBuffer[i + j + 2] = uint8_t(randomColor.blue());
         }
@@ -293,7 +285,7 @@ void IconData::setMultiRandomIndividual(const std::vector<QColor>& colors) {
         } else {
             index = uint32_t(mRandomIndividual[j]);
         }
-        mBuffer[i]     = uint8_t(colors[index].red());
+        mBuffer[i] = uint8_t(colors[index].red());
         mBuffer[i + 1] = uint8_t(colors[index].green());
         mBuffer[i + 2] = uint8_t(colors[index].blue());
         j++;
@@ -309,14 +301,14 @@ void IconData::setBars(const std::vector<QColor>& colors) {
     for (uint32_t i = 3; i < mBufferLength; i = i + 12) {
         color = colors[colorIndex % colorCount];
         for (uint32_t j = 0; j < 6; j = j + 3) {
-            mBuffer[i + j]     = uint8_t(color.red());
+            mBuffer[i + j] = uint8_t(color.red());
             mBuffer[i + j + 1] = uint8_t(color.green());
             mBuffer[i + j + 2] = uint8_t(color.blue());
         }
         color = colors[(colorIndex + 1) % colorCount];
         for (uint32_t j = 6; j < 12; j = j + 3) {
             if (i + j + 2 < mBufferLength) {
-                mBuffer[i + j]     = uint8_t(color.red());
+                mBuffer[i + j] = uint8_t(color.red());
                 mBuffer[i + j + 1] = uint8_t(color.green());
                 mBuffer[i + j + 2] = uint8_t(color.blue());
             }
@@ -394,7 +386,7 @@ void IconData::addWave() {
         } else {
             k = 1.0f - (k - 0.5f) / 0.5f;
         }
-        mBuffer[i]     = uint8_t(mBuffer[i] * k);
+        mBuffer[i] = uint8_t(mBuffer[i] * k);
         mBuffer[i + 1] = uint8_t(mBuffer[i + 1] * k);
         mBuffer[i + 2] = uint8_t(mBuffer[i + 2] * k);
         if (!skip) {
@@ -416,7 +408,7 @@ void IconData::addLinearFade() {
         } else {
             k = 1.0f - (k - 0.5f) / 0.5f;
         }
-        mBuffer[i]     = uint8_t(mBuffer[i] * k);
+        mBuffer[i] = uint8_t(mBuffer[i] * k);
         mBuffer[i + 1] = uint8_t(mBuffer[i + 1] * k);
         mBuffer[i + 2] = uint8_t(mBuffer[i + 2] * k);
         j++;
@@ -435,7 +427,7 @@ void IconData::addSawtoothIn() {
         } else {
             k = (k - 0.5f) / 0.5f;
         }
-        mBuffer[i]     = uint8_t(mBuffer[i] * k);
+        mBuffer[i] = uint8_t(mBuffer[i] * k);
         mBuffer[i + 1] = uint8_t(mBuffer[i + 1] * k);
         mBuffer[i + 2] = uint8_t(mBuffer[i + 2] * k);
         j++;
@@ -454,7 +446,7 @@ void IconData::addSawtoothOut() {
         } else {
             k = 1.0f - (k - 0.5f) / 0.5f;
         }
-        mBuffer[i]     = uint8_t(mBuffer[i] * k);
+        mBuffer[i] = uint8_t(mBuffer[i] * k);
         mBuffer[i + 1] = uint8_t(mBuffer[i + 1] * k);
         mBuffer[i + 2] = uint8_t(mBuffer[i + 2] * k);
         j++;
@@ -468,7 +460,7 @@ void IconData::addSineFade() {
     double max = (mBufferLength / 3.0) - 1;
     for (uint i = 0; i < mBufferLength; i = i + 3) {
         k = cbrt((sin(((j / max) * 6.28) - 1.67) + 1) / 2.0);
-        mBuffer[i]     = uint8_t(mBuffer[i] * k);
+        mBuffer[i] = uint8_t(mBuffer[i] * k);
         mBuffer[i + 1] = uint8_t(mBuffer[i + 1] * k);
         mBuffer[i + 2] = uint8_t(mBuffer[i + 2] * k);
         j++;
@@ -497,8 +489,7 @@ const QPixmap IconData::renderAsQPixmap() {
     return QPixmap::fromImage(renderAsQImage());
 }
 
-QColor IconData::getMiddleColor(const QColor& first,
-                                const QColor& second) {
+QColor IconData::getMiddleColor(const QColor& first, const QColor& second) {
     return {abs(first.red() - second.red()) / 2 + std::min(first.red(), second.red()),
             abs(first.green() - second.green()) / 2 + std::min(first.green(), second.green()),
             abs(first.blue() - second.blue()) / 2 + std::min(first.blue(), second.blue())};

@@ -10,15 +10,15 @@
 #include "utils/qt.h"
 
 #include <QDebug>
+#include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
-#include <QStyleOption>
 
-#include "icondata.h"
 #include "cor/light.h"
+#include "icondata.h"
 
 
-QSize preferredSize(LeftHandButton *label) {
+QSize preferredSize(LeftHandButton* label) {
     float sizeRatio = 0.6f;
     int min = std::min(label->width(), label->height());
     auto finalSize = int(min * sizeRatio);
@@ -26,7 +26,12 @@ QSize preferredSize(LeftHandButton *label) {
 }
 
 
-LeftHandButton::LeftHandButton(const QString& text, EPage page, const QString& iconResource, LeftHandMenu *menu, QWidget *parent) : QWidget(parent) {
+LeftHandButton::LeftHandButton(const QString& text,
+                               EPage page,
+                               const QString& iconResource,
+                               LeftHandMenu* menu,
+                               QWidget* parent)
+    : QWidget(parent) {
     mPage = page;
     mMenu = menu;
     mIsHighlighted = false;
@@ -44,7 +49,7 @@ LeftHandButton::LeftHandButton(const QString& text, EPage page, const QString& i
 
     mLayout = new QHBoxLayout(this);
 
-    mLayout->setContentsMargins(0,0,0,0);
+    mLayout->setContentsMargins(0, 0, 0, 0);
     mLayout->addWidget(mIcon, 1);
     mLayout->addWidget(mTitle, 5);
 
@@ -52,7 +57,12 @@ LeftHandButton::LeftHandButton(const QString& text, EPage page, const QString& i
 }
 
 
-LeftHandButton::LeftHandButton(const QString& text, EPage page, const QJsonObject& jsonObject, LeftHandMenu *menu, QWidget *parent) : QWidget(parent) {
+LeftHandButton::LeftHandButton(const QString& text,
+                               EPage page,
+                               const QJsonObject& jsonObject,
+                               LeftHandMenu* menu,
+                               QWidget* parent)
+    : QWidget(parent) {
     mPage = page;
     mMenu = menu;
     mIsHighlighted = false;
@@ -70,7 +80,7 @@ LeftHandButton::LeftHandButton(const QString& text, EPage page, const QJsonObjec
 
     mLayout = new QHBoxLayout(this);
 
-    mLayout->setContentsMargins(0,0,0,0);
+    mLayout->setContentsMargins(0, 0, 0, 0);
     mLayout->addWidget(mIcon, 1);
     mLayout->addWidget(mTitle, 5);
 
@@ -80,32 +90,27 @@ LeftHandButton::LeftHandButton(const QString& text, EPage page, const QJsonObjec
 void LeftHandButton::updateIcon(const QString& iconResource) {
     QPixmap pixmap(iconResource);
     auto size = preferredSize(this);
-    mIcon->setPixmap(pixmap.scaled(size.width(),
-                                   size.height(),
-                                   Qt::KeepAspectRatio,
-                                   Qt::SmoothTransformation));
+    mIcon->setPixmap(
+        pixmap.scaled(size.width(), size.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
 void LeftHandButton::updateJSON(const QJsonObject& jsonObject) {
     IconData icon(4, 4);
     icon.setRoutine(jsonObject);
     auto size = preferredSize(this);
-    mIcon->setPixmap(icon.renderAsQPixmap().scaled(size.width(),
-                                                   size.height(),
-                                                   Qt::KeepAspectRatio,
-                                                   Qt::FastTransformation));
+    mIcon->setPixmap(icon.renderAsQPixmap().scaled(
+        size.width(), size.height(), Qt::KeepAspectRatio, Qt::FastTransformation));
 }
 
-void LeftHandButton::mousePressEvent(QMouseEvent *event) {
+void LeftHandButton::mousePressEvent(QMouseEvent* event) {
     // turn to light blue
-//    mIsHighlighted = true;
-//    update();
+    //    mIsHighlighted = true;
+    //    update();
     event->ignore();
 }
 
-void LeftHandButton::mouseReleaseEvent(QMouseEvent *event) {
-    if (cor::isMouseEventTouchUpInside(event, this, true)
-            && mMenu->geometry().x() == 0) {
+void LeftHandButton::mouseReleaseEvent(QMouseEvent* event) {
+    if (cor::isMouseEventTouchUpInside(event, this, true) && mMenu->geometry().x() == 0) {
         // turn back to standard color
         if (mIsHighlighted) {
             event->ignore();
@@ -121,7 +126,7 @@ void LeftHandButton::mouseReleaseEvent(QMouseEvent *event) {
     }
 }
 
-void LeftHandButton::resizeEvent(QResizeEvent *) {
+void LeftHandButton::resizeEvent(QResizeEvent*) {
     if (!mResourcePath.isNull()) {
         updateIcon(mResourcePath);
     } else {
@@ -134,7 +139,7 @@ void LeftHandButton::shouldHightlght(bool shouldHighlight) {
     update();
 }
 
-void LeftHandButton::paintEvent(QPaintEvent *) {
+void LeftHandButton::paintEvent(QPaintEvent*) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     // paint background

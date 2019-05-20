@@ -8,10 +8,9 @@
 
 #include "checkbox.h"
 
-namespace cor
-{
+namespace cor {
 
-CheckBox::CheckBox(QWidget *parent, const QString& title) : QWidget(parent) {
+CheckBox::CheckBox(QWidget* parent, const QString& title) : QWidget(parent) {
     mIsChecked = false;
     mSpacer = 5;
 
@@ -28,7 +27,8 @@ CheckBox::CheckBox(QWidget *parent, const QString& title) : QWidget(parent) {
     mCheckBox = new QPushButton(this);
     mCheckBox->setCheckable(true);
     connect(mCheckBox, SIGNAL(clicked(bool)), this, SLOT(buttonPressed(bool)));
-    mCheckBox->setStyleSheet("QPushButton:checked{ background-color:rgb(61, 142, 201); } QPushButton{ border:5px solid #AAAAAA; }");
+    mCheckBox->setStyleSheet("QPushButton:checked{ background-color:rgb(61, 142, 201); } "
+                             "QPushButton{ border:5px solid #AAAAAA; }");
     mCheckBox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     this->setMinimumHeight(mTitle->height());
@@ -49,11 +49,11 @@ void CheckBox::setTitle(const QString& title) {
 
 void CheckBox::downsizeTextWidthToFit(int maxWidth) {
     QLabel label(mTitle->text());
-    int systemFontWidth  = label.fontMetrics().boundingRect(label.text()).width();
-    int fontPtSize       = label.font().pointSize();
-    int nonTitleSize     = mCheckBox->width() + mSpacer * 3;
-    int computedSize     = systemFontWidth;
-    maxWidth             = maxWidth - nonTitleSize;
+    int systemFontWidth = label.fontMetrics().boundingRect(label.text()).width();
+    int fontPtSize = label.font().pointSize();
+    int nonTitleSize = mCheckBox->width() + mSpacer * 3;
+    int computedSize = systemFontWidth;
+    maxWidth = maxWidth - nonTitleSize;
     if (maxWidth > computedSize) {
         // just use the systems font instead of scaling up
         QFont font = mTitle->font();
@@ -62,7 +62,7 @@ void CheckBox::downsizeTextWidthToFit(int maxWidth) {
         QRect r = mTitle->fontMetrics().boundingRect(mTitle->text());
         mTitle->setFixedWidth(r.width());
     } else {
-        while((maxWidth < computedSize) && (fontPtSize > 2)) {
+        while ((maxWidth < computedSize) && (fontPtSize > 2)) {
             fontPtSize--;
             QFont font = mTitle->font();
             font.setPointSize(fontPtSize);
@@ -81,25 +81,18 @@ void CheckBox::setChecked(bool shouldCheck) {
 }
 
 void CheckBox::buttonPressed(bool) {
-
     mIsChecked = !mIsChecked;
     emit boxChecked(mIsChecked);
 }
 
-void CheckBox::resizeEvent(QResizeEvent *) {
-
-    mTitle->setGeometry(mSpacer,
-                        mSpacer,
-                        mTitle->width(),
-                        mTitle->height());
+void CheckBox::resizeEvent(QResizeEvent*) {
+    mTitle->setGeometry(mSpacer, mSpacer, mTitle->width(), mTitle->height());
 
     auto height = int(mTitle->height() * 0.8);
-    mCheckBox->setGeometry(mTitle->width() + 2 * mSpacer,
-                           mTitle->geometry().y(),
-                           height + mSpacer,
-                           height + mSpacer);
+    mCheckBox->setGeometry(
+        mTitle->width() + 2 * mSpacer, mTitle->geometry().y(), height + mSpacer, height + mSpacer);
 
     adjustSize();
 }
 
-}
+} // namespace cor

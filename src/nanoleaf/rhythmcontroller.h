@@ -3,8 +3,7 @@
 
 #include <QString>
 
-namespace nano
-{
+namespace nano {
 /*!
  * \copyright
  * Copyright (C) 2015 - 2019.
@@ -15,11 +14,10 @@ namespace nano
  * \brief The RhythmController class contains all known information about the
  *        connected Rhythm Controller.
  */
-class RhythmController
-{
+class RhythmController {
 public:
     /// Constructor
-    RhythmController();
+    RhythmController() : isConnected{false}, isActive{false}, auxAvailable{false} {}
 
     /// true if connected, false otherwise. If this is false, other values may be null.
     bool isConnected;
@@ -46,6 +44,6 @@ public:
     QString position;
 };
 
-}
+} // namespace nano
 
 #endif // RHYTHMCONTROLLER_H

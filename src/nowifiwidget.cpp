@@ -4,20 +4,20 @@
  * Released under the GNU General Public License.
  */
 
+#include <QGraphicsOpacityEffect>
+#include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
-#include <QStyleOption>
-#include <QGraphicsOpacityEffect>
 
 #include "nowifiwidget.h"
 
-NoWifiWidget::NoWifiWidget(QWidget *parent) : QWidget(parent) {
+NoWifiWidget::NoWifiWidget(QWidget* parent) : QWidget(parent) {
     mText = new QLabel("<b>No Wifi Detected :(</b>", this);
     mText->setStyleSheet("font-size:20pt;");
     mText->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     mText->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    mImage =new QLabel("", this);
+    mImage = new QLabel("", this);
     mImage->setAlignment(Qt::AlignHCenter);
     mImage->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -28,7 +28,7 @@ NoWifiWidget::NoWifiWidget(QWidget *parent) : QWidget(parent) {
 }
 
 
-void NoWifiWidget::paintEvent(QPaintEvent *) {
+void NoWifiWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
@@ -37,11 +37,8 @@ void NoWifiWidget::paintEvent(QPaintEvent *) {
     painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
 }
 
-void NoWifiWidget::resizeEvent(QResizeEvent *) {
+void NoWifiWidget::resizeEvent(QResizeEvent*) {
     mPixmap = QPixmap(":images/no_wifi.png");
     auto width = int(this->width() * 0.5f);
-    mImage->setPixmap(mPixmap.scaled(width,
-                                     width,
-                                     Qt::KeepAspectRatio,
-                                     Qt::SmoothTransformation));
+    mImage->setPixmap(mPixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }

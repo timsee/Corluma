@@ -3,14 +3,14 @@
 
 #include <QScrollArea>
 
+#include "cor/listwidget.h"
 #include "discovery/discoverywidget.h"
 #include "editablefieldwidget.h"
-#include "hue/bridgeinfowidget.h"
-#include "hue/lightdiscovery.h"
-#include "hue/bridgegroupswidget.h"
-#include "hue/bridgescheduleswidget.h"
 #include "greyoutoverlay.h"
-#include "cor/listwidget.h"
+#include "hue/bridgegroupswidget.h"
+#include "hue/bridgeinfowidget.h"
+#include "hue/bridgescheduleswidget.h"
+#include "hue/lightdiscovery.h"
 
 class MainWindow;
 
@@ -25,22 +25,23 @@ class MainWindow;
  *        it prompts the user to enter the IP address. It also prompts the user
  *        through setup steps such as pressing button on the bridge.
  */
-class DiscoveryHueWidget: public DiscoveryWidget
-{
+class DiscoveryHueWidget : public DiscoveryWidget {
     Q_OBJECT
 
 public:
     /*!
      * \brief DiscoverySerialWidget constructor
+     *
      * \param parent
      */
-    explicit DiscoveryHueWidget(CommLayer *comm, MainWindow* mainWindow, QWidget *parent);
+    explicit DiscoveryHueWidget(CommLayer* comm, MainWindow* mainWindow, QWidget* parent);
 
     /// See DiscoveryWidget.h
     void handleDiscovery(bool isActive);
 
     /*!
      * \brief resize size the widget programmatically
+     *
      * \param resizeFullWidget true to resize the widget itself, false to just
      *        resize its contents.
      */
@@ -76,9 +77,8 @@ private slots:
     void deleteBridgeFromAppData(hue::Bridge);
 
 protected:
-
     /// called when the widget resizes
-    virtual void resizeEvent(QResizeEvent *);
+    virtual void resizeEvent(QResizeEvent*);
 
 private:
     /*!
@@ -95,29 +95,30 @@ private:
     bool mBridgeDiscovered;
 
     /// widget for discovering hue lights
-    hue::LightDiscovery *mHueLightDiscovery;
+    hue::LightDiscovery* mHueLightDiscovery;
 
     /// widget for displaying the groups of a bridge
-    hue::BridgeGroupsWidget *mBridgeGroupsWidget;
+    hue::BridgeGroupsWidget* mBridgeGroupsWidget;
 
     /// widget for displaying the schedules of a widget
-    hue::BridgeSchedulesWidget *mBridgeSchedulesWidget;
+    hue::BridgeSchedulesWidget* mBridgeSchedulesWidget;
 
     /// label to prompt the user through the application.
-    QLabel *mLabel;
+    QLabel* mLabel;
 
     /// widget for displaying a scrollable list of other widgets
-    cor::ListWidget *mListWidget;
+    cor::ListWidget* mListWidget;
 
     /// scaling value for size of pngs
     float mScale;
 
     /// pointer to the main window
-    MainWindow *mMainWindow;
+    MainWindow* mMainWindow;
 
     /*!
      * \brief updateHueStatusIcon update the main image for the hue discovery page which
      *        shows what step you're on.
+     *
      * \param iconPath the path to the new icon for the page.
      */
     void updateHueStatusIcon(QString iconPath);
@@ -129,7 +130,7 @@ private:
     EHueDiscoveryState mHueDiscoveryState;
 
     /// layout for widget
-    QVBoxLayout *mLayout;
+    QVBoxLayout* mLayout;
 };
 
 #endif // DISCOVERYHUEWIDGET_H

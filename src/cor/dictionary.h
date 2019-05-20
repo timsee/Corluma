@@ -1,16 +1,15 @@
 #ifndef COR_UTILS_DICTIONARY_H
 #define COR_UTILS_DICTIONARY_H
 
-#include <unordered_map>
-#include <vector>
+#include <functional>
+#include <iostream>
 #include <list>
 #include <string>
-#include <functional>
+#include <unordered_map>
+#include <vector>
 #include "exception.h"
-#include <iostream>
 
-namespace cor
-{
+namespace cor {
 
 /*!
  * \copyright
@@ -18,16 +17,15 @@ namespace cor
  * Released under the GNU General Public License.
  *
  * \brief Simple dictionary optimized for lookup times. Keys are always std::string, but any type
- *        can be used for the items, provided they have a hash and an equal operator. Insertions will
- *        only be succesful if neither the item nor the key exists, and upon a failed insertion the insert
- *        function returns false. Lookups and removals run in constant runtime, but will return false
- *        if an invalid argument is given to them. For instance, if the user tries to remove a key that doesn't
- *        exist, it will return false.
+ * can be used for the items, provided they have a hash and an equal operator. Insertions only be
+ * succesful if neither the item nor the key exists, and upon a failed insertion the insert function
+ * returns false. Lookups and removals run in constant runtime, but will return false if an invalid
+ * argument is given to them. For instance, if the user tries to remove a key that doesn't exist, it
+ * will return false.
  */
 template <typename T>
 class Dictionary {
 public:
-
     /// default constructor
     Dictionary() {}
 
@@ -41,8 +39,10 @@ public:
     /*!
      * \brief item getter for a item based on a key. Lookup time is in constant runtime,
      *        This will return false with an empty item if it does not exst.
+     *
      * \param key key to request an item for.
-     * \return a pair where the first value is the item, and the second is whether or not it was successful.
+     * \return a pair where the first value is the item, and the second is whether or not it was
+     * successful.
      */
     std::pair<T, bool> item(const std::string& key) const {
         auto iterator = mKeyToItemMap.find(key);
@@ -56,8 +56,10 @@ public:
     /*!
      * \brief key getter for a key based on an item. Lookup time is in constant runtime,
      *        This will  return false with an empty string if it does not exist
+     *
      * \param item item to request a key for
-     * \return a pair where the first value is the item, and the second is whether or not it was successful.
+     * \return a pair where the first value is the item, and the second is whether or not it was
+     * successful.
      */
     std::pair<std::string, bool> key(const T& item) const {
         const auto& iterator = mItemToKeyMap.find(item);
@@ -72,6 +74,7 @@ public:
      * \brief insert insert an item into the dictionary. This will return whether or not
      *        the insertion is sucessful. An insertion will not be successful if either the key
      *        or the item already exists in the dictionary
+     *
      * \param key The key to use for the item
      * \param item The item to store in the dictionary
      * \return true if the insertion is successful, false if it failed
@@ -90,15 +93,19 @@ public:
             // if neither exists, add to both.
             auto insertIterator = mKeyToItemMap.emplace(key, item);
             mItemToKeyMap.emplace(item, insertIterator.first->first);
-            GUARD_EXCEPTION(mItemToKeyMap.size() == mKeyToItemMap.size(), "key map and item map don't match in size");
+            GUARD_EXCEPTION(mItemToKeyMap.size() == mKeyToItemMap.size(),
+                            "key map and item map don't match in size");
             return true;
         }
     }
 
     /*!
-     * \brief update update the value with the given key to the new provided value, removing the old one.
+     * \brief update update the value with the given key to the new provided value, removing the old
+     * one.
+     *
      * \param key key to use for update
      * \param item item to update the key to
+     *
      * \return this will return false if the key is not found, or if the item
      */
     bool update(const std::string& key, T item) {
@@ -114,6 +121,7 @@ public:
      * \brief remove removes an item from dictionary, removing both its key and the item,
      *        and decrementing the size of the dictionary by 1. This will throw if the item
      *        does not exist
+     *
      * \param item the item to remove from the dictionary
      */
     bool remove(const T& i) {
@@ -127,7 +135,8 @@ public:
         }
         mItemToKeyMap.erase(itemIterator);
         mKeyToItemMap.erase(keyIterator);
-        GUARD_EXCEPTION(mItemToKeyMap.size() == mKeyToItemMap.size(), "key map and item map don't match in size");
+        GUARD_EXCEPTION(mItemToKeyMap.size() == mKeyToItemMap.size(),
+                        "key map and item map don't match in size");
         return true;
     }
 
@@ -135,6 +144,7 @@ public:
      * \brief removeKey removes an key from dictionary, removing both the key and its item,
      *        and decrementing the size of the dictionary by 1. This will throw if the key
      *        does not exist
+     *
      * \param key the key to remove from the dictionary
      */
     bool removeKey(const std::string& key) {
@@ -148,12 +158,14 @@ public:
         }
         mItemToKeyMap.erase(itemIterator->first);
         mKeyToItemMap.erase(keyIterator->first);
-        GUARD_EXCEPTION(mItemToKeyMap.size() == mKeyToItemMap.size(), "key map and item map don't match in size");
+        GUARD_EXCEPTION(mItemToKeyMap.size() == mKeyToItemMap.size(),
+                        "key map and item map don't match in size");
         return true;
     }
 
     /*!
      * \brief keys getter for a vector of the keys used by the Dictionary
+     *
      * \return a vector of keys used by the Dictionary
      */
     std::vector<std::string> keys() const {
@@ -167,6 +179,7 @@ public:
 
     /*!
      * \brief itemVector Getter for a vector of all items stored in the dictionary
+     *
      * \return a vector of all items stored in the dictionary.
      */
     std::vector<T> itemVector() const {
@@ -180,11 +193,12 @@ public:
 
     /*!
      * \brief itemList Getter for a list of all items stored in the dictionary
+     *
      * \return a list of all items stored in the dictionary.
      */
     std::list<T> itemList() const {
         std::list<T> items;
-        //items.reserve(mItemToKeyMap.size());
+        // items.reserve(mItemToKeyMap.size());
         for (const auto& keyPair : mItemToKeyMap) {
             items.push_back(keyPair.first);
         }
@@ -192,17 +206,12 @@ public:
     }
 
     /// returns true if empty, false if it has any values
-    bool empty() const noexcept {
-        return mKeyToItemMap.empty();
-    }
+    bool empty() const noexcept { return mKeyToItemMap.empty(); }
 
     /// getter for size of dictionary
-    std::size_t size() const noexcept {
-        return mKeyToItemMap.size();
-    }
+    std::size_t size() const noexcept { return mKeyToItemMap.size(); }
 
 protected:
-
     /*!
      * \brief mKeyToItemMap hash table that stores the key's string and the Item, while
      *        provided constant lookup of item from keys.
@@ -217,6 +226,6 @@ protected:
     std::unordered_map<T, std::string> mItemToKeyMap;
 };
 
-}
+} // namespace cor
 
 #endif // COR_UTILS_DICTIONARY_H

@@ -18,11 +18,11 @@
 class CommLayer;
 
 /*!
- * \brief The DataSyncHue class is a datasync thread that syncs the commlayer's representation of how the Hue Bridge
- *        sees the states of the lights with the DataLayer's representation of how the application wants the lights to be.
+ * \brief The DataSyncHue class is a datasync thread that syncs the commlayer's representation of
+ * how the Hue Bridge sees the states of the lights with the DataLayer's representation of how the
+ * application wants the lights to be.
  */
-class DataSyncHue : public QObject, DataSync
-{
+class DataSyncHue : public QObject, DataSync {
     Q_OBJECT
 public:
     /*!
@@ -30,7 +30,7 @@ public:
      * \param data pointer to the app's data layer.
      * \param comm pointer to the app's comm layer.
      */
-    DataSyncHue(cor::DeviceList *data, CommLayer *comm, AppSettings *appSettings);
+    DataSyncHue(cor::DeviceList* data, CommLayer* comm, AppSettings* appSettings);
 
     /*!
      * \brief cancelSync cancel the data sync, regardless of it successfully completed.
@@ -39,14 +39,15 @@ public:
 
 public slots:
     /*!
-     * \brief resetSync Tells the ArduinoDataSync object that the commlayer and the datalayer are potentially
-     *        no longer in sync and the syncData() function needs to get called on the timer again.
+     * \brief resetSync Tells the ArduinoDataSync object that the commlayer and the datalayer are
+     * potentially no longer in sync and the syncData() function needs to get called on the timer
+     * again.
      */
     void resetSync() override;
 
     /*!
-     * \brief commPacketReceived a packet was received from a given protocol type. In some cases, receiving a packet
-     *        will reset the sync for that protocol type.
+     * \brief commPacketReceived a packet was received from a given protocol type. In some cases,
+     * receiving a packet will reset the sync for that protocol type.
      */
     void commPacketReceived(EProtocolType) override;
 
@@ -60,10 +61,10 @@ private slots:
     void syncData() override;
 
     /*!
-     * \brief cleanupSync After the sync is complete, certain actions need to be ran. For example, Hues
-     *        require a schedule to be kept synced to timeout properly. The cleanup thread starts after
-     *        the ArduinoDataSync to run the routines needed to keep data in sync in the long term. This function
-     *        contains all those routines.
+     * \brief cleanupSync After the sync is complete, certain actions need to be ran. For example,
+     * Hues require a schedule to be kept synced to timeout properly. The cleanup thread starts
+     * after the ArduinoDataSync to run the routines needed to keep data in sync in the long term.
+     * This function contains all those routines.
      */
     void cleanupSync() override;
 
@@ -82,14 +83,15 @@ private:
     void endOfSync() override;
 
     /*!
-     * \brief handleIdleTimeout creates or updates an idle timeout, depending on if it already exists
+     * \brief handleIdleTimeout creates or updates an idle timeout, depending on if it already
+     * exists
      * \param bridge the bridge that the light is attached to
      * \param light the light that is getting its idle timeout changed
      */
     void handleIdleTimeout(const hue::Bridge& bridge, const cor::Light& light);
 
     /// poiner to app settings
-    AppSettings *mAppSettings;
+    AppSettings* mAppSettings;
 };
 
 #endif // DATASYNCHUE_H

@@ -22,7 +22,7 @@ enum class ECommType {
     nanoleaf,
 #ifndef MOBILE_BUILD
     serial,
-#endif //MOBILE_BUILD
+#endif // MOBILE_BUILD
     MAX
 };
 Q_DECLARE_METATYPE(ECommType)
@@ -33,18 +33,18 @@ Q_DECLARE_METATYPE(ECommType)
  * \return a simple english representation of the ECommType.
  */
 inline QString commTypeToString(ECommType type) {
-    if (type ==  ECommType::HTTP) {
+    if (type == ECommType::HTTP) {
         return "HTTP";
-    } else if (type ==  ECommType::UDP) {
+    } else if (type == ECommType::UDP) {
         return "UDP";
-    } else if (type ==  ECommType::nanoleaf) {
+    } else if (type == ECommType::nanoleaf) {
         return "Nanoleaf";
-    } else if (type ==  ECommType::hue) {
+    } else if (type == ECommType::hue) {
         return "Hue";
 #ifndef MOBILE_BUILD
     } else if (type == ECommType::serial) {
         return "Serial";
-#endif //MOBILE_BUILD
+#endif // MOBILE_BUILD
     } else {
         return "CommType not recognized";
     }
@@ -69,7 +69,7 @@ inline ECommType stringToCommType(const QString& type) {
 #ifndef MOBILE_BUILD
     } else if (type.compare("Serial") == 0) {
         return ECommType::serial;
-#endif //MOBILE_BUILD
+#endif // MOBILE_BUILD
     } else {
         return ECommType::MAX;
     }
@@ -77,12 +77,7 @@ inline ECommType stringToCommType(const QString& type) {
 
 
 /// type of protocol used for sending and receiving packets.
-enum class EProtocolType {
-    hue,
-    nanoleaf,
-    arduCor,
-    MAX
-};
+enum class EProtocolType { hue, nanoleaf, arduCor, MAX };
 Q_DECLARE_METATYPE(EProtocolType)
 
 /// converts a EProtocolType to a string.
@@ -121,13 +116,7 @@ inline EProtocolType stringToProtocol(const QString& protocol) {
  *        to be sent in different formats based on the mode
  *        of their color.
  */
-enum class EColorMode {
-    HSV,
-    dimmable,
-    CT,
-    XY,
-    MAX
-};
+enum class EColorMode { HSV, dimmable, CT, XY, MAX };
 
 /*!
  * \brief colorModeToString helper for converting a color mode to a
@@ -136,9 +125,9 @@ enum class EColorMode {
  * \return string representation of color mode
  */
 inline QString colorModeToString(EColorMode mode) {
-    if (mode ==  EColorMode::HSV) {
+    if (mode == EColorMode::HSV) {
         return "HSV";
-    } else if (mode ==  EColorMode::CT) {
+    } else if (mode == EColorMode::CT) {
         return "CT";
     } else {
         return "ColorMode not recognized";
@@ -153,11 +142,9 @@ inline QString colorModeToString(EColorMode mode) {
  * \return EColorMode based off of string.
  */
 inline EColorMode stringtoColorMode(const QString& mode) {
-     if (mode.compare("HSV") == 0
-              || mode.compare("hs") == 0) {
+    if (mode.compare("HSV") == 0 || mode.compare("hs") == 0) {
         return EColorMode::HSV;
-    } else if (mode.compare("CT") == 0
-               || mode.compare("ct") == 0) {
+    } else if (mode.compare("CT") == 0 || mode.compare("ct") == 0) {
         return EColorMode::CT;
     } else if (mode.compare("") == 0) {
         // edge case from phillips hue
@@ -175,26 +162,14 @@ inline EColorMode stringtoColorMode(const QString& mode) {
  * \brief The EConnectionButtonIcons enum provides access to the different button
  *        assets used as placeholders for graphics in the application.
  */
-enum class EConnectionButtonIcons {
-    black,
-    red,
-    yellow,
-    blue,
-    MAX
-};
+enum class EConnectionButtonIcons { black, red, yellow, blue, MAX };
 
 
 /*!
  * \brief The EConnectionState enum tracks the various connection states both
  *        of each comm type and of the application overall.
  */
-enum class EConnectionState {
-    off,
-    connectionError,
-    discovering,
-    discovered,
-    MAX
-};
+enum class EConnectionState { off, connectionError, discovering, discovered, MAX };
 Q_DECLARE_METATYPE(EConnectionState)
 
 
@@ -204,8 +179,7 @@ Q_DECLARE_METATYPE(EConnectionState)
  *       two main types of routines: Single Color Routines use a single color while Multi
  *       Color Routines rely on an EPalette.
  */
-enum class ERoutine
-{
+enum class ERoutine {
     /*!
      * <b>0</b><br>
      * <i>Shows a single color at a fixed brightness.</i>
@@ -270,7 +244,7 @@ enum class ERoutine
      *  groups of equal size.</i>
      */
     multiBars,
-    MAX //total number of modes
+    MAX // total number of modes
 };
 Q_DECLARE_METATYPE(ERoutine)
 
@@ -340,8 +314,7 @@ inline ERoutine stringToRoutine(QString routine) {
  *       color array, eAll generates its colors randomly. All
  *       other values use presets based around overall themes.
  */
-enum class EPalette
-{
+enum class EPalette {
     /*!
      * <b>0</b><br>
      * <i>Use the custom color array instead of a preset group.</i>
@@ -522,52 +495,52 @@ inline EPalette stringToPalette(QString palette) {
 /*!
  * \enum EPacketHeader Message headers for packets coming over serial.
  */
-enum class EPacketHeader
-{
-  /*!
-   * <b>0</b><br>
-   * <i>Takes one parameter, 0 turns off, 1 turns on.</i>
-   */
-  onOffChange,
-  /*!
-   * <b>1</b><br>
-   * <i>Takes one int parameter that gets cast to ELightingMode.</i>
-   */
-  modeChange,
-  /*!
-   * <b>2</b><br>
-   * <i>Takes four parameters. The first is the index of the custom color,
-   * the remaining three parameters are a 0-255 representation
-   * of Red, Green, and Blue.</i>
-   */
-  customArrayColorChange,
-  /*!
-   * <b>3</b><br>
-   * <i>Takes one parameter, sets the brightness between 0 and 100.</i>
-   */
-  brightnessChange,
-  /*!
-   * <b>4</b><br>
-   * <i>Change the number of colors used in a custom array routine.</i>
-   */
-  customColorCountChange,
-  /*!
-   * <b>5</b><br>
-   * <i>Set to 0 to turn off, set to any other number minutes until
-   * idle timeout happens.</i>
-   */
-  idleTimeoutChange,
-  /*!
-   * <b>6</b><br>
-   * <i>Sends back a packet that contains basic LED state information.</i>
-   */
-  stateUpdateRequest,
-  /*!
-   * <b>7</b><br>
-   * <i>Sends back a packet that contains the size of the custom array and all of the colors in it. </i>
-   */
-  customArrayUpdateRequest,
-  MAX //total number of Packet Headers
+enum class EPacketHeader {
+    /*!
+     * <b>0</b><br>
+     * <i>Takes one parameter, 0 turns off, 1 turns on.</i>
+     */
+    onOffChange,
+    /*!
+     * <b>1</b><br>
+     * <i>Takes one int parameter that gets cast to ELightingMode.</i>
+     */
+    modeChange,
+    /*!
+     * <b>2</b><br>
+     * <i>Takes four parameters. The first is the index of the custom color,
+     * the remaining three parameters are a 0-255 representation
+     * of Red, Green, and Blue.</i>
+     */
+    customArrayColorChange,
+    /*!
+     * <b>3</b><br>
+     * <i>Takes one parameter, sets the brightness between 0 and 100.</i>
+     */
+    brightnessChange,
+    /*!
+     * <b>4</b><br>
+     * <i>Change the number of colors used in a custom array routine.</i>
+     */
+    customColorCountChange,
+    /*!
+     * <b>5</b><br>
+     * <i>Set to 0 to turn off, set to any other number minutes until
+     * idle timeout happens.</i>
+     */
+    idleTimeoutChange,
+    /*!
+     * <b>6</b><br>
+     * <i>Sends back a packet that contains basic LED state information.</i>
+     */
+    stateUpdateRequest,
+    /*!
+     * <b>7</b><br>
+     * <i>Sends back a packet that contains the size of the custom array and all of the colors in
+     * it. </i>
+     */
+    customArrayUpdateRequest,
+    MAX // total number of Packet Headers
 };
 
 
@@ -598,14 +571,7 @@ inline QString packetHeaderToString(EPacketHeader header) {
  * \brief The EArduinoHardwareType enum is the enum used for hardware
  *        types on ArduCor.
  */
-enum class EArduinoHardwareType {
-    singleLED,
-    cube,
-    rectangle,
-    lightStrip,
-    ring,
-    MAX
-};
+enum class EArduinoHardwareType { singleLED, cube, rectangle, lightStrip, ring, MAX };
 
 /*!
  * \brief The ELightHardwareType enum is the enum used for all hardware
@@ -729,16 +695,10 @@ inline ELightHardwareType stringToHardwareType(QString hardwareType) {
  * \brief The EProductType enum The enum for the product type for a specific
  *        light. This tracks the menaufacturer and the features of a light.
  */
-enum class EProductType {
-    rainbowduino,
-    neopixels,
-    LED,
-    hue
-};
+enum class EProductType { rainbowduino, neopixels, LED, hue };
 
 
-namespace cor
-{
+namespace cor {
 
 
 /// converts the enum for an arduio hardware type to a more generalized corluma type
@@ -780,17 +740,14 @@ inline EProtocolType convertCommTypeToProtocolType(ECommType type) {
 
 
 /// type of widget in cases where there are both condensed and full widgets
-enum class EWidgetType {
-    condensed,
-    full
-};
+enum class EWidgetType { condensed, full };
 
 /// helper for getting the value of the last single color routine.
 const ERoutine ERoutineSingleColorEnd = ERoutine::singleSawtoothFade;
 
-const static QString kUseTimeoutKey  = QString("Settings_UseTimeout");
+const static QString kUseTimeoutKey = QString("Settings_UseTimeout");
 const static QString kTimeoutValue = QString("Settings_TimeoutValue");
 
-}
+} // namespace cor
 
 #endif // PROTOCOLS_H

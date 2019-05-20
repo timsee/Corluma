@@ -1,27 +1,26 @@
 #ifndef HUE_BRIDGE_DISCOVERY_H
 #define HUE_BRIDGE_DISCOVERY_H
 
+#include <QElapsedTimer>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
 #include <QObject>
 #include <QTimer>
-#include <QElapsedTimer>
 #include <QUdpSocket>
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
 
-#include "cor/jsonsavedata.h"
 #include "cor/dictionary.h"
+#include "cor/jsonsavedata.h"
 
-#include "hue/hueprotocols.h"
 #include "comm/upnpdiscovery.h"
-#include "huelight.h"
 #include "hue/bridge.h"
+#include "hue/hueprotocols.h"
+#include "huelight.h"
 
 class CommHue;
 class GroupData;
 
-namespace hue
-{
+namespace hue {
 
 /*!
  * \copyright
@@ -29,29 +28,25 @@ namespace hue
  * Released under the GNU General Public License.
  *
  *
- * \brief The HueBridgeDiscovery class is an object that handles the discovery of a hue bridge by using
- *        a combination of UDP, HTTP, and JSON parsing.
+ * \brief The HueBridgeDiscovery class is an object that handles the discovery of a hue bridge by
+ * using a combination of UDP, HTTP, and JSON parsing.
  *
- *        Upon creation, it checks the persistent app data for the last bridge that was used by
- *        the application. If this passes a validity check, no extra discovery methods are called.
- *        If there is no data or if the current data is not valid, this object begins to go through
- *        the various EHueDiscoveryStates in order to achieve a valid connection. Developers only need
- *        to call startBridgeDiscovery() and stopBridgeDiscovery() in order to control it, it will
- *        automatically handle switching states as it receives and sends discovery packets.
+ * Upon creation, it checks the persistent app data for the last bridge that was used by
+ * the application. If this passes a validity check, no extra discovery methods are called.
+ * If there is no data or if the current data is not valid, this object begins to go through
+ * the various EHueDiscoveryStates in order to achieve a valid connection. Developers only
+ * need to call startBridgeDiscovery() and stopBridgeDiscovery() in order to control it, it will
+ * automatically handle switching states as it receives and sends discovery packets.
  */
-class BridgeDiscovery : public QObject, public cor::JSONSaveData
-{
+class BridgeDiscovery : public QObject, public cor::JSONSaveData {
     Q_OBJECT
 public:
-
     /*!
      * \brief BridgeDiscovery Constructor
      */
-    explicit BridgeDiscovery(QObject *parent, UPnPDiscovery *UPnP, GroupData* groups);
+    explicit BridgeDiscovery(QObject* parent, UPnPDiscovery* UPnP, GroupData* groups);
 
-    /*!
-     * \brief Deconstructor
-     */
+    /// destructor
     ~BridgeDiscovery();
 
     /// starts the discovery object
@@ -72,6 +67,7 @@ public:
     /*!
      * \brief bridge All currently known data about the hue bridge. This is only guarenteed to
      *        return valid data if isConnected() is returning true.
+     *
      * \return the struct that represents the current hue bridge.
      */
     const cor::Dictionary<hue::Bridge>& bridges() const { return mFoundBridges; }
@@ -85,6 +81,7 @@ public:
 
     /*!
      * \brief addManualIP attempts to connect to an IP address entered manually
+     *
      * \param ip new ip address to attempt.
      */
     void addManualIP(const QString& ip);
@@ -97,7 +94,8 @@ public:
 
     /*!
      * \brief changeName change the custom name for a hue::Bridge. This is a custom name that is not
-     *        stored on the bridge, so this will not be synced across multiple instances of the application
+     * stored on the bridge, so this will not be synced across multiple instances of the application
+     *
      * \param bridge bridge to update the custom name on
      * \param newName new name for the bridge
      * \return true if updated, false if bridge isn't found and can't be updated
@@ -106,6 +104,7 @@ public:
 
     /*!
      * \brief lightFromBridgeIDAndIndex uses a bridge and an index to get a specific light
+     *
      * \param bridgeID bridge's unqiue ID
      * \param index light's index
      * \return the HueLight representation of the light
@@ -114,6 +113,7 @@ public:
 
     /*!
      * \brief deleteBridge delete the bridge from app memory
+     *
      * \param bridge bridge to delete
      */
     void deleteBridge(const hue::Bridge& bridge);
@@ -150,7 +150,6 @@ private slots:
     void startupTimerTimeout();
 
 private:
-
     /// checks if an IP address is already known to the bridge discovery object
     bool doesIPExistInSearchingLists(const QString& ip);
 
@@ -163,18 +162,18 @@ private:
     /*!
      * \brief mNetworkManager Qt's HTTP connection object
      */
-    QNetworkAccessManager *mNetworkManager;
+    QNetworkAccessManager* mNetworkManager;
 
     /// pointer to the UPnP object
-    UPnPDiscovery *mUPnP;
+    UPnPDiscovery* mUPnP;
 
     /*!
      * \brief mRoutineTimer single shot timer that determines when a discovery method is timing out.
      */
-    QTimer *mRoutineTimer;
+    QTimer* mRoutineTimer;
 
     /// elapse timer checks how long its been since certain updates
-    QElapsedTimer *mElapsedTimer;
+    QElapsedTimer* mElapsedTimer;
 
     /// tracks last time
     qint64 mLastTime;
@@ -186,7 +185,7 @@ private:
      * \brief mStartupTimer in the first two minutes of the app's lifecycle, if nanoleaf is enabled
      *        it will scan for nanoleafs. This allows hardware changes to be picked up more easily
      */
-    QTimer *mStartupTimer;
+    QTimer* mStartupTimer;
 
     /*!
      * \brief attemptUPnPDiscovery attempts a UPnP connection by binding to the proper port
@@ -214,10 +213,12 @@ private:
     /// list of all controllers that have been verified and can be communicated with
     cor::Dictionary<hue::Bridge> mFoundBridges;
 
-    /// parses the initial full packet from a Bridge, which contains all its lights, schedules, and groups info.
+    /// parses the initial full packet from a Bridge, which contains all its lights, schedules, and
+    /// groups info.
     void parseInitialUpdate(const hue::Bridge& bridge, const QJsonDocument& json);
 
-    /// update the existing JSON data to include lights data, in order to check for hardware changes on bootup.
+    /// update the existing JSON data to include lights data, in order to check for hardware changes
+    /// on bootup.
     void updateJSONLights(const hue::Bridge& bridge, const QJsonArray& array);
 
     /// update the existin JSON data to include more bridge data such as a username or an id.
@@ -227,7 +228,7 @@ private:
     bool loadJSON();
 
     /// pointer to the parent CommHue object.
-    CommHue *mHue;
+    CommHue* mHue;
 
     /// group data, used for generating keys
     GroupData* mGroups;
@@ -239,8 +240,7 @@ private:
 
     /// address for the NUPnP packets
     const static QString kNUPnPAddress;
-
 };
 
-}
+} // namespace hue
 #endif // HUE_BRIDGE_DISCOVERY_H

@@ -3,8 +3,8 @@
 
 #include "cor/slider.h"
 
-#include <QWidget>
 #include <QPushButton>
+#include <QWidget>
 
 /*!
  * \copyright
@@ -13,15 +13,15 @@
  *
  *
  *
- * \brief The SwatchVectorWidget class is a widget that displays buttons that show solid colors. It is used
- *        in the color scheme picker and the custom color picker to choose colors to change and display the current settings.
+ * \brief The SwatchVectorWidget class is a widget that displays buttons that show solid colors. It
+ * is used in the color scheme picker and the custom color picker to choose colors to change and
+ * display the current settings.
  */
-class SwatchVectorWidget: public QWidget
-{
+class SwatchVectorWidget : public QWidget {
     Q_OBJECT
 public:
     /// Constructor
-    explicit SwatchVectorWidget(uint32_t width, uint32_t height, QWidget *parent);
+    explicit SwatchVectorWidget(uint32_t width, uint32_t height, QWidget* parent);
     /*!
      * \brief updateDevices update the devices in the cor::Button to show the exact routine.
      * \param devices list of devices to display
@@ -50,19 +50,19 @@ signals:
     void multiColorCountChanged(int);
 
     /*!
-     * \brief selectedCountChanged a button was pressed so the selected count has changed. emits new count.
+     * \brief selectedCountChanged a button was pressed so the selected count has changed. emits new
+     * count.
      */
     void selectedCountChanged(int);
 
 private slots:
     /*!
-     * \brief toggleArrayColor when called, the multi color array color at the given index is seletected
-     *        or deselected, depending on its current state.
+     * \brief toggleArrayColor when called, the multi color array color at the given index is
+     * seletected or deselected, depending on its current state.
      */
     void toggleArrayColor(int);
 
 private:
-
     /*!
      * \brief mMaximumSize size of the multi color array, used to initialize
      *        and access vectors throughout this page.
@@ -84,7 +84,7 @@ private:
     /*!
      * \brief mLayout layout used to arrange the slider and the buttons.
      */
-    QGridLayout *mLayout;
+    QGridLayout* mLayout;
 };
 
 #endif // SWATCH_VECTOR_WIDGET_H

@@ -1,19 +1,18 @@
 #ifndef COR_LIGHT_H
 #define COR_LIGHT_H
 
-#include <QString>
 #include <QColor>
-#include <QSize>
 #include <QJsonObject>
+#include <QSize>
+#include <QString>
 
-#include "cor/protocols.h"
 #include "cor/palette.h"
+#include "cor/protocols.h"
 #include "protocols.h"
 
 #include <cmath>
 
-namespace cor
-{
+namespace cor {
 /*!
  * \copyright
  * Copyright (C) 2015 - 2019.
@@ -27,10 +26,7 @@ namespace cor
  *        Hue or an arduino-controlled light cube.
  */
 class Light {
-
-
 public:
-
     /// default constructor
     Light();
 
@@ -39,7 +35,8 @@ public:
      */
     Light(const QString& uniqueID, const QString& controller, ECommType commType);
 
-    /// setter for controller name. Should be used sparingly, since some lookup operatins use the controller's name.
+    /// setter for controller name. Should be used sparingly, since some lookup operatins use the
+    /// controller's name.
     void controller(const QString& controller) { mController = controller; }
 
     /*!
@@ -162,38 +159,59 @@ public:
     /// equal operator
     bool operator==(const cor::Light& rhs) const {
         bool result = true;
-        if (uniqueID()      !=  rhs.uniqueID()) result = false;
-        if (isReachable     !=  rhs.isReachable) result = false;
-        if (isOn            !=  rhs.isOn) result = false;
-        if (color           !=  rhs.color) result = false;
-        if (routine         !=  rhs.routine) result = false;
-        if (palette.JSON()  !=  rhs.palette.JSON()) result = false;
-        if (index           !=  rhs.index) result = false;
-        if (commType()      !=  rhs.commType()) result = false;
-        if (protocol()      !=  rhs.protocol()) result = false;
-        if (colorMode       !=  rhs.colorMode) result = false;
-        if (timeout         !=  rhs.timeout) result = false;
-        if (speed           !=  rhs.speed) result = false;
-        if (controller().compare(rhs.controller())) result = false;
+        if (uniqueID() != rhs.uniqueID()) {
+            result = false;
+        }
+        if (isReachable != rhs.isReachable) {
+            result = false;
+        }
+        if (isOn != rhs.isOn) {
+            result = false;
+        }
+        if (color != rhs.color) {
+            result = false;
+        }
+        if (routine != rhs.routine) {
+            result = false;
+        }
+        if (palette.JSON() != rhs.palette.JSON()) {
+            result = false;
+        }
+        if (index != rhs.index) {
+            result = false;
+        }
+        if (commType() != rhs.commType()) {
+            result = false;
+        }
+        if (protocol() != rhs.protocol()) {
+            result = false;
+        }
+        if (colorMode != rhs.colorMode) {
+            result = false;
+        }
+        if (timeout != rhs.timeout) {
+            result = false;
+        }
+        if (speed != rhs.speed) {
+            result = false;
+        }
+        if (controller().compare(rhs.controller())) {
+            result = false;
+        }
 
         return result;
     }
 
-    bool operator!=(const cor::Light& rhs) const {
-        return !(*this == rhs);
-    }
+    bool operator!=(const cor::Light& rhs) const { return !(*this == rhs); }
 
     operator QString() const {
         std::stringstream tempString;
         tempString << "cor::Light Device: "
-                   << " uniqueID: " << uniqueID().toStdString()
-                   << " name: " << name.toStdString()
-                   << " isReachable: " << isReachable
-                   << " isOn: " << isOn
+                   << " uniqueID: " << uniqueID().toStdString() << " name: " << name.toStdString()
+                   << " isReachable: " << isReachable << " isOn: " << isOn
                    << " color: R:" << color.red() << " G:" << color.green() << " B:" << color.blue()
                    << " routine: " << routineToString(routine).toUtf8().toStdString()
-                   << " palette: " << palette
-                   << " API: " << majorAPI << "." << minorAPI
+                   << " palette: " << palette << " API: " << majorAPI << "." << minorAPI
                    << " index: " << index
                    << " CommType: " << commTypeToString(commType()).toUtf8().toStdString()
                    << " Protocol: " << protocolToString(protocol()).toUtf8().toStdString()
@@ -201,12 +219,9 @@ public:
         return QString::fromStdString(tempString.str());
     }
 
-    bool isValid() const {
-        return this->uniqueID() != cor::Light().uniqueID();
-    }
+    bool isValid() const { return this->uniqueID() != cor::Light().uniqueID(); }
 
 private:
-
     /*!
      * \brief mUniqueID a unique identifier of that particular light.
      */
@@ -234,18 +249,15 @@ cor::Light jsonToLight(const QJsonObject& object);
 /// converts a cor::Light to a json representation of its routine.
 QJsonObject lightToJson(const cor::Light& light);
 
-}
+} // namespace cor
 
-namespace std
-{
-    template <>
-    struct hash<cor::Light>
-    {
-        size_t operator()(const cor::Light& k) const
-        {
-            return std::hash<std::string>{}(k.uniqueID().toStdString());
-        }
-    };
-}
+namespace std {
+template <>
+struct hash<cor::Light> {
+    size_t operator()(const cor::Light& k) const {
+        return std::hash<std::string>{}(k.uniqueID().toStdString());
+    }
+};
+} // namespace std
 
 #endif // COR_LIGHT_H

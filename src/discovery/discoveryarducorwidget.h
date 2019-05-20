@@ -1,12 +1,12 @@
 #ifndef DISCOVERYYUNWIDGET_H
 #define DISCOVERYYUNWIDGET_H
 
-#include <QPushButton>
 #include <QLineEdit>
+#include <QPushButton>
 
+#include "comm/commarducor.h"
 #include "discovery/discoverywidget.h"
 #include "searchwidget.h"
-#include "comm/commarducor.h"
 
 /*!
  * \copyright
@@ -19,16 +19,16 @@
  *        IP addresses manually, and then shows which IP addresses are currently running
  *        discovery and which have passed a discovery check.
  */
-class DiscoveryArduCorWidget: public DiscoveryWidget
-{
+class DiscoveryArduCorWidget : public DiscoveryWidget {
     Q_OBJECT
 
 public:
     /*!
      * \brief DiscoveryArduCorWidget constructor
+     *
      * \param parent
      */
-    explicit DiscoveryArduCorWidget(CommLayer *comm, QWidget *parent);
+    explicit DiscoveryArduCorWidget(CommLayer* comm, QWidget* parent);
 
     /// See DiscoveryWidget.h
     void handleDiscovery(bool isActive);
@@ -47,24 +47,25 @@ private slots:
 
 private:
     /*!
-     * \brief doesYunControllerExistAlready checks both UDP and HTTP yun device lists to see if it has any knowledge
-     *        of the given controller.
+     * \brief doesYunControllerExistAlready checks both UDP and HTTP yun device lists to see if it
+     * has any knowledge of the given controller.
+     *
      * \param controller name of controller
      * \return true if yun controller exists on discovered or undiscovered list, false otherwise
      */
     bool doesYunControllerExistAlready(const QString& controller);
 
     /// widget that is used for searching for IP addresses and listing the connected ones.
-    SearchWidget *mSearchWidget;
+    SearchWidget* mSearchWidget;
 
     /// buffer for last IP address used
     QString mLastIP;
 
     /// top label that explains the widget
-    QLabel *mTopLabel;
+    QLabel* mTopLabel;
 
     /// layout for widget
-    QVBoxLayout *mLayout;
+    QVBoxLayout* mLayout;
 };
 
 #endif // DISCOVERYYUNWIDGET_H

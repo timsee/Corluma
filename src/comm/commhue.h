@@ -3,12 +3,12 @@
 
 #include "commtype.h"
 
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
-#include <QWidget>
 #include <QTimer>
-#include <QJsonObject>
-#include <QJsonDocument>
+#include <QWidget>
 
 #include "cor/group.h"
 #include "hue/bridgediscovery.h"
@@ -30,16 +30,13 @@
  *        about the current lights. This object also acts as a layer that takes the protocols from
  *        the rest of the application, and converts it to packets that the Bridge can understand.
  */
-class CommHue : public CommType
-{
-     Q_OBJECT
+class CommHue : public CommType {
+    Q_OBJECT
 public:
-
-
     /*!
      * \brief CommHue Constructor
      */
-    CommHue(UPnPDiscovery *UPnP, GroupData* groups);
+    CommHue(UPnPDiscovery* UPnP, GroupData* groups);
 
     /*!
      * \brief CommHue Destructor
@@ -64,11 +61,13 @@ public:
     void changeColor(const hue::Bridge& bridge, int lightIndex, const QColor& color);
 
     /*!
-     * \brief changeAmbientLight changes the color of the bulb to match the color temperature given. This is the only way to interact with
-     *        white ambiance bulbs and it can also be used with the RGB bulbs.
+     * \brief changeAmbientLight changes the color of the bulb to match the color temperature given.
+     * This is the only way to interact with white ambiance bulbs and it can also be used with the
+     * RGB bulbs.
      * \param lightIndex index of light that you want to change the color temperature of.
      * \param brightness brightness between 0 and 100, with 100 being full brightness.
-     * \param ct a new value for the color temperature, given in meriks. Must be between 153 and 500.
+     * \param ct a new value for the color temperature, given in meriks. Must be between 153 and
+     * 500.
      */
     void changeColorCT(const hue::Bridge& bridge, int lightIndex, int brightness, int ct);
 
@@ -76,11 +75,11 @@ public:
     void turnOnOff(const hue::Bridge& bridge, int index, bool shouldTurnOn);
 
     /*!
-     * \brief discovery returns a pointer to the object used to discover the Hue Bridge. This can be used
-     *        to connect to its signals or to check its current state.
+     * \brief discovery returns a pointer to the object used to discover the Hue Bridge. This can be
+     * used to connect to its signals or to check its current state.
      * \return the discovery object for finding the Hue Bridge.
      */
-    hue::BridgeDiscovery *discovery() { return mDiscovery; }
+    hue::BridgeDiscovery* discovery() { return mDiscovery; }
 
     /*!
      * \brief sendPacket send a packet based off of a JSON object containing all
@@ -90,17 +89,18 @@ public:
     void sendPacket(const QJsonObject& object);
 
     /*!
-     * \brief hueLightFromLight For every cor::Light with type hue, there is a SHueLight that represents the same device.
-     *        The SHueLight contains hue-specific information such as the bulb's software version and model ID. This information
-     *        This function takes the cor::Light and returns the mapped SHueLight
+     * \brief hueLightFromLight For every cor::Light with type hue, there is a SHueLight that
+     * represents the same device.The SHueLight contains hue-specific information such as the bulb's
+     * software version and model ID. This information This function takes the cor::Light and
+     * returns the mapped SHueLight
      * \param device a cor::Light that represents the SHueLight you want to receive
      * \return the SHueLight that represents the same device as the cor::Light given.
      */
     HueLight hueLightFromLight(const cor::Light& device);
 
     /*!
-     * \brief sendSchedule send a schedule to the Hue Bridge. This schedule gets kept on the bridge and will
-     *        not be deleted unless explicitly asked to be deleted.
+     * \brief sendSchedule send a schedule to the Hue Bridge. This schedule gets kept on the bridge
+     * and will not be deleted unless explicitly asked to be deleted.
      * \param schedule the new schedule for the bridge.
      */
     void sendSchedule(SHueSchedule schedule);
@@ -117,26 +117,27 @@ public:
 
     /*!
      * \brief postJson helper function that takes a JSON object and posts it to the hue bridge.
-     * \param resource the resource that you want to control with the hue bridge. This may be a group,
-     *        light, or schedule.
+     * \param resource the resource that you want to control with the hue bridge. This may be a
+     * group, light, or schedule.
      * \param object the JSON object that you want to give to the resource.
      */
     void postJson(const hue::Bridge& bridge, const QString& resource, const QJsonObject& object);
 
     /*!
      * \brief putJson helper function that takes a JSON object and puts it on the hue bridge.
-     * \param resource the resource that you want to control with the hue bridge. This may be a group,
-     *        light, or schedule.
+     * \param resource the resource that you want to control with the hue bridge. This may be a
+     * group, light, or schedule.
      * \param object the JSON object that you want to give to the resource.
      */
     void putJson(const hue::Bridge& bridge, const QString& resource, const QJsonObject& object);
 
     /*!
-     * \brief updateIdleTimeout upate the idle tieout for a specific schedule. This is called during data sync
-     *        to turn off the idle timeout and after datasync it gets called again to turn the idle timeout back on.
+     * \brief updateIdleTimeout upate the idle tieout for a specific schedule. This is called during
+     * data sync to turn off the idle timeout and after datasync it gets called again to turn the
+     * idle timeout back on.
      * \param enable true to turn on the idle timeout, false to turn it off.
-     * \param scheduleID The ID of the schedule that you want to turn on and off. This ID does not necessarily
-     *        map to the resource or group ID.
+     * \param scheduleID The ID of the schedule that you want to turn on and off. This ID does not
+     * necessarily map to the resource or group ID.
      * \param minutes the number of minutes it should take to timeout.
      */
     void updateIdleTimeout(const hue::Bridge& bridge, bool enable, int scheduleID, int minutes);
@@ -164,7 +165,10 @@ public:
      * \param name the new name for the bridge
      * \param lights the lights to include in the new group
      */
-    void createGroup(const hue::Bridge& bridge, const QString& name, std::list<HueLight> lights, bool isRoom);
+    void createGroup(const hue::Bridge& bridge,
+                     const QString& name,
+                     std::list<HueLight> lights,
+                     bool isRoom);
 
     /*!
      * \brief updateGroup change the lights in an already-existing hue group
@@ -236,7 +240,8 @@ public:
     hue::Bridge bridgeFromLight(const cor::Light& light);
 
     /*!
-     * \brief bridgeHasGroup true if the provided bridge contains the provided group, false otherwise
+     * \brief bridgeHasGroup true if the provided bridge contains the provided group, false
+     * otherwise
      * \param bridge bridge to check for the group
      * \param groupName the name of the group to check for
      * \return true if group exists in bridge, false otherwise
@@ -275,7 +280,8 @@ public:
     void deleteLight(const HueLight& light);
 
     /*!
-     * \brief brightnessChange connected to CommPacketParser, this changes the brightness of a device.
+     * \brief brightnessChange connected to CommPacketParser, this changes the brightness of a
+     * device.
      * \param deviceIndex 0 for all indices, a specific index for a specific light.
      *        Will do nothing if index doesn't exist.
      * \param brightness a value between 0 and 100, 0 is off, 100 is full brightness
@@ -283,32 +289,36 @@ public:
     void brightnessChange(const hue::Bridge& bridge, int deviceIndex, int brightness);
 
     /*!
-     * \brief routineChange change the light state of the hue. This JSON object will contain a color and other
-     *        information about the light.
+     * \brief routineChange change the light state of the hue. This JSON object will contain a color
+     * and other information about the light.
      */
     void routineChange(const hue::Bridge& bridge, int deviceIndex, QJsonObject);
 
     /*!
-     * \brief connectionStatusHasChanged called by the HueBridgeDiscovery object whenever its connection
-     *        changes.
+     * \brief connectionStatusHasChanged called by the HueBridgeDiscovery object whenever its
+     * connection changes.
      */
-    void bridgeDiscovered(const hue::Bridge&, const QJsonObject& lightsObject, const QJsonObject& groupObject, const QJsonObject& schedulesObject);
+    void bridgeDiscovered(const hue::Bridge&,
+                          const QJsonObject& lightsObject,
+                          const QJsonObject& groupObject,
+                          const QJsonObject& schedulesObject);
 
 signals:
     /*!
-     * \brief packetReceived emitted whenever a packet that is not a discovery packet is received. Contains
-     *        the full packet's contents as a QString.
+     * \brief packetReceived emitted whenever a packet that is not a discovery packet is received.
+     * Contains the full packet's contents as a QString.
      */
     void packetReceived(QString, QString, ECommType);
 
-    /// signals during discovery things like when the bridge is discovered and when light data is received
+    /// signals during discovery things like when the bridge is discovered and when light data is
+    /// received
     void discoveryStateChanged(EHueDiscoveryState);
 
 private slots:
 
     /*!
-     * \brief replyFinished called whenever the mNetworkManager receives a response to its HTTP requests.
-     *        Used for parsing the responses.
+     * \brief replyFinished called whenever the mNetworkManager receives a response to its HTTP
+     * requests.Used for parsing the responses.
      */
     void replyFinished(QNetworkReply*);
 
@@ -339,13 +349,12 @@ private slots:
     void getGroups();
 
 private:
-
     /*!
-     * \brief generateUniqueID generate a Unique ID for a new group This uses the prexisting groups from a gorup update and
-     *        the information from the app about existing groups to determine whether or not the group you are creating already sxists,
-     *        or if it needs a new ID. If it already exists, the unique ID of the pre-existing group is returned. If it doesn't exist,
-     *        a new unique ID is generated that is guaraneteed to not overlap with any other unique ID
-     *           .
+     * \brief generateUniqueID generate a Unique ID for a new group This uses the prexisting groups
+     * from a group update and the information from the app about existing groups to determine
+     * whether or not the group you are creating already sxists, or if it needs a new ID. If it
+     * already exists, the unique ID of the pre-existing group is returned. If it doesn't exist, a
+     * new unique ID is generated that is guaraneteed to not overlap with any other unique ID.
      * \param groupList list of currently existing groups
      * \param name name of new group
      * \return  a unique ID for the group with the given name
@@ -361,12 +370,12 @@ private:
     /*!
      * \brief mNetworkManager Qt's HTTP connection object
      */
-    QNetworkAccessManager *mNetworkManager;
+    QNetworkAccessManager* mNetworkManager;
 
     /*!
      * \brief mDiscovery object used to discover and connect to a Hue Bridge.
      */
-    hue::BridgeDiscovery *mDiscovery;
+    hue::BridgeDiscovery* mDiscovery;
 
     /*!
      * \brief Every packet sent to the hue bridge starts with
@@ -375,16 +384,17 @@ private:
     QString urlStart(const hue::Bridge& bridge);
 
     /*!
-     * \brief mScheduleTimer the timer that is used to periodically request updates for the schedules of hues.
-     *        This is separate from the state update timer as it needs to be around for longer in order to keep
-     *        idle timeouts in sync.
+     * \brief mScheduleTimer the timer that is used to periodically request updates for the
+     * schedules of hues. This is separate from the state update timer as it needs to be around for
+     * longer in order to keep idle timeouts in sync.
      */
-    QTimer *mScheduleTimer;
+    QTimer* mScheduleTimer;
 
     /*!
-     * \brief mGroupTimer the timer that is used to perpetually request updates for teh groups stored on the hue bridge.
+     * \brief mGroupTimer the timer that is used to perpetually request updates for teh groups
+     * stored on the hue bridge.
      */
-    QTimer *mGroupTimer;
+    QTimer* mGroupTimer;
 
     /*!
      * \brief mLastBackgroundTime The point in time that the schedule timer was last reset.
@@ -401,44 +411,55 @@ private:
     bool mScanIsActive;
 
     /*!
-     * \brief parseJSONObject parses a json object receieved from a hue bridge and updates values internally based off of it.
+     * \brief parseJSONObject parses a json object receieved from a hue bridge and updates values
+     * internally based off of it.
      * \param bridge the bridge that sent the JSON
      * \param object the json object received
      */
     void parseJSONObject(const hue::Bridge& bridge, const QJsonObject& object);
 
     /*!
-     * \brief parseJSONArray parses a json array receieved from a hue bridge and updates values internally based off of it.
+     * \brief parseJSONArray parses a json array receieved from a hue bridge and updates values
+     * internally based off of it.
      * \param bridge the bridge that sent the JSON
      * \param array the json array received
      */
     void parseJSONArray(const hue::Bridge& bridge, const QJsonArray& array);
 
     /*!
-     * \brief handleSuccessPacket handles a packet received from the hue bridge that indicates a requested change
-     *        was successful. These packets are sent from the hue bridge ever time it receives and executes a command.
+     * \brief handleSuccessPacket handles a packet received from the hue bridge that indicates a
+     * requested change was successful. These packets are sent from the hue bridge ever time it
+     * receives and executes a command.
      * \param key key of packet that suceeded
      * \param value JSON data about what changed with the successful packet.
      */
-    void handleSuccessPacket(const hue::Bridge& bridge, const QString& key, const QJsonValue& value);
+    void handleSuccessPacket(const hue::Bridge& bridge,
+                             const QString& key,
+                             const QJsonValue& value);
 
     /*!
-     * \brief handleErrorPacket handle errors received from the Hue Bridge. In most cases, we just print them out as debug messages.
+     * \brief handleErrorPacket handle errors received from the Hue Bridge. In most cases, we just
+     * print them out as debug messages.
      * \param object the object that contains the error data.
      */
     void handleErrorPacket(QJsonObject object);
 
     /*!
-     * \brief updateHueLightState this function is called when an update packet is received to parse the update and then to
-     *        update the internal representations of the hue bridge and its connected lights.
+     * \brief updateHueLightState this function is called when an update packet is received to parse
+     * the update and then to update the internal representations of the hue bridge and its
+     * connected lights.
      * \param object json object that contains all the update information.
      * \param i index of Hue Light.
      * \return true if successful, false if failed.
      */
-    bool updateHueLightState(const hue::Bridge& bridge, QJsonObject object, int i, bool wasDiscovered);
+    bool updateHueLightState(const hue::Bridge& bridge,
+                             QJsonObject object,
+                             int i,
+                             bool wasDiscovered);
 
     /*!
-     * \brief updateNewHueLight a new hue light was discovered from scanning, add the meta data to the list of newly discovered lights
+     * \brief updateNewHueLight a new hue light was discovered from scanning, add the meta data to
+     * the list of newly discovered lights
      * \param object json object that contains all the light information
      * \param i index of hue light
      * \return true if successful, false if failed
@@ -446,42 +467,47 @@ private:
     bool updateNewHueLight(const hue::Bridge& bridge, QJsonObject object, int i);
 
     /*!
-     * \brief updateScanState a new update containing a scan state. This will say if the scan is on or off, and if its off it will
-     *        say how long it was since it was last scanning.
+     * \brief updateScanState a new update containing a scan state. This will say if the scan is on
+     * or off, and if its off it will say how long it was since it was last scanning.
      * \param object json object that contains the scan state update
      * \return true if successful, false if failed.
      */
     bool updateScanState(QJsonObject object);
 
     /*!
-     * \brief jsonToGroup read an incoming packet from the hue bridge and update the internal representation of
-     *        the hue's known groups.
+     * \brief jsonToGroup read an incoming packet from the hue bridge and update the internal
+     * representation of the hue's known groups.
      * \param object json representationof a group
      * \param i the index of the group given by the bridge
      * \return true if successful, false if failed.
      */
-    std::pair<cor::Group, bool> jsonToGroup(QJsonObject object, int i, const std::list<cor::Group>& groupList);
+    std::pair<cor::Group, bool> jsonToGroup(QJsonObject object,
+                                            int i,
+                                            const std::list<cor::Group>& groupList);
 
     /*!
-     * \brief jsonToSchedule read an incoming packet from the Hue Brige and update the Hue Schedule based on the contents
+     * \brief jsonToSchedule read an incoming packet from the Hue Brige and update the Hue Schedule
+     * based on the contents
      * \param object thue QJsonObject that contains the data on the hue schedule.
      * \param i the index of the hue schedule given by the bridge.
      */
     SHueSchedule jsonToSchedule(QJsonObject object, int i);
 
     /*!
-     * \brief checkTypeOfUpdate checks the JSON object received from the hue bridge and figures out whether its a
-     *        HueSchedule update, HueLight update, or anything else.
+     * \brief checkTypeOfUpdate checks the JSON object received from the hue bridge and figures out
+     * whether its a HueSchedule update, HueLight update, or anything else.
      * \param object object to analyze and determine the contents of.
      * \return a enumerated type representing the type of update data received from the Hue Bridge.
      */
     EHueUpdates checkTypeOfUpdate(QJsonObject object);
 
     /*!
-     * \brief convertMinutesToTimeout hues use a specific format for the timers that are used to timeout the hue lights.
-     *        Tihs helper function takes integers and converts them into a string that represents the timeout.
+     * \brief convertMinutesToTimeout hues use a specific format for the timers that are used to
+     * timeout the hue lights. This helper function takes integers and converts them into a string
+     * that represents the timeout.
      * \param minutes the number of minutes you want it to take to timeout.
-     * \return a string that is in the format of `PTHH:MM:SS` which is used for sending a timeout to a hue bridge.
+     * \return a string that is in the format of `PTHH:MM:SS` which is used for sending a timeout to
+     * a hue bridge.
      */
     QString convertMinutesToTimeout(int minutes);
 };

@@ -8,11 +8,12 @@
 #include "utils/qt.h"
 
 #include <QDebug>
+#include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
-#include <QStyleOption>
 
-SettingsButton::SettingsButton(const QString& title, const QString& description, QWidget *parent) : QWidget(parent) {
+SettingsButton::SettingsButton(const QString& title, const QString& description, QWidget* parent)
+    : QWidget(parent) {
     mIsHighlighted = false;
 
     mTitle = new QLabel(title);
@@ -51,7 +52,7 @@ void SettingsButton::shouldHightlght(bool shouldHighlight) {
     update();
 }
 
-void SettingsButton::paintEvent(QPaintEvent *) {
+void SettingsButton::paintEvent(QPaintEvent*) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     // paint background

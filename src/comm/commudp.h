@@ -1,12 +1,12 @@
 #ifndef COMMUDP_H
 #define COMMUDP_H
 
-#include <QUdpSocket>
 #include <QTimer>
+#include <QUdpSocket>
 
-#include "commtype.h"
 #include "arducor/arducordiscovery.h"
 #include "arducor/crccalculator.h"
+#include "commtype.h"
 
 /*!
  * \copyright
@@ -18,8 +18,7 @@
  * and port.
  */
 
-class CommUDP : public CommType
-{
+class CommUDP : public CommType {
     Q_OBJECT
 public:
     /*!
@@ -42,7 +41,7 @@ public:
     void shutdown();
 
     /// connects discovery object
-    void connectDiscovery(ArduCorDiscovery *discovery) { mDiscovery = discovery; }
+    void connectDiscovery(ArduCorDiscovery* discovery) { mDiscovery = discovery; }
 
     /*!
      * \brief sendPacket sends the packet over UDP to a specified
@@ -63,7 +62,8 @@ public:
 
 signals:
     /*!
-     * \brief packetReceived emitted whenever a packet that is not a discovery packet is received. Contains
+     * \brief packetReceived emitted whenever a packet that is not a discovery packet is received.
+     * Contains
      *        the full packet's contents as a QString.
      */
     void packetReceived(QString, QString, ECommType);
@@ -82,9 +82,9 @@ private slots:
     void stateUpdate();
 
 private:
-
-    /// discovery object for storing previous connections, saving new connections, parsing discovery packets
-    ArduCorDiscovery *mDiscovery;
+    /// discovery object for storing previous connections, saving new connections, parsing discovery
+    /// packets
+    ArduCorDiscovery* mDiscovery;
 
     /// used to check CRC on incoming packets.
     CRCCalculator mCRC;
@@ -92,7 +92,7 @@ private:
     /*!
      * \brief mSocket Qt's UDP object
      */
-    QUdpSocket *mSocket;
+    QUdpSocket* mSocket;
 
     /*!
      * \brief mBound true if already bound, false otherwise.

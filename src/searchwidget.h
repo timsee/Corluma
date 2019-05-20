@@ -1,12 +1,12 @@
 #ifndef SEARCHWIDGET_H
 #define SEARCHWIDGET_H
 
-#include <QWidget>
-#include <QLayout>
-#include <QPushButton>
 #include <QLabel>
+#include <QLayout>
 #include <QLineEdit>
 #include <QListWidget>
+#include <QPushButton>
+#include <QWidget>
 
 /*!
  * \copyright
@@ -15,17 +15,20 @@
  */
 
 /*!
- * \brief The SearchWidget class is a widget with three main sections. The top contains an editable field with a plus
- *        and minus button. The middle is a list of objects that are currently being searched for. Objects are added
- *        to the searching list by clicking the plus button. The bottom is a list of objects that have been discovered
- *        or connected. An object cannot be in both the searching list and the connected list at the same time.
+ * \brief The SearchWidget class is a widget with three main sections. The top contains an editable
+ * field with a plus and minus button. The middle is a list of objects that are currently being
+ * searched for. Objects are added to the searching list by clicking the plus button. The bottom is
+ * a list of objects that have been discovered or connected. An object cannot be in both the
+ * searching list and the connected list at the same time.
  */
-class SearchWidget : public QWidget
-{
+class SearchWidget : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit SearchWidget(const QString& defaultLineEditValue, QWidget *parent, int maxSearchingCount = -1, const QString& errorMaxSearchString = QString());
+    explicit SearchWidget(const QString& defaultLineEditValue,
+                          QWidget* parent,
+                          int maxSearchingCount = -1,
+                          const QString& errorMaxSearchString = QString());
 
     /*!
      * \brief lineEditText text in line edit
@@ -34,9 +37,10 @@ public:
     const QString lineEditText() { return mLineEdit->text(); }
 
     /*!
-     * \brief addToSearchList add a string to the search list. This string may be modified after entry,
-     *        if size checks or forceUppercase are turned on. It is then added to the UI and sent to the
-     *        backend of the application to search for these strings
+     * \brief addToSearchList add a string to the search list. This string may be modified after
+     * entry, if size checks or forceUppercase are turned on. It is then added to the UI and sent to
+     * the backend of the application to search for these strings
+     *
      * \param key new string to add to UI and send to backend to search for
      * \return true if added successfully.
      */
@@ -44,6 +48,7 @@ public:
 
     /*!
      * \brief addToConnectedList programmatically add a name to the connected list.
+     *
      * \param name name to add to the list
      * \return true if added successfully.
      */
@@ -51,13 +56,15 @@ public:
 
     /*!
      * \brief removeKey remove the key from the searching list and connected list.
+     *
      * \param key key to remove.
      */
     void removeKey(const QString& key);
 
     /*!
      * \brief enableSizeChecks enable size checks, which makes sure that the string
-     *        provided to the search widget is within the range of the min and max values provided
+     * provided to the search widget is within the range of the min and max values provided
+     *
      * \param min must be greater than or equal to this value
      * \param max must be lesser than or equal to this value
      * \param error string to give an error about a string being out of range.
@@ -69,9 +76,10 @@ public:
 
     /*!
      * \brief forceUpperCase true to force strings for searching into upper case, false to use
-     *        strings as entered.
+     * strings as entered.
+     *
      * \param shouldForceUpperCase true to force strings for searching into upper case, false to use
-     *        strings as entered.
+     * strings as entered.
      */
     void forceUpperCase(bool shouldForceUpperCase) { mForceUpperCase = shouldForceUpperCase; }
 
@@ -100,51 +108,52 @@ private slots:
 
     /*!
      * \brief connectedListClicked The connected list was clicked on a discovery page.
-     *        This allows the user to select one of the connections, but its internal logic
-     *        is handled differently between different CommTypes.
+     * This allows the user to select one of the connections, but its internal logic
+     * is handled differently between different CommTypes.
      */
-    void connectedListClicked(QListWidgetItem *);
+    void connectedListClicked(QListWidgetItem*);
 
     /*!
      * \brief discoveringListClicked The discovering list was clicked on a discovery page.
-     *        This allows the user to select one of the connections, but its internal logic
-     *        is handled differently between different CommTypes.
+     * This allows the user to select one of the connections, but its internal logic
+     * is handled differently between different CommTypes.
      */
-    void discoveringListClicked(QListWidgetItem *);
+    void discoveringListClicked(QListWidgetItem*);
 
 private:
-
     /// layout for the QLineEdit and QPushButtons used for input
-    QHBoxLayout *mInputLayout;
+    QHBoxLayout* mInputLayout;
 
     /// plus button in input layout. adds current string to discovery
-    QPushButton *mPlusButton;
+    QPushButton* mPlusButton;
 
     /// minus button for input layout. removes current string from discovery
-    QPushButton *mMinusButton;
+    QPushButton* mMinusButton;
 
-    /// Displays current IP address and allows user to edit it. Can be added or removed from discovery with QPushButtons
-    QLineEdit *mLineEdit;
+    /// Displays current IP address and allows user to edit it. Can be added or removed from
+    /// discovery with QPushButtons
+    QLineEdit* mLineEdit;
 
     /// label for connected list
-    QLabel *mConnectedLabel;
+    QLabel* mConnectedLabel;
 
     /// label for discovering list
-    QLabel *mDiscoveringLabel;
+    QLabel* mDiscoveringLabel;
 
     /// widget for displaying connected IP addresses
-    QListWidget *mConnectedListWidget;
+    QListWidget* mConnectedListWidget;
 
     /// widget for displaying discovering IP addresses
-    QListWidget *mDiscoveringListWidget;
+    QListWidget* mDiscoveringListWidget;
 
     /// layout for widget
-    QVBoxLayout *mLayout;
+    QVBoxLayout* mLayout;
 
     /// true to force all characters to upper case, false to keep as entered.
     bool mForceUpperCase;
 
-    /// true to check the minimum and maximum size of the string given to the SearchWidget, false to ignore it
+    /// true to check the minimum and maximum size of the string given to the SearchWidget, false to
+    /// ignore it
     bool mCheckSize;
 
     /// minimum size of a string if mCheckSize is enabled, must be this size or greater.
@@ -161,7 +170,6 @@ private:
 
     /// error string to give as popup if check size is out of range.
     QString mSizeCheckError;
-
 };
 
 #endif // SEARCHWIDGET_H

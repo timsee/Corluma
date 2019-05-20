@@ -7,9 +7,7 @@
 #include "editpagetopmenu.h"
 
 
-EditPageTopMenu::EditPageTopMenu(QWidget *parent) :
-    QWidget(parent) {
-
+EditPageTopMenu::EditPageTopMenu(QWidget* parent) : QWidget(parent) {
     mCloseButton = new QPushButton(this);
     mCloseButton->setText("X");
     mCloseButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -35,16 +33,16 @@ EditPageTopMenu::EditPageTopMenu(QWidget *parent) :
     mHelpLabel = new QLabel(this);
 
     mLayout = new QGridLayout(this);
-    mLayout->setContentsMargins(4,4,4,4);
+    mLayout->setContentsMargins(4, 4, 4, 4);
     mLayout->setSpacing(2);
 
-    mLayout->addWidget(mHelpLabel,    0, 0,  1, 9);
-    mLayout->addWidget(mCloseButton,  0, 10, 1, 2);
+    mLayout->addWidget(mHelpLabel, 0, 0, 1, 9);
+    mLayout->addWidget(mCloseButton, 0, 10, 1, 2);
 
-    mLayout->addWidget(mNameEdit,     1, 0,  1, 8);
-    mLayout->addWidget(mSaveButton,   1, 10, 1, 2);
+    mLayout->addWidget(mNameEdit, 1, 0, 1, 8);
+    mLayout->addWidget(mSaveButton, 1, 10, 1, 2);
 
-    mLayout->addWidget(mRoomCheckBox, 2, 0,  1, 4);
-    mLayout->addWidget(mResetButton,  2, 8,  1, 2);
+    mLayout->addWidget(mRoomCheckBox, 2, 0, 1, 4);
+    mLayout->addWidget(mResetButton, 2, 8, 1, 2);
     mLayout->addWidget(mDeleteButton, 2, 10, 1, 2);
 }

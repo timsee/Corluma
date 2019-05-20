@@ -1,14 +1,14 @@
 #ifndef NANO_LEAFCONTROLLER_H
 #define NANO_LEAFCONTROLLER_H
 
-#include <QString>
 #include <QColor>
 #include <QJsonObject>
+#include <QString>
 #include <sstream>
 #include <vector>
-#include "rhythmcontroller.h"
-#include "panels.h"
 #include "cor/range.h"
+#include "panels.h"
+#include "rhythmcontroller.h"
 
 namespace nano {
 
@@ -17,13 +17,10 @@ namespace nano {
  * Copyright (C) 2015 - 2019.
  * Released under the GNU General Public License.
  *
- *
- *
  * \brief The LeafController class holds all the data known
  *        about a NanoLeaf Auorara.
  */
-class LeafController
-{
+class LeafController {
 public:
     /// constructor
     LeafController();
@@ -103,10 +100,8 @@ public:
         std::stringstream tempString;
         tempString << "nano::LeafController: "
                    << " name: " << name.toStdString()
-                   << " hardwareName: " << hardwareName.toStdString()
-                   << " IP:" <<  IP.toStdString()
-                   << " port: " << port
-                   << " authToken: " << authToken.toStdString()
+                   << " hardwareName: " << hardwareName.toStdString() << " IP:" << IP.toStdString()
+                   << " port: " << port << " authToken: " << authToken.toStdString()
                    << " serial: " << serialNumber.toStdString()
                    << " effect: " << authToken.toStdString();
         return QString::fromStdString(tempString.str());
@@ -115,7 +110,8 @@ public:
     /// equal operator
     bool operator==(const nano::LeafController& rhs) const {
         bool result = true;
-        if (serialNumber  !=  rhs.serialNumber) result = false;
+        if (serialNumber != rhs.serialNumber)
+            result = false;
         return result;
     }
 };
@@ -126,18 +122,15 @@ LeafController jsonToLeafController(const QJsonObject& object);
 /// converts a cor::Light to a json representation of its routine.
 QJsonObject leafControllerToJson(const LeafController& controller);
 
-}
+} // namespace nano
 
-namespace std
-{
-    template <>
-    struct hash<::nano::LeafController>
-    {
-        size_t operator()(const ::nano::LeafController& k) const
-        {
-            return std::hash<std::string>{}(k.serialNumber.toStdString());
-        }
-    };
-}
+namespace std {
+template <>
+struct hash<::nano::LeafController> {
+    size_t operator()(const ::nano::LeafController& k) const {
+        return std::hash<std::string>{}(k.serialNumber.toStdString());
+    }
+};
+} // namespace std
 
 #endif // NANO_LEAFCONTROLLER_H

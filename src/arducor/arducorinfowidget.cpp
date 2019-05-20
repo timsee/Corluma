@@ -4,32 +4,37 @@
  * Released under the GNU General Public License.
  */
 
+#include <QGraphicsOpacityEffect>
+#include <QScroller>
+#include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
-#include <QStyleOption>
-#include <QScroller>
-#include <QGraphicsOpacityEffect>
 
 #include "arducorinfowidget.h"
 
-ArduCorInfoWidget::ArduCorInfoWidget(cor::Light light, QWidget *parent) : QWidget(parent), mHideDetails{false}, mLight(light) {
+ArduCorInfoWidget::ArduCorInfoWidget(cor::Light light, QWidget* parent)
+    : QWidget(parent), mHideDetails{false}, mLight(light) {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     this->setStyleSheet(styleSheet);
 
-    mName  = new QLabel(light.uniqueID(), this);
+    mName = new QLabel(light.uniqueID(), this);
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setTitleFontPointSize(14);
 
-    QString pathString = commTypeToString(light.commType()) +  " " + light.controller() + " " + QString::number(light.index);
+    QString pathString = commTypeToString(light.commType()) + " " + light.controller() + " "
+                         + QString::number(light.index);
     mPathLabel = new QLabel(pathString, this);
     mPathLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mPathLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mHardwareTypeLabel = new QLabel("<b>Hardware:</b>  " + hardwareTypeToString(light.hardwareType), this);
+    mHardwareTypeLabel
+        = new QLabel("<b>Hardware:</b>  " + hardwareTypeToString(light.hardwareType), this);
     mHardwareTypeLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mHardwareTypeLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mAPILabel = new QLabel("<b>API:</b>  " + QString::number(light.majorAPI) + "." + QString::number(light.minorAPI), this);
+    mAPILabel = new QLabel(
+        "<b>API:</b>  " + QString::number(light.majorAPI) + "." + QString::number(light.minorAPI),
+        this);
     mAPILabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mAPILabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
@@ -51,7 +56,7 @@ void ArduCorInfoWidget::updateLight(cor::Light light) {
     mLight = std::move(light);
 }
 
-void ArduCorInfoWidget::mouseReleaseEvent(QMouseEvent *event) {
+void ArduCorInfoWidget::mouseReleaseEvent(QMouseEvent* event) {
     Q_UNUSED(event);
     emit clicked(mKey);
 }
@@ -67,7 +72,7 @@ void ArduCorInfoWidget::hideDetails(bool shouldHide) {
     mHideDetails = shouldHide;
 }
 
-void ArduCorInfoWidget::paintEvent(QPaintEvent *event) {
+void ArduCorInfoWidget::paintEvent(QPaintEvent* event) {
     Q_UNUSED(event);
     QStyleOption opt;
     opt.init(this);
@@ -77,7 +82,7 @@ void ArduCorInfoWidget::paintEvent(QPaintEvent *event) {
     if (mIsChecked) {
         painter.fillRect(this->rect(), QBrush(QColor(61, 142, 201, 255)));
     } else {
-        //TODO: could I make this transparent in all cases?
+        // TODO: could I make this transparent in all cases?
         painter.fillRect(this->rect(), QBrush(QColor(32, 31, 31, 255)));
     }
 
@@ -93,8 +98,10 @@ void ArduCorInfoWidget::paintEvent(QPaintEvent *event) {
 
 
 void ArduCorInfoWidget::setTitleFontPointSize(int pt) {
-    if (pt <= 0) pt = 1;
-    QString stylesheet = "font-size:" + QString::number(pt)+ "pt;";
+    if (pt <= 0) {
+        pt = 1;
+    }
+    QString stylesheet = "font-size:" + QString::number(pt) + "pt;";
     mName->setStyleSheet(stylesheet);
 
     QFont font(mName->font().toString(), pt);

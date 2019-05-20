@@ -9,10 +9,10 @@
 #include <QDebug>
 #include <QGraphicsOpacityEffect>
 
-namespace cor
-{
+namespace cor {
 
-Button::Button(QWidget *parent, const QJsonObject& routineObject) : QPushButton(parent), mRoutineObject(routineObject) {
+Button::Button(QWidget* parent, const QJsonObject& routineObject)
+    : QPushButton(parent), mRoutineObject(routineObject) {
     mShouldResizeIcon = true;
 
     this->setCheckable(true);
@@ -24,21 +24,18 @@ Button::Button(QWidget *parent, const QJsonObject& routineObject) : QPushButton(
     resizeIcon();
 }
 
-void Button::resizeEvent(QResizeEvent *event) {
-    Q_UNUSED(event);
+void Button::resizeEvent(QResizeEvent*) {
     if (mShouldResizeIcon) {
         resizeIcon();
-   }
+    }
 }
 
 void Button::resizeIcon() {
     int size = std::min(this->size().height(), this->size().width());
     mIconSize = QSize(int(size * 0.6f), int(size * 0.6f));
     QPixmap pixmap = mIconData.renderAsQPixmap();
-    pixmap = pixmap.scaled(mIconSize.width(),
-                           mIconSize.height(),
-                           Qt::KeepAspectRatio,
-                           Qt::FastTransformation);
+    pixmap = pixmap.scaled(
+        mIconSize.width(), mIconSize.height(), Qt::KeepAspectRatio, Qt::FastTransformation);
     this->setIcon(QIcon(pixmap));
     this->setIconSize(mIconSize);
 }
@@ -47,10 +44,8 @@ void Button::resizeIcon() {
 void Button::updateRoutine(const QJsonObject& routineObject) {
     mIconData.setRoutine(routineObject);
     QPixmap pixmap = mIconData.renderAsQPixmap();
-    pixmap = pixmap.scaled(mIconSize.width(),
-                           mIconSize.height(),
-                           Qt::KeepAspectRatio,
-                           Qt::FastTransformation);
+    pixmap = pixmap.scaled(
+        mIconSize.width(), mIconSize.height(), Qt::KeepAspectRatio, Qt::FastTransformation);
     this->setIcon(QIcon(pixmap));
 }
 
@@ -58,4 +53,4 @@ void Button::handleButton() {
     emit buttonClicked(mRoutineObject);
 }
 
-}
+} // namespace cor

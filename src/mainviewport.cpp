@@ -9,12 +9,13 @@
  * Released under the GNU General Public License.
  */
 
-MainViewport::MainViewport(MainWindow *parent,
-                           CommLayer *comm,
-                           cor::DeviceList *data,
-                           GroupData *groups,
-                           AppSettings *settings) : QWidget(parent), mGroups{groups}, mComm{comm}, mData{data}, mAppSettings{settings} {
-    //NOTE: this is mood page so that it doesn't default to light page on so when light page
+MainViewport::MainViewport(MainWindow* parent,
+                           CommLayer* comm,
+                           cor::DeviceList* data,
+                           GroupData* groups,
+                           AppSettings* settings)
+    : QWidget(parent), mGroups{groups}, mComm{comm}, mData{data}, mAppSettings{settings} {
+    // NOTE: this is mood page so that it doesn't default to light page on so when light page
     //      is turned on, we can use standard functions
     mPageIndex = EPage::moodPage;
 
@@ -25,21 +26,31 @@ MainViewport::MainViewport(MainWindow *parent,
     mColorPage = new ColorPage(parent);
     mColorPage->isOpen(false);
     mColorPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(mColorPage, SIGNAL(routineUpdate(QJsonObject)),  parent, SLOT(routineChanged(QJsonObject)));
+    connect(
+        mColorPage, SIGNAL(routineUpdate(QJsonObject)), parent, SLOT(routineChanged(QJsonObject)));
 
     mPalettePage = new PalettePage(parent);
     mPalettePage->isOpen(false);
     mPalettePage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(mPalettePage, SIGNAL(speedUpdate(int)),  parent, SLOT(speedChanged(int)));
-    connect(mPalettePage, SIGNAL(routineUpdate(QJsonObject)),  parent, SLOT(routineChanged(QJsonObject)));
-    connect(mPalettePage, SIGNAL(schemeUpdate(std::vector<QColor>)),  parent, SLOT(schemeChanged(std::vector<QColor>)));
+    connect(mPalettePage, SIGNAL(speedUpdate(int)), parent, SLOT(speedChanged(int)));
+    connect(mPalettePage,
+            SIGNAL(routineUpdate(QJsonObject)),
+            parent,
+            SLOT(routineChanged(QJsonObject)));
+    connect(mPalettePage,
+            SIGNAL(schemeUpdate(std::vector<QColor>)),
+            parent,
+            SLOT(schemeChanged(std::vector<QColor>)));
 
     mMoodPage = new MoodPage(parent, groups);
     mMoodPage->isOpen(false);
     mMoodPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(mMoodPage, SIGNAL(clickedSelectedMood(std::uint64_t)), parent, SLOT(moodSelected(std::uint64_t)));
-    connect(mMoodPage, SIGNAL(clickedEditButton(bool)),  parent, SLOT(editButtonClicked(bool)));
-    connect(mMoodPage, SIGNAL(moodUpdate(std::uint64_t)),  parent, SLOT(moodChanged(std::uint64_t)));
+    connect(mMoodPage,
+            SIGNAL(clickedSelectedMood(std::uint64_t)),
+            parent,
+            SLOT(moodSelected(std::uint64_t)));
+    connect(mMoodPage, SIGNAL(clickedEditButton(bool)), parent, SLOT(editButtonClicked(bool)));
+    connect(mMoodPage, SIGNAL(moodUpdate(std::uint64_t)), parent, SLOT(moodChanged(std::uint64_t)));
 }
 
 
@@ -47,7 +58,7 @@ void MainViewport::resize(const QRect& geometry) {
     this->setGeometry(geometry);
     mainWidget(mPageIndex)->setGeometry(geometry);
 
-    QWidget *parentWidget = qobject_cast<QWidget*>(this->parent());
+    QWidget* parentWidget = qobject_cast<QWidget*>(this->parent());
     QRect offsetGeometry(parentWidget->width() + geometry.width(),
                          this->pos().y(),
                          this->geometry().width(),
@@ -64,7 +75,6 @@ void MainViewport::resize(const QRect& geometry) {
     if (mPageIndex != EPage::moodPage) {
         mMoodPage->setGeometry(offsetGeometry);
     }
-
 }
 
 void MainViewport::pageChanged(EPage pageIndex) {
@@ -76,7 +86,7 @@ void MainViewport::pageChanged(EPage pageIndex) {
 }
 
 QWidget* MainViewport::mainWidget(EPage page) {
-    QWidget *widget;
+    QWidget* widget;
     switch (page) {
         case EPage::colorPage:
             widget = qobject_cast<QWidget*>(mColorPage);
@@ -95,7 +105,7 @@ QWidget* MainViewport::mainWidget(EPage page) {
 }
 
 cor::Page* MainViewport::mainPage(EPage page) {
-    cor::Page *widget;
+    cor::Page* widget;
     switch (page) {
         case EPage::colorPage:
             widget = mColorPage;
@@ -119,21 +129,17 @@ void MainViewport::showMainPage(EPage page) {
     int x = this->width() + widget->width();
     pageObject->isOpen(true);
 
-    cor::moveWidget(widget,
-                    this->size(),
-                    QPoint(x, this->pos().y()),
-                    this->pos());
+    cor::moveWidget(widget, this->size(), QPoint(x, this->pos().y()), this->pos());
 
-   if (page == EPage::colorPage) {
+    if (page == EPage::colorPage) {
         mColorPage->show(mData->mainColor(),
                          uint32_t(mData->brightness()),
                          uint32_t(mData->devices().size()),
                          mData->bestColorPickerType());
         mColorPage->setVisible(true);
     } else if (page == EPage::moodPage) {
-        mMoodPage->show(mData->findCurrentMood(mGroups->moods()),
-                        mGroups->moods(),
-                        mGroups->roomList());
+        mMoodPage->show(
+            mData->findCurrentMood(mGroups->moods()), mGroups->moods(), mGroups->roomList());
         mMoodPage->setVisible(true);
     } else if (page == EPage::palettePage) {
         mPalettePage->resize();
@@ -152,10 +158,7 @@ void MainViewport::hideMainPage(EPage page) {
     pageObject->isOpen(false);
     int x = widget->width() * -1;
 
-    cor::moveWidget(widget,
-                    this->size(),
-                    this->pos(),
-                    QPoint(x, widget->pos().y()));
+    cor::moveWidget(widget, this->size(), this->pos(), QPoint(x, widget->pos().y()));
     if (page == EPage::colorPage) {
         mColorPage->handleRoutineWidget(false);
     } else if (page == EPage::palettePage) {
@@ -177,4 +180,3 @@ void MainViewport::lightCountChanged() {
                            mData->hasLightWithProtocol(EProtocolType::nanoleaf));
     }
 }
-

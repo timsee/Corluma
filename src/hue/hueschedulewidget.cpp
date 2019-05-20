@@ -5,15 +5,15 @@
  */
 
 #include "hueschedulewidget.h"
+#include <QGraphicsOpacityEffect>
+#include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
-#include <QStyleOption>
-#include <QGraphicsOpacityEffect>
 
-namespace hue
-{
+namespace hue {
 
-HueScheduleWidget::HueScheduleWidget(QWidget *parent, SHueSchedule schedule) : QWidget(parent), mSchedule(schedule) {
+HueScheduleWidget::HueScheduleWidget(QWidget* parent, SHueSchedule schedule)
+    : QWidget(parent), mSchedule(schedule) {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     this->setStyleSheet(styleSheet);
 
@@ -70,7 +70,7 @@ HueScheduleWidget::HueScheduleWidget(QWidget *parent, SHueSchedule schedule) : Q
 }
 
 
-void HueScheduleWidget::paintEvent(QPaintEvent *) {
+void HueScheduleWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
@@ -80,4 +80,4 @@ void HueScheduleWidget::paintEvent(QPaintEvent *) {
 }
 
 
-}
+} // namespace hue

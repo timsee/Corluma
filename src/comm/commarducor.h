@@ -7,8 +7,8 @@
 
 #include "arducor/arducordiscovery.h"
 #include "arducor/crccalculator.h"
-#include "cor/presetpalettes.h"
 #include "comm/commtype.h"
+#include "cor/presetpalettes.h"
 
 class CommUDP;
 class CommHTTP;
@@ -25,12 +25,11 @@ class CommSerial;
  *        This object handles the discovery of both new and previously discovered
  *        arduinos, and handles sending packets and receiving packets from arduinos.
  */
-class CommArduCor : public QObject
-{
+class CommArduCor : public QObject {
     Q_OBJECT
 public:
     /// constructor
-    explicit CommArduCor(QObject *parent);
+    explicit CommArduCor(QObject* parent);
 
     /*!
      * \brief sendPacket sends a packet to the given controller
@@ -59,18 +58,18 @@ public:
      * \param type the comm type to get a point two
      * \return the raw CommType ptr based off the given commType
      */
-    CommType *commByType(ECommType type);
+    CommType* commByType(ECommType type);
 
 #ifndef MOBILE_BUILD
     /// getter for serial
-    CommSerial *serial() { return mSerial.get(); }
-#endif //MOBILE_BUILD
+    CommSerial* serial() { return mSerial.get(); }
+#endif // MOBILE_BUILD
 
     /// getter for UDP
-    CommUDP *UDP() { return mUDP.get(); }
+    CommUDP* UDP() { return mUDP.get(); }
 
     /// getter for discovery
-    ArduCorDiscovery *discovery() { return mDiscovery; }
+    ArduCorDiscovery* discovery() { return mDiscovery; }
 
     /// getter for all connected lights
     std::list<cor::Light> lights();
@@ -78,8 +77,8 @@ public:
 signals:
 
     /*!
-    * \brief packetReceived anotification that a packet was receieved by one of the commtypes.
-    */
+     * \brief packetReceived anotification that a packet was receieved by one of the commtypes.
+     */
     void packetReceived(EProtocolType);
 
     /*!
@@ -93,19 +92,18 @@ private slots:
     void receivedUpdate(ECommType type) { emit updateReceived(type); }
 
     /*!
-    * \brief parsePacket parses any packets sent from any of the commtypes. The
-    *        comm type that received the packet is given as an int
-    */
+     * \brief parsePacket parses any packets sent from any of the commtypes. The
+     *        comm type that received the packet is given as an int
+     */
     void parsePacket(const QString&, const QString&, ECommType);
 
 private:
-
 #ifndef MOBILE_BUILD
     /*!
      * \brief mSerial Serial connection object
      */
     std::shared_ptr<CommSerial> mSerial;
-#endif //MOBILE_BUILD
+#endif // MOBILE_BUILD
     /*!
      * \brief mHTTP HTTP connection object
      */
@@ -113,13 +111,14 @@ private:
     /*!
      * \brief mUDP UDP connection object
      */
-    std::shared_ptr<CommUDP>  mUDP;
+    std::shared_ptr<CommUDP> mUDP;
 
     /// arducor discovery ovbject
-    ArduCorDiscovery *mDiscovery;
+    ArduCorDiscovery* mDiscovery;
 
     /*!
-     * \brief preparePacketForTransmission prepare internal states and variables for sending a new packet and adjust packet
+     * \brief preparePacketForTransmission prepare internal states and variables for sending a new
+     * packet and adjust packet
      *        to fix issues with sending it, if needed
      * \param controller the controller to send the packet the to
      * \param packet the packet that is about to be sent
@@ -151,7 +150,6 @@ private:
 
     /// preset data for palettes from ArduCor
     PresetPalettes mPresetPalettes;
-
 };
 
 #endif // COMMARDUCOR_H

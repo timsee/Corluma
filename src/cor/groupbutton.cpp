@@ -9,18 +9,15 @@
 
 #include <QDebug>
 #include <QGraphicsEffect>
-#include <QPainter>
-#include <QStyleOption>
 #include <QGraphicsScene>
 #include <QMouseEvent>
+#include <QPainter>
+#include <QStyleOption>
 
-namespace cor
-{
+namespace cor {
 
-GroupButton::GroupButton(QWidget *parent, const QString& text) : QWidget(parent),
-                                                                         mIsSelected{false},
-                                                                         mReachableCount{0},
-                                                                         mCheckedCount{0} {
+GroupButton::GroupButton(QWidget* parent, const QString& text)
+    : QWidget(parent), mIsSelected{false}, mReachableCount{0}, mCheckedCount{0} {
     const QString transparentStyleSheet = "background-color: rgba(0,0,0,0);";
 
     mTitle = new QLabel(text, this);
@@ -48,22 +45,16 @@ GroupButton::GroupButton(QWidget *parent, const QString& text) : QWidget(parent)
 void GroupButton::resize() {
     QSize size = preferredButtonSize();
     mClearAllPixmap = QPixmap(":/images/selectAllIcon.png");
-    mClearAllPixmap = mClearAllPixmap.scaled(size.width(),
-                                               size.height(),
-                                               Qt::IgnoreAspectRatio,
-                                               Qt::SmoothTransformation);
+    mClearAllPixmap = mClearAllPixmap.scaled(
+        size.width(), size.height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 
     mSelectAllPixmap = QPixmap(":/images/uncheckedBox.png");
-    mSelectAllPixmap = mSelectAllPixmap.scaled(size.width(),
-                                             size.height(),
-                                             Qt::IgnoreAspectRatio,
-                                             Qt::SmoothTransformation);
+    mSelectAllPixmap = mSelectAllPixmap.scaled(
+        size.width(), size.height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 
     mDisabledPixmap = QPixmap(":/images/disabledX.png");
-    mDisabledPixmap = mDisabledPixmap.scaled(size.width(),
-                                             size.height(),
-                                             Qt::IgnoreAspectRatio,
-                                             Qt::SmoothTransformation);
+    mDisabledPixmap = mDisabledPixmap.scaled(
+        size.width(), size.height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 
     mTitle->setFixedWidth(this->width() - preferredButtonSize().width());
     mButton->setFixedWidth(preferredButtonSize().width());
@@ -73,7 +64,8 @@ void GroupButton::resize() {
     }
 }
 
-bool GroupButton::handleSelectAllButton(uint32_t checkedDevicesCount, uint32_t reachableDevicesCount) {
+bool GroupButton::handleSelectAllButton(uint32_t checkedDevicesCount,
+                                        uint32_t reachableDevicesCount) {
     bool renderFlag = false;
     EGroupButtonState state;
     if (reachableDevicesCount == 0) {
@@ -90,13 +82,12 @@ bool GroupButton::handleSelectAllButton(uint32_t checkedDevicesCount, uint32_t r
         renderFlag = true;
     }
 
-   if (mCheckedCount != checkedDevicesCount
-           || mReachableCount != reachableDevicesCount) {
+    if (mCheckedCount != checkedDevicesCount || mReachableCount != reachableDevicesCount) {
         mCheckedCount = checkedDevicesCount;
         mReachableCount = reachableDevicesCount;
         renderFlag = true;
-   }
-   return renderFlag;
+    }
+    return renderFlag;
 }
 
 void GroupButton::setSelectAll(bool shouldSelect) {
@@ -120,7 +111,8 @@ void GroupButton::buttonPressed(bool) {
     }
 }
 
-QColor GroupButton::computeHighlightColor(uint32_t checkedDeviceCount, uint32_t reachableDeviceCount) {
+QColor GroupButton::computeHighlightColor(uint32_t checkedDeviceCount,
+                                          uint32_t reachableDeviceCount) {
     QColor pureBlue(61, 142, 201);
     QColor pureBlack(32, 31, 31);
     QColor difference(pureBlue.red() - pureBlack.red(),
@@ -137,12 +129,12 @@ QColor GroupButton::computeHighlightColor(uint32_t checkedDeviceCount, uint32_t 
             int(amountOfBlue * difference.blue() + pureBlack.blue())};
 }
 
-void GroupButton::resizeEvent(QResizeEvent *) {
+void GroupButton::resizeEvent(QResizeEvent*) {
     resize();
     mButton->setPixmap(currentPixmap());
 }
 
-void GroupButton::paintEvent(QPaintEvent *) {
+void GroupButton::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
@@ -164,10 +156,10 @@ void GroupButton::paintEvent(QPaintEvent *) {
 }
 
 
-void GroupButton::mouseReleaseEvent(QMouseEvent *event) {
+void GroupButton::mouseReleaseEvent(QMouseEvent* event) {
     if (cor::isMouseEventTouchUpInside(event, this, true)) {
         if (cor::isMouseEventTouchUpInside(event, mButton, false)) {
-            QWidget *parentWidget = this->parentWidget();
+            QWidget* parentWidget = this->parentWidget();
             auto groupButtonsWidget = qobject_cast<GroupButtonsWidget*>(parentWidget);
             if (groupButtonsWidget->type() == cor::EWidgetType::condensed) {
                 if (cor::leftHandMenuMoving()) {
@@ -185,12 +177,12 @@ void GroupButton::mouseReleaseEvent(QMouseEvent *event) {
 
 const QPixmap& GroupButton::currentPixmap() {
     switch (mButtonState) {
-    case EGroupButtonState::disabled:
-        return mDisabledPixmap;
-    case EGroupButtonState::clearAll:
-        return mClearAllPixmap;
-    case EGroupButtonState::selectAll:
-        return mSelectAllPixmap;
+        case EGroupButtonState::disabled:
+            return mDisabledPixmap;
+        case EGroupButtonState::clearAll:
+            return mClearAllPixmap;
+        case EGroupButtonState::selectAll:
+            return mSelectAllPixmap;
     }
     THROW_EXCEPTION("Do not recognize pixmap");
 }
@@ -199,4 +191,4 @@ QSize GroupButton::preferredButtonSize() {
     return {int(mTitle->height() * 0.9), int(mTitle->height() * 0.9)};
 }
 
-}
+} // namespace cor

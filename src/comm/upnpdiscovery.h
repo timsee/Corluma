@@ -1,8 +1,8 @@
 #ifndef UPNPDISCOVERY_H
 #define UPNPDISCOVERY_H
 
-#include <QUdpSocket>
 #include <QObject>
+#include <QUdpSocket>
 
 /*!
  * \copyright
@@ -10,19 +10,18 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief The UPnPDiscovery class listens for UPnP packets and signals them out when they are received.
- *        Rather than using the standard startup/shutdown methods that most of the backend classes use in this app,
- *        this object automatically turns on and off its socket based on how many listeners are requesting that it
- *        sends UPnP packets.
+ * \brief The UPnPDiscovery class listens for UPnP packets and signals them out when they are
+ * received. Rather than using the standard startup/shutdown methods that most of the backend
+ * classes use in this app, this object automatically turns on and off its socket based on how many
+ * listeners are requesting that it sends UPnP packets.
  */
-class UPnPDiscovery: public QObject
-{
+class UPnPDiscovery : public QObject {
     Q_OBJECT
 public:
     /*!
      * \brief Constructor
      */
-    UPnPDiscovery(QObject *parent);
+    UPnPDiscovery(QObject* parent);
 
     /*!
      * \brief addListener increments the listener count. If the count was at zero, it
@@ -55,7 +54,7 @@ private:
     /*!
      * \brief mSocket Qt's UDP object
      */
-    QUdpSocket *mSocket;
+    QUdpSocket* mSocket;
 
     /// startup the UDP socket for listening for packets
     void startup();

@@ -4,18 +4,17 @@
  * Released under the GNU General Public License.
  */
 
+#include <QDebug>
 #include <QGraphicsEffect>
+#include <QGraphicsScene>
 #include <QPainter>
 #include <QStyleOption>
-#include <QGraphicsScene>
-#include <QDebug>
 
 #include "cor/statusicon.h"
 
-namespace cor
-{
+namespace cor {
 
-StatusIcon::StatusIcon(QWidget *parent) : QWidget(parent) {
+StatusIcon::StatusIcon(QWidget* parent) : QWidget(parent) {
     mIcon = new QLabel(this);
     mIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
@@ -38,9 +37,9 @@ void StatusIcon::update(bool isReachable, bool isOn, double brightness) {
 
         QPixmap blackPixmap(":/images/blackButton.png");
         blackPixmap = blackPixmap.scaled(int(mIcon->height() * 0.5f),
-                                       int(mIcon->height() * 0.5f),
-                                       Qt::KeepAspectRatio,
-                                       Qt::SmoothTransformation);
+                                         int(mIcon->height() * 0.5f),
+                                         Qt::KeepAspectRatio,
+                                         Qt::SmoothTransformation);
         mBlackIcon->setPixmap(blackPixmap);
 
         mBlackIcon->setGeometry(mIcon->geometry());
@@ -58,4 +57,4 @@ void StatusIcon::update(bool isReachable, bool isOn, double brightness) {
     mIcon->setPixmap(buttonIcon);
 }
 
-}
+} // namespace cor

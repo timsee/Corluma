@@ -4,13 +4,13 @@
  * Released under the GNU General Public License.
  */
 
+#include "listmoodpreviewwidget.h"
 #include <QPainter>
 #include <QStyleOption>
-#include "listmoodpreviewwidget.h"
 #include "utils/qt.h"
 
-ListMoodPreviewWidget::ListMoodPreviewWidget(const cor::Mood& mood,
-                                             QWidget *parent) : cor::ListItemWidget(mood.name(), parent), mMood{mood} {
+ListMoodPreviewWidget::ListMoodPreviewWidget(const cor::Mood& mood, QWidget* parent)
+    : cor::ListItemWidget(mood.name(), parent), mMood{mood} {
     mIsChecked = false;
     mIsSelected = false;
 
@@ -33,7 +33,7 @@ ListMoodPreviewWidget::ListMoodPreviewWidget(const cor::Mood& mood,
 
     mName->setStyleSheet(backgroundStyleSheet);
 
-    mPalette = new  cor::LightVectorWidget(4, 2, true, this);
+    mPalette = new cor::LightVectorWidget(4, 2, true, this);
     mPalette->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mPalette->enableButtonInteraction(false);
     mPalette->updateDevices(mMood.lights);
@@ -41,7 +41,7 @@ ListMoodPreviewWidget::ListMoodPreviewWidget(const cor::Mood& mood,
     // setup layout
     mTopLayout = new QHBoxLayout;
     mTopLayout->addWidget(mName, 6);
-    mTopLayout->setContentsMargins(0,0,0,0);
+    mTopLayout->setContentsMargins(0, 0, 0, 0);
     mFullLayout = new QVBoxLayout(this);
     mFullLayout->addLayout(mTopLayout, 1);
     mFullLayout->addWidget(mPalette, 2);
@@ -52,18 +52,18 @@ ListMoodPreviewWidget::ListMoodPreviewWidget(const cor::Mood& mood,
 }
 
 
-void ListMoodPreviewWidget::resizeEvent(QResizeEvent *) {
+void ListMoodPreviewWidget::resizeEvent(QResizeEvent*) {
     mName->setFixedSize(this->width(), this->height() / 4);
     mPalette->setFixedSize(int(this->width() * 0.75f), 2 * this->height() / 4);
 }
 
 
-void ListMoodPreviewWidget::enterEvent(QEvent *) {
-   // mEditButton->setHidden(false);
+void ListMoodPreviewWidget::enterEvent(QEvent*) {
+    // mEditButton->setHidden(false);
 }
 
-void ListMoodPreviewWidget::leaveEvent(QEvent *) {
-   // mEditButton->setHidden(true);
+void ListMoodPreviewWidget::leaveEvent(QEvent*) {
+    // mEditButton->setHidden(true);
 }
 
 bool ListMoodPreviewWidget::setChecked(bool checked) {
@@ -78,7 +78,7 @@ bool ListMoodPreviewWidget::setSelected(bool selected) {
     return mIsSelected;
 }
 
-void ListMoodPreviewWidget::paintEvent(QPaintEvent *) {
+void ListMoodPreviewWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
@@ -101,7 +101,6 @@ void ListMoodPreviewWidget::paintEvent(QPaintEvent *) {
 }
 
 
-void ListMoodPreviewWidget::mouseReleaseEvent(QMouseEvent *) {
+void ListMoodPreviewWidget::mouseReleaseEvent(QMouseEvent*) {
     emit moodSelected(mMood.uniqueID());
 }
-

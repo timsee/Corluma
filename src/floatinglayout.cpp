@@ -9,27 +9,27 @@
 #include "utils/qt.h"
 
 #include <QDebug>
-#include <QSignalMapper>
-#include <QStyleOption>
 #include <QGraphicsOpacityEffect>
 #include <QPainter>
+#include <QSignalMapper>
+#include <QStyleOption>
 
-FloatingLayout::FloatingLayout(bool makeVertical, QWidget *parent) : QWidget(parent) {
+FloatingLayout::FloatingLayout(bool makeVertical, QWidget* parent) : QWidget(parent) {
     mIsVertical = makeVertical;
     mRoutineIsTranslucent = false;
     mRoutineIsHighlighted = false;
 
-    this->setContentsMargins(0,0,0,0);
+    this->setContentsMargins(0, 0, 0, 0);
     // setup up the layout
     if (mIsVertical) {
         mVerticalLayout = new QVBoxLayout;
-        mVerticalLayout->setContentsMargins(0,0,0,0);
+        mVerticalLayout->setContentsMargins(0, 0, 0, 0);
         mVerticalLayout->setSpacing(0);
 
         setLayout(mVerticalLayout);
     } else {
         mHorizontalLayout = new QHBoxLayout;
-        mHorizontalLayout->setContentsMargins(0,0,0,0);
+        mHorizontalLayout->setContentsMargins(0, 0, 0, 0);
         mHorizontalLayout->setSpacing(0);
 
         setLayout(mHorizontalLayout);
@@ -56,14 +56,11 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
     // set up the geometry
     QSize size = mOriginalSize;
     if (eButtonSize == EButtonSize::small) {
-        size = QSize(int(size.width() * 0.08f),
-                     int(size.height() * 0.08f));
+        size = QSize(int(size.width() * 0.08f), int(size.height() * 0.08f));
     } else if (eButtonSize == EButtonSize::medium) {
-        size = QSize(int(size.width() * 0.1f),
-                     int(size.height() * 0.1f));
+        size = QSize(int(size.width() * 0.1f), int(size.height() * 0.1f));
     } else if (eButtonSize == EButtonSize::rectangle) {
-        size = QSize(int(size.width() * 0.22f),
-                     int(size.height() * 0.06f));
+        size = QSize(int(size.width() * 0.22f), int(size.height() * 0.06f));
     }
 
     int fixedWidth;
@@ -122,7 +119,7 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             foundMatch = true;
             light.routine = ERoutine::multiFade;
             light.palette = mPalettes.palette(EPalette::poison);
-            light.speed   = 100;
+            light.speed = 100;
             QJsonObject routineObject = lightToJson(light);
             auto lightsButton = new cor::Button(this, routineObject);
             mButtons[i] = static_cast<QPushButton*>(lightsButton);
@@ -140,7 +137,7 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
         } else if (mNames[i].compare("Routine") == 0) {
             foundMatch = true;
             light.routine = ERoutine::singleGlimmer;
-            light.color   = QColor(0, 255, 0);
+            light.color = QColor(0, 255, 0);
             QJsonObject routineObject = lightToJson(light);
             auto lightsButton = new cor::Button(this, routineObject);
             mButtons[i] = static_cast<QPushButton*>(lightsButton);
@@ -298,8 +295,7 @@ void FloatingLayout::updateCollectionButton(const QString& resource) {
 
 void FloatingLayout::updateDiscoveryButton(EProtocolType type, const QPixmap& pixmap) {
     QString label;
-    switch (type)
-    {
+    switch (type) {
         case EProtocolType::hue:
             label = "Discovery_Hue";
             break;
@@ -315,15 +311,11 @@ void FloatingLayout::updateDiscoveryButton(EProtocolType type, const QPixmap& pi
     for (uint32_t i = 0; i < mButtons.size(); ++i) {
         if (mNames[i].compare(label) == 0) {
             int size = int(mButtons[i]->size().height() * 0.5f);
-            mButtons[i]->setIcon(QIcon(pixmap.scaled(size,
-                                                size,
-                                                Qt::IgnoreAspectRatio,
-                                                Qt::SmoothTransformation)));
-            mButtons[i]->setIconSize(QSize(size,
-                                           size));
+            mButtons[i]->setIcon(
+                QIcon(pixmap.scaled(size, size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)));
+            mButtons[i]->setIconSize(QSize(size, size));
         }
     }
-
 }
 
 void FloatingLayout::enableButton(const QString& key, bool enable) {
@@ -350,7 +342,8 @@ bool FloatingLayout::isKeyHighlighted(const QString& key) {
 
 void FloatingLayout::move(QPoint topRightPoint) {
     // add floating region to far right of screen under main icon menu
-    this->setGeometry(topRightPoint.x() - this->width(), topRightPoint.y(), this->width(), this->height());
+    this->setGeometry(
+        topRightPoint.x() - this->width(), topRightPoint.y(), this->width(), this->height());
 }
 
 
@@ -393,11 +386,9 @@ void FloatingLayout::buttonPressed(int buttonIndex) {
 
 
 bool FloatingLayout::isALightsButton(uint32_t index) {
-   return (mNames[index] == "Preset"
-            || mNames[index] == "Routine");
+    return (mNames[index] == "Preset" || mNames[index] == "Routine");
 }
 
 QSize FloatingLayout::buttonSize() {
-    return {this->width() / int(mButtons.size()),
-            this->width() / int(mButtons.size())};
+    return {this->width() / int(mButtons.size()), this->width() / int(mButtons.size())};
 }

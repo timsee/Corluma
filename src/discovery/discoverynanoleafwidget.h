@@ -15,16 +15,16 @@
  *        instructions to connect to the NanoLeaf and also provides the ability to manually
  *        enter an IP address, if discovery is failing.
  */
-class DiscoveryNanoLeafWidget : public DiscoveryWidget
-{
+class DiscoveryNanoLeafWidget : public DiscoveryWidget {
     Q_OBJECT
 
 public:
     /*!
      * \brief DiscoveryNanoLeafWidget constructor
+     *
      * \param parent
      */
-    explicit DiscoveryNanoLeafWidget(CommLayer *comm, QWidget *parent);
+    explicit DiscoveryNanoLeafWidget(CommLayer* comm, QWidget* parent);
 
     /// See DiscoveryWidget.h
     void handleDiscovery(bool isActive);
@@ -38,26 +38,26 @@ private slots:
     void minusButtonClicked();
 
 private:
-
     /*!
      * \brief doesNanoLeafExist
+     *
      * \param controller name of controller
-     * \return true if nanoleaf controller exists on discovered or undiscovered list, false otherwise
+     * \return true if nanoleaf controller exists on discovered or undiscovered list, false
+     * otherwise
      */
     bool doesNanoLeafExist(const QString& controller);
 
     /// widget that is used for searching for IP addresses and listing the connected ones.
-    SearchWidget *mSearchWidget;
+    SearchWidget* mSearchWidget;
 
     /// buffer for last IP address used
     QString mLastIP;
 
     /// label to prompt the user through the application.
-    QLabel *mLabel;
+    QLabel* mLabel;
 
     /// layout for widget
-    QVBoxLayout *mLayout;
-
+    QVBoxLayout* mLayout;
 };
 
 #endif // DISCOVERYNANOLEAFWIDGET_H

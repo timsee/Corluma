@@ -4,18 +4,18 @@
  * Released under the GNU General Public License.
  */
 
+#include <QGraphicsOpacityEffect>
+#include <QScroller>
+#include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
-#include <QStyleOption>
-#include <QScroller>
-#include <QGraphicsOpacityEffect>
 
 #include "bridgeinfowidget.h"
 
-namespace hue
-{
+namespace hue {
 
-BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget *parent) : cor::ListItemWidget(bridge.IP, parent) {
+BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget* parent)
+    : cor::ListItemWidget(bridge.IP, parent) {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     this->setStyleSheet(styleSheet);
 
@@ -53,7 +53,7 @@ BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget *parent) :
     // mid Right info
     //-----------
 
-    mIPAddress  = new QLabel(this);
+    mIPAddress = new QLabel(this);
     mIPAddress->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mIPAddress->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     setTitleFontPointSize(14);
@@ -75,10 +75,10 @@ BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget *parent) :
     //----
 
     mTopRightLayout = new QVBoxLayout;
-    mTopRightLayout->addWidget(mIPAddress,  1);
-    mTopRightLayout->addWidget(mAPI,        1);
-    mTopRightLayout->addWidget(mID,         1);
-    mTopRightLayout->addWidget(mSpacer,     1);
+    mTopRightLayout->addWidget(mIPAddress, 1);
+    mTopRightLayout->addWidget(mAPI, 1);
+    mTopRightLayout->addWidget(mID, 1);
+    mTopRightLayout->addWidget(mSpacer, 1);
 
     //-----
     // mid widget
@@ -134,17 +134,13 @@ void BridgeInfoWidget::handleBridgeState(EBridgeDiscoveryState state) {
     if (state == EBridgeDiscoveryState::connected) {
         mBridgePixmap = QPixmap(":images/Hue-Bridge.png");
         auto width = int(this->width() * 0.333f);
-        mImage->setPixmap(mBridgePixmap.scaled(width,
-                                               width,
-                                               Qt::KeepAspectRatio,
-                                               Qt::SmoothTransformation));
+        mImage->setPixmap(
+            mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     } else if (state == EBridgeDiscoveryState::lookingForUsername) {
         mBridgePixmap = QPixmap(":images/pressHueBridgeImage.png");
         auto width = int(this->width() * 0.333f);
-        mImage->setPixmap(mBridgePixmap.scaled(width,
-                                               width,
-                                               Qt::KeepAspectRatio,
-                                               Qt::SmoothTransformation));
+        mImage->setPixmap(
+            mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     } else if (state == EBridgeDiscoveryState::lookingForResponse) {
         mImage->setMovie(mMovie);
         mMovie->start();
@@ -156,7 +152,7 @@ void BridgeInfoWidget::setChecked(bool checked) {
     update();
 }
 
-void BridgeInfoWidget::paintEvent(QPaintEvent *event) {
+void BridgeInfoWidget::paintEvent(QPaintEvent* event) {
     Q_UNUSED(event);
     QStyleOption opt;
     opt.init(this);
@@ -166,7 +162,7 @@ void BridgeInfoWidget::paintEvent(QPaintEvent *event) {
     if (mIsChecked) {
         painter.fillRect(this->rect(), QBrush(QColor(61, 142, 201, 255)));
     } else {
-        //TODO: could I make this transparent in all cases?
+        // TODO: could I make this transparent in all cases?
         painter.fillRect(this->rect(), QBrush(QColor(32, 31, 31, 255)));
     }
 
@@ -179,19 +175,17 @@ void BridgeInfoWidget::paintEvent(QPaintEvent *event) {
     linePainter.drawLine(spacerLine);
 }
 
-void BridgeInfoWidget::mouseReleaseEvent(QMouseEvent *event) {
+void BridgeInfoWidget::mouseReleaseEvent(QMouseEvent* event) {
     Q_UNUSED(event);
     emit clicked(mBridge.id);
 }
 
-void BridgeInfoWidget::resizeEvent(QResizeEvent *) {
+void BridgeInfoWidget::resizeEvent(QResizeEvent*) {
     if (mBridge.state != EBridgeDiscoveryState::lookingForResponse) {
         auto width = int(this->width() * 0.333f);
         mImage->setFixedWidth(width);
-        mImage->setPixmap(mBridgePixmap.scaled(width,
-                                               width,
-                                               Qt::KeepAspectRatio,
-                                               Qt::SmoothTransformation));
+        mImage->setPixmap(
+            mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     } else {
         mImage->setFixedWidth(int(this->width() * 0.333f));
     }
@@ -215,8 +209,10 @@ void BridgeInfoWidget::changedName(const QString& newName) {
 }
 
 void BridgeInfoWidget::setTitleFontPointSize(int pt) {
-    if (pt <= 0) pt = 1;
-    QString stylesheet = "font-size:" + QString::number(pt)+ "pt;";
+    if (pt <= 0) {
+        pt = 1;
+    }
+    QString stylesheet = "font-size:" + QString::number(pt) + "pt;";
     mIPAddress->setStyleSheet(stylesheet);
 
     QFont font(mIPAddress->font().toString(), pt);
@@ -229,4 +225,4 @@ void BridgeInfoWidget::deleteButtonPressed() {
 }
 
 
-}
+} // namespace hue

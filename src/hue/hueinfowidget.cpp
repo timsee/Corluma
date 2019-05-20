@@ -4,33 +4,34 @@
  * Released under the GNU General Public License.
  */
 
-#include <QtCore>
-#include <QtGui>
-#include <QStyleOption>
-#include <QScroller>
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
+#include <QScroller>
+#include <QStyleOption>
+#include <QtCore>
+#include <QtGui>
 
 #include "hue/hueinfowidget.h"
 #include "utils/qt.h"
 
-namespace hue
-{
+namespace hue {
 
-HueInfoWidget::HueInfoWidget(HueLight light, QWidget *parent) : QWidget(parent), mHideDetails{false}, mLight(light) {
+HueInfoWidget::HueInfoWidget(HueLight light, QWidget* parent)
+    : QWidget(parent), mHideDetails{false}, mLight(light) {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     this->setStyleSheet(styleSheet);
 
-    mName = new EditableFieldWidget(light.name, this, 32, "A hue's name must be at most 32 characters long.");
+    mName = new EditableFieldWidget(
+        light.name, this, 32, "A hue's name must be at most 32 characters long.");
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mName->setFontPointSize(14);
     connect(mName, SIGNAL(updatedField(QString)), this, SLOT(nameChanged(QString)));
 
-    mModelID  = new QLabel("<b>Model:</b>  " + light.modelID, this);
+    mModelID = new QLabel("<b>Model:</b>  " + light.modelID, this);
     mModelID->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mModelID->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mSoftwareVersion  = new QLabel("<b>Software:</b>  " + light.softwareVersion, this);
+    mSoftwareVersion = new QLabel("<b>Software:</b>  " + light.softwareVersion, this);
     mSoftwareVersion->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mSoftwareVersion->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
@@ -57,8 +58,8 @@ HueInfoWidget::HueInfoWidget(HueLight light, QWidget *parent) : QWidget(parent),
 }
 
 void HueInfoWidget::updateLight(HueLight light) {
-
-    // many fields such as the mac address and the type of light won't update, only check the fields that do
+    // many fields such as the mac address and the type of light won't update, only check the fields
+    // that do
     if (light.name.compare(mLight.name) != 0) {
         mName->setText(light.name);
     }
@@ -70,7 +71,7 @@ void HueInfoWidget::updateLight(HueLight light) {
     mLight = light;
 }
 
-void HueInfoWidget::mouseReleaseEvent(QMouseEvent *event) {
+void HueInfoWidget::mouseReleaseEvent(QMouseEvent* event) {
     Q_UNUSED(event);
     emit clicked(mKey);
 }
@@ -87,7 +88,7 @@ void HueInfoWidget::hideDetails(bool shouldHide) {
     mHideDetails = shouldHide;
 }
 
-void HueInfoWidget::paintEvent(QPaintEvent *event) {
+void HueInfoWidget::paintEvent(QPaintEvent* event) {
     Q_UNUSED(event);
     QStyleOption opt;
     opt.init(this);
@@ -97,7 +98,7 @@ void HueInfoWidget::paintEvent(QPaintEvent *event) {
     if (mIsChecked) {
         painter.fillRect(this->rect(), QBrush(QColor(61, 142, 201, 255)));
     } else {
-        //TODO: could I make this transparent in all cases?
+        // TODO: could I make this transparent in all cases?
         painter.fillRect(this->rect(), QBrush(QColor(32, 31, 31, 255)));
     }
 
@@ -110,5 +111,4 @@ void HueInfoWidget::paintEvent(QPaintEvent *event) {
     linePainter.drawLine(spacerLine);
 }
 
-}
-
+} // namespace hue

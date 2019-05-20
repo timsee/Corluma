@@ -1,12 +1,11 @@
 #ifndef COR_STATUS_ICON_H
 #define COR_STATUS_ICON_H
 
+#include <QLabel>
 #include <QObject>
 #include <QWidget>
-#include <QLabel>
 
-namespace cor
-{
+namespace cor {
 
 /*!
  * \copyright
@@ -18,13 +17,11 @@ namespace cor
  *        the device cannot be reached. If it showing black or white, it is off or on respectively.
  *        It also shows the current brightness as a shade of grey.
  */
-class StatusIcon : public QWidget
-{
+class StatusIcon : public QWidget {
     Q_OBJECT
 public:
-
     /// constructor
-    explicit StatusIcon(QWidget *parent);
+    explicit StatusIcon(QWidget* parent);
 
     /*!
      * \brief update update the icon's state.
@@ -35,14 +32,13 @@ public:
     void update(bool isReachable, bool isOn, double brightness);
 
 private:
-
     /// black icon used for overlaying
-    QLabel *mBlackIcon;
+    QLabel* mBlackIcon;
 
     /// main icon
-    QLabel *mIcon;
+    QLabel* mIcon;
 };
 
-}
+} // namespace cor
 
 #endif // COR_STATUS_ICON_H

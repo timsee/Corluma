@@ -1,16 +1,15 @@
 #ifndef BRIDGESCHEDULESWIDGET_H
 #define BRIDGESCHEDULESWIDGET_H
 
-#include <QWidget>
 #include <QScrollArea>
+#include <QWidget>
 
-#include "cor/topwidget.h"
 #include "cor/page.h"
+#include "cor/topwidget.h"
 #include "hue/bridge.h"
 #include "hue/hueschedulewidget.h"
 
-namespace hue
-{
+namespace hue {
 /*!
  * \copyright
  * Copyright (C) 2015 - 2019.
@@ -21,12 +20,11 @@ namespace hue
  * \brief The BridgeSchedulesWidget class is a simple widget made for displaying metadata
  *        about the existing schedules in a list. The user can also delete schedules.
  */
-class BridgeSchedulesWidget : public QWidget, public cor::Page
-{
+class BridgeSchedulesWidget : public QWidget, public cor::Page {
     Q_OBJECT
 public:
     /// constructor
-    explicit BridgeSchedulesWidget(QWidget *parent);
+    explicit BridgeSchedulesWidget(QWidget* parent);
 
     /// update the hue schedules in the widget
     void updateSchedules(std::list<SHueSchedule> schedules);
@@ -46,7 +44,7 @@ protected:
     /*!
      * \brief paintEvent used to draw the background of the widget.
      */
-    void paintEvent(QPaintEvent *);
+    void paintEvent(QPaintEvent*);
 
 private slots:
     /*!
@@ -56,23 +54,23 @@ private slots:
 
 private:
     /// title and close button at top of widget.
-    cor::TopWidget *mTopWidget;
+    cor::TopWidget* mTopWidget;
 
     /// layout for widget
-    QVBoxLayout *mMainLayout;
+    QVBoxLayout* mMainLayout;
 
     /// layout for scroll area
-    QVBoxLayout *mScrollLayout;
+    QVBoxLayout* mScrollLayout;
 
     /// scroll area for displaying list.
-    QScrollArea *mScrollArea;
+    QScrollArea* mScrollArea;
 
     /// widget used for scroll area.
-    QWidget *mScrollAreaWidget;
+    QWidget* mScrollAreaWidget;
 
     /// vector of all HueScheduleWidget
     std::vector<hue::HueScheduleWidget*> mWidgets;
 };
 
-}
+} // namespace hue
 #endif // BRIDGESCHEDULESWIDGET_H

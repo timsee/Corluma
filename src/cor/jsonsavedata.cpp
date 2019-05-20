@@ -6,18 +6,17 @@
 
 #include "jsonsavedata.h"
 
+#include <QDebug>
+#include <QDir>
 #include <QFileInfo>
 #include <QStandardPaths>
-#include <QDir>
-#include <QDebug>
 #include <cmath>
 
-namespace cor
-{
+namespace cor {
 
-JSONSaveData::JSONSaveData(const QString& saveName)
-{
-    mSavePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/" + saveName + ".json";
+JSONSaveData::JSONSaveData(const QString& saveName) {
+    mSavePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/" + saveName
+                + ".json";
     checkForJSON();
 }
 
@@ -38,7 +37,7 @@ bool JSONSaveData::checkForJSON() {
         saveFile.close();
         QJsonParseError error{};
         mJsonData = QJsonDocument::fromJson(data.toUtf8(), &error);
-        //qDebug() << "error: " << error.errorString();
+        // qDebug() << "error: " << error.errorString();
         if (!mJsonData.isNull()) {
             return true;
         }
@@ -64,7 +63,7 @@ bool JSONSaveData::saveJSON() {
     }
 
     if (mJsonData.isNull()) {
-        //qDebug() << "WARNING: json data is null!";
+        // qDebug() << "WARNING: json data is null!";
         return false;
     }
     saveFile.write(mJsonData.toJson());
@@ -77,11 +76,11 @@ bool JSONSaveData::removeJSONObject(const QString& key, const QString& givenValu
     int index = 0;
     int foundIndex = 0;
     bool foundMatch = false;
-    if(mJsonData.isArray()) {
+    if (mJsonData.isArray()) {
         QJsonArray array = mJsonData.array();
-        foreach (const QJsonValue &value, array) {
+        foreach (const QJsonValue& value, array) {
             QJsonObject object = value.toObject();
-             if (object[key].isString()) {
+            if (object[key].isString()) {
                 QString jsonValue = object[key].toString();
                 if (jsonValue == givenValue) {
                     foundMatch = true;
@@ -106,11 +105,11 @@ bool JSONSaveData::removeJSONObject(const QString& key, bool givenValue) {
     int index = 0;
     int foundIndex = 0;
     bool foundMatch = false;
-    if(mJsonData.isArray()) {
+    if (mJsonData.isArray()) {
         QJsonArray array = mJsonData.array();
-        foreach (const QJsonValue &value, array) {
+        foreach (const QJsonValue& value, array) {
             QJsonObject object = value.toObject();
-             if (object[key].isBool()) {
+            if (object[key].isBool()) {
                 bool jsonValue = object[key].toBool();
                 if (jsonValue == givenValue) {
                     foundMatch = true;
@@ -130,8 +129,7 @@ bool JSONSaveData::removeJSONObject(const QString& key, bool givenValue) {
 }
 
 
-bool approximatelyEqual(double a, double b, double epsilon)
-{
+bool approximatelyEqual(double a, double b, double epsilon) {
     return fabs(a - b) <= ((fabs(a) < fabs(b) ? fabs(b) : fabs(a)) * epsilon);
 }
 
@@ -140,11 +138,11 @@ bool JSONSaveData::removeJSONObject(const QString& key, double givenValue) {
     int index = 0;
     int foundIndex = 0;
     bool foundMatch = false;
-    if(mJsonData.isArray()) {
+    if (mJsonData.isArray()) {
         QJsonArray array = mJsonData.array();
-        foreach (const QJsonValue &value, array) {
+        foreach (const QJsonValue& value, array) {
             QJsonObject object = value.toObject();
-             if (object[key].isDouble()) {
+            if (object[key].isDouble()) {
                 double jsonValue = object[key].toDouble();
                 if (approximatelyEqual(jsonValue, givenValue, 0.0001)) {
                     foundMatch = true;
@@ -162,4 +160,4 @@ bool JSONSaveData::removeJSONObject(const QString& key, double givenValue) {
     }
     return false;
 }
-}
+} // namespace cor

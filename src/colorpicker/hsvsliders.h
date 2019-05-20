@@ -11,20 +11,20 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief The HSV class is a set of 3 sliders, one representing hue values, one representing saturation values,
- *        and one representing value values.These sliders are used by the ColorPicker during its HSV layout
- *        to give a second option and represnetation of the HSV color being chosen by the ColorPicker.
+ * \brief The HSV class is a set of 3 sliders, one representing hue values, one representing
+ * saturation values, and one representing value values.These sliders are used by the ColorPicker
+ * during its HSV layout to give a second option and represnetation of the HSV color being chosen by
+ * the ColorPicker.
  */
-class HSVSliders : public QWidget
-{
+class HSVSliders : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit HSVSliders(QWidget *parent);
+    explicit HSVSliders(QWidget* parent);
 
     /*!
-     * \brief changeColor programmatically change the values of the sliders. Does not emit a signal with its new value
-     * \param color new color for the sliders.
+     * \brief changeColor programmatically change the values of the sliders. Does not emit a signal
+     * with its new value \param color new color for the sliders.
      */
     void changeColor(const QColor& color, std::uint32_t brightness);
 
@@ -40,8 +40,8 @@ public:
 signals:
 
     /*!
-     * \brief colorChanged emitted whenever a slider changes its values. Emits the full color representation of all 3 sliders
-     * \param color the color representation of all three sliders
+     * \brief colorChanged emitted whenever a slider changes its values. Emits the full color
+     * representation of all 3 sliders \param color the color representation of all three sliders
      */
     void colorChanged(QColor color);
 
@@ -72,7 +72,6 @@ private slots:
     void releasedSlider();
 
 private:
-
     /// stored buffer of current color.
     QColor mColor;
 
@@ -82,35 +81,35 @@ private:
     /*!
      * \brief mRedSlider top slider. Used for choosing amount of red in color.
      */
-    cor::Slider *mHueSlider;
+    cor::Slider* mHueSlider;
 
     /*!
      * \brief mSaturationSlider middle slider. Used for choosing amount of green in color.
      */
-    cor::Slider *mSaturationSlider;
+    cor::Slider* mSaturationSlider;
 
     /*!
      * \brief mValueSlider bottom slider. Used for choosing amount of blue in color.
      */
-    cor::Slider *mValueSlider;
+    cor::Slider* mValueSlider;
 
     /*!
      * \brief mHLabel puts that little "R" in front of the slider.
      */
-    QLabel *mHLabel;
+    QLabel* mHLabel;
     /*!
      * \brief mSLabel puts that little "G" in front of the slider.
      */
-    QLabel *mSLabel;
+    QLabel* mSLabel;
     /*!
      * \brief mVLabel puts that little "B" in front of the slider.
      */
-    QLabel *mVLabel;
+    QLabel* mVLabel;
 
     /*!
      * \brief mLayout layout used to arrange the RGB sliders.
      */
-    QGridLayout *mLayout;
+    QGridLayout* mLayout;
 };
 
 #endif // HSVSLIDERS_H

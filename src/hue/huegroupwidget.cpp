@@ -6,15 +6,14 @@
 
 #include "huegroupwidget.h"
 
+#include <QGraphicsOpacityEffect>
+#include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
-#include <QStyleOption>
-#include <QGraphicsOpacityEffect>
 
-namespace hue
-{
+namespace hue {
 
-HueGroupWidget::HueGroupWidget(QWidget *parent, cor::Group group) : QWidget(parent) {
+HueGroupWidget::HueGroupWidget(QWidget* parent, cor::Group group) : QWidget(parent) {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     this->setStyleSheet(styleSheet);
 
@@ -45,7 +44,7 @@ HueGroupWidget::HueGroupWidget(QWidget *parent, cor::Group group) : QWidget(pare
     mLayout->addWidget(mGroupType);
 }
 
-void HueGroupWidget::paintEvent(QPaintEvent *) {
+void HueGroupWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
@@ -54,4 +53,4 @@ void HueGroupWidget::paintEvent(QPaintEvent *) {
     painter.fillRect(this->rect(), QBrush(QColor(32, 31, 31)));
 }
 
-}
+} // namespace hue

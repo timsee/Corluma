@@ -1,9 +1,9 @@
 #ifndef NOWIFIWIDGET_H
 #define NOWIFIWIDGET_H
 
-#include <QWidget>
 #include <QLabel>
 #include <QLayout>
+#include <QWidget>
 
 /*!
  * \copyright
@@ -11,32 +11,30 @@
  * Released under the GNU General Public License.
  *
  * \brief The NoWifiWidget class is a simple widget that pop ups when there is no wifi
- *        detected on the device currently in use.
+ * detected on the device currently in use.
  */
-class NoWifiWidget : public QWidget
-{
+class NoWifiWidget : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit NoWifiWidget(QWidget *parent);
+    explicit NoWifiWidget(QWidget* parent);
 
 private slots:
     /// called whenever the screen is painted
-    void paintEvent(QPaintEvent *);
+    void paintEvent(QPaintEvent*);
 
     /// callend whenever the window resizes
-    void resizeEvent(QResizeEvent *);
+    void resizeEvent(QResizeEvent*);
 
 private:
-
     /// label for displaying a text message
-    QLabel *mText;
+    QLabel* mText;
 
     /// label for displaying an image
-    QLabel *mImage;
+    QLabel* mImage;
 
     /// page's layout
-    QVBoxLayout *mLayout;
+    QVBoxLayout* mLayout;
 
     /// pixmap for image's label
     QPixmap mPixmap;

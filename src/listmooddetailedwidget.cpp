@@ -8,14 +8,15 @@
 
 #include "utils/qt.h"
 
-#include <QtCore>
-#include <QtGui>
-#include <QStyleOption>
-#include <QScroller>
 #include <QGraphicsOpacityEffect>
 #include <QScrollBar>
+#include <QScroller>
+#include <QStyleOption>
+#include <QtCore>
+#include <QtGui>
 
-ListMoodDetailedWidget::ListMoodDetailedWidget(QWidget *parent, GroupData *groups, CommLayer* comm) : QWidget(parent), mKey{0}, mComm{comm} {
+ListMoodDetailedWidget::ListMoodDetailedWidget(QWidget* parent, GroupData* groups, CommLayer* comm)
+    : QWidget(parent), mKey{0}, mComm{comm} {
     mTopLabel = new QLabel("Hollywood", this);
     mTopLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mTopLabel->setAlignment(Qt::AlignBottom);
@@ -34,8 +35,12 @@ ListMoodDetailedWidget::ListMoodDetailedWidget(QWidget *parent, GroupData *group
     mSimpleGroupWidget->setStyleSheet("background-color:rgba(33,32,32,255);");
 
     mFloatingMenu = new FloatingLayout(false, parent);
-    connect(mFloatingMenu, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
-    std::vector<QString> buttons = { QString("Group_Lights"), QString("Group_Details"), QString("Group_Edit")};
+    connect(mFloatingMenu,
+            SIGNAL(buttonPressed(QString)),
+            this,
+            SLOT(floatingLayoutButtonPressed(QString)));
+    std::vector<QString> buttons
+        = {QString("Group_Lights"), QString("Group_Details"), QString("Group_Edit")};
     mFloatingMenu->setupButtons(buttons, EButtonSize::small);
     mFloatingMenu->setVisible(false);
 
@@ -51,8 +56,9 @@ ListMoodDetailedWidget::ListMoodDetailedWidget(QWidget *parent, GroupData *group
     mAdditionalDetailsWidget->setObjectName("contentWidget");
     QScroller::grabGesture(mScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
     mAdditionalDetailsWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mAdditionalDetailsWidget->setContentsMargins(0,0,0,0);
-    mAdditionalDetailsWidget->setStyleSheet("QWidget#contentWidget{ background-color: #201F1F; } QLabel { background-color: #201F1F; } ");
+    mAdditionalDetailsWidget->setContentsMargins(0, 0, 0, 0);
+    mAdditionalDetailsWidget->setStyleSheet("QWidget#contentWidget{ background-color: #201F1F; } "
+                                            "QLabel { background-color: #201F1F; } ");
 
     mScrollArea->setWidget(mAdditionalDetailsWidget);
 
@@ -66,7 +72,7 @@ ListMoodDetailedWidget::ListMoodDetailedWidget(QWidget *parent, GroupData *group
     mTopLayout->addWidget(mTopLabel, 8);
 
     mLayout = new QVBoxLayout(this);
-    mLayout->setContentsMargins(4,4,4,4);
+    mLayout->setContentsMargins(4, 4, 4, 4);
     mLayout->setSpacing(2);
 
     mLayout->addWidget(mOnOffSwitch, 1);
@@ -78,38 +84,32 @@ void ListMoodDetailedWidget::update(const cor::Mood& mood) {
     mSimpleGroupWidget->removeWidgets();
     mKey = mood.uniqueID();
     mTopLabel->setText(mood.name());
-    mSimpleGroupWidget->updateDevices(mood.lights,
-                                      cor::EWidgetType::full,
-                                      EOnOffSwitchState::hidden,
-                                      false, true);
+    mSimpleGroupWidget->updateDevices(
+        mood.lights, cor::EWidgetType::full, EOnOffSwitchState::hidden, false, true);
 
-    mEditPage->showGroup(mood.name(),
-                         mComm->makeMood(mood).itemList(),
-                         mComm->allDevices(),
-                         true,
-                         false);
+    mEditPage->showGroup(
+        mood.name(), mComm->makeMood(mood).itemList(), mComm->allDevices(), true, false);
 
     mOnOffSwitch->setSwitchState(ESwitchState::off);
     mAdditionalDetailsWidget->display(mood, mPlaceholder->size());
 }
 
 void ListMoodDetailedWidget::clickedDevice(const QString&) {
-   // qDebug() << " device clicked " << key << " vs" << deviceName;
-
+    // qDebug() << " device clicked " << key << " vs" << deviceName;
 }
 
 void ListMoodDetailedWidget::resize() {
     QSize size = qobject_cast<QWidget*>(this->parent())->size();
-    this->setGeometry(int(size.width()  * 0.125f),
+    this->setGeometry(int(size.width() * 0.125f),
                       int(size.height() * 0.125f),
-                      int(size.width()  * 0.75f),
+                      int(size.width() * 0.75f),
                       int(size.height() * 0.75f));
     mScrollArea->setGeometry(mPlaceholder->geometry());
     mAdditionalDetailsWidget->setFixedWidth(mScrollArea->viewport()->width());
     moveFloatingLayout();
 }
 
-void ListMoodDetailedWidget::paintEvent(QPaintEvent *) {
+void ListMoodDetailedWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
@@ -161,7 +161,7 @@ void ListMoodDetailedWidget::changedSwitchState(bool state) {
     }
 }
 
-void ListMoodDetailedWidget::resizeEvent(QResizeEvent *) {
+void ListMoodDetailedWidget::resizeEvent(QResizeEvent*) {
     mSimpleGroupWidget->resizeWidgets();
     moveFloatingLayout();
     mSimpleGroupWidget->setGeometry(mPlaceholder->geometry());
@@ -181,13 +181,15 @@ void ListMoodDetailedWidget::pushIn() {
     this->isOpen(true);
 
     moveWidget(this,
-               QSize(int(this->parentWidget()->width() * 0.75f), int(this->parentWidget()->height() * 0.75f)),
-               QPoint(int(this->parentWidget()->width() * 0.125f), int(-1 * this->parentWidget()->height())),
-               QPoint(int(this->parentWidget()->width() * 0.125f), int(this->parentWidget()->height() * 0.125f)));
+               QSize(int(this->parentWidget()->width() * 0.75f),
+                     int(this->parentWidget()->height() * 0.75f)),
+               QPoint(int(this->parentWidget()->width() * 0.125f),
+                      int(-1 * this->parentWidget()->height())),
+               QPoint(int(this->parentWidget()->width() * 0.125f),
+                      int(this->parentWidget()->height() * 0.125f)));
 
     auto widthPoint = int(this->parentWidget()->width() * 0.875f - topMenu()->width());
-    QPoint finishPoint(widthPoint,
-                       int(this->parentWidget()->height() * 0.125f));
+    QPoint finishPoint(widthPoint, int(this->parentWidget()->height() * 0.125f));
     cor::moveWidget(topMenu(),
                     topMenu()->size(),
                     QPoint(widthPoint, int(-1 * this->parentWidget()->height())),
@@ -205,13 +207,15 @@ void ListMoodDetailedWidget::pushOut() {
     this->isOpen(false);
 
     moveWidget(this,
-               QSize(int(this->parentWidget()->width() * 0.75f), int(this->parentWidget()->height() * 0.75f)),
-               QPoint(int(this->parentWidget()->width() * 0.125f), int(this->parentWidget()->height() * 0.125f)),
-               QPoint(int(this->parentWidget()->width() * 0.125f), int(-1 * this->parentWidget()->height())));
+               QSize(int(this->parentWidget()->width() * 0.75f),
+                     int(this->parentWidget()->height() * 0.75f)),
+               QPoint(int(this->parentWidget()->width() * 0.125f),
+                      int(this->parentWidget()->height() * 0.125f)),
+               QPoint(int(this->parentWidget()->width() * 0.125f),
+                      int(-1 * this->parentWidget()->height())));
 
     auto widthPoint = int(this->parentWidget()->width() * 0.875f - topMenu()->size().width());
-    QPoint startPoint(widthPoint,
-                       int(this->parentWidget()->height() * 0.125f));
+    QPoint startPoint(widthPoint, int(this->parentWidget()->height() * 0.125f));
     cor::moveWidget(topMenu(),
                     topMenu()->size(),
                     startPoint,

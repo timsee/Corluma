@@ -11,20 +11,20 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief The RGBSliders class is a set of 3 sliders, one representing red values, one representing green values,
- *        and one representing blue values.These sliders are used by the ColorPicker during its standard layout
- *        to give a second option and represnetation of the RGB color being chosen by the ColorPicker.
+ * \brief The RGBSliders class is a set of 3 sliders, one representing red values, one representing
+ * green values, and one representing blue values.These sliders are used by the ColorPicker during
+ * its standard layout to give a second option and represnetation of the RGB color being chosen by
+ * the ColorPicker.
  */
-class RGBSliders : public QWidget
-{
+class RGBSliders : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit RGBSliders(QWidget *parent);
+    explicit RGBSliders(QWidget* parent);
 
     /*!
-     * \brief changeColor programmatically change the values of the sliders. Does not emit a signal with its new value
-     * \param color new color for the sliders.
+     * \brief changeColor programmatically change the values of the sliders. Does not emit a signal
+     * with its new value \param color new color for the sliders.
      */
     void changeColor(const QColor& color);
 
@@ -37,8 +37,8 @@ public:
 signals:
 
     /*!
-     * \brief colorChanged emitted whenever a slider changes its values. Emits the full color representation of all 3 sliders
-     * \param color the color representation of all three sliders
+     * \brief colorChanged emitted whenever a slider changes its values. Emits the full color
+     * representation of all 3 sliders \param color the color representation of all three sliders
      */
     void colorChanged(QColor color);
 
@@ -69,42 +69,41 @@ private slots:
     void releasedSlider();
 
 private:
-
     /// stored buffer of current color.
     QColor mColor;
 
     /*!
      * \brief mRedSlider top slider. Used for choosing amount of red in color.
      */
-    cor::Slider *mRedSlider;
+    cor::Slider* mRedSlider;
 
     /*!
      * \brief mGreenSlider middle slider. Used for choosing amount of green in color.
      */
-    cor::Slider *mGreenSlider;
+    cor::Slider* mGreenSlider;
 
     /*!
      * \brief mBlueSlider bottom slider. Used for choosing amount of blue in color.
      */
-    cor::Slider *mBlueSlider;
+    cor::Slider* mBlueSlider;
 
     /*!
      * \brief mRLabel puts that little "R" in front of the slider.
      */
-    QLabel *mRLabel;
+    QLabel* mRLabel;
     /*!
      * \brief mGLabel puts that little "G" in front of the slider.
      */
-    QLabel *mGLabel;
+    QLabel* mGLabel;
     /*!
      * \brief mBLabel puts that little "B" in front of the slider.
      */
-    QLabel *mBLabel;
+    QLabel* mBLabel;
 
     /*!
      * \brief mLayout layout used to arrange the RGB sliders.
      */
-    QGridLayout *mLayout;
+    QGridLayout* mLayout;
 };
 
 #endif // RGBSLIDERS_H

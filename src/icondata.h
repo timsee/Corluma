@@ -4,8 +4,8 @@
 
 #include "cor/protocols.h"
 
-#include <QPixmap>
 #include <QImage>
+#include <QPixmap>
 
 #include <stdio.h>
 #include <memory>
@@ -22,8 +22,7 @@
  * computation. For display, this buffer gets upscaled to the desired icon size.
  *
  */
-class IconData
-{
+class IconData {
 public:
     /*!
      * \brief Constructor
@@ -39,7 +38,8 @@ public:
 
     /*!
      * \brief setRoutine sets the icon as a lighting routine. This takes a routine object and
-     *        the associated palette for a routine, if one exists.
+     * the associated palette for a routine, if one exists.
+     *
      * \param routineObject the json object that represents the routine
      */
     void setRoutine(const QJsonObject& routineObject);
@@ -51,7 +51,7 @@ public:
 
     /*!
      * \brief setMultiGlimmer sets as mostly mainColor, but adds random colors
-     *        as a glimmer effect
+     * as a glimmer effect
      */
     void setMultiGlimmer(const std::vector<QColor>& colors);
 
@@ -59,7 +59,7 @@ public:
      * \brief setMultiFade regions slowly fade from one array color to another
      * \param colorGroup the colorGroup used for the IconData
      * \param set to false in nearly all cases, this only gets set to true for the menu bar
-     *        so the custom array shows a few more colors than 2 when defaulted to 2.
+     * so the custom array shows a few more colors than 2 when defaulted to 2.
      */
     void setMultiFade(const std::vector<QColor>& colors, bool showMore = false);
 
@@ -126,30 +126,34 @@ public:
 
     /*!
      * \brief width getter for the data buffer's width.
+     *
      * \return the width of the IconData.
      */
     std::uint32_t width();
     /*!
      * \brief height getter for the data buffer's height.
+     *
      * \return the height of the IconData.
      */
     std::uint32_t height();
 
     /*!
      * \brief renderAsQImage takes the data and outputs it as a QImage
+     *
      * \return a QImage representation of the data
      */
     const QImage renderAsQImage();
     /*!
      * \brief renderAsQPixmap takes the dat and outputs it as a QPixmap
+     *
      * \return a QPixmap representation of the data
      */
     const QPixmap renderAsQPixmap();
 
 private:
-
     /*!
      * \brief setup used by the constructors to set up the data buffers.
+     *
      * \param width the width of the data buffers.
      * \param height the height of the data buffers.
      */
@@ -205,6 +209,7 @@ private:
      * \brief getMiddleColor helper that takes two colors and computes
      *        the color in the middle of those colors by averaging their
      *        values.
+     *
      * \param first The first color being used.
      * \param second The second color being used.
      * \return A new QColor based on adding the two colors together and dividing

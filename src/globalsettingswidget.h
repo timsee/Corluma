@@ -1,14 +1,14 @@
 #ifndef GLOBALSETTINGSWIDGET_H
 #define GLOBALSETTINGSWIDGET_H
 
-#include <QWidget>
-#include <QPushButton>
-#include <QLabel>
 #include <QCheckBox>
+#include <QLabel>
+#include <QPushButton>
+#include <QWidget>
 
-#include "cor/slider.h"
-#include "cor/checkbox.h"
 #include "appsettings.h"
+#include "cor/checkbox.h"
+#include "cor/slider.h"
 #include "groupdata.h"
 
 /*!
@@ -22,12 +22,11 @@
  *        well. It contains things such as sliders and checkboxes that have a global
  *        effect on the application's state.
  */
-class GlobalSettingsWidget : public QWidget
-{
+class GlobalSettingsWidget : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit GlobalSettingsWidget(QWidget *parent, AppSettings *appSettings);
+    explicit GlobalSettingsWidget(QWidget* parent, AppSettings* appSettings);
 
     /*!
      * \brief updateUI updates the colors of various settings in the UI.
@@ -39,6 +38,7 @@ public:
 
     /*!
      * \brief checkBoxClicked helper for checking if a checkbox is checked. checkmate!
+     *
      * \param type the type of comm type you're checking
      * \param checked true if checked, false otherwise.
      */
@@ -86,6 +86,7 @@ public slots:
 
     /*!
      * \brief timeoutButtonPressed called when timeout button is pressed
+     *
      * \param isChecked true if checked, false if not
      */
     void timeoutButtonPressed(bool isChecked);
@@ -97,15 +98,14 @@ protected:
     /*!
      * \brief resizeEvent called whenever the widget resizes so that assets can be updated.
      */
-    void resizeEvent(QResizeEvent *event);
+    void resizeEvent(QResizeEvent* event);
 
     /*!
      * \brief paintEvent used to draw the background of the widget.
      */
-    void paintEvent(QPaintEvent *);
+    void paintEvent(QPaintEvent*);
 
 private:
-
     //----------------
     // Helper Functions
     //----------------
@@ -117,6 +117,7 @@ private:
 
     /*!
      * \brief showTimeout shows/hides the timeout slider
+     *
      * \param showTimeout true to show the timeout slider, false to hide it
      */
     void showTimeout(bool showTimeout);
@@ -135,7 +136,7 @@ private:
      * \brief mEnabledConnectionsLabel label for section of widget that contains
      *        the enabled connections
      */
-    QLabel *mEnabledConnectionsLabel;
+    QLabel* mEnabledConnectionsLabel;
 
     //----------------
     // Checkboxes
@@ -144,7 +145,7 @@ private:
     /*!
      * \brief mTimeoutCheckBox checkbox for turning timeouts on and off
      */
-    cor::CheckBox *mTimeoutCheckBox;
+    cor::CheckBox* mTimeoutCheckBox;
 
     //----------------
     // Sliders
@@ -153,13 +154,13 @@ private:
     /*!
      * \brief mTimeoutLabel label for timeout slider, says "Timeout."
      */
-    QLabel *mTimeoutLabel;
+    QLabel* mTimeoutLabel;
 
     /*!
      * \brief mTimeoutSlider slider for determining how short/long timeouts
      *        will be.
      */
-    cor::Slider *mTimeoutSlider;
+    cor::Slider* mTimeoutSlider;
 
     //----------------
     // Enabled Connections
@@ -167,17 +168,17 @@ private:
     /*!
      * \brief mArduCorButton button to enable/disable yun devices
      */
-    QPushButton *mArduCorButton;
+    QPushButton* mArduCorButton;
 
     /*!
      * \brief mHueButton button to enable/disable hue devices.
      */
-    QPushButton *mHueButton;
+    QPushButton* mHueButton;
 
     /*!
      * \brief mNanoLeafButton button to enable/disable hue devices.
      */
-    QPushButton *mNanoLeafButton;
+    QPushButton* mNanoLeafButton;
 
     //----------------
     // Stored Variables
@@ -189,8 +190,9 @@ private:
      */
     std::vector<QPushButton*> mConnectionButtons;
 
-    /// pointer to the app states that determine if a protocol (such as arducor or nanoleaf) is currently enabled
-    AppSettings *mAppSettings;
+    /// pointer to the app states that determine if a protocol (such as arducor or nanoleaf) is
+    /// currently enabled
+    AppSettings* mAppSettings;
 };
 
 #endif // GLOBALSETTINGSWIDGET_H

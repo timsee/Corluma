@@ -4,26 +4,27 @@
  * Released under the GNU General Public License.
  */
 
-#include <QtCore>
-#include <QtGui>
-#include <QStyleOption>
-#include <QScroller>
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
+#include <QScroller>
+#include <QStyleOption>
+#include <QtCore>
+#include <QtGui>
 
 #include "nanoleaf/leafcontrollerinfowidget.h"
 #include "utils/qt.h"
 
-namespace nano
-{
+namespace nano {
 
-LeafControllerInfoWidget::LeafControllerInfoWidget(nano::LeafController controller, QWidget *parent) : QWidget(parent), mHideDetails{true} {
+LeafControllerInfoWidget::LeafControllerInfoWidget(nano::LeafController controller, QWidget* parent)
+    : QWidget(parent), mHideDetails{true} {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     this->setStyleSheet(styleSheet);
 
     mController = controller;
 
-    mName = new EditableFieldWidget(controller.name, this, 28, "A controller's name must be at most 28 characters long.");
+    mName = new EditableFieldWidget(
+        controller.name, this, 28, "A controller's name must be at most 28 characters long.");
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mName->setFontPointSize(14);
     connect(mName, SIGNAL(updatedField(QString)), this, SLOT(nameChanged(QString)));
@@ -36,11 +37,11 @@ LeafControllerInfoWidget::LeafControllerInfoWidget(nano::LeafController controll
     mFirmware->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mFirmware->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mSerialNumber  = new QLabel("<b>Serial:</b> " + controller.serialNumber, this);
+    mSerialNumber = new QLabel("<b>Serial:</b> " + controller.serialNumber, this);
     mSerialNumber->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mSerialNumber->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mModelID  = new QLabel("<b>Model:</b>  " + controller.model, this);
+    mModelID = new QLabel("<b>Model:</b>  " + controller.model, this);
     mModelID->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mModelID->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
@@ -59,8 +60,8 @@ LeafControllerInfoWidget::LeafControllerInfoWidget(nano::LeafController controll
 }
 
 void LeafControllerInfoWidget::updateController(nano::LeafController controller) {
-
-    // many fields such as the mac address and the type of light won't update, only check the fields that do
+    // many fields such as the mac address and the type of light won't update, only check the fields
+    // that do
     if (controller.name.compare(mController.name) != 0) {
         mName->setText(controller.name);
     }
@@ -72,7 +73,7 @@ void LeafControllerInfoWidget::updateController(nano::LeafController controller)
     mController = controller;
 }
 
-void LeafControllerInfoWidget::mouseReleaseEvent(QMouseEvent *event) {
+void LeafControllerInfoWidget::mouseReleaseEvent(QMouseEvent* event) {
     Q_UNUSED(event);
     emit clicked(mKey);
 }
@@ -89,7 +90,7 @@ void LeafControllerInfoWidget::hideDetails(bool shouldHide) {
     mHideDetails = shouldHide;
 }
 
-void LeafControllerInfoWidget::paintEvent(QPaintEvent *event) {
+void LeafControllerInfoWidget::paintEvent(QPaintEvent* event) {
     Q_UNUSED(event);
     QStyleOption opt;
     opt.init(this);
@@ -99,7 +100,7 @@ void LeafControllerInfoWidget::paintEvent(QPaintEvent *event) {
     if (mIsChecked) {
         painter.fillRect(this->rect(), QBrush(QColor(61, 142, 201, 255)));
     } else {
-        //TODO: could I make this transparent in all cases?
+        // TODO: could I make this transparent in all cases?
         painter.fillRect(this->rect(), QBrush(QColor(32, 31, 31, 255)));
     }
 
@@ -112,5 +113,4 @@ void LeafControllerInfoWidget::paintEvent(QPaintEvent *event) {
     linePainter.drawLine(spacerLine);
 }
 
-}
-
+} // namespace nano

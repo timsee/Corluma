@@ -5,27 +5,27 @@
 #include <QMainWindow>
 #include <QPushButton>
 
-#include "cor/page.h"
-#include "discoverypage.h"
-#include "icondata.h"
-#include "cor/button.h"
-#include "floatinglayout.h"
 #include "appsettings.h"
 #include "comm/commlayer.h"
-#include "comm/datasyncsettings.h"
 #include "comm/datasyncarduino.h"
-#include "comm/datasyncnanoleaf.h"
 #include "comm/datasynchue.h"
+#include "comm/datasyncnanoleaf.h"
+#include "comm/datasyncsettings.h"
+#include "cor/button.h"
+#include "cor/page.h"
+#include "discoverypage.h"
 #include "editgrouppage.h"
+#include "floatinglayout.h"
 #include "greyoutoverlay.h"
+#include "hue/lightdiscovery.h"
+#include "icondata.h"
+#include "lefthandmenu.h"
+#include "lightinfolistwidget.h"
+#include "listmooddetailedwidget.h"
+#include "mainviewport.h"
+#include "nowifiwidget.h"
 #include "settingspage.h"
 #include "topmenu.h"
-#include "lightinfolistwidget.h"
-#include "nowifiwidget.h"
-#include "listmooddetailedwidget.h"
-#include "lefthandmenu.h"
-#include "hue/lightdiscovery.h"
-#include "mainviewport.h"
 
 /*!
  * \copyright
@@ -40,15 +40,14 @@
  * also a slider to control the overall brightness of the LEDs.
  *
  */
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
     /*!
      * \brief Constructor
      */
-    explicit MainWindow(QWidget *parent);
+    explicit MainWindow(QWidget* parent);
 
     /// true if any discovered, false if nothing discoverd.
     void anyDiscovered(bool discovered) { mAnyDiscovered = discovered; }
@@ -107,13 +106,14 @@ public slots:
     void settingsClosePressed();
 
     /*!
-     * \brief closeDiscoveryWithoutTransition force close discovery page as quickly as possible. SKips
-     *        the standard transition.
+     * \brief closeDiscoveryWithoutTransition force close discovery page as quickly as possible.
+     * SKips the standard transition.
      */
     void closeDiscoveryWithoutTransition();
 
     /*!
-     * \brief topMenuButtonPressed button is pressed from top menu. Gives back the key of the button.
+     * \brief topMenuButtonPressed button is pressed from top menu. Gives back the key of the
+     * button.
      */
     void topMenuButtonPressed(const QString&);
 
@@ -122,6 +122,7 @@ public slots:
 
     /*!
      * \brief lightNameChange change the name of a widget given the key and the new name.
+     *
      * \param type the protocol type of light being changed
      * \param key the key for the light
      * \param name the new name for the light.
@@ -130,6 +131,7 @@ public slots:
 
     /*!
      * \brief deleteLight Delete the light with the given key
+     *
      * \param key unique ID for light to delete
      */
     void deleteLight(const QString& key);
@@ -165,11 +167,12 @@ public slots:
     void moodSelected(std::uint64_t);
 
     /// getter for left hand menu
-    LeftHandMenu *leftHandMenu() { return mLeftHandMenu; }
+    LeftHandMenu* leftHandMenu() { return mLeftHandMenu; }
 
 private slots:
 
-    /// loads most of the pages. These are not loaded automatically since they require wifi to be enabled.
+    /// loads most of the pages. These are not loaded automatically since they require wifi to be
+    /// enabled.
     void loadPages();
 
     /*!
@@ -187,39 +190,38 @@ private slots:
     void openNewGroupMenu();
 
 protected:
-
     /*!
      * \brief resizeEvent called whenever the window resizes. This is used to override
-     *        the resizing of the icons of the menu bar.
+     * the resizing of the icons of the menu bar.
      */
-    virtual void resizeEvent(QResizeEvent *);
+    virtual void resizeEvent(QResizeEvent*);
 
     /*!
      * \brief changeEvent called whenever an event occurs. Currently used to off communication
      *        threads when the application is put to sleep.
+     *
      * \param event the event that has ocurred.
      */
-    void changeEvent(QEvent *event);
+    void changeEvent(QEvent* event);
 
     /// picks up key praesses, works for picking up things like android back buttons
-    void keyPressEvent(QKeyEvent *event);
+    void keyPressEvent(QKeyEvent* event);
 
     /// picks up mouse presses
-    virtual void mousePressEvent(QMouseEvent *);
+    virtual void mousePressEvent(QMouseEvent*);
 
     /// picks up mouse moves
-    virtual void mouseMoveEvent(QMouseEvent *);
+    virtual void mouseMoveEvent(QMouseEvent*);
 
     /// picks up mouse releases
-    virtual void mouseReleaseEvent(QMouseEvent *);
+    virtual void mouseReleaseEvent(QMouseEvent*);
 
 private:
-
     /// handles whether the app is landscape or potrait
     void handleLandscapeOrPortrait();
 
     /// left hand menu.
-    LeftHandMenu *mLeftHandMenu;
+    LeftHandMenu* mLeftHandMenu;
 
     /// start point for a mouse move event
     QPoint mStartPoint;
@@ -238,9 +240,9 @@ private:
 
     /*!
      * \brief mGreyOut overlay that greys out the entire main window. Used in conjunction with the
-     *        mEditPage
+     * mEditPage
      */
-    GreyOutOverlay *mGreyOut;
+    GreyOutOverlay* mGreyOut;
 
     /// true if pages are loaded, false if they haven't been loaded yet
     bool mPagesLoaded;
@@ -254,37 +256,37 @@ private:
 
     /*!
      * \brief mDiscoveryPage page devoted to discovering new connections. Previous connections
-     *        are saved so this page should only be used for configuring.
+     * are saved so this page should only be used for configuring.
      */
-    DiscoveryPage *mDiscoveryPage;
+    DiscoveryPage* mDiscoveryPage;
 
     /*!
      * \brief mEditPage overlay that allows editing and creating collections and moods.
      */
-    EditGroupPage *mEditPage;
+    EditGroupPage* mEditPage;
 
     /*!
      * \brief mMoodDetailedWidget widget for displaying detailed information about a mood.
      */
-    ListMoodDetailedWidget *mMoodDetailedWidget;
+    ListMoodDetailedWidget* mMoodDetailedWidget;
 
     /*!
-     * \brief mHueInfoWidget displays information about hue lights, including their serial numbers and their
-     *        software versions. Can edit light names and delete lights from the Bridge.
+     * \brief mHueInfoWidget displays information about hue lights, including their serial numbers
+     * and their software versions. Can edit light names and delete lights from the Bridge.
      */
-    LightInfoListWidget *mLightInfoWidget;
+    LightInfoListWidget* mLightInfoWidget;
 
     /*!
-     * \brief mSettingsPage overlay widget that allows access to various app settings such as loading from
-     *        JSON or reseting things to defaults.
+     * \brief mSettingsPage overlay widget that allows access to various app settings such as
+     * loading from JSON or reseting things to defaults.
      */
-    SettingsPage *mSettingsPage;
+    SettingsPage* mSettingsPage;
 
     /// true if wifi found, false otherwise
     bool mWifiFound;
 
     /// timer for checking whether or not wifi is enabled.
-    QTimer *mWifiChecker;
+    QTimer* mWifiChecker;
 
     /// widget for displaying whether or not wifi is enabled.
     NoWifiWidget* mNoWifiWidget;
@@ -297,37 +299,37 @@ private:
      * \brief mMainViewport widget that fills the main view port of the application.
      *        This is used for animations.
      */
-    MainViewport *mMainViewport;
+    MainViewport* mMainViewport;
 
     /// adds space to top of window
-    QWidget *mSpacer;
+    QWidget* mSpacer;
 
     /// top menu, contains buttons to different widget pages and global controls.
-    TopMenu *mTopMenu;
+    TopMenu* mTopMenu;
 
     //------------------
     // Backend Data
     //------------------
 
     /// groups parser
-    GroupData *mGroups;
+    GroupData* mGroups;
 
     /*!
      * \brief communication pointer to communication object
-     *        for sending comannds to the lights
+     * for sending comannds to the lights
      */
-    CommLayer *mComm;
+    CommLayer* mComm;
 
     /*!
      * \brief data layer that maintains and tracks the states of the lights
-     *        and the saved data of the GUI
+     * and the saved data of the GUI
      */
-    cor::DeviceList *mData;
+    cor::DeviceList* mData;
 
     /*!
      * \brief mAppSettings maintains which comnmtypes are currently enabled.
      */
-    AppSettings *mAppSettings;
+    AppSettings* mAppSettings;
 
     //------------------
     // Data Sync Threads
@@ -336,22 +338,22 @@ private:
     /*!
      * \brief mDataSyncArduino sync thread for data coming from arduinos
      */
-    DataSyncArduino *mDataSyncArduino;
+    DataSyncArduino* mDataSyncArduino;
 
     /*!
      * \brief mDataSyncHue sync thread for data coming from hues
      */
-    DataSyncHue *mDataSyncHue;
+    DataSyncHue* mDataSyncHue;
 
     /*!
      * \brief mDataSyncNanoLeaf sync thread for data coming from NanoLeaf
      */
-    DataSyncNanoLeaf *mDataSyncNanoLeaf;
+    DataSyncNanoLeaf* mDataSyncNanoLeaf;
 
     /*!
      * \brief mDataSyncSettings sync thread for data coming from settings
      */
-    DataSyncSettings *mDataSyncSettings;
+    DataSyncSettings* mDataSyncSettings;
 };
 
 #endif // MAINWINDOW_H

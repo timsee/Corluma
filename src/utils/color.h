@@ -11,24 +11,23 @@
 
 #include <QColor>
 
-namespace cor
-{
+namespace cor {
 
 /// the default custom colors of ArduCor colors
 inline std::vector<QColor> defaultCustomColors() {
-    std::vector<QColor> customColors = std::vector<QColor>(10, QColor(0,0,0));
+    std::vector<QColor> customColors = std::vector<QColor>(10, QColor(0, 0, 0));
     uint32_t uniqueColors = 5;
     for (uint32_t i = 0; i < customColors.size(); i++) {
         if ((i % uniqueColors) == 0) {
-            customColors[i] = QColor(0,    255, 0);
+            customColors[i] = QColor(0, 255, 0);
         } else if ((i % uniqueColors) == 1) {
-            customColors[i] = QColor(125,  0,   255);
+            customColors[i] = QColor(125, 0, 255);
         } else if ((i % uniqueColors) == 2) {
-            customColors[i] = QColor(0,    0,   255);
+            customColors[i] = QColor(0, 0, 255);
         } else if ((i % uniqueColors) == 3) {
-            customColors[i] = QColor(40,   127, 40);
+            customColors[i] = QColor(40, 127, 40);
         } else if ((i % uniqueColors) == 4) {
-            customColors[i] = QColor(60,   0,   160);
+            customColors[i] = QColor(60, 0, 160);
         }
     }
     return customColors;
@@ -37,7 +36,9 @@ inline std::vector<QColor> defaultCustomColors() {
 
 /*!
  * \brief colorTemperatureToRGB converts a color temperature value to a RGB representation.
- *        Equation taken from http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/
+ *        Equation taken from
+ * http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/
+ *
  * \param ct meriks of color temperature.
  * \return QColor version of color temperature
  */
@@ -67,9 +68,9 @@ inline QColor colorTemperatureToRGB(int ct) {
         blue = 255;
     }
 
-    red   = std::max(0.0, std::min(red, 255.0));
+    red = std::max(0.0, std::min(red, 255.0));
     green = std::max(0.0, std::min(green, 255.0));
-    blue  = std::max(0.0, std::min(blue, 255.0));
+    blue = std::max(0.0, std::min(blue, 255.0));
     return QColor(int(red), int(green), int(blue));
 }
 
@@ -99,6 +100,7 @@ inline int rgbToColorTemperature(QColor color) {
 /*!
  * \brief brightnessDifference gives a percent difference between two brightness
  *        values
+ *
  * \param first first brightness to check
  * \param second second brightness to check
  * \return a value between 0 and 1 which represents how different the brightnesses are.
@@ -109,6 +111,7 @@ inline float brightnessDifference(float first, float second) {
 
 /*!
  * \brief colorDifference gives a percent difference between two colors
+ *
  * \param first first color to check
  * \param second second color to check
  * \return a value between 0 and 1 which is how different two colors are.
@@ -121,6 +124,6 @@ inline float colorDifference(QColor first, QColor second) {
     return difference;
 }
 
-}
+} // namespace cor
 
 #endif // COR_UTILS_COLOR_H

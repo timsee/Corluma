@@ -1,8 +1,7 @@
 #ifndef RANGE_H
 #define RANGE_H
 
-namespace cor
-{
+namespace cor {
 
 /*!
  * \copyright
@@ -16,16 +15,11 @@ namespace cor
 template <typename T>
 class Range {
 public:
-
     /// constructor
-    constexpr Range(const T& min, const T& max)
-        : mMin(min),
-          mMax(max) {}
+    constexpr Range(const T& min, const T& max) : mMin(min), mMax(max) {}
 
     /// true if value is within range (exclusive)
-    bool test(T value) {
-       return ((value > mMin) && (value < mMax));
-    }
+    bool test(T value) { return ((value > mMin) && (value < mMax)); }
 
     /// max value in the range
     T max() const noexcept { return mMax; }
@@ -40,6 +34,6 @@ private:
     T mMax;
 };
 
-}
+} // namespace cor
 
 #endif // RANGE_H

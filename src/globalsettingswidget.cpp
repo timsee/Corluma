@@ -4,24 +4,20 @@
  * Released under the GNU General Public License.
  */
 
+#include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
-#include <QStyleOption>
 
-#include "utils/qt.h"
 #include "globalsettingswidget.h"
+#include "utils/qt.h"
 
-GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent,
-                                           AppSettings *appSettings) :
-                                           QWidget(parent),
-                                           mAppSettings(appSettings) {
+GlobalSettingsWidget::GlobalSettingsWidget(QWidget* parent, AppSettings* appSettings)
+    : QWidget(parent), mAppSettings(appSettings) {
     mSpacerPixels = 5;
 
     // set margins as spacer * 2
-    this->setContentsMargins(mSpacerPixels * 2,
-                             mSpacerPixels * 2,
-                             mSpacerPixels * 2,
-                             mSpacerPixels * 2);
+    this->setContentsMargins(
+        mSpacerPixels * 2, mSpacerPixels * 2, mSpacerPixels * 2, mSpacerPixels * 2);
 
     //-----------
     // Labels
@@ -70,15 +66,15 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget *parent,
     // Enabled Connections
     //-----------
 
-    mArduCorButton    = new QPushButton(this);
+    mArduCorButton = new QPushButton(this);
     mArduCorButton->setCheckable(true);
     mArduCorButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    mHueButton        = new QPushButton(this);
+    mHueButton = new QPushButton(this);
     mHueButton->setCheckable(true);
     mHueButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    mNanoLeafButton    = new QPushButton(this);
+    mNanoLeafButton = new QPushButton(this);
     mNanoLeafButton->setCheckable(true);
     mNanoLeafButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
@@ -138,7 +134,7 @@ void GlobalSettingsWidget::checkCheckBoxes() {
 
 
 void GlobalSettingsWidget::timeoutChanged(int newTimeout) {
-   emit timeoutUpdate(newTimeout);
+    emit timeoutUpdate(newTimeout);
 }
 
 
@@ -147,7 +143,7 @@ void GlobalSettingsWidget::checkBoxClicked(EProtocolType type, bool checked) {
     bool successful = mAppSettings->enable(type, checked);
     if (!successful) {
         mConnectionButtons[uint32_t(type)]->setChecked(true);
-       // mConnectionButtons[mAppSettings->indexOfProtocolSettings(type)]->setStyleSheet("background-color:#4A4949;");
+        // mConnectionButtons[mAppSettings->indexOfProtocolSettings(type)]->setStyleSheet("background-color:#4A4949;");
     }
 
     if (!checked) {
@@ -164,7 +160,7 @@ void GlobalSettingsWidget::checkBoxClicked(EProtocolType type, bool checked) {
 }
 
 void GlobalSettingsWidget::updateUI() {
- //   mTimeoutSlider->setSliderColorBackground(QColor(255, 127, 0));
+    //   mTimeoutSlider->setSliderColorBackground(QColor(255, 127, 0));
 }
 
 void GlobalSettingsWidget::show() {
@@ -175,12 +171,12 @@ void GlobalSettingsWidget::show() {
     resize();
 }
 
-void GlobalSettingsWidget::resizeEvent(QResizeEvent *event) {
+void GlobalSettingsWidget::resizeEvent(QResizeEvent* event) {
     Q_UNUSED(event);
 }
 
 
-void GlobalSettingsWidget::paintEvent(QPaintEvent *) {
+void GlobalSettingsWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
@@ -188,7 +184,7 @@ void GlobalSettingsWidget::paintEvent(QPaintEvent *) {
 
     QPainterPath path;
     path.addRoundedRect(this->rect(), 10, 10);
-    //painter.setPen(QPen(Qt::black, 10));
+    // painter.setPen(QPen(Qt::black, 10));
     painter.fillPath(path, QColor(48, 47, 47));
     painter.drawPath(path);
 }
@@ -210,13 +206,12 @@ void GlobalSettingsWidget::showTimeout(bool showTimeout) {
 }
 
 void GlobalSettingsWidget::resize() {
-    
     // resize the checkboxes widths, if needed
     mTimeoutCheckBox->downsizeTextWidthToFit(int(this->width() * 0.45f));
 
     int currentY = 0;
     auto sliderWidth = int(this->width() * 0.66f);
-    auto sliderHeight =  int(mEnabledConnectionsLabel->height() * 2.75f);
+    auto sliderHeight = int(mEnabledConnectionsLabel->height() * 2.75f);
 
     mTimeoutCheckBox->setGeometry(mSpacerPixels,
                                   mSpacerPixels,
@@ -226,14 +221,11 @@ void GlobalSettingsWidget::resize() {
     currentY += mTimeoutCheckBox->height() + mSpacerPixels;
 
     if (mTimeoutSlider->isVisible()) {
-        mTimeoutLabel->setGeometry(mSpacerPixels,
-                                 currentY,
-                                 mTimeoutLabel->width(),
-                                 sliderHeight);
+        mTimeoutLabel->setGeometry(mSpacerPixels, currentY, mTimeoutLabel->width(), sliderHeight);
         mTimeoutSlider->setGeometry(mTimeoutLabel->geometry().width() + 2 * mSpacerPixels,
-                                  currentY,
-                                  sliderWidth,
-                                  sliderHeight);
+                                    currentY,
+                                    sliderWidth,
+                                    sliderHeight);
         currentY += mTimeoutSlider->height() + mSpacerPixels;
     }
 
@@ -247,26 +239,24 @@ void GlobalSettingsWidget::resize() {
 
     auto buttonSize = int(this->width() * 0.2f);
     if (mHueButton->isVisible()) {
-        mHueButton->setGeometry(mSpacerPixels,
-                                currentY,
-                                buttonSize,
-                                buttonSize);
+        mHueButton->setGeometry(mSpacerPixels, currentY, buttonSize, buttonSize);
 
-        mNanoLeafButton->setGeometry(mHueButton->geometry().x() + mHueButton->width() + mSpacerPixels,
-                                currentY,
-                                buttonSize,
-                                buttonSize);
+        mNanoLeafButton->setGeometry(
+            mHueButton->geometry().x() + mHueButton->width() + mSpacerPixels,
+            currentY,
+            buttonSize,
+            buttonSize);
 
-        mArduCorButton->setGeometry(mNanoLeafButton->geometry().x() + mNanoLeafButton->width() + mSpacerPixels,
-                                currentY,
-                                buttonSize,
-                                buttonSize);
+        mArduCorButton->setGeometry(
+            mNanoLeafButton->geometry().x() + mNanoLeafButton->width() + mSpacerPixels,
+            currentY,
+            buttonSize,
+            buttonSize);
 
         currentY += mHueButton->height() + 2 * mSpacerPixels;
     }
 
-    if (!mTimeoutSlider->isVisible())
-    {
+    if (!mTimeoutSlider->isVisible()) {
         currentY += mSpacerPixels;
     }
 

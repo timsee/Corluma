@@ -8,14 +8,14 @@
 #include "utils/qt.h"
 
 #include <QDebug>
+#include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
-#include <QStyleOption>
 
-#include "icondata.h"
 #include "cor/light.h"
+#include "icondata.h"
 
-SelectLightsButton::SelectLightsButton(QWidget *parent) : QWidget(parent) {
+SelectLightsButton::SelectLightsButton(QWidget* parent) : QWidget(parent) {
     mLabel = new QLabel("Tap to Select Lights", this);
     mLabel->setStyleSheet("background-color:rgba(0,0,0,0);");
     mLabel->setAlignment(Qt::AlignCenter);
@@ -23,13 +23,13 @@ SelectLightsButton::SelectLightsButton(QWidget *parent) : QWidget(parent) {
     mIsIn = false;
 }
 
-void SelectLightsButton::mousePressEvent(QMouseEvent *event) {
+void SelectLightsButton::mousePressEvent(QMouseEvent* event) {
     mIsHighlighted = true;
     update();
     event->ignore();
 }
 
-void SelectLightsButton::mouseReleaseEvent(QMouseEvent *) {
+void SelectLightsButton::mouseReleaseEvent(QMouseEvent*) {
     mIsHighlighted = false;
     // turn back to standard color
     update();
@@ -37,11 +37,11 @@ void SelectLightsButton::mouseReleaseEvent(QMouseEvent *) {
 }
 
 
-void SelectLightsButton::resizeEvent(QResizeEvent *) {
+void SelectLightsButton::resizeEvent(QResizeEvent*) {
     mLabel->setFixedSize(this->size());
 }
 
-void SelectLightsButton::paintEvent(QPaintEvent *) {
+void SelectLightsButton::paintEvent(QPaintEvent*) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     // paint background
@@ -61,15 +61,9 @@ void SelectLightsButton::paintEvent(QPaintEvent *) {
 
 void SelectLightsButton::resize(int yPos) {
     if (mIsIn) {
-        this->setGeometry(0,
-                          yPos,
-                          this->width(),
-                          this->height());
+        this->setGeometry(0, yPos, this->width(), this->height());
     } else {
-        this->setGeometry(0 - this->width(),
-                          yPos,
-                          this->width(),
-                          this->height());
+        this->setGeometry(0 - this->width(), yPos, this->width(), this->height());
     }
 }
 
@@ -77,10 +71,7 @@ void SelectLightsButton::pushOut(int yPos) {
     mIsIn = false;
     QPoint endPoint(0 - this->width(), yPos);
     if (this->pos().x() != endPoint.x()) {
-        cor::moveWidget(this,
-                        this->size(),
-                        QPoint(0, yPos),
-                        endPoint);
+        cor::moveWidget(this, this->size(), QPoint(0, yPos), endPoint);
     }
 }
 
@@ -88,9 +79,6 @@ void SelectLightsButton::pushIn(int yPos) {
     mIsIn = true;
     QPoint startPoint(0 - this->width(), yPos);
     if (this->pos().x() != 0) {
-        cor::moveWidget(this,
-                        this->size(),
-                        startPoint,
-                        QPoint(0, yPos));
+        cor::moveWidget(this, this->size(), startPoint, QPoint(0, yPos));
     }
 }

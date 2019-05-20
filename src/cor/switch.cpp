@@ -7,11 +7,9 @@
 #include "switch.h"
 #include <QDebug>
 
-namespace cor
-{
+namespace cor {
 
-Switch::Switch(QWidget *parent) : QWidget(parent)
-{
+Switch::Switch(QWidget* parent) : QWidget(parent) {
     mSwitch = new QPushButton(this);
     mSwitch->setCheckable(false);
     connect(mSwitch, SIGNAL(clicked(bool)), this, SLOT(buttonPressed(bool)));
@@ -63,20 +61,17 @@ void Switch::resizeIcon() {
             break;
     }
     mSwitch->setFixedSize(this->width(), this->height());
-    QSize newSize = QSize(int(this->width() * 0.8f),
-                          int(this->height() * 0.8f));
-    mSwitchIcon = mSwitchIcon.scaled(newSize.width(),
-                                     newSize.height(),
-                                     Qt::KeepAspectRatio,
-                                     Qt::SmoothTransformation);
+    QSize newSize = QSize(int(this->width() * 0.8f), int(this->height() * 0.8f));
+    mSwitchIcon = mSwitchIcon.scaled(
+        newSize.width(), newSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
     mSwitch->setIcon(QIcon(mSwitchIcon));
     mSwitch->setIconSize(newSize);
 }
 
-void Switch::resizeEvent(QResizeEvent *event) {
+void Switch::resizeEvent(QResizeEvent* event) {
     Q_UNUSED(event);
     resizeIcon();
 }
 
-}
+} // namespace cor

@@ -5,17 +5,13 @@
 #include <QString>
 #include <QWidget>
 
-#include "listitemwidget.h"
 #include "cor/dictionary.h"
+#include "listitemwidget.h"
 
-namespace cor
-{
+namespace cor {
 
 /// type of list
-enum class EListType {
-    grid,
-    linear
-};
+enum class EListType { grid, linear };
 
 /*!
  * \copyright
@@ -25,16 +21,15 @@ enum class EListType {
  *
  * \brief The ListLayout class computes the layout of a cor::ListWidget
  */
-class ListLayout
-{
+class ListLayout {
 public:
-
     /// constructor
     ListLayout(EListType type);
 
     /*!
      * \brief insertWidget insert cor::ListItemWIdget into the layout.
-     * \param widget widget to be inserted, if it doesn't already exist. Will reorganize widgets if needed.
+     * \param widget widget to be inserted, if it doesn't already exist. Will reorganize widgets if
+     * needed.
      */
     void insertWidget(cor::ListItemWidget* widget);
 
@@ -56,7 +51,7 @@ public:
      * \param index index of widget to return
      * \return pointer to ListCollectionWidget
      */
-    cor::ListItemWidget *widget(uint32_t index);
+    cor::ListItemWidget* widget(uint32_t index);
 
     /*!
      * \brief widget get a ListCollectionWidget by its key.
@@ -64,16 +59,17 @@ public:
      * \return pointer to ListCollectionWidget with matching key, if one exists
      *         otherwise, it returns a nullptr.
      */
-    cor::ListItemWidget *widget(const QString& key);
+    cor::ListItemWidget* widget(const QString& key);
 
     /*!
-     * \brief widgetPosition gives the widget position based off of the given widget. Position is not *actual* position,
-     *        but where it falls in the group overall. For example, top left widget is (0,0). Next widget is (0,1). First
-     *        widget in second row is (1,0)
+     * \brief widgetPosition gives the widget position based off of the given widget. Position is
+     * not *actual* position, but where it falls in the group overall. For example, top left widget
+     * is (0,0). Next widget is (0,1). First widget in second row is (1,0)
+     *
      * \param widget widget to look for position for.
      * \return Position of widget as a point.
      */
-    QPoint widgetPosition(QWidget *widget);
+    QPoint widgetPosition(QWidget* widget);
 
     /// getter for widget position based on index in vector.
     QPoint widgetPosition(int index);
@@ -98,7 +94,6 @@ public:
     QSize overallSize();
 
 private:
-
     /// maps keys to widgets while allowing quicker lookups
     cor::Dictionary<cor::ListItemWidget*> mWidgetDictionary;
 
@@ -107,9 +102,8 @@ private:
 
     /// stores type of list
     EListType mType;
-
 };
 
-}
+} // namespace cor
 
 #endif // LISTLAYOUT_H

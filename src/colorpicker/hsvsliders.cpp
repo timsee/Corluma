@@ -8,7 +8,7 @@
 
 #include <QDebug>
 
-HSVSliders::HSVSliders(QWidget *parent) : QWidget(parent) {
+HSVSliders::HSVSliders(QWidget* parent) : QWidget(parent) {
     // --------------
     // Setup Sliders
     // --------------
@@ -117,21 +117,18 @@ void HSVSliders::enable(bool enable) {
 }
 
 void HSVSliders::hueSliderChanged(int newValue) {
-   emit colorChanged(generateColor(newValue,
-                                   mSaturationSlider->slider()->value(),
-                                   mValueSlider->slider()->value()));
+    emit colorChanged(generateColor(
+        newValue, mSaturationSlider->slider()->value(), mValueSlider->slider()->value()));
 }
 
 void HSVSliders::saturationSliderChanged(int newValue) {
-    emit colorChanged(generateColor(mHueSlider->slider()->value(),
-                                    newValue,
-                                    mValueSlider->slider()->value()));
+    emit colorChanged(
+        generateColor(mHueSlider->slider()->value(), newValue, mValueSlider->slider()->value()));
 }
 
 void HSVSliders::valueSliderChanged(int newValue) {
-    emit colorChanged(generateColor(mHueSlider->slider()->value(),
-                                    mSaturationSlider->slider()->value(),
-                                    newValue));
+    emit colorChanged(generateColor(
+        mHueSlider->slider()->value(), mSaturationSlider->slider()->value(), newValue));
 }
 
 void HSVSliders::releasedSlider() {
@@ -143,13 +140,9 @@ void HSVSliders::releasedSlider() {
 QColor HSVSliders::generateColor(int hue, int saturation, int value) {
     QColor color;
     if (mColor.hue() == -1) {
-        color.setHsvF(0,
-                      saturation / 255.0,
-                      value / 100.0);
+        color.setHsvF(0, saturation / 255.0, value / 100.0);
     } else {
-        color.setHsvF(hue / 359.0,
-                      saturation / 255.0,
-                      value / 100.0);
+        color.setHsvF(hue / 359.0, saturation / 255.0, value / 100.0);
     }
     return color;
 }

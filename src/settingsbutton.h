@@ -1,9 +1,9 @@
 #ifndef SETTINGSBUTTON_H
 #define SETTINGSBUTTON_H
 
-#include <QWidget>
 #include <QLabel>
 #include <QLayout>
+#include <QWidget>
 
 /*!
  * \copyright
@@ -13,17 +13,17 @@
 
 /*!
  * \brief The SettingsButton class is the widget used to display buttons on the settings page. This
- *        button has one main title and an optional description.
+ * button has one main title and an optional description.
  */
-class SettingsButton : public QWidget
-{
+class SettingsButton : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit SettingsButton(const QString& title, const QString& description, QWidget *parent);
+    explicit SettingsButton(const QString& title, const QString& description, QWidget* parent);
 
     /*!
      * \brief shouldHightlght highlights or unhiglights the button.
+     *
      * \param shouldHighlight true to highlight the button, false to unhighlight
      */
     void shouldHightlght(bool shouldHighlight);
@@ -45,17 +45,17 @@ private slots:
 
 protected:
     /// handles when the widget is painted
-    void paintEvent(QPaintEvent *);
+    void paintEvent(QPaintEvent*);
 
 private:
     /// title for button
-    QLabel *mTitle;
+    QLabel* mTitle;
 
     /// dscription for button
-    QLabel *mDescription;
+    QLabel* mDescription;
 
     /// layout for button
-    QVBoxLayout *mLayout;
+    QVBoxLayout* mLayout;
 
     /// true if highlight, false if not
     bool mIsHighlighted;

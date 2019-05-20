@@ -4,18 +4,18 @@
  * Released under the GNU General Public License.
  */
 
+#include <QGraphicsOpacityEffect>
+#include <QMessageBox>
+#include <QScroller>
+#include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
-#include <QStyleOption>
-#include <QGraphicsOpacityEffect>
-#include <QScroller>
-#include <QMessageBox>
 
 #include "lightinfolistwidget.h"
 #include "utils/qt.h"
 
 
-LightInfoListWidget::LightInfoListWidget(QWidget *parent) : QWidget(parent) {
+LightInfoListWidget::LightInfoListWidget(QWidget* parent) : QWidget(parent) {
     mTopWidget = new cor::TopWidget("Light Info", ":images/closeX.png", this);
     connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(closePressed(bool)));
     mTopWidget->setFontPoint(20);
@@ -26,7 +26,7 @@ LightInfoListWidget::LightInfoListWidget(QWidget *parent) : QWidget(parent) {
 
     mScrollAreaWidget = new QWidget(this);
     mScrollAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mScrollAreaWidget->setContentsMargins(0,0,0,0);
+    mScrollAreaWidget->setContentsMargins(0, 0, 0, 0);
     mScrollArea->setWidget(mScrollAreaWidget);
 
     mScrollLayout = new QVBoxLayout(mScrollAreaWidget);
@@ -43,8 +43,8 @@ LightInfoListWidget::LightInfoListWidget(QWidget *parent) : QWidget(parent) {
 
     mMainLayout = new QVBoxLayout(this);
 
-    mMainLayout->addWidget(mTopWidget,    2);
-    mMainLayout->addWidget(mScrollArea,   14);
+    mMainLayout->addWidget(mTopWidget, 2);
+    mMainLayout->addWidget(mScrollArea, 14);
     mMainLayout->addWidget(mDeleteButton, 1, Qt::AlignHCenter);
 
     mLastKey = "";
@@ -65,10 +65,13 @@ void LightInfoListWidget::updateHues(std::list<HueLight> lights) {
 
         // if it doesnt exist, add it
         if (widgetIndex == -1) {
-            hue::HueInfoWidget *widget = new hue::HueInfoWidget(light, mScrollAreaWidget);
+            hue::HueInfoWidget* widget = new hue::HueInfoWidget(light, mScrollAreaWidget);
             widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(lightInfoWidgetClicked(QString)));
-            connect(widget, SIGNAL(changedName(EProtocolType,QString,QString)), this, SLOT(nameChanged(EProtocolType,QString,QString)));
+            connect(widget,
+                    SIGNAL(changedName(EProtocolType, QString, QString)),
+                    this,
+                    SLOT(nameChanged(EProtocolType, QString, QString)));
             mHueWidgets.push_back(widget);
             mScrollLayout->addWidget(widget);
         }
@@ -91,10 +94,14 @@ void LightInfoListWidget::updateControllers(std::list<nano::LeafController> cont
         }
         // if it doesnt exist, add it
         if (widgetIndex == -1) {
-            nano::LeafControllerInfoWidget *widget = new nano::LeafControllerInfoWidget(controller, mScrollAreaWidget);
+            nano::LeafControllerInfoWidget* widget
+                = new nano::LeafControllerInfoWidget(controller, mScrollAreaWidget);
             widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(lightInfoWidgetClicked(QString)));
-            connect(widget, SIGNAL(changedName(EProtocolType,QString,QString)), this, SLOT(nameChanged(EProtocolType,QString,QString)));
+            connect(widget,
+                    SIGNAL(changedName(EProtocolType, QString, QString)),
+                    this,
+                    SLOT(nameChanged(EProtocolType, QString, QString)));
             mNanoleafWidgets.push_back(widget);
             mScrollLayout->addWidget(widget);
         }
@@ -118,7 +125,7 @@ void LightInfoListWidget::updateLights(std::list<cor::Light> lights) {
         }
         // if it doesnt exist, add it
         if (widgetIndex == -1) {
-            ArduCorInfoWidget *widget = new ArduCorInfoWidget(light, mScrollAreaWidget);
+            ArduCorInfoWidget* widget = new ArduCorInfoWidget(light, mScrollAreaWidget);
             widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(lightInfoWidgetClicked(QString)));
             mArduCorWidgets.push_back(widget);
@@ -139,10 +146,9 @@ void LightInfoListWidget::resize(bool resizeFullWidget) {
     }
     // resize scroll area
     mScrollAreaWidget->setFixedWidth(int(mScrollArea->width() * 0.9f));
-    QSize widgetSize(int(this->width()  * 0.9f),
-                     int(this->height() / 3.66f));
+    QSize widgetSize(int(this->width() * 0.9f), int(this->height() / 3.66f));
     int yPos = 0;
-    //TODO: make a better system for resizing
+    // TODO: make a better system for resizing
     // draw widgets in content region
     for (auto widget : mHueWidgets) {
         if (widget->detailsHidden()) {
@@ -150,10 +156,7 @@ void LightInfoListWidget::resize(bool resizeFullWidget) {
         } else {
             widget->setFixedHeight(widgetSize.height());
         }
-        widget->setGeometry(0,
-                            yPos,
-                            widgetSize.width(),
-                            widget->height());
+        widget->setGeometry(0, yPos, widgetSize.width(), widget->height());
         yPos += widget->height();
     }
     for (auto widget : mNanoleafWidgets) {
@@ -162,10 +165,7 @@ void LightInfoListWidget::resize(bool resizeFullWidget) {
         } else {
             widget->setFixedHeight(widgetSize.height());
         }
-        widget->setGeometry(0,
-                            yPos,
-                            widgetSize.width(),
-                            widget->height());
+        widget->setGeometry(0, yPos, widgetSize.width(), widget->height());
         yPos += widget->height();
     }
     for (auto widget : mArduCorWidgets) {
@@ -174,10 +174,7 @@ void LightInfoListWidget::resize(bool resizeFullWidget) {
         } else {
             widget->setFixedHeight(widgetSize.height());
         }
-        widget->setGeometry(0,
-                            yPos,
-                            widgetSize.width(),
-                            widget->height());
+        widget->setGeometry(0, yPos, widgetSize.width(), widget->height());
         yPos += widget->height();
     }
     mDeleteButton->setFixedWidth(int(this->width() * 0.5f));
@@ -213,7 +210,9 @@ void LightInfoListWidget::deleteButtonPressed(bool) {
         QString text;
         switch (type) {
             case EProtocolType::arduCor:
-                text = "Delete " + lightName + "? This will remove this light and all others using the same arduino or raspberry pi from the app memory.";
+                text = "Delete " + lightName
+                       + "? This will remove this light and all others using the same arduino or "
+                         "raspberry pi from the app memory.";
                 break;
             case EProtocolType::hue:
                 text = "Delete " + lightName + "? This will remove it from the Hue Bridge.";
@@ -225,8 +224,7 @@ void LightInfoListWidget::deleteButtonPressed(bool) {
                 text = "LIGHT NOT FOUND";
                 break;
         }
-        reply = QMessageBox::question(this, "Delete?", text,
-                                      QMessageBox::Yes|QMessageBox::No);
+        reply = QMessageBox::question(this, "Delete?", text, QMessageBox::Yes | QMessageBox::No);
         if (reply == QMessageBox::Yes) {
             // signal to remove from app
             emit deleteLight(mLastKey);
@@ -234,7 +232,7 @@ void LightInfoListWidget::deleteButtonPressed(bool) {
     }
 }
 
-void LightInfoListWidget::paintEvent(QPaintEvent *) {
+void LightInfoListWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
@@ -250,7 +248,7 @@ void LightInfoListWidget::closePressed(bool) {
 void LightInfoListWidget::lightInfoWidgetClicked(const QString& key) {
     bool shouldEnableDelete = true;
 
-   // qDebug() << " clicked " << key;
+    // qDebug() << " clicked " << key;
     for (auto widget : mHueWidgets) {
         if (widget->checked()) {
             widget->setChecked(false);
@@ -314,7 +312,7 @@ void LightInfoListWidget::lightInfoWidgetClicked(const QString& key) {
     if (mLastKey.compare("") == 0) {
         mDeleteButton->setEnabled(false);
         mDeleteButton->setStyleSheet("background-color:rgb(45,30,30);");
-    } else if (shouldEnableDelete){
+    } else if (shouldEnableDelete) {
         mDeleteButton->setEnabled(true);
         mDeleteButton->setStyleSheet("background-color:rgb(110,30,30);");
     }
@@ -324,9 +322,12 @@ void LightInfoListWidget::lightInfoWidgetClicked(const QString& key) {
 
 void LightInfoListWidget::pushIn() {
     moveWidget(this,
-               QSize(int(this->parentWidget()->width() * 0.75f), int(this->parentWidget()->height() * 0.75f)),
-               QPoint(int(this->parentWidget()->width() * 0.125f), int(-1 * this->parentWidget()->height())),
-               QPoint(int(this->parentWidget()->width() * 0.125f), int(this->parentWidget()->height() * 0.125f)));
+               QSize(int(this->parentWidget()->width() * 0.75f),
+                     int(this->parentWidget()->height() * 0.75f)),
+               QPoint(int(this->parentWidget()->width() * 0.125f),
+                      int(-1 * this->parentWidget()->height())),
+               QPoint(int(this->parentWidget()->width() * 0.125f),
+                      int(this->parentWidget()->height() * 0.125f)));
 
     this->isOpen(true);
 
@@ -338,7 +339,10 @@ void LightInfoListWidget::pushOut() {
     this->isOpen(false);
 
     moveWidget(this,
-               QSize(int(this->parentWidget()->width() * 0.75f), int(this->parentWidget()->height() * 0.75f)),
-               QPoint(int(this->parentWidget()->width() * 0.125f), int(this->parentWidget()->height() * 0.125f)),
-               QPoint(int(this->parentWidget()->width() * 0.125f), int(-1 * this->parentWidget()->height())));
+               QSize(int(this->parentWidget()->width() * 0.75f),
+                     int(this->parentWidget()->height() * 0.75f)),
+               QPoint(int(this->parentWidget()->width() * 0.125f),
+                      int(this->parentWidget()->height() * 0.125f)),
+               QPoint(int(this->parentWidget()->width() * 0.125f),
+                      int(-1 * this->parentWidget()->height())));
 }

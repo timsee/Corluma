@@ -3,8 +3,7 @@
 
 #include "cor/light.h"
 
-namespace cor
-{
+namespace cor {
 /*!
  * \copyright
  * Copyright (C) 2015 - 2019.
@@ -12,15 +11,12 @@ namespace cor
  */
 
 /*!
- * \brief The Mood class is a recipe for creating a group of lights with predefined states. A mood has a unique ID,
- *        a name, and a list of states of lights. A mood can also have default states for entire groups, as well as
- *        additional information about the mood.
+ * \brief The Mood class is a recipe for creating a group of lights with predefined states. A mood
+ * has a unique ID, a name, and a list of states of lights. A mood can also have default states for
+ * entire groups, as well as additional information about the mood.
  */
-class Mood
-{
-
+class Mood {
 public:
-
     /// Default Constructor
     Mood() : mName{"Error"}, mUniqueID(0u) {}
 
@@ -43,33 +39,26 @@ public:
     QString additionalInfo;
 
     /// equal operator
-    bool operator==(const Mood& rhs) const {
-        return uniqueID() == rhs.uniqueID();
-    }
+    bool operator==(const Mood& rhs) const { return uniqueID() == rhs.uniqueID(); }
 
 private:
-
     /// name of mood
     QString mName;
 
     /// unique ID of the mood
     std::uint64_t mUniqueID;
-
 };
 
-}
+} // namespace cor
 
 
-namespace std
-{
-    template <>
-    struct hash<cor::Mood>
-    {
-        size_t operator()(const cor::Mood& k) const
-        {
-            return std::hash<std::string>{}(QString::number(k.uniqueID()).toStdString());
-        }
-    };
-}
+namespace std {
+template <>
+struct hash<cor::Mood> {
+    size_t operator()(const cor::Mood& k) const {
+        return std::hash<std::string>{}(QString::number(k.uniqueID()).toStdString());
+    }
+};
+} // namespace std
 
 #endif // COR_MOOD_H

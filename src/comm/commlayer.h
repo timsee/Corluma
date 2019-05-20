@@ -7,16 +7,16 @@
 
 #include <memory>
 
-#include "cor/protocols.h"
-#include "cor/presetpalettes.h"
-#include "cor/light.h"
 #include "comm/commtype.h"
+#include "cor/light.h"
+#include "cor/presetpalettes.h"
+#include "cor/protocols.h"
 
-#include "comm/upnpdiscovery.h"
 #include "arducor/arducordiscovery.h"
-#include "hue/hueprotocols.h"
-#include "hue/huelight.h"
+#include "comm/upnpdiscovery.h"
 #include "groupdata.h"
+#include "hue/huelight.h"
+#include "hue/hueprotocols.h"
 
 class CommArduCor;
 class CommHue;
@@ -33,18 +33,17 @@ class CommNanoleaf;
  *  array. Currently it supports serial, UDP, and HTTP.
  *
  */
-class CommLayer : public QObject
-{
+class CommLayer : public QObject {
     Q_OBJECT
 public:
     /*!
      * \brief Constructor
      */
-    CommLayer(QObject *parent, GroupData *parser);
+    CommLayer(QObject* parent, GroupData* parser);
 
     /*!
-     * \brief resetStateUpdates reset the state updates timeouts for specified commtypes. If it isn't on already,
-     *        it gets turned on.
+     * \brief resetStateUpdates reset the state updates timeouts for specified commtypes. If it
+     * isn't on already, it gets turned on.
      */
     void resetStateUpdates(EProtocolType type);
 
@@ -65,8 +64,8 @@ public:
     void startup(EProtocolType type);
 
     /*!
-     * \brief shutdown shuts down the stream of the given type. This stops all of its maintence threads
-     *        and discovery threads.
+     * \brief shutdown shuts down the stream of the given type. This stops all of its maintence
+     * threads and discovery threads.
      * \param type the type of communication stream to shutdown.
      */
     void shutdown(EProtocolType type);
@@ -101,8 +100,8 @@ public:
     bool discoveryErrorsExist(EProtocolType type);
 
     /*!
-     * \brief deviceTable a hash table of all connected devices of a certain connection type. The controller names
-     *        are used as keys.
+     * \brief deviceTable a hash table of all connected devices of a certain connection type. The
+     * controller names are used as keys.
      * \param type the communication type to request.
      * \return a hash table of all connected devices of the given type.
      */
@@ -111,8 +110,8 @@ public:
     }
 
     /*!
-     * \brief controllerName returns the controller name based on the commtype and unique ID. Will return an error
-     *        string if controller is not found
+     * \brief controllerName returns the controller name based on the commtype and unique ID. Will
+     * return an error string if controller is not found
      * \param type commtype to look for a controller in
      * \param uniqueID unique ID of light
      * \return name of lights controller, if it exists.
@@ -162,14 +161,14 @@ public:
 signals:
 
     /*!
-    * \brief packetReceived anotification that a packet was receieved by one of the commtypes.
-    */
+     * \brief packetReceived anotification that a packet was receieved by one of the commtypes.
+     */
     void packetReceived(EProtocolType);
 
     /*!
-    * \brief updateReceived a notification that a packet was received by one of the commtypes.
-    * \param type the int representation of the ECommType that has been updated.
-    */
+     * \brief updateReceived a notification that a packet was received by one of the commtypes.
+     * \param type the int representation of the ECommType that has been updated.
+     */
     void updateReceived(ECommType);
 
 private slots:
@@ -178,19 +177,18 @@ private slots:
     void receivedPacket(EProtocolType type) { emit packetReceived(type); }
 
     /*!
-    * \brief receivedUpdate Each CommType signals out where it receives an update. This slot combines and forwards
-    *        these signals into its own updateReceived signal.
-    * \param type the ECommType that has been updated.
-    */
+     * \brief receivedUpdate Each CommType signals out where it receives an update. This slot
+     * combines and forwards these signals into its own updateReceived signal.
+     * \param type the ECommType that has been updated.
+     */
     void receivedUpdate(ECommType type) { emit updateReceived(type); }
 
     /*!
-    * \brief hueStateChanged sent by hue whenever a packet is received that changes it state.
-    */
+     * \brief hueStateChanged sent by hue whenever a packet is received that changes it state.
+     */
     void hueStateChanged() { emit packetReceived(EProtocolType::hue); }
 
 private:
-
     /// adds meta data to a light, used when creating moods.
     cor::Light addLightMetaData(cor::Light light);
 
@@ -213,14 +211,14 @@ private:
     UPnPDiscovery* mUPnP;
 
     /// groups parser
-    GroupData *mGroups;
+    GroupData* mGroups;
 
     /*!
      * \brief commByType returns the raw CommPtr based off the given commType
      * \param type the comm type to get a point two
      * \return the raw CommType ptr based off the given commType
      */
-    CommType *commByType(ECommType type);
+    CommType* commByType(ECommType type);
 };
 
 #endif // COMMLAYER_H

@@ -1,14 +1,13 @@
 #ifndef HUEGROUPWIDGET_H
 #define HUEGROUPWIDGET_H
 
-#include <QWidget>
 #include <QLabel>
 #include <QLayout>
+#include <QWidget>
 
 #include "cor/group.h"
 
-namespace hue
-{
+namespace hue {
 /*!
  * \copyright
  * Copyright (C) 2015 - 2019.
@@ -19,34 +18,33 @@ namespace hue
  * \brief The HueGroupWidget class is a simple widget made for displaying metadata
  *        about a group. Its stored in a list in the BridgeGRoupsWidget.
  */
-class HueGroupWidget : public QWidget
-{
+class HueGroupWidget : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit HueGroupWidget(QWidget *parent, cor::Group lightGroup);
+    explicit HueGroupWidget(QWidget* parent, cor::Group lightGroup);
 
 protected:
     /// paints the background on the widget
-    void paintEvent(QPaintEvent *);
+    void paintEvent(QPaintEvent*);
 
 private:
     /// name of the group
-    QLabel *mName;
+    QLabel* mName;
 
     /// index of the group, used by its controller
-    QLabel *mIndex;
+    QLabel* mIndex;
 
     /// number of devices in this group
-    QLabel *mDeviceCount;
+    QLabel* mDeviceCount;
 
     /// displays either "Room" or "group" depending on group metadata
-    QLabel *mGroupType;
+    QLabel* mGroupType;
 
     /// layout for widget
-    QVBoxLayout *mLayout;
+    QVBoxLayout* mLayout;
 };
 
-}
+} // namespace hue
 
 #endif // HUEGROUPWIDGET_H

@@ -1,13 +1,13 @@
 #ifndef ARDUCORDISCOVERY_H
 #define ARDUCORDISCOVERY_H
 
-#include <QObject>
 #include <QElapsedTimer>
+#include <QObject>
 #include <QTimer>
 
-#include "cor/jsonsavedata.h"
 #include "arducor/controller.h"
 #include "cor/dictionary.h"
+#include "cor/jsonsavedata.h"
 
 class CommUDP;
 class CommHTTP;
@@ -25,19 +25,18 @@ class CommSerial;
  *        CommHTTP, CommUDP, and CommSerial to handle the communication protocols. Instead,
  *        it stores, saves, and verifies discovery packets
  */
-class ArduCorDiscovery : public QObject, public cor::JSONSaveData
-{
+class ArduCorDiscovery : public QObject, public cor::JSONSaveData {
     Q_OBJECT
 public:
-
     /// constructor
-    explicit ArduCorDiscovery(QObject *parent,
-                              CommHTTP *http,
-                              CommUDP *udp
-                          #ifndef MOBILE_BUILD
-                              ,CommSerial *serial
-                          #endif
-                              );
+    explicit ArduCorDiscovery(QObject* parent,
+                              CommHTTP* http,
+                              CommUDP* udp
+#ifndef MOBILE_BUILD
+                              ,
+                              CommSerial* serial
+#endif
+    );
 
     /// starts dicsovery
     void startDiscovery();
@@ -56,14 +55,19 @@ public:
     void addSerialPort(const QString& serialName);
 #endif
 
-    /// handles an incoming packet and checks if its a discovery packet. If it is, it treats it as such and parses it.
-    void handleIncomingPacket(ECommType type, const QString& controllerName, const QString& payload);
+    /// handles an incoming packet and checks if its a discovery packet. If it is, it treats it as
+    /// such and parses it.
+    void handleIncomingPacket(ECommType type,
+                              const QString& controllerName,
+                              const QString& payload);
 
     /// getter for list of controllers
     const cor::Dictionary<cor::Controller>& controllers() const { return mFoundControllers; }
 
     /// getter for list of undiscovered controllers
-    const std::list<cor::Controller>& undiscoveredControllers() const { return mNotFoundControllers; }
+    const std::list<cor::Controller>& undiscoveredControllers() const {
+        return mNotFoundControllers;
+    }
 
     /// finds the device name of based off its controller and index name.
     QString findDeviceNameByIndexAndControllerName(const QString& controllerName, uint32_t index);
@@ -96,7 +100,6 @@ private slots:
     void handleDiscovery();
 
 private:
-
     /// update json data that stores the connection and controlelr info
     void updateJSON(const cor::Controller& controller);
 
@@ -110,38 +113,42 @@ private:
     void handleDiscoveredController(const cor::Controller& discoveredController);
 
     /*!
-     * \brief deviceControllerFromDiscoveryString takes a discovery string, a controller name, and an empty cor::Controller as input.
-     *       If parsing the string  is successful, it fills the cor::Controller with the info from the discovery string. If its
-     *       unsucessful, it returns false.
+     * \brief deviceControllerFromDiscoveryString takes a discovery string, a controller name, and
+     * an empty cor::Controller as input. If parsing the string  is successful, it fills the
+     * cor::Controller with the info from the discovery string. If its unsucessful, it returns
+     * false.
      * \param discovery string received as discovery string
      * \param controllerName name of controller
      * \param controller filled if discovery string is valid.
      * \return true if discovery string is valid, false otherwise.
      */
-    bool deviceControllerFromDiscoveryString(ECommType type, const QString& discovery, const QString& controllerName, cor::Controller& controller);
+    bool deviceControllerFromDiscoveryString(ECommType type,
+                                             const QString& discovery,
+                                             const QString& controllerName,
+                                             cor::Controller& controller);
 
 
     /// load the json data.
     bool loadJSON();
 
     /// pointer to object that handles the HTTP communication
-    CommHTTP *mHTTP;
+    CommHTTP* mHTTP;
 
     /// pointer to object that handles the UDP communication
-    CommUDP *mUDP;
+    CommUDP* mUDP;
 
 #ifndef MOBILE_BUILD
     /// pointer to object that handles the serial communication
-    CommSerial *mSerial;
+    CommSerial* mSerial;
 #endif
 
     /*!
      * \brief mRoutineTimer single shot timer that determines when a discovery method is timing out.
      */
-    QTimer *mRoutineTimer;
+    QTimer* mRoutineTimer;
 
     /// elapse timer checks how long its been since certain updates
-    QElapsedTimer *mElapsedTimer;
+    QElapsedTimer* mElapsedTimer;
 
     /// tracks last time
     uint32_t mLastTime;
@@ -153,8 +160,7 @@ private:
      * \brief mStartupTimer in the first two minutes of the app's lifecycle, if nanoleaf is enabled
      *        it will scan for nanoleafs. This allows hardware changes to be picked up more easily
      */
-    QTimer *mStartupTimer;
-
+    QTimer* mStartupTimer;
 };
 
 #endif // ARDUCORDISCOVERY_H

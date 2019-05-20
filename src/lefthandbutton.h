@@ -1,10 +1,10 @@
 #ifndef LEFTHANDMENUBUTTON_H
 #define LEFTHANDMENUBUTTON_H
 
-#include <QWidget>
-#include <QLabel>
 #include <QHBoxLayout>
 #include <QJsonObject>
+#include <QLabel>
+#include <QWidget>
 
 #include "topmenu.h"
 
@@ -17,23 +17,32 @@ class LeftHandMenu;
  *
  *
  * \brief The LeftHandButton class is used for buttons on the LeftHandMenu. These buttons are used
- *        to change the main page displayed, so there is a button for pages like Settings, or the Color Page.
+ * to change the main page displayed, so there is a button for pages like Settings, or the
+ * Color Page.
  */
-class LeftHandButton : public QWidget
-{
+class LeftHandButton : public QWidget {
     Q_OBJECT
 public:
     /// constructor with icon
-   LeftHandButton(const QString& text, EPage page, const QString& iconResource, LeftHandMenu *menu, QWidget *parent);
+    LeftHandButton(const QString& text,
+                   EPage page,
+                   const QString& iconResource,
+                   LeftHandMenu* menu,
+                   QWidget* parent);
 
-   /// constructor with json data
-   LeftHandButton(const QString& text, EPage page, const QJsonObject& jsonObject, LeftHandMenu *menu, QWidget *parent);
+    /// constructor with json data
+    LeftHandButton(const QString& text,
+                   EPage page,
+                   const QJsonObject& jsonObject,
+                   LeftHandMenu* menu,
+                   QWidget* parent);
 
     /// returns the title of the button
     QString text() { return mTitle->text(); }
 
     /*!
      * \brief shouldHightlght highlights or unhiglights the button.
+     *
      * \param shouldHighlight true to highlight the button, false to unhighlight
      */
     void shouldHightlght(bool shouldHighlight);
@@ -58,24 +67,23 @@ private slots:
 
 protected:
     /// handles when the widget is painted
-    void paintEvent(QPaintEvent *);
+    void paintEvent(QPaintEvent*);
 
     /// handles when the widget is resized
-    void resizeEvent(QResizeEvent *);
+    void resizeEvent(QResizeEvent*);
 
 private:
-
     /// page index for the button to emit
     EPage mPage;
 
     /// layout for button
-    QHBoxLayout *mLayout;
+    QHBoxLayout* mLayout;
 
     /// pointer to menu to determine if its moving
-    LeftHandMenu *mMenu;
+    LeftHandMenu* mMenu;
 
     /// the icon used for displaying on the left of the menu button
-    QLabel *mIcon;
+    QLabel* mIcon;
 
     /// path to the resource for the icon
     QString mResourcePath;
@@ -84,7 +92,7 @@ private:
     QJsonObject mJsonObject;
 
     /// title for button
-    QLabel *mTitle;
+    QLabel* mTitle;
 
     /// true if highlight, false if not
     bool mIsHighlighted;

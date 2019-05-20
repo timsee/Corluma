@@ -6,10 +6,10 @@
 
 #include "group.h"
 
-namespace cor
-{
+namespace cor {
 
-std::list<Group> Group::mergeLightGroups(const std::list<Group>& first, const std::list<Group> second) {
+std::list<Group> Group::mergeLightGroups(const std::list<Group>& first,
+                                         const std::list<Group> second) {
     std::list<Group> retList = first;
     for (auto group : second) {
         // look for groups with same name and type
@@ -28,4 +28,4 @@ std::list<Group> Group::mergeLightGroups(const std::list<Group>& first, const st
     return retList;
 }
 
-}
+} // namespace cor

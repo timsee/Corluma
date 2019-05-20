@@ -9,7 +9,11 @@
 #include "editablefieldwidget.h"
 #include "utils/reachability.h"
 
-EditableFieldWidget::EditableFieldWidget(const QString& text, QWidget *parent, int maxFieldSize, const QString& maxFieldError) : QWidget(parent) {
+EditableFieldWidget::EditableFieldWidget(const QString& text,
+                                         QWidget* parent,
+                                         int maxFieldSize,
+                                         const QString& maxFieldError)
+    : QWidget(parent) {
     mStoredText = text;
 
     mText = new QLabel(text, this);
@@ -20,7 +24,8 @@ EditableFieldWidget::EditableFieldWidget(const QString& text, QWidget *parent, i
     mEditableField->setFont(mText->font());
     mEditableField->setVisible(false);
     mEditableField->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mEditableField->setStyleSheet("border-style: outset; border-width: 1px; border-color: white; background-color:rgb(30,30,30);");
+    mEditableField->setStyleSheet("border-style: outset; border-width: 1px; border-color: white; "
+                                  "background-color:rgb(30,30,30);");
     mEditableField->setAttribute(Qt::WA_TransparentForMouseEvents, false);
     connect(mEditableField, SIGNAL(textEdited(QString)), this, SLOT(lineEditChanged(QString)));
 
@@ -47,19 +52,21 @@ EditableFieldWidget::EditableFieldWidget(const QString& text, QWidget *parent, i
     mLayout->addWidget(mText, 16);
     mLayout->addWidget(mLeftButton, 2);
     mLayout->addWidget(mRightButton, 2);
-    mLayout->setContentsMargins(0,0,0,0);
+    mLayout->setContentsMargins(0, 0, 0, 0);
     mLayout->setSpacing(0);
 
     mMaxFieldSize = maxFieldSize;
     mMaxFieldError = maxFieldError;
-    mIsEditing     = false;
+    mIsEditing = false;
     mEnableEditing = true;
-    mRequireIP     = false;
+    mRequireIP = false;
 }
 
 void EditableFieldWidget::setFontPointSize(int pt) {
-    if (pt <= 0) pt = 1;
-    QString stylesheet = "font-size:" + QString::number(pt)+ "pt;";
+    if (pt <= 0) {
+        pt = 1;
+    }
+    QString stylesheet = "font-size:" + QString::number(pt) + "pt;";
     this->setStyleSheet(stylesheet);
 
     QFont font(this->font().toString(), pt);
@@ -90,8 +97,7 @@ void EditableFieldWidget::rightButtonClicked(bool) {
             }
         }
         if (mStoredText.compare(mText->text()) != 0) {
-            if (mMaxFieldSize != -1
-                    && mStoredText.size() > mMaxFieldSize) {
+            if (mMaxFieldSize != -1 && mStoredText.size() > mMaxFieldSize) {
                 QMessageBox reply;
                 reply.setText(mMaxFieldError);
                 reply.exec();

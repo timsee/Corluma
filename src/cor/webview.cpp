@@ -7,18 +7,17 @@
 #include "cor/webview.h"
 #include "utils/qt.h"
 
-#include <QFile>
-#include <QTextStream>
 #include <QDebug>
+#include <QFile>
+#include <QScroller>
+#include <QStyleOption>
+#include <QTextStream>
 #include <QtCore>
 #include <QtGui>
-#include <QStyleOption>
-#include <QScroller>
 
-namespace cor
-{
+namespace cor {
 
-WebView::WebView(const QString& title, const QString& htmlPath, QWidget *parent) : QWidget(parent) {
+WebView::WebView(const QString& title, const QString& htmlPath, QWidget* parent) : QWidget(parent) {
     mTextBrowser = new QTextBrowser(this);
     QScroller::grabGesture(mTextBrowser->viewport(), QScroller::LeftMouseButtonGesture);
     mTextBrowser->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -50,7 +49,7 @@ WebView::WebView(const QString& title, const QString& htmlPath, QWidget *parent)
 }
 
 
-void WebView::paintEvent(QPaintEvent *) {
+void WebView::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
@@ -59,8 +58,8 @@ void WebView::paintEvent(QPaintEvent *) {
     painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
 }
 
-void WebView::closeButtonPressed(bool ) {
+void WebView::closeButtonPressed(bool) {
     emit closePressed();
 }
 
-}
+} // namespace cor

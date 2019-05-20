@@ -4,18 +4,17 @@
  * Released under the GNU General Public License.
  */
 
+#include <QGraphicsOpacityEffect>
 #include <QScroller>
+#include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
-#include <QStyleOption>
-#include <QGraphicsOpacityEffect>
 
 #include "bridgegroupswidget.h"
 
-namespace hue
-{
+namespace hue {
 
-BridgeGroupsWidget::BridgeGroupsWidget(QWidget *parent) : QWidget(parent) {
+BridgeGroupsWidget::BridgeGroupsWidget(QWidget* parent) : QWidget(parent) {
     mTopWidget = new cor::TopWidget("Bridge Groups", ":images/closeX.png", this);
     connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(pressedClose(bool)));
     mTopWidget->setFontPoint(20);
@@ -26,7 +25,7 @@ BridgeGroupsWidget::BridgeGroupsWidget(QWidget *parent) : QWidget(parent) {
 
     mScrollAreaWidget = new QWidget(this);
     mScrollAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mScrollAreaWidget->setContentsMargins(0,0,0,0);
+    mScrollAreaWidget->setContentsMargins(0, 0, 0, 0);
     mScrollArea->setWidget(mScrollAreaWidget);
 
     mScrollLayout = new QVBoxLayout(mScrollAreaWidget);
@@ -36,7 +35,7 @@ BridgeGroupsWidget::BridgeGroupsWidget(QWidget *parent) : QWidget(parent) {
 
     mMainLayout = new QVBoxLayout(this);
 
-    mMainLayout->addWidget(mTopWidget,  2);
+    mMainLayout->addWidget(mTopWidget, 2);
     mMainLayout->addWidget(mScrollArea, 15);
 }
 
@@ -59,7 +58,7 @@ void BridgeGroupsWidget::updateGroups(std::list<cor::Group> groups) {
     }
 }
 
-void BridgeGroupsWidget::paintEvent(QPaintEvent *) {
+void BridgeGroupsWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
@@ -87,15 +86,11 @@ void BridgeGroupsWidget::resize() {
     // draw widgets in content region
     for (auto widget : mWidgets) {
         widget->setFixedHeight(widgetSize.height());
-        widget->setGeometry(0,
-                            yPos,
-                            widgetSize.width(),
-                            widget->height());
+        widget->setGeometry(0, yPos, widgetSize.width(), widget->height());
         yPos += widget->height();
     }
     mScrollAreaWidget->setFixedHeight(yPos);
 }
 
 
-}
-
+} // namespace hue

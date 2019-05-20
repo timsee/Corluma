@@ -6,7 +6,7 @@
 
 #include "rgbsliders.h"
 
-RGBSliders::RGBSliders(QWidget *parent) : QWidget(parent) {
+RGBSliders::RGBSliders(QWidget* parent) : QWidget(parent) {
     // --------------
     // Setup Sliders
     // --------------
@@ -98,7 +98,7 @@ void RGBSliders::enable(bool enable) {
 }
 
 void RGBSliders::redSliderChanged(int newValue) {
-   emit colorChanged(QColor(newValue, mColor.green(), mColor.blue()));
+    emit colorChanged(QColor(newValue, mColor.green(), mColor.blue()));
 }
 
 void RGBSliders::greenSliderChanged(int newValue) {
@@ -119,5 +119,4 @@ QColor RGBSliders::color() {
     return QColor(mRedSlider->slider()->value(),
                   mGreenSlider->slider()->value(),
                   mBlueSlider->slider()->value());
-
 }

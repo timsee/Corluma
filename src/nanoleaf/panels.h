@@ -4,8 +4,7 @@
 #include <vector>
 #include "cor/range.h"
 
-namespace nano
-{
+namespace nano {
 /*!
  * \copyright
  * Copyright (C) 2015 - 2019.
@@ -15,14 +14,13 @@ namespace nano
 /*!
  * \brief The Panel class is a simple class storing data about a panel
  */
-class Panel
-{
+class Panel {
 public:
     /// constructor
     Panel(int _x, int _y, int _o, int _ID) {
-        x  = _x;
-        y  = _y;
-        o  = _o;
+        x = _x;
+        y = _y;
+        o = _o;
         ID = _ID;
     }
 
@@ -40,16 +38,16 @@ public:
  * \brief The Panels class contains all the information about the
  *        panels used by the NanoLeaf Controller
  */
-class Panels
-{
+class Panels {
 public:
     /// constructor
-    Panels();
+    Panels() : count{1}, sideLength{3}, orientationValue{0}, orientationRange{0, 0} {}
 
     /// number of panels connected to the controller.
     int count;
 
-    /// the length of a triangle side, in pixels, that is used in calculation of the centroid location
+    /// the length of a triangle side, in pixels, that is used in calculation of the centroid
+    /// location
     int sideLength;
 
     /// a vector of data about each of the individual panels
@@ -62,6 +60,6 @@ public:
     cor::Range<int> orientationRange;
 };
 
-}
+} // namespace nano
 
 #endif // PANELS_H

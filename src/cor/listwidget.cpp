@@ -5,27 +5,26 @@
  */
 
 #include "cor/listwidget.h"
-#include "listroomwidget.h"
 #include "listmoodgroupwidget.h"
+#include "listroomwidget.h"
 
-namespace cor
-{
+namespace cor {
 
 struct subWidgetCompare {
-  bool operator() (cor::ListItemWidget* lhs, cor::ListItemWidget* rhs) const
-  { return (lhs->key().compare(rhs->key()) < 0); }
+    bool operator()(cor::ListItemWidget* lhs, cor::ListItemWidget* rhs) const {
+        return (lhs->key().compare(rhs->key()) < 0);
+    }
 };
 
 
-ListWidget::ListWidget(QWidget *parent, EListType type) : QScrollArea(parent), mListLayout(type) {
-
+ListWidget::ListWidget(QWidget* parent, EListType type) : QScrollArea(parent), mListLayout(type) {
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
     mWidget = new QWidget(this);
     mWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mWidget->setFixedWidth(this->viewport()->width());
 
-    this->setContentsMargins(0,0,0,0);
+    this->setContentsMargins(0, 0, 0, 0);
     QString backgroundStyleSheet = "border: none; background:rgba(0, 0, 0, 0%);";
     mWidget->setStyleSheet(backgroundStyleSheet);
 
@@ -33,7 +32,7 @@ ListWidget::ListWidget(QWidget *parent, EListType type) : QScrollArea(parent), m
 }
 
 
-void ListWidget::resizeEvent(QResizeEvent *) {
+void ListWidget::resizeEvent(QResizeEvent*) {
     resize();
 }
 
@@ -69,18 +68,17 @@ void ListWidget::resizeWidgets() {
             int maxWidth = this->parentWidget()->width() / 2;
             int height = this->parentWidget()->width() / 6;
             QPoint position = mListLayout.widgetPosition(widget);
-            widget->setGeometry(position.x() * maxWidth,
-                                position.y() * height,
-                                maxWidth,
-                                height);
+            widget->setGeometry(position.x() * maxWidth, position.y() * height, maxWidth, height);
             widget->setHidden(false);
             if (position.x() == 0) {
                 newHeight += widget->height();
             }
-         //   qDebug() << "this is the widget position of " << i << position << "and geometry"  << mListLayout.widgets()[i]->geometry();
+            //   qDebug() << "this is the widget position of " << i << position << "and geometry" <<
+            //   mListLayout.widgets()[i]->geometry();
         }
     }
-   // qDebug() << " new height is " << newHeight << " yPos " << yPos   << " vs " << this->viewport()->height();
+    // qDebug() << " new height is " << newHeight << " yPos " << yPos   << " vs " <<
+    // this->viewport()->height();
     mWidget->setFixedHeight(newHeight);
 }
 
@@ -103,4 +101,4 @@ void ListWidget::resize() {
     }
 }
 
-}
+} // namespace cor

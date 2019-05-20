@@ -11,13 +11,16 @@
 
 #include <QDebug>
 
-MultiColorPicker::MultiColorPicker(QWidget *parent) : ColorPicker(parent), mCircleIndex{0} {
+MultiColorPicker::MultiColorPicker(QWidget* parent) : ColorPicker(parent), mCircleIndex{0} {
     mColorSchemeGrid = new SwatchVectorWidget(5, 1, this);
     mColorSchemeGrid->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     mColorSchemeChooser = new ColorSchemeChooser(this);
     mColorSchemeChooser->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(mColorSchemeChooser, SIGNAL(schemeChanged(EColorSchemeType)), this, SLOT(changedScheme(EColorSchemeType)));
+    connect(mColorSchemeChooser,
+            SIGNAL(schemeChanged(EColorSchemeType)),
+            this,
+            SLOT(changedScheme(EColorSchemeType)));
 
     mColorSchemeCircles = new ColorSchemeCircles(5, mColorWheel, this);
     mColorSchemeCircles->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -60,7 +63,7 @@ void MultiColorPicker::updateBottomMenuState(bool enable) {
     mColorSchemeCircles->setEnabled(enable);
 }
 
-void MultiColorPicker::updateColorStates(const std::vector<QColor>& colorSchemes, uint32_t){
+void MultiColorPicker::updateColorStates(const std::vector<QColor>& colorSchemes, uint32_t) {
     mScheme = colorSchemes;
     mColorSchemeCircles->updateColorScheme(colorSchemes);
     mColorSchemeGrid->updateColors(colorSchemes);
@@ -91,11 +94,13 @@ void MultiColorPicker::updateColorCount(std::size_t count) {
 }
 
 void MultiColorPicker::updateSchemeColors(std::size_t i, const QColor& newColor) {
-    auto colorCount =  mScheme.size();
+    auto colorCount = mScheme.size();
     if (colorCount > 5) {
         colorCount = 5;
     }
-    if (i > colorCount) return;
+    if (i > colorCount) {
+        return;
+    }
 
     for (std::size_t x = i; x < mScheme.size(); x += colorCount) {
         mScheme[x] = newColor;
@@ -109,7 +114,7 @@ void MultiColorPicker::updateSchemeColors(std::size_t i, const QColor& newColor)
 // Protected
 //----------
 
-void MultiColorPicker::mousePressEvent(QMouseEvent *event) {
+void MultiColorPicker::mousePressEvent(QMouseEvent* event) {
     auto positionResult = mColorSchemeCircles->positionIsUnderCircle(event->pos());
     if (positionResult != -1) {
         mCircleIndex = std::uint32_t(positionResult);
@@ -118,7 +123,7 @@ void MultiColorPicker::mousePressEvent(QMouseEvent *event) {
 
 
 
-void MultiColorPicker::mouseMoveEvent(QMouseEvent *event) {
+void MultiColorPicker::mouseMoveEvent(QMouseEvent* event) {
     auto colorScheme = mColorSchemeCircles->moveStandardCircle(mCircleIndex, event->pos());
     if (!colorScheme.empty()) {
         for (std::uint32_t i = 0; i < 5; ++i) {
@@ -132,15 +137,19 @@ void MultiColorPicker::mouseMoveEvent(QMouseEvent *event) {
 //----------
 
 
-void MultiColorPicker::resizeEvent(QResizeEvent *) {
+void MultiColorPicker::resizeEvent(QResizeEvent*) {
     resize();
 }
 
 void MultiColorPicker::resize() {
     auto rect = mPlaceholder->geometry();
     mColorSchemeGrid->setGeometry(rect.x(), rect.y(), rect.width(), rect.height() / 2);
-    mColorSchemeChooser->setGeometry(rect.x(), rect.y() + rect.height() / 2, rect.width(), rect.height() / 2);
-    mColorSchemeCircles->setGeometry(0, 0, this->geometry().width(), this->geometry().height() - mPlaceholder->geometry().height());
+    mColorSchemeChooser->setGeometry(
+        rect.x(), rect.y() + rect.height() / 2, rect.width(), rect.height() / 2);
+    mColorSchemeCircles->setGeometry(0,
+                                     0,
+                                     this->geometry().width(),
+                                     this->geometry().height() - mPlaceholder->geometry().height());
 
     resizeWheel();
 }

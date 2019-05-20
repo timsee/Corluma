@@ -1,23 +1,19 @@
 #ifndef BRIDGE_H
 #define BRIDGE_H
 
-#include <QString>
-#include <QJsonObject>
 #include <QJsonDocument>
+#include <QJsonObject>
+#include <QString>
+#include <list>
 #include <sstream>
 #include <vector>
-#include <list>
 
-#include "cor/group.h"
 #include "cor/dictionary.h"
+#include "cor/group.h"
 #include "hue/huelight.h"
 
 /// bridge discovery state
-enum class EBridgeDiscoveryState {
-   lookingForResponse,
-   lookingForUsername,
-   connected
-};
+enum class EBridgeDiscoveryState { lookingForResponse, lookingForUsername, connected };
 Q_DECLARE_METATYPE(EBridgeDiscoveryState)
 
 
@@ -75,37 +71,36 @@ struct SHueSchedule {
     /// SHueSchedule equal operator
     bool operator==(const SHueSchedule& rhs) const {
         bool result = true;
-        if (name.compare(rhs.name)) result = false;
-        if (description.compare(rhs.description)) result = false;
-        if (index     !=  rhs.index) result = false;
+        if (name.compare(rhs.name))
+            result = false;
+        if (description.compare(rhs.description))
+            result = false;
+        if (index != rhs.index)
+            result = false;
         return result;
     }
 };
 
-namespace std
-{
-    template <>
-    struct hash<SHueSchedule>
-    {
-        size_t operator()(const SHueSchedule& k) const
-        {
-            return std::hash<std::string>{}(k.name.toStdString());
-        }
-    };
-}
+namespace std {
+template <>
+struct hash<SHueSchedule> {
+    size_t operator()(const SHueSchedule& k) const {
+        return std::hash<std::string>{}(k.name.toStdString());
+    }
+};
+} // namespace std
 
-namespace hue
-{
+namespace hue {
 
 /*!
  * \copyright
  * Copyright (C) 2015 - 2019.
  * Released under the GNU General Public License.
  *
- * \brief The Bridge class stores useful information about a hue::Bridge for discovery and for connection purposes.
+ * \brief The Bridge class stores useful information about a hue::Bridge for discovery and for
+ * connection purposes.
  */
-class Bridge
-{
+class Bridge {
 public:
     /// constructor
     Bridge() = default;
@@ -150,24 +145,26 @@ public:
     operator QString() const {
         std::stringstream tempString;
         tempString << "hue::Bridge: "
-                   << " IP: " << IP.toStdString()
-                   << " username: " << username.toStdString()
-                   << " name: " << name.toStdString()
-                   << " customName: " << customName.toStdString()
-                   << " api: " << api.toStdString()
-                   << " id:" <<  id.toStdString()
-                   << " macaddress:" <<  macaddress.toStdString();
+                   << " IP: " << IP.toStdString() << " username: " << username.toStdString()
+                   << " name: " << name.toStdString() << " customName: " << customName.toStdString()
+                   << " api: " << api.toStdString() << " id:" << id.toStdString()
+                   << " macaddress:" << macaddress.toStdString();
         return QString::fromStdString(tempString.str());
     }
 
     /// equal operator
     bool operator==(const hue::Bridge& rhs) const {
         bool result = true;
-        if (IP         !=  rhs.IP)         result = false;
-        if (customName !=  rhs.customName) result = false;
-        if (username   !=  rhs.username)   result = false;
-        if (id         !=  rhs.id)         result = false;
-        if (state      !=  rhs.state)      result = false;
+        if (IP != rhs.IP)
+            result = false;
+        if (customName != rhs.customName)
+            result = false;
+        if (username != rhs.username)
+            result = false;
+        if (id != rhs.id)
+            result = false;
+        if (state != rhs.state)
+            result = false;
         return result;
     }
 };
@@ -178,19 +175,16 @@ Bridge jsonToBridge(const QJsonObject& object);
 /// converts a bridge to a json object
 QJsonObject bridgeToJson(const Bridge& controller);
 
-}
+} // namespace hue
 
-namespace std
-{
-    template <>
-    struct hash<hue::Bridge>
-    {
-        size_t operator()(const hue::Bridge& k) const
-        {
-            return std::hash<std::string>{}(k.id.toStdString());
-        }
-    };
-}
+namespace std {
+template <>
+struct hash<hue::Bridge> {
+    size_t operator()(const hue::Bridge& k) const {
+        return std::hash<std::string>{}(k.id.toStdString());
+    }
+};
+} // namespace std
 
 
 #endif // BRIDGE_H

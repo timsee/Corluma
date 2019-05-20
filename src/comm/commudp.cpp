@@ -38,18 +38,18 @@ void CommUDP::startup() {
     QString localIP;
     // lists all adresses associated with this device
     QList<QHostAddress> list = QNetworkInterface::allAddresses();
-    for(int x = 0; x < list.count(); x++) {
+    for (int x = 0; x < list.count(); x++) {
         // verifies its not a loopback
-        if(!list[x].isLoopback()) {
+        if (!list[x].isLoopback()) {
             // makes sure that its an IPv4 address that also starts with 192.
             // the 192 verifies its a class C address.
-             if (list[x].protocol() == QAbstractSocket::IPv4Protocol
-                 && list[x].toString().contains("192")) {
+            if (list[x].protocol() == QAbstractSocket::IPv4Protocol
+                && list[x].toString().contains("192")) {
                 localIP = list[x].toString();
-             }
-         }
+            }
+        }
     }
-    //qDebug() << "local IP" << localIP;
+    // qDebug() << "local IP" << localIP;
     if (mBound) {
         qDebug() << "WARNING: UDP already bound!";
     } else {
@@ -72,10 +72,8 @@ void CommUDP::shutdown() {
 void CommUDP::sendPacket(const cor::Controller& controller, QString& packet) {
     if (mBound) {
         // send packet over UDP
-        //qDebug() << "sending udp" << packet << "to " << controller.name;
-        mSocket->writeDatagram(packet.toUtf8().data(),
-                               QHostAddress(controller.name),
-                               PORT);
+        // qDebug() << "sending udp" << packet << "to " << controller.name;
+        mSocket->writeDatagram(packet.toUtf8().data(), QHostAddress(controller.name), PORT);
     } else {
         qDebug() << "WARNING: UDP port not bound";
     }
@@ -88,7 +86,8 @@ bool CommUDP::portBound() {
 void CommUDP::stateUpdate() {
     if (shouldContinueStateUpdate()) {
         for (const auto& controller : mDiscovery->controllers().itemVector()) {
-            QString packet = QString("%1&").arg(QString::number(int(EPacketHeader::stateUpdateRequest)));
+            QString packet
+                = QString("%1&").arg(QString::number(int(EPacketHeader::stateUpdateRequest)));
             // add CRC, if in use
             if (controller.isUsingCRC) {
                 packet = packet + "#" + QString::number(mCRC.calculate(packet)) + "&";
@@ -96,9 +95,12 @@ void CommUDP::stateUpdate() {
             sendPacket(controller, packet);
 
             if ((mStateUpdateCounter % mSecondaryUpdatesInterval) == 0) {
-                QString customArrayUpdateRequest = QString("%1&").arg(QString::number(int(EPacketHeader::customArrayUpdateRequest)));
+                QString customArrayUpdateRequest = QString("%1&").arg(
+                    QString::number(int(EPacketHeader::customArrayUpdateRequest)));
                 if (controller.isUsingCRC) {
-                    customArrayUpdateRequest = customArrayUpdateRequest + "#" + QString::number(mCRC.calculate(customArrayUpdateRequest)) + "&";
+                    customArrayUpdateRequest
+                        = customArrayUpdateRequest + "#"
+                          + QString::number(mCRC.calculate(customArrayUpdateRequest)) + "&";
                 }
                 sendPacket(controller, customArrayUpdateRequest);
             }
@@ -112,7 +114,8 @@ void CommUDP::stateUpdate() {
 
 void CommUDP::testForController(const cor::Controller& controller) {
     if (mBound) {
-        //qDebug() << "discovery packet to " << controller.name << " " << ArduCorDiscovery::kDiscoveryPacketIdentifier;
+        // qDebug() << "discovery packet to " << controller.name << " " <<
+        // ArduCorDiscovery::kDiscoveryPacketIdentifier;
         mSocket->writeDatagram(ArduCorDiscovery::kDiscoveryPacketIdentifier.toUtf8().data(),
                                QHostAddress(controller.name),
                                PORT);
@@ -134,9 +137,10 @@ void CommUDP::readPendingDatagrams() {
         quint16 senderPort;
         mSocket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
         QString payload = QString::fromUtf8(datagram);
-        //qDebug() << "UDP payload" << payload << payload.size() << "from" << sender.toString();
+        // qDebug() << "UDP payload" << payload << payload.size() << "from" << sender.toString();
         if (payload.contains(";")) {
-            // this may contain multiple packets in a single packet, split and handle as separate messages.
+            // this may contain multiple packets in a single packet, split and handle as separate
+            // messages.
             QRegExp rx("(\\;)");
             QStringList payloads = payload.split(rx);
             for (const auto& payload : payloads) {

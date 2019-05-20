@@ -4,12 +4,16 @@
  * Released under the GNU General Public License.
  */
 
-#include <QMessageBox>
 #include <QDebug>
+#include <QMessageBox>
 
 #include "searchwidget.h"
 
-SearchWidget::SearchWidget(const QString& defaultLineEditValue, QWidget *parent, int maxSearchingCount, const QString& errorMaxSearchString) : QWidget(parent) {
+SearchWidget::SearchWidget(const QString& defaultLineEditValue,
+                           QWidget* parent,
+                           int maxSearchingCount,
+                           const QString& errorMaxSearchString)
+    : QWidget(parent) {
     //----------
     // Top layout
     //----------
@@ -52,7 +56,10 @@ SearchWidget::SearchWidget(const QString& defaultLineEditValue, QWidget *parent,
     mConnectedListWidget = new QListWidget(this);
     mConnectedListWidget->setStyleSheet("color: silver;");
     mConnectedListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(mConnectedListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(connectedListClicked(QListWidgetItem*)));
+    connect(mConnectedListWidget,
+            SIGNAL(itemClicked(QListWidgetItem*)),
+            this,
+            SLOT(connectedListClicked(QListWidgetItem*)));
 
     mDiscoveringLabel = new QLabel(this);
     mDiscoveringLabel->setText("Searching:");
@@ -62,7 +69,10 @@ SearchWidget::SearchWidget(const QString& defaultLineEditValue, QWidget *parent,
     mDiscoveringListWidget = new QListWidget(this);
     mDiscoveringListWidget->setStyleSheet("color: silver;");
     mDiscoveringListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(mDiscoveringListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(discoveringListClicked(QListWidgetItem*)));
+    connect(mDiscoveringListWidget,
+            SIGNAL(itemClicked(QListWidgetItem*)),
+            this,
+            SLOT(discoveringListClicked(QListWidgetItem*)));
 
     //----------
     // Main Layout
@@ -96,9 +106,8 @@ void SearchWidget::plusButtonClicked() {
     // Checks
     //-----------
     // check count
-    if (mMaxSearchingCount != -1
-            && (mDiscoveringListWidget->count() >= mMaxSearchingCount)) {
-        qDebug() << mDiscoveringListWidget->count()  << " is greater than" << mMaxSearchingCount;
+    if (mMaxSearchingCount != -1 && (mDiscoveringListWidget->count() >= mMaxSearchingCount)) {
+        qDebug() << mDiscoveringListWidget->count() << " is greater than" << mMaxSearchingCount;
         // give error
         QMessageBox reply;
         reply.setText(mMaxSearchError);
@@ -108,8 +117,7 @@ void SearchWidget::plusButtonClicked() {
     // check size
     if (mCheckSize) {
         int textSize = mLineEdit->text().size();
-        if (!(textSize >= mMinSizeCheck
-                && textSize <= mMaxSizeCheck)) {
+        if (!(textSize >= mMinSizeCheck && textSize <= mMaxSizeCheck)) {
             // give error
             QMessageBox reply;
             reply.setText(mSizeCheckError);
@@ -143,10 +151,10 @@ void SearchWidget::minusButtonClicked() {
 // ----------------------------
 
 
-void SearchWidget::connectedListClicked(QListWidgetItem *item) {
+void SearchWidget::connectedListClicked(QListWidgetItem* item) {
     mLineEdit->setText(item->text());
     for (int i = 0; i < mConnectedListWidget->count(); ++i) {
-       mConnectedListWidget->item(i)->setSelected(false);
+        mConnectedListWidget->item(i)->setSelected(false);
     }
     for (int i = 0; i < mDiscoveringListWidget->count(); ++i) {
         mDiscoveringListWidget->item(i)->setSelected(false);
@@ -155,10 +163,10 @@ void SearchWidget::connectedListClicked(QListWidgetItem *item) {
 }
 
 
-void SearchWidget::discoveringListClicked(QListWidgetItem *item) {
+void SearchWidget::discoveringListClicked(QListWidgetItem* item) {
     mLineEdit->setText(item->text());
     for (int i = 0; i < mConnectedListWidget->count(); ++i) {
-       mConnectedListWidget->item(i)->setSelected(false);
+        mConnectedListWidget->item(i)->setSelected(false);
     }
     for (int i = 0; i < mDiscoveringListWidget->count(); ++i) {
         mDiscoveringListWidget->item(i)->setSelected(false);
@@ -170,7 +178,7 @@ bool SearchWidget::addToSearchList(const QString& name) {
     // check if item is already in the table, if not, add it
     bool found = false;
     for (int i = 0; i < mDiscoveringListWidget->count(); ++i) {
-        QListWidgetItem *item = mDiscoveringListWidget->item(i);
+        QListWidgetItem* item = mDiscoveringListWidget->item(i);
         if (item->text().compare(name) == 0) {
             found = true;
         }
@@ -186,7 +194,7 @@ bool SearchWidget::addToSearchList(const QString& name) {
 bool SearchWidget::addToConnectedList(const QString& name) {
     // look for it in discovering list
     for (int i = 0; i < mDiscoveringListWidget->count(); ++i) {
-        QListWidgetItem *item = mDiscoveringListWidget->item(i);
+        QListWidgetItem* item = mDiscoveringListWidget->item(i);
         if (item->text().compare(name) == 0) {
             mDiscoveringListWidget->takeItem(i);
         }
@@ -194,7 +202,7 @@ bool SearchWidget::addToConnectedList(const QString& name) {
 
     bool foundInConnectedList = false;
     for (int i = 0; i < mConnectedListWidget->count(); ++i) {
-        QListWidgetItem *item = mConnectedListWidget->item(i);
+        QListWidgetItem* item = mConnectedListWidget->item(i);
         if (item->text().compare(name) == 0) {
             foundInConnectedList = true;
         }
@@ -210,14 +218,14 @@ bool SearchWidget::addToConnectedList(const QString& name) {
 
 void SearchWidget::removeKey(const QString& key) {
     for (int i = 0; i < mDiscoveringListWidget->count(); ++i) {
-        QListWidgetItem *item = mDiscoveringListWidget->item(i);
+        QListWidgetItem* item = mDiscoveringListWidget->item(i);
         if (item->text().compare(key) == 0) {
             mDiscoveringListWidget->takeItem(i);
         }
     }
 
     for (int i = 0; i < mConnectedListWidget->count(); ++i) {
-        QListWidgetItem *item = mConnectedListWidget->item(i);
+        QListWidgetItem* item = mConnectedListWidget->item(i);
         if (item->text().compare(key) == 0) {
             mConnectedListWidget->takeItem(i);
         }
@@ -227,7 +235,7 @@ void SearchWidget::removeKey(const QString& key) {
 std::list<QString> SearchWidget::searchingFor() {
     std::list<QString> searchingForList;
     for (int i = 0; i < mDiscoveringListWidget->count(); ++i) {
-        QListWidgetItem *item = mDiscoveringListWidget->item(i);
+        QListWidgetItem* item = mDiscoveringListWidget->item(i);
         searchingForList.push_back(item->text());
     }
     return searchingForList;

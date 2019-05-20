@@ -4,8 +4,7 @@
 #include <exception>
 #include <string>
 
-namespace cor
-{
+namespace cor {
 
 /*!
  * \copyright
@@ -16,17 +15,14 @@ namespace cor
  */
 class Exception : public std::exception {
 public:
-
     /// contsructor
-    template<class... T>
-    explicit Exception(const char* func, T&&... t) : mFunction{func},
-                                                     mMessage{"cor::Exception at: " + mFunction + " : " + std::forward<T>(t)...}
-    {}
+    template <class... T>
+    explicit Exception(const char* func, T&&... t)
+        : mFunction{func},
+          mMessage{"cor::Exception at: " + mFunction + " : " + std::forward<T>(t)...} {}
 
     /// getter for exception's message
-    virtual const char* what() const noexcept override  {
-        return mMessage.c_str();
-    }
+    virtual const char* what() const noexcept override { return mMessage.c_str(); }
 
 private:
     /// function calling the error

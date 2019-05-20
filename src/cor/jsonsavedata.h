@@ -1,13 +1,12 @@
 #ifndef JSONSAVEDATA_H
 #define JSONSAVEDATA_H
 
-#include <QJsonDocument>
-#include <QJsonValue>
-#include <QJsonObject>
 #include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonValue>
 
-namespace cor
-{
+namespace cor {
 
 /*!
  * \copyright
@@ -16,14 +15,11 @@ namespace cor
  *
  *
  * \brief The JSONSaveData class is an object that uses a JSON save file to save configuration data.
- *        This is used by objects like the discovery objects that require us to save some keys and previous
- *        paths.
+ *        This is used by objects like the discovery objects that require us to save some keys and
+ * previous paths.
  */
-class JSONSaveData
-{
-
+class JSONSaveData {
 public:
-
     /// constructor
     JSONSaveData(const QString& saveName);
 
@@ -31,7 +27,6 @@ public:
     virtual ~JSONSaveData() = default;
 
 protected:
-
     /*!
      * \brief removeJSONObject remove the json object from the array with the given key and value
      * \param key the key to check
@@ -75,6 +70,6 @@ protected:
     QString mSavePath;
 };
 
-}
+} // namespace cor
 
 #endif // JSONSAVEDATA_H

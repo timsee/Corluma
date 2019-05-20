@@ -1,17 +1,16 @@
 #ifndef LEFTHANDMENU_H
 #define LEFTHANDMENU_H
 
-#include <QWidget>
-#include <QVBoxLayout>
 #include <QScrollArea>
+#include <QVBoxLayout>
+#include <QWidget>
 
-#include "lefthandbutton.h"
-#include "cor/devicelist.h"
-#include "groupdata.h"
+#include "addnewgroupbutton.h"
 #include "comm/commlayer.h"
 #include "cor/devicelist.h"
+#include "groupdata.h"
+#include "lefthandbutton.h"
 #include "listroomwidget.h"
-#include "addnewgroupbutton.h"
 
 /*!
  * \copyright
@@ -19,17 +18,20 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief The LeftHandMenu class is a left hand drawer that can either be pulled in or out when the app
- *        has a portrait aspect ratio. If it is a landscape aspect ratio, the drawer is permanently out.
- *        This menu contains buttons for all the main pages of the app, as well as the ability to choose
- *        specific lights to control.
+ * \brief The LeftHandMenu class is a left hand drawer that can either be pulled in or out when the
+ * app has a portrait aspect ratio. If it is a landscape aspect ratio, the drawer is permanently
+ * out. This menu contains buttons for all the main pages of the app, as well as the ability to
+ * choose specific lights to control.
  */
-class LeftHandMenu : public QWidget
-{
+class LeftHandMenu : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    LeftHandMenu(cor::DeviceList *selectedLights, CommLayer *comm, cor::DeviceList *lights, GroupData *groups, QWidget *parent);
+    LeftHandMenu(cor::DeviceList* selectedLights,
+                 CommLayer* comm,
+                 cor::DeviceList* lights,
+                 GroupData* groups,
+                 QWidget* parent);
 
     /// resize programmatically
     void resize();
@@ -88,7 +90,6 @@ private slots:
     void newGroupButtonPressed();
 
 private:
-
     /// true if menu should be always open for landscape orientation, false otherwise
     bool mAlwaysOpen;
 
@@ -96,8 +97,10 @@ private:
     std::list<cor::Group> gatherAllUIGroups();
 
     /*!
-     * \brief updateDataGroupInUI using the new cor::LightGroup, update the UI assets with up-to-date light info. This function matches the dataGroup group
-     *        to all UI groups that match it, then takes the up to date version from the allDevices list to display that info
+     * \brief updateDataGroupInUI using the new cor::LightGroup, update the UI assets with
+     * up-to-date light info. This function matches the dataGroup group to all UI groups that match
+     * it, then takes the up to date version from the allDevices list to display that info
+     *
      * \param dataGroup the group to update in the UI
      * \param uiGroups all UI groups
      */
@@ -105,6 +108,7 @@ private:
 
     /*!
      * \brief initRoomsWidget constructor helper for making a ListRoomWidget
+     *
      * \param group group of lights for collection
      * \param key key for collection
      * \return pointer to the newly created ListDevicesGroupWidget
@@ -130,49 +134,49 @@ private:
     QPoint mStartPoint;
 
     /// scroll area for the widget
-    QScrollArea *mScrollArea;
+    QScrollArea* mScrollArea;
 
     /// main widget
-    QWidget *mWidget;
+    QWidget* mWidget;
 
     /// spacer for top of widget
-    QWidget *mSpacer;
+    QWidget* mSpacer;
 
     /// thread for rendering updates to the UI
-    QTimer *mRenderThread;
+    QTimer* mRenderThread;
 
     /// list of selected lights
-    cor::DeviceList *mSelectedLights;
+    cor::DeviceList* mSelectedLights;
 
     /// palette that shows the currently selected devices
-    cor::LightVectorWidget *mMainPalette;
+    cor::LightVectorWidget* mMainPalette;
 
     /// vector room widgets
     std::vector<ListRoomWidget*> mRoomWidgets;
 
     /// pointer to comm layer
-    CommLayer *mComm;
+    CommLayer* mComm;
 
     /// list of current lights, used to update UI
-    cor::DeviceList *mData;
+    cor::DeviceList* mData;
 
     /// pointer to group data
-    GroupData *mGroups;
+    GroupData* mGroups;
 
     /// single color button
-    LeftHandButton *mSingleColorButton;
+    LeftHandButton* mSingleColorButton;
 
     /// multi color button
-    LeftHandButton *mMultiColorButton;
+    LeftHandButton* mMultiColorButton;
 
     /// mood button
-    LeftHandButton *mMoodButton;
+    LeftHandButton* mMoodButton;
 
     /// settings button
-    LeftHandButton *mSettingsButton;
+    LeftHandButton* mSettingsButton;
 
     /// button to add a new group
-    AddNewGroupButton *mNewGroupButton;
+    AddNewGroupButton* mNewGroupButton;
 
     /// update the single color button based off of what is selected
     void updateSingleColorButton();

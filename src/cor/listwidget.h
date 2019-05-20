@@ -1,14 +1,13 @@
 #ifndef COR_LIST_WIDGET_H
 #define COR_LIST_WIDGET_H
 
-#include <QWidget>
 #include <QScrollArea>
+#include <QWidget>
 
 #include "cor/listitemwidget.h"
 #include "cor/listlayout.h"
 
-namespace cor
-{
+namespace cor {
 
 /*!
  * \copyright
@@ -22,15 +21,14 @@ namespace cor
  *        This widget also handles cases where the cor::ListItemWidgets grow and shrink
  *        dynamically.
  */
-class ListWidget : public QScrollArea
-{
+class ListWidget : public QScrollArea {
     Q_OBJECT
 public:
     /// constructor
-    ListWidget(QWidget *parent, EListType type);
+    ListWidget(QWidget* parent, EListType type);
 
     /// getter for main widget
-    QWidget *mainWidget() { return mWidget; }
+    QWidget* mainWidget() { return mWidget; }
 
     /*!
      * \brief resizeWidgets resizes all the widgets and moves them accordingly.
@@ -39,13 +37,14 @@ public:
 
     /*!
      * \brief insertWidget insert cor::ListItemWIdget into the layout.
-     * \param widget widget to be inserted, if it doesn't already exist. Will reorganize widgets if needed.
+     * \param widget widget to be inserted, if it doesn't already exist. Will reorganize widgets if
+     * needed.
      */
     void insertWidget(cor::ListItemWidget* widget);
 
     /*!
      * \brief removeWidget remove cor::ListItemWIdget from the layout
-     *        all widgets to the right of the removed widget get moved back one cell.
+     * all widgets to the right of the removed widget get moved back one cell.
      * \param widget widget to be removed, if it exists.
      */
     void removeWidget(cor::ListItemWidget* widget);
@@ -66,12 +65,10 @@ public:
     void setFixedWidgetHeight(int);
 
 protected:
-
     /// handles when the widget resizes
-    void resizeEvent(QResizeEvent *);
+    void resizeEvent(QResizeEvent*);
 
 private:
-
     /// resizes the widgets
     void resize();
 
@@ -79,12 +76,11 @@ private:
     ListLayout mListLayout;
 
     /// widget used for scroll area.
-    QWidget *mWidget;
+    QWidget* mWidget;
 
     /// size of overall background of grid.
     QSize mWidgetSize;
-
 };
 
-}
+} // namespace cor
 #endif // COR_LIST_WIDGET_H

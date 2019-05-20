@@ -1,9 +1,9 @@
 #ifndef ProtocolSettings_H
 #define ProtocolSettings_H
 
+#include <QObject>
 #include <QSettings>
 #include "cor/light.h"
-#include <QObject>
 
 /*!
  * \copyright
@@ -11,11 +11,10 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief The ProtocolSettings class manages which CommTypes are enabled and disabled. It manages the settings
- *        between application sessions by saving to a QSettings instance.
+ * \brief The ProtocolSettings class manages which CommTypes are enabled and disabled. It manages
+ * the settings between application sessions by saving to a QSettings instance.
  */
-class AppSettings : QObject
-{
+class AppSettings : QObject {
     Q_OBJECT
 
 public:
@@ -32,6 +31,7 @@ public:
      * \brief enable enables or disables the protocol provided. This saves immediately
      *        to persistent app memory, so your settings from previous sessions will be available
      *        in the next session
+     *
      * \param type the protocol that is getting changed
      * \param shouldEnable true if enabled, false otherwise
      * \return true if successful, false otherwise.
@@ -40,6 +40,7 @@ public:
 
     /*!
      * \brief protocolEnabled check if a ProtocolSettings is currently enabled.
+     *
      * \param type the EProtocolType to check
      * \return true if enabled, false otherwise.
      */
@@ -53,14 +54,16 @@ public:
      * \brief timeOut getter for the amount of minutes it takes for the LEDs
      *        to "time out." When this happens, they turn off, saving you
      *        electricity!
+     *
      * \return the time it'll take for the LEDs to time out.
      */
-    int timeout() { return mTimeout;}
+    int timeout() { return mTimeout; }
 
     /*!
-     * \brief enableTimeout true to enable timeout modes, false to disable them. If they are enabled,
-     *        all lights will turn off after their timeoutInterval has passed if no new packets are sent
-     *        to them
+     * \brief enableTimeout true to enable timeout modes, false to disable them. If they are
+     * enabled, all lights will turn off after their timeoutInterval has passed if no new packets
+     * are sent to them
+     *
      * \param timeout true to enable timeout modes, false to disable them.
      */
     void enableTimeout(bool timeout);
@@ -69,8 +72,10 @@ public:
     bool timeoutEnabled() { return mTimeoutEnabled; }
 
     /*!
-     * \brief updateTimeout update how many minutes it takes for lights to turn themselves off automatically.
-     *        Use a value of 0 to keep lights on indefinitely (until you unplug them or change the setting).
+     * \brief updateTimeout update how many minutes it takes for lights to turn themselves off
+     * automatically. Use a value of 0 to keep lights on indefinitely (until you unplug them or
+     * change the setting).
+     *
      * \param timeout the new number of minutes it takes for LEDs to time out and turn off.
      */
     void updateTimeout(int timeout);
@@ -88,8 +93,8 @@ public:
 signals:
 
     /*!
-     * \brief settingsUpdate there has been an update to the settings such as when to timeout or the speed
-     *        of routines.
+     * \brief settingsUpdate there has been an update to the settings such as when to timeout or the
+     * speed of routines.
      */
     void settingsUpdate();
 
@@ -101,9 +106,10 @@ private:
     std::vector<bool> mProtocolsInUse;
 
     /*!
-     * \brief mSettings pointer to QSettings, used to store and access data in persistent app memory.
+     * \brief mSettings pointer to QSettings, used to store and access data in persistent app
+     * memory.
      */
-    QSettings *mSettings;
+    QSettings* mSettings;
 
     /// true if lights should turn off after X hours of no use, false othwerise.
     bool mTimeoutEnabled;

@@ -9,12 +9,10 @@
 #include "lightvectorwidget.h"
 #include "utils/qt.h"
 
-namespace cor
-{
+namespace cor {
 
-LightVectorWidget::LightVectorWidget(int width, int height,
-                                     bool fillFromLeft,
-                             QWidget *parent) : QWidget(parent) {
+LightVectorWidget::LightVectorWidget(int width, int height, bool fillFromLeft, QWidget* parent)
+    : QWidget(parent) {
     mWidth = width;
     mHeight = height;
     mMaximumSize = width * height;
@@ -25,7 +23,7 @@ LightVectorWidget::LightVectorWidget(int width, int height,
     // --------------
 
     mLayout = new QGridLayout;
-    mLayout->setContentsMargins(0,0,0,0);
+    mLayout->setContentsMargins(0, 0, 0, 0);
     mLayout->setHorizontalSpacing(0);
 
     // --------------
@@ -41,12 +39,16 @@ LightVectorWidget::LightVectorWidget(int width, int height,
             QString iString(i);
             cor::Light light(iString, iString, ECommType::MAX);
             light.routine = ERoutine::singleSolid;
-            light.color = QColor(0,0,0);
+            light.color = QColor(0, 0, 0);
             QJsonObject routineObject = lightToJson(light);
             mArrayColorsButtons[uint32_t(i)] = new cor::Button(this, routineObject);
-            mArrayColorsButtons[uint32_t(i)]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+            mArrayColorsButtons[uint32_t(i)]->setSizePolicy(QSizePolicy::Expanding,
+                                                            QSizePolicy::Expanding);
             arrayButtonsMapper->setMapping(mArrayColorsButtons[uint32_t(i)], i);
-            connect(mArrayColorsButtons[uint32_t(i)], SIGNAL(clicked(bool)), arrayButtonsMapper, SLOT(map()));
+            connect(mArrayColorsButtons[uint32_t(i)],
+                    SIGNAL(clicked(bool)),
+                    arrayButtonsMapper,
+                    SLOT(map()));
 
             QSizePolicy sizePolicy = mArrayColorsButtons[uint32_t(i)]->sizePolicy();
             sizePolicy.setRetainSizeWhenHidden(true);
@@ -61,35 +63,35 @@ LightVectorWidget::LightVectorWidget(int width, int height,
 }
 
 void LightVectorWidget::updateDevices(const std::list<cor::Light>& devices) {
-   if (mFillFromLeft) {
-       int i = 0;
-       for (const auto& device : devices) {
-           bool skip = mHideOffDevices && !device.isOn;
-           if (i < mMaximumSize && !skip) {
-               QJsonObject routineObject = lightToJson(device);
-               mArrayColorsButtons[uint32_t(i)]->updateRoutine(routineObject);
-               mArrayColorsButtons[uint32_t(i)]->setVisible(true);
-           }
-           ++i;
-       }
-       for (; i < mMaximumSize; ++i) {
-           mArrayColorsButtons[uint32_t(i)]->setVisible(false);
-       }
-   } else {
-       int i = mMaximumSize - 1;
-       for (const auto& device : devices) {
-           bool skip = mHideOffDevices && !device.isOn;
-           if (i > 0 && !skip) {
-               QJsonObject routineObject = lightToJson(device);
-               mArrayColorsButtons[uint32_t(i)]->updateRoutine(routineObject);
-               mArrayColorsButtons[uint32_t(i)]->setVisible(true);
-           }
-           --i;
-       }
-       for (; i > 0; --i) {
-           mArrayColorsButtons[uint32_t(i)]->setVisible(false);
-       }
-   }
+    if (mFillFromLeft) {
+        int i = 0;
+        for (const auto& device : devices) {
+            bool skip = mHideOffDevices && !device.isOn;
+            if (i < mMaximumSize && !skip) {
+                QJsonObject routineObject = lightToJson(device);
+                mArrayColorsButtons[uint32_t(i)]->updateRoutine(routineObject);
+                mArrayColorsButtons[uint32_t(i)]->setVisible(true);
+            }
+            ++i;
+        }
+        for (; i < mMaximumSize; ++i) {
+            mArrayColorsButtons[uint32_t(i)]->setVisible(false);
+        }
+    } else {
+        int i = mMaximumSize - 1;
+        for (const auto& device : devices) {
+            bool skip = mHideOffDevices && !device.isOn;
+            if (i > 0 && !skip) {
+                QJsonObject routineObject = lightToJson(device);
+                mArrayColorsButtons[uint32_t(i)]->updateRoutine(routineObject);
+                mArrayColorsButtons[uint32_t(i)]->setVisible(true);
+            }
+            --i;
+        }
+        for (; i > 0; --i) {
+            mArrayColorsButtons[uint32_t(i)]->setVisible(false);
+        }
+    }
 }
 
 uint32_t LightVectorWidget::selectedCount() {
@@ -113,4 +115,4 @@ void LightVectorWidget::enableButtonInteraction(bool enable) {
     }
 }
 
-}
+} // namespace cor

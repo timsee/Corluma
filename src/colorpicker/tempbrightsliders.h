@@ -11,23 +11,23 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief The TempBrightSliders class is a class designed for choosing shades of white and how bright they shine.
- *        The top slider is as "temperature" slider which determines the temperature of the white of the LEDs. Cooler
- *        whites have a blue tint and warmer whites have an orange tint. The sliders use the temperature range available
- *        on Philips hue lights: 153-500. If lights do not have a temperature mode, they emulate it with their RGB mode.
- *        The second slider is a  brightness slider, which determine how bright the LEDs will shine.
+ * \brief The TempBrightSliders class is a class designed for choosing shades of white and how
+ * bright they shine. The top slider is as "temperature" slider which determines the temperature of
+ * the white of the LEDs. Cooler whites have a blue tint and warmer whites have an orange tint. The
+ * sliders use the temperature range available on Philips hue lights: 153-500. If lights do not have
+ * a temperature mode, they emulate it with their RGB mode. The second slider is a  brightness
+ * slider, which determine how bright the LEDs will shine.
  */
-class TempBrightSliders: public QWidget
-{
+class TempBrightSliders : public QWidget {
     Q_OBJECT
 
 public:
     /// Constructor
-    explicit TempBrightSliders(QWidget *parent);
+    explicit TempBrightSliders(QWidget* parent);
 
     /*!
-     * \brief changeTemperatureAndBrightness programmatically change the positions of the sliders. Does not emit
-     *        a signal when the sliders move.
+     * \brief changeTemperatureAndBrightness programmatically change the positions of the sliders.
+     * Does not emit a signal when the sliders move.
      * \param temperature new temperature position, must be between 153 and 500
      * \param brightness new brightness position, must be between 0 and 100.
      */
@@ -71,35 +71,34 @@ private slots:
     void releasedSlider();
 
 private:
-
     /*!
-     * \brief mTemperatureSlider slider that determines the "temperature" of the white LEDs. cooler whites
+     * \brief mTemperatureSlider slider that determines the "temperature" of the white LEDs. cooler
+     * whites
      *        have a blue tint and warmer whites have an orange tint.
      */
-    cor::Slider *mTemperatureSlider;
+    cor::Slider* mTemperatureSlider;
 
     /*!
      * \brief mBrightnessSlider slider that determines how bright the LEDs will shine.
      */
-    cor::Slider *mBrightnessSlider;
+    cor::Slider* mBrightnessSlider;
 
     /// currently unused, but in place so that slider sizes match other layouts
-    QLabel *mTopLabel;
+    QLabel* mTopLabel;
 
     /// currently unused, but in place so that slider sizes match other layouts
-    QLabel *mMidLabel;
+    QLabel* mMidLabel;
 
     /*!
      * \brief mPlaceholder unused label that is instead used to keep the layout of the slider
      *        consistent wtih the other bottom layouts of the ColorPicker.
      */
-    QLabel *mPlaceholder;
+    QLabel* mPlaceholder;
 
     /*!
      * \brief mLayout layout used to arrange the sliders.
      */
-    QGridLayout *mLayout;
-
+    QGridLayout* mLayout;
 };
 
 #endif // TEMPBRIGHTSLIDERS_H

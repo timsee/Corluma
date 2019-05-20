@@ -4,19 +4,17 @@
  * Released under the GNU General Public License.
  */
 
+#include <QGraphicsOpacityEffect>
 #include <QScroller>
+#include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
-#include <QStyleOption>
-#include <QGraphicsOpacityEffect>
 
 #include "bridgescheduleswidget.h"
 
-namespace hue
-{
+namespace hue {
 
-BridgeSchedulesWidget::BridgeSchedulesWidget(QWidget *parent) : QWidget(parent) {
-
+BridgeSchedulesWidget::BridgeSchedulesWidget(QWidget* parent) : QWidget(parent) {
     mTopWidget = new cor::TopWidget("Bridge Schedules", ":images/closeX.png", this);
     connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(pressedClose(bool)));
     mTopWidget->setFontPoint(20);
@@ -27,7 +25,7 @@ BridgeSchedulesWidget::BridgeSchedulesWidget(QWidget *parent) : QWidget(parent) 
 
     mScrollAreaWidget = new QWidget(this);
     mScrollAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mScrollAreaWidget->setContentsMargins(0,0,0,0);
+    mScrollAreaWidget->setContentsMargins(0, 0, 0, 0);
     mScrollArea->setWidget(mScrollAreaWidget);
 
     mScrollLayout = new QVBoxLayout(mScrollAreaWidget);
@@ -37,7 +35,7 @@ BridgeSchedulesWidget::BridgeSchedulesWidget(QWidget *parent) : QWidget(parent) 
 
     mMainLayout = new QVBoxLayout(this);
 
-    mMainLayout->addWidget(mTopWidget,  2);
+    mMainLayout->addWidget(mTopWidget, 2);
     mMainLayout->addWidget(mScrollArea, 15);
 }
 
@@ -53,14 +51,14 @@ void BridgeSchedulesWidget::updateSchedules(std::list<SHueSchedule> schedules) {
 
     // add new widgets
     for (const auto& schedule : schedules) {
-        hue::HueScheduleWidget *widget = new hue::HueScheduleWidget(mScrollAreaWidget, schedule);
+        hue::HueScheduleWidget* widget = new hue::HueScheduleWidget(mScrollAreaWidget, schedule);
         widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         mWidgets.push_back(widget);
         mScrollLayout->addWidget(widget);
     }
 }
 
-void BridgeSchedulesWidget::paintEvent(QPaintEvent *) {
+void BridgeSchedulesWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
@@ -82,20 +80,16 @@ void BridgeSchedulesWidget::resize() {
 
     // resize scroll area
     mScrollAreaWidget->setFixedWidth(int(mScrollArea->width() * 0.9f));
-    QSize widgetSize(int(this->width()  * 0.9f), int(this->height() / 2.5f));
+    QSize widgetSize(int(this->width() * 0.9f), int(this->height() / 2.5f));
     int yPos = 0;
     // draw widgets in content region
     for (auto widget : mWidgets) {
         widget->setFixedHeight(widgetSize.height());
-        widget->setGeometry(0,
-                            yPos,
-                            widgetSize.width(),
-                            widget->height());
+        widget->setGeometry(0, yPos, widgetSize.width(), widget->height());
         yPos += widget->height();
     }
     mScrollAreaWidget->setFixedHeight(yPos);
 }
 
 
-}
-
+} // namespace hue

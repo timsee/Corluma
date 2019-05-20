@@ -5,8 +5,7 @@
 
 #include <memory>
 
-namespace cor
-{
+namespace cor {
 
 /*!
  * \copyright
@@ -17,28 +16,23 @@ namespace cor
  * \brief Inherited by many of the largest Pages, provides a link to the backend.
  */
 class Page {
-
 public:
-
-    /*!
-     * \brief ~Page Destructor
-     */
+    /// Destructor
     virtual ~Page() = default;
 
     /// setter for open flag
-    void isOpen(bool open);
+    void isOpen(bool open) noexcept { mIsOpen = open; }
 
     /// true if open, false otherwise
-    bool isOpen();
+    bool isOpen() const noexcept { return mIsOpen; }
 
 protected:
-
     /*!
      * \brief mRenderThread timer that calls a renderUI() function on each of the pages.
      *        This function is used to render more expensive assets if and only if they
      *        received a change in state since the previous renderUI call.
      */
-    QTimer *mRenderThread;
+    QTimer* mRenderThread;
 
     /// true if page is open, false if hidden.
     bool mIsOpen;
@@ -49,5 +43,5 @@ protected:
     int mRenderInterval = 100;
 };
 
-}
+} // namespace cor
 #endif // COR_PAGE_H

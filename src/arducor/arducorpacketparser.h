@@ -1,11 +1,11 @@
 #ifndef COMMPACKETPARSER_H
 #define COMMPACKETPARSER_H
 
-#include <QWidget>
 #include <QColor>
 #include <QJsonObject>
-#include "cor/protocols.h"
+#include <QWidget>
 #include "cor/light.h"
+#include "cor/protocols.h"
 
 /*!
  * \copyright
@@ -13,25 +13,25 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief The ArduCorPacketParser class takes the packets used for communication with other devices as input,
- *        parses them, and emits signals based on the contents of a packet. For example, a main color change
- *        packet will emit a `receivedMainColorChange(int, QColor)`  signal. This class is used to emulate the
- *        functionality of the parser that is embedded on the arduino platforms on devices like the Philips Hue.
+ * \brief The ArduCorPacketParser class takes the packets used for communication with other devices
+ * as input, parses them, and emits signals based on the contents of a packet. For example, a main
+ * color change packet will emit a `receivedMainColorChange(int, QColor)`  signal. This class is
+ * used to emulate the functionality of the parser that is embedded on the arduino platforms on
+ * devices like the Philips Hue.
  */
-class ArduCorPacketParser: public QObject
-{
+class ArduCorPacketParser : public QObject {
     Q_OBJECT
 
 public:
     /*!
      * \brief ArduCorPacketParser constructor
      */
-    ArduCorPacketParser(QObject *parent = nullptr);
+    ArduCorPacketParser(QObject* parent = nullptr);
 
     /*!
      * \brief parsePacket take a packet that is assumed to be a properly formatted command packet
-     *        and attempts to parse it. If the command is valid, it emits a signal. If the command is invalid,
-     *        nothing happens.
+     * and attempts to parse it. If the command is valid, it emits a signal. If the command is
+     * invalid, nothing happens.
      * \param packet the command packet being used as input
      */
     void parsePacket(const QString& packet);
@@ -47,9 +47,7 @@ public:
      * \param index index of array color
      * \param color the color being sent for the given index
      */
-    QString arrayColorChangePacket(const cor::Light& device,
-                                   int index,
-                                   const QColor& color);
+    QString arrayColorChangePacket(const cor::Light& device, int index, const QColor& color);
     /*!
      * \brief routinePacket change the mode of the lights. The mode changes
      *        how the lights look.
@@ -58,23 +56,23 @@ public:
     QString routinePacket(const cor::Light& device, const QJsonObject& routineObject);
 
     /*!
-     * \brief changeCustomArraySizePacket sends a new custom array count to the LED array. This count
-     *        determines how many colors from the custom array should be used. It is different
-     *        from the size of the custom array, which provides a maximum possible amount
-     *        of colors.
+     * \brief changeCustomArraySizePacket sends a new custom array count to the LED array. This
+     * count determines how many colors from the custom array should be used. It is different from
+     * the size of the custom array, which provides a maximum possible amount of colors.
      * \param count a value less than the size of the custom color array.
      */
     QString changeCustomArraySizePacket(const cor::Light& device, int count);
 
     /*!
-     * \brief brightnessPacket sends a brightness value between 0 and 100, with 100 being full brightness.
+     * \brief brightnessPacket sends a brightness value between 0 and 100, with 100 being full
+     * brightness.
      * \param brightness a value between 0 and 100
      */
     QString brightnessPacket(const cor::Light& device, int brightness);
 
     /*!
-     * \brief timeoutPacket the amount of minutes that it takes for the LEDs to turn themselves off from
-     *        inactivity. Perfect for bedtime!
+     * \brief timeoutPacket the amount of minutes that it takes for the LEDs to turn themselves off
+     * from inactivity. Perfect for bedtime!
      * \param timeOut a number greater than 0
      */
     QString timeoutPacket(const cor::Light& device, int timeOut);
@@ -135,7 +133,6 @@ signals:
     void receivedTimeOutChange(int deviceIndex, int timeOut);
 
 private:
-
     /// parses an int vector representation of a routine object.
     void routineChange(const std::vector<int>& intVector);
 };

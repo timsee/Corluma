@@ -3,11 +3,10 @@
 
 #include <QWidget>
 #include "cor/button.h"
-#include "cor/slider.h"
 #include "cor/light.h"
+#include "cor/slider.h"
 
-namespace cor
-{
+namespace cor {
 
 /*!
  * \copyright
@@ -16,18 +15,15 @@ namespace cor
  *
  *
  *
- * \brief The LightVectorWidget class is a bottom layout for the color picker that allows the user to choose up to
- *        10 colors at once and change them all to a new color. It is used for multi color routines. A slider
- *        is also on top to determine how many colors are used for this routine.
+ * \brief The LightVectorWidget class is a bottom layout for the color picker that allows the user
+ * to choose up to 10 colors at once and change them all to a new color. It is used for multi color
+ * routines. A slider is also on top to determine how many colors are used for this routine.
  */
-class LightVectorWidget: public QWidget
-{
+class LightVectorWidget : public QWidget {
     Q_OBJECT
 public:
     /// Constructor
-    explicit LightVectorWidget(int width, int height,
-                               bool fillFromLeft,
-                               QWidget *parent);
+    explicit LightVectorWidget(int width, int height, bool fillFromLeft, QWidget* parent);
     /*!
      * \brief updateDevices update the devices in the cor::Button to show the exact routine.
      * \param devices list of devices to display
@@ -52,7 +48,7 @@ public:
     uint32_t selectedCount();
 
     /// getter for vector of buttons in widget.
-    std::vector<cor::Button *> buttons() { return mArrayColorsButtons; }
+    std::vector<cor::Button*> buttons() { return mArrayColorsButtons; }
 
 signals:
     /*!
@@ -61,19 +57,19 @@ signals:
     void multiColorCountChanged(int);
 
     /*!
-     * \brief selectedCountChanged a button was pressed so the selected count has changed. emits new count.
+     * \brief selectedCountChanged a button was pressed so the selected count has changed. emits new
+     * count.
      */
     void selectedCountChanged(int);
 
 private slots:
     /*!
-     * \brief toggleArrayColor when called, the multi color array color at the given index is seletected
-     *        or deselected, depending on its current state.
+     * \brief toggleArrayColor when called, the multi color array color at the given index is
+     * seletected or deselected, depending on its current state.
      */
     void toggleArrayColor(int);
 
 private:
-
     /// true if widget should fill new entries from left, false if it should fill from right
     bool mFillFromLeft;
 
@@ -99,14 +95,14 @@ private:
     std::vector<QLabel*> mArrayLabels;
 
     /// color groups used to display color palette state
-    std::vector<std::vector<QColor> > mColorGroups;
+    std::vector<std::vector<QColor>> mColorGroups;
 
     /*!
      * \brief mLayout layout used to arrange the slider and the buttons.
      */
-    QGridLayout *mLayout;
+    QGridLayout* mLayout;
 };
 
-}
+} // namespace cor
 
 #endif // COLORGRID_H

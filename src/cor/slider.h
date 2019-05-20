@@ -2,25 +2,19 @@
 #define COR_SLIDER_H
 
 
-#include <QWidget>
-#include <QSlider>
 #include <QLabel>
 #include <QLayout>
+#include <QSlider>
+#include <QWidget>
 #include <memory>
 
-namespace cor
-{
+namespace cor {
 
 /// mode for slider
-enum class ESliderType {
-    vanilla,
-    color,
-    image,
-    gradient
-};
+enum class ESliderType { vanilla, color, image, gradient };
 
 /// standard background color of groove of slider
-static QColor kSliderBackgroundColor(32,31,31);
+static QColor kSliderBackgroundColor(32, 31, 31);
 
 /*!
  * \copyright
@@ -43,26 +37,25 @@ static QColor kSliderBackgroundColor(32,31,31);
  * in order to prevent users from choosing less than 2 colors for the array routines.
  *
  */
-class Slider : public QWidget
-{
+class Slider : public QWidget {
     Q_OBJECT
 
 public:
     /*!
      * \brief Constructor
      */
-    explicit Slider(QWidget *parent);
+    explicit Slider(QWidget* parent);
 
     /*!
      * \brief setColor Does a dark to light gradient on the color provided on the background
-     *        of the slider to the left of the thumb piece of the slider Uses a custom style sheet to achieve this effect.
-     * \param color the color that will be put into a custom style sheet
+     *        of the slider to the left of the thumb piece of the slider Uses a custom style sheet
+     * to achieve this effect. \param color the color that will be put into a custom style sheet
      */
     void setColor(const QColor& color);
 
     /*!
-     * \brief setImage Adds a background image to the slider instead of using a color with a gradient.
-     * \param path path to the resource of the image
+     * \brief setImage Adds a background image to the slider instead of using a color with a
+     * gradient. \param path path to the resource of the image
      */
     void setImage(const QString& path);
 
@@ -74,31 +67,36 @@ public:
     void setGradient(const QColor& leftColor, const QColor& rightColor);
 
     /*!
-     * \brief setSnapToNearestTick set this if you want the slider to snap to the nearest tick instead
-     *        of snapping to the direct location that the user clicked.
+     * \brief setSnapToNearestTick set this if you want the slider to snap to the nearest tick
+     * instead of snapping to the direct location that the user clicked.
+     *
      * \param shouldSnap true if you want to it to snap, false otherwise.
      */
     void setSnapToNearestTick(bool shouldSnap);
 
     /*!
-     * \brief setMinimumPossible allows the user to set a value other than the minimum as the minimum possible
-     *        value the slider can hit.
+     * \brief setMinimumPossible allows the user to set a value other than the minimum as the
+     * minimum possible value the slider can hit.
+     *
      * \param useMinimumPossible tue if you want to use this new minimum, false otherwise.
      * \param minimumPossible the value that you want to be a minimum.
      */
     void setMinimumPossible(bool useMinimumPossible, int minimumPossible);
 
     /*!
-     * \brief setSliderHeight By default sliders take up all of the of the widget, but this covers ticks
-     *        and leaves no room inbewtween sliders that are stacked. This function takes a value between
-     *        0.0 and 1.0 to  scale the slider down, while keeping it centered in the widget.
-     * \param percent a value between 0.0 and 1.0 that scales the slider to take up less of hte widget.
+     * \brief setSliderHeight By default sliders take up all of the of the widget, but this covers
+     * ticks and leaves no room inbewtween sliders that are stacked. This function takes a value
+     * between 0.0 and 1.0 to  scale the slider down, while keeping it centered in the widget.
+     *
+     * \param percent a value between 0.0 and 1.0 that scales the slider to take up less of hte
+     * widget.
      */
     void setHeightPercentage(float percent);
 
     /*!
-     * \brief enable sets whether the slider is enabled or disabled. Disabling the slider adds opacity,
-     *        greys out the color, and disables user interaction.
+     * \brief enable sets whether the slider is enabled or disabled. Disabling the slider adds
+     * opacity, greys out the color, and disables user interaction.
+     *
      * \param shouldEnable true if the asset should be enabled, false otherwise.
      */
     void enable(bool shouldEnable);
@@ -107,13 +105,13 @@ public:
     void setShouldDrawTickLabels(bool shouldDraw);
 
     /// pointer to internal QSlider
-    QSlider *slider() { return mSlider; }
+    QSlider* slider() { return mSlider; }
 
 
 signals:
     /*!
-     * \brief Sends out the value that the slider has been set to after all the processing of snapping
-     *        it to a tick or accounting for its minium value or any of that.
+     * \brief Sends out the value that the slider has been set to after all the processing of
+     * snapping it to a tick or accounting for its minium value or any of that.
      */
     void valueChanged(int);
 
@@ -137,20 +135,19 @@ protected:
     /*!
      * \brief resizeEvent makes sure that the QSlider resizes with the QWidget
      */
-    void resizeEvent(QResizeEvent *);
+    void resizeEvent(QResizeEvent*);
     /*!
      * \brief paintEvent handles edge cases created by the having a QSlider and
      *        an elaborate stylesheet. Draws the application's background color
      *        and the slider's ticks.
      */
-    void paintEvent(QPaintEvent *);
+    void paintEvent(QPaintEvent*);
 
 private:
-
     /*!
      * \brief slider The actual and factual QSlider in this slider class
      */
-    QSlider *mSlider;
+    QSlider* mSlider;
 
     /*!
      * \brief mHeightScaleFactor used to scale the slider inside of its qwidget so it takes up
@@ -161,7 +158,7 @@ private:
     /*!
      * \brief mLayout layout of a lights slider
      */
-    QVBoxLayout *mLayout;
+    QVBoxLayout* mLayout;
 
     /*!
      * \brief mShouldSnap true if the slider should snap to the nearest ticks, false
@@ -196,7 +193,7 @@ private:
      * \param newPos the position that user clicked.
      * \return the new position of the slider.
      */
-    int jumpSliderToPosition(QSlider *slider, int newPos);
+    int jumpSliderToPosition(QSlider* slider, int newPos);
 
     /*!
      * \brief snapSliderToNearestTick checks the value that the slider is
@@ -209,7 +206,7 @@ private:
      * \param pos the position determined by jumpSliderToPosition.
      * \return the final position of the slider.
      */
-    int snapSliderToNearestTick(QSlider *slider, int pos);
+    int snapSliderToNearestTick(QSlider* slider, int pos);
 
     /*!
      * \brief mShouldDrawTickLabels if true, instead of ticks labels of the values at that
@@ -237,5 +234,5 @@ private:
     ESliderType mType;
 };
 
-}
+} // namespace cor
 #endif // COR_SLIDER_H

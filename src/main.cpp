@@ -4,20 +4,20 @@
  * Released under the GNU General Public License.
  */
 
-#include "mainwindow.h"
 #include "appsettings.h"
-#include "groupdata.h"
-#include "utils/qt.h"
 #include "cor/exception.h"
+#include "groupdata.h"
+#include "mainwindow.h"
+#include "utils/qt.h"
 
 #include <QApplication>
-#include <QFile>
-#include <QTextStream>
 #include <QDebug>
-#include <QSplashScreen>
-#include <QTimer>
-#include <QThread>
 #include <QDesktopWidget>
+#include <QFile>
+#include <QSplashScreen>
+#include <QTextStream>
+#include <QThread>
+#include <QTimer>
 
 /// uncomment to wipe out all QSettings Data.
 //#define WIPE_QSETTINGS 1
@@ -36,7 +36,7 @@
 const static QString kFirstTimeOpenKey = QString("Corluma_FirstTimeOpen");
 
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
     QApplication a(argc, argv);
     QSettings settings;
 
@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
 
 // removes saved groups of devices
 #ifdef WIPE_JSON
-    GroupsParser *parser = new GroupsParser();
+    GroupsParser* parser = new GroupsParser();
     parser->removeAppData();
     delete parser;
 #endif
@@ -95,20 +95,20 @@ int main(int argc, char *argv[]) {
     qDebug() << "";
     qDebug() << "";
     qDebug() << "--------------------";
-    qDebug() << "CPU: "                 << QSysInfo::buildCpuArchitecture();
-    qDebug() << "kernel type: "         << QSysInfo::kernelType();
-    qDebug() << "mac version: "         << QSysInfo::macVersion();
-    qDebug() << "host name: "           << QSysInfo::machineHostName();
+    qDebug() << "CPU: " << QSysInfo::buildCpuArchitecture();
+    qDebug() << "kernel type: " << QSysInfo::kernelType();
+    qDebug() << "mac version: " << QSysInfo::macVersion();
+    qDebug() << "host name: " << QSysInfo::machineHostName();
     qDebug() << "pretty product name: " << QSysInfo::prettyProductName();
-    qDebug() << "product type: "        << QSysInfo::productType();
-    qDebug() << "product version: "     << QSysInfo::productVersion();
-    qDebug() << "windows version: "     << QSysInfo::windowsVersion();
+    qDebug() << "product type: " << QSysInfo::productType();
+    qDebug() << "product version: " << QSysInfo::productVersion();
+    qDebug() << "windows version: " << QSysInfo::windowsVersion();
     qDebug() << "";
-    qDebug() << "Default Save Path: "   << GroupsParser::defaultSavePath();
+    qDebug() << "Default Save Path: " << GroupsParser::defaultSavePath();
     qDebug() << "";
-    qDebug() << "Supports SSL:"         << QSslSocket::supportsSsl();
+    qDebug() << "Supports SSL:" << QSslSocket::supportsSsl();
     qDebug() << "SSL Library Build Version: " << QSslSocket::sslLibraryBuildVersionString();
-    qDebug() << "SSL Library Version: "  << QSslSocket::sslLibraryVersionString();
+    qDebug() << "SSL Library Version: " << QSslSocket::sslLibraryVersionString();
     qDebug() << "--------------------";
     qDebug() << "";
     qDebug() << "";
@@ -135,17 +135,18 @@ int main(int argc, char *argv[]) {
      * since the value function will return the default value if none is found
      */
     if (settings.value(kFirstTimeOpenKey, QVariant(127)) == QVariant(127)) {
-        //add default settings
-        settings.setValue(cor::kUseTimeoutKey,   QString::number(int(true)));
-        settings.setValue(cor::kTimeoutValue,    QString::number(120));
+        // add default settings
+        settings.setValue(cor::kUseTimeoutKey, QString::number(int(true)));
+        settings.setValue(cor::kTimeoutValue, QString::number(120));
 
 
         std::vector<QString> protocolInUseKeys = AppSettings::protocolKeys();
         for (const auto& key : protocolInUseKeys) {
-            settings.setValue(key,   QString::number(int(true)));
+            settings.setValue(key, QString::number(int(true)));
         }
         // set arducor to off
-        settings.setValue(protocolInUseKeys[std::size_t(EProtocolType::arduCor)],   QString::number(int(false)));
+        settings.setValue(protocolInUseKeys[std::size_t(EProtocolType::arduCor)],
+                          QString::number(int(false)));
 
 
         // set the value so it no longer gives a default back.
@@ -162,14 +163,14 @@ int main(int argc, char *argv[]) {
 
     // center the application
     QRect screenGeometry = QApplication::desktop()->screenGeometry();
-    int x = (screenGeometry.width()-window.width()) / 2;
-    int y = (screenGeometry.height()-window.height()) / 2;
+    int x = (screenGeometry.width() - window.width()) / 2;
+    int y = (screenGeometry.height() - window.height()) / 2;
     window.move(x, y);
 
 #ifndef DISABLE_SPLASH_SCREEN
     int splashScreenDelay = 3000; // in milliseconds
     QTimer::singleShot(splashScreenDelay, &splash, SLOT(close()));
-    QTimer::singleShot(splashScreenDelay, &window,SLOT(show()));
+    QTimer::singleShot(splashScreenDelay, &window, SLOT(show()));
     splash.show();
 #else
     window.show();

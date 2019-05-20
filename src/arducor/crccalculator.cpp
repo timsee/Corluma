@@ -6,21 +6,30 @@
 
 #include "crccalculator.h"
 
-CRCCalculator::CRCCalculator()
-{
-    mCRCTable = {
-        0, 498536548, 997073096, 651767980,
-        1994146192, 1802195444, 1303535960, 1342533948,
-        3988292384, 4027552580, 3604390888, 3412177804,
-        2607071920, 2262029012, 2685067896, 3183342108
-    };
+CRCCalculator::CRCCalculator() {
+    mCRCTable = {0,
+                 498536548,
+                 997073096,
+                 651767980,
+                 1994146192,
+                 1802195444,
+                 1303535960,
+                 1342533948,
+                 3988292384,
+                 4027552580,
+                 3604390888,
+                 3412177804,
+                 2607071920,
+                 2262029012,
+                 2685067896,
+                 3183342108};
 }
 
 uint32_t CRCCalculator::calculate(const QString& input) {
     auto crc = uint32_t(~0);
     std::string string = input.toStdString();
     for (uint16_t i = 0; i < input.length(); ++i) {
-      crc = update(crc, uint8_t(string[i]));
+        crc = update(crc, uint8_t(string[i]));
     }
     crc = ~crc;
     return crc;

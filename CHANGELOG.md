@@ -489,3 +489,8 @@ ___
 * Fixed bugs for controlling ambient and dimmable lights. 
 * Fixed miscellaneous bugs.
 
+### **v0.16.1**
+#### The Clang-Format Update
+* Ran `clang-format`on codebase.
+
+

@@ -3,11 +3,11 @@
 
 #include "cor/protocols.h"
 
-#include <QJsonObject>
 #include <QColor>
+#include <QJsonObject>
 
-#include <vector>
 #include <sstream>
+#include <vector>
 /*!
  * \copyright
  * Copyright (C) 2015 - 2019.
@@ -18,9 +18,7 @@
  *        palette maintains a JSON representation and a standard representation of
  *        all of its data.
  */
-class Palette
-{
-
+class Palette {
 public:
     /// json constructor
     Palette(const QJsonObject& object);
@@ -49,10 +47,18 @@ public:
     /// equal operator
     bool operator==(const Palette& rhs) const {
         bool result = true;
-        if (name()        != rhs.name()) result = false;
-        if (brightness()  != rhs.brightness()) result = false;
-        if (paletteEnum() != rhs.paletteEnum()) result = false;
-        if (colors()      != rhs.colors()) result = false;
+        if (name() != rhs.name()) {
+            result = false;
+        }
+        if (brightness() != rhs.brightness()) {
+            result = false;
+        }
+        if (paletteEnum() != rhs.paletteEnum()) {
+            result = false;
+        }
+        if (colors() != rhs.colors()) {
+            result = false;
+        }
         return result;
     }
 
@@ -64,11 +70,12 @@ public:
         tempString << " Enum String: " << paletteToString(paletteEnum()).toStdString();
         uint32_t index = 0;
         for (auto color : colors()) {
-            tempString << index << ". R:" << color.red() << " G:" << color.green() << " B:" << color.blue();
+            tempString << index << ". R:" << color.red() << " G:" << color.green()
+                       << " B:" << color.blue();
             if (index != colors().size() - 1) {
-              tempString << ", ";
+                tempString << ", ";
             } else {
-              tempString << " ";
+                tempString << " ";
             }
             index++;
         }
@@ -77,7 +84,6 @@ public:
     }
 
 private:
-
     /// enum for the palette
     EPalette mEnum;
 

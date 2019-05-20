@@ -1,14 +1,14 @@
 #ifndef DISCOVERYPAGE_H
 #define DISCOVERYPAGE_H
 
-#include <QWidget>
-#include <QPushButton>
-#include <QListWidget>
 #include <QLayout>
+#include <QListWidget>
+#include <QPushButton>
+#include <QWidget>
 
-#include "cor/page.h"
 #include "comm/commlayer.h"
 #include "cor/devicelist.h"
+#include "cor/page.h"
 #include "floatinglayout.h"
 
 class DiscoveryArduCorWidget;
@@ -21,20 +21,22 @@ class DiscoveryNanoLeafWidget;
  * Released under the GNU General Public License.
  *
  *
- * \brief The DiscoveryPage class provides the user an interface to discover new connections with lights.
- *        Each enabled communication type gets its own dedicated page. When the user opens the app the first time,
- *        they are required to connect to a light before they are able to leave this page.
+ * \brief The DiscoveryPage class provides the user an interface to discover new connections with
+ * lights. Each enabled communication type gets its own dedicated page. When the user opens the app
+ * the first time, they are required to connect to a light before they are able to leave this page.
  *
  */
-class DiscoveryPage : public QWidget, public cor::Page
-{
+class DiscoveryPage : public QWidget, public cor::Page {
     Q_OBJECT
 
 public:
     /*!
      * Constructor
      */
-    explicit DiscoveryPage(QWidget *parent, cor::DeviceList *data, CommLayer *layer, AppSettings *appSettings);
+    explicit DiscoveryPage(QWidget* parent,
+                           cor::DeviceList* data,
+                           CommLayer* layer,
+                           AppSettings* appSettings);
 
     /// debug function
     void openStartForDebug() { mForceStartOpen = true; }
@@ -96,10 +98,12 @@ private slots:
     void renderUI();
 
     /*!
-     * \brief widgetConnectionStateChanged handles whenever a connection status changes for any commtype
+     * \brief widgetConnectionStateChanged handles whenever a connection status changes for any
+     * commtype
+     *
      * \param type the commtype where the connection status changes
-     * \param connectionState int representation of a EConnectionState that gives the current connection
-     *        status.
+     * \param connectionState int representation of a EConnectionState that gives the current
+     * connection status.
      */
     void widgetConnectionStateChanged(EProtocolType type, EConnectionState connectionState);
 
@@ -110,25 +114,23 @@ private slots:
     void floatingLayoutButtonPressed(const QString& button);
 
 protected:
-
     /*!
      * \brief resizeEvent called every time the main window is resized.
      */
-    void resizeEvent(QResizeEvent *);
+    void resizeEvent(QResizeEvent*);
 
     /*!
      * \brief paintEvent paint event for rendering. used to overwrite the background
      *        color of the discovery page so that it hides everything behind it.
      */
-    void paintEvent(QPaintEvent *);
+    void paintEvent(QPaintEvent*);
 
 private:
-
     /*!
      * \brief data layer that maintains and tracks the states of the lights
      *        and the saved data of the GUI
      */
-    cor::DeviceList *mData;
+    cor::DeviceList* mData;
 
     /// moves floating layouts to top right position of screen.
     void moveFloatingLayouts();
@@ -137,34 +139,34 @@ private:
     bool checkIfDiscovered(EProtocolType type);
 
     /// floating layout for commtype button
-    FloatingLayout *mHorizontalFloatingLayout;
+    FloatingLayout* mHorizontalFloatingLayout;
 
     /// floating layout for settings button
-    FloatingLayout *mVerticalFloatingLayout;
+    FloatingLayout* mVerticalFloatingLayout;
 
     /// used for certain discovery pages as an additional button
-    FloatingLayout *mOptionalFloatingLayout;
+    FloatingLayout* mOptionalFloatingLayout;
 
     /// discovery widget for ArduCor
-    DiscoveryArduCorWidget *mArduCorWidget;
+    DiscoveryArduCorWidget* mArduCorWidget;
 
     /// discovery widget for hue products
-    DiscoveryHueWidget *mHueWidget;
+    DiscoveryHueWidget* mHueWidget;
 
     /// discovery widget for nanoleaf products
-    DiscoveryNanoLeafWidget *mNanoLeafWidget;
+    DiscoveryNanoLeafWidget* mNanoLeafWidget;
 
     /// spacer for floating layouts
-    QWidget *mSpacer;
+    QWidget* mSpacer;
 
     /// placeholder for main widget
-    QWidget *mPlaceholder;
+    QWidget* mPlaceholder;
 
     /// start button of widget
-    QPushButton *mStartButton;
+    QPushButton* mStartButton;
 
     /// layout of widget
-    QVBoxLayout *mLayout;
+    QVBoxLayout* mLayout;
 
     /*!
      * \brief resizeTopMenu resize buttons at top that switch between Hue, Serial, etc.
@@ -174,6 +176,7 @@ private:
     /*!
      * \brief changeCommTypeConnectionState change the connection state and the associated UI
      *        elements based on the parameters.
+     *
      * \param type the commtype to change the connection state on
      * \param newState the new state for the commtype.
      */
@@ -182,7 +185,7 @@ private:
     /*!
      * \brief mComm pointer to CommLayer.
      */
-    CommLayer *mComm;
+    CommLayer* mComm;
 
     /*!
      * \brief mType current ProtocolSettings displaying its discovery page.
@@ -212,14 +215,16 @@ private:
      */
     QTime mStartTime;
 
-    /// resizes the icons on the discovery page if the floating layout size changes (this typically happens only once)
+    /// resizes the icons on the discovery page if the floating layout size changes (this typically
+    /// happens only once)
     void resizeButtonIcons();
 
     /// the last floating layout height, used to test if resize is needed.
     int mLastFloatingHeight;
 
-    /// pointer to the app states that determine if a protocol (such as arducor or nanoleaf) is currently enabled
-    AppSettings *mAppSettings;
+    /// pointer to the app states that determine if a protocol (such as arducor or nanoleaf) is
+    /// currently enabled
+    AppSettings* mAppSettings;
 };
 
 #endif // DISCOVERYPAGE_H

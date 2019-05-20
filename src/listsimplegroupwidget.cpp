@@ -10,7 +10,8 @@
 
 #include "utils/qt.h"
 
-ListSimpleGroupWidget::ListSimpleGroupWidget(QWidget *parent, cor::EListType type) : cor::ListWidget(parent, type) {}
+ListSimpleGroupWidget::ListSimpleGroupWidget(QWidget* parent, cor::EListType type)
+    : cor::ListWidget(parent, type) {}
 
 void ListSimpleGroupWidget::updateDevices(const std::list<cor::Light>& devices,
                                           cor::EWidgetType listWidgetType,
@@ -42,13 +43,13 @@ void ListSimpleGroupWidget::updateDevices(const std::list<cor::Light>& devices,
             // Create Widget, if not found
             //----------------
             if (!foundDevice) {
-                auto widget = new ListLightWidget(inputDevice,
-                                                  canHighlight,
-                                                  listWidgetType,
-                                                  switchState,
-                                                  mainWidget());
+                auto widget = new ListLightWidget(
+                    inputDevice, canHighlight, listWidgetType, switchState, mainWidget());
                 connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
-                connect(widget, SIGNAL(switchToggled(QString,bool)), this, SLOT(handleToggledSwitch(QString,bool)));
+                connect(widget,
+                        SIGNAL(switchToggled(QString, bool)),
+                        this,
+                        SLOT(handleToggledSwitch(QString, bool)));
                 insertWidget(widget);
                 overallHeight += widget->height();
             }

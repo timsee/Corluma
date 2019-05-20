@@ -2,17 +2,17 @@
 #ifndef COMMTYPE_H
 #define COMMTYPE_H
 
+#include <QElapsedTimer>
 #include <QString>
 #include <QTime>
-#include <QElapsedTimer>
 #include <QTimer>
 
 
 #include <memory>
 #include <unordered_map>
 
-#include "cor/light.h"
 #include "cor/dictionary.h"
+#include "cor/light.h"
 
 /*!
  * \copyright
@@ -30,14 +30,13 @@
 class CommType : public QObject {
     Q_OBJECT
 public:
-
     /// constructor
     CommType(ECommType type);
 
     /*!
      * \brief ~CommType Destructor
      */
-    virtual ~CommType(){}
+    virtual ~CommType() {}
 
     // ----------------------------
     // Virtual Functions
@@ -61,7 +60,8 @@ public:
     // ----------------------------
 
     /*!
-     * \brief resetStateUpdateTimeout reset the timer tracking when to shutdown the state update thread.
+     * \brief resetStateUpdateTimeout reset the timer tracking when to shutdown the state update
+     * thread.
      */
     void resetStateUpdateTimeout();
 
@@ -77,36 +77,38 @@ public:
     /*!
      * \brief removeController attempts to remove the controller from the device table.
      * \param connection the connection you want to remove
-     * \return true if the connection exists and was removed, false if it wasn't there in the first place
+     * \return true if the connection exists and was removed, false if it wasn't there in the first
+     * place
      */
     bool removeController(const QString& name);
 
     /*!
-     * \brief addLight adds lights with specific unique IDs that have been previously discovered. This allows us to show
-     *        previously learned lights as "Not Reachable" when they cannot be erached.
+     * \brief addLight adds lights with specific unique IDs that have been previously discovered.
+     * This allows us to show previously learned lights as "Not Reachable" when they cannot be
+     * erached.
      * \param lights lights to add to the device table
      */
     void addLight(const cor::Light& light);
 
     /*!
-     * \brief updateDevice update all the data in the light device that matches the same controller and index.
-     *        if a light device doesn't exist with these properties, then it creates a new one.
+     * \brief updateDevice update all the data in the light device that matches the same controller
+     * and index. if a light device doesn't exist with these properties, then it creates a new one.
      * \param device the new data for the light device.
      */
     void updateLight(cor::Light device);
 
     /*!
-     * \brief fillDevice takes the controller and index of the referenced cor::Light and overwrites all other
-     *        values with the values stored in the device table.
+     * \brief fillDevice takes the controller and index of the referenced cor::Light and overwrites
+     * all other values with the values stored in the device table.
      * \param device a cor::Light struct that has its index and controller filled in.
      * \return true if device is found and filled, false otherwise.
      */
     bool fillDevice(cor::Light& device);
 
     /*!
-     * \brief controllerName look up a controller's name by providing the unique ID of a light. If no controller
-     *        matches the ID, it will return an error string. The complexity of the lookup scales by number of controllers
-     *        instead of the number of devices.
+     * \brief controllerName look up a controller's name by providing the unique ID of a light. If
+     * no controller matches the ID, it will return an error string. The complexity of the lookup
+     * scales by number of controllers instead of the number of devices.
      * \param uniqueID unique ID to request a light from
      * \return the name of the controller, if the uniqueID is found.
      */
@@ -126,17 +128,17 @@ signals:
     void updateReceived(ECommType);
 
 protected:
-
     /*!
-     * \brief shouldContinueStateUpdate checks internal states and determines if it should still keep requesting
-     *        state updates from the devices.
+     * \brief shouldContinueStateUpdate checks internal states and determines if it should still
+     * keep requesting state updates from the devices.
      * \return true if it should request state updates, false otherwise.
      */
     bool shouldContinueStateUpdate();
 
     /*!
-     * \brief mLastSendTime the last time a message was sent to the commtype. This is tracked to detect
-     *        when the device is no longer being actively used, so it can slow down or shut off state update packets.
+     * \brief mLastSendTime the last time a message was sent to the commtype. This is tracked to
+     * detect when the device is no longer being actively used, so it can slow down or shut off
+     * state update packets.
      */
     QTime mLastSendTime;
 
@@ -144,14 +146,15 @@ protected:
     QElapsedTimer mElapsedTimer;
 
     /// periodically check if all lights have sent packets recently.
-    QTimer *mReachabilityTest;
+    QTimer* mReachabilityTest;
 
     /// number of state updates sent out
     uint32_t mStateUpdateCounter;
 
     /*!
-     * how frequently secondary requests should happen. Secondary requests are things like the custom array update
-     * where they are not needed as frequently as state updates but are still useful on a semi regular basis.
+     * how frequently secondary requests should happen. Secondary requests are things like the
+     * custom array updatewhere they are not needed as frequently as state updates but are still
+     * useful on a semi regular basis.
      */
     uint32_t mSecondaryUpdatesInterval;
 
@@ -159,7 +162,7 @@ protected:
      * \brief mStateUpdateTimer Polls the controller every few seconds requesting
      *        updates on all of its devices.
      */
-    QTimer *mStateUpdateTimer;
+    QTimer* mStateUpdateTimer;
 
     /*!
      * \brief mStateUpdateInterval number of msec between each state update request.
@@ -183,7 +186,6 @@ private slots:
     void checkReachability();
 
 private:
-
     /*!
      * \brief mDeviceTable hash table of all available devices. the hash key is the controller name
      *        and the list associated with it is all known devices connected to that controller.

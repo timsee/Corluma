@@ -1,38 +1,37 @@
 #ifndef COR_UTILS_STRICTDICTIONARY_H
 #define COR_UTILS_STRICTDICTIONARY_H
 
-#include <unordered_map>
-#include <vector>
+#include <functional>
 #include <list>
 #include <string>
-#include <functional>
+#include <unordered_map>
+#include <vector>
 #include "exception.h"
 
 #include <iostream>
 
-namespace cor
-{
+namespace cor {
 
 /*!
  * \copyright
  * Copyright (C) 2015 - 2019.
  * Released under the GNU General Public License.
  *
- * \brief Simple dictionary optimized for lookup times. The strict aspect of this dictionary comes from the fact
- *        that it will throw an exception if you try to do anything that doesn't make sense, IE, remove a key that doesn't exist
- *        or lookup an item's key that isn't in the dictionary. Keys are always std::string, but any type
- *        can be used for the items, provided they have a hash and an equal operator. Insertions will
- *        only be succesful if neither the item nor the key exists,. Lookups and removals run in constant runtime.
+ * \brief Simple dictionary optimized for lookup times. The strict aspect of this dictionary comes
+ * from the fact that it will throw an exception if you try to do anything that doesn't make sense,
+ * IE, remove a key that doesn't exist or lookup an item's key that isn't in the dictionary. Keys
+ * are always std::string, but any type can be used for the items, provided they have a hash and an
+ * equal operator. Insertions will only be succesful if neither the item nor the key exists,.
+ * Lookups and removals run in constant runtime.
  */
 template <typename T>
 class StrictDictionary {
 public:
-
     /// default constructor
     StrictDictionary() {}
 
     /// constructor
-    StrictDictionary(const std::vector<std::pair<std::string, T>>& objectList)  {
+    StrictDictionary(const std::vector<std::pair<std::string, T>>& objectList) {
         for (const auto& object : objectList) {
             insert(object.first, object.second);
         }
@@ -41,6 +40,7 @@ public:
     /*!
      * \brief item getter for a item based on a key. Lookup time is in constant runtime,
      *        This will throw an exception if the key does not exist
+     *
      * \param key key to request an item for
      * \return the item for the key
      */
@@ -53,6 +53,7 @@ public:
     /*!
      * \brief key getter for a key based on an item. Lookup time is in constant runtime,
      *        This will throw an exception if the item does not exist
+     *
      * \param item item to request a key for
      * \return the key for the item
      */
@@ -64,6 +65,7 @@ public:
 
     /*!
      * \brief keys getter for a vector of the keys used by the Dictionary
+     *
      * \return a vector of keys used by the Dictionary
      */
     std::vector<std::string> keys() const {
@@ -77,6 +79,7 @@ public:
 
     /*!
      * \brief itemVector Getter for a vector of all items stored in the dictionary
+     *
      * \return a vector of all items stored in the dictionary.
      */
     std::vector<T> itemVector() const {
@@ -90,11 +93,12 @@ public:
 
     /*!
      * \brief itemList Getter for a list of all items stored in the dictionary
+     *
      * \return a list of all items stored in the dictionary.
      */
     std::list<T> itemList() const {
         std::list<T> items;
-        //items.reserve(mItemToKeyMap.size());
+        // items.reserve(mItemToKeyMap.size());
         for (const auto& keyPair : mItemToKeyMap) {
             items.push_back(keyPair.first);
         }
@@ -102,19 +106,16 @@ public:
     }
 
     /// returns true if empty, false if it has any values
-    bool empty() const noexcept {
-        return mKeyToItemMap.empty();
-    }
+    bool empty() const noexcept { return mKeyToItemMap.empty(); }
 
     /// getter for size of dictionary
-    std::size_t size() const noexcept {
-        return mKeyToItemMap.size();
-    }
+    std::size_t size() const noexcept { return mKeyToItemMap.size(); }
 
     /*!
      * \brief insert insert an item into the dictionary. This will return whether or not
      *        the insertion is sucessful. An insertion will not be successful if either the key
      *        or the item already exists in the dictionary
+     *
      * \param key The key to use for the item
      * \param item The item to store in the dictionary
      * \return true if the insertion is successful, false if it failed
@@ -136,6 +137,7 @@ public:
 
     /*!
      * \brief update update the given item, provided it is already in the dictionary
+     *
      * \param item the item to update
      */
     void update(const T& item) {
@@ -148,6 +150,7 @@ public:
      * \brief remove removes an item from dictionary, removing both its key and the item,
      *        and decrementing the size of the dictionary by 1. This will throw if the item
      *        does not exist
+     *
      * \param item the item to remove from the dictionary
      */
     void remove(const T& i) {
@@ -162,6 +165,7 @@ public:
      * \brief removeKey removes an key from dictionary, removing both the key and its item,
      *        and decrementing the size of the dictionary by 1. This will throw if the key
      *        does not exist
+     *
      * \param key the key to remove from the dictionary
      */
     void removeKey(const std::string& key) {
@@ -173,7 +177,6 @@ public:
     }
 
 private:
-
     /*!
      * \brief mKeyToItemMap hash table that stores the key's string and the Item, while
      *        provided constant lookup of item from keys.
@@ -188,6 +191,6 @@ private:
     std::unordered_map<T, std::reference_wrapper<const std::string>> mItemToKeyMap;
 };
 
-}
+} // namespace cor
 
 #endif // STRICTDICTIONARY_H

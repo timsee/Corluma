@@ -1,13 +1,13 @@
 #ifndef COMMHTTP_H
 #define COMMHTTP_H
 
-#include "commtype.h"
 #include "arducor/arducordiscovery.h"
 #include "arducor/crccalculator.h"
+#include "commtype.h"
 
 #include <QNetworkAccessManager>
-#include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QNetworkRequest>
 #include <QTimer>
 
 /*!
@@ -20,9 +20,7 @@
  * requests by appending them to the end of the HTTP
  * request's link.
  */
-
-class CommHTTP : public CommType
-{
+class CommHTTP : public CommType {
     Q_OBJECT
 public:
     /*!
@@ -45,7 +43,7 @@ public:
     void shutdown();
 
     /// connects discovery object
-    void connectDiscovery(ArduCorDiscovery *discovery) { mDiscovery = discovery; }
+    void connectDiscovery(ArduCorDiscovery* discovery) { mDiscovery = discovery; }
 
     /*!
      * \brief sendPacket sends a packet in a way similar to am
@@ -63,8 +61,8 @@ public:
 
 signals:
     /*!
-     * \brief packetReceived emitted whenever a packet that is not a discovery packet is received. Contains
-     *        the full packet's contents as a QString.
+     * \brief packetReceived emitted whenever a packet that is not a discovery packet is received.
+     * Contains the full packet's contents as a QString.
      */
     void packetReceived(QString, QString, ECommType);
 
@@ -85,14 +83,14 @@ private:
     /*!
      * \brief mNetworkManager Qt's HTTP connection object
      */
-    QNetworkAccessManager *mNetworkManager;
+    QNetworkAccessManager* mNetworkManager;
 
     /// used to check CRC on incoming packets.
     CRCCalculator mCRC;
 
-    /// discovery object for storing previous connections, saving new connections, parsing discovery packets
-    ArduCorDiscovery *mDiscovery;
-
+    /// discovery object for storing previous connections, saving new connections, parsing discovery
+    /// packets
+    ArduCorDiscovery* mDiscovery;
 };
 
 #endif // COMMHTTP_H

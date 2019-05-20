@@ -1,13 +1,12 @@
 #ifndef COR_CHECK_BOX_H
 #define COR_CHECK_BOX_H
 
-#include <QWidget>
-#include <QLayout>
 #include <QLabel>
+#include <QLayout>
 #include <QPushButton>
+#include <QWidget>
 
-namespace cor
-{
+namespace cor {
 
 /*!
  * \copyright
@@ -18,12 +17,11 @@ namespace cor
  * \brief The CheckBox class is a simple widget designed to give a checkbox
  *        with a label.
  */
-class CheckBox : public QWidget
-{
+class CheckBox : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit CheckBox(QWidget *parent, const QString& title);
+    explicit CheckBox(QWidget* parent, const QString& title);
 
     /// checks and unchecks the checkbox
     void setChecked(bool shouldCheck);
@@ -55,23 +53,22 @@ private slots:
     void buttonPressed(bool);
 
 protected:
-
     /// resize the widget
-    virtual void resizeEvent(QResizeEvent *);
+    virtual void resizeEvent(QResizeEvent*);
 
 private:
     /// true if checked, false if not checked
     bool mIsChecked;
-    
+
     /// spacer between checkbox and title
     int mSpacer;
 
     /// label for checkbox
-    QLabel *mTitle;
+    QLabel* mTitle;
 
     /// button that displays checked and unchecked states
-    QPushButton *mCheckBox;
+    QPushButton* mCheckBox;
 };
 
-}
+} // namespace cor
 #endif // COR_CHECK_BOX_H

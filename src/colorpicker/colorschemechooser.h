@@ -1,8 +1,8 @@
 #ifndef COLORSCHEMECHOOSER_H
 #define COLORSCHEMECHOOSER_H
 
-#include <QWidget>
 #include <QHBoxLayout>
+#include <QWidget>
 
 #include "colorpicker/colorschemebutton.h"
 /*!
@@ -14,12 +14,11 @@
  * \brief The ColorSchemeChooser class is a widget that holds the color scheme buttons
  *        and is used for selecting the current color scheme.
  */
-class ColorSchemeChooser : public QWidget
-{
+class ColorSchemeChooser : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit ColorSchemeChooser(QWidget *parent);
+    explicit ColorSchemeChooser(QWidget* parent);
 
     /// enables or disables a button of the given type
     void enableButton(EColorSchemeType, bool);
@@ -38,14 +37,12 @@ private slots:
     void schemeClicked(EColorSchemeType, bool);
 
 protected:
-
     /// called when widget is resized
-    void resizeEvent(QResizeEvent *);
+    void resizeEvent(QResizeEvent*);
 
 private:
-
     /// layout for the widget
-    QHBoxLayout *mLayout;
+    QHBoxLayout* mLayout;
 
     /// stores the key of the currently selected group
     EColorSchemeType mCurrentKey;

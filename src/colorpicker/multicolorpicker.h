@@ -3,9 +3,9 @@
 
 #include "colorpicker/colorpicker.h"
 
-#include "swatchvectorwidget.h"
-#include "colorschemecircles.h"
 #include "colorschemechooser.h"
+#include "colorschemecircles.h"
+#include "swatchvectorwidget.h"
 
 #include <QWidget>
 
@@ -14,16 +14,15 @@
  * Copyright (C) 2015 - 2019.
  * Released under the GNU General Public License.
  *
- * \brief The MultiColorPicker class is a color picker designed for choosing multiple colors at once.
- *        In contrast to the SingleColorPicker, which polls the ColorWheel for colors, this polls the position
- *        of the your mouse/touch event and sets multiple colors programmatically.
+ * \brief The MultiColorPicker class is a color picker designed for choosing multiple colors at
+ * once. In contrast to the SingleColorPicker, which polls the ColorWheel for colors, this polls the
+ * position of the your mouse/touch event and sets multiple colors programmatically.
  */
-class MultiColorPicker : public ColorPicker
-{
+class MultiColorPicker : public ColorPicker {
     Q_OBJECT
 public:
     /// constructor
-    explicit MultiColorPicker(QWidget *parent);
+    explicit MultiColorPicker(QWidget* parent);
 
     /*!
      * \brief updateColorCount update the count of the colors selected
@@ -32,9 +31,9 @@ public:
     void updateColorCount(std::size_t count);
 
     /*!
-     * \brief updateColorStates update the layouts at the bottom of the ColorPicker with new values from the RGB devices
-     * \param brightness brightness from data layer
-     * \param colorSchemes the colors of the selected devices
+     * \brief updateColorStates update the layouts at the bottom of the ColorPicker with new values
+     * from the RGB devices \param brightness brightness from data layer \param colorSchemes the
+     * colors of the selected devices
      */
     void updateColorStates(const std::vector<QColor>& colorSchemes, uint32_t brightness);
 
@@ -49,16 +48,16 @@ protected:
      * \brief mousePressEvent called only onnce when a mouse press is clicked down. Events not
      *        directly on top of the color wheel are ignored.
      */
-    void mousePressEvent(QMouseEvent *) override;
+    void mousePressEvent(QMouseEvent*) override;
 
     /*!
      * \brief resizeEvent called whenever the window resizes. This is used to override
      *        the resizing of the color wheel to use our custom logic.
      */
-    void resizeEvent(QResizeEvent *) override;
+    void resizeEvent(QResizeEvent*) override;
 
     /// detects when a mouse is moved
-    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
 
 private slots:
 
@@ -69,7 +68,6 @@ private slots:
     void changedScheme(EColorSchemeType);
 
 private:
-
     /// cached rendered version of the color wheel
     QImage mRenderedColorWheel;
 
@@ -84,19 +82,20 @@ private:
     std::vector<QColor> mScheme;
 
     /*!
-     * \brief mColorSchemeCircles top layout, overlays circles on the color wheel for color selection
+     * \brief mColorSchemeCircles top layout, overlays circles on the color wheel for color
+     * selection
      */
-    ColorSchemeCircles *mColorSchemeCircles;
+    ColorSchemeCircles* mColorSchemeCircles;
 
     /*!
      * \brief mColorSchemeGrid bottom layout, gives a few color swatches
      */
-    SwatchVectorWidget *mColorSchemeGrid;
+    SwatchVectorWidget* mColorSchemeGrid;
 
     /*!
      * \brief mColorSchemeChooser menu for choosing the color scheme.
      */
-    ColorSchemeChooser *mColorSchemeChooser;
+    ColorSchemeChooser* mColorSchemeChooser;
 
     /// index of circle that is currently clicked and being dragged
     std::uint32_t mCircleIndex;

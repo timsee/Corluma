@@ -8,16 +8,15 @@
 #include "comm/commnanoleaf.h"
 #include "utils/reachability.h"
 
+#include <QDir>
 #include <QFileInfo>
 #include <QStandardPaths>
-#include <QDir>
 
-namespace nano
-{
+namespace nano {
 
-LeafDiscovery::LeafDiscovery(QObject *parent, uint32_t interval)
+LeafDiscovery::LeafDiscovery(QObject* parent, uint32_t interval)
     : QObject(parent), cor::JSONSaveData("Nanoleaf"), mDiscoveryInterval(interval), mUPnP{nullptr} {
-    mNanoleaf =  dynamic_cast<CommNanoleaf*>(parent);
+    mNanoleaf = dynamic_cast<CommNanoleaf*>(parent);
 
     mDiscoveryTimer = new QTimer(this);
     connect(mDiscoveryTimer, SIGNAL(timeout()), this, SLOT(discoveryRoutine()));
@@ -30,7 +29,8 @@ LeafDiscovery::LeafDiscovery(QObject *parent, uint32_t interval)
     loadJSON();
 }
 
-void LeafDiscovery::foundNewAuthToken(const nano::LeafController& newController, const QString& authToken) {
+void LeafDiscovery::foundNewAuthToken(const nano::LeafController& newController,
+                                      const QString& authToken) {
     // check if the controller exists in the unknown group, delete if found
     for (auto&& unknownController : mUnknownControllers) {
         if (unknownController.IP == newController.IP) {
@@ -39,7 +39,6 @@ void LeafDiscovery::foundNewAuthToken(const nano::LeafController& newController,
             break;
         }
     }
-
 }
 
 void LeafDiscovery::foundNewController(nano::LeafController newController) {
@@ -103,7 +102,7 @@ void LeafDiscovery::removeNanoleaf(const nano::LeafController& controllerToRemov
             QJsonObject object = value.toObject();
             nano::LeafController jsonController = jsonToLeafController(object);
             if (jsonController.serialNumber == controllerToRemove.serialNumber
-                    || jsonController.name == controllerToRemove.name) {
+                || jsonController.name == controllerToRemove.name) {
                 array.removeAt(i);
                 mJsonData.setArray(array);
                 shouldSave = true;
@@ -119,7 +118,7 @@ void LeafDiscovery::removeNanoleaf(const nano::LeafController& controllerToRemov
 void LeafDiscovery::receivedUPnP(const QHostAddress& sender, const QString& payload) {
     Q_UNUSED(sender);
     if (payload.contains("nanoleaf_aurora")) {
-        //qDebug() << payload;
+        // qDebug() << payload;
         QStringList paramArray = payload.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
         nano::LeafController controller;
         for (auto&& param : paramArray) {
@@ -147,14 +146,16 @@ void LeafDiscovery::receivedUPnP(const QHostAddress& sender, const QString& payl
                 isFound = true;
             }
         }
-        //TODO: why is this hardware name and not serial number?
+        // TODO: why is this hardware name and not serial number?
         for (const auto& foundController : mFoundControllers.itemVector()) {
             if (foundController.hardwareName == controller.hardwareName) {
                 isFound = true;
             }
         }
 
-        if (!isFound && (controller.IP != "http://")) { // second check is there for an edge case where the nanoleaf did not properly configure
+        if (!isFound
+            && (controller.IP != "http://")) { // second check is there for an edge case where the
+                                               // nanoleaf did not properly configure
             mUnknownControllers.push_back(controller);
         }
     }
@@ -176,9 +177,9 @@ void LeafDiscovery::stopDiscovery() {
 }
 
 void LeafDiscovery::startupTimerTimeout() {
-     mStartupTimerFinished = true;
-     // this automatically stops. the discovery page will immediately turn it back on, if its open.
-     stopDiscovery();
+    mStartupTimerFinished = true;
+    // this automatically stops. the discovery page will immediately turn it back on, if its open.
+    stopDiscovery();
 }
 
 void LeafDiscovery::discoveryRoutine() {
@@ -222,28 +223,28 @@ void LeafDiscovery::addIP(const QString& ip) {
 }
 
 nano::LeafController LeafDiscovery::findControllerByIP(const QString& IP) {
-    QStringList pieces = IP.split( "/" );
+    QStringList pieces = IP.split("/");
     // 7 pieces are expected for status packets
     if (pieces.size() == 7) {
         nano::LeafController controller;
         QStringList mainIP = pieces[2].split(":");
-        QString IP    = "http://" + mainIP[0];
+        QString IP = "http://" + mainIP[0];
         int port = mainIP[1].toInt();
-        QString auth  = pieces[5];
+        QString auth = pieces[5];
 
         bool found = false;
         for (const auto& foundController : mFoundControllers.itemVector()) {
             if (auth.compare(foundController.authToken) == 0) {
-               found = true;
-               controller = foundController;
+                found = true;
+                controller = foundController;
             }
         }
 
         for (auto notFoundController : mNotFoundControllers) {
             if (auth.compare(notFoundController.authToken) == 0
-                    && IP.compare(notFoundController.IP) == 0) {
+                && IP.compare(notFoundController.IP) == 0) {
                 found = true;
-               controller = notFoundController;
+                controller = notFoundController;
             }
         }
 
@@ -255,9 +256,9 @@ nano::LeafController LeafDiscovery::findControllerByIP(const QString& IP) {
             // check in not found for the same auth token, if it exists take its info and add it in
             for (auto notFoundController : mNotFoundControllers) {
                 if (auth.compare(notFoundController.authToken) == 0) {
-                   controller.hardwareName = notFoundController.hardwareName;
-                   controller.serialNumber = notFoundController.serialNumber;
-                   controller.name         = notFoundController.name;
+                    controller.hardwareName = notFoundController.hardwareName;
+                    controller.serialNumber = notFoundController.serialNumber;
+                    controller.name = notFoundController.name;
                 }
             }
         }
@@ -267,8 +268,8 @@ nano::LeafController LeafDiscovery::findControllerByIP(const QString& IP) {
     if (pieces.size() == 6) {
         if (pieces[5] == "new") {
             QStringList mainIP = pieces[2].split(":");
-            QString IP         = "http://" + mainIP[0];
-            int port      = mainIP[1].toInt();
+            QString IP = "http://" + mainIP[0];
+            int port = mainIP[1].toInt();
             for (auto&& unknownController : mUnknownControllers) {
                 if (unknownController.IP == IP && unknownController.port == port) {
                     return unknownController;
@@ -279,7 +280,8 @@ nano::LeafController LeafDiscovery::findControllerByIP(const QString& IP) {
     return nano::LeafController();
 }
 
-bool LeafDiscovery::findControllerBySerial(const QString& serialNumber, nano::LeafController& leafController) {
+bool LeafDiscovery::findControllerBySerial(const QString& serialNumber,
+                                           nano::LeafController& leafController) {
     auto result = mFoundControllers.item(serialNumber.toStdString());
     if (result.second) {
         leafController = result.first;
@@ -296,7 +298,8 @@ void LeafDiscovery::updateFoundDevice(const nano::LeafController& controller) {
 }
 
 ENanoleafDiscoveryState LeafDiscovery::state() {
-    //qDebug() << mFoundControllers.size() << mNotFoundControllers.size() << mUnknownControllers.size() << " CONTROLLER STATE";
+    // qDebug() << mFoundControllers.size() << mNotFoundControllers.size() <<
+    // mUnknownControllers.size() << " CONTROLLER STATE";
 
     if (mUnknownControllers.empty() && mNotFoundControllers.empty() && !mFoundControllers.empty()) {
         return ENanoleafDiscoveryState::allNanoleafsConnected;
@@ -316,14 +319,16 @@ ENanoleafDiscoveryState LeafDiscovery::state() {
 
 void LeafDiscovery::connectUPnP(UPnPDiscovery* upnp) {
     mUPnP = upnp;
-    connect(mUPnP, SIGNAL(UPnPPacketReceived(QHostAddress,QString)), this, SLOT(receivedUPnP(QHostAddress,QString)));
+    connect(mUPnP,
+            SIGNAL(UPnPPacketReceived(QHostAddress, QString)),
+            this,
+            SLOT(receivedUPnP(QHostAddress, QString)));
 }
 
 bool LeafDiscovery::isControllerConnected(const nano::LeafController& controller) {
     for (const auto& foundController : mFoundControllers.itemVector()) {
-        if (foundController.IP == controller.IP
-                && foundController.authToken == controller.authToken
-                && foundController.port == controller.port) {
+        if (foundController.IP == controller.IP && foundController.authToken == controller.authToken
+            && foundController.port == controller.port) {
             return true;
         }
     }
@@ -342,8 +347,7 @@ void LeafDiscovery::updateJSON(const nano::LeafController& controller) {
     for (auto value : array) {
         QJsonObject object = value.toObject();
         nano::LeafController jsonController = jsonToLeafController(object);
-        if ((jsonController.authToken == controller.authToken)
-                && (newJsonObject != object)) {
+        if ((jsonController.authToken == controller.authToken) && (newJsonObject != object)) {
             value = newJsonObject;
             array.removeAt(i);
         } else if (newJsonObject == object) {
@@ -361,17 +365,14 @@ void LeafDiscovery::updateJSON(const nano::LeafController& controller) {
 }
 
 bool LeafDiscovery::loadJSON() {
-    if(!mJsonData.isNull()) {
-        if(mJsonData.isArray()) {
+    if (!mJsonData.isNull()) {
+        if (mJsonData.isArray()) {
             QJsonArray array = mJsonData.array();
-            foreach (const QJsonValue &value, array) {
+            foreach (const QJsonValue& value, array) {
                 QJsonObject object = value.toObject();
-                if (object["name"].isString()
-                        && object["IP"].isString()
-                        && object["port"].isDouble()
-                        && object["serial"].isString()
-                        && object["auth"].isString()
-                        && object["hardwareName"].isString()) {
+                if (object["name"].isString() && object["IP"].isString()
+                    && object["port"].isDouble() && object["serial"].isString()
+                    && object["auth"].isString() && object["hardwareName"].isString()) {
                     mNotFoundControllers.push_back(jsonToLeafController(object));
                 }
             }
@@ -383,4 +384,4 @@ bool LeafDiscovery::loadJSON() {
     return false;
 }
 
-}
+} // namespace nano

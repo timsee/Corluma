@@ -8,27 +8,27 @@
 #include "utils/qt.h"
 
 #include <QDebug>
+#include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
-#include <QStyleOption>
 
-#include "icondata.h"
 #include "cor/light.h"
+#include "icondata.h"
 
-AddNewGroupButton::AddNewGroupButton(QWidget *parent) : QWidget(parent) {
+AddNewGroupButton::AddNewGroupButton(QWidget* parent) : QWidget(parent) {
     mLabel = new QLabel("Add New Group", this);
     mLabel->setAlignment(Qt::AlignCenter);
     mIsHighlighted = false;
     mIsIn = false;
 }
 
-void AddNewGroupButton::mousePressEvent(QMouseEvent *event) {
+void AddNewGroupButton::mousePressEvent(QMouseEvent* event) {
     mIsHighlighted = true;
     update();
     event->ignore();
 }
 
-void AddNewGroupButton::mouseReleaseEvent(QMouseEvent *) {
+void AddNewGroupButton::mouseReleaseEvent(QMouseEvent*) {
     mIsHighlighted = false;
     // turn back to standard color
     update();
@@ -36,11 +36,11 @@ void AddNewGroupButton::mouseReleaseEvent(QMouseEvent *) {
 }
 
 
-void AddNewGroupButton::resizeEvent(QResizeEvent *) {
+void AddNewGroupButton::resizeEvent(QResizeEvent*) {
     mLabel->setFixedSize(this->size());
 }
 
-void AddNewGroupButton::paintEvent(QPaintEvent *) {
+void AddNewGroupButton::paintEvent(QPaintEvent*) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     // paint background
@@ -60,14 +60,8 @@ void AddNewGroupButton::paintEvent(QPaintEvent *) {
 
 void AddNewGroupButton::resize(int yPos, const QSize& size) {
     if (mIsIn) {
-        this->setGeometry(size.width() - this->width(),
-                          yPos,
-                          this->width(),
-                          this->height());
+        this->setGeometry(size.width() - this->width(), yPos, this->width(), this->height());
     } else {
-        this->setGeometry(size.width(),
-                          yPos,
-                          this->width(),
-                          this->height());
+        this->setGeometry(size.width(), yPos, this->width(), this->height());
     }
 }

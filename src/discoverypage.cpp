@@ -15,19 +15,20 @@
 #include "comm/commnanoleaf.h"
 #include "utils/qt.h"
 
-#include <QSignalMapper>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QSignalMapper>
 
+#include <QGraphicsOpacityEffect>
+#include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
-#include <QStyleOption>
-#include <QGraphicsOpacityEffect>
 
-DiscoveryPage::DiscoveryPage(QWidget *parent, cor::DeviceList *data, CommLayer *comm, AppSettings *appSettings) :
-    QWidget(parent),
-    mComm(comm),
-    mAppSettings(appSettings) {
+DiscoveryPage::DiscoveryPage(QWidget* parent,
+                             cor::DeviceList* data,
+                             CommLayer* comm,
+                             AppSettings* appSettings)
+    : QWidget(parent), mComm(comm), mAppSettings(appSettings) {
     mData = data;
 
     mLastFloatingHeight = -1;
@@ -50,9 +51,10 @@ DiscoveryPage::DiscoveryPage(QWidget *parent, cor::DeviceList *data, CommLayer *
     mForceStartOpen = false;
     mStartButton->setEnabled(false);
 
-    //setup button icons
+    // setup button icons
     mButtonIcons = std::vector<QPixmap>(size_t(EConnectionButtonIcons::MAX));
-    mConnectionStates = std::vector<EConnectionState>(size_t(EProtocolType::MAX), EConnectionState::off);
+    mConnectionStates
+        = std::vector<EConnectionState>(size_t(EProtocolType::MAX), EConnectionState::off);
 
     connect(mStartButton, SIGNAL(clicked(bool)), this, SLOT(startClicked()));
 
@@ -63,17 +65,26 @@ DiscoveryPage::DiscoveryPage(QWidget *parent, cor::DeviceList *data, CommLayer *
     mStartButton->setStyleSheet("background-color: #222222;");
 
     mOptionalFloatingLayout = new FloatingLayout(true, this);
-    connect(mOptionalFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
-    std::vector<QString> verticalButtons = { QString("Plus") };
+    connect(mOptionalFloatingLayout,
+            SIGNAL(buttonPressed(QString)),
+            this,
+            SLOT(floatingLayoutButtonPressed(QString)));
+    std::vector<QString> verticalButtons = {QString("Plus")};
     mOptionalFloatingLayout->setupButtons(verticalButtons, EButtonSize::small);
 
     mVerticalFloatingLayout = new FloatingLayout(true, this);
-    connect(mVerticalFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
-    verticalButtons = { QString("Settings") };
+    connect(mVerticalFloatingLayout,
+            SIGNAL(buttonPressed(QString)),
+            this,
+            SLOT(floatingLayoutButtonPressed(QString)));
+    verticalButtons = {QString("Settings")};
     mVerticalFloatingLayout->setupButtons(verticalButtons, EButtonSize::small);
 
     mHorizontalFloatingLayout = new FloatingLayout(false, this);
-    connect(mHorizontalFloatingLayout, SIGNAL(buttonPressed(QString)), this, SLOT(floatingLayoutButtonPressed(QString)));
+    connect(mHorizontalFloatingLayout,
+            SIGNAL(buttonPressed(QString)),
+            this,
+            SLOT(floatingLayoutButtonPressed(QString)));
 
     mStartTime = QTime::currentTime();
 
@@ -81,16 +92,25 @@ DiscoveryPage::DiscoveryPage(QWidget *parent, cor::DeviceList *data, CommLayer *
     resizeButtonIcons();
 
     mArduCorWidget = new DiscoveryArduCorWidget(mComm, this);
-    connect(mArduCorWidget, SIGNAL(connectionStatusChanged(EProtocolType,EConnectionState)), this, SLOT(widgetConnectionStateChanged(EProtocolType,EConnectionState)));
+    connect(mArduCorWidget,
+            SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)),
+            this,
+            SLOT(widgetConnectionStateChanged(EProtocolType, EConnectionState)));
     mArduCorWidget->setVisible(false);
 
-    ///TODO: this way of including mainwindow is kinda messy...
+    /// TODO: this way of including mainwindow is kinda messy...
     mHueWidget = new DiscoveryHueWidget(mComm, dynamic_cast<MainWindow*>(parent), this);
-    connect(mHueWidget, SIGNAL(connectionStatusChanged(EProtocolType,EConnectionState)), this, SLOT(widgetConnectionStateChanged(EProtocolType,EConnectionState)));
+    connect(mHueWidget,
+            SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)),
+            this,
+            SLOT(widgetConnectionStateChanged(EProtocolType, EConnectionState)));
     mHueWidget->setVisible(false);
 
     mNanoLeafWidget = new DiscoveryNanoLeafWidget(mComm, this);
-    connect(mNanoLeafWidget, SIGNAL(connectionStatusChanged(EProtocolType,EConnectionState)), this, SLOT(widgetConnectionStateChanged(EProtocolType,EConnectionState)));
+    connect(mNanoLeafWidget,
+            SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)),
+            this,
+            SLOT(widgetConnectionStateChanged(EProtocolType, EConnectionState)));
     mNanoLeafWidget->setVisible(false);
 
     mType = EProtocolType::hue;
@@ -157,18 +177,18 @@ void DiscoveryPage::resizeButtonIcons() {
         mLastFloatingHeight = mHorizontalFloatingLayout->height();
         auto buttonSize = int(mHorizontalFloatingLayout->height() * 0.5f);
         mButtonIcons = std::vector<QPixmap>(size_t(EConnectionButtonIcons::MAX));
-        mButtonIcons[int(EConnectionButtonIcons::black)]  = QPixmap("://images/blackButton.png").scaled(buttonSize, buttonSize,
-                                                                                                        Qt::KeepAspectRatio,
-                                                                                                        Qt::SmoothTransformation);
-        mButtonIcons[int(EConnectionButtonIcons::red)]    = QPixmap("://images/redButton.png").scaled(buttonSize, buttonSize,
-                                                                                                      Qt::KeepAspectRatio,
-                                                                                                      Qt::SmoothTransformation);
-        mButtonIcons[int(EConnectionButtonIcons::yellow)] = QPixmap("://images/yellowButton.png").scaled(buttonSize, buttonSize,
-                                                                                                         Qt::KeepAspectRatio,
-                                                                                                         Qt::SmoothTransformation);
-        mButtonIcons[int(EConnectionButtonIcons::blue)]   = QPixmap("://images/blueButton.png").scaled(buttonSize, buttonSize,
-                                                                                                       Qt::KeepAspectRatio,
-                                                                                                       Qt::SmoothTransformation);
+        mButtonIcons[int(EConnectionButtonIcons::black)]
+            = QPixmap("://images/blackButton.png")
+                  .scaled(buttonSize, buttonSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        mButtonIcons[int(EConnectionButtonIcons::red)]
+            = QPixmap("://images/redButton.png")
+                  .scaled(buttonSize, buttonSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        mButtonIcons[int(EConnectionButtonIcons::yellow)]
+            = QPixmap("://images/yellowButton.png")
+                  .scaled(buttonSize, buttonSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        mButtonIcons[int(EConnectionButtonIcons::blue)]
+            = QPixmap("://images/blueButton.png")
+                  .scaled(buttonSize, buttonSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
 }
 
@@ -176,8 +196,7 @@ bool DiscoveryPage::checkIfDiscovered(EProtocolType type) {
     bool isAnyConnected = false;
 
     bool runningDiscovery = false;
-    if (type == EProtocolType::arduCor
-            && (!mComm->arducor()->discovery()->controllers().empty())) {
+    if (type == EProtocolType::arduCor && (!mComm->arducor()->discovery()->controllers().empty())) {
         runningDiscovery = true;
     } else if (type == EProtocolType::hue && !mComm->hue()->bridges().empty()) {
         runningDiscovery = true;
@@ -191,7 +210,8 @@ bool DiscoveryPage::checkIfDiscovered(EProtocolType type) {
     return isAnyConnected;
 }
 
-void DiscoveryPage::widgetConnectionStateChanged(EProtocolType type, EConnectionState connectionState) {
+void DiscoveryPage::widgetConnectionStateChanged(EProtocolType type,
+                                                 EConnectionState connectionState) {
     changeCommTypeConnectionState(type, connectionState);
 }
 
@@ -208,7 +228,7 @@ void DiscoveryPage::protocolTypeSelected(EProtocolType type) {
         mNanoLeafWidget->setVisible(false);
         mArduCorWidget->setGeometry(mPlaceholder->geometry());
         mArduCorWidget->handleDiscovery(true);
-    }  else if (type == EProtocolType::hue) {
+    } else if (type == EProtocolType::hue) {
         mArduCorWidget->setVisible(false);
         mHueWidget->setVisible(true);
         mNanoLeafWidget->setVisible(false);
@@ -226,8 +246,7 @@ void DiscoveryPage::protocolTypeSelected(EProtocolType type) {
 void DiscoveryPage::changeCommTypeConnectionState(EProtocolType type, EConnectionState newState) {
     if (mConnectionStates[size_t(type)] != newState) {
         QPixmap pixmap;
-        switch (mConnectionStates[std::size_t(type)])
-        {
+        switch (mConnectionStates[std::size_t(type)]) {
             case EConnectionState::off:
                 pixmap = mButtonIcons[int(EConnectionButtonIcons::black)];
                 break;
@@ -241,7 +260,8 @@ void DiscoveryPage::changeCommTypeConnectionState(EProtocolType type, EConnectio
                 pixmap = mButtonIcons[int(EConnectionButtonIcons::blue)];
                 break;
             default:
-                qDebug() << "WARNING: change resize assets sees type is does not recognize.." << int(mConnectionStates[std::size_t(type)]);
+                qDebug() << "WARNING: change resize assets sees type is does not recognize.."
+                         << int(mConnectionStates[std::size_t(type)]);
                 break;
         }
         mHorizontalFloatingLayout->updateDiscoveryButton(type, pixmap);
@@ -268,10 +288,10 @@ void DiscoveryPage::hide() {
 }
 
 
-void DiscoveryPage::resizeEvent(QResizeEvent *) {
+void DiscoveryPage::resizeEvent(QResizeEvent*) {
     if (mType == EProtocolType::arduCor) {
         mArduCorWidget->setGeometry(mPlaceholder->geometry());
-    }  else if (mType == EProtocolType::hue) {
+    } else if (mType == EProtocolType::hue) {
         mHueWidget->setGeometry(mPlaceholder->geometry());
     } else if (mType == EProtocolType::nanoleaf) {
         mNanoLeafWidget->setGeometry(mPlaceholder->geometry());
@@ -281,7 +301,7 @@ void DiscoveryPage::resizeEvent(QResizeEvent *) {
     moveFloatingLayouts();
 }
 
-void DiscoveryPage::paintEvent(QPaintEvent *) {
+void DiscoveryPage::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
@@ -294,8 +314,7 @@ void DiscoveryPage::resizeTopMenu() {
     for (int commInt = 0; commInt != int(EProtocolType::MAX); ++commInt) {
         auto type = static_cast<EProtocolType>(commInt);
         QPixmap pixmap;
-        switch (mConnectionStates[std::size_t(type)])
-        {
+        switch (mConnectionStates[std::size_t(type)]) {
             case EConnectionState::off:
                 pixmap = mButtonIcons[std::size_t(EConnectionButtonIcons::black)];
                 break;
@@ -309,7 +328,8 @@ void DiscoveryPage::resizeTopMenu() {
                 pixmap = mButtonIcons[std::size_t(EConnectionButtonIcons::blue)];
                 break;
             default:
-                qDebug() << "WARNING: change resize assets sees type is does not recognize.." << int(mConnectionStates[std::size_t(type)]);
+                qDebug() << "WARNING: change resize assets sees type is does not recognize.."
+                         << int(mConnectionStates[std::size_t(type)]);
                 break;
         }
 
@@ -319,7 +339,6 @@ void DiscoveryPage::resizeTopMenu() {
 
 
 void DiscoveryPage::updateTopMenu() {
-
     std::vector<QString> buttons;
 
     // hide and show buttons based on their usage
@@ -382,12 +401,15 @@ void DiscoveryPage::floatingLayoutButtonPressed(const QString& button) {
         bool ok = true;
         bool noValidIP = true;
         while (ok && noValidIP) {
-            QString IP = QInputDialog::getText(this, tr("Manual Discovery"),
-                                                 tr("Add an IP Address for a Bridge:"), QLineEdit::Normal,
-                                                 "192.168.0.100", &ok);
+            QString IP = QInputDialog::getText(this,
+                                               tr("Manual Discovery"),
+                                               tr("Add an IP Address for a Bridge:"),
+                                               QLineEdit::Normal,
+                                               "192.168.0.100",
+                                               &ok);
             QHostAddress address(IP);
             if (address.protocol() == QAbstractSocket::IPv4Protocol
-                    || address.protocol() == QAbstractSocket::IPv6Protocol) {
+                || address.protocol() == QAbstractSocket::IPv6Protocol) {
                 noValidIP = false;
                 mComm->hue()->discovery()->addManualIP(IP);
             }
@@ -430,20 +452,13 @@ void DiscoveryPage::startClicked() {
 
 void DiscoveryPage::pushIn(const QSize& size, const QPoint& startPoint, const QPoint& endPoint) {
     this->setVisible(true);
-    moveWidget(this,
-               size,
-               startPoint,
-               endPoint);
+    moveWidget(this, size, startPoint, endPoint);
     this->raise();
     this->show();
     this->isOpen(true);
 }
 
 void DiscoveryPage::pushOut(const QSize& size, const QPoint& startPoint, const QPoint& endPoint) {
-    moveWidget(this,
-               size,
-               startPoint,
-               endPoint);
+    moveWidget(this, size, startPoint, endPoint);
     this->isOpen(false);
 }
-

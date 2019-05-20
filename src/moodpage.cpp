@@ -6,16 +6,16 @@
 
 #include "moodpage.h"
 
-#include "listmoodpreviewwidget.h"
 #include "listmoodgroupwidget.h"
+#include "listmoodpreviewwidget.h"
 #include "utils/qt.h"
 
 #include <QDebug>
 #include <QInputDialog>
 #include <QScroller>
 
-MoodPage::MoodPage(QWidget *parent, GroupData *groups) : QWidget(parent), mGroups(groups), mCurrentMood{0} {
-
+MoodPage::MoodPage(QWidget* parent, GroupData* groups)
+    : QWidget(parent), mGroups(groups), mCurrentMood{0} {
     mMoodsListWidget = new cor::ListWidget(this, cor::EListType::linear);
     mMoodsListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QScroller::grabGesture(mMoodsListWidget->viewport(), QScroller::LeftMouseButtonGesture);
@@ -30,17 +30,14 @@ MoodPage::MoodPage(QWidget *parent, GroupData *groups) : QWidget(parent), mGroup
     mRenderInterval = 1000;
 }
 
-
-
 void MoodPage::newMoodAdded(const QString& mood) {
     Q_UNUSED(mood);
     qDebug() << "mood added" << mood;
-  //  updateConnectionList();
+    //  updateConnectionList();
 }
 
 void MoodPage::makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
                                     const std::list<cor::Group>& roomList) {
-
     // pair every mood to an existing collection
     std::unordered_map<std::string, std::list<cor::Mood>> roomsWithMoods;
     for (const auto& mood : moods.itemVector()) { // for every mood
@@ -53,14 +50,14 @@ void MoodPage::makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
                     try {
                         if (lightID == moodDevice.uniqueID()) {
                             foundRoom = true;
-                            auto roomIt = std::find(roomNames.begin(), roomNames.end(), room.name());
+                            auto roomIt
+                                = std::find(roomNames.begin(), roomNames.end(), room.name());
                             if (roomIt == roomNames.end()) {
                                 roomNames.push_back(room.name());
                             }
                         }
 
-                    } catch (...) {
-                    }
+                    } catch (...) {}
                 }
             }
             if (!foundRoom) {
@@ -79,7 +76,8 @@ void MoodPage::makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
             } else {
                 // if not found, create entry in table
                 std::list<cor::Mood> newLightGroup = {mood};
-                roomsWithMoods.insert(std::make_pair(roomNames.front().toStdString(), newLightGroup));
+                roomsWithMoods.insert(
+                    std::make_pair(roomNames.front().toStdString(), newLightGroup));
             }
         } else {
             // if theres more than one room, put in miscellaneous
@@ -89,7 +87,7 @@ void MoodPage::makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
                 groupList->second.push_back(mood);
             } else {
                 // if not found, create entry in table
-                std::list<cor::Mood> newLightGroup = { mood };
+                std::list<cor::Mood> newLightGroup = {mood};
                 roomsWithMoods.insert(std::make_pair("Miscellaneous", newLightGroup));
             }
         }
@@ -97,42 +95,42 @@ void MoodPage::makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
 
     for (const auto& room : roomsWithMoods) {
         QString roomName = QString::fromStdString(room.first);
-        if (roomName.compare("Miscellaneous") != 0 ) {
+        if (roomName.compare("Miscellaneous") != 0) {
             // qDebug() << " room name " << roomName;
-             bool roomFound = false;
-             for (auto item : mMoodsListWidget->widgets()) {
-                 if (item->key().compare(roomName) == 0) {
-                     roomFound = true;
-                     auto moodWidget = qobject_cast<ListMoodGroupWidget*>(item);
-                     Q_ASSERT(moodWidget);
-                     //TODO: update mood widget
-                 }
-             }
+            bool roomFound = false;
+            for (auto item : mMoodsListWidget->widgets()) {
+                if (item->key().compare(roomName) == 0) {
+                    roomFound = true;
+                    auto moodWidget = qobject_cast<ListMoodGroupWidget*>(item);
+                    Q_ASSERT(moodWidget);
+                    // TODO: update mood widget
+                }
+            }
 
-             if (!roomFound) {
-                 initMoodsCollectionWidget(roomName, room.second, roomName);
-             }
+            if (!roomFound) {
+                initMoodsCollectionWidget(roomName, room.second, roomName);
+            }
         }
     }
 
-    //TODO: remove the miscellaneous edge case by actually sorting
+    // TODO: remove the miscellaneous edge case by actually sorting
     for (const auto& room : roomsWithMoods) {
         QString roomName = QString::fromStdString(room.first);
-        if (roomName.compare("Miscellaneous") == 0 ) {
+        if (roomName.compare("Miscellaneous") == 0) {
             // qDebug() << " room name " << roomName;
-             bool roomFound = false;
-             for (auto item : mMoodsListWidget->widgets()) {
-                 if (item->key().compare(roomName) == 0) {
-                     roomFound = true;
-                     auto moodWidget = qobject_cast<ListMoodGroupWidget*>(item);
-                     Q_ASSERT(moodWidget);
-                     //TODO: update mood widget
-                 }
-             }
+            bool roomFound = false;
+            for (auto item : mMoodsListWidget->widgets()) {
+                if (item->key().compare(roomName) == 0) {
+                    roomFound = true;
+                    auto moodWidget = qobject_cast<ListMoodGroupWidget*>(item);
+                    Q_ASSERT(moodWidget);
+                    // TODO: update mood widget
+                }
+            }
 
-             if (!roomFound) {
-                 initMoodsCollectionWidget(roomName, room.second, roomName);
-             }
+            if (!roomFound) {
+                initMoodsCollectionWidget(roomName, room.second, roomName);
+            }
         }
     }
 }
@@ -143,19 +141,22 @@ ListMoodGroupWidget* MoodPage::initMoodsCollectionWidget(const QString& name,
                                                          const std::list<cor::Mood>& moods,
                                                          const QString& key,
                                                          bool hideEdit) {
-
-    auto widget = new ListMoodGroupWidget(name,
-                                          moods,
-                                          key,
-                                          hideEdit,
-                                          mMoodsListWidget->mainWidget());
-    connect(widget, SIGNAL(editClicked(QString,std::uint64_t)), this, SLOT(editMoodClicked(QString,std::uint64_t)));
-    connect(widget, SIGNAL(moodSelected(QString,std::uint64_t)), this, SLOT(selectedMood(QString,std::uint64_t)));
+    auto widget
+        = new ListMoodGroupWidget(name, moods, key, hideEdit, mMoodsListWidget->mainWidget());
+    connect(widget,
+            SIGNAL(editClicked(QString, std::uint64_t)),
+            this,
+            SLOT(editMoodClicked(QString, std::uint64_t)));
+    connect(widget,
+            SIGNAL(moodSelected(QString, std::uint64_t)),
+            this,
+            SLOT(selectedMood(QString, std::uint64_t)));
 
     mMoodsListWidget->insertWidget(widget);
     mMoodsListWidget->resizeWidgets();
 
-    connect(widget, SIGNAL(buttonsShown(QString,bool)), this, SLOT(shouldShowButtons(QString,bool)));
+    connect(
+        widget, SIGNAL(buttonsShown(QString, bool)), this, SLOT(shouldShowButtons(QString, bool)));
     return widget;
 }
 
@@ -170,7 +171,7 @@ void MoodPage::editMoodClicked(const QString&, std::uint64_t) {
 }
 
 
-void MoodPage::resizeEvent(QResizeEvent *) {
+void MoodPage::resizeEvent(QResizeEvent*) {
     mMoodsListWidget->resizeWidgets();
 }
 

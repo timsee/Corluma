@@ -1,17 +1,16 @@
 #ifndef BRIDGEGROUPSWIDGET_H
 #define BRIDGEGROUPSWIDGET_H
 
-#include <QWidget>
 #include <QScrollArea>
+#include <QWidget>
 
-#include "cor/topwidget.h"
 #include "cor/group.h"
 #include "cor/page.h"
+#include "cor/topwidget.h"
 
 #include "hue/huegroupwidget.h"
 
-namespace hue
-{
+namespace hue {
 /*!
  * \copyright
  * Copyright (C) 2015 - 2019.
@@ -22,12 +21,11 @@ namespace hue
  * \brief The BridgeGroupsWidget class is a simple widget made for displaying metadata
  *        about a group in a list.
  */
-class BridgeGroupsWidget : public QWidget, public cor::Page
-{
+class BridgeGroupsWidget : public QWidget, public cor::Page {
     Q_OBJECT
 public:
     /// constructor
-    explicit BridgeGroupsWidget(QWidget *parent);
+    explicit BridgeGroupsWidget(QWidget* parent);
 
     /// update the groups in the widget
     void updateGroups(std::list<cor::Group> groups);
@@ -47,7 +45,7 @@ protected:
     /*!
      * \brief paintEvent used to draw the background of the widget.
      */
-    void paintEvent(QPaintEvent *);
+    void paintEvent(QPaintEvent*);
 
 private slots:
     /*!
@@ -56,25 +54,24 @@ private slots:
     void pressedClose(bool);
 
 private:
-
     /// title and close button at top of widget.
-    cor::TopWidget *mTopWidget;
+    cor::TopWidget* mTopWidget;
 
     /// layout for widget
-    QVBoxLayout *mMainLayout;
+    QVBoxLayout* mMainLayout;
 
     /// layout for scroll area
-    QVBoxLayout *mScrollLayout;
+    QVBoxLayout* mScrollLayout;
 
     /// scroll area for displaying list.
-    QScrollArea *mScrollArea;
+    QScrollArea* mScrollArea;
 
     /// widget used for scroll area.
-    QWidget *mScrollAreaWidget;
+    QWidget* mScrollAreaWidget;
 
     /// vector of all HueGroupWidgets
     std::vector<hue::HueGroupWidget*> mWidgets;
 };
 
-}
+} // namespace hue
 #endif // BRIDGEGROUPSWIDGET_H

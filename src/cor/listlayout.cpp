@@ -1,12 +1,11 @@
-#include "cor/listitemwidget.h"
 #include "listlayout.h"
 #include <QDebug>
+#include "cor/listitemwidget.h"
 
-#include "listlightwidget.h"
 #include "cor/exception.h"
+#include "listlightwidget.h"
 
-namespace cor
-{
+namespace cor {
 
 ListLayout::ListLayout(EListType type) : mType(type) {}
 
@@ -25,11 +24,11 @@ void ListLayout::removeWidget(cor::ListItemWidget* widget) {
 }
 
 void ListLayout::removeWidget(const QString& key) {
-    cor::ListItemWidget *tempWidget = mWidgetDictionary.item(key.toStdString()).first;
+    cor::ListItemWidget* tempWidget = mWidgetDictionary.item(key.toStdString()).first;
     removeWidget(tempWidget);
 }
 
-QPoint ListLayout::widgetPosition(QWidget *widget) {
+QPoint ListLayout::widgetPosition(QWidget* widget) {
     auto findResult = std::find(mWidgets.begin(), mWidgets.end(), widget);
     if (findResult == mWidgets.end()) {
         qDebug() << "WARNING: Could not find widget in set" << __func__;
@@ -51,8 +50,8 @@ QPoint ListLayout::widgetPosition(QWidget *widget) {
     }
 
     if (mType == EListType::grid) {
-        int x = index % 2;     // 2 rows per column
-        int y = index / 2;     // new column every other index
+        int x = index % 2; // 2 rows per column
+        int y = index / 2; // new column every other index
         return {x, y};
     } else if (mType == EListType::linear) {
         int x = 0;     // 1 row per column
@@ -63,7 +62,7 @@ QPoint ListLayout::widgetPosition(QWidget *widget) {
 }
 
 
-cor::ListItemWidget *ListLayout::widget(uint32_t index) {
+cor::ListItemWidget* ListLayout::widget(uint32_t index) {
     if (index >= mWidgets.size()) {
         THROW_EXCEPTION("requested a widget that is out of bounds");
     }
@@ -77,15 +76,14 @@ cor::ListItemWidget *ListLayout::widget(uint32_t index) {
     return nullptr;
 }
 
-cor::ListItemWidget *ListLayout::widget(const QString& key) {
+cor::ListItemWidget* ListLayout::widget(const QString& key) {
     return mWidgetDictionary.item(key.toStdString()).first;
 }
 
 
 
 QSize ListLayout::widgetSize(QSize parentSize) {
-    switch (mType)
-    {
+    switch (mType) {
         case EListType::grid:
             return {parentSize.width() / 2, parentSize.height()};
         case EListType::linear:
@@ -109,8 +107,10 @@ void ListLayout::sortDeviceWidgets() {
             return true;
         } else {
             // Hue is hidden from display, hide it in comparison here too.
-            auto nameA = aDeviceWidget->convertUglyHueNameToPrettyName(aDeviceWidget->device().name);
-            auto nameB = bDeviceWidget->convertUglyHueNameToPrettyName(bDeviceWidget->device().name);
+            auto nameA
+                = aDeviceWidget->convertUglyHueNameToPrettyName(aDeviceWidget->device().name);
+            auto nameB
+                = bDeviceWidget->convertUglyHueNameToPrettyName(bDeviceWidget->device().name);
             return (nameA < nameB);
         }
     });
@@ -146,4 +146,4 @@ QSize ListLayout::overallSize() {
     return {width, height};
 }
 
-}
+} // namespace cor

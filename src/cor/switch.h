@@ -1,18 +1,13 @@
 #ifndef SWITCH_H
 #define SWITCH_H
 
-#include <QWidget>
 #include <QPushButton>
+#include <QWidget>
 
 /// state of the switch
-enum class ESwitchState {
-    on,
-    off,
-    disabled
-};
+enum class ESwitchState { on, off, disabled };
 
-namespace cor
-{
+namespace cor {
 
 /*!
  * \copyright
@@ -25,17 +20,17 @@ namespace cor
  *        The switch can have its state set programmatically or will have it swapped
  *        whenever the user clicks the button.
  */
-class Switch : public QWidget
-{
+class Switch : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit Switch(QWidget *parent);
+    explicit Switch(QWidget* parent);
 
     /*!
      * \brief setSwitchState programmatically set the state of the switch. If disabled,
      *        the switch will not react to the users touches until it is put into a either the
      *        on or off state again.
+     *
      * \param state the new state of the switch
      */
     void setSwitchState(ESwitchState state);
@@ -44,7 +39,7 @@ public:
     const ESwitchState& switchState() const noexcept { return mState; }
 
     /// programmtically turn the switch on
-    void switchOn()  { setSwitchState(ESwitchState::on); }
+    void switchOn() { setSwitchState(ESwitchState::on); }
 
     /// programmatically turn the switch off
     void switchOff() { setSwitchState(ESwitchState::off); }
@@ -55,9 +50,8 @@ signals:
     void switchChanged(bool);
 
 protected:
-
     /// resize the widget
-    virtual void resizeEvent(QResizeEvent *);
+    virtual void resizeEvent(QResizeEvent*);
 
 private slots:
 
@@ -65,12 +59,11 @@ private slots:
     void buttonPressed(bool);
 
 private:
-
     /// state of the switch
     ESwitchState mState;
 
     /// button that displays switched on and switched off states
-    QPushButton *mSwitch;
+    QPushButton* mSwitch;
 
     /// helper to resize the icon
     void resizeIcon();
@@ -79,6 +72,6 @@ private:
     QPixmap mSwitchIcon;
 };
 
-}
+} // namespace cor
 
 #endif // SWITCH_H

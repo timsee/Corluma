@@ -6,9 +6,8 @@
 
 #include "discoveryarducorwidget.h"
 
-DiscoveryArduCorWidget::DiscoveryArduCorWidget(CommLayer *comm, QWidget *parent) :
-    DiscoveryWidget(parent) {
-
+DiscoveryArduCorWidget::DiscoveryArduCorWidget(CommLayer* comm, QWidget* parent)
+    : DiscoveryWidget(parent) {
     mComm = comm;
 
     mSearchWidget = new SearchWidget("192.168.0.101", this);
@@ -49,13 +48,12 @@ void DiscoveryArduCorWidget::handleDiscovery(bool isCurrentCommType) {
     if (mComm->discoveryErrorsExist(EProtocolType::arduCor)) {
         emit connectionStatusChanged(EProtocolType::arduCor, EConnectionState::connectionError);
     } else if (undiscoveredControllers.empty() && !controllers.empty()) {
-       emit connectionStatusChanged(EProtocolType::arduCor, EConnectionState::discovered);
+        emit connectionStatusChanged(EProtocolType::arduCor, EConnectionState::discovered);
     } else if (!controllers.empty()) {
         emit connectionStatusChanged(EProtocolType::arduCor, EConnectionState::discovering);
     } else {
         emit connectionStatusChanged(EProtocolType::arduCor, EConnectionState::off);
     }
-
 }
 
 // ----------------------------
@@ -67,22 +65,30 @@ void DiscoveryArduCorWidget::plusButtonClicked() {
     if (!doesYunControllerExistAlready(mSearchWidget->lineEditText())) {
         QString controller = mSearchWidget->lineEditText();
         mComm->arducor()->discovery()->addManualIP(controller);
-//        if (!isSuccessful) qDebug() << "WARNING: failure adding" << controller << "to HTTP discovery list";
+        //        if (!isSuccessful) qDebug() << "WARNING: failure adding" << controller << "to HTTP
+        //        discovery list";
     } else {
-        qDebug() << "WARNING: trying to add controller that already exists: " << mSearchWidget->lineEditText();
+        qDebug() << "WARNING: trying to add controller that already exists: "
+                 << mSearchWidget->lineEditText();
     }
 }
 
 void DiscoveryArduCorWidget::minusButtonClicked() {
     if (doesYunControllerExistAlready(mSearchWidget->lineEditText())) {
         cor::Controller controller;
-        controller.name =  mSearchWidget->lineEditText();
+        controller.name = mSearchWidget->lineEditText();
         bool isSuccessful = mComm->removeController(ECommType::UDP, controller);
-        if (!isSuccessful) qDebug() << "WARNING: failure removing" << controller.name << "from UDP discovery list";
+        if (!isSuccessful) {
+            qDebug() << "WARNING: failure removing" << controller.name << "from UDP discovery list";
+        }
         isSuccessful = mComm->removeController(ECommType::HTTP, controller);
-        if (!isSuccessful) qDebug() << "WARNING: failure removing" << controller.name << "from HTTP discovery list";
+        if (!isSuccessful) {
+            qDebug() << "WARNING: failure removing" << controller.name
+                     << "from HTTP discovery list";
+        }
     } else {
-        qDebug() << "WARNING: trying to remove controller that doesn't exist: " << mSearchWidget->lineEditText();
+        qDebug() << "WARNING: trying to remove controller that doesn't exist: "
+                 << mSearchWidget->lineEditText();
     }
 }
 
@@ -98,7 +104,8 @@ bool DiscoveryArduCorWidget::doesYunControllerExistAlready(const QString& name) 
         return true;
     }
 
-    for (const auto& undiscoveredController : mComm->arducor()->discovery()->undiscoveredControllers()) {
+    for (const auto& undiscoveredController :
+         mComm->arducor()->discovery()->undiscoveredControllers()) {
         if (undiscoveredController.name.compare(name) == 0) {
             deviceFound = true;
         }

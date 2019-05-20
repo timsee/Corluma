@@ -21,19 +21,18 @@ struct ColorSelection {
  */
 
 /*!
- * \brief The ColorSchemeCircles class provides a series of selecction circles to overlay on the color picker.
- *        Circles can both be moved by UI events and programmatically.
+ * \brief The ColorSchemeCircles class provides a series of selecction circles to overlay on the
+ * color picker.Circles can both be moved by UI events and programmatically.
  */
-class ColorSchemeCircles : public QWidget
-{
+class ColorSchemeCircles : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit ColorSchemeCircles(std::size_t count, ColorWheel *wheel, QWidget *parent);
+    explicit ColorSchemeCircles(std::size_t count, ColorWheel* wheel, QWidget* parent);
 
     /*!
-     * \brief positionIsUnderCircle gives index of picker selection that is over the given point, if one exists.
-     *        if none exists, a -1 is returned.
+     * \brief positionIsUnderCircle gives index of picker selection that is over the given point, if
+     * one exists. if none exists, a -1 is returned.
      * \param newPos the position to check whether theres any selection indices over it.
      * \return the selection picker index if one exists, or -1 if there is none.
      */
@@ -49,8 +48,8 @@ public:
     void updateSingleColor(const QColor& color);
 
     /*!
-     * \brief updateColorScheme update the color scheme and the indices of the picker selections based off of the provided
-     *        color scheme
+     * \brief updateColorScheme update the color scheme and the indices of the picker selections
+     * based off of the provided color scheme
      * \param colorScheme new values for the color scheme.
      * \param adjustColorPositions true to adjust the actual color positions
      */
@@ -72,10 +71,9 @@ public:
 
 protected:
     /// called when rendering
-    void paintEvent(QPaintEvent *event);
+    void paintEvent(QPaintEvent* event);
 
 private:
-
     /// update the scheme
     void updateScheme(std::size_t i);
 
@@ -92,7 +90,7 @@ private:
     EColorSchemeType mSchemeType;
 
     /// pointer to the color wheel
-    ColorWheel *mWheel;
+    ColorWheel* mWheel;
 };
 
 #endif // COLORSCHEMECIRCLES_H

@@ -8,7 +8,7 @@
 
 //#define DEBUG_UPNP
 
-UPnPDiscovery::UPnPDiscovery(QObject *parent) : QObject(parent) {
+UPnPDiscovery::UPnPDiscovery(QObject* parent) : QObject(parent) {
     mListenerCount = 0;
     mSocket = new QUdpSocket(this);
     connect(mSocket, SIGNAL(readyRead()), this, SLOT(readPendingUPnPDatagrams()));
@@ -53,7 +53,7 @@ void UPnPDiscovery::startup() {
 void UPnPDiscovery::shutdown() {
     if (mSocket->isOpen()) {
 #ifdef DEBUG_UPNP
-            qDebug() << " Shutting Down UPnP";
+        qDebug() << " Shutting Down UPnP";
 #endif
         mSocket->close();
     }
@@ -74,7 +74,7 @@ void UPnPDiscovery::removeListener() {
     if (mListenerCount > 0) {
         mListenerCount--;
 #ifdef DEBUG_UPNP
-    qDebug() << "listener removed, count now " << mListenerCount;
+        qDebug() << "listener removed, count now " << mListenerCount;
 #endif
         if (mListenerCount == 0) {
             shutdown();

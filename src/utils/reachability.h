@@ -8,22 +8,25 @@
  */
 
 
-#include <QNetworkConfigurationManager>
 #include <QHostAddress>
+#include <QNetworkConfigurationManager>
 
-namespace cor
-{
+namespace cor {
 
 /*!
- * \brief wifiEnabled uses the QNetworkConfiguratyionManager to scan whether or not there is a wifi connection
+ * \brief wifiEnabled uses the QNetworkConfiguratyionManager to scan whether or not there is a wifi
+ * connection
+ *
  * \return true if there is a wifi connection, false otherwise.
  */
 inline bool wifiEnabled() {
     QNetworkConfigurationManager mgr;
-    QList<QNetworkConfiguration> activeConfigs = mgr.allConfigurations(QNetworkConfiguration::Active);
+    QList<QNetworkConfiguration> activeConfigs
+        = mgr.allConfigurations(QNetworkConfiguration::Active);
     bool hasWifiEnabled = false;
     for (const auto& config : activeConfigs) {
-        // HACK: Wifi checks don't work as written for apple devices, for now do a vauge check for number of configs
+        // HACK: Wifi checks don't work as written for apple devices, for now do a vauge check for
+        // number of configs
 #ifdef __APPLE__
         if (activeConfigs.size() > 1) {
             hasWifiEnabled = true;
@@ -53,5 +56,5 @@ inline bool checkIfValidIP(const QString& ip) {
     }
 }
 
-}
+} // namespace cor
 #endif // COR_UTILS_REACHABILITY_H

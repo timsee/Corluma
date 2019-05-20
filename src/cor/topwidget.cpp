@@ -7,11 +7,10 @@
 #include "topwidget.h"
 #include "utils/qt.h"
 
-namespace cor
-{
+namespace cor {
 
-TopWidget::TopWidget(const QString& title, const QString& resource, QWidget *parent) : QWidget(parent)
-{
+TopWidget::TopWidget(const QString& title, const QString& resource, QWidget* parent)
+    : QWidget(parent) {
     mLayout = new QHBoxLayout();
 
     mButton = new QPushButton(this);
@@ -27,14 +26,16 @@ TopWidget::TopWidget(const QString& title, const QString& resource, QWidget *par
 
     mLayout->addWidget(mTitle, 10);
     mLayout->addWidget(mButton, 1);
-    mLayout->setContentsMargins(0,0,0,0);
+    mLayout->setContentsMargins(0, 0, 0, 0);
     mLayout->setSpacing(6);
     this->setLayout(mLayout);
 }
 
 void TopWidget::setFontPoint(int pt) {
-    if (pt <= 0) pt = 1;
-    QString stylesheet = "font-size:" + QString::number(pt)+ "pt;";
+    if (pt <= 0) {
+        pt = 1;
+    }
+    QString stylesheet = "font-size:" + QString::number(pt) + "pt;";
     mTitle->setStyleSheet(stylesheet);
 }
 
@@ -42,9 +43,9 @@ void TopWidget::buttonPressed(bool pressed) {
     emit clicked(pressed);
 }
 
-void TopWidget::resizeEvent(QResizeEvent *) {
+void TopWidget::resizeEvent(QResizeEvent*) {
     mButton->setFixedWidth(mButton->height());
     cor::resizeIcon(mButton, mResource, 0.5f);
 }
 
-}
+} // namespace cor

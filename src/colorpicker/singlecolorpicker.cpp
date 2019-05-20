@@ -4,16 +4,19 @@
  * Released under the GNU General Public License.
  */
 
+#include <QDebug>
 #include <QGraphicsOpacityEffect>
 #include <QMouseEvent>
-#include <QDebug>
 
 #include "singlecolorpicker.h"
 
-SingleColorPicker::SingleColorPicker(QWidget *parent) : ColorPicker(parent), mColor{0,255,0}, mBrightness{50}
-{
+SingleColorPicker::SingleColorPicker(QWidget* parent)
+    : ColorPicker(parent), mColor{0, 255, 0}, mBrightness{50} {
     connect(mColorWheel, SIGNAL(changeColor(QColor)), this, SLOT(wheelColorChanged(QColor)));
-    connect(mColorWheel, SIGNAL(changeCT(std::uint32_t,std::uint32_t)), this, SLOT(wheelCTChanged(std::uint32_t,std::uint32_t)));
+    connect(mColorWheel,
+            SIGNAL(changeCT(std::uint32_t, std::uint32_t)),
+            this,
+            SLOT(wheelCTChanged(std::uint32_t, std::uint32_t)));
 
     mSelectionCircle = new ColorSchemeCircles(1, mColorWheel, this);
     mSelectionCircle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -34,7 +37,10 @@ SingleColorPicker::SingleColorPicker(QWidget *parent) : ColorPicker(parent), mCo
 
     mTempBrightSliders = new TempBrightSliders(this);
     mTempBrightSliders->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(mTempBrightSliders, SIGNAL(temperatureAndBrightnessChanged(std::uint32_t,std::uint32_t)), this, SLOT(tempBrightSlidersChanged(std::uint32_t,std::uint32_t)));
+    connect(mTempBrightSliders,
+            SIGNAL(temperatureAndBrightnessChanged(std::uint32_t, std::uint32_t)),
+            this,
+            SLOT(tempBrightSlidersChanged(std::uint32_t, std::uint32_t)));
     mTempBrightSliders->setVisible(false);
 
     // default to standard layout
@@ -154,7 +160,7 @@ void SingleColorPicker::updateColorStates(const QColor& mainColor, uint32_t brig
     mTempBrightSliders->changeBrightness(brightness);
 }
 
-void SingleColorPicker::mousePressEvent(QMouseEvent *event) {
+void SingleColorPicker::mousePressEvent(QMouseEvent* event) {
     auto colorScheme = mSelectionCircle->moveStandardCircle(0, event->pos());
     if (!colorScheme.empty()) {
         mColorWheel->handleMouseEvent(event);
@@ -162,7 +168,7 @@ void SingleColorPicker::mousePressEvent(QMouseEvent *event) {
     }
 }
 
-void SingleColorPicker::mouseMoveEvent(QMouseEvent *event) {
+void SingleColorPicker::mouseMoveEvent(QMouseEvent* event) {
     auto colorScheme = mSelectionCircle->moveStandardCircle(0, event->pos());
     if (!colorScheme.empty()) {
         mColorWheel->handleMouseEvent(event);
@@ -170,7 +176,7 @@ void SingleColorPicker::mouseMoveEvent(QMouseEvent *event) {
     }
 }
 
-void SingleColorPicker::mouseReleaseEvent(QMouseEvent *) {
+void SingleColorPicker::mouseReleaseEvent(QMouseEvent*) {
     mSelectionCircle->hideCircles();
     update();
 }
@@ -208,7 +214,8 @@ void SingleColorPicker::wheelCTChanged(std::uint32_t temp, std::uint32_t bright)
     }
 }
 
-void SingleColorPicker::tempBrightSlidersChanged(std::uint32_t temperature, std::uint32_t brightness) {
+void SingleColorPicker::tempBrightSlidersChanged(std::uint32_t temperature,
+                                                 std::uint32_t brightness) {
     mSelectionCircle->hideCircles();
     chooseAmbient(temperature, brightness);
     mColorWheel->updateBrightness(brightness);
@@ -220,7 +227,7 @@ void SingleColorPicker::tempBrightSlidersChanged(std::uint32_t temperature, std:
 // Resize
 //----------
 
-void SingleColorPicker::resizeEvent(QResizeEvent *) {
+void SingleColorPicker::resizeEvent(QResizeEvent*) {
     resize();
 }
 
@@ -233,6 +240,9 @@ void SingleColorPicker::resize() {
         mTempBrightSliders->setGeometry(mPlaceholder->geometry());
     }
 
-    mSelectionCircle->setGeometry(0, 0, this->geometry().width(), this->geometry().height() - mPlaceholder->geometry().height());
+    mSelectionCircle->setGeometry(0,
+                                  0,
+                                  this->geometry().width(),
+                                  this->geometry().height() - mPlaceholder->geometry().height());
     resizeWheel();
 }

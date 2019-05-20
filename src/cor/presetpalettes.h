@@ -3,11 +3,11 @@
 
 #include <vector>
 
-#include <QJsonObject>
 #include <QColor>
+#include <QJsonObject>
 
-#include "cor/protocols.h"
 #include "cor/palette.h"
+#include "cor/protocols.h"
 /*!
  * \copyright
  * Copyright (C) 2015 - 2019.
@@ -17,8 +17,7 @@
  * \brief The PresetPalettes class reads a JSON file that defines the ArduCor palettes
  *        and stores them in app-accessible data.
  */
-class PresetPalettes
-{
+class PresetPalettes {
 public:
     /// constructor
     PresetPalettes();
@@ -33,7 +32,9 @@ public:
     EPalette findPalette(const QJsonObject& object);
 
     /// getter for the average color of a palette
-    const QColor& averageColor(EPalette palette) const noexcept { return mAverageColors[uint32_t(palette)]; }
+    const QColor& averageColor(EPalette palette) const noexcept {
+        return mAverageColors[uint32_t(palette)];
+    }
 
 private:
     /// vector for palettes

@@ -1,24 +1,24 @@
 #ifndef TOPMENU_H
 #define TOPMENU_H
 
-#include <QWidget>
-#include <QPushButton>
 #include <QGridLayout>
+#include <QPushButton>
+#include <QWidget>
 
-#include "cor/page.h"
-#include "cor/slider.h"
+#include "colorpage.h"
+#include "comm/commlayer.h"
 #include "cor/button.h"
-#include "icondata.h"
 #include "cor/devicelist.h"
+#include "cor/page.h"
+#include "cor/presetpalettes.h"
+#include "cor/slider.h"
+#include "cor/switch.h"
 #include "floatinglayout.h"
+#include "groupdata.h"
+#include "icondata.h"
 #include "moodpage.h"
 #include "palettepage.h"
-#include "colorpage.h"
-#include "groupdata.h"
-#include "comm/commlayer.h"
-#include "cor/presetpalettes.h"
 #include "selectlightsbutton.h"
-#include "cor/switch.h"
 
 /*!
  * \copyright
@@ -29,15 +29,9 @@
 class MainWindow;
 /*!
  * \brief The EPage enum The main pages of the application, as they are ordered
- *        in their QStackedWidget.
+ * in their QStackedWidget.
  */
-enum class EPage {
-    colorPage,
-    palettePage,
-    moodPage,
-    discoveryPage,
-    settingsPage
-};
+enum class EPage { colorPage, palettePage, moodPage, discoveryPage, settingsPage };
 Q_DECLARE_METATYPE(EPage)
 
 /// converts page enum to string
@@ -58,28 +52,28 @@ enum class EColorMenuType {
  *        and on/off controls for all lights, as well as buttons to navigate to all the main
  *        pages of the application.
  */
-class TopMenu : public QWidget
-{
+class TopMenu : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit TopMenu(QWidget *parent,
+    explicit TopMenu(QWidget* parent,
                      cor::DeviceList* data,
-                     CommLayer *comm,
-                     GroupData *groups,
-                     MainWindow *mainWindow,
-                     PalettePage *palettePage,
-                     ColorPage *colorPage);
+                     CommLayer* comm,
+                     GroupData* groups,
+                     MainWindow* mainWindow,
+                     PalettePage* palettePage,
+                     ColorPage* colorPage);
 
     /// resizes the menus programmatically
     void resize(int xOffset);
 
-    /// call when you want to show the top menus, this handles raising it and making all necessary parts visible
+    /// call when you want to show the top menus, this handles raising it and making all necessary
+    /// parts visible
     void showMenu();
 
     /*!
-     * \brief updateBrightnessSlider update the brightness slider at the top of the mnu based on the current
-     *        light data.
+     * \brief updateBrightnessSlider update the brightness slider at the top of the mnu based on the
+     * current light data.
      */
     void updateBrightnessSlider();
 
@@ -88,6 +82,7 @@ public:
 
     /*!
      * \brief highlightButton highlight the button of any of the floating layouts, based on the key
+     *
      * \param key the key to use to highlight the buttons.
      */
     void highlightButton(const QString& key);
@@ -127,13 +122,13 @@ public slots:
 
     /*!
      * \brief changedSwitchState Connected to the button in the top left of the GUI at all times.
-     *        Toggles between running the current routine at current settings, and off.
+     * Toggles between running the current routine at current settings, and off.
      */
     void changedSwitchState(bool);
 
     /*!
-     * \brief brightnessSliderChanged Connected to the the slider at the top, this takeas a value between 0-100
-     *        and sends that value to the lights to control how bright they are.
+     * \brief brightnessSliderChanged Connected to the the slider at the top, this takeas a value
+     * between 0-100 and sends that value to the lights to control how bright they are.
      */
     void brightnessSliderChanged(int);
 
@@ -142,7 +137,7 @@ public slots:
 
 protected:
     /// resizes assets in the widget
-    void resizeEvent(QResizeEvent *event);
+    void resizeEvent(QResizeEvent* event);
 
 private slots:
 
@@ -156,9 +151,8 @@ private slots:
     void menuButtonPressed();
 
 private:
-
     /// select lights button for portait display ratios when no lights are selected
-    SelectLightsButton *mSelectLightsButton;
+    SelectLightsButton* mSelectLightsButton;
 
     /// y position where the select lights button shows up
     int mStartSelectLightsButton;
@@ -170,7 +164,7 @@ private:
     EColorMenuType mColorMenuType;
 
     /// renders an update for the UI periodically
-    QTimer *mRenderTimer;
+    QTimer* mRenderTimer;
 
     /// preset data for palettes from ArduCor
     PresetPalettes mPalettes;
@@ -178,70 +172,71 @@ private:
     /*!
      * \brief mBrightnessSlider slider for adjusting the brightness of all selected devices.
      */
-    cor::Slider *mBrightnessSlider;
+    cor::Slider* mBrightnessSlider;
 
     /// palette that shows the currently selected devices
-    cor::LightVectorWidget *mMainPalette;
+    cor::LightVectorWidget* mMainPalette;
 
     /// spacer for row of buttons
-    QWidget *mSpacer;
+    QWidget* mSpacer;
 
     /// y position where a floating menu can start.
     int mFloatingMenuStart;
 
     /// data layer, contains intended state for all devices.
-    cor::DeviceList *mData;
+    cor::DeviceList* mData;
 
     /// pointer to commlayer
-    CommLayer *mComm;
+    CommLayer* mComm;
 
     /// pointer to group data
-    GroupData *mGroups;
+    GroupData* mGroups;
 
     /// hamburger icon in top left for opening the main menu
-    QPushButton *mMenuButton;
+    QPushButton* mMenuButton;
 
     /// returns a pointer to the current floating layout.
-    FloatingLayout *currentFloatingLayout();
+    FloatingLayout* currentFloatingLayout();
 
     /// floating layout for palette page.
-    FloatingLayout *mPaletteFloatinglayout;
+    FloatingLayout* mPaletteFloatinglayout;
 
     /// floating layout for moods page.
-    FloatingLayout *mMoodsFloatingLayout;
+    FloatingLayout* mMoodsFloatingLayout;
 
     /// floating layout for color page.
-    FloatingLayout *mColorFloatingLayout;
+    FloatingLayout* mColorFloatingLayout;
 
     /// routine widget for ColorPage
-    FloatingLayout *mSingleRoutineFloatingLayout;
+    FloatingLayout* mSingleRoutineFloatingLayout;
 
     /// routine widget for PalettePage
-    FloatingLayout *mMultiRoutineFloatingLayout;
+    FloatingLayout* mMultiRoutineFloatingLayout;
 
     /// last key for color page.
     QString mLastColorButtonKey;
 
     /// pushes the floating layout specified out to the right and off screen.
-    void pushRightFloatingLayout(FloatingLayout *layout);
+    void pushRightFloatingLayout(FloatingLayout* layout);
 
-    /// pulls the floating layout specified in from the right to the left and places it in the top right.
-    void pullLeftFloatingLayout(FloatingLayout *layout);
+    /// pulls the floating layout specified in from the right to the left and places it in the top
+    /// right.
+    void pullLeftFloatingLayout(FloatingLayout* layout);
 
     /*!
      * \brief mShouldGreyOutIcons cahced satte of whether any device is selected. If none
-     *        are selected, icons that require a device are all greyed out.
+     * are selected, icons that require a device are all greyed out.
      */
     bool mShouldGreyOutIcons;
 
     /// pointer to main window, used for public function calls.
-    MainWindow *mMainWindow;
+    MainWindow* mMainWindow;
 
     /// pointer to group page, used during floating layout clicks
-    PalettePage *mPalettePage;
+    PalettePage* mPalettePage;
 
     /// pointer to color page, used during floating layouts clicks
-    ColorPage *mColorPage;
+    ColorPage* mColorPage;
 
     /// current page being displayed
     EPage mCurrentPage;
@@ -250,7 +245,7 @@ private:
     std::list<cor::Light> mLastDevices;
 
     /// switch for turning all selected lights on and off.
-    cor::Switch *mOnOffSwitch;
+    cor::Switch* mOnOffSwitch;
 
     /// desired size for a button.
     QSize mSize;

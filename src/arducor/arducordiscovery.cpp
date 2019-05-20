@@ -5,8 +5,8 @@
  */
 
 #include "arducordiscovery.h"
-#include "cor/protocols.h"
 #include <sstream>
+#include "cor/protocols.h"
 
 #include "comm/commhttp.h"
 #include "comm/commudp.h"
@@ -14,22 +14,22 @@
 #include "comm/commserial.h"
 #endif
 
-ArduCorDiscovery::ArduCorDiscovery(QObject *parent,
-                                   CommHTTP *http,
-                                   CommUDP *udp
-                                   #ifndef MOBILE_BUILD
-                                   ,CommSerial *serial
-                                   #endif
-                                   ) :
-    QObject(parent),
-    cor::JSONSaveData("arducor"),
-    mHTTP(http),
-    mUDP(udp),
+ArduCorDiscovery::ArduCorDiscovery(QObject* parent,
+                                   CommHTTP* http,
+                                   CommUDP* udp
 #ifndef MOBILE_BUILD
-    mSerial{serial},
+                                   ,
+                                   CommSerial* serial
 #endif
-    mLastTime{0}
-{
+                                   )
+    : QObject(parent),
+      cor::JSONSaveData("arducor"),
+      mHTTP(http),
+      mUDP(udp),
+#ifndef MOBILE_BUILD
+      mSerial{serial},
+#endif
+      mLastTime{0} {
     mRoutineTimer = new QTimer;
     connect(mRoutineTimer, SIGNAL(timeout()), this, SLOT(handleDiscovery()));
     mRoutineTimer->start(1000);
@@ -85,7 +85,10 @@ void ArduCorDiscovery::handleDiscovery() {
 #endif
 }
 
-bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type, const QString& discovery, const QString& controllerName, cor::Controller& controller) {
+bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type,
+                                                           const QString& discovery,
+                                                           const QString& controllerName,
+                                                           cor::Controller& controller) {
     //--------------
     // Split string into an int vector
     //--------------
@@ -137,7 +140,8 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type, const
                 qDebug() << "Received an incorrect value when expecting a hardware type";
                 return false;
             }
-            ELightHardwareType hardwareType = cor::convertArduinoTypeToLightType(EArduinoHardwareType(hardwareTypeIndex));
+            ELightHardwareType hardwareType
+                = cor::convertArduinoTypeToLightType(EArduinoHardwareType(hardwareTypeIndex));
             hardwareTypeVector.push_back(hardwareType);
             nameIndex = 2;
         } else if (nameIndex == 2) {
@@ -152,8 +156,10 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type, const
         }
     }
 
-    if (nameVector.size() != hardwareTypeVector.size() || nameVector.size() != productTypeVector.size()) {
-        qDebug() << "hardware type vector size and name vector don't match! " << nameVector.size() << " vs " << hardwareTypeVector.size();
+    if (nameVector.size() != hardwareTypeVector.size()
+        || nameVector.size() != productTypeVector.size()) {
+        qDebug() << "hardware type vector size and name vector don't match! " << nameVector.size()
+                 << " vs " << hardwareTypeVector.size();
         for (const auto& name : nameVector) {
             qDebug() << " name: " << name;
         }
@@ -247,13 +253,13 @@ void ArduCorDiscovery::addSerialPort(const QString& serial) {
 
 
 
-void ArduCorDiscovery::handleIncomingPacket(ECommType type, const QString& controllerName, const QString& payload) {
+void ArduCorDiscovery::handleIncomingPacket(ECommType type,
+                                            const QString& controllerName,
+                                            const QString& payload) {
     if (payload.contains(kDiscoveryPacketIdentifier) && !payload.isEmpty()) {
         cor::Controller controller;
-        bool success = deviceControllerFromDiscoveryString(type,
-                                                           payload,
-                                                           controllerName,
-                                                           controller);
+        bool success
+            = deviceControllerFromDiscoveryString(type, payload, controllerName, controller);
         if (success) {
             handleDiscoveredController(controller);
         }
@@ -265,8 +271,7 @@ void ArduCorDiscovery::handleDiscoveredController(const cor::Controller& discove
     // search for the sender in the list of discovered devices
     for (auto notFoundController : mNotFoundControllers) {
         if (notFoundController.type == discoveredController.type
-                && notFoundController.name == discoveredController.name) {
-
+            && notFoundController.name == discoveredController.name) {
             // remove from the not found controllers
             mNotFoundControllers.remove(notFoundController);
             if (notFoundController.type == ECommType::HTTP) {
@@ -289,7 +294,7 @@ void ArduCorDiscovery::handleDiscoveredController(const cor::Controller& discove
             int i = 1;
             for (const auto& name : discoveredController.names) {
                 cor::Light light(name, discoveredController.name, discoveredController.type);
-                light.index        = i;
+                light.index = i;
                 light.hardwareType = discoveredController.hardwareTypes[std::size_t(i - 1)];
                 ++i;
 
@@ -399,7 +404,8 @@ void ArduCorDiscovery::updateJSON(const cor::Controller& controller) {
 }
 
 
-QString ArduCorDiscovery::findDeviceNameByIndexAndControllerName(const QString& controllerName, uint32_t index) {
+QString ArduCorDiscovery::findDeviceNameByIndexAndControllerName(const QString& controllerName,
+                                                                 uint32_t index) {
     auto result = mFoundControllers.item(controllerName.toStdString());
     if (result.second) {
         return result.first.names[index - 1];
@@ -407,7 +413,8 @@ QString ArduCorDiscovery::findDeviceNameByIndexAndControllerName(const QString& 
     return QString("NOTFOUND");
 }
 
-bool ArduCorDiscovery::findControllerByDeviceName(const QString& deviceName, cor::Controller& output) {
+bool ArduCorDiscovery::findControllerByDeviceName(const QString& deviceName,
+                                                  cor::Controller& output) {
     for (const auto& controller : mFoundControllers.itemVector()) {
         for (const auto& name : controller.names) {
             if (name == deviceName) {
@@ -419,7 +426,8 @@ bool ArduCorDiscovery::findControllerByDeviceName(const QString& deviceName, cor
     return false;
 }
 
-bool ArduCorDiscovery::findControllerByControllerName(const QString& controllerName, cor::Controller& output) {
+bool ArduCorDiscovery::findControllerByControllerName(const QString& controllerName,
+                                                      cor::Controller& output) {
     auto result = mFoundControllers.item(controllerName.toStdString());
     if (result.second) {
         output = result.first;
@@ -432,13 +440,12 @@ bool ArduCorDiscovery::findControllerByControllerName(const QString& controllerN
 //---------------------
 
 bool ArduCorDiscovery::loadJSON() {
-    if(!mJsonData.isNull()) {
-        if(mJsonData.isArray()) {
+    if (!mJsonData.isNull()) {
+        if (mJsonData.isArray()) {
             QJsonArray array = mJsonData.array();
-            foreach (const QJsonValue &value, array) {
+            foreach (const QJsonValue& value, array) {
                 QJsonObject object = value.toObject();
-                if (object["path"].isString()
-                        && object["commType"].isString()) {
+                if (object["path"].isString() && object["commType"].isString()) {
                     mNotFoundControllers.push_back(cor::jsonToController(object));
                 }
             }
@@ -457,9 +464,9 @@ bool ArduCorDiscovery::loadJSON() {
 //---------------------
 
 void ArduCorDiscovery::startupTimerTimeout() {
-     mStartupTimerFinished = true;
-     // this automatically stops. the discovery page will immediately turn it back on, if its open.
-     stopDiscovery();
+    mStartupTimerFinished = true;
+    // this automatically stops. the discovery page will immediately turn it back on, if its open.
+    stopDiscovery();
 }
 
 const QString ArduCorDiscovery::kDiscoveryPacketIdentifier = QString("DISCOVERY_PACKET");

@@ -19,14 +19,13 @@
 
 /*!
  * \brief The MoodDetailsWidget class is a simple widget used to display details about a mood, such
- *        as its additional info and its default states
+ * as its additional info and its default states
  */
-class MoodDetailsWidget : public QWidget
-{
+class MoodDetailsWidget : public QWidget {
     Q_OBJECT
 public:
     /// contructor
-    explicit MoodDetailsWidget(GroupData *groups, QWidget *parent);
+    explicit MoodDetailsWidget(GroupData* groups, QWidget* parent);
 
     /// displays a mood
     void display(const cor::Mood& mood, const QSize& size);
@@ -35,25 +34,23 @@ public:
     void resize(const QSize& size);
 
 private:
-
     /// data for all the groups
-    GroupData *mGroups;
+    GroupData* mGroups;
 
     /// text for more info widget
-    QLabel *mMoreInfoText;
+    QLabel* mMoreInfoText;
 
     /// title for room default section
-    QLabel *mRoomDefaultsTitle;
+    QLabel* mRoomDefaultsTitle;
 
     /// widget displaying room defaults
-    ListSimpleGroupWidget *mRoomDefaults;
+    ListSimpleGroupWidget* mRoomDefaults;
 
     /// title for group default section
-    QLabel *mGroupDefaultsTitle;
+    QLabel* mGroupDefaultsTitle;
 
     /// widget displaying group defautls
-    ListSimpleGroupWidget *mGroupDefaults;
-
+    ListSimpleGroupWidget* mGroupDefaults;
 };
 
 #endif // MOODDETAILSWIDGET_H

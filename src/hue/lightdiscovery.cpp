@@ -4,17 +4,16 @@
  * Released under the GNU General Public License.
  */
 
+#include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
-#include <QStyleOption>
 
-#include "hue/lightdiscovery.h"
 #include "comm/commhue.h"
+#include "hue/lightdiscovery.h"
 
-namespace hue
-{
+namespace hue {
 
-LightDiscovery::LightDiscovery(QWidget *parent, CommLayer *comm) : QWidget(parent), mComm(comm) {
+LightDiscovery::LightDiscovery(QWidget* parent, CommLayer* comm) : QWidget(parent), mComm(comm) {
     //------------
     // Top Layout
     //------------
@@ -27,7 +26,8 @@ LightDiscovery::LightDiscovery(QWidget *parent, CommLayer *comm) : QWidget(paren
     mSearchButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(mSearchButton, SIGNAL(clicked(bool)), this, SLOT(searchButtonPressed(bool)));
 
-    mSearchWidget = new SearchWidget("", this, 10, QString("You may only search for 10 Hues manually at a time."));
+    mSearchWidget = new SearchWidget(
+        "", this, 10, QString("You may only search for 10 Hues manually at a time."));
     mSearchWidget->enableSizeChecks(6, 6, "Hue serial numbers must be 6 characters long.");
     mSearchWidget->forceUpperCase(true);
     connect(mSearchWidget, SIGNAL(plusClicked()), this, SLOT(plusButtonClicked()));
@@ -43,7 +43,6 @@ LightDiscovery::LightDiscovery(QWidget *parent, CommLayer *comm) : QWidget(paren
     //------------
     mDiscoveryTimer = new QTimer(this);
     connect(mDiscoveryTimer, SIGNAL(timeout()), this, SLOT(discoveryRoutine()));
-
 }
 
 
@@ -57,7 +56,7 @@ void LightDiscovery::resize(bool resizeFullWidget) {
     }
 }
 
-void LightDiscovery::paintEvent(QPaintEvent *) {
+void LightDiscovery::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
@@ -101,7 +100,8 @@ void LightDiscovery::discoveryRoutine() {
 
     // if scan is not active or if new lights have been added, restart scan
     if (!mComm->hue()->scanIsActive() || newLightsAdded) {
-        qDebug() << " search for new lights! active: " << mComm->hue()->scanIsActive()  << " new lgihts added" << newLightsAdded;
+        qDebug() << " search for new lights! active: " << mComm->hue()->scanIsActive()
+                 << " new lgihts added" << newLightsAdded;
         mComm->hue()->searchForNewLights(mBridge, mSearchWidget->searchingFor());
     }
 
@@ -123,12 +123,8 @@ void LightDiscovery::searchButtonPressed(bool) {
 // ----------------------------
 
 
-void LightDiscovery::plusButtonClicked() {
+void LightDiscovery::plusButtonClicked() {}
 
-}
+void LightDiscovery::minusButtonClicked() {}
 
-void LightDiscovery::minusButtonClicked() {
-
-}
-
-}
+} // namespace hue

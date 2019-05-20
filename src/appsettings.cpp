@@ -25,7 +25,7 @@ AppSettings::AppSettings() {
     }
     mSettings->sync();
 
-    //error handling, must always have at least one stream!
+    // error handling, must always have at least one stream!
     if (numberEnabled() == 0) {
         mProtocolsInUse[std::size_t(EProtocolType::hue)] = true;
         mSettings->setValue(keys[std::size_t(EProtocolType::hue)], QString::number(int(true)));
@@ -62,7 +62,7 @@ std::vector<QString> AppSettings::protocolKeys() {
 }
 
 uint32_t AppSettings::numberEnabled() {
-   return uint32_t(std::count(mProtocolsInUse.begin(), mProtocolsInUse.end(), true));
+    return uint32_t(std::count(mProtocolsInUse.begin(), mProtocolsInUse.end(), true));
 }
 
 

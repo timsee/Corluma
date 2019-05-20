@@ -1,35 +1,29 @@
 #ifndef GROUPBUTTON_H
 #define GROUPBUTTON_H
 
-#include <QWidget>
-#include <QPushButton>
 #include <QLabel>
 #include <QLayout>
+#include <QPushButton>
+#include <QWidget>
 
 /// group button state
-enum class EGroupButtonState  {
-    selectAll,
-    clearAll,
-    disabled
-};
+enum class EGroupButtonState { selectAll, clearAll, disabled };
 
-namespace cor
-{
+namespace cor {
 /*!
  * \copyright
  * Copyright (C) 2015 - 2019.
  * Released under the GNU General Public License.
  *
  *
- * \brief The GroupButton class is a simple widget that either emits its key if its pressed, or emits whether
- *         to select/deselect all if its additional button is pressed
+ * \brief The GroupButton class is a simple widget that either emits its key if its pressed, or
+ * emits whether to select/deselect all if its additional button is pressed
  */
-class GroupButton : public QWidget
-{
+class GroupButton : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit GroupButton(QWidget *parent, const QString& text);
+    explicit GroupButton(QWidget* parent, const QString& text);
 
     /// handle the state of the select all button
     bool handleSelectAllButton(uint32_t checkedDevicesCount, uint32_t reachableDevicesCount);
@@ -49,18 +43,17 @@ signals:
     void groupSelectAllToggled(QString, bool);
 
 protected:
-
     /// resize the widget
-    virtual void resizeEvent(QResizeEvent *);
+    virtual void resizeEvent(QResizeEvent*);
 
     /*!
      * \brief mouseReleaseEvent called when a mouse press is released Events not
      *        directly on top of the color wheel are ignored.
      */
-    virtual void mouseReleaseEvent(QMouseEvent *);
+    virtual void mouseReleaseEvent(QMouseEvent*);
 
     /// renders the widget
-    virtual void paintEvent(QPaintEvent *);
+    virtual void paintEvent(QPaintEvent*);
 
 private slots:
 
@@ -68,14 +61,14 @@ private slots:
     void buttonPressed(bool);
 
 private:
-
     /// resizes widget programmatically
     void resize();
 
     /*!
      * \brief computeHighlightColor compute the color of the highlight of the widget. The highlight
-     *        is based on the number of devices and the number that are currently selected. If all devices
-     *        are currently selected, it highlights completely.
+     * is based on the number of devices and the number that are currently selected. If all
+     * devices are currently selected, it highlights completely.
+     *
      * \param checkedDeviceCount the number of devices that are checked
      * \param reachableDeviceCount the total number of reachable devices
      * \return the color to use for the highlight.
@@ -87,7 +80,7 @@ private:
      * \param pixmap the pixmap to resize
      * \param button the button to apply the resized pixmap to
      */
-    void resizeRightHandIcon(QPixmap pixmap, QPushButton *button);
+    void resizeRightHandIcon(QPixmap pixmap, QPushButton* button);
 
     /// preferred size of button
     QSize preferredButtonSize();
@@ -102,7 +95,7 @@ private:
     bool mIsSelected;
 
     /// label for checkbox
-    QLabel *mTitle;
+    QLabel* mTitle;
 
     /// count of reachable devices
     uint32_t mReachableCount;
@@ -113,7 +106,7 @@ private:
     /*!
      * \brief mButton button that selects all devices when pushed and adds them to the data layer.
      */
-    QLabel *mButton;
+    QLabel* mButton;
 
     /// pixmap for the select all button
     QPixmap mSelectAllPixmap;
@@ -125,9 +118,9 @@ private:
     QPixmap mDisabledPixmap;
 
     /// layout for widget
-    QHBoxLayout *mLayout;
+    QHBoxLayout* mLayout;
 };
 
-}
+} // namespace cor
 
 #endif // GROUPBUTTON_H

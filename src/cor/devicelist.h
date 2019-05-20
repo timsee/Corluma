@@ -7,15 +7,14 @@
 
 #include <list>
 
-#include "cor/protocols.h"
-#include "cor/palette.h"
-#include "comm/commhue.h"
 #include "appsettings.h"
-#include "cor/mood.h"
 #include "colorpicker/colorpicker.h"
+#include "comm/commhue.h"
+#include "cor/mood.h"
+#include "cor/palette.h"
+#include "cor/protocols.h"
 
-namespace cor
-{
+namespace cor {
 
 /*!
  * \copyright
@@ -31,15 +30,14 @@ namespace cor
  *
  * \todo Make this class save its data between sessions.
  */
-class DeviceList : public QObject
-{
+class DeviceList : public QObject {
     Q_OBJECT
 
 public:
     /*!
      * \brief Constructor
      */
-    DeviceList(QObject *parent);
+    DeviceList(QObject* parent);
 
     /*!
      * \brief mainColor getter for mainColor, used for single color routines.
@@ -73,8 +71,9 @@ public:
     int speed();
 
     /*!
-     * \brief updateCustomColorCount update the number of custom colors used in the custom color array for multi color routines.
-     *        Must be between 2 and 10 inclusively.
+     * \brief updateCustomColorCount update the number of custom colors used in the custom color
+     * array for multi color routines. Must be between 2 and 10 inclusively.
+     *
      * \param count new count of custom colors.
      */
     void updateCustomColorCount(uint32_t count);
@@ -105,14 +104,15 @@ public:
     void updateSpeed(int speed);
 
     /*!
-     * \brief updateColorScheme update the colors of all the current devices based off of a color scheme.
-     * \param colors a vector of colors.
+     * \brief updateColorScheme update the colors of all the current devices based off of a color
+     * scheme. \param colors a vector of colors.
      */
     void updateColorScheme(std::vector<QColor> colors);
 
     /*!
-     * \brief updateCustomColorArray update the color in the custom color array at the given index. If the index is 10 or larger,
-     *        it is ignored.
+     * \brief updateCustomColorArray update the color in the custom color array at the given index.
+     * If the index is 10 or larger, it is ignored.
+     *
      * \param index Must be bewteen 0 and 9.
      * \param color new color
      */
@@ -205,13 +205,15 @@ public:
     bool hasLightWithProtocol(EProtocolType) const noexcept;
 
     /*!
-     * \brief hasArduinoDevices helper that determines if there are any arduino based devices in the current data.
+     * \brief hasArduinoDevices helper that determines if there are any arduino based devices in the
+     * current data.
      * \return true if any device is an arduino over Serial, UDP, or HTTP
      */
     bool hasArduinoDevices();
 
     /*!
-     * \brief hasNanoLeafDevices helper that determines if there are any nanoleaf devices in the current data
+     * \brief hasNanoLeafDevices helper that determines if there are any nanoleaf devices in the
+     * current data
      * \return true if any device is a nanoleaf
      */
     bool hasNanoLeafDevices();
@@ -222,7 +224,8 @@ public:
     /// compute the best candidate for a mood based on the current devices
     std::uint64_t findCurrentMood(const cor::Dictionary<cor::Mood>& moods);
 
-    /// computes the best possible color picker type that can be supported based off of the currently selected lights
+    /// computes the best possible color picker type that can be supported based off of the
+    /// currently selected lights
     EColorPickerType bestColorPickerType();
 
 signals:
@@ -233,16 +236,14 @@ signals:
     void dataUpdate();
 
 private:
-
     /*!
      * \brief mCurrentDevices list of current devices in data layer
      * \todo complete support of multiple devices in datalayer. currently this is a vector of
      *       size 1 in preparation.
      */
     std::list<cor::Light> mDevices;
-
 };
 
-}
+} // namespace cor
 
 #endif // DATALAYER_H

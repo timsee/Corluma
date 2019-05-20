@@ -7,19 +7,17 @@
 #include "colorpicker.h"
 #include "utils/color.h"
 
-#include <QDebug>
-#include <QSignalMapper>
-#include <QGraphicsOpacityEffect>
 #include <QConicalGradient>
+#include <QDebug>
+#include <QGraphicsOpacityEffect>
+#include <QSignalMapper>
 
 #include <QGraphicsEffect>
+#include <QGraphicsScene>
 #include <QPainter>
 #include <QStyleOption>
-#include <QGraphicsScene>
 
-ColorPicker::ColorPicker(QWidget *parent) :
-    QWidget(parent) {
-
+ColorPicker::ColorPicker(QWidget* parent) : QWidget(parent) {
     mBestPossibleType = EColorPickerType::dimmable;
 
     mPlaceholder = new QWidget(this);
@@ -40,7 +38,7 @@ ColorPicker::ColorPicker(QWidget *parent) :
     mFullLayout->addWidget(mColorWheel, 14);
     mFullLayout->addWidget(mPlaceholder, 6);
     mFullLayout->setSpacing(0);
-    mFullLayout->setContentsMargins(0,0,0,0);
+    mFullLayout->setContentsMargins(0, 0, 0, 0);
     setLayout(mFullLayout);
 }
 
@@ -55,9 +53,7 @@ void ColorPicker::chooseColor(const QColor& color) {
 
 
 void ColorPicker::chooseAmbient(std::uint32_t temperature, std::uint32_t brightness) {
-    if (brightness <= 100
-            && temperature >= 153
-            && temperature <= 500) {
+    if (brightness <= 100 && temperature >= 153 && temperature <= 500) {
         emit ambientUpdate(temperature, brightness);
         mColorWheel->updateBrightness(brightness);
     }

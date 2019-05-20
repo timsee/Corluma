@@ -3,12 +3,11 @@
 
 
 #include <QString>
-#include <vector>
 #include <sstream>
+#include <vector>
 #include "cor/protocols.h"
 
-namespace cor
-{
+namespace cor {
 /*!
  * \copyright
  * Copyright (C) 2015 - 2019.
@@ -17,9 +16,7 @@ namespace cor
  * \brief The Controller class stores information about a Controller.
  *        A controller allows control of one or more light "Devices"
  */
-class Controller
-{
-
+class Controller {
 public:
     /// constructor
     Controller() = default;
@@ -73,13 +70,20 @@ public:
         return QString::fromStdString(tempString.str());
     }
 
-    bool operator==(const Controller& rhs) const
-    {
+    bool operator==(const Controller& rhs) const {
         bool result = true;
-        if (name.compare(rhs.name)) result = false;
-        if (maxHardwareIndex    !=  rhs.maxHardwareIndex) result = false;
-        if (isUsingCRC          !=  rhs.isUsingCRC) result = false;
-        if (type                !=  rhs.type) result = false;
+        if (name.compare(rhs.name)) {
+            result = false;
+        }
+        if (maxHardwareIndex != rhs.maxHardwareIndex) {
+            result = false;
+        }
+        if (isUsingCRC != rhs.isUsingCRC) {
+            result = false;
+        }
+        if (type != rhs.type) {
+            result = false;
+        }
         return result;
     }
 };
@@ -90,19 +94,16 @@ cor::Controller jsonToController(const QJsonObject& object);
 /// converts a controller to a json object
 QJsonObject controllerToJson(const cor::Controller& controller);
 
-}
+} // namespace cor
 
 
-namespace std
-{
-    template <>
-    struct hash<cor::Controller>
-    {
-        size_t operator()(const cor::Controller& k) const
-        {
-            return std::hash<std::string>{}(k.name.toStdString());
-        }
-    };
-}
+namespace std {
+template <>
+struct hash<cor::Controller> {
+    size_t operator()(const cor::Controller& k) const {
+        return std::hash<std::string>{}(k.name.toStdString());
+    }
+};
+} // namespace std
 
 #endif // CONTROLLER_H

@@ -5,29 +5,31 @@
  */
 
 #include "listroomwidget.h"
+#include <QMoveEvent>
 #include <QPainter>
 #include <QStyleOption>
-#include <QMoveEvent>
 
 ListRoomWidget::ListRoomWidget(const cor::Group& group,
-                               CommLayer *comm,
-                               GroupData *groups,
+                               CommLayer* comm,
+                               GroupData* groups,
                                const QString& key,
                                EOnOffSwitchState switchState,
                                cor::EListType listType,
                                cor::EWidgetType type,
-                               QWidget *parent) : cor::ListItemWidget(key, parent),
-                                                    mSwitchState{switchState},
-                                                    mType{type},
-                                                    mComm{comm},
-                                                    mGroupData{groups},
-                                                    mListLayout(listType),
-                                                    mGroup{group} {
-
+                               QWidget* parent)
+    : cor::ListItemWidget(key, parent),
+      mSwitchState{switchState},
+      mType{type},
+      mComm{comm},
+      mGroupData{groups},
+      mListLayout(listType),
+      mGroup{group} {
     if (type == cor::EWidgetType::condensed) {
-        mDropdownTopWidget = new DropdownTopWidget(group.name(), cor::EWidgetType::condensed, true, this);
+        mDropdownTopWidget
+            = new DropdownTopWidget(group.name(), cor::EWidgetType::condensed, true, this);
     } else {
-        mDropdownTopWidget = new DropdownTopWidget(group.name(), cor::EWidgetType::full, true, this);
+        mDropdownTopWidget
+            = new DropdownTopWidget(group.name(), cor::EWidgetType::full, true, this);
     }
     connect(mDropdownTopWidget, SIGNAL(pressed()), this, SLOT(dropdownTopWidgetPressed()));
     mDropdownTopWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -40,15 +42,22 @@ ListRoomWidget::ListRoomWidget(const cor::Group& group,
             // check if group is already in this list
             if (groupResult.second) {
                 // check if its already in the sub group names
-                auto widgetResult = std::find(widgetNames.begin(), widgetNames.end(), groupResult.first.name());
+                auto widgetResult
+                    = std::find(widgetNames.begin(), widgetNames.end(), groupResult.first.name());
                 if (widgetResult != widgetNames.end()) {
                     widgetNames.emplace_back(groupResult.first.name());
                 }
             }
         }
         mGroupsButtonWidget = new GroupButtonsWidget(this, type, mGroup.name(), widgetNames);
-        connect(mGroupsButtonWidget, SIGNAL(groupButtonPressed(QString)), this, SLOT(groupPressed(QString)));
-        connect(mGroupsButtonWidget, SIGNAL(groupSelectAllToggled(QString,bool)), this, SLOT(selectAllToggled(QString,bool)));
+        connect(mGroupsButtonWidget,
+                SIGNAL(groupButtonPressed(QString)),
+                this,
+                SLOT(groupPressed(QString)));
+        connect(mGroupsButtonWidget,
+                SIGNAL(groupSelectAllToggled(QString, bool)),
+                this,
+                SLOT(selectAllToggled(QString, bool)));
 
         mGroupsButtonWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         mGroupsButtonWidget->setVisible(false);
@@ -66,9 +75,7 @@ void ListRoomWidget::updateTopWidget() {
         auto checkedCount = result.first;
         auto reachableCount = result.second;
 
-        mGroupsButtonWidget->updateCheckedDevices("All",
-                                                  checkedCount,
-                                                  reachableCount);
+        mGroupsButtonWidget->updateCheckedDevices("All", checkedCount, reachableCount);
 
         for (const auto& groupID : mGroup.subgroups) {
             auto groupResult = mGroupData->groups().item(QString::number(groupID).toStdString());
@@ -78,9 +85,8 @@ void ListRoomWidget::updateTopWidget() {
                 auto checkedCount = result.first;
                 auto reachableCount = result.second;
 
-                mGroupsButtonWidget->updateCheckedDevices(group.name(),
-                                                          checkedCount,
-                                                          reachableCount);
+                mGroupsButtonWidget->updateCheckedDevices(
+                    group.name(), checkedCount, reachableCount);
             }
         }
     }
@@ -131,13 +137,12 @@ void ListRoomWidget::updateGroup(const cor::Group& group, bool removeIfNotFound)
             //----------------
 
             if (!foundDevice) {
-                auto widget = new ListLightWidget(inputDevice,
-                                                  true,
-                                                  mType,
-                                                  mSwitchState,
-                                                  this);
+                auto widget = new ListLightWidget(inputDevice, true, mType, mSwitchState, this);
                 connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
-                connect(widget, SIGNAL(switchToggled(QString,bool)), this, SLOT(handleToggledSwitch(QString,bool)));
+                connect(widget,
+                        SIGNAL(switchToggled(QString, bool)),
+                        this,
+                        SLOT(handleToggledSwitch(QString, bool)));
                 widget->setVisible(false);
                 mListLayout.insertWidget(widget);
             }
@@ -206,7 +211,7 @@ void ListRoomWidget::setShowButtons(bool show) {
 
     if (!subGroupOpen) {
         for (auto device : mListLayout.widgets()) {
-           if (mDropdownTopWidget->showButtons() && checkIfShowWidgets()) {
+            if (mDropdownTopWidget->showButtons() && checkIfShowWidgets()) {
                 device->setVisible(true);
             } else {
                 device->setVisible(false);
@@ -267,13 +272,13 @@ void ListRoomWidget::setCheckedDevices(std::list<cor::Light> devices) {
     update();
 }
 
-void ListRoomWidget::paintEvent(QPaintEvent *) {
+void ListRoomWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     QRect topRect = mDropdownTopWidget->rect();
-   // QRect topRect(nameRect.x(), nameRect.y(), this->width(), mDropdownTopWidget->height());
+    // QRect topRect(nameRect.x(), nameRect.y(), this->width(), mDropdownTopWidget->height());
     if (!checkedDevices().empty()) {
         painter.fillRect(topRect, QBrush(computeHighlightColor()));
     } else {
@@ -294,7 +299,7 @@ QColor ListRoomWidget::computeHighlightColor() {
             int(amountOfBlue * difference.blue() + pureBlack.blue())};
 }
 
-void ListRoomWidget::resizeEvent(QResizeEvent *) {
+void ListRoomWidget::resizeEvent(QResizeEvent*) {
     resize();
 }
 
@@ -304,9 +309,12 @@ void ListRoomWidget::resize() {
     if (!mGroup.subgroups.empty()) {
         int yPos;
         if (mType == cor::EWidgetType::condensed) {
-            yPos = mGroupsButtonWidget->groupEndPointY(mDropdownTopWidget->size().height(), mLastSubGroupName) + mDropdownTopWidget->height();
+            yPos = mGroupsButtonWidget->groupEndPointY(mDropdownTopWidget->size().height(),
+                                                       mLastSubGroupName)
+                   + mDropdownTopWidget->height();
         } else {
-            yPos = mGroupsButtonWidget->expectedHeight(mDropdownTopWidget->height()) + mDropdownTopWidget->height();
+            yPos = mGroupsButtonWidget->expectedHeight(mDropdownTopWidget->height())
+                   + mDropdownTopWidget->height();
         }
 
         QRect spacerGeometry;
@@ -314,16 +322,17 @@ void ListRoomWidget::resize() {
             spacerGeometry = QRect(0, 0, 0, 0);
             yPos -= mListLayout.overallSize().height();
         } else {
-            spacerGeometry = QRect(0,
-                                   yPos,
-                                   mListLayout.overallSize().width(),
-                                   mListLayout.overallSize().height());
+            spacerGeometry = QRect(
+                0, yPos, mListLayout.overallSize().width(), mListLayout.overallSize().height());
         }
-        mGroupsButtonWidget->resize(mDropdownTopWidget->size(),  spacerGeometry);
-        moveWidgets(QSize(this->parentWidget()->width(), mDropdownTopWidget->height()), QPoint(0, yPos));
-        mGroupsButtonWidget->setGeometry(0, mDropdownTopWidget->height(), this->width(), mGroupsButtonWidget->height());
+        mGroupsButtonWidget->resize(mDropdownTopWidget->size(), spacerGeometry);
+        moveWidgets(QSize(this->parentWidget()->width(), mDropdownTopWidget->height()),
+                    QPoint(0, yPos));
+        mGroupsButtonWidget->setGeometry(
+            0, mDropdownTopWidget->height(), this->width(), mGroupsButtonWidget->height());
     } else {
-        moveWidgets(QSize(this->parentWidget()->width(), mDropdownTopWidget->height()), QPoint(0, mDropdownTopWidget->height()));
+        moveWidgets(QSize(this->parentWidget()->width(), mDropdownTopWidget->height()),
+                    QPoint(0, mDropdownTopWidget->height()));
     }
 }
 
@@ -363,9 +372,9 @@ void ListRoomWidget::moveWidgets(QSize size, QPoint offset) {
             QPoint position = mListLayout.widgetPosition(mListLayout.widgets()[i]);
             mListLayout.widgets()[i]->setFixedSize(size);
             mListLayout.widgets()[i]->setGeometry(offset.x() + position.x() * size.width(),
-                                     offset.y() + position.y() * size.height(),
-                                     size.width(),
-                                     size.height());
+                                                  offset.y() + position.y() * size.height(),
+                                                  size.width(),
+                                                  size.height());
         }
     }
 }
@@ -383,7 +392,7 @@ std::list<cor::Light> ListRoomWidget::checkedDevices() {
 }
 
 void ListRoomWidget::showDevices(const std::list<cor::Light>& devices) {
-    for (const auto& widget: mListLayout.widgets()) {
+    for (const auto& widget : mListLayout.widgets()) {
         auto layoutWidget = qobject_cast<ListLightWidget*>(widget);
         bool deviceFound = false;
         for (const auto& givenDevice : devices) {
@@ -403,7 +412,7 @@ void ListRoomWidget::showDevices(const std::list<cor::Light>& devices) {
 
 std::uint32_t ListRoomWidget::numberOfWidgetsShown() {
     if (mDropdownTopWidget->showButtons()) {
-         return mListLayout.count();
+        return mListLayout.count();
     }
     return 0;
 }
@@ -420,7 +429,8 @@ bool ListRoomWidget::checkIfShowWidgets() {
     return showWidgets;
 }
 
-std::pair<uint32_t, uint32_t> ListRoomWidget::countCheckedAndReachableDevices(const cor::Group& group) {
+std::pair<uint32_t, uint32_t> ListRoomWidget::countCheckedAndReachableDevices(
+    const cor::Group& group) {
     uint32_t reachableCount = 0;
     uint32_t checkedCount = 0;
     for (const auto& lightID : group.lights) {

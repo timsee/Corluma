@@ -5,27 +5,25 @@
  */
 
 #include "light.h"
-#include "utils/color.h"
-#include "cor/palette.h"
 #include <QJsonArray>
+#include "cor/palette.h"
+#include "utils/color.h"
 
-namespace cor
-{
+namespace cor {
 
 Light::Light() : Light(QString("NOT_VALID"), QString("UNINITIALIZED"), ECommType::MAX) {}
 
-Light::Light(const QString& uniqueID, const QString& controller, ECommType commType) :
-    palette("", std::vector<QColor>(1, QColor(0,0,0)), 50),
-    customPalette(paletteToString(EPalette::custom), cor::defaultCustomColors(), 50),
-    lastUpdateTime{0},
-    temperature{200},
-    productType{EProductType::LED},
-    majorAPI{4},
-    minorAPI{2},
-    mUniqueID(uniqueID),
-    mCommType(commType),
-    mController(controller) {
-
+Light::Light(const QString& uniqueID, const QString& controller, ECommType commType)
+    : palette("", std::vector<QColor>(1, QColor(0, 0, 0)), 50),
+      customPalette(paletteToString(EPalette::custom), cor::defaultCustomColors(), 50),
+      lastUpdateTime{0},
+      temperature{200},
+      productType{EProductType::LED},
+      majorAPI{4},
+      minorAPI{2},
+      mUniqueID(uniqueID),
+      mCommType(commType),
+      mController(controller) {
     mProtocol = cor::convertCommTypeToProtocolType(commType);
 
     index = 1;
@@ -63,12 +61,9 @@ cor::Light jsonToLight(const QJsonObject& object) {
     // get either speed or palette, depending on routine type
     //------------
     if (light.routine <= cor::ERoutineSingleColorEnd) {
-        if (object["hue"].isDouble()
-                && object["sat"].isDouble()
-                && object["bri"].isDouble()) {
-            light.color.setHsvF(object["hue"].toDouble(),
-                    object["sat"].toDouble(),
-                    object["bri"].toDouble());
+        if (object["hue"].isDouble() && object["sat"].isDouble() && object["bri"].isDouble()) {
+            light.color.setHsvF(
+                object["hue"].toDouble(), object["sat"].toDouble(), object["bri"].toDouble());
         }
     } else if (object["palette"].isObject()) {
         light.palette = Palette(object["palette"].toObject());
@@ -99,10 +94,10 @@ cor::Light jsonToLight(const QJsonObject& object) {
 QJsonObject lightToJson(const cor::Light& light) {
     QJsonObject object;
     object["uniqueID"] = light.uniqueID();
-    object["type"]     = commTypeToString(light.commType());
+    object["type"] = commTypeToString(light.commType());
 
     object["routine"] = routineToString(light.routine);
-    object["isOn"]    = light.isOn;
+    object["isOn"] = light.isOn;
 
     if (light.routine <= cor::ERoutineSingleColorEnd) {
         object["hue"] = light.color.hueF();
@@ -125,4 +120,4 @@ QJsonObject lightToJson(const cor::Light& light) {
     return object;
 }
 
-}
+} // namespace cor

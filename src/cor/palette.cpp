@@ -4,8 +4,8 @@
  * Released under the GNU General Public License.
  */
 #include "palette.h"
-#include "utils/math.h"
 #include <QJsonArray>
+#include "utils/math.h"
 
 Palette::Palette(const QJsonObject& object) : mJSON(object) {
     mName = object["name"].toString();
@@ -14,15 +14,15 @@ Palette::Palette(const QJsonObject& object) : mJSON(object) {
 
     std::size_t count = std::size_t(object["count"].toDouble());
     bool containsRGB = false;
-    mColors = std::vector<QColor>(count, QColor(0,0,0));
+    mColors = std::vector<QColor>(count, QColor(0, 0, 0));
     for (auto color : object["colors"].toArray()) {
         QJsonObject object = color.toObject();
         uint32_t index = uint32_t(object["index"].toDouble());
 
         if (object["red"].isDouble()) {
-            int red   = int(object["red"].toDouble());
+            int red = int(object["red"].toDouble());
             int green = int(object["green"].toDouble());
-            int blue  = int(object["blue"].toDouble());
+            int blue = int(object["blue"].toDouble());
             mColors[index] = QColor(red, green, blue);
             containsRGB = true;
         } else if (object["hue"].isDouble()) {
@@ -41,9 +41,9 @@ Palette::Palette(const QJsonObject& object) : mJSON(object) {
         for (auto&& color : mColors) {
             QJsonObject colorObject;
             colorObject["index"] = index;
-            colorObject["hue"]   = cor::roundToNDigits(color.hueF(), 4);
-            colorObject["sat"]   = cor::roundToNDigits(color.saturationF(), 4);
-            colorObject["bri"]   = cor::roundToNDigits(color.valueF(), 4);
+            colorObject["hue"] = cor::roundToNDigits(color.hueF(), 4);
+            colorObject["sat"] = cor::roundToNDigits(color.saturationF(), 4);
+            colorObject["bri"] = cor::roundToNDigits(color.valueF(), 4);
             array.append(colorObject);
             ++index;
         }
@@ -51,9 +51,10 @@ Palette::Palette(const QJsonObject& object) : mJSON(object) {
     }
 }
 
-Palette::Palette(const QString& name, const std::vector<QColor>& colors, uint32_t brightness) : mName(name), mColors(colors), mBrightness(brightness) {
+Palette::Palette(const QString& name, const std::vector<QColor>& colors, uint32_t brightness)
+    : mName(name), mColors(colors), mBrightness(brightness) {
     mJSON["name"] = mName;
-    mJSON["bri"]  = mBrightness / 100.0;
+    mJSON["bri"] = mBrightness / 100.0;
     mEnum = stringToPalette(name);
 
     QJsonArray array;
@@ -61,9 +62,9 @@ Palette::Palette(const QString& name, const std::vector<QColor>& colors, uint32_
     for (auto&& color : mColors) {
         QJsonObject colorObject;
         colorObject["index"] = index;
-        colorObject["hue"]   = color.hueF();
-        colorObject["sat"]   = color.saturationF();
-        colorObject["bri"]   = color.valueF();
+        colorObject["hue"] = color.hueF();
+        colorObject["sat"] = color.saturationF();
+        colorObject["bri"] = color.valueF();
         array.append(colorObject);
         ++index;
     }
@@ -73,7 +74,7 @@ Palette::Palette(const QString& name, const std::vector<QColor>& colors, uint32_
 
 void Palette::brightness(uint32_t brightness) {
     mBrightness = brightness;
-    mJSON["bri"]  = mBrightness / 100.0;
+    mJSON["bri"] = mBrightness / 100.0;
 }
 
 

@@ -6,19 +6,19 @@
 
 #include "discoveryhuewidget.h"
 #include "comm/commhue.h"
-#include "utils/qt.h"
 #include "mainwindow.h"
+#include "utils/qt.h"
 
-#include <QScroller>
-#include <QGraphicsOpacityEffect>
 #include <QDesktopWidget>
+#include <QGraphicsOpacityEffect>
 #include <QMessageBox>
+#include <QScroller>
 
-DiscoveryHueWidget::DiscoveryHueWidget(CommLayer *comm, MainWindow *mainWindow, QWidget *parent) :
-    DiscoveryWidget(parent),
-    mBridgeDiscovered{false},
-    mMainWindow(mainWindow),
-    mHueDiscoveryState{EHueDiscoveryState::findingIpAddress} {
+DiscoveryHueWidget::DiscoveryHueWidget(CommLayer* comm, MainWindow* mainWindow, QWidget* parent)
+    : DiscoveryWidget(parent),
+      mBridgeDiscovered{false},
+      mMainWindow(mainWindow),
+      mHueDiscoveryState{EHueDiscoveryState::findingIpAddress} {
     mScale = 0.4f;
 
     mComm = comm;
@@ -61,8 +61,8 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer *comm, MainWindow *mainWindow, 
     connect(mBridgeSchedulesWidget, SIGNAL(closePressed()), this, SLOT(schedulesClosePressed()));
 
     mLayout = new QVBoxLayout;
-    mLayout->addWidget(mLabel,        4);
-    mLayout->addWidget(mListWidget,   8);
+    mLayout->addWidget(mLabel, 4);
+    mLayout->addWidget(mListWidget, 8);
     setLayout(mLayout);
 }
 
@@ -79,31 +79,31 @@ void DiscoveryHueWidget::hueDiscoveryUpdate(EHueDiscoveryState newState) {
         foundBridge = foundBridges;
     }
 
-    switch(mHueDiscoveryState)
-    {
+    switch (mHueDiscoveryState) {
         case EHueDiscoveryState::findingIpAddress:
             mLabel->setText(QString("Looking for Bridge..."));
-            //qDebug() << "Hue Update: Finding IP Address";
+            // qDebug() << "Hue Update: Finding IP Address";
             emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
             break;
         case EHueDiscoveryState::findingDeviceUsername:
             mLabel->setText(QString("Bridge Found! Please press Link button..."));
-            //qDebug() << "Hue Update: Bridge is waiting for link button to be pressed.";
+            // qDebug() << "Hue Update: Bridge is waiting for link button to be pressed.";
             emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
             break;
         case EHueDiscoveryState::testingFullConnection:
             mLabel->setText(QString("Bridge button pressed! Testing connection..."));
-            //qDebug() << "Hue Update: IP and Username received, testing combination. ";
+            // qDebug() << "Hue Update: IP and Username received, testing combination. ";
             emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
             break;
         case EHueDiscoveryState::bridgeConnected:
-            mLabel->setText(QString("Bridge discovered, but more bridges are known. Searching for additional bridges..."));
-            //qDebug() << "Hue Update: Bridge Connected" << mComm->hueBridge().IP;
+            mLabel->setText(QString("Bridge discovered, but more bridges are known. Searching for "
+                                    "additional bridges..."));
+            // qDebug() << "Hue Update: Bridge Connected" << mComm->hueBridge().IP;
             emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovered);
             break;
         case EHueDiscoveryState::allBridgesConnected:
             mLabel->setText(QString(""));
-            //qDebug() << "Hue Update: All Bridges Connected" << mComm->hueBridge().IP;
+            // qDebug() << "Hue Update: All Bridges Connected" << mComm->hueBridge().IP;
             emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovered);
             break;
     }
@@ -142,12 +142,22 @@ void DiscoveryHueWidget::updateBridgeGUI() {
         if (widgetIndex == -1) {
             auto widget = new hue::BridgeInfoWidget(bridge, mListWidget);
             widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-            connect(widget, SIGNAL(nameChanged(QString,QString)), this, SLOT(changedName(QString,QString)));
+            connect(widget,
+                    SIGNAL(nameChanged(QString, QString)),
+                    this,
+                    SLOT(changedName(QString, QString)));
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(bridgePressed(QString)));
-            connect(widget, SIGNAL(discoverHuesPressed(QString)), this, SLOT(discoverHuesPressed(QString)));
+            connect(widget,
+                    SIGNAL(discoverHuesPressed(QString)),
+                    this,
+                    SLOT(discoverHuesPressed(QString)));
             connect(widget, SIGNAL(groupsPressed(QString)), this, SLOT(groupsPressed(QString)));
-            connect(widget, SIGNAL(schedulesPressed(QString)), this, SLOT(schedulesPressed(QString)));
-            connect(widget, SIGNAL(deleteBridge(hue::Bridge)), this, SLOT(deleteBridgeFromAppData(hue::Bridge)));
+            connect(
+                widget, SIGNAL(schedulesPressed(QString)), this, SLOT(schedulesPressed(QString)));
+            connect(widget,
+                    SIGNAL(deleteBridge(hue::Bridge)),
+                    this,
+                    SLOT(deleteBridgeFromAppData(hue::Bridge)));
             mListWidget->insertWidget(widget);
         }
     }
@@ -196,9 +206,9 @@ void DiscoveryHueWidget::changedName(const QString& key, const QString& newName)
 void DiscoveryHueWidget::groupsPressed(const QString& key) {
     const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
     if (bridgeResult.second) {
-//#ifndef MOBILE_BUILD
-//        mMainWindow->greyOut(true);
-//#endif
+        //#ifndef MOBILE_BUILD
+        //        mMainWindow->greyOut(true);
+        //#endif
         mBridgeGroupsWidget->updateGroups(bridgeResult.first.groups);
         mBridgeGroupsWidget->isOpen(true);
         mBridgeGroupsWidget->setVisible(true);
@@ -211,9 +221,9 @@ void DiscoveryHueWidget::groupsPressed(const QString& key) {
 void DiscoveryHueWidget::schedulesPressed(const QString& key) {
     const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
     if (bridgeResult.second) {
-//#ifndef MOBILE_BUILD
-//        mMainWindow->greyOut(true);
-//#endif
+        //#ifndef MOBILE_BUILD
+        //        mMainWindow->greyOut(true);
+        //#endif
         mBridgeSchedulesWidget->updateSchedules(bridgeResult.first.schedules.itemList());
         mBridgeSchedulesWidget->isOpen(true);
         mBridgeSchedulesWidget->setVisible(true);
@@ -259,7 +269,7 @@ void DiscoveryHueWidget::resize() {
     mListWidget->setFixedHeight(yHeight);
 }
 
-void DiscoveryHueWidget::resizeEvent(QResizeEvent *) {
+void DiscoveryHueWidget::resizeEvent(QResizeEvent*) {
     if (mBridgeSchedulesWidget->isOpen()) {
         mBridgeSchedulesWidget->resize();
     }
@@ -267,14 +277,14 @@ void DiscoveryHueWidget::resizeEvent(QResizeEvent *) {
     if (mBridgeGroupsWidget->isOpen()) {
         mBridgeGroupsWidget->resize();
     }
-
 }
 
 void DiscoveryHueWidget::deleteBridgeFromAppData(hue::Bridge bridge) {
     QMessageBox::StandardButton reply;
-    QString text = "Delete this Bridge from App Memory? This will delete all " + QString::number(bridge.lights.size()) + " lights from rooms and moods. This cannot be undone.";
-    reply = QMessageBox::question(this, "Delete Bridge?", text,
-                                  QMessageBox::Yes | QMessageBox::No);
+    QString text = "Delete this Bridge from App Memory? This will delete all "
+                   + QString::number(bridge.lights.size())
+                   + " lights from rooms and moods. This cannot be undone.";
+    reply = QMessageBox::question(this, "Delete Bridge?", text, QMessageBox::Yes | QMessageBox::No);
     if (reply == QMessageBox::Yes) {
         mComm->hue()->discovery()->deleteBridge(bridge);
         mListWidget->removeWidget(bridge.IP);

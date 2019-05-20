@@ -1,16 +1,16 @@
 #ifndef COMMNANOLEAF_H
 #define COMMNANOLEAF_H
 
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
 #include <QJsonArray>
-#include "commtype.h"
-#include "nanoleaf/leafcontroller.h"
-#include "comm/upnpdiscovery.h"
-#include "cor/presetpalettes.h"
-#include "nanoleaf/leafdiscovery.h"
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
 #include "arducor/controller.h"
+#include "comm/upnpdiscovery.h"
+#include "commtype.h"
+#include "cor/presetpalettes.h"
+#include "nanoleaf/leafcontroller.h"
+#include "nanoleaf/leafdiscovery.h"
 
 
 /*!
@@ -24,8 +24,7 @@
  *        HTTP requests and JSON for communication. This class takes Corluma-formatted
  *        message packets and converts them into NanoLeaf packets.
  */
-class CommNanoleaf : public CommType
-{
+class CommNanoleaf : public CommType {
     Q_OBJECT
 public:
     /// constructor
@@ -52,10 +51,12 @@ public:
     void sendPacket(const QJsonObject& object);
 
     /*!
-     * \brief changeAmbientLight changes the color of the bulb to match the color temperature given. This is the only way to interact with
-     *        white ambiance bulbs and it can also be used with the RGB bulbs.
+     * \brief changeAmbientLight changes the color of the bulb to match the color temperature given.
+     * This is the only way to interact with white ambiance bulbs and it can also be used with the
+     * RGB bulbs.
      * \param controller controller to send CT packet to.
-     * \param ct a new value for the color temperature, given in meriks. Must be between 153 and 500.
+     * \param ct a new value for the color temperature, given in meriks. Must be between 153 and
+     * 500.
      */
     void changeColorCT(const cor::Controller& controller, int ct);
 
@@ -91,10 +92,12 @@ public:
     const std::vector<QColor> customColors() { return mCustomColors; }
 
     /// getter for list of nanoleaf controllers
-    const cor::Dictionary<nano::LeafController>& controllers() { return mDiscovery->foundControllers(); }
+    const cor::Dictionary<nano::LeafController>& controllers() {
+        return mDiscovery->foundControllers();
+    }
 
     /// getter for discovery object
-    nano::LeafDiscovery *discovery() { return mDiscovery; }
+    nano::LeafDiscovery* discovery() { return mDiscovery; }
 
 private slots:
     /*!
@@ -111,7 +114,8 @@ private slots:
     void onOffChange(const nano::LeafController& controller, bool turnOn);
 
     /*!
-     * \brief brightnessChange connected to CommPacketParser, this changes the brightness of a device.
+     * \brief brightnessChange connected to CommPacketParser, this changes the brightness of a
+     * device.
      * \param deviceIndex 0 for all indices, a specific index for a specific light.
      *        Will do nothing if index doesn't exist.
      * \param brightness a value between 0 and 100, 0 is off, 100 is full brightness
@@ -119,8 +123,8 @@ private slots:
     void brightnessChange(const nano::LeafController& controller, int brightness);
 
     /*!
-     * \brief routineChange change the light state of the hue. This JSON object will contain a color and other
-     *        information about the light.
+     * \brief routineChange change the light state of the hue. This JSON object will contain a color
+     * and other information about the light.
      */
     void routineChange(const nano::LeafController& controller, QJsonObject);
 
@@ -139,11 +143,11 @@ private slots:
     void stateUpdate();
 
 private:
-
     /// vector that holds the custom colors used in custom color routines
     std::vector<QColor> mCustomColors;
 
-    /// takes the color palette data from thne datalayer and converts it into JSON data for nanoleaf packets
+    /// takes the color palette data from thne datalayer and converts it into JSON data for nanoleaf
+    /// packets
     void createColorPalettes();
 
     /// called on startup, checks saved app data.
@@ -163,18 +167,20 @@ private:
     QNetworkRequest networkRequest(const nano::LeafController& controller, const QString& endpoint);
 
     /*!
-     * \brief parseStateUpdatePacket parses a state update packet. These packets contain everything such
-     *        as the nanoleaf's brightness, color, current effect, and even metadata like the serial number
+     * \brief parseStateUpdatePacket parses a state update packet. These packets contain everything
+     * such as the nanoleaf's brightness, color, current effect, and even metadata like the serial
+     * number
      * \param stateUpdate the packet with the state update data.
      */
     void parseStateUpdatePacket(nano::LeafController& controller, const QJsonObject& stateUpdate);
 
     /*!
-     * \brief parseCommandRequestUpdatePacket parses a command request packet. These packets are received
-     *        when you request the details on a command.
+     * \brief parseCommandRequestUpdatePacket parses a command request packet. These packets are
+     * received when you request the details on a command.
      * \param requestPacket the packet with the command request data
      */
-    void parseCommandRequestUpdatePacket(const nano::LeafController& controller, const QJsonObject& requestPacket);
+    void parseCommandRequestUpdatePacket(const nano::LeafController& controller,
+                                         const QJsonObject& requestPacket);
 
     /*!
      * \brief createRoutinePacket helper that takes a lighting routine and creates
@@ -197,39 +203,43 @@ private:
     void singleSolidColorChange(const nano::LeafController& controller, const QColor& color);
 
     /*!
-     * \brief converts a vector of QColor to two nanoleaf-compatible jsonarrays. the first of the pair is a
-     *        standard palette. The second array is used for highlight routines
+     * \brief converts a vector of QColor to two nanoleaf-compatible jsonarrays. the first of the
+     * pair is a standard palette. The second array is used for highlight routines
      */
-    std::pair<QJsonArray, QJsonArray> vectorToNanoleafPalettes(const std::vector<QColor>& colorVector);
+    std::pair<QJsonArray, QJsonArray> vectorToNanoleafPalettes(
+        const std::vector<QColor>& colorVector);
 
     /// converts a nanoleaf palette JSON array to a vector of QColors
     std::vector<QColor> nanoleafPaletteToVector(const QJsonArray& palette);
 
     /*!
-     * \brief computeBrightnessAndColorFromSingleColorPacket helper function that takes the output from a single color packet and converts it into
-     *        a color value and a brightness value
+     * \brief computeBrightnessAndColorFromSingleColorPacket helper function that takes the output
+     * from a single color packet and converts it into a color value and a brightness value
      * \param routine the routine for the single color packer
      * \param colorVector the vector for the single color routine
      * \return a pair where the first value is a color and the second is a brightness
      */
-    std::pair<QColor, uint32_t> computeBrightnessAndColorFromSingleColorPacket(ERoutine routine, const std::vector<QColor>& colorVector);
+    std::pair<QColor, uint32_t> computeBrightnessAndColorFromSingleColorPacket(
+        ERoutine routine,
+        const std::vector<QColor>& colorVector);
 
     /*!
-     * \brief computeBrightnessFromMultiColorPacket helper funciton that takes the output from a multi color packet and converts it into
-     *        a brightness value
+     * \brief computeBrightnessFromMultiColorPacket helper funciton that takes the output from a
+     * multi color packet and converts it into a brightness value
      * \param routine the routine for the multi color packet
      * \param colorVector the vector for the multi color routine
      * \return a brightness value in the range of 0-100
      */
-    uint32_t computeBrightnessFromMultiColorPacket(ERoutine routine, const std::vector<QColor>& colorVector);
+    uint32_t computeBrightnessFromMultiColorPacket(ERoutine routine,
+                                                   const std::vector<QColor>& colorVector);
 
     /*!
      * \brief mNetworkManager Qt's HTTP connection object
      */
-    QNetworkAccessManager *mNetworkManager;
+    QNetworkAccessManager* mNetworkManager;
 
     /// pointer to the UPnPDiscovery object.
-    UPnPDiscovery *mUPnP;
+    UPnPDiscovery* mUPnP;
 
     /// preset data for palettes from ArduCor
     PresetPalettes mPresetPalettes;
@@ -241,7 +251,7 @@ private:
     std::vector<QJsonArray> mHighlightPalettes;
 
     /// object that holds and manages nanoleaf controller connections.
-    nano::LeafDiscovery *mDiscovery;
+    nano::LeafDiscovery* mDiscovery;
 };
 
 #endif // COMMNANOLEAF_H

@@ -2,11 +2,11 @@
 
 #include <QDebug>
 
-GroupButtonsWidget::GroupButtonsWidget(QWidget *parent,
+GroupButtonsWidget::GroupButtonsWidget(QWidget* parent,
                                        cor::EWidgetType type,
                                        const QString& roomName,
-                                       const std::vector<QString>& groups) : QWidget(parent), mType{type}, mRoomName(roomName)
-{
+                                       const std::vector<QString>& groups)
+    : QWidget(parent), mType{type}, mRoomName(roomName) {
     if (mType == cor::EWidgetType::condensed) {
         mGroupCount = 1;
     } else {
@@ -27,14 +27,19 @@ void GroupButtonsWidget::addGroup(const QString& group) {
     QString adjustedName = convertGroupName(mRoomName, group);
     auto groupButton = new cor::GroupButton(this, adjustedName);
     connect(groupButton, SIGNAL(groupButtonPressed(QString)), this, SLOT(buttonPressed(QString)));
-    connect(groupButton, SIGNAL(groupSelectAllToggled(QString,bool)), this, SLOT(buttonToggled(QString,bool)));
+    connect(groupButton,
+            SIGNAL(groupSelectAllToggled(QString, bool)),
+            this,
+            SLOT(buttonToggled(QString, bool)));
     mButtons.push_back(groupButton);
     bool sucessful = mRelabeledNames.insert(group.toStdString(), adjustedName.toStdString());
-    GUARD_EXCEPTION(sucessful, "insert into cor::Dictionary failed: " + group.toStdString() + " adjusted: " + adjustedName.toStdString());
+    GUARD_EXCEPTION(sucessful,
+                    "insert into cor::Dictionary failed: " + group.toStdString()
+                        + " adjusted: " + adjustedName.toStdString());
 
     groupButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    std::sort(mButtons.begin(), mButtons.end(), [](cor::GroupButton *a, cor::GroupButton *b) {
+    std::sort(mButtons.begin(), mButtons.end(), [](cor::GroupButton* a, cor::GroupButton* b) {
         return (a->key() < b->key());
     });
 }
