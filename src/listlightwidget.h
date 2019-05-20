@@ -7,9 +7,9 @@
 #include <QWidget>
 
 #include "comm/commtype.h"
-#include "cor/listitemwidget.h"
-#include "cor/statusicon.h"
-#include "cor/switch.h"
+#include "cor/widgets/listitemwidget.h"
+#include "cor/widgets/statusicon.h"
+#include "cor/widgets/switch.h"
 #include "icondata.h"
 
 

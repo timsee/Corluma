@@ -8,7 +8,7 @@
 
 #include "comm/commlayer.h"
 #include "cor/devicelist.h"
-#include "cor/page.h"
+#include "cor/objects/page.h"
 #include "floatinglayout.h"
 
 class DiscoveryArduCorWidget;

@@ -8,9 +8,9 @@
 #include <QWidget>
 
 #include "comm/commtype.h"
-#include "cor/lightvectorwidget.h"
-#include "cor/listitemwidget.h"
-#include "cor/mood.h"
+#include "cor/objects/mood.h"
+#include "cor/widgets/lightvectorwidget.h"
+#include "cor/widgets/listitemwidget.h"
 #include "icondata.h"
 
 /*!

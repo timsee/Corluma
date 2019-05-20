@@ -70,6 +70,9 @@ public:
     /// getter for current mode of colorpicker
     EColorPickerMode mode() const noexcept { return mCurrentMode; }
 
+    /// updates the brightness programtically, but does not signal the change
+    void updateBrightness(std::uint32_t brightness);
+
     /*!
      * \brief updateColorStates update the layouts at the bottom of the ColorPicker with new values
      * from the RGB devices

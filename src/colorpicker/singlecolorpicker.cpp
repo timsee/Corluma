@@ -160,19 +160,51 @@ void SingleColorPicker::updateColorStates(const QColor& mainColor, uint32_t brig
     mTempBrightSliders->changeBrightness(brightness);
 }
 
+void SingleColorPicker::updateBrightness(std::uint32_t brightness) {
+    mColor.setHsvF(mColor.hueF(), mColor.saturationF(), double(brightness) / 100.0);
+    mColor = mColor.toRgb();
+    mBrightness = brightness;
+    if (mBestPossibleType != EColorPickerType::CT) {
+        mRGBSliders->changeColor(mColor);
+        mHSVSliders->changeColor(mColor, brightness);
+    }
+
+    if (mCurrentMode == EColorPickerMode::HSV || mCurrentMode == EColorPickerMode::ambient) {
+        mColorWheel->updateBrightness(brightness);
+    }
+    mSelectionCircle->hideCircles();
+    mRGBSliders->changeColor(mColor);
+    mHSVSliders->changeColor(mColor, brightness);
+    mTempBrightSliders->changeBrightness(brightness);
+}
+
 void SingleColorPicker::mousePressEvent(QMouseEvent* event) {
     auto colorScheme = mSelectionCircle->moveStandardCircle(0, event->pos());
+    auto storeBrightness = mBrightness;
     if (!colorScheme.empty()) {
         mColorWheel->handleMouseEvent(event);
         mSelectionCircle->updateSingleColor(colorScheme[0]);
+        mColor = colorScheme[0];
+        if (mCurrentMode == EColorPickerMode::RGB) {
+            mBrightness = colorScheme[0].valueF() * 100.0;
+        } else {
+            mBrightness = storeBrightness;
+        }
     }
 }
 
 void SingleColorPicker::mouseMoveEvent(QMouseEvent* event) {
     auto colorScheme = mSelectionCircle->moveStandardCircle(0, event->pos());
+    auto storeBrightness = mBrightness;
     if (!colorScheme.empty()) {
         mColorWheel->handleMouseEvent(event);
         mSelectionCircle->updateSingleColor(colorScheme[0]);
+        mColor = colorScheme[0];
+        if (mCurrentMode == EColorPickerMode::RGB) {
+            mBrightness = colorScheme[0].valueF() * 100.0;
+        } else {
+            mBrightness = storeBrightness;
+        }
     }
 }
 
@@ -187,9 +219,11 @@ void SingleColorPicker::mouseReleaseEvent(QMouseEvent*) {
 
 void SingleColorPicker::wheelColorChanged(QColor color) {
     if (mCurrentMode == EColorPickerMode::RGB) {
+        emit brightnessUpdate(uint32_t(color.valueF() * 100.0));
         chooseColor(color);
         mRGBSliders->changeColor(color);
     } else if (mCurrentMode == EColorPickerMode::HSV) {
+        emit brightnessUpdate(mHSVSliders->brightness());
         chooseColor(color);
         mHSVSliders->changeColor(color, std::uint32_t(color.valueF() * 100.0));
     }
@@ -197,11 +231,13 @@ void SingleColorPicker::wheelColorChanged(QColor color) {
 
 
 void SingleColorPicker::slidersColorChanged(const QColor& color) {
+    mColor = color;
     chooseColor(color);
     auto brightness = std::uint32_t(color.toHsv().valueF() * 100.0);
     if (mCurrentMode == EColorPickerMode::HSV) {
         mColorWheel->updateBrightness(brightness);
         mHSVSliders->changeColor(color, brightness);
+        emit brightnessUpdate(mHSVSliders->brightness());
     }
     mSelectionCircle->hideCircles();
     update();

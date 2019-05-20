@@ -13,7 +13,7 @@
 #include "comm/commlayer.h"
 #include "cor/devicelist.h"
 #include "cor/dictionary.h"
-#include "cor/listwidget.h"
+#include "cor/widgets/listwidget.h"
 
 
 /*!

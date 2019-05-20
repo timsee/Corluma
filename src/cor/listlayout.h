@@ -6,7 +6,7 @@
 #include <QWidget>
 
 #include "cor/dictionary.h"
-#include "listitemwidget.h"
+#include "cor/widgets/listitemwidget.h"
 
 namespace cor {
 

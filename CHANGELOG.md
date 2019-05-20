@@ -493,4 +493,12 @@ ___
 #### The Clang-Format Update
 * Ran `clang-format`on codebase.
 
+### **v0.16.15**
+#### The Code Reorg Update
+* Moved the `nanoleaf` `hue` and `arducor` directories into the `comm` directory.
+* Added an `objects` and a `widgets` directory to the `cor` directory. 
+* Fixed bugs with nanoleaf discovery.
+* Synced top brightness control bar with `SingleColorPicker`.
+
+
 

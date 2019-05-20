@@ -17,7 +17,6 @@ target_include_directories(Catch INTERFACE
 set(TEST_SOURCES 
     ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/test_Dictionary.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/test_StrictDictionary.cpp
 )
 
 add_executable(tests ${TEST_SOURCES})

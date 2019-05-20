@@ -6,7 +6,7 @@
 
 #include "commarducor.h"
 
-#include "cor/exception.h"
+#include "utils/exception.h"
 #include "utils/qt.h"
 
 #include "comm/commhttp.h"

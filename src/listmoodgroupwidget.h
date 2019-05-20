@@ -10,9 +10,9 @@
 
 #include <set>
 
-#include "cor/listitemwidget.h"
+#include "cor/widgets/listitemwidget.h"
 #include "cor/listlayout.h"
-#include "cor/mood.h"
+#include "cor/objects/mood.h"
 #include "dropdowntopwidget.h"
 #include "listmoodpreviewwidget.h"
 

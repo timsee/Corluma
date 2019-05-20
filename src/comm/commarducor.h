@@ -5,8 +5,8 @@
 
 #include <memory>
 
-#include "arducor/arducordiscovery.h"
-#include "arducor/crccalculator.h"
+#include "comm/arducor/arducordiscovery.h"
+#include "comm/arducor/crccalculator.h"
 #include "comm/commtype.h"
 #include "cor/presetpalettes.h"
 

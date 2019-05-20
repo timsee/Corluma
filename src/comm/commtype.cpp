@@ -5,7 +5,7 @@
  */
 
 #include "commtype.h"
-#include "cor/light.h"
+#include "cor/objects/light.h"
 
 #include "utils/qt.h"
 

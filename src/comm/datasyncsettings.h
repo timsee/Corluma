@@ -6,7 +6,7 @@
 #include <QTimer>
 
 #include "appsettings.h"
-#include "arducor/arducorpacketparser.h"
+#include "comm/arducor/arducorpacketparser.h"
 #include "cor/devicelist.h"
 #include "datasync.h"
 

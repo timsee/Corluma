@@ -5,10 +5,10 @@
 #include <QWidget>
 
 #include "comm/commlayer.h"
-#include "cor/checkbox.h"
-#include "cor/light.h"
-#include "cor/listwidget.h"
-#include "cor/page.h"
+#include "cor/objects/light.h"
+#include "cor/objects/page.h"
+#include "cor/widgets/checkbox.h"
+#include "cor/widgets/listwidget.h"
 #include "editpagetopmenu.h"
 #include "listsimplegroupwidget.h"
 

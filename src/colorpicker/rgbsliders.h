@@ -1,7 +1,7 @@
 #ifndef RGBSLIDERS_H
 #define RGBSLIDERS_H
 
-#include "cor/slider.h"
+#include "cor/widgets/slider.h"
 
 #include <QWidget>
 

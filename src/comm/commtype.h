@@ -12,7 +12,7 @@
 #include <unordered_map>
 
 #include "cor/dictionary.h"
-#include "cor/light.h"
+#include "cor/objects/light.h"
 
 /*!
  * \copyright

@@ -4,8 +4,8 @@
 #include <QLabel>
 #include <QObject>
 #include <QWidget>
-#include "cor/button.h"
-#include "cor/light.h"
+#include "cor/widgets/button.h"
+#include "cor/objects/light.h"
 
 /// mode of this widget
 enum class EPresetWidgetMode { arduino, hue };

@@ -5,8 +5,8 @@
 
 #include <vector>
 #include "cor/dictionary.h"
-#include "cor/groupbutton.h"
 #include "cor/protocols.h"
+#include "cor/widgets/groupbutton.h"
 
 /*!
  * \copyright

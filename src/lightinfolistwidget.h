@@ -7,12 +7,12 @@
 #include <QScrollArea>
 #include <QWidget>
 
-#include "arducor/arducorinfowidget.h"
+#include "comm/arducor/arducorinfowidget.h"
 #include "comm/commhue.h"
-#include "cor/page.h"
-#include "cor/topwidget.h"
-#include "hue/hueinfowidget.h"
-#include "nanoleaf/leafcontrollerinfowidget.h"
+#include "cor/objects/page.h"
+#include "cor/widgets/topwidget.h"
+#include "comm/hue/hueinfowidget.h"
+#include "comm/nanoleaf/leafcontrollerinfowidget.h"
 
 /*!
  * \copyright

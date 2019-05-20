@@ -1,8 +1,8 @@
 #ifndef COMMHTTP_H
 #define COMMHTTP_H
 
-#include "arducor/arducordiscovery.h"
-#include "arducor/crccalculator.h"
+#include "comm/arducor/arducordiscovery.h"
+#include "comm/arducor/crccalculator.h"
 #include "commtype.h"
 
 #include <QNetworkAccessManager>

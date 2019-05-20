@@ -3,8 +3,8 @@
 
 #include <QWidget>
 
-#include "cor/page.h"
-#include "cor/switch.h"
+#include "cor/objects/page.h"
+#include "cor/widgets/switch.h"
 #include "editgrouppage.h"
 #include "floatinglayout.h"
 #include "listsimplegroupwidget.h"

@@ -10,8 +10,8 @@
 #include "appsettings.h"
 #include "colorpicker/colorpicker.h"
 #include "comm/commhue.h"
-#include "cor/mood.h"
-#include "cor/palette.h"
+#include "cor/objects/mood.h"
+#include "cor/objects/palette.h"
 #include "cor/protocols.h"
 
 namespace cor {

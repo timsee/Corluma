@@ -3,9 +3,9 @@
 #define SINGLECOLORPAGE_H
 
 #include "colorpicker/singlecolorpicker.h"
-#include "cor/button.h"
-#include "cor/page.h"
-#include "cor/slider.h"
+#include "cor/widgets/button.h"
+#include "cor/objects/page.h"
+#include "cor/widgets/slider.h"
 #include "icondata.h"
 #include "routinebuttonswidget.h"
 

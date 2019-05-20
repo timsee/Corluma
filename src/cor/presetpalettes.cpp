@@ -4,8 +4,8 @@
  * Released under the GNU General Public License.
  */
 #include "presetpalettes.h"
-#include "cor/exception.h"
-#include "cor/palette.h"
+#include "cor/objects/palette.h"
+#include "utils/exception.h"
 
 #include <QFile>
 #include <QJsonArray>

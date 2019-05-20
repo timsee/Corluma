@@ -6,7 +6,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-#include "cor/mood.h"
+#include "cor/objects/mood.h"
 #include "groupdata.h"
 #include "listsimplegroupwidget.h"
 

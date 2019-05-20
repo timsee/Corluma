@@ -5,7 +5,7 @@
  */
 
 #include "commserial.h"
-#include "arducor/arducordiscovery.h"
+#include "comm/arducor/arducordiscovery.h"
 
 #include <QDebug>
 

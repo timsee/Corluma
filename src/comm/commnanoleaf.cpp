@@ -5,8 +5,8 @@
  */
 
 #include "comm/commnanoleaf.h"
-#include "cor/light.h"
-#include "cor/palette.h"
+#include "cor/objects/light.h"
+#include "cor/objects/palette.h"
 #include "utils/color.h"
 
 #include <QJsonDocument>
@@ -29,7 +29,7 @@ std::pair<int, cor::Range<uint32_t>> valueAndRangeFromJSON(const QJsonObject& ob
 CommNanoleaf::CommNanoleaf() : CommType(ECommType::nanoleaf), mUPnP{nullptr} {
     mStateUpdateInterval = 1000;
 
-    mDiscovery = new nano::LeafDiscovery(this, 2500);
+    mDiscovery = new nano::LeafDiscovery(this, 4000);
     // make list of not found devices
     std::list<cor::Light> lightList;
     for (const auto& nanoleaf : mDiscovery->notFoundControllers()) {

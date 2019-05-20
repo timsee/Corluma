@@ -1,7 +1,7 @@
 #ifndef COLORPICKER_H
 #define COLORPICKER_H
 
-#include "cor/slider.h"
+#include "cor/widgets/slider.h"
 
 #include <QLabel>
 #include <QLayout>

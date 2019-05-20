@@ -5,7 +5,7 @@
  */
 
 #include "appsettings.h"
-#include "cor/exception.h"
+#include "utils/exception.h"
 #include "groupdata.h"
 #include "mainwindow.h"
 #include "utils/qt.h"

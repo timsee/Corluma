@@ -4,8 +4,8 @@
 #include <QObject>
 
 #include "comm/commhue.h"
-#include "cor/group.h"
-#include "cor/mood.h"
+#include "cor/objects/group.h"
+#include "cor/objects/mood.h"
 
 #include "cor/dictionary.h"
 

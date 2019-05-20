@@ -5,7 +5,7 @@
 #include <QObject>
 #include <QTimer>
 #include <unordered_map>
-#include "arducor/arducorpacketparser.h"
+#include "comm/arducor/arducorpacketparser.h"
 #include "comm/commarducor.h"
 #include "datasync.h"
 

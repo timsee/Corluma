@@ -15,7 +15,7 @@
 #include "comm/commnanoleaf.h"
 #include "utils/qt.h"
 
-#include "cor/exception.h"
+#include "utils/exception.h"
 #include "cor/presetpalettes.h"
 #include "utils/reachability.h"
 

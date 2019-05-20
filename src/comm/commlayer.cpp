@@ -5,7 +5,7 @@
  */
 
 #include "commlayer.h"
-#include "cor/exception.h"
+#include "utils/exception.h"
 #include "utils/qt.h"
 
 #include "comm/commarducor.h"
@@ -249,7 +249,7 @@ cor::Light CommLayer::lightByID(const QString& ID) {
             return result.first;
         }
     }
-    THROW_EXCEPTION("Light not found: " + ID.toStdString());
+    return {};
 }
 
 void CommLayer::resetStateUpdates(EProtocolType type) {

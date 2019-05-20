@@ -1,10 +1,10 @@
 #include "commhue.h"
-#include "cor/exception.h"
-#include "cor/light.h"
+#include "utils/exception.h"
+#include "cor/objects/light.h"
 #include "utils/color.h"
 #include "utils/qt.h"
 
-#include "hue/hueprotocols.h"
+#include "comm/hue/hueprotocols.h"
 
 #include <QJsonArray>
 #include <QJsonDocument>

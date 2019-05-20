@@ -4,8 +4,8 @@
 #include <QTimer>
 #include <QUdpSocket>
 
-#include "arducor/arducordiscovery.h"
-#include "arducor/crccalculator.h"
+#include "comm/arducor/arducordiscovery.h"
+#include "comm/arducor/crccalculator.h"
 #include "commtype.h"
 
 /*!

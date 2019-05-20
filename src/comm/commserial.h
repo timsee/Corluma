@@ -1,8 +1,8 @@
 #ifndef SERIALCOMM_H
 #define SERIALCOMM_H
 
-#include "arducor/arducordiscovery.h"
-#include "arducor/crccalculator.h"
+#include "comm/arducor/arducordiscovery.h"
+#include "comm/arducor/crccalculator.h"
 #include "commtype.h"
 
 #include <QSerialPort>

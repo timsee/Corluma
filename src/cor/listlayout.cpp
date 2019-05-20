@@ -1,9 +1,9 @@
 #include "listlayout.h"
 #include <QDebug>
-#include "cor/listitemwidget.h"
+#include "cor/widgets/listitemwidget.h"
 
-#include "cor/exception.h"
 #include "listlightwidget.h"
+#include "utils/exception.h"
 
 namespace cor {
 

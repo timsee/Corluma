@@ -11,7 +11,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
-#include "cor/light.h"
+#include "cor/objects/light.h"
 
 IconData::IconData() {
     setup(4, 4);

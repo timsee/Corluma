@@ -8,15 +8,15 @@
 #include <memory>
 
 #include "comm/commtype.h"
-#include "cor/light.h"
+#include "cor/objects/light.h"
 #include "cor/presetpalettes.h"
 #include "cor/protocols.h"
 
-#include "arducor/arducordiscovery.h"
+#include "comm/arducor/arducordiscovery.h"
+#include "comm/hue/huelight.h"
+#include "comm/hue/hueprotocols.h"
 #include "comm/upnpdiscovery.h"
 #include "groupdata.h"
-#include "hue/huelight.h"
-#include "hue/hueprotocols.h"
 
 class CommArduCor;
 class CommHue;

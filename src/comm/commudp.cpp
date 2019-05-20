@@ -6,7 +6,7 @@
 
 
 #include "commudp.h"
-#include "arducor/arducordiscovery.h"
+#include "comm/arducor/arducordiscovery.h"
 
 #include <QDebug>
 #include <QNetworkInterface>

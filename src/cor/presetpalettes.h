@@ -6,7 +6,7 @@
 #include <QColor>
 #include <QJsonObject>
 
-#include "cor/palette.h"
+#include "cor/objects/palette.h"
 #include "cor/protocols.h"
 /*!
  * \copyright

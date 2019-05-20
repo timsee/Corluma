@@ -108,11 +108,11 @@ ios {
 #----------
 
 SOURCES += main.cpp \
-    arducor/arducordiscovery.cpp \
-    arducor/arducorpacketparser.cpp \
-    arducor/controller.cpp \
-    arducor/arducorinfowidget.cpp \
-    arducor/crccalculator.cpp \
+    comm/arducor/arducordiscovery.cpp \
+    comm/arducor/arducorpacketparser.cpp \
+    comm/arducor/controller.cpp \
+    comm/arducor/arducorinfowidget.cpp \
+    comm/arducor/crccalculator.cpp \
     comm/commarducor.cpp \
     comm/commhttp.cpp \
     comm/commudp.cpp \
@@ -136,35 +136,26 @@ SOURCES += main.cpp \
     discovery/discoverynanoleafwidget.cpp \
     discovery/hardwareconnectionwidget.cpp \
     discovery/discoveryarducorwidget.cpp \
-    cor/light.cpp \
-    cor/button.cpp \
-    cor/checkbox.cpp \
-    cor/slider.cpp \
-    cor/listwidget.cpp \
-    cor/statusicon.cpp \
-    cor/topwidget.cpp \
-    cor/webview.cpp \
-    cor/switch.cpp \
+    cor/widgets/slider.cpp \
+    cor/widgets/listwidget.cpp \
     cor/presetpalettes.cpp \
-    cor/palette.cpp \
     cor/jsonsavedata.cpp \
-    cor/lightvectorwidget.cpp \
+    cor/widgets/lightvectorwidget.cpp \
     cor/listlayout.cpp \
     cor/devicelist.cpp \
-    cor/groupbutton.cpp \
-    cor/group.cpp \
-    hue/bridgeinfowidget.cpp \
-    hue/lightdiscovery.cpp \
-    hue/bridgediscovery.cpp \
-    hue/bridge.cpp \
-    hue/hueinfowidget.cpp \
-    hue/bridgegroupswidget.cpp \
-    hue/bridgescheduleswidget.cpp \
-    hue/huegroupwidget.cpp \
-    hue/hueschedulewidget.cpp \
-    nanoleaf/leafcontroller.cpp \
-    nanoleaf/leafdiscovery.cpp \
-    nanoleaf/leafcontrollerinfowidget.cpp \
+    cor/widgets/groupbutton.cpp \
+    comm/hue/bridgeinfowidget.cpp \
+    comm/hue/lightdiscovery.cpp \
+    comm/hue/bridgediscovery.cpp \
+    comm/hue/bridge.cpp \
+    comm/hue/hueinfowidget.cpp \
+    comm/hue/bridgegroupswidget.cpp \
+    comm/hue/bridgescheduleswidget.cpp \
+    comm/hue/huegroupwidget.cpp \
+    comm/hue/hueschedulewidget.cpp \
+    comm/nanoleaf/leafcontroller.cpp \
+    comm/nanoleaf/leafdiscovery.cpp \
+    comm/nanoleaf/leafcontrollerinfowidget.cpp \
     mainwindow.cpp \
     settingspage.cpp \
     icondata.cpp \
@@ -209,11 +200,11 @@ SOURCES += main.cpp \
     colorpicker/multicolorpicker.cpp \
     palettescrollarea.cpp
 
-HEADERS  +=  arducor/arducordiscovery.h \
-    arducor/arducorpacketparser.h \
-    arducor/controller.h \
-    arducor/arducorinfowidget.h \
-    arducor/crccalculator.h \
+HEADERS  +=  comm/arducor/arducordiscovery.h \
+    comm/arducor/arducorpacketparser.h \
+    comm/arducor/controller.h \
+    comm/arducor/arducorinfowidget.h \
+    comm/arducor/crccalculator.h \
     comm/commtype.h \
     comm/commarducor.h \
     comm/commhttp.h \
@@ -237,47 +228,30 @@ HEADERS  +=  arducor/arducordiscovery.h \
     discovery/discoverynanoleafwidget.h \
     discovery/hardwareconnectionwidget.h \
     discovery/discoveryarducorwidget.h \
-    cor/light.h \
     cor/protocols.h \
-    cor/button.h \
-    cor/checkbox.h \
-    cor/slider.h \
-    cor/listwidget.h \
-    cor/statusicon.h \
-    cor/topwidget.h \
-    cor/webview.h \
-    cor/switch.h \
     cor/range.h \
-    cor/page.h \
     cor/presetpalettes.h \
-    cor/palette.h \
     cor/jsonsavedata.h \
-    cor/lightvectorwidget.h \
     cor/devicelist.h \
     cor/listlayout.h \
-    cor/listitemwidget.h \
-    cor/groupbutton.h \
     cor/dictionary.h \
-    cor/exception.h \
-    cor/strictdictionary.h \
-    cor/mood.h \
-    cor/group.h \
-    hue/lightdiscovery.h \
-    hue/bridgediscovery.h \
-    hue/hueprotocols.h \
-    hue/huelight.h \
-    hue/bridge.h \
-    hue/hueinfowidget.h \
-    hue/bridgeinfowidget.h \
-    hue/bridgegroupswidget.h \
-    hue/bridgescheduleswidget.h \
-    hue/huegroupwidget.h \
-    hue/hueschedulewidget.h \
-    nanoleaf/panels.h \
-    nanoleaf/rhythmcontroller.h \
-    nanoleaf/leafcontroller.h \
-    nanoleaf/leafdiscovery.h \
-    nanoleaf/leafcontrollerinfowidget.h \
+    utils/exception.h \
+    comm/hue/lightdiscovery.h \
+    comm/hue/bridgediscovery.h \
+    comm/hue/hueprotocols.h \
+    comm/hue/huelight.h \
+    comm/hue/bridge.h \
+    comm/hue/hueinfowidget.h \
+    comm/hue/bridgeinfowidget.h \
+    comm/hue/bridgegroupswidget.h \
+    comm/hue/bridgescheduleswidget.h \
+    comm/hue/huegroupwidget.h \
+    comm/hue/hueschedulewidget.h \
+    comm/nanoleaf/panels.h \
+    comm/nanoleaf/rhythmcontroller.h \
+    comm/nanoleaf/leafcontroller.h \
+    comm/nanoleaf/leafdiscovery.h \
+    comm/nanoleaf/leafcontrollerinfowidget.h \
     mainwindow.h \
     settingspage.h \
     icondata.h \
@@ -325,6 +299,25 @@ HEADERS  +=  arducor/arducordiscovery.h \
     colorpicker/singlecolorpicker.h \
     colorpicker/multicolorpicker.h \
     palettescrollarea.h
+
+
+HEADERS  += cor/objects/light.h \
+    cor/objects/group.h \
+    cor/objects/palette.h \
+    cor/objects/page.h \
+    cor/objects/mood.h \
+    cor/widgets/slider.h \
+    cor/widgets/button.h \
+    cor/widgets/checkbox.h \
+    cor/widgets/switch.h \
+    cor/widgets/statusicon.h \
+    cor/widgets/slider.h \
+    cor/widgets/webview.h \
+    cor/widgets/listwidget.h \
+    cor/widgets/topwidget.h \
+    cor/widgets/groupbutton.h \
+    cor/widgets/lightvectorwidget.h \
+    cor/widgets/listitemwidget.h
 
 #----------
 # Desktop builds only

@@ -10,10 +10,10 @@
 #include <QTimer>
 #include <QWidget>
 
-#include "cor/group.h"
-#include "hue/bridgediscovery.h"
-#include "hue/huelight.h"
-#include "hue/hueprotocols.h"
+#include "comm/hue/bridgediscovery.h"
+#include "comm/hue/huelight.h"
+#include "comm/hue/hueprotocols.h"
+#include "cor/objects/group.h"
 
 /*!
  * \copyright

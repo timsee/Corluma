@@ -6,6 +6,7 @@
 
 #include "datasync.h"
 
+#include <cmath>
 
 bool DataSync::appendToPacket(QString& currentPacket,
                               const QString& newAddition,

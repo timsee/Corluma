@@ -7,7 +7,7 @@
 #include <QPushButton>
 #include <QWidget>
 
-#include "cor/checkbox.h"
+#include "cor/widgets/checkbox.h"
 /*!
  * \copyright
  * Copyright (C) 2015 - 2019.

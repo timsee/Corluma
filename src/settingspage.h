@@ -7,9 +7,9 @@
 #include <QScrollArea>
 #include <QWidget>
 
-#include "cor/page.h"
-#include "cor/slider.h"
-#include "cor/webview.h"
+#include "cor/objects/page.h"
+#include "cor/widgets/slider.h"
+#include "cor/widgets/webview.h"
 #include "globalsettingswidget.h"
 #include "settingsbutton.h"
 

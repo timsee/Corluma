@@ -1,7 +1,7 @@
 #ifndef SWATCH_VECTOR_WIDGET_H
 #define SWATCH_VECTOR_WIDGET_H
 
-#include "cor/slider.h"
+#include "cor/widgets/slider.h"
 
 #include <QPushButton>
 #include <QWidget>

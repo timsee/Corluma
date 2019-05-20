@@ -5,7 +5,7 @@
  */
 
 #include "colorpage.h"
-#include "hue/hueprotocols.h"
+#include "comm/hue/hueprotocols.h"
 #include "mainwindow.h"
 #include "utils/color.h"
 #include "utils/qt.h"
@@ -62,6 +62,7 @@ void ColorPage::updateColor(const QColor& color) {
 void ColorPage::updateBrightness(std::uint32_t brightness) {
     mColor.setHsvF(mColor.hueF(), mColor.saturationF(), brightness / 100.0);
     mBrightness = brightness;
+    mColorPicker->updateBrightness(brightness);
 }
 
 // ----------------------------

@@ -4,7 +4,7 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QWidget>
-#include "cor/button.h"
+#include "cor/widgets/button.h"
 #include "cor/presetpalettes.h"
 
 /// size of buttons in widget

@@ -48,7 +48,6 @@ ColorPicker::ColorPicker(QWidget* parent) : QWidget(parent) {
 
 void ColorPicker::chooseColor(const QColor& color) {
     emit colorUpdate(color);
-    emit brightnessUpdate(uint32_t(color.valueF() * 100.0));
 }
 
 

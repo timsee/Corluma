@@ -2,8 +2,8 @@
 #define SINGLECOLORROUTINEWIDGET_H
 
 #include <QWidget>
-#include "cor/button.h"
-#include "cor/light.h"
+#include "cor/widgets/button.h"
+#include "cor/objects/light.h"
 
 
 /// different types of routinebuttonswidgets

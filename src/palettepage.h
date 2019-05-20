@@ -3,9 +3,9 @@
 #define PresetColorsPage_H
 
 #include "colorpicker/multicolorpicker.h"
-#include "cor/button.h"
-#include "cor/listwidget.h"
-#include "cor/page.h"
+#include "cor/widgets/button.h"
+#include "cor/widgets/listwidget.h"
+#include "cor/objects/page.h"
 #include "cor/presetpalettes.h"
 #include "listmoodgroupwidget.h"
 #include "palettescrollarea.h"

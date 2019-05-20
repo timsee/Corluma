@@ -12,7 +12,7 @@
 #include <QtCore>
 #include <QtGui>
 
-#include "cor/light.h"
+#include "cor/objects/light.h"
 #include "icondata.h"
 
 AddNewGroupButton::AddNewGroupButton(QWidget* parent) : QWidget(parent) {

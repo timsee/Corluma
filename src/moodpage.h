@@ -8,10 +8,10 @@
 #include <QWidget>
 
 #include "comm/commlayer.h"
-#include "cor/group.h"
-#include "cor/light.h"
-#include "cor/listwidget.h"
-#include "cor/page.h"
+#include "cor/objects/group.h"
+#include "cor/objects/light.h"
+#include "cor/widgets/listwidget.h"
+#include "cor/objects/page.h"
 #include "cor/presetpalettes.h"
 #include "listmoodgroupwidget.h"
 

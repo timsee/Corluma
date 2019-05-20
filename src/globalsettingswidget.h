@@ -7,8 +7,8 @@
 #include <QWidget>
 
 #include "appsettings.h"
-#include "cor/checkbox.h"
-#include "cor/slider.h"
+#include "cor/widgets/checkbox.h"
+#include "cor/widgets/slider.h"
 #include "groupdata.h"
 
 /*!

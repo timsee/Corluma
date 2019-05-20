@@ -5,7 +5,7 @@
  */
 
 #include "lefthandmenu.h"
-#include "cor/light.h"
+#include "cor/objects/light.h"
 #include "cor/presetpalettes.h"
 #include "utils/qt.h"
 

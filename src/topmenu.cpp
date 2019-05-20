@@ -6,9 +6,9 @@
 
 #include "topmenu.h"
 #include <QGraphicsEffect>
-#include "cor/exception.h"
-#include "hue/huelight.h"
+#include "comm/hue/huelight.h"
 #include "mainwindow.h"
+#include "utils/exception.h"
 #include "utils/qt.h"
 
 

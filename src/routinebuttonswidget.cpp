@@ -5,7 +5,7 @@
  */
 
 #include "routinebuttonswidget.h"
-#include "cor/exception.h"
+#include "utils/exception.h"
 #include "cor/presetpalettes.h"
 #include "utils/qt.h"
 

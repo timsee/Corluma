@@ -8,7 +8,7 @@
 #include <QGraphicsOpacityEffect>
 
 #include "colorschemechooser.h"
-#include "cor/exception.h"
+#include "utils/exception.h"
 
 ColorSchemeChooser::ColorSchemeChooser(QWidget* parent) : QWidget(parent) {
     std::vector<std::pair<EColorSchemeType, QString>> nameResourcePairs
