@@ -13,11 +13,9 @@
 #include <QScroller>
 #include <QSignalMapper>
 
-PalettePage::PalettePage(QWidget* parent) : QWidget(parent), mColorScheme(5, QColor(0, 255, 0)) {
-    mCount = 0;
+PalettePage::PalettePage(QWidget* parent)
+    : QWidget(parent), mColorScheme(6, QColor(0, 255, 0)), mSpeed{150}, mCount{0} {
     this->grabGesture(Qt::SwipeGesture);
-
-    mSpeed = 150;
 
     mArduinoPaletteScrollArea = new PaletteScrollArea(this);
     mArduinoPaletteScrollArea->setupButtons(true);
@@ -48,7 +46,7 @@ PalettePage::PalettePage(QWidget* parent) : QWidget(parent), mColorScheme(5, QCo
             SLOT(newRoutineSelected(QJsonObject)));
 
     mMode = EGroupMode::arduinoPresets;
-    setMode(EGroupMode::colorScheme);
+    setMode(EGroupMode::RGB);
 }
 
 
@@ -74,6 +72,12 @@ void PalettePage::speedChanged(int newSpeed) {
     double smoothed = std::sin(radians) * 200.0;
     mSpeed = int(smoothed);
     emit speedUpdate(mSpeed);
+}
+
+void PalettePage::updateBrightness(std::uint32_t brightness) {
+    if (mMode == EGroupMode::RGB || mMode == EGroupMode::HSV) {
+        mColorPicker->updateBrightness(brightness);
+    }
 }
 
 // ----------------------------
@@ -108,7 +112,7 @@ void PalettePage::newRoutineSelected(QJsonObject routineObject) {
     routineObject["palette"] = palette.JSON();
     routineObject["isOn"] = true;
     if (routine != ERoutine::singleSolid) {
-        // no speed settings for single color routines currently...
+        // no speed settings for single color routines...
         routineObject["speed"] = 125;
     }
 
@@ -129,7 +133,8 @@ void PalettePage::setMode(EGroupMode mode) {
             case EGroupMode::huePresets:
                 mHuePaletteScrollArea->setVisible(true);
                 break;
-            case EGroupMode::colorScheme:
+            case EGroupMode::RGB:
+            case EGroupMode::HSV:
                 mColorPicker->setVisible(true);
                 break;
         }
@@ -173,7 +178,15 @@ void PalettePage::lightCountChanged(std::size_t count) {
             mArduinoPaletteScrollArea->setEnabled(true);
             mHuePaletteScrollArea->setEnabled(true);
         }
-    } else if (mMode == EGroupMode::colorScheme) {
+    } else if (mMode == EGroupMode::RGB) {
+        mColorPicker->changeMode(EMultiColorPickerMode::RGB, 100);
+        if (count == 0) {
+            mColorPicker->enable(false, EColorPickerType::color);
+        } else {
+            mColorPicker->enable(true, EColorPickerType::color);
+        }
+    } else if (mMode == EGroupMode::HSV) {
+        mColorPicker->changeMode(EMultiColorPickerMode::HSV, 100);
         if (count == 0) {
             mColorPicker->enable(false, EColorPickerType::color);
         } else {

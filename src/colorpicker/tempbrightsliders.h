@@ -42,6 +42,9 @@ public:
     /// getter for current brightness
     std::uint32_t brightness();
 
+    /// getter for current temperature
+    std::uint32_t temperature();
+
 signals:
     /*!
      * \brief temperatureAndBrightnessChanged emitted whenever a slider changes values. Emits both

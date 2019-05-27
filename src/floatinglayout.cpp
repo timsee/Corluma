@@ -124,11 +124,6 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             auto lightsButton = new cor::Button(this, routineObject);
             mButtons[i] = static_cast<QPushButton*>(lightsButton);
             Q_ASSERT(mButtons[i]);
-        } else if (mNames[i].compare("ColorScheme") == 0) {
-            foundMatch = true;
-            mButtons[i] = new QPushButton(this);
-            mButtons[i]->setCheckable(true);
-            mButtons[i]->setMinimumSize(buttonSize());
         } else if (mNames[i].compare("Temperature") == 0) {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
@@ -229,29 +224,27 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             if (!isALightsButton(i)) {
                 // resize icon
                 if (mNames[i].compare("RGB") == 0) {
-                    cor::resizeIcon(mButtons[i], ":/images/color_wheel_hsv.png");
+                    cor::resizeIcon(mButtons[i], ":/images/wheels/color_wheel_hsv.png");
                 } else if (mNames[i].compare("Temperature") == 0) {
-                    cor::resizeIcon(mButtons[i], ":/images/color_wheel_ct.png");
+                    cor::resizeIcon(mButtons[i], ":/images/wheels/color_wheel_ct.png");
                 } else if (mNames[i].compare("HSV") == 0) {
-                    cor::resizeIcon(mButtons[i], ":/images/color_wheel_hs.png");
+                    cor::resizeIcon(mButtons[i], ":/images/wheels/color_wheel_hs.png");
                 } else if (mNames[i].compare("Settings") == 0) {
                     cor::resizeIcon(mButtons[i], ":/images/settingsgear.png");
                 } else if (mNames[i].compare("Discovery") == 0) {
                     cor::resizeIcon(mButtons[i], ":/images/wifi.png");
                 } else if (mNames[i].compare("Select_Devices") == 0) {
-                    cor::resizeIcon(mButtons[i], ":/mages/color_wheel_hsv.png");
+                    cor::resizeIcon(mButtons[i], ":/mages/wheels/color_wheel_hsv.png");
                 } else if (mNames[i].compare("New_Group") == 0) {
                     cor::resizeIcon(mButtons[i], ":/images/plusIcon.png");
                 } else if (mNames[i].compare("Plus") == 0) {
                     cor::resizeIcon(mButtons[i], ":/images/plusIcon.png");
-                } else if (mNames[i].compare("ColorScheme") == 0) {
-                    cor::resizeIcon(mButtons[i], ":/images/ColorSchemePicker_icon.png");
                 } else if (mNames[i].compare("HueLightSearch") == 0) {
                     cor::resizeIcon(mButtons[i], ":/images/plusIcon.png");
                 } else if (mNames[i].compare("Group_Lights") == 0) {
                     cor::resizeIcon(mButtons[i], ":/images/connectionIcon.png");
                 } else if (mNames[i].compare("Group_Details") == 0) {
-                    cor::resizeIcon(mButtons[i], ":/images/color_wheel_hsv.png");
+                    cor::resizeIcon(mButtons[i], ":/images/wheels/color_wheel_hsv.png");
                 } else if (mNames[i].compare("Group_Edit") == 0) {
                     cor::resizeIcon(mButtons[i], ":/images/editIcon.png");
                 }

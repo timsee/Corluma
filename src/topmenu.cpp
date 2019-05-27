@@ -98,12 +98,13 @@ TopMenu::TopMenu(QWidget* parent,
     mBrightnessSlider->setFixedHeight(mSize.height() / 2);
     mBrightnessSlider->setHeightPercentage(0.8f);
     mBrightnessSlider->setColor(QColor(255, 255, 255));
+    mBrightnessSlider->enable(false);
     connect(mBrightnessSlider, SIGNAL(valueChanged(int)), this, SLOT(brightnessSliderChanged(int)));
 
     // --------------
     // Setup Main Palette
     // -------------
-    mMainPalette = new cor::LightVectorWidget(5, 2, true, this);
+    mMainPalette = new cor::LightVectorWidget(6, 2, true, this);
     mMainPalette->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mMainPalette->setFixedHeight(int(mSize.height() * 0.8));
     mMainPalette->setFixedWidth(mSize.width() * 3);
@@ -127,9 +128,9 @@ TopMenu::TopMenu(QWidget* parent,
             SIGNAL(buttonPressed(QString)),
             this,
             SLOT(floatingLayoutButtonPressed(QString)));
-    buttons = {QString("ColorScheme"), QString("Preset")};
+    buttons = {QString("RGB"), QString("HSV"), QString("Preset")};
     mPaletteFloatinglayout->setupButtons(buttons, EButtonSize::small);
-    mPaletteFloatinglayout->highlightButton("ColorScheme");
+    mPaletteFloatinglayout->highlightButton("RGB");
     mPaletteFloatinglayout->setVisible(false);
 
     mMultiRoutineFloatingLayout = new FloatingLayout(false, mMainWindow);
@@ -216,6 +217,9 @@ void TopMenu::brightnessUpdate(uint32_t newValue) {
 
     if (mCurrentPage == EPage::colorPage) {
         mColorPage->updateBrightness(newValue);
+    }
+    if (mCurrentPage == EPage::palettePage) {
+        mPalettePage->updateBrightness(newValue);
     }
     emit brightnessChanged(newValue);
 }
@@ -370,16 +374,26 @@ void TopMenu::floatingLayoutButtonPressed(const QString& button) {
             mPalettePage->setMode(EGroupMode::huePresets);
         }
     } else if (button == "RGB") {
-        mLastColorButtonKey = button;
-        mColorPage->changePageType(EColorPickerMode::RGB);
+        if (mColorPage->isOpen()) {
+            mLastColorButtonKey = button;
+            mColorPage->changePageType(ESingleColorPickerMode::RGB);
+        }
+
+        if (mPalettePage->isOpen()) {
+            mPalettePage->setMode(EGroupMode::RGB);
+        }
     } else if (button == "HSV") {
-        mLastColorButtonKey = button;
-        mColorPage->changePageType(EColorPickerMode::HSV);
+        if (mColorPage->isOpen()) {
+            mLastColorButtonKey = button;
+            mColorPage->changePageType(ESingleColorPickerMode::HSV);
+        }
+
+        if (mPalettePage->isOpen()) {
+            mPalettePage->setMode(EGroupMode::HSV);
+        }
     } else if (button == "Temperature") {
         mLastColorButtonKey = button;
-        mColorPage->changePageType(EColorPickerMode::ambient);
-    } else if (button == "ColorScheme") {
-        mPalettePage->setMode(EGroupMode::colorScheme);
+        mColorPage->changePageType(ESingleColorPickerMode::ambient);
     } else if (button == "Routine") {
         if (mColorPage->isOpen()) {
             if (mColorPage->routineWidgetIsOpen()) {
@@ -516,8 +530,9 @@ void TopMenu::adjustSingleColorLayout(bool skipTransition) {
     auto parentSize = qobject_cast<QWidget*>(this->parent())->size();
     // get teh desired endpoint
     bool hasMulti = hasArduino || hasNanoLeaf;
-    if (!hasMulti && !mData->devices().empty()) {
-        mColorPage->changePageType(EColorPickerMode::ambient);
+    if (!hasMulti && !mData->devices().empty()
+        && mData->bestColorPickerType() == EColorPickerType::CT) {
+        mColorPage->changePageType(ESingleColorPickerMode::ambient);
         mColorFloatingLayout->highlightButton("Temperature");
     }
     QPoint endPoint;

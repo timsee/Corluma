@@ -3,8 +3,8 @@
 #define SINGLECOLORPAGE_H
 
 #include "colorpicker/singlecolorpicker.h"
-#include "cor/widgets/button.h"
 #include "cor/objects/page.h"
+#include "cor/widgets/button.h"
 #include "cor/widgets/slider.h"
 #include "icondata.h"
 #include "routinebuttonswidget.h"
@@ -44,7 +44,7 @@ public:
      *
      * \param page the new page type for the hue page.
      */
-    void changePageType(EColorPickerMode page);
+    void changePageType(ESingleColorPickerMode page) { mColorPicker->changeMode(page); }
 
     /*!
      * \brief updateRoutineButton helper to update the Routine button in the floating layout.
@@ -57,7 +57,7 @@ public:
     void handleRoutineWidget(bool show);
 
     /// getter for current type of color page (ambiance, RGB, etc.)
-    EColorPickerMode pageType();
+    ESingleColorPickerMode pageType() { return mColorPicker->mode(); }
 
     /// programmatically updates brightness
     void updateBrightness(std::uint32_t brightness);

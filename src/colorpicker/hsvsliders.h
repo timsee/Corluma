@@ -72,9 +72,6 @@ private slots:
     void releasedSlider();
 
 private:
-    /// stored buffer of current color.
-    QColor mColor;
-
     /// helper to generate a color off of HSV.
     QColor generateColor(int hue, int saturation, int value);
 

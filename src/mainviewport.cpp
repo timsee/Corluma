@@ -143,7 +143,7 @@ void MainViewport::showMainPage(EPage page) {
         mMoodPage->setVisible(true);
     } else if (page == EPage::palettePage) {
         mPalettePage->resize();
-        mPalettePage->show(mData->devices().size(),
+        mPalettePage->show(mData->lightCount(),
                            mData->brightness(),
                            mData->colorScheme(),
                            mData->hasLightWithProtocol(EProtocolType::arduCor),
@@ -173,7 +173,7 @@ void MainViewport::lightCountChanged() {
                          uint32_t(mData->devices().size()),
                          mData->bestColorPickerType());
     } else if (mPageIndex == EPage::palettePage) {
-        mPalettePage->show(mData->devices().size(),
+        mPalettePage->show(mData->lightCount(),
                            mData->brightness(),
                            mData->colorScheme(),
                            mData->hasLightWithProtocol(EProtocolType::arduCor),

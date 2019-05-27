@@ -10,6 +10,32 @@
 #include <QWidget>
 
 /*!
+ * \brief The EMultiColorPickerMode enum contains
+ * all possible layouts for the color picker.
+ * By default, it uses eStandardLayout.
+ */
+enum class EMultiColorPickerMode {
+    /*!
+     * RGB wheel
+     */
+    RGB,
+    /*!
+     * HSV wheel
+     */
+    HSV,
+    /*!
+     * The color wheel is changed to shades of white.
+     * Can choose between the a blue-ish white or an
+     * orange-ish white and everything in between.
+     * Top slider provides the ability to choose the
+     * color via slider, second slider allows you
+     * to adjust brightness.
+     */
+    ambient
+};
+
+
+/*!
  * \copyright
  * Copyright (C) 2015 - 2019.
  * Released under the GNU General Public License.
@@ -24,6 +50,19 @@ public:
     /// constructor
     explicit MultiColorPicker(QWidget* parent);
 
+    /// @copydoc ColorPicker::enable(bool,EColorPickerType)
+    void enable(bool shouldEnable, EColorPickerType bestType) override;
+
+    /*!
+     * \brief changeMode sets the layout using the available layout modes.
+     * \param mode the mode you want to use.
+     * \param brightness the brightness of the app globally
+     */
+    void changeMode(EMultiColorPickerMode mode, std::uint32_t brightness);
+
+    /// getter for current mode of colorpicker
+    EMultiColorPickerMode mode() const noexcept { return mCurrentMode; }
+
     /*!
      * \brief updateColorCount update the count of the colors selected
      * \param count new count of colors
@@ -31,14 +70,18 @@ public:
     void updateColorCount(std::size_t count);
 
     /*!
+     * \brief updateBrightness updates the brighness of the multi color picker's wheel
+     * \param brightness new brightness for the multi color picker
+     */
+    void updateBrightness(std::uint32_t brightness);
+
+    /*!
      * \brief updateColorStates update the layouts at the bottom of the ColorPicker with new values
-     * from the RGB devices \param brightness brightness from data layer \param colorSchemes the
-     * colors of the selected devices
+     * from the RGB devices
+     * \param brightness brightness from data layer
+     * \param colorSchemes the colors of the selected devices
      */
     void updateColorStates(const std::vector<QColor>& colorSchemes, uint32_t brightness);
-
-    /// @copydoc ColorPicker::enable(bool,EColorPickerType)
-    void enable(bool shouldEnable, EColorPickerType bestType) override;
 
     /// programmatically resize
     void resize();
@@ -81,6 +124,12 @@ private:
     /// cached version of the color scheme
     std::vector<QColor> mScheme;
 
+    /// count of slected lights
+    std::size_t mCount;
+
+    /// maxmimum number of selectable lights
+    std::size_t mMaxCount;
+
     /*!
      * \brief mColorSchemeCircles top layout, overlays circles on the color wheel for color
      * selection
@@ -99,6 +148,11 @@ private:
 
     /// index of circle that is currently clicked and being dragged
     std::uint32_t mCircleIndex;
+
+    /*!
+     * \brief mCurrentMode The current mode of the color picker.
+     */
+    EMultiColorPickerMode mCurrentMode;
 };
 
 #endif // MULTICOLORPICKER_H

@@ -64,13 +64,13 @@
         <file>images/disabledX.png</file>
         <file>images/uncheckedBox.png</file>
         <file>images/hamburger_icon.png</file>
-        <file>images/color_wheel_hs.png</file>
-        <file>images/color_wheel_ct.png</file>
-        <file>images/color_wheel_hsv.png</file>
+        <file>images/wheels/color_wheel_hs.png</file>
+        <file>images/wheels/color_wheel_ct.png</file>
+        <file>images/wheels/color_wheel_hsv.png</file>
         <file>images/schemes/complement.png</file>
         <file>images/schemes/compound.png</file>
         <file>images/schemes/custom.png</file>
-        <file>images/schemes/single.png</file>
+        <file>images/schemes/similar.png</file>
         <file>images/schemes/triad.png</file>
         <file>images/hue_range.png</file>
         <file>images/ct_range.png</file>

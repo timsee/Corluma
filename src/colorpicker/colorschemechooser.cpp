@@ -13,7 +13,7 @@
 ColorSchemeChooser::ColorSchemeChooser(QWidget* parent) : QWidget(parent) {
     std::vector<std::pair<EColorSchemeType, QString>> nameResourcePairs
         = {{EColorSchemeType::custom, ":images/schemes/custom.png"},
-           {EColorSchemeType::similar, ":images/schemes/single.png"},
+           {EColorSchemeType::similar, ":images/schemes/similar.png"},
            {EColorSchemeType::complement, ":images/schemes/complement.png"},
            {EColorSchemeType::triad, ":images/schemes/triad.png"},
            {EColorSchemeType::compound, ":images/schemes/compound.png"}};

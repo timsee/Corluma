@@ -202,15 +202,29 @@ bool DeviceList::isOn() {
 
 void DeviceList::updateColorScheme(std::vector<QColor> colors) {
     uint32_t i = 0;
+    // NOTE: this doesn't work entirely as intended. arduCor should be handled the same as nanoleaf,
+    // however, sending tons of custom color updates to arducor ends up spamming the lights comm
+    // channels and only seems to reliably work on serial communication. So for now, I'm falling
+    // back to treating arducor during color schemes as single color lights.
     for (auto&& light : mDevices) {
-        light.color = colors[i];
-        light.isOn = true;
-        // if part of a color scheme but not showing a color scheme, switch to glimmer? maybe?
-        if (light.routine > cor::ERoutineSingleColorEnd) {
-            light.routine = ERoutine::singleGlimmer;
+        if (light.protocol() == EProtocolType::hue || light.protocol() == EProtocolType::arduCor) {
+            light.color = colors[i];
+            light.isOn = true;
+            // if part of a color scheme but not showing a color scheme, switch to glimmer? maybe?
+            if (light.routine > cor::ERoutineSingleColorEnd) {
+                light.routine = ERoutine::singleGlimmer;
+            }
+            i++;
+            i = i % colors.size();
+        } else if (light.protocol() == EProtocolType::nanoleaf) {
+            light.customCount = colors.size();
+            light.isOn = true;
+            light.customPalette = Palette("*Custom*", colors, brightness());
+            if (light.routine <= cor::ERoutineSingleColorEnd) {
+                light.routine = ERoutine::multiGlimmer;
+            }
+            light.palette = light.customPalette;
         }
-        i++;
-        i = i % colors.size();
     }
     emit dataUpdate();
 }
@@ -218,7 +232,7 @@ void DeviceList::updateColorScheme(std::vector<QColor> colors) {
 std::vector<QColor> DeviceList::colorScheme() {
     std::vector<QColor> colorScheme;
     int count = 0;
-    int max = 5;
+    int max = 6;
     for (const auto& device : mDevices) {
         if (count >= max) {
             break;
@@ -474,6 +488,31 @@ EColorPickerType DeviceList::bestColorPickerType() {
         }
     }
     return bestHueType;
+}
+
+std::size_t DeviceList::lightCount() {
+    std::size_t count = 0u;
+    for (const auto& light : mDevices) {
+        if (light.protocol() == EProtocolType::hue) {
+            count += 1;
+        } else if (light.protocol() == EProtocolType::arduCor) {
+            /// TODO: these are all assumptions
+            if (light.hardwareType == ELightHardwareType::cube) {
+                count += 64;
+            } else if (light.hardwareType == ELightHardwareType::lightStrip) {
+                count += 32;
+            } else if (light.hardwareType == ELightHardwareType::ring) {
+                count += 16;
+            } else if (light.hardwareType == ELightHardwareType::rectangle) {
+                count += 32;
+            } else if (light.hardwareType == ELightHardwareType::singleLED) {
+                count += 1;
+            }
+        } else if (light.protocol() == EProtocolType::nanoleaf) {
+            count += 6;
+        }
+    }
+    return count;
 }
 
 } // namespace cor

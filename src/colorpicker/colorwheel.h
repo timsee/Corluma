@@ -12,6 +12,10 @@
 /// type of color wheel
 enum class EWheelType { RGB, HS, CT };
 
+namespace cor {
+using CirclePoint = QPointF;
+}
+
 /*!
  * \brief The ColorWheel class renders the color wheel for the ColorPicker.
  */
@@ -36,22 +40,30 @@ public:
     /// enable or disable
     void enable(bool shouldEnable);
 
-    /// getter for image that contains the color wheel.
-    QImage* image() { return mImage; }
+    /*!
+     * \brief findPixelByColor find the pixel for a color in the color wheel. Useful for
+     * programmatically setting the locations of assets overlaid on the color wheel
+     *
+     * \param color color to look for in color wheel
+     * \return the closest approximation to the color's location in the colorwheel. If there is no
+     * close approximation, it returns the center point.
+     */
+    cor::CirclePoint findPixelByColor(const QColor& color);
 
     /*!
-     * \brief findColorPixelLocation find the pixel for a color in the color wheel. Useful for
-     * programmatically setting the locations of assets overlaid on the color wheel \param color
-     * color to look for in color wheel \return the closest approximation to the color's location in
-     * the colorwheel. If there is no close approximation, it returns the center point.
+     * \brief findColorByPixel converts a normalized cor::CirclePoint to the color it represents
+     * \param point a normalized point.
+     * \return a color from the wheel on that normalize point.
      */
-    QPointF findColorPixelLocation(const QColor& color);
+    QColor findColorByPixel(const cor::CirclePoint& point);
 
     /*!
      * \brief checkIfPointIsOverWheel checcks if a point in non-normalized space is directly over
      * the color wheel. This check looks in a circular region and does not include corners from the
-     * bounding box. \param point point ot test \return true if point is over wheel, false
-     * otherwise.
+     * bounding box.
+     *
+     * \param point point ot test
+     * \return true if point is over wheel, false otherwise.
      */
     bool checkIfPointIsOverWheel(const QPointF& point);
 
@@ -110,17 +122,6 @@ private:
 
     /// stores the color wheel when it is rendered
     QImage* mImage;
-    /// renders cached color wheels used for lookups
-    void renderCachedWheels();
-
-    /// cached version of wheel for RGB
-    QImage* mWheelRGB;
-
-    /// cached version of wheel for CT
-    QImage* mWheelCT;
-
-    /// cached version of wheel for HS
-    QImage* mWheelHS;
 
     /// tracks what color wheel to use
     EWheelType mWheelType;
@@ -134,5 +135,27 @@ private:
     /// true if should repaint, false otherwise
     bool mRepaint;
 };
+
+namespace cor {
+
+inline QPoint circlePointToDenormalizedPoint(const cor::CirclePoint& point,
+                                             const QRect& fullRect,
+                                             const QRect& wheelRect) {
+    auto offsetX = (fullRect.width() - wheelRect.width()) / 2;
+    auto offsetY = (fullRect.height() - wheelRect.height()) / 2;
+    return QPoint(int(point.x() * wheelRect.width() + offsetX),
+                  int(point.y() * wheelRect.height() + offsetY));
+}
+
+inline cor::CirclePoint denormalizedPointToCirclePoint(const QPointF& point,
+                                                       const QRect& fullRect,
+                                                       const QRect& wheelRect) {
+    auto offsetX = (fullRect.width() - wheelRect.width()) / 2;
+    auto offsetY = (fullRect.height() - wheelRect.height()) / 2;
+    return QPointF((point.x() - offsetX) / wheelRect.width(),
+                   (point.y() - offsetY) / wheelRect.height());
+}
+
+} // namespace cor
 
 #endif // COLORWHEEL_H

@@ -63,7 +63,7 @@ LeftHandMenu::LeftHandMenu(cor::DeviceList* devices,
     //---------------
 
     mSingleColorButton = new LeftHandButton(
-        "Single Color", EPage::colorPage, ":/images/color_wheel_hsv.png", this, this);
+        "Single Color", EPage::colorPage, ":/images/wheels/color_wheel_hsv.png", this, this);
     mSingleColorButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mSingleColorButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
     mSingleColorButton->shouldHightlght(true);
@@ -301,17 +301,13 @@ void LeftHandMenu::updateSingleColorButton() {
 
         EHueType bestHueType = checkForHueWithMostFeatures(hues);
         // get a vector of all the possible hue types for a check.
-        if (bestHueType == EHueType::white) {
-            mSingleColorButton->updateIcon(":images/color_wheel_bri.png");
-        } else if (bestHueType == EHueType::ambient) {
-            mSingleColorButton->updateIcon(":images/color_wheel_ct.png");
-        } else if (bestHueType == EHueType::extended) {
-            mSingleColorButton->updateIcon(":images/color_wheel_hsv.png");
+        if (bestHueType == EHueType::ambient) {
+            mSingleColorButton->updateIcon(":images/wheels/color_wheel_ct.png");
         } else {
-            THROW_EXCEPTION("did not find any hue lights when expecting hue lights");
+            mSingleColorButton->updateIcon(":images/wheels/color_wheel_hsv.png");
         }
     } else {
-        mSingleColorButton->updateIcon(":images/color_wheel_hsv.png");
+        mSingleColorButton->updateIcon(":images/wheels/color_wheel_hsv.png");
     }
 }
 

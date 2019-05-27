@@ -65,24 +65,24 @@ HSVSliders::HSVSliders(QWidget* parent) : QWidget(parent) {
     setLayout(mLayout);
 }
 
-void HSVSliders::changeColor(const QColor& color, std::uint32_t brightness) {
-    mColor = color;
-    mColor.setHsvF(color.hueF(), color.saturationF(), brightness / 100.0);
+void HSVSliders::changeColor(const QColor& mColor, std::uint32_t brightness) {
+    auto color = mColor;
+    color.setHsvF(color.hueF(), color.saturationF(), brightness / 100.0);
 
     bool blocked = mHueSlider->slider()->blockSignals(true);
-    mHueSlider->slider()->setValue(mColor.hue());
+    mHueSlider->slider()->setValue(color.hue());
     mHueSlider->slider()->blockSignals(blocked);
 
     blocked = mSaturationSlider->slider()->blockSignals(true);
-    mSaturationSlider->slider()->setValue(mColor.saturation());
+    mSaturationSlider->slider()->setValue(color.saturation());
 
-    auto value = int(mColor.valueF() * 100.0);
-    mSaturationSlider->setGradient(QColor(value, value, value), mColor);
+    auto value = int(color.valueF() * 100.0);
+    mSaturationSlider->setGradient(QColor(value, value, value), color);
     mSaturationSlider->slider()->blockSignals(blocked);
 
     blocked = mValueSlider->slider()->blockSignals(true);
-    mValueSlider->slider()->setValue(int(mColor.valueF() * 100.0));
-    auto brightColor = mColor;
+    mValueSlider->slider()->setValue(int(color.valueF() * 100.0));
+    auto brightColor = color;
     brightColor.setHsvF(brightColor.hueF(), brightColor.saturationF(), 1.0);
     mValueSlider->setGradient(QColor(0, 0, 0), brightColor);
     mValueSlider->slider()->blockSignals(blocked);
@@ -107,9 +107,9 @@ void HSVSliders::enable(bool enable) {
         mValueSlider->slider()->blockSignals(blocked);
     } else {
         mHueSlider->setImage(":/images/hue_range.png");
-        auto value = int(mColor.toHsv().valueF() * 100.0);
-        mSaturationSlider->setGradient(QColor(value, value, value), mColor);
-        auto brightColor = mColor;
+        auto value = int(color().valueF() * 100.0);
+        mSaturationSlider->setGradient(QColor(value, value, value), color());
+        auto brightColor = color();
         brightColor.setHsvF(brightColor.hueF(), brightColor.saturationF(), 1.0);
         mValueSlider->setGradient(QColor(0, 0, 0), brightColor);
     }
@@ -138,13 +138,13 @@ void HSVSliders::releasedSlider() {
 }
 
 QColor HSVSliders::generateColor(int hue, int saturation, int value) {
-    QColor color;
-    if (mColor.hue() == -1) {
-        color.setHsvF(0, saturation / 255.0, value / 100.0);
+    QColor newColor = color();
+    if (newColor.hue() == -1) {
+        newColor.setHsvF(0, saturation / 255.0, value / 100.0);
     } else {
-        color.setHsvF(hue / 359.0, saturation / 255.0, value / 100.0);
+        newColor.setHsvF(hue / 359.0, saturation / 255.0, value / 100.0);
     }
-    return color;
+    return newColor;
 }
 
 std::uint32_t HSVSliders::brightness() {

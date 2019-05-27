@@ -131,6 +131,13 @@ SOURCES += main.cpp \
     colorpicker/tempbrightsliders.cpp \
     colorpicker/colorschemecircles.cpp \
     colorpicker/swatchvectorwidget.cpp \
+    colorpicker/colorschemechooser.cpp \
+    colorpicker/colorschemebutton.cpp \
+    colorpicker/hsvsliders.cpp \
+    colorpicker/colorwheel.cpp \
+    colorpicker/singlecolorpicker.cpp \
+    colorpicker/multicolorpicker.cpp \
+    colorpicker/schemegenerator.cpp \
     discovery/discoverywidget.cpp \
     discovery/discoveryhuewidget.cpp \
     discovery/discoverynanoleafwidget.cpp \
@@ -192,12 +199,6 @@ SOURCES += main.cpp \
     lefthandbutton.cpp \
     listlightwidget.cpp \
     addnewgroupbutton.cpp \
-    colorpicker/colorschemechooser.cpp \
-    colorpicker/colorschemebutton.cpp \
-    colorpicker/hsvsliders.cpp \
-    colorpicker/colorwheel.cpp \
-    colorpicker/singlecolorpicker.cpp \
-    colorpicker/multicolorpicker.cpp \
     palettescrollarea.cpp
 
 HEADERS  +=  comm/arducor/arducordiscovery.h \
@@ -223,6 +224,13 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     colorpicker/tempbrightsliders.h \
     colorpicker/colorschemecircles.h \
     colorpicker/swatchvectorwidget.h \
+    colorpicker/colorschemechooser.h \
+    colorpicker/colorschemebutton.h \
+    colorpicker/hsvsliders.h \
+    colorpicker/colorwheel.h \
+    colorpicker/singlecolorpicker.h \
+    colorpicker/multicolorpicker.h \
+    colorpicker/schemegenerator.h \
     discovery/discoverywidget.h \
     discovery/discoveryhuewidget.h \
     discovery/discoverynanoleafwidget.h \
@@ -292,14 +300,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     lefthandbutton.h \
     listlightwidget.h \
     addnewgroupbutton.h \
-    colorpicker/colorschemechooser.h \
-    colorpicker/colorschemebutton.h \
-    colorpicker/hsvsliders.h \
-    colorpicker/colorwheel.h \
-    colorpicker/singlecolorpicker.h \
-    colorpicker/multicolorpicker.h \
     palettescrollarea.h
-
 
 HEADERS  += cor/objects/light.h \
     cor/objects/group.h \

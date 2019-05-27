@@ -3,10 +3,10 @@
 #define PresetColorsPage_H
 
 #include "colorpicker/multicolorpicker.h"
-#include "cor/widgets/button.h"
-#include "cor/widgets/listwidget.h"
 #include "cor/objects/page.h"
 #include "cor/presetpalettes.h"
+#include "cor/widgets/button.h"
+#include "cor/widgets/listwidget.h"
 #include "listmoodgroupwidget.h"
 #include "palettescrollarea.h"
 #include "presetgroupwidget.h"
@@ -20,7 +20,7 @@
 #include <QWidget>
 
 /// mode of the page
-enum class EGroupMode { arduinoPresets, huePresets, colorScheme };
+enum class EGroupMode { arduinoPresets, huePresets, RGB, HSV };
 
 /*!
  * \copyright
@@ -55,6 +55,9 @@ public:
 
     /// programmatically set the mode of the page
     void setMode(EGroupMode mode);
+
+    /// update the brightness of the palette page assets
+    void updateBrightness(std::uint32_t brightness);
 
     /*!
      * show the preset greset group widgets, but show the version

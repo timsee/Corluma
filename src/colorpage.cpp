@@ -42,14 +42,6 @@ ColorPage::ColorPage(QWidget* parent) : QWidget(parent), mColor{0, 255, 0}, mBri
     mCurrentSingleRoutine = mSingleRoutineWidget->routines()[3].second;
 }
 
-void ColorPage::changePageType(EColorPickerMode page) {
-    mColorPicker->changeLayout(page);
-}
-
-EColorPickerMode ColorPage::pageType() {
-    return mColorPicker->mode();
-}
-
 // ----------------------------
 // Programmatically Change Widget
 // ----------------------------
@@ -60,7 +52,6 @@ void ColorPage::updateColor(const QColor& color) {
 
 
 void ColorPage::updateBrightness(std::uint32_t brightness) {
-    mColor.setHsvF(mColor.hueF(), mColor.saturationF(), brightness / 100.0);
     mBrightness = brightness;
     mColorPicker->updateBrightness(brightness);
 }

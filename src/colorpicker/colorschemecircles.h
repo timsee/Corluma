@@ -3,16 +3,9 @@
 
 #include <QWidget>
 
-#include "colorschemebutton.h"
+#include "schemegenerator.h"
 
 class ColorWheel;
-
-/// info on a specific color picker selection
-struct ColorSelection {
-    bool shouldShow;
-    QPointF center;
-    QColor color;
-};
 
 /*!
  * \copyright
@@ -40,6 +33,12 @@ public:
 
     /// hide all displayed circles
     void hideCircles();
+
+    /// makes circles slightly transparent or disables this
+    void transparentCircles(bool shouldTransparent);
+
+    /// true to make the line to the center white, false to keep it black
+    void setWhiteLine(bool lineIsWhite);
 
     /*!
      * \brief updateSingleColor updates every color to a single color
@@ -74,14 +73,11 @@ protected:
     void paintEvent(QPaintEvent* event);
 
 private:
+    /// creates a color scheme
+    SchemeGenerator mScheme;
+
     /// update the scheme
     void updateScheme(std::size_t i);
-
-    /// radius of circles
-    int mRadius;
-
-    /// size of shadow for the circles
-    int mShadowSize;
 
     /// the rest of the circles that show if multiple lights are selected.
     std::vector<ColorSelection> mCircles;

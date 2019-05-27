@@ -228,6 +228,16 @@ public:
     /// currently selected lights
     EColorPickerType bestColorPickerType();
 
+    /*!
+     * \brief lightCount getter for count of LEDs associated with a single light. IE, a light cube
+     * typically has 64 individually addressable LEDs.
+     *
+     * NOTE: this is currently approximate and does not properly query and store the number of
+     * lights for each backend.
+     * \return an approximate count of the number of lights selected
+     */
+    std::size_t lightCount();
+
 signals:
 
     /*!

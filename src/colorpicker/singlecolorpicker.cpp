@@ -9,9 +9,9 @@
 #include <QMouseEvent>
 
 #include "singlecolorpicker.h"
+#include "utils/color.h"
 
-SingleColorPicker::SingleColorPicker(QWidget* parent)
-    : ColorPicker(parent), mColor{0, 255, 0}, mBrightness{50} {
+SingleColorPicker::SingleColorPicker(QWidget* parent) : ColorPicker(parent) {
     connect(mColorWheel, SIGNAL(changeColor(QColor)), this, SLOT(wheelColorChanged(QColor)));
     connect(mColorWheel,
             SIGNAL(changeCT(std::uint32_t, std::uint32_t)),
@@ -44,8 +44,8 @@ SingleColorPicker::SingleColorPicker(QWidget* parent)
     mTempBrightSliders->setVisible(false);
 
     // default to standard layout
-    mCurrentMode = EColorPickerMode::HSV;
-    changeLayout(EColorPickerMode::RGB);
+    mCurrentMode = ESingleColorPickerMode::HSV;
+    changeMode(ESingleColorPickerMode::RGB);
 }
 
 
@@ -57,7 +57,7 @@ void SingleColorPicker::enable(bool shouldEnable, EColorPickerType bestType) {
         shouldEnable = false;
     }
     // catch edge case where color picker type can't be supported by layout
-    if (mCurrentMode != EColorPickerMode::ambient && bestType == EColorPickerType::CT) {
+    if (mCurrentMode != ESingleColorPickerMode::ambient && bestType == EColorPickerType::CT) {
         shouldEnable = false;
     }
 
@@ -97,9 +97,9 @@ void SingleColorPicker::updateBottomMenuState(bool enable) {
     effect3->setOpacity(opacity);
     mTempBrightSliders->setGraphicsEffect(effect3);
 
-    if (mCurrentMode == EColorPickerMode::HSV) {
+    if (mCurrentMode == ESingleColorPickerMode::HSV) {
         mColorWheel->updateBrightness(mHSVSliders->brightness());
-    } else if (mCurrentMode == EColorPickerMode::ambient) {
+    } else if (mCurrentMode == ESingleColorPickerMode::ambient) {
         mColorWheel->updateBrightness(mTempBrightSliders->brightness());
     }
 
@@ -109,13 +109,26 @@ void SingleColorPicker::updateBottomMenuState(bool enable) {
 }
 
 
-void SingleColorPicker::changeLayout(EColorPickerMode layout) {
-    if (layout != mCurrentMode) {
-        QColor oldColor = mColor;
-        std::uint32_t oldBrightness = mBrightness;
-
+void SingleColorPicker::changeMode(ESingleColorPickerMode mode) {
+    if (mode != mCurrentMode) {
+        QColor oldColor;
+        std::size_t oldBrightness;
+        switch (mCurrentMode) {
+            case ESingleColorPickerMode::RGB:
+                oldColor = mRGBSliders->color();
+                oldBrightness = oldColor.valueF() * 100.0;
+                break;
+            case ESingleColorPickerMode::HSV:
+                oldColor = mHSVSliders->color();
+                oldBrightness = mColorWheel->brightness();
+                break;
+            case ESingleColorPickerMode::ambient:
+                oldColor = cor::colorTemperatureToRGB(mTempBrightSliders->temperature());
+                oldBrightness = mColorWheel->brightness();
+                break;
+        }
         // reset all flags
-        mCurrentMode = layout;
+        mCurrentMode = mode;
 
         //---------------------
         // Add new bottom Layout
@@ -125,16 +138,16 @@ void SingleColorPicker::changeLayout(EColorPickerMode layout) {
         mRGBSliders->setVisible(false);
         mHSVSliders->setVisible(false);
         mTempBrightSliders->setVisible(false);
-        if (mCurrentMode == EColorPickerMode::RGB) {
+        if (mCurrentMode == ESingleColorPickerMode::RGB) {
             mColorWheel->changeType(EWheelType::RGB);
             mRGBSliders->setVisible(true);
             mColorWheel->updateBrightness(100);
-        } else if (mCurrentMode == EColorPickerMode::HSV) {
+        } else if (mCurrentMode == ESingleColorPickerMode::HSV) {
             mColorWheel->changeType(EWheelType::HS);
             mHSVSliders->setVisible(true);
             mHSVSliders->changeColor(oldColor, oldBrightness);
             mColorWheel->updateBrightness(oldBrightness);
-        } else if (mCurrentMode == EColorPickerMode::ambient) {
+        } else if (mCurrentMode == ESingleColorPickerMode::ambient) {
             mColorWheel->changeType(EWheelType::CT);
             mTempBrightSliders->setVisible(true);
             mTempBrightSliders->changeBrightness(oldBrightness);
@@ -150,8 +163,6 @@ void SingleColorPicker::changeLayout(EColorPickerMode layout) {
 }
 
 void SingleColorPicker::updateColorStates(const QColor& mainColor, uint32_t brightness) {
-    mColor = mainColor;
-    mBrightness = brightness;
     if (mBestPossibleType != EColorPickerType::CT) {
         mRGBSliders->changeColor(mainColor);
         mHSVSliders->changeColor(mainColor, brightness);
@@ -161,50 +172,53 @@ void SingleColorPicker::updateColorStates(const QColor& mainColor, uint32_t brig
 }
 
 void SingleColorPicker::updateBrightness(std::uint32_t brightness) {
-    mColor.setHsvF(mColor.hueF(), mColor.saturationF(), double(brightness) / 100.0);
-    mColor = mColor.toRgb();
-    mBrightness = brightness;
-    if (mBestPossibleType != EColorPickerType::CT) {
-        mRGBSliders->changeColor(mColor);
-        mHSVSliders->changeColor(mColor, brightness);
+    QColor oldColor;
+    std::size_t oldBrightness;
+    switch (mCurrentMode) {
+        case ESingleColorPickerMode::RGB: {
+            auto color = mRGBSliders->color();
+            color.setHsvF(color.hueF(), color.saturationF(), brightness / 100.0);
+            oldColor = color;
+            oldBrightness = oldColor.valueF() * 100.0;
+        } break;
+        case ESingleColorPickerMode::HSV:
+            oldColor = mHSVSliders->color();
+            oldBrightness = mHSVSliders->brightness();
+            break;
+        case ESingleColorPickerMode::ambient:
+            oldColor = cor::colorTemperatureToRGB(mTempBrightSliders->temperature());
+            oldBrightness = mTempBrightSliders->brightness();
+            break;
     }
 
-    if (mCurrentMode == EColorPickerMode::HSV || mCurrentMode == EColorPickerMode::ambient) {
+    if (mBestPossibleType != EColorPickerType::CT) {
+        mRGBSliders->changeColor(oldColor);
+        mHSVSliders->changeColor(oldColor, brightness);
+    }
+
+    if (mCurrentMode == ESingleColorPickerMode::HSV
+        || mCurrentMode == ESingleColorPickerMode::ambient) {
         mColorWheel->updateBrightness(brightness);
     }
     mSelectionCircle->hideCircles();
-    mRGBSliders->changeColor(mColor);
-    mHSVSliders->changeColor(mColor, brightness);
+    mRGBSliders->changeColor(oldColor);
+    mHSVSliders->changeColor(oldColor, brightness);
     mTempBrightSliders->changeBrightness(brightness);
 }
 
 void SingleColorPicker::mousePressEvent(QMouseEvent* event) {
     auto colorScheme = mSelectionCircle->moveStandardCircle(0, event->pos());
-    auto storeBrightness = mBrightness;
     if (!colorScheme.empty()) {
         mColorWheel->handleMouseEvent(event);
         mSelectionCircle->updateSingleColor(colorScheme[0]);
-        mColor = colorScheme[0];
-        if (mCurrentMode == EColorPickerMode::RGB) {
-            mBrightness = colorScheme[0].valueF() * 100.0;
-        } else {
-            mBrightness = storeBrightness;
-        }
     }
 }
 
 void SingleColorPicker::mouseMoveEvent(QMouseEvent* event) {
     auto colorScheme = mSelectionCircle->moveStandardCircle(0, event->pos());
-    auto storeBrightness = mBrightness;
     if (!colorScheme.empty()) {
         mColorWheel->handleMouseEvent(event);
         mSelectionCircle->updateSingleColor(colorScheme[0]);
-        mColor = colorScheme[0];
-        if (mCurrentMode == EColorPickerMode::RGB) {
-            mBrightness = colorScheme[0].valueF() * 100.0;
-        } else {
-            mBrightness = storeBrightness;
-        }
     }
 }
 
@@ -218,23 +232,22 @@ void SingleColorPicker::mouseReleaseEvent(QMouseEvent*) {
 //----------
 
 void SingleColorPicker::wheelColorChanged(QColor color) {
-    if (mCurrentMode == EColorPickerMode::RGB) {
+    if (mCurrentMode == ESingleColorPickerMode::RGB) {
         emit brightnessUpdate(uint32_t(color.valueF() * 100.0));
         chooseColor(color);
         mRGBSliders->changeColor(color);
-    } else if (mCurrentMode == EColorPickerMode::HSV) {
+    } else if (mCurrentMode == ESingleColorPickerMode::HSV) {
         emit brightnessUpdate(mHSVSliders->brightness());
         chooseColor(color);
-        mHSVSliders->changeColor(color, std::uint32_t(color.valueF() * 100.0));
+        mHSVSliders->changeColor(color, mHSVSliders->brightness());
     }
 }
 
 
 void SingleColorPicker::slidersColorChanged(const QColor& color) {
-    mColor = color;
     chooseColor(color);
     auto brightness = std::uint32_t(color.toHsv().valueF() * 100.0);
-    if (mCurrentMode == EColorPickerMode::HSV) {
+    if (mCurrentMode == ESingleColorPickerMode::HSV) {
         mColorWheel->updateBrightness(brightness);
         mHSVSliders->changeColor(color, brightness);
         emit brightnessUpdate(mHSVSliders->brightness());
@@ -244,7 +257,7 @@ void SingleColorPicker::slidersColorChanged(const QColor& color) {
 }
 
 void SingleColorPicker::wheelCTChanged(std::uint32_t temp, std::uint32_t bright) {
-    if (mCurrentMode == EColorPickerMode::ambient) {
+    if (mCurrentMode == ESingleColorPickerMode::ambient) {
         chooseAmbient(temp, bright);
         mTempBrightSliders->changeTemperatureAndBrightness(temp, bright);
     }
@@ -268,11 +281,11 @@ void SingleColorPicker::resizeEvent(QResizeEvent*) {
 }
 
 void SingleColorPicker::resize() {
-    if (mCurrentMode == EColorPickerMode::RGB) {
+    if (mCurrentMode == ESingleColorPickerMode::RGB) {
         mRGBSliders->setGeometry(mPlaceholder->geometry());
-    } else if (mCurrentMode == EColorPickerMode::HSV) {
+    } else if (mCurrentMode == ESingleColorPickerMode::HSV) {
         mHSVSliders->setGeometry(mPlaceholder->geometry());
-    } else if (mCurrentMode == EColorPickerMode::ambient) {
+    } else if (mCurrentMode == ESingleColorPickerMode::ambient) {
         mTempBrightSliders->setGeometry(mPlaceholder->geometry());
     }
 

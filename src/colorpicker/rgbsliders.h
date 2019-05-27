@@ -69,9 +69,6 @@ private slots:
     void releasedSlider();
 
 private:
-    /// stored buffer of current color.
-    QColor mColor;
-
     /*!
      * \brief mRedSlider top slider. Used for choosing amount of red in color.
      */

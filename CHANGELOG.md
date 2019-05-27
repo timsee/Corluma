@@ -501,4 +501,12 @@ ___
 * Synced top brightness control bar with `SingleColorPicker`.
 
 
+### **v0.16.17**
+#### The ColorPicker Refactor Part 2 Update
+* Added the ability to generate color scheme icons to the `ColorSchemeCircles`.
+* Optimized the `ColorWheel`. 
+* Added visual feedback to touches on the `ColorWheel`.
+* Fixed bugs with setting custom color vectors. 
+* Fixed miscellaneous bugs and edge cases.
+
 

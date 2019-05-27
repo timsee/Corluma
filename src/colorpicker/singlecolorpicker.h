@@ -18,11 +18,11 @@
  */
 
 /*!
- * \brief The ELayoutColorPicker enum contains
+ * \brief The ESingleColorPickerMode enum contains
  * all possible layouts for the color picker.
  * By default, it uses eStandardLayout.
  */
-enum class EColorPickerMode {
+enum class ESingleColorPickerMode {
     /*!
      * The color wheel is displayed on top of
      * the sliders, with RGB sliders
@@ -55,20 +55,17 @@ public:
     /// constructor
     explicit SingleColorPicker(QWidget* parent);
 
-    /*!
-     * \brief changeLayout sets the layout using the available layout modes. This allows
-     *        you to hide the sliders or color wheel, and change how things are ordered
-     *        so they can fit more window sizes. This should be called only once as Qt doesn't
-     *        seem to like it when you change between horizontal and vertical layouts.
-     * \param layout the layout you want to use.
-     */
-    void changeLayout(EColorPickerMode layout);
-
     /// @copydoc ColorPicker::enable(bool,EColorPickerType)
     void enable(bool shouldEnable, EColorPickerType bestType) override;
 
+    /*!
+     * \brief changeMode sets the layout using the available layout modes.
+     * \param layout the layout you want to use.
+     */
+    void changeMode(ESingleColorPickerMode mode);
+
     /// getter for current mode of colorpicker
-    EColorPickerMode mode() const noexcept { return mCurrentMode; }
+    ESingleColorPickerMode mode() const noexcept { return mCurrentMode; }
 
     /// updates the brightness programtically, but does not signal the change
     void updateBrightness(std::uint32_t brightness);
@@ -143,17 +140,9 @@ private:
     ColorSchemeCircles* mSelectionCircle;
 
     /*!
-     * \brief mCurrentLayout The current layout of the color picker. Used
-     *        to determine whether the mFullLayout or mCondensedLayout is
-     *        in use.
+     * \brief mCurrentMode The current mode of the color picker.
      */
-    EColorPickerMode mCurrentMode;
-
-    /// cached version of the color
-    QColor mColor;
-
-    // cached version of the brightness
-    std::uint32_t mBrightness;
+    ESingleColorPickerMode mCurrentMode;
 };
 
 #endif // SINGLECOLORPICKER_H

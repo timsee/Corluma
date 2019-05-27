@@ -64,8 +64,6 @@ RGBSliders::RGBSliders(QWidget* parent) : QWidget(parent) {
 }
 
 void RGBSliders::changeColor(const QColor& color) {
-    mColor = color;
-
     bool blocked = mRedSlider->slider()->blockSignals(true);
     mRedSlider->slider()->setValue(color.red());
     mRedSlider->slider()->blockSignals(blocked);
@@ -98,21 +96,19 @@ void RGBSliders::enable(bool enable) {
 }
 
 void RGBSliders::redSliderChanged(int newValue) {
-    emit colorChanged(QColor(newValue, mColor.green(), mColor.blue()));
+    emit colorChanged(QColor(newValue, color().green(), color().blue()));
 }
 
 void RGBSliders::greenSliderChanged(int newValue) {
-    emit colorChanged(QColor(mColor.red(), newValue, mColor.blue()));
+    emit colorChanged(QColor(color().red(), newValue, color().blue()));
 }
 
 void RGBSliders::blueSliderChanged(int newValue) {
-    emit colorChanged(QColor(mColor.red(), mColor.green(), newValue));
+    emit colorChanged(QColor(color().red(), color().green(), newValue));
 }
 
 void RGBSliders::releasedSlider() {
-    emit colorChanged(QColor(mRedSlider->slider()->value(),
-                             mGreenSlider->slider()->value(),
-                             mBlueSlider->slider()->value()));
+    emit colorChanged(color());
 }
 
 QColor RGBSliders::color() {

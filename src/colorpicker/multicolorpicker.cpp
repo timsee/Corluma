@@ -11,8 +11,9 @@
 
 #include <QDebug>
 
-MultiColorPicker::MultiColorPicker(QWidget* parent) : ColorPicker(parent), mCircleIndex{0} {
-    mColorSchemeGrid = new SwatchVectorWidget(5, 1, this);
+MultiColorPicker::MultiColorPicker(QWidget* parent)
+    : ColorPicker(parent), mCount{0}, mMaxCount{6}, mCircleIndex{0} {
+    mColorSchemeGrid = new SwatchVectorWidget(mMaxCount, 1, this);
     mColorSchemeGrid->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     mColorSchemeChooser = new ColorSchemeChooser(this);
@@ -22,11 +23,44 @@ MultiColorPicker::MultiColorPicker(QWidget* parent) : ColorPicker(parent), mCirc
             this,
             SLOT(changedScheme(EColorSchemeType)));
 
-    mColorSchemeCircles = new ColorSchemeCircles(5, mColorWheel, this);
+    mColorSchemeCircles = new ColorSchemeCircles(mMaxCount, mColorWheel, this);
     mColorSchemeCircles->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    mColorWheel->changeType(EWheelType::RGB);
+    mColorWheel->changeType(EWheelType::HS);
     enable(true, EColorPickerType::color);
+}
+
+void MultiColorPicker::changeMode(EMultiColorPickerMode mode, std::uint32_t brightness) {
+    if (mode != mCurrentMode) {
+        // reset all flags
+        mCurrentMode = mode;
+
+        //---------------------
+        // Add new bottom Layout
+        //---------------------
+
+        // update the bottom layout
+        if (mCurrentMode == EMultiColorPickerMode::RGB) {
+            mColorWheel->changeType(EWheelType::RGB);
+            mColorWheel->updateBrightness(100);
+            mColorSchemeCircles->setWhiteLine(true);
+        } else if (mCurrentMode == EMultiColorPickerMode::HSV) {
+            mColorWheel->changeType(EWheelType::HS);
+            mColorWheel->updateBrightness(brightness);
+            mColorSchemeCircles->setWhiteLine(false);
+        }
+
+        mColorSchemeCircles->transparentCircles(true);
+        enable(true, mBestPossibleType);
+        resize();
+        update();
+    }
+}
+
+void MultiColorPicker::updateBrightness(std::uint32_t brightness) {
+    if (mCurrentMode == EMultiColorPickerMode::HSV) {
+        mColorWheel->updateBrightness(brightness);
+    }
 }
 
 void MultiColorPicker::enable(bool shouldEnable, EColorPickerType bestType) {
@@ -64,9 +98,22 @@ void MultiColorPicker::updateBottomMenuState(bool enable) {
 }
 
 void MultiColorPicker::updateColorStates(const std::vector<QColor>& colorSchemes, uint32_t) {
-    mScheme = colorSchemes;
-    mColorSchemeCircles->updateColorScheme(colorSchemes);
-    mColorSchemeGrid->updateColors(colorSchemes);
+    std::vector<QColor> newScheme(mMaxCount);
+    // in cases where an light is currently showing one color but can show more, set all the
+    // additional colors it can show as the one color
+    if (colorSchemes.size() < mCount) {
+        for (uint32_t i = 0; i < colorSchemes.size(); ++i) {
+            newScheme[i] = colorSchemes[i];
+        }
+        for (uint32_t i = colorSchemes.size(); i < mMaxCount; ++i) {
+            newScheme[i] = colorSchemes[0];
+        }
+    } else {
+        newScheme = colorSchemes;
+    }
+    mScheme = newScheme;
+    mColorSchemeCircles->updateColorScheme(newScheme);
+    mColorSchemeGrid->updateColors(newScheme);
 }
 
 
@@ -76,7 +123,11 @@ void MultiColorPicker::changedScheme(EColorSchemeType key) {
 
 void MultiColorPicker::updateColorCount(std::size_t count) {
     update();
+    mCount = count;
     mColorSchemeChooser->enableButton(EColorSchemeType::custom, count > 0);
+    if (count > mMaxCount) {
+        count = mMaxCount;
+    }
     if (count < int(EColorSchemeType::MAX)) {
         for (std::size_t i = 1; i <= count; ++i) {
             mColorSchemeChooser->enableButton(EColorSchemeType(i), true);
@@ -95,8 +146,8 @@ void MultiColorPicker::updateColorCount(std::size_t count) {
 
 void MultiColorPicker::updateSchemeColors(std::size_t i, const QColor& newColor) {
     auto colorCount = mScheme.size();
-    if (colorCount > 5) {
-        colorCount = 5;
+    if (colorCount > mMaxCount) {
+        colorCount = mMaxCount;
     }
     if (i > colorCount) {
         return;
@@ -126,7 +177,7 @@ void MultiColorPicker::mousePressEvent(QMouseEvent* event) {
 void MultiColorPicker::mouseMoveEvent(QMouseEvent* event) {
     auto colorScheme = mColorSchemeCircles->moveStandardCircle(mCircleIndex, event->pos());
     if (!colorScheme.empty()) {
-        for (std::uint32_t i = 0; i < 5; ++i) {
+        for (std::uint32_t i = 0; i < mColorSchemeCircles->circles().size(); ++i) {
             updateSchemeColors(i, colorScheme[i]);
         }
     }

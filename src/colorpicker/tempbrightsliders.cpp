@@ -121,3 +121,7 @@ void TempBrightSliders::releasedSlider() {
 std::uint32_t TempBrightSliders::brightness() {
     return std::uint32_t(mBrightnessSlider->slider()->value());
 }
+
+std::uint32_t TempBrightSliders::temperature() {
+    return std::uint32_t(mTemperatureSlider->slider()->value());
+}

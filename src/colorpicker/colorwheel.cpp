@@ -10,26 +10,21 @@
 #include <QStyleOption>
 
 #include "colorwheel.h"
-
 #include "utils/color.h"
+#include "utils/exception.h"
 
 #include <QDebug>
 #include <QMouseEvent>
+
+
+//#define RENDER_WHEELS_AS_IMAGES 1
 
 namespace {
 
 const qreal kPercent = 0.85;
 
-float map(float x, float in_min, float in_max, float out_min, float out_max) {
+double map(double x, double in_min, double in_max, double out_min, double out_max) {
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
-
-float colorDifference(const QColor& first, const QColor& second) {
-    float r = std::abs(first.red() - second.red()) / 255.0f;
-    float g = std::abs(first.green() - second.green()) / 255.0f;
-    float b = std::abs(first.blue() - second.blue()) / 255.0f;
-    float difference = (r + g + b) / 3.0f;
-    return difference;
 }
 
 void applyBrightnessToWheel(QPainter& painter, const QRect& wheelRect, double brightness) {
@@ -135,13 +130,73 @@ void renderWheelDisabled(QPainter& painter,
 }
 
 
+#ifdef RENDER_WHEELS_AS_IMAGES
+
+
+void saveWheel(EWheelType type,
+               const QString& absolutePath,
+               const QString& buttonName,
+               const QRect& rect,
+               double radius) {
+    const auto center = rect.center();
+    QImage wheel(rect.width(), rect.height(), QImage::Format_ARGB32_Premultiplied);
+    QBrush brush(QColor(0, 0, 0, 0));
+    QPainter painter(&wheel);
+    // clear junk from buffer by painting everything with transparent pixels
+    painter.setCompositionMode(QPainter::CompositionMode_Source);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.fillRect(rect, brush);
+    painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+    switch (type) {
+        case EWheelType::RGB:
+            renderWheelRGB(painter, rect, center, radius);
+            break;
+        case EWheelType::HS:
+            renderWheelHS(painter, rect, center, radius, 100);
+            break;
+        case EWheelType::CT:
+            renderWheelCT(painter, rect, 100);
+            break;
+    }
+    bool success = wheel.save(absolutePath + buttonName + ".png", "PNG");
+    if (!success) {
+        qDebug() << " saving image failed: " << buttonName;
+    }
+}
+
+void renderBackgroundWheels() {
+    QRect wheelRect(0, 0, 500, 500);
+    double radius = 250;
+    QBrush brush(QColor(0, 0, 0, 0));
+
+    QImage wheelRGB(wheelRect.width(), wheelRect.height(), QImage::Format_ARGB32_Premultiplied);
+    QImage wheelCT(wheelRect.width(), wheelRect.height(), QImage::Format_ARGB32_Premultiplied);
+    QImage wheelHS(wheelRect.width(), wheelRect.height(), QImage::Format_ARGB32_Premultiplied);
+
+    // change this path to an absolute directory on disk
+    const QString& path = "/path/to/save/ColorWheels/";
+
+    saveWheel(EWheelType::RGB, path, "color_wheel_hsv", wheelRect, radius);
+    saveWheel(EWheelType::HS, path, "color_wheel_hs", wheelRect, radius);
+    saveWheel(EWheelType::CT, path, "color_wheel_ct", wheelRect, radius);
+}
+
+#endif
+
+
 } // namespace
 
 
 ColorWheel::ColorWheel(QWidget* parent)
-    : QLabel(parent), mWheelType{EWheelType::RGB}, mIsEnabled{false}, mRepaint{true} {
+    : QLabel(parent),
+      mWheelType{EWheelType::RGB},
+      mBrightness{100},
+      mIsEnabled{false},
+      mRepaint{true} {
     mImage = new QImage(this->size(), QImage::Format_ARGB32_Premultiplied);
-    renderCachedWheels();
+#ifdef RENDER_WHEELS_AS_IMAGES
+    renderBackgroundWheels();
+#endif
 }
 
 void ColorWheel::updateBrightness(std::uint32_t brightness) {
@@ -201,44 +256,6 @@ void ColorWheel::paintEvent(QPaintEvent*) {
     widgetPainter.drawImage(0, 0, *mImage);
 }
 
-
-
-void ColorWheel::renderCachedWheels() {
-    QRect wheelRect(0, 0, 500, 500);
-    QPoint center(250, 250);
-    double radius = 250;
-    QBrush brush(QColor(0, 0, 0, 0));
-
-
-    mWheelRGB
-        = new QImage(wheelRect.width(), wheelRect.height(), QImage::Format_ARGB32_Premultiplied);
-    mWheelCT
-        = new QImage(wheelRect.width(), wheelRect.height(), QImage::Format_ARGB32_Premultiplied);
-    mWheelHS
-        = new QImage(wheelRect.width(), wheelRect.height(), QImage::Format_ARGB32_Premultiplied);
-
-    QPainter painter(mWheelRGB);
-    painter.setBackground(brush);
-    painter.initFrom(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setPen(Qt::NoPen);
-    renderWheelRGB(painter, wheelRect, center, radius);
-
-    QPainter painter2(mWheelCT);
-    painter2.setBackground(brush);
-    painter2.initFrom(this);
-    painter2.setRenderHint(QPainter::Antialiasing, true);
-    painter2.setPen(Qt::NoPen);
-    renderWheelCT(painter2, wheelRect, 100);
-
-    QPainter painter3(mWheelHS);
-    painter3.setBackground(brush);
-    painter3.initFrom(this);
-    painter3.setRenderHint(QPainter::Antialiasing, true);
-    painter3.setPen(Qt::NoPen);
-    renderWheelHS(painter3, wheelRect, center, radius, 100);
-}
-
 void ColorWheel::mousePressEvent(QMouseEvent* event) {
     handleMouseEvent(event);
 }
@@ -276,11 +293,14 @@ void ColorWheel::handleMouseEvent(QMouseEvent* event) {
 }
 
 bool ColorWheel::checkIfPointIsOverWheel(const QPointF& point) {
+    // center is true center point of widget
     const auto& center = this->center();
+    // radius is set as half the size of the wheel
     const auto& radius = this->wheelRect().height() / 2;
+    // distance uses true center and radius of the wheelRect
     double distance = QLineF(point, center).length();
     distance = distance / radius;
-    if (distance <= 0.95) {
+    if (distance <= 0.96) {
         return true;
     }
     return false;
@@ -308,46 +328,56 @@ bool ColorWheel::checkIfColorIsValid(const QColor& color) {
     return colorIsValid;
 }
 
-QPointF ColorWheel::findColorPixelLocation(const QColor& color) {
-    QImage* image;
-    switch (mWheelType) {
-        case EWheelType::RGB:
-            image = mWheelRGB;
-            break;
-        case EWheelType::CT:
-            image = mWheelCT;
-            break;
-        case EWheelType::HS:
-            image = mWheelHS;
-            break;
-    }
+QColor ColorWheel::findColorByPixel(const cor::CirclePoint& point) {
+    const auto denormalizedPoint = cor::circlePointToDenormalizedPoint(point, rect(), wheelRect());
+    return mImage->pixelColor(int(denormalizedPoint.x()), int(denormalizedPoint.y()));
+}
 
-    float minDiff = std::numeric_limits<float>::max();
-    auto bestMatchPoint = QPoint(0, 0);
-    for (auto y = 0; y < image->height(); ++y) {
-        for (auto x = 0; x < image->width(); ++x) {
-            QPoint point(x, y);
-            if (checkIfPointIsOverWheel(point)) {
-                auto wheelColor = QColor(image->pixel(x, y));
-                if (mWheelType == EWheelType::HS || mWheelType == EWheelType::CT) {
-                    wheelColor.setHsvF(
-                        wheelColor.hueF(), wheelColor.saturationF(), mBrightness / 100.0);
-                }
-                float difference = colorDifference(wheelColor, color);
-                if (difference < minDiff) {
-                    minDiff = difference;
-                    bestMatchPoint = QPoint(x, y);
-                }
-            }
+cor::CirclePoint ColorWheel::findPixelByColor(const QColor& color) {
+    if (mWheelType == EWheelType::HS) {
+        // convert the hue to an angle
+        const auto& angle = color.hueF() * 359.0;
+        // convert the saturation to a distance
+        const auto& distance = color.saturationF() / 2.0;
+        // ignore value, as its not part of the wheel
+        // instead, create the line with the given angle and distance
+        QLineF line(QPointF(0.5, 0.5), QPointF(1.0, 0.5));
+        line.setAngle(angle);
+        line.setLength(distance);
+        return line.p2();
+    } else if (mWheelType == EWheelType::RGB) {
+        // convert the hue to an angle
+        const auto& angle = color.hueF() * 359.0;
+        // convert the saturation to a distance that takes up 1/3 of the possible distance
+        const auto& satDistance = color.saturationF() / 3.0;
+        // convert the value to a distance that takes up 1/10 of the possible distance.
+        // This isn't quite right but makes a good estimate
+        const auto& valDistance = color.valueF() * 0.1;
+
+        // only add the val distance if the saturation distance dictates it
+        auto finalDistance = satDistance;
+        if (finalDistance > 0.32) {
+            finalDistance += valDistance;
         }
+        // create the line that generates the point
+        QLineF line(QPointF(0.5, 0.5), QPointF(1.0, 0.5));
+        line.setAngle(angle);
+        line.setLength(satDistance + valDistance);
+        return line.p2();
+    } else if (mWheelType == EWheelType::CT) {
+        // convert color to color temperature
+        int temperature = cor::rgbToColorTemperature(color);
+        // if color cannot be expressed as color temperature, just return a middle point
+        if (temperature == -1) {
+            return QPointF(0.5, 0.5);
+        }
+        // map from ct range to 0.0-1.0
+        double xValue = map(double(temperature), 153.0, 500.0, 0.0, 1.0);
+        // return point based on xValue
+        return QPointF(xValue, 0.5);
+    } else {
+        THROW_EXCEPTION("findPixelByColor NYI for given wheel type");
     }
-    // if theres no decent match, just return a center point
-    if (minDiff > 0.3f) {
-        return QPointF(0.5, 0.5);
-    }
-
-    return QPointF(bestMatchPoint.x() / qreal(image->width()),
-                   bestMatchPoint.y() / qreal(image->height()));
 }
 
 QPoint ColorWheel::center() {

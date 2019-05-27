@@ -142,13 +142,15 @@ void Slider::adjustStylesheet() {
 }
 
 void Slider::receivedValue(int value) {
-    value = jumpSliderToPosition(mSlider, value);
+    if (this->isEnabled()) {
+        value = jumpSliderToPosition(mSlider, value);
 
-    mSlider->blockSignals(true);
-    mSlider->setValue(value);
-    emit valueChanged(value);
+        mSlider->blockSignals(true);
+        mSlider->setValue(value);
+        emit valueChanged(value);
 
-    mSlider->blockSignals(false);
+        mSlider->blockSignals(false);
+    }
 }
 
 /*!

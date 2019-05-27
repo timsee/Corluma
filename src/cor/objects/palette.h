@@ -86,6 +86,7 @@ public:
             array.append(colorObject);
             ++index;
         }
+        mJSON["colors"] = array;
         mJSON["count"] = double(mColors.size());
     }
 
