@@ -509,4 +509,11 @@ ___
 * Fixed bugs with setting custom color vectors. 
 * Fixed miscellaneous bugs and edge cases.
 
+### **v0.16.18**
+#### Minor Bug Fixes Update
+* Sped up the rendering of the HSV single color picker wheel.
+* Fixed a bug with turning off arducor lights
+* Fixed a bug with the custom color scheme picker.
+* Fixed a bug where greys were showing up in color schemes.
+* Modified how brightness was applied to the `ColorWheel`.
 

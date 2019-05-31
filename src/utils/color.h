@@ -10,6 +10,7 @@
 #include <vector>
 
 #include <QColor>
+#include "utils/math.h"
 
 namespace cor {
 
@@ -122,6 +123,17 @@ inline float colorDifference(QColor first, QColor second) {
     float b = std::abs(first.blue() - second.blue()) / 255.0f;
     float difference = (r + g + b) / 3.0f;
     return difference;
+}
+
+/*!
+ * \brief brightnessToTransparency converts brightness values to transparency values.
+ *        This is not a 1 to 1 mapping, as its intended for use with color wheels and similar'
+ *        assets. Instead, at 0 brightness the object will be at half transparency.
+ * \param brightness brightness to map to transparency
+ * \return transparency based off of brightness
+ */
+inline int brightnessToTransparency(int brightness) {
+    return int(map(100 - brightness, 0, 100, 0, 127));
 }
 
 } // namespace cor

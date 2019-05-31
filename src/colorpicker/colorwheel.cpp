@@ -29,12 +29,11 @@ double map(double x, double in_min, double in_max, double out_min, double out_ma
 
 void applyBrightnessToWheel(QPainter& painter, const QRect& wheelRect, double brightness) {
     if (brightness < 100) {
-        int transparency = int((100 - brightness) * 2.5);
-        if (transparency > 230) {
-            transparency = 230;
-        }
+        int transparency = cor::brightnessToTransparency(int(brightness));
         QBrush brightness(QColor(0, 0, 0, transparency));
-        QPen pen(QColor(255, 255, 255, transparency), double(wheelRect.width()) / 100.0);
+        // transaprency will only ever be half transparencty, so circle white line grows twice as
+        // fast to make it more noticable
+        QPen pen(QColor(255, 255, 255, 2 * transparency), double(wheelRect.width()) / 100.0);
         painter.setPen(pen);
         painter.setBrush(brightness);
         painter.drawEllipse(wheelRect);
@@ -131,7 +130,6 @@ void renderWheelDisabled(QPainter& painter,
 
 
 #ifdef RENDER_WHEELS_AS_IMAGES
-
 
 void saveWheel(EWheelType type,
                const QString& absolutePath,

@@ -190,18 +190,23 @@ void ColorSchemeCircles::updateSingleColor(const QColor& color) {
 }
 
 void ColorSchemeCircles::updateScheme(std::size_t i) {
-    mCircles = mScheme.colorScheme(mCircles[i], mWheel, mSchemeType);
+    if (mSchemeType != EColorSchemeType::custom) {
+        mCircles = mScheme.colorScheme(mCircles[i], mWheel, mSchemeType);
+    }
 }
 
 int ColorSchemeCircles::positionIsUnderCircle(QPointF newPos) {
     auto radius = int(mWheel->height() * 0.05f);
+    const auto& rect = mWheel->rect();
+    const auto& wheelRect = mWheel->wheelRect();
 
     for (std::size_t x = 0; x < mCircles.size(); ++x) {
-        auto lowX = int(mCircles[x].center.x() - radius);
-        auto highX = int(mCircles[x].center.x() + radius);
+        auto center = cor::circlePointToDenormalizedPoint(mCircles[x].center, rect, wheelRect);
+        auto lowX = int(center.x() - radius);
+        auto highX = int(center.x() + radius);
 
-        auto lowY = int(mCircles[x].center.y() - radius);
-        auto highY = int(mCircles[x].center.y() + radius);
+        auto lowY = int(center.y() - radius);
+        auto highY = int(center.y() + radius);
         if (newPos.x() >= lowX && newPos.x() <= highX && newPos.y() >= lowY
             && newPos.y() <= highY) {
             return int(x);

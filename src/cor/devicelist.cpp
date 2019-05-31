@@ -198,8 +198,6 @@ bool DeviceList::isOn() {
 }
 
 
-
-
 void DeviceList::updateColorScheme(std::vector<QColor> colors) {
     uint32_t i = 0;
     // NOTE: this doesn't work entirely as intended. arduCor should be handled the same as nanoleaf,
@@ -233,12 +231,34 @@ std::vector<QColor> DeviceList::colorScheme() {
     std::vector<QColor> colorScheme;
     int count = 0;
     int max = 6;
+    // first check if theres just six unique colors from standard colors
     for (const auto& device : mDevices) {
         if (count >= max) {
             break;
         }
-        colorScheme.push_back(device.color);
-        count++;
+        if (device.routine <= ERoutineSingleColorEnd && device.isOn) {
+            colorScheme.push_back(device.color);
+            count++;
+        }
+    }
+
+    // do second loop if 6 colors aren't found, and add any additional colors from routines
+    // with multiple color options
+    if (count < max) {
+        for (const auto& device : mDevices) {
+            if (count >= max) {
+                break;
+            }
+            if (device.routine > ERoutineSingleColorEnd && device.isOn) {
+                for (const auto& color : device.palette.colors()) {
+                    colorScheme.push_back(color);
+                    count++;
+                    if (count >= max) {
+                        break;
+                    }
+                }
+            }
+        }
     }
     return colorScheme;
 }

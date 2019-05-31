@@ -224,19 +224,6 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
             paramsInSync = false;
         }
 
-
-        //-------------------
-        // On/Off Sync
-        //-------------------
-
-        if (dataDevice.isOn != commDevice.isOn) {
-            QString message = mParser->turnOnPacket(dataDevice, dataDevice.isOn);
-            appendToPacket(packet, message, controller.maxPacketSize);
-            countOutOfSync++;
-            qDebug() << "ON/OFF not in sync" << dataDevice.isOn << " for " << dataDevice.name
-                     << " out of sync is " << countOutOfSync;
-        }
-
         //-------------------
         // Check if should sync routines
         //-------------------
@@ -319,6 +306,19 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
                 countOutOfSync++;
             }
         }
+    }
+
+
+    //-------------------
+    // On/Off Sync
+    //-------------------
+
+    if (dataDevice.isOn != commDevice.isOn) {
+        QString message = mParser->turnOnPacket(dataDevice, dataDevice.isOn);
+        appendToPacket(packet, message, controller.maxPacketSize);
+        countOutOfSync++;
+        //        qDebug() << "ON/OFF not in sync" << dataDevice.isOn << " for " << dataDevice.name
+        //                 << " out of sync is " << countOutOfSync;
     }
 
     if (countOutOfSync) {

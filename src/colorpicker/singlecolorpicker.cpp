@@ -173,21 +173,17 @@ void SingleColorPicker::updateColorStates(const QColor& mainColor, uint32_t brig
 
 void SingleColorPicker::updateBrightness(std::uint32_t brightness) {
     QColor oldColor;
-    std::size_t oldBrightness;
     switch (mCurrentMode) {
         case ESingleColorPickerMode::RGB: {
             auto color = mRGBSliders->color();
             color.setHsvF(color.hueF(), color.saturationF(), brightness / 100.0);
             oldColor = color;
-            oldBrightness = oldColor.valueF() * 100.0;
         } break;
         case ESingleColorPickerMode::HSV:
             oldColor = mHSVSliders->color();
-            oldBrightness = mHSVSliders->brightness();
             break;
         case ESingleColorPickerMode::ambient:
             oldColor = cor::colorTemperatureToRGB(mTempBrightSliders->temperature());
-            oldBrightness = mTempBrightSliders->brightness();
             break;
     }
 
@@ -196,8 +192,9 @@ void SingleColorPicker::updateBrightness(std::uint32_t brightness) {
         mHSVSliders->changeColor(oldColor, brightness);
     }
 
-    if (mCurrentMode == ESingleColorPickerMode::HSV
-        || mCurrentMode == ESingleColorPickerMode::ambient) {
+    if ((mCurrentMode == ESingleColorPickerMode::HSV
+        || mCurrentMode == ESingleColorPickerMode::ambient)
+            && mColorWheel->brightness() != brightness) {
         mColorWheel->updateBrightness(brightness);
     }
     mSelectionCircle->hideCircles();

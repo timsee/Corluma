@@ -37,7 +37,7 @@ Slider::Slider(QWidget* parent) : QWidget(parent) {
 
     mType = ESliderType::vanilla;
 
-    mHandleSize = int(this->width() / 8.0);
+    mHandleSize = int(this->width() / 15.0);
 
     adjustStylesheet();
 }
@@ -50,7 +50,7 @@ void Slider::setColor(const QColor& color) {
     // slider handle is only controllable via stylesheets but the values needed for style sheets
     // breaks in some environments (such as high pixel density android screens). to get around this,
     // we always set the handle size programmatically whenever we udpate the stylesheet.
-    mHandleSize = int(this->width() / 20.0);
+    mHandleSize = int(this->width() / 15.0);
 
     // generate a stylesheet based off of the color with a gradient
     adjustStylesheet();
@@ -59,7 +59,7 @@ void Slider::setColor(const QColor& color) {
 void Slider::setImage(const QString& path) {
     mType = ESliderType::image;
     mPath = path;
-    mHandleSize = int(this->width() / 20.0);
+    mHandleSize = int(this->width() / 15.0);
 
     adjustStylesheet();
 }
@@ -72,7 +72,7 @@ void Slider::setGradient(const QColor& leftColor, const QColor& rightColor) {
     // slider handle is only controllable via stylesheets but the values needed for style sheets
     // breaks in some environments (such as high pixel density android screens). to get around this,
     // we always set the handle size programmatically whenever we udpate the stylesheet.
-    mHandleSize = int(this->width() / 20.0);
+    mHandleSize = int(this->width() / 15.0);
 
     // generate a stylesheet based off of the color with a gradient
     adjustStylesheet();
