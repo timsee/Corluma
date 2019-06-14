@@ -18,14 +18,6 @@
 #include "icondata.h"
 
 
-QSize preferredSize(LeftHandButton* label) {
-    float sizeRatio = 0.6f;
-    int min = std::min(label->width(), label->height());
-    auto finalSize = int(min * sizeRatio);
-    return {finalSize, finalSize};
-}
-
-
 LeftHandButton::LeftHandButton(const QString& text,
                                EPage page,
                                const QString& iconResource,
@@ -39,21 +31,13 @@ LeftHandButton::LeftHandButton(const QString& text,
 
     mTitle = new QLabel(text, this);
     mTitle->setStyleSheet("background-color:rgba(0,0,0,0);");
-    mTitle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mTitle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     mIcon = new QLabel(text, this);
     mIcon->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     mIcon->setStyleSheet("background-color:rgba(0,0,0,0);");
-    mIcon->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     updateIcon(iconResource);
-
-    mLayout = new QHBoxLayout(this);
-
-    mLayout->setContentsMargins(0, 0, 0, 0);
-    mLayout->addWidget(mIcon, 1);
-    mLayout->addWidget(mTitle, 5);
-
-    this->setLayout(mLayout);
 }
 
 
@@ -77,19 +61,11 @@ LeftHandButton::LeftHandButton(const QString& text,
     mIcon->setStyleSheet("background-color:rgba(0,0,0,0);");
     mIcon->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     updateJSON(jsonObject);
-
-    mLayout = new QHBoxLayout(this);
-
-    mLayout->setContentsMargins(0, 0, 0, 0);
-    mLayout->addWidget(mIcon, 1);
-    mLayout->addWidget(mTitle, 5);
-
-    this->setLayout(mLayout);
 }
 
 void LeftHandButton::updateIcon(const QString& iconResource) {
     QPixmap pixmap(iconResource);
-    auto size = preferredSize(this);
+    const auto& size = QSize(int(this->size().width() * 0.8), int(this->size().height() * 0.8));
     mIcon->setPixmap(
         pixmap.scaled(size.width(), size.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
@@ -97,9 +73,19 @@ void LeftHandButton::updateIcon(const QString& iconResource) {
 void LeftHandButton::updateJSON(const QJsonObject& jsonObject) {
     IconData icon(4, 4);
     icon.setRoutine(jsonObject);
-    auto size = preferredSize(this);
+    const auto& size = QSize(int(this->size().width() * 0.8), int(this->size().height() * 0.8));
     mIcon->setPixmap(icon.renderAsQPixmap().scaled(
         size.width(), size.height(), Qt::KeepAspectRatio, Qt::FastTransformation));
+}
+
+void LeftHandButton::resize() {
+    mIcon->setGeometry(0, 0, this->height(), this->height());
+    mTitle->setGeometry(this->height(), 0, this->width() - this->height(), this->height());
+    if (!mResourcePath.isNull()) {
+        updateIcon(mResourcePath);
+    } else {
+        updateJSON(mJsonObject);
+    }
 }
 
 void LeftHandButton::mousePressEvent(QMouseEvent* event) {
@@ -127,11 +113,7 @@ void LeftHandButton::mouseReleaseEvent(QMouseEvent* event) {
 }
 
 void LeftHandButton::resizeEvent(QResizeEvent*) {
-    if (!mResourcePath.isNull()) {
-        updateIcon(mResourcePath);
-    } else {
-        updateJSON(mJsonObject);
-    }
+    resize();
 }
 
 void LeftHandButton::shouldHightlght(bool shouldHighlight) {

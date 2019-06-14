@@ -28,17 +28,16 @@ void updateCircleCenterAndColor(ColorSelection& circle, const QLineF& line, Colo
 } // namespace
 
 
-SchemeGenerator::SchemeGenerator(std::size_t count) : mCount{count} {}
-
 
 std::vector<ColorSelection> SchemeGenerator::colorScheme(const ColorSelection& selection,
+                                                         std::size_t count,
                                                          ColorWheel* wheel,
                                                          EColorSchemeType type) {
     const auto wheelCenter = QPointF(0.5, 0.5);
     auto distance = computeDistance(wheelCenter, selection.center);
     auto center = selection.center;
     auto angle = computeAngle(wheelCenter, selection.center);
-    std::vector<ColorSelection> scheme(mCount, selection);
+    std::vector<ColorSelection> scheme(count, selection);
 
     switch (type) {
         case EColorSchemeType::custom:

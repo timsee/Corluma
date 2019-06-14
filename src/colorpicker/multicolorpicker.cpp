@@ -13,9 +13,6 @@
 
 MultiColorPicker::MultiColorPicker(QWidget* parent)
     : ColorPicker(parent), mCount{0}, mMaxCount{6}, mCircleIndex{0} {
-    mColorSchemeGrid = new SwatchVectorWidget(mMaxCount, 1, this);
-    mColorSchemeGrid->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
     mColorSchemeChooser = new ColorSchemeChooser(this);
     mColorSchemeChooser->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mColorSchemeChooser,
@@ -83,17 +80,12 @@ void MultiColorPicker::updateBottomMenuState(bool enable) {
         opacity = 1.0;
     }
 
-    auto effect = new QGraphicsOpacityEffect(mColorSchemeGrid);
+    auto effect = new QGraphicsOpacityEffect(mColorSchemeCircles);
     effect->setOpacity(opacity);
-    mColorSchemeGrid->setGraphicsEffect(effect);
-    auto effect2 = new QGraphicsOpacityEffect(mColorSchemeCircles);
+    auto effect2 = new QGraphicsOpacityEffect(mColorSchemeChooser);
     effect2->setOpacity(opacity);
-    auto effect3 = new QGraphicsOpacityEffect(mColorSchemeChooser);
-    effect3->setOpacity(opacity);
 
-    mColorSchemeGrid->setGraphicsEffect(effect2);
-    mColorSchemeChooser->setGraphicsEffect(effect3);
-    mColorSchemeGrid->setEnabled(enable);
+    mColorSchemeChooser->setGraphicsEffect(effect2);
     mColorSchemeCircles->setEnabled(enable);
 }
 
@@ -113,7 +105,6 @@ void MultiColorPicker::updateColorStates(const std::vector<QColor>& colorSchemes
     }
     mScheme = newScheme;
     mColorSchemeCircles->updateColorScheme(newScheme);
-    mColorSchemeGrid->updateColors(newScheme);
 }
 
 
@@ -157,7 +148,6 @@ void MultiColorPicker::updateSchemeColors(std::size_t i, const QColor& newColor)
         mScheme[x] = newColor;
     }
 
-    mColorSchemeGrid->updateColors(mScheme);
     emit colorsUpdate(mScheme);
 }
 
@@ -194,7 +184,6 @@ void MultiColorPicker::resizeEvent(QResizeEvent*) {
 
 void MultiColorPicker::resize() {
     auto rect = mPlaceholder->geometry();
-    mColorSchemeGrid->setGeometry(rect.x(), rect.y(), rect.width(), rect.height() / 2);
     mColorSchemeChooser->setGeometry(
         rect.x(), rect.y() + rect.height() / 2, rect.width(), rect.height() / 2);
     mColorSchemeCircles->setGeometry(0,

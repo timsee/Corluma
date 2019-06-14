@@ -14,6 +14,7 @@
 DataSyncArduino::DataSyncArduino(cor::DeviceList* data, CommLayer* comm) {
     mData = data;
     mComm = comm;
+    mType = EDataSyncType::arducor;
     mParser = new ArduCorPacketParser();
     mUpdateInterval = 100;
     connect(mComm,
@@ -100,6 +101,9 @@ void DataSyncArduino::syncData() {
         }
 
         mDataIsInSync = (countOutOfSync == 0);
+        if (!mDataIsInSync) {
+            emit statusChanged(mType, false);
+        }
     }
 
     // TODO: change interval based on how long its been
@@ -178,6 +182,7 @@ void DataSyncArduino::endOfSync() {
         mCleanupTimer->start(500);
         mCleanupStartTime = QTime::currentTime();
     }
+    emit statusChanged(mType, true);
 
     // update schedules of hues to
     if (mSyncTimer->isActive()) {

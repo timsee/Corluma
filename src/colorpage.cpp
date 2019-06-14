@@ -76,14 +76,9 @@ void ColorPage::colorChanged(const QColor& color) {
 
 void ColorPage::newRoutineSelected(QJsonObject routineObject) {
     ERoutine routine = stringToRoutine(routineObject["routine"].toString());
-    if (routine <= cor::ERoutineSingleColorEnd) {
-        routineObject["hue"] = mColor.hueF();
-        routineObject["sat"] = mColor.saturationF();
-        routineObject["bri"] = mColor.valueF();
-    } else {
-        Palette palette(paletteToString(EPalette::custom), cor::defaultCustomColors(), mBrightness);
-        routineObject["palette"] = palette.JSON();
-    }
+    routineObject["hue"] = mColor.hueF();
+    routineObject["sat"] = mColor.saturationF();
+    routineObject["bri"] = mColor.valueF();
     routineObject["isOn"] = true;
     if (routine != ERoutine::singleSolid) {
         // no speed settings for single color routines currently...
@@ -92,9 +87,7 @@ void ColorPage::newRoutineSelected(QJsonObject routineObject) {
 
     // get color
     emit routineUpdate(routineObject);
-    if (routine <= cor::ERoutineSingleColorEnd) {
-        mCurrentSingleRoutine = routineObject;
-    }
+    mCurrentSingleRoutine = routineObject;
 }
 
 void ColorPage::ambientUpdateReceived(std::uint32_t newAmbientValue, std::uint32_t newBrightness) {

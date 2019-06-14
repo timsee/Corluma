@@ -14,6 +14,7 @@ DataSyncSettings::DataSyncSettings(cor::DeviceList* data, CommLayer* comm, AppSe
     : mAppSettings(appSettings) {
     mComm = comm;
     mData = data;
+    mType = EDataSyncType::settings;
     mParser = new ArduCorPacketParser(this);
     mUpdateInterval = 2000;
     connect(mComm,
@@ -70,6 +71,9 @@ void DataSyncSettings::syncData() {
             }
         }
         mDataIsInSync = (countOutOfSync == 0);
+        if (!mDataIsInSync) {
+            emit statusChanged(mType, false);
+        }
     }
 
     if (mStartTime.elapsed() < 15000) {
@@ -92,6 +96,7 @@ void DataSyncSettings::endOfSync() {
     if (mSyncTimer->isActive()) {
         mSyncTimer->stop();
     }
+    emit statusChanged(mType, true);
 }
 
 bool DataSyncSettings::sync(const cor::Light& availableDevice) {

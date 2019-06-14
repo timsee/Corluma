@@ -32,6 +32,10 @@ public:
      * \brief cancelSync cancel the data sync, regardless of it successfully completed.
      */
     void cancelSync() override;
+signals:
+
+    /// emits its correpsonding enum and whether or not it is in sync when its sync status changes
+    void statusChanged(EDataSyncType, bool);
 
 public slots:
     /*!

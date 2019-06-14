@@ -73,9 +73,6 @@ protected:
     void paintEvent(QPaintEvent* event);
 
 private:
-    /// creates a color scheme
-    SchemeGenerator mScheme;
-
     /// update the scheme
     void updateScheme(std::size_t i);
 

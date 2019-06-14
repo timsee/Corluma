@@ -7,16 +7,17 @@
 
 #include "colorpage.h"
 #include "comm/commlayer.h"
-#include "cor/widgets/button.h"
 #include "cor/devicelist.h"
 #include "cor/objects/page.h"
 #include "cor/presetpalettes.h"
+#include "cor/widgets/button.h"
 #include "cor/widgets/slider.h"
 #include "cor/widgets/switch.h"
 #include "floatinglayout.h"
 #include "groupdata.h"
 #include "icondata.h"
 #include "moodpage.h"
+#include "multicolorstatewidget.h"
 #include "palettepage.h"
 #include "selectlightsbutton.h"
 
@@ -49,8 +50,8 @@ enum class EColorMenuType {
 
 /*!
  * \brief The TopMenu class is the top menu on the main window of Corluma. It contains brightness
- *        and on/off controls for all lights, as well as buttons to navigate to all the main
- *        pages of the application.
+ * and on/off controls for all lights, as well as buttons tSingleColorStateWidgeto navigate
+ * to all the main pages of the application.
  */
 class TopMenu : public QWidget {
     Q_OBJECT
@@ -105,6 +106,24 @@ public:
     /// pushes out the tap to select lights button
     void pushOutTapToSelectButton();
 
+    /*!
+     * \brief updateRoutine update the routine for the current app state
+     * \param routine routine to update the apps state to
+     */
+    void updateRoutine(const QJsonObject& routine);
+
+    /*!
+     * \brief updateScheme update the color scheme chosen by the app
+     * \param colors the colors to use in the new color scheme
+     */
+    void updateScheme(const std::vector<QColor>& colors);
+
+    /// true to show single color state widget, false to hide it
+    void showSingleColorStateWidget(bool show);
+
+    /// true to show the multi color state widget, false to hide it
+    void showMultiColorStateWidget(bool show);
+
 signals:
 
     /// sent out whenever a button is pressed. Keys are the names of the buttons, such as "settings"
@@ -134,6 +153,9 @@ public slots:
 
     /// brightness udpated somewhere else
     void brightnessUpdate(uint32_t newValue);
+
+    /// set if data is in sync or not
+    void dataInSync(bool);
 
 protected:
     /// resizes assets in the widget
@@ -212,6 +234,12 @@ private:
 
     /// routine widget for PalettePage
     FloatingLayout* mMultiRoutineFloatingLayout;
+
+    /// widget for showing the state of the single color page
+    SingleColorStateWidget* mSingleColorStateWidget;
+
+    /// widget for showing the state of the multi color page
+    MultiColorStateWidget* mMultiColorStateWidget;
 
     /// last key for color page.
     QString mLastColorButtonKey;

@@ -19,7 +19,7 @@ namespace cor {
  *
  *
  * \brief The CorlumaButton class provides all of the buttons used within the application.
- *        All buttons have an icon, while some have labels or extra logic attached.
+ * All buttons have an icon, while some have labels or extra logic attached.
  *
  * There are currently three different ways you can set up a button. A standard button
  * emits a EPalette and a ERoutine and doesn't have a label. A labeled button
@@ -34,14 +34,13 @@ public:
      * \brief Constructor
      */
     explicit Button(QWidget* parent, const QJsonObject& routine)
-        : QPushButton(parent), mRoutineObject(routine) {
-        mShouldResizeIcon = true;
-
-        this->setCheckable(true);
+        : QPushButton(parent),
+          mShouldResizeIcon{true},
+          mLabelMode{false},
+          mIconData{4, 4},
+          mRoutineObject(routine) {
+        this->setCheckable(!mLabelMode);
         connect(this, SIGNAL(clicked(bool)), this, SLOT(handleButton()));
-
-        mIconData = IconData(4, 4);
-
         mIconData.setRoutine(routine);
         resizeIcon();
     }
@@ -60,6 +59,23 @@ public:
 
     /// getter for routine object
     const QJsonObject& routine() { return mRoutineObject; }
+
+    /*!
+     * \brief setLabelMode true to hide the border and make it non-interactable. False to turn the
+     * button back into a button.
+     * \param isLabel true to set into label mode, false to set into button mode
+     */
+    void setLabelMode(bool isLabel) {
+        if (isLabel != mLabelMode) {
+            mLabelMode = isLabel;
+            this->setCheckable(!mLabelMode);
+            if (mLabelMode) {
+                this->setStyleSheet("border:none;");
+            } else {
+                this->setStyleSheet("");
+            }
+        }
+    }
 
     /*!
      * \brief resizeIcon resize icon used for QPushButton.
@@ -105,6 +121,9 @@ private:
 
     /// true if should automatically resize, false otherwise.
     bool mShouldResizeIcon;
+
+    /// true if in label mode, false otherwise
+    bool mLabelMode;
 
     /*!
      * \brief mIconData icon data used by the button's

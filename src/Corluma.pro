@@ -34,7 +34,6 @@ equals (QT_MAJOR_VERSION, 5)  {
     error(ERROR: Qt5 is not installed. This project uses QT5.4 or later)
 }
 
-#todo: check for C++11
 CONFIG += c++11 #adds C++11 support
 
 #----------
@@ -199,7 +198,11 @@ SOURCES += main.cpp \
     lefthandbutton.cpp \
     listlightwidget.cpp \
     addnewgroupbutton.cpp \
-    palettescrollarea.cpp
+    palettescrollarea.cpp \
+    syncwidget.cpp \
+    singlecolorstatewidget.cpp \
+    multicolorstatewidget.cpp \
+    comm/syncstatus.cpp
 
 HEADERS  +=  comm/arducor/arducordiscovery.h \
     comm/arducor/arducorpacketparser.h \
@@ -292,7 +295,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     mooddetailswidget.h \
     utils/reachability.h \
     utils/color.h \
-    utils/math.h \
     utils/qt.h \
     lefthandmenu.h \
     selectlightsbutton.h \
@@ -300,7 +302,12 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     lefthandbutton.h \
     listlightwidget.h \
     addnewgroupbutton.h \
-    palettescrollarea.h
+    palettescrollarea.h \
+    syncwidget.h \
+    singlecolorstatewidget.h \
+    multicolorstatewidget.h \
+    comm/syncstatus.h \
+    utils/cormath.h
 
 HEADERS  += cor/objects/light.h \
     cor/objects/group.h \
@@ -312,7 +319,6 @@ HEADERS  += cor/objects/light.h \
     cor/widgets/checkbox.h \
     cor/widgets/switch.h \
     cor/widgets/statusicon.h \
-    cor/widgets/slider.h \
     cor/widgets/webview.h \
     cor/widgets/listwidget.h \
     cor/widgets/topwidget.h \

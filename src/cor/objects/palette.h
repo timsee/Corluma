@@ -2,7 +2,7 @@
 #define PALETTE_H
 
 #include "cor/protocols.h"
-#include "utils/math.h"
+#include "utils/cormath.h"
 
 #include <QColor>
 #include <QJsonArray>

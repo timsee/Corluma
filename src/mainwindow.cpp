@@ -15,8 +15,8 @@
 #include "comm/commnanoleaf.h"
 #include "utils/qt.h"
 
-#include "utils/exception.h"
 #include "cor/presetpalettes.h"
+#include "utils/exception.h"
 #include "utils/reachability.h"
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
@@ -58,10 +58,27 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     mData = new cor::DeviceList(this);
     mComm = new CommLayer(this, mGroups);
 
+    mSyncStatus = new SyncStatus(this);
     mDataSyncArduino = new DataSyncArduino(mData, mComm);
+    connect(mDataSyncArduino,
+            SIGNAL(statusChanged(EDataSyncType, bool)),
+            mSyncStatus,
+            SLOT(syncStatusChanged(EDataSyncType, bool)));
     mDataSyncHue = new DataSyncHue(mData, mComm, mAppSettings);
+    connect(mDataSyncHue,
+            SIGNAL(statusChanged(EDataSyncType, bool)),
+            mSyncStatus,
+            SLOT(syncStatusChanged(EDataSyncType, bool)));
     mDataSyncNanoLeaf = new DataSyncNanoLeaf(mData, mComm);
+    connect(mDataSyncNanoLeaf,
+            SIGNAL(statusChanged(EDataSyncType, bool)),
+            mSyncStatus,
+            SLOT(syncStatusChanged(EDataSyncType, bool)));
     mDataSyncSettings = new DataSyncSettings(mData, mComm, mAppSettings);
+    connect(mDataSyncSettings,
+            SIGNAL(statusChanged(EDataSyncType, bool)),
+            mSyncStatus,
+            SLOT(syncStatusChanged(EDataSyncType, bool)));
 
     if (mAppSettings->enabled(EProtocolType::nanoleaf)) {
         mComm->nanoleaf()->discovery()->startDiscovery();
@@ -181,6 +198,8 @@ void MainWindow::loadPages() {
         connect(
             mLeftHandMenu, SIGNAL(changedDeviceCount()), mMainViewport, SLOT(lightCountChanged()));
 
+        connect(mSyncStatus, SIGNAL(statusChanged(bool)), mTopMenu, SLOT(dataInSync(bool)));
+
         // --------------
         // Setup Layout
         // --------------
@@ -226,11 +245,6 @@ void MainWindow::loadPages() {
         connect(mLightInfoWidget, SIGNAL(pressedClose()), this, SLOT(lightInfoClosePressed()));
         mLightInfoWidget->setGeometry(0, -1 * this->height(), this->width(), this->height());
 
-        if (mLeftHandMenu->alwaysOpen()) {
-            mTopMenu->resize(mLeftHandMenu->width());
-        } else {
-            mTopMenu->resize(0);
-        }
         resize();
     }
 }
@@ -624,6 +638,9 @@ void MainWindow::handleLandscapeOrPortrait() {
     if (spaceForMenu && sizeRatio > 1.0f) {
         mLeftHandMenu->alwaysOpen(true);
         mLeftHandMenu->pushIn();
+        if (mMainViewport->currentPage() == EPage::colorPage) {
+            mTopMenu->showSingleColorStateWidget(true);
+        }
         if (mPagesLoaded) {
             mTopMenu->pushOutTapToSelectButton();
             mTopMenu->hideMenuButton(true);
@@ -649,10 +666,12 @@ void MainWindow::routineChanged(QJsonObject routine) {
         routine["palette"] = paletteObject;
     }
     mData->updateRoutine(routine);
+    mTopMenu->updateRoutine(routine);
 }
 
 void MainWindow::schemeChanged(const std::vector<QColor>& colors) {
     mData->updateColorScheme(colors);
+    mTopMenu->updateScheme(colors);
 }
 
 void MainWindow::timeoutChanged(int timeout) {

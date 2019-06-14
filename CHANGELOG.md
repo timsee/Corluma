@@ -500,7 +500,6 @@ ___
 * Fixed bugs with nanoleaf discovery.
 * Synced top brightness control bar with `SingleColorPicker`.
 
-
 ### **v0.16.17**
 #### The ColorPicker Refactor Part 2 Update
 * Added the ability to generate color scheme icons to the `ColorSchemeCircles`.
@@ -509,11 +508,11 @@ ___
 * Fixed bugs with setting custom color vectors. 
 * Fixed miscellaneous bugs and edge cases.
 
-### **v0.16.18**
-#### Minor Bug Fixes Update
-* Sped up the rendering of the HSV single color picker wheel.
-* Fixed a bug with turning off arducor lights
-* Fixed a bug with the custom color scheme picker.
-* Fixed a bug where greys were showing up in color schemes.
-* Modified how brightness was applied to the `ColorWheel`.
+### **v0.16.19**
+#### The SyncWidget Update
+* Added `SyncStatus` for tracking whether or not any thread in the app is currently syncing lights.
+* Added `SingleColorStateWidget` and `MultiColorStateWidget` to show the state the single and multi color pages are setting lights to and whether or not the selected lights are currently in sync.
+* Fixed compilation issues with the iOS build.
+* Fixed miscellaneous bugs.
+
 

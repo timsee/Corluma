@@ -136,6 +136,7 @@ protected:
      * \brief resizeEvent makes sure that the QSlider resizes with the QWidget
      */
     void resizeEvent(QResizeEvent*);
+
     /*!
      * \brief paintEvent handles edge cases created by the having a QSlider and
      *        an elaborate stylesheet. Draws the application's background color

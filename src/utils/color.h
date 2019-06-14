@@ -10,7 +10,7 @@
 #include <vector>
 
 #include <QColor>
-#include "utils/math.h"
+#include "utils/cormath.h"
 
 namespace cor {
 

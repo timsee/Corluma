@@ -76,9 +76,6 @@ private:
     /// page index for the button to emit
     EPage mPage;
 
-    /// layout for button
-    QHBoxLayout* mLayout;
-
     /// pointer to menu to determine if its moving
     LeftHandMenu* mMenu;
 
@@ -96,6 +93,9 @@ private:
 
     /// true if highlight, false if not
     bool mIsHighlighted;
+
+    /// resize programmatically
+    void resize();
 };
 
 #endif // LEFTHANDMENUBUTTON_H

@@ -29,12 +29,6 @@ struct ColorSelection {
  */
 class SchemeGenerator {
 public:
-    /// constructor
-    SchemeGenerator(std::size_t circleCount);
-
-    /// getter for count of circles
-    std::size_t circleCount() const noexcept { return mCount; }
-
     /*!
      * \brief colorScheme creates a color scheme based off of one selection
      * \param selection the selection to use as the basis for the color scheme
@@ -42,13 +36,10 @@ public:
      * \param type the type of color scheme desired
      * \return a vector of color selections based off of the parameters
      */
-    std::vector<ColorSelection> colorScheme(const ColorSelection& selection,
-                                            ColorWheel* wheel,
-                                            EColorSchemeType type);
-
-private:
-    /// count of lights in scheme
-    std::size_t mCount;
+    static std::vector<ColorSelection> colorScheme(const ColorSelection& selection,
+                                                   std::size_t count,
+                                                   ColorWheel* wheel,
+                                                   EColorSchemeType type);
 };
 
 #endif // SCHEMEGENERATOR_H

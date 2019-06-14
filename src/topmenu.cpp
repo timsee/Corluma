@@ -186,6 +186,16 @@ TopMenu::TopMenu(QWidget* parent,
 
     mLastColorButtonKey = "RGB";
 
+    mSingleColorStateWidget = new SingleColorStateWidget(mMainWindow);
+    mSingleColorStateWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mSingleColorStateWidget->setFixedSize(mSize.width(), mSize.height() / 2);
+    showSingleColorStateWidget(true);
+
+    mMultiColorStateWidget = new MultiColorStateWidget(mMainWindow);
+    mMultiColorStateWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mMultiColorStateWidget->setFixedSize(mSize.width() * 3.5, mSize.height() / 2);
+    showMultiColorStateWidget(false);
+
     deviceCountChanged();
 
     mCurrentPage = EPage::colorPage;
@@ -295,6 +305,8 @@ void TopMenu::showMenu() {
     mMoodsFloatingLayout->raise();
     mSingleRoutineFloatingLayout->raise();
     mMultiRoutineFloatingLayout->raise();
+    mSingleColorStateWidget->raise();
+    mMultiColorStateWidget->raise();
 }
 
 void TopMenu::resize(int xOffset) {
@@ -302,7 +314,7 @@ void TopMenu::resize(int xOffset) {
 
     moveFloatingLayout();
 
-    int yPos = 0;
+    int yPos = cor::statusBarOffset();
     int padding = 5;
     mMenuButton->setGeometry(0, yPos, mSize.width(), mSize.height());
     mSpacer->setGeometry(mSize.width(), yPos, this->width() - mSize.width(), mSize.height());
@@ -418,6 +430,46 @@ void TopMenu::floatingLayoutButtonPressed(const QString& button) {
     }
 }
 
+void TopMenu::showSingleColorStateWidget(bool show) {
+    int height = mSize.height() * 2 / 3 + cor::statusBarOffset();
+    int width = 0;
+    if (!mMainWindow->leftHandMenu()->alwaysOpen()) {
+        height += mSize.height();
+    } else {
+        width = mMainWindow->leftHandMenu()->width();
+    }
+    QPoint shownPoint(width, height);
+    QPoint hiddenPoint(-mSingleColorStateWidget->size().width(), height);
+    if (show) {
+        cor::moveWidget(
+            mSingleColorStateWidget, mSingleColorStateWidget->size(), hiddenPoint, shownPoint);
+        mSingleColorStateWidget->updateSyncStatus(ESyncState::notSynced);
+    } else {
+        cor::moveWidget(
+            mSingleColorStateWidget, mSingleColorStateWidget->size(), shownPoint, hiddenPoint);
+    }
+}
+
+void TopMenu::showMultiColorStateWidget(bool show) {
+    int height = mSize.height() * 2 / 3 + cor::statusBarOffset();
+    int width = 0;
+    if (!mMainWindow->leftHandMenu()->alwaysOpen()) {
+        height += mSize.height();
+    } else {
+        width = mMainWindow->leftHandMenu()->width();
+    }
+    QPoint shownPoint(width, height);
+    QPoint hiddenPoint(-mMultiColorStateWidget->size().width(), height);
+    if (show) {
+        cor::moveWidget(
+            mMultiColorStateWidget, mMultiColorStateWidget->size(), hiddenPoint, shownPoint);
+        mMultiColorStateWidget->updateSyncStatus(ESyncState::notSynced);
+    } else {
+        cor::moveWidget(
+            mMultiColorStateWidget, mMultiColorStateWidget->size(), shownPoint, hiddenPoint);
+    }
+}
+
 void TopMenu::showFloatingLayout(EPage newPage) {
     if (newPage != mCurrentPage) {
         // move old menu back
@@ -440,7 +492,7 @@ void TopMenu::showFloatingLayout(EPage newPage) {
                 if (mColorPage->routineWidgetIsOpen()) {
                     mColorPage->handleRoutineWidget(false);
                 }
-
+                showSingleColorStateWidget(false);
             } break;
             case EPage::moodPage:
                 pushRightFloatingLayout(mMoodsFloatingLayout);
@@ -463,6 +515,7 @@ void TopMenu::showFloatingLayout(EPage newPage) {
                 if (mPalettePage->routineWidgetIsOpen()) {
                     mPalettePage->handleRoutineWidget(false);
                 }
+                showMultiColorStateWidget(false);
             } break;
             default:
                 break;
@@ -473,6 +526,7 @@ void TopMenu::showFloatingLayout(EPage newPage) {
             case EPage::colorPage:
                 pullLeftFloatingLayout(mColorFloatingLayout);
                 adjustSingleColorLayout(false);
+                showSingleColorStateWidget(true);
                 break;
             case EPage::moodPage:
                 pullLeftFloatingLayout(mMoodsFloatingLayout);
@@ -480,6 +534,7 @@ void TopMenu::showFloatingLayout(EPage newPage) {
             case EPage::palettePage:
                 pullLeftFloatingLayout(mPaletteFloatinglayout);
                 adjustMultiColorLayout(false);
+                showMultiColorStateWidget(true);
                 break;
             default:
                 break;
@@ -684,5 +739,35 @@ void TopMenu::pushInTapToSelectButton() {
 void TopMenu::pushOutTapToSelectButton() {
     if (mSelectLightsButton->isIn()) {
         mSelectLightsButton->pushOut(mStartSelectLightsButton);
+    }
+}
+
+
+void TopMenu::updateRoutine(const QJsonObject& routineObject) {
+    if (mCurrentPage == EPage::colorPage) {
+        ERoutine routine = stringToRoutine(routineObject["routine"].toString());
+        QColor color;
+        color.setHsvF(routineObject["hue"].toDouble(),
+                      routineObject["sat"].toDouble(),
+                      routineObject["bri"].toDouble());
+        mSingleColorStateWidget->updateState(color, routine);
+    }
+}
+
+void TopMenu::updateScheme(const std::vector<QColor>& colors) {
+    if (mCurrentPage == EPage::palettePage) {
+        mMultiColorStateWidget->updateState(colors);
+    }
+}
+
+void TopMenu::dataInSync(bool inSync) {
+    ESyncState state = ESyncState::syncing;
+    if (inSync) {
+        state = ESyncState::synced;
+    }
+    if (mCurrentPage == EPage::colorPage) {
+        mSingleColorStateWidget->updateSyncStatus(state);
+    } else if (mCurrentPage == EPage::palettePage) {
+        mMultiColorStateWidget->updateSyncStatus(state);
     }
 }

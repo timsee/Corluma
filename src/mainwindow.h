@@ -12,6 +12,7 @@
 #include "comm/datasyncnanoleaf.h"
 #include "comm/datasyncsettings.h"
 #include "comm/hue/lightdiscovery.h"
+#include "comm/syncstatus.h"
 #include "cor/objects/page.h"
 #include "cor/widgets/button.h"
 #include "discoverypage.h"
@@ -354,6 +355,9 @@ private:
      * \brief mDataSyncSettings sync thread for data coming from settings
      */
     DataSyncSettings* mDataSyncSettings;
+
+    /// tracks whether all the DataSync threads are in sync or not
+    SyncStatus* mSyncStatus;
 };
 
 #endif // MAINWINDOW_H

@@ -6,7 +6,7 @@
 
 #include "groupdata.h"
 #include "cor/protocols.h"
-#include "utils/math.h"
+#include "utils/cormath.h"
 
 #include <QDir>
 #include <QFileInfo>

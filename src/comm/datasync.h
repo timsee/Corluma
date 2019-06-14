@@ -33,6 +33,10 @@ struct SThrottle {
 };
 
 
+/// type of datasync thread
+enum class EDataSyncType { arducor, hue, nanoleaf, settings };
+Q_DECLARE_METATYPE(EDataSyncType)
+
 class CommLayer;
 
 /*!
@@ -93,6 +97,9 @@ protected:
      * \brief endOfSync end the sync thread and start the cleanup thread.
      */
     virtual void endOfSync() = 0;
+
+    /// type for this specific instance of the DataSync
+    EDataSyncType mType;
 
     /*!
      * \brief mData pointer to data layer. Used for checking what state the data layer

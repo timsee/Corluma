@@ -8,6 +8,7 @@
 #include "cor/widgets/slider.h"
 #include "icondata.h"
 #include "routinebuttonswidget.h"
+#include "singlecolorstatewidget.h"
 
 #include <QSlider>
 #include <QToolButton>

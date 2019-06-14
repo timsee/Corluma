@@ -103,9 +103,6 @@ void renderButtons(ColorWheel* wheel) {
     mainCircle.center = QPointF(0.62, 0.13);
     mainCircle.color = QColor(255, 255, 255);
 
-    // create a standard vector that uses the mainCircle
-    std::vector<ColorSelection> circles(6, mainCircle);
-
     // setup an example custom color prediction
     std::vector<ColorSelection> customCircles(6, mainCircle);
     customCircles[1].center = QPointF(0.9, 0.6);
@@ -115,18 +112,23 @@ void renderButtons(ColorWheel* wheel) {
     customCircles[5].center = QPointF(0.1, 0.1);
 
     // create a scheme generator for converting a copy of the color scheme vector to a new scheme.
-    SchemeGenerator schemeGenerator(circles.size());
 
     for (uint32_t i = 0; i < uint32_t(EColorSchemeType::MAX); ++i) {
         EColorSchemeType type = EColorSchemeType(i);
         // choose what vector of circles to use
-        std::vector<ColorSelection> circleSelection = circles;
+        std::vector<ColorSelection> circleSelection;
         if (type == EColorSchemeType::custom) {
             circleSelection = customCircles;
+        } else if (type == EColorSchemeType::triad) {
+            circleSelection = SchemeGenerator::colorScheme(mainCircle, 3, wheel, type);
+        } else if (type == EColorSchemeType::complement) {
+            circleSelection = SchemeGenerator::colorScheme(mainCircle, 4, wheel, type);
         } else {
-            // set circles to color scheme using the scheme generator
-            circleSelection = schemeGenerator.colorScheme(mainCircle, wheel, type);
+            circleSelection = SchemeGenerator::colorScheme(mainCircle, 6, wheel, type);
         }
+
+
+
         // reset all color selections to white for icon
         for (auto&& circle : circleSelection) {
             circle.color = QColor(255, 255, 255);
@@ -147,11 +149,7 @@ void renderButtons(ColorWheel* wheel) {
 } // namespace
 
 ColorSchemeCircles::ColorSchemeCircles(std::size_t count, ColorWheel* wheel, QWidget* parent)
-    : QWidget(parent),
-      mScheme{count},
-      mCircles{count},
-      mSchemeType{EColorSchemeType::MAX},
-      mWheel{wheel} {
+    : QWidget(parent), mCircles{count}, mSchemeType{EColorSchemeType::MAX}, mWheel{wheel} {
     this->setStyleSheet("background-color:rgba(0,0,0,0);");
 #ifdef RENDER_BUTTONS_AS_IMAGES
     renderButtons(mWheel);
@@ -191,7 +189,7 @@ void ColorSchemeCircles::updateSingleColor(const QColor& color) {
 
 void ColorSchemeCircles::updateScheme(std::size_t i) {
     if (mSchemeType != EColorSchemeType::custom) {
-        mCircles = mScheme.colorScheme(mCircles[i], mWheel, mSchemeType);
+        mCircles = SchemeGenerator::colorScheme(mCircles[i], mCircles.size(), mWheel, mSchemeType);
     }
 }
 

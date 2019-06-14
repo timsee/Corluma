@@ -14,6 +14,7 @@ DataSyncHue::DataSyncHue(cor::DeviceList* data, CommLayer* comm, AppSettings* ap
     : mAppSettings(appSettings) {
     mData = data;
     mComm = comm;
+    mType = EDataSyncType::hue;
     mUpdateInterval = 250;
     connect(mComm,
             SIGNAL(packetReceived(EProtocolType)),
@@ -78,6 +79,9 @@ void DataSyncHue::syncData() {
             }
         }
         mDataIsInSync = (countOutOfSync == 0);
+        if (!mDataIsInSync) {
+            emit statusChanged(mType, false);
+        }
     }
 
     // TODO: change interval based on how long its been
@@ -101,6 +105,8 @@ void DataSyncHue::endOfSync() {
         mCleanupTimer->start(5000);
         mCleanupStartTime = QTime::currentTime();
     }
+
+    emit statusChanged(mType, true);
 
     // update schedules of hues to
     if (mSyncTimer->isActive()) {

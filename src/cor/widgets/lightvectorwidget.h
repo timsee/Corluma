@@ -69,6 +69,10 @@ private slots:
      */
     void toggleArrayColor(int);
 
+protected:
+    /// called when the widget resizes
+    virtual void resizeEvent(QResizeEvent*);
+
 private:
     /// true if widget should fill new entries from left, false if it should fill from right
     bool mFillFromLeft;

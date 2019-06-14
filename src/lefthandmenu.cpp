@@ -125,7 +125,7 @@ void LeftHandMenu::resize() {
     mScrollArea->setFixedWidth(int(this->width() * 1.2f));
 
     auto buttonHeight = int(this->height() * 0.07);
-    auto yPos = int(this->height() * 0.02);
+    auto yPos = int(this->height() * 0.02) + cor::statusBarOffset();
 
     mSpacer->setGeometry(0, 0, this->width(), this->height());
 

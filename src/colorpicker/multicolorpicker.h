@@ -137,11 +137,6 @@ private:
     ColorSchemeCircles* mColorSchemeCircles;
 
     /*!
-     * \brief mColorSchemeGrid bottom layout, gives a few color swatches
-     */
-    SwatchVectorWidget* mColorSchemeGrid;
-
-    /*!
      * \brief mColorSchemeChooser menu for choosing the color scheme.
      */
     ColorSchemeChooser* mColorSchemeChooser;

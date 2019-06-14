@@ -151,6 +151,14 @@ inline bool leftHandMenuMoving() {
     return false;
 }
 
+/*!
+ * \brief statusBarOffset hacky solution when supporting iOS to offset for the status bar.
+ * \return yPos of assets that need to account for a status bar
+ */
+inline int statusBarOffset() {
+    return 0;
+}
+
 } // namespace cor
 
 #endif // COR_UTILS_QT_H

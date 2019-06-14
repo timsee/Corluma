@@ -41,20 +41,21 @@ LightVectorWidget::LightVectorWidget(int width, int height, bool fillFromLeft, Q
             light.routine = ERoutine::singleSolid;
             light.color = QColor(0, 0, 0);
             QJsonObject routineObject = lightToJson(light);
-            mArrayColorsButtons[uint32_t(i)] = new cor::Button(this, routineObject);
-            mArrayColorsButtons[uint32_t(i)]->setSizePolicy(QSizePolicy::Expanding,
-                                                            QSizePolicy::Expanding);
-            arrayButtonsMapper->setMapping(mArrayColorsButtons[uint32_t(i)], i);
-            connect(mArrayColorsButtons[uint32_t(i)],
+            mArrayColorsButtons[std::size_t(i)] = new cor::Button(this, routineObject);
+            mArrayColorsButtons[std::size_t(i)]->setLabelMode(true);
+            mArrayColorsButtons[std::size_t(i)]->setSizePolicy(QSizePolicy::Fixed,
+                                                               QSizePolicy::Fixed);
+            arrayButtonsMapper->setMapping(mArrayColorsButtons[std::size_t(i)], i);
+            connect(mArrayColorsButtons[std::size_t(i)],
                     SIGNAL(clicked(bool)),
                     arrayButtonsMapper,
                     SLOT(map()));
 
-            QSizePolicy sizePolicy = mArrayColorsButtons[uint32_t(i)]->sizePolicy();
+            QSizePolicy sizePolicy = mArrayColorsButtons[std::size_t(i)]->sizePolicy();
             sizePolicy.setRetainSizeWhenHidden(true);
-            mArrayColorsButtons[uint32_t(i)]->setSizePolicy(sizePolicy);
-            mArrayColorsButtons[uint32_t(i)]->setVisible(false);
-            mLayout->addWidget(mArrayColorsButtons[uint32_t(i)], h, w);
+            mArrayColorsButtons[std::size_t(i)]->setSizePolicy(sizePolicy);
+            mArrayColorsButtons[std::size_t(i)]->setVisible(false);
+            mLayout->addWidget(mArrayColorsButtons[std::size_t(i)], h, w);
             ++i;
         }
     }
@@ -112,6 +113,13 @@ void LightVectorWidget::toggleArrayColor(int index) {
 void LightVectorWidget::enableButtonInteraction(bool enable) {
     for (auto&& button : mArrayColorsButtons) {
         button->setAttribute(Qt::WA_TransparentForMouseEvents, !enable);
+    }
+}
+
+void LightVectorWidget::resizeEvent(QResizeEvent*) {
+    const QSize widgetSize(this->height() / mHeight, this->height() / mHeight);
+    for (auto widget : mArrayColorsButtons) {
+        widget->setFixedSize(widgetSize);
     }
 }
 

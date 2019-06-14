@@ -74,5 +74,6 @@
         <file>images/schemes/triad.png</file>
         <file>images/hue_range.png</file>
         <file>images/ct_range.png</file>
+        <file>images/syncing.gif</file>
     </qresource>
 </RCC>

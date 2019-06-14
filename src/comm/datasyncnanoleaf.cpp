@@ -16,6 +16,7 @@ bool checkIfOffByOne(int goal, int value) {
 DataSyncNanoLeaf::DataSyncNanoLeaf(cor::DeviceList* data, CommLayer* comm) {
     mData = data;
     mComm = comm;
+    mType = EDataSyncType::nanoleaf;
     mUpdateInterval = 500;
 
     connect(mComm,
@@ -42,14 +43,23 @@ void DataSyncNanoLeaf::cancelSync() {
 }
 
 void DataSyncNanoLeaf::resetSync() {
-    if (mCleanupTimer->isActive()) {
-        mCleanupTimer->stop();
+    bool anyNanoleaf = false;
+    for (const auto& light : mData->devices()) {
+        if (light.protocol() == EProtocolType::nanoleaf) {
+            anyNanoleaf = true;
+        }
     }
-    if (!mData->devices().empty()) {
-        mDataIsInSync = false;
-        if (!mSyncTimer->isActive()) {
-            mStartTime = QTime::currentTime();
-            mSyncTimer->start(mUpdateInterval);
+
+    if (anyNanoleaf) {
+        if (mCleanupTimer->isActive()) {
+            mCleanupTimer->stop();
+        }
+        if (!mData->devices().empty()) {
+            mDataIsInSync = false;
+            if (!mSyncTimer->isActive()) {
+                mStartTime = QTime::currentTime();
+                mSyncTimer->start(mUpdateInterval);
+            }
         }
     }
 }
@@ -80,6 +90,9 @@ void DataSyncNanoLeaf::syncData() {
             }
         }
         mDataIsInSync = (countOutOfSync == 0);
+        if (!mDataIsInSync) {
+            emit statusChanged(mType, false);
+        }
     }
 
     // TODO: change interval based on how long its been
@@ -230,6 +243,8 @@ void DataSyncNanoLeaf::endOfSync() {
         mCleanupTimer->start(500);
         mCleanupStartTime = QTime::currentTime();
     }
+
+    emit statusChanged(mType, true);
 
     // update schedules of hues to
     if (mSyncTimer->isActive()) {
