@@ -137,9 +137,6 @@ private:
     /// image for displaying a graphic to help with current step of widget.
     QLabel* mImage;
 
-    /// spacer for top widget
-    QLabel* mTopSpacer;
-
     /// Used for showing when a device is still being discovery.
     QMovie* mMovie;
 
@@ -160,9 +157,6 @@ private:
 
     /// button used for viewing the groups of a bridge.
     QPushButton* mGroupsButton;
-
-    /// main layout
-    QVBoxLayout* mLayout;
 
     /// true if checked, false otherwise
     bool mIsChecked;

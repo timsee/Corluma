@@ -37,16 +37,11 @@ DiscoveryPage::DiscoveryPage(QWidget* parent,
     mStartButton->setText("Start");
 
     mSpacer = new QWidget(this);
-    mSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    mSpacer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mSpacer->setFixedHeight(int(parent->height() * 0.1f));
 
     mPlaceholder = new QWidget(this);
-    mPlaceholder->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-    mLayout = new QVBoxLayout(this);
-    mLayout->addWidget(mSpacer);
-    mLayout->addWidget(mPlaceholder, 6);
-    mLayout->addWidget(mStartButton, 2);
+    mPlaceholder->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     mForceStartOpen = false;
     mStartButton->setEnabled(false);
@@ -164,7 +159,7 @@ void DiscoveryPage::renderUI() {
         mStartButton->setEnabled(false);
     }
 
-    resizeTopMenu();
+    resize();
 
     mNanoLeafWidget->handleDiscovery(mType == EProtocolType::nanoleaf);
     mArduCorWidget->handleDiscovery(mType == EProtocolType::arduCor);
@@ -226,13 +221,15 @@ void DiscoveryPage::protocolTypeSelected(EProtocolType type) {
         mArduCorWidget->setVisible(true);
         mHueWidget->setVisible(false);
         mNanoLeafWidget->setVisible(false);
-        mArduCorWidget->setGeometry(mPlaceholder->geometry());
         mArduCorWidget->handleDiscovery(true);
+        mArduCorWidget->setGeometry(mPlaceholder->geometry());
     } else if (type == EProtocolType::hue) {
         mArduCorWidget->setVisible(false);
         mHueWidget->setVisible(true);
         mNanoLeafWidget->setVisible(false);
+        mHueWidget->handleDiscovery(true);
         mHueWidget->setGeometry(mPlaceholder->geometry());
+        mHueWidget->resize();
     } else if (type == EProtocolType::nanoleaf) {
         mArduCorWidget->setVisible(false);
         mHueWidget->setVisible(false);
@@ -280,6 +277,7 @@ void DiscoveryPage::show() {
     mRenderThread->start(mRenderInterval);
     updateTopMenu();
     moveFloatingLayouts();
+    resize();
 }
 
 
@@ -289,15 +287,7 @@ void DiscoveryPage::hide() {
 
 
 void DiscoveryPage::resizeEvent(QResizeEvent*) {
-    if (mType == EProtocolType::arduCor) {
-        mArduCorWidget->setGeometry(mPlaceholder->geometry());
-    } else if (mType == EProtocolType::hue) {
-        mHueWidget->setGeometry(mPlaceholder->geometry());
-    } else if (mType == EProtocolType::nanoleaf) {
-        mNanoLeafWidget->setGeometry(mPlaceholder->geometry());
-    }
-
-    resizeTopMenu();
+    resize();
     moveFloatingLayouts();
 }
 
@@ -310,7 +300,26 @@ void DiscoveryPage::paintEvent(QPaintEvent*) {
     painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
 }
 
-void DiscoveryPage::resizeTopMenu() {
+void DiscoveryPage::resize() {
+    int yPos = 0;
+    mSpacer->setGeometry(0, yPos, this->width(), this->height() / 9);
+    yPos += mSpacer->height();
+
+    mPlaceholder->setGeometry(0, yPos, this->width(), this->height() * 2 / 3);
+    yPos += mPlaceholder->height();
+
+    mStartButton->setGeometry(0, yPos, this->width(), this->height() * 2 / 9);
+    yPos += mStartButton->height();
+
+    if (mType == EProtocolType::arduCor) {
+        mArduCorWidget->setGeometry(mPlaceholder->geometry());
+    } else if (mType == EProtocolType::hue) {
+        mHueWidget->setGeometry(mPlaceholder->geometry());
+    } else if (mType == EProtocolType::nanoleaf) {
+        mNanoLeafWidget->setGeometry(mPlaceholder->geometry());
+    }
+
+
     for (int commInt = 0; commInt != int(EProtocolType::MAX); ++commInt) {
         auto type = static_cast<EProtocolType>(commInt);
         QPixmap pixmap;
@@ -389,9 +398,9 @@ void DiscoveryPage::updateTopMenu() {
 
 
 void DiscoveryPage::floatingLayoutButtonPressed(const QString& button) {
-    if (button.compare("Settings") == 0) {
+    if (button == "Settings") {
         emit settingsButtonClicked();
-    } else if (button.compare("Discovery_ArduCor") == 0) {
+    } else if (button == "Discovery_ArduCor") {
         protocolTypeSelected(EProtocolType::arduCor);
     } else if (button.compare("Discovery_Hue") == 0) {
         protocolTypeSelected(EProtocolType::hue);

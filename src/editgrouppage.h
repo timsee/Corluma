@@ -189,9 +189,6 @@ private:
     /// widget used for scroll area.
     ListSimpleGroupWidget* mSimpleGroupWidget;
 
-    /// vertical layout for widget
-    QVBoxLayout* mLayout;
-
     /// subwidget holding all the buttons and such in the top of this widget.
     EditPageTopMenu* mTopMenu;
 };

@@ -21,25 +21,14 @@ ColorPicker::ColorPicker(QWidget* parent) : QWidget(parent) {
     mBestPossibleType = EColorPickerType::dimmable;
 
     mPlaceholder = new QWidget(this);
-    mPlaceholder->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mPlaceholder->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     // --------------
     // Setup ColorWheel
     // --------------
 
     mColorWheel = new ColorWheel(this);
-    mColorWheel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-    // --------------
-    // Setup Slider/Label Layout
-    // --------------
-
-    mFullLayout = new QVBoxLayout;
-    mFullLayout->addWidget(mColorWheel, 14);
-    mFullLayout->addWidget(mPlaceholder, 6);
-    mFullLayout->setSpacing(0);
-    mFullLayout->setContentsMargins(0, 0, 0, 0);
-    setLayout(mFullLayout);
+    mColorWheel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
 //------------------------------
@@ -74,6 +63,11 @@ void ColorPicker::resizeWheel() {
     if (wheelSize > this->size().width() * 0.85f) {
         wheelSize = int(this->size().width() * 0.85f);
     }
+
+    int yPos = 0;
+    mColorWheel->setGeometry(0, yPos, this->width(), this->height() * 14 / 20);
+    yPos += mColorWheel->height();
+    mPlaceholder->setGeometry(0, yPos, this->width(), this->height() * 6 / 20);
 
     const auto& size = QSize(this->width(), (this->height() - mPlaceholder->height()));
     mColorWheel->setMinimumSize(size);

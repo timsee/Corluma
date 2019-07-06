@@ -625,7 +625,7 @@ void MainWindow::resize() {
         }
 
         if (mLightInfoWidget->isOpen()) {
-            mLightInfoWidget->resize();
+            mLightInfoWidget->resize(true);
         }
     }
 
@@ -702,6 +702,10 @@ void MainWindow::greyoutClicked() {
 
     if (mEditPage->isOpen()) {
         editClosePressed();
+    }
+    
+    if (mLightInfoWidget->isOpen()) {
+        lightInfoClosePressed();
     }
 }
 

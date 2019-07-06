@@ -23,9 +23,6 @@ BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget* parent)
     mDeleteButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(mDeleteButton, SIGNAL(clicked()), this, SLOT(deleteButtonPressed()));
 
-    mTopSpacer = new QLabel(this);
-    mTopSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
     mNameLabel = new QLabel("<b>Name:</b> ", this);
     mNameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mNameLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
@@ -36,9 +33,8 @@ BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget* parent)
 
     mTopLayout = new QHBoxLayout;
     mTopLayout->addWidget(mDeleteButton, 1);
-    mTopLayout->addWidget(mTopSpacer, 3);
     mTopLayout->addWidget(mNameLabel, 2);
-    mTopLayout->addWidget(mNameWidget, 3);
+    mTopLayout->addWidget(mNameWidget, 6);
 
     //-----------
     // mid Left Image
@@ -108,11 +104,6 @@ BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget* parent)
     mButtonsLayout->addWidget(mDiscoverHueButton);
     mButtonsLayout->addWidget(mGroupsButton);
     mButtonsLayout->addWidget(mSchedulesButton);
-
-    mLayout = new QVBoxLayout(this);
-    mLayout->addLayout(mTopLayout, 1);
-    mLayout->addLayout(mMidLayout, 8);
-    mLayout->addLayout(mButtonsLayout, 2);
 
     mIsChecked = false;
 
@@ -189,6 +180,17 @@ void BridgeInfoWidget::resizeEvent(QResizeEvent*) {
     } else {
         mImage->setFixedWidth(int(this->width() * 0.333f));
     }
+    auto yPos = 0;
+    mTopLayout->setGeometry(QRect(0, yPos, this->width(), this->height() / 11));
+    yPos += mTopLayout->geometry().height();
+
+    mMidLayout->setGeometry(QRect(0, yPos, this->width(), this->height() * 8 / 11));
+    mTopRightLayout->setGeometry(
+        QRect(mImage->width(), yPos, this->width() - mImage->width(), this->height() * 8 / 11));
+    yPos += mMidLayout->geometry().height();
+
+    mButtonsLayout->setGeometry(QRect(0, yPos, this->width(), this->height() * 2 / 11));
+    yPos += mButtonsLayout->geometry().height();
 }
 
 

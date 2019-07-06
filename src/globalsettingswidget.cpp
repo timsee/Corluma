@@ -260,7 +260,6 @@ void GlobalSettingsWidget::resize() {
         currentY += mSpacerPixels;
     }
 
-    this->setMinimumHeight(currentY);
-    this->setMaximumHeight(currentY);
     this->parentWidget()->adjustSize();
+    this->setFixedHeight(currentY);
 }

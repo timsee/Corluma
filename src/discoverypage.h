@@ -164,14 +164,11 @@ private:
 
     /// start button of widget
     QPushButton* mStartButton;
-
-    /// layout of widget
-    QVBoxLayout* mLayout;
-
+    
     /*!
-     * \brief resizeTopMenu resize buttons at top that switch between Hue, Serial, etc.
+     * \brief resize resize buttons at top that switch between Hue, Serial, etc.
      */
-    void resizeTopMenu();
+    void resize();
 
     /*!
      * \brief changeCommTypeConnectionState change the connection state and the associated UI

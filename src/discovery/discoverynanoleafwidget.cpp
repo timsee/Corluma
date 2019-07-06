@@ -29,8 +29,7 @@ DiscoveryNanoLeafWidget::DiscoveryNanoLeafWidget(CommLayer* comm, QWidget* paren
 }
 
 
-void DiscoveryNanoLeafWidget::handleDiscovery(bool isCurrentCommType) {
-    Q_UNUSED(isCurrentCommType);
+void DiscoveryNanoLeafWidget::handleDiscovery(bool) {
     // starts discovery if its not already started
     mComm->nanoleaf()->discovery()->startDiscovery();
 

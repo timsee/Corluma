@@ -515,4 +515,9 @@ ___
 * Fixed compilation issues with the iOS build.
 * Fixed miscellaneous bugs.
 
+### **v0.16.20**
+#### The Resize Bug Fixes Update
+* Fixed resize issues preventing widgets from rendering on iOS.
+* Fixed miscellaneous bugs.
+
 

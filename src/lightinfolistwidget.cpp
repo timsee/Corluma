@@ -21,7 +21,7 @@ LightInfoListWidget::LightInfoListWidget(QWidget* parent) : QWidget(parent) {
     mTopWidget->setFontPoint(20);
 
     mScrollArea = new QScrollArea(this);
-    mScrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mScrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     QScroller::grabGesture(mScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
 
     mScrollAreaWidget = new QWidget(this);
@@ -35,19 +35,13 @@ LightInfoListWidget::LightInfoListWidget(QWidget* parent) : QWidget(parent) {
     mScrollAreaWidget->setLayout(mScrollLayout);
 
     mDeleteButton = new QPushButton("Delete", this);
-    mDeleteButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    mDeleteButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteButtonPressed(bool)));
-    mDeleteButton->setFixedWidth(int(this->width() * 0.5f));
     mDeleteButton->setEnabled(false);
     mDeleteButton->setStyleSheet("background-color:rgb(45,30,30);");
 
-    mMainLayout = new QVBoxLayout(this);
-
-    mMainLayout->addWidget(mTopWidget, 2);
-    mMainLayout->addWidget(mScrollArea, 14);
-    mMainLayout->addWidget(mDeleteButton, 1, Qt::AlignHCenter);
-
     mLastKey = "";
+    resize(true);
 }
 
 void LightInfoListWidget::updateHues(std::list<HueLight> lights) {
@@ -144,10 +138,20 @@ void LightInfoListWidget::resize(bool resizeFullWidget) {
                           int(size.width() * 0.75f),
                           int(size.height() * 0.75f));
     }
+    auto yPos = 0;
+    mTopWidget->setFixedSize(this->width(), this->height() * 2 / 20);
+    yPos += mTopWidget->height();
+
     // resize scroll area
-    mScrollAreaWidget->setFixedWidth(int(mScrollArea->width() * 0.9f));
-    QSize widgetSize(int(this->width() * 0.9f), int(this->height() / 3.66f));
-    int yPos = 0;
+    mScrollArea->setGeometry(
+        int(this->width() * 0.01), yPos, int(this->width() * 0.98), int(this->height() * 15 / 20));
+    yPos += mScrollArea->height();
+
+    mDeleteButton->setGeometry(
+        int(this->width() * 0.01), yPos, int(this->width() * 0.98), int(this->height() * 3 / 20));
+
+    QSize widgetSize(int(this->width() * 0.8f), int(this->height() / 3.66f));
+    int widgetHeightY = 0;
     // TODO: make a better system for resizing
     // draw widgets in content region
     for (auto widget : mHueWidgets) {
@@ -156,8 +160,8 @@ void LightInfoListWidget::resize(bool resizeFullWidget) {
         } else {
             widget->setFixedHeight(widgetSize.height());
         }
-        widget->setGeometry(0, yPos, widgetSize.width(), widget->height());
-        yPos += widget->height();
+        widget->setGeometry(0, widgetHeightY, widgetSize.width(), widget->height());
+        widgetHeightY += widget->height();
     }
     for (auto widget : mNanoleafWidgets) {
         if (widget->detailsHidden()) {
@@ -165,8 +169,8 @@ void LightInfoListWidget::resize(bool resizeFullWidget) {
         } else {
             widget->setFixedHeight(widgetSize.height());
         }
-        widget->setGeometry(0, yPos, widgetSize.width(), widget->height());
-        yPos += widget->height();
+        widget->setGeometry(0, widgetHeightY, widgetSize.width(), widget->height());
+        widgetHeightY += widget->height();
     }
     for (auto widget : mArduCorWidgets) {
         if (widget->detailsHidden()) {
@@ -174,11 +178,10 @@ void LightInfoListWidget::resize(bool resizeFullWidget) {
         } else {
             widget->setFixedHeight(widgetSize.height());
         }
-        widget->setGeometry(0, yPos, widgetSize.width(), widget->height());
-        yPos += widget->height();
+        widget->setGeometry(0, widgetHeightY, widgetSize.width(), widget->height());
+        widgetHeightY += widget->height();
     }
-    mDeleteButton->setFixedWidth(int(this->width() * 0.5f));
-    mScrollAreaWidget->setFixedHeight(yPos);
+    mScrollAreaWidget->setFixedSize(int(this->width() * 0.85), widgetHeightY);
 }
 
 
@@ -333,6 +336,8 @@ void LightInfoListWidget::pushIn() {
 
     this->setVisible(true);
     this->raise();
+
+    resize(true);
 }
 
 void LightInfoListWidget::pushOut() {

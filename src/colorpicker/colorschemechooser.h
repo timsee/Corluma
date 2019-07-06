@@ -41,8 +41,6 @@ protected:
     void resizeEvent(QResizeEvent*);
 
 private:
-    /// layout for the widget
-    QHBoxLayout* mLayout;
 
     /// stores the key of the currently selected group
     EColorSchemeType mCurrentKey;

@@ -159,6 +159,7 @@ void PalettePage::resize() {
     mHuePaletteScrollArea->resize();
 
     mColorPicker->setGeometry(0, yPos, this->width(), int(this->height() * 0.94));
+    mColorPicker->resize();
 }
 
 void PalettePage::showEvent(QShowEvent*) {

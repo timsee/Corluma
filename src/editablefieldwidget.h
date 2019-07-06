@@ -30,6 +30,9 @@ public:
     /// programmatically set the text
     void setText(const QString& text);
 
+    /// getter for text displayed
+    QString text() { return mText->text(); }
+
     /// true to enable editing, false to disable editing.
     void enableEditing(bool enableEditing);
 

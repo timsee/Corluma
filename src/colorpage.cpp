@@ -129,6 +129,7 @@ void ColorPage::show(const QColor& color,
 
 void ColorPage::resizeEvent(QResizeEvent*) {
     mSingleRoutineWidget->resize(QSize(this->width(), this->height()));
+    mColorPicker->resize();
 }
 
 void ColorPage::handleRoutineWidget(bool show) {

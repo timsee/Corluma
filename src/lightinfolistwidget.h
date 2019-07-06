@@ -9,10 +9,10 @@
 
 #include "comm/arducor/arducorinfowidget.h"
 #include "comm/commhue.h"
-#include "cor/objects/page.h"
-#include "cor/widgets/topwidget.h"
 #include "comm/hue/hueinfowidget.h"
 #include "comm/nanoleaf/leafcontrollerinfowidget.h"
+#include "cor/objects/page.h"
+#include "cor/widgets/topwidget.h"
 
 /*!
  * \copyright
@@ -58,7 +58,7 @@ public:
      * \param resizeFullWidget true to resize the widget itself, false to just
      * resize its contents.
      */
-    void resize(bool resizeFullWidget = true);
+    void resize(bool resizeFullWidget);
 
     /// pushes in the widget
     void pushIn();
@@ -125,9 +125,6 @@ private:
 
     /// button for deleting the currently selected widget
     QPushButton* mDeleteButton;
-
-    /// layout for widget
-    QVBoxLayout* mMainLayout;
 
     /// layout for scroll area
     QVBoxLayout* mScrollLayout;

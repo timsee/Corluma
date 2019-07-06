@@ -38,13 +38,6 @@ EditGroupPage::EditGroupPage(QWidget* parent, CommLayer* comm, GroupData* parser
 
     mRenderThread = new QTimer(this);
     connect(mRenderThread, SIGNAL(timeout()), this, SLOT(renderUI()));
-
-    mLayout = new QVBoxLayout(this);
-    mLayout->setContentsMargins(4, 4, 4, 4);
-    mLayout->setSpacing(2);
-
-    mLayout->addWidget(mTopMenu, 2);
-    mLayout->addWidget(mSimpleGroupWidget, 8);
 }
 
 void EditGroupPage::showGroup(const QString& key,
@@ -149,7 +142,13 @@ void EditGroupPage::isRoomChecked(bool checked) {
 
 
 void EditGroupPage::resize() {
-    mSimpleGroupWidget->resizeWidgets();
+   auto yPos = 0;
+   mTopMenu->setGeometry(0, yPos, this->width(), this->height() / 5);
+   yPos += mTopMenu->height();
+
+   mSimpleGroupWidget->setGeometry(0, yPos, this->width(), this->height() * 4 / 5);
+
+   mSimpleGroupWidget->resizeWidgets();
 }
 
 void EditGroupPage::paintEvent(QPaintEvent*) {

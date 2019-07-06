@@ -60,7 +60,16 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
     } else if (eButtonSize == EButtonSize::medium) {
         size = QSize(int(size.width() * 0.1f), int(size.height() * 0.1f));
     } else if (eButtonSize == EButtonSize::rectangle) {
-        size = QSize(int(size.width() * 0.22f), int(size.height() * 0.06f));
+        // extremely thin aspect ratios will likely make the rectangle still pretty thin, so account
+        // for that
+        auto ratio = float(size.height()) / size.width();
+        auto width = size.width() * 0.22f;
+        auto height = size.height() * 0.08f;
+        if (ratio > 1.3f) {
+            width = size.width() * 0.33f;
+            height = size.height() * 0.1f;
+        }
+        size = QSize(width, height);
     }
 
     int fixedWidth;
@@ -301,8 +310,8 @@ void FloatingLayout::updateDiscoveryButton(EProtocolType type, const QPixmap& pi
         default:
             break;
     }
-    for (uint32_t i = 0; i < mButtons.size(); ++i) {
-        if (mNames[i].compare(label) == 0) {
+    for (auto i = 0u; i < mButtons.size(); ++i) {
+        if (mNames[i] == label && !pixmap.isNull()) {
             int size = int(mButtons[i]->size().height() * 0.5f);
             mButtons[i]->setIcon(
                 QIcon(pixmap.scaled(size, size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)));

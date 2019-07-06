@@ -184,12 +184,13 @@ void MultiColorPicker::resizeEvent(QResizeEvent*) {
 
 void MultiColorPicker::resize() {
     auto rect = mPlaceholder->geometry();
-    mColorSchemeChooser->setGeometry(
-        rect.x(), rect.y() + rect.height() / 2, rect.width(), rect.height() / 2);
+    resizeWheel();
+
     mColorSchemeCircles->setGeometry(0,
                                      0,
                                      this->geometry().width(),
                                      this->geometry().height() - mPlaceholder->geometry().height());
 
-    resizeWheel();
+    mColorSchemeChooser->setGeometry(
+        rect.x(), rect.y() + rect.height() / 2, rect.width(), rect.height() / 2);
 }

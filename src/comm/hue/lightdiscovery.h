@@ -36,11 +36,8 @@ public:
 
     /*!
      * \brief resize size the widget programmatically
-     *
-     * \param resizeFullWidget true to resize the widget itself, false to just
-     *        resize its contents.
      */
-    void resize(bool resizeFullWidget = true);
+    void resize();
 
     /// called when the widget is shown
     void show(const hue::Bridge& bridge);
@@ -56,6 +53,9 @@ signals:
     void closePressed();
 
 protected:
+    /// called when widget resizes
+    void resizeEvent(QResizeEvent*);
+
     /*!
      * \brief paintEvent used to draw the background of the widget.
      */
@@ -103,9 +103,6 @@ private:
 
     /// widget for entering serial numbers and displaying names of discovered lights
     SearchWidget* mSearchWidget;
-
-    /// layout
-    QVBoxLayout* mLayout;
 };
 
 } // namespace hue

@@ -292,7 +292,7 @@ void SettingsPage::hideCurrentWebView() {
             return;
     }
 
-    cor::moveWidget(widget, this->size(), QPoint(0, widget->height()), QPoint(0, 0));
+    cor::moveWidget(widget, this->size(), QPoint(0, 0), QPoint(0, widget->height()));
 
     mCurrentWebView = ECorlumaWebView::none;
 }

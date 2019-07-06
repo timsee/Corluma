@@ -128,9 +128,6 @@ private:
      *        This is udpated internally by the hueDiscoveryUpdate(int) slot.
      */
     EHueDiscoveryState mHueDiscoveryState;
-
-    /// layout for widget
-    QVBoxLayout* mLayout;
 };
 
 #endif // DISCOVERYHUEWIDGET_H

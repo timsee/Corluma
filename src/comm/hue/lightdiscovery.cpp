@@ -33,11 +33,6 @@ LightDiscovery::LightDiscovery(QWidget* parent, CommLayer* comm) : QWidget(paren
     connect(mSearchWidget, SIGNAL(plusClicked()), this, SLOT(plusButtonClicked()));
     connect(mSearchWidget, SIGNAL(minusClicked()), this, SLOT(minusButtonClicked()));
 
-    mLayout = new QVBoxLayout(this);
-    mLayout->addWidget(mTopWidget, 1);
-    mLayout->addWidget(mSearchButton, 1);
-    mLayout->addWidget(mSearchWidget, 8);
-
     //------------
     // Timer
     //------------
@@ -46,16 +41,28 @@ LightDiscovery::LightDiscovery(QWidget* parent, CommLayer* comm) : QWidget(paren
 }
 
 
-void LightDiscovery::resize(bool resizeFullWidget) {
+void LightDiscovery::resize() {
     QSize size = qobject_cast<QWidget*>(this->parent())->size();
-    if (resizeFullWidget) {
-        this->setGeometry(int(size.width() * 0.125f),
-                          int(size.height() * 0.125f),
-                          int(size.width() * 0.75f),
-                          int(size.height() * 0.75f));
-    }
+    this->setGeometry(int(size.width() * 0.125f),
+                      int(size.height() * 0.125f),
+                      int(size.width() * 0.75f),
+                      int(size.height() * 0.75f));
+    
+    int yPos = 0;
+    mTopWidget->setGeometry(0, yPos, this->width(), this->height() * 0.1);
+    yPos += mTopWidget->height();
+    
+    mSearchButton->setGeometry(0, yPos, this->width(), this->height() * 0.1);
+    yPos += mSearchButton->height();
+    
+    mSearchWidget->setGeometry(0, yPos, this->width(), this->height() * 0.8);
+    yPos += mSearchWidget->height();
 }
 
+void LightDiscovery::resizeEvent(QResizeEvent*) {
+    resize();
+}
+    
 void LightDiscovery::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
@@ -117,7 +124,7 @@ void LightDiscovery::discoveryRoutine() {
 void LightDiscovery::searchButtonPressed(bool) {
     mComm->hue()->searchForNewLights(mBridge, mSearchWidget->searchingFor());
 }
-
+ 
 // ----------------------------
 // Plus/Minus/Line Edit
 // ----------------------------

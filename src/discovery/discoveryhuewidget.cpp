@@ -59,11 +59,6 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer* comm, MainWindow* mainWindow, 
     mBridgeSchedulesWidget->setVisible(false);
     mBridgeSchedulesWidget->isOpen(false);
     connect(mBridgeSchedulesWidget, SIGNAL(closePressed()), this, SLOT(schedulesClosePressed()));
-
-    mLayout = new QVBoxLayout;
-    mLayout->addWidget(mLabel, 4);
-    mLayout->addWidget(mListWidget, 8);
-    setLayout(mLayout);
 }
 
 void DiscoveryHueWidget::hueDiscoveryUpdate(EHueDiscoveryState newState) {
@@ -109,8 +104,7 @@ void DiscoveryHueWidget::hueDiscoveryUpdate(EHueDiscoveryState newState) {
     }
 }
 
-void DiscoveryHueWidget::handleDiscovery(bool isCurrentCommType) {
-    Q_UNUSED(isCurrentCommType);
+void DiscoveryHueWidget::handleDiscovery(bool) {
     mComm->hue()->discovery()->startDiscovery();
     hueDiscoveryUpdate(mComm->hue()->discovery()->state());
 
@@ -159,9 +153,9 @@ void DiscoveryHueWidget::updateBridgeGUI() {
                     this,
                     SLOT(deleteBridgeFromAppData(hue::Bridge)));
             mListWidget->insertWidget(widget);
+            resize();
         }
     }
-    resize();
 }
 
 
@@ -257,16 +251,19 @@ void DiscoveryHueWidget::bridgePressed(const QString& key) {
 }
 
 void DiscoveryHueWidget::resize() {
-    mHueLightDiscovery->resize();
+    int yPos = 0;
+    mLabel->setGeometry(0, 0, this->width(), this->height() * 0.333);
+    yPos += mLabel->height();
+    mListWidget->setGeometry(0, yPos, this->width(), this->height() * 0.666);
 
-    QSize widgetSize(mListWidget->width(), int(this->height() / 1.6f));
+    QSize widgetSize(this->width(), int(this->height() / 1.6f));
     int yHeight = 0;
     for (auto widget : mListWidget->widgets()) {
         widget->setFixedSize(widgetSize);
         widget->setVisible(true);
         yHeight += widgetSize.height();
     }
-    mListWidget->setFixedHeight(yHeight);
+    mHueLightDiscovery->resize();
 }
 
 void DiscoveryHueWidget::resizeEvent(QResizeEvent*) {
@@ -277,6 +274,7 @@ void DiscoveryHueWidget::resizeEvent(QResizeEvent*) {
     if (mBridgeGroupsWidget->isOpen()) {
         mBridgeGroupsWidget->resize();
     }
+    resize();
 }
 
 void DiscoveryHueWidget::deleteBridgeFromAppData(hue::Bridge bridge) {

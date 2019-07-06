@@ -18,24 +18,19 @@ ColorSchemeChooser::ColorSchemeChooser(QWidget* parent) : QWidget(parent) {
            {EColorSchemeType::triad, ":images/schemes/triad.png"},
            {EColorSchemeType::compound, ":images/schemes/compound.png"}};
 
-    mLayout = new QHBoxLayout;
-    mLayout->setContentsMargins(0, 0, 0, 0);
-    mLayout->setSpacing(0);
     for (const auto& scheme : nameResourcePairs) {
         auto button = new ColorSchemeButton(scheme.first, scheme.second, this);
         connect(button,
                 SIGNAL(clicked(EColorSchemeType, bool)),
                 this,
                 SLOT(schemeClicked(EColorSchemeType, bool)));
-        button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         mButtons.push_back(button);
-        mLayout->addWidget(button);
         if (button->key() == EColorSchemeType::similar) {
             mCurrentKey = button->key();
             button->select(true);
         }
     }
-    this->setLayout(mLayout);
 }
 
 void ColorSchemeChooser::schemeClicked(EColorSchemeType key, bool) {
@@ -62,8 +57,11 @@ void ColorSchemeChooser::enableButton(EColorSchemeType key, bool enable) {
 }
 
 void ColorSchemeChooser::resizeEvent(QResizeEvent*) {
+    auto xPos = 0;
     for (auto button : mButtons) {
-        button->resize();
+        auto size = this->width() / mButtons.size();
+        button->setGeometry(xPos, 0, size, this->height());
+        xPos += button->width();
     }
 }
 

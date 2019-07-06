@@ -46,16 +46,16 @@ LeftHandMenu::LeftHandMenu(cor::DeviceList* devices,
     mScrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     QScroller::grabGesture(mScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
     mScrollArea->setWidget(mWidget);
+    mScrollArea->setFixedHeight(this->height() / 2);
     mScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     mScrollArea->horizontalScrollBar()->setEnabled(false);
-
 
     // --------------
     // Setup Main Palette
     // -------------
     mMainPalette = new cor::LightVectorWidget(6, 2, true, this);
     mMainPalette->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mMainPalette->setFixedHeight(this->height() * 0.1);
+    mMainPalette->setFixedHeight(int(this->height() * 0.1));
     mMainPalette->setStyleSheet("background-color:rgb(33,32,32);");
 
     //---------------
@@ -118,7 +118,7 @@ void LeftHandMenu::resize() {
     if (mAlwaysOpen) {
         this->setGeometry(0u, this->pos().y(), width, mParentSize.height());
     } else if (mIsIn) {
-        this->setGeometry(this->pos().x(), this->pos().y(), width, mParentSize.height());
+        this->setGeometry(0u, this->pos().y(), width, mParentSize.height());
     } else {
         this->setGeometry(-width, this->pos().y(), width, mParentSize.height());
     }
@@ -157,11 +157,12 @@ void LeftHandMenu::resize() {
 }
 
 void LeftHandMenu::pushIn() {
+    mIsIn = true;
+    resize();
     updateLights();
     this->raise();
     cor::moveWidget(this, this->size(), this->pos(), QPoint(0u, 0u));
     mRenderThread->start(333);
-    mIsIn = true;
 }
 
 void LeftHandMenu::pushOut() {
@@ -343,7 +344,6 @@ int LeftHandMenu::resizeRoomsWidgets() {
     std::sort(mRoomWidgets.begin(), mRoomWidgets.end(), [](ListRoomWidget* a, ListRoomWidget* b) {
         return a->key() < b->key();
     });
-
     for (auto widget : mRoomWidgets) {
         widget->setVisible(true);
         widget->setGeometry(0, yPos, this->width(), widget->height());

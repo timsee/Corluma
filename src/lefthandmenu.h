@@ -115,7 +115,7 @@ private:
      */
     ListRoomWidget* initRoomsWidget(const cor::Group& group, const QString& key);
 
-    /// resize teh room widgets
+    /// resize the room widgets
     int resizeRoomsWidgets();
 
     /// update the lights in the room widgets

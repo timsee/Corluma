@@ -24,6 +24,8 @@ ListRoomWidget::ListRoomWidget(const cor::Group& group,
       mGroupData{groups},
       mListLayout(listType),
       mGroup{group} {
+    this->setFixedWidth(parent->width());
+
     if (type == cor::EWidgetType::condensed) {
         mDropdownTopWidget
             = new DropdownTopWidget(group.name(), cor::EWidgetType::condensed, true, this);
@@ -187,7 +189,6 @@ int ListRoomWidget::widgetHeightSum() {
     if (mDropdownTopWidget->showButtons() && checkIfShowWidgets()) {
         height += mListLayout.overallSize().height();
     }
-
     return height;
 }
 
@@ -207,6 +208,8 @@ void ListRoomWidget::setShowButtons(bool show) {
                 showDevices(mComm->lightListFromGroup(group));
             }
         }
+    } else {
+        showDevices(mComm->lightListFromGroup(mGroup));
     }
 
     if (!subGroupOpen) {
@@ -431,8 +434,8 @@ bool ListRoomWidget::checkIfShowWidgets() {
 
 std::pair<uint32_t, uint32_t> ListRoomWidget::countCheckedAndReachableDevices(
     const cor::Group& group) {
-    uint32_t reachableCount = 0;
-    uint32_t checkedCount = 0;
+    std::uint32_t reachableCount = 0;
+    std::uint32_t checkedCount = 0;
     for (const auto& lightID : group.lights) {
         const auto& device = mComm->lightByID(lightID);
         if (device.isValid()) {

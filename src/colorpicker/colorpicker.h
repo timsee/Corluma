@@ -141,16 +141,6 @@ protected:
      * ColorGrid get placed over  this mPlaceholder widget.
      */
     QWidget* mPlaceholder;
-
-private:
-    //------------------------------
-    // Layout-Specific
-    //------------------------------
-
-    /*!
-     * \brief fullLayout layout used when in the full layout mode.
-     */
-    QVBoxLayout* mFullLayout;
 };
 
 #endif // COLORPICKER_H
