@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.15.2</span>
+   &#160;<span id="projectnumber">v0.17.0</span>
    </div>
   </td>
  </tr>
@@ -49,7 +49,7 @@ $(function() {
 <table class="directory">
   <tr class="even"><td class="entry"><a class="el" href="class_color_picker.html#a144f8fab5abaca49220ee5fe0f2f1db9">ambientUpdate</a>(std::uint32_t, std::uint32_t)</td><td class="entry"><a class="el" href="class_color_picker.html">ColorPicker</a></td><td class="entry"><span class="mlabel">signal</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_color_picker.html#aa34611c7c7d015abbc30b49640920f58">brightnessUpdate</a>(uint32_t)</td><td class="entry"><a class="el" href="class_color_picker.html">ColorPicker</a></td><td class="entry"><span class="mlabel">signal</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_single_color_picker.html#aa2741dba06e6955586790c7da5d97ad9">changeLayout</a>(EColorPickerMode layout)</td><td class="entry"><a class="el" href="class_single_color_picker.html">SingleColorPicker</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_single_color_picker.html#aa907fb0dc52d8fa25dc53a4023b861c4">changeMode</a>(ESingleColorPickerMode mode)</td><td class="entry"><a class="el" href="class_single_color_picker.html">SingleColorPicker</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="class_color_picker.html#aa557df7fe1269858870ae69b09831531">chooseAmbient</a>(std::uint32_t temperature, std::uint32_t brightness)</td><td class="entry"><a class="el" href="class_color_picker.html">ColorPicker</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_color_picker.html#a665511c39e746580eab497d6e85c2d47">chooseBrightness</a>(uint32_t brightness)</td><td class="entry"><a class="el" href="class_color_picker.html">ColorPicker</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_color_picker.html#a336a89af0bcb9fcd8c40ed2195ff17d8">chooseColor</a>(const QColor &amp;color)</td><td class="entry"><a class="el" href="class_color_picker.html">ColorPicker</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
@@ -59,7 +59,7 @@ $(function() {
   <tr><td class="entry"><a class="el" href="class_single_color_picker.html#ae810bf06a9859ecda08cb711b839a865">enable</a>(bool shouldEnable, EColorPickerType bestType) override</td><td class="entry"><a class="el" href="class_single_color_picker.html">SingleColorPicker</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_color_picker.html#a067e2defa7a0d6d42266aee9e3e8471d">mBestPossibleType</a></td><td class="entry"><a class="el" href="class_color_picker.html">ColorPicker</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_color_picker.html#aaaccf6ef85757f607ba43285af1c4ad9">mColorWheel</a></td><td class="entry"><a class="el" href="class_color_picker.html">ColorPicker</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_single_color_picker.html#a3e0ffc9d6292f9d1dcc06a9c0b06790a">mode</a>() const noexcept</td><td class="entry"><a class="el" href="class_single_color_picker.html">SingleColorPicker</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_single_color_picker.html#a5ab8cbda02a56aa86895c79cd3af57ba">mode</a>() const noexcept</td><td class="entry"><a class="el" href="class_single_color_picker.html">SingleColorPicker</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_single_color_picker.html#a16c6544406b097e3e99b9e8775d2afcd">mouseMoveEvent</a>(QMouseEvent *event) override</td><td class="entry"><a class="el" href="class_single_color_picker.html">SingleColorPicker</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_single_color_picker.html#a968f246f7f1186d1f7756714c877a406">mousePressEvent</a>(QMouseEvent *event) override</td><td class="entry"><a class="el" href="class_single_color_picker.html">SingleColorPicker</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_single_color_picker.html#a289f5a77183fe9efe677341acbac4947">mouseReleaseEvent</a>(QMouseEvent *event) override</td><td class="entry"><a class="el" href="class_single_color_picker.html">SingleColorPicker</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
@@ -68,8 +68,9 @@ $(function() {
   <tr class="even"><td class="entry"><a class="el" href="class_single_color_picker.html#a626e17ddac5bf9e17272b67483283c5c">resizeEvent</a>(QResizeEvent *) override</td><td class="entry"><a class="el" href="class_single_color_picker.html">SingleColorPicker</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_color_picker.html#aa86347f5fff5a80fc7d6b10cbd17f3bb">resizeWheel</a>()</td><td class="entry"><a class="el" href="class_color_picker.html">ColorPicker</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_single_color_picker.html#ade6eee4eaeabf29ebf0ca52a2df8df86">SingleColorPicker</a>(QWidget *parent)</td><td class="entry"><a class="el" href="class_single_color_picker.html">SingleColorPicker</a></td><td class="entry"><span class="mlabel">explicit</span></td></tr>
-  <tr><td class="entry"><a class="el" href="class_single_color_picker.html#ae792efcf5518ccb95fdd15904248a63b">updateColorStates</a>(const QColor &amp;mainColor, uint32_t brightness)</td><td class="entry"><a class="el" href="class_single_color_picker.html">SingleColorPicker</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_color_picker.html#a4fa20ead7eba29efc956c043c3dd0cd3">~ColorPicker</a>()=default</td><td class="entry"><a class="el" href="class_color_picker.html">ColorPicker</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_single_color_picker.html#a3d5f198311d55871070354442950d371">updateBrightness</a>(std::uint32_t brightness)</td><td class="entry"><a class="el" href="class_single_color_picker.html">SingleColorPicker</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_single_color_picker.html#ae792efcf5518ccb95fdd15904248a63b">updateColorStates</a>(const QColor &amp;mainColor, uint32_t brightness)</td><td class="entry"><a class="el" href="class_single_color_picker.html">SingleColorPicker</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_color_picker.html#a4fa20ead7eba29efc956c043c3dd0cd3">~ColorPicker</a>()=default</td><td class="entry"><a class="el" href="class_color_picker.html">ColorPicker</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
 
 <hr>

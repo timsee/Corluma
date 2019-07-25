@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.15.2</span>
+   &#160;<span id="projectnumber">v0.17.0</span>
    </div>
   </td>
  </tr>
@@ -94,13 +94,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_wheel.html#a3696e9fac45b01856bc870e21ba40484">enable</a> (bool shouldEnable)</td></tr>
 <tr class="memdesc:a3696e9fac45b01856bc870e21ba40484"><td class="mdescLeft">&#160;</td><td class="mdescRight">enable or disable <br /></td></tr>
 <tr class="separator:a3696e9fac45b01856bc870e21ba40484"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a11897edf28b0bcb2472cf54305049a9a"><td class="memItemLeft" align="right" valign="top"><a id="a11897edf28b0bcb2472cf54305049a9a"></a>
-QImage *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_wheel.html#a11897edf28b0bcb2472cf54305049a9a">image</a> ()</td></tr>
-<tr class="memdesc:a11897edf28b0bcb2472cf54305049a9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for image that contains the color wheel. <br /></td></tr>
-<tr class="separator:a11897edf28b0bcb2472cf54305049a9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abd4485572efdd29954c49a1d229f5b2e"><td class="memItemLeft" align="right" valign="top">QPointF&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_wheel.html#abd4485572efdd29954c49a1d229f5b2e">findColorPixelLocation</a> (const QColor &amp;color)</td></tr>
-<tr class="memdesc:abd4485572efdd29954c49a1d229f5b2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">findColorPixelLocation find the pixel for a color in the color wheel. Useful for programmatically setting the locations of assets overlaid on the color wheel  <a href="#abd4485572efdd29954c49a1d229f5b2e">More...</a><br /></td></tr>
-<tr class="separator:abd4485572efdd29954c49a1d229f5b2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c90f46b286c7e305c67e4a0a2179ce5"><td class="memItemLeft" align="right" valign="top">cor::CirclePoint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_wheel.html#a1c90f46b286c7e305c67e4a0a2179ce5">findPixelByColor</a> (const QColor &amp;color)</td></tr>
+<tr class="memdesc:a1c90f46b286c7e305c67e4a0a2179ce5"><td class="mdescLeft">&#160;</td><td class="mdescRight">findPixelByColor find the pixel for a color in the color wheel. Useful for programmatically setting the locations of assets overlaid on the color wheel  <a href="#a1c90f46b286c7e305c67e4a0a2179ce5">More...</a><br /></td></tr>
+<tr class="separator:a1c90f46b286c7e305c67e4a0a2179ce5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3cc58470e3cb326567b923ceec837610"><td class="memItemLeft" align="right" valign="top">QColor&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_wheel.html#a3cc58470e3cb326567b923ceec837610">findColorByPixel</a> (const cor::CirclePoint &amp;point)</td></tr>
+<tr class="memdesc:a3cc58470e3cb326567b923ceec837610"><td class="mdescLeft">&#160;</td><td class="mdescRight">findColorByPixel converts a normalized cor::CirclePoint to the color it represents  <a href="#a3cc58470e3cb326567b923ceec837610">More...</a><br /></td></tr>
+<tr class="separator:a3cc58470e3cb326567b923ceec837610"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad3473f85fdc7ec18445d52ce61e4976e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_wheel.html#ad3473f85fdc7ec18445d52ce61e4976e">checkIfPointIsOverWheel</a> (const QPointF &amp;point)</td></tr>
 <tr class="memdesc:ad3473f85fdc7ec18445d52ce61e4976e"><td class="mdescLeft">&#160;</td><td class="mdescRight">checkIfPointIsOverWheel checcks if a point in non-normalized space is directly over the color wheel. This check looks in a circular region and does not include corners from the bounding box.  <a href="#ad3473f85fdc7ec18445d52ce61e4976e">More...</a><br /></td></tr>
 <tr class="separator:ad3473f85fdc7ec18445d52ce61e4976e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -157,14 +156,39 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a id="abd4485572efdd29954c49a1d229f5b2e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abd4485572efdd29954c49a1d229f5b2e">&#9670;&nbsp;</a></span>findColorPixelLocation()</h2>
+<a id="a3cc58470e3cb326567b923ceec837610"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3cc58470e3cb326567b923ceec837610">&#9670;&nbsp;</a></span>findColorByPixel()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">QPointF ColorWheel::findColorPixelLocation </td>
+          <td class="memname">QColor ColorWheel::findColorByPixel </td>
+          <td>(</td>
+          <td class="paramtype">const cor::CirclePoint &amp;&#160;</td>
+          <td class="paramname"><em>point</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">point</td><td>a normalized point. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a color from the wheel on that normalize point. </dd></dl>
+
+</div>
+</div>
+<a id="a1c90f46b286c7e305c67e4a0a2179ce5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c90f46b286c7e305c67e4a0a2179ce5">&#9670;&nbsp;</a></span>findPixelByColor()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">cor::CirclePoint ColorWheel::findPixelByColor </td>
           <td>(</td>
           <td class="paramtype">const QColor &amp;&#160;</td>
           <td class="paramname"><em>color</em></td><td>)</td>

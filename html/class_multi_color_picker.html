@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.15.2</span>
+   &#160;<span id="projectnumber">v0.17.0</span>
    </div>
   </td>
  </tr>
@@ -61,15 +61,25 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a181c58d2e5b53752fdad707ac63bf124"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_multi_color_picker.html#a181c58d2e5b53752fdad707ac63bf124">MultiColorPicker</a> (QWidget *parent)</td></tr>
 <tr class="memdesc:a181c58d2e5b53752fdad707ac63bf124"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#a181c58d2e5b53752fdad707ac63bf124">More...</a><br /></td></tr>
 <tr class="separator:a181c58d2e5b53752fdad707ac63bf124"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abca8be4cb04860b0f025e2570b5b7795"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_multi_color_picker.html#abca8be4cb04860b0f025e2570b5b7795">updateColorCount</a> (std::size_t count)</td></tr>
-<tr class="memdesc:abca8be4cb04860b0f025e2570b5b7795"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateColorCount update the count of the colors selected  <a href="#abca8be4cb04860b0f025e2570b5b7795">More...</a><br /></td></tr>
-<tr class="separator:abca8be4cb04860b0f025e2570b5b7795"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e473a7183d5144a62c8cedb1212925a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_multi_color_picker.html#a9e473a7183d5144a62c8cedb1212925a">updateColorStates</a> (const std::vector&lt; QColor &gt; &amp;colorSchemes, uint32_t brightness)</td></tr>
-<tr class="memdesc:a9e473a7183d5144a62c8cedb1212925a"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateColorStates update the layouts at the bottom of the <a class="el" href="class_color_picker.html" title="The ColorPicker class is a GUI object designed to give the user ability to choose RGB values in a var...">ColorPicker</a> with new values from the RGB devices  <a href="#a9e473a7183d5144a62c8cedb1212925a">More...</a><br /></td></tr>
-<tr class="separator:a9e473a7183d5144a62c8cedb1212925a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade8ade498b86790072228e8b8f17bf3f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_multi_color_picker.html#ade8ade498b86790072228e8b8f17bf3f">enable</a> (bool shouldEnable, EColorPickerType bestType) override</td></tr>
 <tr class="memdesc:ade8ade498b86790072228e8b8f17bf3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">enable enables/disables the color picker. If the picker wheel is disabled, its faded out and mouse events don't work. If its enabled, its not faded out and um, mouse events do work.  <a href="#ade8ade498b86790072228e8b8f17bf3f">More...</a><br /></td></tr>
 <tr class="separator:ade8ade498b86790072228e8b8f17bf3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e20479bfdb1f397eb14ea479e8db465"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_multi_color_picker.html#a6e20479bfdb1f397eb14ea479e8db465">changeMode</a> (EMultiColorPickerMode <a class="el" href="class_multi_color_picker.html#ae833c945cc687f75ff99ce9a74b1fbaa">mode</a>, std::uint32_t brightness)</td></tr>
+<tr class="memdesc:a6e20479bfdb1f397eb14ea479e8db465"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeMode sets the layout using the available layout modes.  <a href="#a6e20479bfdb1f397eb14ea479e8db465">More...</a><br /></td></tr>
+<tr class="separator:a6e20479bfdb1f397eb14ea479e8db465"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae833c945cc687f75ff99ce9a74b1fbaa"><td class="memItemLeft" align="right" valign="top"><a id="ae833c945cc687f75ff99ce9a74b1fbaa"></a>
+EMultiColorPickerMode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_multi_color_picker.html#ae833c945cc687f75ff99ce9a74b1fbaa">mode</a> () const noexcept</td></tr>
+<tr class="memdesc:ae833c945cc687f75ff99ce9a74b1fbaa"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for current mode of colorpicker <br /></td></tr>
+<tr class="separator:ae833c945cc687f75ff99ce9a74b1fbaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abca8be4cb04860b0f025e2570b5b7795"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_multi_color_picker.html#abca8be4cb04860b0f025e2570b5b7795">updateColorCount</a> (std::size_t count)</td></tr>
+<tr class="memdesc:abca8be4cb04860b0f025e2570b5b7795"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateColorCount update the count of the colors selected  <a href="#abca8be4cb04860b0f025e2570b5b7795">More...</a><br /></td></tr>
+<tr class="separator:abca8be4cb04860b0f025e2570b5b7795"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38197273f2e4e0506c68b4bf584b5594"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_multi_color_picker.html#a38197273f2e4e0506c68b4bf584b5594">updateBrightness</a> (std::uint32_t brightness)</td></tr>
+<tr class="memdesc:a38197273f2e4e0506c68b4bf584b5594"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateBrightness updates the brighness of the multi color picker's wheel  <a href="#a38197273f2e4e0506c68b4bf584b5594">More...</a><br /></td></tr>
+<tr class="separator:a38197273f2e4e0506c68b4bf584b5594"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e473a7183d5144a62c8cedb1212925a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_multi_color_picker.html#a9e473a7183d5144a62c8cedb1212925a">updateColorStates</a> (const std::vector&lt; QColor &gt; &amp;colorSchemes, uint32_t brightness)</td></tr>
+<tr class="memdesc:a9e473a7183d5144a62c8cedb1212925a"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateColorStates update the layouts at the bottom of the <a class="el" href="class_color_picker.html" title="The ColorPicker class is a GUI object designed to give the user ability to choose RGB values in a var...">ColorPicker</a> with new values from the RGB devices  <a href="#a9e473a7183d5144a62c8cedb1212925a">More...</a><br /></td></tr>
+<tr class="separator:a9e473a7183d5144a62c8cedb1212925a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a97ebd414fe29f0d49c5c6b68d72c13ec"><td class="memItemLeft" align="right" valign="top"><a id="a97ebd414fe29f0d49c5c6b68d72c13ec"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_multi_color_picker.html#a97ebd414fe29f0d49c5c6b68d72c13ec">resize</a> ()</td></tr>
 <tr class="memdesc:a97ebd414fe29f0d49c5c6b68d72c13ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">programmatically resize <br /></td></tr>
@@ -141,9 +151,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <a class="el" href="class_color_wheel.html">ColorWheel</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#aaaccf6ef85757f607ba43285af1c4ad9">mColorWheel</a></td></tr>
 <tr class="memdesc:aaaccf6ef85757f607ba43285af1c4ad9 inherit pro_attribs_class_color_picker"><td class="mdescLeft">&#160;</td><td class="mdescRight">mColorWheel the color wheel for the color picker. Uses an image asset, which needs to be included in the project. Used to pick the color with a single mouse event instead of setting 3 sliders. <br /></td></tr>
 <tr class="separator:aaaccf6ef85757f607ba43285af1c4ad9 inherit pro_attribs_class_color_picker"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a067e2defa7a0d6d42266aee9e3e8471d inherit pro_attribs_class_color_picker"><td class="memItemLeft" align="right" valign="top"><a id="a067e2defa7a0d6d42266aee9e3e8471d"></a>
-EColorPickerType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a067e2defa7a0d6d42266aee9e3e8471d">mBestPossibleType</a></td></tr>
-<tr class="memdesc:a067e2defa7a0d6d42266aee9e3e8471d inherit pro_attribs_class_color_picker"><td class="mdescLeft">&#160;</td><td class="mdescRight">stores the best possible type of colorpicker for situations where only white or ambient lights are connected and RGB colors can't be used. <br /></td></tr>
+<tr class="memitem:a067e2defa7a0d6d42266aee9e3e8471d inherit pro_attribs_class_color_picker"><td class="memItemLeft" align="right" valign="top">EColorPickerType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a067e2defa7a0d6d42266aee9e3e8471d">mBestPossibleType</a></td></tr>
 <tr class="separator:a067e2defa7a0d6d42266aee9e3e8471d inherit pro_attribs_class_color_picker"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8de270035af7070131544b583e2ece6a inherit pro_attribs_class_color_picker"><td class="memItemLeft" align="right" valign="top"><a id="a8de270035af7070131544b583e2ece6a"></a>
 QWidget *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a8de270035af7070131544b583e2ece6a">mPlaceholder</a></td></tr>
@@ -181,6 +189,41 @@ QWidget *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a6e20479bfdb1f397eb14ea479e8db465"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e20479bfdb1f397eb14ea479e8db465">&#9670;&nbsp;</a></span>changeMode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MultiColorPicker::changeMode </td>
+          <td>(</td>
+          <td class="paramtype">EMultiColorPickerMode&#160;</td>
+          <td class="paramname"><em>mode</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::uint32_t&#160;</td>
+          <td class="paramname"><em>brightness</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mode</td><td>the mode you want to use. </td></tr>
+    <tr><td class="paramname">brightness</td><td>the brightness of the app globally </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="ade8ade498b86790072228e8b8f17bf3f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ade8ade498b86790072228e8b8f17bf3f">&#9670;&nbsp;</a></span>enable()</h2>
 
@@ -222,6 +265,30 @@ QWidget *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 </dl>
 
 <p>Implements <a class="el" href="class_color_picker.html#a4590d89c2f351c67418a6900e9d2b3f0">ColorPicker</a>.</p>
+
+</div>
+</div>
+<a id="a38197273f2e4e0506c68b4bf584b5594"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a38197273f2e4e0506c68b4bf584b5594">&#9670;&nbsp;</a></span>updateBrightness()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MultiColorPicker::updateBrightness </td>
+          <td>(</td>
+          <td class="paramtype">std::uint32_t&#160;</td>
+          <td class="paramname"><em>brightness</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">brightness</td><td>new brightness for the multi color picker </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

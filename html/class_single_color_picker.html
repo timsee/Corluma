@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.15.2</span>
+   &#160;<span id="projectnumber">v0.17.0</span>
    </div>
   </td>
  </tr>
@@ -61,16 +61,20 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ade6eee4eaeabf29ebf0ca52a2df8df86"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_single_color_picker.html#ade6eee4eaeabf29ebf0ca52a2df8df86">SingleColorPicker</a> (QWidget *parent)</td></tr>
 <tr class="memdesc:ade6eee4eaeabf29ebf0ca52a2df8df86"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#ade6eee4eaeabf29ebf0ca52a2df8df86">More...</a><br /></td></tr>
 <tr class="separator:ade6eee4eaeabf29ebf0ca52a2df8df86"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa2741dba06e6955586790c7da5d97ad9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_single_color_picker.html#aa2741dba06e6955586790c7da5d97ad9">changeLayout</a> (EColorPickerMode layout)</td></tr>
-<tr class="memdesc:aa2741dba06e6955586790c7da5d97ad9"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeLayout sets the layout using the available layout modes. This allows you to hide the sliders or color wheel, and change how things are ordered so they can fit more window sizes. This should be called only once as Qt doesn't seem to like it when you change between horizontal and vertical layouts.  <a href="#aa2741dba06e6955586790c7da5d97ad9">More...</a><br /></td></tr>
-<tr class="separator:aa2741dba06e6955586790c7da5d97ad9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae810bf06a9859ecda08cb711b839a865"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_single_color_picker.html#ae810bf06a9859ecda08cb711b839a865">enable</a> (bool shouldEnable, EColorPickerType bestType) override</td></tr>
 <tr class="memdesc:ae810bf06a9859ecda08cb711b839a865"><td class="mdescLeft">&#160;</td><td class="mdescRight">enable enables/disables the color picker. If the picker wheel is disabled, its faded out and mouse events don't work. If its enabled, its not faded out and um, mouse events do work.  <a href="#ae810bf06a9859ecda08cb711b839a865">More...</a><br /></td></tr>
 <tr class="separator:ae810bf06a9859ecda08cb711b839a865"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e0ffc9d6292f9d1dcc06a9c0b06790a"><td class="memItemLeft" align="right" valign="top"><a id="a3e0ffc9d6292f9d1dcc06a9c0b06790a"></a>
-EColorPickerMode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_single_color_picker.html#a3e0ffc9d6292f9d1dcc06a9c0b06790a">mode</a> () const noexcept</td></tr>
-<tr class="memdesc:a3e0ffc9d6292f9d1dcc06a9c0b06790a"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for current mode of colorpicker <br /></td></tr>
-<tr class="separator:a3e0ffc9d6292f9d1dcc06a9c0b06790a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa907fb0dc52d8fa25dc53a4023b861c4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_single_color_picker.html#aa907fb0dc52d8fa25dc53a4023b861c4">changeMode</a> (ESingleColorPickerMode <a class="el" href="class_single_color_picker.html#a5ab8cbda02a56aa86895c79cd3af57ba">mode</a>)</td></tr>
+<tr class="memdesc:aa907fb0dc52d8fa25dc53a4023b861c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeMode sets the layout using the available layout modes.  <a href="#aa907fb0dc52d8fa25dc53a4023b861c4">More...</a><br /></td></tr>
+<tr class="separator:aa907fb0dc52d8fa25dc53a4023b861c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ab8cbda02a56aa86895c79cd3af57ba"><td class="memItemLeft" align="right" valign="top"><a id="a5ab8cbda02a56aa86895c79cd3af57ba"></a>
+ESingleColorPickerMode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_single_color_picker.html#a5ab8cbda02a56aa86895c79cd3af57ba">mode</a> () const noexcept</td></tr>
+<tr class="memdesc:a5ab8cbda02a56aa86895c79cd3af57ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for current mode of colorpicker <br /></td></tr>
+<tr class="separator:a5ab8cbda02a56aa86895c79cd3af57ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d5f198311d55871070354442950d371"><td class="memItemLeft" align="right" valign="top"><a id="a3d5f198311d55871070354442950d371"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_single_color_picker.html#a3d5f198311d55871070354442950d371">updateBrightness</a> (std::uint32_t brightness)</td></tr>
+<tr class="memdesc:a3d5f198311d55871070354442950d371"><td class="mdescLeft">&#160;</td><td class="mdescRight">updates the brightness programtically, but does not signal the change <br /></td></tr>
+<tr class="separator:a3d5f198311d55871070354442950d371"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae792efcf5518ccb95fdd15904248a63b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_single_color_picker.html#ae792efcf5518ccb95fdd15904248a63b">updateColorStates</a> (const QColor &amp;mainColor, uint32_t brightness)</td></tr>
 <tr class="memdesc:ae792efcf5518ccb95fdd15904248a63b"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateColorStates update the layouts at the bottom of the <a class="el" href="class_color_picker.html" title="The ColorPicker class is a GUI object designed to give the user ability to choose RGB values in a var...">ColorPicker</a> with new values from the RGB devices  <a href="#ae792efcf5518ccb95fdd15904248a63b">More...</a><br /></td></tr>
 <tr class="separator:ae792efcf5518ccb95fdd15904248a63b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -149,9 +153,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <a class="el" href="class_color_wheel.html">ColorWheel</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#aaaccf6ef85757f607ba43285af1c4ad9">mColorWheel</a></td></tr>
 <tr class="memdesc:aaaccf6ef85757f607ba43285af1c4ad9 inherit pro_attribs_class_color_picker"><td class="mdescLeft">&#160;</td><td class="mdescRight">mColorWheel the color wheel for the color picker. Uses an image asset, which needs to be included in the project. Used to pick the color with a single mouse event instead of setting 3 sliders. <br /></td></tr>
 <tr class="separator:aaaccf6ef85757f607ba43285af1c4ad9 inherit pro_attribs_class_color_picker"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a067e2defa7a0d6d42266aee9e3e8471d inherit pro_attribs_class_color_picker"><td class="memItemLeft" align="right" valign="top"><a id="a067e2defa7a0d6d42266aee9e3e8471d"></a>
-EColorPickerType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a067e2defa7a0d6d42266aee9e3e8471d">mBestPossibleType</a></td></tr>
-<tr class="memdesc:a067e2defa7a0d6d42266aee9e3e8471d inherit pro_attribs_class_color_picker"><td class="mdescLeft">&#160;</td><td class="mdescRight">stores the best possible type of colorpicker for situations where only white or ambient lights are connected and RGB colors can't be used. <br /></td></tr>
+<tr class="memitem:a067e2defa7a0d6d42266aee9e3e8471d inherit pro_attribs_class_color_picker"><td class="memItemLeft" align="right" valign="top">EColorPickerType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a067e2defa7a0d6d42266aee9e3e8471d">mBestPossibleType</a></td></tr>
 <tr class="separator:a067e2defa7a0d6d42266aee9e3e8471d inherit pro_attribs_class_color_picker"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8de270035af7070131544b583e2ece6a inherit pro_attribs_class_color_picker"><td class="memItemLeft" align="right" valign="top"><a id="a8de270035af7070131544b583e2ece6a"></a>
 QWidget *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_picker.html#a8de270035af7070131544b583e2ece6a">mPlaceholder</a></td></tr>
@@ -187,17 +189,17 @@ QWidget *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="aa2741dba06e6955586790c7da5d97ad9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa2741dba06e6955586790c7da5d97ad9">&#9670;&nbsp;</a></span>changeLayout()</h2>
+<a id="aa907fb0dc52d8fa25dc53a4023b861c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa907fb0dc52d8fa25dc53a4023b861c4">&#9670;&nbsp;</a></span>changeMode()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void SingleColorPicker::changeLayout </td>
+          <td class="memname">void SingleColorPicker::changeMode </td>
           <td>(</td>
-          <td class="paramtype">EColorPickerMode&#160;</td>
-          <td class="paramname"><em>layout</em></td><td>)</td>
+          <td class="paramtype">ESingleColorPickerMode&#160;</td>
+          <td class="paramname"><em>mode</em></td><td>)</td>
           <td></td>
         </tr>
       </table>

@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.15.2</span>
+   &#160;<span id="projectnumber">v0.17.0</span>
    </div>
   </td>
  </tr>
@@ -59,7 +59,7 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
 <tr class="memitem:a71bbac0fc21f0aa6dc61748a1d9eb793"><td class="memItemLeft" align="right" valign="top"><a id="a71bbac0fc21f0aa6dc61748a1d9eb793"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_temp_bright_sliders.html#a71bbac0fc21f0aa6dc61748a1d9eb793">temperatureAndBrightnessChanged</a> (std::uint32_t temperature, std::uint32_t <a class="el" href="class_temp_bright_sliders.html#a994684b20b36253fe9e0bc883288638d">brightness</a>)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_temp_bright_sliders.html#a71bbac0fc21f0aa6dc61748a1d9eb793">temperatureAndBrightnessChanged</a> (std::uint32_t <a class="el" href="class_temp_bright_sliders.html#a414a18b5bd06b8b577772ee75c7af247">temperature</a>, std::uint32_t <a class="el" href="class_temp_bright_sliders.html#a994684b20b36253fe9e0bc883288638d">brightness</a>)</td></tr>
 <tr class="memdesc:a71bbac0fc21f0aa6dc61748a1d9eb793"><td class="mdescLeft">&#160;</td><td class="mdescRight">temperatureAndBrightnessChanged emitted whenever a slider changes values. Emits both the temperature and the brightness <br /></td></tr>
 <tr class="separator:a71bbac0fc21f0aa6dc61748a1d9eb793"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -68,7 +68,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a25fa78bccdb535fb6f62ef32411c27e9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_temp_bright_sliders.html#a25fa78bccdb535fb6f62ef32411c27e9">TempBrightSliders</a> (QWidget *parent)</td></tr>
 <tr class="memdesc:a25fa78bccdb535fb6f62ef32411c27e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a25fa78bccdb535fb6f62ef32411c27e9">More...</a><br /></td></tr>
 <tr class="separator:a25fa78bccdb535fb6f62ef32411c27e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a05ae49f12a0492d44378343185c3879a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_temp_bright_sliders.html#a05ae49f12a0492d44378343185c3879a">changeTemperatureAndBrightness</a> (std::uint32_t temperature, std::uint32_t <a class="el" href="class_temp_bright_sliders.html#a994684b20b36253fe9e0bc883288638d">brightness</a>)</td></tr>
+<tr class="memitem:a05ae49f12a0492d44378343185c3879a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_temp_bright_sliders.html#a05ae49f12a0492d44378343185c3879a">changeTemperatureAndBrightness</a> (std::uint32_t <a class="el" href="class_temp_bright_sliders.html#a414a18b5bd06b8b577772ee75c7af247">temperature</a>, std::uint32_t <a class="el" href="class_temp_bright_sliders.html#a994684b20b36253fe9e0bc883288638d">brightness</a>)</td></tr>
 <tr class="memdesc:a05ae49f12a0492d44378343185c3879a"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeTemperatureAndBrightness programmatically change the positions of the sliders. Does not emit a signal when the sliders move.  <a href="#a05ae49f12a0492d44378343185c3879a">More...</a><br /></td></tr>
 <tr class="separator:a05ae49f12a0492d44378343185c3879a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5becca14b60da72d98dedecc99c826ec"><td class="memItemLeft" align="right" valign="top"><a id="a5becca14b60da72d98dedecc99c826ec"></a>
@@ -83,6 +83,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 std::uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_temp_bright_sliders.html#a994684b20b36253fe9e0bc883288638d">brightness</a> ()</td></tr>
 <tr class="memdesc:a994684b20b36253fe9e0bc883288638d"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for current brightness <br /></td></tr>
 <tr class="separator:a994684b20b36253fe9e0bc883288638d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a414a18b5bd06b8b577772ee75c7af247"><td class="memItemLeft" align="right" valign="top"><a id="a414a18b5bd06b8b577772ee75c7af247"></a>
+std::uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_temp_bright_sliders.html#a414a18b5bd06b8b577772ee75c7af247">temperature</a> ()</td></tr>
+<tr class="memdesc:a414a18b5bd06b8b577772ee75c7af247"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for current temperature <br /></td></tr>
+<tr class="separator:a414a18b5bd06b8b577772ee75c7af247"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>

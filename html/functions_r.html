@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.15.2</span>
+   &#160;<span id="projectnumber">v0.17.0</span>
    </div>
   </td>
  </tr>
@@ -101,7 +101,6 @@ $(function() {
 , <a class="el" href="class_data_sync_arduino.html#a05bc2462996fd9208a98a45fc5d1bd52">DataSyncArduino</a>
 , <a class="el" href="class_data_sync_hue.html#aa4129e577575f1da96921b74f467aee1">DataSyncHue</a>
 , <a class="el" href="class_data_sync_nano_leaf.html#ad501da5cf98821dfef186a6bc21519bf">DataSyncNanoLeaf</a>
-, <a class="el" href="class_data_sync_settings.html#a20acd0beaace757932dab375a0549d3f">DataSyncSettings</a>
 </li>
 <li>resetThrottle()
 : <a class="el" href="class_data_sync.html#a56edecc537ca6854dd219fc84ddf0279">DataSync</a>
@@ -116,17 +115,23 @@ $(function() {
 , <a class="el" href="class_grey_out_overlay.html#ae3a2389a5292ba4e6acd14c67268ee3f">GreyOutOverlay</a>
 , <a class="el" href="class_group_buttons_widget.html#a1e4c49c13d0aba321b62f074f4e4e7ef">GroupButtonsWidget</a>
 , <a class="el" href="class_left_hand_menu.html#afdfc052013cfceae833cee0023ef5b6e">LeftHandMenu</a>
-, <a class="el" href="class_light_info_list_widget.html#a536dc5671e31c4b604a2230ebd937757">LightInfoListWidget</a>
+, <a class="el" href="class_light_info_list_widget.html#acba5aa70403c2c072f9a1c329483139e">LightInfoListWidget</a>
 , <a class="el" href="class_list_mood_detailed_widget.html#adf06af997ddc6229750e48a5d7c4906d">ListMoodDetailedWidget</a>
+, <a class="el" href="class_list_mood_group_widget.html#a80e41cb72bb8f5da6400a56c550ee681">ListMoodGroupWidget</a>
+, <a class="el" href="class_list_mood_preview_widget.html#a974daffce33d1e4b02f6c9626bd3f325">ListMoodPreviewWidget</a>
 , <a class="el" href="class_main_viewport.html#aec17e435ccdf1d3df3d50dc6a78bdd20">MainViewport</a>
 , <a class="el" href="class_mood_details_widget.html#a930e0a0ad0d8b6f310206f6c0a6951af">MoodDetailsWidget</a>
+, <a class="el" href="class_mood_page.html#a3028afb254c6177835dd2c1b724ab668">MoodPage</a>
 , <a class="el" href="class_multi_color_picker.html#a97ebd414fe29f0d49c5c6b68d72c13ec">MultiColorPicker</a>
+, <a class="el" href="class_multi_color_state_widget.html#a332b0e7359459901be043865eb09294c">MultiColorStateWidget</a>
 , <a class="el" href="class_palette_page.html#aef88c93d32b7b42daac06afa608c155c">PalettePage</a>
 , <a class="el" href="class_palette_scroll_area.html#ae32043314ffb42aa6736729c08810618">PaletteScrollArea</a>
 , <a class="el" href="class_preset_group_widget.html#aaa2ca286665bcec38130c4d5018b393a">PresetGroupWidget</a>
 , <a class="el" href="class_routine_buttons_widget.html#ac80813faf389f3a9f4a93e9ba66b5bef">RoutineButtonsWidget</a>
 , <a class="el" href="class_select_lights_button.html#ad1fcd611eff8b3d34a1c545d2db18305">SelectLightsButton</a>
 , <a class="el" href="class_single_color_picker.html#a89d134e892c3ab59db48205bf92b95a2">SingleColorPicker</a>
+, <a class="el" href="class_single_color_state_widget.html#aa32213c1c0557a6d84fda9e7f6020cc2">SingleColorStateWidget</a>
+, <a class="el" href="class_timeout_widget.html#a79f370d772f16a0aa43baab3082d4945">TimeoutWidget</a>
 , <a class="el" href="class_top_menu.html#a71adf1f9410455e1f859785de6c4f7e4">TopMenu</a>
 </li>
 <li>resizeEvent()
@@ -136,8 +141,6 @@ $(function() {
 , <a class="el" href="class_color_scheme_chooser.html#aa17504359c3d1f59b4323971911622ff">ColorSchemeChooser</a>
 , <a class="el" href="class_discovery_hue_widget.html#a28aea10d8e756de514b07179ca180b70">DiscoveryHueWidget</a>
 , <a class="el" href="class_discovery_page.html#a2e8442aae8deb7f1b3d4ebb58a54bd11">DiscoveryPage</a>
-, <a class="el" href="class_edit_group_page.html#a3271da9b5a3d7698a31e320472d75368">EditGroupPage</a>
-, <a class="el" href="class_global_settings_widget.html#af71cc94295333ad3d9e809772017a3e0">GlobalSettingsWidget</a>
 , <a class="el" href="class_hardware_connection_widget.html#af92259e73edde099993120bf8c1f9ea8">HardwareConnectionWidget</a>
 , <a class="el" href="class_left_hand_button.html#a6620901a91f853b2963e0d5958a4812f">LeftHandButton</a>
 , <a class="el" href="class_list_light_widget.html#af0c79dca0135db009604906caaf00509">ListLightWidget</a>
@@ -148,10 +151,13 @@ $(function() {
 , <a class="el" href="class_main_window.html#a8851a931482834eeec527490eedaf20e">MainWindow</a>
 , <a class="el" href="class_mood_page.html#a27dcfaebedeb096adc5bdc2778a08b50">MoodPage</a>
 , <a class="el" href="class_multi_color_picker.html#a7869e1ef65511a2f03341cfbb1729aa6">MultiColorPicker</a>
+, <a class="el" href="class_multi_color_state_widget.html#af403d9a596d1f424e16b6549fd5e68b0">MultiColorStateWidget</a>
 , <a class="el" href="class_palette_page.html#a4faf7b37f0749aa46ae6e08f6839bb91">PalettePage</a>
 , <a class="el" href="class_select_lights_button.html#a4232316b075d3de51a891686c919c8a9">SelectLightsButton</a>
 , <a class="el" href="class_settings_page.html#aaa85cbe32bc8625e9382a0ddec36efec">SettingsPage</a>
 , <a class="el" href="class_single_color_picker.html#a626e17ddac5bf9e17272b67483283c5c">SingleColorPicker</a>
+, <a class="el" href="class_single_color_state_widget.html#a6567bf788018d1dac93d76f80a1f33fe">SingleColorStateWidget</a>
+, <a class="el" href="class_sync_widget.html#a22c30a9d478cf45891b2ebc4c06fa299">SyncWidget</a>
 , <a class="el" href="class_top_menu.html#af5e3203eae35489ae1507ce9a61feb4d">TopMenu</a>
 </li>
 <li>resizeWheel()

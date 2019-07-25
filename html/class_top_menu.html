@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.15.2</span>
+   &#160;<span id="projectnumber">v0.17.0</span>
    </div>
   </td>
  </tr>
@@ -51,7 +51,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="class_top_menu.html" title="The TopMenu class is the top menu on the main window of Corluma. It contains brightness and on/off co...">TopMenu</a> class is the top menu on the main window of Corluma. It contains brightness and on/off controls for all lights, as well as buttons to navigate to all the main pages of the application.  
+<p>The <a class="el" href="class_top_menu.html" title="The TopMenu class is the top menu on the main window of Corluma. It contains brightness and on/off co...">TopMenu</a> class is the top menu on the main window of Corluma. It contains brightness and on/off controls for all lights, as well as buttons tSingleColorStateWidgeto navigate to all the main pages of the application.  
 </p>
 
 <p><code>#include &quot;<a class="el" href="topmenu_8h_source.html">topmenu.h</a>&quot;</code></p>
@@ -76,6 +76,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a65c2a94c34e93000b9d6fd9a538e482f">brightnessUpdate</a> (uint32_t newValue)</td></tr>
 <tr class="memdesc:a65c2a94c34e93000b9d6fd9a538e482f"><td class="mdescLeft">&#160;</td><td class="mdescRight">brightness udpated somewhere else <br /></td></tr>
 <tr class="separator:a65c2a94c34e93000b9d6fd9a538e482f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65d80953054a68348da3a987d295c57f"><td class="memItemLeft" align="right" valign="top"><a id="a65d80953054a68348da3a987d295c57f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a65d80953054a68348da3a987d295c57f">dataInSync</a> (bool)</td></tr>
+<tr class="memdesc:a65d80953054a68348da3a987d295c57f"><td class="mdescLeft">&#160;</td><td class="mdescRight">set if data is in sync or not <br /></td></tr>
+<tr class="separator:a65d80953054a68348da3a987d295c57f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
@@ -98,9 +102,7 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a71adf1f9410455e1f859785de6c4f7e4">resize</a> (int xOffset)</td></tr>
 <tr class="memdesc:a71adf1f9410455e1f859785de6c4f7e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">resizes the menus programmatically <br /></td></tr>
 <tr class="separator:a71adf1f9410455e1f859785de6c4f7e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ada7e5fff730bfa8a3280c8362282b423"><td class="memItemLeft" align="right" valign="top"><a id="ada7e5fff730bfa8a3280c8362282b423"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#ada7e5fff730bfa8a3280c8362282b423">showMenu</a> ()</td></tr>
-<tr class="memdesc:ada7e5fff730bfa8a3280c8362282b423"><td class="mdescLeft">&#160;</td><td class="mdescRight">call when you want to show the top menus, this handles raising it and making all necessary parts visible <br /></td></tr>
+<tr class="memitem:ada7e5fff730bfa8a3280c8362282b423"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#ada7e5fff730bfa8a3280c8362282b423">showMenu</a> ()</td></tr>
 <tr class="separator:ada7e5fff730bfa8a3280c8362282b423"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a99ea50fdac79452f7eae1e115492558d"><td class="memItemLeft" align="right" valign="top"><a id="a99ea50fdac79452f7eae1e115492558d"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a99ea50fdac79452f7eae1e115492558d">updateBrightnessSlider</a> ()</td></tr>
@@ -137,6 +139,20 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a290efa29bed0d0f82a6b57e492452659">pushOutTapToSelectButton</a> ()</td></tr>
 <tr class="memdesc:a290efa29bed0d0f82a6b57e492452659"><td class="mdescLeft">&#160;</td><td class="mdescRight">pushes out the tap to select lights button <br /></td></tr>
 <tr class="separator:a290efa29bed0d0f82a6b57e492452659"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0900e5e1265fe850b9f248da8e753bfc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#a0900e5e1265fe850b9f248da8e753bfc">updateRoutine</a> (const QJsonObject &amp;routine)</td></tr>
+<tr class="memdesc:a0900e5e1265fe850b9f248da8e753bfc"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateRoutine update the routine for the current app state  <a href="#a0900e5e1265fe850b9f248da8e753bfc">More...</a><br /></td></tr>
+<tr class="separator:a0900e5e1265fe850b9f248da8e753bfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2311e65d205b634b014a7024656304a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#ac2311e65d205b634b014a7024656304a">updateScheme</a> (const std::vector&lt; QColor &gt; &amp;colors)</td></tr>
+<tr class="memdesc:ac2311e65d205b634b014a7024656304a"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateScheme update the color scheme chosen by the app  <a href="#ac2311e65d205b634b014a7024656304a">More...</a><br /></td></tr>
+<tr class="separator:ac2311e65d205b634b014a7024656304a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af93a140ed4df3d802287e141282b4593"><td class="memItemLeft" align="right" valign="top"><a id="af93a140ed4df3d802287e141282b4593"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#af93a140ed4df3d802287e141282b4593">showSingleColorStateWidget</a> (bool show)</td></tr>
+<tr class="memdesc:af93a140ed4df3d802287e141282b4593"><td class="mdescLeft">&#160;</td><td class="mdescRight">true to show single color state widget, false to hide it <br /></td></tr>
+<tr class="separator:af93a140ed4df3d802287e141282b4593"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade117005aa390cdaed4fef57d90264a4"><td class="memItemLeft" align="right" valign="top"><a id="ade117005aa390cdaed4fef57d90264a4"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_menu.html#ade117005aa390cdaed4fef57d90264a4">showMultiColorStateWidget</a> (bool show)</td></tr>
+<tr class="memdesc:ade117005aa390cdaed4fef57d90264a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">true to show the multi color state widget, false to hide it <br /></td></tr>
+<tr class="separator:ade117005aa390cdaed4fef57d90264a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -164,6 +180,72 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">key</td><td>the key to use to highlight the buttons. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ada7e5fff730bfa8a3280c8362282b423"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada7e5fff730bfa8a3280c8362282b423">&#9670;&nbsp;</a></span>showMenu()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void TopMenu::showMenu </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>call when you want to show the top menus, this handles raising it and making all necessary parts visible </p>
+
+</div>
+</div>
+<a id="a0900e5e1265fe850b9f248da8e753bfc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0900e5e1265fe850b9f248da8e753bfc">&#9670;&nbsp;</a></span>updateRoutine()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void TopMenu::updateRoutine </td>
+          <td>(</td>
+          <td class="paramtype">const QJsonObject &amp;&#160;</td>
+          <td class="paramname"><em>routine</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">routine</td><td>routine to update the apps state to </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ac2311e65d205b634b014a7024656304a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac2311e65d205b634b014a7024656304a">&#9670;&nbsp;</a></span>updateScheme()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void TopMenu::updateScheme </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; QColor &gt; &amp;&#160;</td>
+          <td class="paramname"><em>colors</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">colors</td><td>the colors to use in the new color scheme </td></tr>
   </table>
   </dd>
 </dl>

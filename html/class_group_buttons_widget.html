@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.15.2</span>
+   &#160;<span id="projectnumber">v0.17.0</span>
    </div>
   </td>
  </tr>
@@ -49,7 +49,8 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="class_group_buttons_widget.html" title="The GroupButtonsWidget class is a widget that displays a grid of groups buttons. This is used in List...">GroupButtonsWidget</a> class is a widget that displays a grid of groups buttons. This is used in ListRoomWidgets to show subgroups of a room, such as the lights around a desk in a bedroom. This widget does a bit of magic to shorten names of widgets if the subgroups have matching words at the start of the widget as the Room. For example, if the room is named "John's Bedroom" and the group is called "John's Bedroom Desk" the group's name would be shortened to "Desk".  
+<p>The <a class="el" href="class_group_buttons_widget.html" title="The GroupButtonsWidget class is a widget that displays a grid of groups buttons. This is used in List...">GroupButtonsWidget</a> class is a widget that displays a grid of groups buttons. This is used in ListRoomWidgets to show subgroups of a room, such as the lights around a desk in a bedroom. This widget does a bit of magic to shorten names of widgets if the subgroups have matching words at the start of the widget as the Room. For example, if the room is named "John's
+Bedroom" and the group is called "John's Bedroom Desk" the group's name would be shortened to "Desk".  
  <a href="class_group_buttons_widget.html#details">More...</a></p>
 
 <p><code>#include &quot;<a class="el" href="groupbuttonswidget_8h_source.html">groupbuttonswidget.h</a>&quot;</code></p>
@@ -58,13 +59,9 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
-<tr class="memitem:a3ba798a3d0b7edb0c7773fe74fc92947"><td class="memItemLeft" align="right" valign="top"><a id="a3ba798a3d0b7edb0c7773fe74fc92947"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_buttons_widget.html#a3ba798a3d0b7edb0c7773fe74fc92947">groupButtonPressed</a> (QString key)</td></tr>
-<tr class="memdesc:a3ba798a3d0b7edb0c7773fe74fc92947"><td class="mdescLeft">&#160;</td><td class="mdescRight">emitted when a group button is pressed. This emits its actual group name, instead of its displayed group name. <br /></td></tr>
+<tr class="memitem:a3ba798a3d0b7edb0c7773fe74fc92947"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_buttons_widget.html#a3ba798a3d0b7edb0c7773fe74fc92947">groupButtonPressed</a> (QString key)</td></tr>
 <tr class="separator:a3ba798a3d0b7edb0c7773fe74fc92947"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f6dd817f2be343d75b8a9632a82f089"><td class="memItemLeft" align="right" valign="top"><a id="a7f6dd817f2be343d75b8a9632a82f089"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_buttons_widget.html#a7f6dd817f2be343d75b8a9632a82f089">groupSelectAllToggled</a> (QString key, bool selectAll)</td></tr>
-<tr class="memdesc:a7f6dd817f2be343d75b8a9632a82f089"><td class="mdescLeft">&#160;</td><td class="mdescRight">emitted when a group's toggle button is pressed. This emits its actual group name, instead of its displayed group name. <br /></td></tr>
+<tr class="memitem:a7f6dd817f2be343d75b8a9632a82f089"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_buttons_widget.html#a7f6dd817f2be343d75b8a9632a82f089">groupSelectAllToggled</a> (QString key, bool selectAll)</td></tr>
 <tr class="separator:a7f6dd817f2be343d75b8a9632a82f089"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -108,7 +105,72 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
-</div><hr/>The documentation for this class was generated from the following files:<ul>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a3ba798a3d0b7edb0c7773fe74fc92947"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ba798a3d0b7edb0c7773fe74fc92947">&#9670;&nbsp;</a></span>groupButtonPressed</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void GroupButtonsWidget::groupButtonPressed </td>
+          <td>(</td>
+          <td class="paramtype">QString&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">signal</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>emitted when a group button is pressed. This emits its actual group name, instead of its displayed group name. </p>
+
+</div>
+</div>
+<a id="a7f6dd817f2be343d75b8a9632a82f089"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7f6dd817f2be343d75b8a9632a82f089">&#9670;&nbsp;</a></span>groupSelectAllToggled</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void GroupButtonsWidget::groupSelectAllToggled </td>
+          <td>(</td>
+          <td class="paramtype">QString&#160;</td>
+          <td class="paramname"><em>key</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>selectAll</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">signal</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>emitted when a group's toggle button is pressed. This emits its actual group name, instead of its displayed group name. </p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li><a class="el" href="groupbuttonswidget_8h_source.html">groupbuttonswidget.h</a></li>
 <li>groupbuttonswidget.cpp</li>
 </ul>

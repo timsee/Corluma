@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.15.2</span>
+   &#160;<span id="projectnumber">v0.17.0</span>
    </div>
   </td>
  </tr>
@@ -62,9 +62,7 @@ Signals</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#aecb64b62bfc4a7383d2d1c6ca0e96fc4">packetReceived</a> (QString, QString, ECommType)</td></tr>
 <tr class="memdesc:aecb64b62bfc4a7383d2d1c6ca0e96fc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">packetReceived emitted whenever a packet that is not a discovery packet is received. Contains the full packet's contents as a QString. <br /></td></tr>
 <tr class="separator:aecb64b62bfc4a7383d2d1c6ca0e96fc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a081202319f5ec20fa553ff0ff6f5f503"><td class="memItemLeft" align="right" valign="top"><a id="a081202319f5ec20fa553ff0ff6f5f503"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a081202319f5ec20fa553ff0ff6f5f503">discoveryStateChanged</a> (EHueDiscoveryState)</td></tr>
-<tr class="memdesc:a081202319f5ec20fa553ff0ff6f5f503"><td class="mdescLeft">&#160;</td><td class="mdescRight">signals during discovery things like when the bridge is discovered and when light data is received <br /></td></tr>
+<tr class="memitem:a081202319f5ec20fa553ff0ff6f5f503"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a081202319f5ec20fa553ff0ff6f5f503">discoveryStateChanged</a> (EHueDiscoveryState)</td></tr>
 <tr class="separator:a081202319f5ec20fa553ff0ff6f5f503"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header signals_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('signals_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Signals inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
 <tr class="memitem:a6a99e8e95b8ce5ac36a605634b6a460f inherit signals_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a6a99e8e95b8ce5ac36a605634b6a460f"></a>
@@ -107,7 +105,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:abd122a4acfa23f9581b31fe88301759d"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendPacket send a packet based off of a JSON object containing all relevant information about the packet  <a href="#abd122a4acfa23f9581b31fe88301759d">More...</a><br /></td></tr>
 <tr class="separator:abd122a4acfa23f9581b31fe88301759d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add36510b1124afbc25e262dd1785d8ad"><td class="memItemLeft" align="right" valign="top">HueLight&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#add36510b1124afbc25e262dd1785d8ad">hueLightFromLight</a> (const cor::Light &amp;device)</td></tr>
-<tr class="memdesc:add36510b1124afbc25e262dd1785d8ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">hueLightFromLight For every cor::Light with type hue, there is a SHueLight that represents the same device. The SHueLight contains hue-specific information such as the bulb's software version and model ID. This information This function takes the cor::Light and returns the mapped SHueLight  <a href="#add36510b1124afbc25e262dd1785d8ad">More...</a><br /></td></tr>
+<tr class="memdesc:add36510b1124afbc25e262dd1785d8ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">hueLightFromLight For every cor::Light with type hue, there is a SHueLight that represents the same device.The SHueLight contains hue-specific information such as the bulb's software version and model ID. This information This function takes the cor::Light and returns the mapped SHueLight  <a href="#add36510b1124afbc25e262dd1785d8ad">More...</a><br /></td></tr>
 <tr class="separator:add36510b1124afbc25e262dd1785d8ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b80833f0f35e62ea27427c139379fa7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a8b80833f0f35e62ea27427c139379fa7">sendSchedule</a> (SHueSchedule schedule)</td></tr>
 <tr class="memdesc:a8b80833f0f35e62ea27427c139379fa7"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendSchedule send a schedule to the Hue Bridge. This schedule gets kept on the bridge and will not be deleted unless explicitly asked to be deleted.  <a href="#a8b80833f0f35e62ea27427c139379fa7">More...</a><br /></td></tr>
@@ -763,6 +761,33 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>the discovery object for finding the Hue Bridge. </dd></dl>
+
+</div>
+</div>
+<a id="a081202319f5ec20fa553ff0ff6f5f503"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a081202319f5ec20fa553ff0ff6f5f503">&#9670;&nbsp;</a></span>discoveryStateChanged</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CommHue::discoveryStateChanged </td>
+          <td>(</td>
+          <td class="paramtype">EHueDiscoveryState&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">signal</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>signals during discovery things like when the bridge is discovered and when light data is received </p>
 
 </div>
 </div>

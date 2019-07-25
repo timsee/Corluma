@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.15.2</span>
+   &#160;<span id="projectnumber">v0.17.0</span>
    </div>
   </td>
  </tr>
@@ -43,6 +43,7 @@ $(function() {
   <div class="summary">
 <a href="class_data_sync_arduino-members.html">List of all members</a> &#124;
 <a href="#pub-slots">Public Slots</a> &#124;
+<a href="#signals">Signals</a> &#124;
 <a href="#pub-methods">Public Member Functions</a>  </div>
   <div class="headertitle">
 <div class="title">DataSyncArduino Class Reference</div>  </div>
@@ -67,11 +68,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:a9842b4da81e9689ca2bf983bf353b816"><td class="mdescLeft">&#160;</td><td class="mdescRight">commPacketReceived a packet was received from a given EProtocolType. In some cases, receiving a packet will reset the sync for that protocol type. <br /></td></tr>
 <tr class="separator:a9842b4da81e9689ca2bf983bf353b816"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
+Signals</h2></td></tr>
+<tr class="memitem:ace631ca6ef8413dfea075d7ec71698a0"><td class="memItemLeft" align="right" valign="top"><a id="ace631ca6ef8413dfea075d7ec71698a0"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync_arduino.html#ace631ca6ef8413dfea075d7ec71698a0">statusChanged</a> (EDataSyncType, bool)</td></tr>
+<tr class="memdesc:ace631ca6ef8413dfea075d7ec71698a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">emits its correpsonding enum and whether or not it is in sync when its sync status changes <br /></td></tr>
+<tr class="separator:ace631ca6ef8413dfea075d7ec71698a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:adad95a1ec098c3a6083746ce8cbaabbc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync_arduino.html#adad95a1ec098c3a6083746ce8cbaabbc">DataSyncArduino</a> (cor::DeviceList *data, <a class="el" href="class_comm_layer.html">CommLayer</a> *comm)</td></tr>
-<tr class="memdesc:adad95a1ec098c3a6083746ce8cbaabbc"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_data_sync_arduino.html" title="The DataSyncArduino class compares the data layer&#39;s representation of devices with the commlayer&#39;s un...">DataSyncArduino</a> Constructor for <a class="el" href="class_data_sync_arduino.html" title="The DataSyncArduino class compares the data layer&#39;s representation of devices with the commlayer&#39;s un...">DataSyncArduino</a>.  <a href="#adad95a1ec098c3a6083746ce8cbaabbc">More...</a><br /></td></tr>
-<tr class="separator:adad95a1ec098c3a6083746ce8cbaabbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67545256ffaa9b38aecc45a608e948b8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync_arduino.html#a67545256ffaa9b38aecc45a608e948b8">DataSyncArduino</a> (cor::DeviceList *data, <a class="el" href="class_comm_layer.html">CommLayer</a> *comm, <a class="el" href="class_app_settings.html">AppSettings</a> *appSettings)</td></tr>
+<tr class="memdesc:a67545256ffaa9b38aecc45a608e948b8"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_data_sync_arduino.html" title="The DataSyncArduino class compares the data layer&#39;s representation of devices with the commlayer&#39;s un...">DataSyncArduino</a> Constructor for <a class="el" href="class_data_sync_arduino.html" title="The DataSyncArduino class compares the data layer&#39;s representation of devices with the commlayer&#39;s un...">DataSyncArduino</a>.  <a href="#a67545256ffaa9b38aecc45a608e948b8">More...</a><br /></td></tr>
+<tr class="separator:a67545256ffaa9b38aecc45a608e948b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82d9034836a0a06d1c29aa0348a048db"><td class="memItemLeft" align="right" valign="top"><a id="a82d9034836a0a06d1c29aa0348a048db"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync_arduino.html#a82d9034836a0a06d1c29aa0348a048db">cancelSync</a> () override</td></tr>
 <tr class="memdesc:a82d9034836a0a06d1c29aa0348a048db"><td class="mdescLeft">&#160;</td><td class="mdescRight">cancelSync cancel the data sync, regardless of it successfully completed. <br /></td></tr>
@@ -80,8 +88,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="adad95a1ec098c3a6083746ce8cbaabbc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adad95a1ec098c3a6083746ce8cbaabbc">&#9670;&nbsp;</a></span>DataSyncArduino()</h2>
+<a id="a67545256ffaa9b38aecc45a608e948b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a67545256ffaa9b38aecc45a608e948b8">&#9670;&nbsp;</a></span>DataSyncArduino()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -96,7 +104,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="class_comm_layer.html">CommLayer</a> *&#160;</td>
-          <td class="paramname"><em>comm</em>&#160;</td>
+          <td class="paramname"><em>comm</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_app_settings.html">AppSettings</a> *&#160;</td>
+          <td class="paramname"><em>appSettings</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
