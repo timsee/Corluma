@@ -4,8 +4,9 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QWidget>
-#include "cor/widgets/button.h"
+
 #include "cor/presetpalettes.h"
+#include "cor/widgets/button.h"
 
 /// size of buttons in widget
 enum class EButtonSize { small, medium, rectangle };

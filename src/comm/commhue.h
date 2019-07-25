@@ -1,8 +1,6 @@
 #ifndef COMMHUE_H
 #define COMMHUE_H
 
-#include "commtype.h"
-
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QNetworkAccessManager>
@@ -13,6 +11,7 @@
 #include "comm/hue/bridgediscovery.h"
 #include "comm/hue/huelight.h"
 #include "comm/hue/hueprotocols.h"
+#include "commtype.h"
 #include "cor/objects/group.h"
 
 /*!

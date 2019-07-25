@@ -5,6 +5,7 @@
  */
 
 #include "hueschedulewidget.h"
+
 #include <QGraphicsOpacityEffect>
 #include <QStyleOption>
 #include <QtCore>

@@ -5,11 +5,12 @@
  */
 
 #include "arducordiscovery.h"
+
 #include <sstream>
-#include "cor/protocols.h"
 
 #include "comm/commhttp.h"
 #include "comm/commudp.h"
+#include "cor/protocols.h"
 #ifndef MOBILE_BUILD
 #include "comm/commserial.h"
 #endif
@@ -140,8 +141,8 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type,
                 qDebug() << "Received an incorrect value when expecting a hardware type";
                 return false;
             }
-            ELightHardwareType hardwareType
-                = cor::convertArduinoTypeToLightType(EArduinoHardwareType(hardwareTypeIndex));
+            ELightHardwareType hardwareType =
+                cor::convertArduinoTypeToLightType(EArduinoHardwareType(hardwareTypeIndex));
             hardwareTypeVector.push_back(hardwareType);
             nameIndex = 2;
         } else if (nameIndex == 2) {
@@ -258,8 +259,8 @@ void ArduCorDiscovery::handleIncomingPacket(ECommType type,
                                             const QString& payload) {
     if (payload.contains(kDiscoveryPacketIdentifier) && !payload.isEmpty()) {
         cor::Controller controller;
-        bool success
-            = deviceControllerFromDiscoveryString(type, payload, controllerName, controller);
+        bool success =
+            deviceControllerFromDiscoveryString(type, payload, controllerName, controller);
         if (success) {
             handleDiscoveredController(controller);
         }

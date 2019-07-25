@@ -4,6 +4,7 @@
 #include <QLabel>
 #include <QLayout>
 #include <QWidget>
+
 #include "comm/hue/bridge.h"
 #include "comm/hue/hueprotocols.h"
 

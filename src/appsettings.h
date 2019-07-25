@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QSettings>
+
 #include "cor/objects/light.h"
 
 /*!

@@ -2,13 +2,13 @@
 #ifndef ICONDATA_H
 #define ICONDATA_H
 
-#include "cor/protocols.h"
+#include <stdio.h>
 
 #include <QImage>
 #include <QPixmap>
-
-#include <stdio.h>
 #include <memory>
+
+#include "cor/protocols.h"
 
 
 /*!

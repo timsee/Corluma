@@ -4,6 +4,8 @@
  * Released under the GNU General Public License.
  */
 
+#include "comm/nanoleaf/leafcontrollerinfowidget.h"
+
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
 #include <QScroller>
@@ -11,7 +13,6 @@
 #include <QtCore>
 #include <QtGui>
 
-#include "comm/nanoleaf/leafcontrollerinfowidget.h"
 #include "utils/qt.h"
 
 namespace nano {
@@ -23,8 +24,10 @@ LeafControllerInfoWidget::LeafControllerInfoWidget(nano::LeafController controll
 
     mController = controller;
 
-    mName = new EditableFieldWidget(
-        controller.name, this, 28, "A controller's name must be at most 28 characters long.");
+    mName = new EditableFieldWidget(controller.name,
+                                    this,
+                                    28,
+                                    "A controller's name must be at most 28 characters long.");
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mName->setFontPointSize(14);
     connect(mName, SIGNAL(updatedField(QString)), this, SLOT(nameChanged(QString)));

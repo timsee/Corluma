@@ -5,8 +5,10 @@
  */
 
 #include "dropdowntopwidget.h"
+
 #include <QDebug>
 #include <QMouseEvent>
+
 #include "utils/qt.h"
 
 DropdownTopWidget::DropdownTopWidget(const QString& key,
@@ -45,13 +47,17 @@ DropdownTopWidget::DropdownTopWidget(const QString& key,
     mEditButton->setFixedHeight(mMinimumHeight);
 
     mClosedPixmap = QPixmap(":/images/closedArrow.png");
-    mClosedPixmap = mClosedPixmap.scaled(
-        mMinimumHeight, mMinimumHeight, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    mClosedPixmap = mClosedPixmap.scaled(mMinimumHeight,
+                                         mMinimumHeight,
+                                         Qt::KeepAspectRatio,
+                                         Qt::SmoothTransformation);
 
 
     mOpenedPixmap = QPixmap(":/images/openedArrow.png");
-    mOpenedPixmap = mOpenedPixmap.scaled(
-        mMinimumHeight, mMinimumHeight, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    mOpenedPixmap = mOpenedPixmap.scaled(mMinimumHeight,
+                                         mMinimumHeight,
+                                         Qt::KeepAspectRatio,
+                                         Qt::SmoothTransformation);
 
     mHiddenStateIcon = new QLabel(this);
     mHiddenStateIcon->setPixmap(mClosedPixmap);

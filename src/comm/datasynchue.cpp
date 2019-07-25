@@ -215,8 +215,10 @@ void DataSyncHue::handleIdleTimeout(const hue::Bridge& bridge, const cor::Light&
             if (givenIndex == light.index && mAppSettings->timeout() != 0) {
                 foundTimeout = true;
                 // qDebug() << " update idle timeout " << schedule;
-                mComm->hue()->updateIdleTimeout(
-                    bridge, true, schedule.index, mAppSettings->timeout());
+                mComm->hue()->updateIdleTimeout(bridge,
+                                                true,
+                                                schedule.index,
+                                                mAppSettings->timeout());
             }
         }
     }

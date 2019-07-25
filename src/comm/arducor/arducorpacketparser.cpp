@@ -4,10 +4,11 @@
  * Released under the GNU General Public License.
  */
 
+#include "arducorpacketparser.h"
+
 #include <QDebug>
 #include <sstream>
 
-#include "arducorpacketparser.h"
 #include "cor/protocols.h"
 
 #define CUSTOM_COLOR_MAX 10

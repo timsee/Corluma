@@ -5,8 +5,6 @@
  */
 #include "selectlightsbutton.h"
 
-#include "utils/qt.h"
-
 #include <QDebug>
 #include <QStyleOption>
 #include <QtCore>
@@ -14,6 +12,7 @@
 
 #include "cor/objects/light.h"
 #include "icondata.h"
+#include "utils/qt.h"
 
 SelectLightsButton::SelectLightsButton(QWidget* parent) : QWidget(parent) {
     mLabel = new QLabel("Tap to Select Lights", this);

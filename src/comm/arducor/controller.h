@@ -5,6 +5,7 @@
 #include <QString>
 #include <sstream>
 #include <vector>
+
 #include "cor/protocols.h"
 
 namespace cor {

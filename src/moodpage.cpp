@@ -6,13 +6,13 @@
 
 #include "moodpage.h"
 
-#include "listmoodgroupwidget.h"
-#include "listmoodpreviewwidget.h"
-#include "utils/qt.h"
-
 #include <QDebug>
 #include <QInputDialog>
 #include <QScroller>
+
+#include "listmoodgroupwidget.h"
+#include "listmoodpreviewwidget.h"
+#include "utils/qt.h"
 
 MoodPage::MoodPage(QWidget* parent, GroupData* groups)
     : QWidget(parent), mGroups(groups), mCurrentMood{0} {
@@ -46,8 +46,8 @@ void MoodPage::makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
                     try {
                         if (lightID == moodDevice.uniqueID()) {
                             foundRoom = true;
-                            auto roomIt
-                                = std::find(roomNames.begin(), roomNames.end(), room.name());
+                            auto roomIt =
+                                std::find(roomNames.begin(), roomNames.end(), room.name());
                             if (roomIt == roomNames.end()) {
                                 roomNames.push_back(room.name());
                             }
@@ -137,8 +137,8 @@ ListMoodGroupWidget* MoodPage::initMoodsCollectionWidget(const QString& name,
                                                          const std::list<cor::Mood>& moods,
                                                          const QString& key,
                                                          bool hideEdit) {
-    auto widget
-        = new ListMoodGroupWidget(name, moods, key, hideEdit, mMoodsListWidget->mainWidget());
+    auto widget =
+        new ListMoodGroupWidget(name, moods, key, hideEdit, mMoodsListWidget->mainWidget());
     connect(widget,
             SIGNAL(editClicked(QString, std::uint64_t)),
             this,
@@ -151,8 +151,10 @@ ListMoodGroupWidget* MoodPage::initMoodsCollectionWidget(const QString& name,
     mMoodsListWidget->insertWidget(widget);
     mMoodsListWidget->resizeWidgets();
 
-    connect(
-        widget, SIGNAL(buttonsShown(QString, bool)), this, SLOT(shouldShowButtons(QString, bool)));
+    connect(widget,
+            SIGNAL(buttonsShown(QString, bool)),
+            this,
+            SLOT(shouldShowButtons(QString, bool)));
     return widget;
 }
 
@@ -167,7 +169,7 @@ void MoodPage::editMoodClicked(const QString&, std::uint64_t) {
 }
 
 void MoodPage::resize() {
-    mMoodsListWidget->setGeometry(0,0,this->width(), this->height());
+    mMoodsListWidget->setGeometry(0, 0, this->width(), this->height());
     for (auto item : mMoodsListWidget->widgets()) {
         auto moodWidget = qobject_cast<ListMoodGroupWidget*>(item);
         moodWidget->resize();

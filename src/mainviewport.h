@@ -2,6 +2,7 @@
 #define MAINVIEWPORT_H
 
 #include <QWidget>
+
 #include "appsettings.h"
 #include "colorpage.h"
 #include "comm/commlayer.h"

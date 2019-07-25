@@ -351,10 +351,14 @@ ios {
     HEADERS += shareutils/docviewcontroller.hpp
 }
 android {
+    # used for JNI calls
     QT += androidextras
+
     # the source file that contains the JNI and the android share implementation
     SOURCES += shareutils/androidshareutils.cpp
 
+    # this contains the java code for and parsing and sending android intents, and
+    # the android activity required to read incoming intents.
     OTHER_FILES += android/src/org/shareluma/utils/QShareUtils.java \
         android/src/org/shareluma/utils/QSharePathResolver.java \
         android/src/org/shareluma/activity/QShareActivity.java

@@ -5,8 +5,10 @@
  */
 
 #include "listmoodpreviewwidget.h"
+
 #include <QPainter>
 #include <QStyleOption>
+
 #include "utils/qt.h"
 
 ListMoodPreviewWidget::ListMoodPreviewWidget(const cor::Mood& mood, QWidget* parent)

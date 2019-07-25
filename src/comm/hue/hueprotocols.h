@@ -2,6 +2,7 @@
 #define HUEPROTOCOLS_H
 
 #include <list>
+
 #include "cor/objects/light.h"
 #include "cor/protocols.h"
 

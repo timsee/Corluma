@@ -2,7 +2,6 @@
 #define COMMARDUCOR_H
 
 #include <QObject>
-
 #include <memory>
 
 #include "comm/arducor/arducordiscovery.h"

@@ -5,14 +5,15 @@
  */
 
 #include "colorpage.h"
-#include "comm/hue/hueprotocols.h"
-#include "mainwindow.h"
-#include "utils/color.h"
-#include "utils/qt.h"
 
 #include <QColorDialog>
 #include <QDebug>
 #include <QSignalMapper>
+
+#include "comm/hue/hueprotocols.h"
+#include "mainwindow.h"
+#include "utils/color.h"
+#include "utils/qt.h"
 
 ColorPage::ColorPage(QWidget* parent) : QWidget(parent), mColor{0, 255, 0}, mBrightness{50} {
     mColorPicker = new SingleColorPicker(this);
@@ -25,15 +26,19 @@ ColorPage::ColorPage(QWidget* parent) : QWidget(parent), mColor{0, 255, 0}, mBri
             SIGNAL(ambientUpdate(std::uint32_t, std::uint32_t)),
             this,
             SLOT(ambientUpdateReceived(std::uint32_t, std::uint32_t)));
-    connect(
-        mColorPicker, SIGNAL(brightnessUpdate(uint32_t)), this, SLOT(brightnessUpdate(uint32_t)));
+    connect(mColorPicker,
+            SIGNAL(brightnessUpdate(uint32_t)),
+            this,
+            SLOT(brightnessUpdate(uint32_t)));
 
-    mSingleRoutineWidget
-        = new RoutineButtonsWidget(EWidgetGroup::singleRoutines, std::vector<QColor>(), this);
+    mSingleRoutineWidget =
+        new RoutineButtonsWidget(EWidgetGroup::singleRoutines, std::vector<QColor>(), this);
     mSingleRoutineWidget->setMaximumWidth(this->width());
     mSingleRoutineWidget->setMaximumHeight(this->height() / 3);
-    mSingleRoutineWidget->setGeometry(
-        0, this->height(), mSingleRoutineWidget->width(), mSingleRoutineWidget->height());
+    mSingleRoutineWidget->setGeometry(0,
+                                      this->height(),
+                                      mSingleRoutineWidget->width(),
+                                      mSingleRoutineWidget->height());
     mSingleRoutineWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(mSingleRoutineWidget,
             SIGNAL(newRoutineSelected(QJsonObject)),

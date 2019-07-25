@@ -5,6 +5,7 @@
  */
 
 #include "commhttp.h"
+
 #include "comm/arducor/arducordiscovery.h"
 
 CommHTTP::CommHTTP() : CommType(ECommType::HTTP), mDiscovery{nullptr} {
@@ -42,8 +43,8 @@ void CommHTTP::sendPacket(const cor::Controller& controller, QString& packet) {
 void CommHTTP::stateUpdate() {
     if (shouldContinueStateUpdate()) {
         for (const auto& controller : mDiscovery->controllers().itemVector()) {
-            QString packet
-                = QString("%1&").arg(QString::number(int(EPacketHeader::stateUpdateRequest)));
+            QString packet =
+                QString("%1&").arg(QString::number(int(EPacketHeader::stateUpdateRequest)));
             // add CRC, if in use
             if (controller.isUsingCRC) {
                 packet = packet + "#" + QString::number(mCRC.calculate(packet)) + "&";
@@ -53,9 +54,9 @@ void CommHTTP::stateUpdate() {
                 QString customArrayUpdateRequest = QString("%1&").arg(
                     QString::number(int(EPacketHeader::customArrayUpdateRequest)));
                 if (controller.isUsingCRC) {
-                    customArrayUpdateRequest
-                        = customArrayUpdateRequest + "#"
-                          + QString::number(mCRC.calculate(customArrayUpdateRequest)) + "&";
+                    customArrayUpdateRequest =
+                        customArrayUpdateRequest + "#"
+                        + QString::number(mCRC.calculate(customArrayUpdateRequest)) + "&";
                 }
                 sendPacket(controller, customArrayUpdateRequest);
             }
@@ -67,8 +68,8 @@ void CommHTTP::stateUpdate() {
 
 
 void CommHTTP::testForController(const cor::Controller& controller) {
-    QString urlString
-        = "http://" + controller.name + "/arduino/" + ArduCorDiscovery::kDiscoveryPacketIdentifier;
+    QString urlString =
+        "http://" + controller.name + "/arduino/" + ArduCorDiscovery::kDiscoveryPacketIdentifier;
     QNetworkRequest request = QNetworkRequest(QUrl(urlString));
     // qDebug() << "sending" << urlString;
     mNetworkManager->get(request);

@@ -4,12 +4,13 @@
  * Released under the GNU General Public License.
  */
 
+#include "comm/hue/lightdiscovery.h"
+
 #include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
 
 #include "comm/commhue.h"
-#include "comm/hue/lightdiscovery.h"
 
 namespace hue {
 
@@ -26,8 +27,11 @@ LightDiscovery::LightDiscovery(QWidget* parent, CommLayer* comm) : QWidget(paren
     mSearchButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(mSearchButton, SIGNAL(clicked(bool)), this, SLOT(searchButtonPressed(bool)));
 
-    mSearchWidget = new SearchWidget(
-        "", this, 10, QString("You may only search for 10 Hues manually at a time."));
+    mSearchWidget =
+        new SearchWidget("",
+                         this,
+                         10,
+                         QString("You may only search for 10 Hues manually at a time."));
     mSearchWidget->enableSizeChecks(6, 6, "Hue serial numbers must be 6 characters long.");
     mSearchWidget->forceUpperCase(true);
     connect(mSearchWidget, SIGNAL(plusClicked()), this, SLOT(plusButtonClicked()));
@@ -47,14 +51,14 @@ void LightDiscovery::resize() {
                       int(size.height() * 0.125f),
                       int(size.width() * 0.75f),
                       int(size.height() * 0.75f));
-    
+
     int yPos = 0;
     mTopWidget->setGeometry(0, yPos, this->width(), this->height() * 0.1);
     yPos += mTopWidget->height();
-    
+
     mSearchButton->setGeometry(0, yPos, this->width(), this->height() * 0.1);
     yPos += mSearchButton->height();
-    
+
     mSearchWidget->setGeometry(0, yPos, this->width(), this->height() * 0.8);
     yPos += mSearchWidget->height();
 }
@@ -62,7 +66,7 @@ void LightDiscovery::resize() {
 void LightDiscovery::resizeEvent(QResizeEvent*) {
     resize();
 }
-    
+
 void LightDiscovery::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
@@ -124,7 +128,7 @@ void LightDiscovery::discoveryRoutine() {
 void LightDiscovery::searchButtonPressed(bool) {
     mComm->hue()->searchForNewLights(mBridge, mSearchWidget->searchingFor());
 }
- 
+
 // ----------------------------
 // Plus/Minus/Line Edit
 // ----------------------------

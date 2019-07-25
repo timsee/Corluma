@@ -4,11 +4,10 @@
 #include <QScrollArea>
 #include <QWidget>
 
+#include "comm/hue/huegroupwidget.h"
 #include "cor/objects/group.h"
 #include "cor/objects/page.h"
 #include "cor/widgets/topwidget.h"
-
-#include "comm/hue/huegroupwidget.h"
 
 namespace hue {
 /*!

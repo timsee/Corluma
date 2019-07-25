@@ -6,6 +6,7 @@
 #include <QString>
 #include <sstream>
 #include <vector>
+
 #include "cor/range.h"
 #include "panels.h"
 #include "rhythmcontroller.h"

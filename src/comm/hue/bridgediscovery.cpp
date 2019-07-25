@@ -5,12 +5,13 @@
  */
 
 #include "comm/hue/bridgediscovery.h"
-#include "comm/commhue.h"
-#include "groupdata.h"
 
 #include <QDir>
 #include <QFileInfo>
 #include <QStandardPaths>
+
+#include "comm/commhue.h"
+#include "groupdata.h"
 
 //#define DEBUG_BRIDGE_DISCOVERY
 
@@ -226,8 +227,8 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
                         if (outsideObject["error"].isObject()) {
                             for (auto&& notFoundBridge : mNotFoundBridges) {
                                 if (IP == notFoundBridge.IP) {
-                                    notFoundBridge.state
-                                        = EBridgeDiscoveryState::lookingForUsername;
+                                    notFoundBridge.state =
+                                        EBridgeDiscoveryState::lookingForUsername;
                                 }
                             }
                             // error packets are sent when a message cannot be parsed
@@ -247,8 +248,8 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
                                 }
                                 for (auto&& notFoundBridge : mNotFoundBridges) {
                                     if (IP == notFoundBridge.IP) {
-                                        notFoundBridge.username
-                                            = innerObject["username"].toString();
+                                        notFoundBridge.username =
+                                            innerObject["username"].toString();
                                         qDebug()
                                             << "Discovered username:" << notFoundBridge.username
                                             << " for " << notFoundBridge.IP;

@@ -6,12 +6,12 @@
 
 
 #include "commudp.h"
-#include "comm/arducor/arducordiscovery.h"
 
 #include <QDebug>
 #include <QNetworkInterface>
-
 #include <algorithm>
+
+#include "comm/arducor/arducordiscovery.h"
 
 // preffered port used by the server
 #define PORT 10008
@@ -86,8 +86,8 @@ bool CommUDP::portBound() {
 void CommUDP::stateUpdate() {
     if (shouldContinueStateUpdate()) {
         for (const auto& controller : mDiscovery->controllers().itemVector()) {
-            QString packet
-                = QString("%1&").arg(QString::number(int(EPacketHeader::stateUpdateRequest)));
+            QString packet =
+                QString("%1&").arg(QString::number(int(EPacketHeader::stateUpdateRequest)));
             // add CRC, if in use
             if (controller.isUsingCRC) {
                 packet = packet + "#" + QString::number(mCRC.calculate(packet)) + "&";
@@ -98,9 +98,9 @@ void CommUDP::stateUpdate() {
                 QString customArrayUpdateRequest = QString("%1&").arg(
                     QString::number(int(EPacketHeader::customArrayUpdateRequest)));
                 if (controller.isUsingCRC) {
-                    customArrayUpdateRequest
-                        = customArrayUpdateRequest + "#"
-                          + QString::number(mCRC.calculate(customArrayUpdateRequest)) + "&";
+                    customArrayUpdateRequest =
+                        customArrayUpdateRequest + "#"
+                        + QString::number(mCRC.calculate(customArrayUpdateRequest)) + "&";
                 }
                 sendPacket(controller, customArrayUpdateRequest);
             }

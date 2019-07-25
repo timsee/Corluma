@@ -1,13 +1,12 @@
 #ifndef MULTICOLORPICKER_H
 #define MULTICOLORPICKER_H
 
-#include "colorpicker/colorpicker.h"
+#include <QWidget>
 
+#include "colorpicker/colorpicker.h"
 #include "colorschemechooser.h"
 #include "colorschemecircles.h"
 #include "swatchvectorwidget.h"
-
-#include <QWidget>
 
 /*!
  * \brief The EMultiColorPickerMode enum contains

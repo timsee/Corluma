@@ -2,6 +2,7 @@
 #define DATASYNCNANOLEAF_H
 
 #include <QObject>
+
 #include "datasync.h"
 
 class CommLayer;

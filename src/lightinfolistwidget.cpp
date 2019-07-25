@@ -4,6 +4,8 @@
  * Released under the GNU General Public License.
  */
 
+#include "lightinfolistwidget.h"
+
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
 #include <QScroller>
@@ -11,7 +13,6 @@
 #include <QtCore>
 #include <QtGui>
 
-#include "lightinfolistwidget.h"
 #include "utils/qt.h"
 
 
@@ -88,8 +89,8 @@ void LightInfoListWidget::updateControllers(std::list<nano::LeafController> cont
         }
         // if it doesnt exist, add it
         if (widgetIndex == -1) {
-            nano::LeafControllerInfoWidget* widget
-                = new nano::LeafControllerInfoWidget(controller, mScrollAreaWidget);
+            nano::LeafControllerInfoWidget* widget =
+                new nano::LeafControllerInfoWidget(controller, mScrollAreaWidget);
             widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(lightInfoWidgetClicked(QString)));
             connect(widget,
@@ -143,12 +144,16 @@ void LightInfoListWidget::resize(bool resizeFullWidget) {
     yPos += mTopWidget->height();
 
     // resize scroll area
-    mScrollArea->setGeometry(
-        int(this->width() * 0.01), yPos, int(this->width() * 0.98), int(this->height() * 15 / 20));
+    mScrollArea->setGeometry(int(this->width() * 0.01),
+                             yPos,
+                             int(this->width() * 0.98),
+                             int(this->height() * 15 / 20));
     yPos += mScrollArea->height();
 
-    mDeleteButton->setGeometry(
-        int(this->width() * 0.01), yPos, int(this->width() * 0.98), int(this->height() * 3 / 20));
+    mDeleteButton->setGeometry(int(this->width() * 0.01),
+                               yPos,
+                               int(this->width() * 0.98),
+                               int(this->height() * 3 / 20));
 
     QSize widgetSize(int(this->width() * 0.8f), int(this->height() / 3.0f));
     int widgetHeightY = 0;

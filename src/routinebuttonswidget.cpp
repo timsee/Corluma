@@ -5,13 +5,14 @@
  */
 
 #include "routinebuttonswidget.h"
-#include "cor/presetpalettes.h"
-#include "utils/exception.h"
-#include "utils/qt.h"
 
 #include <QGraphicsOpacityEffect>
 #include <QPainter>
 #include <QStyleOption>
+
+#include "cor/presetpalettes.h"
+#include "utils/exception.h"
+#include "utils/qt.h"
 
 RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup,
                                            const std::vector<QColor>& colors,
@@ -192,8 +193,8 @@ QString RoutineButtonsWidget::jsonToButtonName(const QJsonObject& routineObject)
         param = int(routineObject["param"].toDouble());
     }
     for (uint32_t i = 0; i < mRoutineButtons.size(); i++) {
-        ERoutine buttonRoutine
-            = stringToRoutine(mRoutineButtons[i]->routine()["routine"].toString());
+        ERoutine buttonRoutine =
+            stringToRoutine(mRoutineButtons[i]->routine()["routine"].toString());
         int buttonParam = INT_MIN;
 
         if (mRoutineButtons[i]->routine()["param"].isDouble()) {
@@ -221,8 +222,10 @@ void RoutineButtonsWidget::resize(QSize size) {
     this->setFixedHeight(size.height() / 3);
 
     if (mIsOpen) {
-        this->setGeometry(
-            0, this->parentWidget()->height() - this->height(), this->width(), this->height());
+        this->setGeometry(0,
+                          this->parentWidget()->height() - this->height(),
+                          this->width(),
+                          this->height());
     } else {
         this->setGeometry(0, this->parentWidget()->height(), this->width(), this->height());
     }
@@ -246,8 +249,9 @@ void RoutineButtonsWidget::showWidget(bool shouldShow) {
     } else if (!mIsOpen && shouldShow) {
         // mSingleRoutineWidget->singleRoutineColorChanged(mColor);  // update colors of single
         // color routine
-        cor::moveWidget(
-            this, this->pos(), QPoint(0, this->parentWidget()->height() - this->height()));
+        cor::moveWidget(this,
+                        this->pos(),
+                        QPoint(0, this->parentWidget()->height() - this->height()));
         mIsOpen = true;
     }
 }

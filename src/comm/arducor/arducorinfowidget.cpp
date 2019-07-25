@@ -4,13 +4,13 @@
  * Released under the GNU General Public License.
  */
 
+#include "arducorinfowidget.h"
+
 #include <QGraphicsOpacityEffect>
 #include <QScroller>
 #include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
-
-#include "arducorinfowidget.h"
 
 ArduCorInfoWidget::ArduCorInfoWidget(cor::Light light, QWidget* parent)
     : QWidget(parent), mHideDetails{false}, mLight(light) {
@@ -27,8 +27,8 @@ ArduCorInfoWidget::ArduCorInfoWidget(cor::Light light, QWidget* parent)
     mPathLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mPathLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mHardwareTypeLabel
-        = new QLabel("<b>Hardware:</b>  " + hardwareTypeToString(light.hardwareType), this);
+    mHardwareTypeLabel =
+        new QLabel("<b>Hardware:</b>  " + hardwareTypeToString(light.hardwareType), this);
     mHardwareTypeLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mHardwareTypeLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 

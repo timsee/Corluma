@@ -5,10 +5,9 @@
 #include <QLayout>
 #include <QWidget>
 
-#include "editablefieldwidget.h"
-
 #include "comm/hue/huelight.h"
 #include "comm/hue/hueprotocols.h"
+#include "editablefieldwidget.h"
 
 namespace hue {
 

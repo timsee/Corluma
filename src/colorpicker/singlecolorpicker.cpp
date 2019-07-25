@@ -4,11 +4,12 @@
  * Released under the GNU General Public License.
  */
 
+#include "singlecolorpicker.h"
+
 #include <QDebug>
 #include <QGraphicsOpacityEffect>
 #include <QMouseEvent>
 
-#include "singlecolorpicker.h"
 #include "utils/color.h"
 
 SingleColorPicker::SingleColorPicker(QWidget* parent) : ColorPicker(parent) {
@@ -193,8 +194,8 @@ void SingleColorPicker::updateBrightness(std::uint32_t brightness) {
     }
 
     if ((mCurrentMode == ESingleColorPickerMode::HSV
-        || mCurrentMode == ESingleColorPickerMode::ambient)
-            && mColorWheel->brightness() != brightness) {
+         || mCurrentMode == ESingleColorPickerMode::ambient)
+        && mColorWheel->brightness() != brightness) {
         mColorWheel->updateBrightness(brightness);
     }
     mSelectionCircle->hideCircles();

@@ -5,8 +5,6 @@
  */
 #include "addnewgroupbutton.h"
 
-#include "utils/qt.h"
-
 #include <QDebug>
 #include <QStyleOption>
 #include <QtCore>
@@ -14,6 +12,7 @@
 
 #include "cor/objects/light.h"
 #include "icondata.h"
+#include "utils/qt.h"
 
 AddNewGroupButton::AddNewGroupButton(QWidget* parent) : QWidget(parent) {
     mLabel = new QLabel("Add New Group", this);

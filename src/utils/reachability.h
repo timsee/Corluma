@@ -21,8 +21,8 @@ namespace cor {
  */
 inline bool wifiEnabled() {
     QNetworkConfigurationManager mgr;
-    QList<QNetworkConfiguration> activeConfigs
-        = mgr.allConfigurations(QNetworkConfiguration::Active);
+    QList<QNetworkConfiguration> activeConfigs =
+        mgr.allConfigurations(QNetworkConfiguration::Active);
     bool hasWifiEnabled = false;
     for (const auto& config : activeConfigs) {
         // HACK: Wifi checks don't work as written for apple devices, for now do a vauge check for

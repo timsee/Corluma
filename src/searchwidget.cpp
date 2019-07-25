@@ -4,10 +4,10 @@
  * Released under the GNU General Public License.
  */
 
+#include "searchwidget.h"
+
 #include <QDebug>
 #include <QMessageBox>
-
-#include "searchwidget.h"
 
 SearchWidget::SearchWidget(const QString& defaultLineEditValue,
                            QWidget* parent,

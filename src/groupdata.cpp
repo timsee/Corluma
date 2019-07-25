@@ -5,12 +5,13 @@
  */
 
 #include "groupdata.h"
-#include "cor/protocols.h"
-#include "utils/cormath.h"
 
 #include <QDir>
 #include <QFileInfo>
 #include <QStandardPaths>
+
+#include "cor/protocols.h"
+#include "utils/cormath.h"
 
 GroupData::GroupData(QObject* parent) : QObject(parent), cor::JSONSaveData("save") {
     loadJSON();
@@ -232,8 +233,8 @@ void GroupData::updateExternallyStoredGroups(const std::list<cor::Group>& extern
             // merge new lights into it
             for (const auto& externalLightID : externalGroup.lights) {
                 // search for old light
-                auto result
-                    = std::find(groupCopy.lights.begin(), groupCopy.lights.end(), externalLightID);
+                auto result =
+                    std::find(groupCopy.lights.begin(), groupCopy.lights.end(), externalLightID);
                 // add if not found
                 if (result == groupCopy.lights.end()) {
                     groupCopy.lights.push_back(externalLightID);
@@ -388,8 +389,8 @@ void GroupData::parseGroup(const QJsonObject& object) {
 }
 
 bool GroupData::checkIfMoodLightIsValid(const QJsonObject& device) {
-    bool hasMetaData
-        = (device["type"].isString() && device["uniqueID"].isString() && device["isOn"].isBool());
+    bool hasMetaData =
+        (device["type"].isString() && device["uniqueID"].isString() && device["isOn"].isBool());
 
     // cancel early if it doesn't have the data to parse.
     if (!hasMetaData) {

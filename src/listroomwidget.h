@@ -8,9 +8,9 @@
 
 #include "comm/commlayer.h"
 #include "cor/devicelist.h"
+#include "cor/listlayout.h"
 #include "cor/objects/group.h"
 #include "cor/widgets/listitemwidget.h"
-#include "cor/listlayout.h"
 #include "dropdowntopwidget.h"
 #include "groupbuttonswidget.h"
 #include "listlightwidget.h"

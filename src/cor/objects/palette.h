@@ -1,15 +1,14 @@
 #ifndef PALETTE_H
 #define PALETTE_H
 
-#include "cor/protocols.h"
-#include "utils/cormath.h"
-
 #include <QColor>
 #include <QJsonArray>
 #include <QJsonObject>
-
 #include <sstream>
 #include <vector>
+
+#include "cor/protocols.h"
+#include "utils/cormath.h"
 
 /*!
  * \copyright

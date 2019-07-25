@@ -78,8 +78,7 @@ public:
     virtual void sendFile(const QString& filePath,
                           const QString& title,
                           const QString& mimeType,
-                          int requestId)
-        = 0;
+                          int requestId) = 0;
 
 
     /*!
@@ -93,8 +92,7 @@ public:
     virtual void viewFile(const QString& filePath,
                           const QString& title,
                           const QString& mimeType,
-                          int requestId)
-        = 0;
+                          int requestId) = 0;
 
 
     /*!

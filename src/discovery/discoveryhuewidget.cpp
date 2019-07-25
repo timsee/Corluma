@@ -5,14 +5,15 @@
  */
 
 #include "discoveryhuewidget.h"
-#include "comm/commhue.h"
-#include "mainwindow.h"
-#include "utils/qt.h"
 
 #include <QDesktopWidget>
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
 #include <QScroller>
+
+#include "comm/commhue.h"
+#include "mainwindow.h"
+#include "utils/qt.h"
 
 DiscoveryHueWidget::DiscoveryHueWidget(CommLayer* comm, MainWindow* mainWindow, QWidget* parent)
     : DiscoveryWidget(parent),
@@ -146,8 +147,10 @@ void DiscoveryHueWidget::updateBridgeGUI() {
                     this,
                     SLOT(discoverHuesPressed(QString)));
             connect(widget, SIGNAL(groupsPressed(QString)), this, SLOT(groupsPressed(QString)));
-            connect(
-                widget, SIGNAL(schedulesPressed(QString)), this, SLOT(schedulesPressed(QString)));
+            connect(widget,
+                    SIGNAL(schedulesPressed(QString)),
+                    this,
+                    SLOT(schedulesPressed(QString)));
             connect(widget,
                     SIGNAL(deleteBridge(hue::Bridge)),
                     this,

@@ -1,10 +1,4 @@
 #include "commhue.h"
-#include "utils/exception.h"
-#include "cor/objects/light.h"
-#include "utils/color.h"
-#include "utils/qt.h"
-
-#include "comm/hue/hueprotocols.h"
 
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -12,6 +6,12 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QVariantMap>
+
+#include "comm/hue/hueprotocols.h"
+#include "cor/objects/light.h"
+#include "utils/color.h"
+#include "utils/exception.h"
+#include "utils/qt.h"
 /*!
  * \copyright
  * Copyright (C) 2015 - 2019.
@@ -186,8 +186,10 @@ void CommHue::bridgeDiscovered(const hue::Bridge& bridge,
         QStringList keys = lightsObject.keys();
         for (const auto& key : keys) {
             if (lightsObject.value(key).isObject()) {
-                updateHueLightState(
-                    bridge, lightsObject.value(key).toObject(), int(key.toDouble()), false);
+                updateHueLightState(bridge,
+                                    lightsObject.value(key).toObject(),
+                                    int(key.toDouble()),
+                                    false);
             }
         }
 
@@ -195,8 +197,8 @@ void CommHue::bridgeDiscovered(const hue::Bridge& bridge,
         keys = groupObject.keys();
         for (const auto& key : keys) {
             if (groupObject.value(key).isObject()) {
-                const auto& jsonResult
-                    = jsonToGroup(groupObject.value(key).toObject(), int(key.toDouble()), groups);
+                const auto& jsonResult =
+                    jsonToGroup(groupObject.value(key).toObject(), int(key.toDouble()), groups);
                 if (jsonResult.second) {
                     groups.push_back(jsonResult.first);
                 }
@@ -313,8 +315,8 @@ void CommHue::parseJSONObject(const hue::Bridge& bridge, const QJsonObject& obje
             } else if (updateType == EHueUpdates::scheduleUpdate) {
                 scheduleList.push_back(jsonToSchedule(innerObject, int(key.toDouble())));
             } else if (updateType == EHueUpdates::groupUpdate) {
-                const auto& jsonResult
-                    = jsonToGroup(innerObject.value(key).toObject(), int(key.toDouble()), {});
+                const auto& jsonResult =
+                    jsonToGroup(innerObject.value(key).toObject(), int(key.toDouble()), {});
                 if (jsonResult.second) {
                     groupList.push_back(jsonResult.first);
                 }
@@ -371,8 +373,8 @@ void CommHue::handleSuccessPacket(const hue::Bridge& bridge,
     if (list.size() > 1) {
         if (list[1].compare("lights") == 0) {
             if (list.size() > 2) {
-                cor::Light device
-                    = mDiscovery->lightFromBridgeIDAndIndex(bridge.id, list[2].toInt());
+                cor::Light device =
+                    mDiscovery->lightFromBridgeIDAndIndex(bridge.id, list[2].toInt());
                 if (fillDevice(device)) {
                     if (list[3].compare("state") == 0) {
                         QString key = list[4];
@@ -382,19 +384,22 @@ void CommHue::handleSuccessPacket(const hue::Bridge& bridge,
                             valueChanged = true;
                         } else if (key.compare("sat") == 0) {
                             auto saturation = int(value.toDouble());
-                            device.color.setHsv(
-                                device.color.hue(), saturation, device.color.value());
+                            device.color.setHsv(device.color.hue(),
+                                                saturation,
+                                                device.color.value());
                             valueChanged = true;
                         } else if (key.compare("hue") == 0) {
                             auto hue = int(value.toDouble());
-                            device.color.setHsv(
-                                hue / 182, device.color.saturation(), device.color.value());
+                            device.color.setHsv(hue / 182,
+                                                device.color.saturation(),
+                                                device.color.value());
                             device.colorMode = EColorMode::HSV;
                             valueChanged = true;
                         } else if (key.compare("bri") == 0) {
                             auto brightness = int(value.toDouble());
-                            device.color.setHsv(
-                                device.color.hue(), device.color.saturation(), brightness);
+                            device.color.setHsv(device.color.hue(),
+                                                device.color.saturation(),
+                                                brightness);
                             valueChanged = true;
                         } else if (key.compare("colormode") == 0) {
                             QString mode = value.toString();
@@ -488,8 +493,8 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge,
                             double y = array.at(1).toDouble();
 
                             double z = 1.0 - x - y;
-                            double Y = stateObject["bri"].toDouble()
-                                       / 254.0; // The given brightness value
+                            double Y =
+                                stateObject["bri"].toDouble() / 254.0; // The given brightness value
                             double X = (Y / y) * x;
                             double Z = (Y / y) * z;
 

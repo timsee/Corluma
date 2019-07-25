@@ -2,6 +2,7 @@
 #define COLORGRID_H
 
 #include <QWidget>
+
 #include "cor/objects/light.h"
 #include "cor/widgets/button.h"
 #include "cor/widgets/slider.h"

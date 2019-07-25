@@ -5,12 +5,13 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
+
 #include "comm/arducor/controller.h"
+#include "comm/nanoleaf/leafcontroller.h"
+#include "comm/nanoleaf/leafdiscovery.h"
 #include "comm/upnpdiscovery.h"
 #include "commtype.h"
 #include "cor/presetpalettes.h"
-#include "comm/nanoleaf/leafcontroller.h"
-#include "comm/nanoleaf/leafdiscovery.h"
 
 
 /*!

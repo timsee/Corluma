@@ -5,6 +5,7 @@
  */
 
 #include "listroomwidget.h"
+
 #include <QMoveEvent>
 #include <QPainter>
 #include <QStyleOption>
@@ -27,11 +28,11 @@ ListRoomWidget::ListRoomWidget(const cor::Group& group,
     this->setFixedWidth(parent->width());
 
     if (type == cor::EWidgetType::condensed) {
-        mDropdownTopWidget
-            = new DropdownTopWidget(group.name(), cor::EWidgetType::condensed, true, this);
+        mDropdownTopWidget =
+            new DropdownTopWidget(group.name(), cor::EWidgetType::condensed, true, this);
     } else {
-        mDropdownTopWidget
-            = new DropdownTopWidget(group.name(), cor::EWidgetType::full, true, this);
+        mDropdownTopWidget =
+            new DropdownTopWidget(group.name(), cor::EWidgetType::full, true, this);
     }
     connect(mDropdownTopWidget, SIGNAL(pressed()), this, SLOT(dropdownTopWidgetPressed()));
     mDropdownTopWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -44,8 +45,8 @@ ListRoomWidget::ListRoomWidget(const cor::Group& group,
             // check if group is already in this list
             if (groupResult.second) {
                 // check if its already in the sub group names
-                auto widgetResult
-                    = std::find(widgetNames.begin(), widgetNames.end(), groupResult.first.name());
+                auto widgetResult =
+                    std::find(widgetNames.begin(), widgetNames.end(), groupResult.first.name());
                 if (widgetResult != widgetNames.end()) {
                     widgetNames.emplace_back(groupResult.first.name());
                 }
@@ -87,8 +88,9 @@ void ListRoomWidget::updateTopWidget() {
                 auto checkedCount = result.first;
                 auto reachableCount = result.second;
 
-                mGroupsButtonWidget->updateCheckedDevices(
-                    group.name(), checkedCount, reachableCount);
+                mGroupsButtonWidget->updateCheckedDevices(group.name(),
+                                                          checkedCount,
+                                                          reachableCount);
             }
         }
     }
@@ -325,14 +327,18 @@ void ListRoomWidget::resize() {
             spacerGeometry = QRect(0, 0, 0, 0);
             yPos -= mListLayout.overallSize().height();
         } else {
-            spacerGeometry = QRect(
-                0, yPos, mListLayout.overallSize().width(), mListLayout.overallSize().height());
+            spacerGeometry = QRect(0,
+                                   yPos,
+                                   mListLayout.overallSize().width(),
+                                   mListLayout.overallSize().height());
         }
         mGroupsButtonWidget->resize(mDropdownTopWidget->size(), spacerGeometry);
         moveWidgets(QSize(this->parentWidget()->width(), mDropdownTopWidget->height()),
                     QPoint(0, yPos));
-        mGroupsButtonWidget->setGeometry(
-            0, mDropdownTopWidget->height(), this->width(), mGroupsButtonWidget->height());
+        mGroupsButtonWidget->setGeometry(0,
+                                         mDropdownTopWidget->height(),
+                                         this->width(),
+                                         mGroupsButtonWidget->height());
     } else {
         moveWidgets(QSize(this->parentWidget()->width(), mDropdownTopWidget->height()),
                     QPoint(0, mDropdownTopWidget->height()));

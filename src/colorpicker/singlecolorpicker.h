@@ -1,14 +1,13 @@
 #ifndef SINGLECOLORPICKER_H
 #define SINGLECOLORPICKER_H
 
+#include <QWidget>
+
 #include "colorpicker/colorpicker.h"
 #include "colorpicker/colorschemecircles.h"
-
 #include "hsvsliders.h"
 #include "rgbsliders.h"
 #include "tempbrightsliders.h"
-
-#include <QWidget>
 
 
 /*!

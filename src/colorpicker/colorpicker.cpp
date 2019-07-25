@@ -5,17 +5,17 @@
  */
 
 #include "colorpicker.h"
-#include "utils/color.h"
 
 #include <QConicalGradient>
 #include <QDebug>
-#include <QGraphicsOpacityEffect>
-#include <QSignalMapper>
-
 #include <QGraphicsEffect>
+#include <QGraphicsOpacityEffect>
 #include <QGraphicsScene>
 #include <QPainter>
+#include <QSignalMapper>
 #include <QStyleOption>
+
+#include "utils/color.h"
 
 ColorPicker::ColorPicker(QWidget* parent) : QWidget(parent) {
     mBestPossibleType = EColorPickerType::dimmable;

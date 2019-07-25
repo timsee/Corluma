@@ -4,16 +4,16 @@
  * Released under the GNU General Public License.
  */
 
+#include "listlightwidget.h"
+
 #include <QGraphicsEffect>
 #include <QGraphicsScene>
+#include <QMouseEvent>
 #include <QPainter>
 #include <QStyleOption>
-
-#include "listlightwidget.h"
-#include "utils/qt.h"
-
-#include <QMouseEvent>
 #include <algorithm>
+
+#include "utils/qt.h"
 
 ListLightWidget::ListLightWidget(const cor::Light& device,
                                  bool setHighlightable,
@@ -207,8 +207,10 @@ void ListLightWidget::paintEvent(QPaintEvent*) {
         }
 
         if (mIconPixmap.size() != rect.size()) {
-            mIconPixmap = mIconPixmap.scaled(
-                rect.width(), rect.height(), Qt::IgnoreAspectRatio, Qt::FastTransformation);
+            mIconPixmap = mIconPixmap.scaled(rect.width(),
+                                             rect.height(),
+                                             Qt::IgnoreAspectRatio,
+                                             Qt::FastTransformation);
         }
 
         QBrush brush2(mIconPixmap);
@@ -355,8 +357,10 @@ void ListLightWidget::resizeIcons() {
     QSize size(int(this->height() * 0.5f), int(this->height() * 0.5f));
     mTypeIcon->setFixedSize(size);
     updateTypeIcon(mDevice.hardwareType);
-    mTypePixmap = mTypePixmap.scaled(
-        size.width(), size.height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    mTypePixmap = mTypePixmap.scaled(size.width(),
+                                     size.height(),
+                                     Qt::IgnoreAspectRatio,
+                                     Qt::SmoothTransformation);
 
     if (mType == cor::EWidgetType::full) {
         mController->setFixedWidth(this->width());

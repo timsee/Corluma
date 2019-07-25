@@ -1,10 +1,9 @@
 #ifndef PRESETPALETTES_H
 #define PRESETPALETTES_H
 
-#include <vector>
-
 #include <QColor>
 #include <QJsonObject>
+#include <vector>
 
 #include "cor/objects/palette.h"
 #include "cor/protocols.h"

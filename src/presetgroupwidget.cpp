@@ -5,6 +5,7 @@
  */
 
 #include "presetgroupwidget.h"
+
 #include "cor/presetpalettes.h"
 #include "utils/qt.h"
 

@@ -1,7 +1,8 @@
 #include "listlayout.h"
-#include <QDebug>
-#include "cor/widgets/listitemwidget.h"
 
+#include <QDebug>
+
+#include "cor/widgets/listitemwidget.h"
 #include "listlightwidget.h"
 #include "utils/exception.h"
 
@@ -107,10 +108,10 @@ void ListLayout::sortDeviceWidgets() {
             return true;
         } else {
             // Hue is hidden from display, hide it in comparison here too.
-            auto nameA
-                = aDeviceWidget->convertUglyHueNameToPrettyName(aDeviceWidget->device().name);
-            auto nameB
-                = bDeviceWidget->convertUglyHueNameToPrettyName(bDeviceWidget->device().name);
+            auto nameA =
+                aDeviceWidget->convertUglyHueNameToPrettyName(aDeviceWidget->device().name);
+            auto nameB =
+                bDeviceWidget->convertUglyHueNameToPrettyName(bDeviceWidget->device().name);
             return (nameA < nameB);
         }
     });

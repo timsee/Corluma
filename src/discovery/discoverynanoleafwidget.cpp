@@ -5,6 +5,7 @@
  */
 
 #include "discoverynanoleafwidget.h"
+
 #include "comm/commnanoleaf.h"
 
 DiscoveryNanoLeafWidget::DiscoveryNanoLeafWidget(CommLayer* comm, QWidget* parent)

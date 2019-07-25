@@ -5,12 +5,9 @@
  */
 
 #include "settingspage.h"
-#include "comm/commhue.h"
-#include "listlightwidget.h"
-#include "mainwindow.h"
-#include "utils/qt.h"
 
 #include <QDebug>
+#include <QDesktopWidget>
 #include <QFileDialog>
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
@@ -20,7 +17,10 @@
 #include <QStandardPaths>
 #include <QStyleOption>
 
-#include <QDesktopWidget>
+#include "comm/commhue.h"
+#include "listlightwidget.h"
+#include "mainwindow.h"
+#include "utils/qt.h"
 
 SettingsPage::SettingsPage(QWidget* parent,
                            GroupData* parser,
@@ -178,8 +178,8 @@ void SettingsPage::loadButtonClicked() {
     dialog.setNameFilter(tr("JSON (*.json)"));
     dialog.setViewMode(QFileDialog::Detail);
     dialog.setStyleSheet("color:silver;");
-    const QString downloadsFolder
-        = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+    const QString downloadsFolder =
+        QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
     dialog.setDirectory(downloadsFolder);
     QStringList fileNames;
     if (dialog.exec()) {
@@ -201,8 +201,10 @@ void SettingsPage::saveButtonClicked() {
     mGroups->addSaveToTempDirectory();
     mShareUtils->sendFile(mGroups->tempFile(), "CorlumaSave", "application/json", requestID);
 #else
-    auto fileName = QFileDialog::getSaveFileName(
-        this, tr("Save Group Data"), "CorlumaGroups.json", tr("JSON (*.json)"));
+    auto fileName = QFileDialog::getSaveFileName(this,
+                                                 tr("Save Group Data"),
+                                                 "CorlumaGroups.json",
+                                                 tr("JSON (*.json)"));
     if (fileName.isEmpty()) {
         qDebug() << "WARNING: save file name empty";
         return;

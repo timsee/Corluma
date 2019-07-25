@@ -3,14 +3,14 @@
 
 #include <QScrollArea>
 
-#include "cor/widgets/listwidget.h"
-#include "discovery/discoverywidget.h"
-#include "editablefieldwidget.h"
-#include "greyoutoverlay.h"
 #include "comm/hue/bridgegroupswidget.h"
 #include "comm/hue/bridgeinfowidget.h"
 #include "comm/hue/bridgescheduleswidget.h"
 #include "comm/hue/lightdiscovery.h"
+#include "cor/widgets/listwidget.h"
+#include "discovery/discoverywidget.h"
+#include "editablefieldwidget.h"
+#include "greyoutoverlay.h"
 
 class MainWindow;
 

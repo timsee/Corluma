@@ -112,8 +112,10 @@ private:
         }
         mSwitch->setFixedSize(this->width(), this->height());
         QSize newSize = QSize(int(this->width() * 0.8f), int(this->height() * 0.8f));
-        mSwitchIcon = mSwitchIcon.scaled(
-            newSize.width(), newSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        mSwitchIcon = mSwitchIcon.scaled(newSize.width(),
+                                         newSize.height(),
+                                         Qt::KeepAspectRatio,
+                                         Qt::SmoothTransformation);
 
         mSwitch->setIcon(QIcon(mSwitchIcon));
         mSwitch->setIconSize(newSize);

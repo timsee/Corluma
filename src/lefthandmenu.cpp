@@ -5,15 +5,16 @@
  */
 
 #include "lefthandmenu.h"
-#include "cor/objects/light.h"
-#include "cor/presetpalettes.h"
-#include "utils/qt.h"
 
 #include <QDebug>
 #include <QMouseEvent>
 #include <QScrollBar>
 #include <QScroller>
 #include <QStyleOption>
+
+#include "cor/objects/light.h"
+#include "cor/presetpalettes.h"
+#include "utils/qt.h"
 
 LeftHandMenu::LeftHandMenu(cor::DeviceList* devices,
                            CommLayer* comm,
@@ -62,14 +63,20 @@ LeftHandMenu::LeftHandMenu(cor::DeviceList* devices,
     // Setup Buttons
     //---------------
 
-    mSingleColorButton = new LeftHandButton(
-        "Single Color", EPage::colorPage, ":/images/wheels/color_wheel_hsv.png", this, this);
+    mSingleColorButton = new LeftHandButton("Single Color",
+                                            EPage::colorPage,
+                                            ":/images/wheels/color_wheel_hsv.png",
+                                            this,
+                                            this);
     mSingleColorButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mSingleColorButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
     mSingleColorButton->shouldHightlght(true);
 
-    mSettingsButton = new LeftHandButton(
-        "Settings", EPage::settingsPage, ":/images/settingsgear.png", this, this);
+    mSettingsButton = new LeftHandButton("Settings",
+                                         EPage::settingsPage,
+                                         ":/images/settingsgear.png",
+                                         this,
+                                         this);
     mSettingsButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mSettingsButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
@@ -78,8 +85,8 @@ LeftHandMenu::LeftHandMenu(cor::DeviceList* devices,
     light.routine = ERoutine::multiBars;
     light.palette = palettes.palette(EPalette::water);
     light.speed = 100;
-    mMultiColorButton = new LeftHandButton(
-        "Multi Color", EPage::palettePage, cor::lightToJson(light), this, this);
+    mMultiColorButton =
+        new LeftHandButton("Multi Color", EPage::palettePage, cor::lightToJson(light), this, this);
     mMultiColorButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mMultiColorButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
@@ -87,8 +94,8 @@ LeftHandMenu::LeftHandMenu(cor::DeviceList* devices,
     moodLight.routine = ERoutine::multiFade;
     moodLight.palette = palettes.palette(EPalette::fire);
     moodLight.speed = 100;
-    mMoodButton
-        = new LeftHandButton("Moods", EPage::moodPage, cor::lightToJson(moodLight), this, this);
+    mMoodButton =
+        new LeftHandButton("Moods", EPage::moodPage, cor::lightToJson(moodLight), this, this);
     mMoodButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mMoodButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
@@ -141,8 +148,10 @@ void LeftHandMenu::resize() {
     mSettingsButton->setGeometry(0, yPos, this->width(), buttonHeight);
     yPos += mSettingsButton->height();
 
-    mMainPalette->setGeometry(
-        0, yPos + int(this->height() * 0.02), this->width(), int(buttonHeight * 1.2));
+    mMainPalette->setGeometry(0,
+                              yPos + int(this->height() * 0.02),
+                              this->width(),
+                              int(buttonHeight * 1.2));
 
     yPos += mMainPalette->height() + this->height() * 0.02;
 
@@ -328,10 +337,14 @@ ListRoomWidget* LeftHandMenu::initRoomsWidget(const cor::Group& group, const QSt
             SIGNAL(deviceClicked(QString, QString)),
             this,
             SLOT(lightClicked(QString, QString)));
-    connect(
-        widget, SIGNAL(allButtonPressed(QString, bool)), this, SLOT(groupSelected(QString, bool)));
-    connect(
-        widget, SIGNAL(buttonsShown(QString, bool)), this, SLOT(shouldShowButtons(QString, bool)));
+    connect(widget,
+            SIGNAL(allButtonPressed(QString, bool)),
+            this,
+            SLOT(groupSelected(QString, bool)));
+    connect(widget,
+            SIGNAL(buttonsShown(QString, bool)),
+            this,
+            SLOT(shouldShowButtons(QString, bool)));
     connect(widget, SIGNAL(groupChanged(QString)), this, SLOT(changedGroup(QString)));
 
     mRoomWidgets.push_back(widget);
@@ -477,8 +490,8 @@ cor::Group LeftHandMenu::makeMiscellaneousGroup(const std::list<cor::Group>& roo
                 }
                 // check their subgroups for thsi specific light
                 for (const auto& groupID : room.subgroups) {
-                    const auto& group
-                        = mGroups->groups().item(QString::number(groupID).toStdString());
+                    const auto& group =
+                        mGroups->groups().item(QString::number(groupID).toStdString());
                     if (group.second) {
                         for (const auto& lightID : group.first.lights) {
                             if (lightID == device.uniqueID()) {

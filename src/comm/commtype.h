@@ -6,8 +6,6 @@
 #include <QString>
 #include <QTime>
 #include <QTimer>
-
-
 #include <memory>
 #include <unordered_map>
 

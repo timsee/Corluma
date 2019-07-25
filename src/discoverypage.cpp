@@ -6,23 +6,20 @@
 
 #include "discoverypage.h"
 
-#include "discovery/discoveryarducorwidget.h"
-#include "discovery/discoveryhuewidget.h"
-#include "discovery/discoverynanoleafwidget.h"
-
-#include "mainwindow.h"
-
-#include "comm/commnanoleaf.h"
-#include "utils/qt.h"
-
+#include <QGraphicsOpacityEffect>
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QSignalMapper>
-
-#include <QGraphicsOpacityEffect>
 #include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
+
+#include "comm/commnanoleaf.h"
+#include "discovery/discoveryarducorwidget.h"
+#include "discovery/discoveryhuewidget.h"
+#include "discovery/discoverynanoleafwidget.h"
+#include "mainwindow.h"
+#include "utils/qt.h"
 
 DiscoveryPage::DiscoveryPage(QWidget* parent,
                              cor::DeviceList* data,
@@ -48,8 +45,8 @@ DiscoveryPage::DiscoveryPage(QWidget* parent,
 
     // setup button icons
     mButtonIcons = std::vector<QPixmap>(size_t(EConnectionButtonIcons::MAX));
-    mConnectionStates
-        = std::vector<EConnectionState>(size_t(EProtocolType::MAX), EConnectionState::off);
+    mConnectionStates =
+        std::vector<EConnectionState>(size_t(EProtocolType::MAX), EConnectionState::off);
 
     connect(mStartButton, SIGNAL(clicked(bool)), this, SLOT(startClicked()));
 
@@ -172,18 +169,18 @@ void DiscoveryPage::resizeButtonIcons() {
         mLastFloatingHeight = mHorizontalFloatingLayout->height();
         auto buttonSize = int(mHorizontalFloatingLayout->height() * 0.5f);
         mButtonIcons = std::vector<QPixmap>(size_t(EConnectionButtonIcons::MAX));
-        mButtonIcons[int(EConnectionButtonIcons::black)]
-            = QPixmap("://images/blackButton.png")
-                  .scaled(buttonSize, buttonSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-        mButtonIcons[int(EConnectionButtonIcons::red)]
-            = QPixmap("://images/redButton.png")
-                  .scaled(buttonSize, buttonSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-        mButtonIcons[int(EConnectionButtonIcons::yellow)]
-            = QPixmap("://images/yellowButton.png")
-                  .scaled(buttonSize, buttonSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-        mButtonIcons[int(EConnectionButtonIcons::blue)]
-            = QPixmap("://images/blueButton.png")
-                  .scaled(buttonSize, buttonSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        mButtonIcons[int(EConnectionButtonIcons::black)] =
+            QPixmap("://images/blackButton.png")
+                .scaled(buttonSize, buttonSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        mButtonIcons[int(EConnectionButtonIcons::red)] =
+            QPixmap("://images/redButton.png")
+                .scaled(buttonSize, buttonSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        mButtonIcons[int(EConnectionButtonIcons::yellow)] =
+            QPixmap("://images/yellowButton.png")
+                .scaled(buttonSize, buttonSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        mButtonIcons[int(EConnectionButtonIcons::blue)] =
+            QPixmap("://images/blueButton.png")
+                .scaled(buttonSize, buttonSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
 }
 

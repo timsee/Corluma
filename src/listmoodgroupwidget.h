@@ -7,7 +7,6 @@
 #include <QObject>
 #include <QPushButton>
 #include <QWidget>
-
 #include <set>
 
 #include "cor/listlayout.h"

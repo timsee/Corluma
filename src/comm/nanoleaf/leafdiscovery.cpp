@@ -5,12 +5,13 @@
  */
 
 #include "leafdiscovery.h"
-#include "comm/commnanoleaf.h"
-#include "utils/reachability.h"
 
 #include <QDir>
 #include <QFileInfo>
 #include <QStandardPaths>
+
+#include "comm/commnanoleaf.h"
+#include "utils/reachability.h"
 
 namespace nano {
 

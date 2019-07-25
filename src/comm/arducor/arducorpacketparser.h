@@ -4,6 +4,7 @@
 #include <QColor>
 #include <QJsonObject>
 #include <QWidget>
+
 #include "cor/objects/light.h"
 #include "cor/protocols.h"
 

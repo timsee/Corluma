@@ -2,6 +2,7 @@
 #define MULTICOLORSTATEWIDGET_H
 
 #include <QWidget>
+
 #include "colorpicker/swatchvectorwidget.h"
 #include "cor/protocols.h"
 #include "cor/widgets/button.h"

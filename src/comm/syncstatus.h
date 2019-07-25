@@ -2,6 +2,7 @@
 #define SYNCSTATUS_H
 
 #include <QObject>
+
 #include "datasync.h"
 /*!
  * \copyright

@@ -2,12 +2,12 @@
 #define NANOLEAFDISCOVERY_H
 
 #include <QObject>
+#include <QTimer>
+
 #include "comm/nanoleaf/leafcontroller.h"
 #include "comm/upnpdiscovery.h"
 #include "cor/dictionary.h"
 #include "cor/jsonsavedata.h"
-
-#include <QTimer>
 
 /// discovery state for a nanoleaf
 enum class ENanoleafDiscoveryState {

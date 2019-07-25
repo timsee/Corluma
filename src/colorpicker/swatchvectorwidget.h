@@ -1,10 +1,10 @@
 #ifndef SWATCH_VECTOR_WIDGET_H
 #define SWATCH_VECTOR_WIDGET_H
 
-#include "cor/widgets/slider.h"
-
 #include <QPushButton>
 #include <QWidget>
+
+#include "cor/widgets/slider.h"
 
 /*!
  * \copyright

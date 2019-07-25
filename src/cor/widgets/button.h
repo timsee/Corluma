@@ -7,6 +7,7 @@
 #include <QPixmap>
 #include <QPushButton>
 #include <QWidget>
+
 #include "cor/protocols.h"
 #include "icondata.h"
 
@@ -52,8 +53,10 @@ public:
     void updateRoutine(const QJsonObject& routineObject) {
         mIconData.setRoutine(routineObject);
         QPixmap pixmap = mIconData.renderAsQPixmap();
-        pixmap = pixmap.scaled(
-            mIconSize.width(), mIconSize.height(), Qt::KeepAspectRatio, Qt::FastTransformation);
+        pixmap = pixmap.scaled(mIconSize.width(),
+                               mIconSize.height(),
+                               Qt::KeepAspectRatio,
+                               Qt::FastTransformation);
         this->setIcon(QIcon(pixmap));
     }
 
@@ -84,8 +87,10 @@ public:
         int size = std::min(this->size().height(), this->size().width());
         mIconSize = QSize(int(size * 0.6f), int(size * 0.6f));
         QPixmap pixmap = mIconData.renderAsQPixmap();
-        pixmap = pixmap.scaled(
-            mIconSize.width(), mIconSize.height(), Qt::KeepAspectRatio, Qt::FastTransformation);
+        pixmap = pixmap.scaled(mIconSize.width(),
+                               mIconSize.height(),
+                               Qt::KeepAspectRatio,
+                               Qt::FastTransformation);
         this->setIcon(QIcon(pixmap));
         this->setIconSize(mIconSize);
     }

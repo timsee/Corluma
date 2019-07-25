@@ -1,4 +1,5 @@
 #include "timeoutwidget.h"
+
 #include "utils/qt.h"
 
 TimeoutWidget::TimeoutWidget(QWidget* parent,
@@ -143,8 +144,10 @@ int TimeoutWidget::resize(int widgetHeight) {
         currentY += mSlider->height() + mSpacerPixels;
 
         mMinutesButton->setGeometry(2 * mSpacerPixels, currentY, buttonWidth, buttonHeight);
-        mHoursButton->setGeometry(
-            buttonWidth + 3 * mSpacerPixels, currentY, buttonWidth, buttonHeight);
+        mHoursButton->setGeometry(buttonWidth + 3 * mSpacerPixels,
+                                  currentY,
+                                  buttonWidth,
+                                  buttonHeight);
         currentY += mMinutesButton->height();
     }
 

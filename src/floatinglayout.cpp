@@ -5,14 +5,15 @@
  */
 
 #include "floatinglayout.h"
-#include "mainwindow.h"
-#include "utils/qt.h"
 
 #include <QDebug>
 #include <QGraphicsOpacityEffect>
 #include <QPainter>
 #include <QSignalMapper>
 #include <QStyleOption>
+
+#include "mainwindow.h"
+#include "utils/qt.h"
 
 FloatingLayout::FloatingLayout(bool makeVertical, QWidget* parent) : QWidget(parent) {
     mIsVertical = makeVertical;
@@ -344,8 +345,10 @@ bool FloatingLayout::isKeyHighlighted(const QString& key) {
 
 void FloatingLayout::move(QPoint topRightPoint) {
     // add floating region to far right of screen under main icon menu
-    this->setGeometry(
-        topRightPoint.x() - this->width(), topRightPoint.y(), this->width(), this->height());
+    this->setGeometry(topRightPoint.x() - this->width(),
+                      topRightPoint.y(),
+                      this->width(),
+                      this->height());
 }
 
 

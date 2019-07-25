@@ -5,7 +5,6 @@
  */
 
 #include "groupbutton.h"
-#include "utils/qt.h"
 
 #include <QDebug>
 #include <QGraphicsEffect>
@@ -13,6 +12,8 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QStyleOption>
+
+#include "utils/qt.h"
 
 namespace cor {
 
@@ -45,16 +46,22 @@ GroupButton::GroupButton(QWidget* parent, const QString& text)
 void GroupButton::resize() {
     QSize size = preferredButtonSize();
     mClearAllPixmap = QPixmap(":/images/selectAllIcon.png");
-    mClearAllPixmap = mClearAllPixmap.scaled(
-        size.width(), size.height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    mClearAllPixmap = mClearAllPixmap.scaled(size.width(),
+                                             size.height(),
+                                             Qt::IgnoreAspectRatio,
+                                             Qt::SmoothTransformation);
 
     mSelectAllPixmap = QPixmap(":/images/uncheckedBox.png");
-    mSelectAllPixmap = mSelectAllPixmap.scaled(
-        size.width(), size.height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    mSelectAllPixmap = mSelectAllPixmap.scaled(size.width(),
+                                               size.height(),
+                                               Qt::IgnoreAspectRatio,
+                                               Qt::SmoothTransformation);
 
     mDisabledPixmap = QPixmap(":/images/disabledX.png");
-    mDisabledPixmap = mDisabledPixmap.scaled(
-        size.width(), size.height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    mDisabledPixmap = mDisabledPixmap.scaled(size.width(),
+                                             size.height(),
+                                             Qt::IgnoreAspectRatio,
+                                             Qt::SmoothTransformation);
 
     mTitle->setFixedWidth(this->width() - preferredButtonSize().width());
     mButton->setFixedWidth(preferredButtonSize().width());

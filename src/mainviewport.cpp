@@ -1,6 +1,6 @@
 #include "mainviewport.h"
-#include "mainwindow.h"
 
+#include "mainwindow.h"
 #include "utils/qt.h"
 
 /*!
@@ -26,8 +26,10 @@ MainViewport::MainViewport(MainWindow* parent,
     mColorPage = new ColorPage(parent);
     mColorPage->isOpen(false);
     mColorPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(
-        mColorPage, SIGNAL(routineUpdate(QJsonObject)), parent, SLOT(routineChanged(QJsonObject)));
+    connect(mColorPage,
+            SIGNAL(routineUpdate(QJsonObject)),
+            parent,
+            SLOT(routineChanged(QJsonObject)));
 
     mPalettePage = new PalettePage(parent);
     mPalettePage->isOpen(false);
@@ -138,8 +140,9 @@ void MainViewport::showMainPage(EPage page) {
                          mData->bestColorPickerType());
         mColorPage->setVisible(true);
     } else if (page == EPage::moodPage) {
-        mMoodPage->show(
-            mData->findCurrentMood(mGroups->moods()), mGroups->moods(), mGroups->roomList());
+        mMoodPage->show(mData->findCurrentMood(mGroups->moods()),
+                        mGroups->moods(),
+                        mGroups->roomList());
         mMoodPage->setVisible(true);
     } else if (page == EPage::palettePage) {
         mPalettePage->resize();

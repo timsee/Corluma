@@ -34,7 +34,6 @@ void SyncStatus::syncStatusChanged(EDataSyncType type, bool status) {
     }
 }
 
-
 bool SyncStatus::inSync() {
     return mArduCorInSync && mHueInSync && mNanoleafInSync && mSettingsInSync;
 }

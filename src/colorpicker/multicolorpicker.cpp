@@ -4,12 +4,11 @@
  * Released under the GNU General Public License.
  */
 
-#include <QGraphicsOpacityEffect>
-#include <QMouseEvent>
-
 #include "multicolorpicker.h"
 
 #include <QDebug>
+#include <QGraphicsOpacityEffect>
+#include <QMouseEvent>
 
 MultiColorPicker::MultiColorPicker(QWidget* parent)
     : ColorPicker(parent), mCount{0}, mMaxCount{6}, mCircleIndex{0} {
@@ -191,6 +190,8 @@ void MultiColorPicker::resize() {
                                      this->geometry().width(),
                                      this->geometry().height() - mPlaceholder->geometry().height());
 
-    mColorSchemeChooser->setGeometry(
-        rect.x(), rect.y() + rect.height() / 2, rect.width(), rect.height() / 2);
+    mColorSchemeChooser->setGeometry(rect.x(),
+                                     rect.y() + rect.height() / 2,
+                                     rect.width(),
+                                     rect.height() / 2);
 }

@@ -4,7 +4,6 @@
 
 #include <QColor>
 #include <QWidget>
-
 #include <list>
 
 #include "appsettings.h"

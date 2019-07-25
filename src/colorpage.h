@@ -2,6 +2,10 @@
 #ifndef SINGLECOLORPAGE_H
 #define SINGLECOLORPAGE_H
 
+#include <QSlider>
+#include <QToolButton>
+#include <QWidget>
+
 #include "colorpicker/singlecolorpicker.h"
 #include "cor/objects/page.h"
 #include "cor/widgets/button.h"
@@ -9,10 +13,6 @@
 #include "icondata.h"
 #include "routinebuttonswidget.h"
 #include "singlecolorstatewidget.h"
-
-#include <QSlider>
-#include <QToolButton>
-#include <QWidget>
 
 /*!
  * \copyright

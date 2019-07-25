@@ -2,6 +2,7 @@
 #define HUE_HUELIGHT_H
 
 #include <QString>
+
 #include "cor/objects/light.h"
 #include "hueprotocols.h"
 

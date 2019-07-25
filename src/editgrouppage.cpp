@@ -5,8 +5,6 @@
  */
 
 #include "editgrouppage.h"
-#include "comm/commhue.h"
-#include "utils/qt.h"
 
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
@@ -14,6 +12,9 @@
 #include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
+
+#include "comm/commhue.h"
+#include "utils/qt.h"
 
 EditGroupPage::EditGroupPage(QWidget* parent, CommLayer* comm, GroupData* parser)
     : QWidget(parent), mComm(comm), mGroups(parser), mIsMood{false}, mIsRoomCurrent{false} {
@@ -24,8 +25,10 @@ EditGroupPage::EditGroupPage(QWidget* parent, CommLayer* comm, GroupData* parser
     connect(mTopMenu->resetButton(), SIGNAL(clicked(bool)), this, SLOT(resetPressed(bool)));
     connect(mTopMenu->deleteButton(), SIGNAL(clicked(bool)), this, SLOT(deletePressed(bool)));
     connect(mTopMenu->saveButton(), SIGNAL(clicked(bool)), this, SLOT(savePressed(bool)));
-    connect(
-        mTopMenu->nameEdit(), SIGNAL(textChanged(QString)), this, SLOT(lineEditChanged(QString)));
+    connect(mTopMenu->nameEdit(),
+            SIGNAL(textChanged(QString)),
+            this,
+            SLOT(lineEditChanged(QString)));
     connect(mTopMenu->roomCheckBox(), SIGNAL(boxChecked(bool)), this, SLOT(isRoomChecked(bool)));
 
     mIsRoomOriginal = false;
@@ -68,8 +71,11 @@ void EditGroupPage::showGroup(const QString& key,
 
 void EditGroupPage::updateDevices(const std::list<cor::Light>& checkedDevices,
                                   const std::list<cor::Light>& devices) {
-    mSimpleGroupWidget->updateDevices(
-        devices, cor::EWidgetType::full, EOnOffSwitchState::hidden, true, false);
+    mSimpleGroupWidget->updateDevices(devices,
+                                      cor::EWidgetType::full,
+                                      EOnOffSwitchState::hidden,
+                                      true,
+                                      false);
     mSimpleGroupWidget->setCheckedDevices(checkedDevices);
 }
 

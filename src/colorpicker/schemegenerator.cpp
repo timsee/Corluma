@@ -5,9 +5,10 @@
  */
 
 #include "schemegenerator.h"
-#include "colorwheel.h"
 
 #include <QDebug>
+
+#include "colorwheel.h"
 
 namespace {
 

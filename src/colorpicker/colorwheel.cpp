@@ -4,17 +4,17 @@
  * Released under the GNU General Public License.
  */
 
+#include "colorwheel.h"
+
+#include <QDebug>
 #include <QGraphicsEffect>
 #include <QGraphicsScene>
+#include <QMouseEvent>
 #include <QPainter>
 #include <QStyleOption>
 
-#include "colorwheel.h"
 #include "utils/color.h"
 #include "utils/exception.h"
-
-#include <QDebug>
-#include <QMouseEvent>
 
 
 //#define RENDER_WHEELS_AS_IMAGES 1

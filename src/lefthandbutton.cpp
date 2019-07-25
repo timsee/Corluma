@@ -5,9 +5,6 @@
  */
 
 #include "lefthandbutton.h"
-#include "lefthandmenu.h"
-
-#include "utils/qt.h"
 
 #include <QDebug>
 #include <QStyleOption>
@@ -16,6 +13,8 @@
 
 #include "cor/objects/light.h"
 #include "icondata.h"
+#include "lefthandmenu.h"
+#include "utils/qt.h"
 
 
 LeftHandButton::LeftHandButton(const QString& text,
@@ -74,8 +73,10 @@ void LeftHandButton::updateJSON(const QJsonObject& jsonObject) {
     IconData icon(4, 4);
     icon.setRoutine(jsonObject);
     const auto& size = QSize(int(this->size().width() * 0.8), int(this->size().height() * 0.8));
-    mIcon->setPixmap(icon.renderAsQPixmap().scaled(
-        size.width(), size.height(), Qt::KeepAspectRatio, Qt::FastTransformation));
+    mIcon->setPixmap(icon.renderAsQPixmap().scaled(size.width(),
+                                                   size.height(),
+                                                   Qt::KeepAspectRatio,
+                                                   Qt::FastTransformation));
 }
 
 void LeftHandButton::resize() {

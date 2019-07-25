@@ -5,7 +5,9 @@
  */
 
 #include "topmenu.h"
+
 #include <QGraphicsEffect>
+
 #include "comm/hue/huelight.h"
 #include "mainwindow.h"
 #include "utils/exception.h"
@@ -320,8 +322,10 @@ void TopMenu::resize(int xOffset) {
     mSpacer->setGeometry(mSize.width(), yPos, this->width() - mSize.width(), mSize.height());
 
     if (!mMainWindow->leftHandMenu()->alwaysOpen()) {
-        mOnOffSwitch->setGeometry(
-            int(mSize.width() * 1.1), yPos, mSize.width(), mSize.height() / 2);
+        mOnOffSwitch->setGeometry(int(mSize.width() * 1.1),
+                                  yPos,
+                                  mSize.width(),
+                                  mSize.height() / 2);
 
         mBrightnessSlider->setGeometry(mSize.width() * 2 + 5,
                                        yPos,
@@ -330,11 +334,15 @@ void TopMenu::resize(int xOffset) {
 
         mMainPalette->setVisible(true);
     } else {
-        mOnOffSwitch->setGeometry(
-            int(mSize.width() * 0.1), yPos, mSize.width(), mSize.height() / 2);
+        mOnOffSwitch->setGeometry(int(mSize.width() * 0.1),
+                                  yPos,
+                                  mSize.width(),
+                                  mSize.height() / 2);
 
-        mBrightnessSlider->setGeometry(
-            mSize.width() + 5, yPos, this->width() - int(mSize.width() * 1.1), mSize.height() / 2);
+        mBrightnessSlider->setGeometry(mSize.width() + 5,
+                                       yPos,
+                                       this->width() - int(mSize.width() * 1.1),
+                                       mSize.height() / 2);
 
         mMainPalette->setVisible(false);
     }
@@ -604,8 +612,9 @@ void TopMenu::adjustSingleColorLayout(bool skipTransition) {
                                                   mSingleRoutineFloatingLayout->width(),
                                                   mSingleRoutineFloatingLayout->height());
     } else {
-        cor::moveWidget(
-            mSingleRoutineFloatingLayout, mSingleRoutineFloatingLayout->pos(), endPoint);
+        cor::moveWidget(mSingleRoutineFloatingLayout,
+                        mSingleRoutineFloatingLayout->pos(),
+                        endPoint);
     }
 }
 

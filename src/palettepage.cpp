@@ -5,13 +5,14 @@
  */
 
 #include "palettepage.h"
-#include "icondata.h"
-#include "utils/color.h"
-#include "utils/qt.h"
 
 #include <QDebug>
 #include <QScroller>
 #include <QSignalMapper>
+
+#include "icondata.h"
+#include "utils/color.h"
+#include "utils/qt.h"
 
 PalettePage::PalettePage(QWidget* parent)
     : QWidget(parent), mColorScheme(6, QColor(0, 255, 0)), mSpeed{150}, mCount{0} {
@@ -33,12 +34,14 @@ PalettePage::PalettePage(QWidget* parent)
             SLOT(colorsChanged(std::vector<QColor>)));
 
     /// fill with junk data for this case
-    mMultiRoutineWidget
-        = new RoutineButtonsWidget(EWidgetGroup::multiRoutines, cor::defaultCustomColors(), this);
+    mMultiRoutineWidget =
+        new RoutineButtonsWidget(EWidgetGroup::multiRoutines, cor::defaultCustomColors(), this);
     mMultiRoutineWidget->setMaximumWidth(this->width());
     mMultiRoutineWidget->setMaximumHeight(this->height() / 3);
-    mMultiRoutineWidget->setGeometry(
-        0, this->height(), mMultiRoutineWidget->width(), mMultiRoutineWidget->height());
+    mMultiRoutineWidget->setGeometry(0,
+                                     this->height(),
+                                     mMultiRoutineWidget->width(),
+                                     mMultiRoutineWidget->height());
     mMultiRoutineWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(mMultiRoutineWidget,
             SIGNAL(newRoutineSelected(QJsonObject)),
@@ -151,8 +154,10 @@ void PalettePage::handleRoutineWidget(bool show) {
 void PalettePage::resize() {
     auto yPos = int(this->height() * 0.05);
     QSize scrollAreaSize(int(this->width()), int(this->height() * 0.94f));
-    mArduinoPaletteScrollArea->setGeometry(
-        0, yPos, scrollAreaSize.width(), scrollAreaSize.height());
+    mArduinoPaletteScrollArea->setGeometry(0,
+                                           yPos,
+                                           scrollAreaSize.width(),
+                                           scrollAreaSize.height());
     mArduinoPaletteScrollArea->resize();
 
     mHuePaletteScrollArea->setGeometry(0, yPos, scrollAreaSize.width(), scrollAreaSize.height());

@@ -4,19 +4,20 @@
  * Released under the GNU General Public License.
  */
 
+#include "colorschemechooser.h"
+
 #include <QDebug>
 #include <QGraphicsOpacityEffect>
 
-#include "colorschemechooser.h"
 #include "utils/exception.h"
 
 ColorSchemeChooser::ColorSchemeChooser(QWidget* parent) : QWidget(parent) {
-    std::vector<std::pair<EColorSchemeType, QString>> nameResourcePairs
-        = {{EColorSchemeType::custom, ":images/schemes/custom.png"},
-           {EColorSchemeType::similar, ":images/schemes/similar.png"},
-           {EColorSchemeType::complement, ":images/schemes/complement.png"},
-           {EColorSchemeType::triad, ":images/schemes/triad.png"},
-           {EColorSchemeType::compound, ":images/schemes/compound.png"}};
+    std::vector<std::pair<EColorSchemeType, QString>> nameResourcePairs = {
+        {EColorSchemeType::custom, ":images/schemes/custom.png"},
+        {EColorSchemeType::similar, ":images/schemes/similar.png"},
+        {EColorSchemeType::complement, ":images/schemes/complement.png"},
+        {EColorSchemeType::triad, ":images/schemes/triad.png"},
+        {EColorSchemeType::compound, ":images/schemes/compound.png"}};
 
     for (const auto& scheme : nameResourcePairs) {
         auto button = new ColorSchemeButton(scheme.first, scheme.second, this);

@@ -6,14 +6,14 @@
 
 #include "listmooddetailedwidget.h"
 
-#include "utils/qt.h"
-
 #include <QGraphicsOpacityEffect>
 #include <QScrollBar>
 #include <QScroller>
 #include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
+
+#include "utils/qt.h"
 
 ListMoodDetailedWidget::ListMoodDetailedWidget(QWidget* parent, GroupData* groups, CommLayer* comm)
     : QWidget(parent), mKey{0}, mComm{comm} {
@@ -39,8 +39,9 @@ ListMoodDetailedWidget::ListMoodDetailedWidget(QWidget* parent, GroupData* group
             SIGNAL(buttonPressed(QString)),
             this,
             SLOT(floatingLayoutButtonPressed(QString)));
-    std::vector<QString> buttons
-        = {QString("Group_Lights"), QString("Group_Details"), QString("Group_Edit")};
+    std::vector<QString> buttons = {QString("Group_Lights"),
+                                    QString("Group_Details"),
+                                    QString("Group_Edit")};
     mFloatingMenu->setupButtons(buttons, EButtonSize::small);
     mFloatingMenu->setVisible(false);
 
@@ -84,11 +85,17 @@ void ListMoodDetailedWidget::update(const cor::Mood& mood) {
     mSimpleGroupWidget->removeWidgets();
     mKey = mood.uniqueID();
     mTopLabel->setText(mood.name());
-    mSimpleGroupWidget->updateDevices(
-        mood.lights, cor::EWidgetType::full, EOnOffSwitchState::hidden, false, true);
+    mSimpleGroupWidget->updateDevices(mood.lights,
+                                      cor::EWidgetType::full,
+                                      EOnOffSwitchState::hidden,
+                                      false,
+                                      true);
 
-    mEditPage->showGroup(
-        mood.name(), mComm->makeMood(mood).itemList(), mComm->allDevices(), true, false);
+    mEditPage->showGroup(mood.name(),
+                         mComm->makeMood(mood).itemList(),
+                         mComm->allDevices(),
+                         true,
+                         false);
 
     mOnOffSwitch->setSwitchState(ESwitchState::off);
     mAdditionalDetailsWidget->display(mood, mPlaceholder->size());
@@ -188,8 +195,9 @@ void ListMoodDetailedWidget::pushIn() {
 
     auto widthPoint = int(this->parentWidget()->width() * 0.875f - topMenu()->width());
     QPoint finishPoint(widthPoint, int(this->parentWidget()->height() * 0.125f));
-    cor::moveWidget(
-        topMenu(), QPoint(widthPoint, int(-1 * this->parentWidget()->height())), finishPoint);
+    cor::moveWidget(topMenu(),
+                    QPoint(widthPoint, int(-1 * this->parentWidget()->height())),
+                    finishPoint);
 
     mFloatingMenu->setVisible(true);
     mFloatingMenu->raise();
@@ -210,6 +218,7 @@ void ListMoodDetailedWidget::pushOut() {
 
     auto widthPoint = int(this->parentWidget()->width() * 0.875f - topMenu()->size().width());
     QPoint startPoint(widthPoint, int(this->parentWidget()->height() * 0.125f));
-    cor::moveWidget(
-        topMenu(), startPoint, QPoint(widthPoint, int(-1 * this->parentWidget()->height())));
+    cor::moveWidget(topMenu(),
+                    startPoint,
+                    QPoint(widthPoint, int(-1 * this->parentWidget()->height())));
 }

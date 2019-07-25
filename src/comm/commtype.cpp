@@ -5,8 +5,8 @@
  */
 
 #include "commtype.h"
-#include "cor/objects/light.h"
 
+#include "cor/objects/light.h"
 #include "utils/qt.h"
 
 #define REACHABILITY_TIMEOUT 5000

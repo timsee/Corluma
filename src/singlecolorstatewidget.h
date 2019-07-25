@@ -2,6 +2,7 @@
 #define SINGLECOLORSTATEWIDGET_H
 
 #include <QWidget>
+
 #include "cor/objects/light.h"
 #include "cor/widgets/button.h"
 #include "syncwidget.h"

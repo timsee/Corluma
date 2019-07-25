@@ -9,12 +9,11 @@
 #include <QTimer>
 #include <QUdpSocket>
 
-#include "cor/dictionary.h"
-#include "cor/jsonsavedata.h"
-
-#include "comm/upnpdiscovery.h"
 #include "comm/hue/bridge.h"
 #include "comm/hue/hueprotocols.h"
+#include "comm/upnpdiscovery.h"
+#include "cor/dictionary.h"
+#include "cor/jsonsavedata.h"
 #include "huelight.h"
 
 class CommHue;

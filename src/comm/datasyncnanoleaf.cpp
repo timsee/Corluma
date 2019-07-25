@@ -5,6 +5,7 @@
  */
 
 #include "datasyncnanoleaf.h"
+
 #include "comm/commlayer.h"
 #include "comm/commnanoleaf.h"
 #include "utils/color.h"
@@ -151,8 +152,8 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
         bool paramsInSync = true;
         bool colorInSync = (cor::colorDifference(dataDevice.color, commDevice.color) <= 0.02f);
         bool paletteInSync = (commDevice.palette == dataDevice.palette);
-        bool paletteBrightnessInSync
-            = checkIfOffByOne(commDevice.palette.brightness(), dataDevice.palette.brightness());
+        bool paletteBrightnessInSync =
+            checkIfOffByOne(commDevice.palette.brightness(), dataDevice.palette.brightness());
 
         if (dataDevice.palette.paletteEnum() == EPalette::custom) {
             bool palettesAreClose = true;

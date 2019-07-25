@@ -41,7 +41,6 @@ protected:
     void resizeEvent(QResizeEvent*);
 
 private:
-
     /// stores the key of the currently selected group
     EColorSchemeType mCurrentKey;
 

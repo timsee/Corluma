@@ -2,8 +2,8 @@
 #define LISTGROUPTOPWIDGET_H
 
 #include <QWidget>
-
 #include <vector>
+
 #include "cor/dictionary.h"
 #include "cor/protocols.h"
 #include "cor/widgets/groupbutton.h"

@@ -5,6 +5,7 @@
  */
 
 #include "controller.h"
+
 #include <QJsonArray>
 #include <QJsonObject>
 

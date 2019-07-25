@@ -4,9 +4,9 @@
  * Released under the GNU General Public License.
  */
 
-#include <QScroller>
-
 #include "palettescrollarea.h"
+
+#include <QScroller>
 
 PaletteScrollArea::PaletteScrollArea(QWidget* parent) : QScrollArea(parent) {
     mScrollWidget = new QWidget(this);
@@ -31,8 +31,10 @@ void PaletteScrollArea::setupButtons(bool isArduino) {
 
         uint32_t groupIndex = 0;
         for (auto preset = int(EPalette::water); preset < int(EPalette::unknown); preset++) {
-            mPresetWidgets[groupIndex] = new PresetGroupWidget(
-                labels[groupIndex], EPalette(preset), EPresetWidgetMode::arduino, this);
+            mPresetWidgets[groupIndex] = new PresetGroupWidget(labels[groupIndex],
+                                                               EPalette(preset),
+                                                               EPresetWidgetMode::arduino,
+                                                               this);
             mLayout->addWidget(mPresetWidgets[groupIndex], groupIndex, 0);
             connect(mPresetWidgets[groupIndex],
                     SIGNAL(presetButtonClicked(QJsonObject)),
@@ -58,8 +60,10 @@ void PaletteScrollArea::setupButtons(bool isArduino) {
                 columnIndex = 0;
                 rowIndex++;
             }
-            mPresetWidgets[groupIndex] = new PresetGroupWidget(
-                labels[groupIndex], EPalette(preset), EPresetWidgetMode::hue, this);
+            mPresetWidgets[groupIndex] = new PresetGroupWidget(labels[groupIndex],
+                                                               EPalette(preset),
+                                                               EPresetWidgetMode::hue,
+                                                               this);
             mLayout->addWidget(mPresetWidgets[groupIndex], rowIndex, columnIndex);
             connect(mPresetWidgets[groupIndex],
                     SIGNAL(presetButtonClicked(QJsonObject)),

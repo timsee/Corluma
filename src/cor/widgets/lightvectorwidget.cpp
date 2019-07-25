@@ -4,9 +4,10 @@
  * Released under the GNU General Public License.
  */
 
+#include "lightvectorwidget.h"
+
 #include <QSignalMapper>
 
-#include "lightvectorwidget.h"
 #include "utils/qt.h"
 
 namespace cor {

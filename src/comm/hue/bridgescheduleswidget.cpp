@@ -4,13 +4,13 @@
  * Released under the GNU General Public License.
  */
 
+#include "bridgescheduleswidget.h"
+
 #include <QGraphicsOpacityEffect>
 #include <QScroller>
 #include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
-
-#include "bridgescheduleswidget.h"
 
 namespace hue {
 

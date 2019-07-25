@@ -5,9 +5,10 @@
  */
 
 #include "bridge.h"
-#include "huelight.h"
 
 #include <QJsonArray>
+
+#include "huelight.h"
 
 namespace hue {
 

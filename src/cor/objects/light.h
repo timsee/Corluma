@@ -284,8 +284,9 @@ inline cor::Light jsonToLight(const QJsonObject& object) {
     //------------
     if (light.routine <= cor::ERoutineSingleColorEnd) {
         if (object["hue"].isDouble() && object["sat"].isDouble() && object["bri"].isDouble()) {
-            light.color.setHsvF(
-                object["hue"].toDouble(), object["sat"].toDouble(), object["bri"].toDouble());
+            light.color.setHsvF(object["hue"].toDouble(),
+                                object["sat"].toDouble(),
+                                object["bri"].toDouble());
         }
     } else if (object["palette"].isObject()) {
         light.palette = Palette(object["palette"].toObject());

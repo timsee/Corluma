@@ -1,10 +1,9 @@
 #ifndef MOODDETAILSWIDGET_H
 #define MOODDETAILSWIDGET_H
 
-#include <QWidget>
-
 #include <QLabel>
 #include <QVBoxLayout>
+#include <QWidget>
 
 #include "cor/objects/mood.h"
 #include "groupdata.h"

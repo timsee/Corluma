@@ -5,34 +5,37 @@
  */
 
 #include "commlayer.h"
-#include "utils/exception.h"
-#include "utils/qt.h"
 
 #include "comm/commarducor.h"
+#include "utils/exception.h"
+#include "utils/qt.h"
 #ifndef MOBILE_BUILD
 #include "comm/commserial.h"
 #endif // MOBILE_BUILD
+#include <QDebug>
+#include <iostream>
+#include <ostream>
+#include <sstream>
+
 #include "comm/commhttp.h"
 #include "comm/commhue.h"
 #include "comm/commnanoleaf.h"
 #include "comm/commudp.h"
 
-#include <QDebug>
-
-#include <iostream>
-#include <ostream>
-#include <sstream>
-
 CommLayer::CommLayer(QObject* parent, GroupData* parser) : QObject(parent), mGroups(parser) {
     mUPnP = new UPnPDiscovery(this);
 
     mArduCor = std::make_shared<CommArduCor>(this);
-    connect(
-        mArduCor.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
+    connect(mArduCor.get(),
+            SIGNAL(updateReceived(ECommType)),
+            this,
+            SLOT(receivedUpdate(ECommType)));
 
     mNanoleaf = std::make_shared<CommNanoleaf>();
-    connect(
-        mNanoleaf.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
+    connect(mNanoleaf.get(),
+            SIGNAL(updateReceived(ECommType)),
+            this,
+            SLOT(receivedUpdate(ECommType)));
     mNanoleaf->discovery()->connectUPnP(mUPnP);
 
     mHue = std::make_shared<CommHue>(mUPnP, parser);
@@ -191,9 +194,7 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
                     // add if it doesnt
                     moodDict.insert(key, light);
                 }
-            } catch (cor::Exception&) {
-                
-            }
+            } catch (cor::Exception&) {}
         }
     }
 
@@ -214,9 +215,7 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
                     // add if it doesnt
                     moodDict.insert(key, lightCopy);
                 }
-            } catch (cor::Exception&) {
-                
-            }
+            } catch (cor::Exception&) {}
         }
     }
 
@@ -235,9 +234,7 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
                 // add if it doesnt
                 moodDict.insert(key, lightCopy);
             }
-        } catch (cor::Exception&) {
-            
-        }
+        } catch (cor::Exception&) {}
     }
 
     return moodDict;

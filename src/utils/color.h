@@ -6,10 +6,10 @@
  * Released under the GNU General Public License.
  */
 
+#include <QColor>
 #include <cmath>
 #include <vector>
 
-#include <QColor>
 #include "utils/cormath.h"
 
 namespace cor {

@@ -5,6 +5,7 @@
  */
 
 #include "cor/widgets/listwidget.h"
+
 #include "listmoodgroupwidget.h"
 #include "listroomwidget.h"
 

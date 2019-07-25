@@ -4,12 +4,6 @@
  * Released under the GNU General Public License.
  */
 
-#include "appsettings.h"
-#include "groupdata.h"
-#include "mainwindow.h"
-#include "utils/exception.h"
-#include "utils/qt.h"
-
 #include <QApplication>
 #include <QDebug>
 #include <QDesktopWidget>
@@ -18,6 +12,12 @@
 #include <QTextStream>
 #include <QThread>
 #include <QTimer>
+
+#include "appsettings.h"
+#include "groupdata.h"
+#include "mainwindow.h"
+#include "utils/exception.h"
+#include "utils/qt.h"
 
 /// uncomment to wipe out all QSettings Data.
 //#define WIPE_QSETTINGS 1

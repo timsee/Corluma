@@ -5,6 +5,7 @@
  */
 
 #include "mainwindow.h"
+
 #include <QDebug>
 #include <QDesktopWidget>
 #include <QGraphicsOpacityEffect>
@@ -14,10 +15,9 @@
 
 #include "comm/commhue.h"
 #include "comm/commnanoleaf.h"
-#include "utils/qt.h"
-
 #include "cor/presetpalettes.h"
 #include "utils/exception.h"
+#include "utils/qt.h"
 #include "utils/reachability.h"
 
 MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& minimumSize)
@@ -105,8 +105,10 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
             SIGNAL(protocolSettingsUpdate(EProtocolType, bool)),
             this,
             SLOT(protocolSettingsChanged(EProtocolType, bool)));
-    connect(
-        mSettingsPage->globalWidget(), SIGNAL(timeoutUpdate(int)), this, SLOT(timeoutChanged(int)));
+    connect(mSettingsPage->globalWidget(),
+            SIGNAL(timeoutUpdate(int)),
+            this,
+            SLOT(timeoutChanged(int)));
     connect(mSettingsPage->globalWidget(),
             SIGNAL(timeoutEnabled(bool)),
             this,
@@ -154,8 +156,10 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
 
     mLeftHandMenu = new LeftHandMenu(mData, mComm, mData, mGroups, this);
     mLeftHandMenu->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(
-        mLeftHandMenu, SIGNAL(pressedButton(EPage)), this, SLOT(leftHandMenuButtonPressed(EPage)));
+    connect(mLeftHandMenu,
+            SIGNAL(pressedButton(EPage)),
+            this,
+            SLOT(leftHandMenuButtonPressed(EPage)));
     connect(mLeftHandMenu, SIGNAL(createNewGroup()), this, SLOT(openNewGroupMenu()));
 
     // --------------
@@ -166,13 +170,15 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
 
 void MainWindow::shareChecker() {
     if (mSharePath.contains("json", Qt::CaseInsensitive)) {
-        QString text
-            = "You are attempting to share a .json file with Corluma. If you continue, your "
-              "current lights, groups, and moods information will all be overwritten by the data "
-              "in the JSON file. This cannot be undone and it is recommended that you back up your "
-              "save data beforehand.Are you sure you want to continue? ";
-        auto reply = QMessageBox::question(
-            this, "Load New App Data?", text, QMessageBox::Yes | QMessageBox::No);
+        QString text =
+            "You are attempting to share a .json file with Corluma. If you continue, your "
+            "current lights, groups, and moods information will all be overwritten by the data "
+            "in the JSON file. This cannot be undone and it is recommended that you back up your "
+            "save data beforehand.Are you sure you want to continue? ";
+        auto reply = QMessageBox::question(this,
+                                           "Load New App Data?",
+                                           text,
+                                           QMessageBox::Yes | QMessageBox::No);
         if (reply == QMessageBox::Yes) {
             if (!mGroups->loadExternalData(mSharePath)) {
                 qDebug() << "WARNING: loading external data failed at " << mSharePath;
@@ -220,16 +226,20 @@ void MainWindow::loadPages() {
                                this,
                                mMainViewport->palettePage(),
                                mMainViewport->colorPage());
-        connect(
-            mTopMenu, SIGNAL(buttonPressed(QString)), this, SLOT(topMenuButtonPressed(QString)));
+        connect(mTopMenu,
+                SIGNAL(buttonPressed(QString)),
+                this,
+                SLOT(topMenuButtonPressed(QString)));
         connect(mMainViewport->colorPage(),
                 SIGNAL(brightnessChanged(uint32_t)),
                 mTopMenu,
                 SLOT(brightnessUpdate(uint32_t)));
         connect(mLeftHandMenu, SIGNAL(changedDeviceCount()), mTopMenu, SLOT(deviceCountChanged()));
 
-        connect(
-            mLeftHandMenu, SIGNAL(changedDeviceCount()), mMainViewport, SLOT(lightCountChanged()));
+        connect(mLeftHandMenu,
+                SIGNAL(changedDeviceCount()),
+                mMainViewport,
+                SLOT(lightCountChanged()));
 
         connect(mSyncStatus, SIGNAL(statusChanged(bool)), mTopMenu, SLOT(dataInSync(bool)));
 
@@ -845,8 +855,11 @@ bool shouldMoveMenu(QMouseEvent* event,
 void MainWindow::mouseMoveEvent(QMouseEvent* event) {
     // only care about moves when greyout is not open and lefthand menu isn't forced open
     if (!mLeftHandMenu->alwaysOpen() && !mGreyOut->isVisible()) {
-        if (shouldMoveMenu(
-                event, mLeftHandMenu->isIn(), mStartPoint, this->size(), mLeftHandMenu->size())) {
+        if (shouldMoveMenu(event,
+                           mLeftHandMenu->isIn(),
+                           mStartPoint,
+                           this->size(),
+                           mLeftHandMenu->size())) {
             mMovingMenu = true;
             mLeftHandMenu->raise();
             // get the x value based on current value
@@ -858,8 +871,10 @@ void MainWindow::mouseMoveEvent(QMouseEvent* event) {
             } else {
                 xPos -= mLeftHandMenu->width();
             }
-            mLeftHandMenu->setGeometry(
-                xPos, mLeftHandMenu->pos().y(), mLeftHandMenu->width(), mLeftHandMenu->height());
+            mLeftHandMenu->setGeometry(xPos,
+                                       mLeftHandMenu->pos().y(),
+                                       mLeftHandMenu->width(),
+                                       mLeftHandMenu->height());
         } else if (event->pos().x() > mLeftHandMenu->size().width() && mMovingMenu) {
             mLeftHandMenu->pushIn();
             mTopMenu->pushOutTapToSelectButton();

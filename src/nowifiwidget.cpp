@@ -4,12 +4,12 @@
  * Released under the GNU General Public License.
  */
 
+#include "nowifiwidget.h"
+
 #include <QGraphicsOpacityEffect>
 #include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
-
-#include "nowifiwidget.h"
 
 NoWifiWidget::NoWifiWidget(QWidget* parent) : QWidget(parent) {
     mText = new QLabel("<b>No Wifi Detected :(</b>", this);

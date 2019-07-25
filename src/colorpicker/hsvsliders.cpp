@@ -117,8 +117,9 @@ void HSVSliders::enable(bool enable) {
 }
 
 void HSVSliders::hueSliderChanged(int newValue) {
-    emit colorChanged(generateColor(
-        newValue, mSaturationSlider->slider()->value(), mValueSlider->slider()->value()));
+    emit colorChanged(generateColor(newValue,
+                                    mSaturationSlider->slider()->value(),
+                                    mValueSlider->slider()->value()));
 }
 
 void HSVSliders::saturationSliderChanged(int newValue) {
@@ -127,8 +128,9 @@ void HSVSliders::saturationSliderChanged(int newValue) {
 }
 
 void HSVSliders::valueSliderChanged(int newValue) {
-    emit colorChanged(generateColor(
-        mHueSlider->slider()->value(), mSaturationSlider->slider()->value(), newValue));
+    emit colorChanged(generateColor(mHueSlider->slider()->value(),
+                                    mSaturationSlider->slider()->value(),
+                                    newValue));
 }
 
 void HSVSliders::releasedSlider() {

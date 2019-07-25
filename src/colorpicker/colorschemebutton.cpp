@@ -4,7 +4,6 @@
  * Released under the GNU General Public License.
  */
 #include "colorschemebutton.h"
-#include "utils/qt.h"
 
 #include <QDebug>
 #include <QGraphicsEffect>
@@ -12,6 +11,8 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QStyleOption>
+
+#include "utils/qt.h"
 
 
 
@@ -75,12 +76,16 @@ void ColorSchemeButton::resize() {
     auto parentSize = this->parentWidget()->size();
     QSize pixmapSize = QSize(parentSize.height() * 0.5, parentSize.height() * 0.5);
     mPixmap = QPixmap(mResourcePath);
-    mPixmap = mPixmap.scaled(
-        pixmapSize.width(), pixmapSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    mPixmap = mPixmap.scaled(pixmapSize.width(),
+                             pixmapSize.height(),
+                             Qt::KeepAspectRatio,
+                             Qt::SmoothTransformation);
 
     mButton->setGeometry(0, 0, parentSize.width() / 5, parentSize.height() * 2 / 3);
-    mTitle->setGeometry(
-        0, parentSize.height() * 2 / 3, parentSize.width() / 5, parentSize.height() / 3);
+    mTitle->setGeometry(0,
+                        parentSize.height() * 2 / 3,
+                        parentSize.width() / 5,
+                        parentSize.height() / 3);
     mButton->setPixmap(mPixmap);
 }
 

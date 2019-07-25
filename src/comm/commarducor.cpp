@@ -6,11 +6,10 @@
 
 #include "commarducor.h"
 
-#include "utils/exception.h"
-#include "utils/qt.h"
-
 #include "comm/commhttp.h"
 #include "comm/commudp.h"
+#include "utils/exception.h"
+#include "utils/qt.h"
 #ifndef MOBILE_BUILD
 #include "comm/commserial.h"
 #endif
@@ -37,8 +36,10 @@ CommArduCor::CommArduCor(QObject* parent) : QObject(parent) {
             SIGNAL(packetReceived(QString, QString, ECommType)),
             this,
             SLOT(parsePacket(QString, QString, ECommType)));
-    connect(
-        mSerial.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
+    connect(mSerial.get(),
+            SIGNAL(updateReceived(ECommType)),
+            this,
+            SLOT(receivedUpdate(ECommType)));
 #endif // MOBILE_BUILD
 
     mDiscovery = new ArduCorDiscovery(this,
@@ -203,8 +204,8 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
             if (crcPacketList.size() == 2) {
                 // compute CRC
                 uint32_t computedCRC = mCRC.calculate(crcPacketList[0]);
-                uint32_t givenCRC
-                    = crcPacketList[1].leftRef(crcPacketList[1].length() - 1).toUInt();
+                uint32_t givenCRC =
+                    crcPacketList[1].leftRef(crcPacketList[1].length() - 1).toUInt();
                 if (givenCRC != computedCRC) {
                     // qDebug() << "INFO: failed CRC check for" << controller.name << "string:" <<
                     // crcPacketList[0] << "computed:" << QString::number(computedCRC) << "given:"
@@ -230,8 +231,8 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                         // figure out devices that are getting updates
                         std::list<cor::Light> deviceList;
                         if (index != 0) {
-                            cor::Light device
-                                = cor::Light(controller.names[index - 1], controller.name, type);
+                            cor::Light device =
+                                cor::Light(controller.names[index - 1], controller.name, type);
                             device.index = int(index);
                             commByType(type)->fillDevice(device);
                             deviceList.push_back(device);
@@ -282,10 +283,10 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                     device.minutesUntilTimeout = intVector[x + 11];
                                     device.name = device.uniqueID();
 
-                                    device.hardwareType
-                                        = controller.hardwareTypes[std::uint32_t(device.index - 1)];
-                                    device.productType
-                                        = controller.productTypes[std::uint32_t(device.index - 1)];
+                                    device.hardwareType =
+                                        controller.hardwareTypes[std::uint32_t(device.index - 1)];
+                                    device.productType =
+                                        controller.productTypes[std::uint32_t(device.index - 1)];
 
                                     device.majorAPI = controller.majorAPI;
                                     device.minorAPI = controller.minorAPI;
@@ -304,12 +305,15 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                     std::vector<QColor> colors = device.customPalette.colors();
                                     uint32_t brightness = device.customPalette.brightness();
                                     for (uint32_t i = 0; i < customColorCount; ++i) {
-                                        colors[i] = QColor(
-                                            intVector[j], intVector[j + 1], intVector[j + 2]);
+                                        colors[i] = QColor(intVector[j],
+                                                           intVector[j + 1],
+                                                           intVector[j + 2]);
                                         j = j + 3;
                                     }
-                                    device.customPalette = Palette(
-                                        paletteToString(EPalette::custom), colors, brightness);
+                                    device.customPalette =
+                                        Palette(paletteToString(EPalette::custom),
+                                                colors,
+                                                brightness);
                                     if (device.palette.paletteEnum() == EPalette::custom) {
                                         device.palette = device.customPalette;
                                     }
@@ -427,10 +431,10 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                         }
                                         std::vector<QColor> colors = device.customPalette.colors();
                                         colors[index] = QColor(red, green, blue);
-                                        device.customPalette
-                                            = Palette(paletteToString(EPalette::custom),
-                                                      colors,
-                                                      device.customPalette.brightness());
+                                        device.customPalette =
+                                            Palette(paletteToString(EPalette::custom),
+                                                    colors,
+                                                    device.customPalette.brightness());
                                         commByType(type)->updateLight(device);
                                     } else {
                                         isValid = false;

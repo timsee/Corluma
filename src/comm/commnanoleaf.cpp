@@ -5,14 +5,15 @@
  */
 
 #include "comm/commnanoleaf.h"
-#include "cor/objects/light.h"
-#include "cor/objects/palette.h"
-#include "utils/color.h"
 
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QVariantMap>
+
+#include "cor/objects/light.h"
+#include "cor/objects/palette.h"
+#include "utils/color.h"
 
 
 std::pair<int, cor::Range<uint32_t>> valueAndRangeFromJSON(const QJsonObject& object) {
@@ -268,8 +269,9 @@ void CommNanoleaf::replyFinished(QNetworkReply* reply) {
                 }
             } else {
                 // full discovery has happened, we've received a packet with an auth token
-                cor::Light light(
-                    controller.serialNumber, controller.hardwareName, ECommType::nanoleaf);
+                cor::Light light(controller.serialNumber,
+                                 controller.hardwareName,
+                                 ECommType::nanoleaf);
                 addLight(light);
             }
 
@@ -414,8 +416,8 @@ void CommNanoleaf::parseCommandRequestUpdatePacket(const nano::LeafController& c
         fillDevice(light);
         // the display is always treated as custom colors, its only ever used by custom routines
         // though
-        light.customPalette
-            = Palette(paletteToString(EPalette::custom), colors, light.palette.brightness());
+        light.customPalette =
+            Palette(paletteToString(EPalette::custom), colors, light.palette.brightness());
 
         if (routine != ERoutine::MAX) {
             light.routine = routine;
@@ -516,8 +518,9 @@ void CommNanoleaf::parseStateUpdatePacket(nano::LeafController& controller,
             for (auto effect : effectsList) {
                 if (effect.isString()) {
                     QString effectString = effect.toString();
-                    auto result = std::find(
-                        controller.effectsList.begin(), controller.effectsList.end(), effectString);
+                    auto result = std::find(controller.effectsList.begin(),
+                                            controller.effectsList.end(),
+                                            effectString);
                     if (result == controller.effectsList.end()) {
                         controller.effectsList.push_back(effectString);
                     }
@@ -596,8 +599,8 @@ void CommNanoleaf::parseStateUpdatePacket(nano::LeafController& controller,
                 light.isOn = onObject["value"].toBool();
             }
 
-            const auto& brightnessResult
-                = valueAndRangeFromJSON(stateObject["brightness"].toObject());
+            const auto& brightnessResult =
+                valueAndRangeFromJSON(stateObject["brightness"].toObject());
             int brightness = brightnessResult.first;
             controller.brightRange = brightnessResult.second;
 
@@ -841,8 +844,8 @@ QJsonArray CommNanoleaf::createPalette(const cor::Light& light) {
                     }
                     colorObject["hue"] = hue;
                     colorObject["saturation"] = int(light.color.saturationF() * 100.0);
-                    colorObject["brightness"]
-                        = int(light.color.valueF() * 100.0 * ((valueCount - i) / valueCount));
+                    colorObject["brightness"] =
+                        int(light.color.valueF() * 100.0 * ((valueCount - i) / valueCount));
                     if (i == 0) {
                         colorObject["probability"] = 80;
                     } else {
@@ -886,8 +889,8 @@ QJsonArray CommNanoleaf::createPalette(const cor::Light& light) {
                     }
                     colorObject["hue"] = hue;
                     colorObject["saturation"] = int(light.color.saturationF() * 100.0);
-                    colorObject["brightness"]
-                        = int(light.color.valueF() * 100.0 * ((valueCount - i) / valueCount));
+                    colorObject["brightness"] =
+                        int(light.color.valueF() * 100.0 * ((valueCount - i) / valueCount));
                     paletteArray.push_back(colorObject);
                 }
                 break;

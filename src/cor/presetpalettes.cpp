@@ -4,13 +4,14 @@
  * Released under the GNU General Public License.
  */
 #include "presetpalettes.h"
-#include "cor/objects/palette.h"
-#include "utils/exception.h"
 
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonParseError>
+
+#include "cor/objects/palette.h"
+#include "utils/exception.h"
 
 PresetPalettes::PresetPalettes()
     : mPalettes(std::vector<Palette>(uint32_t(EPalette::unknown),

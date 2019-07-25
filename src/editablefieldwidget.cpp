@@ -4,9 +4,10 @@
  * Released under the GNU General Public License.
  */
 
+#include "editablefieldwidget.h"
+
 #include <QMessageBox>
 
-#include "editablefieldwidget.h"
 #include "utils/reachability.h"
 
 EditableFieldWidget::EditableFieldWidget(const QString& text,

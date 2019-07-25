@@ -1,9 +1,9 @@
 #ifndef HSVSLIDERS_H
 #define HSVSLIDERS_H
 
-#include "cor/widgets/slider.h"
-
 #include <QWidget>
+
+#include "cor/widgets/slider.h"
 
 /*!
  * \copyright

@@ -2,6 +2,13 @@
 #ifndef PresetColorsPage_H
 #define PresetColorsPage_H
 
+#include <QGridLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QScrollArea>
+#include <QToolButton>
+#include <QWidget>
+
 #include "colorpicker/multicolorpicker.h"
 #include "cor/objects/page.h"
 #include "cor/presetpalettes.h"
@@ -11,13 +18,6 @@
 #include "palettescrollarea.h"
 #include "presetgroupwidget.h"
 #include "routinebuttonswidget.h"
-
-#include <QGridLayout>
-#include <QLabel>
-#include <QPushButton>
-#include <QScrollArea>
-#include <QToolButton>
-#include <QWidget>
 
 /// mode of the page
 enum class EGroupMode { arduinoPresets, huePresets, RGB, HSV };

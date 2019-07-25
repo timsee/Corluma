@@ -8,12 +8,11 @@
 #include <QPushButton>
 #include <QWidget>
 
-#include "listlightwidget.h"
-
 #include "comm/commlayer.h"
 #include "cor/devicelist.h"
 #include "cor/dictionary.h"
 #include "cor/widgets/listwidget.h"
+#include "listlightwidget.h"
 
 
 /*!

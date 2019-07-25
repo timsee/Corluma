@@ -4,8 +4,8 @@
 #include <QScrollArea>
 #include <QWidget>
 
-#include "cor/widgets/listitemwidget.h"
 #include "cor/listlayout.h"
+#include "cor/widgets/listitemwidget.h"
 
 namespace cor {
 

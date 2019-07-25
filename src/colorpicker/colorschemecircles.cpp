@@ -5,9 +5,11 @@
  */
 
 #include "colorschemecircles.h"
+
 #include <QDebug>
 #include <QPainter>
 #include <QStyleOption>
+
 #include "colorwheel.h"
 
 
@@ -237,8 +239,8 @@ std::vector<QColor> ColorSchemeCircles::moveStandardCircle(uint32_t i, QPointF n
         return {};
     }
 
-    mCircles[i].center
-        = cor::denormalizedPointToCirclePoint(newPos, mWheel->rect(), mWheel->wheelRect());
+    mCircles[i].center =
+        cor::denormalizedPointToCirclePoint(newPos, mWheel->rect(), mWheel->wheelRect());
 
     // recalculate color
     mCircles[i].color = mWheel->findColorByPixel(mCircles[i].center);
@@ -265,6 +267,11 @@ void ColorSchemeCircles::paintEvent(QPaintEvent*) {
     auto radius = int(mWheel->height() * 0.05f);
     auto lineSize = int(mWheel->height() * 0.01f);
     auto shadowSize = int(mWheel->height() * 0.01f);
-    renderColorCircles(
-        painter, mCircles, mWheel->rect(), mWheel->wheelRect(), radius, lineSize, shadowSize);
+    renderColorCircles(painter,
+                       mCircles,
+                       mWheel->rect(),
+                       mWheel->wheelRect(),
+                       radius,
+                       lineSize,
+                       shadowSize);
 }

@@ -4,9 +4,9 @@
  * Released under the GNU General Public License.
  */
 
-#include <QSignalMapper>
-
 #include "swatchvectorwidget.h"
+
+#include <QSignalMapper>
 
 SwatchVectorWidget::SwatchVectorWidget(uint32_t width, uint32_t height, QWidget* parent)
     : QWidget(parent) {
@@ -56,8 +56,8 @@ void SwatchVectorWidget::updateColors(const std::vector<QColor>& colors) {
     uint32_t i = 0;
     for (const auto& color : colors) {
         if (i < mMaximumSize) {
-            int size
-                = std::min(int(mSwatches[i]->width() * 0.8f), int(mSwatches[i]->height() * 0.8f));
+            int size =
+                std::min(int(mSwatches[i]->width() * 0.8f), int(mSwatches[i]->height() * 0.8f));
             QImage image(size, size, QImage::Format_RGB32);
             image.fill(color);
             mSwatches[i]->setIcon(QIcon(QPixmap::fromImage(image)));
@@ -92,8 +92,8 @@ void SwatchVectorWidget::toggleArrayColor(int) {
 void SwatchVectorWidget::updateSelected(const QColor& color) {
     for (uint32_t i = 0; i < mSwatches.size(); ++i) {
         if (mSwatches[i]->isChecked()) {
-            int size
-                = std::min(int(mSwatches[i]->width() * 0.8f), int(mSwatches[i]->height() * 0.8f));
+            int size =
+                std::min(int(mSwatches[i]->width() * 0.8f), int(mSwatches[i]->height() * 0.8f));
             QImage image(size, size, QImage::Format_RGB32);
             image.fill(color);
             mSwatches[i]->setIcon(QIcon(QPixmap::fromImage(image)));

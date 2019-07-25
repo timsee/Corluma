@@ -8,9 +8,9 @@
 #include <sstream>
 #include <vector>
 
+#include "comm/hue/huelight.h"
 #include "cor/dictionary.h"
 #include "cor/objects/group.h"
-#include "comm/hue/huelight.h"
 
 /// bridge discovery state
 enum class EBridgeDiscoveryState { lookingForResponse, lookingForUsername, connected };

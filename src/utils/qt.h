@@ -40,8 +40,8 @@ inline void changeLabelToTitleLabel(QLabel* label) {
     QLabel tempLabel("font");
     // make the size larger
     int newSize = int(tempLabel.font().pointSize() * 1.33);
-    QString styleSheet = "background-color:rgba(0,0,0,0); font:bold; font-size:"
-                         + QString::number(newSize) + "pt;";
+    QString styleSheet =
+        "background-color:rgba(0,0,0,0); font:bold; font-size:" + QString::number(newSize) + "pt;";
     label->setStyleSheet(styleSheet);
 }
 
@@ -83,8 +83,8 @@ inline bool isMouseEventTouchUpInside(QMouseEvent* mouseEvent,
     if (ignoreWidgetPos) {
         finalPoint = mousePos;
     } else {
-        finalPoint
-            = QPoint(mousePos.x() - widget->geometry().x(), mousePos.y() - widget->geometry().y());
+        finalPoint =
+            QPoint(mousePos.x() - widget->geometry().x(), mousePos.y() - widget->geometry().y());
     }
     if (finalPoint.x() < widgetSize.width() && finalPoint.x() > 0
         && finalPoint.y() < widgetSize.height() && finalPoint.y() > 0) {

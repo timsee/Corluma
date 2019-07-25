@@ -4,18 +4,16 @@
 
 #include <QColor>
 #include <QWidget>
-
 #include <memory>
 
-#include "comm/commtype.h"
-#include "cor/objects/light.h"
-#include "cor/presetpalettes.h"
-#include "cor/protocols.h"
-
 #include "comm/arducor/arducordiscovery.h"
+#include "comm/commtype.h"
 #include "comm/hue/huelight.h"
 #include "comm/hue/hueprotocols.h"
 #include "comm/upnpdiscovery.h"
+#include "cor/objects/light.h"
+#include "cor/presetpalettes.h"
+#include "cor/protocols.h"
 #include "groupdata.h"
 
 class CommArduCor;

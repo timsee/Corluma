@@ -4,12 +4,12 @@
  * Released under the GNU General Public License.
  */
 
+#include "greyoutoverlay.h"
+
 #include <QGraphicsOpacityEffect>
 #include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
-
-#include "greyoutoverlay.h"
 
 GreyOutOverlay::GreyOutOverlay(QWidget* parent) : QWidget(parent) {}
 

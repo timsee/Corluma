@@ -4,13 +4,14 @@
  * Released under the GNU General Public License.
  */
 
+#include "comm/hue/hueinfowidget.h"
+
 #include <QGraphicsOpacityEffect>
 #include <QScroller>
 #include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
 
-#include "comm/hue/hueinfowidget.h"
 #include "utils/qt.h"
 
 namespace hue {
@@ -20,8 +21,10 @@ HueInfoWidget::HueInfoWidget(HueLight light, QWidget* parent)
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     this->setStyleSheet(styleSheet);
 
-    mName = new EditableFieldWidget(
-        light.name, this, 32, "A hue's name must be at most 32 characters long.");
+    mName = new EditableFieldWidget(light.name,
+                                    this,
+                                    32,
+                                    "A hue's name must be at most 32 characters long.");
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mName->setFontPointSize(14);
     connect(mName, SIGNAL(updatedField(QString)), this, SLOT(nameChanged(QString)));

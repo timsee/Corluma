@@ -5,10 +5,9 @@
 #include <QLayout>
 #include <QWidget>
 
-#include "editablefieldwidget.h"
-
-#include "cor/protocols.h"
 #include "comm/nanoleaf/leafcontroller.h"
+#include "cor/protocols.h"
+#include "editablefieldwidget.h"
 
 namespace nano {
 

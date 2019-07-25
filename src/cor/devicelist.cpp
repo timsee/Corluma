@@ -6,9 +6,11 @@
 
 
 #include "devicelist.h"
+
 #include <QDebug>
 #include <algorithm>
 #include <vector>
+
 #include "cor/presetpalettes.h"
 #include "utils/color.h"
 #define MAX_SPEED 200
@@ -40,8 +42,8 @@ void DeviceList::updateRoutine(const QJsonObject& routineObject) {
         if (routine <= cor::ERoutineSingleColorEnd) {
             // check for edge case where ambient color values are used
             if (routineObject["temperature"].isDouble()) {
-                light.color
-                    = cor::colorTemperatureToRGB(int(routineObject["temperature"].toDouble()));
+                light.color =
+                    cor::colorTemperatureToRGB(int(routineObject["temperature"].toDouble()));
                 light.temperature = int(routineObject["temperature"].toDouble());
             } else {
                 light.color.setHsvF(routineObject["hue"].toDouble(),
@@ -76,8 +78,8 @@ ERoutine DeviceList::currentRoutine() {
     std::vector<int> routineCount(int(ERoutine::MAX), 0);
     for (const auto& device : mDevices) {
         if (device.isReachable) {
-            routineCount[std::size_t(device.routine)]
-                = routineCount[std::size_t(device.routine)] + 1;
+            routineCount[std::size_t(device.routine)] =
+                routineCount[std::size_t(device.routine)] + 1;
         }
     }
     auto result = std::max_element(routineCount.begin(), routineCount.end());
@@ -89,8 +91,8 @@ Palette DeviceList::palette() {
     std::vector<int> paletteCount(int(EPalette::unknown), 0);
     for (const auto& device : mDevices) {
         if (device.isReachable) {
-            paletteCount[uint32_t(device.palette.paletteEnum())]
-                = paletteCount[uint32_t(device.palette.paletteEnum())] + 1;
+            paletteCount[uint32_t(device.palette.paletteEnum())] =
+                paletteCount[uint32_t(device.palette.paletteEnum())] + 1;
         }
     }
     // find the most frequent color group occurence, return its index.

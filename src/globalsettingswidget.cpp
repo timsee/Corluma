@@ -4,11 +4,12 @@
  * Released under the GNU General Public License.
  */
 
+#include "globalsettingswidget.h"
+
 #include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
 
-#include "globalsettingswidget.h"
 #include "utils/qt.h"
 
 GlobalSettingsWidget::GlobalSettingsWidget(QWidget* parent, AppSettings* appSettings)
@@ -16,8 +17,10 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget* parent, AppSettings* appSett
     mSpacerPixels = 5;
 
     // set margins as spacer * 2
-    this->setContentsMargins(
-        mSpacerPixels * 2, mSpacerPixels * 2, mSpacerPixels * 2, mSpacerPixels * 2);
+    this->setContentsMargins(mSpacerPixels * 2,
+                             mSpacerPixels * 2,
+                             mSpacerPixels * 2,
+                             mSpacerPixels * 2);
 
     //-----------
     // Labels
@@ -31,8 +34,10 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget* parent, AppSettings* appSett
     mEnabledConnectionsLabel->setStyleSheet(labelStyleSheet);
 
 
-    mTimeoutWidget = new TimeoutWidget(
-        this, mAppSettings->timeout(), mAppSettings->timeoutEnabled(), mSpacerPixels);
+    mTimeoutWidget = new TimeoutWidget(this,
+                                       mAppSettings->timeout(),
+                                       mAppSettings->timeoutEnabled(),
+                                       mSpacerPixels);
 
     mMinHeight = this->height() / 8;
 

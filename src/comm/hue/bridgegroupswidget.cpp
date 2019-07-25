@@ -4,13 +4,13 @@
  * Released under the GNU General Public License.
  */
 
+#include "bridgegroupswidget.h"
+
 #include <QGraphicsOpacityEffect>
 #include <QScroller>
 #include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
-
-#include "bridgegroupswidget.h"
 
 namespace hue {
 

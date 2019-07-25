@@ -2,6 +2,7 @@
 #define PANELS_H
 
 #include <vector>
+
 #include "cor/range.h"
 
 namespace nano {

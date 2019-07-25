@@ -5,9 +5,10 @@
  */
 
 #include "tempbrightsliders.h"
-#include "utils/color.h"
 
 #include <QDebug>
+
+#include "utils/color.h"
 
 TempBrightSliders::TempBrightSliders(QWidget* parent) : QWidget(parent) {
     int temperature = 300;
@@ -38,12 +39,14 @@ TempBrightSliders::TempBrightSliders(QWidget* parent) : QWidget(parent) {
     mTemperatureSlider->setSnapToNearestTick(true);
     mTemperatureSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mTemperatureSlider->setHeightPercentage(0.8f);
-    connect(
-        mTemperatureSlider, SIGNAL(valueChanged(int)), this, SLOT(temperatureSliderChanged(int)));
+    connect(mTemperatureSlider,
+            SIGNAL(valueChanged(int)),
+            this,
+            SLOT(temperatureSliderChanged(int)));
     connect(mTemperatureSlider->slider(), SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
 
 
-    // --------------
+    // --- -----------
     // Setup Label
     // --------------
 
@@ -81,7 +84,8 @@ void TempBrightSliders::changeBrightness(uint32_t brightness) {
     mBrightnessSlider->blockSignals(true);
     mBrightnessSlider->slider()->setValue(int(brightness));
     mBrightnessSlider->setGradient(
-        QColor(0, 0, 0), cor::colorTemperatureToRGB(mTemperatureSlider->slider()->value()));
+        QColor(0, 0, 0),
+        cor::colorTemperatureToRGB(mTemperatureSlider->slider()->value()));
     mBrightnessSlider->blockSignals(false);
 }
 

@@ -2,7 +2,6 @@
 #define COR_PAGE_H
 
 #include <QTimer>
-
 #include <memory>
 
 namespace cor {

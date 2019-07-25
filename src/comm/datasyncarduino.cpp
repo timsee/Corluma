@@ -4,11 +4,12 @@
  * Released under the GNU General Public License.
  */
 
+#include "datasyncarduino.h"
+
 #include <QDebug>
 
 #include "comm/commlayer.h"
 #include "cor/protocols.h"
-#include "datasyncarduino.h"
 #include "utils/color.h"
 
 DataSyncArduino::DataSyncArduino(cor::DeviceList* data, CommLayer* comm, AppSettings* appSettings) {
@@ -264,8 +265,9 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
                 if (cor::brightnessDifference(float(commDevice.color.valueF()),
                                               float(dataDevice.color.valueF()))
                     > 0.01f) {
-                    QString message = mParser->brightnessPacket(
-                        dataDevice, int(dataDevice.color.valueF() * 100.0));
+                    QString message =
+                        mParser->brightnessPacket(dataDevice,
+                                                  int(dataDevice.color.valueF() * 100.0));
                     appendToPacket(packet, message, controller.maxPacketSize);
                 }
             } else {
@@ -277,8 +279,8 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
                 if (commDevice.palette.brightness() != dataDevice.palette.brightness()) {
                     // qDebug() << "brightness not in sync" << commDevice.palette.brightness() << "
                     // vs " << dataDevice.palette.brightness();
-                    QString message
-                        = mParser->brightnessPacket(dataDevice, dataDevice.palette.brightness());
+                    QString message =
+                        mParser->brightnessPacket(dataDevice, dataDevice.palette.brightness());
                     appendToPacket(packet, message, controller.maxPacketSize);
                     countOutOfSync++;
                 }
@@ -303,8 +305,9 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
     if (dataDevice.palette.paletteEnum() == EPalette::custom) {
         if (commDevice.customCount != dataDevice.palette.colors().size()) {
             // qDebug() << "Custom color count not in sync";
-            QString message = mParser->changeCustomArraySizePacket(
-                dataDevice, int(commDevice.palette.colors().size()));
+            QString message =
+                mParser->changeCustomArraySizePacket(dataDevice,
+                                                     int(commDevice.palette.colors().size()));
             appendToPacket(packet, message, controller.maxPacketSize);
             countOutOfSync++;
         }
@@ -321,8 +324,9 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
                 //                                 commDevice.palette.colors()[i]
                 //                                 << "data: " <<
                 //                                 dataDevice.palette.colors()[i];
-                QString message = mParser->arrayColorChangePacket(
-                    dataDevice, int(i), dataDevice.palette.colors()[i]);
+                QString message = mParser->arrayColorChangePacket(dataDevice,
+                                                                  int(i),
+                                                                  dataDevice.palette.colors()[i]);
                 appendToPacket(packet, message, controller.maxPacketSize);
                 countOutOfSync++;
             }

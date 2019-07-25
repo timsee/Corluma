@@ -5,6 +5,7 @@
  */
 
 #include "appsettings.h"
+
 #include "utils/qt.h"
 
 AppSettings::AppSettings() {

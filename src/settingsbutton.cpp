@@ -5,12 +5,13 @@
  */
 
 #include "settingsbutton.h"
-#include "utils/qt.h"
 
 #include <QDebug>
 #include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
+
+#include "utils/qt.h"
 
 SettingsButton::SettingsButton(const QString& title, int minHeight, QWidget* parent)
     : QWidget(parent) {
