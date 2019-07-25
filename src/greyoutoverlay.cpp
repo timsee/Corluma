@@ -14,7 +14,7 @@
 GreyOutOverlay::GreyOutOverlay(QWidget* parent) : QWidget(parent) {}
 
 void GreyOutOverlay::resize() {
-    QSize size = qobject_cast<QWidget*>(this->parent())->size();
+    auto size = this->parentWidget()->size();
     this->setGeometry(0, 0, size.width(), size.height());
 }
 

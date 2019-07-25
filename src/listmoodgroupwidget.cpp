@@ -14,21 +14,14 @@ ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
                                          QWidget* parent)
     : cor::ListItemWidget(key, parent), mListLayout(cor::EListType::grid) {
     mWidget = new QWidget(this);
-
-    mLayout = new QVBoxLayout(this);
-    mLayout->setContentsMargins(0, 0, this->size().width() / 40, 0);
-    mLayout->setSpacing(0);
-
-    setLayout(mLayout);
+    mWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     mMoods = moods;
     mDropdownTopWidget = new DropdownTopWidget(name, cor::EWidgetType::full, hideEdit, this);
-    mDropdownTopWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    mDropdownTopWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     updateMoods(moods, false);
-
-    mLayout->addWidget(mDropdownTopWidget);
-    mLayout->addWidget(mWidget);
+    resize();
 }
 
 
@@ -89,7 +82,11 @@ void ListMoodGroupWidget::resizeInteralWidgets() {
     } else {
         this->setFixedHeight(mDropdownTopWidget->height());
     }
-    mWidget->setFixedWidth(this->width());
+    auto yPos = 0;
+    mDropdownTopWidget->setGeometry(0, yPos, this->width(), mDropdownTopWidget->height());
+    yPos += mDropdownTopWidget->height();
+
+    mWidget->setGeometry(0, yPos, this->width(), this->height() - mDropdownTopWidget->height());
 
     QPoint offset(0, 0);
 
@@ -127,8 +124,12 @@ void ListMoodGroupWidget::setCheckedMoods(std::list<QString> checkedMoods) {
     }
 }
 
-void ListMoodGroupWidget::resizeEvent(QResizeEvent*) {
+void ListMoodGroupWidget::resize() {
     resizeInteralWidgets();
+}
+
+void ListMoodGroupWidget::resizeEvent(QResizeEvent*) {
+    resize();
 }
 
 void ListMoodGroupWidget::mouseReleaseEvent(QMouseEvent*) {

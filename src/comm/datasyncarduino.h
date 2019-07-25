@@ -30,7 +30,7 @@ public:
      * \param data pointer to the app's data layer.
      * \param comm pointer to the app's comm layer.
      */
-    DataSyncArduino(cor::DeviceList* data, CommLayer* comm);
+    DataSyncArduino(cor::DeviceList* data, CommLayer* comm, AppSettings* appSettings);
 
     /*!
      * \brief cancelSync cancel the data sync, regardless of it successfully completed.
@@ -109,6 +109,9 @@ private:
 
     /// parses variables for a packet and turns it into ArduCor compatible packets
     ArduCorPacketParser* mParser;
+
+    /// pointer to app settings
+    AppSettings* mAppSettings;
 
     /// a sorted list of messages sorted by the name of the controller to receive them.
     std::unordered_map<std::string, std::list<QString>> mMessages;

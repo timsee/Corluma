@@ -107,6 +107,8 @@ public:
     /// pointer to internal QSlider
     QSlider* slider() { return mSlider; }
 
+    /// resizes programmatically
+    void resize();
 
 signals:
     /*!

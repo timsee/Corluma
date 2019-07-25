@@ -20,12 +20,13 @@
 #include <QStandardPaths>
 #include <QStyleOption>
 
-#include <algorithm>
-
 #include <QDesktopWidget>
 
-SettingsPage::SettingsPage(QWidget* parent, GroupData* parser, AppSettings* appSettings)
-    : QWidget(parent), mGroups(parser) {
+SettingsPage::SettingsPage(QWidget* parent,
+                           GroupData* parser,
+                           AppSettings* appSettings,
+                           ShareUtils* shareUtils)
+    : QWidget(parent), mGroups(parser), mShareUtils(shareUtils) {
     mShowingDebug = true;
 
     mCurrentWebView = ECorlumaWebView::none;
@@ -74,30 +75,32 @@ SettingsPage::SettingsPage(QWidget* parent, GroupData* parser, AppSettings* appS
 
     mSectionTitles = {"Data", "About"};
 
-    mTitles = {"Discover Lights", "Light Info", "Save", "Load", "Reset", "Copyright", "FAQ"};
-
-    mDescriptions = {"Discover new lights.",
-                     "Read and manage the hardware information.",
-                     "Save light moods and collections to JSON.",
-                     "Erase old moods and collections, load new data from JSON.",
-                     "Resets all app data and all app settings.",
-                     "",
-                     ""};
+    mTitles = {"Find New Lights",
+               "View/Edit Lights",
+               "Backup Save Data",
+#ifndef MOBILE_BUILD
+               "Load Backup",
+#endif
+               "Reset",
+               "Copyright",
+               "FAQ"};
 
     mButtons = std::vector<SettingsButton*>(mTitles.size());
     mSectionLabels = std::vector<QLabel*>(mSectionTitles.size());
 
     uint32_t sectionIndex = 0;
     for (uint32_t x = 0; x < mTitles.size(); ++x) {
-        if (mTitles[x] == "Save" || mTitles[x] == "Mock Connection" || mTitles[x] == "Copyright") {
+        if (mTitles[x] == "Backup Save Data" || mTitles[x] == "Mock Connection"
+            || mTitles[x] == "Copyright") {
             mSectionLabels[sectionIndex] = new QLabel(mSectionTitles[sectionIndex].c_str());
             mSectionLabels[sectionIndex]->setStyleSheet(
                 "font:bold; font-size:20pt; color:rgba(61, 142, 201,255);");
             mScrollLayout->addWidget(mSectionLabels[sectionIndex]);
             sectionIndex++;
         }
-        mButtons[x] = new SettingsButton(
-            QString(mTitles[x].c_str()), QString(mDescriptions[x].c_str()), this);
+        auto minHeight = this->height() / 10;
+        mButtons[x] = new SettingsButton(QString(mTitles[x].c_str()), minHeight, this);
+        mButtons[x]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
         connect(mButtons[x],
                 SIGNAL(buttonPressed(QString)),
                 this,
@@ -138,13 +141,15 @@ SettingsPage::SettingsPage(QWidget* parent, GroupData* parser, AppSettings* appS
 void SettingsPage::show() {
     mGlobalWidget->updateUI();
     mGlobalWidget->show();
+    mGlobalWidget->resize();
 
     mCopyrightWidget->setGeometry(this->geometry());
 }
 
-void SettingsPage::resizeEvent(QResizeEvent* event) {
-    Q_UNUSED(event);
-
+void SettingsPage::resizeEvent(QResizeEvent*) {
+    for (auto button : mButtons) {
+        button->setMinimumHeight(this->height() / 10);
+    }
     mScrollAreaWidget->setFixedWidth(int(this->width() * 0.85f));
 
     QRect shownWidget = this->geometry();
@@ -188,17 +193,21 @@ void SettingsPage::loadButtonClicked() {
 }
 
 void SettingsPage::saveButtonClicked() {
-    QString fileName = QFileDialog::getSaveFileName(
+#if defined(Q_OS_IOS)
+    int requestID = 0;
+    mShareUtils->sendFile(mGroups->savePath(), "CorlumaSave", "application/json", requestID);
+#elif defined(Q_OS_ANDROID)
+    int requestID = 0;
+    mGroups->addSaveToTempDirectory();
+    mShareUtils->sendFile(mGroups->tempFile(), "CorlumaSave", "application/json", requestID);
+#else
+    auto fileName = QFileDialog::getSaveFileName(
         this, tr("Save Group Data"), "CorlumaGroups.json", tr("JSON (*.json)"));
     if (fileName.isEmpty()) {
         qDebug() << "WARNING: save file name empty";
         return;
     }
-
-
-    //    if (!mGroups->saveFile(fileName)) {
-    //        qDebug() << "WARNING: Save failed!";
-    //    }
+#endif
 }
 
 void SettingsPage::resetButtonClicked() {
@@ -216,7 +225,7 @@ void SettingsPage::resetToDefaults() {
     mGlobalWidget->checkBoxClicked(EProtocolType::arduCor, false);
     mGlobalWidget->checkBoxClicked(EProtocolType::nanoleaf, false);
 
-    mGlobalWidget->timeoutButtonPressed(true);
+    mGlobalWidget->timeoutCheckboxPressed(true);
 
     // load no data, deleting everything.
     mGroups->loadExternalData("");
@@ -233,21 +242,21 @@ void SettingsPage::paintEvent(QPaintEvent*) {
 
 void SettingsPage::settingsButtonPressed(const QString& title) {
     // qDebug() << "settings button pressed: " << title;
-    if (title.compare("Reset") == 0) {
+    if (title == "Reset") {
         resetButtonClicked();
-    } else if (title.compare("Load") == 0) {
+    } else if (title == "Load Backup") {
         loadButtonClicked();
-    } else if (title.compare("Save") == 0) {
+    } else if (title == "Backup Save Data") {
         saveButtonClicked();
-    } else if (title.compare("Light Info") == 0) {
+    } else if (title == "View/Edit Lights") {
         emit clickedInfoWidget();
-    } else if (title.compare("Discover Lights") == 0) {
+    } else if (title == "Find New Lights") {
         emit clickedDiscovery();
-    } else if (title.compare("Copyright") == 0) {
+    } else if (title == "Copyright") {
         showWebView(ECorlumaWebView::copyright);
-    } else if (title.compare("FAQ") == 0) {
+    } else if (title == "FAQ") {
         showWebView(ECorlumaWebView::FAQ);
-    } else if (title.compare("Mock Connection") == 0) {
+    } else if (title == "Mock Connection") {
         auto mainWindow = qobject_cast<MainWindow*>(this->parentWidget());
         Q_ASSERT(mainWindow);
         mainWindow->anyDiscovered(true);
@@ -272,7 +281,7 @@ void SettingsPage::showWebView(ECorlumaWebView newWebView) {
                 return;
         }
 
-        cor::moveWidget(widget, this->size(), QPoint(0, widget->height()), QPoint(0, 0));
+        cor::moveWidget(widget, QPoint(0, widget->height()), QPoint(0, 0));
 
         widget->raise();
     }
@@ -292,20 +301,20 @@ void SettingsPage::hideCurrentWebView() {
             return;
     }
 
-    cor::moveWidget(widget, this->size(), QPoint(0, 0), QPoint(0, widget->height()));
+    cor::moveWidget(widget, QPoint(0, 0), QPoint(0, widget->height()));
 
     mCurrentWebView = ECorlumaWebView::none;
 }
 
-void SettingsPage::pushIn(const QSize& size, const QPoint& startPoint, const QPoint& endPoint) {
+void SettingsPage::pushIn(const QPoint& startPoint, const QPoint& endPoint) {
     this->setVisible(true);
-    moveWidget(this, size, startPoint, endPoint);
+    moveWidget(this, startPoint, endPoint);
     this->raise();
     this->show();
     this->isOpen(true);
 }
 
 void SettingsPage::pushOut(const QPoint& endPoint) {
-    moveWidget(this, this->size(), this->pos(), endPoint);
+    moveWidget(this, this->pos(), endPoint);
     this->isOpen(false);
 }

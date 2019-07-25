@@ -82,8 +82,8 @@ android {
    DEFINES += MOBILE_BUILD=1
    # Android Manifests are the top level global xml for things like
    # app name, icons, screen orientations, etc.
-   OTHER_FILES += android-sources/AndroidManifest.xml
-   ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android-sources
+   OTHER_FILES += android/AndroidManifest.xml
+   ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
     # adds prebuilt libcrypto and libssl for android versions 6 and later
     contains(ANDROID_TARGET_ARCH, armeabi-v7a) {
         ANDROID_EXTRA_LIBS = \
@@ -96,9 +96,9 @@ ios {
    DEFINES += MOBILE_BUILD=1
    # Info.plist is the top level global configuration file for iOS
    # for things like app name, icons, screen orientations, etc.
-   QMAKE_INFO_PLIST = ios-sources/Info.plist
+   QMAKE_INFO_PLIST = ios/Info.plist
    # adds the icon files to the iOS application
-   ios_icon.files = $$files($$PWD/ios-sources/icon/AppIcon*.png)
+   ios_icon.files = $$files($$PWD/ios/icon/AppIcon*.png)
    QMAKE_BUNDLE_DATA += ios_icon
 }
 
@@ -123,7 +123,6 @@ SOURCES += main.cpp \
     comm/datasynchue.cpp \
     comm/datasyncarduino.cpp \
     comm/datasyncnanoleaf.cpp \
-    comm/datasyncsettings.cpp \
     comm/upnpdiscovery.cpp \
     colorpicker/colorpicker.cpp \
     colorpicker/rgbsliders.cpp \
@@ -162,6 +161,7 @@ SOURCES += main.cpp \
     comm/nanoleaf/leafcontroller.cpp \
     comm/nanoleaf/leafdiscovery.cpp \
     comm/nanoleaf/leafcontrollerinfowidget.cpp \
+    comm/syncstatus.cpp \
     mainwindow.cpp \
     settingspage.cpp \
     icondata.cpp \
@@ -202,7 +202,7 @@ SOURCES += main.cpp \
     syncwidget.cpp \
     singlecolorstatewidget.cpp \
     multicolorstatewidget.cpp \
-    comm/syncstatus.cpp
+    timeoutwidget.cpp
 
 HEADERS  +=  comm/arducor/arducordiscovery.h \
     comm/arducor/arducorpacketparser.h \
@@ -219,7 +219,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     comm/datasync.h \
     comm/datasynchue.h \
     comm/datasyncarduino.h \
-    comm/datasyncsettings.h \
     comm/datasyncnanoleaf.h \
     comm/upnpdiscovery.h \
     colorpicker/colorpicker.h \
@@ -263,6 +262,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     comm/nanoleaf/leafcontroller.h \
     comm/nanoleaf/leafdiscovery.h \
     comm/nanoleaf/leafcontrollerinfowidget.h \
+    comm/syncstatus.h \
     mainwindow.h \
     settingspage.h \
     icondata.h \
@@ -306,8 +306,9 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     syncwidget.h \
     singlecolorstatewidget.h \
     multicolorstatewidget.h \
-    comm/syncstatus.h \
-    utils/cormath.h
+    utils/cormath.h \
+    timeoutwidget.h
+
 
 HEADERS  += cor/objects/light.h \
     cor/objects/group.h \
@@ -334,6 +335,31 @@ HEADERS  += cor/objects/light.h \
 HEADERS  +=  comm/commserial.h
 SOURCES += comm/commserial.cpp
 }
+
+#----------
+# ShareUtils Sources
+#----------
+
+# shareutils.hpp contains all the C++ code needed for calling the native shares on iOS and android
+HEADERS += shareutils/shareutils.hpp
+
+ios {
+    # Objective-C++ files are needed for code that mixes objC and C++
+    OBJECTIVE_SOURCES += shareutils/iosshareutils.mm
+
+    # Headers for objC classes must be separate from a C++ header.
+    HEADERS += shareutils/docviewcontroller.hpp
+}
+android {
+    QT += androidextras
+    # the source file that contains the JNI and the android share implementation
+    SOURCES += shareutils/androidshareutils.cpp
+
+    OTHER_FILES += android/src/org/shareluma/utils/QShareUtils.java \
+        android/src/org/shareluma/utils/QSharePathResolver.java \
+        android/src/org/shareluma/activity/QShareActivity.java
+}
+
 
 #----------
 # Resources

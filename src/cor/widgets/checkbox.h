@@ -23,8 +23,6 @@ public:
     /// constructor
     explicit CheckBox(QWidget* parent, const QString& title) : QWidget(parent) {
         mIsChecked = false;
-        mSpacer = 5;
-
         const QString transparentStyleSheet = "background-color: rgba(0,0,0,0);";
 
         mTitle = new QLabel(title, this);
@@ -35,11 +33,15 @@ public:
         mTitle->setFixedWidth(r.width());
         mTitle->setMinimumHeight(int(r.height() * 1.75f));
 
+
+        mSpacer = int(mTitle->width() * 0.03f);
         mCheckBox = new QPushButton(this);
         mCheckBox->setCheckable(true);
         connect(mCheckBox, SIGNAL(clicked(bool)), this, SLOT(buttonPressed(bool)));
-        mCheckBox->setStyleSheet("QPushButton:checked{ background-color:rgb(61, 142, 201); } "
-                                 "QPushButton{ border:5px solid #AAAAAA; }");
+        mCheckBox->setStyleSheet(
+            QString("QPushButton:checked{ background-color:rgb(61, 142, 201); } "
+                    "QPushButton{ border:%1px solid #AAAAAA; }")
+                .arg(mSpacer));
         mCheckBox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
         this->setMinimumHeight(mTitle->height());
@@ -124,10 +126,12 @@ protected:
         mTitle->setGeometry(mSpacer, mSpacer, mTitle->width(), mTitle->height());
 
         auto height = int(mTitle->height() * 0.8);
-        mCheckBox->setGeometry(mTitle->width() + 2 * mSpacer,
-                               mTitle->geometry().y(),
-                               height + mSpacer,
-                               height + mSpacer);
+        mCheckBox->setGeometry(mSpacer, mSpacer, height + mSpacer, height + mSpacer);
+
+        mTitle->setGeometry(mCheckBox->width() + 2 * mSpacer,
+                            mCheckBox->geometry().y(),
+                            this->width() - mCheckBox->width() - 2 * mSpacer,
+                            mTitle->height());
 
         adjustSize();
     }

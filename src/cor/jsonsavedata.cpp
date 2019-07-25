@@ -15,8 +15,16 @@
 namespace cor {
 
 JSONSaveData::JSONSaveData(const QString& saveName) {
-    mSavePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/" + saveName
-                + ".json";
+    mSaveName = saveName + ".json";
+    mSaveDirectory = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/";
+    mSavePath = mSaveDirectory + mSaveName;
+    mTempDirectory = mSaveDirectory + "share";
+    mTempFile = mTempDirectory + "/" + mSaveName;
+
+    QDir tempDir(mTempDirectory);
+    if (!tempDir.exists()) {
+        QDir("").mkpath(mTempDirectory);
+    }
     checkForJSON();
 }
 
@@ -50,6 +58,29 @@ bool JSONSaveData::checkForJSON() {
     return false;
 }
 
+bool JSONSaveData::addSaveToTempDirectory() {
+    QFileInfo saveInfo(mTempFile);
+    if (saveInfo.exists()) {
+        QFile saveFile(mTempFile);
+        saveFile.remove();
+    }
+    QFile saveFile(mTempFile);
+    if (!saveFile.open(QIODevice::ReadWrite | QIODevice::Text)) {
+        qDebug() << "WARNING: save file exists and couldn't be opened.";
+        return false;
+    }
+
+    if (mJsonData.isNull()) {
+        qDebug() << "WARNING: json data is null!";
+        return false;
+    }
+    saveFile.write(mJsonData.toJson());
+    saveFile.close();
+    qDebug() << "saved data to " << mTempFile;
+    return true;
+}
+
+
 bool JSONSaveData::saveJSON() {
     QFileInfo saveInfo(mSavePath);
     if (saveInfo.exists()) {
@@ -70,7 +101,6 @@ bool JSONSaveData::saveJSON() {
     saveFile.close();
     return true;
 }
-
 
 bool JSONSaveData::removeJSONObject(const QString& key, const QString& givenValue) {
     int index = 0;

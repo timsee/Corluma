@@ -125,7 +125,7 @@ void LeftHandMenu::resize() {
     mScrollArea->setFixedWidth(int(this->width() * 1.2f));
 
     auto buttonHeight = int(this->height() * 0.07);
-    auto yPos = int(this->height() * 0.02) + cor::statusBarOffset();
+    auto yPos = int(this->height() * 0.02);
 
     mSpacer->setGeometry(0, 0, this->width(), this->height());
 
@@ -161,7 +161,7 @@ void LeftHandMenu::pushIn() {
     resize();
     updateLights();
     this->raise();
-    cor::moveWidget(this, this->size(), this->pos(), QPoint(0u, 0u));
+    cor::moveWidget(this, this->pos(), QPoint(0u, 0u));
     mRenderThread->start(333);
 }
 
@@ -169,7 +169,7 @@ void LeftHandMenu::pushOut() {
     if (!mAlwaysOpen) {
         QPoint endPoint = this->pos();
         endPoint.setX(this->size().width() * -1);
-        cor::moveWidget(this, this->size(), this->pos(), endPoint);
+        cor::moveWidget(this, this->pos(), endPoint);
         mRenderThread->stop();
         mIsIn = false;
     }

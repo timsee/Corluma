@@ -82,11 +82,6 @@ protected:
      */
     void paintEvent(QPaintEvent*);
 
-    /*!
-     * \brief resizeEvent called whenever the widget resizes
-     */
-    void resizeEvent(QResizeEvent*);
-
 private slots:
 
     /// updates when the isRoom checkbox is checked

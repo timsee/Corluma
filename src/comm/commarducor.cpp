@@ -280,7 +280,6 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                     device.speed = intVector[x + 9];
                                     device.timeout = intVector[x + 10];
                                     device.minutesUntilTimeout = intVector[x + 11];
-
                                     device.name = device.uniqueID();
 
                                     device.hardwareType

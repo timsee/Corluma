@@ -5,9 +5,9 @@
  */
 
 #include "appsettings.h"
-#include "utils/exception.h"
 #include "groupdata.h"
 #include "mainwindow.h"
+#include "utils/exception.h"
 #include "utils/qt.h"
 
 #include <QApplication>
@@ -157,7 +157,17 @@ int main(int argc, char* argv[]) {
     // Create app window
     //--------------------
 
-    MainWindow window(nullptr);
+#ifdef MOBILE_BUILD
+    QScreen* screen = QApplication::screens().at(0);
+    QSize size = screen->size();
+    QSize startingSize(size);
+    QSize minimumSize(size);
+#else
+    QSize startingSize(700, 600);
+    QSize minimumSize(400, 600);
+#endif
+
+    MainWindow window(nullptr, startingSize, minimumSize);
     // set the icon
     window.setWindowIcon(icon);
 

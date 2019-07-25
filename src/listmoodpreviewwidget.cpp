@@ -51,10 +51,13 @@ ListMoodPreviewWidget::ListMoodPreviewWidget(const cor::Mood& mood, QWidget* par
     this->setStyleSheet(backgroundStyleSheet);
 }
 
-
-void ListMoodPreviewWidget::resizeEvent(QResizeEvent*) {
+void ListMoodPreviewWidget::resize() {
     mName->setFixedSize(this->width(), this->height() / 4);
     mPalette->setFixedSize(int(this->width() * 0.75f), 2 * this->height() / 4);
+}
+
+void ListMoodPreviewWidget::resizeEvent(QResizeEvent*) {
+    resize();
 }
 
 

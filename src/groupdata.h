@@ -15,7 +15,7 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief The GroupsParser class Manipulates and Reads a JSON representation of multiple lights.
+ * \brief The GroupData class Manipulates and Reads a JSON representation of multiple lights.
  * There exists two types of "groups". The first is a collection which contains any number of
  * light devices but does not contain any reference to the lights overall state. The second is a
  * mood, which contains both the path to the light device and data such as its brightness, color,

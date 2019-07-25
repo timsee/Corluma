@@ -459,15 +459,15 @@ void DiscoveryPage::startClicked() {
     emit startButtonClicked();
 }
 
-void DiscoveryPage::pushIn(const QSize& size, const QPoint& startPoint, const QPoint& endPoint) {
+void DiscoveryPage::pushIn(const QPoint& startPoint, const QPoint& endPoint) {
     this->setVisible(true);
-    moveWidget(this, size, startPoint, endPoint);
+    moveWidget(this, startPoint, endPoint);
     this->raise();
     this->show();
     this->isOpen(true);
 }
 
-void DiscoveryPage::pushOut(const QSize& size, const QPoint& startPoint, const QPoint& endPoint) {
-    moveWidget(this, size, startPoint, endPoint);
+void DiscoveryPage::pushOut(const QPoint& startPoint, const QPoint& endPoint) {
+    moveWidget(this, startPoint, endPoint);
     this->isOpen(false);
 }

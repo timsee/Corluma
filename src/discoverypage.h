@@ -58,10 +58,10 @@ public:
     bool isAnyDiscovered();
 
     /// displays the discovery page
-    void pushIn(const QSize& size, const QPoint& startPoint, const QPoint& endPoint);
+    void pushIn(const QPoint& startPoint, const QPoint& endPoint);
 
     /// hides the discovery page
-    void pushOut(const QSize& size, const QPoint& startPoint, const QPoint& endPoint);
+    void pushOut(const QPoint& startPoint, const QPoint& endPoint);
 
 signals:
     /*!
@@ -164,7 +164,7 @@ private:
 
     /// start button of widget
     QPushButton* mStartButton;
-    
+
     /*!
      * \brief resize resize buttons at top that switch between Hue, Serial, etc.
      */

@@ -91,12 +91,12 @@ void ListWidget::show() {
 }
 
 void ListWidget::resize() {
-    mWidget->setFixedWidth(this->viewport()->width());
+    mWidget->setFixedWidth(int(this->geometry().width() * 0.9));
     for (auto widget : mListLayout.widgets()) {
         if (mListLayout.type() == cor::EListType::linear) {
-            widget->setFixedWidth(this->viewport()->width());
+            widget->setFixedWidth(mWidget->geometry().width());
         } else if (mListLayout.type() == cor::EListType::grid) {
-            widget->setFixedWidth(this->viewport()->width() / 2);
+            widget->setFixedWidth(mWidget->geometry().width() / 2);
         }
     }
 }

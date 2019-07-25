@@ -16,7 +16,7 @@
 
 
 LightInfoListWidget::LightInfoListWidget(QWidget* parent) : QWidget(parent) {
-    mTopWidget = new cor::TopWidget("Light Info", ":images/closeX.png", this);
+    mTopWidget = new cor::TopWidget("View/Edit Lights", ":images/closeX.png", this);
     connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(closePressed(bool)));
     mTopWidget->setFontPoint(20);
 
@@ -150,7 +150,7 @@ void LightInfoListWidget::resize(bool resizeFullWidget) {
     mDeleteButton->setGeometry(
         int(this->width() * 0.01), yPos, int(this->width() * 0.98), int(this->height() * 3 / 20));
 
-    QSize widgetSize(int(this->width() * 0.8f), int(this->height() / 3.66f));
+    QSize widgetSize(int(this->width() * 0.8f), int(this->height() / 3.0f));
     int widgetHeightY = 0;
     // TODO: make a better system for resizing
     // draw widgets in content region
@@ -181,7 +181,7 @@ void LightInfoListWidget::resize(bool resizeFullWidget) {
         widget->setGeometry(0, widgetHeightY, widgetSize.width(), widget->height());
         widgetHeightY += widget->height();
     }
-    mScrollAreaWidget->setFixedSize(int(this->width() * 0.85), widgetHeightY);
+    mScrollAreaWidget->setFixedSize(int(this->width() * 0.8), widgetHeightY);
 }
 
 
@@ -271,8 +271,8 @@ void LightInfoListWidget::lightInfoWidgetClicked(const QString& key) {
         }
     }
     for (auto widget : mHueWidgets) {
-        if (widget->key().compare(key) == 0) {
-            if (mLastKey.compare(key) == 0) {
+        if (widget->key() == key) {
+            if (mLastKey == key) {
                 widget->hideDetails(true);
                 widget->setChecked(false);
                 mLastKey = "";
@@ -284,8 +284,8 @@ void LightInfoListWidget::lightInfoWidgetClicked(const QString& key) {
         }
     }
     for (auto widget : mNanoleafWidgets) {
-        if (widget->key().compare(key) == 0) {
-            if (mLastKey.compare(key) == 0) {
+        if (widget->key() == key) {
+            if (mLastKey == key) {
                 widget->hideDetails(true);
                 widget->setChecked(false);
                 mLastKey = "";
@@ -298,8 +298,8 @@ void LightInfoListWidget::lightInfoWidgetClicked(const QString& key) {
     }
 
     for (auto widget : mArduCorWidgets) {
-        if (widget->key().compare(key) == 0) {
-            if (mLastKey.compare(key) == 0) {
+        if (widget->key() == key) {
+            if (mLastKey == key) {
                 widget->hideDetails(true);
                 widget->setChecked(false);
                 mLastKey = "";
@@ -312,7 +312,7 @@ void LightInfoListWidget::lightInfoWidgetClicked(const QString& key) {
         }
     }
 
-    if (mLastKey.compare("") == 0) {
+    if (mLastKey == "") {
         mDeleteButton->setEnabled(false);
         mDeleteButton->setStyleSheet("background-color:rgb(45,30,30);");
     } else if (shouldEnableDelete) {
@@ -325,27 +325,17 @@ void LightInfoListWidget::lightInfoWidgetClicked(const QString& key) {
 
 void LightInfoListWidget::pushIn() {
     moveWidget(this,
-               QSize(int(this->parentWidget()->width() * 0.75f),
-                     int(this->parentWidget()->height() * 0.75f)),
                QPoint(int(this->parentWidget()->width() * 0.125f),
                       int(-1 * this->parentWidget()->height())),
                QPoint(int(this->parentWidget()->width() * 0.125f),
                       int(this->parentWidget()->height() * 0.125f)));
 
-    this->isOpen(true);
-
     this->setVisible(true);
     this->raise();
-
-    resize(true);
 }
 
 void LightInfoListWidget::pushOut() {
-    this->isOpen(false);
-
     moveWidget(this,
-               QSize(int(this->parentWidget()->width() * 0.75f),
-                     int(this->parentWidget()->height() * 0.75f)),
                QPoint(int(this->parentWidget()->width() * 0.125f),
                       int(this->parentWidget()->height() * 0.125f)),
                QPoint(int(this->parentWidget()->width() * 0.125f),

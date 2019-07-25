@@ -10,6 +10,7 @@
 #include "cor/widgets/checkbox.h"
 #include "cor/widgets/slider.h"
 #include "groupdata.h"
+#include "timeoutwidget.h"
 
 /*!
  * \copyright
@@ -34,7 +35,7 @@ public:
     void updateUI();
 
     /// true if timeout is enabled, false if not
-    bool useTimeout() { return mTimeoutCheckBox->checked(); }
+    bool useTimeout() { return mTimeoutWidget->isTimoutEnabled(); }
 
     /*!
      * \brief checkBoxClicked helper for checking if a checkbox is checked. checkmate!
@@ -89,17 +90,12 @@ public slots:
      *
      * \param isChecked true if checked, false if not
      */
-    void timeoutButtonPressed(bool isChecked);
+    void timeoutCheckboxPressed(bool isChecked);
 
     /// value set for how long it takes the lights to timeout.
     int timeoutValue();
 
 protected:
-    /*!
-     * \brief resizeEvent called whenever the widget resizes so that assets can be updated.
-     */
-    void resizeEvent(QResizeEvent* event);
-
     /*!
      * \brief paintEvent used to draw the background of the widget.
      */
@@ -114,13 +110,6 @@ private:
      *        representation of which commtypes are in use.
      */
     void checkCheckBoxes();
-
-    /*!
-     * \brief showTimeout shows/hides the timeout slider
-     *
-     * \param showTimeout true to show the timeout slider, false to hide it
-     */
-    void showTimeout(bool showTimeout);
 
     /// value for minimum possible height of widget
     int mMinHeight;
@@ -138,29 +127,8 @@ private:
      */
     QLabel* mEnabledConnectionsLabel;
 
-    //----------------
-    // Checkboxes
-    //----------------
-
-    /*!
-     * \brief mTimeoutCheckBox checkbox for turning timeouts on and off
-     */
-    cor::CheckBox* mTimeoutCheckBox;
-
-    //----------------
-    // Sliders
-    //----------------
-
-    /*!
-     * \brief mTimeoutLabel label for timeout slider, says "Timeout."
-     */
-    QLabel* mTimeoutLabel;
-
-    /*!
-     * \brief mTimeoutSlider slider for determining how short/long timeouts
-     *        will be.
-     */
-    cor::Slider* mTimeoutSlider;
+    /// widget for controlling the timeout mode
+    TimeoutWidget* mTimeoutWidget;
 
     //----------------
     // Enabled Connections

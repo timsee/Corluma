@@ -11,9 +11,10 @@
 #include "datasyncarduino.h"
 #include "utils/color.h"
 
-DataSyncArduino::DataSyncArduino(cor::DeviceList* data, CommLayer* comm) {
+DataSyncArduino::DataSyncArduino(cor::DeviceList* data, CommLayer* comm, AppSettings* appSettings) {
     mData = data;
     mComm = comm;
+    mAppSettings = appSettings;
     mType = EDataSyncType::arducor;
     mParser = new ArduCorPacketParser();
     mUpdateInterval = 100;
@@ -69,7 +70,7 @@ void DataSyncArduino::syncData() {
             cor::Light commLayerDevice = device;
             if (device.protocol() == EProtocolType::arduCor) {
                 if (mComm->fillDevice(commLayerDevice)) {
-                    if (checkThrottle(device.controller(), device.commType())) {
+                    if (checkThrottle(device.name, device.commType())) {
                         if (!sync(device, commLayerDevice)) {
                             countOutOfSync++;
                         }
@@ -97,7 +98,9 @@ void DataSyncArduino::syncData() {
             QString finalPacket = createPacket(controller, allMessages);
 
             mComm->arducor()->sendPacket(controller, finalPacket);
-            resetThrottle(controller.name, controller.type);
+            for (const auto& name : controller.names) {
+                resetThrottle(name, controller.type);
+            }
         }
 
         mDataIsInSync = (countOutOfSync == 0);
@@ -201,6 +204,18 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
 
     QString packet;
 
+    //-------------------
+    // On/Off Sync
+    //-------------------
+
+    if (dataDevice.isOn != commDevice.isOn) {
+        QString message = mParser->turnOnPacket(dataDevice, dataDevice.isOn);
+        appendToPacket(packet, message, controller.maxPacketSize);
+        countOutOfSync++;
+        //        qDebug() << "ON/OFF not in sync" << dataDevice.isOn << " for " << commDevice.name
+        //                 << " out of sync is " << countOutOfSync;
+    }
+
     // if a lights off, no need to sync the rest of the states
     if (dataDevice.isOn) {
         //-------------------
@@ -281,6 +296,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
         }
     }
 
+
     //-------------------
     // Custom Color Count Sync
     //-------------------
@@ -313,17 +329,26 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
         }
     }
 
-
     //-------------------
-    // On/Off Sync
+    // Timeout Sync
     //-------------------
-
-    if (dataDevice.isOn != commDevice.isOn) {
-        QString message = mParser->turnOnPacket(dataDevice, dataDevice.isOn);
-        appendToPacket(packet, message, controller.maxPacketSize);
-        countOutOfSync++;
-        //        qDebug() << "ON/OFF not in sync" << dataDevice.isOn << " for " << dataDevice.name
-        //                 << " out of sync is " << countOutOfSync;
+    if (mAppSettings->timeoutEnabled()) {
+        // timeout is enabled
+        if (commDevice.timeout != mAppSettings->timeout()) {
+            //            qDebug() << "time out not in sync" << commDevice.timeout << " vs "
+            //                     << mAppSettings->timeout() << commDevice;
+            QString message = mParser->timeoutPacket(commDevice, mAppSettings->timeout());
+            appendToPacket(packet, message, uint32_t(controller.maxPacketSize));
+            countOutOfSync++;
+        }
+    } else {
+        // disable the timeout
+        if (commDevice.timeout != 0) {
+            // qDebug() << "time out not disabled!" << commDevice.timeout;
+            QString message = mParser->timeoutPacket(commDevice, 0);
+            appendToPacket(packet, message, uint32_t(controller.maxPacketSize));
+            countOutOfSync++;
+        }
     }
 
     if (countOutOfSync) {

@@ -42,6 +42,21 @@ Slider::Slider(QWidget* parent) : QWidget(parent) {
     adjustStylesheet();
 }
 
+void Slider::resize() {
+    mSlider->setFixedSize(this->rect().width(), int(this->rect().height() * mHeightScaleFactor));
+    switch (mType) {
+        case ESliderType::color:
+            setColor(mSliderColor);
+            break;
+        case ESliderType::gradient:
+            setGradient(mSliderColor, mColorGradient);
+            break;
+        case ESliderType::image:
+            setImage(mPath);
+            break;
+    }
+    update();
+}
 
 void Slider::setColor(const QColor& color) {
     mSliderColor = color;
@@ -213,18 +228,7 @@ void Slider::setMinimumPossible(bool useMinimumPossible, int minimumPossible) {
 
 
 void Slider::resizeEvent(QResizeEvent*) {
-    mSlider->setFixedSize(this->rect().width(), int(this->rect().height() * mHeightScaleFactor));
-    switch (mType) {
-        case ESliderType::color:
-            setColor(mSliderColor);
-            break;
-        case ESliderType::gradient:
-            setGradient(mSliderColor, mColorGradient);
-            break;
-        case ESliderType::image:
-            setImage(mPath);
-            break;
-    }
+    resize();
 }
 
 void Slider::paintEvent(QPaintEvent*) {

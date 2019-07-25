@@ -520,4 +520,12 @@ ___
 * Fixed resize issues preventing widgets from rendering on iOS.
 * Fixed miscellaneous bugs.
 
+### **v0.17.0**
+#### The Settings Update
+* Added native share support to iOS and Android for backing up and loading save data.
+* Changed the layout and text of the Settings Page. 
+* Added a `TimeoutWidget` for controlling the timeout setting.
+* Fixed bugs with resizing on iOS.
+* Fixed bugs with supporting iPads. 
+* Fixed miscellaneous bugs.
 

@@ -142,13 +142,13 @@ void EditGroupPage::isRoomChecked(bool checked) {
 
 
 void EditGroupPage::resize() {
-   auto yPos = 0;
-   mTopMenu->setGeometry(0, yPos, this->width(), this->height() / 5);
-   yPos += mTopMenu->height();
+    auto yPos = 0;
+    mTopMenu->setGeometry(0, yPos, this->width(), this->height() / 5);
+    yPos += mTopMenu->height();
 
-   mSimpleGroupWidget->setGeometry(0, yPos, this->width(), this->height() * 4 / 5);
+    mSimpleGroupWidget->setGeometry(0, yPos, this->width(), this->height() * 4 / 5);
 
-   mSimpleGroupWidget->resizeWidgets();
+    mSimpleGroupWidget->resizeWidgets();
 }
 
 void EditGroupPage::paintEvent(QPaintEvent*) {
@@ -158,11 +158,6 @@ void EditGroupPage::paintEvent(QPaintEvent*) {
 
     painter.setRenderHint(QPainter::Antialiasing);
     painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
-}
-
-
-void EditGroupPage::resizeEvent(QResizeEvent*) {
-    resize();
 }
 
 void EditGroupPage::lineEditChanged(const QString& newText) {
@@ -186,7 +181,7 @@ void EditGroupPage::saveChanges() {
     // check if group has a name, at least one device, and all valid devices.
     //---------------------------------
     bool nameIsValid = false;
-    if (mNewName.size() > 0 && !(mNewName.compare("zzzAVAIALBLE_DEVICES") == 0)) {
+    if (!mNewName.isEmpty() && (mNewName != "zzzAVAIALBLE_DEVICES")) {
         nameIsValid = true;
     } else {
         qDebug() << "WARNING: attempting to save a group without a valid name";
@@ -200,7 +195,7 @@ void EditGroupPage::saveChanges() {
     bool devicesAreValid = true;
     if (!newDevices.empty()) {
         for (auto& device : newDevices) {
-            if (device.controller().compare("") == 0 || device.index == 0) {
+            if (device.controller() == "" || device.index == 0) {
                 devicesAreValid = false;
             }
         }
@@ -301,7 +296,7 @@ bool EditGroupPage::checkForChanges() {
     }
 
 
-    if (!(mNewName.compare(mOriginalName) == 0)) {
+    if (mNewName != mOriginalName) {
         return true;
     }
 
@@ -359,24 +354,17 @@ void EditGroupPage::clickedDevice(const QString&) {
 
 void EditGroupPage::pushIn() {
     moveWidget(this,
-               QSize(int(this->parentWidget()->width() * 0.75f),
-                     int(this->parentWidget()->height() * 0.75f)),
                QPoint(int(this->parentWidget()->width() * 0.125f),
                       int(-1 * this->parentWidget()->height())),
                QPoint(int(this->parentWidget()->width() * 0.125f),
                       int(this->parentWidget()->height() * 0.125f)));
     this->raise();
     this->setVisible(true);
-    this->isOpen(true);
     mRenderThread->start(mRenderInterval);
 }
 
 void EditGroupPage::pushOut() {
-    this->isOpen(false);
-
     moveWidget(this,
-               QSize(int(this->parentWidget()->width() * 0.75f),
-                     int(this->parentWidget()->height() * 0.75f)),
                QPoint(int(this->parentWidget()->width() * 0.125f),
                       int(this->parentWidget()->height() * 0.125f)),
                QPoint(int(this->parentWidget()->width() * 0.125f),

@@ -12,6 +12,7 @@
 #include "cor/widgets/webview.h"
 #include "globalsettingswidget.h"
 #include "settingsbutton.h"
+#include "shareutils/shareutils.hpp"
 
 
 /// enum for state of corluma web views, tracks which is shown
@@ -42,7 +43,10 @@ public:
     /*!
      * \brief Constructor
      */
-    explicit SettingsPage(QWidget* parent, GroupData* parser, AppSettings* appSettings);
+    explicit SettingsPage(QWidget* parent,
+                          GroupData* parser,
+                          AppSettings* appSettings,
+                          ShareUtils* shareUtils);
 
     /*!
      * \brief Destructor
@@ -56,7 +60,7 @@ public:
     GlobalSettingsWidget* globalWidget() { return mGlobalWidget; }
 
     /// displays the settings page menu
-    void pushIn(const QSize& size, const QPoint& startPoint, const QPoint& endPoint);
+    void pushIn(const QPoint& startPoint, const QPoint& endPoint);
 
     /// hides the settings page menu
     void pushOut(const QPoint& endPoint);
@@ -170,9 +174,6 @@ private:
     /// titles of specific buttons, such as Load, Copyright, or Reset.
     std::vector<std::string> mTitles;
 
-    /// descriptions of buttons, gives more info on what the button does
-    std::vector<std::string> mDescriptions;
-
     /// labels for sections.
     std::vector<QLabel*> mSectionLabels;
 
@@ -184,6 +185,9 @@ private:
 
     /// widget displaying an FAQ
     cor::WebView* mFAQWidget;
+
+    /// pointer to object that handles sharing on mobile devices.
+    ShareUtils* mShareUtils;
 
     /// true if showing debug options, false otherwise.
     bool mShowingDebug;

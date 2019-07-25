@@ -17,17 +17,13 @@
 MoodPage::MoodPage(QWidget* parent, GroupData* groups)
     : QWidget(parent), mGroups(groups), mCurrentMood{0} {
     mMoodsListWidget = new cor::ListWidget(this, cor::EListType::linear);
-    mMoodsListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mMoodsListWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     QScroller::grabGesture(mMoodsListWidget->viewport(), QScroller::LeftMouseButtonGesture);
-
-    mLayout = new QVBoxLayout(this);
-    mLayout->addWidget(mMoodsListWidget);
-
-    setLayout(mLayout);
 
     connect(mGroups, SIGNAL(newMoodAdded(QString)), this, SLOT(newMoodAdded(QString)));
 
     mRenderInterval = 1000;
+    resize();
 }
 
 void MoodPage::newMoodAdded(const QString& mood) {
@@ -99,7 +95,7 @@ void MoodPage::makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
             // qDebug() << " room name " << roomName;
             bool roomFound = false;
             for (auto item : mMoodsListWidget->widgets()) {
-                if (item->key().compare(roomName) == 0) {
+                if (item->key() == roomName) {
                     roomFound = true;
                     auto moodWidget = qobject_cast<ListMoodGroupWidget*>(item);
                     Q_ASSERT(moodWidget);
@@ -170,9 +166,17 @@ void MoodPage::editMoodClicked(const QString&, std::uint64_t) {
     emit clickedEditButton(true);
 }
 
+void MoodPage::resize() {
+    mMoodsListWidget->setGeometry(0,0,this->width(), this->height());
+    for (auto item : mMoodsListWidget->widgets()) {
+        auto moodWidget = qobject_cast<ListMoodGroupWidget*>(item);
+        moodWidget->resize();
+    }
+    mMoodsListWidget->resizeWidgets();
+}
 
 void MoodPage::resizeEvent(QResizeEvent*) {
-    mMoodsListWidget->resizeWidgets();
+    resize();
 }
 
 void MoodPage::show(std::uint64_t currentMood,

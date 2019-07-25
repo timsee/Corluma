@@ -57,12 +57,7 @@ inline void debugWhyWidgetIsNotShowing(QWidget* widget) {
 
 
 /// moves a widge from startPoint to endPoint, resizing to given size if necessary.
-inline void moveWidget(QWidget* widget,
-                       const QSize& size,
-                       const QPoint& startPoint,
-                       const QPoint& endPoint) {
-    widget->setGeometry(startPoint.x(), startPoint.y(), size.width(), size.height());
-
+inline void moveWidget(QWidget* widget, const QPoint& startPoint, const QPoint& endPoint) {
     QPropertyAnimation* animation = new QPropertyAnimation(widget, "pos");
     animation->setDuration(TRANSITION_TIME_MSEC);
     animation->setStartValue(startPoint);
@@ -149,14 +144,6 @@ inline bool leftHandMenuMoving() {
         }
     }
     return false;
-}
-
-/*!
- * \brief statusBarOffset hacky solution when supporting iOS to offset for the status bar.
- * \return yPos of assets that need to account for a status bar
- */
-inline int statusBarOffset() {
-    return 0;
 }
 
 } // namespace cor

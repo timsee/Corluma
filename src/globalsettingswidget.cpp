@@ -30,37 +30,11 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget* parent, AppSettings* appSett
     mEnabledConnectionsLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mEnabledConnectionsLabel->setStyleSheet(labelStyleSheet);
 
-    //-----------
-    // CheckBoxes
-    //-----------
 
-    mTimeoutCheckBox = new cor::CheckBox(this, "Use Timeout");
-    connect(mTimeoutCheckBox, SIGNAL(boxChecked(bool)), this, SLOT(timeoutButtonPressed(bool)));
+    mTimeoutWidget = new TimeoutWidget(
+        this, mAppSettings->timeout(), mAppSettings->timeoutEnabled(), mSpacerPixels);
 
-    mMinHeight = mTimeoutCheckBox->height();
-
-    //-----------
-    // Sliders
-    //-----------
-    mTimeoutSlider = new cor::Slider(this);
-    mTimeoutSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mTimeoutSlider->slider()->setRange(0, 300);
-    mTimeoutSlider->slider()->setValue(mAppSettings->timeout());
-    mTimeoutSlider->setHeightPercentage(0.5f);
-    mTimeoutSlider->slider()->setTickPosition(QSlider::TicksBelow);
-    mTimeoutSlider->slider()->setTickInterval(60);
-    mTimeoutSlider->slider()->setValue(mAppSettings->timeout());
-    mTimeoutSlider->setColor(QColor(255, 127, 0));
-    mTimeoutSlider->setShouldDrawTickLabels(true);
-
-    //-----------
-    // Slider Labels
-    //-----------
-
-    mTimeoutLabel = new QLabel("Timeout", this);
-    mTimeoutLabel->setStyleSheet(transparentStyleSheet);
-    mTimeoutLabel->setMinimumHeight(mTimeoutLabel->height() * 2);
-    mTimeoutLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mMinHeight = this->height() / 8;
 
     //-----------
     // Enabled Connections
@@ -69,34 +43,22 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget* parent, AppSettings* appSett
     mArduCorButton = new QPushButton(this);
     mArduCorButton->setCheckable(true);
     mArduCorButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    connect(mArduCorButton, SIGNAL(clicked(bool)), this, SLOT(arduCorButtonClicked(bool)));
+    mArduCorButton->setText("ArduCor");
 
     mHueButton = new QPushButton(this);
     mHueButton->setCheckable(true);
     mHueButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    connect(mHueButton, SIGNAL(clicked(bool)), this, SLOT(hueCheckboxClicked(bool)));
+    mHueButton->setText("Hue");
 
     mNanoLeafButton = new QPushButton(this);
     mNanoLeafButton->setCheckable(true);
     mNanoLeafButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-    mConnectionButtons = {mArduCorButton, mHueButton, mNanoLeafButton};
-
-    connect(mTimeoutSlider, SIGNAL(valueChanged(int)), this, SLOT(timeoutChanged(int)));
-
-    connect(mHueButton, SIGNAL(clicked(bool)), this, SLOT(hueCheckboxClicked(bool)));
-    mHueButton->setText("Hue");
-
-    connect(mArduCorButton, SIGNAL(clicked(bool)), this, SLOT(arduCorButtonClicked(bool)));
-    mArduCorButton->setText("ArduCor");
-
     connect(mNanoLeafButton, SIGNAL(clicked(bool)), this, SLOT(nanoLeafButtonClicked(bool)));
     mNanoLeafButton->setText("NanoLeaf");
 
-    //-----------
-    // Access Persistent Memory
-    //-----------
-
-    mTimeoutCheckBox->setChecked(mAppSettings->timeoutEnabled());
-    showTimeout(mAppSettings->timeoutEnabled());
+    mConnectionButtons = {mArduCorButton, mHueButton, mNanoLeafButton};
 }
 
 
@@ -165,16 +127,8 @@ void GlobalSettingsWidget::updateUI() {
 
 void GlobalSettingsWidget::show() {
     checkCheckBoxes();
-
-    mTimeoutSlider->enable(true);
-
     resize();
 }
-
-void GlobalSettingsWidget::resizeEvent(QResizeEvent* event) {
-    Q_UNUSED(event);
-}
-
 
 void GlobalSettingsWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
@@ -189,45 +143,23 @@ void GlobalSettingsWidget::paintEvent(QPaintEvent*) {
     painter.drawPath(path);
 }
 
-void GlobalSettingsWidget::timeoutButtonPressed(bool isChecked) {
+void GlobalSettingsWidget::timeoutCheckboxPressed(bool isChecked) {
     emit timeoutEnabled(isChecked);
-    showTimeout(isChecked);
-}
-
-int GlobalSettingsWidget::timeoutValue() {
-    return mTimeoutSlider->slider()->value();
-}
-
-
-void GlobalSettingsWidget::showTimeout(bool showTimeout) {
-    mTimeoutLabel->setVisible(showTimeout);
-    mTimeoutSlider->setVisible(showTimeout);
+    mTimeoutWidget->show(isChecked);
+    if (isChecked) {
+        mTimeoutWidget->changeTimeoutLabel("Timeout Enabled");
+    } else {
+        mTimeoutWidget->changeTimeoutLabel("Timeout Disabled");
+    }
     resize();
 }
 
+int GlobalSettingsWidget::timeoutValue() {
+    return mTimeoutWidget->timeoutValue();
+}
+
 void GlobalSettingsWidget::resize() {
-    // resize the checkboxes widths, if needed
-    mTimeoutCheckBox->downsizeTextWidthToFit(int(this->width() * 0.45f));
-
-    int currentY = 0;
-    auto sliderWidth = int(this->width() * 0.66f);
-    auto sliderHeight = int(mEnabledConnectionsLabel->height() * 2.75f);
-
-    mTimeoutCheckBox->setGeometry(mSpacerPixels,
-                                  mSpacerPixels,
-                                  mTimeoutCheckBox->geometry().width(),
-                                  mTimeoutCheckBox->geometry().height());
-
-    currentY += mTimeoutCheckBox->height() + mSpacerPixels;
-
-    if (mTimeoutSlider->isVisible()) {
-        mTimeoutLabel->setGeometry(mSpacerPixels, currentY, mTimeoutLabel->width(), sliderHeight);
-        mTimeoutSlider->setGeometry(mTimeoutLabel->geometry().width() + 2 * mSpacerPixels,
-                                    currentY,
-                                    sliderWidth,
-                                    sliderHeight);
-        currentY += mTimeoutSlider->height() + mSpacerPixels;
-    }
+    int currentY = mTimeoutWidget->resize(mEnabledConnectionsLabel->height());
 
     if (mEnabledConnectionsLabel->isVisible()) {
         mEnabledConnectionsLabel->setGeometry(mSpacerPixels,
@@ -237,29 +169,33 @@ void GlobalSettingsWidget::resize() {
         currentY += mEnabledConnectionsLabel->height() + mSpacerPixels;
     }
 
-    auto buttonSize = int(this->width() * 0.2f);
-    if (mHueButton->isVisible()) {
-        mHueButton->setGeometry(mSpacerPixels, currentY, buttonSize, buttonSize);
-
-        mNanoLeafButton->setGeometry(
-            mHueButton->geometry().x() + mHueButton->width() + mSpacerPixels,
-            currentY,
-            buttonSize,
-            buttonSize);
-
-        mArduCorButton->setGeometry(
-            mNanoLeafButton->geometry().x() + mNanoLeafButton->width() + mSpacerPixels,
-            currentY,
-            buttonSize,
-            buttonSize);
-
-        currentY += mHueButton->height() + 2 * mSpacerPixels;
+    auto buttonHeight = int(this->width() * 0.2f);
+    auto buttonWidth = int(this->width() * 0.2f);
+    const auto& appSize = cor::applicationSize();
+    auto ratio = float(appSize.height()) / appSize.width();
+    if (ratio > 1.3f) {
+        buttonWidth = int(this->width() * 0.3f);
     }
 
-    if (!mTimeoutSlider->isVisible()) {
+    mHueButton->setGeometry(mSpacerPixels, currentY, buttonWidth, buttonHeight);
+
+    mNanoLeafButton->setGeometry(mHueButton->geometry().x() + mHueButton->width() + mSpacerPixels,
+                                 currentY,
+                                 buttonWidth,
+                                 buttonHeight);
+
+    mArduCorButton->setGeometry(
+        mNanoLeafButton->geometry().x() + mNanoLeafButton->width() + mSpacerPixels,
+        currentY,
+        buttonWidth,
+        buttonHeight);
+
+    currentY += mHueButton->height() + 2 * mSpacerPixels;
+
+    if (mTimeoutWidget->isTimoutEnabled()) {
         currentY += mSpacerPixels;
     }
 
-    this->parentWidget()->adjustSize();
     this->setFixedHeight(currentY);
+    this->parentWidget()->adjustSize();
 }

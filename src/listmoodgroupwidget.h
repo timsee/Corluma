@@ -10,9 +10,9 @@
 
 #include <set>
 
-#include "cor/widgets/listitemwidget.h"
 #include "cor/listlayout.h"
 #include "cor/objects/mood.h"
+#include "cor/widgets/listitemwidget.h"
 #include "dropdowntopwidget.h"
 #include "listmoodpreviewwidget.h"
 
@@ -88,6 +88,9 @@ public:
     /// closes all the displayed lights for this widget
     void closeLights();
 
+    /// resizes programmatically
+    void resize();
+
 signals:
 
     /*!
@@ -148,11 +151,6 @@ private:
 
     /// widget used for background of grid
     QWidget* mWidget;
-
-    /*!
-     * \brief mLayout layout that displays all of the sub widgets.
-     */
-    QVBoxLayout* mLayout;
 
     /// widget for showing/hiding and selecting/deselecting
     DropdownTopWidget* mDropdownTopWidget;

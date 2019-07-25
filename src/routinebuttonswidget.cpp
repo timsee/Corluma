@@ -5,8 +5,8 @@
  */
 
 #include "routinebuttonswidget.h"
-#include "utils/exception.h"
 #include "cor/presetpalettes.h"
+#include "utils/exception.h"
 #include "utils/qt.h"
 
 #include <QGraphicsOpacityEffect>
@@ -240,16 +240,14 @@ void RoutineButtonsWidget::paintEvent(QPaintEvent*) {
 
 void RoutineButtonsWidget::showWidget(bool shouldShow) {
     if (mIsOpen && !shouldShow) {
-        cor::moveWidget(this, this->size(), this->pos(), QPoint(0, this->parentWidget()->height()));
+        cor::moveWidget(this, this->pos(), QPoint(0, this->parentWidget()->height()));
 
         mIsOpen = false;
     } else if (!mIsOpen && shouldShow) {
         // mSingleRoutineWidget->singleRoutineColorChanged(mColor);  // update colors of single
         // color routine
-        cor::moveWidget(this,
-                        this->size(),
-                        this->pos(),
-                        QPoint(0, this->parentWidget()->height() - this->height()));
+        cor::moveWidget(
+            this, this->pos(), QPoint(0, this->parentWidget()->height() - this->height()));
         mIsOpen = true;
     }
 }

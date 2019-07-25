@@ -177,18 +177,22 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
     // first apply the room(s) ...
     for (const auto& room : rooms) {
         for (const auto& lightID : room.first.lights) {
-            auto light = lightByID(lightID);
-            light = addLightMetaData(light);
-            light = applyStateToLight(light, room.second);
-            const auto& key = light.uniqueID().toStdString();
-            // check if light exists in list already
-            const auto& result = moodDict.item(key);
-            if (result.second) {
-                // update if it exists
-                moodDict.update(key, light);
-            } else {
-                // add if it doesnt
-                moodDict.insert(key, light);
+            try {
+                auto light = lightByID(lightID);
+                light = addLightMetaData(light);
+                light = applyStateToLight(light, room.second);
+                const auto& key = light.uniqueID().toStdString();
+                // check if light exists in list already
+                const auto& result = moodDict.item(key);
+                if (result.second) {
+                    // update if it exists
+                    moodDict.update(key, light);
+                } else {
+                    // add if it doesnt
+                    moodDict.insert(key, light);
+                }
+            } catch (cor::Exception&) {
+                
             }
         }
     }
@@ -196,10 +200,32 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
     // ... then apply the group(s) ...
     for (const auto& group : groups) {
         for (const auto& light : group.first.lights) {
-            auto lightCopy = lightByID(light);
-            lightCopy = addLightMetaData(lightCopy);
-            lightCopy = applyStateToLight(lightCopy, group.second);
-            const auto& key = lightCopy.uniqueID().toStdString();
+            try {
+                auto lightCopy = lightByID(light);
+                lightCopy = addLightMetaData(lightCopy);
+                lightCopy = applyStateToLight(lightCopy, group.second);
+                const auto& key = lightCopy.uniqueID().toStdString();
+                // check if light exists in list already
+                const auto& result = moodDict.item(key);
+                if (result.second) {
+                    // update if it exists
+                    moodDict.update(key, lightCopy);
+                } else {
+                    // add if it doesnt
+                    moodDict.insert(key, lightCopy);
+                }
+            } catch (cor::Exception&) {
+                
+            }
+        }
+    }
+
+    // ... now apply the specific lights
+    for (const auto& light : mood.lights) {
+        try {
+            // this is messy and I don't like it.
+            auto lightCopy = addLightMetaData(light);
+            const auto& key = light.uniqueID().toStdString();
             // check if light exists in list already
             const auto& result = moodDict.item(key);
             if (result.second) {
@@ -209,22 +235,8 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
                 // add if it doesnt
                 moodDict.insert(key, lightCopy);
             }
-        }
-    }
-
-    // ... now apply the specific lights
-    for (const auto& light : mood.lights) {
-        // this is messy and I don't like it... why did I need this isReachable hack again?
-        auto lightCopy = addLightMetaData(light);
-        const auto& key = light.uniqueID().toStdString();
-        // check if light exists in list already
-        const auto& result = moodDict.item(key);
-        if (result.second) {
-            // update if it exists
-            moodDict.update(key, lightCopy);
-        } else {
-            // add if it doesnt
-            moodDict.insert(key, lightCopy);
+        } catch (cor::Exception&) {
+            
         }
     }
 

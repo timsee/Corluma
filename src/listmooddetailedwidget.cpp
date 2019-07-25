@@ -181,8 +181,6 @@ void ListMoodDetailedWidget::pushIn() {
     this->isOpen(true);
 
     moveWidget(this,
-               QSize(int(this->parentWidget()->width() * 0.75f),
-                     int(this->parentWidget()->height() * 0.75f)),
                QPoint(int(this->parentWidget()->width() * 0.125f),
                       int(-1 * this->parentWidget()->height())),
                QPoint(int(this->parentWidget()->width() * 0.125f),
@@ -190,10 +188,8 @@ void ListMoodDetailedWidget::pushIn() {
 
     auto widthPoint = int(this->parentWidget()->width() * 0.875f - topMenu()->width());
     QPoint finishPoint(widthPoint, int(this->parentWidget()->height() * 0.125f));
-    cor::moveWidget(topMenu(),
-                    topMenu()->size(),
-                    QPoint(widthPoint, int(-1 * this->parentWidget()->height())),
-                    finishPoint);
+    cor::moveWidget(
+        topMenu(), QPoint(widthPoint, int(-1 * this->parentWidget()->height())), finishPoint);
 
     mFloatingMenu->setVisible(true);
     mFloatingMenu->raise();
@@ -207,8 +203,6 @@ void ListMoodDetailedWidget::pushOut() {
     this->isOpen(false);
 
     moveWidget(this,
-               QSize(int(this->parentWidget()->width() * 0.75f),
-                     int(this->parentWidget()->height() * 0.75f)),
                QPoint(int(this->parentWidget()->width() * 0.125f),
                       int(this->parentWidget()->height() * 0.125f)),
                QPoint(int(this->parentWidget()->width() * 0.125f),
@@ -216,8 +210,6 @@ void ListMoodDetailedWidget::pushOut() {
 
     auto widthPoint = int(this->parentWidget()->width() * 0.875f - topMenu()->size().width());
     QPoint startPoint(widthPoint, int(this->parentWidget()->height() * 0.125f));
-    cor::moveWidget(topMenu(),
-                    topMenu()->size(),
-                    startPoint,
-                    QPoint(widthPoint, int(-1 * this->parentWidget()->height())));
+    cor::moveWidget(
+        topMenu(), startPoint, QPoint(widthPoint, int(-1 * this->parentWidget()->height())));
 }

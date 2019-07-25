@@ -12,27 +12,21 @@
 #include <QtCore>
 #include <QtGui>
 
-SettingsButton::SettingsButton(const QString& title, const QString& description, QWidget* parent)
+SettingsButton::SettingsButton(const QString& title, int minHeight, QWidget* parent)
     : QWidget(parent) {
     mIsHighlighted = false;
+    this->setMinimumHeight(minHeight);
 
     mTitle = new QLabel(title);
     cor::changeLabelToTitleLabel(mTitle);
 
-    mDescription = new QLabel(description);
-    mDescription->setWordWrap(true);
-    mDescription->setStyleSheet("background-color:rgba(0,0,0,0);");
-
     mLayout = new QVBoxLayout(this);
-
     mLayout->addWidget(mTitle);
-    mLayout->addWidget(mDescription);
 
     this->setLayout(mLayout);
 }
 
-void SettingsButton::mousePressEvent(QMouseEvent* event) {
-    Q_UNUSED(event);
+void SettingsButton::mousePressEvent(QMouseEvent*) {
     // turn to light blue
     mIsHighlighted = true;
     update();

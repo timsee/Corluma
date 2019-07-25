@@ -129,7 +129,7 @@ void MainViewport::showMainPage(EPage page) {
     int x = this->width() + widget->width();
     pageObject->isOpen(true);
 
-    cor::moveWidget(widget, this->size(), QPoint(x, this->pos().y()), this->pos());
+    cor::moveWidget(widget, QPoint(x, this->pos().y()), this->pos());
 
     if (page == EPage::colorPage) {
         mColorPage->show(mData->mainColor(),
@@ -158,7 +158,7 @@ void MainViewport::hideMainPage(EPage page) {
     pageObject->isOpen(false);
     int x = widget->width() * -1;
 
-    cor::moveWidget(widget, this->size(), this->pos(), QPoint(x, widget->pos().y()));
+    cor::moveWidget(widget, this->pos(), QPoint(x, widget->pos().y()));
     if (page == EPage::colorPage) {
         mColorPage->handleRoutineWidget(false);
     } else if (page == EPage::palettePage) {

@@ -63,6 +63,9 @@ public:
      */
     const QString& moodName() { return mMood.name(); }
 
+    /// resizes programmatically
+    void resize();
+
 signals:
 
     /// called when mood is selected

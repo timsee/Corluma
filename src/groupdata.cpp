@@ -612,6 +612,7 @@ bool GroupData::loadExternalData(const QString& file) {
             mJsonData = document;
             if (!saveJSON()) {
                 qDebug() << "WARNING: Load External Data couldn't save file";
+                return false;
             }
             return true;
         }

@@ -10,7 +10,6 @@
 #include "comm/datasyncarduino.h"
 #include "comm/datasynchue.h"
 #include "comm/datasyncnanoleaf.h"
-#include "comm/datasyncsettings.h"
 #include "comm/hue/lightdiscovery.h"
 #include "comm/syncstatus.h"
 #include "cor/objects/page.h"
@@ -26,6 +25,7 @@
 #include "mainviewport.h"
 #include "nowifiwidget.h"
 #include "settingspage.h"
+#include "shareutils/shareutils.hpp"
 #include "topmenu.h"
 
 /*!
@@ -48,7 +48,7 @@ public:
     /*!
      * \brief Constructor
      */
-    explicit MainWindow(QWidget* parent);
+    explicit MainWindow(QWidget* parent, const QSize& startingSize, const QSize& minimumSize);
 
     /// true if any discovered, false if nothing discoverd.
     void anyDiscovered(bool discovered) { mAnyDiscovered = discovered; }
@@ -181,6 +181,9 @@ private slots:
      */
     void wifiChecker();
 
+    /// checks if a share from another application is valid
+    void shareChecker();
+
     /// called when the greyout is clicked
     void greyoutClicked();
 
@@ -189,6 +192,12 @@ private slots:
 
     /// opens the new group menu
     void openNewGroupMenu();
+
+    /// Used by shareUtils, called when a URL to a file is receieved
+    void receivedURL(QString url);
+
+    /// Used by shareUtils, called when a URL is received, and saved to disk
+    void receivedAndSavedURL(QString url);
 
 protected:
     /*!
@@ -221,9 +230,6 @@ private:
     /// handles whether the app is landscape or potrait
     void handleLandscapeOrPortrait();
 
-    /// left hand menu.
-    LeftHandMenu* mLeftHandMenu;
-
     /// start point for a mouse move event
     QPoint mStartPoint;
 
@@ -239,27 +245,18 @@ private:
     /// resize
     void resize();
 
-    /*!
-     * \brief mGreyOut overlay that greys out the entire main window. Used in conjunction with the
-     * mEditPage
-     */
-    GreyOutOverlay* mGreyOut;
-
     /// true if pages are loaded, false if they haven't been loaded yet
     bool mPagesLoaded;
 
     /// true if any discovered, false if none discovered
     bool mAnyDiscovered;
 
+    /// handles an edge case when the app is loading the first time.
+    bool mFirstLoad;
+
     //------------------
     // Pages
     //------------------
-
-    /*!
-     * \brief mDiscoveryPage page devoted to discovering new connections. Previous connections
-     * are saved so this page should only be used for configuring.
-     */
-    DiscoveryPage* mDiscoveryPage;
 
     /*!
      * \brief mEditPage overlay that allows editing and creating collections and moods.
@@ -277,17 +274,17 @@ private:
      */
     LightInfoListWidget* mLightInfoWidget;
 
-    /*!
-     * \brief mSettingsPage overlay widget that allows access to various app settings such as
-     * loading from JSON or reseting things to defaults.
-     */
-    SettingsPage* mSettingsPage;
-
     /// true if wifi found, false otherwise
     bool mWifiFound;
 
     /// timer for checking whether or not wifi is enabled.
     QTimer* mWifiChecker;
+
+    /// timer used to access the main thread from shares
+    QTimer* mShareChecker;
+
+    /// path to a shared file.
+    QString mSharePath;
 
     /// widget for displaying whether or not wifi is enabled.
     NoWifiWidget* mNoWifiWidget;
@@ -351,13 +348,32 @@ private:
      */
     DataSyncNanoLeaf* mDataSyncNanoLeaf;
 
-    /*!
-     * \brief mDataSyncSettings sync thread for data coming from settings
-     */
-    DataSyncSettings* mDataSyncSettings;
-
     /// tracks whether all the DataSync threads are in sync or not
     SyncStatus* mSyncStatus;
+
+    /// pointer to object that handles sharing on mobile devices.
+    ShareUtils* mShareUtils;
+
+    /*!
+     * \brief mSettingsPage overlay widget that allows access to various app settings such as
+     * loading from JSON or reseting things to defaults.
+     */
+    SettingsPage* mSettingsPage;
+
+    /*!
+     * \brief mDiscoveryPage page devoted to discovering new connections. Previous connections
+     * are saved so this page should only be used for configuring.
+     */
+    DiscoveryPage* mDiscoveryPage;
+
+    /*!
+     * \brief mGreyOut overlay that greys out the entire main window. Used in conjunction with the
+     * mEditPage
+     */
+    GreyOutOverlay* mGreyOut;
+
+    /// left hand menu.
+    LeftHandMenu* mLeftHandMenu;
 };
 
 #endif // MAINWINDOW_H

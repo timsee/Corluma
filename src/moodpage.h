@@ -10,9 +10,9 @@
 #include "comm/commlayer.h"
 #include "cor/objects/group.h"
 #include "cor/objects/light.h"
-#include "cor/widgets/listwidget.h"
 #include "cor/objects/page.h"
 #include "cor/presetpalettes.h"
+#include "cor/widgets/listwidget.h"
 #include "listmoodgroupwidget.h"
 
 /*!
@@ -43,6 +43,9 @@ public:
 
     /// called when the widget is hidden
     void hide();
+
+    /// resizes programmatically
+    void resize();
 
     /// getter for current mood
     const std::uint64_t& currentMood() { return mCurrentMood; }
@@ -136,9 +139,6 @@ private:
      */
     void makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
                               const std::list<cor::Group>& roomList);
-
-    /// layout of widget
-    QVBoxLayout* mLayout;
 
     /*!
      * \brief mLastUpdateConnectionList the time that the connection list

@@ -5,7 +5,6 @@
  */
 
 #include <QGraphicsOpacityEffect>
-#include <QMessageBox>
 #include <QScroller>
 #include <QStyleOption>
 #include <QtCore>

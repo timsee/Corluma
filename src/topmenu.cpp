@@ -314,7 +314,7 @@ void TopMenu::resize(int xOffset) {
 
     moveFloatingLayout();
 
-    int yPos = cor::statusBarOffset();
+    int yPos = 0;
     int padding = 5;
     mMenuButton->setGeometry(0, yPos, mSize.width(), mSize.height());
     mSpacer->setGeometry(mSize.width(), yPos, this->width() - mSize.width(), mSize.height());
@@ -431,7 +431,7 @@ void TopMenu::floatingLayoutButtonPressed(const QString& button) {
 }
 
 void TopMenu::showSingleColorStateWidget(bool show) {
-    int height = mSize.height() * 2 / 3 + cor::statusBarOffset();
+    int height = mSize.height() * 2 / 3;
     int width = 0;
     if (!mMainWindow->leftHandMenu()->alwaysOpen()) {
         height += mSize.height();
@@ -441,17 +441,15 @@ void TopMenu::showSingleColorStateWidget(bool show) {
     QPoint shownPoint(width, height);
     QPoint hiddenPoint(-mSingleColorStateWidget->size().width(), height);
     if (show) {
-        cor::moveWidget(
-            mSingleColorStateWidget, mSingleColorStateWidget->size(), hiddenPoint, shownPoint);
+        cor::moveWidget(mSingleColorStateWidget, hiddenPoint, shownPoint);
         mSingleColorStateWidget->updateSyncStatus(ESyncState::notSynced);
     } else {
-        cor::moveWidget(
-            mSingleColorStateWidget, mSingleColorStateWidget->size(), shownPoint, hiddenPoint);
+        cor::moveWidget(mSingleColorStateWidget, shownPoint, hiddenPoint);
     }
 }
 
 void TopMenu::showMultiColorStateWidget(bool show) {
-    int height = mSize.height() * 2 / 3 + cor::statusBarOffset();
+    int height = mSize.height() * 2 / 3;
     int width = 0;
     if (!mMainWindow->leftHandMenu()->alwaysOpen()) {
         height += mSize.height();
@@ -461,12 +459,10 @@ void TopMenu::showMultiColorStateWidget(bool show) {
     QPoint shownPoint(width, height);
     QPoint hiddenPoint(-mMultiColorStateWidget->size().width(), height);
     if (show) {
-        cor::moveWidget(
-            mMultiColorStateWidget, mMultiColorStateWidget->size(), hiddenPoint, shownPoint);
+        cor::moveWidget(mMultiColorStateWidget, hiddenPoint, shownPoint);
         mMultiColorStateWidget->updateSyncStatus(ESyncState::notSynced);
     } else {
-        cor::moveWidget(
-            mMultiColorStateWidget, mMultiColorStateWidget->size(), shownPoint, hiddenPoint);
+        cor::moveWidget(mMultiColorStateWidget, shownPoint, hiddenPoint);
     }
 }
 
@@ -483,7 +479,6 @@ void TopMenu::showFloatingLayout(EPage newPage) {
                     auto parentSize = qobject_cast<QWidget*>(this->parent())->size();
                     cor::moveWidget(
                         mSingleRoutineFloatingLayout,
-                        mSingleRoutineFloatingLayout->size(),
                         QPoint(parentSize.width() - mSingleRoutineFloatingLayout->width(),
                                mFloatingMenuStart + mColorFloatingLayout->height()),
                         QPoint(parentSize.width() + mSingleRoutineFloatingLayout->width(),
@@ -506,7 +501,6 @@ void TopMenu::showFloatingLayout(EPage newPage) {
                     auto parentSize = qobject_cast<QWidget*>(this->parent())->size();
                     cor::moveWidget(
                         mMultiRoutineFloatingLayout,
-                        mMultiRoutineFloatingLayout->size(),
                         QPoint(parentSize.width() - mMultiRoutineFloatingLayout->width(),
                                mFloatingMenuStart + mPaletteFloatinglayout->height()),
                         QPoint(parentSize.width() + mMultiRoutineFloatingLayout->width(),
@@ -610,10 +604,8 @@ void TopMenu::adjustSingleColorLayout(bool skipTransition) {
                                                   mSingleRoutineFloatingLayout->width(),
                                                   mSingleRoutineFloatingLayout->height());
     } else {
-        cor::moveWidget(mSingleRoutineFloatingLayout,
-                        mSingleRoutineFloatingLayout->size(),
-                        mSingleRoutineFloatingLayout->pos(),
-                        endPoint);
+        cor::moveWidget(
+            mSingleRoutineFloatingLayout, mSingleRoutineFloatingLayout->pos(), endPoint);
     }
 }
 
@@ -646,17 +638,13 @@ void TopMenu::adjustMultiColorLayout(bool skipTransition) {
                                                  mMultiRoutineFloatingLayout->width(),
                                                  mMultiRoutineFloatingLayout->height());
     } else {
-        cor::moveWidget(mMultiRoutineFloatingLayout,
-                        mMultiRoutineFloatingLayout->size(),
-                        mMultiRoutineFloatingLayout->pos(),
-                        endPoint);
+        cor::moveWidget(mMultiRoutineFloatingLayout, mMultiRoutineFloatingLayout->pos(), endPoint);
     }
 }
 
 void TopMenu::pushRightFloatingLayout(FloatingLayout* layout) {
     auto parentSize = qobject_cast<QWidget*>(this->parent())->size();
     cor::moveWidget(layout,
-                    layout->size(),
                     QPoint(parentSize.width() - layout->width(), mFloatingMenuStart),
                     QPoint(parentSize.width() + layout->width(), mFloatingMenuStart));
 }
@@ -665,7 +653,6 @@ void TopMenu::pushRightFloatingLayout(FloatingLayout* layout) {
 void TopMenu::pullLeftFloatingLayout(FloatingLayout* layout) {
     auto parentSize = qobject_cast<QWidget*>(this->parent())->size();
     cor::moveWidget(layout,
-                    layout->size(),
                     QPoint(parentSize.width() + layout->width(), mFloatingMenuStart),
                     QPoint(parentSize.width() - layout->width(), mFloatingMenuStart));
 }
@@ -747,10 +734,28 @@ void TopMenu::updateRoutine(const QJsonObject& routineObject) {
     if (mCurrentPage == EPage::colorPage) {
         ERoutine routine = stringToRoutine(routineObject["routine"].toString());
         QColor color;
-        color.setHsvF(routineObject["hue"].toDouble(),
-                      routineObject["sat"].toDouble(),
-                      routineObject["bri"].toDouble());
+        if (routineObject["hue"].isDouble() && routineObject["sat"].isDouble()
+            && routineObject["bri"].isDouble()) {
+            color.setHsvF(routineObject["hue"].toDouble(),
+                          routineObject["sat"].toDouble(),
+                          routineObject["bri"].toDouble());
+        } else if (routineObject["temperature"].isDouble() && routineObject["bri"].isDouble()) {
+            color = cor::colorTemperatureToRGB(int(routineObject["temperature"].toDouble()));
+            color.setHsvF(color.hueF(), color.saturationF(), routineObject["bri"].toDouble());
+        }
         mSingleColorStateWidget->updateState(color, routine);
+    } else if (mCurrentPage == EPage::palettePage) {
+        Palette palette = Palette(routineObject["palette"].toObject());
+        auto colors = palette.colors();
+        auto size = palette.colors().size();
+        const auto kPaletteSize = 6;
+        if (size < kPaletteSize) {
+            colors.resize(kPaletteSize);
+            for (auto i = size; i < kPaletteSize; ++i) {
+                colors[i] = colors[i - size];
+            }
+        }
+        mMultiColorStateWidget->updateState(colors);
     }
 }
 

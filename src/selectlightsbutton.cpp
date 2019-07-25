@@ -71,7 +71,7 @@ void SelectLightsButton::pushOut(int yPos) {
     mIsIn = false;
     QPoint endPoint(0 - this->width(), yPos);
     if (this->pos().x() != endPoint.x()) {
-        cor::moveWidget(this, this->size(), QPoint(0, yPos), endPoint);
+        cor::moveWidget(this, QPoint(0, yPos), endPoint);
     }
 }
 
@@ -79,6 +79,6 @@ void SelectLightsButton::pushIn(int yPos) {
     mIsIn = true;
     QPoint startPoint(0 - this->width(), yPos);
     if (this->pos().x() != 0) {
-        cor::moveWidget(this, this->size(), startPoint, QPoint(0, yPos));
+        cor::moveWidget(this, startPoint, QPoint(0, yPos));
     }
 }

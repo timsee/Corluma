@@ -26,6 +26,18 @@ public:
     /// destructor
     virtual ~JSONSaveData() = default;
 
+    /// makes a copy of the save file in the temp directory
+    bool addSaveToTempDirectory();
+
+    /// path to exact file in temporary storage, used for sharing on android
+    const QString& tempFile() { return mTempFile; }
+
+    /// path to directory used for temporary storage, used by sharing on android
+    const QString& tempDirectory() { return mTempDirectory; }
+
+    /// path to save file
+    const QString& savePath() { return mSavePath; }
+
 protected:
     /*!
      * \brief removeJSONObject remove the json object from the array with the given key and value
@@ -66,8 +78,20 @@ protected:
     /// load the json data into app data
     virtual bool loadJSON() = 0;
 
+    /// directory for saving temporary copies of the file
+    QString mTempDirectory;
+
+    /// directory for saving the true version of the file
+    QString mSaveDirectory;
+
     /// path to the save data
     QString mSavePath;
+
+    /// name of file
+    QString mSaveName;
+
+    /// path for saving the temporary file
+    QString mTempFile;
 };
 
 } // namespace cor
