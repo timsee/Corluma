@@ -25,7 +25,9 @@ DiscoveryPage::DiscoveryPage(QWidget* parent,
                              cor::DeviceList* data,
                              CommLayer* comm,
                              AppSettings* appSettings)
-    : QWidget(parent), mComm(comm), mAppSettings(appSettings) {
+    : QWidget(parent),
+      mComm(comm),
+      mAppSettings(appSettings) {
     mData = data;
 
     mLastFloatingHeight = -1;

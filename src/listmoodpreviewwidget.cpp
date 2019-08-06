@@ -12,7 +12,8 @@
 #include "utils/qt.h"
 
 ListMoodPreviewWidget::ListMoodPreviewWidget(const cor::Mood& mood, QWidget* parent)
-    : cor::ListItemWidget(mood.name(), parent), mMood{mood} {
+    : cor::ListItemWidget(mood.name(), parent),
+      mMood{mood} {
     mIsChecked = false;
     mIsSelected = false;
 

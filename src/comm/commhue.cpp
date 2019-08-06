@@ -33,7 +33,8 @@ T clamp(const T& n, const T& lower, const T& upper) {
 } // namespace cor
 
 CommHue::CommHue(UPnPDiscovery* UPnP, GroupData* groups)
-    : CommType(ECommType::hue), mScanIsActive{false} {
+    : CommType(ECommType::hue),
+      mScanIsActive{false} {
     mStateUpdateInterval = 1000;
 
     mNetworkManager = new QNetworkAccessManager(this);

@@ -93,7 +93,7 @@ private:
      * \param bridge the bridge that the light is attached to
      * \param light the light that is getting its idle timeout changed
      */
-    void handleIdleTimeout(const hue::Bridge& bridge, const cor::Light& light);
+    bool handleIdleTimeout(const hue::Bridge& bridge, const cor::Light& light);
 
     /// poiner to app settings
     AppSettings* mAppSettings;

@@ -10,8 +10,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -37,7 +37,7 @@
 //
 // see also /COPYRIGHT and /LICENSE
 
-package org.shareluma.activity;
+package org.corluma.activity;
 
 import android.app.*;
 import android.content.*;
@@ -50,19 +50,15 @@ import android.webkit.MimeTypeMap;
 
 import org.qtproject.qt5.android.QtNative;
 import org.qtproject.qt5.android.bindings.QtActivity;
-import org.shareluma.utils.*;
+import org.corluma.utils.*;
 
 import java.io.File;
 import java.lang.String;
-
-
 
 public class QShareActivity extends QtActivity {
     // native - must be implemented in Cpp via JNI
     // 'file' scheme or resolved from 'content' scheme:
     public static native void setFileUrlReceived(String url);
-    // InputStream from 'content' scheme:
-    public static native void setFileReceivedAndSaved(String url);
 
     public static native void fireActivityResult(int requestCode, int resultCode);
 
@@ -78,18 +74,19 @@ public class QShareActivity extends QtActivity {
     // see QShareUtils.java createCustomChooserAndStartActivity()
     // Selecting your own App as target could cause AndroidOS to call
     // onCreate() instead of onNewIntent()
-    // and then you are in trouble because we're using 'singleInstance' as LaunchMode
-    // more details: my blog at Qt
+    // and then you are in trouble because we're using 'singleInstance' as
+    // LaunchMode more details: my blog at Qt
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Log.d(TAG, "onCreate QShareActivity");
-        // now we're checking if the App was started from another Android App via Intent
+        // Log.d(TAG, "onCreate QShareActivity");
+        // now we're checking if the App was started from another Android App via
+        // Intent
         Intent theIntent = getIntent();
         if (theIntent != null) {
             String theAction = theIntent.getAction();
             if (theAction != null) {
-              //  Log.d(TAG, "onCreate " + theAction);
+                //  Log.d(TAG, "onCreate " + theAction);
                 // QML UI not ready yet
                 // delay processIntent();
                 isIntentPending = true;
@@ -99,7 +96,7 @@ public class QShareActivity extends QtActivity {
 
     @Override
     public void onDestroy() {
-       // Log.d(TAG, "onDestroy QShareActivity");
+        // Log.d(TAG, "onDestroy QShareActivity");
     }
 
     // we start Activity with result code
@@ -108,11 +105,11 @@ public class QShareActivity extends QtActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
-       // Log.d(TAG, "onActivityResult requestCode: " + requestCode);
+        // Log.d(TAG, "onActivityResult requestCode: " + requestCode);
         if (resultCode == RESULT_OK) {
-            Log.d(TAG, "onActivityResult - resultCode: SUCCESS");
+            // Log.d(TAG, "onActivityResult - resultCode: SUCCESS");
         } else {
-            Log.d(TAG, "onActivityResult - resultCode: CANCEL");
+            // Log.d(TAG, "onActivityResult - resultCode: CANCEL");
         }
         // hint: result comes back too fast for Action SEND
         // if you want to delete/move the File add a Timer w 500ms delay
@@ -128,7 +125,8 @@ public class QShareActivity extends QtActivity {
         Log.d(TAG, "onNewIntent");
         super.onNewIntent(intent);
         setIntent(intent);
-        // Intent will be processed, if all is initialized and Qt / QML can handle the event
+        // Intent will be processed, if all is initialized and Qt / QML can handle
+        // the event
         if (isInitialized) {
             processIntent();
         } else {
@@ -142,7 +140,7 @@ public class QShareActivity extends QtActivity {
         Log.d(TAG, workingDirPath);
         if (isIntentPending) {
             isIntentPending = false;
-          //  Log.d(TAG, "checkPendingIntents: true");
+            //  Log.d(TAG, "checkPendingIntents: true");
             processIntent();
         }
     } // checkPendingIntents
@@ -150,6 +148,7 @@ public class QShareActivity extends QtActivity {
     // process the Intent if Action is SEND or VIEW
     private void processIntent() {
         Intent intent = getIntent();
+        // Log.d(TAG, " process Intent");
 
         Uri intentUri;
         String intentScheme;
@@ -169,13 +168,13 @@ public class QShareActivity extends QtActivity {
             Log.d(TAG, "Intent unknown action:" + intent.getAction());
             return;
         }
-        //Log.d(TAG, " action: " + intentAction);
+        // Log.d(TAG, " action: " + intentAction);
         if (intentUri == null) {
             Log.d(TAG, " Intent URI: is null");
             return;
         }
 
-      //  Log.d(TAG, "Intent URI:" + intentUri.toString());
+        // Log.d(TAG, "Intent URI:" + intentUri.toString());
 
         // content or file
         intentScheme = intentUri.getScheme();
@@ -185,7 +184,7 @@ public class QShareActivity extends QtActivity {
         }
         if (intentScheme.equals("file")) {
             // URI as encoded string
-          //  Log.d(TAG, "Intent File URI: " + intentUri.toString());
+            //  Log.d(TAG, "Intent File URI: " + intentUri.toString());
             setFileUrlReceived(intentUri.toString());
             // we are done Qt can deal with file scheme
             return;
@@ -202,25 +201,20 @@ public class QShareActivity extends QtActivity {
 
         // you need the file extension, MimeType or Name from ContentResolver ?
         // here's HowTo get it:
-        Log.d(TAG, " Intent Content URI: " + intentUri.toString());
+        // Log.d(TAG, " Intent Content URI: " + intentUri.toString());
         ContentResolver cR = this.getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         String fileExtension = mime.getExtensionFromMimeType(cR.getType(intentUri));
-       // Log.d(TAG, "Intent extension: " + fileExtension);
+        // Log.d(TAG, "Intent extension: " + fileExtension);
         String mimeType = cR.getType(intentUri);
-        //Log.d(TAG, " Intent MimeType: " + mimeType);
+        // Log.d(TAG, " Intent MimeType: " + mimeType);
         String name = QShareUtils.getContentName(cR, intentUri);
-        if (name != null) {
-            Log.d(TAG, "Intent Name:" + name);
-        } else {
-            Log.d(TAG, "Intent Name: is NULL");
-        }
         String filePath;
         filePath = QSharePathResolver.getRealPathFromURI(this, intentUri);
         if (filePath == null) {
-            Log.d(TAG, "QSharePathResolver: filePath is NULL");
+            // Log.d(TAG, "QSharePathResolver: filePath is NULL");
         } else {
-          //  Log.d(TAG, "QSharePathResolver:" + filePath);
+            //  Log.d(TAG, "QSharePathResolver:" + filePath);
             // to be safe check if this File Url really can be opened by Qt
             // there were problems with MS office apps on Android 7
             if (checkFileExits(filePath)) {
@@ -236,7 +230,7 @@ public class QShareActivity extends QtActivity {
             Log.d(TAG, "Intent FilePath: is NULL");
             return;
         }
-        setFileReceivedAndSaved(filePath);
+        setFileUrlReceived(filePath);
     } // processIntent
 
 } // class QShareActivity

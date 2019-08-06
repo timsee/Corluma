@@ -11,7 +11,8 @@
 #include "utils/qt.h"
 
 MoodDetailsWidget::MoodDetailsWidget(GroupData* groups, QWidget* parent)
-    : QWidget(parent), mGroups{groups} {
+    : QWidget(parent),
+      mGroups{groups} {
     QString titleStylesheet("font:bold; font-size:16pt; background-color:rgba(33,32,32,255);");
 
     mMoreInfoText = new QLabel(this);

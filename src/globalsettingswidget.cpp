@@ -13,7 +13,8 @@
 #include "utils/qt.h"
 
 GlobalSettingsWidget::GlobalSettingsWidget(QWidget* parent, AppSettings* appSettings)
-    : QWidget(parent), mAppSettings(appSettings) {
+    : QWidget(parent),
+      mAppSettings(appSettings) {
     mSpacerPixels = 5;
 
     // set margins as spacer * 2

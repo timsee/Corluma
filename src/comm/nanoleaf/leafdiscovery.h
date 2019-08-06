@@ -79,8 +79,9 @@ public:
 
     /*!
      * \brief foundNewAuthToken a nano::LeafController has found a new auth token packet, combine
-     * them and spur on testing that auth token \param newController the controller that found the
-     * auth token packet \param authToken the auth token provided in the packet
+     * them and spur on testing that auth token
+     * \param newController the controller that found the auth token packet
+     * \param authToken the auth token provided in the packet
      */
     void foundNewAuthToken(const nano::LeafController& newController, const QString& authToken);
 

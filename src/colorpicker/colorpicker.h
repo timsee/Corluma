@@ -1,13 +1,12 @@
 #ifndef COLORPICKER_H
 #define COLORPICKER_H
 
-#include "cor/widgets/slider.h"
-
 #include <QLabel>
 #include <QLayout>
 #include <QWidget>
 
 #include "colorwheel.h"
+#include "cor/widgets/slider.h"
 
 /*!
  * \copyright

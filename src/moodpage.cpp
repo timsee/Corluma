@@ -15,7 +15,9 @@
 #include "utils/qt.h"
 
 MoodPage::MoodPage(QWidget* parent, GroupData* groups)
-    : QWidget(parent), mGroups(groups), mCurrentMood{0} {
+    : QWidget(parent),
+      mGroups(groups),
+      mCurrentMood{0} {
     mMoodsListWidget = new cor::ListWidget(this, cor::EListType::linear);
     mMoodsListWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     QScroller::grabGesture(mMoodsListWidget->viewport(), QScroller::LeftMouseButtonGesture);

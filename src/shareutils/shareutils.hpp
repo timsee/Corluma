@@ -10,8 +10,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -48,11 +48,11 @@
 #include <QtAndroid>
 #endif // Q_OS_ANDROID
 
-
 /*!
- * \brief The PlatformShareUtils class is an abstract class that implements the functionality for
- * sending and viewing files through the native mobile interfaces. Each mobile interface has its own
- * derived class that handles communicating with native mobile code.
+ * \brief The PlatformShareUtils class is an abstract class that implements the
+ * functionality for sending and viewing files through the native mobile
+ * interfaces. Each mobile interface has its own derived class that handles
+ * communicating with native mobile code.
  */
 class PlatformShareUtils : public QObject {
     Q_OBJECT
@@ -60,8 +60,8 @@ public:
     PlatformShareUtils(QObject* parent) : QObject(parent) {}
 
     /*!
-     * \brief checkMimeTypeView check whether the mimeType provided is compatible with the
-     * application that will be sending/viewing the file.
+     * \brief checkMimeTypeView check whether the mimeType provided is compatible
+     * with the application that will be sending/viewing the file.
      * \param mimeType mimeType to check
      * \return true if the mimeType is supported, false otherwise
      */
@@ -72,34 +72,38 @@ public:
      * \param filePath the absolute path to the file
      * \param title the title of the share
      * \param mimeType the mimeType of the file
-     * \param requestId the ID to give the task of sending a file. Set this to a value other than 0
-     * if you want to track the completion of the task.
+     * \param requestId the ID to give the task of sending a file. Set this to a
+     * value other than 0 if you want to track the completion of the task.
      */
     virtual void sendFile(const QString& filePath,
                           const QString& title,
                           const QString& mimeType,
                           int requestId) = 0;
 
-
     /*!
      * \brief vuewFile view a file through the native mobile share interface
      * \param filePath the absolute path to the file
      * \param title the title of the share
      * \param mimeType the mimeType of the file
-     * \param requestId the ID to give the task of sending a file. Set this to a value other than 0
-     * if you want to track the completion of the task.
+     * \param requestId the ID to give the task of sending a file. Set this to a
+     * value other than 0 if you want to track the completion of the task.
      */
     virtual void viewFile(const QString& filePath,
                           const QString& title,
                           const QString& mimeType,
                           int requestId) = 0;
 
+    /*!
+     * \brief checkPendingIntents used by android only, this checks for pending
+     * intents when an application becomes active again.
+     */
+    virtual void checkPendingIntents() {}
 
     /*!
-     * \brief checkPendingIntents used by android only, this checks for pending intents when an
-     * application becomes active again.
+     * \brief clearTempDir android only, this provides an option to clear the temp
+     * save directory.
      */
-    virtual void checkPendingIntents(const QString& /*workingDirPath*/) {}
+    virtual void clearTempDir() {}
 
 signals:
     /// emits when a share finishes successfully.
@@ -108,22 +112,19 @@ signals:
     /// emits when a share fails because an app could not be found
     void shareNoAppAvailable(int requestID);
 
-    /// emits when there is an error with sharing, will give message and requestID if provided
+    /// emits when there is an error with sharing, will give message and requestID
+    /// if provided
     void shareError(int requestID, QString message);
 
     /// emits when a URL is received
     void fileUrlReceived(QString url);
-
-    /// emits when a URL is received and a file is saved.
-    void fileReceivedAndSaved(QString url);
 };
 
-
 /*!
- * \brief The DummyShareUtils class dervies from the PlatformShareUtils class and exists only to
- * make it so that you don't need to wrap `ShareUtils` in preprocessor macros when compiling for
- * desktop. When working with viewing and sending files on desktop, you should instead use
- * QFileDialog.
+ * \brief The DummyShareUtils class dervies from the PlatformShareUtils class
+ * and exists only to make it so that you don't need to wrap `ShareUtils` in
+ * preprocessor macros when compiling for desktop. When working with viewing and
+ * sending files on desktop, you should instead use QFileDialog.
  */
 class DummyShareUtils : public PlatformShareUtils {
     Q_OBJECT
@@ -136,7 +137,8 @@ public:
         return false;
     }
 
-    /// @copydoc PlatformShareUtils::sendFile(const QString&, const QString&, const QString&, int)
+    /// @copydoc PlatformShareUtils::sendFile(const QString&, const QString&,
+    /// const QString&, int)
     virtual void sendFile(const QString& filePath,
                           const QString& title,
                           const QString& mimeType,
@@ -145,7 +147,8 @@ public:
                  << " mimType: " << mimeType << " requestID: " << requestId;
     }
 
-    /// @copydoc PlatformShareUtils::viewFile(const QString&, const QString&, const QString&, int)
+    /// @copydoc PlatformShareUtils::viewFile(const QString&, const QString&,
+    /// const QString&, int)
     virtual void viewFile(const QString& filePath,
                           const QString& title,
                           const QString& mimeType,
@@ -153,19 +156,13 @@ public:
         qDebug() << __func__ << "filePath:" << filePath << " title: " << title
                  << " mimType: " << mimeType << " requestID: " << requestId;
     }
-
-    /// @copydoc PlatformShareUtils::checkPendingIntents(const QString&)
-    virtual void checkPendingIntents(const QString& workingDirPath) override {
-        qDebug() << __func__ << workingDirPath;
-    }
 };
-
 
 #if defined(Q_OS_IOS)
 
 /*!
- * \brief The IosShareUtils class dervies from the PlatformShareUtils class and implements
- * communication between the iOS native share and the Qt application.
+ * \brief The IosShareUtils class dervies from the PlatformShareUtils class and
+ * implements communication between the iOS native share and the Qt application.
  */
 class IosShareUtils : public PlatformShareUtils {
     Q_OBJECT
@@ -176,13 +173,15 @@ public:
     /// @copydoc PlatformShareUtils::checkMimeTypeView(const QString&)
     bool checkMimeTypeView(const QString& mimeType) override;
 
-    /// @copydoc PlatformShareUtils::sendFile(const QString&, const QString&, const QString&, int)
+    /// @copydoc PlatformShareUtils::sendFile(const QString&, const QString&,
+    /// const QString&, int)
     void sendFile(const QString& filePath,
                   const QString& title,
                   const QString& mimeType,
                   int requestId) override;
 
-    /// @copydoc PlatformShareUtils::viewFile(const QString&, const QString&, const QString&, int)
+    /// @copydoc PlatformShareUtils::viewFile(const QString&, const QString&,
+    /// const QString&, int)
     void viewFile(const QString& filePath,
                   const QString& title,
                   const QString& mimeType,
@@ -195,35 +194,42 @@ public slots:
     void handleFileUrlReceived(const QUrl& url);
 };
 
-
 #endif
-
 
 #if defined(Q_OS_ANDROID)
 
 /*!
- * \brief The AndroidShareUtils class dervies from the PlatformShareUtils class and implements
- * communication between the android native share and the Qt application.
+ * \brief The AndroidShareUtils class dervies from the PlatformShareUtils class
+ * and implements communication between the android native share and the Qt
+ * application.
  */
 class AndroidShareUtils : public PlatformShareUtils, public QAndroidActivityResultReceiver {
     Q_OBJECT
 public:
-    AndroidShareUtils(QObject* parent = 0);
+    AndroidShareUtils(QObject* parent = nullptr);
 
     /// @copydoc PlatformShareUtils::checkMimeTypeView(const QString&)
     bool checkMimeTypeView(const QString& mimeType) override;
 
-    /// @copydoc PlatformShareUtils::sendFile(const QString&, const QString&, const QString&, int)
+    /// @copydoc PlatformShareUtils::sendFile(const QString&, const QString&,
+    /// const QString&, int)
     void sendFile(const QString& filePath,
                   const QString& title,
                   const QString& mimeType,
                   int requestId) override;
 
-    /// @copydoc PlatformShareUtils::viewFile(const QString&, const QString&, const QString&, int)
+    /// @copydoc PlatformShareUtils::viewFile(const QString&, const QString&,
+    /// const QString&, int)
     void viewFile(const QString& filePath,
                   const QString& title,
                   const QString& mimeType,
                   int requestId) override;
+
+    /// @copydoc PlatformShareUtils::checkPendingIntents()
+    void checkPendingIntents() override;
+
+    /// @copydoc PlatformShareUtils::clearTempDir()
+    void clearTempDir() override;
 
     void handleActivityResult(int receiverRequestCode,
                               int resultCode,
@@ -231,21 +237,18 @@ public:
 
     void onActivityResult(int requestCode, int resultCode);
 
-    /// @copydoc PlatformShareUtils::checkPendingIntents(const QString&)
-    void checkPendingIntents(const QString& workingDirPath) override;
-
     /// gets single instance of the AndroidShareUtils
     static AndroidShareUtils* getInstance();
 
 public slots:
     void setFileUrlReceived(const QString& url);
 
-    void setFileReceivedAndSaved(const QString& url);
-
     bool checkFileExits(const QString& url);
 
 private:
     static AndroidShareUtils* mInstance;
+
+    QString mSavePath;
 
     void processActivityResult(int requestCode, int resultCode);
 };
@@ -253,12 +256,13 @@ private:
 #endif
 
 /*!
- * \brief The ShareUtils class interfaces the various ShareUtils for each platform with a standard
- * Qt interface. This allows you to include a `ShareUtils` object in your application as a standard
- * Qt object. The `ShareUtils` class abstracts away the native code and emits signals instead. For
- * android and iOS this provides the ability to view and send files. For desktop builds, this only
- * provides a dummy. In desktop environments this design pattern doesn't make sense and QFileDialog
- * is preferred.
+ * \brief The ShareUtils class interfaces the various ShareUtils for each
+ * platform with a standard Qt interface. This allows you to include a
+ * `ShareUtils` object in your application as a standard Qt object. The
+ * `ShareUtils` class abstracts away the native code and emits signals instead.
+ * For android and iOS this provides the ability to view and send files. For
+ * desktop builds, this only provides a dummy. In desktop environments this
+ * design pattern doesn't make sense and QFileDialog is preferred.
  */
 class ShareUtils : public QObject {
     Q_OBJECT
@@ -271,10 +275,11 @@ public:
 #elif defined(Q_OS_ANDROID)
         mPlatformShareUtils = new AndroidShareUtils(this);
 #else
-        // NOTE: The dummy is here so that the object compiles well for desktop builds, however,
-        // since this project is meant for iOS and Android native share design patterns, it doesn't
-        // really make sense to implement share methods for desktop as well. If you're interested in
-        // accessing files on desktop, Qt provides `QFileDialog` for this explicit purpose, and this
+        // NOTE: The dummy is here so that the object compiles well for desktop
+        // builds, however, since this project is meant for iOS and Android native
+        // share design patterns, it doesn't really make sense to implement share
+        // methods for desktop as well. If you're interested in accessing files on
+        // desktop, Qt provides `QFileDialog` for this explicit purpose, and this
         // class better matches the desktop design pattern.
         mPlatformShareUtils = new DummyShareUtils(this);
 #endif
@@ -295,20 +300,15 @@ public:
                 SIGNAL(fileUrlReceived(QString)),
                 this,
                 SLOT(onFileUrlReceived(QString)));
-
-        connect(mPlatformShareUtils,
-                SIGNAL(fileReceivedAndSaved(QString)),
-                this,
-                SLOT(onFileReceivedAndSaved(QString)));
     }
-
 
     /// @copydoc PlatformShareUtils::checkMimeTypeView(const QString&)
     bool checkMimeTypeView(const QString& mimeType) {
         return mPlatformShareUtils->checkMimeTypeView(mimeType);
     }
 
-    /// @copydoc PlatformShareUtils::sendFile(const QString&, const QString&, const QString&, int)
+    /// @copydoc PlatformShareUtils::sendFile(const QString&, const QString&,
+    /// const QString&, int)
     void sendFile(const QString& filePath,
                   const QString& title,
                   const QString& mimeType,
@@ -316,7 +316,8 @@ public:
         mPlatformShareUtils->sendFile(filePath, title, mimeType, requestId);
     }
 
-    /// @copydoc PlatformShareUtils::viewFile(const QString&, const QString&, const QString&, int)
+    /// @copydoc PlatformShareUtils::viewFile(const QString&, const QString&,
+    /// const QString&, int)
     void viewFile(const QString& filePath,
                   const QString& title,
                   const QString& mimeType,
@@ -324,11 +325,11 @@ public:
         mPlatformShareUtils->viewFile(filePath, title, mimeType, requestId);
     }
 
-    /// @copydoc PlatformShareUtils::checkPendingIntents(const QString&)
-    void checkPendingIntents(const QString& workingDirPath) {
-        mPlatformShareUtils->checkPendingIntents(workingDirPath);
-    }
+    /// @copydoc PlatformShareUtils::checkPendingIntents()
+    void checkPendingIntents() { mPlatformShareUtils->checkPendingIntents(); }
 
+    /// @copydoc PlatformShareUtils::clearTempDir();
+    void clearTempDir() { mPlatformShareUtils->clearTempDir(); }
 
 signals:
     /// emits when a share finishes successfully
@@ -337,7 +338,8 @@ signals:
     /// emits when a share fails because an app could not be found
     void shareNoAppAvailable(int requestCode);
 
-    /// emits when there is an error with sharing, will give message and requestID if provided
+    /// emits when there is an error with sharing, will give message and requestID
+    /// if provided
     void shareError(int requestCode, QString message);
 
     /// emits when a URL is received
@@ -353,19 +355,16 @@ private slots:
     /// emits a signal when a share fails because an app could not be found
     void onShareNoAppAvailable(int requestCode) { emit shareNoAppAvailable(requestCode); }
 
-    /// emits a signal when there is an error with sharing, will give message and requestID if
-    /// provided
+    /// emits a signal when there is an error with sharing, will give message and
+    /// requestID if provided
     void onShareError(int requestCode, QString message) { emit shareError(requestCode, message); }
 
     /// emits a signal when a URL is received
     void onFileUrlReceived(QString url) { emit fileUrlReceived(url); }
 
-    /// emits a signal when a URL is received and a file is saved.
-    void onFileReceivedAndSaved(QString url) { emit fileReceivedAndSaved(url); }
-
 private:
-    /*! the object that is used to handle the native share interface. This object will be a
-     * different class depending on what OS the Qt code is compiled for.
+    /*! the object that is used to handle the native share interface. This object
+     * will be a different class depending on what OS the Qt code is compiled for.
      */
     PlatformShareUtils* mPlatformShareUtils;
 };

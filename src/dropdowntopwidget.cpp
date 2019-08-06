@@ -15,7 +15,8 @@ DropdownTopWidget::DropdownTopWidget(const QString& key,
                                      cor::EWidgetType type,
                                      bool hideEdit,
                                      QWidget* parent)
-    : QWidget(parent), mKey(key) {
+    : QWidget(parent),
+      mKey(key) {
     mType = type;
     mShowButtons = false;
     mHideEdit = hideEdit;

@@ -18,11 +18,11 @@ namespace nano {
 class Panel {
 public:
     /// constructor
-    Panel(int _x, int _y, int _o, int _ID) {
-        x = _x;
-        y = _y;
-        o = _o;
-        ID = _ID;
+    Panel(int paramX, int paramY, int paramO, int paramID) {
+        x = paramX;
+        y = paramY;
+        o = paramO;
+        ID = paramID;
     }
 
     /// number given to the panel

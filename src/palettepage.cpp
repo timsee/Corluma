@@ -15,7 +15,10 @@
 #include "utils/qt.h"
 
 PalettePage::PalettePage(QWidget* parent)
-    : QWidget(parent), mColorScheme(6, QColor(0, 255, 0)), mSpeed{150}, mCount{0} {
+    : QWidget(parent),
+      mColorScheme(6, QColor(0, 255, 0)),
+      mSpeed{150},
+      mCount{0} {
     this->grabGesture(Qt::SwipeGesture);
 
     mArduinoPaletteScrollArea = new PaletteScrollArea(this);

@@ -24,7 +24,8 @@ public:
 
     /// constructor
     HueLight(const QString& uniqueID, const QString& controller, ECommType type)
-        : cor::Light(uniqueID, controller, type), hueType{EHueType::color} {}
+        : cor::Light(uniqueID, controller, type),
+          hueType{EHueType::color} {}
 
     /*!
      * \brief type the type of Hue product connected.

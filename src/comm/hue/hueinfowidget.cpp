@@ -17,7 +17,9 @@
 namespace hue {
 
 HueInfoWidget::HueInfoWidget(HueLight light, QWidget* parent)
-    : QWidget(parent), mHideDetails{false}, mLight(light) {
+    : QWidget(parent),
+      mHideDetails{false},
+      mLight(light) {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     this->setStyleSheet(styleSheet);
 

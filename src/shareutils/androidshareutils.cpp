@@ -10,8 +10,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -30,15 +30,32 @@
 
 #include <QDateTime>
 #include <QDebug>
+#include <QDir>
+#include <QFile>
 #include <QFileInfo>
+#include <QStandardPaths>
 #include <QUrl>
 #include <QtAndroidExtras/QAndroidJniObject>
 
 #include "shareutils.hpp"
 
-AndroidShareUtils* AndroidShareUtils::mInstance = NULL;
+namespace {
+
+const QString kFileProviderPath = "/shared_files/";
+
+} // namespace
+
+AndroidShareUtils* AndroidShareUtils::mInstance = nullptr;
 
 AndroidShareUtils::AndroidShareUtils(QObject* parent) : PlatformShareUtils(parent) {
+    // create a save directory, if it doesn't already exist
+    mSavePath =
+        QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + kFileProviderPath;
+    QDir tempDir(mSavePath);
+    if (!tempDir.exists()) {
+        QDir("").mkpath(mSavePath);
+    }
+
     // we need the instance for JNI Call
     mInstance = this;
 }
@@ -53,11 +70,11 @@ AndroidShareUtils* AndroidShareUtils::getInstance() {
 
 bool AndroidShareUtils::checkMimeTypeView(const QString& mimeType) {
     QAndroidJniObject jsMime = QAndroidJniObject::fromString(mimeType);
-    jboolean verified
-        = QAndroidJniObject::callStaticMethod<jboolean>("org/shareluma/utils/QShareUtils",
-                                                        "checkMimeTypeView",
-                                                        "(Ljava/lang/String;)Z",
-                                                        jsMime.object<jstring>());
+    jboolean verified =
+        QAndroidJniObject::callStaticMethod<jboolean>("org/corluma/utils/QShareUtils",
+                                                      "checkMimeTypeView",
+                                                      "(Ljava/lang/String;)Z",
+                                                      jsMime.object<jstring>());
     return verified;
 }
 
@@ -69,11 +86,35 @@ void AndroidShareUtils::sendFile(const QString& filePath,
                                  const QString& title,
                                  const QString& mimeType,
                                  int requestId) {
-    QAndroidJniObject jsPath = QAndroidJniObject::fromString(filePath);
+    QFileInfo fileInfo(filePath);
+    QFileInfo saveDirInfo(mSavePath);
+
+    // first, do a sanity check that the file being sent actually exists.
+    if (!fileInfo.exists()) {
+        qWarning() << "Attempting to share a file that doesn't exist at path: " << filePath;
+        return;
+    }
+
+    // next, check if the file is in the sharing directory. If not, add it.
+    auto path = filePath;
+    if (fileInfo.dir() != saveDirInfo.dir()) {
+        path = mSavePath + fileInfo.fileName();
+        if (QFile::exists(path)) {
+            QFile::remove(path);
+        }
+        auto result = QFile::copy(filePath, path);
+        if (!result) {
+            qWarning() << " could not save file to " << path;
+            return;
+        }
+    }
+
+    // now, send the file
+    QAndroidJniObject jsPath = QAndroidJniObject::fromString(path);
     QAndroidJniObject jsTitle = QAndroidJniObject::fromString(title);
     QAndroidJniObject jsMimeType = QAndroidJniObject::fromString(mimeType);
     jboolean ok = QAndroidJniObject::callStaticMethod<jboolean>(
-        "org/shareluma/utils/QShareUtils",
+        "org/corluma/utils/QShareUtils",
         "sendFile",
         "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)Z",
         jsPath.object<jstring>(),
@@ -98,7 +139,7 @@ void AndroidShareUtils::viewFile(const QString& filePath,
     QAndroidJniObject jsTitle = QAndroidJniObject::fromString(title);
     QAndroidJniObject jsMimeType = QAndroidJniObject::fromString(mimeType);
     jboolean ok = QAndroidJniObject::callStaticMethod<jboolean>(
-        "org/shareluma/utils/QShareUtils",
+        "org/corluma/utils/QShareUtils",
         "viewFile",
         "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)Z",
         jsPath.object<jstring>(),
@@ -115,7 +156,8 @@ void AndroidShareUtils::viewFile(const QString& filePath,
 void AndroidShareUtils::handleActivityResult(int receiverRequestCode,
                                              int resultCode,
                                              const QAndroidJniObject&) {
-    //    qDebug() << "From JNI QAndroidActivityResultReceiver: " << receiverRequestCode
+    // qDebug() << "From JNI QAndroidActivityResultReceiver: " <<
+    // receiverRequestCode
     //             << "ResultCode:" << resultCode;
     processActivityResult(receiverRequestCode, resultCode);
 }
@@ -133,7 +175,7 @@ void AndroidShareUtils::processActivityResult(int requestCode, int resultCode) {
 
     // we're getting RESULT_OK only if edit is done
     if (resultCode == RESULT_OK) {
-        //   emit shareEditDone(requestCode);
+        // emit shareEditDone(requestCode);
     } else if (resultCode == RESULT_CANCELED) {
         emit shareFinished(requestCode);
     } else {
@@ -142,22 +184,32 @@ void AndroidShareUtils::processActivityResult(int requestCode, int resultCode) {
     }
 }
 
-void AndroidShareUtils::checkPendingIntents(const QString& workingDirPath) {
+void AndroidShareUtils::checkPendingIntents() {
     QAndroidJniObject activity = QtAndroid::androidActivity();
     if (activity.isValid()) {
         // create a Java String for the Working Dir Path
-        QAndroidJniObject jniWorkingDir = QAndroidJniObject::fromString(workingDirPath);
+        QAndroidJniObject jniWorkingDir = QAndroidJniObject::fromString(mSavePath);
         if (!jniWorkingDir.isValid()) {
             qWarning() << "QAndroidJniObject jniWorkingDir not valid.";
             emit shareError(0, tr("Share: an Error occured\nWorkingDir not valid"));
             return;
         }
-        activity.callMethod<void>(
-            "checkPendingIntents", "(Ljava/lang/String;)V", jniWorkingDir.object<jstring>());
-        qDebug() << "checkPendingIntents: " << workingDirPath;
+        activity.callMethod<void>("checkPendingIntents",
+                                  "(Ljava/lang/String;)V",
+                                  jniWorkingDir.object<jstring>());
+        qDebug() << "checkPendingIntents: " << mSavePath;
         return;
     }
     qDebug() << "checkPendingIntents: Activity not valid";
+}
+
+void AndroidShareUtils::clearTempDir() {
+    QDir saveDir(mSavePath);
+    saveDir.setNameFilters(QStringList() << "*.*");
+    saveDir.setFilter(QDir::Files);
+    for (const auto& dirFile : saveDir.entryList()) {
+        saveDir.remove(dirFile);
+    }
 }
 
 void AndroidShareUtils::setFileUrlReceived(const QString& url) {
@@ -166,7 +218,8 @@ void AndroidShareUtils::setFileUrlReceived(const QString& url) {
         emit shareError(0, tr("Empty URL received"));
         return;
     }
-    // qDebug() << "AndroidShareUtils setFileUrlReceived: we got the File URL from JAVA: " << url;
+    // qDebug() << "AndroidShareUtils setFileUrlReceived: we got the File URL from
+    // JAVA: " << url;
     QString myUrl;
     if (url.startsWith("file://")) {
         myUrl = url.right(url.length() - 7);
@@ -183,29 +236,6 @@ void AndroidShareUtils::setFileUrlReceived(const QString& url) {
     }
 }
 
-void AndroidShareUtils::setFileReceivedAndSaved(const QString& url) {
-    if (url.isEmpty()) {
-        emit shareError(0, tr("Empty URL received"));
-        return;
-    }
-    // qDebug() << "AndroidShareUtils setFileReceivedAndSaved: we got the File URL from JAVA: " <<
-    // url;
-    QString myUrl;
-    if (url.startsWith("file://")) {
-        myUrl = url.right(url.length() - 7);
-    } else {
-        myUrl = url;
-    }
-
-    // check if File exists
-    QFileInfo fileInfo = QFileInfo(myUrl);
-    if (fileInfo.exists()) {
-        emit fileReceivedAndSaved(myUrl);
-    } else {
-        emit shareError(0, tr("File does not exist: %1").arg(myUrl));
-    }
-}
-
 // to be safe we check if a File Url from java really exists for Qt
 // if not on the Java side we'll try to read the content as Stream
 bool AndroidShareUtils::checkFileExits(const QString& url) {
@@ -213,7 +243,8 @@ bool AndroidShareUtils::checkFileExits(const QString& url) {
         emit shareError(0, tr("Empty URL received"));
         return false;
     }
-    // qDebug() << "AndroidShareUtils checkFileExits: we got the File URL from JAVA: " << url;
+    // qDebug() << "AndroidShareUtils checkFileExits: we got the File URL from
+    // JAVA: " << url;
     QString myUrl;
     if (url.startsWith("file://")) {
         myUrl = url.right(url.length() - 7);
@@ -230,28 +261,18 @@ bool AndroidShareUtils::checkFileExits(const QString& url) {
 extern "C" {
 #endif
 
-JNIEXPORT void JNICALL Java_org_shareluma_activity_QShareActivity_setFileUrlReceived(JNIEnv* env,
-                                                                                     jobject,
-                                                                                     jstring url) {
+JNIEXPORT void JNICALL Java_org_corluma_activity_QShareActivity_setFileUrlReceived(JNIEnv* env,
+                                                                                   jobject,
+                                                                                   jstring url) {
     const char* urlStr = env->GetStringUTFChars(url, nullptr);
     AndroidShareUtils::getInstance()->setFileUrlReceived(urlStr);
     env->ReleaseStringUTFChars(url, urlStr);
     return;
 }
 
-JNIEXPORT void JNICALL
-Java_org_shareluma_activity_QShareActivity_setFileReceivedAndSaved(JNIEnv* env,
-                                                                   jobject,
-                                                                   jstring url) {
-    const char* urlStr = env->GetStringUTFChars(url, nullptr);
-    AndroidShareUtils::getInstance()->setFileReceivedAndSaved(urlStr);
-    env->ReleaseStringUTFChars(url, urlStr);
-    return;
-}
-
-JNIEXPORT bool JNICALL Java_org_shareluma_activity_QShareActivity_checkFileExits(JNIEnv* env,
-                                                                                 jobject,
-                                                                                 jstring url) {
+JNIEXPORT bool JNICALL Java_org_corluma_activity_QShareActivity_checkFileExits(JNIEnv* env,
+                                                                               jobject,
+                                                                               jstring url) {
     const char* urlStr = env->GetStringUTFChars(url, nullptr);
     bool exists = AndroidShareUtils::getInstance()->checkFileExits(urlStr);
     env->ReleaseStringUTFChars(url, urlStr);
@@ -259,10 +280,10 @@ JNIEXPORT bool JNICALL Java_org_shareluma_activity_QShareActivity_checkFileExits
 }
 
 JNIEXPORT void JNICALL
-Java_org_shareluma_activity_QShareActivity_fireActivityResult(JNIEnv*,
-                                                              jobject,
-                                                              jint requestCode,
-                                                              jint resultCode) {
+Java_org_corluma_activity_QShareActivity_fireActivityResult(JNIEnv*,
+                                                            jobject,
+                                                            jint requestCode,
+                                                            jint resultCode) {
     AndroidShareUtils::getInstance()->onActivityResult(requestCode, resultCode);
     return;
 }

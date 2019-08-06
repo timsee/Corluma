@@ -11,7 +11,10 @@
 #include <QMouseEvent>
 
 MultiColorPicker::MultiColorPicker(QWidget* parent)
-    : ColorPicker(parent), mCount{0}, mMaxCount{6}, mCircleIndex{0} {
+    : ColorPicker(parent),
+      mCount{0},
+      mMaxCount{6},
+      mCircleIndex{0} {
     mColorSchemeChooser = new ColorSchemeChooser(this);
     mColorSchemeChooser->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mColorSchemeChooser,

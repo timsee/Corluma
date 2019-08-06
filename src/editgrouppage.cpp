@@ -17,7 +17,11 @@
 #include "utils/qt.h"
 
 EditGroupPage::EditGroupPage(QWidget* parent, CommLayer* comm, GroupData* parser)
-    : QWidget(parent), mComm(comm), mGroups(parser), mIsMood{false}, mIsRoomCurrent{false} {
+    : QWidget(parent),
+      mComm(comm),
+      mGroups(parser),
+      mIsMood{false},
+      mIsRoomCurrent{false} {
     mTopMenu = new EditPageTopMenu(this);
     mTopMenu->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 

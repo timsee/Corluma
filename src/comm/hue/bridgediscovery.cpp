@@ -18,7 +18,11 @@
 namespace hue {
 
 BridgeDiscovery::BridgeDiscovery(QObject* parent, UPnPDiscovery* UPnP, GroupData* groups)
-    : QObject(parent), cor::JSONSaveData("hue"), mUPnP{UPnP}, mLastTime{0}, mGroups{groups} {
+    : QObject(parent),
+      cor::JSONSaveData("hue"),
+      mUPnP{UPnP},
+      mLastTime{0},
+      mGroups{groups} {
     mHue = qobject_cast<CommHue*>(parent);
     connect(UPnP,
             SIGNAL(UPnPPacketReceived(QHostAddress, QString)),

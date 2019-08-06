@@ -6,7 +6,9 @@ GroupButtonsWidget::GroupButtonsWidget(QWidget* parent,
                                        cor::EWidgetType type,
                                        const QString& roomName,
                                        const std::vector<QString>& groups)
-    : QWidget(parent), mType{type}, mRoomName(roomName) {
+    : QWidget(parent),
+      mType{type},
+      mRoomName(roomName) {
     if (mType == cor::EWidgetType::condensed) {
         mGroupCount = 1;
     } else {

@@ -10,8 +10,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -24,11 +24,13 @@
 
 // from:
 // https://github.com/wkh237/react-native-fetch-blob/blob/master/android/src/main/java/com/RNFetchBlob/Utils/PathResolver.java
-// MIT License, see: https://github.com/wkh237/react-native-fetch-blob/blob/master/LICENSE
+// MIT License, see:
+// https://github.com/wkh237/react-native-fetch-blob/blob/master/LICENSE
 // original copyright: Copyright (c) 2017 xeiyan@gmail.com
-// src slightly modified to be used into Qt Projects: (c) 2017 ekke@ekkes-corner.org
+// src slightly modified to be used into Qt Projects: (c) 2017
+// ekke@ekkes-corner.org
 
-package org.shareluma.utils;
+package org.corluma.utils;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -56,7 +58,7 @@ public class QSharePathResolver {
         if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
             // ExternalStorageProvider
             if (isExternalStorageDocument(uri)) {
-               // Log.d(TAG, " isExternalStorageDocument");
+                // Log.d(TAG, " isExternalStorageDocument");
                 final String docId = DocumentsContract.getDocumentId(uri);
                 final String[] split = docId.split(":");
                 final String type = split[0];
@@ -69,9 +71,9 @@ public class QSharePathResolver {
             }
             // DownloadsProvider
             else if (isDownloadsDocument(uri)) {
-             //   Log.d(TAG, " isDownloadsDocument");
+                //   Log.d(TAG, " isDownloadsDocument");
                 final String id = DocumentsContract.getDocumentId(uri);
-              //  Log.d(TAG, " getDocumentId " + id);
+                //  Log.d(TAG, " getDocumentId " + id);
                 long longId = 0;
                 try {
                     longId = Long.valueOf(id);
@@ -79,13 +81,14 @@ public class QSharePathResolver {
                     return getDataColumn(context, uri, null, null);
                 }
                 final Uri contentUri = ContentUris.withAppendedId(
-                        Uri.parse("content://downloads/public_downloads"), longId);
+                        Uri.parse("content://downloads/public_downloads"),
+                        longId);
 
                 return getDataColumn(context, contentUri, null, null);
             }
             // MediaProvider
             else if (isMediaDocument(uri)) {
-               // Log.d(TAG, " isMediaDocument");
+                // Log.d(TAG, " isMediaDocument");
                 final String docId = DocumentsContract.getDocumentId(uri);
                 final String[] split = docId.split(":");
                 final String type = split[0];
@@ -104,7 +107,7 @@ public class QSharePathResolver {
 
                 return getDataColumn(context, contentUri, selection, selectionArgs);
             } else if ("content".equalsIgnoreCase(uri.getScheme())) {
-               // Log.d(TAG, " is uri.getScheme()");
+                // Log.d(TAG, " is uri.getScheme()");
                 // Return the remote address
                 if (isGooglePhotosUri(uri))
                     return uri.getLastPathSegment();
@@ -113,7 +116,6 @@ public class QSharePathResolver {
             }
             // Other Providers
             else {
-               // Log.d(TAG, "is Other Provider");
                 try {
                     InputStream attachment = context.getContentResolver().openInputStream(uri);
                     if (attachment != null) {
@@ -138,18 +140,19 @@ public class QSharePathResolver {
         }
         // MediaStore (and general)
         else if ("content".equalsIgnoreCase(uri.getScheme())) {
-           // Log.d(TAG, "NOT DocumentsContract.isDocumentUri");
-          //  Log.d(TAG, " is uri.getScheme()");
+            // Log.d(TAG, "NOT DocumentsContract.isDocumentUri");
+            //  Log.d(TAG, " is uri.getScheme()");
             // Return the remote address
-            if (isGooglePhotosUri(uri))
+            if (isGooglePhotosUri(uri)) {
                 return uri.getLastPathSegment();
-           // Log.d(TAG, " return: getDataColumn ");
+            }
+            // Log.d(TAG, " return: getDataColumn ");
             return getDataColumn(context, uri, null, null);
         }
         // File
         else if ("file".equalsIgnoreCase(uri.getScheme())) {
-          //  Log.d(TAG, "NOT DocumentsContract.isDocumentUri");
-          //  Log.d(TAG, " is file scheme");
+            //  Log.d(TAG, "NOT DocumentsContract.isDocumentUri");
+            //  Log.d(TAG, " is file scheme");
             return uri.getPath();
         }
 
@@ -180,17 +183,20 @@ public class QSharePathResolver {
      * @return The value of the _data column, which is typically a file path.
      */
     public static String getDataColumn(Context context,
-            Uri uri,
-            String selection,
-            String[] selectionArgs) {
+                                       Uri uri,
+                                       String selection,
+                                       String[] selectionArgs) {
         Cursor cursor = null;
         String result = null;
         final String column = "_data";
         final String[] projection = {column};
 
         try {
-            cursor = context.getContentResolver().query(
-                    uri, projection, selection, selectionArgs, null);
+            cursor = context.getContentResolver().query(uri,
+                                                        projection,
+                                                        selection,
+                                                        selectionArgs,
+                                                        null);
             if (cursor != null && cursor.moveToFirst()) {
                 final int index = cursor.getColumnIndexOrThrow(column);
                 result = cursor.getString(index);
@@ -204,7 +210,6 @@ public class QSharePathResolver {
         }
         return result;
     }
-
 
     /**
      * @param uri The Uri to check.

@@ -16,7 +16,9 @@
 #include "utils/qt.h"
 
 ListMoodDetailedWidget::ListMoodDetailedWidget(QWidget* parent, GroupData* groups, CommLayer* comm)
-    : QWidget(parent), mKey{0}, mComm{comm} {
+    : QWidget(parent),
+      mKey{0},
+      mComm{comm} {
     mTopLabel = new QLabel("Hollywood", this);
     mTopLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mTopLabel->setAlignment(Qt::AlignBottom);

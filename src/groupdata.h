@@ -130,6 +130,9 @@ public:
     /// generates unique key for a group or mood
     std::uint64_t generateNewUniqueKey();
 
+    /// saves JSON data to the given filepath
+    bool save(const QString& filePath);
+
 signals:
 
     /*!

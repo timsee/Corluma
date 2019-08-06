@@ -14,7 +14,11 @@ MainViewport::MainViewport(MainWindow* parent,
                            cor::DeviceList* data,
                            GroupData* groups,
                            AppSettings* settings)
-    : QWidget(parent), mGroups{groups}, mComm{comm}, mData{data}, mAppSettings{settings} {
+    : QWidget(parent),
+      mGroups{groups},
+      mComm{comm},
+      mData{data},
+      mAppSettings{settings} {
     // NOTE: this is mood page so that it doesn't default to light page on so when light page
     //      is turned on, we can use standard functions
     mPageIndex = EPage::moodPage;

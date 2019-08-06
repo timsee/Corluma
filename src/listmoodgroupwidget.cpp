@@ -13,7 +13,8 @@ ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
                                          const QString& key,
                                          bool hideEdit,
                                          QWidget* parent)
-    : cor::ListItemWidget(key, parent), mListLayout(cor::EListType::grid) {
+    : cor::ListItemWidget(key, parent),
+      mListLayout(cor::EListType::grid) {
     mWidget = new QWidget(this);
     mWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 

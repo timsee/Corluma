@@ -679,6 +679,22 @@ bool GroupData::loadJSON() {
     return false;
 }
 
+bool GroupData::save(const QString& filePath) {
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadWrite | QIODevice::Text)) {
+        qDebug() << "WARNING: save file exists and couldn't be opened.";
+        return false;
+    }
+
+    if (mJsonData.isNull()) {
+        // qDebug() << "WARNING: json data is null!";
+        return false;
+    }
+    file.write(mJsonData.toJson());
+    file.close();
+    return true;
+}
+
 //-------------------
 // Helpers
 //-------------------

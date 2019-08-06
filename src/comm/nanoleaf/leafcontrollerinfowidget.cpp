@@ -18,7 +18,8 @@
 namespace nano {
 
 LeafControllerInfoWidget::LeafControllerInfoWidget(nano::LeafController controller, QWidget* parent)
-    : QWidget(parent), mHideDetails{true} {
+    : QWidget(parent),
+      mHideDetails{true} {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     this->setStyleSheet(styleSheet);
 

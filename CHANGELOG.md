@@ -529,3 +529,9 @@ ___
 * Fixed bugs with supporting iPads. 
 * Fixed miscellaneous bugs.
 
+### **v0.17.1**
+#### The Settings Polish Update
+* Polished the `ShareUtils` integration.
+* Implemented Nanoleaf idle timeouts. 
+* Made a minor change to `clang-format` settings. 
+

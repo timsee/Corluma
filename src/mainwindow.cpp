@@ -35,7 +35,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
       mAppSettings{new AppSettings},
       mDataSyncArduino{new DataSyncArduino(mData, mComm, mAppSettings)},
       mDataSyncHue{new DataSyncHue(mData, mComm, mAppSettings)},
-      mDataSyncNanoLeaf{new DataSyncNanoLeaf(mData, mComm)},
+      mDataSyncNanoLeaf{new DataSyncNanoLeaf(mData, mComm, mAppSettings)},
       mSyncStatus{new SyncStatus(this)},
       mShareUtils{new ShareUtils(this)},
       mSettingsPage{new SettingsPage(this, mGroups, mAppSettings, mShareUtils)},
@@ -48,14 +48,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     // set title
     this->setWindowTitle("Corluma");
 
-#ifdef MOBILE_BUILD
     connect(mShareUtils, SIGNAL(fileUrlReceived(QString)), this, SLOT(receivedURL(QString)));
-    connect(mShareUtils,
-            SIGNAL(fileReceivedAndSaved(QString)),
-            this,
-            SLOT(receivedAndSavedURL(QString)));
-#endif
-
 
     // --------------
     // Setup Wifi Checker
@@ -188,17 +181,17 @@ void MainWindow::shareChecker() {
         QString text = "Please share a .json file with Corluma if you want to load new save data.";
         QMessageBox::warning(this, " Incompatible File ", text);
     }
+
+#ifdef MOBILE_BUILD
+    mShareUtils->clearTempDir();
+#endif // MOBILE_BUILD
 }
 
 void MainWindow::receivedURL(QString url) {
-    mSharePath = url;
-    mShareChecker->singleShot(100, this, SLOT(shareChecker()));
-}
-
-void MainWindow::receivedAndSavedURL(QString url) {
     QFileInfo file(url);
     if (file.exists()) {
-        receivedURL(url);
+        mSharePath = url;
+        mShareChecker->singleShot(100, this, SLOT(shareChecker()));
     } else {
         qDebug() << " File not found!";
     }
@@ -331,7 +324,7 @@ void MainWindow::changeEvent(QEvent* event) {
         }
 
 #ifdef MOBILE_BUILD
-        mShareUtils->checkPendingIntents(mGroups->tempDirectory());
+        mShareUtils->checkPendingIntents();
 #endif // MOBILE_BUILD
     } else if (event->type() == QEvent::ActivationChange && !this->isActiveWindow()) {
         for (int commInt = 0; commInt != int(EProtocolType::MAX); ++commInt) {

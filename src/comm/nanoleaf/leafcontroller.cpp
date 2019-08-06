@@ -9,7 +9,10 @@
 namespace nano {
 
 LeafController::LeafController()
-    : brightRange(0, 100), hueRange(0, 100), satRange(0, 100), ctRange(0, 100) {
+    : brightRange(0, 100),
+      hueRange(0, 100),
+      satRange(0, 100),
+      ctRange(0, 100) {
     IP = "";
     port = -1;
     authToken = "";

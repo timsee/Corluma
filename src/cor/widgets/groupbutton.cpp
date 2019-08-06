@@ -18,7 +18,10 @@
 namespace cor {
 
 GroupButton::GroupButton(QWidget* parent, const QString& text)
-    : QWidget(parent), mIsSelected{false}, mReachableCount{0}, mCheckedCount{0} {
+    : QWidget(parent),
+      mIsSelected{false},
+      mReachableCount{0},
+      mCheckedCount{0} {
     const QString transparentStyleSheet = "background-color: rgba(0,0,0,0);";
 
     mTitle = new QLabel(text, this);

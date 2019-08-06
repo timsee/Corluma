@@ -262,6 +262,9 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     comm/nanoleaf/leafcontroller.h \
     comm/nanoleaf/leafdiscovery.h \
     comm/nanoleaf/leafcontrollerinfowidget.h \
+    comm/nanoleaf/leafdate.h \
+    comm/nanoleaf/leafschedule.h \
+    comm/nanoleaf/leafaction.h \
     comm/syncstatus.h \
     mainwindow.h \
     settingspage.h \
@@ -336,9 +339,9 @@ HEADERS  +=  comm/commserial.h
 SOURCES += comm/commserial.cpp
 }
 
-#----------
-# ShareUtils Sources
-#----------
+#--------
+# Native Share Sources
+#--------
 
 # shareutils.hpp contains all the C++ code needed for calling the native shares on iOS and android
 HEADERS += shareutils/shareutils.hpp
@@ -359,9 +362,9 @@ android {
 
     # this contains the java code for and parsing and sending android intents, and
     # the android activity required to read incoming intents.
-    OTHER_FILES += android/src/org/shareluma/utils/QShareUtils.java \
-        android/src/org/shareluma/utils/QSharePathResolver.java \
-        android/src/org/shareluma/activity/QShareActivity.java
+    OTHER_FILES += android/src/org/corluma/utils/QShareUtils.java \
+        android/src/org/corluma/utils/QSharePathResolver.java \
+        android/src/org/corluma/activity/QShareActivity.java
 }
 
 

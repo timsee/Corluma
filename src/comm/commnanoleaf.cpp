@@ -11,6 +11,7 @@
 #include <QJsonValue>
 #include <QVariantMap>
 
+#include "comm/nanoleaf/leafschedule.h"
 #include "cor/objects/light.h"
 #include "cor/objects/palette.h"
 #include "utils/color.h"
@@ -45,14 +46,128 @@ CommNanoleaf::CommNanoleaf() : CommType(ECommType::nanoleaf), mUPnP{nullptr} {
 
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(stateUpdate()));
 
+    mScheduleTimer = new QTimer(this);
+    connect(mScheduleTimer, SIGNAL(timeout()), this, SLOT(getSchedules()));
+
     createColorPalettes();
+}
+
+void CommNanoleaf::getSchedules() {
+    if (mLastBackgroundTime.elapsed() > 15000) {
+        stopBackgroundTimers();
+    } else {
+        for (const auto& controller : mDiscovery->foundControllers().itemVector()) {
+            if (shouldContinueStateUpdate()) {
+                QNetworkRequest request = networkRequest(controller, "schedules");
+                // qDebug() << "get schedue" << controller.name;
+                mNetworkManager->get(request);
+            }
+        }
+    }
+}
+
+void CommNanoleaf::updateSchedule(const nano::LeafController& controller,
+                                  const nano::LeafSchedule& schedule) {
+    auto result = mSchedules.find(controller.serialNumber.toStdString());
+    if (result != mSchedules.end()) {
+        auto scheduleResult = result->second;
+        const auto& scheduleSearch = scheduleResult.item(QString(schedule.ID()).toStdString());
+        if (scheduleSearch.second) { // found in schedule
+            scheduleResult.update(QString(schedule.ID()).toStdString(), schedule);
+        } else {
+            scheduleResult.insert(QString(schedule.ID()).toStdString(), schedule);
+        }
+        // update the unorded map
+        result->second = scheduleResult;
+    } else {
+        // no schedules for this light found, create a dictionary
+        cor::Dictionary<nano::LeafSchedule> schedules;
+        schedules.insert(QString(schedule.ID()).toStdString(), schedule);
+        mSchedules.insert(std::make_pair(controller.serialNumber.toStdString(), schedules));
+    }
+}
+
+const cor::Dictionary<nano::LeafSchedule>& CommNanoleaf::findSchedules(
+    const nano::LeafController& controller) {
+    auto result = mSchedules.find(controller.serialNumber.toStdString());
+    if (result != mSchedules.end()) {
+        return (*result).second;
+    } else {
+        THROW_EXCEPTION("controller not found in findSchedule");
+    }
+}
+
+nano::LeafSchedule CommNanoleaf::findSchedule(const nano::LeafController& controller,
+                                              const QString& ID) {
+    auto result = mSchedules.find(controller.serialNumber.toStdString());
+    if (result != mSchedules.end()) {
+        auto scheduleDict = (*result).second;
+        const auto& scheduleResult = scheduleDict.item(ID.toStdString());
+        if (scheduleResult.second) {
+            return scheduleResult.first;
+        } else {
+            THROW_EXCEPTION("schedule not found in findSchedule");
+        }
+    } else {
+        THROW_EXCEPTION("controller not found in findSchedule");
+    }
+}
+
+void CommNanoleaf::sendTimeout(const nano::LeafController& controller, int minutes) {
+    sendSchedule(controller, createTimeoutSchedule(minutes));
+}
+
+void CommNanoleaf::sendSchedule(const nano::LeafController& controller,
+                                const nano::LeafSchedule& schedule) {
+    QNetworkRequest request = networkRequest(controller, "effects");
+
+    QJsonObject scheduleObject;
+    QJsonObject command;
+    command["command"] = "addSchedules";
+    QJsonArray scheduleArray;
+    scheduleArray.append(schedule.toJSON());
+    command["schedules"] = scheduleArray;
+    scheduleObject["write"] = command;
+    putJSON(request, scheduleObject);
+}
+
+nano::LeafSchedule CommNanoleaf::createTimeoutSchedule(int minutesTimeout) {
+    auto nowDate = nano::LeafDate::currentTime();
+    auto date = nowDate.date();
+    std::time_t time = std::mktime(&date);
+    time += 60 * minutesTimeout;
+    nano::LeafDate startDate(*std::localtime(&time));
+
+    nano::LeafDate endDate;
+    nano::LeafAction action(nano::EActionType::off);
+    return nano::LeafSchedule(true, nano::ERepeat::once, 1, endDate, startDate, action);
+}
+
+void CommNanoleaf::stopBackgroundTimers() {
+    qDebug() << "INFO: stopping background Hue timers";
+    if (mScheduleTimer->isActive()) {
+        mScheduleTimer->stop();
+    }
+    //    if (mGroupTimer->isActive()) {
+    //        mGroupTimer->stop();
+    //    }
+}
+
+void CommNanoleaf::resetBackgroundTimers() {
+    if (!mScheduleTimer->isActive()) {
+        mScheduleTimer->start(mStateUpdateInterval * 5);
+    }
+    //    if (!mGroupTimer->isActive()) {
+    //        mGroupTimer->start(mStateUpdateInterval * 8);
+    //    }
+    mLastBackgroundTime = QTime::currentTime();
 }
 
 void CommNanoleaf::createColorPalettes() {
     // create JSONArrays for standard palettes
     mPalettes = std::vector<QJsonArray>(size_t(EPalette::unknown));
-    // create JSONArrays for the highlight palettes, which require a probability (undocumented in
-    // current API docs)
+    // create JSONArrays for the highlight palettes, which require a probability (undocumented
+    // in current API docs)
     mHighlightPalettes = std::vector<QJsonArray>(size_t(EPalette::unknown));
     for (uint32_t i = 0; i < uint32_t(EPalette::unknown); ++i) {
         auto palettes = vectorToNanoleafPalettes(mPresetPalettes.paletteVector(EPalette(i)));
@@ -146,9 +261,10 @@ void CommNanoleaf::changeColorCT(const cor::Controller&, int) {
     //    Q_UNUSED(controller);
     //    //qDebug() << " CT is " << ct;
     //    // https://en.wikipedia.org/wiki/Mired
-    //    // nanoleaf  can techincally do 1200 - 6500, the UI was designed for Hues which are only
-    //    capable of 2000 - 6500 ct = cor::map(ct, 153, 500, 0, 4500); // move to range between 0
-    //    and 4500 ct = 4500 - ct;                       // invert it since low mired is ct += 2000;
+    //    // nanoleaf  can techincally do 1200 - 6500, the UI was designed for Hues which are
+    //    only capable of 2000 - 6500 ct = cor::map(ct, 153, 500, 0, 4500); // move to range
+    //    between 0 and 4500 ct = 4500 - ct;                       // invert it since low mired
+    //    is ct += 2000;
     //    // add the minimum value for desired range
 
     //    QNetworkRequest request = networkRequest(controller, "state");
@@ -194,7 +310,7 @@ void CommNanoleaf::stateUpdate() {
             mNetworkManager->get(request);
 
             /// if its using a dynamic effect, request metainfo on that effect
-            if (controller.effect.compare("*Dynamic*") == 0) {
+            if (controller.effect == "*Dynamic*") {
                 QNetworkRequest request = networkRequest(controller, "effects");
 
                 QJsonObject effectObject;
@@ -212,6 +328,7 @@ void CommNanoleaf::stateUpdate() {
             } else {
                 mDiscovery->stopDiscovery();
             }
+
             mStateUpdateCounter++;
         }
     }
@@ -238,6 +355,7 @@ void CommNanoleaf::sendPacket(const QJsonObject& object) {
                 brightnessChange(controller, int(object["brightness"].toDouble()));
             }
 
+            resetBackgroundTimers();
             resetStateUpdateTimeout();
         }
     }
@@ -273,38 +391,30 @@ void CommNanoleaf::replyFinished(QNetworkReply* reply) {
                                  controller.hardwareName,
                                  ECommType::nanoleaf);
                 addLight(light);
+                getSchedules();
             }
-
-            // TODO: what? why?
-            QJsonDocument jsonResponse = QJsonDocument::fromJson(payload.toUtf8());
-            if (!jsonResponse.isNull()) {
-                if (jsonResponse.isObject()) {
-                    QJsonObject object = jsonResponse.object();
-                    if (object["serialNo"].isString() && object["name"].isString()) {
-                        parseStateUpdatePacket(controller, object);
-                    }
-                }
-            }
-        } else {
-            QJsonDocument jsonResponse = QJsonDocument::fromJson(payload.toUtf8());
-            if (!jsonResponse.isNull()) {
-                if (jsonResponse.isObject()) {
-                    QJsonObject object = jsonResponse.object();
-                    if (object["auth_token"].isString()) {
-                        QString authToken = object["auth_token"].toString();
-                        mDiscovery->foundNewAuthToken(controller, authToken);
-                    } else if (object["serialNo"].isString() && object["name"].isString()) {
-                        parseStateUpdatePacket(controller, object);
-                    } else if (object["animType"].isString() && object["colorType"].isString()
-                               && object["palette"].isArray()) {
-                        parseCommandRequestUpdatePacket(controller, object);
-                        mDiscovery->updateFoundDevice(controller);
-                    } else {
-                        qDebug() << "Do not recognize packet: " << object;
-                    }
+        }
+        QJsonDocument jsonResponse = QJsonDocument::fromJson(payload.toUtf8());
+        if (!jsonResponse.isNull()) {
+            if (jsonResponse.isObject()) {
+                QJsonObject object = jsonResponse.object();
+                if (object["auth_token"].isString()) {
+                    QString authToken = object["auth_token"].toString();
+                    mDiscovery->foundNewAuthToken(controller, authToken);
+                } else if (object["serialNo"].isString() && object["name"].isString()) {
+                    parseStateUpdatePacket(controller, object);
+                } else if (object["animType"].isString() && object["colorType"].isString()
+                           && object["palette"].isArray()) {
+                    parseCommandRequestUpdatePacket(controller, object);
+                    mDiscovery->updateFoundDevice(controller);
+                } else if (object["schedules"].isArray()) {
+                    parseScheduleUpdatePacket(controller, object["schedules"].toArray());
+                } else {
+                    qDebug() << "Do not recognize packet: " << object;
                 }
             }
         }
+
     } else {
         if (reply->error() == QNetworkReply::ConnectionRefusedError) {
             qDebug() << "Nanoleaf connection refused from " << reply->url().toString();
@@ -447,7 +557,8 @@ void CommNanoleaf::parseCommandRequestUpdatePacket(const nano::LeafController& c
         }
 
         if (light.routine < cor::ERoutineSingleColorEnd) {
-            auto result = computeBrightnessAndColorFromSingleColorPacket(routine, colorVector);
+            auto result =
+                computeBrightnessAndColorFromSingleColorPacket(light.routine, colorVector);
             light.color = result.first;
             light.palette.brightness(result.second);
         } else {
@@ -489,6 +600,17 @@ uint32_t CommNanoleaf::computeBrightnessFromMultiColorPacket(
     return uint32_t(maxColor.valueF() * 100.0);
 }
 
+
+void CommNanoleaf::parseScheduleUpdatePacket(const nano::LeafController& controller,
+                                             const QJsonArray& scheduleUpdate) {
+    for (const auto& schedule : scheduleUpdate) {
+        if (schedule.isObject()) {
+            const auto& scheduleObject = schedule.toObject();
+            // qDebug() << " schedule object" << scheduleObject;
+            updateSchedule(controller, nano::LeafSchedule(scheduleObject));
+        }
+    }
+}
 
 void CommNanoleaf::parseStateUpdatePacket(nano::LeafController& controller,
                                           const QJsonObject& stateUpdate) {
@@ -811,6 +933,7 @@ QJsonObject CommNanoleaf::createRoutinePacket(ERoutine routine, int speed) {
         default:
             break;
     }
+
     return effectObject;
 }
 

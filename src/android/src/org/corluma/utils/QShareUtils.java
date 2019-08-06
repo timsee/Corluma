@@ -10,8 +10,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -34,7 +34,7 @@
 // https://stackoverflow.com/questions/5734678/custom-filtering-of-intent-chooser-based-on-installed-android-package-name
 // see also /COPYRIGHT and /LICENSE
 
-package org.shareluma.utils;
+package org.corluma.utils;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -65,7 +65,7 @@ import java.util.List;
 
 public class QShareUtils {
     // reference Authority as defined in AndroidManifest.xml
-    private static String AUTHORITY = "org.shareluma.fileprovider";
+    private static String AUTHORITY = "org.corluma.shareutils.fileprovider";
     private static String TAG = "QShareUtils";
 
     protected QShareUtils() {
@@ -73,8 +73,9 @@ public class QShareUtils {
     }
 
     public static boolean checkMimeTypeView(String mimeType) {
-        if (QtNative.activity() == null)
+        if (QtNative.activity() == null) {
             return false;
+        }
         Intent myIntent = new Intent();
         myIntent.setAction(Intent.ACTION_VIEW);
         // without an URI resolve always fails
@@ -85,17 +86,18 @@ public class QShareUtils {
 
         // Verify that the intent will resolve to an activity
         if (myIntent.resolveActivity(QtNative.activity().getPackageManager()) != null) {
-            Log.d(TAG, "checkMime YEP - we can go on and View");
+            // Log.d(TAG, "checkMime YEP - we can go on and View");
             return true;
         } else {
-            Log.d(TAG, "checkMime sorry - no App available to View");
+            // Log.d(TAG, "checkMime sorry - no App available to View");
         }
         return false;
     }
 
     public static boolean share(String text, String url) {
-        if (QtNative.activity() == null)
+        if (QtNative.activity() == null) {
             return false;
+        }
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_TEXT, text + " " + url);
@@ -111,35 +113,36 @@ public class QShareUtils {
         return false;
     }
 
-    // thx @oxied and @pooks for the idea: https://stackoverflow.com/a/18835895/135559
-    // theIntent is already configured with all needed properties and flags
-    // so we only have to add the packageName of targeted app
+    // thx @oxied and @pooks for the idea:
+    // https://stackoverflow.com/a/18835895/135559 theIntent is already configured
+    // with all needed properties and flags so we only have to add the packageName
+    // of targeted app
     public static boolean createCustomChooserAndStartActivity(Intent theIntent,
-            String title,
-            int requestId,
-            Uri uri) {
+                                                              String title,
+                                                              int requestId,
+                                                              Uri uri) {
         final Context context = QtNative.activity();
         final PackageManager packageManager = context.getPackageManager();
         final boolean isLowerOrEqualsKitKat = Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT;
 
-        // MATCH_DEFAULT_ONLY: Resolution and querying flag. if set, only filters that support the
-        // CATEGORY_DEFAULT will be considered for matching. Check if there is a default app for
-        // this type of content.
-        ResolveInfo defaultAppInfo
-                = packageManager.resolveActivity(theIntent, PackageManager.MATCH_DEFAULT_ONLY);
+        // MATCH_DEFAULT_ONLY: Resolution and querying flag. if set, only filters
+        // that support the CATEGORY_DEFAULT will be considered for matching. Check
+        // if there is a default app for this type of content.
+        ResolveInfo defaultAppInfo =
+                packageManager.resolveActivity(theIntent, PackageManager.MATCH_DEFAULT_ONLY);
         if (defaultAppInfo == null) {
             Log.d(TAG, title + " PackageManager cannot resolve Activity");
             return false;
         }
 
         // Retrieve all apps for our intent. Check if there are any apps returned
-        List<ResolveInfo> appInfoList = packageManager.queryIntentActivities(
-                theIntent, PackageManager.MATCH_DEFAULT_ONLY);
+        List<ResolveInfo> appInfoList =
+                packageManager.queryIntentActivities(theIntent, PackageManager.MATCH_DEFAULT_ONLY);
         if (appInfoList.isEmpty()) {
             Log.d(TAG, title + " appInfoList.isEmpty");
             return false;
         }
-        Log.d(TAG, title + " appInfoList: " + appInfoList.size());
+        // Log.d(TAG, title + " appInfoList: " + appInfoList.size());
 
         // Sort in alphabetical order
         Collections.sort(appInfoList, new Comparator<ResolveInfo>() {
@@ -157,8 +160,8 @@ public class QShareUtils {
             // get the target PackageName
             String targetPackageName = appInfo.activityInfo.packageName;
             // we don't want to share with our own app
-            // in fact sharing with own app with resultCode will crash because doesn't work well
-            // with launch mode 'singleInstance'
+            // in fact sharing with own app with resultCode will crash because doesn't
+            // work well with launch mode 'singleInstance'
             if (targetPackageName.equals(context.getPackageName())) {
                 continue;
             }
@@ -166,7 +169,8 @@ public class QShareUtils {
 
             // we create the targeted Intent based on our already configured Intent
             Intent targetedIntent = new Intent(theIntent);
-            // now add the target packageName so this Intent will only find the one specific App
+            // now add the target packageName so this Intent will only find the one
+            // specific App
             targetedIntent.setPackage(targetPackageName);
             // collect all these targetedIntents
             targetedIntents.add(targetedIntent);
@@ -177,19 +181,19 @@ public class QShareUtils {
             // also:
             // https://stackoverflow.com/questions/18249007/how-to-use-support-fileprovider-for-sharing-content-to-other-apps
             if (isLowerOrEqualsKitKat) {
-                Log.d(TAG, "legacy support grantUriPermission");
+                // Log.d(TAG, "legacy support grantUriPermission");
                 context.grantUriPermission(targetPackageName,
-                        uri,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION
-                                | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                // attention: you must revoke the permission later, so this only makes sense with
-                // getting back a result to know that Intent was done I always move or delete the
-                // file, so I don't revoke permission
+                                           uri,
+                                           Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                                   | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                // attention: you must revoke the permission later, so this only makes
+                // sense with getting back a result to know that Intent was done I
+                // always move or delete the file, so I don't revoke permission
             }
         }
 
-        // check if there are apps found for our Intent to avoid that there was only our own removed
-        // app before
+        // check if there are apps found for our Intent to avoid that there was only
+        // our own removed app before
         if (targetedIntents.isEmpty()) {
             Log.d(TAG, title + " targetedIntents.isEmpty");
             return false;
@@ -198,14 +202,15 @@ public class QShareUtils {
         // now we can create our Intent with custom Chooser
         // we need all collected targetedIntents as EXTRA_INITIAL_INTENTS
         // we're using the last targetedIntent as initializing Intent, because
-        // chooser adds its initializing intent to the end of EXTRA_INITIAL_INTENTS :)
-        Intent chooserIntent
-                = Intent.createChooser(targetedIntents.remove(targetedIntents.size() - 1), title);
+        // chooser adds its initializing intent to the end of EXTRA_INITIAL_INTENTS
+        // :)
+        Intent chooserIntent =
+                Intent.createChooser(targetedIntents.remove(targetedIntents.size() - 1), title);
         if (targetedIntents.isEmpty()) {
-            Log.d(TAG, title + " only one Intent left for Chooser");
+            // Log.d(TAG, title + " only one Intent left for Chooser");
         } else {
-            chooserIntent.putExtra(
-                    Intent.EXTRA_INITIAL_INTENTS, targetedIntents.toArray(new Parcelable[] {}));
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,
+                                   targetedIntents.toArray(new Parcelable[] {}));
         }
         // Verify that the intent will resolve to an activity
         if (chooserIntent.resolveActivity(QtNative.activity().getPackageManager()) != null) {
@@ -216,26 +221,28 @@ public class QShareUtils {
             }
             return true;
         }
-        Log.d(TAG, title + " Chooser Intent not resolved. Should never happen");
         return false;
     }
 
-    // I am deleting the files from shared folder when Activity was done or canceled
-    // so probably I don't have to revike FilePermissions for older OS
-    // if you don't delete or move the file: here's what you must done to revoke the access
+    // I am deleting the files from shared folder when Activity was done or
+    // canceled so probably I don't have to revike FilePermissions for older OS if
+    // you don't delete or move the file: here's what you must done to revoke the
+    // access
     public static void revokeFilePermissions(String filePath) {
         final Context context = QtNative.activity();
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             File file = new File(filePath);
             Uri uri = FileProvider.getUriForFile(context, AUTHORITY, file);
-            context.revokeUriPermission(uri,
+            context.revokeUriPermission(
+                    uri,
                     Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         }
     }
 
     public static boolean sendFile(String filePath, String title, String mimeType, int requestId) {
-        if (QtNative.activity() == null)
+        if (QtNative.activity() == null) {
             return false;
+        }
 
         // using v4 support library create the Intent from ShareCompat
         // Intent sendIntent = new Intent();
@@ -244,8 +251,8 @@ public class QShareUtils {
 
         File fileToShare = new File(filePath);
 
-        // Using FileProvider you must get the URI from FileProvider using your AUTHORITY
-        // Uri uri = Uri.fromFile(imageFileToShare);
+        // Using FileProvider you must get the URI from FileProvider using your
+        // AUTHORITY Uri uri = Uri.fromFile(imageFileToShare);
         Uri uri;
         try {
             uri = FileProvider.getUriForFile(QtNative.activity(), AUTHORITY, fileToShare);
@@ -260,9 +267,9 @@ public class QShareUtils {
         if (mimeType == null || mimeType.isEmpty()) {
             // fallback if mimeType not set
             mimeType = QtNative.activity().getContentResolver().getType(uri);
-            Log.d(TAG, "sendFile guessed mimeType:" + mimeType);
+            // Log.d(TAG, "sendFile guessed mimeType:" + mimeType);
         } else {
-            Log.d(TAG, "sendFile w mimeType:" + mimeType);
+            // Log.d(TAG, "sendFile w mimeType:" + mimeType);
         }
 
         sendIntent.setType(mimeType);
@@ -273,8 +280,9 @@ public class QShareUtils {
     }
 
     public static boolean viewFile(String filePath, String title, String mimeType, int requestId) {
-        if (QtNative.activity() == null)
+        if (QtNative.activity() == null) {
             return false;
+        }
 
         // using v4 support library create the Intent from ShareCompat
         // Intent viewIntent = new Intent();
@@ -283,7 +291,8 @@ public class QShareUtils {
 
         File fileToShare = new File(filePath);
 
-        // Using FileProvider you must get the URI from FileProvider using your AUTHORITY
+        // Using FileProvider you must get the URI from FileProvider using your
+        // AUTHORITY
         Uri uri;
         try {
             uri = FileProvider.getUriForFile(QtNative.activity(), AUTHORITY, fileToShare);
@@ -295,15 +304,15 @@ public class QShareUtils {
         // content://org.ekkescorner.examples.sharex.fileprovider/my_shared_files/qt-logo.png
         // from a fileUrl:
         // /data/user/0/org.ekkescorner.examples.sharex/files/share_example_x_files/qt-logo.png
-        Log.d(TAG, "viewFile from file path: " + filePath);
-        Log.d(TAG, "viewFile to content URI: " + uri.toString());
+        // Log.d(TAG, "viewFile from file path: " + filePath);
+        // Log.d(TAG, "viewFile to content URI: " + uri.toString());
 
         if (mimeType == null || mimeType.isEmpty()) {
             // fallback if mimeType not set
             mimeType = QtNative.activity().getContentResolver().getType(uri);
-            Log.d(TAG, "viewFile guessed mimeType:" + mimeType);
+            // Log.d(TAG, "viewFile guessed mimeType:" + mimeType);
         } else {
-            Log.d(TAG, "viewFile w mimeType:" + mimeType);
+            // Log.d(TAG, "viewFile w mimeType:" + mimeType);
         }
 
         viewIntent.setDataAndType(uri, mimeType);
@@ -325,23 +334,23 @@ public class QShareUtils {
 
         File imageFileToShare = new File(filePath);
 
-        // Using FileProvider you must get the URI from FileProvider using your AUTHORITY
-        // Uri uri = Uri.fromFile(imageFileToShare);
+        // Using FileProvider you must get the URI from FileProvider using your
+        // AUTHORITY Uri uri = Uri.fromFile(imageFileToShare);
         Uri uri;
         try {
             uri = FileProvider.getUriForFile(QtNative.activity(), AUTHORITY, imageFileToShare);
         } catch (IllegalArgumentException e) {
-            Log.d(TAG, "editFile - cannot be shared: " + filePath);
+            // Log.d(TAG, "editFile - cannot be shared: " + filePath);
             return false;
         }
-        Log.d(TAG, "editFile" + uri.toString());
+        // Log.d(TAG, "editFile" + uri.toString());
 
         if (mimeType == null || mimeType.isEmpty()) {
             // fallback if mimeType not set
             mimeType = QtNative.activity().getContentResolver().getType(uri);
-            Log.d(TAG, "editFile guessed mimeType:" + mimeType);
+            // Log.d(TAG, "editFile guessed mimeType:" + mimeType);
         } else {
-            Log.d(TAG, "editFile w mimeType:" + mimeType);
+            // Log.d(TAG, "editFile w mimeType:" + mimeType);
         }
 
         editIntent.setDataAndType(uri, mimeType);
@@ -371,10 +380,10 @@ public class QShareUtils {
                 String name = getContentName(cR, uri);
                 if (name != null) {
                     filePath = fileLocation + "/" + name;
-                    Log.d(TAG, "- create File" + filePath);
+                    // Log.d(TAG, "- create File" + filePath);
                     File f = new File(filePath);
                     FileOutputStream tmp = new FileOutputStream(f);
-                    Log.d(TAG, "- create File new FileOutputStream");
+                    // Log.d(TAG, "- create File new FileOutputStream");
 
                     byte[] buffer = new byte[1024];
                     while (iStream.read(buffer) > 0) {

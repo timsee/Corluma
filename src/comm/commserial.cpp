@@ -11,7 +11,9 @@
 #include "comm/arducor/arducordiscovery.h"
 
 CommSerial::CommSerial()
-    : CommType(ECommType::serial), mDiscovery{nullptr}, mSerialPortFailed{false} {
+    : CommType(ECommType::serial),
+      mDiscovery{nullptr},
+      mSerialPortFailed{false} {
     mStateUpdateInterval = 500;
     mLookingForActivePorts = false;
 

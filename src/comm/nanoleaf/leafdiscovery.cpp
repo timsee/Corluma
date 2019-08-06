@@ -16,7 +16,10 @@
 namespace nano {
 
 LeafDiscovery::LeafDiscovery(QObject* parent, uint32_t interval)
-    : QObject(parent), cor::JSONSaveData("Nanoleaf"), mDiscoveryInterval(interval), mUPnP{nullptr} {
+    : QObject(parent),
+      cor::JSONSaveData("Nanoleaf"),
+      mDiscoveryInterval(interval),
+      mUPnP{nullptr} {
     mNanoleaf = dynamic_cast<CommNanoleaf*>(parent);
 
     mDiscoveryTimer = new QTimer(this);

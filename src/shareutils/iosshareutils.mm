@@ -32,6 +32,7 @@
 #import <QFileInfo>
 #import <QGuiApplication>
 #import <QUrl>
+#import <QDir>
 #import <QDebug>
 
 #import <UIKit/UIDocumentInteractionController.h>
@@ -66,6 +67,16 @@
 
 
 IosShareUtils::IosShareUtils(QObject* parent) : PlatformShareUtils(parent) {
+    // This allows you to write to Qt's AppDataLocation by actually creating a directory there.
+    auto appDataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    QDir saveDir(appDataPath);
+    if (!saveDir.exists()) {
+        bool ok = saveDir.mkpath(appDataPath);
+        if (!ok) {
+            qWarning() << "Couldn't create dir. " << appDataPath;
+        }
+    }
+    
     // Sharing Files from other iOS Apps I got the ideas and some code contribution from:
     // Thomas K. Fischer (@taskfabric) - http://taskfabric.com - thx
     QDesktopServices::setUrlHandler("file", this, "handleFileUrlReceived");

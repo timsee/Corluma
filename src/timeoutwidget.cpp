@@ -6,7 +6,8 @@ TimeoutWidget::TimeoutWidget(QWidget* parent,
                              int defaultTimeoutValue,
                              bool timeoutEnabled,
                              int spacerPixels)
-    : QWidget(parent), mSpacerPixels{spacerPixels} {
+    : QWidget(parent),
+      mSpacerPixels{spacerPixels} {
     const QString transparentStyleSheet = "background-color: rgba(0,0,0,0)";
     //-----------
     // CheckBoxes

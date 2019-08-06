@@ -17,7 +17,8 @@
 RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup,
                                            const std::vector<QColor>& colors,
                                            QWidget* parent)
-    : QWidget(parent), mIsOpen{false} {
+    : QWidget(parent),
+      mIsOpen{false} {
     mLayout = new QGridLayout(this);
     mLayout->setMargin(0);
     mLayout->setContentsMargins(0, 0, 0, 0);

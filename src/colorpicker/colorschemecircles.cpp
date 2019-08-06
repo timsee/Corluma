@@ -151,7 +151,10 @@ void renderButtons(ColorWheel* wheel) {
 } // namespace
 
 ColorSchemeCircles::ColorSchemeCircles(std::size_t count, ColorWheel* wheel, QWidget* parent)
-    : QWidget(parent), mCircles{count}, mSchemeType{EColorSchemeType::MAX}, mWheel{wheel} {
+    : QWidget(parent),
+      mCircles{count},
+      mSchemeType{EColorSchemeType::MAX},
+      mWheel{wheel} {
     this->setStyleSheet("background-color:rgba(0,0,0,0);");
 #ifdef RENDER_BUTTONS_AS_IMAGES
     renderButtons(mWheel);

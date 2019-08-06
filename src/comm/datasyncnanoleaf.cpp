@@ -14,9 +14,12 @@ bool checkIfOffByOne(int goal, int value) {
     return ((goal == value) || (goal == (value - 1)) || (goal == (value + 1)));
 }
 
-DataSyncNanoLeaf::DataSyncNanoLeaf(cor::DeviceList* data, CommLayer* comm) {
+DataSyncNanoLeaf::DataSyncNanoLeaf(cor::DeviceList* data,
+                                   CommLayer* comm,
+                                   AppSettings* appSettings) {
     mData = data;
     mComm = comm;
+    mAppSettings = appSettings;
     mType = EDataSyncType::nanoleaf;
     mUpdateInterval = 500;
 
@@ -231,12 +234,46 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
         countOutOfSync++;
     }
 
+    bool timeoutInSync = true;
+    if (mAppSettings->timeoutEnabled() && countOutOfSync == 0) {
+        handleIdleTimeout(leafController);
+        timeoutInSync = false;
+    }
+
     if (countOutOfSync) {
         mComm->nanoleaf()->sendPacket(object);
         resetThrottle(dataDevice.controller(), dataDevice.commType());
     }
 
-    return (countOutOfSync == 0);
+    return (countOutOfSync == 0) && timeoutInSync;
+}
+
+void DataSyncNanoLeaf::handleIdleTimeout(const nano::LeafController& controller) {
+    bool foundTimeout = false;
+    int timeoutValue = mAppSettings->timeout();
+    try {
+        for (const auto& schedule : mComm->nanoleaf()->findSchedules(controller).itemVector()) {
+            // check for idle schedule
+            if (schedule.ID() == nano::kTimeoutID) {
+                // check schedule is enabled
+                if (schedule.enabled()) {
+                    auto scheduleTimeout = schedule.startDate().date();
+                    auto scheduleAsTime = std::mktime(&scheduleTimeout);
+                    auto currentTimeout = nano::LeafDate::currentTime().date();
+                    auto currentAsTime = std::mktime(&currentTimeout);
+                    currentAsTime += 60 * timeoutValue;
+                    if (scheduleAsTime == currentAsTime) {
+                        foundTimeout = true;
+                    }
+                }
+            }
+        }
+    } catch (cor::Exception) {}
+
+    if (!foundTimeout) {
+        //  qDebug() << " send timeout~!" << timeoutValue;
+        mComm->nanoleaf()->sendTimeout(controller, timeoutValue);
+    }
 }
 
 void DataSyncNanoLeaf::endOfSync() {

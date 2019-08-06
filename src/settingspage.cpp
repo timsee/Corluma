@@ -26,7 +26,9 @@ SettingsPage::SettingsPage(QWidget* parent,
                            GroupData* parser,
                            AppSettings* appSettings,
                            ShareUtils* shareUtils)
-    : QWidget(parent), mGroups(parser), mShareUtils(shareUtils) {
+    : QWidget(parent),
+      mGroups(parser),
+      mShareUtils(shareUtils) {
     mShowingDebug = true;
 
     mCurrentWebView = ECorlumaWebView::none;
@@ -193,13 +195,9 @@ void SettingsPage::loadButtonClicked() {
 }
 
 void SettingsPage::saveButtonClicked() {
-#if defined(Q_OS_IOS)
-    int requestID = 0;
+#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
+    int requestID = 7;
     mShareUtils->sendFile(mGroups->savePath(), "CorlumaSave", "application/json", requestID);
-#elif defined(Q_OS_ANDROID)
-    int requestID = 0;
-    mGroups->addSaveToTempDirectory();
-    mShareUtils->sendFile(mGroups->tempFile(), "CorlumaSave", "application/json", requestID);
 #else
     auto fileName = QFileDialog::getSaveFileName(this,
                                                  tr("Save Group Data"),
@@ -208,6 +206,8 @@ void SettingsPage::saveButtonClicked() {
     if (fileName.isEmpty()) {
         qDebug() << "WARNING: save file name empty";
         return;
+    } else {
+        mGroups->save(fileName);
     }
 #endif
 }

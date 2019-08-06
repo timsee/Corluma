@@ -52,7 +52,8 @@ EColorSchemeType stringToColorSchemeType(const QString& string) {
 ColorSchemeButton::ColorSchemeButton(EColorSchemeType type,
                                      const QString& imagePath,
                                      QWidget* parent)
-    : QWidget(parent), mResourcePath{imagePath} {
+    : QWidget(parent),
+      mResourcePath{imagePath} {
     mEnabled = true;
     const QString transparentStyleSheet = "font-size:12pt; background-color: rgba(0,0,0,0);";
 

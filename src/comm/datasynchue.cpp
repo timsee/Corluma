@@ -204,7 +204,7 @@ void DataSyncHue::cleanupSync() {
 
 
 
-void DataSyncHue::handleIdleTimeout(const hue::Bridge& bridge, const cor::Light& light) {
+bool DataSyncHue::handleIdleTimeout(const hue::Bridge& bridge, const cor::Light& light) {
     bool foundTimeout = false;
     for (const auto& schedule : mComm->hue()->schedules(bridge)) {
         // qDebug() << "  scheudel name" << schedule.name;
@@ -227,4 +227,5 @@ void DataSyncHue::handleIdleTimeout(const hue::Bridge& bridge, const cor::Light&
         // qDebug() << " create idle timeout " << light.index;
         mComm->hue()->createIdleTimeout(bridge, light.index, mAppSettings->timeout());
     }
+    return foundTimeout;
 }

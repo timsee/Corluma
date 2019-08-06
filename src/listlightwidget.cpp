@@ -20,7 +20,9 @@ ListLightWidget::ListLightWidget(const cor::Light& device,
                                  cor::EWidgetType type,
                                  EOnOffSwitchState switchState,
                                  QWidget* parent)
-    : cor::ListItemWidget(device.uniqueID(), parent), mType{type}, mSwitchState{switchState} {
+    : cor::ListItemWidget(device.uniqueID(), parent),
+      mType{type},
+      mSwitchState{switchState} {
     this->setFixedWidth(parent->width());
     mShouldHighlight = setHighlightable;
     init(device);

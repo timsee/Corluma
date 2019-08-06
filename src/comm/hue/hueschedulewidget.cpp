@@ -14,7 +14,8 @@
 namespace hue {
 
 HueScheduleWidget::HueScheduleWidget(QWidget* parent, SHueSchedule schedule)
-    : QWidget(parent), mSchedule(schedule) {
+    : QWidget(parent),
+      mSchedule(schedule) {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     this->setStyleSheet(styleSheet);
 

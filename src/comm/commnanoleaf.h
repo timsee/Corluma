@@ -9,6 +9,7 @@
 #include "comm/arducor/controller.h"
 #include "comm/nanoleaf/leafcontroller.h"
 #include "comm/nanoleaf/leafdiscovery.h"
+#include "comm/nanoleaf/leafschedule.h"
 #include "comm/upnpdiscovery.h"
 #include "commtype.h"
 #include "cor/presetpalettes.h"
@@ -100,6 +101,20 @@ public:
     /// getter for discovery object
     nano::LeafDiscovery* discovery() { return mDiscovery; }
 
+    /*!
+     * \brief findSchedules returns the schedule dictionary for the given controller
+     * \param controller controller to look for schedules from
+     */
+    const cor::Dictionary<nano::LeafSchedule>& findSchedules(
+        const nano::LeafController& controller);
+
+    /*!
+     * \brief sendTimeout sends a timeout schedule to the provided controller.
+     * \param controller controller to send a tiemout to
+     * \param minutes the number of minutes for the timeout
+     */
+    void sendTimeout(const nano::LeafController& controller, int minutes);
+
 private slots:
     /*!
      * \brief replyFinished called by the mNetworkManager, receives HTTP replies to packets
@@ -143,9 +158,28 @@ private slots:
     /// requests the state of the lights
     void stateUpdate();
 
+    /*!
+     * \brief getSchedules request schedules updates.
+     */
+    void getSchedules();
+
 private:
     /// vector that holds the custom colors used in custom color routines
     std::vector<QColor> mCustomColors;
+
+    /*!
+     * \brief resetBackgroundTimers reset the background timers that sync things such as groups
+     *        and schedules.
+     */
+    void resetBackgroundTimers();
+
+    /// stop the timers that sync things like schedules and groups in the background.
+    void stopBackgroundTimers();
+
+    /*!
+     * \brief mLastBackgroundTime The point in time that the schedule timer was last reset.
+     */
+    QTime mLastBackgroundTime;
 
     /// takes the color palette data from thne datalayer and converts it into JSON data for nanoleaf
     /// packets
@@ -174,6 +208,15 @@ private:
      * \param stateUpdate the packet with the state update data.
      */
     void parseStateUpdatePacket(nano::LeafController& controller, const QJsonObject& stateUpdate);
+
+
+    /*!
+     * \brief parseScheduleUpdatePacket parse an array that contains schedule updates
+     * \param controller controller to parse the array for
+     * \param scheduleUpdate the schedule array
+     */
+    void parseScheduleUpdatePacket(const nano::LeafController& controller,
+                                   const QJsonArray& scheduleUpdate);
 
     /*!
      * \brief parseCommandRequestUpdatePacket parses a command request packet. These packets are
@@ -207,8 +250,7 @@ private:
      * \brief converts a vector of QColor to two nanoleaf-compatible jsonarrays. the first of the
      * pair is a standard palette. The second array is used for highlight routines
      */
-    std::pair<QJsonArray, QJsonArray> vectorToNanoleafPalettes(
-        const std::vector<QColor>& colorVector);
+    std::pair<QJsonArray, QJsonArray> vectorToNanoleafPalettes(const std::vector<QColor>&);
 
     /// converts a nanoleaf palette JSON array to a vector of QColors
     std::vector<QColor> nanoleafPaletteToVector(const QJsonArray& palette);
@@ -253,6 +295,45 @@ private:
 
     /// object that holds and manages nanoleaf controller connections.
     nano::LeafDiscovery* mDiscovery;
+
+    /*!
+     * \brief sendSchedule send a schedule to a controller
+     * \param controller the controller to send the schedule to
+     * \param schedule the schedule to send
+     */
+    void sendSchedule(const nano::LeafController& controller, const nano::LeafSchedule& schedule);
+
+    /*!
+     * \brief findSchedule finds a schedule by ID
+     * \param controller controller to look for schedule with
+     * \param ID unique ID for schedule
+     * \return the schedule, if it exists. throws if it doesn't
+     */
+    nano::LeafSchedule findSchedule(const nano::LeafController& controller, const QString& ID);
+
+    /*!
+     * \brief updateSchedule
+     * \param controller
+     * \param schedule
+     */
+    void updateSchedule(const nano::LeafController& controller, const nano::LeafSchedule& schedule);
+
+    /// stores the schedules for each nanoleaf.
+    std::unordered_map<std::string, cor::Dictionary<nano::LeafSchedule>> mSchedules;
+
+    /*!
+     * \brief createTimeoutSchedule helper that generates a schedule that times out the light based
+     * off of the minute param provided
+     * \param minutesTimeout number of minutes to wait until idle timeout
+     */
+    nano::LeafSchedule createTimeoutSchedule(int minutesTimeout);
+
+    /*!
+     * \brief mScheduleTimer the timer that is used to periodically request updates for the
+     * schedules of hues. This is separate from the state update timer as it needs to be around
+     * for longer in order to keep idle timeouts in sync.
+     */
+    QTimer* mScheduleTimer;
 };
 
 #endif // COMMNANOLEAF_H

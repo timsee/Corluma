@@ -69,7 +69,9 @@ public:
 
     /// app data constructor
     Palette(const QString& name, const std::vector<QColor>& colors, uint32_t brightness)
-        : mName(name), mColors(colors), mBrightness(brightness) {
+        : mName(name),
+          mColors(colors),
+          mBrightness(brightness) {
         mJSON["name"] = mName;
         mJSON["bri"] = mBrightness / 100.0;
         mEnum = stringToPalette(name);

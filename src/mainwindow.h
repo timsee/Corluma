@@ -196,9 +196,6 @@ private slots:
     /// Used by shareUtils, called when a URL to a file is receieved
     void receivedURL(QString url);
 
-    /// Used by shareUtils, called when a URL is received, and saved to disk
-    void receivedAndSavedURL(QString url);
-
 protected:
     /*!
      * \brief resizeEvent called whenever the window resizes. This is used to override

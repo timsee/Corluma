@@ -3,6 +3,7 @@
 
 #include <QObject>
 
+#include "comm/commnanoleaf.h"
 #include "datasync.h"
 
 class CommLayer;
@@ -27,7 +28,7 @@ public:
      * \param data pointer to the app's data layer.
      * \param comm pointer to the app's comm layer.
      */
-    DataSyncNanoLeaf(cor::DeviceList* data, CommLayer* comm);
+    DataSyncNanoLeaf(cor::DeviceList* data, CommLayer* comm, AppSettings* appSettings);
 
     /*!
      * \brief cancelSync cancel the data sync, regardless of it successfully completed.
@@ -79,9 +80,18 @@ private:
     bool sync(const cor::Light& dataDevice, const cor::Light& commDevice) override;
 
     /*!
+     * \brief handleIdleTimeout check a controller's timeout and make sure its in sync
+     * \param controller controller to handle timeout for
+     */
+    void handleIdleTimeout(const nano::LeafController& controller);
+
+    /*!
      * \brief endOfSync end the sync thread and start the cleanup thread.
      */
     void endOfSync() override;
+
+    /// poiner to app settings
+    AppSettings* mAppSettings;
 };
 
 #endif // DATASYNCNANOLEAF_H
