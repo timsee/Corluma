@@ -97,7 +97,7 @@ void EditableFieldWidget::rightButtonClicked(bool) {
                 return;
             }
         }
-        if (mStoredText.compare(mText->text()) != 0) {
+        if (mStoredText != mText->text()) {
             if (mMaxFieldSize != -1 && mStoredText.size() > mMaxFieldSize) {
                 QMessageBox reply;
                 reply.setText(mMaxFieldError);

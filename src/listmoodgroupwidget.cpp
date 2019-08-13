@@ -117,7 +117,7 @@ void ListMoodGroupWidget::setCheckedMoods(std::list<QString> checkedMoods) {
 
         bool checkedNameFound = false;
         for (auto&& checkedName : checkedMoods) {
-            if (widget->moodName().compare(checkedName) == 0) {
+            if (widget->moodName() == checkedName) {
                 checkedNameFound = true;
                 widget->setChecked(true);
             }
@@ -163,7 +163,7 @@ void ListMoodGroupWidget::removeMood(const QString& mood) {
         auto existingWidget = qobject_cast<ListMoodPreviewWidget*>(widget);
         Q_ASSERT(existingWidget);
 
-        if (mood.compare(existingWidget->key()) == 0) {
+        if (mood == existingWidget->key()) {
             foundMood = true;
             moodWidget = existingWidget;
         }

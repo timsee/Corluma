@@ -58,16 +58,16 @@ inline QString commTypeToString(ECommType type) {
  * \return ECommType based off of string.
  */
 inline ECommType stringToCommType(const QString& type) {
-    if (type.compare("HTTP") == 0) {
+    if (type == "HTTP") {
         return ECommType::HTTP;
-    } else if (type.compare("UDP") == 0) {
+    } else if (type == "UDP") {
         return ECommType::UDP;
-    } else if (type.compare("Nanoleaf") == 0) {
+    } else if (type == "Nanoleaf") {
         return ECommType::nanoleaf;
-    } else if (type.compare("Hue") == 0) {
+    } else if (type == "Hue") {
         return ECommType::hue;
 #ifndef MOBILE_BUILD
-    } else if (type.compare("Serial") == 0) {
+    } else if (type == "Serial") {
         return ECommType::serial;
 #endif // MOBILE_BUILD
     } else {
@@ -96,11 +96,11 @@ inline QString protocolToString(EProtocolType protocol) {
 
 /// converts a string to a EProtocolType.
 inline EProtocolType stringToProtocol(const QString& protocol) {
-    if (protocol.compare("ArduCor") == 0) {
+    if (protocol == "ArduCor") {
         return EProtocolType::arduCor;
-    } else if (protocol.compare("Nanoleaf") == 0) {
+    } else if (protocol == "Nanoleaf") {
         return EProtocolType::nanoleaf;
-    } else if (protocol.compare("Hue") == 0) {
+    } else if (protocol == "Hue") {
         return EProtocolType::hue;
     } else {
         return EProtocolType::MAX;
@@ -142,14 +142,14 @@ inline QString colorModeToString(EColorMode mode) {
  * \return EColorMode based off of string.
  */
 inline EColorMode stringtoColorMode(const QString& mode) {
-    if (mode.compare("HSV") == 0 || mode.compare("hs") == 0) {
+    if (mode == "HSV" || mode == "hs") {
         return EColorMode::HSV;
-    } else if (mode.compare("CT") == 0 || mode.compare("ct") == 0) {
+    } else if (mode == "CT" || mode == "ct") {
         return EColorMode::CT;
-    } else if (mode.compare("") == 0) {
+    } else if (mode == "") {
         // edge case from phillips hue
         return EColorMode::dimmable;
-    } else if (mode.compare("xy") == 0) {
+    } else if (mode == "xy") {
         return EColorMode::XY;
     } else {
         qDebug() << "WARNING: color mode not recognized" << mode;
@@ -280,27 +280,27 @@ inline QString routineToString(ERoutine routine) {
 
 /// converts a string to an ERoutine object
 inline ERoutine stringToRoutine(QString routine) {
-    if (routine.compare("Single Solid") == 0) {
+    if (routine == "Single Solid") {
         return ERoutine::singleSolid;
-    } else if (routine.compare("Single Blink") == 0) {
+    } else if (routine == "Single Blink") {
         return ERoutine::singleBlink;
-    } else if (routine.compare("Single Glimmer") == 0) {
+    } else if (routine == "Single Glimmer") {
         return ERoutine::singleGlimmer;
-    } else if (routine.compare("Single Wave") == 0) {
+    } else if (routine == "Single Wave") {
         return ERoutine::singleWave;
-    } else if (routine.compare("Single Fade") == 0) {
+    } else if (routine == "Single Fade") {
         return ERoutine::singleFade;
-    } else if (routine.compare("Single Sawtooth Fade") == 0) {
+    } else if (routine == "Single Sawtooth Fade") {
         return ERoutine::singleSawtoothFade;
-    } else if (routine.compare("Multi Fade") == 0) {
+    } else if (routine == "Multi Fade") {
         return ERoutine::multiFade;
-    } else if (routine.compare("Multi Glimmer") == 0) {
+    } else if (routine == "Multi Glimmer") {
         return ERoutine::multiGlimmer;
-    } else if (routine.compare("Multi Random Individual") == 0) {
+    } else if (routine == "Multi Random Individual") {
         return ERoutine::multiRandomIndividual;
-    } else if (routine.compare("Multi Random Solid") == 0) {
+    } else if (routine == "Multi Random Solid") {
         return ERoutine::multiRandomSolid;
-    } else if (routine.compare("Multi Bars") == 0) {
+    } else if (routine == "Multi Bars") {
         return ERoutine::multiBars;
     } else {
         return ERoutine::MAX;
@@ -453,39 +453,39 @@ inline QString paletteToString(EPalette palette) {
 
 /// converts a string to a EPalette
 inline EPalette stringToPalette(QString palette) {
-    if (palette.compare("*Custom*") == 0) {
+    if (palette == "*Custom*") {
         return EPalette::custom;
-    } else if (palette.compare("Water") == 0) {
+    } else if (palette == "Water") {
         return EPalette::water;
-    } else if (palette.compare("Snow") == 0) {
+    } else if (palette == "Snow") {
         return EPalette::snow;
-    } else if (palette.compare("Frozen") == 0) {
+    } else if (palette == "Frozen") {
         return EPalette::frozen;
-    } else if (palette.compare("Cool") == 0) {
+    } else if (palette == "Cool") {
         return EPalette::cool;
-    } else if (palette.compare("Warm") == 0) {
+    } else if (palette == "Warm") {
         return EPalette::warm;
-    } else if (palette.compare("Fire") == 0) {
+    } else if (palette == "Fire") {
         return EPalette::fire;
-    } else if (palette.compare("Evil") == 0) {
+    } else if (palette == "Evil") {
         return EPalette::evil;
-    } else if (palette.compare("Corrosive") == 0) {
+    } else if (palette == "Corrosive") {
         return EPalette::corrosive;
-    } else if (palette.compare("Poison") == 0) {
+    } else if (palette == "Poison") {
         return EPalette::poison;
-    } else if (palette.compare("Rose") == 0) {
+    } else if (palette == "Rose") {
         return EPalette::rose;
-    } else if (palette.compare("PinkGreen") == 0) {
+    } else if (palette == "PinkGreen") {
         return EPalette::pinkGreen;
-    } else if (palette.compare("RedWhiteBlue") == 0) {
+    } else if (palette == "RedWhiteBlue") {
         return EPalette::redWhiteBlue;
-    } else if (palette.compare("RGB") == 0) {
+    } else if (palette == "RGB") {
         return EPalette::RGB;
-    } else if (palette.compare("CMY") == 0) {
+    } else if (palette == "CMY") {
         return EPalette::CMY;
-    } else if (palette.compare("Six") == 0) {
+    } else if (palette == "Six") {
         return EPalette::sixColor;
-    } else if (palette.compare("Seven") == 0) {
+    } else if (palette == "Seven") {
         return EPalette::sevenColor;
     } else {
         return EPalette::unknown;
@@ -600,6 +600,15 @@ enum class ELightHardwareType {
     MAX
 };
 
+namespace std {
+template <>
+struct hash<ELightHardwareType> {
+    size_t operator()(const ELightHardwareType& k) const {
+        return std::hash<std::string>{}(QString::number(int(k)).toStdString());
+    }
+};
+} // namespace std
+
 /// converts a ELightHardwareType to a string
 inline QString hardwareTypeToString(ELightHardwareType hardwareType) {
     switch (hardwareType) {
@@ -647,43 +656,43 @@ inline QString hardwareTypeToString(ELightHardwareType hardwareType) {
 
 /// converts a string to a ELightHardwareType
 inline ELightHardwareType stringToHardwareType(QString hardwareType) {
-    if (hardwareType.compare("Single LED") == 0) {
+    if (hardwareType == "Single LED") {
         return ELightHardwareType::singleLED;
-    } else if (hardwareType.compare("Light Bulb") == 0) {
+    } else if (hardwareType == "Light Bulb") {
         return ELightHardwareType::hueBulb;
-    } else if (hardwareType.compare("Hue Bulb Round") == 0) {
+    } else if (hardwareType == "Hue Bulb Round") {
         return ELightHardwareType::hueBulbRound;
-    } else if (hardwareType.compare("Hue Candle") == 0) {
+    } else if (hardwareType == "Hue Candle") {
         return ELightHardwareType::hueCandle;
-    } else if (hardwareType.compare("Hue Downlight") == 0) {
+    } else if (hardwareType == "Hue Downlight") {
         return ELightHardwareType::hueDownlight;
-    } else if (hardwareType.compare("Hue Spot") == 0) {
+    } else if (hardwareType == "Hue Spot") {
         return ELightHardwareType::hueSpot;
-    } else if (hardwareType.compare("Hue Iris") == 0) {
+    } else if (hardwareType == "Hue Iris") {
         return ELightHardwareType::hueIris;
-    } else if (hardwareType.compare("Hue Storylight") == 0) {
+    } else if (hardwareType == "Hue Storylight") {
         return ELightHardwareType::hueStorylight;
-    } else if (hardwareType.compare("Hue Storylight") == 0) {
+    } else if (hardwareType == "Hue Storylight") {
         return ELightHardwareType::hueBulb;
-    } else if (hardwareType.compare("Hue Go") == 0) {
+    } else if (hardwareType == "Hue Go") {
         return ELightHardwareType::hueGo;
-    } else if (hardwareType.compare("Hue Aura") == 0) {
+    } else if (hardwareType == "Hue Aura") {
         return ELightHardwareType::hueAura;
-    } else if (hardwareType.compare("Hue Lamp") == 0) {
+    } else if (hardwareType == "Hue Lamp") {
         return ELightHardwareType::hueLamp;
-    } else if (hardwareType.compare("Cube") == 0) {
+    } else if (hardwareType == "Cube") {
         return ELightHardwareType::cube;
-    } else if (hardwareType.compare("2D Array") == 0) {
+    } else if (hardwareType == "2D Array") {
         return ELightHardwareType::rectangle;
-    } else if (hardwareType.compare("Light Strip") == 0) {
+    } else if (hardwareType == "Light Strip") {
         return ELightHardwareType::lightStrip;
-    } else if (hardwareType.compare("Ring") == 0) {
+    } else if (hardwareType == "Ring") {
         return ELightHardwareType::ring;
-    } else if (hardwareType.compare("Bloom") == 0) {
+    } else if (hardwareType == "Bloom") {
         return ELightHardwareType::bloom;
-    } else if (hardwareType.compare("Nanoleaf") == 0) {
+    } else if (hardwareType == "Nanoleaf") {
         return ELightHardwareType::nanoleaf;
-    } else if (hardwareType.compare("Connected Group") == 0) {
+    } else if (hardwareType == "Connected Group") {
         return ELightHardwareType::connectedGroup;
     } else {
         return ELightHardwareType::MAX;

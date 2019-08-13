@@ -16,7 +16,8 @@
 #include "cor/presetpalettes.h"
 #include "utils/qt.h"
 
-LeftHandMenu::LeftHandMenu(cor::DeviceList* devices,
+LeftHandMenu::LeftHandMenu(bool alwaysOpen,
+                           cor::DeviceList* devices,
                            CommLayer* comm,
                            cor::DeviceList* lights,
                            GroupData* groups,
@@ -24,7 +25,7 @@ LeftHandMenu::LeftHandMenu(cor::DeviceList* devices,
     : QWidget(parent) {
     mNumberOfShownLights = 0;
     mLastScrollValue = 0;
-    mAlwaysOpen = false;
+    mAlwaysOpen = alwaysOpen;
     mSelectedLights = devices;
     mComm = comm;
     mData = lights;

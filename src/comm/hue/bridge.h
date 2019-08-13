@@ -71,9 +71,9 @@ struct SHueSchedule {
     /// SHueSchedule equal operator
     bool operator==(const SHueSchedule& rhs) const {
         bool result = true;
-        if (name.compare(rhs.name))
+        if (name != rhs.name)
             result = false;
-        if (description.compare(rhs.description))
+        if (description != rhs.description)
             result = false;
         if (index != rhs.index)
             result = false;

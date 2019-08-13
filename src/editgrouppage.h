@@ -77,6 +77,9 @@ signals:
     void pressedClose();
 
 protected:
+    /// called when widget is resized
+    void resizeEvent(QResizeEvent*);
+
     /*!
      * \brief paintEvent used to draw the background of the widget.
      */

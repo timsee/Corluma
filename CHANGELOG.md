@@ -533,5 +533,13 @@ ___
 #### The Settings Polish Update
 * Polished the `ShareUtils` integration.
 * Implemented Nanoleaf idle timeouts. 
-* Made a minor change to `clang-format` settings. 
+* Made a minor change to `clang-format` settings.
+
+### **v0.17.2**
+#### The Miscellaneous Bugs Update
+* Fixed bugs with greyout. 
+* Removed major lag when clicking for more information about a mood.
+* Fixed sizes of certain assets.
+* Fixed miscellaneous bugs. 
+
 

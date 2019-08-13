@@ -372,42 +372,42 @@ void CommHue::handleSuccessPacket(const hue::Bridge& bridge,
                                   const QJsonValue& value) {
     QStringList list = key.split("/");
     if (list.size() > 1) {
-        if (list[1].compare("lights") == 0) {
+        if (list[1] == "lights") {
             if (list.size() > 2) {
                 cor::Light device =
                     mDiscovery->lightFromBridgeIDAndIndex(bridge.id, list[2].toInt());
                 if (fillDevice(device)) {
-                    if (list[3].compare("state") == 0) {
+                    if (list[3] == "state") {
                         QString key = list[4];
                         bool valueChanged = false;
-                        if (key.compare("on") == 0) {
+                        if (key == "on") {
                             device.isOn = value.toBool();
                             valueChanged = true;
-                        } else if (key.compare("sat") == 0) {
+                        } else if (key == "sat") {
                             auto saturation = int(value.toDouble());
                             device.color.setHsv(device.color.hue(),
                                                 saturation,
                                                 device.color.value());
                             valueChanged = true;
-                        } else if (key.compare("hue") == 0) {
+                        } else if (key == "hue") {
                             auto hue = int(value.toDouble());
                             device.color.setHsv(hue / 182,
                                                 device.color.saturation(),
                                                 device.color.value());
                             device.colorMode = EColorMode::HSV;
                             valueChanged = true;
-                        } else if (key.compare("bri") == 0) {
+                        } else if (key == "bri") {
                             auto brightness = int(value.toDouble());
                             device.color.setHsv(device.color.hue(),
                                                 device.color.saturation(),
                                                 brightness);
                             valueChanged = true;
-                        } else if (key.compare("colormode") == 0) {
+                        } else if (key == "colormode") {
                             QString mode = value.toString();
                             EColorMode colorMode = stringtoColorMode(mode);
                             device.colorMode = colorMode;
                             valueChanged = true;
-                        } else if (key.compare("ct") == 0) {
+                        } else if (key == "ct") {
                             auto ct = int(value.toDouble());
                             device.color = cor::colorTemperatureToRGB(ct);
                             device.colorMode = EColorMode::CT;
@@ -417,7 +417,7 @@ void CommHue::handleSuccessPacket(const hue::Bridge& bridge,
                         if (valueChanged) {
                             updateLight(device);
                         }
-                    } else if (list[3].compare("name") == 0) {
+                    } else if (list[3] == "name") {
                         // fill device
                         if (fillDevice(device)) {
                             device.name = value.toString();

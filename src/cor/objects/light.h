@@ -215,7 +215,7 @@ public:
         if (speed != rhs.speed) {
             result = false;
         }
-        if (controller().compare(rhs.controller())) {
+        if (controller() != rhs.controller()) {
             result = false;
         }
 

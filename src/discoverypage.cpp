@@ -92,8 +92,7 @@ DiscoveryPage::DiscoveryPage(QWidget* parent,
             SLOT(widgetConnectionStateChanged(EProtocolType, EConnectionState)));
     mArduCorWidget->setVisible(false);
 
-    /// TODO: this way of including mainwindow is kinda messy...
-    mHueWidget = new DiscoveryHueWidget(mComm, dynamic_cast<MainWindow*>(parent), this);
+    mHueWidget = new DiscoveryHueWidget(mComm, this);
     connect(mHueWidget,
             SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)),
             this,
@@ -401,11 +400,11 @@ void DiscoveryPage::floatingLayoutButtonPressed(const QString& button) {
         emit settingsButtonClicked();
     } else if (button == "Discovery_ArduCor") {
         protocolTypeSelected(EProtocolType::arduCor);
-    } else if (button.compare("Discovery_Hue") == 0) {
+    } else if (button == "Discovery_Hue") {
         protocolTypeSelected(EProtocolType::hue);
-    } else if (button.compare("Discovery_NanoLeaf") == 0) {
+    } else if (button == "Discovery_NanoLeaf") {
         protocolTypeSelected(EProtocolType::nanoleaf);
-    } else if (button.compare("Plus") == 0) {
+    } else if (button == "Plus") {
         bool ok = true;
         bool noValidIP = true;
         while (ok && noValidIP) {

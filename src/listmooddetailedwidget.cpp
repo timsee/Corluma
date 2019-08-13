@@ -19,7 +19,7 @@ ListMoodDetailedWidget::ListMoodDetailedWidget(QWidget* parent, GroupData* group
     : QWidget(parent),
       mKey{0},
       mComm{comm} {
-    mTopLabel = new QLabel("Hollywood", this);
+    mTopLabel = new QLabel("Default", this);
     mTopLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mTopLabel->setAlignment(Qt::AlignBottom);
     mTopLabel->setStyleSheet("font-size:18pt;");
@@ -31,7 +31,7 @@ ListMoodDetailedWidget::ListMoodDetailedWidget(QWidget* parent, GroupData* group
     mOnOffSwitch->setVisible(true);
 
     mSimpleGroupWidget = new ListSimpleGroupWidget(this, cor::EListType::grid);
-    mSimpleGroupWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mSimpleGroupWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mSimpleGroupWidget, SIGNAL(deviceClicked(QString)), this, SLOT(clickedDevice(QString)));
     QScroller::grabGesture(mSimpleGroupWidget->viewport(), QScroller::LeftMouseButtonGesture);
     mSimpleGroupWidget->setStyleSheet("background-color:rgba(33,32,32,255);");
@@ -108,14 +108,26 @@ void ListMoodDetailedWidget::clickedDevice(const QString&) {
 }
 
 void ListMoodDetailedWidget::resize() {
-    QSize size = qobject_cast<QWidget*>(this->parent())->size();
+    QSize size = this->parentWidget()->size();
     this->setGeometry(int(size.width() * 0.125f),
                       int(size.height() * 0.125f),
                       int(size.width() * 0.75f),
                       int(size.height() * 0.75f));
-    mScrollArea->setGeometry(mPlaceholder->geometry());
-    mAdditionalDetailsWidget->setFixedWidth(mScrollArea->viewport()->width());
     moveFloatingLayout();
+    if (mPageKey == "Group_Details") {
+        mScrollArea->setGeometry(mPlaceholder->geometry());
+        mAdditionalDetailsWidget->setFixedWidth(mScrollArea->viewport()->width());
+        mAdditionalDetailsWidget->resize(mPlaceholder->geometry().size());
+    } else if (mPageKey == "Group_Lights") {
+        mSimpleGroupWidget->setGeometry(mPlaceholder->geometry().x(),
+                                        mPlaceholder->geometry().y(),
+                                        this->width() * 0.98,
+                                        this->height());
+        mSimpleGroupWidget->resizeWidgets();
+    } else if (mPageKey == "Group_Edit") {
+        mEditPage->setGeometry(mPlaceholder->geometry());
+        mEditPage->resize();
+    }
 }
 
 void ListMoodDetailedWidget::paintEvent(QPaintEvent*) {
@@ -128,32 +140,32 @@ void ListMoodDetailedWidget::paintEvent(QPaintEvent*) {
 }
 
 void ListMoodDetailedWidget::floatingLayoutButtonPressed(const QString& key) {
-    if (key == "Group_Details") {
-        mScrollArea->setVisible(true);
-        mEditPage->setVisible(false);
-        mSimpleGroupWidget->setVisible(false);
-        mScrollArea->setGeometry(mPlaceholder->geometry());
-        mScrollArea->raise();
-        mEditPage->hide();
-        mEditPage->isOpen(false);
-    } else if (key == "Group_Lights") {
-        mScrollArea->setVisible(false);
-        mEditPage->setVisible(false);
-        mSimpleGroupWidget->setVisible(true);
-        mSimpleGroupWidget->setGeometry(mPlaceholder->geometry());
-        mSimpleGroupWidget->raise();
-        mEditPage->hide();
-        mEditPage->isOpen(false);
-    } else if (key == "Group_Edit") {
-        mScrollArea->setVisible(false);
-        mEditPage->setVisible(true);
-        mSimpleGroupWidget->setVisible(false);
-        mEditPage->setGeometry(mPlaceholder->geometry());
-        mEditPage->raise();
-        mEditPage->show();
-        mEditPage->isOpen(true);
+    if (key != mPageKey) {
+        mPageKey = key;
+        if (key == "Group_Details") {
+            mScrollArea->setVisible(true);
+            mEditPage->setVisible(false);
+            mSimpleGroupWidget->setVisible(false);
+            mScrollArea->raise();
+            mEditPage->hide();
+            mEditPage->isOpen(false);
+        } else if (key == "Group_Lights") {
+            mScrollArea->setVisible(false);
+            mEditPage->setVisible(false);
+            mSimpleGroupWidget->setVisible(true);
+            mSimpleGroupWidget->raise();
+            mEditPage->hide();
+            mEditPage->isOpen(false);
+        } else if (key == "Group_Edit") {
+            mScrollArea->setVisible(false);
+            mEditPage->setVisible(true);
+            mSimpleGroupWidget->setVisible(false);
+            mEditPage->raise();
+            mEditPage->show();
+            mEditPage->isOpen(true);
+        }
+        resize();
     }
-    resize();
 }
 
 void ListMoodDetailedWidget::moveFloatingLayout() {
@@ -171,17 +183,9 @@ void ListMoodDetailedWidget::changedSwitchState(bool state) {
 }
 
 void ListMoodDetailedWidget::resizeEvent(QResizeEvent*) {
-    mSimpleGroupWidget->resizeWidgets();
-    moveFloatingLayout();
-    mSimpleGroupWidget->setGeometry(mPlaceholder->geometry());
-    mSimpleGroupWidget->raise();
-    mScrollArea->setGeometry(mPlaceholder->geometry());
-    mAdditionalDetailsWidget->setFixedWidth(mScrollArea->viewport()->width());
-    mScrollArea->raise();
-    mAdditionalDetailsWidget->resize(mPlaceholder->geometry().size());
-
-    mEditPage->setGeometry(mPlaceholder->geometry());
-    mEditPage->resize();
+    if (this->isVisible()) {
+        resize();
+    }
 }
 
 void ListMoodDetailedWidget::pushIn() {
@@ -202,15 +206,16 @@ void ListMoodDetailedWidget::pushIn() {
                     finishPoint);
 
     mFloatingMenu->setVisible(true);
-    mFloatingMenu->raise();
     this->raise();
     this->setVisible(true);
+    mFloatingMenu->raise();
     mSimpleGroupWidget->resizeWidgets();
 }
 
 void ListMoodDetailedWidget::pushOut() {
     mFloatingMenu->setVisible(false);
     this->isOpen(false);
+    mPageKey = "";
 
     moveWidget(this,
                QPoint(int(this->parentWidget()->width() * 0.125f),

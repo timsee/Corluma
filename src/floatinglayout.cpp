@@ -115,17 +115,17 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
         light.color = QColor(255, 0, 0);
 
         bool foundMatch = false;
-        if (mNames[i].compare("RGB") == 0) {
+        if (mNames[i] == "RGB") {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(true);
             mButtons[i]->setMinimumSize(buttonSize());
-        } else if (mNames[i].compare("HSV") == 0) {
+        } else if (mNames[i] == "HSV") {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(true);
             mButtons[i]->setMinimumSize(buttonSize());
-        } else if (mNames[i].compare("Preset") == 0) {
+        } else if (mNames[i] == "Preset") {
             foundMatch = true;
             light.routine = ERoutine::multiFade;
             light.palette = mPalettes.palette(EPalette::poison);
@@ -134,12 +134,12 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             auto lightsButton = new cor::Button(this, routineObject);
             mButtons[i] = static_cast<QPushButton*>(lightsButton);
             Q_ASSERT(mButtons[i]);
-        } else if (mNames[i].compare("Temperature") == 0) {
+        } else if (mNames[i] == "Temperature") {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(true);
             mButtons[i]->setMinimumSize(buttonSize());
-        } else if (mNames[i].compare("Routine") == 0) {
+        } else if (mNames[i] == "Routine") {
             foundMatch = true;
             light.routine = ERoutine::singleGlimmer;
             light.color = QColor(0, 255, 0);
@@ -147,26 +147,26 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             auto lightsButton = new cor::Button(this, routineObject);
             mButtons[i] = static_cast<QPushButton*>(lightsButton);
             Q_ASSERT(mButtons[i]);
-        } else if (mNames[i].compare("Settings") == 0) {
+        } else if (mNames[i] == "Settings") {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setMinimumSize(buttonSize());
-        } else if (mNames[i].compare("Group_Lights") == 0) {
-            foundMatch = true;
-            mButtons[i] = new QPushButton(this);
-            mButtons[i]->setCheckable(true);
-            mButtons[i]->setMinimumSize(buttonSize());
-        } else if (mNames[i].compare("Group_Details") == 0) {
+        } else if (mNames[i] == "Group_Lights") {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(true);
             mButtons[i]->setMinimumSize(buttonSize());
-        } else if (mNames[i].compare("Group_Edit") == 0) {
+        } else if (mNames[i] == "Group_Details") {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(true);
             mButtons[i]->setMinimumSize(buttonSize());
-        } else if (mNames[i].compare("Discovery_ArduCor") == 0) {
+        } else if (mNames[i] == "Group_Edit") {
+            foundMatch = true;
+            mButtons[i] = new QPushButton(this);
+            mButtons[i]->setCheckable(true);
+            mButtons[i]->setMinimumSize(buttonSize());
+        } else if (mNames[i] == "Discovery_ArduCor") {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(true);
@@ -174,7 +174,7 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             mButtons[i]->setIconSize(QSize(int(mButtons[i]->size().height() * 0.9f),
                                            int(mButtons[i]->size().height() * 0.9f)));
             mButtons[i]->setText("ArduCor");
-        } else if (mNames[i].compare("Discovery_Hue") == 0) {
+        } else if (mNames[i] == "Discovery_Hue") {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(true);
@@ -182,7 +182,7 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             mButtons[i]->setIconSize(QSize(int(mButtons[i]->size().height() * 0.9f),
                                            int(mButtons[i]->size().height() * 0.9f)));
             mButtons[i]->setText("Hue");
-        } else if (mNames[i].compare("Discovery_NanoLeaf") == 0) {
+        } else if (mNames[i] == "Discovery_NanoLeaf") {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(true);
@@ -190,27 +190,27 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             mButtons[i]->setIconSize(QSize(int(mButtons[i]->size().height() * 0.9f),
                                            int(mButtons[i]->size().height() * 0.9f)));
             mButtons[i]->setText("NanoLeaf");
-        } else if (mNames[i].compare("Discovery") == 0) {
+        } else if (mNames[i] == "Discovery") {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(false);
             mButtons[i]->setMinimumSize(buttonSize());
-        } else if (mNames[i].compare("Select_Devices") == 0) {
+        } else if (mNames[i] == "Select_Devices") {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(true);
             mButtons[i]->setMinimumSize(buttonSize());
-        } else if (mNames[i].compare("HueLightSearch") == 0) {
+        } else if (mNames[i] == "HueLightSearch") {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(true);
             mButtons[i]->setMinimumSize(buttonSize());
-        } else if (mNames[i].compare("New_Group") == 0) {
+        } else if (mNames[i] == "New_Group") {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(false);
             mButtons[i]->setMinimumSize(buttonSize());
-        } else if (mNames[i].compare("Plus") == 0) {
+        } else if (mNames[i] == "Plus") {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(false);
@@ -233,29 +233,29 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
 
             if (!isALightsButton(i)) {
                 // resize icon
-                if (mNames[i].compare("RGB") == 0) {
+                if (mNames[i] == "RGB") {
                     cor::resizeIcon(mButtons[i], ":/images/wheels/color_wheel_hsv.png");
-                } else if (mNames[i].compare("Temperature") == 0) {
+                } else if (mNames[i] == "Temperature") {
                     cor::resizeIcon(mButtons[i], ":/images/wheels/color_wheel_ct.png");
-                } else if (mNames[i].compare("HSV") == 0) {
+                } else if (mNames[i] == "HSV") {
                     cor::resizeIcon(mButtons[i], ":/images/wheels/color_wheel_hs.png");
-                } else if (mNames[i].compare("Settings") == 0) {
+                } else if (mNames[i] == "Settings") {
                     cor::resizeIcon(mButtons[i], ":/images/settingsgear.png");
-                } else if (mNames[i].compare("Discovery") == 0) {
+                } else if (mNames[i] == "Discovery") {
                     cor::resizeIcon(mButtons[i], ":/images/wifi.png");
-                } else if (mNames[i].compare("Select_Devices") == 0) {
+                } else if (mNames[i] == "Select_Devices") {
                     cor::resizeIcon(mButtons[i], ":/mages/wheels/color_wheel_hsv.png");
-                } else if (mNames[i].compare("New_Group") == 0) {
+                } else if (mNames[i] == "New_Group") {
                     cor::resizeIcon(mButtons[i], ":/images/plusIcon.png");
-                } else if (mNames[i].compare("Plus") == 0) {
+                } else if (mNames[i] == "Plus") {
                     cor::resizeIcon(mButtons[i], ":/images/plusIcon.png");
-                } else if (mNames[i].compare("HueLightSearch") == 0) {
+                } else if (mNames[i] == "HueLightSearch") {
                     cor::resizeIcon(mButtons[i], ":/images/plusIcon.png");
-                } else if (mNames[i].compare("Group_Lights") == 0) {
+                } else if (mNames[i] == "Group_Lights") {
                     cor::resizeIcon(mButtons[i], ":/images/connectionIcon.png");
-                } else if (mNames[i].compare("Group_Details") == 0) {
+                } else if (mNames[i] == "Group_Details") {
                     cor::resizeIcon(mButtons[i], ":/images/wheels/color_wheel_hsv.png");
-                } else if (mNames[i].compare("Group_Edit") == 0) {
+                } else if (mNames[i] == "Group_Edit") {
                     cor::resizeIcon(mButtons[i], ":/images/editIcon.png");
                 }
             }

@@ -93,7 +93,7 @@ void MoodPage::makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
 
     for (const auto& room : roomsWithMoods) {
         QString roomName = QString::fromStdString(room.first);
-        if (roomName.compare("Miscellaneous") != 0) {
+        if (roomName != "Miscellaneous") {
             // qDebug() << " room name " << roomName;
             bool roomFound = false;
             for (auto item : mMoodsListWidget->widgets()) {
@@ -114,11 +114,11 @@ void MoodPage::makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
     // TODO: remove the miscellaneous edge case by actually sorting
     for (const auto& room : roomsWithMoods) {
         QString roomName = QString::fromStdString(room.first);
-        if (roomName.compare("Miscellaneous") == 0) {
+        if (roomName == "Miscellaneous") {
             // qDebug() << " room name " << roomName;
             bool roomFound = false;
             for (auto item : mMoodsListWidget->widgets()) {
-                if (item->key().compare(roomName) == 0) {
+                if (item->key() == roomName) {
                     roomFound = true;
                     auto moodWidget = qobject_cast<ListMoodGroupWidget*>(item);
                     Q_ASSERT(moodWidget);

@@ -187,11 +187,11 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
         }
 
         if (dataDevice.routine == ERoutine::singleSolid) {
-            if (leafController.effect.compare("*Static*") == 0) {
+            if (leafController.effect == "*Static*") {
                 routineInSync = false;
             }
         } else {
-            if (leafController.effect.compare("*Dynamic*") != 0) {
+            if (leafController.effect != "*Dynamic*") {
                 routineInSync = false;
             }
         }

@@ -147,7 +147,12 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     // Setup Left Hand Menu
     // --------------
 
-    mLeftHandMenu = new LeftHandMenu(mData, mComm, mData, mGroups, this);
+    float sizeRatio = this->size().width() / float(this->size().height());
+    bool alwaysOpen = false;
+    if (sizeRatio > 1.0f) {
+        alwaysOpen = true;
+    }
+    mLeftHandMenu = new LeftHandMenu(alwaysOpen, mData, mComm, mData, mGroups, this);
     mLeftHandMenu->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mLeftHandMenu,
             SIGNAL(pressedButton(EPage)),
@@ -341,9 +346,11 @@ void MainWindow::changeEvent(QEvent* event) {
 
 void MainWindow::pushOutDiscovery() {
     if (mFirstLoad) {
-        mMainViewport->pageChanged(EPage::colorPage);
         mTopMenu->showMenu();
         mFirstLoad = false;
+        mMainViewport->pageChanged(EPage::colorPage);
+        mLeftHandMenu->pushIn();
+        mTopMenu->showSingleColorStateWidget(true);
     }
 
     if (mLeftHandMenu->alwaysOpen()) {
@@ -408,17 +415,18 @@ void MainWindow::closeDiscoveryWithoutTransition() {
     mDiscoveryPage->hide();
     mDiscoveryPage->isOpen(false);
     mMainViewport->pageChanged(EPage::colorPage);
+    mLeftHandMenu->pushIn();
 }
 
 void MainWindow::editButtonClicked(bool isMood) {
-    greyOut(true);
+    mGreyOut->greyOut(true);
     mEditPage->resize();
     mEditPage->pushIn();
 
     std::list<cor::Light> groupDevices;
     std::list<QString> groupDeviceIDs;
 
-    QString name("");
+    QString name;
     bool isRoom = false;
     if (isMood) {
         auto result = mGroups->moods().item(
@@ -439,7 +447,7 @@ void MainWindow::moodSelected(std::uint64_t key) {
 }
 
 void MainWindow::detailedMoodDisplay(std::uint64_t key) {
-    greyOut(true);
+    mGreyOut->greyOut(true);
 
     const auto& moodResult = mGroups->moods().item(QString::number(key).toStdString());
     cor::Mood detailedMood = moodResult.first;
@@ -460,20 +468,16 @@ void MainWindow::detailedMoodDisplay(std::uint64_t key) {
 }
 
 void MainWindow::hueInfoWidgetClicked() {
-    greyOut(true);
+    mGreyOut->greyOut(true);
 
     mLightInfoWidget->updateHues(mComm->hue()->discovery()->lights());
     mLightInfoWidget->updateControllers(mComm->nanoleaf()->controllers().itemList());
     mLightInfoWidget->updateLights(mComm->arducor()->lights());
     mLightInfoWidget->pushIn();
-
-    if (mGreyOut->isVisible()) {
-        mGreyOut->resize();
-    }
 }
 
 void MainWindow::editClosePressed() {
-    greyOut(false);
+    mGreyOut->greyOut(false);
     mEditPage->pushOut();
 
     // TODO: update lefthandmenu
@@ -482,13 +486,13 @@ void MainWindow::editClosePressed() {
 
 
 void MainWindow::detailedClosePressed() {
-    greyOut(false);
+    mGreyOut->greyOut(false);
     mMoodDetailedWidget->pushOut();
 }
 
 
 void MainWindow::lightInfoClosePressed() {
-    greyOut(false);
+    mGreyOut->greyOut(false);
     mLightInfoWidget->pushOut();
 }
 
@@ -556,36 +560,6 @@ void MainWindow::deleteLight(const QString& key) {
         qDebug() << "light not found";
     }
 }
-
-void MainWindow::greyOut(bool show) {
-    mGreyOut->resize();
-    if (show) {
-        mGreyOut->raise();
-        mGreyOut->setVisible(true);
-        auto fadeOutEffect = new QGraphicsOpacityEffect(mGreyOut);
-        mGreyOut->setGraphicsEffect(fadeOutEffect);
-        auto fadeOutAnimation = new QPropertyAnimation(fadeOutEffect, "opacity");
-        fadeOutAnimation->setDuration(TRANSITION_TIME_MSEC);
-        fadeOutAnimation->setStartValue(0.0f);
-        fadeOutAnimation->setEndValue(1.0f);
-        fadeOutAnimation->start();
-    } else {
-        auto fadeInEffect = new QGraphicsOpacityEffect(mGreyOut);
-        mGreyOut->setGraphicsEffect(fadeInEffect);
-        auto fadeInAnimation = new QPropertyAnimation(fadeInEffect, "opacity");
-        fadeInAnimation->setDuration(TRANSITION_TIME_MSEC);
-        fadeInAnimation->setStartValue(1.0f);
-        fadeInAnimation->setEndValue(0.0f);
-        fadeInAnimation->start();
-        connect(fadeInAnimation, SIGNAL(finished()), this, SLOT(greyOutFadeComplete()));
-    }
-}
-
-
-void MainWindow::greyOutFadeComplete() {
-    mGreyOut->setVisible(false);
-}
-
 
 void MainWindow::resize() {
     handleLandscapeOrPortrait();
@@ -691,11 +665,7 @@ void MainWindow::resize() {
 }
 
 void MainWindow::handleLandscapeOrPortrait() {
-    float sizeRatio = this->size().width() / float(this->size().height());
-    bool spaceForMenu = this->size().width() > (mLeftHandMenu->width() + 400);
-    if (spaceForMenu && sizeRatio > 1.0f) {
-        mLeftHandMenu->alwaysOpen(true);
-        mLeftHandMenu->pushIn();
+    if (mLeftHandMenu->alwaysOpen()) {
         if (mMainViewport->currentPage() == EPage::colorPage) {
             mTopMenu->showSingleColorStateWidget(true);
         }
@@ -704,8 +674,6 @@ void MainWindow::handleLandscapeOrPortrait() {
             mTopMenu->hideMenuButton(true);
         }
     } else {
-        mLeftHandMenu->alwaysOpen(false);
-        mLeftHandMenu->pushOut();
         if (mPagesLoaded) {
             mTopMenu->pushInTapToSelectButton();
             mTopMenu->hideMenuButton(false);

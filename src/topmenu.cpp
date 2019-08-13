@@ -484,7 +484,7 @@ void TopMenu::showFloatingLayout(EPage newPage) {
                 if (mSingleRoutineFloatingLayout->geometry().x()
                     == this->parentWidget()->geometry().width()
                            - mSingleRoutineFloatingLayout->width()) {
-                    auto parentSize = qobject_cast<QWidget*>(this->parent())->size();
+                    auto parentSize = this->parentWidget()->size();
                     cor::moveWidget(
                         mSingleRoutineFloatingLayout,
                         QPoint(parentSize.width() - mSingleRoutineFloatingLayout->width(),

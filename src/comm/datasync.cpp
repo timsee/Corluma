@@ -22,7 +22,7 @@ bool DataSync::checkThrottle(const QString& controller, ECommType type) {
     bool foundThrottle = false;
     bool throttlePasses = false;
     for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
-        if ((throttle->controller.compare(controller) == 0) && (int(throttle->type) == int(type))) {
+        if ((throttle->controller == controller) && (int(throttle->type) == int(type))) {
             foundThrottle = true;
 
             int throttleInterval = 0;
@@ -68,7 +68,7 @@ bool DataSync::checkThrottle(const QString& controller, ECommType type) {
 
 void DataSync::resetThrottle(const QString& controller, ECommType type) {
     for (auto&& throttle = mThrottleList.begin(); throttle != mThrottleList.end(); ++throttle) {
-        if ((throttle->controller.compare(controller) == 0) && (int(throttle->type) == int(type))) {
+        if ((throttle->controller == controller) && (int(throttle->type) == int(type))) {
             // qDebug() << "passed throttle" << controller << throttle->time.elapsed();
             throttle->time.restart();
         }

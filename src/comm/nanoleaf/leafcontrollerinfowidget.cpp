@@ -66,11 +66,11 @@ LeafControllerInfoWidget::LeafControllerInfoWidget(nano::LeafController controll
 void LeafControllerInfoWidget::updateController(nano::LeafController controller) {
     // many fields such as the mac address and the type of light won't update, only check the fields
     // that do
-    if (controller.name.compare(mController.name) != 0) {
+    if (controller.name != mController.name) {
         mName->setText(controller.name);
     }
 
-    if (controller.serialNumber.compare(mController.serialNumber) != 0) {
+    if (controller.serialNumber != mController.serialNumber) {
         mSerialNumber->setText("<b>Serial:</b>  " + controller.serialNumber);
     }
 

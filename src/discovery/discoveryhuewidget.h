@@ -12,8 +12,6 @@
 #include "editablefieldwidget.h"
 #include "greyoutoverlay.h"
 
-class MainWindow;
-
 /*!
  * \copyright
  * Copyright (C) 2015 - 2019.
@@ -34,7 +32,7 @@ public:
      *
      * \param parent
      */
-    explicit DiscoveryHueWidget(CommLayer* comm, MainWindow* mainWindow, QWidget* parent);
+    explicit DiscoveryHueWidget(CommLayer* comm, QWidget* parent);
 
     /// See DiscoveryWidget.h
     void handleDiscovery(bool isActive);
@@ -76,6 +74,9 @@ private slots:
     /// handles when a bridge is deleted from a BridgeInfoWidget
     void deleteBridgeFromAppData(hue::Bridge);
 
+    /// handles when the greyout is clicked
+    void greyOutClicked();
+
 protected:
     /// called when the widget resizes
     virtual void resizeEvent(QResizeEvent*);
@@ -112,8 +113,8 @@ private:
     /// scaling value for size of pngs
     float mScale;
 
-    /// pointer to the main window
-    MainWindow* mMainWindow;
+    /// widget for greying out widgets in the background
+    GreyOutOverlay* mGreyout;
 
     /*!
      * \brief updateHueStatusIcon update the main image for the hue discovery page which

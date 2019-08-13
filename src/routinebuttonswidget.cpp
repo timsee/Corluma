@@ -164,7 +164,7 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup,
 
 void RoutineButtonsWidget::highlightRoutineButton(const QString& label) {
     for (uint i = 0; i < mRoutineButtons.size(); i++) {
-        if (mLabels[i]->text().compare(label) == 0) {
+        if (mLabels[i]->text() == label) {
             mRoutineButtons[i]->setChecked(true);
         } else {
             mRoutineButtons[i]->setChecked(false);

@@ -13,7 +13,7 @@ namespace cor {
 
 struct subWidgetCompare {
     bool operator()(cor::ListItemWidget* lhs, cor::ListItemWidget* rhs) const {
-        return (lhs->key().compare(rhs->key()) < 0);
+        return (lhs->key() < rhs->key());
     }
 };
 

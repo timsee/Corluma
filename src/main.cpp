@@ -164,7 +164,7 @@ int main(int argc, char* argv[]) {
     QSize minimumSize(size);
 #else
     QSize startingSize(700, 600);
-    QSize minimumSize(400, 600);
+    QSize minimumSize(700, 600);
 #endif
 
     MainWindow window(nullptr, startingSize, minimumSize);

@@ -97,13 +97,13 @@ bool DiscoveryNanoLeafWidget::doesNanoLeafExist(const QString& controller) {
     bool deviceFound = false;
     for (const auto& discoveredController :
          mComm->nanoleaf()->discovery()->foundControllers().itemVector()) {
-        if (discoveredController.name.compare(controller) == 0) {
+        if (discoveredController.name == controller) {
             deviceFound = true;
         }
     }
 
     for (auto&& unDiscoveredController : mComm->nanoleaf()->discovery()->notFoundControllers()) {
-        if (unDiscoveredController.name.compare(controller) == 0) {
+        if (unDiscoveredController.name == controller) {
             deviceFound = true;
         }
     }

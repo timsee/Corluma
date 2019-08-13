@@ -179,7 +179,7 @@ bool SearchWidget::addToSearchList(const QString& name) {
     bool found = false;
     for (int i = 0; i < mDiscoveringListWidget->count(); ++i) {
         QListWidgetItem* item = mDiscoveringListWidget->item(i);
-        if (item->text().compare(name) == 0) {
+        if (item->text() == name) {
             found = true;
         }
     }
@@ -195,7 +195,7 @@ bool SearchWidget::addToConnectedList(const QString& name) {
     // look for it in discovering list
     for (int i = 0; i < mDiscoveringListWidget->count(); ++i) {
         QListWidgetItem* item = mDiscoveringListWidget->item(i);
-        if (item->text().compare(name) == 0) {
+        if (item->text() == name) {
             mDiscoveringListWidget->takeItem(i);
         }
     }
@@ -203,7 +203,7 @@ bool SearchWidget::addToConnectedList(const QString& name) {
     bool foundInConnectedList = false;
     for (int i = 0; i < mConnectedListWidget->count(); ++i) {
         QListWidgetItem* item = mConnectedListWidget->item(i);
-        if (item->text().compare(name) == 0) {
+        if (item->text() == name) {
             foundInConnectedList = true;
         }
     }
@@ -219,14 +219,14 @@ bool SearchWidget::addToConnectedList(const QString& name) {
 void SearchWidget::removeKey(const QString& key) {
     for (int i = 0; i < mDiscoveringListWidget->count(); ++i) {
         QListWidgetItem* item = mDiscoveringListWidget->item(i);
-        if (item->text().compare(key) == 0) {
+        if (item->text() == key) {
             mDiscoveringListWidget->takeItem(i);
         }
     }
 
     for (int i = 0; i < mConnectedListWidget->count(); ++i) {
         QListWidgetItem* item = mConnectedListWidget->item(i);
-        if (item->text().compare(key) == 0) {
+        if (item->text() == key) {
             mConnectedListWidget->takeItem(i);
         }
     }

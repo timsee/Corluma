@@ -23,7 +23,7 @@ void DiscoveryWidget::fillList(QListWidget* list, std::list<QString>& connection
         bool connectionFound = false;
         for (int i = 0; i < list->count(); ++i) {
             QListWidgetItem* item = list->item(i);
-            if (item->text().compare(connection) == 0) {
+            if (item->text() == connection) {
                 connectionFound = true;
             }
         }

@@ -451,7 +451,7 @@ void CommNanoleaf::parseCommandRequestUpdatePacket(const nano::LeafController& c
         QString animationType = requestPacket["animType"].toString();
         QJsonArray receivedPalette = requestPacket["palette"].toArray();
         ERoutine routine = ERoutine::MAX;
-        if (animationType.compare("highlight") == 0) {
+        if (animationType == "highlight") {
             QJsonObject brightPacket = requestPacket["brightnessRange"].toObject();
             int brightMin = int(brightPacket["minValue"].toDouble());
             if (brightMin == 2) {
@@ -459,18 +459,18 @@ void CommNanoleaf::parseCommandRequestUpdatePacket(const nano::LeafController& c
             } else {
                 routine = ERoutine::multiGlimmer;
             }
-        } else if (animationType.compare("fade") == 0) {
+        } else if (animationType == "fade") {
             routine = ERoutine::multiFade;
-        } else if (animationType.compare("wheel") == 0) {
+        } else if (animationType == "wheel") {
             QString direction = requestPacket["direction"].toString();
-            if (direction.compare("right") == 0) {
+            if (direction == "right") {
                 routine = ERoutine::singleWave;
             } else {
                 routine = ERoutine::multiBars;
             }
-        } else if (animationType.compare("random") == 0) {
+        } else if (animationType == "random") {
             routine = ERoutine::multiRandomIndividual;
-        } else if (animationType.compare("flow") == 0) {
+        } else if (animationType == "flow") {
             if (requestPacket["flowFactor"].isDouble()) {
                 double flowFactor = requestPacket["flowFactor"].toDouble();
                 if (flowFactor < 2) {
@@ -752,7 +752,7 @@ void CommNanoleaf::parseStateUpdatePacket(nano::LeafController& controller,
                         light.palette.brightness(uint32_t(brightObject["value"].toDouble()));
                     }
                 }
-            } else if (colorMode.compare("ct") == 0) {
+            } else if (colorMode == "ct") {
                 light.color = cor::colorTemperatureToRGB(colorTemp);
             }
 

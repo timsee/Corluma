@@ -73,7 +73,7 @@ public:
 
     bool operator==(const Controller& rhs) const {
         bool result = true;
-        if (name.compare(rhs.name)) {
+        if (name != rhs.name) {
             result = false;
         }
         if (maxHardwareIndex != rhs.maxHardwareIndex) {

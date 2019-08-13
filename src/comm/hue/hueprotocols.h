@@ -3,6 +3,7 @@
 
 #include <list>
 
+#include "cor/dictionary.h"
 #include "cor/objects/light.h"
 #include "cor/protocols.h"
 
@@ -73,13 +74,13 @@ namespace cor {
  * type.
  */
 inline EHueType stringToHueType(const QString& string) {
-    if (string.compare("Extended color light") == 0) {
+    if (string == "Extended color light") {
         return EHueType::extended;
-    } else if (string.compare("Color temperature light") == 0) {
+    } else if (string == "Color temperature light") {
         return EHueType::ambient;
-    } else if (string.compare("Color light") == 0) {
+    } else if (string == "Color light") {
         return EHueType::color;
-    } else if (string.compare("Dimmable light") == 0) {
+    } else if (string == "Dimmable light") {
         return EHueType::white;
     } else {
         qDebug() << "WARNING: Hue type not recognized" << string;
@@ -110,47 +111,48 @@ inline QString hueTypeToString(EHueType type) {
 
 namespace hue {
 
+static std::vector<std::pair<std::string, ELightHardwareType>> vect = {
+    {"LCT001", ELightHardwareType::hueBulb},       {"LCT007", ELightHardwareType::hueBulb},
+    {"LCT010", ELightHardwareType::hueBulb},       {"LCT014", ELightHardwareType::hueBulb},
+    {"LCT015", ELightHardwareType::hueBulb},       {"LTW010", ELightHardwareType::hueBulb},
+    {"LTW001", ELightHardwareType::hueBulb},       {"LTW004", ELightHardwareType::hueBulb},
+    {"LTW015", ELightHardwareType::hueBulb},       {"LWB004", ELightHardwareType::hueBulb},
+    {"LWB006", ELightHardwareType::hueBulb},       {"LCT016", ELightHardwareType::hueBulb},
+    {"LLC011", ELightHardwareType::bloom},         {"LLC012", ELightHardwareType::bloom},
+    {"LLC005", ELightHardwareType::bloom},         {"LLC007", ELightHardwareType::bloom},
+    {"LWB010", ELightHardwareType::hueBulbRound},  {"LWB014", ELightHardwareType::hueBulbRound},
+    {"LCT012", ELightHardwareType::hueCandle},     {"LTW012", ELightHardwareType::hueCandle},
+    {"LCT011", ELightHardwareType::hueDownlight},  {"LTW011", ELightHardwareType::hueDownlight},
+    {"LCT003", ELightHardwareType::hueSpot},       {"LTW013", ELightHardwareType::hueSpot},
+    {"LLC006", ELightHardwareType::hueIris},       {"LLC010", ELightHardwareType::hueIris},
+    {"LLC013", ELightHardwareType::hueStorylight}, {"LLC014", ELightHardwareType::hueAura},
+    {"HBL001", ELightHardwareType::hueLamp},       {"HBL002", ELightHardwareType::hueLamp},
+    {"HBL003", ELightHardwareType::hueLamp},       {"HIL001", ELightHardwareType::hueLamp},
+    {"HIL002", ELightHardwareType::hueLamp},       {"HEL001", ELightHardwareType::hueLamp},
+    {"HEL002", ELightHardwareType::hueLamp},       {"HML001", ELightHardwareType::hueLamp},
+    {"HML002", ELightHardwareType::hueLamp},       {"HML003", ELightHardwareType::hueLamp},
+    {"HML004", ELightHardwareType::hueLamp},       {"HML005", ELightHardwareType::hueLamp},
+    {"HML006", ELightHardwareType::hueLamp},       {"LTP001", ELightHardwareType::hueLamp},
+    {"LTP002", ELightHardwareType::hueLamp},       {"LTP003", ELightHardwareType::hueLamp},
+    {"LTP004", ELightHardwareType::hueLamp},       {"LTP005", ELightHardwareType::hueLamp},
+    {"LTD003", ELightHardwareType::hueLamp},       {"LDF002", ELightHardwareType::hueLamp},
+    {"LTF001", ELightHardwareType::hueLamp},       {"LTF002", ELightHardwareType::hueLamp},
+    {"LTC001", ELightHardwareType::hueLamp},       {"LTC002", ELightHardwareType::hueLamp},
+    {"LTC003", ELightHardwareType::hueLamp},       {"LTC004", ELightHardwareType::hueLamp},
+    {"LTD001", ELightHardwareType::hueLamp},       {"LTD002", ELightHardwareType::hueLamp},
+    {"LDF001", ELightHardwareType::hueLamp},       {"LDD001", ELightHardwareType::hueLamp},
+    {"LFF001", ELightHardwareType::hueLamp},       {"LDD001", ELightHardwareType::hueLamp},
+    {"LTT001", ELightHardwareType::hueLamp},       {"LDT001", ELightHardwareType::hueLamp},
+    {"MWM001", ELightHardwareType::hueLamp},       {"LST002", ELightHardwareType::lightStrip},
+    {"LST001", ELightHardwareType::lightStrip},    {"LLC020", ELightHardwareType::hueGo}};
+
+static cor::Dictionary<ELightHardwareType> modelDict = cor::Dictionary<ELightHardwareType>(vect);
+
 /// converts model from phillips bridge to corluma hardware type
 inline ELightHardwareType modelToHardwareType(const QString& modelID) {
-    if (modelID == "LCT001" || modelID == "LCT007" || modelID == "LCT010" || modelID == "LCT014"
-        || modelID == "LCT015" || modelID == "LTW010" || modelID == "LTW001" || modelID == "LTW004"
-        || modelID == "LTW015" || modelID == "LWB004" || modelID == "LWB006"
-        || modelID == "LCT016") {
-        return ELightHardwareType::hueBulb;
-    } else if (modelID == "LLC011" || modelID == "LLC012" || modelID == "LLC005"
-               || modelID == "LLC007") {
-        return ELightHardwareType::bloom;
-    } else if (modelID == "LWB010" || modelID == "LWB014") {
-        return ELightHardwareType::hueBulbRound;
-    } else if (modelID == "LCT012" || modelID == "LTW012") {
-        return ELightHardwareType::hueCandle;
-    } else if (modelID == "LCT011" || modelID == "LTW011") {
-        return ELightHardwareType::hueDownlight;
-    } else if (modelID == "LCT003" || modelID == "LTW013") {
-        return ELightHardwareType::hueSpot;
-    } else if (modelID == "LLC006" || modelID == "LLC010") {
-        return ELightHardwareType::hueIris;
-    } else if (modelID == "LLC013") {
-        return ELightHardwareType::hueStorylight;
-    } else if (modelID == "LLC014") {
-        return ELightHardwareType::hueAura;
-    } else if (modelID == "HBL001" || modelID == "HBL002" || modelID == "HBL003"
-               || modelID == "HIL001" || modelID == "HIL002" || modelID == "HEL001"
-               || modelID == "HEL002" || modelID == "HML001" || modelID == "HML002"
-               || modelID == "HML003" || modelID == "HML004" || modelID == "HML005"
-               || modelID == "HML006" || modelID == "LTP001" || modelID == "LTP002"
-               || modelID == "LTP003" || modelID == "LTP004" || modelID == "LTP005"
-               || modelID == "LTD003" || modelID == "LDF002" || modelID == "LTF001"
-               || modelID == "LTF002" || modelID == "LTC001" || modelID == "LTC002"
-               || modelID == "LTC003" || modelID == "LTC004" || modelID == "LTD001"
-               || modelID == "LTD002" || modelID == "LDF001" || modelID == "LDD001"
-               || modelID == "LFF001" || modelID == "LDD001" || modelID == "LTT001"
-               || modelID == "LDT001" || modelID == "MWM001") {
-        return ELightHardwareType::hueLamp;
-    } else if (modelID == "LST001" || modelID == "LST002") {
-        return ELightHardwareType::lightStrip;
-    } else if (modelID == "LLC020") {
-        return ELightHardwareType::hueGo;
+    auto itemResult = modelDict.item(modelID.toStdString());
+    if (itemResult.second) {
+        return itemResult.first;
     } else {
         return ELightHardwareType::hueBulb;
     }

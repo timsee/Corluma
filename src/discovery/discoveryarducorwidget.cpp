@@ -106,7 +106,7 @@ bool DiscoveryArduCorWidget::doesYunControllerExistAlready(const QString& name) 
 
     for (const auto& undiscoveredController :
          mComm->arducor()->discovery()->undiscoveredControllers()) {
-        if (undiscoveredController.name.compare(name) == 0) {
+        if (undiscoveredController.name == name) {
             deviceFound = true;
         }
     }

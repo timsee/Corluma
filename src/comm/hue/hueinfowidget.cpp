@@ -64,11 +64,11 @@ HueInfoWidget::HueInfoWidget(HueLight light, QWidget* parent)
 void HueInfoWidget::updateLight(HueLight light) {
     // many fields such as the mac address and the type of light won't update, only check the fields
     // that do
-    if (light.name.compare(mLight.name) != 0) {
+    if (light.name != mLight.name) {
         mName->setText(light.name);
     }
 
-    if (light.softwareVersion.compare(mLight.softwareVersion) != 0) {
+    if (light.softwareVersion != mLight.softwareVersion) {
         mSoftwareVersion->setText("<b>Software:</b>  " + light.softwareVersion);
     }
 

@@ -260,7 +260,7 @@ nano::LeafController LeafDiscovery::findControllerByIP(const QString& IP) {
 
             // check in not found for the same auth token, if it exists take its info and add it in
             for (auto notFoundController : mNotFoundControllers) {
-                if (auth.compare(notFoundController.authToken) == 0) {
+                if (auth == notFoundController.authToken) {
                     controller.hardwareName = notFoundController.hardwareName;
                     controller.serialNumber = notFoundController.serialNumber;
                     controller.name = notFoundController.name;

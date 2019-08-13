@@ -27,7 +27,8 @@ class LeftHandMenu : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    LeftHandMenu(cor::DeviceList* selectedLights,
+    LeftHandMenu(bool alwaysOpen,
+                 cor::DeviceList* selectedLights,
                  CommLayer* comm,
                  cor::DeviceList* lights,
                  GroupData* groups,
@@ -47,9 +48,6 @@ public:
 
     /// true if menu is always open due to the app being in landscape, false otherwise
     bool alwaysOpen() { return mAlwaysOpen; }
-
-    /// set the menu to be either always open or to be able to be pulled in and out
-    void alwaysOpen(bool alwaysOpen) { mAlwaysOpen = alwaysOpen; }
 
 signals:
     /// signals when a page button is pressed

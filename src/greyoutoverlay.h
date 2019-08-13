@@ -18,7 +18,10 @@ class GreyOutOverlay : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit GreyOutOverlay(QWidget* parent);
+    explicit GreyOutOverlay(QWidget* parent = nullptr);
+
+    /// fades in and out the greyout
+    void greyOut(bool shouldGrey);
 
     /*!
      * \brief resize resize the grey out overlay. should be called on the resizeEvent of whatever
@@ -29,6 +32,11 @@ public:
 signals:
     /// emitted when clicked
     void clicked();
+
+private slots:
+
+    /// slot called when greyout fade is complete.
+    void greyOutFadeComplete();
 
 protected:
     /// paints the greyout overlay

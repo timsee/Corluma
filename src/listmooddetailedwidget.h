@@ -80,6 +80,9 @@ private:
     /// moves floating layout
     void moveFloatingLayout();
 
+    /// stores the current key for a page
+    QString mPageKey;
+
     /// scroll area that contains all the information in the widget
     QScrollArea* mScrollArea;
 

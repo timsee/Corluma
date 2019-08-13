@@ -100,7 +100,7 @@ void LightDiscovery::discoveryRoutine() {
     for (const auto& serial : mSearchWidget->searchingFor()) {
         bool foundSerial = false;
         for (const auto& searchingSerial : mComm->hue()->searchingLights()) {
-            if (serial.compare(searchingSerial) == 0) {
+            if (serial == searchingSerial) {
                 foundSerial = true;
             }
         }

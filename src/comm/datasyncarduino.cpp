@@ -141,7 +141,7 @@ void DataSyncArduino::simplifyPackets(const cor::Controller& controller,
                     // inesrt in, first occurence
                     restOfPacket[packetHeader] = packetRemainder;
                     packetCount[packetHeader]++;
-                } else if (restOfPacket[packetHeader].compare(packetRemainder) == 0) {
+                } else if (restOfPacket[packetHeader] == packetRemainder) {
                     // count if its the same occurence
                     packetCount[packetHeader]++;
                 }

@@ -53,9 +53,6 @@ public:
     /// true if any discovered, false if nothing discoverd.
     void anyDiscovered(bool discovered) { mAnyDiscovered = discovered; }
 
-    /// fades in and out the greyout
-    void greyOut(bool show);
-
 public slots:
 
     /// displays the discovery page
@@ -117,9 +114,6 @@ public slots:
      * button.
      */
     void topMenuButtonPressed(const QString&);
-
-    /// slot called when greyout fade is complete.
-    void greyOutFadeComplete();
 
     /*!
      * \brief lightNameChange change the name of a widget given the key and the new name.

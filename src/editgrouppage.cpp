@@ -161,6 +161,10 @@ void EditGroupPage::resize() {
     mSimpleGroupWidget->resizeWidgets();
 }
 
+void EditGroupPage::resizeEvent(QResizeEvent*) {
+    resize();
+}
+
 void EditGroupPage::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);

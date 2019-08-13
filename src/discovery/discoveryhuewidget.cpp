@@ -15,14 +15,15 @@
 #include "mainwindow.h"
 #include "utils/qt.h"
 
-DiscoveryHueWidget::DiscoveryHueWidget(CommLayer* comm, MainWindow* mainWindow, QWidget* parent)
+DiscoveryHueWidget::DiscoveryHueWidget(CommLayer* comm, QWidget* parent)
     : DiscoveryWidget(parent),
       mBridgeDiscovered{false},
-      mMainWindow(mainWindow),
+      mGreyout{new GreyOutOverlay(this->parentWidget()->parentWidget())}, // this is ugly
       mHueDiscoveryState{EHueDiscoveryState::findingIpAddress} {
     mScale = 0.4f;
 
     mComm = comm;
+    auto mainWidget = this->parentWidget()->parentWidget();
 
     mLabel = new QLabel(this);
     mLabel->setWordWrap(true);
@@ -34,11 +35,13 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer* comm, MainWindow* mainWindow, 
     mListWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     QScroller::grabGesture(mListWidget->viewport(), QScroller::LeftMouseButtonGesture);
 
+    connect(mGreyout, SIGNAL(clicked()), this, SLOT(greyOutClicked()));
+
     // --------------
     // Set up HueLightInfoDiscovery
     // --------------
 
-    mHueLightDiscovery = new hue::LightDiscovery(this, comm);
+    mHueLightDiscovery = new hue::LightDiscovery(mainWidget, comm);
     mHueLightDiscovery->setVisible(false);
     mHueLightDiscovery->isOpen(false);
     connect(mHueLightDiscovery, SIGNAL(closePressed()), this, SLOT(hueDiscoveryClosePressed()));
@@ -47,7 +50,7 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer* comm, MainWindow* mainWindow, 
     // Set up hue group widget
     // --------------
 
-    mBridgeGroupsWidget = new hue::BridgeGroupsWidget(this);
+    mBridgeGroupsWidget = new hue::BridgeGroupsWidget(mainWidget);
     mBridgeGroupsWidget->setVisible(false);
     mBridgeGroupsWidget->isOpen(false);
     connect(mBridgeGroupsWidget, SIGNAL(closePressed()), this, SLOT(groupsClosePressed()));
@@ -56,7 +59,7 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer* comm, MainWindow* mainWindow, 
     // Set up hue schedules widget
     // --------------
 
-    mBridgeSchedulesWidget = new hue::BridgeSchedulesWidget(this);
+    mBridgeSchedulesWidget = new hue::BridgeSchedulesWidget(mainWidget);
     mBridgeSchedulesWidget->setVisible(false);
     mBridgeSchedulesWidget->isOpen(false);
     connect(mBridgeSchedulesWidget, SIGNAL(closePressed()), this, SLOT(schedulesClosePressed()));
@@ -135,7 +138,7 @@ void DiscoveryHueWidget::updateBridgeGUI() {
 
         // if it doesnt exist, add it
         if (widgetIndex == -1) {
-            auto widget = new hue::BridgeInfoWidget(bridge, mListWidget);
+            auto widget = new hue::BridgeInfoWidget(bridge, mListWidget->mainWidget());
             widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
             connect(widget,
                     SIGNAL(nameChanged(QString, QString)),
@@ -163,14 +166,14 @@ void DiscoveryHueWidget::updateBridgeGUI() {
 
 
 void DiscoveryHueWidget::hueDiscoveryClosePressed() {
-    mMainWindow->greyOut(false);
+    mGreyout->greyOut(false);
     mHueLightDiscovery->isOpen(false);
     mHueLightDiscovery->setVisible(false);
     mHueLightDiscovery->hide();
 }
 
 void DiscoveryHueWidget::groupsClosePressed() {
-    mMainWindow->greyOut(false);
+    mGreyout->greyOut(false);
     mBridgeGroupsWidget->isOpen(false);
     mBridgeGroupsWidget->setVisible(false);
     mBridgeGroupsWidget->resize();
@@ -178,7 +181,7 @@ void DiscoveryHueWidget::groupsClosePressed() {
 }
 
 void DiscoveryHueWidget::schedulesClosePressed() {
-    mMainWindow->greyOut(false);
+    mGreyout->greyOut(false);
     mBridgeSchedulesWidget->isOpen(false);
     mBridgeSchedulesWidget->setVisible(false);
     mBridgeSchedulesWidget->resize();
@@ -203,9 +206,7 @@ void DiscoveryHueWidget::changedName(const QString& key, const QString& newName)
 void DiscoveryHueWidget::groupsPressed(const QString& key) {
     const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
     if (bridgeResult.second) {
-        //#ifndef MOBILE_BUILD
-        //        mMainWindow->greyOut(true);
-        //#endif
+        mGreyout->greyOut(true);
         mBridgeGroupsWidget->updateGroups(bridgeResult.first.groups);
         mBridgeGroupsWidget->isOpen(true);
         mBridgeGroupsWidget->setVisible(true);
@@ -218,9 +219,7 @@ void DiscoveryHueWidget::groupsPressed(const QString& key) {
 void DiscoveryHueWidget::schedulesPressed(const QString& key) {
     const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
     if (bridgeResult.second) {
-        //#ifndef MOBILE_BUILD
-        //        mMainWindow->greyOut(true);
-        //#endif
+        mGreyout->greyOut(true);
         mBridgeSchedulesWidget->updateSchedules(bridgeResult.first.schedules.itemList());
         mBridgeSchedulesWidget->isOpen(true);
         mBridgeSchedulesWidget->setVisible(true);
@@ -228,21 +227,32 @@ void DiscoveryHueWidget::schedulesPressed(const QString& key) {
         mBridgeSchedulesWidget->resize();
         mBridgeSchedulesWidget->raise();
     }
+    mBridgeSchedulesWidget->raise();
 }
 
 
 void DiscoveryHueWidget::discoverHuesPressed(const QString& key) {
     const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
     if (bridgeResult.second) {
-        qDebug() << " dsicvoered this bridge!" << bridgeResult.first;
-#ifndef MOBILE_BUILD
-        mMainWindow->greyOut(true);
-#endif
+        mGreyout->greyOut(true);
         mHueLightDiscovery->isOpen(true);
         mHueLightDiscovery->resize();
         mHueLightDiscovery->setVisible(true);
         mHueLightDiscovery->show(bridgeResult.first);
-        mHueLightDiscovery->raise();
+    }
+    mHueLightDiscovery->raise();
+}
+
+void DiscoveryHueWidget::greyOutClicked() {
+    mGreyout->greyOut(false);
+    if (mHueLightDiscovery->isOpen()) {
+        hueDiscoveryClosePressed();
+    }
+    if (mBridgeSchedulesWidget->isOpen()) {
+        schedulesClosePressed();
+    }
+    if (mBridgeGroupsWidget->isOpen()) {
+        groupsClosePressed();
     }
 }
 
@@ -255,9 +265,9 @@ void DiscoveryHueWidget::bridgePressed(const QString& key) {
 
 void DiscoveryHueWidget::resize() {
     int yPos = 0;
-    mLabel->setGeometry(0, 0, this->width(), this->height() * 0.333);
+    mLabel->setGeometry(0, 0, this->width(), int(this->height() * 0.333));
     yPos += mLabel->height();
-    mListWidget->setGeometry(0, yPos, this->width(), this->height() * 0.666);
+    mListWidget->setGeometry(0, yPos, this->width(), int(this->height() * 0.666));
 
     QSize widgetSize(this->width(), int(this->height() / 1.6f));
     int yHeight = 0;
@@ -266,6 +276,7 @@ void DiscoveryHueWidget::resize() {
         widget->setVisible(true);
         yHeight += widgetSize.height();
     }
+    mListWidget->mainWidget()->setFixedHeight(yHeight);
     mHueLightDiscovery->resize();
 }
 
