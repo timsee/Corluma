@@ -46,20 +46,20 @@ LightDiscovery::LightDiscovery(QWidget* parent, CommLayer* comm) : QWidget(paren
 
 
 void LightDiscovery::resize() {
-    QSize size = qobject_cast<QWidget*>(this->parent())->size();
-    this->setGeometry(int(size.width() * 0.125f),
-                      int(size.height() * 0.125f),
-                      int(size.width() * 0.75f),
-                      int(size.height() * 0.75f));
+    QSize size = parentWidget()->size();
+    setGeometry(int(size.width() * 0.125f),
+                int(size.height() * 0.125f),
+                int(size.width() * 0.75f),
+                int(size.height() * 0.75f));
 
     int yPos = 0;
-    mTopWidget->setGeometry(0, yPos, this->width(), this->height() * 0.1);
+    mTopWidget->setGeometry(0, yPos, width(), height() * 0.1);
     yPos += mTopWidget->height();
 
-    mSearchButton->setGeometry(0, yPos, this->width(), this->height() * 0.1);
+    mSearchButton->setGeometry(0, yPos, width(), height() * 0.1);
     yPos += mSearchButton->height();
 
-    mSearchWidget->setGeometry(0, yPos, this->width(), this->height() * 0.8);
+    mSearchWidget->setGeometry(0, yPos, width(), height() * 0.8);
     yPos += mSearchWidget->height();
 }
 
@@ -73,7 +73,7 @@ void LightDiscovery::paintEvent(QPaintEvent*) {
     QPainter painter(this);
 
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
+    painter.fillRect(rect(), QBrush(QColor(48, 47, 47)));
 }
 
 void LightDiscovery::closeButtonPressed(bool) {

@@ -171,7 +171,7 @@ void MoodPage::editMoodClicked(const QString&, std::uint64_t) {
 }
 
 void MoodPage::resize() {
-    mMoodsListWidget->setGeometry(0, 0, this->width(), this->height());
+    mMoodsListWidget->setGeometry(0, 0, width(), height());
     for (auto item : mMoodsListWidget->widgets()) {
         auto moodWidget = qobject_cast<ListMoodGroupWidget*>(item);
         moodWidget->resize();

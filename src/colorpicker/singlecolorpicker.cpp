@@ -63,11 +63,11 @@ void SingleColorPicker::enable(bool shouldEnable, EColorPickerType bestType) {
     }
 
     if (shouldEnable) {
-        this->setEnabled(true);
+        setEnabled(true);
         updateBottomMenuState(true);
         mSelectionCircle->setVisible(true);
     } else if (!shouldEnable) {
-        this->setEnabled(false);
+        setEnabled(false);
         updateBottomMenuState(false);
         mSelectionCircle->setVisible(false);
     }
@@ -231,7 +231,7 @@ void SingleColorPicker::mouseReleaseEvent(QMouseEvent*) {
 
 void SingleColorPicker::wheelColorChanged(QColor color) {
     if (mCurrentMode == ESingleColorPickerMode::RGB) {
-        emit brightnessUpdate(uint32_t(color.valueF() * 100.0));
+        emit brightnessUpdate(std::uint32_t(color.valueF() * 100.0));
         chooseColor(color);
         mRGBSliders->changeColor(color);
     } else if (mCurrentMode == ESingleColorPickerMode::HSV) {
@@ -289,7 +289,7 @@ void SingleColorPicker::resize() {
 
     mSelectionCircle->setGeometry(0,
                                   0,
-                                  this->geometry().width(),
-                                  this->geometry().height() - mPlaceholder->geometry().height());
+                                  geometry().width(),
+                                  geometry().height() - mPlaceholder->geometry().height());
     resizeWheel();
 }

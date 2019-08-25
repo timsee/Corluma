@@ -69,12 +69,12 @@ ColorSchemeButton::ColorSchemeButton(EColorSchemeType type,
     mButton->setStyleSheet(transparentStyleSheet);
     mButton->setAlignment(Qt::AlignCenter);
 
-    this->setMinimumHeight(mTitle->height());
+    setMinimumHeight(mTitle->height());
 }
 
 
 void ColorSchemeButton::resize() {
-    auto parentSize = this->parentWidget()->size();
+    auto parentSize = parentWidget()->size();
     QSize pixmapSize = QSize(parentSize.height() * 0.5, parentSize.height() * 0.5);
     mPixmap = QPixmap(mResourcePath);
     mPixmap = mPixmap.scaled(pixmapSize.width(),
@@ -122,7 +122,7 @@ void ColorSchemeButton::paintEvent(QPaintEvent*) {
     painter.setPen(pen);
 
     QPainterPath path;
-    path.addRect(this->rect());
+    path.addRect(rect());
 
     if (!mEnabled) {
         painter.fillPath(path, QBrush(QColor(23, 22, 22, 255)));
@@ -137,7 +137,7 @@ void ColorSchemeButton::paintEvent(QPaintEvent*) {
 
 void ColorSchemeButton::enable(bool enable) {
     mEnabled = enable;
-    this->setEnabled(enable);
+    setEnabled(enable);
     update();
 }
 

@@ -70,7 +70,7 @@ void MultiColorPicker::enable(bool shouldEnable, EColorPickerType bestType) {
         shouldEnable = false;
     }
 
-    this->setEnabled(shouldEnable);
+    setEnabled(shouldEnable);
     updateBottomMenuState(shouldEnable);
     mColorSchemeCircles->setVisible(shouldEnable);
     mColorWheel->enable(shouldEnable);
@@ -96,10 +96,10 @@ void MultiColorPicker::updateColorStates(const std::vector<QColor>& colorSchemes
     // in cases where an light is currently showing one color but can show more, set all the
     // additional colors it can show as the one color
     if (colorSchemes.size() < mCount) {
-        for (uint32_t i = 0; i < colorSchemes.size(); ++i) {
+        for (std::uint32_t i = 0; i < colorSchemes.size(); ++i) {
             newScheme[i] = colorSchemes[i];
         }
-        for (uint32_t i = colorSchemes.size(); i < mMaxCount; ++i) {
+        for (std::uint32_t i = colorSchemes.size(); i < mMaxCount; ++i) {
             newScheme[i] = colorSchemes[0];
         }
     } else {
@@ -190,8 +190,8 @@ void MultiColorPicker::resize() {
 
     mColorSchemeCircles->setGeometry(0,
                                      0,
-                                     this->geometry().width(),
-                                     this->geometry().height() - mPlaceholder->geometry().height());
+                                     geometry().width(),
+                                     geometry().height() - mPlaceholder->geometry().height());
 
     mColorSchemeChooser->setGeometry(rect.x(),
                                      rect.y() + rect.height() / 2,

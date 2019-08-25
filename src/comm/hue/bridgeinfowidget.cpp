@@ -17,7 +17,7 @@ namespace hue {
 BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget* parent)
     : cor::ListItemWidget(bridge.IP, parent) {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
-    this->setStyleSheet(styleSheet);
+    setStyleSheet(styleSheet);
 
     mDeleteButton = new QPushButton("X", this);
     mDeleteButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -31,10 +31,11 @@ BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget* parent)
     mNameWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(mNameWidget, SIGNAL(updatedField(QString)), this, SLOT(changedName(QString)));
 
+
     mTopLayout = new QHBoxLayout;
-    mTopLayout->addWidget(mDeleteButton, 1);
     mTopLayout->addWidget(mNameLabel, 2);
-    mTopLayout->addWidget(mNameWidget, 6);
+    mTopLayout->addWidget(mNameWidget, 4);
+    mTopLayout->addWidget(mDeleteButton, 1);
 
     //-----------
     // mid Left Image
@@ -52,7 +53,6 @@ BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget* parent)
     mIPAddress = new QLabel(this);
     mIPAddress->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mIPAddress->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    setTitleFontPointSize(14);
 
     mAPI = new QLabel(this);
     mAPI->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -65,24 +65,6 @@ BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget* parent)
     mSpacer = new QLabel(this);
     mSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mSpacer->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-
-    //-----
-    // Top right widget
-    //----
-
-    mTopRightLayout = new QVBoxLayout;
-    mTopRightLayout->addWidget(mIPAddress, 1);
-    mTopRightLayout->addWidget(mAPI, 1);
-    mTopRightLayout->addWidget(mID, 1);
-    mTopRightLayout->addWidget(mSpacer, 1);
-
-    //-----
-    // mid widget
-    //----
-
-    mMidLayout = new QHBoxLayout;
-    mMidLayout->addWidget(mImage, 2);
-    mMidLayout->addLayout(mTopRightLayout, 8);
 
     //-----------
     // Bottom
@@ -101,13 +83,34 @@ BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget* parent)
     connect(mSchedulesButton, SIGNAL(clicked()), this, SLOT(schedulesListPressed()));
 
     mButtonsLayout = new QHBoxLayout;
-    mButtonsLayout->addWidget(mDiscoverHueButton);
-    mButtonsLayout->addWidget(mGroupsButton);
-    mButtonsLayout->addWidget(mSchedulesButton);
+    mButtonsLayout->addWidget(mDiscoverHueButton, 2);
+    mButtonsLayout->addWidget(mGroupsButton, 2);
+    mButtonsLayout->addWidget(mSchedulesButton, 2);
+
+    //-----
+    // Top right widget
+    //----
+
+    mTopRightLayout = new QVBoxLayout;
+    mTopRightLayout->addLayout(mTopLayout, 1);
+    mTopRightLayout->addWidget(mIPAddress, 1);
+    mTopRightLayout->addWidget(mAPI, 1);
+    mTopRightLayout->addWidget(mID, 1);
+    mTopRightLayout->addWidget(mSpacer, 1);
+    mTopRightLayout->addLayout(mButtonsLayout, 2);
+
+    //-----
+    // mid widget
+    //----
+
+    mMidLayout = new QHBoxLayout;
+    mMidLayout->addWidget(mImage, 2);
+    mMidLayout->addLayout(mTopRightLayout, 8);
 
     mIsChecked = false;
 
     updateBridge(bridge);
+    calculateButtonFontSize();
 }
 
 void BridgeInfoWidget::updateBridge(const hue::Bridge& bridge) {
@@ -122,14 +125,16 @@ void BridgeInfoWidget::updateBridge(const hue::Bridge& bridge) {
 }
 
 void BridgeInfoWidget::handleBridgeState(EBridgeDiscoveryState state) {
+    auto min = width();
+    // auto min = std::min(width(), height());
     if (state == EBridgeDiscoveryState::connected) {
         mBridgePixmap = QPixmap(":images/Hue-Bridge.png");
-        auto width = int(this->width() * 0.333f);
+        auto width = int(min * 0.333f);
         mImage->setPixmap(
             mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     } else if (state == EBridgeDiscoveryState::lookingForUsername) {
         mBridgePixmap = QPixmap(":images/pressHueBridgeImage.png");
-        auto width = int(this->width() * 0.333f);
+        auto width = int(min * 0.333f);
         mImage->setPixmap(
             mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     } else if (state == EBridgeDiscoveryState::lookingForResponse) {
@@ -143,22 +148,21 @@ void BridgeInfoWidget::setChecked(bool checked) {
     update();
 }
 
-void BridgeInfoWidget::paintEvent(QPaintEvent* event) {
-    Q_UNUSED(event);
+void BridgeInfoWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
 
     painter.setRenderHint(QPainter::Antialiasing);
     if (mIsChecked) {
-        painter.fillRect(this->rect(), QBrush(QColor(61, 142, 201, 255)));
+        painter.fillRect(rect(), QBrush(QColor(61, 142, 201, 255)));
     } else {
         // TODO: could I make this transparent in all cases?
-        painter.fillRect(this->rect(), QBrush(QColor(32, 31, 31, 255)));
+        painter.fillRect(rect(), QBrush(QColor(32, 31, 31, 255)));
     }
 
     // draw line at bottom of widget
-    QRect area(this->x(), this->y(), this->width(), this->height());
+    QRect area(x(), y(), width(), height());
     QPainter linePainter(this);
     linePainter.setRenderHint(QPainter::Antialiasing);
     linePainter.setBrush(QBrush(QColor(255, 255, 255)));
@@ -166,31 +170,28 @@ void BridgeInfoWidget::paintEvent(QPaintEvent* event) {
     linePainter.drawLine(spacerLine);
 }
 
-void BridgeInfoWidget::mouseReleaseEvent(QMouseEvent* event) {
-    Q_UNUSED(event);
+void BridgeInfoWidget::mouseReleaseEvent(QMouseEvent*) {
     emit clicked(mBridge.id);
 }
 
 void BridgeInfoWidget::resizeEvent(QResizeEvent*) {
+    auto min = width();
+    // auto min = std::min(width(), height());
     if (mBridge.state != EBridgeDiscoveryState::lookingForResponse) {
-        auto width = int(this->width() * 0.333f);
+        auto width = int(min * 0.333f);
         mImage->setFixedWidth(width);
         mImage->setPixmap(
             mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     } else {
-        mImage->setFixedWidth(int(this->width() * 0.333f));
+        mImage->setFixedWidth(int(min * 0.333f));
     }
     auto yPos = 0;
-    mTopLayout->setGeometry(QRect(0, yPos, this->width(), this->height() / 11));
-    yPos += mTopLayout->geometry().height();
 
-    mMidLayout->setGeometry(QRect(0, yPos, this->width(), this->height() * 8 / 11));
-    mTopRightLayout->setGeometry(
-        QRect(mImage->width(), yPos, this->width() - mImage->width(), this->height() * 8 / 11));
+    mMidLayout->setGeometry(QRect(0, yPos, width(), height()));
+    mTopRightLayout->setGeometry(QRect(mImage->width(), yPos, width() - mImage->width(), height()));
     yPos += mMidLayout->geometry().height();
 
-    mButtonsLayout->setGeometry(QRect(0, yPos, this->width(), this->height() * 2 / 11));
-    yPos += mButtonsLayout->geometry().height();
+    calculateButtonFontSize();
 }
 
 
@@ -226,5 +227,41 @@ void BridgeInfoWidget::deleteButtonPressed() {
     emit deleteBridge(mBridge);
 }
 
+
+void BridgeInfoWidget::calculateButtonFontSize() {
+    const auto& text = mDiscoverHueButton->text();
+    auto widget = mDiscoverHueButton;
+    // calcuate the text's size
+    auto systemFontWidth = widget->fontMetrics().boundingRect(text).width();
+    // calculate the button's size
+    auto buttonWidth = widget->width() * 0.9;
+    QFont font(widget->font());
+    auto fontPtSize = widget->font().pointSize();
+    if (systemFontWidth > buttonWidth) {
+        for (auto i = fontPtSize - 1; i > 0; --i) {
+            font.setPointSize(i);
+            widget->setFont(font);
+            auto newFontWidth = widget->fontMetrics().boundingRect(text).width();
+            if (newFontWidth < buttonWidth) {
+                // font is small enough to fit
+                break;
+            }
+        }
+    } else {
+        QFont defaultFont;
+        for (auto i = 1; i < defaultFont.pointSize(); ++i) {
+            font.setPointSize(i);
+            widget->setFont(font);
+            auto newFontWidth = widget->fontMetrics().boundingRect(text).width();
+            if (newFontWidth > buttonWidth) {
+                // font is big enough to fit
+                break;
+            }
+        }
+    }
+    mSchedulesButton->setFont(font);
+    mDiscoverHueButton->setFont(font);
+    mGroupsButton->setFont(font);
+}
 
 } // namespace hue

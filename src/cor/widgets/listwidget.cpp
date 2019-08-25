@@ -6,6 +6,8 @@
 
 #include "cor/widgets/listwidget.h"
 
+#include <QScrollBar>
+
 #include "listmoodgroupwidget.h"
 #include "listroomwidget.h"
 
@@ -19,17 +21,17 @@ struct subWidgetCompare {
 
 
 ListWidget::ListWidget(QWidget* parent, EListType type) : QScrollArea(parent), mListLayout(type) {
-    this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
     mWidget = new QWidget(this);
     mWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mWidget->setFixedWidth(this->viewport()->width());
+    mWidget->setFixedWidth(viewport()->width());
 
-    this->setContentsMargins(0, 0, 0, 0);
+    setContentsMargins(0, 0, 0, 0);
     QString backgroundStyleSheet = "border: none; background:rgba(0, 0, 0, 0%);";
     mWidget->setStyleSheet(backgroundStyleSheet);
 
-    this->setWidget(mWidget);
+    setWidget(mWidget);
 }
 
 
@@ -52,8 +54,8 @@ void ListWidget::resizeWidgets() {
     int yPos = 0;
     int newHeight = 0;
     if (mListLayout.type() == cor::EListType::linear) {
-        int maxWidth = this->parentWidget()->width();
-        int height = this->parentWidget()->height() / 8;
+        int maxWidth = parentWidget()->width();
+        int height = parentWidget()->height() / 8;
         for (auto widget : mListLayout.widgets()) {
             QSize size = widget->geometry().size();
             if (size.width() > maxWidth) {
@@ -63,11 +65,11 @@ void ListWidget::resizeWidgets() {
             widget->setHidden(false);
             yPos += size.height();
         }
-        newHeight = std::max(yPos, this->viewport()->height());
+        newHeight = std::max(yPos, viewport()->height());
     } else if (mListLayout.type() == cor::EListType::grid) {
         for (auto widget : mListLayout.widgets()) {
-            int maxWidth = this->parentWidget()->width() / 2;
-            int height = this->parentWidget()->width() / 6;
+            int maxWidth = parentWidget()->width() / 2;
+            int height = parentWidget()->width() / 6;
             QPoint position = mListLayout.widgetPosition(widget);
             widget->setGeometry(position.x() * maxWidth, position.y() * height, maxWidth, height);
             widget->setHidden(false);
@@ -79,7 +81,7 @@ void ListWidget::resizeWidgets() {
         }
     }
     // qDebug() << " new height is " << newHeight << " yPos " << yPos   << " vs " <<
-    // this->viewport()->height();
+    // viewport()->height();
     mWidget->setFixedHeight(newHeight);
 }
 
@@ -92,7 +94,9 @@ void ListWidget::show() {
 }
 
 void ListWidget::resize() {
-    mWidget->setFixedWidth(int(this->geometry().width() * 0.9));
+    mWidget->setFixedWidth(geometry().width() - verticalScrollBar()->width()
+                           - contentsMargins().left() - contentsMargins().right());
+    setMinimumWidth(mWidget->minimumSizeHint().width() + verticalScrollBar()->width());
     for (auto widget : mListLayout.widgets()) {
         if (mListLayout.type() == cor::EListType::linear) {
             widget->setFixedWidth(mWidget->geometry().width());

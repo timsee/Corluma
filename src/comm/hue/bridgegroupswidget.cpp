@@ -64,7 +64,7 @@ void BridgeGroupsWidget::paintEvent(QPaintEvent*) {
     QPainter painter(this);
 
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
+    painter.fillRect(rect(), QBrush(QColor(48, 47, 47)));
 }
 
 void BridgeGroupsWidget::pressedClose(bool) {
@@ -73,15 +73,15 @@ void BridgeGroupsWidget::pressedClose(bool) {
 
 
 void BridgeGroupsWidget::resize() {
-    QSize size = qobject_cast<QWidget*>(this->parent())->size();
-    this->setGeometry(int(size.width() * 0.125f),
-                      int(size.height() * 0.125f),
-                      int(size.width() * 0.75f),
-                      int(size.height() * 0.75f));
+    QSize size = parentWidget()->size();
+    setGeometry(int(size.width() * 0.125f),
+                int(size.height() * 0.125f),
+                int(size.width() * 0.75f),
+                int(size.height() * 0.75f));
 
     // resize scroll area
     mScrollAreaWidget->setFixedWidth(mScrollArea->width());
-    QSize widgetSize(this->width(), int(this->height() / 2.5f));
+    QSize widgetSize(width(), int(height() / 2.5f));
     int yPos = 0;
     // draw widgets in content region
     for (auto widget : mWidgets) {

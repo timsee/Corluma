@@ -26,7 +26,7 @@ CRCCalculator::CRCCalculator() {
 }
 
 uint32_t CRCCalculator::calculate(const QString& input) {
-    auto crc = uint32_t(~0);
+    auto crc = std::uint32_t(~0);
     std::string string = input.toStdString();
     for (uint16_t i = 0; i < input.length(); ++i) {
         crc = update(crc, uint8_t(string[i]));
@@ -42,5 +42,5 @@ uint32_t CRCCalculator::update(unsigned long crc, uint8_t data) {
     crc = mCRCTable[tableIndex & 0x0f] ^ (crc >> 4);
     tableIndex = uint8_t(crc ^ (data >> (1 * 4)));
     crc = mCRCTable[tableIndex & 0x0f] ^ (crc >> 4);
-    return uint32_t(crc);
+    return std::uint32_t(crc);
 }

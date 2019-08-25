@@ -130,7 +130,7 @@ signals:
     void buttonPressed(QString key);
 
     /// the new value of the brightness slider
-    void brightnessChanged(uint32_t newValue);
+    void brightnessChanged(std::uint32_t newValue);
 
 public slots:
 
@@ -152,7 +152,7 @@ public slots:
     void brightnessSliderChanged(int);
 
     /// brightness udpated somewhere else
-    void brightnessUpdate(uint32_t newValue);
+    void brightnessUpdate(std::uint32_t newValue);
 
     /// set if data is in sync or not
     void dataInSync(bool);

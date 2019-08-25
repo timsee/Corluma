@@ -239,7 +239,7 @@ public:
         return QString::fromStdString(tempString.str());
     }
 
-    bool isValid() const { return this->uniqueID() != cor::Light().uniqueID(); }
+    bool isValid() const { return uniqueID() != cor::Light().uniqueID(); }
 
 private:
     /*!
@@ -299,8 +299,8 @@ inline cor::Light jsonToLight(const QJsonObject& object) {
         light.param = int(object["param"].toDouble());
     }
 
-    light.majorAPI = uint32_t(object["majorAPI"].toDouble());
-    light.minorAPI = uint32_t(object["minorAPI"].toDouble());
+    light.majorAPI = std::uint32_t(object["majorAPI"].toDouble());
+    light.minorAPI = std::uint32_t(object["minorAPI"].toDouble());
 
     //------------
     // get speed if theres a speed value

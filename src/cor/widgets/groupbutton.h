@@ -26,7 +26,7 @@ public:
     explicit GroupButton(QWidget* parent, const QString& text);
 
     /// handle the state of the select all button
-    bool handleSelectAllButton(uint32_t checkedDevicesCount, uint32_t reachableDevicesCount);
+    bool handleSelectAllButton(std::uint32_t checkedDevicesCount, uint32_t reachableDevicesCount);
 
     /// key for group
     QString key() const { return mTitle->text(); }
@@ -73,7 +73,7 @@ private:
      * \param reachableDeviceCount the total number of reachable devices
      * \return the color to use for the highlight.
      */
-    QColor computeHighlightColor(uint32_t checkedDeviceCount, uint32_t reachableDeviceCount);
+    QColor computeHighlightColor(std::uint32_t checkedDeviceCount, uint32_t reachableDeviceCount);
 
     /*!
      * \brief resizeRightHandIcon resize the right hand icon to match the widgets size

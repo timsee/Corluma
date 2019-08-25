@@ -38,9 +38,9 @@ GroupButton::GroupButton(QWidget* parent, const QString& text)
     mLayout = new QHBoxLayout;
     mLayout->addWidget(mTitle);
     mLayout->addWidget(mButton);
-    this->setLayout(mLayout);
+    setLayout(mLayout);
 
-    this->setMinimumHeight(mTitle->height());
+    setMinimumHeight(mTitle->height());
 
     handleSelectAllButton(0u, 0u);
 }
@@ -66,7 +66,7 @@ void GroupButton::resize() {
                                              Qt::IgnoreAspectRatio,
                                              Qt::SmoothTransformation);
 
-    mTitle->setFixedWidth(this->width() - preferredButtonSize().width());
+    mTitle->setFixedWidth(width() - preferredButtonSize().width());
     mButton->setFixedWidth(preferredButtonSize().width());
 
     if (handleSelectAllButton(mCheckedCount, mReachableCount)) {
@@ -74,7 +74,7 @@ void GroupButton::resize() {
     }
 }
 
-bool GroupButton::handleSelectAllButton(uint32_t checkedDevicesCount,
+bool GroupButton::handleSelectAllButton(std::uint32_t checkedDevicesCount,
                                         uint32_t reachableDevicesCount) {
     bool renderFlag = false;
     EGroupButtonState state;
@@ -121,7 +121,7 @@ void GroupButton::buttonPressed(bool) {
     }
 }
 
-QColor GroupButton::computeHighlightColor(uint32_t checkedDeviceCount,
+QColor GroupButton::computeHighlightColor(std::uint32_t checkedDeviceCount,
                                           uint32_t reachableDeviceCount) {
     QColor pureBlue(61, 142, 201);
     QColor pureBlack(32, 31, 31);
@@ -152,7 +152,7 @@ void GroupButton::paintEvent(QPaintEvent*) {
     painter.setPen(pen);
 
     QPainterPath path;
-    path.addRect(this->rect());
+    path.addRect(rect());
 
     if (mButtonState == EGroupButtonState::clearAll) {
         painter.fillPath(path, QBrush(computeHighlightColor(mCheckedCount, mReachableCount)));
@@ -169,8 +169,7 @@ void GroupButton::paintEvent(QPaintEvent*) {
 void GroupButton::mouseReleaseEvent(QMouseEvent* event) {
     if (cor::isMouseEventTouchUpInside(event, this, true)) {
         if (cor::isMouseEventTouchUpInside(event, mButton, false)) {
-            QWidget* parentWidget = this->parentWidget();
-            auto groupButtonsWidget = qobject_cast<GroupButtonsWidget*>(parentWidget);
+            auto groupButtonsWidget = qobject_cast<GroupButtonsWidget*>(parentWidget());
             if (groupButtonsWidget->type() == cor::EWidgetType::condensed) {
                 if (cor::leftHandMenuMoving()) {
                     return;

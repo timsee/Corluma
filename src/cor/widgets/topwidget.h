@@ -40,7 +40,7 @@ public:
         mLayout->addWidget(mButton, 1);
         mLayout->setContentsMargins(0, 0, 0, 0);
         mLayout->setSpacing(6);
-        this->setLayout(mLayout);
+        setLayout(mLayout);
     }
 
 

@@ -85,7 +85,7 @@ signals:
      * \brief brightnessUpdate emitted whenever brightness changes from any layout that has a
      * brightness slider
      */
-    void brightnessUpdate(uint32_t);
+    void brightnessUpdate(std::uint32_t);
 
     /*!
      * \brief colorsUpdate update to a full color scheme
@@ -125,7 +125,7 @@ protected:
      *        changes, but a flag can be used to override the signal.
      * \param brightness brightness of the color
      */
-    void chooseBrightness(uint32_t brightness);
+    void chooseBrightness(std::uint32_t brightness);
 
     //------------------------------
     // Miscellaneous

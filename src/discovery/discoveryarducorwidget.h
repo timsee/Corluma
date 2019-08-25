@@ -64,6 +64,12 @@ private:
     /// top label that explains the widget
     QLabel* mTopLabel;
 
+    /// spacer so that label doesn't extend under the floating layouts
+    QWidget* mSpacer;
+
+    /// layout for label and spacer
+    QHBoxLayout* mTopLayout;
+
     /// layout for widget
     QVBoxLayout* mLayout;
 };

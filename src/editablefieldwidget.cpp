@@ -68,11 +68,11 @@ void EditableFieldWidget::setFontPointSize(int pt) {
         pt = 1;
     }
     QString stylesheet = "font-size:" + QString::number(pt) + "pt;";
-    this->setStyleSheet(stylesheet);
+    setStyleSheet(stylesheet);
 
     QFont font(this->font().toString(), pt);
     QFontMetrics fm(font);
-    this->setMinimumHeight(fm.height());
+    setMinimumHeight(fm.height());
 }
 
 void EditableFieldWidget::setText(const QString& text) {

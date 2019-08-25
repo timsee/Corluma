@@ -84,7 +84,7 @@ void ListLightWidget::init(const cor::Light& device) {
 
 void ListLightWidget::updateWidget(const cor::Light& device) {
     bool shouldRender = false;
-    if (!(mDevice == device) && this->isVisible()) {
+    if (!(mDevice == device) && isVisible()) {
         shouldRender = true;
     }
     if (!mHasRendered) {
@@ -92,10 +92,10 @@ void ListLightWidget::updateWidget(const cor::Light& device) {
         mHasRendered = false;
     }
 
-    if (mDevice.hardwareType != device.hardwareType || mLastRenderedSize != this->size()) {
+    if (mDevice.hardwareType != device.hardwareType || mLastRenderedSize != size()) {
         updateTypeIcon(device.hardwareType);
         resizeIcons();
-        mLastRenderedSize = this->size();
+        mLastRenderedSize = size();
     }
 
     if (mDevice.name != device.name) {
@@ -178,10 +178,10 @@ void ListLightWidget::paintEvent(QPaintEvent*) {
     QPainter painter(this);
 
     if (mIsChecked && mShouldHighlight) {
-        painter.fillRect(this->rect(), QBrush(QColor(61, 142, 201)));
+        painter.fillRect(rect(), QBrush(QColor(61, 142, 201)));
     } else {
         // TODO: could I make this transparent in all cases?
-        painter.fillRect(this->rect(), QBrush(QColor(32, 31, 31)));
+        painter.fillRect(rect(), QBrush(QColor(32, 31, 31)));
     }
 
     if (mDevice.isReachable) {
@@ -191,12 +191,9 @@ void ListLightWidget::paintEvent(QPaintEvent*) {
             x += mOnOffSwitch->width() + 5;
         }
         if (mType == cor::EWidgetType::full) {
-            rect = QRect(x, 10, this->width() / 2, int(this->height() * 0.6f / 2));
+            rect = QRect(x, 10, width() / 2, int(height() * 0.6f / 2));
         } else {
-            rect = QRect(x,
-                         int(this->height() * 0.25f),
-                         int(this->height() * 0.5f),
-                         int(this->height() * 0.5f));
+            rect = QRect(x, int(height() * 0.25f), int(height() * 0.5f), int(height() * 0.5f));
         }
 
         // make brush with icon data in it
@@ -355,7 +352,7 @@ void ListLightWidget::updateTypeIcon(ELightHardwareType type) {
 }
 
 void ListLightWidget::resizeIcons() {
-    QSize size(int(this->height() * 0.5f), int(this->height() * 0.5f));
+    QSize size(int(height() * 0.5f), int(height() * 0.5f));
     mTypeIcon->setFixedSize(size);
     updateTypeIcon(mDevice.hardwareType);
     mTypePixmap = mTypePixmap.scaled(size.width(),
@@ -364,13 +361,13 @@ void ListLightWidget::resizeIcons() {
                                      Qt::SmoothTransformation);
 
     if (mType == cor::EWidgetType::full) {
-        mController->setFixedWidth(this->width());
+        mController->setFixedWidth(width());
     } else {
         int offset = size.height() * 3;
         if (mOnOffSwitch->isVisible()) {
             offset += mOnOffSwitch->width();
         }
-        mController->setFixedWidth(this->width() - offset);
+        mController->setFixedWidth(width() - offset);
     }
 
     if (mOnOffSwitch->isVisible()) {

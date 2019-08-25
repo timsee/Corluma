@@ -182,8 +182,8 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type,
         }
         controller.name = controllerName;
         // get the API level
-        controller.majorAPI = uint32_t(intVector[0]);
-        controller.minorAPI = uint32_t(intVector[1]);
+        controller.majorAPI = std::uint32_t(intVector[0]);
+        controller.minorAPI = std::uint32_t(intVector[1]);
 
         // get the USE_CRC
         int crc = intVector[2];
@@ -191,10 +191,10 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type,
             return false;
         }
         controller.isUsingCRC = crc;
-        controller.hardwareCapabilities = uint32_t(intVector[3]);
+        controller.hardwareCapabilities = std::uint32_t(intVector[3]);
 
         // grab the max packet size
-        controller.maxPacketSize = uint32_t(intVector[4]);
+        controller.maxPacketSize = std::uint32_t(intVector[4]);
         controller.type = type;
         if (controller.maxPacketSize > 500) {
             return false;

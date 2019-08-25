@@ -41,12 +41,12 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
       mSettingsPage{new SettingsPage(this, mGroups, mAppSettings, mShareUtils)},
       mGreyOut{new GreyOutOverlay(this)} {
     // initialize geometry
-    this->setGeometry(0, 0, startingSize.width(), startingSize.height());
-    this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-    this->setMinimumSize(minimumSize);
+    setGeometry(0, 0, startingSize.width(), startingSize.height());
+    setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    setMinimumSize(minimumSize);
 
     // set title
-    this->setWindowTitle("Corluma");
+    setWindowTitle("Corluma");
 
     connect(mShareUtils, SIGNAL(fileUrlReceived(QString)), this, SLOT(receivedURL(QString)));
 
@@ -147,7 +147,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     // Setup Left Hand Menu
     // --------------
 
-    float sizeRatio = this->size().width() / float(this->size().height());
+    float sizeRatio = size().width() / float(size().height());
     bool alwaysOpen = false;
     if (sizeRatio > 1.0f) {
         alwaysOpen = true;
@@ -229,9 +229,9 @@ void MainWindow::loadPages() {
                 this,
                 SLOT(topMenuButtonPressed(QString)));
         connect(mMainViewport->colorPage(),
-                SIGNAL(brightnessChanged(uint32_t)),
+                SIGNAL(brightnessChanged(std::uint32_t)),
                 mTopMenu,
-                SLOT(brightnessUpdate(uint32_t)));
+                SLOT(brightnessUpdate(std::uint32_t)));
         connect(mLeftHandMenu, SIGNAL(changedDeviceCount()), mTopMenu, SLOT(deviceCountChanged()));
 
         connect(mLeftHandMenu,
@@ -247,7 +247,7 @@ void MainWindow::loadPages() {
 
         mSpacer = new QWidget(this);
         mSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-        mSpacer->setFixedHeight(int(this->height() * 0.22f));
+        mSpacer->setFixedHeight(int(height() * 0.22f));
 
         // --------------
         // Setup Editing Page
@@ -256,7 +256,7 @@ void MainWindow::loadPages() {
         mEditPage = new EditGroupPage(this, mComm, mGroups);
         mEditPage->isOpen(false);
         connect(mEditPage, SIGNAL(pressedClose()), this, SLOT(editClosePressed()));
-        mEditPage->setGeometry(0, -1 * this->height(), this->width() * 0.75, this->height() * 0.75);
+        mEditPage->setGeometry(0, -1 * height(), width() * 0.75, height() * 0.75);
 
         // --------------
         // Setup Mood Detailed Widget
@@ -269,7 +269,7 @@ void MainWindow::loadPages() {
                 this,
                 SLOT(moodChanged(std::uint64_t)));
 
-        mMoodDetailedWidget->setGeometry(0, -1 * this->height(), this->width(), this->height());
+        mMoodDetailedWidget->setGeometry(0, -1 * height(), width(), height());
         mMoodDetailedWidget->setVisible(false);
 
         // --------------
@@ -284,7 +284,7 @@ void MainWindow::loadPages() {
                 SLOT(lightNameChange(EProtocolType, QString, QString)));
         connect(mLightInfoWidget, SIGNAL(deleteLight(QString)), this, SLOT(deleteLight(QString)));
         connect(mLightInfoWidget, SIGNAL(pressedClose()), this, SLOT(lightInfoClosePressed()));
-        mLightInfoWidget->setGeometry(0, -1 * this->height(), this->width(), this->height());
+        mLightInfoWidget->setGeometry(0, -1 * height(), width(), height());
 
         resize();
     }
@@ -320,7 +320,7 @@ void MainWindow::resizeEvent(QResizeEvent*) {
 
 void MainWindow::changeEvent(QEvent* event) {
     // qDebug() << " EVENT OCCURED " << event->type();
-    if (event->type() == QEvent::ActivationChange && this->isActiveWindow()) {
+    if (event->type() == QEvent::ActivationChange && isActiveWindow()) {
         for (int commInt = 0; commInt != int(EProtocolType::MAX); ++commInt) {
             auto type = static_cast<EProtocolType>(commInt);
             if (mAppSettings->enabled(type)) {
@@ -331,7 +331,7 @@ void MainWindow::changeEvent(QEvent* event) {
 #ifdef MOBILE_BUILD
         mShareUtils->checkPendingIntents();
 #endif // MOBILE_BUILD
-    } else if (event->type() == QEvent::ActivationChange && !this->isActiveWindow()) {
+    } else if (event->type() == QEvent::ActivationChange && !isActiveWindow()) {
         for (int commInt = 0; commInt != int(EProtocolType::MAX); ++commInt) {
             auto type = static_cast<EProtocolType>(commInt);
             if (mAppSettings->enabled(type)) {
@@ -355,14 +355,14 @@ void MainWindow::pushOutDiscovery() {
 
     if (mLeftHandMenu->alwaysOpen()) {
         mDiscoveryPage->pushOut(QPoint(mLeftHandMenu->width(), 0),
-                                QPoint(this->width() + mDiscoveryPage->width(), 0));
+                                QPoint(width() + mDiscoveryPage->width(), 0));
     } else {
-        mDiscoveryPage->pushOut(QPoint(0, 0), QPoint(this->width() + mDiscoveryPage->width(), 0));
+        mDiscoveryPage->pushOut(QPoint(0, 0), QPoint(width() + mDiscoveryPage->width(), 0));
     }
 }
 
 void MainWindow::pushInDiscovery() {
-    const auto& fullScreenSize = this->size();
+    const auto& fullScreenSize = size();
     if (mFirstLoad) {
         mDiscoveryPage->setFixedSize(fullScreenSize.width(), fullScreenSize.height());
     } else if (mLeftHandMenu->isIn()) {
@@ -373,10 +373,10 @@ void MainWindow::pushInDiscovery() {
     }
 
     if (mLeftHandMenu->alwaysOpen() && !mFirstLoad) {
-        mDiscoveryPage->pushIn(QPoint(this->width() + mDiscoveryPage->width(), 0),
+        mDiscoveryPage->pushIn(QPoint(width() + mDiscoveryPage->width(), 0),
                                QPoint(mLeftHandMenu->width(), 0));
     } else {
-        mDiscoveryPage->pushIn(QPoint(this->width() + mDiscoveryPage->width(), 0), QPoint(0, 0));
+        mDiscoveryPage->pushIn(QPoint(width() + mDiscoveryPage->width(), 0), QPoint(0, 0));
     }
 }
 
@@ -579,11 +579,11 @@ void MainWindow::resize() {
             xPos += mLeftHandMenu->width();
             width -= mLeftHandMenu->width();
         }
-        QRect rect(xPos, mTopMenu->height(), width, this->height() - mTopMenu->height());
+        QRect rect(xPos, mTopMenu->height(), width, height() - mTopMenu->height());
         mMainViewport->resize(rect);
     }
 
-    QSize fullScreenSize = this->size();
+    QSize fullScreenSize = size();
     if (mDiscoveryPage->isOpen()) {
         if (mFirstLoad) {
             mDiscoveryPage->setFixedSize(fullScreenSize.width(), fullScreenSize.height());
@@ -606,7 +606,7 @@ void MainWindow::resize() {
             mDiscoveryPage->raise();
         }
     } else {
-        mDiscoveryPage->setGeometry(this->geometry().width() * -1,
+        mDiscoveryPage->setGeometry(geometry().width() * -1,
                                     mDiscoveryPage->geometry().y(),
                                     fullScreenSize.width(),
                                     fullScreenSize.height());
@@ -661,7 +661,7 @@ void MainWindow::resize() {
         }
     }
 
-    mNoWifiWidget->setGeometry(QRect(0, 0, this->geometry().width(), this->geometry().height()));
+    mNoWifiWidget->setGeometry(QRect(0, 0, geometry().width(), geometry().height()));
 }
 
 void MainWindow::handleLandscapeOrPortrait() {
@@ -819,7 +819,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent* event) {
         if (shouldMoveMenu(event,
                            mLeftHandMenu->isIn(),
                            mStartPoint,
-                           this->size(),
+                           size(),
                            mLeftHandMenu->size())) {
             mMovingMenu = true;
             mLeftHandMenu->raise();
@@ -908,7 +908,7 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
 }
 
 void MainWindow::pushInSettingsPage() {
-    const auto& fullScreenSize = this->size();
+    const auto& fullScreenSize = size();
     if (mFirstLoad) {
         mSettingsPage->setFixedSize(fullScreenSize.width(), fullScreenSize.height());
     } else if (mLeftHandMenu->alwaysOpen()) {
@@ -919,15 +919,15 @@ void MainWindow::pushInSettingsPage() {
     }
 
     if (mLeftHandMenu->alwaysOpen() && !mFirstLoad) {
-        mSettingsPage->pushIn(QPoint(this->width(), 0), QPoint(mLeftHandMenu->width(), 0));
+        mSettingsPage->pushIn(QPoint(width(), 0), QPoint(mLeftHandMenu->width(), 0));
     } else {
-        mSettingsPage->pushIn(QPoint(this->width(), 0), QPoint(0u, 0u));
+        mSettingsPage->pushIn(QPoint(width(), 0), QPoint(0u, 0u));
         mLeftHandMenu->pushOut();
     }
 }
 
 void MainWindow::pushOutSettingsPage() {
-    mSettingsPage->pushOut(QPoint(this->width(), 0u));
+    mSettingsPage->pushOut(QPoint(width(), 0u));
 
     if (mDiscoveryPage->isOpen()) {
         mDiscoveryPage->updateTopMenu();

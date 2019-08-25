@@ -153,10 +153,10 @@ void EditGroupPage::isRoomChecked(bool checked) {
 
 void EditGroupPage::resize() {
     auto yPos = 0;
-    mTopMenu->setGeometry(0, yPos, this->width(), this->height() / 5);
+    mTopMenu->setGeometry(0, yPos, width(), height() / 5);
     yPos += mTopMenu->height();
 
-    mSimpleGroupWidget->setGeometry(0, yPos, this->width(), this->height() * 4 / 5);
+    mSimpleGroupWidget->setGeometry(0, yPos, width(), height() * 4 / 5);
 
     mSimpleGroupWidget->resizeWidgets();
 }
@@ -171,7 +171,7 @@ void EditGroupPage::paintEvent(QPaintEvent*) {
     QPainter painter(this);
 
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
+    painter.fillRect(rect(), QBrush(QColor(48, 47, 47)));
 }
 
 void EditGroupPage::lineEditChanged(const QString& newText) {
@@ -367,21 +367,19 @@ void EditGroupPage::clickedDevice(const QString&) {
 }
 
 void EditGroupPage::pushIn() {
-    moveWidget(this,
-               QPoint(int(this->parentWidget()->width() * 0.125f),
-                      int(-1 * this->parentWidget()->height())),
-               QPoint(int(this->parentWidget()->width() * 0.125f),
-                      int(this->parentWidget()->height() * 0.125f)));
-    this->raise();
-    this->setVisible(true);
+    moveWidget(
+        this,
+        QPoint(int(parentWidget()->width() * 0.125f), int(-1 * parentWidget()->height())),
+        QPoint(int(parentWidget()->width() * 0.125f), int(parentWidget()->height() * 0.125f)));
+    raise();
+    setVisible(true);
     mRenderThread->start(mRenderInterval);
 }
 
 void EditGroupPage::pushOut() {
-    moveWidget(this,
-               QPoint(int(this->parentWidget()->width() * 0.125f),
-                      int(this->parentWidget()->height() * 0.125f)),
-               QPoint(int(this->parentWidget()->width() * 0.125f),
-                      int(-1 * this->parentWidget()->height())));
+    moveWidget(
+        this,
+        QPoint(int(parentWidget()->width() * 0.125f), int(parentWidget()->height() * 0.125f)),
+        QPoint(int(parentWidget()->width() * 0.125f), int(-1 * parentWidget()->height())));
     mRenderThread->stop();
 }

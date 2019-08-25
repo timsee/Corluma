@@ -25,7 +25,7 @@ public:
     /// json constructor
     Palette(const QJsonObject& object) : mJSON(object) {
         mName = object["name"].toString();
-        mBrightness = uint32_t(object["bri"].toDouble() * 100.0);
+        mBrightness = std::uint32_t(object["bri"].toDouble() * 100.0);
         mEnum = stringToPalette(mName);
 
         std::size_t count = std::size_t(object["count"].toDouble());
@@ -33,7 +33,7 @@ public:
         mColors = std::vector<QColor>(count, QColor(0, 0, 0));
         for (auto color : object["colors"].toArray()) {
             QJsonObject object = color.toObject();
-            uint32_t index = uint32_t(object["index"].toDouble());
+            uint32_t index = std::uint32_t(object["index"].toDouble());
 
             if (object["red"].isDouble()) {
                 int red = int(object["red"].toDouble());
@@ -92,7 +92,7 @@ public:
     }
 
     /// setter for the brightness of the palette
-    void brightness(uint32_t brightness) {
+    void brightness(std::uint32_t brightness) {
         mBrightness = brightness;
         mJSON["bri"] = mBrightness / 100.0;
     }

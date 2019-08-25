@@ -60,7 +60,7 @@ public:
      * \param newPos new position to move the circle to.
      * \return new color at position
      */
-    std::vector<QColor> moveStandardCircle(uint32_t i, QPointF newPos);
+    std::vector<QColor> moveStandardCircle(std::uint32_t i, QPointF newPos);
 
     /// getter for the varioujs circles used by this class
     const std::vector<ColorSelection>& circles() const noexcept { return mCircles; }

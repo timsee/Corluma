@@ -17,7 +17,7 @@ GreyOutOverlay::GreyOutOverlay(QWidget* parent) : QWidget(parent) {}
 
 void GreyOutOverlay::resize() {
     auto size = cor::applicationSize();
-    this->setFixedSize(size.width(), size.height());
+    setFixedSize(size.width(), size.height());
 }
 
 void GreyOutOverlay::paintEvent(QPaintEvent*) {
@@ -26,7 +26,7 @@ void GreyOutOverlay::paintEvent(QPaintEvent*) {
     QPainter painter(this);
 
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.fillRect(this->rect(), QBrush(QColor(0, 0, 0, 200)));
+    painter.fillRect(rect(), QBrush(QColor(0, 0, 0, 200)));
 }
 
 void GreyOutOverlay::mouseReleaseEvent(QMouseEvent*) {
@@ -34,12 +34,12 @@ void GreyOutOverlay::mouseReleaseEvent(QMouseEvent*) {
 }
 
 void GreyOutOverlay::greyOut(bool shouldGrey) {
-    this->resize();
+    resize();
     if (shouldGrey) {
-        this->raise();
-        this->setVisible(true);
+        raise();
+        setVisible(true);
         auto fadeOutEffect = new QGraphicsOpacityEffect(this);
-        this->setGraphicsEffect(fadeOutEffect);
+        setGraphicsEffect(fadeOutEffect);
         auto fadeOutAnimation = new QPropertyAnimation(fadeOutEffect, "opacity");
         fadeOutAnimation->setDuration(TRANSITION_TIME_MSEC);
         fadeOutAnimation->setStartValue(0.0f);
@@ -47,7 +47,7 @@ void GreyOutOverlay::greyOut(bool shouldGrey) {
         fadeOutAnimation->start();
     } else {
         auto fadeInEffect = new QGraphicsOpacityEffect(this);
-        this->setGraphicsEffect(fadeInEffect);
+        setGraphicsEffect(fadeInEffect);
         auto fadeInAnimation = new QPropertyAnimation(fadeInEffect, "opacity");
         fadeInAnimation->setDuration(TRANSITION_TIME_MSEC);
         fadeInAnimation->setStartValue(1.0f);
@@ -58,5 +58,5 @@ void GreyOutOverlay::greyOut(bool shouldGrey) {
 }
 
 void GreyOutOverlay::greyOutFadeComplete() {
-    this->setVisible(false);
+    setVisible(false);
 }

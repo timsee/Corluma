@@ -183,9 +183,6 @@ private:
     /// widget displaying copyright information
     cor::WebView* mCopyrightWidget;
 
-    /// widget displaying an FAQ
-    cor::WebView* mFAQWidget;
-
     /// pointer to object that handles sharing on mobile devices.
     ShareUtils* mShareUtils;
 

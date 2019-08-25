@@ -542,4 +542,10 @@ ___
 * Fixed sizes of certain assets.
 * Fixed miscellaneous bugs. 
 
+### **v0.17.3**
+#### Another Bug Fixes Update
+* Fixed bugs with scroll areas scrolling horizontally.
+* Fixed places where text is cut off on small screen sizes.
+* Fixed miscellaneous bugs.
+
 

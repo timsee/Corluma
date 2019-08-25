@@ -51,7 +51,7 @@ public:
      * \param index index of widget to return
      * \return pointer to ListCollectionWidget
      */
-    cor::ListItemWidget* widget(uint32_t index);
+    cor::ListItemWidget* widget(std::uint32_t index);
 
     /*!
      * \brief widget get a ListCollectionWidget by its key.
@@ -82,7 +82,7 @@ public:
     void sortDeviceWidgets();
 
     /// number of widgets in the scroll area.
-    uint32_t count() { return uint32_t(mWidgetDictionary.size()); }
+    std::size_t count() { return mWidgetDictionary.size(); }
 
     /// getter for all collection widgets.
     const std::vector<cor::ListItemWidget*>& widgets() { return mWidgets; }

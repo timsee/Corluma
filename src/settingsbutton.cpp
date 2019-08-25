@@ -16,7 +16,7 @@
 SettingsButton::SettingsButton(const QString& title, int minHeight, QWidget* parent)
     : QWidget(parent) {
     mIsHighlighted = false;
-    this->setMinimumHeight(minHeight);
+    setMinimumHeight(minHeight);
 
     mTitle = new QLabel(title);
     cor::changeLabelToTitleLabel(mTitle);
@@ -24,7 +24,7 @@ SettingsButton::SettingsButton(const QString& title, int minHeight, QWidget* par
     mLayout = new QVBoxLayout(this);
     mLayout->addWidget(mTitle);
 
-    this->setLayout(mLayout);
+    setLayout(mLayout);
 }
 
 void SettingsButton::mousePressEvent(QMouseEvent*) {
@@ -52,9 +52,9 @@ void SettingsButton::paintEvent(QPaintEvent*) {
     painter.setRenderHint(QPainter::Antialiasing);
     // paint background
     if (mIsHighlighted) {
-        painter.fillRect(this->rect(), QBrush(QColor(61, 142, 201, 255)));
+        painter.fillRect(rect(), QBrush(QColor(61, 142, 201, 255)));
     } else {
-        painter.fillRect(this->rect(), QBrush(QColor(32, 31, 31, 255)));
+        painter.fillRect(rect(), QBrush(QColor(32, 31, 31, 255)));
     }
 
     // paint top line
@@ -62,5 +62,5 @@ void SettingsButton::paintEvent(QPaintEvent*) {
     QBrush brush(QColor(greyValue, greyValue, greyValue));
     QPen pen(brush, 1);
     painter.setPen(pen);
-    painter.drawLine(0, 0, this->width(), 0);
+    painter.drawLine(0, 0, width(), 0);
 }

@@ -110,8 +110,8 @@ private:
                 mSwitch->setChecked(false);
                 break;
         }
-        mSwitch->setFixedSize(this->width(), this->height());
-        QSize newSize = QSize(int(this->width() * 0.8f), int(this->height() * 0.8f));
+        mSwitch->setFixedSize(width(), height());
+        QSize newSize = QSize(int(width() * 0.8f), int(height() * 0.8f));
         mSwitchIcon = mSwitchIcon.scaled(newSize.width(),
                                          newSize.height(),
                                          Qt::KeepAspectRatio,

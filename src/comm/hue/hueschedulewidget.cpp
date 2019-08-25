@@ -17,7 +17,7 @@ HueScheduleWidget::HueScheduleWidget(QWidget* parent, SHueSchedule schedule)
     : QWidget(parent),
       mSchedule(schedule) {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
-    this->setStyleSheet(styleSheet);
+    setStyleSheet(styleSheet);
 
     mNameLabel = new QLabel("<b>Name:</b> " + schedule.name, this);
     mNameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -78,7 +78,7 @@ void HueScheduleWidget::paintEvent(QPaintEvent*) {
     QPainter painter(this);
 
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.fillRect(this->rect(), QBrush(QColor(32, 31, 31)));
+    painter.fillRect(rect(), QBrush(QColor(32, 31, 31)));
 }
 
 

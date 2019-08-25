@@ -51,12 +51,12 @@ ListMoodPreviewWidget::ListMoodPreviewWidget(const cor::Mood& mood, QWidget* par
 
     setLayout(mFullLayout);
 
-    this->setStyleSheet(backgroundStyleSheet);
+    setStyleSheet(backgroundStyleSheet);
 }
 
 void ListMoodPreviewWidget::resize() {
-    mName->setFixedSize(this->width(), this->height() / 4);
-    mPalette->setFixedSize(int(this->width() * 0.75f), 2 * this->height() / 4);
+    mName->setFixedSize(width(), height() / 4);
+    mPalette->setFixedSize(int(width() * 0.75f), 2 * height() / 4);
 }
 
 void ListMoodPreviewWidget::resizeEvent(QResizeEvent*) {
@@ -92,13 +92,13 @@ void ListMoodPreviewWidget::paintEvent(QPaintEvent*) {
     painter.setPen(pen);
 
     QPainterPath path;
-    path.addRect(this->rect());
+    path.addRect(rect());
 
     painter.setRenderHint(QPainter::Antialiasing);
     if (mIsChecked) {
-        painter.fillRect(this->rect(), QBrush(QColor(61, 142, 201)));
+        painter.fillRect(rect(), QBrush(QColor(61, 142, 201)));
     } else {
-        painter.fillRect(this->rect(), QBrush(QColor(32, 31, 31)));
+        painter.fillRect(rect(), QBrush(QColor(32, 31, 31)));
     }
 
     if (mIsSelected) {

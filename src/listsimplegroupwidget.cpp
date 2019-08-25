@@ -99,7 +99,7 @@ void ListSimpleGroupWidget::setCheckedDevices(const std::list<cor::Light>& devic
 }
 
 
-const std::list<cor::Light> ListSimpleGroupWidget::checkedDevices() {
+std::list<cor::Light> ListSimpleGroupWidget::checkedDevices() {
     std::list<cor::Light> devices;
     for (const auto& widget : widgets()) {
         auto existingWidget = qobject_cast<ListLightWidget*>(widget);

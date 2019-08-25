@@ -31,8 +31,8 @@ LightVectorWidget::LightVectorWidget(int width, int height, bool fillFromLeft, Q
     // Setup Array Color Buttons
     // --------------
 
-    mArrayColorsButtons = std::vector<cor::Button*>(uint32_t(mMaximumSize), nullptr);
-    mArrayLabels = std::vector<QLabel*>(uint32_t(mMaximumSize), nullptr);
+    mArrayColorsButtons = std::vector<cor::Button*>(std::uint32_t(mMaximumSize), nullptr);
+    mArrayLabels = std::vector<QLabel*>(std::uint32_t(mMaximumSize), nullptr);
     auto arrayButtonsMapper = new QSignalMapper(this);
     int i = 0;
     for (int h = 0; h < mHeight; ++h) {
@@ -71,13 +71,13 @@ void LightVectorWidget::updateDevices(const std::list<cor::Light>& devices) {
             bool skip = mHideOffDevices && !device.isOn;
             if (i < mMaximumSize && !skip) {
                 QJsonObject routineObject = lightToJson(device);
-                mArrayColorsButtons[uint32_t(i)]->updateRoutine(routineObject);
-                mArrayColorsButtons[uint32_t(i)]->setVisible(true);
+                mArrayColorsButtons[std::uint32_t(i)]->updateRoutine(routineObject);
+                mArrayColorsButtons[std::uint32_t(i)]->setVisible(true);
             }
             ++i;
         }
         for (; i < mMaximumSize; ++i) {
-            mArrayColorsButtons[uint32_t(i)]->setVisible(false);
+            mArrayColorsButtons[std::uint32_t(i)]->setVisible(false);
         }
     } else {
         int i = mMaximumSize - 1;
@@ -85,13 +85,13 @@ void LightVectorWidget::updateDevices(const std::list<cor::Light>& devices) {
             bool skip = mHideOffDevices && !device.isOn;
             if (i > 0 && !skip) {
                 QJsonObject routineObject = lightToJson(device);
-                mArrayColorsButtons[uint32_t(i)]->updateRoutine(routineObject);
-                mArrayColorsButtons[uint32_t(i)]->setVisible(true);
+                mArrayColorsButtons[std::uint32_t(i)]->updateRoutine(routineObject);
+                mArrayColorsButtons[std::uint32_t(i)]->setVisible(true);
             }
             --i;
         }
         for (; i > 0; --i) {
-            mArrayColorsButtons[uint32_t(i)]->setVisible(false);
+            mArrayColorsButtons[std::uint32_t(i)]->setVisible(false);
         }
     }
 }
@@ -118,7 +118,7 @@ void LightVectorWidget::enableButtonInteraction(bool enable) {
 }
 
 void LightVectorWidget::resizeEvent(QResizeEvent*) {
-    const QSize widgetSize(this->height() / mHeight, this->height() / mHeight);
+    const QSize widgetSize(height() / mHeight, height() / mHeight);
     for (auto widget : mArrayColorsButtons) {
         widget->setFixedSize(widgetSize);
     }

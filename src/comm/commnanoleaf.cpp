@@ -17,14 +17,14 @@
 #include "utils/color.h"
 
 
-std::pair<int, cor::Range<uint32_t>> valueAndRangeFromJSON(const QJsonObject& object) {
+std::pair<int, cor::Range<std::uint32_t>> valueAndRangeFromJSON(const QJsonObject& object) {
     if (object["value"].isDouble() && object["min"].isDouble() && object["max"].isDouble()) {
         int value = int(object["value"].toDouble());
         return std::make_pair(value,
-                              cor::Range<uint32_t>(uint32_t(object["min"].toDouble()),
-                                                   uint32_t(object["max"].toDouble())));
+                              cor::Range<std::uint32_t>(std::uint32_t(object["min"].toDouble()),
+                                                        std::uint32_t(object["max"].toDouble())));
     }
-    return std::make_pair(-1, cor::Range<uint32_t>(45, 47));
+    return std::make_pair(-1, cor::Range<std::uint32_t>(45, 47));
 }
 
 
@@ -169,7 +169,7 @@ void CommNanoleaf::createColorPalettes() {
     // create JSONArrays for the highlight palettes, which require a probability (undocumented
     // in current API docs)
     mHighlightPalettes = std::vector<QJsonArray>(size_t(EPalette::unknown));
-    for (uint32_t i = 0; i < uint32_t(EPalette::unknown); ++i) {
+    for (std::uint32_t i = 0; i < std::uint32_t(EPalette::unknown); ++i) {
         auto palettes = vectorToNanoleafPalettes(mPresetPalettes.paletteVector(EPalette(i)));
         mPalettes[i] = palettes.first;
         mHighlightPalettes[i] = palettes.second;
@@ -581,7 +581,7 @@ std::pair<QColor, uint32_t> CommNanoleaf::computeBrightnessAndColorFromSingleCol
             maxColor = color;
         }
     }
-    return std::make_pair(maxColor, uint32_t(maxColor.valueF() * 100.0));
+    return std::make_pair(maxColor, std::uint32_t(maxColor.valueF() * 100.0));
 }
 
 
@@ -597,7 +597,7 @@ uint32_t CommNanoleaf::computeBrightnessFromMultiColorPacket(
             maxColor = color;
         }
     }
-    return uint32_t(maxColor.valueF() * 100.0);
+    return std::uint32_t(maxColor.valueF() * 100.0);
 }
 
 
@@ -743,13 +743,13 @@ void CommNanoleaf::parseStateUpdatePacket(nano::LeafController& controller,
             if (colorMode == "hsv" || colorMode == "hs") {
                 light.color.setHsvF(hue / 360.0, sat / 100.0, brightness / 100.0);
                 light.routine = ERoutine::singleSolid;
-                light.palette.brightness(uint32_t(brightness));
+                light.palette.brightness(std::uint32_t(brightness));
             } else if (colorMode == "effects") {
                 // parse if brightness packet;
                 if (stateObject["brightness"].isObject()) {
                     const auto& brightObject = stateObject["brightness"].toObject();
                     if (brightObject["value"].isDouble()) {
-                        light.palette.brightness(uint32_t(brightObject["value"].toDouble()));
+                        light.palette.brightness(std::uint32_t(brightObject["value"].toDouble()));
                     }
                 }
             } else if (colorMode == "ct") {
@@ -944,7 +944,7 @@ QJsonArray CommNanoleaf::createPalette(const cor::Light& light) {
         switch (light.routine) {
             case ERoutine::singleSolid: {
                 double valueCount = 1.0;
-                for (uint32_t i = 0; i < valueCount; ++i) {
+                for (std::uint32_t i = 0; i < valueCount; ++i) {
                     QJsonObject colorObject;
                     auto hue = int(light.color.hueF() * 360.0 * ((valueCount - i) / valueCount));
                     if (hue < 0) {
@@ -959,7 +959,7 @@ QJsonArray CommNanoleaf::createPalette(const cor::Light& light) {
             }
             case ERoutine::singleGlimmer: {
                 double valueCount = 4.0;
-                for (uint32_t i = 0; i <= valueCount; ++i) {
+                for (std::uint32_t i = 0; i <= valueCount; ++i) {
                     QJsonObject colorObject;
                     auto hue = int(light.color.hueF() * 360.0);
                     if (hue < 0) {
@@ -1004,7 +1004,7 @@ QJsonArray CommNanoleaf::createPalette(const cor::Light& light) {
             case ERoutine::singleSawtoothFade:
             case ERoutine::singleWave: {
                 double valueCount = 5.0;
-                for (uint32_t i = 0; i < valueCount; ++i) {
+                for (std::uint32_t i = 0; i < valueCount; ++i) {
                     QJsonObject colorObject;
                     auto hue = int(light.color.hueF() * 360.0);
                     if (hue < 0) {

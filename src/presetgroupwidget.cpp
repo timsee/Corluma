@@ -71,7 +71,7 @@ PresetGroupWidget::PresetGroupWidget(const QString& name,
 
 void PresetGroupWidget::setChecked(ERoutine routine, bool isChecked) {
     if (mMode == EPresetWidgetMode::arduino) {
-        uint32_t index = uint32_t(routine) - uint32_t(cor::ERoutineSingleColorEnd) - 1;
+        uint32_t index = std::uint32_t(routine) - std::uint32_t(cor::ERoutineSingleColorEnd) - 1;
         mButtons[index]->setChecked(isChecked);
         if (isChecked) {
             mButtons[index]->setStyleSheet(kCheckedStyleSheet);

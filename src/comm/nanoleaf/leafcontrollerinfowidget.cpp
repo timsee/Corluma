@@ -21,7 +21,7 @@ LeafControllerInfoWidget::LeafControllerInfoWidget(nano::LeafController controll
     : QWidget(parent),
       mHideDetails{true} {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
-    this->setStyleSheet(styleSheet);
+    setStyleSheet(styleSheet);
 
     mController = controller;
 
@@ -102,14 +102,14 @@ void LeafControllerInfoWidget::paintEvent(QPaintEvent* event) {
 
     painter.setRenderHint(QPainter::Antialiasing);
     if (mIsChecked) {
-        painter.fillRect(this->rect(), QBrush(QColor(61, 142, 201, 255)));
+        painter.fillRect(rect(), QBrush(QColor(61, 142, 201, 255)));
     } else {
         // TODO: could I make this transparent in all cases?
-        painter.fillRect(this->rect(), QBrush(QColor(32, 31, 31, 255)));
+        painter.fillRect(rect(), QBrush(QColor(32, 31, 31, 255)));
     }
 
     // draw line at bottom of widget
-    QRect area(this->x(), this->y(), this->width(), this->height());
+    QRect area(x(), y(), width(), height());
     QPainter linePainter(this);
     linePainter.setRenderHint(QPainter::Antialiasing);
     linePainter.setBrush(QBrush(QColor(255, 255, 255)));

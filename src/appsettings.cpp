@@ -15,7 +15,7 @@ AppSettings::AppSettings() {
     mProtocolsInUse = std::vector<bool>(std::size_t(EProtocolType::MAX), false);
 
     std::vector<QString> keys = protocolKeys();
-    for (uint32_t x = 0; x < mProtocolsInUse.size(); ++x) {
+    for (std::uint32_t x = 0; x < mProtocolsInUse.size(); ++x) {
         if (mSettings->value(keys[x]).isValid()) {
             bool shouldEnable = mSettings->value(keys[x]).toBool();
             mProtocolsInUse[x] = shouldEnable;
@@ -35,7 +35,7 @@ AppSettings::AppSettings() {
 }
 
 bool AppSettings::enabled(EProtocolType type) {
-    return mProtocolsInUse[uint32_t(type)];
+    return mProtocolsInUse[std::uint32_t(type)];
 }
 
 bool AppSettings::enable(EProtocolType type, bool shouldEnable) {
@@ -45,16 +45,16 @@ bool AppSettings::enable(EProtocolType type, bool shouldEnable) {
         qDebug() << "WARNING: one commtype must always be active! Not removing commtype.";
         return false;
     }
-    mProtocolsInUse[uint32_t(type)] = shouldEnable;
+    mProtocolsInUse[std::uint32_t(type)] = shouldEnable;
 
-    mSettings->setValue(protocolKeys()[uint32_t(type)], QString::number(int(shouldEnable)));
+    mSettings->setValue(protocolKeys()[std::uint32_t(type)], QString::number(int(shouldEnable)));
     mSettings->sync();
     return true;
 }
 
 std::vector<QString> AppSettings::protocolKeys() {
     std::vector<QString> keys(std::size_t(EProtocolType::MAX), QString(""));
-    for (uint32_t i = 0; i < keys.size(); ++i) {
+    for (std::uint32_t i = 0; i < keys.size(); ++i) {
         QString key = protocolToString(EProtocolType(i));
         key += "InUse";
         keys[i] = key;
@@ -63,7 +63,7 @@ std::vector<QString> AppSettings::protocolKeys() {
 }
 
 uint32_t AppSettings::numberEnabled() {
-    return uint32_t(std::count(mProtocolsInUse.begin(), mProtocolsInUse.end(), true));
+    return std::uint32_t(std::count(mProtocolsInUse.begin(), mProtocolsInUse.end(), true));
 }
 
 

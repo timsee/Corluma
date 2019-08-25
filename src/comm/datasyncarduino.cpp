@@ -315,7 +315,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
         //-------------------
         // Custom Color Sync
         //-------------------
-        for (uint32_t i = 0; i < dataDevice.palette.colors().size(); ++i) {
+        for (std::uint32_t i = 0; i < dataDevice.palette.colors().size(); ++i) {
             if (cor::colorDifference(dataDevice.palette.colors()[i],
                                      commDevice.customPalette.colors()[i])
                 > 0.02f) {
@@ -342,7 +342,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
             //            qDebug() << "time out not in sync" << commDevice.timeout << " vs "
             //                     << mAppSettings->timeout() << commDevice;
             QString message = mParser->timeoutPacket(commDevice, mAppSettings->timeout());
-            appendToPacket(packet, message, uint32_t(controller.maxPacketSize));
+            appendToPacket(packet, message, std::uint32_t(controller.maxPacketSize));
             countOutOfSync++;
         }
     } else {
@@ -350,7 +350,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
         if (commDevice.timeout != 0) {
             // qDebug() << "time out not disabled!" << commDevice.timeout;
             QString message = mParser->timeoutPacket(commDevice, 0);
-            appendToPacket(packet, message, uint32_t(controller.maxPacketSize));
+            appendToPacket(packet, message, std::uint32_t(controller.maxPacketSize));
             countOutOfSync++;
         }
     }

@@ -8,6 +8,7 @@
 
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
+#include <QScrollBar>
 #include <QScroller>
 #include <QStyleOption>
 #include <QtCore>
@@ -132,30 +133,30 @@ void LightInfoListWidget::updateLights(std::list<cor::Light> lights) {
 }
 
 void LightInfoListWidget::resize(bool resizeFullWidget) {
-    QSize size = qobject_cast<QWidget*>(this->parent())->size();
+    QSize size = parentWidget()->size();
     if (resizeFullWidget) {
-        this->setGeometry(int(size.width() * 0.125f),
-                          int(size.height() * 0.125f),
-                          int(size.width() * 0.75f),
-                          int(size.height() * 0.75f));
+        setGeometry(int(size.width() * 0.125f),
+                    int(size.height() * 0.125f),
+                    int(size.width() * 0.75f),
+                    int(size.height() * 0.75f));
     }
     auto yPos = 0;
-    mTopWidget->setFixedSize(this->width(), this->height() * 2 / 20);
+    mTopWidget->setFixedSize(width(), height() * 2 / 20);
     yPos += mTopWidget->height();
 
     // resize scroll area
-    mScrollArea->setGeometry(int(this->width() * 0.01),
+    mScrollArea->setGeometry(int(width() * 0.01),
                              yPos,
-                             int(this->width() * 0.98),
-                             int(this->height() * 15 / 20));
+                             int(width() * 0.98),
+                             int(height() * 15 / 20));
     yPos += mScrollArea->height();
 
-    mDeleteButton->setGeometry(int(this->width() * 0.01),
+    mDeleteButton->setGeometry(int(width() * 0.01),
                                yPos,
-                               int(this->width() * 0.98),
-                               int(this->height() * 3 / 20));
+                               int(width() * 0.98),
+                               int(height() * 3 / 20));
 
-    QSize widgetSize(int(this->width() * 0.8f), int(this->height() / 3.0f));
+    QSize widgetSize(mScrollArea->width(), int(height() / 3.0f));
     int widgetHeightY = 0;
     // TODO: make a better system for resizing
     // draw widgets in content region
@@ -186,7 +187,13 @@ void LightInfoListWidget::resize(bool resizeFullWidget) {
         widget->setGeometry(0, widgetHeightY, widgetSize.width(), widget->height());
         widgetHeightY += widget->height();
     }
-    mScrollAreaWidget->setFixedSize(int(this->width() * 0.8), widgetHeightY);
+
+    mScrollArea->setMinimumWidth(minimumSizeHint().width()
+                                 + mScrollArea->verticalScrollBar()->width());
+    mScrollAreaWidget->setFixedSize(
+        mScrollArea->geometry().width() - mScrollArea->verticalScrollBar()->width()
+            - mScrollArea->contentsMargins().left() - mScrollArea->contentsMargins().right(),
+        widgetHeightY);
 }
 
 
@@ -246,7 +253,7 @@ void LightInfoListWidget::paintEvent(QPaintEvent*) {
     QPainter painter(this);
 
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
+    painter.fillRect(rect(), QBrush(QColor(48, 47, 47)));
 }
 
 void LightInfoListWidget::closePressed(bool) {
@@ -325,24 +332,24 @@ void LightInfoListWidget::lightInfoWidgetClicked(const QString& key) {
         mDeleteButton->setStyleSheet("background-color:rgb(110,30,30);");
     }
 
-    resize(false);
+    resize(true);
 }
 
 void LightInfoListWidget::pushIn() {
-    moveWidget(this,
-               QPoint(int(this->parentWidget()->width() * 0.125f),
-                      int(-1 * this->parentWidget()->height())),
-               QPoint(int(this->parentWidget()->width() * 0.125f),
-                      int(this->parentWidget()->height() * 0.125f)));
+    moveWidget(
+        this,
+        QPoint(int(parentWidget()->width() * 0.125f), int(-1 * parentWidget()->height())),
+        QPoint(int(parentWidget()->width() * 0.125f), int(parentWidget()->height() * 0.125f)));
 
-    this->setVisible(true);
-    this->raise();
+    setVisible(true);
+    raise();
+    isOpen(true);
 }
 
 void LightInfoListWidget::pushOut() {
-    moveWidget(this,
-               QPoint(int(this->parentWidget()->width() * 0.125f),
-                      int(this->parentWidget()->height() * 0.125f)),
-               QPoint(int(this->parentWidget()->width() * 0.125f),
-                      int(-1 * this->parentWidget()->height())));
+    moveWidget(
+        this,
+        QPoint(int(parentWidget()->width() * 0.125f), int(parentWidget()->height() * 0.125f)),
+        QPoint(int(parentWidget()->width() * 0.125f), int(-1 * parentWidget()->height())));
+    isOpen(false);
 }

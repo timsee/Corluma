@@ -20,7 +20,7 @@ TimeoutWidget::TimeoutWidget(QWidget* parent,
     }
     connect(mCheckBox,
             SIGNAL(boxChecked(bool)),
-            this->parentWidget(),
+            parentWidget(),
             SLOT(timeoutCheckboxPressed(bool)));
 
     //-----------
@@ -35,7 +35,7 @@ TimeoutWidget::TimeoutWidget(QWidget* parent,
     mSlider->slider()->setTickPosition(QSlider::TicksBelow);
     mSlider->setColor(QColor(255, 127, 0));
     mSlider->setShouldDrawTickLabels(true);
-    connect(mSlider, SIGNAL(valueChanged(int)), this->parentWidget(), SLOT(timeoutChanged(int)));
+    connect(mSlider, SIGNAL(valueChanged(int)), parentWidget(), SLOT(timeoutChanged(int)));
 
     //----------
     // Buttons
@@ -117,26 +117,26 @@ void TimeoutWidget::show(bool shouldShow) {
 
 int TimeoutWidget::resize(int widgetHeight) {
     mLastWidgetHeight = widgetHeight;
-    auto parentWidth = this->parentWidget()->width();
+    auto parentWidth = parentWidget()->width();
 
     // resize the checkboxes widths, if needed
     mCheckBox->downsizeTextWidthToFit(int(parentWidth * 0.5f));
 
     int currentY = 0;
-    auto sliderWidth = int(this->width() * 0.7f);
+    auto sliderWidth = int(width() * 0.7f);
     auto sliderHeight = int(widgetHeight * 2.75f);
 
-    auto buttonWidth = this->width() * 0.15;
+    auto buttonWidth = width() * 0.15;
     const auto& appSize = cor::applicationSize();
     auto ratio = float(appSize.height()) / appSize.width();
 
     if (ratio > 1.3f) {
-        buttonWidth = int(this->width() * 0.3f);
+        buttonWidth = int(width() * 0.3f);
     }
     auto buttonHeight = buttonWidth / 2;
     auto checkBoxHeight = buttonHeight;
 
-    mCheckBox->setGeometry(mSpacerPixels, mSpacerPixels, int(this->width() * 0.5), checkBoxHeight);
+    mCheckBox->setGeometry(mSpacerPixels, mSpacerPixels, int(width() * 0.5), checkBoxHeight);
 
     currentY += mCheckBox->height() + mSpacerPixels;
 
@@ -152,6 +152,6 @@ int TimeoutWidget::resize(int widgetHeight) {
         currentY += mMinutesButton->height();
     }
 
-    this->setGeometry(0, 0, parentWidth, currentY);
+    setGeometry(0, 0, parentWidth, currentY);
     return currentY;
 }

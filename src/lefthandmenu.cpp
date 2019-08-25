@@ -32,7 +32,7 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     mGroups = groups;
     mParentSize = parent->size();
     auto width = int(mParentSize.width() * 0.66f);
-    this->setGeometry(width * -1, 0, width, parent->height());
+    setGeometry(width * -1, 0, width, parent->height());
     mIsIn = false;
     mNumberOfRooms = 0;
 
@@ -48,7 +48,7 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     mScrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     QScroller::grabGesture(mScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
     mScrollArea->setWidget(mWidget);
-    mScrollArea->setFixedHeight(this->height() / 2);
+    mScrollArea->setFixedHeight(height() / 2);
     mScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     mScrollArea->horizontalScrollBar()->setEnabled(false);
 
@@ -57,7 +57,7 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     // -------------
     mMainPalette = new cor::LightVectorWidget(6, 2, true, this);
     mMainPalette->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mMainPalette->setFixedHeight(int(this->height() * 0.1));
+    mMainPalette->setFixedHeight(int(height() * 0.1));
     mMainPalette->setStyleSheet("background-color:rgb(33,32,32);");
 
     //---------------
@@ -112,10 +112,10 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
 
 
 void LeftHandMenu::resize() {
-    mParentSize = qobject_cast<QWidget*>(this->parent())->size();
+    mParentSize = parentWidget()->size();
     // get if its landscape or portrait
     float preferredWidth;
-    if (mParentSize.width() > mParentSize.height()) {
+    if (mParentSize.width() > mParentSize.height() || mAlwaysOpen) {
         preferredWidth = mParentSize.width() * 2.0f / 7.0f;
     } else {
         preferredWidth = mParentSize.width() * 0.66f;
@@ -124,18 +124,18 @@ void LeftHandMenu::resize() {
     auto width = int(preferredWidth);
 
     if (mAlwaysOpen) {
-        this->setGeometry(0u, this->pos().y(), width, mParentSize.height());
+        setGeometry(0u, pos().y(), width, mParentSize.height());
     } else if (mIsIn) {
-        this->setGeometry(0u, this->pos().y(), width, mParentSize.height());
+        setGeometry(0u, pos().y(), width, mParentSize.height());
     } else {
-        this->setGeometry(-width, this->pos().y(), width, mParentSize.height());
+        setGeometry(-width, pos().y(), width, mParentSize.height());
     }
     mScrollArea->setFixedWidth(int(this->width() * 1.2f));
 
-    auto buttonHeight = int(this->height() * 0.07);
-    auto yPos = int(this->height() * 0.02);
+    auto buttonHeight = int(height() * 0.07);
+    auto yPos = int(height() * 0.02);
 
-    mSpacer->setGeometry(0, 0, this->width(), this->height());
+    mSpacer->setGeometry(0, 0, this->width(), height());
 
     mSingleColorButton->setGeometry(0, yPos, this->width(), buttonHeight);
     yPos += mSingleColorButton->height();
@@ -150,18 +150,18 @@ void LeftHandMenu::resize() {
     yPos += mSettingsButton->height();
 
     mMainPalette->setGeometry(0,
-                              yPos + int(this->height() * 0.02),
+                              yPos + int(height() * 0.02),
                               this->width(),
                               int(buttonHeight * 1.2));
 
-    yPos += mMainPalette->height() + this->height() * 0.02;
+    yPos += mMainPalette->height() + height() * 0.02;
 
     auto scrollWidgetHeight = resizeRoomsWidgets();
     mNewGroupButton->setGeometry(0, scrollWidgetHeight, this->width(), buttonHeight);
     scrollWidgetHeight += mNewGroupButton->height();
 
-    this->setFixedHeight(mParentSize.height());
-    mScrollArea->setGeometry(0, yPos, this->width(), this->height() - yPos);
+    setFixedHeight(mParentSize.height());
+    mScrollArea->setGeometry(0, yPos, this->width(), height() - yPos);
 
     mWidget->setFixedSize(QSize(this->width(), scrollWidgetHeight));
 }
@@ -170,16 +170,16 @@ void LeftHandMenu::pushIn() {
     mIsIn = true;
     resize();
     updateLights();
-    this->raise();
-    cor::moveWidget(this, this->pos(), QPoint(0u, 0u));
+    raise();
+    cor::moveWidget(this, pos(), QPoint(0u, 0u));
     mRenderThread->start(333);
 }
 
 void LeftHandMenu::pushOut() {
     if (!mAlwaysOpen) {
-        QPoint endPoint = this->pos();
-        endPoint.setX(this->size().width() * -1);
-        cor::moveWidget(this, this->pos(), endPoint);
+        QPoint endPoint = pos();
+        endPoint.setX(size().width() * -1);
+        cor::moveWidget(this, pos(), endPoint);
         mRenderThread->stop();
         mIsIn = false;
     }
@@ -360,7 +360,7 @@ int LeftHandMenu::resizeRoomsWidgets() {
     });
     for (auto widget : mRoomWidgets) {
         widget->setVisible(true);
-        widget->setGeometry(0, yPos, this->width(), widget->height());
+        widget->setGeometry(0, yPos, width(), widget->height());
         yPos += widget->height();
     }
     return yPos;

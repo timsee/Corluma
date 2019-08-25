@@ -16,7 +16,7 @@ SingleColorStateWidget::SingleColorStateWidget(QWidget* parent) : QWidget(parent
     mSyncWidget = new SyncWidget(this);
     mSyncWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    this->setStyleSheet("background-color:rgb(33, 32, 32);");
+    setStyleSheet("background-color:rgb(33, 32, 32);");
 }
 
 void SingleColorStateWidget::updateState(const QColor& color, ERoutine routine) {
@@ -27,7 +27,7 @@ void SingleColorStateWidget::updateState(const QColor& color, ERoutine routine) 
 }
 
 void SingleColorStateWidget::resize() {
-    int xPos = this->height() / 10;
+    int xPos = height() / 10;
     auto height = this->height();
     mSyncWidget->setGeometry(xPos, 0, height, height);
     xPos += mSyncWidget->width();

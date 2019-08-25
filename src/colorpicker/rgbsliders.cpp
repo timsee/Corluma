@@ -92,7 +92,7 @@ void RGBSliders::enable(bool enable) {
         mBlueSlider->slider()->setValue(0);
         mBlueSlider->slider()->blockSignals(blocked);
     }
-    this->setEnabled(enable);
+    setEnabled(enable);
 }
 
 void RGBSliders::redSliderChanged(int newValue) {

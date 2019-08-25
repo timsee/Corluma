@@ -18,7 +18,7 @@ namespace cor {
 inline std::vector<QColor> defaultCustomColors() {
     std::vector<QColor> customColors = std::vector<QColor>(10, QColor(0, 0, 0));
     uint32_t uniqueColors = 5;
-    for (uint32_t i = 0; i < customColors.size(); i++) {
+    for (std::uint32_t i = 0; i < customColors.size(); i++) {
         if ((i % uniqueColors) == 0) {
             customColors[i] = QColor(0, 255, 0);
         } else if ((i % uniqueColors) == 1) {

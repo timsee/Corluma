@@ -14,7 +14,7 @@ HardwareConnectionWidget::HardwareConnectionWidget(const QString& hardwareIconPa
 
     mScale = 0.15f;
 
-    auto size = int(this->width() * mScale);
+    auto size = int(width() * mScale);
     mCorlumaLabel = new QLabel(this);
     mCorlumaLabel->setMaximumSize(QSize(size, size));
     mCorlumaPixmap = QPixmap(":images/icon.icns");
@@ -38,7 +38,7 @@ HardwareConnectionWidget::HardwareConnectionWidget(const QString& hardwareIconPa
 }
 
 void HardwareConnectionWidget::resizeEvent(QResizeEvent*) {
-    auto size = int(this->width() * mScale);
+    auto size = int(width() * mScale);
     mCorlumaLabel->setMaximumSize(QSize(size, size));
     mCorlumaLabel->setPixmap(
         mCorlumaPixmap.scaled(size, size, Qt::KeepAspectRatio, Qt::SmoothTransformation));

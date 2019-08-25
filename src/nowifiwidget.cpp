@@ -24,7 +24,7 @@ NoWifiWidget::NoWifiWidget(QWidget* parent) : QWidget(parent) {
     mLayout = new QVBoxLayout;
     mLayout->addWidget(mText, 1);
     mLayout->addWidget(mImage, 5);
-    this->setLayout(mLayout);
+    setLayout(mLayout);
 }
 
 
@@ -34,7 +34,7 @@ void NoWifiWidget::paintEvent(QPaintEvent*) {
     QPainter painter(this);
 
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
+    painter.fillRect(rect(), QBrush(QColor(48, 47, 47)));
 }
 
 void NoWifiWidget::resizeEvent(QResizeEvent*) {

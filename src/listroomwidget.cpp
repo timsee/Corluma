@@ -25,7 +25,7 @@ ListRoomWidget::ListRoomWidget(const cor::Group& group,
       mGroupData{groups},
       mListLayout(listType),
       mGroup{group} {
-    this->setFixedWidth(parent->width());
+    setFixedWidth(parent->width());
 
     if (type == cor::EWidgetType::condensed) {
         mDropdownTopWidget =
@@ -175,7 +175,7 @@ void ListRoomWidget::updateGroup(const cor::Group& group, bool removeIfNotFound)
     }
 
     mListLayout.sortDeviceWidgets();
-    this->setFixedHeight(widgetHeightSum());
+    setFixedHeight(widgetHeightSum());
 }
 
 
@@ -224,7 +224,7 @@ void ListRoomWidget::setShowButtons(bool show) {
         }
     }
 
-    this->setFixedHeight(widgetHeightSum());
+    setFixedHeight(widgetHeightSum());
     emit buttonsShown(mKey, mDropdownTopWidget->showButtons());
 }
 
@@ -241,7 +241,7 @@ void ListRoomWidget::closeWidget() {
     for (const auto& device : mListLayout.widgets()) {
         device->setVisible(false);
     }
-    this->setFixedHeight(widgetHeightSum());
+    setFixedHeight(widgetHeightSum());
 }
 
 std::list<cor::Light> ListRoomWidget::reachableDevices() {
@@ -283,7 +283,7 @@ void ListRoomWidget::paintEvent(QPaintEvent*) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     QRect topRect = mDropdownTopWidget->rect();
-    // QRect topRect(nameRect.x(), nameRect.y(), this->width(), mDropdownTopWidget->height());
+    // QRect topRect(nameRect.x(), nameRect.y(), width(), mDropdownTopWidget->height());
     if (!checkedDevices().empty()) {
         painter.fillRect(topRect, QBrush(computeHighlightColor()));
     } else {
@@ -310,7 +310,7 @@ void ListRoomWidget::resizeEvent(QResizeEvent*) {
 
 
 void ListRoomWidget::resize() {
-    mDropdownTopWidget->setFixedWidth(this->parentWidget()->width());
+    mDropdownTopWidget->setFixedWidth(parentWidget()->width());
     if (!mGroup.subgroups.empty()) {
         int yPos;
         if (mType == cor::EWidgetType::condensed) {
@@ -333,14 +333,13 @@ void ListRoomWidget::resize() {
                                    mListLayout.overallSize().height());
         }
         mGroupsButtonWidget->resize(mDropdownTopWidget->size(), spacerGeometry);
-        moveWidgets(QSize(this->parentWidget()->width(), mDropdownTopWidget->height()),
-                    QPoint(0, yPos));
+        moveWidgets(QSize(parentWidget()->width(), mDropdownTopWidget->height()), QPoint(0, yPos));
         mGroupsButtonWidget->setGeometry(0,
                                          mDropdownTopWidget->height(),
-                                         this->width(),
+                                         width(),
                                          mGroupsButtonWidget->height());
     } else {
-        moveWidgets(QSize(this->parentWidget()->width(), mDropdownTopWidget->height()),
+        moveWidgets(QSize(parentWidget()->width(), mDropdownTopWidget->height()),
                     QPoint(0, mDropdownTopWidget->height()));
     }
 }
@@ -376,7 +375,7 @@ void ListRoomWidget::selectAllToggled(const QString& key, bool selectAll) {
 
 void ListRoomWidget::moveWidgets(QSize size, QPoint offset) {
     size = mListLayout.widgetSize(size);
-    for (uint32_t i = 0; i < mListLayout.widgets().size(); ++i) {
+    for (std::uint32_t i = 0; i < mListLayout.widgets().size(); ++i) {
         if (mListLayout.widgets()[i]->isVisible()) {
             QPoint position = mListLayout.widgetPosition(mListLayout.widgets()[i]);
             mListLayout.widgets()[i]->setFixedSize(size);
@@ -415,7 +414,7 @@ void ListRoomWidget::showDevices(const std::list<cor::Light>& devices) {
         }
     }
 
-    this->setFixedHeight(widgetHeightSum());
+    setFixedHeight(widgetHeightSum());
     resize();
 }
 

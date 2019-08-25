@@ -80,8 +80,8 @@ void LeftHandButton::updateJSON(const QJsonObject& jsonObject) {
 }
 
 void LeftHandButton::resize() {
-    mIcon->setGeometry(0, 0, this->height(), this->height());
-    mTitle->setGeometry(this->height(), 0, this->width() - this->height(), this->height());
+    mIcon->setGeometry(0, 0, height(), height());
+    mTitle->setGeometry(height(), 0, width() - height(), height());
     if (!mResourcePath.isNull()) {
         updateIcon(mResourcePath);
     } else {
@@ -90,9 +90,6 @@ void LeftHandButton::resize() {
 }
 
 void LeftHandButton::mousePressEvent(QMouseEvent* event) {
-    // turn to light blue
-    //    mIsHighlighted = true;
-    //    update();
     event->ignore();
 }
 
@@ -127,9 +124,9 @@ void LeftHandButton::paintEvent(QPaintEvent*) {
     painter.setRenderHint(QPainter::Antialiasing);
     // paint background
     if (mIsHighlighted) {
-        painter.fillRect(this->rect(), QBrush(QColor(61, 142, 201)));
+        painter.fillRect(rect(), QBrush(QColor(61, 142, 201)));
     } else {
-        painter.fillRect(this->rect(), QBrush(QColor(35, 34, 34)));
+        painter.fillRect(rect(), QBrush(QColor(35, 34, 34)));
     }
 
     // paint top line
@@ -137,5 +134,5 @@ void LeftHandButton::paintEvent(QPaintEvent*) {
     QBrush brush(QColor(greyValue, greyValue, greyValue));
     QPen pen(brush, 1);
     painter.setPen(pen);
-    painter.drawLine(0, 0, this->width(), 0);
+    painter.drawLine(0, 0, width(), 0);
 }

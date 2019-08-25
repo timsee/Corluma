@@ -18,12 +18,19 @@ DiscoveryNanoLeafWidget::DiscoveryNanoLeafWidget(CommLayer* comm, QWidget* paren
     mLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mLabel->setAlignment(Qt::AlignLeft | Qt::AlignBottom);
 
+    mSpacer = new QWidget(this);
+    mSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    mTopLayout = new QHBoxLayout;
+    mTopLayout->addWidget(mLabel, 7);
+    mTopLayout->addWidget(mSpacer, 3);
+
     mSearchWidget = new SearchWidget("192.168.0.114", this);
     connect(mSearchWidget, SIGNAL(plusClicked()), this, SLOT(plusButtonClicked()));
     connect(mSearchWidget, SIGNAL(minusClicked()), this, SLOT(minusButtonClicked()));
 
     mLayout = new QVBoxLayout;
-    mLayout->addWidget(mLabel, 4);
+    mLayout->addLayout(mTopLayout, 4);
     mLayout->addWidget(mSearchWidget, 28);
     mLayout->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     setLayout(mLayout);

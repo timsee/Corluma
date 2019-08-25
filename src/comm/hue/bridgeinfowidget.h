@@ -160,6 +160,9 @@ private:
 
     /// true if checked, false otherwise
     bool mIsChecked;
+
+    /// calculates the font size of the buttons
+    void calculateButtonFontSize();
 };
 
 } // namespace hue

@@ -44,10 +44,10 @@ void IconData::setup(std::uint32_t width, std::uint32_t height) {
 
     // zero out the arrays
     for (int i = 0; i < int(mBufferLength); i++) {
-        mBuffer[uint32_t(i)] = 0;
+        mBuffer[std::uint32_t(i)] = 0;
     }
     for (int i = 0; i < int(mDataLength); i++) {
-        mData[uint32_t(i)] = 0;
+        mData[std::uint32_t(i)] = 0;
     }
 
     // Our "random individual is a lie". It uses
@@ -170,10 +170,10 @@ void IconData::setSolidColor(const QColor& color) {
 
 
 void IconData::setMultiGlimmer(const std::vector<QColor>& colors) {
-    auto colorCount = uint32_t(colors.size());
+    auto colorCount = std::uint32_t(colors.size());
 
     int j = 0;
-    for (uint32_t i = 0; i < mBufferLength; i = i + 3) {
+    for (std::uint32_t i = 0; i < mBufferLength; i = i + 3) {
         // the third element and the 8th element get their
         // color changed to simulate the multi glimmer effect.
         if (j == 3) {
@@ -204,17 +204,17 @@ void IconData::setMultiGlimmer(const std::vector<QColor>& colors) {
 }
 
 void IconData::setMultiFade(const std::vector<QColor>& colors, bool showMore) {
-    auto colorCount = uint32_t(colors.size());
+    auto colorCount = std::uint32_t(colors.size());
     if (showMore) {
         colorCount = 10;
     }
 
     uint32_t k = 0;
     int tempIndex = -1;
-    std::vector<uint32_t> arrayIndices(8);
+    std::vector<std::uint32_t> arrayIndices(8);
     while (k < 8) {
         tempIndex = (tempIndex + 1) % int(colorCount);
-        arrayIndices[k] = uint32_t(tempIndex);
+        arrayIndices[k] = std::uint32_t(tempIndex);
         k++;
     }
 
@@ -232,7 +232,7 @@ void IconData::setMultiFade(const std::vector<QColor>& colors, bool showMore) {
     output[count - 2] = colors[arrayIndices[colorIndex]];
     output[count - 1] = getMiddleColor(colors[arrayIndices[colorIndex]], colors[arrayIndices[0]]);
     uint32_t j = 0;
-    for (uint32_t i = 0; i < mBufferLength; i = i + 3) {
+    for (std::uint32_t i = 0; i < mBufferLength; i = i + 3) {
         mBuffer[i] = uint8_t(output[j].red());
         mBuffer[i + 1] = uint8_t(output[j].green());
         mBuffer[i + 2] = uint8_t(output[j].blue());
@@ -243,10 +243,10 @@ void IconData::setMultiFade(const std::vector<QColor>& colors, bool showMore) {
 }
 
 void IconData::setMultiRandomSolid(const std::vector<QColor>& colors) {
-    auto colorCount = uint32_t(colors.size());
+    auto colorCount = std::uint32_t(colors.size());
 
     int k = 0;
-    for (uint32_t i = 0; i < mBufferLength; i = i + 12) {
+    for (std::uint32_t i = 0; i < mBufferLength; i = i + 12) {
         QColor randomColor;
         if (k == 0) {
             randomColor = colors[1];
@@ -267,7 +267,7 @@ void IconData::setMultiRandomSolid(const std::vector<QColor>& colors) {
                 randomColor = colors[0];
             }
         }
-        for (uint32_t j = 0; j < 12; j = j + 3) {
+        for (std::uint32_t j = 0; j < 12; j = j + 3) {
             mBuffer[i + j] = uint8_t(randomColor.red());
             mBuffer[i + j + 1] = uint8_t(randomColor.green());
             mBuffer[i + j + 2] = uint8_t(randomColor.blue());
@@ -281,12 +281,12 @@ void IconData::setMultiRandomIndividual(const std::vector<QColor>& colors) {
     auto colorCount = int(colors.size());
 
     uint32_t j = 0;
-    for (uint32_t i = 0; i < mBufferLength; i = i + 3) {
+    for (std::uint32_t i = 0; i < mBufferLength; i = i + 3) {
         uint32_t index;
         if (mRandomIndividual[j] >= colorCount) {
             index = j % 2; // even number use 0, odd numbers use 1
         } else {
-            index = uint32_t(mRandomIndividual[j]);
+            index = std::uint32_t(mRandomIndividual[j]);
         }
         mBuffer[i] = uint8_t(colors[index].red());
         mBuffer[i + 1] = uint8_t(colors[index].green());
@@ -297,19 +297,19 @@ void IconData::setMultiRandomIndividual(const std::vector<QColor>& colors) {
 }
 
 void IconData::setBars(const std::vector<QColor>& colors) {
-    auto colorCount = uint32_t(colors.size());
+    auto colorCount = std::uint32_t(colors.size());
 
     uint32_t colorIndex = 0;
     QColor color;
-    for (uint32_t i = 3; i < mBufferLength; i = i + 12) {
+    for (std::uint32_t i = 3; i < mBufferLength; i = i + 12) {
         color = colors[colorIndex % colorCount];
-        for (uint32_t j = 0; j < 6; j = j + 3) {
+        for (std::uint32_t j = 0; j < 6; j = j + 3) {
             mBuffer[i + j] = uint8_t(color.red());
             mBuffer[i + j + 1] = uint8_t(color.green());
             mBuffer[i + j + 2] = uint8_t(color.blue());
         }
         color = colors[(colorIndex + 1) % colorCount];
-        for (uint32_t j = 6; j < 12; j = j + 3) {
+        for (std::uint32_t j = 6; j < 12; j = j + 3) {
             if (i + j + 2 < mBufferLength) {
                 mBuffer[i + j] = uint8_t(color.red());
                 mBuffer[i + j + 1] = uint8_t(color.green());

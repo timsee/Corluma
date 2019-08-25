@@ -106,7 +106,7 @@ public:
      *
      * \return the number of buttons in the floating layout
      */
-    uint32_t buttonCount() { return uint32_t(mButtons.size()); }
+    uint32_t buttonCount() { return std::uint32_t(mButtons.size()); }
 
     /// true if key is highlighted in layout, false otherwise
     bool isKeyHighlighted(const QString& key);
@@ -136,7 +136,7 @@ private:
      * lightsbutton \return true if button at index is a lights button, false if its not or if the
      * index is out of range
      */
-    bool isALightsButton(uint32_t index);
+    bool isALightsButton(std::uint32_t index);
 
     /*!
      * \brief buttonSize size of any individual button. All buttons are always the same size
@@ -176,6 +176,9 @@ private:
 
     /// original size of the application during initial load.
     QSize mOriginalSize;
+
+    /// chooses a font size so that rectangle buttons are not cut off.
+    void handleRectangleFontSize();
 };
 
 #endif // FLOATINGLAYOUT_H

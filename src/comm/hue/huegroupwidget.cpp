@@ -15,7 +15,7 @@ namespace hue {
 
 HueGroupWidget::HueGroupWidget(QWidget* parent, cor::Group group) : QWidget(parent) {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
-    this->setStyleSheet(styleSheet);
+    setStyleSheet(styleSheet);
 
     mName = new QLabel("<b>Name:</b> " + group.name(), this);
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -50,7 +50,7 @@ void HueGroupWidget::paintEvent(QPaintEvent*) {
     QPainter painter(this);
 
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.fillRect(this->rect(), QBrush(QColor(32, 31, 31)));
+    painter.fillRect(rect(), QBrush(QColor(32, 31, 31)));
 }
 
 } // namespace hue

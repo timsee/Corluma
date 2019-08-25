@@ -275,7 +275,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                     } else {
                                         device.palette = mPresetPalettes.palette(palette);
                                     }
-                                    device.palette.brightness(uint32_t(brightness * 100.0));
+                                    device.palette.brightness(std::uint32_t(brightness * 100.0));
 
 
                                     device.speed = intVector[x + 9];
@@ -300,11 +300,11 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                         } else if (packetHeader == EPacketHeader::customArrayUpdateRequest) {
                             if (verifyCustomColorUpdatePacket(intVector)) {
                                 for (auto device : deviceList) {
-                                    auto customColorCount = uint32_t(intVector[2]);
+                                    auto customColorCount = std::uint32_t(intVector[2]);
                                     uint32_t j = 3;
                                     std::vector<QColor> colors = device.customPalette.colors();
                                     uint32_t brightness = device.customPalette.brightness();
-                                    for (uint32_t i = 0; i < customColorCount; ++i) {
+                                    for (std::uint32_t i = 0; i < customColorCount; ++i) {
                                         colors[i] = QColor(intVector[j],
                                                            intVector[j + 1],
                                                            intVector[j + 2]);
@@ -326,7 +326,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                 device.color.setHsvF(device.color.hueF(),
                                                      device.color.saturationF(),
                                                      double(intVector[2]) / 100.0);
-                                device.palette.brightness(uint32_t(intVector[2]));
+                                device.palette.brightness(std::uint32_t(intVector[2]));
                                 commByType(type)->updateLight(device);
                             }
                         } else if (packetHeader == EPacketHeader::onOffChange
@@ -371,7 +371,8 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                 } else {
                                     if (intVector.size() > 4) {
                                         // store brightness from previous data
-                                        auto brightness = uint32_t(device.palette.brightness());
+                                        auto brightness =
+                                            std::uint32_t(device.palette.brightness());
                                         auto palette = EPalette(intVector[tempIndex]);
                                         if (palette == EPalette::custom) {
                                             device.palette = device.customPalette;
@@ -415,7 +416,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                    && (intVector.size() % 6 == 0)) {
                             for (auto device : deviceList) {
                                 if (index <= 10) {
-                                    auto index = uint32_t(intVector[2]);
+                                    auto index = std::uint32_t(intVector[2]);
                                     if (intVector.size() > 5) {
                                         int red = intVector[3];
                                         int green = intVector[4];
@@ -447,7 +448,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                    && (intVector.size() % 3 == 0)) {
                             for (auto device : deviceList) {
                                 if (intVector[2] <= 10) {
-                                    device.customCount = uint32_t(intVector[2]);
+                                    device.customCount = std::uint32_t(intVector[2]);
                                     // qDebug() << "UPDATE TO custom color count" <<
                                     // device.customColors;
                                     commByType(type)->updateLight(device);
@@ -530,7 +531,7 @@ bool CommArduCor::verifyCustomColorUpdatePacket(const std::vector<int>& packetIn
     if (packetIntVector.size() < 3) {
         return false;
     }
-    auto customColorCount = uint32_t(packetIntVector[x]);
+    auto customColorCount = std::uint32_t(packetIntVector[x]);
     if (!(customColorCount > 0 && customColorCount < 11)) {
         return false;
     }

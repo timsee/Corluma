@@ -32,7 +32,7 @@ public:
 
     /// getter for the average color of a palette
     const QColor& averageColor(EPalette palette) const noexcept {
-        return mAverageColors[uint32_t(palette)];
+        return mAverageColors[std::uint32_t(palette)];
     }
 
 private:

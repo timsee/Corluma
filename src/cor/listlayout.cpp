@@ -63,7 +63,7 @@ QPoint ListLayout::widgetPosition(QWidget* widget) {
 }
 
 
-cor::ListItemWidget* ListLayout::widget(uint32_t index) {
+cor::ListItemWidget* ListLayout::widget(std::uint32_t index) {
     if (index >= mWidgets.size()) {
         THROW_EXCEPTION("requested a widget that is out of bounds");
     }

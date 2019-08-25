@@ -84,14 +84,13 @@ SettingsPage::SettingsPage(QWidget* parent,
                "Load Backup",
 #endif
                "Reset",
-               "Copyright",
-               "FAQ"};
+               "Copyright"};
 
     mButtons = std::vector<SettingsButton*>(mTitles.size());
     mSectionLabels = std::vector<QLabel*>(mSectionTitles.size());
 
     uint32_t sectionIndex = 0;
-    for (uint32_t x = 0; x < mTitles.size(); ++x) {
+    for (std::uint32_t x = 0; x < mTitles.size(); ++x) {
         if (mTitles[x] == "Backup Save Data" || mTitles[x] == "Mock Connection"
             || mTitles[x] == "Copyright") {
             mSectionLabels[sectionIndex] = new QLabel(mSectionTitles[sectionIndex].c_str());
@@ -100,7 +99,7 @@ SettingsPage::SettingsPage(QWidget* parent,
             mScrollLayout->addWidget(mSectionLabels[sectionIndex]);
             sectionIndex++;
         }
-        auto minHeight = this->height() / 10;
+        auto minHeight = height() / 10;
         mButtons[x] = new SettingsButton(QString(mTitles[x].c_str()), minHeight, this);
         mButtons[x]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
         connect(mButtons[x],
@@ -112,14 +111,8 @@ SettingsPage::SettingsPage(QWidget* parent,
 
     mCopyrightWidget = new cor::WebView("Copyright", ":/resources/Copyright.html", this);
     mCopyrightWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mCopyrightWidget->setGeometry(this->geometry());
+    mCopyrightWidget->setGeometry(geometry());
     connect(mCopyrightWidget, SIGNAL(closePressed()), this, SLOT(hideCurrentWebView()));
-
-
-    mFAQWidget = new cor::WebView("FAQ", ":/resources/FAQ.html", this);
-    mFAQWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mFAQWidget->setGeometry(this->geometry());
-    connect(mFAQWidget, SIGNAL(closePressed()), this, SLOT(hideCurrentWebView()));
 
     //------------
     // Global Widget
@@ -131,7 +124,7 @@ SettingsPage::SettingsPage(QWidget* parent,
     //------------
     // Final Cleanup
     //------------
-    this->setLayout(mMainLayout);
+    setLayout(mMainLayout);
 
     mScrollArea->setWidget(mScrollAreaWidget);
 }
@@ -145,30 +138,27 @@ void SettingsPage::show() {
     mGlobalWidget->show();
     mGlobalWidget->resize();
 
-    mCopyrightWidget->setGeometry(this->geometry());
+    mCopyrightWidget->setGeometry(geometry());
 }
 
 void SettingsPage::resizeEvent(QResizeEvent*) {
     for (auto button : mButtons) {
-        button->setMinimumHeight(this->height() / 10);
+        button->setMinimumHeight(height() / 10);
     }
-    mScrollAreaWidget->setFixedWidth(int(this->width() * 0.85f));
+    mScrollAreaWidget->setFixedWidth(int(width() * 0.85f));
 
-    QRect shownWidget = this->geometry();
-    QRect hiddenWidget = QRect(0, this->geometry().height(), this->width(), this->height());
+    QRect shownWidget = geometry();
+    QRect hiddenWidget = QRect(0, geometry().height(), width(), height());
 
     switch (mCurrentWebView) {
         case ECorlumaWebView::copyright:
             mCopyrightWidget->setGeometry(shownWidget);
-            mFAQWidget->setGeometry(hiddenWidget);
             break;
         case ECorlumaWebView::FAQ:
             mCopyrightWidget->setGeometry(hiddenWidget);
-            mFAQWidget->setGeometry(shownWidget);
             break;
         default:
             mCopyrightWidget->setGeometry(hiddenWidget);
-            mFAQWidget->setGeometry(hiddenWidget);
             return;
     }
 }
@@ -239,7 +229,7 @@ void SettingsPage::paintEvent(QPaintEvent*) {
     QPainter painter(this);
 
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
+    painter.fillRect(rect(), QBrush(QColor(48, 47, 47)));
 }
 
 void SettingsPage::settingsButtonPressed(const QString& title) {
@@ -259,7 +249,7 @@ void SettingsPage::settingsButtonPressed(const QString& title) {
     } else if (title == "FAQ") {
         showWebView(ECorlumaWebView::FAQ);
     } else if (title == "Mock Connection") {
-        auto mainWindow = qobject_cast<MainWindow*>(this->parentWidget());
+        auto mainWindow = qobject_cast<MainWindow*>(parentWidget());
         Q_ASSERT(mainWindow);
         mainWindow->anyDiscovered(true);
     }
@@ -274,9 +264,6 @@ void SettingsPage::showWebView(ECorlumaWebView newWebView) {
         switch (newWebView) {
             case ECorlumaWebView::copyright:
                 widget = mCopyrightWidget;
-                break;
-            case ECorlumaWebView::FAQ:
-                widget = mFAQWidget;
                 break;
             default:
                 // none, return
@@ -295,9 +282,6 @@ void SettingsPage::hideCurrentWebView() {
         case ECorlumaWebView::copyright:
             widget = mCopyrightWidget;
             break;
-        case ECorlumaWebView::FAQ:
-            widget = mFAQWidget;
-            break;
         default:
             // none, return
             return;
@@ -309,14 +293,14 @@ void SettingsPage::hideCurrentWebView() {
 }
 
 void SettingsPage::pushIn(const QPoint& startPoint, const QPoint& endPoint) {
-    this->setVisible(true);
+    setVisible(true);
     moveWidget(this, startPoint, endPoint);
-    this->raise();
-    this->show();
-    this->isOpen(true);
+    raise();
+    show();
+    isOpen(true);
 }
 
 void SettingsPage::pushOut(const QPoint& endPoint) {
-    moveWidget(this, this->pos(), endPoint);
-    this->isOpen(false);
+    moveWidget(this, pos(), endPoint);
+    isOpen(false);
 }

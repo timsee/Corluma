@@ -1,6 +1,8 @@
 #ifndef DISCOVERYNANOLEAFWIDGET_H
 #define DISCOVERYNANOLEAFWIDGET_H
 
+#include <QHBoxLayout>
+
 #include "discoverywidget.h"
 #include "editablefieldwidget.h"
 #include "searchwidget.h"
@@ -55,6 +57,12 @@ private:
 
     /// label to prompt the user through the application.
     QLabel* mLabel;
+
+    /// spacer so that label doesn't extend under the floating layouts
+    QWidget* mSpacer;
+
+    /// layout for label and spacer
+    QHBoxLayout* mTopLayout;
 
     /// layout for widget
     QVBoxLayout* mLayout;

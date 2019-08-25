@@ -60,8 +60,8 @@ void ColorSchemeChooser::enableButton(EColorSchemeType key, bool enable) {
 void ColorSchemeChooser::resizeEvent(QResizeEvent*) {
     auto xPos = 0;
     for (auto button : mButtons) {
-        auto size = this->width() / mButtons.size();
-        button->setGeometry(xPos, 0, size, this->height());
+        auto size = width() / mButtons.size();
+        button->setGeometry(xPos, 0, size, height());
         xPos += button->width();
     }
 }

@@ -44,7 +44,7 @@ public:
                 .arg(mSpacer));
         mCheckBox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-        this->setMinimumHeight(mTitle->height());
+        setMinimumHeight(mTitle->height());
         mCheckBox->setMinimumHeight(mTitle->height());
         mCheckBox->setMinimumWidth(mTitle->height());
     }
@@ -63,7 +63,7 @@ public:
         mTitle->setFixedWidth(r.width());
         mTitle->setMinimumHeight(int(r.height() * 1.75f));
 
-        this->setMinimumHeight(mTitle->height());
+        setMinimumHeight(mTitle->height());
         mCheckBox->setMinimumHeight(mTitle->height());
         mCheckBox->setMinimumWidth(mTitle->height());
     }
@@ -130,7 +130,7 @@ protected:
 
         mTitle->setGeometry(mCheckBox->width() + 2 * mSpacer,
                             mCheckBox->geometry().y(),
-                            this->width() - mCheckBox->width() - 2 * mSpacer,
+                            width() - mCheckBox->width() - 2 * mSpacer,
                             mTitle->height());
 
         adjustSize();

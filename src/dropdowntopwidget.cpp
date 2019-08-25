@@ -78,7 +78,7 @@ DropdownTopWidget::DropdownTopWidget(const QString& key,
     mLayout->setStretch(2, 2);
     mLayout->setStretch(3, 2);
 
-    this->setFixedHeight(mMinimumHeight);
+    setFixedHeight(mMinimumHeight);
 }
 
 void DropdownTopWidget::mouseReleaseEvent(QMouseEvent* event) {

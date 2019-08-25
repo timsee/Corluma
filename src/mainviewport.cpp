@@ -61,12 +61,12 @@ MainViewport::MainViewport(MainWindow* parent,
 
 
 void MainViewport::resize(const QRect& geometry) {
-    this->setGeometry(geometry);
+    setGeometry(geometry);
     mainWidget(mPageIndex)->setGeometry(geometry);
 
-    QWidget* parentWidget = qobject_cast<QWidget*>(this->parent());
-    QRect offsetGeometry(parentWidget->width() + geometry.width(),
-                         this->pos().y(),
+    QWidget* parent = parentWidget();
+    QRect offsetGeometry(parent->width() + geometry.width(),
+                         pos().y(),
                          this->geometry().width(),
                          this->geometry().height());
 
@@ -132,10 +132,10 @@ cor::Page* MainViewport::mainPage(EPage page) {
 void MainViewport::showMainPage(EPage page) {
     auto pageObject = mainPage(page);
     auto widget = mainWidget(page);
-    int x = this->width() + widget->width();
+    auto x = width() + widget->width();
     pageObject->isOpen(true);
 
-    cor::moveWidget(widget, QPoint(x, this->pos().y()), this->pos());
+    cor::moveWidget(widget, QPoint(x, pos().y()), pos());
 
     if (page == EPage::colorPage) {
         mColorPage->show(mData->mainColor(),
@@ -165,7 +165,7 @@ void MainViewport::hideMainPage(EPage page) {
     pageObject->isOpen(false);
     int x = widget->width() * -1;
 
-    cor::moveWidget(widget, this->pos(), QPoint(x, widget->pos().y()));
+    cor::moveWidget(widget, pos(), QPoint(x, widget->pos().y()));
     if (page == EPage::colorPage) {
         mColorPage->handleRoutineWidget(false);
     } else if (page == EPage::palettePage) {

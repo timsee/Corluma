@@ -27,16 +27,16 @@ ColorPage::ColorPage(QWidget* parent) : QWidget(parent), mColor{0, 255, 0}, mBri
             this,
             SLOT(ambientUpdateReceived(std::uint32_t, std::uint32_t)));
     connect(mColorPicker,
-            SIGNAL(brightnessUpdate(uint32_t)),
+            SIGNAL(brightnessUpdate(std::uint32_t)),
             this,
-            SLOT(brightnessUpdate(uint32_t)));
+            SLOT(brightnessUpdate(std::uint32_t)));
 
     mSingleRoutineWidget =
         new RoutineButtonsWidget(EWidgetGroup::singleRoutines, std::vector<QColor>(), this);
-    mSingleRoutineWidget->setMaximumWidth(this->width());
-    mSingleRoutineWidget->setMaximumHeight(this->height() / 3);
+    mSingleRoutineWidget->setMaximumWidth(width());
+    mSingleRoutineWidget->setMaximumHeight(height() / 3);
     mSingleRoutineWidget->setGeometry(0,
-                                      this->height(),
+                                      height(),
                                       mSingleRoutineWidget->width(),
                                       mSingleRoutineWidget->height());
     mSingleRoutineWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -133,7 +133,7 @@ void ColorPage::show(const QColor& color,
 }
 
 void ColorPage::resizeEvent(QResizeEvent*) {
-    mSingleRoutineWidget->resize(QSize(this->width(), this->height()));
+    mSingleRoutineWidget->resize(QSize(width(), height()));
     mColorPicker->resize();
 }
 

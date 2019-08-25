@@ -78,7 +78,7 @@ signals:
      * \brief brightnessChanged signaled whenever the brightness is changed from any color wheel
      * type that supports it.
      */
-    void brightnessChanged(uint32_t);
+    void brightnessChanged(std::uint32_t);
 
     /// sent out whenever a routine update is triggered
     void routineUpdate(QJsonObject);
@@ -116,7 +116,7 @@ private slots:
      *
      * \param brightness new brightness for the selected lights.
      */
-    void brightnessUpdate(uint32_t brightness) { emit brightnessChanged(brightness); }
+    void brightnessUpdate(std::uint32_t brightness) { emit brightnessChanged(brightness); }
 
 private:
     /*!

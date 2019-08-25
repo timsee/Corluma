@@ -16,15 +16,24 @@ DiscoveryArduCorWidget::DiscoveryArduCorWidget(CommLayer* comm, QWidget* parent)
 
     mTopLabel = new QLabel(this);
     mTopLabel->setText("Add or remove IP Addresses:");
+    mTopLabel->setWordWrap(true);
     mTopLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mTopLabel->setAlignment(Qt::AlignLeft | Qt::AlignBottom);
+
+    mSpacer = new QWidget(this);
+    mSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    mTopLayout = new QHBoxLayout;
+    mTopLayout->addWidget(mTopLabel, 7);
+    mTopLayout->addWidget(mSpacer, 3);
+
 
     //----------
     // Main Layout
     //----------
 
     mLayout = new QVBoxLayout;
-    mLayout->addWidget(mTopLabel, 4);
+    mLayout->addLayout(mTopLayout, 4);
     mLayout->addWidget(mSearchWidget, 28);
     setLayout(mLayout);
 }

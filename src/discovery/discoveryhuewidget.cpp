@@ -18,12 +18,12 @@
 DiscoveryHueWidget::DiscoveryHueWidget(CommLayer* comm, QWidget* parent)
     : DiscoveryWidget(parent),
       mBridgeDiscovered{false},
-      mGreyout{new GreyOutOverlay(this->parentWidget()->parentWidget())}, // this is ugly
+      mGreyout{new GreyOutOverlay(parentWidget()->parentWidget())}, // this is ugly
       mHueDiscoveryState{EHueDiscoveryState::findingIpAddress} {
     mScale = 0.4f;
 
     mComm = comm;
-    auto mainWidget = this->parentWidget()->parentWidget();
+    auto mainWidget = parentWidget()->parentWidget();
 
     mLabel = new QLabel(this);
     mLabel->setWordWrap(true);
@@ -40,7 +40,6 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer* comm, QWidget* parent)
     // --------------
     // Set up HueLightInfoDiscovery
     // --------------
-
     mHueLightDiscovery = new hue::LightDiscovery(mainWidget, comm);
     mHueLightDiscovery->setVisible(false);
     mHueLightDiscovery->isOpen(false);
@@ -49,7 +48,6 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer* comm, QWidget* parent)
     // --------------
     // Set up hue group widget
     // --------------
-
     mBridgeGroupsWidget = new hue::BridgeGroupsWidget(mainWidget);
     mBridgeGroupsWidget->setVisible(false);
     mBridgeGroupsWidget->isOpen(false);
@@ -58,7 +56,6 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer* comm, QWidget* parent)
     // --------------
     // Set up hue schedules widget
     // --------------
-
     mBridgeSchedulesWidget = new hue::BridgeSchedulesWidget(mainWidget);
     mBridgeSchedulesWidget->setVisible(false);
     mBridgeSchedulesWidget->isOpen(false);
@@ -94,12 +91,18 @@ void DiscoveryHueWidget::hueDiscoveryUpdate(EHueDiscoveryState newState) {
             // qDebug() << "Hue Update: IP and Username received, testing combination. ";
             emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
             break;
-        case EHueDiscoveryState::bridgeConnected:
-            mLabel->setText(QString("Bridge discovered, but more bridges are known. Searching for "
-                                    "additional bridges..."));
+        case EHueDiscoveryState::bridgeConnected: {
+            auto totalBridges = mComm->hue()->discovery()->bridges().size()
+                                + mComm->hue()->discovery()->notFoundBridges().size();
+            auto notFoundBridges =
+                totalBridges - mComm->hue()->discovery()->notFoundBridges().size();
+            mLabel->setText(
+                QString("%1 out of %2 bridges discovered. Searching for additional bridges...")
+                    .arg(QString::number(notFoundBridges), QString::number(totalBridges)));
             // qDebug() << "Hue Update: Bridge Connected" << mComm->hueBridge().IP;
             emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovered);
             break;
+        }
         case EHueDiscoveryState::allBridgesConnected:
             mLabel->setText(QString(""));
             // qDebug() << "Hue Update: All Bridges Connected" << mComm->hueBridge().IP;
@@ -265,11 +268,11 @@ void DiscoveryHueWidget::bridgePressed(const QString& key) {
 
 void DiscoveryHueWidget::resize() {
     int yPos = 0;
-    mLabel->setGeometry(0, 0, this->width(), int(this->height() * 0.333));
+    mLabel->setGeometry(0, 0, width() * 0.7, int(height() * 0.25));
     yPos += mLabel->height();
-    mListWidget->setGeometry(0, yPos, this->width(), int(this->height() * 0.666));
+    mListWidget->setGeometry(width() * 0.025, yPos, width() * 0.95, int(height() * 0.735));
 
-    QSize widgetSize(this->width(), int(this->height() / 1.6f));
+    QSize widgetSize(mListWidget->width(), int(mListWidget->height() * 0.9));
     int yHeight = 0;
     for (auto widget : mListWidget->widgets()) {
         widget->setFixedSize(widgetSize);
@@ -277,6 +280,7 @@ void DiscoveryHueWidget::resize() {
         yHeight += widgetSize.height();
     }
     mListWidget->mainWidget()->setFixedHeight(yHeight);
+    mListWidget->mainWidget()->setFixedWidth(width());
     mHueLightDiscovery->resize();
 }
 

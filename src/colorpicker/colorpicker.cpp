@@ -48,7 +48,7 @@ void ColorPicker::chooseAmbient(std::uint32_t temperature, std::uint32_t brightn
 }
 
 
-void ColorPicker::chooseBrightness(uint32_t brightness) {
+void ColorPicker::chooseBrightness(std::uint32_t brightness) {
     if (brightness <= 100) {
         emit brightnessUpdate(brightness);
     }
@@ -59,17 +59,17 @@ void ColorPicker::chooseBrightness(uint32_t brightness) {
 // ----------------------------
 
 void ColorPicker::resizeWheel() {
-    int wheelSize = int(this->size().height() * 0.55f);
-    if (wheelSize > this->size().width() * 0.85f) {
-        wheelSize = int(this->size().width() * 0.85f);
+    int wheelSize = int(size().height() * 0.55f);
+    if (wheelSize > size().width() * 0.85f) {
+        wheelSize = int(size().width() * 0.85f);
     }
 
     int yPos = 0;
-    mColorWheel->setGeometry(0, yPos, this->width(), this->height() * 14 / 20);
+    mColorWheel->setGeometry(0, yPos, width(), height() * 14 / 20);
     yPos += mColorWheel->height();
-    mPlaceholder->setGeometry(0, yPos, this->width(), this->height() * 6 / 20);
+    mPlaceholder->setGeometry(0, yPos, width(), height() * 6 / 20);
 
-    const auto& size = QSize(this->width(), (this->height() - mPlaceholder->height()));
+    const auto& size = QSize(width(), (height() - mPlaceholder->height()));
     mColorWheel->setMinimumSize(size);
     mColorWheel->resize();
 }

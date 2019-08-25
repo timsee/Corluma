@@ -18,10 +18,7 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget* parent, AppSettings* appSett
     mSpacerPixels = 5;
 
     // set margins as spacer * 2
-    this->setContentsMargins(mSpacerPixels * 2,
-                             mSpacerPixels * 2,
-                             mSpacerPixels * 2,
-                             mSpacerPixels * 2);
+    setContentsMargins(mSpacerPixels * 2, mSpacerPixels * 2, mSpacerPixels * 2, mSpacerPixels * 2);
 
     //-----------
     // Labels
@@ -40,7 +37,7 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget* parent, AppSettings* appSett
                                        mAppSettings->timeoutEnabled(),
                                        mSpacerPixels);
 
-    mMinHeight = this->height() / 8;
+    mMinHeight = height() / 8;
 
     //-----------
     // Enabled Connections
@@ -110,7 +107,7 @@ void GlobalSettingsWidget::timeoutChanged(int newTimeout) {
 void GlobalSettingsWidget::checkBoxClicked(EProtocolType type, bool checked) {
     bool successful = mAppSettings->enable(type, checked);
     if (!successful) {
-        mConnectionButtons[uint32_t(type)]->setChecked(true);
+        mConnectionButtons[std::uint32_t(type)]->setChecked(true);
         // mConnectionButtons[mAppSettings->indexOfProtocolSettings(type)]->setStyleSheet("background-color:#4A4949;");
     }
 
@@ -143,7 +140,7 @@ void GlobalSettingsWidget::paintEvent(QPaintEvent*) {
     painter.setRenderHint(QPainter::Antialiasing);
 
     QPainterPath path;
-    path.addRoundedRect(this->rect(), 10, 10);
+    path.addRoundedRect(rect(), 10, 10);
     // painter.setPen(QPen(Qt::black, 10));
     painter.fillPath(path, QColor(48, 47, 47));
     painter.drawPath(path);
@@ -175,12 +172,12 @@ void GlobalSettingsWidget::resize() {
         currentY += mEnabledConnectionsLabel->height() + mSpacerPixels;
     }
 
-    auto buttonHeight = int(this->width() * 0.2f);
-    auto buttonWidth = int(this->width() * 0.2f);
+    auto buttonHeight = int(width() * 0.2f);
+    auto buttonWidth = int(width() * 0.2f);
     const auto& appSize = cor::applicationSize();
     auto ratio = float(appSize.height()) / appSize.width();
     if (ratio > 1.3f) {
-        buttonWidth = int(this->width() * 0.3f);
+        buttonWidth = int(width() * 0.3f);
     }
 
     mHueButton->setGeometry(mSpacerPixels, currentY, buttonWidth, buttonHeight);
@@ -202,6 +199,6 @@ void GlobalSettingsWidget::resize() {
         currentY += mSpacerPixels;
     }
 
-    this->setFixedHeight(currentY);
-    this->parentWidget()->adjustSize();
+    setFixedHeight(currentY);
+    parentWidget()->adjustSize();
 }

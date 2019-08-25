@@ -113,7 +113,7 @@ void HSVSliders::enable(bool enable) {
         brightColor.setHsvF(brightColor.hueF(), brightColor.saturationF(), 1.0);
         mValueSlider->setGradient(QColor(0, 0, 0), brightColor);
     }
-    this->setEnabled(enable);
+    setEnabled(enable);
 }
 
 void HSVSliders::hueSliderChanged(int newValue) {

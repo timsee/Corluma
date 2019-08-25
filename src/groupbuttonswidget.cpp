@@ -89,8 +89,8 @@ std::list<QString> GroupButtonsWidget::groupNames() {
 }
 
 void GroupButtonsWidget::resize(const QSize& topWidgetSize, const QRect& spacerGeometry) {
-    this->setFixedHeight(expectedHeight(topWidgetSize.height()) + spacerGeometry.height());
-    this->setFixedWidth(topWidgetSize.width());
+    setFixedHeight(expectedHeight(topWidgetSize.height()) + spacerGeometry.height());
+    setFixedWidth(topWidgetSize.width());
 
     // handle the width for the widgets
     for (int i = 0; i < int(mButtons.size()); ++i) {

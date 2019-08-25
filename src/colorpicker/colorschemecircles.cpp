@@ -115,7 +115,7 @@ void renderButtons(ColorWheel* wheel) {
 
     // create a scheme generator for converting a copy of the color scheme vector to a new scheme.
 
-    for (uint32_t i = 0; i < uint32_t(EColorSchemeType::MAX); ++i) {
+    for (std::uint32_t i = 0; i < std::uint32_t(EColorSchemeType::MAX); ++i) {
         EColorSchemeType type = EColorSchemeType(i);
         // choose what vector of circles to use
         std::vector<ColorSelection> circleSelection;
@@ -155,7 +155,7 @@ ColorSchemeCircles::ColorSchemeCircles(std::size_t count, ColorWheel* wheel, QWi
       mCircles{count},
       mSchemeType{EColorSchemeType::MAX},
       mWheel{wheel} {
-    this->setStyleSheet("background-color:rgba(0,0,0,0);");
+    setStyleSheet("background-color:rgba(0,0,0,0);");
 #ifdef RENDER_BUTTONS_AS_IMAGES
     renderButtons(mWheel);
 #endif
@@ -166,7 +166,7 @@ void ColorSchemeCircles::updateColorScheme(const std::vector<QColor>& colorSchem
     if (colorScheme.size() >= mCircles.size()) {
         numberOfSelectedDevices = mCircles.size();
     } else {
-        numberOfSelectedDevices = uint32_t(colorScheme.size());
+        numberOfSelectedDevices = std::uint32_t(colorScheme.size());
     }
 
     for (std::size_t i = 0; i < numberOfSelectedDevices; ++i) {
@@ -236,7 +236,7 @@ void ColorSchemeCircles::setWhiteLine(bool lineIsWhite) {
     }
 }
 
-std::vector<QColor> ColorSchemeCircles::moveStandardCircle(uint32_t i, QPointF newPos) {
+std::vector<QColor> ColorSchemeCircles::moveStandardCircle(std::uint32_t i, QPointF newPos) {
     // return early if point is not over wheel
     if (!mWheel->checkIfPointIsOverWheel(newPos)) {
         return {};

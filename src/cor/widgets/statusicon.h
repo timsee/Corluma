@@ -29,7 +29,7 @@ public:
         mBlackIcon = new QLabel(this);
         mIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-        this->setStyleSheet("background-color:rgba(0,0,0,0);");
+        setStyleSheet("background-color:rgba(0,0,0,0);");
     }
 
     /*!
@@ -39,7 +39,7 @@ public:
      * \param brightness brightness between 0 and 100.
      */
     void update(bool isReachable, bool isOn, double brightness) {
-        mIcon->setFixedSize(this->width(), this->height());
+        mIcon->setFixedSize(width(), height());
         QPixmap buttonIcon;
         if (!isReachable) {
             buttonIcon = QPixmap(":/images/redButton.png");

@@ -470,8 +470,8 @@ cor::Light parseLightObject(const QJsonObject& object) {
     double hue = object["hue"].toDouble();
     double sat = object["sat"].toDouble();
 
-    uint32_t majorAPI = uint32_t(object["majorAPI"].toDouble());
-    uint32_t minorAPI = uint32_t(object["minorAPI"].toDouble());
+    auto majorAPI = std::uint32_t(object["majorAPI"].toDouble());
+    auto minorAPI = std::uint32_t(object["minorAPI"].toDouble());
 
     double brightness = object["bri"].toDouble();
     QColor color;
@@ -510,8 +510,8 @@ cor::Light parseDefaultStateObject(const QJsonObject& object) {
     double hue = object["hue"].toDouble();
     double sat = object["sat"].toDouble();
 
-    uint32_t majorAPI = uint32_t(object["majorAPI"].toDouble());
-    uint32_t minorAPI = uint32_t(object["minorAPI"].toDouble());
+    auto majorAPI = std::uint32_t(object["majorAPI"].toDouble());
+    auto minorAPI = std::uint32_t(object["minorAPI"].toDouble());
 
     double brightness = object["bri"].toDouble();
     QColor color;

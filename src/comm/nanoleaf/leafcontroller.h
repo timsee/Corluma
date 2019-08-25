@@ -86,16 +86,16 @@ public:
     //-----------
 
     /// possible range for brightness values
-    cor::Range<uint32_t> brightRange;
+    cor::Range<std::uint32_t> brightRange;
 
     /// possible range for hue values
-    cor::Range<uint32_t> hueRange;
+    cor::Range<std::uint32_t> hueRange;
 
     /// possible range for saturation values
-    cor::Range<uint32_t> satRange;
+    cor::Range<std::uint32_t> satRange;
 
     /// possible range for color temperature values
-    cor::Range<uint32_t> ctRange;
+    cor::Range<std::uint32_t> ctRange;
 
     operator QString() const {
         std::stringstream tempString;

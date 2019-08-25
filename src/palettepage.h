@@ -45,7 +45,7 @@ public:
 
     /// called whenever the group page is shown
     void show(std::uint32_t count,
-              uint32_t brightness,
+              std::uint32_t brightness,
               const std::vector<QColor>& colorScheme,
               bool hasArduinoDevices,
               bool hasNanoleafDevices);

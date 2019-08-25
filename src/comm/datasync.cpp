@@ -11,7 +11,7 @@
 bool DataSync::appendToPacket(QString& currentPacket,
                               const QString& newAddition,
                               uint32_t maxPacketSize) {
-    if (uint32_t(currentPacket.size() + newAddition.size()) < (maxPacketSize - 15)) {
+    if (std::uint32_t(currentPacket.size() + newAddition.size()) < (maxPacketSize - 15)) {
         currentPacket += newAddition;
         return true;
     }

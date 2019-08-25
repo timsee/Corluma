@@ -37,7 +37,7 @@ void SelectLightsButton::mouseReleaseEvent(QMouseEvent*) {
 
 
 void SelectLightsButton::resizeEvent(QResizeEvent*) {
-    mLabel->setFixedSize(this->size());
+    mLabel->setFixedSize(size());
 }
 
 void SelectLightsButton::paintEvent(QPaintEvent*) {
@@ -45,9 +45,9 @@ void SelectLightsButton::paintEvent(QPaintEvent*) {
     painter.setRenderHint(QPainter::Antialiasing);
     // paint background
     if (mIsHighlighted) {
-        painter.fillRect(this->rect(), QBrush(QColor(61, 142, 201)));
+        painter.fillRect(rect(), QBrush(QColor(61, 142, 201)));
     } else {
-        painter.fillRect(this->rect(), QBrush(QColor(35, 34, 34)));
+        painter.fillRect(rect(), QBrush(QColor(35, 34, 34)));
     }
 
     // paint top line
@@ -55,29 +55,29 @@ void SelectLightsButton::paintEvent(QPaintEvent*) {
     QBrush brush(QColor(greyValue, greyValue, greyValue));
     QPen pen(brush, 1);
     painter.setPen(pen);
-    painter.drawLine(0, 0, this->width(), 0);
+    painter.drawLine(0, 0, width(), 0);
 }
 
 void SelectLightsButton::resize(int yPos) {
     if (mIsIn) {
-        this->setGeometry(0, yPos, this->width(), this->height());
+        setGeometry(0, yPos, width(), height());
     } else {
-        this->setGeometry(0 - this->width(), yPos, this->width(), this->height());
+        setGeometry(0 - width(), yPos, width(), height());
     }
 }
 
 void SelectLightsButton::pushOut(int yPos) {
     mIsIn = false;
-    QPoint endPoint(0 - this->width(), yPos);
-    if (this->pos().x() != endPoint.x()) {
+    QPoint endPoint(0 - width(), yPos);
+    if (pos().x() != endPoint.x()) {
         cor::moveWidget(this, QPoint(0, yPos), endPoint);
     }
 }
 
 void SelectLightsButton::pushIn(int yPos) {
     mIsIn = true;
-    QPoint startPoint(0 - this->width(), yPos);
-    if (this->pos().x() != 0) {
+    QPoint startPoint(0 - width(), yPos);
+    if (pos().x() != 0) {
         cor::moveWidget(this, startPoint, QPoint(0, yPos));
     }
 }

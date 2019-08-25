@@ -40,7 +40,7 @@ public:
           mLabelMode{false},
           mIconData{4, 4},
           mRoutineObject(routine) {
-        this->setCheckable(!mLabelMode);
+        setCheckable(!mLabelMode);
         connect(this, SIGNAL(clicked(bool)), this, SLOT(handleButton()));
         mIconData.setRoutine(routine);
         resizeIcon();
@@ -57,7 +57,7 @@ public:
                                mIconSize.height(),
                                Qt::KeepAspectRatio,
                                Qt::FastTransformation);
-        this->setIcon(QIcon(pixmap));
+        setIcon(QIcon(pixmap));
     }
 
     /// getter for routine object
@@ -71,11 +71,11 @@ public:
     void setLabelMode(bool isLabel) {
         if (isLabel != mLabelMode) {
             mLabelMode = isLabel;
-            this->setCheckable(!mLabelMode);
+            setCheckable(!mLabelMode);
             if (mLabelMode) {
-                this->setStyleSheet("border:none;");
+                setStyleSheet("border:none;");
             } else {
-                this->setStyleSheet("");
+                setStyleSheet("");
             }
         }
     }
@@ -91,8 +91,8 @@ public:
                                mIconSize.height(),
                                Qt::KeepAspectRatio,
                                Qt::FastTransformation);
-        this->setIcon(QIcon(pixmap));
-        this->setIconSize(mIconSize);
+        setIcon(QIcon(pixmap));
+        setIconSize(mIconSize);
     }
 
     /// set to true to resize automatically, set to false to not resize automatically

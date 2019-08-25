@@ -59,7 +59,7 @@ public:
         mGridLayout->setRowStretch(0, 1);
         mGridLayout->setRowStretch(1, 10);
 
-        this->setLayout(mGridLayout);
+        setLayout(mGridLayout);
     }
 
 signals:
@@ -78,7 +78,7 @@ protected:
         QPainter painter(this);
 
         painter.setRenderHint(QPainter::Antialiasing);
-        painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
+        painter.fillRect(rect(), QBrush(QColor(48, 47, 47)));
     }
 
 

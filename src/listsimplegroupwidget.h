@@ -59,7 +59,7 @@ public:
 
 
     /// getter for checked devices
-    const std::list<cor::Light> checkedDevices();
+    std::list<cor::Light> checkedDevices();
 
 signals:
 

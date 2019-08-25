@@ -82,21 +82,20 @@ void ListMoodGroupWidget::setShowButtons(bool show) {
 
 void ListMoodGroupWidget::resizeInteralWidgets() {
     if (mDropdownTopWidget->showButtons()) {
-        this->setFixedHeight(mListLayout.overallSize().height() + mDropdownTopWidget->height());
+        setFixedHeight(mListLayout.overallSize().height() + mDropdownTopWidget->height());
     } else {
-        this->setFixedHeight(mDropdownTopWidget->height());
+        setFixedHeight(mDropdownTopWidget->height());
     }
     auto yPos = 0;
-    mDropdownTopWidget->setGeometry(0, yPos, this->width(), mDropdownTopWidget->height());
+    mDropdownTopWidget->setGeometry(0, yPos, width(), mDropdownTopWidget->height());
     yPos += mDropdownTopWidget->height();
 
-    mWidget->setGeometry(0, yPos, this->width(), this->height() - mDropdownTopWidget->height());
+    mWidget->setGeometry(0, yPos, width(), height() - mDropdownTopWidget->height());
 
     QPoint offset(0, 0);
 
-    QSize size =
-        mListLayout.widgetSize(QSize(this->width(), int(mDropdownTopWidget->height() * 2)));
-    for (uint32_t i = 0; i < mListLayout.widgets().size(); ++i) {
+    QSize size = mListLayout.widgetSize(QSize(width(), int(mDropdownTopWidget->height() * 2)));
+    for (std::uint32_t i = 0; i < mListLayout.widgets().size(); ++i) {
         auto widget = qobject_cast<ListMoodPreviewWidget*>(mListLayout.widgets()[i]);
         Q_ASSERT(widget);
         QPoint position = mListLayout.widgetPosition(mListLayout.widgets()[i]);

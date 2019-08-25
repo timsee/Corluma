@@ -191,7 +191,7 @@ ColorWheel::ColorWheel(QWidget* parent)
       mBrightness{100},
       mIsEnabled{false},
       mRepaint{true} {
-    mImage = new QImage(this->size(), QImage::Format_ARGB32_Premultiplied);
+    mImage = new QImage(size(), QImage::Format_ARGB32_Premultiplied);
 #ifdef RENDER_WHEELS_AS_IMAGES
     renderBackgroundWheels();
 #endif
@@ -210,9 +210,9 @@ void ColorWheel::changeType(EWheelType type) {
 }
 
 void ColorWheel::resize() {
-    if (mImage->size() != this->size()) {
+    if (mImage->size() != size()) {
         delete mImage;
-        mImage = new QImage(this->width(), this->height(), QImage::Format_ARGB32_Premultiplied);
+        mImage = new QImage(width(), height(), QImage::Format_ARGB32_Premultiplied);
         mRepaint = true;
         update();
     }
@@ -264,10 +264,10 @@ void ColorWheel::mouseMoveEvent(QMouseEvent* event) {
 
 void ColorWheel::handleMouseEvent(QMouseEvent* event) {
     if (mWheelType == EWheelType::CT) {
-        if (this->wheelRect().contains(event->pos())) {
-            const auto& spacerX = this->wheelRect().x();
+        if (wheelRect().contains(event->pos())) {
+            const auto& spacerX = wheelRect().x();
             double xPos = event->pos().x() - spacerX;
-            xPos = xPos / double(this->wheelRect().width());
+            xPos = xPos / double(wheelRect().width());
             double offset = 0.04;
             if (xPos < offset) {
                 xPos = offset;
@@ -291,12 +291,10 @@ void ColorWheel::handleMouseEvent(QMouseEvent* event) {
 }
 
 bool ColorWheel::checkIfPointIsOverWheel(const QPointF& point) {
-    // center is true center point of widget
-    const auto& center = this->center();
     // radius is set as half the size of the wheel
-    const auto& radius = this->wheelRect().height() / 2;
+    const auto& radius = wheelRect().height() / 2;
     // distance uses true center and radius of the wheelRect
-    double distance = QLineF(point, center).length();
+    double distance = QLineF(point, center()).length();
     distance = distance / radius;
     if (distance <= 0.96) {
         return true;
@@ -379,11 +377,11 @@ cor::CirclePoint ColorWheel::findPixelByColor(const QColor& color) {
 }
 
 QPoint ColorWheel::center() {
-    return QPoint(this->width() / 2, this->height() / 2);
+    return QPoint(width() / 2, height() / 2);
 }
 
 
 QRect ColorWheel::wheelRect() {
-    auto radius = int(this->height() / 2 * kPercent);
-    return {this->center().x() - radius, this->center().y() - radius, radius * 2, radius * 2};
+    auto radius = int(height() / 2 * kPercent);
+    return {center().x() - radius, center().y() - radius, radius * 2, radius * 2};
 }

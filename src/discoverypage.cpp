@@ -146,7 +146,7 @@ void DiscoveryPage::renderUI() {
         //---------------------
         mStartButton->setEnabled(true);
         // remove the debug options from settings menu
-        auto mainWindow = qobject_cast<MainWindow*>(this->parentWidget());
+        auto mainWindow = qobject_cast<MainWindow*>(parentWidget());
         Q_ASSERT(mainWindow);
         mainWindow->anyDiscovered(true);
 
@@ -295,18 +295,18 @@ void DiscoveryPage::paintEvent(QPaintEvent*) {
     QPainter painter(this);
 
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
+    painter.fillRect(rect(), QBrush(QColor(48, 47, 47)));
 }
 
 void DiscoveryPage::resize() {
     int yPos = 0;
-    mSpacer->setGeometry(0, yPos, this->width(), this->height() / 9);
+    mSpacer->setGeometry(0, yPos, width(), height() / 9);
     yPos += mSpacer->height();
 
-    mPlaceholder->setGeometry(0, yPos, this->width(), this->height() * 2 / 3);
+    mPlaceholder->setGeometry(0, yPos, width(), height() * 2 / 3);
     yPos += mPlaceholder->height();
 
-    mStartButton->setGeometry(0, yPos, this->width(), this->height() * 2 / 9);
+    mStartButton->setGeometry(0, yPos, width(), height() * 2 / 9);
     yPos += mStartButton->height();
 
     if (mType == EProtocolType::arduCor) {
@@ -429,13 +429,13 @@ void DiscoveryPage::moveFloatingLayouts() {
     QPoint verticalStart;
     if (mHorizontalFloatingLayout->buttonCount() == 0) {
         // theres no horizontal floating layout, so move vertical to top right
-        verticalStart = QPoint(this->width(), padding);
+        verticalStart = QPoint(width(), padding);
     } else {
         // theres a horizontal and vertical menu, horizontal is in top right
-        QPoint topRight(this->width(), padding);
+        QPoint topRight(width(), padding);
         mHorizontalFloatingLayout->move(topRight);
         // vertical is directly under it.
-        verticalStart = QPoint(this->width(), padding + mHorizontalFloatingLayout->size().height());
+        verticalStart = QPoint(width(), padding + mHorizontalFloatingLayout->size().height());
         mHorizontalFloatingLayout->raise();
     }
 
@@ -458,14 +458,14 @@ void DiscoveryPage::startClicked() {
 }
 
 void DiscoveryPage::pushIn(const QPoint& startPoint, const QPoint& endPoint) {
-    this->setVisible(true);
+    setVisible(true);
     moveWidget(this, startPoint, endPoint);
-    this->raise();
-    this->show();
-    this->isOpen(true);
+    raise();
+    show();
+    isOpen(true);
 }
 
 void DiscoveryPage::pushOut(const QPoint& startPoint, const QPoint& endPoint) {
     moveWidget(this, startPoint, endPoint);
-    this->isOpen(false);
+    isOpen(false);
 }

@@ -19,7 +19,7 @@ PalettePage::PalettePage(QWidget* parent)
       mColorScheme(6, QColor(0, 255, 0)),
       mSpeed{150},
       mCount{0} {
-    this->grabGesture(Qt::SwipeGesture);
+    grabGesture(Qt::SwipeGesture);
 
     mArduinoPaletteScrollArea = new PaletteScrollArea(this);
     mArduinoPaletteScrollArea->setupButtons(true);
@@ -39,10 +39,10 @@ PalettePage::PalettePage(QWidget* parent)
     /// fill with junk data for this case
     mMultiRoutineWidget =
         new RoutineButtonsWidget(EWidgetGroup::multiRoutines, cor::defaultCustomColors(), this);
-    mMultiRoutineWidget->setMaximumWidth(this->width());
-    mMultiRoutineWidget->setMaximumHeight(this->height() / 3);
+    mMultiRoutineWidget->setMaximumWidth(width());
+    mMultiRoutineWidget->setMaximumHeight(height() / 3);
     mMultiRoutineWidget->setGeometry(0,
-                                     this->height(),
+                                     height(),
                                      mMultiRoutineWidget->width(),
                                      mMultiRoutineWidget->height());
     mMultiRoutineWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -155,8 +155,8 @@ void PalettePage::handleRoutineWidget(bool show) {
 
 
 void PalettePage::resize() {
-    auto yPos = int(this->height() * 0.05);
-    QSize scrollAreaSize(int(this->width()), int(this->height() * 0.94f));
+    auto yPos = int(height() * 0.05);
+    QSize scrollAreaSize(int(width()), int(height() * 0.94f));
     mArduinoPaletteScrollArea->setGeometry(0,
                                            yPos,
                                            scrollAreaSize.width(),
@@ -166,7 +166,7 @@ void PalettePage::resize() {
     mHuePaletteScrollArea->setGeometry(0, yPos, scrollAreaSize.width(), scrollAreaSize.height());
     mHuePaletteScrollArea->resize();
 
-    mColorPicker->setGeometry(0, yPos, this->width(), int(this->height() * 0.94));
+    mColorPicker->setGeometry(0, yPos, width(), int(height() * 0.94));
     mColorPicker->resize();
 }
 
@@ -206,5 +206,5 @@ void PalettePage::lightCountChanged(std::size_t count) {
 
 void PalettePage::resizeEvent(QResizeEvent*) {
     resize();
-    mMultiRoutineWidget->resize(QSize(this->width(), this->height()));
+    mMultiRoutineWidget->resize(QSize(width(), height()));
 }

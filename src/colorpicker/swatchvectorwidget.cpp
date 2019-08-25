@@ -8,7 +8,7 @@
 
 #include <QSignalMapper>
 
-SwatchVectorWidget::SwatchVectorWidget(uint32_t width, uint32_t height, QWidget* parent)
+SwatchVectorWidget::SwatchVectorWidget(std::uint32_t width, uint32_t height, QWidget* parent)
     : QWidget(parent) {
     mWidth = width;
     mHeight = height;
@@ -30,8 +30,8 @@ SwatchVectorWidget::SwatchVectorWidget(uint32_t width, uint32_t height, QWidget*
     mSwatches = std::vector<QPushButton*>(mMaximumSize, nullptr);
     auto arrayButtonsMapper = new QSignalMapper(this);
     uint32_t i = 0;
-    for (uint32_t h = 0; h < mHeight; ++h) {
-        for (uint32_t w = 0; w < mWidth; ++w) {
+    for (std::uint32_t h = 0; h < mHeight; ++h) {
+        for (std::uint32_t w = 0; w < mWidth; ++w) {
             mSwatches[i] = new QPushButton(this);
             mSwatches[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
             mSwatches[i]->setCheckable(false);
@@ -90,7 +90,7 @@ void SwatchVectorWidget::toggleArrayColor(int) {
 }
 
 void SwatchVectorWidget::updateSelected(const QColor& color) {
-    for (uint32_t i = 0; i < mSwatches.size(); ++i) {
+    for (std::uint32_t i = 0; i < mSwatches.size(); ++i) {
         if (mSwatches[i]->isChecked()) {
             int size =
                 std::min(int(mSwatches[i]->width() * 0.8f), int(mSwatches[i]->height() * 0.8f));

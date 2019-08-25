@@ -78,7 +78,7 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup,
 
         int rowCount = 0;
         uint32_t maxColumn = 4;
-        for (uint32_t i = 0; i < mRoutines.size(); ++i) {
+        for (std::uint32_t i = 0; i < mRoutines.size(); ++i) {
             mRoutineButtons[i] = new cor::Button(this, mRoutines[i].second);
             mRoutineButtons[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -132,7 +132,7 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup,
 
         int rowCount = 0;
         uint32_t maxColumn = 3;
-        for (uint32_t i = 0; i < mRoutines.size(); ++i) {
+        for (std::uint32_t i = 0; i < mRoutines.size(); ++i) {
             mRoutineButtons[i] = new cor::Button(this, mRoutines[i].second);
 
             mRoutineButtons[i]->setStyleSheet("background-color: rgb(52, 52, 52); ");
@@ -173,7 +173,7 @@ void RoutineButtonsWidget::highlightRoutineButton(const QString& label) {
 }
 
 void RoutineButtonsWidget::multiRoutineColorsChanged(const std::vector<QColor>& colors) {
-    for (uint32_t i = 0; i < mRoutineButtons.size(); i++) {
+    for (std::uint32_t i = 0; i < mRoutineButtons.size(); i++) {
         cor::Light light = cor::jsonToLight(mRoutines[i].second);
         light.palette = Palette(paletteToString(EPalette::custom), colors, 51);
         mRoutines[i].second = cor::lightToJson(light);
@@ -193,7 +193,7 @@ QString RoutineButtonsWidget::jsonToButtonName(const QJsonObject& routineObject)
     if (routineObject["param"].isDouble()) {
         param = int(routineObject["param"].toDouble());
     }
-    for (uint32_t i = 0; i < mRoutineButtons.size(); i++) {
+    for (std::uint32_t i = 0; i < mRoutineButtons.size(); i++) {
         ERoutine buttonRoutine =
             stringToRoutine(mRoutineButtons[i]->routine()["routine"].toString());
         int buttonParam = INT_MIN;
@@ -209,7 +209,7 @@ QString RoutineButtonsWidget::jsonToButtonName(const QJsonObject& routineObject)
 }
 
 void RoutineButtonsWidget::singleRoutineColorChanged(const QColor& color) {
-    for (uint32_t i = 0; i < mRoutineButtons.size(); ++i) {
+    for (std::uint32_t i = 0; i < mRoutineButtons.size(); ++i) {
         QJsonObject routineObject = mRoutines[i].second;
         routineObject["hue"] = color.hueF();
         routineObject["sat"] = color.saturationF();
@@ -219,16 +219,13 @@ void RoutineButtonsWidget::singleRoutineColorChanged(const QColor& color) {
 }
 
 void RoutineButtonsWidget::resize(QSize size) {
-    this->setFixedWidth(size.width());
-    this->setFixedHeight(size.height() / 3);
+    setFixedWidth(size.width());
+    setFixedHeight(size.height() / 3);
 
     if (mIsOpen) {
-        this->setGeometry(0,
-                          this->parentWidget()->height() - this->height(),
-                          this->width(),
-                          this->height());
+        setGeometry(0, parentWidget()->height() - height(), width(), height());
     } else {
-        this->setGeometry(0, this->parentWidget()->height(), this->width(), this->height());
+        setGeometry(0, parentWidget()->height(), width(), height());
     }
 }
 
@@ -238,21 +235,19 @@ void RoutineButtonsWidget::paintEvent(QPaintEvent*) {
     QPainter painter(this);
 
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.fillRect(this->rect(), QBrush(QColor(48, 47, 47)));
+    painter.fillRect(rect(), QBrush(QColor(48, 47, 47)));
 }
 
 
 void RoutineButtonsWidget::showWidget(bool shouldShow) {
     if (mIsOpen && !shouldShow) {
-        cor::moveWidget(this, this->pos(), QPoint(0, this->parentWidget()->height()));
+        cor::moveWidget(this, pos(), QPoint(0, parentWidget()->height()));
 
         mIsOpen = false;
     } else if (!mIsOpen && shouldShow) {
         // mSingleRoutineWidget->singleRoutineColorChanged(mColor);  // update colors of single
         // color routine
-        cor::moveWidget(this,
-                        this->pos(),
-                        QPoint(0, this->parentWidget()->height() - this->height()));
+        cor::moveWidget(this, pos(), QPoint(0, parentWidget()->height() - height()));
         mIsOpen = true;
     }
 }

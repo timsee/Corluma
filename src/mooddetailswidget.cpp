@@ -138,5 +138,5 @@ void MoodDetailsWidget::resize(const QSize& size) {
         mGroupDefaults->setGeometry(0, yPos, size.width(), boxSize);
         yPos += boxSize;
     }
-    this->setFixedSize(size);
+    setFixedSize(size);
 }

@@ -34,7 +34,7 @@ public:
     void changeTemperatureAndBrightness(std::uint32_t temperature, std::uint32_t brightness);
 
     /// programmatically change brightness
-    void changeBrightness(uint32_t brightness);
+    void changeBrightness(std::uint32_t brightness);
 
     /// enables and disables the tmperature and brightness
     void enable(bool enable);

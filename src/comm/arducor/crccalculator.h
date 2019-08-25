@@ -32,7 +32,7 @@ private:
     uint32_t update(unsigned long crc, uint8_t data);
 
     /// table of CRC values
-    std::vector<uint32_t> mCRCTable;
+    std::vector<std::uint32_t> mCRCTable;
 };
 
 #endif // CRCCALCULATOR_H

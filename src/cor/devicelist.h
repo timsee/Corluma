@@ -75,7 +75,7 @@ public:
      *
      * \param count new count of custom colors.
      */
-    void updateCustomColorCount(uint32_t count);
+    void updateCustomColorCount(std::uint32_t count);
 
     /*!
      * \brief turnOn turn all devices on or off based off of the boolean. Stores the previous state
@@ -121,7 +121,7 @@ public:
      * \brief updateBrightness update the brightness level of all current devices.
      * \param brightness new brightness
      */
-    void updateBrightness(uint32_t brightness);
+    void updateBrightness(std::uint32_t brightness);
 
     /*!
      * \brief addDevice add new device to connected list. if device already exists,

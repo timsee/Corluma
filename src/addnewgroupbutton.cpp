@@ -36,7 +36,7 @@ void AddNewGroupButton::mouseReleaseEvent(QMouseEvent*) {
 
 
 void AddNewGroupButton::resizeEvent(QResizeEvent*) {
-    mLabel->setFixedSize(this->size());
+    mLabel->setFixedSize(size());
 }
 
 void AddNewGroupButton::paintEvent(QPaintEvent*) {
@@ -44,9 +44,9 @@ void AddNewGroupButton::paintEvent(QPaintEvent*) {
     painter.setRenderHint(QPainter::Antialiasing);
     // paint background
     if (mIsHighlighted) {
-        painter.fillRect(this->rect(), QBrush(QColor(61, 142, 201)));
+        painter.fillRect(rect(), QBrush(QColor(61, 142, 201)));
     } else {
-        painter.fillRect(this->rect(), QBrush(QColor(35, 34, 34)));
+        painter.fillRect(rect(), QBrush(QColor(35, 34, 34)));
     }
 
     // paint top line
@@ -54,13 +54,13 @@ void AddNewGroupButton::paintEvent(QPaintEvent*) {
     QBrush brush(QColor(greyValue, greyValue, greyValue));
     QPen pen(brush, 1);
     painter.setPen(pen);
-    painter.drawLine(0, 0, this->width(), 0);
+    painter.drawLine(0, 0, width(), 0);
 }
 
 void AddNewGroupButton::resize(int yPos, const QSize& size) {
     if (mIsIn) {
-        this->setGeometry(size.width() - this->width(), yPos, this->width(), this->height());
+        setGeometry(size.width() - width(), yPos, width(), height());
     } else {
-        this->setGeometry(size.width(), yPos, this->width(), this->height());
+        setGeometry(size.width(), yPos, width(), height());
     }
 }

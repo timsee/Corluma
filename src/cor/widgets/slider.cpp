@@ -22,7 +22,7 @@ Slider::Slider(QWidget* parent) : QWidget(parent) {
     mUseMinimumPossible = false;
     mMinimumPossible = 0;
 
-    this->setAutoFillBackground(true);
+    setAutoFillBackground(true);
     mSlider = new QSlider(Qt::Horizontal, this);
     mSlider->setAutoFillBackground(true);
     setMinimumPossible(false, 0);
@@ -37,13 +37,13 @@ Slider::Slider(QWidget* parent) : QWidget(parent) {
 
     mType = ESliderType::vanilla;
 
-    mHandleSize = int(this->width() / 15.0);
+    mHandleSize = int(width() / 15.0);
 
     adjustStylesheet();
 }
 
 void Slider::resize() {
-    mSlider->setFixedSize(this->rect().width(), int(this->rect().height() * mHeightScaleFactor));
+    mSlider->setFixedSize(rect().width(), int(rect().height() * mHeightScaleFactor));
     switch (mType) {
         case ESliderType::color:
             setColor(mSliderColor);
@@ -65,7 +65,7 @@ void Slider::setColor(const QColor& color) {
     // slider handle is only controllable via stylesheets but the values needed for style sheets
     // breaks in some environments (such as high pixel density android screens). to get around this,
     // we always set the handle size programmatically whenever we udpate the stylesheet.
-    mHandleSize = int(this->width() / 15.0);
+    mHandleSize = int(width() / 15.0);
 
     // generate a stylesheet based off of the color with a gradient
     adjustStylesheet();
@@ -74,7 +74,7 @@ void Slider::setColor(const QColor& color) {
 void Slider::setImage(const QString& path) {
     mType = ESliderType::image;
     mPath = path;
-    mHandleSize = int(this->width() / 15.0);
+    mHandleSize = int(width() / 15.0);
 
     adjustStylesheet();
 }
@@ -87,7 +87,7 @@ void Slider::setGradient(const QColor& leftColor, const QColor& rightColor) {
     // slider handle is only controllable via stylesheets but the values needed for style sheets
     // breaks in some environments (such as high pixel density android screens). to get around this,
     // we always set the handle size programmatically whenever we udpate the stylesheet.
-    mHandleSize = int(this->width() / 15.0);
+    mHandleSize = int(width() / 15.0);
 
     // generate a stylesheet based off of the color with a gradient
     adjustStylesheet();
@@ -157,7 +157,7 @@ void Slider::adjustStylesheet() {
 }
 
 void Slider::receivedValue(int value) {
-    if (this->isEnabled()) {
+    if (isEnabled()) {
         value = jumpSliderToPosition(mSlider, value);
 
         mSlider->blockSignals(true);
@@ -240,7 +240,7 @@ void Slider::paintEvent(QPaintEvent*) {
         painter.setRenderHint(QPainter::Antialiasing);
         if (mShouldDrawTickLabels) {
             painter.setPen(QColor(255, 255, 255, 80));
-        } else if (this->isEnabled()) {
+        } else if (isEnabled()) {
             painter.setPen(QColor(255, 255, 255, 60));
         } else {
             painter.setPen(QColor(255, 255, 255, 10));
@@ -266,10 +266,10 @@ void Slider::paintEvent(QPaintEvent*) {
         }
         for (int i = mSlider->minimum(); i <= maximum; i += interval) {
             int x = i * interval / mSlider->maximum() * pixelsPerStep;
-            x = x + this->contentsMargins().left();
+            x = x + contentsMargins().left();
 
             if (mShouldDrawTickLabels) {
-                int y = this->rect().bottom();
+                int y = rect().bottom();
                 // handle edge case that makes ugly labels...
                 int labelValue = currentStep;
                 if (shouldSubtractOne && !isFirstLabel) {
@@ -294,7 +294,7 @@ void Slider::paintEvent(QPaintEvent*) {
                 }
                 if (mSlider->tickPosition() == QSlider::TicksBothSides
                     || mSlider->tickPosition() == QSlider::TicksBelow) {
-                    int y = this->rect().bottom();
+                    int y = rect().bottom();
                     painter.drawLine(x, y, x, y * 4 / 5);
                 }
             }
@@ -306,12 +306,12 @@ void Slider::paintEvent(QPaintEvent*) {
 
 void Slider::setHeightPercentage(float percent) {
     mHeightScaleFactor = percent;
-    int newY = int(this->rect().height() * (1.0f - mHeightScaleFactor) / 2.0f);
+    int newY = int(rect().height() * (1.0f - mHeightScaleFactor) / 2.0f);
 
     mSlider->setGeometry(mSlider->rect().x(),
                          newY,
-                         this->rect().width(),
-                         int(this->rect().height() * mHeightScaleFactor));
+                         rect().width(),
+                         int(rect().height() * mHeightScaleFactor));
     resizeEvent(nullptr);
 }
 
@@ -337,12 +337,12 @@ void Slider::enable(bool shouldEnable) {
         auto effect = new QGraphicsOpacityEffect(mSlider);
         effect->setOpacity(1.0);
         mSlider->setGraphicsEffect(effect);
-        this->setEnabled(true);
+        setEnabled(true);
     } else {
         auto effect = new QGraphicsOpacityEffect(mSlider);
         effect->setOpacity(0.5);
         mSlider->setGraphicsEffect(effect);
-        this->setEnabled(false);
+        setEnabled(false);
     }
 }
 

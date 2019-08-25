@@ -61,7 +61,7 @@ void DeviceList::updateRoutine(const QJsonObject& routineObject) {
              */
             std::vector<QColor> colors = palette.colors();
             if (light.protocol() == EProtocolType::hue) {
-                uint32_t colorIndex = uint32_t(hueCount) % colors.size();
+                uint32_t colorIndex = std::uint32_t(hueCount) % colors.size();
                 light.color = colors[colorIndex];
                 hueCount++;
             }
@@ -91,8 +91,8 @@ Palette DeviceList::palette() {
     std::vector<int> paletteCount(int(EPalette::unknown), 0);
     for (const auto& device : mDevices) {
         if (device.isReachable) {
-            paletteCount[uint32_t(device.palette.paletteEnum())] =
-                paletteCount[uint32_t(device.palette.paletteEnum())] + 1;
+            paletteCount[std::uint32_t(device.palette.paletteEnum())] =
+                paletteCount[std::uint32_t(device.palette.paletteEnum())] + 1;
         }
     }
     // find the most frequent color group occurence, return its index.
@@ -201,7 +201,7 @@ bool DeviceList::isOn() {
 
 
 void DeviceList::updateColorScheme(std::vector<QColor> colors) {
-    uint32_t i = 0;
+    auto i = 0u;
     // NOTE: this doesn't work entirely as intended. arduCor should be handled the same as nanoleaf,
     // however, sending tons of custom color updates to arducor ends up spamming the lights comm
     // channels and only seems to reliably work on serial communication. So for now, I'm falling
@@ -268,7 +268,7 @@ std::vector<QColor> DeviceList::colorScheme() {
 
 
 
-void DeviceList::updateBrightness(uint32_t brightness) {
+void DeviceList::updateBrightness(std::uint32_t brightness) {
     for (auto&& light : mDevices) {
         if (light.routine <= cor::ERoutineSingleColorEnd) {
             light.color.setHsvF(light.color.hueF(), light.color.saturationF(), brightness / 100.0);
@@ -411,8 +411,8 @@ bool DeviceList::hasLightWithProtocol(EProtocolType protocol) const noexcept {
 QString DeviceList::findCurrentCollection(const std::list<cor::Group>& collections,
                                           bool allowLights) {
     // count number of lights in each collection currently selected
-    std::vector<uint32_t> lightCount(collections.size(), 0);
-    uint32_t index = 0;
+    std::vector<std::uint32_t> lightCount(collections.size(), 0);
+    auto index = 0u;
     for (const auto& collection : collections) {
         for (const auto& device : mDevices) {
             for (const auto& collectionID : collection.lights) {
@@ -427,7 +427,7 @@ QString DeviceList::findCurrentCollection(const std::list<cor::Group>& collectio
     // check how many collections are currently fully selected
     std::vector<bool> allLightsFound(collections.size(), false);
     index = 0;
-    uint32_t completeGroupCount = 0;
+    auto completeGroupCount = 0u;
     for (const auto& collection : collections) {
         if (lightCount[index] == collection.lights.size()) {
             allLightsFound[index] = true;
@@ -439,7 +439,7 @@ QString DeviceList::findCurrentCollection(const std::list<cor::Group>& collectio
     // if count is higher than 1, check if any have too many
     if (completeGroupCount > 1) {
         QString name;
-        uint32_t biggestSize = 0;
+        auto biggestSize = 0u;
         bool foundNonZeroGroup = false;
         index = 0;
         for (const auto& collection : collections) {
@@ -447,7 +447,7 @@ QString DeviceList::findCurrentCollection(const std::list<cor::Group>& collectio
                 if (collection.lights.size() > biggestSize) {
                     name = collection.name();
                     foundNonZeroGroup = true;
-                    biggestSize = uint32_t(collection.lights.size());
+                    biggestSize = std::uint32_t(collection.lights.size());
                 }
             }
             ++index;

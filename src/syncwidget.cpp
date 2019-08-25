@@ -10,11 +10,11 @@
 
 SyncWidget::SyncWidget(QWidget* parent) : QWidget(parent), mState{ESyncState::synced} {
     mLabel = new QLabel(this);
-    mLabel->setFixedSize(this->size());
+    mLabel->setFixedSize(size());
     changeState(ESyncState::synced);
 
     mMovie = new QMovie(":/images/syncing.gif");
-    mMovie->setScaledSize(this->size());
+    mMovie->setScaledSize(size());
 }
 
 void SyncWidget::changeState(ESyncState state) {
@@ -26,8 +26,8 @@ void SyncWidget::changeState(ESyncState state) {
             resourcePath = ":images/checkmark.png";
         }
         QPixmap syncPixmap(resourcePath);
-        syncPixmap = syncPixmap.scaled(int(this->height() * 0.7f),
-                                       int(this->height() * 0.7f),
+        syncPixmap = syncPixmap.scaled(int(height() * 0.7f),
+                                       int(height() * 0.7f),
                                        Qt::KeepAspectRatio,
                                        Qt::SmoothTransformation);
         mLabel->setPixmap(syncPixmap);
