@@ -7,12 +7,14 @@
 #include <QScrollArea>
 #include <QWidget>
 
+#include "appsettings.h"
 #include "comm/arducor/arducorinfowidget.h"
 #include "comm/commhue.h"
 #include "comm/hue/hueinfowidget.h"
 #include "comm/nanoleaf/leafcontrollerinfowidget.h"
 #include "cor/objects/page.h"
 #include "cor/widgets/topwidget.h"
+#include "lightinfoscrollarea.h"
 
 /*!
  * \copyright
@@ -31,34 +33,14 @@ class LightInfoListWidget : public QWidget, public cor::Page {
     Q_OBJECT
 public:
     /// constructor
-    explicit LightInfoListWidget(QWidget* parent);
+    explicit LightInfoListWidget(QWidget* parent, AppSettings* appSettings);
 
-    /*!
-     * \brief updateHues update the lights displayed in the widget, normally called
-     *        right before displaying the widget.
-     *
-     * \param lights list of lights to load into the HusLightInfoListWidget
-     */
-    void updateHues(std::list<HueLight> lights);
-
-    /*!
-     * \brief updateControllers update the controllers for nanoleafs to any
-     * hardware changes detected
-     *
-     * \param controllers nanoleaf controllers to use as the recent set.
-     */
-    void updateControllers(std::list<nano::LeafController> controllers);
-
-    /// updates the arducor lights in the light info list widget
-    void updateLights(std::list<cor::Light> lights);
+    LightInfoScrollArea* scrollArea() { return mLightInfoScrollArea; }
 
     /*!
      * \brief resize size the widget programmatically
-     *
-     * \param resizeFullWidget true to resize the widget itself, false to just
-     * resize its contents.
      */
-    void resize(bool resizeFullWidget);
+    void resize();
 
     /// pushes in the widget
     void pushIn();
@@ -102,10 +84,10 @@ private slots:
     void paintEvent(QPaintEvent*);
 
     /*!
-     * \brief lightInfoWidgetClicked an individual widget has been clicked and has sent out
+     * \brief lightClicked an individual widget has been clicked and has sent out
      * its key.
      */
-    void lightInfoWidgetClicked(const QString&);
+    void lightInfoClicked(const QString&, bool);
 
     /*!
      * \brief deleteButtonPressed delete button pressed, which triggers deleting a hue
@@ -113,12 +95,27 @@ private slots:
      */
     void deleteButtonPressed(bool);
 
-private:
-    /// last key clicked
-    QString mLastKey;
+    /// hue button clicked
+    void hueClicked();
 
-    /// widget used for scroll area.
-    QWidget* mScrollAreaWidget;
+    /// nanoleaf button clicked
+    void nanoleafClicked();
+
+    /// arducor button clicked
+    void arducorClicked();
+
+private:
+    /// highlights the protocol type
+    void highlightProtocolType();
+
+    /// handle the protocol type thats selected
+    bool handleProtocolType();
+
+    /// scroll area that contains the information about the lights
+    LightInfoScrollArea* mLightInfoScrollArea;
+
+    /// pointer to app settings
+    AppSettings* mAppSettings;
 
     /// title and close button at top of widget.
     cor::TopWidget* mTopWidget;
@@ -126,20 +123,11 @@ private:
     /// button for deleting the currently selected widget
     QPushButton* mDeleteButton;
 
-    /// layout for scroll area
-    QVBoxLayout* mScrollLayout;
+    /// buttons for changing the protocols
+    std::vector<QPushButton*> mProtocolButtons;
 
-    /// scroll area for displaying list.
-    QScrollArea* mScrollArea;
-
-    /// widgets for hue displayed in scroll area
-    std::vector<hue::HueInfoWidget*> mHueWidgets;
-
-    /// widgets for nanoleaf displayed in scroll area
-    std::vector<nano::LeafControllerInfoWidget*> mNanoleafWidgets;
-
-    /// widgets for ArduCor displayed in scroll area
-    std::vector<ArduCorInfoWidget*> mArduCorWidgets;
+    /// current protocol
+    EProtocolType mCurrentProtocol;
 };
 
 

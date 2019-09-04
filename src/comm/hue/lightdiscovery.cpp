@@ -18,14 +18,15 @@ LightDiscovery::LightDiscovery(QWidget* parent, CommLayer* comm) : QWidget(paren
     //------------
     // Top Layout
     //------------
-    mTopWidget = new cor::TopWidget("Discover Hues", ":images/closeX.png", this);
+    mTopWidget = new cor::TopWidget("Discover New Hues", ":images/closeX.png", this);
     connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(closeButtonPressed(bool)));
     mTopWidget->setFontPoint(20);
 
-    mSearchButton = new QPushButton(this);
-    mSearchButton->setText("Search");
-    mSearchButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(mSearchButton, SIGNAL(clicked(bool)), this, SLOT(searchButtonPressed(bool)));
+    mSearchHelpLabel = new QLabel(
+        "Add the serial number of your Hue to the text field and then press the \"+\" button.",
+        this);
+    mSearchHelpLabel->setWordWrap(true);
+    mSearchHelpLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     mSearchWidget =
         new SearchWidget("",
@@ -53,13 +54,13 @@ void LightDiscovery::resize() {
                 int(size.height() * 0.75f));
 
     int yPos = 0;
-    mTopWidget->setGeometry(0, yPos, width(), height() * 0.1);
+    mTopWidget->setGeometry(0, yPos, width(), int(height() * 0.1));
     yPos += mTopWidget->height();
 
-    mSearchButton->setGeometry(0, yPos, width(), height() * 0.1);
-    yPos += mSearchButton->height();
+    mSearchHelpLabel->setGeometry(0, yPos, width(), int(height() * 0.1));
+    yPos += mSearchHelpLabel->height();
 
-    mSearchWidget->setGeometry(0, yPos, width(), height() * 0.8);
+    mSearchWidget->setGeometry(0, yPos, width(), int(height() * 0.8));
     yPos += mSearchWidget->height();
 }
 
@@ -125,16 +126,15 @@ void LightDiscovery::discoveryRoutine() {
     }
 }
 
-void LightDiscovery::searchButtonPressed(bool) {
-    mComm->hue()->searchForNewLights(mBridge, mSearchWidget->searchingFor());
-}
 
 // ----------------------------
 // Plus/Minus/Line Edit
 // ----------------------------
 
 
-void LightDiscovery::plusButtonClicked() {}
+void LightDiscovery::plusButtonClicked() {
+    mComm->hue()->searchForNewLights(mBridge, mSearchWidget->searchingFor());
+}
 
 void LightDiscovery::minusButtonClicked() {}
 

@@ -19,7 +19,8 @@ namespace hue {
 HueInfoWidget::HueInfoWidget(HueLight light, QWidget* parent)
     : QWidget(parent),
       mHideDetails{false},
-      mLight(light) {
+      mLight(light),
+      mTypeIcon(new QLabel(this)) {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     setStyleSheet(styleSheet);
 
@@ -47,18 +48,22 @@ HueInfoWidget::HueInfoWidget(HueLight light, QWidget* parent)
     mType->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mType->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mLayout = new QGridLayout(this);
+    mTopLayout = new QHBoxLayout;
+    mTopLayout->addWidget(mTypeIcon, 1);
+    mTopLayout->addWidget(mName, 5);
 
-    mLayout->addWidget(mName, 0, 0, 1, 2);
-    mLayout->addWidget(mType, 1, 0);
-    mLayout->addWidget(mModelID, 2, 0);
-    mLayout->addWidget(mSoftwareVersion, 3, 0);
-    mLayout->addWidget(mUniqueID, 4, 0);
+    mMainLayout = new QVBoxLayout(this);
+    mMainLayout->addLayout(mTopLayout);
+    mMainLayout->addWidget(mType);
+    mMainLayout->addWidget(mModelID);
+    mMainLayout->addWidget(mSoftwareVersion);
+    mMainLayout->addWidget(mUniqueID);
 
     mKey = light.uniqueID();
 
     mIsChecked = false;
     hideDetails(true);
+    resize();
 }
 
 void HueInfoWidget::updateLight(HueLight light) {
@@ -90,6 +95,21 @@ void HueInfoWidget::hideDetails(bool shouldHide) {
     mSoftwareVersion->setHidden(shouldHide);
     mUniqueID->setHidden(shouldHide);
     mHideDetails = shouldHide;
+}
+
+void HueInfoWidget::resize() {
+    QSize size(mName->height(), mName->height());
+    mTypeIcon->setFixedSize(size);
+    mTypePixmap = lightHardwareTypeToPixmap(mLight.hardwareType);
+    mTypePixmap = mTypePixmap.scaled(size.width(),
+                                     size.height(),
+                                     Qt::IgnoreAspectRatio,
+                                     Qt::SmoothTransformation);
+    mTypeIcon->setPixmap(mTypePixmap);
+}
+
+void HueInfoWidget::resizeEvent(QResizeEvent*) {
+    resize();
 }
 
 void HueInfoWidget::paintEvent(QPaintEvent* event) {

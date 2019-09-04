@@ -2,6 +2,7 @@
 #define COR_PROTOCOLS_H
 
 #include <QDebug>
+#include <QPixmap>
 
 /*!
  * \copyright
@@ -697,6 +698,71 @@ inline ELightHardwareType stringToHardwareType(QString hardwareType) {
     } else {
         return ELightHardwareType::MAX;
     }
+}
+
+
+inline QPixmap lightHardwareTypeToPixmap(ELightHardwareType type) {
+    QString typeResource;
+    switch (type) {
+        case ELightHardwareType::singleLED:
+            typeResource = QString(":/images/led_icon.png");
+            break;
+        case ELightHardwareType::hueBulb:
+            typeResource = QString(":/images/hue_bulb.png");
+            break;
+        case ELightHardwareType::cube:
+            typeResource = QString(":/images/cube_icon.png");
+            break;
+        case ELightHardwareType::hueGo:
+            typeResource = QString(":/images/hue_go.png");
+            break;
+        case ELightHardwareType::hueBulbRound:
+            typeResource = QString(":/images/hue_bulb_round.png");
+            break;
+        case ELightHardwareType::hueIris:
+            typeResource = QString(":/images/hue_iris.png");
+            break;
+        case ELightHardwareType::hueSpot:
+            typeResource = QString(":/images/hue_spot.png");
+            break;
+        case ELightHardwareType::hueAura:
+            typeResource = QString(":/images/hue_aura.png");
+            break;
+        case ELightHardwareType::hueCandle:
+            typeResource = QString(":/images/hue_candle.png");
+            break;
+        case ELightHardwareType::hueDownlight:
+            typeResource = QString(":/images/hue_downlight.png");
+            break;
+        case ELightHardwareType::hueLamp:
+            typeResource = QString(":/images/hue_lamp.png");
+            break;
+        case ELightHardwareType::hueStorylight:
+            typeResource = QString(":/images/hue_storylight.png");
+            break;
+        case ELightHardwareType::rectangle:
+            typeResource = QString(":/images/array_icon.jpg");
+            break;
+        case ELightHardwareType::lightStrip:
+            typeResource = QString(":/images/light_strip.png");
+            break;
+        case ELightHardwareType::ring:
+            typeResource = QString(":/images/ring_icon.png");
+            break;
+        case ELightHardwareType::bloom:
+            typeResource = QString(":/images/hue_bloom.png");
+            break;
+        case ELightHardwareType::nanoleaf:
+            typeResource = QString(":/images/nanoleaf_icon.png");
+            break;
+        case ELightHardwareType::connectedGroup:
+            typeResource = QString(":/images/groupsIcon.png");
+            break;
+        case ELightHardwareType::MAX:
+            typeResource = QString(":/images/led_icon.png");
+            break;
+    }
+    return QPixmap(typeResource);
 }
 
 

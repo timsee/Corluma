@@ -126,9 +126,6 @@ private:
      */
     QString createName(const cor::Light& device);
 
-    /// update the type icon to reflect the hardware type.
-    void updateTypeIcon(ELightHardwareType type);
-
     /// handles the state of the switch
     void handleSwitch();
 
@@ -196,6 +193,9 @@ private:
 
     /// stores the last rendered size to check if it needs to rerender again
     QSize mLastRenderedSize;
+
+    /// font point size for widget
+    int mFontPtSize;
 };
 
 

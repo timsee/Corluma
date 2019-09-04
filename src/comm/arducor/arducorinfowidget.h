@@ -54,6 +54,9 @@ public:
     /// true if details are hidden, false otherwise
     bool detailsHidden() { return mHideDetails; }
 
+    /// resize widget programmatically
+    void resize();
+
 signals:
     /*!
      * \brief clicked emits the key of the widget whenever it is clicked.
@@ -71,6 +74,9 @@ protected:
      */
     virtual void mouseReleaseEvent(QMouseEvent*);
 
+    /// handles when the widget is resized
+    void resizeEvent(QResizeEvent*);
+
 private:
     //// set the title's font size
     void setTitleFontPointSize(int pt);
@@ -83,9 +89,6 @@ private:
 
     /// true if  all info should show, false otherwise.
     bool mHideDetails;
-
-    /// main layout
-    QGridLayout* mLayout;
 
     /// displays the name of arducor light
     QLabel* mName;
@@ -101,6 +104,18 @@ private:
 
     /// stored data the Light being displayed by this widget.
     cor::Light mLight;
+
+    /// pixmap for the type.
+    QPixmap mTypePixmap;
+
+    /// displays the type of light, such as a lightbulb or a light cube.
+    QLabel* mTypeIcon;
+
+    /// layout for top of widget
+    QHBoxLayout* mTopLayout;
+
+    /// main layout of widget
+    QVBoxLayout* mMainLayout;
 };
 
 #endif // ARDUCORINFOWIDGET_H

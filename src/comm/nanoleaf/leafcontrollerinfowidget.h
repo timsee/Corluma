@@ -67,6 +67,9 @@ public:
     /// true if details are hidden, false otherwise
     bool detailsHidden() { return mHideDetails; }
 
+    /// resizes widget programmatically
+    void resize();
+
 signals:
     /*!
      * \brief clicked emits the key of the widget whenever it is clicked.
@@ -103,6 +106,9 @@ protected:
      */
     virtual void mouseReleaseEvent(QMouseEvent*);
 
+    /// handles when the widget is resized
+    void resizeEvent(QResizeEvent*);
+
 private:
     /// Unique key based on device index of Hue Light.
     QString mKey;
@@ -112,9 +118,6 @@ private:
 
     /// true if  all info should show, false otherwise.
     bool mHideDetails;
-
-    /// main layout
-    QGridLayout* mLayout;
 
     /// name of nanoleaf as an editable field.
     EditableFieldWidget* mName;
@@ -133,6 +136,18 @@ private:
 
     /// stored data for the controller being displayed by this widget.
     nano::LeafController mController;
+
+    /// pixmap for the type.
+    QPixmap mTypePixmap;
+
+    /// displays the type of light, such as a lightbulb or a light cube.
+    QLabel* mTypeIcon;
+
+    /// layout for top of widget
+    QHBoxLayout* mTopLayout;
+
+    /// main layout for widget
+    QVBoxLayout* mMainLayout;
 };
 
 } // namespace nano

@@ -31,6 +31,9 @@ public:
     /// returns the title of the button
     QString text() { return mTitle->text(); }
 
+    /// enables/disables the button
+    void shouldEnable(bool shouldEnable);
+
 signals:
 
     /// emits title when pressed
@@ -56,6 +59,9 @@ private:
 
     /// true if highlight, false if not
     bool mIsHighlighted;
+
+    /// true if enabled, false otherwise.
+    bool mIsEnabled;
 };
 
 #endif // SETTINGSBUTTON_H

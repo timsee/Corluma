@@ -7,6 +7,7 @@
 #include "bridgegroupswidget.h"
 
 #include <QGraphicsOpacityEffect>
+#include <QScrollBar>
 #include <QScroller>
 #include <QStyleOption>
 #include <QtCore>
@@ -80,13 +81,17 @@ void BridgeGroupsWidget::resize() {
                 int(size.height() * 0.75f));
 
     // resize scroll area
-    mScrollAreaWidget->setFixedWidth(mScrollArea->width());
-    QSize widgetSize(width(), int(height() / 2.5f));
+    mScrollAreaWidget->setFixedWidth(
+        mScrollArea->geometry().width() - mScrollArea->verticalScrollBar()->width()
+        - mScrollArea->contentsMargins().left() - mScrollArea->contentsMargins().right());
+    mScrollArea->setMinimumWidth(mScrollAreaWidget->minimumSizeHint().width()
+                                 + mScrollArea->verticalScrollBar()->width());
+
+    QSize widgetSize(mScrollArea->width(), int(mScrollArea->height() / 4.0f));
     int yPos = 0;
     // draw widgets in content region
     for (auto widget : mWidgets) {
-        widget->setFixedHeight(widgetSize.height());
-        widget->setGeometry(0, yPos, widgetSize.width(), widget->height());
+        widget->setGeometry(0, yPos, widgetSize.width(), widgetSize.height());
         yPos += widget->height();
     }
     mScrollAreaWidget->setFixedHeight(yPos);

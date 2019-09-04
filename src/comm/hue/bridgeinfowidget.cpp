@@ -15,7 +15,8 @@
 namespace hue {
 
 BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget* parent)
-    : cor::ListItemWidget(bridge.IP, parent) {
+    : cor::ListItemWidget(bridge.IP, parent),
+      mState{EBridgeDiscoveryState::unknown} {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     setStyleSheet(styleSheet);
 
@@ -30,7 +31,6 @@ BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget* parent)
     mNameWidget = new EditableFieldWidget(bridge.customName, this);
     mNameWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(mNameWidget, SIGNAL(updatedField(QString)), this, SLOT(changedName(QString)));
-
 
     mTopLayout = new QHBoxLayout;
     mTopLayout->addWidget(mNameLabel, 2);
@@ -69,23 +69,34 @@ BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget* parent)
     //-----------
     // Bottom
     //-----------
+    const QString buttonStyleSheet = "background-color: #302F2F;";
 
-    mDiscoverHueButton = new QPushButton("Discover Hues", this);
+    mDiscoverHueButton = new QPushButton("Discover \r\n New Hues", this);
     mDiscoverHueButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(mDiscoverHueButton, SIGNAL(clicked()), this, SLOT(pressedDiscoverHues()));
+    mDiscoverHueButton->setStyleSheet(buttonStyleSheet);
 
-    mGroupsButton = new QPushButton("Groups", this);
+    mGroupsButton = new QPushButton("View Groups", this);
     mGroupsButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(mGroupsButton, SIGNAL(clicked()), this, SLOT(groupsListPressed()));
+    mGroupsButton->setStyleSheet(buttonStyleSheet);
 
     mSchedulesButton = new QPushButton("Schedules", this);
     mSchedulesButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(mSchedulesButton, SIGNAL(clicked()), this, SLOT(schedulesListPressed()));
+    mSchedulesButton->setStyleSheet(buttonStyleSheet);
 
     mButtonsLayout = new QHBoxLayout;
     mButtonsLayout->addWidget(mDiscoverHueButton, 2);
     mButtonsLayout->addWidget(mGroupsButton, 2);
-    mButtonsLayout->addWidget(mSchedulesButton, 2);
+    auto margin = int(this->width() * 0.05);
+    mButtonsLayout->setSpacing(margin * 2);
+    mButtonsLayout->setContentsMargins(margin, margin, margin, margin);
+    // mButtonsLayout->addWidget(mSchedulesButton, 2);
+    // for now, hide the schedules menu
+    mSchedulesButton->setVisible(false);
+    mDiscoverHueButton->setEnabled(false);
+    mGroupsButton->setEnabled(false);
 
     //-----
     // Top right widget
@@ -96,16 +107,16 @@ BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget* parent)
     mTopRightLayout->addWidget(mIPAddress, 1);
     mTopRightLayout->addWidget(mAPI, 1);
     mTopRightLayout->addWidget(mID, 1);
-    mTopRightLayout->addWidget(mSpacer, 1);
     mTopRightLayout->addLayout(mButtonsLayout, 2);
+    mTopRightLayout->addWidget(mSpacer, 2);
 
     //-----
     // mid widget
     //----
 
     mMidLayout = new QHBoxLayout;
-    mMidLayout->addWidget(mImage, 2);
-    mMidLayout->addLayout(mTopRightLayout, 8);
+    mMidLayout->addWidget(mImage);
+    mMidLayout->addLayout(mTopRightLayout);
 
     mIsChecked = false;
 
@@ -125,21 +136,27 @@ void BridgeInfoWidget::updateBridge(const hue::Bridge& bridge) {
 }
 
 void BridgeInfoWidget::handleBridgeState(EBridgeDiscoveryState state) {
-    auto min = width();
-    // auto min = std::min(width(), height());
-    if (state == EBridgeDiscoveryState::connected) {
-        mBridgePixmap = QPixmap(":images/Hue-Bridge.png");
-        auto width = int(min * 0.333f);
-        mImage->setPixmap(
-            mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    } else if (state == EBridgeDiscoveryState::lookingForUsername) {
-        mBridgePixmap = QPixmap(":images/pressHueBridgeImage.png");
-        auto width = int(min * 0.333f);
-        mImage->setPixmap(
-            mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    } else if (state == EBridgeDiscoveryState::lookingForResponse) {
-        mImage->setMovie(mMovie);
-        mMovie->start();
+    if (state != mState) {
+        auto min = width();
+        if (state == EBridgeDiscoveryState::connected) {
+            mBridgePixmap = QPixmap(":images/Hue-Bridge.png");
+            mDiscoverHueButton->setEnabled(true);
+            mGroupsButton->setEnabled(true);
+            auto width = int(min * 0.333f);
+            mImage->setPixmap(
+                mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        } else if (state == EBridgeDiscoveryState::lookingForUsername) {
+            mBridgePixmap = QPixmap(":images/pressHueBridgeImage.png");
+            auto width = int(min * 0.333f);
+            mImage->setPixmap(
+                mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        } else if (state == EBridgeDiscoveryState::lookingForResponse) {
+            mImage->setMovie(mMovie);
+            mMovie->start();
+        }
+        resize();
+        mState = state;
+        adjustSize();
     }
 }
 
@@ -174,16 +191,16 @@ void BridgeInfoWidget::mouseReleaseEvent(QMouseEvent*) {
     emit clicked(mBridge.id);
 }
 
-void BridgeInfoWidget::resizeEvent(QResizeEvent*) {
+void BridgeInfoWidget::resize() {
     auto min = width();
     // auto min = std::min(width(), height());
     if (mBridge.state != EBridgeDiscoveryState::lookingForResponse) {
-        auto width = int(min * 0.333f);
+        auto width = int(min * 0.45f);
         mImage->setFixedWidth(width);
         mImage->setPixmap(
             mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     } else {
-        mImage->setFixedWidth(int(min * 0.333f));
+        mImage->setFixedWidth(int(min * 0.45f));
     }
     auto yPos = 0;
 
@@ -192,6 +209,10 @@ void BridgeInfoWidget::resizeEvent(QResizeEvent*) {
     yPos += mMidLayout->geometry().height();
 
     calculateButtonFontSize();
+}
+
+void BridgeInfoWidget::resizeEvent(QResizeEvent*) {
+    resize();
 }
 
 
@@ -229,7 +250,7 @@ void BridgeInfoWidget::deleteButtonPressed() {
 
 
 void BridgeInfoWidget::calculateButtonFontSize() {
-    const auto& text = mDiscoverHueButton->text();
+    const auto& text = mGroupsButton->text();
     auto widget = mDiscoverHueButton;
     // calcuate the text's size
     auto systemFontWidth = widget->fontMetrics().boundingRect(text).width();

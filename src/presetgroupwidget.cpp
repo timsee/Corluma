@@ -12,6 +12,7 @@
 PresetGroupWidget::PresetGroupWidget(const QString& name,
                                      EPalette palette,
                                      EPresetWidgetMode mode,
+                                     int fontSize,
                                      QWidget* parent)
     : QWidget(parent) {
     mMode = mode;
@@ -19,7 +20,11 @@ PresetGroupWidget::PresetGroupWidget(const QString& name,
 
     mLabel = new QLabel(this);
     mLabel->setWordWrap(true);
+    auto font = mLabel->font();
+    font.setPointSize(fontSize);
+    mLabel->setFont(font);
     mLabel->setText(name);
+
 
     PresetPalettes palettes;
     mLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);

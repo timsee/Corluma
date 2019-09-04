@@ -31,7 +31,6 @@ ListMoodPreviewWidget::ListMoodPreviewWidget(const cor::Mood& mood, QWidget* par
         modifiedName = mMood.name();
     }
     mName->setText("<b>" + modifiedName + "</b>");
-    mName->setEnabled(false);
     mName->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     mName->setStyleSheet(backgroundStyleSheet);

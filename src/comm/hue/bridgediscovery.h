@@ -158,6 +158,9 @@ private:
      */
     void requestUsername(const hue::Bridge& bridge);
 
+    /// generates unique name for a bridge discovered.
+    QString generateUniqueName();
+
     /*!
      * \brief mNetworkManager Qt's HTTP connection object
      */

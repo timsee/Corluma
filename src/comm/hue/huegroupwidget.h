@@ -22,7 +22,7 @@ class HueGroupWidget : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit HueGroupWidget(QWidget* parent, cor::Group lightGroup);
+    explicit HueGroupWidget(QWidget* parent, const cor::Group& lightGroup);
 
 protected:
     /// paints the background on the widget
@@ -35,11 +35,9 @@ private:
     /// index of the group, used by its controller
     QLabel* mIndex;
 
-    /// number of devices in this group
-    QLabel* mDeviceCount;
+    QString generateDescription(const cor::Group& group);
 
-    /// displays either "Room" or "group" depending on group metadata
-    QLabel* mGroupType;
+    QLabel* mGroupDescription;
 
     /// layout for widget
     QVBoxLayout* mLayout;

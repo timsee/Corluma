@@ -1,6 +1,6 @@
 
 
-FORMAT="clang-format-9 -i -style=file"
+FORMAT="clang-format-10 -i -style=file"
 
 cd ../src
 

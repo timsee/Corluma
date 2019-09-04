@@ -202,7 +202,8 @@ SOURCES += main.cpp \
     syncwidget.cpp \
     singlecolorstatewidget.cpp \
     multicolorstatewidget.cpp \
-    timeoutwidget.cpp
+    timeoutwidget.cpp \
+    lightinfoscrollarea.cpp
 
 HEADERS  +=  comm/arducor/arducordiscovery.h \
     comm/arducor/arducorpacketparser.h \
@@ -310,7 +311,8 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     singlecolorstatewidget.h \
     multicolorstatewidget.h \
     utils/cormath.h \
-    timeoutwidget.h
+    timeoutwidget.h \
+    lightinfoscrollarea.h
 
 
 HEADERS  += cor/objects/light.h \

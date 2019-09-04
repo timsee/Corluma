@@ -13,7 +13,7 @@
 #include "cor/objects/group.h"
 
 /// bridge discovery state
-enum class EBridgeDiscoveryState { lookingForResponse, lookingForUsername, connected };
+enum class EBridgeDiscoveryState { lookingForResponse, lookingForUsername, connected, unknown };
 Q_DECLARE_METATYPE(EBridgeDiscoveryState)
 
 

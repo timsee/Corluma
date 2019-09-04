@@ -15,7 +15,8 @@
 ArduCorInfoWidget::ArduCorInfoWidget(cor::Light light, QWidget* parent)
     : QWidget(parent),
       mHideDetails{false},
-      mLight(light) {
+      mLight(light),
+      mTypeIcon(new QLabel(this)) {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     setStyleSheet(styleSheet);
 
@@ -40,12 +41,15 @@ ArduCorInfoWidget::ArduCorInfoWidget(cor::Light light, QWidget* parent)
     mAPILabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mAPILabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mLayout = new QGridLayout(this);
+    mTopLayout = new QHBoxLayout;
+    mTopLayout->addWidget(mTypeIcon, 1);
+    mTopLayout->addWidget(mName, 5);
 
-    mLayout->addWidget(mName, 0, 0, 1, 2);
-    mLayout->addWidget(mPathLabel, 1, 0);
-    mLayout->addWidget(mHardwareTypeLabel, 2, 0);
-    mLayout->addWidget(mAPILabel, 3, 0);
+    mMainLayout = new QVBoxLayout(this);
+    mMainLayout->addLayout(mTopLayout);
+    mMainLayout->addWidget(mPathLabel);
+    mMainLayout->addWidget(mHardwareTypeLabel);
+    mMainLayout->addWidget(mAPILabel);
 
     mKey = light.uniqueID();
 
@@ -72,6 +76,21 @@ void ArduCorInfoWidget::hideDetails(bool shouldHide) {
     mAPILabel->setHidden(shouldHide);
     mHardwareTypeLabel->setHidden(shouldHide);
     mHideDetails = shouldHide;
+}
+
+void ArduCorInfoWidget::resizeEvent(QResizeEvent*) {
+    resize();
+}
+
+void ArduCorInfoWidget::resize() {
+    QSize size(mName->height(), mName->height());
+    mTypeIcon->setFixedSize(size);
+    mTypePixmap = lightHardwareTypeToPixmap(mLight.hardwareType);
+    mTypePixmap = mTypePixmap.scaled(size.width(),
+                                     size.height(),
+                                     Qt::IgnoreAspectRatio,
+                                     Qt::SmoothTransformation);
+    mTypeIcon->setPixmap(mTypePixmap);
 }
 
 void ArduCorInfoWidget::paintEvent(QPaintEvent* event) {

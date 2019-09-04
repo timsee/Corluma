@@ -275,7 +275,7 @@ void DiscoveryHueWidget::resize() {
     QSize widgetSize(mListWidget->width(), int(mListWidget->height() * 0.9));
     int yHeight = 0;
     for (auto widget : mListWidget->widgets()) {
-        widget->setFixedSize(widgetSize);
+        widget->setGeometry(0, yHeight, widgetSize.width(), widgetSize.height());
         widget->setVisible(true);
         yHeight += widgetSize.height();
     }

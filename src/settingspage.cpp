@@ -127,6 +127,7 @@ SettingsPage::SettingsPage(QWidget* parent,
     setLayout(mMainLayout);
 
     mScrollArea->setWidget(mScrollAreaWidget);
+    enableButtons(false);
 }
 
 // ----------------------------
@@ -248,10 +249,6 @@ void SettingsPage::settingsButtonPressed(const QString& title) {
         showWebView(ECorlumaWebView::copyright);
     } else if (title == "FAQ") {
         showWebView(ECorlumaWebView::FAQ);
-    } else if (title == "Mock Connection") {
-        auto mainWindow = qobject_cast<MainWindow*>(parentWidget());
-        Q_ASSERT(mainWindow);
-        mainWindow->anyDiscovered(true);
     }
 }
 
@@ -303,4 +300,20 @@ void SettingsPage::pushIn(const QPoint& startPoint, const QPoint& endPoint) {
 void SettingsPage::pushOut(const QPoint& endPoint) {
     moveWidget(this, pos(), endPoint);
     isOpen(false);
+}
+
+void SettingsPage::enableButtons(bool enable) {
+    if (enable) {
+        for (auto button : mButtons) {
+            button->shouldEnable(true);
+        }
+    } else {
+        for (auto button : mButtons) {
+            if (button->text() == "Copyright" || button->text() == "Find New Lights") {
+                button->shouldEnable(true);
+            } else {
+                button->shouldEnable(false);
+            }
+        }
+    }
 }

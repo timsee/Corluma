@@ -15,6 +15,38 @@
 
 #include "utils/qt.h"
 
+
+namespace {
+
+int findFontSize(QWidget* parent, cor::EWidgetType type) {
+    QString text("123456789");
+    if (type == cor::EWidgetType::full) {
+        text = QString("1234567891234567");
+    }
+    QLabel label(text, parent);
+    // calcuate the text's size
+    auto fontWidth = label.fontMetrics().boundingRect(text).width();
+    // calculate the button's size
+    auto widgetWidth = label.width();
+    QFont font(label.font());
+    auto fontPtSize = label.font().pointSize();
+    if (fontWidth > widgetWidth) {
+        for (auto i = fontPtSize - 1; i > 0; --i) {
+            font.setPointSize(i);
+            label.setFont(font);
+            fontPtSize = i;
+            fontWidth = label.fontMetrics().boundingRect(text).width();
+            if (fontWidth < widgetWidth) {
+                // font is small enough to fit
+                break;
+            }
+        }
+    }
+    return fontPtSize;
+}
+
+} // namespace
+
 ListLightWidget::ListLightWidget(const cor::Light& device,
                                  bool setHighlightable,
                                  cor::EWidgetType type,
@@ -22,10 +54,10 @@ ListLightWidget::ListLightWidget(const cor::Light& device,
                                  QWidget* parent)
     : cor::ListItemWidget(device.uniqueID(), parent),
       mType{type},
-      mSwitchState{switchState} {
+      mSwitchState{switchState},
+      mFontPtSize(findFontSize(parent, type)) {
     mShouldHighlight = setHighlightable;
     init(device);
-
     mBlockStateUpdates = false;
     mHideSwitch = false;
     mIsChecked = false;
@@ -53,10 +85,13 @@ void ListLightWidget::init(const cor::Light& device) {
     mOnOffSwitch->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     connect(mOnOffSwitch, SIGNAL(switchChanged(bool)), this, SLOT(changedSwitchState(bool)));
 
-    updateTypeIcon(device.hardwareType);
+    mTypePixmap = lightHardwareTypeToPixmap(device.hardwareType);
 
     QString nameText = createName(device);
     mController->setText(nameText);
+    auto font = mController->font();
+    font.setPointSize(mFontPtSize);
+    mController->setFont(font);
     mController->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 
     // setup layout
@@ -93,7 +128,7 @@ void ListLightWidget::updateWidget(const cor::Light& device) {
     }
 
     if (mDevice.hardwareType != device.hardwareType || mLastRenderedSize != size()) {
-        updateTypeIcon(device.hardwareType);
+        mTypePixmap = lightHardwareTypeToPixmap(device.hardwareType);
         resizeIcons();
         mLastRenderedSize = size();
     }
@@ -287,78 +322,15 @@ void ListLightWidget::hideOnOffSwitch(bool shouldHide) {
     }
 }
 
-void ListLightWidget::updateTypeIcon(ELightHardwareType type) {
-    QString typeResource;
-    switch (type) {
-        case ELightHardwareType::singleLED:
-            typeResource = QString(":/images/led_icon.png");
-            break;
-        case ELightHardwareType::hueBulb:
-            typeResource = QString(":/images/hue_bulb.png");
-            break;
-        case ELightHardwareType::cube:
-            typeResource = QString(":/images/cube_icon.png");
-            break;
-        case ELightHardwareType::hueGo:
-            typeResource = QString(":/images/hue_go.png");
-            break;
-        case ELightHardwareType::hueBulbRound:
-            typeResource = QString(":/images/hue_bulb_round.png");
-            break;
-        case ELightHardwareType::hueIris:
-            typeResource = QString(":/images/hue_iris.png");
-            break;
-        case ELightHardwareType::hueSpot:
-            typeResource = QString(":/images/hue_spot.png");
-            break;
-        case ELightHardwareType::hueAura:
-            typeResource = QString(":/images/hue_aura.png");
-            break;
-        case ELightHardwareType::hueCandle:
-            typeResource = QString(":/images/hue_candle.png");
-            break;
-        case ELightHardwareType::hueDownlight:
-            typeResource = QString(":/images/hue_downlight.png");
-            break;
-        case ELightHardwareType::hueLamp:
-            typeResource = QString(":/images/hue_lamp.png");
-            break;
-        case ELightHardwareType::hueStorylight:
-            typeResource = QString(":/images/hue_storylight.png");
-            break;
-        case ELightHardwareType::rectangle:
-            typeResource = QString(":/images/array_icon.jpg");
-            break;
-        case ELightHardwareType::lightStrip:
-            typeResource = QString(":/images/light_strip.png");
-            break;
-        case ELightHardwareType::ring:
-            typeResource = QString(":/images/ring_icon.png");
-            break;
-        case ELightHardwareType::bloom:
-            typeResource = QString(":/images/hue_bloom.png");
-            break;
-        case ELightHardwareType::nanoleaf:
-            typeResource = QString(":/images/nanoleaf_icon.png");
-            break;
-        case ELightHardwareType::connectedGroup:
-            typeResource = QString(":/images/groupsIcon.png");
-            break;
-        case ELightHardwareType::MAX:
-            typeResource = QString(":/images/led_icon.png");
-            break;
-    }
-    mTypePixmap = QPixmap(typeResource);
-}
-
 void ListLightWidget::resizeIcons() {
     QSize size(int(height() * 0.5f), int(height() * 0.5f));
     mTypeIcon->setFixedSize(size);
-    updateTypeIcon(mDevice.hardwareType);
+    mTypePixmap = lightHardwareTypeToPixmap(mDevice.hardwareType);
     mTypePixmap = mTypePixmap.scaled(size.width(),
                                      size.height(),
                                      Qt::IgnoreAspectRatio,
                                      Qt::SmoothTransformation);
+    mTypeIcon->setPixmap(mTypePixmap);
 
     if (mType == cor::EWidgetType::full) {
         mController->setFixedWidth(width());
@@ -374,7 +346,6 @@ void ListLightWidget::resizeIcons() {
         QSize onOffSize(size.width() * 2, size.height() * 2);
         mOnOffSwitch->setFixedSize(size);
     }
-    mTypeIcon->setPixmap(mTypePixmap);
 }
 
 

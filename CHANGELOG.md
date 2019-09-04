@@ -548,4 +548,11 @@ ___
 * Fixed places where text is cut off on small screen sizes.
 * Fixed miscellaneous bugs.
 
+### **v0.17.4**
+#### Environment Specific Bug Fixes Update
+* Fixed bugs in supporting smaller screens such as an iPod touch.
+* Refactored the `LightInfoListWidget`.
+* Fixed issues with scroll area layouts in specific environments.
+* Fixed bugs with discovering multiple Hue Bridges. 
+* Fixed miscellaneous bugs.
 

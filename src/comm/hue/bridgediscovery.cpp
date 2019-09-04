@@ -161,6 +161,7 @@ void BridgeDiscovery::addManualIP(const QString& ip) {
         hue::Bridge bridge;
         bridge.state = EBridgeDiscoveryState::lookingForUsername;
         bridge.IP = ip;
+        bridge.customName = generateUniqueName();
         mNotFoundBridges.push_back(bridge);
     }
 }
@@ -285,6 +286,8 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
                             bridge.IP = object["internalipaddress"].toString();
                             bridge.id = object["id"].toString();
                             bridge.id = bridge.id.toLower();
+                            bridge.customName = generateUniqueName();
+                            qDebug() << " MAKING USERNAME " << generateUniqueName();
                             bridge.state = EBridgeDiscoveryState::lookingForUsername;
 
                             testNewlyDiscoveredBridge(bridge);
@@ -402,6 +405,8 @@ void BridgeDiscovery::receivedUPnP(const QHostAddress& sender, const QString& pa
         hue::Bridge bridge;
         bridge.state = EBridgeDiscoveryState::lookingForResponse;
         bridge.IP = sender.toString();
+        bridge.customName = generateUniqueName();
+
         // get ID from UPnP
         QStringList paramArray = payload.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
         for (auto&& param : paramArray) {
@@ -738,6 +743,43 @@ std::uint64_t BridgeDiscovery::generateNewUniqueKey() {
         }
     }
     return minID - 1;
+}
+
+QString BridgeDiscovery::generateUniqueName() {
+    QString defaultNamePrefix("Bridge ");
+    auto index = 1;
+    for (const auto& bridge : mFoundBridges.itemVector()) {
+        if (bridge.customName.size() > defaultNamePrefix.size()) {
+            auto prefix = bridge.customName.mid(0, defaultNamePrefix.size());
+            if (prefix == defaultNamePrefix) {
+                auto suffix = bridge.customName.mid(defaultNamePrefix.size());
+                bool flag;
+                auto number = suffix.toInt(&flag);
+                if (flag) {
+                    if (number >= index) {
+                        index = number + 1;
+                    }
+                }
+            }
+        }
+    }
+
+    for (const auto& bridge : mNotFoundBridges) {
+        if (bridge.customName.size() > defaultNamePrefix.size()) {
+            auto prefix = bridge.customName.mid(0, defaultNamePrefix.size());
+            if (prefix == defaultNamePrefix) {
+                auto suffix = bridge.customName.mid(defaultNamePrefix.size());
+                bool flag;
+                auto number = suffix.toInt(&flag);
+                if (flag) {
+                    if (number >= index) {
+                        index = number + 1;
+                    }
+                }
+            }
+        }
+    }
+    return defaultNamePrefix + QString::number(index);
 }
 
 // ----------------------------

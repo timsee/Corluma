@@ -16,211 +16,148 @@
 
 #include "utils/qt.h"
 
-
-LightInfoListWidget::LightInfoListWidget(QWidget* parent) : QWidget(parent) {
+LightInfoListWidget::LightInfoListWidget(QWidget* parent, AppSettings* appSettings)
+    : QWidget(parent),
+      mLightInfoScrollArea(new LightInfoScrollArea(this)),
+      mAppSettings(appSettings),
+      mProtocolButtons(3, nullptr),
+      mCurrentProtocol{EProtocolType::hue} {
     mTopWidget = new cor::TopWidget("View/Edit Lights", ":images/closeX.png", this);
     connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(closePressed(bool)));
     mTopWidget->setFontPoint(20);
 
-    mScrollArea = new QScrollArea(this);
-    mScrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    QScroller::grabGesture(mScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
+    for (auto&& button : mProtocolButtons) {
+        button = new QPushButton(this);
+        button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        button->setCheckable(true);
+    }
+    mProtocolButtons[0]->setText(protocolToString(EProtocolType::hue));
+    connect(mProtocolButtons[0], SIGNAL(clicked()), this, SLOT(hueClicked()));
+    mProtocolButtons[1]->setText(protocolToString(EProtocolType::nanoleaf));
+    connect(mProtocolButtons[1], SIGNAL(clicked()), this, SLOT(nanoleafClicked()));
+    mProtocolButtons[2]->setText(protocolToString(EProtocolType::arduCor));
+    connect(mProtocolButtons[2], SIGNAL(clicked()), this, SLOT(arducorClicked()));
 
-    mScrollAreaWidget = new QWidget(this);
-    mScrollAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mScrollAreaWidget->setContentsMargins(0, 0, 0, 0);
-    mScrollArea->setWidget(mScrollAreaWidget);
-
-    mScrollLayout = new QVBoxLayout(mScrollAreaWidget);
-    mScrollLayout->setSpacing(0);
-    mScrollLayout->setContentsMargins(0, 0, 0, 0);
-    mScrollAreaWidget->setLayout(mScrollLayout);
-
+    connect(mLightInfoScrollArea,
+            SIGNAL(lightClicked(const QString&, bool)),
+            this,
+            SLOT(lightInfoClicked(const QString&, bool)));
     mDeleteButton = new QPushButton("Delete", this);
     mDeleteButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteButtonPressed(bool)));
     mDeleteButton->setEnabled(false);
     mDeleteButton->setStyleSheet("background-color:rgb(45,30,30);");
 
-    mLastKey = "";
-    resize(true);
+    resize();
 }
 
-void LightInfoListWidget::updateHues(std::list<HueLight> lights) {
-    for (const auto& light : lights) {
-        // check if light already exists in list
-        int widgetIndex = -1;
-        int i = 0;
-        for (auto widget : mHueWidgets) {
-            if (widget->light().uniqueID() == light.uniqueID()) {
-                widgetIndex = i;
-                widget->updateLight(light);
-            }
-            ++i;
-        }
+void LightInfoListWidget::hueClicked() {
+    mCurrentProtocol = EProtocolType::hue;
+    highlightProtocolType();
+    mLightInfoScrollArea->changeProtocol(mCurrentProtocol);
+    resize();
+}
 
-        // if it doesnt exist, add it
-        if (widgetIndex == -1) {
-            hue::HueInfoWidget* widget = new hue::HueInfoWidget(light, mScrollAreaWidget);
-            widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-            connect(widget, SIGNAL(clicked(QString)), this, SLOT(lightInfoWidgetClicked(QString)));
-            connect(widget,
-                    SIGNAL(changedName(EProtocolType, QString, QString)),
-                    this,
-                    SLOT(nameChanged(EProtocolType, QString, QString)));
-            mHueWidgets.push_back(widget);
-            mScrollLayout->addWidget(widget);
+void LightInfoListWidget::nanoleafClicked() {
+    mCurrentProtocol = EProtocolType::nanoleaf;
+    highlightProtocolType();
+    mLightInfoScrollArea->changeProtocol(mCurrentProtocol);
+    resize();
+}
+
+void LightInfoListWidget::arducorClicked() {
+    mCurrentProtocol = EProtocolType::arduCor;
+    highlightProtocolType();
+    mLightInfoScrollArea->changeProtocol(mCurrentProtocol);
+    resize();
+}
+
+bool LightInfoListWidget::handleProtocolType() {
+    auto protocolCount = 0u;
+    for (auto button : mProtocolButtons) {
+        auto protocol = stringToProtocol(button->text());
+        auto enabled = mAppSettings->enabled(protocol);
+        if (enabled) {
+            protocolCount++;
+        } else if (mCurrentProtocol == protocol && !enabled) {
+            mCurrentProtocol = EProtocolType::MAX;
         }
     }
-
-    resize(true);
-}
-
-void LightInfoListWidget::updateControllers(std::list<nano::LeafController> controllers) {
-    for (auto controller : controllers) {
-        // check if light already exists in list
-        int widgetIndex = -1;
-        int i = 0;
-        for (auto widget : mNanoleafWidgets) {
-            if (widget->controller().serialNumber == controller.serialNumber) {
-                widgetIndex = i;
-                widget->updateController(controller);
+    // set a new protocol if needed
+    if (mCurrentProtocol == EProtocolType::MAX) {
+        for (auto button : mProtocolButtons) {
+            auto protocol = stringToProtocol(button->text());
+            auto enabled = mAppSettings->enabled(protocol);
+            if (enabled) {
+                mCurrentProtocol = protocol;
+                mLightInfoScrollArea->changeProtocol(mCurrentProtocol);
+                break;
             }
-            ++i;
-        }
-        // if it doesnt exist, add it
-        if (widgetIndex == -1) {
-            nano::LeafControllerInfoWidget* widget =
-                new nano::LeafControllerInfoWidget(controller, mScrollAreaWidget);
-            widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-            connect(widget, SIGNAL(clicked(QString)), this, SLOT(lightInfoWidgetClicked(QString)));
-            connect(widget,
-                    SIGNAL(changedName(EProtocolType, QString, QString)),
-                    this,
-                    SLOT(nameChanged(EProtocolType, QString, QString)));
-            mNanoleafWidgets.push_back(widget);
-            mScrollLayout->addWidget(widget);
         }
     }
-
-    resize(true);
+    return protocolCount > 1;
 }
-
-
-void LightInfoListWidget::updateLights(std::list<cor::Light> lights) {
-    for (const auto& light : lights) {
-        // check if light already exists in list
-        int widgetIndex = -1;
-        int i = 0;
-        for (auto widget : mArduCorWidgets) {
-            if (widget->light().uniqueID() == light.uniqueID()) {
-                widgetIndex = i;
-                widget->updateLight(light);
-            }
-            ++i;
-        }
-        // if it doesnt exist, add it
-        if (widgetIndex == -1) {
-            ArduCorInfoWidget* widget = new ArduCorInfoWidget(light, mScrollAreaWidget);
-            widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-            connect(widget, SIGNAL(clicked(QString)), this, SLOT(lightInfoWidgetClicked(QString)));
-            mArduCorWidgets.push_back(widget);
-            mScrollLayout->addWidget(widget);
-        }
-    }
-
-    resize(true);
-}
-
-void LightInfoListWidget::resize(bool resizeFullWidget) {
+void LightInfoListWidget::resize() {
     QSize size = parentWidget()->size();
-    if (resizeFullWidget) {
-        setGeometry(int(size.width() * 0.125f),
-                    int(size.height() * 0.125f),
-                    int(size.width() * 0.75f),
-                    int(size.height() * 0.75f));
-    }
+    setGeometry(int(size.width() * 0.125f),
+                int(size.height() * 0.125f),
+                int(size.width() * 0.75f),
+                int(size.height() * 0.75f));
+
     auto yPos = 0;
     mTopWidget->setFixedSize(width(), height() * 2 / 20);
     yPos += mTopWidget->height();
+    auto xPos = 0;
 
-    // resize scroll area
-    mScrollArea->setGeometry(int(width() * 0.01),
-                             yPos,
-                             int(width() * 0.98),
-                             int(height() * 15 / 20));
-    yPos += mScrollArea->height();
+    bool shouldShowButtons = handleProtocolType();
+    auto protocolButtonHeight = 0;
+    for (auto button : mProtocolButtons) {
+        if (mAppSettings->enabled(stringToProtocol(button->text())) && shouldShowButtons) {
+            button->setGeometry(xPos, yPos, width() / 3, height() * 2 / 20);
+            xPos += width() / 3;
+            button->setVisible(true);
+            protocolButtonHeight = button->height();
+        } else {
+            button->setVisible(false);
+        }
+    }
+
+    if (shouldShowButtons) {
+        highlightProtocolType();
+    }
+    yPos += protocolButtonHeight;
+
+    mLightInfoScrollArea->setGeometry(int(width() * 0.01),
+                                      yPos,
+                                      int(width() * 0.98),
+                                      int(height() * 13 / 20));
+    yPos += mLightInfoScrollArea->height();
 
     mDeleteButton->setGeometry(int(width() * 0.01),
                                yPos,
                                int(width() * 0.98),
                                int(height() * 3 / 20));
 
-    QSize widgetSize(mScrollArea->width(), int(height() / 3.0f));
-    int widgetHeightY = 0;
-    // TODO: make a better system for resizing
-    // draw widgets in content region
-    for (auto widget : mHueWidgets) {
-        if (widget->detailsHidden()) {
-            widget->setFixedHeight(widgetSize.height() / 2);
-        } else {
-            widget->setFixedHeight(widgetSize.height());
-        }
-        widget->setGeometry(0, widgetHeightY, widgetSize.width(), widget->height());
-        widgetHeightY += widget->height();
-    }
-    for (auto widget : mNanoleafWidgets) {
-        if (widget->detailsHidden()) {
-            widget->setFixedHeight(widgetSize.height() / 2);
-        } else {
-            widget->setFixedHeight(widgetSize.height());
-        }
-        widget->setGeometry(0, widgetHeightY, widgetSize.width(), widget->height());
-        widgetHeightY += widget->height();
-    }
-    for (auto widget : mArduCorWidgets) {
-        if (widget->detailsHidden()) {
-            widget->setFixedHeight(widgetSize.height() / 2);
-        } else {
-            widget->setFixedHeight(widgetSize.height());
-        }
-        widget->setGeometry(0, widgetHeightY, widgetSize.width(), widget->height());
-        widgetHeightY += widget->height();
-    }
-
-    mScrollArea->setMinimumWidth(minimumSizeHint().width()
-                                 + mScrollArea->verticalScrollBar()->width());
-    mScrollAreaWidget->setFixedSize(
-        mScrollArea->geometry().width() - mScrollArea->verticalScrollBar()->width()
-            - mScrollArea->contentsMargins().left() - mScrollArea->contentsMargins().right(),
-        widgetHeightY);
+    mLightInfoScrollArea->resize();
 }
 
 
+void LightInfoListWidget::highlightProtocolType() {
+    for (auto button : mProtocolButtons) {
+        if (mCurrentProtocol == stringToProtocol(button->text())) {
+            button->setChecked(true);
+        } else {
+            button->setChecked(false);
+        }
+    }
+}
+
 void LightInfoListWidget::deleteButtonPressed(bool) {
     QMessageBox::StandardButton reply;
-    QString lightName;
-    EProtocolType type = EProtocolType::MAX;
-    for (auto widget : mHueWidgets) {
-        if (widget->key() == mLastKey) {
-            lightName = widget->light().name;
-            type = EProtocolType::hue;
-        }
-    }
+    auto result = scrollArea()->lookupCurrentLight();
+    auto type = result.first;
+    auto lightName = result.second;
 
-    for (auto widget : mArduCorWidgets) {
-        if (widget->key() == mLastKey) {
-            lightName = widget->light().name;
-            type = EProtocolType::arduCor;
-        }
-    }
-
-    for (auto widget : mNanoleafWidgets) {
-        if (widget->key() == mLastKey) {
-            lightName = widget->controller().name;
-            type = EProtocolType::nanoleaf;
-        }
-    }
     if (type != EProtocolType::MAX) {
         QString text;
         switch (type) {
@@ -242,7 +179,7 @@ void LightInfoListWidget::deleteButtonPressed(bool) {
         reply = QMessageBox::question(this, "Delete?", text, QMessageBox::Yes | QMessageBox::No);
         if (reply == QMessageBox::Yes) {
             // signal to remove from app
-            emit deleteLight(mLastKey);
+            emit deleteLight(scrollArea()->key());
         }
     }
 }
@@ -260,79 +197,16 @@ void LightInfoListWidget::closePressed(bool) {
     emit pressedClose();
 }
 
-void LightInfoListWidget::lightInfoWidgetClicked(const QString& key) {
-    bool shouldEnableDelete = true;
-
-    // qDebug() << " clicked " << key;
-    for (auto widget : mHueWidgets) {
-        if (widget->checked()) {
-            widget->setChecked(false);
-            widget->hideDetails(true);
-        }
-    }
-    for (auto widget : mNanoleafWidgets) {
-        if (widget->checked()) {
-            widget->setChecked(false);
-            widget->hideDetails(true);
-        }
-    }
-    for (auto widget : mArduCorWidgets) {
-        if (widget->checked()) {
-            widget->setChecked(false);
-            widget->hideDetails(true);
-        }
-    }
-    for (auto widget : mHueWidgets) {
-        if (widget->key() == key) {
-            if (mLastKey == key) {
-                widget->hideDetails(true);
-                widget->setChecked(false);
-                mLastKey = "";
-            } else {
-                widget->hideDetails(false);
-                widget->setChecked(true);
-                mLastKey = key;
-            }
-        }
-    }
-    for (auto widget : mNanoleafWidgets) {
-        if (widget->key() == key) {
-            if (mLastKey == key) {
-                widget->hideDetails(true);
-                widget->setChecked(false);
-                mLastKey = "";
-            } else {
-                widget->hideDetails(false);
-                widget->setChecked(true);
-                mLastKey = key;
-            }
-        }
-    }
-
-    for (auto widget : mArduCorWidgets) {
-        if (widget->key() == key) {
-            if (mLastKey == key) {
-                widget->hideDetails(true);
-                widget->setChecked(false);
-                mLastKey = "";
-            } else {
-                shouldEnableDelete = true;
-                widget->hideDetails(false);
-                widget->setChecked(true);
-                mLastKey = key;
-            }
-        }
-    }
-
-    if (mLastKey == "") {
-        mDeleteButton->setEnabled(false);
-        mDeleteButton->setStyleSheet("background-color:rgb(45,30,30);");
-    } else if (shouldEnableDelete) {
+void LightInfoListWidget::lightInfoClicked(const QString&, bool shouldEnableDelete) {
+    if (shouldEnableDelete) {
         mDeleteButton->setEnabled(true);
         mDeleteButton->setStyleSheet("background-color:rgb(110,30,30);");
+    } else {
+        mDeleteButton->setEnabled(false);
+        mDeleteButton->setStyleSheet("background-color:rgb(45,30,30);");
     }
 
-    resize(true);
+    resize();
 }
 
 void LightInfoListWidget::pushIn() {

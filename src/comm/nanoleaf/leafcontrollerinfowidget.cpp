@@ -19,7 +19,8 @@ namespace nano {
 
 LeafControllerInfoWidget::LeafControllerInfoWidget(nano::LeafController controller, QWidget* parent)
     : QWidget(parent),
-      mHideDetails{true} {
+      mHideDetails{true},
+      mTypeIcon(new QLabel(this)) {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     setStyleSheet(styleSheet);
 
@@ -49,13 +50,16 @@ LeafControllerInfoWidget::LeafControllerInfoWidget(nano::LeafController controll
     mModelID->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mModelID->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mLayout = new QGridLayout(this);
+    mTopLayout = new QHBoxLayout;
+    mTopLayout->addWidget(mTypeIcon, 1);
+    mTopLayout->addWidget(mName, 5);
 
-    mLayout->addWidget(mName, 0, 0, 1, 2);
-    mLayout->addWidget(mIPAdress, 1, 0);
-    mLayout->addWidget(mFirmware, 2, 0);
-    mLayout->addWidget(mSerialNumber, 3, 0);
-    mLayout->addWidget(mModelID, 4, 0);
+    mMainLayout = new QVBoxLayout(this);
+    mMainLayout->addLayout(mTopLayout);
+    mMainLayout->addWidget(mIPAdress);
+    mMainLayout->addWidget(mFirmware);
+    mMainLayout->addWidget(mSerialNumber);
+    mMainLayout->addWidget(mModelID);
 
     mKey = controller.serialNumber;
 
@@ -77,8 +81,7 @@ void LeafControllerInfoWidget::updateController(nano::LeafController controller)
     mController = controller;
 }
 
-void LeafControllerInfoWidget::mouseReleaseEvent(QMouseEvent* event) {
-    Q_UNUSED(event);
+void LeafControllerInfoWidget::mouseReleaseEvent(QMouseEvent*) {
     emit clicked(mKey);
 }
 
@@ -93,6 +96,22 @@ void LeafControllerInfoWidget::hideDetails(bool shouldHide) {
     mFirmware->setHidden(shouldHide);
     mHideDetails = shouldHide;
 }
+
+void LeafControllerInfoWidget::resize() {
+    QSize size(mName->height(), mName->height());
+    mTypeIcon->setFixedSize(size);
+    mTypePixmap = lightHardwareTypeToPixmap(ELightHardwareType::nanoleaf);
+    mTypePixmap = mTypePixmap.scaled(size.width(),
+                                     size.height(),
+                                     Qt::IgnoreAspectRatio,
+                                     Qt::SmoothTransformation);
+    mTypeIcon->setPixmap(mTypePixmap);
+}
+
+void LeafControllerInfoWidget::resizeEvent(QResizeEvent*) {
+    resize();
+}
+
 
 void LeafControllerInfoWidget::paintEvent(QPaintEvent* event) {
     Q_UNUSED(event);

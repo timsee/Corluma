@@ -35,6 +35,7 @@ public:
     explicit PresetGroupWidget(const QString& name,
                                EPalette palette,
                                EPresetWidgetMode mode,
+                               int fontSize,
                                QWidget* parent);
 
     /*!

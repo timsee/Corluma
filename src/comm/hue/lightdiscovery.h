@@ -66,9 +66,6 @@ private slots:
     /// close button pressed to hide the widget.
     void closeButtonPressed(bool);
 
-    /// search button pressed
-    void searchButtonPressed(bool);
-
     /*!
      * \brief plusButtonClicked called whenever the plus button is clicked
      */
@@ -92,8 +89,8 @@ private:
     /// the currently selected bridge
     hue::Bridge mBridge;
 
-    /// button to trigger searching on a bridge
-    QPushButton* mSearchButton;
+    /// label that explains how to search for new hues
+    QLabel* mSearchHelpLabel;
 
     /// timer for rendering and updating state of discovery routine
     QTimer* mDiscoveryTimer;

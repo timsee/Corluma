@@ -318,36 +318,38 @@ void TopMenu::resize(int xOffset) {
 
     int yPos = 0;
     int padding = 5;
+    int topSpacer = mSize.height() / 8;
     mMenuButton->setGeometry(0, yPos, mSize.width(), mSize.height());
-    mSpacer->setGeometry(mSize.width(), yPos, width() - mSize.width(), mSize.height());
 
-    if (!mMainWindow->leftHandMenu()->alwaysOpen()) {
+    yPos = topSpacer;
+    if (mMainWindow->leftHandMenu()->alwaysOpen()) {
+        mOnOffSwitch->setGeometry(int(mSize.width() * 0.1),
+                                  yPos,
+                                  mSize.width(),
+                                  mSize.height() / 2 - topSpacer);
+
+        mBrightnessSlider->setGeometry(mSize.width() + 5,
+                                       yPos,
+                                       width() - int(mSize.width() * 2),
+                                       mSize.height() / 2 - topSpacer);
+
+        mMainPalette->setVisible(false);
+
+    } else {
         mOnOffSwitch->setGeometry(int(mSize.width() * 1.1),
                                   yPos,
                                   mSize.width(),
-                                  mSize.height() / 2);
+                                  mSize.height() / 2 - topSpacer);
 
         mBrightnessSlider->setGeometry(mSize.width() * 2 + 5,
                                        yPos,
                                        width() - int(mSize.width() * 2.1),
-                                       mSize.height() / 2);
+                                       mSize.height() / 2 - topSpacer);
 
         mMainPalette->setVisible(true);
-    } else {
-        mOnOffSwitch->setGeometry(int(mSize.width() * 0.1),
-                                  yPos,
-                                  mSize.width(),
-                                  mSize.height() / 2);
-
-        mBrightnessSlider->setGeometry(mSize.width() + 5,
-                                       yPos,
-                                       width() - int(mSize.width() * 1.1),
-                                       mSize.height() / 2);
-
-        mMainPalette->setVisible(false);
     }
 
-    yPos += mMenuButton->height() + padding;
+    yPos = mMenuButton->height() + padding;
     mStartSelectLightsButton = yPos;
     mFloatingMenuStart = yPos;
 

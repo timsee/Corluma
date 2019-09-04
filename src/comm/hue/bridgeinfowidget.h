@@ -98,6 +98,12 @@ private slots:
     void deleteButtonPressed();
 
 private:
+    /// resize programmatically
+    void resize();
+
+    /// state of bridge
+    EBridgeDiscoveryState mState;
+
     /// handles when the bridge state changes
     void handleBridgeState(EBridgeDiscoveryState state);
 

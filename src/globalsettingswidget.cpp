@@ -140,9 +140,10 @@ void GlobalSettingsWidget::paintEvent(QPaintEvent*) {
     painter.setRenderHint(QPainter::Antialiasing);
 
     QPainterPath path;
-    path.addRoundedRect(rect(), 10, 10);
-    // painter.setPen(QPen(Qt::black, 10));
+    auto width = this->width() * 0.01;
+    path.addRoundedRect(rect(), width, width);
     painter.fillPath(path, QColor(48, 47, 47));
+    painter.setPen(QPen(QColor(200, 200, 200), this->width() * 0.005));
     painter.drawPath(path);
 }
 

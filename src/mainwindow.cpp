@@ -256,7 +256,7 @@ void MainWindow::loadPages() {
         mEditPage = new EditGroupPage(this, mComm, mGroups);
         mEditPage->isOpen(false);
         connect(mEditPage, SIGNAL(pressedClose()), this, SLOT(editClosePressed()));
-        mEditPage->setGeometry(0, -1 * height(), width() * 0.75, height() * 0.75);
+        mEditPage->setGeometry(0, -1 * height(), int(width() * 0.75), int(height() * 0.75));
 
         // --------------
         // Setup Mood Detailed Widget
@@ -276,7 +276,7 @@ void MainWindow::loadPages() {
         // Setup Light Info Widget
         // --------------
 
-        mLightInfoWidget = new LightInfoListWidget(this);
+        mLightInfoWidget = new LightInfoListWidget(this, mAppSettings);
         mLightInfoWidget->isOpen(false);
         connect(mLightInfoWidget,
                 SIGNAL(lightNameChanged(EProtocolType, QString, QString)),
@@ -285,6 +285,8 @@ void MainWindow::loadPages() {
         connect(mLightInfoWidget, SIGNAL(deleteLight(QString)), this, SLOT(deleteLight(QString)));
         connect(mLightInfoWidget, SIGNAL(pressedClose()), this, SLOT(lightInfoClosePressed()));
         mLightInfoWidget->setGeometry(0, -1 * height(), width(), height());
+
+        mSettingsPage->enableButtons(true);
 
         resize();
     }
@@ -470,9 +472,10 @@ void MainWindow::detailedMoodDisplay(std::uint64_t key) {
 void MainWindow::hueInfoWidgetClicked() {
     mGreyOut->greyOut(true);
 
-    mLightInfoWidget->updateHues(mComm->hue()->discovery()->lights());
-    mLightInfoWidget->updateControllers(mComm->nanoleaf()->controllers().itemList());
-    mLightInfoWidget->updateLights(mComm->arducor()->lights());
+    mLightInfoWidget->scrollArea()->updateHues(mComm->hue()->discovery()->lights());
+    mLightInfoWidget->scrollArea()->updateControllers(mComm->nanoleaf()->controllers().itemList());
+    mLightInfoWidget->scrollArea()->updateLights(mComm->arducor()->lights());
+    mLightInfoWidget->resize();
     mLightInfoWidget->pushIn();
 }
 
@@ -657,7 +660,7 @@ void MainWindow::resize() {
         }
 
         if (mLightInfoWidget->isOpen()) {
-            mLightInfoWidget->resize(true);
+            mLightInfoWidget->resize();
         }
     }
 

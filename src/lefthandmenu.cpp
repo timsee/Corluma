@@ -223,7 +223,11 @@ void LeftHandMenu::updateDataGroupInUI(const cor::Group& dataGroup,
             for (auto widget : mRoomWidgets) {
                 auto groupWidget = qobject_cast<ListRoomWidget*>(widget);
                 if (groupWidget->key() == dataGroup.name()) {
-                    groupWidget->updateGroup(dataGroup, false);
+                    bool deleteNotFound = false;
+                    if (groupWidget->key() == "Miscellaneous") {
+                        deleteNotFound = true;
+                    }
+                    groupWidget->updateGroup(dataGroup, deleteNotFound);
                 }
             }
         }

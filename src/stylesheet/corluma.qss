@@ -39,8 +39,8 @@ QLineEdit {
     background-color: #201F1F;
 }
 
-.SettingsButton {
-    border-top : 2px solid red;
+QWidget:disabled {
+    color: #454545;
 }
 
 /* ---------------

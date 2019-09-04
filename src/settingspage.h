@@ -48,11 +48,6 @@ public:
                           AppSettings* appSettings,
                           ShareUtils* shareUtils);
 
-    /*!
-     * \brief Destructor
-     */
-    ~SettingsPage() = default;
-
     /// called when the widget is shown
     void show();
 
@@ -64,6 +59,12 @@ public:
 
     /// hides the settings page menu
     void pushOut(const QPoint& endPoint);
+
+    /*!
+     * \brief enables/disables buttons that require lights to be connected to work. For isntance,
+     * the copyright page's button won't ever disable, but the View/Edit Lights button will.
+     */
+    void enableButtons(bool enable);
 
 signals:
 

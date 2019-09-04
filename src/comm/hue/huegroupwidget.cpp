@@ -13,11 +13,15 @@
 
 namespace hue {
 
-HueGroupWidget::HueGroupWidget(QWidget* parent, cor::Group group) : QWidget(parent) {
+HueGroupWidget::HueGroupWidget(QWidget* parent, const cor::Group& group) : QWidget(parent) {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     setStyleSheet(styleSheet);
 
-    mName = new QLabel("<b>Name:</b> " + group.name(), this);
+    mName = new QLabel("<b>" + group.name() + "</b>", this);
+    auto font = mName->font();
+    auto fontSize = int(font.pointSize() * 1.33);
+    font.setPointSize(fontSize);
+    mName->setFont(font);
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mName->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
@@ -25,23 +29,28 @@ HueGroupWidget::HueGroupWidget(QWidget* parent, cor::Group group) : QWidget(pare
     mIndex->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mIndex->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mDeviceCount = new QLabel("<b>Hue Count:</b> " + QString::number(group.lights.size()), this);
-    mDeviceCount->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mDeviceCount->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    if (group.isRoom) {
-        mGroupType = new QLabel("<i>Room</i>", this);
-    } else {
-        mGroupType = new QLabel("<i>Group</i>", this);
-    }
-    mGroupType->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mGroupType->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    mGroupDescription = new QLabel(generateDescription(group), this);
+    mGroupDescription->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mGroupDescription->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
     mLayout = new QVBoxLayout(this);
-    mLayout->addWidget(mName);
-    mLayout->addWidget(mIndex);
-    mLayout->addWidget(mDeviceCount);
-    mLayout->addWidget(mGroupType);
+    mLayout->addWidget(mName, 1);
+    mLayout->addWidget(mIndex, 1);
+    mLayout->addWidget(mGroupDescription, 1);
+}
+
+QString HueGroupWidget::generateDescription(const cor::Group& group) {
+    QString returnString;
+    if (group.isRoom) {
+        returnString += "<i>Room";
+    } else {
+        returnString += "<i>Group";
+    }
+    returnString += ", with ";
+    returnString += QString::number(group.lights.size());
+    returnString += " lights.</i>";
+    return returnString;
 }
 
 void HueGroupWidget::paintEvent(QPaintEvent*) {
@@ -51,6 +60,15 @@ void HueGroupWidget::paintEvent(QPaintEvent*) {
 
     painter.setRenderHint(QPainter::Antialiasing);
     painter.fillRect(rect(), QBrush(QColor(32, 31, 31)));
+
+    // draw line at bottom of widget
+    QRect area(x(), y(), width(), height());
+    QPainter linePainter(this);
+    linePainter.setRenderHint(QPainter::Antialiasing);
+    linePainter.setBrush(QBrush(QColor(255, 255, 255)));
+    QLine spacerLine(QPoint(area.x(), area.height() - 3), QPoint(area.width(), area.height() - 3));
+    linePainter.drawLine(spacerLine);
 }
+
 
 } // namespace hue
