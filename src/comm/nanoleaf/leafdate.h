@@ -26,7 +26,6 @@ public:
         m_date.tm_mday = 0;
         m_date.tm_min = 0;
         m_date.tm_mon = 0;
-        m_date.tm_gmtoff = 0;
         m_date.tm_year = 3000;
     }
 
@@ -45,7 +44,6 @@ public:
         m_date.tm_hour = int(object["hour"].toDouble());
         m_date.tm_min = int(object["minute"].toDouble());
         m_date.tm_mon = int(object["month"].toDouble());
-        m_date.tm_gmtoff = int(object["time_zone"].toDouble());
         auto year = int(object["year"].toDouble());
         if (year > 1900) {
             m_date.tm_year = year - 1900;

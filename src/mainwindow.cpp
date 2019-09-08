@@ -172,7 +172,7 @@ void MainWindow::shareChecker() {
             "You are attempting to share a .json file with Corluma. If you continue, your "
             "current lights, groups, and moods information will all be overwritten by the data "
             "in the JSON file. This cannot be undone and it is recommended that you back up your "
-            "save data beforehand.Are you sure you want to continue? ";
+            "save data beforehand. Are you sure you want to continue? ";
         auto reply = QMessageBox::question(this,
                                            "Load New App Data?",
                                            text,

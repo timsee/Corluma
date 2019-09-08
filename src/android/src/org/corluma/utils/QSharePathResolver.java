@@ -43,6 +43,7 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -71,20 +72,29 @@ public class QSharePathResolver {
             }
             // DownloadsProvider
             else if (isDownloadsDocument(uri)) {
-                //   Log.d(TAG, " isDownloadsDocument");
+                // Log.d(TAG, " isDownloadsDocument");
                 final String id = DocumentsContract.getDocumentId(uri);
-                //  Log.d(TAG, " getDocumentId " + id);
                 long longId = 0;
                 try {
                     longId = Long.valueOf(id);
                 } catch (NumberFormatException nfe) {
                     return getDataColumn(context, uri, null, null);
                 }
-                final Uri contentUri = ContentUris.withAppendedId(
-                        Uri.parse("content://downloads/public_downloads"),
-                        longId);
+                String[] contentUriPrefixesToTry =
+                        new String[] {"content://downloads/public_downloads",
+                                      "content://downloads/my_downloads",
+                                      "content://downloads/all_downloads"};
 
-                return getDataColumn(context, contentUri, null, null);
+                for (String contentUriPrefix : contentUriPrefixesToTry) {
+                    Uri contentUri = ContentUris.withAppendedId(Uri.parse(contentUriPrefix),
+                                                                Long.valueOf(id));
+                    try {
+                        String path = getDataColumn(context, contentUri, null, null);
+                        if (path != null) {
+                            return path;
+                        }
+                    } catch (Exception e) {}
+                }
             }
             // MediaProvider
             else if (isMediaDocument(uri)) {
@@ -123,10 +133,17 @@ public class QSharePathResolver {
                         if (filename != null) {
                             File file = new File(context.getCacheDir(), filename);
                             FileOutputStream tmp = new FileOutputStream(file);
-                            byte[] buffer = new byte[1024];
-                            while (attachment.read(buffer) > 0) {
-                                tmp.write(buffer);
+                            int bufferSize = 1024;
+                            byte[] buffer = new byte[bufferSize];
+                            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                            while (attachment.available() > 0) {
+                                int n = attachment.read(buffer);
+                                // write to output stream
+                                outputStream.write(buffer, 0, n);
                             }
+                            // write output stream to file in one chunk
+                            tmp.write(outputStream.toByteArray());
+                            outputStream.close();
                             tmp.close();
                             attachment.close();
                             return file.getAbsolutePath();

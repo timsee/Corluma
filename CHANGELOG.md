@@ -556,3 +556,8 @@ ___
 * Fixed bugs with discovering multiple Hue Bridges. 
 * Fixed miscellaneous bugs.
 
+### **v0.17.41**
+#### The Qt 5.13 Update
+* Updated the application to support Qt 5.13 android builds. This bumps the minimum Qt version to 5.13.
+* Fixed bugs with windows builds.
+* Added support for more android phones.

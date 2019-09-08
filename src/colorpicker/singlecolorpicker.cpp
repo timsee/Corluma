@@ -113,7 +113,7 @@ void SingleColorPicker::updateBottomMenuState(bool enable) {
 void SingleColorPicker::changeMode(ESingleColorPickerMode mode) {
     if (mode != mCurrentMode) {
         QColor oldColor;
-        std::size_t oldBrightness;
+        std::size_t oldBrightness = 100;
         switch (mCurrentMode) {
             case ESingleColorPickerMode::RGB:
                 oldColor = mRGBSliders->color();
@@ -152,7 +152,7 @@ void SingleColorPicker::changeMode(ESingleColorPickerMode mode) {
             mColorWheel->changeType(EWheelType::CT);
             mTempBrightSliders->setVisible(true);
             mTempBrightSliders->changeBrightness(oldBrightness);
-            mColorWheel->updateBrightness(mColorWheel->brightness());
+            mColorWheel->updateBrightness(oldBrightness);
         }
 
         mSelectionCircle->hideCircles();

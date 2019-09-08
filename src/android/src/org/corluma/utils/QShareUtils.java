@@ -52,6 +52,7 @@ import android.util.Log;
 
 import org.qtproject.qt5.android.QtNative;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -297,7 +298,7 @@ public class QShareUtils {
         try {
             uri = FileProvider.getUriForFile(QtNative.activity(), AUTHORITY, fileToShare);
         } catch (IllegalArgumentException e) {
-            Log.d(TAG, "viewFile - cannot be shared: " + filePath);
+            // Log.d(TAG, "viewFile - cannot be shared: " + filePath);
             return false;
         }
         // now we got a content URI per ex
@@ -385,10 +386,17 @@ public class QShareUtils {
                     FileOutputStream tmp = new FileOutputStream(f);
                     // Log.d(TAG, "- create File new FileOutputStream");
 
-                    byte[] buffer = new byte[1024];
-                    while (iStream.read(buffer) > 0) {
-                        tmp.write(buffer);
+                    int bufferSize = 1024;
+                    byte[] buffer = new byte[bufferSize];
+                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                    while (iStream.available() > 0) {
+                        int n = iStream.read(buffer);
+                        // write to output stream
+                        outputStream.write(buffer, 0, n);
                     }
+                    // write output stream to file in one chunk
+                    tmp.write(outputStream.toByteArray());
+                    outputStream.close();
                     tmp.close();
                     iStream.close();
                     return filePath;

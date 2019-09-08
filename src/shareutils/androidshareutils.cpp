@@ -41,7 +41,7 @@
 
 namespace {
 
-const QString kFileProviderPath = "/shared_files/";
+const QString kFileProviderPath = "/shared_files";
 
 } // namespace
 

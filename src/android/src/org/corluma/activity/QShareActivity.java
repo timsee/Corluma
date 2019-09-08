@@ -48,9 +48,9 @@ import android.os.*;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import org.corluma.utils.*;
 import org.qtproject.qt5.android.QtNative;
 import org.qtproject.qt5.android.bindings.QtActivity;
-import org.corluma.utils.*;
 
 import java.io.File;
 import java.lang.String;
@@ -165,12 +165,12 @@ public class QShareActivity extends QtActivity {
             Bundle bundle = intent.getExtras();
             intentUri = (Uri) bundle.get(Intent.EXTRA_STREAM);
         } else {
-            Log.d(TAG, "Intent unknown action:" + intent.getAction());
+            // Log.d(TAG, "Intent unknown action:" + intent.getAction());
             return;
         }
         // Log.d(TAG, " action: " + intentAction);
         if (intentUri == null) {
-            Log.d(TAG, " Intent URI: is null");
+            // Log.d(TAG, " Intent URI: is null");
             return;
         }
 
@@ -179,7 +179,7 @@ public class QShareActivity extends QtActivity {
         // content or file
         intentScheme = intentUri.getScheme();
         if (intentScheme == null) {
-            Log.d(TAG, "Intent URI Scheme: is null");
+            // Log.d(TAG, "Intent URI Scheme: is null");
             return;
         }
         if (intentScheme.equals("file")) {
@@ -190,7 +190,7 @@ public class QShareActivity extends QtActivity {
             return;
         }
         if (!intentScheme.equals("content")) {
-            Log.d(TAG, "Intent URI unknown scheme: " + intentScheme);
+            // Log.d(TAG, "Intent URI unknown scheme: " + intentScheme);
             return;
         }
         // ok - it's a content scheme URI
@@ -214,7 +214,7 @@ public class QShareActivity extends QtActivity {
         if (filePath == null) {
             // Log.d(TAG, "QSharePathResolver: filePath is NULL");
         } else {
-            //  Log.d(TAG, "QSharePathResolver:" + filePath);
+            // Log.d(TAG, "QSharePathResolver:" + filePath);
             // to be safe check if this File Url really can be opened by Qt
             // there were problems with MS office apps on Android 7
             if (checkFileExits(filePath)) {

@@ -26,12 +26,12 @@ LIB_SSL_ANDROID = $$PWD/../../../Libraries/openssl/libssl.so
 # check for proper version of Qt
 message("DEBUG: Qt Version: $$QT_MAJOR_VERSION _ $$QT_MINOR_VERSION arch: $$QT_ARCH " )
 equals (QT_MAJOR_VERSION, 5)  {
-  !greaterThan(QT_MINOR_VERSION, 1) {
-    error(ERROR: Qt5 is installed, but it is not a recent enough version. This project uses QT5.2 or later)
+  !greaterThan(QT_MINOR_VERSION, 12) {
+    error(ERROR: Qt5 is installed, but it is not a recent enough version. This project uses QT5.13 or later)
   }
 }
-!greaterThan(QT_MAJOR_VERSION, 4) {
-    error(ERROR: Qt5 is not installed. This project uses QT5.4 or later)
+!equals(QT_MAJOR_VERSION, 5) {
+    error(ERROR: Qt5 is not installed. This project uses QT5.13 or later)
 }
 
 CONFIG += c++11 #adds C++11 support

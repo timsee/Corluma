@@ -1,21 +1,7 @@
 <?xml version="1.0"?>
-<manifest package="org.qtproject.example.Corluma"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:versionName="1.0"
-    android:versionCode="1"
-    android:installLocation="auto">
-    <application
-        android:hardwareAccelerated="true"
-        android:name="org.qtproject.qt5.android.bindings.QtApplication"
-        android:label="Corluma"
-        android:icon="@drawable/icon">
-        <activity
-            android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|locale|fontScale|keyboard|keyboardHidden|navigation"
-            android:name="org.corluma.activity.QShareActivity"
-            android:label="Corluma"
-            android:theme="@android:style/Theme.Black.NoTitleBar"
-            android:screenOrientation="portrait"
-            android:launchMode="singleInstance">
+<manifest package="org.qtproject.example.Corluma" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.0" android:versionCode="1" android:installLocation="auto">
+    <application android:hardwareAccelerated="true" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="Corluma" android:icon="@drawable/icon">
+        <activity android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|locale|fontScale|keyboard|keyboardHidden|navigation" android:name="org.corluma.activity.QShareActivity" android:label="Corluma" android:theme="@android:style/Theme.Black.NoTitleBar" android:screenOrientation="portrait" android:launchMode="singleInstance">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -72,22 +58,12 @@
 
         </activity>
 
-        <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="org.corluma.shareutils.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-              android:name="android.support.FILE_PROVIDER_PATHS"
-              android:resource="@xml/filepaths"/>
+        <provider android:name="android.support.v4.content.FileProvider" android:authorities="org.corluma.shareutils.fileprovider" android:exported="false" android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/filepaths"/>
         </provider>
     </application>
-    <uses-sdk android:minSdkVersion="18"/>
-    <supports-screens
-    android:largeScreens="true"
-    android:normalScreens="true"
-    android:anyDensity="true"
-    android:smallScreens="true"/>
+    <uses-sdk android:minSdkVersion="23" android:targetSdkVersion="27"/>
+    <supports-screens android:largeScreens="true" android:normalScreens="true" android:anyDensity="true" android:smallScreens="true"/>
 
     <!-- The following comment will be replaced upon deployment with default permissions based on the dependencies of the application.
      Remove the comment if you do not require these default permissions. -->
@@ -101,4 +77,5 @@
 
 
 <!-- %%INSERT_PERMISSIONS -->
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 </manifest>
