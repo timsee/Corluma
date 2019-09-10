@@ -11,6 +11,7 @@
 
 TARGET = Corluma
 TEMPLATE = app
+VERSION = 1.0.0
 
 
 # Define these paths to include libcrypto and libssl from your machine. This is
@@ -90,6 +91,22 @@ android {
             $$LIB_CRYPTO_ANDROID \
             $$LIB_SSL_ANDROID
     }
+
+    # Android Play Store requires different version numbers for armv7 and arm64
+    # https://www.qt.io/blog/2019/06/28/comply-upcoming-requirements-google-play
+    defineReplace(droidVersionCode) {
+            segments = $$split(1, ".")
+            for (segment, segments): vCode = "$$first(vCode)$$format_number($$segment, width=3 zeropad)"
+            contains(ANDROID_TARGET_ARCH, arm64-v8a): \
+                suffix = 1
+
+            else:contains(ANDROID_TARGET_ARCH, armeabi-v7a): \
+                suffix = 0
+            return($$first(vCode)$$first(suffix))
+    }
+
+    ANDROID_VERSION_NAME = $$VERSION
+    ANDROID_VERSION_CODE = $$droidVersionCode($$ANDROID_VERSION_NAME)
 }
 
 ios {

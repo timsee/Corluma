@@ -50,7 +50,7 @@ AndroidShareUtils* AndroidShareUtils::mInstance = nullptr;
 AndroidShareUtils::AndroidShareUtils(QObject* parent) : PlatformShareUtils(parent) {
     // create a save directory, if it doesn't already exist
     mSavePath =
-        QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + kFileProviderPath;
+        QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + kFileProviderPath + "/";
     QDir tempDir(mSavePath);
     if (!tempDir.exists()) {
         QDir("").mkpath(mSavePath);

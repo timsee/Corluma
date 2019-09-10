@@ -18,7 +18,7 @@
 
 namespace {
 
-int findFontSize(QWidget* parent, cor::EWidgetType type) {
+int findFontSize(QWidget* parent, QWidget* widget, cor::EWidgetType type) {
     QString text("123456789");
     if (type == cor::EWidgetType::full) {
         text = QString("1234567891234567");
@@ -27,8 +27,9 @@ int findFontSize(QWidget* parent, cor::EWidgetType type) {
     // calcuate the text's size
     auto fontWidth = label.fontMetrics().boundingRect(text).width();
     // calculate the button's size
-    auto widgetWidth = label.width();
+    auto widgetWidth = widget->width();
     QFont font(label.font());
+
     auto fontPtSize = label.font().pointSize();
     if (fontWidth > widgetWidth) {
         for (auto i = fontPtSize - 1; i > 0; --i) {
@@ -38,6 +39,18 @@ int findFontSize(QWidget* parent, cor::EWidgetType type) {
             fontWidth = label.fontMetrics().boundingRect(text).width();
             if (fontWidth < widgetWidth) {
                 // font is small enough to fit
+                break;
+            }
+        }
+    } else {
+        for (auto i = fontPtSize; i < 18; ++i) {
+            font.setPointSize(i);
+            label.setFont(font);
+            fontPtSize = i;
+            fontWidth = label.fontMetrics().boundingRect(text).width();
+            if (fontWidth > widgetWidth) {
+                // one size smaller is ideal
+                fontPtSize -= 1;
                 break;
             }
         }
@@ -55,7 +68,7 @@ ListLightWidget::ListLightWidget(const cor::Light& device,
     : cor::ListItemWidget(device.uniqueID(), parent),
       mType{type},
       mSwitchState{switchState},
-      mFontPtSize(findFontSize(parent, type)) {
+      mFontPtSize(findFontSize(parent, this, type)) {
     mShouldHighlight = setHighlightable;
     init(device);
     mBlockStateUpdates = false;
@@ -346,6 +359,11 @@ void ListLightWidget::resizeIcons() {
         QSize onOffSize(size.width() * 2, size.height() * 2);
         mOnOffSwitch->setFixedSize(size);
     }
+
+    mFontPtSize = findFontSize(parentWidget(), this, mType);
+    auto font = mController->font();
+    font.setPointSize(mFontPtSize);
+    mController->setFont(font);
 }
 
 

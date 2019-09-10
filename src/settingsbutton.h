@@ -40,11 +40,11 @@ signals:
     void buttonPressed(QString title);
 
 private slots:
-    /// handles when the mouse is pressed down on a button
-    void mousePressEvent(QMouseEvent* event);
-
     /// handles when the mouse is released on a button. This acts as clicking a button.
     void mouseReleaseEvent(QMouseEvent* event);
+
+    /// remove highlight from button
+    void removeHighlight();
 
 protected:
     /// handles when the widget is painted
@@ -62,6 +62,9 @@ private:
 
     /// true if enabled, false otherwise.
     bool mIsEnabled;
+
+    /// removes highlight from button
+    QTimer* mHighlightTimer;
 };
 
 #endif // SETTINGSBUTTON_H

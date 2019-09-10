@@ -180,6 +180,8 @@ void MainWindow::shareChecker() {
         if (reply == QMessageBox::Yes) {
             if (!mGroups->loadExternalData(mSharePath)) {
                 qDebug() << "WARNING: loading external data failed at " << mSharePath;
+            } else {
+                qDebug() << "New app data saved!";
             }
         }
     } else {

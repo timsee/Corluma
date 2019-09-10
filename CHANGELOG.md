@@ -561,3 +561,9 @@ ___
 * Updated the application to support Qt 5.13 android builds. This bumps the minimum Qt version to 5.13.
 * Fixed bugs with windows builds.
 * Added support for more android phones.
+
+### **v0.17.42**
+#### The Android Update
+* Updated android icons.
+* Updated compliance with Google Play Store requirements.
+* Fixed miscellaneous bugs.

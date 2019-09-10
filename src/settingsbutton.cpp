@@ -14,7 +14,11 @@
 #include "utils/qt.h"
 
 SettingsButton::SettingsButton(const QString& title, int minHeight, QWidget* parent)
-    : QWidget(parent) {
+    : QWidget(parent),
+      mHighlightTimer(new QTimer(this)) {
+    mHighlightTimer->setSingleShot(true);
+    connect(mHighlightTimer, SIGNAL(timeout()), this, SLOT(removeHighlight()));
+
     mIsHighlighted = false;
     setMinimumHeight(minHeight);
 
@@ -27,21 +31,19 @@ SettingsButton::SettingsButton(const QString& title, int minHeight, QWidget* par
     setLayout(mLayout);
 }
 
-void SettingsButton::mousePressEvent(QMouseEvent* event) {
-    // turn to light blue
-    mIsHighlighted = true;
-    update();
-    event->ignore();
-}
-
 void SettingsButton::mouseReleaseEvent(QMouseEvent* event) {
     if (cor::isMouseEventTouchUpInside(event, this, true)) {
         emit buttonPressed(mTitle->text());
+        mIsHighlighted = true;
+        update();
+        mHighlightTimer->start(250);
     }
-    // turn back to standard color
+    event->ignore();
+}
+
+void SettingsButton::removeHighlight() {
     mIsHighlighted = false;
     update();
-    event->ignore();
 }
 
 void SettingsButton::shouldHightlght(bool shouldHighlight) {
