@@ -92,6 +92,9 @@ public:
      */
     bool removeGroup(const QString& groupName, bool isMood);
 
+    /// checks if a file can be read by GroupDate::loadExternalData(const QString&)
+    bool checkIfValidJSON(const QString& file);
+
     /*!
      * \brief loadExternalData
      * \param file path to JSON file
@@ -153,14 +156,6 @@ signals:
     void newMoodAdded(QString);
 
 private:
-    /*!
-     * \brief loadJsonFile loads json data at given path and turns it into a JsonDocument
-     *
-     * \param file path to a json file
-     * \return a JsonDocument representing the data in the file given.
-     */
-    QJsonDocument loadJsonFile(const QString& file);
-
     /// loads json data into app data
     bool loadJSON();
 

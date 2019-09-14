@@ -19,10 +19,17 @@ GroupData::GroupData(QObject* parent) : QObject(parent), cor::JSONSaveData("save
 
 bool GroupData::removeAppData() {
     QFile file(mSavePath);
+    mMoodDict = cor::Dictionary<cor::Mood>();
+    mGroupDict = cor::Dictionary<cor::Group>();
     if (file.exists()) {
         if (file.remove()) {
-            qDebug() << "INFO: removed json save data";
-            return true;
+            if (loadJSON()) {
+                qDebug() << "INFO: removed json save data";
+                return true;
+            } else {
+                qDebug() << " could not load invalid json";
+                return false;
+            }
         }
         qDebug() << "WARNING: could not remove json save data!";
     }
@@ -221,6 +228,23 @@ void GroupData::saveNewGroup(const QString& groupName,
     }
 }
 
+namespace {
+
+void updateGroup(cor::Group& group, const cor::Group& externalGroup) {
+    // merge new lights into it
+    for (const auto& externalLightID : externalGroup.lights) {
+        // search for old light
+        auto result =
+            std::find(group.lights.begin(), group.lights.end(), externalLightID);
+        // add if not found
+        if (result == group.lights.end()) {
+            group.lights.push_back(externalLightID);
+        }
+    }
+}
+
+}
+
 void GroupData::updateExternallyStoredGroups(const std::list<cor::Group>& externalGroups) {
     // fill in subgroups for each room
     for (const auto& externalGroup : externalGroups) {
@@ -230,19 +254,24 @@ void GroupData::updateExternallyStoredGroups(const std::list<cor::Group>& extern
         if (lookupResult.second) {
             // get existing group
             auto groupCopy = lookupResult.first;
-            // merge new lights into it
-            for (const auto& externalLightID : externalGroup.lights) {
-                // search for old light
-                auto result =
-                    std::find(groupCopy.lights.begin(), groupCopy.lights.end(), externalLightID);
-                // add if not found
-                if (result == groupCopy.lights.end()) {
-                    groupCopy.lights.push_back(externalLightID);
-                }
-            }
+            updateGroup(groupCopy, externalGroup);
             mGroupDict.update(key, groupCopy);
         } else {
-            mGroupDict.insert(key, externalGroup);
+            bool foundGroup = false;
+            for (const auto& internalGroup : mGroupDict.itemVector()) {
+                if (internalGroup.name() == externalGroup.name()) {
+                    auto groupCopy = internalGroup;
+                    updateGroup(groupCopy, externalGroup);
+                    mGroupDict.update(QString::number(internalGroup.uniqueID()).toStdString(), groupCopy);
+                    foundGroup = true;
+                }
+            }
+            if (!foundGroup) {
+               auto result =  mGroupDict.insert(key, externalGroup);
+               if (!result) {
+                   qDebug() << " insert failed" << externalGroup.name();
+               }
+            }
         }
     }
     addSubGroupsToRooms();
@@ -590,37 +619,45 @@ void GroupData::parseMood(const QJsonObject& object) {
 // File Manipulation
 //-------------------
 
-QJsonDocument GroupData::loadJsonFile(const QString& file) {
-    QFile jsonFile(file);
-    jsonFile.open(QFile::ReadOnly);
-    QString data = jsonFile.readAll();
-    jsonFile.close();
-    return QJsonDocument::fromJson(data.toUtf8());
-}
-
-bool GroupData::mergeExternalData(const QString& file, bool keepFileChanges) {
-    Q_UNUSED(keepFileChanges);
+bool GroupData::mergeExternalData(const QString& file, bool) {
     loadJsonFile(file);
     return true;
 }
 
 
 bool GroupData::loadExternalData(const QString& file) {
-    QJsonDocument document = loadJsonFile(file);
+    auto document = loadJsonFile(file);
     // check if contains a jsonarray
     if (!document.isNull()) {
         if (document.isArray()) {
             mJsonData = document;
-            if (!saveJSON()) {
+            if (saveJSON()) {
+                if (loadJSON()) {
+                    return true;
+                } else {
+                    qDebug() << " could not load JSON";
+                    return false;
+                }
+            } else {
                 qDebug() << "WARNING: Load External Data couldn't save file";
                 return false;
             }
-            return true;
         }
     }
     return false;
 }
 
+bool GroupData::checkIfValidJSON(const QString& file) {
+    // TODO: check if its a valid Corluma JSON instead of just a JSON array
+    auto document = loadJsonFile(file);
+    // check if contains a jsonarray
+    if (!document.isNull()) {
+        if (document.isArray()) {
+            return true;
+        }
+    }
+    return false;
+}
 
 //-------------------
 // Helpers

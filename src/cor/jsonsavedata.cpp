@@ -73,6 +73,14 @@ bool JSONSaveData::saveJSON() {
     return true;
 }
 
+QJsonDocument JSONSaveData::loadJsonFile(const QString& file) {
+    QFile jsonFile(file);
+    jsonFile.open(QFile::ReadOnly);
+    QString data = jsonFile.readAll();
+    jsonFile.close();
+    return QJsonDocument::fromJson(data.toUtf8());
+}
+
 bool JSONSaveData::removeJSONObject(const QString& key, const QString& givenValue) {
     int index = 0;
     int foundIndex = 0;

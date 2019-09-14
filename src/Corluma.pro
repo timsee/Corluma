@@ -13,13 +13,6 @@ TARGET = Corluma
 TEMPLATE = app
 VERSION = 1.0.0
 
-
-# Define these paths to include libcrypto and libssl from your machine. This is
-# required for android 7.0 and later but is optional for other builds.
-# For more info on how to build and install: http://doc.qt.io/qt-5/opensslsupport.html
-LIB_CRYPTO_ANDROID = $$PWD/../../../Libraries/openssl/libcrypto.so
-LIB_SSL_ANDROID = $$PWD/../../../Libraries/openssl/libssl.so
-
 #----------
 # Minimum Requirements Check
 #----------
@@ -85,24 +78,20 @@ android {
    # app name, icons, screen orientations, etc.
    OTHER_FILES += android/AndroidManifest.xml
    ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
-    # adds prebuilt libcrypto and libssl for android versions 6 and later
-    contains(ANDROID_TARGET_ARCH, armeabi-v7a) {
-        ANDROID_EXTRA_LIBS = \
-            $$LIB_CRYPTO_ANDROID \
-            $$LIB_SSL_ANDROID
-    }
+   # adds prebuilt libcrypto and libssl from https://github.com/KDAB/android_openssl
+   # you can also build your own, see here: https://doc.qt.io/qt-5/android-openssl-support.html
+   include($$PWD/../../../Libraries/android_openssl/openssl.pri)
 
-    # Android Play Store requires different version numbers for armv7 and arm64
-    # https://www.qt.io/blog/2019/06/28/comply-upcoming-requirements-google-play
-    defineReplace(droidVersionCode) {
-            segments = $$split(1, ".")
-            for (segment, segments): vCode = "$$first(vCode)$$format_number($$segment, width=3 zeropad)"
-            contains(ANDROID_TARGET_ARCH, arm64-v8a): \
-                suffix = 1
-
-            else:contains(ANDROID_TARGET_ARCH, armeabi-v7a): \
-                suffix = 0
-            return($$first(vCode)$$first(suffix))
+   # Android Play Store requires different version numbers for armv7 and arm64
+   # https://www.qt.io/blog/2019/06/28/comply-upcoming-requirements-google-play
+   defineReplace(droidVersionCode) {
+       segments = $$split(1, ".")
+       for (segment, segments): vCode = "$$first(vCode)$$format_number($$segment, width=3 zeropad)"
+           contains(ANDROID_TARGET_ARCH, arm64-v8a): \
+              suffix = 1
+           else:contains(ANDROID_TARGET_ARCH, armeabi-v7a): \
+              suffix = 0
+           return($$first(vCode)$$first(suffix))
     }
 
     ANDROID_VERSION_NAME = $$VERSION
@@ -110,7 +99,7 @@ android {
 }
 
 ios {
-   DEFINES += MOBILE_BUILD=1
+   DEFINES += MOBILE_BUILD=1 IOS_BUILD=1
    # Info.plist is the top level global configuration file for iOS
    # for things like app name, icons, screen orientations, etc.
    QMAKE_INFO_PLIST = ios/Info.plist

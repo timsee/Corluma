@@ -567,3 +567,14 @@ ___
 * Updated android icons.
 * Updated compliance with Google Play Store requirements.
 * Fixed miscellaneous bugs.
+
+### **v0.17.43**
+#### The Setup Update
+* Fixed a bug that required reloading the application after loading JSON data.
+* Fixed a bug with discovering ArduCor lights on certain devices.
+* Fixed a bug with lights being selected that can't be unselected.
+* Fixed text resizing improperly in certain environments.
+* Fixed deprecated Qt functions from the update to 5.13.
+* Fixed miscellaneous bugs.
+
+

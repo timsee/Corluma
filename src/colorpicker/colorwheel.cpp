@@ -187,11 +187,11 @@ void renderBackgroundWheels() {
 
 ColorWheel::ColorWheel(QWidget* parent)
     : QLabel(parent),
+      mImage(new QImage(size(), QImage::Format_ARGB32_Premultiplied)),
       mWheelType{EWheelType::RGB},
       mBrightness{100},
       mIsEnabled{false},
       mRepaint{true} {
-    mImage = new QImage(size(), QImage::Format_ARGB32_Premultiplied);
 #ifdef RENDER_WHEELS_AS_IMAGES
     renderBackgroundWheels();
 #endif
@@ -230,10 +230,10 @@ void ColorWheel::paintEvent(QPaintEvent*) {
         mRepaint = false;
 
         QPainter painter(mImage);
-        painter.initFrom(this);
         painter.setRenderHint(QPainter::Antialiasing, true);
         painter.setPen(Qt::NoPen);
         painter.eraseRect(rect());
+        painter.fillRect(rect(), QBrush(QColor(48, 47, 47)));
 
         const auto& wheelRect = this->wheelRect();
         const auto& wheelRadius = this->wheelRect().height() / 2;

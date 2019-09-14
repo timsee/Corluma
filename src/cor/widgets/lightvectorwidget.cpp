@@ -6,8 +6,6 @@
 
 #include "lightvectorwidget.h"
 
-#include <QSignalMapper>
-
 #include "utils/qt.h"
 
 namespace cor {
@@ -33,7 +31,6 @@ LightVectorWidget::LightVectorWidget(int width, int height, bool fillFromLeft, Q
 
     mArrayColorsButtons = std::vector<cor::Button*>(std::uint32_t(mMaximumSize), nullptr);
     mArrayLabels = std::vector<QLabel*>(std::uint32_t(mMaximumSize), nullptr);
-    auto arrayButtonsMapper = new QSignalMapper(this);
     int i = 0;
     for (int h = 0; h < mHeight; ++h) {
         for (int w = 0; w < mWidth; ++w) {
@@ -46,11 +43,10 @@ LightVectorWidget::LightVectorWidget(int width, int height, bool fillFromLeft, Q
             mArrayColorsButtons[std::size_t(i)]->setLabelMode(true);
             mArrayColorsButtons[std::size_t(i)]->setSizePolicy(QSizePolicy::Fixed,
                                                                QSizePolicy::Fixed);
-            arrayButtonsMapper->setMapping(mArrayColorsButtons[std::size_t(i)], i);
             connect(mArrayColorsButtons[std::size_t(i)],
-                    SIGNAL(clicked(bool)),
-                    arrayButtonsMapper,
-                    SLOT(map()));
+                    SIGNAL(clicked()),
+                    this,
+                    SLOT(toggleArrayColor()));
 
             QSizePolicy sizePolicy = mArrayColorsButtons[std::size_t(i)]->sizePolicy();
             sizePolicy.setRetainSizeWhenHidden(true);
@@ -60,7 +56,6 @@ LightVectorWidget::LightVectorWidget(int width, int height, bool fillFromLeft, Q
             ++i;
         }
     }
-    connect(arrayButtonsMapper, SIGNAL(mapped(int)), this, SLOT(toggleArrayColor(int)));
     setLayout(mLayout);
 }
 
@@ -106,8 +101,7 @@ uint32_t LightVectorWidget::selectedCount() {
     return i;
 }
 
-void LightVectorWidget::toggleArrayColor(int index) {
-    Q_UNUSED(index);
+void LightVectorWidget::toggleArrayColor() {
     emit selectedCountChanged(int(selectedCount()));
 }
 

@@ -8,7 +8,6 @@
 
 #include <QColorDialog>
 #include <QDebug>
-#include <QSignalMapper>
 
 #include "comm/hue/hueprotocols.h"
 #include "mainwindow.h"

@@ -73,18 +73,6 @@ signals:
 
 protected:
     /*!
-     * \brief enterEvent picks up when the mouse pointer (or finger on mobile) enters the area of
-     * the widget.
-     */
-    virtual void enterEvent(QEvent*);
-
-    /*!
-     * \brief leaveEvent picks up when the mouse pointer (or finger on mobile) leaves the area of
-     * the widget.
-     */
-    virtual void leaveEvent(QEvent*);
-
-    /*!
      * \brief mouseReleaseEvent picks up when a click (or a tap on mobile) is released.
      */
     virtual void mouseReleaseEvent(QMouseEvent*);

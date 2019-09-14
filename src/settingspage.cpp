@@ -178,9 +178,7 @@ void SettingsPage::loadButtonClicked() {
     if (dialog.exec()) {
         fileNames = dialog.selectedFiles();
         for (auto& name : fileNames) {
-            if (!mGroups->loadExternalData(name)) {
-                qDebug() << "WARNING: loading external data failed at " << name;
-            }
+            emit clickedLoadJSON(name);
         }
     }
 }

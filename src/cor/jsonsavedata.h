@@ -54,6 +54,14 @@ protected:
      */
     bool removeJSONObject(const QString& key, bool value);
 
+    /*!
+     * \brief loadJsonFile loads json data at given path and turns it into a JsonDocument
+     *
+     * \param file path to a json file
+     * \return a JsonDocument representing the data in the file given.
+     */
+    QJsonDocument loadJsonFile(const QString& file);
+
     /// stores the JSON data that keeps track of all found controllers
     QJsonDocument mJsonData;
 

@@ -60,7 +60,7 @@ private slots:
      * \brief toggleArrayColor when called, the multi color array color at the given index is
      * seletected or deselected, depending on its current state.
      */
-    void toggleArrayColor(int);
+    void toggleArrayColor();
 
 private:
     /*!

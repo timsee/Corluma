@@ -62,15 +62,6 @@ void ListMoodPreviewWidget::resizeEvent(QResizeEvent*) {
     resize();
 }
 
-
-void ListMoodPreviewWidget::enterEvent(QEvent*) {
-    // mEditButton->setHidden(false);
-}
-
-void ListMoodPreviewWidget::leaveEvent(QEvent*) {
-    // mEditButton->setHidden(true);
-}
-
 bool ListMoodPreviewWidget::setChecked(bool checked) {
     mIsChecked = checked;
     update();
@@ -106,6 +97,8 @@ void ListMoodPreviewWidget::paintEvent(QPaintEvent*) {
 }
 
 
-void ListMoodPreviewWidget::mouseReleaseEvent(QMouseEvent*) {
-    emit moodSelected(mMood.uniqueID());
+void ListMoodPreviewWidget::mouseReleaseEvent(QMouseEvent* event) {
+    if (cor::isMouseEventTouchUpInside(event, this, true)) {
+        emit moodSelected(mMood.uniqueID());
+    }
 }

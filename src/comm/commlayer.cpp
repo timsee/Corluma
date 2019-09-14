@@ -219,8 +219,18 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
         }
     }
 
-    // ... now apply the specific lights
+
+    // ... now check that all lights exist
+    std::list<cor::Light> lightList;
     for (const auto& light : mood.lights) {
+        auto lightInMemory = lightByID(light.uniqueID());
+        if (lightInMemory.isValid()) {
+            lightList.push_back(light);
+        }
+    }
+
+    // ... now apply the specific lights
+    for (const auto& light : lightList) {
         try {
             // this is messy and I don't like it.
             auto lightCopy = addLightMetaData(light);

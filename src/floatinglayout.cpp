@@ -9,7 +9,6 @@
 #include <QDebug>
 #include <QGraphicsOpacityEffect>
 #include <QPainter>
-#include <QSignalMapper>
 #include <QStyleOption>
 
 #include "mainwindow.h"
@@ -70,7 +69,7 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             width = size.width() * 0.33f;
             height = size.height() * 0.1f;
         }
-        size = QSize(width, height);
+        size = QSize(int(width), int(height));
     }
 
     int fixedWidth;
@@ -108,7 +107,6 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
     mButtons = std::vector<QPushButton*>(buttons.size(), nullptr);
     mNames = buttons;
 
-    auto buttonsMapper = new QSignalMapper(this);
     for (std::uint32_t i = 0; i < mNames.size(); ++i) {
         cor::Light light;
         light.routine = ERoutine::singleSolid;
@@ -178,8 +176,7 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
                 mHorizontalLayout->addWidget(mButtons[i]);
             }
 
-            connect(mButtons[i], SIGNAL(clicked(bool)), buttonsMapper, SLOT(map()));
-            buttonsMapper->setMapping(mButtons[i], int(i));
+            connect(mButtons[i], &QPushButton::clicked, [this, i]() { buttonPressed(int(i)); });
 
             if (!isALightsButton(i)) {
                 // resize icon
@@ -211,7 +208,6 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             }
         }
     }
-    connect(buttonsMapper, SIGNAL(mapped(int)), this, SLOT(buttonPressed(int)));
 
     if (buttonSize == EButtonSize::rectangle) {
         handleRectangleFontSize();
@@ -350,7 +346,6 @@ QSize FloatingLayout::buttonSize() {
 }
 
 void FloatingLayout::handleRectangleFontSize() {
-    const auto& text = QString("NanoLeaf");
     QPushButton* widget = nullptr;
     for (auto button : mButtons) {
         if (button->text() == "NanoLeaf") {
@@ -362,6 +357,8 @@ void FloatingLayout::handleRectangleFontSize() {
         return;
     }
 
+#ifdef IOS_BUILD
+    const auto& text = QString("NanoLeaf");
     // calcuate the text's size
     auto systemFontWidth = widget->fontMetrics().boundingRect(text).width();
     // calculate the button's size
@@ -384,4 +381,5 @@ void FloatingLayout::handleRectangleFontSize() {
             button->setFont(font);
         }
     }
+#endif // IOS_BUILD
 }

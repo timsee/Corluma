@@ -6,8 +6,6 @@
 
 #include "swatchvectorwidget.h"
 
-#include <QSignalMapper>
-
 SwatchVectorWidget::SwatchVectorWidget(std::uint32_t width, uint32_t height, QWidget* parent)
     : QWidget(parent) {
     mWidth = width;
@@ -28,15 +26,13 @@ SwatchVectorWidget::SwatchVectorWidget(std::uint32_t width, uint32_t height, QWi
     // --------------
 
     mSwatches = std::vector<QPushButton*>(mMaximumSize, nullptr);
-    auto arrayButtonsMapper = new QSignalMapper(this);
     uint32_t i = 0;
     for (std::uint32_t h = 0; h < mHeight; ++h) {
         for (std::uint32_t w = 0; w < mWidth; ++w) {
             mSwatches[i] = new QPushButton(this);
             mSwatches[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
             mSwatches[i]->setCheckable(false);
-            arrayButtonsMapper->setMapping(mSwatches[i], int(i));
-            connect(mSwatches[i], SIGNAL(clicked(bool)), arrayButtonsMapper, SLOT(map()));
+            connect(mSwatches[i], SIGNAL(clicked()), this, SLOT(toggleArrayColor()));
 
             QSizePolicy sizePolicy = mSwatches[i]->sizePolicy();
             sizePolicy.setRetainSizeWhenHidden(true);
@@ -46,7 +42,6 @@ SwatchVectorWidget::SwatchVectorWidget(std::uint32_t width, uint32_t height, QWi
             ++i;
         }
     }
-    connect(arrayButtonsMapper, SIGNAL(mapped(int)), this, SLOT(toggleArrayColor(int)));
     setLayout(mLayout);
 }
 
@@ -85,7 +80,7 @@ uint32_t SwatchVectorWidget::selectedCount() {
     return i;
 }
 
-void SwatchVectorWidget::toggleArrayColor(int) {
+void SwatchVectorWidget::toggleArrayColor() {
     emit selectedCountChanged(int(selectedCount()));
 }
 

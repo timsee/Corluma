@@ -49,6 +49,12 @@ public:
     /// true if menu is always open due to the app being in landscape, false otherwise
     bool alwaysOpen() { return mAlwaysOpen; }
 
+    /// used during complete reloads, this deletes all existing widgets
+    void clearWidgets();
+
+    /// update the lights in the room widgets
+    void updateLights();
+
 signals:
     /// signals when a page button is pressed
     void pressedButton(EPage);
@@ -115,9 +121,6 @@ private:
 
     /// resize the room widgets
     int resizeRoomsWidgets();
-
-    /// update the lights in the room widgets
-    void updateLights();
 
     /// creates a miscellaneous group for all groups not stated in standard rooms
     cor::Group makeMiscellaneousGroup(const std::list<cor::Group>& roomList);

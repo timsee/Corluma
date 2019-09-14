@@ -102,9 +102,12 @@ void ListLightWidget::init(const cor::Light& device) {
 
     QString nameText = createName(device);
     mController->setText(nameText);
+#ifdef MOBILE_BUILD
     auto font = mController->font();
     font.setPointSize(mFontPtSize);
     mController->setFont(font);
+#endif // MOBILE_BUILD
+
     mController->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 
     // setup layout
@@ -360,10 +363,12 @@ void ListLightWidget::resizeIcons() {
         mOnOffSwitch->setFixedSize(size);
     }
 
+#ifdef MOBILE_BUILD
     mFontPtSize = findFontSize(parentWidget(), this, mType);
     auto font = mController->font();
     font.setPointSize(mFontPtSize);
     mController->setFont(font);
+#endif // MOBILE_BUILD
 }
 
 

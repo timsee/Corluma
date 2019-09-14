@@ -54,6 +54,8 @@ void Slider::resize() {
         case ESliderType::image:
             setImage(mPath);
             break;
+        default:
+            break;
     }
     update();
 }

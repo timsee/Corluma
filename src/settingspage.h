@@ -89,6 +89,12 @@ signals:
      */
     void clickedDiscovery();
 
+    /*!
+     * \brief clickedLoadJSON emits when the load button is clicked
+     * \param path the path to the JSON to load
+     */
+    void clickedLoadJSON(QString path);
+
 private slots:
     /*!
      * \brief closeButtonPressed signaled from close button, emits a close signal.

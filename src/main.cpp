@@ -104,8 +104,6 @@ int main(int argc, char* argv[]) {
     qDebug() << "product version: " << QSysInfo::productVersion();
     qDebug() << "windows version: " << QSysInfo::windowsVersion();
     qDebug() << "";
-    qDebug() << "Default Save Path: " << GroupsParser::defaultSavePath();
-    qDebug() << "";
     qDebug() << "Supports SSL:" << QSslSocket::supportsSsl();
     qDebug() << "SSL Library Build Version: " << QSslSocket::sslLibraryBuildVersionString();
     qDebug() << "SSL Library Version: " << QSslSocket::sslLibraryVersionString();
@@ -172,10 +170,13 @@ int main(int argc, char* argv[]) {
     window.setWindowIcon(icon);
 
     // center the application
-    QRect screenGeometry = QApplication::desktop()->screenGeometry();
-    int x = (screenGeometry.width() - window.width()) / 2;
-    int y = (screenGeometry.height() - window.height()) / 2;
-    window.move(x, y);
+    auto screens = QGuiApplication::screens();
+    if (!screens.empty()) {
+        auto screenGeometry = screens[0]->geometry();
+        int x = (screenGeometry.width() - window.width()) / 2;
+        int y = (screenGeometry.height() - window.height()) / 2;
+        window.move(x, y);
+    }
 
 #ifndef DISABLE_SPLASH_SCREEN
     int splashScreenDelay = 3000; // in milliseconds

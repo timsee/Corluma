@@ -207,3 +207,9 @@ void MoodPage::shouldShowButtons(const QString& key, bool) {
     }
     mMoodsListWidget->resizeWidgets();
 }
+
+
+void MoodPage::clearWidgets() {
+    mCurrentMood = 0;
+    mMoodsListWidget->clearAll();
+}

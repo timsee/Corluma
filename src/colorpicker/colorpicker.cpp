@@ -12,7 +12,6 @@
 #include <QGraphicsOpacityEffect>
 #include <QGraphicsScene>
 #include <QPainter>
-#include <QSignalMapper>
 #include <QStyleOption>
 
 #include "utils/color.h"

@@ -93,6 +93,17 @@ void ListWidget::show() {
     resize();
 }
 
+void ListWidget::clearAll() {
+    std::vector<QString> keys;
+    for (auto widget : mListLayout.widgets()) {
+        keys.push_back(widget->key());
+    }
+
+    for (const auto& key : keys) {
+        removeWidget(key);
+    }
+}
+
 void ListWidget::resize() {
     mWidget->setFixedWidth(geometry().width() - verticalScrollBar()->width()
                            - contentsMargins().left() - contentsMargins().right());

@@ -38,20 +38,22 @@ void CommUDP::startup() {
     QString localIP;
     // lists all adresses associated with this device
     QList<QHostAddress> list = QNetworkInterface::allAddresses();
+    const auto& localHost = QHostAddress(QHostAddress::LocalHost);
     for (int x = 0; x < list.count(); x++) {
         // verifies its not a loopback
         if (!list[x].isLoopback()) {
             // makes sure that its an IPv4 address that also starts with 192.
             // the 192 verifies its a class C address.
             if (list[x].protocol() == QAbstractSocket::IPv4Protocol
-                && list[x].toString().contains("192")) {
+                && list[x].toString().contains("192")
+                && !list[x].toString().contains("0.0.")
+                && list[x] != localHost) {
                 localIP = list[x].toString();
             }
         }
     }
-    // qDebug() << "local IP" << localIP;
     if (mBound) {
-        qDebug() << "WARNING: UDP already bound!";
+       // qDebug() << "WARNING: UDP already bound!";
     } else {
         mBound = mSocket->bind(QHostAddress(localIP), PORT);
         if (!mBound) {
@@ -114,13 +116,13 @@ void CommUDP::stateUpdate() {
 
 void CommUDP::testForController(const cor::Controller& controller) {
     if (mBound) {
-        // qDebug() << "discovery packet to " << controller.name << " " <<
-        // ArduCorDiscovery::kDiscoveryPacketIdentifier;
+//         qDebug() << "discovery packet to " << controller.name << " " <<
+//         ArduCorDiscovery::kDiscoveryPacketIdentifier;
         mSocket->writeDatagram(ArduCorDiscovery::kDiscoveryPacketIdentifier.toUtf8().data(),
                                QHostAddress(controller.name),
                                PORT);
     } else {
-        // qDebug() << "INFO: discovery when not bound";
+       // qDebug() << "INFO: discovery when not bound";
     }
 }
 

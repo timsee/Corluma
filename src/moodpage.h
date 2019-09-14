@@ -4,7 +4,6 @@
 #include <QLayout>
 #include <QListWidget>
 #include <QPushButton>
-#include <QSignalMapper>
 #include <QWidget>
 
 #include "comm/commlayer.h"
@@ -41,6 +40,15 @@ public:
               const cor::Dictionary<cor::Mood>& moods,
               const std::list<cor::Group>& roomList);
 
+    /*!
+     * \brief makeMoodsCollections make all the mood-based UI widgets based on the saved JSON data
+     * in the application
+     *
+     * \param moods list of all saved moods
+     */
+    void makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
+                              const std::list<cor::Group>& roomList);
+
     /// called when the widget is hidden
     void hide();
 
@@ -49,6 +57,9 @@ public:
 
     /// getter for current mood
     const std::uint64_t& currentMood() { return mCurrentMood; }
+
+    /// used during complete reloads, this deletes all existing widgets
+    void clearWidgets();
 
 signals:
     /*!
@@ -130,15 +141,6 @@ private:
                                                    const std::list<cor::Mood>& moods,
                                                    const QString& key,
                                                    bool hideEdit = false);
-
-    /*!
-     * \brief makeMoodsCollections make all the mood-based UI widgets based on the saved JSON data
-     * in the application
-     *
-     * \param moods list of all saved moods
-     */
-    void makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
-                              const std::list<cor::Group>& roomList);
 
     /*!
      * \brief mLastUpdateConnectionList the time that the connection list

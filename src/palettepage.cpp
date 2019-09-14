@@ -8,7 +8,6 @@
 
 #include <QDebug>
 #include <QScroller>
-#include <QSignalMapper>
 
 #include "icondata.h"
 #include "utils/color.h"

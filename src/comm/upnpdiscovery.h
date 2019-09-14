@@ -23,6 +23,8 @@ public:
      */
     UPnPDiscovery(QObject* parent);
 
+    ~UPnPDiscovery();
+
     /*!
      * \brief addListener increments the listener count. If the count was at zero, it
      *        also starts up the UPnP socket.

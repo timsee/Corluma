@@ -64,6 +64,9 @@ public:
     /// set the height of the scrolling widget, if not using ListWidget::resizeWidgets()
     void setFixedWidgetHeight(int);
 
+    /// resets the list widget to its uninitialized state.
+    void clearAll();
+
 protected:
     /// handles when the widget resizes
     void resizeEvent(QResizeEvent*);

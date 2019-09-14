@@ -93,6 +93,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     connect(mSettingsPage, SIGNAL(closePressed()), this, SLOT(settingsClosePressed()));
     connect(mSettingsPage, SIGNAL(clickedInfoWidget()), this, SLOT(hueInfoWidgetClicked()));
     connect(mSettingsPage, SIGNAL(clickedDiscovery()), this, SLOT(pushInDiscovery()));
+    connect(mSettingsPage, SIGNAL(clickedLoadJSON(QString)), this, SLOT(loadJSON(QString)));
 
     connect(mSettingsPage->globalWidget(),
             SIGNAL(protocolSettingsUpdate(EProtocolType, bool)),
@@ -178,6 +179,9 @@ void MainWindow::shareChecker() {
                                            text,
                                            QMessageBox::Yes | QMessageBox::No);
         if (reply == QMessageBox::Yes) {
+            loadJSON(mSharePath);
+            // check if external save data can be loaded
+            // interact with mainwindow here?
             if (!mGroups->loadExternalData(mSharePath)) {
                 qDebug() << "WARNING: loading external data failed at " << mSharePath;
             } else {
@@ -192,6 +196,23 @@ void MainWindow::shareChecker() {
 #ifdef MOBILE_BUILD
     mShareUtils->clearTempDir();
 #endif // MOBILE_BUILD
+}
+
+void MainWindow::loadJSON(QString path) {
+    if (mGroups->checkIfValidJSON(path)) {
+        mMainViewport->moodPage()->clearWidgets();
+        mLeftHandMenu->clearWidgets();
+        mData->clearDevices();
+        mGroups->removeAppData();
+        if (!mGroups->loadExternalData(path)) {
+            qDebug() << "WARNING: loading external data failed at " << path;
+        } else {
+            mComm->hue()->discovery()->reloadGroupData();
+            qDebug() << "New app data saved!";
+        }
+    } else {
+        qDebug() << " file provided is not parseable JSON";
+    }
 }
 
 void MainWindow::receivedURL(QString url) {
@@ -855,7 +876,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent*) {
     if (!mLeftHandMenu->alwaysOpen() && !mGreyOut->isVisible()) {
         mMovingMenu = false;
         auto showingWidth = mLeftHandMenu->width() + mLeftHandMenu->geometry().x();
-        if (showingWidth < mLeftHandMenu->width() / 2) {
+        if (showingWidth < mLeftHandMenu->width() * 2 / 3) {
             mLeftHandMenu->pushOut();
             if ((mMainViewport->currentPage() == EPage::colorPage
                  || mMainViewport->currentPage() == EPage::palettePage)

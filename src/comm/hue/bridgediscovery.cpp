@@ -107,6 +107,12 @@ void BridgeDiscovery::updateGroups(const hue::Bridge& bridge, const std::list<co
     }
 }
 
+void BridgeDiscovery::reloadGroupData() {
+    for (const auto& bridge : mFoundBridges.itemVector()) {
+       mGroups->updateExternallyStoredGroups(bridge.groups);
+    }
+}
+
 void BridgeDiscovery::handleDiscovery() {
     for (auto notFoundBridge : mNotFoundBridges) {
         if (notFoundBridge.IP != "") {
@@ -287,7 +293,6 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
                             bridge.id = object["id"].toString();
                             bridge.id = bridge.id.toLower();
                             bridge.customName = generateUniqueName();
-                            qDebug() << " MAKING USERNAME " << generateUniqueName();
                             bridge.state = EBridgeDiscoveryState::lookingForUsername;
 
                             testNewlyDiscoveredBridge(bridge);

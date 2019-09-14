@@ -233,7 +233,7 @@ void LeftHandMenu::updateDataGroupInUI(const cor::Group& dataGroup,
         }
     }
     if (!existsInUIGroups) {
-        // qDebug() << "this group does not exist" << dataGroup.name;
+        // qDebug() << "this group does not exist" << dataGroup.name();
         initRoomsWidget(dataGroup, dataGroup.name());
     }
 }
@@ -459,6 +459,14 @@ void LeftHandMenu::newGroupButtonPressed() {
     } else {
         pushIn();
     }
+}
+
+void LeftHandMenu::clearWidgets() {
+    for (auto widget : mRoomWidgets) {
+        delete widget;
+    }
+    mRoomWidgets.clear();
+    resize();
 }
 
 cor::Group LeftHandMenu::makeMiscellaneousGroup(const std::list<cor::Group>& roomList) {

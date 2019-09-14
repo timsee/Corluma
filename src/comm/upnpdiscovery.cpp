@@ -14,6 +14,11 @@ UPnPDiscovery::UPnPDiscovery(QObject* parent) : QObject(parent) {
     connect(mSocket, SIGNAL(readyRead()), this, SLOT(readPendingUPnPDatagrams()));
 }
 
+UPnPDiscovery::~UPnPDiscovery() {
+    if (mSocket->isOpen()) {
+        mSocket->close();
+    }
+}
 
 void UPnPDiscovery::readPendingUPnPDatagrams() {
     while (mSocket->hasPendingDatagrams()) {

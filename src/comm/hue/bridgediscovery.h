@@ -74,9 +74,11 @@ public:
     /// list of bridges that haven't been fully discovered
     std::list<hue::Bridge> notFoundBridges() const { return mNotFoundBridges; }
 
-
     /// getter for all known hue lights
     std::list<HueLight> lights();
+
+    /// reloads the data from the bridges into the App's group data.
+    void reloadGroupData();
 
     /*!
      * \brief addManualIP attempts to connect to an IP address entered manually

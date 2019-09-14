@@ -190,6 +190,9 @@ private slots:
     /// Used by shareUtils, called when a URL to a file is receieved
     void receivedURL(QString url);
 
+    /// path to json is sent to function to load new JSON data
+    void loadJSON(QString);
+
 protected:
     /*!
      * \brief resizeEvent called whenever the window resizes. This is used to override
