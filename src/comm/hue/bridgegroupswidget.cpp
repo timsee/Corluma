@@ -87,10 +87,12 @@ void BridgeGroupsWidget::resize() {
     mScrollArea->setMinimumWidth(mScrollAreaWidget->minimumSizeHint().width()
                                  + mScrollArea->verticalScrollBar()->width());
 
-    QSize widgetSize(mScrollArea->width(), int(mScrollArea->height() / 4.0f));
+
+    QSize widgetSize(mScrollArea->width(), height() / 4);
     int yPos = 0;
     // draw widgets in content region
     for (auto widget : mWidgets) {
+        widget->setFixedHeight(widgetSize.height());
         widget->setGeometry(0, yPos, widgetSize.width(), widgetSize.height());
         yPos += widget->height();
     }

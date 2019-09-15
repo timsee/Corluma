@@ -399,27 +399,16 @@ void DiscoveryPage::floatingLayoutButtonPressed(const QString& button) {
         emit settingsButtonClicked();
     } else if (button == "Discovery_ArduCor") {
         protocolTypeSelected(EProtocolType::arduCor);
+        mOptionalFloatingLayout->setVisible(false);
     } else if (button == "Discovery_Hue") {
         protocolTypeSelected(EProtocolType::hue);
+        mOptionalFloatingLayout->setVisible(true);
     } else if (button == "Discovery_NanoLeaf") {
         protocolTypeSelected(EProtocolType::nanoleaf);
+        mOptionalFloatingLayout->setVisible(false);
     } else if (button == "Plus") {
-        bool ok = true;
-        bool noValidIP = true;
-        while (ok && noValidIP) {
-            QString IP = QInputDialog::getText(this,
-                                               tr("Manual Discovery"),
-                                               tr("Add an IP Address for a Bridge:"),
-                                               QLineEdit::Normal,
-                                               "192.168.0.100",
-                                               &ok);
-            QHostAddress address(IP);
-            if (address.protocol() == QAbstractSocket::IPv4Protocol
-                || address.protocol() == QAbstractSocket::IPv6Protocol) {
-                noValidIP = false;
-                mComm->hue()->discovery()->addManualIP(IP);
-            }
-        }
+        mHueWidget->openIPWidget();
+        mOptionalFloatingLayout->highlightButton("");
     }
 }
 

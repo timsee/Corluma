@@ -18,9 +18,15 @@
 DiscoveryHueWidget::DiscoveryHueWidget(CommLayer* comm, QWidget* parent)
     : DiscoveryWidget(parent),
       mBridgeDiscovered{false},
+      mIPWidget(new cor::TextInputWidget(parentWidget()->parentWidget(),
+                                         "Add an IP Address for a Bridge:",
+                                         "192.168.0.100")),
       mGreyout{new GreyOutOverlay(parentWidget()->parentWidget())}, // this is ugly
       mHueDiscoveryState{EHueDiscoveryState::findingIpAddress} {
     mScale = 0.4f;
+
+    connect(mIPWidget, SIGNAL(textAdded(QString)), this, SLOT(textInputAddedIP(QString)));
+    connect(mIPWidget, SIGNAL(cancelClicked()), this, SLOT(closeIPWidget()));
 
     mComm = comm;
     auto mainWidget = parentWidget()->parentWidget();
@@ -167,7 +173,6 @@ void DiscoveryHueWidget::updateBridgeGUI() {
     }
 }
 
-
 void DiscoveryHueWidget::hueDiscoveryClosePressed() {
     mGreyout->greyOut(false);
     mHueLightDiscovery->isOpen(false);
@@ -189,6 +194,17 @@ void DiscoveryHueWidget::schedulesClosePressed() {
     mBridgeSchedulesWidget->setVisible(false);
     mBridgeSchedulesWidget->resize();
     mBridgeSchedulesWidget->hide();
+}
+
+void DiscoveryHueWidget::closeIPWidget() {
+    mGreyout->greyOut(false);
+    mIPWidget->pushOut();
+}
+
+void DiscoveryHueWidget::openIPWidget() {
+    mGreyout->greyOut(true);
+    mIPWidget->pushIn();
+    mIPWidget->raise();
 }
 
 void DiscoveryHueWidget::changedName(const QString& key, const QString& newName) {
@@ -257,6 +273,9 @@ void DiscoveryHueWidget::greyOutClicked() {
     if (mBridgeGroupsWidget->isOpen()) {
         groupsClosePressed();
     }
+    if (mIPWidget->isOpen()) {
+        closeIPWidget();
+    }
 }
 
 void DiscoveryHueWidget::bridgePressed(const QString& key) {
@@ -266,15 +285,38 @@ void DiscoveryHueWidget::bridgePressed(const QString& key) {
     }
 }
 
+void DiscoveryHueWidget::textInputAddedIP(const QString& IP) {
+    QHostAddress address(IP);
+    if (address.protocol() == QAbstractSocket::IPv4Protocol
+        || address.protocol() == QAbstractSocket::IPv6Protocol) {
+        if (!mComm->hue()->discovery()->doesIPExist(IP)) {
+            mComm->hue()->discovery()->addManualIP(IP);
+            closeIPWidget();
+        } else {
+            QMessageBox reply;
+            reply.setText("IP Address already exists.");
+            reply.exec();
+        }
+    } else {
+        QMessageBox reply;
+        reply.setText("Please enter a valid IP address.");
+        reply.exec();
+    }
+}
+
 void DiscoveryHueWidget::resize() {
     int yPos = 0;
-    mLabel->setGeometry(0, 0, width() * 0.7, int(height() * 0.25));
+    mLabel->setGeometry(0, 0, int(width() * 0.7), int(height() * 0.25));
     yPos += mLabel->height();
-    mListWidget->setGeometry(width() * 0.025, yPos, width() * 0.95, int(height() * 0.735));
+    mListWidget->setGeometry(int(width() * 0.025),
+                             yPos,
+                             int(width() * 0.95),
+                             int(height() * 0.735));
 
     QSize widgetSize(mListWidget->width(), int(mListWidget->height() * 0.9));
     int yHeight = 0;
     for (auto widget : mListWidget->widgets()) {
+        widget->setFixedHeight(widgetSize.height());
         widget->setGeometry(0, yHeight, widgetSize.width(), widgetSize.height());
         widget->setVisible(true);
         yHeight += widgetSize.height();
@@ -286,12 +328,15 @@ void DiscoveryHueWidget::resize() {
 
 void DiscoveryHueWidget::resizeEvent(QResizeEvent*) {
     if (mBridgeSchedulesWidget->isOpen()) {
+        mGreyout->resize();
         mBridgeSchedulesWidget->resize();
     }
 
     if (mBridgeGroupsWidget->isOpen()) {
+        mGreyout->resize();
         mBridgeGroupsWidget->resize();
     }
+
     resize();
 }
 

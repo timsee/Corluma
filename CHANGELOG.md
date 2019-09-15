@@ -577,4 +577,10 @@ ___
 * Fixed deprecated Qt functions from the update to 5.13.
 * Fixed miscellaneous bugs.
 
+### **v0.17.44**
+#### The Hue Manual IP Update
+* Added a new widget to replace `QInputDialog` on mobile.
+* Fixed bugs with discovering Hue Bridges using an IP address.
+* Fixed miscellaneous bugs. 
 
+ 

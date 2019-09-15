@@ -109,7 +109,7 @@ void BridgeDiscovery::updateGroups(const hue::Bridge& bridge, const std::list<co
 
 void BridgeDiscovery::reloadGroupData() {
     for (const auto& bridge : mFoundBridges.itemVector()) {
-       mGroups->updateExternallyStoredGroups(bridge.groups);
+        mGroups->updateExternallyStoredGroups(bridge.groups);
     }
 }
 
@@ -156,20 +156,29 @@ void BridgeDiscovery::attemptFinalCheck(const hue::Bridge& bridge) {
 }
 
 void BridgeDiscovery::addManualIP(const QString& ip) {
-    // check if IP address already exists in unknown or not found
-    bool alreadyFoundIP = false;
-    for (auto notFound : mNotFoundBridges) {
-        if (notFound.IP == ip) {
-            alreadyFoundIP = true;
-        }
-    }
-    if (!alreadyFoundIP) {
+    if (!doesIPExist(ip)) {
         hue::Bridge bridge;
-        bridge.state = EBridgeDiscoveryState::lookingForUsername;
+        bridge.state = EBridgeDiscoveryState::lookingForResponse;
         bridge.IP = ip;
         bridge.customName = generateUniqueName();
         mNotFoundBridges.push_back(bridge);
     }
+}
+
+bool BridgeDiscovery::doesIPExist(const QString& ip) {
+    for (const auto& notFound : mNotFoundBridges) {
+        if (notFound.IP == ip) {
+            return true;
+        }
+    }
+
+    for (const auto& found : mFoundBridges.itemVector()) {
+        if (found.IP == ip) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 
@@ -232,12 +241,13 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
                     }
                 } else if (jsonResponse.isArray()) {
                     if (jsonResponse.array().empty()) {
-                        qDebug() << " test packet received from " << IP;
+                        // qDebug() << " test packet received from " << IP;
                     } else {
                         QJsonObject outsideObject = jsonResponse.array().at(0).toObject();
                         if (outsideObject["error"].isObject()) {
                             for (auto&& notFoundBridge : mNotFoundBridges) {
-                                if (IP == notFoundBridge.IP) {
+                                auto modifiedIP = notFoundBridge.IP + "/api";
+                                if (IP.contains(modifiedIP)) {
                                     notFoundBridge.state =
                                         EBridgeDiscoveryState::lookingForUsername;
                                 }

@@ -116,15 +116,15 @@ void LightInfoScrollArea::clickedLight(const QString& key) {
             }
             for (auto widget : mHueWidgets) {
                 if (widget->key() == key) {
-                    if (mLastKey == key) {
+                    if (mLastHueKey == key) {
                         shouldEnableDelete = false;
                         widget->hideDetails(true);
                         widget->setChecked(false);
-                        mLastKey = "";
+                        mLastHueKey = "";
                     } else {
                         widget->hideDetails(false);
                         widget->setChecked(true);
-                        mLastKey = key;
+                        mLastHueKey = key;
                     }
                 }
             }
@@ -139,15 +139,15 @@ void LightInfoScrollArea::clickedLight(const QString& key) {
 
             for (auto widget : mNanoleafWidgets) {
                 if (widget->key() == key) {
-                    if (mLastKey == key) {
+                    if (mLastNanoleafKey == key) {
                         shouldEnableDelete = false;
                         widget->hideDetails(true);
                         widget->setChecked(false);
-                        mLastKey = "";
+                        mLastNanoleafKey = "";
                     } else {
                         widget->hideDetails(false);
                         widget->setChecked(true);
-                        mLastKey = key;
+                        mLastNanoleafKey = key;
                     }
                 }
             }
@@ -164,14 +164,14 @@ void LightInfoScrollArea::clickedLight(const QString& key) {
             for (auto widget : mArduCorWidgets) {
                 if (widget->key() == key) {
                     shouldEnableDelete = false;
-                    if (mLastKey == key) {
+                    if (mLastArduCorKey == key) {
                         widget->hideDetails(true);
                         widget->setChecked(false);
-                        mLastKey = "";
+                        mLastArduCorKey = "";
                     } else {
                         widget->hideDetails(false);
                         widget->setChecked(true);
-                        mLastKey = key;
+                        mLastArduCorKey = key;
                     }
                 }
             }
@@ -245,6 +245,11 @@ void LightInfoScrollArea::resize() {
 
 void LightInfoScrollArea::changeProtocol(EProtocolType protocol) {
     mCurrentProtocol = protocol;
+    if (key() == "") {
+        emit lightClicked(key(), false);
+    } else {
+        emit lightClicked(key(), true);
+    }
 }
 
 std::pair<EProtocolType, QString> LightInfoScrollArea::lookupCurrentLight() {
@@ -254,24 +259,24 @@ std::pair<EProtocolType, QString> LightInfoScrollArea::lookupCurrentLight() {
     switch (mCurrentProtocol) {
         case EProtocolType::hue:
             for (auto widget : mHueWidgets) {
-                if (widget->key() == mLastKey) {
+                if (widget->key() == mLastHueKey) {
                     lightName = widget->light().name;
                     type = EProtocolType::hue;
                 }
             }
             break;
         case EProtocolType::nanoleaf:
-            for (auto widget : mArduCorWidgets) {
-                if (widget->key() == mLastKey) {
-                    lightName = widget->light().name;
-                    type = EProtocolType::arduCor;
+            for (auto widget : mNanoleafWidgets) {
+                if (widget->key() == mLastNanoleafKey) {
+                    lightName = widget->key();
+                    type = EProtocolType::nanoleaf;
                 }
             }
             break;
         case EProtocolType::arduCor:
 
             for (auto widget : mArduCorWidgets) {
-                if (widget->key() == mLastKey) {
+                if (widget->key() == mLastNanoleafKey) {
                     lightName = widget->light().name;
                     type = EProtocolType::arduCor;
                 }

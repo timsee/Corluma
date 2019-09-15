@@ -8,6 +8,7 @@
 #include "comm/hue/bridgescheduleswidget.h"
 #include "comm/hue/lightdiscovery.h"
 #include "cor/widgets/listwidget.h"
+#include "cor/widgets/textinputwidget.h"
 #include "discovery/discoverywidget.h"
 #include "editablefieldwidget.h"
 #include "greyoutoverlay.h"
@@ -45,6 +46,9 @@ public:
      */
     void resize();
 
+    /// opens the IP widget
+    void openIPWidget();
+
 private slots:
 
     /// handles when a discover hue buttons is pressed
@@ -52,6 +56,12 @@ private slots:
 
     /// handles when a bridge is pressed on the bridge list
     void bridgePressed(const QString&);
+
+    /// handles an IP from the IP widget, giving a warning if necessary
+    void textInputAddedIP(const QString& IP);
+
+    /// closes IP widget
+    void closeIPWidget();
 
     /// handles when the close button is pressed
     void hueDiscoveryClosePressed();
@@ -103,6 +113,9 @@ private:
 
     /// widget for displaying the schedules of a widget
     hue::BridgeSchedulesWidget* mBridgeSchedulesWidget;
+
+    /// widget for entering an IP manually
+    cor::TextInputWidget* mIPWidget;
 
     /// label to prompt the user through the application.
     QLabel* mLabel;

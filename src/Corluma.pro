@@ -336,7 +336,9 @@ HEADERS  += cor/objects/light.h \
     cor/widgets/topwidget.h \
     cor/widgets/groupbutton.h \
     cor/widgets/lightvectorwidget.h \
-    cor/widgets/listitemwidget.h
+    cor/widgets/listitemwidget.h \
+    cor/widgets/textinputwidget.h
+
 
 #----------
 # Desktop builds only

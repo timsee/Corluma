@@ -87,6 +87,9 @@ public:
      */
     void addManualIP(const QString& ip);
 
+    /// returns true if the IP already exists in either not found or found bridges.
+    bool doesIPExist(const QString& ip);
+
     /// gets the bridge that controls a light.
     hue::Bridge bridgeFromLight(const HueLight& light);
 

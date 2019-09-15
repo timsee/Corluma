@@ -35,10 +35,12 @@ private:
     /// index of the group, used by its controller
     QLabel* mIndex;
 
-    QString generateDescription(const cor::Group& group);
-
+    /// description of the group in plain english
     QLabel* mGroupDescription;
-
+    
+    /// helper that generates a plain-english description of the group
+    QString generateDescription(const cor::Group& group);
+    
     /// layout for widget
     QVBoxLayout* mLayout;
 };

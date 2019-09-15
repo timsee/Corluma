@@ -29,7 +29,6 @@ HueGroupWidget::HueGroupWidget(QWidget* parent, const cor::Group& group) : QWidg
     mIndex->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mIndex->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-
     mGroupDescription = new QLabel(generateDescription(group), this);
     mGroupDescription->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mGroupDescription->setAttribute(Qt::WA_TransparentForMouseEvents, true);

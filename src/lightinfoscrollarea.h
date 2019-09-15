@@ -47,7 +47,18 @@ public:
     std::pair<EProtocolType, QString> lookupCurrentLight();
 
     /// getter for current key
-    const QString& key() const noexcept { return mLastKey; }
+    QString key() const noexcept {
+        switch (mCurrentProtocol) {
+            case EProtocolType::hue:
+                return mLastHueKey;
+            case EProtocolType::arduCor:
+                return mLastArduCorKey;
+            case EProtocolType::nanoleaf:
+                return mLastNanoleafKey;
+            case EProtocolType::MAX:
+                return {};
+        }
+    }
 
     /// resize programmatically
     void resize();
@@ -80,8 +91,14 @@ private:
     /// widgets for ArduCor displayed in scroll area
     std::vector<ArduCorInfoWidget*> mArduCorWidgets;
 
-    /// stores the last kety clicked
-    QString mLastKey;
+    /// stores the last hue key clicked
+    QString mLastHueKey;
+
+    /// stores the last arducor key clicked
+    QString mLastArduCorKey;
+
+    /// stores the last nanoleaf key clicked
+    QString mLastNanoleafKey;
 
     /// stores the current protocol shown
     EProtocolType mCurrentProtocol;
