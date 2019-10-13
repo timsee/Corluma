@@ -122,6 +122,12 @@ const cor::Dictionary&lt; nano::LeafController &gt; &amp;&#160;</td><td class="m
 nano::LeafDiscovery *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#a957e08741f6d036aaa6e2bbab4559633">discovery</a> ()</td></tr>
 <tr class="memdesc:a957e08741f6d036aaa6e2bbab4559633"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for discovery object <br /></td></tr>
 <tr class="separator:a957e08741f6d036aaa6e2bbab4559633"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa2b7490571ee96194d9ffccc54dcce6"><td class="memItemLeft" align="right" valign="top">const cor::Dictionary&lt; nano::LeafSchedule &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#afa2b7490571ee96194d9ffccc54dcce6">findSchedules</a> (const nano::LeafController &amp;controller)</td></tr>
+<tr class="memdesc:afa2b7490571ee96194d9ffccc54dcce6"><td class="mdescLeft">&#160;</td><td class="mdescRight">findSchedules returns the schedule dictionary for the given controller  <a href="#afa2b7490571ee96194d9ffccc54dcce6">More...</a><br /></td></tr>
+<tr class="separator:afa2b7490571ee96194d9ffccc54dcce6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa32adc7f447ff04e552634909ffc33ed"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#aa32adc7f447ff04e552634909ffc33ed">sendTimeout</a> (const nano::LeafController &amp;controller, int minutes)</td></tr>
+<tr class="memdesc:aa32adc7f447ff04e552634909ffc33ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendTimeout sends a timeout schedule to the provided controller.  <a href="#aa32adc7f447ff04e552634909ffc33ed">More...</a><br /></td></tr>
+<tr class="separator:aa32adc7f447ff04e552634909ffc33ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
 <tr class="memitem:a6fe7f245ed2a19c250b9cea7598e2bad inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a6fe7f245ed2a19c250b9cea7598e2bad"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a6fe7f245ed2a19c250b9cea7598e2bad">CommType</a> (ECommType type)</td></tr>
@@ -278,6 +284,30 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 </div>
 </div>
+<a id="afa2b7490571ee96194d9ffccc54dcce6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa2b7490571ee96194d9ffccc54dcce6">&#9670;&nbsp;</a></span>findSchedules()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const cor::Dictionary&lt; nano::LeafSchedule &gt; &amp; CommNanoleaf::findSchedules </td>
+          <td>(</td>
+          <td class="paramtype">const nano::LeafController &amp;&#160;</td>
+          <td class="paramname"><em>controller</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">controller</td><td>controller to look for schedules from </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a1e2b18f42e58f4cadbe18a01d662cd22"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1e2b18f42e58f4cadbe18a01d662cd22">&#9670;&nbsp;</a></span>sendPacket()</h2>
 
@@ -296,6 +326,41 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">object</td><td>json representation of the packet to send </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aa32adc7f447ff04e552634909ffc33ed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa32adc7f447ff04e552634909ffc33ed">&#9670;&nbsp;</a></span>sendTimeout()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CommNanoleaf::sendTimeout </td>
+          <td>(</td>
+          <td class="paramtype">const nano::LeafController &amp;&#160;</td>
+          <td class="paramname"><em>controller</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>minutes</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">controller</td><td>controller to send a tiemout to </td></tr>
+    <tr><td class="paramname">minutes</td><td>the number of minutes for the timeout </td></tr>
   </table>
   </dd>
 </dl>
