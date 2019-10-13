@@ -382,6 +382,6 @@ QPoint ColorWheel::center() {
 
 
 QRect ColorWheel::wheelRect() {
-    auto radius = int(height() / 2 * kPercent);
+    auto radius = int(height() / 2.0 * kPercent);
     return {center().x() - radius, center().y() - radius, radius * 2, radius * 2};
 }

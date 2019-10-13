@@ -94,8 +94,8 @@ void PalettePage::colorsChanged(const std::vector<QColor>& colors) {
 }
 
 
-void PalettePage::show(std::uint32_t count,
-                       std::uint32_t brightness,
+void PalettePage::show(std::size_t count,
+                       std::size_t brightness,
                        const std::vector<QColor>& colorScheme,
                        bool hasArduinoDevices,
                        bool hasNanoleafDevices) {

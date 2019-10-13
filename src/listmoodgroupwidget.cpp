@@ -95,7 +95,7 @@ void ListMoodGroupWidget::resizeInteralWidgets() {
     QPoint offset(0, 0);
 
     QSize size = mListLayout.widgetSize(QSize(width(), int(mDropdownTopWidget->height() * 2)));
-    for (std::uint32_t i = 0; i < mListLayout.widgets().size(); ++i) {
+    for (std::size_t i = 0u; i < mListLayout.widgets().size(); ++i) {
         auto widget = qobject_cast<ListMoodPreviewWidget*>(mListLayout.widgets()[i]);
         Q_ASSERT(widget);
         QPoint position = mListLayout.widgetPosition(mListLayout.widgets()[i]);

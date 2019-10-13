@@ -77,8 +77,8 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup,
         mLabels = std::vector<QLabel*>(mRoutines.size(), nullptr);
 
         int rowCount = 0;
-        uint32_t maxColumn = 4;
-        for (std::uint32_t i = 0; i < mRoutines.size(); ++i) {
+        auto maxColumn = 4u;
+        for (std::size_t i = 0u; i < mRoutines.size(); ++i) {
             mRoutineButtons[i] = new cor::Button(this, mRoutines[i].second);
             mRoutineButtons[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -131,8 +131,8 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup,
         mLabels = std::vector<QLabel*>(mRoutines.size(), nullptr);
 
         int rowCount = 0;
-        uint32_t maxColumn = 3;
-        for (std::uint32_t i = 0; i < mRoutines.size(); ++i) {
+        auto maxColumn = 3u;
+        for (std::size_t i = 0u; i < mRoutines.size(); ++i) {
             mRoutineButtons[i] = new cor::Button(this, mRoutines[i].second);
 
             mRoutineButtons[i]->setStyleSheet("background-color: rgb(52, 52, 52); ");
@@ -163,7 +163,7 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup,
 
 
 void RoutineButtonsWidget::highlightRoutineButton(const QString& label) {
-    for (uint i = 0; i < mRoutineButtons.size(); i++) {
+    for (std::size_t i = 0u; i < mRoutineButtons.size(); i++) {
         if (mLabels[i]->text() == label) {
             mRoutineButtons[i]->setChecked(true);
         } else {
@@ -173,7 +173,7 @@ void RoutineButtonsWidget::highlightRoutineButton(const QString& label) {
 }
 
 void RoutineButtonsWidget::multiRoutineColorsChanged(const std::vector<QColor>& colors) {
-    for (std::uint32_t i = 0; i < mRoutineButtons.size(); i++) {
+    for (std::size_t i = 0u; i < mRoutineButtons.size(); i++) {
         cor::Light light = cor::jsonToLight(mRoutines[i].second);
         light.palette = Palette(paletteToString(EPalette::custom), colors, 51);
         mRoutines[i].second = cor::lightToJson(light);
@@ -193,7 +193,7 @@ QString RoutineButtonsWidget::jsonToButtonName(const QJsonObject& routineObject)
     if (routineObject["param"].isDouble()) {
         param = int(routineObject["param"].toDouble());
     }
-    for (std::uint32_t i = 0; i < mRoutineButtons.size(); i++) {
+    for (std::size_t i = 0u; i < mRoutineButtons.size(); i++) {
         ERoutine buttonRoutine =
             stringToRoutine(mRoutineButtons[i]->routine()["routine"].toString());
         int buttonParam = INT_MIN;
@@ -209,7 +209,7 @@ QString RoutineButtonsWidget::jsonToButtonName(const QJsonObject& routineObject)
 }
 
 void RoutineButtonsWidget::singleRoutineColorChanged(const QColor& color) {
-    for (std::uint32_t i = 0; i < mRoutineButtons.size(); ++i) {
+    for (std::size_t i = 0u; i < mRoutineButtons.size(); ++i) {
         QJsonObject routineObject = mRoutines[i].second;
         routineObject["hue"] = color.hueF();
         routineObject["sat"] = color.saturationF();

@@ -58,6 +58,7 @@ public:
             case EProtocolType::MAX:
                 return {};
         }
+        return {};
     }
 
     /// resize programmatically

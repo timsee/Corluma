@@ -111,8 +111,9 @@ public:
     /// equal operator
     bool operator==(const nano::LeafController& rhs) const {
         bool result = true;
-        if (serialNumber != rhs.serialNumber)
+        if (serialNumber != rhs.serialNumber) {
             result = false;
+        }
         return result;
     }
 };

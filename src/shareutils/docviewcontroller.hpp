@@ -31,7 +31,7 @@
 
 #import <UIKit/UIKit.h>
 
-#import <shareutils.hpp>
+#import "shareutils.hpp"
 
 @interface DocViewController : UIViewController <UIDocumentInteractionControllerDelegate>
 

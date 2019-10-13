@@ -90,7 +90,7 @@ SettingsPage::SettingsPage(QWidget* parent,
     mSectionLabels = std::vector<QLabel*>(mSectionTitles.size());
 
     uint32_t sectionIndex = 0;
-    for (std::uint32_t x = 0; x < mTitles.size(); ++x) {
+    for (std::size_t x = 0u; x < mTitles.size(); ++x) {
         if (mTitles[x] == "Backup Save Data" || mTitles[x] == "Mock Connection"
             || mTitles[x] == "Copyright") {
             mSectionLabels[sectionIndex] = new QLabel(mSectionTitles[sectionIndex].c_str());

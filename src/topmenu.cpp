@@ -150,6 +150,10 @@ TopMenu::TopMenu(QWidget* parent,
     mSelectLightsButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mSelectLightsButton, SIGNAL(pressed()), this, SLOT(menuButtonPressed()));
     mSelectLightsButton->setFixedSize(mSize.width() * 3, int(mSize.height() * 0.5));
+    mSelectLightsButton->setGeometry(mSelectLightsButton->width(),
+                                     mStartSelectLightsButton,
+                                     mSelectLightsButton->width(),
+                                     mSelectLightsButton->height());
 
     // --------------
     // Moods Floating Layout
@@ -198,11 +202,10 @@ TopMenu::TopMenu(QWidget* parent,
     mMultiColorStateWidget->setFixedSize(mSize.width() * 3.5, mSize.height() / 2);
     showMultiColorStateWidget(false);
 
-    deviceCountChanged();
-
     mCurrentPage = EPage::colorPage;
     showFloatingLayout(mCurrentPage);
 
+    hideMenuButton(mMainWindow->leftHandMenu()->alwaysOpen());
     resize(0);
 }
 
@@ -440,39 +443,68 @@ void TopMenu::floatingLayoutButtonPressed(const QString& button) {
     }
 }
 
-void TopMenu::showSingleColorStateWidget(bool show) {
+void TopMenu::showSingleColorStateWidget(bool show, bool skipTransition) {
     int height = mSize.height() * 2 / 3;
     int width = 0;
-    if (!mMainWindow->leftHandMenu()->alwaysOpen()) {
-        height += mSize.height();
-    } else {
+    if (mMainWindow->leftHandMenu()->alwaysOpen()) {
         width = mMainWindow->leftHandMenu()->width();
+    } else {
+        height += mSize.height();
     }
+
     QPoint shownPoint(width, height);
     QPoint hiddenPoint(-mSingleColorStateWidget->size().width(), height);
     if (show) {
-        cor::moveWidget(mSingleColorStateWidget, hiddenPoint, shownPoint);
+        if (skipTransition) {
+            mSingleColorStateWidget->setGeometry(shownPoint.x(),
+                                                 shownPoint.y(),
+                                                 mSingleColorStateWidget->width(),
+                                                 mSingleColorStateWidget->height());
+        } else {
+            cor::moveWidget(mSingleColorStateWidget, hiddenPoint, shownPoint);
+        }
         mSingleColorStateWidget->updateSyncStatus(ESyncState::notSynced);
     } else {
-        cor::moveWidget(mSingleColorStateWidget, shownPoint, hiddenPoint);
+        if (skipTransition) {
+            mSingleColorStateWidget->setGeometry(hiddenPoint.x(),
+                                                 hiddenPoint.y(),
+                                                 mSingleColorStateWidget->width(),
+                                                 mSingleColorStateWidget->height());
+        } else {
+            cor::moveWidget(mSingleColorStateWidget, shownPoint, hiddenPoint);
+        }
     }
 }
 
-void TopMenu::showMultiColorStateWidget(bool show) {
+void TopMenu::showMultiColorStateWidget(bool show, bool skipTransition) {
     int height = mSize.height() * 2 / 3;
     int width = 0;
-    if (!mMainWindow->leftHandMenu()->alwaysOpen()) {
-        height += mSize.height();
-    } else {
+    if (mMainWindow->leftHandMenu()->alwaysOpen()) {
         width = mMainWindow->leftHandMenu()->width();
+    } else {
+        height += mSize.height();
     }
     QPoint shownPoint(width, height);
     QPoint hiddenPoint(-mMultiColorStateWidget->size().width(), height);
     if (show) {
-        cor::moveWidget(mMultiColorStateWidget, hiddenPoint, shownPoint);
+        if (skipTransition) {
+            mMultiColorStateWidget->setGeometry(shownPoint.x(),
+                                                shownPoint.y(),
+                                                mMultiColorStateWidget->width(),
+                                                mMultiColorStateWidget->height());
+        } else {
+            cor::moveWidget(mMultiColorStateWidget, hiddenPoint, shownPoint);
+        }
         mMultiColorStateWidget->updateSyncStatus(ESyncState::notSynced);
     } else {
-        cor::moveWidget(mMultiColorStateWidget, shownPoint, hiddenPoint);
+        if (skipTransition) {
+            mMultiColorStateWidget->setGeometry(hiddenPoint.x(),
+                                                hiddenPoint.y(),
+                                                mMultiColorStateWidget->width(),
+                                                mMultiColorStateWidget->height());
+        } else {
+            cor::moveWidget(mMultiColorStateWidget, shownPoint, hiddenPoint);
+        }
     }
 }
 
@@ -624,7 +656,7 @@ void TopMenu::adjustMultiColorLayout(bool skipTransition) {
 
     // get the size of the parent
     auto parentSize = parentWidget()->size();
-    // get teh desired endpoint
+    // get the desired endpoint
     bool hasLights = !mData->devices().empty();
     QPoint endPoint;
     if (hasLights && (hasArduino || hasNanoLeaf)) {

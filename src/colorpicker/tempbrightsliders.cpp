@@ -80,7 +80,6 @@ void TempBrightSliders::changeTemperatureAndBrightness(std::uint32_t temperature
 }
 
 void TempBrightSliders::changeBrightness(std::uint32_t brightness) {
-    QColor brightColor(int(2.5f * brightness), int(2.5f * brightness), int(2.5f * brightness));
     mBrightnessSlider->blockSignals(true);
     mBrightnessSlider->slider()->setValue(int(brightness));
     mBrightnessSlider->setGradient(

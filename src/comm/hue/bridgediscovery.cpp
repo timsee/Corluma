@@ -118,6 +118,14 @@ void BridgeDiscovery::handleDiscovery() {
         if (notFoundBridge.IP != "") {
             if (notFoundBridge.username == "") {
                 requestUsername(notFoundBridge);
+                // IP addresses can change, if a username exists for a previous IP but not a new
+                // one, test it on new IP
+                for (auto innerBridge : mNotFoundBridges) {
+                    if (notFoundBridge.IP != innerBridge.IP && innerBridge.username != "") {
+                        notFoundBridge.username = innerBridge.username;
+                        attemptFinalCheck(notFoundBridge);
+                    }
+                }
             } else {
                 // it has a username, test actual connection
                 attemptFinalCheck(notFoundBridge);
@@ -522,7 +530,7 @@ hue::Bridge BridgeDiscovery::bridgeFromIP(const QString& IP) {
             return foundBridge;
         }
     }
-    return hue::Bridge();
+    return {};
 }
 
 std::list<HueLight> BridgeDiscovery::lights() {

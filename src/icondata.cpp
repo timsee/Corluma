@@ -218,10 +218,10 @@ void IconData::setMultiFade(const std::vector<QColor>& colors, bool showMore) {
         k++;
     }
 
-    uint32_t count = 16;
+    std::uint32_t count = 16;
     std::vector<QColor> output(count);
-    uint32_t colorIndex = 0;
-    for (uint8_t i = 0; i < count - 2; i = i + 2) {
+    std::uint32_t colorIndex = 0;
+    for (auto i = 0u; i < count - 2; i = i + 2) {
         output[i] = colors[arrayIndices[colorIndex]];
         output[i + 1] =
             getMiddleColor(colors[arrayIndices[colorIndex]], colors[arrayIndices[colorIndex + 1]]);

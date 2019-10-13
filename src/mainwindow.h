@@ -221,9 +221,6 @@ protected:
     virtual void mouseReleaseEvent(QMouseEvent*);
 
 private:
-    /// handles whether the app is landscape or potrait
-    void handleLandscapeOrPortrait();
-
     /// start point for a mouse move event
     QPoint mStartPoint;
 

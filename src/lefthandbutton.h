@@ -73,6 +73,9 @@ protected:
     void resizeEvent(QResizeEvent*);
 
 private:
+    /// renders the icon of the button
+    void renderButton();
+
     /// page index for the button to emit
     EPage mPage;
 

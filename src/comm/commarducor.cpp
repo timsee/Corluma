@@ -527,7 +527,7 @@ bool CommArduCor::verifyStateUpdatePacketValidity(const std::vector<int>& packet
 
 
 bool CommArduCor::verifyCustomColorUpdatePacket(const std::vector<int>& packetIntVector) {
-    uint32_t x = 2;
+    std::uint32_t x = 2u;
     if (packetIntVector.size() < 3) {
         return false;
     }

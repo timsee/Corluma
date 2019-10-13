@@ -17,8 +17,8 @@ namespace cor {
 /// the default custom colors of ArduCor colors
 inline std::vector<QColor> defaultCustomColors() {
     std::vector<QColor> customColors = std::vector<QColor>(10, QColor(0, 0, 0));
-    uint32_t uniqueColors = 5;
-    for (std::uint32_t i = 0; i < customColors.size(); i++) {
+    auto uniqueColors = 5u;
+    for (std::size_t i = 0u; i < customColors.size(); i++) {
         if ((i % uniqueColors) == 0) {
             customColors[i] = QColor(0, 255, 0);
         } else if ((i % uniqueColors) == 1) {

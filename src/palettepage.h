@@ -44,8 +44,8 @@ public:
     explicit PalettePage(QWidget* parent);
 
     /// called whenever the group page is shown
-    void show(std::uint32_t count,
-              std::uint32_t brightness,
+    void show(std::size_t count,
+              std::size_t brightness,
               const std::vector<QColor>& colorScheme,
               bool hasArduinoDevices,
               bool hasNanoleafDevices);

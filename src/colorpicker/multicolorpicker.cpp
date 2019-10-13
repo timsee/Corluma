@@ -96,10 +96,10 @@ void MultiColorPicker::updateColorStates(const std::vector<QColor>& colorSchemes
     // in cases where an light is currently showing one color but can show more, set all the
     // additional colors it can show as the one color
     if (colorSchemes.size() < mCount) {
-        for (std::uint32_t i = 0; i < colorSchemes.size(); ++i) {
+        for (std::size_t i = 0u; i < colorSchemes.size(); ++i) {
             newScheme[i] = colorSchemes[i];
         }
-        for (std::uint32_t i = colorSchemes.size(); i < mMaxCount; ++i) {
+        for (auto i = colorSchemes.size(); i < mMaxCount; ++i) {
             newScheme[i] = colorSchemes[0];
         }
     } else {
@@ -146,7 +146,7 @@ void MultiColorPicker::updateSchemeColors(std::size_t i, const QColor& newColor)
         return;
     }
 
-    for (std::size_t x = i; x < mScheme.size(); x += colorCount) {
+    for (auto x = i; x < mScheme.size(); x += colorCount) {
         mScheme[x] = newColor;
     }
 
@@ -169,7 +169,7 @@ void MultiColorPicker::mousePressEvent(QMouseEvent* event) {
 void MultiColorPicker::mouseMoveEvent(QMouseEvent* event) {
     auto colorScheme = mColorSchemeCircles->moveStandardCircle(mCircleIndex, event->pos());
     if (!colorScheme.empty()) {
-        for (std::uint32_t i = 0; i < mColorSchemeCircles->circles().size(); ++i) {
+        for (std::size_t i = 0u; i < mColorSchemeCircles->circles().size(); ++i) {
             updateSchemeColors(i, colorScheme[i]);
         }
     }

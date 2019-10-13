@@ -107,7 +107,7 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
     mButtons = std::vector<QPushButton*>(buttons.size(), nullptr);
     mNames = buttons;
 
-    for (std::uint32_t i = 0; i < mNames.size(); ++i) {
+    for (std::size_t i = 0u; i < mNames.size(); ++i) {
         cor::Light light;
         light.routine = ERoutine::singleSolid;
         light.color = QColor(255, 0, 0);
@@ -220,7 +220,7 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
 //--------------------------------
 
 void FloatingLayout::updateRoutine(const QJsonObject& routineObject) {
-    for (std::uint32_t i = 0; i < mButtons.size(); ++i) {
+    for (std::size_t i = 0u; i < mButtons.size(); ++i) {
         if (mNames[i] == "Routine") {
             auto lightsButton = dynamic_cast<cor::Button*>(mButtons[i]);
             Q_ASSERT(lightsButton);
@@ -231,7 +231,7 @@ void FloatingLayout::updateRoutine(const QJsonObject& routineObject) {
 
 
 void FloatingLayout::updateColorPageButton(const QString& resource) {
-    for (std::uint32_t i = 0; i < mButtons.size(); ++i) {
+    for (std::size_t i = 0u; i < mButtons.size(); ++i) {
         if (mNames[i] == "Colors_Page") {
             cor::resizeIcon(mButtons[i], resource);
         }
@@ -239,7 +239,7 @@ void FloatingLayout::updateColorPageButton(const QString& resource) {
 }
 
 void FloatingLayout::updateCollectionButton(const QString& resource) {
-    for (std::uint32_t i = 0; i < mButtons.size(); ++i) {
+    for (std::size_t i = 0u; i < mButtons.size(); ++i) {
         if (mNames[i] == "New_Group") {
             cor::resizeIcon(mButtons[i], resource);
         }
@@ -261,7 +261,7 @@ void FloatingLayout::updateDiscoveryButton(EProtocolType type, const QPixmap& pi
         default:
             break;
     }
-    for (auto i = 0u; i < mButtons.size(); ++i) {
+    for (std::size_t i = 0u; i < mButtons.size(); ++i) {
         if (mNames[i] == label && !pixmap.isNull()) {
             int size = int(mButtons[i]->size().height() * 0.5f);
             mButtons[i]->setIcon(
@@ -272,7 +272,7 @@ void FloatingLayout::updateDiscoveryButton(EProtocolType type, const QPixmap& pi
 }
 
 void FloatingLayout::enableButton(const QString& key, bool enable) {
-    for (std::uint32_t i = 0; i < mButtons.size(); ++i) {
+    for (std::size_t i = 0u; i < mButtons.size(); ++i) {
         if (mNames[i] == key) {
             mButtons[i]->setEnabled(enable);
         }
@@ -280,7 +280,7 @@ void FloatingLayout::enableButton(const QString& key, bool enable) {
 }
 
 bool FloatingLayout::isKeyHighlighted(const QString& key) {
-    for (std::uint32_t i = 0; i < mButtons.size(); ++i) {
+    for (std::size_t i = 0u; i < mButtons.size(); ++i) {
         if (mNames[i] == key) {
             return mButtons[i]->isEnabled();
         }
@@ -305,7 +305,7 @@ void FloatingLayout::move(QPoint topRightPoint) {
 
 void FloatingLayout::buttonPressed(int buttonIndex) {
     // uncheck all other buttons
-    for (std::uint32_t i = 0; i < mButtons.size(); ++i) {
+    for (std::size_t i = 0u; i < mButtons.size(); ++i) {
         mButtons[i]->setChecked(false);
         if (isALightsButton(i)) {
             auto lightsButton = dynamic_cast<cor::Button*>(mButtons[i]);

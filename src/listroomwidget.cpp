@@ -375,7 +375,7 @@ void ListRoomWidget::selectAllToggled(const QString& key, bool selectAll) {
 
 void ListRoomWidget::moveWidgets(QSize size, QPoint offset) {
     size = mListLayout.widgetSize(size);
-    for (std::uint32_t i = 0; i < mListLayout.widgets().size(); ++i) {
+    for (std::size_t i = 0u; i < mListLayout.widgets().size(); ++i) {
         if (mListLayout.widgets()[i]->isVisible()) {
             QPoint position = mListLayout.widgetPosition(mListLayout.widgets()[i]);
             mListLayout.widgets()[i]->setFixedSize(size);

@@ -373,9 +373,10 @@ void MainWindow::pushOutDiscovery() {
     if (mFirstLoad) {
         mTopMenu->showMenu();
         mFirstLoad = false;
-        mMainViewport->pageChanged(EPage::colorPage);
+        mMainViewport->pageChanged(EPage::colorPage, true);
         mLeftHandMenu->pushIn();
-        mTopMenu->showSingleColorStateWidget(true);
+        mTopMenu->showFloatingLayout(EPage::colorPage);
+        mTopMenu->showSingleColorStateWidget(true, true);
     }
 
     if (mLeftHandMenu->alwaysOpen()) {
@@ -588,11 +589,15 @@ void MainWindow::deleteLight(const QString& key) {
 }
 
 void MainWindow::resize() {
-    handleLandscapeOrPortrait();
     mLeftHandMenu->resize();
 
     if (mPagesLoaded) {
         if (mLeftHandMenu->alwaysOpen()) {
+            if (mMainViewport->currentPage() == EPage::colorPage) {
+                mTopMenu->showSingleColorStateWidget(true, true);
+            } else if (mMainViewport->currentPage() == EPage::palettePage) {
+                mTopMenu->showMultiColorStateWidget(true, true);
+            }
             mTopMenu->resize(mLeftHandMenu->width());
         } else {
             mTopMenu->resize(0);
@@ -689,24 +694,6 @@ void MainWindow::resize() {
 
     mNoWifiWidget->setGeometry(QRect(0, 0, geometry().width(), geometry().height()));
 }
-
-void MainWindow::handleLandscapeOrPortrait() {
-    if (mLeftHandMenu->alwaysOpen()) {
-        if (mMainViewport->currentPage() == EPage::colorPage) {
-            mTopMenu->showSingleColorStateWidget(true);
-        }
-        if (mPagesLoaded) {
-            mTopMenu->pushOutTapToSelectButton();
-            mTopMenu->hideMenuButton(true);
-        }
-    } else {
-        if (mPagesLoaded) {
-            mTopMenu->pushInTapToSelectButton();
-            mTopMenu->hideMenuButton(false);
-        }
-    }
-}
-
 
 
 void MainWindow::routineChanged(QJsonObject routine) {
@@ -872,7 +859,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent* event) {
     }
 }
 
-void MainWindow::mouseReleaseEvent(QMouseEvent*) {
+void MainWindow::mouseReleaseEvent(QMouseEvent* event) {
     if (!mLeftHandMenu->alwaysOpen() && !mGreyOut->isVisible()) {
         mMovingMenu = false;
         auto showingWidth = mLeftHandMenu->width() + mLeftHandMenu->geometry().x();
@@ -888,6 +875,18 @@ void MainWindow::mouseReleaseEvent(QMouseEvent*) {
             mTopMenu->pushOutTapToSelectButton();
             if (mSettingsPage->isOpen()) {
                 settingsClosePressed();
+            }
+        }
+
+        // hide the menu if its in and the user clicks outside of it
+        if (mLeftHandMenu->isIn()) {
+            if (event->pos().x() > mLeftHandMenu->width()) {
+                mLeftHandMenu->pushOut();
+                if ((mMainViewport->currentPage() == EPage::colorPage
+                     || mMainViewport->currentPage() == EPage::palettePage)
+                    && mData->devices().empty()) {
+                    mTopMenu->pushInTapToSelectButton();
+                }
             }
         }
     }

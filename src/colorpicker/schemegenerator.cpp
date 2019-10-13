@@ -46,7 +46,7 @@ std::vector<ColorSelection> SchemeGenerator::colorScheme(const ColorSelection& s
             break;
         case EColorSchemeType::similar: {
             int similarCounter = 0;
-            for (std::uint32_t x = 1; x < scheme.size(); ++x) {
+            for (std::size_t x = 1u; x < scheme.size(); ++x) {
                 // compute new angle and distance
                 auto newAngle = angle;
                 auto newDistance = distance;
@@ -97,7 +97,7 @@ std::vector<ColorSelection> SchemeGenerator::colorScheme(const ColorSelection& s
         } break;
         case EColorSchemeType::complement: {
             bool flipColor = true;
-            for (std::uint32_t x = 1; x < scheme.size(); ++x) {
+            for (std::size_t x = 1u; x < scheme.size(); ++x) {
                 if (scheme[x].shouldShow) {
                     // compute new angle
                     auto newAngle = angle;
@@ -121,7 +121,7 @@ std::vector<ColorSelection> SchemeGenerator::colorScheme(const ColorSelection& s
         } break;
         case EColorSchemeType::triad: {
             int triadCounter = 0;
-            for (std::uint32_t x = 1; x < scheme.size(); ++x) {
+            for (std::size_t x = 1u; x < scheme.size(); ++x) {
                 // compute new angle
                 auto newAngle = angle;
                 if (scheme[x].shouldShow) {
@@ -161,7 +161,7 @@ std::vector<ColorSelection> SchemeGenerator::colorScheme(const ColorSelection& s
         } break;
         case EColorSchemeType::compound:
             int compountCounter = 0;
-            for (std::uint32_t x = 1; x < scheme.size(); ++x) {
+            for (std::size_t x = 1u; x < scheme.size(); ++x) {
                 // compute new angle and distance
                 auto newAngle = angle;
                 auto newDistance = distance;

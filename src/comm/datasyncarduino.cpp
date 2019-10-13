@@ -315,7 +315,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
         //-------------------
         // Custom Color Sync
         //-------------------
-        for (std::uint32_t i = 0; i < dataDevice.palette.colors().size(); ++i) {
+        for (std::size_t i = 0u; i < dataDevice.palette.colors().size(); ++i) {
             if (cor::colorDifference(dataDevice.palette.colors()[i],
                                      commDevice.customPalette.colors()[i])
                 > 0.02f) {

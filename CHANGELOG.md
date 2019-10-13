@@ -583,4 +583,14 @@ ___
 * Fixed bugs with discovering Hue Bridges using an IP address.
 * Fixed miscellaneous bugs. 
 
- 
+### **v0.17.45**
+#### The Resizing Update
+* Fixed bugs with resizing the `LeftHandMenu`.
+* Fixed miscellaneous resize bugs.
+* Tapping outside of the `LeftHandMenu` now closes the menu.
+* Fixed bugs with discovering Hue Bridges.
+* Fixed `clang-tidy` warnings.
+* Fixed miscellaneous bugs.
+
+
+

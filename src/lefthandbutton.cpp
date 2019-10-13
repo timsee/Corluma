@@ -28,6 +28,7 @@ LeftHandButton::LeftHandButton(const QString& text,
     mIsHighlighted = false;
     mResourcePath = iconResource;
 
+    setFixedSize(parentWidget()->width(), parentWidget()->height() / 15);
     mTitle = new QLabel(text, this);
     mTitle->setStyleSheet("background-color:rgba(0,0,0,0);");
     mTitle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -37,6 +38,7 @@ LeftHandButton::LeftHandButton(const QString& text,
     mIcon->setStyleSheet("background-color:rgba(0,0,0,0);");
     mIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     updateIcon(iconResource);
+    renderButton();
 }
 
 
@@ -51,6 +53,7 @@ LeftHandButton::LeftHandButton(const QString& text,
     mIsHighlighted = false;
     mJsonObject = jsonObject;
 
+    setFixedSize(parentWidget()->width(), parentWidget()->height() / 15);
     mTitle = new QLabel(text, this);
     mTitle->setStyleSheet("background-color:rgba(0,0,0,0);");
     mTitle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -60,11 +63,12 @@ LeftHandButton::LeftHandButton(const QString& text,
     mIcon->setStyleSheet("background-color:rgba(0,0,0,0);");
     mIcon->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     updateJSON(jsonObject);
+    renderButton();
 }
 
 void LeftHandButton::updateIcon(const QString& iconResource) {
     QPixmap pixmap(iconResource);
-    const auto& size = QSize(int(this->size().width() * 0.8), int(this->size().height() * 0.8));
+    const auto& size = QSize(int(this->size().height() * 0.8), int(this->size().height() * 0.8));
     mIcon->setPixmap(
         pixmap.scaled(size.width(), size.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
@@ -79,7 +83,7 @@ void LeftHandButton::updateJSON(const QJsonObject& jsonObject) {
                                                    Qt::FastTransformation));
 }
 
-void LeftHandButton::resize() {
+void LeftHandButton::renderButton() {
     mIcon->setGeometry(0, 0, height(), height());
     mTitle->setGeometry(height(), 0, width() - height(), height());
     if (!mResourcePath.isNull()) {
@@ -87,6 +91,11 @@ void LeftHandButton::resize() {
     } else {
         updateJSON(mJsonObject);
     }
+}
+
+void LeftHandButton::resize() {
+    mIcon->setGeometry(0, 0, mIcon->width(), height());
+    mTitle->setGeometry(mIcon->width(), 0, width() - mIcon->width(), height());
 }
 
 void LeftHandButton::mousePressEvent(QMouseEvent* event) {

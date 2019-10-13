@@ -15,7 +15,7 @@ AppSettings::AppSettings() {
     mProtocolsInUse = std::vector<bool>(std::size_t(EProtocolType::MAX), false);
 
     std::vector<QString> keys = protocolKeys();
-    for (std::uint32_t x = 0; x < mProtocolsInUse.size(); ++x) {
+    for (std::size_t x = 0; x < mProtocolsInUse.size(); ++x) {
         if (mSettings->value(keys[x]).isValid()) {
             bool shouldEnable = mSettings->value(keys[x]).toBool();
             mProtocolsInUse[x] = shouldEnable;
@@ -54,7 +54,7 @@ bool AppSettings::enable(EProtocolType type, bool shouldEnable) {
 
 std::vector<QString> AppSettings::protocolKeys() {
     std::vector<QString> keys(std::size_t(EProtocolType::MAX), QString(""));
-    for (std::uint32_t i = 0; i < keys.size(); ++i) {
+    for (std::size_t i = 0; i < keys.size(); ++i) {
         QString key = protocolToString(EProtocolType(i));
         key += "InUse";
         keys[i] = key;

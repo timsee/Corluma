@@ -26,7 +26,6 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget* parent, AppSettings* appSett
     mEnabledConnectionsLabel = new QLabel("Enabled Hardware", this);
 
     const QString labelStyleSheet = "font:bold; font-size:20pt; background-color: rgba(0,0,0,0);";
-    const QString transparentStyleSheet = "background-color: rgba(0,0,0,0)";
 
     mEnabledConnectionsLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mEnabledConnectionsLabel->setStyleSheet(labelStyleSheet);

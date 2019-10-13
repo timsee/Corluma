@@ -27,6 +27,7 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer* comm, QWidget* parent)
 
     connect(mIPWidget, SIGNAL(textAdded(QString)), this, SLOT(textInputAddedIP(QString)));
     connect(mIPWidget, SIGNAL(cancelClicked()), this, SLOT(closeIPWidget()));
+    mIPWidget->setVisible(false);
 
     mComm = comm;
     auto mainWidget = parentWidget()->parentWidget();
@@ -199,12 +200,14 @@ void DiscoveryHueWidget::schedulesClosePressed() {
 void DiscoveryHueWidget::closeIPWidget() {
     mGreyout->greyOut(false);
     mIPWidget->pushOut();
+    mIPWidget->setVisible(false);
 }
 
 void DiscoveryHueWidget::openIPWidget() {
     mGreyout->greyOut(true);
     mIPWidget->pushIn();
     mIPWidget->raise();
+    mIPWidget->setVisible(true);
 }
 
 void DiscoveryHueWidget::changedName(const QString& key, const QString& newName) {
@@ -349,5 +352,6 @@ void DiscoveryHueWidget::deleteBridgeFromAppData(hue::Bridge bridge) {
     if (reply == QMessageBox::Yes) {
         mComm->hue()->discovery()->deleteBridge(bridge);
         mListWidget->removeWidget(bridge.IP);
+        resize();
     }
 }

@@ -46,7 +46,7 @@ PaletteScrollArea::PaletteScrollArea(QWidget* parent) : QScrollArea(parent) {
 
 void PaletteScrollArea::setupButtons(bool isArduino) {
     std::vector<QString> labels(size_t(EPalette::unknown) - 1);
-    for (std::uint32_t i = 0; i < labels.size(); ++i) {
+    for (std::size_t i = 0u; i < labels.size(); ++i) {
         labels[i] = paletteToString(EPalette(i + 1));
     }
 

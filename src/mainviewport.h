@@ -35,7 +35,7 @@ public:
     /*!
      * \brief pageChanged change the QStackedWidget to the page specified
      */
-    void pageChanged(EPage page);
+    void pageChanged(EPage page, bool skipTransition = false);
 
     /// resize to given geometry
     void resize(const QRect& geometry);
@@ -65,7 +65,7 @@ private:
      *
      * \param page the widget to put on the screen.
      */
-    void showMainPage(EPage page);
+    void showMainPage(EPage page, bool skipTransition);
 
     /*!
      * \brief hideMainPage transitions either the color page, group page, or lights page off of the

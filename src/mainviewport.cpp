@@ -83,9 +83,9 @@ void MainViewport::resize(const QRect& geometry) {
     }
 }
 
-void MainViewport::pageChanged(EPage pageIndex) {
+void MainViewport::pageChanged(EPage pageIndex, bool skipTransition) {
     if (pageIndex != mPageIndex) {
-        showMainPage(pageIndex);
+        showMainPage(pageIndex, skipTransition);
         hideMainPage(mPageIndex);
         mPageIndex = pageIndex;
     }
@@ -129,13 +129,17 @@ cor::Page* MainViewport::mainPage(EPage page) {
     return widget;
 }
 
-void MainViewport::showMainPage(EPage page) {
+void MainViewport::showMainPage(EPage page, bool skipTransition) {
     auto pageObject = mainPage(page);
     auto widget = mainWidget(page);
     auto x = width() + widget->width();
     pageObject->isOpen(true);
 
-    cor::moveWidget(widget, QPoint(x, pos().y()), pos());
+    if (skipTransition) {
+        widget->setGeometry(pos().x(), pos().y(), widget->width(), widget->height());
+    } else {
+        cor::moveWidget(widget, QPoint(x, pos().y()), pos());
+    }
 
     if (page == EPage::colorPage) {
         mColorPage->show(mData->mainColor(),

@@ -85,7 +85,7 @@ void SwatchVectorWidget::toggleArrayColor() {
 }
 
 void SwatchVectorWidget::updateSelected(const QColor& color) {
-    for (std::uint32_t i = 0; i < mSwatches.size(); ++i) {
+    for (std::size_t i = 0u; i < mSwatches.size(); ++i) {
         if (mSwatches[i]->isChecked()) {
             int size =
                 std::min(int(mSwatches[i]->width() * 0.8f), int(mSwatches[i]->height() * 0.8f));

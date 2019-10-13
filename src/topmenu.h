@@ -119,10 +119,10 @@ public:
     void updateScheme(const std::vector<QColor>& colors);
 
     /// true to show single color state widget, false to hide it
-    void showSingleColorStateWidget(bool show);
+    void showSingleColorStateWidget(bool show, bool skipTransition = false);
 
     /// true to show the multi color state widget, false to hide it
-    void showMultiColorStateWidget(bool show);
+    void showMultiColorStateWidget(bool show, bool skipTransition = false);
 
 signals:
 

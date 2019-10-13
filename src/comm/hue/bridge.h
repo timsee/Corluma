@@ -71,12 +71,15 @@ struct SHueSchedule {
     /// SHueSchedule equal operator
     bool operator==(const SHueSchedule& rhs) const {
         bool result = true;
-        if (name != rhs.name)
+        if (name != rhs.name) {
             result = false;
-        if (description != rhs.description)
+        }
+        if (description != rhs.description) {
             result = false;
-        if (index != rhs.index)
+        }
+        if (index != rhs.index) {
             result = false;
+        }
         return result;
     }
 };
@@ -155,16 +158,21 @@ public:
     /// equal operator
     bool operator==(const hue::Bridge& rhs) const {
         bool result = true;
-        if (IP != rhs.IP)
+        if (IP != rhs.IP) {
             result = false;
-        if (customName != rhs.customName)
+        }
+        if (customName != rhs.customName) {
             result = false;
-        if (username != rhs.username)
+        }
+        if (username != rhs.username) {
             result = false;
-        if (id != rhs.id)
+        }
+        if (id != rhs.id) {
             result = false;
-        if (state != rhs.state)
+        }
+        if (state != rhs.state) {
             result = false;
+        }
         return result;
     }
 };

@@ -102,6 +102,9 @@ public:
     /// returns the number of widgets shown.
     std::uint32_t numberOfWidgetsShown();
 
+    /// resize the widget
+    void resize();
+
 signals:
 
     /*!
@@ -176,9 +179,6 @@ private:
 
     /// if theres subgroups, this stores the last subgroup name
     QString mLastSubGroupName;
-
-    /// resize the widget
-    void resize();
 
     /// top widget that holds the groups, if any are available.
     GroupButtonsWidget* mGroupsButtonWidget;

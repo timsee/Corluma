@@ -50,8 +50,9 @@ public:
     /// SHueLight equal operator
     bool operator==(const HueLight& rhs) const {
         bool result = true;
-        if (uniqueID() != rhs.uniqueID())
+        if (uniqueID() != rhs.uniqueID()) {
             result = false;
+        }
         return result;
     }
 };

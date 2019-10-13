@@ -28,8 +28,8 @@ CRCCalculator::CRCCalculator() {
 uint32_t CRCCalculator::calculate(const QString& input) {
     auto crc = std::uint32_t(~0);
     std::string string = input.toStdString();
-    for (uint16_t i = 0; i < input.length(); ++i) {
-        crc = update(crc, uint8_t(string[i]));
+    for (std::uint16_t i = 0u; i < input.length(); ++i) {
+        crc = update(crc, std::uint8_t(string[i]));
     }
     crc = ~crc;
     return crc;

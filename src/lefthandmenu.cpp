@@ -31,6 +31,7 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     mData = lights;
     mGroups = groups;
     mParentSize = parent->size();
+
     auto width = int(mParentSize.width() * 0.66f);
     setGeometry(width * -1, 0, width, parent->height());
     mIsIn = false;
@@ -130,7 +131,6 @@ void LeftHandMenu::resize() {
     } else {
         setGeometry(-width, pos().y(), width, mParentSize.height());
     }
-    mScrollArea->setFixedWidth(int(this->width() * 1.2f));
 
     auto buttonHeight = int(height() * 0.07);
     auto yPos = int(height() * 0.02);
@@ -156,14 +156,17 @@ void LeftHandMenu::resize() {
 
     yPos += mMainPalette->height() + height() * 0.02;
 
+    /// setting to 1.2 hides the scroll bar and avoids horizotnal scrolling
+    mScrollArea->setGeometry(0, yPos, this->width() * 1.2, height() - yPos);
+    mWidget->setFixedWidth(this->width());
+
     auto scrollWidgetHeight = resizeRoomsWidgets();
     mNewGroupButton->setGeometry(0, scrollWidgetHeight, this->width(), buttonHeight);
+
     scrollWidgetHeight += mNewGroupButton->height();
+    mWidget->setFixedHeight(scrollWidgetHeight);
 
     setFixedHeight(mParentSize.height());
-    mScrollArea->setGeometry(0, yPos, this->width(), height() - yPos);
-
-    mWidget->setFixedSize(QSize(this->width(), scrollWidgetHeight));
 }
 
 void LeftHandMenu::pushIn() {
@@ -364,7 +367,9 @@ int LeftHandMenu::resizeRoomsWidgets() {
     });
     for (auto widget : mRoomWidgets) {
         widget->setVisible(true);
+        widget->setFixedWidth(width());
         widget->setGeometry(0, yPos, width(), widget->height());
+        widget->resize();
         yPos += widget->height();
     }
     return yPos;
