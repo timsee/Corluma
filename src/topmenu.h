@@ -119,10 +119,10 @@ public:
     void updateScheme(const std::vector<QColor>& colors);
 
     /// true to show single color state widget, false to hide it
-    void showSingleColorStateWidget(bool show, bool skipTransition = false);
+    void showSingleColorStateWidget(bool show);
 
     /// true to show the multi color state widget, false to hide it
-    void showMultiColorStateWidget(bool show, bool skipTransition = false);
+    void showMultiColorStateWidget(bool show);
 
 signals:
 
@@ -286,6 +286,9 @@ private:
 
     /// update the button for the color page based off the group of devices selected.
     void updatePaletteButton();
+
+    /// can run into issues on certain screen ratios, so to be safe, compute once and store
+    int mPaletteWidth;
 };
 
 #endif // TOPMENU_H

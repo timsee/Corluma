@@ -209,6 +209,10 @@ void MainWindow::loadJSON(QString path) {
         } else {
             mComm->hue()->discovery()->reloadGroupData();
             qDebug() << "New app data saved!";
+            // load the mood page again, if necessary
+            if (mMainViewport->currentPage() == EPage::moodPage) {
+                mMainViewport->loadMoodPage();
+            }
         }
     } else {
         qDebug() << " file provided is not parseable JSON";
@@ -324,6 +328,7 @@ void MainWindow::topMenuButtonPressed(const QString& key) {
     if (key == "Settings") {
         pushInSettingsPage();
     } else if (key == "Menu") {
+        mGreyOut->greyOut(true);
         mLeftHandMenu->pushIn();
     } else {
         qDebug() << "Do not recognize key" << key;
@@ -374,9 +379,11 @@ void MainWindow::pushOutDiscovery() {
         mTopMenu->showMenu();
         mFirstLoad = false;
         mMainViewport->pageChanged(EPage::colorPage, true);
-        mLeftHandMenu->pushIn();
+        if (!mLeftHandMenu->alwaysOpen()) {
+            mGreyOut->greyOut(true);
+            mLeftHandMenu->pushIn();
+        }
         mTopMenu->showFloatingLayout(EPage::colorPage);
-        mTopMenu->showSingleColorStateWidget(true, true);
     }
 
     if (mLeftHandMenu->alwaysOpen()) {
@@ -408,6 +415,7 @@ void MainWindow::pushInDiscovery() {
 
 void MainWindow::switchToColorPage() {
     if (mLeftHandMenu->isIn()) {
+        mGreyOut->greyOut(false);
         mLeftHandMenu->pushOut();
     }
 
@@ -441,6 +449,9 @@ void MainWindow::closeDiscoveryWithoutTransition() {
     mDiscoveryPage->hide();
     mDiscoveryPage->isOpen(false);
     mMainViewport->pageChanged(EPage::colorPage);
+    if (!mLeftHandMenu->alwaysOpen()) {
+        mGreyOut->greyOut(true);
+    }
     mLeftHandMenu->pushIn();
 }
 
@@ -448,6 +459,8 @@ void MainWindow::editButtonClicked(bool isMood) {
     mGreyOut->greyOut(true);
     mEditPage->resize();
     mEditPage->pushIn();
+    mEditPage->isOpen(true);
+
 
     std::list<cor::Light> groupDevices;
     std::list<QString> groupDeviceIDs;
@@ -506,6 +519,7 @@ void MainWindow::hueInfoWidgetClicked() {
 void MainWindow::editClosePressed() {
     mGreyOut->greyOut(false);
     mEditPage->pushOut();
+    mEditPage->isOpen(false);
 
     // TODO: update lefthandmenu
     // mMainViewport->lightPage()->updateRoomWidgets();
@@ -593,11 +607,6 @@ void MainWindow::resize() {
 
     if (mPagesLoaded) {
         if (mLeftHandMenu->alwaysOpen()) {
-            if (mMainViewport->currentPage() == EPage::colorPage) {
-                mTopMenu->showSingleColorStateWidget(true, true);
-            } else if (mMainViewport->currentPage() == EPage::palettePage) {
-                mTopMenu->showMultiColorStateWidget(true, true);
-            }
             mTopMenu->resize(mLeftHandMenu->width());
         } else {
             mTopMenu->resize(0);
@@ -735,6 +744,16 @@ void MainWindow::moodChanged(std::uint64_t moodID) {
 }
 
 void MainWindow::greyoutClicked() {
+    if (mLeftHandMenu->isIn()) {
+        mGreyOut->greyOut(false);
+        mLeftHandMenu->pushOut();
+        if ((mMainViewport->currentPage() == EPage::colorPage
+             || mMainViewport->currentPage() == EPage::palettePage)
+            && mData->devices().empty()) {
+            mTopMenu->pushInTapToSelectButton();
+        }
+    }
+
     if (mMoodDetailedWidget->isOpen()) {
         detailedClosePressed();
     }
@@ -828,7 +847,7 @@ bool shouldMoveMenu(QMouseEvent* event,
 
 void MainWindow::mouseMoveEvent(QMouseEvent* event) {
     // only care about moves when greyout is not open and lefthand menu isn't forced open
-    if (!mLeftHandMenu->alwaysOpen() && !mGreyOut->isVisible()) {
+    if (!mLeftHandMenu->alwaysOpen()) {
         if (shouldMoveMenu(event,
                            mLeftHandMenu->isIn(),
                            mStartPoint,
@@ -850,6 +869,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent* event) {
                                        mLeftHandMenu->width(),
                                        mLeftHandMenu->height());
         } else if (event->pos().x() > mLeftHandMenu->size().width() && mMovingMenu) {
+            mGreyOut->greyOut(true);
             mLeftHandMenu->pushIn();
             mTopMenu->pushOutTapToSelectButton();
             if (mSettingsPage->isOpen()) {
@@ -860,27 +880,32 @@ void MainWindow::mouseMoveEvent(QMouseEvent* event) {
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent* event) {
-    if (!mLeftHandMenu->alwaysOpen() && !mGreyOut->isVisible()) {
+    if (!mLeftHandMenu->alwaysOpen() && mMovingMenu) {
         mMovingMenu = false;
         auto showingWidth = mLeftHandMenu->width() + mLeftHandMenu->geometry().x();
         if (showingWidth < mLeftHandMenu->width() * 2 / 3) {
-            mLeftHandMenu->pushOut();
-            if ((mMainViewport->currentPage() == EPage::colorPage
-                 || mMainViewport->currentPage() == EPage::palettePage)
-                && mData->devices().empty()) {
-                mTopMenu->pushInTapToSelectButton();
-            }
-        } else {
+                mGreyOut->greyOut(false);
+                mLeftHandMenu->pushOut();
+                if ((mMainViewport->currentPage() == EPage::colorPage
+                     || mMainViewport->currentPage() == EPage::palettePage)
+                    && mData->devices().empty()) {
+                    mTopMenu->pushInTapToSelectButton();
+                }
+        } else if (!mLeftHandMenu->isIn()) {
+            mGreyOut->greyOut(true);
             mLeftHandMenu->pushIn();
             mTopMenu->pushOutTapToSelectButton();
             if (mSettingsPage->isOpen()) {
                 settingsClosePressed();
             }
+        } else {
+            mLeftHandMenu->pushIn();
         }
 
         // hide the menu if its in and the user clicks outside of it
         if (mLeftHandMenu->isIn()) {
             if (event->pos().x() > mLeftHandMenu->width()) {
+                mGreyOut->greyOut(false);
                 mLeftHandMenu->pushOut();
                 if ((mMainViewport->currentPage() == EPage::colorPage
                      || mMainViewport->currentPage() == EPage::palettePage)
@@ -928,6 +953,7 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
     mMainViewport->pageChanged(page);
     mTopMenu->showFloatingLayout(page);
     if (!ignorePushOut) {
+        mGreyOut->greyOut(false);
         mLeftHandMenu->pushOut();
     }
 }
@@ -947,6 +973,7 @@ void MainWindow::pushInSettingsPage() {
         mSettingsPage->pushIn(QPoint(width(), 0), QPoint(mLeftHandMenu->width(), 0));
     } else {
         mSettingsPage->pushIn(QPoint(width(), 0), QPoint(0u, 0u));
+        mGreyOut->greyOut(false);
         mLeftHandMenu->pushOut();
     }
 }

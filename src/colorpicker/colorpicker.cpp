@@ -58,7 +58,7 @@ void ColorPicker::chooseBrightness(std::uint32_t brightness) {
 // ----------------------------
 
 void ColorPicker::resizeWheel() {
-    int wheelSize = int(size().height() * 0.55f);
+    int wheelSize = int(size().height() * 0.5f);
     if (wheelSize > size().width() * 0.85f) {
         wheelSize = int(size().width() * 0.85f);
     }

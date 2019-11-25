@@ -35,11 +35,23 @@ public:
     /// programmatically resize
     void resize();
 
+    /// true if widget is in, false if its hidden
+    bool isIn() const noexcept { return mIsIn; }
+
+    /// programmatically push the multi color state widget in
+    void pushIn(const QPoint&);
+
+    /// programmatically push the multi color state widget out
+    void pushOut(const QPoint&);
+
 protected:
     /// called when widget resizes
     void resizeEvent(QResizeEvent*);
 
 private:
+    /// stores whether or not the widget is in or not
+    bool mIsIn;
+
     /// widget for displaying sync state
     SyncWidget* mSyncWidget;
 

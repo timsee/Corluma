@@ -519,17 +519,20 @@ std::size_t DeviceList::lightCount() {
             count += 1;
         } else if (light.protocol() == EProtocolType::arduCor) {
             /// TODO: these are all assumptions
-            if (light.hardwareType == ELightHardwareType::cube) {
-                count += 64;
-            } else if (light.hardwareType == ELightHardwareType::lightStrip) {
-                count += 32;
-            } else if (light.hardwareType == ELightHardwareType::ring) {
-                count += 16;
-            } else if (light.hardwareType == ELightHardwareType::rectangle) {
-                count += 32;
-            } else if (light.hardwareType == ELightHardwareType::singleLED) {
-                count += 1;
-            }
+            //            if (light.hardwareType == ELightHardwareType::cube) {
+            //                count += 64;
+            //            } else if (light.hardwareType == ELightHardwareType::lightStrip) {
+            //                count += 32;
+            //            } else if (light.hardwareType == ELightHardwareType::ring) {
+            //                count += 16;
+            //            } else if (light.hardwareType == ELightHardwareType::rectangle) {
+            //                count += 32;
+            //            } else if (light.hardwareType == ELightHardwareType::singleLED) {
+            //                count += 1;
+            //            }
+            // arducor don't update well when we're changing a bunch of them at once, for now, treat
+            // like a single light
+            count += 1;
         } else if (light.protocol() == EProtocolType::nanoleaf) {
             count += 6;
         }

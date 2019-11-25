@@ -132,6 +132,8 @@ void EditGroupPage::savePressed(bool) {
             // make new original name
             mOriginalName = mNewName;
             mTopMenu->saveButton()->setEnabled(false);
+            // close
+            emit pressedClose();
         }
     }
 }
@@ -200,6 +202,7 @@ void EditGroupPage::saveChanges() {
     } else {
         qDebug() << "WARNING: attempting to save a group without a valid name";
     }
+    // TODO: verify only a name has changed, act accordingly
 
     //--------------------------------
     // Create a list of devices

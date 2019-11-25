@@ -41,7 +41,7 @@ void GreyOutOverlay::greyOut(bool shouldGrey) {
         auto fadeOutEffect = new QGraphicsOpacityEffect(this);
         setGraphicsEffect(fadeOutEffect);
         auto fadeOutAnimation = new QPropertyAnimation(fadeOutEffect, "opacity");
-        fadeOutAnimation->setDuration(TRANSITION_TIME_MSEC);
+        fadeOutAnimation->setDuration(TRANSITION_TIME_MSEC / 2);
         fadeOutAnimation->setStartValue(0.0f);
         fadeOutAnimation->setEndValue(1.0f);
         fadeOutAnimation->start();
@@ -49,7 +49,7 @@ void GreyOutOverlay::greyOut(bool shouldGrey) {
         auto fadeInEffect = new QGraphicsOpacityEffect(this);
         setGraphicsEffect(fadeInEffect);
         auto fadeInAnimation = new QPropertyAnimation(fadeInEffect, "opacity");
-        fadeInAnimation->setDuration(TRANSITION_TIME_MSEC);
+        fadeInAnimation->setDuration(TRANSITION_TIME_MSEC / 2);
         fadeInAnimation->setStartValue(1.0f);
         fadeInAnimation->setEndValue(0.0f);
         fadeInAnimation->start();

@@ -85,8 +85,6 @@ TopMenu::TopMenu(QWidget* parent,
     // --------------
     mMenuButton = new QPushButton(this);
     mMenuButton->setVisible(true);
-    mMenuButton->setFixedHeight(int(mSize.height() * 0.8));
-    cor::resizeIcon(mMenuButton, ":/images/hamburger_icon.png", 0.8f);
     connect(mMenuButton, SIGNAL(clicked(bool)), this, SLOT(menuButtonPressed()));
 
     // --------------
@@ -108,8 +106,6 @@ TopMenu::TopMenu(QWidget* parent,
     // -------------
     mMainPalette = new cor::LightVectorWidget(6, 2, true, this);
     mMainPalette->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mMainPalette->setFixedHeight(int(mSize.height() * 0.8));
-    mMainPalette->setFixedWidth(mSize.width() * 3);
 
     // --------------
     // Setup on/off switch
@@ -149,7 +145,13 @@ TopMenu::TopMenu(QWidget* parent,
     mSelectLightsButton = new SelectLightsButton(this);
     mSelectLightsButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mSelectLightsButton, SIGNAL(pressed()), this, SLOT(menuButtonPressed()));
-    mSelectLightsButton->setFixedSize(mSize.width() * 3, int(mSize.height() * 0.5));
+    QFontMetrics fm(mSelectLightsButton->font());
+    auto textWidth = fm.horizontalAdvance(mSelectLightsButton->text()) * 1.1;
+    auto selectLightsWidth = int(mSize.width() * 2.5);
+    if (selectLightsWidth < textWidth) {
+        selectLightsWidth = textWidth;
+    }
+    mSelectLightsButton->setFixedSize(selectLightsWidth, int(mSize.height() * 0.5));
     mSelectLightsButton->setGeometry(mSelectLightsButton->width(),
                                      mStartSelectLightsButton,
                                      mSelectLightsButton->width(),
@@ -195,15 +197,25 @@ TopMenu::TopMenu(QWidget* parent,
     mSingleColorStateWidget = new SingleColorStateWidget(mMainWindow);
     mSingleColorStateWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mSingleColorStateWidget->setFixedSize(mSize.width(), mSize.height() / 2);
-    showSingleColorStateWidget(true);
+    mSingleColorStateWidget->setVisible(false);
+    showSingleColorStateWidget(false);
 
     mMultiColorStateWidget = new MultiColorStateWidget(mMainWindow);
     mMultiColorStateWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mMultiColorStateWidget->setFixedSize(mSize.width() * 3.5, mSize.height() / 2);
+    mMultiColorStateWidget->setFixedSize(int(mSize.width() * 3.5), mSize.height() / 2);
+    mMultiColorStateWidget->setVisible(false);
     showMultiColorStateWidget(false);
 
     mCurrentPage = EPage::colorPage;
     showFloatingLayout(mCurrentPage);
+
+    mPaletteWidth = mSize.width() * 3;
+    auto colorMenuWidth =  cor::applicationSize().width() - mColorFloatingLayout->width();
+    if (mPaletteWidth > colorMenuWidth) {
+        mPaletteWidth = colorMenuWidth;
+    }
+    mMainPalette->setFixedHeight(int(mSize.height() * 0.8));
+    mMainPalette->setFixedWidth(mPaletteWidth);
 
     hideMenuButton(mMainWindow->leftHandMenu()->alwaysOpen());
     resize(0);
@@ -257,6 +269,18 @@ void TopMenu::deviceCountChanged() {
         mSelectLightsButton->pushOut(mStartSelectLightsButton);
     }
 
+    if (mData->devices().empty()) {
+        if (mCurrentPage == EPage::colorPage) {
+            showSingleColorStateWidget(false);
+        } else if (mCurrentPage == EPage::palettePage) {
+            showMultiColorStateWidget(false);
+        }
+
+        if ((mCurrentPage == EPage::colorPage || mCurrentPage == EPage::palettePage)
+               && !mMainWindow->leftHandMenu()->alwaysOpen() && !mSelectLightsButton->isIn()) {
+            mSelectLightsButton->pushIn(mStartSelectLightsButton);
+        }
+    }
     if (mShouldGreyOutIcons && !mData->devices().empty()) {
         mBrightnessSlider->enable(true);
 
@@ -322,7 +346,11 @@ void TopMenu::resize(int xOffset) {
     int yPos = 0;
     int padding = 5;
     int topSpacer = mSize.height() / 8;
-    mMenuButton->setGeometry(0, yPos, mSize.width(), mSize.height());
+    mMenuButton->setGeometry(int(mSize.width() * 0.1),
+                             int(mSize.height() * 0.025),
+                             int(mSize.width() * 0.75f),
+                             int(mSize.height() * 0.75f));
+    cor::resizeIcon(mMenuButton, ":/images/hamburger_icon.png", 0.7f);
 
     yPos = topSpacer;
     if (mMainWindow->leftHandMenu()->alwaysOpen()) {
@@ -356,7 +384,7 @@ void TopMenu::resize(int xOffset) {
     mStartSelectLightsButton = yPos;
     mFloatingMenuStart = yPos;
 
-    mMainPalette->setGeometry(0, yPos, int(width() * 0.8), mSize.height() / 2);
+    mMainPalette->setGeometry(0, yPos, mPaletteWidth, mSize.height() / 2);
     yPos += mMainPalette->height() + padding;
 
     yPos += mBrightnessSlider->height() + 20;
@@ -384,6 +412,7 @@ void TopMenu::floatingLayoutButtonPressed(const QString& button) {
         } else {
             mMainWindow->editButtonClicked(false);
         }
+        highlightButton("");
     } else if (button == "Preset_Groups") {
         if (mData->hasLightWithProtocol(EProtocolType::arduCor)
             || mData->hasLightWithProtocol(EProtocolType::nanoleaf)) {
@@ -443,7 +472,7 @@ void TopMenu::floatingLayoutButtonPressed(const QString& button) {
     }
 }
 
-void TopMenu::showSingleColorStateWidget(bool show, bool skipTransition) {
+void TopMenu::showSingleColorStateWidget(bool show) {
     int height = mSize.height() * 2 / 3;
     int width = 0;
     if (mMainWindow->leftHandMenu()->alwaysOpen()) {
@@ -452,31 +481,17 @@ void TopMenu::showSingleColorStateWidget(bool show, bool skipTransition) {
         height += mSize.height();
     }
 
-    QPoint shownPoint(width, height);
-    QPoint hiddenPoint(-mSingleColorStateWidget->size().width(), height);
+    QPoint startPoint(width, height);
     if (show) {
-        if (skipTransition) {
-            mSingleColorStateWidget->setGeometry(shownPoint.x(),
-                                                 shownPoint.y(),
-                                                 mSingleColorStateWidget->width(),
-                                                 mSingleColorStateWidget->height());
-        } else {
-            cor::moveWidget(mSingleColorStateWidget, hiddenPoint, shownPoint);
-        }
+        mSingleColorStateWidget->setVisible(true);
+        mSingleColorStateWidget->pushIn(startPoint);
         mSingleColorStateWidget->updateSyncStatus(ESyncState::notSynced);
     } else {
-        if (skipTransition) {
-            mSingleColorStateWidget->setGeometry(hiddenPoint.x(),
-                                                 hiddenPoint.y(),
-                                                 mSingleColorStateWidget->width(),
-                                                 mSingleColorStateWidget->height());
-        } else {
-            cor::moveWidget(mSingleColorStateWidget, shownPoint, hiddenPoint);
-        }
+        mSingleColorStateWidget->pushOut(startPoint);
     }
 }
 
-void TopMenu::showMultiColorStateWidget(bool show, bool skipTransition) {
+void TopMenu::showMultiColorStateWidget(bool show) {
     int height = mSize.height() * 2 / 3;
     int width = 0;
     if (mMainWindow->leftHandMenu()->alwaysOpen()) {
@@ -484,27 +499,14 @@ void TopMenu::showMultiColorStateWidget(bool show, bool skipTransition) {
     } else {
         height += mSize.height();
     }
-    QPoint shownPoint(width, height);
-    QPoint hiddenPoint(-mMultiColorStateWidget->size().width(), height);
+
+    QPoint startPoint(width, height);
     if (show) {
-        if (skipTransition) {
-            mMultiColorStateWidget->setGeometry(shownPoint.x(),
-                                                shownPoint.y(),
-                                                mMultiColorStateWidget->width(),
-                                                mMultiColorStateWidget->height());
-        } else {
-            cor::moveWidget(mMultiColorStateWidget, hiddenPoint, shownPoint);
-        }
+        mMultiColorStateWidget->setVisible(true);
+        mMultiColorStateWidget->pushIn(startPoint);
         mMultiColorStateWidget->updateSyncStatus(ESyncState::notSynced);
     } else {
-        if (skipTransition) {
-            mMultiColorStateWidget->setGeometry(hiddenPoint.x(),
-                                                hiddenPoint.y(),
-                                                mMultiColorStateWidget->width(),
-                                                mMultiColorStateWidget->height());
-        } else {
-            cor::moveWidget(mMultiColorStateWidget, shownPoint, hiddenPoint);
-        }
+        mMultiColorStateWidget->pushOut(startPoint);
     }
 }
 
@@ -560,7 +562,7 @@ void TopMenu::showFloatingLayout(EPage newPage) {
             case EPage::colorPage:
                 pullLeftFloatingLayout(mColorFloatingLayout);
                 adjustSingleColorLayout(false);
-                showSingleColorStateWidget(true);
+                showSingleColorStateWidget(false);
                 break;
             case EPage::moodPage:
                 pullLeftFloatingLayout(mMoodsFloatingLayout);
@@ -568,7 +570,7 @@ void TopMenu::showFloatingLayout(EPage newPage) {
             case EPage::palettePage:
                 pullLeftFloatingLayout(mPaletteFloatinglayout);
                 adjustMultiColorLayout(false);
-                showMultiColorStateWidget(true);
+                showMultiColorStateWidget(false);
                 break;
             default:
                 break;
@@ -773,6 +775,7 @@ void TopMenu::pushOutTapToSelectButton() {
 
 void TopMenu::updateRoutine(const QJsonObject& routineObject) {
     if (mCurrentPage == EPage::colorPage) {
+        showSingleColorStateWidget(true);
         ERoutine routine = stringToRoutine(routineObject["routine"].toString());
         QColor color;
         if (routineObject["hue"].isDouble() && routineObject["sat"].isDouble()
@@ -786,6 +789,7 @@ void TopMenu::updateRoutine(const QJsonObject& routineObject) {
         }
         mSingleColorStateWidget->updateState(color, routine);
     } else if (mCurrentPage == EPage::palettePage) {
+        showMultiColorStateWidget(true);
         Palette palette = Palette(routineObject["palette"].toObject());
         auto colors = palette.colors();
         auto size = palette.colors().size();
@@ -802,6 +806,7 @@ void TopMenu::updateRoutine(const QJsonObject& routineObject) {
 
 void TopMenu::updateScheme(const std::vector<QColor>& colors) {
     if (mCurrentPage == EPage::palettePage) {
+        showMultiColorStateWidget(true);
         mMultiColorStateWidget->updateState(colors);
     }
 }

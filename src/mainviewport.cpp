@@ -148,9 +148,7 @@ void MainViewport::showMainPage(EPage page, bool skipTransition) {
                          mData->bestColorPickerType());
         mColorPage->setVisible(true);
     } else if (page == EPage::moodPage) {
-        mMoodPage->show(mData->findCurrentMood(mGroups->moods()),
-                        mGroups->moods(),
-                        mGroups->roomList());
+        loadMoodPage();
         mMoodPage->setVisible(true);
     } else if (page == EPage::palettePage) {
         mPalettePage->resize();
@@ -161,6 +159,12 @@ void MainViewport::showMainPage(EPage page, bool skipTransition) {
                            mData->hasLightWithProtocol(EProtocolType::nanoleaf));
         mPalettePage->setVisible(true);
     }
+}
+
+void MainViewport::loadMoodPage() {
+    mMoodPage->show(mData->findCurrentMood(mGroups->moods()),
+                    mGroups->moods(),
+                    mGroups->roomList());
 }
 
 void MainViewport::hideMainPage(EPage page) {

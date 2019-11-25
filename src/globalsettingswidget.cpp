@@ -162,7 +162,7 @@ int GlobalSettingsWidget::timeoutValue() {
 }
 
 void GlobalSettingsWidget::resize() {
-    int currentY = mTimeoutWidget->resize(mEnabledConnectionsLabel->height());
+    int currentY = mTimeoutWidget->resize(mEnabledConnectionsLabel->height()) + mSpacerPixels;
 
     if (mEnabledConnectionsLabel->isVisible()) {
         mEnabledConnectionsLabel->setGeometry(mSpacerPixels,

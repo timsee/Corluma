@@ -4,8 +4,9 @@
  * Released under the GNU General Public License.
  */
 #include "singlecolorstatewidget.h"
+#include "utils/qt.h"
 
-SingleColorStateWidget::SingleColorStateWidget(QWidget* parent) : QWidget(parent) {
+SingleColorStateWidget::SingleColorStateWidget(QWidget* parent) : QWidget(parent), mIsIn{false} {
     mLight.routine = ERoutine::singleSolid;
     mLight.color = QColor(0, 0, 0);
     auto routineObject = lightToJson(mLight);
@@ -27,7 +28,7 @@ void SingleColorStateWidget::updateState(const QColor& color, ERoutine routine) 
 }
 
 void SingleColorStateWidget::resize() {
-    int xPos = height() / 10;
+    int xPos = this->geometry().x();
     auto height = this->height();
     mSyncWidget->setGeometry(xPos, 0, height, height);
     xPos += mSyncWidget->width();
@@ -40,4 +41,20 @@ void SingleColorStateWidget::updateSyncStatus(ESyncState state) {
 
 void SingleColorStateWidget::resizeEvent(QResizeEvent*) {
     resize();
+}
+
+void SingleColorStateWidget::pushIn(const QPoint& startPoint) {
+    QPoint hiddenPoint(-this->width(), startPoint.y());
+    if (!isIn()) {
+        cor::moveWidget(this, hiddenPoint, startPoint);
+        mIsIn = true;
+    }
+}
+
+void SingleColorStateWidget::pushOut(const QPoint& startPoint) {
+    QPoint hiddenPoint(-this->width(), startPoint.y());
+    if (isIn()) {
+        cor::moveWidget(this, startPoint, hiddenPoint);
+        mIsIn = false;
+    }
 }

@@ -34,6 +34,9 @@ public:
     /// true if in, false otherwise
     bool isIn() { return mIsIn; }
 
+    /// getter of widgets text
+    QString text() { return mLabel->text(); }
+
 signals:
 
     /// emits when pressed

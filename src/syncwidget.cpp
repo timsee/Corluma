@@ -5,13 +5,12 @@
  */
 
 #include "syncwidget.h"
-
 #include <QMovie>
 
-SyncWidget::SyncWidget(QWidget* parent) : QWidget(parent), mState{ESyncState::synced} {
+SyncWidget::SyncWidget(QWidget* parent) : QWidget(parent), mState{ESyncState::notSynced} {
     mLabel = new QLabel(this);
     mLabel->setFixedSize(size());
-    changeState(ESyncState::synced);
+    changeState(ESyncState::notSynced);
 
     mMovie = new QMovie(":/images/syncing.gif");
     mMovie->setScaledSize(size());
@@ -31,7 +30,7 @@ void SyncWidget::changeState(ESyncState state) {
                                        Qt::KeepAspectRatio,
                                        Qt::SmoothTransformation);
         mLabel->setPixmap(syncPixmap);
-    } else {
+    } else if (mState == ESyncState::syncing) {
         mLabel->setMovie(mMovie);
         mMovie->start();
     }

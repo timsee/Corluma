@@ -9,6 +9,7 @@
 
 #include "cor/protocols.h"
 #include "utils/cormath.h"
+#include "utils/exception.h"
 
 /*!
  * \copyright
@@ -54,7 +55,7 @@ public:
         if (containsRGB) {
             QJsonArray array;
             int index = 0;
-            for (auto&& color : mColors) {
+            for (const auto& color : mColors) {
                 QJsonObject colorObject;
                 colorObject["index"] = index;
                 colorObject["hue"] = cor::roundToNDigits(color.hueF(), 4);
@@ -65,6 +66,7 @@ public:
             }
             mJSON["colors"] = array;
         }
+        GUARD_EXCEPTION(!mColors.empty(), "palette does not have any colors")
     }
 
     /// app data constructor
@@ -78,7 +80,7 @@ public:
 
         QJsonArray array;
         int index = 0;
-        for (auto&& color : mColors) {
+        for (const auto& color : mColors) {
             QJsonObject colorObject;
             colorObject["index"] = index;
             colorObject["hue"] = color.hueF();
@@ -89,6 +91,7 @@ public:
         }
         mJSON["colors"] = array;
         mJSON["count"] = double(mColors.size());
+        GUARD_EXCEPTION(!mColors.empty(), "palette does not have any colors")
     }
 
     /// setter for the brightness of the palette
@@ -98,7 +101,17 @@ public:
     }
 
     /// getter for the palette's brightness
-    uint32_t brightness() const { return mBrightness; }
+    std::uint32_t brightness() const {
+        if (mBrightness == 0u) {
+            auto bright = 0.0f;
+            for (const auto& color : mColors) {
+                bright += color.value();
+            }
+            return static_cast<std::uint32_t>(bright / mColors.size());
+        } else {
+            return mBrightness;
+        }
+    }
 
     /// getter for name of the palette
     const QString& name() const noexcept { return mName; }

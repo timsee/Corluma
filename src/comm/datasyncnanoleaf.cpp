@@ -139,6 +139,16 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
     object["commtype"] = commTypeToString(commDevice.commType());
     object["uniqueID"] = commDevice.uniqueID();
 
+    //-------------------
+    // On/Off Sync
+    //-------------------
+
+    if (dataDevice.isOn != commDevice.isOn) {
+        object["isOn"] = dataDevice.isOn;
+        // qDebug() << "nanoleaf ON/OFF not in sync" << dataDevice.isOn;
+        countOutOfSync++;
+    }
+
     if (dataDevice.isOn) {
         //-------------------
         // Routine Sync
@@ -162,23 +172,20 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
             bool palettesAreClose = true;
             if (dataDevice.palette.colors().size() == commDevice.palette.colors().size()) {
                 uint32_t i = 0;
-                for (auto&& color : dataDevice.palette.colors()) {
+                for (const auto& color : dataDevice.palette.colors()) {
                     if (cor::colorDifference(color, commDevice.palette.colors()[i]) > 0.05f) {
                         palettesAreClose = false;
                     }
                     ++i;
                 }
                 paletteInSync = palettesAreClose;
-                if (!paletteBrightnessInSync) {
-                    paletteInSync = false;
-                }
-            }
-        } else {
-            if (!paletteBrightnessInSync) {
-                object["brightness"] = double(dataDevice.palette.brightness());
-                paletteInSync = false;
             }
         }
+        if (!paletteBrightnessInSync) {
+            object["brightness"] = double(dataDevice.palette.brightness());
+            paletteInSync = false;
+        }
+
         if (!colorInSync && dataDevice.routine <= cor::ERoutineSingleColorEnd) {
             paramsInSync = false;
         }
@@ -222,16 +229,6 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
             // qDebug() << " Nanoleaf routine not in sync" << routineToString(dataDevice.routine);
             countOutOfSync++;
         }
-    }
-
-    //-------------------
-    // On/Off Sync
-    //-------------------
-
-    if (dataDevice.isOn != commDevice.isOn) {
-        object["isOn"] = dataDevice.isOn;
-        // qDebug() << "nanoleaf ON/OFF not in sync" << dataDevice.isOn;
-        countOutOfSync++;
     }
 
     bool timeoutInSync = true;

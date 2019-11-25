@@ -234,8 +234,7 @@ void updateGroup(cor::Group& group, const cor::Group& externalGroup) {
     // merge new lights into it
     for (const auto& externalLightID : externalGroup.lights) {
         // search for old light
-        auto result =
-            std::find(group.lights.begin(), group.lights.end(), externalLightID);
+        auto result = std::find(group.lights.begin(), group.lights.end(), externalLightID);
         // add if not found
         if (result == group.lights.end()) {
             group.lights.push_back(externalLightID);
@@ -243,7 +242,7 @@ void updateGroup(cor::Group& group, const cor::Group& externalGroup) {
     }
 }
 
-}
+} // namespace
 
 void GroupData::updateExternallyStoredGroups(const std::list<cor::Group>& externalGroups) {
     // fill in subgroups for each room
@@ -262,15 +261,16 @@ void GroupData::updateExternallyStoredGroups(const std::list<cor::Group>& extern
                 if (internalGroup.name() == externalGroup.name()) {
                     auto groupCopy = internalGroup;
                     updateGroup(groupCopy, externalGroup);
-                    mGroupDict.update(QString::number(internalGroup.uniqueID()).toStdString(), groupCopy);
+                    mGroupDict.update(QString::number(internalGroup.uniqueID()).toStdString(),
+                                      groupCopy);
                     foundGroup = true;
                 }
             }
             if (!foundGroup) {
-               auto result =  mGroupDict.insert(key, externalGroup);
-               if (!result) {
-                   qDebug() << " insert failed" << externalGroup.name();
-               }
+                auto result = mGroupDict.insert(key, externalGroup);
+                if (!result) {
+                    qDebug() << " insert failed" << externalGroup.name();
+                }
             }
         }
     }
@@ -520,7 +520,9 @@ cor::Light parseLightObject(const QJsonObject& object) {
     light.minorAPI = minorAPI;
     light.color = color;
     light.routine = routine;
-    light.palette = Palette(object["palette"].toObject());
+    if (light.routine > cor::ERoutineSingleColorEnd && light.isOn) {
+        light.palette = Palette(object["palette"].toObject());
+    }
     light.speed = speed;
     light.colorMode = colorMode;
     return light;
@@ -560,7 +562,9 @@ cor::Light parseDefaultStateObject(const QJsonObject& object) {
     light.minorAPI = minorAPI;
     light.color = color;
     light.routine = routine;
-    light.palette = Palette(object["palette"].toObject());
+    if (light.routine > cor::ERoutineSingleColorEnd && light.isOn) {
+        light.palette = Palette(object["palette"].toObject());
+    }
     light.speed = speed;
     light.colorMode = colorMode;
     return light;

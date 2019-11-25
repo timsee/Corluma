@@ -547,7 +547,7 @@ void CommNanoleaf::parseCommandRequestUpdatePacket(const nano::LeafController& c
 
         // convert jsonarray array to std::vector<QColor>
         std::vector<QColor> colorVector;
-        for (auto jsonColor : receivedPalette) {
+        for (const auto& jsonColor : receivedPalette) {
             QColor color;
             QJsonObject jColor = jsonColor.toObject();
             color.setHsvF(jColor["hue"].toDouble() / 360.0,
@@ -1045,9 +1045,6 @@ void CommNanoleaf::routineChange(const nano::LeafController& controller,
                                  QJsonObject routineObject) {
     // get values from JSON
     ERoutine routine = stringToRoutine(routineObject["routine"].toString());
-    Palette palette = Palette(routineObject["palette"].toObject());
-
-    int speed = int(routineObject["speed"].toDouble());
     QColor color;
     if (routineObject["hue"].isDouble() && routineObject["sat"].isDouble()
         && routineObject["bri"].isDouble()) {
@@ -1058,6 +1055,7 @@ void CommNanoleaf::routineChange(const nano::LeafController& controller,
     if (routine == ERoutine::singleSolid) {
         singleSolidColorChange(controller, color);
     } else {
+        int speed = int(routineObject["speed"].toDouble());
         cor::Light light(controller.serialNumber, controller.name, ECommType::nanoleaf);
         fillDevice(light);
         light.routine = routine;
@@ -1065,6 +1063,7 @@ void CommNanoleaf::routineChange(const nano::LeafController& controller,
         if (light.routine <= cor::ERoutineSingleColorEnd) {
             light.color = color;
         } else {
+            Palette palette = Palette(routineObject["palette"].toObject());
             light.palette = palette;
         }
 

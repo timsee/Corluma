@@ -16,50 +16,6 @@
 #include "utils/qt.h"
 
 
-namespace {
-
-int findFontSize(QWidget* parent, QWidget* widget, cor::EWidgetType type) {
-    QString text("123456789");
-    if (type == cor::EWidgetType::full) {
-        text = QString("1234567891234567");
-    }
-    QLabel label(text, parent);
-    // calcuate the text's size
-    auto fontWidth = label.fontMetrics().boundingRect(text).width();
-    // calculate the button's size
-    auto widgetWidth = widget->width();
-    QFont font(label.font());
-
-    auto fontPtSize = label.font().pointSize();
-    if (fontWidth > widgetWidth) {
-        for (auto i = fontPtSize - 1; i > 0; --i) {
-            font.setPointSize(i);
-            label.setFont(font);
-            fontPtSize = i;
-            fontWidth = label.fontMetrics().boundingRect(text).width();
-            if (fontWidth < widgetWidth) {
-                // font is small enough to fit
-                break;
-            }
-        }
-    } else {
-        for (auto i = fontPtSize; i < 18; ++i) {
-            font.setPointSize(i);
-            label.setFont(font);
-            fontPtSize = i;
-            fontWidth = label.fontMetrics().boundingRect(text).width();
-            if (fontWidth > widgetWidth) {
-                // one size smaller is ideal
-                fontPtSize -= 1;
-                break;
-            }
-        }
-    }
-    return fontPtSize;
-}
-
-} // namespace
-
 ListLightWidget::ListLightWidget(const cor::Light& device,
                                  bool setHighlightable,
                                  cor::EWidgetType type,
@@ -68,7 +24,7 @@ ListLightWidget::ListLightWidget(const cor::Light& device,
     : cor::ListItemWidget(device.uniqueID(), parent),
       mType{type},
       mSwitchState{switchState},
-      mFontPtSize(findFontSize(parent, this, type)) {
+      mFontPtSize(16) {
     mShouldHighlight = setHighlightable;
     init(device);
     mBlockStateUpdates = false;
@@ -102,11 +58,6 @@ void ListLightWidget::init(const cor::Light& device) {
 
     QString nameText = createName(device);
     mController->setText(nameText);
-#ifdef MOBILE_BUILD
-    auto font = mController->font();
-    font.setPointSize(mFontPtSize);
-    mController->setFont(font);
-#endif // MOBILE_BUILD
 
     mController->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 
@@ -244,7 +195,9 @@ void ListLightWidget::paintEvent(QPaintEvent*) {
         if (mType == cor::EWidgetType::full) {
             rect = QRect(x, 10, width() / 2, int(height() * 0.6f / 2));
         } else {
-            rect = QRect(x, int(height() * 0.25f), int(height() * 0.5f), int(height() * 0.5f));
+            auto side = int(height() * 0.4f);
+            auto xPos = std::max(x, int(this->width() * 0.18f - x + side));
+            rect = QRect(xPos, int(height() * 0.3f), side, side);
         }
 
         // make brush with icon data in it
@@ -362,13 +315,6 @@ void ListLightWidget::resizeIcons() {
         QSize onOffSize(size.width() * 2, size.height() * 2);
         mOnOffSwitch->setFixedSize(size);
     }
-
-#ifdef MOBILE_BUILD
-    mFontPtSize = findFontSize(parentWidget(), this, mType);
-    auto font = mController->font();
-    font.setPointSize(mFontPtSize);
-    mController->setFont(font);
-#endif // MOBILE_BUILD
 }
 
 

@@ -52,6 +52,9 @@ public:
     /// getter for mood page
     MoodPage* moodPage() { return mMoodPage; }
 
+    /// loads the mood page programmatically
+    void loadMoodPage();
+
 private slots:
 
     /// called whenever the light count changes

@@ -35,11 +35,23 @@ public:
     /// programmatically resize
     void resize();
 
+    /// true if in, false if widget is out
+    bool isIn() const noexcept { return mIsIn; }
+
+    /// programmatically move the single color state widget in
+    void pushIn(const QPoint&);
+
+    /// programmatically move the single color state widget out
+    void pushOut(const QPoint&);
+
 protected:
     /// called when widget resizes
     void resizeEvent(QResizeEvent*);
 
 private:
+    /// stores if widget is in or not
+    bool mIsIn;
+
     /// cached version of the light
     cor::Light mLight;
 

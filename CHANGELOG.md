@@ -592,5 +592,11 @@ ___
 * Fixed `clang-tidy` warnings.
 * Fixed miscellaneous bugs.
 
+### **v0.17.46**
+#### The App States Update
+* `SyncWidgets` no longer show when nothning is being synced.
+* Everything behind the `LeftHandMenu` is now greyed out when the menu is open.
+* Fixed UI issues with loading new app data from json.
+* Fixed miscellaneous bugs.
 
 

@@ -151,6 +151,6 @@ int TimeoutWidget::resize(int widgetHeight) {
         currentY += mMinutesButton->height();
     }
 
-    setGeometry(parentWidth * 0.025, currentY * 0.025, parentWidth * 0.95, currentY * 0.975);
+    setGeometry(parentWidth * 0.025, currentY * 0.025, parentWidth * 0.95, currentY);
     return currentY;
 }
