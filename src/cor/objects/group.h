@@ -47,6 +47,7 @@ public:
     /// if a group has subgroups. this contains a list of all groups that are subgroups.
     const std::vector<std::uint64_t>& subgroups() const noexcept { return mSubgroups; }
 
+    /// setter for subgroups
     void subgroups(const std::vector<std::uint64_t>& subgroups) { mSubgroups = subgroups; }
 
     /// list of lights

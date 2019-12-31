@@ -277,14 +277,18 @@ void ArduCorDiscovery::handleDiscoveredController(const cor::Controller& discove
             auto it = std::find(mNotFoundControllers.begin(),
                                 mNotFoundControllers.end(),
                                 notFoundController);
-            mNotFoundControllers.erase(it);
+            if (it != mNotFoundControllers.end()) {
+                mNotFoundControllers.erase(it);
+            }
             if (notFoundController.type == ECommType::HTTP) {
                 auto controllerCopy = notFoundController;
                 controllerCopy.type = ECommType::UDP;
                 auto it = std::find(mNotFoundControllers.begin(),
                                     mNotFoundControllers.end(),
                                     controllerCopy);
-                mNotFoundControllers.erase(it);
+                if (it != mNotFoundControllers.end()) {
+                    mNotFoundControllers.erase(it);
+                }
             }
             if (notFoundController.type == ECommType::UDP) {
                 auto controllerCopy = notFoundController;
@@ -292,7 +296,9 @@ void ArduCorDiscovery::handleDiscoveredController(const cor::Controller& discove
                 auto it = std::find(mNotFoundControllers.begin(),
                                     mNotFoundControllers.end(),
                                     controllerCopy);
-                mNotFoundControllers.erase(it);
+                if (it != mNotFoundControllers.end()) {
+                    mNotFoundControllers.erase(it);
+                }
             }
 
             // add to the found controllers
