@@ -51,6 +51,9 @@ public:
     /// resizes the contents in the widget
     void resize();
 
+    /// true if timeout should be hidden, false otherwise
+    void hideTimeout(bool shouldHide) { mHideTimeout = shouldHide; }
+
 signals:
 
     /// emitted when a protocol is turned off and on.
@@ -161,6 +164,9 @@ private:
     /// pointer to the app states that determine if a protocol (such as arducor or nanoleaf) is
     /// currently enabled
     AppSettings* mAppSettings;
+
+    /// true if timeout should be hidden, false otherwise
+    bool mHideTimeout;
 };
 
 #endif // GLOBALSETTINGSWIDGET_H

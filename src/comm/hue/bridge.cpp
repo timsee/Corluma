@@ -64,7 +64,7 @@ QJsonObject bridgeToJson(const Bridge& bridge) {
     object["api"] = bridge.api;
     object["macaddress"] = bridge.macaddress;
     QJsonArray lightArray;
-    for (const auto& light : bridge.lights.itemVector()) {
+    for (const auto& light : bridge.lights.items()) {
         QJsonObject jsonObject;
         jsonObject["uniqueid"] = light.uniqueID();
         jsonObject["index"] = light.index;

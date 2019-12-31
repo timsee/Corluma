@@ -9,7 +9,7 @@
 #include "utils/qt.h"
 
 ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
-                                         const std::list<cor::Mood>& moods,
+                                         const std::vector<cor::Mood>& moods,
                                          const QString& key,
                                          bool hideEdit,
                                          QWidget* parent)
@@ -27,7 +27,7 @@ ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
 }
 
 
-void ListMoodGroupWidget::updateMoods(const std::list<cor::Mood>& moods, bool removeIfNotFound) {
+void ListMoodGroupWidget::updateMoods(const std::vector<cor::Mood>& moods, bool removeIfNotFound) {
     std::vector<bool> foundWidgets(moods.size(), false);
     for (const auto& mood : moods) {
         bool foundMood = false;
@@ -108,14 +108,13 @@ void ListMoodGroupWidget::resizeInteralWidgets() {
     }
 }
 
-void ListMoodGroupWidget::setCheckedMoods(std::list<QString> checkedMoods) {
+void ListMoodGroupWidget::setCheckedMoods(const std::vector<QString>& checkedMoods) {
     for (auto&& existingWidget : mListLayout.widgets()) {
         auto widget = qobject_cast<ListMoodPreviewWidget*>(existingWidget);
         Q_ASSERT(widget);
 
-
         bool checkedNameFound = false;
-        for (auto&& checkedName : checkedMoods) {
+        for (const auto& checkedName : checkedMoods) {
             if (widget->moodName() == checkedName) {
                 checkedNameFound = true;
                 widget->setChecked(true);

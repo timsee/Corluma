@@ -27,7 +27,7 @@ public:
      *
      * \param lights list of lights to load into the HusLightInfoListWidget
      */
-    void updateHues(std::list<HueLight> lights);
+    void updateHues(std::vector<HueLight> lights);
 
     /*!
      * \brief updateControllers update the controllers for nanoleafs to any
@@ -35,10 +35,10 @@ public:
      *
      * \param controllers nanoleaf controllers to use as the recent set.
      */
-    void updateControllers(std::list<nano::LeafController> controllers);
+    void updateControllers(std::vector<nano::LeafController> controllers);
 
     /// updates the arducor lights in the light info list widget
-    void updateLights(std::list<cor::Light> lights);
+    void updateLights(const std::vector<cor::Light>& lights);
 
     /*!
      * \brief lookupCurrentLight looks up the current light based on what is currently selected

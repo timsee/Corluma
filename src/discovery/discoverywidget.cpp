@@ -9,15 +9,15 @@
 
 DiscoveryWidget::DiscoveryWidget(QWidget* parent) : QWidget(parent), mComm{nullptr} {}
 
-void DiscoveryWidget::fillList(QListWidget* list, std::list<cor::Controller>& connections) {
-    std::list<QString> strings;
+void DiscoveryWidget::fillList(QListWidget* list, std::vector<cor::Controller>& connections) {
+    std::vector<QString> strings;
     for (auto&& connection : connections) {
         strings.push_back(connection.name);
     }
     fillList(list, strings);
 }
 
-void DiscoveryWidget::fillList(QListWidget* list, std::list<QString>& connections) {
+void DiscoveryWidget::fillList(QListWidget* list, std::vector<QString>& connections) {
     for (auto&& connection : connections) {
         // check if item is already in the table, if not, add it
         bool connectionFound = false;

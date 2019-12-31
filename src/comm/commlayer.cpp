@@ -87,11 +87,11 @@ bool CommLayer::fillDevice(cor::Light& device) {
     return commByType(device.commType())->fillDevice(device);
 }
 
-std::list<cor::Light> CommLayer::allDevices() {
-    std::list<cor::Light> list;
+std::vector<cor::Light> CommLayer::allDevices() {
+    std::vector<cor::Light> list;
     for (int i = 0; i < int(ECommType::MAX); ++i) {
         const auto& table = deviceTable(ECommType(i));
-        for (const auto& device : table.itemList()) {
+        for (const auto& device : table.items()) {
             list.push_back(device);
         }
     }
@@ -105,7 +105,7 @@ std::list<cor::Light> CommLayer::allDevices() {
 void CommLayer::deleteHueGroup(const QString& name) {
     // check if group exists
     qDebug() << " delete hue group! " << name;
-    for (const auto& bridge : mHue->bridges().itemVector()) {
+    for (const auto& bridge : mHue->bridges().items()) {
         for (const auto& group : mHue->groups(bridge)) {
             if (group.name() == name) {
                 mHue->deleteGroup(bridge, group);
@@ -141,10 +141,10 @@ cor::Light CommLayer::addLightMetaData(cor::Light light) {
     return light;
 }
 
-std::list<cor::Light> CommLayer::lightListFromGroup(const cor::Group& group) {
-    std::list<cor::Light> lightList;
+std::vector<cor::Light> CommLayer::lightListFromGroup(const cor::Group& group) {
+    std::vector<cor::Light> lightList;
     const auto& allLights = allDevices();
-    for (const auto& lightID : group.lights) {
+    for (const auto& lightID : group.lights()) {
         for (const auto& light : allLights) {
             if (lightID == light.uniqueID()) {
                 lightList.push_back(light);
@@ -159,12 +159,12 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
     cor::Dictionary<cor::Light> moodDict;
 
     // split defaults into rooms and groups
-    std::list<std::pair<cor::Group, cor::Light>> rooms;
-    std::list<std::pair<cor::Group, cor::Light>> groups;
-    for (const auto& defaultState : mood.defaults) {
-        for (const auto& collection : mGroups->groups().itemList()) {
+    std::vector<std::pair<cor::Group, cor::Light>> rooms;
+    std::vector<std::pair<cor::Group, cor::Light>> groups;
+    for (const auto& defaultState : mood.defaults()) {
+        for (const auto& collection : mGroups->groups().items()) {
             if (defaultState.first == collection.uniqueID()) {
-                if (collection.isRoom) {
+                if (collection.isRoom()) {
                     rooms.emplace_back(collection, defaultState.second);
                 } else {
                     groups.emplace_back(collection, defaultState.second);
@@ -174,12 +174,12 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
     }
 
     // sort both alphabettically
-    rooms.sort(sortListByGroupName);
-    groups.sort(sortListByGroupName);
+    std::sort(rooms.begin(), rooms.end(), sortListByGroupName);
+    std::sort(groups.begin(), groups.end(), sortListByGroupName);
 
     // first apply the room(s) ...
     for (const auto& room : rooms) {
-        for (const auto& lightID : room.first.lights) {
+        for (const auto& lightID : room.first.lights()) {
             try {
                 auto light = lightByID(lightID);
                 light = addLightMetaData(light);
@@ -200,7 +200,7 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
 
     // ... then apply the group(s) ...
     for (const auto& group : groups) {
-        for (const auto& light : group.first.lights) {
+        for (const auto& light : group.first.lights()) {
             try {
                 auto lightCopy = lightByID(light);
                 lightCopy = addLightMetaData(lightCopy);
@@ -221,8 +221,8 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
 
 
     // ... now check that all lights exist
-    std::list<cor::Light> lightList;
-    for (const auto& light : mood.lights) {
+    std::vector<cor::Light> lightList;
+    for (const auto& light : mood.lights()) {
         auto lightInMemory = lightByID(light.uniqueID());
         if (lightInMemory.isValid()) {
             lightList.push_back(light);
@@ -251,8 +251,8 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
 }
 
 
-std::list<cor::Light> CommLayer::hueLightsToDevices(std::list<HueLight> hues) {
-    std::list<cor::Light> list;
+std::vector<cor::Light> CommLayer::hueLightsToDevices(std::vector<HueLight> hues) {
+    std::vector<cor::Light> list;
     for (const auto& hue : hues) {
         cor::Light device = static_cast<cor::Light>(hue);
         list.push_back(device);

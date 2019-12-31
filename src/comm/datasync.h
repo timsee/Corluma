@@ -186,7 +186,7 @@ protected:
      * \brief mThrottleList list of all known controllers that packets have been sent to and the
      *  the last time a packet was sent. Used to throttle messages from sending too frequently.
      */
-    std::list<SThrottle> mThrottleList;
+    std::vector<SThrottle> mThrottleList;
 
     /*!
      * \brief checkThrottle checks if any messages have been sent to this controller recently and

@@ -29,6 +29,9 @@ public:
     /// path to save file
     const QString& savePath() { return mSavePath; }
 
+    /// true if save file exists, false if its never been saved
+    bool saveExists();
+
 protected:
     /*!
      * \brief removeJSONObject remove the json object from the array with the given key and value

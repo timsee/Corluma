@@ -232,8 +232,8 @@ void SearchWidget::removeKey(const QString& key) {
     }
 }
 
-std::list<QString> SearchWidget::searchingFor() {
-    std::list<QString> searchingForList;
+std::vector<QString> SearchWidget::searchingFor() {
+    std::vector<QString> searchingForList;
     for (int i = 0; i < mDiscoveringListWidget->count(); ++i) {
         QListWidgetItem* item = mDiscoveringListWidget->item(i);
         searchingForList.push_back(item->text());

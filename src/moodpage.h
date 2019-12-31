@@ -38,7 +38,7 @@ public:
     /// called when the widget is shown
     void show(std::uint64_t currentMood,
               const cor::Dictionary<cor::Mood>& moods,
-              const std::list<cor::Group>& roomList);
+              const std::vector<cor::Group>& roomList);
 
     /*!
      * \brief makeMoodsCollections make all the mood-based UI widgets based on the saved JSON data
@@ -47,7 +47,7 @@ public:
      * \param moods list of all saved moods
      */
     void makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
-                              const std::list<cor::Group>& roomList);
+                              const std::vector<cor::Group>& roomList);
 
     /// called when the widget is hidden
     void hide();
@@ -138,7 +138,7 @@ private:
      * \return pointer to the newly created ListGroupGroupWidget
      */
     ListMoodGroupWidget* initMoodsCollectionWidget(const QString& name,
-                                                   const std::list<cor::Mood>& moods,
+                                                   const std::vector<cor::Mood>& moods,
                                                    const QString& key,
                                                    bool hideEdit = false);
 

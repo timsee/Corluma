@@ -49,7 +49,10 @@ void LeafDiscovery::foundNewController(nano::LeafController newController) {
     // check if the controller exists in the unknown group, delete if found
     for (auto unknownController : mUnknownControllers) {
         if (unknownController.hardwareName == newController.hardwareName) {
-            mUnknownControllers.remove(unknownController);
+            auto it = std::find(mUnknownControllers.begin(),
+                                mUnknownControllers.end(),
+                                unknownController);
+            mUnknownControllers.erase(it);
             break;
         }
     }
@@ -58,7 +61,10 @@ void LeafDiscovery::foundNewController(nano::LeafController newController) {
     for (auto notFoundController : mNotFoundControllers) {
         if (notFoundController.authToken == newController.authToken) {
             newController.name = notFoundController.name;
-            mNotFoundControllers.remove(notFoundController);
+            auto it = std::find(mNotFoundControllers.begin(),
+                                mNotFoundControllers.end(),
+                                notFoundController);
+            mNotFoundControllers.erase(it);
             break;
         }
     }
@@ -72,7 +78,10 @@ void LeafDiscovery::removeNanoleaf(const nano::LeafController& controllerToRemov
     // check if the controller exists in the unknown group, delete if found
     for (auto unknownController : mUnknownControllers) {
         if (unknownController.hardwareName == controllerToRemove.hardwareName) {
-            mUnknownControllers.remove(unknownController);
+            auto it = std::find(mNotFoundControllers.begin(),
+                                mNotFoundControllers.end(),
+                                unknownController);
+            mUnknownControllers.erase(it);
             updateJson = true;
             break;
         }
@@ -81,14 +90,17 @@ void LeafDiscovery::removeNanoleaf(const nano::LeafController& controllerToRemov
     // check if the controlle exists in the not found group, delete if found
     for (auto notFoundController : mNotFoundControllers) {
         if (notFoundController.authToken == controllerToRemove.authToken) {
-            mNotFoundControllers.remove(notFoundController);
+            auto it = std::find(mNotFoundControllers.begin(),
+                                mNotFoundControllers.end(),
+                                notFoundController);
+            mNotFoundControllers.erase(it);
             updateJson = true;
             break;
         }
     }
 
     bool deleteFromDict = false;
-    for (const auto& foundController : mFoundControllers.itemVector()) {
+    for (const auto& foundController : mFoundControllers.items()) {
         if (foundController.serialNumber == controllerToRemove.serialNumber) {
             updateJson = true;
             deleteFromDict = true;
@@ -151,7 +163,7 @@ void LeafDiscovery::receivedUPnP(const QHostAddress& sender, const QString& payl
             }
         }
         // TODO: why is this hardware name and not serial number?
-        for (const auto& foundController : mFoundControllers.itemVector()) {
+        for (const auto& foundController : mFoundControllers.items()) {
             if (foundController.hardwareName == controller.hardwareName) {
                 isFound = true;
             }
@@ -239,7 +251,7 @@ nano::LeafController LeafDiscovery::findControllerByIP(const QString& IP) {
         QString auth = pieces[5];
 
         bool found = false;
-        for (const auto& foundController : mFoundControllers.itemVector()) {
+        for (const auto& foundController : mFoundControllers.items()) {
             if (auth == foundController.authToken) {
                 found = true;
                 controller = foundController;
@@ -328,7 +340,7 @@ void LeafDiscovery::connectUPnP(UPnPDiscovery* upnp) {
 }
 
 bool LeafDiscovery::isControllerConnected(const nano::LeafController& controller) {
-    for (const auto& foundController : mFoundControllers.itemVector()) {
+    for (const auto& foundController : mFoundControllers.items()) {
         if (foundController.IP == controller.IP && foundController.authToken == controller.authToken
             && foundController.port == controller.port) {
             return true;

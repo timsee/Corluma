@@ -29,7 +29,7 @@ public:
      * \brief updateDevices update the devices in the cor::Button to show the exact routine.
      * \param devices list of devices to display
      */
-    void updateDevices(const std::list<cor::Light>& devices);
+    void updateDevices(const std::vector<cor::Light>& devices);
 
     /// set whether or not to hide off devices
     void hideOffDevices(bool shouldHide) { mHideOffDevices = shouldHide; }

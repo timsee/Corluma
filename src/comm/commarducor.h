@@ -71,7 +71,7 @@ public:
     ArduCorDiscovery* discovery() { return mDiscovery; }
 
     /// getter for all connected lights
-    std::list<cor::Light> lights();
+    std::vector<cor::Light> lights();
 
 signals:
 

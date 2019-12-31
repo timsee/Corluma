@@ -50,7 +50,7 @@ public:
      *
      * \param devices list of devices to compare to the widget.
      */
-    void setCheckedDevices(std::list<cor::Light> devices);
+    void setCheckedDevices(std::vector<cor::Light> devices);
 
     /*!
      * \brief updateDevices update the state and number of devices displayed in the widget.
@@ -66,13 +66,13 @@ public:
      *
      * \return all devices being displayed by the widget.
      */
-    const std::list<QString>& devices() { return mGroup.lights; }
+    const std::vector<QString>& devices() { return mGroup.lights(); }
 
     /// getter for just the reachable devices in the group.
-    std::list<cor::Light> reachableDevices();
+    std::vector<cor::Light> reachableDevices();
 
     /// getter for checked devices
-    std::list<cor::Light> checkedDevices();
+    std::vector<cor::Light> checkedDevices();
 
     /*!
      * \brief setShowButtons shows and hides all buttons on the widget
@@ -94,13 +94,13 @@ public:
     void moveWidgets(QSize size, QPoint offset);
 
     /// show the devices provided
-    void showDevices(const std::list<cor::Light>& devices);
+    void showDevices(const std::vector<cor::Light>& devices);
 
     /// update the top widget
     void updateTopWidget();
 
     /// returns the number of widgets shown.
-    std::uint32_t numberOfWidgetsShown();
+    std::size_t numberOfWidgetsShown();
 
     /// resize the widget
     void resize();

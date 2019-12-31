@@ -42,9 +42,9 @@ void MoodDetailsWidget::display(const cor::Mood& mood, const QSize& size) {
     auto width = int(size.width() * 0.95);
 
     // display aditional info, if needed
-    if (!mood.additionalInfo.isEmpty()) {
+    if (!mood.additionalInfo().isEmpty()) {
         mMoreInfoText->setVisible(true);
-        mMoreInfoText->setText(mood.additionalInfo);
+        mMoreInfoText->setText(mood.additionalInfo());
         mMoreInfoText->setGeometry(0, yPos, width, boxSize / 2);
         yPos += boxSize / 2;
     } else {
@@ -52,16 +52,16 @@ void MoodDetailsWidget::display(const cor::Mood& mood, const QSize& size) {
     }
 
     // split into groups and rooms
-    std::list<cor::Light> groupStates;
-    std::list<cor::Light> roomStates;
-    for (const auto& defaultPair : mood.defaults) {
+    std::vector<cor::Light> groupStates;
+    std::vector<cor::Light> roomStates;
+    for (const auto& defaultPair : mood.defaults()) {
         // look up group
         auto groupResult = mGroups->groups().item(QString::number(defaultPair.first).toStdString());
         if (groupResult.second) {
             auto defaultState = defaultPair.second;
             defaultState.name = groupResult.first.name();
             defaultState.hardwareType = ELightHardwareType::connectedGroup;
-            if (groupResult.first.isRoom) {
+            if (groupResult.first.isRoom()) {
                 roomStates.push_back(defaultState);
             } else {
                 groupStates.push_back(defaultState);

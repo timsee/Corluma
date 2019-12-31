@@ -140,7 +140,7 @@ public:
     cor::Dictionary<SHueSchedule> schedules;
 
     /// list of the groups stored on the bridge
-    std::list<cor::Group> groups;
+    std::vector<cor::Group> groups;
 
     /// current state of the bridge during discovery
     EBridgeDiscoveryState state = EBridgeDiscoveryState::lookingForResponse;

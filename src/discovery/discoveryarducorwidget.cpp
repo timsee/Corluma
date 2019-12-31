@@ -40,7 +40,7 @@ DiscoveryArduCorWidget::DiscoveryArduCorWidget(CommLayer* comm, QWidget* parent)
 
 
 void DiscoveryArduCorWidget::handleDiscovery(bool isCurrentCommType) {
-    const auto& controllers = mComm->arducor()->discovery()->controllers().itemVector();
+    const auto& controllers = mComm->arducor()->discovery()->controllers().items();
     const auto& undiscoveredControllers = mComm->arducor()->discovery()->undiscoveredControllers();
 
     if (isCurrentCommType) {

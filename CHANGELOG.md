@@ -600,3 +600,11 @@ ___
 * Fixed miscellaneous bugs.
 
 
+### **v0.17.5**
+#### The Vector Update
+- Changed all std::list to std::vector
+- Adjusted `cor::Group` and `cor::Mood` to use proper getters/setters.
+- Added a visual indication when a light can not be reached. 
+- Split `EditGrouPage` into `EditPage`, `EditGroupPage` and `EditMoodPage`.
+
+

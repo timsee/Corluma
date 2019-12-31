@@ -46,6 +46,23 @@ void GroupButtonsWidget::addGroup(const QString& group) {
     });
 }
 
+
+void GroupButtonsWidget::removeGroup(const QString& group) {
+    // get relabeled name
+    auto adjustedName = renamedGroup(group);
+    auto successful = mRelabeledNames.remove(adjustedName.toStdString());
+    GUARD_EXCEPTION(successful, "removing group from relabeled names failed");
+
+    // remove from relabeled name
+    for (auto groupButton : mButtons) {
+        if (groupButton->key() == adjustedName) {
+            auto it = std::find(mButtons.begin(), mButtons.end(), groupButton);
+            mButtons.erase(it);
+            delete groupButton;
+        }
+    }
+}
+
 void GroupButtonsWidget::updateCheckedDevices(const QString& key,
                                               uint32_t checkedDeviceCount,
                                               uint32_t reachableDeviceCount) {
@@ -80,8 +97,8 @@ void GroupButtonsWidget::buttonPressed(const QString& key) {
     }
 }
 
-std::list<QString> GroupButtonsWidget::groupNames() {
-    std::list<QString> groupList;
+std::vector<QString> GroupButtonsWidget::groupNames() {
+    std::vector<QString> groupList;
     for (const auto& key : mRelabeledNames.keys()) {
         groupList.emplace_back(QString(key.c_str()));
     }
@@ -104,6 +121,7 @@ void GroupButtonsWidget::resize(const QSize& topWidgetSize, const QRect& spacerG
                                  yPos,
                                  topWidgetSize.width() / mGroupCount,
                                  topWidgetSize.height());
+        mButtons[i]->setVisible(true);
     }
     mSpacer->setGeometry(spacerGeometry);
 }

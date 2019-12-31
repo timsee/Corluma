@@ -138,6 +138,9 @@ private:
     /// pixmap used by main icon
     QPixmap mIconPixmap;
 
+    /// pixmap shown when no connection can be established
+    QPixmap mNoConnectionPixmap;
+
     /// type of ListLightWidget
     cor::EWidgetType mType;
 

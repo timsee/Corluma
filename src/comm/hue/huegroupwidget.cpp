@@ -25,7 +25,7 @@ HueGroupWidget::HueGroupWidget(QWidget* parent, const cor::Group& group) : QWidg
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mName->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mIndex = new QLabel("<b>Index:</b> " + QString::number(group.index), this);
+    mIndex = new QLabel("<b>Index:</b> " + QString::number(group.index()), this);
     mIndex->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mIndex->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
@@ -41,13 +41,13 @@ HueGroupWidget::HueGroupWidget(QWidget* parent, const cor::Group& group) : QWidg
 
 QString HueGroupWidget::generateDescription(const cor::Group& group) {
     QString returnString;
-    if (group.isRoom) {
+    if (group.isRoom()) {
         returnString += "<i>Room";
     } else {
         returnString += "<i>Group";
     }
     returnString += ", with ";
-    returnString += QString::number(group.lights.size());
+    returnString += QString::number(group.lights().size());
     returnString += " lights.</i>";
     return returnString;
 }

@@ -83,7 +83,7 @@ void BridgeDiscovery::startupTimerTimeout() {
 //-----------------
 
 void BridgeDiscovery::updateSchedules(const hue::Bridge& bridge,
-                                      const std::list<SHueSchedule>& schedules) {
+                                      const std::vector<SHueSchedule>& schedules) {
     const auto& bridgeResult = mFoundBridges.item(bridge.id.toStdString());
     if (bridgeResult.second) {
         auto foundBridge = bridgeResult.first;
@@ -97,7 +97,8 @@ void BridgeDiscovery::updateSchedules(const hue::Bridge& bridge,
     }
 }
 
-void BridgeDiscovery::updateGroups(const hue::Bridge& bridge, const std::list<cor::Group>& groups) {
+void BridgeDiscovery::updateGroups(const hue::Bridge& bridge,
+                                   const std::vector<cor::Group>& groups) {
     const auto& bridgeResult = mFoundBridges.item(bridge.id.toStdString());
     if (bridgeResult.second) {
         auto foundBridge = bridgeResult.first;
@@ -108,7 +109,7 @@ void BridgeDiscovery::updateGroups(const hue::Bridge& bridge, const std::list<co
 }
 
 void BridgeDiscovery::reloadGroupData() {
-    for (const auto& bridge : mFoundBridges.itemVector()) {
+    for (const auto& bridge : mFoundBridges.items()) {
         mGroups->updateExternallyStoredGroups(bridge.groups);
     }
 }
@@ -149,6 +150,9 @@ void BridgeDiscovery::attemptNUPnPDiscovery() {
     QNetworkRequest request = QNetworkRequest(QUrl(kNUPnPAddress));
     request.setHeader(QNetworkRequest::ContentTypeHeader,
                       QStringLiteral("text/html; charset=utf-8"));
+#ifdef DEBUG_BRIDGE_DISCOVERY
+    qDebug() << __func__;
+#endif
     mNetworkManager->get(request);
 }
 
@@ -160,6 +164,9 @@ void BridgeDiscovery::attemptFinalCheck(const hue::Bridge& bridge) {
     QNetworkRequest request = QNetworkRequest(QUrl(urlString));
     request.setHeader(QNetworkRequest::ContentTypeHeader,
                       QStringLiteral("text/html; charset=utf-8"));
+#ifdef DEBUG_BRIDGE_DISCOVERY
+    qDebug() << __func__;
+#endif
     mNetworkManager->get(request);
 }
 
@@ -180,7 +187,7 @@ bool BridgeDiscovery::doesIPExist(const QString& ip) {
         }
     }
 
-    for (const auto& found : mFoundBridges.itemVector()) {
+    for (const auto& found : mFoundBridges.items()) {
         if (found.IP == ip) {
             return true;
         }
@@ -202,6 +209,9 @@ void BridgeDiscovery::requestUsername(const hue::Bridge& bridge) {
     json["devicetype"] = deviceID;
     QJsonDocument doc(json);
     QString strJson(doc.toJson(QJsonDocument::Compact));
+#ifdef DEBUG_BRIDGE_DISCOVERY
+    qDebug() << __func__;
+#endif
     mNetworkManager->post(request, strJson.toUtf8());
 }
 
@@ -236,7 +246,10 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
                             if (bridge.username == username && bridge.IP == IP) {
                                 bridgeFound = true;
                                 bridgeToMove = bridge;
-                                mNotFoundBridges.remove(bridge);
+                                auto it = std::find(mNotFoundBridges.begin(),
+                                                    mNotFoundBridges.end(),
+                                                    bridge);
+                                mNotFoundBridges.erase(it);
                                 break;
                             }
                         }
@@ -505,7 +518,7 @@ HueLight BridgeDiscovery::lightFromBridgeIDAndIndex(const QString& bridgeID, int
     const auto& bridgeResult = mFoundBridges.item(bridgeID.toStdString());
     if (bridgeResult.second) {
         auto foundBridge = bridgeResult.first;
-        for (const auto& light : foundBridge.lights.itemVector()) {
+        for (const auto& light : foundBridge.lights.items()) {
             if (light.index == index && index != 0) {
                 return light;
             }
@@ -515,7 +528,7 @@ HueLight BridgeDiscovery::lightFromBridgeIDAndIndex(const QString& bridgeID, int
 }
 
 hue::Bridge BridgeDiscovery::bridgeFromLight(const HueLight& light) {
-    for (auto foundBridge : mFoundBridges.itemVector()) {
+    for (auto foundBridge : mFoundBridges.items()) {
         auto lightResult = foundBridge.lights.key(light);
         if (lightResult.second) {
             return foundBridge;
@@ -525,7 +538,7 @@ hue::Bridge BridgeDiscovery::bridgeFromLight(const HueLight& light) {
 }
 
 hue::Bridge BridgeDiscovery::bridgeFromIP(const QString& IP) {
-    for (const auto& foundBridge : mFoundBridges.itemVector()) {
+    for (const auto& foundBridge : mFoundBridges.items()) {
         if (IP == foundBridge.IP) {
             return foundBridge;
         }
@@ -533,10 +546,10 @@ hue::Bridge BridgeDiscovery::bridgeFromIP(const QString& IP) {
     return {};
 }
 
-std::list<HueLight> BridgeDiscovery::lights() {
-    std::list<HueLight> lights;
-    for (const auto& bridge : mFoundBridges.itemList()) {
-        auto itemCopy = bridge.lights.itemList();
+std::vector<HueLight> BridgeDiscovery::lights() {
+    std::vector<HueLight> lights;
+    for (const auto& bridge : mFoundBridges.items()) {
+        auto itemCopy = bridge.lights.items();
         lights.insert(lights.end(), itemCopy.begin(), itemCopy.end());
     }
     return lights;
@@ -625,7 +638,7 @@ void BridgeDiscovery::updateJSONLights(const hue::Bridge& bridge, const QJsonArr
     QJsonArray array = mJsonData.array();
     QJsonObject newJsonObject = bridgeToJson(bridge);
     newJsonObject["lights"] = lightsArray;
-    std::list<QString> deletedLights;
+    std::vector<QString> deletedLights;
     int x = 0;
     // loop through existing controllers
     bool foundBridge = false;
@@ -723,7 +736,8 @@ void BridgeDiscovery::deleteBridge(const hue::Bridge& bridge) {
     // remove from not found
     for (auto&& notFoundBridge : mNotFoundBridges) {
         if (bridge.id == notFoundBridge.id) {
-            mNotFoundBridges.remove(notFoundBridge);
+            auto it = std::find(mNotFoundBridges.begin(), mNotFoundBridges.end(), notFoundBridge);
+            mNotFoundBridges.erase(it);
             break;
         }
     }
@@ -738,14 +752,14 @@ void BridgeDiscovery::deleteBridge(const hue::Bridge& bridge) {
 
 std::uint64_t BridgeDiscovery::keyFromGroupName(const QString& name) {
     // check for ID in GroupsParser in case they get merged
-    for (const auto& group : mGroups->groups().itemList()) {
+    for (const auto& group : mGroups->groups().items()) {
         if (group.name() == name) {
             return group.uniqueID();
         }
     }
 
     // if it doesn't exist, but does exist in bridge memory, add that ID
-    for (const auto& bridge : mFoundBridges.itemVector()) {
+    for (const auto& bridge : mFoundBridges.items()) {
         for (const auto& group : bridge.groups) {
             if (group.name() == name) {
                 return group.uniqueID();
@@ -758,7 +772,7 @@ std::uint64_t BridgeDiscovery::keyFromGroupName(const QString& name) {
 
 std::uint64_t BridgeDiscovery::generateNewUniqueKey() {
     auto minID = std::numeric_limits<std::uint64_t>::max();
-    for (const auto& bridge : mFoundBridges.itemVector()) {
+    for (const auto& bridge : mFoundBridges.items()) {
         for (const auto& group : bridge.groups) {
             if (group.uniqueID() < minID) {
                 minID = group.uniqueID();
@@ -771,7 +785,7 @@ std::uint64_t BridgeDiscovery::generateNewUniqueKey() {
 QString BridgeDiscovery::generateUniqueName() {
     QString defaultNamePrefix("Bridge ");
     auto index = 1;
-    for (const auto& bridge : mFoundBridges.itemVector()) {
+    for (const auto& bridge : mFoundBridges.items()) {
         if (bridge.customName.size() > defaultNamePrefix.size()) {
             auto prefix = bridge.customName.mid(0, defaultNamePrefix.size());
             if (prefix == defaultNamePrefix) {

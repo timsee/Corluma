@@ -6,6 +6,7 @@
  * Released under the GNU General Public License.
  */
 
+#include <algorithm>
 #include <cmath>
 
 namespace cor {
@@ -32,6 +33,15 @@ inline double roundToNDigits(double x, int n) {
     }
     double factor = pow(10.0, n - ceil(log10(fabs(x))));
     return round(x * factor) / factor;
+}
+
+/*!
+ * \brief clamps a value between the lower and upper values given. So it can never be lower than
+ * the lower value or higher than the higher value.
+ */
+template <typename T>
+T clamp(const T& n, const T& lower, const T& upper) {
+    return std::max(lower, std::min(n, upper));
 }
 
 } // namespace cor

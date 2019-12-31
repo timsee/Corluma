@@ -40,7 +40,7 @@ public:
      *        connect to.
      */
     explicit ListMoodGroupWidget(const QString& name,
-                                 const std::list<cor::Mood>& moods,
+                                 const std::vector<cor::Mood>& moods,
                                  const QString& key,
                                  bool hideEdit,
                                  QWidget* parent);
@@ -52,7 +52,7 @@ public:
      * \param bool removeIfNotFound if a widget already exists but this flag is set to true and it
      * doesn't exist in the mood list provided, the widget gets removed from the list.
      */
-    void updateMoods(const std::list<cor::Mood>& moods, bool removeIfNotFound);
+    void updateMoods(const std::vector<cor::Mood>& moods, bool removeIfNotFound);
 
     /*!
      * \brief setCheckedMoods takes a list of moods as input and compares it against the
@@ -61,7 +61,7 @@ public:
      *
      * \param checkedMoods
      */
-    void setCheckedMoods(std::list<QString> checkedMoods);
+    void setCheckedMoods(const std::vector<QString>& checkedMoods);
 
     /*!
      * \brief removeMood remove a mood from the ListCollectionWidget
@@ -75,7 +75,7 @@ public:
      *
      * \return all the mood data for this collection group
      */
-    const std::list<cor::Mood>& moods() { return mMoods; }
+    const std::vector<cor::Mood>& moods() { return mMoods; }
 
     /*!
      * \brief setShowButtons shows and hides all buttons on the widget
@@ -161,7 +161,7 @@ private:
      * \brief mMoods the data that represents the mood widgets that are displayed
      * by this widget.
      */
-    std::list<cor::Mood> mMoods;
+    std::vector<cor::Mood> mMoods;
 };
 
 #endif // LISTGROUPGROUPWIDGET_H

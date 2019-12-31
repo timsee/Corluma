@@ -58,7 +58,7 @@ void CommSerial::sendPacket(const cor::Controller& controller, QString& packet) 
 
 void CommSerial::stateUpdate() {
     if (shouldContinueStateUpdate()) {
-        for (const auto& controller : mDiscovery->controllers().itemVector()) {
+        for (const auto& controller : mDiscovery->controllers().items()) {
             QString packet =
                 QString("%1&").arg(QString::number(int(EPacketHeader::stateUpdateRequest)));
             // add CRC, if in use
@@ -173,7 +173,7 @@ bool CommSerial::connectSerialPort(const QSerialPortInfo& info) {
         serial->setFlowControl(QSerialPort::NoFlowControl);
         qDebug() << "INFO: Serial Port Connected!" << info.portName();
 
-        mSerialPorts.push_front(std::make_pair(serial, QString()));
+        mSerialPorts.push_back(std::make_pair(serial, QString()));
         connect(serial, SIGNAL(readyRead()), this, SLOT(handleReadyRead()));
         connect(serial,
                 SIGNAL(error(QSerialPort::SerialPortError)),

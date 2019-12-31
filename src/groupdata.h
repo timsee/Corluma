@@ -45,10 +45,13 @@ public:
     const cor::Dictionary<cor::Group>& groups() { return mGroupDict; }
 
     /// list of groups, ignoring rooms
-    std::list<cor::Group> groupList();
+    std::vector<cor::Group> groupList();
+
+    /// returns a vector of names for the groups.
+    std::vector<QString> groupNames();
 
     /// list of rooms, with filled in subgroups
-    std::list<cor::Group> roomList();
+    std::vector<cor::Group> roomList();
 
     /// adds subgroups to rooms
     void addSubGroupsToRooms();
@@ -59,18 +62,11 @@ public:
      *
      * \param externalGroups groups that are stored in an external location
      */
-    void updateExternallyStoredGroups(const std::list<cor::Group>& externalGroups);
+    void updateExternallyStoredGroups(const std::vector<cor::Group>& externalGroups);
 
-    /*!
-     * \brief saveNewMood save a new group of devices to JSON data, which then gets saved to file in
-     * AppData.
-     *
-     * \param groupName the name of the new group.
-     * \param devices the devices to save into the group.
-     */
     void saveNewMood(const QString& groupName,
-                     const std::list<cor::Light>& devices,
-                     const std::list<std::pair<std::uint64_t, cor::Light>>& defaultStates);
+                     const std::vector<cor::Light>& lights,
+                     const std::vector<std::pair<std::uint64_t, cor::Light>>& defaultStates);
 
     /*!
      * \brief saveNewGroup save a new group of devices to JSON data, which then gets saved to file
@@ -80,7 +76,9 @@ public:
      * \param devices devices in new collection.
      * \param isRoom true if it is a room, false otherwise
      */
-    void saveNewGroup(const QString& groupName, const std::list<cor::Light>& devices, bool isRoom);
+    void saveNewGroup(const QString& groupName,
+                      const std::vector<cor::Light>& devices,
+                      bool isRoom);
 
     /*!
      * \brief removeGroup remove the group of devices associated with the name provided. If no group
@@ -90,7 +88,7 @@ public:
      * \param groupName name of group
      * \return true if a group is removed, false if nothing happens.
      */
-    bool removeGroup(const QString& groupName, bool isMood);
+    bool removeGroup(const QString& groupName);
 
     /// checks if a file can be read by GroupDate::loadExternalData(const QString&)
     bool checkIfValidJSON(const QString& file);
@@ -181,7 +179,7 @@ private:
     bool checkIfGroupIsValid(const QJsonObject& object);
 
     /*!
-     * \brief parseMood Takes a JSON representation of a mood and converts it to a std::list
+     * \brief parseMood Takes a JSON representation of a mood and converts it to a std::vector
      *        of devices and then adds it to the mMoodList.
      *
      * \param object a JSON representation of a group.
@@ -190,7 +188,7 @@ private:
 
     /*!
      * \brief parseGroup Takes a JSON representation of a collection and converts it
-     *        to a std::list of devices and then adds it to the mCollectionList.
+     *        to a std::vector of devices and then adds it to the mCollectionList.
      *
      * \param object a JSON representation of a group.
      */
@@ -207,12 +205,6 @@ private:
      * is easy to pull all possible collections without having to re-parse the JSON data each time.
      */
     cor::Dictionary<cor::Group> mGroupDict;
-
-    /*!
-     * \brief mNewConnections used during parsing, contains a list of all new connections from a
-     * json file.
-     */
-    std::list<QString> mNewConnections;
 };
 
 #endif // GROUPS_DATA_H

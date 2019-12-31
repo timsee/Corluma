@@ -65,7 +65,7 @@ public:
     const cor::Dictionary<cor::Controller>& controllers() const { return mFoundControllers; }
 
     /// getter for list of undiscovered controllers
-    const std::list<cor::Controller>& undiscoveredControllers() const {
+    const std::vector<cor::Controller>& undiscoveredControllers() const {
         return mNotFoundControllers;
     }
 
@@ -104,7 +104,7 @@ private:
     void updateJSON(const cor::Controller& controller);
 
     /// list of not found controllers
-    std::list<cor::Controller> mNotFoundControllers;
+    std::vector<cor::Controller> mNotFoundControllers;
 
     /// list of found controllers
     cor::Dictionary<cor::Controller> mFoundControllers;

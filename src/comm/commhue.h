@@ -166,7 +166,7 @@ public:
      */
     void createGroup(const hue::Bridge& bridge,
                      const QString& name,
-                     std::list<HueLight> lights,
+                     std::vector<HueLight> lights,
                      bool isRoom);
 
     /*!
@@ -174,7 +174,7 @@ public:
      * \param group the group to change the lights in
      * \param lights the new lights to provide to the group.
      */
-    void updateGroup(const hue::Bridge& bridge, cor::Group group, std::list<HueLight> lights);
+    void updateGroup(const hue::Bridge& bridge, cor::Group group, std::vector<HueLight> lights);
 
     /*!
      * \brief deleteGroup delete a group from the hue bridge
@@ -183,38 +183,19 @@ public:
     void deleteGroup(const hue::Bridge& bridge, cor::Group group);
 
     /// getter for list of groups
-    const std::list<cor::Group> groups();
+    const std::vector<cor::Group> groups();
 
     /// list of lights recently discovered by a scan
-    const std::list<HueLight>& newLights() { return mNewLights; }
+    const std::vector<HueLight>& newLights() { return mNewLights; }
 
     /// serial numbers for lights that we are searching for.
-    const std::list<QString>& searchingLights() { return mSearchingSerialNumbers; }
+    const std::vector<QString>& searchingLights() { return mSearchingSerialNumbers; }
 
     /// request a list of all recently discovered lights
     void requestNewLights(const hue::Bridge& bridge);
 
     /// true if scan is active, false otherwise
     bool scanIsActive() { return mScanIsActive; }
-
-    //---------------
-    // Schedules
-    //---------------
-    /*!
-     * \brief createSchedule create a hue schedule to be stored on the bridge
-     * \param name the name of the schedule
-     * \param description a description of the scheedule
-     * \param command the command to do when the schedule should execute
-     * \param localtime the localtime of the schedule.
-     */
-    void createSchedule(QString name, QString description, SHueCommand command, QString localtime);
-
-    /*!
-     * \brief updateSchedule update a hue schedule with new information
-     * \param schedule the schedule to update
-     * \param newSchedule the new information to provide to the scheudle
-     */
-    void updateSchedule(SHueSchedule schedule, SHueSchedule newSchedule);
 
     /*!
      * \brief deleteSchedule delete a hue schedule from the bridge
@@ -226,34 +207,17 @@ public:
      * \brief schedules getter for a list of all known schedules
      * \return list of all known schedules.
      */
-    std::list<SHueSchedule> schedules(const hue::Bridge& bridge);
+    std::vector<SHueSchedule> schedules(const hue::Bridge& bridge);
 
     /*!
      * \brief groups getter for a list of all know groups
      * \param bridge bridge to get all groups from
      * \return list of all known groups
      */
-    std::list<cor::Group> groups(const hue::Bridge& bridge);
+    std::vector<cor::Group> groups(const hue::Bridge& bridge);
 
     /// get the hue bridge that controls a cor::Light
     hue::Bridge bridgeFromLight(const cor::Light& light);
-
-    /*!
-     * \brief bridgeHasGroup true if the provided bridge contains the provided group, false
-     * otherwise
-     * \param bridge bridge to check for the group
-     * \param groupName the name of the group to check for
-     * \return true if group exists in bridge, false otherwise
-     */
-    bool bridgeHasGroup(const hue::Bridge& bridge, const QString& groupName);
-
-    /*!
-     * \brief bridgeHasSchedule true if the provided bridge contains the provided scheudle
-     * \param bridge bridge to check for the schedule
-     * \param schedule the schedule to check for
-     * \return true if the schedule exists in the bridge, false otherwise
-     */
-    bool bridgeHasSchedule(const hue::Bridge& bridge, const SHueSchedule& schedule);
 
     //---------------
     // Discovery And Maintence
@@ -263,7 +227,7 @@ public:
      * \brief searchForNewLights search for new lights that havent been paired with the bridge yet
      * \param serialNumbers serial numbers to search for manually.
      */
-    void searchForNewLights(const hue::Bridge& bridge, const std::list<QString>& serialNumbers);
+    void searchForNewLights(const hue::Bridge& bridge, const std::vector<QString>& serialNumbers);
 
     /*!
      * \brief renameLight rename the light's name stored on the hue bridge.
@@ -358,7 +322,7 @@ private:
      * \param name name of new group
      * \return  a unique ID for the group with the given name
      */
-    std::uint64_t generateUniqueID(const std::list<cor::Group>& groupList, const QString& name);
+    std::uint64_t generateUniqueID(const std::vector<cor::Group>& groupList, const QString& name);
 
     /*!
      * \brief resetBackgroundTimers reset the background timers that sync things such as groups
@@ -401,10 +365,10 @@ private:
     QTime mLastBackgroundTime;
 
     /// list of new lights found from light scan
-    std::list<HueLight> mNewLights;
+    std::vector<HueLight> mNewLights;
 
     /// list of serial numbers the hue is searching for
-    std::list<QString> mSearchingSerialNumbers;
+    std::vector<QString> mSearchingSerialNumbers;
 
     /// true if scanning for lights, false otherwise.
     bool mScanIsActive;
@@ -482,7 +446,7 @@ private:
      */
     std::pair<cor::Group, bool> jsonToGroup(QJsonObject object,
                                             int i,
-                                            const std::list<cor::Group>& groupList);
+                                            const std::vector<cor::Group>& groupList);
 
     /*!
      * \brief jsonToSchedule read an incoming packet from the Hue Brige and update the Hue Schedule

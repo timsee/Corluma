@@ -21,7 +21,10 @@ public:
     Group() : mName{"Error"}, mUniqueID(0u) {}
 
     /// contructor
-    Group(std::uint64_t uniqueID, const QString& name) : mName{name}, mUniqueID{uniqueID} {}
+    Group(std::uint64_t uniqueID, const QString& name, const std::vector<QString>& lights)
+        : mName{name},
+          mUniqueID{uniqueID},
+          mLights{lights} {}
 
     /// getter for unique ID
     std::uint64_t uniqueID() const noexcept { return mUniqueID; }
@@ -29,17 +32,34 @@ public:
     /// getter for name
     const QString& name() const noexcept { return mName; }
 
-    /// index of group
-    int index;
+    /// setter for name
+    void name(const QString& name) noexcept { mName = name; }
+
+    /// true if group is valid, false otherwise
+    bool isValid() const noexcept { return mName != "Error" && mUniqueID != 0u; }
+
+    /// index of group on controller
+    void index(int index) { mIndex = index; }
+
+    /// index of group on controller
+    int index() const noexcept { return mIndex; }
 
     /// if a group has subgroups. this contains a list of all groups that are subgroups.
-    std::list<std::uint64_t> subgroups;
+    const std::vector<std::uint64_t>& subgroups() const noexcept { return mSubgroups; }
+
+    void subgroups(const std::vector<std::uint64_t>& subgroups) { mSubgroups = subgroups; }
 
     /// list of lights
-    std::list<QString> lights;
+    const std::vector<QString>& lights() const noexcept { return mLights; }
 
-    /// true if a room, false if not
-    bool isRoom;
+    /// setter for lights
+    void lights(const std::vector<QString>& lights) { mLights = lights; }
+
+    /// true if a room, false if a generic group
+    bool isRoom() const noexcept { return mIsRoom; }
+
+    /// setter for room flag
+    void isRoom(bool isRoom) { mIsRoom = isRoom; }
 
     /// equal operator
     bool operator==(const Group& rhs) const { return uniqueID() == rhs.uniqueID(); }
@@ -55,9 +75,9 @@ public:
      *
      * \return a list of the two lights combined
      */
-    static std::list<Group> mergeLightGroups(const std::list<Group>& first,
-                                             const std::list<Group> second) {
-        std::list<Group> retList = first;
+    static std::vector<Group> mergeLightGroups(const std::vector<Group>& first,
+                                               const std::vector<Group>& second) {
+        std::vector<Group> retList = first;
         for (auto group : second) {
             // look for groups with same name and type
             auto result = std::find(retList.begin(), retList.end(), group);
@@ -67,8 +87,10 @@ public:
             } else {
                 // if one does exist, merge the devices instead
                 Group combinedGroup = *result;
-                combinedGroup.lights.splice(combinedGroup.lights.end(), group.lights);
-                retList.remove(*result);
+                auto lights = combinedGroup.lights();
+                lights.insert(lights.end(), group.lights().begin(), group.lights().end());
+                combinedGroup.lights(lights);
+                retList.erase(result);
                 retList.push_back(combinedGroup);
             }
         }
@@ -76,11 +98,23 @@ public:
     }
 
 private:
+    /// true if room, false if generic group
+    bool mIsRoom;
+
+    /// index of light on its hardware
+    int mIndex;
+
     /// name of group
     QString mName;
 
     /// unique ID
     std::uint64_t mUniqueID;
+
+    /// storage of subgroups for rooms
+    std::vector<std::uint64_t> mSubgroups;
+
+    /// storage of uniqueIDs of lights in the group
+    std::vector<QString> mLights;
 };
 
 

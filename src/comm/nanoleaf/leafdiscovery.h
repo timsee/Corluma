@@ -89,7 +89,7 @@ public:
     const cor::Dictionary<nano::LeafController>& foundControllers() { return mFoundControllers; }
 
     /// getter for list of not found controllers
-    const std::list<nano::LeafController>& notFoundControllers() { return mNotFoundControllers; }
+    const std::vector<nano::LeafController>& notFoundControllers() { return mNotFoundControllers; }
 
     /// connects the UPnP object to the nanoleaf object.
     void connectUPnP(UPnPDiscovery* upnp);
@@ -110,10 +110,10 @@ private slots:
 
 private:
     /// list of all unknown controllers added via manual discovery or via UPnP
-    std::list<nano::LeafController> mUnknownControllers;
+    std::vector<nano::LeafController> mUnknownControllers;
 
     /// list of all controllers that have previously been used, but currently are not found
-    std::list<nano::LeafController> mNotFoundControllers;
+    std::vector<nano::LeafController> mNotFoundControllers;
 
     /// list of all controllers that have been verified and can be communicated with
     cor::Dictionary<nano::LeafController> mFoundControllers;

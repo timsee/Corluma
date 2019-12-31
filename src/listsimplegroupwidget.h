@@ -36,7 +36,7 @@ public:
      *
      * \param devices list of devices to compare to the widget.
      */
-    void setCheckedDevices(const std::list<cor::Light>& devices);
+    void setCheckedDevices(const std::vector<cor::Light>& devices);
 
     /// removes all widget from group.
     void removeWidgets();
@@ -48,18 +48,18 @@ public:
      * \param removeIfNotFound if a widget exists already in the listwidget but doesn't exist in the
      * list provided, this widget gets removed and all other widgets get shifted.
      */
-    void updateDevices(const std::list<cor::Light>& devices,
+    void updateDevices(const std::vector<cor::Light>& devices,
                        cor::EWidgetType listWidgetType,
                        EOnOffSwitchState switchState,
                        bool canHighlight,
                        bool skipOff);
 
     /// display only the devices in this list, hiding all others.
-    void displayOnlyDevices(const std::list<cor::Light>& devices);
+    void displayOnlyDevices(const std::vector<cor::Light>& devices);
 
 
     /// getter for checked devices
-    std::list<cor::Light> checkedDevices();
+    std::vector<cor::Light> checkedDevices();
 
 signals:
 

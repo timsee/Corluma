@@ -78,7 +78,7 @@ void DiscoveryHueWidget::hueDiscoveryUpdate(EHueDiscoveryState newState) {
     }
 
     hue::Bridge foundBridge;
-    for (const auto& foundBridges : mComm->hue()->discovery()->bridges().itemVector()) {
+    for (const auto& foundBridges : mComm->hue()->discovery()->bridges().items()) {
         foundBridge = foundBridges;
     }
 
@@ -126,7 +126,7 @@ void DiscoveryHueWidget::handleDiscovery(bool) {
 }
 
 void DiscoveryHueWidget::updateBridgeGUI() {
-    std::list<hue::Bridge> bridgeList = mComm->hue()->bridges().itemList();
+    auto bridgeList = mComm->hue()->bridges().items();
     // get all found bridges
     for (const auto& bridge : mComm->hue()->discovery()->notFoundBridges()) {
         bridgeList.push_back(bridge);
@@ -242,7 +242,7 @@ void DiscoveryHueWidget::schedulesPressed(const QString& key) {
     const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
     if (bridgeResult.second) {
         mGreyout->greyOut(true);
-        mBridgeSchedulesWidget->updateSchedules(bridgeResult.first.schedules.itemList());
+        mBridgeSchedulesWidget->updateSchedules(bridgeResult.first.schedules.items());
         mBridgeSchedulesWidget->isOpen(true);
         mBridgeSchedulesWidget->setVisible(true);
         mBridgeSchedulesWidget->show();

@@ -207,8 +207,8 @@ void LeftHandMenu::deviceCountChanged() {
 
 
 
-std::list<cor::Group> LeftHandMenu::gatherAllUIGroups() {
-    std::list<cor::Group> uiGroups;
+std::vector<cor::Group> LeftHandMenu::gatherAllUIGroups() {
+    std::vector<cor::Group> uiGroups;
     for (auto widget : mRoomWidgets) {
         // cast to ListDeviceGroupWidget
         auto groupWidget = qobject_cast<ListRoomWidget*>(widget);
@@ -218,7 +218,7 @@ std::list<cor::Group> LeftHandMenu::gatherAllUIGroups() {
 }
 
 void LeftHandMenu::updateDataGroupInUI(const cor::Group& dataGroup,
-                                       const std::list<cor::Group>& uiGroups) {
+                                       const std::vector<cor::Group>& uiGroups) {
     bool existsInUIGroups = false;
     for (const auto& uiGroup : uiGroups) {
         if (uiGroup.name() == dataGroup.name()) {
@@ -226,10 +226,7 @@ void LeftHandMenu::updateDataGroupInUI(const cor::Group& dataGroup,
             for (auto widget : mRoomWidgets) {
                 auto groupWidget = qobject_cast<ListRoomWidget*>(widget);
                 if (groupWidget->key() == dataGroup.name()) {
-                    bool deleteNotFound = false;
-                    if (groupWidget->key() == "Miscellaneous") {
-                        deleteNotFound = true;
-                    }
+                    bool deleteNotFound = true;
                     groupWidget->updateGroup(dataGroup, deleteNotFound);
                 }
             }
@@ -247,7 +244,7 @@ void LeftHandMenu::updateLights() {
     // attempt to make a miscellaneous group
     const auto& miscellaneousGroup = makeMiscellaneousGroup(roomList);
     // only add miscellaneous group if it has any data
-    if (!miscellaneousGroup.lights.empty() || !miscellaneousGroup.subgroups.empty()) {
+    if (!miscellaneousGroup.lights().empty() || !miscellaneousGroup.subgroups().empty()) {
         roomList.push_back(miscellaneousGroup);
     }
 
@@ -309,8 +306,8 @@ void LeftHandMenu::updateSingleColorButton() {
     bool hasHue = mSelectedLights->hasLightWithProtocol(EProtocolType::hue);
     bool hasArduino = mSelectedLights->hasLightWithProtocol(EProtocolType::arduCor);
     if (hasHue && !hasArduino) {
-        std::list<cor::Light> devices = mSelectedLights->devices();
-        std::list<HueLight> hues;
+        auto devices = mSelectedLights->devices();
+        std::vector<HueLight> hues;
         for (auto& device : devices) {
             if (device.protocol() == EProtocolType::hue) {
                 hues.push_back(mComm->hue()->hueLightFromLight(device));
@@ -393,7 +390,7 @@ void LeftHandMenu::lightClicked(const QString&, const QString& deviceKey) {
 
 void LeftHandMenu::groupSelected(const QString& key, bool shouldSelect) {
     bool isValid = false;
-    std::list<cor::Light> lights;
+    std::vector<cor::Light> lights;
     // loop through all groups and subgroups, adding or removing lists only if a group is found
     for (const auto& widget : mRoomWidgets) {
         // check if group is the room itself
@@ -403,7 +400,7 @@ void LeftHandMenu::groupSelected(const QString& key, bool shouldSelect) {
         }
 
         // check if group is a subgroup of a room
-        for (const auto& groupID : widget->group().subgroups) {
+        for (const auto& groupID : widget->group().subgroups()) {
             const auto& group = mGroups->groups().item(QString::number(groupID).toStdString());
             if (group.second) {
                 if (group.first.name() == key) {
@@ -474,23 +471,25 @@ void LeftHandMenu::clearWidgets() {
     resize();
 }
 
-cor::Group LeftHandMenu::makeMiscellaneousGroup(const std::list<cor::Group>& roomList) {
+cor::Group LeftHandMenu::makeMiscellaneousGroup(const std::vector<cor::Group>& roomList) {
     // fill in miscellaneous Room default data
-    cor::Group miscellaneousGroup(0u, "Miscellaneous");
-    miscellaneousGroup.index = -1;
-    miscellaneousGroup.isRoom = true;
+    cor::Group miscellaneousGroup(0u, "Miscellaneous", {});
+    miscellaneousGroup.index(-1);
+    miscellaneousGroup.isRoom(true);
     // loop through every group, see if it maps to a room, if not, add it to this room
     for (const auto& group : mGroups->groupList()) {
         bool groupInRoom = false;
         for (const auto& room : roomList) {
-            for (const auto& roomGroup : room.subgroups) {
+            for (const auto& roomGroup : room.subgroups()) {
                 if (roomGroup == group.uniqueID()) {
                     groupInRoom = true;
                 }
             }
         }
         if (!groupInRoom) {
-            miscellaneousGroup.subgroups.push_back(group.uniqueID());
+            auto subgroups = miscellaneousGroup.subgroups();
+            subgroups.push_back(group.uniqueID());
+            miscellaneousGroup.subgroups(subgroups);
         }
     }
     // loop through every light, see if it maps to a room, if not, add it to this group and its
@@ -499,19 +498,19 @@ cor::Group LeftHandMenu::makeMiscellaneousGroup(const std::list<cor::Group>& roo
         bool deviceInGroup = false;
         if (device.isValid()) {
             // looop through all known rooms
-            for (const auto& room : mGroups->groups().itemList()) {
+            for (const auto& room : mGroups->groups().items()) {
                 // check room devices for this specific light
-                for (const auto& lightID : room.lights) {
+                for (const auto& lightID : room.lights()) {
                     if (lightID == device.uniqueID()) {
                         deviceInGroup = true;
                     }
                 }
                 // check their subgroups for thsi specific light
-                for (const auto& groupID : room.subgroups) {
+                for (const auto& groupID : room.subgroups()) {
                     const auto& group =
                         mGroups->groups().item(QString::number(groupID).toStdString());
                     if (group.second) {
-                        for (const auto& lightID : group.first.lights) {
+                        for (const auto& lightID : group.first.lights()) {
                             if (lightID == device.uniqueID()) {
                                 deviceInGroup = true;
                             }
@@ -520,7 +519,9 @@ cor::Group LeftHandMenu::makeMiscellaneousGroup(const std::list<cor::Group>& roo
                 }
             }
             if (!deviceInGroup) {
-                miscellaneousGroup.lights.push_back(device.uniqueID());
+                auto lights = miscellaneousGroup.lights();
+                lights.push_back(device.uniqueID());
+                miscellaneousGroup.lights(lights);
             }
         }
     }

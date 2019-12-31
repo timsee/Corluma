@@ -75,5 +75,6 @@
         <file>images/hue_range.png</file>
         <file>images/ct_range.png</file>
         <file>images/syncing.gif</file>
+        <file>images/questionMark.png</file>
     </qresource>
 </RCC>

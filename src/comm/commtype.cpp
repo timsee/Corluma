@@ -33,8 +33,8 @@ void CommType::addLight(const cor::Light& light) {
 
 bool CommType::removeController(const QString& controller) {
     // make list of all lights to remove
-    std::list<QString> lightIDs;
-    for (const auto& light : mDeviceTable.itemVector()) {
+    std::vector<QString> lightIDs;
+    for (const auto& light : mDeviceTable.items()) {
         if (light.controller() == controller) {
             lightIDs.push_back(light.uniqueID());
         }
@@ -77,7 +77,7 @@ void CommType::resetStateUpdateTimeout() {
     if (!mStateUpdateTimer->isActive()) {
         mStateUpdateTimer->start(mStateUpdateInterval);
         mReachabilityTest->start(REACHABILITY_TIMEOUT);
-        for (const auto& device : mDeviceTable.itemVector()) {
+        for (const auto& device : mDeviceTable.items()) {
             auto dictResult = mDeviceTable.item(device.uniqueID().toStdString());
             if (dictResult.second) {
                 auto device = dictResult.first;
@@ -110,7 +110,7 @@ bool CommType::shouldContinueStateUpdate() {
 void CommType::checkReachability() {
     auto elapsedTime = mElapsedTimer.elapsed();
     const int kThreshold = 15000;
-    for (const auto& device : mDeviceTable.itemVector()) {
+    for (const auto& device : mDeviceTable.items()) {
         auto dictResult = mDeviceTable.item(device.uniqueID().toStdString());
         if (dictResult.second) {
             auto device = dictResult.first;

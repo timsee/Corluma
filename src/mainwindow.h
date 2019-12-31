@@ -16,6 +16,7 @@
 #include "cor/widgets/button.h"
 #include "discoverypage.h"
 #include "editgrouppage.h"
+#include "editmoodpage.h"
 #include "floatinglayout.h"
 #include "greyoutoverlay.h"
 #include "icondata.h"
@@ -52,6 +53,9 @@ public:
 
     /// true if any discovered, false if nothing discoverd.
     void anyDiscovered(bool discovered) { mAnyDiscovered = discovered; }
+
+    /// true if any discovered, false if nothing discoverd.
+    bool anyDiscovered() const noexcept { return mAnyDiscovered; }
 
 public slots:
 
@@ -249,10 +253,11 @@ private:
     // Pages
     //------------------
 
-    /*!
-     * \brief mEditPage overlay that allows editing and creating collections and moods.
-     */
-    EditGroupPage* mEditPage;
+    /// page for editing or making a new group
+    EditGroupPage* mEditGroupPage;
+
+    /// page for editing or making a new mood
+    EditMoodPage* mEditMoodPage;
 
     /*!
      * \brief mMoodDetailedWidget widget for displaying detailed information about a mood.

@@ -122,13 +122,13 @@ public:
     cor::Light lightByID(const QString& ID);
 
     /// creates a list of lights and their current state based off of a group.
-    std::list<cor::Light> lightListFromGroup(const cor::Group& group);
+    std::vector<cor::Light> lightListFromGroup(const cor::Group& group);
 
     /// makes a dictionary of lights based off of the formula provided by a mood object.
     cor::Dictionary<cor::Light> makeMood(const cor::Mood& mood);
 
     /// list of all devices from all comm types
-    std::list<cor::Light> allDevices();
+    std::vector<cor::Light> allDevices();
 
     /// list containing all arduino based cor::Controllers
     const std::vector<cor::Controller> allArduinoControllers();
@@ -151,7 +151,7 @@ public:
      * \param hues list of hue lights to convert
      * \return a list of cor::Lights
      */
-    std::list<cor::Light> hueLightsToDevices(std::list<HueLight> hues);
+    std::vector<cor::Light> hueLightsToDevices(std::vector<HueLight> hues);
 
     /// deletes a hue group by name
     void deleteHueGroup(const QString& name);

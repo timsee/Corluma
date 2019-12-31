@@ -26,10 +26,12 @@ AppSettings::AppSettings() {
     }
     mSettings->sync();
 
-    // error handling, must always have at least one stream!
+    // error handling, if nothings enabled, enable hue and nanoleaf
     if (numberEnabled() == 0) {
         mProtocolsInUse[std::size_t(EProtocolType::hue)] = true;
+        mProtocolsInUse[std::size_t(EProtocolType::nanoleaf)] = true;
         mSettings->setValue(keys[std::size_t(EProtocolType::hue)], QString::number(int(true)));
+        mSettings->setValue(keys[std::size_t(EProtocolType::nanoleaf)], QString::number(int(true)));
         mSettings->sync();
     }
 }

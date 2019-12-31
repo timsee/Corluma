@@ -137,16 +137,6 @@ int main(int argc, char* argv[]) {
         settings.setValue(cor::kUseTimeoutKey, QString::number(int(true)));
         settings.setValue(cor::kTimeoutValue, QString::number(120));
 
-
-        std::vector<QString> protocolInUseKeys = AppSettings::protocolKeys();
-        for (const auto& key : protocolInUseKeys) {
-            settings.setValue(key, QString::number(int(true)));
-        }
-        // set arducor to off
-        settings.setValue(protocolInUseKeys[std::size_t(EProtocolType::arduCor)],
-                          QString::number(int(false)));
-
-
         // set the value so it no longer gives a default back.
         settings.setValue(kFirstTimeOpenKey, QString::number(10));
     }

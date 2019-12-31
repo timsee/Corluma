@@ -157,14 +157,14 @@ public:
      * \param list list of devices to add
      * \return true if all are added, false otherwise.
      */
-    bool addDeviceList(const std::list<cor::Light>& list);
+    bool addDeviceList(const std::vector<cor::Light>& list);
 
     /*!
      * \brief removeDeviceList
      * \param list
      * \return
      */
-    bool removeDeviceList(const std::list<cor::Light>& list);
+    bool removeDeviceList(const std::vector<cor::Light>& list);
 
     /*!
      * \brief removeDevice remove specific device from connected device list.
@@ -195,7 +195,7 @@ public:
      *        connection info and device settings
      * \return the current device pair.
      */
-    const std::list<cor::Light>& devices() { return mDevices; }
+    const std::vector<cor::Light>& devices() { return mDevices; }
 
     /// getter for the color scheme colors
     std::vector<QColor> colorScheme();
@@ -217,8 +217,8 @@ public:
      */
     bool hasNanoLeafDevices();
 
-    /// compute the best candidate for a collection based on the current devices.
-    QString findCurrentCollection(const std::list<cor::Group>& collections, bool allowLights);
+    /// compute the best candidate for a collection based on the current lights.
+    cor::Group findCurrentGroup(const std::vector<cor::Group>& collections);
 
     /// compute the best candidate for a mood based on the current devices
     std::uint64_t findCurrentMood(const cor::Dictionary<cor::Mood>& moods);
@@ -250,7 +250,7 @@ private:
      * \todo complete support of multiple devices in datalayer. currently this is a vector of
      *       size 1 in preparation.
      */
-    std::list<cor::Light> mDevices;
+    std::vector<cor::Light> mDevices;
 };
 
 } // namespace cor

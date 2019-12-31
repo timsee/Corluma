@@ -21,7 +21,10 @@ public:
     Mood() : mName{"Error"}, mUniqueID(0u) {}
 
     /// constructor
-    Mood(std::uint64_t uniqueID, const QString& name) : mName{name}, mUniqueID{uniqueID} {}
+    Mood(std::uint64_t uniqueID, const QString& name, const std::vector<cor::Light>& lights)
+        : mName{name},
+          mUniqueID{uniqueID},
+          mLights{lights} {}
 
     /// getter for unique ID
     std::uint64_t uniqueID() const noexcept { return mUniqueID; }
@@ -29,14 +32,30 @@ public:
     /// getter for name
     const QString& name() const noexcept { return mName; }
 
-    /// list of lights
-    std::list<cor::Light> lights;
+    /// getter for moods
+    const std::vector<cor::Light>& lights() const noexcept { return mLights; }
+
+    /// setter for lights in mood
+    void lights(const std::vector<cor::Light>& lights) { mLights = lights; }
 
     /// default states of groups.
-    std::list<std::pair<std::uint64_t, cor::Light>> defaults;
+    const std::vector<std::pair<std::uint64_t, cor::Light>>& defaults() const noexcept {
+        return mDefaults;
+    }
+
+    /// setter for default states
+    void defaults(const std::vector<std::pair<std::uint64_t, cor::Light>>& defaultStates) {
+        mDefaults = defaultStates;
+    }
+
+    /// setter for name
+    void name(const QString& name) noexcept { mName = name; }
 
     /// additional information to use as a description of a mood
-    QString additionalInfo;
+    void additionalInfo(const QString& string) { mAdditionalInfo = string; }
+
+    /// additional information to use as a description of a mood
+    const QString& additionalInfo() const noexcept { return mAdditionalInfo; }
 
     /// equal operator
     bool operator==(const Mood& rhs) const { return uniqueID() == rhs.uniqueID(); }
@@ -47,6 +66,15 @@ private:
 
     /// unique ID of the mood
     std::uint64_t mUniqueID;
+
+    /// default states of groups.
+    std::vector<std::pair<std::uint64_t, cor::Light>> mDefaults;
+
+    /// list of lights
+    std::vector<cor::Light> mLights;
+
+    /// additional information to use as a description of a mood
+    QString mAdditionalInfo;
 };
 
 } // namespace cor

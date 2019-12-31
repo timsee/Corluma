@@ -38,7 +38,7 @@ ListMoodPreviewWidget::ListMoodPreviewWidget(const cor::Mood& mood, QWidget* par
     mPalette = new cor::LightVectorWidget(4, 2, true, this);
     mPalette->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mPalette->enableButtonInteraction(false);
-    mPalette->updateDevices(mMood.lights);
+    mPalette->updateDevices(mMood.lights());
 
     // setup layout
     mTopLayout = new QHBoxLayout;

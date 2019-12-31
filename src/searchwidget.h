@@ -84,7 +84,7 @@ public:
     void forceUpperCase(bool shouldForceUpperCase) { mForceUpperCase = shouldForceUpperCase; }
 
     /// list of all strings that are being searched for.
-    std::list<QString> searchingFor();
+    std::vector<QString> searchingFor();
 
 signals:
 

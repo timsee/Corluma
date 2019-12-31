@@ -29,22 +29,22 @@ MoodPage::MoodPage(QWidget* parent, GroupData* groups)
 }
 
 void MoodPage::newMoodAdded(const QString& mood) {
-    Q_UNUSED(mood);
     qDebug() << "mood added" << mood;
-    //  updateConnectionList();
+    clearWidgets();
+    makeMoodsCollections(mGroups->moods(), mGroups->roomList());
 }
 
 void MoodPage::makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
-                                    const std::list<cor::Group>& roomList) {
+                                    const std::vector<cor::Group>& roomList) {
     // pair every mood to an existing collection
-    std::unordered_map<std::string, std::list<cor::Mood>> roomsWithMoods;
-    for (const auto& mood : moods.itemVector()) { // for every mood
+    std::unordered_map<std::string, std::vector<cor::Mood>> roomsWithMoods;
+    for (const auto& mood : moods.items()) { // for every mood
         // look at every device, mark its room
-        std::list<QString> roomNames;
-        for (const auto& moodDevice : mood.lights) {
+        std::vector<QString> roomNames;
+        for (const auto& moodDevice : mood.lights()) {
             bool foundRoom = false;
             for (const auto& room : roomList) {
-                for (const auto& lightID : room.lights) {
+                for (const auto& lightID : room.lights()) {
                     try {
                         if (lightID == moodDevice.uniqueID()) {
                             foundRoom = true;
@@ -73,7 +73,7 @@ void MoodPage::makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
                 groupList->second.push_back(mood);
             } else {
                 // if not found, create entry in table
-                std::list<cor::Mood> newLightGroup = {mood};
+                std::vector<cor::Mood> newLightGroup = {mood};
                 roomsWithMoods.insert(
                     std::make_pair(roomNames.front().toStdString(), newLightGroup));
             }
@@ -85,7 +85,7 @@ void MoodPage::makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
                 groupList->second.push_back(mood);
             } else {
                 // if not found, create entry in table
-                std::list<cor::Mood> newLightGroup = {mood};
+                std::vector<cor::Mood> newLightGroup = {mood};
                 roomsWithMoods.insert(std::make_pair("Miscellaneous", newLightGroup));
             }
         }
@@ -136,7 +136,7 @@ void MoodPage::makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
 
 
 ListMoodGroupWidget* MoodPage::initMoodsCollectionWidget(const QString& name,
-                                                         const std::list<cor::Mood>& moods,
+                                                         const std::vector<cor::Mood>& moods,
                                                          const QString& key,
                                                          bool hideEdit) {
     auto widget =
@@ -185,7 +185,7 @@ void MoodPage::resizeEvent(QResizeEvent*) {
 
 void MoodPage::show(std::uint64_t currentMood,
                     const cor::Dictionary<cor::Mood>& moods,
-                    const std::list<cor::Group>& roomList) {
+                    const std::vector<cor::Group>& roomList) {
     mMoodsListWidget->setVisible(true);
     mCurrentMood = currentMood;
     makeMoodsCollections(moods, roomList);

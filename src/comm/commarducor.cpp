@@ -145,15 +145,15 @@ void CommArduCor::resetStateUpdates() {
 }
 
 
-std::list<cor::Light> CommArduCor::lights() {
-    std::list<cor::Light> lights;
+std::vector<cor::Light> CommArduCor::lights() {
+    std::vector<cor::Light> lights;
     std::vector<ECommType> commTypes = {ECommType::HTTP,
 #ifndef MOBILE_BUILD
                                         ECommType::serial,
 #endif
                                         ECommType::UDP};
     for (auto type : commTypes) {
-        for (const auto& storedLight : commByType(type)->deviceTable().itemList()) {
+        for (const auto& storedLight : commByType(type)->deviceTable().items()) {
             lights.push_back(storedLight);
         }
     }
@@ -229,7 +229,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                     bool isValid = true;
                     if (index < 20) {
                         // figure out devices that are getting updates
-                        std::list<cor::Light> deviceList;
+                        std::vector<cor::Light> deviceList;
                         if (index != 0) {
                             cor::Light device =
                                 cor::Light(controller.names[index - 1], controller.name, type);
@@ -238,9 +238,9 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                             deviceList.push_back(device);
                         } else {
                             // get a list of devices for this controller
-                            std::list<cor::Light> lights;
+                            std::vector<cor::Light> lights;
                             const auto& deviceTable = commByType(type)->deviceTable();
-                            for (const auto& light : deviceTable.itemVector()) {
+                            for (const auto& light : deviceTable.items()) {
                                 if (light.controller() == sender) {
                                     lights.push_back(light);
                                 }

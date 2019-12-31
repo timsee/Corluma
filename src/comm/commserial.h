@@ -127,13 +127,13 @@ private:
      * \brief mSerialList list of possible serial ports
      *        for connection
      */
-    std::list<QSerialPortInfo> mSerialInfoList;
+    std::vector<QSerialPortInfo> mSerialInfoList;
 
     /*!
      * \brief mSerialPorts list of serial ports in use. The second element in the pair is a buffer
      * that contains the most recent characters sent by the serial port.
      */
-    std::list<std::pair<QSerialPort*, QString>> mSerialPorts;
+    std::vector<std::pair<QSerialPort*, QString>> mSerialPorts;
 
     /// set to true when looking for active ports, used on discovery page.
     bool mLookingForActivePorts;

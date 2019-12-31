@@ -22,7 +22,7 @@ LightInfoScrollArea::LightInfoScrollArea(QWidget* parent)
 
 
 
-void LightInfoScrollArea::updateHues(std::list<HueLight> lights) {
+void LightInfoScrollArea::updateHues(std::vector<HueLight> lights) {
     for (const auto& light : lights) {
         // check if light already exists in list
         int widgetIndex = -1;
@@ -50,7 +50,7 @@ void LightInfoScrollArea::updateHues(std::list<HueLight> lights) {
     }
 }
 
-void LightInfoScrollArea::updateControllers(std::list<nano::LeafController> controllers) {
+void LightInfoScrollArea::updateControllers(std::vector<nano::LeafController> controllers) {
     for (auto controller : controllers) {
         // check if light already exists in list
         int widgetIndex = -1;
@@ -79,7 +79,7 @@ void LightInfoScrollArea::updateControllers(std::list<nano::LeafController> cont
 }
 
 
-void LightInfoScrollArea::updateLights(std::list<cor::Light> lights) {
+void LightInfoScrollArea::updateLights(const std::vector<cor::Light>& lights) {
     for (const auto& light : lights) {
         // check if light already exists in list
         int widgetIndex = -1;

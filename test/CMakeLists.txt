@@ -11,7 +11,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 add_library(Catch INTERFACE)
 target_include_directories(Catch INTERFACE 
 			   ${CMAKE_CURRENT_SOURCE_DIR}/catch
-			   ${CMAKE_CURRENT_SOURCE_DIR}/../src/cor)
+			   ${CMAKE_CURRENT_SOURCE_DIR}/../src/cor
+			   ${CMAKE_CURRENT_SOURCE_DIR}/../src/)
 
 
 set(TEST_SOURCES 

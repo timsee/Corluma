@@ -183,23 +183,9 @@ public:
      *
      * \return a vector of all items stored in the dictionary.
      */
-    std::vector<T> itemVector() const {
+    std::vector<T> items() const {
         std::vector<T> items;
         items.reserve(mKeyToItemMap.size());
-        for (const auto& keyPair : mItemToKeyMap) {
-            items.push_back(keyPair.first);
-        }
-        return items;
-    }
-
-    /*!
-     * \brief itemList Getter for a list of all items stored in the dictionary
-     *
-     * \return a list of all items stored in the dictionary.
-     */
-    std::list<T> itemList() const {
-        std::list<T> items;
-        // items.reserve(mItemToKeyMap.size());
         for (const auto& keyPair : mItemToKeyMap) {
             items.push_back(keyPair.first);
         }

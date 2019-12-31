@@ -274,16 +274,25 @@ void ArduCorDiscovery::handleDiscoveredController(const cor::Controller& discove
         if (notFoundController.type == discoveredController.type
             && notFoundController.name == discoveredController.name) {
             // remove from the not found controllers
-            mNotFoundControllers.remove(notFoundController);
+            auto it = std::find(mNotFoundControllers.begin(),
+                                mNotFoundControllers.end(),
+                                notFoundController);
+            mNotFoundControllers.erase(it);
             if (notFoundController.type == ECommType::HTTP) {
                 auto controllerCopy = notFoundController;
                 controllerCopy.type = ECommType::UDP;
-                mNotFoundControllers.remove(controllerCopy);
+                auto it = std::find(mNotFoundControllers.begin(),
+                                    mNotFoundControllers.end(),
+                                    controllerCopy);
+                mNotFoundControllers.erase(it);
             }
             if (notFoundController.type == ECommType::UDP) {
                 auto controllerCopy = notFoundController;
                 controllerCopy.type = ECommType::HTTP;
-                mNotFoundControllers.remove(controllerCopy);
+                auto it = std::find(mNotFoundControllers.begin(),
+                                    mNotFoundControllers.end(),
+                                    controllerCopy);
+                mNotFoundControllers.erase(it);
             }
 
             // add to the found controllers
@@ -330,11 +339,12 @@ void ArduCorDiscovery::removeController(const QString& controllerName) {
         }
     }
     if (shouldDeleteNotFound) {
-        mNotFoundControllers.remove(controller);
+        auto it = std::find(mNotFoundControllers.begin(), mNotFoundControllers.end(), controller);
+        mNotFoundControllers.erase(it);
     }
 
     bool shouldDeleteFound = false;
-    for (const auto& foundController : mFoundControllers.itemVector()) {
+    for (const auto& foundController : mFoundControllers.items()) {
         if (foundController.name == controllerName) {
             // foundController con
             controller = foundController;
@@ -416,7 +426,7 @@ QString ArduCorDiscovery::findDeviceNameByIndexAndControllerName(const QString& 
 
 bool ArduCorDiscovery::findControllerByDeviceName(const QString& deviceName,
                                                   cor::Controller& output) {
-    for (const auto& controller : mFoundControllers.itemVector()) {
+    for (const auto& controller : mFoundControllers.items()) {
         for (const auto& name : controller.names) {
             if (name == deviceName) {
                 output = controller;

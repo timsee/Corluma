@@ -27,7 +27,7 @@ public:
     explicit BridgeGroupsWidget(QWidget* parent);
 
     /// update the groups in the widget
-    void updateGroups(std::list<cor::Group> groups);
+    void updateGroups(std::vector<cor::Group> groups);
 
     /*!
      * \brief resize size the widget programmatically

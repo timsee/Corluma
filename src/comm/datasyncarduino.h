@@ -90,7 +90,7 @@ private:
      * \param controller the controller to received all the messages
      * \param allMessages the messages to send to the controller.
      */
-    void simplifyPackets(const cor::Controller& controller, std::list<QString>& allMessages);
+    void simplifyPackets(const cor::Controller& controller, std::vector<QString>& allMessages);
 
     /*!
      * \brief createPacket takes a constroller and a list of messages to send to it as input,
@@ -101,7 +101,7 @@ private:
      * \return the string representation of the packet.
      */
     const QString createPacket(const cor::Controller& controller,
-                               const std::list<QString>& allMessages);
+                               const std::vector<QString>& allMessages);
 
     /*!
      * \brief endOfSync end the sync thread and start the cleanup thread.
@@ -115,7 +115,7 @@ private:
     AppSettings* mAppSettings;
 
     /// a sorted list of messages sorted by the name of the controller to receive them.
-    std::unordered_map<std::string, std::list<QString>> mMessages;
+    std::unordered_map<std::string, std::vector<QString>> mMessages;
 };
 
 #endif // DATASYNCARDUINO_H

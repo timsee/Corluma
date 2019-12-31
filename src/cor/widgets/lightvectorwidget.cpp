@@ -59,7 +59,7 @@ LightVectorWidget::LightVectorWidget(int width, int height, bool fillFromLeft, Q
     setLayout(mLayout);
 }
 
-void LightVectorWidget::updateDevices(const std::list<cor::Light>& devices) {
+void LightVectorWidget::updateDevices(const std::vector<cor::Light>& devices) {
     if (mFillFromLeft) {
         int i = 0;
         for (const auto& device : devices) {

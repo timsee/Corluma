@@ -33,7 +33,7 @@ CommNanoleaf::CommNanoleaf() : CommType(ECommType::nanoleaf), mUPnP{nullptr} {
 
     mDiscovery = new nano::LeafDiscovery(this, 4000);
     // make list of not found devices
-    std::list<cor::Light> lightList;
+    std::vector<cor::Light> lightList;
     for (const auto& nanoleaf : mDiscovery->notFoundControllers()) {
         addLight(cor::Light(nanoleaf.serialNumber, nanoleaf.hardwareName, ECommType::nanoleaf));
     }
@@ -56,7 +56,7 @@ void CommNanoleaf::getSchedules() {
     if (mLastBackgroundTime.elapsed() > 15000) {
         stopBackgroundTimers();
     } else {
-        for (const auto& controller : mDiscovery->foundControllers().itemVector()) {
+        for (const auto& controller : mDiscovery->foundControllers().items()) {
             if (shouldContinueStateUpdate()) {
                 QNetworkRequest request = networkRequest(controller, "schedules");
                 // qDebug() << "get schedue" << controller.name;
@@ -304,7 +304,7 @@ void CommNanoleaf::testAuth(const nano::LeafController& controller) {
 }
 
 void CommNanoleaf::stateUpdate() {
-    for (const auto& controller : mDiscovery->foundControllers().itemVector()) {
+    for (const auto& controller : mDiscovery->foundControllers().items()) {
         if (shouldContinueStateUpdate()) {
             QNetworkRequest request = networkRequest(controller, "");
             mNetworkManager->get(request);
@@ -702,7 +702,7 @@ void CommNanoleaf::parseStateUpdatePacket(nano::LeafController& controller,
         if (wasControllerConnected) {
             mDiscovery->updateFoundDevice(controller);
         } else {
-            std::list<cor::Light> newDeviceList;
+            std::vector<cor::Light> newDeviceList;
             mDiscovery->foundNewController(controller);
         }
         QJsonObject stateObject = stateUpdate["state"].toObject();

@@ -280,10 +280,15 @@ void MainWindow::loadPages() {
         // Setup Editing Page
         // --------------
 
-        mEditPage = new EditGroupPage(this, mComm, mGroups);
-        mEditPage->isOpen(false);
-        connect(mEditPage, SIGNAL(pressedClose()), this, SLOT(editClosePressed()));
-        mEditPage->setGeometry(0, -1 * height(), int(width() * 0.75), int(height() * 0.75));
+        mEditGroupPage = new EditGroupPage(this, mComm, mGroups);
+        mEditGroupPage->isOpen(false);
+        connect(mEditGroupPage, SIGNAL(pressedClose()), this, SLOT(editClosePressed()));
+        mEditGroupPage->setGeometry(0, -1 * height(), int(width() * 0.75), int(height() * 0.75));
+
+        mEditMoodPage = new EditMoodPage(this, mComm, mGroups);
+        mEditMoodPage->isOpen(false);
+        connect(mEditMoodPage, SIGNAL(pressedClose()), this, SLOT(editClosePressed()));
+        mEditMoodPage->setGeometry(0, -1 * height(), int(width() * 0.75), int(height() * 0.75));
 
         // --------------
         // Setup Mood Detailed Widget
@@ -457,28 +462,41 @@ void MainWindow::closeDiscoveryWithoutTransition() {
 
 void MainWindow::editButtonClicked(bool isMood) {
     mGreyOut->greyOut(true);
-    mEditPage->resize();
-    mEditPage->pushIn();
-    mEditPage->isOpen(true);
 
-
-    std::list<cor::Light> groupDevices;
-    std::list<QString> groupDeviceIDs;
-
-    QString name;
-    bool isRoom = false;
     if (isMood) {
+        mEditMoodPage->resize();
+        mEditMoodPage->pushIn();
+        mEditMoodPage->isOpen(true);
+
         auto result = mGroups->moods().item(
             QString::number(mMainViewport->moodPage()->currentMood()).toStdString());
         if (result.second) {
-            name = result.first.name();
+            // use existing mood
+            mEditMoodPage->showMood(result.first, mComm->allDevices());
+        } else {
+            // make a new mood
+            std::vector<cor::Light> lights;
+            std::copy(mData->devices().begin(), mData->devices().end(), std::back_inserter(lights));
+            cor::Mood mood(mGroups->generateNewUniqueKey(), "New Mood", lights);
+            mEditMoodPage->showMood(mood, mComm->allDevices());
         }
     } else {
-        name = mData->findCurrentCollection(mGroups->groups().itemList(), false);
-        isRoom = true;
-    }
+        mEditGroupPage->resize();
+        mEditGroupPage->pushIn();
+        mEditGroupPage->isOpen(true);
 
-    mEditPage->showGroup(name, mData->devices(), mComm->allDevices(), isMood, isRoom);
+        auto group = mData->findCurrentGroup(mGroups->groups().items());
+        if (group.isValid()) {
+            mEditGroupPage->showGroup(group, mComm->lightListFromGroup(group), mComm->allDevices());
+        } else {
+            auto lights = group.lights();
+            for (const auto& light : mData->devices()) {
+                lights.push_back(light.uniqueID());
+            }
+            cor::Group group(mGroups->generateNewUniqueKey(), "New Group", lights);
+            mEditGroupPage->showGroup(group, mData->devices(), mComm->allDevices());
+        }
+    }
 }
 
 void MainWindow::moodSelected(std::uint64_t key) {
@@ -491,15 +509,16 @@ void MainWindow::detailedMoodDisplay(std::uint64_t key) {
     const auto& moodResult = mGroups->moods().item(QString::number(key).toStdString());
     cor::Mood detailedMood = moodResult.first;
     if (moodResult.second) {
+        auto lights = detailedMood.lights();
         // fill in info about light
-        for (auto&& device : detailedMood.lights) {
-            auto lightData = mComm->lightByID(device.uniqueID());
+        for (auto&& light : lights) {
+            auto lightData = mComm->lightByID(light.uniqueID());
             if (lightData.isValid()) {
-                device.hardwareType = lightData.hardwareType;
-                device.name = lightData.name;
+                light.hardwareType = lightData.hardwareType;
+                light.name = lightData.name;
             }
         }
-
+        detailedMood.lights(lights);
         mMoodDetailedWidget->update(detailedMood);
     }
 
@@ -510,7 +529,7 @@ void MainWindow::hueInfoWidgetClicked() {
     mGreyOut->greyOut(true);
 
     mLightInfoWidget->scrollArea()->updateHues(mComm->hue()->discovery()->lights());
-    mLightInfoWidget->scrollArea()->updateControllers(mComm->nanoleaf()->controllers().itemList());
+    mLightInfoWidget->scrollArea()->updateControllers(mComm->nanoleaf()->controllers().items());
     mLightInfoWidget->scrollArea()->updateLights(mComm->arducor()->lights());
     mLightInfoWidget->resize();
     mLightInfoWidget->pushIn();
@@ -518,9 +537,15 @@ void MainWindow::hueInfoWidgetClicked() {
 
 void MainWindow::editClosePressed() {
     mGreyOut->greyOut(false);
-    mEditPage->pushOut();
-    mEditPage->isOpen(false);
+    if (mEditGroupPage->isOpen()) {
+        mEditGroupPage->pushOut();
+        mEditGroupPage->isOpen(false);
+    }
 
+    if (mEditMoodPage->isOpen()) {
+        mEditMoodPage->pushOut();
+        mEditMoodPage->isOpen(false);
+    }
     // TODO: update lefthandmenu
     // mMainViewport->lightPage()->updateRoomWidgets();
 }
@@ -545,7 +570,7 @@ void MainWindow::deletedLight(const QString& uniqueID) {
 void MainWindow::lightNameChange(EProtocolType type, const QString& key, const QString& name) {
     if (type == EProtocolType::hue) {
         // get hue light from key
-        std::list<HueLight> hueLights = mComm->hue()->discovery()->lights();
+        std::vector<HueLight> hueLights = mComm->hue()->discovery()->lights();
         int keyNumber = key.toInt();
         HueLight light;
         bool lightFound = false;
@@ -684,12 +709,19 @@ void MainWindow::resize() {
     }
 
     if (mPagesLoaded) {
-        if (mEditPage->isOpen()) {
+        if (mEditGroupPage->isOpen()) {
             auto size = this->size();
-            mEditPage->setGeometry(int(size.width() * 0.125f),
-                                   int(size.height() * 0.125f),
-                                   int(size.width() * 0.75f),
-                                   int(size.height() * 0.75f));
+            mEditGroupPage->setGeometry(int(size.width() * 0.125f),
+                                        int(size.height() * 0.125f),
+                                        int(size.width() * 0.75f),
+                                        int(size.height() * 0.75f));
+        }
+        if (mEditMoodPage->isOpen()) {
+            auto size = this->size();
+            mEditMoodPage->setGeometry(int(size.width() * 0.125f),
+                                       int(size.height() * 0.125f),
+                                       int(size.width() * 0.75f),
+                                       int(size.height() * 0.75f));
         }
 
         if (mMoodDetailedWidget->isOpen()) {
@@ -735,8 +767,8 @@ void MainWindow::moodChanged(std::uint64_t moodID) {
     if (result.second) {
         mData->clearDevices();
         const auto& moodDict = mComm->makeMood(result.first);
-        mData->addDeviceList(moodDict.itemList());
-        if (!moodDict.itemList().empty()) {
+        mData->addDeviceList(moodDict.items());
+        if (!moodDict.items().empty()) {
             mTopMenu->deviceCountChanged();
             mLeftHandMenu->deviceCountChanged();
         }
@@ -758,7 +790,7 @@ void MainWindow::greyoutClicked() {
         detailedClosePressed();
     }
 
-    if (mEditPage->isOpen()) {
+    if (mEditMoodPage->isOpen() || mEditGroupPage->isOpen()) {
         editClosePressed();
     }
 
@@ -815,7 +847,7 @@ void MainWindow::backButtonPressed() {
         settingsClosePressed();
     }
 
-    if (mEditPage->isOpen()) {
+    if (mEditGroupPage->isOpen() || mEditMoodPage->isOpen()) {
         editClosePressed();
     }
 }
@@ -884,13 +916,13 @@ void MainWindow::mouseReleaseEvent(QMouseEvent* event) {
         mMovingMenu = false;
         auto showingWidth = mLeftHandMenu->width() + mLeftHandMenu->geometry().x();
         if (showingWidth < mLeftHandMenu->width() * 2 / 3) {
-                mGreyOut->greyOut(false);
-                mLeftHandMenu->pushOut();
-                if ((mMainViewport->currentPage() == EPage::colorPage
-                     || mMainViewport->currentPage() == EPage::palettePage)
-                    && mData->devices().empty()) {
-                    mTopMenu->pushInTapToSelectButton();
-                }
+            mGreyOut->greyOut(false);
+            mLeftHandMenu->pushOut();
+            if ((mMainViewport->currentPage() == EPage::colorPage
+                 || mMainViewport->currentPage() == EPage::palettePage)
+                && mData->devices().empty()) {
+                mTopMenu->pushInTapToSelectButton();
+            }
         } else if (!mLeftHandMenu->isIn()) {
             mGreyOut->greyOut(true);
             mLeftHandMenu->pushIn();

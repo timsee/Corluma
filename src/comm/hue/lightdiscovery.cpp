@@ -118,7 +118,7 @@ void LightDiscovery::discoveryRoutine() {
     }
 
     // if any changes happen, update UI
-    std::list<HueLight> hues = mComm->hue()->newLights();
+    auto hues = mComm->hue()->newLights();
 
     // iterate through all hues found
     for (auto hue : hues) {

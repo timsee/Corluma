@@ -173,7 +173,7 @@ QString ArduCorPacketParser::timeoutPacket(const cor::Light& device, int timeOut
 
 
 void ArduCorPacketParser::parsePacket(const QString& packet) {
-    std::list<std::vector<int>> messageList;
+    std::vector<std::vector<int>> messageList;
     std::istringstream input(packet.toStdString());
     std::string number;
     std::string message;

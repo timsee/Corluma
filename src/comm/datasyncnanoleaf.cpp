@@ -249,7 +249,7 @@ void DataSyncNanoLeaf::handleIdleTimeout(const nano::LeafController& controller)
     bool foundTimeout = false;
     int timeoutValue = mAppSettings->timeout();
     try {
-        for (const auto& schedule : mComm->nanoleaf()->findSchedules(controller).itemVector()) {
+        for (const auto& schedule : mComm->nanoleaf()->findSchedules(controller).items()) {
             // check for idle schedule
             if (schedule.ID() == nano::kTimeoutID) {
                 // check schedule is enabled

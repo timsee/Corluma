@@ -168,6 +168,8 @@ SOURCES += main.cpp \
     comm/nanoleaf/leafdiscovery.cpp \
     comm/nanoleaf/leafcontrollerinfowidget.cpp \
     comm/syncstatus.cpp \
+    editgrouppage.cpp \
+    editpage.cpp \
     mainwindow.cpp \
     settingspage.cpp \
     icondata.cpp \
@@ -176,7 +178,7 @@ SOURCES += main.cpp \
     presetgroupwidget.cpp \
     greyoutoverlay.cpp \
     listmoodgroupwidget.cpp \
-    editgrouppage.cpp \
+    editmoodpage.cpp \
     routinebuttonswidget.cpp \
     colorpage.cpp \
     topmenu.cpp \
@@ -252,6 +254,8 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     cor/devicelist.h \
     cor/listlayout.h \
     cor/dictionary.h \
+    editgrouppage.h \
+    editpage.h \
     utils/exception.h \
     comm/hue/lightdiscovery.h \
     comm/hue/bridgediscovery.h \
@@ -281,7 +285,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     presetgroupwidget.h \
     greyoutoverlay.h \
     listmoodgroupwidget.h \
-    editgrouppage.h \
+    editmoodpage.h \
     routinebuttonswidget.h \
     colorpage.h \
     topmenu.h \

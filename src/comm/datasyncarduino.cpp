@@ -89,7 +89,7 @@ void DataSyncArduino::syncData() {
             cor::Controller controller = allControllers.item(map.first).first;
 
             // make a copy of the list of mesasges
-            std::list<QString> allMessages = map.second;
+            std::vector<QString> allMessages = map.second;
 
             // simplify the packet by looking at all messages and changing to more efficient
             // versions, when applicable.
@@ -125,7 +125,7 @@ void DataSyncArduino::syncData() {
 }
 
 void DataSyncArduino::simplifyPackets(const cor::Controller& controller,
-                                      std::list<QString>& allMessages) {
+                                      std::vector<QString>& allMessages) {
     // count number of packets for each of the headers
     if (controller.maxHardwareIndex != 1) {
         std::vector<int> packetCount(int(EPacketHeader::MAX), 0);
@@ -171,7 +171,7 @@ void DataSyncArduino::simplifyPackets(const cor::Controller& controller,
 }
 
 const QString DataSyncArduino::createPacket(const cor::Controller& controller,
-                                            const std::list<QString>& allMessages) {
+                                            const std::vector<QString>& allMessages) {
     QString finalPacket;
     for (auto&& message : allMessages) {
         if (int(finalPacket.size() + message.size()) < int(controller.maxPacketSize - 16)) {
@@ -362,7 +362,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
             if (!message.isEmpty()) {
                 auto messageGroup = mMessages.find(dataDevice.controller().toStdString());
                 if (messageGroup == mMessages.end()) {
-                    std::list<QString> list = {message};
+                    std::vector<QString> list = {message};
                     mMessages.insert(std::make_pair(dataDevice.controller().toStdString(), list));
                 } else {
                     messageGroup->second.push_back(message);

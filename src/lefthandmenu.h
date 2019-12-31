@@ -98,7 +98,7 @@ private:
     bool mAlwaysOpen;
 
     /// gathers all light groups, as displayed in the UI
-    std::list<cor::Group> gatherAllUIGroups();
+    std::vector<cor::Group> gatherAllUIGroups();
 
     /*!
      * \brief updateDataGroupInUI using the new cor::LightGroup, update the UI assets with
@@ -108,7 +108,7 @@ private:
      * \param dataGroup the group to update in the UI
      * \param uiGroups all UI groups
      */
-    void updateDataGroupInUI(const cor::Group& dataGroup, const std::list<cor::Group>& uiGroups);
+    void updateDataGroupInUI(const cor::Group& dataGroup, const std::vector<cor::Group>& uiGroups);
 
     /*!
      * \brief initRoomsWidget constructor helper for making a ListRoomWidget
@@ -123,7 +123,7 @@ private:
     int resizeRoomsWidgets();
 
     /// creates a miscellaneous group for all groups not stated in standard rooms
-    cor::Group makeMiscellaneousGroup(const std::list<cor::Group>& roomList);
+    cor::Group makeMiscellaneousGroup(const std::vector<cor::Group>& roomList);
 
     /// true if menu is in, false otherwise
     bool mIsIn;
@@ -183,7 +183,7 @@ private:
     void updateSingleColorButton();
 
     /// stored values for last devices to prevent unnecessary renders
-    std::list<cor::Light> mLastDevices;
+    std::vector<cor::Light> mLastDevices;
 
     /// stores number of rooms to check if resize is needed
     std::size_t mNumberOfRooms;

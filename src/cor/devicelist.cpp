@@ -316,7 +316,8 @@ bool DeviceList::clearDevices() {
 bool DeviceList::removeDevice(const cor::Light& device) {
     for (const auto& light : mDevices) {
         if (device.uniqueID() == light.uniqueID()) {
-            mDevices.remove(light);
+            auto it = std::find(mDevices.begin(), mDevices.end(), device);
+            mDevices.erase(it);
             return true;
         }
     }
@@ -346,7 +347,7 @@ bool DeviceList::addDevice(cor::Light device) {
 
 
 
-bool DeviceList::addDeviceList(const std::list<cor::Light>& list) {
+bool DeviceList::addDeviceList(const std::vector<cor::Light>& list) {
     for (const auto& device : list) {
         if (device.isReachable) {
             addDevice(device);
@@ -356,7 +357,7 @@ bool DeviceList::addDeviceList(const std::list<cor::Light>& list) {
     return true;
 }
 
-bool DeviceList::removeDeviceList(const std::list<cor::Light>& list) {
+bool DeviceList::removeDeviceList(const std::vector<cor::Light>& list) {
     for (const auto& device : list) {
         removeDevice(device);
     }
@@ -366,7 +367,7 @@ bool DeviceList::removeDeviceList(const std::list<cor::Light>& list) {
 
 
 int DeviceList::removeDevicesOfType(EProtocolType type) {
-    std::list<cor::Light> removeList;
+    std::vector<cor::Light> removeList;
     for (const auto& light : mDevices) {
         if (type == light.protocol()) {
             removeList.push_back(light);
@@ -408,14 +409,13 @@ bool DeviceList::hasLightWithProtocol(EProtocolType protocol) const noexcept {
     return false;
 }
 
-QString DeviceList::findCurrentCollection(const std::list<cor::Group>& collections,
-                                          bool allowLights) {
+cor::Group DeviceList::findCurrentGroup(const std::vector<cor::Group>& groups) {
     // count number of lights in each collection currently selected
-    std::vector<std::uint32_t> lightCount(collections.size(), 0);
+    std::vector<std::uint32_t> lightCount(groups.size(), 0);
     auto index = 0u;
-    for (const auto& collection : collections) {
+    for (const auto& collection : groups) {
         for (const auto& device : mDevices) {
-            for (const auto& collectionID : collection.lights) {
+            for (const auto& collectionID : collection.lights()) {
                 if (collectionID == device.uniqueID()) {
                     ++lightCount[index];
                 }
@@ -425,11 +425,11 @@ QString DeviceList::findCurrentCollection(const std::list<cor::Group>& collectio
     }
 
     // check how many collections are currently fully selected
-    std::vector<bool> allLightsFound(collections.size(), false);
+    std::vector<bool> allLightsFound(groups.size(), false);
     index = 0;
     auto completeGroupCount = 0u;
-    for (const auto& collection : collections) {
-        if (lightCount[index] == collection.lights.size()) {
+    for (const auto& collection : groups) {
+        if (lightCount[index] == collection.lights().size()) {
             allLightsFound[index] = true;
             ++completeGroupCount;
         }
@@ -438,22 +438,22 @@ QString DeviceList::findCurrentCollection(const std::list<cor::Group>& collectio
 
     // if count is higher than 1, check if any have too many
     if (completeGroupCount > 1) {
-        QString name;
+        cor::Group group;
         auto biggestSize = 0u;
         bool foundNonZeroGroup = false;
         index = 0;
-        for (const auto& collection : collections) {
+        for (const auto& collection : groups) {
             if (allLightsFound[index]) {
-                if (collection.lights.size() > biggestSize) {
-                    name = collection.name();
+                if (collection.lights().size() > biggestSize) {
+                    group = collection;
                     foundNonZeroGroup = true;
-                    biggestSize = std::uint32_t(collection.lights.size());
+                    biggestSize = std::uint32_t(collection.lights().size());
                 }
             }
             ++index;
         }
         if (foundNonZeroGroup) {
-            return name;
+            return group;
         }
     }
 
@@ -462,30 +462,20 @@ QString DeviceList::findCurrentCollection(const std::list<cor::Group>& collectio
         auto result = std::find(allLightsFound.begin(), allLightsFound.end(), true);
         auto allLightsIndex = std::distance(allLightsFound.begin(), result);
         int currentIndex = 0;
-        for (const auto& collection : collections) {
+        for (const auto& collection : groups) {
             if (allLightsIndex == currentIndex) {
-                return collection.name();
+                return collection;
             }
             ++currentIndex;
         }
     }
 
-
-    if (allowLights) {
-        if (mDevices.size() == 1) {
-            return mDevices.front().name;
-        }
-        if (mDevices.size() == 2) {
-            return QString(mDevices.front().name + ", " + mDevices.back().name);
-        }
-    }
-
-    return "";
+    return {};
 }
 
 std::uint64_t DeviceList::findCurrentMood(const cor::Dictionary<cor::Mood>& moods) {
-    for (const auto& mood : moods.itemVector()) {
-        if (mDevices == mood.lights) {
+    for (const auto& mood : moods.items()) {
+        if (mDevices == mood.lights()) {
             return mood.uniqueID();
         }
     }

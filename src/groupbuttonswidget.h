@@ -34,8 +34,14 @@ public:
     /// add a group to a the list of supported groups
     void addGroup(const QString& group);
 
+    /// removes a group from the list of supported groups
+    void removeGroup(const QString& group);
+
+    /// true if empty, false if theres at least one button
+    bool empty() { return mButtons.empty(); }
+
     /// get list of groups shown by the widget
-    std::list<QString> groupNames();
+    std::vector<QString> groupNames();
 
     /// key of the currently selected group
     const QString& currentKey() const { return mCurrentKey; }

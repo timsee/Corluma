@@ -52,6 +52,11 @@ bool JSONSaveData::checkForJSON() {
     return false;
 }
 
+bool JSONSaveData::saveExists() {
+    QFile saveFile(mSavePath);
+    return saveFile.exists();
+}
+
 bool JSONSaveData::saveJSON() {
     QFileInfo saveInfo(mSavePath);
     if (saveInfo.exists()) {

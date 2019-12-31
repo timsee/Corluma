@@ -210,7 +210,7 @@ TopMenu::TopMenu(QWidget* parent,
     showFloatingLayout(mCurrentPage);
 
     mPaletteWidth = mSize.width() * 3;
-    auto colorMenuWidth =  cor::applicationSize().width() - mColorFloatingLayout->width();
+    auto colorMenuWidth = cor::applicationSize().width() - mColorFloatingLayout->width();
     if (mPaletteWidth > colorMenuWidth) {
         mPaletteWidth = colorMenuWidth;
     }
@@ -277,7 +277,7 @@ void TopMenu::deviceCountChanged() {
         }
 
         if ((mCurrentPage == EPage::colorPage || mCurrentPage == EPage::palettePage)
-               && !mMainWindow->leftHandMenu()->alwaysOpen() && !mSelectLightsButton->isIn()) {
+            && !mMainWindow->leftHandMenu()->alwaysOpen() && !mSelectLightsButton->isIn()) {
             mSelectLightsButton->pushIn(mStartSelectLightsButton);
         }
     }
@@ -740,7 +740,7 @@ void TopMenu::updateUI() {
         for (auto&& device : currentDevices) {
             device = mComm->lightByID(device.uniqueID());
         }
-        mLastDevices = currentDevices;
+        mLastDevices = mData->devices();
 
         mMainPalette->updateDevices(currentDevices);
         updateBrightnessSlider();

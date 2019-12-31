@@ -58,10 +58,10 @@ public:
     EHueDiscoveryState state();
 
     /// updates the schedules stored in a bridge
-    void updateSchedules(const hue::Bridge& bridge, const std::list<SHueSchedule>& schedules);
+    void updateSchedules(const hue::Bridge& bridge, const std::vector<SHueSchedule>& schedules);
 
     /// updates the groups stored in a bridge
-    void updateGroups(const hue::Bridge& bridge, const std::list<cor::Group>& groups);
+    void updateGroups(const hue::Bridge& bridge, const std::vector<cor::Group>& groups);
 
     /*!
      * \brief bridge All currently known data about the hue bridge. This is only guarenteed to
@@ -72,10 +72,10 @@ public:
     const cor::Dictionary<hue::Bridge>& bridges() const { return mFoundBridges; }
 
     /// list of bridges that haven't been fully discovered
-    std::list<hue::Bridge> notFoundBridges() const { return mNotFoundBridges; }
+    std::vector<hue::Bridge> notFoundBridges() const { return mNotFoundBridges; }
 
     /// getter for all known hue lights
-    std::list<HueLight> lights();
+    std::vector<HueLight> lights();
 
     /// reloads the data from the bridges into the App's group data.
     void reloadGroupData();
@@ -215,7 +215,7 @@ private:
     void testNewlyDiscoveredBridge(const hue::Bridge& bridge);
 
     /// list of all controllers that have previously been used, but currently are not found
-    std::list<hue::Bridge> mNotFoundBridges;
+    std::vector<hue::Bridge> mNotFoundBridges;
 
     /// list of all controllers that have been verified and can be communicated with
     cor::Dictionary<hue::Bridge> mFoundBridges;

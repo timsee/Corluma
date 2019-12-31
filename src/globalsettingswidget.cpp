@@ -14,7 +14,7 @@
 
 GlobalSettingsWidget::GlobalSettingsWidget(QWidget* parent, AppSettings* appSettings)
     : QWidget(parent),
-      mAppSettings(appSettings) {
+      mAppSettings(appSettings), mHideTimeout{false} {
     mSpacerPixels = 5;
 
     // set margins as spacer * 2
@@ -162,7 +162,13 @@ int GlobalSettingsWidget::timeoutValue() {
 }
 
 void GlobalSettingsWidget::resize() {
-    int currentY = mTimeoutWidget->resize(mEnabledConnectionsLabel->height()) + mSpacerPixels;
+    int currentY = mSpacerPixels;
+    if (mHideTimeout) {
+        mTimeoutWidget->setVisible(false);
+    } else {
+        mTimeoutWidget->setVisible(true);
+        currentY += mTimeoutWidget->resize(mEnabledConnectionsLabel->height());
+    }
 
     if (mEnabledConnectionsLabel->isVisible()) {
         mEnabledConnectionsLabel->setGeometry(mSpacerPixels,

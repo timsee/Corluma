@@ -22,6 +22,7 @@ ListLightWidget::ListLightWidget(const cor::Light& device,
                                  EOnOffSwitchState switchState,
                                  QWidget* parent)
     : cor::ListItemWidget(device.uniqueID(), parent),
+      mNoConnectionPixmap(":/images/questionMark.png"),
       mType{type},
       mSwitchState{switchState},
       mFontPtSize(16) {
@@ -58,8 +59,8 @@ void ListLightWidget::init(const cor::Light& device) {
 
     QString nameText = createName(device);
     mController->setText(nameText);
-
     mController->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    mController->setAlignment(Qt::AlignVCenter);
 
     // setup layout
     mLayout = new QGridLayout(this);
@@ -182,30 +183,22 @@ void ListLightWidget::paintEvent(QPaintEvent*) {
     if (mIsChecked && mShouldHighlight) {
         painter.fillRect(rect(), QBrush(QColor(61, 142, 201)));
     } else {
-        // TODO: could I make this transparent in all cases?
         painter.fillRect(rect(), QBrush(QColor(32, 31, 31)));
     }
 
+    int x = mTypeIcon->width() + 5 + mTypeIcon->pos().x();
+    if (mOnOffSwitch->isVisible()) {
+        x += mOnOffSwitch->width() + 5;
+    }
+    auto side = int(height() * 0.45f);
+    auto y = int(height() * 0.3f);
     if (mDevice.isReachable) {
         QRect rect;
-        int x = mTypeIcon->width() + 5 + mTypeIcon->pos().x();
-        if (mOnOffSwitch->isVisible()) {
-            x += mOnOffSwitch->width() + 5;
-        }
         if (mType == cor::EWidgetType::full) {
             rect = QRect(x, 10, width() / 2, int(height() * 0.6f / 2));
         } else {
-            auto side = int(height() * 0.4f);
             auto xPos = std::max(x, int(this->width() * 0.18f - x + side));
-            rect = QRect(xPos, int(height() * 0.3f), side, side);
-        }
-
-        // make brush with icon data in it
-        QBrush brush;
-        if (mDevice.isOn) {
-            brush = QColor(0, 0, 0);
-        } else {
-            brush = QColor(0, 0, 0, 5);
+            rect = QRect(xPos, y, side, side);
         }
 
         if (mIconPixmap.size() != rect.size()) {
@@ -215,15 +208,20 @@ void ListLightWidget::paintEvent(QPaintEvent*) {
                                              Qt::FastTransformation);
         }
 
-        QBrush brush2(mIconPixmap);
-
         if (!mDevice.isOn) {
             painter.setOpacity(0.25);
         }
-        painter.setBrush(brush);
-        painter.drawRect(rect);
 
         if (mType == cor::EWidgetType::full) {
+            // draw the back rectangle
+            QBrush blackBrush(QColor(0, 0, 0));
+            if (!mDevice.isOn) {
+                // if its not on, hide it
+                blackBrush.setColor(QColor(0, 0, 0, 5));
+            }
+            painter.setBrush(blackBrush);
+            painter.drawRect(rect);
+
             // set brightness width
             double brightness = mDevice.color.valueF();
             if (mDevice.routine > cor::ERoutineSingleColorEnd) {
@@ -233,8 +231,17 @@ void ListLightWidget::paintEvent(QPaintEvent*) {
         } else {
             rect.setWidth(int(rect.width()));
         }
-        painter.setBrush(brush2);
+
+        // draw the pixmap stretched to teh width provided
+        QBrush iconBrush(mIconPixmap);
+        painter.setBrush(iconBrush);
         painter.drawRect(rect);
+    } else {
+        painter.setOpacity(0.5);
+        // draw a quesiton mark in this region
+        auto xPos = std::max(x, int(this->width() * 0.18f - x + side));
+        QRect rect(xPos, y, side, side);
+        painter.drawPixmap(rect, mNoConnectionPixmap);
     }
 }
 
@@ -300,6 +307,12 @@ void ListLightWidget::resizeIcons() {
                                      Qt::IgnoreAspectRatio,
                                      Qt::SmoothTransformation);
     mTypeIcon->setPixmap(mTypePixmap);
+    QSize size2(int(height() * 0.45f), int(height() * 0.45f));
+    mNoConnectionPixmap = QPixmap(":/images/questionMark.png");
+    mNoConnectionPixmap = mNoConnectionPixmap.scaled(size2.width(),
+                                                     size2.height(),
+                                                     Qt::KeepAspectRatio,
+                                                     Qt::SmoothTransformation);
 
     if (mType == cor::EWidgetType::full) {
         mController->setFixedWidth(width());

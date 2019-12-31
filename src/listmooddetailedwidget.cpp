@@ -65,7 +65,7 @@ ListMoodDetailedWidget::ListMoodDetailedWidget(QWidget* parent, GroupData* group
 
     mScrollArea->setWidget(mAdditionalDetailsWidget);
 
-    mEditPage = new EditGroupPage(this, mComm, groups);
+    mEditPage = new EditMoodPage(this, mComm, groups);
     mEditPage->setVisible(false);
 
     mPlaceholder = new QWidget(this);
@@ -87,17 +87,12 @@ void ListMoodDetailedWidget::update(const cor::Mood& mood) {
     mSimpleGroupWidget->removeWidgets();
     mKey = mood.uniqueID();
     mTopLabel->setText(mood.name());
-    mSimpleGroupWidget->updateDevices(mood.lights,
+    mSimpleGroupWidget->updateDevices(mood.lights(),
                                       cor::EWidgetType::full,
                                       EOnOffSwitchState::hidden,
                                       false,
                                       true);
-
-    mEditPage->showGroup(mood.name(),
-                         mComm->makeMood(mood).itemList(),
-                         mComm->allDevices(),
-                         true,
-                         false);
+    mEditPage->showMood(mood, mComm->allDevices());
 
     mOnOffSwitch->setSwitchState(ESwitchState::off);
     mAdditionalDetailsWidget->display(mood, mPlaceholder->size());

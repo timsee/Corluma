@@ -67,10 +67,10 @@ public:
  * \param lights vector of hues
  * \return the most fully featured hue type found in the vector
  */
-inline EHueType checkForHueWithMostFeatures(std::list<HueLight> lights) {
-    uint32_t ambientCount = 0;
-    uint32_t whiteCount = 0;
-    uint32_t rgbCount = 0;
+inline EHueType checkForHueWithMostFeatures(std::vector<HueLight> lights) {
+    std::uint32_t ambientCount = 0;
+    std::uint32_t whiteCount = 0;
+    std::uint32_t rgbCount = 0;
     // check for all devices
     for (auto&& hue : lights) {
         // check if its a hue

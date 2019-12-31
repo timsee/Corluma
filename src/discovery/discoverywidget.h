@@ -60,7 +60,7 @@ protected:
      * \param list list widget to fill
      * \param connections cor::Controllers to use during filling.
      */
-    void fillList(QListWidget* list, std::list<cor::Controller>& connections);
+    void fillList(QListWidget* list, std::vector<cor::Controller>& connections);
 
     /*!
      * \brief fillList helper to fill a QListWidget with QStrings
@@ -68,6 +68,6 @@ protected:
      * \param list QListWidget to fill
      * \param connections names of connections to use during filling.
      */
-    void fillList(QListWidget* list, std::list<QString>& connections);
+    void fillList(QListWidget* list, std::vector<QString>& connections);
 };
 #endif // DISCOVERYWIDGET_H

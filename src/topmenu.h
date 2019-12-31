@@ -270,7 +270,7 @@ private:
     EPage mCurrentPage;
 
     /// stored values for last devices to prevent unnecessary renders
-    std::list<cor::Light> mLastDevices;
+    std::vector<cor::Light> mLastDevices;
 
     /// switch for turning all selected lights on and off.
     cor::Switch* mOnOffSwitch;

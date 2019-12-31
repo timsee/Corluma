@@ -137,8 +137,16 @@ SettingsPage::SettingsPage(QWidget* parent,
 void SettingsPage::show() {
     mGlobalWidget->updateUI();
     mGlobalWidget->show();
+    auto mainWindow = qobject_cast<MainWindow*>(parentWidget());
+    Q_ASSERT(mainWindow);
+    bool anyDiscovered = mainWindow->anyDiscovered();
+    mGlobalWidget->hideTimeout(!anyDiscovered);
+    mButtons[1]->shouldEnable(anyDiscovered);
+    mButtons[2]->shouldEnable(mGroups->saveExists());
+#ifndef MOBILE_BUILD
+    mButtons[3]->shouldEnable(anyDiscovered);
+#endif
     mGlobalWidget->resize();
-
     mCopyrightWidget->setGeometry(geometry());
 }
 
