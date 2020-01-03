@@ -214,6 +214,7 @@ SOURCES += main.cpp \
     lightinfoscrollarea.cpp
 
 HEADERS  +=  comm/arducor/arducordiscovery.h \
+    comm/arducor/arducorlight.h \
     comm/arducor/arducorpacketparser.h \
     comm/arducor/controller.h \
     comm/arducor/arducorinfowidget.h \
@@ -229,6 +230,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     comm/datasynchue.h \
     comm/datasyncarduino.h \
     comm/datasyncnanoleaf.h \
+    comm/nanoleaf/leaflight.h \
     comm/upnpdiscovery.h \
     colorpicker/colorpicker.h \
     colorpicker/rgbsliders.h \
@@ -242,6 +244,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     colorpicker/singlecolorpicker.h \
     colorpicker/multicolorpicker.h \
     colorpicker/schemegenerator.h \
+    cor/objects/room.h \
     discovery/discoverywidget.h \
     discovery/discoveryhuewidget.h \
     discovery/discoverynanoleafwidget.h \

@@ -4,6 +4,7 @@
 #include <QScrollArea>
 #include <QWidget>
 
+#include "comm/hue/bridge.h"
 #include "comm/hue/huegroupwidget.h"
 #include "cor/objects/group.h"
 #include "cor/objects/page.h"
@@ -27,7 +28,7 @@ public:
     explicit BridgeGroupsWidget(QWidget* parent);
 
     /// update the groups in the widget
-    void updateGroups(std::vector<cor::Group> groups);
+    void updateGroups(BridgeGroupVector groups, BridgeRoomVector rooms);
 
     /*!
      * \brief resize size the widget programmatically

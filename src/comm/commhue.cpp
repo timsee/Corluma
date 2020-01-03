@@ -7,6 +7,7 @@
 #include <QNetworkRequest>
 #include <QVariantMap>
 
+#include "comm/hue/bridge.h"
 #include "comm/hue/hueprotocols.h"
 #include "cor/objects/light.h"
 #include "utils/color.h"
@@ -110,7 +111,7 @@ void CommHue::changeColor(const hue::Bridge& bridge, int lightIndex, const QColo
         }
     }
 
-    if (light.hueType == EHueType::extended || light.hueType == EHueType::color) {
+    if (light.hueType() == EHueType::extended || light.hueType() == EHueType::color) {
         QJsonObject json;
         json["on"] = true;
         json["sat"] = saturation;
@@ -120,7 +121,7 @@ void CommHue::changeColor(const hue::Bridge& bridge, int lightIndex, const QColo
         resetBackgroundTimers();
         putJson(bridge, "/lights/" + QString::number(lightIndex) + "/state", json);
     } else {
-        qDebug() << "ignoring RGB value to " << light.index;
+        qDebug() << "ignoring RGB value to " << light.index();
     }
 }
 
@@ -133,7 +134,7 @@ void CommHue::changeColorCT(const hue::Bridge& bridge, int lightIndex, int brigh
         }
     }
 
-    if (light.hueType == EHueType::ambient) {
+    if (light.hueType() == EHueType::ambient) {
         if (ct > 500) {
             ct = 500;
         }
@@ -183,18 +184,31 @@ void CommHue::bridgeDiscovered(const hue::Bridge& bridge,
             }
         }
 
+        hue::BridgeGroupVector groupVector;
+        hue::BridgeRoomVector roomVector;
         std::vector<cor::Group> groups;
+        std::vector<cor::Group> rooms;
         keys = groupObject.keys();
+
         for (const auto& key : keys) {
             if (groupObject.value(key).isObject()) {
-                const auto& jsonResult =
-                    jsonToGroup(groupObject.value(key).toObject(), int(key.toDouble()), groups);
-                if (jsonResult.second) {
-                    groups.push_back(jsonResult.first);
+                auto object = groupObject.value(key).toObject();
+                if (object["type"].toString() == "Room") {
+                    const auto& jsonResult = jsonToRoom(object, rooms);
+                    if (jsonResult.second) {
+                        roomVector.emplace_back(jsonResult.first, key.toDouble());
+                        rooms.emplace_back(jsonResult.first);
+                    }
+                } else {
+                    const auto& jsonResult = jsonToGroup(object, groups);
+                    if (jsonResult.second) {
+                        groupVector.emplace_back(jsonResult.first, key.toDouble());
+                        groups.emplace_back(jsonResult.first);
+                    }
                 }
             }
         }
-        mDiscovery->updateGroups(bridge, groups);
+        mDiscovery->updateGroupsAndRooms(bridge, groupVector, roomVector);
 
 
         std::vector<SHueSchedule> schedules;
@@ -295,19 +309,33 @@ void CommHue::parseJSONObject(const hue::Bridge& bridge, const QJsonObject& obje
     QStringList keys = object.keys();
     std::vector<SHueSchedule> scheduleList;
     std::vector<cor::Group> groupList;
+    std::vector<cor::Group> roomList;
+    hue::BridgeGroupVector groupVector;
+    hue::BridgeRoomVector roomVector;
+
     for (const auto& key : keys) {
         if (object.value(key).isObject()) {
             QJsonObject innerObject = object.value(key).toObject();
             EHueUpdates updateType = checkTypeOfUpdate(innerObject);
+
             if (updateType == EHueUpdates::deviceUpdate) {
                 updateHueLightState(bridge, innerObject, int(key.toDouble()), true);
             } else if (updateType == EHueUpdates::scheduleUpdate) {
                 scheduleList.push_back(jsonToSchedule(innerObject, int(key.toDouble())));
             } else if (updateType == EHueUpdates::groupUpdate) {
-                const auto& jsonResult =
-                    jsonToGroup(innerObject.value(key).toObject(), int(key.toDouble()), {});
-                if (jsonResult.second) {
-                    groupList.push_back(jsonResult.first);
+                auto object = innerObject.value(key).toObject();
+                if (object["type"].toString() == "Room") {
+                    const auto& jsonResult = jsonToRoom(object, groupList);
+                    if (jsonResult.second) {
+                        groupVector.emplace_back(jsonResult.first, key.toDouble());
+                        groupList.emplace_back(jsonResult.first);
+                    }
+                } else {
+                    const auto& jsonResult = jsonToRoom(object, roomList);
+                    if (jsonResult.second) {
+                        roomVector.emplace_back(jsonResult.first, key.toDouble());
+                        roomList.emplace_back(jsonResult.first);
+                    }
                 }
             } else if (updateType == EHueUpdates::newLightNameUpdate) {
                 updateNewHueLight(bridge, innerObject, int(key.toDouble()));
@@ -327,7 +355,7 @@ void CommHue::parseJSONObject(const hue::Bridge& bridge, const QJsonObject& obje
         mDiscovery->updateSchedules(bridge, scheduleList);
     }
     if (!groupList.empty()) {
-        mDiscovery->updateGroups(bridge, groupList);
+        mDiscovery->updateGroupsAndRooms(bridge, groupVector, roomVector);
     }
 }
 
@@ -362,43 +390,46 @@ void CommHue::handleSuccessPacket(const hue::Bridge& bridge,
     if (list.size() > 1) {
         if (list[1] == "lights") {
             if (list.size() > 2) {
-                cor::Light device =
-                    mDiscovery->lightFromBridgeIDAndIndex(bridge.id, list[2].toInt());
+                HueLight device = mDiscovery->lightFromBridgeIDAndIndex(bridge.id, list[2].toInt());
                 if (fillDevice(device)) {
                     if (list[3] == "state") {
                         QString key = list[4];
                         bool valueChanged = false;
                         if (key == "on") {
-                            device.isOn = value.toBool();
+                            device.isOn(value.toBool());
                             valueChanged = true;
                         } else if (key == "sat") {
                             auto saturation = int(value.toDouble());
-                            device.color.setHsv(device.color.hue(),
-                                                saturation,
-                                                device.color.value());
+                            QColor color;
+                            color.setHsv(device.color().hue(), saturation, device.color().value());
+                            device.color(color);
                             valueChanged = true;
                         } else if (key == "hue") {
                             auto hue = int(value.toDouble());
-                            device.color.setHsv(hue / 182,
-                                                device.color.saturation(),
-                                                device.color.value());
-                            device.colorMode = EColorMode::HSV;
+                            QColor color;
+                            color.setHsv(hue / 182,
+                                         device.color().saturation(),
+                                         device.color().value());
+                            device.color(color);
+                            device.colorMode(EColorMode::HSV);
                             valueChanged = true;
                         } else if (key == "bri") {
                             auto brightness = int(value.toDouble());
-                            device.color.setHsv(device.color.hue(),
-                                                device.color.saturation(),
-                                                brightness);
+                            QColor color;
+                            color.setHsv(device.color().hue(),
+                                         device.color().saturation(),
+                                         brightness);
+                            device.color(color);
                             valueChanged = true;
                         } else if (key == "colormode") {
                             QString mode = value.toString();
                             EColorMode colorMode = stringtoColorMode(mode);
-                            device.colorMode = colorMode;
+                            device.colorMode(colorMode);
                             valueChanged = true;
                         } else if (key == "ct") {
                             auto ct = int(value.toDouble());
-                            device.color = cor::colorTemperatureToRGB(ct);
-                            device.colorMode = EColorMode::CT;
+                            device.color(cor::colorTemperatureToRGB(ct));
+                            device.colorMode(EColorMode::CT);
                             valueChanged = true;
                         }
 
@@ -408,7 +439,6 @@ void CommHue::handleSuccessPacket(const hue::Bridge& bridge,
                     } else if (list[3] == "name") {
                         // fill device
                         if (fillDevice(device)) {
-                            device.name = value.toString();
                             updateLight(device);
                         }
                         qDebug() << "found the nanme update!";
@@ -448,28 +478,15 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge,
         QJsonObject stateObject = object["state"].toObject();
         if (stateObject["on"].isBool() && stateObject["reachable"].isBool()
             && stateObject["bri"].isDouble()) {
-            HueLight hue(object["uniqueid"].toString(), bridge.id, ECommType::hue);
+            HueLight hue(object, bridge.id, i);
 
-            QString type = object["type"].toString();
-            hue.hueType = cor::stringToHueType(type);
-
-            hue.name = object["name"].toString();
-
-            hue.index = i;
-            hue.modelID = object["modelid"].toString();
-            hue.hardwareType = hue::modelToHardwareType(object["modelid"].toString());
-
-            hue.manufacturer = object["manufacturername"].toString();
-            hue.softwareVersion = object["swversion"].toString();
-
-            hue.isReachable = stateObject["reachable"].toBool();
-            hue.isOn = stateObject["on"].toBool();
+            hue.isReachable(stateObject["reachable"].toBool());
+            hue.isOn(stateObject["on"].toBool());
 
             QString colorMode = stateObject["colormode"].toString();
-            hue.colorMode = stringtoColorMode(colorMode);
-            hue.productType = EProductType::hue;
+            hue.colorMode(stringtoColorMode(colorMode));
 
-            if (hue.colorMode == EColorMode::XY) {
+            if (hue.colorMode() == EColorMode::XY) {
                 bool isValid = false;
                 if (stateObject["xy"].isArray() && stateObject["bri"].isDouble()) {
                     QJsonArray array = stateObject["xy"].toArray();
@@ -504,8 +521,10 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge,
                             g = cor::clamp(g, 0.0, 1.0);
                             b = cor::clamp(b, 0.0, 1.0);
 
-                            hue.color.setRgbF(r, g, b);
-                            hue.colorMode = EColorMode::HSV;
+                            QColor color;
+                            color.setRgbF(r, g, b);
+                            hue.color(color);
+                            hue.colorMode(EColorMode::HSV);
                         }
                     }
                 }
@@ -513,27 +532,29 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge,
                     qDebug() << "something went wrong with the hue xy";
                     return false;
                 }
-            } else if (hue.hueType == EHueType::ambient) {
+            } else if (hue.hueType() == EHueType::ambient) {
                 int ct = int(stateObject["ct"].toDouble());
-                hue.color = cor::colorTemperatureToRGB(ct);
-                hue.colorMode = EColorMode::CT;
-            } else if (hue.hueType == EHueType::extended || hue.hueType == EHueType::color) {
+                hue.color(cor::colorTemperatureToRGB(ct));
+                hue.colorMode(EColorMode::CT);
+            } else if (hue.hueType() == EHueType::extended || hue.hueType() == EHueType::color) {
                 if (stateObject["hue"].isDouble() && stateObject["sat"].isDouble()) {
                     double hueF = stateObject["hue"].toDouble() / 65535.0;
                     double satF = stateObject["sat"].toDouble() / 254.0;
                     double briF = stateObject["bri"].toDouble() / 254.0;
-                    hue.color.setHsvF(hueF, satF, briF);
-                    hue.colorMode = EColorMode::HSV;
+                    QColor color;
+                    color.setHsvF(hueF, satF, briF);
+                    hue.color(color);
+                    hue.colorMode(EColorMode::HSV);
                 } else {
                     qDebug() << "something went wrong with the hue parser";
                     return false;
                 }
-            } else if (hue.hueType == EHueType::white) {
+            } else if (hue.hueType() == EHueType::white) {
                 int brightness = int(stateObject["bri"].toDouble());
                 QColor white(255, 255, 255);
                 white = white.toHsv();
                 white.setHsv(white.hue(), white.saturation(), brightness);
-                hue.color = white;
+                hue.color(white);
             }
             if (wasDiscovered) {
                 updateLight(hue);
@@ -593,7 +614,6 @@ SHueSchedule CommHue::jsonToSchedule(QJsonObject object, int i) {
 }
 
 std::pair<cor::Group, bool> CommHue::jsonToGroup(QJsonObject object,
-                                                 int i,
                                                  const std::vector<cor::Group>& groupList) {
     if (object["name"].isString() && object["lights"].isArray() && object["type"].isString()
         && object["state"].isObject()) {
@@ -605,18 +625,40 @@ std::pair<cor::Group, bool> CommHue::jsonToGroup(QJsonObject object,
             int index = value.toString().toInt();
             for (const auto& bridge : mDiscovery->bridges().items()) {
                 for (const auto& light : bridge.lights.items()) {
-                    if (light.index == index) {
+                    if (light.index() == index) {
                         lightsInGroup.push_back(light.uniqueID());
                     }
                 }
             }
         }
         cor::Group group(generateUniqueID(groupList, name), name, lightsInGroup);
-        group.index(i);
-        group.isRoom(object["type"].toString() == "Room");
         return std::make_pair(group, true);
     }
     return std::make_pair(cor::Group{}, false);
+}
+
+std::pair<cor::Room, bool> CommHue::jsonToRoom(QJsonObject object,
+                                               const std::vector<cor::Group>& groupList) {
+    if (object["name"].isString() && object["lights"].isArray() && object["type"].isString()
+        && object["state"].isObject()) {
+        const auto& name = object["name"].toString();
+
+        QJsonArray lights = object["lights"].toArray();
+        std::vector<QString> lightsInGroup;
+        foreach (const QJsonValue& value, lights) {
+            int index = value.toString().toInt();
+            for (const auto& bridge : mDiscovery->bridges().items()) {
+                for (const auto& light : bridge.lights.items()) {
+                    if (light.index() == index) {
+                        lightsInGroup.push_back(light.uniqueID());
+                    }
+                }
+            }
+        }
+        cor::Room room(generateUniqueID(groupList, name), name, lightsInGroup, {});
+        return std::make_pair(room, true);
+    }
+    return std::make_pair(cor::Room{}, false);
 }
 
 
@@ -624,8 +666,7 @@ bool CommHue::updateNewHueLight(const hue::Bridge& bridge, QJsonObject object, i
     if (object["name"].isString()) {
         QString name = object["name"].toString();
 
-        HueLight light(object["uniqueid"].toString(), bridge.id, ECommType::hue);
-        light.name = name;
+        HueLight light(object, bridge.id, i);
 
         bool searchForLight = false;
         for (const auto& connectedLight : bridge.lights.items()) {
@@ -638,11 +679,8 @@ bool CommHue::updateNewHueLight(const hue::Bridge& bridge, QJsonObject object, i
         }
 
         // update the cor::Light as well
-        cor::Light device(object["uniqueid"].toString(), bridge.id, ECommType::hue);
-        device.index = i;
-        if (fillDevice(device)) {
-            device.name = bridge.id;
-            updateLight(device);
+        if (fillDevice(light)) {
+            updateLight(light);
         } else {
             qDebug() << "Could not find device " << __func__;
             return false;
@@ -692,7 +730,7 @@ HueLight CommHue::hueLightFromLight(const cor::Light& device) {
     if (bridgeFound) {
         return bridge.lights.item(device.uniqueID().toStdString()).first;
     }
-    THROW_EXCEPTION("No hue found for" + device.name.toStdString());
+    THROW_EXCEPTION("No hue found for" + device.name().toStdString());
 }
 
 void CommHue::createIdleTimeout(const hue::Bridge& bridge, int i, int minutes) {
@@ -846,7 +884,7 @@ void CommHue::createGroup(const hue::Bridge& bridge,
 
     QJsonArray array;
     for (auto light : lights) {
-        array.append(QString::number(light.index));
+        array.append(QString::number(light.index()));
     }
     if (!array.empty()) {
         object["lights"] = array;
@@ -870,14 +908,16 @@ void CommHue::createGroup(const hue::Bridge& bridge,
 void CommHue::updateGroup(const hue::Bridge& bridge,
                           cor::Group group,
                           std::vector<HueLight> lights) {
-    QString urlString = urlStart(bridge) + "/groups/" + QString::number(group.index());
+    // get ID from the group
+    auto index = bridge.groupID(group);
+    QString urlString = urlStart(bridge) + "/groups/" + QString::number(index);
 
     QJsonObject object;
     object["name"] = group.name();
 
     QJsonArray array;
     for (auto light : lights) {
-        array.append(QString::number(light.index));
+        array.append(QString::number(light.index()));
     }
     object["lights"] = array;
 
@@ -894,7 +934,9 @@ void CommHue::updateGroup(const hue::Bridge& bridge,
 
 
 void CommHue::deleteGroup(const hue::Bridge& bridge, cor::Group group) {
-    QString urlString = urlStart(bridge) + "/groups/" + QString::number(group.index());
+    auto index = bridge.groupID(group);
+
+    QString urlString = urlStart(bridge) + "/groups/" + QString::number(index);
     mNetworkManager->deleteResource(QNetworkRequest(QUrl(urlString)));
 }
 
@@ -998,7 +1040,7 @@ void CommHue::searchForNewLights(const hue::Bridge& bridge,
 
 void CommHue::renameLight(HueLight light, const QString& newName) {
     auto bridge = mDiscovery->bridgeFromLight(light);
-    QString urlString = urlStart(bridge) + "/lights/" + QString::number(light.index);
+    QString urlString = urlStart(bridge) + "/lights/" + QString::number(light.index());
 
     QJsonObject object;
     object["name"] = newName;
@@ -1013,7 +1055,7 @@ void CommHue::renameLight(HueLight light, const QString& newName) {
 
 void CommHue::deleteLight(const HueLight& light) {
     auto bridge = mDiscovery->bridgeFromLight(light);
-    QString urlString = urlStart(bridge) + "/lights/" + QString::number(light.index);
+    QString urlString = urlStart(bridge) + "/lights/" + QString::number(light.index());
     mNetworkManager->deleteResource(QNetworkRequest(QUrl(urlString)));
 }
 
@@ -1022,7 +1064,7 @@ std::vector<SHueSchedule> CommHue::schedules(const hue::Bridge& bridge) {
 }
 
 std::vector<cor::Group> CommHue::groups(const hue::Bridge& bridge) {
-    return mDiscovery->bridgeFromIP(bridge.IP).groups;
+    return mDiscovery->bridgeFromIP(bridge.IP).groups();
 }
 
 

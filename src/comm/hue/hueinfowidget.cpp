@@ -24,7 +24,7 @@ HueInfoWidget::HueInfoWidget(HueLight light, QWidget* parent)
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     setStyleSheet(styleSheet);
 
-    mName = new EditableFieldWidget(light.name,
+    mName = new EditableFieldWidget(light.name(),
                                     this,
                                     32,
                                     "A hue's name must be at most 32 characters long.");
@@ -32,11 +32,11 @@ HueInfoWidget::HueInfoWidget(HueLight light, QWidget* parent)
     mName->setFontPointSize(14);
     connect(mName, SIGNAL(updatedField(QString)), this, SLOT(nameChanged(QString)));
 
-    mModelID = new QLabel("<b>Model:</b>  " + light.modelID, this);
+    mModelID = new QLabel("<b>Model:</b>  " + light.modelID(), this);
     mModelID->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mModelID->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mSoftwareVersion = new QLabel("<b>Software:</b>  " + light.softwareVersion, this);
+    mSoftwareVersion = new QLabel("<b>Software:</b>  " + light.softwareVersion(), this);
     mSoftwareVersion->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mSoftwareVersion->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
@@ -44,7 +44,7 @@ HueInfoWidget::HueInfoWidget(HueLight light, QWidget* parent)
     mUniqueID->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mUniqueID->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mType = new QLabel(cor::hueTypeToString(light.hueType), this);
+    mType = new QLabel(cor::hueTypeToString(light.hueType()), this);
     mType->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mType->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
@@ -69,12 +69,12 @@ HueInfoWidget::HueInfoWidget(HueLight light, QWidget* parent)
 void HueInfoWidget::updateLight(HueLight light) {
     // many fields such as the mac address and the type of light won't update, only check the fields
     // that do
-    if (light.name != mLight.name) {
-        mName->setText(light.name);
+    if (light.name() != mLight.name()) {
+        mName->setText(light.name());
     }
 
-    if (light.softwareVersion != mLight.softwareVersion) {
-        mSoftwareVersion->setText("<b>Software:</b>  " + light.softwareVersion);
+    if (light.softwareVersion() != mLight.softwareVersion()) {
+        mSoftwareVersion->setText("<b>Software:</b>  " + light.softwareVersion());
     }
 
     mLight = light;
@@ -100,7 +100,7 @@ void HueInfoWidget::hideDetails(bool shouldHide) {
 void HueInfoWidget::resize() {
     QSize size(mName->height(), mName->height());
     mTypeIcon->setFixedSize(size);
-    mTypePixmap = lightHardwareTypeToPixmap(mLight.hardwareType);
+    mTypePixmap = lightHardwareTypeToPixmap(mLight.hardwareType());
     mTypePixmap = mTypePixmap.scaled(size.width(),
                                      size.height(),
                                      Qt::IgnoreAspectRatio,
@@ -112,8 +112,7 @@ void HueInfoWidget::resizeEvent(QResizeEvent*) {
     resize();
 }
 
-void HueInfoWidget::paintEvent(QPaintEvent* event) {
-    Q_UNUSED(event);
+void HueInfoWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);

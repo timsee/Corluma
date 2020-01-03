@@ -13,6 +13,7 @@
 #include "comm/hue/hueprotocols.h"
 #include "commtype.h"
 #include "cor/objects/group.h"
+#include "cor/objects/room.h"
 
 /*!
  * \copyright
@@ -441,12 +442,20 @@ private:
      * \brief jsonToGroup read an incoming packet from the hue bridge and update the internal
      * representation of the hue's known groups.
      * \param object json representationof a group
-     * \param i the index of the group given by the bridge
      * \return true if successful, false if failed.
      */
     std::pair<cor::Group, bool> jsonToGroup(QJsonObject object,
-                                            int i,
                                             const std::vector<cor::Group>& groupList);
+
+
+    /*!
+     * \brief jsonToGroup read an incoming packet from the hue bridge and update the internal
+     * representation of the hue's known groups.
+     * \param object json representationof a group
+     * \return true if successful, false if failed.
+     */
+    std::pair<cor::Room, bool> jsonToRoom(QJsonObject object,
+                                          const std::vector<cor::Group>& groupList);
 
     /*!
      * \brief jsonToSchedule read an incoming packet from the Hue Brige and update the Hue Schedule

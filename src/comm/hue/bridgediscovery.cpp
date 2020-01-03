@@ -97,20 +97,24 @@ void BridgeDiscovery::updateSchedules(const hue::Bridge& bridge,
     }
 }
 
-void BridgeDiscovery::updateGroups(const hue::Bridge& bridge,
-                                   const std::vector<cor::Group>& groups) {
+void BridgeDiscovery::updateGroupsAndRooms(const hue::Bridge& bridge,
+                                           const BridgeGroupVector& groups,
+                                           const BridgeRoomVector& rooms) {
     const auto& bridgeResult = mFoundBridges.item(bridge.id.toStdString());
     if (bridgeResult.second) {
         auto foundBridge = bridgeResult.first;
-        foundBridge.groups = groups;
+        foundBridge.groupsWithIDs(groups);
+        foundBridge.roomsWithIDs(rooms);
         mFoundBridges.update(foundBridge.id.toStdString(), foundBridge);
-        mGroups->updateExternallyStoredGroups(groups);
+        mGroups->updateExternallyStoredGroups(foundBridge.groups());
+        mGroups->updateExternallyStoredRooms(foundBridge.rooms());
     }
 }
 
 void BridgeDiscovery::reloadGroupData() {
     for (const auto& bridge : mFoundBridges.items()) {
-        mGroups->updateExternallyStoredGroups(bridge.groups);
+        mGroups->updateExternallyStoredGroups(bridge.groups());
+        mGroups->updateExternallyStoredRooms(bridge.rooms());
     }
 }
 
@@ -377,28 +381,17 @@ void BridgeDiscovery::parseInitialUpdate(const hue::Bridge& bridge, const QJsonD
                 if (lightsObject.value(key).isObject()) {
                     QJsonObject innerObject = lightsObject.value(key).toObject();
                     if (innerObject["uniqueid"].isString() && innerObject["name"].isString()) {
-                        QString id = innerObject["uniqueid"].toString();
-                        QString name = innerObject["name"].toString();
-                        QString type = innerObject["type"].toString();
-                        QString swversion = innerObject["swversion"].toString();
-                        QString hardwareTypeString = innerObject["modelid"].toString();
                         double index = key.toDouble();
 
-                        HueLight hueLight(id, bridge.id, ECommType::hue);
-                        hueLight.name = name;
-                        hueLight.index = int(index);
-                        hueLight.softwareVersion = swversion;
-                        hueLight.modelID = hardwareTypeString;
-                        hueLight.hardwareType = hue::modelToHardwareType(hardwareTypeString);
-                        hueLight.hueType = cor::stringToHueType(type);
+                        HueLight hueLight(innerObject, bridge.id, index);
                         lights.push_back(hueLight);
 
                         QJsonObject lightObject;
-                        lightObject["uniqueid"] = id;
+                        lightObject["uniqueid"] = hueLight.uniqueID();
                         lightObject["index"] = index;
-                        lightObject["name"] = name;
-                        lightObject["swversion"] = swversion;
-                        lightObject["hardwareType"] = hardwareTypeToString(hueLight.hardwareType);
+                        lightObject["name"] = hueLight.name();
+                        lightObject["swversion"] = hueLight.softwareVersion();
+                        lightObject["hardwareType"] = hardwareTypeToString(hueLight.hardwareType());
                         lightsArray.push_back(lightObject);
                     }
                 }
@@ -519,7 +512,7 @@ HueLight BridgeDiscovery::lightFromBridgeIDAndIndex(const QString& bridgeID, int
     if (bridgeResult.second) {
         auto foundBridge = bridgeResult.first;
         for (const auto& light : foundBridge.lights.items()) {
-            if (light.index == index && index != 0) {
+            if (light.index() == index && index != 0) {
                 return light;
             }
         }
@@ -760,7 +753,7 @@ std::uint64_t BridgeDiscovery::keyFromGroupName(const QString& name) {
 
     // if it doesn't exist, but does exist in bridge memory, add that ID
     for (const auto& bridge : mFoundBridges.items()) {
-        for (const auto& group : bridge.groups) {
+        for (const auto& group : bridge.groups()) {
             if (group.name() == name) {
                 return group.uniqueID();
             }
@@ -773,7 +766,7 @@ std::uint64_t BridgeDiscovery::keyFromGroupName(const QString& name) {
 std::uint64_t BridgeDiscovery::generateNewUniqueKey() {
     auto minID = std::numeric_limits<std::uint64_t>::max();
     for (const auto& bridge : mFoundBridges.items()) {
-        for (const auto& group : bridge.groups) {
+        for (const auto& group : bridge.groups()) {
             if (group.uniqueID() < minID) {
                 minID = group.uniqueID();
             }

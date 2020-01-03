@@ -55,10 +55,7 @@ CommArduCor::CommArduCor(QObject* parent) : QObject(parent) {
     for (const auto& controller : mDiscovery->undiscoveredControllers()) {
         int i = 1;
         for (const auto& name : controller.names) {
-            cor::Light light(name, controller.name, controller.type);
-            light.index = i;
-            light.name = name;
-            light.hardwareType = controller.hardwareTypes[std::size_t(i - 1)];
+            ArduCorLight light(name, controller, i);
             ++i;
             commByType(controller.type)->addLight(light);
         }
@@ -162,10 +159,15 @@ std::vector<cor::Light> CommArduCor::lights() {
 
 void CommArduCor::deleteLight(const cor::Light& light) {
     // remove from comm data
-    commByType(light.commType())->removeController(light.name);
+    commByType(light.commType())->removeController(light.name());
 
     // remove from JSON data
     mDiscovery->removeController(light.controller());
+}
+
+ArduCorLight CommArduCor::arduCorLightFromLight(const cor::Light& light) {
+    auto result = mArduCorLights.item(light.uniqueID().toStdString());
+    return result.first;
 }
 
 void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECommType type) {
@@ -229,20 +231,19 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                     bool isValid = true;
                     if (index < 20) {
                         // figure out devices that are getting updates
-                        std::vector<cor::Light> deviceList;
+                        std::vector<ArduCorLight> deviceList;
                         if (index != 0) {
-                            cor::Light device =
-                                cor::Light(controller.names[index - 1], controller.name, type);
-                            device.index = int(index);
+                            auto device =
+                                ArduCorLight(controller.names[index - 1], controller, index);
                             commByType(type)->fillDevice(device);
                             deviceList.push_back(device);
                         } else {
                             // get a list of devices for this controller
-                            std::vector<cor::Light> lights;
+                            std::vector<ArduCorLight> lights;
                             const auto& deviceTable = commByType(type)->deviceTable();
                             for (const auto& light : deviceTable.items()) {
                                 if (light.controller() == sender) {
-                                    lights.push_back(light);
+                                    lights.push_back(arduCorLightFromLight(light));
                                 }
                             }
                             deviceList = lights;
@@ -255,8 +256,8 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                             // check all values fall in their proper ranges
                             if (verifyStateUpdatePacketValidity(intVector, x)) {
                                 for (auto&& device : deviceList) {
-                                    device.isOn = bool(intVector[x + 1]);
-                                    device.isReachable = bool(intVector[x + 2]);
+                                    device.isOn(intVector[x + 1]);
+                                    device.isReachable(intVector[x + 2]);
 
                                     double brightness = double(intVector[x + 8]) / 100.0;
                                     auto red = int(intVector[x + 3] * brightness);
@@ -265,33 +266,35 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                     QColor color(red, green, blue);
                                     color.setHsvF(color.hueF(), color.saturationF(), 1.0);
                                     color.setHsvF(color.hueF(), color.saturationF(), brightness);
-                                    device.color = color;
+                                    device.color(color);
 
-                                    device.colorMode = EColorMode::HSV;
-                                    device.routine = ERoutine(intVector[x + 6]);
+                                    device.routine(ERoutine(intVector[x + 6]));
                                     auto palette = EPalette(intVector[x + 7]);
                                     if (palette == EPalette::custom) {
-                                        device.palette = device.customPalette;
+                                        device.palette(device.customPalette());
                                     } else {
-                                        device.palette = mPresetPalettes.palette(palette);
+                                        device.palette(mPresetPalettes.palette(palette));
                                     }
-                                    device.palette.brightness(std::uint32_t(brightness * 100.0));
+                                    device.paletteBrightness(std::uint32_t(brightness * 100.0));
 
 
-                                    device.speed = intVector[x + 9];
-                                    device.timeout = intVector[x + 10];
-                                    device.minutesUntilTimeout = intVector[x + 11];
-                                    device.name = device.uniqueID();
+                                    device.speed(intVector[x + 9]);
+                                    device.timeout(intVector[x + 10]);
+                                    device.minutesUntilTimeout(intVector[x + 11]);
 
-                                    device.hardwareType =
-                                        controller.hardwareTypes[std::uint32_t(device.index - 1)];
-                                    device.productType =
-                                        controller.productTypes[std::uint32_t(device.index - 1)];
-
-                                    device.majorAPI = controller.majorAPI;
-                                    device.minorAPI = controller.minorAPI;
+                                    device.version(controller.majorAPI, controller.minorAPI);
 
                                     commByType(type)->updateLight(device);
+
+                                    // check that it doesn't already exist, if it does, replace the
+                                    // old version
+                                    auto key = device.uniqueID().toStdString();
+                                    auto dictResult = mArduCorLights.item(key);
+                                    if (dictResult.second) {
+                                        mArduCorLights.update(key, device);
+                                    } else {
+                                        mArduCorLights.insert(key, device);
+                                    }
                                 }
                             } else {
                                 // qDebug() << "WARNING: Invalid packet for light index" <<
@@ -302,20 +305,19 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                 for (auto device : deviceList) {
                                     auto customColorCount = std::uint32_t(intVector[2]);
                                     uint32_t j = 3;
-                                    std::vector<QColor> colors = device.customPalette.colors();
-                                    uint32_t brightness = device.customPalette.brightness();
+                                    std::vector<QColor> colors = device.customPalette().colors();
+                                    uint32_t brightness = device.customPalette().brightness();
                                     for (std::uint32_t i = 0; i < customColorCount; ++i) {
                                         colors[i] = QColor(intVector[j],
                                                            intVector[j + 1],
                                                            intVector[j + 2]);
                                         j = j + 3;
                                     }
-                                    device.customPalette =
-                                        Palette(paletteToString(EPalette::custom),
-                                                colors,
-                                                brightness);
-                                    if (device.palette.paletteEnum() == EPalette::custom) {
-                                        device.palette = device.customPalette;
+                                    device.customPalette(Palette(paletteToString(EPalette::custom),
+                                                                 colors,
+                                                                 brightness));
+                                    if (device.palette().paletteEnum() == EPalette::custom) {
+                                        device.palette(device.customPalette());
                                     }
                                     commByType(type)->updateLight(device);
                                 }
@@ -323,31 +325,28 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                         } else if (packetHeader == EPacketHeader::brightnessChange
                                    && (intVector.size() % 3 == 0)) {
                             for (auto&& device : deviceList) {
-                                device.color.setHsvF(device.color.hueF(),
-                                                     device.color.saturationF(),
-                                                     double(intVector[2]) / 100.0);
-                                device.palette.brightness(std::uint32_t(intVector[2]));
+                                QColor color;
+                                color.setHsvF(device.color().hueF(),
+                                              device.color().saturationF(),
+                                              double(intVector[2]) / 100.0);
+                                device.color(color);
+                                device.paletteBrightness(std::uint32_t(intVector[2]));
                                 commByType(type)->updateLight(device);
                             }
                         } else if (packetHeader == EPacketHeader::onOffChange
                                    && (intVector.size() % 3 == 0)) {
                             for (auto device : deviceList) {
-                                int onOff = intVector[2];
-                                if (onOff == 0) {
-                                    device.isOn = false;
-                                } else if (onOff == 1) {
-                                    device.isOn = true;
-                                }
+                                device.isOn(intVector[2]);
                                 commByType(type)->updateLight(device);
                             }
                         } else if (packetHeader == EPacketHeader::modeChange
                                    && intVector.size() > 3) {
                             for (auto device : deviceList) {
                                 uint32_t tempIndex = 2;
-                                device.routine = ERoutine(intVector[tempIndex]);
+                                device.routine(ERoutine(intVector[tempIndex]));
                                 ++tempIndex;
                                 // get either the color or the palette
-                                if (int(device.routine) <= int(cor::ERoutineSingleColorEnd)) {
+                                if (int(device.routine()) <= int(cor::ERoutineSingleColorEnd)) {
                                     if (intVector.size() > 5) {
                                         int red = intVector[tempIndex];
                                         ++tempIndex;
@@ -364,7 +363,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                         if ((blue < 0) || (blue > 255)) {
                                             isValid = false;
                                         }
-                                        device.color = QColor(red, green, blue);
+                                        device.color(QColor(red, green, blue));
                                     } else {
                                         isValid = false;
                                     }
@@ -372,16 +371,16 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                     if (intVector.size() > 4) {
                                         // store brightness from previous data
                                         auto brightness =
-                                            std::uint32_t(device.palette.brightness());
+                                            std::uint32_t(device.palette().brightness());
                                         auto palette = EPalette(intVector[tempIndex]);
                                         if (palette == EPalette::custom) {
-                                            device.palette = device.customPalette;
+                                            device.palette(device.customPalette());
                                         } else {
-                                            device.palette = mPresetPalettes.palette(palette);
+                                            device.palette(mPresetPalettes.palette(palette));
                                         }
-                                        device.palette.brightness(brightness);
+                                        device.paletteBrightness(brightness);
                                         ++tempIndex;
-                                        if (device.palette.paletteEnum() == EPalette::unknown) {
+                                        if (device.palette().paletteEnum() == EPalette::unknown) {
                                             isValid = false;
                                         }
                                     } else {
@@ -391,13 +390,13 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
 
                                 // get speed, if it exists
                                 if (intVector.size() > tempIndex) {
-                                    device.speed = intVector[tempIndex];
+                                    device.speed(intVector[tempIndex]);
                                     ++tempIndex;
                                 }
 
                                 // get optional parameter
                                 if (intVector.size() > tempIndex) {
-                                    device.param = intVector[tempIndex];
+                                    device.param(intVector[tempIndex]);
                                     ++tempIndex;
                                 }
 
@@ -408,9 +407,18 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                         } else if (packetHeader == EPacketHeader::idleTimeoutChange
                                    && (intVector.size() % 3 == 0)) {
                             for (auto device : deviceList) {
-                                device.timeout = intVector[2];
-                                device.minutesUntilTimeout = intVector[2];
-                                commByType(type)->updateLight(device);
+                                device.timeout(intVector[2]);
+                                device.minutesUntilTimeout(intVector[2]);
+
+                                // check that it doesn't already exist, if it does, replace the
+                                // old version
+                                auto key = device.uniqueID().toStdString();
+                                auto dictResult = mArduCorLights.item(key);
+                                if (dictResult.second) {
+                                    mArduCorLights.update(key, device);
+                                } else {
+                                    mArduCorLights.insert(key, device);
+                                }
                             }
                         } else if (packetHeader == EPacketHeader::customArrayColorChange
                                    && (intVector.size() % 6 == 0)) {
@@ -430,12 +438,13 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                         if ((blue < 0) || (blue > 255)) {
                                             isValid = false;
                                         }
-                                        std::vector<QColor> colors = device.customPalette.colors();
+                                        std::vector<QColor> colors =
+                                            device.customPalette().colors();
                                         colors[index] = QColor(red, green, blue);
-                                        device.customPalette =
+                                        device.customPalette(
                                             Palette(paletteToString(EPalette::custom),
                                                     colors,
-                                                    device.customPalette.brightness());
+                                                    device.customPalette().brightness()));
                                         commByType(type)->updateLight(device);
                                     } else {
                                         isValid = false;
@@ -448,7 +457,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                    && (intVector.size() % 3 == 0)) {
                             for (auto device : deviceList) {
                                 if (intVector[2] <= 10) {
-                                    device.customCount = std::uint32_t(intVector[2]);
+                                    device.customCount(std::uint32_t(intVector[2]));
                                     // qDebug() << "UPDATE TO custom color count" <<
                                     // device.customColors;
                                     commByType(type)->updateLight(device);

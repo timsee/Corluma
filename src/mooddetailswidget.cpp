@@ -53,21 +53,25 @@ void MoodDetailsWidget::display(const cor::Mood& mood, const QSize& size) {
 
     // split into groups and rooms
     std::vector<cor::Light> groupStates;
-    std::vector<cor::Light> roomStates;
     for (const auto& defaultPair : mood.defaults()) {
         // look up group
         auto groupResult = mGroups->groups().item(QString::number(defaultPair.first).toStdString());
         if (groupResult.second) {
             auto defaultState = defaultPair.second;
-            defaultState.name = groupResult.first.name();
-            defaultState.hardwareType = ELightHardwareType::connectedGroup;
-            if (groupResult.first.isRoom()) {
-                roomStates.push_back(defaultState);
-            } else {
-                groupStates.push_back(defaultState);
-            }
+            groupStates.push_back(defaultState);
         }
     }
+
+    std::vector<cor::Light> roomStates;
+    for (const auto& defaultPair : mood.defaults()) {
+        // look up group
+        auto groupResult = mGroups->rooms().item(QString::number(defaultPair.first).toStdString());
+        if (groupResult.second) {
+            auto defaultState = defaultPair.second;
+            roomStates.push_back(defaultState);
+        }
+    }
+
     // add room states to additional info
     if (!roomStates.empty()) {
         mRoomDefaultsTitle->setVisible(true);

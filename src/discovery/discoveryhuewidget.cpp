@@ -229,7 +229,8 @@ void DiscoveryHueWidget::groupsPressed(const QString& key) {
     const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
     if (bridgeResult.second) {
         mGreyout->greyOut(true);
-        mBridgeGroupsWidget->updateGroups(bridgeResult.first.groups);
+        mBridgeGroupsWidget->updateGroups(bridgeResult.first.groupsWithIDs(),
+                                          bridgeResult.first.roomsWithIDs());
         mBridgeGroupsWidget->isOpen(true);
         mBridgeGroupsWidget->setVisible(true);
         mBridgeGroupsWidget->show();

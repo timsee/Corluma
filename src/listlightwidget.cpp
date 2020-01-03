@@ -55,7 +55,7 @@ void ListLightWidget::init(const cor::Light& device) {
     mOnOffSwitch->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     connect(mOnOffSwitch, SIGNAL(switchChanged(bool)), this, SLOT(changedSwitchState(bool)));
 
-    mTypePixmap = lightHardwareTypeToPixmap(device.hardwareType);
+    mTypePixmap = lightHardwareTypeToPixmap(device.hardwareType());
 
     QString nameText = createName(device);
     mController->setText(nameText);
@@ -95,13 +95,13 @@ void ListLightWidget::updateWidget(const cor::Light& device) {
         mHasRendered = false;
     }
 
-    if (mDevice.hardwareType != device.hardwareType || mLastRenderedSize != size()) {
-        mTypePixmap = lightHardwareTypeToPixmap(device.hardwareType);
+    if (mDevice.hardwareType() != device.hardwareType() || mLastRenderedSize != size()) {
+        mTypePixmap = lightHardwareTypeToPixmap(device.hardwareType());
         resizeIcons();
         mLastRenderedSize = size();
     }
 
-    if (mDevice.name != device.name) {
+    if (mDevice.name() != device.name()) {
         mController->setText(createName(device));
     }
 
@@ -124,9 +124,9 @@ void ListLightWidget::handleSwitch() {
     } else if (mSwitchState == EOnOffSwitchState::hidden) {
         mOnOffSwitch->setVisible(false);
     } else {
-        if (!mDevice.isReachable) {
+        if (!mDevice.isReachable()) {
             mOnOffSwitch->setSwitchState(ESwitchState::disabled);
-        } else if (mDevice.isOn && !mBlockStateUpdates) {
+        } else if (mDevice.isOn() && !mBlockStateUpdates) {
             mOnOffSwitch->setSwitchState(ESwitchState::on);
         } else if (!mBlockStateUpdates) {
             mOnOffSwitch->setSwitchState(ESwitchState::off);
@@ -192,7 +192,7 @@ void ListLightWidget::paintEvent(QPaintEvent*) {
     }
     auto side = int(height() * 0.45f);
     auto y = int(height() * 0.3f);
-    if (mDevice.isReachable) {
+    if (mDevice.isReachable()) {
         QRect rect;
         if (mType == cor::EWidgetType::full) {
             rect = QRect(x, 10, width() / 2, int(height() * 0.6f / 2));
@@ -208,14 +208,14 @@ void ListLightWidget::paintEvent(QPaintEvent*) {
                                              Qt::FastTransformation);
         }
 
-        if (!mDevice.isOn) {
+        if (!mDevice.isOn()) {
             painter.setOpacity(0.25);
         }
 
         if (mType == cor::EWidgetType::full) {
             // draw the back rectangle
             QBrush blackBrush(QColor(0, 0, 0));
-            if (!mDevice.isOn) {
+            if (!mDevice.isOn()) {
                 // if its not on, hide it
                 blackBrush.setColor(QColor(0, 0, 0, 5));
             }
@@ -223,9 +223,9 @@ void ListLightWidget::paintEvent(QPaintEvent*) {
             painter.drawRect(rect);
 
             // set brightness width
-            double brightness = mDevice.color.valueF();
-            if (mDevice.routine > cor::ERoutineSingleColorEnd) {
-                brightness = mDevice.palette.brightness() / 100.0;
+            double brightness = mDevice.color().valueF();
+            if (mDevice.routine() > cor::ERoutineSingleColorEnd) {
+                brightness = mDevice.palette().brightness() / 100.0;
             }
             rect.setWidth(int(rect.width() * brightness));
         } else {
@@ -272,11 +272,11 @@ QString ListLightWidget::createName(const cor::Light& device) {
     QString nameText;
     if (device.protocol() == EProtocolType::arduCor
         || device.protocol() == EProtocolType::nanoleaf) {
-        nameText = device.name;
+        nameText = device.name();
     } else if (device.protocol() == EProtocolType::hue) {
-        nameText = convertUglyHueNameToPrettyName(device.name);
+        nameText = convertUglyHueNameToPrettyName(device.name());
     } else {
-        nameText = device.name;
+        nameText = device.name();
     }
 
     if (mType == cor::EWidgetType::full) {
@@ -301,7 +301,7 @@ void ListLightWidget::hideOnOffSwitch(bool shouldHide) {
 void ListLightWidget::resizeIcons() {
     QSize size(int(height() * 0.5f), int(height() * 0.5f));
     mTypeIcon->setFixedSize(size);
-    mTypePixmap = lightHardwareTypeToPixmap(mDevice.hardwareType);
+    mTypePixmap = lightHardwareTypeToPixmap(mDevice.hardwareType());
     mTypePixmap = mTypePixmap.scaled(size.width(),
                                      size.height(),
                                      Qt::IgnoreAspectRatio,

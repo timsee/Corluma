@@ -5,7 +5,7 @@
 #include <QJsonObject>
 #include <QWidget>
 
-#include "cor/objects/light.h"
+#include "comm/arducor/arducorlight.h"
 #include "cor/protocols.h"
 
 /*!
@@ -41,20 +41,21 @@ public:
      * \brief turnOnPacket builds packet to turn all devices in the provided list either on or off.
      * \param turnOn true to turn devices on, false to turn them off.
      */
-    QString turnOnPacket(const cor::Light& device, bool turnOn);
+    QString turnOnPacket(int index, bool turnOn);
 
     /*!
      * \brief arrayColorChangePacket change an array color in the lighting system
      * \param index index of array color
      * \param color the color being sent for the given index
      */
-    QString arrayColorChangePacket(const cor::Light& device, int index, const QColor& color);
+    QString arrayColorChangePacket(int deviceIndex, int colorIndex, const QColor& color);
+
     /*!
      * \brief routinePacket change the mode of the lights. The mode changes
      *        how the lights look.
      * \param routineObject the mode being sent to the LED system
      */
-    QString routinePacket(const cor::Light& device, const QJsonObject& routineObject);
+    QString routinePacket(int index, const QJsonObject& routineObject);
 
     /*!
      * \brief changeCustomArraySizePacket sends a new custom array count to the LED array. This
@@ -62,21 +63,21 @@ public:
      * the size of the custom array, which provides a maximum possible amount of colors.
      * \param count a value less than the size of the custom color array.
      */
-    QString changeCustomArraySizePacket(const cor::Light& device, int count);
+    QString changeCustomArraySizePacket(int index, int count);
 
     /*!
      * \brief brightnessPacket sends a brightness value between 0 and 100, with 100 being full
      * brightness.
      * \param brightness a value between 0 and 100
      */
-    QString brightnessPacket(const cor::Light& device, int brightness);
+    QString brightnessPacket(int index, int brightness);
 
     /*!
      * \brief timeoutPacket the amount of minutes that it takes for the LEDs to turn themselves off
      * from inactivity. Perfect for bedtime!
      * \param timeOut a number greater than 0
      */
-    QString timeoutPacket(const cor::Light& device, int timeOut);
+    QString timeoutPacket(int index, int timeOut);
 
 
 signals:
@@ -95,7 +96,7 @@ signals:
      * \param index the custom array color index. must be less than 10.
      * \param color the new color for the device's custom color index.
      */
-    void receivedArrayColorChange(int deviceIndex, int index, QColor color);
+    void receivedArrayColorChange(int deviceIndex, int colorIndex, QColor color);
 
     /*!
      * \brief receivedRoutineChange signal that requests that the lighting routine change.

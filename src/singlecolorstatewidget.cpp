@@ -7,8 +7,8 @@
 #include "utils/qt.h"
 
 SingleColorStateWidget::SingleColorStateWidget(QWidget* parent) : QWidget(parent), mIsIn{false} {
-    mLight.routine = ERoutine::singleSolid;
-    mLight.color = QColor(0, 0, 0);
+    mLight.routine(ERoutine::singleSolid);
+    mLight.color(QColor(0, 0, 0));
     auto routineObject = lightToJson(mLight);
     mState = new cor::Button(this, routineObject);
     mState->setLabelMode(true);
@@ -21,8 +21,8 @@ SingleColorStateWidget::SingleColorStateWidget(QWidget* parent) : QWidget(parent
 }
 
 void SingleColorStateWidget::updateState(const QColor& color, ERoutine routine) {
-    mLight.color = color;
-    mLight.routine = routine;
+    mLight.color(color);
+    mLight.routine(routine);
     auto routineObject = lightToJson(mLight);
     mState->updateRoutine(routineObject);
 }

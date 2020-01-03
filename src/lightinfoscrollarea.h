@@ -38,7 +38,7 @@ public:
     void updateControllers(std::vector<nano::LeafController> controllers);
 
     /// updates the arducor lights in the light info list widget
-    void updateLights(const std::vector<cor::Light>& lights);
+    void updateLights(const std::vector<ArduCorLight>& lights);
 
     /*!
      * \brief lookupCurrentLight looks up the current light based on what is currently selected

@@ -81,7 +81,7 @@ bool EditMoodPage::saveChanges() {
     bool devicesAreValid = true;
     if (!newDevices.empty()) {
         for (auto& device : newDevices) {
-            if (device.controller() == "" || device.index == 0) {
+            if (device.isValid()) {
                 devicesAreValid = false;
             }
         }

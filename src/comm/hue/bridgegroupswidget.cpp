@@ -40,7 +40,7 @@ BridgeGroupsWidget::BridgeGroupsWidget(QWidget* parent) : QWidget(parent) {
     mMainLayout->addWidget(mScrollArea, 15);
 }
 
-void BridgeGroupsWidget::updateGroups(std::vector<cor::Group> groups) {
+void BridgeGroupsWidget::updateGroups(BridgeGroupVector groups, BridgeRoomVector rooms) {
     // remove old widgets
     for (auto widget : mWidgets) {
         mScrollLayout->removeWidget(widget);
@@ -52,7 +52,14 @@ void BridgeGroupsWidget::updateGroups(std::vector<cor::Group> groups) {
 
     // add new widgets
     for (const auto& group : groups) {
-        auto widget = new hue::HueGroupWidget(mScrollAreaWidget, group);
+        auto widget = new hue::HueGroupWidget(mScrollAreaWidget, group.second, group.first);
+        widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        mWidgets.push_back(widget);
+        mScrollLayout->addWidget(widget);
+    }
+
+    for (const auto& group : rooms) {
+        auto widget = new hue::HueGroupWidget(mScrollAreaWidget, group.second, group.first);
         widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         mWidgets.push_back(widget);
         mScrollLayout->addWidget(widget);

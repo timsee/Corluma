@@ -20,32 +20,40 @@
 class HueLight : public cor::Light {
 public:
     /// default constructor
-    HueLight() : HueLight("NOT_VALID", "UNINITIALIZED", ECommType::hue) {}
+    HueLight() : cor::Light() {}
 
     /// constructor
-    HueLight(const QString& uniqueID, const QString& controller, ECommType type)
-        : cor::Light(uniqueID, controller, type),
-          hueType{EHueType::color} {}
+    HueLight(const QJsonObject& object, const QString& controller, int lightIndex)
+        : cor::Light(object["uniqueid"].toString(), controller, ECommType::hue),
+          mIndex(lightIndex),
+          mHueType{cor::stringToHueType(object["type"].toString())},
+          mModelID{object["modelid"].toString()},
+          mManufacturer{object["manufacturername"].toString()},
+          mSoftwareVersion{object["swversion"].toString()} {
+        mHardwareType = hue::modelToHardwareType(object["modelid"].toString());
+        mName = object["name"].toString();
+    }
 
-    /*!
-     * \brief type the type of Hue product connected.
-     */
-    EHueType hueType;
+    /// setter for color mode
+    void colorMode(EColorMode mode) { mColorMode = mode; }
 
-    /*!
-     * \brief modelID ID of specific model. changes between versions of the same light.
-     */
-    QString modelID;
+    /// getter for index of light
+    int index() const noexcept { return mIndex; }
 
-    /*!
-     * \brief manufacturer manfucturer of light.
-     */
-    QString manufacturer;
+    /// getter for hue type
+    EHueType hueType() const noexcept { return mHueType; }
 
-    /*!
-     * \brief softwareVersion exact software version of light.
-     */
-    QString softwareVersion;
+    /// getter for color mode
+    EColorMode colorMode() const noexcept { return mColorMode; }
+
+    /// getter for model ID
+    const QString& modelID() const noexcept { return mModelID; }
+
+    /// getter for manufacturer
+    const QString& manufacturer() const noexcept { return mManufacturer; }
+
+    /// getter for software version
+    const QString& softwareVersion() const noexcept { return mSoftwareVersion; }
 
     /// SHueLight equal operator
     bool operator==(const HueLight& rhs) const {
@@ -55,6 +63,36 @@ public:
         }
         return result;
     }
+
+private:
+    /// hardware's index of the light
+    int mIndex;
+
+    /*!
+     * \brief colorMode mode of color. Most devices work in RGB but some work in
+     *        limited ranges or use an HSV representation internally.
+     */
+    EColorMode mColorMode;
+
+    /*!
+     * \brief type the type of Hue product connected.
+     */
+    EHueType mHueType;
+
+    /*!
+     * \brief modelID ID of specific model. changes between versions of the same light.
+     */
+    QString mModelID;
+
+    /*!
+     * \brief manufacturer manfucturer of light.
+     */
+    QString mManufacturer;
+
+    /*!
+     * \brief softwareVersion exact software version of light.
+     */
+    QString mSoftwareVersion;
 };
 
 /*!
@@ -74,11 +112,11 @@ inline EHueType checkForHueWithMostFeatures(std::vector<HueLight> lights) {
     // check for all devices
     for (auto&& hue : lights) {
         // check if its a hue
-        if (hue.hueType == EHueType::extended || hue.hueType == EHueType::color) {
+        if (hue.hueType() == EHueType::extended || hue.hueType() == EHueType::color) {
             rgbCount++;
-        } else if (hue.hueType == EHueType::ambient) {
+        } else if (hue.hueType() == EHueType::ambient) {
             ambientCount++;
-        } else if (hue.hueType == EHueType::white) {
+        } else if (hue.hueType() == EHueType::white) {
             whiteCount++;
         }
     }

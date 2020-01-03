@@ -99,7 +99,6 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type,
     std::vector<int> intVector;
     std::vector<QString> nameVector;
     std::vector<ELightHardwareType> hardwareTypeVector;
-    std::vector<EProductType> productTypeVector;
 
     // check end of string is &
     if (discovery.at(discovery.length() - 1) != '&') {
@@ -152,13 +151,11 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type,
                 qDebug() << "Received an incorrect value when expecting a product type";
                 return false;
             }
-            productTypeVector.push_back(EProductType(productTypeIndex));
             nameIndex = 0;
         }
     }
 
-    if (nameVector.size() != hardwareTypeVector.size()
-        || nameVector.size() != productTypeVector.size()) {
+    if (nameVector.size() != hardwareTypeVector.size()) {
         qDebug() << "hardware type vector size and name vector don't match! " << nameVector.size()
                  << " vs " << hardwareTypeVector.size();
         for (const auto& name : nameVector) {
@@ -166,9 +163,6 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type,
         }
         for (const auto& type : hardwareTypeVector) {
             qDebug() << " type: " << int(type);
-        }
-        for (const auto& product : productTypeVector) {
-            qDebug() << " product: " << int(product);
         }
         return false;
     }
@@ -209,7 +203,6 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type,
         // get the names
         controller.names = nameVector;
         controller.hardwareTypes = hardwareTypeVector;
-        controller.productTypes = productTypeVector;
 
         return true;
     }
@@ -309,9 +302,7 @@ void ArduCorDiscovery::handleDiscoveredController(const cor::Controller& discove
 
             int i = 1;
             for (const auto& name : discoveredController.names) {
-                cor::Light light(name, discoveredController.name, discoveredController.type);
-                light.index = i;
-                light.hardwareType = discoveredController.hardwareTypes[std::size_t(i - 1)];
+                ArduCorLight light(name, discoveredController, i);
                 ++i;
 
                 // start state updates, etc.

@@ -34,7 +34,7 @@ public:
      * \param group group of lights
      * \param key unique key for collection
      */
-    ListRoomWidget(const cor::Group& group,
+    ListRoomWidget(const cor::Room& room,
                    CommLayer* comm,
                    GroupData* groups,
                    const QString& key,
@@ -52,21 +52,14 @@ public:
      */
     void setCheckedDevices(std::vector<cor::Light> devices);
 
-    /*!
-     * \brief updateDevices update the state and number of devices displayed in the widget.
-     *
-     * \param devices the current state of all desired devices for the widget.
-     * \param removeIfNotFound if a widget exists already in the listwidget but doesn't exist in the
-     * list provided, this widget gets removed and all other widgets get shifted.
-     */
-    void updateGroup(const cor::Group& group, bool removeIfNotFound);
+    void updateRoom(const cor::Room& room, bool removeIfNotFound);
 
     /*!
      * \brief devices getter for all devices being displayed by the widget.
      *
      * \return all devices being displayed by the widget.
      */
-    const std::vector<QString>& devices() { return mGroup.lights(); }
+    const std::vector<QString>& devices() { return mRoom.lights(); }
 
     /// getter for just the reachable devices in the group.
     std::vector<cor::Light> reachableDevices();
@@ -84,8 +77,8 @@ public:
     /// hides the group buttons widget (if it has one) and all the listdevicewidgets
     void closeWidget();
 
-    /// getter for the group data.
-    const cor::Group& group() { return mGroup; }
+    /// getter for the room data.
+    const cor::Room& room() { return mRoom; }
 
     /// getter for the desired height of the widget
     int widgetHeightSum();
@@ -200,7 +193,7 @@ private:
     QColor computeHighlightColor();
 
     /// stored data for the group.
-    cor::Group mGroup;
+    cor::Room mRoom;
 
     /// checks if a group with no subgroups should show widgets
     bool checkIfShowWidgets();

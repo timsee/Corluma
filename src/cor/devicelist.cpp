@@ -30,30 +30,32 @@ void DeviceList::updateRoutine(const QJsonObject& routineObject) {
     }
     int hueCount = 0;
     for (auto&& light : mDevices) {
-        light.routine = routine;
-        light.isOn = isOn;
+        light.routine(routine);
+        light.isOn(isOn);
         if (routine != ERoutine::singleSolid) {
-            light.speed = speed;
+            light.speed(speed);
             if (light.protocol() == EProtocolType::nanoleaf) {
-                light.speed = MAX_SPEED - speed;
+                light.speed(MAX_SPEED - speed);
             }
         }
 
         if (routine <= cor::ERoutineSingleColorEnd) {
             // check for edge case where ambient color values are used
             if (routineObject["temperature"].isDouble()) {
-                light.color =
-                    cor::colorTemperatureToRGB(int(routineObject["temperature"].toDouble()));
-                light.temperature = int(routineObject["temperature"].toDouble());
+                light.color(
+                    cor::colorTemperatureToRGB(int(routineObject["temperature"].toDouble())));
+                light.temperature(int(routineObject["temperature"].toDouble()));
             } else {
-                light.color.setHsvF(routineObject["hue"].toDouble(),
-                                    routineObject["sat"].toDouble(),
-                                    routineObject["bri"].toDouble());
-                light.temperature = -1;
+                auto color = light.color();
+                color.setHsvF(routineObject["hue"].toDouble(),
+                              routineObject["sat"].toDouble(),
+                              routineObject["bri"].toDouble());
+                light.color(color);
+                light.temperature(-1);
             }
         } else {
             Palette palette = Palette(routineObject["palette"].toObject());
-            light.palette = palette;
+            light.palette(palette);
 
             /*!
              * hues are not individually addressable, mock a color group by setting
@@ -61,14 +63,14 @@ void DeviceList::updateRoutine(const QJsonObject& routineObject) {
              */
             std::vector<QColor> colors = palette.colors();
             if (light.protocol() == EProtocolType::hue) {
-                uint32_t colorIndex = std::uint32_t(hueCount) % colors.size();
-                light.color = colors[colorIndex];
+                auto colorIndex = std::uint32_t(hueCount) % colors.size();
+                light.color(colors[colorIndex]);
                 hueCount++;
             }
         }
 
         if (routineObject["param"].isDouble()) {
-            light.param = int(routineObject["param"].toDouble());
+            light.param(int(routineObject["param"].toDouble()));
         }
     }
     emit dataUpdate();
@@ -77,9 +79,9 @@ void DeviceList::updateRoutine(const QJsonObject& routineObject) {
 ERoutine DeviceList::currentRoutine() {
     std::vector<int> routineCount(int(ERoutine::MAX), 0);
     for (const auto& device : mDevices) {
-        if (device.isReachable) {
-            routineCount[std::size_t(device.routine)] =
-                routineCount[std::size_t(device.routine)] + 1;
+        if (device.isReachable()) {
+            routineCount[std::size_t(device.routine())] =
+                routineCount[std::size_t(device.routine())] + 1;
         }
     }
     auto result = std::max_element(routineCount.begin(), routineCount.end());
@@ -90,9 +92,9 @@ Palette DeviceList::palette() {
     // count number of times each color group occurs
     std::vector<int> paletteCount(int(EPalette::unknown), 0);
     for (const auto& device : mDevices) {
-        if (device.isReachable) {
-            paletteCount[std::uint32_t(device.palette.paletteEnum())] =
-                paletteCount[std::uint32_t(device.palette.paletteEnum())] + 1;
+        if (device.isReachable()) {
+            paletteCount[std::uint32_t(device.palette().paletteEnum())] =
+                paletteCount[std::uint32_t(device.palette().paletteEnum())] + 1;
         }
     }
     // find the most frequent color group occurence, return its index.
@@ -100,8 +102,8 @@ Palette DeviceList::palette() {
     EPalette palette = EPalette(std::distance(paletteCount.begin(), result));
     if (palette == EPalette::custom) {
         for (const auto& device : mDevices) {
-            if (device.palette.paletteEnum() == palette) {
-                return device.palette;
+            if (device.palette().paletteEnum() == palette) {
+                return device.palette();
             }
         }
     } else {
@@ -109,8 +111,8 @@ Palette DeviceList::palette() {
         // sure we'll regret this assumption one day...
         if (!mDevices.empty()) {
             for (const auto& device : mDevices) {
-                if (device.palette.paletteEnum() == palette) {
-                    return device.palette;
+                if (device.palette().paletteEnum() == palette) {
+                    return device.palette();
                 }
             }
         }
@@ -124,14 +126,14 @@ QColor DeviceList::mainColor() {
     int b = 0;
     int deviceCount = 0;
     for (const auto& device : mDevices) {
-        if (device.isReachable) {
-            if (int(device.routine) <= int(cor::ERoutineSingleColorEnd)) {
-                r = r + device.color.red();
-                g = g + device.color.green();
-                b = b + device.color.blue();
+        if (device.isReachable()) {
+            if (int(device.routine()) <= int(cor::ERoutineSingleColorEnd)) {
+                r = r + device.color().red();
+                g = g + device.color().green();
+                b = b + device.color().blue();
                 deviceCount++;
             } else {
-                for (const auto& color : device.palette.colors()) {
+                for (const auto& color : device.palette().colors()) {
                     r = r + color.red();
                     g = g + color.green();
                     b = b + color.blue();
@@ -159,7 +161,7 @@ void DeviceList::updateSpeed(int speed) {
         } else if (light.protocol() == EProtocolType::nanoleaf) {
             finalSpeed = MAX_SPEED - speed;
         }
-        light.speed = finalSpeed;
+        light.speed(finalSpeed);
     }
     emit dataUpdate();
 }
@@ -168,8 +170,8 @@ int DeviceList::speed() {
     int speed = 0;
     int deviceCount = 0;
     for (const auto& device : mDevices) {
-        if (device.isReachable) {
-            speed = speed + device.speed;
+        if (device.isReachable()) {
+            speed = speed + device.speed();
             deviceCount++;
         }
     }
@@ -184,7 +186,7 @@ int DeviceList::speed() {
 
 void DeviceList::turnOn(bool on) {
     for (auto&& light : mDevices) {
-        light.isOn = on;
+        light.isOn(on);
     }
     emit dataUpdate();
 }
@@ -192,7 +194,7 @@ void DeviceList::turnOn(bool on) {
 bool DeviceList::isOn() {
     // if any is on, return true
     for (const auto& device : mDevices) {
-        if (device.isOn) {
+        if (device.isOn()) {
             return true;
         }
     }
@@ -208,22 +210,22 @@ void DeviceList::updateColorScheme(std::vector<QColor> colors) {
     // back to treating arducor during color schemes as single color lights.
     for (auto&& light : mDevices) {
         if (light.protocol() == EProtocolType::hue || light.protocol() == EProtocolType::arduCor) {
-            light.color = colors[i];
-            light.isOn = true;
+            light.color(colors[i]);
+            light.isOn(true);
             // if part of a color scheme but not showing a color scheme, switch to glimmer? maybe?
-            if (light.routine > cor::ERoutineSingleColorEnd) {
-                light.routine = ERoutine::singleGlimmer;
+            if (light.routine() > cor::ERoutineSingleColorEnd) {
+                light.routine(ERoutine::singleGlimmer);
             }
             i++;
             i = i % colors.size();
         } else if (light.protocol() == EProtocolType::nanoleaf) {
-            light.customCount = colors.size();
-            light.isOn = true;
-            light.customPalette = Palette("*Custom*", colors, brightness());
-            if (light.routine <= cor::ERoutineSingleColorEnd) {
-                light.routine = ERoutine::multiGlimmer;
+            light.customCount(colors.size());
+            light.isOn(true);
+            light.customPalette(Palette("*Custom*", colors, brightness()));
+            if (light.routine() <= cor::ERoutineSingleColorEnd) {
+                light.routine(ERoutine::multiGlimmer);
             }
-            light.palette = light.customPalette;
+            light.palette(light.customPalette());
         }
     }
     emit dataUpdate();
@@ -238,8 +240,8 @@ std::vector<QColor> DeviceList::colorScheme() {
         if (count >= max) {
             break;
         }
-        if (device.routine <= ERoutineSingleColorEnd && device.isOn) {
-            colorScheme.push_back(device.color);
+        if (device.routine() <= ERoutineSingleColorEnd && device.isOn()) {
+            colorScheme.push_back(device.color());
             count++;
         }
     }
@@ -251,8 +253,8 @@ std::vector<QColor> DeviceList::colorScheme() {
             if (count >= max) {
                 break;
             }
-            if (device.routine > ERoutineSingleColorEnd && device.isOn) {
-                for (const auto& color : device.palette.colors()) {
+            if (device.routine() > ERoutineSingleColorEnd && device.isOn()) {
+                for (const auto& color : device.palette().colors()) {
                     colorScheme.push_back(color);
                     count++;
                     if (count >= max) {
@@ -270,15 +272,17 @@ std::vector<QColor> DeviceList::colorScheme() {
 
 void DeviceList::updateBrightness(std::uint32_t brightness) {
     for (auto&& light : mDevices) {
-        if (light.routine <= cor::ERoutineSingleColorEnd) {
-            light.color.setHsvF(light.color.hueF(), light.color.saturationF(), brightness / 100.0);
+        if (light.routine() <= cor::ERoutineSingleColorEnd) {
+            QColor color;
+            color.setHsvF(light.color().hueF(), light.color().saturationF(), brightness / 100.0);
+            light.color(color);
             if (light.protocol() == EProtocolType::nanoleaf) {
-                light.palette.brightness(brightness);
+                light.paletteBrightness(brightness);
             }
         } else {
-            light.palette.brightness(brightness);
+            light.paletteBrightness(brightness);
         }
-        light.isOn = true;
+        light.isOn(bool(brightness));
     }
     emit dataUpdate();
 }
@@ -288,11 +292,11 @@ int DeviceList::brightness() {
     int brightness = 0;
     int deviceCount = 0;
     for (const auto& device : mDevices) {
-        if (device.isReachable) {
-            if (device.routine <= cor::ERoutineSingleColorEnd) {
-                brightness += int(device.color.valueF() * 100.0);
+        if (device.isReachable()) {
+            if (device.routine() <= cor::ERoutineSingleColorEnd) {
+                brightness += int(device.color().valueF() * 100.0);
             } else {
-                brightness += device.palette.brightness();
+                brightness += device.palette().brightness();
             }
             deviceCount++;
         }
@@ -328,7 +332,7 @@ bool DeviceList::removeDevice(const cor::Light& device) {
 
 
 bool DeviceList::addDevice(cor::Light device) {
-    if (device.isReachable) {
+    if (device.isReachable()) {
         for (auto&& light : mDevices) {
             // light already exists, update it
             if (light.uniqueID() == device.uniqueID()) {
@@ -349,7 +353,7 @@ bool DeviceList::addDevice(cor::Light device) {
 
 bool DeviceList::addDeviceList(const std::vector<cor::Light>& list) {
     for (const auto& device : list) {
-        if (device.isReachable) {
+        if (device.isReachable()) {
             addDevice(device);
         }
     }
@@ -482,25 +486,6 @@ std::uint64_t DeviceList::findCurrentMood(const cor::Dictionary<cor::Mood>& mood
     return 0u;
 }
 
-EColorPickerType DeviceList::bestColorPickerType() {
-    EColorPickerType bestHueType = EColorPickerType::dimmable;
-    for (const auto& light : mDevices) {
-        if (light.protocol() == EProtocolType::arduCor
-            || light.protocol() == EProtocolType::nanoleaf) {
-            return EColorPickerType::color;
-        }
-
-        if (light.protocol() == EProtocolType::hue) {
-            if (light.colorMode == EColorMode::CT && bestHueType == EColorPickerType::dimmable) {
-                bestHueType = EColorPickerType::CT;
-            }
-            if (light.colorMode == EColorMode::HSV || light.colorMode == EColorMode::XY) {
-                return EColorPickerType::color;
-            }
-        }
-    }
-    return bestHueType;
-}
 
 std::size_t DeviceList::lightCount() {
     std::size_t count = 0u;

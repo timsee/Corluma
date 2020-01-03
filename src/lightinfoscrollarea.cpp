@@ -79,7 +79,7 @@ void LightInfoScrollArea::updateControllers(std::vector<nano::LeafController> co
 }
 
 
-void LightInfoScrollArea::updateLights(const std::vector<cor::Light>& lights) {
+void LightInfoScrollArea::updateLights(const std::vector<ArduCorLight>& lights) {
     for (const auto& light : lights) {
         // check if light already exists in list
         int widgetIndex = -1;
@@ -260,7 +260,7 @@ std::pair<EProtocolType, QString> LightInfoScrollArea::lookupCurrentLight() {
         case EProtocolType::hue:
             for (auto widget : mHueWidgets) {
                 if (widget->key() == mLastHueKey) {
-                    lightName = widget->light().name;
+                    lightName = widget->light().name();
                     type = EProtocolType::hue;
                 }
             }
@@ -277,7 +277,7 @@ std::pair<EProtocolType, QString> LightInfoScrollArea::lookupCurrentLight() {
 
             for (auto widget : mArduCorWidgets) {
                 if (widget->key() == mLastNanoleafKey) {
-                    lightName = widget->light().name;
+                    lightName = widget->light().name();
                     type = EProtocolType::arduCor;
                 }
             }

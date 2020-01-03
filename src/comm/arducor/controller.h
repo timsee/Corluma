@@ -32,16 +32,16 @@ public:
     bool isUsingCRC = false;
 
     /// max number of bytes for a packet.
-    uint32_t maxPacketSize = 1000;
+    std::uint32_t maxPacketSize = 1000;
 
     /// major API level of controller
-    uint32_t majorAPI = 0;
+    std::uint32_t majorAPI = 0;
 
     /// minor API level of controller
-    uint32_t minorAPI = 0;
+    std::uint32_t minorAPI = 0;
 
     /// capabilities of hardware (0 is arduino-level with no added capabilities)
-    uint32_t hardwareCapabilities;
+    std::uint32_t hardwareCapabilities;
 
     /// type of controller
     ECommType type;
@@ -51,9 +51,6 @@ public:
 
     /// hardware types for the controller's lights
     std::vector<ELightHardwareType> hardwareTypes;
-
-    /// product types for the controller's lights
-    std::vector<EProductType> productTypes;
 
     operator QString() const {
         std::stringstream tempString;

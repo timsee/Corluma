@@ -38,19 +38,8 @@ bool GroupData::removeAppData() {
 }
 
 
-std::vector<cor::Group> GroupData::groupList() {
-    std::vector<cor::Group> retList;
-    retList.reserve(mGroupDict.items().size());
-    for (const auto& collection : mGroupDict.items()) {
-        if (!collection.isRoom()) {
-            retList.emplace_back(collection);
-        }
-    }
-    return retList;
-}
-
 std::vector<QString> GroupData::groupNames() {
-    auto groups = groupList();
+    auto groups = mGroupDict.items();
     std::vector<QString> retVector;
     retVector.reserve(groups.size());
     for (const auto& group : groups) {
@@ -59,36 +48,32 @@ std::vector<QString> GroupData::groupNames() {
     return retVector;
 }
 
-std::vector<cor::Group> GroupData::roomList() {
-    std::vector<cor::Group> retList;
-    retList.reserve(mGroupDict.items().size());
-    for (const auto& collection : mGroupDict.items()) {
-        if (collection.isRoom()) {
-            retList.emplace_back(collection);
+bool GroupData::isGroupARoom(const cor::Group& group) {
+    for (const auto& room : rooms().items()) {
+        if (room.uniqueID() == group.uniqueID()) {
+            return true;
         }
     }
-    return retList;
+    return false;
 }
 
 void GroupData::addSubGroupsToRooms() {
     // convert to dictionary updates intead of on a copy
-    for (auto room : mGroupDict.items()) {
-        if (room.isRoom()) {
-            for (const auto& group : groupList()) {
-                // update the dictionaries
-                bool allGroupLightsInRoom = true;
-                for (const auto& groupLight : group.lights()) {
-                    auto result = std::find(room.lights().begin(), room.lights().end(), groupLight);
-                    if (result == room.lights().end()) {
-                        allGroupLightsInRoom = false;
-                    }
+    for (auto room : mRoomDict.items()) {
+        for (const auto& group : mGroupDict.items()) {
+            // update the dictionaries
+            bool allGroupLightsInRoom = true;
+            for (const auto& groupLight : group.lights()) {
+                auto result = std::find(room.lights().begin(), room.lights().end(), groupLight);
+                if (result == room.lights().end()) {
+                    allGroupLightsInRoom = false;
                 }
-                if (allGroupLightsInRoom) {
-                    auto subgroups = room.subgroups();
-                    subgroups.push_back(group.uniqueID());
-                    room.subgroups(subgroups);
-                    mGroupDict.update(QString::number(room.uniqueID()).toStdString(), room);
-                }
+            }
+            if (allGroupLightsInRoom) {
+                auto subgroups = room.subgroups();
+                subgroups.push_back(group.uniqueID());
+                room.subgroups(subgroups);
+                mRoomDict.update(QString::number(room.uniqueID()).toStdString(), room);
             }
         }
     }
@@ -101,29 +86,28 @@ void GroupData::addSubGroupsToRooms() {
 
 QJsonObject lightToJsonObject(const cor::Light& light) {
     QJsonObject object;
-    object["isOn"] = light.isOn;
-    if (light.isOn) {
-        object["routine"] = routineToString(light.routine);
+    object["isOn"] = light.isOn();
+    if (light.isOn()) {
+        object["routine"] = routineToString(light.routine());
 
-        if (light.routine != ERoutine::singleSolid) {
-            object["speed"] = light.speed;
+        if (light.routine() != ERoutine::singleSolid) {
+            object["speed"] = light.speed();
         }
 
-        if (light.routine <= cor::ERoutineSingleColorEnd) {
-            object["hue"] = cor::roundToNDigits(light.color.hueF(), 4);
-            object["sat"] = cor::roundToNDigits(light.color.saturationF(), 4);
-            object["bri"] = cor::roundToNDigits(light.color.valueF(), 4);
-            object["colorMode"] = colorModeToString(light.colorMode);
+        if (light.routine() <= cor::ERoutineSingleColorEnd) {
+            object["hue"] = cor::roundToNDigits(light.color().hueF(), 4);
+            object["sat"] = cor::roundToNDigits(light.color().saturationF(), 4);
+            object["bri"] = cor::roundToNDigits(light.color().valueF(), 4);
         } else {
-            object["palette"] = light.palette.JSON();
+            object["palette"] = light.palette().JSON();
         }
     }
 
     object["type"] = commTypeToString(light.commType());
 
     if (light.protocol() == EProtocolType::arduCor) {
-        object["majorAPI"] = double(light.majorAPI);
-        object["minorAPI"] = double(light.minorAPI);
+        object["majorAPI"] = double(light.majorAPI());
+        object["minorAPI"] = double(light.minorAPI());
     }
 
     return object;
@@ -184,14 +168,12 @@ void GroupData::saveNewMood(
 }
 
 
-void GroupData::saveNewGroup(const QString& groupName,
-                             const std::vector<cor::Light>& devices,
-                             bool isRoom) {
+void GroupData::saveNewGroup(const QString& groupName, const std::vector<cor::Light>& devices) {
     auto key = generateNewUniqueKey();
     QJsonObject groupObject;
     groupObject["name"] = groupName;
     groupObject["isMood"] = false;
-    groupObject["isRoom"] = isRoom;
+    groupObject["isRoom"] = false;
 
     groupObject["uniqueID"] = double(key);
     // create string of jsondata to add to file
@@ -221,8 +203,6 @@ void GroupData::saveNewGroup(const QString& groupName,
                 lightListID.push_back(light.uniqueID());
             }
             cor::Group group(key, groupName, lightListID);
-            group.isRoom(isRoom);
-
             const auto& keyString = QString::number(key).toStdString();
             // check that it doesn't already exist, if it does, replace the old version
             auto dictResult = mGroupDict.item(keyString);
@@ -230,6 +210,58 @@ void GroupData::saveNewGroup(const QString& groupName,
                 mGroupDict.update(keyString, group);
             } else {
                 mGroupDict.insert(keyString, group);
+            }
+
+            // save file
+            saveJSON();
+            // hues use their bridge to store their data for collections instead of the JSON
+            emit newCollectionAdded(groupName);
+        }
+    }
+}
+
+void GroupData::saveNewRoom(const QString& groupName, const std::vector<cor::Light>& devices) {
+    auto key = generateNewUniqueKey();
+    QJsonObject groupObject;
+    groupObject["name"] = groupName;
+    groupObject["isMood"] = false;
+    groupObject["isRoom"] = true;
+
+    groupObject["uniqueID"] = double(key);
+    // create string of jsondata to add to file
+    QJsonArray deviceArray;
+    for (const auto& device : devices) {
+        // skip saving hues
+        if (device.protocol() != EProtocolType::hue) {
+            QJsonObject object;
+
+            object["type"] = commTypeToString(device.commType());
+            object["uniqueID"] = device.uniqueID();
+
+            deviceArray.append(object);
+        }
+    }
+
+    groupObject["devices"] = deviceArray;
+    if (!mJsonData.isNull() && !deviceArray.empty()) {
+        if (mJsonData.isArray()) {
+            auto array = mJsonData.array();
+            mJsonData.array().push_front(groupObject);
+            array.push_front(groupObject);
+            mJsonData.setArray(array);
+
+            std::vector<QString> lightListID;
+            for (const auto& light : devices) {
+                lightListID.push_back(light.uniqueID());
+            }
+            cor::Room room(key, groupName, lightListID, {});
+            const auto& keyString = QString::number(key).toStdString();
+            // check that it doesn't already exist, if it does, replace the old version
+            auto dictResult = mRoomDict.item(keyString);
+            if (dictResult.second) {
+                mRoomDict.update(keyString, room);
+            } else {
+                mRoomDict.insert(keyString, room);
             }
 
             // save file
@@ -257,6 +289,40 @@ void updateGroup(cor::Group& group, const cor::Group& externalGroup) {
 }
 
 } // namespace
+
+
+void GroupData::updateExternallyStoredRooms(const std::vector<cor::Room>& externalRooms) {
+    // fill in subgroups for each room
+    for (const auto& externalRoom : externalRooms) {
+        const auto& key = QString::number(externalRoom.uniqueID()).toStdString();
+        // check if it exists in group already
+        auto lookupResult = mRoomDict.item(key);
+        if (lookupResult.second) {
+            // get existing group
+            auto groupCopy = lookupResult.first;
+            updateGroup(groupCopy, externalRoom);
+            mRoomDict.update(key, groupCopy);
+        } else {
+            bool foundGroup = false;
+            for (const auto& internalGroup : mRoomDict.items()) {
+                if (internalGroup.name() == externalRoom.name()) {
+                    auto groupCopy = internalGroup;
+                    updateGroup(groupCopy, externalRoom);
+                    mRoomDict.update(QString::number(internalGroup.uniqueID()).toStdString(),
+                                     groupCopy);
+                    foundGroup = true;
+                }
+            }
+            if (!foundGroup) {
+                auto result = mRoomDict.insert(key, externalRoom);
+                if (!result) {
+                    qDebug() << " insert failed" << externalRoom.name();
+                }
+            }
+        }
+    }
+    addSubGroupsToRooms();
+}
 
 void GroupData::updateExternallyStoredGroups(const std::vector<cor::Group>& externalGroups) {
     // fill in subgroups for each room
@@ -369,6 +435,14 @@ bool GroupData::removeGroup(const QString& groupName) {
                                 return true;
                             }
                         }
+
+                        for (const auto& group : mRoomDict.items()) {
+                            if (group.name() == groupName) {
+                                mRoomDict.remove(group);
+                                emit groupDeleted(groupName);
+                                return true;
+                            }
+                        }
                     }
                 }
                 i++;
@@ -405,9 +479,6 @@ void GroupData::parseGroup(const QJsonObject& object) {
                 ECommType type = stringToCommType(typeString);
 
                 cor::Light light(uniqueID, "NO_CONTROLLER", type);
-                if (light.protocol() == EProtocolType::arduCor) {
-                    light.name = uniqueID;
-                }
 
                 list.push_back(light);
             } else {
@@ -419,9 +490,13 @@ void GroupData::parseGroup(const QJsonObject& object) {
             for (const auto& light : list) {
                 lightIDList.push_back(light.uniqueID());
             }
-            cor::Group group(std::uint64_t(uniqueID), name, lightIDList);
-            group.isRoom(isRoom);
-            mGroupDict.insert(QString::number(group.uniqueID()).toStdString(), group);
+            if (isRoom) {
+                cor::Room room(std::uint64_t(uniqueID), name, lightIDList, {});
+                mRoomDict.insert(QString::number(room.uniqueID()).toStdString(), room);
+            } else {
+                cor::Group group(std::uint64_t(uniqueID), name, lightIDList);
+                mGroupDict.insert(QString::number(group.uniqueID()).toStdString(), group);
+            }
         }
     } else {
         qDebug() << __func__ << " not recognized";
@@ -445,8 +520,8 @@ bool GroupData::checkIfMoodLightIsValid(const QJsonObject& device) {
     if (isOn) {
         ERoutine routine = stringToRoutine(device["routine"].toString());
         if (routine <= cor::ERoutineSingleColorEnd) {
-            colorsValid = (device["hue"].isDouble() && device["sat"].isDouble()
-                           && device["bri"].isDouble() && device["colorMode"].isString());
+            colorsValid =
+                (device["hue"].isDouble() && device["sat"].isDouble() && device["bri"].isDouble());
         } else {
             colorsValid = (device["palette"].isObject());
         }
@@ -478,8 +553,8 @@ bool GroupData::checkIfMoodGroupIsValid(const QJsonObject& device) {
     if (isOn) {
         ERoutine routine = stringToRoutine(device["routine"].toString());
         if (routine <= cor::ERoutineSingleColorEnd) {
-            colorsValid = (device["hue"].isDouble() && device["sat"].isDouble()
-                           && device["bri"].isDouble() && device["colorMode"].isString());
+            colorsValid =
+                (device["hue"].isDouble() && device["sat"].isDouble() && device["bri"].isDouble());
         } else {
             colorsValid = (device["palette"].isObject());
         }
@@ -497,13 +572,11 @@ bool GroupData::checkIfMoodGroupIsValid(const QJsonObject& device) {
 
 cor::Light parseLightObject(const QJsonObject& object) {
     // convert to Qt types from json data
-    const auto& modeString = object["colorMode"].toString();
     const auto& typeString = object["type"].toString();
     const auto& uniqueID = object["uniqueID"].toString();
 
     // convert to Corluma types from certain Qt types
     ECommType type = stringToCommType(typeString);
-    EColorMode colorMode = stringtoColorMode(modeString);
 
     bool isOn = object["isOn"].toBool();
 
@@ -525,27 +598,21 @@ cor::Light parseLightObject(const QJsonObject& object) {
     }
 
     cor::Light light(uniqueID, "NO_CONTROLLER", type);
-    light.isReachable = true;
-    light.isOn = isOn;
-    light.majorAPI = majorAPI;
-    light.minorAPI = minorAPI;
-    light.color = color;
-    light.routine = routine;
-    if (light.routine > cor::ERoutineSingleColorEnd && light.isOn) {
-        light.palette = Palette(object["palette"].toObject());
+    light.isReachable(true);
+    light.isOn(isOn);
+    light.version(majorAPI, minorAPI);
+    light.color(color);
+    light.routine(routine);
+    if (light.routine() > cor::ERoutineSingleColorEnd && light.isOn()) {
+        light.palette(Palette(object["palette"].toObject()));
     }
-    light.speed = speed;
-    light.colorMode = colorMode;
+    light.speed(speed);
     return light;
 }
 
 cor::Light parseDefaultStateObject(const QJsonObject& object) {
     // convert to Qt types from json data
     const auto& groupID = object["group"].toDouble();
-    const auto& modeString = object["colorMode"].toString();
-
-    // convert to Corluma types from certain Qt types
-    EColorMode colorMode = stringtoColorMode(modeString);
 
     bool isOn = object["isOn"].toBool();
 
@@ -567,17 +634,15 @@ cor::Light parseDefaultStateObject(const QJsonObject& object) {
     }
 
     cor::Light light(QString::number(groupID), "NO_CONTROLLER", ECommType::MAX);
-    light.isReachable = true;
-    light.isOn = isOn;
-    light.majorAPI = majorAPI;
-    light.minorAPI = minorAPI;
-    light.color = color;
-    light.routine = routine;
-    if (light.routine > cor::ERoutineSingleColorEnd && light.isOn) {
-        light.palette = Palette(object["palette"].toObject());
+    light.isReachable(true);
+    light.isOn(isOn);
+    light.version(majorAPI, minorAPI);
+    light.color(color);
+    light.routine(routine);
+    if (light.routine() > cor::ERoutineSingleColorEnd && light.isOn()) {
+        light.palette(Palette(object["palette"].toObject()));
     }
-    light.speed = speed;
-    light.colorMode = colorMode;
+    light.speed(speed);
     return light;
 }
 
@@ -760,6 +825,13 @@ std::uint64_t GroupData::generateNewUniqueKey() {
         if (group.uniqueID() > maxKey
             && (group.uniqueID() < std::numeric_limits<unsigned long>::max() / 2)) {
             maxKey = group.uniqueID();
+        }
+    }
+
+    for (const auto& room : mRoomDict.items()) {
+        if (room.uniqueID() > maxKey
+            && (room.uniqueID() < std::numeric_limits<unsigned long>::max() / 2)) {
+            maxKey = room.uniqueID();
         }
     }
     return maxKey + 1;

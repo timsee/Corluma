@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QTimer>
 
+#include "comm/arducor/arducorlight.h"
 #include "comm/arducor/controller.h"
 #include "cor/dictionary.h"
 #include "cor/jsonsavedata.h"

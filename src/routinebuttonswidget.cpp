@@ -28,47 +28,47 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup,
     if (widgetGroup == EWidgetGroup::singleRoutines) {
         mRoutines = std::vector<std::pair<QString, QJsonObject>>(8);
         QJsonObject routineObject;
-        light.speed = 100;
-        light.isOn = true;
-        light.color = QColor(0, 0, 0);
+        light.speed(100);
+        light.isOn(true);
+        light.color(QColor(0, 0, 0));
 
         mRoutines[0].first = "Solid";
-        light.routine = ERoutine::singleSolid;
+        light.routine(ERoutine::singleSolid);
         mRoutines[0].second = lightToJson(light);
 
         mRoutines[1].first = "Blink";
-        light.routine = ERoutine::singleBlink;
+        light.routine(ERoutine::singleBlink);
         mRoutines[1].second = lightToJson(light);
 
         mRoutines[2].first = "Wave";
-        light.routine = ERoutine::singleWave;
+        light.routine(ERoutine::singleWave);
         mRoutines[2].second = lightToJson(light);
 
         mRoutines[3].first = "Glimmer";
-        light.routine = ERoutine::singleGlimmer;
+        light.routine(ERoutine::singleGlimmer);
         routineObject["param"] = 15;
         mRoutines[3].second = lightToJson(light);
 
         mRoutines[4].first = "Linear Fade";
-        light.routine = ERoutine::singleFade;
+        light.routine(ERoutine::singleFade);
         routineObject = lightToJson(light);
         routineObject["param"] = 0;
         mRoutines[4].second = routineObject;
 
         mRoutines[5].first = "Sine Fade";
-        light.routine = ERoutine::singleFade;
+        light.routine(ERoutine::singleFade);
         routineObject = lightToJson(light);
         routineObject["param"] = 1;
         mRoutines[5].second = routineObject;
 
         mRoutines[6].first = "Saw Fade In";
-        light.routine = ERoutine::singleSawtoothFade;
+        light.routine(ERoutine::singleSawtoothFade);
         routineObject = lightToJson(light);
         routineObject["param"] = 0;
         mRoutines[6].second = routineObject;
 
         mRoutines[7].first = "Saw Fade Out";
-        light.routine = ERoutine::singleSawtoothFade;
+        light.routine(ERoutine::singleSawtoothFade);
         routineObject = lightToJson(light);
         routineObject["param"] = 1;
         mRoutines[7].second = routineObject;
@@ -101,29 +101,29 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup,
     } else if (widgetGroup == EWidgetGroup::multiRoutines) {
         mRoutines = std::vector<std::pair<QString, QJsonObject>>(5);
         QJsonObject routineObject;
-        light.speed = 100;
-        light.isOn = true;
-        light.palette = Palette(paletteToString(EPalette::custom), colors, 51);
+        light.speed(100);
+        light.isOn(true);
+        light.palette(Palette(paletteToString(EPalette::custom), colors, 51));
 
         mRoutines[0].first = "Glimmer";
-        light.routine = ERoutine::multiGlimmer;
+        light.routine(ERoutine::multiGlimmer);
         routineObject["param"] = 15;
         mRoutines[0].second = lightToJson(light);
 
         mRoutines[1].first = "Fade";
-        light.routine = ERoutine::multiFade;
+        light.routine(ERoutine::multiFade);
         mRoutines[1].second = lightToJson(light);
 
         mRoutines[2].first = "Random Solid";
-        light.routine = ERoutine::multiRandomSolid;
+        light.routine(ERoutine::multiRandomSolid);
         mRoutines[2].second = lightToJson(light);
 
         mRoutines[3].first = "Random Individual";
-        light.routine = ERoutine::multiRandomIndividual;
+        light.routine(ERoutine::multiRandomIndividual);
         mRoutines[3].second = lightToJson(light);
 
         mRoutines[4].first = "Bars";
-        light.routine = ERoutine::multiBars;
+        light.routine(ERoutine::multiBars);
         routineObject["param"] = 4;
         mRoutines[4].second = lightToJson(light);
 
@@ -175,7 +175,7 @@ void RoutineButtonsWidget::highlightRoutineButton(const QString& label) {
 void RoutineButtonsWidget::multiRoutineColorsChanged(const std::vector<QColor>& colors) {
     for (std::size_t i = 0u; i < mRoutineButtons.size(); i++) {
         cor::Light light = cor::jsonToLight(mRoutines[i].second);
-        light.palette = Palette(paletteToString(EPalette::custom), colors, 51);
+        light.palette(Palette(paletteToString(EPalette::custom), colors, 51));
         mRoutines[i].second = cor::lightToJson(light);
         mRoutineButtons[i]->updateRoutine(mRoutines[i].second);
     }

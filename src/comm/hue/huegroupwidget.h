@@ -6,6 +6,7 @@
 #include <QWidget>
 
 #include "cor/objects/group.h"
+#include "cor/objects/room.h"
 
 namespace hue {
 /*!
@@ -22,7 +23,10 @@ class HueGroupWidget : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit HueGroupWidget(QWidget* parent, const cor::Group& lightGroup);
+    explicit HueGroupWidget(QWidget* parent, std::uint32_t index, const cor::Group& lightGroup);
+
+    /// constructor
+    explicit HueGroupWidget(QWidget* parent, std::uint32_t index, const cor::Room& lightGroup);
 
 protected:
     /// paints the background on the widget
@@ -37,10 +41,10 @@ private:
 
     /// description of the group in plain english
     QLabel* mGroupDescription;
-    
+
     /// helper that generates a plain-english description of the group
-    QString generateDescription(const cor::Group& group);
-    
+    QString generateDescription(std::size_t lightCount, bool isRoom);
+
     /// layout for widget
     QVBoxLayout* mLayout;
 };

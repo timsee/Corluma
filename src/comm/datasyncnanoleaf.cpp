@@ -143,37 +143,37 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
     // On/Off Sync
     //-------------------
 
-    if (dataDevice.isOn != commDevice.isOn) {
-        object["isOn"] = dataDevice.isOn;
+    if (dataDevice.isOn() != commDevice.isOn()) {
+        object["isOn"] = dataDevice.isOn();
         // qDebug() << "nanoleaf ON/OFF not in sync" << dataDevice.isOn;
         countOutOfSync++;
     }
 
-    if (dataDevice.isOn) {
+    if (dataDevice.isOn()) {
         //-------------------
         // Routine Sync
         //-------------------
         // these are required by all packets
-        bool routineInSync = (commDevice.routine == dataDevice.routine);
-        bool speedInSync = (commDevice.speed == dataDevice.speed);
+        bool routineInSync = (commDevice.routine() == dataDevice.routine());
+        bool speedInSync = (commDevice.speed() == dataDevice.speed());
         // speed is not used only in single solid routines
-        if (dataDevice.routine == ERoutine::singleSolid) {
+        if (dataDevice.routine() == ERoutine::singleSolid) {
             speedInSync = true;
         }
 
         // these are optional parameters depending on the routine
         bool paramsInSync = true;
-        bool colorInSync = (cor::colorDifference(dataDevice.color, commDevice.color) <= 0.02f);
-        bool paletteInSync = (commDevice.palette == dataDevice.palette);
+        bool colorInSync = (cor::colorDifference(dataDevice.color(), commDevice.color()) <= 0.02f);
+        bool paletteInSync = (commDevice.palette() == dataDevice.palette());
         bool paletteBrightnessInSync =
-            checkIfOffByOne(commDevice.palette.brightness(), dataDevice.palette.brightness());
+            checkIfOffByOne(commDevice.palette().brightness(), dataDevice.palette().brightness());
 
-        if (dataDevice.palette.paletteEnum() == EPalette::custom) {
+        if (dataDevice.palette().paletteEnum() == EPalette::custom) {
             bool palettesAreClose = true;
-            if (dataDevice.palette.colors().size() == commDevice.palette.colors().size()) {
-                uint32_t i = 0;
-                for (const auto& color : dataDevice.palette.colors()) {
-                    if (cor::colorDifference(color, commDevice.palette.colors()[i]) > 0.05f) {
+            if (dataDevice.palette().colors().size() == commDevice.palette().colors().size()) {
+                std::uint32_t i = 0;
+                for (const auto& color : dataDevice.palette().colors()) {
+                    if (cor::colorDifference(color, commDevice.palette().colors()[i]) > 0.05f) {
                         palettesAreClose = false;
                     }
                     ++i;
@@ -182,18 +182,18 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
             }
         }
         if (!paletteBrightnessInSync) {
-            object["brightness"] = double(dataDevice.palette.brightness());
+            object["brightness"] = double(dataDevice.palette().brightness());
             paletteInSync = false;
         }
 
-        if (!colorInSync && dataDevice.routine <= cor::ERoutineSingleColorEnd) {
+        if (!colorInSync && dataDevice.routine() <= cor::ERoutineSingleColorEnd) {
             paramsInSync = false;
         }
-        if (!paletteInSync && dataDevice.routine > cor::ERoutineSingleColorEnd) {
+        if (!paletteInSync && dataDevice.routine() > cor::ERoutineSingleColorEnd) {
             paramsInSync = false;
         }
 
-        if (dataDevice.routine == ERoutine::singleSolid) {
+        if (dataDevice.routine() == ERoutine::singleSolid) {
             if (leafController.effect == "*Static*") {
                 routineInSync = false;
             }
@@ -205,22 +205,22 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
 
         if (!routineInSync || !speedInSync || !paramsInSync) {
             QJsonObject routineObject;
-            routineObject["routine"] = routineToString(dataDevice.routine);
+            routineObject["routine"] = routineToString(dataDevice.routine());
 
-            if (dataDevice.routine <= cor::ERoutineSingleColorEnd) {
-                routineObject["hue"] = dataDevice.color.hueF();
-                routineObject["sat"] = dataDevice.color.saturationF();
-                routineObject["bri"] = dataDevice.color.valueF();
+            if (dataDevice.routine() <= cor::ERoutineSingleColorEnd) {
+                routineObject["hue"] = dataDevice.color().hueF();
+                routineObject["sat"] = dataDevice.color().saturationF();
+                routineObject["bri"] = dataDevice.color().valueF();
             } else {
-                routineObject["palette"] = dataDevice.palette.JSON();
-                if (dataDevice.palette.paletteEnum() == EPalette::custom) {
-                    mComm->nanoleaf()->setCustomColors(dataDevice.palette.colors());
+                routineObject["palette"] = dataDevice.palette().JSON();
+                if (dataDevice.palette().paletteEnum() == EPalette::custom) {
+                    mComm->nanoleaf()->setCustomColors(dataDevice.palette().colors());
                 }
             }
 
-            if (dataDevice.routine != ERoutine::singleSolid) {
+            if (dataDevice.routine() != ERoutine::singleSolid) {
                 // all other routines don't have this edge case and have speed instead
-                routineObject["speed"] = dataDevice.speed;
+                routineObject["speed"] = dataDevice.speed();
             }
 
             // qDebug() << " routine in sync: " << routineInSync << " speed in sync" << speedInSync

@@ -147,14 +147,14 @@ protected:
     QTimer* mReachabilityTest;
 
     /// number of state updates sent out
-    uint32_t mStateUpdateCounter;
+    std::uint32_t mStateUpdateCounter;
 
     /*!
      * how frequently secondary requests should happen. Secondary requests are things like the
      * custom array updatewhere they are not needed as frequently as state updates but are still
      * useful on a semi regular basis.
      */
-    uint32_t mSecondaryUpdatesInterval;
+    std::uint32_t mSecondaryUpdatesInterval;
 
     /*!
      * \brief mStateUpdateTimer Polls the controller every few seconds requesting

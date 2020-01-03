@@ -84,18 +84,18 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
 
     PresetPalettes palettes;
     cor::Light light;
-    light.routine = ERoutine::multiBars;
-    light.palette = palettes.palette(EPalette::water);
-    light.speed = 100;
+    light.routine(ERoutine::multiBars);
+    light.palette(palettes.palette(EPalette::water));
+    light.speed(100);
     mMultiColorButton =
         new LeftHandButton("Multi Color", EPage::palettePage, cor::lightToJson(light), this, this);
     mMultiColorButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mMultiColorButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
     cor::Light moodLight;
-    moodLight.routine = ERoutine::multiFade;
-    moodLight.palette = palettes.palette(EPalette::fire);
-    moodLight.speed = 100;
+    moodLight.routine(ERoutine::multiFade);
+    moodLight.palette(palettes.palette(EPalette::fire));
+    moodLight.speed(100);
     mMoodButton =
         new LeftHandButton("Moods", EPage::moodPage, cor::lightToJson(moodLight), this, this);
     mMoodButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -212,12 +212,12 @@ std::vector<cor::Group> LeftHandMenu::gatherAllUIGroups() {
     for (auto widget : mRoomWidgets) {
         // cast to ListDeviceGroupWidget
         auto groupWidget = qobject_cast<ListRoomWidget*>(widget);
-        uiGroups.push_back(groupWidget->group());
+        uiGroups.push_back(groupWidget->room());
     }
     return uiGroups;
 }
 
-void LeftHandMenu::updateDataGroupInUI(const cor::Group& dataGroup,
+void LeftHandMenu::updateDataGroupInUI(const cor::Room& dataGroup,
                                        const std::vector<cor::Group>& uiGroups) {
     bool existsInUIGroups = false;
     for (const auto& uiGroup : uiGroups) {
@@ -227,7 +227,7 @@ void LeftHandMenu::updateDataGroupInUI(const cor::Group& dataGroup,
                 auto groupWidget = qobject_cast<ListRoomWidget*>(widget);
                 if (groupWidget->key() == dataGroup.name()) {
                     bool deleteNotFound = true;
-                    groupWidget->updateGroup(dataGroup, deleteNotFound);
+                    groupWidget->updateRoom(dataGroup, deleteNotFound);
                 }
             }
         }
@@ -240,7 +240,7 @@ void LeftHandMenu::updateDataGroupInUI(const cor::Group& dataGroup,
 
 void LeftHandMenu::updateLights() {
     // get all rooms
-    auto roomList = mGroups->roomList();
+    auto roomList = mGroups->rooms().items();
     // attempt to make a miscellaneous group
     const auto& miscellaneousGroup = makeMiscellaneousGroup(roomList);
     // only add miscellaneous group if it has any data
@@ -327,8 +327,8 @@ void LeftHandMenu::updateSingleColorButton() {
 }
 
 
-ListRoomWidget* LeftHandMenu::initRoomsWidget(const cor::Group& group, const QString& key) {
-    auto widget = new ListRoomWidget(group,
+ListRoomWidget* LeftHandMenu::initRoomsWidget(const cor::Room& room, const QString& key) {
+    auto widget = new ListRoomWidget(room,
                                      mComm,
                                      mGroups,
                                      key,
@@ -377,7 +377,7 @@ void LeftHandMenu::lightClicked(const QString&, const QString& deviceKey) {
     //             << "device key:" << deviceKey;
 
     auto device = mComm->lightByID(deviceKey);
-    if (device.isReachable) {
+    if (device.isReachable()) {
         if (mSelectedLights->doesDeviceExist(device)) {
             mSelectedLights->removeDevice(device);
         } else {
@@ -400,7 +400,7 @@ void LeftHandMenu::groupSelected(const QString& key, bool shouldSelect) {
         }
 
         // check if group is a subgroup of a room
-        for (const auto& groupID : widget->group().subgroups()) {
+        for (const auto& groupID : widget->room().subgroups()) {
             const auto& group = mGroups->groups().item(QString::number(groupID).toStdString());
             if (group.second) {
                 if (group.first.name() == key) {
@@ -471,13 +471,11 @@ void LeftHandMenu::clearWidgets() {
     resize();
 }
 
-cor::Group LeftHandMenu::makeMiscellaneousGroup(const std::vector<cor::Group>& roomList) {
+cor::Room LeftHandMenu::makeMiscellaneousGroup(const std::vector<cor::Room>& roomList) {
     // fill in miscellaneous Room default data
-    cor::Group miscellaneousGroup(0u, "Miscellaneous", {});
-    miscellaneousGroup.index(-1);
-    miscellaneousGroup.isRoom(true);
+    cor::Room miscellaneousGroup(0u, "Miscellaneous", {}, {});
     // loop through every group, see if it maps to a room, if not, add it to this room
-    for (const auto& group : mGroups->groupList()) {
+    for (const auto& group : mGroups->groups().items()) {
         bool groupInRoom = false;
         for (const auto& room : roomList) {
             for (const auto& roomGroup : room.subgroups()) {
@@ -498,7 +496,7 @@ cor::Group LeftHandMenu::makeMiscellaneousGroup(const std::vector<cor::Group>& r
         bool deviceInGroup = false;
         if (device.isValid()) {
             // looop through all known rooms
-            for (const auto& room : mGroups->groups().items()) {
+            for (const auto& room : mGroups->rooms().items()) {
                 // check room devices for this specific light
                 for (const auto& lightID : room.lights()) {
                     if (lightID == device.uniqueID()) {

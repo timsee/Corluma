@@ -122,12 +122,11 @@ bool sortListByGroupName(const std::pair<cor::Group, cor::Light>& lhs,
 
 cor::Light applyStateToLight(const cor::Light& light, const cor::Light& state) {
     cor::Light lightCopy = light;
-    lightCopy.color = state.color;
-    lightCopy.isOn = state.isOn;
-    lightCopy.routine = state.routine;
-    lightCopy.palette = state.palette;
-    lightCopy.colorMode = state.colorMode;
-    lightCopy.speed = state.speed;
+    lightCopy.color(state.color());
+    lightCopy.isOn(state.isOn());
+    lightCopy.routine(state.routine());
+    lightCopy.palette(state.palette());
+    lightCopy.speed(state.speed());
     return lightCopy;
 }
 
@@ -137,7 +136,7 @@ cor::Light CommLayer::addLightMetaData(cor::Light light) {
     light.controller(controller);
     auto deviceCopy = light;
     fillDevice(deviceCopy);
-    light.isReachable = deviceCopy.isReachable;
+    light.isReachable(deviceCopy.isReachable());
     return light;
 }
 
@@ -164,11 +163,15 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
     for (const auto& defaultState : mood.defaults()) {
         for (const auto& collection : mGroups->groups().items()) {
             if (defaultState.first == collection.uniqueID()) {
-                if (collection.isRoom()) {
-                    rooms.emplace_back(collection, defaultState.second);
-                } else {
-                    groups.emplace_back(collection, defaultState.second);
-                }
+                groups.emplace_back(collection, defaultState.second);
+            }
+        }
+    }
+
+    for (const auto& defaultState : mood.defaults()) {
+        for (const auto& collection : mGroups->rooms().items()) {
+            if (defaultState.first == collection.uniqueID()) {
+                rooms.emplace_back(collection, defaultState.second);
             }
         }
     }
@@ -248,6 +251,29 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
     }
 
     return moodDict;
+}
+
+EColorPickerType CommLayer::bestColorPickerType(const std::vector<cor::Light>& lights) {
+    std::vector<HueLight> hueLights;
+    for (const auto& light : lights) {
+        if (light.protocol() == EProtocolType::arduCor
+            || light.protocol() == EProtocolType::nanoleaf) {
+            return EColorPickerType::color;
+        }
+
+        if (light.protocol() == EProtocolType::hue) {
+            auto hueLight = hue()->hueLightFromLight(light);
+            hueLights.push_back(hueLight);
+        }
+    }
+    EHueType bestType = checkForHueWithMostFeatures(hueLights);
+    if (bestType == EHueType::white) {
+        return EColorPickerType::dimmable;
+    } else if (bestType == EHueType::ambient) {
+        return EColorPickerType::CT;
+    } else {
+        return EColorPickerType::color;
+    }
 }
 
 

@@ -36,8 +36,8 @@ LightVectorWidget::LightVectorWidget(int width, int height, bool fillFromLeft, Q
         for (int w = 0; w < mWidth; ++w) {
             QString iString(i);
             cor::Light light(iString, iString, ECommType::MAX);
-            light.routine = ERoutine::singleSolid;
-            light.color = QColor(0, 0, 0);
+            light.routine(ERoutine::singleSolid);
+            light.color(QColor(0, 0, 0));
             QJsonObject routineObject = lightToJson(light);
             mArrayColorsButtons[std::size_t(i)] = new cor::Button(this, routineObject);
             mArrayColorsButtons[std::size_t(i)]->setLabelMode(true);
@@ -63,7 +63,7 @@ void LightVectorWidget::updateDevices(const std::vector<cor::Light>& devices) {
     if (mFillFromLeft) {
         int i = 0;
         for (const auto& device : devices) {
-            bool skip = mHideOffDevices && !device.isOn;
+            bool skip = mHideOffDevices && !device.isOn();
             if (i < mMaximumSize && !skip) {
                 QJsonObject routineObject = lightToJson(device);
                 mArrayColorsButtons[std::uint32_t(i)]->updateRoutine(routineObject);
@@ -77,7 +77,7 @@ void LightVectorWidget::updateDevices(const std::vector<cor::Light>& devices) {
     } else {
         int i = mMaximumSize - 1;
         for (const auto& device : devices) {
-            bool skip = mHideOffDevices && !device.isOn;
+            bool skip = mHideOffDevices && !device.isOn();
             if (i > 0 && !skip) {
                 QJsonObject routineObject = lightToJson(device);
                 mArrayColorsButtons[std::uint32_t(i)]->updateRoutine(routineObject);

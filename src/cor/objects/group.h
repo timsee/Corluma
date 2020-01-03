@@ -38,29 +38,11 @@ public:
     /// true if group is valid, false otherwise
     bool isValid() const noexcept { return mName != "Error" && mUniqueID != 0u; }
 
-    /// index of group on controller
-    void index(int index) { mIndex = index; }
-
-    /// index of group on controller
-    int index() const noexcept { return mIndex; }
-
-    /// if a group has subgroups. this contains a list of all groups that are subgroups.
-    const std::vector<std::uint64_t>& subgroups() const noexcept { return mSubgroups; }
-
-    /// setter for subgroups
-    void subgroups(const std::vector<std::uint64_t>& subgroups) { mSubgroups = subgroups; }
-
     /// list of lights
     const std::vector<QString>& lights() const noexcept { return mLights; }
 
     /// setter for lights
     void lights(const std::vector<QString>& lights) { mLights = lights; }
-
-    /// true if a room, false if a generic group
-    bool isRoom() const noexcept { return mIsRoom; }
-
-    /// setter for room flag
-    void isRoom(bool isRoom) { mIsRoom = isRoom; }
 
     /// equal operator
     bool operator==(const Group& rhs) const { return uniqueID() == rhs.uniqueID(); }
@@ -99,20 +81,11 @@ public:
     }
 
 private:
-    /// true if room, false if generic group
-    bool mIsRoom;
-
-    /// index of light on its hardware
-    int mIndex;
-
     /// name of group
     QString mName;
 
     /// unique ID
     std::uint64_t mUniqueID;
-
-    /// storage of subgroups for rooms
-    std::vector<std::uint64_t> mSubgroups;
 
     /// storage of uniqueIDs of lights in the group
     std::vector<QString> mLights;

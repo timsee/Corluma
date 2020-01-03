@@ -1,6 +1,7 @@
 #ifndef BRIDGE_H
 #define BRIDGE_H
 
+#include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QString>
@@ -11,6 +12,8 @@
 #include "comm/hue/huelight.h"
 #include "cor/dictionary.h"
 #include "cor/objects/group.h"
+#include "cor/objects/room.h"
+#include "utils/exception.h"
 
 /// bridge discovery state
 enum class EBridgeDiscoveryState { lookingForResponse, lookingForUsername, connected, unknown };
@@ -95,6 +98,10 @@ struct hash<SHueSchedule> {
 
 namespace hue {
 
+using BridgeGroupVector = std::vector<std::pair<cor::Group, int>>;
+
+using BridgeRoomVector = std::vector<std::pair<cor::Room, int>>;
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2019.
@@ -140,7 +147,71 @@ public:
     cor::Dictionary<SHueSchedule> schedules;
 
     /// list of the groups stored on the bridge
-    std::vector<cor::Group> groups;
+    std::vector<cor::Group> groups() const noexcept { return mGroups.items(); }
+
+    /// list of the rooms stored on the bridge
+    std::vector<cor::Room> rooms() const noexcept { return mRooms.items(); }
+
+    /// getter for groups with IDs
+    BridgeGroupVector groupsWithIDs() const {
+        BridgeGroupVector retVector;
+        std::vector<std::string> keys = mGroups.keys();
+        auto items = mGroups.items();
+        for (auto i = 0u; i < items.size(); ++i) {
+            qDebug() << " group with IDS" << items[i].name();
+            retVector.emplace_back(items[i], QString(keys[i].c_str()).toInt());
+        }
+        return retVector;
+    }
+
+    /// getter for pairs of rooms with IDs
+    BridgeRoomVector roomsWithIDs() const {
+        BridgeRoomVector retVector;
+        std::vector<std::string> keys = mRooms.keys();
+        auto items = mRooms.items();
+        for (auto i = 0u; i < items.size(); ++i) {
+            qDebug() << " room with IDS" << items[i].name();
+            retVector.emplace_back(items[i], QString(keys[i].c_str()).toInt());
+        }
+        return retVector;
+    }
+
+    /// setter for groups and their IDs
+    void groupsWithIDs(const BridgeGroupVector& groups) {
+        mGroups = cor::Dictionary<cor::Group>();
+        for (const auto& group : groups) {
+            if (group.first.name() == "Living Room") {
+                THROW_EXCEPTION("WTFF");
+            }
+            mGroups.insert(QString::number(group.second).toStdString(), group.first);
+        }
+    }
+
+    /// setter for rooms and their IDs
+    void roomsWithIDs(const BridgeRoomVector& rooms) {
+        mRooms = cor::Dictionary<cor::Room>();
+        for (const auto& group : rooms) {
+            mRooms.insert(QString::number(group.second).toStdString(), group.first);
+        }
+    }
+
+    /// getter for group ID, regardless of if its a room or group
+    std::uint32_t groupID(const cor::Group& group) const noexcept {
+        if (group.isValid()) {
+            for (const auto& storedGroup : mGroups.items()) {
+                if (group.uniqueID() == storedGroup.uniqueID()) {
+                    return QString(mGroups.key(storedGroup).first.c_str()).toInt();
+                }
+            }
+
+            for (const auto& storedGroup : mRooms.items()) {
+                if (group.uniqueID() == storedGroup.uniqueID()) {
+                    return QString(mGroups.key(storedGroup).first.c_str()).toInt();
+                }
+            }
+        }
+        return std::numeric_limits<std::uint32_t>::max();
+    }
 
     /// current state of the bridge during discovery
     EBridgeDiscoveryState state = EBridgeDiscoveryState::lookingForResponse;
@@ -175,6 +246,13 @@ public:
         }
         return result;
     }
+
+private:
+    /// dictionary of groups
+    cor::Dictionary<cor::Group> mGroups;
+
+    /// dictionary of rooms
+    cor::Dictionary<cor::Room> mRooms;
 };
 
 /// converts a json object to a Bridge

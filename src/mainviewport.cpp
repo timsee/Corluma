@@ -145,7 +145,7 @@ void MainViewport::showMainPage(EPage page, bool skipTransition) {
         mColorPage->show(mData->mainColor(),
                          uint32_t(mData->brightness()),
                          uint32_t(mData->devices().size()),
-                         mData->bestColorPickerType());
+                         mComm->bestColorPickerType(mData->devices()));
         mColorPage->setVisible(true);
     } else if (page == EPage::moodPage) {
         loadMoodPage();
@@ -164,7 +164,7 @@ void MainViewport::showMainPage(EPage page, bool skipTransition) {
 void MainViewport::loadMoodPage() {
     mMoodPage->show(mData->findCurrentMood(mGroups->moods()),
                     mGroups->moods(),
-                    mGroups->roomList());
+                    mGroups->rooms().items());
 }
 
 void MainViewport::hideMainPage(EPage page) {
@@ -186,7 +186,7 @@ void MainViewport::lightCountChanged() {
         mColorPage->show(mData->mainColor(),
                          uint32_t(mData->brightness()),
                          uint32_t(mData->devices().size()),
-                         mData->bestColorPickerType());
+                         mComm->bestColorPickerType(mData->devices()));
     } else if (mPageIndex == EPage::palettePage) {
         mPalettePage->show(mData->lightCount(),
                            mData->brightness(),

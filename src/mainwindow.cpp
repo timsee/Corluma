@@ -486,15 +486,19 @@ void MainWindow::editButtonClicked(bool isMood) {
         mEditGroupPage->isOpen(true);
 
         auto group = mData->findCurrentGroup(mGroups->groups().items());
+        auto isRoom = mGroups->isGroupARoom(group);
         if (group.isValid()) {
-            mEditGroupPage->showGroup(group, mComm->lightListFromGroup(group), mComm->allDevices());
+            mEditGroupPage->showGroup(group,
+                                      mComm->lightListFromGroup(group),
+                                      mComm->allDevices(),
+                                      isRoom);
         } else {
             auto lights = group.lights();
             for (const auto& light : mData->devices()) {
                 lights.push_back(light.uniqueID());
             }
             cor::Group group(mGroups->generateNewUniqueKey(), "New Group", lights);
-            mEditGroupPage->showGroup(group, mData->devices(), mComm->allDevices());
+            mEditGroupPage->showGroup(group, mData->devices(), mComm->allDevices(), false);
         }
     }
 }
@@ -514,8 +518,8 @@ void MainWindow::detailedMoodDisplay(std::uint64_t key) {
         for (auto&& light : lights) {
             auto lightData = mComm->lightByID(light.uniqueID());
             if (lightData.isValid()) {
-                light.hardwareType = lightData.hardwareType;
-                light.name = lightData.name;
+                light.hardwareType(lightData.hardwareType());
+                light.name(lightData.name());
             }
         }
         detailedMood.lights(lights);
@@ -530,7 +534,7 @@ void MainWindow::hueInfoWidgetClicked() {
 
     mLightInfoWidget->scrollArea()->updateHues(mComm->hue()->discovery()->lights());
     mLightInfoWidget->scrollArea()->updateControllers(mComm->nanoleaf()->controllers().items());
-    mLightInfoWidget->scrollArea()->updateLights(mComm->arducor()->lights());
+    mLightInfoWidget->scrollArea()->updateLights(mComm->arducor()->arduCorLights());
     mLightInfoWidget->resize();
     mLightInfoWidget->pushIn();
 }
@@ -575,7 +579,7 @@ void MainWindow::lightNameChange(EProtocolType type, const QString& key, const Q
         HueLight light;
         bool lightFound = false;
         for (auto hue : hueLights) {
-            if (hue.index == keyNumber) {
+            if (hue.index() == keyNumber) {
                 lightFound = true;
                 light = hue;
             }
@@ -609,8 +613,9 @@ void MainWindow::deleteLight(const QString& key) {
                 mComm->arducor()->deleteLight(light);
                 break;
             case EProtocolType::hue: {
+                auto hueLight = mComm->hue()->hueLightFromLight(light);
                 for (auto hue : mComm->hue()->discovery()->lights()) {
-                    if (hue.index == light.index) {
+                    if (hue.index() == hueLight.index()) {
                         mComm->hue()->deleteLight(hue);
                     }
                 }

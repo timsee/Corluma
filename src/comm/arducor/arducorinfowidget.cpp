@@ -12,7 +12,7 @@
 #include <QtCore>
 #include <QtGui>
 
-ArduCorInfoWidget::ArduCorInfoWidget(cor::Light light, QWidget* parent)
+ArduCorInfoWidget::ArduCorInfoWidget(ArduCorLight light, QWidget* parent)
     : QWidget(parent),
       mHideDetails{false},
       mLight(light),
@@ -25,19 +25,19 @@ ArduCorInfoWidget::ArduCorInfoWidget(cor::Light light, QWidget* parent)
     setTitleFontPointSize(14);
 
     QString pathString = commTypeToString(light.commType()) + " " + light.controller() + " "
-                         + QString::number(light.index);
+                         + QString::number(light.index());
     mPathLabel = new QLabel(pathString, this);
     mPathLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mPathLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
     mHardwareTypeLabel =
-        new QLabel("<b>Hardware:</b>  " + hardwareTypeToString(light.hardwareType), this);
+        new QLabel("<b>Hardware:</b>  " + hardwareTypeToString(light.hardwareType()), this);
     mHardwareTypeLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mHardwareTypeLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mAPILabel = new QLabel(
-        "<b>API:</b>  " + QString::number(light.majorAPI) + "." + QString::number(light.minorAPI),
-        this);
+    mAPILabel = new QLabel("<b>API:</b>  " + QString::number(light.majorAPI()) + "."
+                               + QString::number(light.minorAPI()),
+                           this);
     mAPILabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mAPILabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
@@ -58,12 +58,11 @@ ArduCorInfoWidget::ArduCorInfoWidget(cor::Light light, QWidget* parent)
 }
 
 
-void ArduCorInfoWidget::updateLight(cor::Light light) {
+void ArduCorInfoWidget::updateLight(ArduCorLight light) {
     mLight = std::move(light);
 }
 
-void ArduCorInfoWidget::mouseReleaseEvent(QMouseEvent* event) {
-    Q_UNUSED(event);
+void ArduCorInfoWidget::mouseReleaseEvent(QMouseEvent*) {
     emit clicked(mKey);
 }
 
@@ -85,7 +84,7 @@ void ArduCorInfoWidget::resizeEvent(QResizeEvent*) {
 void ArduCorInfoWidget::resize() {
     QSize size(mName->height(), mName->height());
     mTypeIcon->setFixedSize(size);
-    mTypePixmap = lightHardwareTypeToPixmap(mLight.hardwareType);
+    mTypePixmap = lightHardwareTypeToPixmap(mLight.hardwareType());
     mTypePixmap = mTypePixmap.scaled(size.width(),
                                      size.height(),
                                      Qt::IgnoreAspectRatio,
@@ -93,8 +92,7 @@ void ArduCorInfoWidget::resize() {
     mTypeIcon->setPixmap(mTypePixmap);
 }
 
-void ArduCorInfoWidget::paintEvent(QPaintEvent* event) {
-    Q_UNUSED(event);
+void ArduCorInfoWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);

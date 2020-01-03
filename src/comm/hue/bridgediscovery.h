@@ -61,7 +61,9 @@ public:
     void updateSchedules(const hue::Bridge& bridge, const std::vector<SHueSchedule>& schedules);
 
     /// updates the groups stored in a bridge
-    void updateGroups(const hue::Bridge& bridge, const std::vector<cor::Group>& groups);
+    void updateGroupsAndRooms(const hue::Bridge& bridge,
+                              const BridgeGroupVector& groups,
+                              const BridgeRoomVector& rooms);
 
     /*!
      * \brief bridge All currently known data about the hue bridge. This is only guarenteed to

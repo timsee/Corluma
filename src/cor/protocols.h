@@ -766,13 +766,6 @@ inline QPixmap lightHardwareTypeToPixmap(ELightHardwareType type) {
 }
 
 
-/*!
- * \brief The EProductType enum The enum for the product type for a specific
- *        light. This tracks the menaufacturer and the features of a light.
- */
-enum class EProductType { rainbowduino, neopixels, LED, hue };
-
-
 namespace cor {
 
 

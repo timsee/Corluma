@@ -30,7 +30,9 @@ public:
      */
     void showGroup(const cor::Group& group,
                    const std::vector<cor::Light>& groupLights,
-                   const std::vector<cor::Light>& lights);
+                   const std::vector<cor::Light>& lights,
+                   bool isRoom);
+
 
     /// @copydoc EditPage::deleteMessages()
     std::pair<QString, QString> deleteMessages() override {
@@ -60,6 +62,12 @@ private:
 
     /// group that gets modified
     cor::Group mNewGroup;
+
+    /// stores if originally using a room
+    bool mIsRoomOriginal;
+
+    /// stores if currently creating a room
+    bool mIsRoom;
 
     /// store the state of the original lights
     std::vector<cor::Light> mOriginalLights;

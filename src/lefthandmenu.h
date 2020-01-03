@@ -108,7 +108,7 @@ private:
      * \param dataGroup the group to update in the UI
      * \param uiGroups all UI groups
      */
-    void updateDataGroupInUI(const cor::Group& dataGroup, const std::vector<cor::Group>& uiGroups);
+    void updateDataGroupInUI(const cor::Room& dataGroup, const std::vector<cor::Group>& uiGroups);
 
     /*!
      * \brief initRoomsWidget constructor helper for making a ListRoomWidget
@@ -117,13 +117,13 @@ private:
      * \param key key for collection
      * \return pointer to the newly created ListDevicesGroupWidget
      */
-    ListRoomWidget* initRoomsWidget(const cor::Group& group, const QString& key);
+    ListRoomWidget* initRoomsWidget(const cor::Room& room, const QString& key);
 
     /// resize the room widgets
     int resizeRoomsWidgets();
 
     /// creates a miscellaneous group for all groups not stated in standard rooms
-    cor::Group makeMiscellaneousGroup(const std::vector<cor::Group>& roomList);
+    cor::Room makeMiscellaneousGroup(const std::vector<cor::Room>& roomList);
 
     /// true if menu is in, false otherwise
     bool mIsIn;

@@ -16,6 +16,8 @@
 #include "cor/protocols.h"
 #include "groupdata.h"
 
+#include "colorpicker/colorpicker.h"
+
 class CommArduCor;
 class CommHue;
 class CommNanoleaf;
@@ -155,6 +157,10 @@ public:
 
     /// deletes a hue group by name
     void deleteHueGroup(const QString& name);
+
+    /// computes the best possible color picker type that can be supported based off of the
+    /// currently selected lights
+    EColorPickerType bestColorPickerType(const std::vector<cor::Light>& lights);
 
 signals:
 

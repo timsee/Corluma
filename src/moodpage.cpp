@@ -31,11 +31,11 @@ MoodPage::MoodPage(QWidget* parent, GroupData* groups)
 void MoodPage::newMoodAdded(const QString& mood) {
     qDebug() << "mood added" << mood;
     clearWidgets();
-    makeMoodsCollections(mGroups->moods(), mGroups->roomList());
+    makeMoodsCollections(mGroups->moods(), mGroups->rooms().items());
 }
 
 void MoodPage::makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
-                                    const std::vector<cor::Group>& roomList) {
+                                    const std::vector<cor::Room>& roomList) {
     // pair every mood to an existing collection
     std::unordered_map<std::string, std::vector<cor::Mood>> roomsWithMoods;
     for (const auto& mood : moods.items()) { // for every mood
@@ -185,7 +185,7 @@ void MoodPage::resizeEvent(QResizeEvent*) {
 
 void MoodPage::show(std::uint64_t currentMood,
                     const cor::Dictionary<cor::Mood>& moods,
-                    const std::vector<cor::Group>& roomList) {
+                    const std::vector<cor::Room>& roomList) {
     mMoodsListWidget->setVisible(true);
     mCurrentMood = currentMood;
     makeMoodsCollections(moods, roomList);

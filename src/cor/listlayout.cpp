@@ -102,16 +102,17 @@ void ListLayout::sortDeviceWidgets() {
         Q_ASSERT(aDeviceWidget);
         auto bDeviceWidget = qobject_cast<ListLightWidget*>(b);
         Q_ASSERT(bDeviceWidget);
-        if (!aDeviceWidget->device().isReachable && bDeviceWidget->device().isReachable) {
+        if (!aDeviceWidget->device().isReachable() && bDeviceWidget->device().isReachable()) {
             return false;
-        } else if (aDeviceWidget->device().isReachable && !bDeviceWidget->device().isReachable) {
+        } else if (aDeviceWidget->device().isReachable()
+                   && !bDeviceWidget->device().isReachable()) {
             return true;
         } else {
             // Hue is hidden from display, hide it in comparison here too.
             auto nameA =
-                aDeviceWidget->convertUglyHueNameToPrettyName(aDeviceWidget->device().name);
+                aDeviceWidget->convertUglyHueNameToPrettyName(aDeviceWidget->device().name());
             auto nameB =
-                bDeviceWidget->convertUglyHueNameToPrettyName(bDeviceWidget->device().name);
+                bDeviceWidget->convertUglyHueNameToPrettyName(bDeviceWidget->device().name());
             return (nameA < nameB);
         }
     });

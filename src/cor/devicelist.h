@@ -4,10 +4,8 @@
 
 #include <QColor>
 #include <QWidget>
-#include <list>
 
 #include "appsettings.h"
-#include "colorpicker/colorpicker.h"
 #include "comm/commhue.h"
 #include "cor/objects/mood.h"
 #include "cor/objects/palette.h"
@@ -222,10 +220,6 @@ public:
 
     /// compute the best candidate for a mood based on the current devices
     std::uint64_t findCurrentMood(const cor::Dictionary<cor::Mood>& moods);
-
-    /// computes the best possible color picker type that can be supported based off of the
-    /// currently selected lights
-    EColorPickerType bestColorPickerType();
 
     /*!
      * \brief lightCount getter for count of LEDs associated with a single light. IE, a light cube

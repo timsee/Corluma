@@ -117,45 +117,48 @@ void DataSyncHue::endOfSync() {
 bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevice) {
     int countOutOfSync = 0;
 
+    // get hue light
+    auto hueLight = mComm->hue()->hueLightFromLight(commDevice);
+
     QJsonObject object;
     object["controller"] = commDevice.controller();
     object["commtype"] = commTypeToString(commDevice.commType());
-    object["index"] = commDevice.index;
+    object["index"] = hueLight.index();
     object["uniqueID"] = commDevice.controller();
 
     // get bridge
     auto bridge = mComm->hue()->bridgeFromLight(commDevice);
 
-    if (dataDevice.isOn) {
-        if (commDevice.colorMode == EColorMode::HSV) {
+    if (dataDevice.isOn()) {
+        if (hueLight.colorMode() == EColorMode::HSV) {
             //-------------------
             // Hue HSV Color Sync
             //-------------------
-            auto color = dataDevice.color;
+            auto color = dataDevice.color();
 
             // add brightness into lights
-            if (cor::colorDifference(color, commDevice.color) > 0.02f) {
+            if (cor::colorDifference(color, commDevice.color()) > 0.02f) {
                 QJsonObject routineObject;
                 routineObject["routine"] = routineToString(ERoutine::singleSolid);
-                routineObject["hue"] = dataDevice.color.hueF();
-                routineObject["sat"] = dataDevice.color.saturationF();
-                routineObject["bri"] = dataDevice.color.valueF();
+                routineObject["hue"] = dataDevice.color().hueF();
+                routineObject["sat"] = dataDevice.color().saturationF();
+                routineObject["bri"] = dataDevice.color().valueF();
 
                 object["routine"] = routineObject;
                 countOutOfSync++;
             }
-        } else if (commDevice.colorMode == EColorMode::CT) {
+        } else if (hueLight.colorMode() == EColorMode::CT) {
             //-------------------
             // Hue Color Temperature Sync
             //-------------------
-            if (cor::colorDifference(commDevice.color, dataDevice.color) > 0.02f) {
-                object["temperature"] = dataDevice.temperature;
-                object["bri"] = dataDevice.color.valueF();
+            if (cor::colorDifference(commDevice.color(), dataDevice.color()) > 0.02f) {
+                object["temperature"] = dataDevice.temperature();
+                object["bri"] = dataDevice.color().valueF();
                 countOutOfSync++;
             }
-        } else if (commDevice.colorMode == EColorMode::dimmable) {
-            if (cor::colorDifference(commDevice.color, dataDevice.color) > 0.02f) {
-                object["bri"] = dataDevice.color.valueF();
+        } else if (hueLight.colorMode() == EColorMode::dimmable) {
+            if (cor::colorDifference(commDevice.color(), dataDevice.color()) > 0.02f) {
+                object["bri"] = dataDevice.color().valueF();
                 countOutOfSync++;
             }
         }
@@ -164,9 +167,9 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
     //-------------------
     // On/Off Sync
     //-------------------
-    if (dataDevice.isOn != commDevice.isOn) {
+    if (dataDevice.isOn() != commDevice.isOn()) {
         // qDebug() << "hue ON/OFF not in sync" << dataDevice.isOn;
-        object["isOn"] = dataDevice.isOn;
+        object["isOn"] = dataDevice.isOn();
         countOutOfSync++;
     }
 
@@ -174,7 +177,7 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
     // Turn off Hue timers
     //-------------------
     if (mAppSettings->timeoutEnabled() && countOutOfSync == 0) {
-        handleIdleTimeout(bridge, commDevice);
+        handleIdleTimeout(bridge, hueLight);
     }
 
     if (countOutOfSync) {
@@ -192,7 +195,8 @@ void DataSyncHue::cleanupSync() {
             if (device.commType() == ECommType::hue) {
                 // get bridge
                 const auto bridge = mComm->hue()->bridgeFromLight(device);
-                handleIdleTimeout(bridge, device);
+                auto hueLight = mComm->hue()->hueLightFromLight(device);
+                handleIdleTimeout(bridge, hueLight);
             }
         }
     }
@@ -204,7 +208,7 @@ void DataSyncHue::cleanupSync() {
 
 
 
-bool DataSyncHue::handleIdleTimeout(const hue::Bridge& bridge, const cor::Light& light) {
+bool DataSyncHue::handleIdleTimeout(const hue::Bridge& bridge, const HueLight& light) {
     bool foundTimeout = false;
     for (const auto& schedule : mComm->hue()->schedules(bridge)) {
         // qDebug() << "  scheudel name" << schedule.name;
@@ -212,7 +216,7 @@ bool DataSyncHue::handleIdleTimeout(const hue::Bridge& bridge, const cor::Light&
         if (schedule.name.contains("Corluma_timeout")) {
             QString indexString = schedule.name.split("_").last();
             int givenIndex = indexString.toInt();
-            if (givenIndex == light.index && mAppSettings->timeout() != 0) {
+            if (givenIndex == light.index() && mAppSettings->timeout() != 0) {
                 foundTimeout = true;
                 // qDebug() << " update idle timeout " << schedule;
                 mComm->hue()->updateIdleTimeout(bridge,
@@ -225,7 +229,7 @@ bool DataSyncHue::handleIdleTimeout(const hue::Bridge& bridge, const cor::Light&
 
     if (!foundTimeout) {
         // qDebug() << " create idle timeout " << light.index;
-        mComm->hue()->createIdleTimeout(bridge, light.index, mAppSettings->timeout());
+        mComm->hue()->createIdleTimeout(bridge, light.index(), mAppSettings->timeout());
     }
     return foundTimeout;
 }

@@ -5,6 +5,7 @@
 #include <memory>
 
 #include "comm/arducor/arducordiscovery.h"
+#include "comm/arducor/arducorlight.h"
 #include "comm/arducor/crccalculator.h"
 #include "comm/commtype.h"
 #include "cor/presetpalettes.h"
@@ -73,6 +74,12 @@ public:
     /// getter for all connected lights
     std::vector<cor::Light> lights();
 
+    /// getter for arducor lights
+    std::vector<ArduCorLight> arduCorLights() const noexcept { return mArduCorLights.items(); }
+
+    /// converts a cor::Light into a arducor light
+    ArduCorLight arduCorLightFromLight(const cor::Light& light);
+
 signals:
 
     /*!
@@ -114,6 +121,9 @@ private:
 
     /// arducor discovery ovbject
     ArduCorDiscovery* mDiscovery;
+
+    /// dictionary of ArduCor lights
+    cor::Dictionary<ArduCorLight> mArduCorLights;
 
     /*!
      * \brief preparePacketForTransmission prepare internal states and variables for sending a new

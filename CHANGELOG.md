@@ -608,3 +608,9 @@ ___
 - Split `EditGrouPage` into `EditPage`, `EditGroupPage` and `EditMoodPage`.
 
 
+### **v0.17.55**
+#### The Code Data Types Update
+- Split `cor::Group` and `cor::Room` into distinct objects.
+- Added new constructors for derived classes for `cor::Light`.
+- Added proper getters/setters to `cor::Light`.
+

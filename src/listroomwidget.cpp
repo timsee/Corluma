@@ -9,7 +9,7 @@
 #include <QPainter>
 #include <QStyleOption>
 
-ListRoomWidget::ListRoomWidget(const cor::Group& group,
+ListRoomWidget::ListRoomWidget(const cor::Room& room,
                                CommLayer* comm,
                                GroupData* groups,
                                const QString& key,
@@ -23,23 +23,22 @@ ListRoomWidget::ListRoomWidget(const cor::Group& group,
       mComm{comm},
       mGroupData{groups},
       mListLayout(listType),
-      mGroup{group} {
+      mRoom{room} {
     setFixedWidth(parent->width());
 
     if (type == cor::EWidgetType::condensed) {
         mDropdownTopWidget =
-            new DropdownTopWidget(group.name(), cor::EWidgetType::condensed, true, this);
+            new DropdownTopWidget(room.name(), cor::EWidgetType::condensed, true, this);
     } else {
-        mDropdownTopWidget =
-            new DropdownTopWidget(group.name(), cor::EWidgetType::full, true, this);
+        mDropdownTopWidget = new DropdownTopWidget(room.name(), cor::EWidgetType::full, true, this);
     }
     connect(mDropdownTopWidget, SIGNAL(pressed()), this, SLOT(dropdownTopWidgetPressed()));
     mDropdownTopWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    if (!group.subgroups().empty()) {
+    if (!room.subgroups().empty()) {
         std::vector<QString> widgetNames;
-        widgetNames.reserve(group.subgroups().size());
-        for (const auto& subGroupID : group.subgroups()) {
+        widgetNames.reserve(room.subgroups().size());
+        for (const auto& subGroupID : room.subgroups()) {
             auto groupResult = mGroupData->groups().item(QString::number(subGroupID).toStdString());
             // check if group is already in this list
             if (groupResult.second) {
@@ -51,7 +50,7 @@ ListRoomWidget::ListRoomWidget(const cor::Group& group,
                 }
             }
         }
-        mGroupsButtonWidget = new GroupButtonsWidget(this, type, mGroup.name(), widgetNames);
+        mGroupsButtonWidget = new GroupButtonsWidget(this, type, mRoom.name(), widgetNames);
         connect(mGroupsButtonWidget,
                 SIGNAL(groupButtonPressed(QString)),
                 this,
@@ -65,21 +64,21 @@ ListRoomWidget::ListRoomWidget(const cor::Group& group,
         mGroupsButtonWidget->setVisible(false);
     }
 
-    updateGroup(mGroup, false);
+    updateRoom(mRoom, false);
 
     mLastSubGroupName = "NO_GROUP";
     resize();
 }
 
 void ListRoomWidget::updateTopWidget() {
-    if (!mGroup.subgroups().empty()) {
-        auto result = countCheckedAndReachableDevices(mGroup);
+    if (!mRoom.subgroups().empty()) {
+        auto result = countCheckedAndReachableDevices(mRoom);
         auto checkedCount = result.first;
         auto reachableCount = result.second;
 
-        mGroupsButtonWidget->updateCheckedDevices("All", checkedCount, reachableCount);
+        mGroupsButtonWidget->updateCheckedLights("All", checkedCount, reachableCount);
 
-        for (const auto& groupID : mGroup.subgroups()) {
+        for (const auto& groupID : mRoom.subgroups()) {
             auto groupResult = mGroupData->groups().item(QString::number(groupID).toStdString());
             if (groupResult.second) {
                 const auto& group = groupResult.first;
@@ -87,17 +86,17 @@ void ListRoomWidget::updateTopWidget() {
                 auto checkedCount = result.first;
                 auto reachableCount = result.second;
 
-                mGroupsButtonWidget->updateCheckedDevices(group.name(),
-                                                          checkedCount,
-                                                          reachableCount);
+                mGroupsButtonWidget->updateCheckedLights(group.name(),
+                                                         checkedCount,
+                                                         reachableCount);
             }
         }
     }
 }
 
-void ListRoomWidget::updateGroup(const cor::Group& group, bool removeIfNotFound) {
+void ListRoomWidget::updateRoom(const cor::Room& room, bool removeIfNotFound) {
     // for every group, loop through the groups and make sure they are represented in the top widet
-    for (const auto& subGroupID : group.subgroups()) {
+    for (const auto& subGroupID : room.subgroups()) {
         auto groupResult = mGroupData->groups().item(QString::number(subGroupID).toStdString());
         if (groupResult.second) {
             const auto& group = groupResult.first;
@@ -114,10 +113,10 @@ void ListRoomWidget::updateGroup(const cor::Group& group, bool removeIfNotFound)
             }
         }
     }
-    mGroup = group;
+    mRoom = room;
 
     bool rerender = false;
-    for (const auto& lightID : group.lights()) {
+    for (const auto& lightID : mRoom.lights()) {
         const auto& inputDevice = mComm->lightByID(lightID);
         if (inputDevice.isValid()) {
             bool foundDevice = false;
@@ -163,7 +162,7 @@ void ListRoomWidget::updateGroup(const cor::Group& group, bool removeIfNotFound)
             Q_ASSERT(existingWidget);
 
             bool found = false;
-            for (const auto& lightID : group.lights()) {
+            for (const auto& lightID : room.lights()) {
                 if (lightID == existingWidget->device().uniqueID()) {
                     found = true;
                 }
@@ -176,14 +175,16 @@ void ListRoomWidget::updateGroup(const cor::Group& group, bool removeIfNotFound)
 
 
         // look for subgroups that don't exist, remove if needed
-        if (!mGroup.subgroups().empty()) {
+        if (!mRoom.subgroups().empty()) {
             auto groupNames = mGroupData->groupNames();
             for (const auto& subgroupName : mGroupsButtonWidget->groupNames()) {
-                auto it = std::find(groupNames.begin(), groupNames.end(), subgroupName);
-                // if not found remove
-                if (it == groupNames.end()) {
-                    mGroupsButtonWidget->removeGroup(subgroupName);
-                    rerender = true;
+                if (subgroupName != "All") {
+                    auto it = std::find(groupNames.begin(), groupNames.end(), subgroupName);
+                    // if not found remove
+                    if (it == groupNames.end()) {
+                        mGroupsButtonWidget->removeGroup(subgroupName);
+                        rerender = true;
+                    }
                 }
             }
         }
@@ -200,7 +201,7 @@ void ListRoomWidget::updateGroup(const cor::Group& group, bool removeIfNotFound)
 int ListRoomWidget::widgetHeightSum() {
     int height = 0;
     height += mDropdownTopWidget->height();
-    if (!mGroup.subgroups().empty()) {
+    if (!mRoom.subgroups().empty()) {
         if (mGroupsButtonWidget->isVisible()) {
             height += mGroupsButtonWidget->expectedHeight(mDropdownTopWidget->height());
         }
@@ -215,7 +216,7 @@ int ListRoomWidget::widgetHeightSum() {
 void ListRoomWidget::setShowButtons(bool show) {
     mDropdownTopWidget->showButtons(show);
     bool subGroupOpen = false;
-    if (!mGroup.subgroups().empty()) {
+    if (!mRoom.subgroups().empty()) {
         if (mDropdownTopWidget->showButtons()) {
             mGroupsButtonWidget->setVisible(true);
         } else {
@@ -229,7 +230,7 @@ void ListRoomWidget::setShowButtons(bool show) {
             }
         }
     } else {
-        showDevices(mComm->lightListFromGroup(mGroup));
+        showDevices(mComm->lightListFromGroup(mRoom));
     }
 
     if (!subGroupOpen) {
@@ -253,7 +254,7 @@ void ListRoomWidget::handleClicked(const QString& key) {
 
 void ListRoomWidget::closeWidget() {
     mDropdownTopWidget->showButtons(false);
-    if (!mGroup.subgroups().empty()) {
+    if (!mRoom.subgroups().empty()) {
         mGroupsButtonWidget->setVisible(false);
     }
     for (const auto& device : mListLayout.widgets()) {
@@ -264,7 +265,7 @@ void ListRoomWidget::closeWidget() {
 
 std::vector<cor::Light> ListRoomWidget::reachableDevices() {
     std::vector<cor::Light> reachableDevices;
-    for (const auto& device : mGroup.lights()) {
+    for (const auto& device : mRoom.lights()) {
         const auto& light = mComm->lightByID(device);
         if (light.isValid()) {
             reachableDevices.push_back(light);
@@ -329,7 +330,7 @@ void ListRoomWidget::resizeEvent(QResizeEvent*) {
 
 void ListRoomWidget::resize() {
     mDropdownTopWidget->setFixedWidth(parentWidget()->width());
-    if (!mGroup.subgroups().empty()) {
+    if (!mRoom.subgroups().empty()) {
         int yPos;
         if (mType == cor::EWidgetType::condensed) {
             yPos = mGroupsButtonWidget->groupEndPointY(mDropdownTopWidget->size().height(),
@@ -365,7 +366,7 @@ void ListRoomWidget::resize() {
 void ListRoomWidget::groupPressed(const QString& name) {
     if (name == "All") {
         mLastSubGroupName = name;
-        showDevices(mComm->lightListFromGroup(mGroup));
+        showDevices(mComm->lightListFromGroup(mRoom));
         setShowButtons(true);
     } else if (name == "NO_GROUP") {
         mLastSubGroupName = "NO_GROUP";
@@ -385,7 +386,7 @@ void ListRoomWidget::groupPressed(const QString& name) {
 
 void ListRoomWidget::selectAllToggled(const QString& key, bool selectAll) {
     if (key == "All") {
-        emit allButtonPressed(mGroup.name(), selectAll);
+        emit allButtonPressed(mRoom.name(), selectAll);
     } else {
         emit allButtonPressed(key, selectAll);
     }
@@ -449,7 +450,7 @@ void ListRoomWidget::dropdownTopWidgetPressed() {
 
 bool ListRoomWidget::checkIfShowWidgets() {
     bool showWidgets = true;
-    if (!mGroup.subgroups().empty()) {
+    if (!mRoom.subgroups().empty()) {
         showWidgets = (mLastSubGroupName != "NO_GROUP");
     }
     return showWidgets;
@@ -462,7 +463,7 @@ std::pair<uint32_t, uint32_t> ListRoomWidget::countCheckedAndReachableDevices(
     for (const auto& lightID : group.lights()) {
         const auto& device = mComm->lightByID(lightID);
         if (device.isValid()) {
-            if (device.isReachable) {
+            if (device.isReachable()) {
                 reachableCount++;
             }
 

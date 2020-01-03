@@ -109,8 +109,8 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
 
     for (std::size_t i = 0u; i < mNames.size(); ++i) {
         cor::Light light;
-        light.routine = ERoutine::singleSolid;
-        light.color = QColor(255, 0, 0);
+        light.routine(ERoutine::singleSolid);
+        light.color(QColor(255, 0, 0));
 
         bool foundMatch = false;
         if (mNames[i] == "RGB" || mNames[i] == "HSV" || mNames[i] == "Temperature"
@@ -124,17 +124,17 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             mButtons[i]->setMinimumSize(this->buttonSize());
         } else if (mNames[i] == "Preset") {
             foundMatch = true;
-            light.routine = ERoutine::multiFade;
-            light.palette = mPalettes.palette(EPalette::poison);
-            light.speed = 100;
+            light.routine(ERoutine::multiFade);
+            light.palette(mPalettes.palette(EPalette::poison));
+            light.speed(100);
             QJsonObject routineObject = lightToJson(light);
             auto lightsButton = new cor::Button(this, routineObject);
             mButtons[i] = static_cast<QPushButton*>(lightsButton);
             Q_ASSERT(mButtons[i]);
         } else if (mNames[i] == "Routine") {
             foundMatch = true;
-            light.routine = ERoutine::singleGlimmer;
-            light.color = QColor(0, 255, 0);
+            light.routine(ERoutine::singleGlimmer);
+            light.color(QColor(0, 255, 0));
             QJsonObject routineObject = lightToJson(light);
             auto lightsButton = new cor::Button(this, routineObject);
             mButtons[i] = static_cast<QPushButton*>(lightsButton);

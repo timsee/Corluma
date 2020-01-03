@@ -14,7 +14,6 @@
  * Released under the GNU General Public License.
  */
 
-
 /// type of colors allowed by selected lights
 enum class EColorPickerType { dimmable, CT, color };
 

@@ -63,13 +63,13 @@ void GroupButtonsWidget::removeGroup(const QString& group) {
     }
 }
 
-void GroupButtonsWidget::updateCheckedDevices(const QString& key,
-                                              uint32_t checkedDeviceCount,
-                                              uint32_t reachableDeviceCount) {
+void GroupButtonsWidget::updateCheckedLights(const QString& key,
+                                             std::uint32_t checkedLightCount,
+                                             std::uint32_t reachableLightCount) {
     bool renderAny = false;
     for (const auto& widget : mButtons) {
         if (widget->key() == renamedGroup(key)) {
-            if (widget->handleSelectAllButton(checkedDeviceCount, reachableDeviceCount)) {
+            if (widget->handleSelectAllButton(checkedLightCount, reachableLightCount)) {
                 renderAny = true;
             }
         }

@@ -7,6 +7,7 @@
 #include "cor/dictionary.h"
 #include "cor/objects/group.h"
 #include "cor/objects/mood.h"
+#include "cor/objects/room.h"
 
 /*!
  * \copyright
@@ -34,24 +35,19 @@ public:
      * \return a list of all the moods. Each mood is represented as a pair with its name
      *         and a list of the devices with their associated state.
      */
-    const cor::Dictionary<cor::Mood>& moods() { return mMoodDict; }
+    const cor::Dictionary<cor::Mood>& moods() const noexcept { return mMoodDict; }
 
-    /*!
-     * \brief collectionList getter for all known collections.
-     *
-     * \return a list of all the collections. Each collection is represented as a pair with its name
-     * and a list of the devices.
-     */
-    const cor::Dictionary<cor::Group>& groups() { return mGroupDict; }
+    /// getter for groups
+    const cor::Dictionary<cor::Group>& groups() const noexcept { return mGroupDict; }
 
-    /// list of groups, ignoring rooms
-    std::vector<cor::Group> groupList();
+    /// getter for rooms
+    const cor::Dictionary<cor::Room>& rooms() const noexcept { return mRoomDict; }
 
     /// returns a vector of names for the groups.
     std::vector<QString> groupNames();
 
-    /// list of rooms, with filled in subgroups
-    std::vector<cor::Group> roomList();
+    /// true if a group is a room, false if its a group
+    bool isGroupARoom(const cor::Group& group);
 
     /// adds subgroups to rooms
     void addSubGroupsToRooms();
@@ -64,7 +60,22 @@ public:
      */
     void updateExternallyStoredGroups(const std::vector<cor::Group>& externalGroups);
 
-    void saveNewMood(const QString& groupName,
+    /*!
+     * \brief updateExternallyStoredRooms update the information stored from external sources, such
+     * as Philips Bridges. This data gets added to the group info but does not get saved locally.
+     *
+     * \param externalRooms room that are stored in an external location
+     */
+    void updateExternallyStoredRooms(const std::vector<cor::Room>& externalRooms);
+
+    /*!
+     * \brief saveNewMood save a new mood
+     *
+     * \param roomName name of new room
+     * \param lights lights in the mood
+     * \param defaultStates the default state of groups and rooms in the mood
+     */
+    void saveNewMood(const QString& roomName,
                      const std::vector<cor::Light>& lights,
                      const std::vector<std::pair<std::uint64_t, cor::Light>>& defaultStates);
 
@@ -72,13 +83,20 @@ public:
      * \brief saveNewGroup save a new group of devices to JSON data, which then gets saved to file
      * in AppData.
      *
-     * \param groupName name of colelction to save.
-     * \param devices devices in new collection.
-     * \param isRoom true if it is a room, false otherwise
+     * \param groupName name of group to save.
+     * \param devices devices in new group.
      */
-    void saveNewGroup(const QString& groupName,
-                      const std::vector<cor::Light>& devices,
-                      bool isRoom);
+    void saveNewGroup(const QString& groupName, const std::vector<cor::Light>& devices);
+
+    /*!
+     * \brief saveNewRoom save a new room of devices to JSON data, which then gets saved to file
+     * in AppData.
+     *
+     * \param roomName name of room to save.
+     * \param devices devices in new room.
+     */
+    void saveNewRoom(const QString& roomName, const std::vector<cor::Light>& devices);
+
 
     /*!
      * \brief removeGroup remove the group of devices associated with the name provided. If no group
@@ -205,6 +223,11 @@ private:
      * is easy to pull all possible collections without having to re-parse the JSON data each time.
      */
     cor::Dictionary<cor::Group> mGroupDict;
+
+    /*!
+     * \brief mRoomDict dictionary of all known rooms
+     */
+    cor::Dictionary<cor::Room> mRoomDict;
 };
 
 #endif // GROUPS_DATA_H

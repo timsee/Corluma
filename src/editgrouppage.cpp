@@ -10,16 +10,19 @@
 
 void EditGroupPage::showGroup(const cor::Group& group,
                               const std::vector<cor::Light>& groupLights,
-                              const std::vector<cor::Light>& lights) {
+                              const std::vector<cor::Light>& lights,
+                              bool isRoom) {
     mOriginalGroup = group;
     mNewGroup = group;
     mOriginalLights = groupLights;
+    mIsRoomOriginal = isRoom;
+    mIsRoom = isRoom;
 
     mTopMenu->nameEdit()->setText(mOriginalGroup.name());
     mTopMenu->saveButton()->setEnabled(false);
     mTopMenu->helpLabel()->setText("Edit the Group...");
     mTopMenu->roomCheckBox()->setVisible(true);
-    mTopMenu->roomCheckBox()->setChecked(mOriginalGroup.isRoom());
+    mTopMenu->roomCheckBox()->setChecked(mIsRoom);
 
     updateDevices(groupLights, lights);
     update();
@@ -34,7 +37,7 @@ bool EditGroupPage::checkForChanges() {
         return true;
     }
 
-    if (mNewGroup.isRoom() != mOriginalGroup.isRoom()) {
+    if (mIsRoom != mIsRoomOriginal) {
         return true;
     }
 
@@ -68,7 +71,7 @@ bool EditGroupPage::checkForChanges() {
 }
 
 void EditGroupPage::isRoomChecked(bool checked) {
-    mNewGroup.isRoom(checked);
+    mIsRoom = checked;
 
     if (checkForChanges()) {
         mTopMenu->saveButton()->setEnabled(true);
@@ -99,7 +102,7 @@ bool EditGroupPage::saveChanges() {
     bool devicesAreValid = true;
     if (!newDevices.empty()) {
         for (auto& device : newDevices) {
-            if (device.controller() == "" || device.index == 0) {
+            if (device.controller() == "") {
                 devicesAreValid = false;
             }
         }
@@ -130,18 +133,18 @@ bool EditGroupPage::saveChanges() {
     bool passesChecks = true;
 
     // if its a room, check that all lights are unassigned or part of the current room
-    if (mNewGroup.isRoom()) {
+    if (mIsRoom) {
         for (const auto& device : newDevices) {
             // loop through all collections
-            for (const auto& collection : mGroups->groups().items()) {
+            for (const auto& collection : mGroups->rooms().items()) {
                 // ignore the existing room and non-rooms
-                if (collection.isRoom() && (collection.name() != newName)) {
+                if (collection.name() != newName) {
                     for (const auto& lightID : collection.lights()) {
                         if (lightID == device.uniqueID()) {
                             passesChecks = false;
                             // pop up warning that it isn't saving
                             QMessageBox msgBox;
-                            msgBox.setText("Trying to save the light " + device.name
+                            msgBox.setText("Trying to save the light " + device.name()
                                            + " to multiple rooms.");
                             msgBox.exec();
                         }
@@ -162,7 +165,11 @@ bool EditGroupPage::saveChanges() {
     // remove group
     mGroups->removeGroup(originalName);
 
-    mGroups->saveNewGroup(newName, newDevices, mNewGroup.isRoom());
+    if (mIsRoom) {
+        mGroups->saveNewRoom(newName, newDevices);
+    } else {
+        mGroups->saveNewGroup(newName, newDevices);
+    }
     // convert any group devices to Hue Lights, if applicable.
     std::vector<HueLight> hueLights;
     for (const auto& device : newDevices) {
@@ -183,7 +190,7 @@ bool EditGroupPage::saveChanges() {
                 }
             }
             if (!groupExists) {
-                mComm->hue()->createGroup(bridge, newName, hueLights, mNewGroup.isRoom());
+                mComm->hue()->createGroup(bridge, newName, hueLights, mIsRoom);
             }
         }
     }

@@ -50,9 +50,9 @@ public:
     void resize(const QSize& topWidgetSize, const QRect& spacerGeometry);
 
     /// update the checked devices of the group that matches the key
-    void updateCheckedDevices(const QString& key,
-                              uint32_t checkedDeviceCount,
-                              uint32_t reachableDeviceCount);
+    void updateCheckedLights(const QString& key,
+                             std::uint32_t checkedLightCount,
+                             std::uint32_t reachableLightCount);
 
     /// getter for type of widget
     cor::EWidgetType type() const noexcept { return mType; }

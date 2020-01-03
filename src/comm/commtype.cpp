@@ -48,7 +48,7 @@ bool CommType::removeController(const QString& controller) {
 void CommType::updateLight(cor::Light device) {
     auto dictResult = mDeviceTable.item(device.uniqueID().toStdString());
     if (dictResult.second) {
-        device.lastUpdateTime = mElapsedTimer.elapsed();
+        device.lastUpdateTime(mElapsedTimer.elapsed());
         mDeviceTable.update(device.uniqueID().toStdString(), device);
         emit updateReceived(mType);
     }
@@ -81,7 +81,7 @@ void CommType::resetStateUpdateTimeout() {
             auto dictResult = mDeviceTable.item(device.uniqueID().toStdString());
             if (dictResult.second) {
                 auto device = dictResult.first;
-                device.lastUpdateTime = 0;
+                device.lastUpdateTime(0);
                 mDeviceTable.update(device.uniqueID().toStdString(), device);
             }
         }
@@ -114,9 +114,9 @@ void CommType::checkReachability() {
         auto dictResult = mDeviceTable.item(device.uniqueID().toStdString());
         if (dictResult.second) {
             auto device = dictResult.first;
-            if (device.isReachable && (device.lastUpdateTime < (elapsedTime - kThreshold))) {
+            if (device.isReachable() && (device.lastUpdateTime() < (elapsedTime - kThreshold))) {
                 qDebug() << " no update for this device! " << device;
-                device.isReachable = false;
+                device.isReachable(false);
                 mDeviceTable.update(device.uniqueID().toStdString(), device);
             }
         }

@@ -307,7 +307,7 @@ void TopMenu::deviceCountChanged() {
         mColorPage->show(mData->mainColor(),
                          std::uint32_t(mData->brightness()),
                          std::uint32_t(mData->devices().size()),
-                         mData->bestColorPickerType());
+                         mComm->bestColorPickerType(mData->devices()));
     } else if (mCurrentPage == EPage::palettePage) {
         adjustMultiColorLayout(false);
         mPalettePage->lightCountChanged(mData->devices().size());
@@ -622,7 +622,7 @@ void TopMenu::adjustSingleColorLayout(bool skipTransition) {
     // get teh desired endpoint
     bool hasMulti = hasArduino || hasNanoLeaf;
     if (!hasMulti && !mData->devices().empty()
-        && mData->bestColorPickerType() == EColorPickerType::CT) {
+        && mComm->bestColorPickerType(mData->devices()) == EColorPickerType::CT) {
         mColorPage->changePageType(ESingleColorPickerMode::ambient);
         mColorFloatingLayout->highlightButton("Temperature");
     }
