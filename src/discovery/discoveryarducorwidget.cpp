@@ -45,11 +45,11 @@ void DiscoveryArduCorWidget::handleDiscovery(bool isCurrentCommType) {
 
     if (isCurrentCommType) {
         for (const auto& controller : controllers) {
-            mSearchWidget->addToConnectedList(controller.name);
+            mSearchWidget->addToConnectedList(controller.name());
         }
 
         for (auto undiscoveredController : undiscoveredControllers) {
-            mSearchWidget->addToSearchList(undiscoveredController.name);
+            mSearchWidget->addToSearchList(undiscoveredController.name());
         }
     }
 
@@ -84,15 +84,16 @@ void DiscoveryArduCorWidget::plusButtonClicked() {
 
 void DiscoveryArduCorWidget::minusButtonClicked() {
     if (doesYunControllerExistAlready(mSearchWidget->lineEditText())) {
-        cor::Controller controller;
-        controller.name = mSearchWidget->lineEditText();
-        bool isSuccessful = mComm->removeController(ECommType::UDP, controller);
+        cor::Controller controller(mSearchWidget->lineEditText(), ECommType::UDP);
+        bool isSuccessful = mComm->removeController(controller);
         if (!isSuccessful) {
-            qDebug() << "WARNING: failure removing" << controller.name << "from UDP discovery list";
+            qDebug() << "WARNING: failure removing" << controller.name()
+                     << "from UDP discovery list";
         }
-        isSuccessful = mComm->removeController(ECommType::HTTP, controller);
+        cor::Controller controller2(mSearchWidget->lineEditText(), ECommType::HTTP);
+        isSuccessful = mComm->removeController(controller2);
         if (!isSuccessful) {
-            qDebug() << "WARNING: failure removing" << controller.name
+            qDebug() << "WARNING: failure removing" << controller.name()
                      << "from HTTP discovery list";
         }
     } else {
@@ -115,7 +116,7 @@ bool DiscoveryArduCorWidget::doesYunControllerExistAlready(const QString& name) 
 
     for (const auto& undiscoveredController :
          mComm->arducor()->discovery()->undiscoveredControllers()) {
-        if (undiscoveredController.name == name) {
+        if (undiscoveredController.name() == name) {
             deviceFound = true;
         }
     }

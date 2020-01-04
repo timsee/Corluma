@@ -43,7 +43,7 @@ void CommSerial::shutdown() {
 }
 
 void CommSerial::sendPacket(const cor::Controller& controller, QString& packet) {
-    QSerialPort* serial = serialPortByName(controller.name);
+    QSerialPort* serial = serialPortByName(controller.name());
     if (serial != nullptr) {
         if (serial->isOpen()) {
             // add ; to end of serial packet as delimiter
@@ -62,14 +62,14 @@ void CommSerial::stateUpdate() {
             QString packet =
                 QString("%1&").arg(QString::number(int(EPacketHeader::stateUpdateRequest)));
             // add CRC, if in use
-            if (controller.isUsingCRC) {
+            if (controller.isUsingCRC()) {
                 packet = packet + "#" + QString::number(mCRC.calculate(packet)) + "&";
             }
             sendPacket(controller, packet);
             if ((mStateUpdateCounter % mSecondaryUpdatesInterval) == 0) {
                 QString customArrayUpdateRequest = QString("%1&").arg(
                     QString::number(int(EPacketHeader::customArrayUpdateRequest)));
-                if (controller.isUsingCRC) {
+                if (controller.isUsingCRC()) {
                     customArrayUpdateRequest =
                         customArrayUpdateRequest + "#"
                         + QString::number(mCRC.calculate(customArrayUpdateRequest)) + "&";
@@ -101,7 +101,7 @@ QSerialPort* CommSerial::serialPortByName(const QString& name) {
 void CommSerial::testForController(const cor::Controller& controller) {
     QString discoveryPacket = ArduCorDiscovery::kDiscoveryPacketIdentifier + ";";
     bool runningDiscoveryOnSomething = false;
-    QSerialPort* serial = serialPortByName(controller.name);
+    QSerialPort* serial = serialPortByName(controller.name());
     if (serial != nullptr) {
         runningDiscoveryOnSomething = true;
         // write to device
@@ -156,8 +156,8 @@ void CommSerial::discoverSerialPorts() {
 }
 
 bool CommSerial::connectSerialPort(const QSerialPortInfo& info) {
-    for (auto&& serialPorts : mSerialPorts) {
-        if (QString::compare(serialPorts.first->portName(), info.portName()) == 0) {
+    for (const auto& serialPorts : mSerialPorts) {
+        if (serialPorts.first->portName() == info.portName()) {
             // its already connected, no need to connect again
             return true;
         }

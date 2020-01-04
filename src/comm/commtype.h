@@ -93,7 +93,7 @@ public:
      * and index. if a light device doesn't exist with these properties, then it creates a new one.
      * \param device the new data for the light device.
      */
-    void updateLight(cor::Light device);
+    void updateLight(const cor::Light& device);
 
     /*!
      * \brief fillDevice takes the controller and index of the referenced cor::Light and overwrites
@@ -116,7 +116,7 @@ public:
      * \brief deviceList list of the light devices
      * \return list of the light devices
      */
-    const cor::Dictionary<cor::Light>& deviceTable() const noexcept { return mDeviceTable; }
+    const cor::Dictionary<cor::Light>& lightDict() const noexcept { return mLightDict; }
 
 signals:
 
@@ -185,10 +185,12 @@ private slots:
 
 private:
     /*!
-     * \brief mDeviceTable hash table of all available devices. the hash key is the controller name
-     *        and the list associated with it is all known devices connected to that controller.
+     * \brief mLightDict dictionary of all available lights. the hash key is the light's unique ID.
      */
-    cor::Dictionary<cor::Light> mDeviceTable;
+    cor::Dictionary<cor::Light> mLightDict;
+
+    /// dictionary for last time a light was updated.
+    cor::Dictionary<qint64> mUpdateTime;
 };
 
 #endif // COMMTYPE_H

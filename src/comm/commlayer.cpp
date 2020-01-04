@@ -79,18 +79,18 @@ CommType* CommLayer::commByType(ECommType type) {
     return ptr;
 }
 
-bool CommLayer::removeController(ECommType type, const cor::Controller& controller) {
-    return commByType(type)->removeController(controller);
+bool CommLayer::removeController(const cor::Controller& controller) {
+    return commByType(controller.type())->removeController(controller);
 }
 
 bool CommLayer::fillDevice(cor::Light& device) {
     return commByType(device.commType())->fillDevice(device);
 }
 
-std::vector<cor::Light> CommLayer::allDevices() {
+std::vector<cor::Light> CommLayer::allLights() {
     std::vector<cor::Light> list;
     for (int i = 0; i < int(ECommType::MAX); ++i) {
-        const auto& table = deviceTable(ECommType(i));
+        const auto& table = lightDict(ECommType(i));
         for (const auto& device : table.items()) {
             list.push_back(device);
         }
@@ -132,19 +132,24 @@ cor::Light applyStateToLight(const cor::Light& light, const cor::Light& state) {
 
 
 cor::Light CommLayer::addLightMetaData(cor::Light light) {
-    const auto& controller = controllerName(light.commType(), light.uniqueID());
-    light.controller(controller);
     auto deviceCopy = light;
     fillDevice(deviceCopy);
-    light.isReachable(deviceCopy.isReachable());
+    light.copyMetadata(deviceCopy);
     return light;
+}
+
+std::vector<cor::Light> CommLayer::commLightsFromVector(const std::vector<cor::Light>& lights) {
+    std::vector<cor::Light> retVector = lights;
+    for (auto&& light : retVector) {
+        light = lightByID(light.uniqueID());
+    }
+    return retVector;
 }
 
 std::vector<cor::Light> CommLayer::lightListFromGroup(const cor::Group& group) {
     std::vector<cor::Light> lightList;
-    const auto& allLights = allDevices();
     for (const auto& lightID : group.lights()) {
-        for (const auto& light : allLights) {
+        for (const auto& light : allLights()) {
             if (lightID == light.uniqueID()) {
                 lightList.push_back(light);
             }
@@ -288,8 +293,8 @@ std::vector<cor::Light> CommLayer::hueLightsToDevices(std::vector<HueLight> hues
 
 cor::Light CommLayer::lightByID(const QString& ID) {
     const auto& stringID = ID.toStdString();
-    for (int i = 0; i < int(ECommType::MAX); ++i) {
-        const auto& result = deviceTable(ECommType(i)).item(stringID);
+    for (auto i = 0; i < int(ECommType::MAX); ++i) {
+        const auto& result = lightDict(ECommType(i)).item(stringID);
         if (result.second) {
             return result.first;
         }

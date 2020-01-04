@@ -2,7 +2,7 @@
 #define DATASYNC_H
 
 
-#include "cor/devicelist.h"
+#include "cor/lightlist.h"
 
 /*!
  * \copyright
@@ -105,7 +105,7 @@ protected:
      * \brief mData pointer to data layer. Used for checking what state the data layer
      *        desires the devices to be.
      */
-    cor::DeviceList* mData;
+    cor::LightList* mData;
 
     /*!
      * \brief mComm pointer to comm layer. Used for checking what state the comm layer

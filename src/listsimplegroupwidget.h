@@ -9,7 +9,7 @@
 #include <QWidget>
 
 #include "comm/commlayer.h"
-#include "cor/devicelist.h"
+#include "cor/lightlist.h"
 #include "cor/dictionary.h"
 #include "cor/widgets/listwidget.h"
 #include "listlightwidget.h"

@@ -17,9 +17,9 @@
 #include "utils/qt.h"
 
 LeftHandMenu::LeftHandMenu(bool alwaysOpen,
-                           cor::DeviceList* devices,
+                           cor::LightList* devices,
                            CommLayer* comm,
-                           cor::DeviceList* lights,
+                           cor::LightList* lights,
                            GroupData* groups,
                            QWidget* parent)
     : QWidget(parent) {
@@ -189,7 +189,7 @@ void LeftHandMenu::pushOut() {
 }
 
 void LeftHandMenu::deviceCountChanged() {
-    const auto& lights = mSelectedLights->devices();
+    const auto& lights = mSelectedLights->lights();
 
     mMainPalette->updateDevices(lights);
 
@@ -258,7 +258,7 @@ void LeftHandMenu::updateLights() {
     std::uint32_t numberOfLightsShown = 0;
     for (const auto& room : mRoomWidgets) {
         numberOfLightsShown += room->numberOfWidgetsShown();
-        room->setCheckedDevices(mSelectedLights->devices());
+        room->setCheckedDevices(mSelectedLights->lights());
         room->updateTopWidget();
     }
 
@@ -269,16 +269,12 @@ void LeftHandMenu::updateLights() {
         resize();
     }
 
-    if (mData->devices() != mLastDevices) {
-        // get copy of data representation of lights
-        auto currentDevices = mData->devices();
-        // update devices to be comm representation instead of data representaiton
-        for (auto&& device : currentDevices) {
-            device = mComm->lightByID(device.uniqueID());
-        }
-        mLastDevices = currentDevices;
-
-        mMainPalette->updateDevices(currentDevices);
+    if (mData->lights() != mLastDevices) {
+        // take the lights being used as the app's expectation, and get their current state by
+        // polling the CommLayer for its understanding of these lights
+        auto commLights = mComm->commLightsFromVector(mData->lights());
+        mLastDevices = commLights;
+        mMainPalette->updateDevices(commLights);
     }
 }
 
@@ -306,7 +302,7 @@ void LeftHandMenu::updateSingleColorButton() {
     bool hasHue = mSelectedLights->hasLightWithProtocol(EProtocolType::hue);
     bool hasArduino = mSelectedLights->hasLightWithProtocol(EProtocolType::arduCor);
     if (hasHue && !hasArduino) {
-        auto devices = mSelectedLights->devices();
+        auto devices = mSelectedLights->lights();
         std::vector<HueLight> hues;
         for (auto& device : devices) {
             if (device.protocol() == EProtocolType::hue) {
@@ -378,10 +374,10 @@ void LeftHandMenu::lightClicked(const QString&, const QString& deviceKey) {
 
     auto device = mComm->lightByID(deviceKey);
     if (device.isReachable()) {
-        if (mSelectedLights->doesDeviceExist(device)) {
-            mSelectedLights->removeDevice(device);
+        if (mSelectedLights->doesLightExist(device)) {
+            mSelectedLights->removeLight(device);
         } else {
-            mSelectedLights->addDevice(device);
+            mSelectedLights->addLight(device);
         }
         // update UI
         emit changedDeviceCount();
@@ -414,15 +410,15 @@ void LeftHandMenu::groupSelected(const QString& key, bool shouldSelect) {
     // if the group selected is found, either select or deselect it
     if (isValid) {
         if (shouldSelect) {
-            mSelectedLights->addDeviceList(lights);
+            mSelectedLights->addLights(lights);
         } else {
-            mSelectedLights->removeDeviceList(lights);
+            mSelectedLights->removeLights(lights);
         }
 
         updateLights();
 
         for (const auto& widget : mRoomWidgets) {
-            widget->setCheckedDevices(mSelectedLights->devices());
+            widget->setCheckedDevices(mSelectedLights->lights());
             widget->updateTopWidget();
         }
 
@@ -492,7 +488,7 @@ cor::Room LeftHandMenu::makeMiscellaneousGroup(const std::vector<cor::Room>& roo
     }
     // loop through every light, see if it maps to a room, if not, add it to this group and its
     // subgroups
-    for (const auto& device : mComm->allDevices()) {
+    for (const auto& device : mComm->allLights()) {
         bool deviceInGroup = false;
         if (device.isValid()) {
             // looop through all known rooms

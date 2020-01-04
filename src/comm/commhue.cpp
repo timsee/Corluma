@@ -164,7 +164,7 @@ void CommHue::bridgeDiscovered(const hue::Bridge& bridge,
                                const QJsonObject& groupObject,
                                const QJsonObject& schedulesObject) {
     bool controllerFound = false;
-    for (const auto& device : deviceTable().items()) {
+    for (const auto& device : lightDict().items()) {
         if (device.controller() == bridge.id) {
             controllerFound = true;
         }

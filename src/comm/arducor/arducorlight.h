@@ -20,11 +20,11 @@ public:
 
     /// constructor
     ArduCorLight(const QString& uniqueID, const cor::Controller& controller, int lightIndex)
-        : cor::Light(uniqueID, controller.name, controller.type),
+        : cor::Light(uniqueID, controller.name(), controller.type()),
           mIndex(lightIndex),
           mMinutesUntilTimeout{},
           mTimeout{} {
-        mHardwareType = controller.hardwareTypes[std::size_t(lightIndex - 1)];
+        mHardwareType = controller.hardwareTypes()[std::size_t(lightIndex - 1)];
         mName = uniqueID;
     }
 

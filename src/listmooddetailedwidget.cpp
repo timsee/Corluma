@@ -92,7 +92,7 @@ void ListMoodDetailedWidget::update(const cor::Mood& mood) {
                                       EOnOffSwitchState::hidden,
                                       false,
                                       true);
-    mEditPage->showMood(mood, mComm->allDevices());
+    mEditPage->showMood(mood, mComm->allLights());
 
     mOnOffSwitch->setSwitchState(ESwitchState::off);
     mAdditionalDetailsWidget->display(mood, mPlaceholder->size());

@@ -110,9 +110,25 @@ bool EditMoodPage::saveChanges() {
     // Save if passing checks
     //---------------------------------
     // remove group
-    mGroups->removeGroup(originalName);
+    mGroups->removeGroup(mOriginalMood.uniqueID());
 
-    mGroups->saveNewMood(newName, newDevices, {});
+    // make a new mood
+    cor::Mood mood(mGroups->generateNewUniqueKey(), newName, newDevices);
+    mGroups->saveNewMood(mood);
 
     return true;
+}
+
+
+void EditMoodPage::deletePressed(bool) {
+    QMessageBox::StandardButton reply;
+    auto name = mOriginalMood.name();
+    QString text("Delete the " + name + " mood?");
+    reply = QMessageBox::question(this, "Delete?", text, QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::Yes) {
+        mGroups->removeGroup(mOriginalMood.uniqueID());
+        // delete from hue bridge, if applicable.
+        mComm->deleteHueGroup(name);
+        emit pressedClose();
+    }
 }

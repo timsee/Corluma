@@ -609,8 +609,16 @@ ___
 
 
 ### **v0.17.55**
-#### The Code Data Types Update
+#### The Core Data Types Update
 - Split `cor::Group` and `cor::Room` into distinct objects.
 - Added new constructors for derived classes for `cor::Light`.
 - Added proper getters/setters to `cor::Light`.
+
+
+### **v0.17.56**
+#### The cor::Controller and Nanoleaf Update
+- Updated `cor::Controller`.
+- Cleaned up the objects associated with Nanoleafs.
+- Fixed miscellaneous bugs.
+
 

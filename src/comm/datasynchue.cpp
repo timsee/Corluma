@@ -10,7 +10,7 @@
 #include "utils/color.h"
 
 
-DataSyncHue::DataSyncHue(cor::DeviceList* data, CommLayer* comm, AppSettings* appSettings)
+DataSyncHue::DataSyncHue(cor::LightList* data, CommLayer* comm, AppSettings* appSettings)
     : mAppSettings(appSettings) {
     mData = data;
     mComm = comm;
@@ -52,7 +52,7 @@ void DataSyncHue::resetSync() {
     if (mCleanupTimer->isActive()) {
         mCleanupTimer->stop();
     }
-    if (!mData->devices().empty()) {
+    if (!mData->lights().empty()) {
         mDataIsInSync = false;
         if (!mSyncTimer->isActive()) {
             mStartTime = QTime::currentTime();
@@ -64,7 +64,7 @@ void DataSyncHue::resetSync() {
 void DataSyncHue::syncData() {
     if (!mDataIsInSync) {
         int countOutOfSync = 0;
-        for (const auto& device : mData->devices()) {
+        for (const auto& device : mData->lights()) {
             cor::Light commLayerDevice = device;
             if (mComm->fillDevice(commLayerDevice)) {
                 if (device.commType() == ECommType::hue) {
@@ -93,7 +93,7 @@ void DataSyncHue::syncData() {
         mDataIsInSync = true;
     }
 
-    if (mDataIsInSync || mData->devices().empty()) {
+    if (mDataIsInSync || mData->lights().empty()) {
         endOfSync();
     }
 }
@@ -191,7 +191,7 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
 void DataSyncHue::cleanupSync() {
     // repeats until things are synced up.
     if (mAppSettings->timeoutEnabled()) {
-        for (auto&& device : mData->devices()) {
+        for (const auto& device : mData->lights()) {
             if (device.commType() == ECommType::hue) {
                 // get bridge
                 const auto bridge = mComm->hue()->bridgeFromLight(device);

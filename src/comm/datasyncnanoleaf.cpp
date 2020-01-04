@@ -14,7 +14,7 @@ bool checkIfOffByOne(int goal, int value) {
     return ((goal == value) || (goal == (value - 1)) || (goal == (value + 1)));
 }
 
-DataSyncNanoLeaf::DataSyncNanoLeaf(cor::DeviceList* data,
+DataSyncNanoLeaf::DataSyncNanoLeaf(cor::LightList* data,
                                    CommLayer* comm,
                                    AppSettings* appSettings) {
     mData = data;
@@ -48,7 +48,7 @@ void DataSyncNanoLeaf::cancelSync() {
 
 void DataSyncNanoLeaf::resetSync() {
     bool anyNanoleaf = false;
-    for (const auto& light : mData->devices()) {
+    for (const auto& light : mData->lights()) {
         if (light.protocol() == EProtocolType::nanoleaf) {
             anyNanoleaf = true;
         }
@@ -58,7 +58,7 @@ void DataSyncNanoLeaf::resetSync() {
         if (mCleanupTimer->isActive()) {
             mCleanupTimer->stop();
         }
-        if (!mData->devices().empty()) {
+        if (!mData->lights().empty()) {
             mDataIsInSync = false;
             if (!mSyncTimer->isActive()) {
                 mStartTime = QTime::currentTime();
@@ -79,7 +79,7 @@ void DataSyncNanoLeaf::commPacketReceived(EProtocolType type) {
 void DataSyncNanoLeaf::syncData() {
     if (!mDataIsInSync) {
         int countOutOfSync = 0;
-        for (auto&& device : mData->devices()) {
+        for (const auto& device : mData->lights()) {
             cor::Light commLayerDevice = device;
             if (mComm->fillDevice(commLayerDevice)) {
                 if (device.protocol() == EProtocolType::nanoleaf) {
@@ -108,7 +108,7 @@ void DataSyncNanoLeaf::syncData() {
         mDataIsInSync = true;
     }
 
-    if (mDataIsInSync || mData->devices().empty()) {
+    if (mDataIsInSync || mData->lights().empty()) {
         endOfSync();
     }
 }
@@ -129,8 +129,9 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
     int countOutOfSync = 0;
 
     // find nanoleaf controller
-    nano::LeafController leafController;
-    if (!mComm->nanoleaf()->findNanoLeafController(dataDevice.uniqueID(), leafController)) {
+    auto result = mComm->nanoleaf()->findNanoLeafLight(dataDevice.uniqueID());
+    auto leafLight = result.first;
+    if (!result.second) {
         return false;
     }
 
@@ -194,11 +195,11 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
         }
 
         if (dataDevice.routine() == ERoutine::singleSolid) {
-            if (leafController.effect == "*Static*") {
+            if (leafLight.effect() == "*Static*") {
                 routineInSync = false;
             }
         } else {
-            if (leafController.effect != "*Dynamic*") {
+            if (leafLight.effect() != "*Dynamic*") {
                 routineInSync = false;
             }
         }
@@ -233,7 +234,7 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
 
     bool timeoutInSync = true;
     if (mAppSettings->timeoutEnabled() && countOutOfSync == 0) {
-        handleIdleTimeout(leafController);
+        handleIdleTimeout(leafLight);
         timeoutInSync = false;
     }
 
@@ -245,7 +246,7 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
     return (countOutOfSync == 0) && timeoutInSync;
 }
 
-void DataSyncNanoLeaf::handleIdleTimeout(const nano::LeafController& controller) {
+void DataSyncNanoLeaf::handleIdleTimeout(const nano::LeafLight& controller) {
     bool foundTimeout = false;
     int timeoutValue = mAppSettings->timeout();
     try {

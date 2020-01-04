@@ -438,9 +438,10 @@ void BridgeDiscovery::receivedUPnP(const QHostAddress& sender, const QString& pa
 
         // get ID from UPnP
         QStringList paramArray = payload.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
-        for (auto&& param : paramArray) {
+        for (const auto& param : paramArray) {
             if (param.contains("hue-bridgeid: ")) {
-                bridge.id = param.remove("hue-bridgeid: ");
+                auto lightString = param;
+                bridge.id = lightString.remove("hue-bridgeid: ");
                 // convert to lowercase
                 bridge.id = bridge.id.toLower();
             }
@@ -727,7 +728,7 @@ bool BridgeDiscovery::loadJSON() {
 
 void BridgeDiscovery::deleteBridge(const hue::Bridge& bridge) {
     // remove from not found
-    for (auto&& notFoundBridge : mNotFoundBridges) {
+    for (const auto& notFoundBridge : mNotFoundBridges) {
         if (bridge.id == notFoundBridge.id) {
             auto it = std::find(mNotFoundBridges.begin(), mNotFoundBridges.end(), notFoundBridge);
             mNotFoundBridges.erase(it);

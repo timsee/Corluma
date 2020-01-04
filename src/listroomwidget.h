@@ -7,7 +7,7 @@
 #include <QWidget>
 
 #include "comm/commlayer.h"
-#include "cor/devicelist.h"
+#include "cor/lightlist.h"
 #include "cor/listlayout.h"
 #include "cor/objects/group.h"
 #include "cor/widgets/listitemwidget.h"

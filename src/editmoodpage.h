@@ -24,12 +24,6 @@ public:
      */
     void showMood(const cor::Mood& mood, const std::vector<cor::Light>& lights);
 
-    /// @copydoc EditPage::deleteMessages()
-    std::pair<QString, QString> deleteMessages() override {
-        auto name = mOriginalMood.name();
-        return std::make_pair(name, "Delete the " + name + " mood?");
-    }
-
     /// @copydoc EditPage::reset()
     void reset() override { mSimpleGroupWidget->setCheckedDevices(mOriginalMood.lights()); }
 
@@ -41,6 +35,11 @@ public:
 
     /// @copydoc EditPage::saveChanges()
     bool saveChanges() override;
+
+private slots:
+
+    /// delete button is pressed
+    void deletePressed(bool) override;
 
 private:
     /// original state of the mood

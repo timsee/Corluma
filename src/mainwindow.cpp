@@ -31,7 +31,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
       mNoWifiWidget{new NoWifiWidget(this)},
       mGroups{new GroupData(this)},
       mComm{new CommLayer(this, mGroups)},
-      mData{new cor::DeviceList(this)},
+      mData{new cor::LightList(this)},
       mAppSettings{new AppSettings},
       mDataSyncArduino{new DataSyncArduino(mData, mComm, mAppSettings)},
       mDataSyncHue{new DataSyncHue(mData, mComm, mAppSettings)},
@@ -202,7 +202,7 @@ void MainWindow::loadJSON(QString path) {
     if (mGroups->checkIfValidJSON(path)) {
         mMainViewport->moodPage()->clearWidgets();
         mLeftHandMenu->clearWidgets();
-        mData->clearDevices();
+        mData->clearLights();
         mGroups->removeAppData();
         if (!mGroups->loadExternalData(path)) {
             qDebug() << "WARNING: loading external data failed at " << path;
@@ -472,13 +472,13 @@ void MainWindow::editButtonClicked(bool isMood) {
             QString::number(mMainViewport->moodPage()->currentMood()).toStdString());
         if (result.second) {
             // use existing mood
-            mEditMoodPage->showMood(result.first, mComm->allDevices());
+            mEditMoodPage->showMood(result.first, mComm->allLights());
         } else {
             // make a new mood
             std::vector<cor::Light> lights;
-            std::copy(mData->devices().begin(), mData->devices().end(), std::back_inserter(lights));
+            std::copy(mData->lights().begin(), mData->lights().end(), std::back_inserter(lights));
             cor::Mood mood(mGroups->generateNewUniqueKey(), "New Mood", lights);
-            mEditMoodPage->showMood(mood, mComm->allDevices());
+            mEditMoodPage->showMood(mood, mComm->allLights());
         }
     } else {
         mEditGroupPage->resize();
@@ -490,15 +490,15 @@ void MainWindow::editButtonClicked(bool isMood) {
         if (group.isValid()) {
             mEditGroupPage->showGroup(group,
                                       mComm->lightListFromGroup(group),
-                                      mComm->allDevices(),
+                                      mComm->allLights(),
                                       isRoom);
         } else {
             auto lights = group.lights();
-            for (const auto& light : mData->devices()) {
+            for (const auto& light : mData->lights()) {
                 lights.push_back(light.uniqueID());
             }
             cor::Group group(mGroups->generateNewUniqueKey(), "New Group", lights);
-            mEditGroupPage->showGroup(group, mData->devices(), mComm->allDevices(), false);
+            mEditGroupPage->showGroup(group, mData->lights(), mComm->allLights(), false);
         }
     }
 }
@@ -513,16 +513,8 @@ void MainWindow::detailedMoodDisplay(std::uint64_t key) {
     const auto& moodResult = mGroups->moods().item(QString::number(key).toStdString());
     cor::Mood detailedMood = moodResult.first;
     if (moodResult.second) {
-        auto lights = detailedMood.lights();
-        // fill in info about light
-        for (auto&& light : lights) {
-            auto lightData = mComm->lightByID(light.uniqueID());
-            if (lightData.isValid()) {
-                light.hardwareType(lightData.hardwareType());
-                light.name(lightData.name());
-            }
-        }
-        detailedMood.lights(lights);
+        auto moodLights = mComm->makeMood(detailedMood);
+        detailedMood.lights(moodLights.items());
         mMoodDetailedWidget->update(detailedMood);
     }
 
@@ -533,8 +525,8 @@ void MainWindow::hueInfoWidgetClicked() {
     mGreyOut->greyOut(true);
 
     mLightInfoWidget->scrollArea()->updateHues(mComm->hue()->discovery()->lights());
-    mLightInfoWidget->scrollArea()->updateControllers(mComm->nanoleaf()->controllers().items());
-    mLightInfoWidget->scrollArea()->updateLights(mComm->arducor()->arduCorLights());
+    mLightInfoWidget->scrollArea()->updateNanoLeafs(mComm->nanoleaf()->lights().items());
+    mLightInfoWidget->scrollArea()->updateAruCorLights(mComm->arducor()->arduCorLights());
     mLightInfoWidget->resize();
     mLightInfoWidget->pushIn();
 }
@@ -592,13 +584,13 @@ void MainWindow::lightNameChange(EProtocolType type, const QString& key, const Q
         }
     } else if (type == EProtocolType::nanoleaf) {
         // get nanoleaf controller from key
-        const auto& controllers = mComm->nanoleaf()->controllers();
+        const auto& controllers = mComm->nanoleaf()->lights();
         auto result = controllers.item(key.toStdString());
         bool lightFound = result.second;
-        nano::LeafController lightToRename = result.first;
+        nano::LeafLight lightToRename = result.first;
 
         if (lightFound) {
-            mComm->nanoleaf()->renameController(lightToRename, name);
+            mComm->nanoleaf()->renameLight(lightToRename, name);
         } else {
             qDebug() << " could NOT change this key: " << key << " to this name " << name;
         }
@@ -770,9 +762,9 @@ void MainWindow::timeoutEnabledChanged(bool enabled) {
 void MainWindow::moodChanged(std::uint64_t moodID) {
     const auto& result = mGroups->moods().item(QString::number(moodID).toStdString());
     if (result.second) {
-        mData->clearDevices();
+        mData->clearLights();
         const auto& moodDict = mComm->makeMood(result.first);
-        mData->addDeviceList(moodDict.items());
+        mData->addLights(moodDict.items());
         if (!moodDict.items().empty()) {
             mTopMenu->deviceCountChanged();
             mLeftHandMenu->deviceCountChanged();
@@ -786,7 +778,7 @@ void MainWindow::greyoutClicked() {
         mLeftHandMenu->pushOut();
         if ((mMainViewport->currentPage() == EPage::colorPage
              || mMainViewport->currentPage() == EPage::palettePage)
-            && mData->devices().empty()) {
+            && mData->lights().empty()) {
             mTopMenu->pushInTapToSelectButton();
         }
     }
@@ -809,7 +801,7 @@ void MainWindow::protocolSettingsChanged(EProtocolType type, bool enabled) {
         mComm->startup(type);
     } else {
         mComm->shutdown(type);
-        mData->removeDevicesOfType(type);
+        mData->removeLightOfType(type);
     }
 }
 
@@ -823,13 +815,13 @@ void MainWindow::wifiChecker() {
 
     // NOTE: this is a bit of a UX hack since its a non-documented feature, but it would make a more
     // confusing UX to 99%+ of potential users
-    //      to fully show this edge case at this point. The No wifi detected screen will get hidden
-    //      if theres a serial connection, since serial is the one exception to not needing wifi.
-    //      This edge case only comes up if the user is using arduino devices on a non-mobile build
-    //      in a place where they don't have a wifi connection.
+    // to fully show this edge case at this point. The No wifi detected screen will get hidden
+    // if theres a serial connection, since serial is the one exception to not needing wifi.
+    // This edge case only comes up if the user is using arduino devices on a non-mobile build
+    // in a place where they don't have a wifi connection.
 #ifndef MOBILE_BUILD
     if (!mWifiFound) {
-        mWifiFound = !mComm->deviceTable(ECommType::serial).empty();
+        mWifiFound = !mComm->lightDict(ECommType::serial).empty();
     }
 #endif
 
@@ -925,7 +917,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent* event) {
             mLeftHandMenu->pushOut();
             if ((mMainViewport->currentPage() == EPage::colorPage
                  || mMainViewport->currentPage() == EPage::palettePage)
-                && mData->devices().empty()) {
+                && mData->lights().empty()) {
                 mTopMenu->pushInTapToSelectButton();
             }
         } else if (!mLeftHandMenu->isIn()) {
@@ -946,7 +938,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent* event) {
                 mLeftHandMenu->pushOut();
                 if ((mMainViewport->currentPage() == EPage::colorPage
                      || mMainViewport->currentPage() == EPage::palettePage)
-                    && mData->devices().empty()) {
+                    && mData->lights().empty()) {
                     mTopMenu->pushInTapToSelectButton();
                 }
             }
@@ -982,7 +974,7 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
 
 
     if (!ignorePushOut) {
-        if ((page == EPage::colorPage || page == EPage::palettePage) && mData->devices().empty()) {
+        if ((page == EPage::colorPage || page == EPage::palettePage) && mData->lights().empty()) {
             mTopMenu->pushInTapToSelectButton();
         }
     }
@@ -1024,7 +1016,7 @@ void MainWindow::pushOutSettingsPage() {
 
     if ((mMainViewport->currentPage() == EPage::colorPage
          || mMainViewport->currentPage() == EPage::palettePage)
-        && mData->devices().empty()) {
+        && mData->lights().empty()) {
         mTopMenu->pushInTapToSelectButton();
     }
 

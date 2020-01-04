@@ -6,7 +6,7 @@
 #include "appsettings.h"
 #include "colorpage.h"
 #include "comm/commlayer.h"
-#include "cor/devicelist.h"
+#include "cor/lightlist.h"
 #include "groupdata.h"
 #include "moodpage.h"
 #include "palettepage.h"
@@ -28,7 +28,7 @@ public:
     /// constructor
     explicit MainViewport(MainWindow* parent,
                           CommLayer* comm,
-                          cor::DeviceList* data,
+                          cor::LightList* data,
                           GroupData* groups,
                           AppSettings* settings);
 
@@ -106,7 +106,7 @@ private:
      * \brief data layer that maintains and tracks the states of the lights
      * and the saved data of the GUI
      */
-    cor::DeviceList* mData;
+    cor::LightList* mData;
 
     /*!
      * \brief mAppSettings maintains which comnmtypes are currently enabled.

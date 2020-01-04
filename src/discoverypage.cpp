@@ -21,7 +21,7 @@
 #include "utils/qt.h"
 
 DiscoveryPage::DiscoveryPage(QWidget* parent,
-                             cor::DeviceList* data,
+                             cor::LightList* data,
                              CommLayer* comm,
                              AppSettings* appSettings)
     : QWidget(parent),
@@ -192,7 +192,7 @@ bool DiscoveryPage::checkIfDiscovered(EProtocolType type) {
         runningDiscovery = true;
     } else if (type == EProtocolType::hue && !mComm->hue()->bridges().empty()) {
         runningDiscovery = true;
-    } else if (type == EProtocolType::nanoleaf && !mComm->nanoleaf()->controllers().empty()) {
+    } else if (type == EProtocolType::nanoleaf && !mComm->nanoleaf()->lights().empty()) {
         runningDiscovery = true;
     }
 

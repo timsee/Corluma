@@ -8,7 +8,7 @@
 #include "comm/arducor/arducorinfowidget.h"
 #include "comm/commhue.h"
 #include "comm/hue/hueinfowidget.h"
-#include "comm/nanoleaf/leafcontrollerinfowidget.h"
+#include "comm/nanoleaf/leaflightinfowidget.h"
 #include "cor/objects/page.h"
 #include "cor/widgets/topwidget.h"
 
@@ -35,10 +35,10 @@ public:
      *
      * \param controllers nanoleaf controllers to use as the recent set.
      */
-    void updateControllers(std::vector<nano::LeafController> controllers);
+    void updateNanoLeafs(const std::vector<nano::LeafLight>& lights);
 
     /// updates the arducor lights in the light info list widget
-    void updateLights(const std::vector<ArduCorLight>& lights);
+    void updateAruCorLights(const std::vector<ArduCorLight>& lights);
 
     /*!
      * \brief lookupCurrentLight looks up the current light based on what is currently selected
@@ -87,7 +87,7 @@ private:
     std::vector<hue::HueInfoWidget*> mHueWidgets;
 
     /// widgets for nanoleaf displayed in scroll area
-    std::vector<nano::LeafControllerInfoWidget*> mNanoleafWidgets;
+    std::vector<nano::LeafLightInfoWidget*> mNanoleafWidgets;
 
     /// widgets for ArduCor displayed in scroll area
     std::vector<ArduCorInfoWidget*> mArduCorWidgets;

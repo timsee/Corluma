@@ -11,7 +11,7 @@
 #include "comm/arducor/arducorinfowidget.h"
 #include "comm/commhue.h"
 #include "comm/hue/hueinfowidget.h"
-#include "comm/nanoleaf/leafcontrollerinfowidget.h"
+#include "comm/nanoleaf/leaflightinfowidget.h"
 #include "cor/objects/page.h"
 #include "cor/widgets/topwidget.h"
 #include "lightinfoscrollarea.h"

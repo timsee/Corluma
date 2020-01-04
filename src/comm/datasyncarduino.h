@@ -31,7 +31,7 @@ public:
      * \param data pointer to the app's data layer.
      * \param comm pointer to the app's comm layer.
      */
-    DataSyncArduino(cor::DeviceList* data, CommLayer* comm, AppSettings* appSettings);
+    DataSyncArduino(cor::LightList* data, CommLayer* comm, AppSettings* appSettings);
 
     /*!
      * \brief cancelSync cancel the data sync, regardless of it successfully completed.

@@ -74,10 +74,10 @@ public:
     QString findDeviceNameByIndexAndControllerName(const QString& controllerName, uint32_t index);
 
     /// finds a controller based on a device name
-    bool findControllerByDeviceName(const QString& deviceName, cor::Controller& output);
+    std::pair<cor::Controller, bool> findControllerByDeviceName(const QString& deviceName);
 
     /// finds a controller based on its name
-    bool findControllerByControllerName(const QString& controllerName, cor::Controller& output);
+    std::pair<cor::Controller, bool> findControllerByControllerName(const QString& controllerName);
 
     /*!
      * \brief setupConnectionList initializes the connection list and reloads
@@ -114,7 +114,7 @@ private:
     void handleDiscoveredController(const cor::Controller& discoveredController);
 
     /*!
-     * \brief deviceControllerFromDiscoveryString takes a discovery string, a controller name, and
+     * \brief controllerFromDiscoveryString takes a discovery string, a controller name, and
      * an empty cor::Controller as input. If parsing the string  is successful, it fills the
      * cor::Controller with the info from the discovery string. If its unsucessful, it returns
      * false.
@@ -123,10 +123,9 @@ private:
      * \param controller filled if discovery string is valid.
      * \return true if discovery string is valid, false otherwise.
      */
-    bool deviceControllerFromDiscoveryString(ECommType type,
-                                             const QString& discovery,
-                                             const QString& controllerName,
-                                             cor::Controller& controller);
+    std::pair<cor::Controller, bool> controllerFromDiscoveryString(ECommType type,
+                                                                   const QString& discovery,
+                                                                   const QString& controllerName);
 
 
     /// load the json data.

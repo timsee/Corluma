@@ -45,15 +45,14 @@ void CommUDP::startup() {
             // makes sure that its an IPv4 address that also starts with 192.
             // the 192 verifies its a class C address.
             if (list[x].protocol() == QAbstractSocket::IPv4Protocol
-                && list[x].toString().contains("192")
-                && !list[x].toString().contains("0.0.")
+                && list[x].toString().contains("192") && !list[x].toString().contains("0.0.")
                 && list[x] != localHost) {
                 localIP = list[x].toString();
             }
         }
     }
     if (mBound) {
-       // qDebug() << "WARNING: UDP already bound!";
+        // qDebug() << "WARNING: UDP already bound!";
     } else {
         mBound = mSocket->bind(QHostAddress(localIP), PORT);
         if (!mBound) {
@@ -75,7 +74,7 @@ void CommUDP::sendPacket(const cor::Controller& controller, QString& packet) {
     if (mBound) {
         // send packet over UDP
         // qDebug() << "sending udp" << packet << "to " << controller.name;
-        mSocket->writeDatagram(packet.toUtf8().data(), QHostAddress(controller.name), PORT);
+        mSocket->writeDatagram(packet.toUtf8().data(), QHostAddress(controller.name()), PORT);
     } else {
         qDebug() << "WARNING: UDP port not bound";
     }
@@ -91,7 +90,7 @@ void CommUDP::stateUpdate() {
             QString packet =
                 QString("%1&").arg(QString::number(int(EPacketHeader::stateUpdateRequest)));
             // add CRC, if in use
-            if (controller.isUsingCRC) {
+            if (controller.isUsingCRC()) {
                 packet = packet + "#" + QString::number(mCRC.calculate(packet)) + "&";
             }
             sendPacket(controller, packet);
@@ -99,7 +98,7 @@ void CommUDP::stateUpdate() {
             if ((mStateUpdateCounter % mSecondaryUpdatesInterval) == 0) {
                 QString customArrayUpdateRequest = QString("%1&").arg(
                     QString::number(int(EPacketHeader::customArrayUpdateRequest)));
-                if (controller.isUsingCRC) {
+                if (controller.isUsingCRC()) {
                     customArrayUpdateRequest =
                         customArrayUpdateRequest + "#"
                         + QString::number(mCRC.calculate(customArrayUpdateRequest)) + "&";
@@ -116,13 +115,13 @@ void CommUDP::stateUpdate() {
 
 void CommUDP::testForController(const cor::Controller& controller) {
     if (mBound) {
-//         qDebug() << "discovery packet to " << controller.name << " " <<
-//         ArduCorDiscovery::kDiscoveryPacketIdentifier;
+        //         qDebug() << "discovery packet to " << controller.name << " " <<
+        //         ArduCorDiscovery::kDiscoveryPacketIdentifier;
         mSocket->writeDatagram(ArduCorDiscovery::kDiscoveryPacketIdentifier.toUtf8().data(),
-                               QHostAddress(controller.name),
+                               QHostAddress(controller.name()),
                                PORT);
     } else {
-       // qDebug() << "INFO: discovery when not bound";
+        // qDebug() << "INFO: discovery when not bound";
     }
 }
 

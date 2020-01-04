@@ -67,16 +67,16 @@ void ArduCorDiscovery::stopDiscovery() {
 }
 
 void ArduCorDiscovery::handleDiscovery() {
-    for (auto&& notFoundController : mNotFoundControllers) {
-        if (notFoundController.type == ECommType::HTTP) {
+    for (const auto& notFoundController : mNotFoundControllers) {
+        if (notFoundController.type() == ECommType::HTTP) {
             mHTTP->testForController(notFoundController);
         }
 #ifndef MOBILE_BUILD
-        else if (notFoundController.type == ECommType::serial) {
+        else if (notFoundController.type() == ECommType::serial) {
             mSerial->testForController(notFoundController);
         }
 #endif
-        else if (notFoundController.type == ECommType::UDP) {
+        else if (notFoundController.type() == ECommType::UDP) {
             mUDP->testForController(notFoundController);
         }
     }
@@ -86,10 +86,10 @@ void ArduCorDiscovery::handleDiscovery() {
 #endif
 }
 
-bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type,
-                                                           const QString& discovery,
-                                                           const QString& controllerName,
-                                                           cor::Controller& controller) {
+std::pair<cor::Controller, bool> ArduCorDiscovery::controllerFromDiscoveryString(
+    ECommType type,
+    const QString& discovery,
+    const QString& controllerName) {
     //--------------
     // Split string into an int vector
     //--------------
@@ -102,7 +102,7 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type,
 
     // check end of string is &
     if (discovery.at(discovery.length() - 1) != '&') {
-        return false;
+        return std::make_pair(cor::Controller{}, false);
     }
     // remove all data that isn't part of the int vector
     int start = kDiscoveryPacketIdentifier.size() + 1;
@@ -116,7 +116,7 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type,
 
     if (discoveryAndNameVector.size() != 2) {
         qDebug() << "does not include names";
-        return false;
+        return std::make_pair(cor::Controller{}, false);
     }
 
     std::istringstream integerInput(discoveryAndNameVector[0].toStdString());
@@ -138,7 +138,7 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type,
             int hardwareTypeIndex = QString(name.c_str()).toInt(&conversionSuccessful);
             if (!conversionSuccessful) {
                 qDebug() << "Received an incorrect value when expecting a hardware type";
-                return false;
+                return std::make_pair(cor::Controller{}, false);
             }
             ELightHardwareType hardwareType =
                 cor::convertArduinoTypeToLightType(EArduinoHardwareType(hardwareTypeIndex));
@@ -149,7 +149,7 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type,
             int productTypeIndex = QString(name.c_str()).toInt(&conversionSuccessful);
             if (!conversionSuccessful) {
                 qDebug() << "Received an incorrect value when expecting a product type";
-                return false;
+                return std::make_pair(cor::Controller{}, false);
             }
             nameIndex = 0;
         }
@@ -164,7 +164,7 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type,
         for (const auto& type : hardwareTypeVector) {
             qDebug() << " type: " << int(type);
         }
-        return false;
+        return std::make_pair(cor::Controller{}, false);
     }
 
     //--------------
@@ -172,58 +172,54 @@ bool ArduCorDiscovery::deviceControllerFromDiscoveryString(ECommType type,
     //--------------
     if (intVector.size() == 6) {
         if (controllerName.size() == 0) {
-            return false;
+            return std::make_pair(cor::Controller{}, false);
         }
-        controller.name = controllerName;
-        // get the API level
-        controller.majorAPI = std::uint32_t(intVector[0]);
-        controller.minorAPI = std::uint32_t(intVector[1]);
 
         // get the USE_CRC
         int crc = intVector[2];
         if (!(crc == 1 || crc == 0)) {
-            return false;
+            return std::make_pair(cor::Controller{}, false);
         }
-        controller.isUsingCRC = crc;
-        controller.hardwareCapabilities = std::uint32_t(intVector[3]);
+        cor::Controller controller(controllerName,
+                                   type,
+                                   crc,
+                                   intVector[5],
+                                   intVector[4],
+                                   intVector[0],
+                                   intVector[1],
+                                   intVector[3],
+                                   nameVector,
+                                   hardwareTypeVector);
+
 
         // grab the max packet size
-        controller.maxPacketSize = std::uint32_t(intVector[4]);
-        controller.type = type;
-        if (controller.maxPacketSize > 500) {
-            return false;
+        if (controller.maxPacketSize() > 500) {
+            return std::make_pair(cor::Controller{}, false);
         }
 
         // get the max hardware index
-        controller.maxHardwareIndex = intVector[5];
-        if (controller.maxHardwareIndex > 20) {
-            return false;
+        if (controller.maxHardwareIndex() > 20) {
+            return std::make_pair(cor::Controller{}, false);
         }
 
-        // get the names
-        controller.names = nameVector;
-        controller.hardwareTypes = hardwareTypeVector;
-
-        return true;
+        return std::make_pair(controller, true);
     }
-    return false;
+    return std::make_pair(cor::Controller{}, false);
 }
 
 void ArduCorDiscovery::addManualIP(const QString& ip) {
     // check if IP address already exists in unknown or not found
     bool IPAlreadyFound = false;
     for (auto notFound : mNotFoundControllers) {
-        if (notFound.name == ip) {
+        if (notFound.name() == ip) {
             IPAlreadyFound = true;
         }
     }
     if (!IPAlreadyFound) {
-        cor::Controller controller;
-        controller.name = ip;
-        controller.type = ECommType::HTTP;
+        cor::Controller controller(ip, ECommType::HTTP);
         mNotFoundControllers.push_back(controller);
-        controller.type = ECommType::UDP;
-        mNotFoundControllers.push_back(controller);
+        cor::Controller controller2(ip, ECommType::UDP);
+        mNotFoundControllers.push_back(controller2);
     }
 }
 
@@ -232,14 +228,12 @@ void ArduCorDiscovery::addSerialPort(const QString& serial) {
     // check if IP address already exists in unknown or not found
     bool serialAlreadyFound = false;
     for (auto notFound : mNotFoundControllers) {
-        if (notFound.name == serial) {
+        if (notFound.name() == serial) {
             serialAlreadyFound = true;
         }
     }
     if (!serialAlreadyFound) {
-        cor::Controller controller;
-        controller.name = serial;
-        controller.type = ECommType::serial;
+        cor::Controller controller(serial, ECommType::serial);
         mNotFoundControllers.push_back(controller);
     }
 }
@@ -251,11 +245,9 @@ void ArduCorDiscovery::handleIncomingPacket(ECommType type,
                                             const QString& controllerName,
                                             const QString& payload) {
     if (payload.contains(kDiscoveryPacketIdentifier) && !payload.isEmpty()) {
-        cor::Controller controller;
-        bool success =
-            deviceControllerFromDiscoveryString(type, payload, controllerName, controller);
-        if (success) {
-            handleDiscoveredController(controller);
+        auto result = controllerFromDiscoveryString(type, payload, controllerName);
+        if (result.second) {
+            handleDiscoveredController(result.first);
         }
     }
 }
@@ -264,8 +256,8 @@ void ArduCorDiscovery::handleIncomingPacket(ECommType type,
 void ArduCorDiscovery::handleDiscoveredController(const cor::Controller& discoveredController) {
     // search for the sender in the list of discovered devices
     for (auto notFoundController : mNotFoundControllers) {
-        if (notFoundController.type == discoveredController.type
-            && notFoundController.name == discoveredController.name) {
+        if (notFoundController.type() == discoveredController.type()
+            && notFoundController.name() == discoveredController.name()) {
             // remove from the not found controllers
             auto it = std::find(mNotFoundControllers.begin(),
                                 mNotFoundControllers.end(),
@@ -273,9 +265,8 @@ void ArduCorDiscovery::handleDiscoveredController(const cor::Controller& discove
             if (it != mNotFoundControllers.end()) {
                 mNotFoundControllers.erase(it);
             }
-            if (notFoundController.type == ECommType::HTTP) {
-                auto controllerCopy = notFoundController;
-                controllerCopy.type = ECommType::UDP;
+            if (notFoundController.type() == ECommType::HTTP) {
+                auto controllerCopy = cor::Controller(notFoundController.name(), ECommType::UDP);
                 auto it = std::find(mNotFoundControllers.begin(),
                                     mNotFoundControllers.end(),
                                     controllerCopy);
@@ -283,9 +274,8 @@ void ArduCorDiscovery::handleDiscoveredController(const cor::Controller& discove
                     mNotFoundControllers.erase(it);
                 }
             }
-            if (notFoundController.type == ECommType::UDP) {
-                auto controllerCopy = notFoundController;
-                controllerCopy.type = ECommType::HTTP;
+            if (notFoundController.type() == ECommType::UDP) {
+                auto controllerCopy = cor::Controller(notFoundController.name(), ECommType::HTTP);
                 auto it = std::find(mNotFoundControllers.begin(),
                                     mNotFoundControllers.end(),
                                     controllerCopy);
@@ -295,26 +285,27 @@ void ArduCorDiscovery::handleDiscoveredController(const cor::Controller& discove
             }
 
             // add to the found controllers
-            mFoundControllers.insert(discoveredController.name.toStdString(), discoveredController);
+            mFoundControllers.insert(discoveredController.name().toStdString(),
+                                     discoveredController);
 
             // update json data, if needed
             updateJSON(discoveredController);
 
             int i = 1;
-            for (const auto& name : discoveredController.names) {
+            for (const auto& name : discoveredController.names()) {
                 ArduCorLight light(name, discoveredController, i);
                 ++i;
 
                 // start state updates, etc.
-                if (notFoundController.type == ECommType::HTTP) {
+                if (notFoundController.type() == ECommType::HTTP) {
                     mHTTP->addLight(light);
                 }
 #ifndef MOBILE_BUILD
-                else if (notFoundController.type == ECommType::serial) {
+                else if (notFoundController.type() == ECommType::serial) {
                     mSerial->addLight(light);
                 }
 #endif
-                else if (notFoundController.type == ECommType::UDP) {
+                else if (notFoundController.type() == ECommType::UDP) {
                     mUDP->addLight(light);
                 }
             }
@@ -328,10 +319,10 @@ void ArduCorDiscovery::removeController(const QString& controllerName) {
     QString name;
     bool shouldDeleteNotFound = false;
     for (const auto& notFoundController : mNotFoundControllers) {
-        if (notFoundController.name == controllerName) {
+        if (notFoundController.name() == controllerName) {
             // store con
             controller = notFoundController;
-            name = controller.name;
+            name = controller.name();
             shouldDeleteNotFound = true;
         }
     }
@@ -342,10 +333,10 @@ void ArduCorDiscovery::removeController(const QString& controllerName) {
 
     bool shouldDeleteFound = false;
     for (const auto& foundController : mFoundControllers.items()) {
-        if (foundController.name == controllerName) {
+        if (foundController.name() == controllerName) {
             // foundController con
             controller = foundController;
-            name = controller.name;
+            name = controller.name();
             shouldDeleteFound = true;
         }
     }
@@ -360,7 +351,7 @@ void ArduCorDiscovery::removeController(const QString& controllerName) {
         for (auto value : array) {
             QJsonObject object = value.toObject();
             cor::Controller jsonController = cor::jsonToController(object);
-            if (jsonController.name == name) {
+            if (jsonController.name() == name) {
                 array.removeAt(i);
                 mJsonData.setArray(array);
                 shouldSave = true;
@@ -388,7 +379,7 @@ void ArduCorDiscovery::updateJSON(const cor::Controller& controller) {
             bool detectChanges = false;
             QJsonObject object = value.toObject();
             cor::Controller jsonController = cor::jsonToController(object);
-            if (jsonController.name == controller.name) {
+            if (jsonController.name() == controller.name()) {
                 foundLight = true;
                 if (newJsonObject != object) {
                     detectChanges = true;
@@ -416,31 +407,27 @@ QString ArduCorDiscovery::findDeviceNameByIndexAndControllerName(const QString& 
                                                                  uint32_t index) {
     auto result = mFoundControllers.item(controllerName.toStdString());
     if (result.second) {
-        return result.first.names[index - 1];
+        return result.first.names()[index - 1];
     }
-    return QString("NOTFOUND");
+    return {};
 }
 
-bool ArduCorDiscovery::findControllerByDeviceName(const QString& deviceName,
-                                                  cor::Controller& output) {
+std::pair<cor::Controller, bool> ArduCorDiscovery::findControllerByDeviceName(
+    const QString& deviceName) {
     for (const auto& controller : mFoundControllers.items()) {
-        for (const auto& name : controller.names) {
+        for (const auto& name : controller.names()) {
             if (name == deviceName) {
-                output = controller;
-                return true;
+                return std::make_pair(controller, true);
             }
         }
     }
-    return false;
+    return std::make_pair(cor::Controller{}, false);
 }
 
-bool ArduCorDiscovery::findControllerByControllerName(const QString& controllerName,
-                                                      cor::Controller& output) {
+std::pair<cor::Controller, bool> ArduCorDiscovery::findControllerByControllerName(
+    const QString& controllerName) {
     auto result = mFoundControllers.item(controllerName.toStdString());
-    if (result.second) {
-        output = result.first;
-    }
-    return result.second;
+    return result;
 }
 
 //---------------------

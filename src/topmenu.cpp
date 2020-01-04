@@ -46,7 +46,7 @@ EPage stringToPage(const QString& string) {
 }
 
 TopMenu::TopMenu(QWidget* parent,
-                 cor::DeviceList* data,
+                 cor::LightList* data,
                  CommLayer* comm,
                  GroupData* groups,
                  MainWindow* mainWindow,
@@ -262,14 +262,14 @@ void TopMenu::updateBrightnessSlider() {
 }
 
 void TopMenu::deviceCountChanged() {
-    if (mData->devices().empty() && !mMainWindow->leftHandMenu()->isIn()
+    if (mData->lights().empty() && !mMainWindow->leftHandMenu()->isIn()
         && !mMainWindow->leftHandMenu()->alwaysOpen()) {
         mSelectLightsButton->pushIn(mStartSelectLightsButton);
     } else if (!mMainWindow->leftHandMenu()->alwaysOpen()) {
         mSelectLightsButton->pushOut(mStartSelectLightsButton);
     }
 
-    if (mData->devices().empty()) {
+    if (mData->lights().empty()) {
         if (mCurrentPage == EPage::colorPage) {
             showSingleColorStateWidget(false);
         } else if (mCurrentPage == EPage::palettePage) {
@@ -281,7 +281,7 @@ void TopMenu::deviceCountChanged() {
             mSelectLightsButton->pushIn(mStartSelectLightsButton);
         }
     }
-    if (mShouldGreyOutIcons && !mData->devices().empty()) {
+    if (mShouldGreyOutIcons && !mData->lights().empty()) {
         mBrightnessSlider->enable(true);
 
         if (mData->isOn()) {
@@ -294,7 +294,7 @@ void TopMenu::deviceCountChanged() {
         mShouldGreyOutIcons = false;
     }
 
-    if ((!mShouldGreyOutIcons && mData->devices().empty())) {
+    if ((!mShouldGreyOutIcons && mData->lights().empty())) {
         mBrightnessSlider->enable(false);
         mBrightnessSlider->slider()->setValue(0);
         mOnOffSwitch->setSwitchState(ESwitchState::disabled);
@@ -306,11 +306,11 @@ void TopMenu::deviceCountChanged() {
         adjustSingleColorLayout(false);
         mColorPage->show(mData->mainColor(),
                          std::uint32_t(mData->brightness()),
-                         std::uint32_t(mData->devices().size()),
-                         mComm->bestColorPickerType(mData->devices()));
+                         std::uint32_t(mData->lights().size()),
+                         mComm->bestColorPickerType(mData->lights()));
     } else if (mCurrentPage == EPage::palettePage) {
         adjustMultiColorLayout(false);
-        mPalettePage->lightCountChanged(mData->devices().size());
+        mPalettePage->lightCountChanged(mData->lights().size());
     }
 }
 
@@ -621,8 +621,8 @@ void TopMenu::adjustSingleColorLayout(bool skipTransition) {
     auto parentSize = parentWidget()->size();
     // get teh desired endpoint
     bool hasMulti = hasArduino || hasNanoLeaf;
-    if (!hasMulti && !mData->devices().empty()
-        && mComm->bestColorPickerType(mData->devices()) == EColorPickerType::CT) {
+    if (!hasMulti && !mData->lights().empty()
+        && mComm->bestColorPickerType(mData->lights()) == EColorPickerType::CT) {
         mColorPage->changePageType(ESingleColorPickerMode::ambient);
         mColorFloatingLayout->highlightButton("Temperature");
     }
@@ -659,7 +659,7 @@ void TopMenu::adjustMultiColorLayout(bool skipTransition) {
     // get the size of the parent
     auto parentSize = parentWidget()->size();
     // get the desired endpoint
-    bool hasLights = !mData->devices().empty();
+    bool hasLights = !mData->lights().empty();
     QPoint endPoint;
     if (hasLights && (hasArduino || hasNanoLeaf)) {
         endPoint = QPoint(parentSize.width() - mMultiRoutineFloatingLayout->width(),
@@ -733,16 +733,16 @@ void TopMenu::moveHiddenLayouts() {
 }
 
 void TopMenu::updateUI() {
-    if (mData->devices() != mLastDevices) {
+    if (mData->lights() != mLastDevices) {
         // get copy of data representation of lights
-        auto currentDevices = mData->devices();
+        auto currentLights = mData->lights();
         // update devices to be comm representation instead of data representaiton
-        for (auto&& device : currentDevices) {
+        for (auto&& device : currentLights) {
             device = mComm->lightByID(device.uniqueID());
         }
-        mLastDevices = mData->devices();
+        mLastDevices = mData->lights();
 
-        mMainPalette->updateDevices(currentDevices);
+        mMainPalette->updateDevices(currentLights);
         updateBrightnessSlider();
     }
 }
@@ -761,7 +761,7 @@ void TopMenu::menuButtonPressed() {
 
 void TopMenu::pushInTapToSelectButton() {
     if (!mSelectLightsButton->isIn() && !mMainWindow->leftHandMenu()->alwaysOpen()
-        && mData->devices().empty()) {
+        && mData->lights().empty()) {
         mSelectLightsButton->pushIn(mStartSelectLightsButton);
     }
 }

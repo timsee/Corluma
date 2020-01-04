@@ -114,19 +114,15 @@ QJsonObject lightToJsonObject(const cor::Light& light) {
 }
 
 
-void GroupData::saveNewMood(
-    const QString& groupName,
-    const std::vector<cor::Light>& devices,
-    const std::vector<std::pair<std::uint64_t, cor::Light>>& defaultStates) {
-    auto key = generateNewUniqueKey();
+void GroupData::saveNewMood(const cor::Mood& mood) {
     QJsonObject groupObject;
-    groupObject["name"] = groupName;
+    groupObject["name"] = mood.name();
     groupObject["isMood"] = true;
-    groupObject["uniqueID"] = double(key);
+    groupObject["uniqueID"] = double(mood.uniqueID());
 
     // create string of jsondata to add to file
     QJsonArray deviceArray;
-    for (const auto& device : devices) {
+    for (const auto& device : mood.lights()) {
         auto object = lightToJsonObject(device);
         object["uniqueID"] = device.uniqueID();
         deviceArray.append(object);
@@ -134,7 +130,7 @@ void GroupData::saveNewMood(
     groupObject["devices"] = deviceArray;
 
     QJsonArray defaultStateArray;
-    for (const auto& defaultState : defaultStates) {
+    for (const auto& defaultState : mood.defaults()) {
         auto object = lightToJsonObject(defaultState.second);
         object["group"] = double(defaultState.first);
         defaultStateArray.append(object);
@@ -148,7 +144,6 @@ void GroupData::saveNewMood(
             array.push_front(groupObject);
             mJsonData.setArray(array);
 
-            cor::Mood mood(generateNewUniqueKey(), groupName, devices);
             const auto& key = QString::number(mood.uniqueID()).toStdString();
 
             // check that it doesn't already exist, if it does, replace the old version
@@ -162,112 +157,88 @@ void GroupData::saveNewMood(
             // save file
             saveJSON();
 
-            emit newMoodAdded(groupName);
+            emit newMoodAdded(mood.name());
         }
     }
 }
 
 
-void GroupData::saveNewGroup(const QString& groupName, const std::vector<cor::Light>& devices) {
-    auto key = generateNewUniqueKey();
+void GroupData::saveNewGroup(const cor::Group& group) {
     QJsonObject groupObject;
-    groupObject["name"] = groupName;
+    groupObject["name"] = group.name();
     groupObject["isMood"] = false;
     groupObject["isRoom"] = false;
+    groupObject["uniqueID"] = double(group.uniqueID());
 
-    groupObject["uniqueID"] = double(key);
     // create string of jsondata to add to file
-    QJsonArray deviceArray;
-    for (const auto& device : devices) {
-        // skip saving hues
-        if (device.protocol() != EProtocolType::hue) {
-            QJsonObject object;
-
-            object["type"] = commTypeToString(device.commType());
-            object["uniqueID"] = device.uniqueID();
-
-            deviceArray.append(object);
-        }
+    QJsonArray lightArray;
+    for (const auto& lightID : group.lights()) {
+        QJsonObject object;
+        object["uniqueID"] = lightID;
+        lightArray.append(object);
     }
 
-    groupObject["devices"] = deviceArray;
-    if (!mJsonData.isNull() && !deviceArray.empty()) {
+    groupObject["devices"] = lightArray;
+    if (!mJsonData.isNull() && !lightArray.empty()) {
         if (mJsonData.isArray()) {
             auto array = mJsonData.array();
             mJsonData.array().push_front(groupObject);
             array.push_front(groupObject);
             mJsonData.setArray(array);
 
-            std::vector<QString> lightListID;
-            for (const auto& light : devices) {
-                lightListID.push_back(light.uniqueID());
-            }
-            cor::Group group(key, groupName, lightListID);
-            const auto& keyString = QString::number(key).toStdString();
             // check that it doesn't already exist, if it does, replace the old version
-            auto dictResult = mGroupDict.item(keyString);
+            auto key = QString::number(group.uniqueID()).toStdString();
+            auto dictResult = mGroupDict.item(key);
             if (dictResult.second) {
-                mGroupDict.update(keyString, group);
+                mGroupDict.update(key, group);
             } else {
-                mGroupDict.insert(keyString, group);
+                mGroupDict.insert(key, group);
             }
 
             // save file
             saveJSON();
             // hues use their bridge to store their data for collections instead of the JSON
-            emit newCollectionAdded(groupName);
+            emit newCollectionAdded(group.name());
         }
     }
 }
 
-void GroupData::saveNewRoom(const QString& groupName, const std::vector<cor::Light>& devices) {
-    auto key = generateNewUniqueKey();
+void GroupData::saveNewRoom(const cor::Room& room) {
     QJsonObject groupObject;
-    groupObject["name"] = groupName;
+    groupObject["name"] = room.name();
     groupObject["isMood"] = false;
     groupObject["isRoom"] = true;
+    groupObject["uniqueID"] = double(room.uniqueID());
 
-    groupObject["uniqueID"] = double(key);
     // create string of jsondata to add to file
-    QJsonArray deviceArray;
-    for (const auto& device : devices) {
-        // skip saving hues
-        if (device.protocol() != EProtocolType::hue) {
-            QJsonObject object;
-
-            object["type"] = commTypeToString(device.commType());
-            object["uniqueID"] = device.uniqueID();
-
-            deviceArray.append(object);
-        }
+    QJsonArray lightArray;
+    for (const auto& lightID : room.lights()) {
+        QJsonObject object;
+        object["uniqueID"] = lightID;
+        lightArray.append(object);
     }
 
-    groupObject["devices"] = deviceArray;
-    if (!mJsonData.isNull() && !deviceArray.empty()) {
+    groupObject["devices"] = lightArray;
+    if (!mJsonData.isNull() && !lightArray.empty()) {
         if (mJsonData.isArray()) {
             auto array = mJsonData.array();
             mJsonData.array().push_front(groupObject);
             array.push_front(groupObject);
             mJsonData.setArray(array);
 
-            std::vector<QString> lightListID;
-            for (const auto& light : devices) {
-                lightListID.push_back(light.uniqueID());
-            }
-            cor::Room room(key, groupName, lightListID, {});
-            const auto& keyString = QString::number(key).toStdString();
+            const auto& key = QString::number(room.uniqueID()).toStdString();
             // check that it doesn't already exist, if it does, replace the old version
-            auto dictResult = mRoomDict.item(keyString);
+            auto dictResult = mRoomDict.item(key);
             if (dictResult.second) {
-                mRoomDict.update(keyString, room);
+                mRoomDict.update(key, room);
             } else {
-                mRoomDict.insert(keyString, room);
+                mRoomDict.insert(key, room);
             }
 
             // save file
             saveJSON();
             // hues use their bridge to store their data for collections instead of the JSON
-            emit newCollectionAdded(groupName);
+            emit newCollectionAdded(room.name());
         }
     }
 }
@@ -404,7 +375,7 @@ void GroupData::lightDeleted(const QString& uniqueID) {
     }
 }
 
-bool GroupData::removeGroup(const QString& groupName) {
+bool GroupData::removeGroup(std::uint64_t groupID) {
     if (!mJsonData.isNull()) {
         if (mJsonData.isArray()) {
             QJsonArray array = mJsonData.array();
@@ -412,34 +383,34 @@ bool GroupData::removeGroup(const QString& groupName) {
             for (auto value : array) {
                 QJsonObject object = value.toObject();
                 if (checkIfGroupIsValid(object)) {
-                    QString group = object["name"].toString();
+                    auto currentID = std::uint64_t(object["uniqueID"].toDouble());
                     // check if its a mood or not
-                    if (group == groupName) {
+                    if (currentID == groupID) {
                         array.removeAt(i);
                         mJsonData.setArray(array);
                         saveJSON();
 
                         for (const auto& mood : mMoodDict.items()) {
-                            if (mood.name() == groupName) {
+                            if (mood.uniqueID() == groupID) {
                                 mMoodDict.remove(mood);
-                                emit groupDeleted(groupName);
+                                emit groupDeleted(mood.name());
                                 return true;
                             }
                         }
 
 
                         for (const auto& group : mGroupDict.items()) {
-                            if (group.name() == groupName) {
+                            if (group.uniqueID() == groupID) {
                                 mGroupDict.remove(group);
-                                emit groupDeleted(groupName);
+                                emit groupDeleted(group.name());
                                 return true;
                             }
                         }
 
                         for (const auto& group : mRoomDict.items()) {
-                            if (group.name() == groupName) {
+                            if (group.uniqueID() == groupID) {
                                 mRoomDict.remove(group);
-                                emit groupDeleted(groupName);
+                                emit groupDeleted(group.name());
                                 return true;
                             }
                         }
@@ -467,34 +438,21 @@ void GroupData::parseGroup(const QJsonObject& object) {
             isRoom = false;
         }
         QJsonArray deviceArray = object["devices"].toArray();
-        std::vector<cor::Light> list;
+        std::vector<QString> lightList;
         foreach (const QJsonValue& value, deviceArray) {
             QJsonObject device = value.toObject();
-            if (device["type"].isString() && device["uniqueID"].isString()) {
-                // convert to Qt types from json data
-                QString typeString = device["type"].toString();
-                QString uniqueID = device["uniqueID"].toString();
-
-                // convert to Corluma types from certain Qt types
-                ECommType type = stringToCommType(typeString);
-
-                cor::Light light(uniqueID, "NO_CONTROLLER", type);
-
-                list.push_back(light);
+            if (device["uniqueID"].isString()) {
+                lightList.push_back(device["uniqueID"].toString());
             } else {
-                qDebug() << __func__ << " device broken" << value;
+                qDebug() << __func__ << " light broken" << value;
             }
         }
-        if (!list.empty()) {
-            std::vector<QString> lightIDList;
-            for (const auto& light : list) {
-                lightIDList.push_back(light.uniqueID());
-            }
+        if (!lightList.empty()) {
             if (isRoom) {
-                cor::Room room(std::uint64_t(uniqueID), name, lightIDList, {});
+                cor::Room room(std::uint64_t(uniqueID), name, lightList, {});
                 mRoomDict.insert(QString::number(room.uniqueID()).toStdString(), room);
             } else {
-                cor::Group group(std::uint64_t(uniqueID), name, lightIDList);
+                cor::Group group(std::uint64_t(uniqueID), name, lightList);
                 mGroupDict.insert(QString::number(group.uniqueID()).toStdString(), group);
             }
         }
@@ -750,7 +708,7 @@ bool GroupData::checkIfGroupIsValid(const QJsonObject& object) {
     QJsonArray deviceArray = object["devices"].toArray();
     foreach (const QJsonValue& value, deviceArray) {
         QJsonObject device = value.toObject();
-        if (!(device["uniqueID"].isString() && device["type"].isString())) {
+        if (!(device["uniqueID"].isString())) {
             qDebug() << "one of the objects is invalid!" << device;
             return false;
         }

@@ -21,8 +21,6 @@
 
 /// uncomment to wipe out all QSettings Data.
 //#define WIPE_QSETTINGS 1
-/// uncomment to wipe out all json data, even in local directory
-//#define WIPE_JSON 1
 /// uncomment to print system info in debug statement
 //#define PRINT_SYSINFO 1
 
@@ -78,13 +76,6 @@ int main(int argc, char* argv[]) {
 // removes saved controllers and app settings
 #ifdef WIPE_QSETTINGS
     settings.clear();
-#endif
-
-// removes saved groups of devices
-#ifdef WIPE_JSON
-    GroupsParser* parser = new GroupsParser();
-    parser->removeAppData();
-    delete parser;
 #endif
 
     //--------------------

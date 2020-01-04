@@ -20,48 +20,78 @@ namespace cor {
 class Controller {
 public:
     /// constructor
-    Controller() = default;
+    Controller() : Controller("INVALID", ECommType::MAX) {}
 
-    /// name of controller
-    QString name;
+    /// constructor
+    Controller(QString name, ECommType type)
+        : mName{std::move(name)},
+          mType{type},
+          mMaxHardwareIndex{1},
+          mIsUsingCRC{false},
+          mMaxPacketSize(1000),
+          mMajorAPI{0},
+          mMinorAPI{0} {}
 
-    /// maximum number of devices controller can control
-    int maxHardwareIndex = 1;
+    Controller(QString name,
+               ECommType type,
+               bool usingCRC,
+               int maxHardwareIndex,
+               std::uint32_t maxPacketSize,
+               std::uint32_t majorAPI,
+               std::uint32_t minorAPI,
+               std::uint32_t capabilities,
+               const std::vector<QString> names,
+               const std::vector<ELightHardwareType> hardwareTypes)
+        : cor::Controller(name, type) {
+        mIsUsingCRC = usingCRC;
+        mMaxHardwareIndex = maxHardwareIndex;
+        mMaxPacketSize = maxPacketSize;
+        mMajorAPI = majorAPI;
+        mMinorAPI = minorAPI;
+        mHardwareCapabilities = capabilities;
+        mNames = names;
+        mHardwareTypes = hardwareTypes;
+    }
 
-    /// true if using CRC and appending to packets, false otherwise
-    bool isUsingCRC = false;
+    /// getter for name
+    const QString& name() const noexcept { return mName; }
 
-    /// max number of bytes for a packet.
-    std::uint32_t maxPacketSize = 1000;
+    /// getter for type
+    ECommType type() const noexcept { return mType; }
 
-    /// major API level of controller
-    std::uint32_t majorAPI = 0;
+    /// getter for max hardware index
+    int maxHardwareIndex() const noexcept { return mMaxHardwareIndex; }
 
-    /// minor API level of controller
-    std::uint32_t minorAPI = 0;
+    /// getetr for using CRC
+    bool isUsingCRC() const noexcept { return mIsUsingCRC; }
+
+    std::uint32_t maxPacketSize() const noexcept { return mMaxPacketSize; }
+
+    /// getter for major API version
+    std::uint32_t majorAPI() const noexcept { return mMajorAPI; }
+
+    /// getter for minor API version
+    std::uint32_t minorAPI() const noexcept { return mMinorAPI; }
 
     /// capabilities of hardware (0 is arduino-level with no added capabilities)
-    std::uint32_t hardwareCapabilities;
-
-    /// type of controller
-    ECommType type;
+    std::uint32_t hardwareCapabilities() const noexcept { return mHardwareCapabilities; }
 
     /// names of hardware connected to this controller
-    std::vector<QString> names;
+    const std::vector<QString>& names() const noexcept { return mNames; }
 
     /// hardware types for the controller's lights
-    std::vector<ELightHardwareType> hardwareTypes;
+    const std::vector<ELightHardwareType>& hardwareTypes() const noexcept { return mHardwareTypes; }
 
     operator QString() const {
         std::stringstream tempString;
-        tempString << name.toStdString();
-        tempString << " API Level: " << majorAPI << "." << minorAPI;
-        tempString << " maxHardwareIndex: " << maxHardwareIndex;
-        tempString << " CRC: " << isUsingCRC;
-        tempString << " maxPacketSize: " << maxPacketSize;
-        uint32_t i = 0;
-        tempString << " names size: " << names.size();
-        for (auto name : names) {
+        tempString << name().toStdString();
+        tempString << " API Level: " << majorAPI() << "." << minorAPI();
+        tempString << " maxHardwareIndex: " << maxHardwareIndex();
+        tempString << " CRC: " << isUsingCRC();
+        tempString << " maxPacketSize: " << maxPacketSize();
+        std::uint32_t i = 0;
+        tempString << " names size: " << names().size();
+        for (auto name : names()) {
             tempString << " " << i << ". " << name.toStdString();
             ++i;
         }
@@ -70,20 +100,51 @@ public:
 
     bool operator==(const Controller& rhs) const {
         bool result = true;
-        if (name != rhs.name) {
+        if (name() != rhs.name()) {
             result = false;
         }
-        if (maxHardwareIndex != rhs.maxHardwareIndex) {
+        if (maxHardwareIndex() != rhs.maxHardwareIndex()) {
             result = false;
         }
-        if (isUsingCRC != rhs.isUsingCRC) {
+        if (isUsingCRC() != rhs.isUsingCRC()) {
             result = false;
         }
-        if (type != rhs.type) {
+        if (type() != rhs.type()) {
             result = false;
         }
         return result;
     }
+
+private:
+    /// name of controller
+    QString mName;
+
+    /// type of controller
+    ECommType mType;
+
+    /// maximum number of devices controller can control
+    int mMaxHardwareIndex = 1;
+
+    /// true if using CRC and appending to packets, false otherwise
+    bool mIsUsingCRC = false;
+
+    /// max number of bytes for a packet.
+    std::uint32_t mMaxPacketSize = 1000;
+
+    /// major API level
+    std::uint32_t mMajorAPI;
+
+    /// minor API level
+    std::uint32_t mMinorAPI;
+
+    /// capabilities of hardware (0 is arduino-level with no added capabilities)
+    std::uint32_t mHardwareCapabilities;
+
+    /// names of hardware connected to this controller
+    std::vector<QString> mNames;
+
+    /// hardware types for the controller's lights
+    std::vector<ELightHardwareType> mHardwareTypes;
 };
 
 /// converts a json object to a controller
@@ -99,7 +160,7 @@ namespace std {
 template <>
 struct hash<cor::Controller> {
     size_t operator()(const cor::Controller& k) const {
-        return std::hash<std::string>{}(k.name.toStdString());
+        return std::hash<std::string>{}(k.name().toStdString());
     }
 };
 } // namespace std

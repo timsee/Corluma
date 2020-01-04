@@ -70,32 +70,24 @@ public:
 
     /*!
      * \brief saveNewMood save a new mood
-     *
-     * \param roomName name of new room
-     * \param lights lights in the mood
-     * \param defaultStates the default state of groups and rooms in the mood
      */
-    void saveNewMood(const QString& roomName,
-                     const std::vector<cor::Light>& lights,
-                     const std::vector<std::pair<std::uint64_t, cor::Light>>& defaultStates);
+    void saveNewMood(const cor::Mood& mood);
 
     /*!
      * \brief saveNewGroup save a new group of devices to JSON data, which then gets saved to file
      * in AppData.
      *
-     * \param groupName name of group to save.
-     * \param devices devices in new group.
+     * \param group new group to save
      */
-    void saveNewGroup(const QString& groupName, const std::vector<cor::Light>& devices);
+    void saveNewGroup(const cor::Group& group);
 
     /*!
      * \brief saveNewRoom save a new room of devices to JSON data, which then gets saved to file
      * in AppData.
      *
-     * \param roomName name of room to save.
-     * \param devices devices in new room.
+     * \param room new room to save
      */
-    void saveNewRoom(const QString& roomName, const std::vector<cor::Light>& devices);
+    void saveNewRoom(const cor::Room& room);
 
 
     /*!
@@ -103,10 +95,10 @@ public:
      * has this name, nothing happens and it returns false. If a group does have this name, it is
      * removed and this is saved to JSON which is then saved to AppData
      *
-     * \param groupName name of group
+     * \param ID of the group/mood
      * \return true if a group is removed, false if nothing happens.
      */
-    bool removeGroup(const QString& groupName);
+    bool removeGroup(std::uint64_t uniqueID);
 
     /// checks if a file can be read by GroupDate::loadExternalData(const QString&)
     bool checkIfValidJSON(const QString& file);

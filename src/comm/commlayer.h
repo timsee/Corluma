@@ -72,11 +72,10 @@ public:
 
     /*!
      * \brief removeConnection attempt to remove a controller to the hash table
-     * \param type the type of connection it is
      * \param connection the name of the controller
      * \return true if controller is removed, false othewrise.
      */
-    bool removeController(ECommType type, const cor::Controller& controller);
+    bool removeController(const cor::Controller& controller);
 
     /*!
      * \brief fillDevice use the controller name, type, and index to fill in the rest
@@ -100,13 +99,13 @@ public:
     bool discoveryErrorsExist(EProtocolType type);
 
     /*!
-     * \brief deviceTable a hash table of all connected devices of a certain connection type. The
-     * controller names are used as keys.
+     * \brief deviceTable dictionary of all connected devices of a certain connection type. The
+     * light names are used as keys.
      * \param type the communication type to request.
      * \return a hash table of all connected devices of the given type.
      */
-    const cor::Dictionary<cor::Light>& deviceTable(ECommType type) {
-        return commByType(type)->deviceTable();
+    const cor::Dictionary<cor::Light>& lightDict(ECommType type) {
+        return commByType(type)->lightDict();
     }
 
     /*!
@@ -123,6 +122,10 @@ public:
     /// looks up a light by its unique ID and returns its metadata and current state
     cor::Light lightByID(const QString& ID);
 
+    /// takes the unique ID's of the lights provided, and returns their state according to comm
+    /// updates
+    std::vector<cor::Light> commLightsFromVector(const std::vector<cor::Light>& lights);
+
     /// creates a list of lights and their current state based off of a group.
     std::vector<cor::Light> lightListFromGroup(const cor::Group& group);
 
@@ -130,7 +133,7 @@ public:
     cor::Dictionary<cor::Light> makeMood(const cor::Mood& mood);
 
     /// list of all devices from all comm types
-    std::vector<cor::Light> allDevices();
+    std::vector<cor::Light> allLights();
 
     /// list containing all arduino based cor::Controllers
     const std::vector<cor::Controller> allArduinoControllers();

@@ -129,6 +129,8 @@ SOURCES += main.cpp \
     comm/datasynchue.cpp \
     comm/datasyncarduino.cpp \
     comm/datasyncnanoleaf.cpp \
+    comm/nanoleaf/leaflight.cpp \
+    comm/nanoleaf/leaflightinfowidget.cpp \
     comm/upnpdiscovery.cpp \
     colorpicker/colorpicker.cpp \
     colorpicker/rgbsliders.cpp \
@@ -142,6 +144,7 @@ SOURCES += main.cpp \
     colorpicker/singlecolorpicker.cpp \
     colorpicker/multicolorpicker.cpp \
     colorpicker/schemegenerator.cpp \
+    cor/lightlist.cpp \
     discovery/discoverywidget.cpp \
     discovery/discoveryhuewidget.cpp \
     discovery/discoverynanoleafwidget.cpp \
@@ -153,7 +156,6 @@ SOURCES += main.cpp \
     cor/jsonsavedata.cpp \
     cor/widgets/lightvectorwidget.cpp \
     cor/listlayout.cpp \
-    cor/devicelist.cpp \
     cor/widgets/groupbutton.cpp \
     comm/hue/bridgeinfowidget.cpp \
     comm/hue/lightdiscovery.cpp \
@@ -164,9 +166,7 @@ SOURCES += main.cpp \
     comm/hue/bridgescheduleswidget.cpp \
     comm/hue/huegroupwidget.cpp \
     comm/hue/hueschedulewidget.cpp \
-    comm/nanoleaf/leafcontroller.cpp \
     comm/nanoleaf/leafdiscovery.cpp \
-    comm/nanoleaf/leafcontrollerinfowidget.cpp \
     comm/syncstatus.cpp \
     editgrouppage.cpp \
     editpage.cpp \
@@ -231,6 +231,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     comm/datasyncarduino.h \
     comm/datasyncnanoleaf.h \
     comm/nanoleaf/leaflight.h \
+    comm/nanoleaf/leaflightinfowidget.h \
     comm/upnpdiscovery.h \
     colorpicker/colorpicker.h \
     colorpicker/rgbsliders.h \
@@ -244,6 +245,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     colorpicker/singlecolorpicker.h \
     colorpicker/multicolorpicker.h \
     colorpicker/schemegenerator.h \
+    cor/lightlist.h \
     cor/objects/room.h \
     discovery/discoverywidget.h \
     discovery/discoveryhuewidget.h \
@@ -254,7 +256,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     cor/range.h \
     cor/presetpalettes.h \
     cor/jsonsavedata.h \
-    cor/devicelist.h \
     cor/listlayout.h \
     cor/dictionary.h \
     editgrouppage.h \
@@ -273,9 +274,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     comm/hue/hueschedulewidget.h \
     comm/nanoleaf/panels.h \
     comm/nanoleaf/rhythmcontroller.h \
-    comm/nanoleaf/leafcontroller.h \
     comm/nanoleaf/leafdiscovery.h \
-    comm/nanoleaf/leafcontrollerinfowidget.h \
     comm/nanoleaf/leafdate.h \
     comm/nanoleaf/leafschedule.h \
     comm/nanoleaf/leafaction.h \

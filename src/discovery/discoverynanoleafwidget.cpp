@@ -41,15 +41,15 @@ void DiscoveryNanoLeafWidget::handleDiscovery(bool) {
     // starts discovery if its not already started
     mComm->nanoleaf()->discovery()->startDiscovery();
 
-    const auto& foundNanoleafs = mComm->nanoleaf()->discovery()->foundControllers().items();
-    const auto& notFoundNanoleafs = mComm->nanoleaf()->discovery()->notFoundControllers();
+    const auto& foundNanoleafs = mComm->nanoleaf()->discovery()->foundLights().items();
+    const auto& notFoundNanoleafs = mComm->nanoleaf()->discovery()->notFoundLights();
 
     for (const auto& nanoleaf : foundNanoleafs) {
-        mSearchWidget->addToConnectedList(nanoleaf.name);
+        mSearchWidget->addToConnectedList(nanoleaf.name());
     }
 
     for (const auto& nanoleaf : notFoundNanoleafs) {
-        mSearchWidget->addToSearchList(nanoleaf.name);
+        mSearchWidget->addToSearchList(nanoleaf.name());
     }
 
     ENanoleafDiscoveryState discoveryState = mComm->nanoleaf()->discovery()->state();
@@ -102,15 +102,14 @@ void DiscoveryNanoLeafWidget::minusButtonClicked() {}
 
 bool DiscoveryNanoLeafWidget::doesNanoLeafExist(const QString& controller) {
     bool deviceFound = false;
-    for (const auto& discoveredController :
-         mComm->nanoleaf()->discovery()->foundControllers().items()) {
-        if (discoveredController.name == controller) {
+    for (const auto& discoveredController : mComm->nanoleaf()->discovery()->foundLights().items()) {
+        if (discoveredController.name() == controller) {
             deviceFound = true;
         }
     }
 
-    for (auto&& unDiscoveredController : mComm->nanoleaf()->discovery()->notFoundControllers()) {
-        if (unDiscoveredController.name == controller) {
+    for (const auto& unDiscoveredController : mComm->nanoleaf()->discovery()->notFoundLights()) {
+        if (unDiscoveredController.name() == controller) {
             deviceFound = true;
         }
     }

@@ -54,10 +54,10 @@ CommArduCor::CommArduCor(QObject* parent) : QObject(parent) {
     // make list of not found devices
     for (const auto& controller : mDiscovery->undiscoveredControllers()) {
         int i = 1;
-        for (const auto& name : controller.names) {
+        for (const auto& name : controller.names()) {
             ArduCorLight light(name, controller, i);
             ++i;
-            commByType(controller.type)->addLight(light);
+            commByType(controller.type())->addLight(light);
         }
     }
 
@@ -77,7 +77,7 @@ bool CommArduCor::preparePacketForTransmission(const cor::Controller& controller
     }
 
     // add CRC, if in use
-    if (controller.isUsingCRC) {
+    if (controller.isUsingCRC()) {
         packet = packet + "#" + QString::number(mCRC.calculate(packet)) + "&";
     }
     return shouldReset;
@@ -87,21 +87,21 @@ void CommArduCor::sendPacket(const cor::Controller& controller, QString& payload
     // add CRC, check if should reset state updates.
     bool shouldResetStateTimeout = preparePacketForTransmission(controller, payload);
 
-    if (controller.type == ECommType::HTTP) {
+    if (controller.type() == ECommType::HTTP) {
         mHTTP->sendPacket(controller, payload);
         if (shouldResetStateTimeout) {
             mHTTP->resetStateUpdateTimeout();
         }
     }
 #ifndef MOBILE_BUILD
-    else if (controller.type == ECommType::serial) {
+    else if (controller.type() == ECommType::serial) {
         mSerial->sendPacket(controller, payload);
         if (shouldResetStateTimeout) {
             mSerial->resetStateUpdateTimeout();
         }
     }
 #endif
-    else if (controller.type == ECommType::UDP) {
+    else if (controller.type() == ECommType::UDP) {
         mUDP->sendPacket(controller, payload);
         if (shouldResetStateTimeout) {
             mUDP->resetStateUpdateTimeout();
@@ -150,7 +150,7 @@ std::vector<cor::Light> CommArduCor::lights() {
 #endif
                                         ECommType::UDP};
     for (auto type : commTypes) {
-        for (const auto& storedLight : commByType(type)->deviceTable().items()) {
+        for (const auto& storedLight : commByType(type)->lightDict().items()) {
             lights.push_back(storedLight);
         }
     }
@@ -181,7 +181,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
 
     // Turn vector of strings into vector of vector of ints
     std::vector<std::vector<int>> intVectors;
-    for (auto&& parsedPacket : packetVector) {
+    for (const auto& parsedPacket : packetVector) {
         std::vector<int> intVector;
         std::istringstream input(parsedPacket);
         std::string number;
@@ -197,11 +197,11 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
     //------------------
     // Check for CRC
     //------------------
-    cor::Controller controller;
-    bool success = mDiscovery->findControllerByControllerName(sender, controller);
-    if (success && (packet.length() > 0)) {
+    auto result = mDiscovery->findControllerByControllerName(sender);
+    auto controller = result.first;
+    if (result.second && (packet.length() > 0)) {
         // check if it should use CRC
-        if (controller.isUsingCRC) {
+        if (controller.isUsingCRC()) {
             QStringList crcPacketList = packet.split("#");
             if (crcPacketList.size() == 2) {
                 // compute CRC
@@ -223,7 +223,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
         }
         // qDebug() << "the sender: " << sender << "packet:" << packet << "type:" <<
         // commTypeToString(type);
-        for (auto&& intVector : intVectors) {
+        for (const auto& intVector : intVectors) {
             if (intVector.size() > 2) {
                 if (intVector[0] < int(EPacketHeader::MAX)) {
                     auto packetHeader = EPacketHeader(intVector[0]);
@@ -234,13 +234,13 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                         std::vector<ArduCorLight> deviceList;
                         if (index != 0) {
                             auto device =
-                                ArduCorLight(controller.names[index - 1], controller, index);
+                                ArduCorLight(controller.names()[index - 1], controller, index);
                             commByType(type)->fillDevice(device);
                             deviceList.push_back(device);
                         } else {
                             // get a list of devices for this controller
                             std::vector<ArduCorLight> lights;
-                            const auto& deviceTable = commByType(type)->deviceTable();
+                            const auto& deviceTable = commByType(type)->lightDict();
                             for (const auto& light : deviceTable.items()) {
                                 if (light.controller() == sender) {
                                     lights.push_back(arduCorLightFromLight(light));
@@ -282,7 +282,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                     device.timeout(intVector[x + 10]);
                                     device.minutesUntilTimeout(intVector[x + 11]);
 
-                                    device.version(controller.majorAPI, controller.minorAPI);
+                                    device.version(controller.majorAPI(), controller.minorAPI());
 
                                     commByType(type)->updateLight(device);
 

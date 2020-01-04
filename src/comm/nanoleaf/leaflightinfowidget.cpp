@@ -4,7 +4,7 @@
  * Released under the GNU General Public License.
  */
 
-#include "comm/nanoleaf/leafcontrollerinfowidget.h"
+#include "comm/nanoleaf/leaflightinfowidget.h"
 
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
@@ -17,36 +17,35 @@
 
 namespace nano {
 
-LeafControllerInfoWidget::LeafControllerInfoWidget(nano::LeafController controller, QWidget* parent)
+LeafLightInfoWidget::LeafLightInfoWidget(const nano::LeafLight& light, QWidget* parent)
     : QWidget(parent),
       mHideDetails{true},
+      mLight{light},
       mTypeIcon(new QLabel(this)) {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     setStyleSheet(styleSheet);
 
-    mController = controller;
-
-    mName = new EditableFieldWidget(controller.name,
+    mName = new EditableFieldWidget(mLight.name(),
                                     this,
                                     28,
-                                    "A controller's name must be at most 28 characters long.");
+                                    "A lights's name must be at most 28 characters long.");
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mName->setFontPointSize(14);
     connect(mName, SIGNAL(updatedField(QString)), this, SLOT(nameChanged(QString)));
 
-    mIPAdress = new QLabel("<i> " + controller.IP + "</i>", this);
+    mIPAdress = new QLabel("<i> " + mLight.IP() + "</i>", this);
     mIPAdress->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mIPAdress->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mFirmware = new QLabel("<b>Firmware</b> " + controller.firmware, this);
+    mFirmware = new QLabel("<b>Firmware</b> " + mLight.firmware(), this);
     mFirmware->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mFirmware->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mSerialNumber = new QLabel("<b>Serial:</b> " + controller.serialNumber, this);
+    mSerialNumber = new QLabel("<b>Serial:</b> " + mLight.serialNumber(), this);
     mSerialNumber->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mSerialNumber->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mModelID = new QLabel("<b>Model:</b>  " + controller.model, this);
+    mModelID = new QLabel("<b>Model:</b>  " + mLight.model(), this);
     mModelID->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mModelID->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
@@ -61,43 +60,43 @@ LeafControllerInfoWidget::LeafControllerInfoWidget(nano::LeafController controll
     mMainLayout->addWidget(mSerialNumber);
     mMainLayout->addWidget(mModelID);
 
-    mKey = controller.serialNumber;
+    mKey = mLight.serialNumber();
 
     mIsChecked = false;
     hideDetails(true);
 }
 
-void LeafControllerInfoWidget::updateController(nano::LeafController controller) {
+void LeafLightInfoWidget::updateLight(const nano::LeafLight& light) {
     // many fields such as the mac address and the type of light won't update, only check the fields
     // that do
-    if (controller.name != mController.name) {
-        mName->setText(controller.name);
+    if (light.name() != mLight.name()) {
+        mName->setText(light.name());
     }
 
-    if (controller.serialNumber != mController.serialNumber) {
-        mSerialNumber->setText("<b>Serial:</b>  " + controller.serialNumber);
+    if (light.serialNumber() != mLight.serialNumber()) {
+        mSerialNumber->setText("<b>Serial:</b>  " + light.serialNumber());
     }
 
-    mController = controller;
+    mLight = light;
 }
 
-void LeafControllerInfoWidget::mouseReleaseEvent(QMouseEvent*) {
+void LeafLightInfoWidget::mouseReleaseEvent(QMouseEvent*) {
     emit clicked(mKey);
 }
 
-void LeafControllerInfoWidget::setChecked(bool checked) {
+void LeafLightInfoWidget::setChecked(bool checked) {
     mIsChecked = checked;
     update();
 }
 
-void LeafControllerInfoWidget::hideDetails(bool shouldHide) {
+void LeafLightInfoWidget::hideDetails(bool shouldHide) {
     mModelID->setHidden(shouldHide);
     mSerialNumber->setHidden(shouldHide);
     mFirmware->setHidden(shouldHide);
     mHideDetails = shouldHide;
 }
 
-void LeafControllerInfoWidget::resize() {
+void LeafLightInfoWidget::resize() {
     QSize size(mName->height(), mName->height());
     mTypeIcon->setFixedSize(size);
     mTypePixmap = lightHardwareTypeToPixmap(ELightHardwareType::nanoleaf);
@@ -108,13 +107,12 @@ void LeafControllerInfoWidget::resize() {
     mTypeIcon->setPixmap(mTypePixmap);
 }
 
-void LeafControllerInfoWidget::resizeEvent(QResizeEvent*) {
+void LeafLightInfoWidget::resizeEvent(QResizeEvent*) {
     resize();
 }
 
 
-void LeafControllerInfoWidget::paintEvent(QPaintEvent* event) {
-    Q_UNUSED(event);
+void LeafLightInfoWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);

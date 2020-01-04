@@ -12,7 +12,7 @@
 #include "cor/protocols.h"
 #include "utils/color.h"
 
-DataSyncArduino::DataSyncArduino(cor::DeviceList* data, CommLayer* comm, AppSettings* appSettings) {
+DataSyncArduino::DataSyncArduino(cor::LightList* data, CommLayer* comm, AppSettings* appSettings) {
     mData = data;
     mComm = comm;
     mAppSettings = appSettings;
@@ -54,7 +54,7 @@ void DataSyncArduino::resetSync() {
     if (mCleanupTimer->isActive()) {
         mCleanupTimer->stop();
     }
-    if (!mData->devices().empty()) {
+    if (!mData->lights().empty()) {
         mDataIsInSync = false;
         mStartTime = QTime::currentTime();
         if (!mSyncTimer->isActive()) {
@@ -67,7 +67,7 @@ void DataSyncArduino::syncData() {
     if (!mDataIsInSync) {
         mMessages.clear();
         int countOutOfSync = 0;
-        for (const auto& device : mData->devices()) {
+        for (const auto& device : mData->lights()) {
             cor::Light commLayerDevice = device;
             if (device.protocol() == EProtocolType::arduCor) {
                 if (mComm->fillDevice(commLayerDevice)) {
@@ -99,8 +99,8 @@ void DataSyncArduino::syncData() {
             QString finalPacket = createPacket(controller, allMessages);
 
             mComm->arducor()->sendPacket(controller, finalPacket);
-            for (const auto& name : controller.names) {
-                resetThrottle(name, controller.type);
+            for (const auto& name : controller.names()) {
+                resetThrottle(name, controller.type());
             }
         }
 
@@ -119,7 +119,7 @@ void DataSyncArduino::syncData() {
         mDataIsInSync = true;
     }
 
-    if (mDataIsInSync || mData->devices().empty()) {
+    if (mDataIsInSync || mData->lights().empty()) {
         endOfSync();
     }
 }
@@ -127,11 +127,11 @@ void DataSyncArduino::syncData() {
 void DataSyncArduino::simplifyPackets(const cor::Controller& controller,
                                       std::vector<QString>& allMessages) {
     // count number of packets for each of the headers
-    if (controller.maxHardwareIndex != 1) {
+    if (controller.maxHardwareIndex() != 1) {
         std::vector<int> packetCount(int(EPacketHeader::MAX), 0);
         // rest of packet
         std::vector<QString> restOfPacket(int(EPacketHeader::MAX), QString(""));
-        for (auto&& message : allMessages) {
+        for (const auto& message : allMessages) {
             // qDebug() << "\t" << message;
             QStringList packetArray = message.split(",");
             if (packetArray.size() > 1) {
@@ -150,7 +150,7 @@ void DataSyncArduino::simplifyPackets(const cor::Controller& controller,
 
         std::size_t i = 0;
         for (auto count : packetCount) {
-            if (count == controller.maxHardwareIndex) {
+            if (count == controller.maxHardwareIndex()) {
                 auto iterator = allMessages.begin();
                 while (iterator != allMessages.end()) {
                     QStringList packetArray = iterator->split(",");
@@ -173,8 +173,8 @@ void DataSyncArduino::simplifyPackets(const cor::Controller& controller,
 const QString DataSyncArduino::createPacket(const cor::Controller& controller,
                                             const std::vector<QString>& allMessages) {
     QString finalPacket;
-    for (auto&& message : allMessages) {
-        if (int(finalPacket.size() + message.size()) < int(controller.maxPacketSize - 16)) {
+    for (const auto& message : allMessages) {
+        if (int(finalPacket.size() + message.size()) < int(controller.maxPacketSize() - 16)) {
             finalPacket.append(message + "&");
         }
     }
@@ -196,8 +196,9 @@ void DataSyncArduino::endOfSync() {
 
 bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& commDevice) {
     int countOutOfSync = 0;
-    cor::Controller controller;
-    if (!mComm->arducor()->discovery()->findControllerByDeviceName(commDevice.name(), controller)) {
+    auto result = mComm->arducor()->discovery()->findControllerByDeviceName(commDevice.name());
+    auto controller = result.first;
+    if (!result.second) {
         return false;
     }
     auto arduCorLight = mComm->arducor()->arduCorLightFromLight(inputDevice);
@@ -210,7 +211,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
 
     if (dataDevice.isOn() != commDevice.isOn()) {
         QString message = mParser->turnOnPacket(arduCorLight.index(), dataDevice.isOn());
-        appendToPacket(packet, message, controller.maxPacketSize);
+        appendToPacket(packet, message, controller.maxPacketSize());
         countOutOfSync++;
         //        qDebug() << "ON/OFF not in sync" << dataDevice.isOn << " for " << commDevice.name
         //                 << " out of sync is " << countOutOfSync;
@@ -267,7 +268,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
                     QString message =
                         mParser->brightnessPacket(arduCorLight.index(),
                                                   int(dataDevice.color().valueF() * 100.0));
-                    appendToPacket(packet, message, controller.maxPacketSize);
+                    appendToPacket(packet, message, controller.maxPacketSize());
                 }
             } else {
                 routineObject["palette"] = dataDevice.palette().JSON();
@@ -280,7 +281,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
                     // vs " << dataDevice.palette.brightness();
                     QString message = mParser->brightnessPacket(arduCorLight.index(),
                                                                 dataDevice.palette().brightness());
-                    appendToPacket(packet, message, controller.maxPacketSize);
+                    appendToPacket(packet, message, controller.maxPacketSize());
                     countOutOfSync++;
                 }
             }
@@ -292,7 +293,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
                 }
             }
             QString message = mParser->routinePacket(arduCorLight.index(), routineObject);
-            appendToPacket(packet, message, controller.maxPacketSize);
+            appendToPacket(packet, message, controller.maxPacketSize());
             countOutOfSync++;
         }
     }
@@ -307,7 +308,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
             QString message =
                 mParser->changeCustomArraySizePacket(arduCorLight.index(),
                                                      int(commDevice.palette().colors().size()));
-            appendToPacket(packet, message, controller.maxPacketSize);
+            appendToPacket(packet, message, controller.maxPacketSize());
             countOutOfSync++;
         }
 
@@ -326,7 +327,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
                 QString message = mParser->arrayColorChangePacket(arduCorLight.index(),
                                                                   int(i),
                                                                   dataDevice.palette().colors()[i]);
-                appendToPacket(packet, message, controller.maxPacketSize);
+                appendToPacket(packet, message, controller.maxPacketSize());
                 countOutOfSync++;
             }
         }
@@ -341,7 +342,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
             //            qDebug() << "time out not in sync" << commDevice.timeout << " vs "
             //                     << mAppSettings->timeout() << commDevice;
             QString message = mParser->timeoutPacket(arduCorLight.index(), mAppSettings->timeout());
-            appendToPacket(packet, message, std::uint32_t(controller.maxPacketSize));
+            appendToPacket(packet, message, controller.maxPacketSize());
             countOutOfSync++;
         }
     } else {
@@ -349,7 +350,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
         if (arduCorLight.timeout() != 0) {
             // qDebug() << "time out not disabled!" << commDevice.timeout;
             QString message = mParser->timeoutPacket(arduCorLight.index(), 0);
-            appendToPacket(packet, message, std::uint32_t(controller.maxPacketSize));
+            appendToPacket(packet, message, controller.maxPacketSize());
             countOutOfSync++;
         }
     }

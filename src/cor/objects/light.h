@@ -41,14 +41,13 @@ public:
           mPalette("", std::vector<QColor>(1, QColor(0, 0, 0)), 50),
           mCustomPalette(paletteToString(EPalette::custom), cor::defaultCustomColors(), 50),
           mCustomCount{5},
-          mLastUpdateTime{0},
           mSpeed{100},
           mParam{std::numeric_limits<int>::min()},
           mTemperature{200} {}
 
-    /// setter for controller name. Should be used sparingly, since some lookup operatins use the
-    /// controller's name.
-    void controller(const QString& controller) { mController = controller; }
+
+    /// true if valid light, false if not
+    bool isValid() const { return uniqueID() != cor::Light().uniqueID(); }
 
     /// sets the name of the light
     void name(const QString& name) { mName = name; }
@@ -59,8 +58,15 @@ public:
     /// getter for hardware type
     ELightHardwareType hardwareType() const noexcept { return mHardwareType; }
 
-    /// sets the hardware type
-    void hardwareType(ELightHardwareType type) { mHardwareType = type; }
+    /*!
+     * \brief copyMetadata takes the data that is used in displaying lights, and copies it from one
+     * light to another.
+     */
+    void copyMetadata(const cor::Light& metadata) {
+        mName = metadata.name();
+        mHardwareType = metadata.hardwareType();
+        mController = metadata.controller();
+    }
 
     /// true if on, false if off
     bool isOn() const noexcept { return mIsOn; }
@@ -106,12 +112,6 @@ public:
 
     /// setter for the custom color count
     void customCount(std::uint32_t count) { mCustomCount = count; }
-
-    /// getter for last update time
-    qint64 lastUpdateTime() const noexcept { return mLastUpdateTime; }
-
-    /// setter for last update time
-    void lastUpdateTime(std::uint32_t time) { mLastUpdateTime = time; }
 
     /// getter for speed of routines that use it
     int speed() const noexcept { return mSpeed; }
@@ -214,8 +214,6 @@ public:
         return QString::fromStdString(tempString.str());
     }
 
-    /// true if valid light, false if not
-    bool isValid() const { return uniqueID() != cor::Light().uniqueID(); }
 
 protected:
     /// type of hardware for a light (lightbulb, LED, cube, etc.)
@@ -285,9 +283,6 @@ private:
 
     /// slight hack for app memory, custom count of colors used by ArduCor are stored here.
     std::uint32_t mCustomCount;
-
-    /// used by not reachable checks to determine if a light is reachable
-    qint64 mLastUpdateTime;
 
     /*!
      * \brief speed speed of updates to lighting routines.

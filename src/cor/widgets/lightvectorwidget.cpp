@@ -106,7 +106,7 @@ void LightVectorWidget::toggleArrayColor() {
 }
 
 void LightVectorWidget::enableButtonInteraction(bool enable) {
-    for (auto&& button : mArrayColorsButtons) {
+    for (const auto& button : mArrayColorsButtons) {
         button->setAttribute(Qt::WA_TransparentForMouseEvents, !enable);
     }
 }

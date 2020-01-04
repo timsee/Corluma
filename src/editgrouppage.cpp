@@ -13,7 +13,8 @@ void EditGroupPage::showGroup(const cor::Group& group,
                               const std::vector<cor::Light>& lights,
                               bool isRoom) {
     mOriginalGroup = group;
-    mNewGroup = group;
+    mNewName = group.name();
+    mNewLights = groupLights;
     mOriginalLights = groupLights;
     mIsRoomOriginal = isRoom;
     mIsRoom = isRoom;
@@ -29,11 +30,11 @@ void EditGroupPage::showGroup(const cor::Group& group,
 }
 
 bool EditGroupPage::checkForChanges() {
-    if (mNewGroup.name().isEmpty()) {
+    if (mNewName.isEmpty()) {
         return false;
     }
 
-    if (mNewGroup.name() != mOriginalGroup.name()) {
+    if (mNewName != mOriginalGroup.name()) {
         return true;
     }
 
@@ -84,16 +85,14 @@ bool EditGroupPage::saveChanges() {
     //---------------------------------
     // check if group has a name, at least one device, and all valid devices.
     //---------------------------------
-    QString newName = mNewGroup.name();
     QString originalName = mOriginalGroup.name();
 
     bool nameIsValid = false;
-    if (!newName.isEmpty() && (newName != "zzzAVAIALBLE_DEVICES")) {
+    if (!mNewName.isEmpty() && (mNewName != "zzzAVAIALBLE_DEVICES")) {
         nameIsValid = true;
     } else {
         qDebug() << "WARNING: attempting to save a group without a valid name";
     }
-    // TODO: verify only a name has changed, act accordingly
 
     //--------------------------------
     // Create a list of devices
@@ -111,7 +110,7 @@ bool EditGroupPage::saveChanges() {
     }
 
     if (!nameIsValid || !devicesAreValid) {
-        qDebug() << "Not saving this group: " << newName;
+        qDebug() << "Not saving this group: " << mNewName;
         qDebug() << "---------------------";
         for (auto& device : newDevices) {
             qDebug() << device;
@@ -138,7 +137,7 @@ bool EditGroupPage::saveChanges() {
             // loop through all collections
             for (const auto& collection : mGroups->rooms().items()) {
                 // ignore the existing room and non-rooms
-                if (collection.name() != newName) {
+                if (collection.name() != mNewName) {
                     for (const auto& lightID : collection.lights()) {
                         if (lightID == device.uniqueID()) {
                             passesChecks = false;
@@ -163,13 +162,25 @@ bool EditGroupPage::saveChanges() {
     // Save if passing checks
     //---------------------------------
     // remove group
-    mGroups->removeGroup(originalName);
+    mGroups->removeGroup(mOriginalGroup.uniqueID());
 
-    if (mIsRoom) {
-        mGroups->saveNewRoom(newName, newDevices);
-    } else {
-        mGroups->saveNewGroup(newName, newDevices);
+    // split hues from group
+    std::vector<QString> nonHueLights;
+    for (const auto& light : newDevices) {
+        if (light.protocol() != EProtocolType::hue) {
+            nonHueLights.push_back(light.uniqueID());
+        }
     }
+
+    // make a group to save into app data that isn't hue
+    if (mIsRoom) {
+        cor::Room nonHueRoom(mGroups->generateNewUniqueKey(), mNewName, nonHueLights, {});
+        mGroups->saveNewRoom(nonHueRoom);
+    } else {
+        cor::Group nonHueGroup(mGroups->generateNewUniqueKey(), mNewName, nonHueLights);
+        mGroups->saveNewGroup(nonHueGroup);
+    }
+
     // convert any group devices to Hue Lights, if applicable.
     std::vector<HueLight> hueLights;
     for (const auto& device : newDevices) {
@@ -184,16 +195,29 @@ bool EditGroupPage::saveChanges() {
             auto hueGroups = mComm->hue()->groups(bridge);
             bool groupExists = false;
             for (const auto& group : hueGroups) {
-                if (group.name() == newName) {
+                if (group.name() == mNewName) {
                     groupExists = true;
                     mComm->hue()->updateGroup(bridge, group, hueLights);
                 }
             }
             if (!groupExists) {
-                mComm->hue()->createGroup(bridge, newName, hueLights, mIsRoom);
+                mComm->hue()->createGroup(bridge, mNewName, hueLights, mIsRoom);
             }
         }
     }
 
     return true;
+}
+
+void EditGroupPage::deletePressed(bool) {
+    QMessageBox::StandardButton reply;
+    auto name = mOriginalGroup.name();
+    QString text("Delete the " + name + " group?");
+    reply = QMessageBox::question(this, "Delete?", text, QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::Yes) {
+        mGroups->removeGroup(mOriginalGroup.uniqueID());
+        // delete from hue bridge, if applicable.
+        mComm->deleteHueGroup(name);
+        emit pressedClose();
+    }
 }

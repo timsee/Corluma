@@ -7,7 +7,7 @@
 #include <QWidget>
 
 #include "comm/commlayer.h"
-#include "cor/devicelist.h"
+#include "cor/lightlist.h"
 #include "cor/objects/page.h"
 #include "floatinglayout.h"
 
@@ -34,7 +34,7 @@ public:
      * Constructor
      */
     explicit DiscoveryPage(QWidget* parent,
-                           cor::DeviceList* data,
+                           cor::LightList* data,
                            CommLayer* layer,
                            AppSettings* appSettings);
 
@@ -130,7 +130,7 @@ private:
      * \brief data layer that maintains and tracks the states of the lights
      *        and the saved data of the GUI
      */
-    cor::DeviceList* mData;
+    cor::LightList* mData;
 
     /// moves floating layouts to top right position of screen.
     void moveFloatingLayouts();

@@ -7,7 +7,7 @@
 
 #include "addnewgroupbutton.h"
 #include "comm/commlayer.h"
-#include "cor/devicelist.h"
+#include "cor/lightlist.h"
 #include "groupdata.h"
 #include "lefthandbutton.h"
 #include "listroomwidget.h"
@@ -28,9 +28,9 @@ class LeftHandMenu : public QWidget {
 public:
     /// constructor
     LeftHandMenu(bool alwaysOpen,
-                 cor::DeviceList* selectedLights,
+                 cor::LightList* selectedLights,
                  CommLayer* comm,
-                 cor::DeviceList* lights,
+                 cor::LightList* lights,
                  GroupData* groups,
                  QWidget* parent);
 
@@ -147,7 +147,7 @@ private:
     QTimer* mRenderThread;
 
     /// list of selected lights
-    cor::DeviceList* mSelectedLights;
+    cor::LightList* mSelectedLights;
 
     /// palette that shows the currently selected devices
     cor::LightVectorWidget* mMainPalette;
@@ -159,7 +159,7 @@ private:
     CommLayer* mComm;
 
     /// list of current lights, used to update UI
-    cor::DeviceList* mData;
+    cor::LightList* mData;
 
     /// pointer to group data
     GroupData* mGroups;

@@ -40,12 +40,12 @@ PresetPalettes::PresetPalettes()
 
     mAverageColors = std::vector<QColor>(std::uint32_t(EPalette::unknown), QColor(0, 0, 0));
     uint32_t i = 0;
-    for (auto&& palette : mPalettes) {
+    for (const auto& palette : mPalettes) {
         int r = 0;
         int g = 0;
         int b = 0;
 
-        for (auto&& color : palette.colors()) {
+        for (const auto& color : palette.colors()) {
             r = r + color.red();
             g = g + color.green();
             b = b + color.blue();

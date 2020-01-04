@@ -190,7 +190,7 @@ void ArduCorPacketParser::parsePacket(const QString& packet) {
     }
 
 
-    for (auto&& intVector : messageList) {
+    for (const auto& intVector : messageList) {
         bool validPacket = true;
         if (intVector.size() > 1) {
             switch (EPacketHeader(intVector[0])) {

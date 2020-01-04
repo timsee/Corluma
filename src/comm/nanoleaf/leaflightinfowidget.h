@@ -1,11 +1,11 @@
-#ifndef NANOLEAFCONTROLLERINFOWIDGET_H
-#define NANOLEAFCONTROLLERINFOWIDGET_H
+#ifndef NANOLEAFLIGHTINFOWIDGET_H
+#define NANOLEAFLIGHTINFOWIDGET_H
 
 #include <QLabel>
 #include <QLayout>
 #include <QWidget>
 
-#include "comm/nanoleaf/leafcontroller.h"
+#include "comm/nanoleaf/leaflight.h"
 #include "cor/protocols.h"
 #include "editablefieldwidget.h"
 
@@ -18,24 +18,24 @@ namespace nano {
  */
 
 /*!
- * \brief The LeafControllerInfoWidget class is a widget made to be displayed in lists
+ * \brief The LeafLightInfoWidget class is a widget made to be displayed in lists
  * that contains the name of a light and much of its hardware information such
  * as its model number and software version. The user can also edit the name of
  * light from this widget. If an edit is made, this widget signals out the new name
  * for it to be sent to the bridge.
  */
-class LeafControllerInfoWidget : public QWidget {
+class LeafLightInfoWidget : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit LeafControllerInfoWidget(nano::LeafController controller, QWidget* parent);
+    explicit LeafLightInfoWidget(const nano::LeafLight& light, QWidget* parent);
 
     /*!
-     * \brief updateController update the controller used internally to fill the widget
+     * \brief updateLight update the light used internally to fill the widget
      *
-     * \param light new data for the controller.
+     * \param light new data for the light.
      */
-    void updateController(nano::LeafController controller);
+    void updateLight(const nano::LeafLight& light);
 
     /*!
      * \brief hideDetails true to show only the basic details of a widget, false
@@ -61,8 +61,8 @@ public:
     /// getter for the key of the widget.
     const QString& key() { return mKey; }
 
-    /// getter for LeafController being represented.
-    nano::LeafController controller() { return mController; }
+    /// getter for LeafLight being represented.
+    nano::LeafLight light() { return mLight; }
 
     /// true if details are hidden, false otherwise
     bool detailsHidden() { return mHideDetails; }
@@ -134,8 +134,8 @@ private:
     /// displays the serial number of the nanoleaf.
     QLabel* mSerialNumber;
 
-    /// stored data for the controller being displayed by this widget.
-    nano::LeafController mController;
+    /// stored data for the light being displayed by this widget.
+    nano::LeafLight mLight;
 
     /// pixmap for the type.
     QPixmap mTypePixmap;
@@ -152,4 +152,4 @@ private:
 
 } // namespace nano
 
-#endif // NANOLEAFCONTROLLERINFOWIDGET_H
+#endif // NANOLEAFLIGHTINFOWIDGET_H

@@ -33,18 +33,11 @@ public:
                    const std::vector<cor::Light>& lights,
                    bool isRoom);
 
-
-    /// @copydoc EditPage::deleteMessages()
-    std::pair<QString, QString> deleteMessages() override {
-        auto name = mOriginalGroup.name();
-        return std::make_pair(name, "Delete the " + name + " group?");
-    }
-
     /// @copydoc EditPage::reset()
     void reset() override { mSimpleGroupWidget->setCheckedDevices(mOriginalLights); }
 
     /// @copydoc EditPage::changeName(const QString&)
-    void changeName(const QString& name) override { mNewGroup.name(name); }
+    void changeName(const QString& name) override { mNewName = name; }
 
     /// @copydoc EditPage::checkForChanges()
     bool checkForChanges() override;
@@ -56,12 +49,18 @@ private slots:
     /// updates when the isRoom checkbox is checked
     void isRoomChecked(bool);
 
+    /// delete button is pressed
+    void deletePressed(bool) override;
+
 private:
     /// original group state
     cor::Group mOriginalGroup;
 
-    /// group that gets modified
-    cor::Group mNewGroup;
+    /// name of the new group
+    QString mNewName;
+
+    /// vector of lights for the new group
+    std::vector<cor::Light> mNewLights;
 
     /// stores if originally using a room
     bool mIsRoomOriginal;

@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QTimer>
 
-#include "comm/nanoleaf/leafcontroller.h"
+#include "comm/nanoleaf/leaflight.h"
 #include "comm/upnpdiscovery.h"
 #include "cor/dictionary.h"
 #include "cor/jsonsavedata.h"
@@ -42,8 +42,8 @@ public:
     /// constructor
     explicit LeafDiscovery(QObject* parent, uint32_t discoveryInterval);
 
-    /// add new fully found controller
-    void foundNewController(nano::LeafController newController);
+    /// add new fully found light
+    void foundNewLight(nano::LeafLight light);
 
     /// start discovery
     void startDiscovery();
@@ -51,72 +51,66 @@ public:
     /// stop discovery
     void stopDiscovery();
 
-    /// true if the provided controller is fully connected, false otherwise
-    bool isControllerConnected(const nano::LeafController& controller);
+    /// true if the provided light is fully connected, false otherwise
+    bool isLightConnected(const nano::LeafLight& light);
 
-    /// used for manual discovery, add an IP to the unknownControllers list
+    /// used for manual discovery, add an IP to the unknowLights list
     void addIP(const QString& ip);
 
-    /// find a nano::LeafController based off of its IP
-    nano::LeafController findControllerByIP(const QString& IP);
+    /// find a nano::LeafLight based off of its IP
+    nano::LeafLight findLightByIP(const QString& IP);
 
     /// removes the nanoleaf from the save data and discovered data
-    void removeNanoleaf(const nano::LeafController& light);
+    void removeNanoleaf(const nano::LeafLight& light);
 
-    /*!
-     * \brief findControllerBySerial finds a controller by its serial number
-     * \param serialNumber serial number of the controller
-     * \param leafController controller to fill with relevant info
-     * \return true if found, false if not
-     */
-    bool findControllerBySerial(const QString& serialNumber, nano::LeafController& leafController);
+    std::pair<nano::LeafLight, bool> findLightsBySerial(const QString& serialNumber);
 
     /// update stored data about a found device
-    void updateFoundDevice(const nano::LeafController& controller);
+    void updateFoundLight(const nano::LeafLight& light);
 
     /// getter for state
     ENanoleafDiscoveryState state();
 
     /*!
-     * \brief foundNewAuthToken a nano::LeafController has found a new auth token packet, combine
+     * \brief foundNewAuthToken a nano::LeafLight has found a new auth token packet, combine
      * them and spur on testing that auth token
-     * \param newController the controller that found the auth token packet
+     * \param newLight the light that found the auth token packet
      * \param authToken the auth token provided in the packet
      */
-    void foundNewAuthToken(const nano::LeafController& newController, const QString& authToken);
+    void foundNewAuthToken(const nano::LeafLight& newLight, const QString& authToken);
 
-    /// getter for list of found controllers
-    const cor::Dictionary<nano::LeafController>& foundControllers() { return mFoundControllers; }
+    /// getter for list of found lights
+    const cor::Dictionary<nano::LeafLight>& foundLights() { return mFoundLights; }
 
-    /// getter for list of not found controllers
-    const std::vector<nano::LeafController>& notFoundControllers() { return mNotFoundControllers; }
+    /// getter for list of not found lights
+    const std::vector<nano::LeafLight>& notFoundLights() { return mNotFoundLights; }
 
     /// connects the UPnP object to the nanoleaf object.
     void connectUPnP(UPnPDiscovery* upnp);
 
-    /// updates the json connection data based off of the provided controller, overwriting any
+    /// updates the json connection data based off of the provided lights, overwriting any
     /// previous data
-    void updateJSON(const nano::LeafController& controller);
+    void updateJSON(const nano::LeafLight& light);
 
 private slots:
     /// all received UPnP packets are piped here to detect if they nanoleaf related
     void receivedUPnP(const QHostAddress& sender, const QString& payload);
 
-    /// runs discovery routines on unknown and not found controller lists
+    /// runs discovery routines on unknown and not found light lists
     void discoveryRoutine();
 
     /// slot for when the startup timer times out
     void startupTimerTimeout();
 
 private:
-    /// list of all unknown controllers added via manual discovery or via UPnP
-    std::vector<nano::LeafController> mUnknownControllers;
+    /// list of all unknown lights added via manual discovery or via UPnP
+    std::vector<nano::LeafLight> mUnknownLights;
 
-    /// list of all controllers that have previously been used, but currently are not found
-    std::vector<nano::LeafController> mNotFoundControllers;
+    /// list of all lights that have previously been used, but currently are not found
+    std::vector<nano::LeafLight> mNotFoundLights;
 
-    /// list of all controllers that have been verified and can be communicated with
-    cor::Dictionary<nano::LeafController> mFoundControllers;
+    /// list of all lights that have been verified and can be communicated with
+    cor::Dictionary<nano::LeafLight> mFoundLights;
 
     /// timer for running the discovery routine
     QTimer* mDiscoveryTimer;

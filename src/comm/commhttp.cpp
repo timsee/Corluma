@@ -34,7 +34,7 @@ void CommHTTP::shutdown() {
 
 void CommHTTP::sendPacket(const cor::Controller& controller, QString& packet) {
     // send packet over HTTP
-    QString urlString = "http://" + controller.name + "/arduino/" + packet;
+    QString urlString = "http://" + controller.name() + "/arduino/" + packet;
     QNetworkRequest request = QNetworkRequest(QUrl(urlString));
     // qDebug() << "sending" << urlString;
     mNetworkManager->get(request);
@@ -46,14 +46,14 @@ void CommHTTP::stateUpdate() {
             QString packet =
                 QString("%1&").arg(QString::number(int(EPacketHeader::stateUpdateRequest)));
             // add CRC, if in use
-            if (controller.isUsingCRC) {
+            if (controller.isUsingCRC()) {
                 packet = packet + "#" + QString::number(mCRC.calculate(packet)) + "&";
             }
             sendPacket(controller, packet);
             if ((mStateUpdateCounter % mSecondaryUpdatesInterval) == 0) {
                 QString customArrayUpdateRequest = QString("%1&").arg(
                     QString::number(int(EPacketHeader::customArrayUpdateRequest)));
-                if (controller.isUsingCRC) {
+                if (controller.isUsingCRC()) {
                     customArrayUpdateRequest =
                         customArrayUpdateRequest + "#"
                         + QString::number(mCRC.calculate(customArrayUpdateRequest)) + "&";
@@ -69,7 +69,7 @@ void CommHTTP::stateUpdate() {
 
 void CommHTTP::testForController(const cor::Controller& controller) {
     QString urlString =
-        "http://" + controller.name + "/arduino/" + ArduCorDiscovery::kDiscoveryPacketIdentifier;
+        "http://" + controller.name() + "/arduino/" + ArduCorDiscovery::kDiscoveryPacketIdentifier;
     QNetworkRequest request = QNetworkRequest(QUrl(urlString));
     // qDebug() << "sending" << urlString;
     mNetworkManager->get(request);
@@ -90,10 +90,9 @@ void CommHTTP::replyFinished(QNetworkReply* reply) {
     if (reply->error() == QNetworkReply::NoError) {
         QString payload = reply->readAll().trimmed();
         // check if controller is already connected
-        cor::Controller controller;
-        bool success = mDiscovery->findControllerByControllerName(IP, controller);
+        auto result = mDiscovery->findControllerByControllerName(IP);
         bool isDiscovery = payload.contains(ArduCorDiscovery::kDiscoveryPacketIdentifier);
-        if (success && !isDiscovery) {
+        if (result.second && !isDiscovery) {
             emit packetReceived(IP, payload, mType);
         } else if (isDiscovery) {
             mDiscovery->handleIncomingPacket(mType, IP, payload);

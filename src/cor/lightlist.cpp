@@ -5,7 +5,7 @@
  */
 
 
-#include "devicelist.h"
+#include "lightlist.h"
 
 #include <QDebug>
 #include <algorithm>
@@ -17,10 +17,10 @@
 
 namespace cor {
 
-DeviceList::DeviceList(QObject* parent) : QObject(parent) {}
+LightList::LightList(QObject* parent) : QObject(parent) {}
 
 
-void DeviceList::updateRoutine(const QJsonObject& routineObject) {
+void LightList::updateRoutine(const QJsonObject& routineObject) {
     ERoutine routine = stringToRoutine(routineObject["routine"].toString());
     bool isOn = routineObject["isOn"].toBool();
 
@@ -29,7 +29,7 @@ void DeviceList::updateRoutine(const QJsonObject& routineObject) {
         speed = int(routineObject["speed"].toDouble());
     }
     int hueCount = 0;
-    for (auto&& light : mDevices) {
+    for (auto&& light : mLights) {
         light.routine(routine);
         light.isOn(isOn);
         if (routine != ERoutine::singleSolid) {
@@ -76,9 +76,9 @@ void DeviceList::updateRoutine(const QJsonObject& routineObject) {
     emit dataUpdate();
 }
 
-ERoutine DeviceList::currentRoutine() {
+ERoutine LightList::currentRoutine() {
     std::vector<int> routineCount(int(ERoutine::MAX), 0);
-    for (const auto& device : mDevices) {
+    for (const auto& device : mLights) {
         if (device.isReachable()) {
             routineCount[std::size_t(device.routine())] =
                 routineCount[std::size_t(device.routine())] + 1;
@@ -88,10 +88,10 @@ ERoutine DeviceList::currentRoutine() {
     return ERoutine(std::distance(routineCount.begin(), result));
 }
 
-Palette DeviceList::palette() {
+Palette LightList::palette() {
     // count number of times each color group occurs
     std::vector<int> paletteCount(int(EPalette::unknown), 0);
-    for (const auto& device : mDevices) {
+    for (const auto& device : mLights) {
         if (device.isReachable()) {
             paletteCount[std::uint32_t(device.palette().paletteEnum())] =
                 paletteCount[std::uint32_t(device.palette().paletteEnum())] + 1;
@@ -101,7 +101,7 @@ Palette DeviceList::palette() {
     auto result = std::max_element(paletteCount.begin(), paletteCount.end());
     EPalette palette = EPalette(std::distance(paletteCount.begin(), result));
     if (palette == EPalette::custom) {
-        for (const auto& device : mDevices) {
+        for (const auto& device : mLights) {
             if (device.palette().paletteEnum() == palette) {
                 return device.palette();
             }
@@ -109,8 +109,8 @@ Palette DeviceList::palette() {
     } else {
         // we can assume that palettes that have the same enum that aren't custom are identical. I'm
         // sure we'll regret this assumption one day...
-        if (!mDevices.empty()) {
-            for (const auto& device : mDevices) {
+        if (!mLights.empty()) {
+            for (const auto& device : mLights) {
                 if (device.palette().paletteEnum() == palette) {
                     return device.palette();
                 }
@@ -120,12 +120,12 @@ Palette DeviceList::palette() {
     return Palette(QJsonObject());
 }
 
-QColor DeviceList::mainColor() {
+QColor LightList::mainColor() {
     int r = 0;
     int g = 0;
     int b = 0;
     int deviceCount = 0;
-    for (const auto& device : mDevices) {
+    for (const auto& device : mLights) {
         if (device.isReachable()) {
             if (int(device.routine()) <= int(cor::ERoutineSingleColorEnd)) {
                 r = r + device.color().red();
@@ -153,8 +153,8 @@ QColor DeviceList::mainColor() {
 
 
 
-void DeviceList::updateSpeed(int speed) {
-    for (auto&& light : mDevices) {
+void LightList::updateSpeed(int speed) {
+    for (auto&& light : mLights) {
         int finalSpeed = 0;
         if (light.protocol() == EProtocolType::arduCor) {
             finalSpeed = speed;
@@ -166,10 +166,10 @@ void DeviceList::updateSpeed(int speed) {
     emit dataUpdate();
 }
 
-int DeviceList::speed() {
+int LightList::speed() {
     int speed = 0;
     int deviceCount = 0;
-    for (const auto& device : mDevices) {
+    for (const auto& device : mLights) {
         if (device.isReachable()) {
             speed = speed + device.speed();
             deviceCount++;
@@ -184,16 +184,16 @@ int DeviceList::speed() {
 
 
 
-void DeviceList::turnOn(bool on) {
-    for (auto&& light : mDevices) {
+void LightList::turnOn(bool on) {
+    for (auto&& light : mLights) {
         light.isOn(on);
     }
     emit dataUpdate();
 }
 
-bool DeviceList::isOn() {
+bool LightList::isOn() {
     // if any is on, return true
-    for (const auto& device : mDevices) {
+    for (const auto& device : mLights) {
         if (device.isOn()) {
             return true;
         }
@@ -202,13 +202,13 @@ bool DeviceList::isOn() {
 }
 
 
-void DeviceList::updateColorScheme(std::vector<QColor> colors) {
+void LightList::updateColorScheme(std::vector<QColor> colors) {
     auto i = 0u;
     // NOTE: this doesn't work entirely as intended. arduCor should be handled the same as nanoleaf,
     // however, sending tons of custom color updates to arducor ends up spamming the lights comm
     // channels and only seems to reliably work on serial communication. So for now, I'm falling
     // back to treating arducor during color schemes as single color lights.
-    for (auto&& light : mDevices) {
+    for (auto&& light : mLights) {
         if (light.protocol() == EProtocolType::hue || light.protocol() == EProtocolType::arduCor) {
             light.color(colors[i]);
             light.isOn(true);
@@ -231,12 +231,12 @@ void DeviceList::updateColorScheme(std::vector<QColor> colors) {
     emit dataUpdate();
 }
 
-std::vector<QColor> DeviceList::colorScheme() {
+std::vector<QColor> LightList::colorScheme() {
     std::vector<QColor> colorScheme;
     int count = 0;
     int max = 6;
     // first check if theres just six unique colors from standard colors
-    for (const auto& device : mDevices) {
+    for (const auto& device : mLights) {
         if (count >= max) {
             break;
         }
@@ -249,7 +249,7 @@ std::vector<QColor> DeviceList::colorScheme() {
     // do second loop if 6 colors aren't found, and add any additional colors from routines
     // with multiple color options
     if (count < max) {
-        for (const auto& device : mDevices) {
+        for (const auto& device : mLights) {
             if (count >= max) {
                 break;
             }
@@ -270,8 +270,8 @@ std::vector<QColor> DeviceList::colorScheme() {
 
 
 
-void DeviceList::updateBrightness(std::uint32_t brightness) {
-    for (auto&& light : mDevices) {
+void LightList::updateBrightness(std::uint32_t brightness) {
+    for (auto&& light : mLights) {
         if (light.routine() <= cor::ERoutineSingleColorEnd) {
             QColor color;
             color.setHsvF(light.color().hueF(), light.color().saturationF(), brightness / 100.0);
@@ -288,10 +288,10 @@ void DeviceList::updateBrightness(std::uint32_t brightness) {
 }
 
 
-int DeviceList::brightness() {
+int LightList::brightness() {
     int brightness = 0;
     int deviceCount = 0;
-    for (const auto& device : mDevices) {
+    for (const auto& device : mLights) {
         if (device.isReachable()) {
             if (device.routine() <= cor::ERoutineSingleColorEnd) {
                 brightness += int(device.color().valueF() * 100.0);
@@ -310,19 +310,21 @@ int DeviceList::brightness() {
 
 
 
-bool DeviceList::clearDevices() {
-    if (!mDevices.empty()) {
-        mDevices.clear();
+bool LightList::clearLights() {
+    if (!mLights.empty()) {
+        mLights.clear();
     }
     return true;
 }
 
-bool DeviceList::removeDevice(const cor::Light& device) {
-    for (const auto& light : mDevices) {
-        if (device.uniqueID() == light.uniqueID()) {
-            auto it = std::find(mDevices.begin(), mDevices.end(), device);
-            mDevices.erase(it);
-            return true;
+bool LightList::removeLight(const cor::Light& removingLight) {
+    for (auto i = 0u; i < mLights.size(); ++i) {
+        if (removingLight.uniqueID() == mLights[i].uniqueID()) {
+            auto it = mLights.begin() + i;
+            if (it != mLights.end()) {
+                mLights.erase(it);
+                return true;
+            }
         }
     }
     return false;
@@ -331,9 +333,9 @@ bool DeviceList::removeDevice(const cor::Light& device) {
 
 
 
-bool DeviceList::addDevice(cor::Light device) {
+bool LightList::addLight(cor::Light device) {
     if (device.isReachable()) {
-        for (auto&& light : mDevices) {
+        for (auto&& light : mLights) {
             // light already exists, update it
             if (light.uniqueID() == device.uniqueID()) {
                 light = device;
@@ -342,7 +344,7 @@ bool DeviceList::addDevice(cor::Light device) {
             }
         }
         // device doesn't exist, add it to the device
-        mDevices.push_back(device);
+        mLights.push_back(device);
         emit dataUpdate();
     }
     return false;
@@ -351,51 +353,40 @@ bool DeviceList::addDevice(cor::Light device) {
 
 
 
-bool DeviceList::addDeviceList(const std::vector<cor::Light>& list) {
+bool LightList::addLights(const std::vector<cor::Light>& list) {
     for (const auto& device : list) {
         if (device.isReachable()) {
-            addDevice(device);
+            addLight(device);
         }
     }
     emit dataUpdate();
     return true;
 }
 
-bool DeviceList::removeDeviceList(const std::vector<cor::Light>& list) {
+bool LightList::removeLights(const std::vector<cor::Light>& list) {
     for (const auto& device : list) {
-        removeDevice(device);
+        removeLight(device);
     }
     emit dataUpdate();
     return true;
 }
 
 
-int DeviceList::removeDevicesOfType(EProtocolType type) {
+int LightList::removeLightOfType(EProtocolType type) {
     std::vector<cor::Light> removeList;
-    for (const auto& light : mDevices) {
+    for (const auto& light : mLights) {
         if (type == light.protocol()) {
             removeList.push_back(light);
         }
     }
     for (auto&& device : removeList) {
-        removeDevice(device);
+        removeLight(device);
     }
-    return int(mDevices.size());
+    return int(mLights.size());
 }
 
-int DeviceList::countDevicesOfType(EProtocolType type) {
-    int count = 0;
-    for (const auto& light : mDevices) {
-        if (type == light.protocol()) {
-            count++;
-        }
-    }
-    return count;
-}
-
-
-bool DeviceList::doesDeviceExist(const cor::Light& device) {
-    for (const auto& storedDevice : mDevices) {
+bool LightList::doesLightExist(const cor::Light& device) {
+    for (const auto& storedDevice : mLights) {
         if (device.uniqueID() == storedDevice.uniqueID()) {
             return true;
         }
@@ -404,8 +395,8 @@ bool DeviceList::doesDeviceExist(const cor::Light& device) {
 }
 
 
-bool DeviceList::hasLightWithProtocol(EProtocolType protocol) const noexcept {
-    for (const auto& light : mDevices) {
+bool LightList::hasLightWithProtocol(EProtocolType protocol) const noexcept {
+    for (const auto& light : mLights) {
         if (light.protocol() == protocol) {
             return true;
         }
@@ -413,12 +404,12 @@ bool DeviceList::hasLightWithProtocol(EProtocolType protocol) const noexcept {
     return false;
 }
 
-cor::Group DeviceList::findCurrentGroup(const std::vector<cor::Group>& groups) {
+cor::Group LightList::findCurrentGroup(const std::vector<cor::Group>& groups) {
     // count number of lights in each collection currently selected
     std::vector<std::uint32_t> lightCount(groups.size(), 0);
     auto index = 0u;
     for (const auto& collection : groups) {
-        for (const auto& device : mDevices) {
+        for (const auto& device : mLights) {
             for (const auto& collectionID : collection.lights()) {
                 if (collectionID == device.uniqueID()) {
                     ++lightCount[index];
@@ -477,9 +468,9 @@ cor::Group DeviceList::findCurrentGroup(const std::vector<cor::Group>& groups) {
     return {};
 }
 
-std::uint64_t DeviceList::findCurrentMood(const cor::Dictionary<cor::Mood>& moods) {
+std::uint64_t LightList::findCurrentMood(const cor::Dictionary<cor::Mood>& moods) {
     for (const auto& mood : moods.items()) {
-        if (mDevices == mood.lights()) {
+        if (mLights == mood.lights()) {
             return mood.uniqueID();
         }
     }
@@ -487,9 +478,9 @@ std::uint64_t DeviceList::findCurrentMood(const cor::Dictionary<cor::Mood>& mood
 }
 
 
-std::size_t DeviceList::lightCount() {
+std::size_t LightList::lightCount() {
     std::size_t count = 0u;
-    for (const auto& light : mDevices) {
+    for (const auto& light : mLights) {
         if (light.protocol() == EProtocolType::hue) {
             count += 1;
         } else if (light.protocol() == EProtocolType::arduCor) {

@@ -50,22 +50,22 @@ void LightInfoScrollArea::updateHues(std::vector<HueLight> lights) {
     }
 }
 
-void LightInfoScrollArea::updateControllers(std::vector<nano::LeafController> controllers) {
-    for (auto controller : controllers) {
+void LightInfoScrollArea::updateNanoLeafs(const std::vector<nano::LeafLight>& lights) {
+    for (auto light : lights) {
         // check if light already exists in list
         int widgetIndex = -1;
         int i = 0;
         for (auto widget : mNanoleafWidgets) {
-            if (widget->controller().serialNumber == controller.serialNumber) {
+            if (widget->light().serialNumber() == light.serialNumber()) {
                 widgetIndex = i;
-                widget->updateController(controller);
+                widget->updateLight(light);
             }
             ++i;
         }
         // if it doesnt exist, add it
         if (widgetIndex == -1) {
-            nano::LeafControllerInfoWidget* widget =
-                new nano::LeafControllerInfoWidget(controller, mScrollAreaWidget);
+            nano::LeafLightInfoWidget* widget =
+                new nano::LeafLightInfoWidget(light, mScrollAreaWidget);
             widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(clickedLight(QString)));
             connect(widget,
@@ -79,7 +79,7 @@ void LightInfoScrollArea::updateControllers(std::vector<nano::LeafController> co
 }
 
 
-void LightInfoScrollArea::updateLights(const std::vector<ArduCorLight>& lights) {
+void LightInfoScrollArea::updateAruCorLights(const std::vector<ArduCorLight>& lights) {
     for (const auto& light : lights) {
         // check if light already exists in list
         int widgetIndex = -1;

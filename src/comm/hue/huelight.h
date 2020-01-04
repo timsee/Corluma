@@ -110,7 +110,7 @@ inline EHueType checkForHueWithMostFeatures(std::vector<HueLight> lights) {
     std::uint32_t whiteCount = 0;
     std::uint32_t rgbCount = 0;
     // check for all devices
-    for (auto&& hue : lights) {
+    for (const auto& hue : lights) {
         // check if its a hue
         if (hue.hueType() == EHueType::extended || hue.hueType() == EHueType::color) {
             rgbCount++;

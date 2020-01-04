@@ -51,20 +51,6 @@ void EditPage::updateDevices(const std::vector<cor::Light>& checkedDevices,
 // Slots
 // ----------------------------
 
-void EditPage::deletePressed(bool) {
-    QMessageBox::StandardButton reply;
-    auto messages = deleteMessages();
-    QString name = messages.first;
-    QString text = messages.second;
-    reply = QMessageBox::question(this, "Delete?", text, QMessageBox::Yes | QMessageBox::No);
-    if (reply == QMessageBox::Yes) {
-        mGroups->removeGroup(name);
-        // delete from hue bridge, if applicable.
-        mComm->deleteHueGroup(name);
-        emit pressedClose();
-    }
-}
-
 void EditPage::closePressed(bool) {
     if (checkForChanges()) {
         QMessageBox::StandardButton reply;

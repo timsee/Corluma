@@ -54,9 +54,6 @@ public:
     /// pushes out the widget
     void pushOut();
 
-    /// returns a pair of messages used for showing a delete message
-    virtual std::pair<QString, QString> deleteMessages() = 0;
-
     /// resets any changes made in the edit page
     virtual void reset() = 0;
 
@@ -110,7 +107,7 @@ private slots:
      * \brief deletePressed delete button is pressed, this removes the group from the application's
      * save data.
      */
-    void deletePressed(bool);
+    virtual void deletePressed(bool) = 0;
 
     /*!
      * \brief savePressed save button is pressed on edit page.
