@@ -622,3 +622,11 @@ ___
 - Fixed miscellaneous bugs.
 
 
+### **v0.17.57**
+#### The Bug Fixes and Metadata Update
+- Added a unique `HueMetadata`, `LeafMetadata`, and `ArduCorMetadata` class, each with their own API. These are used during discovery and to store light-specific information such as firmware version or hardware type.
+- Fixed miscellaneous discovery bugs.
+- Fixed bugs with the `SyncWidget`.
+- Fixed issues with reachability changes breaking UI.
+- Fixed miscellaneous bugs. 
+

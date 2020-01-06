@@ -5,7 +5,7 @@
 #include <QJsonObject>
 #include <QWidget>
 
-#include "comm/arducor/arducorlight.h"
+#include "comm/arducor/arducormetadata.h"
 #include "cor/protocols.h"
 
 /*!

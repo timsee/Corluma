@@ -376,14 +376,14 @@ void BridgeDiscovery::parseInitialUpdate(const hue::Bridge& bridge, const QJsonD
             lightsObject = object["lights"].toObject();
             QStringList keys = lightsObject.keys();
             QJsonArray lightsArray;
-            std::vector<HueLight> lights;
+            std::vector<HueMetadata> lights;
             for (auto& key : keys) {
                 if (lightsObject.value(key).isObject()) {
                     QJsonObject innerObject = lightsObject.value(key).toObject();
                     if (innerObject["uniqueid"].isString() && innerObject["name"].isString()) {
                         double index = key.toDouble();
 
-                        HueLight hueLight(innerObject, bridge.id, index);
+                        HueMetadata hueLight(innerObject, bridge.id, index);
                         lights.push_back(hueLight);
 
                         QJsonObject lightObject;
@@ -397,16 +397,14 @@ void BridgeDiscovery::parseInitialUpdate(const hue::Bridge& bridge, const QJsonD
                 }
             }
 
-            // create dictionary from lights
-            std::vector<std::pair<std::string, HueLight>> hueLights;
-            hueLights.reserve(lights.size());
+
+            cor::Dictionary<HueMetadata> lightDict;
             for (const auto& light : lights) {
-                hueLights.emplace_back(light.uniqueID().toStdString(), light);
+                lightDict.insert(light.uniqueID().toStdString(), light);
             }
 
             auto bridgeResult = mFoundBridges.item(bridge.id.toStdString());
             if (bridgeResult.second) {
-                cor::Dictionary<HueLight> lightDict(hueLights);
                 auto foundBridge = bridgeResult.first;
                 foundBridge.lights = lightDict;
                 mFoundBridges.update(foundBridge.id.toStdString(), foundBridge);
@@ -418,11 +416,17 @@ void BridgeDiscovery::parseInitialUpdate(const hue::Bridge& bridge, const QJsonD
                 QJsonObject schedulesObject = object["schedules"].toObject();
                 QJsonObject groupsObject = object["groups"].toObject();
                 auto bridgeCopy = bridge;
-                bridgeCopy.lights = hueLights;
+                bridgeCopy.lights = lightDict;
                 mHue->bridgeDiscovered(bridgeCopy, lightsObject, groupsObject, schedulesObject);
             }
         }
     }
+}
+
+void BridgeDiscovery::updateLight(const HueMetadata& light) {
+    auto bridge = bridgeFromLight(light);
+    bridge.lights.update(light.uniqueID().toStdString(), light);
+    mFoundBridges.update(bridge.id.toStdString(), bridge);
 }
 
 
@@ -508,7 +512,7 @@ bool BridgeDiscovery::doesIPExistInSearchingLists(const QString& IP) {
 }
 
 
-HueLight BridgeDiscovery::lightFromBridgeIDAndIndex(const QString& bridgeID, int index) {
+HueMetadata BridgeDiscovery::lightFromBridgeIDAndIndex(const QString& bridgeID, int index) {
     const auto& bridgeResult = mFoundBridges.item(bridgeID.toStdString());
     if (bridgeResult.second) {
         auto foundBridge = bridgeResult.first;
@@ -521,7 +525,7 @@ HueLight BridgeDiscovery::lightFromBridgeIDAndIndex(const QString& bridgeID, int
     return {};
 }
 
-hue::Bridge BridgeDiscovery::bridgeFromLight(const HueLight& light) {
+hue::Bridge BridgeDiscovery::bridgeFromLight(const HueMetadata& light) {
     for (auto foundBridge : mFoundBridges.items()) {
         auto lightResult = foundBridge.lights.key(light);
         if (lightResult.second) {
@@ -540,8 +544,8 @@ hue::Bridge BridgeDiscovery::bridgeFromIP(const QString& IP) {
     return {};
 }
 
-std::vector<HueLight> BridgeDiscovery::lights() {
-    std::vector<HueLight> lights;
+std::vector<HueMetadata> BridgeDiscovery::lights() {
+    std::vector<HueMetadata> lights;
     for (const auto& bridge : mFoundBridges.items()) {
         auto itemCopy = bridge.lights.items();
         lights.insert(lights.end(), itemCopy.begin(), itemCopy.end());

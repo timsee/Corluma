@@ -16,7 +16,7 @@
 
 namespace hue {
 
-HueInfoWidget::HueInfoWidget(HueLight light, QWidget* parent)
+HueInfoWidget::HueInfoWidget(HueMetadata light, QWidget* parent)
     : QWidget(parent),
       mHideDetails{false},
       mLight(light),
@@ -66,7 +66,7 @@ HueInfoWidget::HueInfoWidget(HueLight light, QWidget* parent)
     resize();
 }
 
-void HueInfoWidget::updateLight(HueLight light) {
+void HueInfoWidget::updateLight(HueMetadata light) {
     // many fields such as the mac address and the type of light won't update, only check the fields
     // that do
     if (light.name() != mLight.name()) {

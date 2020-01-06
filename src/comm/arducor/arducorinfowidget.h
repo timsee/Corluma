@@ -5,7 +5,7 @@
 #include <QLabel>
 #include <QWidget>
 
-#include "comm/arducor/arducorlight.h"
+#include "comm/arducor/arducormetadata.h"
 
 /*!
  * \copyright
@@ -18,13 +18,13 @@ class ArduCorInfoWidget : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit ArduCorInfoWidget(ArduCorLight light, QWidget* parent);
+    explicit ArduCorInfoWidget(ArduCorMetadata light, QWidget* parent);
 
     /*!
      * \brief updateLight update the light used internally to fill the widget
      * \param light new data for the light.
      */
-    void updateLight(ArduCorLight light);
+    void updateLight(ArduCorMetadata light);
 
     /*!
      * \brief hideDetails true to show only the basic details of a widget, false
@@ -48,8 +48,8 @@ public:
     /// getter for the key of the widget.
     const QString& key() { return mKey; }
 
-    /// getter for cor::Light being represented.
-    cor::Light light() { return mLight; }
+    /// getter for ArduCorMetadata being represented.
+    ArduCorMetadata metadata() { return mMetadata; }
 
     /// true if details are hidden, false otherwise
     bool detailsHidden() { return mHideDetails; }
@@ -103,7 +103,7 @@ private:
     QLabel* mHardwareTypeLabel;
 
     /// stored data the Light being displayed by this widget.
-    ArduCorLight mLight;
+    ArduCorMetadata mMetadata;
 
     /// pixmap for the type.
     QPixmap mTypePixmap;

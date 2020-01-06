@@ -156,6 +156,7 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup,
     } else {
         THROW_EXCEPTION("RoutinesButtonWidget is not set up to handle that widget group");
     }
+    this->setStyleSheet("background-color:rgb(33,32,32);");
 
     setLayout(mLayout);
 }

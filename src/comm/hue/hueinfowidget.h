@@ -5,7 +5,7 @@
 #include <QLayout>
 #include <QWidget>
 
-#include "comm/hue/huelight.h"
+#include "comm/hue/huemetadata.h"
 #include "comm/hue/hueprotocols.h"
 #include "editablefieldwidget.h"
 
@@ -28,14 +28,14 @@ class HueInfoWidget : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit HueInfoWidget(HueLight light, QWidget* parent);
+    explicit HueInfoWidget(HueMetadata light, QWidget* parent);
 
     /*!
      * \brief updateLight update the light used internally to fill the widget
      *
      * \param light new data for the light.
      */
-    void updateLight(HueLight light);
+    void updateLight(HueMetadata light);
 
     /*!
      * \brief hideDetails true to show only the basic details of a widget, false
@@ -62,7 +62,7 @@ public:
     const QString& key() { return mKey; }
 
     /// getter for SHueLight being represented.
-    HueLight light() { return mLight; }
+    HueMetadata light() { return mLight; }
 
     /// true if details are hidden, false otherwise
     bool detailsHidden() { return mHideDetails; }
@@ -135,7 +135,7 @@ private:
     QLabel* mSoftwareVersion;
 
     /// stored data the Hue Light being displayed by this widget.
-    HueLight mLight;
+    HueMetadata mLight;
 
     /// pixmap for the type.
     QPixmap mTypePixmap;

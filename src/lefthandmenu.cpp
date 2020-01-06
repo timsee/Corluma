@@ -189,7 +189,7 @@ void LeftHandMenu::pushOut() {
 }
 
 void LeftHandMenu::deviceCountChanged() {
-    const auto& lights = mSelectedLights->lights();
+    const auto& lights = mComm->commLightsFromVector(mSelectedLights->lights());
 
     mMainPalette->updateDevices(lights);
 
@@ -224,8 +224,10 @@ void LeftHandMenu::updateDataGroupInUI(const cor::Room& dataGroup,
         if (uiGroup.name() == dataGroup.name()) {
             existsInUIGroups = true;
             for (auto widget : mRoomWidgets) {
+                // using name so that miscellaneous groups are deleted even though the key is
+                // different
                 auto groupWidget = qobject_cast<ListRoomWidget*>(widget);
-                if (groupWidget->key() == dataGroup.name()) {
+                if (groupWidget->room().name() == dataGroup.name()) {
                     bool deleteNotFound = true;
                     groupWidget->updateRoom(dataGroup, deleteNotFound);
                 }
@@ -234,7 +236,11 @@ void LeftHandMenu::updateDataGroupInUI(const cor::Room& dataGroup,
     }
     if (!existsInUIGroups) {
         // qDebug() << "this group does not exist" << dataGroup.name();
-        initRoomsWidget(dataGroup, dataGroup.name());
+        if (dataGroup.name() == "Miscellaneous") {
+            initRoomsWidget(dataGroup, "zzzzMiscellaneous");
+        } else {
+            initRoomsWidget(dataGroup, dataGroup.name());
+        }
     }
 }
 
@@ -303,7 +309,7 @@ void LeftHandMenu::updateSingleColorButton() {
     bool hasArduino = mSelectedLights->hasLightWithProtocol(EProtocolType::arduCor);
     if (hasHue && !hasArduino) {
         auto devices = mSelectedLights->lights();
-        std::vector<HueLight> hues;
+        std::vector<HueMetadata> hues;
         for (auto& device : devices) {
             if (device.protocol() == EProtocolType::hue) {
                 hues.push_back(mComm->hue()->hueLightFromLight(device));

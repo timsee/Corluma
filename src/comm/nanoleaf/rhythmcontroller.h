@@ -1,6 +1,7 @@
 #ifndef RHYTHMCONTROLLER_H
 #define RHYTHMCONTROLLER_H
 
+#include <QJsonObject>
 #include <QString>
 
 namespace nano {
@@ -16,32 +17,75 @@ namespace nano {
  */
 class RhythmController {
 public:
-    /// Constructor
-    RhythmController() : isConnected{false}, isActive{false}, auxAvailable{false} {}
+    RhythmController() : mIsConnected{false} {}
+
+    /// constructor
+    RhythmController(const QJsonObject& object) {
+        mIsConnected = object["rhythmConnected"].toBool();
+        if (mIsConnected) {
+            if (object["rhythmActive"].isBool() && object["rhythmId"].isString()
+                && object["hardwareVersion"].isString() && object["firmwareVersion"].isString()
+                && object["auxAvailable"].isBool() && object["rhythmMode"].isString()
+                && object["rhythmPos"].isString()) {
+                mIsActive = object["rhythmActive"].toBool();
+                mID = object["rhythmId"].toString();
+                mHardwareVersion = object["hardwareVersion"].toString();
+                mFirmwareVersion = object["firmwareVersion"].toString();
+                mAuxAvailable = object["auxAvailable"].toBool();
+                mMode = object["rhythmMode"].toString();
+                mPosition = object["rhythmPos"].toString();
+            }
+        }
+    }
 
     /// true if connected, false otherwise. If this is false, other values may be null.
-    bool isConnected;
+    bool isConnected() const noexcept { return mIsConnected; }
 
     /// true if active, false otherwise
-    bool isActive;
+    bool isActive() const noexcept { return mIsActive; }
 
     /// ID for the Rhythm Controller
-    QString ID;
+    const QString& ID() const noexcept { return mID; }
 
     /// hardware version
-    QString hardwareVersion;
+    const QString& hardwareVersion() const noexcept { return mHardwareVersion; }
 
     /// current firmware version
-    QString firmwareVersion;
+    const QString& firmwareVersion() const noexcept { return mFirmwareVersion; }
 
     /// true if an auxiliary input is available, false otherwise
-    bool auxAvailable;
+    bool auxAvailable() const noexcept { return mAuxAvailable; }
 
     /// current mode of Rhythm controller
-    QString mode;
+    const QString& mode() const noexcept { return mMode; }
 
     /// current position of the Rhythm controller
-    QString position;
+    const QString& position() const noexcept { return mPosition; }
+
+private:
+    /// true if connected, false otherwise. If this is false, other values may be null.
+    bool mIsConnected;
+
+    /// true if active, false otherwise
+    bool mIsActive;
+
+    /// ID for the Rhythm Controller
+    QString mID;
+
+    /// hardware version
+    QString mHardwareVersion;
+
+    /// current firmware version
+    QString mFirmwareVersion;
+
+    /// true if an auxiliary input is available, false otherwise
+    bool mAuxAvailable;
+
+    /// current mode of Rhythm controller
+    QString mMode;
+
+    /// current position of the Rhythm controller
+    QString mPosition;
 };
 
 } // namespace nano

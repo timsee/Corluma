@@ -129,8 +129,8 @@ SOURCES += main.cpp \
     comm/datasynchue.cpp \
     comm/datasyncarduino.cpp \
     comm/datasyncnanoleaf.cpp \
-    comm/nanoleaf/leaflight.cpp \
     comm/nanoleaf/leaflightinfowidget.cpp \
+    comm/nanoleaf/leafmetadata.cpp \
     comm/upnpdiscovery.cpp \
     colorpicker/colorpicker.cpp \
     colorpicker/rgbsliders.cpp \
@@ -214,7 +214,7 @@ SOURCES += main.cpp \
     lightinfoscrollarea.cpp
 
 HEADERS  +=  comm/arducor/arducordiscovery.h \
-    comm/arducor/arducorlight.h \
+    comm/arducor/arducormetadata.h \
     comm/arducor/arducorpacketparser.h \
     comm/arducor/controller.h \
     comm/arducor/arducorinfowidget.h \
@@ -230,8 +230,9 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     comm/datasynchue.h \
     comm/datasyncarduino.h \
     comm/datasyncnanoleaf.h \
-    comm/nanoleaf/leaflight.h \
+    comm/hue/huemetadata.h \
     comm/nanoleaf/leaflightinfowidget.h \
+    comm/nanoleaf/leafmetadata.h \
     comm/upnpdiscovery.h \
     colorpicker/colorpicker.h \
     colorpicker/rgbsliders.h \
@@ -264,7 +265,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     comm/hue/lightdiscovery.h \
     comm/hue/bridgediscovery.h \
     comm/hue/hueprotocols.h \
-    comm/hue/huelight.h \
     comm/hue/bridge.h \
     comm/hue/hueinfowidget.h \
     comm/hue/bridgeinfowidget.h \

@@ -182,10 +182,10 @@ bool EditGroupPage::saveChanges() {
     }
 
     // convert any group devices to Hue Lights, if applicable.
-    std::vector<HueLight> hueLights;
+    std::vector<HueMetadata> hueLights;
     for (const auto& device : newDevices) {
         if (device.commType() == ECommType::hue) {
-            HueLight hue = mComm->hue()->hueLightFromLight(device);
+            HueMetadata hue = mComm->hue()->hueLightFromLight(device);
             hueLights.push_back(hue);
         }
     }

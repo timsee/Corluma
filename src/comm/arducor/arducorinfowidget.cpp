@@ -12,10 +12,10 @@
 #include <QtCore>
 #include <QtGui>
 
-ArduCorInfoWidget::ArduCorInfoWidget(ArduCorLight light, QWidget* parent)
+ArduCorInfoWidget::ArduCorInfoWidget(ArduCorMetadata light, QWidget* parent)
     : QWidget(parent),
       mHideDetails{false},
-      mLight(light),
+      mMetadata(light),
       mTypeIcon(new QLabel(this)) {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     setStyleSheet(styleSheet);
@@ -35,8 +35,8 @@ ArduCorInfoWidget::ArduCorInfoWidget(ArduCorLight light, QWidget* parent)
     mHardwareTypeLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mHardwareTypeLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mAPILabel = new QLabel("<b>API:</b>  " + QString::number(light.majorAPI()) + "."
-                               + QString::number(light.minorAPI()),
+    mAPILabel = new QLabel("<b>API:</b>  " + QString::number(mMetadata.majorAPI()) + "."
+                               + QString::number(mMetadata.minorAPI()),
                            this);
     mAPILabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mAPILabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
@@ -58,8 +58,8 @@ ArduCorInfoWidget::ArduCorInfoWidget(ArduCorLight light, QWidget* parent)
 }
 
 
-void ArduCorInfoWidget::updateLight(ArduCorLight light) {
-    mLight = std::move(light);
+void ArduCorInfoWidget::updateLight(ArduCorMetadata light) {
+    mMetadata = std::move(light);
 }
 
 void ArduCorInfoWidget::mouseReleaseEvent(QMouseEvent*) {
@@ -84,7 +84,7 @@ void ArduCorInfoWidget::resizeEvent(QResizeEvent*) {
 void ArduCorInfoWidget::resize() {
     QSize size(mName->height(), mName->height());
     mTypeIcon->setFixedSize(size);
-    mTypePixmap = lightHardwareTypeToPixmap(mLight.hardwareType());
+    mTypePixmap = lightHardwareTypeToPixmap(mMetadata.hardwareType());
     mTypePixmap = mTypePixmap.scaled(size.width(),
                                      size.height(),
                                      Qt::IgnoreAspectRatio,

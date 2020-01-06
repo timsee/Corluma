@@ -33,7 +33,7 @@ LeafDiscovery::LeafDiscovery(QObject* parent, uint32_t interval)
     loadJSON();
 }
 
-void LeafDiscovery::foundNewAuthToken(const nano::LeafLight& newController,
+void LeafDiscovery::foundNewAuthToken(const nano::LeafMetadata& newController,
                                       const QString& authToken) {
     // check if the controller exists in the unknown group, delete if found
     for (auto&& unknownController : mUnknownLights) {
@@ -45,7 +45,7 @@ void LeafDiscovery::foundNewAuthToken(const nano::LeafLight& newController,
     }
 }
 
-void LeafDiscovery::foundNewLight(nano::LeafLight newController) {
+void LeafDiscovery::foundNewLight(nano::LeafMetadata newController) {
     // check if the controller exists in the unknown group, delete if found
     for (auto unknownController : mUnknownLights) {
         if (unknownController.hardwareName() == newController.hardwareName()) {
@@ -69,7 +69,7 @@ void LeafDiscovery::foundNewLight(nano::LeafLight newController) {
     updateJSON(newController);
 }
 
-void LeafDiscovery::removeNanoleaf(const nano::LeafLight& controllerToRemove) {
+void LeafDiscovery::removeNanoleaf(const nano::LeafMetadata& controllerToRemove) {
     bool updateJson = false;
     // check if the controller exists in the unknown group, delete if found
     for (auto unknownController : mUnknownLights) {
@@ -108,7 +108,7 @@ void LeafDiscovery::removeNanoleaf(const nano::LeafLight& controllerToRemove) {
         std::uint32_t i = 0u;
         for (auto value : array) {
             QJsonObject object = value.toObject();
-            nano::LeafLight jsonController = jsonToLeafController(object);
+            nano::LeafMetadata jsonController = jsonToLeafController(object);
             if (jsonController.serialNumber() == controllerToRemove.serialNumber()
                 || jsonController.name() == controllerToRemove.name()) {
                 array.removeAt(i);
@@ -123,50 +123,52 @@ void LeafDiscovery::removeNanoleaf(const nano::LeafLight& controllerToRemove) {
     }
 }
 
-void LeafDiscovery::receivedUPnP(const QHostAddress& sender, const QString& payload) {
-    Q_UNUSED(sender);
+void LeafDiscovery::receivedUPnP(const QHostAddress&, const QString& payload) {
     if (payload.contains("nanoleaf_aurora")) {
         // qDebug() << payload;
         QStringList paramArray = payload.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
-        nano::LeafLight controller("", "");
-        for (const auto& param : paramArray) {
+        // parse param array for parameters about the nanoleaf
+        QString ip;
+        int port = -1;
+        QString deviceName;
+        for (auto param : paramArray) {
             if (param.contains("Location: ")) {
-                auto paramCopy = param;
-                QString location = paramCopy.remove("Location: ");
+                QString location = param.remove("Location: ");
                 QStringList locationArray = location.split(QRegExp(":"), QString::SkipEmptyParts);
                 if (locationArray.size() == 3) {
-                    QString ip = locationArray[0] + ":" + locationArray[1];
+                    ip = locationArray[0] + ":" + locationArray[1];
                     bool ok;
-                    int port = locationArray[2].toInt(&ok, 10);
-                    controller.IP(ip);
-                    controller.port(port);
+                    port = locationArray[2].toInt(&ok, 10);
                 }
             }
             if (param.contains("nl-devicename: ")) {
                 auto paramCopy = param;
-                QString deviceName = paramCopy.remove("nl-devicename: ");
-                controller = nano::LeafLight("", deviceName);
+                deviceName = paramCopy.remove("nl-devicename: ");
             }
         }
+        nano::LeafMetadata light("", deviceName);
+        light.addConnectionInfo(ip, port);
+        light.name(deviceName);
+
         // search if its found already
         bool isFound = false;
         for (auto unknownController : mUnknownLights) {
             // test by IP to handle manual discovery picked up by UPnP
-            if (unknownController.IP() == controller.IP()) {
-                isFound = true;
-            }
-        }
-        // TODO: why is this hardware name and not serial number?
-        for (const auto& foundController : mFoundLights.items()) {
-            if (foundController.hardwareName() == controller.hardwareName()) {
+            if (unknownController.IP() == light.IP()) {
                 isFound = true;
             }
         }
 
-        if (!isFound
-            && (controller.IP() != "http://")) { // second check is there for an edge case where the
-                                                 // nanoleaf did not properly configure
-            mUnknownLights.push_back(controller);
+        // the light doesn't have a unique ID yet, jsut its hardware name, so look for hardawre name
+        for (const auto& foundController : mFoundLights.items()) {
+            if (foundController.hardwareName() == light.hardwareName()) {
+                isFound = true;
+            }
+        }
+
+        if (!isFound && (light.IP() != "http://")) { // second check is there for an edge case where
+                                                     // the nanoleaf did not properly configure
+            mUnknownLights.push_back(light);
         }
     }
 }
@@ -202,20 +204,60 @@ void LeafDiscovery::discoveryRoutine() {
 
     // loop through all of the unknown controllers
     if (!mUnknownLights.empty()) {
-        for (auto controller : mUnknownLights) {
-            if (controller.authToken() != "") {
-                mNanoleaf->testAuth(controller);
-            } else if (!controller.IP().isEmpty()) {
-                mNanoleaf->testIP(controller);
+        for (auto light : mUnknownLights) {
+            if (light.authToken() != "") {
+                mNanoleaf->testAuth(light);
+            } else if (!light.IP().isEmpty()) {
+                mNanoleaf->testIP(light);
             }
-            // try all not found controllers auth tokens
-            for (auto notFoundController : mNotFoundLights) {
-                if (!controller.IP().isEmpty()) {
-                    notFoundController.IP(controller.IP());
-                    mNanoleaf->testAuth(notFoundController);
+            // try all not found IPs with auth tokens
+            for (auto notFoundLight : mNotFoundLights) {
+                if (!light.IP().isEmpty()) {
+                    notFoundLight.addConnectionInfo(light.IP(), light.port());
+                    mNanoleaf->testAuth(notFoundLight);
                 }
             }
         }
+    }
+}
+std::pair<nano::LeafMetadata, bool> LeafDiscovery::handleUndiscoveredLight(
+    const nano::LeafMetadata& light,
+    const QString& payload) {
+    QJsonDocument jsonResponse = QJsonDocument::fromJson(payload.toUtf8());
+    if (light.authToken() == "") {
+        if (!jsonResponse.isNull()) {
+            if (jsonResponse.isObject()) {
+                QJsonObject object = jsonResponse.object();
+                if (object["auth_token"].isString()) {
+                    QString authToken = object["auth_token"].toString();
+                    foundNewAuthToken(light, authToken);
+                }
+            }
+        }
+        return std::make_pair(light, false);
+    } else {
+        auto object = jsonResponse.object();
+        // get connection unique keys used as connection info for the light
+        QString serialNumber;
+        QString name;
+        if (object["serialNo"].isString() && object["name"].isString()) {
+            serialNumber = object["serialNo"].toString();
+            name = object["name"].toString();
+        } else {
+            // error out, this is not the packet we're looking for
+            return std::make_pair(light, false);
+        }
+        // make a copy of the light to reference as we build a complete light
+        auto lightCopy = light;
+        nano::LeafMetadata completeLight(serialNumber, name);
+        lightCopy.updateMetadata(jsonResponse.object());
+        // update all possible variables of light
+        completeLight.addConnectionInfo(lightCopy.IP(), lightCopy.port());
+        completeLight.authToken(lightCopy.authToken());
+        completeLight.name(name);
+        // add complete light to discovery buffers
+        foundNewLight(completeLight);
+        return std::make_pair(completeLight, true);
     }
 }
 
@@ -226,53 +268,52 @@ void LeafDiscovery::addIP(const QString& ip) {
     }
     // get device count + 1 for unique naming
     auto deviceCount = int(mFoundLights.size() + mNotFoundLights.size() + 1);
-    nano::LeafLight controller("", "Nanoleaf" + QString::number(deviceCount));
-    controller.IP(ipAddr);
-    controller.port(16021);
+    nano::LeafMetadata controller("", "Nanoleaf" + QString::number(deviceCount));
+    controller.addConnectionInfo(ipAddr, 16201);
     controller.name("Nanoleaf" + QString::number(deviceCount));
     mUnknownLights.push_back(controller);
 }
 
-nano::LeafLight LeafDiscovery::findLightByIP(const QString& IP) {
+nano::LeafMetadata LeafDiscovery::findLightByIP(const QString& IP) {
     QStringList pieces = IP.split("/");
     // 7 pieces are expected for status packets
     if (pieces.size() == 7) {
-        nano::LeafLight controller("", "");
         QStringList mainIP = pieces[2].split(":");
         QString IP = "http://" + mainIP[0];
         int port = mainIP[1].toInt();
         QString auth = pieces[5];
+        QString name;
 
         bool found = false;
         for (const auto& foundController : mFoundLights.items()) {
             if (auth == foundController.authToken()) {
                 found = true;
-                controller = foundController;
+                return foundController;
             }
         }
 
         for (auto notFoundController : mNotFoundLights) {
             if (auth == notFoundController.authToken() && IP == notFoundController.IP()) {
                 found = true;
-                controller = notFoundController;
+                return notFoundController;
             }
         }
 
         if (!found) {
-            controller.IP(IP);
-            controller.port(port);
-            controller.authToken(auth);
-
+            nano::LeafMetadata light;
             // check in not found for the same auth token, if it exists take its info and add it in
             for (auto notFoundController : mNotFoundLights) {
                 if (auth == notFoundController.authToken()) {
-                    controller = nano::LeafLight(notFoundController.serialNumber(),
-                                                 notFoundController.hardwareName());
-                    controller.name(notFoundController.name());
+                    light = notFoundController;
+                    IP = notFoundController.IP();
+                    port = notFoundController.port();
                 }
             }
+            light.addConnectionInfo(IP, port);
+            light.authToken(auth);
+            light.name(name);
+            return light;
         }
-        return controller;
     }
 
     if (pieces.size() == 6) {
@@ -287,14 +328,14 @@ nano::LeafLight LeafDiscovery::findLightByIP(const QString& IP) {
             }
         }
     }
-    return nano::LeafLight();
+    return nano::LeafMetadata();
 }
 
-std::pair<nano::LeafLight, bool> LeafDiscovery::findLightsBySerial(const QString& serialNumber) {
+std::pair<nano::LeafMetadata, bool> LeafDiscovery::findLightBySerial(const QString& serialNumber) {
     return mFoundLights.item(serialNumber.toStdString());
 }
 
-void LeafDiscovery::updateFoundLight(const nano::LeafLight& controller) {
+void LeafDiscovery::updateFoundLight(const nano::LeafMetadata& controller) {
     auto result = mFoundLights.item(controller.serialNumber().toStdString());
     if (result.second) {
         mFoundLights.update(controller.serialNumber().toStdString(), controller);
@@ -327,7 +368,7 @@ void LeafDiscovery::connectUPnP(UPnPDiscovery* upnp) {
             SLOT(receivedUPnP(QHostAddress, QString)));
 }
 
-bool LeafDiscovery::isLightConnected(const nano::LeafLight& controller) {
+bool LeafDiscovery::isLightConnected(const nano::LeafMetadata& controller) {
     for (const auto& foundController : mFoundLights.items()) {
         if (foundController.IP() == controller.IP()
             && foundController.authToken() == controller.authToken()
@@ -341,7 +382,7 @@ bool LeafDiscovery::isLightConnected(const nano::LeafLight& controller) {
 
 
 
-void LeafDiscovery::updateJSON(const nano::LeafLight& controller) {
+void LeafDiscovery::updateJSON(const nano::LeafMetadata& controller) {
     // check for changes by looping through json looking for a match.
     QJsonArray array = mJsonData.array();
     bool shouldAdd = true;
@@ -349,7 +390,7 @@ void LeafDiscovery::updateJSON(const nano::LeafLight& controller) {
     int i = 0;
     for (auto value : array) {
         QJsonObject object = value.toObject();
-        nano::LeafLight jsonController = jsonToLeafController(object);
+        nano::LeafMetadata jsonController = jsonToLeafController(object);
         if ((jsonController.authToken() == controller.authToken()) && (newJsonObject != object)) {
             value = newJsonObject;
             array.removeAt(i);

@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QTimer>
 
-#include "comm/nanoleaf/leaflight.h"
+#include "comm/nanoleaf/leafmetadata.h"
 #include "comm/upnpdiscovery.h"
 #include "cor/dictionary.h"
 #include "cor/jsonsavedata.h"
@@ -42,9 +42,6 @@ public:
     /// constructor
     explicit LeafDiscovery(QObject* parent, uint32_t discoveryInterval);
 
-    /// add new fully found light
-    void foundNewLight(nano::LeafLight light);
-
     /// start discovery
     void startDiscovery();
 
@@ -52,24 +49,37 @@ public:
     void stopDiscovery();
 
     /// true if the provided light is fully connected, false otherwise
-    bool isLightConnected(const nano::LeafLight& light);
+    bool isLightConnected(const nano::LeafMetadata& light);
 
     /// used for manual discovery, add an IP to the unknowLights list
     void addIP(const QString& ip);
 
     /// find a nano::LeafLight based off of its IP
-    nano::LeafLight findLightByIP(const QString& IP);
+    nano::LeafMetadata findLightByIP(const QString& IP);
 
     /// removes the nanoleaf from the save data and discovered data
-    void removeNanoleaf(const nano::LeafLight& light);
+    void removeNanoleaf(const nano::LeafMetadata& light);
 
-    std::pair<nano::LeafLight, bool> findLightsBySerial(const QString& serialNumber);
+    /*!
+     * \brief findLightBySerial looks for the LeafMetadata of a light based off of its serial
+     * number.
+     * \param serialNumber serial number to look for
+     * \return true if the serial number exists and a proper light was returned, false if the lookup
+     * was unsucessful
+     */
+    std::pair<nano::LeafMetadata, bool> findLightBySerial(const QString& serialNumber);
 
-    /// update stored data about a found device
-    void updateFoundLight(const nano::LeafLight& light);
-
-    /// getter for state
-    ENanoleafDiscoveryState state();
+    /*!
+     * \brief handleUndiscoveredLight handles a partial LeafMetadata thats received a payload and
+     * tries to discover the light. This usually happens in multiple steps. The first time a light
+     * is added, it gets an auth token. Next, it gets all of its state information.
+     * \param light a LeafMetadata filled with all known infomation about the light
+     * \param payload information sent by the LeafMetadata
+     * \return the current state of the LeafMetadata after parsing the payload, and a bool thats
+     * true if the light is fully discovered
+     */
+    std::pair<nano::LeafMetadata, bool> handleUndiscoveredLight(const nano::LeafMetadata& light,
+                                                                const QString& payload);
 
     /*!
      * \brief foundNewAuthToken a nano::LeafLight has found a new auth token packet, combine
@@ -77,20 +87,26 @@ public:
      * \param newLight the light that found the auth token packet
      * \param authToken the auth token provided in the packet
      */
-    void foundNewAuthToken(const nano::LeafLight& newLight, const QString& authToken);
+    void foundNewAuthToken(const nano::LeafMetadata& newLight, const QString& authToken);
+
+    /// update stored data about a found device
+    void updateFoundLight(const nano::LeafMetadata& light);
+
+    /// getter for state
+    ENanoleafDiscoveryState state();
 
     /// getter for list of found lights
-    const cor::Dictionary<nano::LeafLight>& foundLights() { return mFoundLights; }
+    const cor::Dictionary<nano::LeafMetadata>& foundLights() { return mFoundLights; }
 
     /// getter for list of not found lights
-    const std::vector<nano::LeafLight>& notFoundLights() { return mNotFoundLights; }
+    const std::vector<nano::LeafMetadata>& notFoundLights() { return mNotFoundLights; }
 
     /// connects the UPnP object to the nanoleaf object.
     void connectUPnP(UPnPDiscovery* upnp);
 
     /// updates the json connection data based off of the provided lights, overwriting any
     /// previous data
-    void updateJSON(const nano::LeafLight& light);
+    void updateJSON(const nano::LeafMetadata& light);
 
 private slots:
     /// all received UPnP packets are piped here to detect if they nanoleaf related
@@ -103,14 +119,17 @@ private slots:
     void startupTimerTimeout();
 
 private:
+    /// add new fully found light
+    void foundNewLight(nano::LeafMetadata light);
+
     /// list of all unknown lights added via manual discovery or via UPnP
-    std::vector<nano::LeafLight> mUnknownLights;
+    std::vector<nano::LeafMetadata> mUnknownLights;
 
     /// list of all lights that have previously been used, but currently are not found
-    std::vector<nano::LeafLight> mNotFoundLights;
+    std::vector<nano::LeafMetadata> mNotFoundLights;
 
     /// list of all lights that have been verified and can be communicated with
-    cor::Dictionary<nano::LeafLight> mFoundLights;
+    cor::Dictionary<nano::LeafMetadata> mFoundLights;
 
     /// timer for running the discovery routine
     QTimer* mDiscoveryTimer;

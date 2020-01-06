@@ -22,37 +22,42 @@ namespace nano {
  * \brief The LeafController class holds all the data known
  *        about a NanoLeaf Auorara.
  */
-class LeafLight : public cor::Light {
+class LeafMetadata {
 public:
-    LeafLight() : cor::Light() {}
+    LeafMetadata() {}
 
     /// constructor
-    LeafLight(const QString& serial, const QString& hardware)
-        : cor::Light(serial, hardware, ECommType::nanoleaf),
-          mIP{},
+    LeafMetadata(const QString& serial, const QString& hardware)
+        : mIP{},
           mAuthToken{},
-          mPort{-1} {
-        mHardwareType = ELightHardwareType::nanoleaf;
-    }
+          mPort{-1},
+          mHardwareName{hardware},
+          mSerialNumber{serial},
+          mName{hardware} {}
 
     /// getter for serial number, unique for each light
-    const QString& serialNumber() const noexcept { return uniqueID(); }
+    const QString& serialNumber() const noexcept { return mSerialNumber; }
 
     /// getter for hardware name given to light.
-    const QString& hardwareName() const noexcept { return controller(); }
+    const QString& hardwareName() const noexcept { return mHardwareName; }
 
     //-----------
     // Metadata
     //-----------
 
-    /// getter for manufacturer of light
-    const QString& manufacturer() { return mManufacturer; }
+    const QString& manufacturer() const noexcept { return mManufacturer; }
 
     /// getter for firmware version of light
-    const QString& firmware() { return mFirmware; }
+    const QString& firmware() const noexcept { return mFirmware; }
 
     /// getter for model number of light
-    const QString& model() { return mModel; }
+    const QString& model() const noexcept { return mModel; }
+
+    /// getter for assigned name
+    const QString& name() const noexcept { return mName; }
+
+    /// setter for name
+    void name(const QString& name) { mName = name; }
 
     //-----------
     // Connection
@@ -61,8 +66,11 @@ public:
     /// getter for IP
     const QString& IP() const noexcept { return mIP; }
 
-    /// setter for IP
-    void IP(const QString& IP) { mIP = IP; }
+    /// adds connection info to an object
+    void addConnectionInfo(const QString& IP, int port) {
+        mIP = IP;
+        mPort = port;
+    }
 
     /// getter for auth token
     const QString& authToken() const noexcept { return mAuthToken; }
@@ -72,9 +80,6 @@ public:
 
     /// getter for port
     int port() const noexcept { return mPort; }
-
-    /// setter for light's port
-    void port(int port) { mPort = port; }
 
     /// getter for current effect
     const QString& effect() const noexcept { return mEffect; }
@@ -111,10 +116,26 @@ public:
         mCtRange = ctRange;
     }
 
+
+    /// true if stateupdate has valid metadata, false otherwise
+    static bool isValidMetadataJSON(const QJsonObject& object) {
+        return object["name"].isString() && object["serialNo"].isString()
+               && object["manufacturer"].isString() && object["firmwareVersion"].isString()
+               && object["model"].isString() && object["state"].isObject()
+               && object["effects"].isObject() && object["panelLayout"].isObject()
+               && object["rhythm"].isObject();
+    }
+
+    /// updates the meatadata based off of JSON
     void updateMetadata(const QJsonObject& object) {
         mManufacturer = object["manufacturer"].toString();
         mFirmware = object["firmwareVersion"].toString();
         mModel = object["model"].toString();
+        mHardwareName = object["name"].toString();
+        mSerialNumber = object["serialNo"].toString();
+        if (mName.isEmpty()) {
+            mName = mHardwareName;
+        }
 
         const auto& effectsObject = object["effects"].toObject();
         if (effectsObject["select"].isString()) {
@@ -135,62 +156,13 @@ public:
             }
         }
 
-        QJsonObject panelLayout = object["panelLayout"].toObject();
-        if (panelLayout["layout"].isObject()) {
-            QJsonObject layoutObject = panelLayout["layout"].toObject();
-            if (layoutObject["numPanels"].isDouble() && layoutObject["sideLength"].isDouble()
-                && layoutObject["positionData"].isArray()) {
-                nano::Panels panels;
-                panels.count = int(layoutObject["numPanels"].toDouble());
-                panels.sideLength = int(layoutObject["sideLength"].toDouble());
-                QJsonArray array = layoutObject["positionData"].toArray();
-                std::vector<nano::Panel> panelInfoVector;
-                for (auto value : array) {
-                    if (value.isObject()) {
-                        QJsonObject object = value.toObject();
-                        if (object["panelId"].isDouble() && object["x"].isDouble()
-                            && object["y"].isDouble() && object["o"].isDouble()) {
-                            int ID = int(object["panelId"].toDouble());
-                            int x = int(object["x"].toDouble());
-                            int y = int(object["y"].toDouble());
-                            int o = int(object["o"].toDouble());
-                            nano::Panel panelInfo(x, y, o, ID);
-                            panelInfoVector.push_back(panelInfo);
-                        }
-                    }
-                }
-                panels.positionData = panelInfoVector;
-                mPanelLayout = panels;
-            }
-        }
-
-        QJsonObject rhythmObject = object["rhythm"].toObject();
-        if (rhythmObject["rhythmConnected"].isBool()) {
-            nano::RhythmController rhythm;
-            rhythm.isConnected = rhythmObject["rhythmConnected"].toBool();
-            if (rhythm.isConnected) {
-                if (rhythmObject["rhythmActive"].isBool() && rhythmObject["rhythmId"].isString()
-                    && rhythmObject["hardwareVersion"].isString()
-                    && rhythmObject["firmwareVersion"].isString()
-                    && rhythmObject["auxAvailable"].isBool()
-                    && rhythmObject["rhythmMode"].isString()
-                    && rhythmObject["rhythmPos"].isString()) {
-                    rhythm.isActive = rhythmObject["rhythmActive"].toBool();
-                    rhythm.ID = rhythmObject["rhythmId"].toString();
-                    rhythm.hardwareVersion = rhythmObject["hardwareVersion"].toString();
-                    rhythm.firmwareVersion = rhythmObject["firmwareVersion"].toString();
-                    rhythm.auxAvailable = rhythmObject["auxAvailable"].toBool();
-                    rhythm.mode = rhythmObject["rhythmMode"].toString();
-                    rhythm.position = rhythmObject["rhythmPos"].toString();
-                    mRhythm = rhythm;
-                }
-            }
-        }
+        mPanelLayout = Panels(object["panelLayout"].toObject());
+        mRhythm = RhythmController(object["rhythm"].toObject());
     }
 
     operator QString() const {
         std::stringstream tempString;
-        tempString << "nano::LeafController: "
+        tempString << "nano::LeafLight: "
                    << " name: " << name().toStdString()
                    << " hardwareName: " << hardwareName().toStdString()
                    << " IP:" << IP().toStdString() << " port: " << port()
@@ -200,7 +172,7 @@ public:
     }
 
     /// equal operator
-    bool operator==(const nano::LeafLight& rhs) const {
+    bool operator==(const nano::LeafMetadata& rhs) const {
         bool result = true;
         if (serialNumber() != rhs.serialNumber()) {
             result = false;
@@ -249,6 +221,15 @@ private:
     /// list of names of all effects on the controller
     std::vector<QString> mEffectsList;
 
+    /// hardware name of light
+    QString mHardwareName;
+
+    /// serial number of light
+    QString mSerialNumber;
+
+    /// name of light
+    QString mName;
+
     //-----------
     // Other Hardware
     //-----------
@@ -260,18 +241,29 @@ private:
     RhythmController mRhythm;
 };
 
+/// basic constructor for a cor::Light variant for nanoleafs
+class LeafLight : public cor::Light {
+public:
+    LeafLight(const LeafMetadata& metadata)
+        : cor::Light(metadata.serialNumber(), metadata.hardwareName(), ECommType::nanoleaf) {
+        mName = metadata.name();
+        mHardwareType = ELightHardwareType::nanoleaf;
+    }
+};
+
+
 /// converts json representation of routine to cor::Light
-LeafLight jsonToLeafController(const QJsonObject& object);
+LeafMetadata jsonToLeafController(const QJsonObject& object);
 
 /// converts a cor::Light to a json representation of its routine.
-QJsonObject leafControllerToJson(const LeafLight& controller);
+QJsonObject leafControllerToJson(const LeafMetadata& controller);
 
 } // namespace nano
 
 namespace std {
 template <>
-struct hash<::nano::LeafLight> {
-    size_t operator()(const ::nano::LeafLight& k) const {
+struct hash<::nano::LeafMetadata> {
+    size_t operator()(const ::nano::LeafMetadata& k) const {
         return std::hash<std::string>{}(k.serialNumber().toStdString());
     }
 };

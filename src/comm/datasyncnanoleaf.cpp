@@ -246,7 +246,7 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
     return (countOutOfSync == 0) && timeoutInSync;
 }
 
-void DataSyncNanoLeaf::handleIdleTimeout(const nano::LeafLight& controller) {
+void DataSyncNanoLeaf::handleIdleTimeout(const nano::LeafMetadata& controller) {
     bool foundTimeout = false;
     int timeoutValue = mAppSettings->timeout();
     try {

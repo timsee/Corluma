@@ -83,7 +83,7 @@ private:
      * \brief handleIdleTimeout check a controller's timeout and make sure its in sync
      * \param controller controller to handle timeout for
      */
-    void handleIdleTimeout(const nano::LeafLight& controller);
+    void handleIdleTimeout(const nano::LeafMetadata& controller);
 
     /*!
      * \brief endOfSync end the sync thread and start the cleanup thread.

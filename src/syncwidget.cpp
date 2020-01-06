@@ -17,11 +17,12 @@ SyncWidget::SyncWidget(QWidget* parent) : QWidget(parent), mState{ESyncState::no
 }
 
 void SyncWidget::changeState(ESyncState state) {
-    if (state == ESyncState::notSynced || state == ESyncState::synced) {
+    mState = state;
+    if (mState == ESyncState::notSynced || mState == ESyncState::synced) {
         QString resourcePath;
-        if (state == ESyncState::notSynced) {
+        if (mState == ESyncState::notSynced) {
             resourcePath = ":images/closeX.png";
-        } else if (state == ESyncState::synced) {
+        } else if (mState == ESyncState::synced) {
             resourcePath = ":images/checkmark.png";
         }
         QPixmap syncPixmap(resourcePath);

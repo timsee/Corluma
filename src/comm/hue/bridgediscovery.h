@@ -14,7 +14,7 @@
 #include "comm/upnpdiscovery.h"
 #include "cor/dictionary.h"
 #include "cor/jsonsavedata.h"
-#include "huelight.h"
+#include "huemetadata.h"
 
 class CommHue;
 class GroupData;
@@ -77,7 +77,7 @@ public:
     std::vector<hue::Bridge> notFoundBridges() const { return mNotFoundBridges; }
 
     /// getter for all known hue lights
-    std::vector<HueLight> lights();
+    std::vector<HueMetadata> lights();
 
     /// reloads the data from the bridges into the App's group data.
     void reloadGroupData();
@@ -93,7 +93,7 @@ public:
     bool doesIPExist(const QString& ip);
 
     /// gets the bridge that controls a light.
-    hue::Bridge bridgeFromLight(const HueLight& light);
+    hue::Bridge bridgeFromLight(const HueMetadata& light);
 
     /// gets a bridge from a IP address
     hue::Bridge bridgeFromIP(const QString& IP);
@@ -115,7 +115,10 @@ public:
      * \param index light's index
      * \return the HueLight representation of the light
      */
-    HueLight lightFromBridgeIDAndIndex(const QString& bridgeID, int index);
+    HueMetadata lightFromBridgeIDAndIndex(const QString& bridgeID, int index);
+
+    /// update the lights metadata
+    void updateLight(const HueMetadata& light);
 
     /*!
      * \brief deleteBridge delete the bridge from app memory

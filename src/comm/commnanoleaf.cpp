@@ -36,7 +36,7 @@ CommNanoleaf::CommNanoleaf() : CommType(ECommType::nanoleaf), mUPnP{nullptr} {
     mDiscovery = new nano::LeafDiscovery(this, 4000);
     // make list of not found devices
     for (const auto& nanoleaf : mDiscovery->notFoundLights()) {
-        addLight(nanoleaf);
+        addLight(nano::LeafLight(nanoleaf));
     }
 
     mNetworkManager = new QNetworkAccessManager(this);
@@ -57,8 +57,8 @@ void CommNanoleaf::getSchedules() {
     if (mLastBackgroundTime.elapsed() > 15000) {
         stopBackgroundTimers();
     } else {
-        for (const auto& light : mDiscovery->foundLights().items()) {
-            if (shouldContinueStateUpdate()) {
+        if (shouldContinueStateUpdate()) {
+            for (const auto& light : mDiscovery->foundLights().items()) {
                 QNetworkRequest request = networkRequest(light, "schedules");
                 // qDebug() << "get schedue" << light.name;
                 mNetworkManager->get(request);
@@ -67,7 +67,7 @@ void CommNanoleaf::getSchedules() {
     }
 }
 
-void CommNanoleaf::updateSchedule(const nano::LeafLight& light,
+void CommNanoleaf::updateSchedule(const nano::LeafMetadata& light,
                                   const nano::LeafSchedule& schedule) {
     auto result = mSchedules.find(light.serialNumber().toStdString());
     if (result != mSchedules.end()) {
@@ -89,7 +89,7 @@ void CommNanoleaf::updateSchedule(const nano::LeafLight& light,
 }
 
 const cor::Dictionary<nano::LeafSchedule>& CommNanoleaf::findSchedules(
-    const nano::LeafLight& light) {
+    const nano::LeafMetadata& light) {
     auto result = mSchedules.find(light.serialNumber().toStdString());
     if (result != mSchedules.end()) {
         return (*result).second;
@@ -98,7 +98,7 @@ const cor::Dictionary<nano::LeafSchedule>& CommNanoleaf::findSchedules(
     }
 }
 
-nano::LeafSchedule CommNanoleaf::findSchedule(const nano::LeafLight& light, const QString& ID) {
+nano::LeafSchedule CommNanoleaf::findSchedule(const nano::LeafMetadata& light, const QString& ID) {
     auto result = mSchedules.find(light.serialNumber().toStdString());
     if (result != mSchedules.end()) {
         auto scheduleDict = (*result).second;
@@ -113,11 +113,12 @@ nano::LeafSchedule CommNanoleaf::findSchedule(const nano::LeafLight& light, cons
     }
 }
 
-void CommNanoleaf::sendTimeout(const nano::LeafLight& light, int minutes) {
+void CommNanoleaf::sendTimeout(const nano::LeafMetadata& light, int minutes) {
     sendSchedule(light, createTimeoutSchedule(minutes));
 }
 
-void CommNanoleaf::sendSchedule(const nano::LeafLight& light, const nano::LeafSchedule& schedule) {
+void CommNanoleaf::sendSchedule(const nano::LeafMetadata& light,
+                                const nano::LeafSchedule& schedule) {
     QNetworkRequest request = networkRequest(light, "effects");
 
     QJsonObject scheduleObject;
@@ -231,12 +232,12 @@ void CommNanoleaf::shutdown() {
     }
 }
 
-const QString CommNanoleaf::packetHeader(const nano::LeafLight& light) {
+const QString CommNanoleaf::packetHeader(const nano::LeafMetadata& light) {
     return QString(light.IP() + "/api/v1/" + light.authToken() + "/");
 }
 
 
-QNetworkRequest CommNanoleaf::networkRequest(const nano::LeafLight& light,
+QNetworkRequest CommNanoleaf::networkRequest(const nano::LeafMetadata& light,
                                              const QString& endpoint) {
     QString urlString = packetHeader(light) + endpoint;
     QUrl url(urlString);
@@ -255,7 +256,7 @@ void CommNanoleaf::putJSON(const QNetworkRequest& request, const QJsonObject& js
     mNetworkManager->put(request, strJson.toUtf8());
 }
 
-void CommNanoleaf::testIP(const nano::LeafLight& light) {
+void CommNanoleaf::testIP(const nano::LeafMetadata& light) {
     QString urlString = light.IP() + "/api/v1/new";
     QUrl url(urlString);
     url.setPort(light.port());
@@ -272,7 +273,7 @@ void CommNanoleaf::testIP(const nano::LeafLight& light) {
 }
 
 
-void CommNanoleaf::testAuth(const nano::LeafLight& light) {
+void CommNanoleaf::testAuth(const nano::LeafMetadata& light) {
     QUrl url(packetHeader(light));
     url.setPort(light.port());
 
@@ -283,8 +284,8 @@ void CommNanoleaf::testAuth(const nano::LeafLight& light) {
 }
 
 void CommNanoleaf::stateUpdate() {
-    for (const auto& light : mDiscovery->foundLights().items()) {
-        if (shouldContinueStateUpdate()) {
+    if (shouldContinueStateUpdate()) {
+        for (const auto& light : mDiscovery->foundLights().items()) {
             QNetworkRequest request = networkRequest(light, "");
             mNetworkManager->get(request);
 
@@ -310,13 +311,15 @@ void CommNanoleaf::stateUpdate() {
 
             mStateUpdateCounter++;
         }
+    } else {
+        stopStateUpdates();
     }
 }
 
 void CommNanoleaf::sendPacket(const QJsonObject& object) {
     if (object["uniqueID"].isString() && !lightDict().empty()) {
         // get the light
-        auto result = mDiscovery->findLightsBySerial(object["uniqueID"].toString());
+        auto result = mDiscovery->findLightBySerial(object["uniqueID"].toString());
         auto light = result.first;
         if (result.second) {
             if (object["isOn"].isBool()) {
@@ -340,67 +343,66 @@ void CommNanoleaf::sendPacket(const QJsonObject& object) {
     }
 }
 
-std::pair<nano::LeafLight, bool> CommNanoleaf::findNanoLeafLight(const QString& serialNumber) {
-    return mDiscovery->findLightsBySerial(serialNumber);
+std::pair<nano::LeafMetadata, bool> CommNanoleaf::findNanoLeafLight(const QString& serialNumber) {
+    return mDiscovery->findLightBySerial(serialNumber);
 }
 
+void CommNanoleaf::handleInitialDiscovery(const nano::LeafMetadata& light, const QString& payload) {
+    // adds light if it can be fully discovered
+    auto result = mDiscovery->handleUndiscoveredLight(light, payload);
+    // if light is fully discovered, we still need to add it to the comm layer
+    if (result.second) {
+        QJsonDocument jsonResponse = QJsonDocument::fromJson(payload.toUtf8());
+        addLight(nano::LeafLight(result.first));
+        parseStateUpdatePacket(result.first, jsonResponse.object());
+        getSchedules();
+    }
+}
+
+void CommNanoleaf::handleNetworkPacket(const nano::LeafMetadata& light, const QString& payload) {
+    QJsonDocument jsonResponse = QJsonDocument::fromJson(payload.toUtf8());
+    if (!jsonResponse.isNull()) {
+        if (jsonResponse.isObject()) {
+            QJsonObject object = jsonResponse.object();
+            if (object["auth_token"].isString()) {
+                QString authToken = object["auth_token"].toString();
+                mDiscovery->foundNewAuthToken(light, authToken);
+            } else if (object["serialNo"].isString() && object["name"].isString()) {
+                parseStateUpdatePacket(light, object);
+            } else if (object["animType"].isString() && object["colorType"].isString()
+                       && object["palette"].isArray()) {
+                parseCommandRequestUpdatePacket(light, object);
+                mDiscovery->updateFoundLight(light);
+            } else if (object["schedules"].isArray()) {
+                parseScheduleUpdatePacket(light, object["schedules"].toArray());
+            } else {
+                qDebug() << "Do not recognize packet: " << object;
+            }
+        }
+    }
+}
 void CommNanoleaf::replyFinished(QNetworkReply* reply) {
     // qDebug() << reply->error();
     if (reply->error() == QNetworkReply::NoError) {
         QString payload = reply->readAll().trimmed();
         QString IP = reply->url().toString();
         auto light = mDiscovery->findLightByIP(IP);
+        // if light is not connected, handle as a special case
         bool isConnected = mDiscovery->isLightConnected(light);
         if (!isConnected) {
-            if (light.authToken() == "") {
-                QJsonDocument jsonResponse = QJsonDocument::fromJson(payload.toUtf8());
-                if (!jsonResponse.isNull()) {
-                    if (jsonResponse.isObject()) {
-                        QJsonObject object = jsonResponse.object();
-                        if (object["auth_token"].isString()) {
-                            QString authToken = object["auth_token"].toString();
-                            mDiscovery->foundNewAuthToken(light, authToken);
-                        }
-                    }
-                }
-            } else {
-                // full discovery has happened, we've received a packet with an auth token
-                addLight(light);
-                getSchedules();
-            }
-        }
-        QJsonDocument jsonResponse = QJsonDocument::fromJson(payload.toUtf8());
-        if (!jsonResponse.isNull()) {
-            if (jsonResponse.isObject()) {
-                QJsonObject object = jsonResponse.object();
-                if (object["auth_token"].isString()) {
-                    QString authToken = object["auth_token"].toString();
-                    mDiscovery->foundNewAuthToken(light, authToken);
-                } else if (object["serialNo"].isString() && object["name"].isString()) {
-                    parseStateUpdatePacket(light, object);
-                } else if (object["animType"].isString() && object["colorType"].isString()
-                           && object["palette"].isArray()) {
-                    parseCommandRequestUpdatePacket(light, object);
-                    mDiscovery->updateFoundLight(light);
-                } else if (object["schedules"].isArray()) {
-                    parseScheduleUpdatePacket(light, object["schedules"].toArray());
-                } else {
-                    qDebug() << "Do not recognize packet: " << object;
-                }
-            }
-        }
-
-    } else {
-        if (reply->error() == QNetworkReply::ConnectionRefusedError) {
-            qDebug() << "Nanoleaf connection refused from " << reply->url().toString();
+            handleInitialDiscovery(light, payload);
         } else {
-            qDebug() << " unknown error from " << reply->url().toString() << reply->errorString();
+            handleNetworkPacket(light, payload);
         }
+    } else if (reply->error() == QNetworkReply::ConnectionRefusedError) {
+        qDebug() << "Nanoleaf connection refused from " << reply->url().toString();
+    } else {
+        qDebug() << " unknown error from " << reply->url().toString() << reply->errorString();
     }
 }
 
 
-void CommNanoleaf::renameLight(nano::LeafLight light, const QString& name) {
+void CommNanoleaf::renameLight(nano::LeafMetadata light, const QString& name) {
     // get light from device table
     auto lightResult = lightDict().item(light.serialNumber().toStdString());
     if (lightResult.second) {
@@ -416,7 +418,7 @@ void CommNanoleaf::renameLight(nano::LeafLight light, const QString& name) {
 }
 
 
-void CommNanoleaf::parseCommandRequestUpdatePacket(const nano::LeafLight& leafLight,
+void CommNanoleaf::parseCommandRequestUpdatePacket(const nano::LeafMetadata& leafLight,
                                                    const QJsonObject& requestPacket) {
     if (requestPacket["animType"].isString() && requestPacket["colorType"].isString()
         && requestPacket["palette"].isArray()) {
@@ -497,11 +499,11 @@ void CommNanoleaf::parseCommandRequestUpdatePacket(const nano::LeafLight& leafLi
             }
         }
 
-        auto light = static_cast<cor::Light>(leafLight);
+        auto light = nano::LeafLight(leafLight);
         fillDevice(light);
         if (!colors.empty()) {
-            // the display is always treated as custom colors, its only ever used by custom routines
-            // though
+            // the display is always treated as custom colors, its only ever used by custom
+            // routines though
             light.customPalette(
                 Palette(paletteToString(EPalette::custom), colors, light.palette().brightness()));
             light.palette(
@@ -578,7 +580,7 @@ uint32_t CommNanoleaf::computeBrightnessFromMultiColorPacket(
 }
 
 
-void CommNanoleaf::parseScheduleUpdatePacket(const nano::LeafLight& light,
+void CommNanoleaf::parseScheduleUpdatePacket(const nano::LeafMetadata& light,
                                              const QJsonArray& scheduleUpdate) {
     for (const auto& schedule : scheduleUpdate) {
         if (schedule.isObject()) {
@@ -589,26 +591,18 @@ void CommNanoleaf::parseScheduleUpdatePacket(const nano::LeafLight& light,
     }
 }
 
-void CommNanoleaf::parseStateUpdatePacket(nano::LeafLight& leafLight,
+void CommNanoleaf::parseStateUpdatePacket(const nano::LeafMetadata& nanoLight,
                                           const QJsonObject& stateUpdate) {
-    if (stateUpdate["name"].isString() && stateUpdate["serialNo"].isString()
-        && stateUpdate["manufacturer"].isString() && stateUpdate["firmwareVersion"].isString()
-        && stateUpdate["model"].isString() && stateUpdate["state"].isObject()
-        && stateUpdate["effects"].isObject() && stateUpdate["panelLayout"].isObject()
-        && stateUpdate["rhythm"].isObject()) {
+    if (nano::LeafMetadata::isValidMetadataJSON(stateUpdate)) {
+        auto leafLight = nanoLight;
         leafLight.updateMetadata(stateUpdate);
+        mDiscovery->updateFoundLight(leafLight);
 
-        bool wasControllerConnected = mDiscovery->isLightConnected(leafLight);
-        if (wasControllerConnected) {
-            mDiscovery->updateFoundLight(leafLight);
-        } else {
-            mDiscovery->foundNewLight(leafLight);
-        }
         QJsonObject stateObject = stateUpdate["state"].toObject();
         if (stateObject["on"].isObject() && stateObject["brightness"].isObject()
             && stateObject["hue"].isObject() && stateObject["sat"].isObject()
             && stateObject["ct"].isObject() && stateObject["colorMode"].isString()) {
-            auto light = static_cast<cor::Light>(leafLight);
+            auto light = nano::LeafLight(leafLight);
             fillDevice(light);
             light.isReachable(true);
 
@@ -634,8 +628,7 @@ void CommNanoleaf::parseStateUpdatePacket(nano::LeafLight& leafLight,
                                    satResult.second,
                                    ctResult.second);
 
-            QString colorMode = stateObject["colorMode"].toString();
-
+            auto colorMode = stateObject["colorMode"].toString();
             if (colorMode == "hsv" || colorMode == "hs") {
                 auto color = light.color();
                 color.setHsvF(hue / 360.0, sat / 100.0, brightness / 100.0);
@@ -654,11 +647,7 @@ void CommNanoleaf::parseStateUpdatePacket(nano::LeafLight& leafLight,
                 light.color(cor::colorTemperatureToRGB(colorTemp));
             }
 
-            if (wasControllerConnected) {
-                updateLight(light);
-            } else {
-                addLight(light);
-            }
+            updateLight(light);
         }
     } else {
         qDebug() << "Did not recognize state update:" << stateUpdate;
@@ -669,7 +658,7 @@ void CommNanoleaf::parseStateUpdatePacket(nano::LeafLight& leafLight,
 // Corluma Command Parsed Handlers
 //------------------------------------
 
-void CommNanoleaf::onOffChange(const nano::LeafLight& light, bool shouldTurnOn) {
+void CommNanoleaf::onOffChange(const nano::LeafMetadata& light, bool shouldTurnOn) {
     QNetworkRequest request = networkRequest(light, "state");
 
     QJsonObject json;
@@ -681,7 +670,7 @@ void CommNanoleaf::onOffChange(const nano::LeafLight& light, bool shouldTurnOn) 
 }
 
 
-void CommNanoleaf::singleSolidColorChange(const nano::LeafLight& light, const QColor& color) {
+void CommNanoleaf::singleSolidColorChange(const nano::LeafMetadata& light, const QColor& color) {
     QNetworkRequest request = networkRequest(light, "state");
 
     QJsonObject json;
@@ -938,7 +927,7 @@ QJsonArray CommNanoleaf::createPalette(const cor::Light& light) {
     return paletteArray;
 }
 
-void CommNanoleaf::routineChange(const nano::LeafLight& leafLight, QJsonObject routineObject) {
+void CommNanoleaf::routineChange(const nano::LeafMetadata& leafLight, QJsonObject routineObject) {
     // get values from JSON
     ERoutine routine = stringToRoutine(routineObject["routine"].toString());
     QColor color;
@@ -952,7 +941,7 @@ void CommNanoleaf::routineChange(const nano::LeafLight& leafLight, QJsonObject r
         singleSolidColorChange(leafLight, color);
     } else {
         int speed = int(routineObject["speed"].toDouble());
-        auto light = static_cast<cor::Light>(leafLight);
+        auto light = nano::LeafLight(leafLight);
         fillDevice(light);
         light.routine(routine);
 
@@ -973,7 +962,7 @@ void CommNanoleaf::routineChange(const nano::LeafLight& leafLight, QJsonObject r
     }
 }
 
-void CommNanoleaf::brightnessChange(const nano::LeafLight& leafLight, int brightness) {
+void CommNanoleaf::brightnessChange(const nano::LeafMetadata& leafLight, int brightness) {
     QNetworkRequest request = networkRequest(leafLight, "state");
     QJsonObject json;
     QJsonObject brightObject;
@@ -982,16 +971,16 @@ void CommNanoleaf::brightnessChange(const nano::LeafLight& leafLight, int bright
     putJSON(request, json);
 }
 
-void CommNanoleaf::timeOutChange(const nano::LeafLight&, int) {
+void CommNanoleaf::timeOutChange(const nano::LeafMetadata&, int) {
     // TODO: implement
 }
 
 void CommNanoleaf::deleteLight(const cor::Light& leafLight) {
-    auto result = mDiscovery->findLightsBySerial(leafLight.uniqueID());
+    auto result = mDiscovery->findLightBySerial(leafLight.uniqueID());
     auto light = result.first;
     if (result.second) {
         // remove from comm data
-        removeController(light.controller());
+        removeController(light.hardwareName());
 
         // remove from saved data
         mDiscovery->removeNanoleaf(light);

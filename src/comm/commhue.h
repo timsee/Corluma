@@ -9,7 +9,7 @@
 #include <QWidget>
 
 #include "comm/hue/bridgediscovery.h"
-#include "comm/hue/huelight.h"
+#include "comm/hue/huemetadata.h"
 #include "comm/hue/hueprotocols.h"
 #include "commtype.h"
 #include "cor/objects/group.h"
@@ -96,7 +96,7 @@ public:
      * \param device a cor::Light that represents the SHueLight you want to receive
      * \return the SHueLight that represents the same device as the cor::Light given.
      */
-    HueLight hueLightFromLight(const cor::Light& device);
+    HueMetadata hueLightFromLight(const cor::Light& device);
 
     /*!
      * \brief sendSchedule send a schedule to the Hue Bridge. This schedule gets kept on the bridge
@@ -167,7 +167,7 @@ public:
      */
     void createGroup(const hue::Bridge& bridge,
                      const QString& name,
-                     std::vector<HueLight> lights,
+                     std::vector<HueMetadata> lights,
                      bool isRoom);
 
     /*!
@@ -175,7 +175,7 @@ public:
      * \param group the group to change the lights in
      * \param lights the new lights to provide to the group.
      */
-    void updateGroup(const hue::Bridge& bridge, cor::Group group, std::vector<HueLight> lights);
+    void updateGroup(const hue::Bridge& bridge, cor::Group group, std::vector<HueMetadata> lights);
 
     /*!
      * \brief deleteGroup delete a group from the hue bridge
@@ -187,7 +187,7 @@ public:
     const std::vector<cor::Group> groups();
 
     /// list of lights recently discovered by a scan
-    const std::vector<HueLight>& newLights() { return mNewLights; }
+    const std::vector<HueMetadata>& newLights() { return mNewLights; }
 
     /// serial numbers for lights that we are searching for.
     const std::vector<QString>& searchingLights() { return mSearchingSerialNumbers; }
@@ -235,13 +235,13 @@ public:
      * \param light the light to rename
      * \param newName the new name to assign to it.
      */
-    void renameLight(HueLight light, const QString& newName);
+    void renameLight(HueMetadata light, const QString& newName);
 
     /*!
      * \brief deleteLight delete the light and its stored data from the bridge
      * \param light the light to delete.
      */
-    void deleteLight(const HueLight& light);
+    void deleteLight(const HueMetadata& light);
 
     /*!
      * \brief brightnessChange connected to CommPacketParser, this changes the brightness of a
@@ -366,7 +366,7 @@ private:
     QTime mLastBackgroundTime;
 
     /// list of new lights found from light scan
-    std::vector<HueLight> mNewLights;
+    std::vector<HueMetadata> mNewLights;
 
     /// list of serial numbers the hue is searching for
     std::vector<QString> mSearchingSerialNumbers;

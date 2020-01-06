@@ -37,7 +37,7 @@ CommHue::CommHue(UPnPDiscovery* UPnP, GroupData* groups)
 
     for (const auto& bridge : mDiscovery->notFoundBridges()) {
         for (const auto& light : bridge.lights.items()) {
-            addLight(light);
+            addLight(HueLight(light));
         }
     }
 
@@ -94,7 +94,7 @@ void CommHue::sendPacket(const QJsonObject& object) {
 
 void CommHue::changeColor(const hue::Bridge& bridge, int lightIndex, const QColor& color) {
     // grab the matching hue
-    HueLight light = mDiscovery->lightFromBridgeIDAndIndex(bridge.id, lightIndex);
+    HueMetadata light = mDiscovery->lightFromBridgeIDAndIndex(bridge.id, lightIndex);
 
     auto hue = int(color.hueF() * 65535);
     // catch edge case with hue being -1 for grey in Qt colors
@@ -126,7 +126,7 @@ void CommHue::changeColor(const hue::Bridge& bridge, int lightIndex, const QColo
 }
 
 void CommHue::changeColorCT(const hue::Bridge& bridge, int lightIndex, int brightness, int ct) {
-    HueLight light = mDiscovery->lightFromBridgeIDAndIndex(bridge.id, lightIndex);
+    HueMetadata light = mDiscovery->lightFromBridgeIDAndIndex(bridge.id, lightIndex);
 
     if (lightIndex == 0) {
         for (int i = 1; i <= int(bridge.lights.size()); ++i) {
@@ -390,56 +390,59 @@ void CommHue::handleSuccessPacket(const hue::Bridge& bridge,
     if (list.size() > 1) {
         if (list[1] == "lights") {
             if (list.size() > 2) {
-                HueLight device = mDiscovery->lightFromBridgeIDAndIndex(bridge.id, list[2].toInt());
-                if (fillDevice(device)) {
+                HueMetadata metadata =
+                    mDiscovery->lightFromBridgeIDAndIndex(bridge.id, list[2].toInt());
+                HueLight light(metadata);
+                if (fillDevice(light)) {
                     if (list[3] == "state") {
                         QString key = list[4];
                         bool valueChanged = false;
                         if (key == "on") {
-                            device.isOn(value.toBool());
+                            light.isOn(value.toBool());
                             valueChanged = true;
                         } else if (key == "sat") {
                             auto saturation = int(value.toDouble());
                             QColor color;
-                            color.setHsv(device.color().hue(), saturation, device.color().value());
-                            device.color(color);
+                            color.setHsv(light.color().hue(), saturation, light.color().value());
+                            light.color(color);
                             valueChanged = true;
                         } else if (key == "hue") {
                             auto hue = int(value.toDouble());
                             QColor color;
                             color.setHsv(hue / 182,
-                                         device.color().saturation(),
-                                         device.color().value());
-                            device.color(color);
-                            device.colorMode(EColorMode::HSV);
+                                         light.color().saturation(),
+                                         light.color().value());
+                            light.color(color);
+                            metadata.colorMode(EColorMode::HSV);
                             valueChanged = true;
                         } else if (key == "bri") {
                             auto brightness = int(value.toDouble());
                             QColor color;
-                            color.setHsv(device.color().hue(),
-                                         device.color().saturation(),
+                            color.setHsv(light.color().hue(),
+                                         light.color().saturation(),
                                          brightness);
-                            device.color(color);
+                            light.color(color);
                             valueChanged = true;
                         } else if (key == "colormode") {
                             QString mode = value.toString();
                             EColorMode colorMode = stringtoColorMode(mode);
-                            device.colorMode(colorMode);
+                            metadata.colorMode(colorMode);
                             valueChanged = true;
                         } else if (key == "ct") {
                             auto ct = int(value.toDouble());
-                            device.color(cor::colorTemperatureToRGB(ct));
-                            device.colorMode(EColorMode::CT);
+                            light.color(cor::colorTemperatureToRGB(ct));
+                            metadata.colorMode(EColorMode::CT);
                             valueChanged = true;
                         }
 
                         if (valueChanged) {
-                            updateLight(device);
+                            updateLight(light);
+                            mDiscovery->updateLight(metadata);
                         }
                     } else if (list[3] == "name") {
                         // fill device
-                        if (fillDevice(device)) {
-                            updateLight(device);
+                        if (fillDevice(light)) {
+                            updateLight(light);
                         }
                         qDebug() << "found the nanme update!";
                     }
@@ -478,15 +481,15 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge,
         QJsonObject stateObject = object["state"].toObject();
         if (stateObject["on"].isBool() && stateObject["reachable"].isBool()
             && stateObject["bri"].isDouble()) {
-            HueLight hue(object, bridge.id, i);
+            HueMetadata metadata(object, bridge.id, i);
+            QString colorMode = stateObject["colormode"].toString();
+            metadata.colorMode(stringtoColorMode(colorMode));
 
+            HueLight hue(metadata);
             hue.isReachable(stateObject["reachable"].toBool());
             hue.isOn(stateObject["on"].toBool());
 
-            QString colorMode = stateObject["colormode"].toString();
-            hue.colorMode(stringtoColorMode(colorMode));
-
-            if (hue.colorMode() == EColorMode::XY) {
+            if (metadata.colorMode() == EColorMode::XY) {
                 bool isValid = false;
                 if (stateObject["xy"].isArray() && stateObject["bri"].isDouble()) {
                     QJsonArray array = stateObject["xy"].toArray();
@@ -524,7 +527,7 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge,
                             QColor color;
                             color.setRgbF(r, g, b);
                             hue.color(color);
-                            hue.colorMode(EColorMode::HSV);
+                            metadata.colorMode(EColorMode::HSV);
                         }
                     }
                 }
@@ -532,11 +535,12 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge,
                     qDebug() << "something went wrong with the hue xy";
                     return false;
                 }
-            } else if (hue.hueType() == EHueType::ambient) {
+            } else if (metadata.hueType() == EHueType::ambient) {
                 int ct = int(stateObject["ct"].toDouble());
                 hue.color(cor::colorTemperatureToRGB(ct));
-                hue.colorMode(EColorMode::CT);
-            } else if (hue.hueType() == EHueType::extended || hue.hueType() == EHueType::color) {
+                metadata.colorMode(EColorMode::CT);
+            } else if (metadata.hueType() == EHueType::extended
+                       || metadata.hueType() == EHueType::color) {
                 if (stateObject["hue"].isDouble() && stateObject["sat"].isDouble()) {
                     double hueF = stateObject["hue"].toDouble() / 65535.0;
                     double satF = stateObject["sat"].toDouble() / 254.0;
@@ -544,12 +548,12 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge,
                     QColor color;
                     color.setHsvF(hueF, satF, briF);
                     hue.color(color);
-                    hue.colorMode(EColorMode::HSV);
+                    metadata.colorMode(EColorMode::HSV);
                 } else {
                     qDebug() << "something went wrong with the hue parser";
                     return false;
                 }
-            } else if (hue.hueType() == EHueType::white) {
+            } else if (metadata.hueType() == EHueType::white) {
                 int brightness = int(stateObject["bri"].toDouble());
                 QColor white(255, 255, 255);
                 white = white.toHsv();
@@ -558,6 +562,7 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge,
             }
             if (wasDiscovered) {
                 updateLight(hue);
+                mDiscovery->updateLight(metadata);
             } else {
                 addLight(hue);
             }
@@ -666,24 +671,16 @@ bool CommHue::updateNewHueLight(const hue::Bridge& bridge, QJsonObject object, i
     if (object["name"].isString()) {
         QString name = object["name"].toString();
 
-        HueLight light(object, bridge.id, i);
+        HueMetadata metadata(object, bridge.id, i);
 
         bool searchForLight = false;
         for (const auto& connectedLight : bridge.lights.items()) {
-            if (connectedLight.uniqueID() == light.uniqueID()) {
+            if (connectedLight.uniqueID() == metadata.uniqueID()) {
                 searchForLight = true;
             }
         }
         if (!searchForLight) {
-            mNewLights.push_back(light);
-        }
-
-        // update the cor::Light as well
-        if (fillDevice(light)) {
-            updateLight(light);
-        } else {
-            qDebug() << "Could not find device " << __func__;
-            return false;
+            mNewLights.push_back(metadata);
         }
         return true;
     }
@@ -723,7 +720,7 @@ EHueUpdates CommHue::checkTypeOfUpdate(QJsonObject object) {
     }
 }
 
-HueLight CommHue::hueLightFromLight(const cor::Light& device) {
+HueMetadata CommHue::hueLightFromLight(const cor::Light& device) {
     auto bridgeResult = mDiscovery->bridges().item(device.controller().toStdString());
     const auto& bridge = bridgeResult.first;
     bool bridgeFound = bridgeResult.second;
@@ -875,7 +872,7 @@ void CommHue::stopBackgroundTimers() {
 
 void CommHue::createGroup(const hue::Bridge& bridge,
                           const QString& name,
-                          std::vector<HueLight> lights,
+                          std::vector<HueMetadata> lights,
                           bool isRoom) {
     QString urlString = urlStart(bridge) + "/groups";
 
@@ -907,7 +904,7 @@ void CommHue::createGroup(const hue::Bridge& bridge,
 
 void CommHue::updateGroup(const hue::Bridge& bridge,
                           cor::Group group,
-                          std::vector<HueLight> lights) {
+                          std::vector<HueMetadata> lights) {
     // get ID from the group
     auto index = bridge.groupID(group);
     QString urlString = urlStart(bridge) + "/groups/" + QString::number(index);
@@ -960,6 +957,9 @@ void CommHue::updateLightStates() {
             mNetworkManager->get(request);
             mStateUpdateCounter++;
         }
+    } else {
+        // checkReachability();
+        stopStateUpdates();
     }
 }
 
@@ -1038,7 +1038,7 @@ void CommHue::searchForNewLights(const hue::Bridge& bridge,
     mNetworkManager->post(request, payload.toUtf8());
 }
 
-void CommHue::renameLight(HueLight light, const QString& newName) {
+void CommHue::renameLight(HueMetadata light, const QString& newName) {
     auto bridge = mDiscovery->bridgeFromLight(light);
     QString urlString = urlStart(bridge) + "/lights/" + QString::number(light.index());
 
@@ -1053,7 +1053,7 @@ void CommHue::renameLight(HueLight light, const QString& newName) {
     mNetworkManager->put(QNetworkRequest(QUrl(urlString)), payload.toUtf8());
 }
 
-void CommHue::deleteLight(const HueLight& light) {
+void CommHue::deleteLight(const HueMetadata& light) {
     auto bridge = mDiscovery->bridgeFromLight(light);
     QString urlString = urlStart(bridge) + "/lights/" + QString::number(light.index());
     mNetworkManager->deleteResource(QNetworkRequest(QUrl(urlString)));

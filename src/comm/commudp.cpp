@@ -108,6 +108,8 @@ void CommUDP::stateUpdate() {
         }
 
         mStateUpdateCounter++;
+    } else {
+        stopStateUpdates();
     }
 }
 

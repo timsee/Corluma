@@ -566,9 +566,9 @@ void MainWindow::deletedLight(const QString& uniqueID) {
 void MainWindow::lightNameChange(EProtocolType type, const QString& key, const QString& name) {
     if (type == EProtocolType::hue) {
         // get hue light from key
-        std::vector<HueLight> hueLights = mComm->hue()->discovery()->lights();
+        std::vector<HueMetadata> hueLights = mComm->hue()->discovery()->lights();
         int keyNumber = key.toInt();
-        HueLight light;
+        HueMetadata light;
         bool lightFound = false;
         for (auto hue : hueLights) {
             if (hue.index() == keyNumber) {
@@ -587,7 +587,7 @@ void MainWindow::lightNameChange(EProtocolType type, const QString& key, const Q
         const auto& controllers = mComm->nanoleaf()->lights();
         auto result = controllers.item(key.toStdString());
         bool lightFound = result.second;
-        nano::LeafLight lightToRename = result.first;
+        nano::LeafMetadata lightToRename = result.first;
 
         if (lightFound) {
             mComm->nanoleaf()->renameLight(lightToRename, name);

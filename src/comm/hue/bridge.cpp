@@ -8,7 +8,7 @@
 
 #include <QJsonArray>
 
-#include "huelight.h"
+#include "huemetadata.h"
 
 namespace hue {
 
@@ -41,9 +41,8 @@ Bridge jsonToBridge(const QJsonObject& object) {
         QJsonObject light = arrayObject.toObject();
         if (light["uniqueid"].isString()) {
             auto index = light["index"].toInt();
-
-            // TODO: investigate why putting the bridge.ID as controller causes this to fail
-            HueLight hueLight(light, QString("NO_CONTROLLER"), index);
+            // TODO: group data relies on "NO_CONTROLLER" when it shouldn't care...
+            HueMetadata hueLight(light, "NO_CONTROLLER", index);
             bridge.lights.insert(hueLight.uniqueID().toStdString(), hueLight);
         }
     }

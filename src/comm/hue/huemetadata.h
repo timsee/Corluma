@@ -17,22 +17,38 @@
  * \brief The HueLight class is a class that stores all the relevant
  *        data received from a state update from the bridge.
  */
-class HueLight : public cor::Light {
+class HueMetadata {
 public:
     /// default constructor
-    HueLight() : cor::Light() {}
+    HueMetadata() {}
 
     /// constructor
-    HueLight(const QJsonObject& object, const QString& controller, int lightIndex)
-        : cor::Light(object["uniqueid"].toString(), controller, ECommType::hue),
-          mIndex(lightIndex),
+    HueMetadata(const QJsonObject& object, const QString& controller, int lightIndex)
+        : mIndex(lightIndex),
           mHueType{cor::stringToHueType(object["type"].toString())},
           mModelID{object["modelid"].toString()},
           mManufacturer{object["manufacturername"].toString()},
-          mSoftwareVersion{object["swversion"].toString()} {
-        mHardwareType = hue::modelToHardwareType(object["modelid"].toString());
+          mSoftwareVersion{object["swversion"].toString()},
+          mHardwareType{hue::modelToHardwareType(object["modelid"].toString())},
+          mBridgeID{controller},
+          mUniqueID{object["uniqueid"].toString()} {
         mName = object["name"].toString();
     }
+
+    /// getter for bridge ID
+    const QString& bridgeID() const noexcept { return mBridgeID; }
+
+    /// getter for unique ID
+    const QString& uniqueID() const noexcept { return mUniqueID; }
+
+    /// getter for hardware type
+    ELightHardwareType hardwareType() const noexcept { return mHardwareType; }
+
+    /// getter for assigned name
+    const QString& name() const noexcept { return mName; }
+
+    /// setter for name
+    void name(const QString& name) { mName = name; }
 
     /// setter for color mode
     void colorMode(EColorMode mode) { mColorMode = mode; }
@@ -56,7 +72,7 @@ public:
     const QString& softwareVersion() const noexcept { return mSoftwareVersion; }
 
     /// SHueLight equal operator
-    bool operator==(const HueLight& rhs) const {
+    bool operator==(const HueMetadata& rhs) const {
         bool result = true;
         if (uniqueID() != rhs.uniqueID()) {
             result = false;
@@ -93,7 +109,30 @@ private:
      * \brief softwareVersion exact software version of light.
      */
     QString mSoftwareVersion;
+
+    /// getter for light hardware type
+    ELightHardwareType mHardwareType;
+
+    /// name of light
+    QString mName;
+
+    /// unique ID for bridge
+    QString mBridgeID;
+
+    /// unique ID for hue metadata
+    QString mUniqueID;
 };
+
+/// basic constructor for a cor::Light variant for hues
+class HueLight : public cor::Light {
+public:
+    HueLight(const HueMetadata& metadata)
+        : cor::Light(metadata.uniqueID(), metadata.bridgeID(), ECommType::hue) {
+        mHardwareType = metadata.hardwareType();
+        mName = metadata.name();
+    }
+};
+
 
 /*!
  * \brief checkForHueWithMostFeatures takes a list of hue light structs, and returns
@@ -105,7 +144,7 @@ private:
  * \param lights vector of hues
  * \return the most fully featured hue type found in the vector
  */
-inline EHueType checkForHueWithMostFeatures(std::vector<HueLight> lights) {
+inline EHueType checkForHueWithMostFeatures(std::vector<HueMetadata> lights) {
     std::uint32_t ambientCount = 0;
     std::uint32_t whiteCount = 0;
     std::uint32_t rgbCount = 0;
@@ -138,8 +177,8 @@ inline EHueType checkForHueWithMostFeatures(std::vector<HueLight> lights) {
 
 namespace std {
 template <>
-struct hash<HueLight> {
-    size_t operator()(const HueLight& k) const {
+struct hash<HueMetadata> {
+    size_t operator()(const HueMetadata& k) const {
         return std::hash<std::string>{}(k.uniqueID().toStdString());
     }
 };

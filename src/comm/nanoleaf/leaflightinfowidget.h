@@ -5,7 +5,7 @@
 #include <QLayout>
 #include <QWidget>
 
-#include "comm/nanoleaf/leaflight.h"
+#include "comm/nanoleaf/leafmetadata.h"
 #include "cor/protocols.h"
 #include "editablefieldwidget.h"
 
@@ -28,14 +28,14 @@ class LeafLightInfoWidget : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit LeafLightInfoWidget(const nano::LeafLight& light, QWidget* parent);
+    explicit LeafLightInfoWidget(const nano::LeafMetadata& light, QWidget* parent);
 
     /*!
      * \brief updateLight update the light used internally to fill the widget
      *
      * \param light new data for the light.
      */
-    void updateLight(const nano::LeafLight& light);
+    void updateLight(const nano::LeafMetadata& light);
 
     /*!
      * \brief hideDetails true to show only the basic details of a widget, false
@@ -62,7 +62,7 @@ public:
     const QString& key() { return mKey; }
 
     /// getter for LeafLight being represented.
-    nano::LeafLight light() { return mLight; }
+    nano::LeafMetadata light() { return mLight; }
 
     /// true if details are hidden, false otherwise
     bool detailsHidden() { return mHideDetails; }
@@ -135,7 +135,7 @@ private:
     QLabel* mSerialNumber;
 
     /// stored data for the light being displayed by this widget.
-    nano::LeafLight mLight;
+    nano::LeafMetadata mLight;
 
     /// pixmap for the type.
     QPixmap mTypePixmap;

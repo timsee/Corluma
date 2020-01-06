@@ -80,6 +80,8 @@ void CommSerial::stateUpdate() {
 
 
         mStateUpdateCounter++;
+    } else {
+        stopStateUpdates();
     }
 }
 

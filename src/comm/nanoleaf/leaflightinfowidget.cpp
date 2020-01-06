@@ -17,7 +17,7 @@
 
 namespace nano {
 
-LeafLightInfoWidget::LeafLightInfoWidget(const nano::LeafLight& light, QWidget* parent)
+LeafLightInfoWidget::LeafLightInfoWidget(const nano::LeafMetadata& light, QWidget* parent)
     : QWidget(parent),
       mHideDetails{true},
       mLight{light},
@@ -66,7 +66,7 @@ LeafLightInfoWidget::LeafLightInfoWidget(const nano::LeafLight& light, QWidget* 
     hideDetails(true);
 }
 
-void LeafLightInfoWidget::updateLight(const nano::LeafLight& light) {
+void LeafLightInfoWidget::updateLight(const nano::LeafMetadata& light) {
     // many fields such as the mac address and the type of light won't update, only check the fields
     // that do
     if (light.name() != mLight.name()) {

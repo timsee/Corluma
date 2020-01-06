@@ -8,7 +8,7 @@
 
 #include "comm/arducor/arducordiscovery.h"
 #include "comm/commtype.h"
-#include "comm/hue/huelight.h"
+#include "comm/hue/huemetadata.h"
 #include "comm/hue/hueprotocols.h"
 #include "comm/upnpdiscovery.h"
 #include "cor/objects/light.h"
@@ -156,7 +156,7 @@ public:
      * \param hues list of hue lights to convert
      * \return a list of cor::Lights
      */
-    std::vector<cor::Light> hueLightsToDevices(std::vector<HueLight> hues);
+    std::vector<cor::Light> hueLightsToDevices(std::vector<HueMetadata> hues);
 
     /// deletes a hue group by name
     void deleteHueGroup(const QString& name);

@@ -9,8 +9,6 @@
 #include "cor/objects/light.h"
 #include "utils/qt.h"
 
-#define REACHABILITY_TIMEOUT 5000
-
 CommType::CommType(ECommType type) : mStateUpdateInterval{1000}, mType(type) {
     mUpdateTimeoutInterval = 15000;
     mStateUpdateCounter = 0;
@@ -19,8 +17,6 @@ CommType::CommType(ECommType type) : mStateUpdateInterval{1000}, mType(type) {
     mElapsedTimer.start();
 
     mStateUpdateTimer = new QTimer;
-    mReachabilityTest = new QTimer;
-    connect(mReachabilityTest, SIGNAL(timeout()), this, SLOT(checkReachability()));
 }
 
 void CommType::addLight(const cor::Light& light) {
@@ -77,7 +73,6 @@ QString CommType::controllerName(const QString& uniqueID) {
 void CommType::resetStateUpdateTimeout() {
     if (!mStateUpdateTimer->isActive()) {
         mStateUpdateTimer->start(mStateUpdateInterval);
-        mReachabilityTest->start(REACHABILITY_TIMEOUT);
         for (const auto& light : mLightDict.items()) {
             mUpdateTime.insert(light.uniqueID().toStdString(), 0);
             mLightDict.update(light.uniqueID().toStdString(), light);
@@ -88,16 +83,14 @@ void CommType::resetStateUpdateTimeout() {
 }
 
 void CommType::stopStateUpdates() {
-    qDebug() << "INFO: Turning off state updates" << commTypeToString(mType);
     if (mStateUpdateTimer->isActive()) {
+       // qDebug() << "INFO: Turning off state updates" << commTypeToString(mType);
         mStateUpdateTimer->stop();
-        mReachabilityTest->stop();
     }
 }
 
-bool CommType::shouldContinueStateUpdate() {
+bool CommType::shouldContinueStateUpdate() const noexcept {
     if (mLastSendTime.elapsed() > 15000) {
-        stopStateUpdates();
         return false;
     }
     // if device table is empty, stop updates, otherwise, continue
@@ -111,7 +104,6 @@ void CommType::checkReachability() {
         auto device = light;
         auto updateTime = mUpdateTime.item(light.uniqueID().toStdString());
         if (device.isReachable() && (updateTime.first < (elapsedTime - kThreshold))) {
-            qDebug() << " no update for this device! " << device;
             device.isReachable(false);
             mLightDict.update(device.uniqueID().toStdString(), device);
         }

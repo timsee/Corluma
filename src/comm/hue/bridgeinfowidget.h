@@ -10,7 +10,7 @@
 #include "bridge.h"
 #include "cor/widgets/listitemwidget.h"
 #include "editablefieldwidget.h"
-#include "huelight.h"
+#include "huemetadata.h"
 
 namespace hue {
 

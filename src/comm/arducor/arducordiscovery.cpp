@@ -293,7 +293,8 @@ void ArduCorDiscovery::handleDiscoveredController(const cor::Controller& discove
 
             int i = 1;
             for (const auto& name : discoveredController.names()) {
-                ArduCorLight light(name, discoveredController, i);
+                ArduCorMetadata metadata(name, discoveredController, i);
+                ArduCorLight light(metadata);
                 ++i;
 
                 // start state updates, etc.
@@ -347,7 +348,7 @@ void ArduCorDiscovery::removeController(const QString& controllerName) {
     if (shouldDeleteFound || shouldDeleteNotFound) {
         QJsonArray array = mJsonData.array();
         bool shouldSave = false;
-        std::uint32_t i = 0u;
+        int i = 0;
         for (auto value : array) {
             QJsonObject object = value.toObject();
             cor::Controller jsonController = cor::jsonToController(object);

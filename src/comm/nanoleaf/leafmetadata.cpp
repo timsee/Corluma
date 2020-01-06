@@ -4,11 +4,11 @@
  * Released under the GNU General Public License.
  */
 
-#include "leaflight.h"
+#include "leafmetadata.h"
 
 namespace nano {
 
-LeafLight jsonToLeafController(const QJsonObject& object) {
+LeafMetadata jsonToLeafController(const QJsonObject& object) {
     QString IP = object["IP"].toString();
     QString name = object["name"].toString();
     QString serial = object["serial"].toString();
@@ -16,15 +16,14 @@ LeafLight jsonToLeafController(const QJsonObject& object) {
     QString hardwareName = object["hardwareName"].toString();
     int port = int(object["port"].toDouble());
 
-    nano::LeafLight controller(serial, hardwareName);
-    controller.IP(IP);
+    nano::LeafMetadata controller(serial, hardwareName);
+    controller.addConnectionInfo(IP, port);
     controller.name(name);
     controller.authToken(auth);
-    controller.port(port);
     return controller;
 }
 
-QJsonObject leafControllerToJson(const LeafLight& controller) {
+QJsonObject leafControllerToJson(const LeafMetadata& controller) {
     QJsonObject object;
     object["IP"] = controller.IP();
     object["name"] = controller.name();

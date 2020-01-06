@@ -9,7 +9,7 @@
 #include <sstream>
 #include <vector>
 
-#include "comm/hue/huelight.h"
+#include "comm/hue/huemetadata.h"
 #include "cor/dictionary.h"
 #include "cor/objects/group.h"
 #include "cor/objects/room.h"
@@ -141,7 +141,7 @@ public:
     QString macaddress = "";
 
     /// vector of lights for a bridge
-    cor::Dictionary<HueLight> lights;
+    cor::Dictionary<HueMetadata> lights;
 
     /// list of the schedules stored on the bridge
     cor::Dictionary<SHueSchedule> schedules;

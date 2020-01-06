@@ -118,6 +118,8 @@ public:
      */
     const cor::Dictionary<cor::Light>& lightDict() const noexcept { return mLightDict; }
 
+    /// slot for timer that periodically checks if any lights not reachable
+    void checkReachability();
 signals:
 
     /*!
@@ -131,7 +133,7 @@ protected:
      * keep requesting state updates from the devices.
      * \return true if it should request state updates, false otherwise.
      */
-    bool shouldContinueStateUpdate();
+    bool shouldContinueStateUpdate() const noexcept;
 
     /*!
      * \brief mLastSendTime the last time a message was sent to the commtype. This is tracked to
@@ -142,9 +144,6 @@ protected:
 
     /// checks how long the app has been alive for reachability tests
     QElapsedTimer mElapsedTimer;
-
-    /// periodically check if all lights have sent packets recently.
-    QTimer* mReachabilityTest;
 
     /// number of state updates sent out
     std::uint32_t mStateUpdateCounter;
@@ -177,11 +176,6 @@ protected:
      * \brief mType the type CommType this is, meaning UDP, Serial, HTTP, etc.
      */
     ECommType mType;
-
-private slots:
-
-    /// slot for timer that periodically checks if any lights not reachable
-    void checkReachability();
 
 private:
     /*!

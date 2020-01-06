@@ -259,7 +259,7 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
 }
 
 EColorPickerType CommLayer::bestColorPickerType(const std::vector<cor::Light>& lights) {
-    std::vector<HueLight> hueLights;
+    std::vector<HueMetadata> hueLights;
     for (const auto& light : lights) {
         if (light.protocol() == EProtocolType::arduCor
             || light.protocol() == EProtocolType::nanoleaf) {
@@ -282,11 +282,10 @@ EColorPickerType CommLayer::bestColorPickerType(const std::vector<cor::Light>& l
 }
 
 
-std::vector<cor::Light> CommLayer::hueLightsToDevices(std::vector<HueLight> hues) {
+std::vector<cor::Light> CommLayer::hueLightsToDevices(std::vector<HueMetadata> hues) {
     std::vector<cor::Light> list;
     for (const auto& hue : hues) {
-        cor::Light device = static_cast<cor::Light>(hue);
-        list.push_back(device);
+        list.push_back(HueLight(hue));
     }
     return list;
 }

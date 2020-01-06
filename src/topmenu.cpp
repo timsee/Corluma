@@ -8,7 +8,7 @@
 
 #include <QGraphicsEffect>
 
-#include "comm/hue/huelight.h"
+#include "comm/hue/huemetadata.h"
 #include "mainwindow.h"
 #include "utils/exception.h"
 #include "utils/qt.h"
@@ -735,12 +735,8 @@ void TopMenu::moveHiddenLayouts() {
 void TopMenu::updateUI() {
     if (mData->lights() != mLastDevices) {
         // get copy of data representation of lights
-        auto currentLights = mData->lights();
-        // update devices to be comm representation instead of data representaiton
-        for (auto&& device : currentLights) {
-            device = mComm->lightByID(device.uniqueID());
-        }
-        mLastDevices = mData->lights();
+        auto currentLights = mComm->commLightsFromVector(mData->lights());
+        mLastDevices = currentLights;
 
         mMainPalette->updateDevices(currentLights);
         updateBrightnessSlider();
@@ -775,7 +771,9 @@ void TopMenu::pushOutTapToSelectButton() {
 
 void TopMenu::updateRoutine(const QJsonObject& routineObject) {
     if (mCurrentPage == EPage::colorPage) {
-        showSingleColorStateWidget(true);
+        if (!mSingleColorStateWidget->isIn()) {
+            showSingleColorStateWidget(true);
+        }
         ERoutine routine = stringToRoutine(routineObject["routine"].toString());
         QColor color;
         if (routineObject["hue"].isDouble() && routineObject["sat"].isDouble()
@@ -789,7 +787,9 @@ void TopMenu::updateRoutine(const QJsonObject& routineObject) {
         }
         mSingleColorStateWidget->updateState(color, routine);
     } else if (mCurrentPage == EPage::palettePage) {
-        showMultiColorStateWidget(true);
+        if (!mMultiColorStateWidget->isIn()) {
+            showMultiColorStateWidget(true);
+        }
         Palette palette = Palette(routineObject["palette"].toObject());
         auto colors = palette.colors();
         auto size = palette.colors().size();
@@ -806,7 +806,9 @@ void TopMenu::updateRoutine(const QJsonObject& routineObject) {
 
 void TopMenu::updateScheme(const std::vector<QColor>& colors) {
     if (mCurrentPage == EPage::palettePage) {
-        showMultiColorStateWidget(true);
+        if (!mMultiColorStateWidget->isIn()) {
+            showMultiColorStateWidget(true);
+        }
         mMultiColorStateWidget->updateState(colors);
     }
 }

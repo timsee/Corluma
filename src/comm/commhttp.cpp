@@ -63,6 +63,8 @@ void CommHTTP::stateUpdate() {
         }
 
         mStateUpdateCounter++;
+    } else {
+        stopStateUpdates();
     }
 }
 
