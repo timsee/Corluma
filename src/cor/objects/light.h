@@ -21,17 +21,16 @@ namespace cor {
 class Light {
 public:
     /// default constructor
-    Light() : Light(QString("NOT_VALID"), QString("UNINITIALIZED"), ECommType::MAX) {}
+    Light() : Light(QString("NOT_VALID"), ECommType::MAX) {}
 
     /*!
      * \brief Light Constructor
      */
-    Light(const QString& uniqueID, const QString& controller, ECommType commType)
+    Light(const QString& uniqueID, ECommType commType)
         : mHardwareType{ELightHardwareType::singleLED},
           mUniqueID(uniqueID),
           mCommType(commType),
           mProtocol(cor::convertCommTypeToProtocolType(commType)),
-          mController(controller),
           mMajorAPI{4},
           mMinorAPI{2},
           mIsReachable{false},
@@ -65,7 +64,6 @@ public:
     void copyMetadata(const cor::Light& metadata) {
         mName = metadata.name();
         mHardwareType = metadata.hardwareType();
-        mController = metadata.controller();
     }
 
     /// true if on, false if off
@@ -150,9 +148,6 @@ public:
     /// getter for unique ID
     const QString& uniqueID() const { return mUniqueID; }
 
-    /// getter for controller
-    const QString& controller() const { return mController; }
-
     /// getter for type
     ECommType commType() const { return mCommType; }
 
@@ -190,9 +185,6 @@ public:
         if (speed() != rhs.speed()) {
             result = false;
         }
-        if (controller() != rhs.controller()) {
-            result = false;
-        }
 
         return result;
     }
@@ -209,8 +201,7 @@ public:
                    << " routine: " << routineToString(routine()).toUtf8().toStdString()
                    << " palette: " << palette() << " API: " << majorAPI() << "." << minorAPI()
                    << " CommType: " << commTypeToString(commType()).toUtf8().toStdString()
-                   << " Protocol: " << protocolToString(protocol()).toUtf8().toStdString()
-                   << " controller: " << controller().toUtf8().toStdString();
+                   << " Protocol: " << protocolToString(protocol()).toUtf8().toStdString();
         return QString::fromStdString(tempString.str());
     }
 
@@ -237,13 +228,6 @@ private:
 
     /// type of protocol for packets
     EProtocolType mProtocol;
-
-    /*!
-     * \brief mController the name of the connection. This varies by connection type. For example,
-     *        a UDP connection will use its IP address as a name, or a serial connection
-     *        will use its serial port.
-     */
-    QString mController;
 
     /// major API level
     std::uint32_t mMajorAPI;
@@ -305,7 +289,7 @@ inline cor::Light jsonToLight(const QJsonObject& object) {
     ECommType type = stringToCommType(object["type"].toString());
     QString controller = object["controller"].toString();
 
-    cor::Light light(uniqueID, controller, type);
+    cor::Light light(uniqueID, type);
 
     if (object["routine"].isString()) {
         light.routine(stringToRoutine(object["routine"].toString()));

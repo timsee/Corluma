@@ -555,7 +555,7 @@ cor::Light parseLightObject(const QJsonObject& object) {
         speed = int(object["speed"].toDouble());
     }
 
-    cor::Light light(uniqueID, "NO_CONTROLLER", type);
+    cor::Light light(uniqueID, type);
     light.isReachable(true);
     light.isOn(isOn);
     light.version(majorAPI, minorAPI);
@@ -591,7 +591,7 @@ cor::Light parseDefaultStateObject(const QJsonObject& object) {
         speed = int(object["speed"].toDouble());
     }
 
-    cor::Light light(QString::number(groupID), "NO_CONTROLLER", ECommType::MAX);
+    cor::Light light(QString::number(groupID), ECommType::MAX);
     light.isReachable(true);
     light.isOn(isOn);
     light.version(majorAPI, minorAPI);

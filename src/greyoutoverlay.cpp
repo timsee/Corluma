@@ -13,7 +13,7 @@
 
 #include "utils/qt.h"
 
-GreyOutOverlay::GreyOutOverlay(QWidget* parent) : QWidget(parent) {}
+GreyOutOverlay::GreyOutOverlay(QWidget* parent) : QWidget(parent), mInTransition{false} {}
 
 void GreyOutOverlay::resize() {
     auto size = cor::applicationSize();
@@ -30,7 +30,9 @@ void GreyOutOverlay::paintEvent(QPaintEvent*) {
 }
 
 void GreyOutOverlay::mouseReleaseEvent(QMouseEvent*) {
-    emit clicked();
+    if (!mInTransition) {
+        emit clicked();
+    }
 }
 
 void GreyOutOverlay::greyOut(bool shouldGrey) {
@@ -38,6 +40,7 @@ void GreyOutOverlay::greyOut(bool shouldGrey) {
     if (shouldGrey) {
         raise();
         setVisible(true);
+        mInTransition = true;
         auto fadeOutEffect = new QGraphicsOpacityEffect(this);
         setGraphicsEffect(fadeOutEffect);
         auto fadeOutAnimation = new QPropertyAnimation(fadeOutEffect, "opacity");
@@ -45,18 +48,25 @@ void GreyOutOverlay::greyOut(bool shouldGrey) {
         fadeOutAnimation->setStartValue(0.0f);
         fadeOutAnimation->setEndValue(1.0f);
         fadeOutAnimation->start();
+        connect(fadeOutAnimation, SIGNAL(finished()), this, SLOT(greyOutFadeOutComplete()));
     } else {
         auto fadeInEffect = new QGraphicsOpacityEffect(this);
+        mInTransition = true;
         setGraphicsEffect(fadeInEffect);
         auto fadeInAnimation = new QPropertyAnimation(fadeInEffect, "opacity");
         fadeInAnimation->setDuration(TRANSITION_TIME_MSEC / 2);
         fadeInAnimation->setStartValue(1.0f);
         fadeInAnimation->setEndValue(0.0f);
         fadeInAnimation->start();
-        connect(fadeInAnimation, SIGNAL(finished()), this, SLOT(greyOutFadeComplete()));
+        connect(fadeInAnimation, SIGNAL(finished()), this, SLOT(greyOutFadeInComplete()));
     }
 }
 
-void GreyOutOverlay::greyOutFadeComplete() {
+void GreyOutOverlay::greyOutFadeInComplete() {
+    mInTransition = false;
     setVisible(false);
+}
+
+void GreyOutOverlay::greyOutFadeOutComplete() {
+    mInTransition = false;
 }

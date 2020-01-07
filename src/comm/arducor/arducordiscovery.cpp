@@ -221,6 +221,8 @@ void ArduCorDiscovery::addManualIP(const QString& ip) {
         cor::Controller controller2(ip, ECommType::UDP);
         mNotFoundControllers.push_back(controller2);
     }
+    // start discovery if its not already active
+    startDiscovery();
 }
 
 #ifndef MOBILE_BUILD

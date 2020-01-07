@@ -41,8 +41,7 @@ Bridge jsonToBridge(const QJsonObject& object) {
         QJsonObject light = arrayObject.toObject();
         if (light["uniqueid"].isString()) {
             auto index = light["index"].toInt();
-            // TODO: group data relies on "NO_CONTROLLER" when it shouldn't care...
-            HueMetadata hueLight(light, "NO_CONTROLLER", index);
+            HueMetadata hueLight(light, bridge.id, index);
             bridge.lights.insert(hueLight.uniqueID().toStdString(), hueLight);
         }
     }

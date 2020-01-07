@@ -27,19 +27,9 @@ void CommType::addLight(const cor::Light& light) {
     emit updateReceived(mType);
 }
 
-bool CommType::removeController(const QString& controller) {
-    // make list of all lights to remove
-    std::vector<QString> lightIDs;
-    for (const auto& light : mLightDict.items()) {
-        if (light.controller() == controller) {
-            lightIDs.push_back(light.uniqueID());
-        }
-    }
-    for (const auto& light : lightIDs) {
-        mLightDict.removeKey(light.toStdString());
-        mUpdateTime.removeKey(light.toStdString());
-    }
-    return true;
+bool CommType::removeLight(const QString& uniqueID) {
+    auto result = mLightDict.removeKey(uniqueID.toStdString());
+    return result;
 }
 
 void CommType::updateLight(const cor::Light& device) {
@@ -61,15 +51,6 @@ bool CommType::fillDevice(cor::Light& device) {
     return false;
 }
 
-
-QString CommType::controllerName(const QString& uniqueID) {
-    auto deviceResult = mLightDict.item(uniqueID.toStdString());
-    if (deviceResult.second) {
-        return deviceResult.first.controller();
-    }
-    return "NOT_FOUND";
-}
-
 void CommType::resetStateUpdateTimeout() {
     if (!mStateUpdateTimer->isActive()) {
         mStateUpdateTimer->start(mStateUpdateInterval);
@@ -84,7 +65,7 @@ void CommType::resetStateUpdateTimeout() {
 
 void CommType::stopStateUpdates() {
     if (mStateUpdateTimer->isActive()) {
-       // qDebug() << "INFO: Turning off state updates" << commTypeToString(mType);
+        // qDebug() << "INFO: Turning off state updates" << commTypeToString(mType);
         mStateUpdateTimer->stop();
     }
 }

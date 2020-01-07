@@ -79,8 +79,8 @@ CommType* CommLayer::commByType(ECommType type) {
     return ptr;
 }
 
-bool CommLayer::removeController(const cor::Controller& controller) {
-    return commByType(controller.type())->removeController(controller);
+bool CommLayer::removeLight(const cor::Light& light) {
+    return commByType(light.commType())->removeLight(light);
 }
 
 bool CommLayer::fillDevice(cor::Light& device) {
@@ -188,42 +188,38 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
     // first apply the room(s) ...
     for (const auto& room : rooms) {
         for (const auto& lightID : room.first.lights()) {
-            try {
-                auto light = lightByID(lightID);
-                light = addLightMetaData(light);
-                light = applyStateToLight(light, room.second);
-                const auto& key = light.uniqueID().toStdString();
-                // check if light exists in list already
-                const auto& result = moodDict.item(key);
-                if (result.second) {
-                    // update if it exists
-                    moodDict.update(key, light);
-                } else {
-                    // add if it doesnt
-                    moodDict.insert(key, light);
-                }
-            } catch (cor::Exception&) {}
+            auto light = lightByID(lightID);
+            light = addLightMetaData(light);
+            light = applyStateToLight(light, room.second);
+            const auto& key = light.uniqueID().toStdString();
+            // check if light exists in list already
+            const auto& result = moodDict.item(key);
+            if (result.second) {
+                // update if it exists
+                moodDict.update(key, light);
+            } else {
+                // add if it doesnt
+                moodDict.insert(key, light);
+            }
         }
     }
 
     // ... then apply the group(s) ...
     for (const auto& group : groups) {
         for (const auto& light : group.first.lights()) {
-            try {
-                auto lightCopy = lightByID(light);
-                lightCopy = addLightMetaData(lightCopy);
-                lightCopy = applyStateToLight(lightCopy, group.second);
-                const auto& key = lightCopy.uniqueID().toStdString();
-                // check if light exists in list already
-                const auto& result = moodDict.item(key);
-                if (result.second) {
-                    // update if it exists
-                    moodDict.update(key, lightCopy);
-                } else {
-                    // add if it doesnt
-                    moodDict.insert(key, lightCopy);
-                }
-            } catch (cor::Exception&) {}
+            auto lightCopy = lightByID(light);
+            lightCopy = addLightMetaData(lightCopy);
+            lightCopy = applyStateToLight(lightCopy, group.second);
+            const auto& key = lightCopy.uniqueID().toStdString();
+            // check if light exists in list already
+            const auto& result = moodDict.item(key);
+            if (result.second) {
+                // update if it exists
+                moodDict.update(key, lightCopy);
+            } else {
+                // add if it doesnt
+                moodDict.insert(key, lightCopy);
+            }
         }
     }
 
@@ -239,20 +235,18 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
 
     // ... now apply the specific lights
     for (const auto& light : lightList) {
-        try {
-            // this is messy and I don't like it.
-            auto lightCopy = addLightMetaData(light);
-            const auto& key = light.uniqueID().toStdString();
-            // check if light exists in list already
-            const auto& result = moodDict.item(key);
-            if (result.second) {
-                // update if it exists
-                moodDict.update(key, lightCopy);
-            } else {
-                // add if it doesnt
-                moodDict.insert(key, lightCopy);
-            }
-        } catch (cor::Exception&) {}
+        // this is messy and I don't like it.
+        auto lightCopy = addLightMetaData(light);
+        const auto& key = light.uniqueID().toStdString();
+        // check if light exists in list already
+        const auto& result = moodDict.item(key);
+        if (result.second) {
+            // update if it exists
+            moodDict.update(key, lightCopy);
+        } else {
+            // add if it doesnt
+            moodDict.insert(key, lightCopy);
+        }
     }
 
     return moodDict;

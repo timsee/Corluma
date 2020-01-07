@@ -360,10 +360,10 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
         for (const auto& message : messageArray) {
             // look if the key already exists.
             if (!message.isEmpty()) {
-                auto messageGroup = mMessages.find(dataDevice.controller().toStdString());
+                auto messageGroup = mMessages.find(arduCorLight.controller().toStdString());
                 if (messageGroup == mMessages.end()) {
                     std::vector<QString> list = {message};
-                    mMessages.insert(std::make_pair(dataDevice.controller().toStdString(), list));
+                    mMessages.insert(std::make_pair(arduCorLight.controller().toStdString(), list));
                 } else {
                     messageGroup->second.push_back(message);
                 }

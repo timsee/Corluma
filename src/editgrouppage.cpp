@@ -100,8 +100,8 @@ bool EditGroupPage::saveChanges() {
     std::vector<cor::Light> newDevices = mSimpleGroupWidget->checkedDevices();
     bool devicesAreValid = true;
     if (!newDevices.empty()) {
-        for (auto& device : newDevices) {
-            if (device.controller() == "") {
+        for (const auto& device : newDevices) {
+            if (!device.isValid()) {
                 devicesAreValid = false;
             }
         }

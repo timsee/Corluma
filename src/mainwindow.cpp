@@ -232,7 +232,6 @@ void MainWindow::receivedURL(QString url) {
 void MainWindow::loadPages() {
     if (!mPagesLoaded) {
         mPagesLoaded = true;
-
         // --------------
         // Setup main widget space
         // --------------

@@ -105,7 +105,7 @@ void LeafDiscovery::removeNanoleaf(const nano::LeafMetadata& controllerToRemove)
     if (updateJson) {
         QJsonArray array = mJsonData.array();
         bool shouldSave = false;
-        std::uint32_t i = 0u;
+        int i = 0;
         for (auto value : array) {
             QJsonObject object = value.toObject();
             nano::LeafMetadata jsonController = jsonToLeafController(object);
@@ -300,7 +300,7 @@ nano::LeafMetadata LeafDiscovery::findLightByIP(const QString& IP) {
         }
 
         if (!found) {
-            nano::LeafMetadata light;
+            nano::LeafMetadata light("", name);
             // check in not found for the same auth token, if it exists take its info and add it in
             for (auto notFoundController : mNotFoundLights) {
                 if (auth == notFoundController.authToken()) {
@@ -328,7 +328,7 @@ nano::LeafMetadata LeafDiscovery::findLightByIP(const QString& IP) {
             }
         }
     }
-    return nano::LeafMetadata();
+    return {};
 }
 
 std::pair<nano::LeafMetadata, bool> LeafDiscovery::findLightBySerial(const QString& serialNumber) {

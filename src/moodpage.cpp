@@ -45,17 +45,13 @@ void MoodPage::makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
             bool foundRoom = false;
             for (const auto& room : roomList) {
                 for (const auto& lightID : room.lights()) {
-                    try {
-                        if (lightID == moodDevice.uniqueID()) {
-                            foundRoom = true;
-                            auto roomIt =
-                                std::find(roomNames.begin(), roomNames.end(), room.name());
-                            if (roomIt == roomNames.end()) {
-                                roomNames.push_back(room.name());
-                            }
+                    if (lightID == moodDevice.uniqueID()) {
+                        foundRoom = true;
+                        auto roomIt = std::find(roomNames.begin(), roomNames.end(), room.name());
+                        if (roomIt == roomNames.end()) {
+                            roomNames.push_back(room.name());
                         }
-
-                    } catch (...) {}
+                    }
                 }
             }
             if (!foundRoom) {

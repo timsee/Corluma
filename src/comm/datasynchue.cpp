@@ -68,7 +68,8 @@ void DataSyncHue::syncData() {
             cor::Light commLayerDevice = device;
             if (mComm->fillDevice(commLayerDevice)) {
                 if (device.commType() == ECommType::hue) {
-                    if (checkThrottle(device.controller(), device.commType())) {
+                    auto hueMetadata = mComm->hue()->hueLightFromLight(commLayerDevice);
+                    if (checkThrottle(hueMetadata.bridgeID(), device.commType())) {
                         if (!sync(device, commLayerDevice)) {
                             countOutOfSync++;
                         }
@@ -121,10 +122,10 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
     auto hueLight = mComm->hue()->hueLightFromLight(commDevice);
 
     QJsonObject object;
-    object["controller"] = commDevice.controller();
+    object["controller"] = hueLight.bridgeID();
     object["commtype"] = commTypeToString(commDevice.commType());
     object["index"] = hueLight.index();
-    object["uniqueID"] = commDevice.controller();
+    object["uniqueID"] = hueLight.bridgeID();
 
     // get bridge
     auto bridge = mComm->hue()->bridgeFromLight(commDevice);
@@ -182,7 +183,7 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
 
     if (countOutOfSync) {
         mComm->hue()->sendPacket(object);
-        resetThrottle(dataDevice.controller(), dataDevice.commType());
+        resetThrottle(hueLight.bridgeID(), dataDevice.commType());
     }
 
     return (countOutOfSync == 0);

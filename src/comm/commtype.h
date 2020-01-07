@@ -72,13 +72,7 @@ public:
     // Controller and Device Management
     // ----------------------------
 
-    /*!
-     * \brief removeController attempts to remove the controller from the device table.
-     * \param connection the connection you want to remove
-     * \return true if the connection exists and was removed, false if it wasn't there in the first
-     * place
-     */
-    bool removeController(const QString& name);
+    bool removeLight(const QString& uniqueID);
 
     /*!
      * \brief addLight adds lights with specific unique IDs that have been previously discovered.
@@ -102,15 +96,6 @@ public:
      * \return true if device is found and filled, false otherwise.
      */
     bool fillDevice(cor::Light& device);
-
-    /*!
-     * \brief controllerName look up a controller's name by providing the unique ID of a light. If
-     * no controller matches the ID, it will return an error string. The complexity of the lookup
-     * scales by number of controllers instead of the number of devices.
-     * \param uniqueID unique ID to request a light from
-     * \return the name of the controller, if the uniqueID is found.
-     */
-    QString controllerName(const QString& uniqueID);
 
     /*!
      * \brief deviceList list of the light devices

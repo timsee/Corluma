@@ -18,7 +18,7 @@ class GreyOutOverlay : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit GreyOutOverlay(QWidget* parent = nullptr);
+    explicit GreyOutOverlay(QWidget* parent);
 
     /// fades in and out the greyout
     void greyOut(bool shouldGrey);
@@ -35,8 +35,11 @@ signals:
 
 private slots:
 
-    /// slot called when greyout fade is complete.
-    void greyOutFadeComplete();
+    /// slot called when greyout fade in is complete.
+    void greyOutFadeInComplete();
+
+    /// slot called when greyout fade in is complete.
+    void greyOutFadeOutComplete();
 
 protected:
     /// paints the greyout overlay
@@ -46,6 +49,10 @@ protected:
      * \brief mouseReleaseEvent picks up when a click (or a tap on mobile) is released.
      */
     virtual void mouseReleaseEvent(QMouseEvent*);
+
+private:
+    /// true if currently greying out, false otherwise
+    bool mInTransition;
 };
 
 #endif // GREYOUTOVERLAY_H

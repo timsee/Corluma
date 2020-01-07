@@ -93,26 +93,3 @@ void DiscoveryNanoLeafWidget::plusButtonClicked() {
 }
 
 void DiscoveryNanoLeafWidget::minusButtonClicked() {}
-
-
-// ----------------------------
-// Helpers
-// ----------------------------
-
-
-bool DiscoveryNanoLeafWidget::doesNanoLeafExist(const QString& controller) {
-    bool deviceFound = false;
-    for (const auto& discoveredController : mComm->nanoleaf()->discovery()->foundLights().items()) {
-        if (discoveredController.name() == controller) {
-            deviceFound = true;
-        }
-    }
-
-    for (const auto& unDiscoveredController : mComm->nanoleaf()->discovery()->notFoundLights()) {
-        if (unDiscoveredController.name() == controller) {
-            deviceFound = true;
-        }
-    }
-
-    return deviceFound;
-}

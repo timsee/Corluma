@@ -84,16 +84,16 @@ void DiscoveryArduCorWidget::plusButtonClicked() {
 
 void DiscoveryArduCorWidget::minusButtonClicked() {
     if (doesYunControllerExistAlready(mSearchWidget->lineEditText())) {
-        cor::Controller controller(mSearchWidget->lineEditText(), ECommType::UDP);
-        bool isSuccessful = mComm->removeController(controller);
+        cor::Light light(mSearchWidget->lineEditText(), ECommType::UDP);
+        auto isSuccessful = mComm->removeLight(light);
         if (!isSuccessful) {
-            qDebug() << "WARNING: failure removing" << controller.name()
+            qDebug() << "WARNING: failure removing" << light.uniqueID()
                      << "from UDP discovery list";
         }
-        cor::Controller controller2(mSearchWidget->lineEditText(), ECommType::HTTP);
-        isSuccessful = mComm->removeController(controller2);
+        cor::Light light2(mSearchWidget->lineEditText(), ECommType::HTTP);
+        isSuccessful = mComm->removeLight(light2);
         if (!isSuccessful) {
-            qDebug() << "WARNING: failure removing" << controller.name()
+            qDebug() << "WARNING: failure removing" << light.uniqueID()
                      << "from HTTP discovery list";
         }
     } else {

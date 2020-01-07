@@ -126,8 +126,7 @@ private:
 /// basic constructor for a cor::Light variant for hues
 class HueLight : public cor::Light {
 public:
-    HueLight(const HueMetadata& metadata)
-        : cor::Light(metadata.uniqueID(), metadata.bridgeID(), ECommType::hue) {
+    HueLight(const HueMetadata& metadata) : cor::Light(metadata.uniqueID(), ECommType::hue) {
         mHardwareType = metadata.hardwareType();
         mName = metadata.name();
     }

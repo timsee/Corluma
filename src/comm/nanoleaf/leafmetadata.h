@@ -133,9 +133,6 @@ public:
         mModel = object["model"].toString();
         mHardwareName = object["name"].toString();
         mSerialNumber = object["serialNo"].toString();
-        if (mName.isEmpty()) {
-            mName = mHardwareName;
-        }
 
         const auto& effectsObject = object["effects"].toObject();
         if (effectsObject["select"].isString()) {
@@ -245,7 +242,7 @@ private:
 class LeafLight : public cor::Light {
 public:
     LeafLight(const LeafMetadata& metadata)
-        : cor::Light(metadata.serialNumber(), metadata.hardwareName(), ECommType::nanoleaf) {
+        : cor::Light(metadata.serialNumber(), ECommType::nanoleaf) {
         mName = metadata.name();
         mHardwareType = ELightHardwareType::nanoleaf;
     }

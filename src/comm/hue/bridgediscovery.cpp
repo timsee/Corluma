@@ -219,7 +219,6 @@ void BridgeDiscovery::requestUsername(const hue::Bridge& bridge) {
     mNetworkManager->post(request, strJson.toUtf8());
 }
 
-
 //-----------------
 // Slots
 //-----------------
@@ -511,6 +510,16 @@ bool BridgeDiscovery::doesIPExistInSearchingLists(const QString& IP) {
     return foundIP;
 }
 
+
+std::pair<HueMetadata, bool> BridgeDiscovery::metadataFromLight(const cor::Light& light) {
+    for (const auto& bridge : mFoundBridges.items()) {
+        auto result = bridge.lights.item(light.uniqueID().toStdString());
+        if (result.second) {
+            return std::make_pair(result.first, true);
+        }
+    }
+    return std::make_pair(HueMetadata(), false);
+}
 
 HueMetadata BridgeDiscovery::lightFromBridgeIDAndIndex(const QString& bridgeID, int index) {
     const auto& bridgeResult = mFoundBridges.item(bridgeID.toStdString());

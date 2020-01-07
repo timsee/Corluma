@@ -630,3 +630,12 @@ ___
 - Fixed issues with reachability changes breaking UI.
 - Fixed miscellaneous bugs. 
 
+
+### **v0.17.6**
+#### The Discovery Edge Cases Update
+- Removed `controller()` from `cor::Light`.
+- Fixed edge cases in ArduCor discovery.
+- Fixed miscellaneous bugs.
+
+
+

@@ -159,11 +159,15 @@ std::vector<cor::Light> CommArduCor::lights() {
 }
 
 void CommArduCor::deleteLight(const cor::Light& light) {
-    // remove from comm data
-    commByType(light.commType())->removeController(light.name());
+    auto result = mArduCorLights.item(light.uniqueID().toStdString());
+    if (result.second) {
+        auto arduCorLight = result.first;
+        // remove from comm data
+        commByType(arduCorLight.commType())->removeLight(arduCorLight.controller());
 
-    // remove from JSON data
-    mDiscovery->removeController(light.controller());
+        // remove from JSON data
+        mDiscovery->removeController(arduCorLight.controller());
+    }
 }
 
 ArduCorMetadata CommArduCor::arduCorLightFromLight(const cor::Light& light) {
@@ -243,11 +247,11 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                             lightVector.push_back(light);
                         } else {
                             // get a list of devices for this controller
-                            const auto& deviceTable = commByType(type)->lightDict();
-                            for (const auto& light : deviceTable.items()) {
-                                if (light.controller() == sender) {
-                                    metadataVector.push_back(arduCorLightFromLight(light));
-                                    lightVector.push_back(light);
+                            auto arduCorLights = mArduCorLights.items();
+                            for (const auto& arduCor : arduCorLights) {
+                                if (arduCor.controller() == sender) {
+                                    metadataVector.push_back(arduCor);
+                                    lightVector.push_back(ArduCorLight(arduCor));
                                 }
                             }
                         }

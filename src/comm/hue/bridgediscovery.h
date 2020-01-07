@@ -92,6 +92,9 @@ public:
     /// returns true if the IP already exists in either not found or found bridges.
     bool doesIPExist(const QString& ip);
 
+    /// get the metadata for a light
+    std::pair<HueMetadata, bool> metadataFromLight(const cor::Light& light);
+
     /// gets the bridge that controls a light.
     hue::Bridge bridgeFromLight(const HueMetadata& light);
 

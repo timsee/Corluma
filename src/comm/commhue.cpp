@@ -163,66 +163,58 @@ void CommHue::bridgeDiscovered(const hue::Bridge& bridge,
                                const QJsonObject& lightsObject,
                                const QJsonObject& groupObject,
                                const QJsonObject& schedulesObject) {
-    bool controllerFound = false;
-    for (const auto& device : lightDict().items()) {
-        if (device.controller() == bridge.id) {
-            controllerFound = true;
+    if (!mStateUpdateTimer->isActive()) {
+        mStateUpdateTimer->start(mStateUpdateInterval);
+    }
+
+    QStringList keys = lightsObject.keys();
+    for (const auto& key : keys) {
+        if (lightsObject.value(key).isObject()) {
+            updateHueLightState(bridge,
+                                lightsObject.value(key).toObject(),
+                                int(key.toDouble()),
+                                false);
         }
     }
-    if (!controllerFound) {
-        if (!mStateUpdateTimer->isActive()) {
-            mStateUpdateTimer->start(mStateUpdateInterval);
-        }
 
-        QStringList keys = lightsObject.keys();
-        for (const auto& key : keys) {
-            if (lightsObject.value(key).isObject()) {
-                updateHueLightState(bridge,
-                                    lightsObject.value(key).toObject(),
-                                    int(key.toDouble()),
-                                    false);
-            }
-        }
+    hue::BridgeGroupVector groupVector;
+    hue::BridgeRoomVector roomVector;
+    std::vector<cor::Group> groups;
+    std::vector<cor::Group> rooms;
+    keys = groupObject.keys();
 
-        hue::BridgeGroupVector groupVector;
-        hue::BridgeRoomVector roomVector;
-        std::vector<cor::Group> groups;
-        std::vector<cor::Group> rooms;
-        keys = groupObject.keys();
-
-        for (const auto& key : keys) {
-            if (groupObject.value(key).isObject()) {
-                auto object = groupObject.value(key).toObject();
-                if (object["type"].toString() == "Room") {
-                    const auto& jsonResult = jsonToRoom(object, rooms);
-                    if (jsonResult.second) {
-                        roomVector.emplace_back(jsonResult.first, key.toDouble());
-                        rooms.emplace_back(jsonResult.first);
-                    }
-                } else {
-                    const auto& jsonResult = jsonToGroup(object, groups);
-                    if (jsonResult.second) {
-                        groupVector.emplace_back(jsonResult.first, key.toDouble());
-                        groups.emplace_back(jsonResult.first);
-                    }
+    for (const auto& key : keys) {
+        if (groupObject.value(key).isObject()) {
+            auto object = groupObject.value(key).toObject();
+            if (object["type"].toString() == "Room") {
+                const auto& jsonResult = jsonToRoom(object, rooms);
+                if (jsonResult.second) {
+                    roomVector.emplace_back(jsonResult.first, key.toDouble());
+                    rooms.emplace_back(jsonResult.first);
+                }
+            } else {
+                const auto& jsonResult = jsonToGroup(object, groups);
+                if (jsonResult.second) {
+                    groupVector.emplace_back(jsonResult.first, key.toDouble());
+                    groups.emplace_back(jsonResult.first);
                 }
             }
         }
-        mDiscovery->updateGroupsAndRooms(bridge, groupVector, roomVector);
-
-
-        std::vector<SHueSchedule> schedules;
-        keys = schedulesObject.keys();
-        for (auto& key : keys) {
-            if (schedulesObject.value(key).isObject()) {
-                schedules.push_back(
-                    jsonToSchedule(schedulesObject.value(key).toObject(), int(key.toDouble())));
-            }
-        }
-        mDiscovery->updateSchedules(bridge, schedules);
-
-        updateLightStates();
     }
+    mDiscovery->updateGroupsAndRooms(bridge, groupVector, roomVector);
+
+
+    std::vector<SHueSchedule> schedules;
+    keys = schedulesObject.keys();
+    for (auto& key : keys) {
+        if (schedulesObject.value(key).isObject()) {
+            schedules.push_back(
+                jsonToSchedule(schedulesObject.value(key).toObject(), int(key.toDouble())));
+        }
+    }
+    mDiscovery->updateSchedules(bridge, schedules);
+
+    updateLightStates();
 }
 
 
@@ -354,7 +346,7 @@ void CommHue::parseJSONObject(const hue::Bridge& bridge, const QJsonObject& obje
     if (!scheduleList.empty()) {
         mDiscovery->updateSchedules(bridge, scheduleList);
     }
-    if (!groupList.empty()) {
+    if (!groupList.empty() || !roomList.empty()) {
         mDiscovery->updateGroupsAndRooms(bridge, groupVector, roomVector);
     }
 }
@@ -720,14 +712,12 @@ EHueUpdates CommHue::checkTypeOfUpdate(QJsonObject object) {
     }
 }
 
-HueMetadata CommHue::hueLightFromLight(const cor::Light& device) {
-    auto bridgeResult = mDiscovery->bridges().item(device.controller().toStdString());
-    const auto& bridge = bridgeResult.first;
-    bool bridgeFound = bridgeResult.second;
-    if (bridgeFound) {
-        return bridge.lights.item(device.uniqueID().toStdString()).first;
+HueMetadata CommHue::hueLightFromLight(const cor::Light& light) {
+    auto result = mDiscovery->metadataFromLight(light);
+    if (result.second) {
+        return result.first;
     }
-    THROW_EXCEPTION("No hue found for" + device.name().toStdString());
+    THROW_EXCEPTION("No hue found for" + light.name().toStdString());
 }
 
 void CommHue::createIdleTimeout(const hue::Bridge& bridge, int i, int minutes) {
@@ -958,7 +948,7 @@ void CommHue::updateLightStates() {
             mStateUpdateCounter++;
         }
     } else {
-        // checkReachability();
+        checkReachability();
         stopStateUpdates();
     }
 }

@@ -980,7 +980,7 @@ void CommNanoleaf::deleteLight(const cor::Light& leafLight) {
     auto light = result.first;
     if (result.second) {
         // remove from comm data
-        removeController(light.hardwareName());
+        removeLight(light.hardwareName());
 
         // remove from saved data
         mDiscovery->removeNanoleaf(light);

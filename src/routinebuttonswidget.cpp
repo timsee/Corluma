@@ -24,7 +24,7 @@ RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup,
     mLayout->setContentsMargins(0, 0, 0, 0);
     mLayout->setHorizontalSpacing(0);
     mLayout->setVerticalSpacing(0);
-    cor::Light light("Routines", "Routines", ECommType::MAX);
+    cor::Light light("Routines", ECommType::MAX);
     if (widgetGroup == EWidgetGroup::singleRoutines) {
         mRoutines = std::vector<std::pair<QString, QJsonObject>>(8);
         QJsonObject routineObject;

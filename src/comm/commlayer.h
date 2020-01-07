@@ -70,12 +70,7 @@ public:
      */
     void shutdown(EProtocolType type);
 
-    /*!
-     * \brief removeConnection attempt to remove a controller to the hash table
-     * \param connection the name of the controller
-     * \return true if controller is removed, false othewrise.
-     */
-    bool removeController(const cor::Controller& controller);
+    bool removeLight(const cor::Light& light);
 
     /*!
      * \brief fillDevice use the controller name, type, and index to fill in the rest
@@ -106,17 +101,6 @@ public:
      */
     const cor::Dictionary<cor::Light>& lightDict(ECommType type) {
         return commByType(type)->lightDict();
-    }
-
-    /*!
-     * \brief controllerName returns the controller name based on the commtype and unique ID. Will
-     * return an error string if controller is not found
-     * \param type commtype to look for a controller in
-     * \param uniqueID unique ID of light
-     * \return name of lights controller, if it exists.
-     */
-    QString controllerName(ECommType type, const QString& uniqueID) {
-        return commByType(type)->controllerName(uniqueID);
     }
 
     /// looks up a light by its unique ID and returns its metadata and current state

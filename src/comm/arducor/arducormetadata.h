@@ -132,7 +132,7 @@ private:
 class ArduCorLight : public cor::Light {
 public:
     ArduCorLight(const ArduCorMetadata& metadata)
-        : cor::Light(metadata.uniqueID(), metadata.controller(), metadata.commType()) {
+        : cor::Light(metadata.uniqueID(), metadata.commType()) {
         mHardwareType = metadata.hardwareType();
         mName = metadata.uniqueID();
     }

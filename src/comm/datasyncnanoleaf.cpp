@@ -83,7 +83,7 @@ void DataSyncNanoLeaf::syncData() {
             cor::Light commLayerDevice = device;
             if (mComm->fillDevice(commLayerDevice)) {
                 if (device.protocol() == EProtocolType::nanoleaf) {
-                    if (checkThrottle(device.controller(), device.commType())) {
+                    if (checkThrottle(device.uniqueID(), device.commType())) {
                         if (!sync(device, commLayerDevice)) {
                             countOutOfSync++;
                         }
@@ -136,7 +136,7 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
     }
 
     QJsonObject object;
-    object["controller"] = commDevice.controller();
+    object["controller"] = commDevice.uniqueID();
     object["commtype"] = commTypeToString(commDevice.commType());
     object["uniqueID"] = commDevice.uniqueID();
 
@@ -240,7 +240,7 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
 
     if (countOutOfSync) {
         mComm->nanoleaf()->sendPacket(object);
-        resetThrottle(dataDevice.controller(), dataDevice.commType());
+        resetThrottle(dataDevice.uniqueID(), dataDevice.commType());
     }
 
     return (countOutOfSync == 0) && timeoutInSync;
@@ -249,24 +249,22 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
 void DataSyncNanoLeaf::handleIdleTimeout(const nano::LeafMetadata& controller) {
     bool foundTimeout = false;
     int timeoutValue = mAppSettings->timeout();
-    try {
-        for (const auto& schedule : mComm->nanoleaf()->findSchedules(controller).items()) {
-            // check for idle schedule
-            if (schedule.ID() == nano::kTimeoutID) {
-                // check schedule is enabled
-                if (schedule.enabled()) {
-                    auto scheduleTimeout = schedule.startDate().date();
-                    auto scheduleAsTime = std::mktime(&scheduleTimeout);
-                    auto currentTimeout = nano::LeafDate::currentTime().date();
-                    auto currentAsTime = std::mktime(&currentTimeout);
-                    currentAsTime += 60 * timeoutValue;
-                    if (scheduleAsTime == currentAsTime) {
-                        foundTimeout = true;
-                    }
+    for (const auto& schedule : mComm->nanoleaf()->findSchedules(controller).items()) {
+        // check for idle schedule
+        if (schedule.ID() == nano::kTimeoutID) {
+            // check schedule is enabled
+            if (schedule.enabled()) {
+                auto scheduleTimeout = schedule.startDate().date();
+                auto scheduleAsTime = std::mktime(&scheduleTimeout);
+                auto currentTimeout = nano::LeafDate::currentTime().date();
+                auto currentAsTime = std::mktime(&currentTimeout);
+                currentAsTime += 60 * timeoutValue;
+                if (scheduleAsTime == currentAsTime) {
+                    foundTimeout = true;
                 }
             }
         }
-    } catch (cor::Exception) {}
+    }
 
     if (!foundTimeout) {
         //  qDebug() << " send timeout~!" << timeoutValue;

@@ -40,15 +40,6 @@ private slots:
     void minusButtonClicked();
 
 private:
-    /*!
-     * \brief doesNanoLeafExist
-     *
-     * \param controller name of controller
-     * \return true if nanoleaf controller exists on discovered or undiscovered list, false
-     * otherwise
-     */
-    bool doesNanoLeafExist(const QString& controller);
-
     /// widget that is used for searching for IP addresses and listing the connected ones.
     SearchWidget* mSearchWidget;
 
