@@ -57,7 +57,7 @@ signals:
      * \brief presetButtonClicked signal that any of the lightsbuttons were pressed and emitting
      *        their own signal.
      */
-    void presetButtonClicked(QJsonObject);
+    void presetButtonClicked(cor::LightState);
 
 private slots:
 
@@ -68,7 +68,7 @@ private slots:
      * \param routine widget's lighting routine
      * \param group widget's color palette
      */
-    void multiButtonClicked(QJsonObject object) { emit presetButtonClicked(object); }
+    void multiButtonClicked(cor::LightState object) { emit presetButtonClicked(object); }
 
 private:
     /*!

@@ -251,7 +251,9 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                             for (const auto& arduCor : arduCorLights) {
                                 if (arduCor.controller() == sender) {
                                     metadataVector.push_back(arduCor);
-                                    lightVector.push_back(ArduCorLight(arduCor));
+                                    auto light = ArduCorLight(arduCor);
+                                    commByType(type)->fillDevice(light);
+                                    lightVector.push_back(light);
                                 }
                             }
                         }
@@ -265,35 +267,34 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                 for (auto i = 0u; i < lightVector.size(); ++i) {
                                     auto light = lightVector[i];
                                     auto metadata = metadataVector[i];
+                                    auto state = light.state();
 
-                                    light.isOn(intVector[x + 1]);
-                                    light.isReachable(intVector[x + 2]);
+                                    state.isOn(intVector[x + 1]);
+                                    light.isReachable(true);
 
                                     double brightness = double(intVector[x + 8]) / 100.0;
                                     auto red = int(intVector[x + 3] * brightness);
                                     auto green = int(intVector[x + 4] * brightness);
                                     auto blue = int(intVector[x + 5] * brightness);
                                     QColor color(red, green, blue);
-                                    color.setHsvF(color.hueF(), color.saturationF(), 1.0);
                                     color.setHsvF(color.hueF(), color.saturationF(), brightness);
-                                    light.color(color);
-
-                                    light.routine(ERoutine(intVector[x + 6]));
+                                    state.color(color);
+                                    state.routine(ERoutine(intVector[x + 6]));
                                     auto palette = EPalette(intVector[x + 7]);
                                     if (palette == EPalette::custom) {
-                                        light.palette(light.customPalette());
+                                        state.palette(state.customPalette());
                                     } else {
-                                        light.palette(mPresetPalettes.palette(palette));
+                                        state.palette(mPresetPalettes.palette(palette));
                                     }
-                                    light.paletteBrightness(std::uint32_t(brightness * 100.0));
+                                    state.paletteBrightness(std::uint32_t(brightness * 100.0));
 
 
-                                    light.speed(intVector[x + 9]);
+                                    state.speed(intVector[x + 9]);
                                     metadata.timeout(intVector[x + 10]);
                                     metadata.minutesUntilTimeout(intVector[x + 11]);
 
                                     light.version(controller.majorAPI(), controller.minorAPI());
-
+                                    light.state() = state;
                                     commByType(type)->updateLight(light);
 
                                     // check that it doesn't already exist, if it does, replace the
@@ -313,50 +314,63 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                         } else if (packetHeader == EPacketHeader::customArrayUpdateRequest) {
                             if (verifyCustomColorUpdatePacket(intVector)) {
                                 for (auto light : lightVector) {
+                                    auto state = light.state();
+
                                     auto customColorCount = std::uint32_t(intVector[2]);
-                                    uint32_t j = 3;
-                                    std::vector<QColor> colors = light.customPalette().colors();
-                                    uint32_t brightness = light.customPalette().brightness();
+                                    std::uint32_t j = 3;
+                                    std::vector<QColor> colors = state.customPalette().colors();
+                                    std::uint32_t brightness = state.customPalette().brightness();
                                     for (std::uint32_t i = 0; i < customColorCount; ++i) {
                                         colors[i] = QColor(intVector[j],
                                                            intVector[j + 1],
                                                            intVector[j + 2]);
                                         j = j + 3;
                                     }
-                                    light.customPalette(Palette(paletteToString(EPalette::custom),
+                                    state.customPalette(Palette(paletteToString(EPalette::custom),
                                                                 colors,
                                                                 brightness));
-                                    if (light.palette().paletteEnum() == EPalette::custom) {
-                                        light.palette(light.customPalette());
+                                    if (state.palette().paletteEnum() == EPalette::custom) {
+                                        state.palette(state.customPalette());
                                     }
+                                    light.state() = state;
+                                    light.isReachable(true);
                                     commByType(type)->updateLight(light);
                                 }
                             }
                         } else if (packetHeader == EPacketHeader::brightnessChange
                                    && (intVector.size() % 3 == 0)) {
                             for (auto&& light : lightVector) {
+                                auto state = light.state();
+
                                 QColor color;
-                                color.setHsvF(light.color().hueF(),
-                                              light.color().saturationF(),
+                                color.setHsvF(state.color().hueF(),
+                                              state.color().saturationF(),
                                               double(intVector[2]) / 100.0);
-                                light.color(color);
-                                light.paletteBrightness(std::uint32_t(intVector[2]));
+                                state.color(color);
+                                state.paletteBrightness(std::uint32_t(intVector[2]));
+                                light.state() = state;
+                                light.isReachable(true);
                                 commByType(type)->updateLight(light);
                             }
                         } else if (packetHeader == EPacketHeader::onOffChange
                                    && (intVector.size() % 3 == 0)) {
                             for (auto light : lightVector) {
-                                light.isOn(intVector[2]);
+                                auto state = light.state();
+                                state.isOn(intVector[2]);
+                                light.state() = state;
+                                light.isReachable(true);
                                 commByType(type)->updateLight(light);
                             }
                         } else if (packetHeader == EPacketHeader::modeChange
                                    && intVector.size() > 3) {
                             for (auto light : lightVector) {
-                                uint32_t tempIndex = 2;
-                                light.routine(ERoutine(intVector[tempIndex]));
+                                auto state = light.state();
+
+                                std::uint32_t tempIndex = 2;
+                                state.routine(ERoutine(intVector[tempIndex]));
                                 ++tempIndex;
                                 // get either the color or the palette
-                                if (int(light.routine()) <= int(cor::ERoutineSingleColorEnd)) {
+                                if (int(state.routine()) <= int(cor::ERoutineSingleColorEnd)) {
                                     if (intVector.size() > 5) {
                                         int red = intVector[tempIndex];
                                         ++tempIndex;
@@ -373,7 +387,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                         if ((blue < 0) || (blue > 255)) {
                                             isValid = false;
                                         }
-                                        light.color(QColor(red, green, blue));
+                                        state.color(QColor(red, green, blue));
                                     } else {
                                         isValid = false;
                                     }
@@ -381,16 +395,16 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                     if (intVector.size() > 4) {
                                         // store brightness from previous data
                                         auto brightness =
-                                            std::uint32_t(light.palette().brightness());
+                                            std::uint32_t(state.palette().brightness());
                                         auto palette = EPalette(intVector[tempIndex]);
                                         if (palette == EPalette::custom) {
-                                            light.palette(light.customPalette());
+                                            state.palette(state.customPalette());
                                         } else {
-                                            light.palette(mPresetPalettes.palette(palette));
+                                            state.palette(mPresetPalettes.palette(palette));
                                         }
-                                        light.paletteBrightness(brightness);
+                                        state.paletteBrightness(brightness);
                                         ++tempIndex;
-                                        if (light.palette().paletteEnum() == EPalette::unknown) {
+                                        if (state.palette().paletteEnum() == EPalette::unknown) {
                                             isValid = false;
                                         }
                                     } else {
@@ -400,17 +414,19 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
 
                                 // get speed, if it exists
                                 if (intVector.size() > tempIndex) {
-                                    light.speed(intVector[tempIndex]);
+                                    state.speed(intVector[tempIndex]);
                                     ++tempIndex;
                                 }
 
                                 // get optional parameter
                                 if (intVector.size() > tempIndex) {
-                                    light.param(intVector[tempIndex]);
+                                    state.param(intVector[tempIndex]);
                                     ++tempIndex;
                                 }
 
                                 if (isValid) {
+                                    light.state() = state;
+                                    light.isReachable(true);
                                     commByType(type)->updateLight(light);
                                 }
                             }
@@ -433,6 +449,8 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                         } else if (packetHeader == EPacketHeader::customArrayColorChange
                                    && (intVector.size() % 6 == 0)) {
                             for (auto light : lightVector) {
+                                auto state = light.state();
+
                                 if (index <= 10) {
                                     auto index = std::uint32_t(intVector[2]);
                                     if (intVector.size() > 5) {
@@ -448,12 +466,14 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                         if ((blue < 0) || (blue > 255)) {
                                             isValid = false;
                                         }
-                                        std::vector<QColor> colors = light.customPalette().colors();
+                                        std::vector<QColor> colors = state.customPalette().colors();
                                         colors[index] = QColor(red, green, blue);
-                                        auto brightness = light.customPalette().brightness();
+                                        auto brightness = state.customPalette().brightness();
                                         auto paletteString = paletteToString(EPalette::custom);
-                                        light.customPalette(
+                                        state.customPalette(
                                             Palette(paletteString, colors, brightness));
+                                        light.state() = state;
+                                        light.isReachable(true);
                                         commByType(type)->updateLight(light);
                                     } else {
                                         isValid = false;
@@ -465,10 +485,14 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                         } else if (packetHeader == EPacketHeader::customColorCountChange
                                    && (intVector.size() % 3 == 0)) {
                             for (auto light : lightVector) {
+                                auto state = light.state();
+
                                 if (intVector[2] <= 10) {
-                                    light.customCount(std::uint32_t(intVector[2]));
+                                    state.customCount(std::uint32_t(intVector[2]));
                                     // qDebug() << "UPDATE TO custom color count" <<
                                     // device.customColors;
+                                    light.state() = state;
+                                    light.isReachable(true);
                                     commByType(type)->updateLight(light);
                                 } else {
                                     isValid = false;

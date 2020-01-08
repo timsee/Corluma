@@ -28,10 +28,10 @@ PresetGroupWidget::PresetGroupWidget(const QString& name,
 
     PresetPalettes palettes;
     mLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    cor::Light light;
-    light.isOn(true);
-    light.palette(palettes.palette(palette));
-    light.speed(100);
+    cor::LightState state;
+    state.isOn(true);
+    state.palette(palettes.palette(palette));
+    state.speed(100);
     if (mode == EPresetWidgetMode::arduino) {
         int buttonCount = int(ERoutine::MAX) - int(cor::ERoutineSingleColorEnd) - 1;
         mButtons = std::vector<cor::Button*>(std::size_t(buttonCount), nullptr);
@@ -40,16 +40,15 @@ PresetGroupWidget::PresetGroupWidget(const QString& name,
         uint32_t index = 0;
         for (int routine = int(cor::ERoutineSingleColorEnd) + 1; routine < int(ERoutine::MAX);
              routine++) {
-            light.routine(ERoutine(routine));
-            QJsonObject routineObject = lightToJson(light);
-            mButtons[index] = new cor::Button(this, routineObject);
+            state.routine(ERoutine(routine));
+            mButtons[index] = new cor::Button(this, state);
             mButtons[index]->resizeIconAutomatically(true);
             mButtons[index]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
             mButtons[index]->setStyleSheet(kUncheckedStyleSheet);
             connect(mButtons[index],
-                    SIGNAL(buttonClicked(QJsonObject)),
+                    SIGNAL(buttonClicked(cor::LightState)),
                     this,
-                    SLOT(multiButtonClicked(QJsonObject)));
+                    SLOT(multiButtonClicked(cor::LightState)));
             // add to layout
             mLayout->addWidget(mButtons[index], 1, int(index + 1), 6, 1);
             mButtons[index]->setFixedHeight(int(mButtons[index]->size().width() * 0.9f));
@@ -59,16 +58,15 @@ PresetGroupWidget::PresetGroupWidget(const QString& name,
         mButtons = std::vector<cor::Button*>(1, nullptr);
         mLayout->addWidget(mLabel, 0, 0, 1, 2);
         uint32_t index = 0;
-        light.routine(ERoutine::multiFade);
-        QJsonObject routineObject = lightToJson(light);
-        mButtons[index] = new cor::Button(this, routineObject);
+        state.routine(ERoutine::multiFade);
+        mButtons[index] = new cor::Button(this, state);
         mButtons[index]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         mButtons[index]->resizeIconAutomatically(false);
         mButtons[index]->setStyleSheet(kUncheckedStyleSheet);
         connect(mButtons[index],
-                SIGNAL(buttonClicked(QJsonObject)),
+                SIGNAL(buttonClicked(cor::LightState)),
                 this,
-                SLOT(multiButtonClicked(QJsonObject)));
+                SLOT(multiButtonClicked(cor::LightState)));
         // add to layout
         mLayout->addWidget(mButtons[index], 1, 1, 6, 1);
     }

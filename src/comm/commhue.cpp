@@ -385,35 +385,37 @@ void CommHue::handleSuccessPacket(const hue::Bridge& bridge,
                 HueMetadata metadata =
                     mDiscovery->lightFromBridgeIDAndIndex(bridge.id, list[2].toInt());
                 HueLight light(metadata);
+                fillDevice(light);
+                auto state = light.state();
                 if (fillDevice(light)) {
                     if (list[3] == "state") {
                         QString key = list[4];
                         bool valueChanged = false;
                         if (key == "on") {
-                            light.isOn(value.toBool());
+                            state.isOn(value.toBool());
                             valueChanged = true;
                         } else if (key == "sat") {
                             auto saturation = int(value.toDouble());
                             QColor color;
-                            color.setHsv(light.color().hue(), saturation, light.color().value());
-                            light.color(color);
+                            color.setHsv(state.color().hue(), saturation, state.color().value());
+                            state.color(color);
                             valueChanged = true;
                         } else if (key == "hue") {
                             auto hue = int(value.toDouble());
                             QColor color;
                             color.setHsv(hue / 182,
-                                         light.color().saturation(),
-                                         light.color().value());
-                            light.color(color);
+                                         state.color().saturation(),
+                                         state.color().value());
+                            state.color(color);
                             metadata.colorMode(EColorMode::HSV);
                             valueChanged = true;
                         } else if (key == "bri") {
                             auto brightness = int(value.toDouble());
                             QColor color;
-                            color.setHsv(light.color().hue(),
-                                         light.color().saturation(),
+                            color.setHsv(state.color().hue(),
+                                         state.color().saturation(),
                                          brightness);
-                            light.color(color);
+                            state.color(color);
                             valueChanged = true;
                         } else if (key == "colormode") {
                             QString mode = value.toString();
@@ -422,11 +424,12 @@ void CommHue::handleSuccessPacket(const hue::Bridge& bridge,
                             valueChanged = true;
                         } else if (key == "ct") {
                             auto ct = int(value.toDouble());
-                            light.color(cor::colorTemperatureToRGB(ct));
+                            state.color(cor::colorTemperatureToRGB(ct));
                             metadata.colorMode(EColorMode::CT);
                             valueChanged = true;
                         }
 
+                        light.state() = state;
                         if (valueChanged) {
                             updateLight(light);
                             mDiscovery->updateLight(metadata);
@@ -478,8 +481,11 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge,
             metadata.colorMode(stringtoColorMode(colorMode));
 
             HueLight hue(metadata);
+            fillDevice(hue);
+
+            auto state = hue.state();
             hue.isReachable(stateObject["reachable"].toBool());
-            hue.isOn(stateObject["on"].toBool());
+            state.isOn(stateObject["on"].toBool());
 
             if (metadata.colorMode() == EColorMode::XY) {
                 bool isValid = false;
@@ -518,7 +524,7 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge,
 
                             QColor color;
                             color.setRgbF(r, g, b);
-                            hue.color(color);
+                            state.color(color);
                             metadata.colorMode(EColorMode::HSV);
                         }
                     }
@@ -529,7 +535,7 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge,
                 }
             } else if (metadata.hueType() == EHueType::ambient) {
                 int ct = int(stateObject["ct"].toDouble());
-                hue.color(cor::colorTemperatureToRGB(ct));
+                state.color(cor::colorTemperatureToRGB(ct));
                 metadata.colorMode(EColorMode::CT);
             } else if (metadata.hueType() == EHueType::extended
                        || metadata.hueType() == EHueType::color) {
@@ -539,7 +545,7 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge,
                     double briF = stateObject["bri"].toDouble() / 254.0;
                     QColor color;
                     color.setHsvF(hueF, satF, briF);
-                    hue.color(color);
+                    state.color(color);
                     metadata.colorMode(EColorMode::HSV);
                 } else {
                     qDebug() << "something went wrong with the hue parser";
@@ -550,8 +556,9 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge,
                 QColor white(255, 255, 255);
                 white = white.toHsv();
                 white.setHsv(white.hue(), white.saturation(), brightness);
-                hue.color(white);
+                state.color(white);
             }
+            hue.state() = state;
             if (wasDiscovered) {
                 updateLight(hue);
                 mDiscovery->updateLight(metadata);
@@ -948,7 +955,7 @@ void CommHue::updateLightStates() {
             mStateUpdateCounter++;
         }
     } else {
-        checkReachability();
+        // checkReachability();
         stopStateUpdates();
     }
 }

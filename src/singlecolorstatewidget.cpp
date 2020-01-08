@@ -7,12 +7,11 @@
 #include "utils/qt.h"
 
 SingleColorStateWidget::SingleColorStateWidget(QWidget* parent) : QWidget(parent), mIsIn{false} {
-    mLight.routine(ERoutine::singleSolid);
-    mLight.color(QColor(0, 0, 0));
-    auto routineObject = lightToJson(mLight);
-    mState = new cor::Button(this, routineObject);
-    mState->setLabelMode(true);
-    mState->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mState.routine(ERoutine::singleSolid);
+    mState.color(QColor(0, 0, 0));
+    mButton = new cor::Button(this, mState);
+    mButton->setLabelMode(true);
+    mButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     mSyncWidget = new SyncWidget(this);
     mSyncWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -21,10 +20,9 @@ SingleColorStateWidget::SingleColorStateWidget(QWidget* parent) : QWidget(parent
 }
 
 void SingleColorStateWidget::updateState(const QColor& color, ERoutine routine) {
-    mLight.color(color);
-    mLight.routine(routine);
-    auto routineObject = lightToJson(mLight);
-    mState->updateRoutine(routineObject);
+    mState.color(color);
+    mState.routine(routine);
+    mButton->updateRoutine(mState);
 }
 
 void SingleColorStateWidget::resize() {
@@ -32,7 +30,7 @@ void SingleColorStateWidget::resize() {
     auto height = this->height();
     mSyncWidget->setGeometry(xPos, 0, height, height);
     xPos += mSyncWidget->width();
-    mState->setGeometry(xPos, 0, height, height);
+    mButton->setGeometry(xPos, 0, height, height);
 }
 
 void SingleColorStateWidget::updateSyncStatus(ESyncState state) {

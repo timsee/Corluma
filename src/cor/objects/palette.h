@@ -125,6 +125,9 @@ public:
     /// getter for the enum of the palette
     EPalette paletteEnum() const noexcept { return mEnum; }
 
+    /// true if the palette has all the required values
+    bool isValid() const noexcept { return !mColors.empty(); }
+
     /// equal operator
     bool operator==(const Palette& rhs) const {
         bool result = true;

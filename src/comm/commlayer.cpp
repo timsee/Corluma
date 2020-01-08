@@ -122,11 +122,7 @@ bool sortListByGroupName(const std::pair<cor::Group, cor::Light>& lhs,
 
 cor::Light applyStateToLight(const cor::Light& light, const cor::Light& state) {
     cor::Light lightCopy = light;
-    lightCopy.color(state.color());
-    lightCopy.isOn(state.isOn());
-    lightCopy.routine(state.routine());
-    lightCopy.palette(state.palette());
-    lightCopy.speed(state.speed());
+    lightCopy.state() = state.stateConst();
     return lightCopy;
 }
 

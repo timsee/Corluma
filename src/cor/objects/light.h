@@ -1,6 +1,7 @@
 #ifndef COR_LIGHT_H
 #define COR_LIGHT_H
 
+#include "cor/objects/lightstate.h"
 #include "cor/objects/palette.h"
 #include "cor/protocols.h"
 #include "utils/color.h"
@@ -33,16 +34,7 @@ public:
           mProtocol(cor::convertCommTypeToProtocolType(commType)),
           mMajorAPI{4},
           mMinorAPI{2},
-          mIsReachable{false},
-          mIsOn{false},
-          mRoutine{ERoutine::singleSolid},
-          mColor(0, 0, 127),
-          mPalette("", std::vector<QColor>(1, QColor(0, 0, 0)), 50),
-          mCustomPalette(paletteToString(EPalette::custom), cor::defaultCustomColors(), 50),
-          mCustomCount{5},
-          mSpeed{100},
-          mParam{std::numeric_limits<int>::min()},
-          mTemperature{200} {}
+          mIsReachable{false} {}
 
 
     /// true if valid light, false if not
@@ -66,11 +58,10 @@ public:
         mHardwareType = metadata.hardwareType();
     }
 
-    /// true if on, false if off
-    bool isOn() const noexcept { return mIsOn; }
+    /// getter for light state
+    LightState& state() { return mState; }
 
-    /// setter for isOn
-    void isOn(bool on) { mIsOn = on; }
+    const LightState& stateConst() const noexcept { return mState; }
 
     /// true if reachable, false if can't be reached
     bool isReachable() const noexcept { return mIsReachable; }
@@ -78,56 +69,6 @@ public:
     /// setter for isReachable
     void isReachable(bool reachable) { mIsReachable = reachable; }
 
-    /// getter for routine
-    ERoutine routine() const noexcept { return mRoutine; }
-
-    /// setter for routine
-    void routine(ERoutine routine) { mRoutine = routine; }
-
-    /// getter for color of single color routines
-    const QColor& color() const noexcept { return mColor; }
-
-    /// setter for color of single color routines
-    void color(const QColor& color) { mColor = color; }
-
-    /// getter for palette of multi color routine
-    const Palette& palette() const noexcept { return mPalette; }
-
-    /// setter for palette oif multi color routine
-    void palette(const Palette& palette) { mPalette = palette; }
-
-    /// setter for the palette's brightness
-    void paletteBrightness(std::uint32_t brightness) { mPalette.brightness(brightness); }
-
-    /// getter for the custom palette
-    const Palette& customPalette() const noexcept { return mCustomPalette; }
-
-    /// setter for the custom palette
-    void customPalette(const Palette& palette) { mCustomPalette = palette; }
-
-    /// getter for the custom color count
-    std::uint32_t customCount() const noexcept { return mCustomCount; }
-
-    /// setter for the custom color count
-    void customCount(std::uint32_t count) { mCustomCount = count; }
-
-    /// getter for speed of routines that use it
-    int speed() const noexcept { return mSpeed; }
-
-    /// setter for speed of routines
-    void speed(int speed) { mSpeed = speed; }
-
-    /// getter of param, used by arducor
-    int param() const noexcept { return mParam; }
-
-    /// setter for param, used by arducor
-    void param(int parameter) { mParam = parameter; }
-
-    /// getter for temperature
-    int temperature() const noexcept { return mTemperature; }
-
-    /// setter for temperature
-    void temperature(int temp) { mTemperature = temp; }
 
     /// getter for major API version
     std::uint32_t majorAPI() const noexcept { return mMajorAPI; }
@@ -157,22 +98,14 @@ public:
     /// equal operator
     bool operator==(const cor::Light& rhs) const {
         bool result = true;
-        if (uniqueID() != rhs.uniqueID()) {
-            result = false;
-        }
         if (isReachable() != rhs.isReachable()) {
             result = false;
         }
-        if (isOn() != rhs.isOn()) {
+
+        if (uniqueID() != rhs.uniqueID()) {
             result = false;
         }
-        if (color() != rhs.color()) {
-            result = false;
-        }
-        if (routine() != rhs.routine()) {
-            result = false;
-        }
-        if (palette().JSON() != rhs.palette().JSON()) {
+        if (stateConst() != rhs.stateConst()) {
             result = false;
         }
         if (commType() != rhs.commType()) {
@@ -181,11 +114,6 @@ public:
         if (protocol() != rhs.protocol()) {
             result = false;
         }
-
-        if (speed() != rhs.speed()) {
-            result = false;
-        }
-
         return result;
     }
 
@@ -193,13 +121,9 @@ public:
 
     operator QString() const {
         std::stringstream tempString;
-        tempString << "cor::Light Device: "
+        tempString << "cor::Light: isReachable " << isReachable()
                    << " uniqueID: " << uniqueID().toStdString() << " name: " << name().toStdString()
-                   << " isReachable: " << isReachable() << " isOn: " << isOn()
-                   << " color: R:" << color().red() << " G:" << color().green()
-                   << " B:" << color().blue()
-                   << " routine: " << routineToString(routine()).toUtf8().toStdString()
-                   << " palette: " << palette() << " API: " << majorAPI() << "." << minorAPI()
+                   << " API: " << majorAPI() << "." << minorAPI()
                    << " CommType: " << commTypeToString(commType()).toUtf8().toStdString()
                    << " Protocol: " << protocolToString(protocol()).toUtf8().toStdString();
         return QString::fromStdString(tempString.str());
@@ -235,52 +159,13 @@ private:
     /// minor API level
     std::uint32_t mMinorAPI;
 
+    /// the state of the light
+    LightState mState;
+
     /*!
      * \brief isReachable true if we can communicate with it, false otherwise
      */
     bool mIsReachable;
-
-    /*!
-     * \brief isOn true if the light is shining any color, false if turned
-     *        off by software. By using a combination of isReachable and isOn
-     *        you can determine if the light is on and shining, off by software
-     *        and thus able to be turned on by software again, or off by hardware
-     *        and needs the light switch to be hit in order to turn it on.
-     */
-    bool mIsOn;
-
-    /*!
-     * \brief routine current lighting routine for this device.
-     */
-    ERoutine mRoutine;
-
-    /*!
-     * \brief color color of this device.
-     */
-    QColor mColor;
-
-    /// palette currently in use (sometimes equal to custom palette, sometimes not)
-    Palette mPalette;
-
-    /// palette for storing custom colors.
-    Palette mCustomPalette;
-
-    /// slight hack for app memory, custom count of colors used by ArduCor are stored here.
-    std::uint32_t mCustomCount;
-
-    /*!
-     * \brief speed speed of updates to lighting routines.
-     */
-    int mSpeed;
-
-    /*!
-     * \brief param optional parameter used for certain routines. Different
-     *        between different routines.
-     */
-    int mParam;
-
-    /// color temperature, optional parameter sometimes used for for ambient bulbs.
-    int mTemperature;
 };
 
 /// converts json representation of routine to cor::Light
@@ -292,33 +177,33 @@ inline cor::Light jsonToLight(const QJsonObject& object) {
     cor::Light light(uniqueID, type);
 
     if (object["routine"].isString()) {
-        light.routine(stringToRoutine(object["routine"].toString()));
+        light.state().routine(stringToRoutine(object["routine"].toString()));
     }
 
     if (object["isOn"].isBool()) {
-        light.isOn(object["isOn"].toBool());
+        light.state().isOn(object["isOn"].toBool());
     }
 
     //------------
     // get either speed or palette, depending on routine type
     //------------
-    if (light.routine() <= cor::ERoutineSingleColorEnd) {
+    if (light.state().routine() <= cor::ERoutineSingleColorEnd) {
         if (object["hue"].isDouble() && object["sat"].isDouble() && object["bri"].isDouble()) {
             QColor color;
             color.setHsvF(object["hue"].toDouble(),
                           object["sat"].toDouble(),
                           object["bri"].toDouble());
-            light.color(color);
+            light.state().color(color);
         }
     } else if (object["palette"].isObject()) {
-        light.palette(Palette(object["palette"].toObject()));
+        light.state().palette(Palette(object["palette"].toObject()));
     }
 
     //------------
     // get param if it exists
     //------------
     if (object["param"].isDouble()) {
-        light.param(int(object["param"].toDouble()));
+        light.state().param(int(object["param"].toDouble()));
     }
 
     light.version(std::uint32_t(object["majorAPI"].toDouble()),
@@ -327,9 +212,9 @@ inline cor::Light jsonToLight(const QJsonObject& object) {
     //------------
     // get speed if theres a speed value
     //------------
-    if (light.routine() != ERoutine::singleSolid) {
+    if (light.state().routine() != ERoutine::singleSolid) {
         if (object["speed"].isDouble()) {
-            light.speed(int(object["speed"].toDouble()));
+            light.state().speed(int(object["speed"].toDouble()));
         }
     }
 
@@ -342,27 +227,27 @@ inline QJsonObject lightToJson(const cor::Light& light) {
     object["uniqueID"] = light.uniqueID();
     object["type"] = commTypeToString(light.commType());
 
-    object["routine"] = routineToString(light.routine());
-    object["isOn"] = light.isOn();
+    object["routine"] = routineToString(light.stateConst().routine());
+    object["isOn"] = light.stateConst().isOn();
 
-    if (light.routine() <= cor::ERoutineSingleColorEnd) {
-        object["hue"] = light.color().hueF();
-        object["sat"] = light.color().saturationF();
-        object["bri"] = light.color().valueF();
+    if (light.stateConst().routine() <= cor::ERoutineSingleColorEnd) {
+        object["hue"] = light.stateConst().color().hueF();
+        object["sat"] = light.stateConst().color().saturationF();
+        object["bri"] = light.stateConst().color().valueF();
     }
 
     object["majorAPI"] = double(light.majorAPI());
     object["minorAPI"] = double(light.minorAPI());
 
-    if (light.routine() != ERoutine::singleSolid) {
-        object["speed"] = light.speed();
+    if (light.stateConst().routine() != ERoutine::singleSolid) {
+        object["speed"] = light.stateConst().speed();
     }
 
-    if (light.param() != std::numeric_limits<int>::min()) {
-        object["param"] = light.param();
+    if (light.stateConst().param() != std::numeric_limits<int>::min()) {
+        object["param"] = light.stateConst().param();
     }
 
-    object["palette"] = light.palette().JSON();
+    object["palette"] = light.stateConst().palette().JSON();
     return object;
 }
 

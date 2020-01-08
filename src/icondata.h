@@ -8,8 +8,7 @@
 #include <QPixmap>
 #include <memory>
 
-#include "cor/protocols.h"
-
+#include "cor/objects/lightstate.h"
 
 /*!
  * \copyright
@@ -42,7 +41,7 @@ public:
      *
      * \param routineObject the json object that represents the routine
      */
-    void setRoutine(const QJsonObject& routineObject);
+    void setRoutine(const cor::LightState& state);
 
     /*!
      * \brief setSolidColor sets the icon as a solid color

@@ -86,20 +86,21 @@ void GroupData::addSubGroupsToRooms() {
 
 QJsonObject lightToJsonObject(const cor::Light& light) {
     QJsonObject object;
-    object["isOn"] = light.isOn();
-    if (light.isOn()) {
-        object["routine"] = routineToString(light.routine());
+    auto state = light.stateConst();
+    object["isOn"] = state.isOn();
+    if (state.isOn()) {
+        object["routine"] = routineToString(state.routine());
 
-        if (light.routine() != ERoutine::singleSolid) {
-            object["speed"] = light.speed();
+        if (state.routine() != ERoutine::singleSolid) {
+            object["speed"] = state.speed();
         }
 
-        if (light.routine() <= cor::ERoutineSingleColorEnd) {
-            object["hue"] = cor::roundToNDigits(light.color().hueF(), 4);
-            object["sat"] = cor::roundToNDigits(light.color().saturationF(), 4);
-            object["bri"] = cor::roundToNDigits(light.color().valueF(), 4);
+        if (state.routine() <= cor::ERoutineSingleColorEnd) {
+            object["hue"] = cor::roundToNDigits(state.color().hueF(), 4);
+            object["sat"] = cor::roundToNDigits(state.color().saturationF(), 4);
+            object["bri"] = cor::roundToNDigits(state.color().valueF(), 4);
         } else {
-            object["palette"] = light.palette().JSON();
+            object["palette"] = state.palette().JSON();
         }
     }
 
@@ -556,15 +557,18 @@ cor::Light parseLightObject(const QJsonObject& object) {
     }
 
     cor::Light light(uniqueID, type);
-    light.isReachable(true);
-    light.isOn(isOn);
     light.version(majorAPI, minorAPI);
-    light.color(color);
-    light.routine(routine);
-    if (light.routine() > cor::ERoutineSingleColorEnd && light.isOn()) {
-        light.palette(Palette(object["palette"].toObject()));
+    light.isReachable(true);
+
+    cor::LightState state;
+    state.isOn(isOn);
+    state.color(color);
+    state.routine(routine);
+    if (state.routine() > cor::ERoutineSingleColorEnd && state.isOn()) {
+        state.palette(Palette(object["palette"].toObject()));
     }
-    light.speed(speed);
+    state.speed(speed);
+    light.state() = state;
     return light;
 }
 
@@ -592,15 +596,18 @@ cor::Light parseDefaultStateObject(const QJsonObject& object) {
     }
 
     cor::Light light(QString::number(groupID), ECommType::MAX);
-    light.isReachable(true);
-    light.isOn(isOn);
     light.version(majorAPI, minorAPI);
-    light.color(color);
-    light.routine(routine);
-    if (light.routine() > cor::ERoutineSingleColorEnd && light.isOn()) {
-        light.palette(Palette(object["palette"].toObject()));
+    light.isReachable(true);
+
+    cor::LightState state;
+    state.isOn(isOn);
+    state.color(color);
+    state.routine(routine);
+    if (state.routine() > cor::ERoutineSingleColorEnd && state.isOn()) {
+        state.palette(Palette(object["palette"].toObject()));
     }
-    light.speed(speed);
+    state.speed(speed);
+    light.state() = state;
     return light;
 }
 

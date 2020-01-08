@@ -40,10 +40,10 @@ ColorPage::ColorPage(QWidget* parent) : QWidget(parent), mColor{0, 255, 0}, mBri
                                       mSingleRoutineWidget->height());
     mSingleRoutineWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(mSingleRoutineWidget,
-            SIGNAL(newRoutineSelected(QJsonObject)),
+            SIGNAL(newRoutineSelected(cor::LightState)),
             this,
-            SLOT(newRoutineSelected(QJsonObject)));
-    mCurrentSingleRoutine = mSingleRoutineWidget->routines()[3].second;
+            SLOT(newRoutineSelected(cor::LightState)));
+    mState = mSingleRoutineWidget->routines()[3].second;
 }
 
 // ----------------------------
@@ -52,6 +52,7 @@ ColorPage::ColorPage(QWidget* parent) : QWidget(parent), mColor{0, 255, 0}, mBri
 
 void ColorPage::updateColor(const QColor& color) {
     mColor = color;
+    mState.color(color);
 }
 
 
@@ -66,43 +67,37 @@ void ColorPage::updateBrightness(std::uint32_t brightness) {
 
 void ColorPage::colorChanged(const QColor& color) {
     updateColor(color);
-    mCurrentSingleRoutine["hue"] = mColor.hueF();
-    mCurrentSingleRoutine["sat"] = mColor.saturationF();
-    mCurrentSingleRoutine["bri"] = mColor.valueF();
-    mCurrentSingleRoutine["isOn"] = true;
+    mState.color(color);
+    mState.isOn(true);
 
-    emit routineUpdate(mCurrentSingleRoutine);
+    emit routineUpdate(mState);
 
     if (mSingleRoutineWidget->isOpen()) {
         mSingleRoutineWidget->singleRoutineColorChanged(color);
     }
 }
 
-void ColorPage::newRoutineSelected(QJsonObject routineObject) {
-    ERoutine routine = stringToRoutine(routineObject["routine"].toString());
-    routineObject["hue"] = mColor.hueF();
-    routineObject["sat"] = mColor.saturationF();
-    routineObject["bri"] = mColor.valueF();
-    routineObject["isOn"] = true;
-    if (routine != ERoutine::singleSolid) {
-        // no speed settings for single color routines currently...
-        routineObject["speed"] = 125;
+void ColorPage::newRoutineSelected(cor::LightState state) {
+    state.color(mColor);
+    state.isOn(true);
+    if (state.routine() != ERoutine::singleSolid) {
+        state.speed(125);
     }
 
+    mState = state;
     // get color
-    emit routineUpdate(routineObject);
-    mCurrentSingleRoutine = routineObject;
+    emit routineUpdate(mState);
 }
 
 void ColorPage::ambientUpdateReceived(std::uint32_t newAmbientValue, std::uint32_t newBrightness) {
-    QJsonObject routineObject;
-    routineObject["routine"] = routineToString(ERoutine::singleSolid);
     QColor color = cor::colorTemperatureToRGB(int(newAmbientValue));
     updateColor(color);
-    routineObject["temperature"] = int(newAmbientValue);
-    routineObject["isOn"] = true;
+    mState.color(color);
+    mState.routine(ERoutine::singleSolid);
+    mState.temperature(int(newAmbientValue));
+    mState.isOn(true);
 
-    emit routineUpdate(routineObject);
+    emit routineUpdate(mState);
     mBrightness = newBrightness;
 
     if (mSingleRoutineWidget->isOpen()) {

@@ -501,27 +501,28 @@ void CommNanoleaf::parseCommandRequestUpdatePacket(const nano::LeafMetadata& lea
 
         auto light = nano::LeafLight(leafLight);
         fillDevice(light);
+        auto state = light.state();
         if (!colors.empty()) {
             // the display is always treated as custom colors, its only ever used by custom
             // routines though
-            light.customPalette(
-                Palette(paletteToString(EPalette::custom), colors, light.palette().brightness()));
-            light.palette(
-                Palette(paletteToString(paletteEnum), colors, light.palette().brightness()));
+            state.customPalette(
+                Palette(paletteToString(EPalette::custom), colors, state.palette().brightness()));
+            state.palette(
+                Palette(paletteToString(paletteEnum), colors, state.palette().brightness()));
         }
 
         if (routine != ERoutine::MAX) {
-            light.routine(routine);
+            state.routine(routine);
         }
 
         // get speed
         if (requestPacket["delayTime"].isObject()) {
             QJsonObject delayTimeObject = requestPacket["delayTime"].toObject();
             if (delayTimeObject["maxValue"].isDouble()) {
-                light.speed(int(delayTimeObject["maxValue"].toDouble()));
+                state.speed(int(delayTimeObject["maxValue"].toDouble()));
             }
         } else if (requestPacket["delayTime"].isDouble()) {
-            light.speed(int(requestPacket["delayTime"].toDouble()));
+            state.speed(int(requestPacket["delayTime"].toDouble()));
         }
 
         // convert jsonarray array to std::vector<QColor>
@@ -535,15 +536,16 @@ void CommNanoleaf::parseCommandRequestUpdatePacket(const nano::LeafMetadata& lea
             colorVector.push_back(color);
         }
 
-        if (light.routine() < cor::ERoutineSingleColorEnd) {
-            auto result =
-                computeBrightnessAndColorFromSingleColorPacket(light.routine(), colorVector);
-            light.color(result.first);
-            light.paletteBrightness(result.second);
+        if (state.routine() <= cor::ERoutineSingleColorEnd) {
+            auto result = computeBrightnessAndColorFromSingleColorPacket(light.state().routine(),
+                                                                         colorVector);
+            state.color(result.first);
+            state.paletteBrightness(result.second);
         } else {
             // do nothing for multi color routines
         }
 
+        light.state() = state;
         updateLight(light);
     }
 }
@@ -551,7 +553,7 @@ void CommNanoleaf::parseCommandRequestUpdatePacket(const nano::LeafMetadata& lea
 std::pair<QColor, uint32_t> CommNanoleaf::computeBrightnessAndColorFromSingleColorPacket(
     ERoutine routine,
     const std::vector<QColor>& colorVector) {
-    GUARD_EXCEPTION(routine < cor::ERoutineSingleColorEnd,
+    GUARD_EXCEPTION(routine <= cor::ERoutineSingleColorEnd,
                     "using multi color routine where we expect a single color routine");
     QColor maxColor(0, 0, 0);
     for (const auto& color : colorVector) {
@@ -604,11 +606,12 @@ void CommNanoleaf::parseStateUpdatePacket(const nano::LeafMetadata& nanoLight,
             && stateObject["ct"].isObject() && stateObject["colorMode"].isString()) {
             auto light = nano::LeafLight(leafLight);
             fillDevice(light);
+            auto state = light.state();
             light.isReachable(true);
 
             QJsonObject onObject = stateObject["on"].toObject();
             if (onObject["value"].isBool()) {
-                light.isOn(onObject["value"].toBool());
+                state.isOn(onObject["value"].toBool());
             }
 
             const auto& brightnessResult =
@@ -630,23 +633,24 @@ void CommNanoleaf::parseStateUpdatePacket(const nano::LeafMetadata& nanoLight,
 
             auto colorMode = stateObject["colorMode"].toString();
             if (colorMode == "hsv" || colorMode == "hs") {
-                auto color = light.color();
+                auto color = light.state().color();
                 color.setHsvF(hue / 360.0, sat / 100.0, brightness / 100.0);
-                light.color(color);
-                light.routine(ERoutine::singleSolid);
-                light.paletteBrightness(std::uint32_t(brightness));
+                state.color(color);
+                state.routine(ERoutine::singleSolid);
+                state.paletteBrightness(std::uint32_t(brightness));
             } else if (colorMode == "effects") {
                 // parse if brightness packet;
                 if (stateObject["brightness"].isObject()) {
                     const auto& brightObject = stateObject["brightness"].toObject();
                     if (brightObject["value"].isDouble()) {
-                        light.paletteBrightness(std::uint32_t(brightObject["value"].toDouble()));
+                        state.paletteBrightness(std::uint32_t(brightObject["value"].toDouble()));
                     }
                 }
             } else if (colorMode == "ct") {
-                light.color(cor::colorTemperatureToRGB(colorTemp));
+                state.color(cor::colorTemperatureToRGB(colorTemp));
             }
 
+            light.state() = state;
             updateLight(light);
         }
     } else {
@@ -826,19 +830,20 @@ QJsonObject CommNanoleaf::createRoutinePacket(ERoutine routine, int speed) {
 QJsonArray CommNanoleaf::createPalette(const cor::Light& light) {
     // Build Color Palette
     QJsonArray paletteArray;
-    if (int(light.routine()) <= int(cor::ERoutineSingleColorEnd)) {
-        switch (light.routine()) {
+    const auto& state = light.stateConst();
+    if (int(state.routine()) <= int(cor::ERoutineSingleColorEnd)) {
+        switch (state.routine()) {
             case ERoutine::singleSolid: {
                 double valueCount = 1.0;
                 for (std::uint32_t i = 0; i < valueCount; ++i) {
                     QJsonObject colorObject;
-                    auto hue = int(light.color().hueF() * 360.0 * ((valueCount - i) / valueCount));
+                    auto hue = int(state.color().hueF() * 360.0 * ((valueCount - i) / valueCount));
                     if (hue < 0) {
                         hue = hue * -1;
                     }
                     colorObject["hue"] = hue;
-                    colorObject["saturation"] = int(light.color().saturationF() * 100.0);
-                    colorObject["brightness"] = int(light.color().valueF() * 100.0);
+                    colorObject["saturation"] = int(state.color().saturationF() * 100.0);
+                    colorObject["brightness"] = int(state.color().valueF() * 100.0);
                     paletteArray.push_back(colorObject);
                 }
                 break;
@@ -847,14 +852,14 @@ QJsonArray CommNanoleaf::createPalette(const cor::Light& light) {
                 double valueCount = 4.0;
                 for (std::uint32_t i = 0; i <= valueCount; ++i) {
                     QJsonObject colorObject;
-                    auto hue = int(light.color().hueF() * 360.0);
+                    auto hue = int(state.color().hueF() * 360.0);
                     if (hue < 0) {
                         hue = hue * -1;
                     }
                     colorObject["hue"] = hue;
-                    colorObject["saturation"] = int(light.color().saturationF() * 100.0);
+                    colorObject["saturation"] = int(state.color().saturationF() * 100.0);
                     colorObject["brightness"] =
-                        int(light.color().valueF() * 100.0 * ((valueCount - i) / valueCount));
+                        int(state.color().valueF() * 100.0 * ((valueCount - i) / valueCount));
                     if (i == 0) {
                         colorObject["probability"] = 80;
                     } else {
@@ -866,17 +871,17 @@ QJsonArray CommNanoleaf::createPalette(const cor::Light& light) {
             }
             case ERoutine::singleBlink: {
                 QJsonObject colorObject;
-                auto hue = int(light.color().hueF() * 360.0);
+                auto hue = int(state.color().hueF() * 360.0);
                 if (hue < 0) {
                     hue = hue * -1;
                 }
                 colorObject["hue"] = hue;
-                colorObject["saturation"] = int(light.color().saturationF() * 100.0);
-                colorObject["brightness"] = int(light.color().valueF() * 100.0);
+                colorObject["saturation"] = int(state.color().saturationF() * 100.0);
+                colorObject["brightness"] = int(state.color().valueF() * 100.0);
                 paletteArray.push_back(colorObject);
 
                 QJsonObject offObject;
-                hue = int(light.color().hueF() * 360.0);
+                hue = int(state.color().hueF() * 360.0);
                 if (hue < 0) {
                     hue = hue * -1;
                 }
@@ -892,14 +897,14 @@ QJsonArray CommNanoleaf::createPalette(const cor::Light& light) {
                 double valueCount = 5.0;
                 for (std::uint32_t i = 0; i < valueCount; ++i) {
                     QJsonObject colorObject;
-                    auto hue = int(light.color().hueF() * 360.0);
+                    auto hue = int(state.color().hueF() * 360.0);
                     if (hue < 0) {
                         hue = hue * -1;
                     }
                     colorObject["hue"] = hue;
-                    colorObject["saturation"] = int(light.color().saturationF() * 100.0);
+                    colorObject["saturation"] = int(state.color().saturationF() * 100.0);
                     colorObject["brightness"] =
-                        int(light.color().valueF() * 100.0 * ((valueCount - i) / valueCount));
+                        int(state.color().valueF() * 100.0 * ((valueCount - i) / valueCount));
                     paletteArray.push_back(colorObject);
                 }
                 break;
@@ -908,19 +913,19 @@ QJsonArray CommNanoleaf::createPalette(const cor::Light& light) {
                 break;
         }
     } else {
-        if (light.routine() == ERoutine::multiGlimmer) {
-            if (light.palette().paletteEnum() == EPalette::custom) {
+        if (state.routine() == ERoutine::multiGlimmer) {
+            if (state.palette().paletteEnum() == EPalette::custom) {
                 auto palettes = vectorToNanoleafPalettes(mCustomColors);
                 paletteArray = palettes.second;
-            } else if (light.palette().paletteEnum() != EPalette::unknown) {
-                paletteArray = mHighlightPalettes[std::size_t(light.palette().paletteEnum())];
+            } else if (state.palette().paletteEnum() != EPalette::unknown) {
+                paletteArray = mHighlightPalettes[std::size_t(state.palette().paletteEnum())];
             }
         } else {
-            if (light.palette().paletteEnum() == EPalette::custom) {
+            if (state.palette().paletteEnum() == EPalette::custom) {
                 auto palettes = vectorToNanoleafPalettes(mCustomColors);
                 paletteArray = palettes.first;
-            } else if (light.palette().paletteEnum() != EPalette::unknown) {
-                paletteArray = mPalettes[std::size_t(light.palette().paletteEnum())];
+            } else if (state.palette().paletteEnum() != EPalette::unknown) {
+                paletteArray = mPalettes[std::size_t(state.palette().paletteEnum())];
             }
         }
     }
@@ -943,13 +948,13 @@ void CommNanoleaf::routineChange(const nano::LeafMetadata& leafLight, QJsonObjec
         int speed = int(routineObject["speed"].toDouble());
         auto light = nano::LeafLight(leafLight);
         fillDevice(light);
-        light.routine(routine);
+        light.state().routine(routine);
 
-        if (light.routine() <= cor::ERoutineSingleColorEnd) {
-            light.color(color);
+        if (light.state().routine() <= cor::ERoutineSingleColorEnd) {
+            light.state().color(color);
         } else {
             Palette palette = Palette(routineObject["palette"].toObject());
-            light.palette(palette);
+            light.state().palette(palette);
         }
 
         QJsonObject effectObject = createRoutinePacket(routine, speed);

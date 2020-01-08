@@ -65,9 +65,9 @@ void PaletteScrollArea::setupButtons(bool isArduino) {
                                                                this);
             mLayout->addWidget(mPresetWidgets[groupIndex], groupIndex, 0);
             connect(mPresetWidgets[groupIndex],
-                    SIGNAL(presetButtonClicked(QJsonObject)),
+                    SIGNAL(presetButtonClicked(cor::LightState)),
                     parentWidget(),
-                    SLOT(multiButtonClicked(QJsonObject)));
+                    SLOT(multiButtonClicked(cor::LightState)));
             groupIndex++;
         }
 
@@ -96,9 +96,9 @@ void PaletteScrollArea::setupButtons(bool isArduino) {
                                                                this);
             mLayout->addWidget(mPresetWidgets[groupIndex], rowIndex, columnIndex);
             connect(mPresetWidgets[groupIndex],
-                    SIGNAL(presetButtonClicked(QJsonObject)),
+                    SIGNAL(presetButtonClicked(cor::LightState)),
                     parentWidget(),
-                    SLOT(multiButtonClicked(QJsonObject)));
+                    SLOT(multiButtonClicked(cor::LightState)));
             columnIndex++;
             groupIndex++;
         }

@@ -769,28 +769,23 @@ void TopMenu::pushOutTapToSelectButton() {
 }
 
 
-void TopMenu::updateRoutine(const QJsonObject& routineObject) {
+void TopMenu::updateState(const cor::LightState& state) {
     if (mCurrentPage == EPage::colorPage) {
         if (!mSingleColorStateWidget->isIn()) {
             showSingleColorStateWidget(true);
         }
-        ERoutine routine = stringToRoutine(routineObject["routine"].toString());
-        QColor color;
-        if (routineObject["hue"].isDouble() && routineObject["sat"].isDouble()
-            && routineObject["bri"].isDouble()) {
-            color.setHsvF(routineObject["hue"].toDouble(),
-                          routineObject["sat"].toDouble(),
-                          routineObject["bri"].toDouble());
-        } else if (routineObject["temperature"].isDouble() && routineObject["bri"].isDouble()) {
-            color = cor::colorTemperatureToRGB(int(routineObject["temperature"].toDouble()));
-            color.setHsvF(color.hueF(), color.saturationF(), routineObject["bri"].toDouble());
+        ERoutine routine = state.routine();
+        QColor color = state.color();
+        if (state.temperature() != -1) {
+            color = cor::colorTemperatureToRGB(state.temperature());
+            color.setHsvF(color.hueF(), color.saturationF(), state.color().valueF());
         }
         mSingleColorStateWidget->updateState(color, routine);
     } else if (mCurrentPage == EPage::palettePage) {
         if (!mMultiColorStateWidget->isIn()) {
             showMultiColorStateWidget(true);
         }
-        Palette palette = Palette(routineObject["palette"].toObject());
+        Palette palette = state.palette();
         auto colors = palette.colors();
         auto size = palette.colors().size();
         const auto kPaletteSize = 6;

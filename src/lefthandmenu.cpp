@@ -83,21 +83,19 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     connect(mSettingsButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
     PresetPalettes palettes;
-    cor::Light light;
-    light.routine(ERoutine::multiBars);
-    light.palette(palettes.palette(EPalette::water));
-    light.speed(100);
-    mMultiColorButton =
-        new LeftHandButton("Multi Color", EPage::palettePage, cor::lightToJson(light), this, this);
+    cor::LightState state;
+    state.routine(ERoutine::multiBars);
+    state.palette(palettes.palette(EPalette::water));
+    state.speed(100);
+    mMultiColorButton = new LeftHandButton("Multi Color", EPage::palettePage, state, this, this);
     mMultiColorButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mMultiColorButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
-    cor::Light moodLight;
-    moodLight.routine(ERoutine::multiFade);
-    moodLight.palette(palettes.palette(EPalette::fire));
-    moodLight.speed(100);
-    mMoodButton =
-        new LeftHandButton("Moods", EPage::moodPage, cor::lightToJson(moodLight), this, this);
+    cor::LightState moodState;
+    moodState.routine(ERoutine::multiFade);
+    moodState.palette(palettes.palette(EPalette::fire));
+    moodState.speed(100);
+    mMoodButton = new LeftHandButton("Moods", EPage::moodPage, moodState, this, this);
     mMoodButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mMoodButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
@@ -378,12 +376,13 @@ void LeftHandMenu::lightClicked(const QString&, const QString& deviceKey) {
     //    qDebug() << "collection key:" << collectionKey
     //             << "device key:" << deviceKey;
 
-    auto device = mComm->lightByID(deviceKey);
-    if (device.isReachable()) {
-        if (mSelectedLights->doesLightExist(device)) {
-            mSelectedLights->removeLight(device);
+    auto light = mComm->lightByID(deviceKey);
+    auto state = light.state();
+    if (light.isReachable()) {
+        if (mSelectedLights->doesLightExist(light)) {
+            mSelectedLights->removeLight(light);
         } else {
-            mSelectedLights->addLight(device);
+            mSelectedLights->addLight(light);
         }
         // update UI
         emit changedDeviceCount();

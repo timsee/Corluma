@@ -108,9 +108,9 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
     mNames = buttons;
 
     for (std::size_t i = 0u; i < mNames.size(); ++i) {
-        cor::Light light;
-        light.routine(ERoutine::singleSolid);
-        light.color(QColor(255, 0, 0));
+        cor::LightState state;
+        state.routine(ERoutine::singleSolid);
+        state.color(QColor(255, 0, 0));
 
         bool foundMatch = false;
         if (mNames[i] == "RGB" || mNames[i] == "HSV" || mNames[i] == "Temperature"
@@ -124,19 +124,17 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             mButtons[i]->setMinimumSize(this->buttonSize());
         } else if (mNames[i] == "Preset") {
             foundMatch = true;
-            light.routine(ERoutine::multiFade);
-            light.palette(mPalettes.palette(EPalette::poison));
-            light.speed(100);
-            QJsonObject routineObject = lightToJson(light);
-            auto lightsButton = new cor::Button(this, routineObject);
+            state.routine(ERoutine::multiFade);
+            state.palette(mPalettes.palette(EPalette::poison));
+            state.speed(100);
+            auto lightsButton = new cor::Button(this, state);
             mButtons[i] = static_cast<QPushButton*>(lightsButton);
             Q_ASSERT(mButtons[i]);
         } else if (mNames[i] == "Routine") {
             foundMatch = true;
-            light.routine(ERoutine::singleGlimmer);
-            light.color(QColor(0, 255, 0));
-            QJsonObject routineObject = lightToJson(light);
-            auto lightsButton = new cor::Button(this, routineObject);
+            state.routine(ERoutine::singleGlimmer);
+            state.color(QColor(0, 255, 0));
+            auto lightsButton = new cor::Button(this, state);
             mButtons[i] = static_cast<QPushButton*>(lightsButton);
             Q_ASSERT(mButtons[i]);
         } else if (mNames[i] == "Discovery_ArduCor") {
@@ -219,12 +217,12 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
 // Update Icons
 //--------------------------------
 
-void FloatingLayout::updateRoutine(const QJsonObject& routineObject) {
+void FloatingLayout::updateRoutine(const cor::LightState& state) {
     for (std::size_t i = 0u; i < mButtons.size(); ++i) {
         if (mNames[i] == "Routine") {
             auto lightsButton = dynamic_cast<cor::Button*>(mButtons[i]);
             Q_ASSERT(lightsButton);
-            lightsButton->updateRoutine(routineObject);
+            lightsButton->updateRoutine(state);
         }
     }
 }

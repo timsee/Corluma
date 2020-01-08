@@ -91,19 +91,14 @@ void IconData::bufferToOutput() {
 }
 
 
-void IconData::setRoutine(const QJsonObject& routineObject) {
-    cor::Light routineInfo = cor::jsonToLight(routineObject);
-    ERoutine routine = routineInfo.routine();
-    std::vector<QColor> colors = routineInfo.palette().colors();
-    QColor color = routineInfo.color();
+void IconData::setRoutine(const cor::LightState& state) {
+    ERoutine routine = state.routine();
+    std::vector<QColor> colors = state.palette().colors();
+    QColor color = state.color();
     auto brightness = color.valueF();
     brightness = brightness / 2.0;
     color.setHsvF(color.hueF(), color.saturationF(), 0.5 + brightness);
-
-    int param = INT_MIN;
-    if (routineObject["param"].isDouble()) {
-        param = int(routineObject["param"].toDouble());
-    }
+    int param = state.param();
 
     switch (routine) {
         case ERoutine::singleSolid:

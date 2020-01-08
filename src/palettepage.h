@@ -83,7 +83,7 @@ signals:
     void speedUpdate(int);
 
     /// a button was pressed, signaling a routine change.
-    void routineUpdate(QJsonObject object);
+    void routineUpdate(cor::LightState);
 
     /// sent out whenever the color scheme is changed
     void schemeUpdate(std::vector<QColor>);
@@ -94,7 +94,7 @@ public slots:
      * \brief multiButtonClicked every button setup as a presetButton will signal
      * this slot whenever they are clicked.
      */
-    void multiButtonClicked(QJsonObject);
+    void multiButtonClicked(cor::LightState);
 
     /*!
      * \brief colorsChanged multiple colors have changed and should be sent to the ColorPicker as a
@@ -119,7 +119,7 @@ private slots:
      * \brief newRoutineSelected called whenever a routine button is clicked. Sends
      * the routine to the backend data so that it can get sent to the connected devices.
      */
-    void newRoutineSelected(QJsonObject routineObject);
+    void newRoutineSelected(cor::LightState);
 
 protected:
     /*!
@@ -167,7 +167,7 @@ private:
     std::size_t mCount;
 
     /// tracks the routine type of the current multi color routine from the color page.
-    ERoutine mCurrentMultiRoutine;
+    cor::LightState mState;
 };
 
 #endif // PresetColorsPage_H

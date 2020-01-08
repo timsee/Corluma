@@ -85,9 +85,9 @@ void ListLightWidget::init(const cor::Light& device) {
 }
 
 
-void ListLightWidget::updateWidget(const cor::Light& device) {
+void ListLightWidget::updateWidget(const cor::Light& light) {
     bool shouldRender = false;
-    if (!(mDevice == device) && isVisible()) {
+    if (!(mDevice == light) && isVisible()) {
         shouldRender = true;
     }
     if (!mHasRendered) {
@@ -95,24 +95,23 @@ void ListLightWidget::updateWidget(const cor::Light& device) {
         mHasRendered = false;
     }
 
-    if (mDevice.hardwareType() != device.hardwareType() || mLastRenderedSize != size()) {
-        mTypePixmap = lightHardwareTypeToPixmap(device.hardwareType());
+    if (mDevice.hardwareType() != light.hardwareType() || mLastRenderedSize != size()) {
+        mTypePixmap = lightHardwareTypeToPixmap(light.hardwareType());
         resizeIcons();
         mLastRenderedSize = size();
     }
 
-    if (mDevice.name() != device.name()) {
-        mController->setText(createName(device));
+    if (mDevice.name() != light.name()) {
+        mController->setText(createName(light));
     }
 
-    mDevice = device;
-    mKey = device.uniqueID();
+    mDevice = light;
+    mKey = light.uniqueID();
 
     handleSwitch();
 
     if (shouldRender) {
-        QJsonObject object = cor::lightToJson(device);
-        mIconData.setRoutine(object);
+        mIconData.setRoutine(light.stateConst());
         mIconPixmap = mIconData.renderAsQPixmap();
         update();
     }
@@ -124,9 +123,10 @@ void ListLightWidget::handleSwitch() {
     } else if (mSwitchState == EOnOffSwitchState::hidden) {
         mOnOffSwitch->setVisible(false);
     } else {
+        auto state = mDevice.state();
         if (!mDevice.isReachable()) {
             mOnOffSwitch->setSwitchState(ESwitchState::disabled);
-        } else if (mDevice.isOn() && !mBlockStateUpdates) {
+        } else if (state.isOn() && !mBlockStateUpdates) {
             mOnOffSwitch->setSwitchState(ESwitchState::on);
         } else if (!mBlockStateUpdates) {
             mOnOffSwitch->setSwitchState(ESwitchState::off);
@@ -192,6 +192,7 @@ void ListLightWidget::paintEvent(QPaintEvent*) {
     }
     auto side = int(height() * 0.45f);
     auto y = int(height() * 0.3f);
+    auto state = mDevice.state();
     if (mDevice.isReachable()) {
         QRect rect;
         if (mType == cor::EWidgetType::full) {
@@ -208,14 +209,14 @@ void ListLightWidget::paintEvent(QPaintEvent*) {
                                              Qt::FastTransformation);
         }
 
-        if (!mDevice.isOn()) {
+        if (!state.isOn()) {
             painter.setOpacity(0.25);
         }
 
         if (mType == cor::EWidgetType::full) {
             // draw the back rectangle
             QBrush blackBrush(QColor(0, 0, 0));
-            if (!mDevice.isOn()) {
+            if (!state.isOn()) {
                 // if its not on, hide it
                 blackBrush.setColor(QColor(0, 0, 0, 5));
             }
@@ -223,9 +224,9 @@ void ListLightWidget::paintEvent(QPaintEvent*) {
             painter.drawRect(rect);
 
             // set brightness width
-            double brightness = mDevice.color().valueF();
-            if (mDevice.routine() > cor::ERoutineSingleColorEnd) {
-                brightness = mDevice.palette().brightness() / 100.0;
+            double brightness = state.color().valueF();
+            if (state.routine() > cor::ERoutineSingleColorEnd) {
+                brightness = state.palette().brightness() / 100.0;
             }
             rect.setWidth(int(rect.width() * brightness));
         } else {

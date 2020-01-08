@@ -81,7 +81,7 @@ signals:
     void brightnessChanged(std::uint32_t);
 
     /// sent out whenever a routine update is triggered
-    void routineUpdate(QJsonObject);
+    void routineUpdate(cor::LightState);
 
 public slots:
 
@@ -102,7 +102,7 @@ private slots:
      * \brief newRoutineSelected called whenever a routine button is clicked. Sends
      *        the routine to the backend data so that it can get sent to the connected devices.
      */
-    void newRoutineSelected(QJsonObject routineObject);
+    void newRoutineSelected(cor::LightState routineObject);
 
     /*!
      * \brief ambientUpdateReceived called whenever the colorpicker gives back an ambient update.
@@ -132,7 +132,7 @@ private:
 
     /// current single color lighting routine, stored in buffer for when going from multi color to
     /// single color routines.
-    QJsonObject mCurrentSingleRoutine;
+    cor::LightState mState;
 
     /// updates the colorpage's main color value
     void updateColor(const QColor& color);

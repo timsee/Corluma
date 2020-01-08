@@ -139,7 +139,7 @@ public slots:
     EPage currentPage() { return mMainViewport->currentPage(); }
 
     /// routine changed from any page
-    void routineChanged(QJsonObject routine);
+    void routineChanged(cor::LightState routine);
 
     /// scheme changed from colorpage
     void schemeChanged(const std::vector<QColor>&);

@@ -21,7 +21,8 @@ void ListSimpleGroupWidget::updateDevices(const std::vector<cor::Light>& devices
                                           bool skipOff) {
     int overallHeight = 0;
     for (const auto& inputDevice : devices) {
-        if (!skipOff || inputDevice.isOn()) {
+        auto state = inputDevice.stateConst();
+        if (!skipOff || state.isOn()) {
             bool foundDevice = false;
             // check if device widget exists
             uint32_t x = 0;

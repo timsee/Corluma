@@ -31,18 +31,18 @@ MainViewport::MainViewport(MainWindow* parent,
     mColorPage->isOpen(false);
     mColorPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mColorPage,
-            SIGNAL(routineUpdate(QJsonObject)),
+            SIGNAL(routineUpdate(cor::LightState)),
             parent,
-            SLOT(routineChanged(QJsonObject)));
+            SLOT(routineChanged(cor::LightState)));
 
     mPalettePage = new PalettePage(parent);
     mPalettePage->isOpen(false);
     mPalettePage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mPalettePage, SIGNAL(speedUpdate(int)), parent, SLOT(speedChanged(int)));
     connect(mPalettePage,
-            SIGNAL(routineUpdate(QJsonObject)),
+            SIGNAL(routineUpdate(cor::LightState)),
             parent,
-            SLOT(routineChanged(QJsonObject)));
+            SLOT(routineChanged(cor::LightState)));
     connect(mPalettePage,
             SIGNAL(schemeUpdate(std::vector<QColor>)),
             parent,

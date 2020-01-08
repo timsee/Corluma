@@ -35,11 +35,10 @@ LightVectorWidget::LightVectorWidget(int width, int height, bool fillFromLeft, Q
     for (int h = 0; h < mHeight; ++h) {
         for (int w = 0; w < mWidth; ++w) {
             QString iString(i);
-            cor::Light light(iString, ECommType::MAX);
-            light.routine(ERoutine::singleSolid);
-            light.color(QColor(0, 0, 0));
-            QJsonObject routineObject = lightToJson(light);
-            mArrayColorsButtons[std::size_t(i)] = new cor::Button(this, routineObject);
+            cor::LightState state;
+            state.routine(ERoutine::singleSolid);
+            state.color(QColor(0, 0, 0));
+            mArrayColorsButtons[std::size_t(i)] = new cor::Button(this, state);
             mArrayColorsButtons[std::size_t(i)]->setLabelMode(true);
             mArrayColorsButtons[std::size_t(i)]->setSizePolicy(QSizePolicy::Fixed,
                                                                QSizePolicy::Fixed);
@@ -59,14 +58,14 @@ LightVectorWidget::LightVectorWidget(int width, int height, bool fillFromLeft, Q
     setLayout(mLayout);
 }
 
-void LightVectorWidget::updateDevices(const std::vector<cor::Light>& devices) {
+void LightVectorWidget::updateDevices(const std::vector<cor::Light>& lights) {
     if (mFillFromLeft) {
         int i = 0;
-        for (const auto& device : devices) {
-            bool skip = mHideOffDevices && !device.isOn();
+        for (const auto& light : lights) {
+            auto state = light.stateConst();
+            bool skip = mHideOffDevices && !state.isOn();
             if (i < mMaximumSize && !skip) {
-                QJsonObject routineObject = lightToJson(device);
-                mArrayColorsButtons[std::uint32_t(i)]->updateRoutine(routineObject);
+                mArrayColorsButtons[std::uint32_t(i)]->updateRoutine(state);
                 mArrayColorsButtons[std::uint32_t(i)]->setVisible(true);
             }
             ++i;
@@ -76,11 +75,12 @@ void LightVectorWidget::updateDevices(const std::vector<cor::Light>& devices) {
         }
     } else {
         int i = mMaximumSize - 1;
-        for (const auto& device : devices) {
-            bool skip = mHideOffDevices && !device.isOn();
+        for (const auto& light : lights) {
+            auto state = light.stateConst();
+
+            bool skip = mHideOffDevices && !state.isOn();
             if (i > 0 && !skip) {
-                QJsonObject routineObject = lightToJson(device);
-                mArrayColorsButtons[std::uint32_t(i)]->updateRoutine(routineObject);
+                mArrayColorsButtons[std::uint32_t(i)]->updateRoutine(state);
                 mArrayColorsButtons[std::uint32_t(i)]->setVisible(true);
             }
             --i;

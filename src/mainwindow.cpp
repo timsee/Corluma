@@ -733,16 +733,18 @@ void MainWindow::resize() {
 }
 
 
-void MainWindow::routineChanged(QJsonObject routine) {
+void MainWindow::routineChanged(cor::LightState state) {
     // add brightness to routine
-    routine["bri"] = mTopMenu->brightness() / 100.0;
-    if (routine["palette"].isObject()) {
-        QJsonObject paletteObject = routine["palette"].toObject();
-        paletteObject["bri"] = mTopMenu->brightness() / 100.0;
-        routine["palette"] = paletteObject;
+    auto color = state.color();
+    color.setHsvF(color.hueF(), color.saturationF(), mTopMenu->brightness() / 100.0);
+    state.color(color);
+    auto palette = state.palette();
+    if (palette.isValid()) {
+        palette.brightness(mTopMenu->brightness() / 100.0);
+        state.palette(palette);
     }
-    mData->updateRoutine(routine);
-    mTopMenu->updateRoutine(routine);
+    mData->updateState(state);
+    mTopMenu->updateState(state);
 }
 
 void MainWindow::schemeChanged(const std::vector<QColor>& colors) {

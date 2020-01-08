@@ -47,16 +47,6 @@ public:
     void highlightRoutineButton(const QString& label);
 
     /*!
-     * \brief jsonToButtonName takes a json object that represents a routine as input and if it
-     * matches any of the json objects used by routine buttons, it returns the name. Otherwise, it
-     * returns an empty string
-     *
-     * \param routineObject the routine object to match to a button
-     * \return the name of the json button.
-     */
-    QString jsonToButtonName(const QJsonObject& routineObject);
-
-    /*!
      * \brief singleRoutineColorChanged can only be used by a eSingleRoutines version of the widget,
      * this updates the color of of all of the icons to reflect the new color.
      *
@@ -80,7 +70,7 @@ public:
     void resize(QSize size);
 
     /// getter for routines
-    const std::vector<std::pair<QString, QJsonObject>> routines() { return mRoutines; }
+    const std::vector<std::pair<QString, cor::LightState>> routines() { return mRoutines; }
 
     /// true to show widget, false to hide it
     void showWidget(bool shouldShow);
@@ -94,7 +84,7 @@ signals:
      * \brief newRoutineSelected emitted whenever a button is pressed with the int representation
      *        of the routine that it represents.
      */
-    void newRoutineSelected(QJsonObject);
+    void newRoutineSelected(cor::LightState);
 
 protected:
     /*!
@@ -109,7 +99,7 @@ private slots:
      * \brief routineChanged signaled whenever a routine button is pressed, used to
      * to tell the LEDs to update.
      */
-    void routineChanged(const QJsonObject&);
+    void routineChanged(const cor::LightState&);
 
 private:
     /*!
@@ -118,7 +108,7 @@ private:
     QGridLayout* mLayout;
 
     /// vector of routines
-    std::vector<std::pair<QString, QJsonObject>> mRoutines;
+    std::vector<std::pair<QString, cor::LightState>> mRoutines;
 
     /// true if showing, false if hidden
     bool mIsOpen;

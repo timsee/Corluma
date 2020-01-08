@@ -27,7 +27,6 @@ PalettePage::PalettePage(QWidget* parent)
     mHuePaletteScrollArea->setupButtons(false);
 
     mColorPicker = new MultiColorPicker(this);
-    mCurrentMultiRoutine = ERoutine::multiGlimmer;
     mColorPicker->setVisible(false);
 
     connect(mColorPicker,
@@ -46,9 +45,9 @@ PalettePage::PalettePage(QWidget* parent)
                                      mMultiRoutineWidget->height());
     mMultiRoutineWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(mMultiRoutineWidget,
-            SIGNAL(newRoutineSelected(QJsonObject)),
+            SIGNAL(newRoutineSelected(cor::LightState)),
             this,
-            SLOT(newRoutineSelected(QJsonObject)));
+            SLOT(newRoutineSelected(cor::LightState)));
 
     mMode = EGroupMode::arduinoPresets;
     setMode(EGroupMode::RGB);
@@ -59,15 +58,15 @@ PalettePage::PalettePage(QWidget* parent)
 // Slots
 // ----------------------------
 
-void PalettePage::multiButtonClicked(QJsonObject routineObject) {
-    ERoutine routine = stringToRoutine(routineObject["routine"].toString());
-    EPalette palette = Palette(routineObject["palette"].toObject()).paletteEnum();
-    routineObject["speed"] = mSpeed;
-    emit routineUpdate(routineObject);
+void PalettePage::multiButtonClicked(cor::LightState state) {
+    state.speed(mSpeed);
+    emit routineUpdate(state);
     if (mMode == EGroupMode::arduinoPresets) {
-        mArduinoPaletteScrollArea->highlightRoutineButton(routine, palette);
+        mArduinoPaletteScrollArea->highlightRoutineButton(state.routine(),
+                                                          state.palette().paletteEnum());
     } else if (mMode == EGroupMode::huePresets) {
-        mHuePaletteScrollArea->highlightRoutineButton(routine, palette);
+        mHuePaletteScrollArea->highlightRoutineButton(state.routine(),
+                                                      state.palette().paletteEnum());
     }
 }
 
@@ -111,19 +110,15 @@ void PalettePage::show(std::size_t count,
     }
 }
 
-void PalettePage::newRoutineSelected(QJsonObject routineObject) {
-    ERoutine routine = stringToRoutine(routineObject["routine"].toString());
+void PalettePage::newRoutineSelected(cor::LightState state) {
     Palette palette(paletteToString(EPalette::custom), mColorScheme, mBrightness);
-    routineObject["palette"] = palette.JSON();
-    routineObject["isOn"] = true;
-    if (routine != ERoutine::singleSolid) {
-        // no speed settings for single color routines...
-        routineObject["speed"] = 125;
-    }
+    state.palette(palette);
+    state.isOn(true);
+    state.speed(125);
 
     // get color
-    emit routineUpdate(routineObject);
-    mCurrentMultiRoutine = routine;
+    emit routineUpdate(state);
+    mState = state;
 }
 
 void PalettePage::setMode(EGroupMode mode) {

@@ -54,7 +54,7 @@ public:
      *
      * \param routineObject the json representatino of the routine
      */
-    void updateRoutine(const QJsonObject& routineObject);
+    void updateRoutine(const cor::LightState& state);
 
     /*!
      * \brief updateDiscoveryButton update the icon of a discovery button. Shows the discovery state

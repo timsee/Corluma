@@ -328,6 +328,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
 
 
 HEADERS  += cor/objects/light.h \
+    cor/objects/lightstate.h \
     cor/objects/group.h \
     cor/objects/palette.h \
     cor/objects/page.h \

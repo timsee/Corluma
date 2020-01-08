@@ -110,7 +110,7 @@ public:
      * \brief updateRoutine update the routine for the current app state
      * \param routine routine to update the apps state to
      */
-    void updateRoutine(const QJsonObject& routine);
+    void updateState(const cor::LightState& state);
 
     /*!
      * \brief updateScheme update the color scheme chosen by the app

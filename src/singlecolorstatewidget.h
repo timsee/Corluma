@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-#include "cor/objects/light.h"
+#include "cor/objects/lightstate.h"
 #include "cor/widgets/button.h"
 #include "syncwidget.h"
 /*!
@@ -53,10 +53,10 @@ private:
     bool mIsIn;
 
     /// cached version of the light
-    cor::Light mLight;
+    cor::LightState mState;
 
     /// button for displaying the state
-    cor::Button* mState;
+    cor::Button* mButton;
 
     /// widget for displaying sync state
     SyncWidget* mSyncWidget;

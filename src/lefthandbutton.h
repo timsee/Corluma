@@ -30,10 +30,10 @@ public:
                    LeftHandMenu* menu,
                    QWidget* parent);
 
-    /// constructor with json data
+    /// constructor with Light State
     LeftHandButton(const QString& text,
                    EPage page,
-                   const QJsonObject& jsonObject,
+                   const cor::LightState& state,
                    LeftHandMenu* menu,
                    QWidget* parent);
 
@@ -50,8 +50,8 @@ public:
     /// update the icon of the button
     void updateIcon(const QString& iconResource);
 
-    /// update the json of the button
-    void updateJSON(const QJsonObject& jsonObject);
+    /// update the state of the button
+    void updateState(const cor::LightState& state);
 
 signals:
 
@@ -89,7 +89,7 @@ private:
     QString mResourcePath;
 
     /// copy of the json data for the icon.
-    QJsonObject mJsonObject;
+    cor::LightState mState;
 
     /// title for button
     QLabel* mTitle;

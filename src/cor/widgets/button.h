@@ -8,7 +8,7 @@
 #include <QPushButton>
 #include <QWidget>
 
-#include "cor/protocols.h"
+#include "cor/objects/lightstate.h"
 #include "icondata.h"
 
 namespace cor {
@@ -34,24 +34,25 @@ public:
     /*!
      * \brief Constructor
      */
-    explicit Button(QWidget* parent, const QJsonObject& routine)
+    explicit Button(QWidget* parent, const cor::LightState& state)
         : QPushButton(parent),
           mShouldResizeIcon{true},
           mLabelMode{false},
           mIconData{4, 4},
-          mRoutineObject(routine) {
+          mState(state) {
         setCheckable(!mLabelMode);
         connect(this, SIGNAL(clicked(bool)), this, SLOT(handleButton()));
-        mIconData.setRoutine(routine);
+        mIconData.setRoutine(state);
         resizeIcon();
     }
 
     /*!
      * \brief updateRoutine show a routine on the button
-     * \param routineObject the json representatino of the routine
+     * \param state the state to display
      */
-    void updateRoutine(const QJsonObject& routineObject) {
-        mIconData.setRoutine(routineObject);
+    void updateRoutine(const cor::LightState& state) {
+        mState = state;
+        mIconData.setRoutine(state);
         QPixmap pixmap = mIconData.renderAsQPixmap();
         pixmap = pixmap.scaled(mIconSize.width(),
                                mIconSize.height(),
@@ -61,7 +62,7 @@ public:
     }
 
     /// getter for routine object
-    const QJsonObject& routine() { return mRoutineObject; }
+    const cor::LightState& state() { return mState; }
 
     /*!
      * \brief setLabelMode true to hide the border and make it non-interactable. False to turn the
@@ -102,13 +103,13 @@ signals:
     /*!
      * \brief buttonClicked sent only when setupAsStandardButton has been called.
      */
-    void buttonClicked(QJsonObject);
+    void buttonClicked(cor::LightState);
 
 private slots:
     /*!
      * \brief handleButton listens for a click on the button.
      */
-    void handleButton() { emit buttonClicked(mRoutineObject); }
+    void handleButton() { emit buttonClicked(mState); }
 
 protected:
     /*!
@@ -136,8 +137,8 @@ private:
      */
     IconData mIconData;
 
-    /// the json representation of the routine
-    QJsonObject mRoutineObject;
+    /// the state of the light to display
+    cor::LightState mState;
 };
 
 } // namespace cor

@@ -44,14 +44,14 @@ LeftHandButton::LeftHandButton(const QString& text,
 
 LeftHandButton::LeftHandButton(const QString& text,
                                EPage page,
-                               const QJsonObject& jsonObject,
+                               const cor::LightState& state,
                                LeftHandMenu* menu,
                                QWidget* parent)
     : QWidget(parent) {
     mPage = page;
     mMenu = menu;
     mIsHighlighted = false;
-    mJsonObject = jsonObject;
+    mState = state;
 
     setFixedSize(parentWidget()->width(), parentWidget()->height() / 15);
     mTitle = new QLabel(text, this);
@@ -62,7 +62,7 @@ LeftHandButton::LeftHandButton(const QString& text,
     mIcon->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     mIcon->setStyleSheet("background-color:rgba(0,0,0,0);");
     mIcon->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    updateJSON(jsonObject);
+    updateState(state);
     renderButton();
 }
 
@@ -73,9 +73,10 @@ void LeftHandButton::updateIcon(const QString& iconResource) {
         pixmap.scaled(size.width(), size.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
-void LeftHandButton::updateJSON(const QJsonObject& jsonObject) {
+
+void LeftHandButton::updateState(const cor::LightState& state) {
     IconData icon(4, 4);
-    icon.setRoutine(jsonObject);
+    icon.setRoutine(state);
     const auto& size = QSize(int(this->size().width() * 0.8), int(this->size().height() * 0.8));
     mIcon->setPixmap(icon.renderAsQPixmap().scaled(size.width(),
                                                    size.height(),
@@ -89,7 +90,7 @@ void LeftHandButton::renderButton() {
     if (!mResourcePath.isNull()) {
         updateIcon(mResourcePath);
     } else {
-        updateJSON(mJsonObject);
+        updateState(mState);
     }
 }
 

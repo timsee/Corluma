@@ -638,4 +638,10 @@ ___
 - Fixed miscellaneous bugs.
 
 
+### **v0.17.63**
+#### The LightState Update
+- Added a `LightState` object and removed state data from `cor::Light`.
+- Reduced the reliance on `QJsonObject` for tracking light state data.
+- Fixed miscellaneous bugs.
+
 

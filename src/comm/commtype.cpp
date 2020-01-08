@@ -84,8 +84,10 @@ void CommType::checkReachability() {
     for (const auto& light : mLightDict.items()) {
         auto device = light;
         auto updateTime = mUpdateTime.item(light.uniqueID().toStdString());
+        auto state = light.stateConst();
         if (device.isReachable() && (updateTime.first < (elapsedTime - kThreshold))) {
             device.isReachable(false);
+            device.state() = state;
             mLightDict.update(device.uniqueID().toStdString(), device);
         }
     }

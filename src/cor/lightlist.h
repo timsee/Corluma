@@ -90,7 +90,7 @@ public:
      * \brief updateRoutine update the lighting routine for all current lights.
      * \param routine new lighting routine.
      */
-    void updateRoutine(const QJsonObject& routine);
+    void updateState(const cor::LightState& newState);
 
     /*!
      * \brief updateSpeed update the speed of the lighting routines.

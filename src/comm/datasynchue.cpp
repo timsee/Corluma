@@ -15,7 +15,7 @@ DataSyncHue::DataSyncHue(cor::LightList* data, CommLayer* comm, AppSettings* app
     mData = data;
     mComm = comm;
     mType = EDataSyncType::hue;
-    mUpdateInterval = 250;
+    mUpdateInterval = 1000;
     connect(mComm,
             SIGNAL(packetReceived(EProtocolType)),
             this,
@@ -69,7 +69,7 @@ void DataSyncHue::syncData() {
             if (mComm->fillDevice(commLayerDevice)) {
                 if (device.commType() == ECommType::hue) {
                     auto hueMetadata = mComm->hue()->hueLightFromLight(commLayerDevice);
-                    if (checkThrottle(hueMetadata.bridgeID(), device.commType())) {
+                    if (checkThrottle(hueMetadata.uniqueID(), device.commType())) {
                         if (!sync(device, commLayerDevice)) {
                             countOutOfSync++;
                         }
@@ -130,36 +130,39 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
     // get bridge
     auto bridge = mComm->hue()->bridgeFromLight(commDevice);
 
-    if (dataDevice.isOn()) {
+    auto dataState = dataDevice.stateConst();
+    auto commState = commDevice.stateConst();
+    if (dataState.isOn()) {
         if (hueLight.colorMode() == EColorMode::HSV) {
             //-------------------
             // Hue HSV Color Sync
             //-------------------
-            auto color = dataDevice.color();
+            auto color = dataState.color();
 
             // add brightness into lights
-            if (cor::colorDifference(color, commDevice.color()) > 0.02f) {
+            if (cor::colorDifference(color, commState.color()) > 0.02f) {
                 QJsonObject routineObject;
                 routineObject["routine"] = routineToString(ERoutine::singleSolid);
-                routineObject["hue"] = dataDevice.color().hueF();
-                routineObject["sat"] = dataDevice.color().saturationF();
-                routineObject["bri"] = dataDevice.color().valueF();
+                routineObject["hue"] = dataState.color().hueF();
+                routineObject["sat"] = dataState.color().saturationF();
+                routineObject["bri"] = dataState.color().valueF();
 
                 object["routine"] = routineObject;
                 countOutOfSync++;
             }
+
         } else if (hueLight.colorMode() == EColorMode::CT) {
             //-------------------
             // Hue Color Temperature Sync
             //-------------------
-            if (cor::colorDifference(commDevice.color(), dataDevice.color()) > 0.02f) {
-                object["temperature"] = dataDevice.temperature();
-                object["bri"] = dataDevice.color().valueF();
+            if (cor::colorDifference(commState.color(), dataState.color()) > 0.02f) {
+                object["temperature"] = dataState.temperature();
+                object["bri"] = dataState.color().valueF();
                 countOutOfSync++;
             }
         } else if (hueLight.colorMode() == EColorMode::dimmable) {
-            if (cor::colorDifference(commDevice.color(), dataDevice.color()) > 0.02f) {
-                object["bri"] = dataDevice.color().valueF();
+            if (cor::colorDifference(commState.color(), dataState.color()) > 0.02f) {
+                object["bri"] = dataState.color().valueF();
                 countOutOfSync++;
             }
         }
@@ -168,9 +171,9 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
     //-------------------
     // On/Off Sync
     //-------------------
-    if (dataDevice.isOn() != commDevice.isOn()) {
+    if (dataState.isOn() != commState.isOn()) {
         // qDebug() << "hue ON/OFF not in sync" << dataDevice.isOn;
-        object["isOn"] = dataDevice.isOn();
+        object["isOn"] = dataState.isOn();
         countOutOfSync++;
     }
 
@@ -183,7 +186,7 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
 
     if (countOutOfSync) {
         mComm->hue()->sendPacket(object);
-        resetThrottle(hueLight.bridgeID(), dataDevice.commType());
+        resetThrottle(hueLight.uniqueID(), dataDevice.commType());
     }
 
     return (countOutOfSync == 0);
