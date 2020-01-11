@@ -17,6 +17,35 @@
 
 class CommLayer;
 
+/// basic storage class for storing messages to hues
+class HueMessage {
+public:
+    /// constructor
+    HueMessage(const QString& id, const QString& bridgeID, QJsonObject object)
+        : mID{id},
+          mBridgeID{bridgeID},
+          mObject{object} {}
+
+    /// getter for hue IDs
+    QString ID() const noexcept { return mID; }
+
+    /// getter for bridge ID
+    const QString& bridgeID() const noexcept { return mBridgeID; }
+
+    /// getter for message
+    const QJsonObject& message() const noexcept { return mObject; }
+
+private:
+    /// ID of hue
+    QString mID;
+
+    /// ID of bridge
+    QString mBridgeID;
+
+    /// message to send
+    QJsonObject mObject;
+};
+
 /*!
  * \brief The DataSyncHue class is a datasync thread that syncs the commlayer's representation of
  * how the Hue Bridge sees the states of the lights with the DataLayer's representation of how the
@@ -94,6 +123,9 @@ private:
      * \param light the light that is getting its idle timeout changed
      */
     bool handleIdleTimeout(const hue::Bridge& bridge, const HueMetadata& light);
+
+    /// message buffer
+    std::unordered_map<std::string, std::vector<HueMessage>> mMessages;
 
     /// poiner to app settings
     AppSettings* mAppSettings;

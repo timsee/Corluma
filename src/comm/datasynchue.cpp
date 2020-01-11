@@ -15,7 +15,7 @@ DataSyncHue::DataSyncHue(cor::LightList* data, CommLayer* comm, AppSettings* app
     mData = data;
     mComm = comm;
     mType = EDataSyncType::hue;
-    mUpdateInterval = 1000;
+    mUpdateInterval = 100;
     connect(mComm,
             SIGNAL(packetReceived(EProtocolType)),
             this,
@@ -68,17 +68,47 @@ void DataSyncHue::syncData() {
             cor::Light commLayerDevice = device;
             if (mComm->fillDevice(commLayerDevice)) {
                 if (device.commType() == ECommType::hue) {
-                    auto hueMetadata = mComm->hue()->hueLightFromLight(commLayerDevice);
-                    if (checkThrottle(hueMetadata.uniqueID(), device.commType())) {
-                        if (!sync(device, commLayerDevice)) {
-                            countOutOfSync++;
-                        }
-                    } else {
+                    if (!sync(device, commLayerDevice)) {
                         countOutOfSync++;
                     }
                 }
             }
         }
+
+        if (!mMessages.empty()) {
+            for (const auto& keyVal : mMessages) {
+                QString key(keyVal.first.c_str());
+                auto messages = keyVal.second;
+                if (checkThrottle(key, ECommType::hue)) {
+                    if (messages.size() == 1u) {
+                        // for a single message, just send right away.
+                        auto message = messages.front();
+                        mComm->hue()->sendPacket(message.message());
+                        resetThrottle(key, ECommType::hue);
+                    } else {
+                        // TODO: combine equivalent messages, for now just take a random new message
+                        std::random_shuffle(messages.begin(), messages.end());
+                        // find bridge for key
+                        auto message = messages.front();
+                        // get bridge
+                        auto result = mComm->hue()->discovery()->bridgeFromID(key);
+                        if (result.second) {
+                            auto bridge = result.first;
+                            auto groups = bridge.groupsAndRoomsWithIDs();
+                            // TODO: take the combined equivalent messages and see if we can send to
+                            // larger groups instead
+                            mComm->hue()->sendPacket(message.message());
+                            resetThrottle(key, ECommType::hue);
+                        }
+                    }
+                } else {
+                    countOutOfSync++;
+                }
+            }
+        }
+
+        mMessages.clear();
+
         mDataIsInSync = (countOutOfSync == 0);
         if (!mDataIsInSync) {
             emit statusChanged(mType, false);
@@ -130,8 +160,8 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
     // get bridge
     auto bridge = mComm->hue()->bridgeFromLight(commDevice);
 
-    auto dataState = dataDevice.stateConst();
-    auto commState = commDevice.stateConst();
+    auto dataState = dataDevice.state();
+    auto commState = commDevice.state();
     if (dataState.isOn()) {
         if (hueLight.colorMode() == EColorMode::HSV) {
             //-------------------
@@ -185,8 +215,17 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
     }
 
     if (countOutOfSync) {
-        mComm->hue()->sendPacket(object);
-        resetThrottle(hueLight.uniqueID(), dataDevice.commType());
+        auto key = bridge.id.toStdString();
+        auto result = mMessages.find(key);
+        HueMessage message(hueLight.uniqueID(), bridge.id, object);
+        if (result == mMessages.end()) {
+            // insert message that isnt found
+            mMessages.insert(std::make_pair(key, std::vector<HueMessage>(1, message)));
+        } else {
+            std::vector<HueMessage> vector = result->second;
+            vector.push_back(message);
+            result->second = vector;
+        }
     }
 
     return (countOutOfSync == 0);

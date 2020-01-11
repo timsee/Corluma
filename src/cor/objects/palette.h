@@ -181,7 +181,7 @@ private:
     std::vector<QColor> mColors;
 
     /// brightness of the palette, between 0 - 100
-    uint32_t mBrightness;
+    std::uint32_t mBrightness;
 };
 
 inline std::ostream& operator<<(std::ostream& out, const Palette& palette) {

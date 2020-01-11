@@ -60,6 +60,10 @@ PalettePage::PalettePage(QWidget* parent)
 
 void PalettePage::multiButtonClicked(cor::LightState state) {
     state.speed(mSpeed);
+    // take prexiesitng brightness
+    auto palette = state.palette();
+    palette.brightness(mBrightness);
+    state.palette(palette);
     emit routineUpdate(state);
     if (mMode == EGroupMode::arduinoPresets) {
         mArduinoPaletteScrollArea->highlightRoutineButton(state.routine(),
@@ -79,6 +83,7 @@ void PalettePage::speedChanged(int newSpeed) {
 }
 
 void PalettePage::updateBrightness(std::uint32_t brightness) {
+    mBrightness = brightness;
     if (mMode == EGroupMode::RGB || mMode == EGroupMode::HSV) {
         mColorPicker->updateBrightness(brightness);
     }

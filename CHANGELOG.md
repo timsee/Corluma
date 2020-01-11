@@ -645,3 +645,12 @@ ___
 - Fixed miscellaneous bugs.
 
 
+### **v0.17.65**
+#### The Nanoleaf Firmware Update
+- Added support for Nanoleaf 3.2.0 firmware
+- Rewrote nanoleaf code for detecting and setting routines and palettes.
+- Fixed edge cases in nanoleaf discovery code.
+- Added initial support for sending packets to hue groups and rooms. 
+
+
+

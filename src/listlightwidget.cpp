@@ -111,7 +111,7 @@ void ListLightWidget::updateWidget(const cor::Light& light) {
     handleSwitch();
 
     if (shouldRender) {
-        mIconData.setRoutine(light.stateConst());
+        mIconData.setRoutine(light.state());
         mIconPixmap = mIconData.renderAsQPixmap();
         update();
     }

@@ -76,7 +76,7 @@ public:
      * \brief updateBrightnessSlider update the brightness slider at the top of the mnu based on the
      * current light data.
      */
-    void updateBrightnessSlider();
+    void updateBrightnessSlider(std::uint32_t brightness);
 
     /// getter for brightness
     int brightness() { return mBrightnessSlider->slider()->value(); }

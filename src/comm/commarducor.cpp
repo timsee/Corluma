@@ -294,7 +294,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                     metadata.minutesUntilTimeout(intVector[x + 11]);
 
                                     light.version(controller.majorAPI(), controller.minorAPI());
-                                    light.state() = state;
+                                    light.state(state);
                                     commByType(type)->updateLight(light);
 
                                     // check that it doesn't already exist, if it does, replace the
@@ -332,7 +332,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                     if (state.palette().paletteEnum() == EPalette::custom) {
                                         state.palette(state.customPalette());
                                     }
-                                    light.state() = state;
+                                    light.state(state);
                                     light.isReachable(true);
                                     commByType(type)->updateLight(light);
                                 }
@@ -348,7 +348,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                               double(intVector[2]) / 100.0);
                                 state.color(color);
                                 state.paletteBrightness(std::uint32_t(intVector[2]));
-                                light.state() = state;
+                                light.state(state);
                                 light.isReachable(true);
                                 commByType(type)->updateLight(light);
                             }
@@ -357,7 +357,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                             for (auto light : lightVector) {
                                 auto state = light.state();
                                 state.isOn(intVector[2]);
-                                light.state() = state;
+                                light.state(state);
                                 light.isReachable(true);
                                 commByType(type)->updateLight(light);
                             }
@@ -425,7 +425,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                 }
 
                                 if (isValid) {
-                                    light.state() = state;
+                                    light.state(state);
                                     light.isReachable(true);
                                     commByType(type)->updateLight(light);
                                 }
@@ -472,7 +472,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                         auto paletteString = paletteToString(EPalette::custom);
                                         state.customPalette(
                                             Palette(paletteString, colors, brightness));
-                                        light.state() = state;
+                                        light.state(state);
                                         light.isReachable(true);
                                         commByType(type)->updateLight(light);
                                     } else {
@@ -491,7 +491,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                     state.customCount(std::uint32_t(intVector[2]));
                                     // qDebug() << "UPDATE TO custom color count" <<
                                     // device.customColors;
-                                    light.state() = state;
+                                    light.state(state);
                                     light.isReachable(true);
                                     commByType(type)->updateLight(light);
                                 } else {

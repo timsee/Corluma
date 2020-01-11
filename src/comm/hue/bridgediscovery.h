@@ -95,6 +95,9 @@ public:
     /// get the metadata for a light
     std::pair<HueMetadata, bool> metadataFromLight(const cor::Light& light);
 
+    /// get a bridge based off of its unique ID
+    std::pair<hue::Bridge, bool> bridgeFromID(const QString& ID);
+
     /// gets the bridge that controls a light.
     hue::Bridge bridgeFromLight(const HueMetadata& light);
 

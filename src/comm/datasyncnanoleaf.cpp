@@ -140,8 +140,8 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
     object["commtype"] = commTypeToString(commDevice.commType());
     object["uniqueID"] = commDevice.uniqueID();
 
-    auto dataState = dataDevice.stateConst();
-    auto commState = commDevice.stateConst();
+    auto dataState = dataDevice.state();
+    auto commState = commDevice.state();
 
     //-------------------
     // On/Off Sync
@@ -159,36 +159,55 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
         //-------------------
         // these are required by all packets
         bool routineInSync = (commState.routine() == dataState.routine());
-        bool speedInSync = (commState.speed() == dataState.speed());
+        bool speedInSync = true;
+        // TODO: for now, assume speed is synced
+        //(commState.speed() == dataState.speed());
+        // qDebug() << " speed comm " << commState.speed() << " vs " << dataState.speed();
         // speed is not used only in single solid routines
-        if (dataState.routine() == ERoutine::singleSolid) {
-            speedInSync = true;
-        }
+        //        if (dataState.routine() == ERoutine::singleSolid) {
+        //            speedInSync = true;
+        //        }
 
         // these are optional parameters depending on the routine
         bool paramsInSync = true;
         bool colorInSync = (cor::colorDifference(dataState.color(), commState.color()) <= 0.02f);
         bool paletteInSync = (commState.palette() == dataState.palette());
 
-        if (dataState.palette().paletteEnum() == EPalette::custom) {
-            bool palettesAreClose = true;
+
+        bool paletteBrightnessInSync =
+            checkIfOffByOne(commState.palette().brightness(), dataState.palette().brightness());
+        if (!paletteBrightnessInSync) {
+            paletteInSync = false;
+            object["brightness"] = double(dataState.palette().brightness());
+        }
+
+        if (dataState.routine() > cor::ERoutineSingleColorEnd) {
             if (dataState.palette().colors().size() == commState.palette().colors().size()) {
+                bool palettesAreClose = true;
                 std::uint32_t i = 0;
-                for (const auto& color : dataState.palette().colors()) {
-                    if (cor::colorDifference(color, commState.palette().colors()[i]) > 0.05f) {
+                // TODO: write a better check for this, maybe sort first?
+                for (auto color : dataState.palette().colors()) {
+                    color.setHsvF(color.hueF(),
+                                  color.saturationF(),
+                                  commState.palette().brightness() / 100.0);
+                    if (cor::colorDifference(color, commState.palette().colors()[i]) > 0.25f
+                        && (color.value() != 0u)) {
                         palettesAreClose = false;
                     }
                     ++i;
                 }
                 paletteInSync = palettesAreClose;
+            } else {
+                paramsInSync = false;
             }
-        }
 
-        if (!colorInSync && dataState.routine() <= cor::ERoutineSingleColorEnd) {
-            paramsInSync = false;
-        }
-        if (!paletteInSync && dataState.routine() > cor::ERoutineSingleColorEnd) {
-            paramsInSync = false;
+            if (!paletteInSync) {
+                paramsInSync = false;
+            }
+        } else {
+            if (!colorInSync) {
+                paramsInSync = false;
+            }
         }
 
         if (dataState.routine() == ERoutine::singleSolid) {
@@ -221,10 +240,13 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
                 routineObject["speed"] = dataState.speed();
             }
 
-            // qDebug() << " routine in sync: " << routineInSync << " speed in sync" << speedInSync
-            // << " params in sycn" << paramsInSync;
+            //            qDebug() << " routine in sync: " << routineInSync << " speed in sync" <<
+            //            speedInSync
+            //                     << " params in sycn" << paramsInSync;
             object["routine"] = routineObject;
-            // qDebug() << " Nanoleaf routine not in sync" << routineToString(dataDevice.routine);
+            //            qDebug() << " Nanoleaf routine not in sync data "
+            //                     << routineToString(dataState.routine()) << " vs comm "
+            //                     << routineToString(commState.routine());
             countOutOfSync++;
         }
     }
@@ -243,29 +265,35 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
     return (countOutOfSync == 0) && timeoutInSync;
 }
 
-void DataSyncNanoLeaf::handleIdleTimeout(const nano::LeafMetadata& controller) {
+void DataSyncNanoLeaf::handleIdleTimeout(const nano::LeafMetadata& metadata) {
     bool foundTimeout = false;
     int timeoutValue = mAppSettings->timeout();
-    for (const auto& schedule : mComm->nanoleaf()->findSchedules(controller).items()) {
-        // check for idle schedule
-        if (schedule.ID() == nano::kTimeoutID) {
-            // check schedule is enabled
-            if (schedule.enabled()) {
-                auto scheduleTimeout = schedule.startDate().date();
-                auto scheduleAsTime = std::mktime(&scheduleTimeout);
-                auto currentTimeout = nano::LeafDate::currentTime().date();
-                auto currentAsTime = std::mktime(&currentTimeout);
-                currentAsTime += 60 * timeoutValue;
-                if (scheduleAsTime == currentAsTime) {
-                    foundTimeout = true;
+    auto result = mComm->nanoleaf()->findSchedules(metadata);
+    if (result.second) {
+        auto schedules = result.first;
+        for (const auto& schedule : schedules.items()) {
+            // check for idle schedule
+            if (schedule.ID() == nano::kTimeoutID) {
+                // check schedule is enabled
+                if (schedule.enabled()) {
+                    auto scheduleTimeout = schedule.startDate().date();
+                    auto scheduleAsTime = std::mktime(&scheduleTimeout);
+                    auto currentTimeout = nano::LeafDate::currentTime().date();
+                    auto currentAsTime = std::mktime(&currentTimeout);
+                    currentAsTime += 60 * timeoutValue;
+                    if (scheduleAsTime == currentAsTime) {
+                        foundTimeout = true;
+                    }
                 }
             }
         }
+    } else {
+        qDebug() << " could not find schedules for " << metadata.name();
     }
 
+
     if (!foundTimeout) {
-        //  qDebug() << " send timeout~!" << timeoutValue;
-        mComm->nanoleaf()->sendTimeout(controller, timeoutValue);
+        mComm->nanoleaf()->sendTimeout(metadata, timeoutValue);
     }
 }
 

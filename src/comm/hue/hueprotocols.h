@@ -83,7 +83,6 @@ inline EHueType stringToHueType(const QString& string) {
     } else if (string == "Dimmable light") {
         return EHueType::white;
     } else {
-        qDebug() << "WARNING: Hue type not recognized" << string;
         return EHueType::MAX;
     }
 }

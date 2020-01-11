@@ -44,7 +44,7 @@ void LightList::updateState(const cor::LightState& newState) {
             }
         }
 
-        light.state() = stateCopy;
+        light.state(stateCopy);
     }
     emit dataUpdate();
 }
@@ -52,7 +52,7 @@ void LightList::updateState(const cor::LightState& newState) {
 ERoutine LightList::currentRoutine() {
     std::vector<int> routineCount(int(ERoutine::MAX), 0);
     for (const auto& light : mLights) {
-        const auto& state = light.stateConst();
+        const auto& state = light.state();
         if (light.isReachable()) {
             routineCount[std::size_t(state.routine())] =
                 routineCount[std::size_t(state.routine())] + 1;
@@ -67,7 +67,7 @@ Palette LightList::palette() {
     std::vector<int> paletteCount(int(EPalette::unknown), 0);
     for (const auto& light : mLights) {
         if (light.isReachable()) {
-            auto state = light.stateConst();
+            const auto& state = light.state();
             paletteCount[std::uint32_t(state.palette().paletteEnum())] =
                 paletteCount[std::uint32_t(state.palette().paletteEnum())] + 1;
         }
@@ -77,7 +77,7 @@ Palette LightList::palette() {
     EPalette palette = EPalette(std::distance(paletteCount.begin(), result));
     if (palette == EPalette::custom) {
         for (const auto& light : mLights) {
-            const auto& state = light.stateConst();
+            const auto& state = light.state();
             if (state.palette().paletteEnum() == palette) {
                 return state.palette();
             }
@@ -87,7 +87,7 @@ Palette LightList::palette() {
         // sure we'll regret this assumption one day...
         if (!mLights.empty()) {
             for (const auto& light : mLights) {
-                const auto& state = light.stateConst();
+                const auto& state = light.state();
                 if (state.palette().paletteEnum() == palette) {
                     return state.palette();
                 }
@@ -103,7 +103,7 @@ QColor LightList::mainColor() {
     int b = 0;
     int deviceCount = 0;
     for (const auto& light : mLights) {
-        const auto& state = light.stateConst();
+        const auto& state = light.state();
         if (light.isReachable()) {
             if (int(state.routine()) <= int(cor::ERoutineSingleColorEnd)) {
                 r = r + state.color().red();
@@ -139,7 +139,9 @@ void LightList::updateSpeed(int speed) {
         } else if (light.protocol() == EProtocolType::nanoleaf) {
             finalSpeed = MAX_SPEED - speed;
         }
-        light.state().speed(finalSpeed);
+        auto state = light.state();
+        state.speed(finalSpeed);
+        light.state(state);
     }
     emit dataUpdate();
 }
@@ -148,7 +150,7 @@ int LightList::speed() {
     int speed = 0;
     int deviceCount = 0;
     for (const auto& light : mLights) {
-        const auto& state = light.stateConst();
+        const auto& state = light.state();
         if (light.isReachable()) {
             speed = speed + state.speed();
             deviceCount++;
@@ -167,7 +169,7 @@ void LightList::turnOn(bool on) {
     for (auto&& light : mLights) {
         auto state = light.state();
         state.isOn(on);
-        light.state() = state;
+        light.state(state);
     }
     emit dataUpdate();
 }
@@ -175,7 +177,7 @@ void LightList::turnOn(bool on) {
 bool LightList::isOn() {
     // if any is on, return true
     for (const auto& light : mLights) {
-        if (light.stateConst().isOn()) {
+        if (light.state().isOn()) {
             return true;
         }
     }
@@ -209,7 +211,7 @@ void LightList::updateColorScheme(std::vector<QColor> colors) {
             }
             state.palette(state.customPalette());
         }
-        light.state() = state;
+        light.state(state);
     }
     emit dataUpdate();
 }
@@ -220,7 +222,7 @@ std::vector<QColor> LightList::colorScheme() {
     int max = 6;
     // first check if theres just six unique colors from standard colors
     for (const auto& light : mLights) {
-        auto state = light.stateConst();
+        auto state = light.state();
         if (count >= max) {
             break;
         }
@@ -234,7 +236,7 @@ std::vector<QColor> LightList::colorScheme() {
     // with multiple color options
     if (count < max) {
         for (const auto& light : mLights) {
-            auto state = light.stateConst();
+            auto state = light.state();
             if (count >= max) {
                 break;
             }
@@ -269,7 +271,7 @@ void LightList::updateBrightness(std::uint32_t brightness) {
             state.paletteBrightness(brightness);
         }
         state.isOn(bool(brightness));
-        light.state() = state;
+        light.state(state);
     }
     emit dataUpdate();
 }
@@ -280,7 +282,7 @@ int LightList::brightness() {
     int lightCount = 0;
     for (const auto& light : mLights) {
         if (light.isReachable()) {
-            auto state = light.stateConst();
+            auto state = light.state();
             if (state.routine() <= cor::ERoutineSingleColorEnd) {
                 brightness += int(state.color().valueF() * 100.0);
             } else {

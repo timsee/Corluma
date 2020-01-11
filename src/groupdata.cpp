@@ -86,7 +86,7 @@ void GroupData::addSubGroupsToRooms() {
 
 QJsonObject lightToJsonObject(const cor::Light& light) {
     QJsonObject object;
-    auto state = light.stateConst();
+    auto state = light.state();
     object["isOn"] = state.isOn();
     if (state.isOn()) {
         object["routine"] = routineToString(state.routine());
@@ -568,7 +568,7 @@ cor::Light parseLightObject(const QJsonObject& object) {
         state.palette(Palette(object["palette"].toObject()));
     }
     state.speed(speed);
-    light.state() = state;
+    light.state(state);
     return light;
 }
 
@@ -607,7 +607,7 @@ cor::Light parseDefaultStateObject(const QJsonObject& object) {
         state.palette(Palette(object["palette"].toObject()));
     }
     state.speed(speed);
-    light.state() = state;
+    light.state(state);
     return light;
 }
 

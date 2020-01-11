@@ -521,6 +521,15 @@ std::pair<HueMetadata, bool> BridgeDiscovery::metadataFromLight(const cor::Light
     return std::make_pair(HueMetadata(), false);
 }
 
+std::pair<hue::Bridge, bool> BridgeDiscovery::bridgeFromID(const QString& ID) {
+    for (const auto& bridge : mFoundBridges.items()) {
+        if (bridge.id == ID) {
+            return std::make_pair(bridge, true);
+        }
+    }
+    return std::make_pair(hue::Bridge{}, false);
+}
+
 HueMetadata BridgeDiscovery::lightFromBridgeIDAndIndex(const QString& bridgeID, int index) {
     const auto& bridgeResult = mFoundBridges.item(bridgeID.toStdString());
     if (bridgeResult.second) {

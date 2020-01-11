@@ -57,6 +57,10 @@ public:
     /// find a nano::LeafLight based off of its IP
     nano::LeafMetadata findLightByIP(const QString& IP);
 
+    /// getter for a lights name based off of its serial number
+    /// TODO: remove the need for this?
+    std::pair<QString, bool> nameFromSerial(const QString& serialNumber);
+
     /// removes the nanoleaf from the save data and discovered data
     void removeNanoleaf(const nano::LeafMetadata& light);
 

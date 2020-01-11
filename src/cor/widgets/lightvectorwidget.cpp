@@ -62,7 +62,7 @@ void LightVectorWidget::updateDevices(const std::vector<cor::Light>& lights) {
     if (mFillFromLeft) {
         int i = 0;
         for (const auto& light : lights) {
-            auto state = light.stateConst();
+            auto state = light.state();
             bool skip = mHideOffDevices && !state.isOn();
             if (i < mMaximumSize && !skip) {
                 mArrayColorsButtons[std::uint32_t(i)]->updateRoutine(state);
@@ -76,7 +76,7 @@ void LightVectorWidget::updateDevices(const std::vector<cor::Light>& lights) {
     } else {
         int i = mMaximumSize - 1;
         for (const auto& light : lights) {
-            auto state = light.stateConst();
+            auto state = light.state();
 
             bool skip = mHideOffDevices && !state.isOn();
             if (i > 0 && !skip) {

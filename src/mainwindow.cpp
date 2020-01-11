@@ -734,15 +734,6 @@ void MainWindow::resize() {
 
 
 void MainWindow::routineChanged(cor::LightState state) {
-    // add brightness to routine
-    auto color = state.color();
-    color.setHsvF(color.hueF(), color.saturationF(), mTopMenu->brightness() / 100.0);
-    state.color(color);
-    auto palette = state.palette();
-    if (palette.isValid()) {
-        palette.brightness(mTopMenu->brightness() / 100.0);
-        state.palette(palette);
-    }
     mData->updateState(state);
     mTopMenu->updateState(state);
 }

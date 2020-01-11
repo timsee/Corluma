@@ -36,7 +36,7 @@ bool DataSync::checkThrottle(const QString& controller, ECommType type) {
                     throttleInterval = 2000;
                     break;
                 case ECommType::hue:
-                    throttleInterval = 200;
+                    throttleInterval = 100;
                     break;
                 case ECommType::nanoleaf:
                     throttleInterval = 200;

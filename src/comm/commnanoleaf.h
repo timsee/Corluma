@@ -88,7 +88,7 @@ public:
      * \brief findSchedules returns the schedule dictionary for the given light
      * \param light light to look for schedules from
      */
-    const cor::Dictionary<nano::LeafSchedule>& findSchedules(const nano::LeafMetadata& light);
+    std::pair<cor::Dictionary<nano::LeafSchedule>, bool> findSchedules(const QString& serial);
 
     /*!
      * \brief sendTimeout sends a timeout schedule to the provided light.
@@ -163,10 +163,6 @@ private:
      */
     QTime mLastBackgroundTime;
 
-    /// takes the color palette data from thne datalayer and converts it into JSON data for nanoleaf
-    /// packets
-    void createColorPalettes();
-
     /// called on startup, checks saved app data.
     void checkForSavedData();
 
@@ -201,7 +197,8 @@ private:
      * \param light light to parse the array for
      * \param scheduleUpdate the schedule array
      */
-    void parseScheduleUpdatePacket(const nano::LeafMetadata& light, const QJsonArray& scheduleUpdate);
+    void parseScheduleUpdatePacket(const nano::LeafMetadata& light,
+                                   const QJsonArray& scheduleUpdate);
 
     /*!
      * \brief parseCommandRequestUpdatePacket parses a command request packet. These packets are
@@ -217,7 +214,7 @@ private:
      * \param routine the routine to use for the QJsonObject
      * \return the object that contains the routine data
      */
-    QJsonObject createRoutinePacket(ERoutine routine, int speed);
+    QJsonObject createRoutinePacket(ERoutine routine, int brightness, int speed);
 
     /*!
      * \brief createPalette Takes the Corluma Lighting Routine and Color Group and converts
@@ -226,40 +223,10 @@ private:
      * \param group the palette to use for the jsonarray
      * \return a jsonarray that matches the lighting routine and palette
      */
-    QJsonArray createPalette(const cor::Light& light);
+    QJsonArray createPalette(const cor::LightState& light);
 
     /// changes the main color of a nanoleaf
     void singleSolidColorChange(const nano::LeafMetadata& light, const QColor& color);
-
-    /*!
-     * \brief converts a vector of QColor to two nanoleaf-compatible jsonarrays. the first of the
-     * pair is a standard palette. The second array is used for highlight routines
-     */
-    std::pair<QJsonArray, QJsonArray> vectorToNanoleafPalettes(const std::vector<QColor>&);
-
-    /// converts a nanoleaf palette JSON array to a vector of QColors
-    std::vector<QColor> nanoleafPaletteToVector(const QJsonArray& palette);
-
-    /*!
-     * \brief computeBrightnessAndColorFromSingleColorPacket helper function that takes the output
-     * from a single color packet and converts it into a color value and a brightness value
-     * \param routine the routine for the single color packer
-     * \param colorVector the vector for the single color routine
-     * \return a pair where the first value is a color and the second is a brightness
-     */
-    std::pair<QColor, uint32_t> computeBrightnessAndColorFromSingleColorPacket(
-        ERoutine routine,
-        const std::vector<QColor>& colorVector);
-
-    /*!
-     * \brief computeBrightnessFromMultiColorPacket helper funciton that takes the output from a
-     * multi color packet and converts it into a brightness value
-     * \param routine the routine for the multi color packet
-     * \param colorVector the vector for the multi color routine
-     * \return a brightness value in the range of 0-100
-     */
-    uint32_t computeBrightnessFromMultiColorPacket(ERoutine routine,
-                                                   const std::vector<QColor>& colorVector);
 
     /*!
      * \brief mNetworkManager Qt's HTTP connection object
@@ -271,12 +238,6 @@ private:
 
     /// preset data for palettes from ArduCor
     PresetPalettes mPresetPalettes;
-
-    /// stored json palettes for each color group
-    std::vector<QJsonArray> mPalettes;
-
-    /// stored json palettes for each color group with highlight info
-    std::vector<QJsonArray> mHighlightPalettes;
 
     /// object that holds and manages nanoleaf light connections.
     nano::LeafDiscovery* mDiscovery;
@@ -294,7 +255,8 @@ private:
      * \param ID unique ID for schedule
      * \return the schedule, if it exists. throws if it doesn't
      */
-    nano::LeafSchedule findSchedule(const nano::LeafMetadata& light, const QString& ID);
+    std::pair<nano::LeafSchedule, bool> findSchedule(const nano::LeafMetadata& light,
+                                                     const QString& ID);
 
     /*!
      * \brief updateSchedule

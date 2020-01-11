@@ -59,9 +59,10 @@ public:
     }
 
     /// getter for light state
-    LightState& state() { return mState; }
+    const LightState& state() const noexcept { return mState; }
 
-    const LightState& stateConst() const noexcept { return mState; }
+    /// setter for light state
+    void state(LightState state) { mState = std::move(state); }
 
     /// true if reachable, false if can't be reached
     bool isReachable() const noexcept { return mIsReachable; }
@@ -105,7 +106,7 @@ public:
         if (uniqueID() != rhs.uniqueID()) {
             result = false;
         }
-        if (stateConst() != rhs.stateConst()) {
+        if (state() != rhs.state()) {
             result = false;
         }
         if (commType() != rhs.commType()) {
@@ -175,13 +176,13 @@ inline cor::Light jsonToLight(const QJsonObject& object) {
     QString controller = object["controller"].toString();
 
     cor::Light light(uniqueID, type);
-
+    cor::LightState state;
     if (object["routine"].isString()) {
-        light.state().routine(stringToRoutine(object["routine"].toString()));
+        state.routine(stringToRoutine(object["routine"].toString()));
     }
 
     if (object["isOn"].isBool()) {
-        light.state().isOn(object["isOn"].toBool());
+        state.isOn(object["isOn"].toBool());
     }
 
     //------------
@@ -193,17 +194,17 @@ inline cor::Light jsonToLight(const QJsonObject& object) {
             color.setHsvF(object["hue"].toDouble(),
                           object["sat"].toDouble(),
                           object["bri"].toDouble());
-            light.state().color(color);
+            state.color(color);
         }
     } else if (object["palette"].isObject()) {
-        light.state().palette(Palette(object["palette"].toObject()));
+        state.palette(Palette(object["palette"].toObject()));
     }
 
     //------------
     // get param if it exists
     //------------
     if (object["param"].isDouble()) {
-        light.state().param(int(object["param"].toDouble()));
+        state.param(int(object["param"].toDouble()));
     }
 
     light.version(std::uint32_t(object["majorAPI"].toDouble()),
@@ -214,9 +215,10 @@ inline cor::Light jsonToLight(const QJsonObject& object) {
     //------------
     if (light.state().routine() != ERoutine::singleSolid) {
         if (object["speed"].isDouble()) {
-            light.state().speed(int(object["speed"].toDouble()));
+            state.speed(int(object["speed"].toDouble()));
         }
     }
+    light.state(state);
 
     return light;
 }
@@ -227,27 +229,27 @@ inline QJsonObject lightToJson(const cor::Light& light) {
     object["uniqueID"] = light.uniqueID();
     object["type"] = commTypeToString(light.commType());
 
-    object["routine"] = routineToString(light.stateConst().routine());
-    object["isOn"] = light.stateConst().isOn();
+    object["routine"] = routineToString(light.state().routine());
+    object["isOn"] = light.state().isOn();
 
-    if (light.stateConst().routine() <= cor::ERoutineSingleColorEnd) {
-        object["hue"] = light.stateConst().color().hueF();
-        object["sat"] = light.stateConst().color().saturationF();
-        object["bri"] = light.stateConst().color().valueF();
+    if (light.state().routine() <= cor::ERoutineSingleColorEnd) {
+        object["hue"] = light.state().color().hueF();
+        object["sat"] = light.state().color().saturationF();
+        object["bri"] = light.state().color().valueF();
     }
 
     object["majorAPI"] = double(light.majorAPI());
     object["minorAPI"] = double(light.minorAPI());
 
-    if (light.stateConst().routine() != ERoutine::singleSolid) {
-        object["speed"] = light.stateConst().speed();
+    if (light.state().routine() != ERoutine::singleSolid) {
+        object["speed"] = light.state().speed();
     }
 
-    if (light.stateConst().param() != std::numeric_limits<int>::min()) {
-        object["param"] = light.stateConst().param();
+    if (light.state().param() != std::numeric_limits<int>::min()) {
+        object["param"] = light.state().param();
     }
 
-    object["palette"] = light.stateConst().palette().JSON();
+    object["palette"] = light.state().palette().JSON();
     return object;
 }
 

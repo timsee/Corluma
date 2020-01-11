@@ -429,7 +429,7 @@ void CommHue::handleSuccessPacket(const hue::Bridge& bridge,
                             valueChanged = true;
                         }
 
-                        light.state() = state;
+                        light.state(state);
                         if (valueChanged) {
                             updateLight(light);
                             mDiscovery->updateLight(metadata);
@@ -558,7 +558,7 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge,
                 white.setHsv(white.hue(), white.saturation(), brightness);
                 state.color(white);
             }
-            hue.state() = state;
+            hue.state(state);
             if (wasDiscovered) {
                 updateLight(hue);
                 mDiscovery->updateLight(metadata);
@@ -724,7 +724,8 @@ HueMetadata CommHue::hueLightFromLight(const cor::Light& light) {
     if (result.second) {
         return result.first;
     }
-    THROW_EXCEPTION("No hue found for" + light.name().toStdString());
+    THROW_EXCEPTION("No hue found for" + light.name().toStdString() + " unique ID"
+                    + light.uniqueID().toStdString());
 }
 
 void CommHue::createIdleTimeout(const hue::Bridge& bridge, int i, int minutes) {

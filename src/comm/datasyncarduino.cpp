@@ -205,8 +205,8 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
     auto dataDevice = inputDevice;
     QString packet;
 
-    auto dataState = dataDevice.stateConst();
-    auto commState = commDevice.stateConst();
+    auto dataState = dataDevice.state();
+    auto commState = commDevice.state();
     //-------------------
     // On/Off Sync
     //-------------------

@@ -120,13 +120,6 @@ bool sortListByGroupName(const std::pair<cor::Group, cor::Light>& lhs,
     return (lhs.first.name() < rhs.first.name());
 }
 
-cor::Light applyStateToLight(const cor::Light& light, const cor::Light& state) {
-    cor::Light lightCopy = light;
-    lightCopy.state() = state.stateConst();
-    return lightCopy;
-}
-
-
 cor::Light CommLayer::addLightMetaData(cor::Light light) {
     auto deviceCopy = light;
     fillDevice(deviceCopy);
@@ -185,17 +178,19 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
     for (const auto& room : rooms) {
         for (const auto& lightID : room.first.lights()) {
             auto light = lightByID(lightID);
-            light = addLightMetaData(light);
-            light = applyStateToLight(light, room.second);
-            const auto& key = light.uniqueID().toStdString();
-            // check if light exists in list already
-            const auto& result = moodDict.item(key);
-            if (result.second) {
-                // update if it exists
-                moodDict.update(key, light);
-            } else {
-                // add if it doesnt
-                moodDict.insert(key, light);
+            if (light.isValid()) {
+                light = addLightMetaData(light);
+                light.state(room.second.state());
+                const auto& key = light.uniqueID().toStdString();
+                // check if light exists in list already
+                const auto& result = moodDict.item(key);
+                if (result.second) {
+                    // update if it exists
+                    moodDict.update(key, light);
+                } else {
+                    // add if it doesnt
+                    moodDict.insert(key, light);
+                }
             }
         }
     }
@@ -204,17 +199,19 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
     for (const auto& group : groups) {
         for (const auto& light : group.first.lights()) {
             auto lightCopy = lightByID(light);
-            lightCopy = addLightMetaData(lightCopy);
-            lightCopy = applyStateToLight(lightCopy, group.second);
-            const auto& key = lightCopy.uniqueID().toStdString();
-            // check if light exists in list already
-            const auto& result = moodDict.item(key);
-            if (result.second) {
-                // update if it exists
-                moodDict.update(key, lightCopy);
-            } else {
-                // add if it doesnt
-                moodDict.insert(key, lightCopy);
+            if (lightCopy.isValid()) {
+                lightCopy = addLightMetaData(lightCopy);
+                lightCopy.state(group.second.state());
+                const auto& key = lightCopy.uniqueID().toStdString();
+                // check if light exists in list already
+                const auto& result = moodDict.item(key);
+                if (result.second) {
+                    // update if it exists
+                    moodDict.update(key, lightCopy);
+                } else {
+                    // add if it doesnt
+                    moodDict.insert(key, lightCopy);
+                }
             }
         }
     }

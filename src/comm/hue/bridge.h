@@ -158,10 +158,21 @@ public:
         std::vector<std::string> keys = mGroups.keys();
         auto items = mGroups.items();
         for (auto i = 0u; i < items.size(); ++i) {
-            qDebug() << " group with IDS" << items[i].name();
             retVector.emplace_back(items[i], QString(keys[i].c_str()).toInt());
         }
         return retVector;
+    }
+
+    BridgeGroupVector groupsAndRoomsWithIDs() const {
+        auto groups = groupsWithIDs();
+        BridgeGroupVector retVector;
+        std::vector<std::string> keys = mRooms.keys();
+        auto items = mRooms.items();
+        for (auto i = 0u; i < items.size(); ++i) {
+            retVector.emplace_back(items[i], QString(keys[i].c_str()).toInt());
+        }
+        groups.insert(groups.end(), retVector.begin(), retVector.end());
+        return groups;
     }
 
     /// getter for pairs of rooms with IDs
@@ -170,7 +181,6 @@ public:
         std::vector<std::string> keys = mRooms.keys();
         auto items = mRooms.items();
         for (auto i = 0u; i < items.size(); ++i) {
-            qDebug() << " room with IDS" << items[i].name();
             retVector.emplace_back(items[i], QString(keys[i].c_str()).toInt());
         }
         return retVector;
@@ -180,9 +190,6 @@ public:
     void groupsWithIDs(const BridgeGroupVector& groups) {
         mGroups = cor::Dictionary<cor::Group>();
         for (const auto& group : groups) {
-            if (group.first.name() == "Living Room") {
-                THROW_EXCEPTION("WTFF");
-            }
             mGroups.insert(QString::number(group.second).toStdString(), group.first);
         }
     }

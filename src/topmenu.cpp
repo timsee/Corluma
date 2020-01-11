@@ -236,7 +236,7 @@ void TopMenu::brightnessUpdate(std::uint32_t newValue) {
     mData->updateBrightness(newValue);
     mData->turnOn(true);
     // update the top menu bar
-    updateBrightnessSlider();
+    updateBrightnessSlider(newValue);
 
     if (newValue != 0 && mOnOffSwitch->switchState() != ESwitchState::on) {
         mOnOffSwitch->setSwitchState(ESwitchState::on);
@@ -251,12 +251,11 @@ void TopMenu::brightnessUpdate(std::uint32_t newValue) {
     emit brightnessChanged(newValue);
 }
 
-void TopMenu::updateBrightnessSlider() {
+void TopMenu::updateBrightnessSlider(std::uint32_t brightness) {
     mBrightnessSlider->setColor(mData->mainColor());
-
-    if (mData->brightness() != mBrightnessSlider->slider()->value()) {
+    if (brightness != mBrightnessSlider->slider()->value()) {
         mBrightnessSlider->blockSignals(true);
-        mBrightnessSlider->slider()->setValue(mData->brightness());
+        mBrightnessSlider->slider()->setValue(brightness);
         mBrightnessSlider->blockSignals(false);
     }
 }
@@ -290,7 +289,7 @@ void TopMenu::deviceCountChanged() {
             mOnOffSwitch->setSwitchState(ESwitchState::off);
         }
 
-        updateBrightnessSlider();
+        updateBrightnessSlider(mData->brightness());
         mShouldGreyOutIcons = false;
     }
 
@@ -739,7 +738,6 @@ void TopMenu::updateUI() {
         mLastDevices = currentLights;
 
         mMainPalette->updateDevices(currentLights);
-        updateBrightnessSlider();
     }
 }
 
