@@ -32,6 +32,39 @@ public:
           mTemperature{-1} {}
 
 
+    /// constructor
+    LightState(const QJsonObject& object) : LightState() {
+        if (object["routine"].isString()) {
+            routine(stringToRoutine(object["routine"].toString()));
+        }
+
+        if (object["isOn"].isBool()) {
+            isOn(object["isOn"].toBool());
+        }
+
+        //------------
+        // get either speed or palette, depending on routine type
+        //------------
+        if (routine() <= cor::ERoutineSingleColorEnd) {
+            if (object["hue"].isDouble() && object["sat"].isDouble() && object["bri"].isDouble()) {
+                QColor color;
+                color.setHsvF(object["hue"].toDouble(),
+                              object["sat"].toDouble(),
+                              object["bri"].toDouble());
+                mColor = color;
+            }
+        } else if (object["palette"].isObject()) {
+            palette(Palette(object["palette"].toObject()));
+        }
+
+        //------------
+        // get param if it exists
+        //------------
+        if (object["param"].isDouble()) {
+            param(int(object["param"].toDouble()));
+        }
+    }
+
     /// true if on, false if off
     bool isOn() const noexcept { return mIsOn; }
 
@@ -112,8 +145,10 @@ public:
         return result;
     }
 
+    /// != operator
     bool operator!=(const cor::LightState& rhs) const { return !(*this == rhs); }
 
+    /// string operator
     operator QString() const {
         std::stringstream tempString;
         tempString << "cor::LightState: "
@@ -122,6 +157,55 @@ public:
                    << " routine: " << routineToString(routine()).toUtf8().toStdString()
                    << " palette: " << palette();
         return QString::fromStdString(tempString.str());
+    }
+
+    /// true if json represents a valid light state, false otherwise
+    static bool isValidJson(const QJsonObject& object) {
+        if (!object["isOn"].isBool()) {
+            return false;
+        }
+        bool isOn = object["isOn"].toBool();
+
+        // these values always exist if the light is on
+        if (isOn) {
+            bool defaultChecks = (object["routine"].isString());
+            bool colorsValid = true;
+
+            ERoutine routine = stringToRoutine(object["routine"].toString());
+            if (routine <= cor::ERoutineSingleColorEnd) {
+                colorsValid = (object["hue"].isDouble() && object["sat"].isDouble()
+                               && object["bri"].isDouble());
+            } else {
+                colorsValid = (object["palette"].isObject());
+            }
+            return defaultChecks && colorsValid;
+        } else {
+            return true;
+        }
+    }
+
+    /// represents the lighstate as a valid json
+    QJsonObject toJson() const noexcept {
+        QJsonObject object;
+        object["routine"] = routineToString(routine());
+        object["isOn"] = isOn();
+
+        if (routine() <= cor::ERoutineSingleColorEnd) {
+            object["hue"] = color().hueF();
+            object["sat"] = color().saturationF();
+            object["bri"] = color().valueF();
+        }
+
+        if (routine() != ERoutine::singleSolid) {
+            object["speed"] = speed();
+        }
+
+        if (param() != std::numeric_limits<int>::min()) {
+            object["param"] = param();
+        }
+
+        object["palette"] = palette().JSON();
+        return object;
     }
 
 private:

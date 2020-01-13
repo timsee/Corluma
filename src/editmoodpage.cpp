@@ -77,23 +77,23 @@ bool EditMoodPage::saveChanges() {
     //--------------------------------
     // Create a list of devices
     //--------------------------------
-    std::vector<cor::Light> newDevices = mSimpleGroupWidget->checkedDevices();
-    bool devicesAreValid = true;
-    if (!newDevices.empty()) {
-        for (auto& device : newDevices) {
-            if (device.isValid()) {
-                devicesAreValid = false;
+    std::vector<cor::Light> newLights = mSimpleGroupWidget->checkedDevices();
+    bool lightsAreValid = true;
+    if (!newLights.empty()) {
+        for (auto& device : newLights) {
+            if (!device.isValid()) {
+                lightsAreValid = false;
             }
         }
     } else {
-        devicesAreValid = false;
+        lightsAreValid = false;
     }
 
-    if (!nameIsValid || !devicesAreValid) {
+    if (!nameIsValid || !lightsAreValid) {
         qDebug() << "Not saving this group: " << newName;
         qDebug() << "---------------------";
-        for (auto& device : newDevices) {
-            qDebug() << device;
+        for (const auto& light : newLights) {
+            qDebug() << light;
         }
         qDebug() << "---------------------";
 
@@ -113,7 +113,7 @@ bool EditMoodPage::saveChanges() {
     mGroups->removeGroup(mOriginalMood.uniqueID());
 
     // make a new mood
-    cor::Mood mood(mGroups->generateNewUniqueKey(), newName, newDevices);
+    cor::Mood mood(mGroups->generateNewUniqueKey(), newName, newLights);
     mGroups->saveNewMood(mood);
 
     return true;

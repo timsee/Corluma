@@ -188,7 +188,7 @@ void renderBackgroundWheels() {
 ColorWheel::ColorWheel(QWidget* parent)
     : QLabel(parent),
       mImage(new QImage(size(), QImage::Format_ARGB32_Premultiplied)),
-      mWheelType{EWheelType::RGB},
+      mWheelType{EWheelType::HS},
       mBrightness{100},
       mIsEnabled{false},
       mRepaint{true} {

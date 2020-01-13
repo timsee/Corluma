@@ -87,11 +87,7 @@ void ListMoodDetailedWidget::update(const cor::Mood& mood) {
     mSimpleGroupWidget->removeWidgets();
     mKey = mood.uniqueID();
     mTopLabel->setText(mood.name());
-    mSimpleGroupWidget->updateDevices(mood.lights(),
-                                      cor::EWidgetType::full,
-                                      EOnOffSwitchState::hidden,
-                                      false,
-                                      true);
+    mSimpleGroupWidget->updateDevices(mood.lights(), cor::EWidgetType::full, false, true);
     mEditPage->showMood(mood, mComm->allLights());
 
     mOnOffSwitch->setSwitchState(ESwitchState::off);

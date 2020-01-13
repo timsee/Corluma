@@ -125,6 +125,32 @@ void DataSyncNanoLeaf::cleanupSync() {
     }
 }
 
+namespace {
+
+bool compareTwoPalettes(const Palette& commPalette, const Palette& dataPalette) {
+    if (dataPalette.colors().size() == commPalette.colors().size()) {
+        auto lambda = [](const QColor& a, const QColor& b) -> bool { return a.hueF() < b.hueF(); };
+        auto sortedDataColors = dataPalette.colors();
+        std::sort(sortedDataColors.begin(), sortedDataColors.end(), lambda);
+        auto sortedCommColors = commPalette.colors();
+        std::sort(sortedCommColors.begin(), sortedCommColors.end(), lambda);
+
+        bool palettesAreClose = true;
+        std::uint32_t i = 0;
+        for (auto color : sortedDataColors) {
+            auto commColor = commPalette.colors()[i];
+            if (cor::colorDifference(color, commColor) > 0.25f && (color.value() != 0u)) {
+                palettesAreClose = false;
+            }
+            ++i;
+        }
+        return palettesAreClose;
+    }
+    return false;
+}
+
+} // namespace
+
 bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& commDevice) {
     int countOutOfSync = 0;
 
@@ -170,45 +196,22 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
 
         // these are optional parameters depending on the routine
         bool paramsInSync = true;
-        bool colorInSync = (cor::colorDifference(dataState.color(), commState.color()) <= 0.02f);
-        bool paletteInSync = (commState.palette() == dataState.palette());
-
-
-        bool paletteBrightnessInSync =
-            checkIfOffByOne(commState.palette().brightness(), dataState.palette().brightness());
-        if (!paletteBrightnessInSync) {
-            paletteInSync = false;
-            object["brightness"] = double(dataState.palette().brightness());
-        }
-
         if (dataState.routine() > cor::ERoutineSingleColorEnd) {
-            if (dataState.palette().colors().size() == commState.palette().colors().size()) {
-                bool palettesAreClose = true;
-                std::uint32_t i = 0;
-                // TODO: write a better check for this, maybe sort first?
-                for (auto color : dataState.palette().colors()) {
-                    color.setHsvF(color.hueF(),
-                                  color.saturationF(),
-                                  commState.palette().brightness() / 100.0);
-                    if (cor::colorDifference(color, commState.palette().colors()[i]) > 0.25f
-                        && (color.value() != 0u)) {
-                        palettesAreClose = false;
-                    }
-                    ++i;
-                }
-                paletteInSync = palettesAreClose;
-            } else {
-                paramsInSync = false;
+            bool paletteInSync = compareTwoPalettes(commState.palette(), dataState.palette());
+            if (!checkIfOffByOne(commState.palette().brightness(),
+                                 dataState.palette().brightness())) {
+                paletteInSync = false;
+                object["brightness"] = double(dataState.palette().brightness());
             }
-
             if (!paletteInSync) {
                 paramsInSync = false;
             }
         } else {
-            if (!colorInSync) {
+            if (cor::colorDifference(dataState.color(), commState.color()) > 0.02f) {
                 paramsInSync = false;
             }
         }
+
 
         if (dataState.routine() == ERoutine::singleSolid) {
             if (leafLight.effect() == "*Static*") {

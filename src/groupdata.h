@@ -46,6 +46,9 @@ public:
     /// returns a vector of names for the groups.
     std::vector<QString> groupNames();
 
+    /// getter for name from ID
+    QString nameFromID(std::uint64_t ID);
+
     /// true if a group is a room, false if its a group
     bool isGroupARoom(const cor::Group& group);
 
@@ -166,27 +169,6 @@ signals:
 private:
     /// loads json data into app data
     bool loadJSON();
-
-    /*!
-     * \brief checkIfMoodLightIsValid reads a json object and determines if it contains all valid
-     * values
-     *
-     * \param object the object for the mood
-     * \return true if valid, false othewrise
-     */
-    bool checkIfMoodLightIsValid(const QJsonObject& object);
-
-    /// check if a mood group has the minimum elements required to be valid.
-    bool checkIfMoodGroupIsValid(const QJsonObject& object);
-
-    /*!
-     * \brief checkIfGroupIsValid checks that the values of the JSON data actually map to
-     *        a real group and doesn't miss crucial values.
-     *
-     * \param object a JSON object that represents a group
-     * \return true if the JSONObject has all necessary values, false otherwise.
-     */
-    bool checkIfGroupIsValid(const QJsonObject& object);
 
     /*!
      * \brief parseMood Takes a JSON representation of a mood and converts it to a std::vector

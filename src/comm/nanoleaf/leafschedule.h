@@ -51,7 +51,7 @@ public:
           mAction{action} {}
 
     LeafSchedule(const QJsonObject& object) {
-        GUARD_EXCEPTION(isValidJSON(object), "LeafSchedule passed ivnalid JSON");
+        GUARD_EXCEPTION(isValidJson(object), "LeafSchedule passed invalid JSON");
 
         mIsEnabled = object["enabled"].toBool();
         const auto& repeat = object["repeat"].toObject();
@@ -72,18 +72,18 @@ public:
     }
 
     /// returns whether or not a json object represents a leaf schedule
-    bool isValidJSON(const QJsonObject& object) {
+    bool isValidJson(const QJsonObject& object) {
         return (object["enabled"].isBool() && object["repeat"].isObject()
                 && object["start_time"].isObject() && object["set_id"].isString()
                 && object["id"].isDouble());
     }
 
     /// converts a schedule to json
-    QJsonObject toJSON() const {
+    QJsonObject toJson() const {
         QJsonObject object;
         object["action"] = mAction.toJSON();
         object["enabled"] = mIsEnabled;
-        object["start_time"] = mStartDate.toJSON();
+        object["start_time"] = mStartDate.toJson();
         object["id"] = mID;
         QJsonObject repeatObject;
         repeatObject["interval_type"] = double(mRepeatType);

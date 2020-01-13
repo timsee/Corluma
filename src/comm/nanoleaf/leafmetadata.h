@@ -118,7 +118,7 @@ public:
 
 
     /// true if stateupdate has valid metadata, false otherwise
-    static bool isValidMetadataJSON(const QJsonObject& object) {
+    static bool isValidJson(const QJsonObject& object) {
         return object["name"].isString() && object["serialNo"].isString()
                && object["manufacturer"].isString() && object["firmwareVersion"].isString()
                && object["model"].isString() && object["state"].isObject()

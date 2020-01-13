@@ -45,8 +45,8 @@ SingleColorPicker::SingleColorPicker(QWidget* parent) : ColorPicker(parent) {
     mTempBrightSliders->setVisible(false);
 
     // default to standard layout
-    mCurrentMode = ESingleColorPickerMode::HSV;
-    changeMode(ESingleColorPickerMode::RGB);
+    mCurrentMode = ESingleColorPickerMode::RGB;
+    changeMode(ESingleColorPickerMode::HSV);
 }
 
 
@@ -156,8 +156,7 @@ void SingleColorPicker::changeMode(ESingleColorPickerMode mode) {
         }
 
         mSelectionCircle->hideCircles();
-
-        enable(true, mBestPossibleType);
+        enable(mColorWheel->enabled(), mBestPossibleType);
         resize();
         update();
     }
@@ -173,24 +172,28 @@ void SingleColorPicker::updateColorStates(const QColor& mainColor, uint32_t brig
 }
 
 void SingleColorPicker::updateBrightness(std::uint32_t brightness) {
-    QColor oldColor;
+    QColor newColor;
     switch (mCurrentMode) {
         case ESingleColorPickerMode::RGB: {
             auto color = mRGBSliders->color();
             color.setHsvF(color.hueF(), color.saturationF(), brightness / 100.0);
-            oldColor = color;
+            newColor = color;
         } break;
-        case ESingleColorPickerMode::HSV:
-            oldColor = mHSVSliders->color();
+        case ESingleColorPickerMode::HSV: {
+            auto color = mHSVSliders->color();
+            color.setHsvF(color.hueF(), color.saturationF(), brightness / 100.0);
+            newColor = color;
             break;
-        case ESingleColorPickerMode::ambient:
-            oldColor = cor::colorTemperatureToRGB(mTempBrightSliders->temperature());
+        }
+        case ESingleColorPickerMode::ambient: {
+            newColor = cor::colorTemperatureToRGB(mTempBrightSliders->temperature());
             break;
+        }
     }
 
     if (mBestPossibleType != EColorPickerType::CT) {
-        mRGBSliders->changeColor(oldColor);
-        mHSVSliders->changeColor(oldColor, brightness);
+        mRGBSliders->changeColor(newColor);
+        mHSVSliders->changeColor(newColor, brightness);
     }
 
     if ((mCurrentMode == ESingleColorPickerMode::HSV
@@ -199,8 +202,8 @@ void SingleColorPicker::updateBrightness(std::uint32_t brightness) {
         mColorWheel->updateBrightness(brightness);
     }
     mSelectionCircle->hideCircles();
-    mRGBSliders->changeColor(oldColor);
-    mHSVSliders->changeColor(oldColor, brightness);
+    mRGBSliders->changeColor(newColor);
+    mHSVSliders->changeColor(newColor, brightness);
     mTempBrightSliders->changeBrightness(brightness);
 }
 
@@ -235,9 +238,11 @@ void SingleColorPicker::wheelColorChanged(QColor color) {
         chooseColor(color);
         mRGBSliders->changeColor(color);
     } else if (mCurrentMode == ESingleColorPickerMode::HSV) {
+        auto colorCopy = color;
+        colorCopy.setHsvF(color.hueF(), color.saturationF(), mHSVSliders->brightness() / 100.0);
         emit brightnessUpdate(mHSVSliders->brightness());
-        chooseColor(color);
-        mHSVSliders->changeColor(color, mHSVSliders->brightness());
+        chooseColor(colorCopy);
+        mHSVSliders->changeColor(colorCopy, mHSVSliders->brightness());
     }
 }
 

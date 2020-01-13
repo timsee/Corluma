@@ -9,8 +9,8 @@
 #include <QWidget>
 
 #include "comm/commlayer.h"
-#include "cor/lightlist.h"
 #include "cor/dictionary.h"
+#include "cor/lightlist.h"
 #include "cor/widgets/listwidget.h"
 #include "listlightwidget.h"
 
@@ -50,7 +50,6 @@ public:
      */
     void updateDevices(const std::vector<cor::Light>& devices,
                        cor::EWidgetType listWidgetType,
-                       EOnOffSwitchState switchState,
                        bool canHighlight,
                        bool skipOff);
 

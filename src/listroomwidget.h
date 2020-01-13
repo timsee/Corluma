@@ -38,7 +38,6 @@ public:
                    CommLayer* comm,
                    GroupData* groups,
                    const QString& key,
-                   EOnOffSwitchState switchState,
                    cor::EListType listType,
                    cor::EWidgetType type,
                    QWidget* parent);
@@ -158,9 +157,6 @@ private slots:
     void handleToggledSwitch(QString key, bool isOn) { emit deviceSwitchToggled(key, isOn); }
 
 private:
-    /// state of the switch
-    EOnOffSwitchState mSwitchState;
-
     /// type of widget
     cor::EWidgetType mType;
 

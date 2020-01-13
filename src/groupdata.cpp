@@ -10,9 +10,6 @@
 #include <QFileInfo>
 #include <QStandardPaths>
 
-#include "cor/protocols.h"
-#include "utils/cormath.h"
-
 GroupData::GroupData(QObject* parent) : QObject(parent), cor::JSONSaveData("save") {
     loadJSON();
 }
@@ -84,60 +81,8 @@ void GroupData::addSubGroupsToRooms() {
 //-------------------
 
 
-QJsonObject lightToJsonObject(const cor::Light& light) {
-    QJsonObject object;
-    auto state = light.state();
-    object["isOn"] = state.isOn();
-    if (state.isOn()) {
-        object["routine"] = routineToString(state.routine());
-
-        if (state.routine() != ERoutine::singleSolid) {
-            object["speed"] = state.speed();
-        }
-
-        if (state.routine() <= cor::ERoutineSingleColorEnd) {
-            object["hue"] = cor::roundToNDigits(state.color().hueF(), 4);
-            object["sat"] = cor::roundToNDigits(state.color().saturationF(), 4);
-            object["bri"] = cor::roundToNDigits(state.color().valueF(), 4);
-        } else {
-            object["palette"] = state.palette().JSON();
-        }
-    }
-
-    object["type"] = commTypeToString(light.commType());
-
-    if (light.protocol() == EProtocolType::arduCor) {
-        object["majorAPI"] = double(light.majorAPI());
-        object["minorAPI"] = double(light.minorAPI());
-    }
-
-    return object;
-}
-
-
 void GroupData::saveNewMood(const cor::Mood& mood) {
-    QJsonObject groupObject;
-    groupObject["name"] = mood.name();
-    groupObject["isMood"] = true;
-    groupObject["uniqueID"] = double(mood.uniqueID());
-
-    // create string of jsondata to add to file
-    QJsonArray deviceArray;
-    for (const auto& device : mood.lights()) {
-        auto object = lightToJsonObject(device);
-        object["uniqueID"] = device.uniqueID();
-        deviceArray.append(object);
-    }
-    groupObject["devices"] = deviceArray;
-
-    QJsonArray defaultStateArray;
-    for (const auto& defaultState : mood.defaults()) {
-        auto object = lightToJsonObject(defaultState.second);
-        object["group"] = double(defaultState.first);
-        defaultStateArray.append(object);
-    }
-    groupObject["defaultStates"] = defaultStateArray;
-
+    QJsonObject groupObject = mood.toJson();
     if (!mJsonData.isNull()) {
         if (mJsonData.isArray()) {
             QJsonArray array = mJsonData.array();
@@ -165,22 +110,8 @@ void GroupData::saveNewMood(const cor::Mood& mood) {
 
 
 void GroupData::saveNewGroup(const cor::Group& group) {
-    QJsonObject groupObject;
-    groupObject["name"] = group.name();
-    groupObject["isMood"] = false;
-    groupObject["isRoom"] = false;
-    groupObject["uniqueID"] = double(group.uniqueID());
-
-    // create string of jsondata to add to file
-    QJsonArray lightArray;
-    for (const auto& lightID : group.lights()) {
-        QJsonObject object;
-        object["uniqueID"] = lightID;
-        lightArray.append(object);
-    }
-
-    groupObject["devices"] = lightArray;
-    if (!mJsonData.isNull() && !lightArray.empty()) {
+    auto groupObject = group.toJson();
+    if (!mJsonData.isNull() && !group.lights().empty()) {
         if (mJsonData.isArray()) {
             auto array = mJsonData.array();
             mJsonData.array().push_front(groupObject);
@@ -198,6 +129,7 @@ void GroupData::saveNewGroup(const cor::Group& group) {
 
             // save file
             saveJSON();
+            addSubGroupsToRooms();
             // hues use their bridge to store their data for collections instead of the JSON
             emit newCollectionAdded(group.name());
         }
@@ -205,22 +137,9 @@ void GroupData::saveNewGroup(const cor::Group& group) {
 }
 
 void GroupData::saveNewRoom(const cor::Room& room) {
-    QJsonObject groupObject;
-    groupObject["name"] = room.name();
-    groupObject["isMood"] = false;
+    QJsonObject groupObject = room.toJson();
     groupObject["isRoom"] = true;
-    groupObject["uniqueID"] = double(room.uniqueID());
-
-    // create string of jsondata to add to file
-    QJsonArray lightArray;
-    for (const auto& lightID : room.lights()) {
-        QJsonObject object;
-        object["uniqueID"] = lightID;
-        lightArray.append(object);
-    }
-
-    groupObject["devices"] = lightArray;
-    if (!mJsonData.isNull() && !lightArray.empty()) {
+    if (!mJsonData.isNull() && !room.lights().empty()) {
         if (mJsonData.isArray()) {
             auto array = mJsonData.array();
             mJsonData.array().push_front(groupObject);
@@ -238,6 +157,7 @@ void GroupData::saveNewRoom(const cor::Room& room) {
 
             // save file
             saveJSON();
+            addSubGroupsToRooms();
             // hues use their bridge to store their data for collections instead of the JSON
             emit newCollectionAdded(room.name());
         }
@@ -383,7 +303,7 @@ bool GroupData::removeGroup(std::uint64_t groupID) {
             int i = 0;
             for (auto value : array) {
                 QJsonObject object = value.toObject();
-                if (checkIfGroupIsValid(object)) {
+                if (cor::Group::isValidJson(object)) {
                     auto currentID = std::uint64_t(object["uniqueID"].toDouble());
                     // check if its a mood or not
                     if (currentID == groupID) {
@@ -429,230 +349,23 @@ bool GroupData::removeGroup(std::uint64_t groupID) {
 //-------------------
 
 void GroupData::parseGroup(const QJsonObject& object) {
-    if (object["name"].isString() && object["uniqueID"].isDouble() && object["devices"].isArray()) {
-        const auto& name = object["name"].toString();
-        const auto& uniqueID = object["uniqueID"].toDouble();
-        bool isRoom;
-        if (object["isRoom"].isBool()) {
-            isRoom = object["isRoom"].toBool();
+    if (cor::Group::isValidJson(object) && object["isRoom"].isBool()) {
+        if (object["isRoom"].toBool()) {
+            cor::Room room(object);
+            mRoomDict.insert(QString::number(room.uniqueID()).toStdString(), room);
         } else {
-            isRoom = false;
-        }
-        QJsonArray deviceArray = object["devices"].toArray();
-        std::vector<QString> lightList;
-        foreach (const QJsonValue& value, deviceArray) {
-            QJsonObject device = value.toObject();
-            if (device["uniqueID"].isString()) {
-                lightList.push_back(device["uniqueID"].toString());
-            } else {
-                qDebug() << __func__ << " light broken" << value;
-            }
-        }
-        if (!lightList.empty()) {
-            if (isRoom) {
-                cor::Room room(std::uint64_t(uniqueID), name, lightList, {});
-                mRoomDict.insert(QString::number(room.uniqueID()).toStdString(), room);
-            } else {
-                cor::Group group(std::uint64_t(uniqueID), name, lightList);
-                mGroupDict.insert(QString::number(group.uniqueID()).toStdString(), group);
-            }
+            cor::Group group(object);
+            mGroupDict.insert(QString::number(group.uniqueID()).toStdString(), group);
         }
     } else {
         qDebug() << __func__ << " not recognized";
     }
 }
 
-bool GroupData::checkIfMoodLightIsValid(const QJsonObject& device) {
-    bool hasMetaData =
-        (device["type"].isString() && device["uniqueID"].isString() && device["isOn"].isBool());
-
-    // cancel early if it doesn't have the data to parse.
-    if (!hasMetaData) {
-        return false;
-    }
-
-    bool isOn = device["isOn"].toBool();
-
-    // these values always exist if the light is on
-    bool defaultChecks = (device["routine"].isString());
-    bool colorsValid = false;
-    if (isOn) {
-        ERoutine routine = stringToRoutine(device["routine"].toString());
-        if (routine <= cor::ERoutineSingleColorEnd) {
-            colorsValid =
-                (device["hue"].isDouble() && device["sat"].isDouble() && device["bri"].isDouble());
-        } else {
-            colorsValid = (device["palette"].isObject());
-        }
-    }
-
-    // if its off but has valid metadata, return true
-    if (!isOn && hasMetaData) {
-        return true;
-    }
-
-    // check the important values
-    return (defaultChecks && colorsValid);
-}
-
-
-bool GroupData::checkIfMoodGroupIsValid(const QJsonObject& device) {
-    bool hasMetaData = device["group"].isDouble();
-
-    // cancel early if it doesn't have the data to parse.
-    if (!hasMetaData) {
-        return false;
-    }
-
-    bool isOn = device["isOn"].toBool();
-
-    // these values always exist if the light is on
-    bool defaultChecks = (device["routine"].isString());
-    bool colorsValid = false;
-    if (isOn) {
-        ERoutine routine = stringToRoutine(device["routine"].toString());
-        if (routine <= cor::ERoutineSingleColorEnd) {
-            colorsValid =
-                (device["hue"].isDouble() && device["sat"].isDouble() && device["bri"].isDouble());
-        } else {
-            colorsValid = (device["palette"].isObject());
-        }
-    }
-
-    // if its off but has valid metadata, return true
-    if (!isOn && hasMetaData) {
-        return true;
-    }
-
-    // check the important values
-    return (defaultChecks && colorsValid);
-}
-
-
-cor::Light parseLightObject(const QJsonObject& object) {
-    // convert to Qt types from json data
-    const auto& typeString = object["type"].toString();
-    const auto& uniqueID = object["uniqueID"].toString();
-
-    // convert to Corluma types from certain Qt types
-    ECommType type = stringToCommType(typeString);
-
-    bool isOn = object["isOn"].toBool();
-
-    double hue = object["hue"].toDouble();
-    double sat = object["sat"].toDouble();
-
-    auto majorAPI = std::uint32_t(object["majorAPI"].toDouble());
-    auto minorAPI = std::uint32_t(object["minorAPI"].toDouble());
-
-    double brightness = object["bri"].toDouble();
-    QColor color;
-    color.setHsvF(hue, sat, brightness);
-
-    ERoutine routine = stringToRoutine(object["routine"].toString());
-
-    int speed = 100;
-    if (object["speed"].isDouble()) {
-        speed = int(object["speed"].toDouble());
-    }
-
-    cor::Light light(uniqueID, type);
-    light.version(majorAPI, minorAPI);
-    light.isReachable(true);
-
-    cor::LightState state;
-    state.isOn(isOn);
-    state.color(color);
-    state.routine(routine);
-    if (state.routine() > cor::ERoutineSingleColorEnd && state.isOn()) {
-        state.palette(Palette(object["palette"].toObject()));
-    }
-    state.speed(speed);
-    light.state(state);
-    return light;
-}
-
-cor::Light parseDefaultStateObject(const QJsonObject& object) {
-    // convert to Qt types from json data
-    const auto& groupID = object["group"].toDouble();
-
-    bool isOn = object["isOn"].toBool();
-
-    double hue = object["hue"].toDouble();
-    double sat = object["sat"].toDouble();
-
-    auto majorAPI = std::uint32_t(object["majorAPI"].toDouble());
-    auto minorAPI = std::uint32_t(object["minorAPI"].toDouble());
-
-    double brightness = object["bri"].toDouble();
-    QColor color;
-    color.setHsvF(hue, sat, brightness);
-
-    ERoutine routine = stringToRoutine(object["routine"].toString());
-
-    int speed = 100;
-    if (object["speed"].isDouble()) {
-        speed = int(object["speed"].toDouble());
-    }
-
-    cor::Light light(QString::number(groupID), ECommType::MAX);
-    light.version(majorAPI, minorAPI);
-    light.isReachable(true);
-
-    cor::LightState state;
-    state.isOn(isOn);
-    state.color(color);
-    state.routine(routine);
-    if (state.routine() > cor::ERoutineSingleColorEnd && state.isOn()) {
-        state.palette(Palette(object["palette"].toObject()));
-    }
-    state.speed(speed);
-    light.state(state);
-    return light;
-}
-
 void GroupData::parseMood(const QJsonObject& object) {
-    if (object["name"].isString() && object["uniqueID"].isDouble() && object["devices"].isArray()) {
-        QString name = object["name"].toString();
-        const auto& uniqueID = object["uniqueID"].toDouble();
-
-        const auto& additionalInfo = object["additionalInfo"].toString();
-
-        // parse devices
-        const auto& deviceArray = object["devices"].toArray();
-        std::vector<cor::Light> list;
-        for (const auto& value : deviceArray) {
-            const auto& device = value.toObject();
-            if (checkIfMoodLightIsValid(device)) {
-                const auto& light = parseLightObject(device);
-                list.push_back(light);
-            } else {
-                qDebug() << __func__ << " device broken";
-            }
-        }
-
-        // parse defaults
-        const auto& defaultStateArray = object["defaultStates"].toArray();
-        std::vector<std::pair<std::uint64_t, cor::Light>> defaultList;
-        for (const auto& value : defaultStateArray) {
-            const auto& device = value.toObject();
-            if (checkIfMoodGroupIsValid(device)) {
-                const auto& light = parseDefaultStateObject(device);
-                const auto& groupID = device["group"].toDouble();
-                defaultList.emplace_back(groupID, light);
-            } else {
-                qDebug() << __func__ << " default state broken" << device;
-            }
-        }
-
-        if (list.empty()) {
-            qDebug() << __func__ << " no valid devices for" << name;
-        } else {
-            cor::Mood mood(std::uint64_t(uniqueID), name, list);
-            mood.defaults(defaultList);
-            mood.additionalInfo(additionalInfo);
-            mMoodDict.insert(QString::number(mood.uniqueID()).toStdString(), mood);
-        }
+    if (cor::Mood::isValidJson(object)) {
+        cor::Mood mood(object);
+        mMoodDict.insert(QString::number(mood.uniqueID()).toStdString(), mood);
     } else {
         qDebug() << __func__ << " not recognized";
     }
@@ -703,34 +416,6 @@ bool GroupData::checkIfValidJSON(const QString& file) {
     return false;
 }
 
-//-------------------
-// Helpers
-//-------------------
-
-bool GroupData::checkIfGroupIsValid(const QJsonObject& object) {
-    // check top leve
-    if (!(object["isMood"].isBool() && object["name"].isString() && object["devices"].isArray())) {
-        return false;
-    }
-    QJsonArray deviceArray = object["devices"].toArray();
-    foreach (const QJsonValue& value, deviceArray) {
-        QJsonObject device = value.toObject();
-        if (!(device["uniqueID"].isString())) {
-            qDebug() << "one of the objects is invalid!" << device;
-            return false;
-        }
-        if (object["isMood"].toBool()) {
-            if (!checkIfMoodLightIsValid(device)) {
-                qDebug() << "one of the mood specific values is invalid! for"
-                         << object["name"].toString() << device["type"].toString()
-                         << device["uniqueID"].toString();
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
 
 //-------------------
 // Load JSON
@@ -742,7 +427,7 @@ bool GroupData::loadJSON() {
             QJsonArray array = mJsonData.array();
             foreach (const QJsonValue& value, array) {
                 QJsonObject object = value.toObject();
-                if (checkIfGroupIsValid(object)) {
+                if (cor::Group::isValidJson(object)) {
                     if (object["isMood"].toBool()) {
                         parseMood(object);
                     } else {
@@ -800,4 +485,25 @@ std::uint64_t GroupData::generateNewUniqueKey() {
         }
     }
     return maxKey + 1;
+}
+
+
+QString GroupData::nameFromID(std::uint64_t ID) {
+    auto key = QString::number(ID).toStdString();
+    auto result = mGroupDict.item(key);
+    if (result.second) {
+        return result.first.name();
+    }
+
+    result = mRoomDict.item(key);
+    if (result.second) {
+        return result.first.name();
+    }
+
+    auto moodResult = mMoodDict.item(key);
+    if (result.second) {
+        return result.first.name();
+    }
+
+    return {};
 }

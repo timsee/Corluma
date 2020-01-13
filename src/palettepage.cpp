@@ -50,7 +50,7 @@ PalettePage::PalettePage(QWidget* parent)
             SLOT(newRoutineSelected(cor::LightState)));
 
     mMode = EGroupMode::arduinoPresets;
-    setMode(EGroupMode::RGB);
+    setMode(EGroupMode::HSV);
 }
 
 

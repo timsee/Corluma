@@ -653,4 +653,14 @@ ___
 - Added initial support for sending packets to hue groups and rooms. 
 
 
+### **v0.17.68**
+#### The Miscellaneous Cleanup Update
+- Adjusted Nanoleaf to use global brightness levels, even for palettes. 
+- Simplified `GroupData`.
+- Fixed bugs with saving and modifying groups, rooms, and moods.
+- Fixed layout of `ListLightWidget`.
+- Fixed issues with handling app's global brightness in UI elements.
+- Fixed msicellaneous bugs.
+
+
 

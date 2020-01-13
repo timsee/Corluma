@@ -51,14 +51,14 @@ public:
     }
 
     /// checks if JSON represents a LeafDate
-    static bool isValidJSON(const QJsonObject& object) {
+    static bool isValidJson(const QJsonObject& object) {
         return (object["day"].isDouble() && object["hour"].isDouble() && object["minute"].isDouble()
                 && object["month"].isDouble() && object["time_zone"].isDouble()
                 && object["year"].isDouble());
     }
 
     /// converts the object to a valid JSON representation
-    QJsonObject toJSON() const {
+    QJsonObject toJson() const {
         QJsonObject object;
         object["day"] = m_date.tm_mday;
         object["hour"] = m_date.tm_hour;

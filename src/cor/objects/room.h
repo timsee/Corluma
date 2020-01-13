@@ -28,6 +28,9 @@ public:
         : Group(uniqueID, name, lights),
           mSubgroups{subgroups} {}
 
+    /// json constructor
+    Room(const QJsonObject& object) : Group(object) {}
+
     /// if a group has subgroups. this contains a list of all groups that are subgroups.
     const std::vector<std::uint64_t>& subgroups() const noexcept { return mSubgroups; }
 

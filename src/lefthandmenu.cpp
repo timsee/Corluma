@@ -332,7 +332,6 @@ ListRoomWidget* LeftHandMenu::initRoomsWidget(const cor::Room& room, const QStri
                                      mComm,
                                      mGroups,
                                      key,
-                                     EOnOffSwitchState::hidden,
                                      cor::EListType::linear,
                                      cor::EWidgetType::condensed,
                                      mWidget);

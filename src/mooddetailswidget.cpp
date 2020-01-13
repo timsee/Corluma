@@ -58,7 +58,12 @@ void MoodDetailsWidget::display(const cor::Mood& mood, const QSize& size) {
         auto groupResult = mGroups->groups().item(QString::number(defaultPair.first).toStdString());
         if (groupResult.second) {
             auto defaultState = defaultPair.second;
-            groupStates.push_back(defaultState);
+            auto name = mGroups->nameFromID(defaultPair.first);
+            cor::Light light(name, ECommType::hue);
+            light.isReachable(true);
+            light.name(name);
+            light.state(defaultState);
+            groupStates.push_back(light);
         }
     }
 
@@ -68,7 +73,12 @@ void MoodDetailsWidget::display(const cor::Mood& mood, const QSize& size) {
         auto groupResult = mGroups->rooms().item(QString::number(defaultPair.first).toStdString());
         if (groupResult.second) {
             auto defaultState = defaultPair.second;
-            roomStates.push_back(defaultState);
+            auto name = mGroups->nameFromID(defaultPair.first);
+            cor::Light light(name, ECommType::hue);
+            light.isReachable(true);
+            light.name(name);
+            light.state(defaultState);
+            roomStates.push_back(light);
         }
     }
 
@@ -81,11 +91,7 @@ void MoodDetailsWidget::display(const cor::Mood& mood, const QSize& size) {
         yPos += titleSize;
         mRoomDefaults->setGeometry(0, yPos, size.width(), boxSize);
         yPos += boxSize;
-        mRoomDefaults->updateDevices(roomStates,
-                                     cor::EWidgetType::full,
-                                     EOnOffSwitchState::hidden,
-                                     false,
-                                     false);
+        mRoomDefaults->updateDevices(roomStates, cor::EWidgetType::full, false, false);
     } else {
         mRoomDefaultsTitle->setVisible(false);
         mRoomDefaults->setVisible(false);
@@ -101,11 +107,7 @@ void MoodDetailsWidget::display(const cor::Mood& mood, const QSize& size) {
         yPos += titleSize;
         mGroupDefaults->setGeometry(0, yPos, size.width(), boxSize);
         yPos += boxSize;
-        mGroupDefaults->updateDevices(groupStates,
-                                      cor::EWidgetType::full,
-                                      EOnOffSwitchState::hidden,
-                                      false,
-                                      false);
+        mGroupDefaults->updateDevices(groupStates, cor::EWidgetType::full, false, false);
     } else {
         mGroupDefaultsTitle->setVisible(false);
         mGroupDefaults->setVisible(false);

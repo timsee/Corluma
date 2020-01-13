@@ -9,12 +9,7 @@
 #include "comm/commtype.h"
 #include "cor/widgets/listitemwidget.h"
 #include "cor/widgets/statusicon.h"
-#include "cor/widgets/switch.h"
 #include "icondata.h"
-
-
-/// state of the on off switch
-enum class EOnOffSwitchState { standard, locked, hidden };
 
 /*!
  * \copyright
@@ -41,7 +36,6 @@ public:
     explicit ListLightWidget(const cor::Light& device,
                              bool setHighlightable,
                              cor::EWidgetType type,
-                             EOnOffSwitchState switchState,
                              QWidget* parent);
 
     /*!
@@ -62,9 +56,6 @@ public:
      */
     bool setHighlightChecked(bool checked);
 
-    /// hides if set to true, shows if set to false.
-    void hideOnOffSwitch(bool shouldHide);
-
     /*!
      * \brief checked getter for checked state
      *
@@ -72,15 +63,14 @@ public:
      */
     bool checked() { return mIsChecked; }
 
-    /*!
-     * \brief device getter for device
-     *
-     * \return device displayed by widget
-     */
-    const cor::Light& device() { return mDevice; }
+    /// true if displaying a reachable state, false otherwise
+    bool isReachable() const noexcept { return mIsReachable; }
 
-    /// adds capitalization and stuff like that to a hue name.
-    QString convertUglyHueNameToPrettyName(QString name);
+    /// getter for name of controller
+    QString name() const noexcept { return mController->text(); }
+
+    /// getter for current light
+    const cor::Light& light() const noexcept { return mLight; }
 
 signals:
     /*!
@@ -105,29 +95,17 @@ protected:
     /// called when widget is resized
     void resizeEvent(QResizeEvent*);
 
-private slots:
-
-    /// handles when the switch state changes
-    void changedSwitchState(bool);
-
-    /// cool down timer used to override drawing on the device widget until the cooldown is
-    /// complete.
-    void coolDownClick();
-
 private:
+    /// spacer to use when creating list light widgets
+    int spacer();
+
+    QSize iconRegion();
+
     /// Called by constructors
-    void init(const cor::Light& device);
+    void init(const QString& uniqueID, const QString& name, ELightHardwareType hardwareType);
 
-    /*!
-     * \brief createName create the name to display in the Qlabel
-     *
-     * \param device the device information to generate the name
-     * \return A "pretty" version of the name of the light device.
-     */
-    QString createName(const cor::Light& device);
-
-    /// handles the state of the switch
-    void handleSwitch();
+    /// truncates and modifies the name so that it fits, if necessary
+    QString createName(QString name);
 
     /// displays the type of light, such as a lightbulb or a light cube.
     QLabel* mTypeIcon;
@@ -144,8 +122,14 @@ private:
     /// type of ListLightWidget
     cor::EWidgetType mType;
 
-    /// state of on off switch
-    EOnOffSwitchState mSwitchState;
+    /// hardware type for the light we're displaying
+    ELightHardwareType mHardwareType;
+
+    /// state that is being displayed
+    cor::LightState mState;
+
+    /// true if displaying a reachable light, false otherwise
+    bool mIsReachable;
 
     /// true if should highlight, false otherwise
     bool mShouldHighlight;
@@ -160,28 +144,6 @@ private:
      * \brief mController name of the controller
      */
     QLabel* mController;
-
-    /*!
-     * \brief mLayout layout of widget
-     */
-    QGridLayout* mLayout;
-
-    /*!
-     * \brief mDevice stores the cor::Light used by the widget.
-     */
-    cor::Light mDevice = {};
-
-    /// switch for turning on and off a device
-    cor::Switch* mOnOffSwitch;
-
-    /// timer for tracking when the last click happened
-    QTimer* mCooldownTimer;
-
-    /// true to hide switch, false to show it
-    bool mHideSwitch;
-
-    /// used by cooldown timer, if true state updates are blocked.
-    bool mBlockStateUpdates;
 
     /*!
      * \brief mIsChecked true if checked, false otherwise
@@ -199,6 +161,9 @@ private:
 
     /// font point size for widget
     int mFontPtSize;
+
+    /// light stored by widget
+    cor::Light mLight;
 };
 
 

@@ -126,9 +126,9 @@ TopMenu::TopMenu(QWidget* parent,
             SIGNAL(buttonPressed(QString)),
             this,
             SLOT(floatingLayoutButtonPressed(QString)));
-    buttons = {QString("RGB"), QString("HSV"), QString("Preset")};
+    buttons = {QString("HSV"), QString("RGB"), QString("Preset")};
     mPaletteFloatinglayout->setupButtons(buttons, EButtonSize::small);
-    mPaletteFloatinglayout->highlightButton("RGB");
+    mPaletteFloatinglayout->highlightButton("HSV");
     mPaletteFloatinglayout->setVisible(false);
 
     mMultiRoutineFloatingLayout = new FloatingLayout(false, mMainWindow);
@@ -180,9 +180,9 @@ TopMenu::TopMenu(QWidget* parent,
             this,
             SLOT(floatingLayoutButtonPressed(QString)));
     mColorFloatingLayout->setVisible(false);
-    mColorFloatingLayout->setupButtons({QString("RGB"), QString("HSV"), QString("Temperature")},
+    mColorFloatingLayout->setupButtons({QString("HSV"), QString("RGB"), QString("Temperature")},
                                        EButtonSize::small);
-    mColorFloatingLayout->highlightButton("RGB");
+    mColorFloatingLayout->highlightButton("HSV");
 
     mSingleRoutineFloatingLayout = new FloatingLayout(false, mMainWindow);
     connect(mSingleRoutineFloatingLayout,
@@ -192,7 +192,7 @@ TopMenu::TopMenu(QWidget* parent,
     mSingleRoutineFloatingLayout->setVisible(false);
     mSingleRoutineFloatingLayout->setupButtons({QString("Routine")}, EButtonSize::small);
 
-    mLastColorButtonKey = "RGB";
+    mLastColorButtonKey = "HSV";
 
     mSingleColorStateWidget = new SingleColorStateWidget(mMainWindow);
     mSingleColorStateWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -794,6 +794,7 @@ void TopMenu::updateState(const cor::LightState& state) {
             }
         }
         mMultiColorStateWidget->updateState(colors);
+        updateBrightnessSlider(mBrightnessSlider->slider()->value());
     }
 }
 

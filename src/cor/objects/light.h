@@ -36,6 +36,15 @@ public:
           mMinorAPI{2},
           mIsReachable{false} {}
 
+    /// json constructor
+    Light(const QJsonObject& object)
+        : Light(object["uniqueID"].toString(), stringToCommType(object["type"].toString())) {
+        // add verison
+        version(std::uint32_t(object["majorAPI"].toDouble()),
+                std::uint32_t(object["minorAPI"].toDouble()));
+        // generate state of light
+        mState = cor::LightState(object);
+    }
 
     /// true if valid light, false if not
     bool isValid() const { return uniqueID() != cor::Light().uniqueID(); }
@@ -130,6 +139,24 @@ public:
         return QString::fromStdString(tempString.str());
     }
 
+    /// true if json would make a valid light, false if it wouldn't
+    static bool isValidJson(const QJsonObject& object) {
+        if (!object["uniqueID"].isString() || !object["type"].isString()) {
+            return false;
+        }
+        return cor::LightState::isValidJson(object);
+    }
+
+    /// represents the light as a json object
+    QJsonObject toJson() const noexcept {
+        QJsonObject object = state().toJson();
+        object["uniqueID"] = uniqueID();
+        object["type"] = commTypeToString(commType());
+
+        object["majorAPI"] = double(majorAPI());
+        object["minorAPI"] = double(minorAPI());
+        return object;
+    }
 
 protected:
     /// type of hardware for a light (lightbulb, LED, cube, etc.)
@@ -168,90 +195,6 @@ private:
      */
     bool mIsReachable;
 };
-
-/// converts json representation of routine to cor::Light
-inline cor::Light jsonToLight(const QJsonObject& object) {
-    QString uniqueID = object["uniqueID"].toString();
-    ECommType type = stringToCommType(object["type"].toString());
-    QString controller = object["controller"].toString();
-
-    cor::Light light(uniqueID, type);
-    cor::LightState state;
-    if (object["routine"].isString()) {
-        state.routine(stringToRoutine(object["routine"].toString()));
-    }
-
-    if (object["isOn"].isBool()) {
-        state.isOn(object["isOn"].toBool());
-    }
-
-    //------------
-    // get either speed or palette, depending on routine type
-    //------------
-    if (light.state().routine() <= cor::ERoutineSingleColorEnd) {
-        if (object["hue"].isDouble() && object["sat"].isDouble() && object["bri"].isDouble()) {
-            QColor color;
-            color.setHsvF(object["hue"].toDouble(),
-                          object["sat"].toDouble(),
-                          object["bri"].toDouble());
-            state.color(color);
-        }
-    } else if (object["palette"].isObject()) {
-        state.palette(Palette(object["palette"].toObject()));
-    }
-
-    //------------
-    // get param if it exists
-    //------------
-    if (object["param"].isDouble()) {
-        state.param(int(object["param"].toDouble()));
-    }
-
-    light.version(std::uint32_t(object["majorAPI"].toDouble()),
-                  std::uint32_t(object["minorAPI"].toDouble()));
-
-    //------------
-    // get speed if theres a speed value
-    //------------
-    if (light.state().routine() != ERoutine::singleSolid) {
-        if (object["speed"].isDouble()) {
-            state.speed(int(object["speed"].toDouble()));
-        }
-    }
-    light.state(state);
-
-    return light;
-}
-
-/// converts a cor::Light to a json representation of its routine.
-inline QJsonObject lightToJson(const cor::Light& light) {
-    QJsonObject object;
-    object["uniqueID"] = light.uniqueID();
-    object["type"] = commTypeToString(light.commType());
-
-    object["routine"] = routineToString(light.state().routine());
-    object["isOn"] = light.state().isOn();
-
-    if (light.state().routine() <= cor::ERoutineSingleColorEnd) {
-        object["hue"] = light.state().color().hueF();
-        object["sat"] = light.state().color().saturationF();
-        object["bri"] = light.state().color().valueF();
-    }
-
-    object["majorAPI"] = double(light.majorAPI());
-    object["minorAPI"] = double(light.minorAPI());
-
-    if (light.state().routine() != ERoutine::singleSolid) {
-        object["speed"] = light.state().speed();
-    }
-
-    if (light.state().param() != std::numeric_limits<int>::min()) {
-        object["param"] = light.state().param();
-    }
-
-    object["palette"] = light.state().palette().JSON();
-    return object;
-}
 
 } // namespace cor
 

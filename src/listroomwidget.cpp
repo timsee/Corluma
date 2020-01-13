@@ -13,12 +13,10 @@ ListRoomWidget::ListRoomWidget(const cor::Room& room,
                                CommLayer* comm,
                                GroupData* groups,
                                const QString& key,
-                               EOnOffSwitchState switchState,
                                cor::EListType listType,
                                cor::EWidgetType type,
                                QWidget* parent)
     : cor::ListItemWidget(key, parent),
-      mSwitchState{switchState},
       mType{type},
       mComm{comm},
       mGroupData{groups},
@@ -128,7 +126,7 @@ void ListRoomWidget::updateRoom(const cor::Room& room, bool removeIfNotFound) {
                 //----------------
                 // Update Widget, if it already exists
                 //----------------
-                if ((inputDevice.uniqueID() == existingWidget->device().uniqueID())) {
+                if ((inputDevice.uniqueID() == existingWidget->key())) {
                     foundDevice = true;
                     existingWidget->updateWidget(inputDevice);
                 }
@@ -140,7 +138,7 @@ void ListRoomWidget::updateRoom(const cor::Room& room, bool removeIfNotFound) {
             //----------------
 
             if (!foundDevice) {
-                auto widget = new ListLightWidget(inputDevice, true, mType, mSwitchState, this);
+                auto widget = new ListLightWidget(inputDevice, true, mType, this);
                 connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
                 connect(widget,
                         SIGNAL(switchToggled(QString, bool)),
@@ -163,7 +161,7 @@ void ListRoomWidget::updateRoom(const cor::Room& room, bool removeIfNotFound) {
 
             bool found = false;
             for (const auto& lightID : room.lights()) {
-                if (lightID == existingWidget->device().uniqueID()) {
+                if (lightID == existingWidget->key()) {
                     found = true;
                 }
             }
@@ -282,7 +280,7 @@ void ListRoomWidget::setCheckedDevices(std::vector<cor::Light> devices) {
 
         bool found = false;
         for (const auto& device : devices) {
-            if (device.uniqueID() == widget->device().uniqueID()) {
+            if (device.uniqueID() == widget->key()) {
                 numOfDevices++;
                 found = true;
                 widget->setHighlightChecked(true);
@@ -412,7 +410,7 @@ std::vector<cor::Light> ListRoomWidget::checkedDevices() {
         auto existingWidget = qobject_cast<ListLightWidget*>(widget);
         Q_ASSERT(existingWidget);
         if (existingWidget->checked()) {
-            devices.push_back(existingWidget->device());
+            devices.push_back(existingWidget->light());
         }
     }
     return devices;
@@ -423,7 +421,7 @@ void ListRoomWidget::showDevices(const std::vector<cor::Light>& devices) {
         auto layoutWidget = qobject_cast<ListLightWidget*>(widget);
         bool deviceFound = false;
         for (const auto& givenDevice : devices) {
-            if (layoutWidget->device().uniqueID() == givenDevice.uniqueID()) {
+            if (layoutWidget->key() == givenDevice.uniqueID()) {
                 deviceFound = true;
                 widget->setVisible(true);
             }
@@ -470,7 +468,7 @@ std::pair<uint32_t, uint32_t> ListRoomWidget::countCheckedAndReachableDevices(
             for (const auto& existingWidget : mListLayout.widgets()) {
                 auto widget = qobject_cast<ListLightWidget*>(existingWidget);
                 Q_ASSERT(widget);
-                if (widget->checked() && (widget->device() == device)) {
+                if (widget->checked() && (widget->key() == device.uniqueID())) {
                     checkedCount++;
                 }
             }

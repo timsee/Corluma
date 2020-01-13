@@ -39,11 +39,7 @@ EditPage::EditPage(QWidget* parent, CommLayer* comm, GroupData* parser)
 
 void EditPage::updateDevices(const std::vector<cor::Light>& checkedDevices,
                              const std::vector<cor::Light>& devices) {
-    mSimpleGroupWidget->updateDevices(devices,
-                                      cor::EWidgetType::full,
-                                      EOnOffSwitchState::hidden,
-                                      true,
-                                      false);
+    mSimpleGroupWidget->updateDevices(devices, cor::EWidgetType::full, true, false);
     mSimpleGroupWidget->setCheckedDevices(checkedDevices);
 }
 

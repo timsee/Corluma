@@ -115,8 +115,8 @@ void CommLayer::deleteHueGroup(const QString& name) {
 }
 
 
-bool sortListByGroupName(const std::pair<cor::Group, cor::Light>& lhs,
-                         const std::pair<cor::Group, cor::Light>& rhs) {
+bool sortListByGroupName(const std::pair<cor::Group, cor::LightState>& lhs,
+                         const std::pair<cor::Group, cor::LightState>& rhs) {
     return (lhs.first.name() < rhs.first.name());
 }
 
@@ -152,8 +152,8 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
     cor::Dictionary<cor::Light> moodDict;
 
     // split defaults into rooms and groups
-    std::vector<std::pair<cor::Group, cor::Light>> rooms;
-    std::vector<std::pair<cor::Group, cor::Light>> groups;
+    std::vector<std::pair<cor::Group, cor::LightState>> rooms;
+    std::vector<std::pair<cor::Group, cor::LightState>> groups;
     for (const auto& defaultState : mood.defaults()) {
         for (const auto& collection : mGroups->groups().items()) {
             if (defaultState.first == collection.uniqueID()) {
@@ -180,7 +180,7 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
             auto light = lightByID(lightID);
             if (light.isValid()) {
                 light = addLightMetaData(light);
-                light.state(room.second.state());
+                light.state(room.second);
                 const auto& key = light.uniqueID().toStdString();
                 // check if light exists in list already
                 const auto& result = moodDict.item(key);
@@ -201,7 +201,7 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
             auto lightCopy = lightByID(light);
             if (lightCopy.isValid()) {
                 lightCopy = addLightMetaData(lightCopy);
-                lightCopy.state(group.second.state());
+                lightCopy.state(group.second);
                 const auto& key = lightCopy.uniqueID().toStdString();
                 // check if light exists in list already
                 const auto& result = moodDict.item(key);
@@ -222,23 +222,23 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
     for (const auto& light : mood.lights()) {
         auto lightInMemory = lightByID(light.uniqueID());
         if (lightInMemory.isValid()) {
-            lightList.push_back(light);
+            lightInMemory = addLightMetaData(lightInMemory);
+            lightInMemory.state(light.state());
+            lightList.push_back(lightInMemory);
         }
     }
 
     // ... now apply the specific lights
     for (const auto& light : lightList) {
-        // this is messy and I don't like it.
-        auto lightCopy = addLightMetaData(light);
         const auto& key = light.uniqueID().toStdString();
         // check if light exists in list already
         const auto& result = moodDict.item(key);
         if (result.second) {
             // update if it exists
-            moodDict.update(key, lightCopy);
+            moodDict.update(key, light);
         } else {
             // add if it doesnt
-            moodDict.insert(key, lightCopy);
+            moodDict.insert(key, light);
         }
     }
 

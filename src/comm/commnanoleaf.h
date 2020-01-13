@@ -176,8 +176,11 @@ private:
      */
     void putJSON(const QNetworkRequest& request, const QJsonObject& json);
 
+    /// handles undiscovered packaets and routes the correct information to the the discovery
+    /// object, if necessary
     void handleInitialDiscovery(const nano::LeafMetadata& light, const QString& payload);
 
+    /// handles a standard packet from discovered nanoleaf.
     void handleNetworkPacket(const nano::LeafMetadata& light, const QString& payload);
 
     /// creates a network request based on a QString providing the endpoint.
@@ -216,14 +219,8 @@ private:
      */
     QJsonObject createRoutinePacket(ERoutine routine, int brightness, int speed);
 
-    /*!
-     * \brief createPalette Takes the Corluma Lighting Routine and Color Group and converts
-     *        it into a QJsonArray based on the Palette
-     * \param routine the routine to use for the jsonarray
-     * \param group the palette to use for the jsonarray
-     * \return a jsonarray that matches the lighting routine and palette
-     */
-    QJsonArray createPalette(const cor::LightState& light);
+    /// creates a palette based off of the provided options.
+    QJsonArray createPalette(ERoutine routine, EPalette paletteEnum, const QColor& mainColor);
 
     /// changes the main color of a nanoleaf
     void singleSolidColorChange(const nano::LeafMetadata& light, const QColor& color);

@@ -32,7 +32,22 @@ public:
           mHardwareType{hue::modelToHardwareType(object["modelid"].toString())},
           mBridgeID{controller},
           mUniqueID{object["uniqueid"].toString()} {
-        mName = object["name"].toString();
+        auto name = object["name"].toString();
+        // convert name to a friendlier name in the hue
+        if (name.contains("color lamp")) {
+            name.replace("color lamp", "Color Lamp");
+        } else if (name.contains("lightstrip plus")) {
+            name.replace("lightstrip plus", "Lightstrip Plus");
+        } else if (name.contains("ambiance lamp")) {
+            name.replace("ambiance lamp", "Ambiance Lamp");
+        } else if (name.contains("bloom")) {
+            name.replace("bloom", "Bloom");
+        } else if (name.contains("white lamp")) {
+            name.replace("white lamp", "White Lamp");
+        }
+        QString hueString = QString("Hue ");
+        name.replace(name.indexOf(hueString), hueString.size(), QString(""));
+        mName = name;
     }
 
     /// getter for bridge ID

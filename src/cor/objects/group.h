@@ -26,6 +26,21 @@ public:
           mUniqueID{uniqueID},
           mLights{lights} {}
 
+    /// json constructor
+    Group(const QJsonObject& object)
+        : Group(std::uint64_t(object["uniqueID"].toDouble()), object["name"].toString(), {}) {
+        QJsonArray deviceArray = object["devices"].toArray();
+        std::vector<QString> lightList;
+        foreach (const QJsonValue& value, deviceArray) {
+            QJsonObject device = value.toObject();
+            if (device["uniqueID"].isString()) {
+                mLights.push_back(device["uniqueID"].toString());
+            } else {
+                THROW_EXCEPTION("Invalid uniqueID for Group");
+            }
+        }
+    }
+
     /// getter for unique ID
     std::uint64_t uniqueID() const noexcept { return mUniqueID; }
 
@@ -43,6 +58,45 @@ public:
 
     /// setter for lights
     void lights(const std::vector<QString>& lights) { mLights = lights; }
+
+    /// true if JSON creates a valid group, false otherwise
+    static bool isValidJson(const QJsonObject& object) {
+        // check top level
+        if (!(object["name"].isString() && object["uniqueID"].isDouble()
+              && object["devices"].isArray())) {
+            return false;
+        }
+        QJsonArray deviceArray = object["devices"].toArray();
+        foreach (const QJsonValue& value, deviceArray) {
+            QJsonObject device = value.toObject();
+            if (!(device["uniqueID"].isString())) {
+                qDebug() << "one of the objects is invalid!" << device;
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /// represents group as json
+    QJsonObject toJson() const noexcept {
+        QJsonObject object;
+        object["name"] = name();
+        object["isMood"] = false;
+        object["isRoom"] = false;
+        object["uniqueID"] = double(uniqueID());
+
+        // create string of jsondata to add to file
+        QJsonArray lightArray;
+        for (const auto& lightID : lights()) {
+            QJsonObject object;
+            object["uniqueID"] = lightID;
+            lightArray.append(object);
+        }
+
+        object["devices"] = lightArray;
+        return object;
+    }
+
 
     /// equal operator
     bool operator==(const Group& rhs) const { return uniqueID() == rhs.uniqueID(); }

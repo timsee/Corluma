@@ -40,6 +40,9 @@ public:
     /// enable or disable
     void enable(bool shouldEnable);
 
+    /// true if enabled, false otherwise
+    bool enabled() const noexcept { return mIsEnabled; }
+
     /*!
      * \brief findPixelByColor find the pixel for a color in the color wheel. Useful for
      * programmatically setting the locations of assets overlaid on the color wheel

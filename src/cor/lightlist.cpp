@@ -264,9 +264,6 @@ void LightList::updateBrightness(std::uint32_t brightness) {
             QColor color;
             color.setHsvF(state.color().hueF(), state.color().saturationF(), brightness / 100.0);
             state.color(color);
-            if (light.protocol() == EProtocolType::nanoleaf) {
-                state.paletteBrightness(brightness);
-            }
         } else {
             state.paletteBrightness(brightness);
         }
@@ -313,6 +310,7 @@ bool LightList::removeLight(const cor::Light& removingLight) {
             auto it = mLights.begin() + i;
             if (it != mLights.end()) {
                 mLights.erase(it);
+                emit dataUpdate();
                 return true;
             }
         }
@@ -323,33 +321,29 @@ bool LightList::removeLight(const cor::Light& removingLight) {
 
 
 
-bool LightList::addLight(cor::Light device) {
-    if (device.isReachable()) {
-        for (auto&& light : mLights) {
+bool LightList::addLight(cor::Light light) {
+    if (light.isReachable()) {
+        for (auto i = 0u; i < mLights.size(); ++i) {
             // light already exists, update it
-            if (light.uniqueID() == device.uniqueID()) {
-                light = device;
+            if (mLights[i].uniqueID() == light.uniqueID()) {
+                mLights[i] = light;
                 emit dataUpdate();
                 return true;
             }
         }
         // device doesn't exist, add it to the device
-        mLights.push_back(device);
+        mLights.push_back(light);
         emit dataUpdate();
+    } else {
+        qDebug() << " not adding because light  isn't reachable " << light.name();
     }
     return false;
 }
 
-
-
-
 bool LightList::addLights(const std::vector<cor::Light>& list) {
     for (const auto& light : list) {
-        if (light.isReachable()) {
-            addLight(light);
-        }
+        addLight(light);
     }
-    emit dataUpdate();
     return true;
 }
 
@@ -357,7 +351,6 @@ bool LightList::removeLights(const std::vector<cor::Light>& list) {
     for (const auto& device : list) {
         removeLight(device);
     }
-    emit dataUpdate();
     return true;
 }
 
