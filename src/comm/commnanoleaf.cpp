@@ -728,6 +728,10 @@ void CommNanoleaf::parseStateUpdatePacket(const nano::LeafMetadata& nanoLight,
                 color.setHsvF(hue / 359.0, sat / 100.0, brightness / 100.0);
                 state.color(color);
                 state.routine(ERoutine::singleSolid);
+                // nanoleafs normally need two packets to tell if discovered, except in the case of
+                // showing a single solid color. Because of this, reachability is only confirmed by
+                // this packet if the light is showing solids.
+                light.isReachable(true);
                 //  state.paletteBrightness(std::uint32_t(brightness));
             } else if (colorMode == "effect") {
                 // parse if brightness packet;

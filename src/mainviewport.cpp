@@ -30,23 +30,11 @@ MainViewport::MainViewport(MainWindow* parent,
     mColorPage = new ColorPage(parent);
     mColorPage->isOpen(false);
     mColorPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(mColorPage,
-            SIGNAL(routineUpdate(cor::LightState)),
-            parent,
-            SLOT(routineChanged(cor::LightState)));
 
     mPalettePage = new PalettePage(parent);
     mPalettePage->isOpen(false);
     mPalettePage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(mPalettePage, SIGNAL(speedUpdate(int)), parent, SLOT(speedChanged(int)));
-    connect(mPalettePage,
-            SIGNAL(routineUpdate(cor::LightState)),
-            parent,
-            SLOT(routineChanged(cor::LightState)));
-    connect(mPalettePage,
-            SIGNAL(schemeUpdate(std::vector<QColor>)),
-            parent,
-            SLOT(schemeChanged(std::vector<QColor>)));
+    connect(mPalettePage, SIGNAL(speedUpdate(int)), this, SLOT(speedChanged(int)));
 
     mMoodPage = new MoodPage(parent, groups);
     mMoodPage->isOpen(false);
@@ -194,4 +182,8 @@ void MainViewport::lightCountChanged() {
                            mData->hasLightWithProtocol(EProtocolType::arduCor),
                            mData->hasLightWithProtocol(EProtocolType::nanoleaf));
     }
+}
+
+void MainViewport::speedChanged(int speed) {
+    mData->updateSpeed(speed);
 }

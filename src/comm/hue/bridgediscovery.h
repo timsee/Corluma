@@ -139,11 +139,6 @@ public:
     /// generates a new unique key.
     std::uint64_t generateNewUniqueKey();
 
-signals:
-
-    /// signals when a light is detected as deleted.
-    void lightDeleted(QString);
-
 private slots:
 
     /*!

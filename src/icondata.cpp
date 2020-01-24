@@ -100,6 +100,12 @@ void IconData::setRoutine(const cor::LightState& state) {
     color.setHsvF(color.hueF(), color.saturationF(), 0.5 + brightness);
     int param = state.param();
 
+    // catch edge case where off lights display funny
+    if (!state.isOn()) {
+        setSolidColor(QColor(0, 0, 0));
+        return;
+    }
+
     switch (routine) {
         case ERoutine::singleSolid:
             setSolidColor(color);

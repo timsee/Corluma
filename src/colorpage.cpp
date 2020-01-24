@@ -14,7 +14,7 @@
 #include "utils/color.h"
 #include "utils/qt.h"
 
-ColorPage::ColorPage(QWidget* parent) : QWidget(parent), mColor{0, 255, 0}, mBrightness{50} {
+ColorPage::ColorPage(QWidget* parent) : QWidget(parent), mColor{0, 255, 0} {
     mColorPicker = new SingleColorPicker(this);
 
     mLayout = new QVBoxLayout(this);
@@ -25,10 +25,6 @@ ColorPage::ColorPage(QWidget* parent) : QWidget(parent), mColor{0, 255, 0}, mBri
             SIGNAL(ambientUpdate(std::uint32_t, std::uint32_t)),
             this,
             SLOT(ambientUpdateReceived(std::uint32_t, std::uint32_t)));
-    connect(mColorPicker,
-            SIGNAL(brightnessUpdate(std::uint32_t)),
-            this,
-            SLOT(brightnessUpdate(std::uint32_t)));
 
     mSingleRoutineWidget =
         new RoutineButtonsWidget(EWidgetGroup::singleRoutines, std::vector<QColor>(), this);
@@ -57,7 +53,10 @@ void ColorPage::updateColor(const QColor& color) {
 
 
 void ColorPage::updateBrightness(std::uint32_t brightness) {
-    mBrightness = brightness;
+    mColor.setHsvF(mColor.hueF(), mColor.saturationF(), brightness / 100.0);
+    mState.color(mColor);
+    mState.isOn(true);
+    emit routineUpdate(mState);
     mColorPicker->updateBrightness(brightness);
 }
 
@@ -91,6 +90,7 @@ void ColorPage::newRoutineSelected(cor::LightState state) {
 
 void ColorPage::ambientUpdateReceived(std::uint32_t newAmbientValue, std::uint32_t newBrightness) {
     QColor color = cor::colorTemperatureToRGB(int(newAmbientValue));
+    color.setHsvF(color.hueF(), color.saturationF(), newBrightness / 100.0);
     updateColor(color);
     mState.color(color);
     mState.routine(ERoutine::singleSolid);
@@ -98,12 +98,10 @@ void ColorPage::ambientUpdateReceived(std::uint32_t newAmbientValue, std::uint32
     mState.isOn(true);
 
     emit routineUpdate(mState);
-    mBrightness = newBrightness;
 
     if (mSingleRoutineWidget->isOpen()) {
         mSingleRoutineWidget->singleRoutineColorChanged(color);
     }
-    emit brightnessChanged(newBrightness);
 }
 
 
@@ -116,13 +114,12 @@ void ColorPage::show(const QColor& color,
                      uint32_t lightCount,
                      EColorPickerType bestType) {
     mColor = color;
-    mBrightness = brightness;
     mBestType = bestType;
     if (lightCount == 0) {
         mColorPicker->enable(false, mBestType);
     } else {
         mColorPicker->enable(true, mBestType);
-        mColorPicker->updateColorStates(mColor, mBrightness);
+        mColorPicker->updateColorStates(mColor, mColor.valueF() * 100.0);
     }
 }
 

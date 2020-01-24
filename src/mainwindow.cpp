@@ -79,10 +79,6 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     if (mAppSettings->enabled(EProtocolType::nanoleaf)) {
         mComm->nanoleaf()->discovery()->startDiscovery();
     }
-    connect(mComm->hue()->discovery(),
-            SIGNAL(lightDeleted(QString)),
-            this,
-            SLOT(deletedLight(QString)));
 
     // --------------
     // Settings Page
@@ -99,14 +95,6 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
             SIGNAL(protocolSettingsUpdate(EProtocolType, bool)),
             this,
             SLOT(protocolSettingsChanged(EProtocolType, bool)));
-    connect(mSettingsPage->globalWidget(),
-            SIGNAL(timeoutUpdate(int)),
-            this,
-            SLOT(timeoutChanged(int)));
-    connect(mSettingsPage->globalWidget(),
-            SIGNAL(timeoutEnabled(bool)),
-            this,
-            SLOT(timeoutEnabledChanged(bool)));
 
     // --------------
     // Setup Discovery Page
@@ -254,11 +242,7 @@ void MainWindow::loadPages() {
                 SIGNAL(buttonPressed(QString)),
                 this,
                 SLOT(topMenuButtonPressed(QString)));
-        connect(mMainViewport->colorPage(),
-                SIGNAL(brightnessChanged(std::uint32_t)),
-                mTopMenu,
-                SLOT(brightnessUpdate(std::uint32_t)));
-        connect(mLeftHandMenu, SIGNAL(changedDeviceCount()), mTopMenu, SLOT(deviceCountChanged()));
+        connect(mLeftHandMenu, SIGNAL(changedDeviceCount()), mTopMenu, SLOT(lightCountChanged()));
 
         connect(mLeftHandMenu,
                 SIGNAL(changedDeviceCount()),
@@ -557,20 +541,14 @@ void MainWindow::lightInfoClosePressed() {
     mLightInfoWidget->pushOut();
 }
 
-
-void MainWindow::deletedLight(const QString& uniqueID) {
-    mGroups->lightDeleted(uniqueID);
-}
-
 void MainWindow::lightNameChange(EProtocolType type, const QString& key, const QString& name) {
     if (type == EProtocolType::hue) {
         // get hue light from key
         std::vector<HueMetadata> hueLights = mComm->hue()->discovery()->lights();
-        int keyNumber = key.toInt();
         HueMetadata light;
         bool lightFound = false;
         for (auto hue : hueLights) {
-            if (hue.index() == keyNumber) {
+            if (hue.uniqueID() == key) {
                 lightFound = true;
                 light = hue;
             }
@@ -597,6 +575,7 @@ void MainWindow::lightNameChange(EProtocolType type, const QString& key, const Q
 }
 
 void MainWindow::deleteLight(const QString& key) {
+    qDebug() << " delete light with this key " << key;
     auto light = mComm->lightByID(key);
     if (light.isValid()) {
         switch (light.protocol()) {
@@ -732,25 +711,6 @@ void MainWindow::resize() {
     mNoWifiWidget->setGeometry(QRect(0, 0, geometry().width(), geometry().height()));
 }
 
-
-void MainWindow::routineChanged(cor::LightState state) {
-    mData->updateState(state);
-    mTopMenu->updateState(state);
-}
-
-void MainWindow::schemeChanged(const std::vector<QColor>& colors) {
-    mData->updateColorScheme(colors);
-    mTopMenu->updateScheme(colors);
-}
-
-void MainWindow::timeoutChanged(int timeout) {
-    mAppSettings->updateTimeout(timeout);
-}
-
-void MainWindow::timeoutEnabledChanged(bool enabled) {
-    mAppSettings->enableTimeout(enabled);
-}
-
 void MainWindow::moodChanged(std::uint64_t moodID) {
     const auto& result = mGroups->moods().item(QString::number(moodID).toStdString());
     if (result.second) {
@@ -758,7 +718,7 @@ void MainWindow::moodChanged(std::uint64_t moodID) {
         const auto& moodDict = mComm->makeMood(result.first);
         mData->addLights(moodDict.items());
         if (!moodDict.items().empty()) {
-            mTopMenu->deviceCountChanged();
+            mTopMenu->lightCountChanged();
             mLeftHandMenu->deviceCountChanged();
         }
     }
@@ -796,11 +756,6 @@ void MainWindow::protocolSettingsChanged(EProtocolType type, bool enabled) {
         mData->removeLightOfType(type);
     }
 }
-
-void MainWindow::speedChanged(int speed) {
-    mData->updateSpeed(speed);
-}
-
 
 void MainWindow::wifiChecker() {
     mWifiFound = cor::wifiEnabled();
@@ -994,8 +949,6 @@ void MainWindow::pushInSettingsPage() {
         mSettingsPage->pushIn(QPoint(width(), 0), QPoint(mLeftHandMenu->width(), 0));
     } else {
         mSettingsPage->pushIn(QPoint(width(), 0), QPoint(0u, 0u));
-        mGreyOut->greyOut(false);
-        mLeftHandMenu->pushOut();
     }
 }
 
@@ -1008,7 +961,7 @@ void MainWindow::pushOutSettingsPage() {
 
     if ((mMainViewport->currentPage() == EPage::colorPage
          || mMainViewport->currentPage() == EPage::palettePage)
-        && mData->lights().empty()) {
+        && mData->lights().empty() && !mLeftHandMenu->isIn()) {
         mTopMenu->pushInTapToSelectButton();
     }
 

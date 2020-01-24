@@ -8,31 +8,6 @@
 #include "colorschemecircles.h"
 #include "swatchvectorwidget.h"
 
-/*!
- * \brief The EMultiColorPickerMode enum contains
- * all possible layouts for the color picker.
- * By default, it uses eStandardLayout.
- */
-enum class EMultiColorPickerMode {
-    /*!
-     * RGB wheel
-     */
-    RGB,
-    /*!
-     * HSV wheel
-     */
-    HSV,
-    /*!
-     * The color wheel is changed to shades of white.
-     * Can choose between the a blue-ish white or an
-     * orange-ish white and everything in between.
-     * Top slider provides the ability to choose the
-     * color via slider, second slider allows you
-     * to adjust brightness.
-     */
-    ambient
-};
-
 
 /*!
  * \copyright
@@ -51,16 +26,6 @@ public:
 
     /// @copydoc ColorPicker::enable(bool,EColorPickerType)
     void enable(bool shouldEnable, EColorPickerType bestType) override;
-
-    /*!
-     * \brief changeMode sets the layout using the available layout modes.
-     * \param mode the mode you want to use.
-     * \param brightness the brightness of the app globally
-     */
-    void changeMode(EMultiColorPickerMode mode, std::uint32_t brightness);
-
-    /// getter for current mode of colorpicker
-    EMultiColorPickerMode mode() const noexcept { return mCurrentMode; }
 
     /*!
      * \brief updateColorCount update the count of the colors selected
@@ -82,8 +47,22 @@ public:
      */
     void updateColorStates(const std::vector<QColor>& colorSchemes, uint32_t brightness);
 
+    /// current scheme for the multi color picker
+    EColorSchemeType currentScheme() { return mColorSchemeChooser->currentScheme(); }
+
     /// programmatically resize
     void resize();
+
+    /// getter for currently selected light
+    std::uint32_t selectedLight() { return mCircleIndex; }
+
+signals:
+
+    /// selected light changed.
+    void selectionChanged(std::uint32_t index, QColor color);
+
+    /// scheme changed.
+    void schemeUpdated(EColorSchemeType scheme);
 
 protected:
     /*!
@@ -129,6 +108,9 @@ private:
     /// maxmimum number of selectable lights
     std::size_t mMaxCount;
 
+    /// brightness of the wheel
+    std::uint32_t mBrightness;
+
     /*!
      * \brief mColorSchemeCircles top layout, overlays circles on the color wheel for color
      * selection
@@ -142,11 +124,6 @@ private:
 
     /// index of circle that is currently clicked and being dragged
     std::uint32_t mCircleIndex;
-
-    /*!
-     * \brief mCurrentMode The current mode of the color picker.
-     */
-    EMultiColorPickerMode mCurrentMode;
 };
 
 #endif // MULTICOLORPICKER_H

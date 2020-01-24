@@ -115,19 +115,13 @@ void ListLightWidget::paintEvent(QPaintEvent*) {
     } else {
         y = height() - iconRegion().height();
     }
+
     if (mIsReachable) {
         QRect rect;
         if (mType == cor::EWidgetType::full) {
             rect = QRect(x, y, width() / 2, int(height() * 0.6f / 2));
         } else {
             rect = QRect(x, y, side, side);
-        }
-
-        if (mIconPixmap.size() != rect.size()) {
-            mIconPixmap = mIconPixmap.scaled(rect.width(),
-                                             rect.height(),
-                                             Qt::IgnoreAspectRatio,
-                                             Qt::FastTransformation);
         }
 
         if (!mState.isOn()) {
@@ -155,9 +149,21 @@ void ListLightWidget::paintEvent(QPaintEvent*) {
         }
 
         // draw the pixmap stretched to teh width provided
-        QBrush iconBrush(mIconPixmap);
-        painter.setBrush(iconBrush);
-        painter.drawRect(rect);
+        if (mState.isOn()) {
+            if (mIconPixmap.size() != rect.size()) {
+                mIconPixmap = mIconPixmap.scaled(rect.width(),
+                                                 rect.height(),
+                                                 Qt::IgnoreAspectRatio,
+                                                 Qt::FastTransformation);
+            }
+            QBrush iconBrush(mIconPixmap);
+            painter.setBrush(iconBrush);
+            painter.drawRect(rect);
+        } else {
+            QBrush blackBrush(QColor(0, 0, 0));
+            painter.setBrush(blackBrush);
+            painter.drawRect(rect);
+        }
     } else {
         painter.setOpacity(0.5);
         // draw a quesiton mark in this region

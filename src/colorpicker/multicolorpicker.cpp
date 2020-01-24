@@ -14,6 +14,7 @@ MultiColorPicker::MultiColorPicker(QWidget* parent)
     : ColorPicker(parent),
       mCount{0},
       mMaxCount{6},
+      mBrightness{50},
       mCircleIndex{0} {
     mColorSchemeChooser = new ColorSchemeChooser(this);
     mColorSchemeChooser->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -26,39 +27,35 @@ MultiColorPicker::MultiColorPicker(QWidget* parent)
     mColorSchemeCircles->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     mColorWheel->changeType(EWheelType::HS);
+    mColorSchemeCircles->setWhiteLine(false);
+    mColorSchemeCircles->transparentCircles(true);
     enable(true, EColorPickerType::color);
 }
 
-void MultiColorPicker::changeMode(EMultiColorPickerMode mode, std::uint32_t brightness) {
-    if (mode != mCurrentMode) {
-        // reset all flags
-        mCurrentMode = mode;
-
-        //---------------------
-        // Add new bottom Layout
-        //---------------------
-
-        // update the bottom layout
-        if (mCurrentMode == EMultiColorPickerMode::RGB) {
-            mColorWheel->changeType(EWheelType::RGB);
-            mColorWheel->updateBrightness(100);
-            mColorSchemeCircles->setWhiteLine(true);
-        } else if (mCurrentMode == EMultiColorPickerMode::HSV) {
-            mColorWheel->changeType(EWheelType::HS);
-            mColorWheel->updateBrightness(brightness);
-            mColorSchemeCircles->setWhiteLine(false);
-        }
-
-        mColorSchemeCircles->transparentCircles(true);
-        enable(true, mBestPossibleType);
-        resize();
-        update();
-    }
-}
 
 void MultiColorPicker::updateBrightness(std::uint32_t brightness) {
-    if (mCurrentMode == EMultiColorPickerMode::HSV) {
-        mColorWheel->updateBrightness(brightness);
+    mColorWheel->updateBrightness(brightness);
+    mBrightness = brightness;
+    if (mColorSchemeChooser->currentScheme() == EColorSchemeType::custom) {
+        updateSchemeColors(mCircleIndex, mScheme[mCircleIndex]);
+        auto colorCopy = mScheme[mCircleIndex];
+        auto newBrightness = 0.5 + mBrightness / 100.0 / 2.0;
+        colorCopy.setHsvF(colorCopy.hueF(), colorCopy.saturationF(), newBrightness);
+        auto schemeCopy = mScheme;
+        schemeCopy[mCircleIndex] = colorCopy;
+        mColorSchemeCircles->updateColorScheme(schemeCopy);
+    } else {
+        auto schemeCopy = mScheme;
+        auto newBrightness = 0.5 + mBrightness / 100.0 / 2.0;
+        for (std::size_t i = 0u; i < mColorSchemeCircles->circles().size(); ++i) {
+            auto colorCopy = mScheme[i];
+            colorCopy.setHsvF(colorCopy.hueF(), colorCopy.saturationF(), newBrightness);
+            schemeCopy[i] = colorCopy;
+            auto actualColor = mScheme[i];
+            actualColor.setHsvF(actualColor.hueF(), actualColor.saturationF(), mBrightness / 100.0);
+            mScheme[i] = actualColor;
+        }
+        mColorSchemeCircles->updateColorScheme(schemeCopy);
     }
 }
 
@@ -105,6 +102,7 @@ void MultiColorPicker::updateColorStates(const std::vector<QColor>& colorSchemes
     } else {
         newScheme = colorSchemes;
     }
+
     mScheme = newScheme;
     mColorSchemeCircles->updateColorScheme(newScheme);
 }
@@ -112,10 +110,10 @@ void MultiColorPicker::updateColorStates(const std::vector<QColor>& colorSchemes
 
 void MultiColorPicker::changedScheme(EColorSchemeType key) {
     mColorSchemeCircles->changeColorSchemeType(key);
+    emit schemeUpdated(key);
 }
 
 void MultiColorPicker::updateColorCount(std::size_t count) {
-    update();
     mCount = count;
     mColorSchemeChooser->enableButton(EColorSchemeType::custom, count > 0);
     if (count > mMaxCount) {
@@ -135,22 +133,14 @@ void MultiColorPicker::updateColorCount(std::size_t count) {
     }
 
     mColorSchemeChooser->adjustSelection();
+    update();
 }
 
 void MultiColorPicker::updateSchemeColors(std::size_t i, const QColor& newColor) {
-    auto colorCount = mScheme.size();
-    if (colorCount > mMaxCount) {
-        colorCount = mMaxCount;
-    }
-    if (i > colorCount) {
-        return;
-    }
-
-    for (auto x = i; x < mScheme.size(); x += colorCount) {
-        mScheme[x] = newColor;
-    }
-
-    emit colorsUpdate(mScheme);
+    auto color = newColor;
+    color.setHsvF(color.hueF(), color.saturationF(), mBrightness / 100.0);
+    mScheme[i] = color;
+    emit selectionChanged(i, color);
 }
 
 //----------
@@ -161,6 +151,14 @@ void MultiColorPicker::mousePressEvent(QMouseEvent* event) {
     auto positionResult = mColorSchemeCircles->positionIsUnderCircle(event->pos());
     if (positionResult != -1) {
         mCircleIndex = std::uint32_t(positionResult);
+        auto color = mScheme[mCircleIndex];
+        // in custom case, change the wheel based off of the selected light
+        if (mColorSchemeChooser->currentScheme() == EColorSchemeType::custom) {
+            // generate new brightness based off new color
+            mBrightness = color.valueF() * 100.0;
+            mColorWheel->updateBrightness(mBrightness);
+            emit selectionChanged(mCircleIndex, color);
+        }
     }
 }
 
@@ -170,8 +168,15 @@ void MultiColorPicker::mouseMoveEvent(QMouseEvent* event) {
     auto colorScheme = mColorSchemeCircles->moveStandardCircle(mCircleIndex, event->pos());
     if (!colorScheme.empty()) {
         for (std::size_t i = 0u; i < mColorSchemeCircles->circles().size(); ++i) {
-            updateSchemeColors(i, colorScheme[i]);
+            if (mColorSchemeChooser->currentScheme() == EColorSchemeType::custom) {
+                if (i == mCircleIndex) {
+                    updateSchemeColors(i, colorScheme[i]);
+                }
+            } else {
+                updateSchemeColors(i, colorScheme[i]);
+            }
         }
+        emit schemeUpdate(mScheme, mCircleIndex);
     }
 }
 

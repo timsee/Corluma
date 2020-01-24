@@ -20,7 +20,7 @@
 #include "routinebuttonswidget.h"
 
 /// mode of the page
-enum class EGroupMode { arduinoPresets, huePresets, RGB, HSV };
+enum class EGroupMode { arduinoPresets, huePresets, HSV };
 
 /*!
  * \copyright
@@ -77,6 +77,9 @@ public:
     /// true if the routine widget is open, false otherwise
     bool routineWidgetIsOpen() { return mMultiRoutineWidget->isOpen(); }
 
+    /// getter for color picker
+    MultiColorPicker* colorPicker() { return mColorPicker; }
+
 signals:
 
     /// the speed bar has an update.
@@ -85,9 +88,6 @@ signals:
     /// a button was pressed, signaling a routine change.
     void routineUpdate(cor::LightState);
 
-    /// sent out whenever the color scheme is changed
-    void schemeUpdate(std::vector<QColor>);
-
 public slots:
 
     /*!
@@ -95,12 +95,6 @@ public slots:
      * this slot whenever they are clicked.
      */
     void multiButtonClicked(cor::LightState);
-
-    /*!
-     * \brief colorsChanged multiple colors have changed and should be sent to the ColorPicker as a
-     * color scheme
-     */
-    void colorsChanged(const std::vector<QColor>&);
 
 private slots:
     /*!

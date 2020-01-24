@@ -74,12 +74,6 @@ public:
 
 signals:
 
-    /*!
-     * \brief brightnessChanged signaled whenever the brightness is changed from any color wheel
-     * type that supports it.
-     */
-    void brightnessChanged(std::uint32_t);
-
     /// sent out whenever a routine update is triggered
     void routineUpdate(cor::LightState);
 
@@ -110,14 +104,6 @@ private slots:
      */
     void ambientUpdateReceived(std::uint32_t, std::uint32_t);
 
-    /*!
-     * \brief brightnessUpdate handles whenever a color picker updates brightness, forwards the
-     * signal.
-     *
-     * \param brightness new brightness for the selected lights.
-     */
-    void brightnessUpdate(std::uint32_t brightness) { emit brightnessChanged(brightness); }
-
 private:
     /*!
      * \brief setupButtons sets up the routine buttons.
@@ -139,9 +125,6 @@ private:
 
     /// stores last value for the color
     QColor mColor;
-
-    /// stores the last value for the brightness
-    std::uint32_t mBrightness;
 
     /// best possible type of color picker allowed by selected lights
     EColorPickerType mBestType;

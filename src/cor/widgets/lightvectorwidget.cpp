@@ -10,13 +10,16 @@
 
 namespace cor {
 
-LightVectorWidget::LightVectorWidget(int width, int height, bool fillFromLeft, QWidget* parent)
-    : QWidget(parent) {
-    mWidth = width;
-    mHeight = height;
-    mMaximumSize = width * height;
-    mFillFromLeft = fillFromLeft;
-
+LightVectorWidget::LightVectorWidget(std::uint32_t width,
+                                     std::uint32_t height,
+                                     bool fillFromLeft,
+                                     QWidget* parent)
+    : QWidget(parent),
+      mFillFromLeft{fillFromLeft},
+      mHideOffLights{false},
+      mMaximumSize{width * height},
+      mWidth{width},
+      mHeight{height} {
     // --------------
     // Setup Layout
     // --------------
@@ -31,17 +34,16 @@ LightVectorWidget::LightVectorWidget(int width, int height, bool fillFromLeft, Q
 
     mArrayColorsButtons = std::vector<cor::Button*>(std::uint32_t(mMaximumSize), nullptr);
     mArrayLabels = std::vector<QLabel*>(std::uint32_t(mMaximumSize), nullptr);
-    int i = 0;
-    for (int h = 0; h < mHeight; ++h) {
-        for (int w = 0; w < mWidth; ++w) {
+    std::uint32_t i = 0;
+    for (std::uint32_t h = 0; h < mHeight; ++h) {
+        for (std::uint32_t w = 0; w < mWidth; ++w) {
             QString iString(i);
             cor::LightState state;
             state.routine(ERoutine::singleSolid);
             state.color(QColor(0, 0, 0));
-            mArrayColorsButtons[std::size_t(i)] = new cor::Button(this, state);
-            mArrayColorsButtons[std::size_t(i)]->setLabelMode(true);
-            mArrayColorsButtons[std::size_t(i)]->setSizePolicy(QSizePolicy::Fixed,
-                                                               QSizePolicy::Fixed);
+            mArrayColorsButtons[i] = new cor::Button(this, state);
+            mArrayColorsButtons[i]->setLabelMode(true);
+            mArrayColorsButtons[i]->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
             connect(mArrayColorsButtons[std::size_t(i)],
                     SIGNAL(clicked()),
                     this,
@@ -49,44 +51,45 @@ LightVectorWidget::LightVectorWidget(int width, int height, bool fillFromLeft, Q
 
             QSizePolicy sizePolicy = mArrayColorsButtons[std::size_t(i)]->sizePolicy();
             sizePolicy.setRetainSizeWhenHidden(true);
-            mArrayColorsButtons[std::size_t(i)]->setSizePolicy(sizePolicy);
-            mArrayColorsButtons[std::size_t(i)]->setVisible(false);
-            mLayout->addWidget(mArrayColorsButtons[std::size_t(i)], h, w);
+            mArrayColorsButtons[i]->setSizePolicy(sizePolicy);
+            mArrayColorsButtons[i]->setVisible(false);
+            mLayout->addWidget(mArrayColorsButtons[i], int(h), int(w));
             ++i;
         }
     }
     setLayout(mLayout);
 }
 
-void LightVectorWidget::updateDevices(const std::vector<cor::Light>& lights) {
+void LightVectorWidget::updateLights(const std::vector<cor::Light>& lights) {
     if (mFillFromLeft) {
-        int i = 0;
+        std::uint32_t i = 0;
         for (const auto& light : lights) {
             auto state = light.state();
-            bool skip = mHideOffDevices && !state.isOn();
-            if (i < mMaximumSize && !skip) {
-                mArrayColorsButtons[std::uint32_t(i)]->updateRoutine(state);
-                mArrayColorsButtons[std::uint32_t(i)]->setVisible(true);
+            if (i < mMaximumSize) {
+                if (state.isOn() || !mHideOffLights) {
+                    mArrayColorsButtons[i]->updateRoutine(state);
+                    mArrayColorsButtons[i]->setVisible(true);
+                    ++i;
+                }
             }
-            ++i;
         }
         for (; i < mMaximumSize; ++i) {
-            mArrayColorsButtons[std::uint32_t(i)]->setVisible(false);
+            mArrayColorsButtons[i]->setVisible(false);
         }
     } else {
-        int i = mMaximumSize - 1;
+        std::uint32_t i = mMaximumSize - 1;
         for (const auto& light : lights) {
             auto state = light.state();
-
-            bool skip = mHideOffDevices && !state.isOn();
-            if (i > 0 && !skip) {
-                mArrayColorsButtons[std::uint32_t(i)]->updateRoutine(state);
-                mArrayColorsButtons[std::uint32_t(i)]->setVisible(true);
+            if (i > 0) {
+                if (state.isOn() || !mHideOffLights) {
+                    mArrayColorsButtons[i]->updateRoutine(state);
+                    mArrayColorsButtons[i]->setVisible(true);
+                    --i;
+                }
             }
-            --i;
         }
         for (; i > 0; --i) {
-            mArrayColorsButtons[std::uint32_t(i)]->setVisible(false);
+            mArrayColorsButtons[i]->setVisible(false);
         }
     }
 }
@@ -112,7 +115,7 @@ void LightVectorWidget::enableButtonInteraction(bool enable) {
 }
 
 void LightVectorWidget::resizeEvent(QResizeEvent*) {
-    const QSize widgetSize(height() / mHeight, height() / mHeight);
+    const QSize widgetSize(height() / int(mHeight), height() / int(mHeight));
     for (auto widget : mArrayColorsButtons) {
         widget->setFixedSize(widgetSize);
     }

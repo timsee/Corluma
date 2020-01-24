@@ -273,12 +273,10 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                     light.isReachable(true);
 
                                     double brightness = double(intVector[x + 8]) / 100.0;
-                                    auto red = int(intVector[x + 3] * brightness);
-                                    auto green = int(intVector[x + 4] * brightness);
-                                    auto blue = int(intVector[x + 5] * brightness);
-                                    QColor color(red, green, blue);
-                                    color.setHsvF(color.hueF(), color.saturationF(), brightness);
-                                    state.color(color);
+                                    auto red = int(intVector[x + 3]);
+                                    auto green = int(intVector[x + 4]);
+                                    auto blue = int(intVector[x + 5]);
+                                    state.color(QColor(red, green, blue));
                                     state.routine(ERoutine(intVector[x + 6]));
                                     auto palette = EPalette(intVector[x + 7]);
                                     if (palette == EPalette::custom) {

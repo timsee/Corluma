@@ -438,7 +438,7 @@ inline QString paletteToString(EPalette palette) {
         case EPalette::pinkGreen:
             return "PinkGreen";
         case EPalette::redWhiteBlue:
-            return "RedWhiteBlue";
+            return "RWB";
         case EPalette::RGB:
             return "RGB";
         case EPalette::CMY:
@@ -478,7 +478,7 @@ inline EPalette stringToPalette(QString palette) {
         return EPalette::rose;
     } else if (palette == "PinkGreen") {
         return EPalette::pinkGreen;
-    } else if (palette == "RedWhiteBlue") {
+    } else if (palette == "RWB") {
         return EPalette::redWhiteBlue;
     } else if (palette == "RGB") {
         return EPalette::RGB;

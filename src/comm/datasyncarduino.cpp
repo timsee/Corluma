@@ -264,14 +264,6 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
                 routineObject["hue"] = dataState.color().hueF();
                 routineObject["sat"] = dataState.color().saturationF();
                 routineObject["bri"] = dataState.color().valueF();
-                if (cor::brightnessDifference(float(commState.color().valueF()),
-                                              float(dataState.color().valueF()))
-                    > 0.01f) {
-                    QString message =
-                        mParser->brightnessPacket(arduCorLight.index(),
-                                                  int(dataState.color().valueF() * 100.0));
-                    appendToPacket(packet, message, controller.maxPacketSize());
-                }
             } else {
                 routineObject["palette"] = dataState.palette().JSON();
 

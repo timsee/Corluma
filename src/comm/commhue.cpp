@@ -443,7 +443,7 @@ void CommHue::handleSuccessPacket(const hue::Bridge& bridge,
                     }
                 }
             } else {
-                qDebug() << " searching for new devices success packet";
+                qDebug() << " searching for new lights success packet" << value;
             }
         }
     }

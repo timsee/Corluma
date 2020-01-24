@@ -138,29 +138,11 @@ public slots:
     /// getter for page
     EPage currentPage() { return mMainViewport->currentPage(); }
 
-    /// routine changed from any page
-    void routineChanged(cor::LightState routine);
-
-    /// scheme changed from colorpage
-    void schemeChanged(const std::vector<QColor>&);
-
     /// mood changed from moodpage
     void moodChanged(std::uint64_t mood);
 
     /// protocolsettings page changed from GlobalSettingsWidget
     void protocolSettingsChanged(EProtocolType, bool);
-
-    /// timeout changed from timeout change
-    void timeoutChanged(int);
-
-    /// timeout enabled or disabled
-    void timeoutEnabledChanged(bool);
-
-    /// speed changed from any page
-    void speedChanged(int);
-
-    /// light detected as deleted
-    void deletedLight(const QString& uniqueID);
 
     /// called when a mood is selected
     void moodSelected(std::uint64_t);

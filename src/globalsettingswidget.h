@@ -59,12 +59,6 @@ signals:
     /// emitted when a protocol is turned off and on.
     void protocolSettingsUpdate(EProtocolType, bool);
 
-    /// emitted when the timeout value is updateded
-    void timeoutUpdate(int);
-
-    /// emitted when timeout is enabled/disabled
-    void timeoutEnabled(bool);
-
 public slots:
 
     /*!

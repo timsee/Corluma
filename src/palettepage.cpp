@@ -29,11 +29,6 @@ PalettePage::PalettePage(QWidget* parent)
     mColorPicker = new MultiColorPicker(this);
     mColorPicker->setVisible(false);
 
-    connect(mColorPicker,
-            SIGNAL(colorsUpdate(std::vector<QColor>)),
-            this,
-            SLOT(colorsChanged(std::vector<QColor>)));
-
     /// fill with junk data for this case
     mMultiRoutineWidget =
         new RoutineButtonsWidget(EWidgetGroup::multiRoutines, cor::defaultCustomColors(), this);
@@ -83,19 +78,19 @@ void PalettePage::speedChanged(int newSpeed) {
 }
 
 void PalettePage::updateBrightness(std::uint32_t brightness) {
-    mBrightness = brightness;
-    if (mMode == EGroupMode::RGB || mMode == EGroupMode::HSV) {
+    if (mMode == EGroupMode::HSV) {
+        auto color = mColorScheme[mColorPicker->selectedLight()];
+        color.setHsvF(color.hueF(), color.saturationF(), color.valueF() / 100.0);
+        mColorScheme[mColorPicker->selectedLight()] = color;
         mColorPicker->updateBrightness(brightness);
+    } else {
+        mBrightness = brightness;
     }
 }
 
 // ----------------------------
 // Protected
 // ----------------------------
-
-void PalettePage::colorsChanged(const std::vector<QColor>& colors) {
-    emit schemeUpdate(colors);
-}
 
 
 void PalettePage::show(std::size_t count,
@@ -113,11 +108,20 @@ void PalettePage::show(std::size_t count,
     } else if (mMode == EGroupMode::arduinoPresets && !(hasArduinoDevices || hasNanoleafDevices)) {
         setMode(EGroupMode::huePresets);
     }
+    if (count > 0) {
+        updateBrightness(brightness);
+    }
 }
 
 void PalettePage::newRoutineSelected(cor::LightState state) {
-    Palette palette(paletteToString(EPalette::custom), mColorScheme, mBrightness);
-    state.palette(palette);
+    if (mode() == EGroupMode::HSV) {
+        /// always assume full brightness when working with these palettes
+        Palette palette(paletteToString(EPalette::custom), mColorScheme, 100u);
+        state.palette(palette);
+    } else {
+        Palette palette(paletteToString(EPalette::custom), mColorScheme, mBrightness);
+        state.palette(palette);
+    }
     state.isOn(true);
     state.speed(125);
 
@@ -138,7 +142,6 @@ void PalettePage::setMode(EGroupMode mode) {
             case EGroupMode::huePresets:
                 mHuePaletteScrollArea->setVisible(true);
                 break;
-            case EGroupMode::RGB:
             case EGroupMode::HSV:
                 mColorPicker->setVisible(true);
                 break;
@@ -186,15 +189,7 @@ void PalettePage::lightCountChanged(std::size_t count) {
             mArduinoPaletteScrollArea->setEnabled(true);
             mHuePaletteScrollArea->setEnabled(true);
         }
-    } else if (mMode == EGroupMode::RGB) {
-        mColorPicker->changeMode(EMultiColorPickerMode::RGB, 100);
-        if (count == 0) {
-            mColorPicker->enable(false, EColorPickerType::color);
-        } else {
-            mColorPicker->enable(true, EColorPickerType::color);
-        }
     } else if (mMode == EGroupMode::HSV) {
-        mColorPicker->changeMode(EMultiColorPickerMode::HSV, 100);
         if (count == 0) {
             mColorPicker->enable(false, EColorPickerType::color);
         } else {

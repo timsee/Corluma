@@ -663,4 +663,13 @@ ___
 - Fixed msicellaneous bugs.
 
 
+### **v0.17.7**
+#### The Brightness Update
+- Simplified how brightness is handled across UI widgets and backend code.
+- Moved brightness and on/off switch out of `TopMenu` and into `GlobalBrightnessWidget`.
+- Added a `SingleLightBrightnessWidget` which replaces the `GlobalBrightnessWidget` in certain cases.
+- Fixed UI issues on small screens such as the iPod Touch.
+- Fixed discovery issue with Nanoleafs.
+- Fixed bugs in the `cor::LightVectorWidget`.
+- Fixed miscellaneous bugs.
 

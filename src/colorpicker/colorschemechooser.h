@@ -26,6 +26,9 @@ public:
     /// adjust selection of schemes, unselecting and selecting as required.
     void adjustSelection();
 
+    /// current scheme selected by the chooser
+    EColorSchemeType currentScheme() const noexcept { return mCurrentKey; }
+
 signals:
 
     /// emits when a scheme is changed

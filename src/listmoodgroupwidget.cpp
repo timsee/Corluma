@@ -29,7 +29,13 @@ ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
 
 void ListMoodGroupWidget::updateMoods(const std::vector<cor::Mood>& moods, bool removeIfNotFound) {
     std::vector<bool> foundWidgets(moods.size(), false);
-    for (const auto& mood : moods) {
+    // sort the moods by name
+    auto sortedMoods = moods;
+    auto lambda = [](const cor::Mood& a, const cor::Mood& b) -> bool {
+        return a.name() < b.name();
+    };
+    std::sort(sortedMoods.begin(), sortedMoods.end(), lambda);
+    for (const auto& mood : sortedMoods) {
         bool foundMood = false;
         uint32_t x = 0;
         for (const auto& existingWidget : mListLayout.widgets()) {

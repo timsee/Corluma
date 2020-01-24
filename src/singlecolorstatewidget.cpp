@@ -9,6 +9,7 @@
 SingleColorStateWidget::SingleColorStateWidget(QWidget* parent) : QWidget(parent), mIsIn{false} {
     mState.routine(ERoutine::singleSolid);
     mState.color(QColor(0, 0, 0));
+    mState.isOn(true);
     mButton = new cor::Button(this, mState);
     mButton->setLabelMode(true);
     mButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);

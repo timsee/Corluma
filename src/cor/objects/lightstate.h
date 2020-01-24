@@ -23,7 +23,7 @@ public:
     LightState()
         : mIsOn{false},
           mRoutine{ERoutine::singleSolid},
-          mColor(255, 255, 255),
+          mColor(0, 0, 0),
           mPalette("", std::vector<QColor>(1, QColor(0, 0, 0)), 50),
           mCustomPalette(paletteToString(EPalette::custom), cor::defaultCustomColors(), 50),
           mCustomCount{5},

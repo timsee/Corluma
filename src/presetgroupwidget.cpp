@@ -12,7 +12,6 @@
 PresetGroupWidget::PresetGroupWidget(const QString& name,
                                      EPalette palette,
                                      EPresetWidgetMode mode,
-                                     int fontSize,
                                      QWidget* parent)
     : QWidget(parent) {
     mMode = mode;
@@ -20,11 +19,7 @@ PresetGroupWidget::PresetGroupWidget(const QString& name,
 
     mLabel = new QLabel(this);
     mLabel->setWordWrap(true);
-    auto font = mLabel->font();
-    font.setPointSize(fontSize);
-    mLabel->setFont(font);
     mLabel->setText(name);
-
 
     PresetPalettes palettes;
     mLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -37,7 +32,7 @@ PresetGroupWidget::PresetGroupWidget(const QString& name,
         mButtons = std::vector<cor::Button*>(std::size_t(buttonCount), nullptr);
         mLayout->addWidget(mLabel, 0, 0, 1, buttonCount + 1);
 
-        uint32_t index = 0;
+        std::uint32_t index = 0;
         for (int routine = int(cor::ERoutineSingleColorEnd) + 1; routine < int(ERoutine::MAX);
              routine++) {
             state.routine(ERoutine(routine));
@@ -74,7 +69,7 @@ PresetGroupWidget::PresetGroupWidget(const QString& name,
 
 void PresetGroupWidget::setChecked(ERoutine routine, bool isChecked) {
     if (mMode == EPresetWidgetMode::arduino) {
-        uint32_t index = std::uint32_t(routine) - std::uint32_t(cor::ERoutineSingleColorEnd) - 1;
+        std::uint32_t index = std::uint32_t(routine) - std::uint32_t(cor::ERoutineSingleColorEnd) - 1;
         mButtons[index]->setChecked(isChecked);
         if (isChecked) {
             mButtons[index]->setStyleSheet(kCheckedStyleSheet);

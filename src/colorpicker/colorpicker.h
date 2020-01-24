@@ -87,9 +87,9 @@ signals:
     void brightnessUpdate(std::uint32_t);
 
     /*!
-     * \brief colorsUpdate update to a full color scheme
+     * \brief schemeUpdate update to a full color scheme
      */
-    void colorsUpdate(std::vector<QColor>);
+    void schemeUpdate(std::vector<QColor>, std::uint32_t);
 
 protected slots:
 

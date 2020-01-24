@@ -1,7 +1,6 @@
 #ifndef TOPMENU_H
 #define TOPMENU_H
 
-#include <QGridLayout>
 #include <QPushButton>
 #include <QWidget>
 
@@ -9,17 +8,15 @@
 #include "comm/commlayer.h"
 #include "cor/lightlist.h"
 #include "cor/objects/page.h"
-#include "cor/presetpalettes.h"
 #include "cor/widgets/button.h"
-#include "cor/widgets/slider.h"
-#include "cor/widgets/switch.h"
 #include "floatinglayout.h"
+#include "globalbrightnesswidget.h"
 #include "groupdata.h"
-#include "icondata.h"
 #include "moodpage.h"
 #include "multicolorstatewidget.h"
 #include "palettepage.h"
 #include "selectlightsbutton.h"
+#include "singlelightbrightnesswidget.h"
 
 /*!
  * \copyright
@@ -72,14 +69,8 @@ public:
     /// parts visible
     void showMenu();
 
-    /*!
-     * \brief updateBrightnessSlider update the brightness slider at the top of the mnu based on the
-     * current light data.
-     */
-    void updateBrightnessSlider(std::uint32_t brightness);
-
     /// getter for brightness
-    int brightness() { return mBrightnessSlider->slider()->value(); }
+    int brightness() { return mGlobalBrightness->brightness(); }
 
     /*!
      * \brief highlightButton highlight the button of any of the floating layouts, based on the key
@@ -94,9 +85,6 @@ public:
     /// sets up the colorPage's horizontal floating layout.
     void adjustSingleColorLayout(bool skipTransition);
 
-    /// sets up the PalettePage's horizontal floating layout
-    void adjustMultiColorLayout(bool skipTransition);
-
     /// true to hide menu button, false to display it
     void hideMenuButton(bool shouldHide);
 
@@ -105,18 +93,6 @@ public:
 
     /// pushes out the tap to select lights button
     void pushOutTapToSelectButton();
-
-    /*!
-     * \brief updateRoutine update the routine for the current app state
-     * \param routine routine to update the apps state to
-     */
-    void updateState(const cor::LightState& state);
-
-    /*!
-     * \brief updateScheme update the color scheme chosen by the app
-     * \param colors the colors to use in the new color scheme
-     */
-    void updateScheme(const std::vector<QColor>& colors);
 
     /// true to show single color state widget, false to hide it
     void showSingleColorStateWidget(bool show);
@@ -129,33 +105,36 @@ signals:
     /// sent out whenever a button is pressed. Keys are the names of the buttons, such as "settings"
     void buttonPressed(QString key);
 
-    /// the new value of the brightness slider
-    void brightnessChanged(std::uint32_t newValue);
-
 public slots:
 
     /*!
-     * \brief deviceCountChanged handles the case when the device count changes.
+     * \brief lightCountChanged handles the case when the device count changes.
      */
-    void deviceCountChanged();
+    void lightCountChanged();
 
-    /*!
-     * \brief changedSwitchState Connected to the button in the top left of the GUI at all times.
-     * Toggles between running the current routine at current settings, and off.
-     */
-    void changedSwitchState(bool);
-
-    /*!
-     * \brief brightnessSliderChanged Connected to the the slider at the top, this takeas a value
-     * between 0-100 and sends that value to the lights to control how bright they are.
-     */
-    void brightnessSliderChanged(int);
-
-    /// brightness udpated somewhere else
+    /// brightness is updated, update the widgets
     void brightnessUpdate(std::uint32_t newValue);
 
     /// set if data is in sync or not
     void dataInSync(bool);
+
+    /*!
+     * \brief updateRoutine update the routine for the current app state
+     * \param routine routine to update the apps state to
+     */
+    void updateState(const cor::LightState& state);
+
+    /*!
+     * \brief updateScheme update the color scheme chosen by the app
+     * \param colors the colors to use in the new color scheme
+     */
+    void updateScheme(const std::vector<QColor>& colors, std::uint32_t);
+
+    /// the selection for the multi color picker changed
+    void multiColorSelectionChange(std::uint32_t index, const QColor& color);
+
+    /// color scheme changed
+    void colorSchemeTypeChanged(EColorSchemeType scheme);
 
 protected:
     /// resizes assets in the widget
@@ -185,23 +164,6 @@ private:
     /// the color menu type
     EColorMenuType mColorMenuType;
 
-    /// renders an update for the UI periodically
-    QTimer* mRenderTimer;
-
-    /// preset data for palettes from ArduCor
-    PresetPalettes mPalettes;
-
-    /*!
-     * \brief mBrightnessSlider slider for adjusting the brightness of all selected devices.
-     */
-    cor::Slider* mBrightnessSlider;
-
-    /// palette that shows the currently selected devices
-    cor::LightVectorWidget* mMainPalette;
-
-    /// spacer for row of buttons
-    QWidget* mSpacer;
-
     /// y position where a floating menu can start.
     int mFloatingMenuStart;
 
@@ -213,9 +175,6 @@ private:
 
     /// pointer to group data
     GroupData* mGroups;
-
-    /// hamburger icon in top left for opening the main menu
-    QPushButton* mMenuButton;
 
     /// returns a pointer to the current floating layout.
     FloatingLayout* currentFloatingLayout();
@@ -244,18 +203,15 @@ private:
     /// last key for color page.
     QString mLastColorButtonKey;
 
+    /// handles which brightness slider should be showed
+    void handleBrightnessSliders();
+
     /// pushes the floating layout specified out to the right and off screen.
     void pushRightFloatingLayout(FloatingLayout* layout);
 
     /// pulls the floating layout specified in from the right to the left and places it in the top
     /// right.
     void pullLeftFloatingLayout(FloatingLayout* layout);
-
-    /*!
-     * \brief mShouldGreyOutIcons cahced satte of whether any device is selected. If none
-     * are selected, icons that require a device are all greyed out.
-     */
-    bool mShouldGreyOutIcons;
 
     /// pointer to main window, used for public function calls.
     MainWindow* mMainWindow;
@@ -272,9 +228,6 @@ private:
     /// stored values for last devices to prevent unnecessary renders
     std::vector<cor::Light> mLastDevices;
 
-    /// switch for turning all selected lights on and off.
-    cor::Switch* mOnOffSwitch;
-
     /// desired size for a button.
     QSize mSize;
 
@@ -289,6 +242,27 @@ private:
 
     /// can run into issues on certain screen ratios, so to be safe, compute once and store
     int mPaletteWidth;
+
+    /// stores the current color index for the custom palette picker
+    int mColorIndex;
+
+    /// renders an update for the UI periodically
+    QTimer* mRenderTimer;
+
+    /// palette that shows the currently selected devices
+    cor::LightVectorWidget* mMainPalette;
+
+    /// spacer for row of buttons
+    QWidget* mSpacer;
+
+    /// hamburger icon in top left for opening the main menu
+    QPushButton* mMenuButton;
+
+    /// slider for changing the brightness of all of the lights
+    GlobalBrightnessWidget* mGlobalBrightness;
+
+    /// slider for changing the brightness of a single light
+    SingleLightBrightnessWidget* mSingleLightBrightness;
 };
 
 #endif // TOPMENU_H

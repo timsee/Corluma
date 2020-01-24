@@ -170,6 +170,7 @@ SOURCES += main.cpp \
     comm/syncstatus.cpp \
     editgrouppage.cpp \
     editpage.cpp \
+    globalbrightnesswidget.cpp \
     mainwindow.cpp \
     settingspage.cpp \
     icondata.cpp \
@@ -181,6 +182,7 @@ SOURCES += main.cpp \
     editmoodpage.cpp \
     routinebuttonswidget.cpp \
     colorpage.cpp \
+    singlelightbrightnesswidget.cpp \
     topmenu.cpp \
     settingsbutton.cpp \
     globalsettingswidget.cpp \
@@ -261,6 +263,8 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     cor/dictionary.h \
     editgrouppage.h \
     editpage.h \
+    globalbrightnesswidget.h \
+    singlelightbrightnesswidget.h \
     utils/exception.h \
     comm/hue/lightdiscovery.h \
     comm/hue/bridgediscovery.h \

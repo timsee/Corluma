@@ -86,7 +86,7 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     cor::LightState state;
     state.routine(ERoutine::multiBars);
     state.palette(palettes.palette(EPalette::water));
-    state.speed(100);
+    state.isOn(true);
     mMultiColorButton = new LeftHandButton("Multi Color", EPage::palettePage, state, this, this);
     mMultiColorButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mMultiColorButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
@@ -94,7 +94,7 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     cor::LightState moodState;
     moodState.routine(ERoutine::multiFade);
     moodState.palette(palettes.palette(EPalette::fire));
-    moodState.speed(100);
+    moodState.isOn(true);
     mMoodButton = new LeftHandButton("Moods", EPage::moodPage, moodState, this, this);
     mMoodButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mMoodButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
@@ -189,7 +189,7 @@ void LeftHandMenu::pushOut() {
 void LeftHandMenu::deviceCountChanged() {
     const auto& lights = mComm->commLightsFromVector(mSelectedLights->lights());
 
-    mMainPalette->updateDevices(lights);
+    mMainPalette->updateLights(lights);
 
     // loop for multi color lights
     std::uint32_t multiColorLightCount = 0u;
@@ -278,7 +278,7 @@ void LeftHandMenu::updateLights() {
         // polling the CommLayer for its understanding of these lights
         auto commLights = mComm->commLightsFromVector(mData->lights());
         mLastDevices = commLights;
-        mMainPalette->updateDevices(commLights);
+        mMainPalette->updateLights(commLights);
     }
 }
 

@@ -199,7 +199,9 @@ void ColorSchemeCircles::updateScheme(std::size_t i) {
 }
 
 int ColorSchemeCircles::positionIsUnderCircle(QPointF newPos) {
-    auto radius = int(mWheel->height() * 0.05f);
+    // radius is twice size of actual circle so that close-but-not-quite-correct clicks count to the
+    // circle they are close to.
+    auto radius = int(mWheel->height() * 0.1f);
     const auto& rect = mWheel->rect();
     const auto& wheelRect = mWheel->wheelRect();
 

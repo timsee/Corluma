@@ -24,15 +24,18 @@ class LightVectorWidget : public QWidget {
     Q_OBJECT
 public:
     /// Constructor
-    explicit LightVectorWidget(int width, int height, bool fillFromLeft, QWidget* parent);
+    explicit LightVectorWidget(std::uint32_t width,
+                               std::uint32_t height,
+                               bool fillFromLeft,
+                               QWidget* parent);
     /*!
-     * \brief updateDevices update the devices in the cor::Button to show the exact routine.
+     * \brief updateDevices update the lights in the cor::Button to show the exact routine.
      * \param devices list of devices to display
      */
-    void updateDevices(const std::vector<cor::Light>& devices);
+    void updateLights(const std::vector<cor::Light>& lights);
 
-    /// set whether or not to hide off devices
-    void hideOffDevices(bool shouldHide) { mHideOffDevices = shouldHide; }
+    /// set whether or not to hide off lights
+    void hideOffLights(bool shouldHide) { mHideOffLights = shouldHide; }
 
     /*!
      * \brief enableButtonInteraction true to allow button interaction, false to
@@ -43,7 +46,7 @@ public:
     void enableButtonInteraction(bool enable);
 
     /*!
-     * \brief selectedCount number of selected devices by the ColorGrid
+     * \brief selectedCount number of selected lights by the ColorGrid
      * \return  number of selected devices.
      */
     uint32_t selectedCount();
@@ -79,19 +82,19 @@ private:
     bool mFillFromLeft;
 
     /// hide devices if they are off
-    bool mHideOffDevices = false;
+    bool mHideOffLights;
 
     /*!
      * \brief mMaximumSize size of the multi color array, used to initialize
      *        and access vectors throughout this page.
      */
-    int mMaximumSize;
+    std::uint32_t mMaximumSize;
 
     /// number of columns of palettes
-    int mWidth;
+    std::uint32_t mWidth;
 
     /// number of rows of palettes
-    int mHeight;
+    std::uint32_t mHeight;
 
     /// vector pushbuttons used for the multi layout
     std::vector<cor::Button*> mArrayColorsButtons;

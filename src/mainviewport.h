@@ -60,6 +60,9 @@ private slots:
     /// called whenever the light count changes
     void lightCountChanged();
 
+    /// speed changed from any page
+    void speedChanged(int);
+
 private:
     /*!
      * \brief showMainPage transitions either the color page, group page, or lights page onto the

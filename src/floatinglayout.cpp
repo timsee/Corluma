@@ -111,6 +111,7 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
         cor::LightState state;
         state.routine(ERoutine::singleSolid);
         state.color(QColor(255, 0, 0));
+        state.isOn(true);
 
         bool foundMatch = false;
         if (mNames[i] == "RGB" || mNames[i] == "HSV" || mNames[i] == "Temperature"

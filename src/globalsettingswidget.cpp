@@ -14,7 +14,8 @@
 
 GlobalSettingsWidget::GlobalSettingsWidget(QWidget* parent, AppSettings* appSettings)
     : QWidget(parent),
-      mAppSettings(appSettings), mHideTimeout{false} {
+      mAppSettings(appSettings),
+      mHideTimeout{false} {
     mSpacerPixels = 5;
 
     // set margins as spacer * 2
@@ -98,9 +99,8 @@ void GlobalSettingsWidget::checkCheckBoxes() {
 
 
 void GlobalSettingsWidget::timeoutChanged(int newTimeout) {
-    emit timeoutUpdate(newTimeout);
+    mAppSettings->updateTimeout(newTimeout);
 }
-
 
 
 void GlobalSettingsWidget::checkBoxClicked(EProtocolType type, bool checked) {
@@ -147,7 +147,7 @@ void GlobalSettingsWidget::paintEvent(QPaintEvent*) {
 }
 
 void GlobalSettingsWidget::timeoutCheckboxPressed(bool isChecked) {
-    emit timeoutEnabled(isChecked);
+    mAppSettings->enableTimeout(isChecked);
     mTimeoutWidget->show(isChecked);
     if (isChecked) {
         mTimeoutWidget->changeTimeoutLabel("Timeout Enabled");

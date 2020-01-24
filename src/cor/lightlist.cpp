@@ -226,7 +226,7 @@ std::vector<QColor> LightList::colorScheme() {
         if (count >= max) {
             break;
         }
-        if (state.routine() <= ERoutineSingleColorEnd && state.isOn()) {
+        if (state.routine() <= ERoutineSingleColorEnd) {
             colorScheme.push_back(state.color());
             count++;
         }
@@ -240,7 +240,7 @@ std::vector<QColor> LightList::colorScheme() {
             if (count >= max) {
                 break;
             }
-            if (state.routine() > ERoutineSingleColorEnd && state.isOn()) {
+            if (state.routine() > ERoutineSingleColorEnd) {
                 for (const auto& color : state.palette().colors()) {
                     colorScheme.push_back(color);
                     count++;

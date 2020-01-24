@@ -53,22 +53,27 @@ TopMenu::TopMenu(QWidget* parent,
                  PalettePage* palettePage,
                  ColorPage* colorPage)
     : QWidget(parent),
+      mStartSelectLightsButton{int(cor::applicationSize().height() * 0.1f)},
+      mLastParentSizeColorMenu{0, 0},
+      mColorMenuType{EColorMenuType::none},
+      mFloatingMenuStart{int(cor::applicationSize().height() * 0.1f)},
       mData(data),
       mComm(comm),
       mGroups(groups),
-      mShouldGreyOutIcons{true},
       mMainWindow(mainWindow),
       mPalettePage(palettePage),
-      mColorPage(colorPage) {
-    mLastParentSizeColorMenu = QSize(0u, 0u);
-    QSize size = cor::applicationSize();
-    mSize = QSize(int(size.height() * 0.1f), int(size.height() * 0.1f));
-    mStartSelectLightsButton = mSize.height();
-    mFloatingMenuStart = mSize.height();
-    mColorMenuType = EColorMenuType::none;
-
-
-    mRenderTimer = new QTimer(this);
+      mColorPage(colorPage),
+      mSize{QSize(int(cor::applicationSize().height() * 0.1f),
+                  int(cor::applicationSize().height() * 0.1f))},
+      mColorIndex{0},
+      mRenderTimer{new QTimer(this)},
+      mMainPalette{new cor::LightVectorWidget(6, 2, true, this)},
+      mSpacer{new QWidget(this)},
+      mMenuButton{new QPushButton(this)},
+      mGlobalBrightness{
+          new GlobalBrightnessWidget(mSize, mMainWindow->leftHandMenu()->alwaysOpen(), data, this)},
+      mSingleLightBrightness{
+          new SingleLightBrightnessWidget(mSize, mMainWindow->leftHandMenu()->alwaysOpen(), this)} {
     connect(mRenderTimer, SIGNAL(timeout()), this, SLOT(updateUI()));
     mRenderTimer->start(100);
 
@@ -76,45 +81,35 @@ TopMenu::TopMenu(QWidget* parent,
     // Create Spacer
     //---------------
 
-    mSpacer = new QWidget(this);
     mSpacer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mSpacer->setFixedHeight(mSize.height());
 
     // --------------
     // Setup menu button
     // --------------
-    mMenuButton = new QPushButton(this);
     mMenuButton->setVisible(true);
     connect(mMenuButton, SIGNAL(clicked(bool)), this, SLOT(menuButtonPressed()));
+    mMenuButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     // --------------
     // Setup Brightness Slider
     // --------------
-    // setup the slider that controls the LED's brightness
-    mBrightnessSlider = new cor::Slider(this);
-    mBrightnessSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mBrightnessSlider->slider()->setRange(2, 100);
-    mBrightnessSlider->slider()->setValue(2);
-    mBrightnessSlider->setFixedHeight(mSize.height() / 2);
-    mBrightnessSlider->setHeightPercentage(0.8f);
-    mBrightnessSlider->setColor(QColor(255, 255, 255));
-    mBrightnessSlider->enable(false);
-    connect(mBrightnessSlider, SIGNAL(valueChanged(int)), this, SLOT(brightnessSliderChanged(int)));
+    mGlobalBrightness->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    connect(mGlobalBrightness,
+            SIGNAL(brightnessChanged(std::uint32_t)),
+            this,
+            SLOT(brightnessUpdate(std::uint32_t)));
+
+    mSingleLightBrightness->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    connect(mSingleLightBrightness,
+            SIGNAL(brightnessChanged(std::uint32_t)),
+            this,
+            SLOT(brightnessUpdate(std::uint32_t)));
 
     // --------------
     // Setup Main Palette
     // -------------
-    mMainPalette = new cor::LightVectorWidget(6, 2, true, this);
     mMainPalette->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-    // --------------
-    // Setup on/off switch
-    // --------------
-    mOnOffSwitch = new cor::Switch(this);
-    mOnOffSwitch->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mOnOffSwitch->setFixedSize(QSize(mSize.width(), mSize.height() / 2));
-    connect(mOnOffSwitch, SIGNAL(switchChanged(bool)), this, SLOT(changedSwitchState(bool)));
-    mOnOffSwitch->setSwitchState(ESwitchState::disabled);
 
     std::vector<QString> buttons;
 
@@ -126,7 +121,7 @@ TopMenu::TopMenu(QWidget* parent,
             SIGNAL(buttonPressed(QString)),
             this,
             SLOT(floatingLayoutButtonPressed(QString)));
-    buttons = {QString("HSV"), QString("RGB"), QString("Preset")};
+    buttons = {QString("HSV"), QString("Preset")};
     mPaletteFloatinglayout->setupButtons(buttons, EButtonSize::small);
     mPaletteFloatinglayout->highlightButton("HSV");
     mPaletteFloatinglayout->setVisible(false);
@@ -206,6 +201,30 @@ TopMenu::TopMenu(QWidget* parent,
     mMultiColorStateWidget->setVisible(false);
     showMultiColorStateWidget(false);
 
+    connect(mColorPage,
+            SIGNAL(routineUpdate(cor::LightState)),
+            this,
+            SLOT(updateState(cor::LightState)));
+
+    connect(mPalettePage,
+            SIGNAL(routineUpdate(cor::LightState)),
+            this,
+            SLOT(updateState(cor::LightState)));
+    connect(mPalettePage->colorPicker(),
+            SIGNAL(schemeUpdate(std::vector<QColor>, std::uint32_t)),
+            this,
+            SLOT(updateScheme(std::vector<QColor>, std::uint32_t)));
+
+    connect(mPalettePage->colorPicker(),
+            SIGNAL(selectionChanged(std::uint32_t, QColor)),
+            this,
+            SLOT(multiColorSelectionChange(std::uint32_t, QColor)));
+
+    connect(mPalettePage->colorPicker(),
+            SIGNAL(schemeUpdated(EColorSchemeType)),
+            this,
+            SLOT(colorSchemeTypeChanged(EColorSchemeType)));
+
     mCurrentPage = EPage::colorPage;
     showFloatingLayout(mCurrentPage);
 
@@ -222,45 +241,26 @@ TopMenu::TopMenu(QWidget* parent,
 }
 
 
-void TopMenu::changedSwitchState(bool switchState) {
-    mData->turnOn(switchState);
-    emit buttonPressed("OnOff");
-}
-
-
-void TopMenu::brightnessSliderChanged(int newBrightness) {
-    brightnessUpdate(std::uint32_t(newBrightness));
-}
-
 void TopMenu::brightnessUpdate(std::uint32_t newValue) {
-    mData->updateBrightness(newValue);
-    mData->turnOn(true);
-    // update the top menu bar
-    updateBrightnessSlider(newValue);
-
-    if (newValue != 0 && mOnOffSwitch->switchState() != ESwitchState::on) {
-        mOnOffSwitch->setSwitchState(ESwitchState::on);
-    }
-
     if (mCurrentPage == EPage::colorPage) {
         mColorPage->updateBrightness(newValue);
     }
     if (mCurrentPage == EPage::palettePage) {
         mPalettePage->updateBrightness(newValue);
+        if (mPalettePage->mode() == EGroupMode::HSV) {
+            // update the color scheme color in mData
+            auto scheme = mData->colorScheme();
+            auto color = scheme[mPalettePage->colorPicker()->selectedLight()];
+            color.setHsvF(color.hueF(), color.saturationF(), newValue / 100.0);
+            scheme[mPalettePage->colorPicker()->selectedLight()] = color;
+            mData->updateColorScheme(scheme);
+        }
+        mMultiColorStateWidget->updateState(mData->colorScheme());
     }
-    emit brightnessChanged(newValue);
 }
 
-void TopMenu::updateBrightnessSlider(std::uint32_t brightness) {
-    mBrightnessSlider->setColor(mData->mainColor());
-    if (brightness != mBrightnessSlider->slider()->value()) {
-        mBrightnessSlider->blockSignals(true);
-        mBrightnessSlider->slider()->setValue(brightness);
-        mBrightnessSlider->blockSignals(false);
-    }
-}
-
-void TopMenu::deviceCountChanged() {
+void TopMenu::lightCountChanged() {
+    // handle select lights button
     if (mData->lights().empty() && !mMainWindow->leftHandMenu()->isIn()
         && !mMainWindow->leftHandMenu()->alwaysOpen()) {
         mSelectLightsButton->pushIn(mStartSelectLightsButton);
@@ -268,6 +268,9 @@ void TopMenu::deviceCountChanged() {
         mSelectLightsButton->pushOut(mStartSelectLightsButton);
     }
 
+    handleBrightnessSliders();
+
+    // handle standard cases
     if (mData->lights().empty()) {
         if (mCurrentPage == EPage::colorPage) {
             showSingleColorStateWidget(false);
@@ -280,26 +283,6 @@ void TopMenu::deviceCountChanged() {
             mSelectLightsButton->pushIn(mStartSelectLightsButton);
         }
     }
-    if (mShouldGreyOutIcons && !mData->lights().empty()) {
-        mBrightnessSlider->enable(true);
-
-        if (mData->isOn()) {
-            mOnOffSwitch->setSwitchState(ESwitchState::on);
-        } else {
-            mOnOffSwitch->setSwitchState(ESwitchState::off);
-        }
-
-        updateBrightnessSlider(mData->brightness());
-        mShouldGreyOutIcons = false;
-    }
-
-    if ((!mShouldGreyOutIcons && mData->lights().empty())) {
-        mBrightnessSlider->enable(false);
-        mBrightnessSlider->slider()->setValue(0);
-        mOnOffSwitch->setSwitchState(ESwitchState::disabled);
-
-        mShouldGreyOutIcons = true;
-    }
 
     if (mCurrentPage == EPage::colorPage) {
         adjustSingleColorLayout(false);
@@ -308,7 +291,8 @@ void TopMenu::deviceCountChanged() {
                          std::uint32_t(mData->lights().size()),
                          mComm->bestColorPickerType(mData->lights()));
     } else if (mCurrentPage == EPage::palettePage) {
-        adjustMultiColorLayout(false);
+        showMultiColorStateWidget(!mData->lights().empty());
+        mMultiColorStateWidget->updateState(mData->colorScheme());
         mPalettePage->lightCountChanged(mData->lights().size());
     }
 }
@@ -342,40 +326,20 @@ void TopMenu::resize(int xOffset) {
 
     moveFloatingLayout();
 
-    int yPos = 0;
     int padding = 5;
     int topSpacer = mSize.height() / 8;
+    int yPos = topSpacer;
     mMenuButton->setGeometry(int(mSize.width() * 0.1),
                              int(mSize.height() * 0.025),
                              int(mSize.width() * 0.75f),
                              int(mSize.height() * 0.75f));
     cor::resizeIcon(mMenuButton, ":/images/hamburger_icon.png", 0.7f);
 
-    yPos = topSpacer;
+    mGlobalBrightness->resize();
+    mSingleLightBrightness->resize();
     if (mMainWindow->leftHandMenu()->alwaysOpen()) {
-        mOnOffSwitch->setGeometry(int(mSize.width() * 0.1),
-                                  yPos,
-                                  mSize.width(),
-                                  mSize.height() / 2 - topSpacer);
-
-        mBrightnessSlider->setGeometry(mSize.width() + 5,
-                                       yPos,
-                                       width() - int(mSize.width() * 2),
-                                       mSize.height() / 2 - topSpacer);
-
         mMainPalette->setVisible(false);
-
     } else {
-        mOnOffSwitch->setGeometry(int(mSize.width() * 1.1),
-                                  yPos,
-                                  mSize.width(),
-                                  mSize.height() / 2 - topSpacer);
-
-        mBrightnessSlider->setGeometry(mSize.width() * 2 + 5,
-                                       yPos,
-                                       width() - int(mSize.width() * 2.1),
-                                       mSize.height() / 2 - topSpacer);
-
         mMainPalette->setVisible(true);
     }
 
@@ -385,8 +349,7 @@ void TopMenu::resize(int xOffset) {
 
     mMainPalette->setGeometry(0, yPos, mPaletteWidth, mSize.height() / 2);
     yPos += mMainPalette->height() + padding;
-
-    yPos += mBrightnessSlider->height() + 20;
+    yPos += mGlobalBrightness->height() + 20;
 
     mSelectLightsButton->resize(mStartSelectLightsButton);
 
@@ -403,22 +366,13 @@ void TopMenu::resizeEvent(QResizeEvent*) {
 //--------------------
 
 void TopMenu::floatingLayoutButtonPressed(const QString& button) {
-    if (button == "Discovery") {
-        mMainWindow->pushInDiscovery();
-    } else if (button == "New_Group") {
+    if (button == "New_Group") {
         if (mCurrentPage == EPage::moodPage) {
             mMainWindow->editButtonClicked(true);
         } else {
             mMainWindow->editButtonClicked(false);
         }
         highlightButton("");
-    } else if (button == "Preset_Groups") {
-        if (mData->hasLightWithProtocol(EProtocolType::arduCor)
-            || mData->hasLightWithProtocol(EProtocolType::nanoleaf)) {
-            mPalettePage->setMode(EGroupMode::arduinoPresets);
-        } else {
-            mPalettePage->setMode(EGroupMode::huePresets);
-        }
     } else if (button == "Preset") {
         if (mData->hasLightWithProtocol(EProtocolType::arduCor)
             || mData->hasLightWithProtocol(EProtocolType::nanoleaf)) {
@@ -431,16 +385,11 @@ void TopMenu::floatingLayoutButtonPressed(const QString& button) {
             mLastColorButtonKey = button;
             mColorPage->changePageType(ESingleColorPickerMode::RGB);
         }
-
-        if (mPalettePage->isOpen()) {
-            mPalettePage->setMode(EGroupMode::RGB);
-        }
     } else if (button == "HSV") {
         if (mColorPage->isOpen()) {
             mLastColorButtonKey = button;
             mColorPage->changePageType(ESingleColorPickerMode::HSV);
         }
-
         if (mPalettePage->isOpen()) {
             mPalettePage->setMode(EGroupMode::HSV);
         }
@@ -500,11 +449,13 @@ void TopMenu::showMultiColorStateWidget(bool show) {
     }
 
     QPoint startPoint(width, height);
-    if (show) {
+    if (show && !mData->lights().empty()) {
         mMultiColorStateWidget->setVisible(true);
         mMultiColorStateWidget->pushIn(startPoint);
-        mMultiColorStateWidget->updateSyncStatus(ESyncState::notSynced);
+        mMultiColorStateWidget->updateSyncStatus(ESyncState::synced);
     } else {
+        mMultiColorStateWidget->pushOut(startPoint);
+        mSingleLightBrightness->pushOut();
         mMultiColorStateWidget->pushOut(startPoint);
     }
 }
@@ -568,14 +519,15 @@ void TopMenu::showFloatingLayout(EPage newPage) {
                 break;
             case EPage::palettePage:
                 pullLeftFloatingLayout(mPaletteFloatinglayout);
-                adjustMultiColorLayout(false);
-                showMultiColorStateWidget(false);
+                showMultiColorStateWidget(true);
+                mMultiColorStateWidget->updateState(mData->colorScheme());
                 break;
             default:
                 break;
         }
 
         mCurrentPage = newPage;
+        handleBrightnessSliders();
     }
 }
 
@@ -604,7 +556,7 @@ void TopMenu::moveFloatingLayout() {
     if (mCurrentPage == EPage::colorPage) {
         adjustSingleColorLayout(true);
     } else if (mCurrentPage == EPage::palettePage) {
-        adjustMultiColorLayout(true);
+        showMultiColorStateWidget(true);
     }
     currentFloatingLayout()->move(topRight);
 
@@ -618,7 +570,7 @@ void TopMenu::adjustSingleColorLayout(bool skipTransition) {
 
     // get the size of the parent
     auto parentSize = parentWidget()->size();
-    // get teh desired endpoint
+    // get the desired endpoint
     bool hasMulti = hasArduino || hasNanoLeaf;
     if (!hasMulti && !mData->lights().empty()
         && mComm->bestColorPickerType(mData->lights()) == EColorPickerType::CT) {
@@ -648,39 +600,6 @@ void TopMenu::adjustSingleColorLayout(bool skipTransition) {
         cor::moveWidget(mSingleRoutineFloatingLayout,
                         mSingleRoutineFloatingLayout->pos(),
                         endPoint);
-    }
-}
-
-void TopMenu::adjustMultiColorLayout(bool skipTransition) {
-    bool hasArduino = mData->hasLightWithProtocol(EProtocolType::arduCor);
-    bool hasNanoLeaf = mData->hasLightWithProtocol(EProtocolType::nanoleaf);
-
-    // get the size of the parent
-    auto parentSize = parentWidget()->size();
-    // get the desired endpoint
-    bool hasLights = !mData->lights().empty();
-    QPoint endPoint;
-    if (hasLights && (hasArduino || hasNanoLeaf)) {
-        endPoint = QPoint(parentSize.width() - mMultiRoutineFloatingLayout->width(),
-                          mFloatingMenuStart + mPaletteFloatinglayout->height());
-    } else {
-        if (mPalettePage->routineWidgetIsOpen()) {
-            mMultiRoutineFloatingLayout->highlightButton("");
-            mPalettePage->handleRoutineWidget(false);
-        }
-        endPoint = QPoint(parentSize.width() - mMultiRoutineFloatingLayout->width()
-                              + mMultiRoutineFloatingLayout->height(),
-                          mFloatingMenuStart + mPaletteFloatinglayout->height());
-    }
-
-
-    if (skipTransition) {
-        mMultiRoutineFloatingLayout->setGeometry(endPoint.x(),
-                                                 endPoint.y(),
-                                                 mMultiRoutineFloatingLayout->width(),
-                                                 mMultiRoutineFloatingLayout->height());
-    } else {
-        cor::moveWidget(mMultiRoutineFloatingLayout, mMultiRoutineFloatingLayout->pos(), endPoint);
     }
 }
 
@@ -736,8 +655,7 @@ void TopMenu::updateUI() {
         // get copy of data representation of lights
         auto currentLights = mComm->commLightsFromVector(mData->lights());
         mLastDevices = currentLights;
-
-        mMainPalette->updateDevices(currentLights);
+        mMainPalette->updateLights(currentLights);
     }
 }
 
@@ -768,6 +686,7 @@ void TopMenu::pushOutTapToSelectButton() {
 
 
 void TopMenu::updateState(const cor::LightState& state) {
+    mData->updateState(state);
     if (mCurrentPage == EPage::colorPage) {
         if (!mSingleColorStateWidget->isIn()) {
             showSingleColorStateWidget(true);
@@ -783,27 +702,89 @@ void TopMenu::updateState(const cor::LightState& state) {
         if (!mMultiColorStateWidget->isIn()) {
             showMultiColorStateWidget(true);
         }
-        Palette palette = state.palette();
-        auto colors = palette.colors();
-        auto size = palette.colors().size();
-        const auto kPaletteSize = 6;
-        if (size < kPaletteSize) {
-            colors.resize(kPaletteSize);
-            for (auto i = size; i < kPaletteSize; ++i) {
-                colors[i] = colors[i - size];
-            }
+        mMultiColorStateWidget->updateState(mData->colorScheme());
+    }
+
+    if (mGlobalBrightness->isIn()) {
+        mGlobalBrightness->updateColor(mData->mainColor());
+        // update brightness of the slider only if the wheel isn't HSV
+        bool isHSVWheel =
+            (mCurrentPage == EPage::palettePage && mPalettePage->mode() == EGroupMode::HSV)
+            || (mCurrentPage == EPage::colorPage
+                && mColorPage->pageType() == ESingleColorPickerMode::HSV);
+        if (!isHSVWheel) {
+            mGlobalBrightness->updateBrightness(mData->mainColor().valueF() * 100.0);
         }
-        mMultiColorStateWidget->updateState(colors);
-        updateBrightnessSlider(mBrightnessSlider->slider()->value());
     }
 }
 
-void TopMenu::updateScheme(const std::vector<QColor>& colors) {
+void TopMenu::updateScheme(const std::vector<QColor>& colors, std::uint32_t index) {
+    mData->updateColorScheme(colors);
     if (mCurrentPage == EPage::palettePage) {
         if (!mMultiColorStateWidget->isIn()) {
             showMultiColorStateWidget(true);
         }
         mMultiColorStateWidget->updateState(colors);
+        if (mPalettePage->colorPicker()->currentScheme() == EColorSchemeType::custom) {
+            mSingleLightBrightness->updateColor(colors[index]);
+        }
+    }
+
+    if (mGlobalBrightness->isIn()) {
+        auto color = mData->mainColor();
+        mGlobalBrightness->updateColor(color);
+    }
+}
+
+void TopMenu::multiColorSelectionChange(std::uint32_t index, const QColor& color) {
+    mColorIndex = index;
+    if (mCurrentPage == EPage::palettePage) {
+        if (mPalettePage->colorPicker()->currentScheme() == EColorSchemeType::custom) {
+            mGlobalBrightness->updateColor(mData->mainColor());
+            mSingleLightBrightness->updateColor(color);
+            mSingleLightBrightness->updateBrightness(color.valueF() * 100.0);
+        }
+    }
+}
+
+void TopMenu::colorSchemeTypeChanged(EColorSchemeType scheme) {
+    handleBrightnessSliders();
+}
+
+void TopMenu::handleBrightnessSliders() {
+    if (mData->lights().empty()) {
+        // hide both, its empty
+        mSingleLightBrightness->pushOut();
+        mGlobalBrightness->pushOut();
+    } else {
+        bool updateGlobalBrightness = false;
+        if (mCurrentPage == EPage::palettePage) {
+            if (mPalettePage->mode() == EGroupMode::HSV) {
+                if (mPalettePage->colorPicker()->currentScheme() == EColorSchemeType::custom) {
+                    mGlobalBrightness->pushOut();
+                    if (!mSingleLightBrightness->isIn()) {
+                        auto color = mData->lights().begin()->state().color();
+                        mSingleLightBrightness->updateColor(color);
+                        mSingleLightBrightness->updateBrightness(color.valueF() * 100.0);
+                    }
+                    mSingleLightBrightness->pushIn();
+                } else {
+                    updateGlobalBrightness = true;
+                }
+            } else {
+                updateGlobalBrightness = true;
+            }
+        } else if (mCurrentPage == EPage::colorPage || mCurrentPage == EPage::moodPage) {
+            updateGlobalBrightness = true;
+        }
+
+        if (updateGlobalBrightness) {
+            mGlobalBrightness->pushIn();
+            mGlobalBrightness->lightCountChanged(mData->isOn(),
+                                                 mData->mainColor(),
+                                                 mData->lights().size());
+            mSingleLightBrightness->pushOut();
+        }
     }
 }
 
