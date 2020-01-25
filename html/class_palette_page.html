@@ -60,14 +60,10 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-slots"></a>
 Public Slots</h2></td></tr>
-<tr class="memitem:a2c74981ac85b053dba71413fcb146b32"><td class="memItemLeft" align="right" valign="top"><a id="a2c74981ac85b053dba71413fcb146b32"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#a2c74981ac85b053dba71413fcb146b32">multiButtonClicked</a> (QJsonObject)</td></tr>
-<tr class="memdesc:a2c74981ac85b053dba71413fcb146b32"><td class="mdescLeft">&#160;</td><td class="mdescRight">multiButtonClicked every button setup as a presetButton will signal this slot whenever they are clicked. <br /></td></tr>
-<tr class="separator:a2c74981ac85b053dba71413fcb146b32"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abd348cd9925fb8d6afbf009e3e0de600"><td class="memItemLeft" align="right" valign="top"><a id="abd348cd9925fb8d6afbf009e3e0de600"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#abd348cd9925fb8d6afbf009e3e0de600">colorsChanged</a> (const std::vector&lt; QColor &gt; &amp;)</td></tr>
-<tr class="memdesc:abd348cd9925fb8d6afbf009e3e0de600"><td class="mdescLeft">&#160;</td><td class="mdescRight">colorsChanged multiple colors have changed and should be sent to the <a class="el" href="class_color_picker.html" title="The ColorPicker class is a GUI object designed to give the user ability to choose RGB values in a var...">ColorPicker</a> as a color scheme <br /></td></tr>
-<tr class="separator:abd348cd9925fb8d6afbf009e3e0de600"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f40af75eb231cff1c2b74545b744b5d"><td class="memItemLeft" align="right" valign="top"><a id="a4f40af75eb231cff1c2b74545b744b5d"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#a4f40af75eb231cff1c2b74545b744b5d">multiButtonClicked</a> (cor::LightState)</td></tr>
+<tr class="memdesc:a4f40af75eb231cff1c2b74545b744b5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">multiButtonClicked every button setup as a presetButton will signal this slot whenever they are clicked. <br /></td></tr>
+<tr class="separator:a4f40af75eb231cff1c2b74545b744b5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
@@ -75,14 +71,10 @@ Signals</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#ab9d0d501a8b79e62a6e90bd565788525">speedUpdate</a> (int)</td></tr>
 <tr class="memdesc:ab9d0d501a8b79e62a6e90bd565788525"><td class="mdescLeft">&#160;</td><td class="mdescRight">the speed bar has an update. <br /></td></tr>
 <tr class="separator:ab9d0d501a8b79e62a6e90bd565788525"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f0920f091ff7c70442a4548fe7459ac"><td class="memItemLeft" align="right" valign="top"><a id="a7f0920f091ff7c70442a4548fe7459ac"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#a7f0920f091ff7c70442a4548fe7459ac">routineUpdate</a> (QJsonObject object)</td></tr>
-<tr class="memdesc:a7f0920f091ff7c70442a4548fe7459ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">a button was pressed, signaling a routine change. <br /></td></tr>
-<tr class="separator:a7f0920f091ff7c70442a4548fe7459ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad798101540f6e958cb5f2c08d8ce8d55"><td class="memItemLeft" align="right" valign="top"><a id="ad798101540f6e958cb5f2c08d8ce8d55"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#ad798101540f6e958cb5f2c08d8ce8d55">schemeUpdate</a> (std::vector&lt; QColor &gt;)</td></tr>
-<tr class="memdesc:ad798101540f6e958cb5f2c08d8ce8d55"><td class="mdescLeft">&#160;</td><td class="mdescRight">sent out whenever the color scheme is changed <br /></td></tr>
-<tr class="separator:ad798101540f6e958cb5f2c08d8ce8d55"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66972368ebacb87a3cdffe6a328ceddc"><td class="memItemLeft" align="right" valign="top"><a id="a66972368ebacb87a3cdffe6a328ceddc"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#a66972368ebacb87a3cdffe6a328ceddc">routineUpdate</a> (cor::LightState)</td></tr>
+<tr class="memdesc:a66972368ebacb87a3cdffe6a328ceddc"><td class="mdescLeft">&#160;</td><td class="mdescRight">a button was pressed, signaling a routine change. <br /></td></tr>
+<tr class="separator:a66972368ebacb87a3cdffe6a328ceddc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -123,6 +115,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#a63544baeff7aab95fa5ee9e42f87f861">routineWidgetIsOpen</a> ()</td></tr>
 <tr class="memdesc:a63544baeff7aab95fa5ee9e42f87f861"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if the routine widget is open, false otherwise <br /></td></tr>
 <tr class="separator:a63544baeff7aab95fa5ee9e42f87f861"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a1eb4201c7ff860f837fa27c512f892"><td class="memItemLeft" align="right" valign="top"><a id="a8a1eb4201c7ff860f837fa27c512f892"></a>
+<a class="el" href="class_multi_color_picker.html">MultiColorPicker</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_palette_page.html#a8a1eb4201c7ff860f837fa27c512f892">colorPicker</a> ()</td></tr>
+<tr class="memdesc:a8a1eb4201c7ff860f837fa27c512f892"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for color picker <br /></td></tr>
+<tr class="separator:a8a1eb4201c7ff860f837fa27c512f892"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -162,7 +158,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>
@@ -197,7 +193,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; Corluma Copyright 2015 - 2019  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; Corluma Copyright 2015 - 2020  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights GPL v3.0 Licensed.  &nbsp; &nbsp;
        </small>
        </p>

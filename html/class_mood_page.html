@@ -85,13 +85,13 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mood_page.html#a92af7588cc9e57cd676142029322866d">updateConnectionList</a> ()</td></tr>
 <tr class="memdesc:a92af7588cc9e57cd676142029322866d"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateConnectionList updates the GUI elements that display the <a class="el" href="class_comm_layer.html" title="The CommLayer class provides communication protocols that allow the user to connect and send packets ...">CommLayer</a>'s connection list. <br /></td></tr>
 <tr class="separator:a92af7588cc9e57cd676142029322866d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c7cf4658626d2cbc7694f5d6c4045ff"><td class="memItemLeft" align="right" valign="top"><a id="a7c7cf4658626d2cbc7694f5d6c4045ff"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mood_page.html#a7c7cf4658626d2cbc7694f5d6c4045ff">show</a> (std::uint64_t <a class="el" href="class_mood_page.html#a1096cfd70faa20785dca681ff05cd8c2">currentMood</a>, const cor::Dictionary&lt; cor::Mood &gt; &amp;moods, const std::list&lt; cor::Group &gt; &amp;roomList)</td></tr>
-<tr class="memdesc:a7c7cf4658626d2cbc7694f5d6c4045ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when the widget is shown <br /></td></tr>
-<tr class="separator:a7c7cf4658626d2cbc7694f5d6c4045ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae41785dfda910d20ed66e4cb68076a41"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mood_page.html#ae41785dfda910d20ed66e4cb68076a41">makeMoodsCollections</a> (const cor::Dictionary&lt; cor::Mood &gt; &amp;moods, const std::list&lt; cor::Group &gt; &amp;roomList)</td></tr>
-<tr class="memdesc:ae41785dfda910d20ed66e4cb68076a41"><td class="mdescLeft">&#160;</td><td class="mdescRight">makeMoodsCollections make all the mood-based UI widgets based on the saved JSON data in the application  <a href="#ae41785dfda910d20ed66e4cb68076a41">More...</a><br /></td></tr>
-<tr class="separator:ae41785dfda910d20ed66e4cb68076a41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79ed6136e90fef843d5f934e2747121b"><td class="memItemLeft" align="right" valign="top"><a id="a79ed6136e90fef843d5f934e2747121b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mood_page.html#a79ed6136e90fef843d5f934e2747121b">show</a> (std::uint64_t <a class="el" href="class_mood_page.html#a1096cfd70faa20785dca681ff05cd8c2">currentMood</a>, const cor::Dictionary&lt; cor::Mood &gt; &amp;moods, const std::vector&lt; cor::Room &gt; &amp;roomList)</td></tr>
+<tr class="memdesc:a79ed6136e90fef843d5f934e2747121b"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when the widget is shown <br /></td></tr>
+<tr class="separator:a79ed6136e90fef843d5f934e2747121b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b2daff737eb6317b6303e6de42bfa36"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mood_page.html#a0b2daff737eb6317b6303e6de42bfa36">makeMoodsCollections</a> (const cor::Dictionary&lt; cor::Mood &gt; &amp;moods, const std::vector&lt; cor::Room &gt; &amp;roomList)</td></tr>
+<tr class="memdesc:a0b2daff737eb6317b6303e6de42bfa36"><td class="mdescLeft">&#160;</td><td class="mdescRight">makeMoodsCollections make all the mood-based UI widgets based on the saved JSON data in the application  <a href="#a0b2daff737eb6317b6303e6de42bfa36">More...</a><br /></td></tr>
+<tr class="separator:a0b2daff737eb6317b6303e6de42bfa36"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af3808d0246ccd1752ca37402f745fa79"><td class="memItemLeft" align="right" valign="top"><a id="af3808d0246ccd1752ca37402f745fa79"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mood_page.html#af3808d0246ccd1752ca37402f745fa79">hide</a> ()</td></tr>
 <tr class="memdesc:af3808d0246ccd1752ca37402f745fa79"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when the widget is hidden <br /></td></tr>
@@ -117,7 +117,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:a27dcfaebedeb096adc5bdc2778a08b50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
+<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aa41cf9d4f57998993308d08cab81f3cc"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa41cf9d4f57998993308d08cab81f3cc">&#9670;&nbsp;</a></span>MoodPage()</h2>
@@ -152,13 +152,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae41785dfda910d20ed66e4cb68076a41"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae41785dfda910d20ed66e4cb68076a41">&#9670;&nbsp;</a></span>makeMoodsCollections()</h2>
+<a id="a0b2daff737eb6317b6303e6de42bfa36"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b2daff737eb6317b6303e6de42bfa36">&#9670;&nbsp;</a></span>makeMoodsCollections()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -172,7 +172,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::list&lt; cor::Group &gt; &amp;&#160;</td>
+          <td class="paramtype">const std::vector&lt; cor::Room &gt; &amp;&#160;</td>
           <td class="paramname"><em>roomList</em>&#160;</td>
         </tr>
         <tr>
@@ -203,7 +203,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; Corluma Copyright 2015 - 2019  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; Corluma Copyright 2015 - 2020  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights GPL v3.0 Licensed.  &nbsp; &nbsp;
        </small>
        </p>

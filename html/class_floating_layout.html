@@ -73,9 +73,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a7e72aa165c8cc79384bd650dc1d8fe67"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a7e72aa165c8cc79384bd650dc1d8fe67">move</a> (QPoint topRightPoint)</td></tr>
 <tr class="memdesc:a7e72aa165c8cc79384bd650dc1d8fe67"><td class="mdescLeft">&#160;</td><td class="mdescRight">move move layout to a new location based off of the top right point provided.  <a href="#a7e72aa165c8cc79384bd650dc1d8fe67">More...</a><br /></td></tr>
 <tr class="separator:a7e72aa165c8cc79384bd650dc1d8fe67"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afa09194b40222943da274aff4d115091"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#afa09194b40222943da274aff4d115091">updateRoutine</a> (const QJsonObject &amp;routineObject)</td></tr>
-<tr class="memdesc:afa09194b40222943da274aff4d115091"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateRoutine show a routine on the button  <a href="#afa09194b40222943da274aff4d115091">More...</a><br /></td></tr>
-<tr class="separator:afa09194b40222943da274aff4d115091"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ca7951665db870460b16027ef9d80bc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a8ca7951665db870460b16027ef9d80bc">updateRoutine</a> (const cor::LightState &amp;state)</td></tr>
+<tr class="memdesc:a8ca7951665db870460b16027ef9d80bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateRoutine show a routine on the button  <a href="#a8ca7951665db870460b16027ef9d80bc">More...</a><br /></td></tr>
+<tr class="separator:a8ca7951665db870460b16027ef9d80bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6837f4884a7e5169bf2227f38dfc339e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a6837f4884a7e5169bf2227f38dfc339e">updateDiscoveryButton</a> (EProtocolType type, const QPixmap &amp;pixmap)</td></tr>
 <tr class="memdesc:a6837f4884a7e5169bf2227f38dfc339e"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDiscoveryButton update the icon of a discovery button. Shows the discovery state of the connection.  <a href="#a6837f4884a7e5169bf2227f38dfc339e">More...</a><br /></td></tr>
 <tr class="separator:a6837f4884a7e5169bf2227f38dfc339e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -103,7 +103,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:a6a2f31b40796123f8d76c6a5a4d8d673"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
+<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a0bfc959ee9a42aa78eac62f14b0cb041"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0bfc959ee9a42aa78eac62f14b0cb041">&#9670;&nbsp;</a></span>FloatingLayout()</h2>
@@ -145,7 +145,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </table>
   </dd>
 </dl>
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>
@@ -401,8 +401,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a id="afa09194b40222943da274aff4d115091"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afa09194b40222943da274aff4d115091">&#9670;&nbsp;</a></span>updateRoutine()</h2>
+<a id="a8ca7951665db870460b16027ef9d80bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ca7951665db870460b16027ef9d80bc">&#9670;&nbsp;</a></span>updateRoutine()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -410,8 +410,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="memname">void FloatingLayout::updateRoutine </td>
           <td>(</td>
-          <td class="paramtype">const QJsonObject &amp;&#160;</td>
-          <td class="paramname"><em>routineObject</em></td><td>)</td>
+          <td class="paramtype">const cor::LightState &amp;&#160;</td>
+          <td class="paramname"><em>state</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -437,7 +437,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; Corluma Copyright 2015 - 2019  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; Corluma Copyright 2015 - 2020  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights GPL v3.0 Licensed.  &nbsp; &nbsp;
        </small>
        </p>

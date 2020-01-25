@@ -59,10 +59,10 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
-<tr class="memitem:a71c28f4421898494a79ab4e7453022c2"><td class="memItemLeft" align="right" valign="top"><a id="a71c28f4421898494a79ab4e7453022c2"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#a71c28f4421898494a79ab4e7453022c2">newRoutineSelected</a> (QJsonObject)</td></tr>
-<tr class="memdesc:a71c28f4421898494a79ab4e7453022c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">newRoutineSelected emitted whenever a button is pressed with the int representation of the routine that it represents. <br /></td></tr>
-<tr class="separator:a71c28f4421898494a79ab4e7453022c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b4f40279f590a10a9ff240eac762a0b"><td class="memItemLeft" align="right" valign="top"><a id="a9b4f40279f590a10a9ff240eac762a0b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#a9b4f40279f590a10a9ff240eac762a0b">newRoutineSelected</a> (cor::LightState)</td></tr>
+<tr class="memdesc:a9b4f40279f590a10a9ff240eac762a0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">newRoutineSelected emitted whenever a button is pressed with the int representation of the routine that it represents. <br /></td></tr>
+<tr class="separator:a9b4f40279f590a10a9ff240eac762a0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -72,9 +72,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aa6c6ab324fa8ba6e12f8af2601bd8697"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#aa6c6ab324fa8ba6e12f8af2601bd8697">highlightRoutineButton</a> (const QString &amp;label)</td></tr>
 <tr class="memdesc:aa6c6ab324fa8ba6e12f8af2601bd8697"><td class="mdescLeft">&#160;</td><td class="mdescRight">highlightRoutineButton highlights the button that implements the routine parameter. If it can't find a button that implements the lighting routine, then all buttons are unhighlighted  <a href="#aa6c6ab324fa8ba6e12f8af2601bd8697">More...</a><br /></td></tr>
 <tr class="separator:aa6c6ab324fa8ba6e12f8af2601bd8697"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a30a80b11ab77c4ba888f435e6d6428df"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#a30a80b11ab77c4ba888f435e6d6428df">jsonToButtonName</a> (const QJsonObject &amp;routineObject)</td></tr>
-<tr class="memdesc:a30a80b11ab77c4ba888f435e6d6428df"><td class="mdescLeft">&#160;</td><td class="mdescRight">jsonToButtonName takes a json object that represents a routine as input and if it matches any of the json objects used by routine buttons, it returns the name. Otherwise, it returns an empty string  <a href="#a30a80b11ab77c4ba888f435e6d6428df">More...</a><br /></td></tr>
-<tr class="separator:a30a80b11ab77c4ba888f435e6d6428df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41d2ee824c22b86261d3427420483031"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#a41d2ee824c22b86261d3427420483031">singleRoutineColorChanged</a> (const QColor &amp;newColor)</td></tr>
 <tr class="memdesc:a41d2ee824c22b86261d3427420483031"><td class="mdescLeft">&#160;</td><td class="mdescRight">singleRoutineColorChanged can only be used by a eSingleRoutines version of the widget, this updates the color of of all of the icons to reflect the new color.  <a href="#a41d2ee824c22b86261d3427420483031">More...</a><br /></td></tr>
 <tr class="separator:a41d2ee824c22b86261d3427420483031"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -84,10 +81,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac80813faf389f3a9f4a93e9ba66b5bef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#ac80813faf389f3a9f4a93e9ba66b5bef">resize</a> (QSize size)</td></tr>
 <tr class="memdesc:ac80813faf389f3a9f4a93e9ba66b5bef"><td class="mdescLeft">&#160;</td><td class="mdescRight">resize resize widget to given size  <a href="#ac80813faf389f3a9f4a93e9ba66b5bef">More...</a><br /></td></tr>
 <tr class="separator:ac80813faf389f3a9f4a93e9ba66b5bef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab8375b0a95a3dbe5d9485e7ea0693c5a"><td class="memItemLeft" align="right" valign="top"><a id="ab8375b0a95a3dbe5d9485e7ea0693c5a"></a>
-const std::vector&lt; std::pair&lt; QString, QJsonObject &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#ab8375b0a95a3dbe5d9485e7ea0693c5a">routines</a> ()</td></tr>
-<tr class="memdesc:ab8375b0a95a3dbe5d9485e7ea0693c5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for routines <br /></td></tr>
-<tr class="separator:ab8375b0a95a3dbe5d9485e7ea0693c5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf43b3828da29f1bc1809d97b5d1f350"><td class="memItemLeft" align="right" valign="top"><a id="acf43b3828da29f1bc1809d97b5d1f350"></a>
+const std::vector&lt; std::pair&lt; QString, cor::LightState &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#acf43b3828da29f1bc1809d97b5d1f350">routines</a> ()</td></tr>
+<tr class="memdesc:acf43b3828da29f1bc1809d97b5d1f350"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for routines <br /></td></tr>
+<tr class="separator:acf43b3828da29f1bc1809d97b5d1f350"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a59ec1fb6c64173d6f90287a19dc47e94"><td class="memItemLeft" align="right" valign="top"><a id="a59ec1fb6c64173d6f90287a19dc47e94"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#a59ec1fb6c64173d6f90287a19dc47e94">showWidget</a> (bool shouldShow)</td></tr>
 <tr class="memdesc:a59ec1fb6c64173d6f90287a19dc47e94"><td class="mdescLeft">&#160;</td><td class="mdescRight">true to show widget, false to hide it <br /></td></tr>
@@ -105,7 +102,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:a01c5390760ed64f4bb96402e91e549d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
+<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="afbfee2659c3386b85eee0d2dca4784f7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afbfee2659c3386b85eee0d2dca4784f7">&#9670;&nbsp;</a></span>RoutineButtonsWidget()</h2>
@@ -154,7 +151,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </table>
   </dd>
 </dl>
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>
@@ -180,31 +177,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </table>
   </dd>
 </dl>
-
-</div>
-</div>
-<a id="a30a80b11ab77c4ba888f435e6d6428df"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a30a80b11ab77c4ba888f435e6d6428df">&#9670;&nbsp;</a></span>jsonToButtonName()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">QString RoutineButtonsWidget::jsonToButtonName </td>
-          <td>(</td>
-          <td class="paramtype">const QJsonObject &amp;&#160;</td>
-          <td class="paramname"><em>routineObject</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">routineObject</td><td>the routine object to match to a button </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>the name of the json button. </dd></dl>
 
 </div>
 </div>
@@ -292,7 +264,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; Corluma Copyright 2015 - 2019  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; Corluma Copyright 2015 - 2020  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights GPL v3.0 Licensed.  &nbsp; &nbsp;
        </small>
        </p>

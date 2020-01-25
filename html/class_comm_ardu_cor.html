@@ -110,13 +110,21 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 ArduCorDiscovery *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_ardu_cor.html#afb9be384b73ee59e521dc3547b8c2837">discovery</a> ()</td></tr>
 <tr class="memdesc:afb9be384b73ee59e521dc3547b8c2837"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for discovery <br /></td></tr>
 <tr class="separator:afb9be384b73ee59e521dc3547b8c2837"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6831b610f1a7048591e846fcf284f2a3"><td class="memItemLeft" align="right" valign="top"><a id="a6831b610f1a7048591e846fcf284f2a3"></a>
-std::list&lt; cor::Light &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_ardu_cor.html#a6831b610f1a7048591e846fcf284f2a3">lights</a> ()</td></tr>
-<tr class="memdesc:a6831b610f1a7048591e846fcf284f2a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for all connected lights <br /></td></tr>
-<tr class="separator:a6831b610f1a7048591e846fcf284f2a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae38f842f79f94e3091045f34bc3950dc"><td class="memItemLeft" align="right" valign="top"><a id="ae38f842f79f94e3091045f34bc3950dc"></a>
+std::vector&lt; cor::Light &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_ardu_cor.html#ae38f842f79f94e3091045f34bc3950dc">lights</a> ()</td></tr>
+<tr class="memdesc:ae38f842f79f94e3091045f34bc3950dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for all connected lights <br /></td></tr>
+<tr class="separator:ae38f842f79f94e3091045f34bc3950dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66b7a25fb72997afee5756f7383dcf61"><td class="memItemLeft" align="right" valign="top"><a id="a66b7a25fb72997afee5756f7383dcf61"></a>
+std::vector&lt; ArduCorMetadata &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_ardu_cor.html#a66b7a25fb72997afee5756f7383dcf61">arduCorLights</a> () const noexcept</td></tr>
+<tr class="memdesc:a66b7a25fb72997afee5756f7383dcf61"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for arducor lights <br /></td></tr>
+<tr class="separator:a66b7a25fb72997afee5756f7383dcf61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a281f1d30ee21bdd7eb09c69ddfd75255"><td class="memItemLeft" align="right" valign="top"><a id="a281f1d30ee21bdd7eb09c69ddfd75255"></a>
+ArduCorMetadata&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_ardu_cor.html#a281f1d30ee21bdd7eb09c69ddfd75255">arduCorLightFromLight</a> (const cor::Light &amp;light)</td></tr>
+<tr class="memdesc:a281f1d30ee21bdd7eb09c69ddfd75255"><td class="mdescLeft">&#160;</td><td class="mdescRight">converts a cor::Light into a arducor light <br /></td></tr>
+<tr class="separator:a281f1d30ee21bdd7eb09c69ddfd75255"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
+<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a9af921080e0666a6567f4ba52627f920"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9af921080e0666a6567f4ba52627f920">&#9670;&nbsp;</a></span>CommArduCor()</h2>
@@ -141,7 +149,7 @@ std::list&lt; cor::Light &gt;&#160;</td><td class="memItemRight" valign="bottom"
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>
@@ -218,7 +226,7 @@ std::list&lt; cor::Light &gt;&#160;</td><td class="memItemRight" valign="bottom"
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; Corluma Copyright 2015 - 2019  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; Corluma Copyright 2015 - 2020  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights GPL v3.0 Licensed.  &nbsp; &nbsp;
        </small>
        </p>

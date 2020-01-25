@@ -76,20 +76,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a1e2b18f42e58f4cadbe18a01d662cd22"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#a1e2b18f42e58f4cadbe18a01d662cd22">sendPacket</a> (const QJsonObject &amp;object)</td></tr>
 <tr class="memdesc:a1e2b18f42e58f4cadbe18a01d662cd22"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendPacket send a packet based off of a JSON object containing all relevant information about the packet  <a href="#a1e2b18f42e58f4cadbe18a01d662cd22">More...</a><br /></td></tr>
 <tr class="separator:a1e2b18f42e58f4cadbe18a01d662cd22"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa39b967942bd31328375291fa20243b5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#aa39b967942bd31328375291fa20243b5">changeColorCT</a> (const cor::Controller &amp;controller, int ct)</td></tr>
-<tr class="memdesc:aa39b967942bd31328375291fa20243b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeAmbientLight changes the color of the bulb to match the color temperature given. This is the only way to interact with white ambiance bulbs and it can also be used with the RGB bulbs.  <a href="#aa39b967942bd31328375291fa20243b5">More...</a><br /></td></tr>
-<tr class="separator:aa39b967942bd31328375291fa20243b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afa84edf826c4c41f76164ba6b0a54549"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#afa84edf826c4c41f76164ba6b0a54549">findNanoLeafController</a> (const QString &amp;serialNumber, nano::LeafController &amp;leafController)</td></tr>
-<tr class="memdesc:afa84edf826c4c41f76164ba6b0a54549"><td class="mdescLeft">&#160;</td><td class="mdescRight">findNanoLeafController finds a nanoleaf controller based off of a cor::controller  <a href="#afa84edf826c4c41f76164ba6b0a54549">More...</a><br /></td></tr>
-<tr class="separator:afa84edf826c4c41f76164ba6b0a54549"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b72f256ad61fa4bd6b814629c40f642"><td class="memItemLeft" align="right" valign="top"><a id="a5b72f256ad61fa4bd6b814629c40f642"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#a5b72f256ad61fa4bd6b814629c40f642">testIP</a> (const nano::LeafController &amp;controller)</td></tr>
-<tr class="memdesc:a5b72f256ad61fa4bd6b814629c40f642"><td class="mdescLeft">&#160;</td><td class="mdescRight">tests if an IP address is valid by sending a network request to it. <br /></td></tr>
-<tr class="separator:a5b72f256ad61fa4bd6b814629c40f642"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6dee2143f6712cbdbce5175603399ca2"><td class="memItemLeft" align="right" valign="top"><a id="a6dee2143f6712cbdbce5175603399ca2"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#a6dee2143f6712cbdbce5175603399ca2">testAuth</a> (const nano::LeafController &amp;controller)</td></tr>
-<tr class="memdesc:a6dee2143f6712cbdbce5175603399ca2"><td class="mdescLeft">&#160;</td><td class="mdescRight">tests if an auth totken is valid by using it to send a packet. <br /></td></tr>
-<tr class="separator:a6dee2143f6712cbdbce5175603399ca2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa25c876bc28f50c3bb0fbb9a53485b65"><td class="memItemLeft" align="right" valign="top"><a id="aa25c876bc28f50c3bb0fbb9a53485b65"></a>
+std::pair&lt; nano::LeafMetadata, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#aa25c876bc28f50c3bb0fbb9a53485b65">findNanoLeafLight</a> (const QString &amp;serialNumber)</td></tr>
+<tr class="memdesc:aa25c876bc28f50c3bb0fbb9a53485b65"><td class="mdescLeft">&#160;</td><td class="mdescRight">search for a nanoleaf light based off of serial number <br /></td></tr>
+<tr class="separator:aa25c876bc28f50c3bb0fbb9a53485b65"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6fcd1c604714f2fb5772d852b2fdcb4"><td class="memItemLeft" align="right" valign="top"><a id="aa6fcd1c604714f2fb5772d852b2fdcb4"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#aa6fcd1c604714f2fb5772d852b2fdcb4">testIP</a> (const nano::LeafMetadata &amp;light)</td></tr>
+<tr class="memdesc:aa6fcd1c604714f2fb5772d852b2fdcb4"><td class="mdescLeft">&#160;</td><td class="mdescRight">tests if an IP address is valid by sending a network request to it. <br /></td></tr>
+<tr class="separator:aa6fcd1c604714f2fb5772d852b2fdcb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49bc8813af348f2e2a422e3f9fff1978"><td class="memItemLeft" align="right" valign="top"><a id="a49bc8813af348f2e2a422e3f9fff1978"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#a49bc8813af348f2e2a422e3f9fff1978">testAuth</a> (const nano::LeafMetadata &amp;light)</td></tr>
+<tr class="memdesc:a49bc8813af348f2e2a422e3f9fff1978"><td class="mdescLeft">&#160;</td><td class="mdescRight">tests if an auth totken is valid by using it to send a packet. <br /></td></tr>
+<tr class="separator:a49bc8813af348f2e2a422e3f9fff1978"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa9dd319cd38f316e0262819996c9d498"><td class="memItemLeft" align="right" valign="top"><a id="aa9dd319cd38f316e0262819996c9d498"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#aa9dd319cd38f316e0262819996c9d498">connectUPnPDiscovery</a> (<a class="el" href="class_u_pn_p_discovery.html">UPnPDiscovery</a> *UPnP)</td></tr>
 <tr class="memdesc:aa9dd319cd38f316e0262819996c9d498"><td class="mdescLeft">&#160;</td><td class="mdescRight">connects UPnP object to the discovery object. <br /></td></tr>
@@ -102,10 +100,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 ENanoleafDiscoveryState&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#a5161dbc4d693e77456a192cab60b9f92">discoveryState</a> ()</td></tr>
 <tr class="memdesc:a5161dbc4d693e77456a192cab60b9f92"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the discovery state of the nanoleaf <br /></td></tr>
 <tr class="separator:a5161dbc4d693e77456a192cab60b9f92"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89417869256761d77bfaf729e894305e"><td class="memItemLeft" align="right" valign="top"><a id="a89417869256761d77bfaf729e894305e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#a89417869256761d77bfaf729e894305e">renameController</a> (nano::LeafController controller, const QString &amp;name)</td></tr>
-<tr class="memdesc:a89417869256761d77bfaf729e894305e"><td class="mdescLeft">&#160;</td><td class="mdescRight">renames a nanoleaf controller. This data is stored in appdata. <br /></td></tr>
-<tr class="separator:a89417869256761d77bfaf729e894305e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba6dd853fd4fb9495e7a1bc28ed11860"><td class="memItemLeft" align="right" valign="top"><a id="aba6dd853fd4fb9495e7a1bc28ed11860"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#aba6dd853fd4fb9495e7a1bc28ed11860">renameLight</a> (nano::LeafMetadata light, const QString &amp;name)</td></tr>
+<tr class="memdesc:aba6dd853fd4fb9495e7a1bc28ed11860"><td class="mdescLeft">&#160;</td><td class="mdescRight">renames a nanoleaf leaf. This data is stored in appdata. <br /></td></tr>
+<tr class="separator:aba6dd853fd4fb9495e7a1bc28ed11860"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a39cc21e5c8bc29caa043887669ae54d6"><td class="memItemLeft" align="right" valign="top"><a id="a39cc21e5c8bc29caa043887669ae54d6"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#a39cc21e5c8bc29caa043887669ae54d6">setCustomColors</a> (std::vector&lt; QColor &gt; colors)</td></tr>
 <tr class="memdesc:a39cc21e5c8bc29caa043887669ae54d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the custom colors used for custom color routines <br /></td></tr>
@@ -114,24 +112,23 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 const std::vector&lt; QColor &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#aa0dc8154dae76673998489f8c02861ec">customColors</a> ()</td></tr>
 <tr class="memdesc:aa0dc8154dae76673998489f8c02861ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for custom colors <br /></td></tr>
 <tr class="separator:aa0dc8154dae76673998489f8c02861ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af408d94f9633e3418da13ce381cfbe2a"><td class="memItemLeft" align="right" valign="top"><a id="af408d94f9633e3418da13ce381cfbe2a"></a>
-const cor::Dictionary&lt; nano::LeafController &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#af408d94f9633e3418da13ce381cfbe2a">controllers</a> ()</td></tr>
-<tr class="memdesc:af408d94f9633e3418da13ce381cfbe2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for list of nanoleaf controllers <br /></td></tr>
-<tr class="separator:af408d94f9633e3418da13ce381cfbe2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad22dc7ebb791113c86f39b51f53c181b"><td class="memItemLeft" align="right" valign="top"><a id="ad22dc7ebb791113c86f39b51f53c181b"></a>
+const cor::Dictionary&lt; nano::LeafMetadata &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#ad22dc7ebb791113c86f39b51f53c181b">lights</a> ()</td></tr>
+<tr class="memdesc:ad22dc7ebb791113c86f39b51f53c181b"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for list of nanoleaf lights <br /></td></tr>
+<tr class="separator:ad22dc7ebb791113c86f39b51f53c181b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a957e08741f6d036aaa6e2bbab4559633"><td class="memItemLeft" align="right" valign="top"><a id="a957e08741f6d036aaa6e2bbab4559633"></a>
 nano::LeafDiscovery *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#a957e08741f6d036aaa6e2bbab4559633">discovery</a> ()</td></tr>
 <tr class="memdesc:a957e08741f6d036aaa6e2bbab4559633"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for discovery object <br /></td></tr>
 <tr class="separator:a957e08741f6d036aaa6e2bbab4559633"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afa2b7490571ee96194d9ffccc54dcce6"><td class="memItemLeft" align="right" valign="top">const cor::Dictionary&lt; nano::LeafSchedule &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#afa2b7490571ee96194d9ffccc54dcce6">findSchedules</a> (const nano::LeafController &amp;controller)</td></tr>
-<tr class="memdesc:afa2b7490571ee96194d9ffccc54dcce6"><td class="mdescLeft">&#160;</td><td class="mdescRight">findSchedules returns the schedule dictionary for the given controller  <a href="#afa2b7490571ee96194d9ffccc54dcce6">More...</a><br /></td></tr>
-<tr class="separator:afa2b7490571ee96194d9ffccc54dcce6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa32adc7f447ff04e552634909ffc33ed"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#aa32adc7f447ff04e552634909ffc33ed">sendTimeout</a> (const nano::LeafController &amp;controller, int minutes)</td></tr>
-<tr class="memdesc:aa32adc7f447ff04e552634909ffc33ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendTimeout sends a timeout schedule to the provided controller.  <a href="#aa32adc7f447ff04e552634909ffc33ed">More...</a><br /></td></tr>
-<tr class="separator:aa32adc7f447ff04e552634909ffc33ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f4f6f13ae1aaf42fd9ba9f358b9b3bc"><td class="memItemLeft" align="right" valign="top">std::pair&lt; cor::Dictionary&lt; nano::LeafSchedule &gt;, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#a2f4f6f13ae1aaf42fd9ba9f358b9b3bc">findSchedules</a> (const QString &amp;serial)</td></tr>
+<tr class="memdesc:a2f4f6f13ae1aaf42fd9ba9f358b9b3bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">findSchedules returns the schedule dictionary for the given light  <a href="#a2f4f6f13ae1aaf42fd9ba9f358b9b3bc">More...</a><br /></td></tr>
+<tr class="separator:a2f4f6f13ae1aaf42fd9ba9f358b9b3bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a43f6b8bcd9e808a3830f331bc801181d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_nanoleaf.html#a43f6b8bcd9e808a3830f331bc801181d">sendTimeout</a> (const nano::LeafMetadata &amp;light, int minutes)</td></tr>
+<tr class="memdesc:a43f6b8bcd9e808a3830f331bc801181d"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendTimeout sends a timeout schedule to the provided light.  <a href="#a43f6b8bcd9e808a3830f331bc801181d">More...</a><br /></td></tr>
+<tr class="separator:a43f6b8bcd9e808a3830f331bc801181d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
-<tr class="memitem:a6fe7f245ed2a19c250b9cea7598e2bad inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a6fe7f245ed2a19c250b9cea7598e2bad"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a6fe7f245ed2a19c250b9cea7598e2bad">CommType</a> (ECommType type)</td></tr>
-<tr class="memdesc:a6fe7f245ed2a19c250b9cea7598e2bad inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor <br /></td></tr>
+<tr class="memitem:a6fe7f245ed2a19c250b9cea7598e2bad inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a6fe7f245ed2a19c250b9cea7598e2bad">CommType</a> (ECommType type)</td></tr>
+<tr class="memdesc:a6fe7f245ed2a19c250b9cea7598e2bad inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="class_comm_type.html#a6fe7f245ed2a19c250b9cea7598e2bad">More...</a><br /></td></tr>
 <tr class="separator:a6fe7f245ed2a19c250b9cea7598e2bad inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aea9af432f13faf2a28b6a9fd5d5000e9 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="aea9af432f13faf2a28b6a9fd5d5000e9"></a>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aea9af432f13faf2a28b6a9fd5d5000e9">~CommType</a> ()</td></tr>
@@ -145,24 +142,22 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a684c569bb57248ae4b0b2e4563339f74">stopStateUpdates</a> ()</td></tr>
 <tr class="memdesc:a684c569bb57248ae4b0b2e4563339f74 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">stopStateUpdates turn off the state update timers. <br /></td></tr>
 <tr class="separator:a684c569bb57248ae4b0b2e4563339f74 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a98532b0747253db67e4b5f3d978ff0a2 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a98532b0747253db67e4b5f3d978ff0a2">removeController</a> (const QString &amp;name)</td></tr>
-<tr class="memdesc:a98532b0747253db67e4b5f3d978ff0a2 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeController attempts to remove the controller from the device table.  <a href="class_comm_type.html#a98532b0747253db67e4b5f3d978ff0a2">More...</a><br /></td></tr>
-<tr class="separator:a98532b0747253db67e4b5f3d978ff0a2 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7238ee9df8464546e7afd4c21b203303 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a7238ee9df8464546e7afd4c21b203303">addLight</a> (const cor::Light &amp;light)</td></tr>
 <tr class="memdesc:a7238ee9df8464546e7afd4c21b203303 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">addLight adds lights with specific unique IDs that have been previously discovered. This allows us to show previously learned lights as "Not Reachable" when they cannot be erached.  <a href="class_comm_type.html#a7238ee9df8464546e7afd4c21b203303">More...</a><br /></td></tr>
 <tr class="separator:a7238ee9df8464546e7afd4c21b203303 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ec4272af4b32957d0b3e2bea9d2133f inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a8ec4272af4b32957d0b3e2bea9d2133f">updateLight</a> (cor::Light device)</td></tr>
-<tr class="memdesc:a8ec4272af4b32957d0b3e2bea9d2133f inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDevice update all the data in the light device that matches the same controller and index. if a light device doesn't exist with these properties, then it creates a new one.  <a href="class_comm_type.html#a8ec4272af4b32957d0b3e2bea9d2133f">More...</a><br /></td></tr>
-<tr class="separator:a8ec4272af4b32957d0b3e2bea9d2133f inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3562cb0d1cb525c1bc883d81bac2db35 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a3562cb0d1cb525c1bc883d81bac2db35">updateLight</a> (const cor::Light &amp;device)</td></tr>
+<tr class="memdesc:a3562cb0d1cb525c1bc883d81bac2db35 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDevice update all the data in the light device that matches the same controller and index. if a light device doesn't exist with these properties, then it creates a new one.  <a href="class_comm_type.html#a3562cb0d1cb525c1bc883d81bac2db35">More...</a><br /></td></tr>
+<tr class="separator:a3562cb0d1cb525c1bc883d81bac2db35 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab9d8ebeecae39e95cd2d2647379cadec inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ab9d8ebeecae39e95cd2d2647379cadec">fillDevice</a> (cor::Light &amp;device)</td></tr>
 <tr class="memdesc:ab9d8ebeecae39e95cd2d2647379cadec inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">fillDevice takes the controller and index of the referenced cor::Light and overwrites all other values with the values stored in the device table.  <a href="class_comm_type.html#ab9d8ebeecae39e95cd2d2647379cadec">More...</a><br /></td></tr>
 <tr class="separator:ab9d8ebeecae39e95cd2d2647379cadec inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9b97cb61b399f2e17acaee7a88b65e7 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ae9b97cb61b399f2e17acaee7a88b65e7">controllerName</a> (const QString &amp;uniqueID)</td></tr>
-<tr class="memdesc:ae9b97cb61b399f2e17acaee7a88b65e7 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">controllerName look up a controller's name by providing the unique ID of a light. If no controller matches the ID, it will return an error string. The complexity of the lookup scales by number of controllers instead of the number of devices.  <a href="class_comm_type.html#ae9b97cb61b399f2e17acaee7a88b65e7">More...</a><br /></td></tr>
-<tr class="separator:ae9b97cb61b399f2e17acaee7a88b65e7 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a883f9fb7dad78707958f29ee05dc6cc7 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">const cor::Dictionary&lt; cor::Light &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a883f9fb7dad78707958f29ee05dc6cc7">deviceTable</a> () const noexcept</td></tr>
-<tr class="memdesc:a883f9fb7dad78707958f29ee05dc6cc7 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceList list of the light devices  <a href="class_comm_type.html#a883f9fb7dad78707958f29ee05dc6cc7">More...</a><br /></td></tr>
-<tr class="separator:a883f9fb7dad78707958f29ee05dc6cc7 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a130a72e8b674f9d2d76bf419243083c3 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">const cor::Dictionary&lt; cor::Light &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a130a72e8b674f9d2d76bf419243083c3">lightDict</a> () const noexcept</td></tr>
+<tr class="memdesc:a130a72e8b674f9d2d76bf419243083c3 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceList list of the light devices  <a href="class_comm_type.html#a130a72e8b674f9d2d76bf419243083c3">More...</a><br /></td></tr>
+<tr class="separator:a130a72e8b674f9d2d76bf419243083c3 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2fc73b81632d43ac37cf12c12899362b inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a2fc73b81632d43ac37cf12c12899362b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a2fc73b81632d43ac37cf12c12899362b">checkReachability</a> ()</td></tr>
+<tr class="memdesc:a2fc73b81632d43ac37cf12c12899362b inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">slot for timer that periodically checks if any lights not reachable <br /></td></tr>
+<tr class="separator:a2fc73b81632d43ac37cf12c12899362b inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -172,9 +167,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:a6a99e8e95b8ce5ac36a605634b6a460f inherit signals_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateReceived an update packet was received from any controller. <br /></td></tr>
 <tr class="separator:a6a99e8e95b8ce5ac36a605634b6a460f inherit signals_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
-<tr class="memitem:a140fb846eeb4d24976e2a4f514f95f0f inherit pro_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a140fb846eeb4d24976e2a4f514f95f0f">shouldContinueStateUpdate</a> ()</td></tr>
-<tr class="memdesc:a140fb846eeb4d24976e2a4f514f95f0f inherit pro_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">shouldContinueStateUpdate checks internal states and determines if it should still keep requesting state updates from the devices.  <a href="class_comm_type.html#a140fb846eeb4d24976e2a4f514f95f0f">More...</a><br /></td></tr>
-<tr class="separator:a140fb846eeb4d24976e2a4f514f95f0f inherit pro_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aadfc885896e93e2ef367ab3f56c723d1 inherit pro_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#aadfc885896e93e2ef367ab3f56c723d1">shouldContinueStateUpdate</a> () const noexcept</td></tr>
+<tr class="memdesc:aadfc885896e93e2ef367ab3f56c723d1 inherit pro_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">shouldContinueStateUpdate checks internal states and determines if it should still keep requesting state updates from the devices.  <a href="class_comm_type.html#aadfc885896e93e2ef367ab3f56c723d1">More...</a><br /></td></tr>
+<tr class="separator:aadfc885896e93e2ef367ab3f56c723d1 inherit pro_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
 <tr class="memitem:a93d86e18ed75c62c422d727cc4e25b8c inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a93d86e18ed75c62c422d727cc4e25b8c"></a>
 QTime&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a93d86e18ed75c62c422d727cc4e25b8c">mLastSendTime</a></td></tr>
@@ -184,16 +179,12 @@ QTime&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 QElapsedTimer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a6dde2dd0b11c73245cd1f2e0f63627bb">mElapsedTimer</a></td></tr>
 <tr class="memdesc:a6dde2dd0b11c73245cd1f2e0f63627bb inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">checks how long the app has been alive for reachability tests <br /></td></tr>
 <tr class="separator:a6dde2dd0b11c73245cd1f2e0f63627bb inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3b9dc29353a78edaa33dca51a48d00ad inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a3b9dc29353a78edaa33dca51a48d00ad"></a>
-QTimer *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a3b9dc29353a78edaa33dca51a48d00ad">mReachabilityTest</a></td></tr>
-<tr class="memdesc:a3b9dc29353a78edaa33dca51a48d00ad inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">periodically check if all lights have sent packets recently. <br /></td></tr>
-<tr class="separator:a3b9dc29353a78edaa33dca51a48d00ad inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a079be5b6039a73ab74f242f834702d99 inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a079be5b6039a73ab74f242f834702d99"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a079be5b6039a73ab74f242f834702d99">mStateUpdateCounter</a></td></tr>
-<tr class="memdesc:a079be5b6039a73ab74f242f834702d99 inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">number of state updates sent out <br /></td></tr>
-<tr class="separator:a079be5b6039a73ab74f242f834702d99 inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad8c1f60fe67e3e018ee772d8d8e7a3f8 inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ad8c1f60fe67e3e018ee772d8d8e7a3f8">mSecondaryUpdatesInterval</a></td></tr>
-<tr class="separator:ad8c1f60fe67e3e018ee772d8d8e7a3f8 inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af984875a53cabd67dd78a92020cf04a8 inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="af984875a53cabd67dd78a92020cf04a8"></a>
+std::uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#af984875a53cabd67dd78a92020cf04a8">mStateUpdateCounter</a></td></tr>
+<tr class="memdesc:af984875a53cabd67dd78a92020cf04a8 inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">number of state updates sent out <br /></td></tr>
+<tr class="separator:af984875a53cabd67dd78a92020cf04a8 inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af892b48c53db80359aa46398591a72c1 inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top">std::uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#af892b48c53db80359aa46398591a72c1">mSecondaryUpdatesInterval</a></td></tr>
+<tr class="separator:af892b48c53db80359aa46398591a72c1 inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5fad0675d5baa960558751025bc5ec3a inherit pro_attribs_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a5fad0675d5baa960558751025bc5ec3a"></a>
 QTimer *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a5fad0675d5baa960558751025bc5ec3a">mStateUpdateTimer</a></td></tr>
 <tr class="memdesc:a5fad0675d5baa960558751025bc5ec3a inherit pro_attribs_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">mStateUpdateTimer Polls the controller every few seconds requesting updates on all of its devices. <br /></td></tr>
@@ -212,96 +203,26 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 <tr class="separator:adb4f46ee7ad397a16b5af72172954837 inherit pro_attribs_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
+<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="aa39b967942bd31328375291fa20243b5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa39b967942bd31328375291fa20243b5">&#9670;&nbsp;</a></span>changeColorCT()</h2>
+<a id="a2f4f6f13ae1aaf42fd9ba9f358b9b3bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f4f6f13ae1aaf42fd9ba9f358b9b3bc">&#9670;&nbsp;</a></span>findSchedules()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void CommNanoleaf::changeColorCT </td>
-          <td>(</td>
-          <td class="paramtype">const cor::Controller &amp;&#160;</td>
-          <td class="paramname"><em>controller</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>ct</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">controller</td><td>controller to send CT packet to. </td></tr>
-    <tr><td class="paramname">ct</td><td>a new value for the color temperature, given in meriks. Must be between 153 and 500. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="afa84edf826c4c41f76164ba6b0a54549"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afa84edf826c4c41f76164ba6b0a54549">&#9670;&nbsp;</a></span>findNanoLeafController()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool CommNanoleaf::findNanoLeafController </td>
+          <td class="memname">std::pair&lt; cor::Dictionary&lt; nano::LeafSchedule &gt;, bool &gt; CommNanoleaf::findSchedules </td>
           <td>(</td>
           <td class="paramtype">const QString &amp;&#160;</td>
-          <td class="paramname"><em>serialNumber</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">nano::LeafController &amp;&#160;</td>
-          <td class="paramname"><em>leafController</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">serialNumber</td><td>serialNumber to use to find the nanoleaf controller </td></tr>
-    <tr><td class="paramname">leafController</td><td>the nanoleaf controller to fil as the return </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="afa2b7490571ee96194d9ffccc54dcce6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afa2b7490571ee96194d9ffccc54dcce6">&#9670;&nbsp;</a></span>findSchedules()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const cor::Dictionary&lt; nano::LeafSchedule &gt; &amp; CommNanoleaf::findSchedules </td>
-          <td>(</td>
-          <td class="paramtype">const nano::LeafController &amp;&#160;</td>
-          <td class="paramname"><em>controller</em></td><td>)</td>
+          <td class="paramname"><em>serial</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">controller</td><td>controller to look for schedules from </td></tr>
+    <tr><td class="paramname">light</td><td>light to look for schedules from </td></tr>
   </table>
   </dd>
 </dl>
@@ -332,8 +253,8 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 </div>
 </div>
-<a id="aa32adc7f447ff04e552634909ffc33ed"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa32adc7f447ff04e552634909ffc33ed">&#9670;&nbsp;</a></span>sendTimeout()</h2>
+<a id="a43f6b8bcd9e808a3830f331bc801181d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a43f6b8bcd9e808a3830f331bc801181d">&#9670;&nbsp;</a></span>sendTimeout()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -341,8 +262,8 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
         <tr>
           <td class="memname">void CommNanoleaf::sendTimeout </td>
           <td>(</td>
-          <td class="paramtype">const nano::LeafController &amp;&#160;</td>
-          <td class="paramname"><em>controller</em>, </td>
+          <td class="paramtype">const nano::LeafMetadata &amp;&#160;</td>
+          <td class="paramname"><em>light</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -359,7 +280,7 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">controller</td><td>controller to send a tiemout to </td></tr>
+    <tr><td class="paramname">light</td><td>light to send a tiemout to </td></tr>
     <tr><td class="paramname">minutes</td><td>the number of minutes for the timeout </td></tr>
   </table>
   </dd>
@@ -379,7 +300,7 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; Corluma Copyright 2015 - 2019  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; Corluma Copyright 2015 - 2020  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights GPL v3.0 Licensed.  &nbsp; &nbsp;
        </small>
        </p>

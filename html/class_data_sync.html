@@ -120,10 +120,10 @@ Protected Attributes</h2></td></tr>
 EDataSyncType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a9af4ff12861eeb642c46f5b8e1a5eb1e">mType</a></td></tr>
 <tr class="memdesc:a9af4ff12861eeb642c46f5b8e1a5eb1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">type for this specific instance of the <a class="el" href="class_data_sync.html" title="The DataSync base class is used for datasync threads. These threads compares the data layer&#39;s represe...">DataSync</a> <br /></td></tr>
 <tr class="separator:a9af4ff12861eeb642c46f5b8e1a5eb1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af02a54be815f6401f0a25f4669f5554f"><td class="memItemLeft" align="right" valign="top"><a id="af02a54be815f6401f0a25f4669f5554f"></a>
-cor::DeviceList *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#af02a54be815f6401f0a25f4669f5554f">mData</a></td></tr>
-<tr class="memdesc:af02a54be815f6401f0a25f4669f5554f"><td class="mdescLeft">&#160;</td><td class="mdescRight">mData pointer to data layer. Used for checking what state the data layer desires the devices to be. <br /></td></tr>
-<tr class="separator:af02a54be815f6401f0a25f4669f5554f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72dc9a5476a3ba4948129a22b6397824"><td class="memItemLeft" align="right" valign="top"><a id="a72dc9a5476a3ba4948129a22b6397824"></a>
+cor::LightList *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a72dc9a5476a3ba4948129a22b6397824">mData</a></td></tr>
+<tr class="memdesc:a72dc9a5476a3ba4948129a22b6397824"><td class="mdescLeft">&#160;</td><td class="mdescRight">mData pointer to data layer. Used for checking what state the data layer desires the devices to be. <br /></td></tr>
+<tr class="separator:a72dc9a5476a3ba4948129a22b6397824"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a369794bb01f1bd5a2bd2b1c50d27c140"><td class="memItemLeft" align="right" valign="top"><a id="a369794bb01f1bd5a2bd2b1c50d27c140"></a>
 <a class="el" href="class_comm_layer.html">CommLayer</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a369794bb01f1bd5a2bd2b1c50d27c140">mComm</a></td></tr>
 <tr class="memdesc:a369794bb01f1bd5a2bd2b1c50d27c140"><td class="mdescLeft">&#160;</td><td class="mdescRight">mComm pointer to comm layer. Used for checking what state the comm layer thinks the devices are in and for sending packets to the devices. <br /></td></tr>
@@ -152,10 +152,10 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#ae262394c2ea78e041b895b4a9f633553">mUpdateInterval</a></td></tr>
 <tr class="memdesc:ae262394c2ea78e041b895b4a9f633553"><td class="mdescLeft">&#160;</td><td class="mdescRight">mUpdateInterval number of milliseconds between each sync routine. <br /></td></tr>
 <tr class="separator:ae262394c2ea78e041b895b4a9f633553"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa7310b1dd1e2eae034d8de961875d1cf"><td class="memItemLeft" align="right" valign="top"><a id="aa7310b1dd1e2eae034d8de961875d1cf"></a>
-std::list&lt; <a class="el" href="struct_s_throttle.html">SThrottle</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#aa7310b1dd1e2eae034d8de961875d1cf">mThrottleList</a></td></tr>
-<tr class="memdesc:aa7310b1dd1e2eae034d8de961875d1cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">mThrottleList list of all known controllers that packets have been sent to and the the last time a packet was sent. Used to throttle messages from sending too frequently. <br /></td></tr>
-<tr class="separator:aa7310b1dd1e2eae034d8de961875d1cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68e8b48b9ff470b9596f1f27b2b94e21"><td class="memItemLeft" align="right" valign="top"><a id="a68e8b48b9ff470b9596f1f27b2b94e21"></a>
+std::vector&lt; <a class="el" href="struct_s_throttle.html">SThrottle</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a68e8b48b9ff470b9596f1f27b2b94e21">mThrottleList</a></td></tr>
+<tr class="memdesc:a68e8b48b9ff470b9596f1f27b2b94e21"><td class="mdescLeft">&#160;</td><td class="mdescRight">mThrottleList list of all known controllers that packets have been sent to and the the last time a packet was sent. Used to throttle messages from sending too frequently. <br /></td></tr>
+<tr class="separator:a68e8b48b9ff470b9596f1f27b2b94e21"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a id="ac290609617734e4e0d075687e459072b"></a>
@@ -206,7 +206,7 @@ std::list&lt; <a class="el" href="struct_s_throttle.html">SThrottle</a> &gt;&#16
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if packet is added, false otherwise.</dd></dl>
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>
@@ -397,7 +397,7 @@ std::list&lt; <a class="el" href="struct_s_throttle.html">SThrottle</a> &gt;&#16
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; Corluma Copyright 2015 - 2019  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; Corluma Copyright 2015 - 2020  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights GPL v3.0 Licensed.  &nbsp; &nbsp;
        </small>
        </p>

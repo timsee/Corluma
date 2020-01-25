@@ -67,14 +67,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
-<tr class="memitem:acb37253e5dab32ff2ad94476f9792885"><td class="memItemLeft" align="right" valign="top"><a id="acb37253e5dab32ff2ad94476f9792885"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#acb37253e5dab32ff2ad94476f9792885">brightnessChanged</a> (std::uint32_t)</td></tr>
-<tr class="memdesc:acb37253e5dab32ff2ad94476f9792885"><td class="mdescLeft">&#160;</td><td class="mdescRight">brightnessChanged signaled whenever the brightness is changed from any color wheel type that supports it. <br /></td></tr>
-<tr class="separator:acb37253e5dab32ff2ad94476f9792885"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a29b167b178e26e8e8707899138d576ac"><td class="memItemLeft" align="right" valign="top"><a id="a29b167b178e26e8e8707899138d576ac"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a29b167b178e26e8e8707899138d576ac">routineUpdate</a> (QJsonObject)</td></tr>
-<tr class="memdesc:a29b167b178e26e8e8707899138d576ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">sent out whenever a routine update is triggered <br /></td></tr>
-<tr class="separator:a29b167b178e26e8e8707899138d576ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a114c3ee05ac456e1284699ed45133c"><td class="memItemLeft" align="right" valign="top"><a id="a2a114c3ee05ac456e1284699ed45133c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a2a114c3ee05ac456e1284699ed45133c">routineUpdate</a> (cor::LightState)</td></tr>
+<tr class="memdesc:a2a114c3ee05ac456e1284699ed45133c"><td class="mdescLeft">&#160;</td><td class="mdescRight">sent out whenever a routine update is triggered <br /></td></tr>
+<tr class="separator:a2a114c3ee05ac456e1284699ed45133c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -89,7 +85,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:aafe8561aef3a73aa0ee37029f7f1d291"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateRoutineButton helper to update the Routine button in the floating layout. Requires a bit of logic to abstract away the proper function call from the current app state. <br /></td></tr>
 <tr class="separator:aafe8561aef3a73aa0ee37029f7f1d291"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afc333fa62110e6c504b5f10563809f8d"><td class="memItemLeft" align="right" valign="top"><a id="afc333fa62110e6c504b5f10563809f8d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#afc333fa62110e6c504b5f10563809f8d">handleRoutineWidget</a> (bool <a class="el" href="class_color_page.html#a22e84ff1283c5bf0747eccb422fbcb22">show</a>)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#afc333fa62110e6c504b5f10563809f8d">handleRoutineWidget</a> (bool <a class="el" href="class_color_page.html#aac4f219e10a8b1f218a8025f167ec8ea">show</a>)</td></tr>
 <tr class="memdesc:afc333fa62110e6c504b5f10563809f8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">shows or hides the routine widget <br /></td></tr>
 <tr class="separator:afc333fa62110e6c504b5f10563809f8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a19399fc10a0469c8bc6231637cc6ac1d"><td class="memItemLeft" align="right" valign="top"><a id="a19399fc10a0469c8bc6231637cc6ac1d"></a>
@@ -100,10 +96,10 @@ ESingleColorPickerMode&#160;</td><td class="memItemRight" valign="bottom"><a cla
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a3f9b9936362ab1e742f3bbfd2f5bfc3a">updateBrightness</a> (std::uint32_t brightness)</td></tr>
 <tr class="memdesc:a3f9b9936362ab1e742f3bbfd2f5bfc3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">programmatically updates brightness <br /></td></tr>
 <tr class="separator:a3f9b9936362ab1e742f3bbfd2f5bfc3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a22e84ff1283c5bf0747eccb422fbcb22"><td class="memItemLeft" align="right" valign="top"><a id="a22e84ff1283c5bf0747eccb422fbcb22"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a22e84ff1283c5bf0747eccb422fbcb22">show</a> (const QColor &amp;color, uint32_t brightness, uint32_t lightCount, EColorPickerType bestType)</td></tr>
-<tr class="memdesc:a22e84ff1283c5bf0747eccb422fbcb22"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when the widget is shown <br /></td></tr>
-<tr class="separator:a22e84ff1283c5bf0747eccb422fbcb22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac4f219e10a8b1f218a8025f167ec8ea"><td class="memItemLeft" align="right" valign="top"><a id="aac4f219e10a8b1f218a8025f167ec8ea"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#aac4f219e10a8b1f218a8025f167ec8ea">show</a> (const QColor &amp;color, std::uint32_t lightCount, EColorPickerType bestType)</td></tr>
+<tr class="memdesc:aac4f219e10a8b1f218a8025f167ec8ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when the widget is shown <br /></td></tr>
+<tr class="separator:aac4f219e10a8b1f218a8025f167ec8ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7998372d06f606422cb50c5c3b3f5062"><td class="memItemLeft" align="right" valign="top"><a id="a7998372d06f606422cb50c5c3b3f5062"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a7998372d06f606422cb50c5c3b3f5062">routineWidgetIsOpen</a> ()</td></tr>
 <tr class="memdesc:a7998372d06f606422cb50c5c3b3f5062"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if routine widget is open, false otherwise <br /></td></tr>
@@ -117,7 +113,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:a846cf42238564e46e4c0e712e61b1833"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License.</dd></dl>
+<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License.</dd></dl>
 <p>The page contains a <a class="el" href="class_color_picker.html" title="The ColorPicker class is a GUI object designed to give the user ability to choose RGB values in a var...">ColorPicker</a> that allows the user to choose colors. The color picker has various modes such as standard, which gives full range of RGB, and ambient, which allows the user to choose different shades of white.</p>
 <p>For arduino-based projects, there is also a pop up menu on the bottom that allows the user to choose routines for the arduino. To get the single color routines, the user should be on the standard color picker. To get the multi color routines, the user should be on the multi color picker. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -144,7 +140,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>
@@ -193,7 +189,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; Corluma Copyright 2015 - 2019  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; Corluma Copyright 2015 - 2020  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights GPL v3.0 Licensed.  &nbsp; &nbsp;
        </small>
        </p>

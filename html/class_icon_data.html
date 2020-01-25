@@ -61,9 +61,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a72f402465ef64bb05223a63d7227201e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#a72f402465ef64bb05223a63d7227201e">IconData</a> (std::uint32_t <a class="el" href="class_icon_data.html#ae270b171036936d5d89bf53a6e50f63d">width</a>, std::uint32_t <a class="el" href="class_icon_data.html#a7ebbd4de07d73dab042182ee406158cf">height</a>)</td></tr>
 <tr class="memdesc:a72f402465ef64bb05223a63d7227201e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard Constructor, values must be a multiple of four.  <a href="#a72f402465ef64bb05223a63d7227201e">More...</a><br /></td></tr>
 <tr class="separator:a72f402465ef64bb05223a63d7227201e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d069f8bf5300296760b7d9b6cf11d0e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#a1d069f8bf5300296760b7d9b6cf11d0e">setRoutine</a> (const QJsonObject &amp;routineObject)</td></tr>
-<tr class="memdesc:a1d069f8bf5300296760b7d9b6cf11d0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">setRoutine sets the icon as a lighting routine. This takes a routine object and the associated palette for a routine, if one exists.  <a href="#a1d069f8bf5300296760b7d9b6cf11d0e">More...</a><br /></td></tr>
-<tr class="separator:a1d069f8bf5300296760b7d9b6cf11d0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c6a91559bbd554eb3a2101d087dfe04"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#a6c6a91559bbd554eb3a2101d087dfe04">setRoutine</a> (const cor::LightState &amp;state)</td></tr>
+<tr class="memdesc:a6c6a91559bbd554eb3a2101d087dfe04"><td class="mdescLeft">&#160;</td><td class="mdescRight">setRoutine sets the icon as a lighting routine. This takes a routine object and the associated palette for a routine, if one exists.  <a href="#a6c6a91559bbd554eb3a2101d087dfe04">More...</a><br /></td></tr>
+<tr class="separator:a6c6a91559bbd554eb3a2101d087dfe04"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a60de0644c894c117d1503387d0d1f06a"><td class="memItemLeft" align="right" valign="top"><a id="a60de0644c894c117d1503387d0d1f06a"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#a60de0644c894c117d1503387d0d1f06a">setSolidColor</a> (const QColor &amp;color)</td></tr>
 <tr class="memdesc:a60de0644c894c117d1503387d0d1f06a"><td class="mdescLeft">&#160;</td><td class="mdescRight">setSolidColor sets the icon as a solid color <br /></td></tr>
@@ -133,7 +133,7 @@ std::uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 <tr class="separator:a9896631da91346c3f6f1b6cb3db1522d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
+<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a39a260e6e8ad341b130075e6400b0dc1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a39a260e6e8ad341b130075e6400b0dc1">&#9670;&nbsp;</a></span>IconData() <span class="overload">[1/2]</span></h2>
@@ -149,7 +149,7 @@ std::uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2019. Released under the GNU General Public License. </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
 
 </div>
 </div>
@@ -278,8 +278,8 @@ std::uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 
 </div>
 </div>
-<a id="a1d069f8bf5300296760b7d9b6cf11d0e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1d069f8bf5300296760b7d9b6cf11d0e">&#9670;&nbsp;</a></span>setRoutine()</h2>
+<a id="a6c6a91559bbd554eb3a2101d087dfe04"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c6a91559bbd554eb3a2101d087dfe04">&#9670;&nbsp;</a></span>setRoutine()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -287,8 +287,8 @@ std::uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
         <tr>
           <td class="memname">void IconData::setRoutine </td>
           <td>(</td>
-          <td class="paramtype">const QJsonObject &amp;&#160;</td>
-          <td class="paramname"><em>routineObject</em></td><td>)</td>
+          <td class="paramtype">const cor::LightState &amp;&#160;</td>
+          <td class="paramname"><em>state</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -332,7 +332,7 @@ std::uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
     <td>
       <p align="left">
       <small>
-          &nbsp; &nbsp; Corluma Copyright 2015 - 2019  &nbsp; &nbsp; <br>
+          &nbsp; &nbsp; Corluma Copyright 2015 - 2020  &nbsp; &nbsp; <br>
           &nbsp; &nbsp; All Rights GPL v3.0 Licensed.  &nbsp; &nbsp;
        </small>
        </p>
