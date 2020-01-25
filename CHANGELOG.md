@@ -673,3 +673,11 @@ ___
 - Fixed bugs in the `cor::LightVectorWidget`.
 - Fixed miscellaneous bugs.
 
+
+### **v0.17.72**
+#### A Minor Bug Fixes Update
+- Fixed a bug with page layouts when in portrait mode.
+- Fixed unncessary rendering in `TopMenu`.
+- Lights are now listed alphabetically in the info widget.
+- Fixed miscellaneous bugs.
+

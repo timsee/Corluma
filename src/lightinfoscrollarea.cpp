@@ -23,7 +23,13 @@ LightInfoScrollArea::LightInfoScrollArea(QWidget* parent)
 
 
 void LightInfoScrollArea::updateHues(std::vector<HueMetadata> lights) {
-    for (const auto& light : lights) {
+    // sort alphabetically
+    auto sortedLights = lights;
+    auto lambda = [](const HueMetadata& a, const HueMetadata& b) -> bool {
+        return a.name() < b.name();
+    };
+    std::sort(sortedLights.begin(), sortedLights.end(), lambda);
+    for (const auto& light : sortedLights) {
         // check if light already exists in list
         int widgetIndex = -1;
         int i = 0;
@@ -51,7 +57,12 @@ void LightInfoScrollArea::updateHues(std::vector<HueMetadata> lights) {
 }
 
 void LightInfoScrollArea::updateNanoLeafs(const std::vector<nano::LeafMetadata>& lights) {
-    for (auto light : lights) {
+    auto sortedLights = lights;
+    auto lambda = [](const nano::LeafMetadata& a, const nano::LeafMetadata& b) -> bool {
+        return a.name() < b.name();
+    };
+    std::sort(sortedLights.begin(), sortedLights.end(), lambda);
+    for (auto light : sortedLights) {
         // check if light already exists in list
         int widgetIndex = -1;
         int i = 0;
@@ -80,7 +91,12 @@ void LightInfoScrollArea::updateNanoLeafs(const std::vector<nano::LeafMetadata>&
 
 
 void LightInfoScrollArea::updateAruCorLights(const std::vector<ArduCorMetadata>& lights) {
-    for (const auto& light : lights) {
+    auto sortedLights = lights;
+    auto lambda = [](const ArduCorMetadata& a, const ArduCorMetadata& b) -> bool {
+        return a.uniqueID() < b.uniqueID();
+    };
+    std::sort(sortedLights.begin(), sortedLights.end(), lambda);
+    for (auto light : sortedLights) {
         // check if light already exists in list
         int widgetIndex = -1;
         int i = 0;

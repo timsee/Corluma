@@ -386,7 +386,7 @@ void MainWindow::pushInDiscovery() {
     const auto& fullScreenSize = size();
     if (mFirstLoad) {
         mDiscoveryPage->setFixedSize(fullScreenSize.width(), fullScreenSize.height());
-    } else if (mLeftHandMenu->isIn()) {
+    } else if (mLeftHandMenu->alwaysOpen()) {
         mDiscoveryPage->setFixedSize(fullScreenSize.width() - mLeftHandMenu->width(),
                                      fullScreenSize.height());
     } else {
@@ -830,7 +830,6 @@ void MainWindow::mouseMoveEvent(QMouseEvent* event) {
                            size(),
                            mLeftHandMenu->size())) {
             mMovingMenu = true;
-            mLeftHandMenu->raise();
             // get the x value based on current value
             auto xPos = event->pos().x() - mStartPoint.x();
             if (mLeftHandMenu->isIn()) {
@@ -874,7 +873,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent* event) {
             if (mSettingsPage->isOpen()) {
                 settingsClosePressed();
             }
-        } else {
+        } else if (!mLeftHandMenu->isIn() && (mDiscoveryPage->isOpen() || mSettingsPage->isOpen())) {
             mLeftHandMenu->pushIn();
         }
 
@@ -919,6 +918,10 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
         ignorePushOut = true;
     }
 
+    if (page == EPage::settingsPage
+            || page == EPage::discoveryPage) {
+        ignorePushOut = true;
+    }
 
     if (!ignorePushOut) {
         if ((page == EPage::colorPage || page == EPage::palettePage) && mData->lights().empty()) {

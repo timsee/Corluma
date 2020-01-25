@@ -39,7 +39,7 @@ SingleLightBrightnessWidget::SingleLightBrightnessWidget(const QSize& size,
     if (isLeftAlwaysOpen) {
         mPositionX = int(mSize.width() * 0.1);
     } else {
-        mPositionX = int(mSize.width() * 1.1);
+        mPositionX = int(mSize.width());
     }
     mTopSpacer = mSize.height() / 8;
     resize();
@@ -110,7 +110,7 @@ void SingleLightBrightnessWidget::resize() {
     } else {
         mBrightnessSlider->setGeometry(mSize.width() + 5,
                                        0,
-                                       width() - int(mSize.width() * 2.1),
+                                       width() - int(mSize.width() * 1.2),
                                        height());
     }
 }

@@ -168,16 +168,18 @@ void LeftHandMenu::resize() {
 }
 
 void LeftHandMenu::pushIn() {
-    mIsIn = true;
-    resize();
-    updateLights();
-    raise();
-    cor::moveWidget(this, pos(), QPoint(0u, 0u));
-    mRenderThread->start(333);
+    if (!mIsIn) {
+        mIsIn = true;
+        resize();
+        updateLights();
+        raise();
+        cor::moveWidget(this, pos(), QPoint(0u, 0u));
+        mRenderThread->start(333);
+    }
 }
 
 void LeftHandMenu::pushOut() {
-    if (!mAlwaysOpen) {
+    if (!mAlwaysOpen && mIsIn) {
         QPoint endPoint = pos();
         endPoint.setX(size().width() * -1);
         cor::moveWidget(this, pos(), endPoint);

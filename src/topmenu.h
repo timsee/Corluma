@@ -152,8 +152,6 @@ private slots:
     void menuButtonPressed();
 
 private:
-    /// select lights button for portait display ratios when no lights are selected
-    SelectLightsButton* mSelectLightsButton;
 
     /// y position where the select lights button shows up
     int mStartSelectLightsButton;
@@ -179,32 +177,11 @@ private:
     /// returns a pointer to the current floating layout.
     FloatingLayout* currentFloatingLayout();
 
-    /// floating layout for palette page.
-    FloatingLayout* mPaletteFloatinglayout;
-
-    /// floating layout for moods page.
-    FloatingLayout* mMoodsFloatingLayout;
-
-    /// floating layout for color page.
-    FloatingLayout* mColorFloatingLayout;
-
-    /// routine widget for ColorPage
-    FloatingLayout* mSingleRoutineFloatingLayout;
-
-    /// routine widget for PalettePage
-    FloatingLayout* mMultiRoutineFloatingLayout;
-
-    /// widget for showing the state of the single color page
-    SingleColorStateWidget* mSingleColorStateWidget;
-
-    /// widget for showing the state of the multi color page
-    MultiColorStateWidget* mMultiColorStateWidget;
-
-    /// last key for color page.
-    QString mLastColorButtonKey;
-
     /// handles which brightness slider should be showed
     void handleBrightnessSliders();
+
+    /// handles the right button menus
+    void handleButtonLayouts();
 
     /// pushes the floating layout specified out to the right and off screen.
     void pushRightFloatingLayout(FloatingLayout* layout);
@@ -246,14 +223,14 @@ private:
     /// stores the current color index for the custom palette picker
     int mColorIndex;
 
+    /// last key for color page.
+    QString mLastColorButtonKey;
+
     /// renders an update for the UI periodically
     QTimer* mRenderTimer;
 
     /// palette that shows the currently selected devices
     cor::LightVectorWidget* mMainPalette;
-
-    /// spacer for row of buttons
-    QWidget* mSpacer;
 
     /// hamburger icon in top left for opening the main menu
     QPushButton* mMenuButton;
@@ -263,6 +240,30 @@ private:
 
     /// slider for changing the brightness of a single light
     SingleLightBrightnessWidget* mSingleLightBrightness;
+
+    /// floating layout for palette page.
+    FloatingLayout* mPaletteFloatingLayout;
+
+    /// routine widget for PalettePage
+    FloatingLayout* mMultiRoutineFloatingLayout;
+
+    /// floating layout for moods page.
+    FloatingLayout* mMoodsFloatingLayout;
+
+    /// floating layout for color page.
+    FloatingLayout* mColorFloatingLayout;
+
+    /// routine widget for ColorPage
+    FloatingLayout* mSingleRoutineFloatingLayout;
+
+    /// widget for showing the state of the single color page
+    SingleColorStateWidget* mSingleColorStateWidget;
+
+    /// widget for showing the state of the multi color page
+    MultiColorStateWidget* mMultiColorStateWidget;
+
+    /// select lights button for portait display ratios when no lights are selected
+    SelectLightsButton* mSelectLightsButton;
 };
 
 #endif // TOPMENU_H
