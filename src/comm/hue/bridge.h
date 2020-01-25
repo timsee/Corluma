@@ -104,7 +104,7 @@ using BridgeRoomVector = std::vector<std::pair<cor::Room, int>>;
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2019.
+ * Copyright (C) 2015 - 2020.
  * Released under the GNU General Public License.
  *
  * \brief The Bridge class stores useful information about a hue::Bridge for discovery and for

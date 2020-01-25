@@ -16,7 +16,7 @@ namespace hue {
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2019.
+ * Copyright (C) 2015 - 2020.
  * Released under the GNU General Public License.
  *
  * \brief The BridgeInfoWidget class is a simple widget that shows the metadata of a bridge and

@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2019.
+ * Copyright (C) 2015 - 2020.
  * Released under the GNU General Public License.
  */
 
@@ -69,7 +69,8 @@ PresetGroupWidget::PresetGroupWidget(const QString& name,
 
 void PresetGroupWidget::setChecked(ERoutine routine, bool isChecked) {
     if (mMode == EPresetWidgetMode::arduino) {
-        std::uint32_t index = std::uint32_t(routine) - std::uint32_t(cor::ERoutineSingleColorEnd) - 1;
+        std::uint32_t index =
+            std::uint32_t(routine) - std::uint32_t(cor::ERoutineSingleColorEnd) - 1;
         mButtons[index]->setChecked(isChecked);
         if (isChecked) {
             mButtons[index]->setStyleSheet(kCheckedStyleSheet);

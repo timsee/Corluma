@@ -681,3 +681,8 @@ ___
 - Lights are now listed alphabetically in the info widget.
 - Fixed miscellaneous bugs.
 
+
+### **v0.17.72**
+#### The 2020 Update
+- Updated copyright to 2020.
+

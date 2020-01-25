@@ -11,7 +11,7 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2019.
+ * Copyright (C) 2015 - 2020.
  * Released under the GNU General Public License.
  *
  * \brief The MultiColorPicker class is a color picker designed for choosing multiple colors at

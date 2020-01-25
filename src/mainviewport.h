@@ -16,7 +16,7 @@ class MainWindow;
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2019.
+ * Copyright (C) 2015 - 2020.
  * Released under the GNU General Public License.
  *
  * \brief The MainViewport class is the main viewport on the mainwindow, and is used

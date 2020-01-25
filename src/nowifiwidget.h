@@ -7,7 +7,7 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2019.
+ * Copyright (C) 2015 - 2020.
  * Released under the GNU General Public License.
  *
  * \brief The NoWifiWidget class is a simple widget that pop ups when there is no wifi

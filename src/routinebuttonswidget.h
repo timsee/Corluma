@@ -12,7 +12,7 @@ enum class EWidgetGroup { singleRoutines, multiRoutines };
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2019.
+ * Copyright (C) 2015 - 2020.
  * Released under the GNU General Public License.
  *
  * \brief The RoutineButtonsWidget class is a basic widget that holds a grid of lightsbuttons that

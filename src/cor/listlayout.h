@@ -15,7 +15,7 @@ enum class EListType { grid, linear };
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2019.
+ * Copyright (C) 2015 - 2020.
  * Released under the GNU General Public License.
  *
  *
