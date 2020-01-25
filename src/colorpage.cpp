@@ -48,12 +48,18 @@ ColorPage::ColorPage(QWidget* parent) : QWidget(parent), mColor{0, 255, 0} {
 
 void ColorPage::updateColor(const QColor& color) {
     mColor = color;
+    if (mColorPicker->mode() != ESingleColorPickerMode::ambient) {
+        mState.temperature(-1);
+    }
     mState.color(color);
 }
 
 
 void ColorPage::updateBrightness(std::uint32_t brightness) {
     mColor.setHsvF(mColor.hueF(), mColor.saturationF(), brightness / 100.0);
+    if (mColorPicker->mode() != ESingleColorPickerMode::ambient) {
+        mState.temperature(-1);
+    }
     mState.color(mColor);
     mState.isOn(true);
     emit routineUpdate(mState);
@@ -67,6 +73,9 @@ void ColorPage::updateBrightness(std::uint32_t brightness) {
 void ColorPage::colorChanged(const QColor& color) {
     updateColor(color);
     mState.color(color);
+    if (mColorPicker->mode() != ESingleColorPickerMode::ambient) {
+        mState.temperature(-1);
+    }
     mState.isOn(true);
 
     emit routineUpdate(mState);
@@ -78,6 +87,9 @@ void ColorPage::colorChanged(const QColor& color) {
 
 void ColorPage::newRoutineSelected(cor::LightState state) {
     state.color(mColor);
+    if (mColorPicker->mode() != ESingleColorPickerMode::ambient) {
+        mState.temperature(-1);
+    }
     state.isOn(true);
     if (state.routine() != ERoutine::singleSolid) {
         state.speed(125);
@@ -110,8 +122,7 @@ void ColorPage::ambientUpdateReceived(std::uint32_t newAmbientValue, std::uint32
 // ----------------------------
 
 void ColorPage::show(const QColor& color,
-                     uint32_t brightness,
-                     uint32_t lightCount,
+                     std::uint32_t lightCount,
                      EColorPickerType bestType) {
     mColor = color;
     mBestType = bestType;

@@ -274,8 +274,7 @@ void TopMenu::lightCountChanged() {
     if (mCurrentPage == EPage::colorPage) {
         adjustSingleColorLayout(false);
         mColorPage->show(mData->mainColor(),
-                         std::uint32_t(mData->brightness()),
-                         std::uint32_t(mData->lights().size()),
+                         mData->lights().size(),
                          mComm->bestColorPickerType(mData->lights()));
     } else if (mCurrentPage == EPage::palettePage) {
         showMultiColorStateWidget(!mData->lights().empty());

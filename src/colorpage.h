@@ -65,8 +65,7 @@ public:
 
     /// called when the widget is shown
     void show(const QColor& color,
-              uint32_t brightness,
-              uint32_t lightCount,
+              std::uint32_t lightCount,
               EColorPickerType bestType);
 
     /// true if routine widget is open, false otherwise

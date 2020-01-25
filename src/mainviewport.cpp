@@ -131,8 +131,7 @@ void MainViewport::showMainPage(EPage page, bool skipTransition) {
 
     if (page == EPage::colorPage) {
         mColorPage->show(mData->mainColor(),
-                         uint32_t(mData->brightness()),
-                         uint32_t(mData->lights().size()),
+                         mData->lights().size(),
                          mComm->bestColorPickerType(mData->lights()));
         mColorPage->setVisible(true);
     } else if (page == EPage::moodPage) {
@@ -172,8 +171,7 @@ void MainViewport::hideMainPage(EPage page) {
 void MainViewport::lightCountChanged() {
     if (mPageIndex == EPage::colorPage) {
         mColorPage->show(mData->mainColor(),
-                         uint32_t(mData->brightness()),
-                         uint32_t(mData->lights().size()),
+                         mData->lights().size(),
                          mComm->bestColorPickerType(mData->lights()));
     } else if (mPageIndex == EPage::palettePage) {
         mPalettePage->show(mData->lightCount(),

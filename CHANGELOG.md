@@ -682,7 +682,15 @@ ___
 - Fixed miscellaneous bugs.
 
 
-### **v0.17.72**
+### **v0.17.73**
 #### The 2020 Update
 - Updated copyright to 2020.
+
+
+### **v0.17.74**
+#### The Docs Update
+- Fixed bug with ambient color picker.
+- Updated images and docs.
+
+
 
