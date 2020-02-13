@@ -6,14 +6,6 @@
 
 #include "colorpicker.h"
 
-#include <QConicalGradient>
-#include <QDebug>
-#include <QGraphicsEffect>
-#include <QGraphicsOpacityEffect>
-#include <QGraphicsScene>
-#include <QPainter>
-#include <QStyleOption>
-
 #include "utils/color.h"
 
 ColorPicker::ColorPicker(QWidget* parent) : QWidget(parent) {
@@ -21,10 +13,6 @@ ColorPicker::ColorPicker(QWidget* parent) : QWidget(parent) {
 
     mPlaceholder = new QWidget(this);
     mPlaceholder->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-    // --------------
-    // Setup ColorWheel
-    // --------------
 
     mColorWheel = new ColorWheel(this);
     mColorWheel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);

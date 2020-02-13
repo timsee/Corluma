@@ -42,10 +42,9 @@ public:
     /*!
      * \brief updateColorStates update the layouts at the bottom of the ColorPicker with new values
      * from the RGB devices
-     * \param brightness brightness from data layer
      * \param colorSchemes the colors of the selected devices
      */
-    void updateColorStates(const std::vector<QColor>& colorSchemes, uint32_t brightness);
+    void updateColorStates(const std::vector<QColor>& colorSchemes);
 
     /// current scheme for the multi color picker
     EColorSchemeType currentScheme() { return mColorSchemeChooser->currentScheme(); }

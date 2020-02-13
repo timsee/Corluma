@@ -227,9 +227,15 @@ void LeafDiscovery::discoveryRoutine() {
     if (!mNotFoundLights.empty()) {
         for (const auto& controller : mNotFoundLights) {
 #ifdef DEBUG_LEAF_DISCOVERY
-            qDebug() << __func__ << " testing auth of " << controller.hardwareName();
+            qDebug() << __func__ << " testing auth of " << controller.hardwareName()
+                     << " auth token: " << controller.authToken();
 #endif
-            mNanoleaf->testAuth(controller);
+
+            if (!controller.authToken().isEmpty()) {
+                mNanoleaf->testAuth(controller);
+            } else if (!controller.IP().isEmpty()) {
+                mNanoleaf->testIP(controller);
+            }
         }
     }
 

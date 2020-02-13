@@ -1,7 +1,6 @@
 #ifndef TOPMENU_H
 #define TOPMENU_H
 
-#include <QPushButton>
 #include <QWidget>
 
 #include "colorpage.h"
@@ -16,6 +15,7 @@
 #include "multicolorstatewidget.h"
 #include "palettepage.h"
 #include "selectlightsbutton.h"
+#include "singlecolorstatewidget.h"
 #include "singlelightbrightnesswidget.h"
 
 /*!
@@ -23,20 +23,7 @@
  * Copyright (C) 2015 - 2020.
  * Released under the GNU General Public License.
  */
-
 class MainWindow;
-/*!
- * \brief The EPage enum The main pages of the application, as they are ordered
- * in their QStackedWidget.
- */
-enum class EPage { colorPage, palettePage, moodPage, discoveryPage, settingsPage };
-Q_DECLARE_METATYPE(EPage)
-
-/// converts page enum to string
-QString pageToString(EPage e);
-
-/// converts string to page enum
-EPage stringToPage(const QString&);
 
 /// type of color menu
 enum class EColorMenuType {
@@ -69,9 +56,6 @@ public:
     /// parts visible
     void showMenu();
 
-    /// getter for brightness
-    int brightness() { return mGlobalBrightness->brightness(); }
-
     /*!
      * \brief highlightButton highlight the button of any of the floating layouts, based on the key
      *
@@ -82,8 +66,16 @@ public:
     /// switch the floating layout to show the menu for the given page
     void showFloatingLayout(EPage newPage);
 
-    /// sets up the colorPage's horizontal floating layout.
-    void adjustSingleColorLayout(bool skipTransition);
+    /*!
+     * \brief showRoutineWidget adjusts the routine floating layout, which shows under certain
+     * conditions on the color and palette page. This widget displays various routine buttons, which
+     * are only accessible if lights with individually addressable LEDs are selected. Routines are
+     * either single color, such as blinking, or glimmering, or multi color, such as randomly
+     * switching between solid colors.
+     *
+     * \param skipTransition true to move immediately, false to transition normally.
+     */
+    void showRoutineWidget(bool skipTransition);
 
     /// true to hide menu button, false to display it
     void hideMenuButton(bool shouldHide);
@@ -100,6 +92,21 @@ public:
     /// true to show the multi color state widget, false to hide it
     void showMultiColorStateWidget(bool show);
 
+    /// handles which brightness slider should be showed
+    void handleBrightnessSliders();
+
+    /// getter for single color state widget
+    SingleColorStateWidget* singleColorStateWidget() { return mSingleColorStateWidget; }
+
+    /// getter for multi color state widget
+    MultiColorStateWidget* multiColorStateWidget() { return mMultiColorStateWidget; }
+
+    /// getter for global brightness widget
+    GlobalBrightnessWidget* globalBrightness() { return mGlobalBrightness; }
+
+    /// getter for single light brightness
+    SingleLightBrightnessWidget* singleLightBrightness() { return mSingleLightBrightness; }
+
 signals:
 
     /// sent out whenever a button is pressed. Keys are the names of the buttons, such as "settings"
@@ -112,12 +119,6 @@ public slots:
      */
     void lightCountChanged();
 
-    /// brightness is updated, update the widgets
-    void brightnessUpdate(std::uint32_t newValue);
-
-    /// set if data is in sync or not
-    void dataInSync(bool);
-
     /*!
      * \brief updateRoutine update the routine for the current app state
      * \param routine routine to update the apps state to
@@ -129,12 +130,6 @@ public slots:
      * \param colors the colors to use in the new color scheme
      */
     void updateScheme(const std::vector<QColor>& colors, std::uint32_t);
-
-    /// the selection for the multi color picker changed
-    void multiColorSelectionChange(std::uint32_t index, const QColor& color);
-
-    /// color scheme changed
-    void colorSchemeTypeChanged(EColorSchemeType scheme);
 
 protected:
     /// resizes assets in the widget
@@ -176,9 +171,6 @@ private:
     /// returns a pointer to the current floating layout.
     FloatingLayout* currentFloatingLayout();
 
-    /// handles which brightness slider should be showed
-    void handleBrightnessSliders();
-
     /// handles the right button menus
     void handleButtonLayouts();
 
@@ -219,9 +211,6 @@ private:
     /// can run into issues on certain screen ratios, so to be safe, compute once and store
     int mPaletteWidth;
 
-    /// stores the current color index for the custom palette picker
-    int mColorIndex;
-
     /// last key for color page.
     QString mLastColorButtonKey;
 
@@ -243,17 +232,14 @@ private:
     /// floating layout for palette page.
     FloatingLayout* mPaletteFloatingLayout;
 
-    /// routine widget for PalettePage
-    FloatingLayout* mMultiRoutineFloatingLayout;
-
     /// floating layout for moods page.
     FloatingLayout* mMoodsFloatingLayout;
 
     /// floating layout for color page.
     FloatingLayout* mColorFloatingLayout;
 
-    /// routine widget for ColorPage
-    FloatingLayout* mSingleRoutineFloatingLayout;
+    /// routine widget for ColorPage and PalettePage
+    FloatingLayout* mRoutineFloatingLayout;
 
     /// widget for showing the state of the single color page
     SingleColorStateWidget* mSingleColorStateWidget;

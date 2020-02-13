@@ -84,6 +84,9 @@ private:
 
     /// pointer to the color wheel
     ColorWheel* mWheel;
+
+    /// stores the count of circles to display
+    std::uint32_t mCount;
 };
 
 #endif // COLORSCHEMECIRCLES_H

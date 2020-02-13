@@ -24,7 +24,6 @@ MoodPage::MoodPage(QWidget* parent, GroupData* groups)
 
     connect(mGroups, SIGNAL(newMoodAdded(QString)), this, SLOT(newMoodAdded(QString)));
 
-    mRenderInterval = 1000;
     resize();
 }
 

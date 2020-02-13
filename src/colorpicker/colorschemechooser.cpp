@@ -27,7 +27,7 @@ ColorSchemeChooser::ColorSchemeChooser(QWidget* parent) : QWidget(parent) {
                 SLOT(schemeClicked(EColorSchemeType, bool)));
         button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         mButtons.push_back(button);
-        if (button->key() == EColorSchemeType::similar) {
+        if (button->key() == EColorSchemeType::custom) {
             mCurrentKey = button->key();
             button->select(true);
         }

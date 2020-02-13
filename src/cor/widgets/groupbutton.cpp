@@ -13,6 +13,7 @@
 #include <QPainter>
 #include <QStyleOption>
 
+#include "groupbuttonswidget.h"
 #include "utils/qt.h"
 
 namespace cor {

@@ -51,7 +51,6 @@ DiscoveryPage::DiscoveryPage(QWidget* parent,
 
     connect(mStartButton, SIGNAL(clicked(bool)), this, SLOT(startClicked()));
 
-    mRenderInterval = 100;
     mRenderThread = new QTimer(this);
     connect(mRenderThread, SIGNAL(timeout()), this, SLOT(renderUI()));
 
@@ -271,7 +270,8 @@ void DiscoveryPage::changeCommTypeConnectionState(EProtocolType type, EConnectio
 
 
 void DiscoveryPage::show() {
-    mRenderThread->start(mRenderInterval);
+    const auto renderInterval = 100u;
+    mRenderThread->start(renderInterval);
     updateTopMenu();
     moveFloatingLayouts();
     resize();

@@ -10,13 +10,11 @@
 
 GlobalBrightnessWidget::GlobalBrightnessWidget(const QSize& size,
                                                bool isLeftAlwaysOpen,
-                                               cor::LightList* data,
                                                QWidget* parent)
     : QWidget(parent),
       mIsIn{false},
       mSize{size},
-      mIsLeftAlwaysOpen{isLeftAlwaysOpen},
-      mData{data} {
+      mIsLeftAlwaysOpen{isLeftAlwaysOpen} {
     // --------------
     // Setup Brightness Slider
     // --------------
@@ -136,13 +134,13 @@ void GlobalBrightnessWidget::resize() {
 
 
 void GlobalBrightnessWidget::brightnessSliderChanged(int newBrightness) {
-    mData->updateBrightness(newBrightness);
-    mData->turnOn(true);
-    updateColor(mData->mainColor());
-    emit brightnessChanged(newBrightness);
+    auto color = mBrightnessSlider->color();
+    color.setHsvF(color.hueF(), color.saturationF(), newBrightness / 100.0);
+    updateColor(color);
+    emit brightnessChanged(std::uint32_t(newBrightness));
 }
 
 
 void GlobalBrightnessWidget::changedSwitchState(bool state) {
-    mData->turnOn(state);
+    emit isOnUpdate(state);
 }

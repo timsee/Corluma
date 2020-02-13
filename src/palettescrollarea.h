@@ -8,7 +8,7 @@
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2020.
  * Released under the GNU General Public License.
  *
  *
@@ -38,6 +38,16 @@ public:
 
     /// programmatically resize
     void resize();
+
+signals:
+
+    /// emits the routine and palette clicked when a button is clicked
+    void paletteClicked(ERoutine, EPalette);
+
+private slots:
+
+    /// handles a button click and converts it to a signal.
+    void buttonClicked(cor::LightState);
 
 private:
     /// widget used as main widget of QScrollArea.

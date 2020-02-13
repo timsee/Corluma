@@ -47,10 +47,15 @@ SingleLightBrightnessWidget::SingleLightBrightnessWidget(const QSize& size,
 
 void SingleLightBrightnessWidget::updateColor(const QColor& color) {
     bool rerender = false;
-    if (mColor != color) {
+    if (mBrightnessSlider->color() != color) {
         rerender = true;
-        mColor = color;
         mBrightnessSlider->setColor(color);
+        auto brightness = color.valueF() * 100.0;
+        if (int(brightness) != mBrightnessSlider->slider()->value()) {
+            mBrightnessSlider->blockSignals(true);
+            mBrightnessSlider->slider()->setValue(int(brightness));
+            mBrightnessSlider->blockSignals(false);
+        }
     }
     if (rerender) {
         update();
@@ -58,11 +63,9 @@ void SingleLightBrightnessWidget::updateColor(const QColor& color) {
 }
 
 void SingleLightBrightnessWidget::updateBrightness(std::uint32_t brightness) {
-    if (int(brightness) != mBrightnessSlider->slider()->value()) {
-        mBrightnessSlider->blockSignals(true);
-        mBrightnessSlider->slider()->setValue(int(brightness));
-        mBrightnessSlider->blockSignals(false);
-    }
+    auto color = mBrightnessSlider->color();
+    color.setHsvF(color.hueF(), color.saturationF(), brightness / 100.0);
+    updateColor(color);
 }
 
 
@@ -116,6 +119,9 @@ void SingleLightBrightnessWidget::resize() {
 }
 
 void SingleLightBrightnessWidget::brightnessSliderChanged(int newBrightness) {
+    auto color = mBrightnessSlider->color();
+    color.setHsvF(color.hueF(), color.saturationF(), newBrightness / 100.0);
+    updateColor(color);
     // qDebug() << " new brightness amde " << newBrightness;
     emit brightnessChanged(std::uint32_t(newBrightness));
 }
@@ -124,7 +130,7 @@ void SingleLightBrightnessWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
-    QBrush brush(mColor);
+    QBrush brush(mBrightnessSlider->color());
     painter.setBrush(brush);
     painter.setRenderHint(QPainter::Antialiasing, true);
 

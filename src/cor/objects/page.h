@@ -1,9 +1,6 @@
 #ifndef COR_PAGE_H
 #define COR_PAGE_H
 
-#include <QTimer>
-#include <memory>
-
 namespace cor {
 
 /*!
@@ -26,20 +23,8 @@ public:
     bool isOpen() const noexcept { return mIsOpen; }
 
 protected:
-    /*!
-     * \brief mRenderThread timer that calls a renderUI() function on each of the pages.
-     *        This function is used to render more expensive assets if and only if they
-     *        received a change in state since the previous renderUI call.
-     */
-    QTimer* mRenderThread;
-
     /// true if page is open, false if hidden.
     bool mIsOpen;
-
-    /*!
-     * \brief mRenderInterval number of msec between each of the UI events.
-     */
-    int mRenderInterval = 100;
 };
 
 } // namespace cor

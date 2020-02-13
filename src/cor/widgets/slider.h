@@ -6,7 +6,6 @@
 #include <QLayout>
 #include <QSlider>
 #include <QWidget>
-#include <memory>
 
 namespace cor {
 
@@ -109,6 +108,9 @@ public:
 
     /// resizes programmatically
     void resize();
+
+    /// getter for slider color
+    const QColor& color() const noexcept { return mSliderColor; }
 
 signals:
     /*!

@@ -13,7 +13,7 @@
 #include <QStyleOption>
 
 #include "utils/qt.h"
-
+#include "utils/exception.h"
 
 
 QString colorSchemeTypeToString(EColorSchemeType type) {

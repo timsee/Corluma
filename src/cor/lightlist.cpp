@@ -49,54 +49,6 @@ void LightList::updateState(const cor::LightState& newState) {
     emit dataUpdate();
 }
 
-ERoutine LightList::currentRoutine() {
-    std::vector<int> routineCount(int(ERoutine::MAX), 0);
-    for (const auto& light : mLights) {
-        const auto& state = light.state();
-        if (light.isReachable()) {
-            routineCount[std::size_t(state.routine())] =
-                routineCount[std::size_t(state.routine())] + 1;
-        }
-    }
-    auto result = std::max_element(routineCount.begin(), routineCount.end());
-    return ERoutine(std::distance(routineCount.begin(), result));
-}
-
-Palette LightList::palette() {
-    // count number of times each color group occurs
-    std::vector<int> paletteCount(int(EPalette::unknown), 0);
-    for (const auto& light : mLights) {
-        if (light.isReachable()) {
-            const auto& state = light.state();
-            paletteCount[std::uint32_t(state.palette().paletteEnum())] =
-                paletteCount[std::uint32_t(state.palette().paletteEnum())] + 1;
-        }
-    }
-    // find the most frequent color group occurence, return its index.
-    auto result = std::max_element(paletteCount.begin(), paletteCount.end());
-    EPalette palette = EPalette(std::distance(paletteCount.begin(), result));
-    if (palette == EPalette::custom) {
-        for (const auto& light : mLights) {
-            const auto& state = light.state();
-            if (state.palette().paletteEnum() == palette) {
-                return state.palette();
-            }
-        }
-    } else {
-        // we can assume that palettes that have the same enum that aren't custom are identical. I'm
-        // sure we'll regret this assumption one day...
-        if (!mLights.empty()) {
-            for (const auto& light : mLights) {
-                const auto& state = light.state();
-                if (state.palette().paletteEnum() == palette) {
-                    return state.palette();
-                }
-            }
-        }
-    }
-    return Palette(QJsonObject());
-}
-
 QColor LightList::mainColor() {
     int r = 0;
     int g = 0;
@@ -128,6 +80,22 @@ QColor LightList::mainColor() {
     return QColor(r, g, b);
 }
 
+
+void LightList::updateBrightness(std::uint32_t brightness) {
+    for (auto&& light : mLights) {
+        auto state = light.state();
+        if (state.routine() <= cor::ERoutineSingleColorEnd) {
+            QColor color;
+            color.setHsvF(state.color().hueF(), state.color().saturationF(), brightness / 100.0);
+            state.color(color);
+        } else {
+            state.paletteBrightness(brightness);
+        }
+        state.isOn(bool(brightness));
+        light.state(state);
+    }
+    emit dataUpdate();
+}
 
 
 
@@ -163,17 +131,6 @@ int LightList::speed() {
     return speed;
 }
 
-
-
-void LightList::turnOn(bool on) {
-    for (auto&& light : mLights) {
-        auto state = light.state();
-        state.isOn(on);
-        light.state(state);
-    }
-    emit dataUpdate();
-}
-
 bool LightList::isOn() {
     // if any is on, return true
     for (const auto& light : mLights) {
@@ -200,12 +157,12 @@ void LightList::updateColorScheme(std::vector<QColor> colors) {
             if (state.routine() > cor::ERoutineSingleColorEnd) {
                 state.routine(ERoutine::singleGlimmer);
             }
-            i++;
+            ++i;
             i = i % colors.size();
         } else if (light.protocol() == EProtocolType::nanoleaf) {
             state.customCount(colors.size());
             state.isOn(true);
-            state.customPalette(Palette("*Custom*", colors, brightness()));
+            state.customPalette(Palette("*Custom*", colors, 100u));
             if (state.routine() <= cor::ERoutineSingleColorEnd) {
                 state.routine(ERoutine::multiGlimmer);
             }
@@ -253,48 +210,6 @@ std::vector<QColor> LightList::colorScheme() {
     }
     return colorScheme;
 }
-
-
-
-
-void LightList::updateBrightness(std::uint32_t brightness) {
-    for (auto&& light : mLights) {
-        auto state = light.state();
-        if (state.routine() <= cor::ERoutineSingleColorEnd) {
-            QColor color;
-            color.setHsvF(state.color().hueF(), state.color().saturationF(), brightness / 100.0);
-            state.color(color);
-        } else {
-            state.paletteBrightness(brightness);
-        }
-        state.isOn(bool(brightness));
-        light.state(state);
-    }
-    emit dataUpdate();
-}
-
-
-int LightList::brightness() {
-    int brightness = 0;
-    int lightCount = 0;
-    for (const auto& light : mLights) {
-        if (light.isReachable()) {
-            auto state = light.state();
-            if (state.routine() <= cor::ERoutineSingleColorEnd) {
-                brightness += int(state.color().valueF() * 100.0);
-            } else {
-                brightness += state.palette().brightness();
-            }
-            lightCount++;
-        }
-    }
-    if (lightCount > 0) {
-        brightness = brightness / lightCount;
-    }
-
-    return brightness;
-}
-
 
 
 bool LightList::clearLights() {

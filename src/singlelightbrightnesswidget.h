@@ -64,9 +64,6 @@ private:
     /// true if in, false if out
     bool mIsIn;
 
-    /// current color of slider
-    QColor mColor;
-
     /// size used for determining widget size
     QSize mSize;
 

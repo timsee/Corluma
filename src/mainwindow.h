@@ -25,9 +25,14 @@
 #include "listmooddetailedwidget.h"
 #include "mainviewport.h"
 #include "nowifiwidget.h"
+#include "routinebuttonswidget.h"
 #include "settingspage.h"
 #include "shareutils/shareutils.hpp"
-#include "topmenu.h"
+
+namespace cor {
+class StateObserver;
+}
+class TopMenu;
 
 /*!
  * \copyright
@@ -56,6 +61,15 @@ public:
 
     /// true if any discovered, false if nothing discoverd.
     bool anyDiscovered() const noexcept { return mAnyDiscovered; }
+
+    /// getter for viewport
+    MainViewport* viewport() { return mMainViewport; }
+
+    /// getter for left hand menu
+    LeftHandMenu* leftHandMenu() { return mLeftHandMenu; }
+
+    /// getter for the routine widget
+    RoutineButtonsWidget* routineWidget() { return mRoutineWidget; }
 
 public slots:
 
@@ -135,20 +149,8 @@ public slots:
      */
     void deleteLight(const QString& key);
 
-    /// getter for page
-    EPage currentPage() { return mMainViewport->currentPage(); }
-
-    /// mood changed from moodpage
-    void moodChanged(std::uint64_t mood);
-
-    /// protocolsettings page changed from GlobalSettingsWidget
-    void protocolSettingsChanged(EProtocolType, bool);
-
     /// called when a mood is selected
     void moodSelected(std::uint64_t);
-
-    /// getter for left hand menu
-    LeftHandMenu* leftHandMenu() { return mLeftHandMenu; }
 
 private slots:
 
@@ -352,6 +354,21 @@ private:
 
     /// left hand menu.
     LeftHandMenu* mLeftHandMenu;
+
+    /// routine widget, for choosing the routine of lights with multiple addressable LEDs.
+    RoutineButtonsWidget* mRoutineWidget;
+
+    /*!
+     * \brief mStateObserver listens to signals from other widgets and determins the state that the
+     * app is trying to set the lights to. This avoids having to give most widgets knowledge of the
+     * light's states, but abstracting away all state mannagement to its own object. For example, if
+     * the ColorPage wants to change the color of the app, but needs to poll the global brightness,
+     * it can look at the two widgets and adjust accordingly.
+     */
+    cor::StateObserver* mStateObserver;
+
+    /// sets up the object that listens to the states of various apps
+    void setupStateObserver();
 };
 
 #endif // MAINWINDOW_H

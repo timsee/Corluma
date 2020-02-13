@@ -75,7 +75,7 @@ void LeftHandButton::updateIcon(const QString& iconResource) {
 
 
 void LeftHandButton::updateState(const cor::LightState& state) {
-    IconData icon(4, 4);
+    IconData icon;
     icon.setRoutine(state);
     const auto& size = QSize(int(this->size().width() * 0.8), int(this->size().height() * 0.8));
     mIcon->setPixmap(icon.renderAsQPixmap().scaled(size.width(),

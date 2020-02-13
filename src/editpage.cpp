@@ -8,6 +8,7 @@
 
 #include <QMessageBox>
 #include <QScroller>
+#include <QPainter>
 
 #include "utils/qt.h"
 
@@ -32,9 +33,6 @@ EditPage::EditPage(QWidget* parent, CommLayer* comm, GroupData* parser)
     connect(mSimpleGroupWidget, SIGNAL(deviceClicked(QString)), this, SLOT(clickedDevice(QString)));
     QScroller::grabGesture(mSimpleGroupWidget->viewport(), QScroller::LeftMouseButtonGesture);
     mSimpleGroupWidget->setStyleSheet("background-color:rgba(33,32,32,255);");
-
-    mRenderThread = new QTimer(this);
-    connect(mRenderThread, SIGNAL(timeout()), this, SLOT(renderUI()));
 }
 
 void EditPage::updateDevices(const std::vector<cor::Light>& checkedDevices,
@@ -129,8 +127,6 @@ void EditPage::lineEditChanged(const QString& newText) {
     }
 }
 
-void EditPage::renderUI() {}
-
 // ----------------------------
 // Private
 // ----------------------------
@@ -161,7 +157,6 @@ void EditPage::pushIn() {
         QPoint(int(parentWidget()->width() * 0.125f), int(parentWidget()->height() * 0.125f)));
     raise();
     setVisible(true);
-    mRenderThread->start(mRenderInterval);
 }
 
 void EditPage::pushOut() {
@@ -169,5 +164,4 @@ void EditPage::pushOut() {
         this,
         QPoint(int(parentWidget()->width() * 0.125f), int(parentWidget()->height() * 0.125f)),
         QPoint(int(parentWidget()->width() * 0.125f), int(-1 * parentWidget()->height())));
-    mRenderThread->stop();
 }

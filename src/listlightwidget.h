@@ -99,19 +99,11 @@ private:
     /// spacer to use when creating list light widgets
     int spacer();
 
+    /// size of the region used for the icon
     QSize iconRegion();
-
-    /// Called by constructors
-    void init(const QString& uniqueID, const QString& name, ELightHardwareType hardwareType);
 
     /// truncates and modifies the name so that it fits, if necessary
     QString createName(QString name);
-
-    /// displays the type of light, such as a lightbulb or a light cube.
-    QLabel* mTypeIcon;
-
-    /// pixmap for the type.
-    QPixmap mTypePixmap;
 
     /// pixmap used by main icon
     QPixmap mIconPixmap;
@@ -124,6 +116,9 @@ private:
 
     /// hardware type for the light we're displaying
     ELightHardwareType mHardwareType;
+
+    /// pixmap for the type.
+    QPixmap mTypePixmap;
 
     /// state that is being displayed
     cor::LightState mState;
@@ -141,17 +136,12 @@ private:
     IconData mIconData;
 
     /*!
-     * \brief mController name of the controller
-     */
-    QLabel* mController;
-
-    /*!
      * \brief mIsChecked true if checked, false otherwise
      */
     bool mIsChecked;
 
     /// forces initial update to render
-    bool mHasRendered = false;
+    bool mHasRendered;
 
     /// resizes the icons for the widget
     void resizeIcons();
@@ -164,6 +154,14 @@ private:
 
     /// light stored by widget
     cor::Light mLight;
+
+    /*!
+     * \brief mController name of the controller
+     */
+    QLabel* mController;
+
+    /// displays the type of light, such as a lightbulb or a light cube.
+    QLabel* mTypeIcon;
 };
 
 

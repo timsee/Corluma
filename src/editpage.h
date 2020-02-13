@@ -114,13 +114,6 @@ private slots:
      */
     void savePressed(bool);
 
-
-    /*!
-     * \brief renderUI renders expensive assets if and only if the assets have had any
-     *        change of state.
-     */
-    void renderUI();
-
     /*!
      * \brief lineEditChanged called whenever a new character is typed into the QLineEdit. Used to
      * change the name of a group.

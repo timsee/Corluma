@@ -27,15 +27,9 @@ public:
     /*!
      * \brief RoutineButtonsWidget constructor
      *
-     * \param widgetGroup type of widgetgroup. can be either single color routines or multi color
-     * routines
-     * \param colors the colors to use for multi color routines. Not necessary for single
-     * color routines.
      * \param parent parent of this widget
      */
-    explicit RoutineButtonsWidget(EWidgetGroup widgetGroup,
-                                  const std::vector<QColor>& colors,
-                                  QWidget* parent);
+    explicit RoutineButtonsWidget(QWidget* parent);
 
     /*!
      * \brief highlightRoutineButton highlights the button that implements
@@ -67,31 +61,27 @@ public:
      *
      * \param size new size for widget.
      */
-    void resize(QSize size);
+    void resize(int x, QSize size);
 
-    /// getter for routines
-    const std::vector<std::pair<QString, cor::LightState>> routines() { return mRoutines; }
+    /// push widget in, displaying one of the widget groups
+    void pushIn(EWidgetGroup);
 
-    /// true to show widget, false to hide it
-    void showWidget(bool shouldShow);
+    /// push widget out
+    void pushOut();
 
     /// true if open, false if hidden
     bool isOpen() const noexcept { return mIsOpen; }
 
+    /// last routine clicked
+    ERoutine routine() { return state().routine(); }
+
+    /// last parameter used
+    std::uint32_t parameter() { return state().param(); }
+
 signals:
 
-    /*!
-     * \brief newRoutineSelected emitted whenever a button is pressed with the int representation
-     *        of the routine that it represents.
-     */
-    void newRoutineSelected(cor::LightState);
-
-protected:
-    /*!
-     * \brief paintEvent paint event for rendering. used to overwrite the background
-     * color of the widget so that it hides everything behind it.
-     */
-    void paintEvent(QPaintEvent*);
+    /// emits when a routine is selected, sends just the routine itself
+    void newRoutineSelected(ERoutine);
 
 private slots:
 
@@ -102,25 +92,70 @@ private slots:
     void routineChanged(const cor::LightState&);
 
 private:
-    /*!
-     * \brief mLayout layout for widget
-     */
-    QGridLayout* mLayout;
+    /// getter for current state based off of widget group.
+    const cor::LightState& state() const noexcept {
+        if (mWidgetGroup == EWidgetGroup::multiRoutines) {
+            return mMultiState;
+        } else {
+            return mSingleState;
+        }
+    }
 
-    /// vector of routines
-    std::vector<std::pair<QString, cor::LightState>> mRoutines;
+    /// initializes the widgets used in the single routine version of the widget
+    void initSingleRoutineButtons();
+
+    /// initailizes the widgets used in the multi routine version of the widget
+    void initMultiRoutinesButtons();
 
     /// true if showing, false if hidden
     bool mIsOpen;
 
-    /*!
-     * \brief mRoutineButtons pointers to all the main buttons, used
-     * to iterate through them quickly.
-     */
-    std::vector<cor::Button*> mRoutineButtons;
+    /// widget to display the single routine options
+    QWidget* mSingleWidget;
 
-    /// vector of labels
-    std::vector<QLabel*> mLabels;
+    /*!
+     * \brief mSingleLayout layout for single widget
+     */
+    QGridLayout* mSingleLayout;
+
+    /// widget to display the multi routine options
+    QWidget* mMultiWidget;
+
+    /*!
+     * \brief mMultiLayout layout for multi widget
+     */
+    QGridLayout* mMultiLayout;
+
+    /// vector of single routines
+    std::vector<std::pair<QString, cor::LightState>> mSingleRoutines;
+
+    /// vector of multi routines
+    std::vector<std::pair<QString, cor::LightState>> mMultiRoutines;
+
+    /*!
+     * \brief mSingleRoutineButtons pointers to all the main buttons
+     */
+    std::vector<cor::Button*> mSingleRoutineButtons;
+
+    /*!
+     * \brief mMultiRoutineButtons pointers to all the main buttons
+     */
+    std::vector<cor::Button*> mMultiRoutineButtons;
+
+    /// vector of single labels
+    std::vector<QLabel*> mSingleLabels;
+
+    /// vector of multi labels
+    std::vector<QLabel*> mMultiLabels;
+
+    /// stored state for the single routine
+    cor::LightState mSingleState;
+
+    /// stored state for the multi routine
+    cor::LightState mMultiState;
+
+    /// current group being displayed
+    EWidgetGroup mWidgetGroup;
 };
 
 #endif // SINGLECOLORROUTINEWIDGET_H

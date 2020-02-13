@@ -54,7 +54,7 @@ void DataSyncArduino::resetSync() {
     if (mCleanupTimer->isActive()) {
         mCleanupTimer->stop();
     }
-    if (!mData->lights().empty()) {
+    if (!mData->empty()) {
         mDataIsInSync = false;
         mStartTime = QTime::currentTime();
         if (!mSyncTimer->isActive()) {
@@ -119,7 +119,7 @@ void DataSyncArduino::syncData() {
         mDataIsInSync = true;
     }
 
-    if (mDataIsInSync || mData->lights().empty()) {
+    if (mDataIsInSync || mData->empty()) {
         endOfSync();
     }
 }

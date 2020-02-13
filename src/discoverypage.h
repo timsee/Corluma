@@ -222,6 +222,13 @@ private:
     /// pointer to the app states that determine if a protocol (such as arducor or nanoleaf) is
     /// currently enabled
     AppSettings* mAppSettings;
+
+    /*!
+     * \brief mRenderThread timer that calls a renderUI() function on each of the pages.
+     *        This function is used to render more expensive assets if and only if they
+     *        received a change in state since the previous renderUI call.
+     */
+    QTimer* mRenderThread;
 };
 
 #endif // DISCOVERYPAGE_H

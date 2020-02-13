@@ -36,26 +36,30 @@ MultiColorPicker::MultiColorPicker(QWidget* parent)
 void MultiColorPicker::updateBrightness(std::uint32_t brightness) {
     mColorWheel->updateBrightness(brightness);
     mBrightness = brightness;
-    if (mColorSchemeChooser->currentScheme() == EColorSchemeType::custom) {
-        updateSchemeColors(mCircleIndex, mScheme[mCircleIndex]);
-        auto colorCopy = mScheme[mCircleIndex];
-        auto newBrightness = 0.5 + mBrightness / 100.0 / 2.0;
-        colorCopy.setHsvF(colorCopy.hueF(), colorCopy.saturationF(), newBrightness);
-        auto schemeCopy = mScheme;
-        schemeCopy[mCircleIndex] = colorCopy;
-        mColorSchemeCircles->updateColorScheme(schemeCopy);
-    } else {
-        auto schemeCopy = mScheme;
-        auto newBrightness = 0.5 + mBrightness / 100.0 / 2.0;
-        for (std::size_t i = 0u; i < mColorSchemeCircles->circles().size(); ++i) {
-            auto colorCopy = mScheme[i];
+    if (mScheme.size() > mCircleIndex) {
+        if (mColorSchemeChooser->currentScheme() == EColorSchemeType::custom) {
+            updateSchemeColors(mCircleIndex, mScheme[mCircleIndex]);
+            auto colorCopy = mScheme[mCircleIndex];
+            auto newBrightness = 0.5 + mBrightness / 100.0 / 2.0;
             colorCopy.setHsvF(colorCopy.hueF(), colorCopy.saturationF(), newBrightness);
-            schemeCopy[i] = colorCopy;
-            auto actualColor = mScheme[i];
-            actualColor.setHsvF(actualColor.hueF(), actualColor.saturationF(), mBrightness / 100.0);
-            mScheme[i] = actualColor;
+            auto schemeCopy = mScheme;
+            schemeCopy[mCircleIndex] = colorCopy;
+            mColorSchemeCircles->updateColorScheme(schemeCopy);
+        } else {
+            auto schemeCopy = mScheme;
+            auto newBrightness = 0.5 + mBrightness / 100.0 / 2.0;
+            for (std::size_t i = 0u; i < mColorSchemeCircles->circles().size(); ++i) {
+                auto colorCopy = mScheme[i];
+                colorCopy.setHsvF(colorCopy.hueF(), colorCopy.saturationF(), newBrightness);
+                schemeCopy[i] = colorCopy;
+                auto actualColor = mScheme[i];
+                actualColor.setHsvF(actualColor.hueF(),
+                                    actualColor.saturationF(),
+                                    mBrightness / 100.0);
+                mScheme[i] = actualColor;
+            }
+            mColorSchemeCircles->updateColorScheme(schemeCopy);
         }
-        mColorSchemeCircles->updateColorScheme(schemeCopy);
     }
 }
 
@@ -88,7 +92,7 @@ void MultiColorPicker::updateBottomMenuState(bool enable) {
     mColorSchemeCircles->setEnabled(enable);
 }
 
-void MultiColorPicker::updateColorStates(const std::vector<QColor>& colorSchemes, uint32_t) {
+void MultiColorPicker::updateColorStates(const std::vector<QColor>& colorSchemes) {
     std::vector<QColor> newScheme(mMaxCount);
     // in cases where an light is currently showing one color but can show more, set all the
     // additional colors it can show as the one color
@@ -140,7 +144,6 @@ void MultiColorPicker::updateSchemeColors(std::size_t i, const QColor& newColor)
     auto color = newColor;
     color.setHsvF(color.hueF(), color.saturationF(), mBrightness / 100.0);
     mScheme[i] = color;
-    emit selectionChanged(i, color);
 }
 
 //----------

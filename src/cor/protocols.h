@@ -110,6 +110,49 @@ inline EProtocolType stringToProtocol(const QString& protocol) {
 
 
 /*!
+ * \brief The EPage enum The main pages of the application, as they are ordered
+ * in their QStackedWidget.
+ */
+enum class EPage { colorPage, palettePage, moodPage, discoveryPage, settingsPage, MAX };
+Q_DECLARE_METATYPE(EPage)
+
+
+/// converts page enum to string
+inline QString pageToString(EPage page) {
+    switch (page) {
+        case EPage::colorPage:
+            return "Color";
+        case EPage::moodPage:
+            return "Moods";
+        case EPage::palettePage:
+            return "Palette";
+        case EPage::discoveryPage:
+            return "Discovery";
+        case EPage::settingsPage:
+            return "Settings";
+        default:
+            return "Not Recognized";
+    }
+}
+
+/// converts string to page enum
+inline EPage stringToPage(const QString& string) {
+    if (string == "Color") {
+        return EPage::colorPage;
+    } else if (string == "Moods") {
+        return EPage::moodPage;
+    } else if (string == "Palette") {
+        return EPage::palettePage;
+    } else if (string == "Settings") {
+        return EPage::settingsPage;
+    } else if (string == "Discovery") {
+        return EPage::discoveryPage;
+    } else {
+        return EPage::MAX;
+    }
+}
+
+/*!
  * \brief The EColorMode enum the type of color
  *        that the device uses. In the end, all
  *        colors get converted to RGB for storage

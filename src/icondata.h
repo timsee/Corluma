@@ -2,11 +2,7 @@
 #ifndef ICONDATA_H
 #define ICONDATA_H
 
-#include <stdio.h>
-
-#include <QImage>
 #include <QPixmap>
-#include <memory>
 
 #include "cor/objects/lightstate.h"
 
@@ -27,13 +23,6 @@ public:
      * \brief Constructor
      */
     IconData();
-    /*!
-     * \brief Standard Constructor, values must  be a multiple of four.
-     *
-     * \param width the width
-     * \param height the height
-     */
-    IconData(std::uint32_t width, std::uint32_t height);
 
     /*!
      * \brief setRoutine sets the icon as a lighting routine. This takes a routine object and
@@ -137,12 +126,6 @@ public:
     std::uint32_t height();
 
     /*!
-     * \brief renderAsQImage takes the data and outputs it as a QImage
-     *
-     * \return a QImage representation of the data
-     */
-    const QImage renderAsQImage();
-    /*!
      * \brief renderAsQPixmap takes the dat and outputs it as a QPixmap
      *
      * \return a QPixmap representation of the data
@@ -150,19 +133,6 @@ public:
     const QPixmap renderAsQPixmap();
 
 private:
-    /*!
-     * \brief setup used by the constructors to set up the data buffers.
-     *
-     * \param width the width of the data buffers.
-     * \param height the height of the data buffers.
-     */
-    void setup(std::uint32_t width, std::uint32_t height);
-
-    /*!
-     * the full data used when rendering an image.
-     * It matches in size the size of the image
-     */
-    std::vector<uint8_t> mData;
     /*!
      * \brief mWidth the width of the resulting icon
      */
@@ -178,31 +148,9 @@ private:
     std::uint32_t mDataLength;
 
     /*!
-     * a buffer that is used when doing processing.
-     * set of RGB values in the buffer represents an entire
-     * region of the mData. A function bufferToOutput() must
-     * be called in any function to map mBuffer to mData.
+     * a buffer that stores the RGB values of the icon
      */
-    std::vector<uint8_t> mBuffer;
-    /*!
-     * \brief mBufferWidth the buffer's width.
-     */
-    std::uint32_t mBufferWidth;
-    /*!
-     * \brief mBufferHeight the buffer's height.
-     */
-    std::uint32_t mBufferHeight;
-    /*!
-     * \brief mBufferLength the number of bytes needed to fill
-     *        mBufferWidth * mBufferHeight * 3.
-     */
-    std::uint32_t mBufferLength;
-
-    /*!
-     * \brief bufferToOutput required at the end of any set of processing
-     *        this maps the mBuffer values to mData, scaling mBuffer up.
-     */
-    void bufferToOutput();
+    std::vector<std::uint8_t> mBuffer;
 
     /*!
      * \brief getMiddleColor helper that takes two colors and computes

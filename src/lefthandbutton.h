@@ -6,7 +6,8 @@
 #include <QLabel>
 #include <QWidget>
 
-#include "topmenu.h"
+#include "cor/objects/lightstate.h"
+#include "cor/protocols.h"
 
 class LeftHandMenu;
 

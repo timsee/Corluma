@@ -6,88 +6,17 @@
 
 #include "icondata.h"
 
-#include <QDebug>
-#include <algorithm>
-#include <cmath>
-#include <cstdlib>
-#include <ctime>
-
-#include "cor/objects/light.h"
-
-IconData::IconData() {
-    setup(4, 4);
-}
-
-IconData::IconData(std::uint32_t width, std::uint32_t height) {
-    setup(width, height);
-}
-
-void IconData::setup(std::uint32_t width, std::uint32_t height) {
-    // first, check that both are a multiple of four
-    while ((width % 4)) {
-        width = width - 1;
-    }
-    while ((height % 4)) {
-        height = height - 1;
-    }
-
-    // always uses RGB_888 so multiply width and height by 3
-    mWidth = width;
-    mHeight = height;
-    mDataLength = width * height * 3;
-    mData = std::vector<uint8_t>(std::size_t(mDataLength));
-
-    mBufferWidth = 4;
-    mBufferHeight = 4;
-    mBufferLength = mBufferWidth * mBufferHeight * 3;
-    mBuffer = std::vector<uint8_t>(mBufferLength);
-
-    // zero out the arrays
-    for (int i = 0; i < int(mBufferLength); i++) {
-        mBuffer[std::uint32_t(i)] = 0;
-    }
-    for (int i = 0; i < int(mDataLength); i++) {
-        mData[std::uint32_t(i)] = 0;
-    }
-
+IconData::IconData()
+    : mWidth{4},
+      mHeight{4},
+      mDataLength{mWidth * mHeight * 3},
+      mBuffer(mDataLength, 0u) {
     // Our "random individual is a lie". It uses
     // this array to determine its "random" values,
     // and if the number is too large for that particular
     // color group's size, then it defaults to either 0
     // or 1, since all color groups are at least 2 in size.
     mRandomIndividual = {0, 5, 5, 1, 0, 3, 6, 2, 6, 0, 0, 5, 7, 1, 2, 6};
-}
-
-void IconData::bufferToOutput() {
-    std::uint32_t j = 0;
-    std::uint32_t k = 0;
-    for (std::uint32_t i = 0; i < mDataLength; i = i + 3) {
-        if ((i % (mWidth * 3)) < mWidth * 3 / 4) {
-            mData[i] = mBuffer[j];
-            mData[i + 1] = mBuffer[j + 1];
-            mData[i + 2] = mBuffer[j + 2];
-        } else if ((i % (mWidth * 3)) < mWidth * 6 / 4) {
-            mData[i] = mBuffer[j + 3];
-            mData[i + 1] = mBuffer[j + 4];
-            mData[i + 2] = mBuffer[j + 5];
-        } else if ((i % (mWidth * 3)) < mWidth * 9 / 4) {
-            mData[i] = mBuffer[j + 6];
-            mData[i + 1] = mBuffer[j + 7];
-            mData[i + 2] = mBuffer[j + 8];
-        } else if ((i % (mWidth * 3)) < mWidth * 3) {
-            mData[i] = mBuffer[j + 9];
-            mData[i + 1] = mBuffer[j + 10];
-            mData[i + 2] = mBuffer[j + 11];
-        }
-
-        if (!((i + 3) % (mWidth * 3))) {
-            k++;
-        }
-        if (k == (mHeight / 4)) {
-            j = j + 4 * 3;
-            k = 0;
-        }
-    }
 }
 
 
@@ -161,12 +90,11 @@ void IconData::setRoutine(const cor::LightState& state) {
 }
 
 void IconData::setSolidColor(const QColor& color) {
-    for (uint i = 0; i < mBufferLength; i = i + 3) {
-        mBuffer[i] = uint8_t(color.red());
-        mBuffer[i + 1] = uint8_t(color.green());
-        mBuffer[i + 2] = uint8_t(color.blue());
+    for (std::uint32_t i = 0; i < mDataLength; i = i + 3) {
+        mBuffer[i] = std::uint8_t(color.red());
+        mBuffer[i + 1] = std::uint8_t(color.green());
+        mBuffer[i + 2] = std::uint8_t(color.blue());
     }
-    bufferToOutput();
 }
 
 
@@ -174,7 +102,7 @@ void IconData::setMultiGlimmer(const std::vector<QColor>& colors) {
     auto colorCount = std::uint32_t(colors.size());
 
     int j = 0;
-    for (std::uint32_t i = 0; i < mBufferLength; i = i + 3) {
+    for (std::uint32_t i = 0; i < mDataLength; i = i + 3) {
         // the third element and the 8th element get their
         // color changed to simulate the multi glimmer effect.
         if (j == 3) {
@@ -182,22 +110,22 @@ void IconData::setMultiGlimmer(const std::vector<QColor>& colors) {
             if (colorCount > 2) {
                 color = colorCount - 1;
             }
-            mBuffer[i] = uint8_t(colors[color].red());
-            mBuffer[i + 1] = uint8_t(colors[color].green());
-            mBuffer[i + 2] = uint8_t(colors[color].blue());
+            mBuffer[i] = std::uint8_t(colors[color].red());
+            mBuffer[i + 1] = std::uint8_t(colors[color].green());
+            mBuffer[i + 2] = std::uint8_t(colors[color].blue());
         } else if (j == 8) {
             uint32_t color = 1;
             // only use this value if the colorCount allows it
             if (colorCount > 2) {
                 color = 2;
             }
-            mBuffer[i] = uint8_t(colors[color].red());
-            mBuffer[i + 1] = uint8_t(colors[color].green());
-            mBuffer[i + 2] = uint8_t(colors[color].blue());
+            mBuffer[i] = std::uint8_t(colors[color].red());
+            mBuffer[i + 1] = std::uint8_t(colors[color].green());
+            mBuffer[i + 2] = std::uint8_t(colors[color].blue());
         } else {
-            mBuffer[i] = uint8_t(colors[0].red());
-            mBuffer[i + 1] = uint8_t(colors[0].green());
-            mBuffer[i + 2] = uint8_t(colors[0].blue());
+            mBuffer[i] = std::uint8_t(colors[0].red());
+            mBuffer[i + 1] = std::uint8_t(colors[0].green());
+            mBuffer[i + 2] = std::uint8_t(colors[0].blue());
         }
         j++;
     }
@@ -210,7 +138,7 @@ void IconData::setMultiFade(const std::vector<QColor>& colors, bool showMore) {
         colorCount = 10;
     }
 
-    uint32_t k = 0;
+    std::uint32_t k = 0;
     int tempIndex = -1;
     std::vector<std::uint32_t> arrayIndices(8);
     while (k < 8) {
@@ -232,22 +160,20 @@ void IconData::setMultiFade(const std::vector<QColor>& colors, bool showMore) {
     // wrap the last value around
     output[count - 2] = colors[arrayIndices[colorIndex]];
     output[count - 1] = getMiddleColor(colors[arrayIndices[colorIndex]], colors[arrayIndices[0]]);
-    uint32_t j = 0;
-    for (std::uint32_t i = 0; i < mBufferLength; i = i + 3) {
-        mBuffer[i] = uint8_t(output[j].red());
-        mBuffer[i + 1] = uint8_t(output[j].green());
-        mBuffer[i + 2] = uint8_t(output[j].blue());
+    std::uint32_t j = 0;
+    for (std::uint32_t i = 0; i < mDataLength; i = i + 3) {
+        mBuffer[i] = std::uint8_t(output[j].red());
+        mBuffer[i + 1] = std::uint8_t(output[j].green());
+        mBuffer[i + 2] = std::uint8_t(output[j].blue());
         j++;
     }
-
-    bufferToOutput();
 }
 
 void IconData::setMultiRandomSolid(const std::vector<QColor>& colors) {
     auto colorCount = std::uint32_t(colors.size());
 
     int k = 0;
-    for (std::uint32_t i = 0; i < mBufferLength; i = i + 12) {
+    for (std::uint32_t i = 0; i < mDataLength; i = i + 12) {
         QColor randomColor;
         if (k == 0) {
             randomColor = colors[1];
@@ -269,69 +195,66 @@ void IconData::setMultiRandomSolid(const std::vector<QColor>& colors) {
             }
         }
         for (std::uint32_t j = 0; j < 12; j = j + 3) {
-            mBuffer[i + j] = uint8_t(randomColor.red());
-            mBuffer[i + j + 1] = uint8_t(randomColor.green());
-            mBuffer[i + j + 2] = uint8_t(randomColor.blue());
+            mBuffer[i + j] = std::uint8_t(randomColor.red());
+            mBuffer[i + j + 1] = std::uint8_t(randomColor.green());
+            mBuffer[i + j + 2] = std::uint8_t(randomColor.blue());
         }
         k++;
     }
-    bufferToOutput();
 }
 
 void IconData::setMultiRandomIndividual(const std::vector<QColor>& colors) {
     auto colorCount = int(colors.size());
 
-    uint32_t j = 0;
-    for (std::uint32_t i = 0; i < mBufferLength; i = i + 3) {
+    std::uint32_t j = 0;
+    for (std::uint32_t i = 0; i < mDataLength; i = i + 3) {
         uint32_t index;
         if (mRandomIndividual[j] >= colorCount) {
             index = j % 2; // even number use 0, odd numbers use 1
         } else {
             index = std::uint32_t(mRandomIndividual[j]);
         }
-        mBuffer[i] = uint8_t(colors[index].red());
-        mBuffer[i + 1] = uint8_t(colors[index].green());
-        mBuffer[i + 2] = uint8_t(colors[index].blue());
+        mBuffer[i] = std::uint8_t(colors[index].red());
+        mBuffer[i + 1] = std::uint8_t(colors[index].green());
+        mBuffer[i + 2] = std::uint8_t(colors[index].blue());
         j++;
     }
-    bufferToOutput();
 }
 
 void IconData::setBars(const std::vector<QColor>& colors) {
     auto colorCount = std::uint32_t(colors.size());
 
-    uint32_t colorIndex = 0;
+    std::uint32_t colorIndex = 0;
     QColor color;
-    for (std::uint32_t i = 3; i < mBufferLength; i = i + 12) {
+    for (std::uint32_t i = 3; i < mDataLength; i = i + 12) {
         color = colors[colorIndex % colorCount];
         for (std::uint32_t j = 0; j < 6; j = j + 3) {
-            mBuffer[i + j] = uint8_t(color.red());
-            mBuffer[i + j + 1] = uint8_t(color.green());
-            mBuffer[i + j + 2] = uint8_t(color.blue());
+            mBuffer[i + j] = std::uint8_t(color.red());
+            mBuffer[i + j + 1] = std::uint8_t(color.green());
+            mBuffer[i + j + 2] = std::uint8_t(color.blue());
         }
         color = colors[(colorIndex + 1) % colorCount];
         for (std::uint32_t j = 6; j < 12; j = j + 3) {
-            if (i + j + 2 < mBufferLength) {
-                mBuffer[i + j] = uint8_t(color.red());
-                mBuffer[i + j + 1] = uint8_t(color.green());
-                mBuffer[i + j + 2] = uint8_t(color.blue());
+            if (i + j + 2 < mDataLength) {
+                mBuffer[i + j] = std::uint8_t(color.red());
+                mBuffer[i + j + 1] = std::uint8_t(color.green());
+                mBuffer[i + j + 2] = std::uint8_t(color.blue());
             }
         }
         colorIndex = (colorIndex + 2) % colorCount;
     }
     color = colors[colorIndex % colorCount];
-    mBuffer[0] = uint8_t(color.red());
-    mBuffer[1] = uint8_t(color.green());
-    mBuffer[2] = uint8_t(color.blue());
-    mBuffer[45] = uint8_t(color.red());
-    mBuffer[46] = uint8_t(color.green());
-    mBuffer[47] = uint8_t(color.blue());
-    bufferToOutput();
+    mBuffer[0] = std::uint8_t(color.red());
+    mBuffer[1] = std::uint8_t(color.green());
+    mBuffer[2] = std::uint8_t(color.blue());
+    mBuffer[45] = std::uint8_t(color.red());
+    mBuffer[46] = std::uint8_t(color.green());
+    mBuffer[47] = std::uint8_t(color.blue());
 }
 
 void IconData::addGlimmer() {
     int j = 0;
-    for (uint i = 0; i < mBufferLength; i = i + 3) {
+    for (uint i = 0; i < mDataLength; i = i + 3) {
         // the same colors get assigned the glimmer
         // each time this routine is ran.
         bool shouldGlimmer;
@@ -362,12 +285,11 @@ void IconData::addGlimmer() {
         }
         j++;
     }
-    bufferToOutput();
 }
 
 void IconData::addBlink() {
     bool isOn = false;
-    for (uint i = 0; i < mBufferLength; i = i + 3) {
+    for (std::uint32_t i = 0; i < mDataLength; i = i + 3) {
         if (isOn) {
             mBuffer[i] = 0;
             mBuffer[i + 1] = 0;
@@ -375,103 +297,96 @@ void IconData::addBlink() {
         }
         isOn = !isOn;
     }
-    bufferToOutput();
 }
 
 void IconData::addWave() {
     float k = 0.0f;
     int j = 3;
-    float max = (mBufferLength / 3.0f) - 1.0f;
+    float max = (mDataLength / 3.0f) - 1.0f;
     bool skip = false;
-    for (uint i = 0; i < mBufferLength; i = i + 3) {
+    for (std::uint32_t i = 0; i < mDataLength; i = i + 3) {
         k = j / max;
         if (k <= 0.5f) {
             k = k / 0.5f;
         } else {
             k = 1.0f - (k - 0.5f) / 0.5f;
         }
-        mBuffer[i] = uint8_t(mBuffer[i] * k);
-        mBuffer[i + 1] = uint8_t(mBuffer[i + 1] * k);
-        mBuffer[i + 2] = uint8_t(mBuffer[i + 2] * k);
+        mBuffer[i] = std::uint8_t(mBuffer[i] * k);
+        mBuffer[i + 1] = std::uint8_t(mBuffer[i + 1] * k);
+        mBuffer[i + 2] = std::uint8_t(mBuffer[i + 2] * k);
         if (!skip) {
             j++;
         }
         skip = !skip;
     }
-    bufferToOutput();
 }
 
 void IconData::addLinearFade() {
     float k = 0.0f;
     int j = 0;
-    float max = (mBufferLength / 3.0f) - 1.0f;
-    for (uint i = 0; i < mBufferLength; i = i + 3) {
+    float max = (mDataLength / 3.0f) - 1.0f;
+    for (std::uint32_t i = 0; i < mDataLength; i = i + 3) {
         k = j / max;
         if (k < 0.5f) {
             k = k / 0.5f;
         } else {
             k = 1.0f - (k - 0.5f) / 0.5f;
         }
-        mBuffer[i] = uint8_t(mBuffer[i] * k);
-        mBuffer[i + 1] = uint8_t(mBuffer[i + 1] * k);
-        mBuffer[i + 2] = uint8_t(mBuffer[i + 2] * k);
+        mBuffer[i] = std::uint8_t(mBuffer[i] * k);
+        mBuffer[i + 1] = std::uint8_t(mBuffer[i + 1] * k);
+        mBuffer[i + 2] = std::uint8_t(mBuffer[i + 2] * k);
         j++;
     }
-    bufferToOutput();
 }
 
 void IconData::addSawtoothIn() {
     float k = 0.0f;
     int j = 0;
-    float max = (mBufferLength / 3.0f) - 1.0f;
-    for (uint i = 0; i < mBufferLength; i = i + 3) {
+    float max = (mDataLength / 3.0f) - 1.0f;
+    for (std::uint32_t i = 0; i < mDataLength; i = i + 3) {
         k = j / max;
         if (k < 0.5f) {
             k = k / 0.5f;
         } else {
             k = (k - 0.5f) / 0.5f;
         }
-        mBuffer[i] = uint8_t(mBuffer[i] * k);
-        mBuffer[i + 1] = uint8_t(mBuffer[i + 1] * k);
-        mBuffer[i + 2] = uint8_t(mBuffer[i + 2] * k);
+        mBuffer[i] = std::uint8_t(mBuffer[i] * k);
+        mBuffer[i + 1] = std::uint8_t(mBuffer[i + 1] * k);
+        mBuffer[i + 2] = std::uint8_t(mBuffer[i + 2] * k);
         j++;
     }
-    bufferToOutput();
 }
 
 void IconData::addSawtoothOut() {
     float k = 0.0f;
     int j = 0;
-    float max = (mBufferLength / 3.0f) - 1.0f;
-    for (uint i = 0; i < mBufferLength; i = i + 3) {
+    float max = (mDataLength / 3.0f) - 1.0f;
+    for (std::uint32_t i = 0; i < mDataLength; i = i + 3) {
         k = j / max;
         if (k < 0.5f) {
             k = 1.0f - k / 0.5f;
         } else {
             k = 1.0f - (k - 0.5f) / 0.5f;
         }
-        mBuffer[i] = uint8_t(mBuffer[i] * k);
-        mBuffer[i + 1] = uint8_t(mBuffer[i + 1] * k);
-        mBuffer[i + 2] = uint8_t(mBuffer[i + 2] * k);
+        mBuffer[i] = std::uint8_t(mBuffer[i] * k);
+        mBuffer[i + 1] = std::uint8_t(mBuffer[i + 1] * k);
+        mBuffer[i + 2] = std::uint8_t(mBuffer[i + 2] * k);
         j++;
     }
-    bufferToOutput();
 }
 
 void IconData::addSineFade() {
     double k(0.0);
     int j = 0;
-    double max = (mBufferLength / 3.0) - 1;
-    for (uint i = 0; i < mBufferLength; i = i + 3) {
+    double max = (mDataLength / 3.0) - 1;
+    for (std::uint32_t i = 0; i < mDataLength; i = i + 3) {
         k = cbrt((sin(((j / max) * 6.28) - 1.67) + 1) / 2.0);
-        mBuffer[i] = uint8_t(mBuffer[i] * k);
-        mBuffer[i + 1] = uint8_t(mBuffer[i + 1] * k);
-        mBuffer[i + 2] = uint8_t(mBuffer[i + 2] * k);
+        mBuffer[i] = std::uint8_t(mBuffer[i] * k);
+        mBuffer[i + 1] = std::uint8_t(mBuffer[i + 1] * k);
+        mBuffer[i + 2] = std::uint8_t(mBuffer[i + 2] * k);
         j++;
     }
-    bufferToOutput();
 }
-
 
 std::uint32_t IconData::dataLength() {
     return mDataLength;
@@ -485,12 +400,9 @@ std::uint32_t IconData::height() {
     return mHeight;
 }
 
-const QImage IconData::renderAsQImage() {
-    return QImage(mData.data(), int(mWidth), int(mHeight), QImage::Format_RGB888);
-}
-
 const QPixmap IconData::renderAsQPixmap() {
-    return QPixmap::fromImage(renderAsQImage());
+    return QPixmap::fromImage(
+        QImage(mBuffer.data(), int(mWidth), int(mHeight), QImage::Format_RGB888));
 }
 
 QColor IconData::getMiddleColor(const QColor& first, const QColor& second) {

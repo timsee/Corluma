@@ -20,7 +20,7 @@ namespace cor {
  *
  *
  *
- * \brief The DataLayer class stores and maintains the data
+ * \brief The LightList class stores and maintains the data
  * about the state and settings of the application. It also saves
  * the settings sent to the LED hardware, such as the current brightness
  * and current lighting routine.
@@ -34,30 +34,14 @@ public:
      */
     LightList(QObject* parent);
 
+    /// true if no lights are stoerd, false if any lights are stored
+    bool empty() const noexcept { return lights().empty(); }
+
     /*!
      * \brief mainColor getter for mainColor, used for single color routines.
      * \return the mainColor, used for single color routines.
      */
     QColor mainColor();
-
-    /*!
-     * \brief routine getter for the current ERoutine.
-     * \return the current lighting routine getting displayed on the LED array.
-     */
-    ERoutine currentRoutine();
-
-    /*!
-     * \brief brightness getter for the current brightness.
-     * \return a value between 0 and 100 that represents the current brightness.
-     */
-    int brightness();
-
-    /*!
-     * \brief palette getter for the current palette.
-     * \return the Palette that represents the colors being displayed on
-     *         the LED array.
-     */
-    Palette palette();
 
     /*!
      * \brief speed getter for the speed the LED's update.
@@ -66,29 +50,14 @@ public:
     int speed();
 
     /*!
-     * \brief updateCustomColorCount update the number of custom colors used in the custom color
-     * array for multi color routines. Must be between 2 and 10 inclusively.
-     *
-     * \param count new count of custom colors.
-     */
-    void updateCustomColorCount(std::uint32_t count);
-
-    /*!
-     * \brief turnOn turn all lights on or off based off of the boolean. Stores the previous state
-     *        when turned off so that turning on again can reset it back to its previous state.
-     * \param on true if you want to turn on, false if you want to turn off.
-     */
-    void turnOn(bool on);
-
-    /*!
      * \brief isOn true if any device is on, false if all are off.
      * \return true if any device is on, false if all are off.
      */
     bool isOn();
 
     /*!
-     * \brief updateRoutine update the lighting routine for all current lights.
-     * \param routine new lighting routine.
+     * \brief updateState update the state for all current lights.
+     * \param state new lighting state.
      */
     void updateState(const cor::LightState& newState);
 
@@ -99,37 +68,29 @@ public:
     void updateSpeed(int speed);
 
     /*!
-     * \brief updateColorScheme update the colors of all the current lights based off of a color
-     * scheme. \param colors a vector of colors.
-     */
-    void updateColorScheme(std::vector<QColor> colors);
-
-    /*!
-     * \brief updateCustomColorArray update the color in the custom color array at the given index.
-     * If the index is 10 or larger, it is ignored.
-     *
-     * \param index Must be bewteen 0 and 9.
-     * \param color new color
-     */
-    void updateCustomColorArray(int index, QColor color);
-
-    /*!
      * \brief updateBrightness update the brightness level of all current lights.
      * \param brightness new brightness
      */
     void updateBrightness(std::uint32_t brightness);
 
     /*!
-     * \brief addDevice add new device to connected list. if device already exists,
+     * \brief updateColorScheme update the colors of all the current lights based off of a color
+     * scheme.
+     * \param colors a vector of colors.
+     */
+    void updateColorScheme(std::vector<QColor> colors);
+
+    /*!
+     * \brief addLight add new device to connected list. if device already exists,
      *        update the device with new values.
-     * \param device new device for the connected lights list
+     * \param light new device for the list
      * \return true if device was valid and added, false otherwise.
      */
     bool addLight(cor::Light light);
 
     /*!
-     * \brief doesDeviceExist checks if device exist in connected device list
-     * \param device device to search for
+     * \brief doesLightExist checks if device exist in connected device list
+     * \param light device to search for
      * \return true if the device exists, false otherwise.
      */
     bool doesLightExist(const cor::Light& light);
@@ -141,34 +102,26 @@ public:
     bool clearLights();
 
     /*!
-     * \brief lightsContainCommType helper that checks all lights and returns
-     *        true if at least one of the lights is of a given commtype.
-     * \param type the commtype that you want to search the lights for.
-     * \return true if at least one device is a given commtype, false otherwise.
-     */
-    bool lightsContainCommType(ECommType type);
-
-    /*!
-     * \brief addDeviceList attempts to add a list of lights instead of a single device at a time
+     * \brief addLights attempts to add a list of lights
      * \param list list of lights to add
      * \return true if all are added, false otherwise.
      */
     bool addLights(const std::vector<cor::Light>& list);
 
     /*!
-     * \brief removeDeviceList
-     * \param list
-     * \return
+     * \brief removeLights attempts to remove a list of lights
+     * \param list the list to remove
+     * \return true if all lights are removed, false if any aren't found.
      */
     bool removeLights(const std::vector<cor::Light>& list);
 
     /*!
-     * \brief removeDevice remove specific device from connected device list.
-     * \param device device to remove from the connected device list. For removal to be succesful,
+     * \brief removeLight remove specific device from connected device list.
+     * \param light device to remove from the connected device list. For removal to be succesful,
      *        only the device controllerName, index, and type need to match
      * \return true if a device is removed, false otherwise.
      */
-    bool removeLight(const cor::Light& device);
+    bool removeLight(const cor::Light& light);
 
     /*!
      * \brief removeLightsOfType if they exist, removes lights from list list that match
@@ -183,7 +136,7 @@ public:
      *        connection info and device settings
      * \return the current device pair.
      */
-    const std::vector<cor::Light>& lights() { return mLights; }
+    const std::vector<cor::Light>& lights() const noexcept { return mLights; }
 
     /// getter for the color scheme colors
     std::vector<QColor> colorScheme();

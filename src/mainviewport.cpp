@@ -18,6 +18,7 @@ MainViewport::MainViewport(MainWindow* parent,
       mGroups{groups},
       mComm{comm},
       mData{data},
+      mMainWindow{parent},
       mAppSettings{settings} {
     // NOTE: this is mood page so that it doesn't default to light page on so when light page
     //      is turned on, we can use standard functions
@@ -34,7 +35,6 @@ MainViewport::MainViewport(MainWindow* parent,
     mPalettePage = new PalettePage(parent);
     mPalettePage->isOpen(false);
     mPalettePage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(mPalettePage, SIGNAL(speedUpdate(int)), this, SLOT(speedChanged(int)));
 
     mMoodPage = new MoodPage(parent, groups);
     mMoodPage->isOpen(false);
@@ -44,7 +44,6 @@ MainViewport::MainViewport(MainWindow* parent,
             parent,
             SLOT(moodSelected(std::uint64_t)));
     connect(mMoodPage, SIGNAL(clickedEditButton(bool)), parent, SLOT(editButtonClicked(bool)));
-    connect(mMoodPage, SIGNAL(moodUpdate(std::uint64_t)), parent, SLOT(moodChanged(std::uint64_t)));
 }
 
 
@@ -140,7 +139,6 @@ void MainViewport::showMainPage(EPage page, bool skipTransition) {
     } else if (page == EPage::palettePage) {
         mPalettePage->resize();
         mPalettePage->show(mData->lightCount(),
-                           mData->brightness(),
                            mData->colorScheme(),
                            mData->hasLightWithProtocol(EProtocolType::arduCor),
                            mData->hasLightWithProtocol(EProtocolType::nanoleaf));
@@ -161,27 +159,5 @@ void MainViewport::hideMainPage(EPage page) {
     int x = widget->width() * -1;
 
     cor::moveWidget(widget, pos(), QPoint(x, widget->pos().y()));
-    if (page == EPage::colorPage) {
-        mColorPage->handleRoutineWidget(false);
-    } else if (page == EPage::palettePage) {
-        mPalettePage->handleRoutineWidget(false);
-    }
-}
-
-void MainViewport::lightCountChanged() {
-    if (mPageIndex == EPage::colorPage) {
-        mColorPage->show(mData->mainColor(),
-                         mData->lights().size(),
-                         mComm->bestColorPickerType(mData->lights()));
-    } else if (mPageIndex == EPage::palettePage) {
-        mPalettePage->show(mData->lightCount(),
-                           mData->brightness(),
-                           mData->colorScheme(),
-                           mData->hasLightWithProtocol(EProtocolType::arduCor),
-                           mData->hasLightWithProtocol(EProtocolType::nanoleaf));
-    }
-}
-
-void MainViewport::speedChanged(int speed) {
-    mData->updateSpeed(speed);
+    mMainWindow->routineWidget()->pushOut();
 }

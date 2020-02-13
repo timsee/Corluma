@@ -23,37 +23,24 @@ ListLightWidget::ListLightWidget(const cor::Light& light,
       mNoConnectionPixmap(":/images/questionMark.png"),
       mType{type},
       mHardwareType{light.hardwareType()},
+      mTypePixmap{lightHardwareTypeToPixmap(mHardwareType)},
       mState{light.state()},
       mIsReachable{light.isReachable()},
       mShouldHighlight{setHighlightable},
       mIsChecked{false},
+      mHasRendered{false},
       mFontPtSize(16),
-      mLight{light} {
-    init(light.uniqueID(), light.name(), light.hardwareType());
-    updateWidget(light);
-}
-
-
-void ListLightWidget::init(const QString& uniqueID,
-                           const QString& name,
-                           ELightHardwareType hardwareType) {
-    // setup icon
-    mIconData = IconData(4, 4);
-
-    // setup controller label
-    mController = new QLabel(this);
-
-    mTypeIcon = new QLabel(this);
+      mLight{light},
+      mController{new QLabel(this)},
+      mTypeIcon{new QLabel(this)} {
     mTypeIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    mTypePixmap = lightHardwareTypeToPixmap(hardwareType);
-
-    QString nameText = createName(name);
-    mController->setText(nameText);
+    mController->setText(createName(light.name()));
     mController->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mController->setAlignment(Qt::AlignVCenter);
 
-    mKey = uniqueID;
+    mKey = light.uniqueID();
+    updateWidget(light);
 }
 
 
@@ -107,7 +94,7 @@ void ListLightWidget::paintEvent(QPaintEvent*) {
         painter.fillRect(rect(), QBrush(QColor(32, 31, 31)));
     }
 
-    int x = (iconRegion().width() + spacer() * 1.5);
+    auto x = int(iconRegion().width() + spacer() * 1.5);
     auto side = iconRegion().width();
     int y;
     if (mType == cor::EWidgetType::full) {

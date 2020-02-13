@@ -8,6 +8,7 @@
 #include <QWidget>
 
 #include "utils/qt.h"
+#include "cor/objects/page.h"
 
 namespace cor {
 

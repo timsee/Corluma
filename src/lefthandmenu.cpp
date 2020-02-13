@@ -152,10 +152,10 @@ void LeftHandMenu::resize() {
                               this->width(),
                               int(buttonHeight * 1.2));
 
-    yPos += mMainPalette->height() + height() * 0.02;
+    yPos += int(mMainPalette->height() + height() * 0.02);
 
     /// setting to 1.2 hides the scroll bar and avoids horizotnal scrolling
-    mScrollArea->setGeometry(0, yPos, this->width() * 1.2, height() - yPos);
+    mScrollArea->setGeometry(0, yPos, int(this->width() * 1.2), height() - yPos);
     mWidget->setFixedWidth(this->width());
 
     auto scrollWidgetHeight = resizeRoomsWidgets();

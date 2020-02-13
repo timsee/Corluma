@@ -1,6 +1,6 @@
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2020.
  * Released under the GNU General Public License.
  */
 
@@ -38,8 +38,8 @@ void PaletteScrollArea::setupButtons(bool isArduino) {
             mLayout->addWidget(mPresetWidgets[groupIndex], groupIndex, 0);
             connect(mPresetWidgets[groupIndex],
                     SIGNAL(presetButtonClicked(cor::LightState)),
-                    parentWidget(),
-                    SLOT(multiButtonClicked(cor::LightState)));
+                    this,
+                    SLOT(buttonClicked(cor::LightState)));
             groupIndex++;
         }
 
@@ -67,8 +67,8 @@ void PaletteScrollArea::setupButtons(bool isArduino) {
             mLayout->addWidget(mPresetWidgets[groupIndex], rowIndex, columnIndex);
             connect(mPresetWidgets[groupIndex],
                     SIGNAL(presetButtonClicked(cor::LightState)),
-                    parentWidget(),
-                    SLOT(multiButtonClicked(cor::LightState)));
+                    this,
+                    SLOT(buttonClicked(cor::LightState)));
             columnIndex++;
             groupIndex++;
         }
@@ -99,6 +99,9 @@ void PaletteScrollArea::highlightRoutineButton(ERoutine routine, EPalette colorG
     }
 }
 
+void PaletteScrollArea::buttonClicked(cor::LightState state) {
+    emit paletteClicked(state.routine(), state.palette().paletteEnum());
+}
 
 void PaletteScrollArea::resize() {
     for (auto presetArduinoWidget : mPresetWidgets) {

@@ -693,4 +693,13 @@ ___
 - Updated images and docs.
 
 
+### **v0.18.0**
+#### The StateObserver Update
+- Added a StateObserver which looks at the state of the app and determines the desired state of the lights when the user interacts with the app.
+- Cleaned up IconData.
+- Combine the `SingleRoutineWidget` and `MultiRoutineWidget` into a single `RoutineWidget`.
+- Fixed unnecessary includes.
+- Fixed miscellaneous bugs.
+
+
 

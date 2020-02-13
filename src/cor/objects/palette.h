@@ -94,6 +94,9 @@ public:
         GUARD_EXCEPTION(!mColors.empty(), "palette does not have any colors")
     }
 
+    /// default constructor
+    Palette() : Palette("", std::vector<QColor>(1, QColor(0, 0, 0)), 50) {}
+
     /// setter for the brightness of the palette
     void brightness(std::uint32_t brightness) {
         mBrightness = brightness;
@@ -149,7 +152,7 @@ public:
     /// this allows the palette to be given to QString
     operator QString() const {
         std::stringstream tempString;
-        tempString << "{ Palette Name: ";
+        tempString << "{ Palette Name: " << name().toStdString();
         tempString << " brightness: " << brightness();
         tempString << " Enum String: " << paletteToString(paletteEnum()).toStdString();
         uint32_t index = 0;

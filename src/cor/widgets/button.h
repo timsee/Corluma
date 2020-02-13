@@ -38,7 +38,6 @@ public:
         : QPushButton(parent),
           mShouldResizeIcon{true},
           mLabelMode{false},
-          mIconData{4, 4},
           mState(state) {
         setCheckable(!mLabelMode);
         connect(this, SIGNAL(clicked(bool)), this, SLOT(handleButton()));

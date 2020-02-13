@@ -2,17 +2,10 @@
 #ifndef SINGLECOLORPAGE_H
 #define SINGLECOLORPAGE_H
 
-#include <QSlider>
-#include <QToolButton>
 #include <QWidget>
 
 #include "colorpicker/singlecolorpicker.h"
 #include "cor/objects/page.h"
-#include "cor/widgets/button.h"
-#include "cor/widgets/slider.h"
-#include "icondata.h"
-#include "routinebuttonswidget.h"
-#include "singlecolorstatewidget.h"
 
 /*!
  * \copyright
@@ -47,16 +40,6 @@ public:
      */
     void changePageType(ESingleColorPickerMode page) { mColorPicker->changeMode(page); }
 
-    /*!
-     * \brief updateRoutineButton helper to update the Routine button in the floating layout.
-     *        Requires a bit of logic to abstract away the proper function call from the current
-     *        app state.
-     */
-    void updateRoutineButton();
-
-    /// shows or hides the routine widget
-    void handleRoutineWidget(bool show);
-
     /// getter for current type of color page (ambiance, RGB, etc.)
     ESingleColorPickerMode pageType() { return mColorPicker->mode(); }
 
@@ -64,17 +47,18 @@ public:
     void updateBrightness(std::uint32_t brightness);
 
     /// called when the widget is shown
-    void show(const QColor& color,
-              std::uint32_t lightCount,
-              EColorPickerType bestType);
+    void show(const QColor& color, std::uint32_t lightCount, EColorPickerType bestType);
 
-    /// true if routine widget is open, false otherwise
-    bool routineWidgetIsOpen() { return mSingleRoutineWidget->isOpen(); }
+    /// getter for currently selected color
+    const QColor color() const noexcept { return mColor; }
 
 signals:
 
     /// sent out whenever a routine update is triggered
-    void routineUpdate(cor::LightState);
+    void colorUpdate(QColor);
+
+    /// sent out whenever an ambient color update is triggered
+    void ambientUpdate(std::uint32_t, std::uint32_t);
 
 public slots:
 
@@ -92,12 +76,6 @@ protected:
 private slots:
 
     /*!
-     * \brief newRoutineSelected called whenever a routine button is clicked. Sends
-     *        the routine to the backend data so that it can get sent to the connected devices.
-     */
-    void newRoutineSelected(cor::LightState routineObject);
-
-    /*!
      * \brief ambientUpdateReceived called whenever the colorpicker gives back an ambient update.
      *        Gives the color temperature value first, followed by the brightness.
      */
@@ -108,19 +86,6 @@ private:
      * \brief setupButtons sets up the routine buttons.
      */
     void setupButtons();
-
-    /*!
-     * \brief mSingleRoutineWidget widget that pops up from the bottom and contains buttons for all
-     * of the single color routines.
-     */
-    RoutineButtonsWidget* mSingleRoutineWidget;
-
-    /// current single color lighting routine, stored in buffer for when going from multi color to
-    /// single color routines.
-    cor::LightState mState;
-
-    /// updates the colorpage's main color value
-    void updateColor(const QColor& color);
 
     /// stores last value for the color
     QColor mColor;

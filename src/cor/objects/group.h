@@ -1,7 +1,13 @@
 #ifndef COR_GROUP_H
 #define COR_GROUP_H
 
-#include "cor/objects/light.h"
+#include <QDebug>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QString>
+#include <vector>
+
+#include "utils/exception.h"
 
 namespace cor {
 

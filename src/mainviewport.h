@@ -10,7 +10,6 @@
 #include "groupdata.h"
 #include "moodpage.h"
 #include "palettepage.h"
-#include "topmenu.h"
 
 class MainWindow;
 
@@ -54,14 +53,6 @@ public:
 
     /// loads the mood page programmatically
     void loadMoodPage();
-
-private slots:
-
-    /// called whenever the light count changes
-    void lightCountChanged();
-
-    /// speed changed from any page
-    void speedChanged(int);
 
 private:
     /*!
@@ -110,6 +101,9 @@ private:
      * and the saved data of the GUI
      */
     cor::LightList* mData;
+
+    /// pointer to main window
+    MainWindow* mMainWindow;
 
     /*!
      * \brief mAppSettings maintains which comnmtypes are currently enabled.

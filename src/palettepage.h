@@ -2,29 +2,18 @@
 #ifndef PresetColorsPage_H
 #define PresetColorsPage_H
 
-#include <QGridLayout>
-#include <QLabel>
-#include <QPushButton>
-#include <QScrollArea>
-#include <QToolButton>
-#include <QWidget>
-
 #include "colorpicker/multicolorpicker.h"
 #include "cor/objects/page.h"
 #include "cor/presetpalettes.h"
-#include "cor/widgets/button.h"
-#include "cor/widgets/listwidget.h"
-#include "listmoodgroupwidget.h"
-#include "palettescrollarea.h"
-#include "presetgroupwidget.h"
-#include "routinebuttonswidget.h"
+
+class PaletteScrollArea;
 
 /// mode of the page
 enum class EGroupMode { arduinoPresets, huePresets, HSV };
 
 /*!
  * \copyright
- * Copyright (C) 2015 - 2016.
+ * Copyright (C) 2015 - 2020.
  * Released under the GNU General Public License.
  *
  * \brief The Palete provides a way to use the palettes from ArduCor
@@ -45,7 +34,6 @@ public:
 
     /// called whenever the group page is shown
     void show(std::size_t count,
-              std::size_t brightness,
               const std::vector<QColor>& colorScheme,
               bool hasArduinoDevices,
               bool hasNanoleafDevices);
@@ -68,52 +56,32 @@ public:
     /// called to programmatically resize the widget
     void resize();
 
-    /// detemines which routine widget to show and shows, if needed.
-    void handleRoutineWidget(bool show);
-
     /// changes the light count, affecting the menus on the page
     void lightCountChanged(std::size_t count);
-
-    /// true if the routine widget is open, false otherwise
-    bool routineWidgetIsOpen() { return mMultiRoutineWidget->isOpen(); }
 
     /// getter for color picker
     MultiColorPicker* colorPicker() { return mColorPicker; }
 
+    /// getter for currently selected color scheme
+    const std::vector<QColor>& colorScheme() const noexcept { return mColorScheme; }
+
+    /// getter for palette enum
+    EPalette palette() const noexcept { return mPaletteEnum; }
+
 signals:
 
-    /// the speed bar has an update.
-    void speedUpdate(int);
-
     /// a button was pressed, signaling a routine change.
-    void routineUpdate(cor::LightState);
-
-public slots:
-
-    /*!
-     * \brief multiButtonClicked every button setup as a presetButton will signal
-     * this slot whenever they are clicked.
-     */
-    void multiButtonClicked(cor::LightState);
+    void routineUpdate(ERoutine, EPalette);
 
 private slots:
-    /*!
-     * \brief renderUI renders expensive assets if and only if the assets have had any
-     * change of state.
-     */
-    void renderUI();
 
-    /*!
-     * \brief speedChanged signaled whenever the slider that controls
-     * the LEDs speed changes its value.
-     */
-    void speedChanged(int);
+    void paletteButtonClicked(ERoutine, EPalette);
 
     /*!
      * \brief newRoutineSelected called whenever a routine button is clicked. Sends
      * the routine to the backend data so that it can get sent to the connected devices.
      */
-    void newRoutineSelected(cor::LightState);
+    void newRoutineSelected(ERoutine);
 
 protected:
     /*!
@@ -127,23 +95,17 @@ protected:
     void resizeEvent(QResizeEvent*);
 
 private:
-    /*!
-     * \brief mMultiRoutineWidget widget that pops up from the bottom and contains buttons for all
-     * of the multi color routines.
-     */
-    RoutineButtonsWidget* mMultiRoutineWidget;
+    /// mode
+    EGroupMode mMode;
+
+    /// enum representing the palette. If no enum can be assigned, the enum is EPalette::custom
+    EPalette mPaletteEnum;
 
     /// stores the last values given by the color scheme.
     std::vector<QColor> mColorScheme;
 
-    /// stores the last value for the brightness
-    uint32_t mBrightness;
-
     /// preset data for palettes from ArduCor
     PresetPalettes mPresetPalettes;
-
-    /// color picker for color schemes
-    MultiColorPicker* mColorPicker;
 
     /// PaletteScrollArea containing arduino and nanoleaf palette/routine combos
     PaletteScrollArea* mArduinoPaletteScrollArea;
@@ -151,17 +113,8 @@ private:
     /// PaletteScrollArea containing hue palettes.
     PaletteScrollArea* mHuePaletteScrollArea;
 
-    /// mode
-    EGroupMode mMode;
-
-    /// stored state for current speed
-    int mSpeed;
-
-    /// count of lights
-    std::size_t mCount;
-
-    /// tracks the routine type of the current multi color routine from the color page.
-    cor::LightState mState;
+    /// color picker for color schemes
+    MultiColorPicker* mColorPicker;
 };
 
 #endif // PresetColorsPage_H

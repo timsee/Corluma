@@ -74,9 +74,6 @@ signals:
      */
     void clickedEditButton(bool isMood);
 
-    /// sent when a mood receives an update
-    void moodUpdate(std::uint64_t moodID);
-
     /// called when mood is selected
     void clickedSelectedMood(std::uint64_t moodID);
 

@@ -1,7 +1,6 @@
 #ifndef GLOBALBRIGHTNESSWIDGET_H
 #define GLOBALBRIGHTNESSWIDGET_H
 
-#include "cor/lightlist.h"
 #include "cor/widgets/slider.h"
 #include "cor/widgets/switch.h"
 
@@ -21,10 +20,7 @@ class GlobalBrightnessWidget : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit GlobalBrightnessWidget(const QSize& size,
-                                    bool isLeftAlwaysOpen,
-                                    cor::LightList* data,
-                                    QWidget* parent);
+    explicit GlobalBrightnessWidget(const QSize& size, bool isLeftAlwaysOpen, QWidget* parent);
 
     /// update the state of the widget
     void updateColor(const QColor& color);
@@ -53,6 +49,9 @@ public:
 signals:
     /// the new value of the brightness slider
     void brightnessChanged(std::uint32_t newValue);
+
+    /// the switch for turning all the lights on or off has been toggled
+    void isOnUpdate(bool isOn);
 
 private slots:
     /*!
@@ -85,9 +84,6 @@ private:
 
     /// how many pixels of space between widget and top
     int mTopSpacer;
-
-    /// data to change
-    cor::LightList* mData;
 
     /*!
      * \brief mBrightnessSlider slider for adjusting the brightness of all selected devices.

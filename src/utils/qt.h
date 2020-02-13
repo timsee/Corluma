@@ -17,8 +17,6 @@
 #include <QPushButton>
 #include <QScreen>
 
-#include "mainwindow.h"
-
 #define TRANSITION_TIME_MSEC 150
 
 namespace cor {
@@ -117,16 +115,7 @@ inline void resizeIcon(QPushButton* button, QString iconPath, float sizeRatio = 
  *
  * \return the size of the main window.
  */
-inline QSize applicationSize() {
-    QSize mainWindowSize(0, 0);
-    for (auto widget : QApplication::topLevelWidgets()) {
-        if (QString(widget->metaObject()->className()) == "MainWindow") {
-            mainWindowSize = widget->size();
-        }
-    }
-    return mainWindowSize;
-}
-
+QSize applicationSize();
 
 /*!
  * \brief leftHandMenuMoving returns true if the lefthandmenu is currently in motion, false
@@ -135,16 +124,8 @@ inline QSize applicationSize() {
  *
  * \return true if left hand menu is moving, false otherwise
  */
-inline bool leftHandMenuMoving() {
-    for (auto widget : QApplication::topLevelWidgets()) {
-        if (QString(widget->metaObject()->className()) == "MainWindow") {
-            // cast to mainwindow
-            auto mainWindow = qobject_cast<MainWindow*>(widget);
-            return mainWindow->leftHandMenu()->geometry().x() < 0;
-        }
-    }
-    return false;
-}
+bool leftHandMenuMoving();
+
 
 } // namespace cor
 

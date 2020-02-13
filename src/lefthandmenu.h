@@ -8,6 +8,7 @@
 #include "addnewgroupbutton.h"
 #include "comm/commlayer.h"
 #include "cor/lightlist.h"
+#include "cor/widgets/lightvectorwidget.h"
 #include "groupdata.h"
 #include "lefthandbutton.h"
 #include "listroomwidget.h"

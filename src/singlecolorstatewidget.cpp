@@ -24,6 +24,7 @@ void SingleColorStateWidget::updateState(const QColor& color, ERoutine routine) 
     mState.color(color);
     mState.routine(routine);
     mButton->updateRoutine(mState);
+    mSyncWidget->changeState(ESyncState::syncing);
 }
 
 void SingleColorStateWidget::resize() {

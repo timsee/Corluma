@@ -157,6 +157,8 @@ SOURCES += main.cpp \
     cor/widgets/lightvectorwidget.cpp \
     cor/listlayout.cpp \
     cor/widgets/groupbutton.cpp \
+    stateobserver.cpp \
+    utils/qt.cpp \
     comm/hue/bridgeinfowidget.cpp \
     comm/hue/lightdiscovery.cpp \
     comm/hue/bridgediscovery.cpp \
@@ -265,6 +267,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     editpage.h \
     globalbrightnesswidget.h \
     singlelightbrightnesswidget.h \
+    stateobserver.h \
     utils/exception.h \
     comm/hue/lightdiscovery.h \
     comm/hue/bridgediscovery.h \

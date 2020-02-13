@@ -14,216 +14,258 @@
 #include "utils/exception.h"
 #include "utils/qt.h"
 
-RoutineButtonsWidget::RoutineButtonsWidget(EWidgetGroup widgetGroup,
-                                           const std::vector<QColor>& colors,
-                                           QWidget* parent)
+RoutineButtonsWidget::RoutineButtonsWidget(QWidget* parent)
     : QWidget(parent),
-      mIsOpen{false} {
-    mLayout = new QGridLayout(this);
-    mLayout->setMargin(0);
-    mLayout->setContentsMargins(0, 0, 0, 0);
-    mLayout->setHorizontalSpacing(0);
-    mLayout->setVerticalSpacing(0);
-    if (widgetGroup == EWidgetGroup::singleRoutines) {
-        cor::LightState state;
-        mRoutines = std::vector<std::pair<QString, cor::LightState>>(8);
-        state.speed(100);
-        state.isOn(true);
-        state.color(QColor(0, 0, 0));
+      mIsOpen{false},
+      mSingleWidget{new QWidget(this)},
+      mSingleLayout{new QGridLayout(mSingleWidget)},
+      mMultiWidget{new QWidget(this)},
+      mMultiLayout{new QGridLayout(mMultiWidget)},
+      mWidgetGroup(EWidgetGroup::singleRoutines) {
+    mSingleLayout->setMargin(0);
+    mSingleLayout->setContentsMargins(0, 0, 0, 0);
+    mSingleLayout->setHorizontalSpacing(0);
+    mSingleLayout->setVerticalSpacing(0);
 
-        mRoutines[0].first = "Solid";
-        state.routine(ERoutine::singleSolid);
-        mRoutines[0].second = state;
+    mMultiLayout->setMargin(0);
+    mMultiLayout->setContentsMargins(0, 0, 0, 0);
+    mMultiLayout->setHorizontalSpacing(0);
+    mMultiLayout->setVerticalSpacing(0);
 
-        mRoutines[1].first = "Blink";
-        state.routine(ERoutine::singleBlink);
-        mRoutines[1].second = state;
+    initSingleRoutineButtons();
+    initMultiRoutinesButtons();
 
-        mRoutines[2].first = "Wave";
-        state.routine(ERoutine::singleWave);
-        mRoutines[2].second = state;
+    mSingleWidget->setVisible(true);
+    mMultiWidget->setVisible(false);
 
-        mRoutines[3].first = "Glimmer";
-        state.routine(ERoutine::singleGlimmer);
-        state.param(15);
-        mRoutines[3].second = state;
-
-        mRoutines[4].first = "Linear Fade";
-        state.routine(ERoutine::singleFade);
-        state.param(0);
-        mRoutines[4].second = state;
-
-        mRoutines[5].first = "Sine Fade";
-        state.routine(ERoutine::singleFade);
-        state.param(1);
-        mRoutines[5].second = state;
-
-        mRoutines[6].first = "Saw Fade In";
-        state.routine(ERoutine::singleSawtoothFade);
-        state.param(0);
-        mRoutines[6].second = state;
-
-        mRoutines[7].first = "Saw Fade Out";
-        state.routine(ERoutine::singleSawtoothFade);
-        state.param(1);
-        mRoutines[7].second = state;
-
-        mRoutineButtons = std::vector<cor::Button*>(mRoutines.size(), nullptr);
-        mLabels = std::vector<QLabel*>(mRoutines.size(), nullptr);
-
-        int rowCount = 0;
-        auto maxColumn = 4u;
-        for (std::size_t i = 0u; i < mRoutines.size(); ++i) {
-            mRoutineButtons[i] = new cor::Button(this, mRoutines[i].second);
-            mRoutineButtons[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-            mLabels[i] = new QLabel(this);
-            mLabels[i]->setText(mRoutines[i].first);
-            mLabels[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-            mLabels[i]->setAlignment(Qt::AlignCenter);
-
-            connect(mRoutineButtons[i],
-                    SIGNAL(buttonClicked(cor::LightState)),
-                    this,
-                    SLOT(routineChanged(cor::LightState)));
-            if ((i % maxColumn) == 0 && i != 0) {
-                rowCount = rowCount + 2;
-            }
-            mLayout->addWidget(mRoutineButtons[i], rowCount, int(i % maxColumn));
-            mLayout->addWidget(mLabels[i], rowCount + 1, int(i % maxColumn));
-        }
-
-    } else if (widgetGroup == EWidgetGroup::multiRoutines) {
-        cor::LightState state;
-        mRoutines = std::vector<std::pair<QString, cor::LightState>>(5);
-        QJsonObject routineObject;
-        state.speed(100);
-        state.isOn(true);
-        state.palette(Palette(paletteToString(EPalette::custom), colors, 51));
-
-        mRoutines[0].first = "Glimmer";
-        state.routine(ERoutine::multiGlimmer);
-        state.param(15);
-        mRoutines[0].second = state;
-
-        mRoutines[1].first = "Fade";
-        state.routine(ERoutine::multiFade);
-        mRoutines[1].second = state;
-
-        mRoutines[2].first = "Random Solid";
-        state.routine(ERoutine::multiRandomSolid);
-        mRoutines[2].second = state;
-
-        mRoutines[3].first = "Random Individual";
-        state.routine(ERoutine::multiRandomIndividual);
-        mRoutines[3].second = state;
-
-        mRoutines[4].first = "Bars";
-        state.routine(ERoutine::multiBars);
-        state.param(4);
-        mRoutines[4].second = state;
-
-        mRoutineButtons = std::vector<cor::Button*>(mRoutines.size(), nullptr);
-        mLabels = std::vector<QLabel*>(mRoutines.size(), nullptr);
-
-        int rowCount = 0;
-        auto maxColumn = 3u;
-        for (std::size_t i = 0u; i < mRoutines.size(); ++i) {
-            mRoutineButtons[i] = new cor::Button(this, mRoutines[i].second);
-
-            mRoutineButtons[i]->setStyleSheet("background-color: rgb(52, 52, 52); ");
-            mRoutineButtons[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-            mLabels[i] = new QLabel(this);
-            mLabels[i]->setText(mRoutines[i].first);
-            mLabels[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-            mLabels[i]->setAlignment(Qt::AlignCenter);
-
-            connect(mRoutineButtons[i],
-                    SIGNAL(buttonClicked(cor::LightState)),
-                    this,
-                    SLOT(routineChanged(cor::LightState)));
-            if ((i % maxColumn) == 0 && i != 0) {
-                rowCount = rowCount + 2;
-            }
-            mLayout->addWidget(mRoutineButtons[i], rowCount, int(i % maxColumn));
-            mLayout->addWidget(mLabels[i], rowCount + 1, int(i % maxColumn));
-        }
-    } else {
-        THROW_EXCEPTION("RoutinesButtonWidget is not set up to handle that widget group");
-    }
     this->setStyleSheet("background-color:rgb(33,32,32);");
-
-    setLayout(mLayout);
 }
 
 
+void RoutineButtonsWidget::initSingleRoutineButtons() {
+    cor::LightState state;
+    mSingleRoutines = std::vector<std::pair<QString, cor::LightState>>(8);
+    state.isOn(true);
+    state.color(QColor(0, 0, 0));
+
+    mSingleRoutines[0].first = "Solid";
+    state.routine(ERoutine::singleSolid);
+    mSingleRoutines[0].second = state;
+
+    mSingleRoutines[1].first = "Blink";
+    state.routine(ERoutine::singleBlink);
+    mSingleRoutines[1].second = state;
+
+    mSingleRoutines[2].first = "Wave";
+    state.routine(ERoutine::singleWave);
+    mSingleRoutines[2].second = state;
+
+    mSingleRoutines[3].first = "Glimmer";
+    state.routine(ERoutine::singleGlimmer);
+    state.param(15);
+    mSingleRoutines[3].second = state;
+    // make the default state the glimmer routine
+    mSingleState = state;
+
+    mSingleRoutines[4].first = "Linear Fade";
+    state.routine(ERoutine::singleFade);
+    state.param(0);
+    mSingleRoutines[4].second = state;
+
+    mSingleRoutines[5].first = "Sine Fade";
+    state.routine(ERoutine::singleFade);
+    state.param(1);
+    mSingleRoutines[5].second = state;
+
+    mSingleRoutines[6].first = "Saw Fade In";
+    state.routine(ERoutine::singleSawtoothFade);
+    state.param(0);
+    mSingleRoutines[6].second = state;
+
+    mSingleRoutines[7].first = "Saw Fade Out";
+    state.routine(ERoutine::singleSawtoothFade);
+    state.param(1);
+    mSingleRoutines[7].second = state;
+
+    mSingleRoutineButtons = std::vector<cor::Button*>(mSingleRoutines.size(), nullptr);
+    mSingleLabels = std::vector<QLabel*>(mSingleRoutines.size(), nullptr);
+
+    int rowCount = 0;
+    auto maxColumn = 4u;
+    for (std::size_t i = 0u; i < mSingleRoutines.size(); ++i) {
+        mSingleRoutineButtons[i] = new cor::Button(this, mSingleRoutines[i].second);
+
+        mSingleRoutineButtons[i]->setStyleSheet("background-color:rgb(33,32,32);");
+        mSingleRoutineButtons[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+        mSingleLabels[i] = new QLabel(this);
+        mSingleLabels[i]->setText(mSingleRoutines[i].first);
+        mSingleLabels[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        mSingleLabels[i]->setAlignment(Qt::AlignCenter);
+
+        connect(mSingleRoutineButtons[i],
+                SIGNAL(buttonClicked(cor::LightState)),
+                this,
+                SLOT(routineChanged(cor::LightState)));
+        if ((i % maxColumn) == 0 && i != 0) {
+            rowCount = rowCount + 2;
+        }
+        mSingleLayout->addWidget(mSingleRoutineButtons[i], rowCount, int(i % maxColumn));
+        mSingleLayout->addWidget(mSingleLabels[i], rowCount + 1, int(i % maxColumn));
+    }
+}
+
+void RoutineButtonsWidget::initMultiRoutinesButtons() {
+    auto colors = cor::defaultCustomColors();
+    cor::LightState state;
+    mMultiRoutines = std::vector<std::pair<QString, cor::LightState>>(5);
+    QJsonObject routineObject;
+    state.isOn(true);
+    state.palette(Palette(paletteToString(EPalette::custom), colors, 51));
+
+    mMultiRoutines[0].first = "Glimmer";
+    state.routine(ERoutine::multiGlimmer);
+    state.param(15);
+    mMultiRoutines[0].second = state;
+    // make the default state the glimmer routine
+    mMultiState = state;
+
+    mMultiRoutines[1].first = "Fade";
+    state.routine(ERoutine::multiFade);
+    mMultiRoutines[1].second = state;
+
+    mMultiRoutines[2].first = "Random Solid";
+    state.routine(ERoutine::multiRandomSolid);
+    mMultiRoutines[2].second = state;
+
+    mMultiRoutines[3].first = "Random Individual";
+    state.routine(ERoutine::multiRandomIndividual);
+    mMultiRoutines[3].second = state;
+
+    mMultiRoutines[4].first = "Bars";
+    state.routine(ERoutine::multiBars);
+    state.param(4);
+    mMultiRoutines[4].second = state;
+
+    mMultiRoutineButtons = std::vector<cor::Button*>(mMultiRoutines.size(), nullptr);
+    mMultiLabels = std::vector<QLabel*>(mMultiRoutines.size(), nullptr);
+
+    int rowCount = 0;
+    auto maxColumn = 3u;
+    for (std::size_t i = 0u; i < mMultiRoutines.size(); ++i) {
+        mMultiRoutineButtons[i] = new cor::Button(this, mMultiRoutines[i].second);
+
+        mMultiRoutineButtons[i]->setStyleSheet("background-color:rgb(33,32,32);");
+        mMultiRoutineButtons[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+        mMultiLabels[i] = new QLabel(this);
+        mMultiLabels[i]->setText(mMultiRoutines[i].first);
+        mMultiLabels[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        mMultiLabels[i]->setAlignment(Qt::AlignCenter);
+
+        connect(mMultiRoutineButtons[i],
+                SIGNAL(buttonClicked(cor::LightState)),
+                this,
+                SLOT(routineChanged(cor::LightState)));
+        if ((i % maxColumn) == 0 && i != 0) {
+            rowCount = rowCount + 2;
+        }
+        mMultiLayout->addWidget(mMultiRoutineButtons[i], rowCount, int(i % maxColumn));
+        mMultiLayout->addWidget(mMultiLabels[i], rowCount + 1, int(i % maxColumn));
+    }
+}
+
 
 void RoutineButtonsWidget::highlightRoutineButton(const QString& label) {
-    for (std::size_t i = 0u; i < mRoutineButtons.size(); i++) {
-        if (mLabels[i]->text() == label) {
-            mRoutineButtons[i]->setChecked(true);
+    for (std::size_t i = 0u; i < mSingleRoutineButtons.size(); i++) {
+        if (mSingleLabels[i]->text() == label) {
+            mSingleRoutineButtons[i]->setChecked(true);
         } else {
-            mRoutineButtons[i]->setChecked(false);
+            mSingleRoutineButtons[i]->setChecked(false);
+        }
+    }
+
+    for (std::size_t i = 0u; i < mMultiRoutineButtons.size(); i++) {
+        if (mMultiLabels[i]->text() == label) {
+            mMultiRoutineButtons[i]->setChecked(true);
+        } else {
+            mMultiRoutineButtons[i]->setChecked(false);
         }
     }
 }
 
 void RoutineButtonsWidget::multiRoutineColorsChanged(const std::vector<QColor>& colors) {
-    for (std::size_t i = 0u; i < mRoutineButtons.size(); i++) {
-        auto state = mRoutines[i].second;
+    for (std::size_t i = 0u; i < mMultiRoutineButtons.size(); i++) {
+        auto state = mMultiRoutines[i].second;
         state.palette(Palette(paletteToString(EPalette::custom), colors, 51));
-        mRoutineButtons[i]->updateRoutine(state);
+        mMultiRoutineButtons[i]->updateRoutine(state);
+    }
+}
+
+void RoutineButtonsWidget::singleRoutineColorChanged(const QColor& color) {
+    for (std::size_t i = 0u; i < mSingleRoutineButtons.size(); ++i) {
+        auto state = mSingleRoutines[i].second;
+        state.color(color);
+        mSingleRoutineButtons[i]->updateRoutine(state);
     }
 }
 
 void RoutineButtonsWidget::routineChanged(const cor::LightState& routineObject) {
-    for (const auto& pair : mRoutines) {
-        if (pair.second == routineObject) {
-            highlightRoutineButton(pair.first);
+    if (mWidgetGroup == EWidgetGroup::singleRoutines) {
+        for (const auto& pair : mSingleRoutines) {
+            if (pair.second == routineObject) {
+                highlightRoutineButton(pair.first);
+            }
         }
+        mSingleState = routineObject;
+    } else {
+        for (const auto& pair : mMultiRoutines) {
+            if (pair.second == routineObject) {
+                highlightRoutineButton(pair.first);
+            }
+        }
+        mMultiState = routineObject;
     }
-    emit newRoutineSelected(routineObject);
+
+    emit newRoutineSelected(routineObject.routine());
 }
 
-void RoutineButtonsWidget::singleRoutineColorChanged(const QColor& color) {
-    for (std::size_t i = 0u; i < mRoutineButtons.size(); ++i) {
-        auto state = mRoutines[i].second;
-        state.color(color);
-        mRoutineButtons[i]->updateRoutine(state);
-    }
-}
-
-void RoutineButtonsWidget::resize(QSize size) {
+void RoutineButtonsWidget::resize(int x, QSize size) {
     setFixedWidth(size.width());
     setFixedHeight(size.height() / 3);
-
     if (mIsOpen) {
-        setGeometry(0, parentWidget()->height() - height(), width(), height());
+        setGeometry(x, parentWidget()->height() - height(), width(), height());
     } else {
-        setGeometry(0, parentWidget()->height(), width(), height());
+        setGeometry(x, parentWidget()->height(), width(), height());
+    }
+
+    mSingleWidget->setFixedSize(geometry().size());
+    mMultiWidget->setFixedSize(geometry().size());
+}
+
+
+void RoutineButtonsWidget::pushIn(EWidgetGroup group) {
+    if (mWidgetGroup != group) {
+        mWidgetGroup = group;
+        if (group == EWidgetGroup::singleRoutines) {
+            mSingleWidget->setVisible(true);
+            mMultiWidget->setVisible(false);
+        } else {
+            mSingleWidget->setVisible(false);
+            mMultiWidget->setVisible(true);
+        }
+    }
+    if (!mIsOpen) {
+        // update colors of single color routine
+        cor::moveWidget(this, pos(), QPoint(x(), parentWidget()->height() - height()));
+        mIsOpen = true;
     }
 }
 
-void RoutineButtonsWidget::paintEvent(QPaintEvent*) {
-    QStyleOption opt;
-    opt.init(this);
-    QPainter painter(this);
-
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.fillRect(rect(), QBrush(QColor(48, 47, 47)));
-}
-
-
-void RoutineButtonsWidget::showWidget(bool shouldShow) {
-    if (mIsOpen && !shouldShow) {
-        cor::moveWidget(this, pos(), QPoint(0, parentWidget()->height()));
+void RoutineButtonsWidget::pushOut() {
+    if (mIsOpen) {
+        cor::moveWidget(this, pos(), QPoint(x(), parentWidget()->height()));
 
         mIsOpen = false;
-    } else if (!mIsOpen && shouldShow) {
-        // mSingleRoutineWidget->singleRoutineColorChanged(mColor);  // update colors of single
-        // color routine
-        cor::moveWidget(this, pos(), QPoint(0, parentWidget()->height() - height()));
-        mIsOpen = true;
     }
 }

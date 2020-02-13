@@ -16,6 +16,8 @@
 #include "comm/commhue.h"
 #include "comm/commnanoleaf.h"
 #include "cor/presetpalettes.h"
+#include "stateobserver.h"
+#include "topmenu.h"
 #include "utils/exception.h"
 #include "utils/qt.h"
 #include "utils/reachability.h"
@@ -90,11 +92,6 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     connect(mSettingsPage, SIGNAL(clickedInfoWidget()), this, SLOT(hueInfoWidgetClicked()));
     connect(mSettingsPage, SIGNAL(clickedDiscovery()), this, SLOT(pushInDiscovery()));
     connect(mSettingsPage, SIGNAL(clickedLoadJSON(QString)), this, SLOT(loadJSON(QString)));
-
-    connect(mSettingsPage->globalWidget(),
-            SIGNAL(protocolSettingsUpdate(EProtocolType, bool)),
-            this,
-            SLOT(protocolSettingsChanged(EProtocolType, bool)));
 
     // --------------
     // Setup Discovery Page
@@ -227,6 +224,17 @@ void MainWindow::loadPages() {
         mMainViewport = new MainViewport(this, mComm, mData, mGroups, mAppSettings);
         mMainViewport->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
+        mRoutineWidget = new RoutineButtonsWidget(this);
+        auto x = 0;
+        if (mLeftHandMenu->alwaysOpen()) {
+            x = mLeftHandMenu->width();
+        }
+        mRoutineWidget->setMaximumWidth(mMainViewport->width());
+        mRoutineWidget->setMaximumHeight(mMainViewport->height() / 3);
+        mRoutineWidget->setGeometry(x, height(), mRoutineWidget->width(), mRoutineWidget->height());
+        mRoutineWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+
         // --------------
         // Top Menu
         // --------------
@@ -242,14 +250,6 @@ void MainWindow::loadPages() {
                 SIGNAL(buttonPressed(QString)),
                 this,
                 SLOT(topMenuButtonPressed(QString)));
-        connect(mLeftHandMenu, SIGNAL(changedDeviceCount()), mTopMenu, SLOT(lightCountChanged()));
-
-        connect(mLeftHandMenu,
-                SIGNAL(changedDeviceCount()),
-                mMainViewport,
-                SLOT(lightCountChanged()));
-
-        connect(mSyncStatus, SIGNAL(statusChanged(bool)), mTopMenu, SLOT(dataInSync(bool)));
 
         // --------------
         // Setup Layout
@@ -279,10 +279,7 @@ void MainWindow::loadPages() {
 
         mMoodDetailedWidget = new ListMoodDetailedWidget(this, mGroups, mComm);
         connect(mMoodDetailedWidget, SIGNAL(pressedClose()), this, SLOT(detailedClosePressed()));
-        connect(mMoodDetailedWidget,
-                SIGNAL(enableGroup(std::uint64_t)),
-                this,
-                SLOT(moodChanged(std::uint64_t)));
+
 
         mMoodDetailedWidget->setGeometry(0, -1 * height(), width(), height());
         mMoodDetailedWidget->setVisible(false);
@@ -304,6 +301,8 @@ void MainWindow::loadPages() {
         mSettingsPage->enableButtons(true);
 
         resize();
+
+        setupStateObserver();
     }
 }
 
@@ -458,8 +457,7 @@ void MainWindow::editButtonClicked(bool isMood) {
             mEditMoodPage->showMood(result.first, mComm->allLights());
         } else {
             // make a new mood
-            std::vector<cor::Light> lights;
-            std::copy(mData->lights().begin(), mData->lights().end(), std::back_inserter(lights));
+            auto lights = mData->lights();
             cor::Mood mood(mGroups->generateNewUniqueKey(), "New Mood", lights);
             mEditMoodPage->showMood(mood, mComm->allLights());
         }
@@ -708,20 +706,9 @@ void MainWindow::resize() {
         }
     }
 
+    mRoutineWidget->resize(mMainViewport->x(),
+                           QSize(mMainViewport->width(), mMainViewport->height()));
     mNoWifiWidget->setGeometry(QRect(0, 0, geometry().width(), geometry().height()));
-}
-
-void MainWindow::moodChanged(std::uint64_t moodID) {
-    const auto& result = mGroups->moods().item(QString::number(moodID).toStdString());
-    if (result.second) {
-        mData->clearLights();
-        const auto& moodDict = mComm->makeMood(result.first);
-        mData->addLights(moodDict.items());
-        if (!moodDict.items().empty()) {
-            mTopMenu->lightCountChanged();
-            mLeftHandMenu->deviceCountChanged();
-        }
-    }
 }
 
 void MainWindow::greyoutClicked() {
@@ -730,7 +717,7 @@ void MainWindow::greyoutClicked() {
         mLeftHandMenu->pushOut();
         if ((mMainViewport->currentPage() == EPage::colorPage
              || mMainViewport->currentPage() == EPage::palettePage)
-            && mData->lights().empty()) {
+            && mData->empty()) {
             mTopMenu->pushInTapToSelectButton();
         }
     }
@@ -745,15 +732,6 @@ void MainWindow::greyoutClicked() {
 
     if (mLightInfoWidget->isOpen()) {
         lightInfoClosePressed();
-    }
-}
-
-void MainWindow::protocolSettingsChanged(EProtocolType type, bool enabled) {
-    if (enabled) {
-        mComm->startup(type);
-    } else {
-        mComm->shutdown(type);
-        mData->removeLightOfType(type);
     }
 }
 
@@ -863,7 +841,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent* event) {
             mLeftHandMenu->pushOut();
             if ((mMainViewport->currentPage() == EPage::colorPage
                  || mMainViewport->currentPage() == EPage::palettePage)
-                && mData->lights().empty()) {
+                && mData->empty()) {
                 mTopMenu->pushInTapToSelectButton();
             }
         } else if (!mLeftHandMenu->isIn()) {
@@ -873,7 +851,8 @@ void MainWindow::mouseReleaseEvent(QMouseEvent* event) {
             if (mSettingsPage->isOpen()) {
                 settingsClosePressed();
             }
-        } else if (!mLeftHandMenu->isIn() && (mDiscoveryPage->isOpen() || mSettingsPage->isOpen())) {
+        } else if (!mLeftHandMenu->isIn()
+                   && (mDiscoveryPage->isOpen() || mSettingsPage->isOpen())) {
             mLeftHandMenu->pushIn();
         }
 
@@ -884,7 +863,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent* event) {
                 mLeftHandMenu->pushOut();
                 if ((mMainViewport->currentPage() == EPage::colorPage
                      || mMainViewport->currentPage() == EPage::palettePage)
-                    && mData->lights().empty()) {
+                    && mData->empty()) {
                     mTopMenu->pushInTapToSelectButton();
                 }
             }
@@ -918,13 +897,12 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
         ignorePushOut = true;
     }
 
-    if (page == EPage::settingsPage
-            || page == EPage::discoveryPage) {
+    if (page == EPage::settingsPage || page == EPage::discoveryPage) {
         ignorePushOut = true;
     }
 
     if (!ignorePushOut) {
-        if ((page == EPage::colorPage || page == EPage::palettePage) && mData->lights().empty()) {
+        if ((page == EPage::colorPage || page == EPage::palettePage) && mData->empty()) {
             mTopMenu->pushInTapToSelectButton();
         }
     }
@@ -964,7 +942,7 @@ void MainWindow::pushOutSettingsPage() {
 
     if ((mMainViewport->currentPage() == EPage::colorPage
          || mMainViewport->currentPage() == EPage::palettePage)
-        && mData->lights().empty() && !mLeftHandMenu->isIn()) {
+        && mData->empty() && !mLeftHandMenu->isIn()) {
         mTopMenu->pushInTapToSelectButton();
     }
 
@@ -973,4 +951,80 @@ void MainWindow::pushOutSettingsPage() {
 
 void MainWindow::openNewGroupMenu() {
     editButtonClicked(false);
+}
+
+void MainWindow::setupStateObserver() {
+    mStateObserver = new cor::StateObserver(mData, mComm, mGroups, this, mTopMenu, this);
+    // color page setup
+    connect(mMainViewport->colorPage(),
+            SIGNAL(colorUpdate(QColor)),
+            mStateObserver,
+            SLOT(colorChanged(QColor)));
+
+    connect(mMainViewport->colorPage(),
+            SIGNAL(ambientUpdate(std::uint32_t, std::uint32_t)),
+            mStateObserver,
+            SLOT(ambientColorChanged(std::uint32_t, std::uint32_t)));
+
+    // palette page setup
+    connect(mMainViewport->palettePage(),
+            SIGNAL(routineUpdate(ERoutine, EPalette)),
+            mStateObserver,
+            SLOT(routineChanged(ERoutine, EPalette)));
+
+    connect(mMainViewport->palettePage()->colorPicker(),
+            SIGNAL(schemeUpdate(std::vector<QColor>, std::uint32_t)),
+            mStateObserver,
+            SLOT(updateScheme(std::vector<QColor>, std::uint32_t)));
+
+    connect(mMainViewport->palettePage()->colorPicker(),
+            SIGNAL(selectionChanged(std::uint32_t, QColor)),
+            mStateObserver,
+            SLOT(multiColorSelectionChange(std::uint32_t, QColor)));
+
+    connect(mMainViewport->palettePage()->colorPicker(),
+            SIGNAL(schemeUpdated(EColorSchemeType)),
+            mStateObserver,
+            SLOT(colorSchemeTypeChanged(EColorSchemeType)));
+
+    // brightness slider
+    connect(mTopMenu->globalBrightness(),
+            SIGNAL(brightnessChanged(std::uint32_t)),
+            mStateObserver,
+            SLOT(globalBrightnessChanged(std::uint32_t)));
+
+    connect(mTopMenu->globalBrightness(),
+            SIGNAL(isOnUpdate(bool)),
+            mStateObserver,
+            SLOT(isOnChanged(bool)));
+
+    // single light brightness
+    connect(mTopMenu->singleLightBrightness(),
+            SIGNAL(brightnessChanged(std::uint32_t)),
+            mStateObserver,
+            SLOT(singleLightBrightnessChanged(std::uint32_t)));
+
+    // mood page
+    connect(mMoodDetailedWidget,
+            SIGNAL(enableGroup(std::uint64_t)),
+            mStateObserver,
+            SLOT(moodChanged(std::uint64_t)));
+
+    // settings page
+    connect(mSettingsPage->globalWidget(),
+            SIGNAL(protocolSettingsUpdate(EProtocolType, bool)),
+            mStateObserver,
+            SLOT(protocolSettingsChanged(EProtocolType, bool)));
+
+    // routine state widget
+    connect(mRoutineWidget,
+            SIGNAL(newRoutineSelected(ERoutine)),
+            mStateObserver,
+            SLOT(routineChanged(ERoutine)));
+
+    // left hand menu changes
+    connect(mLeftHandMenu, SIGNAL(changedDeviceCount()), mStateObserver, SLOT(lightCountChanged()));
+
+    // sync status
+    connect(mSyncStatus, SIGNAL(statusChanged(bool)), mStateObserver, SLOT(dataInSync(bool)));
 }

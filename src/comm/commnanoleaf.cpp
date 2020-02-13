@@ -289,6 +289,10 @@ void CommNanoleaf::testAuth(const nano::LeafMetadata& light) {
     QNetworkRequest request;
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
     request.setUrl(url);
+
+#ifdef DEBUG_LEAF_TOUCHY
+    qDebug() << " test Auth token of " << url;
+#endif
     mNetworkManager->get(request);
 }
 
