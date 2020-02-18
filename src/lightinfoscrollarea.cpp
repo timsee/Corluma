@@ -47,9 +47,9 @@ void LightInfoScrollArea::updateHues(std::vector<HueMetadata> lights) {
             widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(clickedLight(QString)));
             connect(widget,
-                    SIGNAL(changedName(EProtocolType, QString, QString)),
+                    SIGNAL(changedName(QString, QString)),
                     parentWidget(),
-                    SLOT(nameChanged(EProtocolType, QString, QString)));
+                    SLOT(nameChanged(QString, QString)));
             mHueWidgets.push_back(widget);
             mScrollLayout->addWidget(widget);
         }
@@ -80,9 +80,9 @@ void LightInfoScrollArea::updateNanoLeafs(const std::vector<nano::LeafMetadata>&
             widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(clickedLight(QString)));
             connect(widget,
-                    SIGNAL(changedName(EProtocolType, QString, QString)),
+                    SIGNAL(changedName(QString, QString)),
                     parentWidget(),
-                    SLOT(nameChanged(EProtocolType, QString, QString)));
+                    SLOT(nameChanged(QString, QString)));
             mNanoleafWidgets.push_back(widget);
             mScrollLayout->addWidget(widget);
         }

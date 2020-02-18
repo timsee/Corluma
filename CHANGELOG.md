@@ -702,4 +702,13 @@ ___
 - Fixed miscellaneous bugs.
 
 
+### **v0.18.1**
+#### The Minor Fixes Update
+- Fixed issues with asset rendering. 
+- Split `bridge.h` into `command.h`, `schedule.h`, and `bridge.h`. 
+- Fixed issues with scroll areas.
+- Fixed a bug where the user could accidentally convert a group into a room or vice versa.
+- Fixed miscellaneous bugs.
+
+
 

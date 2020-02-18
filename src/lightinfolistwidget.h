@@ -55,7 +55,7 @@ signals:
     void pressedClose();
 
     /// emits when a light name should change
-    void lightNameChanged(EProtocolType, const QString&, const QString&);
+    void lightNameChanged(const QString&, const QString&);
 
     /// emits the unique ID of the light that will be deleted.
     void deleteLight(QString);
@@ -65,13 +65,10 @@ private slots:
      * \brief lightNameChagned a LightInfoWidget is signaling that its name should change. This
      * signal is forwarded to a LightInfoWidget signal.
      *
-     * \param type protocol type of light
      * \param key device index represented as a string
      * \param name new name of the light
      */
-    void nameChanged(EProtocolType type, QString key, QString name) {
-        emit lightNameChanged(type, key, name);
-    }
+    void nameChanged(QString key, QString name) { emit lightNameChanged(key, name); }
 
     /*!
      * \brief closePressed close button pressed from top widget.

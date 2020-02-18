@@ -1,100 +1,22 @@
 #ifndef BRIDGE_H
 #define BRIDGE_H
 
-#include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QString>
-#include <list>
 #include <sstream>
 #include <vector>
 
 #include "comm/hue/huemetadata.h"
+#include "comm/hue/schedule.h"
 #include "cor/dictionary.h"
 #include "cor/objects/group.h"
 #include "cor/objects/room.h"
-#include "utils/exception.h"
 
 /// bridge discovery state
 enum class EBridgeDiscoveryState { lookingForResponse, lookingForUsername, connected, unknown };
 Q_DECLARE_METATYPE(EBridgeDiscoveryState)
 
-
-/*!
- * \brief The SHueCommand struct command sent to a hue bridge.
- */
-struct SHueCommand {
-    QString address;
-    QString method;
-    QJsonObject routineObject;
-
-    operator QString() const {
-        QString result = "SHueCommand ";
-        result += " address: " + address;
-        result += " method: " + method;
-        QJsonDocument doc(routineObject);
-        result += " routineObject: " + doc.toJson(QJsonDocument::Compact);
-        return result;
-    }
-};
-
-
-
-/*!
- * \brief The SHueSchedule struct a schedule for hues. Schedules are stored
- *        in the bridge and will execute even when no application is connected.
- *        Schedules also stay around if autodelete is set to false, and must be
- *        deleted explicitly.
- */
-struct SHueSchedule {
-    QString name;
-    QString description;
-    SHueCommand command;
-    QString time;
-    QString localtime;
-    QString created;
-    bool status;
-    int index;
-    bool autodelete;
-
-    operator QString() const {
-        QString result = "SHueCommand ";
-        result += " name: " + name;
-        result += " description: " + description;
-        result += " command: " + command;
-        result += " time: " + time;
-        result += " localtime: " + localtime;
-        result += " created: " + created;
-        result += " status: " + QString(status);
-        result += " index: " + QString(index);
-        result += " autodelete: " + QString(autodelete);
-        return result;
-    }
-
-    /// SHueSchedule equal operator
-    bool operator==(const SHueSchedule& rhs) const {
-        bool result = true;
-        if (name != rhs.name) {
-            result = false;
-        }
-        if (description != rhs.description) {
-            result = false;
-        }
-        if (index != rhs.index) {
-            result = false;
-        }
-        return result;
-    }
-};
-
-namespace std {
-template <>
-struct hash<SHueSchedule> {
-    size_t operator()(const SHueSchedule& k) const {
-        return std::hash<std::string>{}(k.name.toStdString());
-    }
-};
-} // namespace std
 
 namespace hue {
 
@@ -113,44 +35,86 @@ using BridgeRoomVector = std::vector<std::pair<cor::Room, int>>;
 class Bridge {
 public:
     /// constructor
-    Bridge() = default;
+    Bridge() : mState{EBridgeDiscoveryState::lookingForResponse} {}
+
+    Bridge(QString IP, QString customName)
+        : mIP{IP},
+          mCustomName{customName},
+          mState{EBridgeDiscoveryState::lookingForResponse} {}
+
+    Bridge(QString IP, QString customName, QString id)
+        : mIP{IP},
+          mId{id},
+          mCustomName{customName},
+          mState{EBridgeDiscoveryState::lookingForUsername} {}
+
+    Bridge(const QJsonObject&);
 
     /*!
      * \brief IP The IP address of the current bridge
      */
-    QString IP = "";
+    const QString& IP() const noexcept { return mIP; }
+
+    /// setter for IP
+    void IP(QString IP) { mIP = IP; }
+
+    /// update the metadata of a bridge, such as its name and mac address
+    void updateConfig(const QJsonObject& object) {
+        mName = object["name"].toString();
+        mAPI = object["apiversion"].toString();
+        mMacaddress = object["mac"].toString();
+    }
+
     /*!
      * \brief username the username assigned by the bridge. Received
      *        by sending a request packet ot the bridge.
      */
-    QString username = "";
+    const QString& username() const noexcept { return mUsername; }
+
+    /// setter for the username
+    void username(QString name) { mUsername = std::move(name); }
 
     /// unique key
-    QString id = "";
+    const QString& id() const noexcept { return mId; }
 
     /// api version of the software
-    QString api = "";
+    const QString& API() const noexcept { return mAPI; }
 
     /// name of bridge. this is often a default name and uninteresting
-    QString name = "";
+    const QString& name() const noexcept { return mName; }
+
+    void customName(QString name) { mCustomName = std::move(name); }
 
     /// name defined by the apps saved data
-    QString customName = "";
+    const QString& customName() const noexcept { return mCustomName; }
 
     /// mac address for the bridge
-    QString macaddress = "";
+    const QString& macaddress() const noexcept { return mMacaddress; }
 
-    /// vector of lights for a bridge
-    cor::Dictionary<HueMetadata> lights;
+    void lights(cor::Dictionary<HueMetadata> lightsDict) { mLights = std::move(lightsDict); }
 
-    /// list of the schedules stored on the bridge
-    cor::Dictionary<SHueSchedule> schedules;
+    /// dictionary of light metadata
+    const cor::Dictionary<HueMetadata>& lights() const noexcept { return mLights; }
+
+    /// setter for the schedules
+    void schedules(cor::Dictionary<hue::Schedule> scheduleDict) {
+        mSchedules = std::move(scheduleDict);
+    }
+
+    /// dictionary schedules stored on the bridge
+    const cor::Dictionary<hue::Schedule> schedules() const noexcept { return mSchedules; }
 
     /// list of the groups stored on the bridge
     std::vector<cor::Group> groups() const noexcept { return mGroups.items(); }
 
     /// list of the rooms stored on the bridge
     std::vector<cor::Room> rooms() const noexcept { return mRooms.items(); }
+
+    /// setter for the state
+    void state(EBridgeDiscoveryState state) { mState = state; }
+
+    /// getter for the state
+    EBridgeDiscoveryState state() const noexcept { return mState; }
 
     /// getter for groups with IDs
     BridgeGroupVector groupsWithIDs() const {
@@ -163,6 +127,7 @@ public:
         return retVector;
     }
 
+    /// getter for both the groups and rooms with their associated IDs
     BridgeGroupVector groupsAndRoomsWithIDs() const {
         auto groups = groupsWithIDs();
         BridgeGroupVector retVector;
@@ -220,53 +185,83 @@ public:
         return std::numeric_limits<std::uint32_t>::max();
     }
 
-    /// current state of the bridge during discovery
-    EBridgeDiscoveryState state = EBridgeDiscoveryState::lookingForResponse;
-
     operator QString() const {
         std::stringstream tempString;
         tempString << "hue::Bridge: "
-                   << " IP: " << IP.toStdString() << " username: " << username.toStdString()
-                   << " name: " << name.toStdString() << " customName: " << customName.toStdString()
-                   << " api: " << api.toStdString() << " id:" << id.toStdString()
-                   << " macaddress:" << macaddress.toStdString();
+                   << " IP: " << IP().toStdString() << " username: " << username().toStdString()
+                   << " name: " << name().toStdString()
+                   << " customName: " << customName().toStdString()
+                   << " api: " << API().toStdString() << " id:" << id().toStdString()
+                   << " macaddress:" << macaddress().toStdString();
         return QString::fromStdString(tempString.str());
     }
+
+    /// creates a JSON representation of the bridge
+    QJsonObject toJson() const;
 
     /// equal operator
     bool operator==(const hue::Bridge& rhs) const {
         bool result = true;
-        if (IP != rhs.IP) {
+        if (IP() != rhs.IP()) {
             result = false;
         }
-        if (customName != rhs.customName) {
+        if (customName() != rhs.customName()) {
             result = false;
         }
-        if (username != rhs.username) {
+        if (username() != rhs.username()) {
             result = false;
         }
-        if (id != rhs.id) {
+        if (id() != rhs.id()) {
             result = false;
         }
-        if (state != rhs.state) {
+        if (state() != rhs.state()) {
             result = false;
         }
         return result;
     }
 
 private:
+    /*!
+     * \brief IP The IP address of the current bridge
+     */
+    QString mIP;
+
+    /*!
+     * \brief username the username assigned by the bridge. Received
+     *        by sending a request packet ot the bridge.
+     */
+    QString mUsername;
+
+    /// unique key
+    QString mId;
+
+    /// api version of the software
+    QString mAPI;
+
+    /// name of bridge. this is often a default name and uninteresting
+    QString mName;
+
+    /// name defined by the apps saved data
+    QString mCustomName;
+
+    /// mac address for the bridge
+    QString mMacaddress;
+
+    /// dictionary of light metadata
+    cor::Dictionary<HueMetadata> mLights;
+
+    /// dictionary schedules stored on the bridge
+    cor::Dictionary<hue::Schedule> mSchedules;
+
     /// dictionary of groups
     cor::Dictionary<cor::Group> mGroups;
 
     /// dictionary of rooms
     cor::Dictionary<cor::Room> mRooms;
+
+    /// current state of the bridge during discovery
+    EBridgeDiscoveryState mState;
 };
-
-/// converts a json object to a Bridge
-Bridge jsonToBridge(const QJsonObject& object);
-
-/// converts a bridge to a json object
-QJsonObject bridgeToJson(const Bridge& controller);
 
 } // namespace hue
 
@@ -274,9 +269,10 @@ namespace std {
 template <>
 struct hash<hue::Bridge> {
     size_t operator()(const hue::Bridge& k) const {
-        return std::hash<std::string>{}(k.id.toStdString());
+        return std::hash<std::string>{}(k.id().toStdString());
     }
 };
+
 } // namespace std
 
 

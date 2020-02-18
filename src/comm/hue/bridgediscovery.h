@@ -58,10 +58,10 @@ public:
     EHueDiscoveryState state();
 
     /// updates the schedules stored in a bridge
-    void updateSchedules(const hue::Bridge& bridge, const std::vector<SHueSchedule>& schedules);
+    void updateSchedules(const Bridge& bridge, const std::vector<Schedule>& schedules);
 
     /// updates the groups stored in a bridge
-    void updateGroupsAndRooms(const hue::Bridge& bridge,
+    void updateGroupsAndRooms(const Bridge& bridge,
                               const BridgeGroupVector& groups,
                               const BridgeRoomVector& rooms);
 
@@ -71,10 +71,10 @@ public:
      *
      * \return the struct that represents the current hue bridge.
      */
-    const cor::Dictionary<hue::Bridge>& bridges() const { return mFoundBridges; }
+    const cor::Dictionary<Bridge>& bridges() const { return mFoundBridges; }
 
     /// list of bridges that haven't been fully discovered
-    std::vector<hue::Bridge> notFoundBridges() const { return mNotFoundBridges; }
+    std::vector<Bridge> notFoundBridges() const { return mNotFoundBridges; }
 
     /// getter for all known hue lights
     std::vector<HueMetadata> lights();

@@ -24,6 +24,8 @@ void EditGroupPage::showGroup(const cor::Group& group,
     mTopMenu->helpLabel()->setText("Edit the Group...");
     mTopMenu->roomCheckBox()->setVisible(true);
     mTopMenu->roomCheckBox()->setChecked(mIsRoom);
+    // only have this option enabled for new groups
+    mTopMenu->roomCheckBox()->setEnabled((group.name() == "New Group"));
 
     updateDevices(groupLights, lights);
     update();

@@ -65,7 +65,6 @@ TopMenu::TopMenu(QWidget* parent,
     // Setup Brightness Slider
     // --------------
     mGlobalBrightness->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
     mSingleLightBrightness->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     // --------------
@@ -241,6 +240,7 @@ void TopMenu::resize(int xOffset) {
     yPos = mMenuButton->height() + padding;
     mStartSelectLightsButton = yPos;
     mFloatingMenuStart = yPos;
+    yPos += mSize.height() / 2;
 
     mMainPalette->setGeometry(0, yPos, mPaletteWidth, mSize.height() / 2);
     yPos += mMainPalette->height() + padding;
@@ -318,8 +318,6 @@ void TopMenu::showSingleColorStateWidget(bool show) {
     int width = 0;
     if (mMainWindow->leftHandMenu()->alwaysOpen()) {
         width = mMainWindow->leftHandMenu()->width();
-    } else {
-        height += mSize.height();
     }
 
     QPoint startPoint(width, height);
@@ -337,8 +335,6 @@ void TopMenu::showMultiColorStateWidget(bool show) {
     int width = 0;
     if (mMainWindow->leftHandMenu()->alwaysOpen()) {
         width = mMainWindow->leftHandMenu()->width();
-    } else {
-        height += mSize.height();
     }
 
     QPoint startPoint(width, height);

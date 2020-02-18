@@ -215,9 +215,9 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
     }
 
     if (countOutOfSync) {
-        auto key = bridge.id.toStdString();
+        auto key = bridge.id().toStdString();
         auto result = mMessages.find(key);
-        HueMessage message(hueLight.uniqueID(), bridge.id, object);
+        HueMessage message(hueLight.uniqueID(), bridge.id(), object);
         if (result == mMessages.end()) {
             // insert message that isnt found
             mMessages.insert(std::make_pair(key, std::vector<HueMessage>(1, message)));
@@ -256,15 +256,15 @@ bool DataSyncHue::handleIdleTimeout(const hue::Bridge& bridge, const HueMetadata
     for (const auto& schedule : mComm->hue()->schedules(bridge)) {
         // qDebug() << "  scheudel name" << schedule.name;
         // if a device doesnt have a schedule, add it.
-        if (schedule.name.contains("Corluma_timeout")) {
-            QString indexString = schedule.name.split("_").last();
+        if (schedule.name().contains("Corluma_timeout")) {
+            QString indexString = schedule.name().split("_").last();
             int givenIndex = indexString.toInt();
             if (givenIndex == light.index() && mAppSettings->timeout() != 0) {
                 foundTimeout = true;
                 // qDebug() << " update idle timeout " << schedule;
                 mComm->hue()->updateIdleTimeout(bridge,
                                                 true,
-                                                schedule.index,
+                                                schedule.index(),
                                                 mAppSettings->timeout());
             }
         }

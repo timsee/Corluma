@@ -27,7 +27,7 @@ public:
     explicit BridgeSchedulesWidget(QWidget* parent);
 
     /// update the hue schedules in the widget
-    void updateSchedules(std::vector<SHueSchedule> schedules);
+    void updateSchedules(std::vector<hue::Schedule> schedules);
 
     /*!
      * \brief resize size the widget programmatically

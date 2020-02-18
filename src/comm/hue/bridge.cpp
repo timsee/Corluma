@@ -12,28 +12,27 @@
 
 namespace hue {
 
-Bridge jsonToBridge(const QJsonObject& object) {
-    Bridge bridge;
+Bridge::Bridge(const QJsonObject& object) {
     if (object["username"].isString() && object["IP"].isString() && object["id"].isString()) {
-        bridge.username = object["username"].toString();
-        bridge.IP = object["IP"].toString();
-        bridge.id = object["id"].toString();
+        mUsername = object["username"].toString();
+        mIP = object["IP"].toString();
+        mId = object["id"].toString();
     }
 
     if (object["macaddress"].isString()) {
-        bridge.macaddress = object["macadress"].toString();
+        mMacaddress = object["macadress"].toString();
     }
 
     if (object["name"].isString()) {
-        bridge.name = object["name"].toString();
+        mName = object["name"].toString();
     }
 
     if (object["customName"].isString()) {
-        bridge.customName = object["customName"].toString();
+        mCustomName = object["customName"].toString();
     }
 
     if (object["api"].isString()) {
-        bridge.api = object["api"].toString();
+        mAPI = object["api"].toString();
     }
 
     QJsonArray array = object["lights"].toArray();
@@ -41,24 +40,23 @@ Bridge jsonToBridge(const QJsonObject& object) {
         QJsonObject light = arrayObject.toObject();
         if (light["uniqueid"].isString()) {
             auto index = light["index"].toInt();
-            HueMetadata hueLight(light, bridge.id, index);
-            bridge.lights.insert(hueLight.uniqueID().toStdString(), hueLight);
+            HueMetadata hueLight(light, id(), index);
+            mLights.insert(hueLight.uniqueID().toStdString(), hueLight);
         }
     }
-    return bridge;
 }
 
-QJsonObject bridgeToJson(const Bridge& bridge) {
+QJsonObject Bridge::toJson() const {
     QJsonObject object;
-    object["username"] = bridge.username;
-    object["IP"] = bridge.IP;
-    object["id"] = bridge.id;
-    object["name"] = bridge.name;
-    object["customName"] = bridge.customName;
-    object["api"] = bridge.api;
-    object["macaddress"] = bridge.macaddress;
+    object["username"] = mUsername;
+    object["IP"] = mIP;
+    object["id"] = mId;
+    object["name"] = mName;
+    object["customName"] = mCustomName;
+    object["api"] = mAPI;
+    object["macaddress"] = mMacaddress;
     QJsonArray lightArray;
-    for (const auto& light : bridge.lights.items()) {
+    for (const auto& light : lights().items()) {
         QJsonObject jsonObject;
         jsonObject["uniqueid"] = light.uniqueID();
         jsonObject["index"] = light.index();

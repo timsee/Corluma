@@ -133,22 +133,6 @@ public slots:
      */
     void topMenuButtonPressed(const QString&);
 
-    /*!
-     * \brief lightNameChange change the name of a widget given the key and the new name.
-     *
-     * \param type the protocol type of light being changed
-     * \param key the key for the light
-     * \param name the new name for the light.
-     */
-    void lightNameChange(EProtocolType type, const QString& key, const QString& name);
-
-    /*!
-     * \brief deleteLight Delete the light with the given key
-     *
-     * \param key unique ID for light to delete
-     */
-    void deleteLight(const QString& key);
-
     /// called when a mood is selected
     void moodSelected(std::uint64_t);
 

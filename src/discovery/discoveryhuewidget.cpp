@@ -138,7 +138,7 @@ void DiscoveryHueWidget::updateBridgeGUI() {
         int widgetIndex = -1;
         int i = 0;
         for (const auto& widget : mListWidget->widgets()) {
-            if (widget->key() == bridge.IP) {
+            if (widget->key() == bridge.IP()) {
                 auto bridgeInfoWidget = dynamic_cast<hue::BridgeInfoWidget*>(widget);
                 widgetIndex = i;
                 bridgeInfoWidget->updateBridge(bridge);
@@ -218,7 +218,7 @@ void DiscoveryHueWidget::changedName(const QString& key, const QString& newName)
     }
 
     for (const auto& bridge : mComm->hue()->discovery()->notFoundBridges()) {
-        if (bridge.id == key) {
+        if (bridge.id() == key) {
             mComm->hue()->discovery()->changeName(bridge, newName);
             return;
         }
@@ -243,7 +243,7 @@ void DiscoveryHueWidget::schedulesPressed(const QString& key) {
     const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
     if (bridgeResult.second) {
         mGreyout->greyOut(true);
-        mBridgeSchedulesWidget->updateSchedules(bridgeResult.first.schedules.items());
+        mBridgeSchedulesWidget->updateSchedules(bridgeResult.first.schedules().items());
         mBridgeSchedulesWidget->isOpen(true);
         mBridgeSchedulesWidget->setVisible(true);
         mBridgeSchedulesWidget->show();
@@ -347,12 +347,12 @@ void DiscoveryHueWidget::resizeEvent(QResizeEvent*) {
 void DiscoveryHueWidget::deleteBridgeFromAppData(hue::Bridge bridge) {
     QMessageBox::StandardButton reply;
     QString text = "Delete this Bridge from App Memory? This will delete all "
-                   + QString::number(bridge.lights.size())
+                   + QString::number(bridge.lights().size())
                    + " lights from rooms and moods. This cannot be undone.";
     reply = QMessageBox::question(this, "Delete Bridge?", text, QMessageBox::Yes | QMessageBox::No);
     if (reply == QMessageBox::Yes) {
         mComm->hue()->discovery()->deleteBridge(bridge);
-        mListWidget->removeWidget(bridge.IP);
+        mListWidget->removeWidget(bridge.IP());
         resize();
     }
 }

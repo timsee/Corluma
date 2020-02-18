@@ -78,10 +78,6 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
             mSyncStatus,
             SLOT(syncStatusChanged(EDataSyncType, bool)));
 
-    if (mAppSettings->enabled(EProtocolType::nanoleaf)) {
-        mComm->nanoleaf()->discovery()->startDiscovery();
-    }
-
     // --------------
     // Settings Page
     // --------------
@@ -194,10 +190,7 @@ void MainWindow::loadJSON(QString path) {
         } else {
             mComm->hue()->discovery()->reloadGroupData();
             qDebug() << "New app data saved!";
-            // load the mood page again, if necessary
-            if (mMainViewport->currentPage() == EPage::moodPage) {
-                mMainViewport->loadMoodPage();
-            }
+            mMainViewport->loadMoodPage();
         }
     } else {
         qDebug() << " file provided is not parseable JSON";
@@ -290,11 +283,7 @@ void MainWindow::loadPages() {
 
         mLightInfoWidget = new LightInfoListWidget(this, mAppSettings);
         mLightInfoWidget->isOpen(false);
-        connect(mLightInfoWidget,
-                SIGNAL(lightNameChanged(EProtocolType, QString, QString)),
-                this,
-                SLOT(lightNameChange(EProtocolType, QString, QString)));
-        connect(mLightInfoWidget, SIGNAL(deleteLight(QString)), this, SLOT(deleteLight(QString)));
+
         connect(mLightInfoWidget, SIGNAL(pressedClose()), this, SLOT(lightInfoClosePressed()));
         mLightInfoWidget->setGeometry(0, -1 * height(), width(), height());
 
@@ -466,7 +455,7 @@ void MainWindow::editButtonClicked(bool isMood) {
         mEditGroupPage->pushIn();
         mEditGroupPage->isOpen(true);
 
-        auto group = mData->findCurrentGroup(mGroups->groups().items());
+        auto group = mData->findCurrentGroup(mGroups->groupsAndRooms());
         auto isRoom = mGroups->isGroupARoom(group);
         if (group.isValid()) {
             mEditGroupPage->showGroup(group,
@@ -537,67 +526,6 @@ void MainWindow::detailedClosePressed() {
 void MainWindow::lightInfoClosePressed() {
     mGreyOut->greyOut(false);
     mLightInfoWidget->pushOut();
-}
-
-void MainWindow::lightNameChange(EProtocolType type, const QString& key, const QString& name) {
-    if (type == EProtocolType::hue) {
-        // get hue light from key
-        std::vector<HueMetadata> hueLights = mComm->hue()->discovery()->lights();
-        HueMetadata light;
-        bool lightFound = false;
-        for (auto hue : hueLights) {
-            if (hue.uniqueID() == key) {
-                lightFound = true;
-                light = hue;
-            }
-        }
-
-        if (lightFound) {
-            mComm->hue()->renameLight(light, name);
-        } else {
-            qDebug() << " could NOT change this key: " << key << " to this name " << name;
-        }
-    } else if (type == EProtocolType::nanoleaf) {
-        // get nanoleaf controller from key
-        const auto& controllers = mComm->nanoleaf()->lights();
-        auto result = controllers.item(key.toStdString());
-        bool lightFound = result.second;
-        nano::LeafMetadata lightToRename = result.first;
-
-        if (lightFound) {
-            mComm->nanoleaf()->renameLight(lightToRename, name);
-        } else {
-            qDebug() << " could NOT change this key: " << key << " to this name " << name;
-        }
-    }
-}
-
-void MainWindow::deleteLight(const QString& key) {
-    qDebug() << " delete light with this key " << key;
-    auto light = mComm->lightByID(key);
-    if (light.isValid()) {
-        switch (light.protocol()) {
-            case EProtocolType::arduCor:
-                mComm->arducor()->deleteLight(light);
-                break;
-            case EProtocolType::hue: {
-                auto hueLight = mComm->hue()->hueLightFromLight(light);
-                for (auto hue : mComm->hue()->discovery()->lights()) {
-                    if (hue.index() == hueLight.index()) {
-                        mComm->hue()->deleteLight(hue);
-                    }
-                }
-                break;
-            }
-            case EProtocolType::nanoleaf:
-                mComm->nanoleaf()->deleteLight(light);
-                break;
-            case EProtocolType::MAX:
-                break;
-        }
-    } else {
-        qDebug() << "light not found";
-    }
 }
 
 void MainWindow::resize() {
@@ -704,10 +632,11 @@ void MainWindow::resize() {
         if (mLightInfoWidget->isOpen()) {
             mLightInfoWidget->resize();
         }
+
+        mRoutineWidget->resize(mMainViewport->x(),
+                               QSize(mMainViewport->width(), mMainViewport->height()));
     }
 
-    mRoutineWidget->resize(mMainViewport->x(),
-                           QSize(mMainViewport->width(), mMainViewport->height()));
     mNoWifiWidget->setGeometry(QRect(0, 0, geometry().width(), geometry().height()));
 }
 
@@ -1027,4 +956,15 @@ void MainWindow::setupStateObserver() {
 
     // sync status
     connect(mSyncStatus, SIGNAL(statusChanged(bool)), mStateObserver, SLOT(dataInSync(bool)));
+
+    // light info widget
+    connect(mLightInfoWidget,
+            SIGNAL(lightNameChanged(QString, QString)),
+            mStateObserver,
+            SLOT(lightNameChange(QString, QString)));
+
+    connect(mLightInfoWidget,
+            SIGNAL(deleteLight(QString)),
+            mStateObserver,
+            SLOT(deleteLight(QString)));
 }

@@ -24,7 +24,7 @@ class HueScheduleWidget : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit HueScheduleWidget(QWidget* parent, SHueSchedule schedule);
+    explicit HueScheduleWidget(QWidget* parent, hue::Schedule schedule);
 
 protected:
     /// paints the background
@@ -32,7 +32,7 @@ protected:
 
 private:
     /// schedule for the widget
-    SHueSchedule mSchedule;
+    hue::Schedule mSchedule;
 
     /// name for the schedule
     QLabel* mNameLabel;

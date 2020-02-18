@@ -288,6 +288,62 @@ cor::Light CommLayer::lightByID(const QString& ID) {
     return {};
 }
 
+void CommLayer::deleteLight(const QString& uniqueID) {
+    qDebug() << " delete light with this key " << uniqueID;
+    auto light = lightByID(uniqueID);
+    if (light.isValid()) {
+        switch (light.protocol()) {
+            case EProtocolType::arduCor:
+                mArduCor->deleteLight(light);
+                break;
+            case EProtocolType::hue:
+                mHue->deleteLight(light);
+                break;
+            case EProtocolType::nanoleaf:
+                mNanoleaf->deleteLight(light);
+                break;
+            case EProtocolType::MAX:
+                break;
+        }
+    } else {
+        qDebug() << "light not found";
+    }
+}
+
+void CommLayer::lightNameChange(const QString& key, const QString& name) {
+    auto light = lightByID(key);
+    if (light.protocol() == EProtocolType::hue) {
+        // get hue light from key
+        std::vector<HueMetadata> hueLights = hue()->discovery()->lights();
+        HueMetadata light;
+        bool lightFound = false;
+        for (auto hue : hueLights) {
+            if (hue.uniqueID() == key) {
+                lightFound = true;
+                light = hue;
+            }
+        }
+
+        if (lightFound) {
+            hue()->renameLight(light, name);
+        } else {
+            qDebug() << " could NOT change this key: " << key << " to this name " << name;
+        }
+    } else if (light.protocol() == EProtocolType::nanoleaf) {
+        // get nanoleaf controller from key
+        const auto& controllers = nanoleaf()->lights();
+        auto result = controllers.item(key.toStdString());
+        bool lightFound = result.second;
+        nano::LeafMetadata lightToRename = result.first;
+
+        if (lightFound) {
+            nanoleaf()->renameLight(lightToRename, name);
+        } else {
+            qDebug() << " could NOT change this key: " << key << " to this name " << name;
+        }
+    }
+}
+
 void CommLayer::resetStateUpdates(EProtocolType type) {
     if (type == EProtocolType::arduCor) {
         mArduCor->resetStateUpdates();

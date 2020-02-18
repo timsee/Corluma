@@ -62,7 +62,7 @@ ListRoomWidget::ListRoomWidget(const cor::Room& room,
         mGroupsButtonWidget->setVisible(false);
     }
 
-    updateRoom(mRoom, false);
+    updateRoom(mRoom);
 
     mLastSubGroupName = "NO_GROUP";
     resize();
@@ -92,7 +92,7 @@ void ListRoomWidget::updateTopWidget() {
     }
 }
 
-void ListRoomWidget::updateRoom(const cor::Room& room, bool removeIfNotFound) {
+void ListRoomWidget::updateRoom(const cor::Room& room) {
     // for every group, loop through the groups and make sure they are represented in the top widet
     for (const auto& subGroupID : room.subgroups()) {
         auto groupResult = mGroupData->groups().item(QString::number(subGroupID).toStdString());
@@ -153,40 +153,39 @@ void ListRoomWidget::updateRoom(const cor::Room& room, bool removeIfNotFound) {
     //----------------
     // Remove widgets that are not found
     //----------------
-    if (removeIfNotFound) {
-        // look for lights that don't exist, and remove if necessary
-        for (const auto& widget : mListLayout.widgets()) {
-            auto existingWidget = qobject_cast<ListLightWidget*>(widget);
-            Q_ASSERT(existingWidget);
+    // look for lights that don't exist, and remove if necessary
+    for (const auto& widget : mListLayout.widgets()) {
+        auto existingWidget = qobject_cast<ListLightWidget*>(widget);
+        Q_ASSERT(existingWidget);
 
-            bool found = false;
-            for (const auto& lightID : room.lights()) {
-                if (lightID == existingWidget->key()) {
-                    found = true;
-                }
-            }
-            if (!found) {
-                mListLayout.removeWidget(existingWidget);
-                break;
+        bool found = false;
+        for (const auto& lightID : room.lights()) {
+            if (lightID == existingWidget->key()) {
+                found = true;
             }
         }
+        if (!found) {
+            mListLayout.removeWidget(existingWidget);
+            break;
+        }
+    }
 
 
-        // look for subgroups that don't exist, remove if needed
-        if (!mRoom.subgroups().empty()) {
-            auto groupNames = mGroupData->groupNames();
-            for (const auto& subgroupName : mGroupsButtonWidget->groupNames()) {
-                if (subgroupName != "All") {
-                    auto it = std::find(groupNames.begin(), groupNames.end(), subgroupName);
-                    // if not found remove
-                    if (it == groupNames.end()) {
-                        mGroupsButtonWidget->removeGroup(subgroupName);
-                        rerender = true;
-                    }
+    // look for subgroups that don't exist, remove if needed
+    if (!mRoom.subgroups().empty()) {
+        auto groupNames = mGroupData->groupNames();
+        for (const auto& subgroupName : mGroupsButtonWidget->groupNames()) {
+            if (subgroupName != "All") {
+                auto it = std::find(groupNames.begin(), groupNames.end(), subgroupName);
+                // if not found remove
+                if (it == groupNames.end()) {
+                    mGroupsButtonWidget->removeGroup(subgroupName);
+                    rerender = true;
                 }
             }
         }
     }
+
 
     mListLayout.sortDeviceWidgets();
     setFixedHeight(widgetHeightSum());

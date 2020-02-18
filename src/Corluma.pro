@@ -234,7 +234,9 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     comm/datasynchue.h \
     comm/datasyncarduino.h \
     comm/datasyncnanoleaf.h \
+    comm/hue/command.h \
     comm/hue/huemetadata.h \
+    comm/hue/schedule.h \
     comm/nanoleaf/leaflightinfowidget.h \
     comm/nanoleaf/leafmetadata.h \
     comm/upnpdiscovery.h \

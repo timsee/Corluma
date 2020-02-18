@@ -209,4 +209,12 @@ void StateObserver::computeState() {
     }
 }
 
+void StateObserver::lightNameChange(const QString& key, const QString& name) {
+    mComm->lightNameChange(key, name);
+}
+
+void StateObserver::deleteLight(const QString& uniqueID) {
+    mComm->deleteLight(uniqueID);
+}
+
 } // namespace cor

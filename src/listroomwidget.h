@@ -51,7 +51,8 @@ public:
      */
     void setCheckedDevices(std::vector<cor::Light> devices);
 
-    void updateRoom(const cor::Room& room, bool removeIfNotFound);
+    /// update the room with new information.
+    void updateRoom(const cor::Room& room);
 
     /*!
      * \brief devices getter for all devices being displayed by the widget.

@@ -43,6 +43,14 @@ public:
     /// getter for rooms
     const cor::Dictionary<cor::Room>& rooms() const noexcept { return mRoomDict; }
 
+    /// creates a vector of groups and rooms
+    std::vector<cor::Group> groupsAndRooms() const {
+        auto groupVect = mGroupDict.items();
+        auto roomVect = mRoomDict.items();
+        groupVect.insert(groupVect.end(), roomVect.begin(), roomVect.end());
+        return groupVect;
+    }
+
     /// returns a vector of names for the groups.
     std::vector<QString> groupNames();
 

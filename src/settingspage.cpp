@@ -7,14 +7,11 @@
 #include "settingspage.h"
 
 #include <QDebug>
-#include <QDesktopWidget>
 #include <QFileDialog>
-#include <QGraphicsOpacityEffect>
 #include <QMessageBox>
 #include <QPainter>
 #include <QScrollBar>
 #include <QScroller>
-#include <QStandardPaths>
 #include <QStyleOption>
 
 #include "comm/commhue.h"

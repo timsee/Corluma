@@ -15,7 +15,7 @@
 namespace hue {
 
 BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget* parent)
-    : cor::ListItemWidget(bridge.IP, parent),
+    : cor::ListItemWidget(bridge.IP(), parent),
       mState{EBridgeDiscoveryState::unknown} {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     setStyleSheet(styleSheet);
@@ -28,7 +28,7 @@ BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget* parent)
     mNameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mNameLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mNameWidget = new EditableFieldWidget(bridge.customName, this);
+    mNameWidget = new EditableFieldWidget(bridge.customName(), this);
     mNameWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(mNameWidget, SIGNAL(updatedField(QString)), this, SLOT(changedName(QString)));
 
@@ -126,11 +126,11 @@ BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget* parent)
 
 void BridgeInfoWidget::updateBridge(const hue::Bridge& bridge) {
     if (!(bridge == mBridge)) {
-        mNameWidget->setText(bridge.customName);
-        mIPAddress->setText("<b>IP:</b>  " + bridge.IP);
-        mAPI->setText("<b>API:</b>  " + bridge.api);
-        mID->setText("<b>ID:</b>  " + bridge.id);
-        handleBridgeState(bridge.state);
+        mNameWidget->setText(bridge.customName());
+        mIPAddress->setText("<b>IP:</b>  " + bridge.IP());
+        mAPI->setText("<b>API:</b>  " + bridge.API());
+        mID->setText("<b>ID:</b>  " + bridge.id());
+        handleBridgeState(bridge.state());
         mBridge = bridge;
     }
 }
@@ -154,7 +154,6 @@ void BridgeInfoWidget::handleBridgeState(EBridgeDiscoveryState state) {
             mImage->setMovie(mMovie);
             mMovie->start();
         }
-        resize();
         mState = state;
         adjustSize();
     }
@@ -188,13 +187,12 @@ void BridgeInfoWidget::paintEvent(QPaintEvent*) {
 }
 
 void BridgeInfoWidget::mouseReleaseEvent(QMouseEvent*) {
-    emit clicked(mBridge.id);
+    emit clicked(mBridge.id());
 }
 
 void BridgeInfoWidget::resize() {
     auto min = width();
-    // auto min = std::min(width(), height());
-    if (mBridge.state != EBridgeDiscoveryState::lookingForResponse) {
+    if (mBridge.state() != EBridgeDiscoveryState::lookingForResponse) {
         auto width = int(min * 0.45f);
         mImage->setFixedWidth(width);
         mImage->setPixmap(
@@ -217,19 +215,19 @@ void BridgeInfoWidget::resizeEvent(QResizeEvent*) {
 
 
 void BridgeInfoWidget::pressedDiscoverHues() {
-    emit discoverHuesPressed(mBridge.id);
+    emit discoverHuesPressed(mBridge.id());
 }
 
 void BridgeInfoWidget::groupsListPressed() {
-    emit groupsPressed(mBridge.id);
+    emit groupsPressed(mBridge.id());
 }
 
 void BridgeInfoWidget::schedulesListPressed() {
-    emit schedulesPressed(mBridge.id);
+    emit schedulesPressed(mBridge.id());
 }
 
 void BridgeInfoWidget::changedName(const QString& newName) {
-    emit nameChanged(mBridge.id, newName);
+    emit nameChanged(mBridge.id(), newName);
 }
 
 void BridgeInfoWidget::setTitleFontPointSize(int pt) {

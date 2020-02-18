@@ -39,7 +39,7 @@ BridgeSchedulesWidget::BridgeSchedulesWidget(QWidget* parent) : QWidget(parent) 
     mMainLayout->addWidget(mScrollArea, 15);
 }
 
-void BridgeSchedulesWidget::updateSchedules(std::vector<SHueSchedule> schedules) {
+void BridgeSchedulesWidget::updateSchedules(std::vector<hue::Schedule> schedules) {
     // remove old widgets
     for (auto widget : mWidgets) {
         mScrollLayout->removeWidget(widget);

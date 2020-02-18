@@ -84,6 +84,17 @@ public slots:
     /// light count changed
     void lightCountChanged();
 
+    /*!
+     * \brief lightNameChange change the name of a widget given the key and the new name.
+     *
+     * \param key the key for the light
+     * \param name the new name for the light.
+     */
+    void lightNameChange(const QString& key, const QString& name);
+
+    /// delete a light by unique ID. This deletes the light from memory.
+    void deleteLight(const QString& uniqueID);
+
 private:
     /// computes the state based off of the various states of the widget
     void computeState();

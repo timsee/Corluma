@@ -103,7 +103,7 @@ public:
      * and will not be deleted unless explicitly asked to be deleted.
      * \param schedule the new schedule for the bridge.
      */
-    void sendSchedule(SHueSchedule schedule);
+    void sendSchedule(hue::Schedule schedule);
 
     /// stop the timers that sync things like schedules and groups in the background.
     void stopBackgroundTimers();
@@ -147,14 +147,6 @@ public:
      * \return list of hue::Bridges
      */
     const cor::Dictionary<hue::Bridge>& bridges() { return mDiscovery->bridges(); }
-
-    /*!
-     * \brief SHueCommandToJsonObject converts a SHueCommand into a Json object that
-     *        can be sent to a hue as a command. Neat!
-     * \param command the command to convert into json
-     * \return a json representation of a command
-     */
-    QJsonObject SHueCommandToJsonObject(SHueCommand command);
 
     //---------------
     // Groups
@@ -202,13 +194,13 @@ public:
      * \brief deleteSchedule delete a hue schedule from the bridge
      * \param schedule the schedule to delete.
      */
-    void deleteSchedule(SHueSchedule schedule);
+    void deleteSchedule(hue::Schedule schedule);
 
     /*!
      * \brief schedules getter for a list of all known schedules
      * \return list of all known schedules.
      */
-    std::vector<SHueSchedule> schedules(const hue::Bridge& bridge);
+    std::vector<hue::Schedule> schedules(const hue::Bridge& bridge);
 
     /*!
      * \brief groups getter for a list of all know groups
@@ -241,7 +233,7 @@ public:
      * \brief deleteLight delete the light and its stored data from the bridge
      * \param light the light to delete.
      */
-    void deleteLight(const HueMetadata& light);
+    void deleteLight(const cor::Light& light);
 
     /*!
      * \brief brightnessChange connected to CommPacketParser, this changes the brightness of a
@@ -456,14 +448,6 @@ private:
      */
     std::pair<cor::Room, bool> jsonToRoom(QJsonObject object,
                                           const std::vector<cor::Group>& groupList);
-
-    /*!
-     * \brief jsonToSchedule read an incoming packet from the Hue Brige and update the Hue Schedule
-     * based on the contents
-     * \param object thue QJsonObject that contains the data on the hue schedule.
-     * \param i the index of the hue schedule given by the bridge.
-     */
-    SHueSchedule jsonToSchedule(QJsonObject object, int i);
 
     /*!
      * \brief checkTypeOfUpdate checks the JSON object received from the hue bridge and figures out

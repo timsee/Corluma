@@ -105,18 +105,16 @@ void ListMoodDetailedWidget::resize() {
                 int(size.width() * 0.75f),
                 int(size.height() * 0.75f));
     moveFloatingLayout();
+    mSimpleGroupWidget->setGeometry(mPlaceholder->geometry());
+    mEditPage->setGeometry(mPlaceholder->geometry());
+    mScrollArea->setGeometry(mPlaceholder->geometry());
+
     if (mPageKey == "Group_Details") {
-        mScrollArea->setGeometry(mPlaceholder->geometry());
         mAdditionalDetailsWidget->setFixedWidth(mScrollArea->viewport()->width());
         mAdditionalDetailsWidget->resize(mPlaceholder->geometry().size());
     } else if (mPageKey == "Group_Lights") {
-        mSimpleGroupWidget->setGeometry(mPlaceholder->geometry().x(),
-                                        mPlaceholder->geometry().y(),
-                                        width() * 0.98,
-                                        height());
         mSimpleGroupWidget->resizeWidgets();
     } else if (mPageKey == "Group_Edit") {
-        mEditPage->setGeometry(mPlaceholder->geometry());
         mEditPage->resize();
     }
 }
@@ -197,7 +195,7 @@ void ListMoodDetailedWidget::pushIn() {
     raise();
     setVisible(true);
     mFloatingMenu->raise();
-    mSimpleGroupWidget->resizeWidgets();
+    resize();
 }
 
 void ListMoodDetailedWidget::pushOut() {

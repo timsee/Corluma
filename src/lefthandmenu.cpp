@@ -228,8 +228,7 @@ void LeftHandMenu::updateDataGroupInUI(const cor::Room& dataGroup,
                 // different
                 auto groupWidget = qobject_cast<ListRoomWidget*>(widget);
                 if (groupWidget->room().name() == dataGroup.name()) {
-                    bool deleteNotFound = true;
-                    groupWidget->updateRoom(dataGroup, deleteNotFound);
+                    groupWidget->updateRoom(dataGroup);
                 }
             }
         }
